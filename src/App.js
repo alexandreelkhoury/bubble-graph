@@ -131,102 +131,18 @@ const data = {
     "68": 0
 }
 
-function sumAllValues(obj) {
-  let sum = 0;
-  for (const key in obj) {
-    sum += obj[key];
-  }
-  return sum;
-}
-
-const total = sumAllValues(data);
-
-function removeNullValues(obj) {
-	for (const key in obj) {
-	  if (obj.hasOwnProperty(key) && (obj[key] === 0 || obj[key] === undefined)) {
-		delete obj[key];
-	  }
-	  if (key == 1) {
-		delete obj[key];
-	  }
-	}
-	return obj;
-  }
-
-  const cleanedData = removeNullValues(data);
-
-  function regroupKeys(data) {
-    const newData = { ...data };
-    let sum6To10 = 0;
-    let sum10Plus = 0;
-
-    // Regroup keys 6 to 10
-    for (let i = 6; i <= 10; i++) {
-      if (newData.hasOwnProperty(i.toString())) {
-        sum6To10 += newData[i];
-        delete newData[i];
-      }
-    }
-    newData['6-10'] = sum6To10;
-
-    // Regroup keys 10 and above
-    for (const key in newData) {
-      if (newData.hasOwnProperty(key) && parseInt(key) >= 10) {
-        sum10Plus += newData[key];
-        delete newData[key];
-      }
-    }
-    newData['10+'] = sum10Plus;
-
-    return newData;
-  }
-
-  const updatedData = regroupKeys(cleanedData);
-  console.log(updatedData);
-
 export function App() {
-
-	const centerX = 250;
-	const centerY = 250;
-	const aire = 590;
-
-  function calculateDiametre(aire) {
-		return Math.sqrt(aire/Math.PI*2)*8;
-	}
-
-	function calculatePosition(i) {
-		const angle = (i / (Object.keys(updatedData).length)) * 2 * Math.PI;
-		const x = centerX + calculateDiametre(aire)/2 * Math.cos(angle);
-		const y = centerY + calculateDiametre(aire)/2 * Math.sin(angle);
-		return {x: x, y: y};
-	}
 
 	return (
 		<div>
-		<Bubble
-			content={'1'}
-			color="#BFD4FE" // Set your desired color here
-			diameter={calculateDiametre(aire)}
-			position={{x:centerX, y:centerY}}
-			value={590}
-      collectionName="L'h3ritage"
-      total={total}
-		/>
-
-		{Object.entries(updatedData).map(([key, aire], index) => (
-			console.log(key, aire, index),
-			<Bubble
-				key={key}
-				content={key}
-				color="#BFD4FE" // Set your desired color here
-				diameter={calculateDiametre(aire)}
-				position={calculatePosition(index)}
+      <Bubble
+        primaryColor="#BFD4FE" // Set your desired color here
+        secondaryColor="#72A1FD" // Set your desired color here
+        position={{x:200, y:200}}
         collectionName="L'h3ritage"
-				value={aire}
-        total={total}
-			/>
-		))}
-
+        data={data}
+        width={8}
+      />
 		</div>
 	);
 }
