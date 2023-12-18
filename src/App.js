@@ -134,16 +134,13 @@ const data = {
 export function App() {
 
 	return (
-		<div>
       <Bubble
         primaryColor="#BFD4FE" // Set your desired color here
         secondaryColor="#72A1FD" // Set your desired color here
-        position={{x:200, y:200}}
         collectionName="L'h3ritage"
         data={data}
         width={8}
       />
-		</div>
 	);
 }
 

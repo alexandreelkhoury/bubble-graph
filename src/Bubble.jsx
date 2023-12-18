@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import "./bubble.css";
 
-const Bubble = ({ primaryColor, secondaryColor, position, collectionName, data, width }) => {
+export function Bubble ({ primaryColor, secondaryColor, collectionName, data, width }) {
 
   const [hoveredBubble, setHoveredBubble] = useState(null);
+  const [positionBigBubble, setPositionBigBubble] = useState({});
+
+  useEffect(() => {
+    const element = document.getElementById('divParent');
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      setPositionBigBubble(rect);
+      console.log(rect);
+    }
+  }, []);
 
   function removeNullValues(obj) {
     for (const key in obj) {
@@ -84,8 +94,8 @@ const Bubble = ({ primaryColor, secondaryColor, position, collectionName, data, 
 
   function calculatePosition(i) {
     const angle = (i / ((Object.keys(updatedData).length- 1))) * 2 * Math.PI;
-    const x = position.x + calculateDiametre(aire)/2 * Math.cos(angle);
-    const y = position.y + calculateDiametre(aire)/2 * Math.sin(angle);
+    const x = (positionBigBubble.bottom- positionBigBubble.top)/2 + calculateDiametre(aire)/2 * Math.cos(angle);
+    const y = (positionBigBubble.right- positionBigBubble.left)/2 + calculateDiametre(aire)/2 * Math.sin(angle);
     return {x: x, y: y};
   }
 
@@ -98,11 +108,11 @@ const Bubble = ({ primaryColor, secondaryColor, position, collectionName, data, 
     width: diameter,
     height: diameter,
     borderRadius: '50%',
-    position: 'absolute',
-    top: position.y - diameter / 2,
-    left: position.x - diameter / 2,
+    top: 0,
     display: 'flex',
     fontSize: Math.sqrt(diameter)*3,
+    position: "relative",
+    left: 0,
     border : '1px solid #72A1FD',
     justifyContent: 'center',
     alignItems: 'center',
@@ -118,20 +128,19 @@ const Bubble = ({ primaryColor, secondaryColor, position, collectionName, data, 
     position: 'absolute',
     border: `1px solid ${secondaryColor}`,
     pointerEvents: 'none',
-    zIndex: 0,
   });
 
   const tooltipStyle = {
     position: 'absolute',
     backgroundColor: 'white',
     padding: '10px',
-    width: '200px',
+    width: '220px',
     height: 'autp',
     border: '1px solid #E0E0E0',
     color: 'black',
     top: `50%`,
     left: `50%`,
-    zIndex: 1,
+    zIndex: 2,
     fontSize: '12px',
   };
 
@@ -146,19 +155,19 @@ const Bubble = ({ primaryColor, secondaryColor, position, collectionName, data, 
     return (
       <div
         style= {{ backgroundColor: primaryColor,
-                width: diameter,
-                height: diameter,
-                borderRadius: '50%',
-                position: 'absolute',
-                top: position.y - diameter / 2,
-                left: position.x - diameter / 2,
-                display: 'flex',
-                fontSize: Math.sqrt(diameter)*3,
-                border : '1px solid #72A1FD',
-                justifyContent: 'center',
-                alignItems: 'center',
-                cursor: 'pointer',
-                color: 'black'}}
+                  width: diameter,
+                  height: diameter,
+                  position: 'absolute',
+                  borderRadius: '50%',
+                  top: position.x - diameter / 2 ,
+                  left: position.y - diameter / 2,
+                  display: 'flex',
+                  fontSize: Math.sqrt(diameter)*3,
+                  border : '1px solid #72A1FD',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  color: 'black',}}
         onMouseEnter={() => {
           setHoveredBubble(key);
         }}
@@ -169,19 +178,19 @@ const Bubble = ({ primaryColor, secondaryColor, position, collectionName, data, 
         {key}
         {hoveredBubble === key && <div style={biggerBubble}></div>}
       {hoveredBubble === key &&
-      <p style={tooltipStyle}>
-      <b>{`Holder has ${key} tokens`}</b>
+      <div style={tooltipStyle}>
+        <b>{`Holder has ${key} tokens`}</b>
         <br />
         <hr style={{ borderTop: '1px solid #E0E0E0', margin: '10px 0' }} />
         <span style={squareStyle}>&nbsp;</span>
         &nbsp; {collectionName} : {aire} holders ({Math.round((aire / total) * 100)}%)
-      </p>}
+      </div>}
       </div>
     )
   };
 
   return (
-    <div>
+    <div id='divParent'>
       <div style={bigBubbleStyle}
         onMouseEnter={() => {
           setHoveredBubble(highestValue.key);
@@ -193,13 +202,13 @@ const Bubble = ({ primaryColor, secondaryColor, position, collectionName, data, 
         {highestValue.key}
         {hoveredBubble === highestValue.key && <div style={createBiggerBubbleStyle(diameter)}></div>}
         {hoveredBubble === highestValue.key &&
-        <p style={tooltipStyle}>
-        <b>{tooltipContent}</b>
+        <div style={tooltipStyle}>
+          <b>{tooltipContent}</b>
           <br />
           <hr style={{ borderTop: '1px solid #E0E0E0', margin: '10px 0' }} />
           <span style={squareStyle}>&nbsp;</span>
           &nbsp; {collectionName} : {highestValue.value} holders ({percentage}%)
-        </p>}
+        </div>}
       </div>
       {Object.entries(updatedData).map(([key, aire], index) => (
         key !== highestValue.key ? createSmallBubble(aire, calculateDiametre(aire), calculatePosition(index), key) : null
@@ -208,15 +217,4 @@ const Bubble = ({ primaryColor, secondaryColor, position, collectionName, data, 
   );
 };
 
-Bubble.propTypes = {
-  color: PropTypes.string.isRequired,
-  data: PropTypes.object.isRequired,
-  collectionName: PropTypes.string.isRequired,
-  position: PropTypes.shape({
-    x: PropTypes.number.isRequired,
-    y: PropTypes.number.isRequired,
-  }).isRequired,
-};
-
 export default Bubble;
-module.export = Bubble;
