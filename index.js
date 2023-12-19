@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Bubble = Bubble;
+exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -11,12 +12,19 @@ function Bubble(_ref) {
   let {
     primaryColor,
     secondaryColor,
-    position,
     collectionName,
     data,
     width
   } = _ref;
   const [hoveredBubble, setHoveredBubble] = (0, _react.useState)(null);
+  const [positionBigBubble, setPositionBigBubble] = (0, _react.useState)({});
+  (0, _react.useEffect)(() => {
+    const element = document.getElementById('bigBubble');
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      setPositionBigBubble(rect);
+    }
+  }, []);
   function removeNullValues(obj) {
     for (const key in obj) {
       if (obj.hasOwnProperty(key) && (obj[key] === 0 || obj[key] === undefined)) {
@@ -85,13 +93,15 @@ function Bubble(_ref) {
   }
   const aire = highestValue.value;
   function calculatePosition(i) {
-    const angle = i / (Object.keys(updatedData).length - 1) * 2 * Math.PI;
-    const x = position.x + calculateDiametre(aire) / 2 * Math.cos(angle);
-    const y = position.y + calculateDiametre(aire) / 2 * Math.sin(angle);
-    return {
-      x: x,
-      y: y
-    };
+    if (positionBigBubble) {
+      const angle = i / (Object.keys(updatedData).length - 1) * 2 * Math.PI;
+      const x = (positionBigBubble.bottom - positionBigBubble.top) / 2 + calculateDiametre(aire) / 2 * Math.cos(angle);
+      const y = (positionBigBubble.right - positionBigBubble.left) / 2 + calculateDiametre(aire) / 2 * Math.sin(angle);
+      return {
+        x: x,
+        y: y
+      };
+    }
   }
   const tooltipContent = "Holder has ".concat(highestValue.key, " token").concat(highestValue.key === '1' ? '' : 's');
   const percentage = Math.round(highestValue.value / total * 100);
@@ -100,12 +110,12 @@ function Bubble(_ref) {
     backgroundColor: primaryColor,
     width: diameter,
     height: diameter,
-    borderRadius: '50%',
     position: 'absolute',
-    top: position.y - diameter / 2,
-    left: position.x - diameter / 2,
+    borderRadius: '50%',
+    top: 0,
     display: 'flex',
     fontSize: Math.sqrt(diameter) * 3,
+    left: 0,
     border: '1px solid #72A1FD',
     justifyContent: 'center',
     alignItems: 'center',
@@ -119,67 +129,86 @@ function Bubble(_ref) {
     borderRadius: '50%',
     position: 'absolute',
     border: "1px solid ".concat(secondaryColor),
-    pointerEvents: 'none',
-    zIndex: 0
+    pointerEvents: 'none'
   });
-  const tooltipStyle = {
+  const tooltipStyle = (top, left) => ({
     position: 'absolute',
     backgroundColor: 'white',
     padding: '10px',
     width: '220px',
-    height: 'autp',
     border: '1px solid #E0E0E0',
     color: 'black',
-    top: "50%",
-    left: "50%",
-    zIndex: 1,
+    top: top,
+    left: left,
+    zIndex: 2,
     fontSize: '12px'
-  };
+  });
   const squareStyle = {
     backgroundColor: "#BFD4FE",
     border: '1px solid #72A1FD',
     paddingRight: '17px'
   };
+  const divParent = {
+    position: "relative",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  };
   const createSmallBubble = (aire, diameter, position, key) => {
     const biggerBubble = createBiggerBubbleStyle(diameter);
-    return /*#__PURE__*/_react.default.createElement("div", {
-      style: {
-        backgroundColor: primaryColor,
-        width: diameter,
-        height: diameter,
-        borderRadius: '50%',
-        position: 'absolute',
-        top: position.y - diameter / 2,
-        left: position.x - diameter / 2,
-        display: 'flex',
-        fontSize: Math.sqrt(diameter) * 3,
-        border: '1px solid #72A1FD',
-        justifyContent: 'center',
-        alignItems: 'center',
-        cursor: 'pointer',
-        color: 'black'
-      },
-      onMouseEnter: () => {
-        setHoveredBubble(key);
-      },
-      onMouseLeave: () => {
-        setHoveredBubble(null);
+    if (positionBigBubble) {
+      const tooltip = tooltipStyle("75%", "50%");
+      if (position.y - diameter / 2 < 0) {
+        tooltip.left = '-220px';
       }
-    }, key, hoveredBubble === key && /*#__PURE__*/_react.default.createElement("div", {
-      style: biggerBubble
-    }), hoveredBubble === key && /*#__PURE__*/_react.default.createElement("p", {
-      style: tooltipStyle
-    }, /*#__PURE__*/_react.default.createElement("b", null, "Holder has ".concat(key, " tokens")), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("hr", {
-      style: {
-        borderTop: '1px solid #E0E0E0',
-        margin: '10px 0'
+      if (position.x - diameter / 2 < (positionBigBubble.height - positionBigBubble.height / 7) / 2) {
+        tooltip.top = '-60px';
       }
-    }), /*#__PURE__*/_react.default.createElement("span", {
-      style: squareStyle
-    }, "\xA0"), "\xA0 ", collectionName, " : ", aire, " holders (", Math.round(aire / total * 100), "%)"));
+      return /*#__PURE__*/_react.default.createElement("div", {
+        key: key,
+        style: {
+          backgroundColor: primaryColor,
+          width: diameter,
+          height: diameter,
+          position: 'absolute',
+          borderRadius: '50%',
+          top: position.x - diameter / 2,
+          left: position.y - diameter / 2,
+          display: 'flex',
+          fontSize: Math.sqrt(diameter) * 3,
+          border: '1px solid #72A1FD',
+          justifyContent: 'center',
+          alignItems: 'center',
+          cursor: 'pointer',
+          color: 'black'
+        },
+        onMouseEnter: () => {
+          setHoveredBubble(key);
+        },
+        onMouseLeave: () => {
+          setHoveredBubble(null);
+        }
+      }, key, hoveredBubble === key && /*#__PURE__*/_react.default.createElement("div", {
+        style: biggerBubble
+      }), hoveredBubble === key && /*#__PURE__*/_react.default.createElement("div", {
+        style: tooltip
+      }, /*#__PURE__*/_react.default.createElement("b", null, "Holder has ".concat(key, " tokens")), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("hr", {
+        style: {
+          borderTop: '1px solid #E0E0E0',
+          margin: '10px 0'
+        }
+      }), /*#__PURE__*/_react.default.createElement("span", {
+        style: squareStyle
+      }, "\xA0"), "\xA0 ", collectionName, " : ", aire, " holders (", Math.round(aire / total * 100), "%)"));
+    }
   };
-  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
+  const tooltipBigBubble = tooltipStyle("60%", "50%");
+  return /*#__PURE__*/_react.default.createElement("div", {
+    id: "divParent",
+    style: divParent
+  }, /*#__PURE__*/_react.default.createElement("div", {
     style: bigBubbleStyle,
+    id: "bigBubble",
     onMouseEnter: () => {
       setHoveredBubble(highestValue.key);
     },
@@ -188,8 +217,8 @@ function Bubble(_ref) {
     }
   }, highestValue.key, hoveredBubble === highestValue.key && /*#__PURE__*/_react.default.createElement("div", {
     style: createBiggerBubbleStyle(diameter)
-  }), hoveredBubble === highestValue.key && /*#__PURE__*/_react.default.createElement("p", {
-    style: tooltipStyle
+  }), hoveredBubble === highestValue.key && /*#__PURE__*/_react.default.createElement("div", {
+    style: tooltipBigBubble
   }, /*#__PURE__*/_react.default.createElement("b", null, tooltipContent), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("hr", {
     style: {
       borderTop: '1px solid #E0E0E0',
@@ -203,3 +232,4 @@ function Bubble(_ref) {
   }));
 }
 ;
+var _default = exports.default = Bubble;

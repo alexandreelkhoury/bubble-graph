@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import "./bubble.css";
 
 export function Bubble ({ primaryColor, secondaryColor, collectionName, data, width }) {
 
@@ -7,11 +6,10 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
   const [positionBigBubble, setPositionBigBubble] = useState({});
 
   useEffect(() => {
-    const element = document.getElementById('divParent');
+    const element = document.getElementById('bigBubble');
     if (element) {
       const rect = element.getBoundingClientRect();
       setPositionBigBubble(rect);
-      console.log(rect);
     }
   }, []);
 
@@ -58,30 +56,35 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
   const highestValue = getHighestValue(cleanedData);
 
   function regroupKeys(data) {
-      // delete data[highestValue.key]
-      const newData = { ...data };
-      let sum6To10 = 0;
-      let sum10Plus = 0;
+    const newData = { ...data };
+    let sum6To10 = 0;
+    let sum10Plus = 0;
 
-      // Regroup keys 6 to 10
-      for (let i = 6; i <= 10; i++) {
-        if (newData.hasOwnProperty(i.toString())) {
-          sum6To10 += newData[i];
-          delete newData[i];
-        }
+    // Regroup keys 6 to 10
+    for (let i = 6; i <= 10; i++) {
+      if (newData.hasOwnProperty(i.toString())) {
+        sum6To10 += newData[i];
+        delete newData[i];
       }
-      newData['6-10'] = sum6To10;
+    }
+    newData['6-10'] = sum6To10;
 
-      // Regroup keys 10 and above
-      for (const key in newData) {
-        if (newData.hasOwnProperty(key) && parseInt(key) >= 10) {
-          sum10Plus += newData[key];
-          delete newData[key];
-        }
+    // Regroup keys 10 and above if value is not null
+    if (newData.hasOwnProperty('10') && newData['10'] !== null) {
+      sum10Plus += newData['10'];
+      delete newData['10'];
+    }
+    for (const key in newData) {
+      if (newData.hasOwnProperty(key) && parseInt(key) > 10) {
+        sum10Plus += newData[key];
+        delete newData[key];
       }
+    }
+    if (sum10Plus !== 0) {
       newData['10+'] = sum10Plus;
+    }
 
-      return newData;
+    return newData;
   }
 
   const updatedData = regroupKeys(cleanedData);
@@ -94,24 +97,24 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
 
   function calculatePosition(i) {
     const angle = (i / ((Object.keys(updatedData).length- 1))) * 2 * Math.PI;
-    const x = (positionBigBubble.bottom- positionBigBubble.top)/2 + calculateDiametre(aire)/2 * Math.cos(angle);
-    const y = (positionBigBubble.right- positionBigBubble.left)/2 + calculateDiametre(aire)/2 * Math.sin(angle);
+    const x = (positionBigBubble.bottom - positionBigBubble.top)/2 + calculateDiametre(aire)/2 * Math.cos(angle);
+    const y = (positionBigBubble.right - positionBigBubble.left)/2 + calculateDiametre(aire)/2 * Math.sin(angle);
     return {x: x, y: y};
   }
 
   const tooltipContent = `Holder has ${highestValue.key} token${highestValue.key === '1' ? '' : 's'}`;
-  const percentage = Math.round((highestValue.value / total) * 100);
+  const percentage = ((highestValue.value / total) * 100).toFixed(1);
   const diameter = calculateDiametre(aire);
 
   const bigBubbleStyle = {
     backgroundColor: primaryColor,
     width: diameter,
     height: diameter,
+    position: 'absolute',
     borderRadius: '50%',
     top: 0,
     display: 'flex',
     fontSize: Math.sqrt(diameter)*3,
-    position: "relative",
     left: 0,
     border : '1px solid #72A1FD',
     justifyContent: 'center',
@@ -130,19 +133,18 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
     pointerEvents: 'none',
   });
 
-  const tooltipStyle = {
+  const tooltipStyle = (top, left) =>  ({
     position: 'absolute',
     backgroundColor: 'white',
     padding: '10px',
     width: '220px',
-    height: 'autp',
     border: '1px solid #E0E0E0',
     color: 'black',
-    top: `50%`,
-    left: `50%`,
+    top: top,
+    left: left,
     zIndex: 2,
     fontSize: '12px',
-  };
+  });
 
   const squareStyle = {
     backgroundColor: "#BFD4FE",
@@ -150,24 +152,41 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
     paddingRight: '17px',
   };
 
+  const divParent = {
+    position: "relative",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  };
+
   const createSmallBubble = (aire, diameter, position, key) => {
     const biggerBubble = createBiggerBubbleStyle(diameter);
+    const tooltip = tooltipStyle("75%", "50%");
+
+    if ((position.y - diameter / 2) < 0) {
+     tooltip.left = '-220px';
+    }
+    if ((position.x - diameter / 2) < (positionBigBubble.height - positionBigBubble.height/7) / 2) {
+     tooltip.top = '-60px';
+    }
+
     return (
       <div
+      key={key}
         style= {{ backgroundColor: primaryColor,
                   width: diameter,
                   height: diameter,
                   position: 'absolute',
                   borderRadius: '50%',
-                  top: position.x - diameter / 2 ,
-                  left: position.y - diameter / 2,
-                  display: 'flex',
+                  top: isNaN(position.x - diameter / 2) ? '0' : position.x - diameter / 2,
+                  left: isNaN(position.y - diameter / 2) ? '0' : position.y - diameter / 2,
+                  display: isNaN(position.x - diameter / 2) ? 'none' : 'flex',
                   fontSize: Math.sqrt(diameter)*3,
                   border : '1px solid #72A1FD',
                   justifyContent: 'center',
                   alignItems: 'center',
                   cursor: 'pointer',
-                  color: 'black',}}
+                  color: 'black'}}
         onMouseEnter={() => {
           setHoveredBubble(key);
         }}
@@ -178,20 +197,22 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
         {key}
         {hoveredBubble === key && <div style={biggerBubble}></div>}
       {hoveredBubble === key &&
-      <div style={tooltipStyle}>
+      <div style={tooltip}>
         <b>{`Holder has ${key} tokens`}</b>
         <br />
         <hr style={{ borderTop: '1px solid #E0E0E0', margin: '10px 0' }} />
         <span style={squareStyle}>&nbsp;</span>
-        &nbsp; {collectionName} : {aire} holders ({Math.round((aire / total) * 100)}%)
+        &nbsp; {collectionName} : {aire} holders ({((aire / total) * 100).toFixed(1)}%)
       </div>}
       </div>
     )
   };
 
+  const tooltipBigBubble =  tooltipStyle("60%", "50%")
+
   return (
-    <div id='divParent'>
-      <div style={bigBubbleStyle}
+    <div id='divParent' style={divParent}>
+      <div style={bigBubbleStyle} id='bigBubble'
         onMouseEnter={() => {
           setHoveredBubble(highestValue.key);
         }}
@@ -202,7 +223,7 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
         {highestValue.key}
         {hoveredBubble === highestValue.key && <div style={createBiggerBubbleStyle(diameter)}></div>}
         {hoveredBubble === highestValue.key &&
-        <div style={tooltipStyle}>
+        <div style={tooltipBigBubble}>
           <b>{tooltipContent}</b>
           <br />
           <hr style={{ borderTop: '1px solid #E0E0E0', margin: '10px 0' }} />
