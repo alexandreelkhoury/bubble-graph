@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export function Bubble ({ primaryColor, secondaryColor, collectionName, data, width }) {
+export function Bubble ({ primaryColor, secondaryColor, data, width }) {
 
   const [hoveredBubble, setHoveredBubble] = useState(null);
   const [positionBigBubble, setPositionBigBubble] = useState({});
@@ -15,7 +15,7 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
 
   function removeNullValues(obj) {
     for (const key in obj) {
-      if (obj.hasOwnProperty(key) && (obj[key] === 0 || obj[key] === undefined)) {
+      if (obj.hasOwnProperty(key) && (obj[key] === 0 || obj[key] === undefined || obj[key] <= 0)) {
       delete obj[key];
       }
     }
@@ -90,13 +90,24 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
   const updatedData = regroupKeys(cleanedData);
 
   function calculateDiametre(aire) {
-    return Math.sqrt(aire/Math.PI*2)*width;
+    if(Math.sqrt(aire/Math.PI*2) < 1) {
+      return Math.sqrt(aire/Math.PI*2)*width*4;
+    } else if ((Math.sqrt(aire/Math.PI*2) < 2) && (Math.sqrt(aire/Math.PI*2) > 1)) {
+      return Math.sqrt(aire/Math.PI*2)*width*2;
+    } else if (isNaN(aire)){
+      return 10;
+    } else if (aire == 0) {
+      return 0;
+    } else {
+      return Math.sqrt(aire/Math.PI*2)*width;
+    }
   }
 
   const aire = highestValue.value;
 
   function calculatePosition(i) {
-    const angle = (i / ((Object.keys(updatedData).length- 1))) * 2 * Math.PI;
+    const length = (Object.keys(updatedData).length-1 <= 6) ? Object.keys(updatedData).length-1 : 6;
+    const angle = (i / length) * 2 * Math.PI;
     const x = (positionBigBubble.bottom - positionBigBubble.top)/2 + calculateDiametre(aire)/2 * Math.cos(angle);
     const y = (positionBigBubble.right - positionBigBubble.left)/2 + calculateDiametre(aire)/2 * Math.sin(angle);
     return {x: x, y: y};
@@ -136,8 +147,10 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
   const tooltipStyle = (top, left) =>  ({
     position: 'absolute',
     backgroundColor: 'white',
-    padding: '10px',
-    width: '220px',
+    paddingTop: '10px',
+    paddingLeft: '10px',
+    paddingRight: '10px',
+    width: '165px',
     border: '1px solid #E0E0E0',
     color: 'black',
     top: top,
@@ -163,11 +176,11 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
     const biggerBubble = createBiggerBubbleStyle(diameter);
     const tooltip = tooltipStyle("75%", "50%");
 
-    if ((position.y - diameter / 2) < 0) {
-     tooltip.left = '-220px';
+    if ((position.y + 2) < positionBigBubble.width/2) {
+     tooltip.left = '-160px';
     }
-    if ((position.x - diameter / 2) < (positionBigBubble.height - positionBigBubble.height/7) / 2) {
-     tooltip.top = '-60px';
+    if ((position.x + 2) < positionBigBubble.width/2) {
+     tooltip.top = '-70px';
     }
 
     return (
@@ -181,7 +194,7 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
                   top: isNaN(position.x - diameter / 2) ? '0' : position.x - diameter / 2,
                   left: isNaN(position.y - diameter / 2) ? '0' : position.y - diameter / 2,
                   display: isNaN(position.x - diameter / 2) ? 'none' : 'flex',
-                  fontSize: Math.sqrt(diameter)*3,
+                  fontSize: key == '6-10' ? Math.sqrt(diameter)*2.4 : Math.sqrt(diameter)*3,
                   border : '1px solid #72A1FD',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -201,8 +214,10 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
         <b>{`Holder has ${key} tokens`}</b>
         <br />
         <hr style={{ borderTop: '1px solid #E0E0E0', margin: '10px 0' }} />
-        <span style={squareStyle}>&nbsp;</span>
-        &nbsp; {collectionName} : {aire} holders ({((aire / total) * 100).toFixed(1)}%)
+        <p>
+          <span style={squareStyle}>&nbsp;</span>
+          &nbsp;  {aire} holder{aire === 1 ? '' : 's'} ({((aire / total) * 100).toFixed(1)}%)
+          </p>
       </div>}
       </div>
     )
@@ -227,8 +242,10 @@ export function Bubble ({ primaryColor, secondaryColor, collectionName, data, wi
           <b>{tooltipContent}</b>
           <br />
           <hr style={{ borderTop: '1px solid #E0E0E0', margin: '10px 0' }} />
+          <p>
           <span style={squareStyle}>&nbsp;</span>
-          &nbsp; {collectionName} : {highestValue.value} holders ({percentage}%)
+          &nbsp; {highestValue.value} holders ({percentage}%)
+          </p>
         </div>}
       </div>
       {Object.entries(updatedData).map(([key, aire], index) => (

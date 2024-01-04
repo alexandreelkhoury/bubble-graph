@@ -1,6 +1,6 @@
 {
   "name": "metavrs-bubble-chart",
-  "version": "1.6.4",
+  "version": "1.8.2",
   "description": "A react component that takes data and displays it in a bubble chart",
   "devDependencies": {
     "@babel/cli": "^7.15.7",

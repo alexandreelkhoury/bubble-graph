@@ -1,70 +1,67 @@
-# Getting Started with Create React App
+# Bubble Chart React Component
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Integrate an interactive Bubble Chart into your React application with this versatile React component. The Bubble Chart visually represents data points as bubbles in a two-dimensional space, providing a dynamic and engaging user experience.
 
-## Available Scripts
+## Installation
 
-In the project directory, you can run:
+To utilize this Bubble Chart component in your project, simply install it as a dependency using npm:
 
-### `npm start`
+### `npm install react-bubble-chart`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Usage
+Import the Bubble component into your React application and incorporate it as follows:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```Javascript
+import React from 'react';
+import Bubble from 'react-bubble-chart';
 
-### `npm test`
+const MyBubbleChart = () => {
+  // Sample data for the chart
+  const data = {
+    '1': 20,
+    '2': 35,
+    '3': 50,
+    // Add more data points as needed
+  };
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  return (
+    <div>
+      <h2>Bubble Chart Example</h2>
+      <Bubble
+        primaryColor="#008080"
+        secondaryColor="#72A1FD"
+        data={data}
+        width={600}
+      />
+    </div>
+  );
+};
 
-### `npm run build`
+export default MyBubbleChart;
+```
+## Props
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The Bubble component supports the following props:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+primaryColor: The primary color of the bubbles.
+secondaryColor: The color of the border around the bubbles.
+data: An object representing data points for the chart. Each key is a label, and the corresponding value is the size of the bubble.
+width (optional): The width of the chart (default is 600 pixels).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Features
 
-### `npm run eject`
+Interactive: Hover over bubbles to display additional information.
+Dynamic Sizing: Bubbles are dynamically sized based on the provided data.
+Color Customization: Easily customize the colors of the bubbles and borders.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Advanced Configuration
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+The Bubble component offers various customization options. Refer to the source code for advanced configurations and fine-tuning.
 
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Explore the underlying logic and calculations in the component by reviewing the code. For additional information on React, check out the React documentation.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Troubleshooting
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+If you encounter any issues or have questions, please refer to the troubleshooting guide or create an issue on the GitHub repository.

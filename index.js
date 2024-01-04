@@ -12,7 +12,6 @@ function Bubble(_ref) {
   let {
     primaryColor,
     secondaryColor,
-    collectionName,
     data,
     width
   } = _ref;
@@ -27,7 +26,7 @@ function Bubble(_ref) {
   }, []);
   function removeNullValues(obj) {
     for (const key in obj) {
-      if (obj.hasOwnProperty(key) && (obj[key] === 0 || obj[key] === undefined)) {
+      if (obj.hasOwnProperty(key) && (obj[key] === 0 || obj[key] === undefined || obj[key] <= 0)) {
         delete obj[key];
       }
     }
@@ -61,7 +60,6 @@ function Bubble(_ref) {
   }
   const highestValue = getHighestValue(cleanedData);
   function regroupKeys(data) {
-    // delete data[highestValue.key]
     const newData = {
       ...data
     };
@@ -77,34 +75,49 @@ function Bubble(_ref) {
     }
     newData['6-10'] = sum6To10;
 
-    // Regroup keys 10 and above
+    // Regroup keys 10 and above if value is not null
+    if (newData.hasOwnProperty('10') && newData['10'] !== null) {
+      sum10Plus += newData['10'];
+      delete newData['10'];
+    }
     for (const key in newData) {
-      if (newData.hasOwnProperty(key) && parseInt(key) >= 10) {
+      if (newData.hasOwnProperty(key) && parseInt(key) > 10) {
         sum10Plus += newData[key];
         delete newData[key];
       }
     }
-    newData['10+'] = sum10Plus;
+    if (sum10Plus !== 0) {
+      newData['10+'] = sum10Plus;
+    }
     return newData;
   }
   const updatedData = regroupKeys(cleanedData);
   function calculateDiametre(aire) {
-    return Math.sqrt(aire / Math.PI * 2) * width;
+    if (Math.sqrt(aire / Math.PI * 2) < 1) {
+      return Math.sqrt(aire / Math.PI * 2) * width * 4;
+    } else if (Math.sqrt(aire / Math.PI * 2) < 2 && Math.sqrt(aire / Math.PI * 2) > 1) {
+      return Math.sqrt(aire / Math.PI * 2) * width * 2;
+    } else if (isNaN(aire)) {
+      return 10;
+    } else if (aire == 0) {
+      return 0;
+    } else {
+      return Math.sqrt(aire / Math.PI * 2) * width;
+    }
   }
   const aire = highestValue.value;
   function calculatePosition(i) {
-    if (positionBigBubble) {
-      const angle = i / (Object.keys(updatedData).length - 1) * 2 * Math.PI;
-      const x = (positionBigBubble.bottom - positionBigBubble.top) / 2 + calculateDiametre(aire) / 2 * Math.cos(angle);
-      const y = (positionBigBubble.right - positionBigBubble.left) / 2 + calculateDiametre(aire) / 2 * Math.sin(angle);
-      return {
-        x: x,
-        y: y
-      };
-    }
+    const length = Object.keys(updatedData).length - 1 <= 6 ? Object.keys(updatedData).length - 1 : 6;
+    const angle = i / length * 2 * Math.PI;
+    const x = (positionBigBubble.bottom - positionBigBubble.top) / 2 + calculateDiametre(aire) / 2 * Math.cos(angle);
+    const y = (positionBigBubble.right - positionBigBubble.left) / 2 + calculateDiametre(aire) / 2 * Math.sin(angle);
+    return {
+      x: x,
+      y: y
+    };
   }
   const tooltipContent = "Holder has ".concat(highestValue.key, " token").concat(highestValue.key === '1' ? '' : 's');
-  const percentage = Math.round(highestValue.value / total * 100);
+  const percentage = (highestValue.value / total * 100).toFixed(1);
   const diameter = calculateDiametre(aire);
   const bigBubbleStyle = {
     backgroundColor: primaryColor,
@@ -134,8 +147,10 @@ function Bubble(_ref) {
   const tooltipStyle = (top, left) => ({
     position: 'absolute',
     backgroundColor: 'white',
-    padding: '10px',
-    width: '220px',
+    paddingTop: '10px',
+    paddingLeft: '10px',
+    paddingRight: '10px',
+    width: '165px',
     border: '1px solid #E0E0E0',
     color: 'black',
     top: top,
@@ -156,51 +171,49 @@ function Bubble(_ref) {
   };
   const createSmallBubble = (aire, diameter, position, key) => {
     const biggerBubble = createBiggerBubbleStyle(diameter);
-    if (positionBigBubble) {
-      const tooltip = tooltipStyle("75%", "50%");
-      if (position.y - diameter / 2 < 0) {
-        tooltip.left = '-220px';
-      }
-      if (position.x - diameter / 2 < (positionBigBubble.height - positionBigBubble.height / 7) / 2) {
-        tooltip.top = '-60px';
-      }
-      return /*#__PURE__*/_react.default.createElement("div", {
-        key: key,
-        style: {
-          backgroundColor: primaryColor,
-          width: diameter,
-          height: diameter,
-          position: 'absolute',
-          borderRadius: '50%',
-          top: position.x - diameter / 2,
-          left: position.y - diameter / 2,
-          display: 'flex',
-          fontSize: Math.sqrt(diameter) * 3,
-          border: '1px solid #72A1FD',
-          justifyContent: 'center',
-          alignItems: 'center',
-          cursor: 'pointer',
-          color: 'black'
-        },
-        onMouseEnter: () => {
-          setHoveredBubble(key);
-        },
-        onMouseLeave: () => {
-          setHoveredBubble(null);
-        }
-      }, key, hoveredBubble === key && /*#__PURE__*/_react.default.createElement("div", {
-        style: biggerBubble
-      }), hoveredBubble === key && /*#__PURE__*/_react.default.createElement("div", {
-        style: tooltip
-      }, /*#__PURE__*/_react.default.createElement("b", null, "Holder has ".concat(key, " tokens")), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("hr", {
-        style: {
-          borderTop: '1px solid #E0E0E0',
-          margin: '10px 0'
-        }
-      }), /*#__PURE__*/_react.default.createElement("span", {
-        style: squareStyle
-      }, "\xA0"), "\xA0 ", collectionName, " : ", aire, " holders (", Math.round(aire / total * 100), "%)"));
+    const tooltip = tooltipStyle("75%", "50%");
+    if (position.y + 2 < positionBigBubble.width / 2) {
+      tooltip.left = '-160px';
     }
+    if (position.x + 2 < positionBigBubble.width / 2) {
+      tooltip.top = '-70px';
+    }
+    return /*#__PURE__*/_react.default.createElement("div", {
+      key: key,
+      style: {
+        backgroundColor: primaryColor,
+        width: diameter,
+        height: diameter,
+        position: 'absolute',
+        borderRadius: '50%',
+        top: isNaN(position.x - diameter / 2) ? '0' : position.x - diameter / 2,
+        left: isNaN(position.y - diameter / 2) ? '0' : position.y - diameter / 2,
+        display: isNaN(position.x - diameter / 2) ? 'none' : 'flex',
+        fontSize: key == '6-10' ? Math.sqrt(diameter) * 2.4 : Math.sqrt(diameter) * 3,
+        border: '1px solid #72A1FD',
+        justifyContent: 'center',
+        alignItems: 'center',
+        cursor: 'pointer',
+        color: 'black'
+      },
+      onMouseEnter: () => {
+        setHoveredBubble(key);
+      },
+      onMouseLeave: () => {
+        setHoveredBubble(null);
+      }
+    }, key, hoveredBubble === key && /*#__PURE__*/_react.default.createElement("div", {
+      style: biggerBubble
+    }), hoveredBubble === key && /*#__PURE__*/_react.default.createElement("div", {
+      style: tooltip
+    }, /*#__PURE__*/_react.default.createElement("b", null, "Holder has ".concat(key, " tokens")), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("hr", {
+      style: {
+        borderTop: '1px solid #E0E0E0',
+        margin: '10px 0'
+      }
+    }), /*#__PURE__*/_react.default.createElement("p", null, /*#__PURE__*/_react.default.createElement("span", {
+      style: squareStyle
+    }, "\xA0"), "\xA0  ", aire, " holder", aire === 1 ? '' : 's', " (", (aire / total * 100).toFixed(1), "%)")));
   };
   const tooltipBigBubble = tooltipStyle("60%", "50%");
   return /*#__PURE__*/_react.default.createElement("div", {
@@ -224,9 +237,9 @@ function Bubble(_ref) {
       borderTop: '1px solid #E0E0E0',
       margin: '10px 0'
     }
-  }), /*#__PURE__*/_react.default.createElement("span", {
+  }), /*#__PURE__*/_react.default.createElement("p", null, /*#__PURE__*/_react.default.createElement("span", {
     style: squareStyle
-  }, "\xA0"), "\xA0 ", collectionName, " : ", highestValue.value, " holders (", percentage, "%)")), Object.entries(updatedData).map((_ref2, index) => {
+  }, "\xA0"), "\xA0 ", highestValue.value, " holders (", percentage, "%)"))), Object.entries(updatedData).map((_ref2, index) => {
     let [key, aire] = _ref2;
     return key !== highestValue.key ? createSmallBubble(aire, calculateDiametre(aire), calculatePosition(index), key) : null;
   }));
