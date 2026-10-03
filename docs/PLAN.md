@@ -140,12 +140,13 @@ Each milestone ends with tests and builds green, a short report, and ⛔ a stop 
 | Name conflict or trademark | Formal searches before the M5 listing; the name is a single constant and asset set, so it's easy to change |
 | Phones and TV on different networks or guest Wi-Fi in prod | Production goes through the cloud, so this only matters for LAN dev; documented |
 
-## 8. Open questions for you
-1. **Win rule.** Should the default be the official rule (infiltrators win at ≤1 Civilian alive) or the parity rule from your brief (infiltrators ≥ Civilians)? Both will be implemented as a setting. *My recommendation: official.*
-2. **Role secrecy.** Should Civilians and Undercovers be told their role? The official app doesn't tell them, and I'd keep it that way, with a "beginner mode" option that does.
-3. **Name.** Go with **Mish Ana!**, or one of the fallbacks?
-4. **Production domain** for the QR URL, e.g. `play.mishana.app`, or `*.workers.dev` for now? I'll also need a Cloudflare account for deploys from M1/M2 onward; LAN dev works without one.
-5. **Hosting the phone client.** I'd serve it from the same Worker as static assets, so there's one origin. OK?
-6. **Your TCL model and its Android TV OS version.** This decides between `adb pair` and `adb tcpip`.
-7. **A native Lebanese reviewer** for the AR packs: you, or someone else?
-8. **Repo.** I can't rename `bubble-graph` from here; please rename it in GitHub settings. Also, pushing the tag `legacy-bubble-graph` failed with a 403; the old code is still reachable at commit `60c332d`.
+## 8. Open questions (resolved 2026-10-03)
+All answered and approved. [SPEC.md](SPEC.md) records how each answer is implemented.
+1. **Win rule.** Resolved: Default is the **official** rule (infiltrators win when alive Civilians ≤ 1). **Parity** (infiltrators ≥ Civilians) is a setting (`winRule`).
+2. **Role secrecy.** Resolved: Roles are **hidden by default**: players see only their word, and the Blank knows it has no word. A **"beginner mode"** setting (`revealRoles`) shows roles.
+3. **Name.** Resolved: **Mish Ana!** (مش أنا!), kept in one constant and asset set (SPEC §3 `BRAND`, `Brand.kt`, `brand.*` keys, `/assets/brand/`).
+4. **Production domain.** Resolved: `*.workers.dev` for now, configurable through `JOIN_BASE_URL` (and the TV's `mishana.prodServerUrl`). A Cloudflare account is needed only for deploys; LAN dev works without one.
+5. **Hosting the phone client.** Resolved: Served as static assets by the same Worker (single origin).
+6. **TCL model.** Resolved: Unknown, so `docs/TV.md` documents both paths: `adb pair` (Android TV 13+, wireless debugging) and `adb tcpip 5555` (older models, USB once).
+7. **AR packs reviewer.** Resolved: The user (Lebanese) reviews AR packs and AR UI strings; drafts are fine until then.
+8. **Repo.** Still open on GitHub's side: please rename `bubble-graph` in GitHub settings. Pushing the tag `legacy-bubble-graph` failed with a 403; the old code is still reachable at commit `60c332d`.
