@@ -18,6 +18,8 @@ export const fatalError = signal<ErrorCode | null>(null);
 export const inlineError = signal<ErrorCode | null>(null);
 /** True after a join was sent and until welcome/error. */
 export const joinPending = signal(false);
+/** Increments on the first state after a reconnect (a fresh resync: frames sent before the drop may be lost). */
+export const resyncs = signal(0);
 /** True while the hello carried a resume token and no state has arrived yet. */
 export const resuming = signal(false);
 

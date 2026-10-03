@@ -40,7 +40,7 @@ export function TvTopBar({ view, title }: { view: TvView; title?: string }) {
       <span class="tvtop__end">
         {degraded && <span class="tvchip tvchip--danger"><Icon name="wifi-off" size={20} /></span>}
         <RoomCode code={view.roomCode} />
-        {view.phase !== "RESULTS" && <><span class="tvtop__dot" aria-hidden="true">·</span><span class="num">{t("common.aliveCount", { count: alive })}</span></>}
+        {view.phase !== "RESULTS" && <><span class="tvtop__dot" aria-hidden="true">·</span><span class="tnum">{t("common.aliveCount", { count: alive })}</span></>}
       </span>
     </header>
   );
@@ -86,7 +86,7 @@ export function TimerRing({ deadline, size = 216, stroke = 8, children, showNumb
         </svg>
       )}
       <div class="ring__content">{children}</div>
-      {d && showNumber && <span class="ring__num num" role="timer">{fmtNum(d.secs)}</span>}
+      {d && showNumber && <span class="ring__num" role="timer"><bdi class="num">{fmtNum(d.secs)}</bdi></span>}
     </div>
   );
 }
@@ -94,7 +94,7 @@ export function TimerRing({ deadline, size = 216, stroke = 8, children, showNumb
 export function TimerChip({ deadline }: { deadline: DeadlineView | null }) {
   const d = useDeadline(deadline);
   if (!d) return null;
-  return <span class={`tvtimerchip tvtimerchip--${timerTone(d.secs)} num`} role="timer"><Icon name="timer" size={24} />{fmtNum(d.secs)}</span>;
+  return <span class={`tvtimerchip tvtimerchip--${timerTone(d.secs)}`} role="timer"><Icon name="timer" size={24} /><bdi class="num">{fmtNum(d.secs)}</bdi></span>;
 }
 
 export function TvTimerBar({ deadline }: { deadline: DeadlineView | null }) {
@@ -103,7 +103,7 @@ export function TvTimerBar({ deadline }: { deadline: DeadlineView | null }) {
   return (
     <div class={`tvbar tvbar--${timerTone(d.secs)}`}>
       <span class="tvbar__track"><span class="tvbar__fill" style={{ transform: `scaleX(${d.frac})` }} /></span>
-      <span class="tvbar__secs num">{fmtNum(d.secs)}</span>
+      <span class="tvbar__secs"><bdi class="num">{fmtNum(d.secs)}</bdi></span>
     </div>
   );
 }

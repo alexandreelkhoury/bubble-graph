@@ -96,6 +96,47 @@ describe("pack-lint rules", () => {
     expect(errs).toMatch(/must live in packs\/en\//);
   });
 
+  it("civilian and undercover sharing a guess form via alt or translit is an error", () => {
+    const pairs: [Side | string, Side | string][] = [[{ text: "Sofa", alt: ["Couch"] }, { text: "Settee", alt: ["couch"] }], ...TEN.slice(1)];
+    expect(lintPacks([entry(pack("en-alt-01", "en", pairs))]).errors.join("\n")).toMatch(/en-alt-01\/p001: civilian and undercover share the guess form\(s\) "couch"/);
+    const ar: [Side | string, Side | string][] = [[{ text: "بحر", translit: "Bahr" }, { text: "نهر", translit: "Nahr", alt: ["bahr"] }], ...TEN.slice(1)];
+    expect(lintPacks([entry(pack("ar-alt-01", "ar", ar), "ar")]).errors.join("\n")).toMatch(/ar-alt-01\/p001: .*share.*"bahr"/);
+  });
+
+  it("warns about profane translit or alt (EN and FR lists for Arabic packs)", () => {
+    const ar: [Side | string, Side | string][] = [[{ text: "شتي", translit: "Shite" }, { text: "مقص", translit: "Ma'ass", alt: ["merde"] }], ...TEN.slice(1)];
+    const w = lintPacks([entry(pack("ar-prof-01", "ar", ar), "ar")]).warnings.join("\n");
+    expect(w).toMatch(/p001: "Shite" contains a profane word \(shite\)/);
+    expect(w).toMatch(/p001: "Ma'ass" contains a profane word \(ass\)/);
+    expect(w).toMatch(/p001: "merde" contains a profane word/);
+    const clean: [Side | string, Side | string][] = [[{ text: "شتي", translit: "Sheti" }, { text: "مقص", translit: "Ma'as" }], ...TEN.slice(1)];
+    expect(lintPacks([entry(pack("ar-prof-02", "ar", clean), "ar")]).warnings.join("\n")).not.toMatch(/profane/);
+  });
+
+  it("warns about chat digits and mixed sh/ch in Arabic translit", () => {
+    const ar: [Side | string, Side | string][] = [[{ text: "شاي", translit: "Shay" }, { text: "شط", translit: "Chatt" }], [{ text: "حمص", translit: "7ommos" }, { text: "متبل", translit: "Mtabbal" }], ...TEN.slice(2)];
+    const w = lintPacks([entry(pack("ar-tr-01", "ar", ar), "ar")]).warnings.join("\n");
+    expect(w).toMatch(/ar-tr-01: translit mixes "sh" and "ch".*Chatt/);
+    expect(w).toMatch(/p002: translit "7ommos" uses chat digits/);
+  });
+
+  it("warns about plural-looking Latin words without alt", () => {
+    const pairs: [Side | string, Side | string][] = [["Socks", "Bus"], [{ text: "Chaussettes", alt: ["Chaussette"] }, "Chevaux"], ...TEN.slice(2)];
+    const w = lintPacks([entry(pack("en-pl-01", "en", pairs))]).warnings.join("\n");
+    expect(w).toMatch(/p001: "Socks" looks plural/);
+    expect(w).not.toMatch(/"Bus" looks plural/);
+    expect(w).not.toMatch(/"Chaussettes" looks plural/);
+    expect(w).toMatch(/p002: "Chevaux" looks plural/);
+  });
+
+  it("warns about near-duplicate pairs once alt is expanded", () => {
+    const a = pack("en-nd-01", "en", [["Beach", { text: "Pool", alt: ["Swimming pool"] }], ...TEN.slice(1)]);
+    const b = pack("en-nd-02", "en", [["Swimming pool", "Beach"], ...TEN.slice(1).map(([x, y]) => [`${x}z`, `${y}z`] as [string, string])]);
+    const r = lintPacks([entry(a), entry(b)]);
+    expect(r.errors).toEqual([]);
+    expect(r.warnings.join("\n")).toMatch(/en-nd-02\/p001: near-duplicate of en-nd-01\/p001/);
+  });
+
   it("warnings: draft status, fewer than 2 reviewers, unregistered file, M4 targets", () => {
     const p = pack("en-w-01", "en", TEN, { status: "draft" });
     (p.pairs as { reviewedBy: string[] }[])[0]!.reviewedBy = ["a"];
@@ -131,5 +172,10 @@ describe("repository word packs", () => {
     const r = lintDirectory(REPO_WORD_PACKS);
     expect(r.errors).toEqual([]);
     expect(r.warnings.filter((w) => w.startsWith("M4") || w.includes("not listed"))).toEqual([]);
+  });
+
+  it("have no profanity, translit-convention, plural or near-duplicate warnings", () => {
+    const r = lintDirectory(REPO_WORD_PACKS);
+    expect(r.warnings.filter((w) => /profane|translit|looks plural|near-duplicate/.test(w))).toEqual([]);
   });
 });

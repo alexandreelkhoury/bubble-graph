@@ -11,9 +11,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,7 +61,12 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
+import app.mishana.tv.ui.components.fullBleed
 import app.mishana.tv.R
+import androidx.compose.foundation.layout.heightIn
+import app.mishana.tv.ui.components.MishFocus
+import androidx.tv.material3.ClickableSurfaceDefaults
+import androidx.tv.material3.Surface
 import app.mishana.tv.game.Names
 import app.mishana.tv.i18n.isolate
 import app.mishana.tv.protocol.ClientIntent
@@ -200,7 +203,7 @@ private fun VictoryBackdrop(winner: Winner, active: Boolean) {
     val wash = remember { Animatable(0f) }
     LaunchedEffect(Unit) { wash.animateTo(1f, tween(900, easing = MishMotion.Decel)) }
     val strength = if (active) 1f else 0.35f
-    Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
+    Canvas(Modifier.fillMaxSize().fullBleed().clearAndSetSemantics {}) {
         val colors = when (winner) {
             Winner.CIVILIANS -> listOf(MishColors.Civilian.copy(alpha = 0.22f * strength * wash.value), Color.Transparent)
             Winner.INFILTRATORS -> listOf(MishColors.Undercover.copy(alpha = 0.22f * strength * wash.value), MishColors.Blank.copy(alpha = 0.06f * strength * wash.value), Color.Transparent)
@@ -229,7 +232,7 @@ private fun MaskPeek() {
         wink.animateTo(0.1f, tween(100))
         wink.animateTo(1f, tween(100))
     }
-    Box(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize().fullBleed()) {
         for ((i, align) in listOf(Alignment.CenterStart, Alignment.CenterEnd).withIndex()) {
             val dir = if (i == 0) -1f else 1f
             Box(
@@ -424,7 +427,6 @@ private fun ScoreRow(rank: Int, p: PublicPlayer, earned: Int, index: Int, modifi
     val type = MishTheme.type
     val reduce = MishTheme.reduceMotion
     val interaction = remember { MutableInteractionSource() }
-    val focused by interaction.collectIsFocusedAsState()
     val appear = remember { Animatable(if (reduce) 1f else 0f) }
     val counted = remember { Animatable(if (reduce) p.score.toFloat() else (p.score - earned).toFloat()) }
     LaunchedEffect(Unit) {
@@ -435,15 +437,33 @@ private fun ScoreRow(rank: Int, p: PublicPlayer, earned: Int, index: Int, modifi
         }
     }
     val shape = RoundedCornerShape(14.dp)
-    Row(
-        modifier
+    // The one focus style (DESIGN §4.6/§7): a tv-material Surface with the shared scale, ring and glow. OK does
+    // nothing — rows are focusable only so Up can scroll the scoreboard.
+    Surface(
+        onClick = {},
+        modifier = modifier
             .fillMaxWidth()
-            .height(40.dp)
+            .heightIn(min = 40.dp)
             .graphicsLayer { alpha = appear.value; translationY = (1f - appear.value) * 24f }
-            .then(if (rank == 1) Modifier.shadow(18.dp, shape, ambientColor = MishColors.Accent, spotColor = MishColors.Accent) else Modifier)
-            .background(if (focused) MishColors.Elevated else MishColors.Surface, shape)
-            .then(if (focused) Modifier.border(BorderStroke(3.dp, MishColors.Focus), shape) else Modifier)
-            .focusable(interactionSource = interaction)
+            .then(if (rank == 1) Modifier.shadow(18.dp, shape, ambientColor = MishColors.Accent, spotColor = MishColors.Accent) else Modifier),
+        shape = ClickableSurfaceDefaults.shape(shape = shape),
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = MishColors.Surface,
+            contentColor = MishColors.Text,
+            focusedContainerColor = MishColors.Elevated,
+            focusedContentColor = MishColors.Text,
+            pressedContainerColor = MishColors.Elevated,
+            pressedContentColor = MishColors.Text,
+        ),
+        scale = MishFocus.buttonScale(),
+        border = MishFocus.border(shape),
+        glow = MishFocus.glow(),
+        interactionSource = interaction,
+    ) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = 40.dp)
             .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -477,6 +497,7 @@ private fun ScoreRow(rank: Int, p: PublicPlayer, earned: Int, index: Int, modifi
         Box(Modifier.width(90.dp), contentAlignment = Alignment.Center) {
             Text(counted.value.toInt().toString(), style = type.title, color = MishColors.Text)
         }
+    }
     }
 }
 

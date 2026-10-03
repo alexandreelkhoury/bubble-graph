@@ -1,5 +1,5 @@
 {
-  "brand.appName": "Mish Ana !",
+  "brand.appName": "Mish Ana!",
   "brand.tagline": "Le jeu d’ambiance du mot secret",
   "brand.slogan": "Tout le monde est innocent. Quelqu’un ment.",
   "common.ok": "OK",
@@ -18,14 +18,17 @@
   "common.timerOff": "Sans chrono",
   "common.seconds": {
     "one": "{count} seconde",
+    "many": "{count} secondes",
     "other": "{count} secondes"
   },
   "common.points": {
     "one": "{count} point",
+    "many": "{count} points",
     "other": "{count} points"
   },
   "common.aliveCount": {
     "one": "{count} en jeu",
+    "many": "{count} en jeu",
     "other": "{count} en jeu"
   },
   "common.language": "Langue",
@@ -37,13 +40,13 @@
   "role.civilian": "Civil",
   "role.undercover": "Taupe",
   "role.blank": "Blanc",
-  "roleDesc.civilian": "Tu as le mot de la majorité. Trouve les infiltrés.",
+  "roleDesc.civilian": "Tu as le mot de la majorité. Trouve les Infiltrés.",
   "roleDesc.undercover": "Ton mot est un peu différent. Fonds-toi dans la masse.",
   "roleDesc.blank": "Tu n’as pas de mot. Écoute, bluffe, et devine le mot si on te démasque.",
   "team.civilians": "Civils",
   "team.infiltrators": "Infiltrés",
   "winner.civilians": "Les Civils gagnent !",
-  "winner.infiltrators": "Les infiltrés gagnent !",
+  "winner.infiltrators": "Les Infiltrés gagnent !",
   "winner.blank": "Le Blanc gagne : {name} !",
   "color.coral": "Corail",
   "color.azure": "Azur",
@@ -71,6 +74,7 @@
   "lobby.playerCount": "Joueurs {count}/{max}",
   "lobby.needPlayers": {
     "one": "Il manque {count} joueur",
+    "many": "Il manque {count} joueurs",
     "other": "Il manque {count} joueurs"
   },
   "lobby.blockerRoles": "Les rôles ne collent pas au nombre de joueurs",
@@ -99,15 +103,15 @@
   "settings.winRule": "Règle de victoire",
   "settings.winRuleOfficial": "Officielle (1 Civil restant)",
   "settings.winRuleParity": "Parité (autant que les Civils)",
-  "settings.winRuleOfficialHelp": "Les infiltrés gagnent quand il ne reste qu’un seul Civil.",
-  "settings.winRuleParityHelp": "Les infiltrés gagnent dès qu’ils sont aussi nombreux que les Civils.",
+  "settings.winRuleOfficialHelp": "Les Infiltrés gagnent quand il ne reste qu’un seul Civil.",
+  "settings.winRuleParityHelp": "Les Infiltrés gagnent dès qu’ils sont aussi nombreux que les Civils.",
   "settings.revealRoles": "Mode débutant (voir les rôles)",
   "settings.roleMode": "Rôles",
   "settings.roleModeAuto": "Automatique",
   "settings.roleModeCustom": "Personnalisé",
   "settings.undercoverCount": "Taupes",
   "settings.blankCount": "Blancs",
-  "settings.rolePreview": "Avec {count} joueurs : {civilian} Civils · {undercover} Taupes · {blank} Blanc",
+  "settings.rolePreview": "Avec {count} joueurs : Civils {civilian} · Taupes {undercover} · Blancs {blank}",
   "settings.clueSeconds": "Tour d’indice",
   "settings.voteSeconds": "Vote",
   "settings.revealSeconds": "Lecture du mot",
@@ -202,7 +206,7 @@
   "tie.explain": "Un indice de plus chacun, puis on revote, entre eux seulement.",
   "tie.inTie": "Tu es à égalité : sors ton meilleur indice !",
   "elim.eliminated": "{name} quitte la partie !",
-  "elim.wasCivilian": "{name} était Civil",
+  "elim.wasCivilian": "{name} : Civil",
   "elim.wasUndercover": "{name} était la Taupe",
   "elim.wasBlank": "{name} était le Blanc",
   "elim.reactionCivilian": "…un Civil. Oups.",
@@ -212,8 +216,9 @@
   "elim.noElimination": "Personne ne sort ce tour-ci",
   "elim.randomPick": "Toujours égalité : place au hasard !",
   "elim.abstained": {
-    "one": "{count} n’a pas voté",
-    "other": "{count} n’ont pas voté"
+    "one": "{count} personne n’a pas voté",
+    "many": "{count} personnes n’ont pas voté",
+    "other": "{count} personnes n’ont pas voté"
   },
   "elim.nextRound": "Prochain tour dans {count}…",
   "elim.you": "Fin de partie pour toi",

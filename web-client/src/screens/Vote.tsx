@@ -24,7 +24,7 @@ export function Vote({ view, me }: { view: PlayerView; me: Me }) {
         <div class="outpanel">
           <span class="outpanel__icon"><Icon name="door-out" size={56} /></span>
           <h1 class="h1" tabIndex={-1}>{t("vote.dead")}</h1>
-          <p class="bigcount num">{t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</p>
+          <p class="bigcount tnum">{t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</p>
           <TimerBar deadline={view.deadline} />
         </div>
       </main>
@@ -43,7 +43,7 @@ export function Vote({ view, me }: { view: PlayerView; me: Me }) {
           <p class="lockedvote__who">
             <Slot k="vote.youVoted" slot="name"><span class="inline-chip"><Avatar color={voted.color} size={28} state={avatarState(voted)} /><bdi>{voted.name}</bdi></span></Slot>
           </p>
-          <p class="bigcount num" aria-live="polite">{t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</p>
+          <p class="bigcount tnum" aria-live="polite">{t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</p>
           <TimerBar deadline={view.deadline} />
           <p class="hint hint--center"><Icon name="tv" size={18} />{t("vote.lookTv")}</p>
         </div>

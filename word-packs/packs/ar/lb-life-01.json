@@ -1,6 +1,6 @@
 {
   "id": "lb-life-01",
-  "version": 1,
+  "version": 2,
   "locale": "ar-LB",
   "script": "Arab",
   "title": {
@@ -21,11 +21,18 @@
       "id": "p001",
       "civilian": {
         "text": "سرفيس",
-        "translit": "servees"
+        "translit": "Servees",
+        "alt": [
+          "service",
+          "serveece"
+        ]
       },
       "undercover": {
         "text": "تاكسي",
-        "translit": "taxi"
+        "translit": "Taxi",
+        "alt": [
+          "taksi"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": [],
@@ -35,11 +42,17 @@
       "id": "p002",
       "civilian": {
         "text": "فان",
-        "translit": "van"
+        "translit": "Van",
+        "alt": [
+          "fan"
+        ]
       },
       "undercover": {
         "text": "باص",
-        "translit": "bus"
+        "translit": "Bus",
+        "alt": [
+          "bas"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -48,11 +61,22 @@
       "id": "p003",
       "civilian": {
         "text": "دبكة",
-        "translit": "dabke"
+        "translit": "Dabkeh",
+        "alt": [
+          "dabke",
+          "dabka"
+        ]
       },
       "undercover": {
         "text": "رقص شرقي",
-        "translit": "ra2s shar2i"
+        "translit": "Ra's shar'i",
+        "alt": [
+          "ra2s shar2i",
+          "raks sharki",
+          "ra's char'i",
+          "ra2s char2i",
+          "raks charki"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -61,13 +85,25 @@
       "id": "p004",
       "civilian": {
         "text": "ورق شدة",
-        "translit": "wara2 chadde"
+        "translit": "Wara' shaddeh",
+        "alt": [
+          "wara2 shadde",
+          "cards",
+          "wara' shadde",
+          "wara' shadda",
+          "wara2 shaddeh",
+          "wara2 shadda",
+          "wara' chaddeh",
+          "wara2 chadde"
+        ]
       },
       "undercover": {
         "text": "طاولة زهر",
-        "translit": "tawle",
+        "translit": "Tawleh zahr",
         "alt": [
-          "طاولة"
+          "طاولة",
+          "tawle",
+          "backgammon"
         ]
       },
       "difficulty": 2,
@@ -78,11 +114,23 @@
       "id": "p005",
       "civilian": {
         "text": "تريكس",
-        "translit": "trix"
+        "translit": "Trix",
+        "alt": [
+          "tricks"
+        ]
       },
       "undercover": {
         "text": "ليخة",
-        "translit": "likha"
+        "translit": "Likha",
+        "alt": [
+          "li5a",
+          "leekha",
+          "likhe",
+          "likheh",
+          "li5e",
+          "li5eh",
+          "lee5a"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": [],
@@ -92,11 +140,23 @@
       "id": "p006",
       "civilian": {
         "text": "ضيعة",
-        "translit": "day3a"
+        "translit": "Day'a",
+        "alt": [
+          "day3a",
+          "dei3a",
+          "day'e",
+          "day'eh",
+          "day3e",
+          "day3eh"
+        ]
       },
       "undercover": {
         "text": "مدينة",
-        "translit": "madine"
+        "translit": "Madineh",
+        "alt": [
+          "madine",
+          "madina"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -105,11 +165,19 @@
       "id": "p007",
       "civilian": {
         "text": "بيروت",
-        "translit": "beirut"
+        "translit": "Beirut",
+        "alt": [
+          "beyrouth",
+          "bayrut"
+        ]
       },
       "undercover": {
         "text": "طرابلس",
-        "translit": "trablos"
+        "translit": "Trablos",
+        "alt": [
+          "tripoli",
+          "trabls"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -118,11 +186,19 @@
       "id": "p008",
       "civilian": {
         "text": "صيدا",
-        "translit": "saida"
+        "translit": "Saida",
+        "alt": [
+          "sidon",
+          "sayda"
+        ]
       },
       "undercover": {
         "text": "صور",
-        "translit": "sour"
+        "translit": "Sour",
+        "alt": [
+          "tyre",
+          "sur"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -131,11 +207,19 @@
       "id": "p009",
       "civilian": {
         "text": "بعلبك",
-        "translit": "ba3labak"
+        "translit": "Baalbak",
+        "alt": [
+          "ba3labak",
+          "baalbek"
+        ]
       },
       "undercover": {
         "text": "جبيل",
-        "translit": "jbeil"
+        "translit": "Jbeil",
+        "alt": [
+          "byblos",
+          "jbail"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -144,16 +228,19 @@
       "id": "p010",
       "civilian": {
         "text": "كهربا",
-        "translit": "kahraba",
+        "translit": "Kahraba",
         "alt": [
-          "كهرباء"
+          "كهرباء",
+          "kahraba2"
         ]
       },
       "undercover": {
         "text": "موتور",
-        "translit": "motor",
+        "translit": "Motor",
         "alt": [
-          "مولد"
+          "مولد",
+          "moteur",
+          "generator"
         ]
       },
       "difficulty": 3,
@@ -164,11 +251,22 @@
       "id": "p011",
       "civilian": {
         "text": "عرس",
-        "translit": "3eres"
+        "translit": "Eres",
+        "alt": [
+          "3eres",
+          "3ers"
+        ]
       },
       "undercover": {
         "text": "خطبة",
-        "translit": "khetbe"
+        "translit": "Khetbeh",
+        "alt": [
+          "5etbe",
+          "khetbe",
+          "khetba",
+          "5etbeh",
+          "5etba"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -177,11 +275,17 @@
       "id": "p012",
       "civilian": {
         "text": "تيتا",
-        "translit": "teta"
+        "translit": "Teta",
+        "alt": [
+          "tayta"
+        ]
       },
       "undercover": {
         "text": "جدو",
-        "translit": "jeddo"
+        "translit": "Jeddo",
+        "alt": [
+          "jiddo"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -190,16 +294,30 @@
       "id": "p013",
       "civilian": {
         "text": "خالة",
-        "translit": "khalto",
+        "translit": "Khaleh",
         "alt": [
-          "خالتو"
+          "خالتو",
+          "5ale",
+          "khalto",
+          "5alto",
+          "khale",
+          "khala",
+          "5aleh",
+          "5ala"
         ]
       },
       "undercover": {
         "text": "عمة",
-        "translit": "3ammto",
+        "translit": "Ammeh",
         "alt": [
-          "عمتو"
+          "عمتو",
+          "3amme",
+          "3ammto",
+          "ammto",
+          "amme",
+          "amma",
+          "3ammeh",
+          "3amma"
         ]
       },
       "difficulty": 3,
@@ -209,11 +327,24 @@
       "id": "p014",
       "civilian": {
         "text": "صبحية",
-        "translit": "sob7iyye"
+        "translit": "Sobhiyyeh",
+        "alt": [
+          "sob7iyye",
+          "sob7iye",
+          "sobhiyye",
+          "sobhiyya",
+          "sob7iyyeh",
+          "sob7iyya"
+        ]
       },
       "undercover": {
         "text": "سهرة",
-        "translit": "sahra"
+        "translit": "Sahra",
+        "alt": [
+          "sahriyye",
+          "sahre",
+          "sahreh"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -222,13 +353,19 @@
       "id": "p015",
       "civilian": {
         "text": "فرن",
-        "translit": "forn"
+        "translit": "Forn",
+        "alt": [
+          "furn"
+        ]
       },
       "undercover": {
         "text": "دكانة",
-        "translit": "dekkene",
+        "translit": "Dekkeneh",
         "alt": [
-          "دكان"
+          "دكان",
+          "dekkene",
+          "dekken",
+          "dekkena"
         ]
       },
       "difficulty": 2,
@@ -238,11 +375,21 @@
       "id": "p016",
       "civilian": {
         "text": "سوبرماركت",
-        "translit": "supermarket"
+        "translit": "Supermarket",
+        "alt": [
+          "supermarche"
+        ]
       },
       "undercover": {
         "text": "سوق",
-        "translit": "sou2"
+        "translit": "Sou'",
+        "alt": [
+          "sou2",
+          "souk",
+          "souq",
+          "su'",
+          "su2"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -251,13 +398,18 @@
       "id": "p017",
       "civilian": {
         "text": "كورنيش",
-        "translit": "corniche"
+        "translit": "Kornish",
+        "alt": [
+          "corniche",
+          "kornich"
+        ]
       },
       "undercover": {
         "text": "مينا",
-        "translit": "mina",
+        "translit": "Mina",
         "alt": [
-          "مرفأ"
+          "مرفأ",
+          "mina2"
         ]
       },
       "difficulty": 3,
@@ -267,16 +419,20 @@
       "id": "p018",
       "civilian": {
         "text": "مازة",
-        "translit": "mezze",
+        "translit": "Mezzeh",
         "alt": [
-          "مزة"
+          "مزة",
+          "mezze",
+          "maza",
+          "mezza"
         ]
       },
       "undercover": {
         "text": "غدا",
-        "translit": "ghada",
+        "translit": "Ghada",
         "alt": [
-          "غداء"
+          "غداء",
+          "ghada2"
         ]
       },
       "difficulty": 2,
@@ -286,13 +442,19 @@
       "id": "p019",
       "civilian": {
         "text": "مونة",
-        "translit": "mouneh"
+        "translit": "Mouneh",
+        "alt": [
+          "mouné",
+          "mouna",
+          "muneh"
+        ]
       },
       "undercover": {
         "text": "كبيس",
-        "translit": "kbis",
+        "translit": "Kbis",
         "alt": [
-          "مخلل"
+          "مخلل",
+          "kabis"
         ]
       },
       "difficulty": 3,
@@ -302,14 +464,21 @@
       "id": "p020",
       "civilian": {
         "text": "دلة",
-        "translit": "delle",
+        "translit": "Dalleh",
         "alt": [
-          "ركوة"
+          "delle",
+          "dallah",
+          "dalle",
+          "dalla"
         ]
       },
       "undercover": {
         "text": "إبريق",
-        "translit": "ebri2"
+        "translit": "Ebri'",
+        "alt": [
+          "ebri2",
+          "ibri2"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -318,11 +487,20 @@
       "id": "p021",
       "civilian": {
         "text": "منقل",
-        "translit": "man2al"
+        "translit": "Man'al",
+        "alt": [
+          "man2al",
+          "manqal"
+        ]
       },
       "undercover": {
         "text": "شواية",
-        "translit": "shawweye"
+        "translit": "Shawwayeh",
+        "alt": [
+          "shawwaye",
+          "shawwaya",
+          "chawwayeh"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -331,11 +509,42 @@
       "id": "p022",
       "civilian": {
         "text": "زلغوطة",
-        "translit": "zalghouta"
+        "translit": "Zalghouta",
+        "alt": [
+          "zaghrouta",
+          "zalghoute",
+          "zalghouteh",
+          "zalghuta"
+        ]
       },
       "undercover": {
         "text": "تصفيق",
-        "translit": "tasfi2"
+        "translit": "Tasfi'",
+        "alt": [
+          "tasfi2"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "جلاية",
+        "translit": "Jellayeh",
+        "alt": [
+          "غسالة صحون",
+          "jellaye",
+          "jellaya"
+        ]
+      },
+      "undercover": {
+        "text": "غسالة",
+        "translit": "Ghasseleh",
+        "alt": [
+          "ghassele",
+          "ghassela"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []

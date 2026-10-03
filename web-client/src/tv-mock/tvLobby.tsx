@@ -1,6 +1,6 @@
 // TV-02 Lobby and TV-03 Settings.
 import { useEffect, useRef, useState } from "preact/hooks";
-import { LOCALES, MAX_PLAYERS, SETTINGS_BOUNDS } from "@mishana/shared/constants";
+import { LOCALES, MAX_PLAYERS, MIN_PLAYERS, SETTINGS_BOUNDS } from "@mishana/shared/constants";
 import type { Locale } from "@mishana/shared/constants";
 import type { Points, Settings } from "@mishana/shared/engine";
 import type { PublicPlayer, TvView } from "@mishana/shared/protocol";
@@ -10,10 +10,11 @@ import { saveLocale } from "../lib/storage";
 import { stepValue } from "../lib/settings";
 import type { Bound } from "../lib/settings";
 import { usePatcher } from "../screens/Settings";
+import { roleSummaryText } from "../screens/Lobby";
 import { Icon } from "../components/Icon";
 import { Qr } from "./Qr";
 import { RoomCode, Tile, useInitialFocus } from "./tvParts";
-import { tvScreen, tvSend } from "./tvStore";
+import { tvAct, tvLastErrorMsg, tvScreen, tvSend } from "./tvStore";
 import { openDialog } from "./tvDialogs";
 
 const NATIVE: Record<Locale, string> = { en: "English", fr: "Français", ar: "العربية" };
@@ -83,7 +84,7 @@ export function TvLobby({ view }: { view: TvView }) {
 
       <div class="tvlobby__summary" key={flash} data-flash={flash > 0 ? "1" : undefined}>
         <span>{packLine} · {NATIVE[s.wordLocale]}</span>
-        <span>{rc ? t("lobby.roleSummary", { civilian: rc.civilian, undercover: rc.undercover, blank: rc.blank }) : t("lobby.blockerRoles")} · {t(s.winRule === "official" ? "settings.winRuleOfficial" : "settings.winRuleParity")}</span>
+        <span>{roleSummaryText(s, view.players.length, rc)} · {t(s.winRule === "official" ? "settings.winRuleOfficial" : "settings.winRuleParity")}</span>
       </div>
       <div class="tvlobby__players">
         <span class="tvlobby__count">{t("lobby.playerCount", { count: view.players.length, max: MAX_PLAYERS })}</span>
@@ -142,7 +143,7 @@ function SettingRow({ row }: { row: Row }) {
       <span class="setrowtv__label">{row.label}</span>
       <span class="setrowtv__value">
         {!row.open && <span class="setrowtv__chev" onClick={(e) => { e.stopPropagation(); row.prev(); }}><Icon name="chevron-back" size={22} /></span>}
-        <span class="num">{row.value}</span>
+        <span class="tnum">{row.value}</span>
         <span class="setrowtv__chev" onClick={(e) => { e.stopPropagation(); if (row.open) row.open(); else row.next(); }}><Icon name="chevron-forward" size={22} /></span>
       </span>
     </button>
@@ -150,7 +151,7 @@ function SettingRow({ row }: { row: Row }) {
 }
 
 export function TvSettings({ view }: { view: TvView }) {
-  const [s, set] = usePatcher(view.settings, (patch) => tvSend({ type: "UPDATE_SETTINGS", patch }));
+  const [s, set] = usePatcher(view.settings, (patch) => tvAct({ type: "UPDATE_SETTINGS", patch }), tvLastErrorMsg.value);
   const initialCat: Cat = view.startBlocker === "INVALID_ROLE_CONFIG" ? "roles" : view.startBlocker === "NO_WORDS_AVAILABLE" ? "words" : "game";
   const [cat, setCat] = useState<Cat>(initialCat);
   const [sub, setSub] = useState<null | "packs" | "difficulty">(null);
@@ -185,7 +186,7 @@ export function TvSettings({ view }: { view: TvView }) {
     roles: [
       { id: "roleMode", label: t("settings.roleMode"), value: t(s.roleMode === "auto" ? "settings.roleModeAuto" : "settings.roleModeCustom"),
         prev: () => set({ roleMode: cycle(["auto", "custom"] as const, s.roleMode, -1) }), next: () => set({ roleMode: cycle(["auto", "custom"] as const, s.roleMode, 1) }),
-        help: rc ? t("settings.rolePreview", { count: view.players.length, civilian: rc.civilian, undercover: rc.undercover, blank: rc.blank }) : t("lobby.blockerRoles") },
+        help: rc ? t("settings.rolePreview", { count: view.players.length, civilian: rc.civilian, undercover: rc.undercover, blank: rc.blank }) : view.players.length >= MIN_PLAYERS ? t("lobby.blockerRoles") : undefined },
       ...(s.roleMode === "custom" ? [
         num("undercoverCount", B.undercoverCount, (v) => fmtNum(v), t("settings.undercoverCount")),
         num("blankCount", B.blankCount, (v) => fmtNum(v), t("settings.blankCount")),

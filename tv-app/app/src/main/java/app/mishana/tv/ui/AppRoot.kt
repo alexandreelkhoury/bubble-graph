@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
+import app.mishana.tv.ui.components.fullBleed
 import app.mishana.tv.BuildConfig
 import app.mishana.tv.R
 import app.mishana.tv.game.GameViewModel
@@ -127,6 +128,7 @@ fun AppRoot(vm: GameViewModel) {
         vm.events.collect { e ->
             when (e) {
                 is TvEvent.NewCode -> toasts.show(context.getString(R.string.tv__new_code, e.code), MishColors.Accent)
+                is TvEvent.ServerError -> toasts.show(context.getString(messageKeyRes(e.error.messageKey)), MishColors.Danger)
             }
         }
     }
@@ -146,7 +148,8 @@ fun AppRoot(vm: GameViewModel) {
                 is TvUiState.InRoom -> RoomRoot(s, vm, toasts) { debugOpen = true }
                 is TvUiState.Fatal -> FatalScreen(s.messageKey, vm::createRoom)
             }
-            ToastHost(toasts, Modifier.align(Alignment.BottomStart).padding(bottom = 64.dp))
+            // The Lobby draws its own toast zone (never over the code or QR); everywhere else: bottom start.
+            if (toasts.screenHosts == 0) ToastHost(toasts, Modifier.align(Alignment.BottomStart).padding(bottom = 64.dp))
         }
         if (debugOpen && BuildConfig.DEBUG) {
             val prefs = remember { DebugPrefs(context) }
@@ -203,11 +206,7 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
         }
     }
 
-    // ---- informational toasts ----
-    LaunchedEffect(s.lastError) {
-        val e = s.lastError ?: return@LaunchedEffect
-        toasts.show(context.getString(messageKeyRes(e.messageKey)), MishColors.Danger)
-    }
+    // ---- informational toasts (server errors arrive as one-shot TvEvent.ServerError, collected in AppRoot) ----
     ForfeitAndAwayToasts(view, toasts)
 
     // ---- Back (TV-DB): Lobby is root → exit; in a game / on Results → pause menu ----
@@ -271,7 +270,7 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
 
         // TV-13a: the stage stays visible but frozen under a 40 % scrim, with a top banner and an attempt counter.
         if (degraded && view != null && !offlineLong) {
-            Box(Modifier.fillMaxSize().background(MishColors.Bg.copy(alpha = 0.4f)))
+            Box(Modifier.fillMaxSize().fullBleed().background(MishColors.Bg.copy(alpha = 0.4f)))
             StatusBanner(
                 stringResource(R.string.conn__tv_reconnecting),
                 Modifier.align(Alignment.TopCenter),
@@ -312,7 +311,7 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
 @Composable
 private fun ConnectionLost(onRetry: () -> Unit, onBack: () -> Unit) {
     val retry = remember { FocusRequester() }
-    Box(Modifier.fillMaxSize().background(MishColors.Bg.copy(alpha = 0.96f))) {
+    Box(Modifier.fillMaxSize().fullBleed().background(MishColors.Bg.copy(alpha = 0.96f))) {
         FocusTrap(onBack = onBack) {
         CenterStage {
             Icon(MishIcons.WifiOff, contentDescription = null, tint = MishColors.Danger, modifier = Modifier.size(96.dp))

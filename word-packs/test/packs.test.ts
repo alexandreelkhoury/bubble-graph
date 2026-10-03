@@ -40,6 +40,24 @@ describe("word packs", () => {
       }
   });
 
+  it("the two sides of a pair share no guess form (text, alt or translit)", () => {
+    const keys = (s: WordPack["pairs"][number]["civilian"]): Set<string> =>
+      new Set([s.text, ...(s.alt ?? []), ...(s.translit ? [s.translit] : [])].map((w) => normalizeGuess(w)));
+    for (const p of parsed)
+      for (const pair of p.pairs) {
+        const civ = keys(pair.civilian);
+        expect([...keys(pair.undercover)].filter((k) => civ.has(k)), `${p.id}/${pair.id}`).toEqual([]);
+      }
+  });
+
+  it("Arabic translit is readable (no chat digits) and uses sh, not ch", () => {
+    for (const p of parsed.filter((x) => x.script === "Arab"))
+      for (const pair of p.pairs)
+        for (const s of [pair.civilian, pair.undercover]) {
+          expect(s.translit ?? "", `${p.id}/${pair.id}`).not.toMatch(/[0-9]|ch/i);
+        }
+  });
+
   it("no word contains a percent sign", () => {
     for (const p of parsed) for (const w of words(p)) expect(w.includes("%"), `${p.id}: ${w}`).toBe(false);
   });

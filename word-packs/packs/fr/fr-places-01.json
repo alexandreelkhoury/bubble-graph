@@ -20,10 +20,17 @@
     {
       "id": "p001",
       "civilian": {
-        "text": "Voiture"
+        "text": "Voiture",
+        "alt": [
+          "Auto",
+          "Bagnole"
+        ]
       },
       "undercover": {
-        "text": "Bus"
+        "text": "Bus",
+        "alt": [
+          "Autobus"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -42,10 +49,17 @@
     {
       "id": "p003",
       "civilian": {
-        "text": "Voiture"
+        "text": "Voiture",
+        "alt": [
+          "Auto",
+          "Bagnole"
+        ]
       },
       "undercover": {
-        "text": "Vélo"
+        "text": "Vélo",
+        "alt": [
+          "Bicyclette"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -53,7 +67,11 @@
     {
       "id": "p004",
       "civilian": {
-        "text": "Voiture"
+        "text": "Voiture",
+        "alt": [
+          "Auto",
+          "Bagnole"
+        ]
       },
       "undercover": {
         "text": "Camion"
@@ -67,7 +85,10 @@
         "text": "Avion"
       },
       "undercover": {
-        "text": "Hélicoptère"
+        "text": "Hélicoptère",
+        "alt": [
+          "Hélico"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -75,10 +96,16 @@
     {
       "id": "p006",
       "civilian": {
-        "text": "Vélo"
+        "text": "Vélo",
+        "alt": [
+          "Bicyclette"
+        ]
       },
       "undercover": {
-        "text": "Moto"
+        "text": "Moto",
+        "alt": [
+          "Motocyclette"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -111,7 +138,11 @@
         "text": "Bibliothèque"
       },
       "undercover": {
-        "text": "Université"
+        "text": "Université",
+        "alt": [
+          "Fac",
+          "Faculté"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -155,7 +186,10 @@
         "text": "New York"
       },
       "undercover": {
-        "text": "Los Angeles"
+        "text": "Los Angeles",
+        "alt": [
+          "LA"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -166,7 +200,10 @@
         "text": "Paris"
       },
       "undercover": {
-        "text": "Londres"
+        "text": "Londres",
+        "alt": [
+          "London"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -177,7 +214,10 @@
         "text": "Rome"
       },
       "undercover": {
-        "text": "Athènes"
+        "text": "Athènes",
+        "alt": [
+          "Athina"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -199,7 +239,10 @@
         "text": "Rio de Janeiro"
       },
       "undercover": {
-        "text": "Buenos Aires"
+        "text": "Buenos Aires",
+        "alt": [
+          "Baires"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -210,7 +253,10 @@
         "text": "Grand Canyon"
       },
       "undercover": {
-        "text": "Chutes du Niagara"
+        "text": "Chutes du Niagara",
+        "alt": [
+          "Niagara"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -221,7 +267,10 @@
         "text": "Taj Mahal"
       },
       "undercover": {
-        "text": "Grande Muraille de Chine"
+        "text": "Grande Muraille de Chine",
+        "alt": [
+          "Grande Muraille"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -262,10 +311,16 @@
     {
       "id": "p023",
       "civilian": {
-        "text": "Bus"
+        "text": "Bus",
+        "alt": [
+          "Autobus"
+        ]
       },
       "undercover": {
-        "text": "Tramway"
+        "text": "Tramway",
+        "alt": [
+          "Tram"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -306,7 +361,10 @@
     {
       "id": "p027",
       "civilian": {
-        "text": "Métro"
+        "text": "Métro",
+        "alt": [
+          "Métropolitain"
+        ]
       },
       "undercover": {
         "text": "Taxi"
@@ -317,7 +375,10 @@
     {
       "id": "p028",
       "civilian": {
-        "text": "Moto"
+        "text": "Moto",
+        "alt": [
+          "Motocyclette"
+        ]
       },
       "undercover": {
         "text": "Scooter"

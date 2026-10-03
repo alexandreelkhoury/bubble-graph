@@ -38,6 +38,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
+import androidx.compose.ui.platform.LocalDensity
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Surface
@@ -225,6 +227,11 @@ fun PlayerTile(
         if (!player.connected) append(", away")
         if (state.check) append(", ready")
     }
+    // Fixed tile size (grids must keep their geometry), so the avatar gives way when the name line is taller:
+    // Arabic line heights and the 1.3× font scale (DESIGN §11) never clip the name.
+    val nameStyle = if (height < 104.dp) MishTheme.type.titleS else MishTheme.type.title
+    val nameH = with(LocalDensity.current) { nameStyle.lineHeight.toDp() }
+    val fittedAvatar = min(avatarSize, height - 16.dp - nameH).coerceAtLeast(24.dp)
     val content: @Composable BoxScope.() -> Unit = {
         Column(
             Modifier
@@ -234,13 +241,13 @@ fun PlayerTile(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            Avatar(player.color, avatarSize, state = state)
+            Avatar(player.color, fittedAvatar, state = state)
             if (nameOverride != null) {
                 nameOverride()
             } else {
                 Text(
                     text = Names.ellipsize(player.name, nameMax),
-                    style = if (height < 104.dp) MishTheme.type.titleS else MishTheme.type.title,
+                    style = nameStyle,
                     color = MishColors.Text,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

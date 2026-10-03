@@ -8,7 +8,7 @@ This file lists third-party content bundled with Mish Ana! (مش أنا!), apart
 - Used in these packs, each marked `"license": "MIT"` and `"source": "antebrl/undercover-word-game"`:
   - `word-packs/packs/en/en-food-01.json`, `en-things-01.json`, `en-nature-01.json`, `en-places-01.json`, `en-leisure-01.json`
   - `word-packs/packs/fr/fr-food-01.json`, `fr-things-01.json`, `fr-nature-01.json`, `fr-places-01.json`, `fr-leisure-01.json`
-- Changes: we dropped brand names, products, franchises and fictional IP, real people, alcohol, religious and violent pairs, pairs that were not "similar words" (such as Germany/Beer), and duplicates. We fixed casing and some French wording (for example Docteur → Médecin, Boeuf → Bœuf), grouped the pairs by theme, and added difficulty ratings.
+- Changes: we dropped brand names and trademarks (for example Jacuzzi → Hot tub / Bain à remous), products, copyrighted franchises and characters (public-domain characters such as Dracula and Frankenstein are kept), real people, alcohol, religious and violent pairs, pairs that were not "similar words" (such as Germany/Beer), and duplicates. We fixed casing and some French wording (for example Docteur → Médecin, Boeuf → Bœuf), grouped the pairs by theme, and added difficulty ratings.
 
 ```
 MIT License
@@ -40,4 +40,7 @@ All other packs (`en-everyday-01`, `fr-everyday-01`, every `ar-*` and `lb-*` pac
 
 ## Fonts
 
-- **Cairo** (`tv-app/app/src/main/res/font/cairo_*.ttf`, and the web subsets if present): SIL Open Font License 1.1, Copyright 2009 The Cairo Project Authors (https://github.com/Gue3bara/Cairo). The OFL lets you bundle the font with software; the font itself may not be sold on its own.
+- **Cairo**: SIL Open Font License 1.1. Copyright 2009 The Cairo Project Authors (https://github.com/Gue3bara/Cairo). This matches the font's name table (nameID 0 and 13).
+  - Files: `tv-app/app/src/main/res/font/cairo_*.ttf` (unmodified), and `web-client/public/fonts/cairo-600-latin.woff2`, `cairo-600-arabic.woff2`, `cairo-900-latin.woff2`, `cairo-900-arabic.woff2`. The web files are subsets converted to WOFF2, so they are Modified Versions under the OFL. They keep the original font name, which no Reserved Font Name prevents.
+  - Licence text: the full OFL 1.1 text ships with the fonts in `tv-app/licenses/OFL-Cairo.txt`, as OFL §2 requires. Any distribution of the web client must include that file too.
+  - The OFL lets you bundle the font with software. The font itself may not be sold on its own.

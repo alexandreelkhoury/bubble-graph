@@ -15,6 +15,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -62,7 +63,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalDensity
 import androidx.tv.material3.Text
+import app.mishana.tv.ui.components.fullBleed
 import app.mishana.tv.AvatarShape
 import app.mishana.tv.R
 import app.mishana.tv.game.Countdown
@@ -414,8 +417,8 @@ fun EliminationScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: 
             // ---------- card (TV-09) ----------
             if ((stage == Stage.Card || stage == Stage.Done) && elim != null && eliminatedPlayer != null) {
                 val role = elim.role
-                // Colour wash: radial burst in the role colour (30 %) settling to 8 %.
-                Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
+                // Colour wash: radial burst in the role colour (30 %) settling to 8 %; bleeds to the screen edges.
+                Canvas(Modifier.fillMaxSize().fullBleed().clearAndSetSemantics {}) {
                     val w = wash.value
                     val alpha = if (reduce) 0.08f else if (w < 0.6f) 0.30f * (w / 0.6f) else 0.30f - (0.22f * ((w - 0.6f) / 0.4f))
                     drawRect(
@@ -426,6 +429,13 @@ fun EliminationScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: 
                         ),
                     )
                 }
+                // The card takes what the stage leaves after the title and the reaction line (Arabic line heights
+                // included), so the reaction — the payoff — is never clipped.
+                BoxWithConstraints(Modifier.fillMaxSize()) {
+                val cardH = with(LocalDensity.current) {
+                    maxHeight - type.displayS.lineHeight.toDp() - type.headline.lineHeight.toDp() - 24.dp
+                }.coerceIn(150.dp, CARD_H)
+                val cardW = cardH * (CARD_W / CARD_H)
                 Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         stringResource(R.string.elim__eliminated, isolate(Names.ellipsize(eliminatedPlayer.name, 20))),
@@ -440,13 +450,13 @@ fun EliminationScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: 
                     var cardCenter by remember { mutableStateOf<Offset?>(null) }
                     val tileCenter = centers[elim.playerId]
                     val f = fly.value
-                    val fromScale = spec.tileW.value / CARD_W.value
+                    val fromScale = spec.tileW.value / cardW.value
                     val delta = if (tileCenter != null && cardCenter != null) tileCenter - cardCenter!! else Offset.Zero
                     val sc = fromScale + (1f - fromScale) * f
                     val rot = flip.value
                     Box(
                         Modifier
-                            .size(CARD_W, CARD_H)
+                            .size(cardW, cardH)
                             .onGloballyPositioned { c ->
                                 val p = c.positionInRoot()
                                 cardCenter = Offset(p.x + c.size.width / 2f, p.y + c.size.height / 2f)
@@ -486,8 +496,11 @@ fun EliminationScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: 
                             style = type.headline,
                             color = roleColor(role),
                             textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            modifier = Modifier.widthIn(max = 860.dp),
                         )
                     }
+                }
                 }
             }
 
@@ -556,13 +569,19 @@ private fun WheelPick(view: TvView, ids: List<String>, pickId: String?, progress
     val target = players.indexOfFirst { it.id == pickId }.coerceAtLeast(0)
     val totalSteps = n * 4 + target // a few full turns, then land on the pick
     val current = ((totalSteps * progress).toInt()).mod(n)
+    val titleLh = with(LocalDensity.current) { MishTheme.type.displayS.lineHeight.toDp() }
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+    // Radius from the space left under the title (≤ 150 dp), counting the highlighted avatar's 1.2× scale, so no
+    // avatar spills over the action bar.
+    val avatar = 84.dp
+    val radius = ((maxHeight - titleLh - avatar * 1.2f) / 2).coerceIn(60.dp, 150.dp)
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(stringResource(R.string.elim__random_pick), style = MishTheme.type.displayS, color = MishColors.Accent)
-        Box(Modifier.size(380.dp), contentAlignment = Alignment.Center) {
+        Text(stringResource(R.string.elim__random_pick), style = MishTheme.type.displayS, color = MishColors.Accent, maxLines = 1)
+        Box(Modifier.size(radius * 2 + avatar * 1.2f), contentAlignment = Alignment.Center) {
             players.forEachIndexed { i, p ->
                 val angle = -PI / 2 + 2 * PI * i / n
-                val x = (150 * cos(angle)).toFloat()
-                val y = (150 * sin(angle)).toFloat()
+                val x = (radius.value * cos(angle)).toFloat()
+                val y = (radius.value * sin(angle)).toFloat()
                 val on = i == current
                 Box(
                     Modifier
@@ -574,9 +593,10 @@ private fun WheelPick(view: TvView, ids: List<String>, pickId: String?, progress
                             alpha = if (on) 1f else 0.5f
                         },
                 ) {
-                    Avatar(p.color, 84.dp, state = AvatarState(speaking = on))
+                    Avatar(p.color, avatar, state = AvatarState(speaking = on))
                 }
             }
         }
+    }
     }
 }

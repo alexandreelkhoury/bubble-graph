@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { playGame } from "../support/bots";
+import { lobby } from "../support/helpers";
 import { TEST_CATALOG } from "../support/test-catalog";
 
 describe("starter selection (§4.7 startRound)", () => {
@@ -31,4 +32,27 @@ describe("starter selection (§4.7 startRound)", () => {
     expect(checkedR1).toBeGreaterThan(200);
     expect(checkedNext).toBeGreaterThan(200);
   });
+
+  it("SPEC-GAP: the round-1 starter is a connected non-Blank, so the Blank never actually speaks first", () => {
+    let hits = 0;
+    for (let seed = 1; seed <= 400; seed++) {
+      const g = lobby(5, undefined, seed);
+      g.tv({ type: "START" });
+      const blank = g.get(g.byRole("BLANK")[0] as string);
+      const n = g.state.players.length;
+      const before = g.state.players.find((p) => p.seat === (blank.seat + n - 1) % n);
+      if (!before) continue;
+      g.sys({ type: "DISCONNECT", playerId: before.id });
+      g.readyAll();
+      expect(g.state.phase).toBe("CLUES");
+      const s = g.state;
+      const first = s.players.find((p) => p.id === s.speakingOrder[s.turnIdx]);
+      expect(first?.role).not.toBe("BLANK");
+      expect(s.starterId).not.toBe(before.id);
+      expect(s.players.find((p) => p.id === s.starterId)?.connected).toBe(true);
+      hits++;
+    }
+    expect(hits).toBeGreaterThan(300);
+  });
 });
+

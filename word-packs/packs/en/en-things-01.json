@@ -1,6 +1,6 @@
 {
   "id": "en-things-01",
-  "version": 1,
+  "version": 2,
   "locale": "en",
   "script": "Latn",
   "title": {
@@ -42,10 +42,18 @@
     {
       "id": "p003",
       "civilian": {
-        "text": "Sneakers"
+        "text": "Sneakers",
+        "alt": [
+          "Sneaker",
+          "Trainers",
+          "Trainer"
+        ]
       },
       "undercover": {
-        "text": "Sandals"
+        "text": "Sandals",
+        "alt": [
+          "Sandal"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -53,10 +61,18 @@
     {
       "id": "p004",
       "civilian": {
-        "text": "Sunglasses"
+        "text": "Sunglasses",
+        "alt": [
+          "Shades",
+          "Sunnies"
+        ]
       },
       "undercover": {
-        "text": "Glasses"
+        "text": "Glasses",
+        "alt": [
+          "Spectacles",
+          "Eyeglasses"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -75,10 +91,17 @@
     {
       "id": "p006",
       "civilian": {
-        "text": "Sunglasses"
+        "text": "Sunglasses",
+        "alt": [
+          "Shades",
+          "Sunnies"
+        ]
       },
       "undercover": {
-        "text": "Goggles"
+        "text": "Goggles",
+        "alt": [
+          "Goggle"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -86,7 +109,10 @@
     {
       "id": "p007",
       "civilian": {
-        "text": "Laptop"
+        "text": "Laptop",
+        "alt": [
+          "Notebook computer"
+        ]
       },
       "undercover": {
         "text": "Tablet"
@@ -111,7 +137,11 @@
         "text": "Shirt"
       },
       "undercover": {
-        "text": "Sweater"
+        "text": "Sweater",
+        "alt": [
+          "Jumper",
+          "Pullover"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -122,7 +152,11 @@
         "text": "Knife"
       },
       "undercover": {
-        "text": "Scissors"
+        "text": "Scissors",
+        "alt": [
+          "Scissor",
+          "Pair of scissors"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -144,7 +178,10 @@
         "text": "Mirror"
       },
       "undercover": {
-        "text": "Window pane"
+        "text": "Window pane",
+        "alt": [
+          "Pane"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -188,7 +225,10 @@
         "text": "Suit"
       },
       "undercover": {
-        "text": "Necktie"
+        "text": "Necktie",
+        "alt": [
+          "Tie"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -196,10 +236,17 @@
     {
       "id": "p017",
       "civilian": {
-        "text": "Socks"
+        "text": "Socks",
+        "alt": [
+          "Sock"
+        ]
       },
       "undercover": {
-        "text": "Stockings"
+        "text": "Stockings",
+        "alt": [
+          "Stocking",
+          "Tights"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -240,7 +287,11 @@
     {
       "id": "p021",
       "civilian": {
-        "text": "Online news"
+        "text": "Online news",
+        "alt": [
+          "News",
+          "Online newspaper"
+        ]
       },
       "undercover": {
         "text": "Newspaper"
@@ -251,7 +302,10 @@
     {
       "id": "p022",
       "civilian": {
-        "text": "Elevator"
+        "text": "Elevator",
+        "alt": [
+          "Lift"
+        ]
       },
       "undercover": {
         "text": "Escalator"
@@ -276,7 +330,10 @@
         "text": "Notebook"
       },
       "undercover": {
-        "text": "Diary"
+        "text": "Diary",
+        "alt": [
+          "Journal"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -317,10 +374,16 @@
     {
       "id": "p028",
       "civilian": {
-        "text": "Denim"
+        "text": "Denim",
+        "alt": [
+          "Jeans"
+        ]
       },
       "undercover": {
-        "text": "Corduroy"
+        "text": "Corduroy",
+        "alt": [
+          "Cord"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -342,7 +405,10 @@
         "text": "Scarf"
       },
       "undercover": {
-        "text": "Tie"
+        "text": "Tie",
+        "alt": [
+          "Necktie"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -350,10 +416,18 @@
     {
       "id": "p031",
       "civilian": {
-        "text": "Boots"
+        "text": "Boots",
+        "alt": [
+          "Boot"
+        ]
       },
       "undercover": {
-        "text": "Sneakers"
+        "text": "Sneakers",
+        "alt": [
+          "Sneaker",
+          "Trainers",
+          "Trainer"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -386,7 +460,10 @@
         "text": "Ring"
       },
       "undercover": {
-        "text": "Earring"
+        "text": "Earring",
+        "alt": [
+          "Earrings"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -397,7 +474,10 @@
         "text": "Microphone"
       },
       "undercover": {
-        "text": "Speaker"
+        "text": "Speaker",
+        "alt": [
+          "Loudspeaker"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -405,10 +485,17 @@
     {
       "id": "p036",
       "civilian": {
-        "text": "Headphones"
+        "text": "Headphones",
+        "alt": [
+          "Headphone"
+        ]
       },
       "undercover": {
-        "text": "Earbuds"
+        "text": "Earbuds",
+        "alt": [
+          "Earbud",
+          "Earphones"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -416,7 +503,11 @@
     {
       "id": "p037",
       "civilian": {
-        "text": "Television"
+        "text": "Television",
+        "alt": [
+          "TV",
+          "Telly"
+        ]
       },
       "undercover": {
         "text": "Radio"
@@ -449,7 +540,10 @@
     {
       "id": "p040",
       "civilian": {
-        "text": "Flashlight"
+        "text": "Flashlight",
+        "alt": [
+          "Torch"
+        ]
       },
       "undercover": {
         "text": "Lantern"
@@ -474,7 +568,10 @@
         "text": "Boarding pass"
       },
       "undercover": {
-        "text": "ID card"
+        "text": "ID card",
+        "alt": [
+          "Identity card"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -507,7 +604,10 @@
         "text": "Puzzle"
       },
       "undercover": {
-        "text": "Crossword"
+        "text": "Crossword",
+        "alt": [
+          "Crossword puzzle"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -515,10 +615,17 @@
     {
       "id": "p046",
       "civilian": {
-        "text": "Cards"
+        "text": "Cards",
+        "alt": [
+          "Card",
+          "Playing cards"
+        ]
       },
       "undercover": {
-        "text": "Dice"
+        "text": "Dice",
+        "alt": [
+          "Die"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -551,7 +658,11 @@
         "text": "Screen"
       },
       "undercover": {
-        "text": "TV"
+        "text": "TV",
+        "alt": [
+          "Television",
+          "Telly"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -570,10 +681,17 @@
     {
       "id": "p051",
       "civilian": {
-        "text": "TV"
+        "text": "TV",
+        "alt": [
+          "Television",
+          "Telly"
+        ]
       },
       "undercover": {
-        "text": "Laptop"
+        "text": "Laptop",
+        "alt": [
+          "Notebook computer"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -581,10 +699,17 @@
     {
       "id": "p052",
       "civilian": {
-        "text": "Wardrobe"
+        "text": "Wardrobe",
+        "alt": [
+          "Closet"
+        ]
       },
       "undercover": {
-        "text": "Display cabinet"
+        "text": "Display cabinet",
+        "alt": [
+          "Cabinet",
+          "Display case"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -628,7 +753,13 @@
         "text": "Tablet"
       },
       "undercover": {
-        "text": "Smartphone"
+        "text": "Smartphone",
+        "alt": [
+          "Phone",
+          "Mobile",
+          "Mobile phone",
+          "Cell phone"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -636,10 +767,18 @@
     {
       "id": "p057",
       "civilian": {
-        "text": "Stairs"
+        "text": "Stairs",
+        "alt": [
+          "Staircase",
+          "Stair",
+          "Steps"
+        ]
       },
       "undercover": {
-        "text": "Elevator"
+        "text": "Elevator",
+        "alt": [
+          "Lift"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -661,7 +800,10 @@
         "text": "Oven"
       },
       "undercover": {
-        "text": "Heating"
+        "text": "Heating",
+        "alt": [
+          "Heater"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -669,10 +811,10 @@
     {
       "id": "p060",
       "civilian": {
-        "text": "Wristwatch"
+        "text": "Toothbrush"
       },
       "undercover": {
-        "text": "Alarm clock"
+        "text": "Comb"
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -683,7 +825,11 @@
         "text": "Bed"
       },
       "undercover": {
-        "text": "Sofa"
+        "text": "Sofa",
+        "alt": [
+          "Couch",
+          "Settee"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -713,7 +859,12 @@
     {
       "id": "p064",
       "civilian": {
-        "text": "Jacuzzi"
+        "text": "Hot tub",
+        "alt": [
+          "Jacuzzi",
+          "Spa",
+          "Whirlpool"
+        ]
       },
       "undercover": {
         "text": "Sauna"

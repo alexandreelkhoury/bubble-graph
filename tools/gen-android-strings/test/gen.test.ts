@@ -175,6 +175,15 @@ describe("xml output", () => {
     expect(xml).toContain('<item quantity="few">%1$d ثواني</item>');
   });
 
+  it("emits a FR many item (= other) when fr.json omits it", () => {
+    const set = mini();
+    const xml = buildXml(set, "fr");
+    const blocks = xml.split("<plurals ").slice(1);
+    expect(blocks.length).toBeGreaterThan(0);
+    for (const b of blocks) expect(b).toContain('<item quantity="many">');
+    expect(buildXml(set, "en")).not.toContain('quantity="many"');
+  });
+
   it("emits I18nKeys.kt with strings and plurals maps", () => {
     const kt = buildKotlin(mini());
     expect(kt).toContain("package app.mishana.tv.i18n");
@@ -219,5 +228,15 @@ describe("repository i18n files", () => {
     const set = readMessages(REPO);
     expect(validate(set)).toEqual([]);
     expect(run(REPO, true).changed).toEqual([]);
+  });
+
+  it("FR plurals carry one, many and other (Android lint MissingQuantity)", () => {
+    const fr = readMessages(REPO).fr;
+    for (const [k, v] of Object.entries(fr)) if (typeof v === "object") expect(Object.keys(v).sort(), k).toEqual(["many", "one", "other"]);
+  });
+
+  it("brand.appName is identical in EN and FR (one brand name, SPEC §2)", () => {
+    const set = readMessages(REPO);
+    expect(set.fr["brand.appName"]).toBe(set.en["brand.appName"]);
   });
 });

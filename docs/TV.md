@@ -122,9 +122,11 @@ cd tv-app
 ./gradlew :app:testDebugUnitTest
 ```
 
-Fixtures are read from `../../shared/fixtures` relative to the unit-test working directory (`tv-app/app`). Override with `MISHANA_FIXTURES=/abs/path/to/shared/fixtures`. The tests cover: protocol fixtures (decode + re-encode + deep asserts), client encoding, reconnect policy, heartbeat (virtual time), the WebSocket client (MockWebServer), QR module size, the ViewModel (fake socket + Turbine), countdowns, settings stepping, the action pill, and the colour table.
+Fixtures are read from `../../shared/fixtures` relative to the unit-test working directory (`tv-app/app`). Override with `MISHANA_FIXTURES=/abs/path/to/shared/fixtures`. The tests cover: protocol fixtures (decode + re-encode + deep asserts), client encoding, reconnect policy, heartbeat (virtual time), the WebSocket client (MockWebServer), QR module size, the ViewModel (fake socket + Turbine), countdowns, settings stepping, the action pill, the colour table, and the lobby metrics (the widest room code and a long join host fit the 264 dp column at the smallest fit-to-width size, measured with the bundled Cairo fonts).
 
 Full CI-style check on a Mac: `./gradlew :app:testDebugUnitTest :app:assembleDebug`.
+
+Before the first Mac build, check the layouts listed in DESIGN §11 on a device or emulator: 12 players in English and Arabic, at the 1.3× system font scale, on TV-02 (lobby), TV-04 (role reveal), TV-05 (clues: order strip), TV-06 (vote grid) and TV-11 (results). These sandboxes had no Android SDK, so no screenshot tests (Paparazzi/Roborazzi) run here.
 
 ## Debug server override
 

@@ -157,6 +157,24 @@ class GameViewModelTest {
     }
 
     @Test
+    fun repeatedIdenticalServerErrorsAreEachEmittedOnce() = runTest(dispatcher) {
+        val vm = newVm()
+        vm.events.test {
+            val conn = connections.single()
+            conn.state.value = ConnState.OPEN
+            advanceUntilIdle()
+            val err = ErrorMsg(code = "BAD_PHASE", messageKey = "error.badPhase", ref = null)
+            conn.incoming.emit(err)
+            advanceUntilIdle()
+            conn.incoming.emit(err.copy())
+            advanceUntilIdle()
+            assertEquals(err, (awaitItem() as TvEvent.ServerError).error)
+            assertEquals(err, (awaitItem() as TvEvent.ServerError).error)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun roomExpiredMidGameIsFatal() = runTest(dispatcher) {
         val vm = newVm()
         val conn = connections.single()

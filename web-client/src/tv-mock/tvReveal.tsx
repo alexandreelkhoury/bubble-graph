@@ -86,21 +86,24 @@ export function TvElimination({ view }: { view: TvView }) {
             <Stamp text={t(lv && lv.tally.length === 0 ? "vote.nobodyVoted" : "elim.noElimination")} tone="muted" />
           </div>
         ) : out && role ? (
+          // §6.2-C: the card, the name beneath it ("Rami is out!"), then the one-line reaction.
           <div class="tvstage tvelim__card">
-            {random && <p class="tvt-caption tv-accent"><Icon name="dice" size={20} />{t("elim.randomPick")}</p>}
-            <h1 class="tvt-displayM tvelim__name">{t("elim.eliminated", { name: "⁨" + out.name + "⁩" })}</h1>
             <div class={`tvelim__cardwrap${el - T.cardStart < ms(400) ? " is-growing" : ""}`}>
               <RoleCard p={out} role={role} flipped={el >= T.flipAt} />
+              {random && <span class="tvbadge tvbadge--accent tvelim__random"><Icon name="dice" size={18} />{t("elim.randomPick")}</span>}
             </div>
-            <p class={`tvt-headline tvelim__reaction${el >= T.reaction ? " is-on" : ""}`}>
-              {t((role === "BLANK" && !view.settings.blankGuess ? "elim.reactionBlankNoGuess" : REACTION[role]) as Parameters<typeof t>[0])}
-            </p>
+            <h1 class="tvt-displayM tvelim__name"><bdi>{t("elim.eliminated", { name: "⁨" + out.name + "⁩" })}</bdi></h1>
+            {(() => {
+              const line = t((role === "BLANK" && !view.settings.blankGuess ? "elim.reactionBlankNoGuess" : REACTION[role]) as Parameters<typeof t>[0]);
+              // One line between "Next round in…" (start) and Continue (end): long lines step down to tv-title.
+              return <p class={`${line.length > 26 ? "tvt-title" : "tvt-headline"} tvelim__reaction${el >= T.reaction ? " is-on" : ""}`}>{line}</p>;
+            })()}
           </div>
         ) : null
       )}
       <div class="tvbottom">
         {stage === "votes" && animating && <span class="tvbottom__center tvt-caption tv-muted">{t("tv.skipHint")}</span>}
-        {stage === "card" && d && <span class="tvbottom__center tvt-body tv-secondary num">{t("elim.nextRound", { count: d.secs })}</span>}
+        {stage === "card" && d && <span class={`${none ? "tvbottom__center" : "tvbottom__start"} tvt-body tv-secondary tnum`}>{t("elim.nextRound", { count: d.secs })}</span>}
         <ActionPill label={t("common.continue")} pillRef={pill} animating={animating} onSkipAnimation={skip} />
       </div>
     </div>
@@ -353,11 +356,11 @@ export function TvResults({ view }: { view: TvView }) {
                   const pts = r.pointsAwarded[p.id] ?? 0;
                   return (
                     <div key={p.id} role="row" class={`tvsb__row${i === 0 ? " is-first" : ""}`} style={{ "--i": i }}>
-                      <span class="num">{i === 0 ? <Icon name="trophy" size={22} /> : fmtNum(i + 1)}</span>
+                      <span class="tvsb__rank">{i === 0 ? <Icon name="trophy" size={22} /> : <bdi class="num">{fmtNum(i + 1)}</bdi>}</span>
                       <span class="tvsb__who"><Avatar color={p.color} size={32} state={p.left ? "left" : "normal"} /><bdi>{p.name}</bdi></span>
                       <span class="tvsb__role">{p.revealedRole && <><span class={`tvsb__emb tvsb__emb--${p.revealedRole.toLowerCase()}`}><RoleEmblem role={p.revealedRole} size={18} /></span>{t(ROLE_KEY[p.revealedRole] as Parameters<typeof t>[0])}</>}</span>
-                      <span class={`num${pts > 0 ? " tv-success" : " tv-muted"}`}>{pts > 0 ? t("results.pointsEarned", { count: pts }) : "0"}</span>
-                      <span class="num tv-accent tvsb__total">{fmtNum(p.score)}</span>
+                      <span class={`tvsb__pts${pts > 0 ? " tv-success" : " tv-muted"}`}><bdi class="num">{pts > 0 ? t("results.pointsEarned", { count: pts }) : fmtNum(0)}</bdi></span>
+                      <span class="tv-accent tvsb__total"><bdi class="num">{fmtNum(p.score)}</bdi></span>
                     </div>
                   );
                 })}

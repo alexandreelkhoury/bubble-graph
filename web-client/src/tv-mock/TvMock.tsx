@@ -71,7 +71,7 @@ function Splash({ failed }: { failed: string | null }) {
         ) : (
           <>
             <p class="tvt-headline">{t("tv.createFailed")}</p>
-            <p class="tvt-caption tv-muted num">{failed}</p>
+            <p class="tvt-caption tv-muted tnum">{failed}</p>
             <button type="button" ref={retry} class="tvbtn tvbtn--primary" onClick={() => void tvCreateRoom()}><Icon name="refresh" />{t("common.retry")}</button>
           </>
         )}
@@ -237,6 +237,7 @@ export function TvMock() {
   else if (ui.kind === "fatal") content = <Fatal messageKey={ui.messageKey} />;
   else if (!view) content = <Splash failed={null} />;
   else content = <Screen view={view} />;
+  const lobbyMain = view?.phase === "LOBBY" && tvScreen.value === "main" && ui.kind === "room";
   const screenKey = view ? `${view.phase}:${view.round}:${view.gameNumber}:${tvScreen.value}` : ui.kind;
   return (
     <div class="tv" lang={l} dir={dirOf(l)}>
@@ -250,8 +251,8 @@ export function TvMock() {
         <TvDialog />
         {ui.kind === "room" && <ConnStates view={view} />}
         {view && <PhonesAsleep view={view} />}
-        <div class="tvtoasts" aria-live="polite">
-          {toasts.value.map((x) => <div key={x.id} class={`tvtoast tvtoast--${x.tone}`}>{x.text}</div>)}
+        <div class={`tvtoasts ${lobbyMain ? "tvtoasts--lobby" : "tvtoasts--top"}`} aria-live="polite">
+          {toasts.value.slice(lobbyMain ? -2 : -1).map((x) => <div key={x.id} class={`tvtoast tvtoast--${x.tone}`}>{x.text}</div>)}
         </div>
       </div>
     </div>

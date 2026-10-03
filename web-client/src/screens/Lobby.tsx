@@ -1,10 +1,12 @@
 // PH-03 Lobby (player and VIP variants) + kick sheet + settings sheet.
 import { useState } from "preact/hooks";
 import { MAX_PLAYERS, MIN_PLAYERS } from "@mishana/shared/constants";
+import { effectiveRoleCounts } from "@mishana/shared/engine";
+import type { RoleCounts, Settings } from "@mishana/shared/engine";
 import type { PlayerView, PublicPlayer } from "@mishana/shared/protocol";
 import { locale, t } from "../i18n/t";
 import { act } from "../state/session";
-import { wakeLockSupported } from "../lib/wakelock";
+import { wakeLockDenied, wakeLockSupported } from "../lib/wakelock";
 import { Avatar, avatarState, playerLabel } from "../components/PlayerChip";
 import { Button, ConfirmSheet, Heading } from "../components/UI";
 import { Icon } from "../components/Icon";
@@ -13,14 +15,25 @@ import type { SettingsSection } from "./Settings";
 
 const NATIVE = { en: "English", fr: "Français", ar: "العربية" } as const;
 
+/**
+ * Role summary for the lobby cards (phone + TV). Below MIN_PLAYERS the room is simply not full yet, so it previews
+ * the roles at MIN_PLAYERS (or names the role mode) instead of claiming the roles don't fit.
+ */
+export function roleSummaryText(settings: Settings, playerCount: number, rc: RoleCounts | null): string {
+  const few = playerCount < MIN_PLAYERS;
+  const c = rc ?? (few ? effectiveRoleCounts(settings, MIN_PLAYERS) : null);
+  if (c) return t("lobby.roleSummary", { civilian: c.civilian, undercover: c.undercover, blank: c.blank });
+  if (few) return t(settings.roleMode === "auto" ? "settings.roleModeAuto" : "settings.roleModeCustom");
+  return t("lobby.blockerRoles");
+}
+
 export function settingsSummary(view: PlayerView): [string, string] {
   const s = view.settings;
   const l = locale.value;
   const packs = s.packIds.length === 0
     ? t("settings.allPacks")
     : s.packIds.map((id) => view.availablePacks.find((p) => p.id === id)?.title[l] ?? id).join(", ");
-  const rc = view.roleCounts;
-  const roles = rc ? t("lobby.roleSummary", { civilian: rc.civilian, undercover: rc.undercover, blank: rc.blank }) : t("lobby.blockerRoles");
+  const roles = roleSummaryText(s, view.players.length, view.roleCounts);
   const clue = s.clueSeconds === 0 ? t("common.timerOff") : t("common.seconds", { count: s.clueSeconds });
   return [`${packs} · ${NATIVE[s.wordLocale]}`, `${roles} · ${t("settings.clueSeconds")} ${clue}`];
 }
@@ -70,13 +83,16 @@ export function Lobby({ view }: { view: PlayerView }) {
               const content = (
                 <>
                   <Avatar color={p.color} size={40} state={avatarState(p)} host={p.isHost} />
-                  <bdi class="plist__name">{p.name}</bdi>
-                  {you && <span class="tag">{t("common.you")}</span>}
-                  {p.isHost && !you && <span class="tag tag--host">{t("common.host")}</span>}
+                  {/* The crown on the avatar marks the host (named in the row's accessible label); "You" is a small
+                      second line so the name keeps the full row width. */}
+                  <span class="plist__text">
+                    <bdi class="plist__name">{p.name}</bdi>
+                    {you && <span class="plist__you" aria-hidden="true">{t("common.you")}</span>}
+                  </span>
                 </>
               );
               return (
-                <li key={p.id} class="plist__item join-pop">
+                <li key={p.id} class={`plist__item join-pop${you ? " is-you" : ""}`}>
                   {isVip && !you ? (
                     <button type="button" class="plist__row plist__row--btn" aria-label={`${playerLabel(p)}. ${t("lobby.kick")}`} onClick={() => setKick(p)}>
                       {content}<Icon name="x" size={18} class="plist__kick" />
@@ -106,7 +122,7 @@ export function Lobby({ view }: { view: PlayerView }) {
             <p>{line2}</p>
           </section>
         )}
-        {!wakeLockSupported() && <p class="hint hint--tip"><Icon name="phone" size={18} />{t("phone.keepScreenOn")}</p>}
+        {(!wakeLockSupported() || wakeLockDenied.value) && <p class="hint hint--tip"><Icon name="phone" size={18} />{t("phone.keepScreenOn")}</p>}
       </main>
       <footer class="actionbar">
         {isVip ? (

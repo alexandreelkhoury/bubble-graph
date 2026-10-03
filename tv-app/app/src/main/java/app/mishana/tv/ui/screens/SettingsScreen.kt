@@ -219,6 +219,7 @@ fun SettingsScreen(
     val done = remember { FocusRequester() }
     val catRequesters = remember { SettingsCategory.entries.associateWith { FocusRequester() } }
     val firstRow = remember { FocusRequester() }
+    val rowRequesters = remember { mutableMapOf<String, FocusRequester>() }
     val panelOpen = subPanel != SubPanel.None
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
@@ -238,7 +239,13 @@ fun SettingsScreen(
                 Row(Modifier.fillMaxWidth().height(56.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.settings__title), style = type.headline, color = MishColors.Text)
                     Spacer(Modifier.weight(1f))
-                    MishButton(stringResource(R.string.common__done), onClose, Modifier.focusRequester(done), icon = MishIcons.Check)
+                    MishButton(
+                        stringResource(R.string.common__done),
+                        onClose,
+                        // On Done, Back closes Settings (it is not "on a row" any more).
+                        Modifier.focusRequester(done).onFocusChanged { if (it.isFocused) focusedKey = null },
+                        icon = MishIcons.Check,
+                    )
                 }
                 Spacer(Modifier.height(16.dp))
                 Row(Modifier.fillMaxWidth().weight(1f)) {
@@ -276,7 +283,9 @@ fun SettingsScreen(
                                     rtl = rtl,
                                     flash = r.key in flashKeys,
                                     onFocused = { focusedKey = r.key },
-                                    modifier = if (i == 0) Modifier.focusRequester(firstRow) else Modifier,
+                                    modifier = Modifier
+                                        .focusRequester(rowRequesters.getOrPut(r.key) { FocusRequester() })
+                                        .then(if (i == 0) Modifier.focusRequester(firstRow) else Modifier),
                                 )
                             }
                         }
@@ -304,11 +313,13 @@ fun SettingsScreen(
                 )
             }
         }
-        if (initialCategory == SettingsCategory.Game) {
-            InitialFocus(catRequesters.getValue(SettingsCategory.Game))
-        } else {
-            InitialFocus(firstRow)
-        }
+        // Initial focus once; when a sub-panel (or a connection overlay) closes, focus returns to the row that was
+        // focused (e.g. Packs), else the current category — never back to Game (DESIGN §7).
+        val restore = { focusedKey?.let { rowRequesters[it] } ?: catRequesters.getValue(category) }
+        InitialFocus(
+            if (initialCategory == SettingsCategory.Game) catRequesters.getValue(SettingsCategory.Game) else firstRow,
+            restore = restore,
+        )
     }
 
     when (subPanel) {
@@ -449,7 +460,8 @@ private fun buildRows(
                 stringResource(R.string.settings__all_packs)
             } else {
                 s.packIds.mapNotNull { id -> view.availablePacks.firstOrNull { it.id == id } }
-                    .joinToString(", ") { localizedTitle(it.title) }
+                    .map { localizedTitle(it.title) }
+                    .joinToString(", ")
                     .ifEmpty { s.packIds.size.toString() }
             }
             val diffNames = listOf(R.string.settings__difficulty1, R.string.settings__difficulty2, R.string.settings__difficulty3)
@@ -511,11 +523,22 @@ private fun SettingRow(model: RowModel, rtl: Boolean, flash: Boolean, onFocused:
             .heightIn(min = 52.dp)
             .onFocusChanged { if (it.isFocused) onFocused() }
             .onPreviewKeyEvent { e ->
-                if (step == null || e.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
-                when (e.key) {
+                if (e.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
+                val open = model.open
+                when {
                     // Chevrons follow the reading direction: in RTL the visual left is "next".
-                    Key.DirectionRight -> { step(if (rtl) -1 else +1); true }
-                    Key.DirectionLeft -> { step(if (rtl) +1 else -1); true }
+                    step != null -> when (e.key) {
+                        Key.DirectionRight -> { step(if (rtl) -1 else +1); true }
+                        Key.DirectionLeft -> { step(if (rtl) +1 else -1); true }
+                        else -> false
+                    }
+                    // Sub-panel rows: the forward direction (the chevron's side) opens it; the other one does nothing.
+                    // Left/Right never leave the rows on any row; Back returns to the categories.
+                    open != null -> when (e.key) {
+                        Key.DirectionRight -> { if (!rtl) open(); true }
+                        Key.DirectionLeft -> { if (rtl) open(); true }
+                        else -> false
+                    }
                     else -> false
                 }
             },

@@ -8,8 +8,8 @@
     <string name="common__ok">تمام</string>
     <string name="common__cancel">إلغاء</string>
     <string name="common__back">رجوع</string>
-    <string name="common__close">سكّر</string>
-    <string name="common__continue">كمّل</string>
+    <string name="common__close">إغلاق</string>
+    <string name="common__continue">متابعة</string>
     <string name="common__done">خلصت</string>
     <string name="common__retry">منجرّب مرة تانية</string>
     <string name="common__on">شغّال</string>
@@ -126,7 +126,7 @@
     <string name="settings__role_mode_custom">مخصّص</string>
     <string name="settings__undercover_count">الجواسيس</string>
     <string name="settings__blank_count">الفاضيين</string>
-    <string name="settings__role_preview">مع %1$d لاعبين: %2$s مدنيين · %3$s جواسيس · %4$s فاضي</string>
+    <string name="settings__role_preview">عدد اللاعبين: %1$d · مدنيين: %2$s · جواسيس: %3$s · فاضي: %4$s</string>
     <string name="settings__clue_seconds">دور التلميح</string>
     <string name="settings__vote_seconds">التصويت</string>
     <string name="settings__reveal_seconds">قراءة الكلمة</string>
@@ -211,7 +211,7 @@
     <string name="vote__look_tv">العيون عالتلفزيون!</string>
     <string name="vote__dead">انت برّا. الفرجة إلك هلّق!</string>
     <string name="vote__revote_among">تصويت تاني بين المتعادلين</string>
-    <string name="vote__close">سكّر التصويت</string>
+    <string name="vote__close">نسكّر التصويت</string>
     <string name="vote__votes_in">طلعت الأصوات…</string>
     <string name="vote__no_vote">بلا صوت</string>
     <string name="vote__nobody_voted">ما حدا صوّت</string>
@@ -296,7 +296,7 @@
     <string name="conn__seat_saved">محلّك محفوظ.</string>
     <string name="conn__still_trying">بعدنا عم نحاول… الواي فاي أو الداتا شغّالين؟</string>
     <string name="conn__back">رجعنا!</string>
-    <string name="conn__reload">حمّل من جديد</string>
+    <string name="conn__reload">تحميل من جديد</string>
     <string name="tv__creating_room">عم نفتح الغرفة…</string>
     <string name="tv__create_failed">ما قدرنا نفتح غرفة. شيكوا عالإنترنت.</string>
     <string name="tv__new_room">غرفة جديدة</string>
@@ -306,10 +306,10 @@
     <string name="tv__skip_hint">كبسوا OK للتخطّي</string>
     <string name="tv__pause_title">قائمة اللعبة</string>
     <string name="tv__pause_note">اللعبة مكمّلة</string>
-    <string name="tv__resume">كمّل</string>
+    <string name="tv__resume">منكمّل</string>
     <string name="tv__skip">تخطّي (الدور / الوقت)</string>
     <string name="tv__players">اللاعبين…</string>
-    <string name="tv__end_game">وقّف اللعبة</string>
+    <string name="tv__end_game">نوقّف اللعبة</string>
     <string name="tv__end_game_confirm">نوقّف هاللعبة؟</string>
     <string name="tv__end_game_body">ما حدا بيسجّل نقاط. منرجع عالصالون.</string>
     <string name="tv__keep_playing">منكمّل</string>
@@ -333,7 +333,7 @@
     <string name="phone__replaced">اللعبة مفتوحة بمحلّ تاني (تاب أو تلفون).</string>
     <string name="phone__use_here">رجّعها لهون</string>
     <string name="error__bad_message">في شي غلط بهالرسالة.</string>
-    <string name="error__unsupported_version">لازم تحديث. حمّل من جديد.</string>
+    <string name="error__unsupported_version">لازم تحديث. التحميل من جديد بيحلّها.</string>
     <string name="error__not_authenticated">الدخول عالغرفة أوّل.</string>
     <string name="error__tv_auth_failed">هالتلفزيون ما عاد مربوط بالغرفة.</string>
     <string name="error__room_not_found">ما لقينا الغرفة. الكود اللي عالتلفزيون مزبوط؟</string>

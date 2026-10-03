@@ -1,6 +1,6 @@
 {
   "id": "en-leisure-01",
-  "version": 1,
+  "version": 2,
   "locale": "en",
   "script": "Latn",
   "title": {
@@ -31,7 +31,10 @@
     {
       "id": "p002",
       "civilian": {
-        "text": "Football"
+        "text": "Soccer",
+        "alt": [
+          "Football"
+        ]
       },
       "undercover": {
         "text": "Basketball"
@@ -45,7 +48,10 @@
         "text": "Music"
       },
       "undercover": {
-        "text": "Dancing"
+        "text": "Dancing",
+        "alt": [
+          "Dance"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -53,7 +59,10 @@
     {
       "id": "p004",
       "civilian": {
-        "text": "Doctor"
+        "text": "Doctor",
+        "alt": [
+          "Physician"
+        ]
       },
       "undercover": {
         "text": "Surgeon"
@@ -64,7 +73,10 @@
     {
       "id": "p005",
       "civilian": {
-        "text": "Soccer"
+        "text": "Soccer",
+        "alt": [
+          "Football"
+        ]
       },
       "undercover": {
         "text": "Rugby"
@@ -119,10 +131,16 @@
     {
       "id": "p010",
       "civilian": {
-        "text": "Swimming"
+        "text": "Swimming",
+        "alt": [
+          "Swim"
+        ]
       },
       "undercover": {
-        "text": "Diving"
+        "text": "Diving",
+        "alt": [
+          "Dive"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -130,10 +148,16 @@
     {
       "id": "p011",
       "civilian": {
-        "text": "Running"
+        "text": "Running",
+        "alt": [
+          "Run"
+        ]
       },
       "undercover": {
-        "text": "Jogging"
+        "text": "Jogging",
+        "alt": [
+          "Jog"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -144,7 +168,10 @@
         "text": "Surfboard"
       },
       "undercover": {
-        "text": "Skateboard"
+        "text": "Skateboard",
+        "alt": [
+          "Skate"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -155,7 +182,10 @@
         "text": "Baseball"
       },
       "undercover": {
-        "text": "Football"
+        "text": "American football",
+        "alt": [
+          "Gridiron"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -174,7 +204,10 @@
     {
       "id": "p015",
       "civilian": {
-        "text": "Table tennis"
+        "text": "Table tennis",
+        "alt": [
+          "Ping-pong"
+        ]
       },
       "undercover": {
         "text": "Badminton"
@@ -232,7 +265,10 @@
         "text": "Hockey"
       },
       "undercover": {
-        "text": "Soccer"
+        "text": "Soccer",
+        "alt": [
+          "Football"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -254,7 +290,10 @@
         "text": "Pharmacist"
       },
       "undercover": {
-        "text": "Doctor"
+        "text": "Doctor",
+        "alt": [
+          "Physician"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -273,10 +312,18 @@
     {
       "id": "p024",
       "civilian": {
-        "text": "Firefighter"
+        "text": "Firefighter",
+        "alt": [
+          "Fireman"
+        ]
       },
       "undercover": {
-        "text": "Police officer"
+        "text": "Police officer",
+        "alt": [
+          "Policeman",
+          "Policewoman",
+          "Cop"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -298,7 +345,10 @@
         "text": "Baker"
       },
       "undercover": {
-        "text": "Chef"
+        "text": "Chef",
+        "alt": [
+          "Cook"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -309,7 +359,10 @@
         "text": "Farmer"
       },
       "undercover": {
-        "text": "Fisherman"
+        "text": "Fisherman",
+        "alt": [
+          "Fisher"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -350,7 +403,11 @@
     {
       "id": "p031",
       "civilian": {
-        "text": "Cinema"
+        "text": "Cinema",
+        "alt": [
+          "Movies",
+          "Movie theater"
+        ]
       },
       "undercover": {
         "text": "Bowling"
@@ -364,7 +421,11 @@
         "text": "Job"
       },
       "undercover": {
-        "text": "Hobby"
+        "text": "Hobby",
+        "alt": [
+          "Hobbies",
+          "Pastime"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []

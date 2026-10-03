@@ -123,9 +123,13 @@ export function startRound(d: Draft, r: number): void {
     starter = alive.find((p) => p.seat > prev.seat) ?? alive[0];
   } else {
     const cands = alive.filter((p) => p.role !== "BLANK");
-    // Round 1 always has a non-Blank alive player while the game continues; the fallback only matters
-    // for a forfeit cascade that ends the game in the same reduce (§4.8 step 6).
-    const pool = cands.length > 0 ? cands : alive;
+    // SPEC-GAP: §4.7 step 3 picks from alive non-Blank players without regard to connection. A
+    // disconnected starter is skipped by beginTurn, so the next seat (possibly the Blank) would speak
+    // first. Prefer connected non-Blank players; fall back to any non-Blank, then to anyone.
+    // Round 1 always has a non-Blank alive player while the game continues; the last fallback only
+    // matters for a forfeit cascade that ends the game in the same reduce (§4.8 step 6).
+    const conn = cands.filter((p) => p.connected);
+    const pool = conn.length > 0 ? conn : cands.length > 0 ? cands : alive;
     starter = pool[d.rng.int(pool.length)];
   }
   s.starterId = starter?.id ?? null;
@@ -195,7 +199,9 @@ export function afterElimination(d: Draft): void {
     const guesser = findPlayer(s, s.eliminated.playerId);
     s.phase = "MR_WHITE_GUESS";
     s.guess = { playerId: s.eliminated.playerId, status: "PENDING", text: null, overridden: false };
-    if (!guesser?.connected && s.settings.guessSeconds === 0) {
+    // SPEC-GAP: §4.7 only short-circuits a disconnected guesser when guessSeconds is 0. A guesser who
+    // has LEFT (or was kicked) during ELIMINATION can never submit, so they time out immediately too.
+    if (!guesser || guesser.left || (!guesser.connected && s.settings.guessSeconds === 0)) {
       s.guess.status = "TIMEOUT";
       setDeadline(d, "VERDICT", VERDICT_HOLD_MS);
     } else {

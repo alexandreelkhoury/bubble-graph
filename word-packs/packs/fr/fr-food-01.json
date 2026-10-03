@@ -42,7 +42,10 @@
     {
       "id": "p003",
       "civilian": {
-        "text": "Hamburger"
+        "text": "Hamburger",
+        "alt": [
+          "Burger"
+        ]
       },
       "undercover": {
         "text": "Hot-dog"
@@ -67,7 +70,10 @@
         "text": "Lait"
       },
       "undercover": {
-        "text": "Jus"
+        "text": "Jus",
+        "alt": [
+          "Jus de fruit"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -89,7 +95,11 @@
         "text": "Riz"
       },
       "undercover": {
-        "text": "Pâtes"
+        "text": "Pâtes",
+        "alt": [
+          "Pâte",
+          "Spaghettis"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -141,7 +151,10 @@
     {
       "id": "p012",
       "civilian": {
-        "text": "Pomme de terre"
+        "text": "Pomme de terre",
+        "alt": [
+          "Patate"
+        ]
       },
       "undercover": {
         "text": "Tomate"
@@ -152,7 +165,10 @@
     {
       "id": "p013",
       "civilian": {
-        "text": "Oignon"
+        "text": "Oignon",
+        "alt": [
+          "Ognon"
+        ]
       },
       "undercover": {
         "text": "Ail"
@@ -199,7 +215,10 @@
         "text": "Crêpe"
       },
       "undercover": {
-        "text": "Beignet"
+        "text": "Beignet",
+        "alt": [
+          "Donut"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -207,7 +226,10 @@
     {
       "id": "p018",
       "civilian": {
-        "text": "Glace"
+        "text": "Glace",
+        "alt": [
+          "Crème glacée"
+        ]
       },
       "undercover": {
         "text": "Gâteau"
@@ -221,7 +243,11 @@
         "text": "Pizza"
       },
       "undercover": {
-        "text": "Pâtes"
+        "text": "Pâtes",
+        "alt": [
+          "Pâte",
+          "Spaghettis"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -232,7 +258,10 @@
         "text": "Pizza"
       },
       "undercover": {
-        "text": "Lasagnes"
+        "text": "Lasagnes",
+        "alt": [
+          "Lasagne"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -273,7 +302,10 @@
     {
       "id": "p024",
       "civilian": {
-        "text": "Noix de coco"
+        "text": "Noix de coco",
+        "alt": [
+          "Coco"
+        ]
       },
       "undercover": {
         "text": "Ananas"
@@ -342,7 +374,10 @@
         "text": "Lait de coco"
       },
       "undercover": {
-        "text": "Lait de soja"
+        "text": "Lait de soja",
+        "alt": [
+          "Lait de soya"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -375,7 +410,11 @@
         "text": "Four"
       },
       "undercover": {
-        "text": "Micro-ondes"
+        "text": "Micro-ondes",
+        "alt": [
+          "Micro-onde",
+          "Four à micro-ondes"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []

@@ -6,6 +6,7 @@ import { createInitialState, reduce } from "../../src/engine/reduce";
 import type { Rng } from "../../src/engine/rng";
 import { createRng } from "../../src/engine/rng";
 import type { Action, ClientIntent, GameState, ReduceResult, SettingsPatch, Winner } from "../../src/engine/types";
+import { checkWinner } from "../../src/engine/win";
 
 export interface BotOptions {
   players: number;
@@ -14,8 +15,10 @@ export interface BotOptions {
   correctGuessRate?: number; // 0.3
   overrideRate?: number;     // 0.05
   churnRate?: number;        // 0.02
-  kickRate?: number;         // 0.01
-  hostAdvanceRate?: number;  // 0.05 (TV HOST_ADVANCE instead of CLUE_DONE)
+  kickRate?: number;         // 0.01 (half from the TV, half from the VIP)
+  leaveRate?: number;        // 0.005 (LEAVE by a random live player)
+  vipRate?: number;          // 0.5: share of HOST_ADVANCE / HOST_OVERRIDE_GUESS / KICK sent by the VIP instead of the TV
+  hostAdvanceRate?: number;  // 0.05 (HOST_ADVANCE instead of CLUE_DONE)
   noiseRate?: number;        // 0: random (often invalid) intents, checked to leave the state untouched on error
   maxActions?: number;       // 5000
   maxRounds?: number;        // 60
@@ -48,6 +51,29 @@ function pick<T>(rng: Rng, xs: readonly T[]): T | undefined {
   return xs.length ? xs[rng.int(xs.length)] : undefined;
 }
 
+/**
+ * Cross-step checks the driver applies after every successful reduce (beyond assertInvariants):
+ * - the actual first round-1 speaker is never the Blank (RESEARCH 01, §4.7 step 3);
+ * - on entering RESULTS, score deltas equal result.pointsAwarded and a non-Blank winner matches checkWinner.
+ */
+export function checkStep(prev: GameState, res: ReduceResult): void {
+  if (!res.ok) return;
+  const s = res.state;
+  if (s.phase === "CLUES" && s.round === 1 && (prev.phase !== "CLUES" || prev.round !== 1)) {
+    const sp = s.players.find((p) => p.id === s.speakingOrder[s.turnIdx]);
+    if (sp?.role === "BLANK") throw new Error("round-1 first actual speaker is the Blank");
+  }
+  if (s.phase === "RESULTS" && prev.phase !== "RESULTS" && s.result) {
+    const r = s.result;
+    for (const p of s.players) {
+      const before = prev.players.find((x) => x.id === p.id);
+      const delta = p.score - (before?.score ?? 0);
+      if (delta !== (r.pointsAwarded[p.id] ?? 0)) throw new Error(`score delta ${delta} != pointsAwarded for ${p.id}`);
+    }
+    if (r.winner !== "BLANK" && checkWinner(s) !== r.winner) throw new Error(`result.winner ${r.winner} != checkWinner ${checkWinner(s)}`);
+  }
+}
+
 /** Plays one game in a fresh room: joins, START, play to RESULTS (then PLAY_AGAIN once) or until it returns to LOBBY. */
 export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook): GameOutcome {
   const rng = createRng((opts.seed ^ 0x9e3779b9) >>> 0);
@@ -58,6 +84,8 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
     override: opts.overrideRate ?? 0.05,
     churn: opts.churnRate ?? 0.02,
     kick: opts.kickRate ?? 0.01,
+    leave: opts.leaveRate ?? 0.005,
+    vip: opts.vipRate ?? 0.5,
     advance: opts.hostAdvanceRate ?? 0.05,
     noise: opts.noiseRate ?? 0,
   };
@@ -73,18 +101,22 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
     const res = reduce(prev, action, { now, catalog });
     if (!res.ok && res.state !== prev) throw new Error("error result must return the input state");
     assertInvariants(res.state);
+    checkStep(prev, res);
     onStep?.(prev, action, res, now);
     log.push({ action, now, ok: res.ok, error: res.ok ? null : res.error, version: res.state.version });
     state = res.state;
     rounds = Math.max(rounds, state.round);
     return res;
   };
+  /** TV, or (with probability vipRate) the VIP when there is one. The VIP may be refused (e.g. NOT_HOST while guessing). */
+  const hostActor = () => (rate.vip > 0 && state.hostPlayerId && rng.next() < rate.vip ? byPlayer(state.hostPlayerId) : TV);
   const advance = (): void => {
     if (state.deadline) {
       now = Math.max(now, state.deadline.at);
       step({ type: "TICK", by: SYS });
     } else {
-      step({ type: "HOST_ADVANCE", by: TV });
+      // Fall back to the TV when the VIP is refused so the driver always makes progress.
+      if (!step({ type: "HOST_ADVANCE", by: hostActor() }).ok) step({ type: "HOST_ADVANCE", by: TV });
     }
   };
 
@@ -132,7 +164,12 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
     }
     if (r < rate.noise + rate.churn + rate.kick) {
       const p = pick(rng, live);
-      if (p) step({ type: "KICK", by: TV, playerId: p.id });
+      if (p) step({ type: "KICK", by: hostActor(), playerId: p.id });
+      continue;
+    }
+    if (r < rate.noise + rate.churn + rate.kick + rate.leave) {
+      const p = pick(rng, live);
+      if (p) step({ type: "LEAVE", by: byPlayer(p.id) });
       continue;
     }
 
@@ -146,7 +183,7 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
       case "CLUES":
       case "TIE_BREAK": {
         const sp = s.players.find((p) => p.id === s.speakingOrder[s.turnIdx]);
-        if (rng.next() < rate.advance) step({ type: "HOST_ADVANCE", by: TV });
+        if (rng.next() < rate.advance) step({ type: "HOST_ADVANCE", by: hostActor() });
         else if (sp?.connected) step({ type: "CLUE_DONE", by: byPlayer(sp.id) });
         else advance();
         break;
@@ -161,7 +198,7 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
         break;
       }
       case "ELIMINATION": {
-        if (rng.next() < 0.3) step({ type: "HOST_ADVANCE", by: TV });
+        if (rng.next() < 0.3) step({ type: "HOST_ADVANCE", by: hostActor() });
         else advance();
         break;
       }
@@ -183,7 +220,7 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
             break;
           }
           if (g.status === "CORRECT") {
-            step({ type: "HOST_OVERRIDE_GUESS", by: TV, accept: false });
+            step({ type: "HOST_OVERRIDE_GUESS", by: hostActor(), accept: false });
             break;
           }
         }

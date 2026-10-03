@@ -31,10 +31,17 @@
     {
       "id": "p002",
       "civilian": {
-        "text": "Football"
+        "text": "Football",
+        "alt": [
+          "Foot",
+          "Soccer"
+        ]
       },
       "undercover": {
-        "text": "Basket-ball"
+        "text": "Basket-ball",
+        "alt": [
+          "Basket"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -53,10 +60,16 @@
     {
       "id": "p004",
       "civilian": {
-        "text": "Médecin"
+        "text": "Médecin",
+        "alt": [
+          "Docteur"
+        ]
       },
       "undercover": {
-        "text": "Chirurgien"
+        "text": "Chirurgien",
+        "alt": [
+          "Chirurgienne"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -64,7 +77,11 @@
     {
       "id": "p005",
       "civilian": {
-        "text": "Football"
+        "text": "Football",
+        "alt": [
+          "Foot",
+          "Soccer"
+        ]
       },
       "undercover": {
         "text": "Rugby"
@@ -75,10 +92,18 @@
     {
       "id": "p006",
       "civilian": {
-        "text": "Professeur"
+        "text": "Professeur",
+        "alt": [
+          "Prof"
+        ]
       },
       "undercover": {
-        "text": "Maître d’école"
+        "text": "Maître d’école",
+        "alt": [
+          "Maîtresse d’école",
+          "Instituteur",
+          "Institutrice"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -86,10 +111,16 @@
     {
       "id": "p007",
       "civilian": {
-        "text": "Détective"
+        "text": "Détective",
+        "alt": [
+          "Enquêteur"
+        ]
       },
       "undercover": {
-        "text": "Criminel"
+        "text": "Criminel",
+        "alt": [
+          "Criminelle"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -119,7 +150,10 @@
     {
       "id": "p010",
       "civilian": {
-        "text": "Natation"
+        "text": "Natation",
+        "alt": [
+          "Nage"
+        ]
       },
       "undercover": {
         "text": "Plongée"
@@ -130,7 +164,10 @@
     {
       "id": "p011",
       "civilian": {
-        "text": "Course"
+        "text": "Course",
+        "alt": [
+          "Course à pied"
+        ]
       },
       "undercover": {
         "text": "Jogging"
@@ -141,10 +178,17 @@
     {
       "id": "p012",
       "civilian": {
-        "text": "Planche de surf"
+        "text": "Planche de surf",
+        "alt": [
+          "Surf"
+        ]
       },
       "undercover": {
-        "text": "Skateboard"
+        "text": "Skateboard",
+        "alt": [
+          "Skate",
+          "Planche à roulettes"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -155,7 +199,11 @@
         "text": "Base-ball"
       },
       "undercover": {
-        "text": "Football"
+        "text": "Football",
+        "alt": [
+          "Foot",
+          "Soccer"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -163,10 +211,16 @@
     {
       "id": "p014",
       "civilian": {
-        "text": "Volley-ball"
+        "text": "Volley-ball",
+        "alt": [
+          "Volley"
+        ]
       },
       "undercover": {
-        "text": "Basket-ball"
+        "text": "Basket-ball",
+        "alt": [
+          "Basket"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -174,7 +228,10 @@
     {
       "id": "p015",
       "civilian": {
-        "text": "Tennis de table"
+        "text": "Tennis de table",
+        "alt": [
+          "Ping-pong"
+        ]
       },
       "undercover": {
         "text": "Badminton"
@@ -232,7 +289,11 @@
         "text": "Hockey"
       },
       "undercover": {
-        "text": "Football"
+        "text": "Football",
+        "alt": [
+          "Foot",
+          "Soccer"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -251,10 +312,16 @@
     {
       "id": "p022",
       "civilian": {
-        "text": "Pharmacien"
+        "text": "Pharmacien",
+        "alt": [
+          "Pharmacienne"
+        ]
       },
       "undercover": {
-        "text": "Médecin"
+        "text": "Médecin",
+        "alt": [
+          "Docteur"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -262,7 +329,10 @@
     {
       "id": "p023",
       "civilian": {
-        "text": "Ingénieur"
+        "text": "Ingénieur",
+        "alt": [
+          "Ingénieure"
+        ]
       },
       "undercover": {
         "text": "Architecte"
@@ -273,10 +343,18 @@
     {
       "id": "p024",
       "civilian": {
-        "text": "Pompier"
+        "text": "Pompier",
+        "alt": [
+          "Pompière"
+        ]
       },
       "undercover": {
-        "text": "Policier"
+        "text": "Policier",
+        "alt": [
+          "Policière",
+          "Agent de police",
+          "Flic"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -287,7 +365,11 @@
         "text": "Pilote"
       },
       "undercover": {
-        "text": "Astronaute"
+        "text": "Astronaute",
+        "alt": [
+          "Cosmonaute",
+          "Spationaute"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -295,10 +377,17 @@
     {
       "id": "p026",
       "civilian": {
-        "text": "Boulanger"
+        "text": "Boulanger",
+        "alt": [
+          "Boulangère"
+        ]
       },
       "undercover": {
-        "text": "Cuisinier"
+        "text": "Cuisinier",
+        "alt": [
+          "Cuisinière",
+          "Chef"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -306,10 +395,18 @@
     {
       "id": "p027",
       "civilian": {
-        "text": "Agriculteur"
+        "text": "Agriculteur",
+        "alt": [
+          "Agricultrice",
+          "Fermier",
+          "Paysan"
+        ]
       },
       "undercover": {
-        "text": "Pêcheur"
+        "text": "Pêcheur",
+        "alt": [
+          "Pêcheuse"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -350,7 +447,10 @@
     {
       "id": "p031",
       "civilian": {
-        "text": "Cinéma"
+        "text": "Cinéma",
+        "alt": [
+          "Ciné"
+        ]
       },
       "undercover": {
         "text": "Bowling"
@@ -361,10 +461,18 @@
     {
       "id": "p032",
       "civilian": {
-        "text": "Travail"
+        "text": "Travail",
+        "alt": [
+          "Boulot",
+          "Job"
+        ]
       },
       "undercover": {
-        "text": "Loisir"
+        "text": "Loisir",
+        "alt": [
+          "Loisirs",
+          "Hobby"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []

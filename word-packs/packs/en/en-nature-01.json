@@ -34,7 +34,12 @@
         "text": "Virus"
       },
       "undercover": {
-        "text": "Bacteria"
+        "text": "Bacteria",
+        "alt": [
+          "Bacterium",
+          "Germs",
+          "Germ"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -174,7 +179,11 @@
     {
       "id": "p015",
       "civilian": {
-        "text": "Meteor"
+        "text": "Meteor",
+        "alt": [
+          "Meteorite",
+          "Shooting star"
+        ]
       },
       "undercover": {
         "text": "Satellite"
@@ -199,7 +208,10 @@
         "text": "Earthquake"
       },
       "undercover": {
-        "text": "Tsunami"
+        "text": "Tsunami",
+        "alt": [
+          "Tidal wave"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -265,7 +277,10 @@
         "text": "Penguin"
       },
       "undercover": {
-        "text": "Seagull"
+        "text": "Seagull",
+        "alt": [
+          "Gull"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -331,7 +346,10 @@
         "text": "Elephant"
       },
       "undercover": {
-        "text": "Rhino"
+        "text": "Rhino",
+        "alt": [
+          "Rhinoceros"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -339,7 +357,10 @@
     {
       "id": "p030",
       "civilian": {
-        "text": "Alligator"
+        "text": "Alligator",
+        "alt": [
+          "Gator"
+        ]
       },
       "undercover": {
         "text": "Crocodile"
@@ -361,7 +382,10 @@
     {
       "id": "p032",
       "civilian": {
-        "text": "UFO"
+        "text": "UFO",
+        "alt": [
+          "Flying saucer"
+        ]
       },
       "undercover": {
         "text": "Drone"

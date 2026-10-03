@@ -15,6 +15,11 @@ describe("router", () => {
     expect(parseRoute("/abcde").kind).toBe("home");
     expect(parseRoute("/a/b").kind).toBe("home");
   });
+  it("survives malformed percent-encoding", () => {
+    expect(() => parseRoute("/%E0")).not.toThrow();
+    expect(parseRoute("/%E0").kind).toBe("home");
+    expect(parseRoute("/%kxqp")).toEqual({ kind: "home", prefill: "KXQP" });
+  });
   it("cleans typed codes", () => {
     expect(cleanCodeInput("kx q")).toEqual({ code: "KXQ", rejected: false });
     expect(cleanCodeInput("ki1")).toEqual({ code: "K", rejected: true });

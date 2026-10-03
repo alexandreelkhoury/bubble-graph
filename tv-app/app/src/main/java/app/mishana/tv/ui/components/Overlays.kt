@@ -33,13 +33,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.unit.Constraints
+import kotlin.math.roundToInt
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
@@ -68,14 +75,56 @@ import kotlinx.coroutines.launch
 /** True while an overlay owns focus, or while a screen is animating out: screens must not grab focus then. */
 val LocalFocusBlocked = compositionLocalOf { false }
 
-/** Requests initial focus once attached (never in the composable body; RESEARCH 02 §3). Re-runs when [key] changes. */
+/** requestFocus() that never throws (a requester whose node left composition is simply skipped). */
+fun FocusRequester.tryFocus(): Boolean = runCatching { requestFocus() }.getOrDefault(false)
+
+/**
+ * Requests initial focus once attached (never in the composable body; RESEARCH 02 §3), and only once per [key]:
+ * it waits while [LocalFocusBlocked] is set, then focuses [requester].
+ * When the block lifts LATER (a dialog, sub-panel, pause menu or connection overlay closed), focus goes back to
+ * [restore] (what the user was on when the overlay opened; DESIGN §7) and only falls back to [requester] when that
+ * target is gone or not given. In-game screens pass no [restore]: their single action pill is the target.
+ */
 @Composable
-fun InitialFocus(requester: FocusRequester, key: Any? = Unit) {
+fun InitialFocus(requester: FocusRequester, key: Any? = Unit, restore: (() -> FocusRequester?)? = null) {
     val blocked = LocalFocusBlocked.current
+    val initialDone = remember(key) { booleanArrayOf(false) }
+    val restoreTarget by rememberUpdatedState(restore)
     LaunchedEffect(key, blocked) {
         if (blocked) return@LaunchedEffect
         withFrameNanos { }
-        runCatching { requester.requestFocus() }
+        if (!initialDone[0]) {
+            initialDone[0] = true
+            requester.tryFocus()
+            return@LaunchedEffect
+        }
+        val target = restoreTarget?.invoke()
+        if (target == null || !target.tryFocus()) requester.tryFocus()
+    }
+}
+
+/**
+ * Lets a full-screen scrim, wash or overlay escape the safe-area padding of its parents (DESIGN §4.2: backgrounds,
+ * glows and scrims bleed to the screen edges; only content stays inside the safe area). The node keeps its own
+ * layout size, but its content is measured at the window size and placed at the window origin.
+ * Put it on the OUTERMOST node of an animated overlay (e.g. the AnimatedVisibility modifier): an alpha layer below it
+ * would otherwise clip the bled area to the original bounds while it fades.
+ */
+@Composable
+fun Modifier.fullBleed(): Modifier {
+    val window = LocalWindowInfo.current
+    return this.layout { measurable, constraints ->
+        val size = window.containerSize
+        val w = if (size.width > 0) size.width else constraints.maxWidth
+        val h = if (size.height > 0) size.height else constraints.maxHeight
+        val placeable = measurable.measure(Constraints.fixed(w, h))
+        val ownW = if (constraints.hasBoundedWidth) constraints.maxWidth else w
+        val ownH = if (constraints.hasBoundedHeight) constraints.maxHeight else h
+        layout(ownW, ownH) {
+            val origin = coordinates?.positionInRoot() ?: Offset.Zero
+            // place(), not placeRelative(): the window origin is the same in LTR and RTL.
+            placeable.place(-origin.x.roundToInt(), -origin.y.roundToInt())
+        }
     }
 }
 
@@ -120,6 +169,7 @@ fun OverlayCard(
     Box(
         Modifier
             .fillMaxSize()
+            .fullBleed()
             .background(MishColors.Scrim),
         contentAlignment = Alignment.Center,
     ) {
@@ -222,6 +272,9 @@ class ToastState {
     val items = mutableStateListOf<ToastMessage>()
     private var next = 0L
 
+    /** > 0 while a screen draws its own [ToastHost] in its own zone (the Lobby); the root host then stays hidden. */
+    var screenHosts by mutableIntStateOf(0)
+
     fun show(text: String, accent: Color = MishColors.Primary) {
         items.add(ToastMessage(next++, text, accent))
         while (items.size > 2) items.removeAt(0)
@@ -234,8 +287,8 @@ class ToastState {
 
 /** Toast stack at the bottom start (DESIGN §9 `ToastHost`). */
 @Composable
-fun ToastHost(state: ToastState, modifier: Modifier = Modifier) {
-    Column(modifier.widthIn(max = 520.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+fun ToastHost(state: ToastState, modifier: Modifier = Modifier, maxWidth: Dp = 520.dp) {
+    Column(modifier.widthIn(max = maxWidth), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         for (t in state.items) {
             androidx.compose.runtime.key(t.id) {
                 val visible = remember { androidx.compose.animation.core.MutableTransitionState(false) }

@@ -10,8 +10,24 @@ class FakeSocket implements SocketLike {
   reconnects = 0;
   constructor(public h: SocketHandlers) {}
   send(d: string) { if (this.readyState !== 1) throw new Error("send while not open"); this.sent.push(d); }
-  close() { this.closes++; this.readyState = 3; }
-  reconnect() { this.reconnects++; this.readyState = 0; }
+  /**
+   * Mirrors partysocket 1.3.0 ws.js: close() and reconnect() on a CONNECTING/OPEN socket go through `_disconnect`,
+   * which dispatches a synthetic CloseEvent (default code 1000) synchronously, before returning.
+   */
+  close(code = 1000) {
+    this.closes++;
+    if (this.readyState === 2 || this.readyState === 3) return;
+    this.readyState = 3;
+    this.h.close(code);
+  }
+  reconnect(code = 1000) {
+    this.reconnects++;
+    if (this.readyState === 0 || this.readyState === 1) {
+      this.readyState = 2;
+      this.h.close(code);
+    }
+    this.readyState = 0;
+  }
   open() { this.readyState = 1; this.h.open(); }
   serverClose(code: number) { this.readyState = 3; this.h.close(code); }
   msg(o: unknown) { this.h.message(typeof o === "string" ? o : JSON.stringify(o)); }
@@ -134,6 +150,37 @@ describe("Connection", () => {
     expect(s.sock().sent.filter((x) => x === PING_FRAME)).toHaveLength(2);
     vi.advanceTimersByTime(10_000); // no pong
     expect(s.sock().reconnects).toBe(1);
+    // partysocket's synthetic close(1000) from reconnect() → reconnecting, heartbeat stopped, not fatal.
+    expect(s.statuses.at(-1)).toBe("reconnecting");
+    expect(s.conn.heartbeatRunning).toBe(false);
+    expect(s.fatal).toEqual([]);
+    s.sock().open();
+    expect(s.statuses.at(-1)).toBe("open");
+    expect(s.sock().sent.at(-1)).toBe('{"v":1,"t":"hello","role":"player"}');
+  });
+
+  it("a synthetic close from wake() while CONNECTING keeps reconnecting", () => {
+    const s = setup();
+    s.sock().open();
+    s.sock().serverClose(1006);
+    s.sock().readyState = 0; // partysocket is connecting again
+    s.conn.wake();
+    expect(s.sock().reconnects).toBe(1);
+    expect(s.statuses.at(-1)).toBe("reconnecting");
+    expect(s.fatal).toEqual([]);
+  });
+
+  it("a 4008 slow close never reconnects early, even through a synthetic close", () => {
+    const s = setup();
+    s.sock().open();
+    s.sock().serverClose(4008);
+    expect(s.statuses.at(-1)).toBe("reconnecting");
+    s.conn.wake();
+    expect(s.sock().reconnects).toBe(0);
+    vi.advanceTimersByTime(SLOW_RECONNECT_MS);
+    expect(s.sock().reconnects).toBe(1);
+    s.sock().open();
+    expect(s.statuses.at(-1)).toBe("open");
   });
 
   it("heartbeat stops on close and restarts on open", () => {
@@ -176,7 +223,9 @@ describe("Connection", () => {
   it("destroy closes the socket and ignores later events", () => {
     const s = setup();
     s.sock().open();
-    s.conn.destroy();
+    s.conn.destroy(); // the synthetic close(1000) is ignored: destroyed first
+    expect(s.statuses).toEqual(["open", "closed"]);
+    expect(s.sock().closes).toBe(1);
     s.sock().h.close(4006);
     expect(s.fatal).toEqual([]);
     expect(s.conn.isOpen).toBe(false);

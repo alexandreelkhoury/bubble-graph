@@ -42,7 +42,10 @@
     {
       "id": "p003",
       "civilian": {
-        "text": "Hamburger"
+        "text": "Hamburger",
+        "alt": [
+          "Burger"
+        ]
       },
       "undercover": {
         "text": "Hot dog"
@@ -188,7 +191,11 @@
         "text": "Water"
       },
       "undercover": {
-        "text": "Soda"
+        "text": "Soda",
+        "alt": [
+          "Fizzy drink",
+          "Soft drink"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -199,7 +206,10 @@
         "text": "Pancake"
       },
       "undercover": {
-        "text": "Doughnut"
+        "text": "Doughnut",
+        "alt": [
+          "Donut"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -232,7 +242,10 @@
         "text": "Pizza"
       },
       "undercover": {
-        "text": "Lasagna"
+        "text": "Lasagna",
+        "alt": [
+          "Lasagne"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -243,7 +256,10 @@
         "text": "Cucumber"
       },
       "undercover": {
-        "text": "Zucchini"
+        "text": "Zucchini",
+        "alt": [
+          "Courgette"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -331,7 +347,11 @@
         "text": "Energy drink"
       },
       "undercover": {
-        "text": "Soda"
+        "text": "Soda",
+        "alt": [
+          "Fizzy drink",
+          "Soft drink"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -342,7 +362,10 @@
         "text": "Coconut milk"
       },
       "undercover": {
-        "text": "Soy milk"
+        "text": "Soy milk",
+        "alt": [
+          "Soya milk"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -353,7 +376,10 @@
         "text": "Bakery"
       },
       "undercover": {
-        "text": "Butcher"
+        "text": "Butcher",
+        "alt": [
+          "Butcher shop"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -361,10 +387,17 @@
     {
       "id": "p032",
       "civilian": {
-        "text": "Pan"
+        "text": "Pan",
+        "alt": [
+          "Frying pan",
+          "Skillet"
+        ]
       },
       "undercover": {
-        "text": "Pot"
+        "text": "Pot",
+        "alt": [
+          "Saucepan"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -375,7 +408,10 @@
         "text": "Oven"
       },
       "undercover": {
-        "text": "Microwave"
+        "text": "Microwave",
+        "alt": [
+          "Microwave oven"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []

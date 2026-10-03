@@ -5,9 +5,17 @@ import { ROOM_CODE_REGEX, WS_PATH_PREFIX } from "@mishana/shared/constants";
 import type { Env } from "./env";
 import { createRoom, healthz, httpError } from "./http";
 import { originCheck } from "./origin";
+import { CID_REGEX } from "./room-core";
 import { randomBytes } from "./tokens";
 
 export { Room } from "./room";
+
+/**
+ * partyserver's connection id. partysocket sends a UUID/nanoid and the TV a UUID; anything else is refused
+ * before the upgrade. SPEC-GAP: §6.2 does not constrain `_pk`, but partyserver throws (and echoes its stack
+ * to the client) for a hibernation tag over 256 chars, so it is validated here.
+ */
+export const PK_REGEX = /^[A-Za-z0-9_-]{1,64}$/;
 
 async function fetch(req: Request, env: Env): Promise<Response> {
   const url = new URL(req.url);
@@ -33,6 +41,13 @@ async function fetch(req: Request, env: Env): Promise<Response> {
     if (req.headers.get("Upgrade")?.toLowerCase() !== "websocket") return new Response("Not found", { status: 404 });
     if (!path.startsWith(WS_PATH_PREFIX) || !ROOM_CODE_REGEX.test(path.slice(WS_PATH_PREFIX.length))) {
       return new Response("Not found", { status: 404 });
+    }
+    // SPEC-GAP: §6.2 closes a bad `cid` with 4000 from inside the DO; rejecting it here (400 before the
+    // upgrade) also keeps the DO out of it and avoids the late onConnect close seen on wrangler dev.
+    const pk = url.searchParams.get("_pk");
+    const cid = url.searchParams.get("cid");
+    if (pk === null || !PK_REGEX.test(pk) || cid === null || !CID_REGEX.test(cid)) {
+      return new Response("Bad request", { status: 400 });
     }
     const { success } = await env.CONNECT_LIMITER.limit({ key: req.headers.get("CF-Connecting-IP") ?? "local" });
     if (!success) return new Response("Too many requests", { status: 429 });

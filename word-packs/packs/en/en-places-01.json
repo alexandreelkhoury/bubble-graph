@@ -1,6 +1,6 @@
 {
   "id": "en-places-01",
-  "version": 1,
+  "version": 2,
   "locale": "en",
   "script": "Latn",
   "title": {
@@ -31,7 +31,10 @@
     {
       "id": "p002",
       "civilian": {
-        "text": "Cruise"
+        "text": "Cruise",
+        "alt": [
+          "Cruise ship"
+        ]
       },
       "undercover": {
         "text": "Safari"
@@ -45,7 +48,10 @@
         "text": "Car"
       },
       "undercover": {
-        "text": "Bike"
+        "text": "Bike",
+        "alt": [
+          "Bicycle"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -56,7 +62,10 @@
         "text": "Car"
       },
       "undercover": {
-        "text": "Truck"
+        "text": "Truck",
+        "alt": [
+          "Lorry"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -64,7 +73,11 @@
     {
       "id": "p005",
       "civilian": {
-        "text": "Plane"
+        "text": "Plane",
+        "alt": [
+          "Airplane",
+          "Aeroplane"
+        ]
       },
       "undercover": {
         "text": "Helicopter"
@@ -75,10 +88,16 @@
     {
       "id": "p006",
       "civilian": {
-        "text": "Bicycle"
+        "text": "Bicycle",
+        "alt": [
+          "Bike"
+        ]
       },
       "undercover": {
-        "text": "Motorcycle"
+        "text": "Motorcycle",
+        "alt": [
+          "Motorbike"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -133,7 +152,10 @@
         "text": "Ferry"
       },
       "undercover": {
-        "text": "Cruise"
+        "text": "Cruise",
+        "alt": [
+          "Cruise ship"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -141,7 +163,10 @@
     {
       "id": "p012",
       "civilian": {
-        "text": "Sailboat"
+        "text": "Sailboat",
+        "alt": [
+          "Sailing boat"
+        ]
       },
       "undercover": {
         "text": "Yacht"
@@ -152,10 +177,17 @@
     {
       "id": "p013",
       "civilian": {
-        "text": "New York"
+        "text": "New York",
+        "alt": [
+          "New York City",
+          "NYC"
+        ]
       },
       "undercover": {
-        "text": "Los Angeles"
+        "text": "Los Angeles",
+        "alt": [
+          "LA"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -177,7 +209,10 @@
         "text": "Rome"
       },
       "undercover": {
-        "text": "Athens"
+        "text": "Athens",
+        "alt": [
+          "Athina"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -196,10 +231,16 @@
     {
       "id": "p017",
       "civilian": {
-        "text": "Rio de Janeiro"
+        "text": "Rio de Janeiro",
+        "alt": [
+          "Rio"
+        ]
       },
       "undercover": {
-        "text": "Buenos Aires"
+        "text": "Buenos Aires",
+        "alt": [
+          "Baires"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -210,7 +251,10 @@
         "text": "Grand Canyon"
       },
       "undercover": {
-        "text": "Niagara Falls"
+        "text": "Niagara Falls",
+        "alt": [
+          "Niagara"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -221,7 +265,10 @@
         "text": "Taj Mahal"
       },
       "undercover": {
-        "text": "Great Wall of China"
+        "text": "Great Wall of China",
+        "alt": [
+          "Great Wall"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -243,7 +290,10 @@
         "text": "Big Ben"
       },
       "undercover": {
-        "text": "Leaning Tower of Pisa"
+        "text": "Leaning Tower of Pisa",
+        "alt": [
+          "Tower of Pisa"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -265,7 +315,11 @@
         "text": "Bus"
       },
       "undercover": {
-        "text": "Tram"
+        "text": "Tram",
+        "alt": [
+          "Streetcar",
+          "Trolley"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -298,7 +352,10 @@
         "text": "Tent"
       },
       "undercover": {
-        "text": "Cabin"
+        "text": "Cabin",
+        "alt": [
+          "Log cabin"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -306,10 +363,18 @@
     {
       "id": "p027",
       "civilian": {
-        "text": "Subway"
+        "text": "Subway",
+        "alt": [
+          "Underground",
+          "Metro",
+          "Tube"
+        ]
       },
       "undercover": {
-        "text": "Taxi"
+        "text": "Taxi",
+        "alt": [
+          "Cab"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -317,7 +382,10 @@
     {
       "id": "p028",
       "civilian": {
-        "text": "Motorcycle"
+        "text": "Motorcycle",
+        "alt": [
+          "Motorbike"
+        ]
       },
       "undercover": {
         "text": "Scooter"
@@ -343,17 +411,6 @@
       },
       "undercover": {
         "text": "China"
-      },
-      "difficulty": 1,
-      "reviewedBy": []
-    },
-    {
-      "id": "p031",
-      "civilian": {
-        "text": "Swimming pool"
-      },
-      "undercover": {
-        "text": "Beach"
       },
       "difficulty": 1,
       "reviewedBy": []

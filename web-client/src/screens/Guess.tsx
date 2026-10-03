@@ -4,7 +4,7 @@ import { GUESS_MAX_CHARS } from "@mishana/shared/constants";
 import type { Me, PlayerView } from "@mishana/shared/protocol";
 import { dirOf, t } from "../i18n/t";
 import { act } from "../state/session";
-import { inlineError } from "../state/store";
+import { inlineError, resyncs } from "../state/store";
 import { HAPTIC, haptic } from "../lib/haptics";
 import { Avatar, avatarState, COLOR_BY_ID } from "../components/PlayerChip";
 import { RoleEmblem } from "../components/Role";
@@ -16,6 +16,7 @@ import { byId, phaseLine } from "./Clues";
 /** DESIGN §13.5 #10: auto-submit a non-empty guess at deadline − 1 s. */
 export const AUTO_SUBMIT_LEAD_MS = 1000;
 
+/** Typed text per game, plus `<key>:sent` = the resync count when the guess was last sent. */
 const typedByGame = new Map<string, string>();
 
 function Verdict({ status, you, overridden, name }: { status: "CORRECT" | "WRONG" | "TIMEOUT"; you: boolean; overridden: boolean; name: string }) {
@@ -46,7 +47,7 @@ export function Guess({ view, me }: { view: PlayerView; me: Me | null }) {
     const v = text.trim();
     if (!v || sent) return;
     if (act({ type: "SUBMIT_GUESS", text: v })) {
-      typedByGame.set(gameKey + ":sent", "1");
+      typedByGame.set(gameKey + ":sent", String(resyncs.value));
       setSent(true);
       inlineError.value = null;
       haptic(HAPTIC.guessSent);
@@ -67,6 +68,20 @@ export function Guess({ view, me }: { view: PlayerView; me: Me | null }) {
     return () => vv.removeEventListener("resize", onResize);
   }, []);
   useEffect(() => { if (g?.status === "CORRECT" && isGuesser) haptic(HAPTIC.win); }, [g?.status]);
+  // A fresh state after a reconnect still says PENDING: the sent frame was lost with the socket. Resend it
+  // (the server answers WRONG_PHASE if it did process it), or unlock the input when the resend can't go out.
+  const resync = resyncs.value;
+  useEffect(() => {
+    const at = typedByGame.get(gameKey + ":sent");
+    if (!isGuesser || g?.status !== "PENDING" || at === undefined || Number(at) >= resync) return;
+    const v = text.trim();
+    if (v && act({ type: "SUBMIT_GUESS", text: v })) {
+      typedByGame.set(gameKey + ":sent", String(resync));
+    } else {
+      typedByGame.delete(gameKey + ":sent");
+      setSent(false);
+    }
+  }, [resync, g?.status]);
 
   if (!g || !guesser) return <main class="screen"><Heading title={t("guess.title")} /></main>;
   const status = g.status;

@@ -22,7 +22,13 @@ export function cleanCodeInput(raw: string): { code: string; rejected: boolean }
 }
 
 export function parseRoute(pathname: string): Route {
-  const seg = decodeURIComponent(pathname).replace(/^\/+|\/+$/g, "");
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(pathname);
+  } catch {
+    decoded = pathname; // malformed percent-encoding (e.g. /%E0) must never blank the app
+  }
+  const seg = decoded.replace(/^\/+|\/+$/g, "");
   if (seg === "") return { kind: "home", prefill: "" };
   const lower = seg.toLowerCase();
   if (lower === "tv" || lower === "tv-mock") return { kind: "tv" };

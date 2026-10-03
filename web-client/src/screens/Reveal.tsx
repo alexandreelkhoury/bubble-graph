@@ -32,7 +32,7 @@ export function Reveal({ view, me }: { view: PlayerView; me: Me }) {
         {ready ? (
           <p class="waiting waiting--ok" role="status">
             <Icon name="check" size={20} />
-            <span>{t("reveal.waitingOthers")} <span class="num">({t("reveal.readyCount", { ready: readyCount, total: active.length })})</span></span>
+            <span>{t("reveal.waitingOthers")} <span class="tnum">({t("reveal.readyCount", { ready: readyCount, total: active.length })})</span></span>
           </p>
         ) : (
           <Button disabled={!seen} onClick={() => act({ type: "READY" })}>{t("reveal.ready")}</Button>

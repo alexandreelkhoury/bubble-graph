@@ -45,6 +45,9 @@ sealed interface TvUiState {
 sealed interface TvEvent {
     /** A 4010 in an empty lobby silently re-created the room (TV-13e): toast `tv.newCode`. */
     data class NewCode(val code: String) : TvEvent
+
+    /** Every server `error` once, even when it repeats an identical earlier one (lastError would not change). */
+    class ServerError(val error: ErrorMsg) : TvEvent
 }
 
 /** Everything platform-specific the ViewModel needs; tests pass fakes. */
@@ -148,7 +151,10 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 val offset = clockOffset.add(msg.serverNow, deps.clock())
                 _ui.update { s -> if (s is TvUiState.InRoom) s.copy(view = msg.view, clockOffsetMs = offset) else s }
             }
-            is ErrorMsg -> _ui.update { s -> if (s is TvUiState.InRoom) s.copy(lastError = msg) else s }
+            is ErrorMsg -> {
+                _ui.update { s -> if (s is TvUiState.InRoom) s.copy(lastError = msg) else s }
+                if (_ui.value is TvUiState.InRoom) _events.tryEmit(TvEvent.ServerError(msg))
+            }
             else -> Unit // welcome/pong are not for the TV
         }
     }

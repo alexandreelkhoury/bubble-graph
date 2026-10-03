@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,13 +59,15 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.mishana.tv.Constants
 import app.mishana.tv.R
 import app.mishana.tv.game.Names
 import app.mishana.tv.i18n.LocaleController
-import app.mishana.tv.i18n.ltr
+import app.mishana.tv.i18n.isolate
 import app.mishana.tv.net.ServerUrls
 import app.mishana.tv.protocol.ClientIntent
 import app.mishana.tv.protocol.Kick
@@ -81,7 +84,9 @@ import app.mishana.tv.ui.components.MishIcons
 import app.mishana.tv.ui.components.OverlayCard
 import app.mishana.tv.ui.components.PlayerTile
 import app.mishana.tv.ui.components.QrCode
+import app.mishana.tv.ui.components.ToastHost
 import app.mishana.tv.ui.components.ToastState
+import app.mishana.tv.ui.components.FitText
 import app.mishana.tv.ui.components.Wordmark
 import app.mishana.tv.ui.components.WordmarkVariant
 import app.mishana.tv.ui.components.focusFallback
@@ -90,6 +95,7 @@ import app.mishana.tv.ui.theme.LocalIsArabic
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishMotion
 import app.mishana.tv.ui.theme.MishTheme
+import app.mishana.tv.ui.theme.mishTypeScale
 import kotlinx.coroutines.launch
 
 /** Which settings category to open (Start on an invalid config jumps to the offending one). */
@@ -113,6 +119,8 @@ fun LobbyScreen(
     val startFocus = remember { FocusRequester() }
     val settingsFocus = remember { FocusRequester() }
     val gridFocus = remember { FocusRequester() }
+    val languageFocus = remember { FocusRequester() }
+    val tileFocus = remember { mutableMapOf<String, FocusRequester>() }
     val scope = rememberCoroutineScope()
     val shake = remember { Animatable(0f) }
     val density = LocalDensity.current
@@ -123,20 +131,32 @@ fun LobbyScreen(
     val defaultFocus = if (view.canStart || view.startBlocker == "NOT_ENOUGH_PLAYERS") startFocus else settingsFocus
 
     JoinLeaveToasts(players, toasts)
+    // The lobby shows its toasts in its own zone (end column, above the bottom bar), never over the code or QR.
+    DisposableEffect(toasts) {
+        toasts.screenHosts++
+        onDispose { toasts.screenHosts-- }
+    }
+
+    // Where focus goes back to when the kick dialog / language list (or a connection overlay) closes (DESIGN §7).
+    var restoreTarget by remember { mutableStateOf<(() -> FocusRequester?)?>(null) }
 
     val blocked = kickTarget != null || languageOpen
     CompositionLocalProvider(LocalFocusBlocked provides (LocalFocusBlocked.current || blocked)) {
     Row(Modifier.fillMaxSize().focusFallback(defaultFocus)) {
         // ---- start side: QR, code, host line (never focusable) ----
-        Column(Modifier.width(264.dp).fillMaxHeight()) {
+        // Height budget (486 dp): 47 wordmark + 6 + caption + 6 + 240 QR + 6 + 72 code + 2 = ~405, the host block
+        // takes the rest (Arabic: 26 + 28 + 26). The code and host shrink to fit the 264 dp width instead of wrapping.
+        Column(Modifier.width(LobbyMetrics.START_COLUMN_DP.dp).fillMaxHeight()) {
             Wordmark(160.dp, variant = WordmarkVariant.Latin)
-            Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(6.dp))
             Text(
                 stringResource(R.string.lobby__scan_to_join),
                 style = type.caption.copy(letterSpacing = if (LocalIsArabic.current) 0.sp else 0.08.em),
                 color = MishColors.TextSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(6.dp))
             AnimatedContent(
                 targetState = full,
                 transitionSpec = { fadeIn(tween(MishMotion.Slow)) togetherWith fadeOut(tween(MishMotion.Slow)) },
@@ -153,19 +173,14 @@ fun LobbyScreen(
                     }
                 }
             }
-            Spacer(Modifier.height(10.dp))
-            RoomCodeText(view.roomCode, dim = full)
             Spacer(Modifier.height(6.dp))
-            Text(
-                stringResource(R.string.lobby__or_visit, ltr(ServerUrls.displayHost(view.joinUrl))),
-                style = type.body,
-                color = MishColors.TextSecondary,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+            RoomCodeText(view.roomCode, dim = full, modifier = Modifier.fillMaxWidth())
+            Spacer(Modifier.height(2.dp))
+            JoinHostBlock(view.joinUrl, Modifier.fillMaxWidth().weight(1f))
         }
         Spacer(Modifier.width(58.dp))
-        // ---- end side: summary, grid, bottom bar ----
+        // ---- end side: summary, grid, bottom bar (+ the lobby toast zone) ----
+        Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize()) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
                 Column(Modifier.weight(1f)) {
@@ -190,8 +205,15 @@ fun LobbyScreen(
             PlayerGrid(
                 players = players,
                 modifier = Modifier.focusRestorer(gridFocus),
-                firstFocus = gridFocus,
-                onKick = { kickTarget = it },
+                entryFocus = gridFocus,
+                tileFocus = tileFocus,
+                onKick = { p ->
+                    restoreTarget = {
+                        // The kicked tile if it is still there (Cancel), else the grid's last row, else Start.
+                        tileFocus[p.id] ?: if (tileFocus.isNotEmpty()) gridFocus else null
+                    }
+                    kickTarget = p
+                },
             )
             Spacer(Modifier.weight(1f))
             Row(
@@ -207,7 +229,11 @@ fun LobbyScreen(
                 )
                 MishButton(
                     stringResource(langNameRes(uiLanguage())),
-                    { languageOpen = true },
+                    {
+                        restoreTarget = { languageFocus }
+                        languageOpen = true
+                    },
+                    Modifier.focusRequester(languageFocus),
                     icon = MishIcons.Globe,
                 )
                 MishButton(
@@ -233,13 +259,21 @@ fun LobbyScreen(
                 )
             }
         }
+        // SPEC-GAP: DESIGN TV-02 puts the toast zone "bottom start, above the host line", which covers the room code
+        // while people are joining. The lobby toasts sit in the end column above the bottom bar instead.
+        ToastHost(
+            toasts,
+            Modifier.align(Alignment.BottomStart).padding(bottom = 64.dp),
+            maxWidth = 520.dp,
+        )
+        }
     }
-    InitialFocus(defaultFocus)
+    InitialFocus(defaultFocus, restore = { restoreTarget?.invoke() })
     }
 
     kickTarget?.let { target ->
         MishDialog(
-            title = stringResource(R.string.lobby__kick_confirm, target.name),
+            title = stringResource(R.string.lobby__kick_confirm, isolate(Names.ellipsize(target.name, 20))),
             body = stringResource(R.string.lobby__kick_body),
             safeLabel = stringResource(R.string.common__cancel),
             actionLabel = stringResource(R.string.lobby__kick),
@@ -255,17 +289,61 @@ fun LobbyScreen(
     }
 }
 
-/** The room code: always LTR, accent, 72 sp, letters tracked (DESIGN TV-02 / §3.5). */
+/**
+ * The room code: always LTR, accent, tracked letters (DESIGN TV-02 / §3.5). 72 dp at most, stepping down so the
+ * widest code (WWWW ≈ 4.42 em with the tracking) still fits 264 dp in one line — never wrapped, clipped or ellipsized.
+ * Display art: the size is in dp, so the system font scale does not change it.
+ */
 @Composable
 fun RoomCodeText(code: String, dim: Boolean = false, modifier: Modifier = Modifier) {
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Text(
-            text = code.toCharArray().joinToString(" "),
-            style = MishTheme.type.code.copy(fontSize = 72.sp, lineHeight = 80.sp),
+        FitText(
+            text = code,
+            style = MishTheme.type.code.copy(letterSpacing = LobbyMetrics.CODE_TRACKING_EM.em, lineHeight = 1.0.em),
             color = if (dim) MishColors.TextMuted else MishColors.Accent,
-            modifier = modifier,
-            maxLines = 1,
+            maxSize = LobbyMetrics.CODE_MAX_DP.dp,
+            minSize = LobbyMetrics.CODE_MIN_DP.dp,
+            modifier = modifier.semantics { contentDescription = code.toCharArray().joinToString(" ") },
+            textAlign = if (rtl) TextAlign.End else TextAlign.Start,
         )
+    }
+}
+
+/** Marker substituted for `{url}` in `lobby.orVisit`, to split the sentence around the host line. */
+private const val URL_MARK = "%URL%"
+
+/**
+ * "or open / mish-ana.example.workers.dev / and enter the code" (`lobby.orVisit`): the host gets its own LTR line
+ * that shrinks (20 → 13 dp) instead of breaking at a hyphen or ellipsizing — people type it by hand. The words
+ * around it are caption lines; the host is measured first so it always shows.
+ */
+@Composable
+private fun JoinHostBlock(joinUrl: String, modifier: Modifier) {
+    val type = MishTheme.type
+    val sentence = stringResource(R.string.lobby__or_visit, URL_MARK)
+    val before = sentence.substringBefore(URL_MARK).trim()
+    val after = sentence.substringAfter(URL_MARK, "").trim()
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val latinBody = remember { mishTypeScale(arabic = false).body.copy(lineHeight = 1.4.em) }
+    Column(modifier) {
+        if (before.isNotEmpty()) {
+            Text(before, style = type.caption, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+        }
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+            FitText(
+                text = ServerUrls.displayHost(joinUrl),
+                style = latinBody,
+                color = MishColors.Text,
+                maxSize = LobbyMetrics.HOST_MAX_DP.dp,
+                minSize = LobbyMetrics.HOST_MIN_DP.dp,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = if (rtl) TextAlign.End else TextAlign.Start,
+            )
+        }
+        if (after.isNotEmpty()) {
+            Text(after, style = type.caption, color = MishColors.TextSecondary, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+        }
     }
 }
 
@@ -355,9 +433,13 @@ private fun SettingsSummary(view: TvView) {
 private fun PlayerGrid(
     players: List<PublicPlayer>,
     modifier: Modifier,
-    firstFocus: FocusRequester,
+    entryFocus: FocusRequester,
+    tileFocus: MutableMap<String, FocusRequester>,
     onKick: (PublicPlayer) -> Unit,
 ) {
+    // Up from the bottom bar enters the LAST occupied row (DESIGN TV-02): the restorer's fallback is its first tile.
+    val entryIndex = if (players.isEmpty()) 0 else ((players.size - 1) / 4) * 4
+    tileFocus.keys.retainAll(players.map { it.id }.toSet()) // a kicked/left player's requester is dropped
     val known = remember { mutableStateOf(players.map { it.id }.toSet()) }
     val slots = Constants.MAX_PLAYERS
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -373,7 +455,9 @@ private fun PlayerGrid(
                                 player = p,
                                 animate = isNew,
                                 onShown = { known.value = known.value + p.id },
-                                modifier = if (i == 0) Modifier.focusRequester(firstFocus) else Modifier,
+                                modifier = Modifier
+                                    .focusRequester(tileFocus.getOrPut(p.id) { FocusRequester() })
+                                    .then(if (i == entryIndex) Modifier.focusRequester(entryFocus) else Modifier),
                                 onClick = { onKick(p) },
                             )
                         }
@@ -480,8 +564,8 @@ private fun JoinLeaveToasts(players: List<PublicPlayer>, toasts: ToastState) {
         val before = prev.value
         val now = players.associateBy { it.id }
         if (before != null) {
-            for ((id, p) in now) if (id !in before) toasts.show(joinedFmt.replace("%NAME%", app.mishana.tv.i18n.isolate(p.name)), MishColors.Success)
-            for ((id, p) in before) if (id !in now) toasts.show(leftFmt.replace("%NAME%", app.mishana.tv.i18n.isolate(p.name)), MishColors.TextMuted)
+            for ((id, p) in now) if (id !in before) toasts.show(joinedFmt.replace("%NAME%", isolate(p.name)), MishColors.Success)
+            for ((id, p) in before) if (id !in now) toasts.show(leftFmt.replace("%NAME%", isolate(p.name)), MishColors.TextMuted)
         }
         prev.value = now
     }

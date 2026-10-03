@@ -96,6 +96,13 @@ export interface RoomCoreDeps {
 export interface ConnectInfo { url: string; ip: string | null }
 
 export const CID_REGEX = /^[A-Za-z0-9-]{8,64}$/;
+/**
+ * SPEC-GAP (§7.5 caps): spectator sockets (hello'd as player, not joined) do not count toward
+ * MAX_CONNECTIONS_PER_ROOM, so they can never lock out the TV or a resume-token reconnect. They have their own
+ * per-room cap instead, sized for a whole party of phones sitting on the join screen at once. No per-IP cap:
+ * phones at one party usually share a public IP.
+ */
+export const MAX_SPECTATORS_PER_ROOM = 16;
 export const ACTIVITY_WRITE_INTERVAL_MS = 60_000;
 /** Lower bound between alarm runs, so an alarm that finds nothing due can never spin. */
 export const MIN_ALARM_GAP_MS = 250;
@@ -144,6 +151,10 @@ function uint32(bytes: Uint8Array): number {
 
 function isPending(c: ConnHandle): boolean {
   return c.state === null || c.state.role === "pending";
+}
+
+function isSpectator(c: ConnHandle): boolean {
+  return c.state !== null && c.state.role === "player" && c.state.playerId === null;
 }
 
 // ------------------------------------------------------------------ RoomCore
@@ -229,14 +240,18 @@ export class RoomCore {
       this.#closeStalePending(now);
       // Count the new socket explicitly: it is the only open socket without a state yet (entry points are
       // serialised), and the runtime may hand out distinct wrapper objects for the same socket.
-      const others = this.#d.connections.list().filter((c) => c.state !== null);
+      // Spectators are capped separately at hello time (MAX_SPECTATORS_PER_ROOM).
+      const others = this.#d.connections.list().filter((c) => c.state !== null && !isSpectator(c));
       if (others.length + 1 > MAX_CONNECTIONS_PER_ROOM) {
         safeClose(conn, CLOSE_CODES.CAPACITY, "room full");
         return;
       }
-      if (others.filter(isPending).length + 1 > MAX_PENDING_CONNECTIONS) {
-        safeClose(conn, CLOSE_CODES.CAPACITY, "too many pending");
-        return;
+      const pending = others.filter(isPending).sort((a, b) => (a.state?.openedAt ?? 0) - (b.state?.openedAt ?? 0));
+      if (pending.length + 1 > MAX_PENDING_CONNECTIONS) {
+        // SPEC-GAP: §7.5 refuses the new socket. A real client says hello within milliseconds, so the oldest
+        // pending socket is far more likely to be an idle flood than the newcomer: evict it instead.
+        const oldest = pending[0];
+        if (oldest) safeClose(oldest, CLOSE_CODES.CAPACITY, "too many pending");
       }
       let cid: string | null;
       try {
@@ -325,18 +340,25 @@ export class RoomCore {
   async #handleMessage(conn: ConnHandle, raw: string | ArrayBuffer | ArrayBufferView): Promise<void> {
     const st0 = conn.state;
     if (!st0) return; // rejected in onConnect; nothing to do
-    // 1. Binary frames and oversize frames.
-    if (typeof raw !== "string" || new TextEncoder().encode(raw).length > MSG_MAX_BYTES) {
-      safeSend(conn, errorFrame("BAD_MESSAGE"));
-      return;
-    }
     const now = this.#d.clock.now();
+    // SPEC-GAP: §7.5 checks binary/oversize frames (step 1) before the token bucket (step 2), which lets a
+    // flood of bad frames bypass rate limiting. Every frame takes a token first, and every bad frame is
+    // also a strike, so a binary/oversize flood is closed with 4008 either way.
     // 2. Token bucket.
     const taken = takeToken(st0.bucket, now);
     if (!taken.ok) {
       const strikes = addStrike(st0.strikes, now);
       conn.setState({ ...st0, bucket: taken.bucket, strikes });
       safeSend(conn, errorFrame("RATE_LIMITED"));
+      if (strikes.length >= STRIKES_TO_CLOSE) safeClose(conn, CLOSE_CODES.RATE_LIMITED, "rate limited");
+      return;
+    }
+    // 1. Binary frames and oversize frames. UTF-8 length >= UTF-16 length, so `raw.length` alone proves an
+    // oversize frame without encoding it.
+    if (typeof raw !== "string" || raw.length > MSG_MAX_BYTES || new TextEncoder().encode(raw).length > MSG_MAX_BYTES) {
+      const strikes = addStrike(st0.strikes, now);
+      conn.setState({ ...st0, bucket: taken.bucket, strikes });
+      safeSend(conn, errorFrame("BAD_MESSAGE"));
       if (strikes.length >= STRIKES_TO_CLOSE) safeClose(conn, CLOSE_CODES.RATE_LIMITED, "rate limited");
       return;
     }
@@ -380,7 +402,9 @@ export class RoomCore {
       safeSend(conn, errorFrame("BAD_MESSAGE", ref));
       return;
     }
-    await this.#touchActivity(now);
+    // SPEC-GAP: §7.5 touches activity for every schema-valid frame, so a spectator repeating `hello` could
+    // keep a room alive forever. Only real participation counts: a TV hello, a resume, a join or an
+    // accepted action (see the #touchActivity calls below).
     // 6. Dispatch.
     const m: ClientMessage = res.data;
     switch (m.t) {
@@ -408,6 +432,7 @@ export class RoomCore {
     }
     const next: ConnState = { ...st, role: "tv", playerId: null };
     conn.setState(next);
+    await this.#touchActivity(this.#d.clock.now());
     for (const c of this.#d.connections.list()) {
       if (c.state === null || c.state.cid === st.cid || c.state.role !== "tv") continue;
       safeSend(c, errorFrame("REPLACED"));
@@ -420,6 +445,7 @@ export class RoomCore {
   async #helloPlayer(conn: ConnHandle, st: ConnState, m: HelloPlayerMsg): Promise<void> {
     const token = m.resumeToken;
     if (token === undefined) {
+      if (!this.#spectatorSlot(conn, st.cid)) return;
       conn.setState({ ...st, role: "player", playerId: null });
       this.#sendState(conn);
       await this.#reschedule();
@@ -442,12 +468,14 @@ export class RoomCore {
         this.#sessions = rest;
         await this.#d.storage.put(STORAGE_SESSIONS, this.#sessions);
       }
+      if (!this.#spectatorSlot(conn, st.cid)) return;
       conn.setState({ ...st, role: "player", playerId: null });
       this.#sendState(conn);
       await this.#reschedule();
       return;
     }
     conn.setState({ ...st, role: "player", playerId: matchPid });
+    await this.#touchActivity(this.#d.clock.now());
     for (const c of this.#d.connections.list()) {
       if (c.state === null || c.state.cid === st.cid || c.state.playerId !== matchPid) continue;
       safeSend(c, errorFrame("REPLACED"));
@@ -460,6 +488,14 @@ export class RoomCore {
     if (changed) this.#broadcast();
     else this.#sendState(conn);
     await this.#reschedule();
+  }
+
+  /** False (after closing `conn` with 4009) when the room already holds MAX_SPECTATORS_PER_ROOM spectators. */
+  #spectatorSlot(conn: ConnHandle, cid: string): boolean {
+    const n = this.#d.connections.list().filter((c) => isSpectator(c) && c.state?.cid !== cid).length;
+    if (n < MAX_SPECTATORS_PER_ROOM) return true;
+    safeClose(conn, CLOSE_CODES.CAPACITY, "too many spectators");
+    return false;
   }
 
   async #join(conn: ConnHandle, st: ConnState, m: JoinMsg, now: number): Promise<void> {
@@ -493,6 +529,7 @@ export class RoomCore {
     }
     this.#sessions = { ...this.#sessions, [playerId]: { tokenHash, kicked: false } };
     conn.setState({ ...st, playerId });
+    await this.#touchActivity(now);
     await this.#persist(r.state);
     safeSend(conn, JSON.stringify({ v: 1, t: "welcome", playerId, resumeToken, roomCode: this.#d.roomCode }));
     this.#broadcast();
@@ -516,6 +553,7 @@ export class RoomCore {
       safeSend(conn, errorFrame(r.error, ref));
       return;
     }
+    await this.#touchActivity(this.#d.clock.now());
     if (r.state === state) return;
     const a = m.a;
     if (a.type === "KICK") {

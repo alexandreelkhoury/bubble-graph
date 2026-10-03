@@ -552,6 +552,24 @@ describe("ELIMINATION and next round", () => {
 });
 
 describe("MR_WHITE_GUESS", () => {
+  it("SPEC-GAP: a Blank who LEFT during ELIMINATION times out at once (no dead GUESS window)", () => {
+    for (const how of ["LEAVE", "KICK"] as const) {
+      const seed = findSeed(5, undefined, (x) => x.byRole("BLANK")[0] !== VIP);
+      const g = lobby(5, undefined, seed);
+      g.tv({ type: "START" });
+      g.readyAll();
+      g.speakAll();
+      const blank = g.byRole("BLANK")[0] as string;
+      g.voteOut(blank);
+      expect(g.state.phase).toBe("ELIMINATION");
+      if (how === "LEAVE") g.p(blank, { type: "LEAVE" });
+      else g.tv({ type: "KICK", playerId: blank });
+      g.expire();
+      expect(g.state.phase).toBe("MR_WHITE_GUESS");
+      expect(g.state.guess?.status).toBe("TIMEOUT");
+      expect(g.state.deadline).toMatchObject({ kind: "VERDICT", durationMs: VERDICT_HOLD_MS });
+    }
+  });
   it("SUBMIT_GUESS: wrong → WRONG + VERDICT; only the guesser; trimmed 1..40; text hidden", () => {
     const { g, blank } = inGuess();
     expect(g.state.deadline).toMatchObject({ kind: "GUESS", durationMs: 45_000 });

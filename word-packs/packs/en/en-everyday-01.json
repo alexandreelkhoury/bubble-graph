@@ -44,7 +44,10 @@
         "text": "Beach"
       },
       "undercover": {
-        "text": "Pool"
+        "text": "Pool",
+        "alt": [
+          "Swimming pool"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -55,7 +58,10 @@
         "text": "Pizza"
       },
       "undercover": {
-        "text": "Burger"
+        "text": "Burger",
+        "alt": [
+          "Hamburger"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -77,7 +83,10 @@
         "text": "Guitar"
       },
       "undercover": {
-        "text": "Violin"
+        "text": "Violin",
+        "alt": [
+          "Fiddle"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -85,7 +94,10 @@
     {
       "id": "p007",
       "civilian": {
-        "text": "Doctor"
+        "text": "Doctor",
+        "alt": [
+          "Physician"
+        ]
       },
       "undercover": {
         "text": "Nurse"
@@ -154,7 +166,11 @@
         "text": "Shower"
       },
       "undercover": {
-        "text": "Bath"
+        "text": "Bath",
+        "alt": [
+          "Bathtub",
+          "Tub"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -176,7 +192,11 @@
         "text": "Chess"
       },
       "undercover": {
-        "text": "Checkers"
+        "text": "Checkers",
+        "alt": [
+          "Draughts",
+          "Checker"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -187,7 +207,10 @@
         "text": "Library"
       },
       "undercover": {
-        "text": "Bookshop"
+        "text": "Bookshop",
+        "alt": [
+          "Bookstore"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": []
@@ -220,7 +243,11 @@
         "text": "Airport"
       },
       "undercover": {
-        "text": "Train station"
+        "text": "Train station",
+        "alt": [
+          "Station",
+          "Railway station"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -239,7 +266,11 @@
     {
       "id": "p021",
       "civilian": {
-        "text": "Sofa"
+        "text": "Sofa",
+        "alt": [
+          "Couch",
+          "Settee"
+        ]
       },
       "undercover": {
         "text": "Armchair"
@@ -253,7 +284,10 @@
         "text": "Honey"
       },
       "undercover": {
-        "text": "Jam"
+        "text": "Jam",
+        "alt": [
+          "Jelly"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []

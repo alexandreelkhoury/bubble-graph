@@ -69,15 +69,15 @@ export function Results({ view, me }: { view: PlayerView; me: Me | null }) {
               const pts = r.pointsAwarded[p.id] ?? 0;
               return (
                 <li key={p.id} class={`sb__row${p.id === myId ? " is-you" : ""}${i === 0 ? " is-first" : ""}`} style={{ "--i": i }}>
-                  <span class="sb__rank num">{i === 0 ? <Icon name="trophy" size={18} /> : fmtNum(i + 1)}</span>
+                  <span class="sb__rank">{i === 0 ? <Icon name="trophy" size={18} /> : <bdi class="num">{fmtNum(i + 1)}</bdi>}</span>
                   <Avatar color={p.color} size={32} state={p.left ? "left" : avatarState({ ...p, alive: true })} />
                   <span class="sb__who">
                     <bdi class="sb__name">{p.name}</bdi>
                     {p.revealedRole && <span class={`sb__role sb__role--${p.revealedRole.toLowerCase()}`}><RoleEmblem role={p.revealedRole} size={16} /></span>}
                     {p.id === myId && <span class="tag">{t("common.you")}</span>}
                   </span>
-                  <span class={`sb__pts num${pts > 0 ? " is-pos" : ""}`}>{pts > 0 ? t("results.pointsEarned", { count: pts }) : "0"}</span>
-                  <span class="sb__total num">{fmtNum(p.score)}</span>
+                  <span class={`sb__pts${pts > 0 ? " is-pos" : ""}`}><bdi class="num">{pts > 0 ? t("results.pointsEarned", { count: pts }) : fmtNum(0)}</bdi></span>
+                  <span class="sb__total"><bdi class="num">{fmtNum(p.score)}</bdi></span>
                 </li>
               );
             })}

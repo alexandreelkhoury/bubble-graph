@@ -33,6 +33,7 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import app.mishana.tv.R
 import app.mishana.tv.game.Names
+import app.mishana.tv.i18n.isolate
 import app.mishana.tv.protocol.PublicPlayer
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishTheme
@@ -83,7 +84,7 @@ fun PauseMenu(
             val target = kickTarget
             if (target != null) {
                 MishDialog(
-                    title = stringResource(R.string.lobby__kick_confirm, target.name),
+                    title = stringResource(R.string.lobby__kick_confirm, isolate(Names.ellipsize(target.name, 20))),
                     body = null,
                     safeLabel = stringResource(R.string.common__cancel),
                     actionLabel = stringResource(R.string.lobby__kick),

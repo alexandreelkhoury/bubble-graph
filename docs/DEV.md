@@ -119,13 +119,15 @@ The room comes back in the same phase with the same words. On the first connecti
 - `server/src/index.ts`: the Worker. In order:
   1. `GET /healthz`;
   2. `POST /api/rooms`, and 405 for any other request under `/api/*`;
-  3. WebSocket upgrades to `/parties/room/{CODE}`: the Worker checks the code regex and the per-IP `CONNECT_LIMITER`, then routes through partyserver, which runs the Origin check in `onBeforeConnect`.
+  3. WebSocket upgrades to `/parties/room/{CODE}`: the Worker checks the code regex, returns 400 unless `_pk` matches `^[A-Za-z0-9_-]{1,64}$` and `cid` matches `^[A-Za-z0-9-]{8,64}$`, applies the per-IP `CONNECT_LIMITER`, then routes through partyserver, which runs the Origin check in `onBeforeConnect`.
 
   Everything else is served by the static-assets layer, with SPA fallback.
 - `server/src/http.ts`: room creation. It draws a code by rejection sampling, hashes the TV token, calls `initRoom` over native RPC (retrying up to 10 codes on collision) and returns 201 with `no-store`.
 - `server/src/room.ts`: a thin partyserver `Server` (`hibernate: true`). It sets the ping/pong auto-response and forwards every entry point to `RoomCore`.
 - `server/src/room-core.ts`: all behaviour. Every entry point runs through one FIFO mutex. Each change goes read → reduce → persist (`meta`, `state` and `sessions` in DO storage) → broadcast per-connection projections → reschedule the alarm (the minimum of the engine wake time, the room expiry and the hello deadline).
 - Per-socket data lives in the hibernation-safe attachment: role, playerId, `cid`, a truncated IP hash, epoch and rate-limit bucket. Resume and TV tokens are stored only as SHA-256 hashes and compared in constant time.
+- Connection caps: at most `MAX_CONNECTIONS_PER_ROOM` (40) non-spectator sockets (pending, TV, joined players) and, separately, `MAX_SPECTATORS_PER_ROOM` (16) spectators (said hello as a player but have not joined). A spectator flood therefore cannot lock out the TV or a resume-token reconnect. When `MAX_PENDING_CONNECTIONS` is reached, a new socket evicts the oldest pending one (4009). Every inbound frame takes a rate-limit token; binary and oversize frames also count as strikes (three in 10 s → 4008). Room activity (idle TTL) is refreshed only by a TV hello, a resume, a join or an accepted action.
+- Known local-dev effect: on `wrangler dev`, a close sent from inside `onConnect` (4004 room not found, 4009 room full) reaches the client about 10 s late, because it is issued before partyserver returns the 101. Closes sent from `onMessage` arrive at once. Bad `_pk` and `cid` values are rejected with 400 before the upgrade, so they are not affected. This has not been checked against a deployed Worker; check it before shipping.
 - Server code never logs message bodies, state, words, guesses, tokens, names or IPs. The catch-all logs `{code, phase, roomCode}` only.
 
 ## Deploy (Cloudflare)

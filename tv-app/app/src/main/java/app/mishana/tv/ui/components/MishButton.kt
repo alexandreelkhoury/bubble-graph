@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -77,6 +79,7 @@ fun MishButton(
     dimmed: Boolean = false,
     minWidth: Dp = 0.dp,
     onLongClick: (() -> Unit)? = null,
+    reserveText: String? = null,
 ) {
     val interaction = remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
@@ -123,13 +126,27 @@ fun MishButton(
                 Icon(icon, contentDescription = null, modifier = Modifier.size(24.dp))
                 Spacer(Modifier.width(10.dp))
             }
-            Text(
-                text = text,
-                style = MishTheme.type.label,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-            )
+            // [reserveText]: an invisible second label that reserves the size of the longer one, so a label swap
+            // (e.g. the action pill arming to `tv.pressAgain`) never resizes the button or reflows its row.
+            Box(contentAlignment = Alignment.Center) {
+                if (reserveText != null) {
+                    Text(
+                        text = reserveText,
+                        style = MishTheme.type.label,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.alpha(0f).clearAndSetSemantics { },
+                    )
+                }
+                Text(
+                    text = text,
+                    style = MishTheme.type.label,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }

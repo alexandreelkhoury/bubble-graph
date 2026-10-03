@@ -11,7 +11,14 @@ const CASES: [number, number, string][] = [
 
 describe("golden seeded games", () => {
   it.each(CASES)("n=%i seed=%i %s", { timeout: 120_000 }, (n, seed, winRule) => {
-    const out = playGame(TEST_CATALOG, { players: n, seed, settings: { winRule: winRule as "official" | "parity" } });
+    const out = playGame(TEST_CATALOG, {
+      players: n,
+      seed,
+      // Pinned to the original driver mix so the snapshots stay a pure engine regression check.
+      leaveRate: 0,
+      vipRate: 0,
+      settings: { winRule: winRule as "official" | "parity" },
+    });
     expect(out.failure).toBeNull();
     expect({
       final: out.final,

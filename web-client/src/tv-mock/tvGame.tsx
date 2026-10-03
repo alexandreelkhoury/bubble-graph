@@ -31,7 +31,7 @@ export function TvRoleReveal({ view }: { view: TvView }) {
         </div>
       </div>
       <div class="tvbottom">
-        <span class="tvbottom__center num">{t("reveal.readyCount", { ready, total: active.length })}</span>
+        <span class="tvbottom__center tnum">{t("reveal.readyCount", { ready, total: active.length })}</span>
         <TimerChip deadline={view.deadline} />
         <ActionPill label={t("tv.startNow")} pillRef={pill} />
       </div>
@@ -146,7 +146,7 @@ export function TvVoting({ view }: { view: TvView }) {
       </div>
       <div class="tvbottom tvbottom--vote">
         <div class="tvvote__timer"><TvTimerBar deadline={view.deadline} /></div>
-        <span class="tvvote__progress num" key={pulse}>{d && d.secs <= 10 && d.secs > 0 ? <span class="tv-danger">{t("vote.tenLeft")}</span> : t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</span>
+        <span class="tvvote__progress tnum" key={pulse}>{d && d.secs <= 10 && d.secs > 0 ? <span class="tv-danger">{t("vote.tenLeft")}</span> : t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</span>
         <ActionPill label={t("vote.close")} pillRef={pill} />
       </div>
     </div>

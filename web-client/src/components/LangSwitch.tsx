@@ -23,9 +23,9 @@ export function LangSwitch() {
   return (
     <div class="langlist" role="radiogroup" aria-label={t("common.language")}>
       {LOCALES.map((l) => (
-        <button key={l} type="button" role="radio" aria-checked={cur === l} class={`radiorow${cur === l ? " is-selected" : ""}`} onClick={() => switchLocale(l)} lang={l} dir={l === "ar" ? "rtl" : "ltr"}>
+        <button key={l} type="button" role="radio" aria-checked={cur === l} class={`radiorow${cur === l ? " is-selected" : ""}`} onClick={() => switchLocale(l)}>
           <span class="radiorow__dot" aria-hidden="true" />
-          <span>{NATIVE[l]}</span>
+          <span class="radiorow__label"><bdi lang={l} dir={l === "ar" ? "rtl" : "ltr"}>{NATIVE[l]}</bdi></span>
           {cur === l && <Icon name="check" size={20} class="radiorow__check" />}
         </button>
       ))}

@@ -55,7 +55,10 @@
         "text": "Pizza"
       },
       "undercover": {
-        "text": "Burger"
+        "text": "Burger",
+        "alt": [
+          "Hamburger"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -66,7 +69,10 @@
         "text": "Train"
       },
       "undercover": {
-        "text": "Bus"
+        "text": "Bus",
+        "alt": [
+          "Autobus"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -85,10 +91,16 @@
     {
       "id": "p007",
       "civilian": {
-        "text": "Médecin"
+        "text": "Médecin",
+        "alt": [
+          "Docteur"
+        ]
       },
       "undercover": {
-        "text": "Infirmier"
+        "text": "Infirmier",
+        "alt": [
+          "Infirmière"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -129,10 +141,16 @@
     {
       "id": "p011",
       "civilian": {
-        "text": "Mariage"
+        "text": "Mariage",
+        "alt": [
+          "Noces"
+        ]
       },
       "undercover": {
-        "text": "Anniversaire"
+        "text": "Anniversaire",
+        "alt": [
+          "Anniv"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -154,7 +172,10 @@
         "text": "Douche"
       },
       "undercover": {
-        "text": "Baignoire"
+        "text": "Baignoire",
+        "alt": [
+          "Bain"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -173,10 +194,18 @@
     {
       "id": "p015",
       "civilian": {
-        "text": "Échecs"
+        "text": "Échecs",
+        "alt": [
+          "Échec",
+          "Jeu d’échecs"
+        ]
       },
       "undercover": {
-        "text": "Dames"
+        "text": "Dames",
+        "alt": [
+          "Dame",
+          "Jeu de dames"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -198,7 +227,10 @@
         "text": "Citron"
       },
       "undercover": {
-        "text": "Citron vert"
+        "text": "Citron vert",
+        "alt": [
+          "Lime"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []
@@ -209,7 +241,10 @@
         "text": "Fourchette"
       },
       "undercover": {
-        "text": "Cuillère"
+        "text": "Cuillère",
+        "alt": [
+          "Cuiller"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -239,7 +274,11 @@
     {
       "id": "p021",
       "civilian": {
-        "text": "Canapé"
+        "text": "Canapé",
+        "alt": [
+          "Sofa",
+          "Divan"
+        ]
       },
       "undercover": {
         "text": "Fauteuil"
@@ -264,7 +303,10 @@
         "text": "Croissant"
       },
       "undercover": {
-        "text": "Pain au chocolat"
+        "text": "Pain au chocolat",
+        "alt": [
+          "Chocolatine"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []

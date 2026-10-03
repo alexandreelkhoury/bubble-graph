@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
+import app.mishana.tv.ui.components.fullBleed
 import app.mishana.tv.R
 import app.mishana.tv.game.Names
 import app.mishana.tv.i18n.isolate
@@ -185,7 +186,7 @@ fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
                     Confetti(seed = view.round)
                 }
                 if (flash.value > 0f) {
-                    Box(Modifier.fillMaxSize().background(Color.White.copy(alpha = flash.value)))
+                    Box(Modifier.fillMaxSize().fullBleed().background(Color.White.copy(alpha = flash.value)))
                 }
             }
         }

@@ -1,6 +1,6 @@
 // TV-mock state: room creation, the TV socket (hello tv), the TvView and local UI (pause, dialogs, settings).
 import { signal } from "@preact/signals";
-import type { ClientIntentMsg, CreateRoomResponseBody, ErrorCode, TvView } from "@mishana/shared/protocol";
+import type { ClientIntentMsg, CreateRoomResponseBody, ErrorCode, ErrorMsg, TvView } from "@mishana/shared/protocol";
 import { Connection, partySocketFactory } from "../net/connection";
 import type { ConnStatus } from "../net/connection";
 import { createRoom } from "../net/api";
@@ -20,6 +20,8 @@ export const tvConn = signal<ConnStatus>("connecting");
 export const tvPaused = signal(false);
 export const tvScreen = signal<"main" | "settings">("main");
 export const tvLastError = signal<ErrorCode | null>(null);
+/** The last error frame (its `ref` ties it to an action id). */
+export const tvLastErrorMsg = signal<ErrorMsg | null>(null);
 /** Seconds the TV socket has been down (for TV-13a/13b). */
 export const tvDownSince = signal<number | null>(null);
 
@@ -29,7 +31,12 @@ const FATAL_KEY: Record<number, MessageKey> = {
 };
 
 export function tvSend(a: ClientIntentMsg): boolean {
-  return conn?.action(a) != null;
+  return tvAct(a) !== null;
+}
+
+/** Sends an action; returns its id (null when the socket is not OPEN). */
+export function tvAct(a: ClientIntentMsg): string | null {
+  return conn?.action(a) ?? null;
 }
 
 export async function tvCreateRoom(): Promise<void> {
@@ -60,6 +67,7 @@ export async function tvCreateRoom(): Promise<void> {
     onWelcome: () => undefined,
     onError: (msg) => {
       tvLastError.value = msg.code;
+      tvLastErrorMsg.value = msg;
       const silent: ErrorCode[] = ["ROOM_EXPIRED", "REPLACED", "TV_AUTH_FAILED", "ROOM_NOT_FOUND", "UNSUPPORTED_VERSION"];
       if (!silent.includes(msg.code)) pushToast(t(msg.messageKey as MessageKey), "error");
     },

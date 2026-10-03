@@ -5,12 +5,12 @@ import { Connection, partySocketFactory } from "../net/connection";
 import type { SocketFactory } from "../net/connection";
 import { clearResume, loadResume, saveColor, saveName, saveResume } from "../lib/storage";
 import { HAPTIC, haptic } from "../lib/haptics";
-import { reacquireWakeLock, requestWakeLock } from "../lib/wakelock";
+import { reacquireWakeLock, releaseWakeLock, requestWakeLock, wantWakeLock } from "../lib/wakelock";
 import { locale, t } from "../i18n/t";
 import { ROLE_KEY } from "../lib/roles";
 import type { MessageKey } from "../i18n/t";
 import {
-  announce, conn, fatalCode, fatalError, inlineError, joinPending, lastError, pushToast, resetClock, resuming,
+  announce, conn, fatalCode, fatalError, inlineError, joinPending, lastError, pushToast, resetClock, resuming, resyncs,
   sampleClock, view,
 } from "./store";
 
@@ -20,6 +20,7 @@ const SILENT: readonly ErrorCode[] = ["RESUME_INVALID", "KICKED", "REPLACED", "R
 
 let current: { code: string; conn: Connection; detach: () => void } | null = null;
 let wasReconnecting = false;
+let awaitingResync = false;
 
 export function sessionCode(): string | null { return current?.code ?? null; }
 
@@ -35,6 +36,7 @@ export function startSession(code: string, factory: SocketFactory = partySocketF
   conn.value = "connecting";
   resetClock();
   wasReconnecting = false;
+  awaitingResync = false;
   const c = new Connection(factory, {
     hello: () => {
       const r = loadResume(code);
@@ -49,23 +51,35 @@ export function startSession(code: string, factory: SocketFactory = partySocketF
       const prev = view.value;
       view.value = next;
       onViewChange(prev, next);
+      if (awaitingResync) {
+        awaitingResync = false;
+        resyncs.value++;
+      }
     },
     onWelcome: (msg) => {
       saveResume(code, msg.playerId, msg.resumeToken);
       joinPending.value = false;
+      // A held seat wants the wake lock, also after a resume (no Join tap); browsers may need a gesture, so the
+      // pointerdown listener below retries on the next tap.
+      wantWakeLock();
+      reacquireWakeLock();
       inlineError.value = null;
     },
     onError: (msg) => handleError(code, msg),
     onStatus: (s) => {
       conn.value = s;
+      // A join frame may be lost with the socket: never leave the CTA stuck on "Joining…".
+      if (s !== "open") joinPending.value = false;
       if (s === "reconnecting") wasReconnecting = true;
       if (s === "open" && wasReconnecting) {
         wasReconnecting = false;
+        awaitingResync = true;
         pushToast(t("conn.back"), "success", 1600);
       }
     },
     onFatal: (closeCode) => {
       fatalCode.value = closeCode;
+      releaseWakeLock();
       if (closeCode === 4006) clearResume(code);
     },
   });
@@ -75,14 +89,17 @@ export function startSession(code: string, factory: SocketFactory = partySocketF
   };
   const onVis = (): void => { if (document.visibilityState === "visible") onWake(); };
   const onShow = (e: PageTransitionEvent): void => { if (e.persisted) onWake(); };
+  const onTap = (): void => { if (view.value?.me) reacquireWakeLock(); };
   document.addEventListener("visibilitychange", onVis);
   window.addEventListener("online", onWake);
   window.addEventListener("pageshow", onShow);
+  window.addEventListener("pointerdown", onTap, { passive: true });
   current = {
     code, conn: c, detach: () => {
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("online", onWake);
       window.removeEventListener("pageshow", onShow);
+      window.removeEventListener("pointerdown", onTap);
     },
   };
 }
@@ -92,6 +109,7 @@ export function stopSession(): void {
   current.detach();
   current.conn.destroy();
   current = null;
+  releaseWakeLock();
 }
 
 function handleError(code: string, msg: ErrorMsg): void {
@@ -116,8 +134,12 @@ function handleError(code: string, msg: ErrorMsg): void {
 
 /** Sends an action; a tap while not OPEN does nothing (the banner explains). */
 export function act(a: ClientIntentMsg): boolean {
-  if (!current) return false;
-  return current.conn.action(a) !== null;
+  return actId(a) !== null;
+}
+
+/** Like act(), but returns the action id (matched by an error's `ref`), or null when nothing was sent. */
+export function actId(a: ClientIntentMsg): string | null {
+  return current?.conn.action(a) ?? null;
 }
 
 export function join(name: string, color: ColorId): boolean {

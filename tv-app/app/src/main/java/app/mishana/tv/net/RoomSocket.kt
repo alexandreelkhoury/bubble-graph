@@ -85,6 +85,9 @@ class RoomSocket(
     private var reconnectJob: Job? = null
     private var resetJob: Job? = null
 
+    /** The socket the running heartbeat belongs to; a timeout only acts on that socket while it is still current. */
+    private var heartbeatSocket: WebSocket? = null
+
     private val _state = MutableStateFlow<ConnState>(ConnState.CONNECTING)
     override val state: StateFlow<ConnState> = _state.asStateFlow()
 
@@ -138,7 +141,7 @@ class RoomSocket(
             resetJob = null
             ws = current
             current = null
-            heartbeat.stop()
+            stopHeartbeatLocked()
         }
         ws?.close(1000, null)
     }
@@ -152,6 +155,11 @@ class RoomSocket(
         // Request.Builder.url(String) canonicalises ws:// → http:// (do not use HttpUrl for ws URLs).
         val request = Request.Builder().url(url).build()
         current = webSocketFactory(request, Listener())
+    }
+
+    private fun stopHeartbeatLocked() {
+        heartbeatSocket = null
+        heartbeat.stop()
     }
 
     private fun isCurrent(ws: WebSocket): Boolean = synchronized(lock) { ws === current }
@@ -187,7 +195,7 @@ class RoomSocket(
                 in Constants.SLOW_RECONNECT_CLOSE_CODES -> scheduleReconnectLocked(slowReconnectMs)
                 else -> scheduleReconnectLocked()
             }
-            heartbeat.stop()
+            stopHeartbeatLocked()
         }
     }
 
@@ -198,7 +206,7 @@ class RoomSocket(
             resetJob?.cancel()
             resetJob = null
             scheduleReconnectLocked()
-            heartbeat.stop()
+            stopHeartbeatLocked()
         }
     }
 
@@ -206,11 +214,12 @@ class RoomSocket(
         val ws: WebSocket?
         synchronized(lock) {
             ws = current ?: return
+            if (ws !== heartbeatSocket) return // a stale watchdog from an older socket: never cancel a newer one
             current = null
             resetJob?.cancel()
             resetJob = null
             scheduleReconnectLocked()
-            heartbeat.stop()
+            stopHeartbeatLocked()
         }
         ws?.cancel()
     }
@@ -227,9 +236,12 @@ class RoomSocket(
                     delay(attemptResetMs)
                     synchronized(lock) { if (webSocket === current) _attempt.value = 0 }
                 }
+                // Started under the lock, after the current-socket check: a concurrent disconnect()/timeout can no
+                // longer stop() first and then have this start() revive a ping loop for a dead socket.
+                heartbeatSocket = webSocket
+                heartbeat.start()
             }
             webSocket.send(ProtocolJson.encodeClient(HelloTv(tvToken = token)))
-            heartbeat.start()
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {

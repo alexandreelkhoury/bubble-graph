@@ -87,6 +87,10 @@ export function convert(text: string, order: readonly string[], where = "?"): st
     out += escapeLiteral(literal);
     const n = order.indexOf(name);
     if (n < 0) throw new GenError(`${where}: placeholder {${name}} is not in the EN string`);
+    // SPEC-GAP: §11.3 rule 2 maps {count} to `%N$d`. java.util.Formatter renders %d with the locale's zero digit,
+    // and CLDR's default numbering system for `ar`/`ar-LB` is `arab`, so values-ar would show Arabic-Indic digits
+    // (٣) against DESIGN.md (Western digits in every locale). Kept per SPEC; the TV app (C) must format resources
+    // through a configuration context whose locale is `ar-LB-u-nu-latn` (plural selection is unchanged).
     out += `%${n + 1}$${name === "count" ? "d" : "s"}`;
     last = m.index + m[0].length;
   }
@@ -174,7 +178,9 @@ export function buildXml(set: MessageSet, loc: Locale): string {
     if (isPlural(v)) {
       lines.push(`    <plurals name="${name}">`);
       for (const c of ALL_CATEGORIES) {
-        const f = v[c];
+        // SPEC-GAP: §11.1 makes FR `many` optional, but Android lint's MissingQuantity (Error) expects it for `fr`.
+        // When fr.json omits it we emit `many` = `other`; Android would fall back to `other` at runtime anyway.
+        const f = v[c] ?? (loc === "fr" && c === "many" ? v.other : undefined);
         if (f !== undefined) lines.push(`        <item quantity="${c}">${convert(f, order, `${where}.${c}`)}</item>`);
       }
       lines.push("    </plurals>");

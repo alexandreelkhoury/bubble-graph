@@ -117,4 +117,7 @@ body { margin: 0; min-height: 100dvh; touch-action: manipulation;
 :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
 :lang(ar) * { letter-spacing: 0 !important; }
 [dir="rtl"] .icon--mirror { transform: scaleX(-1); }
+/* .num isolates digit-only content as LTR; never put it on a translated sentence (use .tnum, which keeps the
+   inherited direction and only switches to tabular figures). */
 .num, .timer, .code { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+.tnum { font-variant-numeric: tabular-nums; }
