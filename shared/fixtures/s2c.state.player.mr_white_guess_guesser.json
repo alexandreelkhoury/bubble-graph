@@ -59,13 +59,13 @@
         "color": "azure",
         "seat": 1,
         "connected": true,
-        "alive": true,
+        "alive": false,
         "left": false,
         "isHost": false,
         "ready": true,
         "spoke": true,
         "hasVoted": false,
-        "revealedRole": null,
+        "revealedRole": "BLANK",
         "score": 2
       },
       {
@@ -74,13 +74,13 @@
         "color": "jade",
         "seat": 2,
         "connected": true,
-        "alive": false,
+        "alive": true,
         "left": false,
         "isHost": false,
         "ready": true,
         "spoke": true,
         "hasVoted": false,
-        "revealedRole": "BLANK",
+        "revealedRole": null,
         "score": 2
       },
       {
@@ -138,10 +138,10 @@
       "revote": false,
       "tally": [
         {
-          "targetId": "p_2c3d4e5f60718293a4b5c6d7",
+          "targetId": "p_1b2c3d4e5f60718293a4b5c6",
           "voterIds": [
             "p_0a1b2c3d4e5f60718293a4b5",
-            "p_1b2c3d4e5f60718293a4b5c6",
+            "p_2c3d4e5f60718293a4b5c6d7",
             "p_3d4e5f60718293a4b5c6d7e8",
             "p_4e5f60718293a4b5c6d7e8f9"
           ]
@@ -149,20 +149,20 @@
         {
           "targetId": "p_0a1b2c3d4e5f60718293a4b5",
           "voterIds": [
-            "p_2c3d4e5f60718293a4b5c6d7"
+            "p_1b2c3d4e5f60718293a4b5c6"
           ]
         }
       ],
       "abstainIds": [],
       "outcome": "ELIMINATED",
-      "eliminatedId": "p_2c3d4e5f60718293a4b5c6d7"
+      "eliminatedId": "p_1b2c3d4e5f60718293a4b5c6"
     },
     "eliminated": {
-      "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+      "playerId": "p_1b2c3d4e5f60718293a4b5c6",
       "role": "BLANK"
     },
     "guess": {
-      "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+      "playerId": "p_1b2c3d4e5f60718293a4b5c6",
       "status": "PENDING",
       "text": null,
       "overridden": false
@@ -171,14 +171,14 @@
     "history": [
       {
         "round": 1,
-        "eliminatedId": "p_2c3d4e5f60718293a4b5c6d7",
+        "eliminatedId": "p_1b2c3d4e5f60718293a4b5c6",
         "role": "BLANK",
         "cause": "VOTE"
       }
     ],
     "availablePacks": [],
     "me": {
-      "id": "p_2c3d4e5f60718293a4b5c6d7",
+      "id": "p_1b2c3d4e5f60718293a4b5c6",
       "word": null,
       "isBlank": true,
       "role": "BLANK",

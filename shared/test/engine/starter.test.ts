@@ -4,36 +4,48 @@ import { lobby } from "../support/helpers";
 import { TEST_CATALOG } from "../support/test-catalog";
 
 describe("starter selection (§4.7 startRound)", () => {
-  it("round-1 starter is never BLANK; round>1 starter is the next alive seat after the previous starter", () => {
-    let checkedR1 = 0;
-    let checkedNext = 0;
-    for (let n = 5; n <= 12; n++) {
-      for (let seed = 1; seed <= 40; seed++) {
+  it("the Blank never speaks first: every round and every tie-break opens with a non-Blank", () => {
+    const opened = { CLUES: 0, TIE_BREAK: 0, laterRounds: 0 };
+    for (let n = 3; n <= 12; n++) {
+      for (let seed = 1; seed <= 60; seed++) {
         playGame(TEST_CATALOG, { players: n, seed, churnRate: 0.02, kickRate: 0.01 }, (prev, _a, res) => {
           const s = res.state;
-          const entered = s.phase === "CLUES" && (prev.phase !== "CLUES" || prev.round !== s.round);
-          if (!entered) return;
-          const starter = s.players.find((p) => p.id === s.starterId);
-          expect(starter).toBeDefined();
-          if (s.round === 1) {
-            expect(starter?.role).not.toBe("BLANK");
-            checkedR1++;
-          } else {
-            const prevStarter = prev.players.find((p) => p.id === prev.starterId);
-            const alive = s.players.filter((p) => p.alive);
-            const expected = alive.find((p) => p.seat > (prevStarter?.seat ?? -1)) ?? alive[0];
-            expect(s.starterId).toBe(expected?.id);
-            expect(s.speakingOrder[0]).toBe(s.starterId);
-            checkedNext++;
-          }
+          const isOpening =
+            (s.phase === "CLUES" && (prev.phase !== "CLUES" || prev.round !== s.round)) ||
+            (s.phase === "TIE_BREAK" && prev.phase !== "TIE_BREAK");
+          if (!isOpening) return;
+          const speaker = s.players.find((p) => p.id === s.speakingOrder[s.turnIdx]);
+          const order = s.speakingOrder.map((id) => s.players.find((p) => p.id === id));
+          const nonBlankAvailable = order.some((p) => p && p.alive && p.connected && p.role !== "BLANK");
+          if (nonBlankAvailable) expect(speaker?.role).not.toBe("BLANK");
+          expect(s.speakingOrder[0]).toBe(s.phase === "CLUES" ? s.starterId : s.speakingOrder[0]);
+          opened[s.phase as "CLUES" | "TIE_BREAK"]++;
+          if (s.phase === "CLUES" && s.round > 1) opened.laterRounds++;
         });
       }
     }
-    expect(checkedR1).toBeGreaterThan(200);
-    expect(checkedNext).toBeGreaterThan(200);
+    expect(opened.CLUES).toBeGreaterThan(500);
+    expect(opened.laterRounds).toBeGreaterThan(200);
+    expect(opened.TIE_BREAK).toBeGreaterThan(0);
   });
 
-  it("SPEC-GAP: the round-1 starter is a connected non-Blank, so the Blank never actually speaks first", () => {
+  it("later-round openers are drawn at random, not rotated by seat (no seat-skip leak)", () => {
+    const starters = new Set<string>();
+    for (let seed = 1; seed <= 200; seed++) {
+      playGame(TEST_CATALOG, { players: 8, seed }, (prev, _a, res) => {
+        const s = res.state;
+        if (s.phase === "CLUES" && prev.phase !== "CLUES" && s.round === 2) {
+          const a = prev.players.find((p) => p.id === prev.starterId)?.seat ?? -1;
+          const b = s.players.find((p) => p.id === s.starterId)?.seat ?? -1;
+          starters.add(String((b - a + 8) % 8));
+        }
+      });
+    }
+    // A fixed rotation would always give the same seat offset; random draws give many.
+    expect(starters.size).toBeGreaterThan(3);
+  });
+
+  it("the opener is a connected non-Blank, so a disconnected opener never hands the first turn to the Blank", () => {
     let hits = 0;
     for (let seed = 1; seed <= 400; seed++) {
       const g = lobby(5, undefined, seed);

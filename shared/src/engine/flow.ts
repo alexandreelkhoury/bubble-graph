@@ -117,27 +117,28 @@ export function startRound(d: Draft, r: number): void {
   s.guess = null;
   const alive = s.players.filter((p) => p.alive);
   for (const p of alive) p.spoke = false;
-  let starter: Player | undefined;
-  const prev = r > 1 ? findPlayer(s, s.starterId) : undefined;
-  if (prev) {
-    starter = alive.find((p) => p.seat > prev.seat) ?? alive[0];
-  } else {
-    const cands = alive.filter((p) => p.role !== "BLANK");
-    // SPEC-GAP: §4.7 step 3 picks from alive non-Blank players without regard to connection. A
-    // disconnected starter is skipped by beginTurn, so the next seat (possibly the Blank) would speak
-    // first. Prefer connected non-Blank players; fall back to any non-Blank, then to anyone.
-    // Round 1 always has a non-Blank alive player while the game continues; the last fallback only
-    // matters for a forfeit cascade that ends the game in the same reduce (§4.8 step 6).
-    const conn = cands.filter((p) => p.connected);
-    const pool = conn.length > 0 ? conn : cands.length > 0 ? cands : alive;
-    starter = pool[d.rng.int(pool.length)];
-  }
-  s.starterId = starter?.id ?? null;
   const ids = alive.map((p) => p.id);
-  const k = starter ? ids.indexOf(starter.id) : 0;
-  s.speakingOrder = [...ids.slice(k), ...ids.slice(0, k)];
+  s.speakingOrder = openingOrder(d, ids);
+  s.starterId = s.speakingOrder[0] ?? null;
   s.turnIdx = 0;
   beginTurn(d, false);
+}
+
+/**
+ * Rotate `ids` (seat order) so a random non-Blank player opens. The Blank never speaks first, in any
+ * round or tie-break. The opener is drawn at random rather than rotated by seat, so skipping the Blank
+ * never publicly reveals their seat. Connected players are preferred because beginTurn skips a
+ * disconnected opener, which could otherwise hand the first turn to the Blank. The last fallback
+ * (anyone) only matters when no non-Blank remains, i.e. a forfeit cascade that ends the game.
+ */
+function openingOrder(d: Draft, ids: readonly string[]): string[] {
+  const ps = ids.map((id) => findPlayer(d.s, id)).filter((p): p is Player => p !== undefined);
+  const cands = ps.filter((p) => p.role !== "BLANK");
+  const conn = cands.filter((p) => p.connected);
+  const pool = conn.length > 0 ? conn : cands.length > 0 ? cands : ps;
+  if (pool.length === 0) return [...ids];
+  const k = ids.indexOf((pool[d.rng.int(pool.length)] as Player).id);
+  return [...ids.slice(k), ...ids.slice(0, k)];
 }
 
 export function beginTurn(d: Draft, leadIn: boolean): void {
@@ -179,7 +180,7 @@ export function enterTieBreak(d: Draft, candidates: string[]): void {
   s.tieCandidates = candidates;
   s.phase = "TIE_BREAK";
   s.votes = {};
-  s.speakingOrder = [...candidates];
+  s.speakingOrder = openingOrder(d, candidates);
   s.turnIdx = 0;
   for (const id of candidates) {
     const p = findPlayer(s, id);

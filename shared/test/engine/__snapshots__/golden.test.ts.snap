@@ -159,7 +159,7 @@ exports[`golden seeded games > n=3 seed=101 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000000000000000000000",
+        "playerId": "p_b07000020000000000000000",
       },
       "error": null,
       "now": 1790000016941,
@@ -169,7 +169,7 @@ exports[`golden seeded games > n=3 seed=101 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000010000000000000000",
+        "playerId": "p_b07000000000000000000000",
       },
       "error": null,
       "now": 1790000017326,
@@ -179,7 +179,7 @@ exports[`golden seeded games > n=3 seed=101 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000020000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000019503,
@@ -307,7 +307,7 @@ exports[`golden seeded games > n=3 seed=101 official 1`] = `
     ],
     "result": null,
     "revote": false,
-    "rngState": 567894574,
+    "rngState": 2399460387,
     "roleCounts": null,
     "roomCode": "SIMR",
     "round": 0,
@@ -601,7 +601,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000000000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000021979,
@@ -611,7 +611,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000010000000000000000",
+        "playerId": "p_b07000000000000000000000",
       },
       "error": null,
       "now": 1790000023650,
@@ -705,7 +705,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000020000000000000000",
       },
       "error": null,
       "now": 1790000049735,
@@ -715,7 +715,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000040000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000050701,
@@ -725,7 +725,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000010000000000000000",
+        "playerId": "p_b07000040000000000000000",
       },
       "error": null,
       "now": 1790000053099,
@@ -735,7 +735,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000020000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000055441,
@@ -798,7 +798,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000040000000000000000",
+        "playerId": "p_b07000020000000000000000",
       },
       "error": null,
       "now": 1790000070386,
@@ -808,7 +808,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000020000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000072200,
@@ -818,7 +818,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000040000000000000000",
       },
       "error": null,
       "now": 1790000074154,
@@ -944,7 +944,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
         "name": "Bot1",
         "ready": false,
         "role": null,
-        "score": 0,
+        "score": 6,
         "seat": 0,
         "spoke": false,
         "word": null,
@@ -961,7 +961,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
         "name": "Bot2",
         "ready": false,
         "role": null,
-        "score": 2,
+        "score": 0,
         "seat": 1,
         "spoke": false,
         "word": null,
@@ -978,7 +978,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
         "name": "Bot3",
         "ready": false,
         "role": null,
-        "score": 0,
+        "score": 10,
         "seat": 2,
         "spoke": false,
         "word": null,
@@ -995,7 +995,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
         "name": "Bot4",
         "ready": false,
         "role": null,
-        "score": 2,
+        "score": 0,
         "seat": 3,
         "spoke": false,
         "word": null,
@@ -1012,7 +1012,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
         "name": "Bot5",
         "ready": false,
         "role": null,
-        "score": 2,
+        "score": 0,
         "seat": 4,
         "spoke": false,
         "word": null,
@@ -1020,7 +1020,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     ],
     "result": null,
     "revote": false,
-    "rngState": 1767624818,
+    "rngState": 503953478,
     "roleCounts": null,
     "roomCode": "SIMR",
     "round": 0,
@@ -1063,7 +1063,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
     "votes": {},
   },
   "stalemate": false,
-  "winner": "CIVILIANS",
+  "winner": "INFILTRATORS",
 }
 `;
 
@@ -1463,7 +1463,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000050000000000000000",
+        "playerId": "p_b07000040000000000000000",
       },
       "error": null,
       "now": 1790000046994,
@@ -1473,7 +1473,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b07000050000000000000000",
       },
       "error": null,
       "now": 1790000049783,
@@ -1483,7 +1483,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000000000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000052547,
@@ -1493,7 +1493,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000010000000000000000",
+        "playerId": "p_b07000000000000000000000",
       },
       "error": null,
       "now": 1790000055390,
@@ -1503,7 +1503,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000020000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000056627,
@@ -1513,7 +1513,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000020000000000000000",
       },
       "error": null,
       "now": 1790000057520,
@@ -1736,7 +1736,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000050000000000000000",
+        "playerId": "p_b07000020000000000000000",
       },
       "error": null,
       "now": 1790000104086,
@@ -1746,7 +1746,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000106731,
@@ -1756,7 +1756,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000000000000000000000",
+        "playerId": "p_b07000050000000000000000",
       },
       "error": null,
       "now": 1790000108805,
@@ -1775,7 +1775,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000020000000000000000",
+        "playerId": "p_b07000000000000000000000",
       },
       "error": null,
       "now": 1790000113251,
@@ -1785,7 +1785,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000115281,
@@ -1870,7 +1870,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000134429,
@@ -1880,7 +1880,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000000000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000135398,
@@ -1890,7 +1890,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000010000000000000000",
+        "playerId": "p_b07000050000000000000000",
       },
       "error": null,
       "now": 1790000135543,
@@ -1900,7 +1900,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000136420,
@@ -1910,7 +1910,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000050000000000000000",
+        "playerId": "p_b07000000000000000000000",
       },
       "error": null,
       "now": 1790000137905,
@@ -1975,7 +1975,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000010000000000000000",
+        "playerId": "p_b07000050000000000000000",
       },
       "error": null,
       "now": 1790000145630,
@@ -1985,7 +1985,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000050000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000148074,
@@ -2142,7 +2142,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000000000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000170415,
@@ -2152,7 +2152,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000010000000000000000",
+        "playerId": "p_b07000000000000000000000",
       },
       "error": null,
       "now": 1790000171631,
@@ -2376,7 +2376,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
     ],
     "result": null,
     "revote": false,
-    "rngState": 2967355062,
+    "rngState": 2903413865,
     "roleCounts": null,
     "roomCode": "SIMR",
     "round": 0,
@@ -2987,7 +2987,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000050000000000000000",
       },
       "error": null,
       "now": 1790000054695,
@@ -2997,7 +2997,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000050000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000055499,
@@ -3007,7 +3007,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b07000070000000000000000",
       },
       "error": null,
       "now": 1790000058172,
@@ -3017,7 +3017,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000070000000000000000",
+        "playerId": "p_b07000080000000000000000",
       },
       "error": null,
       "now": 1790000058712,
@@ -3027,7 +3027,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000080000000000000000",
+        "playerId": "p_b07000090000000000000000",
       },
       "error": null,
       "now": 1790000060776,
@@ -3037,7 +3037,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000090000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000060927,
@@ -3047,7 +3047,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000a0000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000063303,
@@ -3057,7 +3057,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b07000000000000000000000",
       },
       "error": null,
       "now": 1790000063356,
@@ -3067,7 +3067,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000000000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000064660,
@@ -3077,7 +3077,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000010000000000000000",
+        "playerId": "p_b07000020000000000000000",
       },
       "error": null,
       "now": 1790000065576,
@@ -3087,7 +3087,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000020000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000066816,
@@ -3227,7 +3227,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000050000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000091851,
@@ -3237,7 +3237,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000093759,
@@ -3247,7 +3247,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000070000000000000000",
+        "playerId": "p_b07000000000000000000000",
       },
       "error": null,
       "now": 1790000096697,
@@ -3257,7 +3257,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000090000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000097801,
@@ -3276,7 +3276,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000100954,
@@ -3286,7 +3286,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000000000000000000000",
+        "playerId": "p_b07000050000000000000000",
       },
       "error": null,
       "now": 1790000103017,
@@ -3306,7 +3306,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000010000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000105898,
@@ -3316,7 +3316,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000020000000000000000",
+        "playerId": "p_b07000070000000000000000",
       },
       "error": null,
       "now": 1790000108594,
@@ -3326,7 +3326,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000090000000000000000",
       },
       "error": null,
       "now": 1790000111408,
@@ -3455,7 +3455,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000136512,
@@ -3465,7 +3465,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000070000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000138425,
@@ -3475,7 +3475,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000090000000000000000",
+        "playerId": "p_b07000000000000000000000",
       },
       "error": null,
       "now": 1790000139307,
@@ -3485,7 +3485,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000a0000000000000000",
+        "playerId": "p_b07000010000000000000000",
       },
       "error": null,
       "now": 1790000141098,
@@ -3495,7 +3495,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b07000020000000000000000",
       },
       "error": null,
       "now": 1790000141957,
@@ -3505,7 +3505,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000000000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000142484,
@@ -3515,7 +3515,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000010000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000144191,
@@ -3525,7 +3525,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000020000000000000000",
+        "playerId": "p_b07000070000000000000000",
       },
       "error": null,
       "now": 1790000145667,
@@ -3535,7 +3535,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000090000000000000000",
       },
       "error": null,
       "now": 1790000146149,
@@ -3654,7 +3654,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000070000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000165442,
@@ -3664,7 +3664,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000090000000000000000",
+        "playerId": "p_b07000070000000000000000",
       },
       "error": null,
       "now": 1790000167159,
@@ -3674,7 +3674,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b07000090000000000000000",
       },
       "error": null,
       "now": 1790000167975,
@@ -3792,7 +3792,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000070000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000192376,
@@ -3802,7 +3802,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000a0000000000000000",
+        "playerId": "p_b07000070000000000000000",
       },
       "error": null,
       "now": 1790000194925,
@@ -3822,7 +3822,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000198403,
@@ -3832,7 +3832,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000000000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000200047,
@@ -3842,7 +3842,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000020000000000000000",
+        "playerId": "p_b07000000000000000000000",
       },
       "error": null,
       "now": 1790000202250,
@@ -3852,7 +3852,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000020000000000000000",
       },
       "error": null,
       "now": 1790000204495,
@@ -3862,7 +3862,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000206709,
@@ -4065,7 +4065,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000a0000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000242283,
@@ -4075,7 +4075,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b07000070000000000000000",
       },
       "error": null,
       "now": 1790000243572,
@@ -4085,7 +4085,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000020000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000244363,
@@ -4095,7 +4095,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000246317,
@@ -4105,7 +4105,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b07000020000000000000000",
       },
       "error": null,
       "now": 1790000248491,
@@ -4115,7 +4115,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000070000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000249755,
@@ -4200,7 +4200,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000268984,
@@ -4210,7 +4210,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000270888,
@@ -4220,7 +4220,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000271935,
@@ -4230,7 +4230,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000070000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000273974,
@@ -4240,7 +4240,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000a0000000000000000",
+        "playerId": "p_b07000070000000000000000",
       },
       "error": null,
       "now": 1790000276031,
@@ -4352,7 +4352,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000341798,
@@ -4362,7 +4362,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000342240,
@@ -4372,7 +4372,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000a0000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000342516,
@@ -4382,7 +4382,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000344334,
@@ -4445,7 +4445,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000358253,
@@ -4455,7 +4455,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000360458,
@@ -4465,7 +4465,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000a0000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000362128,
@@ -4475,7 +4475,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000363730,
@@ -4529,7 +4529,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b07000060000000000000000",
       },
       "error": null,
       "now": 1790000368242,
@@ -4539,7 +4539,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000060000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000368458,
@@ -4549,7 +4549,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000a0000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000368865,
@@ -4559,7 +4559,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000370839,
@@ -4622,7 +4622,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000a0000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000379038,
@@ -4632,7 +4632,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000380611,
@@ -4642,7 +4642,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000380953,
@@ -4685,7 +4685,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b07000030000000000000000",
+        "playerId": "p_b070000b0000000000000000",
       },
       "error": null,
       "now": 1790000385705,
@@ -4704,7 +4704,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     {
       "by": {
         "kind": "player",
-        "playerId": "p_b070000b0000000000000000",
+        "playerId": "p_b070000a0000000000000000",
       },
       "error": null,
       "now": 1790000388212,
@@ -4755,17 +4755,37 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     },
     {
       "by": {
-        "kind": "tv",
+        "kind": "player",
+        "playerId": "p_b07000030000000000000000",
       },
       "error": null,
       "now": 1790000402035,
+      "ok": true,
+      "text": "Pizza",
+      "type": "SUBMIT_GUESS",
+    },
+    {
+      "by": {
+        "kind": "system",
+      },
+      "error": null,
+      "now": 1790000410035,
+      "ok": true,
+      "type": "TICK",
+    },
+    {
+      "by": {
+        "kind": "tv",
+      },
+      "error": null,
+      "now": 1790000412601,
       "ok": true,
       "type": "PLAY_AGAIN",
     },
   ],
   "final": {
     "deadline": null,
-    "deadlineSeq": 110,
+    "deadlineSeq": 112,
     "eliminated": null,
     "gameNumber": 1,
     "guess": null,
@@ -4789,7 +4809,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
         "name": "Bot1",
         "ready": false,
         "role": null,
-        "score": 10,
+        "score": 0,
         "seat": 0,
         "spoke": false,
         "word": null,
@@ -4798,7 +4818,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
         "alive": true,
         "color": "azure",
         "connected": false,
-        "disconnectedAt": 1790000402035,
+        "disconnectedAt": 1790000412601,
         "id": "p_b07000010000000000000000",
         "joinedAt": 1790000000100,
         "left": false,
@@ -4874,7 +4894,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
         "name": "Bot7",
         "ready": false,
         "role": null,
-        "score": 10,
+        "score": 0,
         "seat": 6,
         "spoke": false,
         "word": null,
@@ -4883,7 +4903,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
         "alive": true,
         "color": "rose",
         "connected": false,
-        "disconnectedAt": 1790000402035,
+        "disconnectedAt": 1790000412601,
         "id": "p_b07000070000000000000000",
         "joinedAt": 1790000000700,
         "left": false,
@@ -4891,7 +4911,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
         "name": "Bot8",
         "ready": false,
         "role": null,
-        "score": 6,
+        "score": 0,
         "seat": 7,
         "spoke": false,
         "word": null,
@@ -4908,7 +4928,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
         "name": "Bot10",
         "ready": false,
         "role": null,
-        "score": 10,
+        "score": 0,
         "seat": 9,
         "spoke": false,
         "word": null,
@@ -4950,7 +4970,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     ],
     "result": null,
     "revote": false,
-    "rngState": 3535249636,
+    "rngState": 1575801429,
     "roleCounts": null,
     "roomCode": "SIMR",
     "round": 0,
@@ -4989,10 +5009,10 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
     "usedPairKeys": [
       "test-en-01:p004",
     ],
-    "version": 221,
+    "version": 223,
     "votes": {},
   },
   "stalemate": false,
-  "winner": "INFILTRATORS",
+  "winner": "BLANK",
 }
 `;

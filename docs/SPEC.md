@@ -691,8 +691,8 @@ RESULTS --PLAY_AGAIN--> LOBBY ;  any non-LOBBY --BACK_TO_LOBBY (TV)--> LOBBY
 1. Set `round=r`, `phase=CLUES`, `revote=false`, `tieCandidates=[]`, `votes={}`, `lastVote=null`, `eliminated=null`, `guess=null`.
 2. Set every alive player's `spoke=false`.
 3. Choose the starter and set `starterId`:
-   - r==1: `rng` pick among alive non-BLANK players in seat order (round 1 always has one, because civilians > infiltrators).
-   - r>1: the first alive player **of any role** strictly after the previous `starterId`'s seat, wrapping around. No role filter: skipping a seat would publicly reveal that seat as the Blank.
+   - Every round (and every TIE_BREAK, over the tied candidates): `rng` pick among alive, connected, non-BLANK players; fall back to any non-BLANK, then to anyone. **The Blank never speaks first.**
+   - The opener is drawn at random each round rather than rotated by seat, so skipping the Blank never reveals their seat (user decision 2026-10-03, replaces the seat-rotation rule).
 4. `speakingOrder` = alive ids in seat order, rotated so the starter is first. `turnIdx=0`.
 5. `beginTurn()`.
 
@@ -2517,7 +2517,7 @@ See §11.3 and §12.5. Each has `package.json`, `src/main.ts`, `vitest.config.ts
 | `engine/normalize.test.ts` | every §4.12 vector, `isGuessCorrect` with `alt`/`translit` |
 | `engine/transitions.test.ts` | one test per §4.7/§4.8 transition and per §4.9 permission-matrix cell (allowed and rejected). Must include: LEAVE and KICK in-game and in RESULTS (player marked `left`, removed at `resetToLobby`, never dealt in again); host reassignment when the VIP forfeits; forfeit of an already-dead player (no second history entry); forfeit of a TIE_BREAK speaker who is also a tie candidate (§4.8 order); VIP KICK of a connected vs a disconnected target in-game; HOST_OVERRIDE_GUESS on CORRECT/WRONG/TIMEOUT by TV and VIP, and a second override refused; HOST_ADVANCE by the VIP while PENDING (guesser connected vs disconnected); START with 3 players but only 2 connected; the speaker disconnecting mid-turn (turn kept; grace deadline when the timer is off); the stalemate rule; RECONNECT/DISCONNECT for unknown ids return the same object; a disconnected player in RESULTS for more than 120 s keeps invariants and results valid |
 | `engine/win.test.ts` | matrix n=3..12 × winRule × alive compositions; a Blank guess beats the civilian count; forfeits that drop below 3 alive end the game |
-| `engine/starter.test.ts` | across seeded games, the round-1 starter is never BLANK, and the round>1 starter is the next alive seat after the previous starter, regardless of role |
+| `engine/starter.test.ts` | across seeded games, the round-1 starter is never BLANK, and every round and tie-break opener is a non-Blank, and later-round openers are random (not seat-rotated) |
 | `engine/sanitize.test.ts` | bidi controls stripped; Zalgo (1 base + 15 marks) cut to 2 marks; 17 graphemes cut to 16; `nameKey` treats full-width and case variants as equal |
 | `engine/props.test.ts` (fast-check) | random games terminate; invariants hold after every step; role counts are respected; determinism (same seed + actions → deep-equal states) |
 | `engine/golden.test.ts` | seeded full games, snapshot of the final state + action log (`toMatchSnapshot`) |

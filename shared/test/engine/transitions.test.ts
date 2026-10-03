@@ -397,12 +397,14 @@ describe("TIE_BREAK and re-vote", () => {
     const g = inVoting();
     const [a, b, c, d] = toTieBreak(g);
     expect(g.state.tieCandidates).toEqual([a, d]);
-    expect(g.state.speakingOrder).toEqual([a, d]);
+    // Opener is drawn at random among the tied (never the Blank); order is a rotation of [a, d].
+    expect([...g.state.speakingOrder].sort()).toEqual([a, d].sort());
+    const [first, second] = g.state.speakingOrder as [string, string];
     expect(g.state.lastVote).toMatchObject({ outcome: "TIE", eliminatedId: null });
     expect(g.state.deadline?.durationMs).toBe(45_000 + TIE_LEAD_IN_MS);
-    g.p(a, { type: "CLUE_DONE" });
+    g.p(first, { type: "CLUE_DONE" });
     expect(g.state.deadline?.durationMs).toBe(45_000);
-    g.p(d, { type: "CLUE_DONE" });
+    g.p(second, { type: "CLUE_DONE" });
     expect(g.state.phase).toBe("VOTING");
     expect(g.state.revote).toBe(true);
     expect(g.err({ type: "CAST_VOTE", targetId: b, by: P(c) })).toBe("INVALID_TARGET");
