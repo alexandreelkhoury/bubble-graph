@@ -309,3 +309,168 @@ test("PH-16: a dropped socket shows the reconnect overlay and keeps the seat", a
   await expect(tv.locator(".tvgrid .tile--btn")).toHaveCount(1);
   for (const x of [p, tv]) await x.context().close();
 });
+
+// ---------------------------------------------------------------------------------------------------------------
+// 6 players: a forced first-round tie → TIE_BREAK → revote eliminates the Blank → the Blank guesses (wrong) →
+// the civilians vote the Undercover out → RESULTS → play again. Meanwhile a phone reloads mid-game and must resume
+// its seat via the stored token, and every WS frame the TV mock receives before RESULTS is checked for secrets.
+
+type TvFrameView = {
+  phase: string;
+  round: number;
+  players: { id: string; name: string; alive: boolean; score: number }[];
+  tieCandidates: string[];
+  revote: boolean;
+};
+
+test("6 players: tie-break, Blank guess, results, play again; TV frames hold no secrets; reload resumes", async ({ browser }) => {
+  test.setTimeout(420_000);
+  const tvCtx = await context(browser, "tv", "en");
+  const tv = await tvCtx.newPage();
+  const frames: string[] = [];
+  let view: TvFrameView | null = null;
+  tv.on("websocket", (ws) => {
+    ws.on("framereceived", (f) => {
+      const s = typeof f.payload === "string" ? f.payload : f.payload.toString("utf8");
+      frames.push(s);
+      try {
+        const m = JSON.parse(s) as { t?: string; view?: TvFrameView };
+        if (m.t === "state" && m.view) view = m.view;
+      } catch {
+        /* pong or non-JSON */
+      }
+    });
+  });
+  await tv.goto("/tv");
+  const big = tv.locator(".tvlobby .tvcode--big");
+  await expect(big).toBeVisible({ timeout: 30_000 });
+  const code = ((await big.getAttribute("aria-label")) ?? "").replace(/\s+/g, "");
+  const phase = (): string => (view as TvFrameView | null)?.phase ?? "";
+  const waitPhase = async (...ps: string[]): Promise<void> => {
+    await expect.poll(phase, { timeout: 60_000, message: `waiting for ${ps.join("|")}` }).toMatch(new RegExp(`^(${ps.join("|")})$`));
+  };
+
+  const names = ["Ava", "Ben", "Cleo", "Dev", "Eli", "Fay"];
+  const phones: Page[] = [];
+  for (const n of names) phones.push(await joinPhone(browser, code, n, "en"));
+  const byName = new Map(names.map((n, i) => [n, phones[i]!]));
+  const vip = phones[0]!;
+  await expect(tv.locator(".tvgrid .tile--btn")).toHaveCount(6);
+
+  // Start, read every word (Blank has none), mark everyone ready.
+  await vip.locator(".actionbar .btn--primary").click();
+  await waitPhase("ROLE_REVEAL");
+  const words = new Map<string, string | null>();
+  for (const [i, p] of phones.entries()) {
+    await expect(p.locator(".wordcard")).toBeVisible();
+    await holdCard(p);
+    words.set(names[i]!, (await visible(p, ".wordface--blank")) ? null : ((await p.locator(".wordface__text").textContent()) ?? "").trim());
+    await p.mouse.up();
+    await p.locator(".actionbar .btn--primary").click();
+  }
+  const counts = new Map<string, number>();
+  for (const w of words.values()) if (w) counts.set(w, (counts.get(w) ?? 0) + 1);
+  const civWord = [...counts].find(([, c]) => c === 4)?.[0];
+  const ucWord = [...counts].find(([, c]) => c === 1)?.[0];
+  expect(civWord, JSON.stringify([...words])).toBeTruthy();
+  expect(ucWord, JSON.stringify([...words])).toBeTruthy();
+  const blank = names.find((n) => words.get(n) === null)!;
+  const undercover = names.find((n) => words.get(n) === ucWord)!;
+  const civs = names.filter((n) => words.get(n) === civWord);
+  const x = civs[0]!; // the civilian who ties with the Blank
+  await waitPhase("CLUES");
+
+  // Mid-game reload: the Undercover's phone comes back to its seat via the resume token (never the Join form).
+  const ucPhone = byName.get(undercover)!;
+  await ucPhone.reload();
+  await expect(ucPhone.locator(".screen--clues, .screen--turn").first()).toBeVisible();
+  await expect(ucPhone.locator("#name")).toHaveCount(0);
+  await expect.poll(() => (view as TvFrameView | null)?.players.find((p) => p.name === undercover) !== undefined).toBe(true);
+
+  const clueRound = async (): Promise<void> => {
+    while (phase() === "CLUES" || phase() === "TIE_BREAK") {
+      for (const p of phones) if (await visible(p, ".donebtn.is-armed")) await p.locator(".donebtn").click().catch(() => {});
+      await tv.waitForTimeout(150);
+    }
+  };
+  const vote = async (voter: string, target: string): Promise<void> => {
+    const p = byName.get(voter)!;
+    const row = p.locator(".voterow", { hasText: target });
+    await expect(row).toHaveCount(1);
+    await row.click();
+    await p.locator(".actionbar .btn--primary").click();
+  };
+
+  await clueRound();
+  await waitPhase("VOTING");
+  // 3–3 tie between the Blank and civilian X.
+  const others = names.filter((n) => n !== blank && n !== x);
+  await vote(blank, x);
+  await vote(x, blank);
+  await vote(others[0]!, blank);
+  await vote(others[1]!, blank);
+  await vote(others[2]!, x);
+  await vote(others[3]!, x);
+  await waitPhase("TIE_BREAK");
+  const v1 = view as TvFrameView | null;
+  const idOf = (n: string): string => v1!.players.find((p) => p.name === n)!.id;
+  expect([...v1!.tieCandidates].sort()).toEqual([idOf(blank), idOf(x)].sort());
+  await expect(tv.locator(".tvtie")).toBeVisible();
+  await clueRound();
+  await waitPhase("VOTING");
+  expect((view as TvFrameView | null)?.revote).toBe(true);
+  // Revote: only the tied pair are candidates.
+  await expect(byName.get(others[0]!)!.locator(".voterow")).toHaveCount(2);
+  await expect(byName.get(blank)!.locator(".voterow")).toHaveCount(1);
+  await vote(blank, x);
+  for (const n of names) if (n !== blank) await vote(n, blank);
+  await waitPhase("ELIMINATION", "MR_WHITE_GUESS");
+  await waitPhase("MR_WHITE_GUESS");
+  await expect(tv.locator(".tvguess")).toBeVisible();
+  const bp = byName.get(blank)!;
+  await expect(bp.locator(".input--big")).toBeVisible();
+  await bp.locator(".input--big").fill("zzwrongguess");
+  await bp.locator(".actionbar .btn--primary").click();
+
+  // Round 2: everyone left votes the Undercover out → civilians win.
+  for (let guard = 0; guard < 6 && phase() !== "RESULTS"; guard++) {
+    await waitPhase("CLUES", "RESULTS");
+    if (phase() === "RESULTS") break;
+    await clueRound();
+    await waitPhase("VOTING");
+    const alive = new Set((view as TvFrameView | null)!.players.filter((p) => p.alive).map((p) => p.name));
+    for (const n of names) {
+      if (!alive.has(n)) continue;
+      await vote(n, n === undercover ? [...alive].find((m) => m !== undercover)! : undercover);
+    }
+    await waitPhase("ELIMINATION", "RESULTS");
+    await waitPhase("CLUES", "RESULTS");
+  }
+  await waitPhase("RESULTS");
+  await expect(tv.locator(".tvresults")).toBeVisible();
+  for (const p of phones) await expect(p.locator(".screen--results")).toBeVisible();
+
+  // Secrecy: nothing the TV received before RESULTS carries a word, a vote map, the pair or the Blank's guess text.
+  const firstResults = frames.findIndex((s) => s.includes('"phase":"RESULTS"'));
+  expect(firstResults).toBeGreaterThan(0);
+  const before = frames.slice(0, firstResults);
+  expect(before.length).toBeGreaterThan(20);
+  for (const needle of [JSON.stringify(civWord), JSON.stringify(ucWord), "zzwrongguess", '"pair":', '"votes":', '"word":', '"guessLog":']) {
+    const leak = before.find((s) => s.includes(needle));
+    expect(leak, `TV frame leaked ${needle}`).toBeUndefined();
+  }
+  // ...and RESULTS does publish the pair to the TV.
+  const after = frames.slice(firstResults).join("\n");
+  expect(after).toContain(JSON.stringify(civWord));
+  expect(after).toContain("zzwrongguess");
+
+  // Play again → everyone back in the lobby, scores kept.
+  await expect(tv.locator(".tvresults.is-stage2")).toBeVisible({ timeout: 10_000 });
+  await vip.locator(".actionbar .btn--primary").click();
+  await waitPhase("LOBBY");
+  for (const p of phones) await expect(p.locator(".screen--lobby")).toBeVisible();
+  await expect(tv.locator(".tvlobby")).toBeVisible();
+  const scores = (view as TvFrameView | null)!.players.map((p) => p.score);
+  expect(scores.some((s) => s > 0)).toBe(true);
+  for (const p of [...phones, tv]) await p.context().close();
+});
