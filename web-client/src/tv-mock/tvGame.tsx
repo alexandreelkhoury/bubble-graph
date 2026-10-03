@@ -92,15 +92,15 @@ export function TvClues({ view }: { view: TvView }) {
         {speaker && (
           <div class="tvclues__hero" key={speaker.id}>
             {view.deadline ? (
-              <TimerRing deadline={view.deadline} size={216}>
-                <Avatar color={speaker.color} size={160} state={avatarState(speaker)} speaking={speaker.connected} />
+              <TimerRing deadline={view.deadline} size={184}>
+                <Avatar color={speaker.color} size={136} state={avatarState(speaker)} speaking={speaker.connected} />
               </TimerRing>
             ) : (
-              <div class="ring" style={{ width: "216px", height: "216px" }}><div class="ring__content"><Avatar color={speaker.color} size={160} state={avatarState(speaker)} speaking /></div></div>
+              <div class="ring" style={{ width: "184px", height: "184px" }}><div class="ring__content"><Avatar color={speaker.color} size={136} state={avatarState(speaker)} speaking /></div></div>
             )}
             <h1 class="tvt-displayM tvclues__name"><bdi>{t("clues.speaking", { name: "⁨" + speaker.name + "⁩" })}</bdi></h1>
-            <p class="tvt-body tv-secondary">{view.deadline ? t("clues.speakerSub") : t("clues.noTimer")}</p>
-            {next && <p class="tvt-caption tv-muted">{t("clues.upNext", { name: "⁨" + next.name + "⁩" })}</p>}
+            <p class="tvt-body tv-secondary">{view.deadline ? t("clues.speakerSub") : t("clues.noTimer")}
+              {next && <span class="tv-muted"> · {t("clues.upNext", { name: "\u2068" + next.name + "\u2069" })}</span>}</p>
           </div>
         )}
       </div>
