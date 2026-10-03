@@ -1,0 +1,460 @@
+{
+  "id": "ar-home-01",
+  "version": 1,
+  "locale": "ar",
+  "script": "Arab",
+  "title": {
+    "en": "Things & home",
+    "fr": "Objets et maison",
+    "ar": "أغراض البيت"
+  },
+  "tags": [
+    "home",
+    "objects"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "تلفزيون",
+        "translit": "televizyon",
+        "alt": [
+          "تلفاز"
+        ]
+      },
+      "undercover": {
+        "text": "راديو",
+        "translit": "radio"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "مراية",
+        "translit": "mrayye",
+        "alt": [
+          "مرآة"
+        ]
+      },
+      "undercover": {
+        "text": "شبّاك",
+        "translit": "shebbek",
+        "alt": [
+          "نافذة"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "ساعة",
+        "translit": "se3a"
+      },
+      "undercover": {
+        "text": "منبّه",
+        "translit": "mnabbeh"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "مفتاح",
+        "translit": "mefte7"
+      },
+      "undercover": {
+        "text": "قفل",
+        "translit": "2efel"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "سرير",
+        "translit": "srir",
+        "alt": [
+          "تخت"
+        ]
+      },
+      "undercover": {
+        "text": "كنباية",
+        "translit": "kanabaye",
+        "alt": [
+          "كنبة"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "فرن",
+        "translit": "forn"
+      },
+      "undercover": {
+        "text": "ميكروويف",
+        "translit": "microwave",
+        "alt": [
+          "مايكرويف"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "براد",
+        "translit": "brad",
+        "alt": [
+          "ثلاجة"
+        ]
+      },
+      "undercover": {
+        "text": "فريزر",
+        "translit": "freezer"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "غسالة",
+        "translit": "ghassele"
+      },
+      "undercover": {
+        "text": "جلاية",
+        "translit": "jellaye",
+        "alt": [
+          "غسالة صحون"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "مكنسة",
+        "translit": "mekense"
+      },
+      "undercover": {
+        "text": "ممسحة",
+        "translit": "mamsa7a"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "صابون",
+        "translit": "saboun"
+      },
+      "undercover": {
+        "text": "شامبو",
+        "translit": "shampoo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "فرشاية سنان",
+        "translit": "frcheyet snen",
+        "alt": [
+          "فرشاة أسنان"
+        ]
+      },
+      "undercover": {
+        "text": "مشط",
+        "translit": "mechet"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "نظارات",
+        "translit": "nadarat",
+        "alt": [
+          "نظارة"
+        ]
+      },
+      "undercover": {
+        "text": "عدسات",
+        "translit": "3adasat"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "خاتم",
+        "translit": "khetem"
+      },
+      "undercover": {
+        "text": "سوار",
+        "translit": "swar",
+        "alt": [
+          "اسوارة"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "قميص",
+        "translit": "2amis"
+      },
+      "undercover": {
+        "text": "كنزة",
+        "translit": "kanze"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "جاكيت",
+        "translit": "jacket",
+        "alt": [
+          "جاكيتة"
+        ]
+      },
+      "undercover": {
+        "text": "معطف",
+        "translit": "me3taf",
+        "alt": [
+          "كبوت"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "صباط",
+        "translit": "sabbat",
+        "alt": [
+          "حذاء",
+          "كندرة"
+        ]
+      },
+      "undercover": {
+        "text": "شحّاطة",
+        "translit": "sha77ata",
+        "alt": [
+          "شبشب"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "قبعة",
+        "translit": "2ebba3a",
+        "alt": [
+          "برنيطة"
+        ]
+      },
+      "undercover": {
+        "text": "طاقية",
+        "translit": "ta2iyye"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "كتاب",
+        "translit": "ktab"
+      },
+      "undercover": {
+        "text": "مجلة",
+        "translit": "majalle"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "قلم",
+        "translit": "2alam"
+      },
+      "undercover": {
+        "text": "طبشورة",
+        "translit": "tabshoura"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "موبايل",
+        "translit": "mobile",
+        "alt": [
+          "تلفون",
+          "جوال"
+        ]
+      },
+      "undercover": {
+        "text": "تابلت",
+        "translit": "tablet"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "لابتوب",
+        "translit": "laptop"
+      },
+      "undercover": {
+        "text": "كمبيوتر",
+        "translit": "computer",
+        "alt": [
+          "حاسوب"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "سماعات",
+        "translit": "sammee3at"
+      },
+      "undercover": {
+        "text": "ميكروفون",
+        "translit": "microphone",
+        "alt": [
+          "مايك"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "كوباية",
+        "translit": "kebbeye",
+        "alt": [
+          "كوب",
+          "كاسة"
+        ]
+      },
+      "undercover": {
+        "text": "فنجان",
+        "translit": "fenjen"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "سكين",
+        "translit": "sekkine",
+        "alt": [
+          "سكينة"
+        ]
+      },
+      "undercover": {
+        "text": "مقص",
+        "translit": "ma2ass"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "شمعة",
+        "translit": "sham3a"
+      },
+      "undercover": {
+        "text": "لمبة",
+        "translit": "lambe"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "درج",
+        "translit": "daraj"
+      },
+      "undercover": {
+        "text": "أسانسير",
+        "translit": "ascenseur",
+        "alt": [
+          "مصعد"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "باب",
+        "translit": "beb"
+      },
+      "undercover": {
+        "text": "بوابة",
+        "translit": "bawwabe"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "محفظة",
+        "translit": "ma7faza",
+        "alt": [
+          "جزدان"
+        ]
+      },
+      "undercover": {
+        "text": "شنطة",
+        "translit": "shanta",
+        "alt": [
+          "حقيبة"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    }
+  ]
+}

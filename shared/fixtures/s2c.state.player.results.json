@@ -1,0 +1,202 @@
+{
+  "v": 1,
+  "t": "state",
+  "seq": 32,
+  "serverNow": 1790000029000,
+  "view": {
+    "kind": "player",
+    "roomCode": "KXRT",
+    "joinUrl": "https://mish-ana.example.workers.dev/KXRT",
+    "phase": "RESULTS",
+    "gameNumber": 1,
+    "round": 2,
+    "settings": {
+      "winRule": "official",
+      "revealRoles": false,
+      "roleMode": "custom",
+      "undercoverCount": 1,
+      "blankCount": 0,
+      "clueSeconds": 45,
+      "voteSeconds": 90,
+      "revealSeconds": 30,
+      "guessSeconds": 45,
+      "tieBreak": "random",
+      "blankGuess": true,
+      "wordLocale": "en",
+      "packIds": [],
+      "difficulties": [
+        1,
+        2,
+        3
+      ],
+      "familyFilter": true,
+      "swapSides": true,
+      "points": {
+        "civilian": 2,
+        "undercover": 10,
+        "blank": 6
+      }
+    },
+    "players": [
+      {
+        "id": "p_0a1b2c3d4e5f60718293a4b5",
+        "name": "Rami",
+        "color": "coral",
+        "seat": 0,
+        "connected": true,
+        "alive": false,
+        "left": false,
+        "isHost": true,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": "UNDERCOVER",
+        "score": 0
+      },
+      {
+        "id": "p_1b2c3d4e5f60718293a4b5c6",
+        "name": "Léa",
+        "color": "azure",
+        "seat": 1,
+        "connected": true,
+        "alive": true,
+        "left": false,
+        "isHost": false,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": "CIVILIAN",
+        "score": 2
+      },
+      {
+        "id": "p_2c3d4e5f60718293a4b5c6d7",
+        "name": "نور",
+        "color": "jade",
+        "seat": 2,
+        "connected": true,
+        "alive": true,
+        "left": false,
+        "isHost": false,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": "CIVILIAN",
+        "score": 2
+      },
+      {
+        "id": "p_3d4e5f60718293a4b5c6d7e8",
+        "name": "Sam",
+        "color": "lemon",
+        "seat": 3,
+        "connected": true,
+        "alive": false,
+        "left": false,
+        "isHost": false,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": "CIVILIAN",
+        "score": 2
+      }
+    ],
+    "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+    "roleCounts": {
+      "civilian": 3,
+      "undercover": 1,
+      "blank": 0
+    },
+    "canStart": false,
+    "startBlocker": null,
+    "speakingOrder": [],
+    "currentSpeakerId": null,
+    "revote": false,
+    "tieCandidates": [],
+    "deadline": null,
+    "votesCast": 0,
+    "votesExpected": 0,
+    "lastVote": {
+      "round": 2,
+      "revote": false,
+      "tally": [
+        {
+          "targetId": "p_0a1b2c3d4e5f60718293a4b5",
+          "voterIds": [
+            "p_1b2c3d4e5f60718293a4b5c6",
+            "p_2c3d4e5f60718293a4b5c6d7"
+          ]
+        },
+        {
+          "targetId": "p_1b2c3d4e5f60718293a4b5c6",
+          "voterIds": [
+            "p_0a1b2c3d4e5f60718293a4b5"
+          ]
+        }
+      ],
+      "abstainIds": [],
+      "outcome": "ELIMINATED",
+      "eliminatedId": "p_0a1b2c3d4e5f60718293a4b5"
+    },
+    "eliminated": {
+      "playerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "role": "UNDERCOVER"
+    },
+    "guess": null,
+    "result": {
+      "winner": "CIVILIANS",
+      "winnerIds": [
+        "p_1b2c3d4e5f60718293a4b5c6",
+        "p_2c3d4e5f60718293a4b5c6d7",
+        "p_3d4e5f60718293a4b5c6d7e8"
+      ],
+      "civilianWord": {
+        "text": "Palace",
+        "translit": null
+      },
+      "undercoverWord": {
+        "text": "Castle",
+        "translit": null
+      },
+      "pack": {
+        "id": "test-en-01",
+        "version": 1,
+        "title": {
+          "en": "Test pack",
+          "fr": "Paquet de test",
+          "ar": "حزمة اختبار"
+        }
+      },
+      "pointsAwarded": {
+        "p_0a1b2c3d4e5f60718293a4b5": 0,
+        "p_1b2c3d4e5f60718293a4b5c6": 2,
+        "p_2c3d4e5f60718293a4b5c6d7": 2,
+        "p_3d4e5f60718293a4b5c6d7e8": 2
+      },
+      "guesses": []
+    },
+    "history": [
+      {
+        "round": 1,
+        "eliminatedId": "p_3d4e5f60718293a4b5c6d7e8",
+        "role": "CIVILIAN",
+        "cause": "VOTE"
+      },
+      {
+        "round": 2,
+        "eliminatedId": "p_0a1b2c3d4e5f60718293a4b5",
+        "role": "UNDERCOVER",
+        "cause": "VOTE"
+      }
+    ],
+    "availablePacks": [],
+    "me": {
+      "id": "p_1b2c3d4e5f60718293a4b5c6",
+      "word": {
+        "text": "Palace",
+        "translit": null
+      },
+      "isBlank": false,
+      "role": "CIVILIAN",
+      "myVote": null
+    }
+  }
+}

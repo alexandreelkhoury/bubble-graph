@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DESIGN §2.1 tokens needed outside Compose (window background, launcher colour). -->
+<resources>
+    <color name="mish_bg">#FF120A1F</color>
+    <color name="mish_primary">#FFFF3D8B</color>
+    <color name="mish_accent">#FFFFC23D</color>
+</resources>

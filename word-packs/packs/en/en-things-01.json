@@ -1,0 +1,725 @@
+{
+  "id": "en-things-01",
+  "version": 1,
+  "locale": "en",
+  "script": "Latn",
+  "title": {
+    "en": "Things & home",
+    "fr": "Objets et maison",
+    "ar": "أغراض وبيت"
+  },
+  "tags": [
+    "things",
+    "seeded"
+  ],
+  "ageRating": "all",
+  "license": "MIT",
+  "source": "antebrl/undercover-word-game",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Perfume"
+      },
+      "undercover": {
+        "text": "Deodorant"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Backpack"
+      },
+      "undercover": {
+        "text": "Suitcase"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Sneakers"
+      },
+      "undercover": {
+        "text": "Sandals"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Sunglasses"
+      },
+      "undercover": {
+        "text": "Glasses"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Pencil"
+      },
+      "undercover": {
+        "text": "Pen"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Sunglasses"
+      },
+      "undercover": {
+        "text": "Goggles"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Laptop"
+      },
+      "undercover": {
+        "text": "Tablet"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Watch"
+      },
+      "undercover": {
+        "text": "Ring"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Shirt"
+      },
+      "undercover": {
+        "text": "Sweater"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Knife"
+      },
+      "undercover": {
+        "text": "Scissors"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Chair"
+      },
+      "undercover": {
+        "text": "Bench"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Mirror"
+      },
+      "undercover": {
+        "text": "Window pane"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Clock"
+      },
+      "undercover": {
+        "text": "Watch"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Painting"
+      },
+      "undercover": {
+        "text": "Sketch"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Umbrella"
+      },
+      "undercover": {
+        "text": "Parasol"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Suit"
+      },
+      "undercover": {
+        "text": "Necktie"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Socks"
+      },
+      "undercover": {
+        "text": "Stockings"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Crown"
+      },
+      "undercover": {
+        "text": "Hat"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Candle"
+      },
+      "undercover": {
+        "text": "Lantern"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Radio"
+      },
+      "undercover": {
+        "text": "Podcast"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Online news"
+      },
+      "undercover": {
+        "text": "Newspaper"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Elevator"
+      },
+      "undercover": {
+        "text": "Escalator"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Map"
+      },
+      "undercover": {
+        "text": "GPS"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Notebook"
+      },
+      "undercover": {
+        "text": "Diary"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Plate"
+      },
+      "undercover": {
+        "text": "Bowl"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Gold"
+      },
+      "undercover": {
+        "text": "Silver"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Platinum"
+      },
+      "undercover": {
+        "text": "Gold"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Denim"
+      },
+      "undercover": {
+        "text": "Corduroy"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Jacket"
+      },
+      "undercover": {
+        "text": "Coat"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Scarf"
+      },
+      "undercover": {
+        "text": "Tie"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Boots"
+      },
+      "undercover": {
+        "text": "Sneakers"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Helmet"
+      },
+      "undercover": {
+        "text": "Hat"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Necklace"
+      },
+      "undercover": {
+        "text": "Bracelet"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Ring"
+      },
+      "undercover": {
+        "text": "Earring"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Microphone"
+      },
+      "undercover": {
+        "text": "Speaker"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "Headphones"
+      },
+      "undercover": {
+        "text": "Earbuds"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p037",
+      "civilian": {
+        "text": "Television"
+      },
+      "undercover": {
+        "text": "Radio"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p038",
+      "civilian": {
+        "text": "Projector"
+      },
+      "undercover": {
+        "text": "Screen"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p039",
+      "civilian": {
+        "text": "Calculator"
+      },
+      "undercover": {
+        "text": "Typewriter"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p040",
+      "civilian": {
+        "text": "Flashlight"
+      },
+      "undercover": {
+        "text": "Lantern"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p041",
+      "civilian": {
+        "text": "Compass"
+      },
+      "undercover": {
+        "text": "Map"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p042",
+      "civilian": {
+        "text": "Boarding pass"
+      },
+      "undercover": {
+        "text": "ID card"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p043",
+      "civilian": {
+        "text": "Ticket"
+      },
+      "undercover": {
+        "text": "Invoice"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p044",
+      "civilian": {
+        "text": "Passport"
+      },
+      "undercover": {
+        "text": "Ticket"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p045",
+      "civilian": {
+        "text": "Puzzle"
+      },
+      "undercover": {
+        "text": "Crossword"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p046",
+      "civilian": {
+        "text": "Cards"
+      },
+      "undercover": {
+        "text": "Dice"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p047",
+      "civilian": {
+        "text": "Dictionary"
+      },
+      "undercover": {
+        "text": "Encyclopedia"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p048",
+      "civilian": {
+        "text": "Novel"
+      },
+      "undercover": {
+        "text": "Poem"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p049",
+      "civilian": {
+        "text": "Screen"
+      },
+      "undercover": {
+        "text": "TV"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p050",
+      "civilian": {
+        "text": "Mouse"
+      },
+      "undercover": {
+        "text": "Keyboard"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p051",
+      "civilian": {
+        "text": "TV"
+      },
+      "undercover": {
+        "text": "Laptop"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p052",
+      "civilian": {
+        "text": "Wardrobe"
+      },
+      "undercover": {
+        "text": "Display cabinet"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p053",
+      "civilian": {
+        "text": "Radiator"
+      },
+      "undercover": {
+        "text": "Hairdryer"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p054",
+      "civilian": {
+        "text": "Lamp"
+      },
+      "undercover": {
+        "text": "Candle"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p055",
+      "civilian": {
+        "text": "Microphone"
+      },
+      "undercover": {
+        "text": "Camera"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p056",
+      "civilian": {
+        "text": "Tablet"
+      },
+      "undercover": {
+        "text": "Smartphone"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p057",
+      "civilian": {
+        "text": "Stairs"
+      },
+      "undercover": {
+        "text": "Elevator"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p058",
+      "civilian": {
+        "text": "Window"
+      },
+      "undercover": {
+        "text": "Door"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p059",
+      "civilian": {
+        "text": "Oven"
+      },
+      "undercover": {
+        "text": "Heating"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p060",
+      "civilian": {
+        "text": "Wristwatch"
+      },
+      "undercover": {
+        "text": "Alarm clock"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p061",
+      "civilian": {
+        "text": "Bed"
+      },
+      "undercover": {
+        "text": "Sofa"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p062",
+      "civilian": {
+        "text": "Book"
+      },
+      "undercover": {
+        "text": "Newspaper"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p063",
+      "civilian": {
+        "text": "Glass"
+      },
+      "undercover": {
+        "text": "Cup"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p064",
+      "civilian": {
+        "text": "Jacuzzi"
+      },
+      "undercover": {
+        "text": "Sauna"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AppCompat NoActionBar dark theme; it only hosts Compose (SPEC §9.2). -->
+<resources>
+    <style name="Theme.MishAna" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/mish_bg</item>
+        <item name="android:colorBackground">@color/mish_bg</item>
+        <item name="colorPrimary">@color/mish_primary</item>
+        <item name="colorAccent">@color/mish_accent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+</resources>

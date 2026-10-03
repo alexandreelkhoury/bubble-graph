@@ -1,0 +1,5 @@
+{
+  "name": "@mishana/gen-android-strings", "version": "0.0.0", "private": true, "type": "module",
+  "scripts": { "gen": "tsx src/main.ts", "typecheck": "tsc -p ." },
+  "dependencies": { "@mishana/shared": "workspace:*" }
+}

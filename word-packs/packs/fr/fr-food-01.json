@@ -1,0 +1,384 @@
+{
+  "id": "fr-food-01",
+  "version": 1,
+  "locale": "fr",
+  "script": "Latn",
+  "title": {
+    "en": "Food & drinks",
+    "fr": "À table",
+    "ar": "أكل وشرب"
+  },
+  "tags": [
+    "food",
+    "seeded"
+  ],
+  "ageRating": "all",
+  "license": "MIT",
+  "source": "antebrl/undercover-word-game",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Banane"
+      },
+      "undercover": {
+        "text": "Pomme"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Sushi"
+      },
+      "undercover": {
+        "text": "Pizza"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Hamburger"
+      },
+      "undercover": {
+        "text": "Hot-dog"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Chocolat"
+      },
+      "undercover": {
+        "text": "Vanille"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Lait"
+      },
+      "undercover": {
+        "text": "Jus"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Pain"
+      },
+      "undercover": {
+        "text": "Beurre"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Riz"
+      },
+      "undercover": {
+        "text": "Pâtes"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Poulet"
+      },
+      "undercover": {
+        "text": "Bœuf"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Pomme"
+      },
+      "undercover": {
+        "text": "Orange"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Banane"
+      },
+      "undercover": {
+        "text": "Fraise"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Carotte"
+      },
+      "undercover": {
+        "text": "Brocoli"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Pomme de terre"
+      },
+      "undercover": {
+        "text": "Tomate"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Oignon"
+      },
+      "undercover": {
+        "text": "Ail"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Sel"
+      },
+      "undercover": {
+        "text": "Poivre"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Sucre"
+      },
+      "undercover": {
+        "text": "Miel"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Eau"
+      },
+      "undercover": {
+        "text": "Soda"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Crêpe"
+      },
+      "undercover": {
+        "text": "Beignet"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Glace"
+      },
+      "undercover": {
+        "text": "Gâteau"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Pizza"
+      },
+      "undercover": {
+        "text": "Pâtes"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Pizza"
+      },
+      "undercover": {
+        "text": "Lasagnes"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Concombre"
+      },
+      "undercover": {
+        "text": "Courgette"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Fraise"
+      },
+      "undercover": {
+        "text": "Framboise"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Banane"
+      },
+      "undercover": {
+        "text": "Plantain"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Noix de coco"
+      },
+      "undercover": {
+        "text": "Ananas"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Pain"
+      },
+      "undercover": {
+        "text": "Toast"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Tortilla"
+      },
+      "undercover": {
+        "text": "Taco"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Baguette"
+      },
+      "undercover": {
+        "text": "Ciabatta"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Hot-dog"
+      },
+      "undercover": {
+        "text": "Bratwurst"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Boisson énergisante"
+      },
+      "undercover": {
+        "text": "Soda"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Lait de coco"
+      },
+      "undercover": {
+        "text": "Lait de soja"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Boulangerie"
+      },
+      "undercover": {
+        "text": "Boucherie"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Poêle"
+      },
+      "undercover": {
+        "text": "Casserole"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Four"
+      },
+      "undercover": {
+        "text": "Micro-ondes"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    }
+  ]
+}

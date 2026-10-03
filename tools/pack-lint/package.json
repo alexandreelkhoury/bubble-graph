@@ -1,0 +1,5 @@
+{
+  "name": "@mishana/pack-lint", "version": "0.0.0", "private": true, "type": "module",
+  "scripts": { "lint": "tsx src/main.ts", "typecheck": "tsc -p ." },
+  "dependencies": { "@mishana/shared": "workspace:*" }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@mishana/shared", "version": "0.0.0", "private": true, "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./engine": "./src/engine/index.ts",
+    "./protocol": "./src/protocol/index.ts",
+    "./projection": "./src/projection/index.ts",
+    "./packs": "./src/packs/index.ts",
+    "./brand": "./src/brand.ts",
+    "./constants": "./src/constants.ts",
+    "./i18n": "./src/i18n/index.ts",
+    "./i18n/*.json": "./i18n/*.json",
+    "./fixtures/*": "./fixtures/*"
+  },
+  "scripts": { "typecheck": "tsc -p .", "gen:fixtures": "tsx scripts/gen-fixtures.ts", "check:fixtures": "tsx scripts/gen-fixtures.ts --check" },
+  "dependencies": { "zod": "4.6.5" }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "@mishana/sim", "version": "0.0.0", "private": true, "type": "module",
+  "scripts": { "sim": "tsx src/main.ts", "typecheck": "tsc -p ." },
+  "dependencies": { "@mishana/shared": "workspace:*", "@mishana/word-packs": "workspace:*", "ws": "8.20.0" },
+  "devDependencies": { "@types/ws": "8.18.2" }
+}

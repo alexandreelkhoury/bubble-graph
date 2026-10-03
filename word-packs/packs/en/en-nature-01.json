@@ -1,0 +1,384 @@
+{
+  "id": "en-nature-01",
+  "version": 1,
+  "locale": "en",
+  "script": "Latn",
+  "title": {
+    "en": "Nature & animals",
+    "fr": "Nature et animaux",
+    "ar": "طبيعة وحيوانات"
+  },
+  "tags": [
+    "nature",
+    "seeded"
+  ],
+  "ageRating": "all",
+  "license": "MIT",
+  "source": "antebrl/undercover-word-game",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Beach"
+      },
+      "undercover": {
+        "text": "Mountain"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Virus"
+      },
+      "undercover": {
+        "text": "Bacteria"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Dog"
+      },
+      "undercover": {
+        "text": "Wolf"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "River"
+      },
+      "undercover": {
+        "text": "Lake"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Ocean"
+      },
+      "undercover": {
+        "text": "River"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Mouse"
+      },
+      "undercover": {
+        "text": "Rat"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Dragon"
+      },
+      "undercover": {
+        "text": "Dinosaur"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Ghost"
+      },
+      "undercover": {
+        "text": "Zombie"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Volcano"
+      },
+      "undercover": {
+        "text": "Mountain"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Cloud"
+      },
+      "undercover": {
+        "text": "Fog"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Snow"
+      },
+      "undercover": {
+        "text": "Hail"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Jungle"
+      },
+      "undercover": {
+        "text": "Forest"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Parrot"
+      },
+      "undercover": {
+        "text": "Crow"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Bat"
+      },
+      "undercover": {
+        "text": "Owl"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Meteor"
+      },
+      "undercover": {
+        "text": "Satellite"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Planet"
+      },
+      "undercover": {
+        "text": "Star"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Earthquake"
+      },
+      "undercover": {
+        "text": "Tsunami"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Jellyfish"
+      },
+      "undercover": {
+        "text": "Octopus"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Wolf"
+      },
+      "undercover": {
+        "text": "Fox"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Hawk"
+      },
+      "undercover": {
+        "text": "Vulture"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Lizard"
+      },
+      "undercover": {
+        "text": "Gecko"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Shark"
+      },
+      "undercover": {
+        "text": "Dolphin"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Penguin"
+      },
+      "undercover": {
+        "text": "Seagull"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Moon"
+      },
+      "undercover": {
+        "text": "Planet"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Comet"
+      },
+      "undercover": {
+        "text": "Asteroid"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Fountain"
+      },
+      "undercover": {
+        "text": "Waterfall"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Lake"
+      },
+      "undercover": {
+        "text": "Pond"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Giraffe"
+      },
+      "undercover": {
+        "text": "Zebra"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Elephant"
+      },
+      "undercover": {
+        "text": "Rhino"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Alligator"
+      },
+      "undercover": {
+        "text": "Crocodile"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Oyster"
+      },
+      "undercover": {
+        "text": "Clam"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "UFO"
+      },
+      "undercover": {
+        "text": "Drone"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Forest"
+      },
+      "undercover": {
+        "text": "Park"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "v": 1,
+  "t": "state",
+  "seq": 52,
+  "serverNow": 1790000048000,
+  "view": {
+    "kind": "player",
+    "roomCode": "KXRT",
+    "joinUrl": "https://mish-ana.example.workers.dev/KXRT",
+    "phase": "MR_WHITE_GUESS",
+    "gameNumber": 2,
+    "round": 1,
+    "settings": {
+      "winRule": "official",
+      "revealRoles": false,
+      "roleMode": "custom",
+      "undercoverCount": 1,
+      "blankCount": 1,
+      "clueSeconds": 45,
+      "voteSeconds": 90,
+      "revealSeconds": 30,
+      "guessSeconds": 45,
+      "tieBreak": "random",
+      "blankGuess": true,
+      "wordLocale": "en",
+      "packIds": [],
+      "difficulties": [
+        1,
+        2,
+        3
+      ],
+      "familyFilter": true,
+      "swapSides": true,
+      "points": {
+        "civilian": 2,
+        "undercover": 10,
+        "blank": 6
+      }
+    },
+    "players": [
+      {
+        "id": "p_0a1b2c3d4e5f60718293a4b5",
+        "name": "Rami",
+        "color": "coral",
+        "seat": 0,
+        "connected": true,
+        "alive": true,
+        "left": false,
+        "isHost": true,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": null,
+        "score": 0
+      },
+      {
+        "id": "p_1b2c3d4e5f60718293a4b5c6",
+        "name": "Léa",
+        "color": "azure",
+        "seat": 1,
+        "connected": true,
+        "alive": true,
+        "left": false,
+        "isHost": false,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": null,
+        "score": 2
+      },
+      {
+        "id": "p_2c3d4e5f60718293a4b5c6d7",
+        "name": "نور",
+        "color": "jade",
+        "seat": 2,
+        "connected": true,
+        "alive": false,
+        "left": false,
+        "isHost": false,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": "BLANK",
+        "score": 2
+      },
+      {
+        "id": "p_3d4e5f60718293a4b5c6d7e8",
+        "name": "Sam",
+        "color": "lemon",
+        "seat": 3,
+        "connected": true,
+        "alive": true,
+        "left": false,
+        "isHost": false,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": null,
+        "score": 2
+      },
+      {
+        "id": "p_4e5f60718293a4b5c6d7e8f9",
+        "name": "Zoé",
+        "color": "grape",
+        "seat": 4,
+        "connected": true,
+        "alive": true,
+        "left": false,
+        "isHost": false,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": null,
+        "score": 0
+      }
+    ],
+    "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+    "roleCounts": {
+      "civilian": 3,
+      "undercover": 1,
+      "blank": 1
+    },
+    "canStart": false,
+    "startBlocker": null,
+    "speakingOrder": [],
+    "currentSpeakerId": null,
+    "revote": false,
+    "tieCandidates": [],
+    "deadline": {
+      "kind": "GUESS",
+      "at": 1790000093000,
+      "durationMs": 45000
+    },
+    "votesCast": 0,
+    "votesExpected": 0,
+    "lastVote": {
+      "round": 1,
+      "revote": false,
+      "tally": [
+        {
+          "targetId": "p_2c3d4e5f60718293a4b5c6d7",
+          "voterIds": [
+            "p_0a1b2c3d4e5f60718293a4b5",
+            "p_1b2c3d4e5f60718293a4b5c6",
+            "p_3d4e5f60718293a4b5c6d7e8",
+            "p_4e5f60718293a4b5c6d7e8f9"
+          ]
+        },
+        {
+          "targetId": "p_0a1b2c3d4e5f60718293a4b5",
+          "voterIds": [
+            "p_2c3d4e5f60718293a4b5c6d7"
+          ]
+        }
+      ],
+      "abstainIds": [],
+      "outcome": "ELIMINATED",
+      "eliminatedId": "p_2c3d4e5f60718293a4b5c6d7"
+    },
+    "eliminated": {
+      "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+      "role": "BLANK"
+    },
+    "guess": {
+      "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+      "status": "PENDING",
+      "text": null,
+      "overridden": false
+    },
+    "result": null,
+    "history": [
+      {
+        "round": 1,
+        "eliminatedId": "p_2c3d4e5f60718293a4b5c6d7",
+        "role": "BLANK",
+        "cause": "VOTE"
+      }
+    ],
+    "availablePacks": [],
+    "me": {
+      "id": "p_2c3d4e5f60718293a4b5c6d7",
+      "word": null,
+      "isBlank": true,
+      "role": "BLANK",
+      "myVote": null
+    }
+  }
+}

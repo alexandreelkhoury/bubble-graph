@@ -1,0 +1,26 @@
+{
+  "name": "mishana",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "dev": "node tools/dev.mjs",
+    "build": "pnpm --filter @mishana/web-client run build && pnpm --filter @mishana/server run build",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "sim": "pnpm --filter @mishana/sim run sim",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r --if-present run typecheck",
+    "fixtures": "pnpm --filter @mishana/shared run gen:fixtures",
+    "gen:strings": "pnpm --filter @mishana/gen-android-strings run gen",
+    "lint:packs": "pnpm --filter @mishana/pack-lint run lint",
+    "e2e": "pnpm --filter @mishana/web-client run e2e",
+    "deploy": "pnpm run build && pnpm --filter @mishana/server run deploy"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3", "vitest": "4.1.11", "@vitest/coverage-v8": "4.1.11",
+    "fast-check": "4.10.2", "tsx": "4.23.15", "eslint": "10.12.0", "@eslint/js": "10.0.1",
+    "typescript-eslint": "8.71.0", "@types/node": "22.20.5"
+  }
+}

@@ -1,0 +1,384 @@
+{
+  "id": "fr-leisure-01",
+  "version": 1,
+  "locale": "fr",
+  "script": "Latn",
+  "title": {
+    "en": "Sports, hobbies & jobs",
+    "fr": "Sports, loisirs et métiers",
+    "ar": "رياضة وهوايات ومهن"
+  },
+  "tags": [
+    "leisure",
+    "seeded"
+  ],
+  "ageRating": "all",
+  "license": "MIT",
+  "source": "antebrl/undercover-word-game",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Piano"
+      },
+      "undercover": {
+        "text": "Guitare"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Football"
+      },
+      "undercover": {
+        "text": "Basket-ball"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Musique"
+      },
+      "undercover": {
+        "text": "Danse"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Médecin"
+      },
+      "undercover": {
+        "text": "Chirurgien"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Football"
+      },
+      "undercover": {
+        "text": "Rugby"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Professeur"
+      },
+      "undercover": {
+        "text": "Maître d’école"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Détective"
+      },
+      "undercover": {
+        "text": "Criminel"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Ballet"
+      },
+      "undercover": {
+        "text": "Hip-hop"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Tennis"
+      },
+      "undercover": {
+        "text": "Badminton"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Natation"
+      },
+      "undercover": {
+        "text": "Plongée"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Course"
+      },
+      "undercover": {
+        "text": "Jogging"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Planche de surf"
+      },
+      "undercover": {
+        "text": "Skateboard"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Base-ball"
+      },
+      "undercover": {
+        "text": "Football"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Volley-ball"
+      },
+      "undercover": {
+        "text": "Basket-ball"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Tennis de table"
+      },
+      "undercover": {
+        "text": "Badminton"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Bowling"
+      },
+      "undercover": {
+        "text": "Golf"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Marathon"
+      },
+      "undercover": {
+        "text": "Sprint"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Escrime"
+      },
+      "undercover": {
+        "text": "Tir à l’arc"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Boxe"
+      },
+      "undercover": {
+        "text": "Karaté"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Hockey"
+      },
+      "undercover": {
+        "text": "Football"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Concert"
+      },
+      "undercover": {
+        "text": "Festival"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Pharmacien"
+      },
+      "undercover": {
+        "text": "Médecin"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Ingénieur"
+      },
+      "undercover": {
+        "text": "Architecte"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Pompier"
+      },
+      "undercover": {
+        "text": "Policier"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Pilote"
+      },
+      "undercover": {
+        "text": "Astronaute"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Boulanger"
+      },
+      "undercover": {
+        "text": "Cuisinier"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Agriculteur"
+      },
+      "undercover": {
+        "text": "Pêcheur"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Forgeron"
+      },
+      "undercover": {
+        "text": "Charpentier"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Techno"
+      },
+      "undercover": {
+        "text": "Rap"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Rock"
+      },
+      "undercover": {
+        "text": "Pop"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Cinéma"
+      },
+      "undercover": {
+        "text": "Bowling"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Travail"
+      },
+      "undercover": {
+        "text": "Loisir"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Dracula"
+      },
+      "undercover": {
+        "text": "Frankenstein"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    }
+  ]
+}

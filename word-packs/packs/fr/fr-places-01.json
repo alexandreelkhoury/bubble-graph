@@ -1,0 +1,351 @@
+{
+  "id": "fr-places-01",
+  "version": 1,
+  "locale": "fr",
+  "script": "Latn",
+  "title": {
+    "en": "Places & travel",
+    "fr": "Lieux et voyages",
+    "ar": "أماكن وسفر"
+  },
+  "tags": [
+    "places",
+    "seeded"
+  ],
+  "ageRating": "all",
+  "license": "MIT",
+  "source": "antebrl/undercover-word-game",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Voiture"
+      },
+      "undercover": {
+        "text": "Bus"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Croisière"
+      },
+      "undercover": {
+        "text": "Safari"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Voiture"
+      },
+      "undercover": {
+        "text": "Vélo"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Voiture"
+      },
+      "undercover": {
+        "text": "Camion"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Avion"
+      },
+      "undercover": {
+        "text": "Hélicoptère"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Vélo"
+      },
+      "undercover": {
+        "text": "Moto"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Château"
+      },
+      "undercover": {
+        "text": "Maison"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Pyramide"
+      },
+      "undercover": {
+        "text": "Temple"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Bibliothèque"
+      },
+      "undercover": {
+        "text": "Université"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Musée"
+      },
+      "undercover": {
+        "text": "Galerie"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Ferry"
+      },
+      "undercover": {
+        "text": "Croisière"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Voilier"
+      },
+      "undercover": {
+        "text": "Yacht"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "New York"
+      },
+      "undercover": {
+        "text": "Los Angeles"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Paris"
+      },
+      "undercover": {
+        "text": "Londres"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Rome"
+      },
+      "undercover": {
+        "text": "Athènes"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Sydney"
+      },
+      "undercover": {
+        "text": "Melbourne"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Rio de Janeiro"
+      },
+      "undercover": {
+        "text": "Buenos Aires"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Grand Canyon"
+      },
+      "undercover": {
+        "text": "Chutes du Niagara"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Taj Mahal"
+      },
+      "undercover": {
+        "text": "Grande Muraille de Chine"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Tour Eiffel"
+      },
+      "undercover": {
+        "text": "Statue de la Liberté"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Big Ben"
+      },
+      "undercover": {
+        "text": "Tour de Pise"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Pont"
+      },
+      "undercover": {
+        "text": "Tunnel"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Bus"
+      },
+      "undercover": {
+        "text": "Tramway"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Train"
+      },
+      "undercover": {
+        "text": "Monorail"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Bateau"
+      },
+      "undercover": {
+        "text": "Sous-marin"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Tente"
+      },
+      "undercover": {
+        "text": "Cabane"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Métro"
+      },
+      "undercover": {
+        "text": "Taxi"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Moto"
+      },
+      "undercover": {
+        "text": "Scooter"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Allemagne"
+      },
+      "undercover": {
+        "text": "France"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Japon"
+      },
+      "undercover": {
+        "text": "Chine"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    }
+  ]
+}

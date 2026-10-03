@@ -1,0 +1,1 @@
+{ "v": 1, "t": "action", "id": "1", "a": { "type": "UPDATE_SETTINGS", "patch": { "winRule": "parity", "clueSeconds": 30 } } }

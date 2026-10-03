@@ -1,0 +1,397 @@
+{
+  "id": "lb-food-01",
+  "version": 1,
+  "locale": "ar-LB",
+  "script": "Arab",
+  "title": {
+    "en": "Lebanese food",
+    "fr": "Cuisine libanaise",
+    "ar": "أكل لبناني"
+  },
+  "tags": [
+    "food",
+    "lebanese"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "تبولة",
+        "translit": "tabbouleh",
+        "alt": [
+          "تبولي"
+        ]
+      },
+      "undercover": {
+        "text": "فتوش",
+        "translit": "fattouch"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "حمص",
+        "translit": "7ommos",
+        "alt": [
+          "حمص بطحينة"
+        ]
+      },
+      "undercover": {
+        "text": "متبل",
+        "translit": "mtabbal"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "فلافل",
+        "translit": "falafel"
+      },
+      "undercover": {
+        "text": "شاورما",
+        "translit": "shawarma"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "كبة",
+        "translit": "kebbe"
+      },
+      "undercover": {
+        "text": "كفتة",
+        "translit": "kafta"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "ورق عنب",
+        "translit": "wara2 3enab"
+      },
+      "undercover": {
+        "text": "محشي",
+        "translit": "me7chi",
+        "alt": [
+          "كوسا محشي"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "مجدرة",
+        "translit": "mjaddara"
+      },
+      "undercover": {
+        "text": "مدردرة",
+        "translit": "mdardara"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Same ingredients: lentils with bulgur (mjaddara) or rice (mdardara)."
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "كنافة",
+        "translit": "knefe",
+        "alt": [
+          "كنافي"
+        ]
+      },
+      "undercover": {
+        "text": "بقلاوة",
+        "translit": "ba2lewa"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "معمول",
+        "translit": "ma3moul"
+      },
+      "undercover": {
+        "text": "غريبة",
+        "translit": "ghraybe"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "لبنة",
+        "translit": "labne"
+      },
+      "undercover": {
+        "text": "جبنة",
+        "translit": "jebne"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "زعتر",
+        "translit": "za3tar"
+      },
+      "undercover": {
+        "text": "سماق",
+        "translit": "summa2"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "جلاب",
+        "translit": "jallab"
+      },
+      "undercover": {
+        "text": "تمر هندي",
+        "translit": "tamer hendi"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "كعكة",
+        "translit": "ka3ke"
+      },
+      "undercover": {
+        "text": "كرواسون",
+        "translit": "croissant"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "طاووق",
+        "translit": "tawou2",
+        "alt": [
+          "شيش طاووق"
+        ]
+      },
+      "undercover": {
+        "text": "كباب",
+        "translit": "kabab"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "فول",
+        "translit": "foul",
+        "alt": [
+          "فول مدمس"
+        ]
+      },
+      "undercover": {
+        "text": "بليلة",
+        "translit": "balila"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "صفوف",
+        "translit": "sfouf",
+        "alt": [
+          "سفوف"
+        ]
+      },
+      "undercover": {
+        "text": "نمورة",
+        "translit": "nammoura"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "مغلي",
+        "translit": "meghle"
+      },
+      "undercover": {
+        "text": "رز بحليب",
+        "translit": "rezz b7alib"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "عيران",
+        "translit": "ayran"
+      },
+      "undercover": {
+        "text": "لبن",
+        "translit": "laban"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "فتة",
+        "translit": "fatte"
+      },
+      "undercover": {
+        "text": "مسقعة",
+        "translit": "msa2a3a"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "بابا غنوج",
+        "translit": "baba ghannouj"
+      },
+      "undercover": {
+        "text": "متبل باذنجان",
+        "translit": "mtabbal bitinjen"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "صيادية",
+        "translit": "sayyadiyye"
+      },
+      "undercover": {
+        "text": "سمكة حرة",
+        "translit": "samke 7arra"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "شيش برك",
+        "translit": "chich barak"
+      },
+      "undercover": {
+        "text": "كبة بلبنية",
+        "translit": "kebbe b laban"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "ملوخية",
+        "translit": "mloukhiyye"
+      },
+      "undercover": {
+        "text": "سبانخ",
+        "translit": "sbenekh"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "أكي دنيا",
+        "translit": "akidinya",
+        "alt": [
+          "إكي دنيا"
+        ]
+      },
+      "undercover": {
+        "text": "مشمش",
+        "translit": "mechmech"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "صبير",
+        "translit": "sabbir"
+      },
+      "undercover": {
+        "text": "تين",
+        "translit": "tin"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "ترمس",
+        "translit": "termos"
+      },
+      "undercover": {
+        "text": "فستق",
+        "translit": "fost2"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "ليموناضة",
+        "translit": "limonada"
+      },
+      "undercover": {
+        "text": "عصير برتقان",
+        "translit": "3asir berd2an"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "منقوشة زعتر",
+        "translit": "man2oushe za3tar"
+      },
+      "undercover": {
+        "text": "منقوشة جبنة",
+        "translit": "man2oushe jebne"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+packages:
+  - shared
+  - server
+  - web-client
+  - word-packs
+  - tools/*
+onlyBuiltDependencies:
+  - esbuild
+  - workerd
+  - sharp

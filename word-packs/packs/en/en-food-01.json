@@ -1,0 +1,384 @@
+{
+  "id": "en-food-01",
+  "version": 1,
+  "locale": "en",
+  "script": "Latn",
+  "title": {
+    "en": "Food & drinks",
+    "fr": "À table",
+    "ar": "أكل وشرب"
+  },
+  "tags": [
+    "food",
+    "seeded"
+  ],
+  "ageRating": "all",
+  "license": "MIT",
+  "source": "antebrl/undercover-word-game",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Banana"
+      },
+      "undercover": {
+        "text": "Apple"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Sushi"
+      },
+      "undercover": {
+        "text": "Pizza"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Hamburger"
+      },
+      "undercover": {
+        "text": "Hot dog"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Chocolate"
+      },
+      "undercover": {
+        "text": "Vanilla"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Milk"
+      },
+      "undercover": {
+        "text": "Juice"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Bread"
+      },
+      "undercover": {
+        "text": "Butter"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Rice"
+      },
+      "undercover": {
+        "text": "Pasta"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Chicken"
+      },
+      "undercover": {
+        "text": "Beef"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Apple"
+      },
+      "undercover": {
+        "text": "Orange"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Banana"
+      },
+      "undercover": {
+        "text": "Strawberry"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Carrot"
+      },
+      "undercover": {
+        "text": "Broccoli"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Potato"
+      },
+      "undercover": {
+        "text": "Tomato"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Onion"
+      },
+      "undercover": {
+        "text": "Garlic"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Salt"
+      },
+      "undercover": {
+        "text": "Pepper"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Sugar"
+      },
+      "undercover": {
+        "text": "Honey"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Water"
+      },
+      "undercover": {
+        "text": "Soda"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Pancake"
+      },
+      "undercover": {
+        "text": "Doughnut"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Ice cream"
+      },
+      "undercover": {
+        "text": "Cake"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Pizza"
+      },
+      "undercover": {
+        "text": "Pasta"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Pizza"
+      },
+      "undercover": {
+        "text": "Lasagna"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Cucumber"
+      },
+      "undercover": {
+        "text": "Zucchini"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Strawberry"
+      },
+      "undercover": {
+        "text": "Raspberry"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Banana"
+      },
+      "undercover": {
+        "text": "Plantain"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Coconut"
+      },
+      "undercover": {
+        "text": "Pineapple"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Bread"
+      },
+      "undercover": {
+        "text": "Toast"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Tortilla"
+      },
+      "undercover": {
+        "text": "Taco"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Baguette"
+      },
+      "undercover": {
+        "text": "Ciabatta"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Hot dog"
+      },
+      "undercover": {
+        "text": "Bratwurst"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Energy drink"
+      },
+      "undercover": {
+        "text": "Soda"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Coconut milk"
+      },
+      "undercover": {
+        "text": "Soy milk"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Bakery"
+      },
+      "undercover": {
+        "text": "Butcher"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Pan"
+      },
+      "undercover": {
+        "text": "Pot"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Oven"
+      },
+      "undercover": {
+        "text": "Microwave"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    }
+  ]
+}

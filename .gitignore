@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.wrangler/
+coverage/
+.env
+.dev.vars
+tv-app/.gradle/
+tv-app/build/
+tv-app/app/build/
+tv-app/local.properties
+web-client/test-results/
+web-client/playwright-report/

@@ -1,0 +1,284 @@
+{
+  "id": "en-everyday-01",
+  "version": 1,
+  "locale": "en",
+  "script": "Latn",
+  "title": {
+    "en": "Everyday",
+    "fr": "Le quotidien",
+    "ar": "من كل يوم"
+  },
+  "tags": [
+    "everyday"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Coffee"
+      },
+      "undercover": {
+        "text": "Tea"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Cat"
+      },
+      "undercover": {
+        "text": "Dog"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Beach"
+      },
+      "undercover": {
+        "text": "Pool"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Pizza"
+      },
+      "undercover": {
+        "text": "Burger"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Train"
+      },
+      "undercover": {
+        "text": "Bus"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Guitar"
+      },
+      "undercover": {
+        "text": "Violin"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Doctor"
+      },
+      "undercover": {
+        "text": "Nurse"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Moon"
+      },
+      "undercover": {
+        "text": "Sun"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Apple"
+      },
+      "undercover": {
+        "text": "Pear"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Pillow"
+      },
+      "undercover": {
+        "text": "Blanket"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Wedding"
+      },
+      "undercover": {
+        "text": "Birthday"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Lion"
+      },
+      "undercover": {
+        "text": "Tiger"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Shower"
+      },
+      "undercover": {
+        "text": "Bath"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Rain"
+      },
+      "undercover": {
+        "text": "Snow"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Chess"
+      },
+      "undercover": {
+        "text": "Checkers"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Library"
+      },
+      "undercover": {
+        "text": "Bookshop"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Lemon"
+      },
+      "undercover": {
+        "text": "Lime"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Fork"
+      },
+      "undercover": {
+        "text": "Spoon"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Airport"
+      },
+      "undercover": {
+        "text": "Train station"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Butter"
+      },
+      "undercover": {
+        "text": "Margarine"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Sofa"
+      },
+      "undercover": {
+        "text": "Armchair"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Honey"
+      },
+      "undercover": {
+        "text": "Jam"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Painter"
+      },
+      "undercover": {
+        "text": "Photographer"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Mountain"
+      },
+      "undercover": {
+        "text": "Hill"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    }
+  ]
+}

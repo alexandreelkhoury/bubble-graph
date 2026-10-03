@@ -1,0 +1,332 @@
+{
+  "id": "ar-everyday-01",
+  "version": 1,
+  "locale": "ar",
+  "script": "Arab",
+  "title": {
+    "en": "Everyday",
+    "fr": "Le quotidien",
+    "ar": "من كل يوم"
+  },
+  "tags": [
+    "everyday"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "قهوة",
+        "translit": "ahwe"
+      },
+      "undercover": {
+        "text": "شاي",
+        "translit": "shay"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "قطة",
+        "translit": "otta"
+      },
+      "undercover": {
+        "text": "كلب",
+        "translit": "kalb"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "بحر",
+        "translit": "ba7r"
+      },
+      "undercover": {
+        "text": "مسبح",
+        "translit": "masba7"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "بيتزا",
+        "translit": "pizza"
+      },
+      "undercover": {
+        "text": "برغر",
+        "translit": "burger"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "قطار",
+        "translit": "2itar"
+      },
+      "undercover": {
+        "text": "باص",
+        "translit": "bus"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "عود",
+        "translit": "3ud"
+      },
+      "undercover": {
+        "text": "كمنجة",
+        "translit": "kamanja"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "دكتور",
+        "translit": "doctor"
+      },
+      "undercover": {
+        "text": "ممرض",
+        "translit": "mumarred"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "قمر",
+        "translit": "amar"
+      },
+      "undercover": {
+        "text": "شمس",
+        "translit": "shames"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "تفاح",
+        "translit": "teffe7"
+      },
+      "undercover": {
+        "text": "إجاص",
+        "translit": "njass"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "مخدة",
+        "translit": "mkhadde"
+      },
+      "undercover": {
+        "text": "حرام",
+        "translit": "7ram"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "عرس",
+        "translit": "3eres"
+      },
+      "undercover": {
+        "text": "عيد ميلاد",
+        "translit": "3id milad"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "أسد",
+        "translit": "asad"
+      },
+      "undercover": {
+        "text": "نمر",
+        "translit": "nemer"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "دوش",
+        "translit": "douche"
+      },
+      "undercover": {
+        "text": "بانيو",
+        "translit": "banyo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "شتي",
+        "translit": "shite"
+      },
+      "undercover": {
+        "text": "تلج",
+        "translit": "talj"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "شطرنج",
+        "translit": "shatranj"
+      },
+      "undercover": {
+        "text": "طاولة",
+        "translit": "tawle"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "مكتبة",
+        "translit": "maktabe"
+      },
+      "undercover": {
+        "text": "دكانة كتب",
+        "translit": "dekkenit kotob"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "ليمون",
+        "translit": "leymoun"
+      },
+      "undercover": {
+        "text": "برتقان",
+        "translit": "berd2an"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "شوكة",
+        "translit": "shoke"
+      },
+      "undercover": {
+        "text": "معلقة",
+        "translit": "ma3la2a"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "مطار",
+        "translit": "matar"
+      },
+      "undercover": {
+        "text": "مرفأ",
+        "translit": "marfa2"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "زبدة",
+        "translit": "zebde"
+      },
+      "undercover": {
+        "text": "لبنة",
+        "translit": "labne"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "كنباية",
+        "translit": "kanabaye"
+      },
+      "undercover": {
+        "text": "كرسي",
+        "translit": "kerse"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "عسل",
+        "translit": "3asal"
+      },
+      "undercover": {
+        "text": "مربى",
+        "translit": "mrabba"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "منقوشة",
+        "translit": "man2ushe"
+      },
+      "undercover": {
+        "text": "فطيرة",
+        "translit": "ftire"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "جبل",
+        "translit": "jabal"
+      },
+      "undercover": {
+        "text": "تلة",
+        "translit": "telle"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    }
+  ]
+}

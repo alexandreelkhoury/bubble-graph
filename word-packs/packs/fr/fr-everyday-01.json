@@ -1,0 +1,284 @@
+{
+  "id": "fr-everyday-01",
+  "version": 1,
+  "locale": "fr",
+  "script": "Latn",
+  "title": {
+    "en": "Everyday",
+    "fr": "Le quotidien",
+    "ar": "من كل يوم"
+  },
+  "tags": [
+    "everyday"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Café"
+      },
+      "undercover": {
+        "text": "Thé"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Chat"
+      },
+      "undercover": {
+        "text": "Chien"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Plage"
+      },
+      "undercover": {
+        "text": "Piscine"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Pizza"
+      },
+      "undercover": {
+        "text": "Burger"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Train"
+      },
+      "undercover": {
+        "text": "Bus"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Guitare"
+      },
+      "undercover": {
+        "text": "Violon"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Médecin"
+      },
+      "undercover": {
+        "text": "Infirmier"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Lune"
+      },
+      "undercover": {
+        "text": "Soleil"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Pomme"
+      },
+      "undercover": {
+        "text": "Poire"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Oreiller"
+      },
+      "undercover": {
+        "text": "Couverture"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Mariage"
+      },
+      "undercover": {
+        "text": "Anniversaire"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Lion"
+      },
+      "undercover": {
+        "text": "Tigre"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Douche"
+      },
+      "undercover": {
+        "text": "Baignoire"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Pluie"
+      },
+      "undercover": {
+        "text": "Neige"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Échecs"
+      },
+      "undercover": {
+        "text": "Dames"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Bibliothèque"
+      },
+      "undercover": {
+        "text": "Librairie"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Citron"
+      },
+      "undercover": {
+        "text": "Citron vert"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Fourchette"
+      },
+      "undercover": {
+        "text": "Cuillère"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Aéroport"
+      },
+      "undercover": {
+        "text": "Gare"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Beurre"
+      },
+      "undercover": {
+        "text": "Margarine"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Canapé"
+      },
+      "undercover": {
+        "text": "Fauteuil"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Miel"
+      },
+      "undercover": {
+        "text": "Confiture"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Croissant"
+      },
+      "undercover": {
+        "text": "Pain au chocolat"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Montagne"
+      },
+      "undercover": {
+        "text": "Colline"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "v": 1,
+  "t": "state",
+  "seq": 24,
+  "serverNow": 1790000021000,
+  "view": {
+    "kind": "tv",
+    "roomCode": "KXRT",
+    "joinUrl": "https://mish-ana.example.workers.dev/KXRT",
+    "phase": "ELIMINATION",
+    "gameNumber": 1,
+    "round": 1,
+    "settings": {
+      "winRule": "official",
+      "revealRoles": false,
+      "roleMode": "custom",
+      "undercoverCount": 1,
+      "blankCount": 0,
+      "clueSeconds": 45,
+      "voteSeconds": 90,
+      "revealSeconds": 30,
+      "guessSeconds": 45,
+      "tieBreak": "random",
+      "blankGuess": true,
+      "wordLocale": "en",
+      "packIds": [],
+      "difficulties": [
+        1,
+        2,
+        3
+      ],
+      "familyFilter": true,
+      "swapSides": true,
+      "points": {
+        "civilian": 2,
+        "undercover": 10,
+        "blank": 6
+      }
+    },
+    "players": [
+      {
+        "id": "p_0a1b2c3d4e5f60718293a4b5",
+        "name": "Rami",
+        "color": "coral",
+        "seat": 0,
+        "connected": true,
+        "alive": true,
+        "left": false,
+        "isHost": true,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": null,
+        "score": 0
+      },
+      {
+        "id": "p_1b2c3d4e5f60718293a4b5c6",
+        "name": "Léa",
+        "color": "azure",
+        "seat": 1,
+        "connected": true,
+        "alive": true,
+        "left": false,
+        "isHost": false,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": null,
+        "score": 0
+      },
+      {
+        "id": "p_2c3d4e5f60718293a4b5c6d7",
+        "name": "نور",
+        "color": "jade",
+        "seat": 2,
+        "connected": true,
+        "alive": true,
+        "left": false,
+        "isHost": false,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": null,
+        "score": 0
+      },
+      {
+        "id": "p_3d4e5f60718293a4b5c6d7e8",
+        "name": "Sam",
+        "color": "lemon",
+        "seat": 3,
+        "connected": true,
+        "alive": false,
+        "left": false,
+        "isHost": false,
+        "ready": true,
+        "spoke": true,
+        "hasVoted": false,
+        "revealedRole": "CIVILIAN",
+        "score": 0
+      }
+    ],
+    "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+    "roleCounts": {
+      "civilian": 3,
+      "undercover": 1,
+      "blank": 0
+    },
+    "canStart": false,
+    "startBlocker": null,
+    "speakingOrder": [],
+    "currentSpeakerId": null,
+    "revote": true,
+    "tieCandidates": [
+      "p_0a1b2c3d4e5f60718293a4b5",
+      "p_3d4e5f60718293a4b5c6d7e8"
+    ],
+    "deadline": {
+      "kind": "ELIMINATION",
+      "at": 1790000029000,
+      "durationMs": 8000
+    },
+    "votesCast": 0,
+    "votesExpected": 0,
+    "lastVote": {
+      "round": 1,
+      "revote": true,
+      "tally": [
+        {
+          "targetId": "p_3d4e5f60718293a4b5c6d7e8",
+          "voterIds": [
+            "p_0a1b2c3d4e5f60718293a4b5",
+            "p_1b2c3d4e5f60718293a4b5c6",
+            "p_2c3d4e5f60718293a4b5c6d7"
+          ]
+        },
+        {
+          "targetId": "p_0a1b2c3d4e5f60718293a4b5",
+          "voterIds": [
+            "p_3d4e5f60718293a4b5c6d7e8"
+          ]
+        }
+      ],
+      "abstainIds": [],
+      "outcome": "ELIMINATED",
+      "eliminatedId": "p_3d4e5f60718293a4b5c6d7e8"
+    },
+    "eliminated": {
+      "playerId": "p_3d4e5f60718293a4b5c6d7e8",
+      "role": "CIVILIAN"
+    },
+    "guess": null,
+    "result": null,
+    "history": [
+      {
+        "round": 1,
+        "eliminatedId": "p_3d4e5f60718293a4b5c6d7e8",
+        "role": "CIVILIAN",
+        "cause": "VOTE"
+      }
+    ],
+    "availablePacks": []
+  }
+}

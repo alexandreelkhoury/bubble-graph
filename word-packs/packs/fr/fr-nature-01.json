@@ -1,0 +1,362 @@
+{
+  "id": "fr-nature-01",
+  "version": 1,
+  "locale": "fr",
+  "script": "Latn",
+  "title": {
+    "en": "Nature & animals",
+    "fr": "Nature et animaux",
+    "ar": "طبيعة وحيوانات"
+  },
+  "tags": [
+    "nature",
+    "seeded"
+  ],
+  "ageRating": "all",
+  "license": "MIT",
+  "source": "antebrl/undercover-word-game",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Plage"
+      },
+      "undercover": {
+        "text": "Montagne"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Virus"
+      },
+      "undercover": {
+        "text": "Bactérie"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Chien"
+      },
+      "undercover": {
+        "text": "Loup"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Rivière"
+      },
+      "undercover": {
+        "text": "Lac"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Océan"
+      },
+      "undercover": {
+        "text": "Rivière"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Souris"
+      },
+      "undercover": {
+        "text": "Rat"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Dragon"
+      },
+      "undercover": {
+        "text": "Dinosaure"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Fantôme"
+      },
+      "undercover": {
+        "text": "Zombie"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Volcan"
+      },
+      "undercover": {
+        "text": "Montagne"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Nuage"
+      },
+      "undercover": {
+        "text": "Brouillard"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Neige"
+      },
+      "undercover": {
+        "text": "Grêle"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Jungle"
+      },
+      "undercover": {
+        "text": "Forêt"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Perroquet"
+      },
+      "undercover": {
+        "text": "Corbeau"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Chauve-souris"
+      },
+      "undercover": {
+        "text": "Hibou"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Météore"
+      },
+      "undercover": {
+        "text": "Satellite"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Planète"
+      },
+      "undercover": {
+        "text": "Étoile"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Tremblement de terre"
+      },
+      "undercover": {
+        "text": "Tsunami"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Méduse"
+      },
+      "undercover": {
+        "text": "Poulpe"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Loup"
+      },
+      "undercover": {
+        "text": "Renard"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Requin"
+      },
+      "undercover": {
+        "text": "Dauphin"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Pingouin"
+      },
+      "undercover": {
+        "text": "Mouette"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Lune"
+      },
+      "undercover": {
+        "text": "Planète"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Comète"
+      },
+      "undercover": {
+        "text": "Astéroïde"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Fontaine"
+      },
+      "undercover": {
+        "text": "Cascade"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Lac"
+      },
+      "undercover": {
+        "text": "Étang"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Girafe"
+      },
+      "undercover": {
+        "text": "Zèbre"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Éléphant"
+      },
+      "undercover": {
+        "text": "Rhinocéros"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Alligator"
+      },
+      "undercover": {
+        "text": "Crocodile"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Huître"
+      },
+      "undercover": {
+        "text": "Palourde"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "OVNI"
+      },
+      "undercover": {
+        "text": "Drone"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Forêt"
+      },
+      "undercover": {
+        "text": "Parc"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    }
+  ]
+}

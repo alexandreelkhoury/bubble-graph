@@ -1,0 +1,429 @@
+{
+  "id": "ar-nature-01",
+  "version": 1,
+  "locale": "ar",
+  "script": "Arab",
+  "title": {
+    "en": "Nature & animals",
+    "fr": "Nature et animaux",
+    "ar": "طبيعة وحيوانات"
+  },
+  "tags": [
+    "nature",
+    "animals"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "فيل",
+        "translit": "fil"
+      },
+      "undercover": {
+        "text": "زرافة",
+        "translit": "zarafe"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "حصان",
+        "translit": "7san"
+      },
+      "undercover": {
+        "text": "حمار",
+        "translit": "7mar"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "جمل",
+        "translit": "jamal"
+      },
+      "undercover": {
+        "text": "غزال",
+        "translit": "ghazel"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "بقرة",
+        "translit": "ba2ra"
+      },
+      "undercover": {
+        "text": "جاموس",
+        "translit": "jemous"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "خروف",
+        "translit": "kharouf"
+      },
+      "undercover": {
+        "text": "ماعز",
+        "translit": "me3ez",
+        "alt": [
+          "عنزة",
+          "معزة"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "دجاجة",
+        "translit": "djeje"
+      },
+      "undercover": {
+        "text": "بطة",
+        "translit": "batta"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "نسر",
+        "translit": "neser"
+      },
+      "undercover": {
+        "text": "صقر",
+        "translit": "sa2er"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "حمامة",
+        "translit": "7amame"
+      },
+      "undercover": {
+        "text": "عصفور",
+        "translit": "3asfour"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "بومة",
+        "translit": "boume"
+      },
+      "undercover": {
+        "text": "غراب",
+        "translit": "ghrab"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "سمكة",
+        "translit": "samke"
+      },
+      "undercover": {
+        "text": "دلفين",
+        "translit": "dolphin",
+        "alt": [
+          "دولفين"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "قرش",
+        "translit": "2erch"
+      },
+      "undercover": {
+        "text": "حوت",
+        "translit": "7out"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "أفعى",
+        "translit": "af3a",
+        "alt": [
+          "حية"
+        ]
+      },
+      "undercover": {
+        "text": "سحلية",
+        "translit": "sa7liyye"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "نملة",
+        "translit": "namle"
+      },
+      "undercover": {
+        "text": "نحلة",
+        "translit": "na7le"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "فراشة",
+        "translit": "farache"
+      },
+      "undercover": {
+        "text": "دبّور",
+        "translit": "dabbour"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "ضفدع",
+        "translit": "dofda3"
+      },
+      "undercover": {
+        "text": "سلحفاة",
+        "translit": "sel7afe",
+        "alt": [
+          "سلحفة"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "ذئب",
+        "translit": "dib",
+        "alt": [
+          "ديب"
+        ]
+      },
+      "undercover": {
+        "text": "ثعلب",
+        "translit": "ta3lab"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "قرد",
+        "translit": "2ered"
+      },
+      "undercover": {
+        "text": "غوريلا",
+        "translit": "gorilla"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "شجرة",
+        "translit": "shajara"
+      },
+      "undercover": {
+        "text": "وردة",
+        "translit": "warde"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "نخلة",
+        "translit": "nakhle"
+      },
+      "undercover": {
+        "text": "صنوبرة",
+        "translit": "snawbara"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "بحر",
+        "translit": "ba7er"
+      },
+      "undercover": {
+        "text": "نهر",
+        "translit": "nahr"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "صحراء",
+        "translit": "sa7ra",
+        "alt": [
+          "صحرا"
+        ]
+      },
+      "undercover": {
+        "text": "شط",
+        "translit": "chatt",
+        "alt": [
+          "شاطئ"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "غيمة",
+        "translit": "ghayme"
+      },
+      "undercover": {
+        "text": "ضباب",
+        "translit": "dabab"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "شمس",
+        "translit": "shames"
+      },
+      "undercover": {
+        "text": "نجمة",
+        "translit": "najme"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "برق",
+        "translit": "bare2"
+      },
+      "undercover": {
+        "text": "رعد",
+        "translit": "ra3ed"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "زلزال",
+        "translit": "zelzel",
+        "alt": [
+          "هزة"
+        ]
+      },
+      "undercover": {
+        "text": "بركان",
+        "translit": "borkan"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "وادي",
+        "translit": "wedi"
+      },
+      "undercover": {
+        "text": "مغارة",
+        "translit": "maghara",
+        "alt": [
+          "كهف"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "قمح",
+        "translit": "2am7"
+      },
+      "undercover": {
+        "text": "رز",
+        "translit": "rezz",
+        "alt": [
+          "أرز"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "وردة جورية",
+        "translit": "warde jouriyye"
+      },
+      "undercover": {
+        "text": "ياسمين",
+        "translit": "yasmin"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "بطيخ",
+        "translit": "batti5"
+      },
+      "undercover": {
+        "text": "شمام",
+        "translit": "chammam"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    }
+  ]
+}

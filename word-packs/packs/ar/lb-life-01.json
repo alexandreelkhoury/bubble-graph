@@ -1,0 +1,344 @@
+{
+  "id": "lb-life-01",
+  "version": 1,
+  "locale": "ar-LB",
+  "script": "Arab",
+  "title": {
+    "en": "Lebanese life",
+    "fr": "La vie au Liban",
+    "ar": "حياة لبنانية"
+  },
+  "tags": [
+    "life",
+    "lebanese"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "سرفيس",
+        "translit": "servees"
+      },
+      "undercover": {
+        "text": "تاكسي",
+        "translit": "taxi"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Servees: the shared taxi."
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "فان",
+        "translit": "van"
+      },
+      "undercover": {
+        "text": "باص",
+        "translit": "bus"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "دبكة",
+        "translit": "dabke"
+      },
+      "undercover": {
+        "text": "رقص شرقي",
+        "translit": "ra2s shar2i"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "ورق شدة",
+        "translit": "wara2 chadde"
+      },
+      "undercover": {
+        "text": "طاولة زهر",
+        "translit": "tawle",
+        "alt": [
+          "طاولة"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Tawle here is backgammon."
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "تريكس",
+        "translit": "trix"
+      },
+      "undercover": {
+        "text": "ليخة",
+        "translit": "likha"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Two card games."
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "ضيعة",
+        "translit": "day3a"
+      },
+      "undercover": {
+        "text": "مدينة",
+        "translit": "madine"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "بيروت",
+        "translit": "beirut"
+      },
+      "undercover": {
+        "text": "طرابلس",
+        "translit": "trablos"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "صيدا",
+        "translit": "saida"
+      },
+      "undercover": {
+        "text": "صور",
+        "translit": "sour"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "بعلبك",
+        "translit": "ba3labak"
+      },
+      "undercover": {
+        "text": "جبيل",
+        "translit": "jbeil"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "كهربا",
+        "translit": "kahraba",
+        "alt": [
+          "كهرباء"
+        ]
+      },
+      "undercover": {
+        "text": "موتور",
+        "translit": "motor",
+        "alt": [
+          "مولد"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Motor: the neighbourhood generator subscription."
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "عرس",
+        "translit": "3eres"
+      },
+      "undercover": {
+        "text": "خطبة",
+        "translit": "khetbe"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "تيتا",
+        "translit": "teta"
+      },
+      "undercover": {
+        "text": "جدو",
+        "translit": "jeddo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "خالة",
+        "translit": "khalto",
+        "alt": [
+          "خالتو"
+        ]
+      },
+      "undercover": {
+        "text": "عمة",
+        "translit": "3ammto",
+        "alt": [
+          "عمتو"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "صبحية",
+        "translit": "sob7iyye"
+      },
+      "undercover": {
+        "text": "سهرة",
+        "translit": "sahra"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "فرن",
+        "translit": "forn"
+      },
+      "undercover": {
+        "text": "دكانة",
+        "translit": "dekkene",
+        "alt": [
+          "دكان"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "سوبرماركت",
+        "translit": "supermarket"
+      },
+      "undercover": {
+        "text": "سوق",
+        "translit": "sou2"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "كورنيش",
+        "translit": "corniche"
+      },
+      "undercover": {
+        "text": "مينا",
+        "translit": "mina",
+        "alt": [
+          "مرفأ"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "مازة",
+        "translit": "mezze",
+        "alt": [
+          "مزة"
+        ]
+      },
+      "undercover": {
+        "text": "غدا",
+        "translit": "ghada",
+        "alt": [
+          "غداء"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "مونة",
+        "translit": "mouneh"
+      },
+      "undercover": {
+        "text": "كبيس",
+        "translit": "kbis",
+        "alt": [
+          "مخلل"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "دلة",
+        "translit": "delle",
+        "alt": [
+          "ركوة"
+        ]
+      },
+      "undercover": {
+        "text": "إبريق",
+        "translit": "ebri2"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "منقل",
+        "translit": "man2al"
+      },
+      "undercover": {
+        "text": "شواية",
+        "translit": "shawweye"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "زلغوطة",
+        "translit": "zalghouta"
+      },
+      "undercover": {
+        "text": "تصفيق",
+        "translit": "tasfi2"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    }
+  ]
+}

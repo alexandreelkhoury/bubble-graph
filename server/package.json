@@ -1,0 +1,11 @@
+{
+  "name": "@mishana/server", "version": "0.0.0", "private": true, "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": { "partyserver": "0.5.10", "@mishana/shared": "workspace:*", "@mishana/word-packs": "workspace:*" },
+  "devDependencies": { "wrangler": "4.147.0", "@cloudflare/workers-types": "5.20261003.1" }
+}
