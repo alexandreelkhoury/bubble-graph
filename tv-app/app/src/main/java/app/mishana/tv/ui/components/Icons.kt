@@ -85,6 +85,7 @@ object MishIcons {
     val ChevronForward = stroke("chevron-forward", "M9 5.5l6.5 6.5L9 18.5", autoMirror = true, width = 2.5f)
     val ChevronBack = stroke("chevron-back", "M15 5.5L8.5 12l6.5 6.5", autoMirror = true, width = 2.5f)
     val Refresh = stroke("refresh", "M20 12a8 8 0 1 1-2.4-5.7", "M20 4v5h-5")
+    val Plus = stroke("plus", "M12 5v14M5 12h14", width = 2.5f)
     val Users = stroke(
         "users",
         "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",

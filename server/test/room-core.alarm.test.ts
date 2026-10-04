@@ -98,11 +98,7 @@ describe("RoomCore alarm", () => {
 
   it("expiry: RESULTS for 30 min → 4010", async () => {
     const h = await new Harness().init();
-    const tv = await h.tv();
-    const ps = [];
-    for (let i = 0; i < 4; i++) ps.push(await h.player(i));
-    await h.act(tv, { type: "UPDATE_SETTINGS", patch: { clueSeconds: 0, voteSeconds: 0, revealSeconds: 0, guessSeconds: 0 } });
-    await h.act(tv, { type: "START" });
+    const { tv, ps } = await h.startedGame();
     await h.playToResults(tv, ps);
     const meta = h.core.peek().meta!;
     expect(meta.resultsAt).not.toBeNull();

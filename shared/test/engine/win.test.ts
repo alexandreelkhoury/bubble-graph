@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { checkWinner } from "../../src/engine/win";
 import { createInitialState } from "../../src/engine/reduce";
 import type { GameState, Role } from "../../src/engine/types";
-import { inClues, lobby } from "../support/helpers";
+import { inClues, lobby } from "../../src/testing";
 
 function stateWith(winRule: "official" | "parity", aliveC: number, aliveU: number, aliveB: number, dead = 0): GameState {
   const s = createInitialState({ roomCode: "TEST", joinUrl: "x", seed: 1, wordLocale: "en" });

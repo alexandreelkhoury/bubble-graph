@@ -2,16 +2,21 @@
 import { Server } from "partyserver";
 import type { Connection, ConnectionContext, WSMessage } from "partyserver";
 import { PING_FRAME, PONG_FRAME } from "@mishana/shared/constants";
-import { buildCatalog } from "@mishana/shared/engine";
-import { WordPackSchema } from "@mishana/shared/packs";
+import type { Catalog } from "@mishana/shared/engine";
+import { loadCatalog } from "@mishana/shared/packs";
 import { PACKS } from "@mishana/word-packs";
 import type { Env } from "./env";
+import { clientIp, notFound } from "./request";
 import { RoomCore } from "./room-core";
 import type { ConnHandle, ConnState, InitRoomArgs, InitRoomResult, RoomStorage } from "./room-core";
 import { randomBytes, sha256hex } from "./tokens";
 
-// §7.8: built once at module load; a schema failure throws at startup.
-const CATALOG = buildCatalog(PACKS.map((p) => WordPackSchema.parse(p)));
+// §7.8: built once per isolate, on the first Room access (onStart), so the stateless Worker never pays the
+// schema parse. A schema failure throws there; word-packs tests and pack-lint catch it at build time.
+let catalog: Catalog | null = null;
+function roomCatalog(): Catalog {
+  return (catalog ??= loadCatalog(PACKS));
+}
 
 export class Room extends Server<Env> {
   static override options = { hibernate: true };
@@ -23,8 +28,7 @@ export class Room extends Server<Env> {
       const storage = this.ctx.storage;
       const roomStorage: RoomStorage = {
         get: <T>(key: string) => storage.get<T>(key),
-        put: <T>(key: string, value: T) => storage.put(key, value),
-        delete: (key: string) => storage.delete(key),
+        put: (entries: Record<string, unknown>) => storage.put(entries),
         deleteAll: () => storage.deleteAll(),
         getAlarm: () => storage.getAlarm(),
         setAlarm: (at: number) => storage.setAlarm(at),
@@ -36,7 +40,7 @@ export class Room extends Server<Env> {
         connections: { list: () => [...this.getConnections<ConnState>()] as unknown as ConnHandle[] },
         clock: { now: () => Date.now() },
         crypto: { randomBytes, sha256hex },
-        catalog: CATALOG,
+        catalog: roomCatalog(),
         debugInvariants: this.env.DEBUG_INVARIANTS === "1",
         roomCode: this.name,
       });
@@ -57,7 +61,7 @@ export class Room extends Server<Env> {
   override async onConnect(conn: Connection<ConnState>, ctx: ConnectionContext): Promise<void> {
     await this.#roomCore.onConnect(conn as unknown as ConnHandle, {
       url: ctx.request.url,
-      ip: ctx.request.headers.get("CF-Connecting-IP"),
+      ip: clientIp(ctx.request),
     });
   }
 
@@ -74,6 +78,6 @@ export class Room extends Server<Env> {
   }
 
   override onRequest(): Response {
-    return new Response("Not found", { status: 404 });
+    return notFound();
   }
 }

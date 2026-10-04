@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { playGame } from "../support/bots";
-import { findLeaks } from "../support/leak-check";
-import { makeTokenCatalog } from "../support/test-catalog";
+import { findLeaks, makeTokenCatalog, playGame } from "../../src/testing";
 
 const catalog = makeTokenCatalog(40);
 const BATCHES = Array.from({ length: 10 }, (_, i) => [i * 100 + 1, i * 100 + 100] as const);

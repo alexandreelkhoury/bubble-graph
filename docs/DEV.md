@@ -63,16 +63,19 @@ curl -s -X POST localhost:8787/api/rooms           # {"code":"KXRT","tvToken":"�
 | `pnpm test` | Every Vitest project: `shared`, `server`, `web-client`, `word-packs`, `tools/*` |
 | `pnpm test:coverage` | The same, with the engine coverage gate (≥ 90 %) |
 | `pnpm lint` / `pnpm typecheck` | ESLint (flat config) and `tsc -p .` in every package |
-| `pnpm sim --players 3..12 --games 500` | Engine-mode bot games with invariant, termination, role-count and leak checks |
+| `pnpm sim --players 3..12 --games 500` | Engine-mode bot games on the real packs with invariant, termination, role-count and leak checks, and the Blank-never-opens rule at every round and tie-break |
 | `pnpm sim --ws http://127.0.0.1:8787 --players 4 --games 3` | **WS mode** against a running server (see below) |
-| `pnpm --filter @mishana/server build` | Wrangler dry-run bundle into `server/dist` |
+| `pnpm --filter @mishana/web-client build` | Vite production build into `web-client/dist`, then the 60 KB gzip phone budget (`web-client/scripts/check-size.mjs`, TV mock excluded) |
+| `pnpm --filter @mishana/server build` | Wrangler dry-run bundle (minified) into `server/dist`, then the 400 KB script budget (`server/scripts/check-size.mjs`) |
 | `pnpm fixtures` / `pnpm --filter @mishana/shared run check:fixtures` | Regenerate or verify `shared/fixtures/*.json` |
 
 To run one project: `pnpm vitest run --project server` (or `shared`, `sim`, …).
 
+Test support lives in `shared/src/testing` and is imported as `@mishana/shared/testing` (from shared tests: `../../src/testing`): the scripted `Game` driver, the seeded bot driver `playGame` with its per-step checks, the secret-leak checker and the test catalogs. The server tests, `tools/sim` and the fixture generator use the same code.
+
 ### Server tests (`server/test`)
 
-The server tests run in Node. They drive `RoomCore` (`server/src/room-core.ts`) through in-memory fakes in `server/test/support/fakes.ts`: storage with an alarm, sockets, a clock and real WebCrypto. They never import `room.ts` or `index.ts`, so no workerd is needed. The suites cover:
+The server tests run in Node. They drive `RoomCore` (`server/src/room-core.ts`) through in-memory fakes in `server/test/support/fakes.ts`: storage with an alarm, sockets, a clock and real WebCrypto. `Harness.startedGame({ n, settings, ready })` sets up a TV, `n` players and a started game with the timers off. They never import `room.ts` or `index.ts`, so no workerd is needed. The suites cover:
 
 - hello, join, actions and KICK/LEAVE;
 - rate limits and frame checks;

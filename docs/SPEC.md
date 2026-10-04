@@ -85,10 +85,11 @@ Implementers skip these DESIGN items. They need protocol or scope that v1 does n
 /shared/                    @mishana/shared   (A; i18n JSON by D)
   package.json tsconfig.json vitest.config.ts
   src/brand.ts src/constants.ts src/index.ts
-  src/engine/{index,types,settings,roles,rng,reduce,flow,votes,win,scoring,normalize,sanitize,invariants,catalog}.ts
+  src/engine/{index,types,settings,roles,rng,reduce,draft,queries,lifecycle,turns,departures,membership,votes,win,scoring,normalize,sanitize,invariants,catalog}.ts
   src/protocol/{index,common,messages,views,errors,http}.ts
   src/projection/{index,project}.ts
   src/packs/{index,schema}.ts
+  src/testing/{index,game,bots,leak-check,test-catalog}.ts   (test support; `@mishana/shared/testing`)
   src/i18n/index.ts          (types + helpers; loads ../../i18n/*.json)
   i18n/en.json fr.json ar.json          (D)
   fixtures/*.json                       (A)
@@ -96,7 +97,8 @@ Implementers skip these DESIGN items. They need protocol or scope that v1 does n
   test/**                               (A)
 /server/                    @mishana/server   (A)
   package.json tsconfig.json vitest.config.ts wrangler.jsonc
-  src/index.ts src/env.ts src/room.ts src/room-core.ts src/http.ts src/codes.ts src/tokens.ts src/origin.ts src/ratelimit.ts src/mutex.ts
+  src/index.ts src/env.ts src/room.ts src/room-core.ts src/room-store.ts src/frames.ts src/request.ts src/http.ts src/codes.ts src/tokens.ts src/origin.ts src/ratelimit.ts src/mutex.ts
+  scripts/check-size.mjs   (bundle budget, run by `build`)
   (only index.ts and room.ts import partyserver or `cloudflare:workers`; tests never import those two)
   test/**
 /web-client/                @mishana/web-client (B; includes public/_headers, §8.10)
@@ -230,6 +232,7 @@ There is no build step. Every consumer (tsx, vite, wrangler/esbuild, vitest) com
     "./protocol": "./src/protocol/index.ts",
     "./projection": "./src/projection/index.ts",
     "./packs": "./src/packs/index.ts",
+    "./testing": "./src/testing/index.ts",
     "./brand": "./src/brand.ts",
     "./constants": "./src/constants.ts",
     "./i18n": "./src/i18n/index.ts",
@@ -244,7 +247,9 @@ There is no build step. Every consumer (tsx, vite, wrangler/esbuild, vitest) com
 - The web client may import these at runtime.
 - It may only use `import type` from `./protocol` and `./projection`.
 
-Rule: `src/engine/**` must not import zod. Zod lives only in `src/protocol/**` and `src/packs/**`.
+Rule: `src/engine/**` must not import zod. Zod lives only in `src/protocol/**` and `src/packs/**` (and `src/testing/**`, which builds the test catalog through `loadCatalog`). Zod is always imported as a namespace, `import * as z from "zod"`, so bundlers can drop the unused parts (`import { z }` pulls in every locale pack).
+
+`./testing` is test support only: the scripted driver `Game` (`T0`, `TV`, `SYS`, `P`, `pid`, `TIMERS_OFF`, `lobby`, `inClues`, `findSeed`), the seeded bot driver `playGame` with its cross-step checks (`checkStep`, `isOpening`, `blankOpensViolation`), the secret-leak checker (`findLeaks`, `FORBIDDEN_KEYS`) and the test catalogs (`TEST_CATALOG`, `makeTokenCatalog`). Shared tests, server tests, `tools/sim` and the fixture generator import it; the web client and the Worker never do.
 
 ### 2.6 `/vitest.config.ts`
 ```ts
@@ -308,7 +313,7 @@ export const BRAND = {
 export const PROTOCOL_VERSION = 1;
 export const ROOM_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ"; // 23 letters, no I L O
 export const ROOM_CODE_LENGTH = 4;
-export const ROOM_CODE_REGEX = /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/;
+export const ROOM_CODE_REGEX = new RegExp(`^[${ROOM_CODE_ALPHABET}]{${ROOM_CODE_LENGTH}}$`); // = /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/
 export const PARTY_NAME = "room";              // kebab of DO binding "Room"
 export const WS_PATH_PREFIX = "/parties/room/"; // + CODE
 export const MIN_PLAYERS = 3;
@@ -337,7 +342,9 @@ export const CREATE_ROOMS_PER_MIN_PER_IP = 10;
 export const CONNECTS_PER_MIN_PER_IP = 60;  // Worker-level, all rooms (CONNECT_LIMITER)
 export const MAX_CONNECTIONS_PER_ROOM = 40; // includes the new socket
 export const MAX_PENDING_CONNECTIONS = 10;  // never-hello'd sockets per room
-export const FATAL_CLOSE_CODES = [4002, 4003, 4004, 4005, 4006, 4010] as const; // client stops reconnecting
+export const CLOSE_CODES = { BAD_CID: 4000, HELLO_TIMEOUT: 4001, UNSUPPORTED_VERSION: 4002, TV_AUTH_FAILED: 4003, ROOM_NOT_FOUND: 4004,
+  REPLACED: 4005, KICKED: 4006, RATE_LIMITED: 4008, CAPACITY: 4009, ROOM_EXPIRED: 4010 } as const; // §6.4; re-exported by protocol/errors.ts
+export const FATAL_CLOSE_CODES = [4002, 4003, 4004, 4005, 4006, 4010] as const; // client stops reconnecting (written via CLOSE_CODES; a test checks it equals the fatal ERROR_INFO close codes)
 export const SLOW_RECONNECT_CLOSE_CODES = [4008, 4009] as const;                 // reconnect, but wait ≥ SLOW_RECONNECT_MS
 export const SLOW_RECONNECT_MS = 10_000;
 export const PING_FRAME = '{"v":1,"t":"ping"}'; // byte-exact
@@ -370,7 +377,7 @@ export const SETTINGS_BOUNDS = {
   revealSeconds:   { off: 0, min: 10, max: 120, step: 5 },
   guessSeconds:    { off: 0, min: 10, max: 120, step: 5 },
   points:          { min: 0, max: 20, step: 1 },   // each of civilian/undercover/blank
-  packIds:         { maxItems: 50, idRegex: "^[a-z0-9-]{1,40}$" },
+  packIds:         { maxItems: 50, idRegex: "^[a-z0-9-]{1,40}$" },   // 40 = PACK_ID_MAX, also enforced by WordPackSchema
 } as const;
 ```
 A UI stepping down from `min` goes to `off` (when present) and stepping up from `off` goes to `min`. Kotlin mirrors all of §3 in `app.mishana.tv.Constants` (§9.3): the alphabet, timings, frames, `FATAL_CLOSE_CODES`, `SLOW_RECONNECT_CLOSE_CODES`, `SETTINGS_BOUNDS` and `COLORS` (id, ARGB, shape, glyph).
@@ -550,7 +557,9 @@ export function nameKey(name: string): string;                          // NFKC 
 export function isGuessCorrect(guess: string, target: WordSide): boolean;
 export function assertInvariants(state: GameState): void;               // throws InvariantError
 export class InvariantError extends Error {}
-export function buildCatalog(packs: readonly WordPackLike[]): Catalog;  // see §12.3; validation is done by caller via packs schema
+export function buildCatalog(packs: readonly WordPackLike[]): Catalog;  // see §12.3; validation is done by caller via packs schema (`loadCatalog` in ./packs does both)
+export function languageOf(locale: string): Locale;                     // "ar-LB" → "ar"
+export function countRoles(players: readonly { role: Role | null }[]): RoleCounts;
 export const DEFAULT_SETTINGS: Settings;
 export { SETTINGS_BOUNDS } from "../constants";                         // §3
 export function applySettingsPatch(s: Settings, patch: SettingsPatch, catalog: Catalog): Settings | null; // null = invalid
@@ -630,7 +639,9 @@ Test vector, seed `42`: `next()` returns `0.6011037519201636`, `0.44829055899754
 
 `reduce` creates `createRng(state.rngState)` and writes `rng.state` back. The seed comes from the server (`crypto.getRandomValues(new Uint32Array(1))[0]`).
 
-### 4.7 Phase flow (`flow.ts`, `votes.ts`)
+### 4.7 Phase flow (`lifecycle.ts`, `turns.ts`, `departures.ts`, `votes.ts`)
+
+Module split (acyclic): `draft.ts` (the `Draft` working copy and `setDeadline`), `queries.ts` (pure reads: `findPlayer`, `currentSpeakerId`, `inferKind`, `isInGame`, `isPlaying`, `isSpeakingPhase`; used by the projection and the invariants), `membership.ts` (`reassignHost`, `removePlayer`, `markLeft`), `lifecycle.ts` (`startGame`, `enterResults`, `resetToLobby` and the shared per-round / per-game scratch reset), `votes.ts` (ballots and the tally, no transitions), `turns.ts` (rounds, turns, `openingOrder`, vote closing, elimination, the Blank's guess, `expire`) and `departures.ts` (`forfeit`, `onDisconnect`).
 
 ```
 LOBBY --START--> ROLE_REVEAL --(all connected ready | deadline | HOST_ADVANCE)--> CLUES(round=1)
@@ -851,7 +862,7 @@ A correct Blank guess is resolved **before** the civilian count is checked.
 **Consequence (asserted by invariant 13 and `win.test.ts`).** While a game continues into a new round, at least 3 players are alive: official needs `aliveC>=2 && aliveI>=1`, and parity needs `aliveC>aliveI>=1`. A forfeit that would drop below that always ends the game through step 6 of `forfeit`.
 
 ### 4.11 Scoring (`scoring.ts`)
-`awardPoints(state, winner, winnerIds) → Record<playerId, number>` uses `settings.points`. The full rule is in `enterResults` (§4.7).
+`awardPoints(state, winnerIds) → Record<playerId, number>` uses `settings.points`. The full rule is in `enterResults` (§4.7).
 
 ### 4.12 Blank-guess normalisation (`normalize.ts`, exact algorithm)
 ```ts
@@ -1126,6 +1137,7 @@ The zod schemas `CreateRoomRequest`, `CreateRoomResponse`, `HttpError` and `Heal
   "main": "src/index.ts",
   "compatibility_date": "2026-09-30",
   "workers_dev": true,
+  "minify": true,
   "observability": { "enabled": true },
   "assets": {
     "directory": "../web-client/dist",
@@ -1146,7 +1158,8 @@ The zod schemas `CreateRoomRequest`, `CreateRoomResponse`, `HttpError` and `Heal
 - `ALLOWED_ORIGINS`: a comma-separated list of exact origins.
 - Package scripts:
   - `"dev": "wrangler dev"`
-  - `"build": "wrangler deploy --dry-run --outdir dist"`
+  - `"build": "wrangler deploy --dry-run --outdir dist && node scripts/check-size.mjs"`
+  - `"size": "node scripts/check-size.mjs"`: fails when the minified `dist/index.js` exceeds 400 KB (every cold Worker/DO isolate parses the whole script; most of it is word-pack data).
   - `"deploy": "wrangler deploy"`
   - `"typecheck": "tsc -p ."`
 - Dependencies: `partyserver@0.5.10` and `@mishana/shared`, `@mishana/word-packs` (`workspace:*`). Dev dependencies: `wrangler@4.147.0` and `@cloudflare/workers-types@5.20261003.1`.
@@ -1280,7 +1293,7 @@ A `pending` connection that has not said hello after `HELLO_TIMEOUT_MS` is close
 at = min(nextWakeAt(state), expiresAt(meta, state), pendingDeadline)
 pendingDeadline = min(openedAt) + HELLO_TIMEOUT_MS over pending connections (absent if none)
 ```
-If `at` differs from `getAlarm()`, call `setAlarm(at)`. `expiresAt` is the minimum of:
+If `at` differs from the current alarm, call `setAlarm(at)`. The current alarm is read with `getAlarm()` once and then cached (`RoomStore`): the cache is reset when the instance starts, after `deleteAll()` and when an alarm fires. `expiresAt` is the minimum of:
 - `lastActivityAt + ROOM_IDLE_TTL_MS`;
 - if phase LOBBY && `players.length===0`: `max(createdAt, lastActivityAt) + ROOM_EMPTY_TTL_MS`;
 - if phase RESULTS: `resultsAt + ROOM_RESULTS_TTL_MS`.
@@ -1300,9 +1313,10 @@ Alarms may fire early or late; the engine compares times. A failed alarm handler
 - Ping/pong uses the auto-response, so idle rooms stay hibernated.
 
 **Dependency injection (testability).** `RoomCore` is constructed with `{ storage: RoomStorage, connections: Connections, clock: Clock, crypto: CryptoProvider, catalog: Catalog, debugInvariants: boolean }`.
-- `RoomStorage` = `get/put/delete/deleteAll/getAlarm/setAlarm/deleteAlarm`.
+- `RoomStorage` = `get/put(entries)/deleteAll/getAlarm/setAlarm/deleteAlarm`. `RoomStore` (`room-store.ts`) owns the keys `meta`, `state`, `sessions`; every persist is one multi-key `put` of `state` plus whichever of `meta`/`sessions` changed. Wire frames are built in `frames.ts` (typed against the protocol message types).
+- `RoomCore` lists the open sockets once per serialised entry point (listing hibernated sockets deserialises every attachment) and drops the sockets it closes from that snapshot.
 - `Connections` = `list(): ConnHandle[]`, where `ConnHandle = {state, setState, send, close}`.
-- Only `room.ts` builds the real `CATALOG` (§7.8) and imports partyserver. Server tests pass `shared/test/support/test-catalog.ts` and never import `room.ts` or `index.ts`.
+- Only `room.ts` builds the real `CATALOG` (§7.8) and imports partyserver. Server tests pass `TEST_CATALOG` from `@mishana/shared/testing` and never import `room.ts` or `index.ts`.
 
 **Logging and privacy.**
 - Server code never logs message bodies, `GameState`, views, words, guesses, tokens, token hashes, names or IPs.
@@ -1343,13 +1357,13 @@ export function createRoom(req: Request, env: Env, deps: CreateRoomDeps): Promis
 - Old sockets that survived anyway carry an older `ConnState.epoch` and are closed 4010 on their next message (§7.5).
 
 ### 7.7 Tokens (`src/tokens.ts`)
-- `randomHex(bytes)` uses `crypto.getRandomValues`.
+- `randomHex(bytes, source = randomBytes)`: `source` defaults to `crypto.getRandomValues`; the Worker and `RoomCore` pass their injected `randomBytes`.
 - `sha256hex(s)`.
 - `timingSafeEqualHex(a, b)`: same length, XOR-accumulate over all chars.
 - Tokens are never logged and never stored in plain text.
 
 ### 7.8 Catalog
-Only `room.ts` builds it, at module load: `const CATALOG = buildCatalog(PACKS.map((p) => WordPackSchema.parse(p)))`, where `PACKS` comes from `@mishana/word-packs`. It passes `CATALOG` to `RoomCore`. A schema failure throws at startup, and `word-packs/test/packs.test.ts` catches it earlier. `RoomCore` tests use the test catalog, so they do not depend on D's packs.
+Only `room.ts` builds it, once per isolate on the first Room access (`onStart`): `loadCatalog(PACKS)` (schema-parse + `buildCatalog`, from `@mishana/shared/packs`), where `PACKS` comes from `@mishana/word-packs`. Building it lazily keeps the zod parse of the packs off the stateless Worker's cold start. It passes the catalog to `RoomCore`. A schema failure throws on the Room's start, and `word-packs/test/packs.test.ts` and `pnpm lint:packs` catch it earlier. `RoomCore` tests use the test catalog, so they do not depend on the shipped packs.
 
 ### 7.9 Name sanitising (`shared/src/engine/sanitize.ts`, exported from `@mishana/shared/engine` as `sanitizeName`)
 ```
@@ -1813,7 +1827,7 @@ QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, 0, 0, mapOf(EncodeHintType
 
 Fixtures are the contract tests for both TS and Kotlin.
 - Files marked **V** below are written **exactly as shown** here (one-line blocks stay one line; the pretty-printed blocks keep their 2-space layout), each ending with a trailing newline. Tests compare **parsed** JSON, never bytes.
-- Files marked **G** are produced by `shared/scripts/gen-fixtures.ts` with a fixed seed (`12345`), `now` starting at `1790000000000` and advanced by the script, and the test catalog from `shared/test/support/test-catalog.ts`. G files are pretty-printed with 2 spaces.
+- Files marked **G** are produced by `shared/scripts/gen-fixtures.ts` with a fixed seed (`12345`), `now` starting at `1790000000000` and advanced by the script, and the test catalog `TEST_CATALOG` from `shared/src/testing/test-catalog.ts`, driven by the `Game` test driver. G files are pretty-printed with 2 spaces.
 - `gen-fixtures --check` fails if any G file would change. The script never touches V files.
 - `lastVote.tally[].voterIds` and `abstainIds` are in **seat order** (so the JSON is deterministic).
 
@@ -2404,7 +2418,7 @@ PairSchema = z.strictObject({
   notes: z.string().max(200).optional(),
 })
 WordPackSchema = z.strictObject({
-  id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),          // e.g. "lb-food-01", "en-everyday-01"
+  id: z.string().max(PACK_ID_MAX).regex(/^[a-z0-9]+(-[a-z0-9]+)*$/), // e.g. "lb-food-01"; ≤ 40 so every pack is selectable (SETTINGS_BOUNDS.packIds)
   version: z.number().int().min(1),
   locale: z.enum(["en", "fr", "ar", "ar-LB"]),
   script: z.enum(["Latn", "Arab"]),
@@ -2543,7 +2557,7 @@ See §11.3 and §12.5. Each has `package.json`, `src/main.ts`, `vitest.config.ts
 
 Integration (manual or CI with network): `pnpm dev`, then `pnpm sim --ws http://127.0.0.1:8787 --players 4 --games 3`.
 
-`pnpm --filter @mishana/server build` (dry-run bundle) must succeed.
+`pnpm --filter @mishana/server build` (dry-run bundle, then the size budget) must succeed.
 
 ### 14.3 web-client (B)
 - `pnpm test` (project `web-client`, Node environment). Unit tests cover:

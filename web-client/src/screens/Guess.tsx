@@ -2,16 +2,17 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import { GUESS_MAX_CHARS } from "@mishana/shared/constants";
 import type { Me, PlayerView } from "@mishana/shared/protocol";
-import { dirOf, t } from "../i18n/t";
+import { dirOf, isolate, t } from "../i18n/t";
 import { act } from "../state/session";
 import { inlineError, resyncs } from "../state/store";
 import { HAPTIC, haptic } from "../lib/haptics";
 import { Avatar, avatarState, COLOR_BY_ID } from "../components/PlayerChip";
 import { RoleEmblem } from "../components/Role";
-import { TimerBar, useDeadline } from "../components/Timer";
-import { Button, ConfirmSheet, Confetti, Heading } from "../components/UI";
+import { TimerBar, useDeadlineSelect } from "../components/Timer";
+import { Button, ConfirmSheet, Confetti, Heading, PALETTE } from "../components/UI";
 import { Icon } from "../components/Icon";
-import { byId, phaseLine } from "./Clues";
+import { byId } from "../lib/view";
+import { phaseLine } from "./Clues";
 
 /** DESIGN §13.5 #10: auto-submit a non-empty guess at deadline − 1 s. */
 export const AUTO_SUBMIT_LEAD_MS = 1000;
@@ -40,7 +41,7 @@ export function Guess({ view, me }: { view: PlayerView; me: Me | null }) {
   const [sent, setSent] = useState(() => typedByGame.has(gameKey + ":sent"));
   const [confirm, setConfirm] = useState(false);
   const input = useRef<HTMLInputElement>(null);
-  const d = useDeadline(view.deadline);
+  const autoDue = useDeadlineSelect(view.deadline, (c) => c.ms <= AUTO_SUBMIT_LEAD_MS, false);
   const err = inlineError.value;
 
   const submit = (): void => {
@@ -57,8 +58,8 @@ export function Guess({ view, me }: { view: PlayerView; me: Me | null }) {
   useEffect(() => { if (err === "GUESS_INVALID") { setSent(false); typedByGame.delete(gameKey + ":sent"); } }, [err]);
   // Auto-submit at deadline − 1 s when the box has text.
   useEffect(() => {
-    if (isGuesser && g?.status === "PENDING" && !sent && d && view.deadline?.kind === "GUESS" && d.ms <= AUTO_SUBMIT_LEAD_MS && text.trim()) submit();
-  }, [d?.secs]);
+    if (isGuesser && g?.status === "PENDING" && !sent && autoDue && view.deadline?.kind === "GUESS" && text.trim()) submit();
+  }, [autoDue]);
   // Keep the input above the keyboard.
   useEffect(() => {
     const vv = window.visualViewport;
@@ -91,7 +92,9 @@ export function Guess({ view, me }: { view: PlayerView; me: Me | null }) {
     return (
       <>
         <main class="screen screen--guess">
-          <div class="eyebrow-row"><p class="eyebrow">{t("phase.mrWhiteGuess")}</p><TimerBar deadline={view.deadline} class="timerbar--inline" /></div>
+          {/* "Round 1 · Last chance" needs the full width: the bar gets its own row under it. */}
+          <p class="eyebrow">{phaseLine(view)}</p>
+          <TimerBar deadline={view.deadline} />
           <Heading title={t("guess.prompt")} />
           <input
             ref={input} class="input input--big" value={text} dir="auto" lang={view.settings.wordLocale} autoFocus
@@ -111,7 +114,7 @@ export function Guess({ view, me }: { view: PlayerView; me: Me | null }) {
   if (isGuesser) {
     return (
       <main class="screen screen--guess">
-        <p class="eyebrow">{t("phase.mrWhiteGuess")}</p>
+        <p class="eyebrow">{phaseLine(view)}</p>
         {status === "PENDING" ? (
           <div class="sentguess">
             <Heading title={t("guess.sent")} />
@@ -120,7 +123,7 @@ export function Guess({ view, me }: { view: PlayerView; me: Me | null }) {
           </div>
         ) : (
           <>
-            {status === "CORRECT" && <Confetti colors={myColor ? [COLOR_BY_ID[myColor].hex, "#FFF7EC", "#FFC23D"] : undefined} />}
+            {status === "CORRECT" && <Confetti colors={myColor ? [COLOR_BY_ID[myColor].hex, PALETTE.text, PALETTE.accent] : undefined} />}
             <Verdict status={status} you overridden={g.overridden} name={guesser.name} />
             {text.trim() && <p class="sentguess__text" dir={dirOf(view.settings.wordLocale)} lang={view.settings.wordLocale}>“{text.trim()}”</p>}
           </>
@@ -138,11 +141,12 @@ export function Guess({ view, me }: { view: PlayerView; me: Me | null }) {
         <p class="eyebrow">{phaseLine(view)}</p>
         <div class="watch">
           <span class="watch__spot" aria-hidden="true" />
-          <span class="watch__card"><RoleEmblem role="BLANK" size={72} /></span>
-          <Avatar color={guesser.color} size={48} state={avatarState(guesser)} />
+          {/* The verdict keeps one focal point (avatar + verdict): the spotlight card is for the wait only. */}
+          {status === "PENDING" && <span class="watch__card"><RoleEmblem role="BLANK" size={72} /></span>}
+          <Avatar color={guesser.color} size={status === "PENDING" ? 48 : 64} state={avatarState(guesser)} />
           {status === "PENDING" ? (
             <>
-              <Heading title={t("guess.waiting", { name: "⁨" + guesser.name + "⁩" })} />
+              <Heading title={t("guess.waiting", { name: isolate(guesser.name) })} />
               <p class="hint hint--center">{t("guess.silence")}</p>
             </>
           ) : (
@@ -156,7 +160,7 @@ export function Guess({ view, me }: { view: PlayerView; me: Me | null }) {
           <Button kind="secondary" onClick={() => setConfirm(true)}><Icon name="check" />{t("guess.accept")}</Button>
         </footer>
       )}
-      <ConfirmSheet open={confirm} danger={false} title={t("guess.acceptConfirm", { name: "⁨" + guesser.name + "⁩" })} confirm={t("guess.accept")}
+      <ConfirmSheet open={confirm} danger={false} title={t("guess.acceptConfirm", { name: isolate(guesser.name) })} confirm={t("guess.accept")}
         onConfirm={() => act({ type: "HOST_OVERRIDE_GUESS", accept: true })} onClose={() => setConfirm(false)} />
     </>
   );

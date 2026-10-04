@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/check-size.mjs",
     "typecheck": "tsc -p .",
     "size": "node scripts/check-size.mjs",
     "e2e": "playwright test"

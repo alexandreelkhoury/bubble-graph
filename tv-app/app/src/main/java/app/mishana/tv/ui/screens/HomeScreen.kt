@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
 import app.mishana.tv.BuildConfig
 import app.mishana.tv.R
+import app.mishana.tv.i18n.MessageKeys
 import app.mishana.tv.i18n.messageText
 import app.mishana.tv.ui.components.ButtonKind
 import app.mishana.tv.ui.components.InitialFocus
@@ -80,7 +81,7 @@ fun HomeScreen(status: HomeStatus, onRetry: () -> Unit, onOpenDebug: () -> Unit)
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.height(96.dp).semantics { liveRegion = LiveRegionMode.Polite },
                     ) {
-                        Spinner(28.dp)
+                        Spinner(size = 28.dp)
                         Spacer(Modifier.width(16.dp))
                         Text(stringResource(st.labelRes), style = type.titleS, color = MishColors.Text)
                     }
@@ -90,7 +91,7 @@ fun HomeScreen(status: HomeStatus, onRetry: () -> Unit, onOpenDebug: () -> Unit)
                         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                     ) {
                         Text(stringResource(R.string.tv__create_failed), style = type.title, color = MishColors.Text)
-                        if (st.messageKey != "tv.createFailed") {
+                        if (st.messageKey != MessageKeys.TV_CREATE_FAILED) {
                             Text(messageText(st.messageKey), style = type.caption, color = MishColors.TextMuted)
                         }
                         Spacer(Modifier.height(8.dp))

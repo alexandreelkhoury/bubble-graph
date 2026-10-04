@@ -6,8 +6,6 @@ import java.util.Locale
 
 /** Per-app language (AppCompat; stored automatically on API < 33 by AppLocalesMetadataHolderService). */
 object LocaleController {
-    val SUPPORTED: List<String> = listOf("en", "fr", "ar")
-
     fun set(tag: String) {
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
     }
@@ -19,9 +17,5 @@ object LocaleController {
         return normalize(lang)
     }
 
-    fun normalize(lang: String?): String = when (lang?.lowercase()) {
-        "fr" -> "fr"
-        "ar" -> "ar"
-        else -> "en"
-    }
+    fun normalize(lang: String?): String = Locales.normalize(lang)
 }

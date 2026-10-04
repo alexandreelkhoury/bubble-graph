@@ -1,12 +1,12 @@
 // In-memory fakes for driving RoomCore in Node (§7.5 "Dependency injection").
 import type { ClientIntentMsg } from "@mishana/shared/protocol";
-import type { GameState } from "@mishana/shared/engine";
-import { TEST_CATALOG } from "../../../shared/test/support/test-catalog";
+import type { GameState, SettingsPatch } from "@mishana/shared/engine";
+import { T0, TEST_CATALOG, TIMERS_OFF } from "@mishana/shared/testing";
 import { RoomCore } from "../../src/room-core";
 import type { ConnHandle, ConnState, RoomStorage } from "../../src/room-core";
 import { randomBytes, sha256hex } from "../../src/tokens";
 
-export const T0 = 1_790_000_000_000;
+export { T0 };
 export const TV_TOKEN = "0123456789abcdef0123456789abcdef";
 export const ROOM = "KXRT";
 
@@ -18,11 +18,10 @@ export class FakeStorage implements RoomStorage {
     const v = this.map.get(key);
     return v === undefined ? undefined : (structuredClone(v) as T);
   }
-  async put<T>(key: string, value: T): Promise<void> {
-    this.map.set(key, structuredClone(value));
-  }
-  async delete(key: string): Promise<boolean> {
-    return this.map.delete(key);
+  /** Single-key or multi-key put (DurableObjectStorage overloads); RoomCore only uses the multi-key form. */
+  async put(keyOrEntries: string | Record<string, unknown>, value?: unknown): Promise<void> {
+    const entries = typeof keyOrEntries === "string" ? { [keyOrEntries]: value } : keyOrEntries;
+    for (const [k, v] of Object.entries(entries)) this.map.set(k, structuredClone(v));
   }
   async deleteAll(): Promise<void> {
     this.deleteAllCalls++;
@@ -183,6 +182,20 @@ export class Harness {
     const c = await this.connect({ label });
     await this.send(c, { v: 1, t: "hello", role: "player", resumeToken: token });
     return c;
+  }
+
+  /**
+   * TV + `n` joined players, timers off (plus `settings`), then START; with `ready`, every player is READY
+   * so the game is in CLUES round 1.
+   */
+  async startedGame(opts: { n?: number; settings?: SettingsPatch; ready?: boolean } = {}): Promise<{ tv: FakeConn; ps: { conn: FakeConn; pid: string; token: string }[] }> {
+    const tv = await this.tv();
+    const ps = [];
+    for (let i = 0; i < (opts.n ?? 4); i++) ps.push(await this.player(i));
+    await this.act(tv, { type: "UPDATE_SETTINGS", patch: { ...TIMERS_OFF, ...opts.settings } });
+    await this.act(tv, { type: "START" });
+    if (opts.ready) for (const p of ps) await this.act(p.conn, { type: "READY" });
+    return { tv, ps };
   }
 
   /** Drives the current game to RESULTS: everyone votes an infiltrator; the TV advances everything else. */

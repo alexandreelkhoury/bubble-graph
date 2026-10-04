@@ -12,9 +12,9 @@ export function randomBytes(n: number): Uint8Array {
   return out;
 }
 
-/** `bytes` random bytes as lowercase hex (length 2 × bytes). */
-export function randomHex(bytes: number): string {
-  return bytesToHex(randomBytes(bytes));
+/** `bytes` random bytes (from `source`, the platform CSPRNG by default) as lowercase hex (length 2 × bytes). */
+export function randomHex(bytes: number, source: (n: number) => Uint8Array = randomBytes): string {
+  return bytesToHex(source(bytes));
 }
 
 /** Lowercase hex SHA-256 of the UTF-8 encoding of `s`. */

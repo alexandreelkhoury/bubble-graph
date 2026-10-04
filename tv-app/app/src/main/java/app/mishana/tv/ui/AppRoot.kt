@@ -13,7 +13,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,52 +21,47 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.tv.material3.Icon
-import androidx.tv.material3.Text
 import app.mishana.tv.ui.components.fullBleed
 import app.mishana.tv.BuildConfig
 import app.mishana.tv.R
 import app.mishana.tv.game.GameViewModel
 import app.mishana.tv.game.TvEvent
 import app.mishana.tv.game.TvUiState
+import app.mishana.tv.game.ViewEvent
 import app.mishana.tv.i18n.isolate
 import app.mishana.tv.i18n.messageKeyRes
 import app.mishana.tv.net.ConnState
 import app.mishana.tv.protocol.BackToLobby
+import app.mishana.tv.protocol.ClientIntent
 import app.mishana.tv.protocol.GuessStatus
-import app.mishana.tv.protocol.HistoryCause
 import app.mishana.tv.protocol.HostAdvance
 import app.mishana.tv.protocol.Kick
 import app.mishana.tv.protocol.Phase
 import app.mishana.tv.protocol.PlayAgain
 import app.mishana.tv.protocol.TvView
 import app.mishana.tv.settings.DebugPrefs
-import app.mishana.tv.ui.components.ButtonKind
-import app.mishana.tv.ui.components.CenterStage
 import app.mishana.tv.ui.components.FocusTrap
-import app.mishana.tv.ui.components.InitialFocus
 import app.mishana.tv.ui.components.LocalFocusBlocked
 import app.mishana.tv.ui.components.MishBackground
-import app.mishana.tv.ui.components.MishButton
+import app.mishana.tv.ui.components.ProvideFrameClock
+import app.mishana.tv.ui.components.StatusStage
+import app.mishana.tv.ui.components.blockPointer
+import app.mishana.tv.ui.components.inertWhen
 import app.mishana.tv.ui.components.MishIcons
 import app.mishana.tv.ui.components.PauseMenu
 import app.mishana.tv.ui.components.StatusBanner
@@ -129,6 +123,8 @@ fun AppRoot(vm: GameViewModel) {
             when (e) {
                 is TvEvent.NewCode -> toasts.show(context.getString(R.string.tv__new_code, e.code), MishColors.Accent)
                 is TvEvent.ServerError -> toasts.show(context.getString(messageKeyRes(e.error.messageKey)), MishColors.Danger)
+                is TvEvent.Game -> showGameToast(context, toasts, e.event)
+                is TvEvent.SettingsChanged -> Unit // announced by the Settings screen, which flashes the rows too
             }
         }
     }
@@ -148,8 +144,15 @@ fun AppRoot(vm: GameViewModel) {
                 is TvUiState.InRoom -> RoomRoot(s, vm, toasts) { debugOpen = true }
                 is TvUiState.Fatal -> FatalScreen(s.messageKey, vm::createRoom)
             }
-            // The Lobby draws its own toast zone (never over the code or QR); everywhere else: bottom start.
-            if (toasts.screenHosts == 0) ToastHost(toasts, Modifier.align(Alignment.BottomStart).padding(bottom = 64.dp))
+            // The Lobby shows its toasts in its own header slot (never over the code, QR or grid). In a game they sit
+            // at the top centre under the top bar, one at a time (clear of the stage, the strip and the action bar).
+            if (toasts.screenHosts == 0) {
+                when (gv?.phase) {
+                    null, Phase.LOBBY -> ToastHost(toasts, Modifier.align(Alignment.BottomStart).padding(bottom = 64.dp))
+                    Phase.RESULTS -> ToastHost(toasts, Modifier.align(Alignment.TopCenter), maxItems = 1)
+                    else -> ToastHost(toasts, Modifier.align(Alignment.TopCenter).padding(top = 56.dp), maxItems = 1)
+                }
+            }
         }
         if (debugOpen && BuildConfig.DEBUG) {
             val prefs = remember { DebugPrefs(context) }
@@ -161,20 +164,38 @@ fun AppRoot(vm: GameViewModel) {
     }
 }
 
+/** Toast text for a [ViewEvent] (the diff itself lives in the ViewModel, so no event is lost to a screen change). */
+private fun showGameToast(context: Context, toasts: ToastState, e: ViewEvent) {
+    when (e) {
+        is ViewEvent.PlayerJoined -> toasts.show(context.getString(R.string.lobby__joined, isolate(e.name)), MishColors.Success)
+        is ViewEvent.PlayerLeft -> toasts.show(context.getString(R.string.lobby__left, isolate(e.name)), MishColors.TextMuted)
+        is ViewEvent.PlayerAway -> toasts.show(context.getString(R.string.conn__player_away, isolate(e.name)), MishColors.Danger)
+        is ViewEvent.TurnSkipped -> toasts.show(context.getString(R.string.clues__skipped, isolate(e.name)), MishColors.Danger)
+        is ViewEvent.Forfeit -> toasts.show(
+            context.getString(R.string.elim__forfeit, isolate(e.name), context.getString(roleLabelRes(e.role))),
+            MishColors.Undercover,
+        )
+    }
+}
+
 @Composable
 private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState, onOpenDebug: () -> Unit) {
     val context = LocalContext.current
     val view = s.view
     val attempt by vm.reconnectAttempt.collectAsStateWithLifecycle()
+    val settingsDraft by vm.settingsDraft.collectAsStateWithLifecycle()
     var settingsOpen by remember { mutableStateOf(false) }
     var settingsCategory by remember { mutableStateOf(SettingsCategory.Game) }
     var settingsAfterPlayAgain by remember { mutableStateOf(false) }
+    // TV-07: while the votes are being revealed, the top bar must not give the verdict away.
+    var revealing by remember { mutableStateOf(false) }
     val reduce = MishTheme.reduceMotion
     val rise = with(LocalDensity.current) { 24.dp.roundToPx() }
 
     // Settings is reachable only in the lobby; leaving the lobby closes it.
     LaunchedEffect(view?.phase) {
         if (view?.phase != Phase.LOBBY) settingsOpen = false
+        if (view?.phase != Phase.ELIMINATION) revealing = false
         if (view?.phase == Phase.LOBBY && settingsAfterPlayAgain) {
             settingsAfterPlayAgain = false
             settingsCategory = SettingsCategory.Game
@@ -185,12 +206,10 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
 
     // ---- connection state timers (TV-13a/b/f) ----
     val degraded = s.conn != ConnState.OPEN
-    var offlineSince by remember { mutableLongStateOf(0L) }
     var offlineLong by remember { mutableStateOf(false) }
     LaunchedEffect(degraded) {
         offlineLong = false
         if (degraded) {
-            offlineSince = System.currentTimeMillis()
             delay(30_000)
             offlineLong = true
         }
@@ -206,91 +225,108 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
         }
     }
 
-    // ---- informational toasts (server errors arrive as one-shot TvEvent.ServerError, collected in AppRoot) ----
-    ForfeitAndAwayToasts(view, toasts)
-
     // ---- Back (TV-DB): Lobby is root → exit; in a game / on Results → pause menu ----
     val activity = context.findActivity()
-    BackHandler(enabled = view != null && !settingsOpen && !s.paused) {
-        if (view?.phase == Phase.LOBBY) activity?.finish() else vm.setPaused(true)
+    val onBack: () -> Unit = { if (view?.phase == Phase.LOBBY) activity?.finish() else vm.setPaused(true) }
+    BackHandler(enabled = view != null && !settingsOpen && !s.paused) { onBack() }
+
+    // TV-13a: the stage is frozen while the socket is down; a press that cannot be sent says so instead of vanishing.
+    val conn by rememberUpdatedState(s.conn)
+    val send: (ClientIntent) -> Unit = { intent ->
+        if (conn == ConnState.OPEN) vm.send(intent) else toasts.show(context.getString(R.string.conn__tv_reconnecting), MishColors.Danger)
     }
 
     val key = screenKeyFor(view, settingsOpen)
-    val overlayOpen = s.paused || (offlineLong && view != null)
+    val lostOverlay = offlineLong && view != null && degraded && !s.paused
+    val overlayOpen = s.paused || lostOverlay
     Box(Modifier.fillMaxSize()) {
-    CompositionLocalProvider(LocalFocusBlocked provides overlayOpen) {
-        Column(Modifier.fillMaxSize()) {
-            val showTopBar = view != null && key != ScreenKey.Lobby && key != ScreenKey.Settings && key != ScreenKey.Results && key != ScreenKey.Loading
-            if (showTopBar) {
-                TopBar(view, degraded)
-                Spacer(Modifier.height(12.dp))
-            }
-            AnimatedContent(
-                targetState = Frame(key, view),
-                contentKey = { it.key },
-                transitionSpec = {
-                    if (reduce) {
-                        fadeIn(tween(MishMotion.Fast)) togetherWith fadeOut(tween(MishMotion.Fast))
-                    } else {
-                        (fadeIn(tween(MishMotion.Slow, easing = MishMotion.Decel)) + slideInVertically(tween(MishMotion.Slow, easing = MishMotion.Decel)) { rise }) togetherWith
-                            (fadeOut(tween(MishMotion.Base, easing = MishMotion.Accel)) + scaleOut(tween(MishMotion.Base, easing = MishMotion.Accel), targetScale = 0.98f))
+        CompositionLocalProvider(LocalFocusBlocked provides overlayOpen) {
+            ProvideFrameClock(active = view?.deadline != null) {
+                // Nothing behind an overlay can take D-pad focus (DESIGN §7: no way out of a modal but its own exits).
+                Column(Modifier.fillMaxSize().inertWhen(overlayOpen)) {
+                    val showTopBar = view != null && key != ScreenKey.Lobby && key != ScreenKey.Settings && key != ScreenKey.Results && key != ScreenKey.Loading
+                    if (showTopBar) {
+                        val hideVerdict = revealing && key == ScreenKey.Elimination
+                        TopBar(
+                            view,
+                            degraded,
+                            phaseOverride = if (hideVerdict) stringResource(R.string.vote__votes_in) else null,
+                            aliveOverride = if (hideVerdict) view.players.count { (it.alive || it.id == view.eliminated?.playerId) && !it.left } else null,
+                        )
+                        Spacer(Modifier.height(MishSpace.s3))
                     }
-                },
-                modifier = Modifier.weight(1f),
-                label = "phase",
-            ) { frame ->
-                val leaving = transition.targetState != EnterExitState.Visible
-                CompositionLocalProvider(LocalFocusBlocked provides (overlayOpen || leaving)) {
-                    Box(Modifier.fillMaxSize()) {
-                        val v = frame.view
-                        val send: (app.mishana.tv.protocol.ClientIntent) -> Unit = vm::send
-                        when {
-                            v == null -> HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom, onOpenDebug)
-                            frame.key == ScreenKey.Lobby -> LobbyScreen(v, send, { c -> settingsCategory = c; settingsOpen = true }, toasts)
-                            frame.key == ScreenKey.Settings -> SettingsScreen(v, send, { settingsOpen = false }, settingsCategory, toasts)
-                            frame.key == ScreenKey.RoleReveal -> RoleRevealScreen(v, s.clockOffsetMs, send)
-                            frame.key == ScreenKey.Clues -> CluesScreen(v, s.clockOffsetMs, s.paused, send, toasts)
-                            frame.key == ScreenKey.Voting -> VotingScreen(v, s.clockOffsetMs, send)
-                            frame.key == ScreenKey.Elimination -> EliminationScreen(v, s.clockOffsetMs, s.paused, send)
-                            frame.key == ScreenKey.Guess -> BlankGuessScreen(v, s.clockOffsetMs, send)
-                            frame.key == ScreenKey.Results -> ResultsScreen(
-                                v,
-                                send,
-                                onChangeSettings = {
-                                    settingsAfterPlayAgain = true
-                                    vm.send(PlayAgain)
-                                },
-                                onNewRoom = vm::createRoom,
-                            )
+                    AnimatedContent(
+                        targetState = Frame(key, view),
+                        contentKey = { it.key },
+                        transitionSpec = {
+                            if (reduce) {
+                                fadeIn(tween(MishMotion.Fast)) togetherWith fadeOut(tween(MishMotion.Fast))
+                            } else {
+                                (fadeIn(tween(MishMotion.Slow, easing = MishMotion.Decel)) + slideInVertically(tween(MishMotion.Slow, easing = MishMotion.Decel)) { rise }) togetherWith
+                                    (fadeOut(tween(MishMotion.Base, easing = MishMotion.Accel)) + scaleOut(tween(MishMotion.Base, easing = MishMotion.Accel), targetScale = 0.98f))
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                        label = "phase",
+                    ) { frame ->
+                        val leaving = transition.targetState != EnterExitState.Visible
+                        CompositionLocalProvider(LocalFocusBlocked provides (overlayOpen || leaving)) {
+                            Box(Modifier.fillMaxSize()) {
+                                val v = frame.view
+                                when {
+                                    v == null -> HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom, onOpenDebug)
+                                    frame.key == ScreenKey.Lobby -> LobbyScreen(v, send, { c -> settingsCategory = c; settingsOpen = true }, toasts)
+                                    frame.key == ScreenKey.Settings -> SettingsScreen(
+                                        view = v,
+                                        draft = settingsDraft,
+                                        events = vm.events,
+                                        onChange = vm::changeSettings,
+                                        onClose = { settingsOpen = false },
+                                        initialCategory = settingsCategory,
+                                        toasts = toasts,
+                                    )
+                                    frame.key == ScreenKey.RoleReveal -> RoleRevealScreen(v, s.clockOffsetMs, send)
+                                    frame.key == ScreenKey.Clues -> CluesScreen(v, s.clockOffsetMs, s.paused, send)
+                                    frame.key == ScreenKey.Voting -> VotingScreen(v, s.clockOffsetMs, send)
+                                    frame.key == ScreenKey.Elimination -> EliminationScreen(v, s.clockOffsetMs, s.paused, send) { revealing = it }
+                                    frame.key == ScreenKey.Guess -> BlankGuessScreen(v, s.clockOffsetMs, send)
+                                    frame.key == ScreenKey.Results -> ResultsScreen(
+                                        v,
+                                        send,
+                                        onChangeSettings = {
+                                            settingsAfterPlayAgain = true
+                                            send(PlayAgain)
+                                        },
+                                        onNewRoom = vm::createRoom,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
 
-        // TV-13a: the stage stays visible but frozen under a 40 % scrim, with a top banner and an attempt counter.
-        if (degraded && view != null && !offlineLong) {
-            Box(Modifier.fillMaxSize().fullBleed().background(MishColors.Bg.copy(alpha = 0.4f)))
-            StatusBanner(
-                stringResource(R.string.conn__tv_reconnecting),
-                Modifier.align(Alignment.TopCenter),
-                spinner = true,
-                trailing = if (attempt > 0) "#$attempt" else null,
-            )
+            // TV-13a: the stage stays visible but frozen under a 40 % scrim (pointer clicks stop here too), with a top
+            // banner and an attempt counter.
+            if (degraded && view != null && !offlineLong) {
+                Box(Modifier.fillMaxSize().fullBleed().background(MishColors.Bg.copy(alpha = 0.4f)).blockPointer())
+                StatusBanner(
+                    stringResource(R.string.conn__tv_reconnecting),
+                    Modifier.align(Alignment.TopCenter),
+                    spinner = true,
+                    trailing = if (attempt > 0) "#$attempt" else null,
+                )
+            }
+            // TV-13f
+            AnimatedVisibility(phonesAsleep && !degraded, Modifier.align(Alignment.TopCenter), enter = fadeIn(), exit = fadeOut()) {
+                StatusBanner(stringResource(R.string.conn__phones_asleep), icon = MishIcons.Phone)
+            }
         }
-        // TV-13f
-        AnimatedVisibility(phonesAsleep && !degraded, Modifier.align(Alignment.TopCenter), enter = fadeIn(), exit = fadeOut()) {
-            StatusBanner(stringResource(R.string.conn__phones_asleep), icon = MishIcons.Phone)
-        }
-    }
     }
 
     // TV-13b: still offline after 30 s.
-    if (offlineLong && view != null && degraded && !s.paused) {
-        ConnectionLost(
-            onRetry = vm::retryConnectionNow,
-            onBack = { if (view.phase == Phase.LOBBY) activity?.finish() else vm.setPaused(true) },
-        )
+    if (lostOverlay) {
+        ConnectionLost(onRetry = vm::retryConnectionNow, onBack = onBack)
     }
 
     // TV-12 pause menu.
@@ -299,9 +335,9 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
             players = view.players,
             canSkip = view.phase != Phase.RESULTS && view.phase != Phase.LOBBY,
             onResume = { vm.setPaused(false) },
-            onSkip = { vm.send(HostAdvance) },
-            onKick = { p -> vm.send(Kick(p.id)) },
-            onEndGame = { vm.send(BackToLobby) },
+            onSkip = { send(HostAdvance) },
+            onKick = { p -> send(Kick(p.id)) },
+            onEndGame = { send(BackToLobby) },
             onExit = { activity?.finish() },
         )
     }
@@ -310,47 +346,16 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
 /** TV-13b full screen: wifi-off, `conn.lost`, `conn.tvLostBody`, (• Try again). Auto-retry continues underneath. */
 @Composable
 private fun ConnectionLost(onRetry: () -> Unit, onBack: () -> Unit) {
-    val retry = remember { FocusRequester() }
-    Box(Modifier.fillMaxSize().fullBleed().background(MishColors.Bg.copy(alpha = 0.96f))) {
+    Box(Modifier.fillMaxSize().fullBleed().background(MishColors.Bg.copy(alpha = 0.96f)).blockPointer()) {
         FocusTrap(onBack = onBack) {
-        CenterStage {
-            Icon(MishIcons.WifiOff, contentDescription = null, tint = MishColors.Danger, modifier = Modifier.size(96.dp))
-            Spacer(Modifier.height(20.dp))
-            Text(stringResource(R.string.conn__lost), style = MishTheme.type.displayS, color = MishColors.Text, textAlign = TextAlign.Center)
-            Spacer(Modifier.height(8.dp))
-            Text(stringResource(R.string.conn__tv_lost_body), style = MishTheme.type.body, color = MishColors.TextSecondary, textAlign = TextAlign.Center)
-            Spacer(Modifier.height(28.dp))
-            MishButton(stringResource(R.string.common__retry), onRetry, Modifier.focusRequester(retry), kind = ButtonKind.Primary, icon = MishIcons.Refresh, minWidth = 220.dp)
-        }
-        }
-    }
-    InitialFocus(retry)
-}
-
-/** `elim.forfeit` for in-game LEAVE/KICK (role revealed) and `conn.playerAway` when someone drops mid-game (TV-13c). */
-@Composable
-private fun ForfeitAndAwayToasts(view: TvView?, toasts: ToastState) {
-    val context = LocalContext.current
-    val prev = remember { mutableStateOf<TvView?>(null) }
-    LaunchedEffect(view) {
-        val before = prev.value
-        prev.value = view
-        if (view == null || before == null || before.gameNumber != view.gameNumber) return@LaunchedEffect
-        if (view.history.size > before.history.size) {
-            for (h in view.history.drop(before.history.size)) {
-                if (h.cause != HistoryCause.LEAVE && h.cause != HistoryCause.KICK) continue
-                val p = view.players.firstOrNull { it.id == h.eliminatedId } ?: continue
-                val role = h.role?.let { context.getString(roleLabelRes(it)) } ?: continue
-                toasts.show(context.getString(R.string.elim__forfeit, isolate(p.name), role), MishColors.Undercover)
-            }
-        }
-        if (view.phase != Phase.LOBBY) {
-            for (p in view.players) {
-                val old = before.players.firstOrNull { it.id == p.id } ?: continue
-                if (old.connected && !p.connected && !p.left) {
-                    toasts.show(context.getString(R.string.conn__player_away, isolate(p.name)), MishColors.Danger)
-                }
-            }
+            StatusStage(
+                icon = MishIcons.WifiOff,
+                tint = MishColors.Danger,
+                title = stringResource(R.string.conn__lost),
+                body = stringResource(R.string.conn__tv_lost_body),
+                actionLabel = stringResource(R.string.common__retry),
+                onAction = onRetry,
+            )
         }
     }
 }

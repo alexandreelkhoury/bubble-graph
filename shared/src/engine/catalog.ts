@@ -1,9 +1,10 @@
 import type { Locale } from "../constants";
 import { LOCALES } from "../constants";
 import type { Rng } from "./rng";
-import type { Settings, WordSide } from "./types";
+import type { LocalizedTitle, Settings, WordRef, WordSide } from "./types";
 
-export type AgeRating = "all" | "teen" | "adult";
+export const AGE_RATINGS = ["all", "teen", "adult"] as const;
+export type AgeRating = (typeof AGE_RATINGS)[number];
 
 export interface CatalogPair {
   key: string; packId: string; packVersion: number; pairId: string; difficulty: 1 | 2 | 3;
@@ -11,7 +12,7 @@ export interface CatalogPair {
 }
 export interface CatalogPack {
   id: string; version: number; locale: string; language: Locale;
-  title: { en: string; fr: string; ar: string };
+  title: LocalizedTitle;
   ageRating: AgeRating;
   pairs: CatalogPair[];
 }
@@ -24,7 +25,7 @@ export interface WordPackLike {
   version: number;
   locale: "en" | "fr" | "ar" | "ar-LB";
   script: "Latn" | "Arab";
-  title: { en: string; fr: string; ar: string };
+  title: LocalizedTitle;
   tags: string[];
   ageRating: AgeRating;
   license: string;
@@ -44,7 +45,13 @@ function toSide(s: WordSideLike): WordSide {
   return { text: s.text, translit: s.translit ?? null, alt: s.alt ? [...s.alt] : [] };
 }
 
-function languageOf(locale: string): Locale {
+/** The public word of a side (never its `alt` spellings). */
+export function toWordRef(side: WordSide): WordRef {
+  return { text: side.text, translit: side.translit };
+}
+
+/** UI language of a pack locale ("ar-LB" → "ar"). */
+export function languageOf(locale: string): Locale {
   const lang = locale.split("-")[0];
   const found = LOCALES.find((l) => l === lang);
   // SPEC-GAP: a pack whose language is not en/fr/ar cannot be produced by WordPackSchema; fall back to "en" defensively.

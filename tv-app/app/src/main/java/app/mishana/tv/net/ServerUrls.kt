@@ -1,5 +1,6 @@
 package app.mishana.tv.net
 
+import app.mishana.tv.Constants
 import java.util.UUID
 
 /** Pure URL helpers (SPEC §9.4). */
@@ -17,7 +18,7 @@ object ServerUrls {
             base.startsWith("http://", ignoreCase = true) -> "ws://" + base.substring(7)
             else -> base
         }
-        return "$ws/parties/room/$code?_pk=$pk&cid=$cid"
+        return "$ws${Constants.WS_PATH_PREFIX}$code?_pk=$pk&cid=$cid"
     }
 
     fun apiRoomsUrl(serverUrl: String): String = serverUrl.trim().trimEnd('/') + "/api/rooms"

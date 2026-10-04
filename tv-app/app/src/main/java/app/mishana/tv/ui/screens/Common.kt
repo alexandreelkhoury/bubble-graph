@@ -10,26 +10,23 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import app.mishana.tv.R
+import app.mishana.tv.i18n.Locales
 import app.mishana.tv.protocol.LocalizedTitle
-import app.mishana.tv.protocol.PublicPlayer
 import app.mishana.tv.protocol.Role
-import app.mishana.tv.protocol.TvView
 
 /** UI language of the current configuration: en | fr | ar. */
 @Composable
 @ReadOnlyComposable
-fun uiLanguage(): String = when (LocalConfiguration.current.locales.get(0)?.language) {
-    "fr" -> "fr"
-    "ar" -> "ar"
-    else -> "en"
-}
+fun uiLanguage(): String = Locales.normalize(LocalConfiguration.current.locales.get(0)?.language)
 
 @Composable
 @ReadOnlyComposable
-fun localizedTitle(t: LocalizedTitle): String = when (uiLanguage()) {
-    "fr" -> t.fr
-    "ar" -> t.ar
-    else -> t.en
+fun localizedTitle(t: LocalizedTitle): String = t.inLanguage(uiLanguage())
+
+fun LocalizedTitle.inLanguage(lang: String): String = when (lang) {
+    "fr" -> fr
+    "ar" -> ar
+    else -> en
 }
 
 fun roleLabelRes(role: Role): Int = when (role) {
@@ -47,8 +44,6 @@ fun langNameRes(tag: String): Int = when (tag) {
 @Composable
 @ReadOnlyComposable
 fun roleLabel(role: Role): String = stringResource(roleLabelRes(role))
-
-fun TvView.player(id: String?): PublicPlayer? = if (id == null) null else players.firstOrNull { it.id == id }
 
 /** Horizontal shake: 3 cycles of ±12 dp in 360 ms (DESIGN §6.2-D); skipped in reduced motion. */
 suspend fun Animatable<Float, AnimationVector1D>.shake(amplitudePx: Float) {

@@ -2,8 +2,7 @@ import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { effectiveRoleCounts } from "../../src/engine/roles";
 import type { SettingsPatch } from "../../src/engine/types";
-import { playGame } from "../support/bots";
-import { TEST_CATALOG } from "../support/test-catalog";
+import { playGame, TEST_CATALOG } from "../../src/testing";
 
 const settingsArb: fc.Arbitrary<SettingsPatch> = fc.record({
   winRule: fc.constantFrom("official" as const, "parity" as const),

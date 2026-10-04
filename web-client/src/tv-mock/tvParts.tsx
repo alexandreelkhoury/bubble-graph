@@ -3,35 +3,30 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import type { ComponentChildren, Ref } from "preact";
 import type { DeadlineView, PublicPlayer, TvView } from "@mishana/shared/protocol";
 import { fmtNum, t } from "../i18n/t";
-import { PHASE_KEY } from "../state/session";
-import { Avatar, avatarState } from "../components/PlayerChip";
+import { PHASE_KEY } from "../lib/keys";
+import { Avatar, avatarState, colorVars } from "../components/PlayerChip";
 import { useDeadline } from "../components/Timer";
 import { timerTone } from "../lib/countdown";
 import { Icon } from "../components/Icon";
-import { tvConn, tvSend } from "./tvStore";
+import { tvAct, tvConn, tvPaused } from "./tvStore";
+import { openPause } from "./tvDialogs";
+import { pushToast } from "../state/store";
+import { ellipsizeName } from "../lib/names";
 
 export const PRESS_AGAIN_MS = 3000;
-
-/** Focus `ref` on mount (and when `dep` changes): every TV screen has an initial focus. */
-export function useInitialFocus<T extends HTMLElement>(dep: unknown = null): Ref<T> {
-  const ref = useRef<T>(null);
-  useEffect(() => {
-    const id = setTimeout(() => {
-      const a = document.activeElement;
-      if (!a || a === document.body || !a.isConnected || !(a as HTMLElement).closest(".tv__canvas")) ref.current?.focus();
-      else ref.current?.focus();
-    }, 30);
-    return () => clearTimeout(id);
-  }, [dep]);
-  return ref;
-}
+/** DESIGN TV-06/07: names on vote tiles are cut to 12 graphemes. */
+export const VOTE_NAME_MAX = 12;
 
 export function RoomCode({ code, size = "mini" }: { code: string; size?: "mini" | "big" }) {
   return <span class={`tvcode tvcode--${size}`} dir="ltr" aria-label={code.split("").join(" ")}>{code.split("").map((c, i) => <span key={i}>{c}</span>)}</span>;
 }
 
-export function TvTopBar({ view, title }: { view: TvView; title?: string }) {
-  const alive = view.players.filter((p) => p.alive && !p.left).length;
+/**
+ * The in-game top bar. `stillAlive` keeps a just-voted-out player counted until their card flips (the count must not
+ * spoil the TV-07/TV-09 suspense). The pause button is for pointer remotes only (tabIndex -1: never a D-pad stop).
+ */
+export function TvTopBar({ view, title, stillAlive = null }: { view: TvView; title?: string; stillAlive?: string | null }) {
+  const alive = view.players.filter((p) => (p.alive || p.id === stillAlive) && !p.left).length;
   const label = title ?? (view.phase === "ROLE_REVEAL" ? t("game.label", { count: view.gameNumber }) : `${t("round.label", { count: view.round })} · ${t(PHASE_KEY[view.phase])}`);
   const degraded = tvConn.value !== "open";
   return (
@@ -41,22 +36,30 @@ export function TvTopBar({ view, title }: { view: TvView; title?: string }) {
         {degraded && <span class="tvchip tvchip--danger"><Icon name="wifi-off" size={20} /></span>}
         <RoomCode code={view.roomCode} />
         {view.phase !== "RESULTS" && <><span class="tvtop__dot" aria-hidden="true">·</span><span class="tnum">{t("common.aliveCount", { count: alive })}</span></>}
+        {!tvPaused.value && (
+          <button type="button" class="tvmenu-btn" tabIndex={-1} aria-label={t("tv.pauseTitle")} onClick={openPause}><Icon name="pause" size={20} /></button>
+        )}
       </span>
     </header>
   );
 }
 
-/** One ghost pill in the bottom-end action bar: first OK arms (or skips a running animation), second OK within 3 s sends HOST_ADVANCE. */
+/**
+ * One ghost pill in the bottom-end action bar: first OK arms (or skips a running animation), second OK within 3 s sends
+ * HOST_ADVANCE. Both labels share one grid cell, so arming never reflows the bar (Kotlin reserveText). While the socket
+ * is down (TV-13a) a press is not dropped silently: it says "Reconnecting…" and does not arm.
+ */
 export function ActionPill({ label, onSkipAnimation, animating = false, pillRef, onAdvance }: { label: string; animating?: boolean; onSkipAnimation?(): void; pillRef?: Ref<HTMLButtonElement>; onAdvance?(): void }) {
   const [armed, setArmed] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
   const press = (): void => {
     if (animating && onSkipAnimation) { onSkipAnimation(); return; }
+    if (tvConn.value !== "open") { pushToast(t("conn.tvReconnecting"), "error"); return; }
     if (armed) {
       if (timer.current) clearTimeout(timer.current);
       setArmed(false);
-      if (onAdvance) onAdvance(); else tvSend({ type: "HOST_ADVANCE" });
+      if (onAdvance) onAdvance(); else tvAct({ type: "HOST_ADVANCE" });
       return;
     }
     setArmed(true);
@@ -64,7 +67,8 @@ export function ActionPill({ label, onSkipAnimation, animating = false, pillRef,
   };
   return (
     <button type="button" ref={pillRef} class={`tvpill${armed ? " is-armed" : ""}`} onClick={press} data-pill="1">
-      {armed ? t("tv.pressAgain") : label}
+      <span class="tvpill__label" aria-hidden={armed}>{label}</span>
+      <span class="tvpill__label tvpill__label--armed" aria-hidden={!armed}>{t("tv.pressAgain")}</span>
     </button>
   );
 }
@@ -108,18 +112,19 @@ export function TvTimerBar({ deadline }: { deadline: DeadlineView | null }) {
   );
 }
 
-export function Tile({ p, size = 56, check = false, focusable = false, onClick, class: cls, children, speaking = false }: { p: PublicPlayer; size?: number; check?: boolean; focusable?: boolean; onClick?(): void; class?: string; children?: ComponentChildren; speaking?: boolean }) {
+/** A player tile; `nameMax` cuts the name to that many graphemes (DESIGN: 12 on vote tiles) before CSS ellipsis. */
+export function Tile({ p, size = 56, check = false, focusable = false, onClick, class: cls, children, speaking = false, index, nameMax }: { p: PublicPlayer; size?: number; check?: boolean; focusable?: boolean; onClick?(): void; class?: string; children?: ComponentChildren; speaking?: boolean; index?: number; nameMax?: number }) {
   const inner = (
     <>
       <Avatar color={p.color} size={size} state={avatarState(p)} host={p.isHost} check={check} role={p.revealedRole} speaking={speaking} />
-      <bdi class="tile__name">{p.name}</bdi>
+      <bdi class="tile__name">{nameMax ? ellipsizeName(p.name, nameMax) : p.name}</bdi>
       {children}
     </>
   );
   return focusable ? (
-    <button type="button" class={`tile tile--btn${cls ? ` ${cls}` : ""}`} onClick={onClick} data-pid={p.id}>{inner}</button>
+    <button type="button" class={`tile tile--btn${cls ? ` ${cls}` : ""}`} style={colorVars(p.color)} onClick={onClick} data-pid={p.id} data-index={index}>{inner}</button>
   ) : (
-    <div class={`tile${cls ? ` ${cls}` : ""}`} data-pid={p.id}>{inner}</div>
+    <div class={`tile${cls ? ` ${cls}` : ""}`} style={colorVars(p.color)} data-pid={p.id}>{inner}</div>
   );
 }
 

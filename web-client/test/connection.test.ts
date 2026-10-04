@@ -41,7 +41,7 @@ function setup() {
   const errors: string[] = [];
   const welcomes: string[] = [];
   const conn = new Connection((h) => (sock = new FakeSocket(h)), {
-    hello: () => '{"v":1,"t":"hello","role":"player"}',
+    hello: () => ({ v: 1, t: "hello", role: "player" }),
     onState: (m) => states.push(m.seq),
     onWelcome: (m) => welcomes.push(m.playerId),
     onError: (m) => errors.push(m.code),

@@ -11,7 +11,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -65,9 +64,16 @@ import app.mishana.tv.ui.components.fullBleed
 import app.mishana.tv.R
 import androidx.compose.foundation.layout.heightIn
 import app.mishana.tv.ui.components.MishFocus
-import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.Surface
+import app.mishana.tv.ui.components.MishFocusSurface
+import app.mishana.tv.ui.components.inertWhen
+import app.mishana.tv.ui.theme.MishShapes
+import app.mishana.tv.ui.theme.MishSpace
+import app.mishana.tv.protocol.player
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import app.mishana.tv.game.Names
+import app.mishana.tv.game.Ranking
+import androidx.compose.ui.platform.LocalDensity
 import app.mishana.tv.i18n.isolate
 import app.mishana.tv.protocol.ClientIntent
 import app.mishana.tv.protocol.GuessStatus
@@ -98,6 +104,9 @@ import app.mishana.tv.ui.theme.MishTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/** How long Play again / Change settings / New room ignore OK after the summary appears. */
+private const val STAGE2_GUARD_MS = 800L
+
 /**
  * TV-11 Results. Stage 1 (≈ 5 s, local): the victory moment and both words meeting in the middle. Stage 2: the
  * compact summary with the scoreboard, history and actions. OK during stage 1 jumps to stage 2.
@@ -116,16 +125,26 @@ fun ResultsScreen(
     val playAgain = remember { FocusRequester() }
     var confirmNewRoom by remember { mutableStateOf(false) }
     val key = "${view.gameNumber}"
-    var stage by remember(key) { mutableStateOf(1) }
+    var stage by remember(key) { mutableIntStateOf(1) }
+    // When stage 2 appeared: the press that skipped stage 1 (or a mashed second one) must not chain into PLAY_AGAIN
+    // and send everyone back to the lobby before the scoreboard has been read.
+    var stage2At by remember(key) { mutableLongStateOf(Long.MAX_VALUE) }
+    fun toStage2() {
+        if (stage == 1) {
+            stage = 2
+            stage2At = System.currentTimeMillis()
+        }
+    }
+    fun ready() = System.currentTimeMillis() - stage2At >= STAGE2_GUARD_MS
     LaunchedEffect(key) {
         delay(if (reduce) 2_500 else 5_000)
-        stage = 2
+        toStage2()
     }
-    val players = view.players.sortedWith(compareByDescending<PublicPlayer> { it.score }.thenBy { it.seat })
+    val players = Ranking.order(view.players)
     val winnerTitle = winnerText(view, result)
 
     CompositionLocalProvider(LocalFocusBlocked provides (LocalFocusBlocked.current || confirmNewRoom)) {
-        Box(Modifier.fillMaxSize().focusFallback(playAgain)) {
+        Box(Modifier.fillMaxSize().inertWhen(confirmNewRoom).focusFallback(playAgain)) {
             VictoryBackdrop(result.winner, stage == 1)
             Column(Modifier.fillMaxSize()) {
                 // Header: "Game over" · room code
@@ -156,19 +175,19 @@ fun ResultsScreen(
                     MishButton(
                         stringResource(R.string.results__play_again),
                         {
-                            if (stage == 1) stage = 2 else send(PlayAgain)
+                            if (stage == 1) toStage2() else if (ready()) send(PlayAgain)
                         },
                         Modifier.focusRequester(playAgain),
                         kind = ButtonKind.Primary,
-                        icon = MishIcons.Play,
+                        icon = MishIcons.Refresh,
                         minWidth = 220.dp,
                     )
                     MishButton(stringResource(R.string.results__change_settings), {
-                        if (stage == 1) stage = 2 else onChangeSettings()
+                        if (stage == 1) toStage2() else if (ready()) onChangeSettings()
                     }, icon = MishIcons.Settings)
                     MishButton(stringResource(R.string.results__new_room), {
-                        if (stage == 1) stage = 2 else confirmNewRoom = true
-                    }, icon = MishIcons.Refresh)
+                        if (stage == 1) toStage2() else if (ready()) confirmNewRoom = true
+                    }, icon = MishIcons.Plus)
                 }
             }
         }
@@ -306,7 +325,7 @@ private fun BlankCardSpin(text: String?) {
         Modifier
             .size(240.dp, 96.dp)
             .graphicsLayer { rotationZ = (1f - spin.value) * 360f; scaleX = spin.value; scaleY = spin.value }
-            .background(MishColors.Blank, RoundedCornerShape(20.dp)),
+            .background(MishColors.Blank, MishShapes.tile),
         contentAlignment = Alignment.Center,
     ) {
         Canvas(Modifier.fillMaxSize().padding(8.dp)) {
@@ -328,9 +347,9 @@ private fun WordCard(label: String, word: WordRef, role: Role, modifier: Modifie
     Column(
         modifier
             .widthIn(min = 260.dp, max = 400.dp)
-            .shadow(24.dp, RoundedCornerShape(28.dp))
-            .background(MishColors.Surface, RoundedCornerShape(28.dp))
-            .border(BorderStroke(3.dp, roleColor(role)), RoundedCornerShape(28.dp))
+            .shadow(24.dp, MishShapes.card)
+            .background(MishColors.Surface, MishShapes.card)
+            .border(BorderStroke(3.dp, roleColor(role)), MishShapes.card)
             .padding(horizontal = 28.dp, vertical = 18.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -346,15 +365,20 @@ private fun WordCard(label: String, word: WordRef, role: Role, modifier: Modifie
     }
 }
 
-/** Stage 2: headline, one 56 dp word strip, caption (pack + guesses), scoreboard, history timeline. */
+/**
+ * Stage 2: headline, one 56 dp word strip, one caption line (pack + guesses), scoreboard, history timeline.
+ * Budget (486 dp live area − 40 header − 58 buttons = 388 dp): the fixed content stays ≤ 200 dp so the scoreboard
+ * always shows 4 × 40 dp rows (+ 3 gaps + the focus padding), in Arabic too. At a large font scale the column
+ * header goes, so the 4 (taller) rows still fit (DESIGN TV-11, §11).
+ */
 @Composable
 private fun Summary(view: TvView, result: ResultView, players: List<PublicPlayer>, title: String) {
     val type = MishTheme.type
     Column(Modifier.fillMaxSize()) {
         Text(title, style = type.headline, color = MishColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.align(Alignment.CenterHorizontally))
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(MishSpace.s1))
         Row(
-            Modifier.fillMaxWidth().height(56.dp).background(MishColors.Surface, RoundedCornerShape(18.dp)).padding(horizontal = 20.dp),
+            Modifier.fillMaxWidth().height(56.dp).background(MishColors.Surface, MishShapes.row).padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             WordInline(stringResource(R.string.results__civilian_word), result.civilianWord, Role.CIVILIAN, Modifier.weight(1f))
@@ -362,19 +386,41 @@ private fun Summary(view: TvView, result: ResultView, players: List<PublicPlayer
             Spacer(Modifier.width(20.dp))
             WordInline(stringResource(R.string.results__undercover_word), result.undercoverWord, Role.UNDERCOVER, Modifier.weight(1f))
         }
-        Spacer(Modifier.height(6.dp))
-        val captions = buildList {
-            add(stringResource(R.string.results__pack, localizedTitle(result.pack.title)))
-            for (g in result.guesses) {
-                val name = view.player(g.playerId)?.name ?: continue
-                val text = g.text ?: continue
-                add(stringResource(R.string.guess__guessed, isolate(name), isolate("“$text”")))
-            }
-        }
-        Text(captions.joinToString("   ·   "), style = type.caption, color = MishColors.TextMuted, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        Spacer(Modifier.height(6.dp))
-        Scoreboard(players, result, Modifier.weight(1f))
+        Spacer(Modifier.height(MishSpace.s1))
+        CaptionLine(view, result)
+        Scoreboard(players, result, Modifier.weight(1f), showHeader = LocalDensity.current.fontScale < LARGE_FONT_SCALE)
         HistoryTimeline(view)
+    }
+}
+
+/** From this system font scale on, the scoreboard drops its column header to keep 4 rows visible. */
+private const val LARGE_FONT_SCALE = 1.15f
+
+/**
+ * "Pack: … · Lina guessed: “…”" on one caption line (DESIGN TV-11). The guesses are the payoff: drawn in the
+ * primary text colour and measured first, so when the line is too long it is the pack name that ellipsizes.
+ */
+@Composable
+private fun CaptionLine(view: TvView, result: ResultView) {
+    val type = MishTheme.type
+    val guesses = result.guesses.mapNotNull { g ->
+        val name = view.player(g.playerId)?.name ?: return@mapNotNull null
+        val text = g.text ?: return@mapNotNull null
+        stringResource(R.string.guess__guessed, isolate(name), isolate("“$text”"))
+    }
+    Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            stringResource(R.string.results__pack, localizedTitle(result.pack.title)),
+            style = type.caption,
+            color = MishColors.TextSecondary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false),
+        )
+        if (guesses.isNotEmpty()) {
+            Text("   ·   ", style = type.caption, color = MishColors.TextMuted, maxLines = 1)
+            Text(guesses.joinToString("   ·   "), style = type.caption, color = MishColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
     }
 }
 
@@ -393,13 +439,17 @@ private fun WordInline(label: String, word: WordRef, role: Role, modifier: Modif
     }
 }
 
-/** Scoreboard: 40 dp rows, focus-scroll (Up from the buttons enters it); rank 1 gets glow.accent + a trophy. */
+/**
+ * Scoreboard: 40 dp rows, focus-scroll (Up from the buttons enters it). Competition ranking (equal totals share a
+ * rank, like the phone and the web TV), so every rank-1 row gets glow.accent + a trophy.
+ */
 @Composable
-private fun Scoreboard(players: List<PublicPlayer>, result: ResultView, modifier: Modifier) {
+private fun Scoreboard(players: List<PublicPlayer>, result: ResultView, modifier: Modifier, showHeader: Boolean) {
     val type = MishTheme.type
     val first = remember { FocusRequester() }
+    val ranks = remember(players) { Ranking.ranks(players) }
     Column(modifier.fillMaxWidth()) {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        if (showHeader) Row(Modifier.fillMaxWidth().padding(horizontal = MishFocus.ListPadH + MishSpace.s3), verticalAlignment = Alignment.CenterVertically) {
             HeaderCell(stringResource(R.string.results__col_rank), 40)
             Text(stringResource(R.string.results__col_player), style = type.caption, color = MishColors.TextMuted, modifier = Modifier.weight(1f))
             HeaderCell(stringResource(R.string.results__col_role), 170)
@@ -408,10 +458,12 @@ private fun Scoreboard(players: List<PublicPlayer>, result: ResultView, modifier
         }
         LazyColumn(
             Modifier.fillMaxWidth().weight(1f).focusRestorer(first),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            // Room for the focused row's scale + ring, which the list would otherwise clip.
+            contentPadding = PaddingValues(horizontal = MishFocus.ListPadH, vertical = MishFocus.ListPadV),
+            verticalArrangement = Arrangement.spacedBy(MishSpace.s1),
         ) {
             itemsIndexed(players, key = { _, p -> p.id }) { i, p ->
-                ScoreRow(i + 1, p, result.pointsAwarded[p.id] ?: 0, i, if (i == 0) Modifier.focusRequester(first) else Modifier)
+                ScoreRow(ranks[i], p, result.pointsAwarded[p.id] ?: 0, i, if (i == 0) Modifier.focusRequester(first) else Modifier)
             }
         }
     }
@@ -426,7 +478,6 @@ private fun RowScope.HeaderCell(text: String, widthDp: Int) {
 private fun ScoreRow(rank: Int, p: PublicPlayer, earned: Int, index: Int, modifier: Modifier) {
     val type = MishTheme.type
     val reduce = MishTheme.reduceMotion
-    val interaction = remember { MutableInteractionSource() }
     val appear = remember { Animatable(if (reduce) 1f else 0f) }
     val counted = remember { Animatable(if (reduce) p.score.toFloat() else (p.score - earned).toFloat()) }
     LaunchedEffect(Unit) {
@@ -436,68 +487,55 @@ private fun ScoreRow(rank: Int, p: PublicPlayer, earned: Int, index: Int, modifi
             counted.animateTo(p.score.toFloat(), tween(700, easing = LinearEasing))
         }
     }
-    val shape = RoundedCornerShape(14.dp)
-    // The one focus style (DESIGN §4.6/§7): a tv-material Surface with the shared scale, ring and glow. OK does
-    // nothing — rows are focusable only so Up can scroll the scoreboard.
-    Surface(
+    val shape = MishShapes.row
+    // The one focus style (DESIGN §4.6/§7). OK does nothing: rows are focusable only so Up can scroll the scoreboard.
+    MishFocusSurface(
         onClick = {},
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 40.dp)
             .graphicsLayer { alpha = appear.value; translationY = (1f - appear.value) * 24f }
             .then(if (rank == 1) Modifier.shadow(18.dp, shape, ambientColor = MishColors.Accent, spotColor = MishColors.Accent) else Modifier),
-        shape = ClickableSurfaceDefaults.shape(shape = shape),
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = MishColors.Surface,
-            contentColor = MishColors.Text,
-            focusedContainerColor = MishColors.Elevated,
-            focusedContentColor = MishColors.Text,
-            pressedContainerColor = MishColors.Elevated,
-            pressedContentColor = MishColors.Text,
-        ),
-        scale = MishFocus.buttonScale(),
-        border = MishFocus.border(shape),
-        glow = MishFocus.glow(),
-        interactionSource = interaction,
+        shape = shape,
     ) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .heightIn(min = 40.dp)
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(Modifier.width(40.dp), contentAlignment = Alignment.Center) {
-            if (rank == 1) {
-                Icon(MishIcons.Trophy, contentDescription = null, tint = MishColors.Accent, modifier = Modifier.size(24.dp))
-            } else {
-                Text(rank.toString(), style = type.titleS, color = MishColors.TextSecondary)
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 40.dp)
+                .padding(horizontal = MishSpace.s3),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(Modifier.width(40.dp), contentAlignment = Alignment.Center) {
+                if (rank == 1) {
+                    Icon(MishIcons.Trophy, contentDescription = null, tint = MishColors.Accent, modifier = Modifier.size(24.dp))
+                } else {
+                    Text(rank.toString(), style = type.titleS, color = MishColors.TextSecondary)
+                }
+            }
+            Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                Avatar(p.color, 28.dp, state = AvatarState(away = !p.connected && !p.left, left = p.left))
+                Spacer(Modifier.width(10.dp))
+                Text(Names.ellipsize(p.name, 16), style = type.titleS, color = MishColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+            Row(Modifier.width(170.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                val role = p.revealedRole
+                if (role != null) {
+                    RoleEmblem(role, 22.dp, roleColor(role))
+                    Spacer(Modifier.width(6.dp))
+                    Text(roleLabel(role), style = type.body, color = roleColor(role), maxLines = 1)
+                }
+            }
+            Box(Modifier.width(110.dp), contentAlignment = Alignment.Center) {
+                Text(
+                    if (earned > 0) stringResource(R.string.results__points_earned, earned) else "0",
+                    style = type.titleS,
+                    color = if (earned > 0) MishColors.Accent else MishColors.TextMuted,
+                )
+            }
+            Box(Modifier.width(90.dp), contentAlignment = Alignment.Center) {
+                Text(counted.value.toInt().toString(), style = type.title, color = MishColors.Text)
             }
         }
-        Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-            Avatar(p.color, 28.dp, state = AvatarState(away = !p.connected && !p.left, left = p.left))
-            Spacer(Modifier.width(10.dp))
-            Text(Names.ellipsize(p.name, 16), style = type.titleS, color = MishColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        }
-        Row(Modifier.width(170.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-            val role = p.revealedRole
-            if (role != null) {
-                RoleEmblem(role, 22.dp, roleColor(role))
-                Spacer(Modifier.width(6.dp))
-                Text(roleLabel(role), style = type.caption, color = roleColor(role), maxLines = 1)
-            }
-        }
-        Box(Modifier.width(110.dp), contentAlignment = Alignment.Center) {
-            Text(
-                if (earned > 0) stringResource(R.string.results__points_earned, earned) else "0",
-                style = type.titleS,
-                color = if (earned > 0) MishColors.Accent else MishColors.TextMuted,
-            )
-        }
-        Box(Modifier.width(90.dp), contentAlignment = Alignment.Center) {
-            Text(counted.value.toInt().toString(), style = type.title, color = MishColors.Text)
-        }
-    }
     }
 }
 
@@ -506,14 +544,14 @@ private fun ScoreRow(rank: Int, p: PublicPlayer, earned: Int, index: Int, modifi
 private fun HistoryTimeline(view: TvView) {
     if (view.history.isEmpty()) return
     Row(
-        Modifier.fillMaxWidth().height(34.dp).padding(top = 4.dp),
+        Modifier.fillMaxWidth().heightIn(min = 28.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Text(stringResource(R.string.history__title), style = MishTheme.type.caption, color = MishColors.TextMuted)
         for (h in view.history.take(8)) {
             Row(
-                Modifier.background(MishColors.Surface, RoundedCornerShape(50)).padding(horizontal = 10.dp, vertical = 2.dp),
+                Modifier.background(MishColors.Surface, MishShapes.pill).padding(horizontal = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {

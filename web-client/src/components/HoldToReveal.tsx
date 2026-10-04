@@ -135,15 +135,23 @@ export function WordCard({ word, isBlank, role, color, wordLocale, seenOnce, onR
   );
 }
 
-/** PH-05/06/10 bottom "Hold to peek my word" button; the word shows in a bubble above while held. */
-export function PeekButton({ word, isBlank, wordLocale, onDark = false }: { word: WordRef | null; isBlank: boolean; wordLocale: Locale; onDark?: boolean }) {
+/**
+ * PH-05/06/10 bottom "Hold to peek my word" button; the word, or the Blank's card and bluffing tip, shows in a bubble
+ * above while held, never on the open screen. The label is the same for every role while alive (no tell); once out
+ * (`out`, the role is public) the Blank's reads "Hold to see my card".
+ */
+export function PeekButton({ word, isBlank, wordLocale, onDark = false, out = false }: { word: WordRef | null; isBlank: boolean; wordLocale: Locale; onDark?: boolean; out?: boolean }) {
   const h = useHoldReveal();
+  const blank = isBlank || !word;
   return (
     <div class="peek">
       {h.revealed && (
         <div class="peek__bubble" role="status">
-          {isBlank || !word ? (
-            <span class="peek__blank"><RoleEmblem role="BLANK" size={28} />{t("reveal.noWord")}</span>
+          {blank || !word ? (
+            <span class="peek__blankcard">
+              <span class="peek__blank"><RoleEmblem role="BLANK" size={28} />{t("reveal.noWord")}</span>
+              {isBlank && <span class="peek__tip">{t("clues.blankBody")}</span>}
+            </span>
           ) : (
             <WordText word={word} wordLocale={wordLocale} big={false} />
           )}
@@ -151,7 +159,7 @@ export function PeekButton({ word, isBlank, wordLocale, onDark = false }: { word
       )}
       <button type="button" class={`btn btn--secondary btn--peek${onDark ? " btn--on-color" : ""}${h.revealed ? " is-held" : ""}`} aria-label={t("reveal.showFor5")} {...h.handlers}>
         <Icon name={h.revealed ? "eye-off" : "eye"} />
-        <span>{t("clues.peek")}</span>
+        <span>{t(blank && out ? "clues.peekRole" : "clues.peek")}</span>
       </button>
     </div>
   );

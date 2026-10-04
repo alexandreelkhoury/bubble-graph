@@ -1,8 +1,12 @@
-import { z } from "zod";
+import * as z from "zod";
+import { NAME_MAX_CODEPOINTS, PROTOCOL_VERSION } from "../constants";
 import { ColorIdSchema, ErrorCodeSchema, LocaleSchema, PlayerId, SettingsPatchSchema, Token } from "./common";
 import { ViewSchema } from "./views";
 
-const V = z.literal(1);
+const V = z.literal(PROTOCOL_VERSION);
+
+/** Client-chosen action id, echoed back as the error `ref`. */
+export const ACTION_ID_REGEX = /^[A-Za-z0-9-]{1,36}$/;
 
 // ---------------------------------------------------------------- client → server (strict)
 const intent = {
@@ -26,9 +30,9 @@ export const ClientIntentSchema = z.discriminatedUnion("type", [
 
 export const HelloTvSchema = z.strictObject({ v: V, t: z.literal("hello"), role: z.literal("tv"), tvToken: Token });
 export const HelloPlayerSchema = z.strictObject({ v: V, t: z.literal("hello"), role: z.literal("player"), resumeToken: Token.optional() });
-export const JoinSchema = z.strictObject({ v: V, t: z.literal("join"), name: z.string().min(1).max(64), color: ColorIdSchema, locale: LocaleSchema });
+export const JoinSchema = z.strictObject({ v: V, t: z.literal("join"), name: z.string().min(1).max(NAME_MAX_CODEPOINTS), color: ColorIdSchema, locale: LocaleSchema });
 export const ActionMsgSchema = z.strictObject({
-  v: V, t: z.literal("action"), id: z.string().regex(/^[A-Za-z0-9-]{1,36}$/).optional(), a: ClientIntentSchema,
+  v: V, t: z.literal("action"), id: z.string().regex(ACTION_ID_REGEX).optional(), a: ClientIntentSchema,
 });
 // zod 4.6.5 throws "Duplicate discriminator value" if HelloTv and HelloPlayer are both listed directly on "t".
 const Hello = z.discriminatedUnion("role", [HelloTvSchema, HelloPlayerSchema]);

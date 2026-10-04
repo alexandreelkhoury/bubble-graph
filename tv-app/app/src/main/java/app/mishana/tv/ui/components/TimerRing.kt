@@ -7,20 +7,21 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -38,15 +40,38 @@ import app.mishana.tv.protocol.DeadlineView
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishTheme
 
-fun urgencyColor(remainingMs: Long, calm: Color = MishColors.Text): Color = when (Countdown.urgency(remainingMs)) {
+fun urgencyColor(urgency: Countdown.Urgency, calm: Color = MishColors.Text): Color = when (urgency) {
     Countdown.Urgency.CALM -> calm
     Countdown.Urgency.WARN -> MishColors.Accent
     Countdown.Urgency.DANGER -> MishColors.Danger
 }
 
 /**
+ * Whole seconds left on [deadline], recomputed from the frame clock but only invalidating readers when the number
+ * changes (once a second), never every frame.
+ */
+@Composable
+fun rememberSecondsLeft(deadline: DeadlineView, clockOffsetMs: Long): State<Int> {
+    val clock = rememberFrameClock()
+    return remember(deadline, clockOffsetMs, clock) {
+        derivedStateOf { Countdown.remainingSeconds(deadline.at, clockOffsetMs, clock.value) }
+    }
+}
+
+/** Urgency stage from whole seconds (DESIGN TV-05): text until 10 s, accent until 5 s, then danger. */
+private fun urgencyOf(secs: Int): Countdown.Urgency = Countdown.urgency(secs * 1_000L)
+
+/** The animated timer colour for [secs] (ring, bar and digits share it, so they never disagree). */
+@Composable
+private fun timerColor(secs: Int, calm: Color): Color {
+    val color by animateColorAsState(urgencyColor(urgencyOf(secs), calm), label = "timerColor")
+    return color
+}
+
+/**
  * Depleting ring (DESIGN TV-05/TV-10, §10: always clockwise from 12 o'clock, never mirrored).
  * Colour: text → accent (≤ 10 s) → danger with a pulse (≤ 5 s; no pulse in reduced motion).
+ * The arc is drawn from the frame clock in the draw phase; [number] (a text style) adds the seconds in the centre.
  */
 @Composable
 fun TimerRing(
@@ -55,24 +80,26 @@ fun TimerRing(
     size: Dp,
     stroke: Dp,
     modifier: Modifier = Modifier,
-    showNumber: Boolean = false,
+    number: TextStyle? = null,
     calmColor: Color = MishColors.Text,
 ) {
-    val now by rememberFrameClock()
-    val remaining = Countdown.remainingMs(deadline.at, clockOffsetMs, now)
-    val fraction = Countdown.fraction(deadline, clockOffsetMs, now)
-    val color by animateColorAsState(urgencyColor(remaining, calmColor), label = "ringColor")
-    val pulse = if (Countdown.urgency(remaining) == Countdown.Urgency.DANGER && remaining > 0 && !MishTheme.reduceMotion) {
-        val t = rememberInfiniteTransition(label = "ringPulse")
-        t.animateFloat(1f, 1.04f, infiniteRepeatable(tween(500), RepeatMode.Reverse), label = "p").value
+    val clock = rememberFrameClock()
+    val secs by rememberSecondsLeft(deadline, clockOffsetMs)
+    val color = timerColor(secs, calmColor)
+    val pulse = if (urgencyOf(secs) == Countdown.Urgency.DANGER && secs > 0 && !MishTheme.reduceMotion) {
+        rememberInfiniteTransition(label = "ringPulse").animateFloat(1f, 1.04f, infiniteRepeatable(tween(500), RepeatMode.Reverse), label = "p")
     } else {
-        1f
+        null
     }
     Box(modifier.size(size), contentAlignment = Alignment.Center) {
         Canvas(
             Modifier
                 .fillMaxSize()
-                .graphicsLayer { scaleX = pulse; scaleY = pulse }
+                .graphicsLayer {
+                    val p = pulse?.value ?: 1f
+                    scaleX = p
+                    scaleY = p
+                }
                 .clearAndSetSemantics {},
         ) {
             val sw = stroke.toPx()
@@ -88,7 +115,7 @@ fun TimerRing(
                 style = Stroke(sw),
             )
             // Remaining time: clockwise from 12 o'clock; it depletes from its start (the clock metaphor).
-            val sweep = 360f * fraction
+            val sweep = 360f * Countdown.fraction(deadline, clockOffsetMs, clock.value)
             drawArc(
                 color = color,
                 startAngle = -90f + (360f - sweep),
@@ -99,42 +126,39 @@ fun TimerRing(
                 style = Stroke(sw, cap = StrokeCap.Round),
             )
         }
-        if (showNumber) {
-            TimerNumber(remaining, color)
-        }
+        if (number != null) TimerDigits(secs, color, number)
     }
 }
 
-/** Seconds only, Western digits, never `0:27` (DESIGN §3.5). */
+/** Seconds only, Western digits, never `0:27` (DESIGN §3.5); same colour as its ring. */
 @Composable
-fun TimerNumber(remainingMs: Long, color: Color, modifier: Modifier = Modifier) {
-    val secs = ((remainingMs + 999) / 1000).toInt()
+fun TimerSeconds(
+    deadline: DeadlineView,
+    clockOffsetMs: Long,
+    modifier: Modifier = Modifier,
+    style: TextStyle = MishTheme.type.timer,
+    calmColor: Color = MishColors.Text,
+) {
+    val secs by rememberSecondsLeft(deadline, clockOffsetMs)
+    TimerDigits(secs, timerColor(secs, calmColor), style, modifier)
+}
+
+@Composable
+private fun TimerDigits(secs: Int, color: Color, style: TextStyle, modifier: Modifier = Modifier) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Text(text = secs.toString(), style = MishTheme.type.timer, color = color, modifier = modifier)
+        Text(text = secs.toString(), style = style, color = color, modifier = modifier)
     }
 }
 
-/** Small timer chip: ring + number (TV-04 bottom end, TV-06). */
+/** Small timer chip: ring + number from one clock (TV-04 bottom end, TV-06, TV-09). */
 @Composable
 fun TimerChip(deadline: DeadlineView, clockOffsetMs: Long, modifier: Modifier = Modifier, size: Dp = 56.dp) {
-    val now by rememberFrameClock()
-    val remaining = Countdown.remainingMs(deadline.at, clockOffsetMs, now)
-    Box(modifier.size(size), contentAlignment = Alignment.Center) {
-        TimerRing(deadline, clockOffsetMs, size, 5.dp)
-        val secs = ((remaining + 999) / 1000).toInt()
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-            Text(
-                text = secs.toString(),
-                style = MishTheme.type.title,
-                color = urgencyColor(remaining),
-            )
-        }
-    }
+    TimerRing(deadline, clockOffsetMs, size, 5.dp, modifier, number = MishTheme.type.title)
 }
 
 /**
- * Linear timer bar (DESIGN TV-06). Mirrors in RTL: it depletes toward inline-start, which the layout direction
- * handles because the fill is aligned to the start.
+ * Linear timer bar (DESIGN TV-06). Mirrors in RTL: it depletes toward inline-start. Drawn from the frame clock in
+ * the draw phase (no per-frame re-measure).
  */
 @Composable
 fun TimerBar(
@@ -143,24 +167,23 @@ fun TimerBar(
     modifier: Modifier = Modifier,
     height: Dp = 8.dp,
 ) {
-    val now by rememberFrameClock()
-    val remaining = Countdown.remainingMs(deadline.at, clockOffsetMs, now)
-    val fraction = Countdown.fraction(deadline, clockOffsetMs, now)
-    val color by animateColorAsState(urgencyColor(remaining, MishColors.Primary), label = "barColor")
-    val shape = RoundedCornerShape(50)
+    val clock = rememberFrameClock()
+    val secs by rememberSecondsLeft(deadline, clockOffsetMs)
+    val color = timerColor(secs, MishColors.Primary)
+    val track = MishColors.Text.copy(alpha = 0.10f)
     Box(
         modifier
             .fillMaxWidth()
             .height(height)
-            .clip(shape)
-            .background(MishColors.Text.copy(alpha = 0.10f)),
-    ) {
-        Box(
-            Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(fraction)
-                .align(Alignment.CenterStart)
-                .background(color, shape),
-        )
-    }
+            .clearAndSetSemantics {}
+            .drawBehind {
+                val r = CornerRadius(size.height / 2, size.height / 2)
+                drawRoundRect(track, cornerRadius = r)
+                val w = size.width * Countdown.fraction(deadline, clockOffsetMs, clock.value)
+                if (w > 0f) {
+                    val x = if (layoutDirection == LayoutDirection.Rtl) size.width - w else 0f
+                    drawRoundRect(color, topLeft = Offset(x, 0f), size = Size(w, size.height), cornerRadius = r)
+                }
+            },
+    )
 }

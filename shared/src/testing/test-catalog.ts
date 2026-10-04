@@ -1,7 +1,6 @@
-// Deterministic catalog for engine/server tests and the fixture generator (independent of Agent D's packs).
-import { buildCatalog } from "../../src/engine/catalog";
-import type { Catalog } from "../../src/engine/catalog";
-import { WordPackSchema } from "../../src/packs/schema";
+// Deterministic catalog for engine/server tests and the fixture generator (independent of the shipped word-packs/).
+import type { Catalog } from "../engine/catalog";
+import { loadCatalog } from "../packs";
 
 type Side = { text: string; translit?: string | null; alt?: string[] };
 const pair = (id: string, civilian: Side, undercover: Side, difficulty: 1 | 2 | 3 = 1) => ({ id, civilian, undercover, difficulty, reviewedBy: [] as string[] });
@@ -50,7 +49,7 @@ export const TEST_PACKS = [
   },
 ];
 
-export const TEST_CATALOG: Catalog = buildCatalog(TEST_PACKS.map((p) => WordPackSchema.parse(p)));
+export const TEST_CATALOG: Catalog = loadCatalog(TEST_PACKS);
 
 /**
  * Synthetic catalog of unique tokens for the secret-leak checker (§14.1): every civilian, undercover,
@@ -58,8 +57,8 @@ export const TEST_CATALOG: Catalog = buildCatalog(TEST_PACKS.map((p) => WordPack
  */
 export function makeTokenCatalog(pairs = 40): Catalog {
   const n4 = (i: number): string => String(i).padStart(4, "0");
-  return buildCatalog([
-    WordPackSchema.parse({
+  return loadCatalog([
+    {
       ...base, id: "zz-tokens-01", locale: "en", script: "Latn", ageRating: "all",
       title: { en: "Tokens", fr: "Jetons", ar: "رموز" },
       pairs: Array.from({ length: pairs }, (_, i) =>
@@ -70,6 +69,6 @@ export function makeTokenCatalog(pairs = 40): Catalog {
           ((i % 3) + 1) as 1 | 2 | 3,
         ),
       ),
-    }),
+    },
   ]);
 }

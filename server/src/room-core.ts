@@ -1,12 +1,14 @@
 // Runtime-agnostic Room behaviour (§7.5). Never imports partyserver or `cloudflare:workers`:
 // `room.ts` adapts the Durable Object, tests drive this class with in-memory fakes.
 import {
+  CLOSE_CODES,
   HELLO_TIMEOUT_MS,
   MAX_CONNECTIONS_PER_ROOM,
   MAX_PENDING_CONNECTIONS,
   MSG_MAX_BYTES,
   PING_FRAME,
   PONG_FRAME,
+  PROTOCOL_VERSION,
   ROOM_EMPTY_TTL_MS,
   ROOM_IDLE_TTL_MS,
   ROOM_RESULTS_TTL_MS,
@@ -15,12 +17,18 @@ import type { Locale } from "@mishana/shared/constants";
 import { assertInvariants, createInitialState, nextWakeAt, reduce, sanitizeName } from "@mishana/shared/engine";
 import type { Action, Catalog, GameState } from "@mishana/shared/engine";
 import { projectForPlayer, projectForTv } from "@mishana/shared/projection";
-import type { ClientMessage, ErrorCode, HelloPlayerMsg, HelloTvMsg, JoinMsg, ActionMsg } from "@mishana/shared/protocol";
-import { CLOSE_CODES, ClientMessageSchema, errorMessageKey } from "@mishana/shared/protocol";
+import type { ActionMsg, ClientMessage, HelloPlayerMsg, HelloTvMsg, JoinMsg } from "@mishana/shared/protocol";
+import { ACTION_ID_REGEX, ClientMessageSchema } from "@mishana/shared/protocol";
+import { errorFrame, safeClose, safeSend, sendFatal, stateFrame, welcomeFrame } from "./frames";
+import type { FatalErrorCode } from "./frames";
 import { Mutex } from "./mutex";
-import { addStrike, fullBucket, JoinLimiter, STRIKES_TO_CLOSE, takeToken } from "./ratelimit";
+import { addStrike, fullBucket, JoinLimiter, pruneStrikes, STRIKES_TO_CLOSE, takeToken } from "./ratelimit";
 import type { Bucket } from "./ratelimit";
-import { bytesToHex, timingSafeEqualHex } from "./tokens";
+import { RoomStore } from "./room-store";
+import type { RoomMeta, RoomStorage, Sessions } from "./room-store";
+import { randomHex, timingSafeEqualHex } from "./tokens";
+
+export type { RoomMeta, RoomStorage, SessionRecord, Sessions } from "./room-store";
 
 // ------------------------------------------------------------------ types
 
@@ -37,32 +45,8 @@ export type ConnState = {
   strikes: number[];
 };
 
-export interface RoomMeta {
-  schema: 1;
-  code: string;
-  tvTokenHash: string;
-  joinUrl: string;
-  createdAt: number;
-  lastActivityAt: number;
-  resultsAt: number | null;
-}
-
-export interface SessionRecord { tokenHash: string; kicked: boolean }
-export type Sessions = Record<string, SessionRecord>;
-
 export interface InitRoomArgs { tvTokenHash: string; joinUrl: string; locale: Locale; now: number }
 export type InitRoomResult = { ok: true } | { ok: false; reason: "EXISTS" };
-
-/** The subset of `DurableObjectStorage` the room uses (KV API + alarm). */
-export interface RoomStorage {
-  get<T>(key: string): Promise<T | undefined>;
-  put<T>(key: string, value: T): Promise<void>;
-  delete(key: string): Promise<boolean>;
-  deleteAll(): Promise<void>;
-  getAlarm(): Promise<number | null>;
-  setAlarm(at: number): Promise<void>;
-  deleteAlarm(): Promise<void>;
-}
 
 /** An open WebSocket. `state` is the hibernation-safe attachment (null until `onConnect` sets it). */
 export interface ConnHandle {
@@ -107,11 +91,6 @@ export const ACTIVITY_WRITE_INTERVAL_MS = 60_000;
 /** Lower bound between alarm runs, so an alarm that finds nothing due can never spin. */
 export const MIN_ALARM_GAP_MS = 250;
 
-const STORAGE_META = "meta";
-const STORAGE_STATE = "state";
-const STORAGE_SESSIONS = "sessions";
-const ACTION_ID_REGEX = /^[A-Za-z0-9-]{1,36}$/;
-
 // ------------------------------------------------------------------ helpers
 
 export function expiresAt(meta: RoomMeta, state: GameState | null): number {
@@ -123,26 +102,6 @@ export function expiresAt(meta: RoomMeta, state: GameState | null): number {
     at = Math.min(at, meta.resultsAt + ROOM_RESULTS_TTL_MS);
   }
   return at;
-}
-
-function errorFrame(code: ErrorCode, ref: string | null = null): string {
-  return JSON.stringify({ v: 1, t: "error", code, messageKey: errorMessageKey(code), ref });
-}
-
-function safeSend(conn: ConnHandle, msg: string): void {
-  try {
-    conn.send(msg);
-  } catch {
-    // The socket is closing; the close handler deals with it.
-  }
-}
-
-function safeClose(conn: ConnHandle, code: number, reason = ""): void {
-  try {
-    conn.close(code, reason);
-  } catch {
-    // Already closed.
-  }
 }
 
 function uint32(bytes: Uint8Array): number {
@@ -157,32 +116,49 @@ function isSpectator(c: ConnHandle): boolean {
   return c.state !== null && c.state.role === "player" && c.state.playerId === null;
 }
 
+function withoutSession(sessions: Sessions, pid: string): Sessions {
+  const rest = { ...sessions };
+  delete rest[pid];
+  return rest;
+}
+
 // ------------------------------------------------------------------ RoomCore
 
 export class RoomCore {
   readonly #d: RoomCoreDeps;
+  readonly #store: RoomStore;
   readonly #mutex = new Mutex();
   readonly #joins = new JoinLimiter();
   #loaded = false;
   #meta: RoomMeta | null = null;
   #state: GameState | null = null;
   #sessions: Sessions = {};
+  /** The sessions object last read from or written to storage (a different reference = unsaved changes). */
+  #savedSessions: Sessions = {};
+  /**
+   * Open sockets, listed once per serialised entry point: listing hibernated sockets deserialises every
+   * attachment. Sockets this entry point closes are dropped from it (partyserver hands out the socket
+   * object itself as the connection, so identity is stable within a run).
+   */
+  #snapshot: ConnHandle[] | null = null;
+  readonly #closedNow = new Set<ConnHandle>();
 
   constructor(deps: RoomCoreDeps) {
     this.#d = deps;
+    this.#store = new RoomStore(deps.storage);
   }
 
   // ---------------------------------------------------------------- entry points
 
   /** Loads the cache and reconciles `connected` flags with the live sockets (§7.5 onStart). */
   start(): Promise<void> {
-    return this.#mutex.run(async () => {
+    return this.#run(async () => {
       await this.#load();
       const state = this.#state;
       const meta = this.#meta;
       if (!state || !meta) return;
       const live = new Set<string>();
-      for (const c of this.#d.connections.list()) if (c.state?.playerId) live.add(c.state.playerId);
+      for (const c of this.#conns()) if (c.state?.playerId) live.add(c.state.playerId);
       let s = state;
       for (const p of state.players) {
         if (p.connected && !live.has(p.id)) {
@@ -196,29 +172,23 @@ export class RoomCore {
   }
 
   initRoom(args: InitRoomArgs): Promise<InitRoomResult> {
-    return this.#mutex.run(async () => {
+    return this.#run(async () => {
       const seed = uint32(this.#d.crypto.randomBytes(4));
       // Native RPC bypasses partyserver's initialisation and the DO may have been evicted: never trust the cache.
-      const storage = this.#d.storage;
-      const meta = await storage.get<RoomMeta>(STORAGE_META);
-      if (meta) {
-        const state = (await storage.get<GameState>(STORAGE_STATE)) ?? null;
-        if (args.now < expiresAt(meta, state)) return { ok: false, reason: "EXISTS" };
-        this.#expireConnections();
+      const head = await this.#store.loadHead();
+      if (head.meta) {
+        if (args.now < expiresAt(head.meta, head.state)) return { ok: false, reason: "EXISTS" };
+        this.#closeWhere(() => true, "ROOM_EXPIRED");
       }
-      await storage.deleteAll();
-      const newMeta: RoomMeta = {
+      await this.#store.wipe();
+      const meta: RoomMeta = {
         schema: 1, code: this.#d.roomCode, tvTokenHash: args.tvTokenHash, joinUrl: args.joinUrl,
         createdAt: args.now, lastActivityAt: args.now, resultsAt: null,
       };
       const state = createInitialState({ roomCode: this.#d.roomCode, joinUrl: args.joinUrl, seed, wordLocale: args.locale });
-      await storage.put(STORAGE_META, newMeta);
-      await storage.put(STORAGE_STATE, state);
-      await storage.put(STORAGE_SESSIONS, {});
-      this.#meta = newMeta;
-      this.#state = state;
-      this.#sessions = {};
-      this.#loaded = true;
+      const sessions: Sessions = {};
+      await this.#store.write({ meta, state, sessions });
+      this.#setCache(meta, state, sessions);
       await this.#reschedule();
       return { ok: true };
     });
@@ -226,13 +196,12 @@ export class RoomCore {
 
   async onConnect(conn: ConnHandle, info: ConnectInfo): Promise<void> {
     const ipKey = (await this.#d.crypto.sha256hex(this.#d.roomCode + ":" + (info.ip ?? "local"))).slice(0, 16);
-    return this.#mutex.run(async () => {
+    return this.#run(async () => {
       await this.#ensureLoaded();
       const meta = this.#meta;
       if (!meta) {
-        safeSend(conn, errorFrame("ROOM_NOT_FOUND"));
-        safeClose(conn, CLOSE_CODES.ROOM_NOT_FOUND, "room not found");
-        await this.#d.storage.deleteAll();
+        this.#fatal(conn, "ROOM_NOT_FOUND");
+        await this.#store.wipe();
         this.#loaded = false;
         return;
       }
@@ -241,9 +210,9 @@ export class RoomCore {
       // Count the new socket explicitly: it is the only open socket without a state yet (entry points are
       // serialised), and the runtime may hand out distinct wrapper objects for the same socket.
       // Spectators are capped separately at hello time (MAX_SPECTATORS_PER_ROOM).
-      const others = this.#d.connections.list().filter((c) => c.state !== null && !isSpectator(c));
+      const others = this.#conns().filter((c) => c.state !== null && !isSpectator(c));
       if (others.length + 1 > MAX_CONNECTIONS_PER_ROOM) {
-        safeClose(conn, CLOSE_CODES.CAPACITY, "room full");
+        this.#close(conn, CLOSE_CODES.CAPACITY, "room full");
         return;
       }
       const pending = others.filter(isPending).sort((a, b) => (a.state?.openedAt ?? 0) - (b.state?.openedAt ?? 0));
@@ -251,7 +220,7 @@ export class RoomCore {
         // SPEC-GAP: §7.5 refuses the new socket. A real client says hello within milliseconds, so the oldest
         // pending socket is far more likely to be an idle flood than the newcomer: evict it instead.
         const oldest = pending[0];
-        if (oldest) safeClose(oldest, CLOSE_CODES.CAPACITY, "too many pending");
+        if (oldest) this.#close(oldest, CLOSE_CODES.CAPACITY, "too many pending");
       }
       let cid: string | null;
       try {
@@ -260,7 +229,7 @@ export class RoomCore {
         cid = null;
       }
       if (cid === null || !CID_REGEX.test(cid)) {
-        safeClose(conn, CLOSE_CODES.BAD_CID, "bad cid");
+        this.#close(conn, CLOSE_CODES.BAD_CID, "bad cid");
         return;
       }
       conn.setState({ role: "pending", playerId: null, cid, ipKey, epoch: meta.createdAt, openedAt: now, bucket: fullBucket(now), strikes: [] });
@@ -269,7 +238,7 @@ export class RoomCore {
   }
 
   onMessage(conn: ConnHandle, msg: string | ArrayBuffer | ArrayBufferView): Promise<void> {
-    return this.#mutex.run(async () => {
+    return this.#run(async () => {
       try {
         await this.#handleMessage(conn, msg);
       } catch (e) {
@@ -280,7 +249,7 @@ export class RoomCore {
   }
 
   onClose(conn: ConnHandle): Promise<void> {
-    return this.#mutex.run(async () => {
+    return this.#run(async () => {
       await this.#ensureLoaded();
       const st = conn.state;
       const state = this.#state;
@@ -288,7 +257,7 @@ export class RoomCore {
       const pid = st.playerId;
       if (pid !== null) {
         const session = this.#sessions[pid];
-        const others = this.#d.connections.list().filter((c) => c.state !== null && c.state.cid !== st.cid && c.state.playerId === pid);
+        const others = this.#conns().filter((c) => c.state !== null && c.state.cid !== st.cid && c.state.playerId === pid);
         if (session && !session.kicked && others.length === 0) {
           const r = reduce(state, { type: "DISCONNECT", by: { kind: "system" }, playerId: pid }, this.#ctx());
           if (r.ok && r.state !== state) {
@@ -302,23 +271,21 @@ export class RoomCore {
   }
 
   onAlarm(): Promise<void> {
-    return this.#mutex.run(async () => {
+    return this.#run(async () => {
+      this.#store.alarmFired();
       await this.#ensureLoaded();
       const meta = this.#meta;
       if (!meta) {
-        await this.#d.storage.deleteAll();
+        await this.#store.wipe();
         this.#loaded = false;
         return;
       }
       const now = this.#d.clock.now();
       if (now >= expiresAt(meta, this.#state)) {
-        this.#expireConnections();
-        await this.#d.storage.deleteAlarm();
-        await this.#d.storage.deleteAll();
-        this.#meta = null;
-        this.#state = null;
-        this.#sessions = {};
-        this.#loaded = true;
+        this.#closeWhere(() => true, "ROOM_EXPIRED");
+        await this.#store.clearAlarm();
+        await this.#store.wipe();
+        this.#setCache(null, null, {});
         return;
       }
       const state = this.#state;
@@ -341,28 +308,18 @@ export class RoomCore {
     const st0 = conn.state;
     if (!st0) return; // rejected in onConnect; nothing to do
     const now = this.#d.clock.now();
-    // SPEC-GAP: §7.5 checks binary/oversize frames (step 1) before the token bucket (step 2), which lets a
-    // flood of bad frames bypass rate limiting. Every frame takes a token first, and every bad frame is
-    // also a strike, so a binary/oversize flood is closed with 4008 either way.
-    // 2. Token bucket.
+    // SPEC-GAP: §7.5 checks binary/oversize frames before the token bucket, which lets a flood of bad frames
+    // bypass rate limiting. Here every frame takes a token first, and every bad frame is also a strike, so a
+    // binary/oversize flood is closed with 4008 either way.
+    // 1. Token bucket.
     const taken = takeToken(st0.bucket, now);
-    if (!taken.ok) {
-      const strikes = addStrike(st0.strikes, now);
-      conn.setState({ ...st0, bucket: taken.bucket, strikes });
-      safeSend(conn, errorFrame("RATE_LIMITED"));
-      if (strikes.length >= STRIKES_TO_CLOSE) safeClose(conn, CLOSE_CODES.RATE_LIMITED, "rate limited");
-      return;
-    }
-    // 1. Binary frames and oversize frames. UTF-8 length >= UTF-16 length, so `raw.length` alone proves an
+    if (!taken.ok) return this.#strike(conn, st0, taken.bucket, "RATE_LIMITED", now);
+    // 2. Binary frames and oversize frames. UTF-8 length >= UTF-16 length, so `raw.length` alone proves an
     // oversize frame without encoding it.
     if (typeof raw !== "string" || raw.length > MSG_MAX_BYTES || new TextEncoder().encode(raw).length > MSG_MAX_BYTES) {
-      const strikes = addStrike(st0.strikes, now);
-      conn.setState({ ...st0, bucket: taken.bucket, strikes });
-      safeSend(conn, errorFrame("BAD_MESSAGE"));
-      if (strikes.length >= STRIKES_TO_CLOSE) safeClose(conn, CLOSE_CODES.RATE_LIMITED, "rate limited");
-      return;
+      return this.#strike(conn, st0, taken.bucket, "BAD_MESSAGE", now);
     }
-    const st: ConnState = { ...st0, bucket: taken.bucket, strikes: st0.strikes.filter((t) => now - t < 10_000) };
+    const st: ConnState = { ...st0, bucket: taken.bucket, strikes: pruneStrikes(st0.strikes, now) };
     conn.setState(st);
     // 3. Ping.
     if (raw === PING_FRAME) {
@@ -373,8 +330,7 @@ export class RoomCore {
     const meta = this.#meta;
     // 4. Epoch (a room re-created under the same code, or deleted).
     if (!meta || st.epoch !== meta.createdAt) {
-      safeSend(conn, errorFrame("ROOM_EXPIRED"));
-      safeClose(conn, CLOSE_CODES.ROOM_EXPIRED, "room expired");
+      this.#fatal(conn, "ROOM_EXPIRED");
       return;
     }
     this.#closeStalePending(now, st.cid);
@@ -391,9 +347,8 @@ export class RoomCore {
       return;
     }
     const obj = parsed as Record<string, unknown>;
-    if (obj.v !== 1) {
-      safeSend(conn, errorFrame("UNSUPPORTED_VERSION"));
-      safeClose(conn, CLOSE_CODES.UNSUPPORTED_VERSION, "unsupported version");
+    if (obj.v !== PROTOCOL_VERSION) {
+      this.#fatal(conn, "UNSUPPORTED_VERSION");
       return;
     }
     const res = ClientMessageSchema.safeParse(parsed);
@@ -422,35 +377,31 @@ export class RoomCore {
     }
   }
 
+  /** A rate-limited or malformed frame: one strike, an error, and a 4008 close on the third strike in the window. */
+  #strike(conn: ConnHandle, st0: ConnState, bucket: Bucket, code: "RATE_LIMITED" | "BAD_MESSAGE", now: number): void {
+    const strikes = addStrike(st0.strikes, now);
+    conn.setState({ ...st0, bucket, strikes });
+    safeSend(conn, errorFrame(code));
+    if (strikes.length >= STRIKES_TO_CLOSE) this.#close(conn, CLOSE_CODES.RATE_LIMITED, "rate limited");
+  }
+
   async #helloTv(conn: ConnHandle, st: ConnState, m: HelloTvMsg): Promise<void> {
     const hash = await this.#d.crypto.sha256hex(m.tvToken);
     const meta = this.#meta;
     if (!meta || !timingSafeEqualHex(hash, meta.tvTokenHash)) {
-      safeSend(conn, errorFrame("TV_AUTH_FAILED"));
-      safeClose(conn, CLOSE_CODES.TV_AUTH_FAILED, "tv auth failed");
+      this.#fatal(conn, "TV_AUTH_FAILED");
       return;
     }
-    const next: ConnState = { ...st, role: "tv", playerId: null };
-    conn.setState(next);
+    conn.setState({ ...st, role: "tv", playerId: null });
     await this.#touchActivity(this.#d.clock.now());
-    for (const c of this.#d.connections.list()) {
-      if (c.state === null || c.state.cid === st.cid || c.state.role !== "tv") continue;
-      safeSend(c, errorFrame("REPLACED"));
-      safeClose(c, CLOSE_CODES.REPLACED, "replaced");
-    }
+    this.#closeWhere((o) => o !== null && o.cid !== st.cid && o.role === "tv", "REPLACED");
     this.#sendState(conn);
     await this.#reschedule();
   }
 
   async #helloPlayer(conn: ConnHandle, st: ConnState, m: HelloPlayerMsg): Promise<void> {
     const token = m.resumeToken;
-    if (token === undefined) {
-      if (!this.#spectatorSlot(conn, st.cid)) return;
-      conn.setState({ ...st, role: "player", playerId: null });
-      this.#sendState(conn);
-      await this.#reschedule();
-      return;
-    }
+    if (token === undefined) return this.#becomeSpectator(conn, st);
     const hash = await this.#d.crypto.sha256hex(token);
     const state = this.#state;
     if (!state) return;
@@ -463,39 +414,33 @@ export class RoomCore {
     if (matchPid === null || !session || session.kicked || !player) {
       safeSend(conn, errorFrame("RESUME_INVALID"));
       if (matchPid !== null && session && !player) {
-        const { [matchPid]: _gone, ...rest } = this.#sessions;
-        void _gone;
-        this.#sessions = rest;
-        await this.#d.storage.put(STORAGE_SESSIONS, this.#sessions);
+        this.#sessions = withoutSession(this.#sessions, matchPid);
+        await this.#saveSessions();
       }
-      if (!this.#spectatorSlot(conn, st.cid)) return;
-      conn.setState({ ...st, role: "player", playerId: null });
-      this.#sendState(conn);
-      await this.#reschedule();
-      return;
+      return this.#becomeSpectator(conn, st);
     }
     conn.setState({ ...st, role: "player", playerId: matchPid });
     await this.#touchActivity(this.#d.clock.now());
-    for (const c of this.#d.connections.list()) {
-      if (c.state === null || c.state.cid === st.cid || c.state.playerId !== matchPid) continue;
-      safeSend(c, errorFrame("REPLACED"));
-      safeClose(c, CLOSE_CODES.REPLACED, "replaced");
-    }
+    this.#closeWhere((o) => o !== null && o.cid !== st.cid && o.playerId === matchPid, "REPLACED");
     const r = reduce(state, { type: "RECONNECT", by: { kind: "system" }, playerId: matchPid }, this.#ctx());
     const changed = r.ok && r.state !== state;
     if (changed) await this.#persist(r.state);
-    safeSend(conn, JSON.stringify({ v: 1, t: "welcome", playerId: matchPid, resumeToken: token, roomCode: this.#d.roomCode }));
+    safeSend(conn, welcomeFrame(matchPid, token, this.#d.roomCode));
     if (changed) this.#broadcast();
     else this.#sendState(conn);
     await this.#reschedule();
   }
 
-  /** False (after closing `conn` with 4009) when the room already holds MAX_SPECTATORS_PER_ROOM spectators. */
-  #spectatorSlot(conn: ConnHandle, cid: string): boolean {
-    const n = this.#d.connections.list().filter((c) => isSpectator(c) && c.state?.cid !== cid).length;
-    if (n < MAX_SPECTATORS_PER_ROOM) return true;
-    safeClose(conn, CLOSE_CODES.CAPACITY, "too many spectators");
-    return false;
+  /** A player hello without a (valid) resume token: a spectator, if the room has a spectator slot left. */
+  async #becomeSpectator(conn: ConnHandle, st: ConnState): Promise<void> {
+    const n = this.#conns().filter((c) => isSpectator(c) && c.state?.cid !== st.cid).length;
+    if (n >= MAX_SPECTATORS_PER_ROOM) {
+      this.#close(conn, CLOSE_CODES.CAPACITY, "too many spectators");
+      return;
+    }
+    conn.setState({ ...st, role: "player", playerId: null });
+    this.#sendState(conn);
+    await this.#reschedule();
   }
 
   async #join(conn: ConnHandle, st: ConnState, m: JoinMsg, now: number): Promise<void> {
@@ -517,8 +462,8 @@ export class RoomCore {
       return;
     }
     // Ids, token and hash before reading state.
-    const playerId = "p_" + bytesToHex(this.#d.crypto.randomBytes(12));
-    const resumeToken = bytesToHex(this.#d.crypto.randomBytes(16));
+    const playerId = "p_" + randomHex(12, this.#d.crypto.randomBytes);
+    const resumeToken = randomHex(16, this.#d.crypto.randomBytes);
     const tokenHash = await this.#d.crypto.sha256hex(resumeToken);
     const state = this.#state;
     if (!state) return;
@@ -531,7 +476,7 @@ export class RoomCore {
     conn.setState({ ...st, playerId });
     await this.#touchActivity(now);
     await this.#persist(r.state);
-    safeSend(conn, JSON.stringify({ v: 1, t: "welcome", playerId, resumeToken, roomCode: this.#d.roomCode }));
+    safeSend(conn, welcomeFrame(playerId, resumeToken, this.#d.roomCode));
     this.#broadcast();
     await this.#reschedule();
   }
@@ -560,43 +505,36 @@ export class RoomCore {
       const s = this.#sessions[a.playerId];
       if (s) this.#sessions = { ...this.#sessions, [a.playerId]: { ...s, kicked: true } };
       await this.#persist(r.state);
-      for (const c of this.#d.connections.list()) {
-        if (c.state?.playerId !== a.playerId) continue;
-        safeSend(c, errorFrame("KICKED"));
-        safeClose(c, CLOSE_CODES.KICKED, "kicked");
-      }
-      this.#broadcast();
-      await this.#reschedule();
-      return;
-    }
-    if (a.type === "LEAVE" && by.kind === "player") {
+      this.#closeWhere((o) => o?.playerId === a.playerId, "KICKED");
+    } else if (a.type === "LEAVE" && by.kind === "player") {
       const pid = by.playerId;
-      const { [pid]: _left, ...rest } = this.#sessions;
-      void _left;
-      this.#sessions = rest;
+      this.#sessions = withoutSession(this.#sessions, pid);
       await this.#persist(r.state);
-      for (const c of this.#d.connections.list()) {
-        if (c.state?.playerId === pid) safeClose(c, 1000, "left");
-      }
-      this.#broadcast();
-      await this.#reschedule();
-      return;
+      for (const c of this.#conns()) if (c.state?.playerId === pid) this.#close(c, 1000, "left");
+    } else {
+      await this.#persist(r.state);
     }
-    await this.#commit(r.state);
+    this.#broadcast();
+    await this.#reschedule();
   }
 
-  // ---------------------------------------------------------------- persistence, broadcast, alarm
+  // ---------------------------------------------------------------- persistence
 
   #ctx(): { now: number; catalog: Catalog } {
     return { now: this.#d.clock.now(), catalog: this.#d.catalog };
   }
 
-  async #load(): Promise<void> {
-    const s = this.#d.storage;
-    this.#meta = (await s.get<RoomMeta>(STORAGE_META)) ?? null;
-    this.#state = (await s.get<GameState>(STORAGE_STATE)) ?? null;
-    this.#sessions = (await s.get<Sessions>(STORAGE_SESSIONS)) ?? {};
+  #setCache(meta: RoomMeta | null, state: GameState | null, sessions: Sessions): void {
+    this.#meta = meta;
+    this.#state = state;
+    this.#sessions = sessions;
+    this.#savedSessions = sessions;
     this.#loaded = true;
+  }
+
+  async #load(): Promise<void> {
+    const r = await this.#store.load();
+    this.#setCache(r.meta, r.state, r.sessions);
   }
 
   async #ensureLoaded(): Promise<void> {
@@ -610,7 +548,10 @@ export class RoomCore {
     await this.#reschedule();
   }
 
-  /** Invariants (debug), session pruning, `resultsAt`, then write meta/state/sessions before anything is sent. */
+  /**
+   * Invariants (debug), session pruning and `resultsAt`, then one atomic write of the state plus whichever of
+   * meta/sessions changed, before anything is sent.
+   */
   async #persist(next: GameState): Promise<void> {
     if (this.#d.debugInvariants) assertInvariants(next);
     const prev = this.#state;
@@ -620,42 +561,89 @@ export class RoomCore {
     if (Object.keys(sessions).some((pid) => !live.has(pid))) {
       sessions = Object.fromEntries(Object.entries(sessions).filter(([pid]) => live.has(pid)));
     }
-    const storage = this.#d.storage;
+    let nextMeta: RoomMeta | null = null;
     if (meta) {
       let resultsAt = meta.resultsAt;
       if (next.phase === "RESULTS" && prev?.phase !== "RESULTS") resultsAt = this.#d.clock.now();
       else if (next.phase !== "RESULTS") resultsAt = null;
-      if (resultsAt !== meta.resultsAt) {
-        this.#meta = { ...meta, resultsAt };
-        await storage.put(STORAGE_META, this.#meta);
-      }
+      if (resultsAt !== meta.resultsAt) nextMeta = { ...meta, resultsAt };
     }
-    await storage.put(STORAGE_STATE, next);
-    await storage.put(STORAGE_SESSIONS, sessions);
+    await this.#store.write({
+      state: next,
+      ...(nextMeta ? { meta: nextMeta } : {}),
+      ...(sessions !== this.#savedSessions ? { sessions } : {}),
+    });
+    if (nextMeta) this.#meta = nextMeta;
     this.#state = next;
     this.#sessions = sessions;
+    this.#savedSessions = sessions;
+  }
+
+  async #saveSessions(): Promise<void> {
+    const sessions = this.#sessions;
+    await this.#store.write({ sessions });
+    this.#savedSessions = sessions;
   }
 
   async #touchActivity(now: number): Promise<void> {
     const meta = this.#meta;
     if (!meta || now - meta.lastActivityAt <= ACTIVITY_WRITE_INTERVAL_MS) return;
     this.#meta = { ...meta, lastActivityAt: now };
-    await this.#d.storage.put(STORAGE_META, this.#meta);
+    await this.#store.write({ meta: this.#meta });
   }
 
-  #stateFrame(state: GameState, st: ConnState, now: number): string | null {
-    let view;
-    if (st.role === "tv") view = projectForTv(state, this.#d.catalog);
-    else if (st.role === "player") view = projectForPlayer(state, this.#d.catalog, st.playerId);
-    else return null;
-    return JSON.stringify({ v: 1, t: "state", seq: state.version, serverNow: now, view });
+  // ---------------------------------------------------------------- sockets, broadcast, alarm
+
+  /** Serialises an entry point; the socket snapshot lives exactly as long as one run. */
+  #run<T>(fn: () => Promise<T>): Promise<T> {
+    return this.#mutex.run(async () => {
+      try {
+        return await fn();
+      } finally {
+        this.#snapshot = null;
+        this.#closedNow.clear();
+      }
+    });
+  }
+
+  /** Open sockets, minus the ones closed during this entry point. */
+  #conns(): ConnHandle[] {
+    const all = (this.#snapshot ??= this.#d.connections.list());
+    if (this.#closedNow.size === 0) return all;
+    return all.filter((c) => !this.#closedNow.has(c));
+  }
+
+  #close(conn: ConnHandle, code: number, reason: string): void {
+    safeClose(conn, code, reason);
+    this.#forget(conn);
+  }
+
+  /** Sends a fatal error, then closes with its close code. */
+  #fatal(conn: ConnHandle, code: FatalErrorCode): void {
+    sendFatal(conn, code);
+    this.#forget(conn);
+  }
+
+  #forget(conn: ConnHandle): void {
+    this.#closedNow.add(conn);
+  }
+
+  /** Sends the fatal `code` to every open socket whose state (null before onConnect) matches, then closes it. */
+  #closeWhere(pred: (st: ConnState | null) => boolean, code: FatalErrorCode): void {
+    for (const c of this.#conns()) if (pred(c.state)) this.#fatal(c, code);
+  }
+
+  #viewFrame(state: GameState, st: ConnState, now: number): string | null {
+    if (st.role === "tv") return stateFrame(state.version, now, projectForTv(state, this.#d.catalog));
+    if (st.role === "player") return stateFrame(state.version, now, projectForPlayer(state, this.#d.catalog, st.playerId));
+    return null;
   }
 
   #sendState(conn: ConnHandle): void {
     const state = this.#state;
     const st = conn.state;
     if (!state || !st) return;
-    const frame = this.#stateFrame(state, st, this.#d.clock.now());
+    const frame = this.#viewFrame(state, st, this.#d.clock.now());
     if (frame !== null) safeSend(conn, frame);
   }
 
@@ -665,20 +653,20 @@ export class RoomCore {
     const now = this.#d.clock.now();
     let tvFrame: string | null = null;
     let spectatorFrame: string | null = null;
-    for (const c of this.#d.connections.list()) {
+    for (const c of this.#conns()) {
       const st = c.state;
       if (!st || st.role === "pending") continue;
       let frame: string | null;
-      if (st.role === "tv") frame = tvFrame ??= this.#stateFrame(state, st, now);
-      else if (st.playerId === null) frame = spectatorFrame ??= this.#stateFrame(state, st, now);
-      else frame = this.#stateFrame(state, st, now);
+      if (st.role === "tv") frame = tvFrame ??= this.#viewFrame(state, st, now);
+      else if (st.playerId === null) frame = spectatorFrame ??= this.#viewFrame(state, st, now);
+      else frame = this.#viewFrame(state, st, now);
       if (frame !== null) safeSend(c, frame);
     }
   }
 
   #pendingDeadline(): number | null {
     let min: number | null = null;
-    for (const c of this.#d.connections.list()) {
+    for (const c of this.#conns()) {
       const st = c.state;
       if (!st || st.role !== "pending") continue;
       const at = st.openedAt + HELLO_TIMEOUT_MS;
@@ -696,23 +684,14 @@ export class RoomCore {
     if (wake !== null) candidates.push(wake);
     const pending = this.#pendingDeadline();
     if (pending !== null) candidates.push(pending);
-    const at = Math.max(Math.min(...candidates), this.#d.clock.now() + MIN_ALARM_GAP_MS);
-    const current = await this.#d.storage.getAlarm();
-    if (current !== at) await this.#d.storage.setAlarm(at);
+    await this.#store.scheduleAlarm(Math.max(Math.min(...candidates), this.#d.clock.now() + MIN_ALARM_GAP_MS));
   }
 
   #closeStalePending(now: number, exceptCid?: string): void {
-    for (const c of this.#d.connections.list()) {
+    for (const c of this.#conns()) {
       const st = c.state;
       if (!st || st.role !== "pending" || st.cid === exceptCid) continue;
-      if (now >= st.openedAt + HELLO_TIMEOUT_MS) safeClose(c, CLOSE_CODES.HELLO_TIMEOUT, "hello timeout");
-    }
-  }
-
-  #expireConnections(): void {
-    for (const c of this.#d.connections.list()) {
-      safeSend(c, errorFrame("ROOM_EXPIRED"));
-      safeClose(c, CLOSE_CODES.ROOM_EXPIRED, "room expired");
+      if (now >= st.openedAt + HELLO_TIMEOUT_MS) this.#close(c, CLOSE_CODES.HELLO_TIMEOUT, "hello timeout");
     }
   }
 

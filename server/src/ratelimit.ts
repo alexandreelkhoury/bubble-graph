@@ -19,9 +19,14 @@ export function takeToken(b: Bucket, now: number): { ok: boolean; bucket: Bucket
   return { ok: true, bucket: { tokens: tokens - 1, ts: now } };
 }
 
+/** The strikes still inside the last STRIKE_WINDOW_MS. */
+export function pruneStrikes(strikes: readonly number[], now: number): number[] {
+  return strikes.filter((t) => now - t < STRIKE_WINDOW_MS);
+}
+
 /** Adds a strike at `now`, keeping only the last STRIKE_WINDOW_MS. */
 export function addStrike(strikes: readonly number[], now: number): number[] {
-  return [...strikes.filter((t) => now - t < STRIKE_WINDOW_MS), now];
+  return [...pruneStrikes(strikes, now), now];
 }
 
 /** Sliding one-minute window of join attempts per ipKey (in memory; fine to lose on hibernation). */

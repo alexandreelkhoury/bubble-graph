@@ -1,7 +1,7 @@
 // Pure projection: GameState → client views (§5). Never imports zod at runtime.
 import type { Catalog } from "../engine/catalog";
 import { candidatePairs, packAllowedByAge } from "../engine/catalog";
-import { currentSpeakerId, isInGame } from "../engine/flow";
+import { currentSpeakerId, isInGame, isSpeakingPhase } from "../engine/queries";
 import { effectiveRoleCounts } from "../engine/roles";
 import type { GameState, Player } from "../engine/types";
 import type { ErrorCode } from "../protocol/errors";
@@ -53,7 +53,7 @@ export function projectPublic(state: GameState, catalog: Catalog): PublicView {
   const s = state;
   const lobby = s.phase === "LOBBY";
   const results = s.phase === "RESULTS";
-  const speaking = s.phase === "CLUES" || s.phase === "TIE_BREAK";
+  const speaking = isSpeakingPhase(s.phase);
   const voting = s.phase === "VOTING";
   const voters = voting ? s.players.filter((p) => p.alive && p.connected) : [];
   const blocker = startBlocker(s, catalog);

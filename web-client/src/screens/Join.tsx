@@ -1,26 +1,20 @@
 // PH-02 Join (name + colour) and its locked variant (me===null, phase≠LOBBY).
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { NAME_MAX_CHARS } from "@mishana/shared/constants";
+import { MAX_PLAYERS, NAME_MAX_CHARS } from "@mishana/shared/constants";
 import type { ColorId } from "@mishana/shared/constants";
 import { sanitizeName } from "@mishana/shared/engine";
 import type { PlayerView } from "@mishana/shared/protocol";
-import { errorKeyOf, fmtNum, t } from "../i18n/t";
+import { errorKeyOf, fmtNum, isolateLtr, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { inlineError, joinPending } from "../state/store";
-import { join, PHASE_KEY } from "../state/session";
+import { join } from "../state/session";
+import { PHASE_KEY } from "../lib/keys";
 import { loadColor, loadName } from "../lib/storage";
+import { graphemeCount } from "../lib/names";
 import { ColorPicker, firstFree } from "../components/ColorPicker";
 import { Avatar } from "../components/PlayerChip";
 import { Button, Heading } from "../components/UI";
 import { Icon } from "../components/Icon";
-
-const segmenter = typeof Intl !== "undefined" && "Segmenter" in Intl ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : null;
-export function graphemeCount(s: string): number {
-  if (!segmenter) return [...s].length;
-  let n = 0;
-  for (const seg of segmenter.segment(s)) if (seg.segment) n++;
-  return n;
-}
 
 export function Join({ view }: { view: PlayerView }) {
   const locked = view.phase !== "LOBBY";
@@ -47,7 +41,7 @@ export function Join({ view }: { view: PlayerView }) {
     }
   }, [err]);
 
-  const full = view.players.length >= 12;
+  const full = view.players.length >= MAX_PLAYERS;
   const canSubmit = !locked && clean !== null && color !== null && !pending && !full;
   const submit = (): void => {
     if (!canSubmit || clean === null || color === null) return;
@@ -70,7 +64,7 @@ export function Join({ view }: { view: PlayerView }) {
             </p>
           </div>
         ) : (
-          <Heading title={<>{t("join.joiningCode", { code: "⁨" + view.roomCode + "⁩" })}</>} />
+          <Heading title={<>{t("join.joiningCode", { code: isolateLtr(view.roomCode) })}</>} />
         )}
 
         <label class="field-label" for="name">{t("join.nameLabel")}</label>
@@ -82,7 +76,8 @@ export function Join({ view }: { view: PlayerView }) {
             onInput={(e) => { setName(e.currentTarget.value); if (err === "NAME_INVALID" || err === "NAME_TAKEN") inlineError.value = null; }}
             onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
           />
-          <span class={`field__count num${count >= NAME_MAX_CHARS ? " is-max" : ""}`} aria-hidden="true">{fmtNum(count)}/{fmtNum(NAME_MAX_CHARS)}</span>
+          {/* Under the field, at the end (never inside it: a dir=auto Arabic name would run under the counter). */}
+          <p class={`field__count${count >= NAME_MAX_CHARS ? " is-max" : ""}`} aria-hidden="true"><bdi class="num">{fmtNum(count)}/{fmtNum(NAME_MAX_CHARS)}</bdi></p>
         </div>
 
         <p class="field-label" id="color-label">{t("join.colorLabel")}</p>

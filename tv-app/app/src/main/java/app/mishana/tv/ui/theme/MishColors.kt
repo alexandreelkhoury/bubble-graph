@@ -31,29 +31,23 @@ object MishColors {
     val Blank = Color(0xFFECE6F5)
 }
 
-/** DESIGN §13.2 swatch enum; identical to SPEC §3 `COLORS` (ConstantsTest compares them). */
-enum class PlayerSwatch(val id: String, val color: Color, val glyph: Color, val shape: AvatarShape) {
-    Coral("coral", Color(0xFFF0183A), MishColors.Ink, AvatarShape.Circle),
-    Azure("azure", Color(0xFF478CFF), MishColors.Ink, AvatarShape.Square),
-    Lemon("lemon", Color(0xFFFFF04D), MishColors.Ink, AvatarShape.Star),
-    Jade("jade", Color(0xFF1FA88A), MishColors.Ink, AvatarShape.Triangle),
-    Grape("grape", Color(0xFF7A43FF), MishColors.Text, AvatarShape.Diamond),
-    Tangerine("tangerine", Color(0xFFFF7A1F), MishColors.Ink, AvatarShape.Hexagon),
-    Aqua("aqua", Color(0xFF7BFFF4), MishColors.Ink, AvatarShape.Plus),
-    Rose("rose", Color(0xFFFF96C5), MishColors.Ink, AvatarShape.Drop),
-    Mint("mint", Color(0xFFBDF5C8), MishColors.Ink, AvatarShape.Crescent),
-    Plum("plum", Color(0xFFC02A8F), MishColors.Text, AvatarShape.Bolt),
-    Sand("sand", Color(0xFFE6C486), MishColors.Ink, AvatarShape.Flower),
-    Lilac("lilac", Color(0xFFC9BFFF), MishColors.Ink, AvatarShape.Arch);
+/**
+ * DESIGN §13.2 swatch enum, derived from the single colour table [Constants.COLORS] (SPEC §3): only the enum names
+ * live here; colour, shape and glyph ink come from the table, so the two can never drift.
+ */
+enum class PlayerSwatch(val id: String) {
+    Coral("coral"), Azure("azure"), Lemon("lemon"), Jade("jade"), Grape("grape"), Tangerine("tangerine"),
+    Aqua("aqua"), Rose("rose"), Mint("mint"), Plum("plum"), Sand("sand"), Lilac("lilac");
+
+    private val spec = Constants.colorById(id)
+    val color: Color = Color(spec.argb)
+    val glyph: Color = if (spec.glyphIsCream) MishColors.Text else MishColors.Ink
+    val shape: AvatarShape = spec.shape
 
     /** Plum and grape fall below 3:1 on `elevated`: tiles get a cream ring at 24 % (DESIGN §2.3). */
     val needsRingOnElevated: Boolean get() = this == Grape || this == Plum
 
     companion object {
         fun byId(id: String): PlayerSwatch = entries.firstOrNull { it.id == id } ?: Coral
-
-        /** Same table built from [Constants.COLORS], used by the swatch/constant consistency test. */
-        fun fromConstants(): List<Triple<String, Long, AvatarShape>> =
-            Constants.COLORS.map { Triple(it.id, it.argb, it.shape) }
     }
 }

@@ -5,29 +5,35 @@ import { t } from "../i18n/t";
 import { act } from "../state/session";
 import { HAPTIC, haptic } from "../lib/haptics";
 import { Avatar, avatarState, playerLabel } from "../components/PlayerChip";
-import { TimerBar, useDeadline } from "../components/Timer";
+import { TimerBar, useDeadlineSelect } from "../components/Timer";
+import { PeekButton } from "../components/HoldToReveal";
 import { Button, Heading, Slot } from "../components/UI";
 import { Icon } from "../components/Icon";
-import { byId, phaseLine } from "./Clues";
+import { byId } from "../lib/view";
+import { phaseLine } from "./Clues";
 
 export function Vote({ view, me }: { view: PlayerView; me: Me }) {
   const meP = byId(view, me.id);
   const [sel, setSel] = useState<string | null>(null);
-  const d = useDeadline(view.deadline);
+  const timeUp = useDeadlineSelect(view.deadline, (c) => c.ms <= 0, false);
   const candidates = view.players.filter((p) => p.alive && !p.left && p.id !== me.id && (!view.revote || view.tieCandidates.includes(p.id)));
   useEffect(() => { if (sel && !candidates.some((p) => p.id === sel)) setSel(null); }, [view]);
 
   if (meP && !meP.alive) {
     return (
-      <main class="screen screen--out">
-        <p class="eyebrow">{phaseLine(view)}</p>
-        <div class="outpanel">
-          <span class="outpanel__icon"><Icon name="door-out" size={56} /></span>
-          <h1 class="h1" tabIndex={-1}>{t("vote.dead")}</h1>
-          <p class="bigcount tnum">{t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</p>
-          <TimerBar deadline={view.deadline} />
-        </div>
-      </main>
+      <>
+        <main class="screen screen--out">
+          <p class="eyebrow">{phaseLine(view)}</p>
+          <div class="outpanel">
+            <span class="outpanel__icon"><Icon name="door-out" size={56} /></span>
+            <h1 class="h1" tabIndex={-1}>{t("vote.dead")}</h1>
+            <p class="bigcount tnum">{t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</p>
+            <TimerBar deadline={view.deadline} />
+          </div>
+        </main>
+        {/* Same footer as PH-10 during the clues: the controls don't change between phases. */}
+        <footer class="actionbar"><PeekButton word={me.word} isBlank={me.isBlank} wordLocale={view.settings.wordLocale} out /></footer>
+      </>
     );
   }
 
@@ -52,7 +58,6 @@ export function Vote({ view, me }: { view: PlayerView; me: Me }) {
   }
 
   const target = byId(view, sel);
-  const timeUp = d !== null && d.ms <= 0;
   return (
     <>
       <main class="screen screen--vote">
@@ -79,7 +84,8 @@ export function Vote({ view, me }: { view: PlayerView; me: Me }) {
           if (!target) return;
           if (act({ type: "CAST_VOTE", targetId: target.id })) haptic(HAPTIC.voteLocked);
         }}>
-          {target ? <Slot k="vote.confirm" slot="name"><bdi>{target.name}</bdi></Slot> : t("vote.pickSub")}
+          {/* One inline run: as separate flex items the template's space and the button gap would double up. */}
+          {target ? <span><Slot k="vote.confirm" slot="name"><bdi>{target.name}</bdi></Slot></span> : t("vote.pickSub")}
         </Button>
       </footer>
     </>

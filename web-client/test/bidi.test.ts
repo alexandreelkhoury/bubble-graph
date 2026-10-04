@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { translate } from "../src/i18n/t";
+import { loadCatalog, translate } from "../src/i18n/t";
 
 function files(dir: string): string[] {
   return readdirSync(dir).flatMap((f) => {
@@ -22,7 +22,19 @@ describe("bidi", () => {
     expect(bad).toEqual([]);
   });
 
-  it("AR vote progress reads cast-of-expected in logical (RTL) order", () => {
+  // Bidi isolates go through isolate()/isolateLtr() (i18n/t.ts), never inline: an inline one is easy to forget.
+  it("never inlines a raw U+2068 / U+2066 isolate in a component", () => {
+    const bad: string[] = [];
+    for (const f of files(join(__dirname, "../src"))) {
+      readFileSync(f, "utf8").split("\n").forEach((line, i) => {
+        if (/[\u2066\u2068]|\\u206[68]/.test(line)) bad.push(`${f}:${i + 1}`);
+      });
+    }
+    expect(bad).toEqual([]);
+  });
+
+  it("AR vote progress reads cast-of-expected in logical (RTL) order", async () => {
+    await loadCatalog("ar");
     const s = translate("ar", "vote.progress", { cast: 1, expected: 4 });
     expect(s.indexOf("1")).toBeLessThan(s.indexOf("4"));
     expect(s.indexOf("1")).toBeLessThan(s.indexOf("من"));

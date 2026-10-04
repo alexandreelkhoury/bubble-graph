@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -34,6 +33,7 @@ import app.mishana.tv.ui.components.ButtonKind
 import app.mishana.tv.ui.components.InitialFocus
 import app.mishana.tv.ui.components.MishButton
 import app.mishana.tv.ui.components.OverlayCard
+import app.mishana.tv.ui.theme.MishShapes
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishTheme
 
@@ -64,8 +64,8 @@ fun DebugSettingsScreen(prefs: DebugPrefs, onClose: () -> Unit, onSaved: () -> U
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(field)
-                .background(MishColors.Overlay, RoundedCornerShape(14.dp))
-                .border(BorderStroke(if (focused) 3.dp else 2.dp, if (focused) MishColors.Focus else MishColors.OutlineStrong), RoundedCornerShape(14.dp))
+                .background(MishColors.Overlay, MishShapes.row)
+                .border(BorderStroke(if (focused) 3.dp else 2.dp, if (focused) MishColors.Focus else MishColors.OutlineStrong), MishShapes.row)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
         )
         Spacer(Modifier.height(8.dp))

@@ -1,4 +1,5 @@
 // Zod-free: the web client and i18n helpers may import this at runtime.
+import { CLOSE_CODES as C } from "../constants";
 import type { EngineError } from "../engine/types";
 
 export const ERROR_CODES = [
@@ -13,11 +14,11 @@ export type ErrorCode = (typeof ERROR_CODES)[number];
 /** §6.4: fatal errors are followed by a close with `closeCode`. RATE_LIMITED closes 4008 only after 3 strikes. */
 export const ERROR_INFO: Record<ErrorCode, { fatal: boolean; closeCode: number | null }> = {
   BAD_MESSAGE: { fatal: false, closeCode: null },
-  UNSUPPORTED_VERSION: { fatal: true, closeCode: 4002 },
+  UNSUPPORTED_VERSION: { fatal: true, closeCode: C.UNSUPPORTED_VERSION },
   NOT_AUTHENTICATED: { fatal: false, closeCode: null },
-  TV_AUTH_FAILED: { fatal: true, closeCode: 4003 },
-  ROOM_NOT_FOUND: { fatal: true, closeCode: 4004 },
-  ROOM_EXPIRED: { fatal: true, closeCode: 4010 },
+  TV_AUTH_FAILED: { fatal: true, closeCode: C.TV_AUTH_FAILED },
+  ROOM_NOT_FOUND: { fatal: true, closeCode: C.ROOM_NOT_FOUND },
+  ROOM_EXPIRED: { fatal: true, closeCode: C.ROOM_EXPIRED },
   ROOM_FULL: { fatal: false, closeCode: null },
   ROOM_LOCKED: { fatal: false, closeCode: null },
   ALREADY_JOINED: { fatal: false, closeCode: null },
@@ -25,8 +26,8 @@ export const ERROR_INFO: Record<ErrorCode, { fatal: boolean; closeCode: number |
   NAME_TAKEN: { fatal: false, closeCode: null },
   COLOR_TAKEN: { fatal: false, closeCode: null },
   RESUME_INVALID: { fatal: false, closeCode: null },
-  KICKED: { fatal: true, closeCode: 4006 },
-  REPLACED: { fatal: true, closeCode: 4005 },
+  KICKED: { fatal: true, closeCode: C.KICKED },
+  REPLACED: { fatal: true, closeCode: C.REPLACED },
   NOT_HOST: { fatal: false, closeCode: null },
   WRONG_PHASE: { fatal: false, closeCode: null },
   NOT_YOUR_TURN: { fatal: false, closeCode: null },
@@ -37,23 +38,11 @@ export const ERROR_INFO: Record<ErrorCode, { fatal: boolean; closeCode: number |
   INVALID_ROLE_CONFIG: { fatal: false, closeCode: null },
   NO_WORDS_AVAILABLE: { fatal: false, closeCode: null },
   GUESS_INVALID: { fatal: false, closeCode: null },
-  RATE_LIMITED: { fatal: false, closeCode: 4008 },
+  RATE_LIMITED: { fatal: false, closeCode: C.RATE_LIMITED },
   INTERNAL: { fatal: false, closeCode: null },
 };
 
-/** Other close codes (§6.4). */
-export const CLOSE_CODES = {
-  BAD_CID: 4000,
-  HELLO_TIMEOUT: 4001,
-  UNSUPPORTED_VERSION: 4002,
-  TV_AUTH_FAILED: 4003,
-  ROOM_NOT_FOUND: 4004,
-  REPLACED: 4005,
-  KICKED: 4006,
-  RATE_LIMITED: 4008,
-  CAPACITY: 4009,
-  ROOM_EXPIRED: 4010,
-} as const;
+export { CLOSE_CODES } from "../constants";
 
 /** "NOT_YOUR_TURN" → "notYourTurn". */
 export function lowerCamel(code: string): string {

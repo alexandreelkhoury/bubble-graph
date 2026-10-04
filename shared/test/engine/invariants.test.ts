@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { assertInvariants, InvariantError } from "../../src/engine/invariants";
 import type { GameState } from "../../src/engine/types";
-import { inClues, lobby, pid } from "../support/helpers";
+import { inClues, lobby, pid } from "../../src/testing";
 
 function expectBroken(s: GameState, n: number): void {
   try {

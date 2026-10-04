@@ -24,4 +24,16 @@ class ArmedActionTest {
         assertEquals(ArmedAction.Result.ARMED, a.press(3_000))
         assertEquals(ArmedAction.Result.FIRED, a.press(3_500))
     }
+
+    @Test
+    fun resetDisarmsAndIgnoresCarriedOverPresses() {
+        val a = ArmedAction()
+        a.press(0)
+        a.reset(100) // the phase changed under a mashed OK
+        assertFalse(a.isArmed(150))
+        assertEquals(ArmedAction.Result.IGNORED, a.press(400))
+        assertEquals(ArmedAction.Result.IGNORED, a.press(899))
+        assertEquals(ArmedAction.Result.ARMED, a.press(900))
+        assertEquals(ArmedAction.Result.FIRED, a.press(1_200))
+    }
 }

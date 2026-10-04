@@ -1,10 +1,10 @@
 // Routes (§8.3) and the phone screen-by-phase switch (§8.5).
 import { useEffect, useState } from "preact/hooks";
 import type { ComponentType } from "preact";
-import { route } from "./router";
+import { goHome, route } from "./router";
 import { conn, fatalCode, me, menuOpen, resuming, view } from "./state/store";
 import { leave, startSession, stopSession } from "./state/session";
-import { goHome } from "./router";
+import { CLOSE } from "./net/connection";
 import { t } from "./i18n/t";
 import { ConnBanner } from "./components/ConnBanner";
 import { MenuSheet } from "./components/LangSwitch";
@@ -45,7 +45,7 @@ function Room({ code }: { code: string }) {
   let content;
   if (fc !== null) {
     key = `fatal:${fc}`;
-    content = fc === 4006 ? <Kicked /> : fc === 4005 ? <Replaced /> : <RoomGone closeCode={fc} code={code} />;
+    content = fc === CLOSE.KICKED ? <Kicked code={code} /> : fc === CLOSE.REPLACED ? <Replaced /> : <RoomGone closeCode={fc} code={code} />;
   } else if (!v) {
     key = "loading";
     content = <Loading />;

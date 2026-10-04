@@ -1,31 +1,10 @@
-/* TV mock: DESIGN §3.2 TV type scale and §4.2 layout on a 960 × 540 canvas (1 px = 1 dp), scaled to fit. */
+/* TV mock: DESIGN §4.2 layout on a 960 × 540 canvas (1 px = 1 dp), scaled to fit; the --tv-* type scale and the
+   focus ring live in styles/tokens.css. Every class here is a TV class (prefixed tv, or scoped under .tv). */
 .tv {
-  --tv-code: 900 88px/96px var(--font-sans);
-  --tv-displayL: 900 72px/80px var(--font-sans);
-  --tv-displayM: 900 56px/64px var(--font-sans);
-  --tv-displayS: 700 44px/52px var(--font-sans);
-  --tv-headline: 700 34px/42px var(--font-sans);
-  --tv-title: 700 26px/32px var(--font-sans);
-  --tv-titleS: 600 22px/28px var(--font-sans);
-  --tv-body: 600 20px/28px var(--font-sans);
-  --tv-label: 700 20px/24px var(--font-sans);
-  --tv-caption: 600 16px/22px var(--font-sans);
-  --tv-timer: 900 40px/44px var(--font-sans);
-  position: fixed; inset: 0; overflow: hidden; background: #07040D; color: var(--color-text);
+  position: fixed; inset: 0; overflow: hidden; background: var(--color-bg-deep); color: var(--color-text);
   font: var(--tv-body); user-select: none; -webkit-user-select: none;
 }
-.tv:lang(ar) {
-  --tv-displayL: 900 77.76px/96px var(--font-sans);
-  --tv-displayM: 900 60.48px/80px var(--font-sans);
-  --tv-displayS: 700 44px/64px var(--font-sans);
-  --tv-headline: 700 34px/52px var(--font-sans);
-  --tv-title: 700 26px/40px var(--font-sans);
-  --tv-titleS: 600 22px/34px var(--font-sans);
-  --tv-body: 600 20px/34px var(--font-sans);
-  --tv-label: 700 20px/30px var(--font-sans);
-  --tv-caption: 600 16px/26px var(--font-sans);
-}
-.tv__canvas { position: absolute; left: 50%; top: 50%; width: 960px; height: 540px; overflow: hidden; transform-origin: center; background: var(--color-bg); }
+.tv__canvas { position: absolute; left: 0; top: 0; width: 960px; height: 540px; overflow: hidden; transform-origin: 0 0; background: var(--color-bg); }
 .tv__bg { position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 0%, var(--color-bg-glow), transparent 70%), var(--color-bg); }
 .tv__stage { position: absolute; inset: 0; animation: tv-phase-in var(--motion-slow) var(--ease-decel) both; }
 @keyframes tv-phase-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
@@ -45,6 +24,7 @@
 .tv-accent { color: var(--color-accent); }
 .tv-success { color: var(--color-success); }
 .tv-danger { color: var(--color-danger); }
+.tv-blank { color: var(--color-blank); }
 
 /* top bar y 27–75, stage y 87–447, bottom bar y 459–513 */
 .tvtop { position: absolute; top: 27px; inset-inline: 48px; height: 48px; display: flex; align-items: center; justify-content: space-between; }
@@ -61,65 +41,72 @@
 /* room code */
 .tvcode { display: inline-flex; direction: ltr; unicode-bidi: isolate; color: var(--color-accent); font-variant-numeric: tabular-nums; }
 .tvcode--mini { font: 900 18px/1 var(--font-sans); gap: 2px; letter-spacing: 0.08em; }
-.tvcode--big { font: var(--tv-code); font-size: 72px; line-height: 72px; gap: 0.08em; letter-spacing: 0.08em; text-shadow: 0 0 32px rgb(255 194 61 / 0.35); }
+.tvcode--big { font: var(--tv-code); font-size: 72px; line-height: 72px; gap: 0.08em; letter-spacing: 0.08em; text-shadow: 0 0 32px rgb(var(--rgb-accent) / 0.35); }
 
 /* focus (DESIGN §4.6: the one focus style) */
 .tv button { outline: none; }
-.tvbtn, .tvpill, .tile--btn, .setrowtv, .tvcat, .tvmenu__item, .tvtoggle, .tvlang__opt, .tvsb__body {
+.tv :is(.tvbtn, .tvpill, .tile--btn, .setrowtv, .tvcat, .tvmenu__item, .tvtoggle, .tvmenu-btn, .tvsb__row) {
   transition: transform var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), background var(--motion-fast), opacity var(--motion-fast);
 }
-.tvbtn:focus, .tvpill:focus, .setrowtv:focus, .tvcat:focus, .tvmenu__item:focus, .tvtoggle:focus, .tvlang__opt:focus {
-  transform: scale(1.04); background-color: var(--color-elevated);
-  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 5px var(--color-focus), 0 0 18px 4px rgb(255 61 139 / 0.45);
+.tv :is(.tvbtn, .tvpill, .setrowtv, .tvcat, .tvmenu__item, .tvtoggle, .tvmenu-btn):focus {
+  transform: scale(1.04); background-color: var(--color-elevated); box-shadow: var(--tv-focus-ring);
 }
-.tile--btn:focus { transform: scale(1.06); background: var(--color-elevated); box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 5px var(--color-focus), 0 0 18px 4px rgb(255 61 139 / 0.45); }
-.tvsb__body:focus { box-shadow: 0 0 0 3px var(--color-focus); }
+.tile--btn:focus { transform: scale(1.06); background: var(--color-elevated); box-shadow: var(--tv-focus-ring); }
+/* Scoreboard rows sit in a clipping scroll box: an inset ring (same focus colour) that the box cannot cut. */
+.tv .tvsb__row:focus { outline: none; background: var(--color-elevated); box-shadow: inset 0 0 0 3px var(--color-focus); }
 
 /* buttons */
 .tvbtn {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 48px; min-width: 140px; padding-inline: 24px;
   border: 0; border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font: var(--tv-label); letter-spacing: 0.02em;
-  box-shadow: inset 0 1px 0 rgb(255 247 236 / 0.06);
+  box-shadow: inset 0 1px 0 rgb(var(--rgb-text) / 0.06);
 }
 .tv:lang(ar) .tvbtn { letter-spacing: 0; }
 .tvbtn--primary { background: var(--color-primary); color: var(--color-on-primary); }
-.tvbtn--primary:focus { background: var(--color-primary); }
+.tv .tvbtn--primary:focus { background: var(--color-primary); }
 .tvbtn--danger { background: transparent; color: var(--color-danger); box-shadow: inset 0 0 0 2px var(--color-danger); }
-.tvbtn--danger:focus { background: var(--color-danger); color: var(--color-ink); }
+.tv .tvbtn--danger:focus { background: var(--color-danger); color: var(--color-ink); }
 .tvbtn.is-disabled { opacity: 0.4; }
 .tvbtn.is-disabled:focus { opacity: 0.7; }
 .tvpill {
-  height: 48px; min-width: 160px; padding-inline: 28px; border: 2px solid rgb(255 247 236 / 0.5); border-radius: var(--radius-pill);
-  background: transparent; color: var(--color-text); font: var(--tv-label); opacity: 0.6;
+  display: inline-grid; place-items: center; height: 48px; min-width: 160px; padding-inline: 28px; border: 2px solid rgb(var(--rgb-text) / 0.5); border-radius: var(--radius-pill);
+  background: transparent; color: var(--color-text); font: var(--tv-label); white-space: nowrap; opacity: 0.6;
 }
+/* Both labels stack in one cell: the pill is always as wide as the longer one, so arming never moves the bar. */
+.tvpill__label { grid-area: 1 / 1; }
+.tvpill__label--armed, .tvpill.is-armed .tvpill__label:not(.tvpill__label--armed) { visibility: hidden; }
+.tvpill.is-armed .tvpill__label--armed { visibility: visible; }
 .tvpill:focus { opacity: 1; border-color: transparent; }
-.tvpill.is-armed { opacity: 1; background: var(--color-accent); color: var(--color-ink); border-color: transparent; }
-.tvmenu-btn { position: absolute; top: 33px; inset-inline-end: 12px; display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: var(--color-text-muted); opacity: 0.5; }
+/* Beats the generic focus fill (0,3,0): the armed pill is always accent with ink text, focused or not. */
+.tv .tvpill.is-armed, .tv .tvpill.is-armed:focus { opacity: 1; background: var(--color-accent); color: var(--color-ink); border-color: transparent; }
+/* Pointer remotes only (tabIndex -1): sits at the end of the top bar, inside the safe area. */
+.tvmenu-btn { display: grid; place-items: center; width: 32px; height: 32px; margin-inline-start: 4px; border: 0; border-radius: 50%; background: transparent; color: var(--color-text-muted); opacity: 0.5; }
 .tvmenu-btn:hover { opacity: 1; background: var(--color-surface); }
-.tvbadge { display: inline-flex; align-items: center; height: 32px; padding-inline: 14px; border-radius: var(--radius-pill); font: var(--tv-caption); font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
+.tvbadge { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding-inline: 16px; border-radius: var(--radius-pill); font: var(--tv-label); font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
 .tv:lang(ar) .tvbadge { text-transform: none; letter-spacing: 0; }
 .tvbadge--accent { background: var(--color-accent); color: var(--color-ink); }
 .tvtag { padding: 2px 8px; border-radius: var(--radius-pill); background: var(--tint-accent); color: var(--color-accent); font: var(--tv-caption); }
 
 /* tiles */
-.tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: inset 0 1px 0 rgb(255 247 236 / 0.06); color: var(--color-text); padding: 8px; }
+.tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: inset 0 1px 0 rgb(var(--rgb-text) / 0.06); color: var(--color-text); padding: 8px; }
 .tile__name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-title); font-size: 22px; }
 .tile--empty { border: 2px dashed var(--color-outline); background: transparent; color: var(--color-outline); box-shadow: none; }
 .tile--empty.is-next { animation: slot-pulse 2.4s ease-in-out infinite; color: var(--color-outline-strong); }
-@keyframes slot-pulse { 50% { border-color: var(--color-outline-strong); background: rgb(255 247 236 / 0.03); } }
+@keyframes slot-pulse { 50% { border-color: var(--color-outline-strong); background: rgb(var(--rgb-text) / 0.03); } }
 .tile--drop { animation: tile-drop 620ms var(--ease-overshoot) both; }
-.tile--drop::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 var(--avatar-color, var(--color-primary)); animation: ring-burst 600ms 200ms var(--ease-decel) both; pointer-events: none; }
+/* The burst is the player's own colour and gone within ~600 ms, so it never reads as a second focus ring. */
+.tile--drop::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 transparent; animation: ring-burst 480ms 120ms var(--ease-decel) both; pointer-events: none; }
 @keyframes tile-drop { from { opacity: 0; transform: translateY(-60px); } to { opacity: 1; transform: none; } }
-@keyframes ring-burst { from { box-shadow: 0 0 0 0 rgb(255 61 139 / 0.7); } to { box-shadow: 0 0 0 18px rgb(255 61 139 / 0); } }
-.tile--mini { background: transparent; box-shadow: none; padding: 0; gap: 6px; }
-.tile--mini .tile__name { font: var(--tv-caption); font-weight: 700; max-width: 80px; }
+@keyframes ring-burst { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--avatar-color, var(--color-primary)) 70%, transparent); } to { box-shadow: 0 0 0 16px transparent; } }
+.tile--mini { width: 104px; background: transparent; box-shadow: none; padding: 0; gap: 6px; }
+.tile--mini .tile__name { font: var(--tv-titleS); max-width: 104px; }
 
 /* home */
 .tvhome { display: flex; flex-direction: column; align-items: center; }
 .tvhome__pattern { position: absolute; inset: 0; background: var(--bang-pattern); background-size: 64px; opacity: 0.04; animation: drift 30s linear infinite; }
 @keyframes drift { to { background-position: 640px 320px; } }
 .tvhome__mark { position: absolute; top: 27px; inset-inline-start: 48px; border-radius: 12px; }
-.tvhome__wordmark { margin-top: 128px; width: 560px; height: auto; filter: drop-shadow(0 0 24px rgb(255 61 139 / 0.25)); animation: bang-in 800ms var(--ease-overshoot) both; }
+.tvhome__wordmark { margin-top: 128px; width: 560px; height: auto; filter: drop-shadow(0 0 24px rgb(var(--rgb-primary) / 0.25)); animation: bang-in 800ms var(--ease-overshoot) both; }
 @keyframes bang-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
 .tvhome__slogan { margin-top: 20px; }
 .tvhome__status { margin-top: 48px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
@@ -131,80 +118,88 @@
 .tvlobby__scan { position: absolute; top: 87px; inset-inline-start: 58px; width: 240px; text-align: center; font: var(--tv-caption); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); }
 .tv:lang(ar) .tvlobby__scan { letter-spacing: 0; text-transform: none; }
 .tvlobby__qr { position: absolute; top: 111px; inset-inline-start: 58px; width: 240px; height: 240px; }
-.qr { background: var(--color-text); border-radius: var(--radius-lg); box-shadow: 0 0 0 6px rgb(255 247 236 / 0.06), 0 20px 48px -12px rgb(0 0 0 / 0.6); overflow: hidden; }
+.qr { background: var(--color-text); border-radius: var(--radius-lg); box-shadow: 0 0 0 6px rgb(var(--rgb-text) / 0.06), 0 20px 48px -12px rgb(0 0 0 / 0.6); overflow: hidden; }
 .qr svg { border-radius: var(--radius-sm); display: block; }
 .qr--full { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; width: 240px; height: 240px; background: var(--color-surface); color: var(--color-text-secondary); font: var(--tv-title); animation: fade-in var(--motion-slow) both; }
 .tvlobby__code { position: absolute; top: 363px; inset-inline-start: 58px; width: 240px; height: 72px; display: flex; justify-content: center; }
 .tvlobby__code.is-dim .tvcode { color: var(--color-text-muted); text-shadow: none; }
-.tvlobby__host { position: absolute; top: 447px; inset-inline-start: 40px; width: 276px; text-align: center; font: var(--tv-body); color: var(--color-text-secondary); }
-.tvlobby__summary { position: absolute; top: 27px; inset-inline-end: 58px; max-width: 520px; display: flex; flex-direction: column; align-items: flex-end; text-align: end; font: var(--tv-caption); color: var(--color-text-secondary); }
+/* Ends above the 513 dp safe line in every locale (2 lines × 28, Arabic 2 × 30). */
+.tvlobby__host { position: absolute; top: 445px; inset-inline-start: 40px; width: 276px; text-align: center; font: var(--tv-body); color: var(--color-text-secondary); }
+.tv:lang(ar) .tvlobby__host { line-height: 30px; top: 443px; }
+.tvlobby__summary { position: absolute; top: 31px; inset-inline-end: 58px; max-width: 520px; display: flex; flex-direction: column; align-items: flex-end; text-align: end; font: var(--tv-caption); color: var(--color-text-secondary); }
 .tvlobby__summary[data-flash] { animation: sweep 600ms var(--ease-standard); }
 @keyframes sweep { 0% { color: var(--color-accent); } 100% { color: var(--color-text-secondary); } }
-.tvlobby__players { position: absolute; top: 75px; inset-inline-start: 370px; inset-inline-end: 62px; height: 28px; display: flex; align-items: center; justify-content: space-between; }
-.tvlobby__count { font: var(--tv-caption); font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text); }
+.tvlobby__players { position: absolute; top: 75px; inset-inline-start: 370px; inset-inline-end: 62px; height: 30px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.tvlobby__count { flex: none; font: var(--tv-label); font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text); }
 .tv:lang(ar) .tvlobby__count { letter-spacing: 0; }
-.tvlobby__blocker { font: var(--tv-caption); color: var(--color-accent); font-weight: 700; }
+.tvlobby__status { min-width: 0; display: flex; justify-content: flex-end; }
+.tvlobby__blocker { font: var(--tv-label); color: var(--color-accent); }
 .tvgrid { position: absolute; top: 111px; inset-inline-start: 370px; display: grid; grid-template-columns: repeat(4, 120px); grid-auto-rows: 96px; gap: 16px; }
-.tvgrid .tile { width: 120px; height: 96px; gap: 6px; padding: 6px; border-radius: var(--radius-md); }
-.tvgrid .tile__name { font: var(--tv-title); font-size: 18px; line-height: 22px; max-width: 108px; }
+.tvgrid .tile { width: 120px; height: 96px; gap: 2px; padding: 4px; border-radius: var(--radius-md); }
+.tvgrid .tile__name { font: var(--tv-titleS); font-weight: 700; max-width: 110px; }
+.tv:lang(ar) .tvgrid .avatar { --avatar-size: 50px !important; }
 .tvbottom--lobby { inset-inline-start: 370px; justify-content: flex-start; gap: 16px; }
 .tvbtn--start { width: 200px; margin-inline-start: auto; }
-.tvlang { position: relative; }
-.tvlang__menu { position: absolute; bottom: 60px; inset-inline-start: 0; display: flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: var(--radius-md); background: var(--color-overlay); box-shadow: var(--elev-3-shadow); z-index: 5; animation: fade-in var(--motion-base) both; }
-.tvlang__opt { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 200px; height: 44px; padding-inline: 16px; border: 0; border-radius: var(--radius-pill); background: transparent; font: var(--tv-label); }
-.tvlang__opt.is-on { color: var(--color-primary); }
 
 /* settings (TV-03) */
-.tvsettings__head { position: absolute; top: 27px; inset-inline: 58px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
-.tvsettings__title { font: var(--tv-headline); text-transform: uppercase; letter-spacing: 0.04em; }
+.tvsettings__head { position: absolute; top: 31px; inset-inline: 58px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+.tvsettings__title { margin: 0; font: var(--tv-headline); text-transform: uppercase; letter-spacing: 0.04em; }
 .tv:lang(ar) .tvsettings__title { text-transform: none; letter-spacing: 0; }
 .tvsettings__cats { position: absolute; top: 103px; inset-inline-start: 58px; width: 200px; display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: var(--radius-lg); background: var(--color-surface); }
 .tvcat { height: 52px; padding-inline: 16px; border: 0; border-radius: var(--radius-md); background: transparent; color: var(--color-text-secondary); font: var(--tv-titleS); text-align: start; }
 .tvcat.is-on { color: var(--color-text); background: var(--color-elevated); box-shadow: inset 4px 0 0 var(--color-primary); }
 [dir="rtl"] .tvcat.is-on { box-shadow: inset -4px 0 0 var(--color-primary); }
-.tvsettings__rows { position: absolute; top: 103px; inset-inline-start: 282px; inset-inline-end: 58px; bottom: 80px; display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: var(--radius-lg); background: var(--color-surface); overflow-y: auto; scrollbar-width: none; }
+/* The rows scroll; the explanation stays put under them (never inside the scroll box). */
+.tvsettings__panel { position: absolute; top: 103px; inset-inline-start: 282px; inset-inline-end: 58px; bottom: 80px; display: flex; flex-direction: column; border-radius: var(--radius-lg); background: var(--color-surface); }
+.tvsettings__rows { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; overflow-y: auto; scrollbar-width: none; }
 .setrowtv { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 44px; flex: none; padding-inline: 16px; border: 0; border-radius: var(--radius-md); background: transparent; color: var(--color-text); font: var(--tv-titleS); text-align: start; }
 .setrowtv__value { display: inline-flex; align-items: center; gap: 6px; color: var(--color-accent); font: var(--tv-label); white-space: nowrap; }
 .setrowtv__chev { display: inline-grid; place-items: center; color: var(--color-text-muted); }
 .setrowtv:focus .setrowtv__chev { color: var(--color-text); }
-.tvsettings__help { margin-top: auto; padding: 12px 16px 4px; border-top: 1px solid var(--color-outline); font: var(--tv-body); color: var(--color-text-secondary); }
+.tvsettings__help { flex: none; margin: 0 12px; padding: 10px 16px 12px; border-top: 1px solid var(--color-outline); font: var(--tv-body); color: var(--color-text-secondary); }
 .tvsettings__help.is-danger { color: var(--color-danger); }
 .tvsettings__foot { position: absolute; bottom: 36px; inset-inline: 0; text-align: center; font: var(--tv-caption); color: var(--color-text-muted); }
-.tvsub { display: flex; flex-wrap: wrap; gap: 10px; }
+.tvsub { display: flex; flex-wrap: wrap; gap: 12px; padding: 6px; }
 .tvtoggle { display: inline-flex; align-items: center; gap: 8px; height: 48px; padding-inline: 18px; border: 0; border-radius: var(--radius-pill); background: var(--color-elevated); box-shadow: inset 0 0 0 2px var(--color-outline); font: var(--tv-label); }
-.tvtoggle.is-on { box-shadow: inset 0 0 0 2px var(--color-primary); background: rgb(255 61 139 / 0.14); }
+.tvtoggle.is-on { box-shadow: inset 0 0 0 2px var(--color-primary); background: var(--tint-primary); }
 
 /* role reveal (TV-04) */
 .tvreveal__phone { display: grid; place-items: center; color: var(--color-accent); animation: tv-wobble 1.8s ease-in-out infinite; }
 @keyframes tv-wobble { 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
-.tvreveal__title { text-transform: uppercase; text-shadow: 0 0 40px rgb(255 61 139 / 0.4); }
+.tvreveal__title { text-transform: uppercase; text-shadow: 0 0 40px rgb(var(--rgb-primary) / 0.4); }
 .tv:lang(ar) .tvreveal__title { text-transform: none; }
-.tvrow { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px 24px; margin-top: 12px; max-width: 760px; }
-.tvrow--two { gap: 10px 18px; }
+.tvrow { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 24px; max-width: 760px; }
 
 /* clues (TV-05) */
-.tvspot { position: absolute; top: 0; left: 50%; width: 520px; height: 460px; transform: translateX(-50%); background: radial-gradient(50% 100% at 50% 0%, rgb(255 61 139 / 0.12), transparent 80%); clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%); pointer-events: none; }
+.tvspot { position: absolute; top: 0; left: 50%; width: 520px; height: 460px; transform: translateX(-50%); background: radial-gradient(50% 100% at 50% 0%, rgb(var(--rgb-primary) / 0.12), transparent 80%); clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%); pointer-events: none; }
 .tvclues__rule { position: absolute; top: 72px; inset-inline: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; }
 .tvclues__rule .tvbadge { position: absolute; inset-inline-start: 0; top: 4px; }
-.tvclues__stage { bottom: 112px; top: 150px; justify-content: flex-start; }
+.tvclues__stage { top: 150px; justify-content: flex-start; }
 .tvclues__hero { display: flex; flex-direction: column; align-items: center; gap: 4px; animation: hero-in var(--motion-slow) var(--ease-decel) both; }
 @keyframes hero-in { from { opacity: 0; transform: translateY(16px) scale(0.96); } to { opacity: 1; transform: none; } }
 .tvclues__name { max-width: 820px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
 .tv:lang(ar) .tvclues__name { line-height: 72px; }
 .tv:lang(ar) .tvclues__stage { top: 132px; }
-.tvbottom--strip { height: 76px; justify-content: space-between; border-top: 1px solid var(--color-outline); padding-top: 8px; }
-.tvorder { display: flex; align-items: center; gap: 6px; overflow: visible; }
-.tvorder__item { display: flex; align-items: center; gap: 6px; }
-.tvorder__chev { color: var(--color-outline-strong); }
-.tvorder__who { display: flex; flex-direction: column; align-items: center; gap: 2px; padding-bottom: 4px; border-bottom: 4px solid transparent; transition: transform var(--motion-base) var(--ease-standard); }
-.tvorder__name { max-width: 9ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-caption); font-weight: 700; }
+.tvclues__stage { bottom: 115px; }
+/* TV-05 strip (Kotlin OrderStrip): fixed 84 dp items; the window logic (orderWindow) keeps it inside the bar. */
+.tvbottom--strip { height: 84px; justify-content: space-between; border-top: 1px solid var(--color-outline); padding-top: 2px; }
+.tvbottom--strip .tvpill { flex: none; }
+.tvorder { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; overflow-x: clip; overflow-y: visible; }
+.tvorder__item { flex: none; display: flex; align-items: center; }
+.tvorder__chev { flex: none; width: 16px; margin-inline: 4px; color: var(--color-outline-strong); }
+.tvorder__who { position: relative; width: 84px; padding-inline: 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.tvorder__who::after { content: ""; position: absolute; bottom: -4px; left: 50%; width: 28px; height: 4px; margin-left: -14px; border-radius: var(--radius-pill); background: transparent; }
+.tvorder__name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-titleS); line-height: 28px; color: var(--color-text-secondary); }
 .tvorder__item.is-done .tvorder__who { opacity: 0.6; }
-.tvorder__item.is-current .tvorder__who { transform: scale(1.12); border-bottom-color: var(--color-primary); }
-.tvorder .avatar { --avatar-size: 40px !important; }
+.tvorder__item.is-current .tvorder__name { color: var(--color-text); font-weight: 700; }
+.tvorder__item.is-current .tvorder__who::after { background: var(--color-primary); }
+.tvorder .avatar { transform-origin: center bottom; transition: transform var(--motion-base) var(--ease-standard); }
+.tvorder__item.is-current .avatar { transform: scale(1.12); }
+.tvorder__more { flex: none; width: 48px; text-align: center; font: var(--tv-titleS); color: var(--color-text-muted); }
 
 .ring { position: relative; display: grid; place-items: center; }
 .ring__svg { position: absolute; inset: 0; }
-.ring__track { stroke: rgb(255 247 236 / 0.1); }
+.ring__track { stroke: rgb(var(--rgb-text) / 0.1); }
 .ring__fill { stroke: var(--color-text); transition: stroke-dashoffset 200ms linear, stroke var(--motion-fast); }
 .ring--warn .ring__fill { stroke: var(--color-accent); }
 .ring--danger .ring__fill { stroke: var(--color-danger); }
@@ -215,7 +210,9 @@
 .ring--warn .ring__num { color: var(--color-accent); }
 .ring--danger .ring__num { color: var(--color-danger); }
 
-.tvtie { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; background: rgb(18 10 31 / 0.92); animation: tie-out 2500ms linear both; }
+/* The action bar stays above the tie overlay: its focused Skip pill is the visible "OK skips" cue. */
+.tvclues .tvbottom { z-index: 9; }
+.tvtie { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; background: rgb(var(--rgb-bg) / 0.92); animation: tie-out 2500ms linear both; }
 @keyframes tie-out { 0% { opacity: 0; } 8% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
 .tvtie__cards { display: flex; align-items: center; gap: 32px; }
 .tvtie__card { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px 24px; border-radius: var(--radius-lg); background: var(--color-surface); min-width: 200px; }
@@ -228,16 +225,21 @@
 .tvvote__title { font: var(--tv-displayS); text-transform: uppercase; }
 .tv:lang(ar) .tvvote__title { text-transform: none; }
 .tvvote__title .tvt-headline { text-transform: none; margin-inline-start: 12px; }
-.tvvgrid { display: grid; grid-template-columns: repeat(4, 136px); grid-auto-rows: 112px; gap: 16px; justify-content: center; transition: opacity var(--motion-base); }
-.tvvgrid--12 { grid-template-columns: repeat(6, 120px); grid-auto-rows: 96px; }
-.tile--vote { width: 136px; height: 112px; }
-.tile--vote-s { width: 120px; height: 96px; }
-.tile--vote .tile__name { font-size: 20px; line-height: 26px; max-width: 120px; }
+/* Rows of 4 (6 when > 8 players); an incomplete last row is centred, as in Kotlin. */
+.tvvgrid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; max-width: 592px; transition: opacity var(--motion-base); }
+.tvvgrid--12 { max-width: 800px; }
+/* One name line, cut to 12 graphemes (Tile nameMax) and ellipsized: avatar + gap + line + padding fit the tile
+   (136 × 112: 64 + 6 + 28/34 + 8; compact 120 × 96: 48 + 4 + 28/34 + 8). */
+.tile--vote { width: 136px; height: 112px; gap: 6px; padding: 4px 8px; }
+.tile--vote .tile__name { flex: none; font-size: 20px; line-height: 28px; max-width: 120px; }
+.tv:lang(ar) .tile--vote .tile__name { line-height: 34px; }
+.tile--vote-s { width: 120px; height: 96px; gap: 4px; padding: 4px 6px; }
+.tile--vote-s .tile__name { font-size: 18px; max-width: 108px; }
 .tvbottom--vote { justify-content: space-between; }
 .tvvote__timer { flex: 1; max-width: 520px; }
 .tvvote__progress { font: var(--tv-title); color: var(--color-accent); animation: pop var(--motion-base) var(--ease-overshoot); }
 .tvbar { display: flex; align-items: center; gap: 14px; }
-.tvbar__track { flex: 1; height: 10px; border-radius: var(--radius-pill); background: rgb(255 247 236 / 0.1); overflow: hidden; }
+.tvbar__track { flex: 1; height: 10px; border-radius: var(--radius-pill); background: rgb(var(--rgb-text) / 0.1); overflow: hidden; }
 .tvbar__fill { display: block; height: 100%; border-radius: inherit; background: var(--color-text); transform-origin: left; transition: transform 200ms linear, background var(--motion-fast); }
 [dir="rtl"] .tvbar__fill { transform-origin: right; }
 .tvbar--warn .tvbar__fill { background: var(--color-accent); }
@@ -256,7 +258,7 @@
 .tvtally { position: absolute; top: -14px; inset-inline-end: -14px; display: grid; place-items: center; min-width: 40px; height: 40px; padding-inline: 8px; border-radius: var(--radius-pill); background: var(--color-accent); color: var(--color-ink); font: var(--tv-title); box-shadow: 0 0 0 3px var(--color-bg); animation: tally-roll 200ms var(--ease-overshoot) both; }
 @keyframes tally-roll { from { transform: translateY(8px) scale(0.6); opacity: 0; } to { transform: none; opacity: 1; } }
 .tile__stamp { position: absolute; inset: 0; display: grid; place-items: center; }
-.stamp { display: inline-block; padding: 6px 22px; border: 6px solid currentColor; border-radius: var(--radius-sm); font: var(--tv-displayM); text-transform: uppercase; transform: rotate(-8deg); animation: tv-stamp 400ms var(--ease-overshoot) both; background: rgb(18 10 31 / 0.5); white-space: nowrap; }
+.stamp { display: inline-block; padding: 6px 22px; border: 6px solid currentColor; border-radius: var(--radius-sm); font: var(--tv-displayM); text-transform: uppercase; transform: rotate(-8deg); animation: tv-stamp 400ms var(--ease-overshoot) both; background: rgb(var(--rgb-bg) / 0.5); white-space: nowrap; }
 .tv:lang(ar) .stamp { text-transform: none; }
 .stamp--primary { color: var(--color-primary); }
 .stamp--accent { color: var(--color-accent); }
@@ -271,33 +273,33 @@
 
 /* elimination (TV-09) */
 .tvelim::before { content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none; }
-.tvelim.wash--civilian::before { background: radial-gradient(circle at 50% 55%, rgb(90 184 255 / 0.3), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
-.tvelim.wash--undercover::before { background: radial-gradient(circle at 50% 55%, rgb(255 138 61 / 0.3), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
-.tvelim.wash--blank::before { background: radial-gradient(circle at 50% 55%, rgb(236 230 245 / 0.3), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
+.tvelim.wash--civilian::before { background: radial-gradient(circle at 50% 55%, rgb(var(--rgb-civilian) / 0.3), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
+.tvelim.wash--undercover::before { background: radial-gradient(circle at 50% 55%, rgb(var(--rgb-undercover) / 0.3), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
+.tvelim.wash--blank::before { background: radial-gradient(circle at 50% 55%, rgb(var(--rgb-blank) / 0.3), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
 @keyframes wash { 0% { opacity: 0; transform: scale(0.4); } 45% { opacity: 1; transform: scale(1.4); } 100% { opacity: 0.35; transform: scale(1.4); } }
 /* TV-09 stack: card from just under the top bar, name beneath it, the reaction on the bottom-bar line between
    "Next round in…" (start) and Continue (end). SPEC-GAP: DESIGN's 280 × 380 dp card cannot fit the 360 dp stage
    with the name and reaction stacked, so the card keeps DESIGN's ratio at the largest size that fits (EN 236 × 320, AR 216 × 293). */
-.tvelim__card { top: 80px; bottom: 25px; justify-content: flex-start; gap: 2px; }
-.tvelim__name { max-width: 540px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 6px; animation: fade-in 400ms both; }
-.tvelim__reaction { max-width: 470px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* TV-09 stack inside the stage: card (sized from the stage, see cardSize()), the name in displayS, the reaction line. */
+.tvelim__card { justify-content: center; gap: 4px; }
+.tvelim__name { max-width: 820px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; animation: fade-in 400ms both; }
+.tvelim__reaction { max-width: 820px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tvelim__cardwrap { position: relative; perspective: 1200px; }
 .tvelim__random { gap: 6px; position: absolute; top: 0; left: 50%; transform: translate(-50%, -40%); white-space: nowrap; z-index: 1; }
 .tvbottom__start { margin-inline-end: auto; pointer-events: none; }
 .tvelim__cardwrap.is-growing { animation: card-grow 400ms var(--ease-decel) both; }
 @keyframes card-grow { from { transform: scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
-.rolecard { width: 236px; height: 320px; }
-.tv:lang(ar) .rolecard { width: 216px; height: 293px; }
 .rolecard__inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform var(--motion-dramatic) var(--ease-standard); }
 .rolecard.is-flipped .rolecard__inner { transform: rotateY(180deg); }
 .rolecard__back, .rolecard__face { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; border-radius: var(--radius-xl); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .rolecard__back { background: var(--avatar-color); box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.7); }
 .rolecard__back svg { width: 50%; height: 50%; fill: var(--avatar-glyph); }
-.rolecard__face { transform: rotateY(180deg); color: var(--color-ink); box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.7); }
+.rolecard__face { transform: rotateY(180deg); color: var(--color-ink); box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.7); container-type: inline-size; padding-inline: 8px; }
 .rolecard__face--civilian { background: var(--color-civilian); }
 .rolecard__face--undercover { background: var(--color-undercover) repeating-linear-gradient(45deg, rgb(255 255 255 / 0.12) 0 6px, transparent 6px 12px); }
 .rolecard__face--blank { background: var(--color-blank) var(--dot-pattern); }
-.rolecard__label { font: var(--tv-displayM); text-transform: uppercase; letter-spacing: 0.02em; }
+/* Steps down with the label's length so it always fits the card (≈ 0.65 em per bold uppercase glyph). */
+.rolecard__label { max-width: 100%; font: var(--tv-displayM); font-size: clamp(22px, calc(130cqw / var(--chars, 6)), 56px); line-height: 1.15; text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; }
 .tv:lang(ar) .rolecard__label { text-transform: none; letter-spacing: 0; }
 .tvelim__reaction { opacity: 0; transform: translateY(8px); transition: opacity 400ms, transform 400ms var(--ease-decel); }
 .tvelim__reaction.is-on { opacity: 1; transform: none; }
@@ -309,8 +311,8 @@
 
 /* Blank guess (TV-10) */
 .tvguess { transition: background 600ms; }
-.tvguess.is-dark { background: #07040D; }
-.tvguess__spot { position: absolute; left: 50%; top: 60px; width: 340px; height: 340px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgb(236 230 245 / 0.14), transparent 70%); opacity: 0; transition: opacity 600ms; }
+.tvguess.is-dark { background: var(--color-bg-deep); }
+.tvguess__spot { position: absolute; left: 50%; top: 60px; width: 340px; height: 340px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgb(var(--rgb-blank) / 0.14), transparent 70%); opacity: 0; transition: opacity 600ms; }
 .tvguess.is-dark .tvguess__spot { opacity: 1; }
 .tvguess__stage { gap: 8px; }
 .tvguess__ring { display: grid; place-items: center; padding: 6px; border-radius: 30%; border: 3px dashed var(--color-blank); }
@@ -325,9 +327,11 @@
 
 /* results (TV-11) */
 .tvresults__wash { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.tvresults--civilians .tvresults__wash { background: radial-gradient(70% 70% at 50% 40%, rgb(90 184 255 / 0.22), transparent 70%); }
-.tvresults--infiltrators .tvresults__wash { background: linear-gradient(135deg, rgb(255 138 61 / 0.22), rgb(236 230 245 / 0.10)); }
-.tvresults--blank .tvresults__wash { background: radial-gradient(70% 70% at 50% 40%, rgb(236 230 245 / 0.18), transparent 70%); }
+/* Particles stay below the top bar (y ≥ 87); the colour wash itself stays full-bleed. */
+.tvresults__fx { position: absolute; inset: 87px 0 0; overflow: hidden; }
+.tvresults--civilians .tvresults__wash { background: radial-gradient(70% 70% at 50% 40%, rgb(var(--rgb-civilian) / 0.22), transparent 70%); }
+.tvresults--infiltrators .tvresults__wash { background: linear-gradient(135deg, rgb(var(--rgb-undercover) / 0.22), rgb(var(--rgb-blank) / 0.10)); }
+.tvresults--blank .tvresults__wash { background: radial-gradient(70% 70% at 50% 40%, rgb(var(--rgb-blank) / 0.18), transparent 70%); }
 .particle { position: absolute; bottom: -40px; left: calc(6% + var(--i) * 8%); color: var(--color-civilian); opacity: 0.7; animation: rise 3s var(--ease-decel) calc(mod(var(--i) * 7, 12) * 140ms) both; }
 @keyframes rise { from { transform: translateY(0); opacity: 0; } 20% { opacity: 0.8; } to { transform: translateY(-560px); opacity: 0; } }
 .peek-mask { position: absolute; color: var(--color-undercover); opacity: 0.8; animation: peek 3s var(--ease-decel) both; }
@@ -337,7 +341,7 @@
 .peek-mask--3 { bottom: 40px; right: -40px; animation-delay: 600ms; }
 @keyframes peek { 0% { transform: translateX(0) scaleY(1); opacity: 0; } 20% { opacity: 0.8; } 50% { transform: scaleY(1); } 55% { transform: scaleY(0.1); } 60% { transform: scaleY(1); } 100% { opacity: 0; } }
 .tvresults__stage { top: 75px; bottom: 93px; justify-content: center; gap: 14px; }
-.tvresults.is-stage2 .tvresults__stage { justify-content: flex-start; gap: 8px; }
+.tvresults.is-stage2 .tvresults__stage { justify-content: flex-start; gap: 6px; }
 .tvresults__title { text-transform: uppercase; animation: pop 600ms var(--ease-overshoot) both; }
 .tv:lang(ar) .tvresults__title { text-transform: none; }
 .tvresults--civilians .tvresults__title { color: var(--color-civilian); }
@@ -364,13 +368,18 @@
 .tvresults__meta { max-width: 840px; justify-content: center; flex-wrap: wrap; }
 .tvsb { width: 760px; text-align: start; }
 .tvsb__row { display: grid; grid-template-columns: 44px 1fr 200px 120px 80px; column-gap: 12px; align-items: center; height: 40px; padding-inline: 12px; border-radius: var(--radius-sm); font: var(--tv-titleS); animation: tv-phase-in var(--motion-base) var(--ease-decel) both; animation-delay: calc(var(--i, 0) * 60ms); }
-.tvsb__row--head { height: 26px; font: var(--tv-caption); font-weight: 900; color: var(--color-text-muted); letter-spacing: 0.06em; text-transform: uppercase; animation: none; }
+.tvsb__row--head { height: 24px; font: var(--tv-caption); font-weight: 900; color: var(--color-text-muted); letter-spacing: 0.06em; text-transform: uppercase; animation: none; }
 .tv:lang(ar) .tvsb__row--head { text-transform: none; letter-spacing: 0; }
-.tvsb__body { max-height: 164px; overflow-y: auto; scrollbar-width: none; border-radius: var(--radius-sm); }
-.tvsb__row.is-first { background: rgb(255 194 61 / 0.10); box-shadow: 0 0 24px rgb(255 194 61 / 0.15); color: var(--color-accent); }
+/* DESIGN TV-11: 4 rows of 40 dp, focus-scroll for more; a fade and a chevron say there is more. */
+.tvsb__bodywrap { position: relative; }
+.tvsb__body { max-height: 160px; overflow-y: auto; scrollbar-width: none; border-radius: var(--radius-sm); }
+.tvsb__bodywrap.has-more::after { content: ""; position: absolute; inset-inline: 0; bottom: 0; height: 28px; border-radius: 0 0 var(--radius-sm) var(--radius-sm); background: linear-gradient(transparent, var(--color-bg)); pointer-events: none; }
+.tvsb__more { position: absolute; z-index: 1; bottom: -6px; left: 50%; display: grid; place-items: center; width: 28px; height: 28px; transform: translateX(-50%); color: var(--color-text-secondary); pointer-events: none; animation: more-bob 1.6s ease-in-out infinite; }
+@keyframes more-bob { 50% { transform: translate(-50%, 3px); } }
+.tvsb__row.is-first { background: rgb(var(--rgb-accent) / 0.10); box-shadow: 0 0 24px rgb(var(--rgb-accent) / 0.15); color: var(--color-accent); }
 .tvsb__who { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--color-text); }
 .tvsb__who bdi { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tvsb__role { display: inline-flex; align-items: center; gap: 8px; font: var(--tv-caption); color: var(--color-text-secondary); }
+.tvsb__role { display: inline-flex; align-items: center; gap: 8px; font: var(--tv-body); color: var(--color-text-secondary); }
 .tvsb__emb { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; color: var(--color-ink); }
 .tvsb__emb--civilian { background: var(--color-civilian); }
 .tvsb__emb--undercover { background: var(--color-undercover); }
@@ -379,8 +388,9 @@
 /* Numbers are isolated in inner <bdi class="num">; the cells keep the page direction so start/end mirror in RTL. */
 .tvsb__row > :first-child { text-align: start; }
 .tvsb__row > :nth-child(4), .tvsb__row > :nth-child(5) { text-align: end; }
-.tvhistory { display: flex; gap: 18px; align-items: center; color: var(--color-text-secondary); }
-.tvhistory__item { display: inline-flex; align-items: center; gap: 6px; }
+.tvhistory { display: flex; gap: 22px; align-items: center; color: var(--color-text-secondary); }
+.tvhistory__item { display: inline-flex; align-items: center; gap: 8px; }
+.tvhistory__round { font: var(--tv-body); color: var(--color-text-muted); }
 .tvbottom--results { justify-content: center; gap: 20px; }
 
 /* overlays, dialogs (TV-12, TV-14), connection states (TV-13) */
@@ -394,33 +404,40 @@
 .tvdialog__body { color: var(--color-text-secondary); }
 .tvdialog__actions { display: flex; justify-content: flex-end; gap: 16px; margin-top: 8px; }
 .tvdialog__note { text-align: center; font: var(--tv-caption); color: var(--color-text-muted); }
-.tvmenu { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; scrollbar-width: none; padding: 6px; }
+/* Inline padding ≥ the focused item's growth (scale 1.04) + ring (5) + glow, so the ring is never clipped. */
+.tvmenu { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; scrollbar-width: none; padding: 10px 16px; margin-inline: -16px; }
 .tvmenu__item { display: flex; align-items: center; gap: 14px; height: 48px; padding-inline: 20px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--color-text); font: var(--tv-label); text-align: start; }
 .tvmenu__item--player { height: 52px; }
-.tvmenu__end { margin-inline-start: auto; color: var(--color-danger); }
+.tvmenu__end { margin-inline-start: auto; flex: none; color: var(--color-danger); }
+.tvmenu__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The kick icon is muted at rest and turns danger only on the focused row (not a red button on every row). */
+.tvmenu__end--kick { color: var(--color-text-muted); }
+.tvmenu__item:focus .tvmenu__end--kick { color: var(--color-danger); }
+.tvmenu__item.is-on { color: var(--color-primary); }
+.tvmenu__end--ok { color: var(--color-primary); }
 .tvfatal { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; }
 .tvfatal__icon { display: grid; place-items: center; width: 160px; height: 160px; border-radius: 50%; background: var(--color-surface); color: var(--color-text-secondary); }
 .tvfatal__body { max-width: 620px; display: block; }
-.tvfreeze { position: absolute; inset: 0; z-index: 15; background: rgb(18 10 31 / 0.4); }
+.tvfreeze { position: absolute; inset: 0; z-index: 15; background: rgb(var(--rgb-bg) / 0.4); }
 .tvconnbanner { position: absolute; z-index: 16; top: 12px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 12px; padding: 10px 22px; border-radius: var(--radius-pill); background: var(--color-elevated); box-shadow: var(--elev-2-shadow); font: var(--tv-body); }
 .tvconnbanner .icon { color: var(--color-accent); }
 .tvconnbanner--soft { top: auto; bottom: 96px; background: var(--color-surface); color: var(--color-text-secondary); }
-/* Toast zones never cover what the room is reading (DESIGN §4.2 rows):
-   lobby → the free strip between the player grid (ends y 431) and the bottom bar (starts y 459), up to 2 side by side;
-   in game → the empty centre of the top bar row (y 27–75), newest only. */
-.tvtoasts { position: absolute; z-index: 18; display: flex; gap: 8px; pointer-events: none; min-width: 0; }
-.tvtoasts--lobby { top: 433px; height: 24px; inset-inline-start: 370px; inset-inline-end: 62px; }
-.tvtoasts--lobby .tvtoast { max-width: calc(50% - 4px); padding-block: 1px; font-size: 16px; line-height: 22px; }
-.tv:lang(ar) .tvtoasts--lobby .tvtoast { padding-block: 0; line-height: 24px; }
-.tvtoasts--top { top: 33px; left: 50%; width: 400px; margin-left: -200px; justify-content: center; }
-.tvtoast { min-width: 0; max-width: 100%; padding: 6px 14px; border-radius: var(--radius-md); background: var(--color-overlay); box-shadow: var(--elev-2-shadow); border-inline-start: 4px solid var(--color-outline-strong); font: var(--tv-caption); font-size: 17px; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: tv-toast 240ms var(--ease-overshoot) both; }
+/* Toast zones never cover what the room is reading (DESIGN §4.2 rows), one toast at a time:
+   lobby → the player-grid header row, in place of the blocker line (TvLobby);
+   in game → the empty centre of the top bar row (y 27–75). */
+.tvtoasts { position: absolute; z-index: 18; top: 31px; left: 50%; width: 420px; margin-left: -210px; display: flex; justify-content: center; pointer-events: none; }
+.tvtoast { min-width: 0; max-width: 100%; padding: 6px 16px; border-radius: var(--radius-md); background: var(--color-overlay); box-shadow: var(--elev-2-shadow); border-inline-start: 4px solid var(--color-outline-strong); font: var(--tv-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: tv-toast 240ms var(--ease-overshoot) both; }
+/* Lobby slot: plain text (no card, no edge bar, which a pill radius would bend into a stray arc). */
+.tvtoast--inline { padding: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; font: var(--tv-label); color: var(--color-text-secondary); }
+.tvtoast--inline.tvtoast--success { color: var(--color-success); }
+.tvtoast--inline.tvtoast--error { color: var(--color-danger); }
 .tvtoast--success { border-inline-start-color: var(--color-success); }
 .tvtoast--error { border-inline-start-color: var(--color-danger); }
 @keyframes tv-toast { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   .tv__stage { animation: fade-in 150ms linear both; }
-  .tvhome__pattern, .tvreveal__phone, .tile--empty.is-next, .ring--danger, .particle, .peek-mask, .shake, .tvflash, .tile--drop::after { animation: none !important; }
+  .tvhome__pattern, .tvreveal__phone, .tile--empty.is-next, .ring--danger, .particle, .peek-mask, .shake, .tvflash, .tile--drop::after, .tvsb__more { animation: none !important; }
   .tile--drop, .tvclues__hero, .stamp, .tvword--civilian, .tvword--undercover, .tvblankcard, .tvresults__title, .tvsb__row, .tvtally, .tvelim__cardwrap.is-growing { animation: fade-in 200ms linear both !important; }
   .rolecard__inner { transition: none; }
   .rolecard.is-flipped .rolecard__back { opacity: 0; transition: opacity 200ms; }

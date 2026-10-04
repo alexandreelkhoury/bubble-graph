@@ -5,12 +5,7 @@ import type { FakeConn } from "./support/fakes";
 
 async function midGame(clueSeconds = 0) {
   const h = await new Harness().init();
-  const tv = await h.tv();
-  const ps = [];
-  for (let i = 0; i < 4; i++) ps.push(await h.player(i));
-  await h.act(tv, { type: "UPDATE_SETTINGS", patch: { clueSeconds, voteSeconds: 0, revealSeconds: 0, guessSeconds: 0 } });
-  await h.act(tv, { type: "START" });
-  for (const p of ps) await h.act(p.conn, { type: "READY" });
+  const { tv, ps } = await h.startedGame({ settings: { clueSeconds }, ready: true });
   expect(h.state.phase).toBe("CLUES");
   return { h, tv, ps };
 }

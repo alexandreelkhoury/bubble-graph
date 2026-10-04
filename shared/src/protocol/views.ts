@@ -1,6 +1,6 @@
-import { z } from "zod";
+import * as z from "zod";
 import {
-  ColorIdSchema, DeadlineKindSchema, ErrorCodeSchema, GuessStatusSchema, HistoryCauseSchema, PhaseSchema,
+  AgeRatingSchema, ColorIdSchema, DeadlineKindSchema, LocalizedTitleSchema, ErrorCodeSchema, GuessStatusSchema, HistoryCauseSchema, PhaseSchema,
   RoleCountsSchema, RoleSchema, SettingsSchema, VoteOutcomeSchema, WinnerSchema, WordRefSchema,
 } from "./common";
 
@@ -11,8 +11,8 @@ export const PublicPlayerSchema = z.object({
   revealedRole: RoleSchema.nullable(), score: z.number(),
 });
 export const PackInfoSchema = z.object({
-  id: z.string(), locale: z.string(), title: z.object({ en: z.string(), fr: z.string(), ar: z.string() }),
-  pairCount: z.number().int(), ageRating: z.enum(["all", "teen", "adult"]),
+  id: z.string(), locale: z.string(), title: LocalizedTitleSchema,
+  pairCount: z.number().int(), ageRating: AgeRatingSchema,
 });
 export const DeadlineViewSchema = z.object({ kind: DeadlineKindSchema, at: z.number(), durationMs: z.number() });
 export const VoteSummarySchema = z.object({
@@ -23,7 +23,7 @@ export const VoteSummarySchema = z.object({
 export const GuessStateSchema = z.object({ playerId: z.string(), status: GuessStatusSchema, text: z.string().nullable(), overridden: z.boolean() });
 export const ResultStateSchema = z.object({
   winner: WinnerSchema, winnerIds: z.array(z.string()), civilianWord: WordRefSchema, undercoverWord: WordRefSchema,
-  pack: z.object({ id: z.string(), version: z.number().int(), title: z.object({ en: z.string(), fr: z.string(), ar: z.string() }) }),
+  pack: z.object({ id: z.string(), version: z.number().int(), title: LocalizedTitleSchema }),
   pointsAwarded: z.record(z.string(), z.number()), guesses: z.array(GuessStateSchema),
 });
 export const HistoryEntrySchema = z.object({ round: z.number().int(), eliminatedId: z.string().nullable(), role: RoleSchema.nullable(), cause: HistoryCauseSchema });

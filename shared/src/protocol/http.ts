@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 import { ROOM_CODE_REGEX } from "../constants";
 import { ErrorCodeSchema, LocaleSchema, Token } from "./common";
 

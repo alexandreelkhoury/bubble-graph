@@ -18,6 +18,9 @@ import app.mishana.tv.protocol.PublicPlayer
 import app.mishana.tv.protocol.RoleMode
 import app.mishana.tv.protocol.ServerMessage
 import app.mishana.tv.protocol.Settings
+import app.mishana.tv.protocol.SettingsPatch
+import app.mishana.tv.protocol.UpdateSettings
+import app.mishana.tv.game.ViewEvent
 import app.mishana.tv.protocol.Start
 import app.mishana.tv.protocol.StateMsg
 import app.mishana.tv.protocol.TieBreak
@@ -29,6 +32,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -209,6 +213,42 @@ class GameViewModelTest {
         val vm = GameViewModel(Application(), failing)
         advanceUntilIdle()
         assertEquals(TvUiState.CreateFailed("error.rateLimited"), vm.ui.value)
+    }
+
+    @Test
+    fun settingsChangesAreDebouncedIntoOnePatch() = runTest(dispatcher) {
+        val vm = newVm()
+        val conn = connections.single()
+        conn.state.value = ConnState.OPEN
+        advanceUntilIdle()
+        vm.changeSettings(SettingsPatch(clueSeconds = 60))
+        advanceTimeBy(100)
+        vm.changeSettings(SettingsPatch(voteSeconds = 120))
+        assertEquals(60, vm.settingsDraft.value?.clueSeconds) // shown at once
+        advanceTimeBy(GameViewModel.SETTINGS_DEBOUNCE_MS + 1)
+        assertEquals(listOf(ActionMsg(id = "1", a = UpdateSettings(SettingsPatch(clueSeconds = 60, voteSeconds = 120)))), conn.sent)
+        advanceTimeBy(GameViewModel.SETTINGS_FALLBACK_MS + 1) // never echoed: back to the server values
+        assertEquals(null, vm.settingsDraft.value)
+    }
+
+    @Test
+    fun viewDiffsAreEmittedAsEvents() = runTest(dispatcher) {
+        val vm = newVm()
+        vm.events.test {
+            val conn = connections.single()
+            conn.state.value = ConnState.OPEN
+            advanceUntilIdle()
+            conn.incoming.emit(StateMsg(seq = 1, serverNow = 1L, view = view()))
+            conn.incoming.emit(StateMsg(seq = 2, serverNow = 1L, view = view(players = listOf(player("p_0a1b2c3d4e5f60718293a4b5")))))
+            advanceUntilIdle()
+            assertEquals(TvEvent.Game(ViewEvent.PlayerJoined("Rami")), awaitItem())
+            val vip = view(players = listOf(player("p_0a1b2c3d4e5f60718293a4b5"))).let { it.copy(hostPlayerId = it.players[0].id) }
+            conn.incoming.emit(StateMsg(seq = 3, serverNow = 1L, view = vip))
+            conn.incoming.emit(StateMsg(seq = 4, serverNow = 1L, view = vip.copy(settings = vip.settings.copy(clueSeconds = 60))))
+            advanceUntilIdle()
+            assertEquals(TvEvent.SettingsChanged(setOf("timers.clueSeconds"), "Rami"), awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     private fun player(id: String) = PublicPlayer(

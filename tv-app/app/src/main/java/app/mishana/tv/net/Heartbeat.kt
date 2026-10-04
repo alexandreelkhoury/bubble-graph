@@ -28,10 +28,6 @@ class Heartbeat(
     @Volatile var pendingSince: Long? = null
         private set
 
-    /** Clock time of the last pong received, or null. */
-    @Volatile var lastPongAt: Long? = null
-        private set
-
     fun start() {
         synchronized(lock) {
             cancelJobs()
@@ -68,7 +64,6 @@ class Heartbeat(
     fun onPong() {
         synchronized(lock) {
             pendingSince = null
-            lastPongAt = clock()
             watchdog?.cancel()
             watchdog = null
         }

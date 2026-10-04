@@ -3,12 +3,7 @@ import { Harness, seqs, strictlyIncreasing } from "./support/fakes";
 
 async function startedGame(n = 4) {
   const h = await new Harness().init();
-  const tv = await h.tv();
-  const ps = [];
-  for (let i = 0; i < n; i++) ps.push(await h.player(i));
-  await h.act(tv, { type: "UPDATE_SETTINGS", patch: { clueSeconds: 0, voteSeconds: 0, revealSeconds: 0, guessSeconds: 0 } });
-  await h.act(tv, { type: "START" });
-  return { h, tv, ps };
+  return { h, ...(await h.startedGame({ n })) };
 }
 
 describe("RoomCore actions", () => {

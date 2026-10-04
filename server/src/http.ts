@@ -8,7 +8,8 @@ import { generateRoomCode } from "./codes";
 import type { Env } from "./env";
 import { isOriginAllowed } from "./origin";
 import type { InitRoomArgs, InitRoomResult } from "./room-core";
-import { bytesToHex, sha256hex } from "./tokens";
+import { clientIp } from "./request";
+import { randomHex, sha256hex } from "./tokens";
 
 export interface CreateRoomDeps {
   getStub(code: string): Promise<{ initRoom(args: InitRoomArgs): Promise<InitRoomResult> }>;
@@ -65,7 +66,7 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
   if (!isOriginAllowed(req, env.ALLOWED_ORIGINS)) return httpError("BAD_MESSAGE", 403);
 
   // 2. Rate limit per IP (raw IP used only as the limiter key, never logged or stored).
-  const { success } = await env.CREATE_ROOM_LIMITER.limit({ key: req.headers.get("CF-Connecting-IP") ?? "local" });
+  const { success } = await env.CREATE_ROOM_LIMITER.limit({ key: clientIp(req) });
   if (!success) return httpError("RATE_LIMITED", 429);
 
   // 3. Body: optional JSON {locale}.
@@ -87,7 +88,7 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
   }
 
   // 4. TV token (hashed before it reaches the DO).
-  const tvToken = bytesToHex(deps.randomBytes(16));
+  const tvToken = randomHex(16, deps.randomBytes);
   const tvTokenHash = await sha256hex(tvToken);
 
   // 7. joinUrl base (computed once; it does not depend on the code).

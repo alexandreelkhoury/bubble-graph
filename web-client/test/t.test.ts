@@ -1,5 +1,10 @@
-import { describe, expect, it } from "vitest";
-import { detectLocale, dirOf, errorKeyOf, translate } from "../src/i18n/t";
+import { beforeAll, describe, expect, it } from "vitest";
+import { detectLocale, dirOf, errorKeyOf, isolate, isolateLtr, loadCatalog, translate, tSplit } from "../src/i18n/t";
+
+beforeAll(async () => {
+  await loadCatalog("fr");
+  await loadCatalog("ar");
+});
 
 describe("t()", () => {
   it("falls back locale → en → key", () => {
@@ -38,6 +43,19 @@ describe("t()", () => {
   });
   it("formats numbers with latn digits in every locale", () => {
     expect(translate("ar", "round.label", { count: 12 })).toMatch(/12/);
+  });
+  it("FR/AR load on demand and English is the fallback until then", () => {
+    expect(translate("fr", "common.back")).toBe("Retour");
+    expect(translate("ar", "common.back")).not.toBe(translate("en", "common.back"));
+  });
+  it("tSplit keeps the template's own spacing around the slot", () => {
+    const [a, b] = tSplit("vote.confirm", "name");
+    expect(a).toBe("Lock my vote: ");
+    expect(b).toBe("");
+  });
+  it("isolates user text (FSI/LRI … PDI)", () => {
+    expect(isolate("Rami")).toBe("\u2068Rami\u2069");
+    expect(isolateLtr("KXQP")).toBe("\u2066KXQP\u2069");
   });
   it("helpers", () => {
     expect(errorKeyOf("NOT_YOUR_TURN")).toBe("error.notYourTurn");

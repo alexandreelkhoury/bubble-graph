@@ -1,12 +1,13 @@
 // Seeded bot driver shared by the property, golden and leak tests and by tools/sim (engine mode, §13.1).
-import { COLORS } from "../../src/constants";
-import type { Catalog } from "../../src/engine/catalog";
-import { assertInvariants } from "../../src/engine/invariants";
-import { createInitialState, reduce } from "../../src/engine/reduce";
-import type { Rng } from "../../src/engine/rng";
-import { createRng } from "../../src/engine/rng";
-import type { Action, ClientIntent, GameState, ReduceResult, SettingsPatch, Winner } from "../../src/engine/types";
-import { checkWinner } from "../../src/engine/win";
+import { COLORS } from "../constants";
+import type { Catalog } from "../engine/catalog";
+import { assertInvariants } from "../engine/invariants";
+import { createInitialState, reduce } from "../engine/reduce";
+import type { Rng } from "../engine/rng";
+import { createRng } from "../engine/rng";
+import type { Action, ClientIntent, GameState, ReduceResult, SettingsPatch, Winner } from "../engine/types";
+import { checkWinner } from "../engine/win";
+import { P, SYS, TV } from "./game";
 
 export interface BotOptions {
   players: number;
@@ -43,25 +44,45 @@ export function botPlayerId(i: number): string {
   return "p_" + (0xb0700000 + i).toString(16).padStart(8, "0") + "0".repeat(16);
 }
 
-const TV = { kind: "tv" } as const;
-const byPlayer = (playerId: string) => ({ kind: "player", playerId }) as const;
-const SYS = { kind: "system" } as const;
 
 function pick<T>(rng: Rng, xs: readonly T[]): T | undefined {
   return xs.length ? xs[rng.int(xs.length)] : undefined;
 }
 
 /**
- * Cross-step checks the driver applies after every successful reduce (beyond assertInvariants):
- * - the actual first round-1 speaker is never the Blank (RESEARCH 01, §4.7 step 3);
+ * A speaking pass just opened: a new CLUES round (from any other phase or round) or a new TIE_BREAK.
+ * Shared by checkStep and the starter tests, so the Blank-never-first rule and its test agree on "opening".
+ */
+export function isOpening(prev: GameState, s: GameState): boolean {
+  return (
+    (s.phase === "CLUES" && (prev.phase !== "CLUES" || prev.round !== s.round)) ||
+    (s.phase === "TIE_BREAK" && prev.phase !== "TIE_BREAK")
+  );
+}
+
+/**
+ * The Blank never speaks first (§4.7, every round and tie-break): at an opening, the first actual speaker
+ * is not the Blank whenever an alive, connected non-Blank is in the speaking order. Null when the rule holds.
+ */
+export function blankOpensViolation(s: GameState): string | null {
+  const order = s.speakingOrder.map((id) => s.players.find((p) => p.id === id));
+  if (!order.some((p) => p && p.alive && p.connected && p.role !== "BLANK")) return null;
+  const sp = s.players.find((p) => p.id === s.speakingOrder[s.turnIdx]);
+  return sp?.role === "BLANK" ? `the Blank opens ${s.phase} (round ${s.round})` : null;
+}
+
+/**
+ * Cross-step checks the driver applies after every successful reduce (beyond assertInvariants), so every
+ * property test and every `pnpm sim` game enforces them:
+ * - at every opening (each CLUES round and each TIE_BREAK) the first actual speaker is not the Blank;
  * - on entering RESULTS, score deltas equal result.pointsAwarded and a non-Blank winner matches checkWinner.
  */
 export function checkStep(prev: GameState, res: ReduceResult): void {
   if (!res.ok) return;
   const s = res.state;
-  if (s.phase === "CLUES" && s.round === 1 && (prev.phase !== "CLUES" || prev.round !== 1)) {
-    const sp = s.players.find((p) => p.id === s.speakingOrder[s.turnIdx]);
-    if (sp?.role === "BLANK") throw new Error("round-1 first actual speaker is the Blank");
+  if (isOpening(prev, s)) {
+    const v = blankOpensViolation(s);
+    if (v) throw new Error(v);
   }
   if (s.phase === "RESULTS" && prev.phase !== "RESULTS" && s.result) {
     const r = s.result;
@@ -109,7 +130,7 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
     return res;
   };
   /** TV, or (with probability vipRate) the VIP when there is one. The VIP may be refused (e.g. NOT_HOST while guessing). */
-  const hostActor = () => (rate.vip > 0 && state.hostPlayerId && rng.next() < rate.vip ? byPlayer(state.hostPlayerId) : TV);
+  const hostActor = () => (rate.vip > 0 && state.hostPlayerId && rng.next() < rate.vip ? P(state.hostPlayerId) : TV);
   const advance = (): void => {
     if (state.deadline) {
       now = Math.max(now, state.deadline.at);
@@ -147,7 +168,7 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
     }
     if (s.phase === "RESULTS") {
       winner = s.result?.winner ?? null;
-      const host = s.hostPlayerId && rng.next() < 0.5 ? byPlayer(s.hostPlayerId) : TV;
+      const host = s.hostPlayerId && rng.next() < 0.5 ? P(s.hostPlayerId) : TV;
       step({ type: "PLAY_AGAIN", by: host });
       break;
     }
@@ -169,14 +190,14 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
     }
     if (r < rate.noise + rate.churn + rate.kick + rate.leave) {
       const p = pick(rng, live);
-      if (p) step({ type: "LEAVE", by: byPlayer(p.id) });
+      if (p) step({ type: "LEAVE", by: P(p.id) });
       continue;
     }
 
     switch (s.phase) {
       case "ROLE_REVEAL": {
         const p = pick(rng, s.players.filter((x) => x.connected && !x.ready));
-        if (p) step({ type: "READY", by: byPlayer(p.id) });
+        if (p) step({ type: "READY", by: P(p.id) });
         else advance();
         break;
       }
@@ -184,7 +205,7 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
       case "TIE_BREAK": {
         const sp = s.players.find((p) => p.id === s.speakingOrder[s.turnIdx]);
         if (rng.next() < rate.advance) step({ type: "HOST_ADVANCE", by: hostActor() });
-        else if (sp?.connected) step({ type: "CLUE_DONE", by: byPlayer(sp.id) });
+        else if (sp?.connected) step({ type: "CLUE_DONE", by: P(sp.id) });
         else advance();
         break;
       }
@@ -193,7 +214,7 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
         const v = pick(rng, voters);
         const targets = v ? s.players.filter((p) => p.alive && p.id !== v.id && (!s.revote || s.tieCandidates.includes(p.id))) : [];
         const t = pick(rng, targets);
-        if (v && t) step({ type: "CAST_VOTE", by: byPlayer(v.id), targetId: t.id });
+        if (v && t) step({ type: "CAST_VOTE", by: P(v.id), targetId: t.id });
         else advance();
         break;
       }
@@ -209,13 +230,13 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
           if (guesser?.connected && !guesser.left) {
             const correct = rng.next() < rate.correct;
             const text = correct && s.pair ? s.pair.civilian.text : `zzwrong${wrongN++}`;
-            step({ type: "SUBMIT_GUESS", by: byPlayer(guesser.id), text });
+            step({ type: "SUBMIT_GUESS", by: P(guesser.id), text });
           } else advance();
           break;
         }
         if (g && !g.overridden && rng.next() < rate.override) {
           if (g.status === "WRONG" && g.text !== null) {
-            const vip = s.hostPlayerId && s.hostPlayerId !== g.playerId && rng.next() < 0.5 ? byPlayer(s.hostPlayerId) : TV;
+            const vip = s.hostPlayerId && s.hostPlayerId !== g.playerId && rng.next() < 0.5 ? P(s.hostPlayerId) : TV;
             step({ type: "HOST_OVERRIDE_GUESS", by: vip, accept: true });
             break;
           }
@@ -231,7 +252,7 @@ export function playGame(catalog: Catalog, opts: BotOptions, onStep?: StepHook):
   }
 
   function noise(s: GameState): void {
-    const actors = [TV, ...s.players.map((p) => byPlayer(p.id)), byPlayer("p_ffffffffffffffffffffffff")];
+    const actors = [TV, ...s.players.map((p) => P(p.id)), P("p_ffffffffffffffffffffffff")];
     const by = pick(rng, actors) ?? TV;
     const someone = pick(rng, s.players)?.id ?? "p_000000000000000000000000";
     const intents: ClientIntent[] = [

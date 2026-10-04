@@ -3,12 +3,22 @@ import type { Catalog } from "./catalog";
 
 export const PHASES = ["LOBBY","ROLE_REVEAL","CLUES","VOTING","TIE_BREAK","ELIMINATION","MR_WHITE_GUESS","RESULTS"] as const;
 export type Phase = (typeof PHASES)[number];
-export type Role = "CIVILIAN" | "UNDERCOVER" | "BLANK";
-export type Winner = "CIVILIANS" | "INFILTRATORS" | "BLANK";
-export type DeadlineKind = "REVEAL" | "CLUE" | "VOTE" | "ELIMINATION" | "GUESS" | "VERDICT";
-export type VoteOutcome = "ELIMINATED" | "TIE" | "RANDOM" | "NO_ELIMINATION";
-export type GuessStatus = "PENDING" | "CORRECT" | "WRONG" | "TIMEOUT";
-export type HistoryCause = "VOTE" | "RANDOM" | "KICK" | "LEAVE" | "NONE";
+// Enum literal lists: the single source for the engine unions and the protocol's z.enum schemas.
+export const ROLES = ["CIVILIAN", "UNDERCOVER", "BLANK"] as const;
+export type Role = (typeof ROLES)[number];
+export const WINNERS = ["CIVILIANS", "INFILTRATORS", "BLANK"] as const;
+export type Winner = (typeof WINNERS)[number];
+export const DEADLINE_KINDS = ["REVEAL", "CLUE", "VOTE", "ELIMINATION", "GUESS", "VERDICT"] as const;
+export type DeadlineKind = (typeof DEADLINE_KINDS)[number];
+export const VOTE_OUTCOMES = ["ELIMINATED", "TIE", "RANDOM", "NO_ELIMINATION"] as const;
+export type VoteOutcome = (typeof VOTE_OUTCOMES)[number];
+export const GUESS_STATUSES = ["PENDING", "CORRECT", "WRONG", "TIMEOUT"] as const;
+export type GuessStatus = (typeof GUESS_STATUSES)[number];
+export const HISTORY_CAUSES = ["VOTE", "RANDOM", "KICK", "LEAVE", "NONE"] as const;
+export type HistoryCause = (typeof HISTORY_CAUSES)[number];
+
+/** A title in every UI locale (pack titles). */
+export type LocalizedTitle = Record<Locale, string>;
 
 export interface WordRef { text: string; translit: string | null }
 export interface WordSide { text: string; translit: string | null; alt: string[] }   // catalog-internal (alt never leaves server)
@@ -59,7 +69,7 @@ export interface Deadline { id: number; kind: DeadlineKind; at: number; duration
 export interface SelectedPair {
   key: string;              // `${packId}:${pairId}`
   packId: string; packVersion: number; pairId: string;
-  packTitle: { en: string; fr: string; ar: string };
+  packTitle: LocalizedTitle;
   civilian: WordSide;       // after optional swap
   undercover: WordSide;
 }
@@ -80,7 +90,7 @@ export interface ResultState {
   winnerIds: string[];                     // seat order
   civilianWord: WordRef;
   undercoverWord: WordRef;
-  pack: { id: string; version: number; title: { en: string; fr: string; ar: string } };
+  pack: { id: string; version: number; title: LocalizedTitle };
   pointsAwarded: Record<string, number>;  // every player id → points this game (0 for losers and left players)
   guesses: GuessState[];                   // every resolved Blank guess this game, in order (texts public now)
 }

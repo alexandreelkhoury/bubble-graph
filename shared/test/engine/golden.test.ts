@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { playGame } from "../support/bots";
-import { TEST_CATALOG } from "../support/test-catalog";
+import { playGame, TEST_CATALOG } from "../../src/testing";
 
 const CASES: [number, number, string][] = [
   [3, 101, "official"],

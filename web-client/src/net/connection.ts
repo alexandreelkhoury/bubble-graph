@@ -1,10 +1,10 @@
 // §8.4 connection: partysocket with no queueing, seq filter, close-code fatality, heartbeat.
 import PartySocket from "partysocket";
 import {
-  FATAL_CLOSE_CODES, HEARTBEAT_INTERVAL_MS, PARTY_NAME, PING_FRAME, PONG_FRAME, PONG_TIMEOUT_MS,
+  FATAL_CLOSE_CODES, HEARTBEAT_INTERVAL_MS, PARTY_NAME, PING_FRAME, PONG_FRAME, PONG_TIMEOUT_MS, PROTOCOL_VERSION,
   SLOW_RECONNECT_CLOSE_CODES, SLOW_RECONNECT_MS,
 } from "@mishana/shared/constants";
-import type { ClientIntentMsg, ErrorMsg, StateMsg, WelcomeMsg } from "@mishana/shared/protocol";
+import type { ClientIntentMsg, ClientMessage, ErrorMsg, HelloPlayerMsg, HelloTvMsg, StateMsg, WelcomeMsg } from "@mishana/shared/protocol";
 import { nextActionId, randomId } from "./ids";
 
 export const WS_OPEN = 1;
@@ -25,9 +25,14 @@ export type SocketFactory = (h: SocketHandlers) => SocketLike;
 
 export type ConnStatus = "connecting" | "open" | "reconnecting" | "closed";
 
+/** Fatal close codes by name (SPEC §8.4); typed against the shared FATAL_CLOSE_CODES list. */
+export const CLOSE = {
+  UNSUPPORTED_VERSION: 4002, TV_AUTH_FAILED: 4003, ROOM_NOT_FOUND: 4004, REPLACED: 4005, KICKED: 4006, ROOM_EXPIRED: 4010,
+} as const satisfies Record<string, (typeof FATAL_CLOSE_CODES)[number]>;
+
 export interface ConnectionCallbacks {
   /** The hello frame to send on every open (reads the stored resume token at that moment). */
-  hello(): string;
+  hello(): HelloPlayerMsg | HelloTvMsg;
   onState(msg: StateMsg): void;
   onWelcome(msg: WelcomeMsg): void;
   onError(msg: ErrorMsg): void;
@@ -71,14 +76,14 @@ export class Connection {
     return true;
   }
 
-  send(msg: object): boolean {
+  send(msg: ClientMessage): boolean {
     return this.sendRaw(JSON.stringify(msg));
   }
 
   /** Sends an action; returns its id, or null when the socket is not OPEN. */
   action(a: ClientIntentMsg): string | null {
     const id = nextActionId();
-    return this.send({ v: 1, t: "action", id, a }) ? id : null;
+    return this.send({ v: PROTOCOL_VERSION, t: "action", id, a }) ? id : null;
   }
 
   /** visibilitychange → visible, online, pageshow(persisted): reconnect now if not OPEN. */
@@ -115,7 +120,7 @@ export class Connection {
     if (this.destroyed) return;
     this.lastSeq = -1;
     this.setStatus("open");
-    this.sendRaw(this.cb.hello());
+    this.send(this.cb.hello());
     this.startHeartbeat();
   }
 
@@ -205,6 +210,24 @@ export class Connection {
   /** Test hook. */
   get seq(): number { return this.lastSeq; }
   get heartbeatRunning(): boolean { return this.heartbeat !== null; }
+}
+
+/**
+ * Wakes the connection when the page comes back (visibilitychange → visible, online, pageshow from the bfcache);
+ * `extra` runs too (the phone re-takes its wake lock). Returns the unbind function.
+ */
+export function bindWake(conn: Pick<Connection, "wake">, extra?: () => void): () => void {
+  const wake = (): void => { conn.wake(); extra?.(); };
+  const onVis = (): void => { if (document.visibilityState === "visible") wake(); };
+  const onShow = (e: PageTransitionEvent): void => { if (e.persisted) wake(); };
+  document.addEventListener("visibilitychange", onVis);
+  window.addEventListener("online", wake);
+  window.addEventListener("pageshow", onShow);
+  return () => {
+    document.removeEventListener("visibilitychange", onVis);
+    window.removeEventListener("online", wake);
+    window.removeEventListener("pageshow", onShow);
+  };
 }
 
 /** The real socket (§8.4 options, all explicit). */

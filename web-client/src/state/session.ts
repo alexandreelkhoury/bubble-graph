@@ -1,13 +1,15 @@
 // Player session: wires the Connection to the store and derives one-shot UI effects from view changes.
+import { PROTOCOL_VERSION } from "@mishana/shared/constants";
 import type { ColorId } from "@mishana/shared/constants";
 import type { ClientIntentMsg, ErrorCode, ErrorMsg, PlayerView } from "@mishana/shared/protocol";
-import { Connection, partySocketFactory } from "../net/connection";
+import { bindWake, CLOSE, Connection, partySocketFactory } from "../net/connection";
 import type { SocketFactory } from "../net/connection";
 import { clearResume, loadResume, saveColor, saveName, saveResume } from "../lib/storage";
 import { HAPTIC, haptic } from "../lib/haptics";
 import { reacquireWakeLock, releaseWakeLock, requestWakeLock, wantWakeLock } from "../lib/wakelock";
-import { locale, t } from "../i18n/t";
-import { ROLE_KEY } from "../lib/roles";
+import { isolate, locale, t } from "../i18n/t";
+import { PHASE_KEY, ROLE_KEY } from "../lib/keys";
+import { newForfeits } from "../lib/view";
 import type { MessageKey } from "../i18n/t";
 import {
   announce, conn, fatalCode, fatalError, inlineError, joinPending, lastError, pushToast, resetClock, resuming, resyncs,
@@ -21,8 +23,6 @@ const SILENT: readonly ErrorCode[] = ["RESUME_INVALID", "KICKED", "REPLACED", "R
 let current: { code: string; conn: Connection; detach: () => void } | null = null;
 let wasReconnecting = false;
 let awaitingResync = false;
-
-export function sessionCode(): string | null { return current?.code ?? null; }
 
 export function startSession(code: string, factory: SocketFactory = partySocketFactory(code)): void {
   if (current?.code === code) return;
@@ -41,7 +41,7 @@ export function startSession(code: string, factory: SocketFactory = partySocketF
     hello: () => {
       const r = loadResume(code);
       resuming.value = r !== null;
-      return JSON.stringify(r ? { v: 1, t: "hello", role: "player", resumeToken: r.resumeToken } : { v: 1, t: "hello", role: "player" });
+      return r ? { v: PROTOCOL_VERSION, t: "hello", role: "player", resumeToken: r.resumeToken } : { v: PROTOCOL_VERSION, t: "hello", role: "player" };
     },
     onState: (msg) => {
       sampleClock(msg.serverNow);
@@ -80,25 +80,15 @@ export function startSession(code: string, factory: SocketFactory = partySocketF
     onFatal: (closeCode) => {
       fatalCode.value = closeCode;
       releaseWakeLock();
-      if (closeCode === 4006) clearResume(code);
+      if (closeCode === CLOSE.KICKED) clearResume(code);
     },
   });
-  const onWake = (): void => {
-    c.wake();
-    reacquireWakeLock();
-  };
-  const onVis = (): void => { if (document.visibilityState === "visible") onWake(); };
-  const onShow = (e: PageTransitionEvent): void => { if (e.persisted) onWake(); };
+  const unbindWake = bindWake(c, reacquireWakeLock);
   const onTap = (): void => { if (view.value?.me) reacquireWakeLock(); };
-  document.addEventListener("visibilitychange", onVis);
-  window.addEventListener("online", onWake);
-  window.addEventListener("pageshow", onShow);
   window.addEventListener("pointerdown", onTap, { passive: true });
   current = {
     code, conn: c, detach: () => {
-      document.removeEventListener("visibilitychange", onVis);
-      window.removeEventListener("online", onWake);
-      window.removeEventListener("pageshow", onShow);
+      unbindWake();
       window.removeEventListener("pointerdown", onTap);
     },
   };
@@ -146,7 +136,7 @@ export function join(name: string, color: ColorId): boolean {
   if (!current) return false;
   void requestWakeLock();
   inlineError.value = null;
-  const ok = current.conn.send({ v: 1, t: "join", name, color, locale: locale.value });
+  const ok = current.conn.send({ v: PROTOCOL_VERSION, t: "join", name, color, locale: locale.value });
   if (ok) {
     joinPending.value = true;
     saveName(name);
@@ -171,19 +161,6 @@ export function leave(): void {
   // Give the frame a moment to flush before closing the socket.
   setTimeout(() => stopSession(), 150);
 }
-
-export const PHASE_KEY: Record<PlayerView["phase"], MessageKey> = {
-  LOBBY: "phase.lobby",
-  ROLE_REVEAL: "phase.roleReveal",
-  CLUES: "phase.clues",
-  VOTING: "phase.voting",
-  TIE_BREAK: "phase.tieBreak",
-  ELIMINATION: "phase.elimination",
-  MR_WHITE_GUESS: "phase.mrWhiteGuess",
-  RESULTS: "phase.results",
-};
-
-
 
 /** One-shot effects of a view change: haptics, toasts, live-region announcements. Pure on its inputs except for side effects. */
 export function onViewChange(prev: PlayerView | null, next: PlayerView): void {
@@ -215,13 +192,6 @@ export function onViewChange(prev: PlayerView | null, next: PlayerView): void {
     announce(t("elim.you"), true);
   }
   // Forfeits (LEAVE/KICK in-game): toast with the revealed role.
-  if (prev && next.history.length > prev.history.length && next.gameNumber === prev.gameNumber) {
-    for (const h of next.history.slice(prev.history.length)) {
-      if ((h.cause === "LEAVE" || h.cause === "KICK") && h.eliminatedId && h.role) {
-        const p = next.players.find((x) => x.id === h.eliminatedId);
-        if (p) pushToast(t("elim.forfeit", { name: p.name, role: t(ROLE_KEY[h.role]) }));
-      }
-    }
-  }
+  if (prev) for (const f of newForfeits(prev, next)) pushToast(t("elim.forfeit", { name: isolate(f.player.name), role: t(ROLE_KEY[f.role]) }));
   if (next.phase === "RESULTS" && prev?.phase !== "RESULTS" && next.result?.winnerIds.includes(myId)) haptic(HAPTIC.win);
 }

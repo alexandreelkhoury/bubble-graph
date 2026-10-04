@@ -16,10 +16,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,34 +32,27 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
 import app.mishana.tv.R
-import app.mishana.tv.game.Countdown
 import app.mishana.tv.protocol.ClientIntent
 import app.mishana.tv.protocol.HostAdvance
-import app.mishana.tv.protocol.PublicPlayer
+import app.mishana.tv.protocol.voteCandidates
 import app.mishana.tv.protocol.TvView
 import app.mishana.tv.ui.components.ActionPill
 import app.mishana.tv.ui.components.AvatarState
 import app.mishana.tv.ui.components.InitialFocus
 import app.mishana.tv.ui.components.PlayerTile
 import app.mishana.tv.ui.components.TimerBar
-import app.mishana.tv.ui.components.rememberFrameClock
+import app.mishana.tv.ui.components.rememberSecondsLeft
+import app.mishana.tv.ui.components.TimerChip
+import app.mishana.tv.ui.components.InGameScaffold
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishMotion
+import app.mishana.tv.ui.theme.MishShapes
+import app.mishana.tv.ui.theme.MishSpace
 import app.mishana.tv.ui.theme.MishTheme
-
-/** Tile geometry for the vote board (DESIGN TV-06): ≤ 8 candidates 136 × 112 (4 per row), else 120 × 96 (6 per row). */
-data class BoardSpec(val tileW: Dp, val tileH: Dp, val avatar: Dp, val perRow: Int)
-
-fun boardSpec(n: Int) = if (n <= 8) BoardSpec(136.dp, 112.dp, 60.dp, 4) else BoardSpec(120.dp, 96.dp, 50.dp, 6)
-
-/** Vote candidates: the tied players in a re-vote, else every alive player. */
-fun TvView.voteCandidates(): List<PublicPlayer> =
-    if (revote && tieCandidates.isNotEmpty()) tieCandidates.mapNotNull { player(it) } else players.filter { it.alive && !it.left }
 
 /** TV-06 Voting. The check badge means "has voted", never for whom; no tallies until the vote closes. */
 @Composable
@@ -97,7 +89,7 @@ fun VotingScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit
                     stringResource(R.string.vote__revote_among),
                     style = type.caption,
                     color = MishColors.Ink,
-                    modifier = Modifier.background(MishColors.Accent, RoundedCornerShape(50)).padding(horizontal = 14.dp, vertical = 2.dp),
+                    modifier = Modifier.background(MishColors.Accent, MishShapes.pill).padding(horizontal = 14.dp, vertical = 2.dp),
                 )
             }
             Spacer(Modifier.weight(1f))
@@ -119,7 +111,12 @@ fun VotingScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit
             Spacer(Modifier.weight(1f))
             val deadline = view.deadline
             if (deadline != null) {
-                TimerBar(deadline, clockOffsetMs, Modifier.padding(horizontal = 8.dp))
+                // The bar shows the shape of the time left; the seconds next to it are what the room reads (TV-06).
+                Row(Modifier.fillMaxWidth().padding(horizontal = MishSpace.s2), verticalAlignment = Alignment.CenterVertically) {
+                    TimerBar(deadline, clockOffsetMs, Modifier.weight(1f))
+                    Spacer(Modifier.width(MishSpace.s4))
+                    TimerChip(deadline, clockOffsetMs, size = 48.dp)
+                }
             }
         }
     }
@@ -129,9 +126,9 @@ fun VotingScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit
 /** "x / y voted" (rolling), or `vote.tenLeft` in the last 10 s. */
 @Composable
 private fun VoteProgress(view: TvView, clockOffsetMs: Long, modifier: Modifier) {
-    val now by rememberFrameClock()
     val deadline = view.deadline
-    val tenLeft = deadline != null && Countdown.remainingMs(deadline.at, clockOffsetMs, now) in 1..10_000
+    // Changes once (at 10 s), not every frame.
+    val tenLeft = deadline != null && rememberSecondsLeft(deadline, clockOffsetMs).value in 1..10
     Row(modifier, horizontalArrangement = Arrangement.Center) {
         AnimatedContent(
             targetState = if (tenLeft) -1 else view.votesCast,

@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -18,6 +17,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
+import app.mishana.tv.ui.theme.MishShapes
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishMotion
 import app.mishana.tv.ui.theme.MishTheme
@@ -49,7 +49,7 @@ fun Stamp(
     LaunchedEffect(instant) {
         if (!instant && !reduce) scale.animateTo(1f, tween(durationMs, easing = MishMotion.Overshoot))
     }
-    val shape = RoundedCornerShape(16.dp)
+    val shape = MishShapes.row
     Box(
         modifier
             .graphicsLayer {

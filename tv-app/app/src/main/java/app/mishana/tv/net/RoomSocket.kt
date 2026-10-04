@@ -70,8 +70,7 @@ class RoomSocket(
     companion object {
         /** connectTimeout 5 s, readTimeout 0, and no OkHttp pingInterval (the heartbeat is app-level). */
         val defaultClient: OkHttpClient by lazy {
-            OkHttpClient.Builder()
-                .connectTimeout(5, TimeUnit.SECONDS)
+            Http.base.newBuilder()
                 .readTimeout(0, TimeUnit.MILLISECONDS)
                 .build()
         }

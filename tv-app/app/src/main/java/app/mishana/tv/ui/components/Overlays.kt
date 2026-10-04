@@ -3,7 +3,6 @@ package app.mishana.tv.ui.components
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -28,7 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
@@ -64,6 +62,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.input.pointer.pointerInput
+import app.mishana.tv.ui.theme.MishShapes
+import app.mishana.tv.ui.theme.MishSpace
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.mishana.tv.ui.theme.MishColors
@@ -136,22 +137,43 @@ fun Modifier.fullBleed(): Modifier {
 fun Modifier.focusFallback(default: FocusRequester): Modifier {
     val blocked by rememberUpdatedState(LocalFocusBlocked.current)
     val scope = rememberCoroutineScope()
+    val hasFocus = remember { booleanArrayOf(false) }
     return this.onFocusChanged { st ->
+        hasFocus[0] = st.hasFocus
         if (!st.hasFocus && !blocked) {
             scope.launch {
                 delay(48)
-                if (!blocked) runCatching { default.requestFocus() }
+                // Re-check: focus may have come back (or moved in) meanwhile, e.g. an initial focus request.
+                if (!hasFocus[0] && !blocked) default.tryFocus()
             }
         }
     }
 }
 
-/** Traps D-pad focus inside an overlay; Back calls [onBack]. */
+/**
+ * Makes a subtree unreachable by D-pad while [blocked] (an overlay owns focus): focus search can never enter it,
+ * even after the overlay's focused item left composition and focus fell back to the root.
+ */
+fun Modifier.inertWhen(blocked: Boolean): Modifier =
+    this.focusProperties { onEnter = { if (blocked) cancelFocusChange() } }.focusGroup()
+
+/** Swallows every pointer event (air-mouse clicks and hovers) so nothing under a scrim can be clicked through. */
+fun Modifier.blockPointer(): Modifier = this.pointerInput(Unit) {
+    awaitPointerEventScope {
+        while (true) awaitPointerEvent().changes.forEach { it.consume() }
+    }
+}
+
+/**
+ * Traps D-pad focus inside an overlay; Back calls [onBack]. When the focused item leaves composition (a row whose
+ * player left, a menu item that no longer applies), focus returns to [default] instead of falling to the root.
+ */
 @Composable
-fun FocusTrap(onBack: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+fun FocusTrap(onBack: () -> Unit, modifier: Modifier = Modifier, default: FocusRequester? = null, content: @Composable () -> Unit) {
     BackHandler(onBack = onBack)
     Box(
         modifier
+            .then(if (default != null) Modifier.focusFallback(default) else Modifier)
             .focusProperties { onExit = { cancelFocusChange() } }
             .focusGroup(),
     ) {
@@ -159,22 +181,24 @@ fun FocusTrap(onBack: () -> Unit, modifier: Modifier = Modifier, content: @Compo
     }
 }
 
-/** Full-screen scrim + centred `elev.3` card (DESIGN §4.5). */
+/** Full-screen scrim + centred `elev.3` card (DESIGN §4.5). The scrim swallows pointer clicks aimed under it. */
 @Composable
 fun OverlayCard(
     onBack: () -> Unit,
     width: Dp = 520.dp,
+    default: FocusRequester? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(
         Modifier
             .fillMaxSize()
             .fullBleed()
-            .background(MishColors.Scrim),
+            .background(MishColors.Scrim)
+            .blockPointer(),
         contentAlignment = Alignment.Center,
     ) {
-        FocusTrap(onBack = onBack) {
-            val shape = RoundedCornerShape(32.dp)
+        FocusTrap(onBack = onBack, default = default) {
+            val shape = MishShapes.card
             Column(
                 Modifier
                     .width(width)
@@ -202,7 +226,7 @@ fun MishDialog(
     actionKind: ButtonKind = ButtonKind.Danger,
 ) {
     val safe = remember { FocusRequester() }
-    OverlayCard(onBack = onSafe) {
+    OverlayCard(onBack = onSafe, default = safe) {
         Text(
             title,
             style = MishTheme.type.headline,
@@ -220,23 +244,19 @@ fun MishDialog(
             MishButton(actionLabel, onAction, kind = actionKind, minWidth = 180.dp)
         }
     }
-    LaunchedEffect(Unit) {
-        withFrameNanos { }
-        runCatching { safe.requestFocus() }
-    }
+    InitialFocus(safe)
 }
 
-/** Indeterminate spinner (an amber arc; static dots in reduced motion). */
+/** Indeterminate spinner (an amber arc; a full static ring in reduced motion). The angle is read in the layer only. */
 @Composable
-fun Spinner(size: Dp = 28.dp, color: Color = MishColors.Accent, modifier: Modifier = Modifier) {
+fun Spinner(modifier: Modifier = Modifier, size: Dp = 28.dp, color: Color = MishColors.Accent) {
     val reduce = MishTheme.reduceMotion
     val angle = if (reduce) {
-        0f
+        null
     } else {
-        val t = rememberInfiniteTransition(label = "spin")
-        t.animateFloat(0f, 360f, infiniteRepeatable(tween(900, easing = LinearEasing)), label = "a").value
+        rememberInfiniteTransition(label = "spin").animateFloat(0f, 360f, infiniteRepeatable(tween(900, easing = LinearEasing)), label = "a")
     }
-    Canvas(modifier.size(size).graphicsLayer { rotationZ = angle }) {
+    Canvas(modifier.size(size).graphicsLayer { rotationZ = angle?.value ?: 0f }) {
         val sw = this.size.minDimension * 0.14f
         drawArc(color.copy(alpha = 0.2f), 0f, 360f, false, topLeft = Offset(sw / 2, sw / 2),
             size = androidx.compose.ui.geometry.Size(this.size.width - sw, this.size.height - sw), style = Stroke(sw))
@@ -248,7 +268,7 @@ fun Spinner(size: Dp = 28.dp, color: Color = MishColors.Accent, modifier: Modifi
 /** Top status banner (DESIGN §9 `StatusBanner`): connection, "phones asleep". Never focusable. */
 @Composable
 fun StatusBanner(text: String, modifier: Modifier = Modifier, icon: ImageVector? = null, spinner: Boolean = false, trailing: String? = null) {
-    val shape = RoundedCornerShape(50)
+    val shape = MishShapes.pill
     Row(
         modifier
             .shadow(24.dp, shape)
@@ -258,7 +278,7 @@ fun StatusBanner(text: String, modifier: Modifier = Modifier, icon: ImageVector?
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (spinner) Spinner(22.dp)
+        if (spinner) Spinner(size = 22.dp)
         if (icon != null) Icon(icon, contentDescription = null, tint = MishColors.Danger, modifier = Modifier.size(22.dp))
         Text(text, style = MishTheme.type.body, color = MishColors.Text)
         if (trailing != null) Text(trailing, style = MishTheme.type.caption, color = MishColors.TextMuted)
@@ -285,11 +305,11 @@ class ToastState {
     }
 }
 
-/** Toast stack at the bottom start (DESIGN §9 `ToastHost`). */
+/** Toast stack (DESIGN §9 `ToastHost`); shows the newest [maxItems] (≤ 2). */
 @Composable
-fun ToastHost(state: ToastState, modifier: Modifier = Modifier, maxWidth: Dp = 520.dp) {
+fun ToastHost(state: ToastState, modifier: Modifier = Modifier, maxWidth: Dp = 520.dp, maxItems: Int = 2) {
     Column(modifier.widthIn(max = maxWidth), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        for (t in state.items) {
+        for (t in state.items.takeLast(maxItems)) {
             androidx.compose.runtime.key(t.id) {
                 val visible = remember { androidx.compose.animation.core.MutableTransitionState(false) }
                 LaunchedEffect(t.id) {
@@ -304,7 +324,7 @@ fun ToastHost(state: ToastState, modifier: Modifier = Modifier, maxWidth: Dp = 5
                     enter = fadeIn(tween(MishMotion.Base)) + slideInVertically(tween(MishMotion.Base, easing = MishMotion.Decel)) { it / 2 },
                     exit = fadeOut(tween(MishMotion.Base)) + slideOutVertically(tween(MishMotion.Base, easing = MishMotion.Accel)) { it / 2 },
                 ) {
-                    val shape = RoundedCornerShape(18.dp)
+                    val shape = MishShapes.row
                     Row(
                         Modifier
                             .shadow(16.dp, shape)
@@ -313,7 +333,7 @@ fun ToastHost(state: ToastState, modifier: Modifier = Modifier, maxWidth: Dp = 5
                             .semantics { liveRegion = LiveRegionMode.Polite },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Box(Modifier.size(10.dp).background(t.accent, RoundedCornerShape(50)))
+                        Box(Modifier.size(10.dp).background(t.accent, MishShapes.pill))
                         Spacer(Modifier.width(12.dp))
                         Text(t.text, style = MishTheme.type.body, color = MishColors.Text, maxLines = 2)
                     }
@@ -332,6 +352,42 @@ fun CenterStage(modifier: Modifier = Modifier, content: @Composable ColumnScope.
         verticalArrangement = Arrangement.Center,
         content = content,
     )
+}
+
+/**
+ * Full-screen status layout (TV-13b connection lost, TV-13e/g fatal): a 96 dp icon, a displayS title, an optional
+ * body, and one primary action that takes initial focus.
+ */
+@Composable
+fun StatusStage(
+    icon: ImageVector,
+    tint: Color,
+    title: String,
+    body: String?,
+    actionLabel: String,
+    onAction: () -> Unit,
+    modifier: Modifier = Modifier,
+    actionIcon: ImageVector = MishIcons.Refresh,
+) {
+    val action = remember { FocusRequester() }
+    CenterStage(modifier) {
+        Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(96.dp))
+        Spacer(Modifier.height(MishSpace.s5))
+        Text(
+            title,
+            style = MishTheme.type.displayS,
+            color = MishColors.Text,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        )
+        if (body != null) {
+            Spacer(Modifier.height(MishSpace.s2))
+            Text(body, style = MishTheme.type.body, color = MishColors.TextSecondary, textAlign = TextAlign.Center)
+        }
+        Spacer(Modifier.height(MishSpace.s7))
+        MishButton(actionLabel, onAction, Modifier.focusRequester(action), kind = ButtonKind.Primary, icon = actionIcon, minWidth = 240.dp)
+    }
+    InitialFocus(action)
 }
 
 /** A full-width thin divider in `outline` (decorative). */

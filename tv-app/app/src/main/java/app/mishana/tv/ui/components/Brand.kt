@@ -17,6 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.Constraints
+import kotlin.math.roundToInt
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -162,6 +167,9 @@ fun Mark(size: Dp, modifier: Modifier = Modifier) {
 /**
  * `elev.0` screen background: `bg` + a radial `bgGlow` from the top centre (60 % radius), drifting slowly
  * (30 s loop; static in reduced motion). [pattern] adds the faint bang-mark pattern (4 %) used on Home.
+ *
+ * Cost on low-end TV GPUs: the glow and the pattern are recorded once (`drawWithCache`); the drift only moves the
+ * glow's layer (`graphicsLayer` translation read in the layer phase), so nothing recomposes or re-records per frame.
  */
 @Composable
 fun MishBackground(
@@ -172,41 +180,69 @@ fun MishBackground(
 ) {
     val reduce = MishTheme.reduceMotion
     val drift = if (reduce) {
-        0.5f
+        null
     } else {
-        val t = rememberInfiniteTransition(label = "bgDrift")
-        t.animateFloat(0f, 1f, infiniteRepeatable(tween(15_000, easing = LinearEasing), RepeatMode.Reverse), label = "d").value
+        rememberInfiniteTransition(label = "bgDrift")
+            .animateFloat(0f, 1f, infiniteRepeatable(tween(15_000, easing = LinearEasing), RepeatMode.Reverse), label = "d")
     }
+    val glowAlpha = if (base == MishColors.Bg) 1f else 0.5f
     Box(modifier.fillMaxSize().background(base)) {
-        Canvas(Modifier.fillMaxSize()) {
-            val cx = size.width * (0.42f + 0.16f * drift)
-            val r = size.width * 0.6f
-            drawRect(
-                Brush.radialGradient(
-                    colors = listOf(MishColors.BgGlow.copy(alpha = if (base == MishColors.Bg) 1f else 0.5f), Color.Transparent),
-                    center = Offset(cx, -size.height * 0.05f),
-                    radius = r,
-                ),
-            )
-            if (pattern) {
-                val step = 72.dp.toPx()
-                val h = 14.dp.toPx()
-                val c = MishColors.Text.copy(alpha = 0.04f)
-                var row = 0
-                var y = step / 2
-                while (y < size.height + step) {
-                    var x = if (row % 2 == 0) step / 2 else step
-                    while (x < size.width + step) {
-                        // a tiny leaning bang: stem + dot
-                        drawLine(c, Offset(x + h * 0.14f, y - h / 2), Offset(x - h * 0.14f, y + h * 0.25f), strokeWidth = h * 0.28f, cap = StrokeCap.Round)
-                        drawCircle(c, h * 0.16f, Offset(x - h * 0.2f, y + h * 0.62f))
-                        x += step
-                    }
-                    y += step * 0.75f
-                    row++
+        Box(
+            Modifier
+                .fillMaxSize()
+                // A layer wider than the screen (± the drift range), so its edges never show while it moves.
+                .layout { measurable, constraints ->
+                    val extra = (constraints.maxWidth * DRIFT_RANGE / 2).roundToInt()
+                    val placeable = measurable.measure(Constraints.fixed(constraints.maxWidth + 2 * extra, constraints.maxHeight))
+                    layout(constraints.maxWidth, constraints.maxHeight) { placeable.place(-extra, 0) }
                 }
-            }
+                .graphicsLayer {
+                    // Centre moves 0.42 → 0.58 of the screen width (the layer is 1 + DRIFT_RANGE wide).
+                    translationX = ((drift?.value ?: 0.5f) - 0.5f) * DRIFT_RANGE * size.width / (1f + DRIFT_RANGE)
+                }
+                .drawWithCache {
+                    val screenW = size.width / (1f + DRIFT_RANGE)
+                    val brush = Brush.radialGradient(
+                        colors = listOf(MishColors.BgGlow.copy(alpha = glowAlpha), Color.Transparent),
+                        center = Offset(size.width / 2f, -size.height * 0.05f),
+                        radius = screenW * 0.6f,
+                    )
+                    onDrawBehind { drawRect(brush) }
+                },
+        )
+        if (pattern) {
+            Box(
+                Modifier.fillMaxSize().drawWithCache {
+                    val step = 72.dp.toPx()
+                    val h = 14.dp.toPx()
+                    val c = MishColors.Text.copy(alpha = 0.04f)
+                    val stems = Path()
+                    val dots = mutableListOf<Offset>()
+                    var row = 0
+                    var y = step / 2
+                    while (y < size.height + step) {
+                        var x = if (row % 2 == 0) step / 2 else step
+                        while (x < size.width + step) {
+                            // a tiny leaning bang: stem + dot
+                            stems.moveTo(x + h * 0.14f, y - h / 2)
+                            stems.lineTo(x - h * 0.14f, y + h * 0.25f)
+                            dots += Offset(x - h * 0.2f, y + h * 0.62f)
+                            x += step
+                        }
+                        y += step * 0.75f
+                        row++
+                    }
+                    val stroke = Stroke(width = h * 0.28f, cap = StrokeCap.Round)
+                    onDrawBehind {
+                        drawPath(stems, c, style = stroke)
+                        for (d in dots) drawCircle(c, h * 0.16f, d)
+                    }
+                },
+            )
         }
         content()
     }
 }
+
+/** The glow drifts over this fraction of the screen width (0.42 → 0.58). */
+private const val DRIFT_RANGE = 0.16f

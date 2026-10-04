@@ -2,34 +2,35 @@
 import { useState } from "preact/hooks";
 import { LOCALES } from "@mishana/shared/constants";
 import type { Locale } from "@mishana/shared/constants";
-import { locale, setLocale, t } from "../i18n/t";
+import { dirOf, locale, LOCALE_NATIVE_NAME, setLocale, t } from "../i18n/t";
 import { saveLocale } from "../lib/storage";
 import { setVibration, vibrationEnabled } from "../lib/haptics";
 import { Icon } from "./Icon";
 import { ConfirmSheet, Sheet } from "./UI";
 
-const NATIVE: Record<Locale, string> = { en: "English", fr: "Français", ar: "العربية" };
-
 export function switchLocale(l: Locale): void {
   const root = document.documentElement;
   root.classList.add("lang-fade");
-  setLocale(l);
   saveLocale(l);
-  setTimeout(() => root.classList.remove("lang-fade"), 160);
+  void setLocale(l).then(() => setTimeout(() => root.classList.remove("lang-fade"), 160));
 }
 
-export function LangSwitch() {
+/** The language radios; `labelled` adds a small "Language" label (the menu sheet, whose title is "Menu"). */
+export function LangSwitch({ labelled = false }: { labelled?: boolean }) {
   const cur = locale.value;
   return (
-    <div class="langlist" role="radiogroup" aria-label={t("common.language")}>
-      {LOCALES.map((l) => (
-        <button key={l} type="button" role="radio" aria-checked={cur === l} class={`radiorow${cur === l ? " is-selected" : ""}`} onClick={() => switchLocale(l)}>
-          <span class="radiorow__dot" aria-hidden="true" />
-          <span class="radiorow__label"><bdi lang={l} dir={l === "ar" ? "rtl" : "ltr"}>{NATIVE[l]}</bdi></span>
-          {cur === l && <Icon name="check" size={20} class="radiorow__check" />}
-        </button>
-      ))}
-    </div>
+    <>
+      {labelled && <p class="sheet__label" id="lang-label">{t("common.language")}</p>}
+      <div class="langlist" role="radiogroup" aria-label={labelled ? undefined : t("common.language")} aria-labelledby={labelled ? "lang-label" : undefined}>
+        {LOCALES.map((l) => (
+          <button key={l} type="button" role="radio" aria-checked={cur === l} class={`radiorow${cur === l ? " is-selected" : ""}`} onClick={() => switchLocale(l)}>
+            <span class="radiorow__dot" aria-hidden="true" />
+            <span class="radiorow__label"><bdi lang={l} dir={dirOf(l)}>{LOCALE_NATIVE_NAME[l]}</bdi></span>
+            {cur === l && <Icon name="check" size={20} class="radiorow__check" />}
+          </button>
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -38,8 +39,8 @@ export function MenuSheet({ open, onClose, onLeave, joined }: { open: boolean; o
   const [confirm, setConfirm] = useState(false);
   return (
     <>
-      <Sheet open={open && !confirm} onClose={onClose} title={t("common.language")}>
-        <LangSwitch />
+      <Sheet open={open && !confirm} onClose={onClose} title={joined ? t("phone.menu") : t("common.language")}>
+        <LangSwitch labelled={joined} />
         {typeof navigator !== "undefined" && "vibrate" in navigator && (
           <>
             <hr class="sheet__rule" />
@@ -61,7 +62,7 @@ export function MenuSheet({ open, onClose, onLeave, joined }: { open: boolean; o
           </>
         )}
       </Sheet>
-      <ConfirmSheet open={open && confirm} title={t("phone.leaveConfirm")} confirm={t("phone.leave")}
+      <ConfirmSheet open={open && confirm} title={t("phone.leaveConfirm")} body={t("phone.leaveBody")} confirm={t("phone.leaveShort")}
         onConfirm={() => { onLeave?.(); }} onClose={() => { setConfirm(false); onClose(); }} />
     </>
   );

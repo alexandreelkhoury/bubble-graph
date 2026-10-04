@@ -21,8 +21,7 @@ object RoomApi {
     private val JSON = "application/json".toMediaType()
 
     val defaultClient: OkHttpClient by lazy {
-        OkHttpClient.Builder()
-            .connectTimeout(5, TimeUnit.SECONDS)
+        Http.base.newBuilder()
             .readTimeout(10, TimeUnit.SECONDS)
             .callTimeout(15, TimeUnit.SECONDS)
             .build()

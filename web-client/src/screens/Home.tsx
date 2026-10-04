@@ -4,7 +4,7 @@ import { ROOM_CODE_LENGTH } from "@mishana/shared/constants";
 import { t } from "../i18n/t";
 import { cleanCodeInput, navigate } from "../router";
 import { Icon } from "../components/Icon";
-import { Button, Heading } from "../components/UI";
+import { Button, Heading, Wordmark } from "../components/UI";
 import { HAPTIC, haptic } from "../lib/haptics";
 
 export function Home({ prefill, onLang }: { prefill: string; onLang(): void }) {
@@ -13,7 +13,10 @@ export function Home({ prefill, onLang }: { prefill: string; onLang(): void }) {
   const [shakeKey, setShakeKey] = useState(0);
   const input = useRef<HTMLInputElement>(null);
   const go = (c: string): void => { if (c.length === ROOM_CODE_LENGTH) navigate(`/${c}`); };
-  useEffect(() => { input.current?.focus({ preventScroll: true }); }, []);
+  useEffect(() => {
+    input.current?.focus({ preventScroll: true });
+    if (prefill) input.current?.select(); // after "Room not found": typing replaces the old code
+  }, []);
   const onInput = (raw: string): void => {
     const { code: c, rejected } = cleanCodeInput(raw);
     setCode(c);
@@ -30,7 +33,7 @@ export function Home({ prefill, onLang }: { prefill: string; onLang(): void }) {
   return (
     <div class="page">
       <header class="topbar topbar--brand">
-        <div class="topbar__start"><img class="topbar__wordmark" src="/brand/wordmark-latin.svg" alt="Mish Ana!" width={140} height={42} /></div>
+        <div class="topbar__start"><Wordmark class="topbar__wordmark" /></div>
         <div class="topbar__center" />
         <div class="topbar__end">
           <button type="button" class="chipbtn" onClick={onLang} aria-label={t("common.language")}>

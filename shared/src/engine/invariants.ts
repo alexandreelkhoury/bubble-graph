@@ -1,5 +1,6 @@
 import { MAX_PLAYERS } from "../constants";
-import { currentSpeakerId, isInGame } from "./flow";
+import { currentSpeakerId, isInGame, isPlaying, isSpeakingPhase } from "./queries";
+import { countRoles } from "./roles";
 import { nameKey } from "./sanitize";
 import type { DeadlineKind, GameState } from "./types";
 import { checkWinner } from "./win";
@@ -65,25 +66,18 @@ export function assertInvariants(s: GameState): void {
   if (inGame || s.phase === "RESULTS") {
     const pair = s.pair;
     if (!pair || !s.roleCounts) fail(4, "pair/roleCounts null");
-    const c = { civilian: 0, undercover: 0, blank: 0 };
     for (const p of ps) {
       if (p.role === null) fail(4, `player ${p.id} without role`);
-      if (p.role === "CIVILIAN") {
-        c.civilian++;
-        if (p.word?.text !== pair.civilian.text) fail(4, `civilian ${p.id} word`);
-      } else if (p.role === "UNDERCOVER") {
-        c.undercover++;
-        if (p.word?.text !== pair.undercover.text) fail(4, `undercover ${p.id} word`);
-      } else {
-        c.blank++;
-        if (p.word !== null) fail(4, `blank ${p.id} has a word`);
-      }
+      if (p.role === "CIVILIAN" && p.word?.text !== pair.civilian.text) fail(4, `civilian ${p.id} word`);
+      if (p.role === "UNDERCOVER" && p.word?.text !== pair.undercover.text) fail(4, `undercover ${p.id} word`);
+      if (p.role === "BLANK" && p.word !== null) fail(4, `blank ${p.id} has a word`);
     }
+    const c = countRoles(ps);
     const rc = s.roleCounts;
     if (c.civilian !== rc.civilian || c.undercover !== rc.undercover || c.blank !== rc.blank) fail(4, "role counts mismatch");
   }
   // 5
-  if (s.phase === "CLUES" || s.phase === "TIE_BREAK") {
+  if (isSpeakingPhase(s.phase)) {
     if (s.turnIdx < 0 || s.turnIdx >= s.speakingOrder.length) fail(5, `turnIdx=${s.turnIdx}`);
     const sp = byId.get(currentSpeakerId(s) ?? "");
     if (!sp || !sp.alive || sp.spoke) fail(5, `speaker ${sp?.id ?? "?"}`);
@@ -100,7 +94,7 @@ export function assertInvariants(s: GameState): void {
   // 7
   if ((s.phase === "TIE_BREAK" || (s.phase === "VOTING" && s.revote)) && s.tieCandidates.length < 2) fail(7, "tieCandidates < 2");
   // 8
-  if (["ROLE_REVEAL", "CLUES", "VOTING", "TIE_BREAK"].includes(s.phase) && checkWinner(s) !== null) fail(8, "winner while playing");
+  if (isPlaying(s.phase) && checkWinner(s) !== null) fail(8, "winner while playing");
   // 9
   if ((s.phase === "RESULTS") !== (s.result !== null)) fail(9, "RESULTS ⇔ result");
   if (s.phase === "RESULTS" && s.deadline !== null) fail(9, "deadline in RESULTS");
@@ -118,7 +112,7 @@ export function assertInvariants(s: GameState): void {
     if (byId.get(s.guess.playerId)?.role !== "BLANK") fail(12, `guesser ${s.guess.playerId} not BLANK`);
   }
   // 13
-  if (["ROLE_REVEAL", "CLUES", "VOTING", "TIE_BREAK"].includes(s.phase) && ps.filter((p) => p.alive).length < 3) fail(13, "fewer than 3 alive");
+  if (isPlaying(s.phase) && ps.filter((p) => p.alive).length < 3) fail(13, "fewer than 3 alive");
   // 14
   for (const p of ps) {
     if (p.left && p.connected) fail(14, `left player ${p.id} connected`);

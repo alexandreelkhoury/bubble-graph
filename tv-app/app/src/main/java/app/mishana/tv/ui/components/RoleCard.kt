@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.mishana.tv.protocol.Role
+import app.mishana.tv.ui.theme.MishShapes
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishTheme
 import app.mishana.tv.ui.theme.PlayerSwatch
@@ -96,7 +96,7 @@ fun RolePattern(role: Role, modifier: Modifier = Modifier) {
 /** Face-up role card: role colour + pattern + emblem + label in ink (DESIGN §6.2-C step 3). */
 @Composable
 fun RoleCardFace(role: Role, label: String, modifier: Modifier = Modifier, emblemSize: Dp = 120.dp) {
-    val shape = RoundedCornerShape(32.dp)
+    val shape = MishShapes.card
     Box(modifier.clip(shape).background(roleColor(role), shape)) {
         RolePattern(role, Modifier.fillMaxSize())
         Column(
@@ -121,7 +121,7 @@ fun RoleCardFace(role: Role, label: String, modifier: Modifier = Modifier, emble
 @Composable
 fun RoleCardBack(colorId: String, modifier: Modifier = Modifier) {
     val swatch = PlayerSwatch.byId(colorId)
-    val shape = RoundedCornerShape(32.dp)
+    val shape = MishShapes.card
     Box(modifier.clip(shape).background(swatch.color, shape), contentAlignment = Alignment.Center) {
         Icon(AvatarGlyphs.of(swatch.shape), contentDescription = null, tint = swatch.glyph, modifier = Modifier.size(150.dp))
     }

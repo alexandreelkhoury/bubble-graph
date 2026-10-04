@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -27,6 +26,7 @@ import app.mishana.tv.R
 import app.mishana.tv.protocol.Phase
 import app.mishana.tv.protocol.TvView
 import app.mishana.tv.ui.theme.MishColors
+import app.mishana.tv.ui.theme.MishShapes
 import app.mishana.tv.ui.theme.MishTheme
 
 fun phaseNameRes(phase: Phase): Int = when (phase) {
@@ -45,14 +45,21 @@ fun phaseNameRes(phase: Phase): Int = when (phase) {
  * mini room code, alive count and a wifi-off chip (socket degraded) on the end side. It never moves between phases.
  */
 @Composable
-fun TopBar(view: TvView, degraded: Boolean, modifier: Modifier = Modifier, phaseOverride: String? = null) {
+fun TopBar(
+    view: TvView,
+    degraded: Boolean,
+    modifier: Modifier = Modifier,
+    phaseOverride: String? = null,
+    aliveOverride: Int? = null,
+) {
     val type = MishTheme.type
     val start = if (view.phase == Phase.ROLE_REVEAL || view.round == 0) {
         stringResource(R.string.game__label, view.gameNumber)
     } else {
         stringResource(R.string.round__label, view.round) + "  ·  " + (phaseOverride ?: stringResource(phaseNameRes(view.phase)))
     }
-    val alive = view.players.count { it.alive && !it.left }
+    // [aliveOverride]: during the vote reveal the eliminated player still counts (no spoiler before the card flips).
+    val alive = aliveOverride ?: view.players.count { it.alive && !it.left }
     Row(
         modifier.fillMaxWidth().height(48.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -69,7 +76,7 @@ fun TopBar(view: TvView, degraded: Boolean, modifier: Modifier = Modifier, phase
             if (degraded) {
                 Row(
                     Modifier
-                        .background(MishColors.Danger.copy(alpha = 0.18f), RoundedCornerShape(50))
+                        .background(MishColors.Danger.copy(alpha = 0.18f), MishShapes.pill)
                         .padding(horizontal = 10.dp, vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

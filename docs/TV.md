@@ -67,6 +67,8 @@ Release build (production URL from `gradle.properties`):
 ./gradlew :app:assembleRelease      # or :app:bundleRelease for Play (AAB)
 ```
 
+Release builds are minified and resource-shrunk (R8). They **refuse to build** while the server URL is still the `example.workers.dev` placeholder: set `mishana.prodServerUrl` in `gradle.properties` (or pass `-PserverUrl=https://…`) first. The Compose compiler treats the protocol models as stable (`app/compose-stability.conf`), so unchanged parts of a broadcast skip recomposition.
+
 The app appears in the TV launcher's apps row with its banner (`res/drawable/banner.xml`, localised for Arabic in `drawable-ar/`).
 
 ## Emulator (Google TV AVD)
@@ -122,11 +124,22 @@ cd tv-app
 ./gradlew :app:testDebugUnitTest
 ```
 
-Fixtures are read from `../../shared/fixtures` relative to the unit-test working directory (`tv-app/app`). Override with `MISHANA_FIXTURES=/abs/path/to/shared/fixtures`. The tests cover: protocol fixtures (decode + re-encode + deep asserts), client encoding, reconnect policy, heartbeat (virtual time), the WebSocket client (MockWebServer), QR module size, the ViewModel (fake socket + Turbine), countdowns, settings stepping, the action pill, the colour table, and the lobby metrics (the widest room code and a long join host fit the 264 dp column at the smallest fit-to-width size, measured with the bundled Cairo fonts).
+Fixtures are read from `../../shared/fixtures` relative to the unit-test working directory (`tv-app/app`). Override with `MISHANA_FIXTURES=/abs/path/to/shared/fixtures`. The tests cover: protocol fixtures (decode + re-encode + deep asserts), client encoding, reconnect policy, heartbeat (virtual time), the WebSocket client (MockWebServer), QR module size, the ViewModel (fake socket + Turbine), countdowns, settings stepping, the action pill (arming, and the guard that ignores OK presses carried over from a skipped reveal), the colour table, the view diff behind the join / leave / away / forfeit / skipped-turn toasts, the optimistic settings draft (debounce, echo, late echo), the elimination sequence plan (flights, budget, what follows: next round / last chance / end), and the lobby metrics (the widest room code and a long join host fit the 264 dp column at the smallest fit-to-width size, measured with the bundled Cairo fonts).
 
 Full CI-style check on a Mac: `./gradlew :app:testDebugUnitTest :app:assembleDebug`.
 
 Before the first Mac build, check the layouts listed in DESIGN §11 on a device or emulator: 12 players in English and Arabic, at the 1.3× system font scale, on TV-02 (lobby), TV-04 (role reveal), TV-05 (clues: order strip), TV-06 (vote grid) and TV-11 (results). These sandboxes had no Android SDK, so no screenshot tests (Paparazzi/Roborazzi) run here.
+
+## Remote-only checks on a device
+
+The app must be fully usable with the remote alone (D-pad, OK, Back; sometimes an air-mouse). There is no instrumented test suite yet (it needs the Android SDK and Google Maven, which the authoring sandboxes did not have); before a release, walk through these on a TV or a Google TV AVD:
+
+- Every screen has a visible focused element on arrival, and Up/Down/Left/Right never leave focus on nothing. Back works everywhere: Lobby → exit; Settings rows → categories → Lobby; in a game or on Results → pause menu; inside any dialog or panel → closes it.
+- Overlays keep focus inside: open the pause menu, a kick or end-game confirm, the language list, the packs/difficulty panels, and the connection-lost screen; the D-pad must never reach the screen behind. Let a listed player leave while the pause menu's Players… page or a kick confirm is open: focus stays in the overlay and the confirm closes.
+- Focus comes back to where it was: pause menu → Players… → Back returns to Players…; cancelling a kick returns to that player's row; cancelling the guess override returns to its button; pausing from the verdict's Continue pill and resuming returns to Continue. Down on the last Settings row stays put (it never jumps to a lower category).
+- Mash OK through the vote reveal into the next clue turn: the new speaker's turn is never skipped (the pill ignores OK briefly after a phase or speaker change). On Results, a double OK does not trigger Play again before the summary has shown. On the Results summary, players with equal totals share a rank (every rank-1 row has the trophy), and 4 score rows stay fully visible in English and Arabic.
+- Air-mouse: hovering a control focuses it; clicks on a dimmed area under any dialog or scrim do nothing; both Settings chevrons step values. **Check that a pointer click (BUTTON_PRIMARY) on tv-material Surfaces activates them** (buttons, tiles, rows). If it does not on your remote, add a tap handler next to `MishFocusSurface` (one place) rather than per screen.
+- Performance: on a low-end stick (e.g. Chromecast HD), the idle lobby and the clue timer should not keep the GPU busy (no per-frame recomposition: check with the Layout Inspector's recomposition counts). A baseline profile (`androidx.baselineprofile` + a Macrobenchmark walking Home → Lobby → Reveal → Clues → Vote → Elimination → Results with D-pad events) is the next step for first-launch smoothness.
 
 ## Debug server override
 

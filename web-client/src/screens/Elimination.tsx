@@ -1,23 +1,40 @@
-// PH-08b Elimination: "Look at the TV!" during the TV's head start (≈3 s), then the outcome, tally and deadline bar.
+// PH-08b Elimination: "Look at the TV!" during the TV's head start (≈3 s), then the outcome, tally and the
+// countdown to what comes next. A voted-out Blank who may guess gets "Last chance coming…" instead of "You're out".
 import type { Me, PlayerView } from "@mishana/shared/protocol";
-import { t } from "../i18n/t";
-import { ROLE_WAS_KEY } from "../lib/roles";
+import { isolate, t } from "../i18n/t";
+import { ROLE_WAS_KEY } from "../lib/keys";
+import { afterElimination, byId, TV_VOTE_REVEAL_MS } from "../lib/view";
 import { Avatar, avatarState } from "../components/PlayerChip";
 import { RoleChip, RoleEmblem } from "../components/Role";
-import { TimerBar, useDeadline } from "../components/Timer";
+import { TimerBar, useDeadline, useDeadlineSelect } from "../components/Timer";
 import { Heading, Slot } from "../components/UI";
 import { Icon } from "../components/Icon";
-import { byId, phaseLine } from "./Clues";
+import { phaseLine } from "./Clues";
 
-export const TV_HEAD_START_MS = 3000;
+/**
+ * The calm (non-warning) bar under the outcome, labelled with what comes next (afterElimination): "Next round in…",
+ * "Last chance coming…" when the voted-out Blank may guess, or no label when the game ends or returns to the lobby.
+ */
+function NextUp({ view }: { view: PlayerView }) {
+  const d = useDeadline(view.deadline);
+  if (!d) return null;
+  const next = afterElimination(view);
+  return (
+    <div class="nextround">
+      <TimerBar deadline={view.deadline} showSeconds={false} tone="neutral" />
+      {next === "NEXT_ROUND" && <p class="nextround__label tnum">{t("elim.nextRound", { count: d.secs })}</p>}
+      {next === "LAST_CHANCE" && <p class="nextround__label nextround__label--blank">{t("elim.lastChance")}</p>}
+    </div>
+  );
+}
 
 export function Elimination({ view, me }: { view: PlayerView; me: Me | null }) {
-  const d = useDeadline(view.deadline);
-  const elapsed = view.deadline && d ? view.deadline.durationMs - d.ms : TV_HEAD_START_MS;
+  // Re-renders once when the head start ends, not on every tick.
+  const headStart = useDeadlineSelect(view.deadline, (c) => view.deadline!.durationMs - c.ms < TV_VOTE_REVEAL_MS, false);
   const lv = view.lastVote;
-  const out = view.eliminated ? byId(view, view.eliminated.playerId) : undefined;
+  const out = byId(view, view.eliminated?.playerId);
   const isMe = me !== null && out?.id === me.id;
-  if (elapsed < TV_HEAD_START_MS && !isMe) {
+  if (headStart && !isMe) {
     return (
       <main class="screen screen--looktv">
         <p class="eyebrow">{phaseLine(view)}</p>
@@ -30,10 +47,17 @@ export function Elimination({ view, me }: { view: PlayerView; me: Me | null }) {
     );
   }
   const maxVotes = Math.max(1, ...(lv?.tally.map((x) => x.voterIds.length) ?? [1]));
+  const lastChance = isMe && view.eliminated?.role === "BLANK" && view.settings.blankGuess;
   return (
     <main class="screen screen--elim">
       <p class="eyebrow">{phaseLine(view)}</p>
-      {isMe && view.eliminated ? (
+      {lastChance ? (
+        <div class="outpanel outpanel--me outpanel--lastchance">
+          <span class="outpanel__icon outpanel__icon--blank"><RoleEmblem role="BLANK" size={64} /></span>
+          <Heading title={t("elim.lastChance")} />
+          <p class="sub">{t("elim.blankGetReady")}</p>
+        </div>
+      ) : isMe && view.eliminated ? (
         <div class="outpanel outpanel--me">
           <span class="outpanel__icon"><Icon name="door-out" size={56} /></span>
           <Heading title={t("elim.you")} />
@@ -44,15 +68,15 @@ export function Elimination({ view, me }: { view: PlayerView; me: Me | null }) {
         <div class={`outcome outcome--${view.eliminated.role.toLowerCase()}`}>
           {lv?.outcome === "RANDOM" && <p class="banner banner--accent"><Icon name="dice" size={20} />{t("elim.randomPick")}</p>}
           <Avatar color={out.color} size={72} state={avatarState(out)} role={view.eliminated.role} />
-          <Heading title={t("elim.eliminated", { name: "⁨" + out.name + "⁩" })} />
-          <p class="outcome__role"><RoleEmblem role={view.eliminated.role} size={28} />{t(ROLE_WAS_KEY[view.eliminated.role], { name: "⁨" + out.name + "⁩" })}</p>
+          <Heading title={t("elim.eliminated", { name: isolate(out.name) })} />
+          <p class="outcome__role"><RoleEmblem role={view.eliminated.role} size={28} />{t(ROLE_WAS_KEY[view.eliminated.role], { name: isolate(out.name) })}</p>
         </div>
       ) : (
         <div class="outcome outcome--none">
           <span class="outcome__stamp">{t(lv && lv.tally.length === 0 ? "vote.nobodyVoted" : "elim.noElimination")}</span>
         </div>
       )}
-      {lv && (lv.tally.length > 0 || lv.abstainIds.length > 0) && (
+      {!lastChance && lv && (lv.tally.length > 0 || lv.abstainIds.length > 0) && (
         <section class="card tally" aria-label={t("vote.votesIn")}>
           {lv.tally.map((x) => {
             const p = byId(view, x.targetId);
@@ -77,7 +101,7 @@ export function Elimination({ view, me }: { view: PlayerView; me: Me | null }) {
           )}
         </section>
       )}
-      <TimerBar deadline={view.deadline} showSeconds={false} />
+      {lastChance ? <TimerBar deadline={view.deadline} showSeconds={false} tone="neutral" /> : <NextUp view={view} />}
     </main>
   );
 }

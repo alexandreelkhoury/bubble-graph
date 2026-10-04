@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { SETTINGS_BOUNDS } from "../../src/constants";
 import { applySettingsPatch, DEFAULT_SETTINGS, validateSettings } from "../../src/engine/settings";
 import type { SettingsPatch } from "../../src/engine/types";
-import { TEST_CATALOG } from "../support/test-catalog";
+import { TEST_CATALOG } from "../../src/testing";
 
 const apply = (patch: SettingsPatch, base = DEFAULT_SETTINGS) => applySettingsPatch(base, patch, TEST_CATALOG);
 

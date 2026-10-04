@@ -1,11 +1,10 @@
 // Engine mode (§13.1): seeded bot games straight through `reduce`, invariants + leak checks after every step.
 import type { Catalog } from "@mishana/shared/engine";
-import { effectiveRoleCounts } from "@mishana/shared/engine";
-// SPEC-GAP: the bot driver and the leak checker are shared with the @mishana/shared tests (one implementation),
-// imported by relative path because SPEC §2.5 exports no test-support entry point.
-import { playGame } from "../../../shared/test/support/bots";
-import { findLeaks } from "../../../shared/test/support/leak-check";
+import { countRoles, effectiveRoleCounts } from "@mishana/shared/engine";
+// The bot driver and the leak checker are the ones the @mishana/shared tests use (one implementation).
+import { findLeaks, playGame } from "@mishana/shared/testing";
 import type { SimArgs } from "./args";
+import { formatColumns } from "./format";
 
 export interface RowStats {
   n: number;
@@ -38,12 +37,7 @@ export function runEngineMode(catalog: Catalog, args: SimArgs, log: (line: strin
           (prev, action, res) => {
             if (action.type === "START" && res.ok) {
               const expected = effectiveRoleCounts(prev.settings, prev.players.length);
-              const actual = { civilian: 0, undercover: 0, blank: 0 };
-              for (const p of res.state.players) {
-                if (p.role === "CIVILIAN") actual.civilian++;
-                else if (p.role === "UNDERCOVER") actual.undercover++;
-                else if (p.role === "BLANK") actual.blank++;
-              }
+              const actual = countRoles(res.state.players);
               if (JSON.stringify(actual) !== JSON.stringify(expected) || JSON.stringify(res.state.roleCounts) !== JSON.stringify(expected)) {
                 throw new Error("role-count mismatch");
               }
@@ -78,7 +72,5 @@ export function formatTable(rows: RowStats[]): string {
     String(r.n), String(r.games), r.games ? (r.rounds / r.games).toFixed(2) : "-",
     pct(r.civilians, r.games), pct(r.infiltrators, r.games), pct(r.blank, r.games), String(r.blank), String(r.stalemates), String(r.failures.length),
   ]);
-  const widths = header.map((h, i) => Math.max(h.length, ...lines.map((l) => (l[i] as string).length)));
-  const fmt = (cells: string[]): string => cells.map((c, i) => c.padStart(widths[i] as number)).join("  ");
-  return [fmt(header), widths.map((w) => "-".repeat(w)).join("  "), ...lines.map(fmt)].join("\n");
+  return formatColumns(header, lines);
 }

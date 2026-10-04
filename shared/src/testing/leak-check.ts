@@ -1,14 +1,15 @@
 // Secret-leak checker (§5.4, §14.1). Used by projection/leak.test.ts and tools/sim.
-import type { Catalog } from "../../src/engine/catalog";
-import type { GameState } from "../../src/engine/types";
-import { projectForPlayer, projectForTv } from "../../src/projection/project";
+import type { Catalog } from "../engine/catalog";
+import type { GameState } from "../engine/types";
+import { projectForPlayer, projectForTv } from "../projection/project";
 
 // Enum-valued keys whose values can never be secret words (guards against accidental collisions with real words).
 const ENUM_KEYS = new Set([
   "color", "phase", "kind", "status", "outcome", "cause", "role", "revealedRole", "winRule", "roleMode", "tieBreak",
   "wordLocale", "locale", "ageRating", "winner", "startBlocker",
 ]);
-const FORBIDDEN_KEYS = ["votes", "guessLog", "pair", "alt", "rngState", "usedPairKeys", "deadlineSeq", "disconnectedAt", "joinedAt"];
+/** State-only keys that must never appear in any projected view (§5.4). */
+export const FORBIDDEN_KEYS: readonly string[] = ["votes", "guessLog", "pair", "alt", "rngState", "usedPairKeys", "deadlineSeq", "disconnectedAt", "joinedAt"];
 
 type Visit = (path: readonly string[], key: string, value: string) => void;
 

@@ -5,6 +5,7 @@ import { ROOM_CODE_REGEX, WS_PATH_PREFIX } from "@mishana/shared/constants";
 import type { Env } from "./env";
 import { createRoom, healthz, httpError } from "./http";
 import { originCheck } from "./origin";
+import { clientIp, notFound } from "./request";
 import { CID_REGEX } from "./room-core";
 import { randomBytes } from "./tokens";
 
@@ -38,9 +39,9 @@ async function fetch(req: Request, env: Env): Promise<Response> {
   }
 
   if (path.startsWith("/parties/")) {
-    if (req.headers.get("Upgrade")?.toLowerCase() !== "websocket") return new Response("Not found", { status: 404 });
+    if (req.headers.get("Upgrade")?.toLowerCase() !== "websocket") return notFound();
     if (!path.startsWith(WS_PATH_PREFIX) || !ROOM_CODE_REGEX.test(path.slice(WS_PATH_PREFIX.length))) {
-      return new Response("Not found", { status: 404 });
+      return notFound();
     }
     // SPEC-GAP: §6.2 closes a bad `cid` with 4000 from inside the DO; rejecting it here (400 before the
     // upgrade) also keeps the DO out of it and avoids the late onConnect close seen on wrangler dev.
@@ -49,10 +50,10 @@ async function fetch(req: Request, env: Env): Promise<Response> {
     if (pk === null || !PK_REGEX.test(pk) || cid === null || !CID_REGEX.test(cid)) {
       return new Response("Bad request", { status: 400 });
     }
-    const { success } = await env.CONNECT_LIMITER.limit({ key: req.headers.get("CF-Connecting-IP") ?? "local" });
+    const { success } = await env.CONNECT_LIMITER.limit({ key: clientIp(req) });
     if (!success) return new Response("Too many requests", { status: 429 });
     const res = await routePartykitRequest(req, env, { onBeforeConnect: (r) => originCheck(r, env.ALLOWED_ORIGINS) });
-    return res ?? new Response("Not found", { status: 404 });
+    return res ?? notFound();
   }
 
   return env.ASSETS.fetch(req);

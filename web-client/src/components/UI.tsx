@@ -4,7 +4,9 @@ import type { ComponentChildren, JSX } from "preact";
 import { COLORS } from "@mishana/shared/constants";
 import type { ColorId } from "@mishana/shared/constants";
 import { assertiveMsg, menuOpen, politeMsg, toasts } from "../state/store";
-import { t, tSplit } from "../i18n/t";
+import { BRAND } from "@mishana/shared/brand";
+import { locale, t, tSplit } from "../i18n/t";
+import { reduced } from "../lib/motion";
 import type { MessageKey, Params } from "../i18n/t";
 import { Icon } from "./Icon";
 import { Avatar } from "./PlayerChip";
@@ -20,8 +22,11 @@ export function Button({ kind = "primary", class: cls, children, ...rest }: { ki
   );
 }
 
-/** Bottom sheet (`radius.xl` top corners, drag handle, `elev.3`). Escape or the scrim closes it. */
-export function Sheet({ open, onClose, title, children, labelledBy }: { open: boolean; onClose(): void; title?: string; children: ComponentChildren; labelledBy?: string }) {
+/**
+ * Bottom sheet (`radius.xl` top corners, drag handle, `elev.3`). Escape or the scrim closes it; `closable` adds a sticky
+ * header with a 48 px close button, and `footer` a sticky bottom action (full-height sheets must never trap a phone).
+ */
+export function Sheet({ open, onClose, title, children, labelledBy, closable = false, footer }: { open: boolean; onClose(): void; title?: string; children: ComponentChildren; labelledBy?: string; closable?: boolean; footer?: ComponentChildren }) {
   const panel = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -38,10 +43,21 @@ export function Sheet({ open, onClose, title, children, labelledBy }: { open: bo
   return (
     <div class="sheet-root">
       <div class="scrim" onClick={onClose} />
-      <div class="sheet" role="dialog" aria-modal="true" aria-label={title} aria-labelledby={labelledBy} ref={panel}>
-        <span class="sheet__handle" aria-hidden="true" />
-        {title && <h2 class="sheet__title">{title}</h2>}
+      <div class={`sheet${closable ? " sheet--full" : ""}`} role="dialog" aria-modal="true" aria-label={title} aria-labelledby={labelledBy} ref={panel}>
+        {closable ? (
+          <header class="sheet__head">
+            <span class="sheet__handle" aria-hidden="true" />
+            <h2 class="sheet__title">{title}</h2>
+            <button type="button" class="iconbtn sheet__close" aria-label={t("common.close")} onClick={onClose}><Icon name="x" /></button>
+          </header>
+        ) : (
+          <>
+            <span class="sheet__handle" aria-hidden="true" />
+            {title && <h2 class="sheet__title">{title}</h2>}
+          </>
+        )}
         {children}
+        {footer && <div class="sheet__foot">{footer}</div>}
       </div>
     </div>
   );
@@ -84,19 +100,25 @@ export function LiveRegions() {
   );
 }
 
-/** The room code is always LTR and isolated, spaced in two pairs: KX QP. */
+/** The room code is always LTR and isolated, one run ("EJJE", as on the TV and in the join heading). */
 export function CodeChip({ code }: { code: string }) {
   return (
     <span class="codechip code" dir="ltr" aria-label={`${t("lobby.roomCode")} ${code.split("").join(" ")}`}>
-      {code.slice(0, 2)}<span class="codechip__gap" />{code.slice(2)}
+      <span class="codechip__text">{code}</span>
     </span>
   );
+}
+
+/** The wordmark: the Arabic one on Arabic surfaces (DESIGN §1.3), else the Latin one. */
+export function Wordmark({ class: cls }: { class?: string }) {
+  const ar = locale.value === "ar";
+  return <img class={cls} src={ar ? "/brand/wordmark-ar.svg" : "/brand/wordmark-latin.svg"} alt={ar ? BRAND.nameAr : BRAND.name} height={42} />;
 }
 
 export function TopBar({ code, name, color, host = false, state = "normal", showLang = false, onLang }: { code: string | null; name?: string; color?: ColorId; host?: boolean; state?: AvatarState; showLang?: boolean; onLang?(): void }) {
   return (
     <header class="topbar">
-      <div class="topbar__start">{code ? <CodeChip code={code} /> : <img class="topbar__wordmark" src="/brand/wordmark-latin.svg" alt="Mish Ana!" width={140} height={42} />}</div>
+      <div class="topbar__start">{code ? <CodeChip code={code} /> : <Wordmark class="topbar__wordmark" />}</div>
       <div class="topbar__center">
         {name && color && (
           <span class="topbar__me">
@@ -121,12 +143,13 @@ export function TopBar({ code, name, color, host = false, state = "normal", show
   );
 }
 
-const reducedMotion = (): boolean => typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+/** Token hexes for the few places that need a colour in JS (confetti, the QR modules); keep in sync with tokens.css. */
+export const PALETTE = { text: "#FFF7EC", ink: "#120A1F", accent: "#FFC23D", primary: "#FF3D8B", blank: "#ECE6F5" } as const;
 
 /** A one-shot confetti burst (none with reduced motion). */
 export function Confetti({ colors, count = 36 }: { colors?: string[]; count?: number }) {
-  if (reducedMotion()) return null;
-  const palette = colors ?? ["#FFF7EC", "#FFC23D", "#FF3D8B", ...COLORS.slice(0, 4).map((c) => c.hex)];
+  if (reduced()) return null;
+  const palette = colors ?? [PALETTE.text, PALETTE.accent, PALETTE.primary, ...COLORS.slice(0, 4).map((c) => c.hex)];
   const bits = Array.from({ length: count }, (_, i) => {
     const x = (i * 37) % 100;
     const delay = (i % 9) * 60;

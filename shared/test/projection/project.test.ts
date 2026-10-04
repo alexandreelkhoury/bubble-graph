@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { projectForPlayer, projectForTv, projectPublic } from "../../src/projection/project";
 import { PlayerViewSchema, TvViewSchema } from "../../src/protocol/views";
-import { inClues, lobby, P, pid } from "../support/helpers";
-import { TEST_CATALOG } from "../support/test-catalog";
+import { inClues, lobby, P, pid, TEST_CATALOG } from "../../src/testing";
 
 const KEYS = [
   "roomCode", "joinUrl", "phase", "gameNumber", "round", "settings", "players", "hostPlayerId", "roleCounts", "canStart",

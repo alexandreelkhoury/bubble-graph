@@ -25,7 +25,9 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8 matters for Compose on low-end TV SoCs (inlining, dead group removal); resources shrink with it.
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -41,13 +43,29 @@ android {
     }
 
     testOptions {
-        // GameViewModelTest constructs an Application; android.jar stubs return defaults instead of throwing.
+        // GameViewModelTest constructs an Application (SPEC §9.8: AndroidViewModel); android.jar stubs return defaults.
         unitTests.isReturnDefaultValues = true
     }
 
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+}
+
+// The protocol models are immutable (vals, read-only lists from kotlinx.serialization): declaring them stable lets
+// screens skip sub-trees whose part of the broadcast did not change.
+composeCompiler {
+    stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose-stability.conf"))
+}
+
+// A release must never ship the placeholder server (SPEC §9.4): set mishana.prodServerUrl or -PserverUrl.
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    val url = serverUrl // a local copy: the task action captures no script object
+    doFirst {
+        check(!url.contains("example.")) {
+            "Release build with the placeholder server URL ($url): set mishana.prodServerUrl in gradle.properties or pass -PserverUrl=https://…"
         }
     }
 }

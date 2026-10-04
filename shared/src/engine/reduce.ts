@@ -1,22 +1,12 @@
 import { COLORS, GUESS_MAX_CHARS, LOCALES, MAX_PLAYERS, SEAT_HOLD_MS, VERDICT_HOLD_MS } from "../constants";
 import type { Locale } from "../constants";
-import type { Draft } from "./flow";
-import {
-  checkAllReady,
-  currentSpeakerId,
-  expire,
-  findPlayer,
-  finishTurn,
-  forfeit,
-  inferKind,
-  isInGame,
-  markLeft,
-  onDisconnect,
-  removePlayer,
-  resetToLobby,
-  setDeadline,
-  startGame,
-} from "./flow";
+import { forfeit, onDisconnect } from "./departures";
+import type { Draft } from "./draft";
+import { setDeadline } from "./draft";
+import { resetToLobby, startGame } from "./lifecycle";
+import { markLeft, removePlayer } from "./membership";
+import { currentSpeakerId, findPlayer, inferKind, isInGame, isSpeakingPhase } from "./queries";
+import { checkAllReady, expire, finishTurn, maybeCloseVote } from "./turns";
 import { isGuessCorrect } from "./normalize";
 import { createRng } from "./rng";
 import { nameKey, sanitizeName } from "./sanitize";
@@ -104,7 +94,7 @@ function applyIntent(d: Draft, action: Extract<Action, { by: { kind: "tv" } | { 
       return null;
     }
     case "CLUE_DONE": {
-      if (phase !== "CLUES" && phase !== "TIE_BREAK") return "WRONG_PHASE";
+      if (!isSpeakingPhase(phase)) return "WRONG_PHASE";
       if (!me || currentSpeakerId(s) !== me.id) return "NOT_YOUR_TURN";
       finishTurn(d);
       return null;
@@ -112,7 +102,9 @@ function applyIntent(d: Draft, action: Extract<Action, { by: { kind: "tv" } | { 
     case "CAST_VOTE": {
       if (phase !== "VOTING") return "WRONG_PHASE";
       if (!me || !me.alive) return "NOT_ALIVE";
-      return castVote(d, me.id, action.targetId);
+      const err = castVote(d, me.id, action.targetId);
+      if (err === null) maybeCloseVote(d);
+      return err;
     }
     case "SUBMIT_GUESS": {
       if (phase !== "MR_WHITE_GUESS") return "WRONG_PHASE";

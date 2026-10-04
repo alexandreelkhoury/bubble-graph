@@ -114,6 +114,12 @@ describe("escaping", () => {
     expect(escapeLiteral("a\nb")).toBe("a\\nb");
   });
 
+  it("passes localized typographic quotes and no-break spaces through unchanged (guess.quoted)", () => {
+    expect(convert("“{text}”", ["text"])).toBe("“%1$s”");
+    expect(convert("« {text} »", ["text"])).toBe("« %1$s »");
+    expect(convert("«{text}»", ["text"])).toBe("«%1$s»");
+  });
+
   it("prefixes a leading @ or ?", () => {
     expect(convert("@home", [])).toBe("\\@home");
     expect(convert("?why", [])).toBe("\\?why");

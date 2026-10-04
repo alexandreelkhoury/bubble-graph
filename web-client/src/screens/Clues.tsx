@@ -1,9 +1,11 @@
 // PH-05 (someone else's turn, incl. next up), PH-06 (your turn), PH-09 (tie-break), PH-10 (eliminated / spectator).
 import { Fragment } from "preact";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import type { Me, PlayerView, PublicPlayer } from "@mishana/shared/protocol";
 import { t } from "../i18n/t";
-import { act, PHASE_KEY } from "../state/session";
+import { act } from "../state/session";
+import { PHASE_KEY } from "../lib/keys";
+import { byId, playersOf, tiedWithTally } from "../lib/view";
 import { Avatar, avatarState, colorVars, LIGHT_GLYPH } from "../components/PlayerChip";
 import { PeekButton } from "../components/HoldToReveal";
 import { RoleChip } from "../components/Role";
@@ -12,27 +14,55 @@ import { Heading, Slot } from "../components/UI";
 import { Icon } from "../components/Icon";
 
 export const DONE_GUARD_MS = 1500;
+/** PH-09: the full tie card shows this long, then folds into a one-line chip so the speaker stays the hero. */
+export const TIE_CARD_MS = 3000;
 
 export function phaseLine(view: PlayerView): string {
   return view.round > 0 ? `${t("round.label", { count: view.round })} · ${t(PHASE_KEY[view.phase])}` : t(PHASE_KEY[view.phase]);
 }
 
-export function byId(view: PlayerView, id: string | null): PublicPlayer | undefined {
-  return id === null ? undefined : view.players.find((p) => p.id === id);
+/** Which inline edges of a sideways-scrolling box hide content (RTL scrollLeft runs 0 → negative). */
+function useOverflowEdges(ref: { current: HTMLElement | null }, dep: unknown): { start: boolean; end: boolean } {
+  const [edges, setEdges] = useState({ start: false, end: false });
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = (): void => {
+      const x = Math.abs(el.scrollLeft);
+      const next = { start: x > 1, end: x + el.clientWidth < el.scrollWidth - 1 };
+      setEdges((p) => (p.start === next.start && p.end === next.end ? p : next));
+    };
+    measure();
+    el.addEventListener("scroll", measure, { passive: true });
+    window.addEventListener("resize", measure);
+    return () => { el.removeEventListener("scroll", measure); window.removeEventListener("resize", measure); };
+  }, [dep]);
+  return edges;
 }
 
+/**
+ * The speaking order. It scrolls sideways with long names / many players: it follows the current speaker, and a soft
+ * edge appears only on a side that hides players. You are marked by "You" in place of your name (the underline is
+ * the only highlight: the current speaker).
+ */
 export function OrderStrip({ view, myId }: { view: PlayerView; myId: string | null }) {
-  const order = view.speakingOrder.map((id) => byId(view, id)).filter((p): p is PublicPlayer => !!p);
+  const order = playersOf(view, view.speakingOrder);
+  const list = useRef<HTMLOListElement>(null);
+  const edges = useOverflowEdges(list, order.length);
+  useEffect(() => {
+    list.current?.querySelector<HTMLElement>(".is-current")?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  }, [view.currentSpeakerId]);
   return (
-    <ol class="orderstrip" aria-label={t("clues.nowSpeaking")}>
+    <ol class={`orderstrip${edges.start ? " fade-start" : ""}${edges.end ? " fade-end" : ""}`} ref={list} aria-label={t("clues.nowSpeaking")}>
       {order.map((p, i) => {
         const cur = p.id === view.currentSpeakerId;
+        const you = p.id === myId;
         return (
-          <li key={p.id} class={`orderstrip__item${cur ? " is-current" : ""}${p.spoke && !cur ? " is-done" : ""}${p.id === myId ? " is-you" : ""}`} aria-current={cur ? "step" : undefined}>
+          <li key={p.id} class={`orderstrip__item${cur ? " is-current" : ""}${p.spoke && !cur ? " is-done" : ""}${you ? " is-you" : ""}`} aria-current={cur ? "step" : undefined}>
             {i > 0 && <Icon name="chevron-forward" size={14} class="orderstrip__chev" />}
             <span class="orderstrip__who">
               <Avatar color={p.color} size={36} state={avatarState(p)} check={p.spoke && !cur} speaking={cur} />
-              <bdi class="orderstrip__name">{p.name}</bdi>
+              {you ? <span class="orderstrip__name">{t("common.you")}<span class="sr-only"> (<bdi>{p.name}</bdi>)</span></span> : <bdi class="orderstrip__name">{p.name}</bdi>}
             </span>
           </li>
         );
@@ -42,28 +72,55 @@ export function OrderStrip({ view, myId }: { view: PlayerView; myId: string | nu
 }
 
 /** PH-09 tie card: the tied players with their tallies. */
-export function TieCard({ view, myId }: { view: PlayerView; myId: string | null }) {
-  const tied = view.tieCandidates.map((id) => byId(view, id)).filter((p): p is PublicPlayer => !!p);
-  const tally = (id: string): number => view.lastVote?.tally.find((x) => x.targetId === id)?.voterIds.length ?? 0;
+export function TieCard({ view }: { view: PlayerView }) {
   return (
     <section class="tiecard stamp-in" aria-label={t("tie.title")}>
       <p class="tiecard__stamp">{t("stamp.tie")}</p>
       <div class="tiecard__row">
-        {tied.map((p, i) => (
+        {tiedWithTally(view).map(({ player: p, votes }, i) => (
           <Fragment key={p.id}>
-            {i > 0 && <span class="tiecard__vs" aria-hidden="true">vs</span>}
+            {i > 0 && <span class="tiecard__vs" aria-hidden="true">{t("tie.vs")}</span>}
             <span class="tiecard__p">
               <Avatar color={p.color} size={48} state={avatarState(p)} />
               <bdi>{p.name}</bdi>
-              <span class="tiecard__n num">{tally(p.id)}</span>
+              <span class="tiecard__n num">{votes}</span>
             </span>
           </Fragment>
         ))}
       </div>
       <p class="tiecard__explain">{t("tie.explain")}</p>
-      {myId && view.tieCandidates.includes(myId) && <p class="banner banner--primary">{t("tie.inTie")}</p>}
     </section>
   );
+}
+
+/** The folded tie card: "TIE · Rami vs Sam" in the eyebrow row. */
+function TieChip({ view }: { view: PlayerView }) {
+  return (
+    <p class="tiechip" aria-label={t("tie.title")}>
+      <span class="tiechip__stamp">{t("stamp.tie")}</span>
+      {playersOf(view, view.tieCandidates).map((p, i) => (
+        <Fragment key={p.id}>
+          {i > 0 && <span class="tiechip__vs">{t("tie.vs")}</span>}
+          <span class="tiechip__p"><Avatar color={p.color} size={20} state={avatarState(p)} /><bdi>{p.name}</bdi></span>
+        </Fragment>
+      ))}
+    </p>
+  );
+}
+
+/** Tie rounds whose full card was already shown (the screen remounts around your own turn). */
+const tieCardsShown = new Set<string>();
+
+function useTieCardOpen(view: PlayerView): boolean {
+  const key = `${view.roomCode}:${view.gameNumber}:${view.round}`;
+  const tie = view.phase === "TIE_BREAK";
+  const [open, setOpen] = useState(() => tie && !tieCardsShown.has(key));
+  useEffect(() => {
+    if (!open) return;
+    const id = setTimeout(() => { tieCardsShown.add(key); setOpen(false); }, TIE_CARD_MS);
+    return () => clearTimeout(id);
+  }, [open]);
+  return tie && open;
 }
 
 /** PH-10: you're out; follow along passively. */
@@ -90,6 +147,10 @@ export function OutPanel({ view, me }: { view: PlayerView; me: Me }) {
   );
 }
 
+/**
+ * PH-06. Identical for every role (the most exposed screen in the room): the Blank's coaching lives in the private
+ * hold-to-peek bubble instead of an extra line here.
+ */
 function YourTurn({ view, me, color }: { view: PlayerView; me: Me; color: PublicPlayer["color"] }) {
   const [armed, setArmed] = useState(false);
   useEffect(() => {
@@ -103,8 +164,7 @@ function YourTurn({ view, me, color }: { view: PlayerView; me: Me; color: Public
         <p class="eyebrow">{phaseLine(view)}</p>
         <h1 class="display" tabIndex={-1}>{t("clues.yourTurn")}</h1>
         <p class="flood__body">{t("clues.yourTurnBody")}</p>
-        {me.isBlank && <p class="flood__body flood__body--strong">{t("clues.blankBody")}</p>}
-        {me.role && !me.isBlank && <RoleChip role={me.role} />}
+        {me.role && <RoleChip role={me.role} />}
         {view.deadline ? <TimerBar deadline={view.deadline} class="timerbar--on-color" /> : <p class="flood__body">{t("clues.noTimer")}</p>}
         <button type="button" class={`donebtn${armed ? " is-armed" : ""}`} aria-disabled={!armed}
           onClick={() => { if (armed) act({ type: "CLUE_DONE" }); }}>
@@ -119,11 +179,12 @@ function YourTurn({ view, me, color }: { view: PlayerView; me: Me; color: Public
 
 export function Clues({ view, me }: { view: PlayerView; me: Me }) {
   const meP = byId(view, me.id);
+  const tieOpen = useTieCardOpen(view);
   if (meP && !meP.alive) {
     return (
       <>
         <main class="screen screen--out"><OutPanel view={view} me={me} /></main>
-        <footer class="actionbar"><PeekButton word={me.word} isBlank={me.isBlank} wordLocale={view.settings.wordLocale} /></footer>
+        <footer class="actionbar"><PeekButton word={me.word} isBlank={me.isBlank} wordLocale={view.settings.wordLocale} out /></footer>
       </>
     );
   }
@@ -132,11 +193,14 @@ export function Clues({ view, me }: { view: PlayerView; me: Me }) {
   const idx = view.currentSpeakerId ? view.speakingOrder.indexOf(view.currentSpeakerId) : -1;
   const nextUp = idx >= 0 && view.speakingOrder[idx + 1] === me.id;
   const tie = view.phase === "TIE_BREAK";
+  const inTie = tie && view.tieCandidates.includes(me.id) && !meP?.spoke;
+  // One banner at most: "You're next" wins over "You're in the tie".
+  const banner = nextUp ? t("clues.youreNext") : inTie ? t("tie.inTie") : null;
   return (
     <>
       <main class="screen screen--clues">
-        <p class="eyebrow">{phaseLine(view)}</p>
-        {tie && <TieCard view={view} myId={me.id} />}
+        {tie && !tieOpen ? <div class="eyebrow-row eyebrow-row--wrap"><p class="eyebrow">{phaseLine(view)}</p><TieChip view={view} /></div> : <p class="eyebrow">{phaseLine(view)}</p>}
+        {tieOpen && <TieCard view={view} />}
         {speaker ? (
           <section class="speaker" aria-live="polite">
             <p class="speaker__label">{t("clues.nowSpeaking")}</p>
@@ -147,7 +211,7 @@ export function Clues({ view, me }: { view: PlayerView; me: Me }) {
         ) : (
           <Heading title={t(PHASE_KEY[view.phase])} />
         )}
-        {nextUp && <p class="banner banner--primary" role="status"><Icon name="speech" size={20} />{t("clues.youreNext")}</p>}
+        {banner && <p class="banner banner--primary" role="status"><Icon name="speech" size={20} />{banner}</p>}
         <OrderStrip view={view} myId={me.id} />
         <p class="hint hint--center">{view.round === 1 && idx === 0 && !tie ? t("clues.firstHint") : t("clues.listen")}</p>
         <p class="rule"><Icon name="info" size={16} />{t("clues.rule")}</p>

@@ -1,4 +1,4 @@
-// Zod-free: types + helpers over the i18n JSON owned by Agent D.
+// Zod-free: types + helpers over the UI strings in shared/i18n/*.json.
 import ar from "../../i18n/ar.json";
 import en from "../../i18n/en.json";
 import fr from "../../i18n/fr.json";

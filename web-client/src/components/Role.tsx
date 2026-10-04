@@ -1,7 +1,7 @@
 // DESIGN §2.2 / §5.3: role = colour + emblem + pattern + label. Emblems on a 48 grid, filled.
 import type { Role } from "@mishana/shared/engine";
 import { t } from "../i18n/t";
-import { ROLE_KEY } from "../lib/roles";
+import { ROLE_KEY } from "../lib/keys";
 
 export function RoleEmblem({ role, size = 32 }: { role: Role; size?: number }) {
   return (

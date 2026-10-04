@@ -1,6 +1,6 @@
 import { MAX_PLAYERS, MIN_PLAYERS } from "../constants";
 import type { Rng } from "./rng";
-import type { Role, RoleCounts, Settings } from "./types";
+import type { Player, Role, RoleCounts, Settings } from "./types";
 
 // n:            3  4  5  6  7  8  9 10 11 12
 const U_TABLE = [1, 1, 1, 1, 2, 2, 3, 3, 3, 3];
@@ -47,4 +47,15 @@ export function assignRoles(ids: readonly string[], counts: RoleCounts, rng: Rng
     out.set(id, i < counts.undercover ? "UNDERCOVER" : i < counts.undercover + counts.blank ? "BLANK" : "CIVILIAN");
   });
   return out;
+}
+
+/** Tally of the dealt roles (players without a role are not counted). */
+export function countRoles(players: readonly Pick<Player, "role">[]): RoleCounts {
+  const c: RoleCounts = { civilian: 0, undercover: 0, blank: 0 };
+  for (const p of players) {
+    if (p.role === "CIVILIAN") c.civilian++;
+    else if (p.role === "UNDERCOVER") c.undercover++;
+    else if (p.role === "BLANK") c.blank++;
+  }
+  return c;
 }

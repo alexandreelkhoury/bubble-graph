@@ -1,10 +1,9 @@
 // PH-03 Lobby (player and VIP variants) + kick sheet + settings sheet.
 import { useState } from "preact/hooks";
-import { MAX_PLAYERS, MIN_PLAYERS } from "@mishana/shared/constants";
-import { effectiveRoleCounts } from "@mishana/shared/engine";
-import type { RoleCounts, Settings } from "@mishana/shared/engine";
+import { MAX_PLAYERS } from "@mishana/shared/constants";
 import type { PlayerView, PublicPlayer } from "@mishana/shared/protocol";
-import { locale, t } from "../i18n/t";
+import { fmtNum, isolate, locale, LOCALE_NATIVE_NAME, t } from "../i18n/t";
+import { blockerText, packsLine, roleSummaryText } from "../lib/lobby";
 import { act } from "../state/session";
 import { wakeLockDenied, wakeLockSupported } from "../lib/wakelock";
 import { Avatar, avatarState, playerLabel } from "../components/PlayerChip";
@@ -13,42 +12,14 @@ import { Icon } from "../components/Icon";
 import { SettingsSheet } from "./Settings";
 import type { SettingsSection } from "./Settings";
 
-const NATIVE = { en: "English", fr: "Français", ar: "العربية" } as const;
-
-/**
- * Role summary for the lobby cards (phone + TV). Below MIN_PLAYERS the room is simply not full yet, so it previews
- * the roles at MIN_PLAYERS (or names the role mode) instead of claiming the roles don't fit.
- */
-export function roleSummaryText(settings: Settings, playerCount: number, rc: RoleCounts | null): string {
-  const few = playerCount < MIN_PLAYERS;
-  const c = rc ?? (few ? effectiveRoleCounts(settings, MIN_PLAYERS) : null);
-  if (c) return t("lobby.roleSummary", { civilian: c.civilian, undercover: c.undercover, blank: c.blank });
-  if (few) return t(settings.roleMode === "auto" ? "settings.roleModeAuto" : "settings.roleModeCustom");
-  return t("lobby.blockerRoles");
-}
-
+/** The two lines of the lobby settings card: packs · word language / roles · clue timer. */
 export function settingsSummary(view: PlayerView): [string, string] {
   const s = view.settings;
-  const l = locale.value;
-  const packs = s.packIds.length === 0
-    ? t("settings.allPacks")
-    : s.packIds.map((id) => view.availablePacks.find((p) => p.id === id)?.title[l] ?? id).join(", ");
-  const roles = roleSummaryText(s, view.players.length, view.roleCounts);
   const clue = s.clueSeconds === 0 ? t("common.timerOff") : t("common.seconds", { count: s.clueSeconds });
-  return [`${packs} · ${NATIVE[s.wordLocale]}`, `${roles} · ${t("settings.clueSeconds")} ${clue}`];
-}
-
-export function blockerText(view: PlayerView): string | null {
-  switch (view.startBlocker) {
-    case null: return null;
-    case "NOT_ENOUGH_PLAYERS": {
-      const connected = view.players.filter((p) => p.connected && !p.left).length;
-      return t("lobby.needPlayers", { count: Math.max(1, MIN_PLAYERS - connected) });
-    }
-    case "INVALID_ROLE_CONFIG": return t("lobby.blockerRoles");
-    case "NO_WORDS_AVAILABLE": return t("lobby.blockerWords");
-    default: return t("error.invalidSettings");
-  }
+  return [
+    `${packsLine(s, view.availablePacks, locale.value)} · ${LOCALE_NATIVE_NAME[s.wordLocale]}`,
+    `${roleSummaryText(view)} · ${t("settings.clueSeconds")} ${clue}`,
+  ];
 }
 
 export function Lobby({ view }: { view: PlayerView }) {
@@ -60,6 +31,8 @@ export function Lobby({ view }: { view: PlayerView }) {
   const blocker = blockerText(view);
   const players = view.players;
   const host = players.find((p) => p.isHost);
+  // After "Play again" the running totals stay visible (the TV shows them on Results).
+  const topScore = Math.max(0, ...players.map((p) => p.score));
   const openBlocker = (): void => {
     if (view.startBlocker === "INVALID_ROLE_CONFIG") setSettings("roles");
     else if (view.startBlocker === "NO_WORDS_AVAILABLE") setSettings("words");
@@ -89,6 +62,11 @@ export function Lobby({ view }: { view: PlayerView }) {
                     <bdi class="plist__name">{p.name}</bdi>
                     {you && <span class="plist__you" aria-hidden="true">{t("common.you")}</span>}
                   </span>
+                  {topScore > 0 && (
+                    <span class={`plist__score${p.score === topScore ? " is-lead" : ""}`}>
+                      {p.score === topScore && <Icon name="trophy" size={14} />}<bdi class="num">{fmtNum(p.score)}</bdi>
+                    </span>
+                  )}
                 </>
               );
               return (
@@ -104,7 +82,7 @@ export function Lobby({ view }: { view: PlayerView }) {
               );
             })}
           </ul>
-          {!isVip && host && <p class="card__foot">{t("lobby.hostIs", { name: "⁨" + host.name + "⁩" })}</p>}
+          {!isVip && host && <p class="card__foot">{t("lobby.hostIs", { name: isolate(host.name) })}</p>}
         </section>
 
         {isVip ? (
@@ -135,10 +113,10 @@ export function Lobby({ view }: { view: PlayerView }) {
             <Button disabled={!view.canStart} onClick={() => act({ type: "START" })}>{t("lobby.startAll")}</Button>
           </>
         ) : (
-          <p class="waiting"><span class="dots" aria-hidden="true"><i /><i /><i /></span>{t("lobby.waitingHost")}</p>
+          <p class="waiting"><span class="waiting__text"><span class="dots" aria-hidden="true"><i /><i /><i /></span>{t("lobby.waitingHost")}</span></p>
         )}
       </footer>
-      <ConfirmSheet open={kick !== null} title={kick ? t("lobby.kickConfirm", { name: "⁨" + kick.name + "⁩" }) : ""} body={t("lobby.kickBody")}
+      <ConfirmSheet open={kick !== null} title={kick ? t("lobby.kickConfirm", { name: isolate(kick.name) }) : ""} body={t("lobby.kickBody")}
         confirm={t("lobby.kick")} onConfirm={() => { if (kick) act({ type: "KICK", playerId: kick.id }); }} onClose={() => setKick(null)} />
       {isVip && <SettingsSheet view={view} open={settings !== false} section={settings === false ? null : settings} onClose={() => setSettings(false)} />}
     </>

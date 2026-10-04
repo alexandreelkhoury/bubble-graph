@@ -3,6 +3,7 @@ package app.mishana.tv.game
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import app.mishana.tv.i18n.MessageKeys
 import app.mishana.tv.net.ConnState
 import app.mishana.tv.net.CreateRoomException
 import app.mishana.tv.net.RoomConnection
@@ -11,10 +12,13 @@ import app.mishana.tv.protocol.ClientIntent
 import app.mishana.tv.protocol.CreateRoomResponse
 import app.mishana.tv.protocol.ErrorMsg
 import app.mishana.tv.protocol.Phase
+import app.mishana.tv.protocol.SettingsPatch
 import app.mishana.tv.protocol.StateMsg
+import app.mishana.tv.protocol.UpdateSettings
 import app.mishana.tv.protocol.TvView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -48,6 +52,12 @@ sealed interface TvEvent {
 
     /** Every server `error` once, even when it repeats an identical earlier one (lastError would not change). */
     class ServerError(val error: ErrorMsg) : TvEvent
+
+    /** Join / leave / away / forfeit / skipped turn, derived from consecutive views ([diffViews]). */
+    data class Game(val event: ViewEvent) : TvEvent
+
+    /** Someone else (the VIP) changed lobby settings: the `settings.changedBy` toast and the row flash. */
+    data class SettingsChanged(val keys: Set<String>, val hostName: String?) : TvEvent
 }
 
 /** Everything platform-specific the ViewModel needs; tests pass fakes. */
@@ -61,6 +71,7 @@ class GameDeps(
     val clock: () -> Long = { System.currentTimeMillis() },
 )
 
+/** SPEC §9.8. */
 class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewModel(app) {
 
     /** Used by the default ViewModel factory (AndroidViewModelFactory needs an `(Application)` constructor). */
@@ -76,6 +87,13 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
 
     /** Consecutive reconnect attempts of the current socket (TV-13a counter). */
     val reconnectAttempt: StateFlow<Int> = _reconnectAttempt.asStateFlow()
+
+    private val draft = SettingsDraft()
+    private val _settingsDraft = MutableStateFlow<SettingsPatch?>(null)
+
+    /** The TV's optimistic settings overlay (TV-03), shown over `view.settings` until the server echoes it. */
+    val settingsDraft: StateFlow<SettingsPatch?> = _settingsDraft.asStateFlow()
+    private var draftJob: Job? = null
 
     private var connection: RoomConnection? = null
     private var roomJobs: List<Job> = emptyList()
@@ -101,10 +119,10 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
             } catch (e: CancellationException) {
                 throw e
             } catch (e: CreateRoomException) {
-                _ui.value = TvUiState.CreateFailed(e.errorCode?.let { errorMessageKey(it) } ?: "tv.createFailed")
+                _ui.value = TvUiState.CreateFailed(e.errorCode?.let { errorMessageKey(it) } ?: MessageKeys.TV_CREATE_FAILED)
                 return@launch
             } catch (e: Exception) {
-                _ui.value = TvUiState.CreateFailed("tv.createFailed")
+                _ui.value = TvUiState.CreateFailed(MessageKeys.TV_CREATE_FAILED)
                 return@launch
             }
             openRoom(resp)
@@ -141,6 +159,9 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         connection?.disconnect()
         connection = null
         _reconnectAttempt.value = 0
+        draftJob?.cancel()
+        draft.clear()
+        _settingsDraft.value = null
     }
 
     private fun onMessage(msg: app.mishana.tv.protocol.ServerMessage) {
@@ -149,13 +170,29 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 if (msg.seq <= lastSeq) return
                 lastSeq = msg.seq
                 val offset = clockOffset.add(msg.serverNow, deps.clock())
-                _ui.update { s -> if (s is TvUiState.InRoom) s.copy(view = msg.view, clockOffsetMs = offset) else s }
+                val current = _ui.value as? TvUiState.InRoom ?: return
+                val before = current.view
+                _ui.value = current.copy(view = msg.view, clockOffsetMs = offset)
+                announce(before, msg.view)
             }
             is ErrorMsg -> {
                 _ui.update { s -> if (s is TvUiState.InRoom) s.copy(lastError = msg) else s }
                 if (_ui.value is TvUiState.InRoom) _events.tryEmit(TvEvent.ServerError(msg))
             }
             else -> Unit // welcome/pong are not for the TV
+        }
+    }
+
+    /** Toast-worthy differences between two consecutive views, emitted whichever screen is showing. */
+    private fun announce(before: TvView?, after: TvView) {
+        for (e in diffViews(before, after)) _events.tryEmit(TvEvent.Game(e))
+        if (before != null && before.phase == Phase.LOBBY && after.phase == Phase.LOBBY) {
+            val keys = draft.onServerSettings(before.settings, after.settings)
+            _settingsDraft.value = draft.patch
+            if (keys.isNotEmpty()) {
+                val host = after.players.firstOrNull { it.id == after.hostPlayerId }?.name
+                _events.tryEmit(TvEvent.SettingsChanged(keys, host))
+            }
         }
     }
 
@@ -179,18 +216,36 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         val expected = FATAL_ERROR_CODES[code]
         val key = s.lastError?.takeIf { it.code == expected }?.messageKey
             ?: expected?.let { errorMessageKey(it) }
-            ?: "error.internal"
+            ?: MessageKeys.INTERNAL
         teardownRoom()
         _ui.value = TvUiState.Fatal(key)
     }
 
-    /** Wraps in `ActionMsg(id = counter)`; dropped unless the socket is OPEN. */
+    /** Wraps in `ActionMsg(id = counter)`; dropped unless the socket is OPEN (the UI says so: AppRoot, TV-13a). */
     fun send(intent: ClientIntent) {
         val s = _ui.value as? TvUiState.InRoom ?: return
         if (s.conn != ConnState.OPEN) return
         val conn = connection ?: return
         actionCounter += 1
         conn.send(ActionMsg(id = actionCounter.toString(), a = intent))
+    }
+
+    /**
+     * A local settings change (TV-03): shown at once, merged and sent as one UPDATE_SETTINGS after [SETTINGS_DEBOUNCE_MS];
+     * if the server never echoes it (rejected), the screen falls back to the server values after [SETTINGS_FALLBACK_MS].
+     */
+    fun changeSettings(p: SettingsPatch) {
+        draft.change(p)
+        _settingsDraft.value = draft.patch
+        draftJob?.cancel()
+        draftJob = viewModelScope.launch {
+            delay(SETTINGS_DEBOUNCE_MS)
+            val patch = draft.flush() ?: return@launch
+            send(UpdateSettings(patch))
+            delay(SETTINGS_FALLBACK_MS)
+            draft.expire()
+            _settingsDraft.value = draft.patch
+        }
     }
 
     /** Local only: pauses local animations and shows the pause menu, never the game. */
@@ -209,6 +264,9 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     }
 
     companion object {
+        const val SETTINGS_DEBOUNCE_MS = 300L
+        const val SETTINGS_FALLBACK_MS = 1_500L
+
         /** Close code → the error code whose messageKey explains it (SPEC §6.4). */
         val FATAL_ERROR_CODES: Map<Int, String> = mapOf(
             4002 to "UNSUPPORTED_VERSION",
@@ -222,7 +280,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         /** `messageKey = "error." + lowerCamel(code)` (SPEC §6.4). */
         fun errorMessageKey(code: String): String {
             val parts = code.lowercase().split('_').filter { it.isNotEmpty() }
-            if (parts.isEmpty()) return "error.internal"
+            if (parts.isEmpty()) return MessageKeys.INTERNAL
             return "error." + parts.first() + parts.drop(1).joinToString("") { p -> p.replaceFirstChar { it.uppercaseChar() } }
         }
     }

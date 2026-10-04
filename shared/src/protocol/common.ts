@@ -1,7 +1,8 @@
-import { z } from "zod";
+import * as z from "zod";
 import { COLORS, LOCALES, SETTINGS_BOUNDS } from "../constants";
-import type { Points, Settings } from "../engine/types";
-import { PHASES } from "../engine/types";
+import { AGE_RATINGS } from "../engine/catalog";
+import type { LocalizedTitle, Points, Settings } from "../engine/types";
+import { DEADLINE_KINDS, GUESS_STATUSES, HISTORY_CAUSES, PHASES, ROLES, VOTE_OUTCOMES, WINNERS } from "../engine/types";
 import { ERROR_CODES } from "./errors";
 
 export const Token = z.string().regex(/^[0-9a-f]{32}$/);
@@ -10,13 +11,16 @@ const COLOR_IDS = COLORS.map((c) => c.id) as [(typeof COLORS)[number]["id"], ...
 export const ColorIdSchema = z.enum(COLOR_IDS);
 export const LocaleSchema = z.enum(LOCALES);
 export const PhaseSchema = z.enum(PHASES);
-export const RoleSchema = z.enum(["CIVILIAN", "UNDERCOVER", "BLANK"]);
-export const WinnerSchema = z.enum(["CIVILIANS", "INFILTRATORS", "BLANK"]);
-export const DeadlineKindSchema = z.enum(["REVEAL", "CLUE", "VOTE", "ELIMINATION", "GUESS", "VERDICT"]);
-export const VoteOutcomeSchema = z.enum(["ELIMINATED", "TIE", "RANDOM", "NO_ELIMINATION"]);
-export const GuessStatusSchema = z.enum(["PENDING", "CORRECT", "WRONG", "TIMEOUT"]);
-export const HistoryCauseSchema = z.enum(["VOTE", "RANDOM", "KICK", "LEAVE", "NONE"]);
+export const RoleSchema = z.enum(ROLES);
+export const WinnerSchema = z.enum(WINNERS);
+export const DeadlineKindSchema = z.enum(DEADLINE_KINDS);
+export const VoteOutcomeSchema = z.enum(VOTE_OUTCOMES);
+export const GuessStatusSchema = z.enum(GUESS_STATUSES);
+export const HistoryCauseSchema = z.enum(HISTORY_CAUSES);
+export const AgeRatingSchema = z.enum(AGE_RATINGS);
 export const ErrorCodeSchema = z.enum(ERROR_CODES);
+/** A title in every UI locale (engine `LocalizedTitle`). */
+export const LocalizedTitleSchema = z.object({ en: z.string(), fr: z.string(), ar: z.string() });
 
 export const WordRefSchema = z.object({ text: z.string(), translit: z.string().nullable() });
 export const PointsSchema = z.strictObject({ civilian: z.number().int(), undercover: z.number().int(), blank: z.number().int() });
@@ -49,3 +53,4 @@ export const SettingsPatchSchema = SettingsSchema.partial().strict();
 type Same<A, B> = [A] extends [B] ? ([B] extends [A] ? true : never) : never;
 export const _settingsAgree: Same<z.infer<typeof SettingsSchema>, Settings> = true;
 export const _pointsAgree: Same<z.infer<typeof PointsSchema>, Points> = true;
+export const _titleAgree: Same<z.infer<typeof LocalizedTitleSchema>, LocalizedTitle> = true;

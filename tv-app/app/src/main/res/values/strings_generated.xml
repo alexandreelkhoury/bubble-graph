@@ -36,6 +36,7 @@
     <string name="lang__fr">Français</string>
     <string name="lang__ar">العربية</string>
     <string name="round__label">Round %1$d</string>
+    <string name="round__short">R%1$d</string>
     <string name="game__label">Game %1$d</string>
     <string name="role__civilian">Civilian</string>
     <string name="role__undercover">Mole</string>
@@ -179,6 +180,7 @@
     <string name="clues__blank_body">Bluff! Lean on the others\' clues.</string>
     <string name="clues__done">Done</string>
     <string name="clues__peek">Hold to peek my word</string>
+    <string name="clues__peek_role">Hold to see my card</string>
     <string name="clues__skip_turn">Skip turn</string>
     <string name="clues__skipped">%1$s isn\'t here, skipping</string>
     <string name="vote__title">Who\'s not one of us?</string>
@@ -204,6 +206,7 @@
     <string name="tie__title">It\'s a tie!</string>
     <string name="tie__explain">One more clue each, then everyone votes again, between them only.</string>
     <string name="tie__in_tie">You\'re in the tie: get your best clue ready!</string>
+    <string name="tie__vs">vs</string>
     <string name="elim__eliminated">%1$s is out!</string>
     <string name="elim__was_civilian">%1$s was a Civilian</string>
     <string name="elim__was_undercover">%1$s was the Mole</string>
@@ -222,13 +225,15 @@
     <string name="elim__you">You\'re out of the game</string>
     <string name="elim__you_were">You were: %1$s</string>
     <string name="elim__stay">Stick around for the reveal. No hints, OK?</string>
+    <string name="elim__last_chance">Last chance coming…</string>
+    <string name="elim__blank_get_ready">You\'ve been caught… but you get one guess at the Civilians\' word. Get ready!</string>
     <string name="elim__forfeit">%1$s left the game (%2$s)</string>
     <string name="history__title">How it went</string>
     <string name="history__left">%1$s left</string>
     <string name="history__kicked">%1$s was removed</string>
     <string name="guess__title">The Blank gets one guess</string>
     <string name="guess__guessing">%1$s is guessing the Civilians\' word…</string>
-    <string name="guess__silence">Silence, please!</string>
+    <string name="guess__silence">Don\'t help!</string>
     <string name="guess__waiting">%1$s is the Blank and gets one guess. Shh…</string>
     <string name="guess__prompt">What\'s the Civilians\' word?</string>
     <string name="guess__placeholder">Your guess</string>
@@ -284,6 +289,7 @@
     <string name="tv__start_now">Start now</string>
     <string name="tv__press_again">Press OK again to confirm</string>
     <string name="tv__skip_hint">Press OK to skip</string>
+    <string name="tv__back_to_categories">Back: categories</string>
     <string name="tv__pause_title">Game menu</string>
     <string name="tv__pause_note">The game keeps running</string>
     <string name="tv__resume">Resume</string>
@@ -294,12 +300,18 @@
     <string name="tv__end_game_body">Nobody scores. You\'ll go back to the lobby.</string>
     <string name="tv__keep_playing">Keep playing</string>
     <string name="tv__exit_app">Exit</string>
+    <string name="tv__players_title">Players</string>
+    <string name="tv__back_to_lobby">Back: lobby</string>
+    <string name="tv__app_closed">Mish Ana! is closed</string>
+    <string name="tv__open_again">Open again</string>
     <string name="tv__room_closed">This room has closed</string>
     <string name="tv__debug_title">Debug settings</string>
     <string name="tv__server_url">Server URL</string>
     <string name="phone__menu">Menu</string>
     <string name="phone__leave">Leave the game</string>
-    <string name="phone__leave_confirm">Leave? Your seat will be freed.</string>
+    <string name="phone__leave_short">Leave</string>
+    <string name="phone__leave_confirm">Leave the game?</string>
+    <string name="phone__leave_body">Your seat will be freed.</string>
     <string name="phone__you_are_host">You\'re the host</string>
     <string name="phone__keep_screen_on">Keep your screen on during the game</string>
     <string name="phone__vibration">Vibration</string>
@@ -309,6 +321,7 @@
     <string name="phone__room_gone_body">Thanks for playing!</string>
     <string name="phone__no_room">No room called %1$s</string>
     <string name="phone__go_home">Join another game</string>
+    <string name="phone__rejoin">Rejoin %1$s</string>
     <string name="phone__different_code">Enter a different code</string>
     <string name="phone__replaced">This game is open in another tab or phone.</string>
     <string name="phone__use_here">Use it here</string>

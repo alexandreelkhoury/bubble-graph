@@ -1,5 +1,5 @@
 // Pure core of tools/pack-lint (SPEC §12.5). No I/O here; see main.ts.
-import { normalizeGuess } from "@mishana/shared/engine";
+import { languageOf, normalizeGuess } from "@mishana/shared/engine";
 import { WordPackSchema, type WordPack } from "@mishana/shared/packs";
 
 export interface PackEntry {
@@ -19,8 +19,6 @@ export interface LintResult {
 
 /** M4 drafting targets (§12.2). Missing them is only a warning. */
 export const M4_TARGETS: Readonly<Record<string, number>> = { en: 150, fr: 150, ar: 100, "ar-LB": 40 };
-
-const languageOf = (locale: string): string => locale.split("-")[0] ?? locale;
 
 type Side = WordPack["pairs"][number]["civilian"];
 

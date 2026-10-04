@@ -5,7 +5,7 @@ import { assertInvariants } from "../../src/engine/invariants";
 import { createInitialState, reduce } from "../../src/engine/reduce";
 import { createRng } from "../../src/engine/rng";
 import { checkWinner } from "../../src/engine/win";
-import { TEST_CATALOG } from "../support/test-catalog";
+import { TEST_CATALOG } from "../../src/testing";
 import type { Action, GameState, SettingsPatch } from "../../src/engine/types";
 
 const SYS = { kind: "system" } as const, TV = { kind: "tv" } as const;

@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { playGame } from "../support/bots";
-import { lobby } from "../support/helpers";
-import { TEST_CATALOG } from "../support/test-catalog";
+import { blankOpensViolation, isOpening, lobby, playGame, TEST_CATALOG } from "../../src/testing";
 
 describe("starter selection (§4.7 startRound)", () => {
   it("the Blank never speaks first: every round and every tie-break opens with a non-Blank", () => {
@@ -10,14 +8,8 @@ describe("starter selection (§4.7 startRound)", () => {
       for (let seed = 1; seed <= 60; seed++) {
         playGame(TEST_CATALOG, { players: n, seed, churnRate: 0.02, kickRate: 0.01 }, (prev, _a, res) => {
           const s = res.state;
-          const isOpening =
-            (s.phase === "CLUES" && (prev.phase !== "CLUES" || prev.round !== s.round)) ||
-            (s.phase === "TIE_BREAK" && prev.phase !== "TIE_BREAK");
-          if (!isOpening) return;
-          const speaker = s.players.find((p) => p.id === s.speakingOrder[s.turnIdx]);
-          const order = s.speakingOrder.map((id) => s.players.find((p) => p.id === id));
-          const nonBlankAvailable = order.some((p) => p && p.alive && p.connected && p.role !== "BLANK");
-          if (nonBlankAvailable) expect(speaker?.role).not.toBe("BLANK");
+          if (!isOpening(prev, s)) return;
+          expect(blankOpensViolation(s)).toBeNull();
           expect(s.speakingOrder[0]).toBe(s.phase === "CLUES" ? s.starterId : s.speakingOrder[0]);
           opened[s.phase as "CLUES" | "TIE_BREAK"]++;
           if (s.phase === "CLUES" && s.round > 1) opened.laterRounds++;
@@ -27,6 +19,17 @@ describe("starter selection (§4.7 startRound)", () => {
     expect(opened.CLUES).toBeGreaterThan(500);
     expect(opened.laterRounds).toBeGreaterThan(200);
     expect(opened.TIE_BREAK).toBeGreaterThan(0);
+  });
+
+  it("blankOpensViolation flags a Blank opener only when a connected non-Blank could have opened", () => {
+    const g = lobby(5, { roleMode: "custom", undercoverCount: 1, blankCount: 1 });
+    g.tv({ type: "START" });
+    g.readyAll();
+    const blank = g.byRole("BLANK")[0] as string;
+    const forged = { ...g.state, speakingOrder: [blank, ...g.state.speakingOrder.filter((id) => id !== blank)], turnIdx: 0 };
+    expect(blankOpensViolation(forged)).toMatch(/the Blank opens CLUES/);
+    const alone = { ...forged, players: forged.players.map((p) => (p.id === blank ? p : { ...p, connected: false })) };
+    expect(blankOpensViolation(alone)).toBeNull();
   });
 
   it("later-round openers are drawn at random, not rotated by seat (no seat-skip leak)", () => {

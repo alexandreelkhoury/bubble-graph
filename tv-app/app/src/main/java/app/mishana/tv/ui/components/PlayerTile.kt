@@ -20,6 +20,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.res.stringResource
+import app.mishana.tv.R
+import app.mishana.tv.ui.theme.MishShapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -40,9 +43,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.platform.LocalDensity
-import androidx.tv.material3.ClickableSurfaceDefaults
+import androidx.tv.material3.Border
 import androidx.tv.material3.Icon
-import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import app.mishana.tv.game.Names
 import app.mishana.tv.protocol.PublicPlayer
@@ -106,11 +108,12 @@ fun Avatar(
         state.away -> 0.6f
         else -> 1f
     }
+    // Read in the layer only: the speaking avatar breathes without recomposing.
     val breathe = if (state.speaking && !reduce) {
-        val t = rememberInfiniteTransition(label = "breathe")
-        t.animateFloat(1f, 1.03f, infiniteRepeatable(tween(800, easing = MishMotion.Standard), RepeatMode.Reverse), label = "b").value
+        rememberInfiniteTransition(label = "breathe")
+            .animateFloat(1f, 1.03f, infiniteRepeatable(tween(800, easing = MishMotion.Standard), RepeatMode.Reverse), label = "b")
     } else {
-        1f
+        null
     }
     val shape = RoundedCornerShape(percent = 30)
     val badge = (size * 0.36f).coerceIn(18.dp, 30.dp)
@@ -118,7 +121,11 @@ fun Avatar(
         Box(
             Modifier
                 .fillMaxSize()
-                .graphicsLayer { scaleX = breathe; scaleY = breathe }
+                .graphicsLayer {
+                    val b = breathe?.value ?: 1f
+                    scaleX = b
+                    scaleY = b
+                }
                 .then(
                     if (state.speaking) {
                         Modifier
@@ -220,13 +227,13 @@ fun PlayerTile(
     nameOverride: (@Composable () -> Unit)? = null,
 ) {
     val swatch = PlayerSwatch.byId(player.color)
-    val shape = RoundedCornerShape(MishThemeRadius.tile)
-    val a11y = buildString {
-        append(player.name)
-        if (player.isHost) append(", host")
-        if (!player.connected) append(", away")
-        if (state.check) append(", ready")
-    }
+    val shape = MishShapes.tile
+    val a11y = listOfNotNull(
+        player.name,
+        stringResource(R.string.common__host).takeIf { player.isHost },
+        stringResource(R.string.common__away).takeIf { !player.connected },
+        stringResource(R.string.reveal__ready).takeIf { state.check },
+    ).joinToString(", ")
     // Fixed tile size (grids must keep their geometry), so the avatar gives way when the name line is taller:
     // Arabic line heights and the 1.3× font scale (DESIGN §11) never clip the name.
     val nameStyle = if (height < 104.dp) MishTheme.type.titleS else MishTheme.type.title
@@ -259,22 +266,13 @@ fun PlayerTile(
     }
     val ring = if (swatch.needsRingOnElevated) MishColors.Text.copy(alpha = 0.24f) else Color.Transparent
     if (onClick != null) {
-        Surface(
+        MishFocusSurface(
             onClick = onClick,
             modifier = modifier.size(width, height).semantics { contentDescription = a11y },
-            shape = ClickableSurfaceDefaults.shape(shape = shape),
-            colors = ClickableSurfaceDefaults.colors(
-                containerColor = MishColors.Surface,
-                contentColor = MishColors.Text,
-                focusedContainerColor = MishColors.Elevated,
-                focusedContentColor = MishColors.Text,
-                pressedContainerColor = MishColors.Elevated,
-                pressedContentColor = MishColors.Text,
-            ),
-            scale = MishFocus.tileScale(),
-            border = MishFocus.border(shape, rest = androidx.tv.material3.Border(BorderStroke(2.dp, ring), shape = shape)),
-            glow = MishFocus.glow(),
-            content = content,
+            shape = shape,
+            kind = FocusKind.Tile,
+            rest = Border(BorderStroke(2.dp, ring), shape = shape),
+            body = content,
         )
     } else {
         Box(
@@ -286,9 +284,4 @@ fun PlayerTile(
             content = content,
         )
     }
-}
-
-/** Radii used by tiles (DESIGN §4.4: tiles and cards use `lg` on TV). */
-object MishThemeRadius {
-    val tile = 24.dp
 }

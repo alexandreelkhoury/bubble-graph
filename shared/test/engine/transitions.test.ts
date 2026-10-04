@@ -3,8 +3,7 @@ import { CLUE_GRACE_MS, ELIMINATION_HOLD_MS, SEAT_HOLD_MS, TIE_LEAD_IN_MS, VERDI
 import { assertInvariants } from "../../src/engine/invariants";
 import { nextWakeAt, reduce } from "../../src/engine/reduce";
 import type { Action, SettingsPatch } from "../../src/engine/types";
-import { findSeed, Game, inClues, lobby, P, pid, SYS, T0, TV } from "../support/helpers";
-import { TEST_CATALOG } from "../support/test-catalog";
+import { findSeed, Game, inClues, lobby, P, pid, SYS, T0, TEST_CATALOG, TV } from "../../src/testing";
 
 const NO_BLANK: SettingsPatch = { roleMode: "custom", undercoverCount: 1, blankCount: 0 };
 const VIP = pid(0);

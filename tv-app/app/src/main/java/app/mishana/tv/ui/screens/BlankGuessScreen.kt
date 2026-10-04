@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,7 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -53,6 +55,7 @@ import app.mishana.tv.protocol.GuessStatus
 import app.mishana.tv.protocol.HostAdvance
 import app.mishana.tv.protocol.HostOverrideGuess
 import app.mishana.tv.protocol.TvView
+import app.mishana.tv.protocol.player
 import app.mishana.tv.ui.components.ActionPill
 import app.mishana.tv.ui.components.Avatar
 import app.mishana.tv.ui.components.AvatarState
@@ -65,6 +68,9 @@ import app.mishana.tv.ui.components.MishDialog
 import app.mishana.tv.ui.components.MishIcons
 import app.mishana.tv.ui.components.TimerBar
 import app.mishana.tv.ui.components.TimerRing
+import app.mishana.tv.ui.components.TimerSeconds
+import app.mishana.tv.ui.components.InGameScaffold
+import app.mishana.tv.ui.components.inertWhen
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishTheme
 
@@ -76,12 +82,16 @@ import app.mishana.tv.ui.theme.MishTheme
 fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit) {
     val type = MishTheme.type
     val pill = remember { FocusRequester() }
+    val overrideButton = remember { FocusRequester() }
     val guess = view.guess
     val guesser = view.player(guess?.playerId)
     val status = guess?.status ?: GuessStatus.PENDING
     val reduce = MishTheme.reduceMotion
     val density = LocalDensity.current
     var confirm by remember { mutableStateOf(false) }
+    // Which action-bar control the user was last on (no recomposition needed): when an overlay (the override
+    // confirm or the pause menu) closes, focus returns there (DESIGN §7), not always to the override button.
+    val lastOnOverride = remember { booleanArrayOf(false) }
 
     // Verdict effects: a single 25 % white flash (no strobe) + confetti for CORRECT; a shake for WRONG.
     val flash = remember { Animatable(0f) }
@@ -99,6 +109,7 @@ fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
 
     CompositionLocalProvider(LocalFocusBlocked provides (LocalFocusBlocked.current || confirm)) {
         InGameScaffold(
+            modifier = Modifier.inertWhen(confirm),
             defaultFocus = pill,
             actionBar = {
                 val deadline = view.deadline
@@ -111,6 +122,9 @@ fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
                     MishButton(
                         text = stringResource(if (status == GuessStatus.WRONG) R.string.guess__accept else R.string.guess__reject),
                         onClick = { confirm = true },
+                        modifier = Modifier
+                            .focusRequester(overrideButton)
+                            .onFocusChanged { if (it.isFocused) lastOnOverride[0] = true },
                         kind = ButtonKind.Secondary,
                         icon = if (status == GuessStatus.WRONG) MishIcons.Check else MishIcons.X,
                     )
@@ -119,6 +133,7 @@ fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
                     stringResource(if (status == GuessStatus.PENDING) R.string.guess__skip else R.string.common__continue),
                     { send(HostAdvance) },
                     pill,
+                    Modifier.onFocusChanged { if (it.hasFocus) lastOnOverride[0] = false },
                 )
             },
         ) {
@@ -141,7 +156,9 @@ fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
                         }
                         val deadline = view.deadline
                         if (status == GuessStatus.PENDING && deadline != null) {
-                            TimerRing(deadline, clockOffsetMs, 220.dp, 8.dp, showNumber = false)
+                            TimerRing(deadline, clockOffsetMs, 220.dp, 8.dp)
+                            // The seconds at the ring's top end, as on TV-05 (DESIGN TV-10 "(o 18)").
+                            TimerSeconds(deadline, clockOffsetMs, Modifier.align(Alignment.TopEnd).offset(x = 8.dp, y = (-6).dp))
                         }
                         Canvas(Modifier.size(176.dp).clearAndSetSemantics {}) {
                             drawCircle(
@@ -190,7 +207,9 @@ fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
                 }
             }
         }
-        InitialFocus(pill, key = status)
+        // After an overlay closes (override confirm, pause menu), focus goes back to the control the user was on
+        // (DESIGN §7); tryFocus falls back to the pill once the override button has left with the deadline.
+        InitialFocus(pill, key = status, restore = { if (lastOnOverride[0]) overrideButton else pill })
     }
 
     if (confirm && guess != null) {
@@ -209,7 +228,9 @@ fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
                 send(HostOverrideGuess(accept = accept))
                 confirm = false
             },
-            actionKind = ButtonKind.Primary,
+            // Accepting a wrong guess hands the Blank the win; rejecting a right one takes it away: both change the
+            // result, so the action looks destructive (like kick / end game).
+            actionKind = ButtonKind.Danger,
         )
     }
     // The verdict buttons leave composition when the deadline ends; the dialog must not outlive its button.

@@ -1,27 +1,29 @@
-import type { Draft } from "./flow";
-import { enterElimination, enterTieBreak, findPlayer } from "./flow";
-import type { EngineError, VoteOutcome, VoteSummary } from "./types";
+// Ballots and their tally. Pure bookkeeping: the phase change that follows a closed vote lives in turns.ts.
+import { findPlayer } from "./queries";
+import type { Draft } from "./draft";
+import type { EngineError, GameState, VoteOutcome, VoteSummary } from "./types";
 
-/** CAST_VOTE body (actor already checked to be an alive player). */
+/** CAST_VOTE body (actor already checked to be an alive player). Records the ballot; never closes the vote. */
 export function castVote(d: Draft, voterId: string, targetId: string): EngineError | null {
   const s = d.s;
   const target = findPlayer(s, targetId);
   if (!target || !target.alive || targetId === voterId) return "INVALID_TARGET";
   if (s.revote && !s.tieCandidates.includes(targetId)) return "INVALID_TARGET";
   s.votes[voterId] = targetId;
-  maybeCloseVote(d);
   return null;
 }
 
-/** Close the vote when every alive connected player has voted (and there is at least one). */
-export function maybeCloseVote(d: Draft): void {
-  const s = d.s;
-  if (s.phase !== "VOTING") return;
+/** Every alive connected player has voted (and there is at least one). */
+export function allVotesIn(s: GameState): boolean {
   const voters = s.players.filter((p) => p.alive && p.connected);
-  if (voters.length > 0 && voters.every((p) => s.votes[p.id] !== undefined)) closeVote(d);
+  return voters.length > 0 && voters.every((p) => s.votes[p.id] !== undefined);
 }
 
-export function closeVote(d: Draft): void {
+/** What closing the vote led to: a first-ballot tie (→ TIE_BREAK) or a settled ballot (→ ELIMINATION). */
+export type VoteResolution = { kind: "TIE"; candidates: string[] } | { kind: "SETTLED" };
+
+/** Tallies the ballots and records `lastVote` (plus the elimination and its history entry when settled). */
+export function resolveVote(d: Draft): VoteResolution {
   const s = d.s;
   const alive = s.players.filter((p) => p.alive);
   const aliveIds = new Set(alive.map((p) => p.id));
@@ -57,8 +59,7 @@ export function closeVote(d: Draft): void {
       eliminatedId = top[0] as string;
     } else if (!s.revote) {
       s.lastVote = summary("TIE", null);
-      enterTieBreak(d, top);
-      return;
+      return { kind: "TIE", candidates: top };
     } else if (s.settings.tieBreak === "random") {
       outcome = "RANDOM";
       eliminatedId = top[d.rng.int(top.length)] as string;
@@ -76,5 +77,5 @@ export function closeVote(d: Draft): void {
     s.history.push({ round: s.round, eliminatedId: null, role: null, cause: "NONE" });
   }
   s.lastVote = summary(outcome, eliminatedId);
-  enterElimination(d);
+  return { kind: "SETTLED" };
 }

@@ -1,36 +1,60 @@
-// Small helpers for engine unit tests.
-import { COLORS } from "../../src/constants";
-import { assertInvariants } from "../../src/engine/invariants";
-import { createInitialState, reduce } from "../../src/engine/reduce";
-import type { Action, ClientIntent, EngineError, GameState, ReduceResult, SettingsPatch, SystemAction } from "../../src/engine/types";
+// Scripted engine driver and actor helpers for engine unit tests and the fixture generator.
+import { COLORS } from "../constants";
+import { assertInvariants } from "../engine/invariants";
+import { createInitialState, reduce } from "../engine/reduce";
+import type { Catalog } from "../engine/catalog";
+import { isSpeakingPhase } from "../engine/queries";
+import type { Action, ClientIntent, EngineError, GameState, Player, ReduceResult, Role, SettingsPatch, SystemAction } from "../engine/types";
 import { TEST_CATALOG } from "./test-catalog";
 
+/** Default scripted clock origin shared by engine, server and fixture drivers. */
 export const T0 = 1_790_000_000_000;
 export const pid = (i: number): string => "p_" + i.toString(16).padStart(24, "0");
 export const TV = { kind: "tv" } as const;
 export const SYS = { kind: "system" } as const;
 export const P = (playerId: string) => ({ kind: "player", playerId }) as const;
 
+/** Every timer off (patch for UPDATE_SETTINGS): phases only advance on actions or HOST_ADVANCE. */
+export const TIMERS_OFF = { clueSeconds: 0, voteSeconds: 0, revealSeconds: 0, guessSeconds: 0 } as const satisfies SettingsPatch;
+
+export interface GameOptions {
+  seed?: number;
+  now?: number;
+  catalog?: Catalog;
+  roomCode?: string;
+  joinUrl?: string;
+}
+
+/** Scripted engine driver: a clock, `reduce` and assertInvariants after every dispatch. */
 export class Game {
   state: GameState;
   now: number;
-  constructor(seed = 1, now = T0) {
-    this.state = createInitialState({ roomCode: "TEST", joinUrl: "https://x.test/TEST", seed, wordLocale: "en" });
-    this.now = now;
+  readonly catalog: Catalog;
+  constructor(opts: GameOptions = {}) {
+    const roomCode = opts.roomCode ?? "TEST";
+    this.state = createInitialState({ roomCode, joinUrl: opts.joinUrl ?? `https://x.test/${roomCode}`, seed: opts.seed ?? 1, wordLocale: "en" });
+    this.now = opts.now ?? T0;
+    this.catalog = opts.catalog ?? TEST_CATALOG;
   }
-  /** Dispatch and expect success; asserts invariants. */
+  #reduce(action: Action): ReduceResult {
+    const r = reduce(this.state, action, { now: this.now, catalog: this.catalog });
+    assertInvariants(r.state);
+    if (r.ok) this.state = r.state;
+    return r;
+  }
+  /** Dispatch `dt` ms after the previous one and expect success. */
   do(action: Action, dt = 1000): GameState {
-    const r = this.try(action, dt);
-    if (!r.ok) throw new Error(`${action.type} failed: ${r.error}`);
-    return r.state;
+    return expectOk(action, this.try(action, dt));
+  }
+  /** Dispatch at the absolute time `at` and expect success. */
+  doAt(action: Action, at: number): GameState {
+    this.now = at;
+    return expectOk(action, this.#reduce(action));
   }
   /** Dispatch; returns the result (state updated only on success). */
   try(action: Action, dt = 1000): ReduceResult {
     this.now += dt;
-    const r = reduce(this.state, action, { now: this.now, catalog: TEST_CATALOG });
-    assertInvariants(r.state);
-    if (r.ok) this.state = r.state;
-    return r;
+    return this.#reduce(action);
   }
   /** Expect an error and that the state is unchanged (same object). */
   err(action: Action, dt = 0): EngineError {
@@ -45,10 +69,7 @@ export class Game {
   sys(a: SystemAction): GameState { return this.do({ ...a, by: SYS } as Action); }
   tick(at?: number): ReduceResult {
     if (at !== undefined) this.now = at;
-    const r = reduce(this.state, { type: "TICK", by: SYS }, { now: this.now, catalog: TEST_CATALOG });
-    assertInvariants(r.state);
-    if (r.ok) this.state = r.state;
-    return r;
+    return this.#reduce({ type: "TICK", by: SYS });
   }
   /** Advance the clock to the current deadline and TICK. */
   expire(): void {
@@ -66,18 +87,19 @@ export class Game {
     return p;
   }
   ids(): string[] { return this.state.players.map((p) => p.id); }
-  byRole(role: "CIVILIAN" | "UNDERCOVER" | "BLANK"): string[] { return this.state.players.filter((p) => p.role === role).map((p) => p.id); }
+  alive(): Player[] { return this.state.players.filter((p) => p.alive); }
+  byRole(role: Role): string[] { return this.state.players.filter((p) => p.role === role).map((p) => p.id); }
   speaker(): string { return this.state.speakingOrder[this.state.turnIdx] as string; }
   /** All speakers of the current pass say CLUE_DONE. */
   speakAll(): void {
-    while (this.state.phase === "CLUES" || this.state.phase === "TIE_BREAK") this.p(this.speaker(), { type: "CLUE_DONE" });
+    while (isSpeakingPhase(this.state.phase)) this.p(this.speaker(), { type: "CLUE_DONE" });
   }
   readyAll(): void {
     for (const p of this.state.players) if (this.state.phase === "ROLE_REVEAL" && p.connected && !p.ready) this.p(p.id, { type: "READY" });
   }
   /** Every alive connected voter votes `target` (the target votes for `fallback` or the first other alive player). */
   voteOut(target: string, fallback?: string): void {
-    const alive = this.state.players.filter((p) => p.alive);
+    const alive = this.alive();
     const other = fallback ?? alive.find((p) => p.id !== target && (!this.state.revote || this.state.tieCandidates.includes(p.id)))?.id;
     for (const p of alive) {
       if (this.state.phase !== "VOTING" || !p.connected) continue;
@@ -86,9 +108,14 @@ export class Game {
   }
 }
 
+function expectOk(action: Action, r: ReduceResult): GameState {
+  if (!r.ok) throw new Error(`${action.type} failed: ${r.error}`);
+  return r.state;
+}
+
 /** A lobby with n joined players and optional settings (by TV). */
 export function lobby(n: number, settings?: SettingsPatch, seed = 1): Game {
-  const g = new Game(seed);
+  const g = new Game({ seed });
   for (let i = 0; i < n; i++) g.join(i);
   if (settings) g.tv({ type: "UPDATE_SETTINGS", patch: settings });
   return g;

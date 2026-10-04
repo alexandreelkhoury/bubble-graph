@@ -2,6 +2,7 @@
 
 package app.mishana.tv.protocol
 
+import app.mishana.tv.Constants
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -10,14 +11,14 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 // SPEC §6.2/§6.3/§9.5. Ping/pong are byte-exact constant strings and are never serialised (Constants.PING_FRAME).
 
 @Serializable @JsonClassDiscriminator("t") sealed class ServerMessage
-@Serializable @SerialName("welcome") data class WelcomeMsg(val v: Int = 1, val playerId: String, val resumeToken: String, val roomCode: String) : ServerMessage()
-@Serializable @SerialName("state") data class StateMsg(val v: Int = 1, val seq: Long, val serverNow: Long, val view: TvView) : ServerMessage()
-@Serializable @SerialName("error") data class ErrorMsg(val v: Int = 1, val code: String, val messageKey: String, val ref: String?) : ServerMessage()
-@Serializable @SerialName("pong") data class PongMsg(val v: Int = 1) : ServerMessage()
+@Serializable @SerialName("welcome") data class WelcomeMsg(val v: Int = Constants.PROTOCOL_VERSION, val playerId: String, val resumeToken: String, val roomCode: String) : ServerMessage()
+@Serializable @SerialName("state") data class StateMsg(val v: Int = Constants.PROTOCOL_VERSION, val seq: Long, val serverNow: Long, val view: TvView) : ServerMessage()
+@Serializable @SerialName("error") data class ErrorMsg(val v: Int = Constants.PROTOCOL_VERSION, val code: String, val messageKey: String, val ref: String?) : ServerMessage()
+@Serializable @SerialName("pong") data class PongMsg(val v: Int = Constants.PROTOCOL_VERSION) : ServerMessage()
 
 @Serializable @JsonClassDiscriminator("t") sealed class ClientMessage
-@Serializable @SerialName("hello") data class HelloTv(val v: Int = 1, val role: String = "tv", val tvToken: String) : ClientMessage()
-@Serializable @SerialName("action") data class ActionMsg(val v: Int = 1, val id: String? = null, val a: ClientIntent) : ClientMessage()
+@Serializable @SerialName("hello") data class HelloTv(val v: Int = Constants.PROTOCOL_VERSION, val role: String = "tv", val tvToken: String) : ClientMessage()
+@Serializable @SerialName("action") data class ActionMsg(val v: Int = Constants.PROTOCOL_VERSION, val id: String? = null, val a: ClientIntent) : ClientMessage()
 
 @Serializable @JsonClassDiscriminator("type") sealed class ClientIntent
 @Serializable @SerialName("UPDATE_SETTINGS") data class UpdateSettings(val patch: SettingsPatch) : ClientIntent()

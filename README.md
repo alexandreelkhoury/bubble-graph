@@ -82,9 +82,9 @@ docs/            SPEC.md (binding contract), DESIGN.md (visual/UX spec), PLAN.md
 | `pnpm typecheck` | `tsc` in every package |
 | `pnpm test` | Vitest across all projects (engine, server, web-client, packs, tools) |
 | `pnpm test:coverage` | the same, with v8 coverage (engine ≥ 90% branches) |
-| `pnpm build` | web-client production build + Worker dry-run bundle |
+| `pnpm build` | web-client production build + Worker dry-run bundle, each checked against its size budget (phone JS 60 KB gzip, Worker script 400 KB) |
 | `pnpm sim` | simulate 200 games per player count from 3 to 12 and check invariants, termination and secrecy (`--ws http://host:8787` plays over the real protocol) |
-| `pnpm e2e` | Playwright: builds the web client, starts `wrangler dev` on :8788, then a TV mock and 5–6 browser phones play full games |
+| `pnpm e2e` | Playwright: builds the web client, starts `wrangler dev` on :8788, then a TV mock and 5–6 browser phones play full games (two of them drive the TV mock with the keyboard D-pad, OK and Back only) |
 | `pnpm fixtures` | regenerate `shared/fixtures/*.json` (the TS ↔ Kotlin protocol contract) |
 | `pnpm gen:strings` | regenerate the Android string resources from `shared/i18n` |
 | `pnpm lint:packs` | lint the word packs |
@@ -95,8 +95,8 @@ docs/            SPEC.md (binding contract), DESIGN.md (visual/UX spec), PLAN.md
 | Milestone | Scope | Status |
 |---|---|---|
 | **M1** Engine + server | shared engine, protocol, projections, Worker + Room DO, sim | **Done.** `pnpm test` green, `pnpm sim` 3–12 players with zero invariant, termination or leak failures, resume tokens |
-| **M2** Phone client + TV mock | Preact controller, browser TV mock, wake lock, reconnect | **Done.** 47.8 KB gzip (budget 60). Playwright e2e plays full games (EN and AR/RTL, tie-break → revote → Blank guess → results → play again, reload resume, dropped-socket reconnect) and checks that no secret reaches the TV over WebSocket. Not yet tried on a real phone on a LAN |
-| **M3** Android TV app | Compose for TV screens, D-pad flow, QR lobby, reconnects | **Code complete, not device-tested.** The protocol models, socket, ViewModel and lobby metrics pass 54 JVM unit tests against the shared fixtures. The UI type-checks against stubs. The APK has not been built here because Google Maven / the Android SDK were unavailable; see docs/TV.md |
+| **M2** Phone client + TV mock | Preact controller, browser TV mock, wake lock, reconnect | **Done.** 48.9 KB gzip (budget 60). Playwright e2e plays full games (EN and AR/RTL, remote-only TV in EN and AR, tie-break → revote → Blank guess → results → play again, reload resume, dropped-socket reconnect) and checks that no secret reaches the TV over WebSocket. Not yet tried on a real phone on a LAN |
+| **M3** Android TV app | Compose for TV screens, D-pad flow, QR lobby, reconnects | **Code complete, not device-tested.** The protocol models, socket, ViewModel and lobby metrics pass 76 JVM unit tests against the shared fixtures. The UI type-checks against stubs. The APK has not been built here because Google Maven / the Android SDK were unavailable; see docs/TV.md |
 | **M4** i18n + packs + polish | FR/EN/AR + RTL, packs, sounds, motion | **Mostly done.** All three locales on phone and TV, with motion and reduced-motion fallbacks. Packs: EN 217, FR 215, AR 131 pairs (50 Lebanese), lint-clean; review/"draft" warnings remain. **Pending:** sound cues and the mute setting (only hooks exist so far), and AR RTL screenshot checks on a real TV |
 | **M5** Play Store readiness | banners, signing, prod deploy, listing | Not started (the production server URL is still a placeholder) |
 

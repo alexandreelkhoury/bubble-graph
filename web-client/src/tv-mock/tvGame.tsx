@@ -1,33 +1,55 @@
 // TV-04 role reveal wait, TV-05 clues (+ TV-08 tie overlay), TV-06 voting.
 import { Fragment } from "preact";
-import { useEffect, useState } from "preact/hooks";
-import { useDeadline } from "../components/Timer";
+import type { RefObject } from "preact";
+import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
+import { useDeadlineSelect } from "../components/Timer";
 import type { PublicPlayer, TvView } from "@mishana/shared/protocol";
-import { fmtNum, t } from "../i18n/t";
+import { dirOf, fmtNum, isolate, locale, t } from "../i18n/t";
 import { Avatar, avatarState } from "../components/PlayerChip";
 import { Icon } from "../components/Icon";
-import { ActionPill, Stamp, Tile, TimerChip, TimerRing, TvTimerBar, TvTopBar, useInitialFocus } from "./tvParts";
-import { reduced } from "./motion";
+import { reduced } from "../lib/motion";
+import { byId, orderWindow, playersOf, tiedWithTally } from "../lib/view";
+import { ellipsizeName } from "../lib/names";
+import { ActionPill, Stamp, Tile, TimerChip, TimerRing, TvTimerBar, TvTopBar, VOTE_NAME_MAX } from "./tvParts";
+import { useInitialFocus } from "./dpad";
 
-export function byIdTv(view: TvView, id: string | null | undefined): PublicPlayer | undefined {
-  return id ? view.players.find((p) => p.id === id) : undefined;
+/** TV-04 avatar row: 104 dp tiles (titleS names, 1 line) with a 24 dp gap in a 760 dp row → 6 per row. */
+const REVEAL_PER_ROW = 6;
+
+/**
+ * TV-04 sizing (Kotlin needed() fallback): the phone icon and the avatars shrink — icon 84 → 56 → none, avatars
+ * 64 → 44 — until the whole stack fits the 360 dp stage, so the avatar rows never reach the bottom bar.
+ */
+export function revealSizes(players: number, blankHint: boolean, rtl: boolean): { icon: number; avatar: number; hint: boolean } {
+  const STAGE = 360, GAP = 12, ROW_GAP = 10;
+  const title = rtl ? 96 : 80, body = rtl ? 34 : 28, name = rtl ? 34 : 28;
+  const rows = Math.max(1, Math.ceil(players / REVEAL_PER_ROW));
+  for (const [icon, avatar] of [[84, 64], [56, 64], [56, 44], [0, 44]] as const) {
+    const blocks = (icon ? 1 : 0) + 2 + (blankHint ? 1 : 0) + 1;
+    const needed = icon + title + body + (blankHint ? body : 0) + rows * (avatar + 6 + name) + (rows - 1) * ROW_GAP + (blocks - 1) * GAP;
+    if (needed <= STAGE) return { icon, avatar, hint: blankHint };
+  }
+  return { icon: 0, avatar: 44, hint: false }; // 12 players in Arabic: the muted Blank hint goes last
 }
 
 /** TV-04 "Check your phones". */
 export function TvRoleReveal({ view }: { view: TvView }) {
   const pill = useInitialFocus<HTMLButtonElement>();
   const active = view.players.filter((p) => !p.left);
-  const ready = active.filter((p) => p.ready && p.connected).length;
+  // "Ready" = pressed Got it (as on the phones and the Kotlin TV); an away player who was ready stays ready.
+  const ready = active.filter((p) => p.ready).length;
+  const blankHint = (view.roleCounts?.blank ?? 0) > 0;
+  const size = revealSizes(active.length, blankHint, dirOf(locale.value) === "rtl");
   return (
     <div class="tvscreen">
       <TvTopBar view={view} />
       <div class="tvstage tvreveal">
-        <span class="tvreveal__phone"><Icon name="phone" size={96} /></span>
+        {size.icon > 0 && <span class="tvreveal__phone"><Icon name="phone" size={size.icon} /></span>}
         <h1 class="tvt-displayL tvreveal__title">{t("reveal.checkPhones")}</h1>
         <p class="tvt-body">{t("reveal.checkBody")}</p>
-        {(view.roleCounts?.blank ?? 0) > 0 && <p class="tvt-body tv-muted">{t("reveal.blankHint")}</p>}
-        <div class={`tvrow${active.length > 7 ? " tvrow--two" : ""}`}>
-          {active.map((p) => <Tile key={p.id} p={p} size={64} check={p.ready && p.connected} class="tile--mini" />)}
+        {size.hint && <p class="tvt-body tv-muted">{t("reveal.blankHint")}</p>}
+        <div class="tvrow">
+          {active.map((p) => <Tile key={p.id} p={p} size={size.avatar} check={p.ready} class="tile--mini" />)}
         </div>
       </div>
       <div class="tvbottom">
@@ -45,19 +67,17 @@ function TieOverlay({ view, onDone }: { view: TvView; onDone(): void }) {
     const id = setTimeout(onDone, reduced() ? 1250 : 2500);
     return () => clearTimeout(id);
   }, []);
-  const tied = view.tieCandidates.map((id) => byIdTv(view, id)).filter((p): p is PublicPlayer => !!p);
-  const tally = (id: string): number => view.lastVote?.tally.find((x) => x.targetId === id)?.voterIds.length ?? 0;
   return (
     <div class="tvtie" onClick={onDone}>
       <Stamp text={t("tie.title")} tone="accent" />
       <div class="tvtie__cards">
-        {tied.map((p, i) => (
+        {tiedWithTally(view).map(({ player: p, votes }, i) => (
           <Fragment key={p.id}>
-            {i > 0 && <span class="tvtie__vs">VS</span>}
+            {i > 0 && <span class="tvtie__vs">{t("tie.vs")}</span>}
             <div class="tvtie__card">
               <span class="tvtie__av">
                 <Avatar color={p.color} size={120} state={avatarState(p)} />
-                <span class="tvtally num">{fmtNum(tally(p.id))}</span>
+                <span class="tvtally num">{fmtNum(votes)}</span>
               </span>
               <bdi class="tvt-title">{p.name}</bdi>
             </div>
@@ -69,15 +89,61 @@ function TieOverlay({ view, onDone }: { view: TvView; onDone(): void }) {
   );
 }
 
+/** The strip's width in dp (layout px inside the scaled canvas), tracked so the window follows the action bar. */
+function useWidth<T extends HTMLElement>(): [RefObject<T>, number] {
+  const ref = useRef<T>(null);
+  const [w, setW] = useState(0);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    setW(el.clientWidth);
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => setW(el.clientWidth));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, w];
+}
+
+/**
+ * TV-05 speaking order (Kotlin OrderStrip): 84 dp items (48 dp avatar, name cut to 8 graphemes). When the bar is too
+ * narrow the chevrons go first, then a window keeps the current speaker in view with "+n" on either side; the strip
+ * never widens the bottom bar.
+ */
+function OrderStrip({ order, currentId }: { order: PublicPlayer[]; currentId: string | null }) {
+  const [ref, width] = useWidth<HTMLOListElement>();
+  const cur = Math.max(0, order.findIndex((p) => p.id === currentId));
+  const win = orderWindow(order.length, cur, width || Infinity);
+  const after = order.length - win.end;
+  return (
+    <ol class="tvorder" ref={ref}>
+      {win.start > 0 && <li class="tvorder__more tnum" dir="ltr" aria-hidden="true">+{fmtNum(win.start)}</li>}
+      {order.slice(win.start, win.end).map((p, i) => {
+        const isCur = p.id === currentId;
+        return (
+          <li key={p.id} class={`tvorder__item${isCur ? " is-current" : ""}${p.spoke && !isCur ? " is-done" : ""}`}>
+            {i > 0 && win.chevrons && <Icon name="chevron-forward" size={16} class="tvorder__chev" />}
+            <span class="tvorder__who">
+              <Avatar color={p.color} size={48} state={avatarState(p)} check={p.spoke && !isCur} />
+              <bdi class="tvorder__name">{ellipsizeName(p.name, 8)}</bdi>
+            </span>
+          </li>
+        );
+      })}
+      {after > 0 && <li class="tvorder__more tnum" dir="ltr" aria-hidden="true">+{fmtNum(after)}</li>}
+    </ol>
+  );
+}
+
 /** TV-05 Clues / TIE_BREAK. */
 export function TvClues({ view }: { view: TvView }) {
   const pill = useInitialFocus<HTMLButtonElement>();
   const tie = view.phase === "TIE_BREAK";
   const [overlay, setOverlay] = useState(tie && view.round === (view.lastVote?.round ?? -1) && view.lastVote?.outcome === "TIE");
-  const speaker = byIdTv(view, view.currentSpeakerId);
-  const order = view.speakingOrder.map((id) => byIdTv(view, id)).filter((p): p is PublicPlayer => !!p);
+  const speaker = byId(view, view.currentSpeakerId);
+  const order = playersOf(view, view.speakingOrder);
   const idx = view.currentSpeakerId ? view.speakingOrder.indexOf(view.currentSpeakerId) : -1;
-  const next = byIdTv(view, view.speakingOrder[idx + 1]);
+  const next = byId(view, view.speakingOrder[idx + 1]);
   const firstTurn = view.round === 1 && idx === 0 && !tie;
   return (
     <div class="tvscreen tvclues">
@@ -92,33 +158,20 @@ export function TvClues({ view }: { view: TvView }) {
         {speaker && (
           <div class="tvclues__hero" key={speaker.id}>
             {view.deadline ? (
-              <TimerRing deadline={view.deadline} size={184}>
-                <Avatar color={speaker.color} size={136} state={avatarState(speaker)} speaking={speaker.connected} />
+              <TimerRing deadline={view.deadline} size={172}>
+                <Avatar color={speaker.color} size={124} state={avatarState(speaker)} speaking={speaker.connected} />
               </TimerRing>
             ) : (
-              <div class="ring" style={{ width: "184px", height: "184px" }}><div class="ring__content"><Avatar color={speaker.color} size={136} state={avatarState(speaker)} speaking /></div></div>
+              <div class="ring" style={{ width: "172px", height: "172px" }}><div class="ring__content"><Avatar color={speaker.color} size={124} state={avatarState(speaker)} speaking /></div></div>
             )}
-            <h1 class="tvt-displayM tvclues__name"><bdi>{t("clues.speaking", { name: "⁨" + speaker.name + "⁩" })}</bdi></h1>
+            <h1 class="tvt-displayM tvclues__name">{t("clues.speaking", { name: isolate(speaker.name) })}</h1>
             <p class="tvt-body tv-secondary">{view.deadline ? t("clues.speakerSub") : t("clues.noTimer")}
-              {next && <span class="tv-muted"> · {t("clues.upNext", { name: "\u2068" + next.name + "\u2069" })}</span>}</p>
+              {next && <span class="tv-muted"> · {t("clues.upNext", { name: isolate(next.name) })}</span>}</p>
           </div>
         )}
       </div>
       <div class="tvbottom tvbottom--strip">
-        <ol class="tvorder">
-          {order.map((p, i) => {
-            const cur = p.id === view.currentSpeakerId;
-            return (
-              <li key={p.id} class={`tvorder__item${cur ? " is-current" : ""}${p.spoke && !cur ? " is-done" : ""}`}>
-                {i > 0 && <Icon name="chevron-forward" size={18} class="tvorder__chev" />}
-                <span class="tvorder__who">
-                  <Avatar color={p.color} size={48} state={avatarState(p)} check={p.spoke && !cur} />
-                  <bdi class="tvorder__name">{p.name}</bdi>
-                </span>
-              </li>
-            );
-          })}
-        </ol>
+        <OrderStrip order={order} currentId={view.currentSpeakerId} />
         <ActionPill label={t("clues.skipTurn")} pillRef={pill} animating={overlay} onSkipAnimation={() => setOverlay(false)} />
       </div>
       {overlay && <TieOverlay view={view} onDone={() => setOverlay(false)} />}
@@ -132,7 +185,8 @@ export function TvVoting({ view }: { view: TvView }) {
   const cands = view.players.filter((p) => p.alive && !p.left && (!view.revote || view.tieCandidates.includes(p.id)));
   const big = cands.length > 8;
   const [pulse, setPulse] = useState(0);
-  const d = useDeadline(view.deadline);
+  // Re-renders when the last-10-seconds state flips, not on every tick (the bar ticks on its own).
+  const lastTen = useDeadlineSelect(view.deadline, (c) => c.secs <= 10 && c.secs > 0, false);
   useEffect(() => { setPulse((x) => x + 1); }, [view.votesCast]);
   return (
     <div class="tvscreen">
@@ -141,12 +195,12 @@ export function TvVoting({ view }: { view: TvView }) {
         <h1 class="tvt-displayS tvvote__title">{t("vote.title")} <span class="tv-secondary tvt-headline">{t("vote.sub")}</span></h1>
         {view.revote && <span class="tvbadge tvbadge--accent">{t("vote.revoteAmong")}</span>}
         <div class={`tvvgrid${big ? " tvvgrid--12" : ""}`}>
-          {cands.map((p) => <Tile key={p.id} p={p} size={big ? 56 : 64} check={p.hasVoted} class={big ? "tile--vote tile--vote-s" : "tile--vote"} />)}
+          {cands.map((p) => <Tile key={p.id} p={p} size={big ? 48 : 64} check={p.hasVoted} nameMax={VOTE_NAME_MAX} class={big ? "tile--vote tile--vote-s" : "tile--vote"} />)}
         </div>
       </div>
       <div class="tvbottom tvbottom--vote">
         <div class="tvvote__timer"><TvTimerBar deadline={view.deadline} /></div>
-        <span class="tvvote__progress tnum" key={pulse}>{d && d.secs <= 10 && d.secs > 0 ? <span class="tv-danger">{t("vote.tenLeft")}</span> : t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</span>
+        <span class="tvvote__progress tnum" key={pulse}>{lastTen ? <span class="tv-danger">{t("vote.tenLeft")}</span> : t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</span>
         <ActionPill label={t("vote.close")} pillRef={pill} />
       </div>
     </div>

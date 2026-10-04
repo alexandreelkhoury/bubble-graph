@@ -6,6 +6,7 @@
     "./protocol": "./src/protocol/index.ts",
     "./projection": "./src/projection/index.ts",
     "./packs": "./src/packs/index.ts",
+    "./testing": "./src/testing/index.ts",
     "./brand": "./src/brand.ts",
     "./constants": "./src/constants.ts",
     "./i18n": "./src/i18n/index.ts",

@@ -1,8 +1,7 @@
 // §8.7 in-house t(): locale → en → key fallback, Intl.PluralRules plurals, {name} placeholders, latn digits.
+// Only English (the fallback) ships in the entry chunk; FR and AR are fetched on demand (each player needs one).
 import { signal } from "@preact/signals";
 import en from "@mishana/shared/i18n/en.json";
-import fr from "@mishana/shared/i18n/fr.json";
-import ar from "@mishana/shared/i18n/ar.json";
 import { LOCALES } from "@mishana/shared/constants";
 import type { Locale } from "@mishana/shared/constants";
 
@@ -12,7 +11,17 @@ type Value = string | PluralValue;
 type Catalog = Record<string, Value | undefined>;
 export type Params = Record<string, string | number>;
 
-const CATALOGS: Record<Locale, Catalog> = { en, fr: fr as Catalog, ar: ar as Catalog };
+const CATALOGS: Partial<Record<Locale, Catalog>> = { en };
+const LOADERS: Record<Exclude<Locale, "en">, () => Promise<{ default: unknown }>> = {
+  fr: () => import("@mishana/shared/i18n/fr.json"),
+  ar: () => import("@mishana/shared/i18n/ar.json"),
+};
+
+/** Loads a locale's catalog (once). Until it is in, translate() falls back to English. */
+export async function loadCatalog(l: Locale): Promise<void> {
+  if (CATALOGS[l] || l === "en") return;
+  CATALOGS[l] = (await LOADERS[l]()).default as Catalog;
+}
 
 export const locale = signal<Locale>("en");
 
@@ -35,10 +44,10 @@ export function fmtNum(n: number, l: Locale = locale.value): string {
 }
 
 export function translate(l: Locale, key: string, params?: Params): string {
-  let value: Value | undefined = CATALOGS[l][key];
+  let value: Value | undefined = CATALOGS[l]?.[key];
   let used: Locale = l;
   if (value === undefined) {
-    value = CATALOGS.en[key];
+    value = en[key as MessageKey];
     used = "en";
   }
   if (value === undefined) return key;
@@ -79,8 +88,26 @@ export function dirOf(l: Locale): "rtl" | "ltr" {
   return l === "ar" ? "rtl" : "ltr";
 }
 
-/** Sets the locale and updates <html lang dir>. */
-export function setLocale(l: Locale): void {
+/** Each locale's name in its own language (language pickers, the word-language setting, summaries). */
+export const LOCALE_NATIVE_NAME: Readonly<Record<Locale, string>> = { en: "English", fr: "Français", ar: "العربية" };
+
+/** Wraps user text (a name, a guess) in FSI…PDI so it never reorders the sentence around it (DESIGN §3.5). */
+export function isolate(s: string): string {
+  return "\u2068" + s + "\u2069";
+}
+
+/** Wraps always-LTR text (a URL, a room code) in LRI…PDI. */
+export function isolateLtr(s: string): string {
+  return "\u2066" + s + "\u2069";
+}
+
+/** Loads the catalog if needed, then sets the locale and updates <html lang dir> (one switch, no English flash). */
+export async function setLocale(l: Locale): Promise<void> {
+  try {
+    await loadCatalog(l);
+  } catch {
+    /* offline mid-switch: keep going, translate() falls back to English */
+  }
   locale.value = l;
   if (typeof document !== "undefined") {
     document.documentElement.lang = l;

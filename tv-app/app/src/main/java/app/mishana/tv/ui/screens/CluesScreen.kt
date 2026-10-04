@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,7 +57,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.mishana.tv.R
-import app.mishana.tv.game.Countdown
 import app.mishana.tv.game.Names
 import app.mishana.tv.i18n.isolate
 import app.mishana.tv.protocol.ClientIntent
@@ -67,18 +65,18 @@ import app.mishana.tv.protocol.Phase
 import app.mishana.tv.protocol.PublicPlayer
 import app.mishana.tv.protocol.TvView
 import app.mishana.tv.protocol.VoteOutcome
+import app.mishana.tv.protocol.player
 import app.mishana.tv.ui.components.ActionPill
 import app.mishana.tv.ui.components.Avatar
 import app.mishana.tv.ui.components.AvatarState
+import app.mishana.tv.ui.components.InGameScaffold
 import app.mishana.tv.ui.components.InitialFocus
 import app.mishana.tv.ui.components.MishIcons
 import app.mishana.tv.ui.components.Stamp
-import app.mishana.tv.ui.components.TimerNumber
+import app.mishana.tv.ui.components.TimerSeconds
 import app.mishana.tv.ui.components.TimerRing
-import app.mishana.tv.ui.components.ToastState
 import app.mishana.tv.ui.components.fullBleed
-import app.mishana.tv.ui.components.rememberFrameClock
-import app.mishana.tv.ui.components.urgencyColor
+import app.mishana.tv.ui.theme.MishShapes
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishMotion
 import app.mishana.tv.ui.theme.MishTheme
@@ -89,7 +87,7 @@ import kotlinx.coroutines.delay
  * the speaking-order strip at the bottom, and the `clues.skipTurn` pill. TIE_BREAK first plays the TV-08 overlay.
  */
 @Composable
-fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (ClientIntent) -> Unit, toasts: ToastState) {
+fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (ClientIntent) -> Unit) {
     val type = MishTheme.type
     val pill = remember { FocusRequester() }
     val speaker = view.player(view.currentSpeakerId)
@@ -118,8 +116,6 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
         }
     }
 
-    SkipToasts(view, toasts)
-
     InGameScaffold(
         defaultFocus = pill,
         actionBar = {
@@ -128,6 +124,8 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
                 stringResource(R.string.clues__skip_turn),
                 { send(HostAdvance) },
                 pill,
+                // A new speaker is a new action: presses mashed through the hand-over never skip them.
+                resetKey = view.currentSpeakerId,
                 onFirstPress = {
                     if (tieVisible.targetState) {
                         tieVisible.targetState = false
@@ -163,23 +161,23 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
                 // The hero steps its ring/avatar down (216 → 140 dp) when the stage is short (Arabic line heights,
                 // the round-1 hint, large font scale) instead of pushing the name and sub-line off the stage.
                 BoxWithConstraints(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                val textH = with(LocalDensity.current) { type.displayM.lineHeight.toDp() + type.body.lineHeight.toDp() } + 10.dp
-                val ring = (maxHeight - textH).coerceIn(140.dp, 216.dp)
-                AnimatedContent(
-                    targetState = speaker,
-                    contentKey = { it?.id },
-                    transitionSpec = {
-                        if (reduce) {
-                            fadeIn(tween(MishMotion.Fast)) togetherWith fadeOut(tween(MishMotion.Fast))
-                        } else {
-                            (slideInHorizontally(tween(MishMotion.Slow, easing = MishMotion.Decel)) { it / 3 } + fadeIn(tween(MishMotion.Slow))) togetherWith
-                                (slideOutHorizontally(tween(MishMotion.Base, easing = MishMotion.Accel)) { -it / 3 } + fadeOut(tween(MishMotion.Base)))
-                        }
-                    },
-                    label = "speaker",
-                ) { sp ->
-                    if (sp != null) SpeakerHero(sp, view, clockOffsetMs, ring) else Spacer(Modifier.height(ring))
-                }
+                    val textH = with(LocalDensity.current) { type.displayM.lineHeight.toDp() + type.body.lineHeight.toDp() } + 10.dp
+                    val ring = (maxHeight - textH).coerceIn(140.dp, 216.dp)
+                    AnimatedContent(
+                        targetState = speaker,
+                        contentKey = { it?.id },
+                        transitionSpec = {
+                            if (reduce) {
+                                fadeIn(tween(MishMotion.Fast)) togetherWith fadeOut(tween(MishMotion.Fast))
+                            } else {
+                                (slideInHorizontally(tween(MishMotion.Slow, easing = MishMotion.Decel)) { it / 3 } + fadeIn(tween(MishMotion.Slow))) togetherWith
+                                    (slideOutHorizontally(tween(MishMotion.Base, easing = MishMotion.Accel)) { -it / 3 } + fadeOut(tween(MishMotion.Base)))
+                            }
+                        },
+                        label = "speaker",
+                    ) { sp ->
+                        if (sp != null) SpeakerHero(sp, view, clockOffsetMs, ring) else Spacer(Modifier.height(ring))
+                    }
                 }
             }
         }
@@ -202,7 +200,7 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
 private fun TieBadge() {
     Row(
         Modifier
-            .background(MishColors.Accent, RoundedCornerShape(50))
+            .background(MishColors.Accent, MishShapes.pill)
             .padding(horizontal = 14.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -215,7 +213,6 @@ private fun TieBadge() {
 private fun SpeakerHero(sp: PublicPlayer, view: TvView, clockOffsetMs: Long, ring: Dp) {
     val type = MishTheme.type
     val deadline = view.deadline
-    val now by rememberFrameClock()
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(Modifier.size(ring), contentAlignment = Alignment.Center) {
             if (deadline != null) {
@@ -223,12 +220,7 @@ private fun SpeakerHero(sp: PublicPlayer, view: TvView, clockOffsetMs: Long, rin
             }
             Avatar(sp.color, ring * (160f / 216f), state = AvatarState.of(sp, speaking = sp.connected, showHost = false))
             if (deadline != null) {
-                val remaining = Countdown.remainingMs(deadline.at, clockOffsetMs, now)
-                TimerNumber(
-                    remaining,
-                    urgencyColor(remaining),
-                    Modifier.align(Alignment.TopEnd).offset(x = 36.dp, y = (-6).dp),
-                )
+                TimerSeconds(deadline, clockOffsetMs, Modifier.align(Alignment.TopEnd).offset(x = 36.dp, y = (-6).dp))
             }
         }
         Spacer(Modifier.height(10.dp))
@@ -320,7 +312,7 @@ private fun StripItem(p: PublicPlayer, current: Boolean) {
             Modifier
                 .width(28.dp)
                 .height(4.dp)
-                .background(if (current) MishColors.Primary else Color.Transparent, RoundedCornerShape(2.dp)),
+                .background(if (current) MishColors.Primary else Color.Transparent, MishShapes.pill),
         )
     }
 }
@@ -365,7 +357,7 @@ private fun TieOverlay(view: TvView) {
                             Modifier
                                 .graphicsLayer { scaleX = pop.value; scaleY = pop.value; alpha = pop.value.coerceIn(0f, 1f) }
                                 .widthIn(max = if (compact) 196.dp else 240.dp)
-                                .background(MishColors.Surface, RoundedCornerShape(24.dp))
+                                .background(MishColors.Surface, MishShapes.tile)
                                 .padding(horizontal = if (compact) 20.dp else 28.dp, vertical = 18.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
@@ -402,25 +394,6 @@ private fun TieOverlay(view: TvView) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier.widthIn(max = 640.dp),
             )
-        }
-    }
-}
-
-/** `clues.skipped` when the turn passes over an away player. */
-@Composable
-private fun SkipToasts(view: TvView, toasts: ToastState) {
-    val fmt = stringResource(R.string.clues__skipped, "%NAME%")
-    val prev = remember { mutableStateOf<Pair<String?, List<String>>?>(null) }
-    LaunchedEffect(view.currentSpeakerId, view.speakingOrder) {
-        val before = prev.value
-        prev.value = view.currentSpeakerId to view.speakingOrder
-        if (before == null || before.second != view.speakingOrder) return@LaunchedEffect
-        val from = view.speakingOrder.indexOf(before.first)
-        val to = view.currentSpeakerId?.let { view.speakingOrder.indexOf(it) } ?: view.speakingOrder.size
-        if (from < 0 || to <= from + 1) return@LaunchedEffect
-        for (id in view.speakingOrder.subList(from + 1, to)) {
-            val p = view.player(id) ?: continue
-            if (!p.connected) toasts.show(fmt.replace("%NAME%", isolate(p.name)), MishColors.Danger)
         }
     }
 }

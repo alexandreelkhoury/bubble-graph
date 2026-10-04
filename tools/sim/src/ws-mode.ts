@@ -6,7 +6,9 @@ import type { ClientIntentMsg, ServerMessage, TvView, View } from "@mishana/shar
 import { CreateRoomResponse, ServerMessageSchema } from "@mishana/shared/protocol";
 import { createRng } from "@mishana/shared/engine";
 import type { Rng } from "@mishana/shared/engine";
+import { FORBIDDEN_KEYS, TIMERS_OFF } from "@mishana/shared/testing";
 import type { SimArgs } from "./args";
+import { formatColumns } from "./format";
 
 export interface WsGameStats { n: number; games: number; civilians: number; infiltrators: number; blank: number; stalemates: number; resumes: number; failures: string[] }
 
@@ -152,7 +154,8 @@ export class WsClient {
 export function tvViewProblems(view: TvView, secretWords: ReadonlySet<string>): string[] {
   const out: string[] = [];
   const results = view.phase === "RESULTS";
-  const forbidden = new Set(["pair", "votes", "word", "alt", "guessLog", "me"]);
+  // Every state-only key, plus the per-player keys a TV view never carries.
+  const forbidden = new Set([...FORBIDDEN_KEYS, "word", "me"]);
   const walk = (x: unknown, path: string): void => {
     if (typeof x === "string") {
       if (!results && secretWords.has(x) && !path.endsWith(".name") && !path.includes(".title.")) out.push(`secret word at ${path}`);
@@ -220,7 +223,7 @@ export async function playRoom(httpBase: string, n: number, games: number, args:
     await t.tv.waitFor(() => t.tv.pongs > 0, "pong");
     await t.tv.send({ v: 1, t: "hello", role: "tv", tvToken });
     await t.tv.waitFor(() => t.tv.view !== null, "TV state");
-    await t.tv.act({ type: "UPDATE_SETTINGS", patch: { clueSeconds: 0, voteSeconds: 0, revealSeconds: 0, guessSeconds: 0, winRule: args.winRule, tieBreak: args.tieBreak } });
+    await t.tv.act({ type: "UPDATE_SETTINGS", patch: { ...TIMERS_OFF, winRule: args.winRule, tieBreak: args.tieBreak } });
 
     // Players
     for (let i = 0; i < n; i++) {
@@ -378,7 +381,5 @@ export async function runWsMode(args: SimArgs, log: (s: string) => void = consol
 export function formatWsTable(rows: WsGameStats[]): string {
   const header = ["n", "games", "civilians", "infiltrators", "blank", "stalemates", "resumes", "failures"];
   const lines = rows.map((r) => [r.n, r.games, r.civilians, r.infiltrators, r.blank, r.stalemates, r.resumes, r.failures.length].map(String));
-  const widths = header.map((h, i) => Math.max(h.length, ...lines.map((l) => (l[i] as string).length)));
-  const fmt = (cells: string[]): string => cells.map((c, i) => c.padStart(widths[i] as number)).join("  ");
-  return [fmt(header), widths.map((w) => "-".repeat(w)).join("  "), ...lines.map(fmt)].join("\n");
+  return formatColumns(header, lines);
 }

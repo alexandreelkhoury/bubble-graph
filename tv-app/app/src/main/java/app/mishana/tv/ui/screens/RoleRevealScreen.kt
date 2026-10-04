@@ -6,15 +6,11 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,7 +27,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,64 +34,19 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.mishana.tv.R
-import app.mishana.tv.game.Names
 import app.mishana.tv.protocol.ClientIntent
 import app.mishana.tv.protocol.HostAdvance
-import app.mishana.tv.protocol.PublicPlayer
 import app.mishana.tv.protocol.TvView
 import app.mishana.tv.ui.components.ActionPill
-import app.mishana.tv.ui.components.Avatar
+import app.mishana.tv.ui.components.AvatarRow
+import app.mishana.tv.ui.components.InGameScaffold
 import app.mishana.tv.ui.components.AvatarState
 import app.mishana.tv.ui.components.InitialFocus
 import app.mishana.tv.ui.components.MishIcons
 import app.mishana.tv.ui.components.TimerChip
-import app.mishana.tv.ui.components.focusFallback
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishMotion
 import app.mishana.tv.ui.theme.MishTheme
-
-/**
- * Shared in-game layout: the stage fills the space under the top bar; the bottom action bar (54 dp) holds the
- * action pill at the end. Focus falls back to [defaultFocus] whenever it is lost.
- */
-@Composable
-fun InGameScaffold(
-    defaultFocus: FocusRequester,
-    modifier: Modifier = Modifier,
-    actionBar: @Composable RowScope.() -> Unit,
-    stage: @Composable () -> Unit,
-) {
-    Column(modifier.fillMaxSize().focusFallback(defaultFocus)) {
-        Box(Modifier.fillMaxWidth().weight(1f)) { stage() }
-        Row(
-            Modifier.fillMaxWidth().defaultMinSize(minHeight = 54.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
-            content = actionBar,
-        )
-    }
-}
-
-/** A row of mini avatars with names (TV-04, TV-05 strip). */
-@Composable
-fun AvatarRow(players: List<PublicPlayer>, size: androidx.compose.ui.unit.Dp, state: (PublicPlayer) -> AvatarState, nameMax: Int = 8) {
-    Row(horizontalArrangement = Arrangement.spacedBy(20.dp), verticalAlignment = Alignment.Top) {
-        for (p in players) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(size + 24.dp)) {
-                Avatar(p.color, size, state = state(p))
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    Names.ellipsize(p.name, nameMax),
-                    style = MishTheme.type.caption,
-                    color = if (p.connected) MishColors.Text else MishColors.TextMuted,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-    }
-}
 
 /** TV-04 Role reveal wait ("Check your phones!"). The pill (`tv.startNow`) double-OK → HOST_ADVANCE. */
 @Composable
@@ -106,11 +56,12 @@ fun RoleRevealScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
     val players = view.players.filter { !it.left }
     val ready = players.count { it.ready }
     val reduce = MishTheme.reduceMotion
+    // Read in the layer only: the wobble never recomposes the screen.
     val wobble = if (reduce) {
-        0f
+        null
     } else {
-        val t = rememberInfiniteTransition(label = "phoneWobble")
-        t.animateFloat(-7f, 7f, infiniteRepeatable(tween(800, easing = MishMotion.Standard), RepeatMode.Reverse), label = "w").value
+        rememberInfiniteTransition(label = "phoneWobble")
+            .animateFloat(-7f, 7f, infiniteRepeatable(tween(800, easing = MishMotion.Standard), RepeatMode.Reverse), label = "w")
     }
     InGameScaffold(
         defaultFocus = pill,
@@ -141,13 +92,13 @@ fun RoleRevealScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
         val density = LocalDensity.current
         val titleLh = with(density) { type.displayM.lineHeight.toDp() }
         val bodyLh = with(density) { type.body.lineHeight.toDp() }
-        val captionLh = with(density) { type.caption.lineHeight.toDp() }
+        val nameLh = with(density) { type.titleS.lineHeight.toDp() }
         BoxWithConstraints(Modifier.fillMaxSize()) {
             // Fit the stage (12 players, Arabic line heights, 1.3× font scale): the phone icon shrinks, then goes,
             // then the avatars step down — the ready avatars are what people check, so they stay.
             fun needed(icon: Dp, avatar: Dp): Dp {
                 val text = titleLh + bodyLh * (if (blankHint) 2 else 1) + 16.dp
-                val avatars = (avatar + 6.dp + captionLh) * rows.size + 10.dp * (rows.size - 1)
+                val avatars = (avatar + 6.dp + nameLh) * rows.size + 10.dp * (rows.size - 1)
                 return (if (icon > 0.dp) icon + 4.dp else 0.dp) + text + avatars
             }
             val baseAvatar = if (twoRows) 52.dp else 64.dp
@@ -163,7 +114,7 @@ fun RoleRevealScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
                         MishIcons.Phone,
                         contentDescription = null,
                         tint = MishColors.Primary,
-                        modifier = Modifier.size(iconSize).graphicsLayer { rotationZ = wobble },
+                        modifier = Modifier.size(iconSize).graphicsLayer { rotationZ = wobble?.value ?: 0f },
                     )
                     Spacer(Modifier.height(4.dp))
                 }
