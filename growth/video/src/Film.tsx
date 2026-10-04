@@ -513,7 +513,9 @@ const Slogan: React.FC<{L: Layout; f: number}> = ({L, f}) => {
   );
 };
 
-const Outro: React.FC<{L: Layout; f: number}> = ({L, f}) => {
+export type Cta = 'live' | 'prelaunch';
+
+const Outro: React.FC<{L: Layout; f: number; cta: Cta}> = ({L, f, cta}) => {
   if (f < b(40.95)) return null;
   const L0 = L.logo * 1.35;
   const wmW = Math.min(L.W * 0.82, L.logo * (L.mode === 'tall' ? 2.9 : 3.1));
@@ -536,8 +538,8 @@ const Outro: React.FC<{L: Layout; f: number}> = ({L, f}) => {
   const size = lerp(L0, L.logo, settle);
   const mx = L.W / 2, my = lerp(L.H / 2, markY, settle);
   const reveal = prog(f, b(42.2), b(43.1), easeInOut);
-  const chips = ['3–12 players', 'Phones are the controllers', 'Free'];
-  const cta = spr(f, b(46), POP);
+  const chips = ['3–12 players', 'Phones are the controllers', 'Free to play'];
+  const ctaPop = spr(f, b(46), POP);
   return (
     <>
       <At x={mx} y={my} z={82}>
@@ -564,20 +566,26 @@ const Outro: React.FC<{L: Layout; f: number}> = ({L, f}) => {
         })}
       </div>
       <At x={L.W / 2} y={ctaY} z={84}>
-        <div style={{position: 'absolute', left: 0, top: -ctaH / 2, height: ctaH, transform: `translateX(-50%) scale(${cta})`, borderRadius: 999,
+        <div style={{position: 'absolute', left: 0, top: -ctaH / 2, height: ctaH, transform: `translateX(-50%) scale(${ctaPop})`, borderRadius: 999,
           background: C.primary, color: C.ink, fontFamily: FONT, fontWeight: 900, fontSize: ctaH * 0.36, display: 'flex', alignItems: 'center',
           padding: `0 ${ctaH * 0.55}px`, gap: ctaH * 0.2, whiteSpace: 'nowrap', boxShadow: `0 0 ${ctaH * 0.6}px rgba(255,61,139,0.45)`}}>
           <svg width={ctaH * 0.3} height={ctaH * 0.33} viewBox="0 0 22 24"><path d="M2 2l18 10L2 22z" fill={C.ink} /></svg>
-          Available on Google TV
+          {cta === 'live' ? 'Available on Google TV' : 'Play free in your browser'}
         </div>
       </At>
+      {cta === 'prelaunch' ? (
+        <div style={{position: 'absolute', left: 0, width: L.W, top: ctaY + ctaH / 2 + ctaH * 0.28, textAlign: 'center', fontFamily: FONT, fontWeight: 700,
+          fontSize: ctaH * 0.3, color: C.text2, zIndex: 84}}>
+          <Rise f={f} start={b(46.6)}>Google TV app coming soon</Rise>
+        </div>
+      ) : null}
     </>
   );
 };
 
 // ---------------------------------------------------------------- the film
 
-export const Film: React.FC = () => {
+export const Film: React.FC<{cta?: Cta}> = ({cta = 'live'}) => {
   const f = useCurrentFrame();
   const {width, height} = useVideoConfig();
   const L = layoutFor(width, height);
@@ -609,7 +617,7 @@ export const Film: React.FC = () => {
       <MoleWord L={L} f={f} />
       <Stamp L={L} f={f} />
       <Slogan L={L} f={f} />
-      <Outro L={L} f={f} />
+      <Outro L={L} f={f} cta={cta} />
 
       {/* captions (screen space) */}
       <Caption L={L}>

@@ -13,16 +13,16 @@ loadFont({family: 'Cairo', url: staticFile('fonts/cairo_bold.ttf'), weight: '700
 loadFont({family: 'Cairo', url: staticFile('fonts/cairo_bold.ttf'), weight: '800'});
 loadFont({family: 'Cairo', url: staticFile('fonts/cairo_black.ttf'), weight: '900'});
 
-type Props = {blur: number};
+type Props = {blur: number; cta?: 'live' | 'prelaunch'};
 
-const Main: React.FC<Props> = ({blur}) => (
+const Main: React.FC<Props> = ({blur, cta = 'live'}) => (
   <AbsoluteFill>
     {blur > 1 ? (
       <CameraMotionBlur samples={blur} shutterAngle={180}>
-        <Film />
+        <Film cta={cta} />
       </CameraMotionBlur>
     ) : (
-      <Film />
+      <Film cta={cta} />
     )}
     <Sound />
   </AbsoluteFill>
@@ -41,6 +41,11 @@ export const RemotionRoot: React.FC = () => (
     {FORMATS.map((fm) => (
       <Composition key={fm.id} id={fm.id} component={Main} durationInFrames={DURATION} fps={FPS} width={fm.width} height={fm.height}
         defaultProps={{blur: 0} satisfies Props} />
+    ))}
+    {/* Before the Google Play launch: the CTA sends people to the free browser version */}
+    {FORMATS.map((fm) => (
+      <Composition key={fm.id + '-prelaunch'} id={fm.id + '-prelaunch'} component={Main} durationInFrames={DURATION} fps={FPS} width={fm.width}
+        height={fm.height} defaultProps={{blur: 0, cta: 'prelaunch'} satisfies Props} />
     ))}
   </Folder>
   </>
