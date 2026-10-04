@@ -10,7 +10,6 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.nativeKeyEvent
 import androidx.compose.ui.input.key.type
 import app.mishana.tv.game.Countdown
 import app.mishana.tv.game.Cue
@@ -38,8 +37,8 @@ class TvSounds(private val sink: (CuePlay) -> Unit, private val stop: () -> Unit
         if (e.type != KeyEventType.KeyDown) return
         when (e.key) {
             Key.DirectionUp, Key.DirectionDown, Key.DirectionLeft, Key.DirectionRight -> arrowAt = SystemClock.uptimeMillis()
-            Key.DirectionCenter, Key.Enter, Key.NumPadEnter -> if (e.nativeKeyEvent.repeatCount == 0) sink(CuePlay(Cue.UI_SELECT))
-            Key.Back, Key.Escape -> if (e.nativeKeyEvent.repeatCount == 0) sink(CuePlay(Cue.UI_BACK))
+            Key.DirectionCenter, Key.Enter, Key.NumPadEnter -> sink(CuePlay(Cue.UI_SELECT))
+            Key.Back, Key.Escape -> sink(CuePlay(Cue.UI_BACK))
             else -> Unit
         }
     }
