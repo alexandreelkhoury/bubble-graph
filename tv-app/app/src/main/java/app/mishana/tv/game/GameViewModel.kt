@@ -278,7 +278,8 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     fun setSoundMuted(muted: Boolean) {
         _soundMuted.value = muted
         deps.saveMuted(muted)
-        if (muted) deps.sound.stopAll()
+        // Muting cuts what rings; unmuting confirms with the OK tick (the key's own tick was still muted).
+        if (muted) deps.sound.stopAll() else deps.sound.play(CuePlay(Cue.UI_SELECT))
     }
 
     /** TV-13b "Try again": skip the backoff. */
