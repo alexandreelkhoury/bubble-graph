@@ -63,7 +63,7 @@ Debug builds allow cleartext `http://` / `ws://` (a debug-only network security 
 
 ### Production server URL
 
-`tv-app/gradle.properties` ships a **placeholder**: `mishana.prodServerUrl=https://mish-ana.example.workers.dev`. Before a release, replace it with your deployed Worker origin (the `https://mish-ana.<your-subdomain>.workers.dev` URL that `pnpm deploy` prints, or your custom domain; no trailing slash, no path), or pass it per build:
+`tv-app/gradle.properties` ships a **placeholder**: `mishana.prodServerUrl=https://mish-ana.example.workers.dev`. Before a release, replace it with your deployed Worker origin (the `https://play.<your-subdomain>.workers.dev` URL that `pnpm run deploy` prints, or your custom domain; no trailing slash, no path), or pass it per build:
 
 ```sh
 ./gradlew :app:bundleRelease -PserverUrl=https://<your-worker-origin>
@@ -174,4 +174,5 @@ Debug builds only: on the splash screen, focus the small version label at the bo
 | Cleartext error in logs | Only debug builds allow `http://`/`ws://`; use a debug build for LAN dev, `https://` for release |
 | "Reconnecting to the server…" banner | The socket dropped; the app retries with backoff (0.5 s → 10 s). After 30 s a full-screen "Connection lost" appears with Try again. The room and players are kept by the server |
 | Gradle can't find `gradle-wrapper.jar` | Run `gradle wrapper --gradle-version 9.6.0` once (see above) |
+| Text taller than designed; labels clipped (e.g. the lobby's bottom buttons show only the top half of their text) | Android 13+ never makes a line shorter than the font's ascent + descent (fallback line spacing, which Compose cannot turn off), and stock Cairo's are 1.874 em, so every `lineHeight` in `MishType` was ignored. The bundled fonts carry tightened metrics (880 / −180) so the line heights apply again. If you replace the font files, re-run `python3 tv-app/scripts/tighten_cairo_metrics.py` (needs `pip install fonttools`) |
 | AGP/Kotlin DSL error on `compileSdk` | AGP 9 may prefer `compileSdk { version = release(37) }`; switch the line in `app/build.gradle.kts` (SPEC §16 [VERIFY]) |
