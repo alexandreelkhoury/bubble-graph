@@ -90,7 +90,7 @@ docs/            SPEC.md (binding contract), DESIGN.md (visual/UX spec), PLAN.md
 | `pnpm gen:strings` | regenerate the Android string resources from `shared/i18n` |
 | `pnpm lint:packs` | lint the word packs |
 | `pnpm gen:sounds` | re-render the synthesised sound cues (needs ffmpeg with libvorbis) |
-| `pnpm deploy` | build, then `wrangler deploy` |
+| `pnpm run deploy` | build, then `wrangler deploy` |
 
 ## Status
 
@@ -108,7 +108,7 @@ No real domain is committed. Before shipping, set these (details: [docs/DEV.md â
 
 | What | Where | Ships as | Set to |
 |---|---|---|---|
-| TV app server (`BuildConfig.SERVER_URL`) | `mishana.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=` | placeholder `https://mish-ana.example.workers.dev`; `assembleRelease`/`bundleRelease` fail until it is replaced with an `https://` URL | the Worker origin `pnpm deploy` prints (`https://mish-ana.<your-subdomain>.workers.dev`) or your custom domain |
+| TV app server (`BuildConfig.SERVER_URL`) | `mishana.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=` | placeholder `https://mish-ana.example.workers.dev`; `assembleRelease`/`bundleRelease` fail until it is replaced with an `https://` URL | the Worker origin `pnpm run deploy` prints (`https://play.<your-subdomain>.workers.dev`) or your custom domain |
 | Phone join URL in the QR code | `JOIN_BASE_URL` in `server/wrangler.jsonc` `vars` | `""` (the origin the TV called) | leave empty on `workers.dev`; `https://<your-domain>` with a custom domain |
 | Extra browser origins | `ALLOWED_ORIGINS` in `server/wrangler.jsonc` `vars` | `""` (same-origin only) | leave empty unless the phone page is hosted on another origin |
 

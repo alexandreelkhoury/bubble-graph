@@ -74,7 +74,7 @@ tasks.matching { it.name == "preReleaseBuild" }.configureEach {
     doFirst {
         check(url != placeholder && !url.contains(".example.") && !url.contains("<")) {
             "Release build with the placeholder server URL ($url): set mishana.prodServerUrl in tv-app/gradle.properties " +
-                "to your deployed Worker (e.g. https://mish-ana.<your-subdomain>.workers.dev) or pass -PserverUrl=https://…"
+                "to your deployed Worker (e.g. https://play.<your-subdomain>.workers.dev) or pass -PserverUrl=https://…"
         }
         check(url.startsWith("https://")) {
             "Release server URL must be https:// (release builds allow no cleartext traffic): $url"

@@ -63,7 +63,7 @@ Debug builds allow cleartext `http://` / `ws://` (a debug-only network security 
 
 ### Production server URL
 
-`tv-app/gradle.properties` ships a **placeholder**: `mishana.prodServerUrl=https://mish-ana.example.workers.dev`. Before a release, replace it with your deployed Worker origin (the `https://mish-ana.<your-subdomain>.workers.dev` URL that `pnpm deploy` prints, or your custom domain; no trailing slash, no path), or pass it per build:
+`tv-app/gradle.properties` ships a **placeholder**: `mishana.prodServerUrl=https://mish-ana.example.workers.dev`. Before a release, replace it with your deployed Worker origin (the `https://play.<your-subdomain>.workers.dev` URL that `pnpm run deploy` prints, or your custom domain; no trailing slash, no path), or pass it per build:
 
 ```sh
 ./gradlew :app:bundleRelease -PserverUrl=https://<your-worker-origin>
