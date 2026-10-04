@@ -18,5 +18,12 @@
     { "name": "CREATE_ROOM_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },
     { "name": "CONNECT_LIMITER", "namespace_id": "1002", "simple": { "limit": 60, "period": 60 } }
   ],
+  // Production URL configuration (docs/DEV.md "Production URLs"). No domain is committed here on purpose.
+  //  - JOIN_BASE_URL: origin printed in the TV's QR code / join link (`<JOIN_BASE_URL>/<CODE>`). Empty = the origin
+  //    the TV called (the Worker's https://mish-ana.<your-subdomain>.workers.dev). Set it to https://<your-domain>
+  //    (no trailing slash) once a custom domain is attached. The phone page must be served from that origin.
+  //  - ALLOWED_ORIGINS: comma-separated exact browser origins allowed in addition to same-origin. Empty is right
+  //    when the web client is served by this Worker (assets above); `pnpm dev` passes its LAN origins with --var.
+  //  - DEBUG_INVARIANTS: keep "0" in production.
   "vars": { "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0" }
 }

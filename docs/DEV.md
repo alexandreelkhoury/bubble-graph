@@ -138,9 +138,26 @@ The room comes back in the same phase with the same words. On the first connecti
 1. Log in once: `pnpm --filter @mishana/server exec wrangler login`.
 2. **Rate-limit namespaces.** `namespace_id` must be a positive integer string that is unique in your account. `"1001"` and `"1002"` in `server/wrangler.jsonc` work locally; change them if they collide with other Workers.
 3. Deploy: `pnpm deploy`. This builds the web client, dry-run bundles the Worker, then runs `wrangler deploy`. The Worker is served at `https://mish-ana.<your-subdomain>.workers.dev`.
-4. **Custom domain.** Add the domain to the Worker in the Cloudflare dashboard, then set the variables in `server/wrangler.jsonc` (`vars`) or the dashboard:
-   - `JOIN_BASE_URL=https://your.domain`, so QR codes and join links use it (by default the request origin is used);
-   - `ALLOWED_ORIGINS`: only needed when the web client is served from another origin than the Worker.
-5. Build the TV app against the deployed URL (`-PserverUrl=https://…`; see [TV.md](TV.md)).
+4. **Custom domain** (optional). Add the domain to the Worker in the Cloudflare dashboard, then set `JOIN_BASE_URL` (see below).
+5. Build the TV app against the deployed URL (see below and [TV.md](TV.md#production-server-url)).
+
+### Production URLs
+
+Nothing in the repo names a real domain. There are exactly three settings, all empty or placeholders until you deploy:
+
+| Setting | Where | Placeholder / default | Set it to |
+|---|---|---|---|
+| TV app server URL → `BuildConfig.SERVER_URL` | `mishana.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=…` / env `ORG_GRADLE_PROJECT_serverUrl` | `https://mish-ana.example.workers.dev` (placeholder; release builds refuse it, and refuse any non-`https://` URL) | The Worker origin: the `https://mish-ana.<your-subdomain>.workers.dev` URL printed by `pnpm deploy`, or `https://<your-domain>`. No trailing slash, no path |
+| Phone join base URL (QR code and join link) | `JOIN_BASE_URL` in `server/wrangler.jsonc` `vars` (or the dashboard) | `""` = the origin the TV called, i.e. the same URL as above | Leave empty on `*.workers.dev`. With a custom domain: `https://<your-domain>`, so QR codes do not show the `workers.dev` host |
+| Extra browser origins | `ALLOWED_ORIGINS` in `server/wrangler.jsonc` `vars` | `""` = same-origin only | Leave empty in production (the Worker serves the phone page itself). Only for a web client hosted elsewhere: a comma-separated list of exact origins |
+
+The phone client has no server URL of its own: it is served by the Worker and connects to `location.host` (in dev, Vite proxies `/api`, `/parties` and `/healthz` to `:8787`). So `JOIN_BASE_URL` must point at an origin that serves this Worker.
+
+Checklist after `pnpm deploy`:
+
+1. `curl https://<worker-origin>/healthz` prints `{"ok":true,…}`.
+2. With a custom domain: set `JOIN_BASE_URL`, run `pnpm deploy` again.
+3. Put the same origin in `tv-app/gradle.properties` (`mishana.prodServerUrl=https://…`) and run `./gradlew :app:bundleRelease`; the build log prints `Mish Ana! release server URL: …`.
+4. Open `/tv` on the deployed origin: the QR code must show the intended host.
 
 Keep `DEBUG_INVARIANTS` at `"0"` in production. Workers observability is enabled, and the logging rules above keep player data out of it.

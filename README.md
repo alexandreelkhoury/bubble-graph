@@ -3,7 +3,7 @@
 A social-deduction word party game for **Android TV**, for 3–12 players. The TV is the shared screen. Each player joins on their phone by scanning a QR code; no app install is needed. Everyone gets a secret word, except the **Undercover**, who has a slightly different one, and the **Blank**, who has none. Players take turns giving one-word clues, vote someone out, and try to find out who is "not me". Available in English, French and Arabic (RTL), with Lebanese word packs.
 
 - **TV:** a Kotlin + Jetpack Compose for TV app (`tv-app/`). For development there is also a browser TV mock at `/tv`.
-- **Phones:** a small Preact web controller (`web-client/`), about 48 KB gzip.
+- **Phones:** a small Preact web controller (`web-client/`), about 49 KB gzip.
 - **Server:** a Cloudflare Worker with one Durable Object per room (`server/`, using partyserver). It is authoritative: it runs the pure game engine from `shared/` and sends each client only its own projection of the state.
 
 ## Quick start (local LAN)
@@ -68,6 +68,7 @@ tools/
   dev.mjs        `pnpm dev` (wrangler + vite on the LAN)
   sim/           headless game simulator (in-process, or over WebSocket against a running server)
   gen-android-strings/  shared/i18n → tv-app res/values*/strings_generated.xml
+  gen-sounds/    synthesised sound cues → web-client/public/sounds + tv-app res/raw (OGG)
   pack-lint/     word-pack linter
 assets/brand/    logo and brand assets
 docs/            SPEC.md (binding contract), DESIGN.md (visual/UX spec), PLAN.md, RESEARCH.md, DEV.md, TV.md
@@ -88,6 +89,7 @@ docs/            SPEC.md (binding contract), DESIGN.md (visual/UX spec), PLAN.md
 | `pnpm fixtures` | regenerate `shared/fixtures/*.json` (the TS ↔ Kotlin protocol contract) |
 | `pnpm gen:strings` | regenerate the Android string resources from `shared/i18n` |
 | `pnpm lint:packs` | lint the word packs |
+| `pnpm gen:sounds` | re-render the synthesised sound cues (needs ffmpeg with libvorbis) |
 | `pnpm deploy` | build, then `wrangler deploy` |
 
 ## Status
@@ -95,10 +97,22 @@ docs/            SPEC.md (binding contract), DESIGN.md (visual/UX spec), PLAN.md
 | Milestone | Scope | Status |
 |---|---|---|
 | **M1** Engine + server | shared engine, protocol, projections, Worker + Room DO, sim | **Done.** `pnpm test` green, `pnpm sim` 3–12 players with zero invariant, termination or leak failures, resume tokens |
-| **M2** Phone client + TV mock | Preact controller, browser TV mock, wake lock, reconnect | **Done.** 48.9 KB gzip (budget 60). Playwright e2e plays full games (EN and AR/RTL, remote-only TV in EN and AR, tie-break → revote → Blank guess → results → play again, reload resume, dropped-socket reconnect) and checks that no secret reaches the TV over WebSocket. Not yet tried on a real phone on a LAN |
-| **M3** Android TV app | Compose for TV screens, D-pad flow, QR lobby, reconnects | **Code complete, not device-tested.** The protocol models, socket, ViewModel and lobby metrics pass 76 JVM unit tests against the shared fixtures. The UI type-checks against stubs. The APK has not been built here because Google Maven / the Android SDK were unavailable; see docs/TV.md |
-| **M4** i18n + packs + polish | FR/EN/AR + RTL, packs, sounds, motion | **Mostly done.** All three locales on phone and TV, with motion and reduced-motion fallbacks. Packs: EN 217, FR 215, AR 131 pairs (50 Lebanese), lint-clean; review/"draft" warnings remain. **Pending:** sound cues and the mute setting (only hooks exist so far), and AR RTL screenshot checks on a real TV |
-| **M5** Play Store readiness | banners, signing, prod deploy, listing | Not started (the production server URL is still a placeholder) |
+| **M2** Phone client + TV mock | Preact controller, browser TV mock, wake lock, reconnect | **Done.** 49.1 KB gzip (budget 60). Playwright e2e plays full games (EN and AR/RTL, remote-only TV in EN and AR, tie-break → revote → Blank guess → results → play again, reload resume, dropped-socket reconnect) and checks that no secret reaches the TV over WebSocket. Not yet tried on a real phone on a LAN |
+| **M3** Android TV app | Compose for TV screens, D-pad flow, QR lobby, reconnects | **Code complete, not device-tested.** The protocol models, socket, ViewModel and lobby metrics pass 86 JVM unit tests against the shared fixtures (including the sound-cue mapping and mute). The UI type-checks against stubs. The APK has not been built here because Google Maven / the Android SDK were unavailable; see docs/TV.md |
+| **M4** i18n + packs + polish | FR/EN/AR + RTL, packs, sounds, motion | **Done** (except on-device checks). All three locales on phone and TV, with motion and reduced-motion fallbacks. **Sounds done:** 26 original cues synthesised by `pnpm gen:sounds` (OGG, `tv-app/app/src/main/res/raw` and `web-client/public/sounds`), played through SoundPool on the TV and Web Audio in the `/tv` mock, with remote feedback cues (move / OK / Back) and one global mute in Settings and the pause menu (persisted). Packs: EN 217, FR 215, AR 131 pairs (50 Lebanese), lint-clean; review/"draft" warnings remain. **Pending:** AR RTL screenshot checks and sound levels on a real TV |
+| **M5** Play Store readiness | banners, signing, prod deploy, listing | Not started. Banners exist. The production server URL is wired and documented but still a **placeholder** (see [Production configuration](#production-configuration)); release builds refuse to build until it is set |
+
+## Production configuration
+
+No real domain is committed. Before shipping, set these (details: [docs/DEV.md → Production URLs](docs/DEV.md#production-urls), [docs/TV.md → Production server URL](docs/TV.md#production-server-url)):
+
+| What | Where | Ships as | Set to |
+|---|---|---|---|
+| TV app server (`BuildConfig.SERVER_URL`) | `mishana.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=` | placeholder `https://mish-ana.example.workers.dev`; `assembleRelease`/`bundleRelease` fail until it is replaced with an `https://` URL | the Worker origin `pnpm deploy` prints (`https://mish-ana.<your-subdomain>.workers.dev`) or your custom domain |
+| Phone join URL in the QR code | `JOIN_BASE_URL` in `server/wrangler.jsonc` `vars` | `""` (the origin the TV called) | leave empty on `workers.dev`; `https://<your-domain>` with a custom domain |
+| Extra browser origins | `ALLOWED_ORIGINS` in `server/wrangler.jsonc` `vars` | `""` (same-origin only) | leave empty unless the phone page is hosted on another origin |
+
+The phone client itself has no URL setting: the Worker serves it and it connects back to its own origin.
 
 ## License
 

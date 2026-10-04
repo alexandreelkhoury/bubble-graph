@@ -5,9 +5,15 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-val serverUrl: String = (project.findProperty("serverUrl") as String?)
+// Server URL baked into BuildConfig.SERVER_URL (SPEC §9.1, §9.4; docs/TV.md "Production server URL"), first set wins:
+//   1. -PserverUrl=…  (or the env var ORG_GRADLE_PROJECT_serverUrl, e.g. in CI)
+//   2. mishana.prodServerUrl in tv-app/gradle.properties
+//   3. PLACEHOLDER_SERVER_URL below.
+// The placeholder is deliberately not a real host: release builds refuse it (see preReleaseBuild below).
+val PLACEHOLDER_SERVER_URL = "https://mish-ana.example.workers.dev"
+val serverUrl: String = ((project.findProperty("serverUrl") as String?)
     ?: (project.findProperty("mishana.prodServerUrl") as String?)
-    ?: "https://mish-ana.example.workers.dev"
+    ?: PLACEHOLDER_SERVER_URL).trim().trimEnd('/')
 
 android {
     namespace = "app.mishana.tv"
@@ -60,13 +66,20 @@ composeCompiler {
     stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose-stability.conf"))
 }
 
-// A release must never ship the placeholder server (SPEC §9.4): set mishana.prodServerUrl or -PserverUrl.
+// A release must never ship the placeholder server (SPEC §9.4), nor a cleartext one (release has no cleartext
+// network config, so http:// would fail at runtime): set mishana.prodServerUrl or pass -PserverUrl=https://….
 tasks.matching { it.name == "preReleaseBuild" }.configureEach {
-    val url = serverUrl // a local copy: the task action captures no script object
+    val url = serverUrl // local copies: the task action captures no script object
+    val placeholder = PLACEHOLDER_SERVER_URL
     doFirst {
-        check(!url.contains("example.")) {
-            "Release build with the placeholder server URL ($url): set mishana.prodServerUrl in gradle.properties or pass -PserverUrl=https://…"
+        check(url != placeholder && !url.contains(".example.") && !url.contains("<")) {
+            "Release build with the placeholder server URL ($url): set mishana.prodServerUrl in tv-app/gradle.properties " +
+                "to your deployed Worker (e.g. https://mish-ana.<your-subdomain>.workers.dev) or pass -PserverUrl=https://…"
         }
+        check(url.startsWith("https://")) {
+            "Release server URL must be https:// (release builds allow no cleartext traffic): $url"
+        }
+        logger.lifecycle("Mish Ana! release server URL: $url")
     }
 }
 

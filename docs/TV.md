@@ -48,8 +48,8 @@ sdk.dir=/Users/<you>/Library/Android/sdk
 The server URL is baked into `BuildConfig.SERVER_URL` at build time (SPEC §9.4):
 
 1. `-PserverUrl=…` on the command line, else
-2. `mishana.prodServerUrl` in `tv-app/gradle.properties` (the production `*.workers.dev` URL), else
-3. `https://mish-ana.example.workers.dev`.
+2. `mishana.prodServerUrl` in `tv-app/gradle.properties` (a placeholder until you deploy; see [Production server URL](#production-server-url)), else
+3. `https://mish-ana.example.workers.dev` (the same placeholder).
 
 Build and install a debug APK against your Mac's dev server:
 
@@ -61,13 +61,24 @@ adb shell am start -n app.mishana.tv/.MainActivity
 
 Debug builds allow cleartext `http://` / `ws://` (a debug-only network security config). Release builds do not, so production must be `https://`.
 
+### Production server URL
+
+`tv-app/gradle.properties` ships a **placeholder**: `mishana.prodServerUrl=https://mish-ana.example.workers.dev`. Before a release, replace it with your deployed Worker origin (the `https://mish-ana.<your-subdomain>.workers.dev` URL that `pnpm deploy` prints, or your custom domain; no trailing slash, no path), or pass it per build:
+
+```sh
+./gradlew :app:bundleRelease -PserverUrl=https://<your-worker-origin>
+# CI: ORG_GRADLE_PROJECT_serverUrl=https://<your-worker-origin> ./gradlew :app:bundleRelease
+```
+
+The phone join link in the QR code comes from the server, not from the app (`JOIN_BASE_URL`, see [DEV.md](DEV.md#production-urls)).
+
 Release build (production URL from `gradle.properties`):
 
 ```sh
 ./gradlew :app:assembleRelease      # or :app:bundleRelease for Play (AAB)
 ```
 
-Release builds are minified and resource-shrunk (R8). They **refuse to build** while the server URL is still the `example.workers.dev` placeholder: set `mishana.prodServerUrl` in `gradle.properties` (or pass `-PserverUrl=https://…`) first. The Compose compiler treats the protocol models as stable (`app/compose-stability.conf`), so unchanged parts of a broadcast skip recomposition.
+Release builds are minified and resource-shrunk (R8). `preReleaseBuild` **fails** while the server URL is still the `example.workers.dev` placeholder, and when it is not `https://` (release builds allow no cleartext traffic); on success it logs `Mish Ana! release server URL: …`. The Compose compiler treats the protocol models as stable (`app/compose-stability.conf`), so unchanged parts of a broadcast skip recomposition.
 
 The app appears in the TV launcher's apps row with its banner (`res/drawable/banner.xml`, localised for Arabic in `drawable-ar/`).
 
@@ -140,6 +151,10 @@ The app must be fully usable with the remote alone (D-pad, OK, Back; sometimes a
 - Mash OK through the vote reveal into the next clue turn: the new speaker's turn is never skipped (the pill ignores OK briefly after a phase or speaker change). On Results, a double OK does not trigger Play again before the summary has shown. On the Results summary, players with equal totals share a rank (every rank-1 row has the trophy), and 4 score rows stay fully visible in English and Arabic.
 - Air-mouse: hovering a control focuses it; clicks on a dimmed area under any dialog or scrim do nothing; both Settings chevrons step values. **Check that a pointer click (BUTTON_PRIMARY) on tv-material Surfaces activates them** (buttons, tiles, rows). If it does not on your remote, add a tap handler next to `MishFocusSurface` (one place) rather than per screen.
 - Performance: on a low-end stick (e.g. Chromecast HD), the idle lobby and the clue timer should not keep the GPU busy (no per-frame recomposition: check with the Layout Inspector's recomposition counts). A baseline profile (`androidx.baselineprofile` + a Macrobenchmark walking Home → Lobby → Reveal → Clues → Vote → Elimination → Results with D-pad events) is the next step for first-launch smoothness.
+
+## Sound
+
+The 26 cues (DESIGN §6.4) are original synthesis rendered by `pnpm gen:sounds` into `app/src/main/res/raw/*.ogg` (and `web-client/public/sounds` for the `/tv` mock). The app plays them through `SoundPool` on two buses (SFX, Stingers), plus quiet remote feedback for D-pad moves, OK and Back. One global mute lives in Settings and in the pause menu; it is persisted, muting stops what is ringing and unmuting confirms with the OK tick. Check levels on the real TV speakers before release.
 
 ## Debug server override
 
