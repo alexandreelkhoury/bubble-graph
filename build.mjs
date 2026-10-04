@@ -131,7 +131,7 @@ function loadArticles() {
       list.push({ ...meta, lang, slug, path: urlPath, body, faq, answer, type: meta.type || 'Article' });
     }
   }
-  return list;
+  return list.sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
 }
 const articles = loadArticles();
 const byGroup = {};
@@ -403,6 +403,7 @@ ${a.type === 'Article' ? `<meta property="article:modified_time" content="${a.up
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preload" href="/assets/fonts/cairo-black.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/cairo-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/cairo-bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/site.css">
 <script src="/assets/js/page.js" defer></script>
 ${ld({ '@context': 'https://schema.org', '@graph': graph })}

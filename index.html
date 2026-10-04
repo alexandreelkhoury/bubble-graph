@@ -17,6 +17,7 @@
 
 <link rel="preload" href="/assets/fonts/cairo-black.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/cairo-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/cairo-bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="/assets/img/hero-poster-16x9-sm.webp" type="image/webp" media="(max-width: 700px)" fetchpriority="high">
 <link rel="preload" as="image" href="/assets/img/hero-poster-16x9.webp" type="image/webp" media="(min-width: 701px)" fetchpriority="high">
 <link rel="stylesheet" href="/assets/css/site.css">
@@ -49,7 +50,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
       <img class="brand__word brand__word--latin" src="/assets/img/wordmark-latin.svg" alt="Mish Ana!" width="100" height="30">
       <img class="brand__word brand__word--ar" src="/assets/img/wordmark-ar.svg" alt="مش أنا!" width="77" height="30">
     </a>
-    <nav class="lang" aria-label="Language">
+    <nav class="lang" aria-label="Language" data-i18n-aria="langNav">
       <a href="?lang=en" data-lang="en" hreflang="en" lang="en" aria-current="true">EN</a>
       <a href="?lang=fr" data-lang="fr" hreflang="fr" lang="fr">FR</a>
       <a href="?lang=ar" data-lang="ar" hreflang="ar" lang="ar">عربي</a>
@@ -447,7 +448,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
     <h2 id="about-title" data-i18n="aboutTitle">About Mish Ana!</h2>
     <p class="about__def" data-i18n="aboutDef">Mish Ana! is a secret-word party game for Android TV and Google TV: 3–12 players join from their phones by scanning a QR code, get a secret word, and find the player whose word is different.</p>
     <dl class="about__facts">
-      <div><dt data-i18n="aboutNameT">Name</dt><dd data-i18n="aboutName">“Mish Ana!” (مش أنا!) is Lebanese Arabic for “Not me!”, what everyone says when they’re accused.</dd></div>
+      <div><dt data-i18n="aboutNameT">Name</dt><dd data-i18n="aboutName">“Mish Ana!” (<bdi lang="ar">مش أنا!</bdi>) is Lebanese Arabic for “Not me!”, what everyone says when they’re accused.</dd></div>
       <div><dt data-i18n="aboutGenreT">Genre</dt><dd data-i18n="aboutGenre">Party game, social deduction, word game</dd></div>
       <div><dt data-i18n="aboutPlatT">Plays on</dt><dd data-i18n="aboutPlat">Android TV and Google TV (Google Play), or any web browser</dd></div>
       <div><dt data-i18n="aboutRolesT">Roles</dt><dd data-i18n="aboutRoles">Civilians share a word. The Mole has a slightly different word and isn’t told. The Blank has no word and bluffs.</dd></div>

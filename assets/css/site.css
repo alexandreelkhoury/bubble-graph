@@ -648,7 +648,7 @@ h3 { font-size: 1.375rem; line-height: 1.2; letter-spacing: -.01em; }
 .foot__guides a:hover { color: var(--cream); text-decoration: underline; }
 
 /* ---------- Guide pages (built from content/<lang>/*.html) ---------- */
-.art .crumbs ol { display: flex; flex-wrap: wrap; gap: 4px 8px; font-size: .875rem; color: #A99BBE; margin-bottom: 18px; }
+.art .crumbs ol { list-style: none; padding: 0; margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 4px 8px; font-size: .875rem; color: #A99BBE; }
 .art .crumbs li + li::before { content: "/"; margin-inline-end: 8px; opacity: .6; }
 .art .crumbs a { color: var(--muted); text-decoration: none; display: inline-flex; min-height: 32px; align-items: center; }
 .art .crumbs a:hover { color: var(--cream); text-decoration: underline; }
