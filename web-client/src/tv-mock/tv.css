@@ -497,9 +497,9 @@
 .tvshop__busy { display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%; flex: 0 1 auto; font: var(--tv-caption); color: var(--color-text-secondary); }
 .tvshop__busy > .icon { flex: none; }
 .tvshop__busytext { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.tvshop__packs { flex: none; display: flex; flex-direction: column; gap: 6px; }
+.tvshop__packs { flex: none; display: flex; flex-direction: column; gap: 4px; }
 .tvshop__packshead { margin: 0; font: var(--tv-caption); color: var(--color-text-secondary); }
-.tvshop__row { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; padding: 8px 6px; margin-inline: -6px; }
+.tvshop__row { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; padding: 6px; margin-inline: -6px; }
 .tvshop__pack { flex: none; width: 200px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 14px; border: 0; border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font: var(--tv-caption); text-align: start; }
 .tvshop__packtitle { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-label); }
 .tvshop__packmeta { color: var(--color-text-muted); }
