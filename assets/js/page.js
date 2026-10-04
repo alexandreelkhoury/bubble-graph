@@ -35,6 +35,11 @@
     el.addEventListener('toggle', function () { if (el.open) track('faq', { p: page.slice(0, 20) + ':' + (i + 1) }); });
   });
 
+  // keep utm_* on links to the browser version (marked data-browser by build.mjs)
+  var utm = [];
+  q.forEach(function (v, k) { if (/^utm_/i.test(k) && v) utm.push(encodeURIComponent(k) + '=' + encodeURIComponent(v)); });
+  if (utm.length) d.querySelectorAll('a[data-browser]').forEach(function (a) { a.href = a.getAttribute('href').split('?')[0] + '?' + utm.join('&'); });
+
   track('view');
   window.addEventListener('load', function () {
     if (optOut || local || !/^[0-9a-f]{32}$/i.test(CF_BEACON_TOKEN)) return;

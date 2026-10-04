@@ -63,6 +63,14 @@
     var h = playHref(lang);
     doc.querySelectorAll('[data-play]').forEach(function (a) { a.href = h; });
   }
+  // Browser-version links (marked data-browser by build.mjs) keep the visitor's utm_* parameters too.
+  function updateBrowserLinks() {
+    if (!utm.length) return;
+    doc.querySelectorAll('a[data-browser]').forEach(function (a) {
+      var base = a.getAttribute('href').split('?')[0];
+      a.href = base + '?' + utm.join('&');
+    });
+  }
 
   /* ------------------------------------------------------------------
      MEASUREMENT – cookieless, no identifiers, no storage.
@@ -166,6 +174,7 @@
       if (a.dataset.lang === lang) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
     });
     updatePlayLinks(lang);
+    updateBrowserLinks();
     updateLangLinks();
     syncVideoLabel();
     resetDeal();
@@ -438,6 +447,7 @@
      ------------------------------------------------------------------ */
   snapshot();
   updatePlayLinks('en');
+  updateBrowserLinks();
   updateLangLinks();
   var initial = root.getAttribute('data-lang-init') || 'en';
   if (initial !== 'en') { current = initial; setLang(initial, false); }

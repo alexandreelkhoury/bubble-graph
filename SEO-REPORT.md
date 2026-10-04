@@ -78,7 +78,7 @@ Volumes are not available (no Keyword Planner/Ahrefs access); intent and competi
 
 | Page | Performance | Accessibility | Best practices | SEO | LCP | CLS |
 |---|---|---|---|---|---|---|
-| `/` | 100 | 100 | 100 | 100 | 1.8 s | 0.000 |
+| `/` | 100 | 100 | 100 | 100 | 1.9 s | 0.000 |
 | `/fr/` | 100 | 100 | 100 | 100 | 1.8 s | 0.000 |
 | `/ar/` | 100 | 100 | 100 | 100 | 1.8 s | 0.000 |
 | `/how-to-play/` | 100 | 100 | 100 | 100 | 1.6 s | 0.000 |
@@ -86,16 +86,18 @@ Volumes are not available (no Keyword Planner/Ahrefs access); intent and competi
 | `/fr/jeu-mr-white-tele/` | 100 | 100 | 100 | 100 | 1.6 s | 0.000 |
 | `/ar/lebanese-game-night/` | 100 | 100 | 100 | 100 | 1.6 s | 0.000 |
 
-Lighthouse 13.5, mobile preset, headless Chrome, origin set to the placeholder. Before this pass: SEO 92 (placeholder canonical), FR home CLS 0.083 (late `cairo-bold` swap moved the hero media). Fix: `cairo-bold.woff2` is now preloaded with the other two weights (home and guides), CLS 0.000 everywhere.
+Lighthouse 13.5, mobile preset, headless Chrome, origin set to the placeholder. Home rows re-run after the pre-launch home change (`playStoreLive: false`). Before this pass: SEO 92 (placeholder canonical), FR home CLS 0.083 (late `cairo-bold` swap moved the hero media). Fix: `cairo-bold.woff2` is now preloaded with the other two weights (home and guides), CLS 0.000 everywhere.
 
 Local server, no CDN. On Cloudflare (HTTP/2/3, edge cache) expect equal or better.
 
 ## 4. Things to know / decisions
 
-- **Home CTA vs Play status.** The CRO landing keeps "Install on my TV" → Google Play as the hero CTA (unchanged). The launch drafts say the Play listing is not public yet. Deploy the site when Play is live, or tell the CRO owner; the guides already handle both states with `playStoreLive`.
-- **Hero video end card** shows "Available on Google TV" (also flagged in X-THREAD.md). It's in the `VideoObject` too; replace the video file when the fixed render exists (same file names, no build change).
+- **Home follows `playStoreLive` too.** While `false` (now), the home in EN/FR/AR leads with "Play free in your browser" everywhere (nav, hero, every ad-angle variant, sticky bar, final CTA), shows the TV app as "Android TV & Google TV app: in testing, coming soon to Google Play" (no email capture), drops the install-from-phone section and the duplicate browser buttons, and no Google Play link appears on the page. Copy lives in `content/prelaunch.json`; structure changes are in `prelaunchStructure()` in `build.mjs` (it fails loudly if the template changes under it). With `true`, the home is the CRO page exactly; the only differences from the CRO build are the corrected device facts and the utm passthrough below (checked by diffing the builds). Guides use `<!--LIVE-->…<!--SOON-->…<!--/LIVE-->` blocks for the same switch.
+- **UTM passthrough in both modes.** Google Play links keep the existing `referrer` passthrough; links to the browser version (marked `data-browser` by the build) now get the visitor's `utm_*` parameters appended (`main.js`, `page.js`).
+- **Pre-launch phone visitors**: the primary button opens the browser version on the phone itself (the hint underneath says to open it on a laptop or TV browser, and the "Send the link to my laptop" button stays in the browser section). If phone traffic dominates before launch, consider making the hero button share/copy the link on phones.
+- **Hero video**: a corrected pre-launch render will replace `assets/video/hero-16x9-720.mp4` / `-540.mp4` and the posters (same names). Nothing needs editing: the build reads the duration from the MP4 (`mvhd` box) for the `VideoObject` (`duration` and the "{seconds}-second preview" description); `uploadDate` comes from `content/home.json` (update it to the new render's date, or delete it to use the file date). The poster `<img width/height>` only fixes the 16:9 ratio, so a different resolution at 16:9 is fine.
 - **Auto language redirect** on `/` is client-side and only when the visitor has chosen a language before or their browser language is FR/AR (once per session). Crawlers (en-US) always get English at `/`, and every language has its own indexable URL, so this doesn't affect indexing.
-- **Device facts changed since the CRO copy** (research 2026-10-04): the Chromecast with Google TV is discontinued (still supported), Philips 2026 TVs run Titan OS (older Philips models have Google TV), the Google TV Streamer is now $149.99 in the US. The guides say "older Philips models" and "no longer sold, still supported"; the CRO home strip still says "Sony, TCL, Hisense, Philips…" and "Chromecast with Google TV" (still true for existing devices, but consider "many Sony, TCL and Hisense TVs" in a future copy pass).
+- **Device facts** (research 2026-10-04) are now correct on the home (EN/FR/AR) and in the guides: "many Sony, TCL and Hisense models, some older Philips models" (Philips 2026 TVs run Titan OS), "Chromecast with Google TV (discontinued, still supported)", plus the Google TV Streamer.
 - **Privacy page** stays one bilingual document (EN/FR toggled with `?lang=fr`), canonical `/privacy/`.
 - The guides avoid "Undercover", "Spyfall" etc. in brand positions; comparison pages name them nominatively with a disclaimer. "Mr. White" (no trademark registration for games was found, but this wasn't verified in TMview/INPI) is used in two titles as a descriptive genre term. "Undercover" is registered by Yanstar Studio (EU, class 28; international registration 2025) and appears only inside comparison text and the comparison page title, never as our brand. Spyfall (Hobby World), Jackbox, Codenames etc. are treated as protected. Owner check before launch: search "Mr White" and "Undercover" on https://www.tmdn.org/tmview/ and https://data.inpi.fr/. If a cease-and-desist ever arrives, retitle those two pages "The no-word-player game…" and keep the URLs.
 

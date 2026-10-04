@@ -49,17 +49,17 @@
   },
 
   "video": {
+    "_note": "Duration is read from assets/video/hero-16x9-720.mp4 at build time ({seconds} below). uploadDate: set it to the publish date of the current render, or remove the line to use the file date.",
     "uploadDate": "2026-10-04",
-    "duration": "PT20S",
     "name": {
       "en": "Mish Ana! – a round of the secret-word party game on TV",
       "fr": "Mish Ana! – une partie du jeu d’ambiance du mot secret sur la télé",
       "ar": "مش أنا! – جولة من لعبة الكلمة السرّية عالتلفزيون"
     },
     "description": {
-      "en": "20-second preview: friends join from their phones by scanning the QR code on the TV, get a secret word, give one-word clues and vote a player out.",
-      "fr": "Aperçu de 20 secondes : les amis rejoignent la partie en scannant le QR code de la télé, reçoivent un mot secret, donnent un indice chacun et votent pour éliminer un joueur.",
-      "ar": "لمحة بـ20 ثانية: الرفقات بيفوتوا من تلفوناتن بمسح كود QR عالتلفزيون، كل واحد بتوصلو كلمة سرّية، بيعطوا تلميحات وبيصوّتوا ليطلّعوا لاعب."
+      "en": "{seconds}-second preview: friends join from their phones by scanning the QR code on the TV, get a secret word, give one-word clues and vote a player out.",
+      "fr": "Aperçu de {seconds} secondes : les amis rejoignent la partie en scannant le QR code de la télé, reçoivent un mot secret, donnent un indice chacun et votent pour éliminer un joueur.",
+      "ar": "لمحة بـ{seconds} ثانية: الرفقات بيفوتوا من تلفوناتن بمسح كود QR عالتلفزيون، كل واحد بتوصلو كلمة سرّية، بيعطوا تلميحات وبيصوّتوا ليطلّعوا لاعب."
     }
   }
 }

@@ -115,7 +115,8 @@ function loadArticles() {
     const dir = path.join(ROOT, 'content', lang);
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.html')).sort()) {
-      const raw = fs.readFileSync(path.join(dir, f), 'utf8');
+      // <!--LIVE-->shown when playStoreLive is true<!--SOON-->shown before the Play launch<!--/LIVE-->
+      const raw = fs.readFileSync(path.join(dir, f), 'utf8').replace(/<!--LIVE-->([\s\S]*?)<!--SOON-->([\s\S]*?)<!--\/LIVE-->/g, (s, live, soon) => (LIVE ? live : soon));
       const fm = raw.match(/^<!--\s*(\{[\s\S]*?\})\s*-->/);
       if (!fm) throw new Error(`content/${lang}/${f}: missing <!--{ front matter }--> block`);
       let meta; try { meta = JSON.parse(fm[1]); } catch (e) { throw new Error(`content/${lang}/${f}: bad front matter JSON: ${e.message}`); }
@@ -197,12 +198,29 @@ const gameNode = (lang) => ({
   author: { '@id': ORG_ID }, publisher: { '@id': ORG_ID },
   trailer: { '@id': abs('/#video') }
 });
+/* Hero video facts are read from the file itself, so a new render (same file name) needs no edit here:
+   duration from the MP4 'mvhd' box, upload date from the file's modification date (override with home.json video.uploadDate). */
+const HERO_VIDEO = 'assets/video/hero-16x9-720.mp4';
+function mp4Seconds(rel) {
+  try {
+    const b = fs.readFileSync(path.join(ROOT, rel));
+    const i = b.indexOf('mvhd');
+    if (i < 0) return null;
+    const v = b[i + 4];
+    const scale = v === 1 ? b.readUInt32BE(i + 24) : b.readUInt32BE(i + 16);
+    const dur = v === 1 ? Number(b.readBigUInt64BE(i + 28)) : b.readUInt32BE(i + 20);
+    return scale ? dur / scale : null;
+  } catch { return null; }
+}
+const videoSecs = Math.round(mp4Seconds(HERO_VIDEO) || 0);
+if (!videoSecs) throw new Error(`Could not read the duration of ${HERO_VIDEO}`);
+const videoDate = home.video.uploadDate || fs.statSync(path.join(ROOT, HERO_VIDEO)).mtime.toISOString().slice(0, 10);
 const videoNode = (lang) => ({
   '@type': 'VideoObject', '@id': abs('/#video'),
-  name: home.video.name[lang], description: home.video.description[lang],
+  name: home.video.name[lang], description: home.video.description[lang].replace('{seconds}', videoSecs),
   thumbnailUrl: [abs('/assets/img/hero-poster-16x9.jpg')],
-  uploadDate: home.video.uploadDate, duration: home.video.duration,
-  contentUrl: abs('/assets/video/hero-16x9-720.mp4'),
+  uploadDate: videoDate, duration: `PT${videoSecs}S`,
+  contentUrl: abs('/' + HERO_VIDEO),
   inLanguage: 'en', publisher: { '@id': ORG_ID }
 });
 const websiteNode = () => ({ '@type': 'WebSite', '@id': SITE_ID, url: abs('/'), name: 'Mish Ana!', alternateName: 'مش أنا!', inLanguage: ['en', 'fr', 'ar'], publisher: { '@id': ORG_ID } });
@@ -242,20 +260,38 @@ function socialMeta({ lang, url, title, desc, type = 'website', imageAlt, alts }
 <meta name="twitter:image" content="${abs('/assets/img/og.png')}">`;
 }
 
+// Before the Play launch (playStoreLive: false) the home leads with the browser version and shows the TV app as "coming soon".
+const PRE = LIVE ? null : JSON.parse(rd('content/prelaunch.json'));
+function prelaunchStructure(h) {
+  const cut = (re, what, by = '') => { if (!re.test(h)) throw new Error(`prelaunch: ${what} not found in index.html`); h = h.replace(re, by); };
+  cut(/[ \t]*<!-- =+ INSTALL GUIDE =+ -->[\s\S]*?<\/section>\s*/, 'install section');
+  cut(/[ \t]*<a class="btn btn--ghost btn--lg hero__browser"[^>]*>[\s\S]*?<\/a>\s*/, 'hero browser button');
+  cut(/<p class="hero__alt">[\s\S]*?<\/p>/, 'hero "No Android TV?" line', `<p class="hero__alt hero__soon" data-i18n="soon">${PRE.en.soon}</p>`);
+  cut(/[ \t]*<a class="btn btn--ghost btn--lg" href="[^"]*" data-cta="final"[^>]*>[\s\S]*?<\/a>\s*/, 'final browser button');
+  // every Google Play button becomes a browser-version button (main.js only rewrites [data-play] links to Play)
+  h = h.replace(/<a\b[^>]*\sdata-play\b[^>]*>/g, (tag) => tag.replace(/href="[^"]*"/, `href="${BROWSER}"`).replace(/\sdata-play\b/, ''));
+  return h;
+}
+// main.js / page.js append the visitor's utm_* parameters to links marked data-browser
+const markBrowserLinks = (h) => h.replace(new RegExp(`<a\\b(?![^>]*data-browser)([^>]*\\shref="${BROWSER.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}")`, 'g'), '<a data-browser$1');
+
 function renderHome(lang) {
   const m = home.meta[lang];
-  const dict = lang === 'en' ? null : DICTS[lang];
+  const dict = { ...(lang === 'en' ? {} : DICTS[lang]), ...(PRE ? PRE[lang] : {}) };
   let h = tpl;
-  if (dict) {
+  if (PRE) h = prelaunchStructure(h);
+  if (Object.keys(dict).length) {
     h = replaceI18n(h, dict);
-    // hero angle copy + device hints live in an inline script: swap in the page language
+    // hero angle copy + device hints live in an inline script: swap in the page language / pre-launch copy
     h = h.replace(/var A=\{[\s\S]*?\},a='',p,d=document;/, () => {
       const keys = ['reveal', 'passphone', 'nohardware', 'tonight', 'family', 'tvgame'];
       const en = {}; tpl.replace(/(\w+):\['((?:[^'\\]|\\.)*)','((?:[^'\\]|\\.)*)'\]/g, (s, k, t, sub) => { en[k] = [t, sub]; return s; });
       const A = keys.map((k) => `${k}:${JSON.stringify([dict['heroTitle_' + k] ?? en[k][0], strip(dict['heroSub_' + k] ?? en[k][1])])}`).join(',\n        ');
       return `var A={\n        ${A}\n      },a='',p,d=document;`;
     });
-    h = h.replace(/h\.innerHTML='[^']*';h\.setAttribute\('data-i18n','(hintIos|hintDesktop)'\)/g, (s, k) => `h.innerHTML=${JSON.stringify(dict[k])};h.setAttribute('data-i18n','${k}')`);
+    h = h.replace(/h\.innerHTML='[^']*';h\.setAttribute\('data-i18n','(hintIos|hintDesktop)'\)/g, (s, k) => (dict[k] != null ? `h.innerHTML=${JSON.stringify(dict[k])};h.setAttribute('data-i18n','${k}')` : s));
+  }
+  if (lang !== 'en') {
     // strings main.js needs at runtime (the rest is already in the HTML): ~1 KB instead of loading i18n.js
     const mini = { metaTitle: m.title, metaDesc: m.description };
     for (const k of JS_KEYS) if (dict[k] != null) mini[k] = dict[k];
@@ -289,7 +325,7 @@ ${hreflangLinks(HOME)}
 ${socialMeta({ lang, url, title: m.ogTitle, desc: m.ogDescription, imageAlt: m.ogImageAlt, alts: HOME })}
 ${ld(graph)}`;
   h = h.replace('<!--SEO_HEAD-->', head);
-  return fillPlaceholders(h);
+  return fillPlaceholders(markBrowserLinks(h));
 }
 
 /* ------------------------------------------------------------------ GUIDE pages */
@@ -423,7 +459,7 @@ ${footer(a.lang)}
 </body>
 </html>
 `;
-  return fillPlaceholders(html);
+  return fillPlaceholders(markBrowserLinks(html));
 }
 
 /* ------------------------------------------------------------------ llms.txt / llms-full.txt */
