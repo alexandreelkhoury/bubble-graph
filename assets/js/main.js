@@ -160,8 +160,8 @@
     doc.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
       var k = el.dataset.i18nAlt; el.alt = d && d[k] ? d[k] : original.alt[k];
     });
-    doc.title = d ? d.metaTitle : original.title;
-    metaDesc().content = d ? d.metaDesc : original.desc;
+    doc.title = (d && d.metaTitle) || original.title;
+    metaDesc().content = (d && d.metaDesc) || original.desc;
     doc.querySelectorAll('.lang a').forEach(function (a) {
       if (a.dataset.lang === lang) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
     });
@@ -173,10 +173,13 @@
     root.classList.remove('i18n-wait');
   }
 
+  // Each language has its own URL (/, /fr/, /ar/, pre-rendered by build.mjs). Keep ad params (utm_*, angle) when switching.
   function updateLangLinks() {
     doc.querySelectorAll('.lang a').forEach(function (a) {
-      var p = new URLSearchParams(location.search); p.set('lang', a.dataset.lang);
-      a.href = '?' + p.toString();
+      if (!a.dataset.path) a.dataset.path = (a.getAttribute('href') || '/').split('?')[0];
+      var p = new URLSearchParams(location.search); p.delete('lang');
+      var q = p.toString();
+      a.href = a.dataset.path + (q ? '?' + q : '');
     });
   }
 
@@ -195,14 +198,11 @@
     loadDict().then(function () { applyLang(lang); });
   }
 
+  // Switching language = following the link to that language's page; remember the choice for next visits to "/".
   doc.querySelectorAll('.lang a').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      e.preventDefault();
-      var lang = a.dataset.lang;
-      setLang(lang, true);
-      track('lang', { p: lang });
-      var p = new URLSearchParams(location.search); p.set('lang', lang);
-      try { history.replaceState(null, '', '?' + p.toString() + location.hash); } catch (err) {}
+    a.addEventListener('click', function () {
+      store.set('mishana:site-lang', a.dataset.lang);
+      track('lang', { p: a.dataset.lang });
     });
   });
 

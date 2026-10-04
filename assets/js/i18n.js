@@ -1,11 +1,11 @@
 /* Mish Ana! landing – FR and AR strings. English lives in the HTML (and, for ad angles, in the inline
    script in the hero; for JS-only strings, in main.js EN).
    Values may contain trusted inline HTML. Terms match the app (shared/i18n): Taupe/Blanc, جاسوس/فاضي.
-   Word pairs match the packs: EN PIZZA/PASTA, FR PIZZA/PÂTES, AR بيتزا/برغر. */
+   Word pairs match the packs: EN PIZZA/PASTA, FR PIZZA/PÂTES, AR بيتزا/برغر.
+   build.mjs pre-renders /fr/ and /ar/ from index.html + these strings (crawlers see each language without JS).
+   Page <title>, meta description and social tags per language live in content/home.json, not here. */
 window.MISHANA_I18N = {
 fr: {
-  metaTitle: 'Mish Ana! – Le jeu d’ambiance du mot secret, sur ta télé',
-  metaDesc: 'Chacun reçoit un mot secret sur son téléphone. L’un de vous a un mot différent. Indices, vote, et on démasque le menteur. Jeu gratuit pour Android TV et Google TV, 3 à 12 joueurs.',
   skip: 'Aller au contenu',
   heroKicker: 'Jeu d’ambiance pour Android TV et Google TV',
   heroTitle: 'Tout le monde est innocent. <span class="hl">Quelqu’un ment<span class="dot">.</span></span>',
@@ -143,6 +143,21 @@ fr: {
   fin4: 'Anglais, français et arabe',
   finalAlt: 'Ou cherche « Mish Ana » dans l’onglet Applications de ta télé.',
   footTag: 'Mish Ana! – Le jeu d’ambiance du mot secret',
+  footAbout: 'À propos',
+  footGuides: 'Guides',
+  aboutTitle: 'À propos de Mish Ana!',
+  aboutDef: 'Mish Ana! est un jeu d’ambiance du mot secret pour Android TV et Google TV : de 3 à 12 joueurs rejoignent la partie avec leur téléphone en scannant un QR code, reçoivent un mot secret et cherchent le joueur dont le mot est différent.',
+  aboutNameT: 'Le nom',
+  aboutName: '« Mish Ana! » (مش أنا!) veut dire « Pas moi ! » en libanais : ce que tout le monde répond quand on l’accuse.',
+  aboutGenreT: 'Genre',
+  aboutGenre: 'Jeu d’ambiance, de déduction et de mots',
+  aboutPlatT: 'Sur',
+  aboutPlat: 'Android TV et Google TV (Google Play), ou n’importe quel navigateur web',
+  aboutRolesT: 'Rôles',
+  aboutRoles: 'Les Civils partagent un mot. La Taupe a un mot un peu différent et ne le sait pas. Le Blanc n’a pas de mot et bluffe.',
+  aboutPriceT: 'Prix',
+  aboutPrice: 'Jeu gratuit. Pas de pub, pas de compte.',
+  aboutMore: '<a href="/fr/comment-jouer/">Toutes les règles : comment jouer à Mish Ana!</a>',
   footPrivacy: 'Confidentialité',
   footContact: 'Contact',
   footBrowser: 'Jouer dans le navigateur',
@@ -154,8 +169,6 @@ fr: {
   copied: 'Lien copié. Ouvre-le sur ton ordinateur.'
 },
 ar: {
-  metaTitle: 'مش أنا! – لعبة الكلمة السرّية للسهرات، على تلفزيونك',
-  metaDesc: 'كل واحد بتوصلو كلمة سرّية عتلفونو، وفي واحد كلمتو مختلفة. تلميحات، تصويت، ومنكشف الكذّاب. لعبة بتنلعب ببلاش عالـAndroid TV وGoogle TV، من 3 لـ12 لاعب.',
   skip: 'روح عالمحتوى',
   heroKicker: 'لعبة سهرات للـAndroid TV والـGoogle TV',
   heroTitle: 'كلّنا أبرياء… <span class="hl">بس في حدا عم يكذب<span class="dot">.</span></span>',
@@ -293,6 +306,21 @@ ar: {
   fin4: 'إنكليزي، فرنساوي وعربي',
   finalAlt: 'أو دوّر على «Mish Ana» بقسم التطبيقات عالتلفزيون.',
   footTag: 'مش أنا! – لعبة الكلمة السرّية للسهرات',
+  footAbout: 'عن اللعبة',
+  footGuides: 'أدلّة',
+  aboutTitle: 'عن «مش أنا!»',
+  aboutDef: '«مش أنا!» لعبة سهرات بالكلمة السرّية على Android TV وGoogle TV: من 3 لـ12 لاعب بيفوتوا من تلفوناتن بمسح كود QR، كل واحد بتوصلو كلمة سرّية، والهدف تكشفوا اللاعب اللي كلمتو مختلفة.',
+  aboutNameT: 'الاسم',
+  aboutName: '«مش أنا!» هي اللي بيقولها الكل لمّا حدا يتّهمن.',
+  aboutGenreT: 'النوع',
+  aboutGenre: 'لعبة سهرات، كشف وخداع، ولعبة كلمات',
+  aboutPlatT: 'بتشتغل على',
+  aboutPlat: 'Android TV وGoogle TV (عبر Google Play)، أو أي متصفّح إنترنت',
+  aboutRolesT: 'الأدوار',
+  aboutRoles: 'المدنيين معن نفس الكلمة. الجاسوس معو كلمة شوي مختلفة وما بيعرف. والفاضي ما معو كلمة وبيبلّف.',
+  aboutPriceT: 'السعر',
+  aboutPrice: 'اللعب ببلاش. بلا إعلانات وبلا حسابات.',
+  aboutMore: '<a href="/ar/lebanese-game-night/">سهرة ألعاب لبنانية: كيف تلعبوا «مش أنا!» مع العيلة والرفقات</a>',
   footPrivacy: 'الخصوصية',
   footContact: 'تواصل معنا',
   footBrowser: 'العب بالمتصفّح',

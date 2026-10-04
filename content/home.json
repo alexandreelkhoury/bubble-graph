@@ -1,0 +1,65 @@
+{
+  "_README": "Per-language SEO meta for the home pages (/, /fr/, /ar/) and the shared entity facts used in JSON-LD, /about/ and llms.txt. Home body copy: EN in index.html, FR/AR in assets/js/i18n.js.",
+  "updated": "2026-10-04",
+  "privacyUpdated": "2026-10-04",
+
+  "definition": {
+    "en": "Mish Ana! is a secret-word party game for Android TV and Google TV: 3–12 players join from their phones by scanning a QR code, get a secret word, and find the player whose word is different.",
+    "fr": "Mish Ana! est un jeu d’ambiance du mot secret pour Android TV et Google TV : de 3 à 12 joueurs rejoignent la partie avec leur téléphone en scannant un QR code, reçoivent un mot secret et cherchent le joueur dont le mot est différent.",
+    "ar": "«مش أنا!» لعبة سهرات بالكلمة السرّية على Android TV وGoogle TV: من 3 لـ12 لاعب بيفوتوا من تلفوناتن بمسح كود QR، كل واحد بتوصلو كلمة سرّية، والهدف تكشفوا اللاعب اللي كلمتو مختلفة."
+  },
+
+  "facts": [
+    "Name: Mish Ana! (Arabic: مش أنا!), Lebanese Arabic for \"Not me!\".",
+    "Genre: party game, social deduction, secret-word / impostor word game.",
+    "Platforms: Android TV and Google TV app (Google Play package app.mishana.tv), plus a browser version that runs on any laptop or smart-TV browser.",
+    "How it works: the TV shows a QR code; each player scans it and plays in their phone's web browser (iPhone or Android). Nothing to install on phones, no accounts, no controllers.",
+    "Players: 3 to 12, one phone each, in the same room.",
+    "Roles: Civilians share the same secret word; the Mole gets a slightly different word and is not told; the Blank (from 5 players) gets no word, bluffs, and if voted out gets one guess at the Civilians' word to win alone.",
+    "Round: everyone gives one spoken clue, then everyone votes on their phone; the TV reveals the role of the player voted out.",
+    "Languages: English, French and Arabic (full right-to-left), with Lebanese word packs; 560+ word pairs.",
+    "Price: free to play; no ads, no accounts. Optional in-app purchases may be added later.",
+    "Privacy: players only type a nickname; rooms are deleted automatically.",
+    "Requires: internet on the TV and on every phone.",
+    "Does not run as an app on Samsung (Tizen), LG (webOS), Fire TV or Apple TV; owners of those TVs can use the browser version on a laptop connected by HDMI."
+  ],
+
+  "meta": {
+    "en": {
+      "title": "Secret-Word Party Game for Android TV & Google TV – Mish Ana!",
+      "description": "Find the liar on your TV. A free-to-play party game for Android TV & Google TV: 3–12 players, phones are the controllers, nothing to install on phones.",
+      "ogTitle": "Mish Ana! – Everyone's innocent. Someone's lying.",
+      "ogDescription": "The secret-word party game for your TV. Phones are the controllers: scan the QR, get your word, find the liar. 3–12 players, free to play.",
+      "ogImageAlt": "Mish Ana! – Everyone's innocent. Someone's lying. A TV lobby with a QR code and a phone showing the secret word PIZZA."
+    },
+    "fr": {
+      "title": "Jeu d’ambiance du mot secret sur la télé (Android TV) – Mish Ana!",
+      "description": "Le jeu de soirée façon « qui est l’intrus » sur ta télé : de 3 à 12 joueurs, le téléphone sert de manette, rien à installer. Gratuit, Android TV et Google TV.",
+      "ogTitle": "Mish Ana! – Tout le monde est innocent. Quelqu’un ment.",
+      "ogDescription": "Le jeu d’ambiance du mot secret sur ta télé. Les téléphones servent de manettes : scanne le QR code, reçois ton mot, démasque le menteur. 3 à 12 joueurs, gratuit.",
+      "ogImageAlt": "Mish Ana! – Tout le monde est innocent. Quelqu’un ment. L’écran d’accueil sur une télé avec un QR code, et un téléphone qui affiche le mot secret PIZZA."
+    },
+    "ar": {
+      "title": "مش أنا! – لعبة سهرات بالكلمة السرّية على التلفزيون",
+      "description": "مين الجاسوس؟ لعبة سهرات عالـAndroid TV والـGoogle TV: من 3 لـ12 لاعب، التلفون هو الجويستيك، وما في شي تنزّلوه عالتلفونات. بالعربي واللبناني، ببلاش.",
+      "ogTitle": "مش أنا! – كلّنا أبرياء… بس في حدا عم يكذب",
+      "ogDescription": "لعبة الكلمة السرّية للسهرات على تلفزيونك. امسحوا كود QR، كل واحد بتوصلو كلمة عتلفونو، واكشفوا الكذّاب. من 3 لـ12 لاعب، ببلاش.",
+      "ogImageAlt": "مش أنا! على التلفزيون: شاشة الانتظار مع كود QR، وتلفون عليه الكلمة السرّية بيتزا."
+    }
+  },
+
+  "video": {
+    "uploadDate": "2026-10-04",
+    "duration": "PT20S",
+    "name": {
+      "en": "Mish Ana! – a round of the secret-word party game on TV",
+      "fr": "Mish Ana! – une partie du jeu d’ambiance du mot secret sur la télé",
+      "ar": "مش أنا! – جولة من لعبة الكلمة السرّية عالتلفزيون"
+    },
+    "description": {
+      "en": "20-second preview: friends join from their phones by scanning the QR code on the TV, get a secret word, give one-word clues and vote a player out.",
+      "fr": "Aperçu de 20 secondes : les amis rejoignent la partie en scannant le QR code de la télé, reçoivent un mot secret, donnent un indice chacun et votent pour éliminer un joueur.",
+      "ar": "لمحة بـ20 ثانية: الرفقات بيفوتوا من تلفوناتن بمسح كود QR عالتلفزيون، كل واحد بتوصلو كلمة سرّية، بيعطوا تلميحات وبيصوّتوا ليطلّعوا لاعب."
+    }
+  }
+}
