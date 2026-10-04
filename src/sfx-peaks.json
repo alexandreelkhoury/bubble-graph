@@ -1,0 +1,82 @@
+{
+ "bass_hit": {
+  "onset": 0.061,
+  "peak": 0.075,
+  "dur": 1.1
+ },
+ "click": {
+  "onset": 0.0,
+  "peak": 0.002,
+  "dur": 0.2
+ },
+ "correct": {
+  "onset": 0.0,
+  "peak": 0.019,
+  "dur": 1.96
+ },
+ "drumroll": {
+  "onset": 0.014,
+  "peak": 3.006,
+  "dur": 5.94
+ },
+ "impact_drop": {
+  "onset": 0.273,
+  "peak": 0.55,
+  "dur": 4.06
+ },
+ "pop_a": {
+  "onset": 0.014,
+  "peak": 0.042,
+  "dur": 0.38
+ },
+ "pop_b": {
+  "onset": 0.012,
+  "peak": 0.021,
+  "dur": 0.18
+ },
+ "pop_hard": {
+  "onset": 0.001,
+  "peak": 0.045,
+  "dur": 1.17
+ },
+ "sparkle": {
+  "onset": 0.195,
+  "peak": 0.312,
+  "dur": 1.3
+ },
+ "stamp": {
+  "onset": 0.115,
+  "peak": 0.187,
+  "dur": 0.59
+ },
+ "swoosh_short": {
+  "onset": 0.079,
+  "peak": 0.162,
+  "dur": 1.39
+ },
+ "tick": {
+  "onset": 0.0,
+  "peak": 0.005,
+  "dur": 1.1
+ },
+ "typing": {
+  "onset": 0.166,
+  "peak": 0.186,
+  "dur": 3.88
+ },
+ "whoosh_fast": {
+  "onset": 0.518,
+  "peak": 1.072,
+  "dur": 1.33
+ },
+ "whoosh_impact": {
+  "onset": 0.096,
+  "peak": 0.878,
+  "dur": 3.53
+ },
+ "wrong": {
+  "onset": 0.004,
+  "peak": 0.14,
+  "dur": 1.95
+ }
+}
