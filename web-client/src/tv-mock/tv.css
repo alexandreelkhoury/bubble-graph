@@ -507,7 +507,10 @@
 .tvshop__buy { color: var(--color-primary); font-weight: 800; }
 .tvshop__divider { flex: none; align-self: center; padding: 0 6px; color: var(--color-text-muted); font: var(--tv-caption); white-space: nowrap; }
 .tvshop__toastslot { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; pointer-events: none; }
-.tvshop__toastslot .tvtoast { max-width: 640px; }
+/* The Store's toast band: full width at caption size, so every billing toast fits on one line (two at most). */
+.tvshop__toastslot { min-height: 30px; }
+.tvshop__toastslot .tvtoast { max-width: 100%; padding: 2px 14px; font: var(--tv-caption); line-height: 26px; animation-name: tv-toast-fade; }
+@keyframes tv-toast-fade { from { opacity: 0; } to { opacity: 1; } }
 .tvshop__foot { flex: none; display: flex; align-items: center; gap: 14px; min-height: 44px; }
 .tvshop__help { font: var(--tv-caption); color: var(--color-text-secondary); }
 .tvshop__testctl { display: inline-flex; align-items: center; gap: 10px; margin-inline-start: auto; padding-inline-start: 14px; border-inline-start: 1px dashed var(--color-outline-strong); }
