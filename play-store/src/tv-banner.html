@@ -1,0 +1,16 @@
+<!doctype html><html><head><meta charset="utf-8"><title>TV Banner</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* 1280x720 = 4x the in-app banner (tv-app res/drawable/banner.xml, 320x180): same mark-left / wordmark-right layout. */
+.stage { width: 1280px; height: 720px; display: flex; align-items: center; justify-content: center; gap: 72px; }
+.tile { width: 384px; height: 384px; border-radius: 86px; background: var(--night); display: grid; place-items: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,.45), 0 0 0 2px rgba(255,247,236,.04), 0 0 140px rgba(255,61,139,.22); }
+.tile img { width: 300px; }
+.right { display: flex; flex-direction: column; gap: 6px; }
+.wm { width: 620px; display: block; }
+.ar { width: 300px; display: block; margin-left: 4px; opacity: .92; }
+</style></head><body>
+<div class="stage grain">
+  <div class="tile"><img src="brand/bubble.svg" alt=""></div>
+  <div class="right"><img class="wm" src="brand/wordmark-latin.svg" alt="Mish Ana!"></div>
+</div></body></html>

@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Feature Graphic</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* 1024x500. Content kept inside ~80px side / 60px top-bottom margins; the centre (Play's play-button overlay,
+   ~ 512,250) sits in the gap between wordmark and tagline. */
+.stage { width: 1024px; height: 500px; }
+.wm { position: absolute; left: 50%; top: 66px; transform: translateX(-50%); width: 760px; }
+.dots { position: absolute; left: 50%; top: 236px; transform: translateX(-50%); display: flex; gap: 22px; opacity: .9; }
+.dots i { width: 14px; height: 14px; border-radius: 50%; display: block; }
+.tag { position: absolute; left: 0; right: 0; top: 318px; text-align: center; font-weight: 900; font-size: 46px; letter-spacing: -.5px; line-height: 1.1; }
+.tag em { font-style: normal; color: var(--amber); }
+.sub { position: absolute; left: 0; right: 0; top: 380px; text-align: center; font-weight: 700; font-size: 25px; color: rgba(255,247,236,.72); }
+</style></head><body>
+<div class="stage grain">
+  <img class="wm" src="brand/wordmark-bilingual.svg" alt="Mish Ana!">
+  <div class="dots"><i style="background:#F0183A"></i><i style="background:#478CFF"></i><i style="background:#FFF04D"></i><i style="background:#1FA88A"></i><i style="background:#7A43FF"></i><i style="background:#FF7A1F"></i></div>
+  <div class="tag">Everyone’s innocent. <em>Someone’s lying.</em></div>
+  <div class="sub">The secret-word party game for your TV</div>
+</div></body></html>

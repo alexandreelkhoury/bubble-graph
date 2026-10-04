@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Screenshot Frame</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+/* 1920x1080 marketing screenshot: benefit headline + the real TV capture, framed like a screen.
+   Params: ?img=<path to raw 1920x1080 PNG>&h=<headline, *word* = magenta>&s=<optional subline> */
+.stage { width: 1920px; height: 1080px; }
+.head { position: absolute; left: 0; right: 0; top: 54px; text-align: center; font-weight: 900; font-size: 84px; line-height: 1; letter-spacing: -1px; }
+.head b { color: var(--magenta); font-weight: 900; }
+.sub { position: absolute; left: 0; right: 0; top: 150px; text-align: center; font-weight: 700; font-size: 34px; color: rgba(255,247,236,.7); }
+.screen { position: absolute; left: 50%; bottom: 52px; transform: translateX(-50%); width: 1376px; height: 774px; /* 16:9 */
+  border-radius: 22px; padding: 10px; background: #07040D;
+  box-shadow: 0 0 0 2px rgba(255,247,236,.08), 0 40px 120px rgba(0,0,0,.6), 0 0 160px rgba(255,61,139,.18); }
+.screen img { width: 100%; height: 100%; display: block; border-radius: 13px; }
+.bang { position: absolute; left: 70px; top: 52px; width: 64px; }
+.nosub .screen { bottom: 60px; width: 1440px; height: 810px; }
+</style></head><body>
+<div class="stage grain" id="st">
+  <img class="bang" src="brand/bubble.svg" alt="">
+  <div class="head" id="h"></div>
+  <div class="sub" id="s"></div>
+  <div class="screen"><img id="img" alt=""></div>
+</div>
+<script>
+const q = new URLSearchParams(location.search);
+const esc = (t) => t.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+document.getElementById("h").innerHTML = esc(q.get("h") || "").replace(/\*(.+?)\*/g, "<b>$1</b>");
+const s = q.get("s") || "";
+document.getElementById("s").textContent = s;
+if (!s) document.getElementById("st").classList.add("nosub");
+document.getElementById("img").src = q.get("img") || "";
+</script></body></html>
