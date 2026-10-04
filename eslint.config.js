@@ -9,6 +9,7 @@ export default tseslint.config(
       "**/.wrangler/**",
       "coverage/**",
       "tv-app/**",
+      "growth/**", // marketing tooling (Remotion video, landing site, docs): own configs
       "web-client/test-results/**",
       "web-client/playwright-report/**",
     ],
