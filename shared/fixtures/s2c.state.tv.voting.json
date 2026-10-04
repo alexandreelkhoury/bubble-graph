@@ -51,6 +51,10 @@
     "guess": null,
     "result": null,
     "history": [],
-    "availablePacks": []
+    "availablePacks": [],
+    "premium": false,
+    "lockedPacks": [],
+    "tvBusy": false,
+    "poolExhausted": false
   }
 }

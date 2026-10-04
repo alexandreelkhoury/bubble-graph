@@ -22,7 +22,7 @@ export const ROOM_EMPTY_TTL_MS = 15 * 60_000;
 export const ROOM_IDLE_TTL_MS = 2 * 60 * 60_000;
 export const ROOM_RESULTS_TTL_MS = 30 * 60_000;
 export const MSG_MAX_BYTES = 4096;          // UTF-8 bytes (TextEncoder)
-export const HTTP_BODY_MAX_BYTES = 1024;    // POST /api/rooms
+export const HTTP_BODY_MAX_BYTES = 4096;    // POST /api/rooms (PAYMENTS-SPEC §3.3: was 1024; now carries an entitlement token)
 export const RATE_MSGS_PER_SEC = 5;         // token bucket refill / s
 export const RATE_BURST = 10;               // bucket capacity
 export const JOINS_PER_MIN_PER_IP = 30;     // per room; a whole party shares one NAT IP
@@ -86,3 +86,28 @@ export const SETTINGS_BOUNDS = {
   points:          { min: 0, max: 20, step: 1 },   // each of civilian/undercover/blank
   packIds:         { maxItems: 50, idRegex: `^[a-z0-9-]{1,${PACK_ID_MAX}}$` },
 } as const;
+
+// ---------------------------------------------------------------- billing (PAYMENTS-SPEC §3.3)
+export const BILLING_BODY_MAX_BYTES = 16384;
+export const ENTITLEMENT_TOKEN_MAX_CHARS = 3000;
+export const ENTITLEMENT_TTL_S = 28_800;          // 8 h
+export const MAX_TOKEN_PACKS = 64;
+export const MAX_PURCHASES_PER_VERIFY = 20;
+export const PURCHASE_TOKEN_MAX_CHARS = 2048;     // printable ASCII \x21-\x7e
+export const MAX_INSTALLS_PER_PURCHASE = 10;      // ACTIVE bindings (§2.1)
+export const INSTALL_ACTIVE_WINDOW_MS = 30 * 86_400_000;
+export const INSTALL_VERIFY_PER_10MIN = 20;       // per installHash, Billing DO in-memory window
+export const INSTALL_ENTITLEMENT_PER_10MIN = 60;
+export const RATE_MAP_MAX_ENTRIES = 10_000;       // LRU bound of the in-memory rateCheck map
+export const GOOGLE_FRESH_MS = 10 * 60_000;       // verify reuses a stored Google read younger than this
+export const INVALID_TOKEN_TTL_MS = 86_400_000;   // negative cache for Google 400/404/410
+export const MAX_GOOGLE_READS_PER_VERIFY = 5;
+export const GOOGLE_CALL_TIMEOUT_VERIFY_MS = 3_000;   // per call, verify path (RTDN/cron: 10 s)
+export const VERIFY_DEADLINE_MS = 12_000;             // whole verify request
+export const GOOGLE_VERIFY_BUCKET = { capacity: 120, refillPerMin: 60 } as const;  // global, verify path only (§3.5)
+export const ACK_WINDOW_MS = 3 * 86_400_000;      // starts at PENDING → PURCHASED
+export const ACK_OVERDUE_ALERT_MS = 48 * 3_600_000;
+export const PENDING_ACK_TOKEN_MAX_MS = 30 * 86_400_000;
+export const RTDN_AUTH_HEADER_MAX_CHARS = 4096;
+/** §3.11 `storeOpen`: the TV-busy flag lapses after this even if `open:false` never arrives. */
+export const TV_BUSY_MAX_MS = 5 * 60_000;

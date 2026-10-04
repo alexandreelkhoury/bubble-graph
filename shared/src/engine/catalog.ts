@@ -5,6 +5,9 @@ import type { LocalizedTitle, Settings, WordRef, WordSide } from "./types";
 
 export const AGE_RATINGS = ["all", "teen", "adult"] as const;
 export type AgeRating = (typeof AGE_RATINGS)[number];
+/** PAYMENTS-SPEC §1.2: "free" packs are playable in every room; "premium" packs need Premium or the pack. */
+export const PACK_TIERS = ["free", "premium"] as const;
+export type PackTier = (typeof PACK_TIERS)[number];
 
 export interface CatalogPair {
   key: string; packId: string; packVersion: number; pairId: string; difficulty: 1 | 2 | 3;
@@ -14,6 +17,7 @@ export interface CatalogPack {
   id: string; version: number; locale: string; language: Locale;
   title: LocalizedTitle;
   ageRating: AgeRating;
+  tier: PackTier;
   pairs: CatalogPair[];
 }
 export interface Catalog { packs: CatalogPack[] }          // language = locale.split("-")[0]
@@ -28,6 +32,7 @@ export interface WordPackLike {
   title: LocalizedTitle;
   tags: string[];
   ageRating: AgeRating;
+  tier: PackTier;
   license: string;
   source: string;
   status: "draft" | "reviewed";
@@ -68,6 +73,7 @@ export function buildCatalog(packs: readonly WordPackLike[]): Catalog {
     language: languageOf(p.locale),
     title: { en: p.title.en, fr: p.title.fr, ar: p.title.ar },
     ageRating: p.ageRating,
+    tier: p.tier,
     pairs: p.pairs
       .map((q) => ({
         key: `${p.id}:${q.id}`,

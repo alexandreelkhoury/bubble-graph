@@ -8,11 +8,14 @@ import { isolate, locale, LOCALE_NATIVE_NAME, setLocale, t } from "../i18n/t";
 import { saveLocale } from "../lib/storage";
 import { Avatar, avatarState } from "../components/PlayerChip";
 import { Icon } from "../components/Icon";
-import { tvAct, tvExit, tvLangOpen, tvPaused, tvPausePage } from "./tvStore";
+import { tvAct, tvExit, tvLangOpen, tvPaused, tvPausePage, tvShop } from "./tvStore";
+import { closeShop } from "./shopState";
+import { billing } from "./billing";
 import { refocus, useInitialFocus } from "./dpad";
 import { SoundToggle } from "./sound/SoundToggle";
 
-export interface DialogSpec { title: string; body?: string; confirm: string; safe?: string; danger?: boolean; onConfirm(): void }
+/** `info`: a message with a single OK (no confirm action), e.g. the mock store's notices. */
+export interface DialogSpec { title: string; body?: string; confirm: string; safe?: string; danger?: boolean; info?: boolean; onConfirm(): void }
 export const tvDialog = signal<DialogSpec | null>(null);
 
 /** What had focus when each overlay opened (restored on close, Kotlin's InitialFocus(restore = …)). */
@@ -47,9 +50,10 @@ export function closeLanguages(): void {
   refocus(openers.lang);
 }
 
-/** Back, innermost first: dialog → language list → pause sub-page → pause menu. Returns false when nothing was open. */
+/** Back, innermost first: dialog → store → language list → pause sub-page → pause menu. False when nothing was open. */
 export function closeTopOverlay(): boolean {
   if (tvDialog.value) { closeDialog(); return true; }
+  if (tvShop.value) { closeShop(); return true; }
   if (tvLangOpen.value) { closeLanguages(); return true; }
   if (tvPaused.value && tvPausePage.value === "players") { tvPausePage.value = "menu"; return true; }
   if (tvPaused.value) { closePause(); return true; }
@@ -66,8 +70,14 @@ export function TvDialog() {
         <h2 class="tvdialog__title">{d.title}</h2>
         {d.body && <p class="tvdialog__body">{d.body}</p>}
         <div class="tvdialog__actions">
-          <button type="button" ref={safeRef} class="tvbtn" data-default-focus onClick={closeDialog}>{d.safe ?? t("common.cancel")}</button>
-          <button type="button" class={`tvbtn ${d.danger ? "tvbtn--danger" : "tvbtn--primary"}`} onClick={() => { closeDialog(); d.onConfirm(); }}>{d.confirm}</button>
+          {d.info ? (
+            <button type="button" ref={safeRef} class="tvbtn tvbtn--primary" data-default-focus onClick={() => { closeDialog(); d.onConfirm(); }}>{d.confirm}</button>
+          ) : (
+            <>
+              <button type="button" ref={safeRef} class="tvbtn" data-default-focus onClick={closeDialog}>{d.safe ?? t("common.cancel")}</button>
+              <button type="button" class={`tvbtn ${d.danger ? "tvbtn--danger" : "tvbtn--primary"}`} onClick={() => { closeDialog(); d.onConfirm(); }}>{d.confirm}</button>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -142,6 +152,18 @@ export function PauseMenu({ view }: { view: TvView }) {
               onConfirm: () => { tvAct({ type: "BACK_TO_LOBBY" }); closePause(); },
             })}><Icon name="door-out" />{t("tv.endGame")}</button>
             <button type="button" class="tvmenu__item" onClick={tvExit}><Icon name="x" />{t("tv.exitApp")}</button>
+            {/* PAY-GAP: §5.2 puts the fake-mode test controls in the Store, which opens only in LOBBY, while §5.3 test 4
+                expires Premium mid-game. The same two debug controls (plain English, fake mode only) are here too. */}
+            {billing.fake && billing.hasTestTarget("premium") && (
+              <button type="button" class="tvmenu__item tvmenu__item--test" data-test="expire" onClick={() => { void billing.testExpirePremium(); closePause(); }}>
+                <Icon name="timer" />Expire Premium now
+              </button>
+            )}
+            {billing.fake && billing.hasTestTarget("pack") && (
+              <button type="button" class="tvmenu__item tvmenu__item--test" data-test="refund" onClick={() => { void billing.testRefundPack(); closePause(); }}>
+                <Icon name="refresh" />Refund pack
+              </button>
+            )}
           </div>
         )}
         <p class="tvdialog__note">{t("tv.pauseNote")}</p>

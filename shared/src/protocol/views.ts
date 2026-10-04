@@ -1,6 +1,6 @@
 import * as z from "zod";
 import {
-  AgeRatingSchema, ColorIdSchema, DeadlineKindSchema, LocalizedTitleSchema, ErrorCodeSchema, GuessStatusSchema, HistoryCauseSchema, PhaseSchema,
+  AgeRatingSchema, ColorIdSchema, PackTierSchema, DeadlineKindSchema, LocalizedTitleSchema, ErrorCodeSchema, GuessStatusSchema, HistoryCauseSchema, PhaseSchema,
   RoleCountsSchema, RoleSchema, SettingsSchema, VoteOutcomeSchema, WinnerSchema, WordRefSchema,
 } from "./common";
 
@@ -13,6 +13,12 @@ export const PublicPlayerSchema = z.object({
 export const PackInfoSchema = z.object({
   id: z.string(), locale: z.string(), title: LocalizedTitleSchema,
   pairCount: z.number().int(), ageRating: AgeRatingSchema,
+  tier: PackTierSchema,                                 // PAYMENTS-SPEC §3.11
+});
+/** PAYMENTS-SPEC §3.11: a pack this room may not play. Metadata only: never words or pair ids. */
+export const LockedPackInfoSchema = z.object({
+  id: z.string(), locale: z.string(), title: LocalizedTitleSchema,
+  pairCount: z.number().int(), ageRating: AgeRatingSchema, productId: z.string(),
 });
 export const DeadlineViewSchema = z.object({ kind: DeadlineKindSchema, at: z.number(), durationMs: z.number() });
 export const VoteSummarySchema = z.object({
@@ -53,6 +59,11 @@ const publicViewShape = {
   result: ResultStateSchema.nullable(),
   history: z.array(HistoryEntrySchema),
   availablePacks: z.array(PackInfoSchema),
+  // PAYMENTS-SPEC §3.11 (always present, in this order)
+  premium: z.boolean(),
+  lockedPacks: z.array(LockedPackInfoSchema),
+  tvBusy: z.boolean(),
+  poolExhausted: z.boolean(),
 };
 export const PublicViewSchema = z.object(publicViewShape);
 export const MeSchema = z.object({
@@ -64,6 +75,7 @@ export const ViewSchema = z.discriminatedUnion("kind", [TvViewSchema, PlayerView
 
 export type PublicPlayer = z.infer<typeof PublicPlayerSchema>;
 export type PackInfo = z.infer<typeof PackInfoSchema>;
+export type LockedPackInfo = z.infer<typeof LockedPackInfoSchema>;
 export type DeadlineView = z.infer<typeof DeadlineViewSchema>;
 export type PublicView = z.infer<typeof PublicViewSchema>;
 export type Me = z.infer<typeof MeSchema>;

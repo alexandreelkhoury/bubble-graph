@@ -10,6 +10,7 @@ import { reacquireWakeLock, releaseWakeLock, requestWakeLock, wantWakeLock } fro
 import { isolate, locale, t } from "../i18n/t";
 import { PHASE_KEY, ROLE_KEY } from "../lib/keys";
 import { newForfeits } from "../lib/view";
+import { premiumEndedStep } from "../lib/premium";
 import type { MessageKey } from "../i18n/t";
 import {
   announce, conn, fatalCode, fatalError, inlineError, joinPending, lastError, pushToast, resetClock, resuming, resyncs,
@@ -23,6 +24,8 @@ const SILENT: readonly ErrorCode[] = ["RESUME_INVALID", "KICKED", "REPLACED", "R
 let current: { code: string; conn: Connection; detach: () => void } | null = null;
 let wasReconnecting = false;
 let awaitingResync = false;
+/** PAYMENTS-SPEC §5.1: a premium → free flip seen mid-game, shown to the VIP on the next LOBBY. */
+let premiumEndedPending = false;
 
 export function startSession(code: string, factory: SocketFactory = partySocketFactory(code)): void {
   if (current?.code === code) return;
@@ -37,6 +40,7 @@ export function startSession(code: string, factory: SocketFactory = partySocketF
   resetClock();
   wasReconnecting = false;
   awaitingResync = false;
+  premiumEndedPending = false;
   const c = new Connection(factory, {
     hello: () => {
       const r = loadResume(code);
@@ -173,6 +177,10 @@ export function onViewChange(prev: PlayerView | null, next: PlayerView): void {
     haptic(HAPTIC.unlocked);
   }
   if (!myId) return;
+  // §5.1: the VIP phone only, once per flip (in LOBBY, or on the first LOBBY after the game).
+  const ended = premiumEndedStep(premiumEndedPending, prev, next);
+  premiumEndedPending = ended.pending;
+  if (ended.show && next.hostPlayerId === myId) pushToast(t("lobby.premiumEndedPhone"), "info", 4000);
   const isTurn = (v: PlayerView | null): boolean => v?.currentSpeakerId === myId && (v.phase === "CLUES" || v.phase === "TIE_BREAK");
   if (isTurn(next) && !isTurn(prev)) {
     haptic(HAPTIC.yourTurn);

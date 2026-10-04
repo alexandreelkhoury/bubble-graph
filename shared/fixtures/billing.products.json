@@ -1,0 +1,2 @@
+{ "premium": "premium", "basePlans": ["monthly", "yearly"], "trialOfferId": "trial-7d",
+  "pairs": [["lb-food-01", "pack_lb_food_01"], ["en-things-01", "pack_en_things_01"]] }

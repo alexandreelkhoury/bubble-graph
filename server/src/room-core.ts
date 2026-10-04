@@ -16,8 +16,8 @@ import {
 import type { Locale } from "@mishana/shared/constants";
 import { assertInvariants, createInitialState, nextWakeAt, reduce, sanitizeName } from "@mishana/shared/engine";
 import type { Action, Catalog, GameState } from "@mishana/shared/engine";
-import { projectForPlayer, projectForTv } from "@mishana/shared/projection";
-import type { ActionMsg, ClientMessage, HelloPlayerMsg, HelloTvMsg, JoinMsg } from "@mishana/shared/protocol";
+import { fullAccess, projectForPlayer, projectForTv } from "@mishana/shared/projection";
+import type { ActionMsg, ClientMessage, EntitlementMsg, HelloPlayerMsg, HelloTvMsg, JoinMsg, StoreOpenMsg } from "@mishana/shared/protocol";
 import { ACTION_ID_REGEX, ClientMessageSchema } from "@mishana/shared/protocol";
 import { errorFrame, safeClose, safeSend, sendFatal, stateFrame, welcomeFrame } from "./frames";
 import type { FatalErrorCode } from "./frames";
@@ -374,7 +374,24 @@ export class RoomCore {
         return this.#join(conn, st, m, now);
       case "action":
         return this.#action(conn, st, m);
+      case "entitlement":
+      case "storeOpen":
+        return this.#billingMsg(conn, st, m);
     }
+  }
+
+  /**
+   * PAYMENTS-SPEC §3.11 `entitlement` / `storeOpen` (TV only). Phase 0 stub: the wire contract is accepted, but
+   * token verification, room access and the TV-busy flag arrive with Phase 1 (access.ts, billing/token.ts).
+   * Until then no token can be verified (→ ENTITLEMENT_INVALID, non-fatal) and `storeOpen` is ignored.
+   */
+  #billingMsg(conn: ConnHandle, st: ConnState, m: EntitlementMsg | StoreOpenMsg): void {
+    if (st.role !== "tv") {
+      safeSend(conn, errorFrame("NOT_AUTHENTICATED"));
+      return;
+    }
+    // PAY-GAP: Phase 1 implements §3.11 (verify, write meta.entitlement, restrict, broadcast; tvBusyUntil).
+    if (m.t === "entitlement") safeSend(conn, errorFrame("ENTITLEMENT_INVALID"));
   }
 
   /** A rate-limited or malformed frame: one strike, an error, and a 4008 close on the third strike in the window. */
@@ -634,8 +651,12 @@ export class RoomCore {
   }
 
   #viewFrame(state: GameState, st: ConnState, now: number): string | null {
-    if (st.role === "tv") return stateFrame(state.version, now, projectForTv(state, this.#d.catalog));
-    if (st.role === "player") return stateFrame(state.version, now, projectForPlayer(state, this.#d.catalog, st.playerId));
+    // PAY-GAP (PAYMENTS-SPEC Phase 1): rooms are not access-restricted yet; the server still plays its whole catalog,
+    // so the view says so (premium: true, nothing locked). Phase 1 passes the room's playable catalog and RoomAccess
+    // here and to reduce/nextWakeAt (§3.11).
+    const access = fullAccess(this.#d.catalog);
+    if (st.role === "tv") return stateFrame(state.version, now, projectForTv(state, this.#d.catalog, access));
+    if (st.role === "player") return stateFrame(state.version, now, projectForPlayer(state, this.#d.catalog, st.playerId, access));
     return null;
   }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { playGame, TEST_CATALOG } from "../../src/testing";
+import { playGame, TEST_FREE_CATALOG } from "../../src/testing";
 
 const CASES: [number, number, string][] = [
   [3, 101, "official"],
@@ -10,7 +10,8 @@ const CASES: [number, number, string][] = [
 
 describe("golden seeded games", () => {
   it.each(CASES)("n=%i seed=%i %s", { timeout: 120_000 }, (n, seed, winRule) => {
-    const out = playGame(TEST_CATALOG, {
+    // The free test catalog has exactly the pre-billing English pool, so the snapshots stay unchanged.
+    const out = playGame(TEST_FREE_CATALOG, {
       players: n,
       seed,
       // Pinned to the original driver mix so the snapshots stay a pure engine regression check.

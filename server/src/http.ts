@@ -2,7 +2,7 @@
 import { BRAND } from "@mishana/shared/brand";
 import { HTTP_BODY_MAX_BYTES, PROTOCOL_VERSION, WS_PATH_PREFIX } from "@mishana/shared/constants";
 import type { Locale } from "@mishana/shared/constants";
-import type { ErrorCode } from "@mishana/shared/protocol";
+import type { EntitlementStatus, ErrorCode } from "@mishana/shared/protocol";
 import { CreateRoomRequest } from "@mishana/shared/protocol";
 import { generateRoomCode } from "./codes";
 import type { Env } from "./env";
@@ -73,6 +73,7 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
   const body = await readBodyLimited(req, HTTP_BODY_MAX_BYTES);
   if (body === null) return httpError("BAD_MESSAGE", 400);
   let locale: Locale = "en";
+  let entitlementToken: string | null = null;
   if (body.byteLength > 0) {
     const ct = (req.headers.get("Content-Type") ?? "").split(";")[0]?.trim().toLowerCase();
     if (ct !== "application/json") return httpError("BAD_MESSAGE", 400);
@@ -85,7 +86,11 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
     const r = CreateRoomRequest.safeParse(parsed);
     if (!r.success) return httpError("BAD_MESSAGE", 400);
     locale = r.data.locale ?? "en";
+    entitlementToken = r.data.entitlement ?? null;
   }
+  // PAYMENTS-SPEC §3.11. PAY-GAP (Phase 1): tokens are not verified yet (billing/token.ts), so a sent token is
+  // reported INVALID (the room is created either way) and no token is passed to the Room DO.
+  const entitlement: EntitlementStatus = entitlementToken === null ? "NONE" : "INVALID";
 
   // 4. TV token (hashed before it reaches the DO).
   const tvToken = randomHex(16, deps.randomBytes);
@@ -109,7 +114,7 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
     }
     if (ok) {
       // 8. 201, never cached (the body carries tvToken).
-      return json({ code, tvToken, joinUrl, wsPath: WS_PATH_PREFIX + code }, 201, { "Cache-Control": "no-store" });
+      return json({ code, tvToken, joinUrl, wsPath: WS_PATH_PREFIX + code, entitlement }, 201, { "Cache-Control": "no-store" });
     }
   }
   return httpError("INTERNAL", 503);

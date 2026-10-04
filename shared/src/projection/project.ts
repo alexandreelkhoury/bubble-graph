@@ -5,8 +5,25 @@ import { currentSpeakerId, isInGame, isSpeakingPhase } from "../engine/queries";
 import { effectiveRoleCounts } from "../engine/roles";
 import type { GameState, Player } from "../engine/types";
 import type { ErrorCode } from "../protocol/errors";
-import type { Me, PackInfo, PlayerView, PublicPlayer, PublicView, TvView } from "../protocol/views";
+import type { LockedPackInfo, Me, PackInfo, PlayerView, PublicPlayer, PublicView, TvView } from "../protocol/views";
 import { MIN_PLAYERS } from "../constants";
+import { packProductId } from "../billing/products";
+
+/**
+ * PAYMENTS-SPEC §3.11: the room's billing context for one projection. The `catalog` argument of every projection
+ * function is the room's PLAYABLE catalog (billing/access.ts `playableCatalog`); `fullCatalog` is used only for the
+ * metadata of the packs the room may not play (`lockedPacks`): never their words.
+ */
+export interface ViewAccess {
+  premium: boolean;      // RoomAccess.premium at projection time
+  fullCatalog: Catalog;  // every shipped pack
+  tvBusy: boolean;       // meta.tvBusyUntil > now (the projection adds the LOBBY condition)
+}
+
+/** Access for a catalog with nothing locked (sim engine mode, engine tests): equivalent to Premium. */
+export function fullAccess(catalog: Catalog): ViewAccess {
+  return { premium: true, fullCatalog: catalog, tvBusy: false };
+}
 
 function startBlocker(state: GameState, catalog: Catalog): ErrorCode | null {
   if (state.phase !== "LOBBY") return null;
@@ -27,7 +44,34 @@ function availablePacks(state: GameState, catalog: Catalog): PackInfo[] {
       title: { en: p.title.en, fr: p.title.fr, ar: p.title.ar },
       pairCount: p.pairs.filter((q) => s.difficulties.includes(q.difficulty)).length,
       ageRating: p.ageRating,
+      tier: p.tier,
     }));
+}
+
+/** LOBBY only: packs of the room's word language (and age filter) that are absent from the playable catalog. Metadata only. */
+function lockedPacks(state: GameState, playable: Catalog, access: ViewAccess): LockedPackInfo[] {
+  if (state.phase !== "LOBBY") return [];
+  const s = state.settings;
+  const playableIds = new Set(playable.packs.map((p) => p.id));
+  return access.fullCatalog.packs
+    .filter((p) => !playableIds.has(p.id) && p.language === s.wordLocale && packAllowedByAge(p, s))
+    .map((p) => ({
+      id: p.id,
+      locale: p.locale,
+      title: { en: p.title.en, fr: p.title.fr, ar: p.title.ar },
+      pairCount: p.pairs.filter((q) => s.difficulties.includes(q.difficulty)).length,
+      ageRating: p.ageRating,
+      productId: packProductId(p.id),
+    }));
+}
+
+/** LOBBY, not premium, and every pair of the (non-empty) playable pool is already used: the next game repeats (§12.4). */
+function poolExhausted(state: GameState, playable: Catalog, access: ViewAccess): boolean {
+  if (state.phase !== "LOBBY" || access.premium) return false;
+  const pool = candidatePairs(playable, state.settings);
+  if (pool.length === 0) return false;
+  const used = new Set(state.usedPairKeys);
+  return pool.every((q) => used.has(q.key));
 }
 
 function publicPlayer(state: GameState, p: Player): PublicPlayer {
@@ -49,7 +93,8 @@ function publicPlayer(state: GameState, p: Player): PublicPlayer {
   };
 }
 
-export function projectPublic(state: GameState, catalog: Catalog): PublicView {
+/** `catalog` is the room's playable catalog (see ViewAccess). */
+export function projectPublic(state: GameState, catalog: Catalog, access: ViewAccess): PublicView {
   const s = state;
   const lobby = s.phase === "LOBBY";
   const results = s.phase === "RESULTS";
@@ -96,11 +141,15 @@ export function projectPublic(state: GameState, catalog: Catalog): PublicView {
       : null,
     history: s.history.map((h) => ({ ...h })),
     availablePacks: availablePacks(s, catalog),
+    premium: access.premium,
+    lockedPacks: lockedPacks(s, catalog, access),
+    tvBusy: lobby && access.tvBusy,
+    poolExhausted: poolExhausted(s, catalog, access),
   };
 }
 
-export function projectForTv(state: GameState, catalog: Catalog): TvView {
-  return { kind: "tv", ...projectPublic(state, catalog) };
+export function projectForTv(state: GameState, catalog: Catalog, access: ViewAccess): TvView {
+  return { kind: "tv", ...projectPublic(state, catalog, access) };
 }
 
 function projectMe(state: GameState, p: Player): Me {
@@ -115,7 +164,7 @@ function projectMe(state: GameState, p: Player): Me {
 }
 
 /** `playerId === null` (or unknown) → spectator view with `me: null`. */
-export function projectForPlayer(state: GameState, catalog: Catalog, playerId: string | null): PlayerView {
+export function projectForPlayer(state: GameState, catalog: Catalog, playerId: string | null, access: ViewAccess): PlayerView {
   const p = playerId === null ? undefined : state.players.find((x) => x.id === playerId);
-  return { kind: "player", ...projectPublic(state, catalog), me: p ? projectMe(state, p) : null };
+  return { kind: "player", ...projectPublic(state, catalog, access), me: p ? projectMe(state, p) : null };
 }

@@ -1,12 +1,13 @@
 // Secret-leak checker (§5.4, §14.1). Used by projection/leak.test.ts and tools/sim.
 import type { Catalog } from "../engine/catalog";
 import type { GameState } from "../engine/types";
-import { projectForPlayer, projectForTv } from "../projection/project";
+import { fullAccess, projectForPlayer, projectForTv } from "../projection/project";
+import type { ViewAccess } from "../projection/project";
 
 // Enum-valued keys whose values can never be secret words (guards against accidental collisions with real words).
 const ENUM_KEYS = new Set([
   "color", "phase", "kind", "status", "outcome", "cause", "role", "revealedRole", "winRule", "roleMode", "tieBreak",
-  "wordLocale", "locale", "ageRating", "winner", "startBlocker",
+  "wordLocale", "locale", "ageRating", "winner", "startBlocker", "tier",
 ]);
 /** State-only keys that must never appear in any projected view (§5.4). */
 export const FORBIDDEN_KEYS: readonly string[] = ["votes", "guessLog", "pair", "alt", "rngState", "usedPairKeys", "deadlineSeq", "disconnectedAt", "joinedAt"];
@@ -34,7 +35,8 @@ function walk(x: unknown, path: string[], onKey: (key: string) => void, onLeaf: 
 }
 
 /** Returns a list of violations (empty = no leak). */
-export function findLeaks(state: GameState, catalog: Catalog): string[] {
+/** `catalog` is the playable catalog the room projects with; `access` defaults to "nothing locked". */
+export function findLeaks(state: GameState, catalog: Catalog, access: ViewAccess = fullAccess(catalog)): string[] {
   const errs: string[] = [];
   const results = state.phase === "RESULTS";
   const pair = state.pair;
@@ -70,8 +72,8 @@ export function findLeaks(state: GameState, catalog: Catalog): string[] {
     for (const p of v.players) if (p.alive && !results && p.revealedRole !== null) errs.push(`${label}: alive role revealed for ${p.id}`);
   };
 
-  check("tv", projectForTv(state, catalog), new Set(), () => false);
-  check("spectator", projectForPlayer(state, catalog, null), new Set(), () => false);
+  check("tv", projectForTv(state, catalog, access), new Set(), () => false);
+  check("spectator", projectForPlayer(state, catalog, null, access), new Set(), () => false);
   const isMeWord = (path: readonly string[]): boolean => path[0] === "me" && path[1] === "word";
   for (const p of state.players) {
     const own = new Set<string>();
@@ -79,7 +81,7 @@ export function findLeaks(state: GameState, catalog: Catalog): string[] {
       own.add(p.word.text);
       if (p.word.translit) own.add(p.word.translit);
     }
-    const view = projectForPlayer(state, catalog, p.id);
+    const view = projectForPlayer(state, catalog, p.id, access);
     check(`player ${p.id}`, view, own, isMeWord);
     const me = view.me;
     if (me && !results && me.role !== null && !state.settings.revealRoles && p.alive) errs.push(`player ${p.id}: own role shown while alive`);

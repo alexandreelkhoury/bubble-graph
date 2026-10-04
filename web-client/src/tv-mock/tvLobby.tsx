@@ -1,5 +1,5 @@
 // TV-02 Lobby.
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import { MAX_PLAYERS } from "@mishana/shared/constants";
 import type { PublicPlayer, TvView } from "@mishana/shared/protocol";
 import { isolate, isolateLtr, locale, LOCALE_NATIVE_NAME, t } from "../i18n/t";
@@ -10,6 +10,7 @@ import { Qr } from "./Qr";
 import { RoomCode, Tile } from "./tvParts";
 import { tvAct, tvScreen } from "./tvStore";
 import { openDialog, openLanguages } from "./tvDialogs";
+import { openShop } from "./shopState";
 
 const GRID_COLS = 4;
 
@@ -45,6 +46,18 @@ export function TvLobby({ view }: { view: TvView }) {
   const l = locale.value;
   const blocker = blockerText(view);
   const toast = toasts.value.at(-1);
+  // PAY-GAP (§4.4 fit rule): Premium · Settings · Language · Start do not fit the 542 dp bar in EN/FR even with an
+  // icon-only Premium, so when the bar overflows, Language also becomes icon-only (its name stays the tooltip/label).
+  const bar = useRef<HTMLDivElement>(null);
+  const [tight, setTight] = useState(false);
+  useLayoutEffect(() => {
+    const b = bar.current;
+    if (!b) return;
+    b.classList.remove("is-tight");
+    const over = b.scrollWidth > b.clientWidth + 1;
+    if (over) b.classList.add("is-tight");
+    setTight(over);
+  }, [l]);
   const slots = Array.from({ length: MAX_PLAYERS }, (_, i) => view.players[i] ?? null);
   const firstEmpty = view.players.length;
   const onStart = (): void => {
@@ -88,7 +101,8 @@ export function TvLobby({ view }: { view: TvView }) {
       <p class="tvlobby__host">{t("lobby.orVisit", { url: isolateLtr(hostOf(view.joinUrl)) })}</p>
 
       <div class="tvlobby__summary" key={flash} data-flash={flash > 0 ? "1" : undefined}>
-        <span>{packsLine(s, view.availablePacks, l)} · {LOCALE_NATIVE_NAME[s.wordLocale]}</span>
+        {/* §4.4: the premium chip leads the summary; inline, so the summary keeps its two lines above the grid. */}
+        <span>{view.premium && <span class="tvlobby__premium"><Icon name="gem" size={20} />{t("lobby.premiumRoom")}</span>}{packsLine(s, view.availablePacks, l)} · {LOCALE_NATIVE_NAME[s.wordLocale]}</span>
         <span>{roleSummaryText(view)} · {t(s.winRule === "official" ? "settings.winRuleOfficial" : "settings.winRuleParity")}</span>
       </div>
       <div class="tvlobby__players">
@@ -107,9 +121,17 @@ export function TvLobby({ view }: { view: TvView }) {
           <div key={`e${i}`} class={`tile tile--empty${i === firstEmpty ? " is-next" : ""}`} aria-hidden="true"><Icon name="plus" size={28} /></div>
         ))}
       </div>
-      <div class="tvbottom tvbottom--lobby" onKeyDown={onBarKey}>
-        <button type="button" ref={settingsRef} class="tvbtn" data-default-focus={startFirst ? undefined : true} onClick={() => { tvScreen.value = "settings"; }}><Icon name="settings" />{t("lobby.settings")}</button>
-        <button type="button" class="tvbtn" aria-haspopup="dialog" onClick={openLanguages}><Icon name="globe" />{LOCALE_NATIVE_NAME[l]}</button>
+      <div class={`tvbottom tvbottom--lobby${tight ? " is-tight" : ""}`} ref={bar} onKeyDown={onBarKey}>
+        {/* PAYMENTS-SPEC §4.4: Premium first, icon-only (the labelled button does not fit the 542 dp bar next to
+            Settings, Language and Start), with its fixed label as the focus tooltip and accessible name. */}
+        <button type="button" class="tvbtn tvbtn--icon" data-lobby="premium" aria-haspopup="true" aria-label={t("lobby.premium")}
+          onClick={() => openShop({ focusProductId: null, origin: "LOBBY_BUTTON" })}>
+          <Icon name="gem" /><span class="tvtip" aria-hidden="true">{t("lobby.premium")}</span>
+        </button>
+        <button type="button" ref={settingsRef} class="tvbtn" data-lobby="settings" data-default-focus={startFirst ? undefined : true} onClick={() => { tvScreen.value = "settings"; }}><Icon name="settings" />{t("lobby.settings")}</button>
+        <button type="button" class="tvbtn tvbtn--lang" aria-haspopup="dialog" aria-label={LOCALE_NATIVE_NAME[l]} onClick={openLanguages}>
+          <Icon name="globe" /><span class="tvbtn__label">{LOCALE_NATIVE_NAME[l]}</span><span class="tvtip" aria-hidden="true">{LOCALE_NATIVE_NAME[l]}</span>
+        </button>
         <button type="button" ref={startRef} key={shake} data-default-focus={startFirst ? true : undefined}
           class={`tvbtn tvbtn--primary tvbtn--start${view.canStart ? "" : " is-disabled"}${shake ? " shake" : ""}`} aria-disabled={!view.canStart} onClick={onStart}>
           <Icon name="play" />{t("lobby.startGame")}

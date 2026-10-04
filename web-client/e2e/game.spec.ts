@@ -123,7 +123,7 @@ async function playFullGame(browser: Browser, locale: string, tag: string): Prom
     await expect(vip.locator(".settings")).toBeVisible();
     await shot(vip, `${tag}-phone-03b-settings`);
     await vip.keyboard.press("Escape");
-    await tv.locator(".tvbottom--lobby .tvbtn").first().click();
+    await tv.locator(".tvbottom--lobby [data-lobby=settings]").click();
     await expect(tv.locator(".tvsettings")).toBeVisible();
     await tv.waitForTimeout(500);
     await shot(tv, `${tag}-tv-03-settings`);

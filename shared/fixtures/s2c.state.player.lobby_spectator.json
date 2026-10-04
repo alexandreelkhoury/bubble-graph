@@ -129,9 +129,27 @@
           "ar": "حزمة اختبار"
         },
         "pairCount": 10,
-        "ageRating": "all"
+        "ageRating": "all",
+        "tier": "free"
       }
     ],
+    "premium": false,
+    "lockedPacks": [
+      {
+        "id": "test-en-prem-01",
+        "locale": "en",
+        "title": {
+          "en": "Premium test",
+          "fr": "Test premium",
+          "ar": "اختبار بريميوم"
+        },
+        "pairCount": 10,
+        "ageRating": "all",
+        "productId": "pack_test_en_prem_01"
+      }
+    ],
+    "tvBusy": false,
+    "poolExhausted": false,
     "me": null
   }
 }

@@ -5,6 +5,7 @@ import type { PlayerView, PublicPlayer } from "@mishana/shared/protocol";
 import { fmtNum, isolate, locale, LOCALE_NATIVE_NAME, t } from "../i18n/t";
 import { blockerText, packsLine, roleSummaryText } from "../lib/lobby";
 import { act } from "../state/session";
+import { tvBusyHint } from "../lib/premium";
 import { wakeLockDenied, wakeLockSupported } from "../lib/wakelock";
 import { Avatar, avatarState, playerLabel } from "../components/PlayerChip";
 import { Button, ConfirmSheet, Heading } from "../components/UI";
@@ -45,6 +46,7 @@ export function Lobby({ view }: { view: PlayerView }) {
         ) : (
           <Heading title={t("lobby.youreIn")} sub={t("lobby.lookTv")} />
         )}
+        {view.premium && <p class="premiumchip"><Icon name="gem" size={16} />{t("lobby.premiumRoom")}</p>}
         <section class="card card--list" aria-labelledby="players-h">
           <div class="card__head">
             <h2 id="players-h" class="eyebrow">{t("lobby.playerCount", { count: players.length, max: MAX_PLAYERS })}</h2>
@@ -111,6 +113,7 @@ export function Lobby({ view }: { view: PlayerView }) {
                 : <button type="button" class="blocker blocker--link" onClick={openBlocker}>{blocker}<Icon name="chevron-forward" size={18} /></button>
             )}
             <Button disabled={!view.canStart} onClick={() => act({ type: "START" })}>{t("lobby.startAll")}</Button>
+            {tvBusyHint(view, isVip) && <p class="blocker blocker--busy" role="status">{t("error.tvBusy")}</p>}
           </>
         ) : (
           <p class="waiting"><span class="waiting__text"><span class="dots" aria-hidden="true"><i /><i /><i /></span>{t("lobby.waitingHost")}</span></p>

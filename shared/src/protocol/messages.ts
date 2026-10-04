@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { NAME_MAX_CODEPOINTS, PROTOCOL_VERSION } from "../constants";
+import { ENTITLEMENT_TOKEN_MAX_CHARS, NAME_MAX_CODEPOINTS, PROTOCOL_VERSION } from "../constants";
 import { ColorIdSchema, ErrorCodeSchema, LocaleSchema, PlayerId, SettingsPatchSchema, Token } from "./common";
 import { ViewSchema } from "./views";
 
@@ -34,9 +34,13 @@ export const JoinSchema = z.strictObject({ v: V, t: z.literal("join"), name: z.s
 export const ActionMsgSchema = z.strictObject({
   v: V, t: z.literal("action"), id: z.string().regex(ACTION_ID_REGEX).optional(), a: ClientIntentSchema,
 });
+/** PAYMENTS-SPEC §3.11: TV only; the server-signed entitlement token (opaque to clients). No `ref`. */
+export const EntitlementMsgSchema = z.strictObject({ v: V, t: z.literal("entitlement"), token: z.string().min(1).max(ENTITLEMENT_TOKEN_MAX_CHARS) });
+/** PAYMENTS-SPEC §3.11: TV only; the host-busy signal while the Store or the Play purchase sheet is up. */
+export const StoreOpenMsgSchema = z.strictObject({ v: V, t: z.literal("storeOpen"), open: z.boolean() });
 // zod 4.6.5 throws "Duplicate discriminator value" if HelloTv and HelloPlayer are both listed directly on "t".
 const Hello = z.discriminatedUnion("role", [HelloTvSchema, HelloPlayerSchema]);
-export const ClientMessageSchema = z.discriminatedUnion("t", [Hello, JoinSchema, ActionMsgSchema]);
+export const ClientMessageSchema = z.discriminatedUnion("t", [Hello, JoinSchema, ActionMsgSchema, EntitlementMsgSchema, StoreOpenMsgSchema]);
 
 // ---------------------------------------------------------------- server → client (non-strict)
 export const WelcomeSchema = z.object({ v: V, t: z.literal("welcome"), playerId: PlayerId, resumeToken: Token, roomCode: z.string() });
@@ -50,6 +54,8 @@ export type HelloTvMsg = z.infer<typeof HelloTvSchema>;
 export type HelloPlayerMsg = z.infer<typeof HelloPlayerSchema>;
 export type JoinMsg = z.infer<typeof JoinSchema>;
 export type ActionMsg = z.infer<typeof ActionMsgSchema>;
+export type EntitlementMsg = z.infer<typeof EntitlementMsgSchema>;
+export type StoreOpenMsg = z.infer<typeof StoreOpenMsgSchema>;
 export type ClientMessage = z.infer<typeof ClientMessageSchema>;
 export type WelcomeMsg = z.infer<typeof WelcomeSchema>;
 export type StateMsg = z.infer<typeof StateSchema>;

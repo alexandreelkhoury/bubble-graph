@@ -5,7 +5,7 @@ import { createInitialState, reduce } from "../engine/reduce";
 import type { Catalog } from "../engine/catalog";
 import { isSpeakingPhase } from "../engine/queries";
 import type { Action, ClientIntent, EngineError, GameState, Player, ReduceResult, Role, SettingsPatch, SystemAction } from "../engine/types";
-import { TEST_CATALOG } from "./test-catalog";
+import { TEST_FREE_CATALOG } from "./test-catalog";
 
 /** Default scripted clock origin shared by engine, server and fixture drivers. */
 export const T0 = 1_790_000_000_000;
@@ -34,7 +34,7 @@ export class Game {
     const roomCode = opts.roomCode ?? "TEST";
     this.state = createInitialState({ roomCode, joinUrl: opts.joinUrl ?? `https://x.test/${roomCode}`, seed: opts.seed ?? 1, wordLocale: "en" });
     this.now = opts.now ?? T0;
-    this.catalog = opts.catalog ?? TEST_CATALOG;
+    this.catalog = opts.catalog ?? TEST_FREE_CATALOG; // a free room (PAYMENTS-SPEC §7.1); pass TEST_CATALOG for Premium
   }
   #reduce(action: Action): ReduceResult {
     const r = reduce(this.state, action, { now: this.now, catalog: this.catalog });

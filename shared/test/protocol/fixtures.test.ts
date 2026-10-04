@@ -4,6 +4,10 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { PING_FRAME, PONG_FRAME } from "../../src/constants";
 import { CreateRoomRequest, CreateRoomResponse, Healthz, HttpError } from "../../src/protocol/http";
+import { CatalogResponse, EntitlementRequest, VerifyRequest, VerifyResponse } from "../../src/billing/http";
+import {
+  BASE_PLAN_IDS, packIdFromProductId, packProductId, PREMIUM_PRODUCT_ID, TRIAL_OFFER_ID,
+} from "../../src/billing/products";
 import { ClientMessageSchema, ServerMessageSchema } from "../../src/protocol/messages";
 import { errorMessageKey } from "../../src/protocol/errors";
 import { generateFixtures } from "../../scripts/fixture-scenario";
@@ -15,8 +19,9 @@ const read = (f: string): string => readFileSync(join(dir, f), "utf8");
 const VIEW_KEYS = [
   "kind", "roomCode", "joinUrl", "phase", "gameNumber", "round", "settings", "players", "hostPlayerId", "roleCounts", "canStart",
   "startBlocker", "speakingOrder", "currentSpeakerId", "revote", "tieCandidates", "deadline", "votesCast", "votesExpected",
-  "lastVote", "eliminated", "guess", "result", "history", "availablePacks",
+  "lastVote", "eliminated", "guess", "result", "history", "availablePacks", "premium", "lockedPacks", "tvBusy", "poolExhausted",
 ];
+const ENTITLEMENT_FIXTURE_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImsxIn0.e30.c2ln";
 
 describe("fixtures (§10)", () => {
   it("the full file set exists", () => {
@@ -27,6 +32,9 @@ describe("fixtures (§10)", () => {
       ...["lobby", "role_reveal", "clues", "tie_break", "elimination", "mr_white_guess", "results"].map((p) => `s2c.state.tv.${p}.json`),
       ...["lobby_spectator", "lobby", "role_reveal_blank", "voting", "mr_white_guess_guesser", "results"].map((p) => `s2c.state.player.${p}.json`),
       "http.create_room.request.json", "http.create_room.response.json", "http.error.json", "http.healthz.json",
+      // PAYMENTS-SPEC §3.11
+      "c2s.entitlement.json", "c2s.storeOpen.json", "billing.products.json",
+      ...["catalog.response", "verify.request", "verify.response", "entitlement.request"].map((n) => `http.billing.${n}.json`),
     ].sort();
     expect(files).toEqual(expected);
     for (const f of files) expect(read(f).endsWith("\n")).toBe(true);
@@ -54,10 +62,36 @@ describe("fixtures (§10)", () => {
   });
 
   it("http fixtures parse with the HTTP schemas", () => {
-    expect(CreateRoomRequest.parse(JSON.parse(read("http.create_room.request.json")))).toEqual({ locale: "fr" });
-    expect(CreateRoomResponse.safeParse(JSON.parse(read("http.create_room.response.json"))).success).toBe(true);
+    expect(CreateRoomRequest.parse(JSON.parse(read("http.create_room.request.json")))).toEqual({ locale: "fr", entitlement: ENTITLEMENT_FIXTURE_TOKEN });
+    expect(CreateRoomResponse.parse(JSON.parse(read("http.create_room.response.json"))).entitlement).toBe("OK");
     expect(HttpError.safeParse(JSON.parse(read("http.error.json"))).success).toBe(true);
     expect(Healthz.safeParse(JSON.parse(read("http.healthz.json"))).success).toBe(true);
+  });
+
+  it("billing fixtures parse with the billing HTTP schemas (PAYMENTS-SPEC §3.4)", () => {
+    const catalog = CatalogResponse.parse(JSON.parse(read("http.billing.catalog.response.json")));
+    expect(catalog.packs.length).toBeGreaterThan(0);
+    for (const p of catalog.packs) expect(p.productId).toBe(packProductId(p.packId));
+    expect(catalog.freePackIds.some((id) => catalog.packs.some((p) => p.packId === id))).toBe(false);
+    const req = VerifyRequest.parse(JSON.parse(read("http.billing.verify.request.json")));
+    const res = VerifyResponse.parse(JSON.parse(read("http.billing.verify.response.json")));
+    expect(res.results.map((r) => r.productId)).toEqual(req.purchases.map((p) => p.productId));
+    EntitlementRequest.parse(JSON.parse(read("http.billing.entitlement.request.json")));
+  });
+
+  it("billing.products.json matches the shared product constants (§1.3)", () => {
+    const f = JSON.parse(read("billing.products.json")) as { premium: string; basePlans: string[]; trialOfferId: string; pairs: [string, string][] };
+    expect(f.premium).toBe(PREMIUM_PRODUCT_ID);
+    expect(f.basePlans).toEqual([...BASE_PLAN_IDS]);
+    expect(f.trialOfferId).toBe(TRIAL_OFFER_ID);
+    for (const [packId, productId] of f.pairs) {
+      expect(packProductId(packId)).toBe(productId);
+      expect(packIdFromProductId(productId)).toBe(packId);
+    }
+  });
+
+  it("c2s.entitlement.json carries the shared fixture token", () => {
+    expect(JSON.parse(read("c2s.entitlement.json"))).toEqual({ v: 1, t: "entitlement", token: ENTITLEMENT_FIXTURE_TOKEN });
   });
 
   it("check:fixtures is clean (generated files are up to date)", () => {
@@ -77,6 +111,11 @@ describe("fixtures (§10)", () => {
       { v: 1, t: "action", a: { type: "SUBMIT_GUESS", text: "x".repeat(201) } },
       { v: 1, t: "action", a: { type: "START", extra: true } },
       { v: 2, t: "action", a: { type: "START" } },
+      { v: 1, t: "entitlement", token: "" },
+      { v: 1, t: "entitlement", token: "x".repeat(3001) },
+      { v: 1, t: "entitlement", token: "x", extra: 1 },
+      { v: 1, t: "storeOpen" },
+      { v: 1, t: "storeOpen", open: "yes" },
     ];
     for (const b of bad) expect(ClientMessageSchema.safeParse(b).success, JSON.stringify(b)).toBe(false);
   });

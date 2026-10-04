@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { normalizeGuess } from "@mishana/shared/engine";
 import { WordPackSchema, type WordPack } from "@mishana/shared/packs";
+import { packIdFromProductId, packProductId, PREMIUM_PACK_ID_MAX, PRODUCT_ID_REGEX } from "@mishana/shared/billing/products";
 import { PACKS } from "../index";
 
 // Mirrors the §12.5 error rules; tools/pack-lint is the authoritative CLI (pnpm lint:packs).
@@ -10,6 +11,28 @@ const words = (p: WordPack): string[] =>
   p.pairs.flatMap((pair) => [pair.civilian, pair.undercover]).flatMap((s) => [s.text, ...(s.alt ?? []), ...(s.translit ? [s.translit] : [])]);
 
 describe("word packs", () => {
+  it("PAYMENTS-SPEC §1.2/§1.5: exactly one free starter pack per language, unregional and for all ages", () => {
+    const free = parsed.filter((p) => p.tier === "free");
+    expect(free.map((p) => p.id).sort()).toEqual(["ar-everyday-01", "en-everyday-01", "fr-everyday-01"]);
+    for (const lang of ["en", "fr", "ar"]) expect(free.filter((p) => language(p) === lang), lang).toHaveLength(1);
+    for (const p of free) {
+      expect(["en", "fr", "ar"], p.id).toContain(p.locale);
+      expect(p.ageRating, p.id).toBe("all");
+    }
+  });
+
+  it("PAYMENTS-SPEC §1.3/§1.5: premium pack ids map 1:1 onto valid Play product ids", () => {
+    const productIds = new Set<string>();
+    for (const p of parsed) {
+      const productId = packProductId(p.id);
+      expect(PRODUCT_ID_REGEX.test(productId), productId).toBe(true);
+      expect(packIdFromProductId(productId), productId).toBe(p.id);
+      expect(productIds.has(productId), productId).toBe(false);
+      productIds.add(productId);
+      if (p.tier === "premium") expect(p.id.length, p.id).toBeLessThanOrEqual(PREMIUM_PACK_ID_MAX);
+    }
+  });
+
   it("every pack parses with WordPackSchema", () => {
     for (const p of PACKS) expect(WordPackSchema.safeParse(p).success).toBe(true);
   });

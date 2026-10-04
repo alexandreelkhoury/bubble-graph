@@ -124,6 +124,10 @@
     "result": null,
     "history": [],
     "availablePacks": [],
+    "premium": false,
+    "lockedPacks": [],
+    "tvBusy": false,
+    "poolExhausted": false,
     "me": {
       "id": "p_1b2c3d4e5f60718293a4b5c6",
       "word": {

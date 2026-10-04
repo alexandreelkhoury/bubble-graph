@@ -1,2 +1,2 @@
-export { projectPublic, projectForTv, projectForPlayer } from "./project";
-export type { PublicView, TvView, PlayerView, PublicPlayer, Me, PackInfo, View } from "../protocol/views";
+export { projectPublic, projectForTv, projectForPlayer, fullAccess, type ViewAccess } from "./project";
+export type { PublicView, TvView, PlayerView, PublicPlayer, Me, PackInfo, LockedPackInfo, View } from "../protocol/views";

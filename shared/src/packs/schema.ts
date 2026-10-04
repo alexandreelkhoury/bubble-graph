@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { PACK_ID_MAX } from "../constants";
-import { AGE_RATINGS } from "../engine/catalog";
+import { AGE_RATINGS, PACK_TIERS } from "../engine/catalog";
 import type { WordPackLike } from "../engine/catalog";
 
 export const WordSideSchema = z.strictObject({ text: z.string().min(1).max(40), translit: z.string().min(1).max(40).nullable().optional(), alt: z.array(z.string().min(1).max(40)).max(8).optional() });
@@ -19,6 +19,8 @@ export const WordPackSchema = z.strictObject({
   title: z.strictObject({ en: z.string().min(1), fr: z.string().min(1), ar: z.string().min(1) }),
   tags: z.array(z.string()).default([]),
   ageRating: z.enum(AGE_RATINGS),
+  // PAYMENTS-SPEC §1.2: a pack without `tier` is premium; only the starter packs say "free".
+  tier: z.enum(PACK_TIERS).default("premium"),
   license: z.string().min(1),                                 // "CC-BY-4.0" (original) | "MIT" (seeded)
   source: z.string().min(1),                                  // "original" | "antebrl/undercover-word-game" | …
   status: z.enum(["draft", "reviewed"]),

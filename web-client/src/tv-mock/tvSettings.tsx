@@ -16,7 +16,10 @@ import {
 import type { RowDef, SettingsCategory } from "../lib/settingsModel";
 import { usePatcher } from "../hooks/usePatcher";
 import { Icon } from "../components/Icon";
-import { tvAct, tvLastErrorMsg, tvScreen } from "./tvStore";
+import { tvAct, tvLastErrorMsg, tvScreen, tvShop } from "./tvStore";
+import { openShop } from "./shopState";
+import { soundCue } from "./sound/controller";
+import { settingLocked } from "../lib/premium";
 import { focusables, isBackKey, nearest, useInitialFocus } from "./dpad";
 import type { Arrow } from "./dpad";
 import { SoundToggle } from "./sound/SoundToggle";
@@ -54,6 +57,33 @@ function SettingRow({ row, s, set, onOpen, onExit }: { row: RowDef; s: Settings;
   );
 }
 
+/**
+ * PAYMENTS-SPEC §4.4 entry 3: a premium-only row in a free room. Lock + "Premium"; Left/Right shake with the error
+ * sound (as Start does), OK opens the Store on Premium. It never steps.
+ */
+function LockedRow({ row }: { row: RowDef }) {
+  const onKey = (e: KeyboardEvent): void => {
+    const dir = inlineDir(e);
+    if (dir === 0) return;
+    swallow(e);
+    // Left/Right would step the value: refused with a shake (Back returns to the categories, as from any row).
+    // Restart the animation without re-mounting the focused button.
+    const el = e.currentTarget as HTMLElement;
+    el.classList.remove("shake");
+    void el.offsetWidth;
+    el.classList.add("shake");
+    soundCue("sfx.error");
+  };
+  const label = row.kind === "points" ? `${t(row.group)} · ${t(row.label)}` : t(row.label);
+  return (
+    <button type="button" class="setrowtv setrowtv--locked" data-row={row.id} data-locked="1" onKeyDown={onKey}
+      onClick={() => openShop({ focusProductId: "premium", origin: "LOCKED_SETTING" })}>
+      <span class="setrowtv__label">{label}</span>
+      <span class="setrowtv__value setrowtv__value--locked"><Icon name="lock" size={22} />{t("settings.premiumOnly")}</span>
+    </button>
+  );
+}
+
 function Toggle({ on, onClick, children, first }: { on: boolean; onClick(): void; children: ComponentChildren; first?: Ref<HTMLButtonElement> }) {
   // The first toggle is the panel's default focus (the focus keeper lands there, not on a category, which would close it).
   return (
@@ -76,7 +106,10 @@ export function TvSettings({ view }: { view: TvView }) {
   const doneRef = useRef<HTMLButtonElement>(null);
   const [zone, setZone] = useState<"cats" | "rows" | "sub" | "head">("cats");
   const subFirst = useInitialFocus<HTMLButtonElement>(sub);
-  const rows = visibleRows(cat, s);
+  // §4.4: premium-only rows move to the bottom of their category in a free room (the initial focus never lands on a lock).
+  const locked = (r: RowDef): boolean => r.kind === "points" && settingLocked(view, "points");
+  const allRows = visibleRows(cat, s);
+  const rows = [...allRows.filter((r) => !locked(r)), ...allRows.filter(locked)];
   const preview = rolePreview(view);
 
   const focusCategory = (): void => catBox.current?.querySelector<HTMLElement>(".tvcat.is-on")?.focus();
@@ -93,6 +126,7 @@ export function TvSettings({ view }: { view: TvView }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       if (!isBackKey(e)) return;
+      if (tvShop.value) return; // the Store (an overlay above Settings) handles its own Back
       swallow(e);
       if (sub) { closeSub(); return; }
       if ((document.activeElement as HTMLElement | null)?.closest(".tvsettings__rows")) { focusCategory(); return; }
@@ -165,6 +199,20 @@ export function TvSettings({ view }: { view: TvView }) {
                   {p.ageRating === "teen" && <span class="tvtag">{t("settings.packTeen")}</span>}
                 </Toggle>
               ))}
+              {view.lockedPacks.length > 0 && (
+                // §4.4 entry 2: locked packs below a divider; OK opens the Store on that pack.
+                <>
+                  <p class="tvsub__divider">{t("settings.lockedPacks")}</p>
+                  {view.lockedPacks.map((p) => (
+                    <button key={p.id} type="button" class="tvtoggle tvtoggle--locked" data-locked-pack={p.id}
+                      onClick={() => openShop({ focusProductId: p.productId, origin: "LOCKED_PACK" })}>
+                      <Icon name="lock" size={20} /><bdi>{p.title[l]}</bdi>
+                      <span class="muted">{t("store.packPairs", { count: p.pairCount })}</span>
+                      <span class="tvtoggle__hint">{t("settings.unlockHint")}</span>
+                    </button>
+                  ))}
+                </>
+              )}
             </div>
           ) : sub === "difficulty" ? (
             <div class="tvsub">
@@ -177,7 +225,7 @@ export function TvSettings({ view }: { view: TvView }) {
           ) : (
             rows.map((r) => (
               <div key={r.id} onFocusIn={() => { setFocusRow(r.id); lastRow.current[cat] = r.id; }}>
-                <SettingRow row={r} s={s} set={set} onOpen={setSub} onExit={focusCategory} />
+                {locked(r) ? <LockedRow row={r} /> : <SettingRow row={r} s={s} set={set} onOpen={setSub} onExit={focusCategory} />}
               </div>
             ))
           )}

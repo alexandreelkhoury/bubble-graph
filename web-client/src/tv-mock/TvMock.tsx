@@ -5,7 +5,9 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import type { TvView } from "@mishana/shared/protocol";
 import { dirOf, locale } from "../i18n/t";
 import { toasts } from "../state/store";
-import { tvCreateRoom, tvExit, tvLangOpen, tvPaused, tvScale, tvScreen, tvStop, tvUi, tvView } from "./tvStore";
+import { tvCreateRoom, tvExit, tvLangOpen, tvPaused, tvScale, tvScreen, tvShop, tvStop, tvUi, tvView } from "./tvStore";
+import { TvShop } from "./tvShop";
+import { bootBilling, useBillingView, useBillingVisibility } from "./billingEffects";
 import { TvLobby } from "./tvLobby";
 import { TvSettings } from "./tvSettings";
 import { TvClues, TvRoleReveal, TvVoting } from "./tvGame";
@@ -54,9 +56,12 @@ export function TvMock() {
   const ui = tvUi.value;
   const view = tvView.value;
   usePresenceToasts(view);
+  useBillingView(view);
+  useBillingVisibility();
   useRemoteSounds(canvas, isBackKey);
   useEffect(() => {
-    void tvCreateRoom();
+    // PAYMENTS-SPEC §5.2: the catalog (mode) and a token first, so the room can be created with it.
+    void bootBilling().then(() => tvCreateRoom());
     document.title = "Mish Ana! · TV";
     return () => tvStop();
   }, []);
@@ -80,7 +85,8 @@ export function TvMock() {
   else content = <Screen view={view} />;
   const room = ui.kind === "room" && view !== null;
   const lobbyMain = view?.phase === "LOBBY" && tvScreen.value === "main";
-  const overlay = room && (tvDialog.value !== null || tvPaused.value || tvLangOpen.value);
+  const shop = room && view.phase === "LOBBY" ? tvShop.value : null;
+  const overlay = room && (tvDialog.value !== null || tvPaused.value || tvLangOpen.value || shop !== null);
   const screenKey = view ? `${view.phase}:${view.round}:${view.gameNumber}:${tvScreen.value}` : ui.kind;
   const toast = toasts.value.at(-1);
   return (
@@ -90,13 +96,14 @@ export function TvMock() {
         {/* Content behind an overlay is inert: neither the remote, Tab nor a pointer can reach it. */}
         <div class="tv__stage" key={screenKey} inert={overlay}>{content}</div>
         {room && tvPaused.value && <PauseMenu view={view} />}
+        {shop && <TvShop view={view!} entry={shop} />}
         {room && tvLangOpen.value && <LanguagePicker />}
         {room && <TvDialog />}
         {ui.kind === "room" && <ConnStates view={view} />}
         {view && <PhonesAsleep view={view} />}
         {/* In the lobby the toast sits in the player-grid header (TvLobby); in a game, newest only, in the top bar row. */}
-        <div class="tvtoasts" aria-live="polite">
-          {!lobbyMain && toast && <div key={toast.id} class={`tvtoast tvtoast--${toast.tone}`}>{toast.text}</div>}
+        <div class={`tvtoasts${shop ? " tvtoasts--shop" : ""}`} aria-live="polite">
+          {(!lobbyMain || shop) && toast && <div key={toast.id} class={`tvtoast tvtoast--${toast.tone}`}>{toast.text}</div>}
         </div>
       </div>
     </div>

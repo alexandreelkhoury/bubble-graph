@@ -8,6 +8,8 @@ export const ERROR_CODES = [
   "KICKED", "REPLACED", "NOT_HOST", "WRONG_PHASE", "NOT_YOUR_TURN", "NOT_ALIVE", "INVALID_TARGET",
   "INVALID_SETTINGS", "NOT_ENOUGH_PLAYERS", "INVALID_ROLE_CONFIG", "NO_WORDS_AVAILABLE", "GUESS_INVALID",
   "RATE_LIMITED", "INTERNAL",
+  // PAYMENTS-SPEC §3.11 (all non-fatal)
+  "PREMIUM_REQUIRED", "PACK_LOCKED", "ENTITLEMENT_INVALID", "TV_BUSY",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 
@@ -40,6 +42,10 @@ export const ERROR_INFO: Record<ErrorCode, { fatal: boolean; closeCode: number |
   GUESS_INVALID: { fatal: false, closeCode: null },
   RATE_LIMITED: { fatal: false, closeCode: C.RATE_LIMITED },
   INTERNAL: { fatal: false, closeCode: null },
+  PREMIUM_REQUIRED: { fatal: false, closeCode: null },
+  PACK_LOCKED: { fatal: false, closeCode: null },
+  ENTITLEMENT_INVALID: { fatal: false, closeCode: null },
+  TV_BUSY: { fatal: false, closeCode: null },
 };
 
 export { CLOSE_CODES } from "../constants";

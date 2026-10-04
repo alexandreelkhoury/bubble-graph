@@ -187,6 +187,10 @@
         "cause": "VOTE"
       }
     ],
-    "availablePacks": []
+    "availablePacks": [],
+    "premium": false,
+    "lockedPacks": [],
+    "tvBusy": false,
+    "poolExhausted": false
   }
 }

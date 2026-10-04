@@ -9,6 +9,8 @@ import { locale, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { pushToast, resetClock, sampleClock } from "../state/store";
 import { soundCue, soundOnView, soundReset } from "./sound/controller";
+import { billing } from "./billing";
+import type { StoreEntry } from "./billing/model";
 
 export type TvUi =
   | { kind: "creating" }
@@ -33,6 +35,8 @@ export const tvLangOpen = signal(false);
 export const tvLastErrorMsg = signal<ErrorMsg | null>(null);
 /** Seconds the TV socket has been down (for TV-13a/13b). */
 export const tvDownSince = signal<number | null>(null);
+/** PAYMENTS-SPEC §4.4: the Store overlay (LOBBY only) and what opened it, or null when closed. */
+export const tvShop = signal<StoreEntry | null>(null);
 
 let conn: Connection | null = null;
 let unbindWake: (() => void) | null = null;
@@ -40,7 +44,10 @@ const FATAL_KEY: Record<number, MessageKey> = {
   [CLOSE.UNSUPPORTED_VERSION]: "error.unsupportedVersion", [CLOSE.TV_AUTH_FAILED]: "error.tvAuthFailed",
   [CLOSE.ROOM_NOT_FOUND]: "error.roomNotFound", [CLOSE.REPLACED]: "error.replaced", [CLOSE.ROOM_EXPIRED]: "error.roomExpired",
 };
-const SILENT: readonly ErrorCode[] = ["ROOM_EXPIRED", "REPLACED", "TV_AUTH_FAILED", "ROOM_NOT_FOUND", "UNSUPPORTED_VERSION"];
+// TV_BUSY is never expected on the TV (the Store covers the lobby), so it stays silent like the TV app (§4.3).
+const SILENT: readonly ErrorCode[] = ["ROOM_EXPIRED", "REPLACED", "TV_AUTH_FAILED", "ROOM_NOT_FOUND", "UNSUPPORTED_VERSION", "TV_BUSY"];
+/** §4.4: the TV's own wording for the two premium errors (TV register, no "on the TV"). */
+const TV_ERROR_KEY: Partial<Record<ErrorCode, MessageKey>> = { PREMIUM_REQUIRED: "tv.premiumRequired", PACK_LOCKED: "tv.packLocked" };
 
 /** Sends an action; returns its id (null when the socket is not OPEN). */
 export function tvAct(a: ClientIntentMsg): string | null {
@@ -48,6 +55,8 @@ export function tvAct(a: ClientIntentMsg): string | null {
 }
 
 function closeLocalUi(): void {
+  tvShop.value = null;
+  billing.setStoreVisible(false);
   tvPaused.value = false;
   tvPausePage.value = "menu";
   tvLangOpen.value = false;
@@ -61,7 +70,7 @@ export async function tvCreateRoom(): Promise<void> {
   tvUi.value = { kind: "creating" };
   resetClock();
   const started = Date.now();
-  const res = await createRoom(locale.value);
+  const res = await createRoom(locale.value, billing.tokenForCreate());
   // Let the splash breathe (≤ 800 ms) so the bang animation completes.
   const wait = Math.max(0, 700 - (Date.now() - started));
   if (wait) await new Promise((r) => setTimeout(r, wait));
@@ -71,11 +80,16 @@ export async function tvCreateRoom(): Promise<void> {
   }
   const room = res.room;
   tvUi.value = { kind: "room", room };
+  let freshOpen = false;
   conn = new Connection(partySocketFactory(room.code), {
     hello: () => ({ v: PROTOCOL_VERSION, t: "hello", role: "tv", tvToken: room.tvToken }),
     onState: (msg) => {
       sampleClock(msg.serverNow);
       if (msg.view.kind !== "tv") return;
+      if (freshOpen) {
+        freshOpen = false;
+        queueMicrotask(() => billing.roomOpened()); // the queued token and the busy flag, once the hello is through
+      }
       const prev = tvView.value;
       tvView.value = msg.view;
       soundOnView(prev, msg.view);
@@ -84,10 +98,11 @@ export async function tvCreateRoom(): Promise<void> {
     onError: (msg) => {
       tvLastErrorMsg.value = msg;
       if (SILENT.includes(msg.code)) return;
-      pushToast(t(msg.messageKey as MessageKey), "error");
+      pushToast(t(TV_ERROR_KEY[msg.code] ?? (msg.messageKey as MessageKey)), "error");
       soundCue("sfx.error");
     },
     onStatus: (s) => {
+      if (s === "open") freshOpen = true;
       tvConn.value = s;
       tvDownSince.value = s === "open" ? null : tvDownSince.value ?? Date.now();
     },
@@ -106,6 +121,15 @@ export async function tvCreateRoom(): Promise<void> {
     },
   });
   unbindWake = bindWake(conn);
+  billing.attach({
+    send: (m) => conn?.send(m) ?? false,
+    canToast: () => {
+      const v = tvView.value;
+      return tvShop.value !== null || v?.phase === "LOBBY" || v?.phase === "RESULTS";
+    },
+    showToast: (x) => pushToast(t(x.key, x.params), x.tone, 4000),
+  });
+  billing.roomCreated(room.entitlement);
 }
 
 export function tvWake(): void { conn?.wake(); }
@@ -118,6 +142,7 @@ export function tvExit(): void {
   tvUi.value = { kind: "closed" };
 }
 export function tvStop(): void {
+  billing.detach();
   unbindWake?.();
   unbindWake = null;
   soundReset();

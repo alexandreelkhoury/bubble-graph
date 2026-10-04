@@ -40,7 +40,9 @@ export default defineConfig({
   webServer: process.env.E2E_BASE_URL
     ? undefined
     : {
-        command: `pnpm --filter @mishana/web-client build && pnpm --filter @mishana/server exec wrangler dev --port ${PORT} --ip 127.0.0.1 --show-interactive-dev-session=false --var DEBUG_INVARIANTS:1`,
+        // PAYMENTS-SPEC §3.10 / §5.3: fake billing for e2e. The Worker still decides fake mode per request (the host is
+        // 127.0.0.1) and never with a service account configured; specs that need no billing are unaffected.
+        command: `pnpm --filter @mishana/web-client build && pnpm --filter @mishana/server exec wrangler dev --port ${PORT} --ip 127.0.0.1 --show-interactive-dev-session=false --var DEBUG_INVARIANTS:1 --var BILLING_MODE:fake --var ALLOW_FAKE_BILLING:1`,
         cwd: "..",
         url: `${baseURL}/healthz`,
         reuseExistingServer: true,

@@ -1,5 +1,6 @@
 // Deterministic catalog for engine/server tests and the fixture generator (independent of the shipped word-packs/).
 import type { Catalog } from "../engine/catalog";
+import { playableCatalog } from "../billing/access";
 import { loadCatalog } from "../packs";
 
 type Side = { text: string; translit?: string | null; alt?: string[] };
@@ -9,7 +10,7 @@ const base = { version: 1, tags: ["test"], license: "CC-BY-4.0", source: "origin
 
 export const TEST_PACKS = [
   {
-    ...base, id: "test-en-01", locale: "en", script: "Latn", ageRating: "all",
+    ...base, id: "test-en-01", locale: "en", script: "Latn", ageRating: "all", tier: "free",
     title: { en: "Test pack", fr: "Paquet de test", ar: "حزمة اختبار" },
     pairs: [
       pair("p001", { text: "Cat" }, { text: "Dog" }),
@@ -35,21 +36,40 @@ export const TEST_PACKS = [
     pairs: Array.from({ length: 10 }, (_, i) => pair(`p${String(i + 1).padStart(3, "0")}`, { text: `Adult A${i}` }, { text: `Adult B${i}` })),
   },
   {
-    ...base, id: "test-fr-01", locale: "fr", script: "Latn", ageRating: "all",
+    ...base, id: "test-fr-01", locale: "fr", script: "Latn", ageRating: "all", tier: "free",
     title: { en: "French test", fr: "Test français", ar: "اختبار فرنسي" },
     pairs: Array.from({ length: 10 }, (_, i) => pair(`p${String(i + 1).padStart(3, "0")}`, { text: `Chat ${i}` }, { text: `Chien ${i}` })),
   },
   {
-    ...base, id: "test-ar-01", locale: "ar-LB", script: "Arab", ageRating: "all",
+    ...base, id: "test-ar-01", locale: "ar-LB", script: "Arab", ageRating: "all", tier: "free",
     title: { en: "Arabic test", fr: "Test arabe", ar: "اختبار عربي" },
     pairs: [
       pair("p001", { text: "منقوشة", translit: "Man2oushe", alt: ["مناقيش"] }, { text: "فطيرة", translit: "Fatayer" }),
       ...Array.from({ length: 9 }, (_, i) => pair(`p${String(i + 2).padStart(3, "0")}`, { text: `كلمة${i}` }, { text: `عبارة${i}` })),
     ],
   },
+  // PAYMENTS-SPEC §7.1: one premium "all" pack per language next to the free one (no `tier` → premium).
+  {
+    ...base, id: "test-en-prem-01", locale: "en", script: "Latn", ageRating: "all",
+    title: { en: "Premium test", fr: "Test premium", ar: "اختبار بريميوم" },
+    pairs: Array.from({ length: 10 }, (_, i) => pair(`p${String(i + 1).padStart(3, "0")}`, { text: `Prem A${i}` }, { text: `Prem B${i}` })),
+  },
+  {
+    ...base, id: "test-fr-prem-01", locale: "fr", script: "Latn", ageRating: "all",
+    title: { en: "French premium test", fr: "Test premium français", ar: "اختبار بريميوم فرنسي" },
+    pairs: Array.from({ length: 10 }, (_, i) => pair(`p${String(i + 1).padStart(3, "0")}`, { text: `Prime ${i}` }, { text: `Bonus ${i}` })),
+  },
+  {
+    ...base, id: "test-ar-prem-01", locale: "ar", script: "Arab", ageRating: "all",
+    title: { en: "Arabic premium test", fr: "Test premium arabe", ar: "اختبار بريميوم عربي" },
+    pairs: Array.from({ length: 10 }, (_, i) => pair(`p${String(i + 1).padStart(3, "0")}`, { text: `بريم${i}` }, { text: `ممتاز${i}` })),
+  },
 ];
 
+/** Every test pack (free and premium): the full catalog, i.e. what a Premium room plays. */
 export const TEST_CATALOG: Catalog = loadCatalog(TEST_PACKS);
+/** What a free room with no owned packs plays: the free test packs only (PAYMENTS-SPEC §3.11 `playableCatalog`). */
+export const TEST_FREE_CATALOG: Catalog = playableCatalog(TEST_CATALOG, false, new Set());
 
 /**
  * Synthetic catalog of unique tokens for the secret-leak checker (§14.1): every civilian, undercover,

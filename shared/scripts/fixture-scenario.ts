@@ -2,10 +2,13 @@
 import type { ColorId, Locale } from "../src/constants";
 import { isGuessCorrect } from "../src/engine/normalize";
 import { projectForPlayer, projectForTv } from "../src/projection/project";
-import { Game, SYS, TEST_CATALOG } from "../src/testing";
+import type { ViewAccess } from "../src/projection/project";
+import { Game, SYS, TEST_CATALOG, TEST_FREE_CATALOG } from "../src/testing";
 
 export const FIXTURE_SEED = 12345;
 export const FIXTURE_T0 = 1_790_000_000_000;
+/** The fixture room is a free room (PAYMENTS-SPEC §3.11): it plays the free test packs; the premium ones show as locked. */
+const FREE_ACCESS: ViewAccess = { premium: false, fullCatalog: TEST_CATALOG, tvBusy: false };
 
 const CAST: { name: string; color: ColorId; id: string; locale: Locale }[] = [
   { name: "Rami", color: "coral", id: "p_0a1b2c3d4e5f60718293a4b5", locale: "en" },
@@ -19,14 +22,14 @@ const LEA = "p_1b2c3d4e5f60718293a4b5c6";
 /** Returns generated file name → file content (pretty-printed, trailing newline). */
 export function generateFixtures(): Map<string, string> {
   const files = new Map<string, string>();
-  const g = new Game({ seed: FIXTURE_SEED, now: FIXTURE_T0, roomCode: "KXRT", joinUrl: "https://mish-ana.example.workers.dev/KXRT" });
+  const g = new Game({ seed: FIXTURE_SEED, now: FIXTURE_T0, catalog: TEST_FREE_CATALOG, roomCode: "KXRT", joinUrl: "https://mish-ana.example.workers.dev/KXRT" });
 
   const write = (name: string, view: unknown): void => {
     const msg = { v: 1, t: "state", seq: g.state.version, serverNow: g.now, view };
     files.set(name, JSON.stringify(msg, null, 2) + "\n");
   };
-  const writeTv = (phase: string): void => write(`s2c.state.tv.${phase}.json`, projectForTv(g.state, TEST_CATALOG));
-  const writePlayer = (name: string, pid: string | null): void => write(`s2c.state.player.${name}.json`, projectForPlayer(g.state, TEST_CATALOG, pid));
+  const writeTv = (phase: string): void => write(`s2c.state.tv.${phase}.json`, projectForTv(g.state, TEST_FREE_CATALOG, FREE_ACCESS));
+  const writePlayer = (name: string, pid: string | null): void => write(`s2c.state.player.${name}.json`, projectForPlayer(g.state, TEST_FREE_CATALOG, pid, FREE_ACCESS));
   const join = (i: number): void => {
     const c = CAST[i];
     if (!c) throw new Error("cast");

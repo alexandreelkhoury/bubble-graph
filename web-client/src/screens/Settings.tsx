@@ -4,7 +4,8 @@ import type { Settings, SettingsPatch } from "@mishana/shared/engine";
 import type { PlayerView } from "@mishana/shared/protocol";
 import { fmtNum, locale, t } from "../i18n/t";
 import { actId } from "../state/session";
-import { lastError } from "../state/store";
+import { lastError, pushToast } from "../state/store";
+import { lockedPackRows, settingLocked } from "../lib/premium";
 import { canStep } from "../lib/settings";
 import type { Bound } from "../lib/settings";
 import { rolePreview } from "../lib/lobby";
@@ -44,6 +45,50 @@ function Stepper({ label, value, bound, format, onStep }: { label: string; value
         <output class="stepper__value tnum" aria-live="polite">{format(value)}</output>
         <button type="button" class="stepper__btn" aria-label={`${label} +`} disabled={!canStep(value, bound, 1)} onClick={() => onStep(1)}><Icon name="plus" /></button>
       </div>
+    </div>
+  );
+}
+
+/**
+ * PAYMENTS-SPEC §5.1: a premium-only number row in a free room. The steppers stay visible but disabled; any tap on the
+ * row says why (no buy button, no price: the TV is the only place to unlock).
+ */
+function LockedStepper({ label, value }: { label: string; value: string }) {
+  return (
+    <button type="button" class="lockedrow lockedrow--stepper"
+      aria-label={`${label}: ${value}. ${t("settings.unlockOnTv")}`} onClick={() => pushToast(t("error.premiumRequired"), "error", 3000)}>
+      <span class="setrow__label">{label}</span>
+      <span class="stepper is-locked" aria-hidden="true">
+        <span class="stepper__btn"><Icon name="minus" /></span>
+        <span class="stepper__value tnum">{value}</span>
+        <span class="stepper__btn"><Icon name="plus" /></span>
+      </span>
+      <span class="lockedrow__hint"><Icon name="lock" size={16} />{t("settings.unlockOnTv")}</span>
+    </button>
+  );
+}
+
+/** §5.1: the room's locked packs as disabled rows (lock, title, pair count, "Unlock on the TV"); a tap explains. */
+function LockedPacks({ view }: { view: PlayerView }) {
+  const rows = lockedPackRows(view.lockedPacks, locale.value);
+  if (rows.length === 0) return null;
+  return (
+    <div class="setrow lockedpacks">
+      <span class="setrow__label setrow__label--group">{t("settings.lockedPacks")}</span>
+      <ul class="lockedpacks__list">
+        {rows.map((r) => (
+          <li key={r.id}>
+            <button type="button" class="lockedrow lockedrow--pack" aria-label={`${r.title}. ${t("settings.locked")}. ${t(r.trailingKey)}`} onClick={() => pushToast(t("error.packLocked"), "error", 3000)}>
+              <Icon name="lock" size={20} class="lockedrow__lock" />
+              <span class="lockedrow__text">
+                <bdi class="lockedrow__title">{r.title}</bdi>
+                <span class="lockedrow__meta">{t("store.packPairs", { count: r.pairCount })}</span>
+              </span>
+              <span class="lockedrow__hint">{t(r.trailingKey)}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -92,9 +137,13 @@ function Row({ row, s, set, view, groupStart }: { row: RowDef; s: Settings; set(
     case "num":
     case "points": {
       const step = (dir: 1 | -1): void => { const p = stepRow(row, s, dir); if (p) set(p); };
+      const group = row.kind === "points" && groupStart && <p class="setrow__label setrow__label--group">{t(row.group)}</p>;
+      if (row.kind === "points" && settingLocked(view, "points")) {
+        return <>{group}<LockedStepper label={label} value={fmtNum(numValue(row, s))} /></>;
+      }
       return (
         <>
-          {row.kind === "points" && groupStart && <p class="setrow__label setrow__label--group">{t(row.group)}</p>}
+          {group}
           <Stepper label={label} value={numValue(row, s)} bound={rowBound(row)}
             format={row.kind === "num" ? row.format : (v) => fmtNum(v)} onStep={step} />
         </>
@@ -115,6 +164,7 @@ function Row({ row, s, set, view, groupStart }: { row: RowDef; s: Settings; set(
               </Chip>
             ))}
           </div>
+          <LockedPacks view={view} />
         </div>
       );
     }
