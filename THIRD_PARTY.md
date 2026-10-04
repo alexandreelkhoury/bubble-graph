@@ -41,7 +41,7 @@ All other packs (`en-everyday-01`, `fr-everyday-01`, every `ar-*` and `lb-*` pac
 ## Fonts
 
 - **Cairo**: SIL Open Font License 1.1. Copyright 2009 The Cairo Project Authors (https://github.com/Gue3bara/Cairo). This matches the font's name table (nameID 0 and 13).
-  - Files: `tv-app/app/src/main/res/font/cairo_*.ttf` (unmodified), and `web-client/public/fonts/cairo-600-latin.woff2`, `cairo-600-arabic.woff2`, `cairo-900-latin.woff2`, `cairo-900-arabic.woff2`. The web files are subsets converted to WOFF2, so they are Modified Versions under the OFL. They keep the original font name, which no Reserved Font Name prevents.
+  - Files: `tv-app/app/src/main/res/font/cairo_*.ttf` (Modified Versions: only the vertical metrics are tightened by `tv-app/scripts/tighten_cairo_metrics.py`, see [docs/TV.md](docs/TV.md#troubleshooting); outlines and names unchanged), and `web-client/public/fonts/cairo-600-latin.woff2`, `cairo-600-arabic.woff2`, `cairo-900-latin.woff2`, `cairo-900-arabic.woff2`. The web files are subsets converted to WOFF2, so they are Modified Versions under the OFL. They keep the original font name, which no Reserved Font Name prevents.
   - Licence text: the full OFL 1.1 text ships with the fonts in `tv-app/licenses/OFL-Cairo.txt`, as OFL §2 requires. Any distribution of the web client must include that file too.
   - The OFL lets you bundle the font with software. The font itself may not be sold on its own.
 

@@ -307,9 +307,12 @@ private fun JoinHostBlock(joinUrl: String, modifier: Modifier) {
     val after = sentence.substringAfter(URL_MARK, "").trim()
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val latinBody = remember { mishTypeScale(arabic = false).body.copy(lineHeight = 1.4.em) }
+    // The block gets ~75 dp (what the column above leaves): Arabic captions at their 30 sp line height (2 × 30 + 28)
+    // overflowed it and were clipped. 23 sp lines fit in every locale; Arabic marks draw past the box, unclipped.
+    val line = type.caption.copy(lineHeight = 23.sp)
     Column(modifier) {
         if (before.isNotEmpty()) {
-            Text(before, style = type.caption, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+            Text(before, style = line, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
         }
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
             FitText(
@@ -323,7 +326,7 @@ private fun JoinHostBlock(joinUrl: String, modifier: Modifier) {
             )
         }
         if (after.isNotEmpty()) {
-            Text(after, style = type.caption, color = MishColors.TextSecondary, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+            Text(after, style = line, color = MishColors.TextSecondary, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
         }
     }
 }
