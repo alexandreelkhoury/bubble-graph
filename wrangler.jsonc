@@ -4,11 +4,19 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "mishana-site",
   "compatibility_date": "2026-10-01",
+  // Tiny Worker for the cookieless /e event endpoint (see worker/index.js). Everything else is a static asset.
+  "main": "worker/index.js",
   "assets": {
     "directory": ".",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
-  }
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/e"]
+  },
+  // Workers Analytics Engine dataset for the events (created on first write; query it with the SQL API).
+  "analytics_engine_datasets": [
+    { "binding": "EVENTS", "dataset": "mishana_site_events" }
+  ]
   // Custom domain: uncomment and set once the domain is on Cloudflare.
   // "routes": [{ "pattern": "{{DOMAIN}}", "custom_domain": true }]
 }

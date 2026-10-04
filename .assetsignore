@@ -4,3 +4,6 @@ README.md
 node_modules
 .wrangler
 *.md
+worker
+.git
+.gitignore
