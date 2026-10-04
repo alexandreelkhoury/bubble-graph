@@ -27,4 +27,24 @@ export default tseslint.config(
       "@typescript-eslint/consistent-type-imports": "error",
     },
   },
+  // PAYMENTS-SPEC §3.9: billing code logs only through billingLog (log.ts), which redacts every free-form string.
+  {
+    files: ["server/src/billing/**/*.ts"],
+    ignores: ["server/src/billing/log.ts"],
+    rules: { "no-console": "error" },
+  },
+  // PAYMENTS-SPEC §3.2: only billing code may read the Play service-account secret (the Room DO never does).
+  {
+    files: ["server/src/**/*.ts"],
+    ignores: ["server/src/billing/**"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "MemberExpression[property.name='PLAY_SERVICE_ACCOUNT_JSON']",
+          message: "Only server/src/billing/** may read PLAY_SERVICE_ACCOUNT_JSON (PAYMENTS-SPEC §3.2).",
+        },
+      ],
+    },
+  },
 );

@@ -88,7 +88,7 @@ function PremiumCardView({ plan, target, onBuy, onFocusPlan }: { plan: BasePlanI
             {PLAN_DISPLAY_ORDER.map((p) => (
               <button key={p} type="button" class="tvbtn tvshop__plan" data-focus={`plan:${p}`} data-default-focus={defFocus(`plan:${p}`, target)} onFocus={() => onFocusPlan(p)} onClick={() => onBuy(p)}
                 aria-disabled={billing.inflight.value !== null}>
-                <span class="tvshop__planname">{planLabel(p)} · {planPriceText(p)}</span>
+                <span class="tvshop__planname"><span class="tvshop__planlabel">{planLabel(p)}</span>&nbsp;·&nbsp;<span class="tvshop__planprice">{planPriceText(p)}</span></span>
                 {isInflight(PREMIUM_PRODUCT_ID, p) ? <Busy />
                   : pending ? <span class="tvshop__chip">{t("store.pending")}</span>
                   : trial && <span class="tvshop__badge">{t("store.trialDays", { count: FAKE_TRIAL_DAYS })}</span>}
@@ -182,6 +182,16 @@ export function TvShop({ view, entry }: { view: TvView; entry: StoreEntry }) {
     e.stopPropagation();
     row[i + step]?.focus();
   };
+  // Down from any pack card enters the footer at Restore, its real action (geometry would pick whatever test control
+  // sits under the focused card; on the TV app there are no test controls).
+  const onRowKey = (e: KeyboardEvent): void => {
+    if (e.key !== "ArrowDown") return;
+    const restore = box.current?.querySelector<HTMLElement>('[data-focus="restore"]');
+    if (!restore) return;
+    e.preventDefault();
+    e.stopPropagation();
+    restore.focus();
+  };
   const anyPending = billing.pending.value.size > 0;
   const toast = toasts.value.at(-1);
   return (
@@ -215,7 +225,7 @@ export function TvShop({ view, entry }: { view: TvView; entry: StoreEntry }) {
             <PremiumCardView plan={plan} target={target} onBuy={buyPlan} onFocusPlan={setPlan} />
             <section class="tvshop__packs" aria-label={t("store.packsTitle")}>
               <h2 class="tvshop__packshead">{t("store.packsTitle")}</h2>
-              <div class="tvshop__row" data-scroll>
+              <div class="tvshop__row" data-scroll onKeyDown={onRowKey}>
                 {packs.mine.map((p) => <PackCard key={p.packId} p={p} target={target} onBuy={buyPack} />)}
                 {packs.other.length > 0 && <div class="tvshop__divider" aria-hidden="true">{t("store.otherLanguages")}</div>}
                 {packs.other.map((p) => <PackCard key={p.packId} p={p} target={target} onBuy={buyPack} />)}

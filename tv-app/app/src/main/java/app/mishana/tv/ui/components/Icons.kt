@@ -49,6 +49,12 @@ object MishIcons {
         width = 2.5f,
     )
     val Crown = stroke("crown", "M3.5 8l4.5 4L12 5l4 7 4.5-4-2 10.5h-13z", width = 2.5f)
+
+    /** PAYMENTS-SPEC §4.4 / DESIGN delta: Premium (cut gemstone outline). Never mirrors; `crown` stays host/VIP. */
+    val Gem = stroke("gem", "M6.5 4h11L21.5 9.5 12 20.5 2.5 9.5z", "M2.5 9.5h19", "M9.5 4L8 9.5l4 11 4-11L14.5 4", width = 2f)
+
+    /** PAYMENTS-SPEC §4.4 lock badge (locked packs and premium-only settings). */
+    val Lock = stroke("lock", "M6 11h12v9.5H6z", "M8.5 11V8a3.5 3.5 0 0 1 7 0v3", "M12 14.5v2.5", width = 2f)
     val DoorOut = stroke("door-out", "M13 4H6.5v16H13", "M10 12h10.5", "M17 8.5l3.5 3.5-3.5 3.5", autoMirror = true, width = 2.5f)
     val UserX = stroke(
         "user-x",

@@ -395,12 +395,12 @@
     <string name="store__title">بريميوم وباقات كلمات</string>
     <string name="store__premium_title">بريميوم</string>
     <plurals name="store__premium_pitch">
-        <item quantity="zero">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
-        <item quantity="one">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
-        <item quantity="two">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
-        <item quantity="few">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
-        <item quantity="many">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
-        <item quantity="other">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="zero">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="one">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="two">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="few">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="many">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="other">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
     </plurals>
     <string name="store__plan_monthly">شهري</string>
     <string name="store__plan_yearly">سنوي</string>

@@ -121,14 +121,14 @@ describe("RoomCore alarm", () => {
   it("initRoom: EXISTS for a live room; on an expired room it closes old sockets 4010 and refreshes the cache", async () => {
     const h = await new Harness().init();
     const hash = await sha256hex(TV_TOKEN);
-    expect(await h.core.initRoom({ tvTokenHash: hash, joinUrl: "https://x.test/KXRT", locale: "en", now: h.now + 1000 })).toEqual({ ok: false, reason: "EXISTS" });
+    expect(await h.core.initRoom({ tvTokenHash: hash, joinUrl: "https://x.test/KXRT", locale: "en", now: h.now + 1000, entitlement: null, billingMode: "google" })).toEqual({ ok: false, reason: "EXISTS" });
     const tv = await h.tv();
     const old = await h.spectator();
     const oldEpoch = old.state!.epoch;
     // Expired, but the alarm has not fired yet.
     h.now = T0 + ROOM_EMPTY_TTL_MS + 5;
     const newHash = await sha256hex("f".repeat(32));
-    expect(await h.core.initRoom({ tvTokenHash: newHash, joinUrl: "https://x.test/KXRT", locale: "fr", now: h.now })).toEqual({ ok: true });
+    expect(await h.core.initRoom({ tvTokenHash: newHash, joinUrl: "https://x.test/KXRT", locale: "fr", now: h.now, entitlement: null, billingMode: "google" })).toEqual({ ok: true });
     expect(tv.closeCode).toBe(4010);
     expect(old.closeCode).toBe(4010);
     const meta = h.core.peek().meta!;
@@ -149,6 +149,6 @@ describe("RoomCore alarm", () => {
   it("initRoom never trusts the cache: a stale core with storage replaced underneath still answers EXISTS", async () => {
     const h = await new Harness().init();
     const stale = h.makeCore();
-    expect(await stale.initRoom({ tvTokenHash: "0".repeat(64), joinUrl: "x", locale: "en", now: h.now })).toEqual({ ok: false, reason: "EXISTS" });
+    expect(await stale.initRoom({ tvTokenHash: "0".repeat(64), joinUrl: "x", locale: "en", now: h.now, entitlement: null, billingMode: "google" })).toEqual({ ok: false, reason: "EXISTS" });
   });
 });

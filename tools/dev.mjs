@@ -73,6 +73,10 @@ function main() {
     "--var", `JOIN_BASE_URL:${webOrigin}`,
     "--var", `ALLOWED_ORIGINS:${webOrigin},http://localhost:${VITE_PORT}`,
     "--var", "DEBUG_INVARIANTS:1",
+    // PAYMENTS-SPEC §3.10: fake billing for local dev. The Worker still requires a localhost/LAN host per request,
+    // and no Play service account may be configured (server/.dev.vars), or every billing route answers 503.
+    "--var", "BILLING_MODE:fake",
+    "--var", "ALLOW_FAKE_BILLING:1",
   ];
   const viteArgs = ["--filter", "@mishana/web-client", "exec", "vite", "--host", "0.0.0.0", "--port", String(VITE_PORT), "--strictPort"];
 
@@ -108,6 +112,7 @@ function main() {
   console.log(`TV server URL: http://${lanHost}:${SERVER_PORT}   (Android TV: -PserverUrl=http://${lanHost}:${SERVER_PORT})`);
   console.log(`Phone/TV-mock: ${webOrigin}/tv`);
   console.log(`Join URLs look like: ${webOrigin}/ABCD`);
+  console.log("Billing: FAKE (test store, no real payments). See docs/DEV.md \"Billing\".");
   console.log("Press Ctrl+C to stop both.\n");
 }
 

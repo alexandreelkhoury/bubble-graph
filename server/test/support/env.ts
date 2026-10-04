@@ -10,6 +10,15 @@ export function fakeEnv(over: Partial<Env> = {}): Env {
     JOIN_BASE_URL: "",
     ALLOWED_ORIGINS: "",
     DEBUG_INVARIANTS: "0",
+    BILLING: {} as Env["BILLING"],
+    BILLING_LIMITER: ok,
+    RTDN_LIMITER: ok,
+    BILLING_MODE: "google",
+    ALLOW_FAKE_BILLING: "0",
+    PLAY_PACKAGE_NAME: "app.mishana.tv",
+    RTDN_AUDIENCE: "",
+    RTDN_SA_EMAIL: "",
+    RTDN_SUBSCRIPTION: "",
     ...over,
   };
 }

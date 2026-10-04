@@ -325,6 +325,7 @@ Compose for TV: use `androidx.tv.material3` `Surface` / `Button` / `Card` with `
 | `user-plus` | Head + plus | no |
 | `user-x` (kick) | Head + × | no |
 | `crown` (host/VIP) | 3-point crown | no |
+| `gem` (Premium; PAYMENTS-SPEC §4.4) | Cut gemstone outline (table facet on top, pointed base), same 2 px stroke | no |
 | `check` | Tick | no |
 | `x` | Cross | no |
 | `timer` | Stopwatch | no |
@@ -592,16 +593,16 @@ Haptics come only from user gestures or right after one, as the API requires (RE
 | Host line | y 447–499, "or open {url} and enter the code" (`lobby.orVisit`) in `type.tv.body` **20 sp** (people type it). `{url}` = `view.joinUrl` with the scheme and path stripped, never hard-coded |
 | Player grid | 4 × 3 tiles, **120 × 96 dp**, gap 16 dp, starting x 370, y 111. Each tile has an avatar (56 dp) and a name (`type.tv.title`, 1 line). Empty slots have a dashed `outline` border with a faint "+" (non-focusable), and only the **first empty slot** pulses gently |
 | Host badge | `crown` on the VIP (`isHost`) tile |
-| Settings summary | Top end, 2 lines in `type.tv.caption` `textSecondary`: pack · word language / role counts (`lobby.roleSummary`) · win rule. It updates live when the VIP changes settings, with a 600 ms `accent` highlight sweep |
+| Settings summary | Top end, 2 lines in `type.tv.caption` `textSecondary`: pack · word language / role counts (`lobby.roleSummary`) · win rule. It updates live when the VIP changes settings, with a 600 ms `accent` highlight sweep. When `view.premium`, a chip `gem` + `lobby.premiumRoom` is its **first** line (PAYMENTS-SPEC §4.4) |
 | Start blocker line | Top end, under the summary: `lobby.needPlayers` / `lobby.blockerRoles` / `lobby.blockerWords` per `view.startBlocker` |
-| Bottom bar | Starts at **x ≥ 370** (under the grid, never under the code): Settings · Language (`common.language`, opens the 3-item list) · Start |
+| Bottom bar | Starts at **x ≥ 370** (under the grid, never under the code): **Premium** (`gem` + the fixed label `lobby.premium`; opens the Store, PAYMENTS-SPEC §4.4) · Settings · Language (`common.language`, opens the 3-item list) · Start. It must fit in 960 − 48 − 370 = 542 dp with Start at 200 dp in EN/FR/AR; if the labelled Premium button does not fit, Premium becomes an **icon-only 48 × 48 dp** button with a focus tooltip (`lobby.premium`) and a content description |
 | Start | Primary pill **200 × 48 dp** (`lobby.startGame`). Disabled while `startBlocker !== null`. For `NOT_ENOUGH_PLAYERS` it stays focusable; OK plays a gentle shake and `sfx.error`. For `INVALID_ROLE_CONFIG` / `NO_WORDS_AVAILABLE`, OK opens TV-03 focused on the offending row (Roles or Words) |
 | Toast zone | Bottom start, above the host line: `lobby.joined` for joins, `lobby.left` for leaves |
 
 - **Live join:** the tile drops in (§6.2-F), `sfx.join`, and the counter "PLAYERS 5/12" rolls. When the 12th player joins, the QR panel crossfades to `lobby.full`, the QR is hidden, and the code is greyed out.
 - **Focus:**
   - Initial focus is **Start** if `canStart` or the blocker is `NOT_ENOUGH_PLAYERS`; otherwise **Settings** (SPEC §9.6).
-  - Left/Right moves across the bottom bar: Settings ↔ Language ↔ Start.
+  - Left/Right moves across the bottom bar: Premium ↔ Settings ↔ Language ↔ Start.
   - **Up from the bottom bar enters the player grid** (`focusRestorer`, last row), so tiles are focusable for **kicking**. OK on a focused tile → TV-14a "Remove {name}?".
   - Up from the grid's top row goes nowhere; the QR and the summary are not focusable.
   - **Back exits the app immediately** (no confirm; TV-DB).
@@ -640,6 +641,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 - **Sound: On/Off** (`tv.soundOn` / `tv.soundOff`, a device setting kept on the TV, never sent to the server) sits next to **Done** in the header.
 - **[not in v1]** Display (reduce motion, hide room code), volume, transliteration toggle (translit is shown whenever it is non-null).
 - **Interaction:** a category list on the start side (`focusRestorer`) and rows on the end side. **Moving toward inline-end from a category enters its rows** (Right in LTR, **Left in RTL**; Compose geometry handles it), and moving toward inline-start from the rows returns to it. On a row, **Left/Right step the value** (the chevrons follow the reading direction), and **OK also steps** (for sticky D-pads). Multi-option rows (Packs, Difficulty) open a sub-panel on OK. An **explanation panel** below the rows describes the focused row's current value.
+- **Locked rows (PAYMENTS-SPEC §4.4):** in a room without Premium, each premium setting row (`PREMIUM_SETTING_KEYS`, v1: Points) moves to the **bottom** of its category and shows a lock badge + `settings.premiumOnly`. Such a row does **not** step: **Left/Right** play the disabled shake + `sfx.error`, and **OK opens the Store** (focused on Premium). The "OK also steps" rule above does not apply to locked rows. In Words → Packs, the locked packs (`view.lockedPacks`) are listed below a divider with a lock badge, `store.packPairs` and `settings.unlockHint`; OK on one opens the Store focused on that pack.
 - **Done:** Up from the first category or the first row → **Done**; OK on Done = Back.
 - **Initial focus:** the first category (Game). **Back:** if a sub-panel is open, closes it; otherwise returns to the Lobby. Each change sends `UPDATE_SETTINGS` (debounced 300 ms); there's no "save" button.
 - **Footer:** "Changes apply to this game." (`settings.applies`).
@@ -1447,6 +1449,7 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 3. "4 / 7 جاهزين": the numbers stay in LTR order inside the RTL sentence.
 4. A mixed word card (an EN pack in an AR UI) must be left-aligned inside a centred card. Centring hides most issues; keep the word centred.
 5. A punctuation-only name ("!!!") must render the same as on the TV.
+6. A billing string with `{price}` and `{date}` in AR (e.g. `store.legalTrialRenew` and `store.renewsOn` with "US$29.99" and a Western-digit date): both values are bidi-isolated and keep their LTR order (PAYMENTS-SPEC §4.7).
 
 ---
 

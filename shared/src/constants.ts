@@ -105,6 +105,12 @@ export const MAX_GOOGLE_READS_PER_VERIFY = 5;
 export const GOOGLE_CALL_TIMEOUT_VERIFY_MS = 3_000;   // per call, verify path (RTDN/cron: 10 s)
 export const VERIFY_DEADLINE_MS = 12_000;             // whole verify request
 export const GOOGLE_VERIFY_BUCKET = { capacity: 120, refillPerMin: 60 } as const;  // global, verify path only (§3.5)
+/** PAY-GAP (§6.1 "API abuse"): verify-path Google reads per client IP (truncated hash, in memory) per minute, so one
+ *  IP cannot drain GOOGLE_VERIFY_BUCKET for every real buyer. */
+export const GOOGLE_READS_PER_IP_PER_MIN = 10;
+/** PAY-GAP (§6.1 "installId sharing"): distinct client network prefixes (IPv4 /24, IPv6 /48; hashed, in memory) that
+ *  may use one installId per day. Above it `/entitlement` is refused (`/verify`, which needs the purchase token, is not). */
+export const INSTALL_PREFIXES_PER_DAY = 4;
 export const ACK_WINDOW_MS = 3 * 86_400_000;      // starts at PENDING → PURCHASED
 export const ACK_OVERDUE_ALERT_MS = 48 * 3_600_000;
 export const PENDING_ACK_TOKEN_MAX_MS = 30 * 86_400_000;

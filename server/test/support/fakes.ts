@@ -2,8 +2,9 @@
 import type { ClientIntentMsg } from "@mishana/shared/protocol";
 import type { GameState, SettingsPatch } from "@mishana/shared/engine";
 import { T0, TEST_CATALOG, TIMERS_OFF } from "@mishana/shared/testing";
+import type { RoomEntitlement } from "../../src/billing/token";
 import { RoomCore } from "../../src/room-core";
-import type { ConnHandle, ConnState, RoomStorage } from "../../src/room-core";
+import type { ConnHandle, ConnState, RoomBillingDeps, RoomStorage } from "../../src/room-core";
 import { randomBytes, sha256hex } from "../../src/tokens";
 
 export { T0 };
@@ -100,12 +101,19 @@ export class Harness {
   now = T0;
   core: RoomCore;
   debugInvariants = true;
+  /** PAYMENTS-SPEC §3.11: the room's entitlement at initRoom (null = a free room). */
+  entitlement: RoomEntitlement | null;
+  billingMode: "google" | "fake";
+  billing: RoomBillingDeps;
   #n = 0;
 
-  constructor(opts: { storage?: FakeStorage; conns?: FakeConnections; now?: number } = {}) {
+  constructor(opts: { storage?: FakeStorage; conns?: FakeConnections; now?: number; entitlement?: RoomEntitlement | null; billingMode?: "google" | "fake"; billing?: RoomBillingDeps } = {}) {
     if (opts.storage) this.storage = opts.storage;
     if (opts.conns) this.conns = opts.conns;
     if (opts.now !== undefined) this.now = opts.now;
+    this.entitlement = opts.entitlement === undefined ? null : opts.entitlement;
+    this.billingMode = opts.billingMode ?? "google";
+    this.billing = opts.billing ?? { verifyKeys: new Map(), fakeAllowedByEnv: false };
     this.core = this.makeCore();
   }
 
@@ -116,13 +124,17 @@ export class Harness {
       clock: { now: () => this.now },
       crypto: { randomBytes, sha256hex },
       catalog: TEST_CATALOG,
+      billing: async () => this.billing,
       debugInvariants: this.debugInvariants,
       roomCode: ROOM,
     });
   }
 
   async init(): Promise<this> {
-    const r = await this.core.initRoom({ tvTokenHash: await sha256hex(TV_TOKEN), joinUrl: `https://x.test/${ROOM}`, locale: "en", now: this.now });
+    const r = await this.core.initRoom({
+      tvTokenHash: await sha256hex(TV_TOKEN), joinUrl: `https://x.test/${ROOM}`, locale: "en", now: this.now,
+      entitlement: this.entitlement, billingMode: this.billingMode,
+    });
     if (!r.ok) throw new Error("initRoom failed");
     return this;
   }
@@ -228,4 +240,9 @@ export function seqs(c: FakeConn): number[] {
 
 export function strictlyIncreasing(xs: number[]): boolean {
   return xs.every((x, i) => i === 0 || x > (xs[i - 1] as number));
+}
+
+/** A premium entitlement valid for `ttlMs` (the full test catalog is playable). */
+export function premiumEntitlement(now: number, ttlMs = 8 * 3_600_000, sub = "a".repeat(64)): RoomEntitlement {
+  return { sub, iatMs: now, expMs: now + ttlMs, premiumUntilMs: now + 30 * 86_400_000, packs: [], mode: "google" };
 }

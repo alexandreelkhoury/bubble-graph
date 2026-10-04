@@ -2,7 +2,7 @@
 
 The Android TV app lives in [`/tv-app`](../tv-app). It is a single-module Gradle project (`:app`, package `app.mishana.tv`) written in Kotlin with Compose for TV. It creates a room on the server, shows the QR code and room code, and is the stage for the whole game (SPEC §9, DESIGN §7).
 
-Contents: [Prerequisites](#prerequisites) · [First-time setup](#first-time-setup-gradle-wrapper) · [Build and install](#build-and-install) · [Emulator](#emulator-google-tv-avd) · [Real TV (TCL)](#real-tv-tcl-google-tv--android-tv) · [Unit tests](#unit-tests) · [Debug server override](#debug-server-override) · [Troubleshooting](#troubleshooting)
+Contents: [Prerequisites](#prerequisites) · [First-time setup](#first-time-setup-gradle-wrapper) · [Build and install](#build-and-install) · [Emulator](#emulator-google-tv-avd) · [Real TV (TCL)](#real-tv-tcl-google-tv--android-tv) · [Unit tests](#unit-tests) · [Billing: premium and packs](#billing-premium-and-packs) · [Debug server override](#debug-server-override) · [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -156,9 +156,53 @@ The app must be fully usable with the remote alone (D-pad, OK, Back; sometimes a
 
 The 26 cues (DESIGN §6.4) are original synthesis rendered by `pnpm gen:sounds` into `app/src/main/res/raw/*.ogg` (and `web-client/public/sounds` for the `/tv` mock). The app plays them through `SoundPool` on two buses (SFX, Stingers), plus quiet remote feedback for D-pad moves, OK and Back. One global mute lives in Settings and in the pause menu; it is persisted, muting stops what is ringing and unmuting confirms with the OK tick. Check levels on the real TV speakers before release.
 
+## Billing: premium and packs
+
+The TV is the only place anything is sold (PAYMENTS-SPEC §0, §4): the `premium` subscription (base plans `monthly` / `yearly`, offer `trial-7d`) and one-time `pack_<id>` products, through **Google Play Billing Library 9.1.0** (`com.android.billingclient:billing`, no `billing-ktx`). The server verifies every purchase, acknowledges it, and returns a signed entitlement token; the TV never acknowledges or consumes anything itself.
+
+**Where things are** (`app/src/main/java/app/mishana/tv/`):
+
+| Path | Role |
+|---|---|
+| `billing/BillingRepository.kt` | Process-wide orchestration: restore on start / `ON_START` / `ON_RESUME`, `/api/billing/verify` and `/entitlement`, the in-room refresh timer, the Store state machine, billing toasts |
+| `billing/PlayBillingGateway.kt` | The only file that touches Play Billing (one `BillingClient` per process, auto-reconnect, pending one-time purchases enabled) |
+| `billing/StoreModel.kt`, `ui/screens/StoreScreen.kt` | The Store overlay (LOBBY only): Premium card + disclosure, packs row, Restore, room code in the header |
+| `billing/EntitlementStore.kt`, `billing/InstallId.kt` | SharedPreferences `mishana_billing` (install id, last entitlement). Excluded from backup and device transfer (`res/xml/backup_rules.xml`, `data_extraction_rules.xml`) |
+| `src/debug/…/FakeBillingGateway.kt` | The server's fake test store (debug builds only; a release APK does not contain it) |
+
+**Entry points (remote only):** the lobby's Premium button (gem icon, first in the bottom bar; icon-only with a focus tooltip, like the globe Language button, because the labelled bar does not fit the 542 dp end column), a locked pack in Settings → Words → Packs, and the locked Points rows in Settings → Game (Left/Right shake, OK opens the Store). Back closes the Store and returns focus to the control that opened it. While the Store or the Play purchase sheet is up, the TV sends `storeOpen` so a phone cannot start a game behind it.
+
+### Fake billing (debug builds, no Play account needed)
+
+1. Run the server with fake billing: `pnpm dev` (it passes `BILLING_MODE=fake` and `ALLOW_FAKE_BILLING=1`; the Worker only honours them on `localhost`/LAN hosts).
+2. Open the debug settings (splash screen → long-press OK on the version label), set the server URL to your Mac (`http://<mac-ip>:8787`), switch **Billing: Fake (server test store)** on, then Done. The dialog checks `GET /api/billing/catalog`: "Server is in Google mode" means the toggle is ignored and Google Play is used.
+3. In the lobby open **Premium**: the Store shows the banner "Test store: no real payments" and synthetic prices ($4.99 / $29.99 / $1.99, 7-day trials). OK on a plan or pack opens a **Fake purchase** dialog: *Approve* (purchased), *Pending* (the pending chip; complete it from the server with `POST /api/billing/fake/set`, then open the Store or use Restore purchases), *Cancel* (USER_CANCELED, silent) or *Error* (generic error toast).
+4. Fake purchase tokens are remembered in the debug prefs (`mishana_debug` / `fake_purchases`), so **Restore purchases** and app restarts behave like Play. Clearing the app's data starts over (new install id).
+5. To test expiry and refunds, use the `/tv` mock's test controls or `POST /api/billing/fake/set {purchaseToken, state}` (see [DEV.md](DEV.md)); the TV picks the change up on its next refresh (open the Store, resume the app, or wait for the in-room timer).
+
+### Google Play testing (license testers)
+
+Real Play Billing only works for an app **installed from Play** (internal or closed testing track) by an account the console knows; a sideloaded debug APK gets `BILLING_UNAVAILABLE` or `ITEM_UNAVAILABLE` [VERIFY on your device].
+
+1. Play Console → Settings → **License testing**: add the testers' Gmail addresses. Upload a release AAB to **Internal testing** and create the products (PAYMENTS-SPEC §8.B).
+2. On the TV, sign in to Google Play with a license tester account (Settings → Accounts), accept the internal test link from a phone or computer, and install from Play.
+3. Test timings (license testers): monthly renews every 5 min, yearly every 30 min, the free trial lasts 3 min, grace 5 min, account hold 10 min; a test subscription renews at most 6 times. An **unacknowledged** purchase is refunded after 3 min (one-time) or 5 min (subscription): if purchases keep vanishing, the server is not acknowledging (check the Worker logs for `BILLING_ACK_*`).
+4. Test cards: "Test card, always approves", "always declines", and "slow test card, approves/declines after a few minutes" (the last one exercises the **Payment pending** state).
+5. Walk PAYMENTS-SPEC §8.E: trial → premium without a new room code; slow card → pending → unlocks later; refund a pack in Play Console → it disappears; refund-and-revoke the subscription → `lobby.premiumEnded`; Restore purchases on a second TV; a declining card → grace/hold → the Store shows **Fix payment** and no plan buttons.
+6. **Manage subscription / Fix payment** open `https://play.google.com/store/account/subscriptions?sku=premium&package=app.mishana.tv`. [VERIFY on a real Google TV that the Play Store handles this link; when nothing does, the TV shows the "On a phone or computer…" instructions instead.]
+
+### What to check on a device (not covered by the JVM tests)
+
+- The Store at 960×540 dp in EN, FR and AR: the Premium card with the longest disclosure (trial + cancel line) fits above the packs row without scrolling, every plan shows its price and badge, and focus starts where §4.4 says (yearly plan, Fix payment, Manage, or the pack you came from). `StoreLayoutFitTest` checks the arithmetic with the Cairo metrics; a Compose screenshot test (Paparazzi/Roborazzi) of `StoreScreen` is still to add.
+- The lobby bottom bar in all three languages, with the icon-only Premium and Language buttons and their focus tooltips.
+- `BILLING_UNAVAILABLE`: sign out of Google Play (or use a kids profile), open the Store → "To buy on this TV, sign in to Google Play…" with a single OK; locked rows read "Locked". Sign back in, leave and reopen the app: the Store works again.
+- The merged manifest contains `com.android.vending.BILLING` (`./gradlew :app:processDebugManifest`, then look in `app/build/intermediates/merged_manifest/`) [VERIFY].
+
+**JVM tests** (`./gradlew :app:testDebugUnitTest`): `ProductsTest`, `OfferSelectionTest`, `BillingErrorsTest`, `EntitlementApiTest` (MockWebServer), `BillingRepositoryTest` (fake gateway + fake API, virtual time), `StoreFocusTest`, `BillingNoticesTest`, `GameViewModelBillingTest`, `LobbyBarFitTest`, `StoreLayoutFitTest`, plus the billing fixtures in `ProtocolFixturesTest` and `ClientEncodingTest`.
+
 ## Debug server override
 
-Debug builds only: on the splash screen, focus the small version label at the bottom end and **long-press OK**. The Debug settings dialog stores a server URL in SharedPreferences `mishana_debug` / `server_url`; blank means `BuildConfig.SERVER_URL`. Saving creates a new room on that server. Release builds always use `BuildConfig.SERVER_URL`.
+Debug builds only: on the splash screen, focus the small version label at the bottom end and **long-press OK**. The Debug settings dialog stores a server URL in SharedPreferences `mishana_debug` / `server_url`; blank means `BuildConfig.SERVER_URL`. Saving creates a new room on that server. Release builds always use `BuildConfig.SERVER_URL`. The same dialog holds the **Billing: Google Play / Fake** toggle ([Fake billing](#fake-billing-debug-builds-no-play-account-needed)).
 
 ## Troubleshooting
 
@@ -175,4 +219,7 @@ Debug builds only: on the splash screen, focus the small version label at the bo
 | "Reconnecting to the server…" banner | The socket dropped; the app retries with backoff (0.5 s → 10 s). After 30 s a full-screen "Connection lost" appears with Try again. The room and players are kept by the server |
 | Gradle can't find `gradle-wrapper.jar` | Run `gradle wrapper --gradle-version 9.6.0` once (see above) |
 | Text taller than designed; labels clipped (e.g. the lobby's bottom buttons show only the top half of their text) | Android 13+ never makes a line shorter than the font's ascent + descent (fallback line spacing, which Compose cannot turn off), and stock Cairo's are 1.874 em, so every `lineHeight` in `MishType` was ignored. The bundled fonts carry tightened metrics (880 / −180) so the line heights apply again. If you replace the font files, re-run `python3 tv-app/scripts/tighten_cairo_metrics.py` (needs `pip install fonttools`) |
+| Store says "To buy on this TV, sign in to Google Play…" | Play reported `BILLING_UNAVAILABLE`: no Google account on the TV, a kids profile, or the app was not installed from Play. Sign in, then leave and reopen the app (it retries on the next start). For local testing use the fake store |
+| Store shows "The store isn't available right now" | The catalog or Play product query failed or took over 10 s. Try again; check `curl http://<server>/api/billing/catalog` |
+| A test purchase disappears after a few minutes | It was never acknowledged (license-tester auto-refund after 3 / 5 min). The server acknowledges: check its Play API credentials and logs |
 | AGP/Kotlin DSL error on `compileSdk` | AGP 9 may prefer `compileSdk { version = release(37) }`; switch the line in `app/build.gradle.kts` (SPEC §16 [VERIFY]) |

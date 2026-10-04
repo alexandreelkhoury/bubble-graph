@@ -40,6 +40,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.mishana.tv.ui.components.fullBleed
 import app.mishana.tv.BuildConfig
 import app.mishana.tv.R
+import app.mishana.tv.billing.StoreEntry
+import app.mishana.tv.billing.StoreOrigin
+import app.mishana.tv.billing.StoreUiState
+import app.mishana.tv.game.BillingToast
 import app.mishana.tv.game.GameViewModel
 import app.mishana.tv.game.TvEvent
 import app.mishana.tv.game.TvUiState
@@ -84,6 +88,9 @@ import app.mishana.tv.ui.screens.ResultsScreen
 import app.mishana.tv.ui.screens.RoleRevealScreen
 import app.mishana.tv.ui.screens.SettingsCategory
 import app.mishana.tv.ui.screens.SettingsScreen
+import app.mishana.tv.ui.screens.FakePurchaseDialog
+import app.mishana.tv.ui.screens.StoreScreen
+import app.mishana.tv.ui.screens.langNameRes
 import app.mishana.tv.ui.screens.VotingScreen
 import app.mishana.tv.ui.screens.roleLabelRes
 import app.mishana.tv.ui.theme.MishColors
@@ -127,7 +134,8 @@ fun AppRoot(vm: GameViewModel) {
         vm.events.collect { e ->
             when (e) {
                 is TvEvent.NewCode -> toasts.show(context.getString(R.string.tv__new_code, e.code), MishColors.Accent)
-                is TvEvent.ServerError -> toasts.show(context.getString(messageKeyRes(e.error.messageKey)), MishColors.Danger)
+                is TvEvent.ServerError -> toasts.show(context.getString(messageKeyRes(GameViewModel.tvMessageKey(e.error))), MishColors.Danger)
+                is TvEvent.Billing -> toasts.show(billingToastText(context, e.toast), MishColors.Accent)
                 is TvEvent.Game -> showGameToast(context, toasts, e.event)
                 is TvEvent.SettingsChanged -> Unit // announced by the Settings screen, which flashes the rows too
             }
@@ -178,6 +186,14 @@ fun AppRoot(vm: GameViewModel) {
     }
 }
 
+/** PAYMENTS-SPEC §4.4/§4.7: a billing toast's text; its one argument is bidi-isolated (a language code becomes its name). */
+private fun billingToastText(context: Context, t: BillingToast): String {
+    val res = messageKeyRes(t.key)
+    val arg = t.arg ?: return context.getString(res)
+    val value = if (t.key == "store.switchLanguage") context.getString(langNameRes(arg)) else arg
+    return context.getString(res, isolate(value))
+}
+
 /** Toast text for a [ViewEvent] (the diff itself lives in the ViewModel, so no event is lost to a screen change). */
 private fun showGameToast(context: Context, toasts: ToastState, e: ViewEvent) {
     when (e) {
@@ -199,6 +215,10 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
     val attempt by vm.reconnectAttempt.collectAsStateWithLifecycle()
     val settingsDraft by vm.settingsDraft.collectAsStateWithLifecycle()
     val soundMuted by vm.soundMuted.collectAsStateWithLifecycle()
+    val noBilling = remember { kotlinx.coroutines.flow.MutableStateFlow(StoreUiState()) }
+    val billing by (vm.billingState ?: noBilling).collectAsStateWithLifecycle()
+    val noFake = remember { kotlinx.coroutines.flow.MutableStateFlow<app.mishana.tv.billing.PurchasableOffer?>(null) }
+    val fakeRequest by (vm.fakePrompt?.request ?: noFake).collectAsStateWithLifecycle()
     var settingsOpen by remember { mutableStateOf(false) }
     var settingsCategory by remember { mutableStateOf(SettingsCategory.Game) }
     var settingsAfterPlayAgain by remember { mutableStateOf(false) }
@@ -243,7 +263,7 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
     // ---- Back (TV-DB): Lobby is root → exit; in a game / on Results → pause menu ----
     val activity = context.findActivity()
     val onBack: () -> Unit = { if (view?.phase == Phase.LOBBY) activity?.finish() else vm.setPaused(true) }
-    BackHandler(enabled = view != null && !settingsOpen && !s.paused) { onBack() }
+    BackHandler(enabled = view != null && !settingsOpen && !s.paused && s.store == null) { onBack() }
 
     // TV-13a: the stage is frozen while the socket is down; a press that cannot be sent says so instead of vanishing.
     val conn by rememberUpdatedState(s.conn)
@@ -256,7 +276,16 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
 
     val key = screenKeyFor(view, settingsOpen)
     val lostOverlay = offlineLong && view != null && degraded && !s.paused
-    val overlayOpen = s.paused || lostOverlay
+    val storeOpen = s.store != null && view != null && view.phase == Phase.LOBBY
+    val overlayOpen = s.paused || lostOverlay || storeOpen
+    // §4.4 entry points: the lobby's Premium button, a locked pack row, a locked premium setting.
+    val openStore: (StoreEntry) -> Unit = { entry ->
+        if (billing.billingUnavailable && entry.origin != StoreOrigin.LOBBY_BUTTON) {
+            toasts.show(context.getString(R.string.store__play_unavailable), MishColors.Accent)
+        } else {
+            vm.openStore(entry)
+        }
+    }
     Box(Modifier.fillMaxSize()) {
         CompositionLocalProvider(LocalFocusBlocked provides overlayOpen) {
             ProvideFrameClock(active = view?.deadline != null) {
@@ -293,7 +322,10 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
                                 val v = frame.view
                                 when {
                                     v == null -> HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom, onOpenDebug)
-                                    frame.key == ScreenKey.Lobby -> LobbyScreen(v, send, { c -> settingsCategory = c; settingsOpen = true }, toasts)
+                                    frame.key == ScreenKey.Lobby -> LobbyScreen(
+                                        v, send, { c -> settingsCategory = c; settingsOpen = true }, toasts,
+                                        onOpenStore = if (vm.billingState != null) openStore else null,
+                                    )
                                     frame.key == ScreenKey.Settings -> SettingsScreen(
                                         view = v,
                                         draft = settingsDraft,
@@ -304,6 +336,8 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
                                         toasts = toasts,
                                         soundOn = !soundMuted,
                                         onToggleSound = { vm.setSoundMuted(!soundMuted) },
+                                        onOpenStore = if (vm.billingState != null) openStore else null,
+                                        billingUnavailable = billing.billingUnavailable,
                                     )
                                     frame.key == ScreenKey.RoleReveal -> RoleRevealScreen(v, s.clockOffsetMs, send)
                                     frame.key == ScreenKey.Clues -> CluesScreen(v, s.clockOffsetMs, s.paused, send)
@@ -342,6 +376,24 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
                 StatusBanner(stringResource(R.string.conn__phones_asleep), icon = MishIcons.Phone)
             }
         }
+    }
+
+    // PAYMENTS-SPEC §4.4: the Store overlay (LOBBY only; the ViewModel closes it when the phase leaves LOBBY).
+    val entry = s.store
+    if (entry != null && view != null && view.phase == Phase.LOBBY && !s.paused && !lostOverlay) {
+        StoreScreen(
+            entry = entry,
+            state = billing,
+            view = view,
+            onClose = vm::closeStore,
+            onRetry = vm::retryStore,
+            onBuy = { productId, basePlanId -> activity?.let { vm.buy(it, productId, basePlanId) } },
+            onRestore = vm::restorePurchases,
+        )
+    }
+    // §4.8 debug fake store: the purchase "sheet" (a remote-friendly dialog), over everything like Play's own sheet.
+    fakeRequest?.let { offer ->
+        FakePurchaseDialog(offer.productId) { choice -> vm.fakePrompt?.choose(choice) }
     }
 
     // TV-13b: still offline after 30 s.

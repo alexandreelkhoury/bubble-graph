@@ -1,6 +1,7 @@
 // Durable storage of one room (§7.5): the three KV records and the alarm. Owns the storage keys, batches
 // writes into one multi-key put, and caches the scheduled alarm so it is not read back on every entry point.
 import type { GameState } from "@mishana/shared/engine";
+import type { RoomEntitlement } from "./billing/token";
 
 export interface RoomMeta {
   schema: 1;
@@ -10,6 +11,12 @@ export interface RoomMeta {
   createdAt: number;
   lastActivityAt: number;
   resultsAt: number | null;
+  // PAYMENTS-SPEC §3.11. Optional on disk: rooms created before the billing deploy read as null / "google" / null.
+  entitlement?: RoomEntitlement | null;
+  billingMode?: "google" | "fake";
+  tvBusyUntil?: number | null;
+  /** Meta-only broadcasts since creation (missing = 0); frame `seq = state.version + viewRev` (room-core #metaBroadcast). */
+  viewRev?: number;
 }
 
 export interface SessionRecord { tokenHash: string; kicked: boolean }

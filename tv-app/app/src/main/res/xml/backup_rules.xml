@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PAYMENTS-SPEC §4.1: the install id and entitlement (SharedPreferences "mishana_billing") never leave the device.
+  Backups are off anyway (android:allowBackup="false"); this keeps the exclusion explicit for API 23-30 should that change.
+  A TV restored from another one gets a new install id; purchases still come back through Google Play (restore).
+-->
+<full-backup-content>
+    <exclude domain="sharedpref" path="mishana_billing.xml" />
+</full-backup-content>

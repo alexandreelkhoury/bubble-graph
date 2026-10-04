@@ -3,6 +3,8 @@ package app.mishana.tv
 import app.mishana.tv.protocol.ActionMsg
 import app.mishana.tv.protocol.BackToLobby
 import app.mishana.tv.protocol.ClientMessage
+import app.mishana.tv.protocol.EntitlementMsg
+import app.mishana.tv.protocol.StoreOpenMsg
 import app.mishana.tv.protocol.HelloTv
 import app.mishana.tv.protocol.HostAdvance
 import app.mishana.tv.protocol.HostOverrideGuess
@@ -46,6 +48,14 @@ class ClientEncodingTest {
     @Test fun playAgain() = assertEncodes("c2s.action.play_again.json", ActionMsg(id = "10", a = PlayAgain))
 
     @Test fun backToLobby() = assertEncodes("c2s.action.back_to_lobby.json", ActionMsg(id = "11", a = BackToLobby))
+
+    /** PAYMENTS-SPEC §3.11 / §4.9: the two TV-only messages. */
+    @Test fun entitlement() = assertEncodes(
+        "c2s.entitlement.json",
+        EntitlementMsg(token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImsxIn0.e30.c2ln"),
+    )
+
+    @Test fun storeOpen() = assertEncodes("c2s.storeOpen.json", StoreOpenMsg(open = true))
 
     @Test fun pingFrameIsByteExact() {
         assertEquals(Constants.PING_FRAME + "\n", Fixtures.read("c2s.ping.json"))

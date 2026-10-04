@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { packOwned, PACK_STATES, RENEWAL_SLACK_MS, SUB_STATES, subscriptionAccessUntil } from "../../src/billing/entitlement";
+import { packOwned, PACK_STATES, RENEWAL_SLACK_MS, SILENT_GRACE_MS, SUB_STATES, subscriptionAccessUntil } from "../../src/billing/entitlement";
 import type { SubState } from "../../src/billing/entitlement";
 
 const NOW = 1_790_000_000_000;
@@ -8,12 +8,14 @@ const PAST = NOW - 1;
 const S = (s: string): SubState => `SUBSCRIPTION_STATE_${s}` as SubState;
 
 describe("subscriptionAccessUntil (PAYMENTS-SPEC §2.2)", () => {
-  it("ACTIVE: expiry + slack only while auto-renewing", () => {
-    expect(subscriptionAccessUntil({ state: S("ACTIVE"), expiryMs: FUTURE, autoRenew: true }, NOW)).toBe(FUTURE + RENEWAL_SLACK_MS);
+  it("ACTIVE: expiry + the 24 h silent grace only while auto-renewing", () => {
+    expect(SILENT_GRACE_MS).toBe(24 * 3600_000);
+    expect(subscriptionAccessUntil({ state: S("ACTIVE"), expiryMs: FUTURE, autoRenew: true }, NOW)).toBe(FUTURE + SILENT_GRACE_MS);
     expect(subscriptionAccessUntil({ state: S("ACTIVE"), expiryMs: FUTURE, autoRenew: false }, NOW)).toBe(FUTURE);
     expect(subscriptionAccessUntil({ state: S("ACTIVE"), expiryMs: PAST, autoRenew: false }, NOW)).toBeNull();
-    // Inside the slack window after the old expiry: still premium.
-    expect(subscriptionAccessUntil({ state: S("ACTIVE"), expiryMs: PAST, autoRenew: true }, NOW)).toBe(PAST + RENEWAL_SLACK_MS);
+    // Google still says ACTIVE (silent grace, renewal payment retried) 20 h after the old expiry: still premium.
+    expect(subscriptionAccessUntil({ state: S("ACTIVE"), expiryMs: NOW - 20 * 3600_000, autoRenew: true }, NOW)).toBe(NOW + 4 * 3600_000);
+    expect(subscriptionAccessUntil({ state: S("ACTIVE"), expiryMs: NOW - SILENT_GRACE_MS, autoRenew: true }, NOW)).toBeNull();
   });
   it("IN_GRACE_PERIOD: expiry + slack regardless of autoRenew", () => {
     for (const autoRenew of [true, false]) {

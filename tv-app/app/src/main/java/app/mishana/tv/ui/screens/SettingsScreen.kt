@@ -59,6 +59,18 @@ import androidx.tv.material3.Text
 import app.mishana.tv.Constants
 import app.mishana.tv.IntBounds
 import app.mishana.tv.R
+import app.mishana.tv.billing.Products
+import app.mishana.tv.billing.StoreEntry
+import app.mishana.tv.billing.StoreOrigin
+import app.mishana.tv.game.Cue
+import app.mishana.tv.game.CuePlay
+import app.mishana.tv.ui.components.LocalSounds
+import app.mishana.tv.ui.components.LockBadge
+import androidx.compose.animation.core.Animatable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
+import kotlinx.coroutines.launch
 import app.mishana.tv.SettingsBounds
 import app.mishana.tv.game.SettingsStepper
 import app.mishana.tv.game.TvEvent
@@ -107,6 +119,8 @@ private class RowModel(
     val helpIsError: Boolean = false,
     val step: ((Int) -> Unit)? = null,
     val open: (() -> Unit)? = null,
+    /** PAYMENTS-SPEC §4.4: a premium-only setting in a free room. Left/Right shake + sfx.error; OK runs [open] (Store). */
+    val locked: Boolean = false,
 )
 
 private enum class SubPanel { None, Packs, Difficulty }
@@ -128,6 +142,10 @@ fun SettingsScreen(
     toasts: ToastState,
     soundOn: Boolean = true,
     onToggleSound: () -> Unit = {},
+    /** PAYMENTS-SPEC §4.4 entry points 2 and 3; null when billing is off. */
+    onOpenStore: ((StoreEntry) -> Unit)? = null,
+    /** Play said BILLING_UNAVAILABLE this session: locked rows read `settings.locked` (§4.4 state machine). */
+    billingUnavailable: Boolean = false,
 ) {
     val type = MishTheme.type
     val context = LocalContext.current
@@ -150,7 +168,7 @@ fun SettingsScreen(
             flashKeys = e.keys
             val host = e.hostName ?: return@collect
             val v = currentView
-            val all = SettingsCategory.entries.flatMap { buildRows(context, lang, it, v.settings, v, Constants.SETTINGS_BOUNDS, {}, {}) }
+            val all = SettingsCategory.entries.flatMap { buildRows(context, lang, it, v.settings, v, Constants.SETTINGS_BOUNDS, {}, {}, null) }
             for (k in e.keys.take(2)) {
                 val r = all.firstOrNull { it.key == k } ?: continue
                 toasts.show(context.getString(R.string.settings__changed_by, isolate(host), r.label, r.value), MishColors.Accent)
@@ -164,8 +182,12 @@ fun SettingsScreen(
         }
     }
 
-    val rows = remember(category, shown, view.roleCounts, view.players, view.startBlocker, view.availablePacks, configuration) {
-        buildRows(context, lang, category, shown, view, Constants.SETTINGS_BOUNDS, { change(it) }, open = { subPanel = it })
+    val storeOpener by rememberUpdatedState(onOpenStore)
+    val rows = remember(category, shown, view.roleCounts, view.players, view.startBlocker, view.availablePacks, view.premium, configuration, onOpenStore != null) {
+        val premiumStore: (() -> Unit)? = if (onOpenStore == null) null else {
+            { storeOpener?.invoke(StoreEntry(focusProductId = Products.PREMIUM_PRODUCT_ID, origin = StoreOrigin.LOCKED_SETTING)) }
+        }
+        buildRows(context, lang, category, shown, view, Constants.SETTINGS_BOUNDS, { change(it) }, open = { subPanel = it }, premiumStore)
     }
 
     val catRequesters = remember { SettingsCategory.entries.associateWith { FocusRequester() } }
@@ -288,7 +310,13 @@ fun SettingsScreen(
     }
 
     when (subPanel) {
-        SubPanel.Packs -> PacksPanel(view, shown, onToggle = { change(SettingsPatch(packIds = it)) }, onClose = { subPanel = SubPanel.None })
+        SubPanel.Packs -> PacksPanel(
+            view, shown,
+            onToggle = { change(SettingsPatch(packIds = it)) },
+            onClose = { subPanel = SubPanel.None },
+            onOpenStore = onOpenStore,
+            billingUnavailable = billingUnavailable,
+        )
         SubPanel.Difficulty -> DifficultyPanel(shown, onToggle = { change(SettingsPatch(difficulties = it)) }, onClose = { subPanel = SubPanel.None })
         SubPanel.None -> Unit
     }
@@ -316,6 +344,8 @@ private fun buildRows(
     b: SettingsBounds,
     change: (SettingsPatch) -> Unit,
     open: (SubPanel) -> Unit,
+    /** Opens the Store on Premium (billing on); premium-only rows are locked in a free room only then. */
+    premiumStore: (() -> Unit)?,
 ): List<RowModel> {
     fun str(id: Int, vararg args: Any): String = ctx.getString(id, *args)
     fun onOff(v: Boolean) = str(if (v) R.string.common__on else R.string.common__off)
@@ -326,6 +356,11 @@ private fun buildRows(
         val n = SettingsStepper.stepInt(v, bounds, dir)
         if (n != v) change(make(n))
     }
+    // §1.6 / §4.4: PREMIUM_SETTING_KEYS rows are locked in a free room (they already sit at the bottom of Game, so the
+    // category's initial focus never lands on a lock).
+    val pointsLocked = premiumStore != null && !view.premium && "points" in Products.PREMIUM_SETTING_KEYS
+    fun lockedRow(key: String, label: String) =
+        RowModel(key, label, str(R.string.settings__premium_only), open = premiumStore, locked = true)
     return when (category) {
         SettingsCategory.Game -> listOf(
             RowModel(
@@ -341,6 +376,11 @@ private fun buildRows(
                 step = { d -> change(SettingsPatch(tieBreak = SettingsStepper.cycle(TieBreak.entries, s.tieBreak, d))) },
             ),
             RowModel("game.blankGuess", str(R.string.settings__blank_guess), onOff(s.blankGuess), step = { change(SettingsPatch(blankGuess = !s.blankGuess)) }),
+        ) + if (pointsLocked) listOf(
+            lockedRow("game.points.civilian", str(R.string.settings__points) + " · " + str(R.string.role__civilian)),
+            lockedRow("game.points.undercover", str(R.string.settings__points) + " · " + str(R.string.role__undercover)),
+            lockedRow("game.points.blank", str(R.string.settings__points) + " · " + str(R.string.role__blank)),
+        ) else listOf(
             RowModel(
                 "game.points.civilian", str(R.string.settings__points) + " · " + str(R.string.role__civilian), pointsText(s.points.civilian),
                 step = intStep(s.points.civilian, b.points) { SettingsPatch(points = s.points.copy(civilian = it)) },
@@ -452,11 +492,17 @@ private fun SettingRow(model: RowModel, rtl: Boolean, flash: Boolean, onFocused:
     val flashBg by animateColorAsState(if (flash) MishColors.Accent.copy(alpha = 0.22f) else Color.Transparent, tween(MishMotion.Slow), label = "rowFlash")
     val step = model.step
     val open = model.open
+    val sounds = LocalSounds.current
+    val shake = remember { Animatable(0f) }
+    val scope = rememberCoroutineScope()
+    val amplitude = with(LocalDensity.current) { 12.dp.toPx() }
+    val reduce = MishTheme.reduceMotion
     MishFocusSurface(
         onClick = { if (open != null) open() else step?.invoke(+1) },
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 52.dp)
+            .shakeOffset(shake)
             .onFocusChanged { if (it.isFocused) onFocused() }
             .onPreviewKeyEvent { e ->
                 if (e.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
@@ -464,6 +510,14 @@ private fun SettingRow(model: RowModel, rtl: Boolean, flash: Boolean, onFocused:
                 val forward = if (rtl) Key.DirectionLeft else Key.DirectionRight
                 val backward = if (rtl) Key.DirectionRight else Key.DirectionLeft
                 when {
+                    // §4.4: a locked premium row never steps; Left/Right give the "disabled shake" + sfx.error.
+                    model.locked -> if (e.key == forward || e.key == backward) {
+                        sounds.play(CuePlay(Cue.ERROR))
+                        if (!reduce) scope.launch { shake.shake(amplitude) }
+                        true
+                    } else {
+                        false
+                    }
                     step != null -> when (e.key) {
                         forward -> { step(+1); true }
                         backward -> { step(-1); true }
@@ -484,7 +538,9 @@ private fun SettingRow(model: RowModel, rtl: Boolean, flash: Boolean, onFocused:
         ) {
             Text(model.label, style = MishTheme.type.titleS, modifier = Modifier.weight(1f), maxLines = 2, overflow = TextOverflow.Ellipsis)
             Spacer(Modifier.width(MishSpace.s3))
-            if (open != null) {
+            if (model.locked) {
+                LockBadge(model.value)
+            } else if (open != null) {
                 Text(model.value, style = MishTheme.type.titleS, color = MishColors.Accent, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.widthIn(max = 260.dp))
                 Spacer(Modifier.width(MishSpace.s2))
                 Icon(MishIcons.ChevronForward, null, Modifier.size(22.dp), tint = MishColors.TextSecondary)
@@ -518,9 +574,20 @@ private fun Chevron(icon: ImageVector, tint: Color, onClick: () -> Unit) {
 
 /** Packs sub-panel: "All packs" or a multi-select list (localised title + pairCount + Teen badge). */
 @Composable
-private fun PacksPanel(view: TvView, s: Settings, onToggle: (List<String>) -> Unit, onClose: () -> Unit) {
+private fun PacksPanel(
+    view: TvView,
+    s: Settings,
+    onToggle: (List<String>) -> Unit,
+    onClose: () -> Unit,
+    onOpenStore: ((StoreEntry) -> Unit)?,
+    billingUnavailable: Boolean,
+) {
     val first = remember { FocusRequester() }
     val available = view.availablePacks
+    // §4.4 entry point 2: locked packs (metadata only) under a divider; OK opens the Store on that pack.
+    val locked = if (onOpenStore != null) view.lockedPacks else emptyList()
+    val lockedFocus = remember { mutableMapOf<String, FocusRequester>() }
+    var reopenOn by remember { mutableStateOf<String?>(null) }
     OverlayCard(onBack = onClose, width = 560.dp, default = first) {
         Text(stringResource(R.string.settings__packs), style = MishTheme.type.headline, color = MishColors.Text)
         Spacer(Modifier.height(MishSpace.s2))
@@ -547,11 +614,54 @@ private fun PacksPanel(view: TvView, s: Settings, onToggle: (List<String>) -> Un
                     onClick = { onToggle(SettingsStepper.togglePack(s.packIds, p.id, available.map { it.id }, Constants.SETTINGS_BOUNDS.packIds.maxItems)) },
                 )
             }
+            if (locked.isNotEmpty() && onOpenStore != null) {
+                item(key = "locked-header") {
+                    Column(Modifier.fillMaxWidth()) {
+                        Divider(Modifier.padding(vertical = MishSpace.s1))
+                        Text(stringResource(R.string.settings__locked_packs), style = MishTheme.type.caption, color = MishColors.TextMuted)
+                    }
+                }
+                items(locked.size, key = { "locked:" + locked[it].id }) { i ->
+                    val p = locked[i]
+                    LockedPackRow(
+                        title = localizedTitle(p.title),
+                        pairs = pluralStringResource(R.plurals.store__pack_pairs, p.pairCount, p.pairCount),
+                        hint = stringResource(if (billingUnavailable) R.string.settings__locked else R.string.settings__unlock_hint),
+                        onClick = {
+                            reopenOn = p.id
+                            onOpenStore(StoreEntry(focusProductId = p.productId, origin = StoreOrigin.LOCKED_PACK))
+                        },
+                        modifier = Modifier.focusRequester(lockedFocus.getOrPut(p.id) { FocusRequester() }),
+                    )
+                }
+            }
         }
         Spacer(Modifier.height(MishSpace.s2))
         MishButton(stringResource(R.string.common__done), onClose, kind = ButtonKind.Primary, icon = MishIcons.Check)
     }
-    InitialFocus(first)
+    // Back from the Store returns to the locked row that opened it (DESIGN §7).
+    InitialFocus(first, restore = { reopenOn?.let { lockedFocus[it] } })
+}
+
+/** A locked pack: lock + title + pair count + `settings.unlockHint` (`settings.locked` while Play is unavailable). */
+@Composable
+private fun LockedPackRow(title: String, pairs: String, hint: String, onClick: () -> Unit, modifier: Modifier) {
+    MishFocusSurface(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth().heightIn(min = 52.dp),
+        shape = MishShapes.row,
+    ) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = MishSpace.s4, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+            LockBadge(null)
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text(title, style = MishTheme.type.titleS, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(pairs, style = MishTheme.type.caption, color = MishColors.TextMuted, maxLines = 1)
+            }
+            Spacer(Modifier.width(MishSpace.s2))
+            Text(hint, style = MishTheme.type.caption, color = MishColors.Accent, maxLines = 1)
+        }
+    }
 }
 
 /** Difficulty sub-panel: multi-select Easy / Medium / Subtle (never empty). */

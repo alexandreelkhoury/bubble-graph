@@ -17,7 +17,7 @@
     "gen:sounds": "pnpm --filter @mishana/gen-sounds run gen",
     "lint:packs": "pnpm --filter @mishana/pack-lint run lint",
     "e2e": "pnpm --filter @mishana/web-client run e2e",
-    "deploy": "pnpm run build && pnpm --filter @mishana/server run deploy"
+    "deploy": "pnpm run build && pnpm --filter @mishana/pack-lint run lint -- --release && pnpm --filter @mishana/server run deploy"
   },
   "devDependencies": {
     "typescript": "5.9.3", "vitest": "4.1.11", "@vitest/coverage-v8": "4.1.11",

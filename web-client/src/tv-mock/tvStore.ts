@@ -98,6 +98,8 @@ export async function tvCreateRoom(): Promise<void> {
     onError: (msg) => {
       tvLastErrorMsg.value = msg;
       if (SILENT.includes(msg.code)) return;
+      // A dropped background `entitlement` / `storeOpen`: the billing client re-sends it, the user asked for nothing.
+      if (msg.code === "RATE_LIMITED" && billing.wsRateLimited()) return;
       pushToast(t(TV_ERROR_KEY[msg.code] ?? (msg.messageKey as MessageKey)), "error");
       soundCue("sfx.error");
     },

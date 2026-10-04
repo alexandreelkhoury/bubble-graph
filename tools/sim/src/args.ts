@@ -6,11 +6,16 @@ export interface SimArgs {
   tieBreak: "random" | "none";
   ws: string | null;
   verbose: boolean;
+  /**
+   * PAYMENTS-SPEC §3.11 room access for engine mode: "premium" plays the full catalog (equivalent to a Premium room,
+   * the default); "free" plays the free starter packs only and also checks that no locked pack is ever picked.
+   */
+  access: "premium" | "free";
 }
 
-/** Parses `--players 3..12|N --games N --seed N --win-rule official|parity --tie-break random|none --ws URL --verbose`. */
+/** Parses `--players 3..12|N --games N --seed N --win-rule official|parity --tie-break random|none --access premium|free --ws URL --verbose`. */
 export function parseArgs(argv: readonly string[]): SimArgs {
-  const out: SimArgs = { players: range(3, 12), games: 200, seed: 1, winRule: "official", tieBreak: "random", ws: null, verbose: false };
+  const out: SimArgs = { players: range(3, 12), games: 200, seed: 1, winRule: "official", tieBreak: "random", ws: null, verbose: false, access: "premium" };
   const args = argv.filter((a) => a !== "--");
   for (let i = 0; i < args.length; i++) {
     const a = args[i] as string;
@@ -40,6 +45,12 @@ export function parseArgs(argv: readonly string[]): SimArgs {
         const v = value();
         if (v !== "random" && v !== "none") throw new Error(`--tie-break must be random|none, got ${v}`);
         out.tieBreak = v;
+        break;
+      }
+      case "--access": {
+        const v = value();
+        if (v !== "premium" && v !== "free") throw new Error(`--access must be premium|free, got ${v}`);
+        out.access = v;
         break;
       }
       case "--ws": out.ws = value(); break;

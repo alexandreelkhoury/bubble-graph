@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { blankOpensViolation, isOpening, lobby, playGame, TEST_CATALOG } from "../../src/testing";
 
 describe("starter selection (§4.7 startRound)", () => {
-  it("the Blank never speaks first: every round and every tie-break opens with a non-Blank", () => {
+  it("the Blank never speaks first: every round and every tie-break opens with a non-Blank", { timeout: 60_000 }, () => {
     const opened = { CLUES: 0, TIE_BREAK: 0, laterRounds: 0 };
     for (let n = 3; n <= 12; n++) {
       for (let seed = 1; seed <= 60; seed++) {

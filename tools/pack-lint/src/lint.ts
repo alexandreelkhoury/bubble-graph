@@ -1,4 +1,5 @@
 // Pure core of tools/pack-lint (SPEC §12.5). No I/O here; see main.ts.
+import { packProductId, PREMIUM_PACK_ID_MAX, PRODUCT_ID_REGEX } from "@mishana/shared/billing/products";
 import { languageOf, normalizeGuess } from "@mishana/shared/engine";
 import { WordPackSchema, type WordPack } from "@mishana/shared/packs";
 
@@ -15,6 +16,16 @@ export interface LintResult {
   warnings: string[];
   /** Pair counts per language (`en`, `fr`, `ar`) plus `ar-LB`. */
   counts: Record<string, number>;
+}
+
+/** PAYMENTS-SPEC §1.2 release gate: every free starter pack needs at least this many pairs (error with --release). */
+export const STARTER_MIN_PAIRS = 40;
+/** PAYMENTS-SPEC §1.5: a premium pack below this is only a warning. */
+export const PREMIUM_MIN_PAIRS = 20;
+
+export interface LintOptions {
+  /** `--release` (run by `pnpm deploy`): a free pack below STARTER_MIN_PAIRS is an error instead of a warning. */
+  release?: boolean;
 }
 
 /** M4 drafting targets (§12.2). Missing them is only a warning. */
@@ -62,8 +73,9 @@ export function looksPlural(text: string): boolean {
  * Lints a set of pack files.
  * @param registered pack files listed in word-packs/index.ts (relative to the word-packs root); `null` skips that check.
  */
-export function lintPacks(entries: readonly PackEntry[], registered: readonly string[] | null = null): LintResult {
+export function lintPacks(entries: readonly PackEntry[], registered: readonly string[] | null = null, opts: LintOptions = {}): LintResult {
   const errors: string[] = [];
+  const tiers: { id: string; lang: string; locale: string; tier: "free" | "premium" }[] = [];
   const warnings: string[] = [];
   const counts: Record<string, number> = { en: 0, fr: 0, ar: 0, "ar-LB": 0 };
   const packIds = new Map<string, string>();
@@ -97,6 +109,23 @@ export function lintPacks(entries: readonly PackEntry[], registered: readonly st
     else packIds.set(pack.id, where);
 
     if (pack.status === "draft") warnings.push(`${pack.id}: status is "draft"`);
+
+    // PAYMENTS-SPEC §1.5: tiers and Play product ids.
+    tiers.push({ id: pack.id, lang, locale: pack.locale, tier: pack.tier });
+    if (pack.tier === "free") {
+      if (pack.locale !== "en" && pack.locale !== "fr" && pack.locale !== "ar") errors.push(`${pack.id}: a free pack must have locale en, fr or ar (starter packs are not regional), not ${pack.locale}`);
+      if (pack.ageRating !== "all") errors.push(`${pack.id}: a free pack must have ageRating "all"`);
+      if (pack.pairs.length < STARTER_MIN_PAIRS) {
+        const msg = `${pack.id}: free starter pack has ${pack.pairs.length} pairs (release gate: at least ${STARTER_MIN_PAIRS})`;
+        if (opts.release) errors.push(msg);
+        else warnings.push(msg);
+      }
+    } else {
+      if (pack.id.length > PREMIUM_PACK_ID_MAX) errors.push(`${pack.id}: a premium pack id must be at most ${PREMIUM_PACK_ID_MAX} characters (Play product id limit)`);
+      if (pack.pairs.length < PREMIUM_MIN_PAIRS) warnings.push(`${pack.id}: premium pack has only ${pack.pairs.length} pairs (aim for at least ${PREMIUM_MIN_PAIRS})`);
+    }
+    const productId = packProductId(pack.id);
+    if (!PRODUCT_ID_REGEX.test(productId)) errors.push(`${pack.id}: product id ${productId} is not a valid Play product id`);
     if ((pack.script === "Arab") !== (lang === "ar")) warnings.push(`${pack.id}: script ${pack.script} looks wrong for locale ${pack.locale}`);
 
     const pairIds = new Set<string>();
@@ -174,6 +203,19 @@ export function lintPacks(entries: readonly PackEntry[], registered: readonly st
       const exact = errors.some((e) => e.startsWith(`${y.at}: same pair as ${x.at}`));
       if (same && !exact) warnings.push(`${y.at}: near-duplicate of ${x.at} once alt/translit are expanded`);
     }
+  }
+
+  // PAYMENTS-SPEC §1.5: exactly one free pack per language; product ids unique.
+  for (const lang of [...new Set(tiers.map((t) => t.lang))].sort()) {
+    const free = tiers.filter((t) => t.lang === lang && t.tier === "free");
+    if (free.length !== 1) errors.push(`language ${lang}: exactly one free (tier "free") pack is required, found ${free.length}${free.length ? ` (${free.map((t) => t.id).join(", ")})` : ""}`);
+  }
+  const byProduct = new Map<string, string>();
+  for (const t of tiers) {
+    const pid = packProductId(t.id);
+    const other = byProduct.get(pid);
+    if (other !== undefined && other !== t.id) errors.push(`${t.id}: product id ${pid} collides with ${other}`);
+    else byProduct.set(pid, t.id);
   }
 
   for (const [scope, target] of Object.entries(M4_TARGETS)) {

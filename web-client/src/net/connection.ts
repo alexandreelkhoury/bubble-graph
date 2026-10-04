@@ -163,6 +163,9 @@ export class Connection {
     const m = msg as { t?: unknown; seq?: unknown };
     switch (m.t) {
       case "state":
+        // SPEC §8.4: strictly greater. Meta-only broadcasts (PAYMENTS-SPEC §3.11 premium flip, `tvBusy`) bump the
+        // server's seq via room-core `#metaBroadcast` (`seq = state.version + viewRev`); e2e payments.spec asserts no
+        // state frame repeats a seq on a socket, so a server regression fails there rather than being masked here.
         if (typeof m.seq === "number" && m.seq > this.lastSeq) {
           this.lastSeq = m.seq;
           this.cb.onState(msg as StateMsg);

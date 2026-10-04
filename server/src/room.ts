@@ -7,8 +7,10 @@ import { loadCatalog } from "@mishana/shared/packs";
 import { PACKS } from "@mishana/word-packs";
 import type { Env } from "./env";
 import { clientIp, notFound } from "./request";
+import { fakeAllowedByEnv } from "./billing/mode";
+import { verifyKeysFromSecret } from "./billing/token";
 import { RoomCore } from "./room-core";
-import type { ConnHandle, ConnState, InitRoomArgs, InitRoomResult, RoomStorage } from "./room-core";
+import type { ConnHandle, ConnState, InitRoomArgs, InitRoomResult, RoomBillingDeps, RoomStorage } from "./room-core";
 import { randomBytes, sha256hex } from "./tokens";
 
 // §7.8: built once per isolate, on the first Room access (onStart), so the stateless Worker never pays the
@@ -16,6 +18,13 @@ import { randomBytes, sha256hex } from "./tokens";
 let catalog: Catalog | null = null;
 function roomCatalog(): Catalog {
   return (catalog ??= loadCatalog(PACKS));
+}
+
+// PAYMENTS-SPEC §3.2: built once per isolate. Public verify keys only (every private half is dropped while
+// parsing) and the env-level fake guard. The Play service account is never read here.
+let billingDeps: Promise<RoomBillingDeps> | null = null;
+function roomBillingDeps(env: Env): Promise<RoomBillingDeps> {
+  return (billingDeps ??= verifyKeysFromSecret(env.ENTITLEMENT_KEYS).then((verifyKeys) => ({ verifyKeys, fakeAllowedByEnv: fakeAllowedByEnv(env) })));
 }
 
 export class Room extends Server<Env> {
@@ -41,6 +50,7 @@ export class Room extends Server<Env> {
         clock: { now: () => Date.now() },
         crypto: { randomBytes, sha256hex },
         catalog: roomCatalog(),
+        billing: () => roomBillingDeps(this.env),
         debugInvariants: this.env.DEBUG_INVARIANTS === "1",
         roomCode: this.name,
       });

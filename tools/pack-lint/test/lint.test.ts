@@ -21,6 +21,7 @@ function pack(id: string, locale: string, pairs: [Side | string, Side | string][
     license: "CC-BY-4.0",
     source: "original",
     status: "reviewed",
+    tier: "free", // one free starter per language (PAYMENTS-SPEC §1.5); pass { tier: "premium" } for the others
     pairs: pairs.map(([c, u], i) => ({ id: `p${String(i + 1).padStart(3, "0")}`, civilian: side(c), undercover: side(u), difficulty: 1, reviewedBy: ["a", "b"] })),
     ...extra,
   };
@@ -33,7 +34,7 @@ describe("pack-lint rules", () => {
     const r = lintPacks([entry(pack("en-ok-01", "en", TEN))]);
     expect(r.errors).toEqual([]);
     expect(r.counts.en).toBe(10);
-    expect(r.warnings.every((w) => w.startsWith("M4 target not met"))).toBe(true);
+    expect(r.warnings.every((w) => w.startsWith("M4 target not met") || w.includes("release gate"))).toBe(true);
   });
 
   it("schema failure", () => {
@@ -71,14 +72,14 @@ describe("pack-lint rules", () => {
 
   it("the same unordered pair twice across packs of one language (ar and ar-LB share a language)", () => {
     const a = entry(pack("en-a-01", "en", TEN));
-    const b = entry(pack("en-b-01", "en", [["beta0", "ALPHA0"], ...TEN.slice(1).map(([x, y]) => [`${x}z`, `${y}z`] as [string, string])]));
+    const b = entry(pack("en-b-01", "en", [["beta0", "ALPHA0"], ...TEN.slice(1).map(([x, y]) => [`${x}z`, `${y}z`] as [string, string])], { tier: "premium" }));
     expect(lintPacks([a, b]).errors.join("\n")).toMatch(/en-b-01\/p001: same pair as en-a-01\/p001/);
 
     const fr = entry(pack("fr-a-01", "fr", TEN), "fr"); // same words, other language: fine
     expect(lintPacks([a, fr]).errors).toEqual([]);
 
     const ar = entry(pack("ar-a-01", "ar", [["قهوة", "شاي"], ...TEN.slice(1)]), "ar");
-    const lb = entry(pack("lb-a-01", "ar-LB", [["شاي", "قهوه"], ...TEN.slice(1).map(([x, y]) => [`${x}q`, `${y}q`] as [string, string])]), "ar");
+    const lb = entry(pack("lb-a-01", "ar-LB", [["شاي", "قهوه"], ...TEN.slice(1).map(([x, y]) => [`${x}q`, `${y}q`] as [string, string])], { tier: "premium" }), "ar");
     expect(lintPacks([ar, lb]).errors.join("\n")).toMatch(/lb-a-01\/p001: same pair as ar-a-01\/p001/);
   });
 
@@ -131,7 +132,7 @@ describe("pack-lint rules", () => {
 
   it("warns about near-duplicate pairs once alt is expanded", () => {
     const a = pack("en-nd-01", "en", [["Beach", { text: "Pool", alt: ["Swimming pool"] }], ...TEN.slice(1)]);
-    const b = pack("en-nd-02", "en", [["Swimming pool", "Beach"], ...TEN.slice(1).map(([x, y]) => [`${x}z`, `${y}z`] as [string, string])]);
+    const b = pack("en-nd-02", "en", [["Swimming pool", "Beach"], ...TEN.slice(1).map(([x, y]) => [`${x}z`, `${y}z`] as [string, string])], { tier: "premium" });
     const r = lintPacks([entry(a), entry(b)]);
     expect(r.errors).toEqual([]);
     expect(r.warnings.join("\n")).toMatch(/en-nd-02\/p001: near-duplicate of en-nd-01\/p001/);
@@ -148,6 +149,37 @@ describe("pack-lint rules", () => {
     expect(w).toMatch(/not listed in word-packs\/index.ts/);
     expect(w).toMatch(/M4 target not met: en has 10 pairs \(target 150\)/);
     expect(w).toMatch(/M4 target not met: ar-LB has 0 pairs/);
+  });
+
+  it("PAYMENTS-SPEC §1.5: exactly one free pack per language (ar-LB counts as ar)", () => {
+    const enFree = entry(pack("en-f-01", "en", TEN));
+    const enFree2 = entry(pack("en-f-02", "en", TEN.map(([x, y]) => [`${x}k`, `${y}k`] as [string, string])));
+    expect(lintPacks([enFree, enFree2]).errors.join("\n")).toMatch(/language en: exactly one free .* found 2 \(en-f-01, en-f-02\)/);
+    const enPrem = entry(pack("en-p-01", "en", TEN, { tier: "premium" }));
+    expect(lintPacks([enPrem]).errors.join("\n")).toMatch(/language en: exactly one free .* found 0/);
+    const arFree = entry(pack("ar-f-01", "ar", TEN.map(([x, y]) => [`ع${x}`, `غ${y}`] as [string, string])), "ar");
+    const lbFree = entry(pack("lb-f-01", "ar-LB", TEN.map(([x, y]) => [`ف${x}`, `ق${y}`] as [string, string])), "ar");
+    const errs = lintPacks([arFree, lbFree]).errors.join("\n");
+    expect(errs).toMatch(/language ar: exactly one free/);
+    expect(errs).toMatch(/lb-f-01: a free pack must have locale en, fr or ar/);
+  });
+
+  it("PAYMENTS-SPEC §1.5: free packs are for all ages; premium id length; product ids", () => {
+    const teen = lintPacks([entry(pack("en-t-01", "en", TEN, { ageRating: "teen" }))]);
+    expect(teen.errors.join("\n")).toMatch(/en-t-01: a free pack must have ageRating "all"/);
+    const longId = "en-" + "a".repeat(30) + "-01"; // 36 chars > 35
+    const r = lintPacks([entry(pack("en-f-01", "en", TEN)), entry(pack(longId, "en", TEN.map(([x, y]) => [`${x}m`, `${y}m`] as [string, string]), { tier: "premium" }))]);
+    expect(r.errors.join("\n")).toMatch(/at most 35 characters/);
+  });
+
+  it("PAYMENTS-SPEC §1.5: starter < 40 pairs warns, errors with --release; premium < 20 pairs warns", () => {
+    const entries = [entry(pack("en-f-01", "en", TEN)), entry(pack("en-p-01", "en", TEN.map(([x, y]) => [`${x}m`, `${y}m`] as [string, string]), { tier: "premium" }))];
+    const dev = lintPacks(entries);
+    expect(dev.errors).toEqual([]);
+    expect(dev.warnings.join("\n")).toMatch(/en-f-01: free starter pack has 10 pairs \(release gate: at least 40\)/);
+    expect(dev.warnings.join("\n")).toMatch(/en-p-01: premium pack has only 10 pairs/);
+    const rel = lintPacks(entries, null, { release: true });
+    expect(rel.errors.join("\n")).toMatch(/en-f-01: free starter pack has 10 pairs/);
   });
 
   it("reads registered files from index.ts", () => {

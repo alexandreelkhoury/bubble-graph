@@ -85,7 +85,7 @@ class GameViewModelTest {
     private fun deps() = GameDeps(
         serverUrl = { "https://mish-ana.example.workers.dev" },
         appLocale = { "fr" },
-        createRoom = { url, locale ->
+        createRoom = { url, locale, _ ->
             createCalls += url to locale
             val code = codes.removeFirst()
             CreateRoomResponse(code, "0123456789abcdef0123456789abcdef", "https://mish-ana.example.workers.dev/$code", "/parties/room/$code")
@@ -140,7 +140,7 @@ class GameViewModelTest {
     }
 
     @Test
-    fun appliesOnlyIncreasingSeqAndTracksClockOffset() = runTest(dispatcher) {
+    fun dropsOnlyOlderSeqAndTracksClockOffset() = runTest(dispatcher) {
         val vm = newVm()
         val conn = connections.single()
         conn.state.value = ConnState.OPEN
@@ -152,7 +152,11 @@ class GameViewModelTest {
             assertEquals(1, a.view!!.round)
             assertEquals(2_000L, a.clockOffsetMs)
             conn.incoming.emit(StateMsg(seq = 4, serverNow = 1_790_000_003_000L, view = view(round = 99))) // stale
-            conn.incoming.emit(StateMsg(seq = 5, serverNow = 1_790_000_003_000L, view = view(round = 98))) // duplicate
+            // Equal seq: a meta-only broadcast (premium / lockedPacks / tvBusy) reuses the version; frames on one
+            // socket arrive in order, so it is applied (PAYMENTS-SPEC §3.11 broadcasts).
+            conn.incoming.emit(StateMsg(seq = 5, serverNow = 1_790_000_002_000L, view = view(round = 98)))
+            val dup = awaitItem() as TvUiState.InRoom
+            assertEquals(98, dup.view!!.round)
             conn.incoming.emit(StateMsg(seq = 6, serverNow = 1_790_000_001_000L, view = view(round = 2)))
             val b = awaitItem() as TvUiState.InRoom
             assertEquals(2, b.view!!.round)
@@ -241,7 +245,7 @@ class GameViewModelTest {
         val failing = GameDeps(
             serverUrl = { "http://x" },
             appLocale = { "en" },
-            createRoom = { _, _ -> throw app.mishana.tv.net.CreateRoomException(429, "RATE_LIMITED") },
+            createRoom = { _, _, _ -> throw app.mishana.tv.net.CreateRoomException(429, "RATE_LIMITED") },
             newConnection = { _, _ -> FakeConnection() },
         )
         val vm = GameViewModel(Application(), failing)

@@ -4,6 +4,10 @@ import { HTTP_BODY_MAX_BYTES, PROTOCOL_VERSION, WS_PATH_PREFIX } from "@mishana/
 import type { Locale } from "@mishana/shared/constants";
 import type { EntitlementStatus, ErrorCode } from "@mishana/shared/protocol";
 import { CreateRoomRequest } from "@mishana/shared/protocol";
+import { billingPacks } from "./billing/catalog-info";
+import { billingModeForRequest } from "./billing/mode";
+import { verifyEntitlementToken, verifyKeysFromSecret } from "./billing/token";
+import type { RoomEntitlement } from "./billing/token";
 import { generateRoomCode } from "./codes";
 import type { Env } from "./env";
 import { isOriginAllowed } from "./origin";
@@ -69,7 +73,7 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
   const { success } = await env.CREATE_ROOM_LIMITER.limit({ key: clientIp(req) });
   if (!success) return httpError("RATE_LIMITED", 429);
 
-  // 3. Body: optional JSON {locale}.
+  // 3. Body: optional JSON {locale, entitlement}.
   const body = await readBodyLimited(req, HTTP_BODY_MAX_BYTES);
   if (body === null) return httpError("BAD_MESSAGE", 400);
   let locale: Locale = "en";
@@ -88,9 +92,15 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
     locale = r.data.locale ?? "en";
     entitlementToken = r.data.entitlement ?? null;
   }
-  // PAYMENTS-SPEC §3.11. PAY-GAP (Phase 1): tokens are not verified yet (billing/token.ts), so a sent token is
-  // reported INVALID (the room is created either way) and no token is passed to the Room DO.
-  const entitlement: EntitlementStatus = entitlementToken === null ? "NONE" : "INVALID";
+  // PAYMENTS-SPEC §3.10/§3.11: the billing mode is decided here, once, from the request; the token is verified before
+  // a code is drawn. An invalid or expired token gives a free room (the TV refreshes on "INVALID").
+  const billingMode = billingModeForRequest(env, req);
+  let roomEntitlement: RoomEntitlement | null = null;
+  if (entitlementToken !== null) {
+    const keys = await verifyKeysFromSecret(env.ENTITLEMENT_KEYS);
+    roomEntitlement = await verifyEntitlementToken(entitlementToken, keys, deps.now(), billingMode === "fake", billingPacks().premiumIds);
+  }
+  const entitlement: EntitlementStatus = entitlementToken === null ? "NONE" : roomEntitlement ? "OK" : "INVALID";
 
   // 4. TV token (hashed before it reaches the DO).
   const tvToken = randomHex(16, deps.randomBytes);
@@ -106,7 +116,7 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
     let ok: boolean;
     try {
       const stub = await deps.getStub(code);
-      const r = await stub.initRoom({ tvTokenHash, joinUrl, locale, now: deps.now() });
+      const r = await stub.initRoom({ tvTokenHash, joinUrl, locale, now: deps.now(), entitlement: roomEntitlement, billingMode });
       ok = r.ok;
     } catch {
       console.error(JSON.stringify({ code: "INTERNAL", phase: "createRoom", roomCode: code }));

@@ -45,7 +45,7 @@ function decodeJsonSegment(seg: string): { text: string; value: unknown } | null
   const bytes = b64urlDecode(seg);
   if (!bytes) return null;
   try {
-    const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    const text = new TextDecoder("utf-8", { fatal: true, ignoreBOM: false }).decode(bytes);
     return { text, value: JSON.parse(text) as unknown };
   } catch {
     return null;
@@ -71,7 +71,7 @@ const KeyringSchema = z.object({ active: z.string().regex(KID_REGEX), keys: z.ar
  * Parses the ENTITLEMENT_KEYS secret. Every entry must be an Ed25519 OKP key (`kty`/`crv`, when given, must say so;
  * an RSA or EC JWK is rejected here), kids are unique and never "fake", and the active kid has its private half.
  */
-export function parseKeyring(json: string | undefined): Keyring | null {
+export function parseKeyring(json: string | undefined, opts: { publicOnly?: boolean } = {}): Keyring | null {
   if (!json) return null;
   let raw: unknown;
   try {
@@ -89,7 +89,19 @@ export function parseKeyring(json: string | undefined): Keyring | null {
   }
   const active = r.data.keys.find((k) => k.kid === r.data.active);
   if (!active || active.d === undefined) return null;
+  // publicOnly: the verify-only view (Room DO, createRoom): every private half is dropped here.
+  if (opts.publicOnly) return { active: r.data.active, keys: r.data.keys.map((k) => ({ kid: k.kid, x: k.x })) };
   return { active: r.data.active, keys: r.data.keys.map((k) => (k.d === undefined ? { kid: k.kid, x: k.x } : { kid: k.kid, x: k.x, d: k.d })) };
+}
+
+// Verify keys per isolate, keyed by the secret's value (rotation = a new deploy with a new value).
+let verifyCache: { json: string; keys: Promise<Map<string, CryptoKey>> } | null = null;
+/** Public Ed25519 verify keys from ENTITLEMENT_KEYS (empty map when unset or invalid: every token is then invalid). */
+export function verifyKeysFromSecret(json: string | undefined): Promise<Map<string, CryptoKey>> {
+  const j = json ?? "";
+  if (verifyCache?.json === j) return verifyCache.keys;
+  verifyCache = { json: j, keys: importVerifyKeys(parseKeyring(j, { publicOnly: true })) };
+  return verifyCache.keys;
 }
 
 /** Public verify keys only (every `d` is dropped): what the Room DO receives. */
@@ -184,7 +196,7 @@ export async function verifyEntitlementToken(
   if (!key) return null;
   const sig = b64urlDecode(s);
   if (!sig || sig.length !== 64) return null;
-  let ok = false;
+  let ok: boolean;
   try {
     ok = await crypto.subtle.verify({ name: "Ed25519" }, key, sig, utf8.encode(`${h}.${p}`));
   } catch {

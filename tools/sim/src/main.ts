@@ -1,4 +1,5 @@
-// pnpm sim [--players 3..12|N] [--games N=200] [--seed N=1] [--win-rule official|parity] [--tie-break random|none] [--ws URL] [--verbose]
+// pnpm sim [--players 3..12|N] [--games N=200] [--seed N=1] [--win-rule official|parity] [--tie-break random|none]
+//          [--access premium|free] [--ws URL] [--verbose]
 import { parseArgs } from "./args";
 import { realCatalog } from "./catalog";
 import { formatTable, runEngineMode } from "./engine-mode";
@@ -30,7 +31,7 @@ async function main(): Promise<number> {
   }
   const t0 = Date.now();
   const rows = runEngineMode(realCatalog(), args);
-  console.log(`engine mode · win-rule ${args.winRule} · tie-break ${args.tieBreak} · seed ${args.seed} · ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  console.log(`engine mode · access ${args.access} · win-rule ${args.winRule} · tie-break ${args.tieBreak} · seed ${args.seed} · ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   console.log(formatTable(rows));
   if (reportFailures(rows)) return 1;
   console.log("\nOK: zero invariant, termination, role-count or leak failures");

@@ -2,6 +2,9 @@
 // /api/*, /parties/* and /healthz (wrangler.jsonc `run_worker_first`).
 import { getServerByName, routePartykitRequest } from "partyserver";
 import { ROOM_CODE_REGEX, WS_PATH_PREFIX } from "@mishana/shared/constants";
+import { BILLING_PREFIX, handleBilling, productionBillingDeps } from "./billing/routes";
+import { runCron } from "./billing/cron";
+import type { BillingStore } from "./billing/billing-core";
 import type { Env } from "./env";
 import { createRoom, healthz, httpError } from "./http";
 import { originCheck } from "./origin";
@@ -10,6 +13,7 @@ import { CID_REGEX } from "./room-core";
 import { randomBytes } from "./tokens";
 
 export { Room } from "./room";
+export { Billing } from "./billing/billing-do";
 
 /**
  * partyserver's connection id. partysocket sends a UUID/nanoid and the TV a UUID; anything else is refused
@@ -35,6 +39,7 @@ async function fetch(req: Request, env: Env): Promise<Response> {
         now: () => Date.now(),
       });
     }
+    if (path.startsWith(BILLING_PREFIX)) return handleBilling(req, env, productionBillingDeps(env));
     return httpError("BAD_MESSAGE", 405);
   }
 
@@ -59,4 +64,10 @@ async function fetch(req: Request, env: Env): Promise<Response> {
   return env.ASSETS.fetch(req);
 }
 
-export default { fetch } satisfies ExportedHandler<Env>;
+/** PAYMENTS-SPEC §3.8: hourly ack retries, daily voided purchases + prune. Dispatches on `controller.cron`. */
+function scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): void {
+  const deps = productionBillingDeps(env);
+  ctx.waitUntil(runCron(env, controller.cron, { store: deps.store() as BillingStore, api: deps.google(env), now: deps.now }));
+}
+
+export default { fetch, scheduled } satisfies ExportedHandler<Env>;

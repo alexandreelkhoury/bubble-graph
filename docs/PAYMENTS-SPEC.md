@@ -84,7 +84,7 @@ Edits to the pack JSON files (A):
 | `lb-food-01` | ar-LB | 27 | premium | `pack_lb_food_01` |
 | `lb-life-01` | ar-LB | 23 | premium | `pack_lb_life_01` |
 
-Starter packs are the "Everyday" pack because it exists with the same theme in all three languages. **Release gate:** each starter pack must reach **at least 40 pairs** before the first production release. 24 pairs is about 24 games before repeats, and in a deduction game a remembered pair exposes the Mole at once. `pack-lint --release` (run by `pnpm deploy`) fails below 40; dev runs only warn (§1.5). Growing the three starter packs is an owner/D content task; A only adds the gate.
+Starter packs are the "Everyday" pack because it exists with the same theme in all three languages. **Release gate:** each starter pack must reach **at least 40 pairs** before the first production release. 24 pairs is about 24 games before repeats, and in a deduction game a remembered pair exposes the Mole at once. `pack-lint --release` (run by `pnpm run deploy`) fails below 40; dev runs only warn (§1.5). Growing the three starter packs is an owner/D content task; A only adds the gate.
 
 ### 1.3 Pack → product id mapping (shared, A; mirrored in Kotlin by B)
 
@@ -1294,7 +1294,7 @@ Do these in order. Items marked [VERIFY] come from third-party summaries or bloc
 **B. App and billing in Play Console**
 1. Create the app: name "Mish Ana!", default language, App, Free (in-app purchases are allowed in free apps), declarations.
 2. Fill **App content**: privacy policy URL (M5), ads = none, content rating questionnaire, target audience (13+, so that Families policy is avoided [VERIFY with the owner]), **Data safety** (§6.3), and the **TV** form factor (Release → Advanced settings → Form factors → Android TV; TV screenshots and banner are needed for review).
-3. Build a release AAB with the billing library (B's work) and upload it to **Internal testing** (and to the closed test track for A.9). Billing products can be created only after an APK/AAB with the BILLING permission is uploaded [VERIFY; it was true historically].
+3. Build a release AAB with the billing library (B's work) and upload it. `assembleRelease`/`bundleRelease` refuse to build until `mishana.prodServerUrl` in `tv-app/gradle.properties` (or `-PserverUrl=`) is the deployed `https://` Worker origin (docs/TV.md → Production server URL). The URL is known before the first deploy: `https://play.<your-workers-subdomain>.workers.dev` (Worker `name` in `wrangler.jsonc`) or your custom domain. Upload it to **Internal testing** (and to the closed test track for A.9). Billing products can be created only after an APK/AAB with the BILLING permission is uploaded [VERIFY; it was true historically].
 4. **License testers:** Settings → License testing → add the testers' Gmail addresses. License testers get test payment methods and shortened timings ✔ (developer.android.com/google/play/billing/test): renewals monthly = 5 min, yearly = 30 min; free trial = 3 min; grace period 5 min; account hold 10 min; test subscriptions renew at most 6 times; an unacknowledged **one-time** purchase is refunded after 3 min, an unacknowledged **subscription** after 5 min.
 5. **Subscription:** Monetize with Play → Products → Subscriptions → Create subscription:
    - Product ID `premium`, name "Mish Ana! Premium" (benefits: "All word packs", "New packs included", "Custom scoring").
@@ -1302,12 +1302,12 @@ Do these in order. Items marked [VERIFY] come from third-party summaries or bloc
    - Add base plan `yearly`: auto-renewing, 1 year, prices. **Activate.**
    - Add offer `trial-7d` on `monthly`: eligibility "New customer acquisition → Never had this subscription", phase "Free trial", duration 7 days. **Activate.** Repeat on `yearly` (same offer id).
    - Subscription settings: turn **Pause off**. Keep Resubscribe on.
-6. **One-time products:** Monetize with Play → Products → One-time products → Create, for each line of `pnpm --filter @mishana/server billing:products`:
+6. **One-time products:** Monetize with Play → Products → One-time products → Create, for each row of `pnpm --silent --filter @mishana/server billing:products` (CSV: `productId,packId,locale,titleEn,titleFr,titleAr`; 14 packs today):
    - product id `pack_en_food_01` etc.;
    - name = English title (add the FR/AR translations);
    - one purchase option (buy), price ~US$1.99–2.99.
    - **Activate.**
-7. **RTDN** (after section C): Monetize with Play → Monetization setup → Real-time developer notifications:
+7. **RTDN** (after sections C and D: the Worker must be deployed with the `RTDN_*` vars, or the push answers 503 `NOT_CONFIGURED`): Monetize with Play → Monetization setup → Real-time developer notifications:
    - enable;
    - Topic name `projects/<PROJECT_ID>/topics/play-rtdn`;
    - choose **"Get all notifications for subscriptions and one-time products"** ✔;
@@ -1354,7 +1354,7 @@ npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json   # stdin i
   - keep `BILLING_MODE:"google"`, `ALLOW_FAKE_BILLING:"0"`.
 - Replace the ratelimit `namespace_id`s with unique account values.
 - Set `SUPPORT_EMAIL` in `shared/src/billing/products.ts` (the same address as the Play listing).
-- `pnpm deploy`: this runs pack-lint `--release` (starter packs ≥ 40 pairs), `check-deploy.mjs`, and `secrets.required` blocks a deploy with missing secrets ✔.
+- From the repo root, `pnpm run deploy` (always `run`: bare `pnpm deploy` is pnpm's built-in command, not the script): this builds, runs pack-lint `--release` (starter packs ≥ 40 pairs; the three `*-everyday-01` packs have 24 today, so the deploy fails until they grow), `check-deploy.mjs` (`BILLING_MODE:"google"`, `ALLOW_FAKE_BILLING:"0"`, traces off, no `env` block), and `secrets.required` blocks a deploy with missing secrets ✔.
 - Then send the Play Console **test RTDN** (B.7). The Worker logs `{code:"RTDN_TEST"}`.
 - In the Cloudflare dashboard → Workers → Observability, create alerts (or a saved query you check weekly) on the codes `BILLING_ACK_OVERDUE`, `BILLING_ACK_REJECTED`, `BILLING_AUTH`, `BILLING_BUDGET`, `BILLING_SUB_STALE`, `RTDN_AUTH` [VERIFY alerting availability on your plan].
 
@@ -1438,7 +1438,7 @@ The review findings were applied as follows. "Applied" means the fix is in the r
 | M15 | Silent downgrade: `lobby.premiumEnded` (TV) / `lobby.premiumEndedPhone` (VIP), shown once per flip; e2e test 4 asserts them | §4.4, §4.7, §5.1, §5.3 |
 | M16 | Billing-unavailable/offline: Store state machine (Loading/Ready/Unavailable), Try again, actionable `store.playUnavailable`, locked rows show `settings.locked`, catalog fallback from `lockedPacks`, missing premium product handled | §4.4, §4.6, §4.7, §4.9 |
 | M17 | AR/FR register: AR buttons as nouns, phone keys in noun/impersonal form, separate TV toasts `tv.packLocked`/`tv.premiumRequired`; owner reviews all AR | §4.3, §4.4, §4.7 |
-| M18 | Free tier generosity: ≥ 40 starter pairs is a release gate (`pack-lint --release` in `pnpm deploy`); `poolExhausted` view flag + `lobby.wordsRepeating` toast | §1.2, §1.5, §3.11, §4.4, §4.7 |
+| M18 | Free tier generosity: ≥ 40 starter pairs is a release gate (`pack-lint --release` in `pnpm run deploy`); `poolExhausted` view flag + `lobby.wordsRepeating` toast | §1.2, §1.5, §3.11, §4.4, §4.7 |
 
 **Minors**
 | # | Finding | Decision |

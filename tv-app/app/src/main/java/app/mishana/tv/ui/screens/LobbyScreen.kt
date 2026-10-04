@@ -28,6 +28,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import app.mishana.tv.ui.components.MishFocusSurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -62,6 +69,8 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.mishana.tv.Constants
 import app.mishana.tv.R
+import app.mishana.tv.billing.StoreEntry
+import app.mishana.tv.billing.StoreOrigin
 import app.mishana.tv.game.Names
 import app.mishana.tv.i18n.LocaleController
 import app.mishana.tv.i18n.Locales
@@ -115,12 +124,15 @@ fun LobbyScreen(
     send: (ClientIntent) -> Unit,
     onOpenSettings: (SettingsCategory) -> Unit,
     toasts: ToastState,
+    /** PAYMENTS-SPEC §4.4 entry point 1; null when billing is off (no Premium button). */
+    onOpenStore: ((StoreEntry) -> Unit)? = null,
 ) {
     val type = MishTheme.type
     val startFocus = remember { FocusRequester() }
     val settingsFocus = remember { FocusRequester() }
     val gridFocus = remember { FocusRequester() }
     val languageFocus = remember { FocusRequester() }
+    val premiumFocus = remember { FocusRequester() }
     val tileFocus = remember { mutableMapOf<String, FocusRequester>() }
     val scope = rememberCoroutineScope()
     val shake = remember { Animatable(0f) }
@@ -228,24 +240,38 @@ fun LobbyScreen(
                 Spacer(Modifier.weight(1f))
                 Row(
                     Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
+                    horizontalArrangement = Arrangement.spacedBy(LobbyMetrics.BAR_GAP_DP.dp, Alignment.End),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    // §4.4: Premium · Settings · Language · Start. A fixed label, never swapped for premium status (the
+                    // summary chip shows that). Back from the Store returns focus here.
+                    if (onOpenStore != null) {
+                        val open = {
+                            restoreTarget = { premiumFocus }
+                            onOpenStore(StoreEntry(focusProductId = null, origin = StoreOrigin.LOBBY_BUTTON))
+                        }
+                        if (LobbyMetrics.barVariant(uiLanguage()).premiumIconOnly) {
+                            IconOnlyButton(stringResource(R.string.lobby__premium), MishIcons.Gem, open, Modifier.focusRequester(premiumFocus), tint = MishColors.Accent)
+                        } else {
+                            MishButton(stringResource(R.string.lobby__premium), open, Modifier.focusRequester(premiumFocus), icon = MishIcons.Gem)
+                        }
+                    }
                     MishButton(
                         stringResource(R.string.lobby__settings),
                         { onOpenSettings(SettingsCategory.Game) },
                         Modifier.focusRequester(settingsFocus),
                         icon = MishIcons.Settings,
                     )
-                    MishButton(
-                        stringResource(langNameRes(uiLanguage())),
-                        {
-                            restoreTarget = { languageFocus }
-                            languageOpen = true
-                        },
-                        Modifier.focusRequester(languageFocus),
-                        icon = MishIcons.Globe,
-                    )
+                    val openLanguage = {
+                        restoreTarget = { languageFocus }
+                        languageOpen = true
+                    }
+                    if (onOpenStore != null && LobbyMetrics.barVariant(uiLanguage()).languageIconOnly) {
+                        // §4.4 fit rule (PAY-GAP): with Premium in the bar, the language button keeps its globe only.
+                        IconOnlyButton(stringResource(langNameRes(uiLanguage())), MishIcons.Globe, openLanguage, Modifier.focusRequester(languageFocus))
+                    } else {
+                        MishButton(stringResource(langNameRes(uiLanguage())), openLanguage, Modifier.focusRequester(languageFocus), icon = MishIcons.Globe)
+                    }
                     MishButton(
                         text = stringResource(R.string.lobby__start_game),
                         onClick = {
@@ -288,6 +314,40 @@ fun LobbyScreen(
     }
     if (languageOpen) {
         LanguagePicker(onDismiss = { languageOpen = false })
+    }
+}
+
+/**
+ * PAYMENTS-SPEC §4.4 fit rule fallback: a 48 × 48 dp icon-only bar button (`gem` for Premium, never mirrored) with a
+ * focus tooltip ([label]) drawn above it (outside the bar's layout, so nothing moves) and [label] as contentDescription.
+ */
+@Composable
+private fun IconOnlyButton(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit, modifier: Modifier, tint: Color = MishColors.Text) {
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    Box(Modifier.size(LobbyMetrics.ICON_ONLY_DP.dp)) {
+        MishFocusSurface(
+            onClick = onClick,
+            modifier = modifier.size(LobbyMetrics.ICON_ONLY_DP.dp).semantics { contentDescription = label },
+            shape = MishShapes.pill,
+            interactionSource = interaction,
+        ) {
+            Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.align(Alignment.Center).size(24.dp))
+        }
+        if (focused) {
+            Text(
+                label,
+                style = MishTheme.type.caption,
+                color = MishColors.Text,
+                maxLines = 1,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .wrapContentWidth(unbounded = true)
+                    .offset(y = (-44).dp)
+                    .background(MishColors.Elevated, MishShapes.pill)
+                    .padding(horizontal = 12.dp, vertical = 2.dp),
+            )
+        }
     }
 }
 
@@ -389,7 +449,25 @@ private fun SettingsSummary(view: TvView) {
             .padding(horizontal = 8.dp, vertical = 2.dp),
         horizontalAlignment = Alignment.End,
     ) {
-        Text(line1, style = type.caption, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.End)
+        if (view.premium) {
+            // §4.4: premium status lives here, at the start of the first line (not on the Premium button). Inline, so the
+            // summary keeps its height and the grid never moves (Arabic caption lines are 30 dp).
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(MishIcons.Gem, null, tint = MishColors.Accent, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(6.dp))
+                Text(stringResource(R.string.lobby__premium_room), style = type.caption, color = MishColors.Accent, maxLines = 1)
+                Text(
+                    "  ·  $line1",
+                    style = type.caption,
+                    color = MishColors.TextSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+            }
+        } else {
+            Text(line1, style = type.caption, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.End)
+        }
         Text(line2, style = type.caption, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.End)
         val blocker = view.blocker
         val blockerText = when (blocker) {

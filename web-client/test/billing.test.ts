@@ -2,7 +2,7 @@
 // gating from the catalog response, the purchase sequence calls in order, and the token persisted with try/catch.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { CatalogResponseBody, EntitlementBody } from "@mishana/shared/billing";
-import { BillingController, BILLING_KEYS, STORE_OPEN_RESEND_MS } from "../src/tv-mock/billing/controller";
+import { BillingController, BILLING_ERROR_WINDOW_MS, CONFIRM_SLOW_MS, BILLING_KEYS, BILLING_RESEND_MS, STORE_OPEN_RESEND_MS } from "../src/tv-mock/billing/controller";
 import type { BillingDeps, BillingRoomLink, BillingToast } from "../src/tv-mock/billing/controller";
 import {
   afterPackPurchase, backoffMs, inflightKey, initialFocus, nextRefreshAt, packState, pitchParams, planPurchaseRequest,
@@ -315,7 +315,65 @@ describe("BillingController", () => {
     expect(h.sent).toEqual([]);
     h.setOpen(true);
     h.c.roomOpened();
-    expect(h.sent).toEqual([{ v: 1, t: "entitlement", token: h.c.ent.value!.token }, { v: 1, t: "storeOpen", open: false }]);
+    // No `storeOpen:false`: nothing was ever sent as true, so there is nothing to clear (§3.9 budget).
+    expect(h.sent).toEqual([{ v: 1, t: "entitlement", token: h.c.ent.value!.token }]);
+  });
+
+  it("attach + reconnect with the Store closed sends no storeOpen; after an open:true it clears once", async () => {
+    const h = harness();
+    await h.c.loadCatalog();
+    h.c.attach(h.link);
+    h.c.roomOpened();
+    expect(h.sent).toEqual([]);
+    h.c.setStoreVisible(true);
+    h.setOpen(false);
+    h.c.setStoreVisible(false); // dropped: the socket is down
+    h.setOpen(true);
+    h.c.roomOpened();
+    expect(h.sent).toEqual([{ v: 1, t: "storeOpen", open: true }, { v: 1, t: "storeOpen", open: false }]);
+    h.c.roomOpened();
+    expect(h.sent.length).toBe(2);
+  });
+
+  it("a verify that answers after the 15 s notice and fails says verifyFailed once", async () => {
+    const h = harness();
+    let release: (r: Response) => void = () => undefined;
+    const c = new BillingController({
+      ...h.deps,
+      fetch: (url, init) => url === "/api/billing/verify"
+        ? new Promise<Response>((r) => { release = r; })
+        : h.deps.fetch(url, init),
+    });
+    await c.loadCatalog();
+    c.attach(h.link);
+    const p = c.purchase("pack_en_food_01");
+    await vi.waitFor(() => expect(c.inflight.value).not.toBeNull());
+    await new Promise((r) => setTimeout(r, 0));
+    h.advance(CONFIRM_SLOW_MS);
+    expect(c.confirmSlow.value).toBe(true);
+    release(new Response(JSON.stringify({ error: "UPSTREAM_ERROR" }), { status: 502 }));
+    await p;
+    expect(h.toasts.map((x) => x.key)).toEqual(["store.verifyFailed"]);
+  });
+
+  it("a RATE_LIMITED after a billing send is silent and re-sends the token and the busy flag after ≥ 10 s", async () => {
+    const h = harness();
+    await h.c.loadCatalog();
+    h.c.attach(h.link);
+    h.c.setStoreVisible(true);
+    await h.c.purchase("pack_en_food_01");
+    const token = h.c.ent.value!.token;
+    const n = h.sent.length;
+    expect(h.c.wsRateLimited()).toBe(true);
+    expect(h.c.wsRateLimited()).toBe(true); // one resend scheduled, not two
+    h.advance(9_999);
+    expect(h.sent.length).toBe(n);
+    h.advance(BILLING_RESEND_MS);
+    expect(h.sent.slice(n)).toEqual([{ v: 1, t: "entitlement", token }, { v: 1, t: "storeOpen", open: true }]);
+    expect(h.toasts.map((x) => x.key)).not.toContain("error.rateLimited");
+    // Long after any billing send, a RATE_LIMITED is not ours: the caller shows its usual toast.
+    h.advance(BILLING_ERROR_WINDOW_MS + 1);
+    expect(h.c.wsRateLimited()).toBe(false);
   });
 
   it("storeOpen: on open, re-sent every 4 min while open, false on close, again after a reconnect", async () => {

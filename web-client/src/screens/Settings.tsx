@@ -82,9 +82,10 @@ function LockedPacks({ view }: { view: PlayerView }) {
               <Icon name="lock" size={20} class="lockedrow__lock" />
               <span class="lockedrow__text">
                 <bdi class="lockedrow__title">{r.title}</bdi>
-                <span class="lockedrow__meta">{t("store.packPairs", { count: r.pairCount })}</span>
+                {/* lock · title / pairs · hint: the hint has its own line, so it never squeezes the title (the only
+                    thing that names the pack). */}
+                <span class="lockedrow__meta">{t("store.packPairs", { count: r.pairCount })} · <span class="lockedrow__hint">{t(r.trailingKey)}</span></span>
               </span>
-              <span class="lockedrow__hint">{t(r.trailingKey)}</span>
             </button>
           </li>
         ))}

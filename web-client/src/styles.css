@@ -707,5 +707,5 @@ h1:focus, h1:focus-visible { outline: none; }
 .lockedrow__text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .lockedrow__title { font-weight: 700; color: var(--color-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lockedrow__meta { font: var(--type-ph-small); color: var(--color-text-muted); }
-.lockedrow--pack .lockedrow__hint { flex: none; max-width: 45%; text-align: end; }
+.lockedrow--pack .lockedrow__hint { display: inline; }
 .blocker--busy { color: var(--color-accent); }

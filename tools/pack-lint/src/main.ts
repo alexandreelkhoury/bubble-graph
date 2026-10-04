@@ -1,8 +1,9 @@
-// CLI: `pnpm lint:packs [--quiet]`. Exits 1 on any error; warnings are printed but never fail.
+// CLI: `pnpm lint:packs [--quiet] [--release]`. Exits 1 on any error; warnings are printed but never fail.
+// `--release` (PAYMENTS-SPEC §1.5, run by `pnpm deploy`) turns the starter-pack size gate into an error.
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { lintPacks, registeredPackFiles, type LintResult, type PackEntry } from "./lint";
+import { lintPacks, registeredPackFiles, type LintOptions, type LintResult, type PackEntry } from "./lint";
 
 /** Reads every `packs/<lang>/*.json` under a word-packs root. */
 export function readPackEntries(wordPacksRoot: string): PackEntry[] {
@@ -25,14 +26,14 @@ export function readPackEntries(wordPacksRoot: string): PackEntry[] {
   return entries;
 }
 
-export function lintDirectory(wordPacksRoot: string): LintResult {
+export function lintDirectory(wordPacksRoot: string, opts: LintOptions = {}): LintResult {
   let registered: string[] | null;
   try {
     registered = registeredPackFiles(readFileSync(join(wordPacksRoot, "index.ts"), "utf8"));
   } catch {
     registered = null;
   }
-  return lintPacks(readPackEntries(wordPacksRoot), registered);
+  return lintPacks(readPackEntries(wordPacksRoot), registered, opts);
 }
 
 function main(): void {
@@ -40,7 +41,7 @@ function main(): void {
   const quiet = args.includes("--quiet");
   const dirIdx = args.indexOf("--dir");
   const root = dirIdx >= 0 && args[dirIdx + 1] ? resolve(args[dirIdx + 1] as string) : resolve(dirname(fileURLToPath(import.meta.url)), "../../../word-packs");
-  const { errors, warnings, counts } = lintDirectory(root);
+  const { errors, warnings, counts } = lintDirectory(root, { release: args.includes("--release") });
   if (!quiet) for (const w of warnings) console.warn(`warning: ${w}`);
   for (const e of errors) console.error(`error: ${e}`);
   console.log(`pack-lint: pairs en=${counts.en ?? 0} fr=${counts.fr ?? 0} ar=${counts.ar ?? 0} (ar-LB=${counts["ar-LB"] ?? 0}); ${errors.length} error(s), ${warnings.length} warning(s)`);

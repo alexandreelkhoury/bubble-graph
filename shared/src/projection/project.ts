@@ -3,7 +3,7 @@ import type { Catalog } from "../engine/catalog";
 import { candidatePairs, packAllowedByAge } from "../engine/catalog";
 import { currentSpeakerId, isInGame, isSpeakingPhase } from "../engine/queries";
 import { effectiveRoleCounts } from "../engine/roles";
-import type { GameState, Player } from "../engine/types";
+import type { GameState, Player, Settings } from "../engine/types";
 import type { ErrorCode } from "../protocol/errors";
 import type { LockedPackInfo, Me, PackInfo, PlayerView, PublicPlayer, PublicView, TvView } from "../protocol/views";
 import { MIN_PLAYERS } from "../constants";
@@ -51,9 +51,16 @@ function availablePacks(state: GameState, catalog: Catalog): PackInfo[] {
 /** LOBBY only: packs of the room's word language (and age filter) that are absent from the playable catalog. Metadata only. */
 function lockedPacks(state: GameState, playable: Catalog, access: ViewAccess): LockedPackInfo[] {
   if (state.phase !== "LOBBY") return [];
-  const s = state.settings;
+  return lockedPackInfos(access.fullCatalog, playable, state.settings);
+}
+
+/**
+ * PAYMENTS-SPEC §3.11 `lockedPacks`: the packs of `full` that are not playable, match `settings.wordLocale` and the age
+ * filter. Metadata only (`pairCount` passes the difficulty filter): never words, never pair ids.
+ */
+export function lockedPackInfos(full: Catalog, playable: Catalog, s: Settings): LockedPackInfo[] {
   const playableIds = new Set(playable.packs.map((p) => p.id));
-  return access.fullCatalog.packs
+  return full.packs
     .filter((p) => !playableIds.has(p.id) && p.language === s.wordLocale && packAllowedByAge(p, s))
     .map((p) => ({
       id: p.id,

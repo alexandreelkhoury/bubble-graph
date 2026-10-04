@@ -5,19 +5,28 @@
   "compatibility_date": "2026-09-30",
   "workers_dev": true,
   "minify": true,
-  "observability": { "enabled": true },
+  // PAYMENTS-SPEC §3.2: traces record outbound fetch URLs, and every Google Play call carries a raw purchase token in
+  // its path, so traces stay OFF (written explicitly; check-deploy.mjs enforces it). Invocation logs record only the
+  // incoming URL; billing routes carry tokens in request bodies only.
+  "observability": { "enabled": true, "logs": { "enabled": true, "invocation_logs": true }, "traces": { "enabled": false } },
   "assets": {
     "directory": "../web-client/dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/api/*", "/parties/*", "/healthz"]
   },
-  "durable_objects": { "bindings": [{ "name": "Room", "class_name": "Room" }] },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Room"] }],
+  "durable_objects": { "bindings": [{ "name": "Room", "class_name": "Room" }, { "name": "BILLING", "class_name": "Billing" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Room"] }, { "tag": "v2", "new_sqlite_classes": ["Billing"] }],
   "ratelimits": [
     { "name": "CREATE_ROOM_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },
-    { "name": "CONNECT_LIMITER", "namespace_id": "1002", "simple": { "limit": 60, "period": 60 } }
+    { "name": "CONNECT_LIMITER", "namespace_id": "1002", "simple": { "limit": 60, "period": 60 } },
+    { "name": "BILLING_LIMITER", "namespace_id": "1003", "simple": { "limit": 30, "period": 60 } },
+    { "name": "RTDN_LIMITER", "namespace_id": "1004", "simple": { "limit": 120, "period": 60 } }
   ],
+  // PAYMENTS-SPEC §3.8 (UTC): hourly ack retries + overdue alert; daily voided purchases, stale-sub alert, prune.
+  "triggers": { "crons": ["23 * * * *", "17 3 * * *"] },
+  // `wrangler deploy` fails when one is missing; local dev (fake billing) only warns. See docs/DEV.md "Billing".
+  "secrets": { "required": ["PLAY_SERVICE_ACCOUNT_JSON", "ENTITLEMENT_KEYS"] },
   // Production URL configuration (docs/DEV.md "Production URLs"). No domain is committed here on purpose.
   //  - JOIN_BASE_URL: origin printed in the TV's QR code / join link (`<JOIN_BASE_URL>/<CODE>`). Empty = the origin
   //    the TV called (the Worker's https://play.<your-subdomain>.workers.dev). Set it to https://<your-domain>
@@ -25,5 +34,13 @@
   //  - ALLOWED_ORIGINS: comma-separated exact browser origins allowed in addition to same-origin. Empty is right
   //    when the web client is served by this Worker (assets above); `pnpm dev` passes its LAN origins with --var.
   //  - DEBUG_INVARIANTS: keep "0" in production.
-  "vars": { "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0" }
+  // Billing (PAYMENTS-SPEC §3.2, §3.10): BILLING_MODE must stay "google" and ALLOW_FAKE_BILLING "0" here; `pnpm dev`
+  // and the e2e webServer pass the fake values with --var. check-deploy.mjs refuses a deploy otherwise.
+  //  - RTDN_AUDIENCE: https://<your-domain>/api/billing/rtdn; RTDN_SA_EMAIL: the push service account;
+  //    RTDN_SUBSCRIPTION: projects/<project>/subscriptions/play-rtdn-push (PAYMENTS-SPEC §8.C/§8.D).
+  "vars": {
+    "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0",
+    "BILLING_MODE": "google", "ALLOW_FAKE_BILLING": "0",
+    "PLAY_PACKAGE_NAME": "app.mishana.tv", "RTDN_AUDIENCE": "", "RTDN_SA_EMAIL": "", "RTDN_SUBSCRIPTION": ""
+  }
 }

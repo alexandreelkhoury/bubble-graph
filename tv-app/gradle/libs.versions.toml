@@ -8,7 +8,7 @@ tvMaterial = "1.1.0"
 tvFoundation = "1.0.0"
 activityCompose = "1.13.0"     # [VERIFY] stable per developer.android.com release page 2026-10-03
 lifecycle = "2.11.0"           # [VERIFY]
-coreKtx = "1.19.1"             # [VERIFY]
+coreKtx = "1.19.1"             # [VERIFY]; PBL 9 needs androidx.core >= 1.9 for BILLING_UNAVAILABLE in kids mode ✔ (release notes)
 appcompat = "1.8.0"            # [VERIFY]
 kotlinxSerialization = "1.11.0"
 coroutines = "1.11.0"
@@ -16,6 +16,7 @@ okhttp = "5.5.0"
 zxing = "3.5.4"
 junit = "4.13.2"
 turbine = "1.2.1"
+billing = "9.1.0"              # PAYMENTS-SPEC §4.1 (latest per the PBL release notes, 2026-06-18); [VERIFY] resolves on Google Maven
 
 [libraries]
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -38,6 +39,8 @@ okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver3"
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+# Play Billing only: no billing-ktx (the callback APIs are wrapped by hand, PAYMENTS-SPEC §4.1).
+play-billing = { group = "com.android.billingclient", name = "billing", version.ref = "billing" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

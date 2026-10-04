@@ -12,13 +12,20 @@ import {
   ROOM_EMPTY_TTL_MS,
   ROOM_IDLE_TTL_MS,
   ROOM_RESULTS_TTL_MS,
+  TV_BUSY_MAX_MS,
 } from "@mishana/shared/constants";
 import type { Locale } from "@mishana/shared/constants";
 import { assertInvariants, createInitialState, nextWakeAt, reduce, sanitizeName } from "@mishana/shared/engine";
 import type { Action, Catalog, GameState } from "@mishana/shared/engine";
-import { fullAccess, projectForPlayer, projectForTv } from "@mishana/shared/projection";
+import { PREMIUM_SETTING_KEYS } from "@mishana/shared/billing/products";
+import { projectForPlayer, projectForTv } from "@mishana/shared/projection";
+import type { ViewAccess } from "@mishana/shared/projection";
 import type { ActionMsg, ClientMessage, EntitlementMsg, HelloPlayerMsg, HelloTvMsg, JoinMsg, StoreOpenMsg } from "@mishana/shared/protocol";
 import { ACTION_ID_REGEX, ClientMessageSchema } from "@mishana/shared/protocol";
+import { playableCatalog, restrictionFor, roomAccess } from "./access";
+import type { RoomAccess } from "./access";
+import { verifyEntitlementToken } from "./billing/token";
+import type { RoomEntitlement } from "./billing/token";
 import { errorFrame, safeClose, safeSend, sendFatal, stateFrame, welcomeFrame } from "./frames";
 import type { FatalErrorCode } from "./frames";
 import { Mutex } from "./mutex";
@@ -43,9 +50,19 @@ export type ConnState = {
   openedAt: number;
   bucket: Bucket;
   strikes: number[];
+  /** PAYMENTS-SPEC §3.9: times of this TV connection's `entitlement` messages in the last minute. */
+  billingMsgs?: number[];
+  /** PAY-GAP §3.9: times of this TV connection's `storeOpen{open:true}` messages in the last minute (own budget). */
+  storeMsgs?: number[];
 };
 
-export interface InitRoomArgs { tvTokenHash: string; joinUrl: string; locale: Locale; now: number }
+export interface InitRoomArgs {
+  tvTokenHash: string; joinUrl: string; locale: Locale; now: number;
+  /** PAYMENTS-SPEC §3.11: verified by the Worker before a code is drawn; null = a free room. */
+  entitlement: RoomEntitlement | null;
+  /** §3.10: decided once, in the Worker, from the request. */
+  billingMode: "google" | "fake";
+}
 export type InitRoomResult = { ok: true } | { ok: false; reason: "EXISTS" };
 
 /** An open WebSocket. `state` is the hibernation-safe attachment (null until `onConnect` sets it). */
@@ -64,12 +81,21 @@ export interface CryptoProvider {
   sha256hex(s: string): Promise<string>;
 }
 
+/**
+ * PAYMENTS-SPEC §3.2: the only billing material a room gets. Public Ed25519 verify keys (no private half) and the
+ * env-level fake-mode guard (§3.10 conditions 1–3). RoomCore never receives `env`.
+ */
+export interface RoomBillingDeps { verifyKeys: ReadonlyMap<string, CryptoKey>; fakeAllowedByEnv: boolean }
+
 export interface RoomCoreDeps {
   storage: RoomStorage;
   connections: Connections;
   clock: Clock;
   crypto: CryptoProvider;
+  /** The FULL catalog. Rooms play `playableCatalog(catalog, access)` only (PAYMENTS-SPEC §3.11). */
   catalog: Catalog;
+  /** Built once per isolate (WebCrypto key import is async). */
+  billing: () => Promise<RoomBillingDeps>;
   debugInvariants: boolean;
   // SPEC-GAP: §7.5 lists the deps without the room code, but `ipKey` must be hashed before any state is
   // read (and `meta` is missing for never-created rooms), so the DO name is passed in explicitly.
@@ -90,6 +116,13 @@ export const MAX_SPECTATORS_PER_ROOM = 16;
 export const ACTIVITY_WRITE_INTERVAL_MS = 60_000;
 /** Lower bound between alarm runs, so an alarm that finds nothing due can never spin. */
 export const MIN_ALARM_GAP_MS = 250;
+/**
+ * PAYMENTS-SPEC §3.9, with separate budgets (PAY-GAP: one shared budget of 6 dropped a real purchase's `entitlement`
+ * after a few Store open/close cycles): `entitlement` messages per TV connection per minute.
+ */
+export const BILLING_MSGS_PER_MIN = 6;
+/** `storeOpen{open:true}` per TV connection per minute. `storeOpen{open:false}` only clears state and is never capped. */
+export const STORE_OPEN_MSGS_PER_MIN = 12;
 
 // ------------------------------------------------------------------ helpers
 
@@ -116,6 +149,12 @@ function isSpectator(c: ConnHandle): boolean {
   return c.state !== null && c.state.role === "player" && c.state.playerId === null;
 }
 
+const SYSTEM = { kind: "system" } as const;
+
+function accessKey(a: RoomAccess): string {
+  return `${a.premium ? 1 : 0}|${[...a.packs].sort().join(",")}`;
+}
+
 function withoutSession(sessions: Sessions, pid: string): Sessions {
   const rest = { ...sessions };
   delete rest[pid];
@@ -132,6 +171,8 @@ export class RoomCore {
   #loaded = false;
   #meta: RoomMeta | null = null;
   #state: GameState | null = null;
+  /** The meta object last read from or written to storage (a different reference = unsaved changes). */
+  #savedMeta: RoomMeta | null = null;
   #sessions: Sessions = {};
   /** The sessions object last read from or written to storage (a different reference = unsaved changes). */
   #savedSessions: Sessions = {};
@@ -142,10 +183,16 @@ export class RoomCore {
    */
   #snapshot: ConnHandle[] | null = null;
   readonly #closedNow = new Set<ConnHandle>();
+  readonly #premiumPackIds: ReadonlySet<string>;
+  /** Access (premium + owned packs) of the last broadcast; an alarm re-broadcasts when it changes (§3.11). */
+  #broadcastAccess: string | null = null;
+  /** §3.10: the env-level fake guard, read with the room (fail closed until known). */
+  #fakeEnv = false;
 
   constructor(deps: RoomCoreDeps) {
     this.#d = deps;
     this.#store = new RoomStore(deps.storage);
+    this.#premiumPackIds = new Set(deps.catalog.packs.filter((p) => p.tier === "premium").map((p) => p.id));
   }
 
   // ---------------------------------------------------------------- entry points
@@ -166,13 +213,16 @@ export class RoomCore {
           if (r.ok) s = r.state;
         }
       }
-      if (s !== state) await this.#commit(s);
+      if (s !== state || this.#restrictionPending(s)) await this.#commit(s);
       else await this.#reschedule();
     });
   }
 
   initRoom(args: InitRoomArgs): Promise<InitRoomResult> {
     return this.#run(async () => {
+      // §3.10 defence in depth: a fake-mode entitlement is kept only in a fake room with the env guard still on.
+      this.#fakeEnv = (await this.#d.billing()).fakeAllowedByEnv;
+      const entitlement = args.entitlement?.mode === "fake" && !(args.billingMode === "fake" && this.#fakeEnv) ? null : args.entitlement;
       const seed = uint32(this.#d.crypto.randomBytes(4));
       // Native RPC bypasses partyserver's initialisation and the DO may have been evicted: never trust the cache.
       const head = await this.#store.loadHead();
@@ -184,6 +234,7 @@ export class RoomCore {
       const meta: RoomMeta = {
         schema: 1, code: this.#d.roomCode, tvTokenHash: args.tvTokenHash, joinUrl: args.joinUrl,
         createdAt: args.now, lastActivityAt: args.now, resultsAt: null,
+        entitlement, billingMode: args.billingMode, tvBusyUntil: null, viewRev: 0,
       };
       const state = createInitialState({ roomCode: this.#d.roomCode, joinUrl: args.joinUrl, seed, wordLocale: args.locale });
       const sessions: Sessions = {};
@@ -255,6 +306,16 @@ export class RoomCore {
       const state = this.#state;
       if (!st || !state || !this.#meta) return;
       const pid = st.playerId;
+      // §3.11 storeOpen: the busy flag clears when the TV connection closes (not when a replacing TV socket took over).
+      if (st.role === "tv" && (this.#meta.tvBusyUntil ?? null) !== null) {
+        const otherTv = this.#conns().some((c) => c.state !== null && c.state.cid !== st.cid && c.state.role === "tv");
+        if (!otherTv) {
+          this.#meta = { ...this.#meta, tvBusyUntil: null };
+          await this.#metaBroadcast();
+          await this.#reschedule();
+          return;
+        }
+      }
       if (pid !== null) {
         const session = this.#sessions[pid];
         const others = this.#conns().filter((c) => c.state !== null && c.state.cid !== st.cid && c.state.playerId === pid);
@@ -288,15 +349,23 @@ export class RoomCore {
         this.#setCache(null, null, {});
         return;
       }
+      let metaChanged = false;
+      if ((meta.tvBusyUntil ?? null) !== null && (meta.tvBusyUntil as number) <= now) {
+        this.#meta = { ...meta, tvBusyUntil: null };
+        metaChanged = true;
+      }
       const state = this.#state;
       if (state) {
-        const r = reduce(state, { type: "TICK", by: { kind: "system" } }, this.#ctx());
-        if (r.ok && r.state !== state) {
+        const r = reduce(state, { type: "TICK", by: SYSTEM }, this.#ctx());
+        const next = r.ok ? r.state : state;
+        if (next !== state || this.#restrictionPending(next)) {
           this.#closeStalePending(now);
-          await this.#commit(r.state);
+          await this.#commit(next);
           return;
         }
       }
+      // An access change (premium or a pack ending) re-broadcasts; after a fresh isolate the last key is unknown → broadcast.
+      if (metaChanged || this.#broadcastAccess !== accessKey(this.#accessAt(now).access)) await this.#metaBroadcast();
       this.#closeStalePending(now);
       await this.#reschedule();
     });
@@ -360,7 +429,9 @@ export class RoomCore {
     // SPEC-GAP: §7.5 touches activity for every schema-valid frame, so a spectator repeating `hello` could
     // keep a room alive forever. Only real participation counts: a TV hello, a resume, a join or an
     // accepted action (see the #touchActivity calls below).
-    // 6. Dispatch.
+    // 6. Access (§3.11): a LOBBY that lost access is restricted before the message is handled.
+    if (this.#state && this.#restrictionPending(this.#state)) await this.#commit(this.#state);
+    // 7. Dispatch.
     const m: ClientMessage = res.data;
     switch (m.t) {
       case "hello":
@@ -380,18 +451,59 @@ export class RoomCore {
     }
   }
 
-  /**
-   * PAYMENTS-SPEC §3.11 `entitlement` / `storeOpen` (TV only). Phase 0 stub: the wire contract is accepted, but
-   * token verification, room access and the TV-busy flag arrive with Phase 1 (access.ts, billing/token.ts).
-   * Until then no token can be verified (→ ENTITLEMENT_INVALID, non-fatal) and `storeOpen` is ignored.
-   */
-  #billingMsg(conn: ConnHandle, st: ConnState, m: EntitlementMsg | StoreOpenMsg): void {
+  /** PAYMENTS-SPEC §3.11 `entitlement` / `storeOpen` (TV only; at most BILLING_MSGS_PER_MIN per connection). */
+  async #billingMsg(conn: ConnHandle, st: ConnState, m: EntitlementMsg | StoreOpenMsg): Promise<void> {
     if (st.role !== "tv") {
       safeSend(conn, errorFrame("NOT_AUTHENTICATED"));
       return;
     }
-    // PAY-GAP: Phase 1 implements §3.11 (verify, write meta.entitlement, restrict, broadcast; tvBusyUntil).
-    if (m.t === "entitlement") safeSend(conn, errorFrame("ENTITLEMENT_INVALID"));
+    const now = this.#d.clock.now();
+    // Separate budgets per kind; closing the Store only clears state, so it is never capped (PAY-GAP §3.9).
+    if (m.t === "storeOpen" && !m.open) return this.#storeOpen(m, now);
+    const key = m.t === "entitlement" ? "billingMsgs" : "storeMsgs";
+    const cap = m.t === "entitlement" ? BILLING_MSGS_PER_MIN : STORE_OPEN_MSGS_PER_MIN;
+    const recent = (Array.isArray(st[key]) ? st[key] : []).filter((t) => t > now - 60_000);
+    if (recent.length >= cap) {
+      conn.setState({ ...st, [key]: recent });
+      safeSend(conn, errorFrame("RATE_LIMITED"));
+      return;
+    }
+    conn.setState({ ...st, [key]: [...recent, now] });
+    if (m.t === "entitlement") return this.#entitlement(conn, m);
+    return this.#storeOpen(m, now);
+  }
+
+  async #entitlement(conn: ConnHandle, m: EntitlementMsg): Promise<void> {
+    const billing = await this.#d.billing();
+    const meta = this.#meta;
+    if (!meta) return;
+    const now = this.#d.clock.now();
+    this.#fakeEnv = billing.fakeAllowedByEnv;
+    const fakeActive = meta.billingMode === "fake" && billing.fakeAllowedByEnv;
+    const e = await verifyEntitlementToken(m.token, billing.verifyKeys, now, fakeActive, this.#premiumPackIds);
+    const cur = meta.entitlement ?? null;
+    if (!e || (cur !== null && (e.sub !== cur.sub || e.iatMs < cur.iatMs))) {
+      safeSend(conn, errorFrame("ENTITLEMENT_INVALID"));
+      return;
+    }
+    // Accepted, even when the claims are lower (a refund): the room follows the newest token.
+    this.#meta = { ...meta, entitlement: e };
+    const state = this.#state;
+    if (state && this.#restrictionPending(state)) await this.#commit(state);
+    else {
+      await this.#metaBroadcast();
+      await this.#reschedule();
+    }
+  }
+
+  async #storeOpen(m: StoreOpenMsg, now: number): Promise<void> {
+    const meta = this.#meta;
+    if (!meta || this.#state?.phase !== "LOBBY") return; // ignored outside LOBBY
+    const next = m.open ? now + TV_BUSY_MAX_MS : null;
+    if ((meta.tvBusyUntil ?? null) === next) return;
+    this.#meta = { ...meta, tvBusyUntil: next };
+    await this.#metaBroadcast();
+    await this.#reschedule();
   }
 
   /** A rate-limited or malformed frame: one strike, an error, and a 4008 close on the third strike in the window. */
@@ -509,6 +621,11 @@ export class RoomCore {
     }
     const state = this.#state;
     if (!state) return;
+    const pre = this.#accessPrecheck(state, m, by);
+    if (pre !== null) {
+      safeSend(conn, errorFrame(pre, ref));
+      return;
+    }
     const action = { ...m.a, by } as Action;
     const r = reduce(state, action, this.#ctx());
     if (!r.ok) {
@@ -538,10 +655,57 @@ export class RoomCore {
   // ---------------------------------------------------------------- persistence
 
   #ctx(): { now: number; catalog: Catalog } {
-    return { now: this.#d.clock.now(), catalog: this.#d.catalog };
+    const now = this.#d.clock.now();
+    return { now, catalog: this.#accessAt(now).playable };
+  }
+
+  /** The room's access and playable catalog at `now` (§3.11). Only `playable` reaches reduce and the projections. */
+  #accessAt(now: number): { access: RoomAccess; playable: Catalog } {
+    const meta = this.#meta;
+    let ent = meta?.entitlement ?? null;
+    // §3.10: a stored fake-mode entitlement grants nothing once the room is not fake or the env guard is off.
+    if (ent?.mode === "fake" && !(meta?.billingMode === "fake" && this.#fakeEnv)) ent = null;
+    const access = roomAccess(ent, now);
+    return { access, playable: playableCatalog(this.#d.catalog, access) };
+  }
+
+  #restrictionPending(state: GameState): boolean {
+    const { access, playable } = this.#accessAt(this.#d.clock.now());
+    return restrictionFor(state, playable, access) !== null;
+  }
+
+  /**
+   * §3.11 UPDATE_SETTINGS pre-checks (PACK_LOCKED, then PREMIUM_REQUIRED) and the TV-busy START guard. Run before
+   * `reduce`, so clients get a precise error; INVALID_SETTINGS still covers unknown ids.
+   */
+  #accessPrecheck(state: GameState, m: ActionMsg, by: { kind: "tv" } | { kind: "player"; playerId: string }): "PACK_LOCKED" | "PREMIUM_REQUIRED" | "TV_BUSY" | null {
+    const a = m.a;
+    const now = this.#d.clock.now();
+    if (a.type === "UPDATE_SETTINGS") {
+      const { access, playable } = this.#accessAt(now);
+      const patch = a.patch as Record<string, unknown>;
+      if (Array.isArray(patch.packIds)) {
+        const playableIds = new Set(playable.packs.map((p) => p.id));
+        const known = new Set(this.#d.catalog.packs.map((p) => p.id));
+        if (patch.packIds.some((id) => typeof id === "string" && known.has(id) && !playableIds.has(id))) return "PACK_LOCKED";
+      }
+      if (!access.premium) {
+        for (const k of PREMIUM_SETTING_KEYS) {
+          if (patch[k] !== undefined && JSON.stringify(patch[k]) !== JSON.stringify(state.settings[k])) return "PREMIUM_REQUIRED";
+        }
+      }
+    }
+    if (a.type === "START" && by.kind === "player" && state.phase === "LOBBY" && this.#tvBusy(now)) return "TV_BUSY";
+    return null;
+  }
+
+  #tvBusy(now: number): boolean {
+    const until = this.#meta?.tvBusyUntil ?? null;
+    return until !== null && until > now;
   }
 
   #setCache(meta: RoomMeta | null, state: GameState | null, sessions: Sessions): void {
+    this.#savedMeta = meta;
     this.#meta = meta;
     this.#state = state;
     this.#sessions = sessions;
@@ -550,6 +714,7 @@ export class RoomCore {
   }
 
   async #load(): Promise<void> {
+    this.#fakeEnv = (await this.#d.billing()).fakeAllowedByEnv;
     const r = await this.#store.load();
     this.#setCache(r.meta, r.state, r.sessions);
   }
@@ -570,6 +735,18 @@ export class RoomCore {
    * meta/sessions changed, before anything is sent.
    */
   async #persist(next: GameState): Promise<void> {
+    // §3.11: a LOBBY that may not keep its pack filter or premium settings is restricted in the same write.
+    if (next.phase === "LOBBY") {
+      const now = this.#d.clock.now();
+      const { access, playable } = this.#accessAt(now);
+      const restrict = restrictionFor(next, playable, access);
+      if (restrict) {
+        const r = reduce(next, { type: "RESTRICT_SETTINGS", by: SYSTEM, ...restrict }, { now, catalog: playable });
+        if (r.ok) next = r.state;
+      }
+    } else if (this.#meta && (this.#meta.tvBusyUntil ?? null) !== null) {
+      this.#meta = { ...this.#meta, tvBusyUntil: null }; // the busy flag never outlives LOBBY
+    }
     if (this.#d.debugInvariants) assertInvariants(next);
     const prev = this.#state;
     const meta = this.#meta;
@@ -578,19 +755,23 @@ export class RoomCore {
     if (Object.keys(sessions).some((pid) => !live.has(pid))) {
       sessions = Object.fromEntries(Object.entries(sessions).filter(([pid]) => live.has(pid)));
     }
-    let nextMeta: RoomMeta | null = null;
+    let nextMeta: RoomMeta | null = meta;
     if (meta) {
       let resultsAt = meta.resultsAt;
       if (next.phase === "RESULTS" && prev?.phase !== "RESULTS") resultsAt = this.#d.clock.now();
       else if (next.phase !== "RESULTS") resultsAt = null;
       if (resultsAt !== meta.resultsAt) nextMeta = { ...meta, resultsAt };
     }
+    const writeMeta = nextMeta !== null && nextMeta !== this.#savedMeta;
     await this.#store.write({
       state: next,
-      ...(nextMeta ? { meta: nextMeta } : {}),
+      ...(writeMeta && nextMeta ? { meta: nextMeta } : {}),
       ...(sessions !== this.#savedSessions ? { sessions } : {}),
     });
-    if (nextMeta) this.#meta = nextMeta;
+    if (nextMeta) {
+      this.#meta = nextMeta;
+      this.#savedMeta = nextMeta;
+    }
     this.#state = next;
     this.#sessions = sessions;
     this.#savedSessions = sessions;
@@ -606,7 +787,33 @@ export class RoomCore {
     const meta = this.#meta;
     if (!meta || now - meta.lastActivityAt <= ACTIVITY_WRITE_INTERVAL_MS) return;
     this.#meta = { ...meta, lastActivityAt: now };
-    await this.#store.write({ meta: this.#meta });
+    await this.#flushMeta();
+  }
+
+  /**
+   * A broadcast for a meta-only change (entitlement, storeOpen, tvBusy clear, an access flip at `changesAt`). The
+   * state's `version` is unchanged, so `meta.viewRev` is bumped and persisted first: every frame's
+   * `seq = state.version + viewRev` stays strictly increasing across broadcasts and hibernation (SPEC §8.4 clients
+   * drop a frame whose seq is not greater than the last one). SPEC-GAP: SPEC §6 says `seq = state.version`.
+   */
+  async #metaBroadcast(): Promise<void> {
+    const meta = this.#meta;
+    if (!meta || !this.#state) return;
+    this.#meta = { ...meta, viewRev: (meta.viewRev ?? 0) + 1 };
+    await this.#flushMeta();
+    this.#broadcast();
+  }
+
+  #seq(state: GameState): number {
+    return state.version + (this.#meta?.viewRev ?? 0);
+  }
+
+  /** Writes the meta if it changed since the last read/write. */
+  async #flushMeta(): Promise<void> {
+    const meta = this.#meta;
+    if (!meta || meta === this.#savedMeta) return;
+    await this.#store.write({ meta });
+    this.#savedMeta = meta;
   }
 
   // ---------------------------------------------------------------- sockets, broadcast, alarm
@@ -650,13 +857,15 @@ export class RoomCore {
     for (const c of this.#conns()) if (pred(c.state)) this.#fatal(c, code);
   }
 
-  #viewFrame(state: GameState, st: ConnState, now: number): string | null {
-    // PAY-GAP (PAYMENTS-SPEC Phase 1): rooms are not access-restricted yet; the server still plays its whole catalog,
-    // so the view says so (premium: true, nothing locked). Phase 1 passes the room's playable catalog and RoomAccess
-    // here and to reduce/nextWakeAt (§3.11).
-    const access = fullAccess(this.#d.catalog);
-    if (st.role === "tv") return stateFrame(state.version, now, projectForTv(state, this.#d.catalog, access));
-    if (st.role === "player") return stateFrame(state.version, now, projectForPlayer(state, this.#d.catalog, st.playerId, access));
+  /** §3.11: projections get the PLAYABLE catalog; the full one is used only for locked-pack metadata. */
+  #viewAccess(now: number): { view: ViewAccess; playable: Catalog } {
+    const { access, playable } = this.#accessAt(now);
+    return { view: { premium: access.premium, fullCatalog: this.#d.catalog, tvBusy: this.#tvBusy(now) }, playable };
+  }
+
+  #viewFrame(state: GameState, st: ConnState, now: number, va = this.#viewAccess(now)): string | null {
+    if (st.role === "tv") return stateFrame(this.#seq(state), now, projectForTv(state, va.playable, va.view));
+    if (st.role === "player") return stateFrame(this.#seq(state), now, projectForPlayer(state, va.playable, st.playerId, va.view));
     return null;
   }
 
@@ -672,15 +881,17 @@ export class RoomCore {
     const state = this.#state;
     if (!state) return;
     const now = this.#d.clock.now();
+    const va = this.#viewAccess(now);
+    this.#broadcastAccess = accessKey(this.#accessAt(now).access);
     let tvFrame: string | null = null;
     let spectatorFrame: string | null = null;
     for (const c of this.#conns()) {
       const st = c.state;
       if (!st || st.role === "pending") continue;
       let frame: string | null;
-      if (st.role === "tv") frame = tvFrame ??= this.#viewFrame(state, st, now);
-      else if (st.playerId === null) frame = spectatorFrame ??= this.#viewFrame(state, st, now);
-      else frame = this.#viewFrame(state, st, now);
+      if (st.role === "tv") frame = tvFrame ??= this.#viewFrame(state, st, now, va);
+      else if (st.playerId === null) frame = spectatorFrame ??= this.#viewFrame(state, st, now, va);
+      else frame = this.#viewFrame(state, st, now, va);
       if (frame !== null) safeSend(c, frame);
     }
   }
@@ -696,11 +907,17 @@ export class RoomCore {
     return min;
   }
 
-  /** alarm = min(nextWakeAt(state), expiresAt(meta, state), pendingDeadline); only written when it changes. */
+  /**
+   * alarm = min(nextWakeAt(state), expiresAt(meta, state), pendingDeadline, access.changesAt, tvBusyUntil); only
+   * written when it changes.
+   */
   async #reschedule(): Promise<void> {
     const meta = this.#meta;
     if (!meta) return;
     const candidates = [expiresAt(meta, this.#state)];
+    const changesAt = this.#accessAt(this.#d.clock.now()).access.changesAt;
+    if (changesAt !== null) candidates.push(changesAt);
+    if ((meta.tvBusyUntil ?? null) !== null) candidates.push(meta.tvBusyUntil as number);
     const wake = this.#state ? nextWakeAt(this.#state) : null;
     if (wake !== null) candidates.push(wake);
     const pending = this.#pendingDeadline();
