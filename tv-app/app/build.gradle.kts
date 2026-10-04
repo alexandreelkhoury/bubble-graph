@@ -1,4 +1,7 @@
 // SPEC §9.1. AGP 9.4.0 with built-in Kotlin (no org.jetbrains.kotlin.android plugin).
+import java.io.File
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -15,6 +18,13 @@ val serverUrl: String = ((project.findProperty("serverUrl") as String?)
     ?: (project.findProperty("mishana.prodServerUrl") as String?)
     ?: PLACEHOLDER_SERVER_URL).trim().trimEnd('/')
 
+// Upload key for Play App Signing (docs/TV.md "Release signing"). Never committed: the properties file lives outside
+// the repo, at -PsigningProps=… or ~/.mishana-keys/keystore.properties (storeFile, storePassword, keyAlias,
+// keyPassword). Without it, release builds stay unsigned.
+val signingProps: Properties? = File(
+    (project.findProperty("signingProps") as String?) ?: "${System.getProperty("user.home")}/.mishana-keys/keystore.properties"
+).takeIf { it.isFile }?.let { f -> Properties().apply { f.inputStream().use { load(it) } } }
+
 android {
     namespace = "app.mishana.tv"
     // [VERIFY] AGP 9 DSL: if `compileSdk = 37` is deprecated, use `compileSdk { version = release(37) }`.
@@ -29,8 +39,20 @@ android {
         buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
     }
 
+    signingProps?.let { p ->
+        signingConfigs {
+            create("upload") {
+                storeFile = file(p.getProperty("storeFile"))
+                storePassword = p.getProperty("storePassword")
+                keyAlias = p.getProperty("keyAlias")
+                keyPassword = p.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (signingProps != null) signingConfig = signingConfigs.getByName("upload")
             // R8 matters for Compose on low-end TV SoCs (inlining, dead group removal); resources shrink with it.
             isMinifyEnabled = true
             isShrinkResources = true

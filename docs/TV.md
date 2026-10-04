@@ -82,6 +82,19 @@ Release builds are minified and resource-shrunk (R8). `preReleaseBuild` **fails*
 
 The app appears in the TV launcher's apps row with its banner (`res/drawable/banner.xml`, localised for Arabic in `drawable-ar/`).
 
+### Release signing
+
+Play App Signing holds the app signing key; we only keep an **upload key**. `app/build.gradle.kts` signs release builds with it when it finds a properties file (never committed): `-PsigningProps=/path/to/keystore.properties`, else `~/.mishana-keys/keystore.properties`:
+
+```properties
+storeFile=/home/<you>/.mishana-keys/upload.jks
+storePassword=…
+keyAlias=upload
+keyPassword=…
+```
+
+Create one with `keytool -genkeypair -keystore upload.jks -alias upload -keyalg RSA -keysize 4096 -validity 10000`. Without the file, release builds are unsigned. If the upload key is lost, request an upload-key reset in Play Console (Setup → App signing). Back up `~/.mishana-keys/` somewhere safe and offline.
+
 ## Emulator (Google TV AVD)
 
 1. Android Studio → Device Manager → **Create Virtual Device**.
