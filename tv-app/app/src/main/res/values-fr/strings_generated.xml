@@ -294,6 +294,8 @@
     <string name="tv__start_now">Commencer</string>
     <string name="tv__press_again">Appuyez encore sur OK pour confirmer</string>
     <string name="tv__skip_hint">Appuyez sur OK pour passer</string>
+    <string name="tv__clues_sub">Dites-le à voix haute, puis terminez le tour sur votre téléphone</string>
+    <string name="tv__clues_no_timer">Sans chrono : terminez le tour sur votre téléphone quand c’est fini</string>
     <string name="tv__back_to_categories">Retour : catégories</string>
     <string name="tv__pause_title">Menu de la partie</string>
     <string name="tv__pause_note">La partie continue</string>

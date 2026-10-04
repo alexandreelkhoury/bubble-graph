@@ -2302,6 +2302,8 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `tv.startNow` | Start now |
 | `tv.pressAgain` | Press OK again to confirm |
 | `tv.skipHint` | Press OK to skip |
+| `tv.cluesSub` | Say it out loud, then end the turn on your phone |
+| `tv.cluesNoTimer` | No timer: end the turn on your phone when you're done |
 | `tv.pauseTitle` | Game menu |
 | `tv.pauseNote` | The game keeps running |
 | `tv.resume` | Resume |

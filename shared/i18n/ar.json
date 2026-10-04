@@ -306,6 +306,8 @@
   "tv.startNow": "يلّا هلّق",
   "tv.pressAgain": "كبسوا OK مرّة تانية للتأكيد",
   "tv.skipHint": "كبسوا OK للتخطّي",
+  "tv.cluesSub": "قولوها بصوت عالي، وبعدها خلّصوا الدور من التلفون",
+  "tv.cluesNoTimer": "بلا وقت: خلّصوا الدور من التلفون لمّا تخلصوا",
   "tv.backToCategories": "رجوع: الفئات",
   "tv.pauseTitle": "قائمة اللعبة",
   "tv.pauseNote": "اللعبة مكمّلة",

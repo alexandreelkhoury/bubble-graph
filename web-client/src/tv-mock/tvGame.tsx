@@ -9,7 +9,6 @@ import { Avatar, avatarState } from "../components/PlayerChip";
 import { Icon } from "../components/Icon";
 import { reduced } from "../lib/motion";
 import { byId, orderWindow, playersOf, tiedWithTally } from "../lib/view";
-import { ellipsizeName } from "../lib/names";
 import { ActionPill, Stamp, Tile, TimerChip, TimerRing, TvTimerBar, TvTopBar, VOTE_NAME_MAX } from "./tvParts";
 import { useInitialFocus } from "./dpad";
 
@@ -106,7 +105,8 @@ function useWidth<T extends HTMLElement>(): [RefObject<T>, number] {
 }
 
 /**
- * TV-05 speaking order (Kotlin OrderStrip): 84 dp items (48 dp avatar, name cut to 8 graphemes). When the bar is too
+ * TV-05 speaking order (Kotlin OrderStrip): 104 dp items (48 dp avatar, the name truncated once by a CSS ellipsis at
+ * the 96 dp text width, then the current-speaker underline, all inside the safe area). When the bar is too
  * narrow the chevrons go first, then a window keeps the current speaker in view with "+n" on either side; the strip
  * never widens the bottom bar.
  */
@@ -125,7 +125,7 @@ function OrderStrip({ order, currentId }: { order: PublicPlayer[]; currentId: st
             {i > 0 && win.chevrons && <Icon name="chevron-forward" size={16} class="tvorder__chev" />}
             <span class="tvorder__who">
               <Avatar color={p.color} size={48} state={avatarState(p)} check={p.spoke && !isCur} />
-              <bdi class="tvorder__name">{ellipsizeName(p.name, 8)}</bdi>
+              <bdi class="tvorder__name">{p.name}</bdi>
             </span>
           </li>
         );
@@ -145,6 +145,9 @@ export function TvClues({ view }: { view: TvView }) {
   const idx = view.currentSpeakerId ? view.speakingOrder.indexOf(view.currentSpeakerId) : -1;
   const next = byId(view, view.speakingOrder[idx + 1]);
   const firstTurn = view.round === 1 && idx === 0 && !tie;
+  // Arabic's taller lines (name 72, body 34) and taller strip leave less stage: the hero steps down like Kotlin's.
+  const rtl = dirOf(locale.value) === "rtl";
+  const ring = rtl ? 156 : 172, av = rtl ? 112 : 124;
   return (
     <div class="tvscreen tvclues">
       <TvTopBar view={view} />
@@ -158,14 +161,14 @@ export function TvClues({ view }: { view: TvView }) {
         {speaker && (
           <div class="tvclues__hero" key={speaker.id}>
             {view.deadline ? (
-              <TimerRing deadline={view.deadline} size={172}>
-                <Avatar color={speaker.color} size={124} state={avatarState(speaker)} speaking={speaker.connected} />
+              <TimerRing deadline={view.deadline} size={ring}>
+                <Avatar color={speaker.color} size={av} state={avatarState(speaker)} speaking={speaker.connected} />
               </TimerRing>
             ) : (
-              <div class="ring" style={{ width: "172px", height: "172px" }}><div class="ring__content"><Avatar color={speaker.color} size={124} state={avatarState(speaker)} speaking /></div></div>
+              <div class="ring" style={{ width: `${ring}px`, height: `${ring}px` }}><div class="ring__content"><Avatar color={speaker.color} size={av} state={avatarState(speaker)} speaking /></div></div>
             )}
             <h1 class="tvt-displayM tvclues__name">{t("clues.speaking", { name: isolate(speaker.name) })}</h1>
-            <p class="tvt-body tv-secondary">{view.deadline ? t("clues.speakerSub") : t("clues.noTimer")}
+            <p class="tvt-body tv-secondary">{view.deadline ? t("tv.cluesSub") : t("tv.cluesNoTimer")}
               {next && <span class="tv-muted"> · {t("clues.upNext", { name: isolate(next.name) })}</span>}</p>
           </div>
         )}

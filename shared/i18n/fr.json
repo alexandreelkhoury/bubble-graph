@@ -291,6 +291,8 @@
   "tv.startNow": "Commencer",
   "tv.pressAgain": "Appuyez encore sur OK pour confirmer",
   "tv.skipHint": "Appuyez sur OK pour passer",
+  "tv.cluesSub": "Dites-le à voix haute, puis terminez le tour sur votre téléphone",
+  "tv.cluesNoTimer": "Sans chrono : terminez le tour sur votre téléphone quand c’est fini",
   "tv.backToCategories": "Retour : catégories",
   "tv.pauseTitle": "Menu de la partie",
   "tv.pauseNote": "La partie continue",

@@ -147,11 +147,11 @@ fun LobbyScreen(
     CompositionLocalProvider(LocalFocusBlocked provides (LocalFocusBlocked.current || blocked)) {
         Row(Modifier.fillMaxSize().inertWhen(blocked).focusFallback(defaultFocus)) {
             // ---- start side: QR, code, host line (never focusable) ----
-            // Height budget (486 dp): 47 wordmark + 6 + caption + 6 + 240 QR + 6 + 72 code + 2 = ~405, the host block
-            // takes the rest (Arabic: 26 + 28 + 26). The code and host shrink to fit the 264 dp width instead of wrapping.
+            // Height budget (486 dp): 47 wordmark + 4 + caption (26; Arabic 30) + 4 + 240 QR + 6 + 72 code + 2 = ~401,
+            // the host block takes the rest. The code and host shrink to fit the 264 dp width instead of wrapping.
             Column(Modifier.width(LobbyMetrics.START_COLUMN_DP.dp).fillMaxHeight()) {
                 Wordmark(160.dp, variant = WordmarkVariant.Latin)
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(4.dp))
                 Text(
                     stringResource(R.string.lobby__scan_to_join),
                     style = type.caption.copy(letterSpacing = if (LocalIsArabic.current) 0.sp else 0.08.em),
@@ -159,7 +159,7 @@ fun LobbyScreen(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(4.dp))
                 AnimatedContent(
                     targetState = full,
                     transitionSpec = { fadeIn(tween(MishMotion.Slow)) togetherWith fadeOut(tween(MishMotion.Slow)) },

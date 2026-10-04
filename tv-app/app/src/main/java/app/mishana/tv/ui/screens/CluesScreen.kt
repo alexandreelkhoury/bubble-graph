@@ -234,7 +234,8 @@ private fun SpeakerHero(sp: PublicPlayer, view: TvView, clockOffsetMs: Long, rin
             modifier = Modifier.widthIn(max = 820.dp).semantics { liveRegion = LiveRegionMode.Polite },
         )
         Text(
-            stringResource(if (deadline == null) R.string.clues__no_timer else R.string.clues__speaker_sub),
+            // TV wording: the speaker ends the turn on their phone (the TV is remote-only, never "tap").
+            stringResource(if (deadline == null) R.string.tv__clues_no_timer else R.string.tv__clues_sub),
             style = type.body,
             color = MishColors.TextSecondary,
             textAlign = TextAlign.Center,
@@ -242,13 +243,15 @@ private fun SpeakerHero(sp: PublicPlayer, view: TvView, clockOffsetMs: Long, rin
     }
 }
 
-private val STRIP_ITEM = 84.dp
+private val STRIP_ITEM = 104.dp
+private val STRIP_TEXT = 96.dp // STRIP_ITEM minus 2 × 4 dp: the one ellipsis point for long names
 private val STRIP_CHEVRON = 24.dp // 16 dp icon + 2 × 4 dp
 private val STRIP_MORE = 48.dp
 
 /**
- * Speaking order (DESIGN TV-05): 48 dp avatars, first names in titleS (8 graphemes). Done = check + 60 %;
- * current = 1.25× + a 4 dp primary underline; chevrons follow the reading direction.
+ * Speaking order (DESIGN TV-05): 104 dp items, 48 dp avatars, names in titleS truncated once by an end ellipsis at
+ * [STRIP_TEXT] (no grapheme pre-cut). Done = check + 60 %; current = 1.25× + a 4 dp primary underline that ends
+ * 2 dp above the bottom safe line (96 dp bar: 8 top + 48 + 2 + name + 4 + 4 + 2); chevrons follow the reading direction.
  * Every item keeps its full size: when the bar is too narrow, the chevrons go first, then the strip becomes a
  * window that keeps the current speaker in view with "+n" counts for the players before and after it
  * (never zero-width items).
@@ -301,19 +304,23 @@ private fun StripItem(p: PublicPlayer, current: Boolean) {
         )
         Spacer(Modifier.height(2.dp))
         Text(
-            Names.ellipsize(p.name, 8),
+            p.name,
             style = MishTheme.type.titleS,
             color = if (current) MishColors.Text else MishColors.TextSecondary,
             maxLines = 1,
+            softWrap = false,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
+            modifier = Modifier.widthIn(max = STRIP_TEXT),
         )
+        Spacer(Modifier.height(4.dp))
         Box(
             Modifier
                 .width(28.dp)
                 .height(4.dp)
                 .background(if (current) MishColors.Primary else Color.Transparent, MishShapes.pill),
         )
+        Spacer(Modifier.height(2.dp))
     }
 }
 

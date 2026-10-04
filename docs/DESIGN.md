@@ -224,7 +224,7 @@ These ids, hexes, shapes and glyph colours are the canonical `COLORS` table in S
 
 ### 3.2 TV type scale (sp; designed on the 960 × 540 dp canvas; viewed at 2.5–3.5 m)
 
-Minimum readable size is **16 sp**. Anything a player must read during play is **≥ 20 sp**.
+Minimum readable size is **20 sp** (≈ 40 px on a 1080p panel). Every TV text, captions included, is ≥ 20 sp: `type.tv.caption` was raised from 16 / 22 to **20 / 26** after the 10-foot review (16 sp captions — the top bar's "N alive", the clue rule line, scoreboard headers, the pause note — were too small from the couch). Caption stays distinct from `body` by its tighter line height, muted colour and placement, not by size.
 
 | Token | Size / line height (Latin) | Line height (AR) | Weight | Tracking | Used for |
 |---|---|---|---|---|---|
@@ -237,7 +237,7 @@ Minimum readable size is **16 sp**. Anything a player must read during play is *
 | `type.tv.titleS` | 22 / 28 | 34 | 600 | 0 | Settings row labels, list items |
 | `type.tv.body` | 20 / 28 | 34 | 600 | 0 | Instructions, descriptions |
 | `type.tv.label` | 20 / 24 | 30 | 700 | +2 % (Latin only) | Buttons (`labelLarge`) |
-| `type.tv.caption` | 16 / 22 | 26 | 600 | +1 % (Latin only) | Badges, hints, the join URL, footers |
+| `type.tv.caption` | 20 / 26 | 30 | 600 | +1 % (Latin only) | Badges, hints, footers, the top bar's "N alive", table headers |
 | `type.tv.timer` | 40 / 44 | — | 900, `tnum` | 0 | Timer numerals |
 
 Body text uses weight 600, not 400: at 10 ft, regular Cairo strokes break up on cheap panels.
@@ -528,7 +528,7 @@ Haptics come only from user gestures or right after one, as the API requires (RE
 - **Back** follows TV-DB. **Lobby (TV-02) is the root: Back exits the app immediately, with no confirmation.** Home (TV-01) is only a splash. **During a game and on Results, Back opens the pause menu (TV-12)** and never exits silently. Back inside a dialog or menu closes it.
 - **No Menu-key dependency** (TV-DM). Every action is reachable with the 5-way D-pad.
 - **Top bar** (y 27–75 dp) on every in-game screen: start side shows "GAME {count}" during ROLE_REVEAL (`game.label`; `round` is 0 there) and "ROUND {count} · <phase>" afterwards (`round.label` + `phase.*`). End side shows a mini room code `KXQP`, the alive count (`common.aliveCount`), and a `wifi-off` chip when the TV's socket is degraded.
-- **Long names** are truncated with an ellipsis at 12 graphemes on tiles and 20 in the spotlight. Names come from players, so render them with `TextOverflow.Ellipsis` and `maxLines = 1`.
+- **Long names** are truncated with an ellipsis at 12 graphemes on tiles and 20 in the spotlight. The TV-05 order strip uses **width-only** truncation (one ellipsis at the item's text width, no grapheme pre-cut), so a name is never cut twice ("Nour …"). Names come from players, so render them with `TextOverflow.Ellipsis` and `maxLines = 1`.
 - **The TV never shows secrets.** No word or role of a living player, and no Blank guess text, ever appears before RESULTS (SPEC §5.4).
 
 ### TV-01 Home / splash
@@ -685,14 +685,14 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                          \   +------+   /                              |
 |                            '----------'                                |
 |                         LINA'S CLUE           (displayM, name in text) |
-|                     Say it out loud, then tap Done                     |
+|          Say it out loud, then end the turn on your phone              |
 | ---------------------------------------------------------------------  |
 |  [O]v  >  [#]v  >  (*)NOW  >  [^]  >  [<>]  >  [+]     ( Skip turn )   |
 |  Maya     Rami     Lina       Joe     Nour     Ziad                    |
 +------------------------------------------------------------------------+
 ```
-- **Spotlight:** a radial cone of `primary` at 12 % from the top centre onto the speaker. The avatar is 160 dp with the "Speaking" state, and the **timer ring (216 dp, 8 dp stroke) wraps the avatar** with the seconds number at its top end (`type.tv.timer`). The ring is `text` until 10 s, `accent` until 5 s, then `danger` with a pulse and `sfx.tick`. Timer Off: no ring, and the caption reads `clues.noTimer`.
-- **Order strip** (bottom, y 447–513): every alive player in this round's speaking order, 48 dp avatars with first names in **`type.tv.titleS` (22 sp)**, truncated at 8 graphemes; the current speaker's full name is shown in the spotlight. Done = `check` and 60 % opacity; current = a 1.25× scale and a `primary` underline bar 4 dp; upcoming = full opacity. Chevrons between them follow the reading direction. In a tie-break round, only the tied players appear.
+- **Spotlight:** a radial cone of `primary` at 12 % from the top centre onto the speaker. The avatar is 160 dp with the "Speaking" state, and the **timer ring (216 dp, 8 dp stroke) wraps the avatar** with the seconds number at its top end (`type.tv.timer`). The ring is `text` until 10 s, `accent` until 5 s, then `danger` with a pulse and `sfx.tick`. Timer Off: no ring, and the line reads `tv.cluesNoTimer`. The sub-line under the name is `tv.cluesSub` (the speaker ends the turn on their phone; the TV never says "tap", since it is used only with a remote).
+- **Order strip** (bottom action bar, **y 417–513**, 96 dp; 102 dp in Arabic for the taller line): every alive player in this round's speaking order in **104 dp items**: a 48 dp avatar, 2 dp, the name in **`type.tv.titleS` (22 sp)** truncated **once**, by a single end ellipsis at the item's 96 dp text width (no grapheme pre-cut), 4 dp, the 4 dp current-speaker underline, and 2 dp to the bottom safe line, so the names and the underline always end inside the safe area. The current speaker's full name is shown in the spotlight. Done = `check` and 60 % opacity; current = a 1.25× scale and a `primary` underline bar 4 dp; upcoming = full opacity. Chevrons between them follow the reading direction. In a tie-break round, only the tied players appear.
 - **Skipped (away) player:** the tile flashes `wifi-off`, the toast `clues.skipped` appears, and the spotlight moves on.
 - **Speaker drops mid-turn:** the turn is kept (SPEC §4.8). The spotlight avatar shows the away badge; the timer continues (with the timer off, a 15 s grace timer appears).
 - **Focus:** the action pill **Skip turn** (`clues.skipTurn`, double-OK → `HOST_ADVANCE`). Back → pause.
@@ -1758,6 +1758,8 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | `tv.startNow` | Commencer | يلّا هلّق |
 | `tv.pressAgain` | Appuyez encore sur OK pour confirmer | كبسوا OK مرّة تانية للتأكيد |
 | `tv.skipHint` | Appuyez sur OK pour passer | OK للتخطّي |
+| `tv.cluesSub` | Dites-le à voix haute, puis terminez le tour sur votre téléphone | قولوها بصوت عالي، وبعدها خلّصوا الدور من التلفون |
+| `tv.cluesNoTimer` | Sans chrono : terminez le tour sur votre téléphone quand c'est fini | بلا وقت: خلّصوا الدور من التلفون لمّا تخلصوا |
 | `tv.pauseTitle` | Menu de la partie | قائمة اللعبة |
 | `tv.pauseNote` | La partie continue | اللعبة مكمّلة |
 | `tv.resume` | Reprendre | كمّل |
@@ -2054,7 +2056,7 @@ fun mishTypeScale(arabic: Boolean): MishTypeScale {
         titleS   = style(22, if (arabic) 34 else 28, FontWeight.SemiBold),
         body     = style(20, if (arabic) 34 else 28, FontWeight.SemiBold),
         label    = style(20, if (arabic) 30 else 24, FontWeight.Bold, t(0.02)),
-        caption  = style(16, if (arabic) 26 else 22, FontWeight.SemiBold, t(0.01)),
+        caption  = style(20, if (arabic) 30 else 26, FontWeight.SemiBold, t(0.01)),
         timer    = style(40, 44, FontWeight.Black, tnum = true),
     )
 }

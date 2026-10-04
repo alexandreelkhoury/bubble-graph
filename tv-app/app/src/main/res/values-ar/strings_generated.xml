@@ -309,6 +309,8 @@
     <string name="tv__start_now">يلّا هلّق</string>
     <string name="tv__press_again">كبسوا OK مرّة تانية للتأكيد</string>
     <string name="tv__skip_hint">كبسوا OK للتخطّي</string>
+    <string name="tv__clues_sub">قولوها بصوت عالي، وبعدها خلّصوا الدور من التلفون</string>
+    <string name="tv__clues_no_timer">بلا وقت: خلّصوا الدور من التلفون لمّا تخلصوا</string>
     <string name="tv__back_to_categories">رجوع: الفئات</string>
     <string name="tv__pause_title">قائمة اللعبة</string>
     <string name="tv__pause_note">اللعبة مكمّلة</string>

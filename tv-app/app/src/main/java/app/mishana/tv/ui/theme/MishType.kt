@@ -60,7 +60,7 @@ fun mishTypeScale(arabic: Boolean): MishTypeScale {
         titleS = style(22, if (arabic) 34 else 28, FontWeight.SemiBold),
         body = style(20, if (arabic) 34 else 28, FontWeight.SemiBold),
         label = style(20, if (arabic) 30 else 24, FontWeight.Bold, t(0.02)),
-        caption = style(16, if (arabic) 26 else 22, FontWeight.SemiBold, t(0.01)),
+        caption = style(20, if (arabic) 30 else 26, FontWeight.SemiBold, t(0.01)),
         timer = style(40, 44, FontWeight.Black),
     )
 }

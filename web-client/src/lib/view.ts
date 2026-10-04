@@ -84,7 +84,7 @@ export function afterElimination(view: Pick<PublicView, "phase" | "eliminated" |
 }
 
 /** TV-05 speaking-order strip geometry (dp, Kotlin OrderStrip): fixed-width items, chevrons between, "+n" counters. */
-export const ORDER_STRIP = { item: 84, chevron: 24, more: 48 } as const;
+export const ORDER_STRIP = { item: 104, chevron: 24, more: 48 } as const;
 
 /**
  * Which part of the order fits `width` dp: everything with chevrons, else everything without them, else a window of

@@ -272,6 +272,8 @@ object I18nKeys {
         "tv.startNow" to R.string.tv__start_now,
         "tv.pressAgain" to R.string.tv__press_again,
         "tv.skipHint" to R.string.tv__skip_hint,
+        "tv.cluesSub" to R.string.tv__clues_sub,
+        "tv.cluesNoTimer" to R.string.tv__clues_no_timer,
         "tv.backToCategories" to R.string.tv__back_to_categories,
         "tv.pauseTitle" to R.string.tv__pause_title,
         "tv.pauseNote" to R.string.tv__pause_note,

@@ -289,6 +289,8 @@
     <string name="tv__start_now">Start now</string>
     <string name="tv__press_again">Press OK again to confirm</string>
     <string name="tv__skip_hint">Press OK to skip</string>
+    <string name="tv__clues_sub">Say it out loud, then end the turn on your phone</string>
+    <string name="tv__clues_no_timer">No timer: end the turn on your phone when you\'re done</string>
     <string name="tv__back_to_categories">Back: categories</string>
     <string name="tv__pause_title">Game menu</string>
     <string name="tv__pause_note">The game keeps running</string>

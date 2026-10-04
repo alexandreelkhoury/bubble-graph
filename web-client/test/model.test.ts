@@ -83,11 +83,11 @@ describe("what follows ELIMINATION (Kotlin afterElimination parity)", () => {
 
 describe("TV-05 order strip window (Kotlin OrderStrip)", () => {
   it("shows everyone with chevrons, then without, then a window around the speaker with +n counts", () => {
-    expect(orderWindow(5, 2, 600)).toEqual({ chevrons: true, start: 0, end: 5 }); // 5 × 84 + 4 × 24 = 516
-    expect(orderWindow(6, 2, 520)).toEqual({ chevrons: false, start: 0, end: 6 }); // 504 fits without chevrons
-    expect(orderWindow(12, 0, 520)).toEqual({ chevrons: false, start: 0, end: 5 }); // (520 − 96) / 84 = 5 slots
-    expect(orderWindow(12, 6, 520)).toEqual({ chevrons: false, start: 5, end: 10 }); // one finished player before
-    expect(orderWindow(12, 11, 520)).toEqual({ chevrons: false, start: 7, end: 12 });
+    expect(orderWindow(5, 2, 640)).toEqual({ chevrons: true, start: 0, end: 5 }); // 5 × 104 + 4 × 24 = 616
+    expect(orderWindow(6, 2, 630)).toEqual({ chevrons: false, start: 0, end: 6 }); // 624 fits without chevrons
+    expect(orderWindow(12, 0, 620)).toEqual({ chevrons: false, start: 0, end: 5 }); // (620 − 96) / 104 = 5 slots
+    expect(orderWindow(12, 6, 620)).toEqual({ chevrons: false, start: 5, end: 10 }); // one finished player before
+    expect(orderWindow(12, 11, 620)).toEqual({ chevrons: false, start: 7, end: 12 });
     expect(orderWindow(12, 3, 50)).toEqual({ chevrons: false, start: 2, end: 3 }); // never fewer than one item
   });
   it("cuts names in graphemes", () => {

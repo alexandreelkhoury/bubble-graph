@@ -105,7 +105,7 @@
   --tv-titleS: 600 22px/28px var(--font-sans);
   --tv-body: 600 20px/28px var(--font-sans);
   --tv-label: 700 20px/24px var(--font-sans);
-  --tv-caption: 600 16px/22px var(--font-sans);
+  --tv-caption: 600 20px/26px var(--font-sans);
   --tv-timer: 900 40px/44px var(--font-sans);
   --tv-focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 5px var(--color-focus), 0 0 18px 4px rgb(var(--rgb-primary) / 0.45);
 }
@@ -118,7 +118,7 @@
   --tv-titleS: 600 22px/34px var(--font-sans);
   --tv-body: 600 20px/34px var(--font-sans);
   --tv-label: 700 20px/30px var(--font-sans);
-  --tv-caption: 600 16px/26px var(--font-sans);
+  --tv-caption: 600 20px/30px var(--font-sans);
 }
 
 /* Arabic: looser lines, no tracking */
