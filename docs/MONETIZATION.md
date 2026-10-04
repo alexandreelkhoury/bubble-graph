@@ -117,17 +117,23 @@ For a France-based seller of digital goods to EU consumers, VAT is due at the bu
 
 ## 5. Recommendation
 
-### 5.1 v1 model
+### 5.1 v1 model — DECIDED by the owner (2026-10-04)
+
+The owner chose to combine a subscription with à-la-carte packs, replacing the "one Full SKU, no subscription" suggestion that was here before.
 
 | Item | Decision |
 |---|---|
-| What is sold | **"Mish Ana! Full"**: a one-time, **non-consumable** Play in-app product that unlocks all game modes and settings (e.g. Mr. White, custom timers, more than N players) and all current word packs. Later, optional **word packs** as separate non-consumables ($1.99–2.99). |
-| Free tier | Core game with one base pack (AR/FR/EN) and a player cap. Fully playable, so the game spreads. |
-| Who pays | **Host TV only.** Phones never pay and never see a buy button, the same "one-for-all" approach as Jackbox and AirConsole. |
-| Price | US$4.99 in the US/EU (France €4.99). Use Play's per-country pricing to set a **lower Lebanon / Middle East price** (e.g. about $2.99) **(owner decision)**. |
-| Subscription? | **No** for v1. A party game is used occasionally, and subscriptions need grace-period and account-hold handling. Revisit with v2 content cadence. |
-| Rail on Android TV | **Google Play Billing only** (Play Billing Library 9.1+). |
-| Phone-web purchase | **No in v1.** Not policy-safe while the TV app shows the QR code (rest of world, and no TV billing choice in the EEA). Re-evaluate after Google extends billing choice to TV or to the rest of world (≥ 2027-09-30). Even then, sales must go through the choice screen and be reported. |
+| Free tier | Core game: full rules, 3–12 players, **one starter pack per language** (EN/FR/AR). |
+| **Premium subscription** | `premium` (Play subscription). Base plans: **monthly about $4.99** and **yearly about $29.99**, with a **7-day free trial** offer for new subscribers. Unlocks **every pack, including packs released later**, plus premium settings. |
+| **Single packs** | One-time **non-consumable** Play products `pack_<packId>` at about $1.99–2.99, **owned forever**, whether or not the buyer subscribes. Every premium pack is sold this way, including the Lebanese pack. |
+| Lifetime unlock | None. |
+| Who pays | **The host TV only.** Phones never pay and never see a buy button. |
+| Prices by region | Use Play's per-country pricing. Suggested: about 40% lower in Lebanon and the Middle East. **Exact prices are set in Play Console (owner decision).** |
+| Seller | **The owner as an individual** Play developer account. Payouts go to a personal bank account. Check Play Console's current rules for individual accounts. For example, new personal accounts must run a closed test with testers before going to production (unverified for 2026; check in Play Console). |
+| Rail on Android TV | **Google Play Billing only.** |
+| Phone-web purchase | **None.** Not policy-safe (see §1.3). The phone only shows "Unlock on the TV". |
+
+Entitlement = `premium` if a subscription is active (including the trial and the grace period), **plus** the set of owned `pack_*` products. A room's playable packs are the free packs, plus all packs if premium, plus the host's owned packs.
 
 ### 5.2 Entitlement architecture (account-less)
 
@@ -162,10 +168,10 @@ Cron Trigger (daily) ──Voided Purchases API──▶ revoke refunded tokens
 
 | # | Decision | Suggested default |
 |---|---|---|
-| 1 | Which legal entity sells: France (company or micro-entreprise) or Lebanon | **France**, for easier Stripe/Paddle/Apple access and EUR payouts |
-| 2 | Free tier limits (players, modes, packs) | Base pack + max 8 players |
-| 3 | Price points by region | $4.99 / €4.99; about $2.99 Lebanon/ME |
-| 4 | Product split: one "Full" SKU only, or also à-la-carte packs | One SKU at launch; packs later |
+| 1 | Seller | **Decided:** the owner, as an individual |
+| 2 | Free tier | **Decided:** core game, 1 starter pack per language |
+| 3 | Price points by region | Open: about $4.99/mo, $29.99/yr, packs $1.99–2.99; lower in Lebanon/ME |
+| 4 | Product split | **Decided:** `premium` subscription (monthly + yearly, 7-day trial) plus `pack_*` non-consumables |
 | 5 | Accounts in v1? | No (account-less, keyed by Google purchase token) |
 | 6 | Apple TV timing | After Android TV hits product-market fit |
 
