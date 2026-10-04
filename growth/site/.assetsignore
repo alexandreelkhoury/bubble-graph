@@ -1,0 +1,14 @@
+# The assets directory is now dist/ (built by `node build.mjs`), so sources are never uploaded.
+# Kept as a safety net in case "directory" is ever pointed back at the project root.
+wrangler.jsonc
+.assetsignore
+README.md
+node_modules
+.wrangler
+*.md
+*.mjs
+worker
+content
+site.config.json
+.git
+.gitignore

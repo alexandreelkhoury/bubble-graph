@@ -1,0 +1,28 @@
+// Cloudflare Workers static-assets site. NOT deployed yet.
+// Deploy later with:  npx wrangler deploy   (from this folder, after `npx wrangler login`)
+// `wrangler deploy` / `wrangler dev` first run `node build.mjs` (see "build"), which writes the site to dist/.
+// Only dist/ is uploaded: sources, .git, node_modules, *.md and the build script never reach the CDN.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mishana-site",
+  "compatibility_date": "2026-10-01",
+  // Tiny Worker for the cookieless /e event endpoint (see worker/index.js). Everything else is a static asset.
+  "main": "worker/index.js",
+  // Build step: pre-renders /, /fr/, /ar/, the guides, sitemap.xml, robots.txt and llms.txt with the origin from site.config.json.
+  "build": { "command": "node build.mjs", "watch_dir": ["content", "assets", "privacy"] },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/e"]
+  },
+  // Workers Analytics Engine dataset for the events (created on first write; query it with the SQL API).
+  "analytics_engine_datasets": [
+    { "binding": "EVENTS", "dataset": "mishana_site_events" }
+  ]
+  // Custom domain: uncomment and set once the domain is on Cloudflare (same host as "origin" in site.config.json),
+  // then set "workers_dev": false so the *.workers.dev copy of the site stops being served (duplicate content).
+  // "routes": [{ "pattern": "www.example.com", "custom_domain": true }],
+  // "workers_dev": false
+}
