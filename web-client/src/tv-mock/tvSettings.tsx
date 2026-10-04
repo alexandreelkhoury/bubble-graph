@@ -22,6 +22,7 @@ import { displayInstallId } from "./roomLife";
 import { openShop } from "./shopState";
 import { soundCue } from "./sound/controller";
 import { settingLocked } from "../lib/premium";
+import { billingEnabled } from "../lib/billingFlag";
 import { focusables, isBackKey, nearest, useInitialFocus } from "./dpad";
 import type { Arrow } from "./dpad";
 import { SoundToggle } from "./sound/SoundToggle";
@@ -33,9 +34,9 @@ const TV_CATEGORIES: readonly TvCategory[] = [...CATEGORIES, "about"];
 
 /** TV-03 About (PAYMENTS-SPEC §3.12): read-only, nothing focusable; the owner reads the install id for `pnpm grant`. */
 function AboutPanel() {
-  let id: string | null;
+  let id: string | null = null;
   try {
-    id = billing.installId();
+    if (billingEnabled.value) id = billing.installId(); // the id only serves `pnpm grant` (comp premium)
   } catch {
     id = null; // storage unavailable: nothing to show
   }

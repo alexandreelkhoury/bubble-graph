@@ -8,6 +8,8 @@ export interface Env {
   JOIN_BASE_URL: string;
   ALLOWED_ORIGINS: string;
   DEBUG_INVARIANTS: string;
+  /** "1" turns premium/billing on (config.ts); anything else, or unset, keeps it entirely off. */
+  BILLING_ENABLED?: string;
   // PAYMENTS-SPEC §3.2. Secrets are optional at the type level: local dev (fake mode) runs without them.
   BILLING: DurableObjectNamespace<Billing>;
   BILLING_LIMITER: RateLimit;

@@ -221,7 +221,7 @@ fun LobbyScreen(
                             }
                         }
                     }
-                    SettingsSummary(view)
+                    SettingsSummary(view, premiumChip = view.premium && onOpenStore != null)
                 }
                 Spacer(Modifier.height(10.dp))
                 PlayerGrid(
@@ -413,7 +413,7 @@ private fun PlayerCounter(count: Int) {
 
 /** Top-end summary (2 caption lines) + the start blocker line; flashes accent when the settings change. */
 @Composable
-private fun SettingsSummary(view: TvView) {
+private fun SettingsSummary(view: TvView, premiumChip: Boolean = view.premium) {
     val type = MishTheme.type
     val s = view.settings
     val packs = if (s.packIds.isEmpty()) {
@@ -449,7 +449,7 @@ private fun SettingsSummary(view: TvView) {
             .padding(horizontal = 8.dp, vertical = 2.dp),
         horizontalAlignment = Alignment.End,
     ) {
-        if (view.premium) {
+        if (premiumChip) { // false while billing is off (no Store): a billing-off room projects premium:true
             // §4.4: premium status lives here, at the start of the first line (not on the Premium button). Inline, so the
             // summary keeps its height and the grid never moves (Arabic caption lines are 30 dp).
             Row(verticalAlignment = Alignment.CenterVertically) {

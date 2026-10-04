@@ -9,6 +9,7 @@ import { billingModeForRequest } from "./billing/mode";
 import { verifyEntitlementToken, verifyKeysFromSecret } from "./billing/token";
 import type { RoomEntitlement } from "./billing/token";
 import { generateRoomCode } from "./codes";
+import { billingEnabled } from "./config";
 import type { Env } from "./env";
 import { isOriginAllowed } from "./origin";
 import type { InitRoomArgs, InitRoomResult } from "./room-core";
@@ -90,7 +91,8 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
     const r = CreateRoomRequest.safeParse(parsed);
     if (!r.success) return httpError("BAD_MESSAGE", 400);
     locale = r.data.locale ?? "en";
-    entitlementToken = r.data.entitlement ?? null;
+    // BILLING_ENABLED off: a token is ignored (never verified), so the room is created as with none.
+    entitlementToken = billingEnabled(env) ? r.data.entitlement ?? null : null;
   }
   // PAYMENTS-SPEC §3.10/§3.11: the billing mode is decided here, once, from the request; the token is verified before
   // a code is drawn. An invalid or expired token gives a free room (the TV refreshes on "INVALID").

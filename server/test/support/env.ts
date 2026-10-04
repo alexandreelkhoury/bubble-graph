@@ -10,6 +10,7 @@ export function fakeEnv(over: Partial<Env> = {}): Env {
     JOIN_BASE_URL: "",
     ALLOWED_ORIGINS: "",
     DEBUG_INVARIANTS: "0",
+    BILLING_ENABLED: "1", // the billing tests exercise billing on; config.test.ts covers off
     BILLING: {} as Env["BILLING"],
     BILLING_LIMITER: ok,
     RTDN_LIMITER: ok,

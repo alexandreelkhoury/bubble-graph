@@ -11,6 +11,7 @@ import { RoomCode, Tile } from "./tvParts";
 import { tvAct, tvScreen } from "./tvStore";
 import { openDialog, openLanguages } from "./tvDialogs";
 import { openShop } from "./shopState";
+import { billingEnabled } from "../lib/billingFlag";
 
 const GRID_COLS = 4;
 
@@ -57,7 +58,7 @@ export function TvLobby({ view }: { view: TvView }) {
     const over = b.scrollWidth > b.clientWidth + 1;
     if (over) b.classList.add("is-tight");
     setTight(over);
-  }, [l]);
+  }, [l, billingEnabled.value]);
   const slots = Array.from({ length: MAX_PLAYERS }, (_, i) => view.players[i] ?? null);
   const firstEmpty = view.players.length;
   const onStart = (): void => {
@@ -102,7 +103,7 @@ export function TvLobby({ view }: { view: TvView }) {
 
       <div class="tvlobby__summary" key={flash} data-flash={flash > 0 ? "1" : undefined}>
         {/* §4.4: the premium chip leads the summary; inline, so the summary keeps its two lines above the grid. */}
-        <span>{view.premium && <span class="tvlobby__premium"><Icon name="gem" size={20} />{t("lobby.premiumRoom")}</span>}{packsLine(s, view.availablePacks, l)} · {LOCALE_NATIVE_NAME[s.wordLocale]}</span>
+        <span>{view.premium && billingEnabled.value && <span class="tvlobby__premium"><Icon name="gem" size={20} />{t("lobby.premiumRoom")}</span>}{packsLine(s, view.availablePacks, l)} · {LOCALE_NATIVE_NAME[s.wordLocale]}</span>
         <span>{roleSummaryText(view)} · {t(s.winRule === "official" ? "settings.winRuleOfficial" : "settings.winRuleParity")}</span>
       </div>
       <div class="tvlobby__players">
@@ -124,10 +125,12 @@ export function TvLobby({ view }: { view: TvView }) {
       <div class={`tvbottom tvbottom--lobby${tight ? " is-tight" : ""}`} ref={bar} onKeyDown={onBarKey}>
         {/* PAYMENTS-SPEC §4.4: Premium first, icon-only (the labelled button does not fit the 542 dp bar next to
             Settings, Language and Start), with its fixed label as the focus tooltip and accessible name. */}
-        <button type="button" class="tvbtn tvbtn--icon" data-lobby="premium" aria-haspopup="true" aria-label={t("lobby.premium")}
-          onClick={() => openShop({ focusProductId: null, origin: "LOBBY_BUTTON" })}>
-          <Icon name="gem" /><span class="tvtip" aria-hidden="true">{t("lobby.premium")}</span>
-        </button>
+        {billingEnabled.value && (
+          <button type="button" class="tvbtn tvbtn--icon" data-lobby="premium" aria-haspopup="true" aria-label={t("lobby.premium")}
+            onClick={() => openShop({ focusProductId: null, origin: "LOBBY_BUTTON" })}>
+            <Icon name="gem" /><span class="tvtip" aria-hidden="true">{t("lobby.premium")}</span>
+          </button>
+        )}
         <button type="button" ref={settingsRef} class="tvbtn" data-lobby="settings" data-default-focus={startFirst ? undefined : true} onClick={() => { tvScreen.value = "settings"; }}><Icon name="settings" />{t("lobby.settings")}</button>
         <button type="button" class="tvbtn tvbtn--lang" aria-haspopup="dialog" aria-label={LOCALE_NATIVE_NAME[l]} onClick={openLanguages}>
           <Icon name="globe" /><span class="tvbtn__label">{LOCALE_NATIVE_NAME[l]}</span><span class="tvtip" aria-hidden="true">{LOCALE_NATIVE_NAME[l]}</span>

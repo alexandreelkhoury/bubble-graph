@@ -326,7 +326,7 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
                                     v == null -> HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom, onOpenDebug)
                                     frame.key == ScreenKey.Lobby -> LobbyScreen(
                                         v, send, { c -> settingsCategory = c; settingsOpen = true }, toasts,
-                                        onOpenStore = if (vm.billingState != null) openStore else null,
+                                        onOpenStore = if (vm.billingState != null && s.billingEnabled) openStore else null,
                                     )
                                     frame.key == ScreenKey.Settings -> SettingsScreen(
                                         view = v,
@@ -338,9 +338,9 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
                                         toasts = toasts,
                                         soundOn = !soundMuted,
                                         onToggleSound = { vm.setSoundMuted(!soundMuted) },
-                                        onOpenStore = if (vm.billingState != null) openStore else null,
+                                        onOpenStore = if (vm.billingState != null && s.billingEnabled) openStore else null,
                                         billingUnavailable = billing.billingUnavailable,
-                                        installId = installId,
+                                        installId = if (s.billingEnabled) installId else null,
                                         appVersion = BuildConfig.VERSION_NAME,
                                     )
                                     frame.key == ScreenKey.RoleReveal -> RoleRevealScreen(v, s.clockOffsetMs, send)

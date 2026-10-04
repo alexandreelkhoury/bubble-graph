@@ -4,6 +4,7 @@ import type { ComponentType } from "preact";
 import { goHome, route } from "./router";
 import { conn, fatalCode, me, menuOpen, resuming, view } from "./state/store";
 import { leave, startSession, stopSession } from "./state/session";
+import { loadBillingFlag } from "./lib/billingFlag";
 import { CLOSE } from "./net/connection";
 import { t } from "./i18n/t";
 import { ConnBanner } from "./components/ConnBanner";
@@ -35,6 +36,7 @@ function Loading() {
 
 function Room({ code }: { code: string }) {
   useEffect(() => {
+    void loadBillingFlag();
     startSession(code);
     return () => stopSession();
   }, [code]);

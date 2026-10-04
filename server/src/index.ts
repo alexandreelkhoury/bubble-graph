@@ -6,6 +6,7 @@ import { ADMIN_PREFIX, handleAdmin } from "./admin";
 import { BILLING_PREFIX, handleBilling, productionBillingDeps } from "./billing/routes";
 import { runCron } from "./billing/cron";
 import type { BillingStore } from "./billing/billing-core";
+import { billingEnabled, billingGate, CONFIG_PATH, handleConfig } from "./config";
 import type { Env } from "./env";
 import { createRoom, healthz, httpError } from "./http";
 import { originCheck } from "./origin";
@@ -40,6 +41,9 @@ async function fetch(req: Request, env: Env): Promise<Response> {
         now: () => Date.now(),
       });
     }
+    if (path === CONFIG_PATH) return handleConfig(req, env);
+    const gated = billingGate(path, env);
+    if (gated) return gated;
     if (path.startsWith(BILLING_PREFIX)) return handleBilling(req, env, productionBillingDeps(env));
     if (path.startsWith(ADMIN_PREFIX)) {
       const deps = productionBillingDeps(env);
@@ -71,6 +75,7 @@ async function fetch(req: Request, env: Env): Promise<Response> {
 
 /** PAYMENTS-SPEC §3.8: hourly ack retries, daily voided purchases + prune. Dispatches on `controller.cron`. */
 function scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): void {
+  if (!billingEnabled(env)) return; // BILLING_ENABLED off: no Billing DO, no Google calls
   const deps = productionBillingDeps(env);
   ctx.waitUntil(runCron(env, controller.cron, { store: deps.store() as BillingStore, api: deps.google(env), now: deps.now }));
 }

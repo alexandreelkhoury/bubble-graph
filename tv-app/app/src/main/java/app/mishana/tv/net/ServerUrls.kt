@@ -23,6 +23,9 @@ object ServerUrls {
 
     fun apiRoomsUrl(serverUrl: String): String = serverUrl.trim().trimEnd('/') + "/api/rooms"
 
+    /** `GET /api/config`: the server's BILLING_ENABLED switch. */
+    fun apiConfigUrl(serverUrl: String): String = serverUrl.trim().trimEnd('/') + "/api/config"
+
     /** `joinUrl` without scheme and path, for the lobby host line (`lobby.orVisit`). */
     fun displayHost(joinUrl: String): String {
         val noScheme = joinUrl.substringAfter("://", joinUrl)

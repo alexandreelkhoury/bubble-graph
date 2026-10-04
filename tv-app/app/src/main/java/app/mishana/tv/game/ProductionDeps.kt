@@ -26,6 +26,7 @@ internal fun productionDeps(app: Application): GameDeps {
         serverUrl = { prefs.effectiveServerUrl() },
         appLocale = { LocaleController.currentLanguage() },
         createRoom = { baseUrl, locale, entitlement -> RoomApi.createRoom(baseUrl, locale, entitlement) },
+        billingEnabled = { baseUrl -> RoomApi.billingEnabled(baseUrl) },
         newConnection = { scope, url -> RoomSocket(serverUrl = url, scope = scope) },
         sound = SoundPoolPlayer(app),
         loadMuted = { soundPrefs.muted },

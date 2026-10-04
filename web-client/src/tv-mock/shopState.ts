@@ -3,6 +3,7 @@ import { billing } from "./billing";
 import type { StoreEntry } from "./billing/model";
 import { refocus } from "./dpad";
 import { tvShop, tvView } from "./tvStore";
+import { billingEnabled } from "../lib/billingFlag";
 
 let opener: Element | null = null;
 /** Bounds the catalog fetch while the Store shows "Loading" (§4.4: 10 s → unavailable). */
@@ -19,7 +20,7 @@ export async function loadStoreCatalog(): Promise<void> {
 }
 
 export function openShop(entry: StoreEntry): void {
-  if (tvView.value?.phase !== "LOBBY") return;
+  if (tvView.value?.phase !== "LOBBY" || !billingEnabled.value) return;
   opener = document.activeElement;
   tvShop.value = entry;
   billing.setStoreVisible(true);

@@ -54,6 +54,8 @@ sealed interface TvUiState {
         val paused: Boolean,
         /** PAYMENTS-SPEC §4.4: the Store overlay (LOBBY only), or null. */
         val store: StoreEntry? = null,
+        /** The server's BILLING_ENABLED for this room (`GET /api/config`). false: no Premium button, chip, Store or install id. */
+        val billingEnabled: Boolean = true,
     ) : TvUiState
     data class Fatal(val messageKey: String) : TvUiState
 }
@@ -93,6 +95,8 @@ class GameDeps(
     val saveMuted: (Boolean) -> Unit = {},
     /** Premium / packs (PAYMENTS-SPEC §4); null = no billing (free rooms only). */
     val billing: RoomBilling? = null,
+    /** `GET /api/config` before each room: false = the server has billing off (no token, no billing messages or UI). */
+    val billingEnabled: suspend (baseUrl: String) -> Boolean = { true },
     /** PAYMENTS-SPEC §2.1 install id, shown in Settings → About (§3.12 admin grants); null = none on this build. */
     val installId: () -> String? = { null },
 )
@@ -166,6 +170,9 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     private var billingRetryJob: Job? = null
     private var storeOpenRetry = false
 
+    /** The server's BILLING_ENABLED, read before each room is created (fail closed). */
+    private var billingOn = true
+
     init {
         billing?.let { b ->
             viewModelScope.launch { b.events.collect { onBillingEvent(it) } }
@@ -183,7 +190,8 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         _ui.value = TvUiState.CreatingRoom
         createJob = viewModelScope.launch {
             val resp = try {
-                deps.createRoom(deps.serverUrl(), deps.appLocale(), billing?.tokenForCreate())
+                billingOn = try { deps.billingEnabled(deps.serverUrl()) } catch (e: CancellationException) { throw e } catch (e: Exception) { false }
+                deps.createRoom(deps.serverUrl(), deps.appLocale(), if (billingOn) billing?.tokenForCreate() else null)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: CreateRoomException) {
@@ -194,7 +202,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 return@launch
             }
             openRoom(resp)
-            billing?.onCreateRoomEntitlement(resp.entitlement)
+            if (billingOn) billing?.onCreateRoomEntitlement(resp.entitlement)
             if (announceNewCode) _events.tryEmit(TvEvent.NewCode(resp.code))
         }
     }
@@ -212,6 +220,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
             clockOffsetMs = 0L,
             lastError = null,
             paused = false,
+            billingEnabled = billingOn,
         )
         // Subscribe before connecting so nothing is missed.
         roomJobs = listOf(
@@ -267,7 +276,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 if (firstOfSocket) onSessionReady()
                 announce(before, msg.view)
                 for (c in SoundCues.viewCues(before, msg.view)) playCue(c)
-                if (billing != null) {
+                if (billing != null && billingOn) {
                     for (key in lobbyNotices.onView(before, msg.view)) showBillingToast(BillingToast(key))
                     toastQueue.flush(storeOpen(), msg.view.phase)?.let { _events.tryEmit(TvEvent.Billing(it)) }
                 }
@@ -497,6 +506,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     }
 
     private fun onBillingEvent(e: BillingEvent) {
+        if (!billingOn) return // server billing off: no entitlement sends, toasts or grants
         when (e) {
             is BillingEvent.Token -> sendEntitlement(e.token)
             is BillingEvent.Toast -> showBillingToast(BillingToast(e.key, e.arg))
@@ -534,7 +544,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     fun openStore(entry: StoreEntry) {
         val s = _ui.value as? TvUiState.InRoom ?: return
         val view = s.view ?: return
-        if (view.phase != Phase.LOBBY || billing == null) return
+        if (view.phase != Phase.LOBBY || billing == null || !s.billingEnabled) return
         _ui.value = s.copy(store = entry)
         billing.openStore(view.lockedPacks)
         toastQueue.flush(true, view.phase)?.let { _events.tryEmit(TvEvent.Billing(it)) }

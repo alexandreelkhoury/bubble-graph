@@ -108,7 +108,7 @@ class GameViewModelBillingTest {
 
     @After fun tearDown() = Dispatchers.resetMain()
 
-    private fun TestScope.newVm(): GameViewModel {
+    private fun TestScope.newVm(billingEnabled: Boolean = true): GameViewModel {
         val vm = GameViewModel(
             Application(),
             GameDeps(
@@ -121,6 +121,7 @@ class GameViewModelBillingTest {
                 newConnection = { _, _ -> FakeConnection().also { connections += it } },
                 clock = { 1_790_000_000_000L },
                 billing = billing,
+                billingEnabled = { billingEnabled },
             ),
         )
         advanceUntilIdle()
@@ -138,6 +139,25 @@ class GameViewModelBillingTest {
         assertEquals(listOf<String?>("stored-token"), createTokens)
         assertEquals(listOf<String?>("INVALID"), billing.createStatuses)
         assertEquals(true, billing.inRoom.last())
+    }
+
+    /** Server BILLING_ENABLED off (`GET /api/config` → billing:false): a free-game room, nothing billing goes out. */
+    @Test
+    fun billingOffSendsNoTokenNoBillingMessagesAndOpensNoStore() = runTest(dispatcher) {
+        val vm = newVm(billingEnabled = false)
+        assertEquals(listOf<String?>(null), createTokens)
+        assertTrue(billing.createStatuses.isEmpty())
+        val conn = connections.single()
+        conn.state.value = ConnState.OPEN
+        conn.state(lobby)
+        advanceUntilIdle()
+        assertEquals(false, (vm.ui.value as TvUiState.InRoom).billingEnabled)
+        billing.events.emit(BillingEvent.Token("t1"))
+        vm.openStore(StoreEntry(null, StoreOrigin.LOBBY_BUTTON))
+        advanceUntilIdle()
+        assertEquals(0, billing.opened)
+        assertNull((vm.ui.value as TvUiState.InRoom).store)
+        assertTrue(conn.sent.none { it is EntitlementMsg || it is StoreOpenMsg })
     }
 
     @Test

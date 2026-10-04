@@ -11,6 +11,7 @@ import { pushToast, resetClock, sampleClock } from "../state/store";
 import { soundCue, soundOnView, soundReset } from "./sound/controller";
 import { billing } from "./billing";
 import type { StoreEntry } from "./billing/model";
+import { billingEnabled } from "../lib/billingFlag";
 import { recreatesRoomOnFatal } from "./roomLife";
 
 export type TvUi =
@@ -71,7 +72,8 @@ export async function tvCreateRoom(): Promise<void> {
   tvUi.value = { kind: "creating" };
   resetClock();
   const started = Date.now();
-  const res = await createRoom(locale.value, billing.tokenForCreate());
+  const billingOn = billingEnabled.value;
+  const res = await createRoom(locale.value, billingOn ? billing.tokenForCreate() : null);
   // Let the splash breathe (≤ 800 ms) so the bang animation completes.
   const wait = Math.max(0, 700 - (Date.now() - started));
   if (wait) await new Promise((r) => setTimeout(r, wait));
@@ -123,6 +125,7 @@ export async function tvCreateRoom(): Promise<void> {
     },
   });
   unbindWake = bindWake(conn);
+  if (!billingOn) return; // BILLING_ENABLED off: the billing client never links to the room (no entitlement / storeOpen)
   billing.attach({
     send: (m) => conn?.send(m) ?? false,
     canToast: () => {

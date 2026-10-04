@@ -105,15 +105,18 @@ export class Harness {
   entitlement: RoomEntitlement | null;
   billingMode: "google" | "fake";
   billing: RoomBillingDeps;
+  /** BILLING_ENABLED (undefined = the RoomCore default, on). */
+  billingEnabled: boolean | undefined;
   #n = 0;
 
-  constructor(opts: { storage?: FakeStorage; conns?: FakeConnections; now?: number; entitlement?: RoomEntitlement | null; billingMode?: "google" | "fake"; billing?: RoomBillingDeps } = {}) {
+  constructor(opts: { storage?: FakeStorage; conns?: FakeConnections; now?: number; entitlement?: RoomEntitlement | null; billingMode?: "google" | "fake"; billing?: RoomBillingDeps; billingEnabled?: boolean } = {}) {
     if (opts.storage) this.storage = opts.storage;
     if (opts.conns) this.conns = opts.conns;
     if (opts.now !== undefined) this.now = opts.now;
     this.entitlement = opts.entitlement === undefined ? null : opts.entitlement;
     this.billingMode = opts.billingMode ?? "google";
     this.billing = opts.billing ?? { verifyKeys: new Map(), fakeAllowedByEnv: false };
+    this.billingEnabled = opts.billingEnabled;
     this.core = this.makeCore();
   }
 
@@ -125,6 +128,7 @@ export class Harness {
       crypto: { randomBytes, sha256hex },
       catalog: TEST_CATALOG,
       billing: async () => this.billing,
+      ...(this.billingEnabled === undefined ? {} : { billingEnabled: this.billingEnabled }),
       debugInvariants: this.debugInvariants,
       roomCode: ROOM,
     });

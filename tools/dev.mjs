@@ -77,6 +77,8 @@ function main() {
     // and no Play service account may be configured (server/.dev.vars), or every billing route answers 503.
     "--var", "BILLING_MODE:fake",
     "--var", "ALLOW_FAKE_BILLING:1",
+    // wrangler.jsonc ships BILLING_ENABLED "0" (premium hidden in production); local dev works on payments.
+    "--var", "BILLING_ENABLED:1",
   ];
   const viteArgs = ["--filter", "@mishana/web-client", "exec", "vite", "--host", "0.0.0.0", "--port", String(VITE_PORT), "--strictPort"];
 

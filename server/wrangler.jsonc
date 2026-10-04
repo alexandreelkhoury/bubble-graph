@@ -39,8 +39,11 @@
   // and the e2e webServer pass the fake values with --var. check-deploy.mjs refuses a deploy otherwise.
   //  - RTDN_AUDIENCE: https://<your-domain>/api/billing/rtdn; RTDN_SA_EMAIL: the push service account;
   //    RTDN_SUBSCRIPTION: projects/<project>/subscriptions/play-rtdn-push (PAYMENTS-SPEC §8.C/§8.D).
+  //  - BILLING_ENABLED: the production switch for everything premium/billing (server/src/config.ts). "0": billing and
+  //    admin routes 404, crons idle, rooms play the whole catalog, GET /api/config says {"billing":false} and every
+  //    client hides its premium UI. "1": payments as specified. `pnpm dev` and the e2e webServer pass "1".
   "vars": {
-    "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0",
+    "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0", "BILLING_ENABLED": "0",
     "BILLING_MODE": "google", "ALLOW_FAKE_BILLING": "0",
     "PLAY_PACKAGE_NAME": "app.mishana.tv", "RTDN_AUDIENCE": "", "RTDN_SA_EMAIL": "", "RTDN_SUBSCRIPTION": ""
   }

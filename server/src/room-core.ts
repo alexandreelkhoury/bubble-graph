@@ -95,6 +95,8 @@ export interface RoomCoreDeps {
   catalog: Catalog;
   /** Built once per isolate (WebCrypto key import is async). */
   billing: () => Promise<RoomBillingDeps>;
+  /** BILLING_ENABLED (config.ts). false: the room plays the whole catalog and ignores `entitlement` / `storeOpen`. Default true. */
+  billingEnabled?: boolean;
   debugInvariants: boolean;
   // SPEC-GAP: §7.5 lists the deps without the room code, but `ipKey` must be hashed before any state is
   // read (and `meta` is missing for never-created rooms), so the DO name is passed in explicitly.
@@ -155,6 +157,8 @@ function isSpectator(c: ConnHandle): boolean {
 }
 
 const SYSTEM = { kind: "system" } as const;
+
+const BILLING_OFF_ACCESS: RoomAccess = { premium: true, packs: new Set(), changesAt: null };
 
 function accessKey(a: RoomAccess): string {
   return `${a.premium ? 1 : 0}|${[...a.packs].sort().join(",")}`;
@@ -463,6 +467,7 @@ export class RoomCore {
       safeSend(conn, errorFrame("NOT_AUTHENTICATED"));
       return;
     }
+    if (this.#d.billingEnabled === false) return; // billing off: nothing to verify, the TV is never busy
     const now = this.#d.clock.now();
     // Separate budgets per kind; closing the Store only clears state, so it is never capped (PAY-GAP §3.9).
     if (m.t === "storeOpen" && !m.open) return this.#storeOpen(m, now);
@@ -667,6 +672,8 @@ export class RoomCore {
 
   /** The room's access and playable catalog at `now` (§3.11). Only `playable` reaches reduce and the projections. */
   #accessAt(now: number): { access: RoomAccess; playable: Catalog } {
+    // BILLING_ENABLED off: every room plays the whole catalog, as before payments (no locks, no premium settings).
+    if (this.#d.billingEnabled === false) return { access: BILLING_OFF_ACCESS, playable: this.#d.catalog };
     const meta = this.#meta;
     let ent = meta?.entitlement ?? null;
     // §3.10: a stored fake-mode entitlement grants nothing once the room is not fake or the env guard is off.

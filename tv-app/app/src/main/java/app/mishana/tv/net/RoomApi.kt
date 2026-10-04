@@ -5,6 +5,7 @@ import app.mishana.tv.protocol.CreateRoomResponse
 import app.mishana.tv.protocol.ProtocolJson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.MediaType.Companion.toMediaType
@@ -55,6 +56,23 @@ object RoomApi {
                 throw CreateRoomException(null, null, e)
             }
         }
+
+    /**
+     * `GET /api/config` → `{"billing": Boolean}` (server BILLING_ENABLED). Only an explicit `true` turns premium/billing
+     * on; any failure (network, an older server without the route, a bad body) keeps it off. Never throws.
+     */
+    suspend fun billingEnabled(baseUrl: String, client: OkHttpClient = defaultClient): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val request = Request.Builder().url(ServerUrls.apiConfigUrl(baseUrl)).get().build()
+            client.newCall(request).execute().use { response ->
+                if (response.code != 200) return@use false
+                val v = ProtocolJson.decoder.parseToJsonElement(response.body.string()).jsonObject["billing"]?.jsonPrimitive
+                v != null && !v.isString && v.booleanOrNull == true
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
 
     private fun parseErrorCode(text: String): String? = try {
         ProtocolJson.decoder.parseToJsonElement(text).jsonObject["error"]?.jsonPrimitive?.content

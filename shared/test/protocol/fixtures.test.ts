@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { PING_FRAME, PONG_FRAME } from "../../src/constants";
-import { CreateRoomRequest, CreateRoomResponse, Healthz, HttpError } from "../../src/protocol/http";
+import { ClientConfig, CreateRoomRequest, CreateRoomResponse, Healthz, HttpError } from "../../src/protocol/http";
 import { CatalogResponse, EntitlementRequest, VerifyRequest, VerifyResponse } from "../../src/billing/http";
 import {
   BASE_PLAN_IDS, packIdFromProductId, packProductId, PREMIUM_PRODUCT_ID, TRIAL_OFFER_ID,
@@ -32,6 +32,7 @@ describe("fixtures (§10)", () => {
       ...["lobby", "role_reveal", "clues", "tie_break", "elimination", "mr_white_guess", "results"].map((p) => `s2c.state.tv.${p}.json`),
       ...["lobby_spectator", "lobby", "role_reveal_blank", "voting", "mr_white_guess_guesser", "results"].map((p) => `s2c.state.player.${p}.json`),
       "http.create_room.request.json", "http.create_room.response.json", "http.error.json", "http.healthz.json",
+      "http.config.json", // BILLING_ENABLED switch
       // PAYMENTS-SPEC §3.11
       "c2s.entitlement.json", "c2s.storeOpen.json", "billing.products.json",
       ...["catalog.response", "verify.request", "verify.response", "entitlement.request"].map((n) => `http.billing.${n}.json`),
@@ -66,6 +67,7 @@ describe("fixtures (§10)", () => {
     expect(CreateRoomResponse.parse(JSON.parse(read("http.create_room.response.json"))).entitlement).toBe("OK");
     expect(HttpError.safeParse(JSON.parse(read("http.error.json"))).success).toBe(true);
     expect(Healthz.safeParse(JSON.parse(read("http.healthz.json"))).success).toBe(true);
+    expect(ClientConfig.parse(JSON.parse(read("http.config.json")))).toEqual({ billing: false });
   });
 
   it("billing fixtures parse with the billing HTTP schemas (PAYMENTS-SPEC §3.4)", () => {

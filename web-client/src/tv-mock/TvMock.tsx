@@ -8,6 +8,7 @@ import { toasts } from "../state/store";
 import { tvCreateRoom, tvExit, tvLangOpen, tvPaused, tvScale, tvScreen, tvShop, tvStop, tvUi, tvView } from "./tvStore";
 import { TvShop } from "./tvShop";
 import { bootBilling, useBillingView, useBillingVisibility } from "./billingEffects";
+import { loadBillingFlag } from "../lib/billingFlag";
 import { TvLobby } from "./tvLobby";
 import { TvSettings } from "./tvSettings";
 import { TvClues, TvRoleReveal, TvVoting } from "./tvGame";
@@ -61,7 +62,8 @@ export function TvMock() {
   useRemoteSounds(canvas, isBackKey);
   useEffect(() => {
     // PAYMENTS-SPEC §5.2: the catalog (mode) and a token first, so the room can be created with it.
-    void bootBilling().then(() => tvCreateRoom());
+    // BILLING_ENABLED first: off → no billing calls at all (bootBilling returns at once).
+    void loadBillingFlag().then(() => bootBilling()).then(() => tvCreateRoom());
     document.title = "Mish Ana! · TV";
     return () => tvStop();
   }, []);

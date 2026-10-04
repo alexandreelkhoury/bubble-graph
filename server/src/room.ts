@@ -8,6 +8,7 @@ import { PACKS } from "@mishana/word-packs";
 import type { Env } from "./env";
 import { clientIp, notFound } from "./request";
 import { fakeAllowedByEnv } from "./billing/mode";
+import { billingEnabled } from "./config";
 import { verifyKeysFromSecret } from "./billing/token";
 import { RoomCore } from "./room-core";
 import type { ConnHandle, ConnState, InitRoomArgs, InitRoomResult, RoomBillingDeps, RoomStorage } from "./room-core";
@@ -51,6 +52,7 @@ export class Room extends Server<Env> {
         crypto: { randomBytes, sha256hex },
         catalog: roomCatalog(),
         billing: () => roomBillingDeps(this.env),
+        billingEnabled: billingEnabled(this.env),
         debugInvariants: this.env.DEBUG_INVARIANTS === "1",
         roomCode: this.name,
       });
