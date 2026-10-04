@@ -92,6 +92,8 @@ object MishIcons {
         "M2.5 21v-1a6 6 0 0 1 6-6h1a6 6 0 0 1 6 6v1",
         "M16 3.6a4 4 0 0 1 0 7.3M21.5 21v-1a6 6 0 0 0-3.5-5.4",
     )
+    val Volume = stroke("volume", "M4 9.5h3.5L12 5.5v13l-4.5-4H4z", "M15.5 9a4 4 0 0 1 0 6", "M18.2 6.3a7.8 7.8 0 0 1 0 11.4")
+    val VolumeOff = stroke("volume-off", "M4 9.5h3.5L12 5.5v13l-4.5-4H4z", "M16 9.5l5 5", "M21 9.5l-5 5")
     val Pause = stroke("pause", "M8.5 5v14M15.5 5v14", width = 3f)
     val Timer = stroke("timer", "M12 21.5a8 8 0 1 0 0-16 8 8 0 0 0 0 16z", "M12 9.5v4l2.5 2", "M10 2.5h4")
     val Vote = stroke(

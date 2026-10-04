@@ -10,6 +10,7 @@ import { Avatar, avatarState } from "../components/PlayerChip";
 import { Icon } from "../components/Icon";
 import { tvAct, tvExit, tvLangOpen, tvPaused, tvPausePage } from "./tvStore";
 import { refocus, useInitialFocus } from "./dpad";
+import { SoundToggle } from "./sound/SoundToggle";
 
 export interface DialogSpec { title: string; body?: string; confirm: string; safe?: string; danger?: boolean; onConfirm(): void }
 export const tvDialog = signal<DialogSpec | null>(null);
@@ -135,6 +136,7 @@ export function PauseMenu({ view }: { view: TvView }) {
             <button type="button" ref={firstRef} class="tvmenu__item" data-default-focus onClick={closePause}><Icon name="play" />{t("tv.resume")}</button>
             {view.phase !== "RESULTS" && <button type="button" class="tvmenu__item" onClick={() => { tvAct({ type: "HOST_ADVANCE" }); closePause(); }}><Icon name="arrow-forward" />{t("tv.skip")}</button>}
             <button type="button" ref={playersRef} class="tvmenu__item" onClick={() => { tvPausePage.value = "players"; }}><Icon name="users" />{t("tv.players")}</button>
+            <SoundToggle class="tvmenu__item" />
             <button type="button" class="tvmenu__item" onClick={() => openDialog({
               title: t("tv.endGameConfirm"), body: t("tv.endGameBody"), confirm: t("tv.endGame"), safe: t("tv.keepPlaying"), danger: true,
               onConfirm: () => { tvAct({ type: "BACK_TO_LOBBY" }); closePause(); },

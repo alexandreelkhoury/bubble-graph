@@ -19,6 +19,7 @@ import { Icon } from "../components/Icon";
 import { tvAct, tvLastErrorMsg, tvScreen } from "./tvStore";
 import { focusables, isBackKey, nearest, useInitialFocus } from "./dpad";
 import type { Arrow } from "./dpad";
+import { SoundToggle } from "./sound/SoundToggle";
 
 type Sub = null | "packs" | "difficulty";
 
@@ -134,7 +135,11 @@ export function TvSettings({ view }: { view: TvView }) {
     <div class="tvscreen tvsettings" onFocusIn={onFocusIn}>
       <header class="tvsettings__head">
         <h1 class="tvsettings__title">{t("settings.title")}</h1>
-        <button type="button" ref={doneRef} class="tvbtn" onClick={() => { tvScreen.value = "main"; }}><Icon name="check" />{t("common.done")}</button>
+        <div class="tvsettings__actions">
+          {/* A TV-only device setting (not a game setting): never sent to the server. */}
+          <SoundToggle class="tvbtn" />
+          <button type="button" ref={doneRef} class="tvbtn" onClick={() => { tvScreen.value = "main"; }}><Icon name="check" />{t("common.done")}</button>
+        </div>
       </header>
       <nav class="tvsettings__cats" ref={catBox} aria-label={t("settings.title")}>
         {CATEGORIES.map((c) => (

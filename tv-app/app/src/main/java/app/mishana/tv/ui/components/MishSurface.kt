@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -76,10 +77,11 @@ fun MishFocusSurface(
     interactionSource: MutableInteractionSource? = null,
     body: @Composable BoxScope.() -> Unit,
 ) {
+    val sounds = LocalSounds.current
     Surface(
         onClick = onClick,
         onLongClick = onLongClick,
-        modifier = modifier.focusOnHover(),
+        modifier = modifier.onFocusChanged { if (it.isFocused) sounds.focusMoved() }.focusOnHover(),
         shape = ClickableSurfaceDefaults.shape(shape = shape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = container,

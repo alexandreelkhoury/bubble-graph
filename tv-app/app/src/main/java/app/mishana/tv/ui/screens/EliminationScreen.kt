@@ -72,6 +72,9 @@ import app.mishana.tv.AvatarShape
 import app.mishana.tv.R
 import app.mishana.tv.game.AfterElimination
 import app.mishana.tv.game.Countdown
+import app.mishana.tv.game.Cue
+import app.mishana.tv.game.CuePlay
+import app.mishana.tv.game.SoundCues
 import app.mishana.tv.game.EliminationPlan
 import app.mishana.tv.game.EliminationPlan.Timing
 import app.mishana.tv.game.Names
@@ -91,6 +94,7 @@ import app.mishana.tv.ui.components.AvatarGlyphs
 import app.mishana.tv.ui.components.AvatarState
 import app.mishana.tv.ui.components.InGameScaffold
 import app.mishana.tv.ui.components.InitialFocus
+import app.mishana.tv.ui.components.LocalSounds
 import app.mishana.tv.ui.components.PlayerTile
 import app.mishana.tv.ui.components.RoleCardBack
 import app.mishana.tv.ui.components.RoleCardFace
@@ -124,7 +128,7 @@ private enum class Stage { Board, Verdict, Wheel, Card, Done }
  * lambdas or through `derivedStateOf`, so the board does not recompose per frame.
  */
 @Stable
-private class EliminationSequence(val plan: EliminationPlan, startDone: Boolean) {
+private class EliminationSequence(val plan: EliminationPlan, startDone: Boolean, val role: Role?) {
     var stage by mutableStateOf(if (startDone) Stage.Done else Stage.Board)
     var skipToken by mutableIntStateOf(0)
     val arrowsMs = Animatable(0f)
@@ -147,8 +151,12 @@ private class EliminationSequence(val plan: EliminationPlan, startDone: Boolean)
         stage = Stage.Done
     }
 
-    /** Plays B (+ wheel) + C at time scale [k], holding while [paused] (the pause menu). */
-    suspend fun run(k: Float, reduce: Boolean, paused: () -> Boolean) = kotlinx.coroutines.coroutineScope {
+    /**
+     * Plays B (+ wheel) + C at time scale [k], holding while [paused] (the pause menu), with its sound cues
+     * (DESIGN §6.4): drumroll from the lock, a marimba tick per landing chip, the stamp, the wheel's ratchet, a
+     * heartbeat on the hold, the card swish and the role's sting. A skip cancels this coroutine, so no late cue plays.
+     */
+    suspend fun run(k: Float, reduce: Boolean, paused: () -> Boolean, cue: (CuePlay) -> Unit) = kotlinx.coroutines.coroutineScope {
         fun d(ms: Int) = (ms * k).toInt().coerceAtLeast(1)
         suspend fun waitUnpaused() {
             if (paused()) snapshotFlow { paused() }.first { !it }
@@ -156,14 +164,31 @@ private class EliminationSequence(val plan: EliminationPlan, startDone: Boolean)
         // B. vote reveal
         waitUnpaused()
         val arrowsEnd = plan.arrowsEnd
+        cue(CuePlay(Cue.DRUMROLL))
+        val chips = launch {
+            if (reduce) {
+                if (plan.flights.isNotEmpty()) cue(CuePlay(Cue.CHIP_LAND, SoundCues.chipRate(1)))
+                return@launch
+            }
+            var at = 0L
+            for (f in plan.flights.sortedBy { it.startMs }) {
+                val land = ((f.startMs + Timing.FLIGHT) * k).toLong()
+                delay((land - at).coerceAtLeast(0L))
+                at = land
+                cue(CuePlay(Cue.CHIP_LAND, SoundCues.chipRate(f.stackIndex + 1)))
+            }
+        }
         if (reduce) arrowsMs.snapTo(arrowsEnd.toFloat()) else arrowsMs.animateTo(arrowsEnd.toFloat(), tween(d(arrowsEnd), easing = LinearEasing))
         waitUnpaused()
         dim.animateTo(1f, tween(d(Timing.SUSPENSE)))
+        chips.cancel()
         stage = Stage.Verdict
+        cue(CuePlay(Cue.STAMP))
         delay(d(Timing.VERDICT).toLong() + d(Timing.VERDICT_SETTLE).toLong())
         waitUnpaused()
         if (plan.hasWheel) {
             stage = Stage.Wheel
+            cue(CuePlay(Cue.WHEEL))
             wheel.animateTo(1f, tween(d(Timing.WHEEL), easing = FastOutSlowInEasing))
             waitUnpaused()
         }
@@ -174,10 +199,13 @@ private class EliminationSequence(val plan: EliminationPlan, startDone: Boolean)
         // C. card
         stage = Stage.Card
         fly.animateTo(1f, tween(d(Timing.GROW), easing = MishMotion.Decel))
+        cue(CuePlay(Cue.HEARTBEAT))
         delay(d(Timing.HOLD).toLong())
         waitUnpaused()
         launch { wash.animateTo(1f, tween(d(Timing.FLIP + Timing.WASH), easing = MishMotion.Decel)) }
+        cue(CuePlay(Cue.FLIP))
         if (reduce) flip.snapTo(180f) else flip.animateTo(180f, tween(d(Timing.FLIP), easing = FastOutSlowInEasing))
+        role?.let { cue(CuePlay(SoundCues.roleSting(it))) }
         stage = Stage.Done
     }
 }
@@ -231,10 +259,12 @@ fun EliminationScreen(
         val deadline = view.deadline
         plan.budgetFactor(deadline?.let { Countdown.remainingMs(it.at, clockOffsetMs, System.currentTimeMillis()) }, reduce)
     }
-    val seq = remember(sequenceKey) { EliminationSequence(plan, startDone = k == 0f) }
+    val seq = remember(sequenceKey) { EliminationSequence(plan, startDone = k == 0f, role = elim?.role) }
     val isPaused by rememberUpdatedState(paused)
+    val sounds = LocalSounds.current
     LaunchedEffect(seq, seq.skipToken) {
-        if (seq.stage == Stage.Done || seq.skipToken > 0) seq.snapToEnd() else seq.run(k, reduce) { isPaused }
+        if (seq.skipToken > 0 && seq.stage != Stage.Done) sounds.stopAll() // no drumroll over the end state
+        if (seq.stage == Stage.Done || seq.skipToken > 0) seq.snapToEnd() else seq.run(k, reduce, { isPaused }, sounds::play)
     }
     val revealing = seq.revealing
     SideEffect { onRevealing(revealing) }

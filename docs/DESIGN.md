@@ -476,8 +476,8 @@ In Compose, cubic-bezier tokens become `CubicBezierEasing(a, b, c, d)` used with
 
 Reduced motion also halves the total reveal time, so the game moves faster.
 
-### 6.4 Sound cues (TV only; M4. Sound settings, volume and phone sounds are **[not in v1]**)
-All cues: **OGG Vorbis, 48 kHz, mono, ≤ 1.5 s** (stings ≤ 3 s), normalised to **−16 LUFS** integrated with peaks ≤ −1 dBTP. Played through `SoundPool` on TV and Web Audio on the phone (preloaded after the first tap). Two volume buses: **SFX** and **Stingers**. Global mute is in Settings and the pause menu; on the phone it's in the "⋯" menu.
+### 6.4 Sound cues (TV only. Volume and phone sounds are **[not in v1]**; one global mute is in)
+All cues: **OGG Vorbis, 48 kHz, mono, ≤ 1.5 s** (stings ≤ 3 s; the drumroll and the wheel span their animation, ≤ 2.5 s), normalised to **−16 LUFS** integrated with peaks ≤ −1 dBTP. **Implemented** as original synthesis (no samples, nothing to license): `tools/gen-sounds` renders every cue deterministically (`pnpm gen:sounds`, ffmpeg/libvorbis), < 400 KB in total. Pitch-shifted cues (`sfx.join` by seat, `sfx.turn`, `sfx.chipLand`) use the playback rate, within SoundPool's 0.5–2×. Remote feedback cues: `ui.move` (focus moved by the D-pad; very quiet, ≥ 70 ms apart), `ui.select` (OK), `ui.back` (Back). The `/tv` mock unlocks Web Audio on the first key press; reduced motion is not a mute. Played through `SoundPool` on TV and Web Audio on the phone (preloaded after the first tap). Two volume buses: **SFX** and **Stingers**. Global mute is in Settings and the pause menu; on the phone it's in the "⋯" menu.
 
 | ID | When | Character |
 |---|---|---|
@@ -637,7 +637,8 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 | **Timers** | Clue turn (`clueSeconds`): Off, 10–120 step 5, **45** · Vote (`voteSeconds`): Off, 15–300 step 15, **90** · Reading the word (`revealSeconds`): Off, 10–120 step 5, **30** · Blank's guess (`guessSeconds`): Off, 10–120 step 5, **45**. Help line: `settings.timerOffHelp` |
 | **Words** | Word language (`wordLocale`): English / Français / العربية (default: the room's creation language) · Packs (`packIds`): **All packs** or a multi-select chip grid with the localised title + `pairCount` + a "Teen" badge (`settings.packTeen`) when `ageRating==="teen"` · Difficulty (`difficulties`): multi-select Easy / Medium / Subtle, **all** · Family friendly (`familyFilter`): **On** / Off · Shuffle word sides (`swapSides`): **On** / Off |
 
-- **[not in v1]** Display (reduce motion, hide room code), Sound, transliteration toggle (translit is shown whenever it is non-null).
+- **Sound: On/Off** (`tv.soundOn` / `tv.soundOff`, a device setting kept on the TV, never sent to the server) sits next to **Done** in the header.
+- **[not in v1]** Display (reduce motion, hide room code), volume, transliteration toggle (translit is shown whenever it is non-null).
 - **Interaction:** a category list on the start side (`focusRestorer`) and rows on the end side. **Moving toward inline-end from a category enters its rows** (Right in LTR, **Left in RTL**; Compose geometry handles it), and moving toward inline-start from the rows returns to it. On a row, **Left/Right step the value** (the chevrons follow the reading direction), and **OK also steps** (for sticky D-pads). Multi-option rows (Packs, Difficulty) open a sub-panel on OK. An **explanation panel** below the rows describes the focused row's current value.
 - **Done:** Up from the first category or the first row → **Done**; OK on Done = Back.
 - **Initial focus:** the first category (Game). **Back:** if a sub-panel is open, closes it; otherwise returns to the Lobby. Each change sends `UPDATE_SETTINGS` (debounced 300 ms); there's no "save" button.
@@ -876,7 +877,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                      The game keeps running.                           |
 +------------------------------------------------------------------------+
 ```
-- Items per SPEC §9.6: **Resume** · **Skip turn / timer** (`tv.skip` → `HOST_ADVANCE`) · **Players…** (`tv.players` → list → TV-14a → `KICK`) · **End game** (TV-14c → `BACK_TO_LOBBY`) · **Exit** (`tv.exitApp`, finishes the app). Sound and Language items are **[not in v1]**.
+- Items per SPEC §9.6: **Resume** · **Skip turn / timer** (`tv.skip` → `HOST_ADVANCE`) · **Players…** (`tv.players` → list → TV-14a → `KICK`) · **Sound: On/Off** (the global mute; the menu stays open) · **End game** (TV-14c → `BACK_TO_LOBBY`) · **Exit** (`tv.exitApp`, finishes the app). A Language item is **[not in v1]**.
 - **Nothing pauses for everyone** (no PAUSE action in v1): the footer is `tv.pauseNote`. Only local reveal animations pause while the menu is open.
 - **Players…** is for removing someone who left for good, so the game stops skipping their turns.
 - **Focus:** initial **Resume**; it's a vertical list; **Back = Resume**.

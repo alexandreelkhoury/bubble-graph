@@ -302,6 +302,8 @@
     <string name="tv__end_game_body">Nobody scores. You\'ll go back to the lobby.</string>
     <string name="tv__keep_playing">Keep playing</string>
     <string name="tv__exit_app">Exit</string>
+    <string name="tv__sound_on">Sound: On</string>
+    <string name="tv__sound_off">Sound: Off</string>
     <string name="tv__players_title">Players</string>
     <string name="tv__back_to_lobby">Back: lobby</string>
     <string name="tv__app_closed">Mish Ana! is closed</string>

@@ -13,7 +13,8 @@ import { TvElimination } from "./tvElimination";
 import { TvGuess, TvResults } from "./tvResults";
 import { closeTopOverlay, LanguagePicker, openPause, PauseMenu, TvDialog, tvDialog } from "./tvDialogs";
 import { Closed, ConnStates, Fatal, PhonesAsleep, Splash, usePresenceToasts } from "./tvStatus";
-import { useDpad } from "./dpad";
+import { isBackKey, useDpad } from "./dpad";
+import { useRemoteSounds } from "./sound/controller";
 
 const W = 960;
 const H = 540;
@@ -53,6 +54,7 @@ export function TvMock() {
   const ui = tvUi.value;
   const view = tvView.value;
   usePresenceToasts(view);
+  useRemoteSounds(canvas, isBackKey);
   useEffect(() => {
     void tvCreateRoom();
     document.title = "Mish Ana! · TV";

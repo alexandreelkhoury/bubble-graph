@@ -307,6 +307,8 @@
     <string name="tv__end_game_body">Personne ne marque. Retour au salon.</string>
     <string name="tv__keep_playing">Continuer</string>
     <string name="tv__exit_app">Quitter</string>
+    <string name="tv__sound_on">Son : activé</string>
+    <string name="tv__sound_off">Son : coupé</string>
     <string name="tv__players_title">Joueurs</string>
     <string name="tv__back_to_lobby">Retour : salon</string>
     <string name="tv__app_closed">Mish Ana! est fermé</string>

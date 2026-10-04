@@ -69,6 +69,11 @@ class GameDeps(
     val createRoom: suspend (baseUrl: String, locale: String) -> CreateRoomResponse,
     val newConnection: (scope: CoroutineScope, serverUrl: () -> String) -> RoomConnection,
     val clock: () -> Long = { System.currentTimeMillis() },
+    /** Sound cues (DESIGN §6.4); SoundPool on the device. */
+    val sound: SoundSink = SoundSink.None,
+    /** The persisted mute setting (Settings and the pause menu). */
+    val loadMuted: () -> Boolean = { false },
+    val saveMuted: (Boolean) -> Unit = {},
 )
 
 /** SPEC §9.8. */
@@ -101,6 +106,11 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     private var lastSeq = -1L
     private var actionCounter = 0L
     private val clockOffset = ClockOffset()
+
+    private val _soundMuted = MutableStateFlow(deps.loadMuted())
+
+    /** The TV's global mute (a device setting, never sent to the server). */
+    val soundMuted: StateFlow<Boolean> = _soundMuted.asStateFlow()
 
     init {
         createRoom()
@@ -174,10 +184,14 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 val before = current.view
                 _ui.value = current.copy(view = msg.view, clockOffsetMs = offset)
                 announce(before, msg.view)
+                for (c in SoundCues.viewCues(before, msg.view)) playCue(c)
             }
             is ErrorMsg -> {
                 _ui.update { s -> if (s is TvUiState.InRoom) s.copy(lastError = msg) else s }
-                if (_ui.value is TvUiState.InRoom) _events.tryEmit(TvEvent.ServerError(msg))
+                if (_ui.value is TvUiState.InRoom) {
+                    _events.tryEmit(TvEvent.ServerError(msg))
+                    playCue(CuePlay(Cue.ERROR))
+                }
             }
             else -> Unit // welcome/pong are not for the TV
         }
@@ -253,6 +267,20 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         _ui.update { s -> if (s is TvUiState.InRoom) s.copy(paused = p) else s }
     }
 
+    /** Plays a cue unless the TV is muted (the screens' timelines, deadlines and remote feedback come here too). */
+    fun playCue(p: CuePlay) {
+        if (!_soundMuted.value) deps.sound.play(p)
+    }
+
+    /** Cuts every ringing cue (a skipped reveal must not drag its drumroll over the end state). */
+    fun stopCues() = deps.sound.stopAll()
+
+    fun setSoundMuted(muted: Boolean) {
+        _soundMuted.value = muted
+        deps.saveMuted(muted)
+        if (muted) deps.sound.stopAll()
+    }
+
     /** TV-13b "Try again": skip the backoff. */
     fun retryConnectionNow() {
         connection?.retryNow()
@@ -260,6 +288,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
 
     override fun onCleared() {
         teardownRoom()
+        deps.sound.release()
         super.onCleared()
     }
 

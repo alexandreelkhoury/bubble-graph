@@ -72,7 +72,7 @@ Agents run in parallel and never talk, but A's typecheck and tests import D's fi
 Implementers skip these DESIGN items. They need protocol or scope that v1 does not have.
 - Pausing timers for everyone (PAUSE/RESUME), and the phone "Paused on the TV" overlay. The TV pause menu is local and says "The game keeps running" (`tv.pauseNote`).
 - Tie-break naming "wheel". The setting is `tieBreak: "random" | "none"`. The TV may still *animate* a random pick as a wheel (DESIGN TV-09 variant).
-- Sound settings, volume, phone sounds, and the sound cue assets (M4). B and C may leave hooks.
+- Sound volume (one global mute only) and phone sounds. The TV sound cues (DESIGN §6.4) are in: original sounds synthesised by `tools/gen-sounds` (`pnpm gen:sounds`, OGG in `tv-app/app/src/main/res/raw` and `web-client/public/sounds`), played on the TV and the `/tv` mock, with a mute in TV-03 Settings and the TV-12 pause menu.
 - TV-15 How to play (M4), the "Display" settings category, "Hide room code" and "Show transliteration" (translit is shown whenever it is non-null).
 - The away countdown ring (`disconnectedAt` is not projected; use a static away badge), the `blankTyping` indicator, and a CLOSE_ROOM intent.
 - Interactive TV Home: Home is a splash plus "creating / failed" states only (§9.6).

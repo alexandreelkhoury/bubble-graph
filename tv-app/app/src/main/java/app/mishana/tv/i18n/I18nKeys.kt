@@ -285,6 +285,8 @@ object I18nKeys {
         "tv.endGameBody" to R.string.tv__end_game_body,
         "tv.keepPlaying" to R.string.tv__keep_playing,
         "tv.exitApp" to R.string.tv__exit_app,
+        "tv.soundOn" to R.string.tv__sound_on,
+        "tv.soundOff" to R.string.tv__sound_off,
         "tv.playersTitle" to R.string.tv__players_title,
         "tv.backToLobby" to R.string.tv__back_to_lobby,
         "tv.appClosed" to R.string.tv__app_closed,

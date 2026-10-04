@@ -299,6 +299,8 @@
   "tv.endGameBody": "Nobody scores. You'll go back to the lobby.",
   "tv.keepPlaying": "Keep playing",
   "tv.exitApp": "Exit",
+  "tv.soundOn": "Sound: On",
+  "tv.soundOff": "Sound: Off",
   "tv.playersTitle": "Players",
   "tv.backToLobby": "Back: lobby",
   "tv.appClosed": "Mish Ana! is closed",

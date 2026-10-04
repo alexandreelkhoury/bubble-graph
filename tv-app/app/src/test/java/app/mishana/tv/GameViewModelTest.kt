@@ -2,7 +2,10 @@ package app.mishana.tv
 
 import android.app.Application
 import app.cash.turbine.test
+import app.mishana.tv.game.Cue
+import app.mishana.tv.game.CuePlay
 import app.mishana.tv.game.GameDeps
+import app.mishana.tv.game.SoundSink
 import app.mishana.tv.game.GameViewModel
 import app.mishana.tv.game.TvEvent
 import app.mishana.tv.game.TvUiState
@@ -71,6 +74,14 @@ class GameViewModelTest {
     private val createCalls = mutableListOf<Pair<String, String>>()
     private val codes = ArrayDeque(listOf("KXRT", "WXYZ", "ABCD"))
 
+    private val played = mutableListOf<CuePlay>()
+    private var savedMuted: Boolean? = null
+    private val sink = object : SoundSink {
+        override fun play(p: CuePlay) { played += p }
+        override fun stopAll() = Unit
+        override fun release() = Unit
+    }
+
     private fun deps() = GameDeps(
         serverUrl = { "https://mish-ana.example.workers.dev" },
         appLocale = { "fr" },
@@ -81,6 +92,9 @@ class GameViewModelTest {
         },
         newConnection = { _, _ -> FakeConnection().also { connections += it } },
         clock = { 1_790_000_000_000L },
+        sound = sink,
+        loadMuted = { false },
+        saveMuted = { savedMuted = it },
     )
 
     @Before fun setUp() = Dispatchers.setMain(dispatcher)
@@ -103,6 +117,26 @@ class GameViewModelTest {
         assertEquals("https://mish-ana.example.workers.dev/KXRT", s.joinUrl)
         assertEquals(listOf("https://mish-ana.example.workers.dev" to "fr"), createCalls)
         assertEquals("KXRT" to "0123456789abcdef0123456789abcdef", connections.single().connectedWith)
+    }
+
+    @Test
+    fun broadcastsPlayTheirCuesUnlessMuted() = runTest(dispatcher) {
+        val vm = newVm()
+        val conn = connections.single()
+        conn.state.value = ConnState.OPEN
+        val lobby = TvFixtures.view("lobby")
+        conn.incoming.emit(StateMsg(seq = 1, serverNow = 1_790_000_000_000L, view = lobby.copy(players = lobby.players.take(3))))
+        advanceUntilIdle()
+        assertTrue(played.isEmpty()) // the first view is silent
+        conn.incoming.emit(StateMsg(seq = 2, serverNow = 1_790_000_000_000L, view = lobby))
+        advanceUntilIdle()
+        assertEquals(listOf(Cue.JOIN), played.map { it.cue })
+        vm.setSoundMuted(true)
+        assertEquals(true, savedMuted)
+        assertTrue(vm.soundMuted.value)
+        conn.incoming.emit(StateMsg(seq = 3, serverNow = 1_790_000_000_000L, view = lobby.copy(players = lobby.players.take(3))))
+        advanceUntilIdle()
+        assertEquals(1, played.size)
     }
 
     @Test

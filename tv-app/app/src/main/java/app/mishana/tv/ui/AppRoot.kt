@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -55,7 +56,10 @@ import app.mishana.tv.protocol.Phase
 import app.mishana.tv.protocol.PlayAgain
 import app.mishana.tv.protocol.TvView
 import app.mishana.tv.settings.DebugPrefs
+import app.mishana.tv.ui.components.DeadlineSounds
 import app.mishana.tv.ui.components.FocusTrap
+import app.mishana.tv.ui.components.LocalSounds
+import app.mishana.tv.ui.components.TvSounds
 import app.mishana.tv.ui.components.LocalFocusBlocked
 import app.mishana.tv.ui.components.MishBackground
 import app.mishana.tv.ui.components.ProvideFrameClock
@@ -117,6 +121,7 @@ fun AppRoot(vm: GameViewModel) {
     val context = LocalContext.current
     val toasts = remember { ToastState() }
     var debugOpen by remember { mutableStateOf(false) }
+    val sounds = remember(vm) { TvSounds(vm::playCue, vm::stopCues) }
 
     LaunchedEffect(vm) {
         vm.events.collect { e ->
@@ -136,30 +141,39 @@ fun AppRoot(vm: GameViewModel) {
         (guessStatus == GuessStatus.PENDING || guessStatus == GuessStatus.CORRECT)
     val base by animateColorAsState(if (darkRoom) MishColors.BgDark else MishColors.Bg, tween(600), label = "roomLight")
 
-    MishBackground(base = base, pattern = s !is TvUiState.InRoom) {
-        Box(Modifier.fillMaxSize().padding(horizontal = MishSpace.SafeH, vertical = MishSpace.SafeV)) {
-            when (s) {
-                TvUiState.CreatingRoom -> HomeScreen(HomeStatus.Busy(R.string.tv__creating_room), vm::createRoom) { debugOpen = true }
-                is TvUiState.CreateFailed -> HomeScreen(HomeStatus.Failed(s.messageKey), vm::createRoom) { debugOpen = true }
-                is TvUiState.InRoom -> RoomRoot(s, vm, toasts) { debugOpen = true }
-                is TvUiState.Fatal -> FatalScreen(s.messageKey, vm::createRoom)
-            }
-            // The Lobby shows its toasts in its own header slot (never over the code, QR or grid). In a game they sit
-            // at the top centre under the top bar, one at a time (clear of the stage, the strip and the action bar).
-            if (toasts.screenHosts == 0) {
-                when (gv?.phase) {
-                    null, Phase.LOBBY -> ToastHost(toasts, Modifier.align(Alignment.BottomStart).padding(bottom = 64.dp))
-                    Phase.RESULTS -> ToastHost(toasts, Modifier.align(Alignment.TopCenter), maxItems = 1)
-                    else -> ToastHost(toasts, Modifier.align(Alignment.TopCenter).padding(top = 56.dp), maxItems = 1)
+    CompositionLocalProvider(LocalSounds provides sounds) {
+        MishBackground(base = base, pattern = s !is TvUiState.InRoom) {
+            // The remote's own feedback (ui.select / ui.back, and the arrow that makes a focus change tick): observed here,
+            // never consumed.
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .onPreviewKeyEvent { sounds.onKey(it); false }
+                    .padding(horizontal = MishSpace.SafeH, vertical = MishSpace.SafeV),
+            ) {
+                when (s) {
+                    TvUiState.CreatingRoom -> HomeScreen(HomeStatus.Busy(R.string.tv__creating_room), vm::createRoom) { debugOpen = true }
+                    is TvUiState.CreateFailed -> HomeScreen(HomeStatus.Failed(s.messageKey), vm::createRoom) { debugOpen = true }
+                    is TvUiState.InRoom -> RoomRoot(s, vm, toasts) { debugOpen = true }
+                    is TvUiState.Fatal -> FatalScreen(s.messageKey, vm::createRoom)
+                }
+                // The Lobby shows its toasts in its own header slot (never over the code, QR or grid). In a game they sit
+                // at the top centre under the top bar, one at a time (clear of the stage, the strip and the action bar).
+                if (toasts.screenHosts == 0) {
+                    when (gv?.phase) {
+                        null, Phase.LOBBY -> ToastHost(toasts, Modifier.align(Alignment.BottomStart).padding(bottom = 64.dp))
+                        Phase.RESULTS -> ToastHost(toasts, Modifier.align(Alignment.TopCenter), maxItems = 1)
+                        else -> ToastHost(toasts, Modifier.align(Alignment.TopCenter).padding(top = 56.dp), maxItems = 1)
+                    }
                 }
             }
-        }
-        if (debugOpen && BuildConfig.DEBUG) {
-            val prefs = remember { DebugPrefs(context) }
-            DebugSettingsScreen(prefs, onClose = { debugOpen = false }, onSaved = {
-                debugOpen = false
-                vm.createRoom()
-            })
+            if (debugOpen && BuildConfig.DEBUG) {
+                val prefs = remember { DebugPrefs(context) }
+                DebugSettingsScreen(prefs, onClose = { debugOpen = false }, onSaved = {
+                    debugOpen = false
+                    vm.createRoom()
+                })
+            }
         }
     }
 }
@@ -184,6 +198,7 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
     val view = s.view
     val attempt by vm.reconnectAttempt.collectAsStateWithLifecycle()
     val settingsDraft by vm.settingsDraft.collectAsStateWithLifecycle()
+    val soundMuted by vm.soundMuted.collectAsStateWithLifecycle()
     var settingsOpen by remember { mutableStateOf(false) }
     var settingsCategory by remember { mutableStateOf(SettingsCategory.Game) }
     var settingsAfterPlayAgain by remember { mutableStateOf(false) }
@@ -236,6 +251,9 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
         if (conn == ConnState.OPEN) vm.send(intent) else toasts.show(context.getString(R.string.conn__tv_reconnecting), MishColors.Danger)
     }
 
+    // DESIGN §6.4: the last 5 s of a timer tick (then the horn); the Blank's guess beats a heartbeat.
+    DeadlineSounds(view?.deadline, s.clockOffsetMs)
+
     val key = screenKeyFor(view, settingsOpen)
     val lostOverlay = offlineLong && view != null && degraded && !s.paused
     val overlayOpen = s.paused || lostOverlay
@@ -284,6 +302,8 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
                                         onClose = { settingsOpen = false },
                                         initialCategory = settingsCategory,
                                         toasts = toasts,
+                                        soundOn = !soundMuted,
+                                        onToggleSound = { vm.setSoundMuted(!soundMuted) },
                                     )
                                     frame.key == ScreenKey.RoleReveal -> RoleRevealScreen(v, s.clockOffsetMs, send)
                                     frame.key == ScreenKey.Clues -> CluesScreen(v, s.clockOffsetMs, s.paused, send)
@@ -339,6 +359,8 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
             onKick = { p -> send(Kick(p.id)) },
             onEndGame = { send(BackToLobby) },
             onExit = { activity?.finish() },
+            soundOn = !soundMuted,
+            onToggleSound = { vm.setSoundMuted(!soundMuted) },
         )
     }
 }

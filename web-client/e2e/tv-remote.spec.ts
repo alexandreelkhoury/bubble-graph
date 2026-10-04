@@ -136,6 +136,19 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   expect(await focused(tv, ".setrowtv"), "Down never leaves the rows").toBe(true);
   for (let i = 0; i < 8; i++) await press(tv, "ArrowUp", "rows up", 120);
   expect(await focused(tv, ".tvsettings__head .tvbtn"), "Up from the first row reaches Done").toBe(true);
+  // The mute toggle sits next to Done (a TV device setting); OK flips it, and it is remembered.
+  await press(tv, bwd, "Done → sound");
+  expect(await focused(tv, "[data-sound-toggle]")).toBe(true);
+  const pressed = (): Promise<string | null> => tv.evaluate(() => document.activeElement?.getAttribute("aria-pressed") ?? null);
+  expect(await pressed()).toBe("true");
+  await press(tv, "Enter", "mute");
+  expect(await pressed()).toBe("false");
+  expect(await tv.evaluate(() => localStorage.getItem("mishana:tvSound"))).toBe("off");
+  await press(tv, "Enter", "unmute");
+  expect(await pressed()).toBe("true");
+  // The first key press unlocked audio: every cue file was fetched (DESIGN §6.4, TV only).
+  expect(await tv.evaluate(() => performance.getEntriesByType("resource").filter((e) => e.name.includes("/sounds/")).length)).toBeGreaterThanOrEqual(26);
+  await press(tv, fwd, "sound → Done");
   await press(tv, "ArrowDown", "Done → rows");
   expect(await focused(tv, ".setrowtv")).toBe(true);
   await press(tv, "Escape", "rows → categories", 300);
@@ -149,7 +162,8 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   await expect(tv.locator(".tvreveal")).toBeVisible();
   await press(tv, "Escape", "pause", 350);
   await expect(tv.locator(".tvdialog--menu")).toBeVisible();
-  for (let i = 0; i < 6; i++) await press(tv, "ArrowDown", "pause trap", 100);
+  await expect(tv.locator(".tvdialog--menu [data-sound-toggle]")).toBeVisible();
+  for (let i = 0; i < 7; i++) await press(tv, "ArrowDown", "pause trap", 100);
   for (const k of ["ArrowLeft", "ArrowRight"] as Key[]) await press(tv, k, "pause trap", 100);
   await press(tv, "Escape", "resume", 350);
   await expect(tv.locator(".tvoverlay")).toHaveCount(0);

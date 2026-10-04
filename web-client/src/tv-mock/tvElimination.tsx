@@ -15,6 +15,9 @@ import { useDeadline } from "../components/Timer";
 import { ActionPill, Stamp, TimerChip, TvTopBar, VOTE_NAME_MAX } from "./tvParts";
 import { ellipsizeName } from "../lib/names";
 import { useInitialFocus } from "./dpad";
+import { chipRate, ROLE_STING } from "./sound/cues";
+import type { TimelineMark } from "./sound/cues";
+import { useTimelineSounds } from "./sound/controller";
 
 /** Elapsed ms since mount (rAF), frozen once `until` is reached. */
 function useElapsed(until: number, startAt = 0): [number, (v: number) => void] {
@@ -75,13 +78,25 @@ export function TvElimination({ view }: { view: TvView }) {
     const k = random ? 0.6 : 1;
     const grow = ms(400 * k), hold = ms(600 * k), flip = ms(800 * k);
     const cardStart = votesEnd + wheel;
-    return { arrows: ms(300), arrowsEnd: ms(1800), suspense: ms(1800), verdict: ms(2400), votesEnd, wheel, cardStart, flipAt: cardStart + grow + hold, flipEnd: cardStart + grow + hold + flip, reaction: cardStart + grow + hold + flip + ms(200), total: cardStart + grow + hold + flip + ms(800) };
+    return { arrows: ms(300), arrowsEnd: ms(1800), suspense: ms(1800), verdict: ms(2400), votesEnd, wheel, cardStart, holdAt: cardStart + grow, flipAt: cardStart + grow + hold, flipEnd: cardStart + grow + hold + flip, reaction: cardStart + grow + hold + flip + ms(200), total: cardStart + grow + hold + flip + ms(800) };
   }, [random]);
   // Late mount (reconnect mid-phase) → end state.
   const dl = view.deadline;
   const lateStart = dl ? Math.max(0, dl.durationMs - (dl.at - Date.now())) > 1500 : true;
   const [el, setEl] = useElapsed(T.total, lateStart ? T.total : 0);
   const skip = (): void => setEl(T.total);
+  // DESIGN §6.4: drumroll from the lock, the verdict stamp, the wheel's ratchet, a heartbeat on the hold, the card
+  // swish, then the role's sting as the face lands. The chips' marimba ticks play from the VoteBoard.
+  const marks = useMemo(() => {
+    const m: TimelineMark[] = [];
+    if (lv) m.push({ at: 0, cue: "sfx.drumroll" }, { at: T.verdict, cue: "sfx.stamp" });
+    if (lv && random) m.push({ at: T.votesEnd, cue: "sfx.wheel" });
+    if (view.eliminated) {
+      m.push({ at: T.holdAt, cue: "sfx.heartbeat" }, { at: T.flipAt, cue: "sfx.flip" }, { at: T.flipEnd, cue: ROLE_STING[view.eliminated.role] });
+    }
+    return m;
+  }, [T, lv, view.eliminated?.playerId]);
+  useTimelineSounds(marks, el, lateStart ? T.total : 0, T.total);
   const animating = el < T.total;
   const stage = el < T.votesEnd ? "votes" : el < T.cardStart ? "wheel" : "card";
   const d = useDeadline(view.deadline);
@@ -177,6 +192,12 @@ function VoteBoard({ view, el, T }: { view: TvView; el: number; T: Timeline }) {
   const top = lv.eliminatedId ?? null;
   const maxN = Math.max(0, ...lv.tally.map((x) => x.voterIds.length));
   const topIds = new Set(lv.outcome === "ELIMINATED" || lv.outcome === "RANDOM" ? lv.tally.filter((x) => x.voterIds.length === maxN).map((x) => x.targetId) : []);
+  // One marimba tick per landing chip, rising with the target's tally (reduced motion: they land at once, one tick).
+  const chipMarks = useMemo<TimelineMark[]>(() => {
+    const m = flights.map((f) => ({ at: f.delay + (reduced() ? 0 : f.dur), cue: "sfx.chipLand" as const, rate: chipRate(f.k + 1) }));
+    return reduced() ? m.slice(0, 1) : m;
+  }, [flights]);
+  useTimelineSounds(chipMarks, el, 0, T.votesEnd);
   const landed = (f: { delay: number; dur: number }): boolean => el >= f.delay + (reduced() ? 0 : f.dur);
   const count = (id: string): number => flights.filter((f) => f.to === id && landed(f)).length;
   const suspense = el >= T.suspense;

@@ -304,6 +304,8 @@
   "tv.endGameBody": "Personne ne marque. Retour au salon.",
   "tv.keepPlaying": "Continuer",
   "tv.exitApp": "Quitter",
+  "tv.soundOn": "Son : activé",
+  "tv.soundOff": "Son : coupé",
   "tv.playersTitle": "Joueurs",
   "tv.backToLobby": "Retour : salon",
   "tv.appClosed": "Mish Ana! est fermé",

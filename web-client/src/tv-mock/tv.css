@@ -143,6 +143,7 @@
 
 /* settings (TV-03) */
 .tvsettings__head { position: absolute; top: 31px; inset-inline: 58px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+.tvsettings__actions { display: flex; gap: 16px; }
 .tvsettings__title { margin: 0; font: var(--tv-headline); text-transform: uppercase; letter-spacing: 0.04em; }
 .tv:lang(ar) .tvsettings__title { text-transform: none; letter-spacing: 0; }
 .tvsettings__cats { position: absolute; top: 103px; inset-inline-start: 58px; width: 200px; display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: var(--radius-lg); background: var(--color-surface); }

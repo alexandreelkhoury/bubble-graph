@@ -322,6 +322,8 @@
     <string name="tv__end_game_body">ما حدا بيسجّل نقاط. منرجع عالصالون.</string>
     <string name="tv__keep_playing">منكمّل</string>
     <string name="tv__exit_app">خروج</string>
+    <string name="tv__sound_on">الصوت: شغّال</string>
+    <string name="tv__sound_off">الصوت: مطفي</string>
     <string name="tv__players_title">اللاعبين</string>
     <string name="tv__back_to_lobby">رجوع: الصالون</string>
     <string name="tv__app_closed">مش أنا! مسكّرة</string>

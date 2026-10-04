@@ -8,6 +8,7 @@ import { createRoom } from "../net/api";
 import { locale, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { pushToast, resetClock, sampleClock } from "../state/store";
+import { soundCue, soundOnView, soundReset } from "./sound/controller";
 
 export type TvUi =
   | { kind: "creating" }
@@ -74,12 +75,17 @@ export async function tvCreateRoom(): Promise<void> {
     hello: () => ({ v: PROTOCOL_VERSION, t: "hello", role: "tv", tvToken: room.tvToken }),
     onState: (msg) => {
       sampleClock(msg.serverNow);
-      if (msg.view.kind === "tv") tvView.value = msg.view;
+      if (msg.view.kind !== "tv") return;
+      const prev = tvView.value;
+      tvView.value = msg.view;
+      soundOnView(prev, msg.view);
     },
     onWelcome: () => undefined,
     onError: (msg) => {
       tvLastErrorMsg.value = msg;
-      if (!SILENT.includes(msg.code)) pushToast(t(msg.messageKey as MessageKey), "error");
+      if (SILENT.includes(msg.code)) return;
+      pushToast(t(msg.messageKey as MessageKey), "error");
+      soundCue("sfx.error");
     },
     onStatus: (s) => {
       tvConn.value = s;
@@ -114,6 +120,7 @@ export function tvExit(): void {
 export function tvStop(): void {
   unbindWake?.();
   unbindWake = null;
+  soundReset();
   conn?.destroy();
   conn = null;
 }

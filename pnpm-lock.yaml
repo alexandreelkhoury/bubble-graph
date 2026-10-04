@@ -67,6 +67,8 @@ importers:
         specifier: workspace:*
         version: link:../../shared
 
+  tools/gen-sounds: {}
+
   tools/pack-lint:
     dependencies:
       '@mishana/shared':

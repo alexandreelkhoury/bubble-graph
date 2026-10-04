@@ -40,11 +40,12 @@ import app.mishana.tv.ui.theme.MishTheme
 
 private enum class PausePage { Menu, Players, ConfirmEnd }
 
-private enum class MenuItem { Resume, Skip, Players, EndGame, Exit }
+private enum class MenuItem { Resume, Skip, Players, Sound, EndGame, Exit }
 
 /**
  * TV-12 pause menu (Back during a game or on Results). Local only: "The game keeps running" (`tv.pauseNote`).
- * Items: Resume · Skip turn/timer (HOST_ADVANCE; hidden on Results) · Players… (→ kick) · End game (confirm) · Exit.
+ * Items: Resume · Skip turn/timer (HOST_ADVANCE; hidden on Results) · Players… (→ kick) · Sound on/off (DESIGN §6.4
+ * global mute; the menu stays open) · End game (confirm) · Exit.
  * Coming back from a sub-page or a confirm puts focus on the item that opened it (DESIGN §7).
  */
 @Composable
@@ -56,6 +57,8 @@ fun PauseMenu(
     onKick: (PublicPlayer) -> Unit,
     onEndGame: () -> Unit,
     onExit: () -> Unit,
+    soundOn: Boolean,
+    onToggleSound: () -> Unit,
 ) {
     var page by remember { mutableStateOf(PausePage.Menu) }
     var lastItem by remember { mutableStateOf(MenuItem.Resume) }
@@ -84,6 +87,12 @@ fun PauseMenu(
                         MishButton(stringResource(R.string.tv__skip), { onSkip(); onResume() }, Modifier.item(MenuItem.Skip))
                     }
                     MishButton(stringResource(R.string.tv__players), { open(MenuItem.Players, PausePage.Players) }, Modifier.item(MenuItem.Players), icon = MishIcons.Users)
+                    MishButton(
+                        stringResource(if (soundOn) R.string.tv__sound_on else R.string.tv__sound_off),
+                        onToggleSound,
+                        Modifier.item(MenuItem.Sound),
+                        icon = if (soundOn) MishIcons.Volume else MishIcons.VolumeOff,
+                    )
                     MishButton(stringResource(R.string.tv__end_game), { open(MenuItem.EndGame, PausePage.ConfirmEnd) }, Modifier.item(MenuItem.EndGame))
                     MishButton(stringResource(R.string.tv__exit_app), onExit, Modifier.item(MenuItem.Exit), kind = ButtonKind.Danger, icon = MishIcons.DoorOut)
                 }

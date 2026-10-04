@@ -126,6 +126,8 @@ fun SettingsScreen(
     onClose: () -> Unit,
     initialCategory: SettingsCategory,
     toasts: ToastState,
+    soundOn: Boolean = true,
+    onToggleSound: () -> Unit = {},
 ) {
     val type = MishTheme.type
     val context = LocalContext.current
@@ -187,6 +189,14 @@ fun SettingsScreen(
             Row(Modifier.fillMaxWidth().height(56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.settings__title), style = type.headline, color = MishColors.Text)
                 Spacer(Modifier.weight(1f))
+                // DESIGN §6.4 global mute: a TV device setting next to Done (never sent to the server).
+                MishButton(
+                    stringResource(if (soundOn) R.string.tv__sound_on else R.string.tv__sound_off),
+                    onToggleSound,
+                    Modifier.onFocusChanged { if (it.isFocused) focusedKey = null },
+                    icon = if (soundOn) MishIcons.Volume else MishIcons.VolumeOff,
+                )
+                Spacer(Modifier.width(MishSpace.s3))
                 MishButton(
                     stringResource(R.string.common__done),
                     onClose,
