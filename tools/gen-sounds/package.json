@@ -1,0 +1,4 @@
+{
+  "name": "@mishana/gen-sounds", "version": "0.0.0", "private": true, "type": "module",
+  "scripts": { "gen": "tsx src/main.ts", "typecheck": "tsc -p ." }
+}
