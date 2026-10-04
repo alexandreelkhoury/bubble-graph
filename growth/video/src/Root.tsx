@@ -10,7 +10,7 @@ import {AdCompositions} from './ads/Ads';
 // The app's own Cairo files (tv-app/app/src/main/res/font, tightened metrics).
 loadFont({family: 'Cairo', url: staticFile('fonts/cairo_semibold.ttf'), weight: '600'});
 loadFont({family: 'Cairo', url: staticFile('fonts/cairo_bold.ttf'), weight: '700'});
-loadFont({family: 'Cairo', url: staticFile('fonts/cairo_bold.ttf'), weight: '800'});
+loadFont({family: 'Cairo', url: staticFile('fonts/cairo_extrabold.ttf'), weight: '800'});
 loadFont({family: 'Cairo', url: staticFile('fonts/cairo_black.ttf'), weight: '900'});
 
 type Props = {blur: number; cta?: 'live' | 'prelaunch'};
@@ -18,7 +18,7 @@ type Props = {blur: number; cta?: 'live' | 'prelaunch'};
 const Main: React.FC<Props> = ({blur, cta = 'live'}) => (
   <AbsoluteFill>
     {blur > 1 ? (
-      <CameraMotionBlur samples={blur} shutterAngle={180}>
+      <CameraMotionBlur samples={blur} shutterAngle={120}>
         <Film cta={cta} />
       </CameraMotionBlur>
     ) : (

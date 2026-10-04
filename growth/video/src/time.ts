@@ -27,8 +27,10 @@ export const prog = (f: number, f0: number, f1: number, e: (t: number) => number
   e(clamp((f - f0) / (f1 - f0)));
 
 export type SpringCfg = {damping?: number; stiffness?: number; mass?: number};
-export const SNAPPY: SpringCfg = {damping: 15, stiffness: 190, mass: 1};
-export const POP: SpringCfg = {damping: 11, stiffness: 210, mass: 0.8};
+// v2 (review-v2/polish.md): calmer springs read as premium. TEXT ≈ no overshoot, POP ≈ 9 %, SNAPPY ≈ 4 %.
+export const TEXT: SpringCfg = {damping: 26, stiffness: 220, mass: 1};
+export const SNAPPY: SpringCfg = {damping: 20, stiffness: 200, mass: 1};
+export const POP: SpringCfg = {damping: 17, stiffness: 240, mass: 0.8};
 export const SOFT: SpringCfg = {damping: 22, stiffness: 120, mass: 1};
 export const HEAVY: SpringCfg = {damping: 16, stiffness: 140, mass: 1.6};
 

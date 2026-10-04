@@ -1,6 +1,6 @@
 import React from 'react';
 import {C, Shape} from './brand';
-import {clamp, lerp, spr, SpringCfg, SNAPPY} from './time';
+import {clamp, lerp, spr, SpringCfg, SNAPPY, TEXT} from './time';
 
 export const FONT = 'Cairo';
 
@@ -37,7 +37,7 @@ export const At: React.FC<{x: number; y: number; z?: number; children: React.Rea
  * Text that rises out of a mask line: in at `start` (spring), out (rising up and away) at `end`.
  * Renders nothing before it starts or after it has fully left.
  */
-export const Rise: React.FC<{f: number; start: number; end?: number; children: React.ReactNode; cfg?: SpringCfg; style?: React.CSSProperties; pad?: number}> = ({f, start, end, children, cfg = SNAPPY, style, pad = 0.18}) => {
+export const Rise: React.FC<{f: number; start: number; end?: number; children: React.ReactNode; cfg?: SpringCfg; style?: React.CSSProperties; pad?: number}> = ({f, start, end, children, cfg = TEXT, style, pad = 0.18}) => {
   if (f < start) return null;
   const pin = spr(f, start, cfg);
   const pout = end === undefined ? 0 : spr(f, end, {damping: 30, stiffness: 260});
@@ -52,16 +52,27 @@ export const Rise: React.FC<{f: number; start: number; end?: number; children: R
 };
 
 /** A line of words rising one by one, `step` frames apart. Words can carry their own colour with `*word*`. */
-export const Words: React.FC<{f: number; text: string; start: number; step: number; end?: number; accent?: string; style?: React.CSSProperties; pad?: number}> = ({f, text, start, step, end, accent = C.accent, style, pad}) => {
+/**
+ * A line of words rising one by one, `step` frames apart. `*word*` marks a hot word: coloured, or — with `boxed`
+ * (v2 captions) — set in ink on a slightly tilted colour box, which reads at thumbnail size on any background.
+ */
+export const Words: React.FC<{f: number; text: string; start: number; step: number; end?: number; accent?: string; style?: React.CSSProperties; pad?: number; boxed?: boolean}> = ({f, text, start, step, end, accent = C.accent, style, pad, boxed}) => {
   const words = text.split(' ');
+  let hotIndex = 0;
   return (
-    <span style={{display: 'inline-flex', flexWrap: 'wrap', justifyContent: 'center', columnGap: '0.28em', ...style}}>
+    <span style={{display: 'inline-flex', flexWrap: 'wrap', justifyContent: 'center', columnGap: '0.28em', rowGap: boxed ? '0.12em' : undefined, ...style}}>
       {words.map((w, i) => {
         const hot = w.startsWith('*');
         const clean = w.replace(/\*/g, '');
+        const tilt = hot ? (hotIndex++ % 2 ? 2 : -2) : 0;
         return (
-          <Rise key={i} f={f} start={start + i * step} end={end === undefined ? undefined : end + i * step * 0.35} pad={pad}>
-            <span style={{color: hot ? accent : undefined}}>{clean}</span>
+          <Rise key={i} f={f} start={start + i * step} end={end === undefined ? undefined : end + i * step * 0.35} pad={boxed ? 0.32 : pad}>
+            {hot && boxed ? (
+              <span style={{display: 'inline-block', background: accent, color: C.ink, padding: '0.02em 0.22em 0.06em', borderRadius: '0.16em',
+                transform: `rotate(${tilt}deg)`, textShadow: 'none', WebkitTextStroke: '0px transparent', boxShadow: '0 0.08em 0.25em rgba(10,4,20,0.35)'}}>{clean}</span>
+            ) : (
+              <span style={{color: hot ? accent : undefined}}>{clean}</span>
+            )}
           </Rise>
         );
       })}
