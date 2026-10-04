@@ -5,8 +5,8 @@ import type { CatalogResponseBody, EntitlementBody } from "@mishana/shared/billi
 import { BillingController, BILLING_KEYS, STORE_OPEN_RESEND_MS } from "../src/tv-mock/billing/controller";
 import type { BillingDeps, BillingRoomLink, BillingToast } from "../src/tv-mock/billing/controller";
 import {
-  afterPackPurchase, backoffMs, initialFocus, nextRefreshAt, packState, pitchParams, premiumCard, splitPacks, tokenForCreate,
-  ToastGate,
+  afterPackPurchase, backoffMs, inflightKey, initialFocus, nextRefreshAt, packState, pitchParams, planPurchaseRequest,
+  premiumCard, splitPacks, tokenForCreate, ToastGate, trialOffered,
 } from "../src/tv-mock/billing/model";
 
 const MIN = 60_000;
@@ -102,6 +102,25 @@ describe("model", () => {
     expect(shown).toEqual(["a", "c"]);
   });
 
+  it("§4.5 trial offer: only with a catalog trial offer, a fresh install and no subscription row", () => {
+    const cat = CATALOG("fake");
+    expect(trialOffered(cat, null, false)).toBe(true);
+    expect(trialOffered(cat, body(), false)).toBe(true);
+    expect(trialOffered(cat, body(), true)).toBe(false);
+    const expired = { state: "SUBSCRIPTION_STATE_EXPIRED" as const, basePlanId: "yearly", autoRenewing: false, inTrial: false, expiresAt: NOW - HOUR };
+    expect(trialOffered(cat, body({ subscription: expired }), false)).toBe(false);
+    expect(trialOffered({ subscription: { ...cat.subscription, trialOfferId: "" } }, null, false)).toBe(false);
+    expect(trialOffered(null, null, false)).toBe(false);
+    expect(planPurchaseRequest("i", "monthly").offerId).toBe("trial-7d");
+    expect(planPurchaseRequest("i", "monthly", false).offerId).toBeNull();
+  });
+
+  it("the in-flight key names the plan, so only the button the user pressed confirms", () => {
+    expect(inflightKey("premium", "yearly")).toBe("premium:yearly");
+    expect(inflightKey("premium", "monthly")).not.toBe(inflightKey("premium", "yearly"));
+    expect(inflightKey("pack_en_food_01")).toBe("pack_en_food_01");
+  });
+
   it("backoff: 1 s doubling, capped at 10 min", () => {
     expect([0, 1, 2].map(backoffMs)).toEqual([1000, 2000, 4000]);
     expect(backoffMs(30)).toBe(10 * MIN);
@@ -158,7 +177,7 @@ function harness(opts: { mode?: "fake" | "google"; catalogStatus?: number; purch
   };
   const c = new BillingController(deps);
   return {
-    c, calls, mem, sent, toasts, link, timers,
+    deps, c, calls, mem, sent, toasts, link, timers,
     setOpen: (v: boolean) => { open = v; },
     setCanToast: (v: boolean) => { canToast = v; },
     advance: (ms: number) => {
@@ -214,6 +233,44 @@ describe("BillingController", () => {
     ]);
     expect(h.toasts.map((x) => x.key)).toEqual(["store.unlocked"]);
     expect(h.c.inflight.value).toBeNull();
+  });
+
+  it("a plan purchase marks only that plan in flight, and the trial is used once per install", async () => {
+    const h = harness();
+    await h.c.loadCatalog();
+    h.c.attach(h.link);
+    expect(h.c.trialOffered).toBe(true);
+    const p = h.c.purchase("premium", "monthly");
+    expect(h.c.inflight.value).toBe("premium:monthly");
+    await p;
+    expect(h.c.trialUsed.value).toBe(true);
+    expect(h.mem.get(BILLING_KEYS.trialUsed)).toBe(h.mem.get(BILLING_KEYS.installId));
+    // A new controller on the same storage (a reload) still knows; a different install id does not inherit it.
+    expect(new BillingController(harnessDeps(h.mem)).trialUsed.value).toBe(true);
+    const other = new Map(h.mem);
+    other.set(BILLING_KEYS.installId, "f".repeat(32));
+    expect(new BillingController(harnessDeps(other)).trialUsed.value).toBe(false);
+    await h.c.testExpirePremium();
+    await h.c.purchase("premium", "yearly");
+    expect(h.calls.filter((x) => x.url === "/api/billing/fake/purchase").map((x) => (x.body as { offerId: unknown }).offerId)).toEqual(["trial-7d", null]);
+  });
+
+  it("the cached entitlement body is UI-only: only the stored token ever leaves the browser", async () => {
+    const h = harness();
+    // A viewer edits their own storage to claim Premium and every pack.
+    h.mem.set(BILLING_KEYS.token, "tok.real");
+    h.mem.set(BILLING_KEYS.body, JSON.stringify({ body: body({ token: "tok.real", premium: true, packs: ["en-food-01"] }), savedAt: NOW }));
+    h.mem.set(BILLING_KEYS.verified, "forged");
+    const c = new BillingController(h.deps);
+    await c.loadCatalog();
+    c.attach(h.link);
+    await c.refresh(true);
+    await c.purchase("pack_en_food_01");
+    const bodies = JSON.stringify(h.calls.map((x) => x.body ?? null));
+    expect(bodies).not.toContain("premiumUntil");
+    expect(bodies).not.toContain("forged");
+    expect(bodies).not.toMatch(/"premium":true/);
+    for (const m of h.sent as { t: string }[]) expect(Object.keys(m).sort()).toEqual(m.t === "entitlement" ? ["t", "token", "v"] : ["open", "t", "v"]);
   });
 
   it("a pack purchase posts every remembered purchase; a PENDING one shows the pending chip and no toast", async () => {

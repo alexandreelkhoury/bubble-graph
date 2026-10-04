@@ -206,18 +206,25 @@ async function closeStore(tv: Page): Promise<void> {
 
 // ------------------------------------------------------------------------------------------------ gate
 
+// A server without billing routes FAILS this file: a missing or broken /api/billing must never pass as "skipped".
+// E2E_ALLOW_NO_BILLING=1 is the explicit opt-out for a run against a server from before PAYMENTS-SPEC Phase 1
+// (implementer A); the store layout and remote rules are still covered by store-layout.spec.ts with a mocked store.
 let gate: string | null = null;
 test.beforeAll(async ({ playwright, baseURL }) => {
   const req: APIRequestContext = await playwright.request.newContext({ baseURL });
   const r = await req.get("/api/billing/catalog");
-  // 404/405: the Worker has no billing routes at all (unknown /api paths answer 405 today).
-  if (r.status() === 404 || r.status() === 405) gate = "the server has no /api/billing routes yet (PAYMENTS-SPEC Phase 1, implementer A)";
-  else {
-    const j = (await r.json().catch(() => null)) as { mode?: string } | null;
-    // A server with billing that is not in fake mode here is a misconfiguration: fail, never skip.
-    expect(j?.mode, "the e2e server must run with BILLING_MODE:fake and ALLOW_FAKE_BILLING:1").toBe("fake");
+  // 404/405: the Worker has no billing routes at all (unknown /api paths answer 405 before Phase 1).
+  if (r.status() === 404 || r.status() === 405) {
+    const why = `the server has no /api/billing routes (GET /api/billing/catalog → ${r.status()}; PAYMENTS-SPEC Phase 1, implementer A)`;
+    await req.dispose();
+    if (process.env.E2E_ALLOW_NO_BILLING !== "1") throw new Error(`${why}. Set E2E_ALLOW_NO_BILLING=1 only to run e2e against a pre-Phase-1 server.`);
+    gate = why;
+    return;
   }
+  const j = (await r.json().catch(() => null)) as { mode?: string } | null;
   await req.dispose();
+  // A server with billing that is not in fake mode here is a misconfiguration: fail, never skip.
+  expect(j?.mode, "the e2e server must run with BILLING_MODE:fake and ALLOW_FAKE_BILLING:1").toBe("fake");
 });
 test.beforeEach(() => { test.skip(gate !== null, gate ?? ""); });
 
