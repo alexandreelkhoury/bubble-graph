@@ -503,7 +503,7 @@
 .tvshop__pack { flex: none; width: 200px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 14px; border: 0; border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font: var(--tv-caption); text-align: start; }
 .tvshop__packtitle { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-label); }
 .tvshop__packmeta { color: var(--color-text-muted); }
-.tvshop__packend { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; min-width: 0; min-height: 24px; }
+.tvshop__packend { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; min-width: 0; height: 28px; overflow: hidden; }
 .tvshop__buy { color: var(--color-primary); font-weight: 800; }
 .tvshop__divider { flex: none; align-self: center; padding: 0 6px; color: var(--color-text-muted); font: var(--tv-caption); white-space: nowrap; }
 .tvshop__toastslot { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; pointer-events: none; }

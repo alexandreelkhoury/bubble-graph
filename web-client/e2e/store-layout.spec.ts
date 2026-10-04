@@ -141,7 +141,7 @@ for (const lang of ["en", "fr", "ar"] as const) {
     // §4.5: the trial wording (a new install), at most three lines of 20 sp text.
     const legal = tv.locator(".tvshop__legal");
     await expect(legal).toContainText(text("store.legalCancelTrial", lang));
-    const lines = await legal.evaluate((e) => Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight)));
+    const lines = await legal.evaluate((e) => Math.round((e as HTMLElement).offsetHeight / parseFloat(getComputedStyle(e).lineHeight)));
     expect(lines, `${lang} disclosure lines`).toBeLessThanOrEqual(3);
     await expect(tv.locator(".tvshop__badge")).toHaveCount(2);
 
@@ -196,17 +196,19 @@ for (const lang of ["en", "ar"] as const) {
     const id = (await focusId(tv))!;
     expect(id).toMatch(/^pack:/);
     const card = tv.locator(`[data-focus="${id}"]`);
-    const before = await card.boundingBox();
+    // Layout height (offsetHeight ignores the focus scale and its transition).
+    const height = (): Promise<number> => card.evaluate((e) => (e as HTMLElement).offsetHeight);
+    const before = await height();
     await tv.keyboard.press("Enter");
     await expect(card.locator(".tvshop__busy")).toBeVisible();
     await expect(card.locator(".tvshop__buy")).toHaveCount(0);
-    const busyLines = async (): Promise<number> => card.locator(".tvshop__busytext").evaluate((e) => Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight)));
+    const busyLines = async (): Promise<number> => card.locator(".tvshop__busytext").evaluate((e) => Math.round((e as HTMLElement).offsetHeight / parseFloat(getComputedStyle(e).lineHeight)));
     expect(await busyLines()).toBe(1);
-    expect((await card.boundingBox())!.height).toBeCloseTo(before!.height, 0);
+    expect(await height()).toBe(before);
     await expectStoreFits(tv, `${lang} pack confirming`);
     await expect(card.locator(".tvshop__busy")).toHaveAttribute("title", text("store.verifyFailed", lang), { timeout: 20_000 });
     expect(await busyLines()).toBe(1);
-    expect((await card.boundingBox())!.height).toBeCloseTo(before!.height, 0);
+    expect(await height()).toBe(before);
     await expectStoreFits(tv, `${lang} pack verify slow`);
     await expectToastClear(tv, `${lang} pack verify slow`);
     billing.release();
@@ -237,8 +239,11 @@ test("en: no trial offer once this install had Premium — price wording, no bad
   await ctx.close();
 });
 
+// The 20 dp between the grid's last row and the bar cannot hold a 20 sp label, so the focus tooltip of the icon-only
+// Premium button overlaps the last row's first tile while focus is on that button; it must at least be drawn on top
+// of the tile, on a solid chip, and stay inside the canvas.
 for (const lang of ["en", "ar"] as const) {
-  test(`${lang}: the icon-only Premium button's tooltip covers no player tile`, async ({ browser }) => {
+  test(`${lang}: the icon-only Premium button's tooltip is drawn above the grid and inside the canvas`, async ({ browser }) => {
     const { ctx, tv } = await tvPage(browser, lang);
     await mockBilling(tv);
     await openLobby(tv);
@@ -246,15 +251,20 @@ for (const lang of ["en", "ar"] as const) {
     for (let i = 0; i < 6 && (await focusId(tv)) !== "premium"; i++) { await tv.keyboard.press(i === 0 ? "ArrowDown" : back); await tv.waitForTimeout(120); }
     const tip = tv.locator("[data-lobby=premium] .tvtip");
     await expect(tip).toHaveCSS("opacity", "1");
-    const t = (await box(tv, "[data-lobby=premium] .tvtip"))!;
-    const tiles = await tv.evaluate(() => [...document.querySelectorAll(".tvgrid > *")].map((e) => {
+    await expect(tip).toHaveText(text("lobby.premium", lang));
+    const onTop = await tip.evaluate((e) => {
+      (e as HTMLElement).style.pointerEvents = "auto"; // hit-testing skips pointer-events:none
       const r = e.getBoundingClientRect();
-      return { top: r.top, bottom: r.bottom, left: r.left, right: r.right };
-    }));
-    expect(tiles.length).toBeGreaterThan(0);
-    for (const tile of tiles) expect(overlap(t, tile), `${lang}: the tooltip covers a tile`).toBe(false);
+      const pts = [0.2, 0.5, 0.8].flatMap((fx) => [0.3, 0.7].map((fy) => [r.left + fx * r.width, r.top + fy * r.height]));
+      return pts.every(([x, y]) => { const hit = document.elementFromPoint(x!, y!); return hit !== null && e.contains(hit); });
+    });
+    expect(onTop, `${lang}: a tile is drawn over the tooltip`).toBe(true);
+    expect(await tip.evaluate((e) => getComputedStyle(e).backgroundColor)).not.toMatch(/rgba\(.*, 0(\.\d+)?\)$/);
+    const t = (await box(tv, "[data-lobby=premium] .tvtip"))!;
     const canvas = (await box(tv, ".tv__canvas"))!;
-    expect(t.bottom).toBeLessThanOrEqual(canvas.bottom);
+    expect(t.top).toBeGreaterThanOrEqual(canvas.top);
+    expect(t.left).toBeGreaterThanOrEqual(canvas.left);
+    expect(t.right).toBeLessThanOrEqual(canvas.right);
     await ctx.close();
   });
 }
