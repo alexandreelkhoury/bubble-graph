@@ -17,6 +17,7 @@
     "gen:sounds": "pnpm --filter @mishana/gen-sounds run gen",
     "lint:packs": "pnpm --filter @mishana/pack-lint run lint",
     "e2e": "pnpm --filter @mishana/web-client run e2e",
+    "grant": "node server/scripts/grant.mjs",
     "deploy": "pnpm run build && pnpm --filter @mishana/pack-lint run lint -- --release && pnpm --filter @mishana/server run deploy"
   },
   "devDependencies": {

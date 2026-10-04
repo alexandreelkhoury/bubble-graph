@@ -121,6 +121,10 @@
     <string name="settings__cat_roles">الأدوار</string>
     <string name="settings__cat_timers">التوقيت</string>
     <string name="settings__cat_words">الكلمات</string>
+    <string name="settings__cat_about">حول</string>
+    <string name="settings__install_id">رقم التثبيت</string>
+    <string name="settings__install_id_help">ممكن الدعم يطلب منك هالرقم ليفتح المشتريات على هالتلفزيون.</string>
+    <string name="settings__app_version">النسخة</string>
     <string name="settings__win_rule">شرط الربح</string>
     <string name="settings__win_rule_official">الرسمي (بيبقى مدني واحد)</string>
     <string name="settings__win_rule_parity">قدّ بقدّ (عددهن قدّ المدنيين)</string>

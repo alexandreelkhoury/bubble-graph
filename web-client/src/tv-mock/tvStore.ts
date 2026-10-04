@@ -11,6 +11,7 @@ import { pushToast, resetClock, sampleClock } from "../state/store";
 import { soundCue, soundOnView, soundReset } from "./sound/controller";
 import { billing } from "./billing";
 import type { StoreEntry } from "./billing/model";
+import { recreatesRoomOnFatal } from "./roomLife";
 
 export type TvUi =
   | { kind: "creating" }
@@ -109,9 +110,8 @@ export async function tvCreateRoom(): Promise<void> {
       tvDownSince.value = s === "open" ? null : tvDownSince.value ?? Date.now();
     },
     onFatal: (code) => {
-      const v = tvView.value;
-      if (code === CLOSE.ROOM_EXPIRED && (!v || (v.phase === "LOBBY" && v.players.length === 0))) {
-        // TV-13e: an empty lobby expired → silently create a new room.
+      if (recreatesRoomOnFatal(code, tvView.value)) {
+        // TV-13e: the room expired or vanished between games → silently create a new room.
         void tvCreateRoom().then(() => {
           const u = tvUi.value;
           if (u.kind === "room") pushToast(t("tv.newCode", { code: u.room.code }), "info", 4000);

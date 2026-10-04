@@ -59,6 +59,7 @@ import androidx.tv.material3.Text
 import app.mishana.tv.Constants
 import app.mishana.tv.IntBounds
 import app.mishana.tv.R
+import app.mishana.tv.billing.InstallId
 import app.mishana.tv.billing.Products
 import app.mishana.tv.billing.StoreEntry
 import app.mishana.tv.billing.StoreOrigin
@@ -107,8 +108,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 
-/** Which settings category to open (Start on an invalid config jumps to the offending one). */
-enum class SettingsCategory { Game, Roles, Timers, Words }
+/**
+ * Which settings category to open (Start on an invalid config jumps to the offending one). [About] is TV-only and has
+ * no rows: its panel shows the app version and the install id (DESIGN TV-03, PAYMENTS-SPEC §3.12).
+ */
+enum class SettingsCategory { Game, Roles, Timers, Words, About }
 
 /** One settings row: label, current value text, an optional help line, and how it steps. */
 private class RowModel(
@@ -146,6 +150,9 @@ fun SettingsScreen(
     onOpenStore: ((StoreEntry) -> Unit)? = null,
     /** Play said BILLING_UNAVAILABLE this session: locked rows read `settings.locked` (§4.4 state machine). */
     billingUnavailable: Boolean = false,
+    /** About: this TV's install id (PAYMENTS-SPEC §2.1) and app version; null hides the line. */
+    installId: String? = null,
+    appVersion: String? = null,
 ) {
     val type = MishTheme.type
     val context = LocalContext.current
@@ -242,7 +249,9 @@ fun SettingsScreen(
                                 category = c
                                 focusedKey = null
                             },
-                            modifier = Modifier.focusRequester(catRequesters.getValue(c)),
+                            modifier = Modifier.focusRequester(catRequesters.getValue(c))
+                                // About has nothing to enter: toward inline-end must not wander to the header buttons.
+                                .then(if (c == SettingsCategory.About) Modifier.focusProperties { end = FocusRequester.Cancel } else Modifier),
                         )
                     }
                 }
@@ -253,7 +262,9 @@ fun SettingsScreen(
                         .background(MishColors.Surface, MishShapes.tile)
                         .padding(vertical = MishSpace.s1),
                 ) {
-                    LazyColumn(
+                    if (category == SettingsCategory.About) {
+                        AboutPanel(installId, appVersion)
+                    } else LazyColumn(
                         // Entering the rows from a category lands on the first row, never on whichever is level.
                         Modifier.fillMaxWidth().weight(1f, fill = false).heightIn(max = 316.dp).focusRestorer(firstRow),
                         // Room for the focus scale + ring, which the list would otherwise clip.
@@ -327,6 +338,24 @@ private fun categoryLabel(c: SettingsCategory): Int = when (c) {
     SettingsCategory.Roles -> R.string.settings__cat_roles
     SettingsCategory.Timers -> R.string.settings__cat_timers
     SettingsCategory.Words -> R.string.settings__cat_words
+    SettingsCategory.About -> R.string.settings__cat_about
+}
+
+/** TV-03 About: read-only, nothing focusable (the category itself keeps focus). Small text, per DESIGN TV-03. */
+@Composable
+private fun AboutPanel(installId: String?, appVersion: String?) {
+    val type = MishTheme.type
+    Column(Modifier.fillMaxWidth().padding(horizontal = MishSpace.s5, vertical = MishSpace.s4), verticalArrangement = Arrangement.spacedBy(MishSpace.s3)) {
+        if (appVersion != null) {
+            Text(stringResource(R.string.settings__app_version) + "  " + isolate(appVersion), style = type.caption, color = MishColors.TextSecondary)
+        }
+        if (installId != null) {
+            Text(stringResource(R.string.settings__install_id), style = type.caption, color = MishColors.TextSecondary)
+            // An LTR-isolated hex string in every UI language (digits and a–f read left to right even in Arabic).
+            Text(isolate(InstallId.display(installId)), style = type.caption, color = MishColors.Text, maxLines = 1)
+            Text(stringResource(R.string.settings__install_id_help), style = type.caption, color = MishColors.TextMuted, maxLines = 3)
+        }
+    }
 }
 
 private val DIFFICULTY_NAMES = listOf(R.string.settings__difficulty1, R.string.settings__difficulty2, R.string.settings__difficulty3)
@@ -462,6 +491,7 @@ private fun buildRows(
                     step = { change(SettingsPatch(swapSides = !s.swapSides)) }),
             )
         }
+        SettingsCategory.About -> emptyList()
     }
 }
 

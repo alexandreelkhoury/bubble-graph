@@ -70,6 +70,7 @@ curl -s -X POST localhost:8787/api/rooms           # {"code":"KXRT","tvToken":"�
 | `pnpm fixtures` / `pnpm --filter @mishana/shared run check:fixtures` | Regenerate or verify `shared/fixtures/*.json` |
 | `pnpm lint:packs` / `pnpm --filter @mishana/pack-lint run lint -- --release` | Pack lint. `--release` (run by `pnpm run deploy`) fails when a free starter pack has fewer than 40 pairs |
 | `pnpm --filter @mishana/server billing:products` | CSV of every premium pack (`productId,packId,locale,titleEn,titleFr,titleAr`) for Play Console |
+| `pnpm grant <installId>` / `pnpm grant list` / `pnpm grant revoke <id>` | Owner comps through `/api/admin/grants` (needs the optional `ADMIN_TOKEN` secret; see [Admin grants](#admin-grants-comp-premium-for-a-tv-payments-spec-312)) |
 
 To run one project: `pnpm vitest run --project server` (or `shared`, `sim`, …).
 
@@ -183,6 +184,7 @@ In fake mode the cron only prunes.
 |---|---|
 | `PLAY_SERVICE_ACCOUNT_JSON` | The Play Developer API service-account key JSON (view-only Play permissions, rotated every 90 days; PAYMENTS-SPEC §8.C) |
 | `ENTITLEMENT_KEYS` | `{"active":"k1","keys":[{"kid":"k1","x":"…","d":"…"}]}` (Ed25519 OKP keys) |
+| `ADMIN_TOKEN` (optional) | ≥ 32 random characters (`openssl rand -hex 32`); unset = admin endpoints answer 404. See [Admin grants](#admin-grants-comp-premium-for-a-tv-payments-spec-312) |
 
 ```sh
 pnpm --filter @mishana/server gen:entitlement-key            # prints {"kid":"k1","x":"…","d":"…"}; -- --kid k2 for the next one
@@ -191,9 +193,30 @@ npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json
 ```
 
 - `wrangler.jsonc` lists both under `secrets.required`, so `wrangler deploy` fails when one is missing; local dev only warns.
+- `ADMIN_TOKEN` is the one optional secret (see [Admin grants](#admin-grants-comp-premium-for-a-tv-payments-spec-312)).
 - **Key rotation:** generate `k2`, add it to `keys`, set `"active":"k2"`, deploy; remove `k1` (or keep only its `x`) after at least 16 h (2 × token TTL; 24 h recommended).
 - **Local Google mode:** put the secrets and non-fake vars in `server/.dev.vars` (git-ignored, `.dev.vars*`) and run `wrangler dev` without the fake `--var`s. Never use `pnpm dev` for this: it forces fake mode, and a configured service account disables fake mode (503).
 - Only `server/src/billing/**` reads `PLAY_SERVICE_ACCOUNT_JSON` (ESLint `no-restricted-syntax`). The Room DO parses `ENTITLEMENT_KEYS` with the private halves dropped.
+
+### Admin grants (comp premium for a TV, PAYMENTS-SPEC §3.12)
+
+Optional. Lets the owner give premium and/or packs to specific TV installs (e.g. a sideloaded TV) without paying. Grants never involve Google and never use one of a purchase's 10 install slots.
+
+1. **Turn it on** (once): `cd server && openssl rand -hex 32 | npx wrangler secret put ADMIN_TOKEN`, and keep the value in your password manager. Without the secret (or with one shorter than 32 characters) every `/api/admin/*` path answers 404; `check-deploy.mjs` keeps it optional (never a var, never in `secrets.required`). To turn it off again: `npx wrangler secret delete ADMIN_TOKEN`. Locally, put `ADMIN_TOKEN=…` in `server/.dev.vars`.
+2. **Find the TV's install id:** on the TV, Lobby → **Settings** → **About** (last category, D-pad Down). It shows `Install ID` as eight groups of four hex characters. The `/tv` browser mock shows its own id in the same place. The id is created on first launch and survives updates; clearing the app's data creates a new one.
+3. **Grant / list / revoke** (the token is read from the environment only, so it stays out of shell history; the server from `--url` or `MISHANA_URL`):
+
+```sh
+export MISHANA_URL=https://play.<your-subdomain>.workers.dev   # or your custom domain
+read -rs ADMIN_TOKEN && export ADMIN_TOKEN                      # paste the token
+pnpm grant "0123 4567 89ab cdef 0123 4567 89ab cdef" --note "living-room TV"   # premium, no end date
+pnpm grant 0123456789abcdef0123456789abcdef --packs en-food-01,fr-food-01      # only these packs
+pnpm grant 0123456789abcdef0123456789abcdef --premium --packs en-food-01 --expires 2027-01-01
+pnpm grant list                                  # install hashes (the raw id is never stored), what, until when
+pnpm grant revoke 0123456789abcdef0123456789abcdef   # or the 64-hex hash printed by `list`
+```
+
+4. The TV picks it up on its next entitlement refresh: open the Store and choose **Restore purchases**, or restart the app. A new room is then premium; a room already open gets it with the TV's next token.
 
 ### Vars, observability and logs
 

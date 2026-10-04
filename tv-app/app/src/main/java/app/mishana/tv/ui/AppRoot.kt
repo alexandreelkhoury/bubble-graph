@@ -221,6 +221,8 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
     val fakeRequest by (vm.fakePrompt?.request ?: noFake).collectAsStateWithLifecycle()
     var settingsOpen by remember { mutableStateOf(false) }
     var settingsCategory by remember { mutableStateOf(SettingsCategory.Game) }
+    // Settings → About (PAYMENTS-SPEC §3.12): read once; the install id never changes for this install.
+    val installId = remember { vm.installId() }
     var settingsAfterPlayAgain by remember { mutableStateOf(false) }
     // TV-07: while the votes are being revealed, the top bar must not give the verdict away.
     var revealing by remember { mutableStateOf(false) }
@@ -338,6 +340,8 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
                                         onToggleSound = { vm.setSoundMuted(!soundMuted) },
                                         onOpenStore = if (vm.billingState != null) openStore else null,
                                         billingUnavailable = billing.billingUnavailable,
+                                        installId = installId,
+                                        appVersion = BuildConfig.VERSION_NAME,
                                     )
                                     frame.key == ScreenKey.RoleReveal -> RoleRevealScreen(v, s.clockOffsetMs, send)
                                     frame.key == ScreenKey.Clues -> CluesScreen(v, s.clockOffsetMs, s.paused, send)

@@ -105,6 +105,10 @@
     <string name="settings__cat_roles">Roles</string>
     <string name="settings__cat_timers">Timers</string>
     <string name="settings__cat_words">Words</string>
+    <string name="settings__cat_about">About</string>
+    <string name="settings__install_id">Install ID</string>
+    <string name="settings__install_id_help">Support may ask for this ID to unlock purchases on this TV.</string>
+    <string name="settings__app_version">Version</string>
     <string name="settings__win_rule">Win rule</string>
     <string name="settings__win_rule_official">Official (1 Civilian left)</string>
     <string name="settings__win_rule_parity">Parity (as many as the Civilians)</string>

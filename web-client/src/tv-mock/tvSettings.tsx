@@ -17,6 +17,8 @@ import type { RowDef, SettingsCategory } from "../lib/settingsModel";
 import { usePatcher } from "../hooks/usePatcher";
 import { Icon } from "../components/Icon";
 import { tvAct, tvLastErrorMsg, tvScreen, tvShop } from "./tvStore";
+import { billing } from "./billing";
+import { displayInstallId } from "./roomLife";
 import { openShop } from "./shopState";
 import { soundCue } from "./sound/controller";
 import { settingLocked } from "../lib/premium";
@@ -25,6 +27,31 @@ import type { Arrow } from "./dpad";
 import { SoundToggle } from "./sound/SoundToggle";
 
 type Sub = null | "packs" | "difficulty";
+/** The settings categories plus the TV-only About (DESIGN TV-03): no rows, version and install id only. */
+type TvCategory = SettingsCategory | "about";
+const TV_CATEGORIES: readonly TvCategory[] = [...CATEGORIES, "about"];
+
+/** TV-03 About (PAYMENTS-SPEC §3.12): read-only, nothing focusable; the owner reads the install id for `pnpm grant`. */
+function AboutPanel() {
+  let id: string | null;
+  try {
+    id = billing.installId();
+  } catch {
+    id = null; // storage unavailable: nothing to show
+  }
+  return (
+    <div class="tvabout" data-about>
+      <p class="tvabout__line">{t("settings.appVersion")} <bdi dir="ltr">web mock</bdi></p>
+      {id !== null && (
+        <>
+          <p class="tvabout__line">{t("settings.installId")}</p>
+          <p class="tvabout__id"><bdi dir="ltr" data-install-id>{displayInstallId(id)}</bdi></p>
+          <p class="tvabout__help">{t("settings.installIdHelp")}</p>
+        </>
+      )}
+    </div>
+  );
+}
 
 const isRtl = (): boolean => document.documentElement.dir === "rtl";
 /** +1 for the inline-end arrow (Right in LTR, Left in RTL), -1 for inline-start, 0 otherwise. */
@@ -96,10 +123,10 @@ function Toggle({ on, onClick, children, first }: { on: boolean; onClick(): void
 export function TvSettings({ view }: { view: TvView }) {
   const [s, set] = usePatcher(view.settings, (patch) => tvAct({ type: "UPDATE_SETTINGS", patch }), tvLastErrorMsg.value);
   const initialCat: SettingsCategory = view.startBlocker === "INVALID_ROLE_CONFIG" ? "roles" : view.startBlocker === "NO_WORDS_AVAILABLE" ? "words" : "game";
-  const [cat, setCat] = useState<SettingsCategory>(initialCat);
+  const [cat, setCat] = useState<TvCategory>(initialCat);
   const [sub, setSub] = useState<Sub>(null);
   const [focusRow, setFocusRow] = useState<string | null>(null);
-  const lastRow = useRef<Partial<Record<SettingsCategory, string>>>({});
+  const lastRow = useRef<Partial<Record<TvCategory, string>>>({});
   const rowsBox = useRef<HTMLDivElement>(null);
   const catBox = useRef<HTMLElement>(null);
   const catRef = useInitialFocus<HTMLButtonElement>();
@@ -108,7 +135,7 @@ export function TvSettings({ view }: { view: TvView }) {
   const subFirst = useInitialFocus<HTMLButtonElement>(sub);
   // §4.4: premium-only rows move to the bottom of their category in a free room (the initial focus never lands on a lock).
   const locked = (r: RowDef): boolean => r.kind === "points" && settingLocked(view, "points");
-  const allRows = visibleRows(cat, s);
+  const allRows = cat === "about" ? [] : visibleRows(cat, s);
   const rows = [...allRows.filter((r) => !locked(r)), ...allRows.filter(locked)];
   const preview = rolePreview(view);
 
@@ -160,7 +187,7 @@ export function TvSettings({ view }: { view: TvView }) {
 
   const focused = rows.find((r) => r.id === focusRow);
   const rowHelp = focused?.kind === "enum" ? focused.help?.(s) : undefined;
-  const catHelp = CATEGORY_HELP[cat];
+  const catHelp = cat === "about" ? undefined : CATEGORY_HELP[cat];
   const help = rowHelp ? t(rowHelp) : catHelp ? t(catHelp) : cat === "roles" ? preview?.text : undefined;
   const helpDanger = cat === "roles" && !rowHelp && !catHelp && preview?.invalid === true;
   const l = locale.value;
@@ -176,15 +203,15 @@ export function TvSettings({ view }: { view: TvView }) {
         </div>
       </header>
       <nav class="tvsettings__cats" ref={catBox} aria-label={t("settings.title")}>
-        {CATEGORIES.map((c) => (
-          <button key={c} type="button" ref={c === initialCat ? catRef : undefined} class={`tvcat${cat === c ? " is-on" : ""}`}
+        {TV_CATEGORIES.map((c) => (
+          <button key={c} type="button" data-cat={c} ref={c === initialCat ? catRef : undefined} class={`tvcat${cat === c ? " is-on" : ""}`}
             data-default-focus={cat === c && !sub ? true : undefined} aria-current={cat === c ? "true" : undefined}
             onFocus={() => { setCat(c); setSub(null); }} onClick={() => setCat(c)}
             onKeyDown={(e) => {
-              if (inlineDir(e) === 1) { swallow(e); focusRowId(lastRow.current[c]); }
+              if (inlineDir(e) === 1) { swallow(e); if (c !== "about") focusRowId(lastRow.current[c]); }
               else if (e.key === "ArrowUp" && c === CATEGORIES[0]) { swallow(e); doneRef.current?.focus(); }
             }}>
-            {t(CATEGORY_LABEL[c])}
+            {t(c === "about" ? "settings.catAbout" : CATEGORY_LABEL[c])}
           </button>
         ))}
       </nav>
@@ -222,6 +249,8 @@ export function TvSettings({ view }: { view: TvView }) {
                 </Toggle>
               ))}
             </div>
+          ) : cat === "about" ? (
+            <AboutPanel />
           ) : (
             rows.map((r) => (
               <div key={r.id} onFocusIn={() => { setFocusRow(r.id); lastRow.current[cat] = r.id; }}>

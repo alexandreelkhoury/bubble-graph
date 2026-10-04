@@ -330,9 +330,8 @@ export const MAX_NO_ELIMINATION_STREAK = 3;
 export const HEARTBEAT_INTERVAL_MS = 20_000;
 export const PONG_TIMEOUT_MS = 10_000;
 export const HELLO_TIMEOUT_MS = 10_000;
-export const ROOM_EMPTY_TTL_MS = 15 * 60_000;
-export const ROOM_IDLE_TTL_MS = 2 * 60 * 60_000;
-export const ROOM_RESULTS_TTL_MS = 30 * 60_000;
+export const ROOM_TV_MAX_TTL_MS = 12 * 60 * 60_000; // TV connected: safety cap after lastActivityAt (§7.5 expiry)
+export const ROOM_TV_GONE_TTL_MS = 15 * 60_000;     // no TV connected: expiry after tvLeftAt (§7.5 expiry)
 export const MSG_MAX_BYTES = 4096;          // UTF-8 bytes (TextEncoder)
 export const HTTP_BODY_MAX_BYTES = 1024;    // POST /api/rooms
 export const RATE_MSGS_PER_SEC = 5;         // token bucket refill / s
@@ -1238,14 +1237,14 @@ The runtime persists attachments across hibernation, which is why the raw IP is 
 
 | Key | Type |
 |---|---|
-| `meta` | `{ schema: 1, code, tvTokenHash, joinUrl, createdAt, lastActivityAt, resultsAt: number \| null }` |
+| `meta` | `{ schema: 1, code, tvTokenHash, joinUrl, createdAt, lastActivityAt, tvLeftAt: number \| null, … }` (billing fields: PAYMENTS-SPEC §3.11) |
 | `state` | `GameState` |
 | `sessions` | `Record<playerId, { tokenHash: string; kicked: boolean }>` |
 
 Rules:
 - The DO writes `state` (and `meta`/`sessions` when they change) **before** sending any message that reflects the change.
 - `lastActivityAt` is updated on an accepted client message only if more than 60 s have passed since the last update.
-- `resultsAt` is set when the phase becomes RESULTS and cleared when it leaves RESULTS.
+- `tvLeftAt` = when the room last had no hello'd TV socket; `null` while a TV is connected. `initRoom` sets it to `createdAt` (no TV yet); the TV's hello clears it (via the reconcile below); the close of the **last** TV socket (compared by `cid`, so a REPLACED socket does not count) sets it to now if it was `null`. **Reconcile** (every alarm reschedule, `onStart` and `onAlarm`): "TV connected" is derived from the live sockets only — some socket in `getConnections()` whose attachment has `role:"tv"` (attachments survive hibernation; pings never wake the DO, so they cannot be used) — and `tvLeftAt` is set to `null` if a TV is connected, or to now if no TV is connected but `tvLeftAt` is `null` (a DO reset dropped the socket without `webSocketClose`; later wake-ups do not move it again). A socket error (`onError`) is handled like a close. Rooms stored before this field read it as unknown (`lastActivityAt` is used until the reconcile sets it). An older stored `resultsAt` is ignored.
 - **Session pruning.** After every accepted reduce, delete every session whose `playerId` is not in `state.players` (seat expiry, `resetToLobby` removing left players, LOBBY LEAVE/KICK). Kicked sessions of players still in the game stay (marked `kicked`) until then.
 
 **`onStart`** (after the cache loads):
@@ -1290,17 +1289,18 @@ A `pending` connection that has not said hello after `HELLO_TIMEOUT_MS` is close
 
 **Alarm scheduling.** After every persist, and after any pending connection opens:
 ```
-at = min(nextWakeAt(state), expiresAt(meta, state), pendingDeadline)
+at = min(nextWakeAt(state), expiresAt(meta, tvConnected), pendingDeadline)
 pendingDeadline = min(openedAt) + HELLO_TIMEOUT_MS over pending connections (absent if none)
 ```
-If `at` differs from the current alarm, call `setAlarm(at)`. The current alarm is read with `getAlarm()` once and then cached (`RoomStore`): the cache is reset when the instance starts, after `deleteAll()` and when an alarm fires. `expiresAt` is the minimum of:
-- `lastActivityAt + ROOM_IDLE_TTL_MS`;
-- if phase LOBBY && `players.length===0`: `max(createdAt, lastActivityAt) + ROOM_EMPTY_TTL_MS`;
-- if phase RESULTS: `resultsAt + ROOM_RESULTS_TTL_MS`.
+If `at` differs from the current alarm, call `setAlarm(at)`. The current alarm is read with `getAlarm()` once and then cached (`RoomStore`): the cache is reset when the instance starts, after `deleteAll()` and when an alarm fires. `expiresAt` (the room lifetime, whatever the phase):
+- **TV connected:** the room does not expire while the TV is on. Safety cap against a zombie socket: `lastActivityAt + ROOM_TV_MAX_TTL_MS` (12 h). A TV hello is an accepted client message, so this is 12 h after the later of the last accepted client message and the TV's (re)connection (to the minute: `lastActivityAt` is written at most once per 60 s).
+- **No TV connected:** `tvLeftAt + ROOM_TV_GONE_TTL_MS` (15 min after the TV app closed or the TV went off — or after creation if the TV never said hello), unless the TV reconnects first. Players alone do not keep a room alive.
+
+The earlier empty-lobby (15 min), RESULTS (30 min) and idle (2 h) rules are gone: with a TV connected they would close a room on a TV that is still on, and without one the 15-min TV-gone rule is always the earliest.
 
 **`onAlarm`:**
 1. No `meta` → `deleteAll()` and return.
-2. `now >= expiresAt` → send `error ROOM_EXPIRED` and close 4010 on every connection, then `deleteAlarm()` and `deleteAll()`.
+2. Reconcile `tvLeftAt`. `now >= expiresAt` → send `error ROOM_EXPIRED` and close 4010 on every connection, then `deleteAlarm()` and `deleteAll()`.
 3. Otherwise dispatch `TICK`. If the version changed → persist and broadcast. Also close stale pending connections (4001), then reschedule.
 
 Alarms may fire early or late; the engine compares times. A failed alarm handler is retried by the runtime, and `TICK` is idempotent.
@@ -1351,7 +1351,7 @@ export function createRoom(req: Request, env: Env, deps: CreateRoomDeps): Promis
 
 `initRoom` (native RPC, inside the mutex). Native RPC bypasses partyserver's `fetch` initialisation, and the DO may have been evicted after `getServerByName` ran `onStart`, so `initRoom` never trusts the cache:
 - Read `meta` **directly from storage**.
-- If `meta` exists and the room has not expired → `{ok:false, reason:"EXISTS"}`.
+- If `meta` exists and the room has not expired (`expiresAt(meta, tvConnected)` with the live sockets) → `{ok:false, reason:"EXISTS"}`.
 - If `meta` exists but has expired (its alarm has not fired yet): send `error ROOM_EXPIRED` and close 4010 on every connection from `getConnections()` first.
 - Then `deleteAll()`, write `meta`, `state = createInitialState({roomCode, joinUrl, seed: randomUint32, wordLocale: locale})` and `sessions={}`, **replace the in-memory cache** (meta, state, sessions) in the same critical section, schedule the alarm, and return ok.
 - Old sockets that survived anyway carry an older `ConnState.epoch` and are closed 4010 on their next message (§7.5).
@@ -1798,7 +1798,7 @@ class GameViewModel(app: Application) : AndroidViewModel(app) {
 ```
 - A `StateMsg` is applied only if `seq > lastSeq` (reset on reconnect).
 - `clockOffsetMs` = the largest of the last 5 samples of `serverNow − System.currentTimeMillis()` taken at receipt.
-- On `CLOSED_FATAL(4010)` while in LOBBY with no players → `createRoom()` automatically (a new QR) and toast `tv.newCode`. Other fatal codes → `Fatal`, with the `messageKey` of the last `ErrorMsg` if it matches the code (`error.roomExpired` for 4010, `error.replaced` for 4005, `error.tvAuthFailed` for 4003, `error.unsupportedVersion` for 4002, `error.roomNotFound` for 4004), and a "New room" button.
+- On `CLOSED_FATAL(4010)` (ROOM_EXPIRED) or `CLOSED_FATAL(4004)` (ROOM_NOT_FOUND, e.g. the TV was offline past the 15-min TV-gone expiry) while the view is LOBBY (with or without players) or RESULTS, or before the first view → `createRoom()` automatically (a new QR) and toast `tv.newCode`; the `error ROOM_EXPIRED` / `ROOM_NOT_FOUND` frame that precedes the close shows no toast in that case. In-game phases keep the Fatal screen. Other fatal codes → `Fatal`, with the `messageKey` of the last `ErrorMsg` if it matches the code (`error.roomExpired` for 4010, `error.replaced` for 4005, `error.tvAuthFailed` for 4003, `error.unsupportedVersion` for 4002, `error.roomNotFound` for 4004), and a "New room" button.
 - `tvToken` lives in memory only. If the process dies, the room is lost and a new one is created.
 
 ### 9.9 QR (`ui/components/QrCode.kt`)
@@ -2111,6 +2111,10 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `settings.catRoles` | Roles |
 | `settings.catTimers` | Timers |
 | `settings.catWords` | Words |
+| `settings.catAbout` | About |
+| `settings.installId` | Install ID |
+| `settings.installIdHelp` | Support may ask for this ID to unlock purchases on this TV. |
+| `settings.appVersion` | Version |
 | `settings.winRule` | Win rule |
 | `settings.winRuleOfficial` | Official (1 Civilian left) |
 | `settings.winRuleParity` | Parity (as many as the Civilians) |
@@ -2553,7 +2557,7 @@ See §11.3 and §12.5. Each has `package.json`, `src/main.ts`, `vitest.config.ts
 | `room-core.actions.test.ts` | error `ref` echo; KICK closes with 4006 and invalidates the token; LEAVE deletes the session; sessions pruned after `resetToLobby`; seq monotonic; each connection gets its own projection; `onClose` after KICK does not dispatch DISCONNECT |
 | `room-core.concurrency.test.ts` | two hellos and a join fired concurrently (without awaiting) → every broadcast `seq` strictly increasing, no lost update |
 | `room-core.ratelimit.test.ts` | bucket (5/s, burst 10), strikes → 4008, oversize (UTF-8 bytes) → BAD_MESSAGE, binary frame → BAD_MESSAGE, `v:2` → UNSUPPORTED_VERSION + 4002 (not BAD_MESSAGE), connection cap (41st socket → 4009), pending cap |
-| `room-core.alarm.test.ts` | TICK on deadline; alarm = min(wake, expiry, pending deadline); a never-hello'd socket is closed 4001 by the alarm; each expiry rule → 4010 + `deleteAll`; meta missing → `deleteAll`; `initRoom` on an expired room closes old sockets 4010 and refreshes the cache |
+| `room-core.alarm.test.ts` | TICK on deadline; alarm = min(wake, expiry, pending deadline); a never-hello'd socket is closed 4001 by the alarm; expiry: TV connected never expires before the 12 h cap, TV gone 15 min → 4010 + `deleteAll`, TV reconnect cancels it, a REPLACED close does not start it, hibernation wake-ups keep/derive the TV state from attachments; meta missing → `deleteAll`; `initRoom` on an expired room closes old sockets 4010 and refreshes the cache |
 | `room-core.hibernation.test.ts` | recreate `RoomCore` from the same fake storage mid-game → identical subsequent behaviour; recreate with an **empty connections list** → players become disconnected and the current turn rules apply (§4.8) |
 | `http.test.ts` | body > 1 KB → 400; wrong content type → 400; foreign Origin → 403; 201 has `Cache-Control: no-store` |
 
@@ -2584,7 +2588,7 @@ Integration (manual or CI with network): `pnpm dev`, then `pnpm sim --ws http://
 - `HeartbeatTest` (`runTest` virtual time, fake send/clock): PING_FRAME every 20 s; `onTimeout` 10 s after an unanswered ping; `onPong` cancels the timeout; `stop()` stops everything.
 - `RoomSocketTest` (MockWebServer, real time, short timeouts): hello is sent on open; no reconnect after close 4006; a reconnect after a normal close; a late 4005 delivered to an **old** socket after the new socket opened leaves the state OPEN.
 - `QrCodeTest`: module size ≥ 6 dp at a 240 dp panel for the production URL shape (≤ 61 characters upper-cased) and the LAN-dev shape.
-- `GameViewModelTest` (fake socket + Turbine): create → InRoom; the seq filter; ROOM_EXPIRED in an empty lobby → re-create.
+- `GameViewModelTest` (fake socket + Turbine): create → InRoom; the seq filter; ROOM_EXPIRED / ROOM_NOT_FOUND in LOBBY or RESULTS → silent re-create; in-game → Fatal.
 - `CountdownTest`.
 
 The agent cannot run Gradle here and states so in its report.

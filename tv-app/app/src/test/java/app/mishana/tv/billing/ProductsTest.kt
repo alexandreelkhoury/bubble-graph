@@ -81,4 +81,12 @@ class ProductsTest {
         assertEquals("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", InstallId.hash("abc"))
         assertEquals(64, InstallId.hash(id).length)
     }
+
+    @Test
+    fun installIdDisplayGroupsOfFour() {
+        // Settings → About (PAYMENTS-SPEC §3.12): readable off the screen; `pnpm grant` strips the spaces again.
+        val shown = InstallId.display("0123456789abcdef0123456789abcdef")
+        assertEquals("0123 4567 89ab cdef 0123 4567 89ab cdef", shown)
+        assertEquals("0123456789abcdef0123456789abcdef", shown.replace(" ", ""))
+    }
 }

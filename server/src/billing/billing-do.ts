@@ -3,7 +3,7 @@
 import { DurableObject } from "cloudflare:workers";
 import type { Env } from "../env";
 import { BillingCore, storeFromCore } from "./billing-core";
-import type { ApplyInput, ApplyResult, BillingStore, BindResult, Entitlement, PendingAck, PurchaseRow } from "./billing-core";
+import type { ApplyInput, ApplyResult, BillingStore, BindResult, Entitlement, Grant, PendingAck, PurchaseRow } from "./billing-core";
 import { billingPacks } from "./catalog-info";
 
 export class Billing extends DurableObject<Env> implements BillingStore {
@@ -38,4 +38,7 @@ export class Billing extends DurableObject<Env> implements BillingStore {
   fakeGet(token: string): Promise<string | null> { return this.#s.fakeGet(token); }
   fakePut(token: string, json: string): Promise<void> { return this.#s.fakePut(token, json); }
   fakeNext(): Promise<number> { return this.#s.fakeNext(); }
+  grantPut(g: Grant): Promise<void> { return this.#s.grantPut(g); }
+  grantDelete(installHash: string): Promise<boolean> { return this.#s.grantDelete(installHash); }
+  grantList(): Promise<Grant[]> { return this.#s.grantList(); }
 }

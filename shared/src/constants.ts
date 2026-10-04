@@ -18,9 +18,10 @@ export const MAX_NO_ELIMINATION_STREAK = 3;
 export const HEARTBEAT_INTERVAL_MS = 20_000;
 export const PONG_TIMEOUT_MS = 10_000;
 export const HELLO_TIMEOUT_MS = 10_000;
-export const ROOM_EMPTY_TTL_MS = 15 * 60_000;
-export const ROOM_IDLE_TTL_MS = 2 * 60 * 60_000;
-export const ROOM_RESULTS_TTL_MS = 30 * 60_000;
+/** §7.5 expiry: a room whose TV is connected lives until `lastActivityAt` + this (safety cap for a zombie socket). */
+export const ROOM_TV_MAX_TTL_MS = 12 * 60 * 60_000;
+/** §7.5 expiry: a room without a connected TV expires this long after the TV left (or after creation). */
+export const ROOM_TV_GONE_TTL_MS = 15 * 60_000;
 export const MSG_MAX_BYTES = 4096;          // UTF-8 bytes (TextEncoder)
 export const HTTP_BODY_MAX_BYTES = 4096;    // POST /api/rooms (PAYMENTS-SPEC §3.3: was 1024; now carries an entitlement token)
 export const RATE_MSGS_PER_SEC = 5;         // token bucket refill / s

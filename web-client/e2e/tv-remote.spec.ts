@@ -153,6 +153,11 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   expect(await focused(tv, ".setrowtv")).toBe(true);
   await press(tv, "Escape", "rows → categories", 300);
   expect(await focused(tv, ".tvcat")).toBe(true);
+  // TV-03 About (PAYMENTS-SPEC §3.12): the last category shows the install id; nothing in it takes focus.
+  await reach(tv, ".tvcat[data-cat=about]", ["ArrowDown"]);
+  await expect(tv.locator("[data-install-id]")).toHaveText(/^([0-9a-f]{4} ){7}[0-9a-f]{4}$/);
+  await press(tv, fwd, "About has no rows", 200);
+  expect(await focused(tv, ".tvcat[data-cat=about]")).toBe(true);
   await press(tv, "Escape", "settings → lobby", 450);
   await expect(tv.locator(".tvlobby")).toBeVisible();
 

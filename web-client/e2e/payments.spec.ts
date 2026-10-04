@@ -350,7 +350,7 @@ test("3. a single pack purchase unlocks only that pack", async ({ browser }) => 
   await reach(tv.page, "[data-lobby=settings]", ["ArrowDown", "ArrowLeft", "ArrowRight"]);
   await tv.page.keyboard.press("Enter");
   await expect(tv.page.locator(".tvsettings")).toBeVisible();
-  await reach(tv.page, ".tvcat:last-child", ["ArrowDown"]);
+  await reach(tv.page, ".tvcat[data-cat=words]", ["ArrowDown"]);
   await tv.page.keyboard.press("ArrowRight");
   await reach(tv.page, "[data-row=packIds]", ["ArrowDown"]);
   await tv.page.keyboard.press("Enter");

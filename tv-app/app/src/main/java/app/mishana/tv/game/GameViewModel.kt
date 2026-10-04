@@ -60,7 +60,7 @@ sealed interface TvUiState {
 
 /** One-shot UI events (toasts). */
 sealed interface TvEvent {
-    /** A 4010 in an empty lobby silently re-created the room (TV-13e): toast `tv.newCode`. */
+    /** A 4010 / 4004 in LOBBY or RESULTS silently re-created the room (TV-13e): toast `tv.newCode`. */
     data class NewCode(val code: String) : TvEvent
 
     /** Every server `error` once, even when it repeats an identical earlier one (lastError would not change). */
@@ -93,6 +93,8 @@ class GameDeps(
     val saveMuted: (Boolean) -> Unit = {},
     /** Premium / packs (PAYMENTS-SPEC §4); null = no billing (free rooms only). */
     val billing: RoomBilling? = null,
+    /** PAYMENTS-SPEC §2.1 install id, shown in Settings → About (§3.12 admin grants); null = none on this build. */
+    val installId: () -> String? = { null },
 )
 
 /** SPEC §9.8. */
@@ -272,6 +274,8 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
             }
             is ErrorMsg -> {
                 if (msg.code == "TV_BUSY") return // never expected on the TV (the Store covers Start)
+                // TV-13e: the fatal close that follows re-creates the room silently; no red toast first.
+                if (msg.code in RECREATE_ERROR_CODES && recreatesRoom(currentView())) return
                 // A cap hit on our own entitlement/storeOpen (§3.9, 6/min per TV connection): retried, no toast.
                 if (msg.code == "RATE_LIMITED" && msg.ref == null && onBillingRateLimited()) return
                 _ui.update { s -> if (s is TvUiState.InRoom) s.copy(lastError = msg) else s }
@@ -308,9 +312,8 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     }
 
     private fun handleFatal(code: Int, s: TvUiState.InRoom) {
-        val view = s.view
-        val emptyLobby = view == null || (view.phase == Phase.LOBBY && view.players.isEmpty())
-        if (code == 4010 && emptyLobby) {
+        // TV-13e (SPEC §7.5): the room expired (TV gone 15 min, or the 12 h cap) or vanished between games.
+        if (code in RECREATE_CLOSE_CODES && recreatesRoom(s.view)) {
             createRoomInternal(announceNewCode = true)
             return
         }
@@ -557,6 +560,9 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         billing?.restorePurchases()
     }
 
+    /** Settings → About: this TV's install id (created on first use), or null. Never sent anywhere from here. */
+    fun installId(): String? = deps.installId()
+
     /** TV-13b "Try again": skip the backoff. */
     fun retryConnectionNow() {
         connection?.retryNow()
@@ -590,6 +596,13 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
             "PACK_LOCKED" -> "tv.packLocked"
             else -> error.messageKey
         }
+
+        /** TV-13e: ROOM_EXPIRED (4010) and ROOM_NOT_FOUND (4004) re-create the room when [recreatesRoom]. */
+        val RECREATE_CLOSE_CODES: Set<Int> = setOf(4010, 4004)
+        val RECREATE_ERROR_CODES: Set<String> = setOf("ROOM_EXPIRED", "ROOM_NOT_FOUND")
+
+        /** Between games (LOBBY or RESULTS, or no view yet): a lost room is replaced silently; in-game stays Fatal. */
+        fun recreatesRoom(view: TvView?): Boolean = view == null || view.phase == Phase.LOBBY || view.phase == Phase.RESULTS
 
         /** Close code → the error code whose messageKey explains it (SPEC §6.4). */
         val FATAL_ERROR_CODES: Map<Int, String> = mapOf(

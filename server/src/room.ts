@@ -83,6 +83,11 @@ export class Room extends Server<Env> {
     await this.#roomCore.onClose(conn as unknown as ConnHandle);
   }
 
+  /** A socket that errors out may never deliver `webSocketClose`: treat it as closed (idempotent, §7.5 TV-gone expiry). */
+  override async onError(conn: Connection<ConnState>): Promise<void> {
+    await this.#roomCore.onClose(conn as unknown as ConnHandle);
+  }
+
   override async onAlarm(): Promise<void> {
     await this.#roomCore.onAlarm();
   }

@@ -9,9 +9,8 @@ import {
   PING_FRAME,
   PONG_FRAME,
   PROTOCOL_VERSION,
-  ROOM_EMPTY_TTL_MS,
-  ROOM_IDLE_TTL_MS,
-  ROOM_RESULTS_TTL_MS,
+  ROOM_TV_GONE_TTL_MS,
+  ROOM_TV_MAX_TTL_MS,
   TV_BUSY_MAX_MS,
 } from "@mishana/shared/constants";
 import type { Locale } from "@mishana/shared/constants";
@@ -126,15 +125,17 @@ export const STORE_OPEN_MSGS_PER_MIN = 12;
 
 // ------------------------------------------------------------------ helpers
 
-export function expiresAt(meta: RoomMeta, state: GameState | null): number {
-  let at = meta.lastActivityAt + ROOM_IDLE_TTL_MS;
-  if (state && state.phase === "LOBBY" && state.players.length === 0) {
-    at = Math.min(at, Math.max(meta.createdAt, meta.lastActivityAt) + ROOM_EMPTY_TTL_MS);
-  }
-  if (state && state.phase === "RESULTS" && meta.resultsAt !== null) {
-    at = Math.min(at, meta.resultsAt + ROOM_RESULTS_TTL_MS);
-  }
-  return at;
+/**
+ * §7.5 expiry. `tvConnected` = a hello'd TV socket is open (derived from the live sockets, never from pings: the
+ * ping/pong auto-response does not wake the DO).
+ * - TV connected: the room never expires, up to a safety cap of `lastActivityAt + ROOM_TV_MAX_TTL_MS` (a TV hello
+ *   counts as activity, so this is 12 h after the later of the last accepted client message and the TV's hello).
+ * - No TV: `tvLeftAt + ROOM_TV_GONE_TTL_MS` (set at creation, so a TV that never connects also gets 15 min).
+ *   An unknown `tvLeftAt` (older rooms, before reconciliation) falls back to `lastActivityAt`.
+ */
+export function expiresAt(meta: RoomMeta, tvConnected: boolean): number {
+  if (tvConnected) return meta.lastActivityAt + ROOM_TV_MAX_TTL_MS;
+  return (meta.tvLeftAt ?? meta.lastActivityAt) + ROOM_TV_GONE_TTL_MS;
 }
 
 function uint32(bytes: Uint8Array): number {
@@ -143,6 +144,10 @@ function uint32(bytes: Uint8Array): number {
 
 function isPending(c: ConnHandle): boolean {
   return c.state === null || c.state.role === "pending";
+}
+
+function isTv(c: ConnHandle, exceptCid?: string): boolean {
+  return c.state !== null && c.state.role === "tv" && c.state.cid !== exceptCid;
 }
 
 function isSpectator(c: ConnHandle): boolean {
@@ -227,13 +232,13 @@ export class RoomCore {
       // Native RPC bypasses partyserver's initialisation and the DO may have been evicted: never trust the cache.
       const head = await this.#store.loadHead();
       if (head.meta) {
-        if (args.now < expiresAt(head.meta, head.state)) return { ok: false, reason: "EXISTS" };
+        if (args.now < expiresAt(head.meta, this.#conns().some((c) => isTv(c)))) return { ok: false, reason: "EXISTS" };
         this.#closeWhere(() => true, "ROOM_EXPIRED");
       }
       await this.#store.wipe();
       const meta: RoomMeta = {
         schema: 1, code: this.#d.roomCode, tvTokenHash: args.tvTokenHash, joinUrl: args.joinUrl,
-        createdAt: args.now, lastActivityAt: args.now, resultsAt: null,
+        createdAt: args.now, lastActivityAt: args.now, tvLeftAt: args.now,
         entitlement, billingMode: args.billingMode, tvBusyUntil: null, viewRev: 0,
       };
       const state = createInitialState({ roomCode: this.#d.roomCode, joinUrl: args.joinUrl, seed, wordLocale: args.locale });
@@ -306,15 +311,15 @@ export class RoomCore {
       const state = this.#state;
       if (!st || !state || !this.#meta) return;
       const pid = st.playerId;
-      // §3.11 storeOpen: the busy flag clears when the TV connection closes (not when a replacing TV socket took over).
-      if (st.role === "tv" && (this.#meta.tvBusyUntil ?? null) !== null) {
-        const otherTv = this.#conns().some((c) => c.state !== null && c.state.cid !== st.cid && c.state.role === "tv");
-        if (!otherTv) {
-          this.#meta = { ...this.#meta, tvBusyUntil: null };
-          await this.#metaBroadcast();
-          await this.#reschedule();
-          return;
-        }
+      // The last TV socket closed (not one a replacing TV socket took over): the 15-min TV-gone expiry starts (§7.5),
+      // and the §3.11 storeOpen busy flag clears.
+      if (st.role === "tv" && !this.#conns().some((c) => isTv(c, st.cid))) {
+        const busy = (this.#meta.tvBusyUntil ?? null) !== null;
+        this.#meta = { ...this.#meta, tvLeftAt: this.#meta.tvLeftAt ?? this.#d.clock.now(), tvBusyUntil: null };
+        if (busy) await this.#metaBroadcast();
+        else await this.#flushMeta();
+        await this.#reschedule(st.cid);
+        return;
       }
       if (pid !== null) {
         const session = this.#sessions[pid];
@@ -342,7 +347,8 @@ export class RoomCore {
         return;
       }
       const now = this.#d.clock.now();
-      if (now >= expiresAt(meta, this.#state)) {
+      const synced = this.#syncTvLeft(now);
+      if (now >= expiresAt(synced, this.#tvConnected())) {
         this.#closeWhere(() => true, "ROOM_EXPIRED");
         await this.#store.clearAlarm();
         await this.#store.wipe();
@@ -351,7 +357,7 @@ export class RoomCore {
       }
       let metaChanged = false;
       if ((meta.tvBusyUntil ?? null) !== null && (meta.tvBusyUntil as number) <= now) {
-        this.#meta = { ...meta, tvBusyUntil: null };
+        this.#meta = { ...synced, tvBusyUntil: null };
         metaChanged = true;
       }
       const state = this.#state;
@@ -731,7 +737,7 @@ export class RoomCore {
   }
 
   /**
-   * Invariants (debug), session pruning and `resultsAt`, then one atomic write of the state plus whichever of
+   * Invariants (debug) and session pruning, then one atomic write of the state plus whichever of
    * meta/sessions changed, before anything is sent.
    */
   async #persist(next: GameState): Promise<void> {
@@ -748,30 +754,19 @@ export class RoomCore {
       this.#meta = { ...this.#meta, tvBusyUntil: null }; // the busy flag never outlives LOBBY
     }
     if (this.#d.debugInvariants) assertInvariants(next);
-    const prev = this.#state;
     const meta = this.#meta;
     const live = new Set(next.players.map((p) => p.id));
     let sessions = this.#sessions;
     if (Object.keys(sessions).some((pid) => !live.has(pid))) {
       sessions = Object.fromEntries(Object.entries(sessions).filter(([pid]) => live.has(pid)));
     }
-    let nextMeta: RoomMeta | null = meta;
-    if (meta) {
-      let resultsAt = meta.resultsAt;
-      if (next.phase === "RESULTS" && prev?.phase !== "RESULTS") resultsAt = this.#d.clock.now();
-      else if (next.phase !== "RESULTS") resultsAt = null;
-      if (resultsAt !== meta.resultsAt) nextMeta = { ...meta, resultsAt };
-    }
-    const writeMeta = nextMeta !== null && nextMeta !== this.#savedMeta;
+    const writeMeta = meta !== null && meta !== this.#savedMeta;
     await this.#store.write({
       state: next,
-      ...(writeMeta && nextMeta ? { meta: nextMeta } : {}),
+      ...(writeMeta ? { meta } : {}),
       ...(sessions !== this.#savedSessions ? { sessions } : {}),
     });
-    if (nextMeta) {
-      this.#meta = nextMeta;
-      this.#savedMeta = nextMeta;
-    }
+    if (meta) this.#savedMeta = meta;
     this.#state = next;
     this.#sessions = sessions;
     this.#savedSessions = sessions;
@@ -907,14 +902,34 @@ export class RoomCore {
     return min;
   }
 
+  /** A hello'd TV socket is open (`exceptCid`: a socket being closed right now). */
+  #tvConnected(exceptCid?: string): boolean {
+    return this.#conns().some((c) => isTv(c, exceptCid));
+  }
+
   /**
-   * alarm = min(nextWakeAt(state), expiresAt(meta, state), pendingDeadline, access.changesAt, tvBusyUntil); only
-   * written when it changes.
+   * Keeps `meta.tvLeftAt` in line with the live sockets: null while a TV is connected; `now` when no TV socket is
+   * open but the leave was never seen (a DO reset dropped the socket without `webSocketClose`, or an older room).
+   * Changes only the cache; the caller persists it. Returns the (possibly new) meta.
    */
-  async #reschedule(): Promise<void> {
-    const meta = this.#meta;
-    if (!meta) return;
-    const candidates = [expiresAt(meta, this.#state)];
+  #syncTvLeft(now: number, exceptCid?: string): RoomMeta {
+    const meta = this.#meta as RoomMeta;
+    const left = meta.tvLeftAt ?? null;
+    const connected = this.#tvConnected(exceptCid);
+    if (connected && left !== null) this.#meta = { ...meta, tvLeftAt: null };
+    else if (!connected && left === null) this.#meta = { ...meta, tvLeftAt: now };
+    return this.#meta as RoomMeta;
+  }
+
+  /**
+   * alarm = min(nextWakeAt(state), expiresAt(meta, tvConnected), pendingDeadline, access.changesAt, tvBusyUntil);
+   * only written when it changes. Reconciles `tvLeftAt` first (§7.5).
+   */
+  async #reschedule(closingCid?: string): Promise<void> {
+    if (!this.#meta) return;
+    const meta = this.#syncTvLeft(this.#d.clock.now(), closingCid);
+    await this.#flushMeta();
+    const candidates = [expiresAt(meta, this.#tvConnected(closingCid))];
     const changesAt = this.#accessAt(this.#d.clock.now()).access.changesAt;
     if (changesAt !== null) candidates.push(changesAt);
     if ((meta.tvBusyUntil ?? null) !== null) candidates.push(meta.tvBusyUntil as number);

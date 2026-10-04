@@ -56,6 +56,10 @@ export function checkDeployConfig(jsoncText) {
   if (vars.BILLING_MODE !== "google") errors.push(`vars.BILLING_MODE must be "google" (is ${JSON.stringify(vars.BILLING_MODE)})`);
   if (vars.ALLOW_FAKE_BILLING !== "0") errors.push(`vars.ALLOW_FAKE_BILLING must be "0" (is ${JSON.stringify(vars.ALLOW_FAKE_BILLING)})`);
   if (cfg.observability?.traces?.enabled !== false) errors.push("observability.traces.enabled must be false (traces record outbound URLs with purchase tokens)");
+  // PAYMENTS-SPEC §3.12: ADMIN_TOKEN is an OPTIONAL secret (unset = /api/admin/* answers 404). It must never be a plain
+  // `vars` entry (that would publish it in the config) nor `secrets.required` (a deploy without it must still work).
+  if (Object.prototype.hasOwnProperty.call(vars, "ADMIN_TOKEN")) errors.push("vars.ADMIN_TOKEN must not exist (set it with `wrangler secret put ADMIN_TOKEN`)");
+  if ((cfg.secrets?.required ?? []).includes("ADMIN_TOKEN")) errors.push("secrets.required must not list ADMIN_TOKEN (it is optional: unset turns the admin endpoints off)");
   if (cfg.env !== undefined) errors.push("wrangler.jsonc must not define `env` blocks (they could override billing vars or observability; check-deploy validates top-level config only)");
   return errors;
 }
@@ -65,7 +69,7 @@ function main() {
   const errors = checkDeployConfig(readFileSync(file, "utf8"));
   for (const e of errors) console.error(`check-deploy: ${e}`);
   if (errors.length > 0) process.exit(1);
-  console.log("check-deploy: OK (google billing, fake billing off, traces off)");
+  console.log("check-deploy: OK (google billing, fake billing off, traces off; ADMIN_TOKEN optional — unset = admin endpoints 404)");
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

@@ -3,6 +3,7 @@
 // tests drive it with a node:sqlite-backed SqlLike.
 import {
   ACK_WINDOW_MS,
+  ENTITLEMENT_TTL_S,
   GOOGLE_VERIFY_BUCKET,
   GOOGLE_READS_PER_IP_PER_MIN,
   INSTALL_ACTIVE_WINDOW_MS,
@@ -56,6 +57,9 @@ export const SCHEMA: readonly string[] = [
   `CREATE TABLE IF NOT EXISTS rtdn_seen (message_id TEXT PRIMARY KEY, at_ms INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS kv (k TEXT PRIMARY KEY, v TEXT NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS fake_purchases (token TEXT PRIMARY KEY, json TEXT NOT NULL)`,
+  // §3.12 admin grants (owner comps): one row per install, keyed by the install-id hash only (never the raw id).
+  `CREATE TABLE IF NOT EXISTS grants (install_hash TEXT PRIMARY KEY, premium INTEGER NOT NULL DEFAULT 0, packs TEXT NOT NULL DEFAULT '[]',
+    expires_ms INTEGER, note TEXT, created_ms INTEGER NOT NULL)`,
 ];
 
 // ------------------------------------------------------------------ pure rules
@@ -113,6 +117,21 @@ export interface ApplyInput {
 export interface ApplyResult { result: Exclude<PurchaseResult, "INVALID" | "UPSTREAM_ERROR">; ackDue: boolean; refreshLinked: boolean }
 export type BindResult = Exclude<PurchaseResult, "INVALID" | "UPSTREAM_ERROR">;
 export interface Entitlement { premiumUntilMs: number | null; packs: string[]; subscription: SubscriptionInfo | null }
+/** §3.12: an admin grant (premium and/or packs) for one install, outside Google and outside the install limit. */
+export interface Grant { installHash: string; premium: boolean; packs: string[]; expiresAt: number | null; note: string | null; createdAt: number }
+interface GrantRow { install_hash: string; premium: number; packs: string; expires_ms: number | null; note: string | null; created_ms: number; [k: string]: SqlValue }
+
+function grantFromRow(r: GrantRow): Grant {
+  let packs: string[] = [];
+  try {
+    const v: unknown = JSON.parse(r.packs);
+    if (Array.isArray(v)) packs = v.filter((x): x is string => typeof x === "string");
+  } catch {
+    packs = [];
+  }
+  return { installHash: r.install_hash, premium: r.premium === 1, packs, expiresAt: r.expires_ms, note: r.note, createdAt: r.created_ms };
+}
+
 export interface PendingAck { tokenHash: string; kind: "sub" | "pack"; productId: string; token: string; windowStartMs: number }
 
 type RateKind = "verify" | "entitlement";
@@ -422,7 +441,49 @@ export class BillingCore {
         if (id && this.#premiumPackIds.has(id)) packs.add(id);
       }
     }
+    // §3.12: an unexpired admin grant adds premium and/or packs. A grant without an end date gives premium for the
+    // token's own lifetime (`pu` = `exp`); the TV's refresh before `exp` renews it.
+    const g = this.grantFor(installHash);
+    if (g && (g.expiresAt === null || g.expiresAt > nowMs)) {
+      if (g.premium) {
+        const until = g.expiresAt ?? nowMs + ENTITLEMENT_TTL_S * 1000;
+        if (premiumUntilMs === null || until > premiumUntilMs) premiumUntilMs = until;
+      }
+      for (const id of g.packs) if (this.#premiumPackIds.has(id)) packs.add(id);
+    }
     return { premiumUntilMs, packs: [...packs].sort().slice(0, MAX_TOKEN_PACKS), subscription: pickSubscription(subs, nowMs) };
+  }
+
+  // ---------------------------------------------------------------- admin grants (§3.12)
+
+  /** Inserts or replaces the grant of `g.installHash` (a sha256 hex, never a raw install id). */
+  grantPut(g: Grant): void {
+    if (!HEX64.test(g.installHash)) throw new Error("grantPut: installHash must be a sha256 hex");
+    this.#q(
+      `INSERT INTO grants (install_hash, premium, packs, expires_ms, note, created_ms) VALUES (?, ?, ?, ?, ?, ?)
+       ON CONFLICT(install_hash) DO UPDATE SET premium = excluded.premium, packs = excluded.packs, expires_ms = excluded.expires_ms,
+         note = excluded.note, created_ms = excluded.created_ms`,
+      g.installHash, g.premium ? 1 : 0, JSON.stringify([...new Set(g.packs)].sort()), g.expiresAt, g.note, g.createdAt,
+    );
+  }
+
+  /** true when a grant was removed. */
+  grantDelete(installHash: string): boolean {
+    return this.#st.transactionSync(() => {
+      const had = this.grantFor(installHash) !== null;
+      if (had) this.#q("DELETE FROM grants WHERE install_hash = ?", installHash);
+      return had;
+    });
+  }
+
+  grantFor(installHash: string): Grant | null {
+    const r = this.#q<GrantRow>("SELECT * FROM grants WHERE install_hash = ?", installHash)[0];
+    return r ? grantFromRow(r) : null;
+  }
+
+  /** Every grant, newest first (expired ones included; they grant nothing). */
+  grantList(): Grant[] {
+    return this.#q<GrantRow>("SELECT * FROM grants ORDER BY created_ms DESC, install_hash").map(grantFromRow);
   }
 
   // ---------------------------------------------------------------- RTDN dedupe, cron helpers
@@ -589,6 +650,9 @@ export interface BillingStore {
   fakeGet(token: string): Promise<string | null>;
   fakePut(token: string, json: string): Promise<void>;
   fakeNext(): Promise<number>;
+  grantPut(g: Grant): Promise<void>;
+  grantDelete(installHash: string): Promise<boolean>;
+  grantList(): Promise<Grant[]>;
 }
 
 export function storeFromCore(core: BillingCore): BillingStore {
@@ -615,5 +679,8 @@ export function storeFromCore(core: BillingCore): BillingStore {
     fakeGet: async (t) => core.fakeGet(t),
     fakePut: async (t, j) => core.fakePut(t, j),
     fakeNext: async () => core.fakeNext(),
+    grantPut: async (g) => core.grantPut(g),
+    grantDelete: async (h) => core.grantDelete(h),
+    grantList: async () => core.grantList(),
   };
 }

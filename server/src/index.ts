@@ -2,6 +2,7 @@
 // /api/*, /parties/* and /healthz (wrangler.jsonc `run_worker_first`).
 import { getServerByName, routePartykitRequest } from "partyserver";
 import { ROOM_CODE_REGEX, WS_PATH_PREFIX } from "@mishana/shared/constants";
+import { ADMIN_PREFIX, handleAdmin } from "./admin";
 import { BILLING_PREFIX, handleBilling, productionBillingDeps } from "./billing/routes";
 import { runCron } from "./billing/cron";
 import type { BillingStore } from "./billing/billing-core";
@@ -40,6 +41,10 @@ async function fetch(req: Request, env: Env): Promise<Response> {
       });
     }
     if (path.startsWith(BILLING_PREFIX)) return handleBilling(req, env, productionBillingDeps(env));
+    if (path.startsWith(ADMIN_PREFIX)) {
+      const deps = productionBillingDeps(env);
+      return handleAdmin(req, env, { store: deps.store, now: deps.now });
+    }
     return httpError("BAD_MESSAGE", 405);
   }
 

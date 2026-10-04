@@ -10,7 +10,11 @@ export interface RoomMeta {
   joinUrl: string;
   createdAt: number;
   lastActivityAt: number;
-  resultsAt: number | null;
+  /**
+   * §7.5 expiry: when the room last had no hello'd TV socket (set at creation, on the last TV close, or when a wake-up
+   * finds no TV socket); null while a TV is connected. Optional on disk: older rooms read as unknown.
+   */
+  tvLeftAt?: number | null;
   // PAYMENTS-SPEC §3.11. Optional on disk: rooms created before the billing deploy read as null / "google" / null.
   entitlement?: RoomEntitlement | null;
   billingMode?: "google" | "fake";

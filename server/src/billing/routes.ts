@@ -84,7 +84,7 @@ function signerFor(env: Env, mode: BillingMode): Promise<Signer> | null {
 }
 
 /** Reads and strictly parses a JSON body (Content-Type, size cap); null → 400. */
-async function readJson<T>(req: Request, schema: z.ZodType<T>): Promise<T | null> {
+export async function readJson<T>(req: Request, schema: z.ZodType<T>): Promise<T | null> {
   const ct = (req.headers.get("Content-Type") ?? "").split(";")[0]?.trim().toLowerCase();
   if (ct !== "application/json") return null;
   const body = await readBodyLimited(req, BILLING_BODY_MAX_BYTES);

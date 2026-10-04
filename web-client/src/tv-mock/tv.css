@@ -160,6 +160,11 @@
 .setrowtv:focus .setrowtv__chev { color: var(--color-text); }
 .tvsettings__help { flex: none; margin: 0 12px; padding: 10px 16px 12px; border-top: 1px solid var(--color-outline); font: var(--tv-body); color: var(--color-text-secondary); }
 .tvsettings__help.is-danger { color: var(--color-danger); }
+/* TV-03 About: small read-only text (DESIGN TV-03). */
+.tvabout { display: flex; flex-direction: column; gap: 12px; padding: 16px 8px; }
+.tvabout p { margin: 0; font: var(--tv-caption); color: var(--color-text-secondary); }
+.tvabout .tvabout__id { color: var(--color-text); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+.tvabout .tvabout__help { color: var(--color-text-muted); }
 .tvsettings__foot { position: absolute; bottom: 36px; inset-inline: 0; text-align: center; font: var(--tv-caption); color: var(--color-text-muted); }
 .tvsub { display: flex; flex-wrap: wrap; gap: 12px; padding: 6px; }
 .tvtoggle { display: inline-flex; align-items: center; gap: 8px; height: 48px; padding-inline: 18px; border: 0; border-radius: var(--radius-pill); background: var(--color-elevated); box-shadow: inset 0 0 0 2px var(--color-outline); font: var(--tv-label); }

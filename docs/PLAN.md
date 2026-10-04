@@ -102,7 +102,7 @@ Transport: WebSocket carrying JSON. Each message is `{v:1, t:"<type>", ...}`. Th
 - The Blank's typed guess is checked on the server. Clients only ever receive `correct: bool`.
 
 **Lifetimes:**
-- A room expires after 15 min in an empty lobby, after 2 h of inactivity, or 30 min after `RESULTS` with no play-again. Expiry is enforced by an alarm, which deletes storage.
+- A room never expires while the TV is connected (12 h safety cap since the last activity); it expires 15 min after the TV disconnects (SPEC §7.5). Expiry is enforced by an alarm, which deletes storage.
 - A disconnected player's seat is held for 120 s. While they're away, their turn is skipped and their vote is counted as an abstention.
 
 ## 5. Security

@@ -45,9 +45,8 @@ object Constants {
     const val HEARTBEAT_INTERVAL_MS = 20_000L
     const val PONG_TIMEOUT_MS = 10_000L
     const val HELLO_TIMEOUT_MS = 10_000L
-    const val ROOM_EMPTY_TTL_MS = 15 * 60_000L
-    const val ROOM_IDLE_TTL_MS = 2 * 60 * 60_000L
-    const val ROOM_RESULTS_TTL_MS = 30 * 60_000L
+    const val ROOM_TV_MAX_TTL_MS = 12 * 60 * 60_000L
+    const val ROOM_TV_GONE_TTL_MS = 15 * 60_000L
     const val MSG_MAX_BYTES = 4096
     const val HTTP_BODY_MAX_BYTES = 4096 // PAYMENTS-SPEC §3.3: was 1024; POST /api/rooms carries the entitlement token
     const val RATE_MSGS_PER_SEC = 5

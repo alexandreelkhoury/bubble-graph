@@ -20,4 +20,6 @@ export interface Env {
   RTDN_SUBSCRIPTION: string;
   PLAY_SERVICE_ACCOUNT_JSON?: string;
   ENTITLEMENT_KEYS?: string;
+  /** PAYMENTS-SPEC §3.12: optional owner secret for /api/admin/* (unset = those endpoints answer 404). */
+  ADMIN_TOKEN?: string;
 }

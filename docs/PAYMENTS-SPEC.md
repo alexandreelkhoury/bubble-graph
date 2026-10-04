@@ -780,6 +780,21 @@ export function restrictionFor(state: GameState, playable: Catalog, a: RoomAcces
 
 **Sim and tests** construct `RoomCore` with an explicit `entitlement` (sim engine mode passes the full catalog, which is equivalent to premium).
 
+### 3.12 Admin grants (owner comps; `server/src/admin.ts`, CLI `server/scripts/grant.mjs`)
+
+The owner can give premium and/or premium packs to specific installs (e.g. a sideloaded TV of their own) without a Google purchase.
+
+- **Switch:** the optional Workers secret `ADMIN_TOKEN` (≥ 32 characters; `openssl rand -hex 32`). Unset or shorter → every `/api/admin/*` path answers **404** (indistinguishable from a missing route). It is never a `vars` entry and never in `secrets.required` (`check-deploy.mjs` enforces both).
+- **Auth:** `Authorization: Bearer <ADMIN_TOKEN>` only (never a URL or body field). Both sides are SHA-256-hashed and compared in constant time (`timingSafeEqualHex`). Missing, malformed or wrong → **401** `{error:"UNAUTHORIZED"}` with `WWW-Authenticate: Bearer`. Rate limit first (before the token check): `BILLING_LIMITER` keyed `admin:<ip>` → 429. Nothing about the request is logged (a failure logs only `{"code":"ADMIN_INTERNAL"}`). No origin check: a browser cannot send the bearer token cross-site without already knowing it.
+- **Endpoints** (`/api/admin/grants`, JSON, `Cache-Control: no-store`):
+  - `POST` `{ installId, premium?: true, packs?: string[], expiresAt?: number|null /* ms */, note?: string /* ≤ 200 */ }` — at least `premium:true` or one pack. Pack ids must be **premium** catalog packs (`400 {error:"UNKNOWN_PACK", packs}` otherwise); a past `expiresAt` → `400 {error:"EXPIRED"}`. Upserts the install's grant (a new POST replaces it). → `200 {grant}`.
+  - `DELETE` `{ installId }` or `{ installHash }` (the 64-hex hash that `GET` lists) → `200 {revoked: boolean, installHash}`.
+  - `GET` → `200 {grants: [{installHash, premium, packs, expiresAt, note, createdAt, active}]}`, newest first (expired grants stay listed with `active:false` until revoked).
+- **Storage:** Billing DO SQLite table `grants (install_hash TEXT PRIMARY KEY, premium INTEGER, packs TEXT /* JSON array */, expires_ms INTEGER NULL, note TEXT NULL, created_ms INTEGER)`. Only `sha256hex(installId)` is stored, like `bindings`. Grants never create `purchases` or `bindings` rows, so they never count toward `MAX_INSTALLS_PER_PURCHASE`, and they never call Google. `prune` leaves them alone.
+- **Entitlement:** `entitlementFor(installHash)` merges an unexpired grant into the result: premium → `premiumUntilMs = max(purchases, grant.expiresAt ?? now + ENTITLEMENT_TTL_S·1000)` (an open-ended grant lasts as long as the token itself, `pu = exp`, and every refresh renews it); packs → added (filtered to premium packs). `subscription` is unaffected (null for a grant alone). The token is the normal signed entitlement token, so `/entitlement`, `/verify`, `createRoom` and the room's `entitlement` message need no change, in both google and fake mode. The TV picks a new grant up on its next refresh (§2.4: app start when stale, Store open, Restore purchases, or before the token expires).
+- **CLI:** `pnpm grant <installId> [--packs a,b] [--premium] [--expires YYYY-MM-DD|ISO] [--note text]`, `pnpm grant list`, `pnpm grant revoke <installId|installHash>`; server from `--url` or `MISHANA_URL`, token from the `ADMIN_TOKEN` environment variable only (docs/DEV.md "Admin grants").
+- **Install id on the TV:** Settings → **About** (DESIGN TV-03) shows it in groups of four; the CLI drops the spaces.
+
 ---
 
 ## 4. TV app (B)
@@ -1182,6 +1197,7 @@ Removed from revision 1: `store.startTrial`, `store.subscribe` (plan buttons now
 |---|---|
 | `PLAY_SERVICE_ACCOUNT_JSON` | Full JSON key of the Play API service account (view-only Play permissions; rotated every 90 days, §8.C) |
 | `ENTITLEMENT_KEYS` | §2.3 JSON |
+| `ADMIN_TOKEN` (optional) | §3.12: ≥ 32 random characters. Unset = the admin endpoints answer 404 |
 
 Non-secret vars: `PLAY_PACKAGE_NAME`, `RTDN_AUDIENCE`, `RTDN_SA_EMAIL`, `RTDN_SUBSCRIPTION`, `BILLING_MODE`, `ALLOW_FAKE_BILLING`.
 
@@ -1257,7 +1273,9 @@ The client IP is used transiently for rate limiting and not stored. PRIVACY.md (
 | `access.test.ts` | `roomAccess` time edges; `playableCatalog`; `lockedPacks` metadata-only; `restrictionFor` |
 | `room-core.access.test.ts` | createRoom with valid, invalid or no token; fake-kid token accepted only with `billingMode:"fake"` and fake env, rejected with prod config; `storeOpen` from a player → `NOT_AUTHENTICATED`; phone START while `tvBusy` → `TV_BUSY`; busy flag cleared on TV close, phase change and alarm; `entitlement` WS message from a player → `NOT_AUTHENTICATED`; sub mismatch / older iat → `ENTITLEMENT_INVALID`; upgrade mid-lobby broadcasts `premium:true`; `PACK_LOCKED`/`PREMIUM_REQUIRED` pre-checks; **expiry mid-game: the game finishes with its pair, the restriction applies in LOBBY**; alarm scheduled at `changesAt`; hibernation reload keeps `meta.entitlement`; VIP reassignment leaves entitlement unchanged |
 | `http.test.ts` | body ≤ 4096; response has `entitlement` status; `billingMode` passed to `InitRoomArgs` from the request host |
-| `scripts/check-deploy.test.ts` | rejects non-google vars and `observability.traces.enabled !== false` |
+| `scripts/check-deploy.test.ts` | rejects non-google vars and `observability.traces.enabled !== false`; `ADMIN_TOKEN` never a var nor a required secret |
+| `admin.test.ts` | §3.12: unset/short `ADMIN_TOKEN` → 404; missing/wrong token → 401; rate limit before auth (`admin:<ip>`); never logs the token or install id; grant → signed entitlement has premium / packs (google and fake mode); revoke (by id or hash) → gone; expiry respected; hash-only storage; no purchases/bindings rows, no Google call |
+| `scripts/grant.test.ts` | the CLI's argument parsing (grant/list/revoke, `--packs`, `--expires`, grouped ids, errors) |
 
 ### 7.3 web-client (C)
 - Unit tests:

@@ -198,6 +198,65 @@ class GameViewModelTest {
         assertEquals("WXYZ", (vm.ui.value as TvUiState.InRoom).code)
     }
 
+    /** TV-13e (SPEC §7.5): a lost room between games (LOBBY with players, RESULTS; 4010 or 4004) is re-created silently. */
+    private suspend fun TestScope.assertSilentRecreate(phase: Phase, code: Int, errorCode: String) {
+        val vm = newVm()
+        vm.events.test {
+            val first = connections.single()
+            first.state.value = ConnState.OPEN
+            advanceUntilIdle()
+            first.incoming.emit(StateMsg(seq = 1, serverNow = 1_790_000_000_000L, view = view(phase = phase, players = listOf(player("p_0a1b2c3d4e5f60718293a4b5")))))
+            advanceUntilIdle()
+            first.incoming.emit(ErrorMsg(code = errorCode, messageKey = "error.x", ref = null))
+            advanceUntilIdle()
+            first.state.value = ConnState.CLOSED_FATAL(code)
+            advanceUntilIdle()
+            val events = cancelAndConsumeRemainingEvents().mapNotNull { (it as? app.cash.turbine.Event.Item)?.value }
+            assertTrue("no error toast before the new code: $events", events.none { it is TvEvent.ServerError })
+            assertEquals(TvEvent.NewCode("WXYZ"), events.last())
+        }
+        assertEquals(2, createCalls.size)
+        assertTrue(connections[0].disconnected)
+        assertEquals("WXYZ", (vm.ui.value as TvUiState.InRoom).code)
+    }
+
+    @Test
+    fun roomExpiredInALobbyWithPlayersRecreatesTheRoom() = runTest(dispatcher) {
+        assertSilentRecreate(Phase.LOBBY, 4010, "ROOM_EXPIRED")
+    }
+
+    @Test
+    fun roomExpiredInResultsRecreatesTheRoom() = runTest(dispatcher) {
+        assertSilentRecreate(Phase.RESULTS, 4010, "ROOM_EXPIRED")
+    }
+
+    @Test
+    fun roomNotFoundInLobbyOrResultsRecreatesTheRoom() = runTest(dispatcher) {
+        assertSilentRecreate(Phase.RESULTS, 4004, "ROOM_NOT_FOUND")
+    }
+
+    @Test
+    fun roomNotFoundMidGameIsFatal() = runTest(dispatcher) {
+        val vm = newVm()
+        val conn = connections.single()
+        conn.state.value = ConnState.OPEN
+        advanceUntilIdle()
+        conn.incoming.emit(StateMsg(seq = 1, serverNow = 1L, view = view(phase = Phase.VOTING, players = listOf(player("p_0a1b2c3d4e5f60718293a4b5")))))
+        advanceUntilIdle()
+        conn.state.value = ConnState.CLOSED_FATAL(4004)
+        advanceUntilIdle()
+        assertEquals(TvUiState.Fatal("error.roomNotFound"), vm.ui.value)
+        assertEquals(1, createCalls.size)
+    }
+
+    @Test
+    fun recreatesRoomOnlyBetweenGames() {
+        assertTrue(GameViewModel.recreatesRoom(null))
+        for (p in Phase.entries) {
+            assertEquals(p == Phase.LOBBY || p == Phase.RESULTS, GameViewModel.recreatesRoom(view(phase = p)))
+        }
+    }
+
     @Test
     fun repeatedIdenticalServerErrorsAreEachEmittedOnce() = runTest(dispatcher) {
         val vm = newVm()

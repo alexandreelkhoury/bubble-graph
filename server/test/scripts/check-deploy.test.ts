@@ -9,6 +9,10 @@ describe("check-deploy", () => {
   it("accepts the shipped wrangler.jsonc", () => {
     expect(checkDeployConfig(REAL)).toEqual([]);
   });
+  it("ADMIN_TOKEN stays optional: never a plain var, never a required secret", () => {
+    expect(checkDeployConfig(REAL.replace('"DEBUG_INVARIANTS": "0",', '"DEBUG_INVARIANTS": "0", "ADMIN_TOKEN": "x",')).join()).toMatch(/vars.ADMIN_TOKEN/);
+    expect(checkDeployConfig(REAL.replace('"ENTITLEMENT_KEYS"]', '"ENTITLEMENT_KEYS", "ADMIN_TOKEN"]')).join()).toMatch(/secrets.required/);
+  });
   it("rejects non-google billing vars", () => {
     expect(checkDeployConfig(REAL.replace('"BILLING_MODE": "google"', '"BILLING_MODE": "fake"')).join()).toMatch(/BILLING_MODE/);
     expect(checkDeployConfig(REAL.replace('"ALLOW_FAKE_BILLING": "0"', '"ALLOW_FAKE_BILLING": "1"')).join()).toMatch(/ALLOW_FAKE_BILLING/);

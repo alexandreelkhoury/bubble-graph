@@ -31,6 +31,7 @@ internal fun productionDeps(app: Application): GameDeps {
         loadMuted = { soundPrefs.muted },
         saveMuted = { soundPrefs.muted = it },
         billing = BillingRuntime.get(app),
+        installId = { PrefsEntitlementStore(app).installId() },
     )
 }
 

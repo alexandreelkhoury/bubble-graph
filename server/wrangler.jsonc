@@ -26,6 +26,7 @@
   // PAYMENTS-SPEC §3.8 (UTC): hourly ack retries + overdue alert; daily voided purchases, stale-sub alert, prune.
   "triggers": { "crons": ["23 * * * *", "17 3 * * *"] },
   // `wrangler deploy` fails when one is missing; local dev (fake billing) only warns. See docs/DEV.md "Billing".
+  // ADMIN_TOKEN is optional and deliberately not listed (PAYMENTS-SPEC §3.12): unset = /api/admin/* answers 404.
   "secrets": { "required": ["PLAY_SERVICE_ACCOUNT_JSON", "ENTITLEMENT_KEYS"] },
   // Production URL configuration (docs/DEV.md "Production URLs"). No domain is committed here on purpose.
   //  - JOIN_BASE_URL: origin printed in the TV's QR code / join link (`<JOIN_BASE_URL>/<CODE>`). Empty = the origin

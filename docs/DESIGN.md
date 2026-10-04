@@ -639,6 +639,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 | **Words** | Word language (`wordLocale`): English / Français / العربية (default: the room's creation language) · Packs (`packIds`): **All packs** or a multi-select chip grid with the localised title + `pairCount` + a "Teen" badge (`settings.packTeen`) when `ageRating==="teen"` · Difficulty (`difficulties`): multi-select Easy / Medium / Subtle, **all** · Family friendly (`familyFilter`): **On** / Off · Shuffle word sides (`swapSides`): **On** / Off |
 
 - **Sound: On/Off** (`tv.soundOn` / `tv.soundOff`, a device setting kept on the TV, never sent to the server) sits next to **Done** in the header.
+- **About** (`settings.catAbout`, TV only, last category; the phone's PH-03b has no such section): no rows and nothing focusable in its panel — focusing the category shows, in the panel, `settings.appVersion` + the app version and `settings.installId` + the install id (PAYMENTS-SPEC §2.1) as eight groups of four lowercase hex characters (`caption`, `text`, tabular figures, LTR-isolated in every UI language), then `settings.installIdHelp` (`caption`, `textMuted`). The owner reads it to comp this TV (`pnpm grant`, PAYMENTS-SPEC §3.12). Moving toward inline-end from About does nothing.
 - **[not in v1]** Display (reduce motion, hide room code), volume, transliteration toggle (translit is shown whenever it is non-null).
 - **Interaction:** a category list on the start side (`focusRestorer`) and rows on the end side. **Moving toward inline-end from a category enters its rows** (Right in LTR, **Left in RTL**; Compose geometry handles it), and moving toward inline-start from the rows returns to it. On a row, **Left/Right step the value** (the chevrons follow the reading direction), and **OK also steps** (for sticky D-pads). Multi-option rows (Packs, Difficulty) open a sub-panel on OK. An **explanation panel** below the rows describes the focused row's current value.
 - **Locked rows (PAYMENTS-SPEC §4.4):** in a room without Premium, each premium setting row (`PREMIUM_SETTING_KEYS`, v1: Points) moves to the **bottom** of its category and shows a lock badge + `settings.premiumOnly`. Such a row does **not** step: **Left/Right** play the disabled shake + `sfx.error`, and **OK opens the Store** (focused on Premium). The "OK also steps" rule above does not apply to locked rows. In Words → Packs, the locked packs (`view.lockedPacks`) are listed below a divider with a lock badge, `store.packPairs` and `settings.unlockHint`; OK on one opens the Store focused on that pack.
@@ -891,7 +892,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 | **13b** | Still offline after 30 s | Full screen: `wifi-off` 96 dp, `conn.lost`, `conn.tvLostBody`, **(• Try again)**. Auto-retry with backoff continues underneath. Back → pause menu (Exit is there) |
 | **13c** | A player is away | Their tile goes to the static away state (§5.2) and a toast `conn.playerAway`. Their turn is skipped and their vote counts as an abstention. Their seat is held until the room returns to the lobby (then 120 s) |
 | **13d** | Room creation failed (Home) | TV-01 failure state |
-| **13e** | Room expired (`ROOM_EXPIRED`, close 4010) | In an empty lobby: **silently create a new room** and toast `tv.newCode` (SPEC §9.8). Otherwise full screen `tv.roomClosed` with **(• New room)**. Phones show their RoomGone screen |
+| **13e** | Room expired (`ROOM_EXPIRED`, close 4010) | In LOBBY or RESULTS (also ROOM_NOT_FOUND, close 4004): **silently create a new room** and toast `tv.newCode` (SPEC §9.8). A room never expires while the TV is connected (12 h safety cap); it expires 15 min after the TV disconnects (SPEC §7.5). Otherwise full screen `tv.roomClosed` with **(• New room)**. Phones show their RoomGone screen |
 | **13f** | No phones connected for 60 s mid-game | A soft banner: `conn.phonesAsleep`. No state change |
 | **13g** | Other fatal closes (4002, 4003, 4005) | Full screen with the error text (`error.unsupportedVersion`, `error.tvAuthFailed`, `error.replaced`) and **(• New room)** |
 
@@ -1571,6 +1572,10 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | `settings.catRoles` | Rôles | الأدوار |
 | `settings.catTimers` | Chronos | التوقيت |
 | `settings.catWords` | Mots | الكلمات |
+| `settings.catAbout` | À propos | حول |
+| `settings.installId` | ID d’installation | رقم التثبيت |
+| `settings.installIdHelp` | Le support peut te demander cet identifiant pour débloquer tes achats sur cette télé. | ممكن الدعم يطلب منك هالرقم ليفتح المشتريات على هالتلفزيون. |
+| `settings.appVersion` | Version | النسخة |
 | `settings.winRule` | Règle de victoire | شرط الربح |
 | `settings.winRuleOfficial` | Officielle (1 Civil restant) | الرسمي (بيبقى مدني واحد) |
 | `settings.winRuleParity` | Parité (autant que les Civils) | قدّ بقدّ (عددهن قد المدنيين) |

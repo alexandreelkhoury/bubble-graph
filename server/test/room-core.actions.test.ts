@@ -66,12 +66,9 @@ describe("RoomCore actions", () => {
     const { h, tv, ps } = await startedGame(5);
     await h.act(ps[4]!.conn, { type: "LEAVE" });
     await h.playToResults(tv, ps.slice(0, 4));
-    const stored = (await h.storage.get<{ resultsAt: number | null }>("meta"))!;
-    expect(stored.resultsAt).toBe(h.core.peek().meta?.resultsAt);
-    expect(stored.resultsAt).not.toBeNull();
+    expect(h.state.phase).toBe("RESULTS");
     await h.act(tv, { type: "PLAY_AGAIN" });
     expect(h.state.phase).toBe("LOBBY");
-    expect(h.core.peek().meta?.resultsAt).toBeNull();
     expect(Object.keys(h.core.peek().sessions).sort()).toEqual(h.state.players.map((p) => p.id).sort());
     expect(h.state.players).toHaveLength(4);
   });
