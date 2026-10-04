@@ -613,7 +613,7 @@ export const Film: React.FC = () => {
 
       {/* captions (screen space) */}
       <Caption L={L}>
-        <Words f={f} text="Turn any TV into a *party.*" start={b(2.25)} step={b(0.2)} end={b(7.6)} />
+        <Words f={f} text="Turn your Google TV into a *party.*" start={b(2.25)} step={b(0.2)} end={b(7.6)} />
       </Caption>
       <Caption L={L}>
         <Words f={f} text="Friends join from their phones. *No* *app.*" start={b(8)} step={b(0.16)} end={b(11.7)} />

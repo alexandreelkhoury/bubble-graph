@@ -90,7 +90,19 @@ All connections between the TV app, the phones and the server are encrypted (HTT
 
 If the game changes how it uses information (for example when optional in-app purchases are added), we will update this page and the date at the top before the change takes effect.
 
-## 12. Contact
+## 12. This website
+
+This section covers only the website you are reading (not the game). To know how many people visit and which buttons and ads work, it uses:
+
+- Cloudflare Web Analytics: counts page views and page-load performance. It does not use cookies or local storage and does not fingerprint visitors. Cloudflare processes this on our behalf.
+
+- Anonymous click counts sent to our own server when you press a button such as “Install on my TV” or “Play in your browser”, open a question, or scroll: which button or section, the page language, the ad campaign named in the link (utm tags), the device type (phone or computer) and the country Cloudflare derives from the connection. No identifier, no cookie, and your IP address is not stored. These counts are kept for at most 3 months.
+
+- Your language choice is remembered in your browser (local storage) so the site opens in your language next time. It never leaves your device.
+
+If your browser sends Global Privacy Control or Do Not Track, none of this measurement runs. We use it on the basis of our legitimate interest in understanding, in aggregate, how the website is used. Clicking through to Google Play takes you to Google, whose own privacy policy applies.
+
+## 13. Contact
 
 {{OWNER_NAME}} — {{CONTACT_EMAIL}}
 
@@ -178,7 +190,19 @@ Toutes les connexions entre l’application TV, les téléphones et le serveur s
 
 Si le jeu change sa façon d’utiliser les informations (par exemple lors de l’ajout d’achats intégrés facultatifs), nous mettrons cette page et sa date à jour avant que le changement ne s’applique.
 
-## 12. Contact
+## 12. Ce site web
+
+Cette section concerne uniquement le site que vous lisez (pas le jeu). Pour savoir combien de personnes le visitent et quels boutons et quelles publicités fonctionnent, il utilise :
+
+- Cloudflare Web Analytics : compte les pages vues et la vitesse de chargement. Aucun cookie, aucun stockage local, aucune prise d’empreinte du navigateur. Cloudflare traite ces données pour notre compte.
+
+- Des comptages anonymes de clics, envoyés à notre propre serveur quand vous touchez un bouton comme « Installer sur ma télé » ou « Jouer dans le navigateur », ouvrez une question ou faites défiler la page : quel bouton ou quelle section, la langue de la page, la campagne publicitaire indiquée dans le lien (balises utm), le type d’appareil (téléphone ou ordinateur) et le pays déduit par Cloudflare. Aucun identifiant, aucun cookie, et votre adresse IP n’est pas enregistrée. Ces comptages sont conservés 3 mois au maximum.
+
+- Votre choix de langue est mémorisé dans votre navigateur (stockage local) pour que le site s’ouvre dans votre langue la prochaine fois. Il ne quitte jamais votre appareil.
+
+Si votre navigateur envoie Global Privacy Control ou Do Not Track, aucune de ces mesures n’est effectuée. Cette mesure repose sur notre intérêt légitime à comprendre, de façon agrégée, l’utilisation du site. En suivant le lien vers Google Play, vous arrivez chez Google, dont la propre politique de confidentialité s’applique.
+
+## 13. Contact
 
 {{OWNER_NAME}} — {{CONTACT_EMAIL}}
 
