@@ -48,6 +48,7 @@ var s=document.createElement('script');s.src='/assets/js/i18n.js';
 window.__mishanaI18n=new Promise(function(r){s.onload=s.onerror=r;});document.head.appendChild(s);
 setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
 </script>
+<!-- Measurement (cookieless): the Cloudflare Web Analytics token and the click-event endpoint are set in /assets/js/main.js (CONFIG). -->
 <script src="/assets/js/main.js" defer></script>
 
 <script type="application/ld+json">
@@ -80,35 +81,62 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
       <a href="?lang=fr" data-lang="fr" hreflang="fr" lang="fr">FR</a>
       <a href="?lang=ar" data-lang="ar" hreflang="ar" lang="ar">عربي</a>
     </nav>
-    <a class="btn btn--play btn--sm nav__cta" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play rel="noopener" data-i18n="navCta">Get it on Google TV</a>
+    <a class="btn btn--play btn--sm nav__cta" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play data-cta="nav" rel="noopener" data-i18n="ctaInstall">Install on my TV</a>
   </div>
 </header>
 
 <main id="main">
 
-<!-- ============ HERO ============ -->
+<!-- ============ HERO ============
+     Headline + sub swap with ?angle=reveal|passphone|nohardware|tonight|family|tvgame
+     (or a utm_campaign that starts with one of those slugs). EN copy: inline script below.
+     FR/AR copy: assets/js/i18n.js (keys heroTitle_<angle>, heroSub_<angle>). -->
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero__glow" aria-hidden="true"></div>
   <div class="wrap hero__grid">
     <div class="hero__copy">
-      <p class="eyebrow" data-i18n="heroEyebrow">The secret-word party game for your TV</p>
+      <p class="kicker"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 21h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span data-i18n="heroKicker">Party game for Android TV &amp; Google TV</span></p>
       <h1 id="hero-title" class="hero__title" data-i18n="heroTitle">Everyone's innocent. <span class="hl">Someone's lying<span class="dot">.</span></span></h1>
-      <p class="hero__sub" data-i18n="heroSub">Everyone gets a secret word on their phone. One player got a slightly different one. Give one-word clues, vote, and catch the liar – on the big screen.</p>
+      <p class="hero__sub" id="hero-sub" data-i18n="heroSub">Everyone gets a secret word on their phone. One player's word is slightly different. Give one-word clues, vote, and catch the liar on the big screen.</p>
 
       <div class="ctas" id="hero-ctas">
-        <a class="btn btn--play btn--lg" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play rel="noopener">
+        <a class="btn btn--play btn--lg btn--stack" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play data-cta="hero" rel="noopener">
           <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 21h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M10.2 7.9v5.2l4.4-2.6z" fill="currentColor"/></svg>
-          <span data-i18n="ctaPlay">Get it on Google TV</span>
+          <span class="btn__txt"><span data-i18n="ctaInstall">Install on my TV</span><small data-i18n="ctaInstallSub">Free to play · via Google Play</small></span>
         </a>
-        <a class="btn btn--ghost btn--lg" href="https://play.mishana.workers.dev/tv" rel="noopener" data-i18n="ctaBrowser">Try it now in your browser</a>
+        <a class="btn btn--ghost btn--lg hero__browser" href="https://play.mishana.workers.dev/tv" data-cta="hero" rel="noopener" data-i18n="ctaBrowser">Play in your browser</a>
       </div>
-      <p class="micro" data-i18n="heroMicro"><strong>Free to play.</strong> On your phone right now? Install it straight onto your TV from here.</p>
+      <p class="micro hero__hint" id="hero-hint" data-i18n="hintAndroid"><strong>Google Play opens on this phone.</strong> Choose your TV and the game installs there.</p>
+      <p class="hero__alt"><span data-i18n="noTvQ">No Android TV?</span> <a href="#no-tv" data-i18n="noTvLink">Play in your browser</a></p>
 
       <ul class="chips" aria-label="Key facts">
         <li data-i18n="chipPlayers">3–12 players</li>
-        <li data-i18n="chipNoApp">No app on phones</li>
+        <li data-i18n="chipNoApp">Nothing to install on phones</li>
         <li data-i18n="chipLangs">EN · FR · عربي</li>
       </ul>
+      <script>
+      /* Ad-angle message match + device-aware install hint. Runs before first paint; main.js reads window.__mishanaAngle. */
+      (function(){var A={
+        reveal:['“It was you?!” <span class="hl">Find the liar on your TV<span class="dot">.</span></span>','Everyone gets a secret word on their phone. One player’s word is slightly different, and nobody tells them. One clue each, a vote, then the TV stamps the liar OUT.'],
+        passphone:['Stop passing the phone. <span class="hl">Everyone gets their own<span class="dot">.</span></span>','Your secret word goes straight to your own phone. No hands over screens, no peeking, no waiting your turn. The TV runs the game for 3–12 players.'],
+        nohardware:['No controllers. No app. <span class="hl">Just your phones<span class="dot">.</span></span>','Open Mish Ana! on your Android TV or Google TV. Friends scan a QR code and play in their phone’s browser, iPhone or Android. Free to play.'],
+        tonight:['5 phones. 0 plans? <span class="hl">Tonight’s sorted<span class="dot">.</span></span>','Put a party game on the TV and play with the phones already in your hands. One round teaches the rules. 3–12 players, free to play.'],
+        family:['Family game night <span class="hl">just got dangerous<span class="dot">.</span></span>','From Teta to the cousins, everyone gets a secret word on their own phone. Play in Arabic, English or French, with Lebanese word packs. Tabbouleh or fattoush? Someone’s lying.'],
+        tvgame:['Looking for a game for your TV? <span class="hl">Here’s one<span class="dot">.</span></span>','Mish Ana! is a secret-word party game for Android TV and Google TV. 3–12 players use their phones as controllers. Free to play.']
+      },a='',p,d=document;
+      try{p=new URLSearchParams(location.search);a=(p.get('angle')||p.get('utm_campaign')||'').toLowerCase();}catch(e){}
+      for(var k in A){if(a===k||a.indexOf(k+'_')===0){a=k;break;}}
+      if(!A[a])a='';window.__mishanaAngle=a||'default';
+      if(a){var t=d.getElementById('hero-title'),s=d.getElementById('hero-sub');
+        t.innerHTML=A[a][0];t.setAttribute('data-i18n','heroTitle_'+a);s.textContent=A[a][1];s.setAttribute('data-i18n','heroSub_'+a);
+        d.documentElement.setAttribute('data-angle',a);}
+      var u=navigator.userAgent||'',ios=/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1),
+        mob=/Android|Mobi/.test(u)||ios,h=d.getElementById('hero-hint');
+      window.__mishanaDevice=ios?'ios':/Android/.test(u)?'android':mob?'mobile':'desktop';
+      if(ios){h.innerHTML='<strong>On iPhone? It works.</strong> Google Play opens in your browser: sign in with your TV’s Google account and pick your TV.';h.setAttribute('data-i18n','hintIos');}
+      else if(!mob){h.innerHTML='<strong>Google Play opens in this browser.</strong> Sign in with your TV’s Google account and pick your TV.';h.setAttribute('data-i18n','hintDesktop');}
+      })();
+      </script>
     </div>
 
     <div class="hero__media">
@@ -139,20 +167,35 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
         <p class="phone__label" data-i18n="yourWord">Your secret word</p>
         <div class="wcard wcard--coral"><span class="wcard__word" data-i18n="wordA">PIZZA</span></div>
       </div>
+    </div>
   </div>
 </section>
 
-<!-- ============ HOW IT WORKS ============ -->
+<!-- ============ WORKS ON ============ -->
+<section class="works" aria-labelledby="works-title">
+  <div class="wrap works__in">
+    <h2 id="works-title" class="works__title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="worksTitle">Works on Android TV &amp; Google TV</span></h2>
+    <ul class="works__list">
+      <li data-i18n="works1">Smart TVs with Google TV or Android TV: Sony, TCL, Hisense, Philips…</li>
+      <li data-i18n="works2">Chromecast with Google TV</li>
+      <li data-i18n="works3">Google TV Streamer</li>
+    </ul>
+    <p class="works__check" data-i18n="worksCheck">Quick check: if your TV has the Google Play Store, it works.</p>
+    <p class="works__no"><span data-i18n="worksNo">Samsung, LG, Fire TV or Apple TV?</span> <a href="#no-tv" data-i18n="worksNoLink">Play in your browser instead</a></p>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS: a round in 15 seconds ============ -->
 <section class="sec how" id="how" aria-labelledby="how-title">
   <div class="wrap">
     <header class="sec__head">
-      <p class="eyebrow" data-i18n="howEyebrow">How it works</p>
-      <h2 id="how-title" class="rv" data-i18n="howTitle">One TV. Everyone's phone. One liar<span class="dot">.</span></h2>
+      <h2 id="how-title" class="rv" data-i18n="howTitle">A whole round in 15 seconds<span class="dot">.</span></h2>
     </header>
 
-    <ol class="steps">
-      <li class="step rv">
-        <div class="step__art art-tv" aria-hidden="true">
+    <div class="reel" id="reel" data-step="0">
+      <div class="reel__stage" aria-hidden="true">
+        <!-- 1 · scan -->
+        <div class="sc sc--scan">
           <div class="mtv">
             <div class="mtv__left">
               <span class="mtv__scan" data-i18n="scanToJoin">Scan to join</span>
@@ -160,71 +203,93 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
               <span class="mtv__code">JQPU</span>
             </div>
             <div class="mtv__right">
-              <span class="mtv__count"><span data-i18n="players">Players</span> <b>3/12</b></span>
+              <span class="mtv__count"><span data-i18n="players">Players</span> <b>4/12</b></span>
               <div class="mtv__grid">
-                <div class="slot"><div class="av av--coral"><span>M</span></div><i>Maya</i></div>
-                <div class="slot"><div class="av av--azure av--square"><span>K</span></div><i>Karim</i></div>
-                <div class="slot"><div class="av av--lemon av--star"><span>L</span></div><i>Lea</i></div>
-                <div class="slot slot--empty"></div><div class="slot slot--empty"></div><div class="slot slot--empty"></div>
+                <div class="slot j1"><div class="av av--coral"><span>M</span></div><i>Maya</i></div>
+                <div class="slot j2"><div class="av av--azure av--square"><span>K</span></div><i>Karim</i></div>
+                <div class="slot j3"><div class="av av--lemon av--star"><span>L</span></div><i>Lea</i></div>
+                <div class="slot j4"><div class="av av--tangerine av--hex"><span>S</span></div><i>Sami</i></div>
+                <div class="slot slot--empty"></div><div class="slot slot--empty"></div>
               </div>
             </div>
           </div>
+          <div class="rph rph--scan"><span class="rph__code">JQPU</span><span class="rph__name">Sami</span><span class="rph__ok" data-i18n="youreIn">✓ You're in</span></div>
         </div>
-        <div class="step__txt">
-          <span class="step__n">1</span>
-          <h3 data-i18n="step1Title">Open it on the TV</h3>
-          <p data-i18n="step1Body">Launch Mish Ana! on your Android TV or Google TV. A QR code and a room code pop up.</p>
-        </div>
-      </li>
-
-      <li class="step rv">
-        <div class="step__art art-join" aria-hidden="true">
-          <div class="mphone">
-            <span class="mphone__k" data-i18n="joinRoom">Join room</span>
-            <span class="mphone__code">JQPU</span>
-            <span class="mphone__field">Nour<span class="caret"></span></span>
-            <span class="mphone__dots"><i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i><i class="c5 on"></i><i class="c6"></i></span>
-            <span class="mphone__ok" data-i18n="youreIn">✓ You're in</span>
+        <!-- 2 · secret words (the Mole's card looks like everyone else's) -->
+        <div class="sc sc--word">
+          <div class="minis">
+            <div class="mini" style="--pc:var(--coral)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordA">PIZZA</span></div><i>Maya</i></div>
+            <div class="mini" style="--pc:var(--azure)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordA">PIZZA</span></div><i>Karim</i></div>
+            <div class="mini" style="--pc:var(--lemon)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordA">PIZZA</span></div><i>Lea</i></div>
+            <div class="mini mini--mole" style="--pc:var(--tangerine)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordB">PASTA</span></div><i>Sami</i><b class="mini__tag" data-i18n="moleTag">The Mole. Nobody told him.</b></div>
           </div>
-          <div class="scanline"></div>
         </div>
-        <div class="step__txt">
-          <span class="step__n">2</span>
-          <h3 data-i18n="step2Title">Everyone scans with their phone</h3>
-          <p data-i18n="step2Body">Friends point their camera at the QR and type a nickname. No app to download, no account – iPhone or Android.</p>
-        </div>
-      </li>
-
-      <li class="step rv">
-        <div class="step__art art-word">
-          <div class="dphone">
-            <div class="ph-top" aria-hidden="true"><span class="ph-code">JQPU</span><span class="ph-me"><span class="av av--coral"><span>M</span></span>Maya</span></div>
-            <p class="phone__label" data-i18n="yourWord">Your secret word</p>
-            <button class="deal" type="button" data-state="hidden" aria-describedby="deal-cap">
-              <span class="deal__front">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10m0-.5V4a1.5 1.5 0 0 1 3 0v6m0-1a1.5 1.5 0 0 1 3 0v4.5a6.5 6.5 0 0 1-6.5 6.5h-.6a6 6 0 0 1-4.6-2.2L4.3 14.4a1.6 1.6 0 0 1 2.4-2.1L9 14.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span class="deal__tap" data-i18n="holdToSee">Press and hold to see your word</span>
-              </span>
-              <span class="deal__back">
-                <span class="deal__word"></span>
-                <span class="deal__blank">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2.4"/></svg>
-                  <b data-i18n="noWord">No word for you.</b>
-                  <small data-i18n="blankBody">Listen. Blend in. Bluff.</small>
-                </span>
-              </span>
-            </button>
+        <!-- 3 · clues, then the vote on phones -->
+        <div class="sc sc--clue">
+          <div class="seats">
+            <div class="seat"><span class="bub" data-i18n="clue1">Cheese</span><div class="av av--coral"><span>M</span></div><i>Maya</i></div>
+            <div class="seat"><span class="bub" data-i18n="clue2">Oven</span><div class="av av--azure av--square"><span>K</span></div><i>Karim</i></div>
+            <div class="seat"><span class="bub" data-i18n="clue3">Slice</span><div class="av av--lemon av--star"><span>L</span></div><i>Lea</i></div>
+            <div class="seat seat--sus"><span class="bub" data-i18n="clue4">…Fork?</span><div class="av av--tangerine av--hex"><span>S</span></div><i>Sami</i><span class="votes"><b style="--c:var(--coral)"></b><b style="--c:var(--azure)"></b><b style="--c:var(--lemon)"></b></span></div>
           </div>
-          <p class="deal__cap" id="deal-cap" aria-live="polite"></p>
-          <button class="deal__again" type="button" data-i18n="dealAgain">Deal again</button>
+          <p class="sc__vote" data-i18n="voteTitle">Who's not one of us?</p>
         </div>
-        <div class="step__txt">
-          <span class="step__n">3</span>
-          <h3 data-i18n="step3Title">Clue. Vote. Reveal.</h3>
-          <p data-i18n="step3Body">Your word shows up on your phone only. Most of the table gets PIZZA; one player, the Mole, gets PASTA and isn't told. In bigger groups a Blank may get no word at all. Give one-word clues, vote out who doesn't fit, and the TV reveals who was who.</p>
+        <!-- 4 · the TV reveal: OUT stamp, card flips to the Mole -->
+        <div class="sc sc--out">
+          <p class="out__name" data-i18n="outName">Sami is out!</p>
+          <div class="out__card">
+            <span class="out__back"><span class="av av--tangerine av--hex"><span>S</span></span></span>
+            <span class="out__face"><svg viewBox="0 0 48 24" aria-hidden="true"><path d="M3 7c6-5 15-5 21 0 6-5 15-5 21 0 2 9-2 14-8 14-5 0-8-4-13-4s-8 4-13 4C5 21 1 16 3 7z" fill="#120A1F"/><ellipse cx="14" cy="11.5" rx="4.2" ry="3.2" fill="#FF8A3D"/><ellipse cx="34" cy="11.5" rx="4.2" ry="3.2" fill="#FF8A3D"/></svg><b data-i18n="roleMole">Mole</b></span>
+            <span class="out__stamp" data-i18n="stampOut">OUT</span>
+          </div>
+          <p class="out__line" data-i18n="moleCaught">…the Mole! Nice catch.</p>
         </div>
-      </li>
-    </ol>
+      </div>
+
+      <p class="reel__cap" aria-hidden="true"></p>
+      <div class="reel__bar">
+        <ol class="reel__steps">
+          <li><button type="button" data-step="0" aria-current="step"><span class="reel__prog"><i></i></span><span class="reel__lbl" data-i18n="r1">Scan</span><span class="reel__txt" data-i18n="r1Cap">Open it on the TV. Everyone scans the QR code with their phone.</span></button></li>
+          <li><button type="button" data-step="1"><span class="reel__prog"><i></i></span><span class="reel__lbl" data-i18n="r2">Secret word</span><span class="reel__txt" data-i18n="r2Cap">Everyone gets a secret word. One is different, and nobody tells them.</span></button></li>
+          <li><button type="button" data-step="2"><span class="reel__prog"><i></i></span><span class="reel__lbl" data-i18n="r3">Clue &amp; vote</span><span class="reel__txt" data-i18n="r3Cap">One clue each, out loud. Then everyone votes on their phone.</span></button></li>
+          <li><button type="button" data-step="3"><span class="reel__prog"><i></i></span><span class="reel__lbl" data-i18n="r4">Reveal</span><span class="reel__txt" data-i18n="r4Cap">The TV stamps the most-voted player OUT and reveals who they were.</span></button></li>
+        </ol>
+        <button class="reel__pause" type="button" aria-label="Pause the animation" data-i18n-aria="reelPause">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Try the phone card (mirrors PH-04 hold-to-peek) -->
+    <div class="try rv">
+      <div class="try__txt">
+        <h3 data-i18n="tryTitle">Try it: here's your phone</h3>
+        <p data-i18n="tryBody">Your word only ever shows on your own phone. Press and hold the card to peek, let go to hide it. Deal again to see what the Mole and the Blank get.</p>
+      </div>
+      <div class="step__art art-word">
+        <div class="dphone">
+          <div class="ph-top" aria-hidden="true"><span class="ph-code">JQPU</span><span class="ph-me"><span class="av av--coral"><span>M</span></span>Maya</span></div>
+          <p class="phone__label" data-i18n="yourWord">Your secret word</p>
+          <button class="deal" type="button" data-state="hidden" aria-describedby="deal-cap">
+            <span class="deal__front">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10m0-.5V4a1.5 1.5 0 0 1 3 0v6m0-1a1.5 1.5 0 0 1 3 0v4.5a6.5 6.5 0 0 1-6.5 6.5h-.6a6 6 0 0 1-4.6-2.2L4.3 14.4a1.6 1.6 0 0 1 2.4-2.1L9 14.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="deal__tap" data-i18n="holdToSee">Press and hold to see your word</span>
+            </span>
+            <span class="deal__back">
+              <span class="deal__word"></span>
+              <span class="deal__blank">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2.4"/></svg>
+                <b data-i18n="noWord">No word for you.</b>
+                <small data-i18n="blankBody">Listen. Blend in. Bluff.</small>
+              </span>
+            </span>
+          </button>
+        </div>
+        <p class="deal__cap" id="deal-cap" aria-live="polite"></p>
+        <button class="deal__again" type="button" data-i18n="dealAgain">Deal again</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -232,7 +297,6 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
 <section class="sec install" id="install" aria-labelledby="install-title">
   <div class="wrap">
     <header class="sec__head">
-      <p class="eyebrow" data-i18n="installEyebrow">Install in three taps</p>
       <h2 id="install-title" class="rv" data-i18n="installTitle">Put it on your TV from the phone in your hand<span class="dot">.</span></h2>
       <p class="sec__lede rv" data-i18n="installLede">No typing with the remote. Google Play can send Mish Ana! straight to your TV.</p>
     </header>
@@ -250,8 +314,8 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
           </div>
         </div>
         <span class="g__n">1</span>
-        <h3 data-i18n="g1Title">Tap “Get it on Google TV”</h3>
-        <p data-i18n="g1Body">The Google Play listing opens on your phone.</p>
+        <h3 data-i18n="g1Title">Tap “Install on my TV”</h3>
+        <p data-i18n="g1Body">The Mish Ana! page opens in Google Play.</p>
       </li>
       <li class="g rv">
         <div class="g__art" aria-hidden="true">
@@ -286,11 +350,34 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
     </ol>
 
     <div class="install__cta rv">
-      <a class="btn btn--play btn--lg" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play rel="noopener">
+      <a class="btn btn--play btn--lg" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play data-cta="install" rel="noopener">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 21h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M10.2 7.9v5.2l4.4-2.6z" fill="currentColor"/></svg>
-        <span data-i18n="ctaPlay">Get it on Google TV</span>
+        <span data-i18n="ctaInstall">Install on my TV</span>
       </a>
-      <p class="micro" data-i18n="installAlt">Prefer the remote? Search <b>“Mish Ana”</b> in the Apps tab on your TV.</p>
+      <ul class="install__notes">
+        <li data-i18n="installIos"><b>iPhone or computer?</b> Google Play opens in the browser. Sign in with the Google account your TV uses.</li>
+        <li data-i18n="installAlt"><b>Prefer the remote?</b> Search “Mish Ana” in the Apps tab on your TV.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOT ON ANDROID TV: browser fallback ============ -->
+<section class="sec notv" id="no-tv" aria-labelledby="notv-title">
+  <div class="wrap notv__in">
+    <div class="notv__copy">
+      <h2 id="notv-title" class="rv" data-i18n="notvTitle">No Android TV? Play in your browser<span class="dot">.</span></h2>
+      <p class="sec__lede rv" data-i18n="notvLede">Samsung, LG, Fire TV, Apple TV, or no smart TV at all: Mish Ana! also runs in a web browser. Phones join exactly the same way.</p>
+    </div>
+    <ol class="notv__steps rv">
+      <li><span class="g__n">1</span><span data-i18n="notv1">On a laptop or computer, open <b dir="ltr">play.mishana.workers.dev/tv</b></span></li>
+      <li><span class="g__n">2</span><span data-i18n="notv2">Plug it into the TV with HDMI, or gather round the screen.</span></li>
+      <li><span class="g__n">3</span><span data-i18n="notv3">Everyone scans the QR code with their phone. Play.</span></li>
+    </ol>
+    <div class="notv__ctas rv">
+      <a class="btn btn--cream btn--lg" href="https://play.mishana.workers.dev/tv" data-cta="notv" rel="noopener" data-i18n="ctaBrowserOpen">Open the browser version</a>
+      <button class="btn btn--ghost btn--lg share" type="button" data-share="https://play.mishana.workers.dev/tv" data-i18n="ctaShare">Send the link to my laptop</button>
+      <p class="micro share__done" role="status" aria-live="polite"></p>
     </div>
   </div>
 </section>
@@ -299,7 +386,6 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
 <section class="sec why" id="why" aria-labelledby="why-title">
   <div class="wrap">
     <header class="sec__head">
-      <p class="eyebrow" data-i18n="whyEyebrow">Why it hits different</p>
       <h2 id="why-title" class="rv" data-i18n="whyTitle">Made for the couch, not the controller<span class="dot">.</span></h2>
     </header>
     <ul class="feats">
@@ -331,41 +417,52 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
 <section class="sec faq" id="faq" aria-labelledby="faq-title">
   <div class="wrap wrap--narrow">
     <header class="sec__head">
-      <p class="eyebrow" data-i18n="faqEyebrow">Questions</p>
       <h2 id="faq-title" class="rv" data-i18n="faqTitle">Before you press play<span class="dot">.</span></h2>
     </header>
     <div class="qa">
-      <details>
+      <details data-q="tvs">
         <summary data-i18n="q1">Which TVs does it work on?</summary>
-        <div class="qa__a" data-i18n="a1"><p>Any Android TV or Google TV with the Google Play Store – for example TCL and Sony TVs, Chromecast with Google TV, and the Google TV Streamer.</p><p>No Android TV? Open <a href="https://play.mishana.workers.dev/tv" rel="noopener">play.mishana.workers.dev/tv</a> on a laptop and plug it into your TV.</p></div>
+        <div class="qa__a" data-i18n="a1"><p>Any Android TV or Google TV with the Google Play Store: many Sony, TCL, Hisense and Philips TVs, Chromecast with Google TV and the Google TV Streamer.</p><p>Quick check: if your TV has the Google Play Store, it works.</p></div>
       </details>
-      <details>
-        <summary data-i18n="q2">How much does it cost?</summary>
-        <div class="qa__a" data-i18n="a2"><p>Mish Ana! is free to play, with no account to create. Optional in-app purchases may add extra content.</p></div>
+      <details data-q="other-tv">
+        <summary data-i18n="qOther">My TV is a Samsung, LG, Fire TV or Apple TV. Can we still play?</summary>
+        <div class="qa__a" data-i18n="aOther"><p>Yes, in a browser. The TV app needs Google Play, so it isn't available on those TVs. Open <a href="https://play.mishana.workers.dev/tv" data-cta="faq" rel="noopener">play.mishana.workers.dev/tv</a> on a laptop or computer, plug it into the TV with HDMI (or gather round the screen), and phones join the same way.</p></div>
       </details>
-      <details>
-        <summary data-i18n="q3">Do my friends need to download anything?</summary>
-        <div class="qa__a" data-i18n="a3"><p>No. They scan the QR code on the TV and play in their phone's browser. iPhone and Android both work.</p></div>
-      </details>
-      <details>
-        <summary data-i18n="q4">How many people can play?</summary>
-        <div class="qa__a" data-i18n="a4"><p>3 to 12 players. Everyone needs their own phone.</p></div>
-      </details>
-      <details>
-        <summary data-i18n="q5">Which languages?</summary>
-        <div class="qa__a" data-i18n="a5"><p>English, French and Arabic, with Lebanese word packs. The Arabic version is fully right-to-left.</p></div>
-      </details>
-      <details>
-        <summary data-i18n="q6">Do we need internet?</summary>
-        <div class="qa__a" data-i18n="a6"><p>Yes. The TV and the phones talk to each other through the internet, so each one needs a connection (Wi-Fi or mobile data).</p></div>
-      </details>
-      <details>
+      <details data-q="iphone">
         <summary data-i18n="q7">I'm on an iPhone. Can I still install it on my TV?</summary>
         <div class="qa__a" data-i18n="a7"><p>Yes. Open the Google Play page in your browser, sign in with the Google account your TV uses, and choose your TV. Or install it on the TV directly: search “Mish Ana” in the Apps tab.</p></div>
       </details>
-      <details>
+      <details data-q="cost">
+        <summary data-i18n="q2">How much does it cost?</summary>
+        <div class="qa__a" data-i18n="a2"><p>Mish Ana! is free to play, with no account to create. Optional in-app purchases may add extra content.</p></div>
+      </details>
+      <details data-q="friends">
+        <summary data-i18n="q3">Do my friends need to download anything?</summary>
+        <div class="qa__a" data-i18n="a3"><p>No. They scan the QR code on the TV and play in their phone's browser. iPhone and Android both work.</p></div>
+      </details>
+      <details data-q="setup">
+        <summary data-i18n="qSetup">How long does it take to set up?</summary>
+        <div class="qa__a" data-i18n="aSetup"><p>Installing is like any TV app: a few taps from your phone. After that, a game starts as soon as everyone has scanned the QR code. No accounts, no controllers to pair, and one round teaches the rules.</p></div>
+      </details>
+      <details data-q="internet">
+        <summary data-i18n="q6">Do we need internet?</summary>
+        <div class="qa__a" data-i18n="a6"><p>Yes. The TV and the phones talk to each other through the internet, so each one needs a connection (Wi-Fi or mobile data).</p></div>
+      </details>
+      <details data-q="kids">
+        <summary data-i18n="qKids">Is it OK for kids?</summary>
+        <div class="qa__a" data-i18n="aKids"><p>Mish Ana! is made for teens and adults, and it's often played with the whole family. Turn on the family-friendly word filter, and Beginner mode shows everyone their role. Players only type a nickname, and rooms are deleted automatically.</p></div>
+      </details>
+      <details data-q="players">
+        <summary data-i18n="q4">How many people can play?</summary>
+        <div class="qa__a" data-i18n="a4"><p>3 to 12 players. Everyone needs their own phone.</p></div>
+      </details>
+      <details data-q="languages">
+        <summary data-i18n="q5">Which languages?</summary>
+        <div class="qa__a" data-i18n="a5"><p>English, French and Arabic, with Lebanese word packs. The Arabic version is fully right-to-left.</p></div>
+      </details>
+      <details data-q="data">
         <summary data-i18n="q8">What do you do with our data?</summary>
-        <div class="qa__a" data-i18n="a8"><p>Very little. Players type a nickname, and the room is deleted soon after the game ends. No accounts, no ad trackers. Read the <a href="/privacy/">privacy policy</a>.</p></div>
+        <div class="qa__a" data-i18n="a8"><p>Very little. Players type a nickname, and the room is deleted soon after the game ends. No accounts, no ad trackers. This website counts visits and button clicks without cookies. Read the <a href="/privacy/">privacy policy</a>.</p></div>
       </details>
     </div>
   </div>
@@ -384,14 +481,20 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
   <div class="wrap final__in">
     <img class="final__mark rv" src="/assets/img/mark.svg" alt="" width="72" height="72" loading="lazy">
     <h2 id="final-title" class="rv" data-i18n="finalTitle">Someone at your table is lying<span class="dot">.</span><br><span class="hl">Find out who.</span></h2>
-    <p class="final__sub rv" data-i18n="finalSub">Free to play on Android TV and Google TV. Install it from this phone in a few taps.</p>
+    <ul class="final__list rv">
+      <li data-i18n="fin1">Free to play</li>
+      <li data-i18n="fin2">Nothing to install on phones</li>
+      <li data-i18n="fin3">3–12 players</li>
+      <li data-i18n="fin4">English, French &amp; Arabic</li>
+    </ul>
     <div class="ctas ctas--center rv" id="final-ctas">
-      <a class="btn btn--play btn--lg" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play rel="noopener">
+      <a class="btn btn--play btn--lg btn--stack" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play data-cta="final" rel="noopener">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 21h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M10.2 7.9v5.2l4.4-2.6z" fill="currentColor"/></svg>
-        <span data-i18n="ctaPlay">Get it on Google TV</span>
+        <span class="btn__txt"><span data-i18n="ctaInstall">Install on my TV</span><small data-i18n="ctaFinalSub">Android TV &amp; Google TV · via Google Play</small></span>
       </a>
-      <a class="btn btn--ghost btn--lg" href="https://play.mishana.workers.dev/tv" rel="noopener" data-i18n="ctaBrowser">Try it now in your browser</a>
+      <a class="btn btn--ghost btn--lg" href="https://play.mishana.workers.dev/tv" data-cta="final" rel="noopener" data-i18n="ctaBrowserAlt">No Android TV? Play in your browser</a>
     </div>
+    <p class="micro final__alt rv" data-i18n="finalAlt">Or search “Mish Ana” in the Apps tab on your TV.</p>
   </div>
 </section>
 </main>
@@ -405,7 +508,7 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
     <nav class="foot__links" aria-label="Footer">
       <a href="/privacy/" data-i18n="footPrivacy">Privacy</a>
       <a href="mailto:{{CONTACT_EMAIL}}" data-i18n="footContact">Contact</a>
-      <a href="https://play.mishana.workers.dev/tv" rel="noopener" data-i18n="footBrowser">Play in browser</a>
+      <a href="https://play.mishana.workers.dev/tv" data-cta="footer" rel="noopener" data-i18n="footBrowser">Play in browser</a>
     </nav>
     <p class="foot__legal"><span>© 2026 Mish Ana!</span> <span data-i18n="footTm">Android TV, Google TV, Google Play and Chromecast are trademarks of Google LLC.</span></p>
   </div>
@@ -413,8 +516,8 @@ setTimeout(function(){d.classList.remove('i18n-wait')},2500);}})();
 
 <div class="sticky" id="sticky" aria-hidden="true">
   <img src="/assets/img/mark.svg" alt="" width="40" height="40">
-  <div class="sticky__txt"><b><bdi>Mish Ana!</bdi></b><span data-i18n="stickySub">Free to play · Google TV</span></div>
-  <a class="btn btn--play btn--sm" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play rel="noopener" tabindex="-1" data-i18n="stickyCta">Get it</a>
+  <div class="sticky__txt"><b><bdi>Mish Ana!</bdi></b><span data-i18n="stickySub">Free to play · Android TV &amp; Google TV</span></div>
+  <a class="btn btn--play btn--sm" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play data-cta="sticky" rel="noopener" tabindex="-1" data-i18n="stickyCta">Install on TV</a>
 </div>
 </body>
 </html>
