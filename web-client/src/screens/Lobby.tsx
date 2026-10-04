@@ -6,6 +6,7 @@ import { fmtNum, isolate, locale, LOCALE_NATIVE_NAME, t } from "../i18n/t";
 import { blockerText, packsLine, roleSummaryText } from "../lib/lobby";
 import { act } from "../state/session";
 import { tvBusyHint } from "../lib/premium";
+import { billingEnabled } from "../lib/billingFlag";
 import { wakeLockDenied, wakeLockSupported } from "../lib/wakelock";
 import { Avatar, avatarState, playerLabel } from "../components/PlayerChip";
 import { Button, ConfirmSheet, Heading } from "../components/UI";
@@ -46,7 +47,7 @@ export function Lobby({ view }: { view: PlayerView }) {
         ) : (
           <Heading title={t("lobby.youreIn")} sub={t("lobby.lookTv")} />
         )}
-        {view.premium && <p class="premiumchip"><Icon name="gem" size={16} />{t("lobby.premiumRoom")}</p>}
+        {view.premium && billingEnabled.value && <p class="premiumchip"><Icon name="gem" size={16} />{t("lobby.premiumRoom")}</p>}
         <section class="card card--list" aria-labelledby="players-h">
           <div class="card__head">
             <h2 id="players-h" class="eyebrow">{t("lobby.playerCount", { count: players.length, max: MAX_PLAYERS })}</h2>
