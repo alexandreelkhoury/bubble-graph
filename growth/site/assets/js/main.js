@@ -35,7 +35,17 @@
     reelPlay: 'Play the animation',
     shareTitle: 'Mish Ana! – play in your browser',
     shareText: 'Open this on a laptop connected to the TV:',
-    copied: 'Link copied. Open it on your laptop.'
+    copied: 'Link copied. Open it on your laptop.',
+    sendTitle: 'Mish Ana! – play it on the big screen',
+    sendText: 'Open this link on a laptop or TV browser, put it on the big screen, and everyone scans the QR code with their phone.',
+    sheetTitle: 'Send the link to your laptop or TV',
+    sheetBody: 'Mish Ana! is played on a big screen. Open this link there; phones join by scanning the QR code.',
+    copyLink: 'Copy link',
+    linkCopied: 'Link copied',
+    emailLink: 'Email it to me',
+    emailSubject: 'Mish Ana! – open this on your laptop or TV',
+    openHere: 'Open here anyway',
+    closeSheet: 'Close'
   };
 
   var doc = document, root = doc.documentElement;
@@ -106,6 +116,7 @@
   doc.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[data-play], a[href*="play.mishana.workers.dev"]');
     if (!a) return;
+    if ((a.hasAttribute('data-send') && sendMode()) || a.closest('.send-sheet')) return; // phones: tracked by the send-link flow below
     var type = a.hasAttribute('data-play') ? 'play_store' : 'browser';
     var pos = a.getAttribute('data-cta') || 'other';
     track('cta', { t: type, p: pos });
@@ -349,6 +360,84 @@
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(ok, function () { location.href = url; });
       else location.href = url;
     });
+  });
+
+  /* ------------------------------------------------------------------
+     SEND THE LINK (pre-launch, phones). Buttons marked data-send (hero, sticky, final; build.mjs adds them while
+     playStoreLive is false) open the browser game on a laptop/desktop as usual. On phones the game needs a big screen,
+     so the button shares the link (native share sheet) or opens a small sheet: copy / email it to me / open here anyway.
+     The label switch is pure CSS (same media query), so nothing moves on load.
+     ------------------------------------------------------------------ */
+  var SEND_MQ = '(pointer: coarse), (max-width: 700px)';
+  function sendMode() { return mq(SEND_MQ); }
+  function sendUrl(a) {
+    var p = new URLSearchParams();
+    params.forEach(function (v, k) { if (/^utm_/i.test(k) && v) p.set(k, v); });
+    p.set('utm_content', 'share');
+    return a.getAttribute('href').split('?')[0] + '?' + p.toString();
+  }
+  var sheet = null, sheetUrl = '', sheetPos = '';
+  function sheetEl() {
+    if (sheet) return sheet;
+    sheet = doc.createElement('dialog');
+    sheet.className = 'send-sheet';
+    sheet.setAttribute('aria-labelledby', 'send-title');
+    sheet.innerHTML = '<form method="dialog" class="send-sheet__x"><button type="submit" data-k="closeSheet" aria-label=""><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></form>' +
+      '<h2 id="send-title"></h2><p class="send-sheet__body"></p><p class="send-sheet__url" dir="ltr"></p>' +
+      '<div class="send-sheet__btns"><button type="button" class="btn btn--play btn--lg" data-act="copy"></button>' +
+      '<a class="btn btn--ghost btn--lg" data-act="email" href="#"></a>' +
+      '<a class="send-sheet__open" data-act="open" href="#"></a></div><p class="micro send-sheet__done" role="status" aria-live="polite"></p>';
+    doc.body.appendChild(sheet);
+    sheet.addEventListener('click', function (e) {
+      if (e.target === sheet) { sheet.close ? sheet.close() : sheet.removeAttribute('open'); return; } // tap on the backdrop
+      var b = e.target.closest('[data-act]'); if (!b) return;
+      var act = b.getAttribute('data-act');
+      if (act === 'copy') {
+        e.preventDefault();
+        var done = function () { sheet.querySelector('.send-sheet__done').textContent = t('linkCopied'); track('link_copied', { p: sheetPos }); };
+        var legacy = function () { // older browsers / non-secure contexts
+          var ta = doc.createElement('textarea'); ta.value = sheetUrl; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;opacity:0;top:0';
+          sheet.appendChild(ta); ta.select(); var ok = false; try { ok = doc.execCommand('copy'); } catch (err) {}
+          ta.remove(); if (ok) done(); else selectUrl();
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(sheetUrl).then(done, legacy);
+        else legacy();
+      } else if (act === 'email') track('email_link', { p: sheetPos });
+      else if (act === 'open') track('open_here', { p: sheetPos });
+    });
+    return sheet;
+  }
+  function selectUrl() { // last resort for copy: select the URL text so the phone's own Copy menu appears
+    var u = sheet.querySelector('.send-sheet__url'), r = doc.createRange(); r.selectNodeContents(u);
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+  function openSheet(url, pos) {
+    var s = sheetEl(); sheetUrl = url; sheetPos = pos;
+    s.querySelector('h2').textContent = t('sheetTitle');
+    s.querySelector('.send-sheet__body').textContent = t('sheetBody');
+    s.querySelector('.send-sheet__url').textContent = url.replace(/^https?:\/\//, '').split('?')[0];
+    s.querySelector('[data-act="copy"]').textContent = t('copyLink');
+    var em = s.querySelector('[data-act="email"]');
+    em.textContent = t('emailLink');
+    em.href = 'mailto:?subject=' + encodeURIComponent(t('emailSubject')) + '&body=' + encodeURIComponent(t('sendText') + '\n\n' + url);
+    var op = s.querySelector('[data-act="open"]'); op.textContent = t('openHere'); op.href = url;
+    s.querySelector('[data-k="closeSheet"]').setAttribute('aria-label', t('closeSheet'));
+    s.querySelector('.send-sheet__done').textContent = '';
+    if (s.showModal) { if (!s.open) s.showModal(); } else s.setAttribute('open', '');
+  }
+  doc.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[data-send]');
+    if (!a || !sendMode()) return;
+    e.preventDefault();
+    var url = sendUrl(a), pos = a.getAttribute('data-cta') || 'other';
+    var data = { title: t('sendTitle'), text: t('sendText'), url: url };
+    if (navigator.share && (!navigator.canShare || navigator.canShare(data))) {
+      track('share_opened', { p: pos, t: 'native' });
+      navigator.share(data).catch(function (err) { if (!err || err.name !== 'AbortError') openSheet(url, pos); });
+    } else {
+      track('share_opened', { p: pos, t: 'sheet' });
+      openSheet(url, pos);
+    }
   });
 
   /* ------------------------------------------------------------------

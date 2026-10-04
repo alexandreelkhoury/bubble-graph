@@ -168,6 +168,16 @@ fr: {
   stickyCta: 'Installer',
   shareTitle: 'Mish Ana! – jouer dans le navigateur',
   shareText: 'À ouvrir sur un ordinateur branché à la télé :',
+  sendTitle: 'Mish Ana! – à jouer sur grand écran',
+  sendText: 'Ouvre ce lien sur un ordinateur ou le navigateur de la télé, mets-le sur grand écran, et chacun scanne le QR code avec son téléphone.',
+  sheetTitle: 'Envoie le lien à ton ordi ou ta télé',
+  sheetBody: 'Mish Ana! se joue sur un grand écran. Ouvre ce lien là-bas : les téléphones rejoignent la partie en scannant le QR code.',
+  copyLink: 'Copier le lien',
+  linkCopied: 'Lien copié',
+  emailLink: 'Me l’envoyer par e-mail',
+  emailSubject: 'Mish Ana! – à ouvrir sur l’ordi ou la télé',
+  openHere: 'Ouvrir ici quand même',
+  closeSheet: 'Fermer',
   copied: 'Lien copié. Ouvre-le sur ton ordinateur.'
 },
 ar: {
@@ -333,6 +343,16 @@ ar: {
   stickyCta: 'نزّلها',
   shareTitle: 'مش أنا! – العب بالمتصفّح',
   shareText: 'افتحو عاللابتوب الموصول عالتلفزيون:',
+  sendTitle: 'مش أنا! – العبوها عالشاشة الكبيرة',
+  sendText: 'افتح هالرابط عاللابتوب أو بمتصفّح التلفزيون، حطّو عالشاشة الكبيرة، وكل واحد بيمسح كود QR بتلفونو.',
+  sheetTitle: 'ابعت الرابط للّابتوب أو التلفزيون',
+  sheetBody: 'مش أنا! بتنلعب عشاشة كبيرة. افتح هالرابط هونيك، والتلفونات بتفوت بمسح كود QR.',
+  copyLink: 'انسخ الرابط',
+  linkCopied: 'انتسخ الرابط',
+  emailLink: 'ابعتلي ياه عالإيميل',
+  emailSubject: 'مش أنا! – افتحها عاللابتوب أو التلفزيون',
+  openHere: 'افتحها هون على كل حال',
+  closeSheet: 'سكّر',
   copied: 'انتسخ الرابط. افتحو عاللابتوب.'
 }
 };

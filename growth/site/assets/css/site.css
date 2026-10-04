@@ -687,3 +687,22 @@ h3 { font-size: 1.375rem; line-height: 1.2; letter-spacing: -.01em; }
 .related li span, .guide-list li span { font-size: .9375rem; color: var(--muted); }
 .art table { font-size: .875rem; }
 .art td strong { color: var(--cream); }
+
+/* ---------- Pre-launch: "send the link" on phones (labels switch with CSS, so no layout shift) ---------- */
+.lbl-send { display: none; }
+@media (pointer: coarse), (max-width: 700px) {
+  [data-send] .lbl-open, [data-send].lbl-open { display: none; }
+  [data-send] .lbl-send { display: inline; }
+}
+.send-sheet { width: min(100% - 24px, 440px); margin: auto auto 12px; padding: 24px 20px 20px; border: 0; border-radius: var(--r-lg); background: var(--surface-2); color: var(--cream); box-shadow: 0 0 0 1px var(--line-2) inset, 0 30px 80px -20px rgba(0,0,0,.9); }
+.send-sheet::backdrop { background: rgba(11,6,20,.72); }
+.send-sheet h2 { font-size: 1.5rem; line-height: 1.15; padding-inline-end: 40px; }
+.send-sheet__body { margin-top: 10px; color: var(--muted); }
+.send-sheet__url { margin-top: 12px; padding: 10px 14px; border-radius: var(--r-sm); background: rgba(255,247,236,.06); font-weight: 800; user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; text-align: start; }
+.send-sheet__btns { display: grid; gap: 10px; margin-top: 16px; }
+.send-sheet__btns .btn { width: 100%; justify-content: center; text-decoration: none; }
+.send-sheet__open { justify-self: center; min-height: 44px; display: inline-flex; align-items: center; color: var(--muted); text-underline-offset: 3px; }
+.send-sheet__done { text-align: center; color: var(--ok); margin-top: 8px; min-height: 1.5em; }
+.send-sheet__x { position: absolute; top: 12px; inset-inline-end: 12px; margin: 0; }
+.send-sheet__x button { width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 999px; background: rgba(255,247,236,.08); color: var(--cream); cursor: pointer; }
+.send-sheet__x svg { width: 20px; height: 20px; }

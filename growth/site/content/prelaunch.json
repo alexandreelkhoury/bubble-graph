@@ -3,9 +3,9 @@
   "en": {
     "heroKicker": "TV party game · free in your browser",
     "navCta": "Play free",
-    "ctaInstall": "Play free in your browser",
-    "ctaInstallSub": "Laptop or TV browser · no download",
-    "ctaFinalSub": "Any TV with a laptop · free",
+    "ctaInstall": "<span class=\"lbl-open\">Play free in your browser</span><span class=\"lbl-send\">Send the link to my laptop or TV</span>",
+    "ctaInstallSub": "<span class=\"lbl-open\">Laptop or TV browser · no download</span><span class=\"lbl-send\">The game runs on the big screen · free</span>",
+    "ctaFinalSub": "<span class=\"lbl-open\">Any TV with a laptop · free</span><span class=\"lbl-send\">The game runs on the big screen · free</span>",
     "hintAndroid": "<strong>Open it on a laptop or a TV browser.</strong> Put it on the big screen and everyone joins by scanning the QR code.",
     "hintIos": "<strong>Open it on a laptop or a TV browser.</strong> Put it on the big screen and everyone joins by scanning the QR code.",
     "hintDesktop": "<strong>Connect this computer to the TV</strong> (HDMI), open the game, and everyone joins by scanning the QR code.",
@@ -27,15 +27,15 @@
     "aSetup": "<p>About a minute. Open the game in a browser on the TV screen, and a game starts as soon as everyone has scanned the QR code. No accounts, no controllers to pair, and one round teaches the rules.</p>",
     "finalAlt": "Android TV &amp; Google TV app: in testing, coming soon to Google Play.",
     "stickySub": "Free · any TV with a laptop",
-    "stickyCta": "Play free",
+    "stickyCta": "<span class=\"lbl-open\">Play free</span><span class=\"lbl-send\">Send link</span>",
     "aboutPlat": "Any web browser today; Android TV and Google TV app coming soon to Google Play"
   },
   "fr": {
     "heroKicker": "Jeu d’ambiance sur la télé · gratuit dans le navigateur",
     "navCta": "Jouer gratuitement",
-    "ctaInstall": "Jouer gratuitement dans le navigateur",
-    "ctaInstallSub": "Sur ordi ou télé · rien à télécharger",
-    "ctaFinalSub": "N’importe quelle télé avec un ordi · gratuit",
+    "ctaInstall": "<span class=\"lbl-open\">Jouer gratuitement dans le navigateur</span><span class=\"lbl-send\">Envoyer le lien à mon ordi ou ma télé</span>",
+    "ctaInstallSub": "<span class=\"lbl-open\">Sur ordi ou télé · rien à télécharger</span><span class=\"lbl-send\">Le jeu se joue sur grand écran · gratuit</span>",
+    "ctaFinalSub": "<span class=\"lbl-open\">N’importe quelle télé avec un ordi · gratuit</span><span class=\"lbl-send\">Le jeu se joue sur grand écran · gratuit</span>",
     "hintAndroid": "<strong>Ouvre-le sur un ordinateur ou le navigateur de la télé.</strong> Mets-le sur grand écran, et chacun rejoint la partie en scannant le QR code.",
     "hintIos": "<strong>Ouvre-le sur un ordinateur ou le navigateur de la télé.</strong> Mets-le sur grand écran, et chacun rejoint la partie en scannant le QR code.",
     "hintDesktop": "<strong>Branche cet ordinateur à la télé</strong> (HDMI), ouvre le jeu, et chacun rejoint la partie en scannant le QR code.",
@@ -57,15 +57,15 @@
     "aSetup": "<p>Environ une minute. Ouvre le jeu dans un navigateur sur l’écran de la télé, et la partie démarre dès que tout le monde a scanné le QR code. Pas de compte, pas de manette à appairer, et une manche suffit pour comprendre les règles.</p>",
     "finalAlt": "Application Android TV et Google TV : en test, bientôt sur Google Play.",
     "stickySub": "Gratuit · toute télé avec un ordi",
-    "stickyCta": "Jouer",
+    "stickyCta": "<span class=\"lbl-open\">Jouer</span><span class=\"lbl-send\">Envoyer le lien</span>",
     "aboutPlat": "N’importe quel navigateur web dès aujourd’hui ; application Android TV et Google TV bientôt sur Google Play"
   },
   "ar": {
     "heroKicker": "لعبة سهرات عالتلفزيون · ببلاش بالمتصفّح",
     "navCta": "العب ببلاش",
-    "ctaInstall": "العب ببلاش بالمتصفّح",
-    "ctaInstallSub": "عاللابتوب أو متصفّح التلفزيون · بلا تنزيل",
-    "ctaFinalSub": "أي تلفزيون مع لابتوب · ببلاش",
+    "ctaInstall": "<span class=\"lbl-open\">العب ببلاش بالمتصفّح</span><span class=\"lbl-send\">ابعت الرابط للّابتوب أو التلفزيون</span>",
+    "ctaInstallSub": "<span class=\"lbl-open\">عاللابتوب أو متصفّح التلفزيون · بلا تنزيل</span><span class=\"lbl-send\">اللعبة بتنلعب عالشاشة الكبيرة · ببلاش</span>",
+    "ctaFinalSub": "<span class=\"lbl-open\">أي تلفزيون مع لابتوب · ببلاش</span><span class=\"lbl-send\">اللعبة بتنلعب عالشاشة الكبيرة · ببلاش</span>",
     "hintAndroid": "<strong>افتحها عاللابتوب أو بمتصفّح التلفزيون.</strong> حطّوها عالشاشة الكبيرة، وكل واحد بيفوت بمسح كود QR.",
     "hintIos": "<strong>افتحها عاللابتوب أو بمتصفّح التلفزيون.</strong> حطّوها عالشاشة الكبيرة، وكل واحد بيفوت بمسح كود QR.",
     "hintDesktop": "<strong>وصّل هالكمبيوتر بالتلفزيون</strong> (HDMI)، افتح اللعبة، وكل واحد بيفوت بمسح كود QR.",
@@ -87,7 +87,7 @@
     "aSetup": "<p>شي دقيقة. افتحوا اللعبة بمتصفّح عشاشة التلفزيون، واللعبة بتبلّش أوّل ما الكل يمسح كود الـQR. بلا حسابات، بلا جويستيك تربطوه، ومن أول جولة بتفهموا القواعد.</p>",
     "finalAlt": "تطبيق Android TV وGoogle TV: عم يتجرّب، وجايي قريبًا على Google Play.",
     "stickySub": "ببلاش · أي تلفزيون مع لابتوب",
-    "stickyCta": "العب",
+    "stickyCta": "<span class=\"lbl-open\">العب</span><span class=\"lbl-send\">ابعت الرابط</span>",
     "aboutPlat": "أي متصفّح إنترنت من هلّق؛ وتطبيق Android TV وGoogle TV جايي قريبًا على Google Play"
   }
 }

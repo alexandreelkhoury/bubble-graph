@@ -3,7 +3,7 @@
 // No cookies are read or set, nothing identifies a visitor, and the IP address is never stored.
 // Only /e reaches this code ("run_worker_first" in wrangler.jsonc); every other path is a static asset.
 
-const EVENTS = new Set(['view', 'cta', 'faq', 'depth', 'lang', 'reel', 'share', 'demo']);
+const EVENTS = new Set(['view', 'cta', 'faq', 'depth', 'lang', 'reel', 'share', 'demo', 'share_opened', 'link_copied', 'email_link', 'open_here']);
 const MAX_BODY = 1024;
 
 // Short, safe strings only (slugs, codes): no free text reaches the dataset.

@@ -234,7 +234,8 @@ const absLinks = (h) => h.replace(/href="\//g, `href="${ORIGIN}/`);
 const tpl = rd('index.html');
 const ctx = { window: {} }; vm.runInNewContext(rd('assets/js/i18n.js'), ctx);
 const DICTS = ctx.window.MISHANA_I18N;
-const JS_KEYS = ['capCiv', 'capMole', 'capBlank', 'wordA', 'wordB', 'pause', 'play', 'reelPause', 'reelPlay', 'shareTitle', 'shareText', 'copied'];
+const JS_KEYS = ['capCiv', 'capMole', 'capBlank', 'wordA', 'wordB', 'pause', 'play', 'reelPause', 'reelPlay', 'shareTitle', 'shareText', 'copied',
+  'sendTitle', 'sendText', 'sheetTitle', 'sheetBody', 'copyLink', 'linkCopied', 'emailLink', 'emailSubject', 'openHere', 'closeSheet'];
 
 function hreflangLinks(alts) { // alts: {en:'/x/', fr:'/fr/y/'}
   const ls = Object.keys(alts);
@@ -269,7 +270,8 @@ function prelaunchStructure(h) {
   cut(/<p class="hero__alt">[\s\S]*?<\/p>/, 'hero "No Android TV?" line', `<p class="hero__alt hero__soon" data-i18n="soon">${PRE.en.soon}</p>`);
   cut(/[ \t]*<a class="btn btn--ghost btn--lg" href="[^"]*" data-cta="final"[^>]*>[\s\S]*?<\/a>\s*/, 'final browser button');
   // every Google Play button becomes a browser-version button (main.js only rewrites [data-play] links to Play)
-  h = h.replace(/<a\b[^>]*\sdata-play\b[^>]*>/g, (tag) => tag.replace(/href="[^"]*"/, `href="${BROWSER}"`).replace(/\sdata-play\b/, ''));
+  // hero (incl. ad angles), sticky and final buttons also get data-send: on phones main.js turns them into "send the link to my laptop or TV"
+  h = h.replace(/<a\b[^>]*\sdata-play\b[^>]*>/g, (tag) => tag.replace(/href="[^"]*"/, `href="${BROWSER}"`).replace(/\sdata-play\b/, /data-cta="(hero|sticky|final)"/.test(tag) ? ' data-send' : ''));
   return h;
 }
 // main.js / page.js append the visitor's utm_* parameters to links marked data-browser
