@@ -49,7 +49,7 @@ object Constants {
     const val ROOM_IDLE_TTL_MS = 2 * 60 * 60_000L
     const val ROOM_RESULTS_TTL_MS = 30 * 60_000L
     const val MSG_MAX_BYTES = 4096
-    const val HTTP_BODY_MAX_BYTES = 1024
+    const val HTTP_BODY_MAX_BYTES = 4096 // PAYMENTS-SPEC §3.3: was 1024; POST /api/rooms carries the entitlement token
     const val RATE_MSGS_PER_SEC = 5
     const val RATE_BURST = 10
     const val JOINS_PER_MIN_PER_IP = 30
@@ -63,6 +63,14 @@ object Constants {
     const val PING_FRAME = """{"v":1,"t":"ping"}"""
     const val PONG_FRAME = """{"v":1,"t":"pong"}"""
     val LOCALES: List<String> = listOf("en", "fr", "ar")
+
+    // PAYMENTS-SPEC §3.3 mirrors.
+    const val ENTITLEMENT_TOKEN_MAX_CHARS = 3000
+    const val MAX_PURCHASES_PER_VERIFY = 20
+    const val PURCHASE_TOKEN_MAX_CHARS = 2048
+
+    /** §3.11 `TV_BUSY_MAX_MS` (5 min): the TV re-sends `storeOpen{open:true}` every 4 min while busy. */
+    const val TV_BUSY_MAX_MS = 5 * 60_000L
 
     /** DESIGN §2.3 palette in pick order. */
     val COLORS: List<PlayerColor> = listOf(

@@ -10,7 +10,8 @@ import { checkAllReady, expire, finishTurn, maybeCloseVote } from "./turns";
 import { isGuessCorrect } from "./normalize";
 import { createRng } from "./rng";
 import { nameKey, sanitizeName } from "./sanitize";
-import { applySettingsPatch, defaultSettings } from "./settings";
+import { PREMIUM_SETTING_KEYS } from "../billing/products";
+import { applySettingsPatch, DEFAULT_SETTINGS, defaultSettings } from "./settings";
 import type { Action, EngineError, GameState, Player, ReduceCtx, ReduceResult } from "./types";
 import { castVote } from "./votes";
 
@@ -234,7 +235,22 @@ function applySystem(d: Draft, action: Extract<Action, { by: { kind: "system" } 
       }
       return null;
     }
+    case "RESTRICT_SETTINGS": {
+      // PAYMENTS-SPEC §3.11: LOBBY only. Nothing changed → the reduce change check returns the same object.
+      if (s.phase !== "LOBBY") return "WRONG_PHASE";
+      const allowed = new Set(action.allowedPackIds);
+      s.settings.packIds = s.settings.packIds.filter((id) => allowed.has(id));
+      if (action.resetPremiumSettings) {
+        for (const key of PREMIUM_SETTING_KEYS) s.settings[key] = structuredCloneJson(DEFAULT_SETTINGS[key]);
+      }
+      return null;
+    }
   }
+}
+
+/** Deep copy of a plain JSON settings value (the exported defaults must never be aliased). */
+function structuredCloneJson<T>(v: T): T {
+  return JSON.parse(JSON.stringify(v)) as T;
 }
 
 /** Fast path: a TICK with nothing due must return the same object without cloning. */

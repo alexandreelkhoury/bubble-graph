@@ -50,5 +50,14 @@ import kotlinx.serialization.json.JsonClassDiscriminator
     val points: Points? = null,
 )
 
-@Serializable data class CreateRoomRequest(val locale: String)
-@Serializable data class CreateRoomResponse(val code: String, val tvToken: String, val joinUrl: String, val wsPath: String)
+/** PAYMENTS-SPEC §4.3: `entitlement` is the stored token (omitted when null: the encoder drops nulls). */
+@Serializable data class CreateRoomRequest(val locale: String, val entitlement: String? = null)
+
+/** PAYMENTS-SPEC §3.11: `entitlement` ∈ NONE | OK | INVALID (null from a pre-billing server). */
+@Serializable data class CreateRoomResponse(
+    val code: String,
+    val tvToken: String,
+    val joinUrl: String,
+    val wsPath: String,
+    val entitlement: String? = null,
+)

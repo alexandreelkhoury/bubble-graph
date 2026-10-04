@@ -148,7 +148,9 @@ export type SystemAction =
   | { type: "JOIN"; playerId: string; name: string; color: ColorId; locale: Locale }
   | { type: "RECONNECT"; playerId: string }
   | { type: "DISCONNECT"; playerId: string }
-  | { type: "TICK" };
+  | { type: "TICK" }
+  // PAYMENTS-SPEC §3.11: RoomCore drops locked pack ids and resets premium settings when a LOBBY loses access.
+  | { type: "RESTRICT_SETTINGS"; allowedPackIds: string[]; resetPremiumSettings: boolean };
 
 export type Action = (ClientIntent & { by: Exclude<Actor, { kind: "system" }> }) | (SystemAction & { by: { kind: "system" } });
 

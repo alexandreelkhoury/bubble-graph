@@ -1,4 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { playableCatalog } from "../../src/billing/access";
+import { loadCatalog } from "../../src/packs";
+import { projectForPlayer, projectForTv } from "../../src/projection/project";
+import type { ViewAccess } from "../../src/projection/project";
 import { findLeaks, makeTokenCatalog, playGame } from "../../src/testing";
 
 const catalog = makeTokenCatalog(40);
@@ -43,5 +47,52 @@ describe("secret-leak property (§5.4): 1,000 seeded games with a synthetic toke
     });
     expect(found).toBe(true);
     expect(out.failure).toBeNull();
+  });
+});
+
+/** PAYMENTS-SPEC §7.1: two token packs, one free (`zzfree…`) and one premium (`zzprem…`), same language. */
+function freeAndPremiumCatalog() {
+  const n4 = (i: number): string => String(i).padStart(4, "0");
+  const tokenPack = (id: string, tag: string, tier: "free" | "premium") => ({
+    id, version: 1, locale: "en", script: "Latn", ageRating: "all", tier, tags: ["test"], license: "CC-BY-4.0", source: "original", status: "draft",
+    title: { en: `Pack ${tier}`, fr: `Paquet ${tier}`, ar: "رزمة" },
+    pairs: Array.from({ length: 30 }, (_, i) => ({
+      id: `p${n4(i + 1)}`, difficulty: ((i % 3) + 1) as 1 | 2 | 3, reviewedBy: [],
+      civilian: { text: `${tag}c${n4(i + 1)}`, translit: `${tag}t${n4(i + 1)}`, alt: [`${tag}a${n4(i + 1)}`] },
+      undercover: { text: `${tag}u${n4(i + 1)}`, alt: [`${tag}b${n4(i + 1)}`] },
+    })),
+  });
+  return loadCatalog([tokenPack("zz-free-01", "zzfree", "free"), tokenPack("zz-prem-01", "zzprem", "premium")]);
+}
+
+describe("premium leak property (PAYMENTS-SPEC §7.1): 1,000 seeded games in a free room", () => {
+  const full = freeAndPremiumCatalog();
+  const playable = playableCatalog(full, false, new Set());
+  const access: ViewAccess = { premium: false, fullCatalog: full, tvBusy: false };
+  const LOCKED_KEYS = ["ageRating", "id", "locale", "pairCount", "productId", "title"];
+
+  it("the free playable catalog has only the free pack", () => {
+    expect(playable.packs.map((p) => p.id)).toEqual(["zz-free-01"]);
+  });
+
+  it.each(BATCHES)("seeds %i..%i: no zzprem token in any view, lockedPacks metadata only", { timeout: 120_000 }, (from, to) => {
+    let lockedSeen = 0;
+    for (let seed = from; seed <= to; seed++) {
+      const n = 3 + (seed % 10);
+      const out = playGame(playable, { players: n, seed, correctGuessRate: 0.3, settings: { packIds: [], blankGuess: true } }, (_prev, action, res) => {
+        const s = res.state;
+        const views = [projectForTv(s, playable, access), projectForPlayer(s, playable, null, access), ...s.players.map((p) => projectForPlayer(s, playable, p.id, access))];
+        for (const v of views) {
+          if (JSON.stringify(v).includes("zzprem")) throw new Error(`seed ${seed} after ${action.type}: premium token in a view`);
+          for (const lp of v.lockedPacks) {
+            lockedSeen++;
+            if (JSON.stringify(Object.keys(lp).sort()) !== JSON.stringify(LOCKED_KEYS)) throw new Error(`lockedPacks keys ${Object.keys(lp).join(",")}`);
+          }
+        }
+        if (s.pair && s.pair.packId !== "zz-free-01") throw new Error(`seed ${seed}: picked ${s.pair.packId}`);
+      });
+      expect(out.failure).toBeNull();
+    }
+    expect(lockedSeen).toBeGreaterThan(0);
   });
 });

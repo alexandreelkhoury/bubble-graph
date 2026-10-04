@@ -84,7 +84,18 @@ import kotlinx.serialization.Serializable
 )
 
 @Serializable data class HistoryEntry(val round: Int, val eliminatedId: String?, val role: Role?, val cause: HistoryCause)
-@Serializable data class PackInfo(val id: String, val locale: String, val title: LocalizedTitle, val pairCount: Int, val ageRating: String)
+/** PAYMENTS-SPEC §3.11: `tier` ("free" | "premium") is the final key. Default only for a pre-billing server. */
+@Serializable data class PackInfo(val id: String, val locale: String, val title: LocalizedTitle, val pairCount: Int, val ageRating: String, val tier: String = "free")
+
+/** PAYMENTS-SPEC §3.11: a pack this room may not play. Metadata only: never words, never pair ids. */
+@Serializable data class LockedPackInfo(
+    val id: String,
+    val locale: String,
+    val title: LocalizedTitle,
+    val pairCount: Int,
+    val ageRating: String,
+    val productId: String,
+)
 
 @Serializable data class TvView(
     val kind: String, // always "tv"
@@ -112,4 +123,10 @@ import kotlinx.serialization.Serializable
     val result: ResultView?,
     val history: List<HistoryEntry>,
     val availablePacks: List<PackInfo>,
+    // PAYMENTS-SPEC §3.11, appended after availablePacks in this order. Defaults only so a pre-billing server's
+    // view still decodes in production (free, nothing locked); fixtures always carry every key.
+    val premium: Boolean = false,
+    val lockedPacks: List<LockedPackInfo> = emptyList(),
+    val tvBusy: Boolean = false,
+    val poolExhausted: Boolean = false,
 )
