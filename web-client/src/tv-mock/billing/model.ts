@@ -93,9 +93,27 @@ export function pitchParams(catalog: Pick<CatalogResponseBody, "packs">): { coun
   return { count: catalog.packs.length, pairs: Math.floor(pairs / 10) * 10 };
 }
 
-/** §5.2: the fake-purchase request of a plan button (the trial offer exists on both plans, §1.1). */
-export function planPurchaseRequest(installId: string, plan: BasePlanId): { installId: string; productId: string; basePlanId: BasePlanId; offerId: typeof TRIAL_OFFER_ID } {
-  return { installId, productId: PREMIUM_PRODUCT_ID, basePlanId: plan, offerId: TRIAL_OFFER_ID };
+/**
+ * §5.2: the fake-purchase request of a plan button. The trial offer exists on both plans (§1.1) but only for a new
+ * customer, so a plan bought without one sends `offerId: null` (FakePurchaseRequest allows it).
+ */
+export function planPurchaseRequest(installId: string, plan: BasePlanId, trial = true): { installId: string; productId: string; basePlanId: BasePlanId; offerId: typeof TRIAL_OFFER_ID | null } {
+  return { installId, productId: PREMIUM_PRODUCT_ID, basePlanId: plan, offerId: trial ? TRIAL_OFFER_ID : null };
+}
+
+/**
+ * §4.5 "with a trial offer" vs "without": the fake store stands in for Play's offer eligibility ("new customer
+ * acquisition → never had this subscription", §1.1). There is a trial only when the catalog names a trial offer, this
+ * install never bought `premium` (the mock's per-install flag), and the entitlement carries no subscription row at all
+ * (an expired, on-hold or paused one means "had this subscription").
+ */
+export function trialOffered(catalog: Pick<CatalogResponseBody, "subscription"> | null, body: Pick<EntitlementBody, "subscription"> | null, trialUsed: boolean): boolean {
+  return !!catalog?.subscription.trialOfferId && !trialUsed && !body?.subscription;
+}
+
+/** The in-flight key of a purchase: `premium:<basePlanId>` for a plan, the product id for a pack (§4.4 "the button the user started from"). */
+export function inflightKey(productId: string, plan?: BasePlanId): string {
+  return plan ? `${productId}:${plan}` : productId;
 }
 
 /**

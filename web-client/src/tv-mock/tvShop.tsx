@@ -11,14 +11,15 @@ import { isolate, locale, LOCALE_NATIVE_NAME, t } from "../i18n/t";
 import { Icon } from "../components/Icon";
 import { billing } from "./billing";
 import {
-  afterPackPurchase, FAKE_PRICES, FAKE_TRIAL_DAYS, initialFocus, packState, PLAN_DISPLAY_ORDER, pitchParams, premiumCard,
-  splitPacks,
+  afterPackPurchase, FAKE_PRICES, FAKE_TRIAL_DAYS, inflightKey, initialFocus, packState, PLAN_DISPLAY_ORDER, pitchParams,
+  premiumCard, splitPacks,
 } from "./billing/model";
 import type { FocusId, PackState, StoreEntry, StorePhase } from "./billing/model";
 import { closeShop, loadStoreCatalog } from "./shopState";
 import { openDialog } from "./tvDialogs";
 import { RoomCode } from "./tvParts";
 import { tvAct, tvView } from "./tvStore";
+import { toasts } from "../state/store";
 
 /** §4.7 `{date}`: medium date, Western digits in every locale. */
 export function fmtDate(ms: number, l: Locale): string {
@@ -39,20 +40,28 @@ const planLabel = (p: BasePlanId): string => t(p === "yearly" ? "store.planYearl
 const planPriceText = (p: BasePlanId): string => t(p === "yearly" ? "store.pricePerYear" : "store.pricePerMonth", { price: isolate(planPrice(p)) });
 const planPeriod = (p: BasePlanId): string => t(p === "yearly" ? "store.periodYear" : "store.periodMonth");
 
-/** §4.5: one paragraph for the focused plan, always visible under the plan buttons. */
-function Disclosure({ plan }: { plan: BasePlanId }) {
+/** §4.5: one paragraph for the focused plan, always visible under the plan buttons; the trial wording only with a trial offer. */
+function Disclosure({ plan, trial }: { plan: BasePlanId; trial: boolean }) {
   const params = { count: FAKE_TRIAL_DAYS, price: isolate(planPrice(plan)), period: isolate(planPeriod(plan)) };
   return (
     <p class="tvshop__legal">
-      {t("store.legalTrialRenew", params)} {t("store.legalCancelTrial")}
+      {trial
+        ? <>{t("store.legalTrialRenew", params)} {t("store.legalCancelTrial")}</>
+        : <>{t("store.legalPriceRenew", params)} {t("store.legalCancel")}</>}
     </p>
   );
 }
 
-function Busy({ productId }: { productId: string }) {
-  if (billing.inflight.value !== productId) return null;
-  return <span class="tvshop__busy"><Icon name="refresh" size={20} class="spin" />{t(billing.confirmSlow.value ? "store.verifyFailed" : "store.confirming")}</span>;
+/**
+ * §4.4: the button the user started from shows a spinner and `store.confirming`, after 15 s `store.verifyFailed`. It
+ * replaces that button's trailing part and stays on one line (ellipsis): the full sentence is also the toast, and the
+ * accessible name, so the card never grows and the footer never leaves the canvas.
+ */
+function Busy() {
+  const text = t(billing.confirmSlow.value ? "store.verifyFailed" : "store.confirming");
+  return <span class="tvshop__busy" title={text}><Icon name="refresh" size={20} class="spin" /><span class="tvshop__busytext">{text}</span></span>;
 }
+const isInflight = (productId: string, plan?: BasePlanId): boolean => billing.inflight.value === inflightKey(productId, plan);
 
 /** `data-default-focus` on the §4.4 initial target only (the focus keeper returns there if focus is lost). */
 const defFocus = (id: FocusId, target: FocusId): true | undefined => (id === target ? true : undefined);
@@ -66,6 +75,7 @@ function PremiumCardView({ plan, target, onBuy, onFocusPlan }: { plan: BasePlanI
   const manage = (): void => openDialog({ title: t("store.manage"), body: t("store.manageHint"), confirm: t("common.ok"), info: true, onConfirm: () => undefined });
   const sub = ent?.subscription ?? null;
   const pending = billing.pending.value.has(PREMIUM_PRODUCT_ID);
+  const trial = billing.trialOffered;
   return (
     <section class="tvshop__card" aria-labelledby="tvshop-premium">
       <div class="tvshop__cardhead">
@@ -79,12 +89,13 @@ function PremiumCardView({ plan, target, onBuy, onFocusPlan }: { plan: BasePlanI
               <button key={p} type="button" class="tvbtn tvshop__plan" data-focus={`plan:${p}`} data-default-focus={defFocus(`plan:${p}`, target)} onFocus={() => onFocusPlan(p)} onClick={() => onBuy(p)}
                 aria-disabled={billing.inflight.value !== null}>
                 <span class="tvshop__planname">{planLabel(p)} · {planPriceText(p)}</span>
-                {pending ? <span class="tvshop__chip">{t("store.pending")}</span> : <span class="tvshop__badge">{t("store.trialDays", { count: FAKE_TRIAL_DAYS })}</span>}
-                <Busy productId={PREMIUM_PRODUCT_ID} />
+                {isInflight(PREMIUM_PRODUCT_ID, p) ? <Busy />
+                  : pending ? <span class="tvshop__chip">{t("store.pending")}</span>
+                  : trial && <span class="tvshop__badge">{t("store.trialDays", { count: FAKE_TRIAL_DAYS })}</span>}
               </button>
             ))}
           </div>
-          <Disclosure plan={plan} />
+          <Disclosure plan={plan} trial={trial} />
         </>
       )}
       {card === "suspended" && (
@@ -124,7 +135,7 @@ function PackCard({ p, target, onBuy }: { p: CatalogPackBody; target: FocusId; o
       onClick={() => { if (state === "buy") onBuy(p); }}>
       <bdi class="tvshop__packtitle">{p.title[l]}</bdi>
       <span class="tvshop__packmeta">{t("store.packPairs", { count: p.pairCount })}</span>
-      <span class="tvshop__packend">{packTrailing(state)}<Busy productId={p.productId} /></span>
+      <span class="tvshop__packend">{isInflight(p.productId) ? <Busy /> : packTrailing(state)}</span>
     </button>
   );
 }
@@ -159,7 +170,20 @@ export function TvShop({ view, entry }: { view: TvView; entry: StoreEntry }) {
     });
   };
   const fake = phase.kind === "ready";
+  // §4.4 footer: Left/Right walk Restore → the test controls in reading order and stop at either end; they never leave
+  // the row by geometry (the last button sits below the packs row, which `nearest` would otherwise pick).
+  const onFootKey = (e: KeyboardEvent): void => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    const row = [...(e.currentTarget as HTMLElement).querySelectorAll<HTMLElement>("button")];
+    const i = row.indexOf(e.target as HTMLElement);
+    if (i < 0) return;
+    const step = (e.key === "ArrowRight") !== (document.documentElement.dir === "rtl") ? 1 : -1;
+    e.preventDefault();
+    e.stopPropagation();
+    row[i + step]?.focus();
+  };
   const anyPending = billing.pending.value.size > 0;
+  const toast = toasts.value.at(-1);
   return (
     <div class="tvoverlay tvoverlay--solid" role="dialog" aria-modal="true" aria-label={t("store.title")}>
       <div class="tvshop" ref={box}>
@@ -197,7 +221,12 @@ export function TvShop({ view, entry }: { view: TvView; entry: StoreEntry }) {
                 {packs.other.map((p) => <PackCard key={p.packId} p={p} target={target} onBuy={buyPack} />)}
               </div>
             </section>
-            <footer class="tvshop__foot">
+            {/* Toast slot (DESIGN: never over the focused control): its own band between the packs row and the
+                footer, two lines at most, so it covers neither the pack cards nor Restore / the test controls. */}
+            <div class="tvshop__toastslot" aria-live="polite">
+              {toast && <div key={toast.id} class={`tvtoast tvtoast--${toast.tone}`}>{toast.text}</div>}
+            </div>
+            <footer class="tvshop__foot" onKeyDown={onFootKey}>
               <button type="button" class="tvbtn" data-focus="restore" onClick={() => void billing.restore()}><Icon name="refresh" />{t("store.restore")}</button>
               {SUPPORT_EMAIL && <span class="tvshop__help">{t("store.help", { email: isolate(SUPPORT_EMAIL) })}</span>}
               {anyPending && <span class="tvshop__help">{t("store.pendingBody")}</span>}

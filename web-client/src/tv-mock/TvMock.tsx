@@ -101,9 +101,10 @@ export function TvMock() {
         {room && <TvDialog />}
         {ui.kind === "room" && <ConnStates view={view} />}
         {view && <PhonesAsleep view={view} />}
-        {/* In the lobby the toast sits in the player-grid header (TvLobby); in a game, newest only, in the top bar row. */}
-        <div class={`tvtoasts${shop ? " tvtoasts--shop" : ""}`} aria-live="polite">
-          {(!lobbyMain || shop) && toast && <div key={toast.id} class={`tvtoast tvtoast--${toast.tone}`}>{toast.text}</div>}
+        {/* In the lobby the toast sits in the player-grid header (TvLobby); in the Store, in its own slot between the
+            packs row and the footer (TvShop); in a game, newest only, in the top bar row. */}
+        <div class="tvtoasts" aria-live="polite">
+          {!lobbyMain && !shop && toast && <div key={toast.id} class={`tvtoast tvtoast--${toast.tone}`}>{toast.text}</div>}
         </div>
       </div>
     </div>

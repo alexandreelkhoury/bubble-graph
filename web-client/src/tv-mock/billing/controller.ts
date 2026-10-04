@@ -11,16 +11,27 @@ import { BRAND } from "@mishana/shared/brand";
 import { MAX_PURCHASES_PER_VERIFY, PROTOCOL_VERSION } from "@mishana/shared/constants";
 import type { EntitlementMsg, StoreOpenMsg } from "@mishana/shared/protocol";
 import type { MessageKey, Params } from "../../i18n/t";
-import { backoffMs, nextRefreshAt, planPurchaseRequest, purchasesKey, tokenForCreate, tokenStale, ToastGate } from "./model";
+import { backoffMs, inflightKey, nextRefreshAt, planPurchaseRequest, purchasesKey, tokenForCreate, tokenStale, ToastGate, trialOffered } from "./model";
 
 const P = BRAND.storagePrefix;
-/** §5.2 keys (installId, entToken); the rest are the mock's own (PAY-GAP: the spec names only those two). */
+/**
+ * §5.2 keys (installId, entToken); the rest are the mock's own (PAY-GAP: the spec names only those two; they mirror
+ * the TV app's `ent_json` / `ent_saved_at` (§4.8 EntitlementStore) plus the fake store's own state).
+ *
+ * Trust: everything here is a UI cache on the viewer's own device. Only `entToken` ever leaves the browser (WS
+ * `entitlement`, POST /api/rooms), and the server re-verifies its Ed25519 signature and expiry on every use (§3.11),
+ * so editing `entBody` / `entVerified` / `trialUsed` changes this TV's Store screen at most, never what a room may play:
+ * `premium` and `lockedPacks` in the server's state frames decide that. `fakePurchases` is the fake store's stand-in for
+ * `queryPurchasesAsync` and is re-verified by the server on every /verify.
+ */
 export const BILLING_KEYS = {
   installId: `${P}:installId`,
   token: `${P}:entToken`,
   body: `${P}:entBody`,
   purchases: `${P}:fakePurchases`,
   verified: `${P}:entVerified`,
+  /** The install id that already bought `premium` once (§1.1 trial eligibility: "never had this subscription"). */
+  trialUsed: `${P}:trialUsed`,
 } as const;
 
 const INSTALL_ID_RE = /^[0-9a-f]{32}$/;
@@ -70,8 +81,10 @@ export class BillingController {
   readonly ent = signal<EntitlementBody | null>(null);
   /** Product ids whose purchase is PENDING (no access, §4.4). */
   readonly pending = signal<ReadonlySet<string>>(new Set());
-  /** The product id of the purchase in flight (fake purchase → /verify), or null. */
+  /** The purchase in flight (fake purchase → /verify) as `inflightKey` (`premium:yearly`, `pack_en_food_01`), or null. */
   readonly inflight = signal<string | null>(null);
+  /** This install already had the subscription once: no trial offer any more (§4.5 no-trial wording). */
+  readonly trialUsed = signal(false);
   /** The in-flight purchase passed CONFIRM_SLOW_MS without an answer. */
   readonly confirmSlow = signal(false);
   readonly storeVisible = signal(false);
@@ -88,6 +101,8 @@ export class BillingController {
   private readonly toasts = new ToastGate<BillingToast>((t) => this.link?.showToast(t));
 
   constructor(private readonly d: BillingDeps) {
+    const used = d.read(BILLING_KEYS.trialUsed);
+    this.trialUsed.value = used !== null && used === d.read(BILLING_KEYS.installId);
     const raw = d.read(BILLING_KEYS.body);
     if (raw !== null) {
       try {
@@ -167,6 +182,9 @@ export class BillingController {
   }
 
   get fake(): boolean { return this.mode.value === "fake"; }
+
+  /** §4.5: whether the plan buttons offer the free trial (badge, `legalTrialRenew` + `legalCancelTrial`). */
+  get trialOffered(): boolean { return trialOffered(this.catalog.value, this.ent.value, this.trialUsed.value); }
 
   // ------------------------------------------------------------------ entitlement
 
@@ -263,24 +281,29 @@ export class BillingController {
    */
   async purchase(productId: string, plan?: BasePlanId): Promise<PurchaseResult | null> {
     if (!this.fake || this.inflight.value !== null) return null;
-    this.inflight.value = productId;
+    const key = inflightKey(productId, plan);
+    this.inflight.value = key;
     this.confirmSlow.value = false;
     this.updateBusy();
     const slow = this.d.setTimeout(() => {
-      if (this.inflight.value === productId) {
+      if (this.inflight.value === key) {
         this.confirmSlow.value = true;
         this.notify({ key: "store.verifyFailed", tone: "info" });
       }
     }, CONFIRM_SLOW_MS);
     try {
       const installId = this.installId();
-      const req = plan ? planPurchaseRequest(installId, plan) : { installId, productId };
+      const req = plan ? planPurchaseRequest(installId, plan, this.trialOffered) : { installId, productId };
       const bought = await this.http<FakePurchaseResponseBody>("/api/billing/fake/purchase", req);
       if (!bought.ok || typeof bought.body?.purchaseToken !== "string") {
         this.notify({ key: !bought.ok && bought.error === "RATE_LIMITED" ? "error.rateLimited" : "store.errorGeneric", tone: "error" });
         return null;
       }
       const token = bought.body.purchaseToken;
+      if (productId === PREMIUM_PRODUCT_ID) {
+        this.d.write(BILLING_KEYS.trialUsed, installId);
+        this.trialUsed.value = true;
+      }
       this.savePurchases([...this.purchases().filter((p) => p.productId !== productId), { productId, purchaseToken: token, state: "PURCHASED" }]);
       const all = this.purchases();
       const r = await this.verify(all);
