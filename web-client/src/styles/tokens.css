@@ -21,32 +21,49 @@
 :root {
   color-scheme: dark;
 
-  /* color — core */
-  --color-bg: #120A1F;
-  --color-bg-glow: #2A0F3D;
-  --color-surface: #1E1430;
-  --color-elevated: #2A1D42;
-  --color-overlay: #362752;
+  /* color — core (palette B "lit stage", DESIGN §2.1; contrast in §2.4) */
+  --color-bg: #1D1036;        /* stage base (bottom of the gradient), scrims, sticky bars, badge cut-outs */
+  --color-bg-mid: #24124A;    /* gradient stop at 55 %; the phone stage's top */
+  --color-bg-top: #2B1650;    /* top of the TV stage gradient */
+  --color-surface: #3A2266;
+  --color-elevated: #4A2E7A;
+  --color-overlay: #5A3A8E;
   --color-scrim: rgb(var(--rgb-bg) / 0.8);
-  --color-outline: #4A3A66;
-  --color-outline-strong: #8A77AB;
+  --color-outline: #6B54A0;
+  --color-outline-strong: #9C88CC;
   --color-text: #FFF7EC;
-  --color-text-secondary: #CBBFDD;
-  --color-text-muted: #A193B8;
+  --color-text-secondary: #E2D6F5;
+  --color-text-muted: #B8A8D6;
   --color-ink: #120A1F;
-  --color-primary: #FF3D8B;
+  --color-primary: #FF4F9A;
+  --color-primary-text: #FF7AB3; /* primary as text or a thin line on surface/elevated/overlay (#FF4F9A is 4.27 on surface) */
   --color-on-primary: #120A1F;
-  --color-accent: #FFC23D;
+  --color-accent: #FFC94D;
   --color-on-accent: #120A1F;
   --color-success: #3DDC97;
-  --color-danger: #FF5A4E;
+  --color-danger: #FF6B60;
+  --color-danger-text: #FF8A80;  /* danger as small text on elevated/overlay (#FF6B60 is 3.83 on elevated) */
   --color-focus: #FFF7EC;
 
   --color-bg-deep: #07040D;   /* the TV letterbox and the "lights down" of the Blank's guess */
 
+  /* stage light (DESIGN §2.1 "Stage"): the marketing glows (.62 / .20 / .16) dialled down ~30 % so content stays
+     the brightest thing on screen. The TV gets all three + grain; the phone only a weaker top glow (darker, §2). */
+  --stage-tv:
+    radial-gradient(90% 55% at 50% -5%, rgb(140 80 230 / 0.45), transparent 70%),
+    radial-gradient(70% 45% at 105% 100%, rgb(var(--rgb-accent) / 0.14), transparent 70%),
+    radial-gradient(60% 50% at -10% 60%, rgb(var(--rgb-primary) / 0.12), transparent 70%),
+    linear-gradient(180deg, var(--color-bg-top) 0%, var(--color-bg-mid) 55%, var(--color-bg) 100%);
+  --stage-phone:
+    radial-gradient(120% 40% at 50% 0%, rgb(140 80 230 / 0.2), transparent 70%),
+    linear-gradient(180deg, var(--color-bg-mid) 0%, var(--color-bg) 50%);
+  /* 6 % film grain (overlay blend) against 8-bit banding in the stage gradient on cheap TV panels */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+
   /* colour channels (for rgb(var(--rgb-*) / alpha) tints; keep in sync with the hexes above) */
-  --rgb-text: 255 247 236;    --rgb-bg: 18 10 31;         --rgb-primary: 255 61 139;
-  --rgb-accent: 255 194 61;   --rgb-success: 61 220 151;  --rgb-danger: 255 90 78;
+  --rgb-text: 255 247 236;    --rgb-bg: 29 16 54;         --rgb-primary: 255 79 154;
+  --rgb-bg-mid: 36 18 74;     --rgb-ink: 18 10 31;
+  --rgb-accent: 255 201 77;   --rgb-success: 61 220 151;  --rgb-danger: 255 107 96;
   --rgb-civilian: 90 184 255; --rgb-undercover: 255 138 61; --rgb-blank: 236 230 245;
 
   /* color — roles */
@@ -152,10 +169,12 @@
 html { background: var(--color-bg); color: var(--color-text); font: var(--type-ph-body);
   -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 body { margin: 0; min-height: 100dvh; touch-action: manipulation;
-  background: radial-gradient(120% 60% at 50% 0%, var(--color-bg-glow), var(--color-bg) 60%);
   /* Safe areas are applied once: sides here, the top in .topbar, the bottom in the action bar / sheets / the last
      screen (styles.css). Padding the body top and bottom as well made every phone screen 100dvh + the insets tall. */
   padding-inline: env(safe-area-inset-left) env(safe-area-inset-right); }
+/* The phone stage is pinned to the viewport, so the opaque top bar (bg-mid) and action bar (bg) always sit on the
+   colour they match, however long the page scrolls. */
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--stage-phone); pointer-events: none; }
 :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
 :lang(ar) * { letter-spacing: 0 !important; }
 [dir="rtl"] .icon--mirror { transform: scaleX(-1); }

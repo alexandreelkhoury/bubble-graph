@@ -28,8 +28,9 @@ export const SHAPES: Record<string, string> = {
 export const COLOR_BY_ID = Object.fromEntries(COLORS.map((c) => [c.id, c])) as Record<ColorId, (typeof COLORS)[number]>;
 export const LIGHT_GLYPH = (id: ColorId): boolean => COLOR_BY_ID[id].glyph === "cream";
 
-/** DESIGN §2.3: grape and plum fall under 3:1 on elevated surfaces, so their tiles carry a 24 % cream ring (native too). */
-const RINGED: ReadonlySet<ColorId> = new Set(["grape", "plum"]);
+/** DESIGN §2.3: on the palette-B surfaces coral, grape and plum fall under 3:1 (surface #3A2266 / elevated #4A2E7A),
+ *  so their tiles always carry a 24 % cream ring. On overlay (#5A3A8E: sheets, TV dialogs) every tile gets it (styles.css). */
+const RINGED: ReadonlySet<ColorId> = new Set(["coral", "grape", "plum"]);
 
 export function colorVars(id: ColorId): Record<string, string> {
   const c = COLOR_BY_ID[id];

@@ -5,7 +5,8 @@
   font: var(--tv-body); user-select: none; -webkit-user-select: none;
 }
 .tv__canvas { position: absolute; left: 0; top: 0; width: 960px; height: 540px; overflow: hidden; transform-origin: 0 0; background: var(--color-bg); }
-.tv__bg { position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 0%, var(--color-bg-glow), transparent 70%), var(--color-bg); }
+.tv__bg { position: absolute; inset: 0; background: var(--stage-tv); }
+.tv__bg::after { content: ""; position: absolute; inset: 0; opacity: 0.06; mix-blend-mode: overlay; background-image: var(--grain); }
 .tv__stage { position: absolute; inset: 0; animation: tv-phase-in var(--motion-slow) var(--ease-decel) both; }
 @keyframes tv-phase-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 .tvscreen { position: absolute; inset: 0; }
@@ -67,7 +68,7 @@
 .tv:lang(ar) .tvbtn { letter-spacing: 0; }
 .tvbtn--primary { background: var(--color-primary); color: var(--color-on-primary); }
 .tv .tvbtn--primary:focus { background: var(--color-primary); }
-.tvbtn--danger { background: transparent; color: var(--color-danger); box-shadow: inset 0 0 0 2px var(--color-danger); }
+.tvbtn--danger { background: transparent; color: var(--color-danger-text); box-shadow: inset 0 0 0 2px var(--color-danger-text); }
 .tv .tvbtn--danger:focus { background: var(--color-danger); color: var(--color-ink); }
 .tvbtn.is-disabled { opacity: 0.4; }
 .tvbtn.is-disabled:focus { opacity: 0.7; }
@@ -188,7 +189,7 @@
 .setrowtv__chev { display: inline-grid; place-items: center; color: var(--color-text-muted); }
 .setrowtv:focus .setrowtv__chev { color: var(--color-text); }
 .tvsettings__help { flex: none; margin: 0 12px; padding: 10px 16px 12px; border-top: 1px solid var(--color-outline); font: var(--tv-body); color: var(--color-text-secondary); }
-.tvsettings__help.is-danger { color: var(--color-danger); }
+.tvsettings__help.is-danger { color: var(--color-danger-text); }
 /* TV-03 About: small read-only text (DESIGN TV-03). */
 .tvabout { display: flex; flex-direction: column; gap: 12px; padding: 16px 8px; }
 .tvabout p { margin: 0; font: var(--tv-caption); color: var(--color-text-secondary); }
@@ -379,7 +380,8 @@
 .tvresults--civilians .tvresults__wash { background: radial-gradient(70% 70% at 50% 40%, rgb(var(--rgb-civilian) / 0.22), transparent 70%); }
 .tvresults--infiltrators .tvresults__wash { background: linear-gradient(135deg, rgb(var(--rgb-undercover) / 0.22), rgb(var(--rgb-blank) / 0.10)); }
 .tvresults--blank .tvresults__wash { background: radial-gradient(70% 70% at 50% 40%, rgb(var(--rgb-blank) / 0.18), transparent 70%); }
-.particle { position: absolute; bottom: -40px; left: calc(6% + var(--i) * 8%); color: var(--color-civilian); opacity: 0.7; animation: rise 3s var(--ease-decel) calc(mod(var(--i) * 7, 12) * 140ms) both; }
+/* x comes from particleLanes() (tvResults.tsx): two lanes beside the title, never across it. */
+.particle { position: absolute; bottom: -40px; color: var(--color-civilian); opacity: 0.7; animation: rise 3s var(--ease-decel) calc(mod(var(--i) * 7, 12) * 140ms) both; }
 @keyframes rise { from { transform: translateY(0); opacity: 0; } 20% { opacity: 0.8; } to { transform: translateY(-560px); opacity: 0; } }
 .peek-mask { position: absolute; color: var(--color-undercover); opacity: 0.8; animation: peek 3s var(--ease-decel) both; }
 .peek-mask--0 { top: 40px; left: -40px; animation-delay: 0ms; }
@@ -472,13 +474,13 @@
 .tvmenu { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; scrollbar-width: none; padding: 10px 16px; margin-inline: -16px; }
 .tvmenu__item { display: flex; align-items: center; gap: 14px; height: 48px; padding-inline: 20px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--color-text); font: var(--tv-label); text-align: start; }
 .tvmenu__item--player { height: 52px; }
-.tvmenu__end { margin-inline-start: auto; flex: none; color: var(--color-danger); }
+.tvmenu__end { margin-inline-start: auto; flex: none; color: var(--color-danger-text); }
 .tvmenu__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* The kick icon is muted at rest and turns danger only on the focused row (not a red button on every row). */
 .tvmenu__end--kick { color: var(--color-text-muted); }
-.tvmenu__item:focus .tvmenu__end--kick { color: var(--color-danger); }
-.tvmenu__item.is-on { color: var(--color-primary); }
-.tvmenu__end--ok { color: var(--color-primary); }
+.tvmenu__item:focus .tvmenu__end--kick { color: var(--color-danger-text); }
+.tvmenu__item.is-on { color: var(--color-primary-text); }
+.tvmenu__end--ok { color: var(--color-primary-text); }
 .tvfatal { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; }
 .tvfatal__icon { display: grid; place-items: center; width: 160px; height: 160px; border-radius: 50%; background: var(--color-surface); color: var(--color-text-secondary); }
 .tvfatal__body { max-width: 620px; display: block; text-wrap: pretty; }
@@ -497,7 +499,7 @@
 /* Lobby slot: plain text (no card, no edge bar, which a pill radius would bend into a stray arc). */
 .tvtoast--inline { padding: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; font: var(--tv-label); color: var(--color-text-secondary); }
 .tvtoast--inline.tvtoast--success { color: var(--color-success); }
-.tvtoast--inline.tvtoast--error { color: var(--color-danger); }
+.tvtoast--inline.tvtoast--error { color: var(--color-danger-text); }
 .tvtoast:not(.tvtoast--inline)::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-inline-end: 12px; border-radius: 50%; vertical-align: 2px; background: var(--toast-dot, var(--color-outline-strong)); }
 .tvtoast--success { --toast-dot: var(--color-success); }
 .tvtoast--error { --toast-dot: var(--color-danger); }
@@ -578,7 +580,7 @@
 .tvshop__packtitle { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-label); }
 .tvshop__packmeta { color: var(--color-text-muted); }
 .tvshop__packend { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; min-width: 0; min-height: 28px; }
-.tvshop__buy { color: var(--color-primary); font-weight: 800; }
+.tvshop__buy { color: var(--color-primary-text); font-weight: 800; }
 .tvshop__divider { flex: none; align-self: center; padding: 0 6px; color: var(--color-text-muted); font: var(--tv-caption); white-space: nowrap; }
 .tvshop__toastslot { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; pointer-events: none; }
 /* The Store's toast band: full width at caption size, so every billing toast fits on one line (two at most). */

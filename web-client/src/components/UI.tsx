@@ -144,7 +144,7 @@ export function TopBar({ code, name, color, host = false, state = "normal", show
 }
 
 /** Token hexes for the few places that need a colour in JS (confetti, the QR modules); keep in sync with tokens.css. */
-export const PALETTE = { text: "#FFF7EC", ink: "#120A1F", accent: "#FFC23D", primary: "#FF3D8B", blank: "#ECE6F5" } as const;
+export const PALETTE = { text: "#FFF7EC", ink: "#120A1F", accent: "#FFC94D", primary: "#FF4F9A", blank: "#ECE6F5" } as const;
 
 /** A one-shot confetti burst (none with reduced motion). */
 export function Confetti({ colors, count = 36 }: { colors?: string[]; count?: number }) {

@@ -112,30 +112,48 @@ The name must change in **one place** (PLAN §7):
 
 ## 2. Color
 
-Dark-first, and only dark: the TV must be opaque (TV-TR), and party rooms are dim. The phone uses the same palette, so the phone matches the TV and its screen doesn't light up faces, which helps privacy.
+Dark-first, and only dark: the TV must be opaque (TV-TR), and party rooms are dim. Since v3 (B19) the browser TV and the phone use **palette B, the "lit stage"**: the violet room of the ads and the landing, dialled down about 30 % so the content stays the brightest thing on screen. The phone uses the same tokens on a **darker stage** (below), so it matches the TV and its screen still doesn't light up faces in a dark room, which helps privacy.
+
+> **Native TV app:** `tv-app` keeps the previous night palette (`#120A1F` bg, `#1E1430` surface, `#FF3D8B` primary, `#FFC23D` accent, …; `MishColors.kt`) until palette B is checked on the owner's TV (8-bit panel at low backlight: gradient banding, milky blacks around the QR). Port it to `MishColors.kt` / `MishBackground` only after that test.
 
 ### 2.1 Core tokens
 
 | Token | Hex | Use |
 |---|---|---|
-| `color.bg` | `#120A1F` | App background ("night violet"). Also `color.ink`, the dark text and glyphs placed on bright fills |
-| `color.bgGlow` | `#2A0F3D` | Second stop of the background radial gradient (top-centre, 60 % radius) |
-| `color.surface` | `#1E1430` | Cards, tiles, panels |
-| `color.elevated` | `#2A1D42` | Focused and raised cards, dialogs, sheets |
-| `color.overlay` | `#362752` | Menus over content, the input fill on the phone |
-| `color.scrim` | `#120A1F` at 80 % | Behind dialogs and the pause menu |
-| `color.outline` | `#4A3A66` | Decorative dividers only (2.2:1, not relied on) |
-| `color.outlineStrong` | `#8A77AB` | Input borders and unselected radios (**4.43:1** on surface, meets 1.4.11) |
+| `color.bg` | `#1D1036` | Stage base: bottom of the stage gradient, sticky bars on the phone, scrims, badge cut-outs |
+| `color.bgMid` | `#24124A` | Stage gradient stop at 55 % (TV); the top of the phone stage and its top bar |
+| `color.bgTop` | `#2B1650` | Top of the TV stage gradient |
+| `color.surface` | `#3A2266` | Cards, tiles, panels (1.20–1.36:1 against the stage, was 1.10) |
+| `color.elevated` | `#4A2E7A` | Focused and raised cards, dialogs, sheets |
+| `color.overlay` | `#5A3A8E` | Menus over content, the input fill on the phone |
+| `color.scrim` | `#1D1036` at 80 % | Behind dialogs and the pause menu |
+| `color.outline` | `#6B54A0` | Decorative dividers only (2.12:1 on surface, not relied on) |
+| `color.outlineStrong` | `#9C88CC` | Input borders and unselected radios (**4.25:1** on surface, meets 1.4.11) |
 | `color.text` | `#FFF7EC` | Primary text ("warm cream"; pure white glares on TVs) |
-| `color.textSecondary` | `#CBBFDD` | Supporting text |
-| `color.textMuted` | `#A193B8` | Hints and metadata. Lowest allowed text colour |
-| `color.primary` | `#FF3D8B` | "Neon magenta": the brand, primary buttons, the speaker spotlight, the eliminated highlight |
-| `color.onPrimary` | `#120A1F` | Text on primary (cream on magenta is only 3.14:1, so it's banned) |
-| `color.accent` | `#FFC23D` | "Sodium amber": timers in their last 10 s, points, the room code, the bang dot |
+| `color.textSecondary` | `#E2D6F5` | Supporting text |
+| `color.textMuted` | `#B8A8D6` | Hints and metadata. Lowest allowed text colour |
+| `color.ink` | `#120A1F` | Dark text and glyphs on bright fills, the DONE slab, darkening tints on a player-colour flood (unchanged "night violet") |
+| `color.primary` | `#FF4F9A` | "Neon magenta": the brand, primary buttons, the speaker spotlight, the eliminated highlight |
+| `color.primaryText` | `#FF7AB3` | Primary **as text or a thin line** on surface/elevated/overlay (speaker label, TV menu "on" item, selected segment border). Plain `primary` is only 4.27:1 on surface |
+| `color.onPrimary` | `#120A1F` | Text on primary (6.28:1; cream on magenta is 2.89:1, so it's banned) |
+| `color.accent` | `#FFC94D` | "Sodium amber": timers in their last 10 s, points, the room code, the bang dot |
 | `color.onAccent` | `#120A1F` | |
 | `color.success` | `#3DDC97` | Ready, voted, connected, correct guess |
-| `color.danger` | `#FF5A4E` | Last 5 s of a timer, errors, kick, wrong guess |
+| `color.danger` | `#FF6B60` | Last 5 s of a timer, errors, kick, wrong guess |
+| `color.dangerText` | `#FF8A80` | Danger as small text or an outline on elevated/overlay (settings help, kick buttons, menu ends). Plain `danger` is 3.83:1 on elevated |
 | `color.focus` | `#FFF7EC` | TV focus ring (3 dp) plus a glow of `color.primary` at 45 % |
+
+**Stage (the screen background, `elev.0`).** Web tokens `--stage-tv`, `--stage-phone`, `--grain` (`tokens.css`).
+
+| Layer | TV (`.tv__bg`) | Phone (`body::before`, pinned to the viewport) |
+|---|---|---|
+| Base | linear 180°: `bgTop` 0 % → `bgMid` 55 % → `bg` 100 % | linear 180°: `bgMid` 0 % → `bg` 50 % |
+| Top glow | radial 90 % × 55 % at 50 % −5 %, `rgb(140 80 230)` at **45 %** | radial 120 % × 40 % at 50 % 0, same violet at **20 %** |
+| Amber rim | radial 70 % × 45 % at 105 % 100 %, `accent` at 14 % | — |
+| Magenta bounce | radial 60 % × 50 % at −10 % 60 %, `primary` at 12 % | — |
+| Grain | 6 % fractal noise, overlay blend (against 8-bit banding) | — (the phone ramp is short and dark; no banding seen at 2× DPR) |
+
+Marketing uses .62 / .20 / .16 for the three glows; the app is ~30 % lower. **Why the phone is darker:** in a dark room the phone sits 30–40 cm from a face, so its screen-average luminance is what lights the face (and the word on it). Measured mean relative luminance of the stage alone on a 390 × 844 phone viewport: old night background **0.0052**, phone stage **0.0114**, the TV stage at that size **0.0174**; so the phone variant gives off about 35 % less light than the TV's would (≈ 4.6 vs 7.0 nits on a 400-nit screen; the old one was ≈ 2.1). Whole phone screens with content went from 0.026–0.058 to 0.038–0.079 (home, lobby, reveal hidden, clues, voted), which stays well under the screens a player already holds up in the dark: the held word card, the your-turn flood and results (0.07–0.42, set by the player colours, not the stage). The phone's sticky top bar is `bgMid` and its action bar `bg`, the colours of the stage under them, because the stage is pinned to the viewport. The Android `theme-color` is `bgMid`.
 
 ### 2.2 Role tokens (always color + emblem + pattern + label)
 
@@ -180,33 +198,40 @@ These ids, hexes, shapes and glyph colours are the canonical `COLORS` table in S
 
 **Rules**
 - Every player color reaches **≥ 3:1 on `surface`**, which meets WCAG 1.4.11 for graphics. Player colors are **never used for text**. Names are always `color.text`.
-- Plum (3.31) and grape (3.40) drop below 3:1 on `elevated`. On elevated backgrounds, tiles get a 2 dp `color.text` ring at 24 % opacity.
+- On the palette-B surfaces coral (3.06 on surface, 2.49 on elevated), grape (2.55 / 2.08) and plum (2.48 / 2.02) are below 3:1, so their tiles **always** get a 2 dp `color.text` ring at 24 % opacity. On `overlay` (#5A3A8E: phone sheets and toasts, TV dialogs) azure (2.66) and jade (2.89) fall below too, so every tile there gets the ring. The colour table's "vs `surface`" column above is against the old night surface; the native TV still uses it.
 - The avatar glyph is `ink` on light colors and `cream` on grape and plum (cream on grape is 4.85:1 and on plum 4.98:1).
 - The AR color names are draft, colloquial-friendly adjectives. "يافاوي" (Jaffa orange) and "خوخي" are Levantine; native review is needed.
 
 ### 2.4 Contrast ratios (WCAG 2.x, computed)
 
-| Foreground → background | `bg` | `surface` | `elevated` | `overlay` | Allowed for |
-|---|---|---|---|---|---|
-| `text` #FFF7EC | **18.15** | 16.50 | 14.61 | 12.60 | all text |
-| `textSecondary` #CBBFDD | 11.05 | 10.05 | 8.90 | 7.67 | all text |
-| `textMuted` #A193B8 | 6.78 | 6.16 | 5.46 | 4.70 | all text (AA at every level) |
-| `primary` #FF3D8B | 5.78 | 5.25 | 4.65 | 4.01* | text ≥ 18.66 px bold / 24 px on overlay; any size on bg/surface/elevated |
-| `accent` #FFC23D | 11.97 | 10.88 | 9.64 | 8.31 | all text (timers, code) |
-| `success` #3DDC97 | 10.91 | 9.92 | 8.78 | 7.57 | all text |
-| `danger` #FF5A4E | 6.27 | 5.70 | 5.04 | 4.35* | *large text only on overlay |
-| `civilian` #5AB8FF | 8.94 | 8.13 | 7.20 | 6.20 | all text |
-| `undercover` #FF8A3D | 8.22 | 7.48 | 6.62 | 5.71 | all text |
-| `blank` #ECE6F5 | 15.80 | 14.36 | 12.72 | 10.97 | all text |
+Palette B (web). `bgTop` is the lightest point of the stage, so it is the worst case for text on the stage.
+
+| Foreground → background | `bg` #1D1036 | `bgMid` #24124A | `bgTop` #2B1650 | `surface` #3A2266 | `elevated` #4A2E7A | `overlay` #5A3A8E | Allowed for |
+|---|---|---|---|---|---|---|---|
+| `text` #FFF7EC | **16.76** | 15.68 | 14.83 | 12.35 | 10.07 | 8.13 | all text |
+| `textSecondary` #E2D6F5 | 12.86 | 12.04 | 11.38 | 9.48 | 7.73 | 6.24 | all text |
+| `textMuted` #B8A8D6 | 8.15 | 7.62 | 7.21 | 6.00 | 4.90 | 3.95* | *large text only on overlay |
+| `primary` #FF4F9A | 5.80 | 5.42 | 5.13 | 4.27* | 3.48* | 2.81 ❌ | fills and glows; as text only on the stage. On raised fills use `primaryText` |
+| `primaryText` #FF7AB3 | 7.36 | 6.89 | 6.52 | 5.43 | 4.43* | 3.57* | *large text (≥ 18.66 px bold) and lines only |
+| `accent` #FFC94D | 11.63 | 10.88 | 10.29 | 8.57 | 6.99 | 5.64 | all text (timers, code) |
+| `success` #3DDC97 | 10.07 | 9.43 | 8.91 | 7.42 | 6.05 | 4.89 | all text |
+| `danger` #FF6B60 | 6.38 | 5.97 | 5.64 | 4.70 | 3.83* | 3.10* | timers and errors on the stage; on raised fills use `dangerText` |
+| `dangerText` #FF8A80 | 7.80 | — | — | 5.75 | 4.69 | 3.78* | *large text only on overlay (TV dialog buttons are 20 px bold) |
+| `civilian` #5AB8FF | 8.25 | 7.72 | 7.30 | 6.08 | 4.96 | 4.01 | all text on the stage and surface |
+| `undercover` #FF8A3D | 7.59 | 7.10 | 6.72 | 5.59 | 4.56 | 3.68 | all text on the stage and surface |
+| `blank` #ECE6F5 | 14.58 | 13.65 | 12.90 | 10.75 | 8.76 | 7.08 | all text |
+| `outlineStrong` #9C88CC | 5.77 | 5.40 | 5.11 | 4.25 | 3.47 | 2.80 | UI borders on stage/surface/elevated |
 
 | Text on a fill | Ratio | Verdict |
 |---|---|---|
-| `ink` on `primary` | **5.78** | ✅ the primary button label |
-| `ink` on `accent` / `success` / `danger` | 11.97 / 10.91 / 6.27 | ✅ |
+| `ink` on `primary` | **6.28** | ✅ the primary button label |
+| `ink` on `accent` / `success` / `danger` | 12.59 / 10.91 / 6.91 | ✅ |
 | `ink` on `civilian` / `undercover` / `blank` | 8.94 / 8.22 / 15.80 | ✅ role card text is ink |
-| `text` (cream) on `primary` | 3.14 | ❌ never |
-| `text` on `danger` | 2.90 | ❌ never; use ink |
-| `focus` ring vs `bg` | 18.15 | ✅ |
+| `text` (cream) on `primary` | 2.89 | ❌ never |
+| `text` on `danger` | 2.63 | ❌ never; use ink |
+| `focus` ring vs `bg` / `elevated` | 16.76 / 10.07 | ✅ |
+
+The night palette's table (still the native TV's) had `text` 18.15 / 16.50 / 14.61 / 12.60 on bg / surface / elevated / overlay, `textMuted` 6.78 / 6.16 / 5.46 / 4.70 and `ink` on `primary` 5.78.
 
 ---
 
@@ -296,7 +321,7 @@ Body text uses weight 600, not 400: at 10 ft, regular Cairo strokes break up on 
 ### 4.5 Elevation (dark UI = tone + glow, not shadow)
 | Level | Fill | Extra | Used for |
 |---|---|---|---|
-| `elev.0` | `bg` + radial `bgGlow` | — | Screen |
+| `elev.0` | the stage (§2.1: gradient + glows; TV adds grain) | — | Screen |
 | `elev.1` | `surface` | 1 dp inner top highlight in `text` at 6 % | Tiles, panels |
 | `elev.2` | `elevated` | Shadow 0 8 24 #000 at 40 % | Focused tiles, sheets, dialogs |
 | `elev.3` | `overlay` | Shadow 0 16 48 #000 at 55 % + `scrim` behind | Pause menu, phone overlays |
@@ -559,7 +584,7 @@ Haptics come only from user gestures or right after one, as the API requires (RE
 +------------------------------------------------------------------------+
 ```
 - Splash ≤ 800 ms: the bang draws in and the dot drops with `ease.overshoot`, then the spinner with `tv.creatingRoom`.
-- Background: `bg` with a slow drifting `bgGlow` (30 s loop; static in reduced motion), plus a faint pattern of tiny bang marks at 4 % opacity.
+- Background: the stage (§2.1) with its top glow drifting slowly (30 s loop; static in reduced motion; native: the night `bg` + `bgGlow` until palette B ships there), plus a faint pattern of tiny bang marks at 4 % opacity.
 - **Failure (13d):** `tv.createFailed` plus a muted line with the error code, and **(• Try again)** (`common.retry`) focused; OK retries. **Back: exit the app.**
 - The footer line is static brand copy (`brand.tagline` may replace it).
 
@@ -1872,25 +1897,28 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 :root {
   color-scheme: dark;
 
-  /* color — core */
-  --color-bg: #120A1F;
-  --color-bg-glow: #2A0F3D;
-  --color-surface: #1E1430;
-  --color-elevated: #2A1D42;
-  --color-overlay: #362752;
-  --color-scrim: rgb(18 10 31 / 0.8);
-  --color-outline: #4A3A66;
-  --color-outline-strong: #8A77AB;
+  /* color — core (palette B; the stage layers are in web-client/src/styles/tokens.css) */
+  --color-bg: #1D1036;
+  --color-bg-mid: #24124A;
+  --color-bg-top: #2B1650;
+  --color-surface: #3A2266;
+  --color-elevated: #4A2E7A;
+  --color-overlay: #5A3A8E;
+  --color-scrim: rgb(29 16 54 / 0.8);
+  --color-outline: #6B54A0;
+  --color-outline-strong: #9C88CC;
   --color-text: #FFF7EC;
-  --color-text-secondary: #CBBFDD;
-  --color-text-muted: #A193B8;
+  --color-text-secondary: #E2D6F5;
+  --color-text-muted: #B8A8D6;
   --color-ink: #120A1F;
-  --color-primary: #FF3D8B;
+  --color-primary: #FF4F9A;
+  --color-primary-text: #FF7AB3;
   --color-on-primary: #120A1F;
-  --color-accent: #FFC23D;
+  --color-accent: #FFC94D;
   --color-on-accent: #120A1F;
   --color-success: #3DDC97;
-  --color-danger: #FF5A4E;
+  --color-danger: #FF6B60;
+  --color-danger-text: #FF8A80;
   --color-focus: #FFF7EC;
 
   /* color — roles */
