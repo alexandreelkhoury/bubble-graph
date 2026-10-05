@@ -2,11 +2,11 @@
 // gating from the catalog response, the purchase sequence calls in order, and the token persisted with try/catch.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { CatalogResponseBody, EntitlementBody } from "@mishana/shared/billing";
-import { BillingController, BILLING_KEYS, STORE_OPEN_RESEND_MS } from "../src/tv-mock/billing/controller";
+import { BillingController, BILLING_ERROR_WINDOW_MS, CONFIRM_SLOW_MS, BILLING_KEYS, BILLING_RESEND_MS, STORE_OPEN_RESEND_MS } from "../src/tv-mock/billing/controller";
 import type { BillingDeps, BillingRoomLink, BillingToast } from "../src/tv-mock/billing/controller";
 import {
-  afterPackPurchase, backoffMs, initialFocus, nextRefreshAt, packState, pitchParams, premiumCard, splitPacks, tokenForCreate,
-  ToastGate,
+  afterPackPurchase, backoffMs, inflightKey, initialFocus, nextRefreshAt, packState, pitchParams, planPurchaseRequest,
+  premiumCard, splitPacks, tokenForCreate, ToastGate, trialOffered,
 } from "../src/tv-mock/billing/model";
 
 const MIN = 60_000;
@@ -102,6 +102,25 @@ describe("model", () => {
     expect(shown).toEqual(["a", "c"]);
   });
 
+  it("§4.5 trial offer: only with a catalog trial offer, a fresh install and no subscription row", () => {
+    const cat = CATALOG("fake");
+    expect(trialOffered(cat, null, false)).toBe(true);
+    expect(trialOffered(cat, body(), false)).toBe(true);
+    expect(trialOffered(cat, body(), true)).toBe(false);
+    const expired = { state: "SUBSCRIPTION_STATE_EXPIRED" as const, basePlanId: "yearly", autoRenewing: false, inTrial: false, expiresAt: NOW - HOUR };
+    expect(trialOffered(cat, body({ subscription: expired }), false)).toBe(false);
+    expect(trialOffered({ subscription: { ...cat.subscription, trialOfferId: "" } }, null, false)).toBe(false);
+    expect(trialOffered(null, null, false)).toBe(false);
+    expect(planPurchaseRequest("i", "monthly").offerId).toBe("trial-7d");
+    expect(planPurchaseRequest("i", "monthly", false).offerId).toBeNull();
+  });
+
+  it("the in-flight key names the plan, so only the button the user pressed confirms", () => {
+    expect(inflightKey("premium", "yearly")).toBe("premium:yearly");
+    expect(inflightKey("premium", "monthly")).not.toBe(inflightKey("premium", "yearly"));
+    expect(inflightKey("pack_en_food_01")).toBe("pack_en_food_01");
+  });
+
   it("backoff: 1 s doubling, capped at 10 min", () => {
     expect([0, 1, 2].map(backoffMs)).toEqual([1000, 2000, 4000]);
     expect(backoffMs(30)).toBe(10 * MIN);
@@ -158,7 +177,7 @@ function harness(opts: { mode?: "fake" | "google"; catalogStatus?: number; purch
   };
   const c = new BillingController(deps);
   return {
-    c, calls, mem, sent, toasts, link, timers,
+    deps, c, calls, mem, sent, toasts, link, timers,
     setOpen: (v: boolean) => { open = v; },
     setCanToast: (v: boolean) => { canToast = v; },
     advance: (ms: number) => {
@@ -216,6 +235,44 @@ describe("BillingController", () => {
     expect(h.c.inflight.value).toBeNull();
   });
 
+  it("a plan purchase marks only that plan in flight, and the trial is used once per install", async () => {
+    const h = harness();
+    await h.c.loadCatalog();
+    h.c.attach(h.link);
+    expect(h.c.trialOffered).toBe(true);
+    const p = h.c.purchase("premium", "monthly");
+    expect(h.c.inflight.value).toBe("premium:monthly");
+    await p;
+    expect(h.c.trialUsed.value).toBe(true);
+    expect(h.mem.get(BILLING_KEYS.trialUsed)).toBe(h.mem.get(BILLING_KEYS.installId));
+    // A new controller on the same storage (a reload) still knows; a different install id does not inherit it.
+    expect(new BillingController(harnessDeps(h.mem)).trialUsed.value).toBe(true);
+    const other = new Map(h.mem);
+    other.set(BILLING_KEYS.installId, "f".repeat(32));
+    expect(new BillingController(harnessDeps(other)).trialUsed.value).toBe(false);
+    await h.c.testExpirePremium();
+    await h.c.purchase("premium", "yearly");
+    expect(h.calls.filter((x) => x.url === "/api/billing/fake/purchase").map((x) => (x.body as { offerId: unknown }).offerId)).toEqual(["trial-7d", null]);
+  });
+
+  it("the cached entitlement body is UI-only: only the stored token ever leaves the browser", async () => {
+    const h = harness();
+    // A viewer edits their own storage to claim Premium and every pack.
+    h.mem.set(BILLING_KEYS.token, "tok.real");
+    h.mem.set(BILLING_KEYS.body, JSON.stringify({ body: body({ token: "tok.real", premium: true, packs: ["en-food-01"] }), savedAt: NOW }));
+    h.mem.set(BILLING_KEYS.verified, "forged");
+    const c = new BillingController(h.deps);
+    await c.loadCatalog();
+    c.attach(h.link);
+    await c.refresh(true);
+    await c.purchase("pack_en_food_01");
+    const bodies = JSON.stringify(h.calls.map((x) => x.body ?? null));
+    expect(bodies).not.toContain("premiumUntil");
+    expect(bodies).not.toContain("forged");
+    expect(bodies).not.toMatch(/"premium":true/);
+    for (const m of h.sent as { t: string }[]) expect(Object.keys(m).sort()).toEqual(m.t === "entitlement" ? ["t", "token", "v"] : ["open", "t", "v"]);
+  });
+
   it("a pack purchase posts every remembered purchase; a PENDING one shows the pending chip and no toast", async () => {
     const h = harness({ purchaseResult: "PENDING" });
     await h.c.loadCatalog();
@@ -258,7 +315,65 @@ describe("BillingController", () => {
     expect(h.sent).toEqual([]);
     h.setOpen(true);
     h.c.roomOpened();
-    expect(h.sent).toEqual([{ v: 1, t: "entitlement", token: h.c.ent.value!.token }, { v: 1, t: "storeOpen", open: false }]);
+    // No `storeOpen:false`: nothing was ever sent as true, so there is nothing to clear (§3.9 budget).
+    expect(h.sent).toEqual([{ v: 1, t: "entitlement", token: h.c.ent.value!.token }]);
+  });
+
+  it("attach + reconnect with the Store closed sends no storeOpen; after an open:true it clears once", async () => {
+    const h = harness();
+    await h.c.loadCatalog();
+    h.c.attach(h.link);
+    h.c.roomOpened();
+    expect(h.sent).toEqual([]);
+    h.c.setStoreVisible(true);
+    h.setOpen(false);
+    h.c.setStoreVisible(false); // dropped: the socket is down
+    h.setOpen(true);
+    h.c.roomOpened();
+    expect(h.sent).toEqual([{ v: 1, t: "storeOpen", open: true }, { v: 1, t: "storeOpen", open: false }]);
+    h.c.roomOpened();
+    expect(h.sent.length).toBe(2);
+  });
+
+  it("a verify that answers after the 15 s notice and fails says verifyFailed once", async () => {
+    const h = harness();
+    let release: (r: Response) => void = () => undefined;
+    const c = new BillingController({
+      ...h.deps,
+      fetch: (url, init) => url === "/api/billing/verify"
+        ? new Promise<Response>((r) => { release = r; })
+        : h.deps.fetch(url, init),
+    });
+    await c.loadCatalog();
+    c.attach(h.link);
+    const p = c.purchase("pack_en_food_01");
+    await vi.waitFor(() => expect(c.inflight.value).not.toBeNull());
+    await new Promise((r) => setTimeout(r, 0));
+    h.advance(CONFIRM_SLOW_MS);
+    expect(c.confirmSlow.value).toBe(true);
+    release(new Response(JSON.stringify({ error: "UPSTREAM_ERROR" }), { status: 502 }));
+    await p;
+    expect(h.toasts.map((x) => x.key)).toEqual(["store.verifyFailed"]);
+  });
+
+  it("a RATE_LIMITED after a billing send is silent and re-sends the token and the busy flag after ≥ 10 s", async () => {
+    const h = harness();
+    await h.c.loadCatalog();
+    h.c.attach(h.link);
+    h.c.setStoreVisible(true);
+    await h.c.purchase("pack_en_food_01");
+    const token = h.c.ent.value!.token;
+    const n = h.sent.length;
+    expect(h.c.wsRateLimited()).toBe(true);
+    expect(h.c.wsRateLimited()).toBe(true); // one resend scheduled, not two
+    h.advance(9_999);
+    expect(h.sent.length).toBe(n);
+    h.advance(BILLING_RESEND_MS);
+    expect(h.sent.slice(n)).toEqual([{ v: 1, t: "entitlement", token }, { v: 1, t: "storeOpen", open: true }]);
+    expect(h.toasts.map((x) => x.key)).not.toContain("error.rateLimited");
+    // Long after any billing send, a RATE_LIMITED is not ours: the caller shows its usual toast.
+    h.advance(BILLING_ERROR_WINDOW_MS + 1);
+    expect(h.c.wsRateLimited()).toBe(false);
   });
 
   it("storeOpen: on open, re-sent every 4 min while open, false on close, again after a reconnect", async () => {

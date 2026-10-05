@@ -40,7 +40,12 @@ function premiumNeedles(): string[] {
 
 // ------------------------------------------------------------------------------------------------ pages
 
-interface Client { page: Page; ctx: BrowserContext; frames: string[]; inject(msg: unknown): void }
+interface Client {
+  page: Page; ctx: BrowserContext; frames: string[];
+  /** The `seq` of every state frame, one list per socket (SPEC §8.4: strictly increasing on a socket). */
+  seqs: number[][];
+  inject(msg: unknown): void;
+}
 
 /**
  * A page whose party socket goes through Playwright: every server frame is recorded, and `inject` sends a frame to the
@@ -64,16 +69,27 @@ async function client(browser: Browser, kind: "tv" | "phone"): Promise<Client> {
     }).observe(document, { childList: true, subtree: true });
   });
   const frames: string[] = [];
+  const seqs: number[][] = [];
   let server: { send(m: string): void } | null = null;
   await ctx.routeWebSocket(/\/parties\//, (ws) => {
     const s = ws.connectToServer();
+    const mine: number[] = [];
+    seqs.push(mine);
     ws.onMessage((m) => s.send(m));
-    s.onMessage((m) => { frames.push(String(m)); ws.send(m); });
+    s.onMessage((m) => {
+      const f = String(m);
+      frames.push(f);
+      if (f.includes('"t":"state"')) {
+        const seq = (JSON.parse(f) as { seq?: unknown }).seq;
+        if (typeof seq === "number") mine.push(seq);
+      }
+      ws.send(m);
+    });
     server = s;
   });
   const page = await ctx.newPage();
   return {
-    page, ctx, frames,
+    page, ctx, frames, seqs,
     inject: (msg) => {
       if (!server) throw new Error("no socket yet");
       server.send(JSON.stringify(msg));
@@ -98,8 +114,31 @@ function lastView(frames: readonly string[]): View | null {
 const errors = (frames: readonly string[]): string[] => frames.filter((f) => f.includes('"t":"error"')).map((f) => (JSON.parse(f) as { code: string }).code);
 
 async function expectView(c: Client, pred: (v: View) => boolean, msg: string): Promise<View> {
-  await expect.poll(() => { const v = lastView(c.frames); return v !== null && pred(v); }, { message: msg, timeout: 20_000 }).toBe(true);
+  try {
+    await expect.poll(() => { const v = lastView(c.frames); return v !== null && pred(v); }, { message: msg, timeout: 20_000 }).toBe(true);
+  } catch (e) {
+    // Say what the server answered instead (e.g. ENTITLEMENT_INVALID), not only that the view never matched.
+    throw new Error(`${msg}: never seen; error frames ${JSON.stringify(errors(c.frames))}`, { cause: e });
+  }
   return lastView(c.frames)!;
+}
+
+/**
+ * SPEC §8.4 / PAYMENTS-SPEC §3.11: every state frame on one socket has a greater seq than the one before, also for
+ * meta-only broadcasts (premium flip, tvBusy). Clients drop a repeated seq, so a server that reuses one would freeze the
+ * native TV app; this catches it here, where the web client's filter would otherwise hide it.
+ */
+function expectStrictSeq(c: Client): void {
+  for (const list of c.seqs) {
+    const bad = list.findIndex((x, i) => i > 0 && x <= list[i - 1]!);
+    expect(bad, `state seq on one socket must strictly increase: ${JSON.stringify(list)}`).toBe(-1);
+  }
+}
+
+/** Every socket's seq check, then close. */
+async function done(clients: readonly Client[]): Promise<void> {
+  for (const c of clients) expectStrictSeq(c);
+  for (const c of clients) await c.ctx.close();
 }
 
 const visible = (p: Page, sel: string): Promise<boolean> => p.locator(sel).first().isVisible().catch(() => false);
@@ -206,18 +245,25 @@ async function closeStore(tv: Page): Promise<void> {
 
 // ------------------------------------------------------------------------------------------------ gate
 
+// A server without billing routes FAILS this file: a missing or broken /api/billing must never pass as "skipped".
+// E2E_ALLOW_NO_BILLING=1 is the explicit opt-out for a run against a server from before PAYMENTS-SPEC Phase 1
+// (implementer A); the store layout and remote rules are still covered by store-layout.spec.ts with a mocked store.
 let gate: string | null = null;
 test.beforeAll(async ({ playwright, baseURL }) => {
   const req: APIRequestContext = await playwright.request.newContext({ baseURL });
   const r = await req.get("/api/billing/catalog");
-  // 404/405: the Worker has no billing routes at all (unknown /api paths answer 405 today).
-  if (r.status() === 404 || r.status() === 405) gate = "the server has no /api/billing routes yet (PAYMENTS-SPEC Phase 1, implementer A)";
-  else {
-    const j = (await r.json().catch(() => null)) as { mode?: string } | null;
-    // A server with billing that is not in fake mode here is a misconfiguration: fail, never skip.
-    expect(j?.mode, "the e2e server must run with BILLING_MODE:fake and ALLOW_FAKE_BILLING:1").toBe("fake");
+  // 404/405: the Worker has no billing routes at all (unknown /api paths answer 405 before Phase 1).
+  if (r.status() === 404 || r.status() === 405) {
+    const why = `the server has no /api/billing routes (GET /api/billing/catalog → ${r.status()}; PAYMENTS-SPEC Phase 1, implementer A)`;
+    await req.dispose();
+    if (process.env.E2E_ALLOW_NO_BILLING !== "1") throw new Error(`${why}. Set E2E_ALLOW_NO_BILLING=1 only to run e2e against a pre-Phase-1 server.`);
+    gate = why;
+    return;
   }
+  const j = (await r.json().catch(() => null)) as { mode?: string } | null;
   await req.dispose();
+  // A server with billing that is not in fake mode here is a misconfiguration: fail, never skip.
+  expect(j?.mode, "the e2e server must run with BILLING_MODE:fake and ALLOW_FAKE_BILLING:1").toBe("fake");
 });
 test.beforeEach(() => { test.skip(gate !== null, gate ?? ""); });
 
@@ -267,7 +313,7 @@ test("1. a free room cannot get premium packs: locked rows only, PACK_LOCKED, no
     const hit = needles.find((n) => all.includes(n));
     expect(hit, "a premium word reached a client of a free room").toBeUndefined();
   }
-  for (const c of [tv, ...phones]) await c.ctx.close();
+  await done([tv, ...phones]);
 });
 
 test("2. purchase → premium → a premium pack plays (D-pad only on the TV)", async ({ browser }) => {
@@ -278,7 +324,7 @@ test("2. purchase → premium → a premium pack plays (D-pad only on the TV)", 
   await expect(tv.page.locator(".tvshop__test")).toHaveText(text("store.testMode"));
   // §4.5: the disclosure for the focused (yearly) plan is on screen.
   await expect(tv.page.locator(".tvshop__legal")).toContainText("$29.99");
-  expect(await tv.page.evaluate(() => document.activeElement?.getAttribute("data-focus"))).toBe("plan:yearly");
+  await expect.poll(() => tv.page.evaluate(() => document.activeElement?.getAttribute("data-focus"))).toBe("plan:yearly");
   await tv.page.keyboard.press("Enter");
   // Premium without a new room.
   await expectView(tv, (v) => v.premium && v.lockedPacks.length === 0, "premium:true, nothing locked");
@@ -292,7 +338,7 @@ test("2. purchase → premium → a premium pack plays (D-pad only on the TV)", 
   await playToResults(tv.page, phones);
   const res = await expectView(tv, (v) => v.phase === "RESULTS" && v.result !== null, "results");
   expect(res.result!.pack.id).toBe("en-food-01");
-  for (const c of [tv, ...phones]) await c.ctx.close();
+  await done([tv, ...phones]);
 });
 
 test("3. a single pack purchase unlocks only that pack", async ({ browser }) => {
@@ -304,7 +350,7 @@ test("3. a single pack purchase unlocks only that pack", async ({ browser }) => 
   await reach(tv.page, "[data-lobby=settings]", ["ArrowDown", "ArrowLeft", "ArrowRight"]);
   await tv.page.keyboard.press("Enter");
   await expect(tv.page.locator(".tvsettings")).toBeVisible();
-  await reach(tv.page, ".tvcat:last-child", ["ArrowDown"]);
+  await reach(tv.page, ".tvcat[data-cat=words]", ["ArrowDown"]);
   await tv.page.keyboard.press("ArrowRight");
   await reach(tv.page, "[data-row=packIds]", ["ArrowDown"]);
   await tv.page.keyboard.press("Enter");
@@ -318,7 +364,7 @@ test("3. a single pack purchase unlocks only that pack", async ({ browser }) => 
   expect(after.availablePacks.map((p) => p.id)).toContain("en-food-01");
   expect(after.lockedPacks.map((p) => p.id).sort()).toEqual(before.lockedPacks.map((p) => p.id).filter((id) => id !== "en-food-01").sort());
   await expect(tv.page.locator('[data-pack="en-food-01"] .tvshop__chip--ok')).toBeVisible();
-  for (const c of [tv, ...phones]) await c.ctx.close();
+  await done([tv, ...phones]);
 });
 
 test("4. expiry mid-game: the game finishes with its pack, then the lobby falls back to free (notices once)", async ({ browser }) => {
@@ -353,7 +399,7 @@ test("4. expiry mid-game: the game finishes with its pack, then the lobby falls 
   expect((await toastsOf(tv.page)).filter((x) => x === text("lobby.premiumEnded")).length).toBe(1);
   await vip.page.locator(".actionbar .btn--primary").click();
   await expect(tv.page.locator(".tvreveal")).toBeVisible();
-  for (const c of [tv, ...phones]) await c.ctx.close();
+  await done([tv, ...phones]);
 });
 
 test("5. fake billing is refused off-LAN (request level)", async ({ request }) => {
@@ -380,5 +426,27 @@ test("6. no start behind the store: TV_BUSY while it is open, START works once i
   await expectView(vip, (v) => !v.tvBusy, "busy cleared");
   await vip.page.locator(".actionbar .btn--primary").click();
   await expect(tv.page.locator(".tvreveal")).toBeVisible();
-  for (const c of [tv, ...phones]) await c.ctx.close();
+  await done([tv, ...phones]);
+});
+
+test("7. open and close the Store 4 times by D-pad, then buy: premium arrives, nothing rate-limited", async ({ browser }) => {
+  test.setTimeout(240_000);
+  const { tv, code } = await openTv(browser);
+  const phones = await joinPhones(browser, code, ["Rami", "Léa", "Nour"]);
+  const vip = phones[0]!;
+  for (let i = 0; i < 4; i++) {
+    await openStoreByRemote(tv.page);
+    await expectView(vip, (v) => v.tvBusy, `tvBusy on (${i + 1})`);
+    await closeStore(tv.page);
+    await expectView(vip, (v) => !v.tvBusy, `tvBusy off (${i + 1})`);
+  }
+  await openStoreByRemote(tv.page);
+  await expect.poll(() => tv.page.evaluate(() => document.activeElement?.getAttribute("data-focus"))).toBe("plan:yearly");
+  await tv.page.keyboard.press("Enter");
+  await expectView(tv, (v) => v.premium && v.lockedPacks.length === 0, "premium:true after 4 Store visits");
+  await expect(tv.page.locator(".tvshop__active")).toBeVisible();
+  expect(errors(tv.frames)).not.toContain("RATE_LIMITED");
+  expect((await toastsOf(tv.page)).filter((x) => x === text("error.rateLimited"))).toEqual([]);
+  await closeStore(tv.page);
+  await done([tv, ...phones]);
 });

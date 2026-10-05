@@ -104,7 +104,8 @@ export function PhonesAsleep({ view }: { view: TvView }) {
   }, []);
   if (!(inGame && none)) { since.current = null; return null; }
   since.current ??= Date.now();
-  return Date.now() - since.current > 60_000 ? <div class="tvconnbanner tvconnbanner--soft">{t("conn.phonesAsleep")}</div> : null;
+  // A running timer decides on its own: "the game is waiting" is only true with timers off.
+  return Date.now() - since.current > 60_000 ? <div class="tvconnbanner tvconnbanner--soft">{t(view.deadline ? "conn.phonesAsleepTimer" : "conn.phonesAsleep")}</div> : null;
 }
 
 /** Lobby join/leave toasts (TV-02 toast zone), in-game away toasts (TV-13c) and forfeits with the revealed role. */

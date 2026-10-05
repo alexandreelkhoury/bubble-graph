@@ -61,6 +61,30 @@
     <string name="winner__civilians">ربحوا المدنيين!</string>
     <string name="winner__infiltrators">ربحوا المندسّين!</string>
     <string name="winner__blank">ربح الفاضي: %1$s!</string>
+    <plurals name="winner__moles">
+        <item quantity="zero">ربحوا الجواسيس!</item>
+        <item quantity="one">ربح الجاسوس!</item>
+        <item quantity="two">ربحوا الجاسوسين!</item>
+        <item quantity="few">ربحوا الجواسيس!</item>
+        <item quantity="many">ربحوا الجواسيس!</item>
+        <item quantity="other">ربحوا الجواسيس!</item>
+    </plurals>
+    <plurals name="winner__moles_blank">
+        <item quantity="zero">ربحوا الجواسيس والفاضي!</item>
+        <item quantity="one">ربحوا الجاسوس والفاضي!</item>
+        <item quantity="two">ربحوا الجاسوسين والفاضي!</item>
+        <item quantity="few">ربحوا الجواسيس والفاضي!</item>
+        <item quantity="many">ربحوا الجواسيس والفاضي!</item>
+        <item quantity="other">ربحوا الجواسيس والفاضي!</item>
+    </plurals>
+    <plurals name="winner__moles_blanks">
+        <item quantity="zero">ربحوا الجواسيس والفاضيين!</item>
+        <item quantity="one">ربحوا الجاسوس والفاضيين!</item>
+        <item quantity="two">ربحوا الجاسوسين والفاضيين!</item>
+        <item quantity="few">ربحوا الجواسيس والفاضيين!</item>
+        <item quantity="many">ربحوا الجواسيس والفاضيين!</item>
+        <item quantity="other">ربحوا الجواسيس والفاضيين!</item>
+    </plurals>
     <string name="color__coral">مرجاني</string>
     <string name="color__azure">أزرق</string>
     <string name="color__lemon">ليموني</string>
@@ -114,6 +138,11 @@
     <string name="lobby__premium">بريميوم</string>
     <string name="lobby__premium_room">غرفة بريميوم</string>
     <string name="lobby__premium_ended">خلص البريميوم. الباقات المجانية بعدها هون.</string>
+    <string name="howto__title">كيف منلعب؟</string>
+    <string name="howto__step1">كل حدا بياخد كلمة سرّية، إلا…</string>
+    <string name="howto__step2">كل حدا بيعطي تلميح، بصوت عالي.</string>
+    <string name="howto__step3">منصوّت لنطلّع يلّي مش منّا.</string>
+    <string name="howto__step4">الفاضي إلو محاولة أخيرة.</string>
     <string name="lobby__premium_ended_phone">خلص البريميوم بهالغرفة. الباقات المجانية شغّالة.</string>
     <string name="lobby__words_repeating">لعبتوا كل الكلمات المجانية. في باقات أكتر مع البريميوم.</string>
     <string name="settings__title">إعدادات اللعبة</string>
@@ -121,6 +150,10 @@
     <string name="settings__cat_roles">الأدوار</string>
     <string name="settings__cat_timers">التوقيت</string>
     <string name="settings__cat_words">الكلمات</string>
+    <string name="settings__cat_about">حول</string>
+    <string name="settings__install_id">رقم التثبيت</string>
+    <string name="settings__install_id_help">ممكن الدعم يطلب منك هالرقم ليفتح المشتريات على هالتلفزيون.</string>
+    <string name="settings__app_version">النسخة</string>
     <string name="settings__win_rule">شرط الربح</string>
     <string name="settings__win_rule_official">الرسمي (بيبقى مدني واحد)</string>
     <string name="settings__win_rule_parity">قدّ بقدّ (عددهن قدّ المدنيين)</string>
@@ -175,9 +208,11 @@
     <string name="join__resuming">عم نرجّعك عمحلّك…</string>
     <string name="join__locked">في لعبة عم تصير. الدخول بعد ما تخلص.</string>
     <string name="join__unlocked">الدخول صار ممكن!</string>
+    <string name="home__host_hint">ما في كود؟ اللعبة بتنفتح على تلفزيون أو لابتوب:</string>
     <string name="reveal__your_word">كلمتك السرّية</string>
     <string name="reveal__hold_to_see">كبسة طويلة… وبتبيّن كلمتك</string>
     <string name="reveal__release">بتختفي مع رفع الإصبع</string>
+    <string name="reveal__twist">الأغلبية معها هالكلمة. مش الكل. ويمكن مش انت.</string>
     <string name="reveal__privacy">الأحسن ما حدا يكون عم يتطلّع.</string>
     <string name="reveal__first_time">هيدي كلمتك. ما حدا لازم يشوفها.</string>
     <string name="reveal__no_word">ما في كلمة إلك.</string>
@@ -194,7 +229,7 @@
     <string name="reveal__blank_hint">الفاضي ما عندو كلمة… ولازم يبلّف.</string>
     <string name="clues__rule">كلمة وحدة أو جملة قصيرة. بلا ما تقولوا الكلمة!</string>
     <string name="clues__first_hint">اسمعوا منيح. في حدا كلمته غير… أو ما عندو كلمة أصلاً.</string>
-    <string name="clues__speaking">دور %1$s</string>
+    <string name="clues__speaking">يلّا %1$s، تلميحك!</string>
     <string name="clues__speaker_sub">بصوت عالي، وبعدها «خلصت»</string>
     <string name="clues__no_timer">بلا وقت: «خلصت» لمّا يخلص الدور</string>
     <string name="clues__now_speaking">الدور هلّق</string>
@@ -207,12 +242,14 @@
     <string name="clues__done">خلصت</string>
     <string name="clues__peek">شوف كلمتي</string>
     <string name="clues__peek_role">شوف كرتي</string>
+    <string name="tie__your_turn">انت بالتعادل: هالتلميح لازم يفرق!</string>
     <string name="clues__skip_turn">نطّ الدور</string>
     <string name="clues__skipped">%1$s مش هون، منكمّل</string>
     <string name="vote__title">مين مش منّا؟</string>
     <string name="vote__sub">صوّتوا عالتلفون</string>
     <string name="vote__pick">مين عم يكذب؟</string>
     <string name="vote__pick_sub">نقّي حدا، وبعدها «ثبّت صوتي».</string>
+    <string name="vote__pick_first">نقّي حدا أوّل</string>
     <string name="vote__confirm">ثبّت صوتي: %1$s</string>
     <string name="vote__locked">صوتك انحسب.</string>
     <string name="vote__act_natural">ولا كأنّو صار شي.</string>
@@ -223,6 +260,7 @@
     <string name="vote__look_tv">العيون عالتلفزيون!</string>
     <string name="vote__dead">انت برّا. الفرجة إلك هلّق!</string>
     <string name="vote__revote_among">تصويت تاني بين المتعادلين</string>
+    <string name="vote__revote_between">تصويت تاني: %1$s. تعادل كمان؟ %2$s.</string>
     <string name="vote__close">نسكّر التصويت</string>
     <string name="vote__votes_in">طلعت الأصوات…</string>
     <string name="vote__no_vote">بلا صوت</string>
@@ -232,6 +270,7 @@
     <string name="tie__title">تعادل!</string>
     <string name="tie__explain">كل واحد بيعطي تلميح كمان، وبعدين منرجع نصوّت بس بيناتهن.</string>
     <string name="tie__in_tie">دورك بالتعادل: وقت أحلى تلميح!</string>
+    <string name="tie__persist">تعادل بين %1$s. تلميح كمان لكل واحد، وبعدين تصويت تاني.</string>
     <string name="tie__vs">ضد</string>
     <string name="elim__eliminated">%1$s برّا!</string>
     <string name="elim__was_civilian">%1$s: مدني</string>
@@ -252,6 +291,7 @@
         <item quantity="other">%1$d ما صوّتوا</item>
     </plurals>
     <string name="elim__next_round">الجولة الجاية بعد %1$d…</string>
+    <string name="elim__next_in">الجاية بعد %1$d</string>
     <string name="elim__you">خلصت اللعبة إلك</string>
     <string name="elim__you_were">كان دورك: %1$s</string>
     <string name="elim__stay">الفرجة مسموحة… بس بلا تلميحات!</string>
@@ -264,10 +304,12 @@
     <string name="guess__title">الفاضي إلو محاولة وحدة</string>
     <string name="guess__guessing">%1$s: المحاولة الأخيرة لكلمة المدنيين…</string>
     <string name="guess__silence">ممنوع المساعدة!</string>
+    <string name="guess__say_aloud">%1$s: الجواب عالتلفون، وبعدين بصوت عالي!</string>
     <string name="guess__waiting">الفاضي: %1$s. إلو محاولة وحدة. هس…</string>
     <string name="guess__prompt">شو كلمة المدنيين؟</string>
     <string name="guess__placeholder">جوابك</string>
     <string name="guess__spelling">مش ضروري الإملا تكون مزبوطة.</string>
+    <string name="guess__stakes">الجواب الصح بيربّحك اللعبة.</string>
     <string name="guess__submit">هيدا جوابي</string>
     <string name="guess__sent">انبعت! هلّق الجواب بصوت عالي للكل.</string>
     <string name="guess__correct">الفاضي عرفها!</string>
@@ -275,7 +317,7 @@
     <string name="guess__wrong">غلط! اللعبة مكمّلة.</string>
     <string name="guess__wrong_you">مش هيك. اللعبة مكمّلة.</string>
     <string name="guess__timeout">خلص الوقت! ما في جواب.</string>
-    <string name="guess__accept">منقبلها!</string>
+    <string name="guess__accept">منقبلها: الفاضي بيربح</string>
     <string name="guess__accept_confirm">منقبل جواب %1$s؟ الفاضي بيربح.</string>
     <string name="guess__reject">ما بتنحسب</string>
     <string name="guess__reject_confirm">منرفض الجواب؟ اللعبة مكمّلة.</string>
@@ -308,6 +350,7 @@
     <string name="conn__cant_reach">ما عم نقدر نوصل عالسيرفر.</string>
     <string name="conn__player_away">انقطع الخط مع %1$s. المحلّ محفوظ.</string>
     <string name="conn__phones_asleep">التلفونات نايمة؟ فيّقوها، اللعبة ناطرة.</string>
+    <string name="conn__phones_asleep_timer">التلفونات نايمة؟ فيّقوها، وإلا الوقت بيقرّر.</string>
     <string name="conn__seat_saved">محلّك محفوظ.</string>
     <string name="conn__still_trying">بعدنا عم نحاول… الواي فاي أو الداتا شغّالين؟</string>
     <string name="conn__back">رجعنا!</string>
@@ -318,13 +361,16 @@
     <string name="tv__new_code">كود جديد: %1$s</string>
     <string name="tv__start_now">يلّا هلّق</string>
     <string name="tv__press_again">كبسوا OK مرّة تانية للتأكيد</string>
+    <string name="tv__press_again_web">Enter أو كليك كمان مرّة للتأكيد</string>
     <string name="tv__skip_hint">كبسوا OK للتخطّي</string>
+    <string name="tv__skip_hint_web">Enter أو كليك للتخطّي</string>
+    <string name="tv__browser_tip">F = شاشة كاملة · الأسهم + Enter، أو كليك</string>
     <string name="tv__clues_sub">قولوها بصوت عالي، وبعدها خلّصوا الدور من التلفون</string>
     <string name="tv__clues_no_timer">بلا وقت: خلّصوا الدور من التلفون لمّا تخلصوا</string>
     <string name="tv__back_to_categories">رجوع: الفئات</string>
     <string name="tv__pause_title">قائمة اللعبة</string>
-    <string name="tv__pause_note">اللعبة مكمّلة</string>
-    <string name="tv__resume">منكمّل</string>
+    <string name="tv__pause_note">الوقت ماشي</string>
+    <string name="tv__resume">رجوع للعبة</string>
     <string name="tv__skip">تخطّي (الدور / الوقت)</string>
     <string name="tv__players">اللاعبين…</string>
     <string name="tv__end_game">نوقّف اللعبة</string>
@@ -338,6 +384,9 @@
     <string name="tv__back_to_lobby">رجوع: الصالون</string>
     <string name="tv__app_closed">مش أنا! مسكّرة</string>
     <string name="tv__open_again">افتحوها من جديد</string>
+    <string name="tv__close_room_confirm">نسكّر هالغرفة؟</string>
+    <string name="tv__close_room_body">الكل رح يحتاج كود جديد.</string>
+    <string name="tv__keep_room">منخلّي الغرفة</string>
     <string name="tv__room_closed">هالغرفة تسكّرت</string>
     <string name="tv__debug_title">إعدادات التصحيح</string>
     <string name="tv__server_url">عنوان السيرفر</string>
@@ -395,12 +444,12 @@
     <string name="store__title">بريميوم وباقات كلمات</string>
     <string name="store__premium_title">بريميوم</string>
     <plurals name="store__premium_pitch">
-        <item quantity="zero">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
-        <item quantity="one">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
-        <item quantity="two">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
-        <item quantity="few">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
-        <item quantity="many">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
-        <item quantity="other">كل الباقات (%1$d) و%2$s+ زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="zero">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="one">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="two">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="few">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="many">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
+        <item quantity="other">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
     </plurals>
     <string name="store__plan_monthly">شهري</string>
     <string name="store__plan_yearly">سنوي</string>

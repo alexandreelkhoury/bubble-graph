@@ -5,7 +5,8 @@
   font: var(--tv-body); user-select: none; -webkit-user-select: none;
 }
 .tv__canvas { position: absolute; left: 0; top: 0; width: 960px; height: 540px; overflow: hidden; transform-origin: 0 0; background: var(--color-bg); }
-.tv__bg { position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 0%, var(--color-bg-glow), transparent 70%), var(--color-bg); }
+.tv__bg { position: absolute; inset: 0; background: var(--stage-tv); }
+.tv__bg::after { content: ""; position: absolute; inset: 0; opacity: 0.06; mix-blend-mode: overlay; background-image: var(--grain); }
 .tv__stage { position: absolute; inset: 0; animation: tv-phase-in var(--motion-slow) var(--ease-decel) both; }
 @keyframes tv-phase-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 .tvscreen { position: absolute; inset: 0; }
@@ -40,8 +41,9 @@
 
 /* room code */
 .tvcode { display: inline-flex; direction: ltr; unicode-bidi: isolate; color: var(--color-accent); font-variant-numeric: tabular-nums; }
-.tvcode--mini { font: 900 20px/1 var(--font-sans); gap: 2px; letter-spacing: 0.08em; }
-.tvcode--big { font: var(--tv-code); font-size: 72px; line-height: 72px; gap: 0.08em; letter-spacing: 0.08em; text-shadow: 0 0 32px rgb(var(--rgb-accent) / 0.35); }
+/* Spacing is the gap alone (Arabic zeroes letter-spacing, which halved it and shifted the code off-centre). */
+.tvcode--mini { font: 900 20px/1 var(--font-sans); gap: 0.1em; letter-spacing: 0; }
+.tvcode--big { font: var(--tv-code); font-size: 72px; line-height: 72px; gap: 0.14em; letter-spacing: 0; text-shadow: 0 0 32px rgb(var(--rgb-accent) / 0.35); }
 
 /* focus (DESIGN §4.6: the one focus style) */
 .tv button { outline: none; }
@@ -51,6 +53,8 @@
 .tv :is(.tvbtn, .tvpill, .setrowtv, .tvcat, .tvmenu__item, .tvtoggle, .tvmenu-btn, .tvshop__pack):focus {
   transform: scale(1.04); background-color: var(--color-elevated); box-shadow: var(--tv-focus-ring);
 }
+/* Full-width rows grow less (1.02): at 1.04 their start edge jumped 9–12 dp sideways. Pills 1.04, tiles 1.06. */
+.tv :is(.setrowtv, .tvcat, .tvmenu__item):focus { transform: scale(1.02); }
 .tile--btn:focus { transform: scale(1.06); background: var(--color-elevated); box-shadow: var(--tv-focus-ring); }
 /* Scoreboard rows sit in a clipping scroll box: an inset ring (same focus colour) that the box cannot cut. */
 .tv .tvsb__row:focus { outline: none; background: var(--color-elevated); box-shadow: inset 0 0 0 3px var(--color-focus); }
@@ -64,10 +68,14 @@
 .tv:lang(ar) .tvbtn { letter-spacing: 0; }
 .tvbtn--primary { background: var(--color-primary); color: var(--color-on-primary); }
 .tv .tvbtn--primary:focus { background: var(--color-primary); }
-.tvbtn--danger { background: transparent; color: var(--color-danger); box-shadow: inset 0 0 0 2px var(--color-danger); }
+.tvbtn--danger { background: transparent; color: var(--color-danger-text); box-shadow: inset 0 0 0 2px var(--color-danger-text); }
 .tv .tvbtn--danger:focus { background: var(--color-danger); color: var(--color-ink); }
 .tvbtn.is-disabled { opacity: 0.4; }
 .tvbtn.is-disabled:focus { opacity: 0.7; }
+/* A disabled primary (Start) stays focusable and readable: neutral fill, no alpha (10.05:1 at rest, 14.61:1 focused);
+   the focus ring and glow keep full strength. */
+.tvbtn--primary.is-disabled { opacity: 1; background: var(--color-surface); color: var(--color-text-secondary); }
+.tv .tvbtn--primary.is-disabled:focus { opacity: 1; background: var(--color-elevated); color: var(--color-text); }
 .tvpill {
   display: inline-grid; place-items: center; height: 48px; min-width: 160px; padding-inline: 28px; border: 2px solid rgb(var(--rgb-text) / 0.5); border-radius: var(--radius-pill);
   background: transparent; color: var(--color-text); font: var(--tv-label); white-space: nowrap; opacity: 0.6;
@@ -80,11 +88,13 @@
 /* Beats the generic focus fill (0,3,0): the armed pill is always accent with ink text, focused or not. */
 .tv .tvpill.is-armed, .tv .tvpill.is-armed:focus { opacity: 1; background: var(--color-accent); color: var(--color-ink); border-color: transparent; }
 /* Pointer remotes only (tabIndex -1): sits at the end of the top bar, inside the safe area. */
-.tvmenu-btn { display: grid; place-items: center; width: 32px; height: 32px; margin-inline-start: 4px; border: 0; border-radius: 50%; background: transparent; color: var(--color-text-muted); opacity: 0.5; }
+.tvmenu-btn { display: grid; place-items: center; width: 32px; height: 32px; margin-inline-start: 4px; border: 0; border-radius: 50%; background: transparent; color: var(--color-outline-strong); }
 .tvmenu-btn:hover { opacity: 1; background: var(--color-surface); }
 .tvbadge { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding-inline: 16px; border-radius: var(--radius-pill); font: var(--tv-label); font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
 .tv:lang(ar) .tvbadge { text-transform: none; letter-spacing: 0; }
 .tvbadge--accent { background: var(--color-accent); color: var(--color-ink); }
+/* A badge that carries a sentence (the re-vote rule) reads in sentence case. */
+.tvbadge--sentence { text-transform: none; letter-spacing: 0; }
 .tvtag { padding: 2px 8px; border-radius: var(--radius-pill); background: var(--tint-accent); color: var(--color-accent); font: var(--tv-caption); }
 
 /* tiles */
@@ -105,7 +115,7 @@
 .tvhome { display: flex; flex-direction: column; align-items: center; }
 .tvhome__pattern { position: absolute; inset: 0; background: var(--bang-pattern); background-size: 64px; opacity: 0.04; animation: drift 30s linear infinite; }
 @keyframes drift { to { background-position: 640px 320px; } }
-.tvhome__mark { position: absolute; top: 27px; inset-inline-start: 48px; border-radius: 12px; }
+.tvhome__mark { position: absolute; top: 27px; inset-inline-start: 48px; border-radius: 12px; outline: 1px solid rgb(255 255 255 / 0.1); outline-offset: -1px; }
 .tvhome__wordmark { margin-top: 128px; width: 560px; height: auto; filter: drop-shadow(0 0 24px rgb(var(--rgb-primary) / 0.25)); animation: bang-in 800ms var(--ease-overshoot) both; }
 @keyframes bang-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
 .tvhome__slogan { margin-top: 20px; }
@@ -113,22 +123,34 @@
 .tvhome__foot { position: absolute; bottom: 27px; }
 
 /* lobby (TV-02) */
-.tvlobby__wordmark { position: absolute; top: 27px; inset-inline-start: 58px; width: 160px; height: auto; }
-[dir="rtl"] .tvlobby__wordmark { content: url("/brand/wordmark-ar.svg"); width: 120px; }
-.tvlobby__scan { position: absolute; top: 87px; inset-inline-start: 58px; width: 240px; text-align: center; font: var(--tv-caption); font-weight: 700; line-height: 22px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); }
-.tv:lang(ar) .tvlobby__scan { letter-spacing: 0; text-transform: none; }
-.tvlobby__qr { position: absolute; top: 111px; inset-inline-start: 58px; width: 240px; height: 240px; }
-.qr { background: var(--color-text); border-radius: var(--radius-lg); box-shadow: 0 0 0 6px rgb(var(--rgb-text) / 0.06), 0 20px 48px -12px rgb(0 0 0 / 0.6); overflow: hidden; }
+/* The lobby is the brand's billboard while people arrive: a 196 dp wordmark over one join "ticket". */
+.tvlobby__wordmark { position: absolute; top: 27px; inset-inline-start: 48px; width: 196px; height: auto; }
+[dir="rtl"] .tvlobby__wordmark { content: url("/brand/wordmark-ar.svg"); width: 147px; }
+/* TV-02 join ticket (y 94 → ≤ 500 in every locale): caption, QR, code and URL read as one object. */
+.tvticket { position: absolute; top: 94px; inset-inline-start: 48px; width: 270px; display: flex; flex-direction: column; align-items: center; padding: 12px 14px 14px; border-radius: 28px; background: var(--color-surface); box-shadow: inset 0 1px 0 rgb(var(--rgb-text) / 0.08), 0 24px 60px -20px rgb(0 0 0 / 0.6); text-align: center; }
+.tvticket__scan { margin: 0 0 8px; font: var(--tv-caption); font-weight: 700; line-height: 22px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); }
+.tv:lang(ar) .tvticket__scan { letter-spacing: 0; text-transform: none; line-height: 30px; }
+.tvticket__code { display: flex; justify-content: center; height: 64px; margin-top: 6px; }
+.tvticket__code .tvcode--big { font-size: 64px; line-height: 64px; text-shadow: 0 0 28px rgb(var(--rgb-accent) / 0.45); }
+.tvticket__code.is-dim .tvcode { color: var(--color-text-muted); text-shadow: none; }
+.tvticket__url { margin: 2px 0 0; font: var(--tv-caption); color: var(--color-text-muted); text-wrap: balance; }
+.tvticket__url b { color: var(--color-text); font-weight: 700; }
+.qr { background: var(--color-text); border-radius: 20px; overflow: hidden; }
 .qr svg { border-radius: var(--radius-sm); display: block; }
-.qr--full { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; width: 240px; height: 240px; background: var(--color-surface); color: var(--color-text-secondary); font: var(--tv-title); animation: fade-in var(--motion-slow) both; }
-.tvlobby__code { position: absolute; top: 363px; inset-inline-start: 58px; width: 240px; height: 72px; display: flex; justify-content: center; }
-.tvlobby__code.is-dim .tvcode { color: var(--color-text-muted); text-shadow: none; }
-/* Ends above the 513 dp safe line in every locale (2 lines × 28, Arabic 2 × 30). */
-.tvlobby__host { position: absolute; top: 445px; inset-inline-start: 40px; width: 276px; text-align: center; font: var(--tv-body); color: var(--color-text-secondary); }
-.tv:lang(ar) .tvlobby__host { line-height: 30px; top: 443px; }
-.tvlobby__summary { position: absolute; top: 33px; inset-inline-end: 58px; max-width: 520px; display: flex; flex-direction: column; align-items: flex-end; text-align: end; font: var(--tv-caption); color: var(--color-text-secondary); }
-.tvlobby__summary[data-flash] { animation: sweep 600ms var(--ease-standard); }
-@keyframes sweep { 0% { color: var(--color-accent); } 100% { color: var(--color-text-secondary); } }
+.qr--full { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: var(--color-elevated); color: var(--color-text-secondary); font: var(--tv-title); animation: fade-in var(--motion-slow) both; }
+/* Settings chips (B5): shown once the room can start; the win rule lives in Settings. */
+.tvlobby__summary { position: absolute; top: 35px; inset-inline-end: 58px; max-width: 540px; display: flex; justify-content: flex-end; gap: 8px; }
+.tvsumchip { display: inline-flex; align-items: center; gap: 6px; height: 32px; min-width: 0; padding-inline: 14px; border-radius: var(--radius-pill); background: rgb(var(--rgb-text) / 0.07); box-shadow: inset 0 0 0 1px rgb(var(--rgb-text) / 0.1); font: 700 20px/1 var(--font-sans); color: var(--color-text-secondary); white-space: nowrap; }
+.tvsumchip--text { overflow: hidden; text-overflow: ellipsis; display: block; line-height: 32px; }
+.tvsumchip__dot { width: 10px; height: 10px; border-radius: 50%; margin-inline-start: 4px; }
+.tvsumchip__dot:first-child { margin-inline-start: 0; }
+.tvsumchip__dot--civilian { background: var(--color-civilian); }
+.tvsumchip__dot--undercover { background: var(--color-undercover); }
+.tvsumchip__dot--blank { background: var(--color-blank); }
+.tvlobby__summary[data-flash] .tvsumchip { animation: sweep 600ms var(--ease-standard); }
+@keyframes sweep { 0% { color: var(--color-accent); box-shadow: inset 0 0 0 1px var(--color-accent); } 100% { color: var(--color-text-secondary); } }
+/* B3: on a fresh room the browser TV says how to drive it without a remote (where the chips go later). */
+.tvlobby__tip { position: absolute; top: 35px; inset-inline-end: 58px; max-width: 540px; margin: 0; padding: 4px 16px; border-radius: var(--radius-pill); background: rgb(var(--rgb-text) / 0.07); font: var(--tv-caption); color: var(--color-text-secondary); white-space: nowrap; }
 .tvlobby__players { position: absolute; top: 85px; inset-inline-start: 370px; inset-inline-end: 62px; height: 30px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .tvlobby__count { flex: none; font: var(--tv-label); font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text); }
 .tv:lang(ar) .tvlobby__count { letter-spacing: 0; }
@@ -137,6 +159,11 @@
 .tvgrid { position: absolute; top: 121px; inset-inline-start: 370px; display: grid; grid-template-columns: repeat(4, 120px); grid-auto-rows: 96px; gap: 16px; }
 .tvgrid .tile { width: 120px; height: 96px; gap: 2px; padding: 4px; border-radius: var(--radius-md); }
 .tvgrid .tile__name { font: var(--tv-titleS); font-weight: 700; max-width: 110px; }
+/* B4: the newest player keeps a ring in their colour until the next join; scores show after Play again. */
+.tvgrid .tile--newest { box-shadow: inset 0 1px 0 rgb(var(--rgb-text) / 0.06), 0 0 0 2px var(--avatar-color), 0 0 26px -4px var(--avatar-color); }
+/* A sticker on the tile's top-end corner (as the vote tallies), clear of the avatar. */
+.tvscore { position: absolute; z-index: 1; top: -10px; inset-inline-end: -10px; display: grid; place-items: center; min-width: 30px; height: 30px; padding-inline: 6px; border-radius: var(--radius-pill); background: var(--color-elevated); color: var(--color-accent); font: 900 20px/1 var(--font-sans); box-shadow: 0 0 0 3px var(--color-bg); }
+.tvscore.is-lead { background: var(--color-accent); color: var(--color-ink); }
 .tv:lang(ar) .tvgrid .avatar { --avatar-size: 50px !important; }
 .tvbottom--lobby { inset-inline-start: 370px; justify-content: flex-start; gap: 16px; }
 .tvbtn--start { width: 200px; margin-inline-start: auto; }
@@ -147,19 +174,27 @@
 .tvsettings__title { margin: 0; font: var(--tv-headline); text-transform: uppercase; letter-spacing: 0.04em; }
 .tv:lang(ar) .tvsettings__title { text-transform: none; letter-spacing: 0; }
 .tvsettings__cats { position: absolute; top: 103px; inset-inline-start: 58px; width: 200px; display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: var(--radius-lg); background: var(--color-surface); }
-.tvcat { height: 52px; padding-inline: 16px; border: 0; border-radius: var(--radius-md); background: transparent; color: var(--color-text-secondary); font: var(--tv-titleS); text-align: start; }
-.tvcat.is-on { color: var(--color-text); background: var(--color-elevated); box-shadow: inset 4px 0 0 var(--color-primary); }
-[dir="rtl"] .tvcat.is-on { box-shadow: inset -4px 0 0 var(--color-primary); }
+.tvcat { position: relative; height: 52px; padding-inline: 32px 16px; border: 0; border-radius: 12px; background: transparent; color: var(--color-text-secondary); font: var(--tv-titleS); text-align: start; }
+/* The selected category: a 4 × 22 dp pill inside the padding (native SettingsScreen), mirrored by the logical inset. */
+.tvcat.is-on { color: var(--color-text); background: var(--color-elevated); }
+.tvcat.is-on::before { content: ""; position: absolute; inset-inline-start: 16px; top: 15px; width: 4px; height: 22px; border-radius: var(--radius-pill); background: var(--color-primary); }
 /* The rows scroll; the explanation stays put under them (never inside the scroll box). */
 .tvsettings__panel { position: absolute; top: 103px; inset-inline-start: 282px; inset-inline-end: 58px; bottom: 80px; display: flex; flex-direction: column; border-radius: var(--radius-lg); background: var(--color-surface); }
 /* Inline padding leaves room for the focused row's 1.04 scale and ring (DESIGN §4.6) inside the panel. */
 .tvsettings__rows { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 2px; padding: 10px 24px; overflow-y: auto; scrollbar-width: none; }
+/* More rows below: fade out instead of cutting a row through its glyphs at the help divider. */
+.tvsettings__rows.has-more { mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent); }
 .setrowtv { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 44px; flex: none; padding-inline: 16px; border: 0; border-radius: var(--radius-md); background: transparent; color: var(--color-text); font: var(--tv-titleS); text-align: start; }
 .setrowtv__value { display: inline-flex; align-items: center; gap: 6px; color: var(--color-accent); font: var(--tv-label); white-space: nowrap; }
 .setrowtv__chev { display: inline-grid; place-items: center; color: var(--color-text-muted); }
 .setrowtv:focus .setrowtv__chev { color: var(--color-text); }
 .tvsettings__help { flex: none; margin: 0 12px; padding: 10px 16px 12px; border-top: 1px solid var(--color-outline); font: var(--tv-body); color: var(--color-text-secondary); }
-.tvsettings__help.is-danger { color: var(--color-danger); }
+.tvsettings__help.is-danger { color: var(--color-danger-text); }
+/* TV-03 About: small read-only text (DESIGN TV-03). */
+.tvabout { display: flex; flex-direction: column; gap: 12px; padding: 16px 8px; }
+.tvabout p { margin: 0; font: var(--tv-caption); color: var(--color-text-secondary); }
+.tvabout .tvabout__id { color: var(--color-text); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+.tvabout .tvabout__help { color: var(--color-text-muted); }
 .tvsettings__foot { position: absolute; bottom: 36px; inset-inline: 0; text-align: center; font: var(--tv-caption); color: var(--color-text-muted); }
 .tvsub { display: flex; flex-wrap: wrap; gap: 12px; padding: 6px; }
 .tvtoggle { display: inline-flex; align-items: center; gap: 8px; height: 48px; padding-inline: 18px; border: 0; border-radius: var(--radius-pill); background: var(--color-elevated); box-shadow: inset 0 0 0 2px var(--color-outline); font: var(--tv-label); }
@@ -212,7 +247,8 @@
 .ring--danger { animation: ring-pulse 1s ease-in-out infinite; }
 @keyframes ring-pulse { 50% { transform: scale(1.03); } }
 .ring__content { position: relative; display: grid; place-items: center; }
-.ring__num { position: absolute; top: 4px; inset-inline-end: -88px; font: var(--tv-timer); color: var(--color-text); }
+/* Attached to its ring (native: offset 36 dp, −6 dp), not floating 88 dp away like a separate score. */
+.ring__num { position: absolute; top: -6px; inset-inline-end: -36px; font: var(--tv-timer); color: var(--color-text); }
 .ring--warn .ring__num { color: var(--color-accent); }
 .ring--danger .ring__num { color: var(--color-danger); }
 
@@ -220,13 +256,14 @@
 .tvclues .tvbottom { z-index: 9; }
 /* …but not the order strip: under the overlay it would collide with the tie explanation (Kotlin draws the overlay over it). */
 .tvclues:has(.tvtie) .tvorder { visibility: hidden; }
-.tvtie { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; background: rgb(var(--rgb-bg) / 0.92); animation: tie-out 2500ms linear both; }
-@keyframes tie-out { 0% { opacity: 0; } 8% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
+/* The column ends above the strip line (y 417) so the focused Skip pill never covers the explanation. */
+.tvtie { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding-bottom: 120px; background: rgb(var(--rgb-bg) / 0.96); animation: tie-out 4000ms linear both; }
+@keyframes tie-out { 0% { opacity: 0; } 5% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; } }
 .tvtie__cards { display: flex; align-items: center; gap: 32px; }
 .tvtie__card { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px 24px; border-radius: var(--radius-lg); background: var(--color-surface); min-width: 200px; }
 .tvtie__av { position: relative; }
 .tvtie__vs { font: var(--tv-headline); color: var(--color-text-muted); }
-.tvtie__explain { max-width: 640px; color: var(--color-text-secondary); }
+.tvtie__explain { display: block; max-width: 560px; text-align: center; color: var(--color-text-secondary); text-wrap: balance; }
 
 /* voting (TV-06) */
 .tvvote { justify-content: center; gap: 20px; }
@@ -281,16 +318,19 @@
 
 /* elimination (TV-09) */
 .tvelim::before { content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none; }
-.tvelim.wash--civilian::before { background: radial-gradient(circle at 50% 55%, rgb(var(--rgb-civilian) / 0.3), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
-.tvelim.wash--undercover::before { background: radial-gradient(circle at 50% 55%, rgb(var(--rgb-undercover) / 0.3), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
-.tvelim.wash--blank::before { background: radial-gradient(circle at 50% 55%, rgb(var(--rgb-blank) / 0.3), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
-@keyframes wash { 0% { opacity: 0; transform: scale(0.4); } 45% { opacity: 1; transform: scale(1.4); } 100% { opacity: 0.35; transform: scale(1.4); } }
+/* The OUT is the peak of the round: the role colour washes the stage and stays at full strength. */
+.tvelim.wash--civilian::before { background: radial-gradient(circle at 50% 55%, rgb(var(--rgb-civilian) / 0.34), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
+.tvelim.wash--undercover::before { background: radial-gradient(circle at 50% 55%, rgb(var(--rgb-undercover) / 0.34), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
+.tvelim.wash--blank::before { background: radial-gradient(circle at 50% 55%, rgb(var(--rgb-blank) / 0.34), transparent 70%); animation: wash 1400ms var(--ease-decel) 1800ms both; }
+@keyframes wash { 0% { opacity: 0; transform: scale(0.4); } 45% { opacity: 1; transform: scale(1.4); } 100% { opacity: 1; transform: scale(1.4); } }
 /* TV-09 stack: card from just under the top bar, name beneath it, the reaction on the bottom-bar line between
    "Next round in…" (start) and Continue (end). SPEC-GAP: DESIGN's 280 × 380 dp card cannot fit the 360 dp stage
    with the name and reaction stacked, so the card keeps DESIGN's ratio at the largest size that fits (EN 236 × 320, AR 216 × 293). */
 /* TV-09 stack inside the stage: card (sized from the stage, see cardSize()), the name in displayS, the reaction line. */
 .tvelim__card { justify-content: center; gap: 4px; }
-.tvelim__name { max-width: 820px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; animation: fade-in 400ms both; }
+.tvelim__name { display: inline-flex; align-items: center; gap: 14px; max-width: 820px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; animation: fade-in 400ms both; }
+.tvelim__name > .avatar { flex: none; }
+.tvelim__nametext { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .tvelim__reaction { max-width: 820px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tvelim__cardwrap { position: relative; perspective: 1200px; }
 .tvelim__random { gap: 6px; position: absolute; top: 0; left: 50%; transform: translate(-50%, -40%); white-space: nowrap; z-index: 1; }
@@ -340,7 +380,8 @@
 .tvresults--civilians .tvresults__wash { background: radial-gradient(70% 70% at 50% 40%, rgb(var(--rgb-civilian) / 0.22), transparent 70%); }
 .tvresults--infiltrators .tvresults__wash { background: linear-gradient(135deg, rgb(var(--rgb-undercover) / 0.22), rgb(var(--rgb-blank) / 0.10)); }
 .tvresults--blank .tvresults__wash { background: radial-gradient(70% 70% at 50% 40%, rgb(var(--rgb-blank) / 0.18), transparent 70%); }
-.particle { position: absolute; bottom: -40px; left: calc(6% + var(--i) * 8%); color: var(--color-civilian); opacity: 0.7; animation: rise 3s var(--ease-decel) calc(mod(var(--i) * 7, 12) * 140ms) both; }
+/* x comes from particleLanes() (tvResults.tsx): two lanes beside the title, never across it. */
+.particle { position: absolute; bottom: -40px; color: var(--color-civilian); opacity: 0.7; animation: rise 3s var(--ease-decel) calc(mod(var(--i) * 7, 12) * 140ms) both; }
 @keyframes rise { from { transform: translateY(0); opacity: 0; } 20% { opacity: 0.8; } to { transform: translateY(-560px); opacity: 0; } }
 .peek-mask { position: absolute; color: var(--color-undercover); opacity: 0.8; animation: peek 3s var(--ease-decel) both; }
 .peek-mask--0 { top: 40px; left: -40px; animation-delay: 0ms; }
@@ -350,10 +391,11 @@
 @keyframes peek { 0% { transform: translateX(0) scaleY(1); opacity: 0; } 20% { opacity: 0.8; } 50% { transform: scaleY(1); } 55% { transform: scaleY(0.1); } 60% { transform: scaleY(1); } 100% { opacity: 0; } }
 .tvresults__stage { top: 75px; bottom: 93px; justify-content: center; gap: 14px; }
 .tvresults.is-stage2 .tvresults__stage { justify-content: flex-start; gap: 6px; }
-.tvresults__title { text-transform: uppercase; animation: pop 600ms var(--ease-overshoot) both; }
+.tvresults__title { max-width: 860px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; animation: pop 600ms var(--ease-overshoot) both; }
 .tv:lang(ar) .tvresults__title { text-transform: none; }
 .tvresults--civilians .tvresults__title { color: var(--color-civilian); }
-.tvresults--infiltrators .tvresults__title { background: linear-gradient(135deg, var(--color-undercover), var(--color-blank)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* Solid team colour (gradient text vanished under forced colours and read as two states). */
+.tvresults--infiltrators .tvresults__title { color: var(--color-undercover); }
 .tvresults--blank .tvresults__title { color: var(--color-blank); }
 .tvblankcard { display: flex; align-items: center; gap: 16px; padding: 14px 28px; border-radius: var(--radius-lg); background: var(--color-blank) var(--dot-pattern); color: var(--color-ink); animation: spin-in 800ms var(--ease-overshoot) both; }
 @keyframes spin-in { from { transform: rotate(-200deg) scale(0.2); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -373,18 +415,23 @@
 .tvwords--strip .tvword { flex-direction: row; gap: 14px; min-width: 0; height: 56px; padding: 0 22px; animation: none; }
 .tvwords--strip .tvword__text { font: var(--tv-title); }
 .tvwords--strip .tvword__translit { font: var(--tv-caption); }
+.tvculprits { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 20px; max-width: 840px; animation: fade-in var(--motion-slow) 1000ms both; }
+.tvculprits__item { display: inline-flex; align-items: center; gap: 12px; padding: 4px 20px 4px 4px; padding-inline: 4px 20px; border-radius: var(--radius-pill); background: var(--color-surface); }
+.tvculprits__item--undercover { box-shadow: inset 0 0 0 3px var(--color-undercover); }
+.tvculprits__item--blank { box-shadow: inset 0 0 0 3px var(--color-blank); }
 .tvresults__meta { max-width: 840px; justify-content: center; flex-wrap: wrap; }
 .tvsb { width: 760px; text-align: start; }
 .tvsb__row { display: grid; grid-template-columns: 44px 1fr 200px 120px 80px; column-gap: 12px; align-items: center; height: 40px; padding-inline: 12px; border-radius: var(--radius-sm); font: var(--tv-titleS); animation: tv-phase-in var(--motion-base) var(--ease-decel) both; animation-delay: calc(var(--i, 0) * 60ms); }
 .tvsb__row--head { height: 28px; font: var(--tv-caption); font-weight: 900; color: var(--color-text-muted); letter-spacing: 0.06em; text-transform: uppercase; animation: none; }
 .tv:lang(ar) .tvsb__row--head { text-transform: none; letter-spacing: 0; }
-/* DESIGN TV-11: 4 rows of 40 dp, focus-scroll for more; a fade and a chevron say there is more. */
+/* DESIGN TV-11: 5 rows of 40 dp, focus-scroll for more; a fade and a chevron say there is more. */
 .tvsb__bodywrap { position: relative; }
-.tvsb__body { max-height: 160px; overflow-y: auto; scrollbar-width: none; border-radius: var(--radius-sm); }
+.tvsb__body { max-height: 200px; overflow-y: auto; scrollbar-width: none; border-radius: var(--radius-sm); }
 .tvsb__bodywrap.has-more::after { content: ""; position: absolute; inset-inline: 0; bottom: 0; height: 28px; border-radius: 0 0 var(--radius-sm) var(--radius-sm); background: linear-gradient(transparent, var(--color-bg)); pointer-events: none; }
 .tvsb__more { position: absolute; z-index: 1; bottom: -6px; left: 50%; display: grid; place-items: center; width: 28px; height: 28px; transform: translateX(-50%); color: var(--color-text-secondary); pointer-events: none; animation: more-bob 1.6s ease-in-out infinite; }
 @keyframes more-bob { 50% { transform: translate(-50%, 3px); } }
-.tvsb__row.is-first { background: rgb(var(--rgb-accent) / 0.10); box-shadow: 0 0 24px rgb(var(--rgb-accent) / 0.15); color: var(--color-accent); }
+/* Rank 1 is the fill, the trophy and the amber total: no glow (tied winners stacked glows into a brown smear). */
+.tvsb__row.is-first { background: rgb(var(--rgb-accent) / 0.08); color: var(--color-accent); }
 .tvsb__who { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--color-text); }
 .tvsb__who bdi { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tvsb__role { display: inline-flex; align-items: center; gap: 8px; font: var(--tv-body); color: var(--color-text-secondary); }
@@ -396,53 +443,69 @@
 /* Numbers are isolated in inner <bdi class="num">; the cells keep the page direction so start/end mirror in RTL. */
 .tvsb__row > :first-child { text-align: start; }
 .tvsb__row > :nth-child(4), .tvsb__row > :nth-child(5) { text-align: end; }
-.tvhistory { display: flex; gap: 22px; align-items: center; color: var(--color-text-secondary); }
-.tvhistory__item { display: inline-flex; align-items: center; gap: 8px; }
-.tvhistory__round { font: var(--tv-body); color: var(--color-text-muted); }
+/* TV-12 on Results: how the game went, round by round (moved from TV-11 stage 2). */
+.tvhistory { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; margin: 0; padding: 0; color: var(--color-text-secondary); }
+.tvhistory__item { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.tvhistory__round { font: var(--tv-caption); color: var(--color-text-muted); }
+.tvhistory__name { max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-titleS); color: var(--color-text); }
+.tvhistory__emb { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; color: var(--color-ink); }
+.tvhistory__emb--civilian { background: var(--color-civilian); }
+.tvhistory__emb--undercover { background: var(--color-undercover); }
+.tvhistory__emb--blank { background: var(--color-blank); }
+.tvdialog--history { width: 540px; gap: 12px; padding: 28px 32px; }
+.tvdialog--history .tvmenu { max-height: 240px; }
+.tvdialog__sub { margin: -8px 0 0; text-align: center; font: var(--tv-caption); color: var(--color-text-muted); }
 .tvbottom--results { justify-content: center; gap: 20px; }
 
 /* overlays, dialogs (TV-12, TV-14), connection states (TV-13) */
 .tvoverlay { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; background: var(--color-scrim); animation: fade-in var(--motion-base) both; }
 .tvoverlay--solid { background: var(--color-bg); }
-.tvdialog { width: 520px; padding: 32px; border-radius: var(--radius-lg); background: var(--color-overlay); box-shadow: var(--elev-3-shadow); display: flex; flex-direction: column; gap: 16px; animation: pop var(--motion-base) var(--ease-overshoot) both; }
+.tvdialog { width: 520px; padding: 32px; border-radius: var(--radius-lg); background: var(--color-overlay); box-shadow: var(--elev-3-shadow); display: flex; flex-direction: column; gap: 16px; animation: dialog-in 200ms var(--ease-decel) both; }
+/* A large panel enters subtly (it grew from 20 % with an overshoot, a toy pop). */
+@keyframes dialog-in { from { opacity: 0; transform: translateY(8px) scale(0.96); } to { opacity: 1; transform: none; } }
 .tvdialog--menu { width: 400px; }
 .tvdialog__title { font: var(--tv-headline); }
 .tvdialog__title--center { text-align: center; text-transform: uppercase; letter-spacing: 0.04em; }
 .tv:lang(ar) .tvdialog__title--center { text-transform: none; letter-spacing: 0; }
-.tvdialog__body { color: var(--color-text-secondary); }
+.tvdialog__body { color: var(--color-text-secondary); text-wrap: pretty; }
 .tvdialog__actions { display: flex; justify-content: flex-end; gap: 16px; margin-top: 8px; }
 .tvdialog__note { text-align: center; font: var(--tv-caption); color: var(--color-text-muted); }
 /* Inline padding ≥ the focused item's growth (scale 1.04) + ring (5) + glow, so the ring is never clipped. */
 .tvmenu { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; scrollbar-width: none; padding: 10px 16px; margin-inline: -16px; }
 .tvmenu__item { display: flex; align-items: center; gap: 14px; height: 48px; padding-inline: 20px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--color-text); font: var(--tv-label); text-align: start; }
 .tvmenu__item--player { height: 52px; }
-.tvmenu__end { margin-inline-start: auto; flex: none; color: var(--color-danger); }
+.tvmenu__end { margin-inline-start: auto; flex: none; color: var(--color-danger-text); }
 .tvmenu__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* The kick icon is muted at rest and turns danger only on the focused row (not a red button on every row). */
 .tvmenu__end--kick { color: var(--color-text-muted); }
-.tvmenu__item:focus .tvmenu__end--kick { color: var(--color-danger); }
-.tvmenu__item.is-on { color: var(--color-primary); }
-.tvmenu__end--ok { color: var(--color-primary); }
+.tvmenu__item:focus .tvmenu__end--kick { color: var(--color-danger-text); }
+.tvmenu__item.is-on { color: var(--color-primary-text); }
+.tvmenu__end--ok { color: var(--color-primary-text); }
 .tvfatal { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; }
 .tvfatal__icon { display: grid; place-items: center; width: 160px; height: 160px; border-radius: 50%; background: var(--color-surface); color: var(--color-text-secondary); }
-.tvfatal__body { max-width: 620px; display: block; }
+.tvfatal__body { max-width: 620px; display: block; text-wrap: pretty; }
 .tvfreeze { position: absolute; inset: 0; z-index: 15; background: rgb(var(--rgb-bg) / 0.4); }
 .tvconnbanner { position: absolute; z-index: 16; top: 12px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 12px; padding: 10px 22px; border-radius: var(--radius-pill); background: var(--color-elevated); box-shadow: var(--elev-2-shadow); font: var(--tv-body); }
 .tvconnbanner .icon { color: var(--color-accent); }
-.tvconnbanner--soft { top: auto; bottom: 96px; background: var(--color-surface); color: var(--color-text-secondary); }
+.tvconnbanner--soft { top: auto; bottom: 96px; max-width: 880px; white-space: nowrap; background: var(--color-surface); color: var(--color-text-secondary); }
 /* Toast zones never cover what the room is reading (DESIGN §4.2 rows), one toast at a time:
    lobby → the player-grid header row, in place of the blocker line (TvLobby);
    in game → the empty centre of the top bar row (y 27–75). */
 .tvtoasts { position: absolute; z-index: 18; top: 31px; left: 50%; width: 420px; margin-left: -210px; display: flex; justify-content: center; pointer-events: none; }
-.tvtoast { min-width: 0; max-width: 100%; padding: 6px 16px; border-radius: var(--radius-md); background: var(--color-overlay); box-shadow: var(--elev-2-shadow); border-inline-start: 4px solid var(--color-outline-strong); font: var(--tv-body); animation: tv-toast 240ms var(--ease-overshoot) both;
+/* A 10 dp tone dot leads the text (as native ToastHost); a side stripe bent into a crescent on the rounded corner. */
+.tvtoast { min-width: 0; max-width: 100%; padding: 6px 20px; border-radius: var(--radius-md); background: var(--color-elevated); box-shadow: var(--elev-2-shadow); font: var(--tv-body); animation: tv-toast 240ms var(--ease-decel) both;
   /* Two lines at most (billing toasts carry two sentences); a longer one ends in an ellipsis on line 2. */
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
 /* Lobby slot: plain text (no card, no edge bar, which a pill radius would bend into a stray arc). */
 .tvtoast--inline { padding: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; font: var(--tv-label); color: var(--color-text-secondary); }
 .tvtoast--inline.tvtoast--success { color: var(--color-success); }
-.tvtoast--inline.tvtoast--error { color: var(--color-danger); }
-.tvtoast--success { border-inline-start-color: var(--color-success); }
-.tvtoast--error { border-inline-start-color: var(--color-danger); }
+.tvtoast--inline.tvtoast--error { color: var(--color-danger-text); }
+.tvtoast:not(.tvtoast--inline)::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-inline-end: 12px; border-radius: 50%; vertical-align: 2px; background: var(--toast-dot, var(--color-outline-strong)); }
+.tvtoast--success { --toast-dot: var(--color-success); }
+.tvtoast--error { --toast-dot: var(--color-danger); }
+/* In-game toasts stay one line inside the top bar row (y 31–67 in Arabic too), never over the TV-05 rule at y 72. */
+.tvtoasts .tvtoast:not(.tvtoast--inline) { -webkit-line-clamp: 1; line-clamp: 1; }
+.tv:lang(ar) .tvtoasts .tvtoast:not(.tvtoast--inline) { line-height: 28px; padding-block: 4px; }
 @keyframes tv-toast { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
@@ -454,8 +517,12 @@
   .rolecard__face { transform: none; opacity: 0; transition: opacity 200ms; }
   .rolecard.is-flipped .rolecard__inner { transform: none; }
   .rolecard.is-flipped .rolecard__face { opacity: 1; }
-  .tvelim.wash--civilian::before, .tvelim.wash--undercover::before, .tvelim.wash--blank::before { animation: none; opacity: 0.35; }
-  .tvtie { animation: tie-out 1250ms linear both; }
+  .tvelim.wash--civilian::before, .tvelim.wash--undercover::before, .tvelim.wash--blank::before { animation: fade-in 200ms linear 1800ms both; transform: scale(1.4); }
+  .tvtie { animation: tie-out 2000ms linear both; }
+  /* §6.3: a fade, not a shortened bounce. */
+  .tvdialog, .tvvote__progress, .tvhome__wordmark, .tvtoast { animation: fade-in 150ms linear both !important; }
+  .tile.is-verdict { transform: none; transition: box-shadow 150ms; }
+  .tvwheel__seat.is-lit, .tvelim__reaction { transform: none; }
 }
 
 /* PAYMENTS-SPEC §4.4 / §5.2: Premium entry points and the mock Store (fake billing). */
@@ -484,10 +551,19 @@
 .tvshop__cardhead { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
 .tvshop__cardtitle { display: inline-flex; align-items: center; gap: 8px; margin: 0; font: var(--tv-titleS); font-weight: 900; color: var(--color-accent); }
 .tvshop__pitch { margin: 0; font: var(--tv-caption); color: var(--color-text-secondary); }
-.tvshop__plans { display: flex; gap: 16px; }
-.tvshop__plan { flex: 1 1 0; min-width: 0; justify-content: space-between; height: 52px; }
-.tvshop__planname { flex: none; white-space: nowrap; }
+/* The trial badge is a sticker on each plan button's top-end corner (never in the label's line), so a long FR/AR label
+   and price always have the whole button: 8 dp above the buttons keep the sticker clear of the pitch line. */
+.tvshop__plans { display: flex; gap: 16px; padding-top: 8px; }
+.tvshop__plan { position: relative; flex: 1 1 0; min-width: 0; justify-content: space-between; height: 52px; }
+/* Name and price keep their width; "Confirming…" next to them is what ellipsizes. Should a button ever be narrower than
+   name + price, only the plan name shrinks (ellipsis), never the price. */
+.tvshop__planname { display: inline-flex; min-width: 0; flex: 0 0 auto; max-width: 100%; white-space: nowrap; }
+.tvshop__planlabel { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.tvshop__planprice { flex: none; }
 .tvshop__badge, .tvshop__chip { flex: none; padding: 2px 10px; border-radius: var(--radius-pill); background: var(--tint-accent); color: var(--color-accent); font: var(--tv-caption); white-space: nowrap; }
+.tvshop__badge { position: absolute; top: 0; inset-inline-end: 16px; transform: translateY(-55%); padding-block: 0; line-height: 24px; background: var(--color-accent); color: var(--color-ink); font-weight: 800; box-shadow: 0 2px 6px rgb(0 0 0 / 0.35); pointer-events: none; }
+/* A pack card's state chip ("Included with Premium") wraps to a second line instead of being cut mid-word. */
+.tvshop__packend .tvshop__chip { flex: 0 1 auto; min-width: 0; white-space: normal; line-height: 22px; border-radius: 12px; }
 .tvshop__chip--ok { display: inline-flex; align-items: center; gap: 4px; background: transparent; color: var(--color-success); padding-inline: 0; }
 .tvshop__legal { margin: 0; font: var(--tv-caption); line-height: 24px; color: var(--color-text-secondary); }
 .tvshop__state { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
@@ -503,8 +579,8 @@
 .tvshop__pack { flex: none; width: 200px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 14px; border: 0; border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font: var(--tv-caption); text-align: start; }
 .tvshop__packtitle { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-label); }
 .tvshop__packmeta { color: var(--color-text-muted); }
-.tvshop__packend { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; min-width: 0; height: 28px; overflow: hidden; }
-.tvshop__buy { color: var(--color-primary); font-weight: 800; }
+.tvshop__packend { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; min-width: 0; min-height: 28px; }
+.tvshop__buy { color: var(--color-primary-text); font-weight: 800; }
 .tvshop__divider { flex: none; align-self: center; padding: 0 6px; color: var(--color-text-muted); font: var(--tv-caption); white-space: nowrap; }
 .tvshop__toastslot { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; pointer-events: none; }
 /* The Store's toast band: full width at caption size, so every billing toast fits on one line (two at most). */
@@ -512,12 +588,13 @@
 .tvshop__toastslot .tvtoast { max-width: 100%; padding: 2px 14px; font: var(--tv-caption); line-height: 26px; animation-name: tv-toast-fade; }
 @keyframes tv-toast-fade { from { opacity: 0; } to { opacity: 1; } }
 .tvshop__foot { flex: none; display: flex; align-items: center; gap: 14px; min-height: 44px; }
+.tvshop__foot .tvbtn { white-space: nowrap; flex: none; }
 .tvshop__help { font: var(--tv-caption); color: var(--color-text-secondary); }
-.tvshop__testctl { display: inline-flex; align-items: center; gap: 10px; margin-inline-start: auto; padding-inline-start: 14px; border-inline-start: 1px dashed var(--color-outline-strong); }
-.tvshop__testhead { font: var(--tv-caption); color: var(--color-text-muted); white-space: nowrap; }
+.tvshop__testctl { display: inline-flex; align-items: center; gap: 10px; min-width: 0; margin-inline-start: auto; padding-inline-start: 14px; border-inline-start: 1px dashed var(--color-outline-strong); }
+.tvshop__testhead { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: var(--tv-caption); color: var(--color-text-muted); white-space: nowrap; }
 .tvshop__back { white-space: nowrap; }
 .tvmenu__item--test { color: var(--color-text-muted); font: var(--tv-caption); }
-.tvlobby__premium { margin-inline-end: 12px; vertical-align: -3px; }
+.tvsumchip.tvlobby__premium { color: var(--color-accent); }
 /* Four buttons in the 542 dp lobby bar: Settings and Language hug their labels; nothing shrinks its icon. */
 .tvbottom--lobby .tvbtn { flex-shrink: 0; }
 .tvbottom--lobby .tvbtn:not(.tvbtn--start):not(.tvbtn--icon) { min-width: 0; padding-inline: 20px; }

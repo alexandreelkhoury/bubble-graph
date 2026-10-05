@@ -12,6 +12,7 @@ import { soundCue, soundOnView, soundReset } from "./sound/controller";
 import { billing } from "./billing";
 import type { StoreEntry } from "./billing/model";
 import { billingEnabled } from "../lib/billingFlag";
+import { recreatesRoomOnFatal } from "./roomLife";
 
 export type TvUi =
   | { kind: "creating" }
@@ -100,6 +101,8 @@ export async function tvCreateRoom(): Promise<void> {
     onError: (msg) => {
       tvLastErrorMsg.value = msg;
       if (SILENT.includes(msg.code)) return;
+      // A dropped background `entitlement` / `storeOpen`: the billing client re-sends it, the user asked for nothing.
+      if (msg.code === "RATE_LIMITED" && billing.wsRateLimited()) return;
       pushToast(t(TV_ERROR_KEY[msg.code] ?? (msg.messageKey as MessageKey)), "error");
       soundCue("sfx.error");
     },
@@ -109,9 +112,8 @@ export async function tvCreateRoom(): Promise<void> {
       tvDownSince.value = s === "open" ? null : tvDownSince.value ?? Date.now();
     },
     onFatal: (code) => {
-      const v = tvView.value;
-      if (code === CLOSE.ROOM_EXPIRED && (!v || (v.phase === "LOBBY" && v.players.length === 0))) {
-        // TV-13e: an empty lobby expired → silently create a new room.
+      if (recreatesRoomOnFatal(code, tvView.value)) {
+        // TV-13e: the room expired or vanished between games → silently create a new room.
         void tvCreateRoom().then(() => {
           const u = tvUi.value;
           if (u.kind === "room") pushToast(t("tv.newCode", { code: u.room.code }), "info", 4000);

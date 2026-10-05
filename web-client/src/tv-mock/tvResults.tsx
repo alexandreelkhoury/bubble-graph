@@ -1,12 +1,12 @@
 // TV-10 Blank guess and TV-11 results (stage 1: the victory moment and the words meeting; stage 2: scoreboard,
 // history and the next-game actions).
 import { Fragment } from "preact";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import type { TvView } from "@mishana/shared/protocol";
 import { fmtNum, isolate, locale, t } from "../i18n/t";
-import { ROLE_KEY } from "../lib/keys";
+import { ROLE_KEY, ROLE_WAS_KEY } from "../lib/keys";
 import { ms, reduced } from "../lib/motion";
-import { byId, competitionRank, rankPlayers, winnerKey } from "../lib/view";
+import { byId, competitionRank, culprits, rankPlayers, winnerMessage } from "../lib/view";
 import { Avatar, avatarState } from "../components/PlayerChip";
 import { RoleEmblem } from "../components/Role";
 import { Icon } from "../components/Icon";
@@ -39,7 +39,8 @@ export function TvGuess({ view }: { view: TvView }) {
           <>
             <h1 class="tvt-displayS">{t("guess.title")}</h1>
             <p class="tvt-body tv-secondary">{t("guess.guessing", { name })}</p>
-            <p class="tvt-caption tv-muted">{t("guess.silence")}</p>
+            {/* The host's override relies on the room hearing the guess: the TV asks for it out loud too. */}
+            <p class="tvt-caption tv-accent">{t("guess.sayAloud", { name })}</p>
           </>
         ) : (
           <>
@@ -66,7 +67,23 @@ export function TvGuess({ view }: { view: TvView }) {
   );
 }
 
-const CAUSE_ICON: Record<string, string> = { VOTE: "vote", RANDOM: "dice", KICK: "user-x", LEAVE: "door-out", NONE: "x" };
+/** TV-11 scoreboard rows in view (40 dp each): five, so the Mole of a 5–6 player game is never behind the fold. */
+export const SB_ROWS = 5;
+
+/** Stage 1 title steps down with its length so it always stays one line ("THE MOLES & THE BLANK WIN!" included). */
+export function titleSize(text: string): string {
+  const n = [...text].length;
+  return n <= 16 ? "tvt-displayL" : n <= 24 ? "tvt-displayM" : "tvt-displayS";
+}
+
+/** The civilian-win houses rise in two lanes beside the title, never across its letters: x (canvas px) for each of
+ *  the 12, from the title's layout box (transform-free, so the pop-in scale doesn't skew it). A lane narrower than
+ *  one house is left empty. */
+export function particleLanes(titleLeft: number, titleRight: number, canvas = 960, size = 28, pad = 24): number[] {
+  const lane = (from: number, to: number): number[] =>
+    to - from < 0 ? [] : Array.from({ length: 6 }, (_, i) => Math.round(from + ((to - from) * i) / 5));
+  return [...lane(pad, titleLeft - pad - size), ...lane(titleRight + pad, canvas - pad - size)];
+}
 
 /** TV-11 Results: stage 1 (victory moment, words meet), then stage 2 (scoreboard, history, actions). */
 export function TvResults({ view }: { view: TvView }) {
@@ -74,6 +91,8 @@ export function TvResults({ view }: { view: TvView }) {
   const [stage2, setStage2] = useState(false);
   const [sbEnd, setSbEnd] = useState(false);
   const playRef = useInitialFocus<HTMLButtonElement>();
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const [lanes, setLanes] = useState<number[]>([]);
   useEffect(() => {
     if (stage2) return;
     const id = setTimeout(() => setStage2(true), ms(5000));
@@ -81,22 +100,33 @@ export function TvResults({ view }: { view: TvView }) {
   }, [stage2]);
   // Stage 1 already shows the action bar with Play again focused (Kotlin): any OK there only skips to stage 2.
   const guard = (f: () => void) => (): void => { if (stage2) f(); else setStage2(true); };
+  const showHouses = !!r && r.winner === "CIVILIANS" && !stage2 && !reduced();
+  useLayoutEffect(() => {
+    const h = titleRef.current;
+    const stageEl = h?.offsetParent as HTMLElement | null;
+    if (!showHouses || !h || !stageEl) return;
+    const left = stageEl.offsetLeft + h.offsetLeft;
+    setLanes(particleLanes(left, left + h.offsetWidth));
+  }, [showHouses]);
   if (!r) return null;
   const winnerName = r.winner === "BLANK" ? byId(view, r.winnerIds[0])?.name ?? "" : "";
   const ranked = rankPlayers(view.players);
   const blankGuess = r.winner === "BLANK" ? r.guesses.find((g) => g.status === "CORRECT")?.text ?? null : null;
   const l = locale.value;
+  const win = winnerMessage(view);
+  const title = t(win.key, { count: win.count, name: isolate(winnerName) });
+  const caught = culprits(view);
   return (
     <div class={`tvscreen tvresults tvresults--${r.winner.toLowerCase()}${stage2 ? " is-stage2" : ""}`} onClick={() => setStage2(true)}>
       <TvTopBar view={view} title={t("results.title")} />
       <div class="tvresults__wash" aria-hidden="true">
         <div class="tvresults__fx">
-          {!reduced() && r.winner === "CIVILIANS" && Array.from({ length: 12 }, (_, i) => <span key={i} class="particle" style={{ "--i": i }}><RoleEmblem role="CIVILIAN" size={28} /></span>)}
+          {showHouses && lanes.map((x, i) => <span key={i} class="particle" style={{ "--i": i, left: `${x}px` }}><RoleEmblem role="CIVILIAN" size={28} /></span>)}
           {!reduced() && r.winner === "INFILTRATORS" && [0, 1, 2, 3].map((i) => <span key={i} class={`peek-mask peek-mask--${i}`}><RoleEmblem role="UNDERCOVER" size={96} /></span>)}
         </div>
       </div>
       <div class="tvstage tvresults__stage">
-        <h1 class={`tvresults__title ${stage2 ? "tvt-headline" : "tvt-displayL"}`}>{t(winnerKey(r.winner), { name: isolate(winnerName) })}</h1>
+        <h1 ref={titleRef} class={`tvresults__title ${stage2 ? "tvt-headline" : titleSize(title)}`}>{title}</h1>
         {!stage2 && r.winner === "BLANK" && blankGuess && (
           <div class="tvblankcard"><RoleEmblem role="BLANK" size={64} /><span class="tvt-displayS">{blankGuess}</span></div>
         )}
@@ -112,6 +142,17 @@ export function TvResults({ view }: { view: TvView }) {
             {r.undercoverWord.translit && <span class="tvword__translit">{r.undercoverWord.translit}</span>}
           </div>
         </div>
+        {/* The reveal everyone waited for ("it was Ben!"), under the words. */}
+        {!stage2 && caught.length > 0 && (
+          <ul class="tvculprits">
+            {caught.map((p) => (
+              <li key={p.id} class={`tvculprits__item tvculprits__item--${p.revealedRole!.toLowerCase()}`}>
+                <Avatar color={p.color} size={48} state={p.left ? "left" : "normal"} />
+                <span class="tvt-title">{t(ROLE_WAS_KEY[p.revealedRole!], { name: isolate(p.name) })}</span>
+              </li>
+            ))}
+          </ul>
+        )}
         {stage2 && (
           <>
             <p class="tvt-body tv-secondary tvresults__meta">
@@ -125,10 +166,10 @@ export function TvResults({ view }: { view: TvView }) {
               <div class="tvsb__row tvsb__row--head" role="row">
                 <span>{t("results.colRank")}</span><span>{t("results.colPlayer")}</span><span>{t("results.colRole")}</span><span>{t("results.colGame")}</span><span>{t("results.colTotal")}</span>
               </div>
-              {/* DESIGN TV-11: 4 rows show; every row is a D-pad stop, so focus scrolls the list (data-scroll: the
+              {/* DESIGN TV-11: 5 rows show (the round history lives in the pause menu); every row is a D-pad stop, so focus scrolls the list (data-scroll: the
                   remote enters it on a visible row). The fade and chevron stay until the last row is in view. */}
-              <div class={`tvsb__bodywrap${ranked.length > 4 && !sbEnd ? " has-more" : ""}`}>
-                {ranked.length > 4 && !sbEnd && <span class="tvsb__more" aria-hidden="true"><Icon name="chevron-down" size={20} /></span>}
+              <div class={`tvsb__bodywrap${ranked.length > SB_ROWS && !sbEnd ? " has-more" : ""}`}>
+                {ranked.length > SB_ROWS && !sbEnd && <span class="tvsb__more" aria-hidden="true"><Icon name="chevron-down" size={20} /></span>}
                 <div class="tvsb__body" data-scroll onScroll={(e) => { const b = e.currentTarget; setSbEnd(b.scrollTop + b.clientHeight >= b.scrollHeight - 2); }}>
                 {ranked.map((p, i) => {
                   const pts = r.pointsAwarded[p.id] ?? 0;
@@ -146,19 +187,6 @@ export function TvResults({ view }: { view: TvView }) {
                 </div>
               </div>
             </div>
-            <ol class="tvhistory" aria-label={t("history.title")}>
-              {view.history.map((h, i) => {
-                const hp = byId(view, h.eliminatedId);
-                return (
-                  <li key={i} class="tvhistory__item">
-                    <span class="tvhistory__round tnum">{t("round.short", { count: h.round })}</span>
-                    {hp ? <Avatar color={hp.color} size={32} state="out" /> : null}
-                    {h.role && <RoleEmblem role={h.role} size={24} />}
-                    <Icon name={CAUSE_ICON[h.cause] ?? "x"} size={24} />
-                  </li>
-                );
-              })}
-            </ol>
           </>
         )}
       </div>

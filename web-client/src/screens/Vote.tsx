@@ -10,6 +10,7 @@ import { PeekButton } from "../components/HoldToReveal";
 import { Button, Heading, Slot } from "../components/UI";
 import { Icon } from "../components/Icon";
 import { byId } from "../lib/view";
+import { revoteLine } from "../lib/gameText";
 import { phaseLine } from "./Clues";
 
 export function Vote({ view, me }: { view: PlayerView; me: Me }) {
@@ -62,15 +63,16 @@ export function Vote({ view, me }: { view: PlayerView; me: Me }) {
     <>
       <main class="screen screen--vote">
         <div class="eyebrow-row"><p class="eyebrow">{phaseLine(view)}</p><TimerBar deadline={view.deadline} class="timerbar--inline" /></div>
-        <Heading title={t("vote.pick")} sub={t("vote.pickSub")} />
-        {view.revote && <p class="banner banner--accent"><Icon name="users" size={20} />{t("vote.revoteAmong")}</p>}
+        {/* The brand's question, the same as on the TV ("lying" assumes the voter knows they are honest). */}
+        <Heading title={t("vote.title")} sub={t("vote.pickSub")} />
+        {view.revote && <p class="banner banner--accent"><Icon name="users" size={20} />{revoteLine(view)}</p>}
         {timeUp && <p class="banner banner--danger" role="alert">{t("vote.timeUp")}</p>}
-        <div class="votelist" role="radiogroup" aria-label={t("vote.pick")}>
+        <div class="votelist" role="radiogroup" aria-label={t("vote.title")}>
           {candidates.map((p) => {
             const on = sel === p.id;
             return (
               <button key={p.id} type="button" role="radio" aria-checked={on} class={`voterow${on ? " is-selected" : ""}`}
-                aria-label={playerLabel(p)} onClick={() => setSel(p.id)}>
+                aria-label={playerLabel(p)} onClick={() => { if (sel !== p.id) haptic(HAPTIC.tick); setSel(p.id); }}>
                 <Avatar color={p.color} size={56} state={avatarState(p)} />
                 <bdi class="voterow__name">{p.name}</bdi>
                 <span class="voterow__radio" aria-hidden="true">{on && <Icon name="check" size={18} />}</span>
@@ -85,7 +87,7 @@ export function Vote({ view, me }: { view: PlayerView; me: Me }) {
           if (act({ type: "CAST_VOTE", targetId: target.id })) haptic(HAPTIC.voteLocked);
         }}>
           {/* One inline run: as separate flex items the template's space and the button gap would double up. */}
-          {target ? <span><Slot k="vote.confirm" slot="name"><bdi>{target.name}</bdi></Slot></span> : t("vote.pickSub")}
+          {target ? <span><Slot k="vote.confirm" slot="name"><bdi>{target.name}</bdi></Slot></span> : t("vote.pickFirst")}
         </Button>
       </footer>
     </>

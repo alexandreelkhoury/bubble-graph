@@ -41,6 +41,9 @@ export function chipRate(tally: number): number {
   return semitones(PENTATONIC[Math.min(PENTATONIC.length - 1, 4 + Math.max(1, tally))]!);
 }
 
+/** A stamp (`--ease-overshoot`, 400 ms) first reaches its size ≈ 150 ms in: the thud plays then, not on mount. */
+export const STAMP_LAND_MS = 150;
+
 export const ROLE_STING: Record<Role, CueId> = { CIVILIAN: "sting.civilian", UNDERCOVER: "sting.mole", BLANK: "sting.blank" };
 
 const CLUE_PHASES = new Set(["CLUES", "TIE_BREAK"]);
@@ -70,7 +73,7 @@ export function viewCues(prev: TvView | null, next: TvView): CuePlay[] {
 
   const speakerChanged = next.currentSpeakerId !== null && (next.currentSpeakerId !== prev.currentSpeakerId || next.phase !== prev.phase || next.round !== prev.round);
   if (prev.phase === "ROLE_REVEAL" && next.phase === "CLUES") out.push({ cue: "sfx.allReady" });
-  if (prev.phase === "VOTING" && next.phase === "TIE_BREAK") out.push({ cue: "sfx.stamp" });
+  if (prev.phase === "VOTING" && next.phase === "TIE_BREAK") out.push({ cue: "sfx.stamp", delayMs: STAMP_LAND_MS });
   if (CLUE_PHASES.has(next.phase) && speakerChanged) {
     const delayMs = prev.phase === "ROLE_REVEAL" || prev.phase === "VOTING" ? 550 : 0;
     out.push({ cue: "sfx.turn", rate: turnRate(next.speakingOrder.indexOf(next.currentSpeakerId!)), delayMs });

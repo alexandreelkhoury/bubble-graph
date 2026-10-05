@@ -101,23 +101,54 @@ const box = (p: Page, sel: string): Promise<Box | null> => p.evaluate((s) => {
 }, sel);
 const overlap = (a: Box, b: Box): boolean => a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1;
 
-/** §4.4 "fits without scrolling": nothing in the Store reaches past the 540 dp canvas, and the card sits above the packs. */
+/**
+ * §4.4 "fits without scrolling": nothing in the Store reaches past the 540 dp canvas (down or sideways), no element's
+ * content is wider than its box (a cut word, a badge under the next button, a wrapped footer button), and the card
+ * sits above the packs. Exempt: the packs row itself (it scrolls by design; its cards are checked one by one) and a
+ * text that ellipsizes on purpose (`text-overflow: ellipsis`, e.g. a long pack title or "Confirming…").
+ */
 async function expectStoreFits(tv: Page, what: string): Promise<void> {
   const r = await tv.evaluate(() => {
     const canvas = document.querySelector(".tv__canvas")!.getBoundingClientRect();
     const shop = document.querySelector(".tvshop")!;
+    const name = (e: Element): string => `${e.tagName.toLowerCase()}.${e.className.toString().trim().replace(/\s+/g, ".")}${e.getAttribute("data-focus") ? `[${e.getAttribute("data-focus")}]` : ""}`;
     let lowest = 0;
     let who = "";
+    const wide: string[] = [];
+    const out: string[] = [];
     for (const e of shop.querySelectorAll("*")) {
       const b = e.getBoundingClientRect();
       if (b.height > 0 && b.bottom > lowest) { lowest = b.bottom; who = e.className.toString(); }
+      if (!(e instanceof HTMLElement) || b.width === 0) continue;
+      const cs = getComputedStyle(e);
+      // The packs row bleeds 6 dp each side for the focus ring: it and its ancestors are measured by the canvas check.
+      const scroller = e.hasAttribute("data-scroll") || e.querySelector("[data-scroll]") !== null;
+      const inRow = e.parentElement?.closest("[data-scroll]") !== null && e.parentElement?.closest("[data-scroll]") !== undefined;
+      // Unscaled layout box vs content: a focused control's scale transform does not count.
+      if (!scroller && cs.textOverflow !== "ellipsis" && e.clientWidth > 0 && e.scrollWidth > e.clientWidth + 1) {
+        wide.push(`${name(e)} ${e.scrollWidth}>${e.clientWidth}`);
+      }
+      if (!inRow && (b.left < canvas.left - 0.5 || b.right > canvas.right + 0.5)) out.push(name(e));
+    }
+    // The pack cards: every child stays inside its card (a chip cut mid-word is a fail).
+    for (const card of shop.querySelectorAll<HTMLElement>(".tvshop__pack")) {
+      const cb = card.getBoundingClientRect();
+      for (const c of card.querySelectorAll<HTMLElement>("*")) {
+        const b = c.getBoundingClientRect();
+        if (b.width === 0 || getComputedStyle(c).textOverflow === "ellipsis") continue;
+        if (b.left < cb.left - 0.5 || b.right > cb.right + 0.5 || b.bottom > cb.bottom + 0.5 || (c.clientWidth > 0 && c.scrollWidth > c.clientWidth + 1)) {
+          wide.push(`${name(c)} in ${card.getAttribute("data-pack")}`);
+        }
+      }
     }
     const card = document.querySelector(".tvshop__card")!.getBoundingClientRect();
     const packs = document.querySelector(".tvshop__packs")!.getBoundingClientRect();
-    return { canvasBottom: canvas.bottom, lowest, who, cardBottom: card.bottom, packsTop: packs.top };
+    return { canvasBottom: canvas.bottom, lowest, who, cardBottom: card.bottom, packsTop: packs.top, wide, out };
   });
   expect(r.lowest, `${what}: ${r.who} ends below the canvas`).toBeLessThanOrEqual(r.canvasBottom + 0.5);
   expect(r.cardBottom, `${what}: the Premium card runs into the packs row`).toBeLessThanOrEqual(r.packsTop + 0.5);
+  expect(r.wide, `${what}: content wider than its box`).toEqual([]);
+  expect(r.out, `${what}: past the canvas sideways`).toEqual([]);
 }
 
 /** A visible toast covers neither a pack card nor a footer control (DESIGN: never over the focused element). */
@@ -149,6 +180,7 @@ for (const lang of ["en", "fr", "ar"] as const) {
     const inFoot = (): Promise<boolean> => tv.evaluate(() => !!document.activeElement?.closest(".tvshop__foot"));
     for (let i = 0; i < 4 && !(await inFoot()); i++) { await tv.keyboard.press("ArrowDown"); await tv.waitForTimeout(120); }
     expect(await inFoot(), `${lang}: Down reaches the footer`).toBe(true);
+    expect(await focusId(tv), `${lang}: Down from the packs row lands on Restore`).toBe("restore");
     const fwd = lang === "ar" ? "ArrowLeft" : "ArrowRight";
     const back = lang === "ar" ? "ArrowRight" : "ArrowLeft";
     for (let i = 0; i < 3; i++) { await tv.keyboard.press(back); await tv.waitForTimeout(120); }
@@ -158,6 +190,22 @@ for (const lang of ["en", "fr", "ar"] as const) {
     expect(path, `${lang} footer path`).toEqual(["expire", "refund", "refund", "refund"]);
     await tv.keyboard.press("Escape");
     await expect(tv.locator(".tvshop")).toHaveCount(0);
+    await ctx.close();
+  });
+}
+
+for (const lang of ["en", "fr", "ar"] as const) {
+  test(`${lang}: Premium active — every pack card says "Included" in full, nothing overflows`, async ({ browser }) => {
+    const { ctx, tv } = await tvPage(browser, lang);
+    await mockBilling(tv);
+    await openLobby(tv);
+    await openStore(tv, lang);
+    await tv.keyboard.press("Enter"); // yearly
+    await expect(tv.locator(".tvshop__active")).toBeVisible();
+    const chips = tv.locator(".tvshop__pack .tvshop__chip");
+    await expect(chips.first()).toHaveText(text("store.included", lang));
+    expect(await chips.count()).toBe(CATALOG.packs.length);
+    await expectStoreFits(tv, `${lang} premium active`);
     await ctx.close();
   });
 }

@@ -34,7 +34,9 @@ export function Elimination({ view, me }: { view: PlayerView; me: Me | null }) {
   const lv = view.lastVote;
   const out = byId(view, view.eliminated?.playerId);
   const isMe = me !== null && out?.id === me.id;
-  if (headStart && !isMe) {
+  const lastChance = isMe && view.eliminated?.role === "BLANK" && view.settings.blankGuess;
+  // The voted-out player looks at the TV too: their own "You're out" must not land before the TV's OUT stamp.
+  if (headStart && !lastChance) {
     return (
       <main class="screen screen--looktv">
         <p class="eyebrow">{phaseLine(view)}</p>
@@ -47,7 +49,6 @@ export function Elimination({ view, me }: { view: PlayerView; me: Me | null }) {
     );
   }
   const maxVotes = Math.max(1, ...(lv?.tally.map((x) => x.voterIds.length) ?? [1]));
-  const lastChance = isMe && view.eliminated?.role === "BLANK" && view.settings.blankGuess;
   return (
     <main class="screen screen--elim">
       <p class="eyebrow">{phaseLine(view)}</p>

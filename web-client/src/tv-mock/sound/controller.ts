@@ -1,15 +1,18 @@
 // Wires the pure cue rules to the TV mock: view broadcasts, the running deadline, local reveal timelines and the
 // remote's own feedback (focus move, OK, Back).
 import { useEffect, useRef } from "preact/hooks";
+import { effect } from "@preact/signals";
 import type { RefObject } from "preact";
 import type { TvView } from "@mishana/shared/protocol";
 import { remainingMs } from "../../lib/countdown";
 import { clockOffset } from "../../state/store";
+import { now } from "../../components/Timer";
 import { deadlineCue, RateLimiter, timelineCues, viewCues } from "./cues";
 import type { CueId, TimelineMark } from "./cues";
 import { play, playAll, stopAll, unlockAudio } from "./player";
 
-let ticker: ReturnType<typeof setInterval> | null = null;
+/** The countdown ticks ride the same 5 Hz clock as the digits they belong to (TimerRing, the bar): one clock, in sync. */
+let ticker: (() => void) | null = null;
 let current: TvView | null = null;
 let lastRemaining: { at: number; ms: number } | null = null;
 
@@ -17,13 +20,13 @@ let lastRemaining: { at: number; ms: number } | null = null;
 export function soundOnView(prev: TvView | null, next: TvView): void {
   current = next;
   playAll(viewCues(prev, next));
-  if (!ticker) ticker = setInterval(tickDeadline, 100);
+  ticker ??= effect(() => tickDeadline(now.value));
 }
 
-function tickDeadline(): void {
+function tickDeadline(at: number): void {
   const d = current?.deadline;
   if (!d) { lastRemaining = null; return; }
-  const ms = remainingMs(d.at, Date.now(), clockOffset.value);
+  const ms = remainingMs(d.at, at, clockOffset.value);
   const prev = lastRemaining?.at === d.at ? lastRemaining.ms : null;
   lastRemaining = { at: d.at, ms };
   const cue = deadlineCue(d.kind, prev, ms);
@@ -31,7 +34,7 @@ function tickDeadline(): void {
 }
 
 export function soundReset(): void {
-  if (ticker) clearInterval(ticker);
+  ticker?.();
   ticker = null;
   current = null;
   lastRemaining = null;

@@ -3,7 +3,7 @@
 import "./tv.css";
 import { useEffect, useRef, useState } from "preact/hooks";
 import type { TvView } from "@mishana/shared/protocol";
-import { dirOf, locale } from "../i18n/t";
+import { dirOf, locale, t } from "../i18n/t";
 import { toasts } from "../state/store";
 import { tvCreateRoom, tvExit, tvLangOpen, tvPaused, tvScale, tvScreen, tvShop, tvStop, tvUi, tvView } from "./tvStore";
 import { TvShop } from "./tvShop";
@@ -14,7 +14,7 @@ import { TvSettings } from "./tvSettings";
 import { TvClues, TvRoleReveal, TvVoting } from "./tvGame";
 import { TvElimination } from "./tvElimination";
 import { TvGuess, TvResults } from "./tvResults";
-import { closeTopOverlay, LanguagePicker, openPause, PauseMenu, TvDialog, tvDialog } from "./tvDialogs";
+import { closeTopOverlay, LanguagePicker, openDialog, openPause, PauseMenu, TvDialog, tvDialog } from "./tvDialogs";
 import { Closed, ConnStates, Fatal, PhonesAsleep, Splash, usePresenceToasts } from "./tvStatus";
 import { isBackKey, useDpad } from "./dpad";
 import { useRemoteSounds } from "./sound/controller";
@@ -51,6 +51,21 @@ function Screen({ view }: { view: TvView }) {
   }
 }
 
+/** B3: F toggles full screen on the browser TV (a laptop host otherwise plays in a tab with the browser chrome). */
+function useFullscreenKey(): void {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      if ((e.key !== "f" && e.key !== "F") || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+      if ((e.target as HTMLElement | null)?.tagName === "INPUT") return;
+      const doc = document;
+      if (doc.fullscreenElement) void doc.exitFullscreen?.().catch(() => undefined);
+      else void doc.documentElement.requestFullscreen?.().catch(() => undefined);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+}
+
 export function TvMock() {
   const box = useCanvasBox();
   const canvas = useRef<HTMLDivElement>(null);
@@ -70,14 +85,20 @@ export function TvMock() {
   // Settings that come from PLAY_AGAIN → "Change settings" open only once the lobby arrives.
   useEffect(() => { if (view && view.phase !== "LOBBY" && view.phase !== "RESULTS" && tvScreen.value === "settings") tvScreen.value = "main"; }, [view?.phase]);
   // Back: close the innermost overlay; in a game (or on Results) open the pause menu; in the lobby exit the app
-  // (DESIGN TV-02, no confirm). TV-03 Settings handles its own Back first.
+  // (DESIGN TV-02). On a laptop Esc and Backspace are reflexes, so once someone has joined the browser TV asks first,
+  // with "Keep room" focused (closing kills every phone's room). TV-03 Settings handles its own Back first.
   useDpad(canvas, () => {
     if (closeTopOverlay()) return;
     const v = tvView.value;
     if (!v || tvUi.value.kind !== "room") return;
     if (v.phase !== "LOBBY") openPause();
-    else if (tvScreen.value === "main") tvExit();
+    else if (tvScreen.value === "main") {
+      if (v.players.some((p) => !p.left)) {
+        openDialog({ title: t("tv.closeRoomConfirm"), body: t("tv.closeRoomBody"), confirm: t("common.close"), safe: t("tv.keepRoom"), danger: true, onConfirm: tvExit });
+      } else tvExit();
+    }
   });
+  useFullscreenKey();
   const l = locale.value;
   let content;
   if (ui.kind === "creating" || ui.kind === "failed") content = <Splash failed={ui.kind === "failed" ? ui.error : null} />;

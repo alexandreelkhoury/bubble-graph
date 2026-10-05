@@ -3,6 +3,8 @@ import { useState } from "preact/hooks";
 import { MAX_PLAYERS } from "@mishana/shared/constants";
 import type { PlayerView, PublicPlayer } from "@mishana/shared/protocol";
 import { fmtNum, isolate, locale, LOCALE_NATIVE_NAME, t } from "../i18n/t";
+import type { MessageKey } from "../i18n/t";
+import { RoleEmblem } from "../components/Role";
 import { blockerText, packsLine, roleSummaryText } from "../lib/lobby";
 import { act } from "../state/session";
 import { tvBusyHint } from "../lib/premium";
@@ -12,6 +14,10 @@ import { Avatar, avatarState, playerLabel } from "../components/PlayerChip";
 import { Button, ConfirmSheet, Heading } from "../components/UI";
 import { Icon } from "../components/Icon";
 import { SettingsSheet } from "./Settings";
+import { createArrivals, isFresh, noteArrivals } from "../lib/arrivals";
+
+/** B15: only a player who just joined drops in (a remount after Play again or a reload animates nothing). */
+const rows = createArrivals();
 import type { SettingsSection } from "./Settings";
 
 /** The two lines of the lobby settings card: packs · word language / roles · clue timer. */
@@ -24,6 +30,31 @@ export function settingsSummary(view: PlayerView): [string, string] {
   ];
 }
 
+const HOWTO: { key: MessageKey; icon: string | null }[] = [
+  { key: "howto.step1", icon: "eye-off" }, { key: "howto.step2", icon: "speech" },
+  { key: "howto.step3", icon: "vote" }, { key: "howto.step4", icon: null },
+];
+
+/**
+ * The rules, in the one moment the whole group is idle and looking down (DESIGN TV-15 copy). Open before the first
+ * game, folded into a "How to play" disclosure from game 2 on.
+ */
+function HowTo({ open }: { open: boolean }) {
+  return (
+    <details class="card howto" open={open}>
+      <summary class="howto__title"><span>{t("howto.title")}</span><Icon name="chevron-forward" size={20} class="howto__chev" /></summary>
+      <ol class="howto__list">
+        {HOWTO.map((s, i) => (
+          <li key={s.key} class="howto__step">
+            <span class="howto__icon" aria-hidden="true">{s.icon ? <Icon name={s.icon} size={20} /> : <RoleEmblem role="BLANK" size={20} />}</span>
+            <span class="howto__text"><span class="sr-only">{fmtNum(i + 1)}. </span>{t(s.key)}</span>
+          </li>
+        ))}
+      </ol>
+    </details>
+  );
+}
+
 export function Lobby({ view }: { view: PlayerView }) {
   const myId = view.me?.id ?? "";
   const isVip = view.hostPlayerId === myId;
@@ -32,6 +63,8 @@ export function Lobby({ view }: { view: PlayerView }) {
   const [line1, line2] = settingsSummary(view);
   const blocker = blockerText(view);
   const players = view.players;
+  const now = Date.now();
+  noteArrivals(rows, view.roomCode, view.gameNumber, players.map((p) => p.id), now);
   const host = players.find((p) => p.isHost);
   // After "Play again" the running totals stay visible (the TV shows them on Results).
   const topScore = Math.max(0, ...players.map((p) => p.score));
@@ -73,7 +106,7 @@ export function Lobby({ view }: { view: PlayerView }) {
                 </>
               );
               return (
-                <li key={p.id} class={`plist__item join-pop${you ? " is-you" : ""}`}>
+                <li key={p.id} class={`plist__item${isFresh(rows, p.id, now) ? " join-pop" : ""}${you ? " is-you" : ""}`}>
                   {isVip && !you ? (
                     <button type="button" class="plist__row plist__row--btn" aria-label={`${playerLabel(p)}. ${t("lobby.kick")}`} onClick={() => setKick(p)}>
                       {content}<Icon name="x" size={18} class="plist__kick" />
@@ -103,6 +136,7 @@ export function Lobby({ view }: { view: PlayerView }) {
             <p>{line2}</p>
           </section>
         )}
+        <HowTo open={view.gameNumber === 0} />
         {(!wakeLockSupported() || wakeLockDenied.value) && <p class="hint hint--tip"><Icon name="phone" size={18} />{t("phone.keepScreenOn")}</p>}
       </main>
       <footer class="actionbar">

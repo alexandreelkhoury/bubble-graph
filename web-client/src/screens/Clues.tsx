@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import type { Me, PlayerView, PublicPlayer } from "@mishana/shared/protocol";
 import { t } from "../i18n/t";
 import { act } from "../state/session";
+import { HAPTIC, haptic } from "../lib/haptics";
 import { PHASE_KEY } from "../lib/keys";
 import { byId, playersOf, tiedWithTally } from "../lib/view";
 import { Avatar, avatarState, colorVars, LIGHT_GLYPH } from "../components/PlayerChip";
@@ -163,11 +164,12 @@ function YourTurn({ view, me, color }: { view: PlayerView; me: Me; color: Public
       <div class="flood__inner">
         <p class="eyebrow">{phaseLine(view)}</p>
         <h1 class="display" tabIndex={-1}>{t("clues.yourTurn")}</h1>
-        <p class="flood__body">{t("clues.yourTurnBody")}</p>
+        {/* In a tie-break the speaker is one of the tied: the clue that may save them. */}
+        <p class="flood__body">{t(view.phase === "TIE_BREAK" && view.tieCandidates.includes(me.id) ? "tie.yourTurn" : "clues.yourTurnBody")}</p>
         {me.role && <RoleChip role={me.role} />}
         {view.deadline ? <TimerBar deadline={view.deadline} class="timerbar--on-color" /> : <p class="flood__body">{t("clues.noTimer")}</p>}
         <button type="button" class={`donebtn${armed ? " is-armed" : ""}`} aria-disabled={!armed}
-          onClick={() => { if (armed) act({ type: "CLUE_DONE" }); }}>
+          onClick={() => { if (armed && act({ type: "CLUE_DONE" })) haptic(HAPTIC.voteLocked); }}>
           <span class="donebtn__fill" aria-hidden="true" />
           <span class="donebtn__label">{t("clues.done")}</span>
         </button>

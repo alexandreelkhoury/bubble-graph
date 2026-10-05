@@ -96,6 +96,16 @@ export function isolate(s: string): string {
   return "\u2068" + s + "\u2069";
 }
 
+/** "Ben and Eli" / "Ben or Eli" in the current locale (names bidi-isolated). */
+export function listOf(names: readonly string[], type: "conjunction" | "disjunction" = "conjunction"): string {
+  const parts = names.map(isolate);
+  try {
+    return new Intl.ListFormat(locale.value, { type }).format(parts);
+  } catch {
+    return parts.join(", ");
+  }
+}
+
 /** Wraps always-LTR text (a URL, a room code) in LRI…PDI. */
 export function isolateLtr(s: string): string {
   return "\u2066" + s + "\u2069";

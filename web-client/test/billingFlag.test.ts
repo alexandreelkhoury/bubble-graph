@@ -38,19 +38,6 @@ describe("billing flag", () => {
   });
 });
 
-describe("production hotfix default (server has no /api/config)", () => {
-  it("loadBillingFlag() with no fetchFn stays off and makes no request", async () => {
-    const spy = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response(JSON.stringify({ billing: true }), { status: 200 }));
-    try {
-      await expect(loadBillingFlag()).resolves.toBe(false);
-      expect(billingEnabled.value).toBe(false);
-      expect(spy).not.toHaveBeenCalled();
-    } finally {
-      spy.mockRestore();
-    }
-  });
-});
-
 describe("TV mock boot with billing off", () => {
   it("bootBilling makes no request at all", async () => {
     const spy = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response("{}", { status: 500 }));

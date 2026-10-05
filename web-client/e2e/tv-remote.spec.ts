@@ -153,6 +153,11 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   expect(await focused(tv, ".setrowtv")).toBe(true);
   await press(tv, "Escape", "rows → categories", 300);
   expect(await focused(tv, ".tvcat")).toBe(true);
+  // TV-03 About (PAYMENTS-SPEC §3.12): the last category shows the install id; nothing in it takes focus.
+  await reach(tv, ".tvcat[data-cat=about]", ["ArrowDown"]);
+  await expect(tv.locator("[data-install-id]")).toHaveText(/^([0-9a-f]{4} ){7}[0-9a-f]{4}$/);
+  await press(tv, fwd, "About has no rows", 200);
+  expect(await focused(tv, ".tvcat[data-cat=about]")).toBe(true);
   await press(tv, "Escape", "settings → lobby", 450);
   await expect(tv.locator(".tvlobby")).toBeVisible();
 
@@ -210,7 +215,7 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   await expect(tv.locator(".tvresults")).toBeVisible();
 
   // TV-11: stage 1 already has Play again focused; OK only skips to stage 2. Up reaches the scoreboard rows, Down
-  // scrolls them (5 players, 4 rows show), and walks back out to the actions.
+  // walks them (5 rows show; more scroll), and walks back out to the actions.
   await expectFocusOk(tv, "results stage 1");
   expect(await focused(tv, ".tvbottom--results .tvbtn--primary")).toBe(true);
   await press(tv, "Enter", "stage 2", 600);
@@ -218,8 +223,8 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   await expect(tv.locator(".tvlobby")).toHaveCount(0);
   await press(tv, "ArrowUp", "into the scoreboard");
   expect(await focused(tv, ".tvsb__row")).toBe(true);
-  await reach(tv, ".tvsb__row:last-child", ["ArrowDown"], 4);
-  expect(await tv.locator(".tvsb__body").evaluate((b) => b.scrollTop)).toBeGreaterThan(0);
+  await reach(tv, ".tvsb__row:last-child", ["ArrowDown"], 6);
+  if ((await tv.locator(".tvsb__body .tvsb__row").count()) > 5) expect(await tv.locator(".tvsb__body").evaluate((b) => b.scrollTop)).toBeGreaterThan(0);
   await press(tv, "ArrowDown", "out of the scoreboard");
   expect(await focused(tv, ".tvbottom--results .tvbtn")).toBe(true);
   await reach(tv, ".tvbottom--results .tvbtn--primary", [bwd, fwd], 3);
@@ -227,8 +232,17 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   await expect(tv.locator(".tvlobby")).toBeVisible();
   await expectFocusOk(tv, "lobby after play again");
 
-  // Back in the lobby exits (DESIGN TV-02): a remote-friendly splash whose focused button opens a new room.
-  await press(tv, "Escape", "exit", 400);
+  // Back in the lobby exits (DESIGN TV-02), but with players in the room the browser TV asks first, "Keep room"
+  // focused: Back keeps the room, Close exits to a remote-friendly splash whose focused button opens a new room.
+  await press(tv, "Escape", "close room?", 400);
+  await expect(tv.locator(".tvdialog")).toBeVisible();
+  expect(await focused(tv, ".tvdialog__actions .tvbtn:not(.tvbtn--danger)")).toBe(true);
+  await press(tv, "Escape", "keep room", 400);
+  await expect(tv.locator(".tvdialog")).toHaveCount(0);
+  await expect(tv.locator(".tvlobby")).toBeVisible();
+  await press(tv, "Escape", "close room?", 400);
+  await reach(tv, ".tvdialog__actions .tvbtn--danger", [fwd], 2);
+  await press(tv, "Enter", "exit", 400);
   await expect(tv.locator(".tvfatal")).toBeVisible();
   await press(tv, "Enter", "open again", 400);
   await expect(tv.locator(".tvlobby .tvcode--big")).toBeVisible({ timeout: 30_000 });

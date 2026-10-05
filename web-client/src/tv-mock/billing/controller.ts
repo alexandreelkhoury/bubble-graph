@@ -39,6 +39,14 @@ const INSTALL_ID_RE = /^[0-9a-f]{32}$/;
 export const STORE_OPEN_RESEND_MS = 4 * 60_000;
 /** §4.4: a purchase button shows "Confirming…" for at most 15 s, then `store.verifyFailed`. */
 export const CONFIRM_SLOW_MS = 15_000;
+/**
+ * PAY-GAP: the server's RATE_LIMITED error frame carries `ref: null`, so a billing frame it dropped is recognised by
+ * time: a RATE_LIMITED that arrives within this window after an `entitlement` / `storeOpen` send is ours.
+ */
+export const BILLING_ERROR_WINDOW_MS = 3_000;
+/** A dropped billing frame is re-sent after this backoff (doubling per attempt, capped), never sooner than 10 s. */
+export const BILLING_RESEND_MS = 15_000;
+const BILLING_RESEND_MAX_MS = 60_000;
 
 /** A purchase the mock remembers, standing in for `queryPurchasesAsync` (§4.8 queryOwned). */
 export interface OwnedPurchase { productId: string; purchaseToken: string; state: "PURCHASED" | "PENDING" }
@@ -93,6 +101,14 @@ export class BillingController {
   private link: BillingRoomLink | null = null;
   private pendingToken: string | null = null;
   private busySent: boolean | null = null;
+  /** An `open:true` reached the socket and no `open:false` followed (on this room); a reconnect must then clear it. */
+  private busyTrueOutstanding = false;
+  /** The last token handed to the socket, re-sent when the server rate-limited it. */
+  private lastSentToken: string | null = null;
+  private lastBillingSendAt = -Infinity;
+  private wsResendTimer: unknown = null;
+  private wsResendAttempt = 0;
+  private lastRateLimitedAt = -Infinity;
   private resendTimer: unknown = null;
   private refreshTimer: unknown = null;
   private retryTimer: unknown = null;
@@ -205,7 +221,47 @@ export class BillingController {
   private sendEntitlement(token: string): void {
     if (!this.link) return;
     const msg: EntitlementMsg = { v: PROTOCOL_VERSION, t: "entitlement", token };
-    this.pendingToken = this.link.send(msg) ? null : token;
+    const ok = this.sendBilling(msg);
+    this.pendingToken = ok ? null : token;
+    if (ok) this.lastSentToken = token;
+  }
+
+  private sendBilling(msg: EntitlementMsg | StoreOpenMsg): boolean {
+    if (!this.link) return false;
+    const ok = this.link.send(msg);
+    if (ok) this.lastBillingSendAt = this.d.now();
+    return ok;
+  }
+
+  /**
+   * The TV socket got a RATE_LIMITED error. When it follows a billing send (BILLING_ERROR_WINDOW_MS), the server may
+   * have dropped our `entitlement` or `storeOpen`: keep the last token and the busy flag and send them again after a
+   * backoff. Returns true when the error was ours, so the caller shows no toast (a background message the user never
+   * asked for).
+   */
+  wsRateLimited(): boolean {
+    const now = this.d.now();
+    if (!this.link || now - this.lastBillingSendAt > BILLING_ERROR_WINDOW_MS) return false;
+    if (now - this.lastRateLimitedAt > BILLING_RESEND_MAX_MS * 2) this.wsResendAttempt = 0; // a fresh episode
+    this.lastRateLimitedAt = now;
+    if (this.wsResendTimer === null) {
+      const ms = Math.min(BILLING_RESEND_MS * 2 ** this.wsResendAttempt++, BILLING_RESEND_MAX_MS);
+      this.wsResendTimer = this.d.setTimeout(() => {
+        this.wsResendTimer = null;
+        if (!this.link) return;
+        const token = this.ent.value?.token ?? this.lastSentToken;
+        if (token !== null && token !== undefined) this.sendEntitlement(token);
+        this.busySent = null;
+        this.updateBusy();
+      }, ms);
+    }
+    return true;
+  }
+
+  private stopWsResend(): void {
+    if (this.wsResendTimer !== null) this.d.clearTimeout(this.wsResendTimer);
+    this.wsResendTimer = null;
+    this.wsResendAttempt = 0;
   }
 
   private async verify(purchases: readonly OwnedPurchase[]): Promise<HttpResult<VerifyResponseBody>> {
@@ -285,10 +341,14 @@ export class BillingController {
     this.inflight.value = key;
     this.confirmSlow.value = false;
     this.updateBusy();
+    // The 15 s notice and a later verify failure say the same sentence: show it once per purchase.
+    let slowShown = false;
+    const verifyFailed = (): void => { if (!slowShown) this.notify({ key: "store.verifyFailed", tone: "info" }); };
     const slow = this.d.setTimeout(() => {
       if (this.inflight.value === key) {
         this.confirmSlow.value = true;
         this.notify({ key: "store.verifyFailed", tone: "info" });
+        slowShown = true;
       }
     }, CONFIRM_SLOW_MS);
     try {
@@ -308,14 +368,15 @@ export class BillingController {
       const all = this.purchases();
       const r = await this.verify(all);
       if (!r.ok) {
-        this.notify({ key: r.error === "RATE_LIMITED" ? "error.rateLimited" : "store.verifyFailed", tone: r.error === "RATE_LIMITED" ? "error" : "info" });
+        if (r.error !== "RATE_LIMITED") verifyFailed(); // `failed` shows error.rateLimited itself
         this.failed(r.error);
         return "UPSTREAM_ERROR";
       }
       this.applyResults(r.body.results);
       this.apply(r.body.entitlement, purchasesKey(all));
       const result = r.body.results.find((x) => x.productId === productId)?.result ?? "UPSTREAM_ERROR";
-      this.notifyResult(result);
+      if (result === "UPSTREAM_ERROR") verifyFailed();
+      else this.notifyResult(result);
       return result;
     } finally {
       this.d.clearTimeout(slow);
@@ -387,6 +448,9 @@ export class BillingController {
   attach(link: BillingRoomLink): void {
     this.link = link;
     this.busySent = null;
+    this.busyTrueOutstanding = false;
+    this.lastSentToken = null;
+    this.stopWsResend();
     this.scheduleRefresh();
   }
 
@@ -394,8 +458,11 @@ export class BillingController {
     this.link = null;
     this.pendingToken = null;
     this.busySent = null;
+    this.busyTrueOutstanding = false;
+    this.lastSentToken = null;
     this.storeVisible.value = false;
     this.stopResend();
+    this.stopWsResend();
     if (this.refreshTimer !== null) { this.d.clearTimeout(this.refreshTimer); this.refreshTimer = null; }
   }
 
@@ -429,15 +496,18 @@ export class BillingController {
   private updateBusy(): void {
     const busy = this.busy;
     if (!this.link) return;
+    // Nothing to clear: `open:false` only when an `open:true` may still stand on the server (budget, §3.9).
+    if (!busy && this.busySent === null && !this.busyTrueOutstanding) this.busySent = false;
     if (busy !== this.busySent) {
-      const ok = this.link.send({ v: PROTOCOL_VERSION, t: "storeOpen", open: busy });
+      const ok = this.sendBilling({ v: PROTOCOL_VERSION, t: "storeOpen", open: busy });
       this.busySent = ok ? busy : null;
+      if (ok) this.busyTrueOutstanding = busy;
     }
     if (busy && this.resendTimer === null) {
       const tick = (): void => {
         this.resendTimer = null;
         if (!this.busy || !this.link) return;
-        this.link.send({ v: PROTOCOL_VERSION, t: "storeOpen", open: true });
+        this.sendBilling({ v: PROTOCOL_VERSION, t: "storeOpen", open: true });
         this.resendTimer = this.d.setTimeout(tick, STORE_OPEN_RESEND_MS);
       };
       this.resendTimer = this.d.setTimeout(tick, STORE_OPEN_RESEND_MS);

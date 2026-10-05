@@ -13,23 +13,31 @@ export const SHAPES: Record<string, string> = {
   circle: '<circle cx="12" cy="12" r="9"/>',
   square: '<rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/>',
   star: '<path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z" stroke-linejoin="round"/>',
-  triangle: '<path d="M12 3.2 21.4 19.8H2.6z" stroke-linejoin="round"/>',
+  // Triangle, drop and arch sit optically higher (their visual mass is low in a centred bbox).
+  triangle: '<path d="M12 2.4 21.4 19H2.6z" stroke-linejoin="round"/>',
   diamond: '<path d="M12 2.2 21.8 12 12 21.8 2.2 12z"/>',
   hexagon: '<path d="M12 2.6 20.2 7.3v9.4L12 21.4 3.8 16.7V7.3z"/>',
   plus: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',
-  drop: '<path d="M12 2.5S5 10.4 5 15a7 7 0 0 0 14 0c0-4.6-7-12.5-7-12.5z"/>',
+  drop: '<path d="M12 1.25S5 9.15 5 13.75a7 7 0 0 0 14 0c0-4.6-7-12.5-7-12.5z"/>',
   crescent: '<path d="M15 2.7a9.5 9.5 0 1 0 6.3 13.6A7.6 7.6 0 0 1 15 2.7z"/>',
   bolt: '<path d="M13.5 2 5 13.5h6L10 22l9-12h-6.2z"/>',
   flower: '<circle cx="12" cy="7.4" r="4.6"/><circle cx="16.6" cy="12" r="4.6"/><circle cx="12" cy="16.6" r="4.6"/><circle cx="7.4" cy="12" r="4.6"/><circle cx="12" cy="12" r="4"/>',
-  arch: '<path d="M5 21.5V11a7 7 0 0 1 14 0v10.5h-4.5V15a2.5 2.5 0 0 0-5 0v6.5z"/>',
+  arch: '<path d="M5 20.75V10.25a7 7 0 0 1 14 0v10.5h-4.5v-6.5a2.5 2.5 0 0 0-5 0v6.5z"/>',
 };
 
 export const COLOR_BY_ID = Object.fromEntries(COLORS.map((c) => [c.id, c])) as Record<ColorId, (typeof COLORS)[number]>;
 export const LIGHT_GLYPH = (id: ColorId): boolean => COLOR_BY_ID[id].glyph === "cream";
 
+/** DESIGN §2.3: on the palette-B surfaces coral, grape and plum fall under 3:1 (surface #3A2266 / elevated #4A2E7A),
+ *  so their tiles always carry a 24 % cream ring. On overlay (#5A3A8E: sheets, TV dialogs) every tile gets it (styles.css). */
+const RINGED: ReadonlySet<ColorId> = new Set(["coral", "grape", "plum"]);
+
 export function colorVars(id: ColorId): Record<string, string> {
   const c = COLOR_BY_ID[id];
-  return { "--avatar-color": c.hex, "--avatar-glyph": c.glyph === "ink" ? "var(--color-ink)" : "var(--color-text)" };
+  return {
+    "--avatar-color": c.hex, "--avatar-glyph": c.glyph === "ink" ? "var(--color-ink)" : "var(--color-text)",
+    "--avatar-ring": RINGED.has(id) ? "rgb(var(--rgb-text) / 0.24)" : "transparent",
+  };
 }
 
 export function Glyph({ color }: { color: ColorId }) {

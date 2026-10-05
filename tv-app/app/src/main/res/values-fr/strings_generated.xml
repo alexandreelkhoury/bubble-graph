@@ -52,6 +52,21 @@
     <string name="winner__civilians">Les Civils gagnent !</string>
     <string name="winner__infiltrators">Les Infiltrés gagnent !</string>
     <string name="winner__blank">Le Blanc gagne : %1$s !</string>
+    <plurals name="winner__moles">
+        <item quantity="one">La Taupe gagne !</item>
+        <item quantity="many">Les Taupes gagnent !</item>
+        <item quantity="other">Les Taupes gagnent !</item>
+    </plurals>
+    <plurals name="winner__moles_blank">
+        <item quantity="one">La Taupe et le Blanc gagnent !</item>
+        <item quantity="many">Les Taupes et le Blanc gagnent !</item>
+        <item quantity="other">Les Taupes et le Blanc gagnent !</item>
+    </plurals>
+    <plurals name="winner__moles_blanks">
+        <item quantity="one">La Taupe et les Blancs gagnent !</item>
+        <item quantity="many">Les Taupes et les Blancs gagnent !</item>
+        <item quantity="other">Les Taupes et les Blancs gagnent !</item>
+    </plurals>
     <string name="color__coral">Corail</string>
     <string name="color__azure">Azur</string>
     <string name="color__lemon">Citron</string>
@@ -102,6 +117,11 @@
     <string name="lobby__premium">Premium</string>
     <string name="lobby__premium_room">Partie Premium</string>
     <string name="lobby__premium_ended">Premium est terminé. Vos packs gratuits sont toujours là.</string>
+    <string name="howto__title">Comment jouer</string>
+    <string name="howto__step1">Chacun reçoit un mot secret, sauf…</string>
+    <string name="howto__step2">Un indice chacun, à voix haute.</string>
+    <string name="howto__step3">On vote pour éliminer l’intrus.</string>
+    <string name="howto__step4">Le Blanc a une dernière chance de deviner.</string>
     <string name="lobby__premium_ended_phone">Premium est terminé pour cette partie. Les packs gratuits marchent toujours.</string>
     <string name="lobby__words_repeating">Vous avez joué tous les mots gratuits. Plus de packs avec Premium.</string>
     <string name="settings__title">Réglages de la partie</string>
@@ -109,6 +129,10 @@
     <string name="settings__cat_roles">Rôles</string>
     <string name="settings__cat_timers">Chronos</string>
     <string name="settings__cat_words">Mots</string>
+    <string name="settings__cat_about">À propos</string>
+    <string name="settings__install_id">ID d’installation</string>
+    <string name="settings__install_id_help">Le support peut te demander cet identifiant pour débloquer tes achats sur cette télé.</string>
+    <string name="settings__app_version">Version</string>
     <string name="settings__win_rule">Règle de victoire</string>
     <string name="settings__win_rule_official">Officielle (1 Civil restant)</string>
     <string name="settings__win_rule_parity">Parité (autant que les Civils)</string>
@@ -163,9 +187,11 @@
     <string name="join__resuming">Retour à ta place…</string>
     <string name="join__locked">Une partie est en cours. Tu pourras rejoindre à la fin.</string>
     <string name="join__unlocked">Tu peux rejoindre !</string>
+    <string name="home__host_hint">Pas de code ? Lance la partie sur une télé ou un ordi :</string>
     <string name="reveal__your_word">Ton mot secret</string>
     <string name="reveal__hold_to_see">Maintiens appuyé pour voir ton mot</string>
     <string name="reveal__release">Relâche pour cacher</string>
+    <string name="reveal__twist">La plupart d’entre vous ont ce mot. Pas tous. Peut-être pas toi.</string>
     <string name="reveal__privacy">Vérifie que personne ne regarde.</string>
     <string name="reveal__first_time">C’est ton mot. Ne le montre à personne.</string>
     <string name="reveal__no_word">Pas de mot pour toi.</string>
@@ -182,7 +208,7 @@
     <string name="reveal__blank_hint">Le Blanc n’a pas de mot… et doit bluffer.</string>
     <string name="clues__rule">Un mot ou une courte phrase. Sans dire le mot !</string>
     <string name="clues__first_hint">Écoutez bien. Quelqu’un a un autre mot… ou pas de mot du tout.</string>
-    <string name="clues__speaking">L’indice de %1$s</string>
+    <string name="clues__speaking">%1$s, ton indice !</string>
     <string name="clues__speaker_sub">À voix haute, puis « Terminé »</string>
     <string name="clues__no_timer">Sans chrono : « Terminé » quand c’est fini</string>
     <string name="clues__now_speaking">La parole est à</string>
@@ -195,12 +221,14 @@
     <string name="clues__done">Terminé</string>
     <string name="clues__peek">Revoir mon mot</string>
     <string name="clues__peek_role">Revoir ma carte</string>
+    <string name="tie__your_turn">Tu es à égalité. Cet indice compte !</string>
     <string name="clues__skip_turn">Passer le tour</string>
     <string name="clues__skipped">%1$s n’est pas là, on passe</string>
     <string name="vote__title">Qui n’est pas des nôtres ?</string>
     <string name="vote__sub">Votez sur vos téléphones</string>
     <string name="vote__pick">Qui ment ?</string>
     <string name="vote__pick_sub">Choisis quelqu’un, puis valide.</string>
+    <string name="vote__pick_first">Choisis d’abord quelqu’un</string>
     <string name="vote__confirm">Valider mon vote : %1$s</string>
     <string name="vote__locked">Vote validé.</string>
     <string name="vote__act_natural">Fais comme si de rien n’était.</string>
@@ -211,6 +239,7 @@
     <string name="vote__look_tv">Regarde la télé !</string>
     <string name="vote__dead">Tu es hors jeu. Profite du spectacle !</string>
     <string name="vote__revote_among">Nouveau vote entre les ex æquo</string>
+    <string name="vote__revote_between">Nouveau vote : %1$s. Encore une égalité ? %2$s.</string>
     <string name="vote__close">Clore le vote</string>
     <string name="vote__votes_in">Les votes sont tombés…</string>
     <string name="vote__no_vote">Pas de vote</string>
@@ -220,6 +249,7 @@
     <string name="tie__title">Égalité !</string>
     <string name="tie__explain">Un indice de plus chacun, puis on revote, entre eux seulement.</string>
     <string name="tie__in_tie">Tu es à égalité : sors ton meilleur indice !</string>
+    <string name="tie__persist">%1$s sont à égalité. Un indice de plus chacun, puis on revote.</string>
     <string name="tie__vs">contre</string>
     <string name="elim__eliminated">Dehors, %1$s !</string>
     <string name="elim__was_civilian">%1$s : Civil</string>
@@ -237,6 +267,7 @@
         <item quantity="other">%1$d personnes n’ont pas voté</item>
     </plurals>
     <string name="elim__next_round">Prochain tour dans %1$d…</string>
+    <string name="elim__next_in">Suite dans %1$d</string>
     <string name="elim__you">Fin de partie pour toi</string>
     <string name="elim__you_were">Ton rôle : %1$s</string>
     <string name="elim__stay">Reste pour la suite. Sans souffler, hein !</string>
@@ -249,10 +280,12 @@
     <string name="guess__title">Le Blanc a droit à un essai</string>
     <string name="guess__guessing">%1$s cherche le mot des Civils…</string>
     <string name="guess__silence">On ne souffle pas !</string>
+    <string name="guess__say_aloud">%1$s : tape-le, puis dis-le à voix haute !</string>
     <string name="guess__waiting">%1$s est le Blanc et a un essai. Chut…</string>
     <string name="guess__prompt">Quel est le mot des Civils ?</string>
     <string name="guess__placeholder">Ta réponse</string>
     <string name="guess__spelling">Pas besoin d’une orthographe parfaite.</string>
+    <string name="guess__stakes">Si tu trouves, tu gagnes la partie.</string>
     <string name="guess__submit">C’est ma réponse</string>
     <string name="guess__sent">Envoyé ! Dis ta réponse à voix haute.</string>
     <string name="guess__correct">Le Blanc a trouvé !</string>
@@ -260,7 +293,7 @@
     <string name="guess__wrong">Raté ! La partie continue.</string>
     <string name="guess__wrong_you">Pas tout à fait. La partie continue.</string>
     <string name="guess__timeout">Temps écoulé ! Pas de réponse.</string>
-    <string name="guess__accept">On l’accepte !</string>
+    <string name="guess__accept">Valider : le Blanc gagne</string>
     <string name="guess__accept_confirm">Accepter la réponse de %1$s ? Le Blanc gagne.</string>
     <string name="guess__reject">Refusé</string>
     <string name="guess__reject_confirm">Refuser la réponse ? La partie continue.</string>
@@ -293,6 +326,7 @@
     <string name="conn__cant_reach">Impossible de joindre le serveur.</string>
     <string name="conn__player_away">%1$s a perdu la connexion. Sa place est gardée.</string>
     <string name="conn__phones_asleep">Les téléphones dorment ? Réveillez-les, la partie attend.</string>
+    <string name="conn__phones_asleep_timer">Les téléphones dorment ? Réveillez-les, sinon le minuteur décidera.</string>
     <string name="conn__seat_saved">Ta place est gardée.</string>
     <string name="conn__still_trying">On essaie encore… Vérifie ton Wi-Fi ou tes données.</string>
     <string name="conn__back">De retour !</string>
@@ -303,13 +337,16 @@
     <string name="tv__new_code">Nouveau code : %1$s</string>
     <string name="tv__start_now">Commencer</string>
     <string name="tv__press_again">Appuyez encore sur OK pour confirmer</string>
+    <string name="tv__press_again_web">Entrée ou clic encore pour confirmer</string>
     <string name="tv__skip_hint">Appuyez sur OK pour passer</string>
+    <string name="tv__skip_hint_web">Entrée ou clic pour passer</string>
+    <string name="tv__browser_tip">F = plein écran · flèches + Entrée, ou clic</string>
     <string name="tv__clues_sub">Dites-le à voix haute, puis terminez le tour sur votre téléphone</string>
     <string name="tv__clues_no_timer">Sans chrono : terminez le tour sur votre téléphone quand c’est fini</string>
     <string name="tv__back_to_categories">Retour : catégories</string>
     <string name="tv__pause_title">Menu de la partie</string>
-    <string name="tv__pause_note">La partie continue</string>
-    <string name="tv__resume">Reprendre</string>
+    <string name="tv__pause_note">Les minuteurs continuent</string>
+    <string name="tv__resume">Retour au jeu</string>
     <string name="tv__skip">Passer (tour / chrono)</string>
     <string name="tv__players">Joueurs…</string>
     <string name="tv__end_game">Terminer la partie</string>
@@ -323,6 +360,9 @@
     <string name="tv__back_to_lobby">Retour : salon</string>
     <string name="tv__app_closed">Mish Ana! est fermé</string>
     <string name="tv__open_again">Rouvrir</string>
+    <string name="tv__close_room_confirm">Fermer cette salle ?</string>
+    <string name="tv__close_room_body">Tout le monde aura besoin d’un nouveau code.</string>
+    <string name="tv__keep_room">Garder la salle</string>
     <string name="tv__room_closed">Cette salle est fermée</string>
     <string name="tv__debug_title">Réglages de débogage</string>
     <string name="tv__server_url">URL du serveur</string>

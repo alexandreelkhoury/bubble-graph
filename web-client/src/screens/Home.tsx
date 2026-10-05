@@ -62,6 +62,11 @@ export function Home({ prefill, onLang }: { prefill: string; onLang(): void }) {
           </div>
         </div>
         <p id="code-hint" class={`hint${bad ? " hint--error" : ""}`} role={bad ? "alert" : undefined}>{bad ? t("join.codeInvalid") : " "}</p>
+        {/* B3: a friend sent the bare link has no code: the game is hosted on a TV or laptop browser. */}
+        <p class="hosthint">
+          <Icon name="tv" size={20} />
+          <span>{t("home.hostHint")} <a class="hosthint__link" href="/tv" dir="ltr">{location.host}/tv</a></span>
+        </p>
       </main>
       <footer class="actionbar">
         <Button disabled={code.length !== ROOM_CODE_LENGTH} onClick={() => go(code)}>

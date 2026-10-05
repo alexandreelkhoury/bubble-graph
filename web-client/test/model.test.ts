@@ -5,6 +5,7 @@ import { SETTINGS_SCHEMA, rowValueText, stepRow, toggleDifficulty, togglePack, v
 import { afterElimination, competitionRank, newForfeits, orderWindow, rankPlayers, tiedWithTally, topVoted } from "../src/lib/view";
 import { ellipsizeName, graphemeCount } from "../src/lib/names";
 import { nearest } from "../src/tv-mock/dpad";
+import { displayInstallId, recreatesRoomOnFatal } from "../src/tv-mock/roomLife";
 
 const P = (id: string, seat: number, score = 0): PublicPlayer => ({
   id, name: id, color: "coral", seat, connected: true, alive: true, left: false, isHost: false, ready: false, spoke: false,
@@ -112,5 +113,25 @@ describe("D-pad geometry", () => {
   });
   it("still reaches a lone target far off-axis (Up from the first row → Done)", () => {
     expect(nearest(r(0, 0), [{ el: "done", rect: r(600, -100) }], "ArrowUp")).toBe("done");
+  });
+});
+
+describe("TV-13e: a lost room between games is re-created (SPEC §7.5)", () => {
+  it("4010 / 4004 in LOBBY, RESULTS or before any view; never in-game or for other codes", () => {
+    for (const code of [4010, 4004]) {
+      expect(recreatesRoomOnFatal(code, null)).toBe(true);
+      expect(recreatesRoomOnFatal(code, { phase: "LOBBY" })).toBe(true);
+      expect(recreatesRoomOnFatal(code, { phase: "RESULTS" })).toBe(true);
+      for (const phase of ["ROLE_REVEAL", "CLUES", "VOTING", "TIE_BREAK", "ELIMINATION", "MR_WHITE_GUESS"] as const) {
+        expect(recreatesRoomOnFatal(code, { phase })).toBe(false);
+      }
+    }
+    for (const code of [4002, 4003, 4005, 4006]) expect(recreatesRoomOnFatal(code, { phase: "LOBBY" })).toBe(false);
+  });
+});
+
+describe("Settings → About install id (PAYMENTS-SPEC §3.12)", () => {
+  it("groups of four, like the TV app", () => {
+    expect(displayInstallId("0123456789abcdef0123456789abcdef")).toBe("0123 4567 89ab cdef 0123 4567 89ab cdef");
   });
 });

@@ -12,8 +12,11 @@ export const CreateRoomResponse = z.object({
 });
 export const HttpError = z.object({ error: ErrorCodeSchema });
 export const Healthz = z.object({ ok: z.literal(true), app: z.string(), protocol: z.number().int() });
+/** `GET /api/config`: the Worker's client-visible switches. `billing` false (BILLING_ENABLED != "1") → no premium UI, no billing calls. */
+export const ClientConfig = z.object({ billing: z.boolean() });
 
 export type CreateRoomRequestBody = z.infer<typeof CreateRoomRequest>;
 export type CreateRoomResponseBody = z.infer<typeof CreateRoomResponse>;
 export type HttpErrorBody = z.infer<typeof HttpError>;
 export type HealthzBody = z.infer<typeof Healthz>;
+export type ClientConfigBody = z.infer<typeof ClientConfig>;
