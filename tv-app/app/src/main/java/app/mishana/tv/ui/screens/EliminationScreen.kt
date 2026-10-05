@@ -45,6 +45,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -117,6 +118,9 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
 
+private const val WASH_ALPHA = 0.34f
+private const val RAYS_ALPHA = 0.07f
+
 private val CARD_W = 192.dp
 private val CARD_H = 250.dp
 
@@ -183,7 +187,11 @@ private class EliminationSequence(val plan: EliminationPlan, startDone: Boolean,
         dim.animateTo(1f, tween(d(Timing.SUSPENSE)))
         chips.cancel()
         stage = Stage.Verdict
-        cue(CuePlay(Cue.STAMP))
+        // The thud lands with the stamp (+150 ms), not when it mounts; a skip cancels it with this scope.
+        launch {
+            delay(d(SoundCues.STAMP_LAND_MS.toInt()).toLong())
+            cue(CuePlay(Cue.STAMP))
+        }
         delay(d(Timing.VERDICT).toLong() + d(Timing.VERDICT_SETTLE).toLong())
         waitUnpaused()
         if (plan.hasWheel) {
@@ -336,9 +344,9 @@ private fun EndCountdown(view: TvView, deadline: app.mishana.tv.protocol.Deadlin
             AfterElimination.LAST_CHANCE -> {
                 Text(stringResource(R.string.elim__last_chance), style = type.body, color = MishColors.Blank, textAlign = TextAlign.Center)
                 Spacer(Modifier.size(MishSpace.s4))
-                TimerChip(deadline, clockOffsetMs, size = 48.dp)
+                TimerChip(deadline, clockOffsetMs, size = 48.dp, urgent = false)
             }
-            AfterElimination.OTHER -> TimerChip(deadline, clockOffsetMs, size = 48.dp)
+            AfterElimination.OTHER -> TimerChip(deadline, clockOffsetMs, size = 48.dp, urgent = false)
         }
     }
 }
@@ -463,8 +471,9 @@ private fun BoardTile(
     geometry: BoardGeometry,
 ) {
     val landed by remember(plan, p.id) { derivedStateOf { plan.landed(p.id, seq.arrowsMs.value) } }
+    // Reduced motion: no verdict scale (the stamp and the dim carry it; DESIGN §6.3 "a fade, not a shorter bounce").
     val verdictScale = animateFloatAsState(
-        if (seq.stage == Stage.Verdict && isTop && unique) 1.15f else 1f,
+        if (seq.stage == Stage.Verdict && isTop && unique && !MishTheme.reduceMotion) 1.15f else 1f,
         tween(Timing.VERDICT, easing = MishMotion.Overshoot),
         label = "verdict",
     )
@@ -494,17 +503,44 @@ private fun EliminationCard(
 ) {
     val type = MishTheme.type
     val reduce = MishTheme.reduceMotion
-    // Colour wash: radial burst in the role colour (30 %) settling to 8 %; bleeds to the screen edges.
+    // Colour wash: a radial burst in the role colour that holds at full strength (34 %) — the OUT is the peak of the
+    // round — plus soft stage-light rays (7 %, faded out radially). Static in reduced motion.
+    val tint = roleColor(role)
+    val wedge = remember { Path() }
     Canvas(Modifier.fillMaxSize().fullBleed().clearAndSetSemantics {}) {
-        val w = seq.wash.value
-        val alpha = if (reduce) 0.08f else if (w < 0.6f) 0.30f * (w / 0.6f) else 0.30f - (0.22f * ((w - 0.6f) / 0.4f))
+        val w = if (reduce) 1f else seq.wash.value
+        val alpha = WASH_ALPHA * (w / 0.6f).coerceAtMost(1f)
+        val center = Offset(size.width / 2f, size.height * 0.42f)
         drawRect(
             Brush.radialGradient(
-                colors = listOf(roleColor(role).copy(alpha = alpha), Color.Transparent),
-                center = Offset(size.width / 2f, size.height / 2f),
-                radius = max(1f, max(size.width, size.height) * (0.25f + 0.75f * w)),
+                colors = listOf(tint.copy(alpha = alpha), Color.Transparent),
+                center = center,
+                radius = max(1f, max(size.width, size.height) * (0.2f + 0.45f * w)),
             ),
         )
+        // Rays: 6° wedges every 18°, masked by a radial fade (DstIn keeps them only where the mask is opaque).
+        val raysCenter = Offset(size.width / 2f, size.height * 0.46f)
+        val reach = max(size.width, size.height)
+        drawContext.canvas.saveLayer(androidx.compose.ui.geometry.Rect(Offset.Zero, size), androidx.compose.ui.graphics.Paint())
+        for (i in 0 until 20) {
+            val a0 = Math.toRadians(i * 18.0 - 90.0)
+            val a1 = Math.toRadians(i * 18.0 + 6.0 - 90.0)
+            wedge.reset()
+            wedge.moveTo(raysCenter.x, raysCenter.y)
+            wedge.lineTo(raysCenter.x + reach * cos(a0).toFloat(), raysCenter.y + reach * sin(a0).toFloat())
+            wedge.lineTo(raysCenter.x + reach * cos(a1).toFloat(), raysCenter.y + reach * sin(a1).toFloat())
+            wedge.close()
+            drawPath(wedge, tint.copy(alpha = RAYS_ALPHA * w))
+        }
+        drawRect(
+            Brush.radialGradient(
+                0.3f to Color.Black, 1f to Color.Transparent,
+                center = raysCenter,
+                radius = size.height * 0.6f,
+            ),
+            blendMode = BlendMode.DstIn,
+        )
+        drawContext.canvas.restore()
     }
     // The card takes what the stage leaves after the title and the reaction line (Arabic line heights included),
     // so the reaction — the payoff — is never clipped.
@@ -514,14 +550,18 @@ private fun EliminationCard(
         }.coerceIn(150.dp, CARD_H)
         val cardW = cardH * (CARD_W / CARD_H)
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                stringResource(R.string.elim__eliminated, isolate(Names.ellipsize(player.name, 20))),
-                style = type.displayS,
-                color = MishColors.Text,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.widthIn(max = 820.dp).semantics { liveRegion = LiveRegionMode.Polite },
-            )
+            // Who left stays visible as a colour/shape once the card shows the role: their avatar beside the name.
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                Avatar(player.color, 48.dp)
+                Text(
+                    stringResource(R.string.elim__eliminated, isolate(Names.ellipsize(player.name, 20))),
+                    style = type.displayS,
+                    color = MishColors.Text,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.widthIn(max = 760.dp).semantics { liveRegion = LiveRegionMode.Polite },
+                )
+            }
             Spacer(Modifier.height(MishSpace.s2))
             // The card flies from the player's tile to the centre and grows (400 ms), then flips on Y (800 ms).
             val faceUp by remember { derivedStateOf { seq.flip.value >= 90f } }

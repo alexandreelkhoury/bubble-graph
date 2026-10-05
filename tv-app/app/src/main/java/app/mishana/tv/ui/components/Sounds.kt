@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
@@ -17,7 +18,6 @@ import app.mishana.tv.game.CuePlay
 import app.mishana.tv.game.RateLimiter
 import app.mishana.tv.game.SoundCues
 import app.mishana.tv.protocol.DeadlineView
-import kotlinx.coroutines.delay
 
 /**
  * The screens' way to the sound cues (DESIGN §6.4): [play] goes through the ViewModel (which applies the mute),
@@ -58,7 +58,7 @@ class TvSounds(private val sink: (CuePlay) -> Unit, private val stop: () -> Unit
 
 val LocalSounds = staticCompositionLocalOf { TvSounds.None }
 
-/** The running timer's cues: the last 5 s tick and the horn, or the Blank's heartbeat ([SoundCues.deadlineCue]). */
+/** The running timer's cues (sampled every frame, the digits' clock): the last 5 s tick and the horn, or the Blank's heartbeat ([SoundCues.deadlineCue]). */
 @Composable
 fun DeadlineSounds(deadline: DeadlineView?, clockOffsetMs: Long) {
     val sounds = LocalSounds.current
@@ -71,7 +71,9 @@ fun DeadlineSounds(deadline: DeadlineView?, clockOffsetMs: Long) {
             SoundCues.deadlineCue(d.kind, prev, now)?.let { sounds.play(CuePlay(it)) }
             if (now <= 0L) break
             prev = now
-            delay(100)
+            // On the frame clock, like the digits ([rememberSecondsLeft]): the tick lands on the frame the number
+            // changes, instead of up to 100 ms after it with a polling delay.
+            withFrameMillis { }
         }
     }
 }

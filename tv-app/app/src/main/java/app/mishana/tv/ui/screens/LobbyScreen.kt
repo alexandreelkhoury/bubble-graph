@@ -1,5 +1,17 @@
 package app.mishana.tv.ui.screens
 
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
@@ -158,72 +170,55 @@ fun LobbyScreen(
     val blocked = activeKick != null || languageOpen
     CompositionLocalProvider(LocalFocusBlocked provides (LocalFocusBlocked.current || blocked)) {
         Row(Modifier.fillMaxSize().inertWhen(blocked).focusFallback(defaultFocus)) {
-            // ---- start side: QR, code, host line (never focusable) ----
-            // Height budget (486 dp): 47 wordmark + 4 + caption (26; Arabic 30) + 4 + 240 QR + 6 + 72 code + 2 = ~401,
-            // the host block takes the rest. The code and host shrink to fit the 264 dp width instead of wrapping.
+            // ---- start side: the wordmark, then one join "ticket" (caption, QR, code, host line); never focusable ----
+            // Height budget (486 dp): 58 wordmark (196 dp) + 12 + ticket [12 + caption 26 (Arabic 30) + 6 + 200 QR + 8
+            // + 64 code + 2 + host block ~74 + 12] = ~474. The code and host shrink to fit the ticket's inner width.
             Column(Modifier.width(LobbyMetrics.START_COLUMN_DP.dp).fillMaxHeight()) {
-                Wordmark(160.dp, variant = WordmarkVariant.Latin)
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    stringResource(R.string.lobby__scan_to_join),
-                    style = type.caption.copy(letterSpacing = if (LocalIsArabic.current) 0.sp else 0.08.em),
-                    color = MishColors.TextSecondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Spacer(Modifier.height(4.dp))
-                AnimatedContent(
-                    targetState = full,
-                    transitionSpec = { fadeIn(tween(MishMotion.Slow)) togetherWith fadeOut(tween(MishMotion.Slow)) },
-                    label = "qrFull",
-                ) { isFull ->
-                    if (!isFull) {
-                        QrCode(view.joinUrl, description = stringResource(R.string.lobby__scan_to_join))
-                    } else {
-                        Box(
-                            Modifier.size(240.dp).background(MishColors.Surface, MishShapes.tile),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(stringResource(R.string.lobby__full), style = type.headline, color = MishColors.Text, textAlign = TextAlign.Center)
-                        }
-                    }
-                }
-                Spacer(Modifier.height(6.dp))
-                RoomCode(view.roomCode, dim = full, modifier = Modifier.fillMaxWidth())
-                Spacer(Modifier.height(2.dp))
-                JoinHostBlock(view.joinUrl, Modifier.fillMaxWidth().weight(1f))
+                Wordmark(LobbyMetrics.WORDMARK_DP.dp, variant = WordmarkVariant.Latin)
+                Spacer(Modifier.height(12.dp))
+                JoinTicket(view, full, Modifier.fillMaxWidth().weight(1f, fill = false))
             }
             Spacer(Modifier.width(58.dp))
             // ---- end side: summary (+ the lobby toast slot), grid, bottom bar ----
             Column(Modifier.fillMaxSize()) {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-                    Column(Modifier.weight(1f)) {
-                        PlayerCounter(players.size)
+                // Settings as chips (scan in 1 s), top end; the role split only once 3 players are in (DESIGN TV-02).
+                SettingsChips(view, players.size, premiumChip = view.premium && onOpenStore != null, modifier = Modifier.fillMaxWidth())
+                Spacer(Modifier.height(8.dp))
+                Row(Modifier.fillMaxWidth().defaultMinSize(minHeight = 54.dp), verticalAlignment = Alignment.CenterVertically) {
+                    PlayerCounter(players.size)
+                    Spacer(Modifier.width(16.dp))
+                    // One fixed-height slot, end side: a toast swapping in never moves the grid. Priority: the toast
+                    // (3 s), then why Start is dimmed, then the host line.
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
                         val host = view.players.firstOrNull { it.id == view.hostPlayerId }
-                        // One fixed-height slot: a toast swapping in never moves the grid.
-                        Box(Modifier.fillMaxWidth().defaultMinSize(minHeight = 54.dp), contentAlignment = Alignment.CenterStart) {
-                            if (toasts.items.isNotEmpty()) {
-                                // SPEC-GAP: DESIGN TV-02 puts the toast zone "bottom start, above the host line", which
-                                // covers the room code; over the end column it would cover the grid's last row. One toast
-                                // at a time takes the host line's slot for its 3 s instead.
-                                ToastHost(toasts, maxItems = 1)
-                            } else if (host != null) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(MishIcons.Crown, null, tint = MishColors.Accent, modifier = Modifier.size(18.dp))
-                                    Spacer(Modifier.width(6.dp))
-                                    Text(
-                                        stringResource(R.string.lobby__host_is, Names.ellipsize(host.name, 16)),
-                                        style = type.caption,
-                                        color = MishColors.TextMuted,
-                                        maxLines = 1,
-                                    )
-                                }
+                        val blockerText = blockerText(view)
+                        when {
+                            // SPEC-GAP: DESIGN TV-02 puts the toast zone "bottom start, above the host line", which
+                            // covers the room code; over the end column it would cover the grid's last row. One toast
+                            // at a time takes this slot for its 3 s instead.
+                            toasts.items.isNotEmpty() -> ToastHost(toasts, maxItems = 1)
+                            blockerText != null -> Text(
+                                blockerText,
+                                style = type.label,
+                                color = if (view.blocker == StartBlocker.NOT_ENOUGH_PLAYERS) MishColors.Accent else MishColors.Danger,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.End,
+                            )
+                            host != null -> Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(MishIcons.Crown, null, tint = MishColors.Accent, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text(
+                                    stringResource(R.string.lobby__host_is, Names.ellipsize(host.name, 16)),
+                                    style = type.caption,
+                                    color = MishColors.TextMuted,
+                                    maxLines = 1,
+                                )
                             }
                         }
                     }
-                    SettingsSummary(view, premiumChip = view.premium && onOpenStore != null)
                 }
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(8.dp))
                 PlayerGrid(
                     players = players,
                     modifier = Modifier.focusRestorer(gridFocus),
@@ -355,8 +350,9 @@ private fun IconOnlyButton(label: String, icon: androidx.compose.ui.graphics.vec
 private const val URL_MARK = "%URL%"
 
 /**
- * "or open / mish-ana.example.workers.dev / and enter the code" (`lobby.orVisit`): the host gets its own LTR line
- * that shrinks (20 → 13 dp) instead of breaking at a hyphen or ellipsizing — people type it by hand. The words
+ * "or open / mish-ana.example.workers.dev / and enter the code" (`lobby.orVisit`), centred in the ticket, the host in
+ * cream Bold, the words around it muted: the host gets its own LTR line
+ * that shrinks (20 → 12 dp) instead of breaking at a hyphen or ellipsizing — people type it by hand. The words
  * around it are caption lines; the host is measured first so it always shows.
  */
 @Composable
@@ -365,28 +361,27 @@ private fun JoinHostBlock(joinUrl: String, modifier: Modifier) {
     val sentence = stringResource(R.string.lobby__or_visit, URL_MARK)
     val before = sentence.substringBefore(URL_MARK).trim()
     val after = sentence.substringAfter(URL_MARK, "").trim()
-    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val latinBody = remember { mishTypeScale(arabic = false).body.copy(lineHeight = 1.4.em) }
     // The block gets ~75 dp (what the column above leaves): Arabic captions at their 30 sp line height (2 × 30 + 28)
     // overflowed it and were clipped. 23 sp lines fit in every locale; Arabic marks draw past the box, unclipped.
     val line = type.caption.copy(lineHeight = 23.sp)
-    Column(modifier) {
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         if (before.isNotEmpty()) {
-            Text(before, style = line, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+            Text(before, style = line, color = MishColors.TextMuted, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.weight(1f, fill = false))
         }
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
             FitText(
                 text = ServerUrls.displayHost(joinUrl),
-                style = latinBody,
+                style = latinBody.copy(fontWeight = FontWeight.Bold),
                 color = MishColors.Text,
                 maxSize = LobbyMetrics.HOST_MAX_DP.dp,
                 minSize = LobbyMetrics.HOST_MIN_DP.dp,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = if (rtl) TextAlign.End else TextAlign.Start,
+                textAlign = TextAlign.Center,
             )
         }
         if (after.isNotEmpty()) {
-            Text(after, style = line, color = MishColors.TextSecondary, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+            Text(after, style = line, color = MishColors.TextMuted, maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.weight(1f, fill = false))
         }
     }
 }
@@ -411,24 +406,31 @@ private fun PlayerCounter(count: Int) {
     }
 }
 
-/** Top-end summary (2 caption lines) + the start blocker line; flashes accent when the settings change. */
+/** Why Start is dimmed (readable from the sofa), or null. */
 @Composable
-private fun SettingsSummary(view: TvView, premiumChip: Boolean = view.premium) {
-    val type = MishTheme.type
+private fun blockerText(view: TvView): String? = when (view.blocker) {
+    StartBlocker.NOT_ENOUGH_PLAYERS -> {
+        val need = (Constants.MIN_PLAYERS - view.players.count { it.connected && !it.left }).coerceAtLeast(1)
+        pluralStringResource(R.plurals.lobby__need_players, need, need)
+    }
+    StartBlocker.INVALID_ROLE_CONFIG -> stringResource(R.string.lobby__blocker_roles)
+    StartBlocker.NO_WORDS_AVAILABLE -> stringResource(R.string.lobby__blocker_words)
+    StartBlocker.UNKNOWN, null -> null
+}
+
+/**
+ * Top-end settings chips (DESIGN TV-02): [Premium room] [packs] [word language] [● 4 ● 1 ● 1] with role-colour dots,
+ * and the win rule only when it is not the default. The role chip waits for 3 players (a split for 0 players is
+ * noise while the QR should own the screen). The row flashes accent when the settings change.
+ */
+@Composable
+private fun SettingsChips(view: TvView, playerCount: Int, premiumChip: Boolean, modifier: Modifier = Modifier) {
     val s = view.settings
     val packs = if (s.packIds.isEmpty()) {
         stringResource(R.string.settings__all_packs)
     } else {
         val titles = s.packIds.mapNotNull { id -> view.availablePacks.firstOrNull { it.id == id } }.map { localizedTitle(it.title) }
         if (titles.isEmpty()) stringResource(R.string.settings__all_packs) else titles.take(2).joinToString(", ") + if (titles.size > 2) " +${titles.size - 2}" else ""
-    }
-    val line1 = packs + "  ·  " + stringResource(langNameRes(s.wordLocale))
-    val rc = view.roleCounts
-    val rule = stringResource(if (s.winRule == WinRule.OFFICIAL) R.string.settings__win_rule_official else R.string.settings__win_rule_parity)
-    val line2 = if (rc != null) {
-        stringResource(R.string.lobby__role_summary, rc.civilian.toString(), rc.undercover.toString(), rc.blank.toString()) + "  ·  " + rule
-    } else {
-        rule
     }
     var flash by remember { mutableStateOf(false) }
     var first by remember { mutableStateOf(true) }
@@ -442,53 +444,112 @@ private fun SettingsSummary(view: TvView, premiumChip: Boolean = view.premium) {
         }
     }
     val bg by animateColorAsState(if (flash) MishColors.Accent.copy(alpha = 0.18f) else Color.Transparent, tween(MishMotion.Slow), label = "flash")
-    Column(
-        Modifier
-            .width(330.dp)
-            .background(bg, MishShapes.sm)
-            .padding(horizontal = 8.dp, vertical = 2.dp),
-        horizontalAlignment = Alignment.End,
+    Row(
+        modifier.background(bg, MishShapes.pill),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (premiumChip) { // false while billing is off (no Store): a billing-off room projects premium:true
-            // §4.4: premium status lives here, at the start of the first line (not on the Premium button). Inline, so the
-            // summary keeps its height and the grid never moves (Arabic caption lines are 30 dp).
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            // §4.4: premium status lives here (not on the Premium button).
+            SummaryChip {
                 Icon(MishIcons.Gem, null, tint = MishColors.Accent, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(6.dp))
-                Text(stringResource(R.string.lobby__premium_room), style = type.caption, color = MishColors.Accent, maxLines = 1)
-                Text(
-                    "  ·  $line1",
-                    style = type.caption,
-                    color = MishColors.TextSecondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false),
-                )
+                ChipText(stringResource(R.string.lobby__premium_room), MishColors.Accent)
             }
-        } else {
-            Text(line1, style = type.caption, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.End)
         }
-        Text(line2, style = type.caption, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.End)
-        val blocker = view.blocker
-        val blockerText = when (blocker) {
-            StartBlocker.NOT_ENOUGH_PLAYERS -> {
-                val need = (Constants.MIN_PLAYERS - view.players.count { it.connected && !it.left }).coerceAtLeast(1)
-                pluralStringResource(R.plurals.lobby__need_players, need, need)
+        SummaryChip(Modifier.weight(1f, fill = false)) { ChipText(packs) }
+        SummaryChip { ChipText(stringResource(langNameRes(s.wordLocale))) }
+        if (s.winRule != WinRule.OFFICIAL) {
+            SummaryChip(Modifier.weight(1f, fill = false)) { ChipText(stringResource(R.string.settings__win_rule_parity)) }
+        }
+        val rc = view.roleCounts
+        if (rc != null && playerCount >= ROLE_CHIP_MIN_PLAYERS) {
+            val a11y = stringResource(R.string.lobby__role_summary, rc.civilian.toString(), rc.undercover.toString(), rc.blank.toString())
+            SummaryChip(Modifier.semantics(mergeDescendants = true) { contentDescription = a11y }) {
+                RoleCount(MishColors.Civilian, rc.civilian)
+                RoleCount(MishColors.Undercover, rc.undercover, Modifier.padding(start = 10.dp))
+                RoleCount(MishColors.Blank, rc.blank, Modifier.padding(start = 10.dp))
             }
-            StartBlocker.INVALID_ROLE_CONFIG -> stringResource(R.string.lobby__blocker_roles)
-            StartBlocker.NO_WORDS_AVAILABLE -> stringResource(R.string.lobby__blocker_words)
-            StartBlocker.UNKNOWN, null -> null
         }
-        if (blockerText != null) {
-            // Why Start is dimmed: readable from the sofa (label, not caption).
-            Text(
-                blockerText,
-                style = type.label,
-                color = if (blocker == StartBlocker.NOT_ENOUGH_PLAYERS) MishColors.Accent else MishColors.Danger,
-                maxLines = 1,
-                textAlign = TextAlign.End,
-            )
+    }
+}
+
+private const val ROLE_CHIP_MIN_PLAYERS = 3
+
+@Composable
+private fun SummaryChip(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
+    Row(
+        modifier
+            .height(36.dp)
+            .background(MishColors.Text.copy(alpha = 0.07f), MishShapes.pill)
+            .border(BorderStroke(1.dp, MishColors.Text.copy(alpha = 0.10f)), MishShapes.pill)
+            .padding(horizontal = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        content = content,
+    )
+}
+
+@Composable
+private fun ChipText(text: String, color: Color = MishColors.TextSecondary) {
+    Text(text, style = MishTheme.type.caption.copy(fontWeight = FontWeight.Bold), color = color, maxLines = 1, overflow = TextOverflow.Ellipsis)
+}
+
+@Composable
+private fun RoleCount(color: Color, count: Int, modifier: Modifier = Modifier) {
+    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.size(10.dp).background(color, CircleShape))
+        Spacer(Modifier.width(6.dp))
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+            Text(count.toString(), style = MishTheme.type.caption.copy(fontWeight = FontWeight.Black), color = MishColors.Text, maxLines = 1)
         }
+    }
+}
+
+/**
+ * The join "ticket" (DESIGN TV-02): one surface card holding "Scan to join", the QR, the room code (accent, soft glow)
+ * and the host line, so how to join reads as one object.
+ */
+@Composable
+private fun JoinTicket(view: TvView, full: Boolean, modifier: Modifier) {
+    val type = MishTheme.type
+    val shape = RoundedCornerShape(28.dp)
+    Column(
+        modifier
+            .shadow(24.dp, shape, ambientColor = Color.Black, spotColor = Color.Black)
+            .background(MishColors.Surface, shape)
+            // The inner highlight: a hairline of light along the top edge.
+            .border(BorderStroke(1.dp, Brush.verticalGradient(0f to MishColors.Text.copy(alpha = 0.10f), 0.25f to Color.Transparent)), shape)
+            .padding(horizontal = LobbyMetrics.TICKET_PAD_DP.dp, vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            stringResource(R.string.lobby__scan_to_join),
+            style = type.caption.copy(letterSpacing = if (LocalIsArabic.current) 0.sp else 0.08.em, fontWeight = FontWeight.Black),
+            color = MishColors.TextSecondary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(Modifier.height(6.dp))
+        AnimatedContent(
+            targetState = full,
+            transitionSpec = { fadeIn(tween(MishMotion.Slow)) togetherWith fadeOut(tween(MishMotion.Slow)) },
+            label = "qrFull",
+        ) { isFull ->
+            if (!isFull) {
+                QrCode(view.joinUrl, panel = LobbyMetrics.QR_DP.dp, description = stringResource(R.string.lobby__scan_to_join))
+            } else {
+                Box(
+                    Modifier.size(LobbyMetrics.QR_DP.dp).background(MishColors.Elevated, MishShapes.tile),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(stringResource(R.string.lobby__full), style = type.headline, color = MishColors.Text, textAlign = TextAlign.Center)
+                }
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        RoomCode(view.roomCode, dim = full, modifier = Modifier.fillMaxWidth(), centered = true, glow = !full)
+        Spacer(Modifier.height(2.dp))
+        JoinHostBlock(view.joinUrl, Modifier.fillMaxWidth())
     }
 }
 
@@ -505,6 +566,16 @@ private fun PlayerGrid(
     val entryIndex = if (players.isEmpty()) 0 else ((players.size - 1) / 4) * 4
     tileFocus.keys.retainAll(players.map { it.id }.toSet()) // a kicked/left player's requester is dropped
     val known = remember { mutableStateOf(players.map { it.id }.toSet()) }
+    // The newest arrival keeps a ring in their colour until the next join (it pairs with the "Karim is with us!" toast).
+    val seen = remember { mutableSetOf<String>().apply { addAll(players.map { it.id }) } }
+    var newest by remember { mutableStateOf<String?>(null) }
+    val ids = players.map { it.id }
+    LaunchedEffect(ids) {
+        ids.lastOrNull { it !in seen }?.let { newest = it }
+        seen.addAll(ids)
+    }
+    // After "Play again" the scores are the replay hook ("I'm 2 points behind"): a badge on every tile.
+    val showScores = players.any { it.score > 0 }
     val slots = Constants.MAX_PLAYERS
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         for (row in 0 until 3) {
@@ -518,6 +589,8 @@ private fun PlayerGrid(
                             JoiningTile(
                                 player = p,
                                 animate = isNew,
+                                newest = p.id == newest,
+                                showScore = showScores,
                                 onShown = { known.value = known.value + p.id },
                                 modifier = Modifier
                                     .focusRequester(tileFocus.getOrPut(p.id) { FocusRequester() })
@@ -539,6 +612,8 @@ private fun PlayerGrid(
 private fun JoiningTile(
     player: PublicPlayer,
     animate: Boolean,
+    newest: Boolean,
+    showScore: Boolean,
     onShown: () -> Unit,
     modifier: Modifier,
     onClick: () -> Unit,
@@ -557,7 +632,32 @@ private fun JoiningTile(
         onShown()
     }
     val color = app.mishana.tv.ui.theme.PlayerSwatch.byId(player.color).color
+    val newestAlpha by animateFloatAsState(if (newest) 1f else 0f, tween(MishMotion.Slow), label = "newest")
     Box(modifier.graphicsLayer { translationY = drop.value.dp.toPx() }) {
+        if (newestAlpha > 0f) {
+            // A 2 dp ring in the player's own colour + a soft colour glow, drawn around (outside) the tile.
+            Canvas(Modifier.size(TILE_W.dp, TILE_H.dp)) {
+                val out = 3.dp.toPx()
+                val glow = 13.dp.toPx()
+                drawRoundRect(
+                    Brush.radialGradient(
+                        listOf(color.copy(alpha = 0.32f * newestAlpha), Color.Transparent),
+                        center = center,
+                        radius = size.maxDimension * 0.75f,
+                    ),
+                    topLeft = Offset(-glow, -glow),
+                    size = Size(size.width + 2 * glow, size.height + 2 * glow),
+                    cornerRadius = CornerRadius(MishRadius.lg.toPx() + glow),
+                )
+                drawRoundRect(
+                    color = color.copy(alpha = newestAlpha),
+                    topLeft = Offset(-out, -out),
+                    size = Size(size.width + 2 * out, size.height + 2 * out),
+                    cornerRadius = CornerRadius(MishRadius.lg.toPx() + out),
+                    style = Stroke(width = 2.dp.toPx()),
+                )
+            }
+        }
         PlayerTile(
             player = player,
             width = TILE_W.dp,
@@ -591,6 +691,26 @@ private fun JoiningTile(
                     style = Stroke(width = 4.dp.toPx() * (1f - p) + 1f),
                 )
             }
+        }
+        if (showScore) ScoreBadge(player.score, Modifier.align(Alignment.BottomEnd).offset(x = 6.dp, y = 6.dp))
+    }
+}
+
+/** The player's total after a game: an accent pill with a trophy, at the tile's bottom end. */
+@Composable
+private fun ScoreBadge(score: Int, modifier: Modifier) {
+    Row(
+        modifier
+            .height(28.dp)
+            .background(MishColors.Accent, MishShapes.pill)
+            .padding(horizontal = 8.dp)
+            .clearAndSetSemantics { },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(MishIcons.Trophy, contentDescription = null, tint = MishColors.Ink, modifier = Modifier.size(16.dp))
+        Spacer(Modifier.width(4.dp))
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+            Text(score.toString(), style = MishTheme.type.caption.copy(fontWeight = FontWeight.Black, lineHeight = 22.sp), color = MishColors.Ink, maxLines = 1)
         }
     }
 }

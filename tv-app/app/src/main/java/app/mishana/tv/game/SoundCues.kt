@@ -76,6 +76,12 @@ object SoundCues {
 
     private val CLUE_PHASES = setOf(Phase.CLUES, Phase.TIE_BREAK)
 
+    /**
+     * When a stamp first lands: its 400 ms overshoot reaches scale 1.0 at ≈ 37 %, so the thud plays then, not on the
+     * frame the stamp mounts (still ≈ 2× in the air).
+     */
+    const val STAMP_LAND_MS = 150L
+
     /** Cues for one broadcast (the ELIMINATION reveal plays its own timeline, [timeline]). */
     fun viewCues(before: TvView?, after: TvView): List<CuePlay> {
         if (before == null) return emptyList()
@@ -104,7 +110,7 @@ object SoundCues {
         val speakerChanged = speaker != null &&
             (speaker != before.currentSpeakerId || after.phase != before.phase || after.round != before.round)
         if (before.phase == Phase.ROLE_REVEAL && after.phase == Phase.CLUES) out += CuePlay(Cue.ALL_READY)
-        if (before.phase == Phase.VOTING && after.phase == Phase.TIE_BREAK) out += CuePlay(Cue.STAMP)
+        if (before.phase == Phase.VOTING && after.phase == Phase.TIE_BREAK) out += CuePlay(Cue.STAMP, delayMs = STAMP_LAND_MS)
         if (after.phase in CLUE_PHASES && speakerChanged) {
             val delay = if (before.phase == Phase.ROLE_REVEAL || before.phase == Phase.VOTING) 550L else 0L
             out += CuePlay(Cue.TURN, turnRate(after.speakingOrder.indexOf(speaker)), delay)

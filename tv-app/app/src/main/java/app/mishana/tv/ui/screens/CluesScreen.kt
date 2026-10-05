@@ -51,8 +51,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
@@ -94,7 +96,8 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
     val order = view.speakingOrder.mapNotNull { view.player(it) }
     val tie = view.phase == Phase.TIE_BREAK
 
-    // TV-08: a ≤ 2.5 s tie overlay at the start of TIE_BREAK (OK skips it). Halved in reduced motion.
+    // TV-08: a 4 s tie overlay at the start of TIE_BREAK (OK skips it): long enough to read the rule from the couch.
+    // Halved in reduced motion.
     val reduce = MishTheme.reduceMotion
     val tieKey = "${view.gameNumber}:${view.round}"
     var tieShownFor by remember { mutableStateOf<String?>(null) }
@@ -105,7 +108,7 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
         if (showTie) {
             tieVisible.targetState = true
             var waited = 0L
-            val total = if (reduce) 1_250L else 2_500L
+            val total = if (reduce) TIE_OVERLAY_MS / 2 else TIE_OVERLAY_MS
             while (waited < total) {
                 delay(50)
                 if (!isPaused) waited += 50
@@ -163,6 +166,7 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
                 BoxWithConstraints(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
                     val textH = with(LocalDensity.current) { type.displayM.lineHeight.toDp() + type.body.lineHeight.toDp() } + 10.dp
                     val ring = (maxHeight - textH).coerceIn(140.dp, 216.dp)
+                    val dir = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1 else 1
                     AnimatedContent(
                         targetState = speaker,
                         contentKey = { it?.id },
@@ -170,8 +174,10 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
                             if (reduce) {
                                 fadeIn(tween(MishMotion.Fast)) togetherWith fadeOut(tween(MishMotion.Fast))
                             } else {
-                                (slideInHorizontally(tween(MishMotion.Slow, easing = MishMotion.Decel)) { it / 3 } + fadeIn(tween(MishMotion.Slow))) togetherWith
-                                    (slideOutHorizontally(tween(MishMotion.Base, easing = MishMotion.Accel)) { -it / 3 } + fadeOut(tween(MishMotion.Base)))
+                                // The next speaker comes from where the order strip continues: the end side, which is
+                                // the left in Arabic (slide offsets are absolute px, so mirror them by hand).
+                                (slideInHorizontally(tween(MishMotion.Slow, easing = MishMotion.Decel)) { dir * it / 3 } + fadeIn(tween(MishMotion.Slow))) togetherWith
+                                    (slideOutHorizontally(tween(MishMotion.Base, easing = MishMotion.Accel)) { -dir * it / 3 } + fadeOut(tween(MishMotion.Base)))
                             }
                         },
                         label = "speaker",
@@ -242,6 +248,9 @@ private fun SpeakerHero(sp: PublicPlayer, view: TvView, clockOffsetMs: Long, rin
         )
     }
 }
+
+/** How long TV-08 stays up (2 s in reduced motion). */
+internal const val TIE_OVERLAY_MS = 4_000L
 
 private val STRIP_ITEM = 104.dp
 private val STRIP_TEXT = 96.dp // STRIP_ITEM minus 2 × 4 dp: the one ellipsis point for long names

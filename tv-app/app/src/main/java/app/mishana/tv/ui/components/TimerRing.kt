@@ -63,8 +63,8 @@ private fun urgencyOf(secs: Int): Countdown.Urgency = Countdown.urgency(secs * 1
 
 /** The animated timer colour for [secs] (ring, bar and digits share it, so they never disagree). */
 @Composable
-private fun timerColor(secs: Int, calm: Color): Color {
-    val color by animateColorAsState(urgencyColor(urgencyOf(secs), calm), label = "timerColor")
+private fun timerColor(secs: Int, calm: Color, urgent: Boolean = true): Color {
+    val color by animateColorAsState(if (urgent) urgencyColor(urgencyOf(secs), calm) else calm, label = "timerColor")
     return color
 }
 
@@ -82,11 +82,12 @@ fun TimerRing(
     modifier: Modifier = Modifier,
     number: TextStyle? = null,
     calmColor: Color = MishColors.Text,
+    urgent: Boolean = true,
 ) {
     val clock = rememberFrameClock()
     val secs by rememberSecondsLeft(deadline, clockOffsetMs)
-    val color = timerColor(secs, calmColor)
-    val pulse = if (urgencyOf(secs) == Countdown.Urgency.DANGER && secs > 0 && !MishTheme.reduceMotion) {
+    val color = timerColor(secs, calmColor, urgent)
+    val pulse = if (urgent && urgencyOf(secs) == Countdown.Urgency.DANGER && secs > 0 && !MishTheme.reduceMotion) {
         rememberInfiniteTransition(label = "ringPulse").animateFloat(1f, 1.04f, infiniteRepeatable(tween(500), RepeatMode.Reverse), label = "p")
     } else {
         null
@@ -150,10 +151,18 @@ private fun TimerDigits(secs: Int, color: Color, style: TextStyle, modifier: Mod
     }
 }
 
-/** Small timer chip: ring + number from one clock (TV-04 bottom end, TV-06, TV-09). */
+/**
+ * Small timer chip: ring + number from one clock (TV-04 bottom end, TV-06, TV-09). [urgent] = false is the calm
+ * auto-advance countdown (TV-09: secondary text, never accent/danger nor a pulse; red means "act now").
+ */
 @Composable
-fun TimerChip(deadline: DeadlineView, clockOffsetMs: Long, modifier: Modifier = Modifier, size: Dp = 56.dp) {
-    TimerRing(deadline, clockOffsetMs, size, 5.dp, modifier, number = MishTheme.type.title)
+fun TimerChip(deadline: DeadlineView, clockOffsetMs: Long, modifier: Modifier = Modifier, size: Dp = 56.dp, urgent: Boolean = true) {
+    TimerRing(
+        deadline, clockOffsetMs, size, 5.dp, modifier,
+        number = MishTheme.type.title,
+        calmColor = if (urgent) MishColors.Text else MishColors.TextSecondary,
+        urgent = urgent,
+    )
 }
 
 /**

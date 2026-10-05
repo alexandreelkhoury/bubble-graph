@@ -6,17 +6,27 @@ package app.mishana.tv.ui.screens
  * in one line at the minimum sizes the fit-to-width text may step down to.
  */
 object LobbyMetrics {
-    /** Width of the QR / code / host column. */
+    /** Width of the start column (wordmark + join ticket). */
     const val START_COLUMN_DP = 264
 
-    /** Room code: 72 dp at most (DESIGN), stepping down to [CODE_MIN_DP]; tracked letters, no joined spaces. */
-    const val CODE_MAX_DP = 72
+    /** The wordmark heading the start column: the lobby is the brand's billboard while people arrive. */
+    const val WORDMARK_DP = 196
+
+    /** The join ticket's side padding, and the width its code and host line fit in. */
+    const val TICKET_PAD_DP = 12
+    const val TICKET_INNER_DP = START_COLUMN_DP - 2 * TICKET_PAD_DP
+
+    /** The QR panel inside the ticket (the budget that fits the 486 dp live height with the 196 dp wordmark). */
+    const val QR_DP = 200
+
+    /** Room code: 64 dp at most (DESIGN TV-02 ticket), stepping down to [CODE_MIN_DP]; tracked letters, no joined spaces. */
+    const val CODE_MAX_DP = 64
     const val CODE_MIN_DP = 44
     const val CODE_TRACKING_EM = 0.2
 
-    /** Join host line: body 20 dp at most, stepping down to [HOST_MIN_DP] for long hosts (never ellipsized). */
+    /** Join host line: body Bold 20 dp at most, stepping down to [HOST_MIN_DP] for long hosts (never ellipsized). */
     const val HOST_MAX_DP = 20
-    const val HOST_MIN_DP = 13
+    const val HOST_MIN_DP = 12
 
     // ---- PAYMENTS-SPEC §4.4 bottom bar fit: "Premium · Settings · Language · Start" from x 370 dp to the end margin ----
 
