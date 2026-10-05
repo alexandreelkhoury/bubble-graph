@@ -304,11 +304,11 @@ Body text uses weight 600, not 400: at 10 ft, regular Cairo strokes break up on 
 | `glow.accent` | — | Outer glow in `accent` at 40 %, blur 24 dp | Winner, points |
 
 ### 4.6 Interaction states
-**TV focus (the one focus style, everywhere):** scale **1.06** (tiles) or **1.04** (buttons and rows), a 3 dp `color.focus` ring offset 2 dp outside, `glow.primary`, and the fill lifts to `elevated`. Takes `motion.fast` with `ease.standard`. Unfocused focusables sit at 100 % scale with no ring. Disabled: 40 % opacity, still focusable *only* if it explains why it's disabled (e.g. Start shows "Need 3 players").
+**TV focus (the one focus style, everywhere):** scale **1.06** (tiles), **1.04** (buttons, pills) or **1.02** (full-width rows: settings rows, categories, menu items; at 1.04 their start edge jumped 9–12 dp), a 3 dp `color.focus` ring offset 2 dp outside, `glow.primary`, and the fill lifts to `elevated`. Takes `motion.fast` with `ease.standard`. Unfocused focusables sit at 100 % scale with no ring. Disabled: 40 % opacity, still focusable *only* if it explains why it's disabled (e.g. Start shows "Need 3 players"). **A disabled primary never uses alpha** (ink on 40 % pink was 1.35–1.82:1): rest = `surface` fill + `textSecondary`, focused = `elevated` + `text`, ring and glow at full strength (v3 A4).
 
 Compose for TV: use `androidx.tv.material3` `Surface` / `Button` / `Card` with `ClickableSurfaceDefaults.scale(focusedScale = 1.06f)`, `border(focusedBorder = Border(BorderStroke(3.dp, MishColors.Focus), inset = (-2).dp))` and `glow(focusedGlow = Glow(MishColors.Primary.copy(alpha = .45f), 18.dp))` **[verify these parameter names against tv-material 1.1.0]**.
 
-**Phone press:** scale 0.97 plus a 6 % brightness drop on `:active`, taking 80 ms. `:focus-visible` shows a 3 px `color.focus` outline offset 3 px (keyboard and switch users). Selected rows get a 2 px `primary` border plus a check icon. Selection is never shown by color alone.
+**Phone press:** scale 0.97 plus a 6 % brightness drop on `:active`, taking 80 ms; small controls (icon buttons, chips, segmented options, swatches, steppers) 0.96. A **disabled primary** button is `elevated` + `textMuted` (5.46:1), no opacity and no glow. `:focus-visible` shows a 3 px `color.focus` outline offset 3 px (keyboard and switch users). Selected rows get a 2 px `primary` border plus a check icon. Selection is never shown by color alone.
 
 ---
 
@@ -360,15 +360,15 @@ Reference geometry (24 × 24 viewBox, filled, no stroke; tune visually in the ve
 | Circle | `<circle cx="12" cy="12" r="9"/>` |
 | Square | `<rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/>` |
 | Star | `<path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/>` |
-| Triangle | `<path d="M12 3.2 21.4 19.8H2.6z" stroke-linejoin="round"/>` |
+| Triangle | `<path d="M12 2.4 21.4 19H2.6z" stroke-linejoin="round"/>` (raised 0.8: its mass sits low) |
 | Diamond | `<path d="M12 2.2 21.8 12 12 21.8 2.2 12z"/>` |
 | Hexagon | `<path d="M12 2.6 20.2 7.3v9.4L12 21.4 3.8 16.7V7.3z"/>` |
 | Plus | `<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>` |
-| Drop | `<path d="M12 2.5S5 10.4 5 15a7 7 0 0 0 14 0c0-4.6-7-12.5-7-12.5z"/>` |
+| Drop | `<path d="M12 1.25S5 9.15 5 13.75a7 7 0 0 0 14 0c0-4.6-7-12.5-7-12.5z"/>` (raised 1.25) |
 | Crescent | `<path d="M15 2.7a9.5 9.5 0 1 0 6.3 13.6A7.6 7.6 0 0 1 15 2.7z"/>` |
 | Bolt | `<path d="M13.5 2 5 13.5h6L10 22l9-12h-6.2z"/>` |
 | Flower | Four circles r = 4.6 at (12, 7.4), (16.6, 12), (12, 16.6), (7.4, 12) + a centre circle r = 4 |
-| Arch (*bab*) | `<path d="M5 21.5V11a7 7 0 0 1 14 0v10.5h-4.5V15a2.5 2.5 0 0 0-5 0v6.5z"/>` (a doorway arch, a nod to the Lebanese triple-arch house) |
+| Arch (*bab*) | `<path d="M5 20.75V10.25a7 7 0 0 1 14 0v10.5h-4.5v-6.5a2.5 2.5 0 0 0-5 0v6.5z"/>` (raised 0.75; a doorway arch, a nod to the Lebanese triple-arch house) |
 
 **Avatar states** (identical on TV and phone)
 
@@ -594,19 +594,20 @@ Haptics come only from user gestures or right after one, as the API requires (RE
 | Host line | y 447–499, "or open {url} and enter the code" (`lobby.orVisit`) in `type.tv.body` **20 sp** (people type it). `{url}` = `view.joinUrl` with the scheme and path stripped, never hard-coded |
 | Player grid | 4 × 3 tiles, **120 × 96 dp**, gap 16 dp, starting x 370, y 111. Each tile has an avatar (56 dp) and a name (`type.tv.title`, 1 line). Empty slots have a dashed `outline` border with a faint "+" (non-focusable), and only the **first empty slot** pulses gently |
 | Host badge | `crown` on the VIP (`isHost`) tile |
-| Settings summary | Top end, 2 lines in `type.tv.caption` `textSecondary`: pack · word language / role counts (`lobby.roleSummary`) · win rule. It updates live when the VIP changes settings, with a 600 ms `accent` highlight sweep. When `view.premium`, a chip `gem` + `lobby.premiumRoom` is its **first** line (PAYMENTS-SPEC §4.4) |
+| Settings summary | **v3:** top end, one row of 32 dp **chips** (700 20 sp, `text/.07` fill): packs · word language · role dots (civilian / undercover / blank colour + count; the accessible label is `lobby.roleSummary`). **Shown only once the room can start (≥ 3 players)**, so the QR owns the empty lobby; the win rule lives in Settings. Live updates sweep the chips in `accent` (600 ms). When `view.premium`, a `gem` + `lobby.premiumRoom` chip leads (PAYMENTS-SPEC §4.4). Before that, on a fresh browser-TV room, the same slot shows `tv.browserTip` ("F = full screen · arrows + Enter, or click"; F toggles full screen) |
 | Start blocker line | Top end, under the summary: `lobby.needPlayers` / `lobby.blockerRoles` / `lobby.blockerWords` per `view.startBlocker` |
 | Bottom bar | Starts at **x ≥ 370** (under the grid, never under the code): **Premium** (`gem` + the fixed label `lobby.premium`; opens the Store, PAYMENTS-SPEC §4.4) · Settings · Language (`common.language`, opens the 3-item list) · Start. It must fit in 960 − 48 − 370 = 542 dp with Start at 200 dp in EN/FR/AR; if the labelled Premium button does not fit, Premium becomes an **icon-only 48 × 48 dp** button with a focus tooltip (`lobby.premium`) and a content description |
 | Start | Primary pill **200 × 48 dp** (`lobby.startGame`). Disabled while `startBlocker !== null`. For `NOT_ENOUGH_PLAYERS` it stays focusable; OK plays a gentle shake and `sfx.error`. For `INVALID_ROLE_CONFIG` / `NO_WORDS_AVAILABLE`, OK opens TV-03 focused on the offending row (Roles or Words) |
 | Toast zone | Bottom start, above the host line: `lobby.joined` for joins, `lobby.left` for leaves |
 
-- **Live join:** the tile drops in (§6.2-F), `sfx.join`, and the counter "PLAYERS 5/12" rolls. When the 12th player joins, the QR panel crossfades to `lobby.full`, the QR is hidden, and the code is greyed out.
+- **v3 join ticket:** the wordmark is 196 dp; "SCAN TO JOIN", the QR (208 dp panel), the code (64 sp) and the host line (`lobby.orVisit`, host in `text` 700, caption size, 2 lines) sit in **one `surface` card** (radius 28, x 48, y 94, 270 dp wide, ends ≤ y 500 in every locale).
+- **Live join:** only the **new** tile drops in (§6.2-F; returning from Settings or Play again animates nothing), `sfx.join`, and the counter "PLAYERS 5/12" rolls. The **newest player keeps a 2 dp ring + 26 dp glow in their own colour** until the next join (it pairs with "Karim is with us!"). After Play again each tile shows its running **score badge** (top end; the leader's in `accent` with a trophy). When the 12th player joins, the QR panel crossfades to `lobby.full`, the QR is hidden, and the code is greyed out.
 - **Focus:**
   - Initial focus is **Start** if `canStart` or the blocker is `NOT_ENOUGH_PLAYERS`; otherwise **Settings** (SPEC §9.6).
   - Left/Right moves across the bottom bar: Premium ↔ Settings ↔ Language ↔ Start.
   - **Up from the bottom bar enters the player grid** (`focusRestorer`, last row), so tiles are focusable for **kicking**. OK on a focused tile → TV-14a "Remove {name}?".
   - Up from the grid's top row goes nowhere; the QR and the summary are not focusable.
-  - **Back exits the app immediately** (no confirm; TV-DB).
+  - **Back exits the app immediately** (no confirm; TV-DB). **Browser TV:** with ≥ 1 player in, Back (Esc/Backspace) first asks `tv.closeRoomConfirm` / `tv.closeRoomBody` with **(• Keep room)** [ Close ] (laptop keys are reflexes; closing kills every phone's room).
 - **Edge:** the crown moves only when the VIP's seat is removed (120 s lobby seat hold) or the VIP leaves (SPEC `reassignHost`). The TV remote can always Start.
 
 ### TV-03 Settings
@@ -704,7 +705,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 - **Round 1, first turn only:** under the rule line, `clues.firstHint`.
 
 ### TV-06 Voting
-**Enters:** VOTING (or the re-vote after a tie, which adds a badge `vote.revoteAmong` and shows only the tied players as candidates).
+**Enters:** VOTING (or the re-vote after a tie, which adds a sentence-case badge `vote.revoteBetween` — "Re-vote: Ben or Eli. Another tie? Random pick.", the outcome from `settings.tieBreak` — and shows only the tied players as candidates). With every phone asleep the progress reads "0/N voted" (N = alive players), never "0/0".
 
 ```text
 +------------------------------------------------------------------------+
@@ -759,7 +760,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 - **Focus:** the action pill (Continue in ELIMINATION). **OK = skip to the end state; a second OK within 3 s = `HOST_ADVANCE`. Back = pause** (the local animation pauses too).
 
 ### TV-08 Tie-break (overlay)
-**Enters:** TIE_BREAK. The server starts the first tied player's turn immediately, with `TIE_LEAD_IN_MS` (3 s) added to that turn's timer (SPEC §4.7). So the tie is **a ≤ 2.5 s overlay on top of TV-05**, never a separate screen with its own countdown.
+**Enters:** TIE_BREAK. The server starts the first tied player's turn immediately, with `TIE_LEAD_IN_MS` (3 s) added to that turn's timer (SPEC §4.7). So the tie is **a 4 s overlay on top of TV-05** (2 s with reduced motion; OK skips it), never a separate screen with its own countdown. Its column ends above the strip line (y 417) so the focused Skip pill never covers `tie.explain`. (Starting the clue timer after the overlay is a server change, deferred.)
 
 ```text
 +------------------------------------------------------------------------+
@@ -776,7 +777,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                (TV-05 with the TIE-BREAK badge underneath)             |
 +------------------------------------------------------------------------+
 ```
-- The tied players' cards (2–4) with their tallies, `tie.title` and `tie.explain`. The overlay fades out after ≤ 2.5 s (OK skips it), revealing TV-05 with the tie-break badge and only the tied players in the order strip; then TV-06 with only the tied players as candidates.
+- The tied players' cards (2–4) with their tallies, `tie.title` and `tie.explain`. The overlay fades out after 4 s (OK skips it), revealing TV-05 where the rule line now reads `tie.persist` ("Ava and Dev are tied. One more clue each, then a re-vote."; the top bar already says TIE-BREAK, so no badge) and only the tied players in the order strip; then TV-06 with only the tied players as candidates.
 - The second-tie wheel and "Nobody's out" are **TV-09 variants** (not this screen).
 
 ### TV-09 Elimination reveal
@@ -799,7 +800,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                    Next round in 2...               ( Continue )       |
 +------------------------------------------------------------------------+
 ```
-- The sequence is §6.2-C. "Next round in {count}…" (`elim.nextRound`) counts down from `deadline.at − serverNow`. The server moves on when the 8 s ELIMINATION deadline ends (to CLUES, MR_WHITE_GUESS, RESULTS, or LOBBY on a stalemate).
+- The sequence is §6.2-C. "Next round in {count}…" (`elim.nextRound`) counts down from `deadline.at − serverNow`; when no round follows, a calm `elim.nextIn` ("Next in 2", `textSecondary`) replaces the red stopwatch. **v3:** the player's 48 dp avatar sits before "Ben is out!", and the role-colour wash (34 % at its centre) stays at full strength. The server moves on when the 8 s ELIMINATION deadline ends (to CLUES, MR_WHITE_GUESS, RESULTS, or LOBBY on a stalemate).
 - **Variants:**
   - **Random pick** (`lastVote.revote && outcome==="RANDOM"`): the tied avatars sit on a ring (radius 150 dp) and a highlight runs around it, decelerating over ≤ 2 s (`sfx.wheel` + heartbeat), landing on `eliminated.playerId` (the server's pick). Copy `elim.randomPick`. Then the card flip, compressed to fit.
   - **No elimination** (`outcome==="NO_ELIMINATION"`): stamp "NOBODY'S OUT" (`elim.noElimination`; `vote.nobodyVoted` when the tally is empty), no card.
@@ -824,7 +825,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                    THE BLANK GETS ONE GUESS            (displayS)      |
 |                  Lina is guessing the Civilians' word...  (body)       |
 |                                                                        |
-|                          Silence, please!                (caption)     |
+|          Lina: type it, then say it out loud!   (caption, accent)     |
 |                                                         ( Skip )       |
 +------------------------------------------------------------------------+
 ```
@@ -832,7 +833,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 - **While PENDING:** the action pill **Skip** (`guess.skip`) sends `HOST_ADVANCE` (TV only; the server makes it a TIMEOUT).
 - **Verdict** (status ≠ PENDING; lasts the VERDICT deadline, **8 s**, shown as a depleting bar under the buttons):
   - **CORRECT:** "The Blank nailed it!" + confetti. Buttons **(• Continue)** and **[ Doesn't count ]** (`guess.reject`, TV only, for a matcher false positive; confirm `guess.rejectConfirm`) → `HOST_OVERRIDE_GUESS{accept:false}`.
-  - **WRONG:** "Wrong! The game goes on." Buttons **(• Continue)** and **[ It counts! ]** (`guess.accept`; confirm `guess.acceptConfirm`) → `HOST_OVERRIDE_GUESS{accept:true}`.
+  - **WRONG:** "Wrong! The game goes on." Buttons **(• Continue)** and **[ Count it: Blank wins ]** (`guess.accept`; confirm `guess.acceptConfirm`) → `HOST_OVERRIDE_GUESS{accept:true}`.
   - **TIMEOUT:** "Time's up! No guess." Only **(• Continue)**.
   - After an override (`overridden`), only Continue remains, with the `guess.overridden` caption. Overrides are allowed once.
   - Continue is the double-OK action pill (`HOST_ADVANCE`). When the deadline ends, the buttons leave composition and focus returns to the default target.
@@ -858,8 +859,8 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |      (•  Play again  )   [ Change settings ]   [ New room ]            |
 +------------------------------------------------------------------------+
 ```
-- **Stage 1 (≈ 5 s, local):** the victory moment (§6.2-E) in `displayL`, and the words meeting in the middle, with translit under each word whenever `translit !== null`.
-- **Stage 2:** the title shrinks to `headline`; the words collapse into **one 56 dp strip**; a caption line shows `results.pack` and, if any, `guess.guessed` for each entry of `result.guesses`; the scoreboard shows **4 rows of 40 dp** (focus-scroll for more) with every player and their now-public role (emblem + label); a one-line **history timeline** from `history` (round, avatar, emblem, cause icon: vote / `dice` for RANDOM / `user-x` for KICK / `door-out` for LEAVE). Rank 1 gets `glow.accent` and a `trophy`.
+- **Stage 1 (≈ 5 s, local):** the victory moment (§6.2-E) in `displayL` (stepping down to `displayM` / `displayS` for longer titles, always one line) in the **solid** team colour (no gradient text), and the words meeting in the middle, with translit under each word whenever `translit !== null`; then (1 s) the **culprits row**: each Mole and Blank as a pill "[avatar 48] Ben was the Mole" (`elim.was*`) ringed in the role colour. The infiltrators' title names the roles: `winner.moles` / `winner.molesBlank` / `winner.molesBlanks` (plural on the Mole count; `winner.infiltrators` is the fallback).
+- **Stage 2:** the title shrinks to `headline`; the words collapse into **one 56 dp strip**; a caption line shows `results.pack` and, if any, `guess.guessed` for each entry of `result.guesses`; the scoreboard shows **5 rows of 40 dp** (focus-scroll for more) with every player and their now-public role (emblem + label). Rank 1 gets an `accent` 8 % fill, the amber total and a `trophy` — **no glow** (tied winners stacked into a brown smear). The round **history** moved to the pause menu (TV-12).
 - **Focus:** initial **Play again** (→ PLAY_AGAIN → TV-02 with the same players and scores). Left/Right across the 3 buttons; Up enters the score list (scroll only). **Change settings** → PLAY_AGAIN, then TV-03. **New room** → TV-14b, then a new room (old phones keep the old room until it expires). **Back** → pause menu (TV-12). The VIP's phone can also Play again.
 - Must pass a 1.3× font-scale screenshot test with 12 players (§11).
 
@@ -882,7 +883,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 +------------------------------------------------------------------------+
 ```
 - Items per SPEC §9.6: **Resume** · **Skip turn / timer** (`tv.skip` → `HOST_ADVANCE`) · **Players…** (`tv.players` → list → TV-14a → `KICK`) · **Sound: On/Off** (the global mute; the menu stays open) · **End game** (TV-14c → `BACK_TO_LOBBY`) · **Exit** (`tv.exitApp`, finishes the app). A Language item is **[not in v1]**.
-- **Nothing pauses for everyone** (no PAUSE action in v1): the footer is `tv.pauseNote`. Only local reveal animations pause while the menu is open.
+- **Nothing pauses for everyone** (no PAUSE action in v1): `tv.pauseNote` ("Timers keep running") is the **subtitle under the title**, and the first item is "Back to game" (`tv.resume`). **On Results** the menu (540 dp) also shows the round history: "R1 [avatar] Ben [role emblem]" per round, plus a cause icon only when it was not a plain vote (`dice` / `user-x` / `door-out` / `x`). Only local reveal animations pause while the menu is open.
 - **Players…** is for removing someone who left for good, so the game stops skipping their turns.
 - **Focus:** initial **Resume**; it's a vertical list; **Back = Resume**.
 
@@ -894,7 +895,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 | **13c** | A player is away | Their tile goes to the static away state (§5.2) and a toast `conn.playerAway`. Their turn is skipped and their vote counts as an abstention. Their seat is held until the room returns to the lobby (then 120 s) |
 | **13d** | Room creation failed (Home) | TV-01 failure state |
 | **13e** | Room expired (`ROOM_EXPIRED`, close 4010) | In LOBBY or RESULTS (also ROOM_NOT_FOUND, close 4004): **silently create a new room** and toast `tv.newCode` (SPEC §9.8). A room never expires while the TV is connected (12 h safety cap); it expires 15 min after the TV disconnects (SPEC §7.5). Otherwise full screen `tv.roomClosed` with **(• New room)**. Phones show their RoomGone screen |
-| **13f** | No phones connected for 60 s mid-game | A soft banner: `conn.phonesAsleep`. No state change |
+| **13f** | No phones connected for 60 s mid-game | A soft banner: `conn.phonesAsleepTimer` while a timer runs ("…or the timer decides"), `conn.phonesAsleep` with timers off. No state change |
 | **13g** | Other fatal closes (4002, 4003, 4005) | Full screen with the error text (`error.unsupportedVersion`, `error.tvAuthFailed`, `error.replaced`) and **(• New room)** |
 
 ### TV-14 Dialogs (`elev.3`, centred, 520 dp wide, **initial focus on the safe option**)
@@ -942,6 +943,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 - A single `<input inputmode="text" autocapitalize="characters" autocomplete="off" maxlength="4" dir="ltr">` drawn as 4 boxes (`type.ph.code`). It uppercases on input and accepts only `ROOM_CODE_ALPHABET` (SPEC §3; the check is `ROOM_CODE_REGEX`). Any digit, or I, L or O, shakes the box and shows "Codes use letters only, never I, L or O." (`join.codeInvalid`).
 - Auto-submits on the 4th character. **Next** is disabled until 4 characters are entered. The `arrow-forward` icon mirrors in RTL.
 - Errors after navigating to `/{CODE}` appear on PH-14 (not found) or PH-02 (full, locked).
+- **No code?** (v3) Under the boxes a `surface` card with a `tv` icon: `home.hostHint` + the link `{host}/tv` (≥ 48 px), for a friend sent the bare link who wants to host.
 
 ### PH-02 Join (name + color)
 ```text
@@ -1027,6 +1029,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 - **Kick:** tap a player row → a bottom sheet "Remove Joe?" with [Cancel] and [Remove] (`danger`).
 - **Game settings ›** opens PH-03b, a full-height sheet with exactly the TV-03 rows, defaults and `SETTINGS_BOUNDS` steps, as native-feeling segmented controls and steppers (48 px). Changes are sent immediately. Sections can be expanded or collapsed. Language is per device (PH-17).
 - **Non-VIP:** a read-only settings summary. The player list is announced as a list with "host" and "you" labels.
+- **How to play** (v3, both variants): a card under the settings with the TV-15 steps (`howto.step1–4`, icons eye-off / speech / vote / the Blank emblem). Open before the first game, a collapsed disclosure from game 2 on. Only newly joined rows drop in (`join-pop`).
 
 ### PH-04 Your word (ROLE_REVEAL; hold to reveal)
 ```text
@@ -1068,6 +1071,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 +------------------------------------+
 ```
 - **Card:** 100 % width, `aspect-ratio: 3/4`, max height 55 dvh, `radius.xl`. The interaction is §6.2-A. Use pointer events (`pointerdown` + `setPointerCapture`; hide on `pointerup`, `pointercancel`, `pointerleave` and `blur`). Set `user-select: none`, `-webkit-touch-callout: none` and `touch-action: none` on the card, and call `contextmenu` `preventDefault` so a long press doesn't open the OS menu.
+- **Every face is the player's colour, the Blank's too** (a near-white flash outed the Blank across the sofa; paper white stays for TV-09 and results). Civilian and Mole faces add `reveal.twist` under the word, identical for both: "Most of you have this word. Not everyone. Maybe not you." (not in beginner mode).
 - **The Blank's face:** the empty-card emblem, "**No word for you.**" and "Listen. Blend in. Bluff."
 - **"Got it"** (sends READY) is disabled until the card has been revealed at least once. After that tap: "Ready! Waiting for the others… (4/7)". The card stays available to peek again.
 - **Accessibility alternative:** with a screen reader, the card is a `button` labelled "Show my word for 5 seconds". Activating it reveals the word for 5 s and announces the word through the live region. A visible "Tap to show for 5 s instead" link sits under the card for motor-impaired players (§11).
@@ -1123,6 +1127,8 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 - **DONE** is a 50 dvh-tall rounded rectangle in `bg` with cream text (`type.ph.display`): the biggest target in the app. It sends `CLUE_DONE` and then returns to PH-05.
 - **Accidental-tap guard:** DONE is inert for the first 1.5 s of the turn (it shows a fill animation during that time), so a lingering tap can't end the turn.
 - **The Blank's variant:** an extra line "Bluff! Listen to the others' clues." Beginner mode adds a role chip.
+- **In a tie-break**, a tied speaker's body line is `tie.yourTurn` ("You're in the tie. Make this clue count!").
+- **Haptics (v3):** an armed DONE gives a 20 ms confirm bump; READY and a vote selection a 10 ms tick.
 - Timer at 5 s: the bar turns to `danger` and a 10 ms tick haptic fires each second (Android only).
 
 ### PH-07 Vote
@@ -1131,7 +1137,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 | [KXQP]     [*] Lina            ... |
 | ROUND 2 - VOTE      ======---  41s |
 |                                    |
-|       Who's lying?                 |
+|   Who's not one of us?             |
 |   Tap a player, then lock it in.   |
 |                                    |
 |  +--------------------------------+|
@@ -1151,7 +1157,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 ```
 - The selected row (Rami) gets a 2 px `primary` border and a check.
 - A `role="radiogroup"` of 64 px rows (56 px avatar, `type.ph.h2` name). **You are not listed** (no self-vote). Eliminated players are not listed. Away players are listed with a `wifi-off` badge, because you may still vote for them.
-- The CTA is disabled until a player is selected, then reads "Lock my vote: {name}".
+- The heading is the TV's question, `vote.title` ("Who's not one of us?"; "lying" assumed the voter knows they are honest). The CTA is disabled until a player is selected (it reads `vote.pickFirst`, "Pick one first"), then reads "Lock my vote: {name}". A re-vote shows `vote.revoteBetween` as its banner.
 - **Spectators** (eliminated) see PH-10 instead.
 - If time runs out before locking, the vote is an abstention (PLAN). A banner says "Time's up, no vote counted."
 
@@ -1266,6 +1272,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 +------------------------------------+
 ```
 - The input autofocuses and the screen scrolls so the input and CTA stay above the keyboard (`visualViewport` resize handling). Settings: `type.ph.input`, `dir="auto"`, `autocapitalize="off"`, `autocorrect="off"`, `spellcheck="false"`, `enterkeyhint="send"`, `maxlength=40`, `lang` = the word language (so the right keyboard is suggested).
+- The sub-heading states the stakes: `guess.stakes` ("Get it right and you win the game."), above the spelling hint.
 - **Submit once.** After submitting: "Sent! Say your answer out loud for everyone." This supports the host-override house rule (TV-10). The phone shows **its own typed text from local state** (the server never echoes it before RESULTS). Then "Look at the TV!"
 - **Verdict on the phone:** "You got it! You win!" (`guess.correctYou`; win haptic + confetti in the player color), "Not quite. The game goes on." (`guess.wrongYou`), or "Time's up! No guess." (`guess.timeout`). If the host overrides, the verdict updates with the `guess.overridden` caption.
 - At timeout with text in the box, the text is **auto-submitted**. That's kinder than losing it. **[Engine note §13.5]**
@@ -1310,7 +1317,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 |   start the next game..."          |
 +------------------------------------+
 ```
-- The personal headline comes first ("You won! +{count}" in `success` / "You lost this one" in `textSecondary`), then the team result, then **both words** (public at RESULTS), the pack (`results.pack`), any Blank guesses (`guess.guessed` from `result.guesses`), and the scoreboard.
+- The personal headline comes first ("You won! +{count}" in `success` / "You lost this one" in `textSecondary`), then the team result (solid team colour; infiltrators named by role as on TV-11), then **both words** (public at RESULTS), the **culprits** ("[avatar 32] Ben was the Mole" pills, above the fold), the pack (`results.pack`), any Blank guesses (`guess.guessed` from `result.guesses`), and the scoreboard.
 - Non-VIP footer: `results.waitingHost` (the TV remote can also start the next game).
 - A win plays a confetti burst in the player's color and the win haptic.
 

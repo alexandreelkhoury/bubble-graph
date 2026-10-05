@@ -52,6 +52,8 @@
 .tv :is(.tvbtn, .tvpill, .setrowtv, .tvcat, .tvmenu__item, .tvtoggle, .tvmenu-btn, .tvshop__pack):focus {
   transform: scale(1.04); background-color: var(--color-elevated); box-shadow: var(--tv-focus-ring);
 }
+/* Full-width rows grow less (1.02): at 1.04 their start edge jumped 9–12 dp sideways. Pills 1.04, tiles 1.06. */
+.tv :is(.setrowtv, .tvcat, .tvmenu__item):focus { transform: scale(1.02); }
 .tile--btn:focus { transform: scale(1.06); background: var(--color-elevated); box-shadow: var(--tv-focus-ring); }
 /* Scoreboard rows sit in a clipping scroll box: an inset ring (same focus colour) that the box cannot cut. */
 .tv .tvsb__row:focus { outline: none; background: var(--color-elevated); box-shadow: inset 0 0 0 3px var(--color-focus); }
@@ -455,12 +457,14 @@
 /* overlays, dialogs (TV-12, TV-14), connection states (TV-13) */
 .tvoverlay { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; background: var(--color-scrim); animation: fade-in var(--motion-base) both; }
 .tvoverlay--solid { background: var(--color-bg); }
-.tvdialog { width: 520px; padding: 32px; border-radius: var(--radius-lg); background: var(--color-overlay); box-shadow: var(--elev-3-shadow); display: flex; flex-direction: column; gap: 16px; animation: pop var(--motion-base) var(--ease-overshoot) both; }
+.tvdialog { width: 520px; padding: 32px; border-radius: var(--radius-lg); background: var(--color-overlay); box-shadow: var(--elev-3-shadow); display: flex; flex-direction: column; gap: 16px; animation: dialog-in 200ms var(--ease-decel) both; }
+/* A large panel enters subtly (it grew from 20 % with an overshoot, a toy pop). */
+@keyframes dialog-in { from { opacity: 0; transform: translateY(8px) scale(0.96); } to { opacity: 1; transform: none; } }
 .tvdialog--menu { width: 400px; }
 .tvdialog__title { font: var(--tv-headline); }
 .tvdialog__title--center { text-align: center; text-transform: uppercase; letter-spacing: 0.04em; }
 .tv:lang(ar) .tvdialog__title--center { text-transform: none; letter-spacing: 0; }
-.tvdialog__body { color: var(--color-text-secondary); }
+.tvdialog__body { color: var(--color-text-secondary); text-wrap: pretty; }
 .tvdialog__actions { display: flex; justify-content: flex-end; gap: 16px; margin-top: 8px; }
 .tvdialog__note { text-align: center; font: var(--tv-caption); color: var(--color-text-muted); }
 /* Inline padding ≥ the focused item's growth (scale 1.04) + ring (5) + glow, so the ring is never clipped. */

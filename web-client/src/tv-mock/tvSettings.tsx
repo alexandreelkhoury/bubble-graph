@@ -3,7 +3,7 @@
 // step a row's value, OK steps too or opens the Packs / Difficulty sub-panel; Back closes the sub-panel, then returns
 // from the rows to the categories, then to the Lobby. Up from the first category or row reaches Done; Down stops at the
 // last row; a sub-panel traps the arrows (Kotlin FocusTrap), so only Back or a toggle's own action leaves it.
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import type { ComponentChildren, Ref } from "preact";
 import type { Settings, SettingsPatch } from "@mishana/shared/engine";
 import type { TvView } from "@mishana/shared/protocol";
@@ -139,6 +139,13 @@ export function TvSettings({ view }: { view: TvView }) {
   const allRows = cat === "about" ? [] : visibleRows(cat, s);
   const rows = [...allRows.filter((r) => !locked(r)), ...allRows.filter(locked)];
   const preview = rolePreview(view);
+  // B14: rows hidden below the help divider fade out (has-more) instead of being cut through the middle of a line.
+  const [more, setMore] = useState(false);
+  const measureMore = (): void => {
+    const b = rowsBox.current;
+    if (b) setMore(b.scrollTop + b.clientHeight < b.scrollHeight - 2);
+  };
+  useLayoutEffect(measureMore, [cat, sub, rows.length, s]);
 
   const focusCategory = (): void => catBox.current?.querySelector<HTMLElement>(".tvcat.is-on")?.focus();
   const focusRowId = (id: string | undefined): void => {
@@ -217,7 +224,7 @@ export function TvSettings({ view }: { view: TvView }) {
         ))}
       </nav>
       <section class="tvsettings__panel">
-        <div class="tvsettings__rows" ref={rowsBox} onKeyDown={onRowsKey}>
+        <div class={`tvsettings__rows${more ? " has-more" : ""}`} ref={rowsBox} onKeyDown={onRowsKey} onScroll={measureMore}>
           {sub === "packs" ? (
             <div class="tvsub">
               <Toggle first={subFirst} on={s.packIds.length === 0} onClick={() => set({ packIds: [] })}>{t("settings.allPacks")}</Toggle>
