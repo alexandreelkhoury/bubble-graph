@@ -49,6 +49,18 @@
     <string name="winner__civilians">Civilians win!</string>
     <string name="winner__infiltrators">The infiltrators win!</string>
     <string name="winner__blank">The Blank wins: %1$s!</string>
+    <plurals name="winner__moles">
+        <item quantity="one">The Mole wins!</item>
+        <item quantity="other">The Moles win!</item>
+    </plurals>
+    <plurals name="winner__moles_blank">
+        <item quantity="one">The Mole &amp; the Blank win!</item>
+        <item quantity="other">The Moles &amp; the Blank win!</item>
+    </plurals>
+    <plurals name="winner__moles_blanks">
+        <item quantity="one">The Mole &amp; the Blanks win!</item>
+        <item quantity="other">The Moles &amp; the Blanks win!</item>
+    </plurals>
     <string name="color__coral">Coral</string>
     <string name="color__azure">Azure</string>
     <string name="color__lemon">Lemon</string>
@@ -98,6 +110,11 @@
     <string name="lobby__premium">Premium</string>
     <string name="lobby__premium_room">Premium room</string>
     <string name="lobby__premium_ended">Premium has ended. Your free packs are still here.</string>
+    <string name="howto__title">How to play</string>
+    <string name="howto__step1">Everyone gets a secret word, except…</string>
+    <string name="howto__step2">Give one clue each, out loud.</string>
+    <string name="howto__step3">Vote out the odd one.</string>
+    <string name="howto__step4">The Blank gets one last guess.</string>
     <string name="lobby__premium_ended_phone">Premium has ended for this room. Free packs still work.</string>
     <string name="lobby__words_repeating">You\'ve played every free word. More packs in Premium.</string>
     <string name="settings__title">Game settings</string>
@@ -163,9 +180,11 @@
     <string name="join__resuming">Rejoining your seat…</string>
     <string name="join__locked">A game is in progress. You\'ll be able to join when it ends.</string>
     <string name="join__unlocked">You can join now!</string>
+    <string name="home__host_hint">No code? Host the game on a TV or laptop:</string>
     <string name="reveal__your_word">Your secret word</string>
     <string name="reveal__hold_to_see">Press and hold to see your word</string>
     <string name="reveal__release">Release to hide</string>
+    <string name="reveal__twist">Most of you have this word. Not everyone. Maybe not you.</string>
     <string name="reveal__privacy">Make sure nobody\'s looking.</string>
     <string name="reveal__first_time">That\'s your word. Don\'t show anyone.</string>
     <string name="reveal__no_word">No word for you.</string>
@@ -182,7 +201,7 @@
     <string name="reveal__blank_hint">The Blank has no word… and has to bluff.</string>
     <string name="clues__rule">One word or short phrase. Don\'t say the word!</string>
     <string name="clues__first_hint">Listen carefully. Someone has a different word… or none at all.</string>
-    <string name="clues__speaking">%1$s\'s clue</string>
+    <string name="clues__speaking">%1$s, your clue!</string>
     <string name="clues__speaker_sub">Say it out loud, then tap Done</string>
     <string name="clues__no_timer">No timer, tap Done when finished</string>
     <string name="clues__now_speaking">Now speaking</string>
@@ -195,12 +214,14 @@
     <string name="clues__done">Done</string>
     <string name="clues__peek">Hold to peek my word</string>
     <string name="clues__peek_role">Hold to see my card</string>
+    <string name="tie__your_turn">You\'re in the tie. Make this clue count!</string>
     <string name="clues__skip_turn">Skip turn</string>
     <string name="clues__skipped">%1$s isn\'t here, skipping</string>
     <string name="vote__title">Who\'s not one of us?</string>
     <string name="vote__sub">Vote on your phone</string>
     <string name="vote__pick">Who\'s lying?</string>
     <string name="vote__pick_sub">Tap a player, then lock it in.</string>
+    <string name="vote__pick_first">Pick one first</string>
     <string name="vote__confirm">Lock my vote: %1$s</string>
     <string name="vote__locked">Vote locked.</string>
     <string name="vote__act_natural">Act natural.</string>
@@ -211,6 +232,7 @@
     <string name="vote__look_tv">Look at the TV!</string>
     <string name="vote__dead">You\'re out. Watch and enjoy!</string>
     <string name="vote__revote_among">Re-vote between the tied players</string>
+    <string name="vote__revote_between">Re-vote: %1$s. Another tie? %2$s.</string>
     <string name="vote__close">Close vote</string>
     <string name="vote__votes_in">The votes are in…</string>
     <string name="vote__no_vote">No vote</string>
@@ -220,6 +242,7 @@
     <string name="tie__title">It\'s a tie!</string>
     <string name="tie__explain">One more clue each, then everyone votes again, between them only.</string>
     <string name="tie__in_tie">You\'re in the tie: get your best clue ready!</string>
+    <string name="tie__persist">%1$s are tied. One more clue each, then a re-vote.</string>
     <string name="tie__vs">vs</string>
     <string name="elim__eliminated">%1$s is out!</string>
     <string name="elim__was_civilian">%1$s was a Civilian</string>
@@ -236,6 +259,7 @@
         <item quantity="other">%1$d didn\'t vote</item>
     </plurals>
     <string name="elim__next_round">Next round in %1$d…</string>
+    <string name="elim__next_in">Next in %1$d</string>
     <string name="elim__you">You\'re out of the game</string>
     <string name="elim__you_were">You were: %1$s</string>
     <string name="elim__stay">Stick around for the reveal. No hints, OK?</string>
@@ -248,10 +272,12 @@
     <string name="guess__title">The Blank gets one guess</string>
     <string name="guess__guessing">%1$s is guessing the Civilians\' word…</string>
     <string name="guess__silence">Don\'t help!</string>
+    <string name="guess__say_aloud">%1$s: type it, then say it out loud!</string>
     <string name="guess__waiting">%1$s is the Blank and gets one guess. Shh…</string>
     <string name="guess__prompt">What\'s the Civilians\' word?</string>
     <string name="guess__placeholder">Your guess</string>
     <string name="guess__spelling">Spelling doesn\'t need to be perfect.</string>
+    <string name="guess__stakes">Get it right and you win the game.</string>
     <string name="guess__submit">That\'s my answer</string>
     <string name="guess__sent">Sent! Say your answer out loud for everyone.</string>
     <string name="guess__correct">The Blank nailed it!</string>
@@ -259,7 +285,7 @@
     <string name="guess__wrong">Wrong! The game goes on.</string>
     <string name="guess__wrong_you">Not quite. The game goes on.</string>
     <string name="guess__timeout">Time\'s up! No guess.</string>
-    <string name="guess__accept">It counts!</string>
+    <string name="guess__accept">Count it: Blank wins</string>
     <string name="guess__accept_confirm">Accept %1$s\'s guess? The Blank wins.</string>
     <string name="guess__reject">Doesn\'t count</string>
     <string name="guess__reject_confirm">Reject the guess? The game goes on.</string>
@@ -292,6 +318,7 @@
     <string name="conn__cant_reach">Can\'t reach the server.</string>
     <string name="conn__player_away">Lost connection with %1$s. Their seat is saved.</string>
     <string name="conn__phones_asleep">Everyone\'s phone is asleep? Wake them up, the game is waiting.</string>
+    <string name="conn__phones_asleep_timer">Everyone\'s phone is asleep? Wake them up, or the timer decides.</string>
     <string name="conn__seat_saved">Your seat is saved.</string>
     <string name="conn__still_trying">Still trying… Check your Wi-Fi or mobile data.</string>
     <string name="conn__back">Back in!</string>
@@ -302,13 +329,16 @@
     <string name="tv__new_code">New code: %1$s</string>
     <string name="tv__start_now">Start now</string>
     <string name="tv__press_again">Press OK again to confirm</string>
+    <string name="tv__press_again_web">Enter or click again to confirm</string>
     <string name="tv__skip_hint">Press OK to skip</string>
+    <string name="tv__skip_hint_web">Enter or click to skip</string>
+    <string name="tv__browser_tip">F = full screen · arrows + Enter, or click</string>
     <string name="tv__clues_sub">Say it out loud, then end the turn on your phone</string>
     <string name="tv__clues_no_timer">No timer: end the turn on your phone when you\'re done</string>
     <string name="tv__back_to_categories">Back: categories</string>
     <string name="tv__pause_title">Game menu</string>
-    <string name="tv__pause_note">The game keeps running</string>
-    <string name="tv__resume">Resume</string>
+    <string name="tv__pause_note">Timers keep running</string>
+    <string name="tv__resume">Back to game</string>
     <string name="tv__skip">Skip turn / timer</string>
     <string name="tv__players">Players…</string>
     <string name="tv__end_game">End game</string>
@@ -322,6 +352,9 @@
     <string name="tv__back_to_lobby">Back: lobby</string>
     <string name="tv__app_closed">Mish Ana! is closed</string>
     <string name="tv__open_again">Open again</string>
+    <string name="tv__close_room_confirm">Close this room?</string>
+    <string name="tv__close_room_body">Everyone will need a new code.</string>
+    <string name="tv__keep_room">Keep room</string>
     <string name="tv__room_closed">This room has closed</string>
     <string name="tv__debug_title">Debug settings</string>
     <string name="tv__server_url">Server URL</string>
