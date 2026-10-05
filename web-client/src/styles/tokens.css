@@ -150,7 +150,7 @@
 }
 
 html { background: var(--color-bg); color: var(--color-text); font: var(--type-ph-body);
-  -webkit-text-size-adjust: 100%; }
+  -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 body { margin: 0; min-height: 100dvh; touch-action: manipulation;
   background: radial-gradient(120% 60% at 50% 0%, var(--color-bg-glow), var(--color-bg) 60%);
   /* Safe areas are applied once: sides here, the top in .topbar, the bottom in the action bar / sheets / the last

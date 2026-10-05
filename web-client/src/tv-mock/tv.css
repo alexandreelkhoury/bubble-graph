@@ -40,8 +40,9 @@
 
 /* room code */
 .tvcode { display: inline-flex; direction: ltr; unicode-bidi: isolate; color: var(--color-accent); font-variant-numeric: tabular-nums; }
-.tvcode--mini { font: 900 20px/1 var(--font-sans); gap: 2px; letter-spacing: 0.08em; }
-.tvcode--big { font: var(--tv-code); font-size: 72px; line-height: 72px; gap: 0.08em; letter-spacing: 0.08em; text-shadow: 0 0 32px rgb(var(--rgb-accent) / 0.35); }
+/* Spacing is the gap alone (Arabic zeroes letter-spacing, which halved it and shifted the code off-centre). */
+.tvcode--mini { font: 900 20px/1 var(--font-sans); gap: 0.1em; letter-spacing: 0; }
+.tvcode--big { font: var(--tv-code); font-size: 72px; line-height: 72px; gap: 0.14em; letter-spacing: 0; text-shadow: 0 0 32px rgb(var(--rgb-accent) / 0.35); }
 
 /* focus (DESIGN §4.6: the one focus style) */
 .tv button { outline: none; }
@@ -84,7 +85,7 @@
 /* Beats the generic focus fill (0,3,0): the armed pill is always accent with ink text, focused or not. */
 .tv .tvpill.is-armed, .tv .tvpill.is-armed:focus { opacity: 1; background: var(--color-accent); color: var(--color-ink); border-color: transparent; }
 /* Pointer remotes only (tabIndex -1): sits at the end of the top bar, inside the safe area. */
-.tvmenu-btn { display: grid; place-items: center; width: 32px; height: 32px; margin-inline-start: 4px; border: 0; border-radius: 50%; background: transparent; color: var(--color-text-muted); opacity: 0.5; }
+.tvmenu-btn { display: grid; place-items: center; width: 32px; height: 32px; margin-inline-start: 4px; border: 0; border-radius: 50%; background: transparent; color: var(--color-outline-strong); }
 .tvmenu-btn:hover { opacity: 1; background: var(--color-surface); }
 .tvbadge { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding-inline: 16px; border-radius: var(--radius-pill); font: var(--tv-label); font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
 .tv:lang(ar) .tvbadge { text-transform: none; letter-spacing: 0; }
@@ -111,7 +112,7 @@
 .tvhome { display: flex; flex-direction: column; align-items: center; }
 .tvhome__pattern { position: absolute; inset: 0; background: var(--bang-pattern); background-size: 64px; opacity: 0.04; animation: drift 30s linear infinite; }
 @keyframes drift { to { background-position: 640px 320px; } }
-.tvhome__mark { position: absolute; top: 27px; inset-inline-start: 48px; border-radius: 12px; }
+.tvhome__mark { position: absolute; top: 27px; inset-inline-start: 48px; border-radius: 12px; outline: 1px solid rgb(255 255 255 / 0.1); outline-offset: -1px; }
 .tvhome__wordmark { margin-top: 128px; width: 560px; height: auto; filter: drop-shadow(0 0 24px rgb(var(--rgb-primary) / 0.25)); animation: bang-in 800ms var(--ease-overshoot) both; }
 @keyframes bang-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
 .tvhome__slogan { margin-top: 20px; }
@@ -169,13 +170,16 @@
 .tvsettings__title { margin: 0; font: var(--tv-headline); text-transform: uppercase; letter-spacing: 0.04em; }
 .tv:lang(ar) .tvsettings__title { text-transform: none; letter-spacing: 0; }
 .tvsettings__cats { position: absolute; top: 103px; inset-inline-start: 58px; width: 200px; display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: var(--radius-lg); background: var(--color-surface); }
-.tvcat { height: 52px; padding-inline: 16px; border: 0; border-radius: var(--radius-md); background: transparent; color: var(--color-text-secondary); font: var(--tv-titleS); text-align: start; }
-.tvcat.is-on { color: var(--color-text); background: var(--color-elevated); box-shadow: inset 4px 0 0 var(--color-primary); }
-[dir="rtl"] .tvcat.is-on { box-shadow: inset -4px 0 0 var(--color-primary); }
+.tvcat { position: relative; height: 52px; padding-inline: 32px 16px; border: 0; border-radius: 12px; background: transparent; color: var(--color-text-secondary); font: var(--tv-titleS); text-align: start; }
+/* The selected category: a 4 × 22 dp pill inside the padding (native SettingsScreen), mirrored by the logical inset. */
+.tvcat.is-on { color: var(--color-text); background: var(--color-elevated); }
+.tvcat.is-on::before { content: ""; position: absolute; inset-inline-start: 16px; top: 15px; width: 4px; height: 22px; border-radius: var(--radius-pill); background: var(--color-primary); }
 /* The rows scroll; the explanation stays put under them (never inside the scroll box). */
 .tvsettings__panel { position: absolute; top: 103px; inset-inline-start: 282px; inset-inline-end: 58px; bottom: 80px; display: flex; flex-direction: column; border-radius: var(--radius-lg); background: var(--color-surface); }
 /* Inline padding leaves room for the focused row's 1.04 scale and ring (DESIGN §4.6) inside the panel. */
 .tvsettings__rows { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 2px; padding: 10px 24px; overflow-y: auto; scrollbar-width: none; }
+/* More rows below: fade out instead of cutting a row through its glyphs at the help divider. */
+.tvsettings__rows.has-more { mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent); }
 .setrowtv { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 44px; flex: none; padding-inline: 16px; border: 0; border-radius: var(--radius-md); background: transparent; color: var(--color-text); font: var(--tv-titleS); text-align: start; }
 .setrowtv__value { display: inline-flex; align-items: center; gap: 6px; color: var(--color-accent); font: var(--tv-label); white-space: nowrap; }
 .setrowtv__chev { display: inline-grid; place-items: center; color: var(--color-text-muted); }
@@ -239,7 +243,8 @@
 .ring--danger { animation: ring-pulse 1s ease-in-out infinite; }
 @keyframes ring-pulse { 50% { transform: scale(1.03); } }
 .ring__content { position: relative; display: grid; place-items: center; }
-.ring__num { position: absolute; top: 4px; inset-inline-end: -88px; font: var(--tv-timer); color: var(--color-text); }
+/* Attached to its ring (native: offset 36 dp, −6 dp), not floating 88 dp away like a separate score. */
+.ring__num { position: absolute; top: -6px; inset-inline-end: -36px; font: var(--tv-timer); color: var(--color-text); }
 .ring--warn .ring__num { color: var(--color-accent); }
 .ring--danger .ring__num { color: var(--color-danger); }
 
@@ -471,24 +476,26 @@
 .tvmenu__end--ok { color: var(--color-primary); }
 .tvfatal { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; }
 .tvfatal__icon { display: grid; place-items: center; width: 160px; height: 160px; border-radius: 50%; background: var(--color-surface); color: var(--color-text-secondary); }
-.tvfatal__body { max-width: 620px; display: block; }
+.tvfatal__body { max-width: 620px; display: block; text-wrap: pretty; }
 .tvfreeze { position: absolute; inset: 0; z-index: 15; background: rgb(var(--rgb-bg) / 0.4); }
 .tvconnbanner { position: absolute; z-index: 16; top: 12px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 12px; padding: 10px 22px; border-radius: var(--radius-pill); background: var(--color-elevated); box-shadow: var(--elev-2-shadow); font: var(--tv-body); }
 .tvconnbanner .icon { color: var(--color-accent); }
-.tvconnbanner--soft { top: auto; bottom: 96px; background: var(--color-surface); color: var(--color-text-secondary); }
+.tvconnbanner--soft { top: auto; bottom: 96px; max-width: 880px; white-space: nowrap; background: var(--color-surface); color: var(--color-text-secondary); }
 /* Toast zones never cover what the room is reading (DESIGN §4.2 rows), one toast at a time:
    lobby → the player-grid header row, in place of the blocker line (TvLobby);
    in game → the empty centre of the top bar row (y 27–75). */
 .tvtoasts { position: absolute; z-index: 18; top: 31px; left: 50%; width: 420px; margin-left: -210px; display: flex; justify-content: center; pointer-events: none; }
-.tvtoast { min-width: 0; max-width: 100%; padding: 6px 16px; border-radius: var(--radius-md); background: var(--color-overlay); box-shadow: var(--elev-2-shadow); border-inline-start: 4px solid var(--color-outline-strong); font: var(--tv-body); animation: tv-toast 240ms var(--ease-overshoot) both;
+/* A 10 dp tone dot leads the text (as native ToastHost); a side stripe bent into a crescent on the rounded corner. */
+.tvtoast { min-width: 0; max-width: 100%; padding: 6px 20px; border-radius: var(--radius-md); background: var(--color-elevated); box-shadow: var(--elev-2-shadow); font: var(--tv-body); animation: tv-toast 240ms var(--ease-decel) both;
   /* Two lines at most (billing toasts carry two sentences); a longer one ends in an ellipsis on line 2. */
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
 /* Lobby slot: plain text (no card, no edge bar, which a pill radius would bend into a stray arc). */
 .tvtoast--inline { padding: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; font: var(--tv-label); color: var(--color-text-secondary); }
 .tvtoast--inline.tvtoast--success { color: var(--color-success); }
 .tvtoast--inline.tvtoast--error { color: var(--color-danger); }
-.tvtoast--success { border-inline-start-color: var(--color-success); }
-.tvtoast--error { border-inline-start-color: var(--color-danger); }
+.tvtoast:not(.tvtoast--inline)::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-inline-end: 12px; border-radius: 50%; vertical-align: 2px; background: var(--toast-dot, var(--color-outline-strong)); }
+.tvtoast--success { --toast-dot: var(--color-success); }
+.tvtoast--error { --toast-dot: var(--color-danger); }
 /* In-game toasts stay one line inside the top bar row (y 31–67 in Arabic too), never over the TV-05 rule at y 72. */
 .tvtoasts .tvtoast:not(.tvtoast--inline) { -webkit-line-clamp: 1; line-clamp: 1; }
 .tv:lang(ar) .tvtoasts .tvtoast:not(.tvtoast--inline) { line-height: 28px; padding-block: 4px; }
