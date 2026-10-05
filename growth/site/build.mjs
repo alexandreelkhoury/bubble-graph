@@ -429,7 +429,7 @@ ${a.faq.map((x) => `      <details>\n        <summary>${x.q}</summary>\n        
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(a.title)}</title>
 <meta name="description" content="${esc(a.description)}">
-<meta name="theme-color" content="#120A1F">
+<meta name="theme-color" content="#2B1650">
 <meta name="color-scheme" content="dark">
 <link rel="canonical" href="${url}">
 ${hreflangLinks(alts)}

@@ -521,14 +521,22 @@
   /* ------------------------------------------------------------------
      REVEAL ON SCROLL
      ------------------------------------------------------------------ */
+  // Content is visible by default. An element is only hidden ("armed") after IntersectionObserver has reported it
+  // off-screen, so it can rise in when it scrolls into view; everything is revealed after 1.5 s regardless, so a
+  // webview where IO stalls (in-app browsers) never shows a blank section.
   var rv = doc.querySelectorAll('.rv');
+  function revealAll() { rv.forEach(function (el) { el.classList.add('in'); }); }
   if (!reduceMotion && 'IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (ents) {
-      ents.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      ents.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        else if (!e.target.classList.contains('in')) e.target.classList.add('rv-armed');
+      });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
     rv.forEach(function (el) { io.observe(el); });
+    setTimeout(function () { io.disconnect(); revealAll(); }, 1500);
   } else {
-    rv.forEach(function (el) { el.classList.add('in'); });
+    revealAll();
   }
 
   /* ------------------------------------------------------------------
