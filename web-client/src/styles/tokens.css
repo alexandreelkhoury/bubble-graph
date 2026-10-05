@@ -153,7 +153,9 @@ html { background: var(--color-bg); color: var(--color-text); font: var(--type-p
   -webkit-text-size-adjust: 100%; }
 body { margin: 0; min-height: 100dvh; touch-action: manipulation;
   background: radial-gradient(120% 60% at 50% 0%, var(--color-bg-glow), var(--color-bg) 60%);
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  /* Safe areas are applied once: sides here, the top in .topbar, the bottom in the action bar / sheets / the last
+     screen (styles.css). Padding the body top and bottom as well made every phone screen 100dvh + the insets tall. */
+  padding-inline: env(safe-area-inset-left) env(safe-area-inset-right); }
 :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
 :lang(ar) * { letter-spacing: 0 !important; }
 [dir="rtl"] .icon--mirror { transform: scaleX(-1); }

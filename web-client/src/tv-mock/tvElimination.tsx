@@ -7,7 +7,7 @@ import { fmtNum, isolate, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { ROLE_KEY } from "../lib/keys";
 import { ms, reduced } from "../lib/motion";
-import { afterElimination, byId, topVoted, TV_VOTE_REVEAL_MS } from "../lib/view";
+import { afterElimination, byId, topVoted, TV_VERDICT_MS, TV_VOTE_REVEAL_MS } from "../lib/view";
 import { Avatar, avatarState, COLOR_BY_ID, Glyph, colorVars } from "../components/PlayerChip";
 import { RoleEmblem } from "../components/Role";
 import { Icon } from "../components/Icon";
@@ -78,7 +78,7 @@ export function TvElimination({ view }: { view: TvView }) {
     const k = random ? 0.6 : 1;
     const grow = ms(400 * k), hold = ms(600 * k), flip = ms(800 * k);
     const cardStart = votesEnd + wheel;
-    return { arrows: ms(300), arrowsEnd: ms(1800), suspense: ms(1800), verdict: ms(2400), votesEnd, wheel, cardStart, holdAt: cardStart + grow, flipAt: cardStart + grow + hold, flipEnd: cardStart + grow + hold + flip, reaction: cardStart + grow + hold + flip + ms(200), total: cardStart + grow + hold + flip + ms(800) };
+    return { arrows: ms(300), arrowsEnd: ms(1800), suspense: ms(1800), verdict: ms(TV_VERDICT_MS), votesEnd, wheel, cardStart, holdAt: cardStart + grow, flipAt: cardStart + grow + hold, flipEnd: cardStart + grow + hold + flip, reaction: cardStart + grow + hold + flip + ms(200), total: cardStart + grow + hold + flip + ms(800) };
   }, [random]);
   // Late mount (reconnect mid-phase) → end state.
   const dl = view.deadline;

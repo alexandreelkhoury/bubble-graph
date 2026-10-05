@@ -8,6 +8,8 @@ type Players = Pick<PublicView, "players">;
 
 /** DESIGN timing: the TV's vote reveal plays alone for 3 s before the phones show the outcome (TV-07 → PH-08b). */
 export const TV_VOTE_REVEAL_MS = 3000;
+/** TV-07: the OUT stamp lands this long after ELIMINATION starts (the voted-out phone waits for it, DESIGN §6.2-C). */
+export const TV_VERDICT_MS = 2400;
 
 export function byId(view: Players, id: string | null | undefined): PublicPlayer | undefined {
   return id ? view.players.find((p) => p.id === id) : undefined;

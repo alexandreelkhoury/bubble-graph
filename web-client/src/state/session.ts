@@ -9,7 +9,8 @@ import { HAPTIC, haptic } from "../lib/haptics";
 import { reacquireWakeLock, releaseWakeLock, requestWakeLock, wantWakeLock } from "../lib/wakelock";
 import { isolate, locale, t } from "../i18n/t";
 import { PHASE_KEY, ROLE_KEY } from "../lib/keys";
-import { newForfeits } from "../lib/view";
+import { newForfeits, TV_VERDICT_MS } from "../lib/view";
+import { ms } from "../lib/motion";
 import { premiumEndedStep } from "../lib/premium";
 import type { MessageKey } from "../i18n/t";
 import {
@@ -196,8 +197,9 @@ export function onViewChange(prev: PlayerView | null, next: PlayerView): void {
   const meP = next.players.find((p) => p.id === myId);
   const meWas = prev?.players.find((p) => p.id === myId);
   if (meP && meWas && meWas.alive && !meP.alive && next.phase !== "LOBBY") {
-    haptic(HAPTIC.eliminated);
-    announce(t("elim.you"), true);
+    // A vote-out waits for the TV's OUT stamp: buzzing on the table at t = 0 would give the verdict away.
+    const out = (): void => { haptic(HAPTIC.eliminated); announce(t("elim.you"), true); };
+    if (next.phase === "ELIMINATION") setTimeout(out, ms(TV_VERDICT_MS)); else out();
   }
   // Forfeits (LEAVE/KICK in-game): toast with the revealed role.
   if (prev) for (const f of newForfeits(prev, next)) pushToast(t("elim.forfeit", { name: isolate(f.player.name), role: t(ROLE_KEY[f.role]) }));

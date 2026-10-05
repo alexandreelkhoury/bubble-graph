@@ -40,6 +40,8 @@ h1:focus, h1:focus-visible { outline: none; }
   padding: var(--space-3) var(--gutter) var(--space-6);
   animation: phase-in var(--motion-slow) var(--ease-decel) both;
 }
+/* A screen with no action bar under it keeps its last line above the home indicator. */
+.stage > .screen:last-child:not(.flood) { padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom)); }
 /* Opaque, so nothing scrolling under it shows through behind the timer or the buttons; the fade above it is the
    "more below" cue. */
 .actionbar {
@@ -54,7 +56,7 @@ h1:focus, h1:focus-visible { outline: none; }
 
 /* top bar (56 px): code chip · me · menu */
 .topbar {
-  position: sticky; top: 0; z-index: 10; height: var(--topbar-height);
+  position: sticky; top: 0; z-index: 10; height: calc(var(--topbar-height) + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-2);
   padding-inline: var(--gutter);
   background: linear-gradient(to bottom, var(--color-bg) 55%, rgb(var(--rgb-bg) / 0));
@@ -499,7 +501,7 @@ h1:focus, h1:focus-visible { outline: none; }
 .flood--cream { color: var(--color-text); }
 @keyframes flood-up { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 /* One screen tall: DONE takes the room that is left (28–50 dvh) and the peek button stays on screen at the bottom. */
-.flood__inner { flex: 1; display: flex; flex-direction: column; gap: var(--space-4); min-height: calc(100dvh - var(--topbar-height) - env(safe-area-inset-top) - env(safe-area-inset-bottom)); padding: var(--space-3) var(--gutter) calc(var(--space-5) + env(safe-area-inset-bottom)); animation: phase-in var(--motion-slow) 120ms var(--ease-decel) both; }
+.flood__inner { flex: 1; display: flex; flex-direction: column; gap: var(--space-4); min-height: calc(100dvh - var(--topbar-height) - env(safe-area-inset-top)); padding: var(--space-3) var(--gutter) calc(var(--space-5) + env(safe-area-inset-bottom)); animation: phase-in var(--motion-slow) 120ms var(--ease-decel) both; }
 .flood__inner .peek { margin-top: auto; }
 .flood .eyebrow { color: inherit; }
 .flood .display { font-size: clamp(2.25rem, 12vw, 3.25rem); }
