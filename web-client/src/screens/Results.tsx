@@ -7,7 +7,8 @@ import { Avatar, avatarState, COLOR_BY_ID } from "../components/PlayerChip";
 import { RoleChip, RoleEmblem } from "../components/Role";
 import { Button, Confetti, PALETTE, Slot } from "../components/UI";
 import { Icon } from "../components/Icon";
-import { byId, competitionRank, rankPlayers, winnerKey } from "../lib/view";
+import { byId, competitionRank, culprits, rankPlayers, winnerMessage } from "../lib/view";
+import { ROLE_WAS_KEY } from "../lib/keys";
 
 function Word({ label, word, cls, wordLocale }: { label: string; word: WordRef; cls: string; wordLocale: PlayerView["settings"]["wordLocale"] }) {
   return (
@@ -29,6 +30,8 @@ export function Results({ view, me }: { view: PlayerView; me: Me | null }) {
   const meP = byId(view, myId);
   const isVip = myId !== null && view.hostPlayerId === myId;
   const ranked = rankPlayers(view.players);
+  const win = winnerMessage(view);
+  const caught = culprits(view);
   return (
     <>
       <main class={`screen screen--results results--${r.winner.toLowerCase()}`}>
@@ -39,13 +42,24 @@ export function Results({ view, me }: { view: PlayerView; me: Me | null }) {
               {won ? <><Icon name="trophy" size={22} />{t("results.youWon", { count: myPts })}</> : t("results.youLost")}
             </p>
           )}
-          <h1 class="display results__team" tabIndex={-1}>{t(winnerKey(r.winner), { name: isolate(blankName) })}</h1>
+          <h1 class="display results__team" tabIndex={-1}>{t(win.key, { count: win.count, name: isolate(blankName) })}</h1>
           {meP?.revealedRole && <p class="results__role"><Slot k="elim.youWere" slot="role"><RoleChip role={meP.revealedRole} size={22} /></Slot></p>}
         </div>
         <div class="reswords">
           <Word label={t("results.civilianWord")} word={r.civilianWord} cls="resword--civilian" wordLocale={view.settings.wordLocale} />
           <Word label={t("results.undercoverWord")} word={r.undercoverWord} cls="resword--undercover" wordLocale={view.settings.wordLocale} />
         </div>
+        {/* The payoff: who the Mole and the Blank were, above the fold (the scoreboard sorts them to the bottom). */}
+        {caught.length > 0 && (
+          <ul class="culprits">
+            {caught.map((p) => (
+              <li key={p.id} class={`culprits__item culprits__item--${p.revealedRole!.toLowerCase()}`}>
+                <Avatar color={p.color} size={32} state={p.left ? "left" : "normal"} />
+                <span>{t(ROLE_WAS_KEY[p.revealedRole!], { name: isolate(p.name) })}</span>
+              </li>
+            ))}
+          </ul>
+        )}
         <p class="results__meta">{t("results.pack", { title: r.pack.title[locale.value] })}</p>
         {r.guesses.map((g, i) => {
           const p = byId(view, g.playerId);

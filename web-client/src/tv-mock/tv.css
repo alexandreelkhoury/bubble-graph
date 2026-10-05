@@ -385,6 +385,10 @@
 .tvwords--strip .tvword { flex-direction: row; gap: 14px; min-width: 0; height: 56px; padding: 0 22px; animation: none; }
 .tvwords--strip .tvword__text { font: var(--tv-title); }
 .tvwords--strip .tvword__translit { font: var(--tv-caption); }
+.tvculprits { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 20px; max-width: 840px; animation: fade-in var(--motion-slow) 1000ms both; }
+.tvculprits__item { display: inline-flex; align-items: center; gap: 12px; padding: 4px 20px 4px 4px; padding-inline: 4px 20px; border-radius: var(--radius-pill); background: var(--color-surface); }
+.tvculprits__item--undercover { box-shadow: inset 0 0 0 3px var(--color-undercover); }
+.tvculprits__item--blank { box-shadow: inset 0 0 0 3px var(--color-blank); }
 .tvresults__meta { max-width: 840px; justify-content: center; flex-wrap: wrap; }
 .tvsb { width: 760px; text-align: start; }
 .tvsb__row { display: grid; grid-template-columns: 44px 1fr 200px 120px 80px; column-gap: 12px; align-items: center; height: 40px; padding-inline: 12px; border-radius: var(--radius-sm); font: var(--tv-titleS); animation: tv-phase-in var(--motion-base) var(--ease-decel) both; animation-delay: calc(var(--i, 0) * 60ms); }

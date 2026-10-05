@@ -4,9 +4,9 @@ import { Fragment } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import type { TvView } from "@mishana/shared/protocol";
 import { fmtNum, isolate, locale, t } from "../i18n/t";
-import { ROLE_KEY } from "../lib/keys";
+import { ROLE_KEY, ROLE_WAS_KEY } from "../lib/keys";
 import { ms, reduced } from "../lib/motion";
-import { byId, competitionRank, rankPlayers, winnerKey } from "../lib/view";
+import { byId, competitionRank, culprits, rankPlayers, winnerMessage } from "../lib/view";
 import { Avatar, avatarState } from "../components/PlayerChip";
 import { RoleEmblem } from "../components/Role";
 import { Icon } from "../components/Icon";
@@ -86,6 +86,8 @@ export function TvResults({ view }: { view: TvView }) {
   const ranked = rankPlayers(view.players);
   const blankGuess = r.winner === "BLANK" ? r.guesses.find((g) => g.status === "CORRECT")?.text ?? null : null;
   const l = locale.value;
+  const win = winnerMessage(view);
+  const caught = culprits(view);
   return (
     <div class={`tvscreen tvresults tvresults--${r.winner.toLowerCase()}${stage2 ? " is-stage2" : ""}`} onClick={() => setStage2(true)}>
       <TvTopBar view={view} title={t("results.title")} />
@@ -96,7 +98,7 @@ export function TvResults({ view }: { view: TvView }) {
         </div>
       </div>
       <div class="tvstage tvresults__stage">
-        <h1 class={`tvresults__title ${stage2 ? "tvt-headline" : "tvt-displayL"}`}>{t(winnerKey(r.winner), { name: isolate(winnerName) })}</h1>
+        <h1 class={`tvresults__title ${stage2 ? "tvt-headline" : "tvt-displayL"}`}>{t(win.key, { count: win.count, name: isolate(winnerName) })}</h1>
         {!stage2 && r.winner === "BLANK" && blankGuess && (
           <div class="tvblankcard"><RoleEmblem role="BLANK" size={64} /><span class="tvt-displayS">{blankGuess}</span></div>
         )}
@@ -112,6 +114,17 @@ export function TvResults({ view }: { view: TvView }) {
             {r.undercoverWord.translit && <span class="tvword__translit">{r.undercoverWord.translit}</span>}
           </div>
         </div>
+        {/* The reveal everyone waited for ("it was Ben!"), under the words. */}
+        {!stage2 && caught.length > 0 && (
+          <ul class="tvculprits">
+            {caught.map((p) => (
+              <li key={p.id} class={`tvculprits__item tvculprits__item--${p.revealedRole!.toLowerCase()}`}>
+                <Avatar color={p.color} size={48} state={p.left ? "left" : "normal"} />
+                <span class="tvt-title">{t(ROLE_WAS_KEY[p.revealedRole!], { name: isolate(p.name) })}</span>
+              </li>
+            ))}
+          </ul>
+        )}
         {stage2 && (
           <>
             <p class="tvt-body tv-secondary tvresults__meta">

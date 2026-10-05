@@ -30,8 +30,23 @@ export function competitionRank(players: readonly PublicPlayer[], p: PublicPlaye
   return 1 + players.filter((x) => x.score > p.score).length;
 }
 
-export function winnerKey(winner: NonNullable<PublicView["result"]>["winner"]): MessageKey {
-  return winner === "CIVILIANS" ? "winner.civilians" : winner === "INFILTRATORS" ? "winner.infiltrators" : "winner.blank";
+/**
+ * The winner title. The infiltrators are named by the roles the players met ("The Mole & the Blank win!", plural on the
+ * Mole count); `winner.infiltrators` is only the fallback when the counts are unknown. `winner.blank` takes {name}.
+ */
+export function winnerMessage(view: Pick<PublicView, "result" | "roleCounts">): { key: MessageKey; count: number } {
+  const winner = view.result?.winner;
+  if (winner === "CIVILIANS") return { key: "winner.civilians", count: 0 };
+  if (winner === "BLANK") return { key: "winner.blank", count: 0 };
+  const rc = view.roleCounts;
+  if (!rc || rc.undercover < 1) return { key: "winner.infiltrators", count: 0 };
+  return { key: rc.blank === 0 ? "winner.moles" : rc.blank === 1 ? "winner.molesBlank" : "winner.molesBlanks", count: rc.undercover };
+}
+
+/** The game's Moles then Blanks (revealed at RESULTS), in seat order: who the room was hunting. */
+export function culprits(view: Players): PublicPlayer[] {
+  const rank = (p: PublicPlayer): number => (p.revealedRole === "UNDERCOVER" ? 0 : 1);
+  return view.players.filter((p) => p.revealedRole === "UNDERCOVER" || p.revealedRole === "BLANK").sort((a, b) => rank(a) - rank(b) || a.seat - b.seat);
 }
 
 /** The tied players (tie-break / revote) with their tallies from the last vote. */
