@@ -12,14 +12,15 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="/assets/fonts/cairo-black.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/cairo-semibold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/site.css">
 <script>
 (function(){var l='en';try{var q=new URLSearchParams(location.search).get('lang');var s=localStorage.getItem('mishana:site-lang');
 var n=(navigator.languages&&navigator.languages[0]||navigator.language||'').slice(0,2).toLowerCase();l=q||s||n;}catch(e){}
-if(l!=='fr')l='en';document.documentElement.setAttribute('data-plang',l);document.documentElement.lang=l;})();
+if(l!=='fr'&&l!=='ar')l='en';var d=document.documentElement;d.setAttribute('data-plang',l);d.lang=l;d.dir=l==='ar'?'rtl':'ltr';})();
 </script>
 <style>
-[data-plang="fr"] .pv-en, [data-plang="en"] .pv-fr { display: none; }
+[data-plang="fr"] .pv-en, [data-plang="ar"] .pv-en, [data-plang="en"] .pv-fr, [data-plang="ar"] .pv-fr, [data-plang="en"] .pv-ar, [data-plang="fr"] .pv-ar { display: none; }
 </style>
 </head>
 <body>
@@ -29,10 +30,12 @@ if(l!=='fr')l='en';document.documentElement.setAttribute('data-plang',l);documen
     <a class="brand" href="/" aria-label="Mish Ana! home">
       <img class="brand__mark" src="/assets/img/mark.svg" alt="" width="36" height="36">
       <img class="brand__word brand__word--latin" src="/assets/img/wordmark-latin.svg" alt="Mish Ana!" width="100" height="30">
+      <img class="brand__word brand__word--ar" src="/assets/img/wordmark-ar.svg" alt="مش أنا!" width="77" height="30">
     </a>
     <nav class="lang" aria-label="Language">
       <a href="?lang=en" data-lang="en" hreflang="en" lang="en">EN</a>
       <a href="?lang=fr" data-lang="fr" hreflang="fr" lang="fr">FR</a>
+      <a href="?lang=ar" data-lang="ar" hreflang="ar" lang="ar">عربي</a>
     </nav>
   </div>
 </header>
@@ -44,8 +47,8 @@ if(l!=='fr')l='en';document.documentElement.setAttribute('data-plang',l);documen
 <main id="main" class="legal">
   <article class="wrap wrap--narrow pv-en" lang="en">
     <h1>Privacy policy<span class="dot">.</span></h1>
-    <p class="meta">Last updated: October 4, 2026</p>
-    <p>Mish Ana! ("the game") is a party game for Android TV and Google TV. The TV app hosts a game room; players join from their phones in a web browser. This policy explains what information the game uses, why, and for how long. It covers the Android TV app "Mish Ana!" (package <code>app.mishana.tv</code>) and the player web page that the TV's QR code opens.</p>
+    <p class="meta">Last updated: October 5, 2026</p>
+    <p>Mish Ana! ("the game") is a party game for the TV: an app for Android TV and Google TV, and a TV page that runs in any web browser. The TV hosts a game room; players join from their phones in a web browser. This policy explains what information the game uses, why, and for how long. It covers the Android TV app "Mish Ana!" (package <code>app.mishana.tv</code>), the TV page that runs the game in a web browser at <span dir="ltr">play.mishana.workers.dev/tv</span>, and the player web page that the QR code on the TV opens.</p>
 <p><strong>Who is responsible.</strong> {{OWNER_NAME}} (the developer), contact: <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a>.</p>
 <h2>1. The short version</h2>
 <ul>
@@ -66,7 +69,7 @@ if(l!=='fr')l='en';document.documentElement.setAttribute('data-plang',l);documen
 </ul>
 <p><strong>When the TV opens a room</strong></p>
 <ul>
-<li>The TV app sends only its <strong>display language</strong>. It does not send any device identifier, Google account, location or list of apps.</li>
+<li>The TV (app or browser page) sends only its <strong>display language</strong>. It does not send any device identifier, Google account, location or list of apps.</li>
 </ul>
 <p><strong>Technical information</strong></p>
 <ul>
@@ -88,7 +91,7 @@ if(l!=='fr')l='en';document.documentElement.setAttribute('data-plang',l);documen
 <h2>5. Information stored on your devices</h2>
 <ul>
 <li><strong>Phone (browser storage):</strong> your last nickname, colour and language, your vibration setting, and, for each room you joined, a resume token that lets you rejoin your seat; resume tokens are discarded after 6 hours. You can clear this at any time by clearing the site data in your browser.</li>
-<li><strong>TV:</strong> only the sound on/off setting. The TV app does not back up any data to your Google account.</li>
+<li><strong>TV:</strong> only the sound on/off setting (in the app, or in the browser's local storage for the TV page). The TV app does not back up any data to your Google account.</li>
 </ul>
 <h2>6. Who can see it, and who processes it</h2>
 <ul>
@@ -121,8 +124,8 @@ if(l!=='fr')l='en';document.documentElement.setAttribute('data-plang',l);documen
   </article>
   <article class="wrap wrap--narrow pv-fr" lang="fr">
     <h1>Politique de confidentialité<span class="dot">.</span></h1>
-    <p class="meta">Dernière mise à jour : 4 octobre 2026</p>
-    <p>Mish Ana! (« le jeu ») est un jeu d’ambiance pour Android TV et Google TV. L’application TV héberge une salle de jeu ; les joueurs la rejoignent depuis le navigateur de leur téléphone. Cette politique explique quelles informations le jeu utilise, pourquoi et pendant combien de temps. Elle couvre l’application Android TV « Mish Ana! » (package <code>app.mishana.tv</code>) et la page web joueur ouverte par le QR code affiché sur la télé.</p>
+    <p class="meta">Dernière mise à jour : 5 octobre 2026</p>
+    <p>Mish Ana! (« le jeu ») est un jeu d’ambiance pour la télé : une application pour Android TV et Google TV, et une page télé qui tourne dans n’importe quel navigateur web. La télé héberge une salle de jeu ; les joueurs la rejoignent depuis le navigateur de leur téléphone. Cette politique explique quelles informations le jeu utilise, pourquoi et pendant combien de temps. Elle couvre l’application Android TV « Mish Ana! » (package <code>app.mishana.tv</code>), la page télé qui fait tourner le jeu dans un navigateur web à l’adresse <span dir="ltr">play.mishana.workers.dev/tv</span>, et la page web joueur ouverte par le QR code affiché sur la télé.</p>
 <p><strong>Responsable du traitement.</strong> {{OWNER_NAME}} (le développeur), contact : <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a>.</p>
 <h2>1. En bref</h2>
 <ul>
@@ -165,7 +168,7 @@ if(l!=='fr')l='en';document.documentElement.setAttribute('data-plang',l);documen
 <h2>5. Informations stockées sur vos appareils</h2>
 <ul>
 <li><strong>Téléphone (stockage du navigateur) :</strong> votre dernier pseudo, votre couleur et votre langue, le réglage de vibration et, pour chaque salle rejointe, un jeton de reprise permettant de retrouver votre place ; les jetons de reprise sont effacés après 6 heures. Vous pouvez tout effacer à tout moment en supprimant les données du site dans votre navigateur.</li>
-<li><strong>Télé :</strong> uniquement le réglage du son (activé/désactivé). L’application TV ne sauvegarde aucune donnée sur votre compte Google.</li>
+<li><strong>Télé :</strong> uniquement le réglage du son (activé/désactivé), dans l’application ou, pour la page télé, dans le stockage local du navigateur. L’application TV ne sauvegarde aucune donnée sur votre compte Google.</li>
 </ul>
 <h2>6. Qui peut voir ces informations et qui les traite</h2>
 <ul>
@@ -195,6 +198,83 @@ if(l!=='fr')l='en';document.documentElement.setAttribute('data-plang',l);documen
 <h2>13. Contact</h2>
 <p>{{OWNER_NAME}} — <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a></p>
     <p class="back"><a href="/fr/">← Retour à Mish Ana!</a></p>
+  </article>
+  <article class="wrap wrap--narrow pv-ar" lang="ar" dir="rtl">
+    <h1>سياسة الخصوصية<span class="dot">.</span></h1>
+    <p class="meta">آخر تحديث: 5 تشرين الأول 2026 · ترجمة عربية للنسخة الإنكليزية، وبحال في أي اختلاف، النسخة الإنكليزية هي المعتمدة.</p>
+    <p>«مش أنا!» («اللعبة») لعبة سهرات للتلفزيون: تطبيق لـ Android TV و Google TV، وصفحة تلفزيون بتشتغل بأي متصفّح إنترنت. التلفزيون بيفتح غرفة اللعبة، واللاعبين بيفوتوا عليها من متصفّح تلفوناتن. هالسياسة بتشرح شو المعلومات اللي بتستعملها اللعبة، وليش، وقدّيش بتضلّ محفوظة. وهي بتغطّي تطبيق Android TV «Mish Ana!» (الحزمة <code dir="ltr">app.mishana.tv</code>)، وصفحة التلفزيون اللي بتشغّل اللعبة بالمتصفّح على <span dir="ltr">play.mishana.workers.dev/tv</span>، وصفحة اللاعب اللي بتفتح لمّا تمسحوا كود QR اللي عالتلفزيون.</p>
+<p><strong>المسؤول.</strong> <bdi>{{OWNER_NAME}}</bdi> (المطوّر)، للتواصل: <a href="mailto:{{CONTACT_EMAIL}}" dir="ltr">{{CONTACT_EMAIL}}</a>.</p>
+<h2>1. باختصار</h2>
+<ul>
+<li>ما في حسابات، ولا تسجيل دخول، ولا إيميل، ولا رقم تلفون.</li>
+<li>جوّا اللعبة: ما في إعلانات، ولا إحصاءات، ولا تتبّع، ولا مكتبات (SDK) لجهات تانية.</li>
+<li>على هالموقع: بس عدّ زيارات وكبسات مجهول وبلا كوكيز (شوفوا القسم 12).</li>
+<li>اللاعبين بيكتبوا اسم مستعار، وهالاسم بيشوفوه باقي اللاعبين بالغرفة.</li>
+<li>كل غرفة لعب، مع الأسامي وكل شي انلعب فيها، <strong>بتنمحى لحالها</strong>، بأقصى حدّ بعد ساعتين من آخر حركة.</li>
+<li>ما منبيع معلوماتك ولا منشاركها مع حدا.</li>
+</ul>
+<h2>2. المعلومات اللي منستعملها</h2>
+<p><strong>لمّا تفوت على لعبة من تلفونك</strong></p>
+<ul>
+<li><strong>الاسم المستعار</strong> (من 1 لـ16 حرف) و<strong>اللون</strong> اللي بتنقّيه: بيبيّنوا عالتلفزيون وعلى تلفونات باقي اللاعبين بغرفتك.</li>
+<li><strong>لغتك</strong> (إنكليزي، فرنساوي أو عربي): لنفرجيك اللعبة بلغتك.</li>
+<li><strong>شو بتعمل باللعبة</strong>: إنّك جاهز، إنّك خلّصت دورك، تصويتك، تغيير الإعدادات إذا إنت المضيف، وإذا كنت «الفاضي»، الكلمة اللي بتحزرها. هيدي لازمة لتمشي اللعبة، وبتنعرض عالغرفة حسب القواعد (مثلًا الأصوات وحزورة الفاضي بيبيّنوا آخر الجولة أو آخر اللعبة).</li>
+<li>التلميحات بتنقال بصوت عالي بالغرفة؛ اللعبة ما بتسجّل صوت أبدًا.</li>
+</ul>
+<p><strong>لمّا التلفزيون يفتح غرفة</strong></p>
+<ul>
+<li>التلفزيون (التطبيق أو صفحة المتصفّح) بيبعت بس <strong>لغة العرض</strong>. ما بيبعت أي معرّف للجهاز، ولا حساب Google، ولا الموقع، ولا لائحة التطبيقات.</li>
+</ul>
+<p><strong>معلومات تقنية</strong></p>
+<ul>
+<li>لنوصّل التلفونات بالتلفزيون، السيرفر بيعمل معرّفات عشوائية ومؤقّتة (كود الغرفة، معرّف اللاعب، و«رموز» سرّية للرجعة وللتلفزيون لتقدر ترجع على محلّك إذا انقطع الاتصال). الرموز بتنحفظ عالسيرفر بس بشكل مشفّر (hash).</li>
+<li><strong>عنوان IP</strong> تبعك بيُستعمل لفترة قصيرة بس لمنع الإساءة (تحديد عدد الطلبات). الكود تبعنا ما بيحفظو بمعلومات اللعبة ولا بيكتبو بالسجلّات؛ جوّا الغرفة، بيُستعمل بس hash قصير منّو وإنت متّصل. شركة الاستضافة ممكن تحتفظ بسجلّات تقنية فيها عناوين IP لمدّة أقصاها 7 أيّام، للأمان وتصليح الأعطال.</li>
+</ul>
+<p><strong>ما منجمع:</strong> اسمك الحقيقي (إلّا إذا اخترت تستعملو كاسم مستعار)، ولا إيميلك، ولا رقم تلفونك، ولا جهات الاتصال، ولا الصور، ولا الميكروفون أو الكاميرا، ولا موقعك، ولا معرّفات الإعلانات، ولا سجلّ التصفّح.</p>
+<h2>3. ليش منستعملها (الأسس القانونية)</h2>
+<p>منستعمل هالمعلومات بس لنشغّل اللعبة اللي طلبت تلعبها (تقديم الخدمة اللي طلبتها)، ولنحميها من الإساءة ونحافظ على أمانها (مصلحتنا المشروعة). ما منستعملها لا للإعلانات، ولا للتنميط، ولا للإحصاءات.</p>
+<h2>4. قدّيش منحتفظ فيها</h2>
+<p>غرفة اللعب وكل شي فيها (الأسامي، الألوان، اللغات، الأدوار، الكلمات، الأصوات، الحزورات، النقاط، الرموز المشفّرة) بتنمحى لحالها:</p>
+<ul>
+<li>بعد 15 دقيقة من فتح الغرفة إذا ما فات حدا؛</li>
+<li>بعد 30 دقيقة من آخر لعبة إذا ما بلّش حدا لعبة جديدة؛</li>
+<li>وبكل الأحوال، بأقصى حدّ بعد ساعتين من آخر حركة بالغرفة.</li>
+</ul>
+<p>اللاعب اللي بينقطع اتصالو بيضلّ محلّو محفوظ لدقيقتين بغرفة الانتظار، وبعدها بيطلع.</p>
+<p>السجلّات التقنية عند شركة الاستضافة بتنمحى بعد 7 أيّام بأقصى حدّ.</p>
+<h2>5. المعلومات المحفوظة على أجهزتك</h2>
+<ul>
+<li><strong>التلفون (تخزين المتصفّح):</strong> آخر اسم ولون ولغة استعملتن، إعداد الاهتزاز، ولكل غرفة فتت عليها رمز رجعة ليرجّعك على محلّك؛ رموز الرجعة بتنمحى بعد 6 ساعات. فيك تمحي كل شي بأي وقت بمحي بيانات الموقع من متصفّحك.</li>
+<li><strong>التلفزيون:</strong> بس إعداد الصوت (شغّال/مطفي)، بالتطبيق، أو بالتخزين المحلّي للمتصفّح لصفحة التلفزيون. تطبيق التلفزيون ما بيعمل نسخة احتياطية لأي معلومات على حساب Google تبعك.</li>
+</ul>
+<h2>6. مين فيه يشوفها، ومين بيعالجها</h2>
+<ul>
+<li><strong>باقي اللاعبين بغرفتك</strong> بيشوفوا اسمك المستعار ولونك وحركاتك باللعبة متل ما شرحنا فوق. أكواد الغرف مؤقّتة؛ أي حدا بتعطيه الكود فيه يفوت عغرفة الانتظار، والمضيف فيه يطلّع لاعبين.</li>
+<li><strong>Cloudflare, Inc.</strong> بتستضيف السيرفر تبعنا وبتعالج هالمعلومات عن لساننا، على شبكتها العالمية، حسب شروط معالجة البيانات تبعها. الغرف عادةً بتنعمل بمركز بيانات قريب من التلفزيون.</li>
+<li><strong>Google</strong> بتوزّع التطبيق عبر Google Play؛ وسياسة الخصوصية تبع Google هيّي اللي بتنطبق على استعمالك لـ Google Play.</li>
+<li>ما منبيع ولا منأجّر ولا منشارك معلوماتك مع حدا تاني، واللعبة ما بتستعمل خدمات إعلانات ولا إحصاءات. هالموقع بيستعمل Cloudflare Web Analytics بلا كوكيز (شوفوا القسم 12).</li>
+</ul>
+<h2>7. النقل لبرّا بلدك</h2>
+<p>شركة الاستضافة ممكن تعالج البيانات برّا بلدك، ومن ضمنها بالولايات المتّحدة. لمّا تنتقل بيانات من المنطقة الاقتصادية الأوروبية أو بريطانيا أو سويسرا، بتكون محميّة بالضمانات التعاقدية تبع الشركة (متل البنود التعاقدية النموذجية للمفوضية الأوروبية).</p>
+<h2>8. الولاد</h2>
+<p>«مش أنا!» لعبة سهرات للمراهقين والكبار، وكتير بتنلعب مع كل العيلة. هيّي مش موجّهة للولاد اللي عمرن أقل من 13 سنة، وما منجمع عن قصد معلومات شخصية عنّن؛ اللاعبين بيكتبوا بس اسم مستعار، وبينمحى لحالو مع الغرفة. إذا بتفكّر إنّو ولد كتب معلومات شخصية (مثلًا اسمو الكامل كاسم مستعار)، تواصل معنا ومنمحيها إذا بعدها موجودة.</p>
+<h2>9. حقوقك</h2>
+<p>حسب وين ساكن (مثلًا تحت الـ GDPR بالاتحاد الأوروبي وبريطانيا)، إلك الحقّ توصل لبياناتك الشخصية، تصحّحها أو تمحيها، تعترض على استعمالها أو تحدّدو، وتنقلها. بما إنّو ما في حسابات والغرف بتنمحى لحالها خلال ساعات، عادةً ما منقدر نربط أي بيانات باقية فيك؛ بس تواصل معنا على <a href="mailto:{{CONTACT_EMAIL}}" dir="ltr">{{CONTACT_EMAIL}}</a> مع كود الغرفة والاسم المستعار ومنساعدك. وفيك كمان تقدّم شكوى لهيئة حماية البيانات ببلدك (بفرنسا: CNIL، <a href="https://www.cnil.fr" rel="noopener" dir="ltr">www.cnil.fr</a>).</p>
+<h2>10. الأمان</h2>
+<p>كل الاتصالات بين تطبيق التلفزيون أو صفحتو، والتلفونات، والسيرفر مشفّرة (HTTPS/WSS). الكلمات السرّية بتنبعت بس لتلفون اللاعب صاحبها، وأبدًا مش للتلفزيون وقت اللعب. والرموز بتنحفظ بس بشكل مشفّر.</p>
+<h2>11. التغييرات</h2>
+<p>إذا اللعبة غيّرت طريقة استعمالها للمعلومات (مثلًا لمّا تنزاد مشتريات اختيارية جوّا اللعبة)، منحدّث هالصفحة والتاريخ اللي فوق قبل ما يصير التغيير.</p>
+<h2>12. هالموقع</h2>
+<p>هالقسم بيغطّي بس الموقع اللي عم تقراه (مش اللعبة). لنعرف قدّيش في زوّار وأيّا أزرار وإعلانات عم تشتغل، منستعمل:</p>
+<ul>
+<li><strong>Cloudflare Web Analytics</strong>: بيعدّ مشاهدات الصفحات وسرعة تحميلها. ما بيستعمل كوكيز ولا تخزين محلّي، وما بيعمل «بصمة» للزوّار. Cloudflare بتعالج هالشي عن لساننا.</li>
+<li><strong>عدّ كبسات مجهول</strong> بينبعت للسيرفر تبعنا لمّا تكبس على زرّ متل «العب ببلاش»، أو تفتح سؤال، أو تنزل بالصفحة: أيّا زرّ أو قسم، لغة الصفحة، الحملة الإعلانية المذكورة بالرابط (utm)، نوع الجهاز (تلفون أو كمبيوتر)، والبلد اللي بتستنتجو Cloudflare من الاتصال. بلا أي معرّف، بلا كوكيز، وعنوان IP ما بينحفظ. هالأرقام بتضلّ محفوظة 3 أشهر بأقصى حدّ.</li>
+<li><strong>اللغة اللي بتنقّيها</strong> بتنحفظ بمتصفّحك (تخزين محلّي) ليفتح الموقع بلغتك المرّة الجايي. وما بتطلع من جهازك أبدًا.</li>
+</ul>
+<p>إذا متصفّحك بيبعت <strong>Global Privacy Control</strong> أو <strong>Do Not Track</strong>، ولا شي من هالقياس بيشتغل. منستعملو على أساس مصلحتنا المشروعة إنّو نفهم، بشكل إجمالي، كيف الموقع عم ينستعمل. والانتقال لـ Google Play بياخدك لـ Google، وسياسة الخصوصية تبعها هيّي اللي بتنطبق.</p>
+<h2>13. التواصل</h2>
+<p><bdi>{{OWNER_NAME}}</bdi> — <a href="mailto:{{CONTACT_EMAIL}}" dir="ltr">{{CONTACT_EMAIL}}</a></p>
+    <p class="back"><a href="/ar/">رجوع لـ «مش أنا!»</a></p>
   </article>
 </main>
 

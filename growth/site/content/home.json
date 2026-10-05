@@ -1,7 +1,7 @@
 {
   "_README": "Per-language SEO meta for the home pages (/, /fr/, /ar/) and the shared entity facts used in JSON-LD, /about/ and llms.txt. Home body copy: EN in index.html, FR/AR in assets/js/i18n.js.",
   "updated": "2026-10-04",
-  "privacyUpdated": "2026-10-04",
+  "privacyUpdated": "2026-10-05",
   "definition": {
     "en": "Mish Ana! is a secret-word party game for Android TV and Google TV: 3–12 players join from their phones by scanning a QR code, get a secret word, and find the player whose word is different.",
     "fr": "Mish Ana! est un jeu d’ambiance du mot secret pour Android TV et Google TV : de 3 à 12 joueurs rejoignent la partie avec leur téléphone en scannant un QR code, reçoivent un mot secret et cherchent le joueur dont le mot est différent.",
@@ -25,23 +25,23 @@
     "en": {
       "title": "Secret-Word Party Game for Android TV & Google TV – Mish Ana!",
       "description": "Find the liar on your TV. A free-to-play party game for Android TV & Google TV: 3–12 players, phones are the controllers, nothing to install on phones.",
-      "ogTitle": "Mish Ana! – Everyone's innocent. Someone's lying.",
+      "ogTitle": "Mish Ana! – Everyone’s innocent. Someone’s lying.",
       "ogDescription": "The secret-word party game for your TV. Phones are the controllers: scan the QR, get your word, find the liar. 3–12 players, free to play.",
-      "ogImageAlt": "Mish Ana! – Everyone's innocent. Someone's lying. A TV lobby with a QR code and a phone showing the secret word PIZZA."
+      "ogImageAlt": "Mish Ana! – Everyone’s innocent. Someone’s lying. A TV shows six phones: five say PIZZA, one says PASTA."
     },
     "fr": {
       "title": "Jeu d’ambiance du mot secret sur la télé (Android TV) – Mish Ana!",
       "description": "Le jeu de soirée façon « qui est l’intrus » sur ta télé : de 3 à 12 joueurs, le téléphone sert de manette, rien à installer. Gratuit, Android TV et Google TV.",
       "ogTitle": "Mish Ana! – Tout le monde est innocent. Quelqu’un ment.",
       "ogDescription": "Le jeu d’ambiance du mot secret sur ta télé. Les téléphones servent de manettes : scanne le QR code, reçois ton mot, démasque le menteur. 3 à 12 joueurs, gratuit.",
-      "ogImageAlt": "Mish Ana! – Tout le monde est innocent. Quelqu’un ment. L’écran d’accueil sur une télé avec un QR code, et un téléphone qui affiche le mot secret PIZZA."
+      "ogImageAlt": "Mish Ana! – Tout le monde est innocent. Quelqu’un ment. Une télé montre six téléphones : cinq disent PIZZA, un dit PÂTES."
     },
     "ar": {
       "title": "مش أنا! – لعبة سهرات بالكلمة السرّية على التلفزيون",
       "description": "مين الجاسوس؟ لعبة سهرات عالـ Android TV والـ Google TV: من 3 لـ12 لاعب، التلفون هو الجويستيك، وما في شي تنزّلوه عالتلفونات. بالعربي واللبناني، ببلاش.",
       "ogTitle": "مش أنا! – كلّنا أبرياء… بس في حدا عم يكذب",
       "ogDescription": "لعبة الكلمة السرّية للسهرات على تلفزيونك. امسحوا كود QR، كل واحد بتوصلو كلمة عتلفونو، واكشفوا الكذّاب. من 3 لـ12 لاعب، ببلاش.",
-      "ogImageAlt": "مش أنا! على التلفزيون: شاشة الانتظار مع كود QR، وتلفون عليه الكلمة السرّية بيتزا."
+      "ogImageAlt": "مش أنا! – كلّنا أبرياء… بس في حدا عم يكذب. تلفزيون عليه ستّ تلفونات: خمسة مكتوب عليها بيتزا، وواحد برغر."
     }
   },
   "video": {

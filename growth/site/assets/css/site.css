@@ -196,8 +196,13 @@ main, .nav, .foot { position: relative; z-index: 1; }
   font-weight: 900; font-size: max(13px, 3.9cqw); line-height: 1.12; letter-spacing: -.01em; color: var(--cream); text-wrap: balance;
   text-shadow: 0 .05em .22em rgba(14,6,28,.85), 0 0 .04em rgba(14,6,28,.9); opacity: 0; translate: 0 .5em; transition: opacity .25s var(--ease), translate .35s var(--ease-out); }
 .tv__cap.is-on { opacity: 1; translate: 0 0; }
+.tv__cap[hidden], .tv__sub[hidden] { display: none; }
 .tv__cap b { display: inline-block; padding: .02em .22em .06em; border-radius: .16em; background: var(--amber); color: var(--ink); text-shadow: none; rotate: -2deg; box-shadow: 0 .08em .25em rgba(10,4,20,.35); font-weight: 900; }
 .tv__cap[data-hot="m"] b { background: var(--magenta); }
+/* "Sami was the Mole": the film's small amber line under the Mole tile */
+.tv__sub { position: absolute; z-index: 1; inset-inline: 0; top: 63%; width: fit-content; margin: 0 auto; padding: .15em .6em .2em; border-radius: 99px; background: rgba(14,6,28,.62); text-align: center; pointer-events: none; font-weight: 900; font-size: max(11px, 2.9cqw); line-height: 1.2; color: var(--amber);
+  text-shadow: 0 .05em .22em rgba(14,6,28,.85); opacity: 0; transition: opacity .25s var(--ease); }
+.tv__sub.is-on { opacity: 1; }
 :lang(ar) .tv__cap { letter-spacing: 0; line-height: 1.3; }
 .vid-toggle { position: absolute; z-index: 2; top: 8px; inset-inline-end: 8px; width: 40px; height: 40px; border: 0; border-radius: 999px; display: grid; place-items: center; cursor: pointer; color: var(--cream); background: rgba(29,16,54,.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 0 0 1px var(--line-2) inset; opacity: .75; transition: opacity .15s var(--ease), transform .15s var(--ease); }
 .vid-toggle:hover, .vid-toggle:focus-visible { opacity: 1; }
@@ -581,6 +586,8 @@ h3 { font-size: 1.375rem; line-height: 1.2; letter-spacing: -.01em; }
 :lang(ar) body, :lang(ar) .btn { letter-spacing: 0; }
 :lang(ar) h1, :lang(ar) h2, :lang(ar) h3 { letter-spacing: 0; line-height: 1.3; }
 :lang(ar) .hero__title { line-height: 1.25; font-size: clamp(2.1rem, 9vw, 4.8rem); }
+/* always exactly two lines on phones (no reflow when Cairo replaces the fallback font = no layout shift) */
+:lang(ar) .hero__title .hl:has(.hlb) { white-space: nowrap; }
 :lang(ar) .mtv__code, :lang(ar) .rph__code { direction: ltr; }
 :lang(ar) .reel__steps button { font-size: .875rem; }
 [dir="rtl"] .sticky { padding: 8px 10px 8px 8px; }
@@ -611,7 +618,8 @@ h3 { font-size: 1.375rem; line-height: 1.2; letter-spacing: -.01em; }
   .hero__copy { display: block; }
   .hero__title { font-size: clamp(3.6rem, 5.7vw, 5.125rem); line-height: .93; letter-spacing: -.035em; }
   .hero__title .hl:has(.hlb) { white-space: nowrap; }
-  :lang(ar) .hero__title { line-height: 1.2; }
+  :lang(ar) .hero__title { line-height: 1.2; font-size: clamp(3rem, 4.6vw, 4.25rem); }
+  :lang(ar) .hero__title .hl:has(.hlb) { white-space: normal; }
   .hero__title .hlb { margin-top: .08em; }
   .hero__sub { margin-top: 26px; font-size: 1.25rem; line-height: 1.5; }
   .hero .ctas { margin-top: 28px; }

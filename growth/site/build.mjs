@@ -159,7 +159,7 @@ function footer(lang, extra = '') {
     </div>
     <nav class="foot__links" aria-label="${esc(u.footer)}">
       <a href="${lang === 'en' ? '/about/' : HOME[lang] + '#about'}">${esc(u.about)}</a>
-      <a href="/privacy/${lang === 'fr' ? '?lang=fr' : ''}">${esc(u.privacy)}</a>
+      <a href="/privacy/${lang !== 'en' ? '?lang=' + lang : ''}">${esc(u.privacy)}</a>
       <a href="mailto:{{CONTACT_EMAIL}}">${esc(u.contact)}</a>
       <a href="${BROWSER}" rel="noopener">${esc(u.ctaBrowser)}</a>
     </nav>
@@ -205,11 +205,18 @@ const gameNode = (lang) => ({
 const fileExists = (rel) => fs.existsSync(path.join(ROOT, rel));
 /* Hero loop. The caption-free render (growth/video → assets/video/hero-clean-*) is used for every language when it
    exists, with translated HTML captions on top (.tv__cap, cues in main.js). Otherwise: the English-captioned loop. */
-const CLEAN = ['assets/video/hero-clean-16x9-720.mp4', 'assets/video/hero-clean-16x9-540.mp4', 'assets/video/hero-clean-poster-16x9.jpg', 'assets/video/hero-clean-poster-16x9.webp'].every(fileExists);
+const CLEAN_POSTER = ['assets/img', 'assets/video'].find((d) => fileExists(`${d}/hero-clean-poster-16x9.jpg`) && fileExists(`${d}/hero-clean-poster-16x9.webp`));
+const CLEAN = !!CLEAN_POSTER && ['assets/video/hero-clean-16x9-720.mp4', 'assets/video/hero-clean-16x9-540.mp4'].every(fileExists);
+/* Caption cues written by the video pipeline next to the loop (hero-clean.json: seconds of the loop, one or two segments
+   when a caption wraps across the loop end). main.js shows the page-language text of cap_<id> during each segment. */
+const CUES = CLEAN && fileExists('assets/video/hero-clean.json')
+  ? JSON.parse(rd('assets/video/hero-clean.json')).captions.map((c) => ({ k: 'cap_' + c.id, s: c.segments, ...(c.accent === '#FF4F9A' ? { hot: 'm' } : {}), ...(c.accent ? {} : { sub: 1 }) }))
+  : null;
+if (CLEAN && !CUES) throw new Error('assets/video/hero-clean.json is missing: the caption-free loop needs its caption cues');
 const HERO = CLEAN ? {
   lg: '/assets/video/hero-clean-16x9-720.mp4', sm: '/assets/video/hero-clean-16x9-540.mp4',
-  jpg: '/assets/video/hero-clean-poster-16x9.jpg', webp: '/assets/video/hero-clean-poster-16x9.webp',
-  webpSm: fileExists('assets/img/hero-clean-poster-16x9-sm.webp') ? '/assets/img/hero-clean-poster-16x9-sm.webp' : '/assets/video/hero-clean-poster-16x9.webp', caps: true
+  jpg: `/${CLEAN_POSTER}/hero-clean-poster-16x9.jpg`, webp: `/${CLEAN_POSTER}/hero-clean-poster-16x9.webp`,
+  webpSm: fileExists('assets/img/hero-clean-poster-16x9-sm.webp') ? '/assets/img/hero-clean-poster-16x9-sm.webp' : `/${CLEAN_POSTER}/hero-clean-poster-16x9.webp`, caps: true
 } : {
   lg: '/assets/video/hero-16x9-720.mp4', sm: '/assets/video/hero-16x9-540.mp4',
   jpg: '/assets/img/hero-poster-16x9.jpg', webp: '/assets/img/hero-poster-16x9.webp', webpSm: '/assets/img/hero-poster-16x9-sm.webp', caps: false
@@ -219,7 +226,7 @@ function heroMedia(h) {
     .replace('href="/assets/img/hero-poster-16x9-sm.webp"', `href="${HERO.webpSm}"`).replace('href="/assets/img/hero-poster-16x9.webp"', `href="${HERO.webp}"`)
     .replace('srcset="/assets/img/hero-poster-16x9-sm.webp"', `srcset="${HERO.webpSm}"`).replace('srcset="/assets/img/hero-poster-16x9.webp"', `srcset="${HERO.webp}"`)
     .replace('src="/assets/img/hero-poster-16x9.jpg"', `src="${HERO.jpg}"`)
-    .replace('<div class="tv" data-ratio="16x9">', `<div class="tv" data-ratio="16x9" data-src="${HERO.lg}" data-src-sm="${HERO.sm}"${HERO.caps ? ' data-caps' : ''}>`);
+    .replace('<div class="tv" data-ratio="16x9">', `<div class="tv" data-ratio="16x9" data-src="${HERO.lg}" data-src-sm="${HERO.sm}"${HERO.caps ? ` data-caps="${esc(JSON.stringify(CUES))}"` : ''}>`);
 }
 const HERO_VIDEO = HERO.lg.slice(1);
 function mp4Seconds(rel) {
@@ -255,10 +262,12 @@ const absLinks = (h) => h.replace(/href="\//g, `href="${ORIGIN}/`);
 const tpl = rd('index.html');
 const ctx = { window: {} }; vm.runInNewContext(rd('assets/js/i18n.js'), ctx);
 const DICTS = ctx.window.MISHANA_I18N;
+if (CUES) for (const c of CUES) for (const l of ['fr', 'ar']) if (DICTS[l][c.k] == null) throw new Error(`assets/js/i18n.js: ${l}.${c.k} is missing (caption of the hero loop)`);
 const JS_KEYS = ['capCiv', 'capMole', 'capBlank', 'wordA', 'wordB', 'pause', 'play', 'reelPause', 'reelPlay', 'shareTitle', 'shareText', 'copied',
   'sendTitle', 'sendText', 'sheetTitle', 'sheetBody', 'copyLink', 'linkCopied', 'emailLink', 'emailSubject', 'openHere', 'closeSheet',
   'sheetStep1', 'sheetStep2', 'waLink', 'moreShare', 'tapToCopy', 'nameMaya', 'nameSami',
-  'cap_opening', 'cap_friends', 'cap_secret', 'cap_different', 'cap_clues', 'cap_fit', 'cap_out', 'cap_mole'];
+  'cap_opening', 'cap_friends', 'cap_secret', 'cap_different', 'cap_clues', 'cap_fit', 'cap_out', 'cap_mole', 'cap_moleWord'];
+// every caption the loop needs must exist in FR and AR (the build fails otherwise, see below)
 
 function hreflangLinks(alts) { // alts: {en:'/x/', fr:'/fr/y/'}
   const ls = Object.keys(alts);
@@ -348,7 +357,7 @@ function renderHome(lang) {
   h = h.replace(/(<nav class="lang"[^>]*>)([\s\S]*?)(<\/nav>)/, (s, a, inner, c) => a + '\n      ' + LANGS.map((l) =>
     `<a href="${HOME[l]}" data-lang="${l}" hreflang="${l}" lang="${l}"${l === lang ? ' aria-current="page"' : ''}>${LANG_LABEL[l]}</a>`).join('\n      ') + '\n    ' + c);
   h = h.replace('<!--GUIDES_NAV-->', guidesNav(lang));
-  h = h.replace(/href="\/privacy\/"/g, `href="/privacy/${lang === 'fr' ? '?lang=fr' : ''}"`);
+  h = h.replace(/href="\/privacy\/"/g, `href="/privacy/${lang !== 'en' ? '?lang=' + lang : ''}"`);
 
   const url = abs(HOME[lang]);
   const faqItems = [];

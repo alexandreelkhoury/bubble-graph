@@ -1,0 +1,65 @@
+<!doctype html>
+<!-- Share image template (1200×630), rendered per language by tools/og.mjs into assets/img/og-<lang>.png.
+     Palette B, the TV shows the caption-free loop's first frame (no caption to be cut), PIZZA / PASTA phones. -->
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: Cairo; font-weight: 600; src: url(../assets/fonts/cairo-semibold.woff2) format("woff2"); }
+@font-face { font-family: Cairo; font-weight: 700 800; src: url(../assets/fonts/cairo-bold.woff2) format("woff2"); }
+@font-face { font-family: Cairo; font-weight: 900; src: url(../assets/fonts/cairo-black.woff2) format("woff2"); }
+:root { --bg: #2B1650; --bg-deep: #1D1036; --ink: #1A0B2E; --magenta: #FF4F9A; --amber: #FFC94D; --cream: #FFF7EC; --muted: #E2D6F5; --coral: #FF3355; --lilac: #C9BFFF; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1200px; height: 630px; overflow: hidden; }
+body { font-family: Cairo, sans-serif; color: var(--cream); -webkit-font-smoothing: antialiased; position: relative;
+  background: radial-gradient(65% 70% at 75% 0%, rgba(160,95,245,.6), transparent 70%), radial-gradient(40% 50% at 100% 100%, rgba(255,201,77,.16), transparent 70%),
+    radial-gradient(45% 55% at 0% 75%, rgba(255,79,154,.18), transparent 70%), linear-gradient(180deg, var(--bg), var(--bg-deep)); }
+body::after { content: ""; position: absolute; inset: 0; opacity: .06; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.copy { position: absolute; inset-inline-start: 64px; top: 58px; width: 560px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand img.mark { width: 56px; height: 56px; }
+.brand img.word { height: 34px; }
+h1 { margin-top: 40px; font-weight: 900; font-size: 68px; line-height: .95; letter-spacing: -.035em; }
+h1 span { display: block; }
+.hlb { display: inline-block !important; background: var(--magenta); color: var(--ink); padding: 0 .14em .04em; border-radius: .12em; rotate: -4deg; box-shadow: 0 .12em .4em -.1em rgba(255,79,154,.7); margin-top: .1em; }
+.sub { margin-top: 30px; font-weight: 800; font-size: 26px; line-height: 1.3; color: var(--muted); }
+.sub b { color: var(--amber); }
+[dir=rtl] h1 { letter-spacing: 0; line-height: 1.25; font-size: 64px; }
+[dir=rtl] .hlb { padding: .02em .18em .1em; }
+.tv { position: absolute; inset-inline-start: 610px; top: 110px; width: 540px; aspect-ratio: 16/9; border-radius: 14px; background: #0B0614 center / cover no-repeat;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 0 0 9px #120A22, 0 0 0 10px rgba(255,255,255,.08), 0 40px 90px -20px rgba(255,79,154,.55), 0 50px 120px -30px rgba(0,0,0,.95); }
+
+.ph { position: absolute; width: 150px; height: 300px; border-radius: 28px; background: #120A22; padding: 8px; box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 30px 60px -12px rgba(0,0,0,.9); }
+.ph > div { height: 100%; border-radius: 21px; background: radial-gradient(90% 50% at 50% 0%, #2A0F3D, #120A1F 70%); display: flex; flex-direction: column; padding: 30px 12px 12px; }
+.ph p { font-weight: 900; font-size: 14px; line-height: 1.1; }
+.ph i { flex: 1; margin-top: 12px; border-radius: 14px; display: grid; place-items: center; font-style: normal; font-weight: 900; font-size: 30px; color: var(--ink); letter-spacing: -.02em; }
+.ph1 { inset-inline-start: 650px; top: 320px; rotate: -7deg; }
+.ph1 i { background: var(--coral); }
+.ph2 { inset-inline-start: 1010px; top: 300px; rotate: 6deg; box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 0 0 4px var(--amber), 0 0 50px 4px rgba(255,201,77,.35), 0 30px 60px -12px rgba(0,0,0,.9); }
+.ph2 i { background: var(--lilac); }
+[dir=rtl] .ph1 { rotate: 7deg; } [dir=rtl] .ph2 { rotate: -6deg; }
+[dir=rtl] .ph i { font-size: 34px; }
+</style></head>
+<body>
+<div class="copy">
+  <div class="brand"><img class="mark" src="../assets/img/mark.svg" alt=""><img class="word" id="word" src="../assets/img/wordmark-latin.svg" alt=""></div>
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+</div>
+<div class="tv" id="tv"></div>
+<div class="ph ph1"><div><p id="yw1"></p><i id="w1"></i></div></div>
+<div class="ph ph2"><div><p id="yw2"></p><i id="w2"></i></div></div>
+<script>
+const T = {
+  en: { h1: 'Everyone’s innocent.|Someone’s <span class="hlb">lying.</span>', sub: 'The secret-word party game for your TV.<br><b>Free in your browser.</b>', yw: 'Your secret word', a: 'PIZZA', b: 'PASTA' },
+  fr: { h1: 'Tout le monde est innocent.|Quelqu’un <span class="hlb">ment.</span>', sub: 'Le jeu d’ambiance du mot secret sur ta télé.<br><b>Gratuit dans le navigateur.</b>', yw: 'Ton mot secret', a: 'PIZZA', b: 'PÂTES' },
+  ar: { h1: 'كلّنا أبرياء…|بس في حدا عم <span class="hlb">يكذب.</span>', sub: 'لعبة الكلمة السرّية للسهرات عالتلفزيون.<br><b>ببلاش بالمتصفّح.</b>', yw: 'كلمتك السرّية', a: 'بيتزا', b: 'برغر' }
+};
+const q = new URLSearchParams(location.search), L = q.get('lang') || 'en', t = T[L];
+document.documentElement.lang = L; document.documentElement.dir = L === 'ar' ? 'rtl' : 'ltr';
+if (L === 'ar') document.getElementById('word').src = '../assets/img/wordmark-ar.svg';
+document.getElementById('h1').innerHTML = t.h1.split('|').map((x) => `<span>${x}</span>`).join('');
+document.getElementById('sub').innerHTML = t.sub;
+document.getElementById('yw1').textContent = document.getElementById('yw2').textContent = t.yw;
+document.getElementById('w1').textContent = t.a; document.getElementById('w2').textContent = t.b;
+document.getElementById('tv').style.backgroundImage = `url(${q.get('poster') || '../assets/img/hero-clean-poster-16x9.jpg'})`;
+</script>
+</body></html>

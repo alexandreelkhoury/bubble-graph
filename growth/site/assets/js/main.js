@@ -27,20 +27,10 @@
     { ratio: '16x9', media: 'all', src: (tvEl && tvEl.getAttribute('data-src')) || '/assets/video/hero-16x9-720.mp4' }
   ];
 
-  // Captions of the hero loop, as in the film (growth/video/src/Film.tsx <Caption>), in film seconds.
-  // The loop is the film rotated to start on the PIZZA ×5 / PASTA moment: loop time = film time − LOOP_OFFSET.
-  // hot: magenta box (C.primary) for the two payoffs, amber box (C.accent) otherwise.
-  var LOOP_OFFSET = 9.92;
-  var CAPTIONS = [
-    { k: 'cap_opening', from: 0, to: 2.67, hot: 'm' },
-    { k: 'cap_friends', from: 2.81, to: 5.48 },
-    { k: 'cap_secret', from: 5.6, to: 7.66 },
-    { k: 'cap_different', from: 9.33, to: 11.34, hot: 'm' },
-    { k: 'cap_clues', from: 11.44, to: 13.38 },
-    { k: 'cap_fit', from: 13.48, to: 15.51 },
-    { k: 'cap_out', from: 15.61, to: 17.35 },
-    { k: 'cap_mole', from: 17.48, to: 19.29, hot: 'm' }
-  ];
+  // Captions of the hero loop (caption-free render): build.mjs copies the cues of assets/video/hero-clean.json into
+  // data-caps: [{ k: i18n key, s: [[from, to], …] in loop seconds, hot: 'm' = magenta box, sub: 1 = the small amber line }].
+  var CAPTIONS = [];
+  try { CAPTIONS = JSON.parse((tvEl && tvEl.getAttribute('data-caps')) || '[]'); } catch (e) {}
 
   var EN = { // strings only used from JS (the rest of English is in the HTML)
     capCiv: 'Most players got this word. One of them, the Mole, got a slightly different one and isn’t told.',
@@ -76,7 +66,8 @@
     cap_clues: 'Give one-word <b>clues.</b>',
     cap_fit: 'Spot who doesn’t <b>fit.</b>',
     cap_out: 'Vote them <b>out.</b>',
-    cap_mole: 'Caught the <b>Mole!</b>'
+    cap_mole: 'Caught the <b>Mole!</b>',
+    cap_moleWord: 'Sami was the Mole'
   };
 
   var doc = document, root = doc.documentElement;
@@ -292,34 +283,41 @@
 
   // HTML captions over the caption-free loop (one video for every language). Driven by the video clock, so they
   // follow pauses and loops; before the video plays, the first cue sits on the poster (it is the loop's first frame).
-  var capEl = frame && frame.hasAttribute('data-caps') ? frame.querySelector('.tv__cap') : null;
-  var capKey = '', capRaf = 0;
-  function cueAt(tLoop) {
-    var dur = video && video.duration > 1 ? video.duration : 30.067;
-    var tf = (tLoop + LOOP_OFFSET) % dur;
-    for (var i = 0; i < CAPTIONS.length; i++) if (tf >= CAPTIONS[i].from && tf < CAPTIONS[i].to) return CAPTIONS[i];
-    return null;
+  var capEl = frame && CAPTIONS.length ? frame.querySelector('.tv__cap') : null;
+  var subEl = frame && CAPTIONS.length ? frame.querySelector('.tv__sub') : null;
+  var capKey = '', subKey = '', capRaf = 0;
+  function cuesAt(t) {
+    var main = null, sub = null;
+    for (var i = 0; i < CAPTIONS.length; i++) for (var j = 0; j < CAPTIONS[i].s.length; j++) {
+      var g = CAPTIONS[i].s[j];
+      if (t >= g[0] && t < g[1]) { if (CAPTIONS[i].sub) sub = CAPTIONS[i]; else main = CAPTIONS[i]; }
+    }
+    return [main, sub];
   }
-  function renderCap(cue, force) {
-    if (!capEl) return;
+  function showCue(el, cue, prev, force) {
     var k = cue ? cue.k : '';
-    if (k === capKey && !force) return;
-    capKey = k;
-    if (!cue) { capEl.classList.remove('is-on'); return; }
-    capEl.innerHTML = t(k);
-    capEl.setAttribute('data-hot', cue.hot || 'a');
-    capEl.classList.remove('is-on'); void capEl.offsetWidth; capEl.classList.add('is-on');
+    if (k === prev && !force) return prev;
+    if (!cue) { el.classList.remove('is-on'); return k; }
+    el.innerHTML = t(k);
+    el.setAttribute('data-hot', cue.hot || 'a');
+    el.classList.remove('is-on'); void el.offsetWidth; el.classList.add('is-on');
+    return k;
+  }
+  function renderCap(cues, force) {
+    if (!capEl) return;
+    capKey = showCue(capEl, cues[0], capKey, force);
+    if (subEl) subKey = showCue(subEl, cues[1], subKey, force);
   }
   function capTick() {
     capRaf = 0;
     if (!videoReady || video.paused) return;
-    renderCap(cueAt(video.currentTime));
+    renderCap(cuesAt(video.currentTime));
     capRaf = requestAnimationFrame(capTick);
   }
   function syncCaps(force) {
     if (!capEl) return;
-    capEl.hidden = false;
-    renderCap(cueAt(videoReady ? video.currentTime : 0), force);
+    capEl.hidden = false; if (subEl) subEl.hidden = false;
+    renderCap(cuesAt(videoReady ? video.currentTime : 0), force);
     if (!capRaf && videoReady && !video.paused) capRaf = requestAnimationFrame(capTick);
   }
   if (capEl && video) {
