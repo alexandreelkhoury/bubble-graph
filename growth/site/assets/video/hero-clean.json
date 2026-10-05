@@ -1,5 +1,5 @@
 {
- "_about": "Caption-free hero loop (design-v3 C6). Made from growth/video comp MishAna-16x9-prelaunch with props {blur:0,cta:\"prelaunch\",captions:false}, rotated so it starts on film frame loopStartFilmFrame (60 fps) = the PIZZA x5 / PASTA moment, then wraps through the lobby back to it. Times are seconds from the loop start (video currentTime). A segment list with two entries wraps across the loop end. *word* = the boxed hot word (accent = box colour, ink text on it); captions are Cairo 900 cream #FFF7EC with a soft dark shadow, centred at centerY (fraction of video height), font size fontSizeH x video height; in the film each word rises in 0.058 s apart and they fade out at the end.",
+ "_about": "Caption-free hero loop (design-v3 C6). Made from growth/video comp MishAna-16x9-prelaunch with props {blur:0,cta:\"prelaunch\",captions:false}, rotated so it starts on film frame loopStartFilmFrame (60 fps) = the PIZZA x5 / PASTA moment, plays to the amber OUT flash (film frame loopEndFilmFrame, exclusive; the slogan and outro are cut out), then cuts to the lobby (film frame 0) and plays back to the start. Times are seconds from the loop start (video currentTime). A segment list with two entries wraps across the loop end. *word* = the boxed hot word (accent = box colour, ink text on it); captions are Cairo 900 cream #FFF7EC with a soft dark shadow, centred at centerY (fraction of video height), font size fontSizeH x video height; in the film each word rises in 0.058 s apart and they fade out at the end.",
  "files": {
   "720": "/assets/video/hero-clean-16x9-720.mp4",
   "540": "/assets/video/hero-clean-16x9-540.mp4",
@@ -9,8 +9,8 @@
   ]
  },
  "fps": 30,
- "frames": 902,
- "duration": 30.067,
+ "frames": 590,
+ "duration": 19.667,
  "filmFps": 60,
  "filmFrames": 1804,
  "loopStartFilmFrame": 595,
@@ -39,7 +39,7 @@
    "text": "Spot who doesn’t *fit.*",
    "segments": [
     [
-     3.559,
+     3.558,
      5.595
     ]
    ],
@@ -76,7 +76,7 @@
    "segments": [
     [
      7.558,
-     9.376
+     9.375
     ]
    ],
    "filmFrames": [
@@ -93,8 +93,8 @@
    "text": "Sami was the Mole",
    "segments": [
     [
-     7.776,
-     9.666
+     7.777,
+     9.667
     ]
    ],
    "filmFrames": [
@@ -113,8 +113,8 @@
    "text": "Your TV. Everyone’s phone. *One liar.*",
    "segments": [
     [
-     20.15,
-     22.816
+     9.75,
+     12.417
     ]
    ],
    "filmFrames": [
@@ -131,8 +131,8 @@
    "text": "Friends join from their phones. *No app.*",
    "segments": [
     [
-     22.961,
-     25.627
+     12.562,
+     15.227
     ]
    ],
    "filmFrames": [
@@ -149,8 +149,8 @@
    "text": "Everyone gets a *secret word…*",
    "segments": [
     [
-     25.749,
-     27.809
+     15.348,
+     17.408
     ]
    ],
    "filmFrames": [
@@ -167,12 +167,12 @@
    "text": "…but one is *different.*",
    "segments": [
     [
-     29.481,
-     30.067
+     19.082,
+     19.667
     ],
     [
      0.0,
-     1.426
+     1.427
     ]
    ],
    "filmFrames": [
@@ -184,5 +184,6 @@
    "centerY": 0.8194,
    "fontSizeH": 0.0667
   }
- ]
+ ],
+ "loopEndFilmFrame": 1180
 }
