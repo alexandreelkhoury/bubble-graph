@@ -12,10 +12,10 @@ import { Avatar, avatarState, COLOR_BY_ID, Glyph, colorVars } from "../component
 import { RoleEmblem } from "../components/Role";
 import { Icon } from "../components/Icon";
 import { useDeadline } from "../components/Timer";
-import { ActionPill, Stamp, TimerChip, TvTopBar, VOTE_NAME_MAX } from "./tvParts";
+import { ActionPill, Stamp, TvTopBar, VOTE_NAME_MAX } from "./tvParts";
 import { ellipsizeName } from "../lib/names";
 import { useInitialFocus } from "./dpad";
-import { chipRate, ROLE_STING } from "./sound/cues";
+import { chipRate, ROLE_STING, STAMP_LAND_MS } from "./sound/cues";
 import type { TimelineMark } from "./sound/cues";
 import { useTimelineSounds } from "./sound/controller";
 
@@ -89,7 +89,8 @@ export function TvElimination({ view }: { view: TvView }) {
   // swish, then the role's sting as the face lands. The chips' marimba ticks play from the VoteBoard.
   const marks = useMemo(() => {
     const m: TimelineMark[] = [];
-    if (lv) m.push({ at: 0, cue: "sfx.drumroll" }, { at: T.verdict, cue: "sfx.stamp" });
+    // The thud lands with the stamp: at +150 ms the overshoot first reaches scale 1 (it was still 2× in the air).
+    if (lv) m.push({ at: 0, cue: "sfx.drumroll" }, { at: T.verdict + ms(STAMP_LAND_MS), cue: "sfx.stamp" });
     if (lv && random) m.push({ at: T.votesEnd, cue: "sfx.wheel" });
     if (view.eliminated) {
       m.push({ at: T.holdAt, cue: "sfx.heartbeat" }, { at: T.flipAt, cue: "sfx.flip" }, { at: T.flipEnd, cue: ROLE_STING[view.eliminated.role] });
@@ -124,7 +125,8 @@ export function TvElimination({ view }: { view: TvView }) {
               <RoleCard p={out} role={role} flipped={flipped} size={cardSize(rtl)} />
               {random && <span class="tvbadge tvbadge--accent tvelim__random"><Icon name="dice" size={18} />{t("elim.randomPick")}</span>}
             </div>
-            <h1 class="tvt-displayS tvelim__name">{t("elim.eliminated", { name: isolate(out.name) })}</h1>
+            {/* Who left stays visible as a colour and a shape next to the name once the card has flipped. */}
+            <h1 class="tvt-displayS tvelim__name"><Avatar color={out.color} size={48} /><span class="tvelim__nametext">{t("elim.eliminated", { name: isolate(out.name) })}</span></h1>
             {(() => {
               const line = t(role === "BLANK" && !view.settings.blankGuess ? "elim.reactionBlankNoGuess" : REACTION[role]);
               // One line inside the stage, above the bottom bar: long lines step down to tv-title.
@@ -139,7 +141,8 @@ export function TvElimination({ view }: { view: TvView }) {
           ? d && <span class={`${none ? "tvbottom__center" : "tvbottom__start"} tvt-body tv-secondary tnum`}>{t("elim.nextRound", { count: d.secs })}</span>
           : <>
             {next === "LAST_CHANCE" && <span class="tvbottom__start tvt-body tv-blank">{t("elim.lastChance")}</span>}
-            <TimerChip deadline={view.deadline} />
+            {/* An auto-advance nobody acts on stays calm: "Next in 2", never a red stopwatch in the celebration. */}
+            {d && <span class="tvt-body tv-secondary tnum">{t("elim.nextIn", { count: d.secs })}</span>}
           </>)}
         <ActionPill label={t("common.continue")} pillRef={pill} animating={animating} onSkipAnimation={skip} />
       </div>

@@ -215,7 +215,7 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   await expect(tv.locator(".tvresults")).toBeVisible();
 
   // TV-11: stage 1 already has Play again focused; OK only skips to stage 2. Up reaches the scoreboard rows, Down
-  // scrolls them (5 players, 4 rows show), and walks back out to the actions.
+  // walks them (5 rows show; more scroll), and walks back out to the actions.
   await expectFocusOk(tv, "results stage 1");
   expect(await focused(tv, ".tvbottom--results .tvbtn--primary")).toBe(true);
   await press(tv, "Enter", "stage 2", 600);
@@ -223,8 +223,8 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   await expect(tv.locator(".tvlobby")).toHaveCount(0);
   await press(tv, "ArrowUp", "into the scoreboard");
   expect(await focused(tv, ".tvsb__row")).toBe(true);
-  await reach(tv, ".tvsb__row:last-child", ["ArrowDown"], 4);
-  expect(await tv.locator(".tvsb__body").evaluate((b) => b.scrollTop)).toBeGreaterThan(0);
+  await reach(tv, ".tvsb__row:last-child", ["ArrowDown"], 6);
+  if ((await tv.locator(".tvsb__body .tvsb__row").count()) > 5) expect(await tv.locator(".tvsb__body").evaluate((b) => b.scrollTop)).toBeGreaterThan(0);
   await press(tv, "ArrowDown", "out of the scoreboard");
   expect(await focused(tv, ".tvbottom--results .tvbtn")).toBe(true);
   await reach(tv, ".tvbottom--results .tvbtn--primary", [bwd, fwd], 3);

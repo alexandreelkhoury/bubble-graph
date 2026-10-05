@@ -3,6 +3,7 @@ import { useState } from "preact/hooks";
 import type { Me, PlayerView } from "@mishana/shared/protocol";
 import { t } from "../i18n/t";
 import { act } from "../state/session";
+import { HAPTIC, haptic } from "../lib/haptics";
 import { WordCard } from "../components/HoldToReveal";
 import { Button, Heading } from "../components/UI";
 import { Icon } from "../components/Icon";
@@ -34,7 +35,7 @@ export function Reveal({ view, me }: { view: PlayerView; me: Me }) {
             <span class="waiting__text"><Icon name="check" size={20} />{t("reveal.waitingOthers")}<span class="waiting__sub tnum">{t("reveal.readyCount", { ready: readyCount, total: active.length })}</span></span>
           </p>
         ) : (
-          <Button disabled={!seen} onClick={() => act({ type: "READY" })}>{t("reveal.ready")}</Button>
+          <Button disabled={!seen} onClick={() => { if (act({ type: "READY" })) haptic(HAPTIC.tick); }}>{t("reveal.ready")}</Button>
         )}
       </footer>
     </>

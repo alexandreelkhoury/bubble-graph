@@ -67,7 +67,14 @@ export function TvGuess({ view }: { view: TvView }) {
   );
 }
 
-const CAUSE_ICON: Record<string, string> = { VOTE: "vote", RANDOM: "dice", KICK: "user-x", LEAVE: "door-out", NONE: "x" };
+/** TV-11 scoreboard rows in view (40 dp each): five, so the Mole of a 5–6 player game is never behind the fold. */
+export const SB_ROWS = 5;
+
+/** Stage 1 title steps down with its length so it always stays one line ("THE MOLES & THE BLANK WIN!" included). */
+export function titleSize(text: string): string {
+  const n = [...text].length;
+  return n <= 16 ? "tvt-displayL" : n <= 24 ? "tvt-displayM" : "tvt-displayS";
+}
 
 /** TV-11 Results: stage 1 (victory moment, words meet), then stage 2 (scoreboard, history, actions). */
 export function TvResults({ view }: { view: TvView }) {
@@ -88,6 +95,7 @@ export function TvResults({ view }: { view: TvView }) {
   const blankGuess = r.winner === "BLANK" ? r.guesses.find((g) => g.status === "CORRECT")?.text ?? null : null;
   const l = locale.value;
   const win = winnerMessage(view);
+  const title = t(win.key, { count: win.count, name: isolate(winnerName) });
   const caught = culprits(view);
   return (
     <div class={`tvscreen tvresults tvresults--${r.winner.toLowerCase()}${stage2 ? " is-stage2" : ""}`} onClick={() => setStage2(true)}>
@@ -99,7 +107,7 @@ export function TvResults({ view }: { view: TvView }) {
         </div>
       </div>
       <div class="tvstage tvresults__stage">
-        <h1 class={`tvresults__title ${stage2 ? "tvt-headline" : "tvt-displayL"}`}>{t(win.key, { count: win.count, name: isolate(winnerName) })}</h1>
+        <h1 class={`tvresults__title ${stage2 ? "tvt-headline" : titleSize(title)}`}>{title}</h1>
         {!stage2 && r.winner === "BLANK" && blankGuess && (
           <div class="tvblankcard"><RoleEmblem role="BLANK" size={64} /><span class="tvt-displayS">{blankGuess}</span></div>
         )}
@@ -139,10 +147,10 @@ export function TvResults({ view }: { view: TvView }) {
               <div class="tvsb__row tvsb__row--head" role="row">
                 <span>{t("results.colRank")}</span><span>{t("results.colPlayer")}</span><span>{t("results.colRole")}</span><span>{t("results.colGame")}</span><span>{t("results.colTotal")}</span>
               </div>
-              {/* DESIGN TV-11: 4 rows show; every row is a D-pad stop, so focus scrolls the list (data-scroll: the
+              {/* DESIGN TV-11: 5 rows show (the round history lives in the pause menu); every row is a D-pad stop, so focus scrolls the list (data-scroll: the
                   remote enters it on a visible row). The fade and chevron stay until the last row is in view. */}
-              <div class={`tvsb__bodywrap${ranked.length > 4 && !sbEnd ? " has-more" : ""}`}>
-                {ranked.length > 4 && !sbEnd && <span class="tvsb__more" aria-hidden="true"><Icon name="chevron-down" size={20} /></span>}
+              <div class={`tvsb__bodywrap${ranked.length > SB_ROWS && !sbEnd ? " has-more" : ""}`}>
+                {ranked.length > SB_ROWS && !sbEnd && <span class="tvsb__more" aria-hidden="true"><Icon name="chevron-down" size={20} /></span>}
                 <div class="tvsb__body" data-scroll onScroll={(e) => { const b = e.currentTarget; setSbEnd(b.scrollTop + b.clientHeight >= b.scrollHeight - 2); }}>
                 {ranked.map((p, i) => {
                   const pts = r.pointsAwarded[p.id] ?? 0;
@@ -160,19 +168,6 @@ export function TvResults({ view }: { view: TvView }) {
                 </div>
               </div>
             </div>
-            <ol class="tvhistory" aria-label={t("history.title")}>
-              {view.history.map((h, i) => {
-                const hp = byId(view, h.eliminatedId);
-                return (
-                  <li key={i} class="tvhistory__item">
-                    <span class="tvhistory__round tnum">{t("round.short", { count: h.round })}</span>
-                    {hp ? <Avatar color={hp.color} size={32} state="out" /> : null}
-                    {h.role && <RoleEmblem role={h.role} size={24} />}
-                    <Icon name={CAUSE_ICON[h.cause] ?? "x"} size={24} />
-                  </li>
-                );
-              })}
-            </ol>
           </>
         )}
       </div>

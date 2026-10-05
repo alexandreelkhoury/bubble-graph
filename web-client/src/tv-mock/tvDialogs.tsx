@@ -8,6 +8,7 @@ import { isolate, locale, LOCALE_NATIVE_NAME, setLocale, t } from "../i18n/t";
 import { saveLocale } from "../lib/storage";
 import { Avatar, avatarState } from "../components/PlayerChip";
 import { Icon } from "../components/Icon";
+import { RoleEmblem } from "../components/Role";
 import { tvAct, tvExit, tvLangOpen, tvPaused, tvPausePage, tvShop } from "./tvStore";
 import { closeShop } from "./shopState";
 import { billing } from "./billing";
@@ -120,10 +121,14 @@ export function PauseMenu({ view }: { view: TvView }) {
   }, [page]);
   const kickable = view.players.filter((p) => !p.left);
   const players = page === "players";
+  const history = !players && view.phase === "RESULTS" && view.history.length > 0;
   return (
     <div class="tvoverlay" role="dialog" aria-modal="true" aria-label={t("tv.pauseTitle")}>
-      <div class="tvdialog tvdialog--menu">
+      <div class={`tvdialog tvdialog--menu${history ? " tvdialog--history" : ""}`}>
         <h2 class="tvdialog__title tvdialog__title--center">{players ? t("tv.playersTitle") : t("tv.pauseTitle")}</h2>
+        {/* The menu promises no pause: say so up front (the timers keep running). */}
+        {!players && <p class="tvdialog__sub">{t("tv.pauseNote")}</p>}
+        {history && <History view={view} />}
         {players ? (
           // Kotlin PlayersList: the first player is focused, Back closes the page (the Back key too) and sits last.
           <div class="tvmenu" key="players">
@@ -166,8 +171,29 @@ export function PauseMenu({ view }: { view: TvView }) {
             )}
           </div>
         )}
-        <p class="tvdialog__note">{t("tv.pauseNote")}</p>
       </div>
     </div>
+  );
+}
+
+const CAUSE_ICON: Record<string, string> = { RANDOM: "dice", KICK: "user-x", LEAVE: "door-out", NONE: "x" };
+
+/** "R1 [avatar] Ben [Mole]": who went out each round; the cause icon only when it was not a plain vote. */
+function History({ view }: { view: TvView }) {
+  return (
+    <ol class="tvhistory" aria-label={t("history.title")}>
+      {view.history.map((h, i) => {
+        const hp = view.players.find((p) => p.id === h.eliminatedId);
+        const cause = CAUSE_ICON[h.cause];
+        return (
+          <li key={i} class="tvhistory__item">
+            <span class="tvhistory__round tnum">{t("round.short", { count: h.round })}</span>
+            {hp ? <><Avatar color={hp.color} size={28} state="out" /><bdi class="tvhistory__name">{hp.name}</bdi></> : null}
+            {h.role && <span class={`tvhistory__emb tvhistory__emb--${h.role.toLowerCase()}`}><RoleEmblem role={h.role} size={16} /></span>}
+            {cause && <Icon name={cause} size={22} />}
+          </li>
+        );
+      })}
+    </ol>
   );
 }

@@ -72,7 +72,7 @@ export function Vote({ view, me }: { view: PlayerView; me: Me }) {
             const on = sel === p.id;
             return (
               <button key={p.id} type="button" role="radio" aria-checked={on} class={`voterow${on ? " is-selected" : ""}`}
-                aria-label={playerLabel(p)} onClick={() => setSel(p.id)}>
+                aria-label={playerLabel(p)} onClick={() => { if (sel !== p.id) haptic(HAPTIC.tick); setSel(p.id); }}>
                 <Avatar color={p.color} size={56} state={avatarState(p)} />
                 <bdi class="voterow__name">{p.name}</bdi>
                 <span class="voterow__radio" aria-hidden="true">{on && <Icon name="check" size={18} />}</span>
