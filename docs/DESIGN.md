@@ -66,8 +66,9 @@ The name must change in **one place** (PLAN §7):
 **Variants**
 - `wordmark-latin`: "MISH ANA" + the bang at the right end (stem + dot). Use it on FR/EN-only surfaces such as small phone headers.
 - `wordmark-ar`: the bang at the left end, then "مش أنا". Use it for AR-only surfaces.
-- `mark` (app icon): a 160 × 160 rounded square in `color.bg`, with a magenta **speech bubble** 112 × 96 whose tail points down-left. Inside it, the cream bang (stem + amber dot), with the same 8° lean. No text, so it works in every locale.
-- **Banner** (320 × 180 px, TV-BN requires the name): a `color.bg` → `#2A0F3D` diagonal gradient, the mark at the left 32 px from the edge at 96 px tall, and `wordmark-latin` (EN/FR) or `wordmark-ar` (AR) at 150 px wide, vertically centred. In the AR banner the mark moves to the right.
+- `mark` (in-app mark): a 160 × 160 rounded square in `color.bg`, with a magenta **speech bubble** 112 × 96 whose tail points down-left. Inside it, the cream bang (stem + amber dot), with the same 8° lean. No text, so it works in every locale.
+- **Launcher / Play icon** (`assets/brand/icon.svg`, design-v3 D2): the mark tuned for launchers in palette B: radial violet tile `#5A2E9A` → `#3A1E6A` → `#2B1650` (keeps an edge on dark launchers), bubble `#FF4F9A` 4 % bigger with the tail tucked inside a circular mask, stem 22 % wider, amber `#FFC94D` dot r 10 (the "!" reads at 32 px). Adaptive icon: that tile as the background layer, bubble + bang inside the 66 dp safe circle.
+- **Banner** (320 × 180 px, TV-BN requires the name; design-v3 D3): marketing palette B stage (`#2E1856` → `#1D1036` diagonal + a violet lift), the icon's magenta **bubble with no tile** (84 px tall) over a soft magenta glow, and `wordmark-latin` (EN/FR, 168 px wide) or `wordmark-ar` (AR, same scale × 1.2) beside it, centred as a group. In the AR banner the order mirrors (bubble on the right). The Play TV banner is the same art at 4×.
 
 ```svg
 <!-- reference skeleton; replace <text> with outlined paths in the shipped asset -->
