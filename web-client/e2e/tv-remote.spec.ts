@@ -232,8 +232,17 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   await expect(tv.locator(".tvlobby")).toBeVisible();
   await expectFocusOk(tv, "lobby after play again");
 
-  // Back in the lobby exits (DESIGN TV-02): a remote-friendly splash whose focused button opens a new room.
-  await press(tv, "Escape", "exit", 400);
+  // Back in the lobby exits (DESIGN TV-02), but with players in the room the browser TV asks first, "Keep room"
+  // focused: Back keeps the room, Close exits to a remote-friendly splash whose focused button opens a new room.
+  await press(tv, "Escape", "close room?", 400);
+  await expect(tv.locator(".tvdialog")).toBeVisible();
+  expect(await focused(tv, ".tvdialog__actions .tvbtn:not(.tvbtn--danger)")).toBe(true);
+  await press(tv, "Escape", "keep room", 400);
+  await expect(tv.locator(".tvdialog")).toHaveCount(0);
+  await expect(tv.locator(".tvlobby")).toBeVisible();
+  await press(tv, "Escape", "close room?", 400);
+  await reach(tv, ".tvdialog__actions .tvbtn--danger", [fwd], 2);
+  await press(tv, "Enter", "exit", 400);
   await expect(tv.locator(".tvfatal")).toBeVisible();
   await press(tv, "Enter", "open again", 400);
   await expect(tv.locator(".tvlobby .tvcode--big")).toBeVisible({ timeout: 30_000 });
