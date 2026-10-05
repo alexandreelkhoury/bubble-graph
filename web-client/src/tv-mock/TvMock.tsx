@@ -51,6 +51,21 @@ function Screen({ view }: { view: TvView }) {
   }
 }
 
+/** B3: F toggles full screen on the browser TV (a laptop host otherwise plays in a tab with the browser chrome). */
+function useFullscreenKey(): void {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      if ((e.key !== "f" && e.key !== "F") || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+      if ((e.target as HTMLElement | null)?.tagName === "INPUT") return;
+      const doc = document;
+      if (doc.fullscreenElement) void doc.exitFullscreen?.().catch(() => undefined);
+      else void doc.documentElement.requestFullscreen?.().catch(() => undefined);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+}
+
 export function TvMock() {
   const box = useCanvasBox();
   const canvas = useRef<HTMLDivElement>(null);
@@ -83,6 +98,7 @@ export function TvMock() {
       } else tvExit();
     }
   });
+  useFullscreenKey();
   const l = locale.value;
   let content;
   if (ui.kind === "creating" || ui.kind === "failed") content = <Splash failed={ui.kind === "failed" ? ui.error : null} />;

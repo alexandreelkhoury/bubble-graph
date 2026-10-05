@@ -14,6 +14,10 @@ import { Avatar, avatarState, playerLabel } from "../components/PlayerChip";
 import { Button, ConfirmSheet, Heading } from "../components/UI";
 import { Icon } from "../components/Icon";
 import { SettingsSheet } from "./Settings";
+import { createArrivals, isFresh, noteArrivals } from "../lib/arrivals";
+
+/** B15: only a player who just joined drops in (a remount after Play again or a reload animates nothing). */
+const rows = createArrivals();
 import type { SettingsSection } from "./Settings";
 
 /** The two lines of the lobby settings card: packs · word language / roles · clue timer. */
@@ -59,6 +63,8 @@ export function Lobby({ view }: { view: PlayerView }) {
   const [line1, line2] = settingsSummary(view);
   const blocker = blockerText(view);
   const players = view.players;
+  const now = Date.now();
+  noteArrivals(rows, view.roomCode, view.gameNumber, players.map((p) => p.id), now);
   const host = players.find((p) => p.isHost);
   // After "Play again" the running totals stay visible (the TV shows them on Results).
   const topScore = Math.max(0, ...players.map((p) => p.score));
@@ -100,7 +106,7 @@ export function Lobby({ view }: { view: PlayerView }) {
                 </>
               );
               return (
-                <li key={p.id} class={`plist__item join-pop${you ? " is-you" : ""}`}>
+                <li key={p.id} class={`plist__item${isFresh(rows, p.id, now) ? " join-pop" : ""}${you ? " is-you" : ""}`}>
                   {isVip && !you ? (
                     <button type="button" class="plist__row plist__row--btn" aria-label={`${playerLabel(p)}. ${t("lobby.kick")}`} onClick={() => setKick(p)}>
                       {content}<Icon name="x" size={18} class="plist__kick" />
