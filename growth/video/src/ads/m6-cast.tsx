@@ -4,6 +4,8 @@ import {C} from '../brand';
 /**
  * M6 family cast: the app's 12 player swatches (tv-app Constants.kt) in join order.
  * Index 0 sits top-right (RTL reading order). Khalo (index 5) is the Mole: فتوش.
+ * v2: lifted colours (brand.ts); Khalo is lilac #C9BFFF like Sami (DECISIONS #8: the Mole's colour
+ * must not hint amber/orange, and aqua read too close to Baba's jade card), so Rami takes tangerine and Nour aqua.
  * Pair p001 of word-packs/packs/ar/lb-food-01.json: civilian تبولة / undercover فتوش.
  */
 export type Glyph = 'circle' | 'square' | 'star' | 'triangle' | 'diamond' | 'hexagon' | 'plus' | 'drop' | 'bolt' | 'flower' | 'arch';
@@ -13,19 +15,19 @@ export const CIVIL = 'تبولة';
 export const UNDER = 'فتوش';
 
 export const FAM: Fam[] = [
-  {name: 'تيتا', color: '#F0183A', glyph: 'circle', cream: false},
-  {name: 'جدّو', color: '#478CFF', glyph: 'square', cream: false},
+  {name: 'تيتا', color: '#FF3355', glyph: 'circle', cream: false},
+  {name: 'جدّو', color: '#5A9BFF', glyph: 'square', cream: false},
   {name: 'ماما', color: '#FFF04D', glyph: 'star', cream: false},
-  {name: 'بابا', color: '#1FA88A', glyph: 'triangle', cream: false},
-  {name: 'عمّتو', color: '#7A43FF', glyph: 'diamond', cream: true},
-  {name: 'خالو', color: '#FF7A1F', glyph: 'hexagon', cream: false},
-  {name: 'رامي', color: '#7BFFF4', glyph: 'plus', cream: false},
+  {name: 'بابا', color: '#2BC49F', glyph: 'triangle', cream: false},
+  {name: 'عمّتو', color: '#9A6BFF', glyph: 'diamond', cream: true},
+  {name: 'خالو', color: '#C9BFFF', glyph: 'hexagon', cream: false},
+  {name: 'رامي', color: '#FF8A33', glyph: 'plus', cream: false},
   {name: 'لين', color: '#FF96C5', glyph: 'drop', cream: false},
   // mint's in-app glyph is a crescent; drawn as a circle here to keep the ad free of anything read as a symbol
   {name: 'كريم', color: '#BDF5C8', glyph: 'circle', cream: false},
   {name: 'سارة', color: '#C02A8F', glyph: 'bolt', cream: true},
   {name: 'هادي', color: '#E6C486', glyph: 'flower', cream: false},
-  {name: 'نور', color: '#C9BFFF', glyph: 'arch', cream: false},
+  {name: 'نور', color: '#7BFFF4', glyph: 'arch', cream: false},
 ];
 export const MOLE_I = 5;
 

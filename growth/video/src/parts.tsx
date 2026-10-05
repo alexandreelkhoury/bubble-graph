@@ -42,8 +42,8 @@ export const Rise: React.FC<{f: number; start: number; end?: number; children: R
   const pin = spr(f, start, cfg);
   const pout = end === undefined ? 0 : spr(f, end, {damping: 30, stiffness: 260});
   if (pout > 0.97) return null;
-  // exit travels further than the mask so outlined (stroked) text never leaves specks at the mask edge
-  const y = (1 - pin) * 110 - pout * 145;
+  // exit travels well past the mask so boxed hot words (box + shadow + tilt) never leave slivers at the mask edge
+  const y = (1 - pin) * 110 - pout * 200;
   return (
     <span style={{display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom', padding: `${pad}em 0.06em`, margin: `-${pad}em -0.06em`, ...style}}>
       <span style={{display: 'inline-block', transform: `translateY(${y}%)`}}>{children}</span>

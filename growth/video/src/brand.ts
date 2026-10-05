@@ -28,7 +28,7 @@ export const PLAYERS: Player[] = [
   {name: 'Lea', color: '#FFF04D', shape: 'star', cream: false, word: 'PIZZA', clue: 'Oven'},
   {name: 'Joe', color: '#2BC49F', shape: 'triangle', cream: false, word: 'PIZZA', clue: 'Delivery'},
   {name: 'Nour', color: '#9A6BFF', shape: 'diamond', cream: true, word: 'PIZZA', clue: 'Crust'},
-  {name: 'Sami', color: '#4FE3D2', shape: 'hexagon', cream: false, word: 'PASTA', clue: 'Boiled?'},
+  {name: 'Sami', color: '#C9BFFF', shape: 'hexagon', cream: false, word: 'PASTA', clue: 'Boiled?'},
 ];
 export const MOLE = 5;
 export const ROOM_CODE = 'JQPU';

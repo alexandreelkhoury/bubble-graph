@@ -4,7 +4,7 @@ You build ONE ad in the Remotion project `/home/alex/bubble-graph/growth/video` 
 `review-v2/DECISIONS.md` (approved decisions), the four reviews `review-v2/{impeccable,uiux,frontend,polish}.md` (find every point about YOUR ad: exact timings, copy, sizes), and the Remotion rules in `/home/alex/.claude/skills/remotion-best-practices/rules/{animations,timing,sequencing,text-animations}.md`.
 
 ## The v2 foundation (already built, use it, don't edit shared files)
-- `src/brand.ts`: palette v2 (`C.bg #2B1650`, `C.surface #3A2266`, `C.primary #FF4F9A`, `C.accent #FFC94D`, `C.ink`, `C.text`), lifted player colours; **Sami is aqua `#4FE3D2`** (no orange Mole hint). `PLAYERS`, `ROOM_CODE`.
+- `src/brand.ts`: palette v2 (`C.bg #2B1650`, `C.surface #3A2266`, `C.primary #FF4F9A`, `C.accent #FFC94D`, `C.ink`, `C.text`), lifted player colours; **Sami is lilac `#C9BFFF`** (no orange Mole hint). `PLAYERS`, `ROOM_CODE`.
 - `src/bg.tsx` `StageBg` (lit background) — `AdBg` in `ads/common.tsx` renders it; `Ads.tsx` already puts it under your body.
 - `src/time.ts`: beat grid `b(beats)` (123.78 BPM, 1 beat = 29.08 frames, ad beat 0 = the song's drop), springs **`TEXT`** (all text), `SNAPPY`, `POP` (pops only), `SOFT`, `HEAVY`; `prog`, `mix`, `lerp`, easings.
 - `src/parts.tsx`: `Rise` (mask text, default TEXT spring), `Words`, **`WordFace`** (the real phone word screen — dark screen, player-colour card flipping to the word; the Mole's looks identical), `PhoneFrame`, `Avatar`, `Bubble`, `Mark`, `At`.
