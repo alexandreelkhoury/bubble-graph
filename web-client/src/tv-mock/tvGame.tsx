@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import { useDeadlineSelect } from "../components/Timer";
 import type { PublicPlayer, TvView } from "@mishana/shared/protocol";
 import { dirOf, fmtNum, isolate, locale, t } from "../i18n/t";
+import { revoteLine, tieLine } from "../lib/gameText";
 import { Avatar, avatarState } from "../components/PlayerChip";
 import { Icon } from "../components/Icon";
 import { reduced } from "../lib/motion";
@@ -60,10 +61,13 @@ export function TvRoleReveal({ view }: { view: TvView }) {
   );
 }
 
-/** TV-08: a ≤ 2.5 s overlay on top of TV-05 at the start of TIE_BREAK (OK skips it). */
+/** TV-08 overlay length: long enough to read the explanation from the couch (OK skips it). */
+export const TIE_OVERLAY_MS = 4000;
+
+/** TV-08: an overlay on top of TV-05 at the start of TIE_BREAK (OK skips it). */
 function TieOverlay({ view, onDone }: { view: TvView; onDone(): void }) {
   useEffect(() => {
-    const id = setTimeout(onDone, reduced() ? 1250 : 2500);
+    const id = setTimeout(onDone, reduced() ? TIE_OVERLAY_MS / 2 : TIE_OVERLAY_MS);
     return () => clearTimeout(id);
   }, []);
   return (
@@ -75,7 +79,7 @@ function TieOverlay({ view, onDone }: { view: TvView; onDone(): void }) {
             {i > 0 && <span class="tvtie__vs">{t("tie.vs")}</span>}
             <div class="tvtie__card">
               <span class="tvtie__av">
-                <Avatar color={p.color} size={120} state={avatarState(p)} />
+                <Avatar color={p.color} size={96} state={avatarState(p)} />
                 <span class="tvtally num">{fmtNum(votes)}</span>
               </span>
               <bdi class="tvt-title">{p.name}</bdi>
@@ -152,10 +156,12 @@ export function TvClues({ view }: { view: TvView }) {
     <div class="tvscreen tvclues">
       <TvTopBar view={view} />
       <div class="tvspot" aria-hidden="true" />
+      {/* During a tie-break the rule line says who tied and what happens next (the top bar already says TIE-BREAK). */}
       <div class="tvclues__rule">
-        <span class="tvt-caption tv-muted">{t("clues.rule")}</span>
+        {tie
+          ? <span class="tvt-caption tv-secondary">{tieLine(view)}</span>
+          : <span class="tvt-caption tv-muted">{t("clues.rule")}</span>}
         {firstTurn && <span class="tvt-caption tv-secondary">{t("clues.firstHint")}</span>}
-        {tie && <span class="tvbadge tvbadge--accent">{t("phase.tieBreak")}</span>}
       </div>
       <div class="tvstage tvclues__stage">
         {speaker && (
@@ -191,19 +197,21 @@ export function TvVoting({ view }: { view: TvView }) {
   // Re-renders when the last-10-seconds state flips, not on every tick (the bar ticks on its own).
   const lastTen = useDeadlineSelect(view.deadline, (c) => c.secs <= 10 && c.secs > 0, false);
   useEffect(() => { setPulse((x) => x + 1); }, [view.votesCast]);
+  // With every phone asleep the server expects 0 votes: "0/0 voted" looks broken, so count the alive voters.
+  const expected = view.votesExpected > 0 ? view.votesExpected : view.players.filter((p) => p.alive && !p.left).length;
   return (
     <div class="tvscreen">
       <TvTopBar view={view} />
       <div class="tvstage tvvote">
         <h1 class="tvt-displayS tvvote__title">{t("vote.title")} <span class="tv-secondary tvt-headline">{t("vote.sub")}</span></h1>
-        {view.revote && <span class="tvbadge tvbadge--accent">{t("vote.revoteAmong")}</span>}
+        {view.revote && <span class="tvbadge tvbadge--accent tvbadge--sentence">{revoteLine(view)}</span>}
         <div class={`tvvgrid${big ? " tvvgrid--12" : ""}`}>
           {cands.map((p) => <Tile key={p.id} p={p} size={big ? 48 : 64} check={p.hasVoted} nameMax={VOTE_NAME_MAX} class={big ? "tile--vote tile--vote-s" : "tile--vote"} />)}
         </div>
       </div>
       <div class="tvbottom tvbottom--vote">
         <div class="tvvote__timer"><TvTimerBar deadline={view.deadline} /></div>
-        <span class="tvvote__progress tnum" key={pulse}>{lastTen ? <span class="tv-danger">{t("vote.tenLeft")}</span> : t("vote.progress", { cast: view.votesCast, expected: view.votesExpected })}</span>
+        <span class="tvvote__progress tnum" key={pulse}>{lastTen ? <span class="tv-danger">{t("vote.tenLeft")}</span> : t("vote.progress", { cast: view.votesCast, expected })}</span>
         <ActionPill label={t("vote.close")} pillRef={pill} />
       </div>
     </div>

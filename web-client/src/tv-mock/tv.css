@@ -68,6 +68,10 @@
 .tv .tvbtn--danger:focus { background: var(--color-danger); color: var(--color-ink); }
 .tvbtn.is-disabled { opacity: 0.4; }
 .tvbtn.is-disabled:focus { opacity: 0.7; }
+/* A disabled primary (Start) stays focusable and readable: neutral fill, no alpha (10.05:1 at rest, 14.61:1 focused);
+   the focus ring and glow keep full strength. */
+.tvbtn--primary.is-disabled { opacity: 1; background: var(--color-surface); color: var(--color-text-secondary); }
+.tv .tvbtn--primary.is-disabled:focus { opacity: 1; background: var(--color-elevated); color: var(--color-text); }
 .tvpill {
   display: inline-grid; place-items: center; height: 48px; min-width: 160px; padding-inline: 28px; border: 2px solid rgb(var(--rgb-text) / 0.5); border-radius: var(--radius-pill);
   background: transparent; color: var(--color-text); font: var(--tv-label); white-space: nowrap; opacity: 0.6;
@@ -85,6 +89,8 @@
 .tvbadge { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding-inline: 16px; border-radius: var(--radius-pill); font: var(--tv-label); font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
 .tv:lang(ar) .tvbadge { text-transform: none; letter-spacing: 0; }
 .tvbadge--accent { background: var(--color-accent); color: var(--color-ink); }
+/* A badge that carries a sentence (the re-vote rule) reads in sentence case. */
+.tvbadge--sentence { text-transform: none; letter-spacing: 0; }
 .tvtag { padding: 2px 8px; border-radius: var(--radius-pill); background: var(--tint-accent); color: var(--color-accent); font: var(--tv-caption); }
 
 /* tiles */
@@ -225,13 +231,14 @@
 .tvclues .tvbottom { z-index: 9; }
 /* …but not the order strip: under the overlay it would collide with the tie explanation (Kotlin draws the overlay over it). */
 .tvclues:has(.tvtie) .tvorder { visibility: hidden; }
-.tvtie { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; background: rgb(var(--rgb-bg) / 0.92); animation: tie-out 2500ms linear both; }
-@keyframes tie-out { 0% { opacity: 0; } 8% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
+/* The column ends above the strip line (y 417) so the focused Skip pill never covers the explanation. */
+.tvtie { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding-bottom: 120px; background: rgb(var(--rgb-bg) / 0.96); animation: tie-out 4000ms linear both; }
+@keyframes tie-out { 0% { opacity: 0; } 5% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; } }
 .tvtie__cards { display: flex; align-items: center; gap: 32px; }
 .tvtie__card { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px 24px; border-radius: var(--radius-lg); background: var(--color-surface); min-width: 200px; }
 .tvtie__av { position: relative; }
 .tvtie__vs { font: var(--tv-headline); color: var(--color-text-muted); }
-.tvtie__explain { max-width: 640px; color: var(--color-text-secondary); }
+.tvtie__explain { display: block; max-width: 560px; text-align: center; color: var(--color-text-secondary); text-wrap: balance; }
 
 /* voting (TV-06) */
 .tvvote { justify-content: center; gap: 20px; }
@@ -448,6 +455,9 @@
 .tvtoast--inline.tvtoast--error { color: var(--color-danger); }
 .tvtoast--success { border-inline-start-color: var(--color-success); }
 .tvtoast--error { border-inline-start-color: var(--color-danger); }
+/* In-game toasts stay one line inside the top bar row (y 31–67 in Arabic too), never over the TV-05 rule at y 72. */
+.tvtoasts .tvtoast:not(.tvtoast--inline) { -webkit-line-clamp: 1; line-clamp: 1; }
+.tv:lang(ar) .tvtoasts .tvtoast:not(.tvtoast--inline) { line-height: 28px; padding-block: 4px; }
 @keyframes tv-toast { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
@@ -460,7 +470,7 @@
   .rolecard.is-flipped .rolecard__inner { transform: none; }
   .rolecard.is-flipped .rolecard__face { opacity: 1; }
   .tvelim.wash--civilian::before, .tvelim.wash--undercover::before, .tvelim.wash--blank::before { animation: none; opacity: 0.35; }
-  .tvtie { animation: tie-out 1250ms linear both; }
+  .tvtie { animation: tie-out 2000ms linear both; }
 }
 
 /* PAYMENTS-SPEC §4.4 / §5.2: Premium entry points and the mock Store (fake billing). */
