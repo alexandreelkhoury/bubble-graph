@@ -95,7 +95,6 @@ import app.mishana.tv.protocol.Start
 import app.mishana.tv.protocol.StartBlocker
 import app.mishana.tv.protocol.TvView
 import app.mishana.tv.protocol.blocker
-import app.mishana.tv.protocol.WinRule
 import app.mishana.tv.ui.components.AvatarState
 import app.mishana.tv.ui.components.ButtonKind
 import app.mishana.tv.ui.components.InitialFocus
@@ -181,8 +180,13 @@ fun LobbyScreen(
             Spacer(Modifier.width(58.dp))
             // ---- end side: summary (+ the lobby toast slot), grid, bottom bar ----
             Column(Modifier.fillMaxSize()) {
-                // Settings as chips (scan in 1 s), top end; the role split only once 3 players are in (DESIGN TV-02).
-                SettingsChips(view, players.size, premiumChip = view.premium && onOpenStore != null, modifier = Modifier.fillMaxWidth())
+                // Settings as chips (scan in 1 s), top end, once the room can start (DESIGN TV-02): before that the
+                // QR owns the screen. The row keeps its height so the grid never moves.
+                Box(Modifier.fillMaxWidth().height(SUMMARY_CHIP_H), contentAlignment = Alignment.CenterEnd) {
+                    if (players.size >= Constants.MIN_PLAYERS) {
+                        SettingsChips(view, premiumChip = view.premium && onOpenStore != null, modifier = Modifier.fillMaxWidth())
+                    }
+                }
                 Spacer(Modifier.height(8.dp))
                 Row(Modifier.fillMaxWidth().defaultMinSize(minHeight = 54.dp), verticalAlignment = Alignment.CenterVertically) {
                     PlayerCounter(players.size)
@@ -419,12 +423,11 @@ private fun blockerText(view: TvView): String? = when (view.blocker) {
 }
 
 /**
- * Top-end settings chips (DESIGN TV-02): [Premium room] [packs] [word language] [● 4 ● 1 ● 1] with role-colour dots,
- * and the win rule only when it is not the default. The role chip waits for 3 players (a split for 0 players is
- * noise while the QR should own the screen). The row flashes accent when the settings change.
+ * Top-end settings chips (DESIGN TV-02): [Premium room] [packs] [word language] [● 4 ● 1 ● 1] with role-colour dots
+ * (the Blank's only when there is one). The win rule lives in Settings. The row flashes accent when the settings change.
  */
 @Composable
-private fun SettingsChips(view: TvView, playerCount: Int, premiumChip: Boolean, modifier: Modifier = Modifier) {
+private fun SettingsChips(view: TvView, premiumChip: Boolean, modifier: Modifier = Modifier) {
     val s = view.settings
     val packs = if (s.packIds.isEmpty()) {
         stringResource(R.string.settings__all_packs)
@@ -459,28 +462,25 @@ private fun SettingsChips(view: TvView, playerCount: Int, premiumChip: Boolean, 
         }
         SummaryChip(Modifier.weight(1f, fill = false)) { ChipText(packs) }
         SummaryChip { ChipText(stringResource(langNameRes(s.wordLocale))) }
-        if (s.winRule != WinRule.OFFICIAL) {
-            SummaryChip(Modifier.weight(1f, fill = false)) { ChipText(stringResource(R.string.settings__win_rule_parity)) }
-        }
         val rc = view.roleCounts
-        if (rc != null && playerCount >= ROLE_CHIP_MIN_PLAYERS) {
+        if (rc != null) {
             val a11y = stringResource(R.string.lobby__role_summary, rc.civilian.toString(), rc.undercover.toString(), rc.blank.toString())
             SummaryChip(Modifier.semantics(mergeDescendants = true) { contentDescription = a11y }) {
                 RoleCount(MishColors.Civilian, rc.civilian)
                 RoleCount(MishColors.Undercover, rc.undercover, Modifier.padding(start = 10.dp))
-                RoleCount(MishColors.Blank, rc.blank, Modifier.padding(start = 10.dp))
+                if (rc.blank > 0) RoleCount(MishColors.Blank, rc.blank, Modifier.padding(start = 10.dp))
             }
         }
     }
 }
 
-private const val ROLE_CHIP_MIN_PLAYERS = 3
+private val SUMMARY_CHIP_H = 36.dp
 
 @Composable
 private fun SummaryChip(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
     Row(
         modifier
-            .height(36.dp)
+            .height(SUMMARY_CHIP_H)
             .background(MishColors.Text.copy(alpha = 0.07f), MishShapes.pill)
             .border(BorderStroke(1.dp, MishColors.Text.copy(alpha = 0.10f)), MishShapes.pill)
             .padding(horizontal = 14.dp),
@@ -574,8 +574,8 @@ private fun PlayerGrid(
         ids.lastOrNull { it !in seen }?.let { newest = it }
         seen.addAll(ids)
     }
-    // After "Play again" the scores are the replay hook ("I'm 2 points behind"): a badge on every tile.
-    val showScores = players.any { it.score > 0 }
+    // After "Play again" the scores are the replay hook ("I'm 2 points behind"): a badge on every tile, the leader's solid.
+    val topScore = players.maxOfOrNull { it.score } ?: 0
     val slots = Constants.MAX_PLAYERS
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         for (row in 0 until 3) {
@@ -590,7 +590,7 @@ private fun PlayerGrid(
                                 player = p,
                                 animate = isNew,
                                 newest = p.id == newest,
-                                showScore = showScores,
+                                topScore = topScore,
                                 onShown = { known.value = known.value + p.id },
                                 modifier = Modifier
                                     .focusRequester(tileFocus.getOrPut(p.id) { FocusRequester() })
@@ -613,7 +613,7 @@ private fun JoiningTile(
     player: PublicPlayer,
     animate: Boolean,
     newest: Boolean,
-    showScore: Boolean,
+    topScore: Int,
     onShown: () -> Unit,
     modifier: Modifier,
     onClick: () -> Unit,
@@ -692,25 +692,31 @@ private fun JoiningTile(
                 )
             }
         }
-        if (showScore) ScoreBadge(player.score, Modifier.align(Alignment.BottomEnd).offset(x = 6.dp, y = 6.dp))
+        if (topScore > 0) ScoreBadge(player.score, lead = player.score == topScore, Modifier.align(Alignment.TopEnd).padding(6.dp))
     }
 }
 
-/** The player's total after a game: an accent pill with a trophy, at the tile's bottom end. */
+/**
+ * The player's running total after a game, at the tile's top end: an accent tint (14 %) with accent digits; the
+ * leader's is solid accent with a trophy (web parity).
+ */
 @Composable
-private fun ScoreBadge(score: Int, modifier: Modifier) {
+private fun ScoreBadge(score: Int, lead: Boolean, modifier: Modifier) {
+    val ink = if (lead) MishColors.Ink else MishColors.Accent
     Row(
         modifier
-            .height(28.dp)
-            .background(MishColors.Accent, MishShapes.pill)
+            .height(24.dp)
+            .background(if (lead) MishColors.Accent else MishColors.Accent.copy(alpha = 0.14f), MishShapes.pill)
             .padding(horizontal = 8.dp)
             .clearAndSetSemantics { },
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(MishIcons.Trophy, contentDescription = null, tint = MishColors.Ink, modifier = Modifier.size(16.dp))
-        Spacer(Modifier.width(4.dp))
+        if (lead) {
+            Icon(MishIcons.Trophy, contentDescription = null, tint = ink, modifier = Modifier.size(16.dp))
+            Spacer(Modifier.width(2.dp))
+        }
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-            Text(score.toString(), style = MishTheme.type.caption.copy(fontWeight = FontWeight.Black, lineHeight = 22.sp), color = MishColors.Ink, maxLines = 1)
+            Text(score.toString(), style = MishTheme.type.caption.copy(fontWeight = FontWeight.Black, lineHeight = 20.sp), color = ink, maxLines = 1)
         }
     }
 }
