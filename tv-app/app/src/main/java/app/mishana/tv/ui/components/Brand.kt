@@ -1,5 +1,8 @@
 package app.mishana.tv.ui.components
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -154,15 +157,23 @@ private fun DrawScope.drawBang(stem: Path, stemProgress: Float, dotProgress: Flo
     }
 }
 
-/** The app mark (speech bubble + bang), vector drawable generated from the same source. */
+/**
+ * The app mark (speech bubble + bang), vector drawable generated from the same source. A 1 dp white hairline at 10 %
+ * keeps its dark tile's edge visible on the dark stage (the glow only carried the bottom half).
+ */
 @Composable
 fun Mark(size: Dp, modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(R.drawable.ic_mark),
         contentDescription = null,
-        modifier = modifier.size(size),
+        modifier = modifier
+            .size(size)
+            .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.10f)), RoundedCornerShape(percent = MARK_RADIUS_PERCENT)),
     )
 }
+
+/** The mark's tile corner (36 of 160 in `ic_mark`). */
+private const val MARK_RADIUS_PERCENT = 22
 
 /**
  * `elev.0` screen background: `bg` + a radial `bgGlow` from the top centre (60 % radius), drifting slowly

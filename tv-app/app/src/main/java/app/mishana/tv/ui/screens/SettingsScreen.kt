@@ -1,5 +1,11 @@
 package app.mishana.tv.ui.screens
 
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.lazy.rememberLazyListState
 import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
@@ -263,11 +269,19 @@ fun SettingsScreen(
                         .background(MishColors.Surface, MishShapes.tile)
                         .padding(vertical = MishSpace.s1),
                 ) {
+                    val rowsState = rememberLazyListState()
                     if (category == SettingsCategory.About) {
                         AboutPanel(installId, appVersion)
                     } else LazyColumn(
                         // Entering the rows from a category lands on the first row, never on whichever is level.
-                        Modifier.fillMaxWidth().weight(1f, fill = false).heightIn(max = 316.dp).focusRestorer(firstRow),
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f, fill = false)
+                            .heightIn(max = 316.dp)
+                            .focusRestorer(firstRow)
+                            // More rows below: the last one fades out ("more below") instead of being cut by the divider.
+                            .fadeBottom(rowsState.canScrollForward),
+                        state = rowsState,
                         // Room for the focus scale + ring, which the list would otherwise clip.
                         contentPadding = PaddingValues(horizontal = MishFocus.ListPadH, vertical = MishFocus.ListPadV),
                         verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -748,3 +762,15 @@ private fun ToggleRow(label: String, trailing: String?, checked: Boolean, onClic
         }
     }
 }
+
+/** Fades the last 24 dp out (a mask, so whatever is behind shows through) while [on]. */
+private fun Modifier.fadeBottom(on: Boolean): Modifier = if (!on) this else this
+    .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+    .drawWithContent {
+        drawContent()
+        val fade = 24.dp.toPx()
+        drawRect(
+            Brush.verticalGradient(0f to Color.Black, 1f to Color.Transparent, startY = size.height - fade, endY = size.height),
+            blendMode = BlendMode.DstIn,
+        )
+    }

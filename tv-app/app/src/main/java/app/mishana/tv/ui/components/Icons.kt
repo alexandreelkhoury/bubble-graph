@@ -130,19 +130,20 @@ object AvatarGlyphs {
         circle(12f, 7.4f, 4.6f), circle(16.6f, 12f, 4.6f), circle(12f, 16.6f, 4.6f), circle(7.4f, 12f, 4.6f), circle(12f, 12f, 4f),
     ).joinToString("")
 
+    // Triangle, drop and arch sit optically up (−0.8 / −1.25 / −0.75): their visual mass is low in the box (v3 B18).
     private val vectors: Map<AvatarShape, ImageVector> = mapOf(
         AvatarShape.Circle to filled("circle", circle(12f, 12f, 9f)),
         AvatarShape.Square to filled("square", "M7 3.5h10a3.5 3.5 0 0 1 3.5 3.5v10a3.5 3.5 0 0 1-3.5 3.5H7A3.5 3.5 0 0 1 3.5 17V7A3.5 3.5 0 0 1 7 3.5z"),
         AvatarShape.Star to filled("star", "M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"),
-        AvatarShape.Triangle to filled("triangle", "M12 3.2 21.4 19.8H2.6z"),
+        AvatarShape.Triangle to filled("triangle", "M12 2.4 21.4 19H2.6z"),
         AvatarShape.Diamond to filled("diamond", "M12 2.2 21.8 12 12 21.8 2.2 12z"),
         AvatarShape.Hexagon to filled("hexagon", "M12 2.6 20.2 7.3v9.4L12 21.4 3.8 16.7V7.3z"),
         AvatarShape.Plus to filled("plus", "M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"),
-        AvatarShape.Drop to filled("drop", "M12 2.5S5 10.4 5 15a7 7 0 0 0 14 0c0-4.6-7-12.5-7-12.5z"),
+        AvatarShape.Drop to filled("drop", "M12 1.25S5 9.15 5 13.75a7 7 0 0 0 14 0c0-4.6-7-12.5-7-12.5z"),
         AvatarShape.Crescent to filled("crescent", "M15 2.7a9.5 9.5 0 1 0 6.3 13.6A7.6 7.6 0 0 1 15 2.7z"),
         AvatarShape.Bolt to filled("bolt", "M13.5 2 5 13.5h6L10 22l9-12h-6.2z"),
         AvatarShape.Flower to filled("flower", flower),
-        AvatarShape.Arch to filled("arch", "M5 21.5V11a7 7 0 0 1 14 0v10.5h-4.5V15a2.5 2.5 0 0 0-5 0v6.5z"),
+        AvatarShape.Arch to filled("arch", "M5 20.75V10.25a7 7 0 0 1 14 0v10.5h-4.5V14.25a2.5 2.5 0 0 0-5 0v6.5z"),
     )
 
     fun of(shape: AvatarShape): ImageVector = vectors.getValue(shape)
