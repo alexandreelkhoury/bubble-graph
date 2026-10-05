@@ -438,7 +438,9 @@ h1:focus, h1:focus-visible { outline: none; }
 /* Ink on the player colour: 8 % white lifts the darkest ink colour (coral, 4.47:1) above AA (≥ 4.7:1). */
 .wordface--color { background: color-mix(in srgb, var(--avatar-color) 92%, white); color: var(--color-ink); }
 .wordface--dark { background: var(--color-elevated); color: var(--color-text); box-shadow: inset 0 0 0 3px var(--avatar-color); }
-.wordface--blank { background: var(--color-blank) var(--dot-pattern); color: var(--color-ink); }
+/* The Blank's face: the player's colour (as every face), its empty card drawn dashed in the face's text colour. */
+.wordface--blank .emblem { opacity: 0.9; }
+.wordface__twist { max-width: 17em; font: var(--type-ph-small); text-wrap: balance; }
 @keyframes flip-in { from { transform: rotateY(-90deg); } to { transform: none; } }
 @keyframes flip-out { from { transform: none; } to { transform: rotateY(90deg); } }
 .wordface__word { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); max-width: 100%; }

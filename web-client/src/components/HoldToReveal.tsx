@@ -99,7 +99,9 @@ export function WordCard({ word, isBlank, role, color, wordLocale, seenOnce, onR
     announce(isBlank || !word ? t("reveal.youAreBlank") : word.text, true);
     setTimeout(() => { assertiveMsg.value = ""; }, TAP_REVEAL_MS);
   });
-  const faceCls = isBlank ? "wordface--blank" : LIGHT_GLYPH(color) ? "wordface--dark" : "wordface--color";
+  // Every face is the player's own colour, the Blank's too: a white flash of screen light would out the Blank across
+  // the sofa. Paper white stays for the public reveal (TV-09, results).
+  const faceCls = `${LIGHT_GLYPH(color) ? "wordface--dark" : "wordface--color"}${isBlank ? " wordface--blank" : ""}`;
   return (
     <div class="wordcard-wrap">
       <button
@@ -123,7 +125,12 @@ export function WordCard({ word, isBlank, role, color, wordLocale, seenOnce, onR
                 <span class="wordface__blank-body">{t("reveal.noWord")}<br />{t("reveal.blankBody")}</span>
               </>
             ) : (
-              <WordText word={word} wordLocale={wordLocale} />
+              <>
+                <WordText word={word} wordLocale={wordLocale} />
+                {/* The twist, word for word the same for Civilians and Moles (it leaks nothing). Beginner mode names the
+                    role on the card instead. */}
+                {!role && <span class="wordface__twist">{t("reveal.twist")}</span>}
+              </>
             )}
             {role && !isBlank && <RoleChip role={role} size={22} />}
             <span class="wordface__hint">{t("reveal.release")}</span>
