@@ -45,7 +45,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
 
 <header class="nav" id="top">
   <div class="nav__in wrap">
-    <a class="brand" href="#top" aria-label="Mish Ana! home">
+    <a class="brand" href="#top" aria-label="Mish Ana! home" data-i18n-aria="brandHome">
       <img class="brand__mark" src="/assets/img/mark.svg" alt="" width="36" height="36">
       <img class="brand__word brand__word--latin" src="/assets/img/wordmark-latin.svg" alt="Mish Ana!" width="100" height="30">
       <img class="brand__word brand__word--ar" src="/assets/img/wordmark-ar.svg" alt="مش أنا!" width="77" height="30">
@@ -69,9 +69,9 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
   <div class="hero__glow" aria-hidden="true"></div>
   <div class="wrap hero__grid">
     <div class="hero__copy">
-      <p class="kicker"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 21h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span data-i18n="heroKicker">Party game for Android TV &amp; Google TV</span></p>
-      <h1 id="hero-title" class="hero__title" data-i18n="heroTitle">Everyone's innocent. <span class="hl">Someone's lying<span class="dot">.</span></span></h1>
-      <p class="hero__sub" id="hero-sub" data-i18n="heroSub">Everyone gets a secret word on their phone. One player's word is slightly different. Give one-word clues, vote, and catch the liar on the big screen.</p>
+      <p class="kicker"><i aria-hidden="true"></i><span data-i18n="heroKicker">Party game for Android TV &amp; Google TV</span></p>
+      <h1 id="hero-title" class="hero__title" data-i18n="heroTitle">Everyone’s innocent. <span class="hl">Someone’s <span class="hlb">lying.</span></span></h1>
+      <p class="hero__sub" id="hero-sub" data-i18n="heroSub">A secret word on every phone. <b>One is different.</b> Give one clue each, vote, and find the liar on the TV.</p>
 
       <div class="ctas" id="hero-ctas">
         <a class="btn btn--play btn--lg btn--stack" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play data-cta="hero" rel="noopener">
@@ -83,9 +83,10 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
       <p class="micro hero__hint" id="hero-hint" data-i18n="hintAndroid"><strong>Google Play opens on this phone.</strong> Choose your TV and the game installs there.</p>
       <p class="hero__alt"><span data-i18n="noTvQ">No Android TV?</span> <a href="#no-tv" data-i18n="noTvLink">Play in your browser</a></p>
 
-      <ul class="chips" aria-label="Key facts">
+      <ul class="chips" aria-label="Key facts" data-i18n-aria="chipsLabel">
         <li data-i18n="chipPlayers">3–12 players</li>
-        <li data-i18n="chipNoApp">Nothing to install on phones</li>
+        <li data-i18n="chipNoApp">No app on phones</li>
+        <li data-i18n="chipNoAccount">No sign-up</li>
         <li data-i18n="chipLangs">EN · FR · عربي</li>
       </ul>
       <script>
@@ -115,9 +116,9 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
 
     <div class="hero__media">
       <!--
-        HERO MEDIA. 16:9 now. When the 9:16 cut is ready, add it to HERO_MEDIA in /assets/js/main.js
-        and add a <source media="(max-aspect-ratio: 4/5)" srcset="...9x16.webp"> to the <picture> below.
-        The frame switches its shape through data-ratio="9x16" (set by JS).
+        HERO MEDIA. build.mjs fills data-src / data-src-sm / data-poster-* from the files that exist:
+        the caption-free loop (hero-clean-*) + translated HTML captions (.tv__cap, cues in main.js) when it is there,
+        otherwise the English-captioned loop (hero-16x9-*) with no HTML captions.
       -->
       <div class="tv" data-ratio="16x9">
         <div class="tv__screen">
@@ -128,6 +129,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
                  alt="Mish Ana!: six phones show their secret word. Five say PIZZA, one says PASTA, and that player is the Mole." data-i18n-alt="heroAlt">
           </picture>
           <video class="tv__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+          <p class="tv__cap" aria-hidden="true" hidden></p>
           <button class="vid-toggle" type="button" aria-label="Pause video" data-i18n-aria="pause" hidden>
             <svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
             <svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5.5v13l10.5-6.5z"/></svg>
@@ -135,12 +137,18 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
         </div>
         <div class="tv__foot" aria-hidden="true"></div>
       </div>
-      <div class="phone phone--float" aria-hidden="true">
-        <div class="phone__notch"></div>
-        <div class="ph-top"><span class="ph-code">JQPU</span><span class="ph-me"><span class="av av--coral"><span>M</span></span>Maya</span></div>
+      <!-- the whole mechanic in one still frame: two phones, two words (PH-04 held) -->
+      <div class="phone phone--a" aria-hidden="true">
+        <div class="ph-top"><span class="ph-code">JQPU</span><span class="ph-me"><span class="av av--coral"><span>M</span></span><span data-i18n="nameMaya">Maya</span></span></div>
         <p class="phone__label" data-i18n="yourWord">Your secret word</p>
         <div class="wcard wcard--coral"><span class="wcard__word" data-i18n="wordA">PIZZA</span></div>
       </div>
+      <div class="phone phone--b" aria-hidden="true">
+        <div class="ph-top"><span class="ph-code">JQPU</span><span class="ph-me"><span class="av av--lilac av--hex"><span>S</span></span><span data-i18n="nameSami">Sami</span></span></div>
+        <p class="phone__label" data-i18n="yourWord">Your secret word</p>
+        <div class="wcard wcard--lilac"><span class="wcard__word" data-i18n="wordB">PASTA</span></div>
+      </div>
+      <p class="odd-tag" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="oddTag">one word is different</span></p>
     </div>
   </div>
 </section>
@@ -182,12 +190,12 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
                 <div class="slot j1"><div class="av av--coral"><span>M</span></div><i>Maya</i></div>
                 <div class="slot j2"><div class="av av--azure av--square"><span>K</span></div><i>Karim</i></div>
                 <div class="slot j3"><div class="av av--lemon av--star"><span>L</span></div><i>Lea</i></div>
-                <div class="slot j4"><div class="av av--tangerine av--hex"><span>S</span></div><i>Sami</i></div>
+                <div class="slot j4"><div class="av av--lilac av--hex"><span>S</span></div><i>Sami</i></div>
                 <div class="slot slot--empty"></div><div class="slot slot--empty"></div>
               </div>
             </div>
           </div>
-          <div class="rph rph--scan"><span class="rph__code">JQPU</span><span class="rph__name">Sami</span><span class="rph__ok" data-i18n="youreIn">✓ You're in</span></div>
+          <div class="rph rph--scan"><span class="rph__code">JQPU</span><span class="rph__name">Sami</span><span class="rph__ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="youreIn">You’re in</span></span></div>
         </div>
         <!-- 2 · secret words (the Mole's card looks like everyone else's) -->
         <div class="sc sc--word">
@@ -195,7 +203,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
             <div class="mini" style="--pc:var(--coral)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordA">PIZZA</span></div><i>Maya</i></div>
             <div class="mini" style="--pc:var(--azure)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordA">PIZZA</span></div><i>Karim</i></div>
             <div class="mini" style="--pc:var(--lemon)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordA">PIZZA</span></div><i>Lea</i></div>
-            <div class="mini mini--mole" style="--pc:var(--tangerine)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordB">PASTA</span></div><i>Sami</i><b class="mini__tag" data-i18n="moleTag">The Mole. Nobody told him.</b></div>
+            <div class="mini mini--mole" style="--pc:var(--lilac)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordB">PASTA</span></div><i>Sami</i><b class="mini__tag" data-i18n="moleTag">The Mole. Nobody told him.</b></div>
           </div>
         </div>
         <!-- 3 · clues, then the vote on phones -->
@@ -204,7 +212,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
             <div class="seat"><span class="bub" data-i18n="clue1">Cheese</span><div class="av av--coral"><span>M</span></div><i>Maya</i></div>
             <div class="seat"><span class="bub" data-i18n="clue2">Oven</span><div class="av av--azure av--square"><span>K</span></div><i>Karim</i></div>
             <div class="seat"><span class="bub" data-i18n="clue3">Slice</span><div class="av av--lemon av--star"><span>L</span></div><i>Lea</i></div>
-            <div class="seat seat--sus"><span class="bub" data-i18n="clue4">…Fork?</span><div class="av av--tangerine av--hex"><span>S</span></div><i>Sami</i><span class="votes"><b style="--c:var(--coral)"></b><b style="--c:var(--azure)"></b><b style="--c:var(--lemon)"></b></span></div>
+            <div class="seat seat--sus"><span class="bub" data-i18n="clue4">…Fork?</span><div class="av av--lilac av--hex"><span>S</span></div><i>Sami</i><span class="votes"><b style="--c:var(--coral)"></b><b style="--c:var(--azure)"></b><b style="--c:var(--lemon)"></b></span></div>
           </div>
           <p class="sc__vote" data-i18n="voteTitle">Who's not one of us?</p>
         </div>
@@ -212,7 +220,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
         <div class="sc sc--out">
           <p class="out__name" data-i18n="outName">Sami is out!</p>
           <div class="out__card">
-            <span class="out__back"><span class="av av--tangerine av--hex"><span>S</span></span></span>
+            <span class="out__back"><span class="av av--lilac av--hex"><span>S</span></span></span>
             <span class="out__face"><svg viewBox="0 0 48 24" aria-hidden="true"><path d="M3 7c6-5 15-5 21 0 6-5 15-5 21 0 2 9-2 14-8 14-5 0-8-4-13-4s-8 4-13 4C5 21 1 16 3 7z" fill="#1A0B2E"/><ellipse cx="14" cy="11.5" rx="4.2" ry="3.2" fill="#FF8A3D"/><ellipse cx="34" cy="11.5" rx="4.2" ry="3.2" fill="#FF8A3D"/></svg><b data-i18n="roleMole">Mole</b></span>
             <span class="out__stamp" data-i18n="stampOut">OUT</span>
           </div>
@@ -240,6 +248,10 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
       <div class="try__txt">
         <h3 data-i18n="tryTitle">Try it: here's your phone</h3>
         <p data-i18n="tryBody">Your word only ever shows on your own phone. Press and hold the card to peek, let go to hide it. Deal again to see what the Mole and the Blank get.</p>
+        <div class="try__deals">
+          <button class="deal__as" type="button" data-role="mole"><span class="av av--lilac av--hex av--sm" aria-hidden="true"><span>?</span></span><span data-i18n="dealMole">Deal me the Mole’s card</span></button>
+          <button class="deal__as" type="button" data-role="blank"><span class="av av--cream av--sm" aria-hidden="true"><span>?</span></span><span data-i18n="dealBlank">Deal me the Blank’s card</span></button>
+        </div>
       </div>
       <div class="step__art art-word">
         <div class="dphone">
@@ -283,7 +295,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
               <img src="/assets/img/mark.svg" alt="" width="40" height="40" loading="lazy">
               <div><b><bdi>Mish Ana!</bdi></b><small data-i18n="gpCategory">Party game · TV</small></div>
             </div>
-            <div class="gp-btn gp-btn--split tap"><span data-i18n="gpInstall">Install</span><span class="gp-caret">▾</span></div>
+            <div class="gp-btn gp-btn--split tap"><span data-i18n="gpInstall">Install</span><span class="gp-caret"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
             <div class="gp-lines"><i></i><i></i><i></i></div>
           </div>
         </div>
@@ -460,16 +472,15 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
 
 <!-- ============ FINAL CTA ============ -->
 <section class="final" id="get" aria-labelledby="final-title">
-  <div class="final__shapes" aria-hidden="true">
-    <div class="av av--coral"><span>M</span></div>
-    <div class="av av--azure av--square"><span>K</span></div>
-    <div class="av av--lemon av--star"><span>L</span></div>
-    <div class="av av--jade av--tri"><span>J</span></div>
-    <div class="av av--grape av--diamond"><span>N</span></div>
-    <div class="av av--tangerine av--hex"><span>S</span></div>
-  </div>
   <div class="wrap final__in">
-    <img class="final__mark rv" src="/assets/img/mark.svg" alt="" width="72" height="72" loading="lazy">
+    <div class="lineup rv" aria-hidden="true">
+      <div class="av av--coral"><span>M</span></div>
+      <div class="av av--azure av--square"><span>K</span></div>
+      <div class="av av--lemon av--star"><span>L</span></div>
+      <div class="lineup__odd"><div class="av av--lilac av--hex"><span>?</span></div></div>
+      <div class="av av--jade av--tri"><span>J</span></div>
+      <div class="av av--grape av--diamond"><span>N</span></div>
+    </div>
     <h2 id="final-title" class="rv" data-i18n="finalTitle">Someone at your table is lying<span class="dot">.</span><br><span class="hl">Find out who.</span></h2>
     <ul class="final__list rv">
       <li data-i18n="fin1">Free to play</li>
@@ -495,7 +506,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
       <img src="/assets/img/mark.svg" alt="" width="32" height="32" loading="lazy">
       <span data-i18n="footTag">Mish Ana! – The secret-word party game</span>
     </div>
-    <nav class="foot__links" aria-label="Footer">
+    <nav class="foot__links" aria-label="Footer" data-i18n-aria="footNav">
       <a href="/about/" data-i18n="footAbout">About</a>
       <a href="/privacy/" data-i18n="footPrivacy">Privacy</a>
       <a href="mailto:{{CONTACT_EMAIL}}" data-i18n="footContact">Contact</a>
@@ -504,7 +515,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
     <nav class="foot__guides" aria-label="Guides" data-i18n-aria="footGuides">
       <!--GUIDES_NAV-->
     </nav>
-    <p class="foot__legal"><span>© 2026 Mish Ana!</span> <span data-i18n="footTm">Android TV, Google TV, Google Play and Chromecast are trademarks of Google LLC.</span></p>
+    <p class="foot__legal"><span dir="ltr">© 2026 <bdi>Mish Ana!</bdi></span> <span data-i18n="footTm">Android TV, Google TV, Google Play and Chromecast are trademarks of Google LLC.</span></p>
   </div>
 </footer>
 

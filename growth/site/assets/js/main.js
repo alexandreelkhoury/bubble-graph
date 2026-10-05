@@ -16,12 +16,30 @@
   // which writes them to Workers Analytics Engine. Set to '' to switch custom events off.
   var EVENT_URL = '/e';
 
-  // Hero media. Add the 9:16 cut when it exists, e.g.
+  // Hero media. build.mjs writes the files it picked on the .tv frame (data-src / data-src-sm): the caption-free
+  // loop when it exists (then data-caps: HTML captions in the page language, see CAPTIONS), else the captioned one.
+  // To add a 9:16 cut, put an entry first, e.g.
   //   { ratio: '9x16', media: '(max-aspect-ratio: 4/5)', src: '/assets/video/hero-9x16-720.mp4', poster: '/assets/img/hero-poster-9x16.webp' },
   // The first entry whose `media` matches wins.
+  var tvEl = document.querySelector('.tv');
   var HERO_MEDIA = [
-    { ratio: '16x9', media: '(max-width: 700px)', src: '/assets/video/hero-16x9-540.mp4' },
-    { ratio: '16x9', media: 'all', src: '/assets/video/hero-16x9-720.mp4' }
+    { ratio: '16x9', media: '(max-width: 700px)', src: (tvEl && tvEl.getAttribute('data-src-sm')) || '/assets/video/hero-16x9-540.mp4' },
+    { ratio: '16x9', media: 'all', src: (tvEl && tvEl.getAttribute('data-src')) || '/assets/video/hero-16x9-720.mp4' }
+  ];
+
+  // Captions of the hero loop, as in the film (growth/video/src/Film.tsx <Caption>), in film seconds.
+  // The loop is the film rotated to start on the PIZZA ×5 / PASTA moment: loop time = film time − LOOP_OFFSET.
+  // hot: magenta box (C.primary) for the two payoffs, amber box (C.accent) otherwise.
+  var LOOP_OFFSET = 9.92;
+  var CAPTIONS = [
+    { k: 'cap_opening', from: 0, to: 2.67, hot: 'm' },
+    { k: 'cap_friends', from: 2.81, to: 5.48 },
+    { k: 'cap_secret', from: 5.6, to: 7.66 },
+    { k: 'cap_different', from: 9.33, to: 11.34, hot: 'm' },
+    { k: 'cap_clues', from: 11.44, to: 13.38 },
+    { k: 'cap_fit', from: 13.48, to: 15.51 },
+    { k: 'cap_out', from: 15.61, to: 17.35 },
+    { k: 'cap_mole', from: 17.48, to: 19.29, hot: 'm' }
   ];
 
   var EN = { // strings only used from JS (the rest of English is in the HTML)
@@ -38,14 +56,27 @@
     copied: 'Link copied. Open it on your laptop.',
     sendTitle: 'Mish Ana! – play it on the big screen',
     sendText: 'Open this link on a laptop or TV browser, put it on the big screen, and everyone scans the QR code with their phone.',
-    sheetTitle: 'Send the link to your laptop or TV',
+    sheetTitle: 'Play it on the big screen',
     sheetBody: 'Mish Ana! is played on a big screen. Open this link there; phones join by scanning the QR code.',
+    sheetStep1: 'On your laptop or TV browser, type:',
+    sheetStep2: 'Then scan the QR code on the screen with this phone.',
+    tapToCopy: 'Tap to copy',
+    waLink: 'WhatsApp it to me',
     copyLink: 'Copy link',
     linkCopied: 'Link copied',
     emailLink: 'Email it to me',
+    moreShare: 'More…',
     emailSubject: 'Mish Ana! – open this on your laptop or TV',
-    openHere: 'Open here anyway',
-    closeSheet: 'Close'
+    openHere: 'Just looking? Open the game here',
+    closeSheet: 'Close',
+    cap_opening: 'Your TV. Everyone’s phone. <b>One liar.</b>',
+    cap_friends: 'Friends join from their phones. <b>No app.</b>',
+    cap_secret: 'Everyone gets a <b>secret word…</b>',
+    cap_different: '…but one is <b>different.</b>',
+    cap_clues: 'Give one-word <b>clues.</b>',
+    cap_fit: 'Spot who doesn’t <b>fit.</b>',
+    cap_out: 'Vote them <b>out.</b>',
+    cap_mole: 'Caught the <b>Mole!</b>'
   };
 
   var doc = document, root = doc.documentElement;
@@ -188,6 +219,7 @@
     updateBrowserLinks();
     updateLangLinks();
     syncVideoLabel();
+    if (typeof syncCaps === 'function') syncCaps(true);
     resetDeal();
     syncReel();
     root.classList.remove('i18n-wait');
@@ -258,11 +290,49 @@
   }
   function play() { var p = video.play(); if (p && p.catch) p.catch(function () { syncVideoLabel(); }); }
 
+  // HTML captions over the caption-free loop (one video for every language). Driven by the video clock, so they
+  // follow pauses and loops; before the video plays, the first cue sits on the poster (it is the loop's first frame).
+  var capEl = frame && frame.hasAttribute('data-caps') ? frame.querySelector('.tv__cap') : null;
+  var capKey = '', capRaf = 0;
+  function cueAt(tLoop) {
+    var dur = video && video.duration > 1 ? video.duration : 30.067;
+    var tf = (tLoop + LOOP_OFFSET) % dur;
+    for (var i = 0; i < CAPTIONS.length; i++) if (tf >= CAPTIONS[i].from && tf < CAPTIONS[i].to) return CAPTIONS[i];
+    return null;
+  }
+  function renderCap(cue, force) {
+    if (!capEl) return;
+    var k = cue ? cue.k : '';
+    if (k === capKey && !force) return;
+    capKey = k;
+    if (!cue) { capEl.classList.remove('is-on'); return; }
+    capEl.innerHTML = t(k);
+    capEl.setAttribute('data-hot', cue.hot || 'a');
+    capEl.classList.remove('is-on'); void capEl.offsetWidth; capEl.classList.add('is-on');
+  }
+  function capTick() {
+    capRaf = 0;
+    if (!videoReady || video.paused) return;
+    renderCap(cueAt(video.currentTime));
+    capRaf = requestAnimationFrame(capTick);
+  }
+  function syncCaps(force) {
+    if (!capEl) return;
+    capEl.hidden = false;
+    renderCap(cueAt(videoReady ? video.currentTime : 0), force);
+    if (!capRaf && videoReady && !video.paused) capRaf = requestAnimationFrame(capTick);
+  }
+  if (capEl && video) {
+    video.addEventListener('play', function () { syncCaps(); });
+    video.addEventListener('seeked', function () { syncCaps(); });
+  }
+
   var saveData = navigator.connection && navigator.connection.saveData;
   if (video) {
     var autoplay = !reduceMotion && !saveData;
     toggle.hidden = false;
     syncVideoLabel();
+    syncCaps();
     toggle.addEventListener('click', function () {
       if (!videoReady) { userPaused = false; loadVideo(true); return; }
       if (video.paused) { userPaused = false; play(); } else { userPaused = true; video.pause(); }
@@ -377,22 +447,30 @@
     return a.getAttribute('href').split('?')[0] + '?' + p.toString();
   }
   var sheet = null, sheetUrl = '', sheetPos = '';
+  // Our own sheet first (the OS share sheet is unreliable in TikTok/IG webviews and gives no instructions):
+  // 1. the short URL to type on the laptop / TV browser that is usually already in the room (tap to copy),
+  //    WhatsApp-to-myself first, then copy / email / the OS share sheet; 2. "then scan the QR code with this phone".
+  var ICON_WA = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 0 0-7.6 13.2L3.2 20.8l4.5-1.2A8.8 8.8 0 1 0 12 3.2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.9 7.9c.3-.6.6-.6.9-.6h.6c.2 0 .4.1.6.5l.8 1.8c.1.3 0 .5-.1.7l-.5.6c-.2.2-.2.4 0 .7.4.7 1.6 2.1 3 2.6.3.1.5.1.7-.1l.7-.8c.2-.3.4-.3.7-.2l1.7.8c.3.2.4.3.4.6 0 .5-.2 1.4-1 1.9-.8.5-2 .6-3.6-.1-2.3-1-3.8-3-4.2-3.7-.5-.8-1-2.3-.5-3.4z" fill="currentColor"/></svg>';
   function sheetEl() {
     if (sheet) return sheet;
     sheet = doc.createElement('dialog');
     sheet.className = 'send-sheet';
     sheet.setAttribute('aria-labelledby', 'send-title');
     sheet.innerHTML = '<form method="dialog" class="send-sheet__x"><button type="submit" data-k="closeSheet" aria-label=""><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></form>' +
-      '<h2 id="send-title"></h2><p class="send-sheet__body"></p><p class="send-sheet__url" dir="ltr"></p>' +
-      '<div class="send-sheet__btns"><button type="button" class="btn btn--play btn--lg" data-act="copy"></button>' +
-      '<a class="btn btn--ghost btn--lg" data-act="email" href="#"></a>' +
-      '<a class="send-sheet__open" data-act="open" href="#"></a></div><p class="micro send-sheet__done" role="status" aria-live="polite"></p>';
+      '<h2 id="send-title"></h2>' +
+      '<p class="send-sheet__step"><span class="g__n" aria-hidden="true">1</span><span class="send-sheet__s1"></span></p>' +
+      '<button type="button" class="send-sheet__url" data-act="copy" dir="ltr"><span class="send-sheet__u"></span><small class="send-sheet__tap"></small></button>' +
+      '<div class="send-sheet__btns"><a class="btn btn--play btn--lg" data-act="wa" href="#" rel="noopener"></a>' +
+      '<div class="send-sheet__row"><button type="button" class="btn btn--ghost" data-act="copy2"></button><a class="btn btn--ghost" data-act="email" href="#"></a><button type="button" class="btn btn--ghost" data-act="more" hidden></button></div></div>' +
+      '<p class="micro send-sheet__done" role="status" aria-live="polite"></p>' +
+      '<p class="send-sheet__step send-sheet__step--2"><span class="g__n" aria-hidden="true">2</span><span class="send-sheet__s2"></span></p>' +
+      '<a class="send-sheet__open" data-act="open" href="#"></a>';
     doc.body.appendChild(sheet);
     sheet.addEventListener('click', function (e) {
       if (e.target === sheet) { sheet.close ? sheet.close() : sheet.removeAttribute('open'); return; } // tap on the backdrop
       var b = e.target.closest('[data-act]'); if (!b) return;
       var act = b.getAttribute('data-act');
-      if (act === 'copy') {
+      if (act === 'copy' || act === 'copy2') {
         e.preventDefault();
         var done = function () { sheet.querySelector('.send-sheet__done').textContent = t('linkCopied'); track('link_copied', { p: sheetPos }); };
         var legacy = function () { // older browsers / non-secure contexts
@@ -402,24 +480,38 @@
         };
         if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(sheetUrl).then(done, legacy);
         else legacy();
-      } else if (act === 'email') track('email_link', { p: sheetPos });
-      else if (act === 'open') track('open_here', { p: sheetPos });
+      } else if (act === 'wa') track('wa_link', { p: sheetPos });
+      else if (act === 'email') track('email_link', { p: sheetPos });
+      else if (act === 'more') {
+        e.preventDefault();
+        track('share_more', { p: sheetPos });
+        navigator.share({ title: t('sendTitle'), text: t('sendText'), url: sheetUrl }).catch(function () {});
+      } else if (act === 'open') track('open_here', { p: sheetPos });
     });
     return sheet;
   }
   function selectUrl() { // last resort for copy: select the URL text so the phone's own Copy menu appears
-    var u = sheet.querySelector('.send-sheet__url'), r = doc.createRange(); r.selectNodeContents(u);
+    var u = sheet.querySelector('.send-sheet__u'), r = doc.createRange(); r.selectNodeContents(u);
     var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
   }
   function openSheet(url, pos) {
     var s = sheetEl(); sheetUrl = url; sheetPos = pos;
+    var msg = t('sendText') + '\n' + url;
     s.querySelector('h2').textContent = t('sheetTitle');
-    s.querySelector('.send-sheet__body').textContent = t('sheetBody');
-    s.querySelector('.send-sheet__url').textContent = url.replace(/^https?:\/\//, '').split('?')[0];
-    s.querySelector('[data-act="copy"]').textContent = t('copyLink');
+    s.querySelector('.send-sheet__s1').textContent = t('sheetStep1');
+    s.querySelector('.send-sheet__u').textContent = url.replace(/^https?:\/\//, '').split('?')[0];
+    s.querySelector('.send-sheet__tap').textContent = t('tapToCopy');
+    s.querySelector('.send-sheet__s2').textContent = t('sheetStep2');
+    var wa = s.querySelector('[data-act="wa"]');
+    wa.innerHTML = ICON_WA + '<span></span>'; wa.lastChild.textContent = t('waLink');
+    wa.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+    s.querySelector('[data-act="copy2"]').textContent = t('copyLink');
     var em = s.querySelector('[data-act="email"]');
     em.textContent = t('emailLink');
     em.href = 'mailto:?subject=' + encodeURIComponent(t('emailSubject')) + '&body=' + encodeURIComponent(t('sendText') + '\n\n' + url);
+    var more = s.querySelector('[data-act="more"]');
+    more.textContent = t('moreShare');
+    more.hidden = !(navigator.share && (!navigator.canShare || navigator.canShare({ url: url })));
     var op = s.querySelector('[data-act="open"]'); op.textContent = t('openHere'); op.href = url;
     s.querySelector('[data-k="closeSheet"]').setAttribute('aria-label', t('closeSheet'));
     s.querySelector('.send-sheet__done').textContent = '';
@@ -430,14 +522,8 @@
     if (!a || !sendMode()) return;
     e.preventDefault();
     var url = sendUrl(a), pos = a.getAttribute('data-cta') || 'other';
-    var data = { title: t('sendTitle'), text: t('sendText'), url: url };
-    if (navigator.share && (!navigator.canShare || navigator.canShare(data))) {
-      track('share_opened', { p: pos, t: 'native' });
-      navigator.share(data).catch(function (err) { if (!err || err.name !== 'AbortError') openSheet(url, pos); });
-    } else {
-      track('share_opened', { p: pos, t: 'sheet' });
-      openSheet(url, pos);
-    }
+    track('share_opened', { p: pos, t: 'sheet' });
+    openSheet(url, pos);
   });
 
   /* ------------------------------------------------------------------
@@ -492,6 +578,13 @@
     });
     deal.addEventListener('blur', function () { if (Date.now() - downAt > 300) hide(); });
     again.addEventListener('click', newDeal);
+    doc.querySelectorAll('.deal__as').forEach(function (b) {
+      b.addEventListener('click', function () {
+        deals = Math.max(deals, 3); role = b.getAttribute('data-role'); revealed = false; hide(); renderDeal();
+        track('demo', { p: role });
+        deal.focus({ preventScroll: true });
+      });
+    });
     newDeal();
   }
 
@@ -522,19 +615,21 @@
      REVEAL ON SCROLL
      ------------------------------------------------------------------ */
   // Content is visible by default. An element is only hidden ("armed") after IntersectionObserver has reported it
-  // off-screen, so it can rise in when it scrolls into view; everything is revealed after 1.5 s regardless, so a
-  // webview where IO stalls (in-app browsers) never shows a blank section.
+  // off-screen, so it can rise in when it scrolls into view. If IO has not reported anything after 1.5 s (webviews
+  // where it stalls), everything is revealed, so a section is never left blank.
   var rv = doc.querySelectorAll('.rv');
   function revealAll() { rv.forEach(function (el) { el.classList.add('in'); }); }
   if (!reduceMotion && 'IntersectionObserver' in window) {
+    var ioFired = false;
     var io = new IntersectionObserver(function (ents) {
+      ioFired = true;
       ents.forEach(function (e) {
         if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
         else if (!e.target.classList.contains('in')) e.target.classList.add('rv-armed');
       });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
     rv.forEach(function (el) { io.observe(el); });
-    setTimeout(function () { io.disconnect(); revealAll(); }, 1500);
+    setTimeout(function () { if (!ioFired) { io.disconnect(); revealAll(); } }, 1500);
   } else {
     revealAll();
   }

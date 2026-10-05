@@ -1,20 +1,40 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Not found – Mish Ana!</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#2B1650">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/cairo-black.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/site.css">
 </head>
 <body>
-<main class="legal"><div class="wrap wrap--narrow" style="text-align:center">
-  <img src="/assets/img/mark.svg" alt="" width="72" height="72" style="margin:40px auto 24px">
-  <h1>Not me<span class="dot">!</span></h1>
-  <p class="meta" style="margin-inline:auto">This page doesn't exist. Someone's lying.</p>
-  <a class="btn btn--play btn--lg" href="/">Back to Mish Ana!</a>
-</div></main>
+<!-- The Worker serves this page for every missing URL, /fr/ and /ar/ ones included: so it speaks all three languages
+     and its one action is the game itself (never block the party). -->
+<main class="nf">
+  <div class="wrap wrap--narrow">
+    <img class="nf__mark" src="/assets/img/mark.svg" alt="" width="72" height="72">
+    <h1>Not me<span class="dot">!</span></h1>
+    <div class="nf__lines">
+      <p lang="fr">Pas moi !</p>
+      <p lang="ar" dir="rtl">مش أنا!</p>
+    </div>
+    <p class="nf__lead">This page doesn’t exist. Someone’s lying.</p>
+    <a class="btn btn--play btn--lg" href="{{BROWSER_URL}}" rel="noopener">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 21h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M10.2 7.9v5.2l4.4-2.6z" fill="currentColor"/></svg>
+      <span>Play free in your browser</span>
+    </a>
+    <nav class="nf__langs" aria-label="Mish Ana! home">
+      <a href="/" hreflang="en" lang="en">Home</a>
+      <a href="/fr/" hreflang="fr" lang="fr">Accueil</a>
+      <a href="/ar/" hreflang="ar" lang="ar">الرئيسية</a>
+    </nav>
+  </div>
+</main>
 </body>
 </html>

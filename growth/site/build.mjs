@@ -62,10 +62,10 @@ const UI = {
         navCta: LIVE ? 'Installer' : 'Jouer', aboutBox: 'À propos de Mish Ana!', readIn: 'Aussi en' },
   ar: { skip: 'روح عالمحتوى', home: 'الرئيسية', guides: 'أدلّة', updated: 'آخر تحديث', faq: 'أسئلة متكرّرة', more: 'اقرأ كمان',
         langNav: 'اللغة', crumbs: 'مسار التنقّل', footer: 'تذييل الصفحة', privacy: 'الخصوصية', contact: 'تواصل معنا', about: 'عن اللعبة', footTag: 'مش أنا! – لعبة الكلمة السرّية للسهرات',
-        tm: 'Android TV وGoogle TV وGoogle Play وChromecast علامات تجارية تابعة لـGoogle LLC.',
+        tm: 'Android TV و Google TV و Google Play و Chromecast علامات تجارية تابعة لـ Google LLC.',
         ctaTitle: 'العبوا «مش أنا!» الليلة', ctaInstall: 'نزّلها عتلفزيوني', ctaInstallSub: 'اللعب ببلاش · عبر Google Play', ctaBrowser: 'العب بالمتصفّح', ctaBrowserSub: 'ببلاش · على أي تلفزيون مع لابتوب',
         ctaBodyLive: 'نزّلها على Android TV أو Google TV من تلفونك، أو افتح نسخة المتصفّح المجانية على لابتوب موصول بالتلفزيون. التلفونات بتفوت بمسح كود QR.',
-        ctaBodySoon: 'تطبيق Android TV وGoogle TV جايي قريبًا على Google Play. بس فيكن تلعبوا اللعبة كاملة هلّق ببلاش بالمتصفّح: افتحوها على لابتوب موصول بالتلفزيون، وكل واحد بيفوت بمسح كود QR بتلفونو.',
+        ctaBodySoon: 'تطبيق Android TV و Google TV جايي قريبًا على Google Play. بس فيكن تلعبوا اللعبة كاملة هلّق ببلاش بالمتصفّح: افتحوها على لابتوب موصول بالتلفزيون، وكل واحد بيفوت بمسح كود QR بتلفونو.',
         navCta: LIVE ? 'نزّلها' : 'العب', aboutBox: 'عن «مش أنا!»', readIn: 'كمان بـ' }
 };
 const LANG_LABEL = { en: 'EN', fr: 'FR', ar: 'عربي' };
@@ -80,7 +80,7 @@ function copy(rel) {
   fs.cpSync(src, dst, { recursive: true, filter: (s) => !/\.(md|raw\.mp4)$/.test(s) && !s.endsWith('.DS_Store') });
 }
 function fillPlaceholders(s) {
-  s = s.split('{{SITE_URL}}').join(ORIGIN);
+  s = s.split('{{SITE_URL}}').join(ORIGIN).split('{{BROWSER_URL}}').join(BROWSER).split('{{BROWSER_SHORT}}').join(BROWSER_SHORT);
   if (cfg.contactEmail) s = s.split('{{CONTACT_EMAIL}}').join(cfg.contactEmail);
   if (cfg.ownerName) s = s.split('{{OWNER_NAME}}').join(cfg.ownerName);
   if (cfg.cfBeaconToken) s = s.split('{{CF_BEACON_TOKEN}}').join(cfg.cfBeaconToken);
@@ -116,7 +116,9 @@ function loadArticles() {
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.html')).sort()) {
       // <!--LIVE-->shown when playStoreLive is true<!--SOON-->shown before the Play launch<!--/LIVE-->
-      const raw = fs.readFileSync(path.join(dir, f), 'utf8').replace(/<!--LIVE-->([\s\S]*?)<!--SOON-->([\s\S]*?)<!--\/LIVE-->/g, (s, live, soon) => (LIVE ? live : soon));
+      const raw = fs.readFileSync(path.join(dir, f), 'utf8').replace(/<!--LIVE-->([\s\S]*?)<!--SOON-->([\s\S]*?)<!--\/LIVE-->/g, (s, live, soon) => (LIVE ? live : soon))
+        // URL tokens are filled here, once, so the body, the <faq> answers, their FAQPage JSON-LD and llms-full.txt all get them
+        .replace(/\{\{BROWSER_URL\}\}/g, BROWSER).replace(/\{\{BROWSER_SHORT\}\}/g, BROWSER_SHORT).replace(/\{\{PLAY_URL\}\}/g, PLAY);
       const fm = raw.match(/^<!--\s*(\{[\s\S]*?\})\s*-->/);
       if (!fm) throw new Error(`content/${lang}/${f}: missing <!--{ front matter }--> block`);
       let meta; try { meta = JSON.parse(fm[1]); } catch (e) { throw new Error(`content/${lang}/${f}: bad front matter JSON: ${e.message}`); }
@@ -164,7 +166,7 @@ function footer(lang, extra = '') {
     <nav class="foot__guides" aria-label="${esc(u.guides)}">
       ${guidesNav(lang)}
     </nav>
-    <p class="foot__legal"><span>© 2026 Mish Ana!</span> <span>${esc(u.tm)}</span>${extra}</p>
+    <p class="foot__legal"><span dir="ltr">© 2026 <bdi>Mish Ana!</bdi></span> <span>${esc(u.tm)}</span>${extra}</p>
   </div>
 </footer>`;
 }
@@ -181,8 +183,8 @@ const gameNode = (lang) => ({
   name: 'Mish Ana!', alternateName: ['مش أنا!', 'Mish Ana'],
   description: DEF[lang],
   url: abs(HOME[lang]),
-  image: abs('/assets/img/og.png'),
-  screenshot: abs('/assets/img/hero-poster-16x9.jpg'),
+  image: abs(ogImage(lang)),
+  screenshot: abs(HERO.jpg),
   applicationCategory: 'GameApplication',
   applicationSubCategory: 'Party game',
   genre: ['Party game', 'Social deduction', 'Word game'],
@@ -200,7 +202,26 @@ const gameNode = (lang) => ({
 });
 /* Hero video facts are read from the file itself, so a new render (same file name) needs no edit here:
    duration from the MP4 'mvhd' box, upload date from the file's modification date (override with home.json video.uploadDate). */
-const HERO_VIDEO = 'assets/video/hero-16x9-720.mp4';
+const fileExists = (rel) => fs.existsSync(path.join(ROOT, rel));
+/* Hero loop. The caption-free render (growth/video → assets/video/hero-clean-*) is used for every language when it
+   exists, with translated HTML captions on top (.tv__cap, cues in main.js). Otherwise: the English-captioned loop. */
+const CLEAN = ['assets/video/hero-clean-16x9-720.mp4', 'assets/video/hero-clean-16x9-540.mp4', 'assets/video/hero-clean-poster-16x9.jpg', 'assets/video/hero-clean-poster-16x9.webp'].every(fileExists);
+const HERO = CLEAN ? {
+  lg: '/assets/video/hero-clean-16x9-720.mp4', sm: '/assets/video/hero-clean-16x9-540.mp4',
+  jpg: '/assets/video/hero-clean-poster-16x9.jpg', webp: '/assets/video/hero-clean-poster-16x9.webp',
+  webpSm: fileExists('assets/img/hero-clean-poster-16x9-sm.webp') ? '/assets/img/hero-clean-poster-16x9-sm.webp' : '/assets/video/hero-clean-poster-16x9.webp', caps: true
+} : {
+  lg: '/assets/video/hero-16x9-720.mp4', sm: '/assets/video/hero-16x9-540.mp4',
+  jpg: '/assets/img/hero-poster-16x9.jpg', webp: '/assets/img/hero-poster-16x9.webp', webpSm: '/assets/img/hero-poster-16x9-sm.webp', caps: false
+};
+function heroMedia(h) {
+  return h
+    .replace('href="/assets/img/hero-poster-16x9-sm.webp"', `href="${HERO.webpSm}"`).replace('href="/assets/img/hero-poster-16x9.webp"', `href="${HERO.webp}"`)
+    .replace('srcset="/assets/img/hero-poster-16x9-sm.webp"', `srcset="${HERO.webpSm}"`).replace('srcset="/assets/img/hero-poster-16x9.webp"', `srcset="${HERO.webp}"`)
+    .replace('src="/assets/img/hero-poster-16x9.jpg"', `src="${HERO.jpg}"`)
+    .replace('<div class="tv" data-ratio="16x9">', `<div class="tv" data-ratio="16x9" data-src="${HERO.lg}" data-src-sm="${HERO.sm}"${HERO.caps ? ' data-caps' : ''}>`);
+}
+const HERO_VIDEO = HERO.lg.slice(1);
 function mp4Seconds(rel) {
   try {
     const b = fs.readFileSync(path.join(ROOT, rel));
@@ -218,10 +239,10 @@ const videoDate = home.video.uploadDate || fs.statSync(path.join(ROOT, HERO_VIDE
 const videoNode = (lang) => ({
   '@type': 'VideoObject', '@id': abs('/#video'),
   name: home.video.name[lang], description: home.video.description[lang].replace('{seconds}', videoSecs),
-  thumbnailUrl: [abs('/assets/img/hero-poster-16x9.jpg')],
+  thumbnailUrl: [abs(HERO.jpg)],
   uploadDate: videoDate, duration: `PT${videoSecs}S`,
   contentUrl: abs('/' + HERO_VIDEO),
-  inLanguage: 'en', publisher: { '@id': ORG_ID }
+  ...(HERO.caps ? {} : { inLanguage: 'en' }), publisher: { '@id': ORG_ID }
 });
 const websiteNode = () => ({ '@type': 'WebSite', '@id': SITE_ID, url: abs('/'), name: 'Mish Ana!', alternateName: 'مش أنا!', inLanguage: ['en', 'fr', 'ar'], publisher: { '@id': ORG_ID } });
 const faqNode = (url, items, lang) => ({
@@ -235,7 +256,9 @@ const tpl = rd('index.html');
 const ctx = { window: {} }; vm.runInNewContext(rd('assets/js/i18n.js'), ctx);
 const DICTS = ctx.window.MISHANA_I18N;
 const JS_KEYS = ['capCiv', 'capMole', 'capBlank', 'wordA', 'wordB', 'pause', 'play', 'reelPause', 'reelPlay', 'shareTitle', 'shareText', 'copied',
-  'sendTitle', 'sendText', 'sheetTitle', 'sheetBody', 'copyLink', 'linkCopied', 'emailLink', 'emailSubject', 'openHere', 'closeSheet'];
+  'sendTitle', 'sendText', 'sheetTitle', 'sheetBody', 'copyLink', 'linkCopied', 'emailLink', 'emailSubject', 'openHere', 'closeSheet',
+  'sheetStep1', 'sheetStep2', 'waLink', 'moreShare', 'tapToCopy', 'nameMaya', 'nameSami',
+  'cap_opening', 'cap_friends', 'cap_secret', 'cap_different', 'cap_clues', 'cap_fit', 'cap_out', 'cap_mole'];
 
 function hreflangLinks(alts) { // alts: {en:'/x/', fr:'/fr/y/'}
   const ls = Object.keys(alts);
@@ -243,6 +266,8 @@ function hreflangLinks(alts) { // alts: {en:'/x/', fr:'/fr/y/'}
   return ls.map((l) => `<link rel="alternate" hreflang="${l}" href="${abs(alts[l])}">`).join('\n') +
     `\n<link rel="alternate" hreflang="x-default" href="${abs(alts.en || alts[ls[0]])}">`;
 }
+/* Share image per language (assets/img/og-<lang>.png, rendered by tools/og.mjs), falling back to og.png. */
+const ogImage = (lang) => (fileExists(`assets/img/og-${lang}.png`) ? `/assets/img/og-${lang}.png` : '/assets/img/og.png');
 function socialMeta({ lang, url, title, desc, type = 'website', imageAlt, alts }) {
   const otherLocales = Object.keys(alts || {}).filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternate" content="${OG_LOCALE[l]}">`).join('\n');
   return `<meta property="og:type" content="${type}">
@@ -250,7 +275,7 @@ function socialMeta({ lang, url, title, desc, type = 'website', imageAlt, alts }
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${url}">
-<meta property="og:image" content="${abs('/assets/img/og.png')}">
+<meta property="og:image" content="${abs(ogImage(lang))}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${esc(imageAlt)}">
@@ -258,7 +283,7 @@ function socialMeta({ lang, url, title, desc, type = 'website', imageAlt, alts }
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
-<meta name="twitter:image" content="${abs('/assets/img/og.png')}">`;
+<meta name="twitter:image" content="${abs(ogImage(lang))}">`;
 }
 
 // Before the Play launch (playStoreLive: false) the home leads with the browser version and shows the TV app as "coming soon".
@@ -267,7 +292,21 @@ function prelaunchStructure(h) {
   const cut = (re, what, by = '') => { if (!re.test(h)) throw new Error(`prelaunch: ${what} not found in index.html`); h = h.replace(re, by); };
   cut(/[ \t]*<!-- =+ INSTALL GUIDE =+ -->[\s\S]*?<\/section>\s*/, 'install section');
   cut(/[ \t]*<a class="btn btn--ghost btn--lg hero__browser"[^>]*>[\s\S]*?<\/a>\s*/, 'hero browser button');
-  cut(/<p class="hero__alt">[\s\S]*?<\/p>/, 'hero "No Android TV?" line', `<p class="hero__alt hero__soon" data-i18n="soon">${PRE.en.soon}</p>`);
+  // the hero keeps one action: no "No Android TV?" line and no "in testing" line (the FAQ and the final band say it)
+  cut(/[ \t]*<p class="hero__alt">[\s\S]*?<\/p>\s*/, 'hero "No Android TV?" line');
+  // the browser section repeated the "What you need" strip: its steps live in the send sheet, the hint and the FAQ
+  cut(/[ \t]*<!-- =+ NOT ON ANDROID TV[^>]*-->[\s\S]*?<\/section>\s*/, 'browser (no-tv) section');
+  cut(/href="#no-tv" data-i18n="worksNoLink"/, 'works link', 'href="#how" data-i18n="worksNoLink"');
+  // FAQ: phone-visitor objections first; "My TV is a Samsung…" is merged into the first answer
+  h = h.replace(/(<div class="qa">)([\s\S]*?)(\n    <\/div>\n  <\/div>\n<\/section>)/, (s, a, inner, c) => {
+    const items = {}; inner.replace(/\s*<details data-q="([^"]+)">[\s\S]*?<\/details>/g, (x, q) => { items[q] = x; return x; });
+    for (const q of PRE.faqOrder) if (!items[q]) throw new Error(`prelaunch: FAQ item ${q} not found`);
+    return a + PRE.faqOrder.map((q) => items[q]).join('') + c;
+  });
+  // About moves under the final call to action, in smaller type
+  const about = (h.match(/[ \t]*<!-- =+ ABOUT[\s\S]*?<\/section>\s*/) || [])[0];
+  if (!about) throw new Error('prelaunch: about section not found');
+  h = h.replace(about, '').replace(/(<section class="final"[\s\S]*?<\/section>\n)/, (s) => s + about.replace('class="sec about"', 'class="sec about about--small"'));
   cut(/[ \t]*<a class="btn btn--ghost btn--lg" href="[^"]*" data-cta="final"[^>]*>[\s\S]*?<\/a>\s*/, 'final browser button');
   // every Google Play button becomes a browser-version button (main.js only rewrites [data-play] links to Play)
   // hero (incl. ad angles), sticky and final buttons also get data-send: on phones main.js turns them into "send the link to my laptop or TV"
@@ -278,9 +317,10 @@ function prelaunchStructure(h) {
 const markBrowserLinks = (h) => h.replace(new RegExp(`<a\\b(?![^>]*data-browser)([^>]*\\shref="${BROWSER.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}")`, 'g'), '<a data-browser$1');
 
 function renderHome(lang) {
-  const m = home.meta[lang];
+  const m = { ...home.meta[lang], ...(PRE && PRE[lang]._metaTitle ? { title: PRE[lang]._metaTitle, description: PRE[lang]._metaDescription } : {}) };
   const dict = { ...(lang === 'en' ? {} : DICTS[lang]), ...(PRE ? PRE[lang] : {}) };
   let h = tpl;
+  h = heroMedia(h);
   if (PRE) h = prelaunchStructure(h);
   if (Object.keys(dict).length) {
     h = replaceI18n(h, dict);
@@ -306,7 +346,7 @@ function renderHome(lang) {
   h = h.replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(m.description)}">`);
   // language switcher: real URLs
   h = h.replace(/(<nav class="lang"[^>]*>)([\s\S]*?)(<\/nav>)/, (s, a, inner, c) => a + '\n      ' + LANGS.map((l) =>
-    `<a href="${HOME[l]}" data-lang="${l}" hreflang="${l}" lang="${l}"${l === lang ? ' aria-current="true"' : ''}>${LANG_LABEL[l]}</a>`).join('\n      ') + '\n    ' + c);
+    `<a href="${HOME[l]}" data-lang="${l}" hreflang="${l}" lang="${l}"${l === lang ? ' aria-current="page"' : ''}>${LANG_LABEL[l]}</a>`).join('\n      ') + '\n    ' + c);
   h = h.replace('<!--GUIDES_NAV-->', guidesNav(lang));
   h = h.replace(/href="\/privacy\/"/g, `href="/privacy/${lang === 'fr' ? '?lang=fr' : ''}"`);
 
@@ -318,7 +358,7 @@ function renderHome(lang) {
     '@context': 'https://schema.org',
     '@graph': [
       orgNode(), websiteNode(), gameNode(lang), videoNode(lang),
-      { '@type': 'WebPage', '@id': url + '#webpage', url, name: m.title, description: m.description, inLanguage: lang, isPartOf: { '@id': SITE_ID }, about: { '@id': GAME_ID }, primaryImageOfPage: abs('/assets/img/hero-poster-16x9.jpg'), dateModified: home.updated },
+      { '@type': 'WebPage', '@id': url + '#webpage', url, name: m.title, description: m.description, inLanguage: lang, isPartOf: { '@id': SITE_ID }, about: { '@id': GAME_ID }, primaryImageOfPage: abs(HERO.jpg), dateModified: home.updated },
       faqNode(url, faqItems, lang)
     ]
   };
@@ -334,7 +374,7 @@ ${ld(graph)}`;
 function langSwitch(current, alts) {
   return `<nav class="lang" aria-label="${esc(UI[current].langNav)}">\n      ` + LANGS.map((l) => {
     const href = alts[l] || HOME[l];
-    return `<a href="${href}" data-lang="${l}" hreflang="${l}" lang="${l}"${l === current ? ' aria-current="true"' : ''}>${LANG_LABEL[l]}</a>`;
+    return `<a href="${href}" data-lang="${l}" hreflang="${l}" lang="${l}"${l === current ? ' aria-current="page"' : ''}>${LANG_LABEL[l]}</a>`;
   }).join('\n      ') + '\n    </nav>';
 }
 function headerBar(lang, alts) {
@@ -416,7 +456,7 @@ ${a.faq.map((x) => `      <details>\n        <summary>${x.q}</summary>\n        
   if (a.type === 'Article') graph.push({
     '@type': 'Article', '@id': url + '#article', headline: a.h1, description: a.description, inLanguage: a.lang,
     datePublished: a.published, dateModified: a.updated, mainEntityOfPage: { '@id': url + '#webpage' },
-    image: abs('/assets/img/og.png'), author: { '@id': ORG_ID }, publisher: { '@id': ORG_ID }, about: { '@id': GAME_ID },
+    image: abs(ogImage(a.lang)), author: { '@id': ORG_ID }, publisher: { '@id': ORG_ID }, about: { '@id': GAME_ID },
     ...(a.mentions ? { mentions: a.mentions.map((x) => ({ '@type': x.type || 'VideoGame', name: x.name, ...(x.url ? { url: x.url } : {}) })) } : {})
   });
   if (a.type === 'AboutPage') graph.push(gameNode(a.lang));
@@ -583,10 +623,13 @@ const exists = (urlPath) => {
   const f = path.join(OUT, clean);
   return fs.existsSync(clean.endsWith('/') ? path.join(f, 'index.html') : f) || fs.existsSync(f + '.html');
 };
+const ALLOWED_TOKENS = new Set(['CONTACT_EMAIL', 'OWNER_NAME', 'CF_BEACON_TOKEN'].filter((k) => !cfg[{ CONTACT_EMAIL: 'contactEmail', OWNER_NAME: 'ownerName', CF_BEACON_TOKEN: 'cfBeaconToken' }[k]]));
 let ldCount = 0;
 for (const f of files.filter((x) => /\.(html|txt|xml|js)$/.test(x))) {
   const s = fs.readFileSync(f, 'utf8'), rel = path.relative(OUT, f);
   if (s.includes('{{SITE_URL}}')) fail(`${rel}: leftover {{SITE_URL}}`);
+  // any other {{TOKEN}} is a bug; only the documented, intentionally unfilled ones may remain (site.config.json: null)
+  for (const m of s.matchAll(/\{\{([A-Z_]+)\}\}/g)) if (!ALLOWED_TOKENS.has(m[1])) fail(`${rel}: leftover {{${m[1]}}}`);
   if (!f.endsWith('.html')) continue;
   for (const m of s.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
     ldCount++;
