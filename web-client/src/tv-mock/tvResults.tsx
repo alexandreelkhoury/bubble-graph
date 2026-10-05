@@ -39,7 +39,8 @@ export function TvGuess({ view }: { view: TvView }) {
           <>
             <h1 class="tvt-displayS">{t("guess.title")}</h1>
             <p class="tvt-body tv-secondary">{t("guess.guessing", { name })}</p>
-            <p class="tvt-caption tv-muted">{t("guess.silence")}</p>
+            {/* The host's override relies on the room hearing the guess: the TV asks for it out loud too. */}
+            <p class="tvt-caption tv-accent">{t("guess.sayAloud", { name })}</p>
           </>
         ) : (
           <>

@@ -95,7 +95,7 @@ export function Guess({ view, me }: { view: PlayerView; me: Me | null }) {
           {/* "Round 1 · Last chance" needs the full width: the bar gets its own row under it. */}
           <p class="eyebrow">{phaseLine(view)}</p>
           <TimerBar deadline={view.deadline} />
-          <Heading title={t("guess.prompt")} />
+          <Heading title={t("guess.prompt")} sub={t("guess.stakes")} />
           <input
             ref={input} class="input input--big" value={text} dir="auto" lang={view.settings.wordLocale} autoFocus
             autoCapitalize="off" autoCorrect="off" spellcheck={false} enterKeyHint="send" maxLength={GUESS_MAX_CHARS}
