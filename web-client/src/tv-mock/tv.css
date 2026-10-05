@@ -160,7 +160,8 @@
 .tvgrid .tile__name { font: var(--tv-titleS); font-weight: 700; max-width: 110px; }
 /* B4: the newest player keeps a ring in their colour until the next join; scores show after Play again. */
 .tvgrid .tile--newest { box-shadow: inset 0 1px 0 rgb(var(--rgb-text) / 0.06), 0 0 0 2px var(--avatar-color), 0 0 26px -4px var(--avatar-color); }
-.tvscore { position: absolute; top: 6px; inset-inline-end: 6px; display: inline-flex; align-items: center; gap: 2px; height: 24px; padding-inline: 8px; border-radius: var(--radius-pill); background: var(--tint-accent); color: var(--color-accent); font: 900 20px/1 var(--font-sans); }
+/* A sticker on the tile's top-end corner (as the vote tallies), clear of the avatar. */
+.tvscore { position: absolute; z-index: 1; top: -10px; inset-inline-end: -10px; display: grid; place-items: center; min-width: 30px; height: 30px; padding-inline: 6px; border-radius: var(--radius-pill); background: var(--color-elevated); color: var(--color-accent); font: 900 20px/1 var(--font-sans); box-shadow: 0 0 0 3px var(--color-bg); }
 .tvscore.is-lead { background: var(--color-accent); color: var(--color-ink); }
 .tv:lang(ar) .tvgrid .avatar { --avatar-size: 50px !important; }
 .tvbottom--lobby { inset-inline-start: 370px; justify-content: flex-start; gap: 16px; }

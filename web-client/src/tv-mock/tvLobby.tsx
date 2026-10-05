@@ -159,7 +159,7 @@ export function TvLobby({ view }: { view: TvView }) {
             class={`tile--lobby${isFresh(arrivals, p.id, now) ? " tile--drop" : ""}${arrivals.newest === p.id ? " tile--newest" : ""}`}>
             {topScore > 0 && (
               <span class={`tvscore tnum${p.score === topScore ? " is-lead" : ""}`}>
-                {p.score === topScore && <Icon name="trophy" size={16} />}<bdi class="num">{fmtNum(p.score)}</bdi>
+                <bdi class="num">{fmtNum(p.score)}</bdi>
               </span>
             )}
           </Tile>
