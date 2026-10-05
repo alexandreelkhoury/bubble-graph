@@ -68,7 +68,7 @@ export function ActionPill({ label, onSkipAnimation, animating = false, pillRef,
   return (
     <button type="button" ref={pillRef} class={`tvpill${armed ? " is-armed" : ""}`} onClick={press} data-pill="1">
       <span class="tvpill__label" aria-hidden={armed}>{label}</span>
-      <span class="tvpill__label tvpill__label--armed" aria-hidden={!armed}>{t("tv.pressAgain")}</span>
+      <span class="tvpill__label tvpill__label--armed" aria-hidden={!armed}>{t("tv.pressAgainWeb")}</span>
     </button>
   );
 }

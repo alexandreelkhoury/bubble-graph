@@ -134,7 +134,7 @@ export function TvElimination({ view }: { view: TvView }) {
         ) : null
       )}
       <div class="tvbottom">
-        {stage === "votes" && animating && <span class="tvbottom__center tvt-caption tv-muted">{t("tv.skipHint")}</span>}
+        {stage === "votes" && animating && <span class="tvbottom__center tvt-caption tv-muted">{t("tv.skipHintWeb")}</span>}
         {stage === "card" && (next === "NEXT_ROUND"
           ? d && <span class={`${none ? "tvbottom__center" : "tvbottom__start"} tvt-body tv-secondary tnum`}>{t("elim.nextRound", { count: d.secs })}</span>
           : <>
