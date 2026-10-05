@@ -1,7 +1,7 @@
 // TV-10 Blank guess and TV-11 results (stage 1: the victory moment and the words meeting; stage 2: scoreboard,
 // history and the next-game actions).
 import { Fragment } from "preact";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import type { TvView } from "@mishana/shared/protocol";
 import { fmtNum, isolate, locale, t } from "../i18n/t";
 import { ROLE_KEY, ROLE_WAS_KEY } from "../lib/keys";
@@ -76,12 +76,23 @@ export function titleSize(text: string): string {
   return n <= 16 ? "tvt-displayL" : n <= 24 ? "tvt-displayM" : "tvt-displayS";
 }
 
+/** The civilian-win houses rise in two lanes beside the title, never across its letters: x (canvas px) for each of
+ *  the 12, from the title's layout box (transform-free, so the pop-in scale doesn't skew it). A lane narrower than
+ *  one house is left empty. */
+export function particleLanes(titleLeft: number, titleRight: number, canvas = 960, size = 28, pad = 24): number[] {
+  const lane = (from: number, to: number): number[] =>
+    to - from < 0 ? [] : Array.from({ length: 6 }, (_, i) => Math.round(from + ((to - from) * i) / 5));
+  return [...lane(pad, titleLeft - pad - size), ...lane(titleRight + pad, canvas - pad - size)];
+}
+
 /** TV-11 Results: stage 1 (victory moment, words meet), then stage 2 (scoreboard, history, actions). */
 export function TvResults({ view }: { view: TvView }) {
   const r = view.result;
   const [stage2, setStage2] = useState(false);
   const [sbEnd, setSbEnd] = useState(false);
   const playRef = useInitialFocus<HTMLButtonElement>();
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const [lanes, setLanes] = useState<number[]>([]);
   useEffect(() => {
     if (stage2) return;
     const id = setTimeout(() => setStage2(true), ms(5000));
@@ -89,6 +100,14 @@ export function TvResults({ view }: { view: TvView }) {
   }, [stage2]);
   // Stage 1 already shows the action bar with Play again focused (Kotlin): any OK there only skips to stage 2.
   const guard = (f: () => void) => (): void => { if (stage2) f(); else setStage2(true); };
+  const showHouses = !!r && r.winner === "CIVILIANS" && !stage2 && !reduced();
+  useLayoutEffect(() => {
+    const h = titleRef.current;
+    const stageEl = h?.offsetParent as HTMLElement | null;
+    if (!showHouses || !h || !stageEl) return;
+    const left = stageEl.offsetLeft + h.offsetLeft;
+    setLanes(particleLanes(left, left + h.offsetWidth));
+  }, [showHouses]);
   if (!r) return null;
   const winnerName = r.winner === "BLANK" ? byId(view, r.winnerIds[0])?.name ?? "" : "";
   const ranked = rankPlayers(view.players);
@@ -102,12 +121,12 @@ export function TvResults({ view }: { view: TvView }) {
       <TvTopBar view={view} title={t("results.title")} />
       <div class="tvresults__wash" aria-hidden="true">
         <div class="tvresults__fx">
-          {!reduced() && r.winner === "CIVILIANS" && Array.from({ length: 12 }, (_, i) => <span key={i} class="particle" style={{ "--i": i }}><RoleEmblem role="CIVILIAN" size={28} /></span>)}
+          {showHouses && lanes.map((x, i) => <span key={i} class="particle" style={{ "--i": i, left: `${x}px` }}><RoleEmblem role="CIVILIAN" size={28} /></span>)}
           {!reduced() && r.winner === "INFILTRATORS" && [0, 1, 2, 3].map((i) => <span key={i} class={`peek-mask peek-mask--${i}`}><RoleEmblem role="UNDERCOVER" size={96} /></span>)}
         </div>
       </div>
       <div class="tvstage tvresults__stage">
-        <h1 class={`tvresults__title ${stage2 ? "tvt-headline" : titleSize(title)}`}>{title}</h1>
+        <h1 ref={titleRef} class={`tvresults__title ${stage2 ? "tvt-headline" : titleSize(title)}`}>{title}</h1>
         {!stage2 && r.winner === "BLANK" && blankGuess && (
           <div class="tvblankcard"><RoleEmblem role="BLANK" size={64} /><span class="tvt-displayS">{blankGuess}</span></div>
         )}
