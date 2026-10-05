@@ -136,7 +136,10 @@ fun Avatar(
                     },
                 )
                 .alpha(bodyAlpha)
-                .background(fill, shape),
+                .background(fill, shape)
+                // Grape and plum fall under 3:1 on surface/elevated: a 2 dp cream ring at 24 % on the avatar itself
+                // (DESIGN §2.3, the web's `--avatar-ring`), on every surface. The speaking ring replaces it.
+                .then(if (swatch.needsRing && !state.speaking) Modifier.border(BorderStroke(2.dp, AVATAR_RING), shape) else Modifier),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
@@ -226,7 +229,6 @@ fun PlayerTile(
     contentAlpha: Float = 1f,
     nameOverride: (@Composable () -> Unit)? = null,
 ) {
-    val swatch = PlayerSwatch.byId(player.color)
     val shape = MishShapes.tile
     val a11y = listOfNotNull(
         player.name,
@@ -264,14 +266,12 @@ fun PlayerTile(
             }
         }
     }
-    val ring = if (swatch.needsRingOnElevated) MishColors.Text.copy(alpha = 0.24f) else Color.Transparent
     if (onClick != null) {
         MishFocusSurface(
             onClick = onClick,
             modifier = modifier.size(width, height).semantics { contentDescription = a11y },
             shape = shape,
             kind = FocusKind.Tile,
-            rest = Border(BorderStroke(2.dp, ring), shape = shape),
             body = content,
         )
     } else {
@@ -285,3 +285,5 @@ fun PlayerTile(
         )
     }
 }
+
+private val AVATAR_RING = MishColors.Text.copy(alpha = 0.24f)

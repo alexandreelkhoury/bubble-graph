@@ -29,8 +29,9 @@ import app.mishana.tv.ui.theme.MishTheme
 enum class ButtonKind { Primary, Secondary, Danger, Ghost }
 
 /**
- * Pill button (DESIGN §9 `MishButton`). [dimmed] renders the "disabled but explains why" state (40 %) while staying
- * focusable and clickable, e.g. Start with too few players (OK then shakes).
+ * Pill button (DESIGN §9 `MishButton`). [dimmed] renders the "disabled but explains why" state while staying
+ * focusable and clickable, e.g. Start with too few players (OK then shakes). A dimmed Primary drops its pink for a
+ * neutral surface + secondary text (10:1 rest, 14.6:1 focused) instead of alpha, which measured 1.35:1 / 2.59:1.
  */
 @Composable
 fun MishButton(
@@ -43,6 +44,7 @@ fun MishButton(
     minWidth: Dp = 0.dp,
     onLongClick: (() -> Unit)? = null,
     reserveText: String? = null,
+    focusKind: FocusKind = FocusKind.Button,
 ) {
     val shape = MishFocus.Pill
     var (container, content, focusedContainer, focusedContent) = when (kind) {
@@ -56,7 +58,14 @@ fun MishButton(
         ButtonKind.Ghost -> Border(BorderStroke(1.dp, MishColors.Outline), shape = shape)
         else -> Border.None
     }
-    if (dimmed) {
+    if (dimmed && kind == ButtonKind.Primary) {
+        // No alpha on a primary: ink on 40 % pink is unreadable. The pink is gone, so it still reads as unavailable;
+        // the focus ring and glow stay at full strength (this is the first focus the host sees on the lobby).
+        container = MishColors.Surface
+        content = MishColors.TextSecondary
+        focusedContainer = MishColors.Elevated
+        focusedContent = MishColors.Text
+    } else if (dimmed) {
         // Dim the fill and label only: the focus ring and glow stay at full strength (the first focus users see on
         // the lobby is this dimmed Start, so it must be the clearest one).
         container = container.copy(alpha = container.alpha * DIM_REST)
@@ -69,6 +78,7 @@ fun MishButton(
         onLongClick = onLongClick,
         modifier = modifier.defaultMinSize(minWidth = minWidth, minHeight = 48.dp),
         shape = shape,
+        kind = focusKind,
         container = container,
         content = content,
         focusedContainer = focusedContainer,

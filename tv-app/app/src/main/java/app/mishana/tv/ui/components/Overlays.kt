@@ -62,6 +62,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.core.Animatable
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.input.pointer.pointerInput
 import app.mishana.tv.ui.theme.MishShapes
 import app.mishana.tv.ui.theme.MishSpace
@@ -187,12 +190,18 @@ fun OverlayCard(
     onBack: () -> Unit,
     width: Dp = 520.dp,
     default: FocusRequester? = null,
+    padV: Dp = 28.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    // Enter: 200 ms fade + scale from 0.96 (a sheet, not a toy pop); a plain fade in reduced motion (DESIGN §6.3).
+    val reduce = MishTheme.reduceMotion
+    val appear = remember { Animatable(0f) }
+    LaunchedEffect(Unit) { appear.animateTo(1f, tween(DIALOG_ENTER_MS, easing = MishMotion.Decel)) }
     Box(
         Modifier
             .fillMaxSize()
             .fullBleed()
+            .graphicsLayer { alpha = appear.value }
             .background(MishColors.Scrim)
             .blockPointer(),
         contentAlignment = Alignment.Center,
@@ -201,16 +210,26 @@ fun OverlayCard(
             val shape = MishShapes.card
             Column(
                 Modifier
+                    .graphicsLayer {
+                        val sc = if (reduce) 1f else DIALOG_FROM_SCALE + (1f - DIALOG_FROM_SCALE) * appear.value
+                        scaleX = sc
+                        scaleY = sc
+                    }
                     .width(width)
                     .shadow(48.dp, shape, ambientColor = Color.Black, spotColor = Color.Black)
                     .background(MishColors.Overlay, shape)
-                    .padding(horizontal = 32.dp, vertical = 28.dp),
+                    .padding(horizontal = 32.dp, vertical = padV),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 content = content,
             )
         }
     }
 }
+
+private val COMPACT_TOAST_LINE = 28.sp
+
+private const val DIALOG_ENTER_MS = 200
+private const val DIALOG_FROM_SCALE = 0.96f
 
 /**
  * Confirm dialog (DESIGN TV-14): 520 dp, initial focus on the safe option, Back = the safe option.
@@ -305,9 +324,14 @@ class ToastState {
     }
 }
 
-/** Toast stack (DESIGN §9 `ToastHost`); shows the newest [maxItems] (≤ 2). */
+/**
+ * Toast stack (DESIGN §9 `ToastHost`); shows the newest [maxItems] (≤ 2). [compact]: the in-game toast, one 36 dp
+ * line (also in Arabic) that fits the top bar's band and never covers the stage's first line (the clue rule).
+ * Reduced motion: a plain fade (DESIGN §6.3).
+ */
 @Composable
-fun ToastHost(state: ToastState, modifier: Modifier = Modifier, maxWidth: Dp = 520.dp, maxItems: Int = 2) {
+fun ToastHost(state: ToastState, modifier: Modifier = Modifier, maxWidth: Dp = 520.dp, maxItems: Int = 2, compact: Boolean = false) {
+    val reduce = MishTheme.reduceMotion
     Column(modifier.widthIn(max = maxWidth), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         for (t in state.items.takeLast(maxItems)) {
             androidx.compose.runtime.key(t.id) {
@@ -321,21 +345,39 @@ fun ToastHost(state: ToastState, modifier: Modifier = Modifier, maxWidth: Dp = 5
                 }
                 AnimatedVisibility(
                     visibleState = visible,
-                    enter = fadeIn(tween(MishMotion.Base)) + slideInVertically(tween(MishMotion.Base, easing = MishMotion.Decel)) { it / 2 },
-                    exit = fadeOut(tween(MishMotion.Base)) + slideOutVertically(tween(MishMotion.Base, easing = MishMotion.Accel)) { it / 2 },
+                    enter = if (reduce) {
+                        fadeIn(tween(MishMotion.Fast))
+                    } else {
+                        fadeIn(tween(MishMotion.Base)) + slideInVertically(tween(MishMotion.Base, easing = MishMotion.Decel)) { it / 2 }
+                    },
+                    exit = if (reduce) {
+                        fadeOut(tween(MishMotion.Fast))
+                    } else {
+                        fadeOut(tween(MishMotion.Base)) + slideOutVertically(tween(MishMotion.Base, easing = MishMotion.Accel)) { it / 2 }
+                    },
                 ) {
                     val shape = MishShapes.row
                     Row(
                         Modifier
                             .shadow(16.dp, shape)
                             .background(MishColors.Elevated, shape)
-                            .padding(horizontal = 20.dp, vertical = 10.dp)
+                            .padding(horizontal = 20.dp, vertical = if (compact) 4.dp else 10.dp)
                             .semantics { liveRegion = LiveRegionMode.Polite },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Box(Modifier.size(10.dp).background(t.accent, MishShapes.pill))
                         Spacer(Modifier.width(12.dp))
-                        Text(t.text, style = MishTheme.type.body, color = MishColors.Text, maxLines = 2)
+                        if (compact) {
+                            Text(
+                                t.text,
+                                style = MishTheme.type.body.copy(lineHeight = COMPACT_TOAST_LINE),
+                                color = MishColors.Text,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        } else {
+                            Text(t.text, style = MishTheme.type.body, color = MishColors.Text, maxLines = 2)
+                        }
                     }
                 }
             }

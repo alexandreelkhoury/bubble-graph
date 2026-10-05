@@ -88,6 +88,7 @@ import app.mishana.tv.protocol.WinRule
 import app.mishana.tv.protocol.blocker
 import app.mishana.tv.ui.components.ButtonKind
 import app.mishana.tv.ui.components.Divider
+import app.mishana.tv.ui.components.FocusKind
 import app.mishana.tv.ui.components.InitialFocus
 import app.mishana.tv.ui.components.LocalFocusBlocked
 import app.mishana.tv.ui.components.MishButton
@@ -504,6 +505,7 @@ private fun CategoryItem(label: String, selected: Boolean, onClick: () -> Unit, 
             .heightIn(min = 52.dp)
             .onFocusChanged { if (it.isFocused) onFocused() },
         shape = MishShapes.row,
+        kind = FocusKind.Row,
         container = if (selected) MishColors.Surface else Color.Transparent,
         content = if (selected) MishColors.Text else MishColors.TextSecondary,
     ) {
@@ -559,6 +561,7 @@ private fun SettingRow(model: RowModel, rtl: Boolean, flash: Boolean, onFocused:
                 }
             },
         shape = MishShapes.row,
+        kind = FocusKind.Row,
         container = flashBg,
         interactionSource = interaction,
     ) {
@@ -680,6 +683,7 @@ private fun LockedPackRow(title: String, pairs: String, hint: String, onClick: (
         onClick = onClick,
         modifier = modifier.fillMaxWidth().heightIn(min = 52.dp),
         shape = MishShapes.row,
+        kind = FocusKind.Row,
     ) {
         Row(Modifier.fillMaxWidth().padding(horizontal = MishSpace.s4, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             LockBadge(null)
@@ -726,6 +730,7 @@ private fun ToggleRow(label: String, trailing: String?, checked: Boolean, onClic
         onClick = onClick,
         modifier = modifier.fillMaxWidth().heightIn(min = 52.dp),
         shape = shape,
+        kind = FocusKind.Row,
         rest = if (checked) Border(androidx.compose.foundation.BorderStroke(2.dp, MishColors.Primary), shape = shape) else Border.None,
     ) {
         Row(Modifier.fillMaxWidth().padding(horizontal = MishSpace.s4, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {

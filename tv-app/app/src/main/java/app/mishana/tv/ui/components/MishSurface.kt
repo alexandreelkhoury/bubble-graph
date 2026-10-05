@@ -25,13 +25,15 @@ import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishShapes
 
 /**
- * The one TV focus style (DESIGN §4.6): scale 1.06 (tiles) / 1.04 (buttons, rows), a 3 dp cream ring 2 dp
+ * The one TV focus style (DESIGN §4.6): scale 1.06 (tiles) / 1.04 (buttons, pills) / 1.02 (full-width rows), a 3 dp cream ring 2 dp
  * outside the shape, a primary glow at 45 %, and the fill lifting to `elevated`.
  * tv-material 1.1.0 draws `Border.inset` outward (`inset(-border.inset)`), so +2 dp = "offset 2 dp outside".
  */
 object MishFocus {
     const val TILE_SCALE = 1.06f
     const val BUTTON_SCALE = 1.04f
+    /** Full-width rows (settings rows, menu items, categories): at 1.04 a 600 dp row's start edge jumped 12 dp. */
+    const val ROW_SCALE = 1.02f
     val Pill: Shape = MishShapes.pill
 
     /** Room a focused row needs inside a clipping list: half of the 4 % scale of a ~600 dp row (12 dp) + the 5 dp ring. */
@@ -51,10 +53,11 @@ object MishFocus {
 
     fun tileScale(): ClickableSurfaceScale = ClickableSurfaceDefaults.scale(focusedScale = TILE_SCALE, pressedScale = 1.02f)
     fun buttonScale(): ClickableSurfaceScale = ClickableSurfaceDefaults.scale(focusedScale = BUTTON_SCALE, pressedScale = 0.98f)
+    fun rowScale(): ClickableSurfaceScale = ClickableSurfaceDefaults.scale(focusedScale = ROW_SCALE, pressedScale = 0.99f)
 }
 
-/** Which focus scale a [MishFocusSurface] uses: tiles 1.06, buttons and rows 1.04. */
-enum class FocusKind { Tile, Button }
+/** Which focus scale a [MishFocusSurface] uses: tiles 1.06, buttons and pills 1.04, full-width rows 1.02. */
+enum class FocusKind { Tile, Button, Row }
 
 /**
  * Every focusable surface of the TV app (DESIGN §13.2: one focus helper, so the style cannot drift): tv-material
@@ -91,7 +94,11 @@ fun MishFocusSurface(
             pressedContainerColor = focusedContainer,
             pressedContentColor = focusedContent,
         ),
-        scale = if (kind == FocusKind.Tile) MishFocus.tileScale() else MishFocus.buttonScale(),
+        scale = when (kind) {
+            FocusKind.Tile -> MishFocus.tileScale()
+            FocusKind.Button -> MishFocus.buttonScale()
+            FocusKind.Row -> MishFocus.rowScale()
+        },
         border = MishFocus.border(shape, rest = rest),
         glow = MishFocus.glow(),
         interactionSource = interactionSource ?: remember { MutableInteractionSource() },

@@ -32,6 +32,7 @@ import androidx.tv.material3.Text
 import app.mishana.tv.R
 import app.mishana.tv.game.Names
 import app.mishana.tv.i18n.isolate
+import app.mishana.tv.protocol.HistoryEntry
 import app.mishana.tv.protocol.PublicPlayer
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishShapes
@@ -43,7 +44,8 @@ private enum class PausePage { Menu, Players, ConfirmEnd }
 private enum class MenuItem { Resume, Skip, Players, Sound, EndGame, Exit }
 
 /**
- * TV-12 pause menu (Back during a game or on Results). Local only: "The game keeps running" (`tv.pauseNote`).
+ * TV-12 pause menu (Back during a game or on Results). Local only: "The game keeps running" (`tv.pauseNote`, under the
+ * title). On Results it also holds the round [history] (moved off the scoreboard).
  * Items: Resume · Skip turn/timer (HOST_ADVANCE; hidden on Results) · Players… (→ kick) · Sound on/off (DESIGN §6.4
  * global mute; the menu stays open) · End game (confirm) · Exit.
  * Coming back from a sub-page or a confirm puts focus on the item that opened it (DESIGN §7).
@@ -59,6 +61,7 @@ fun PauseMenu(
     onExit: () -> Unit,
     soundOn: Boolean,
     onToggleSound: () -> Unit,
+    history: List<HistoryEntry> = emptyList(),
 ) {
     var page by remember { mutableStateOf(PausePage.Menu) }
     var lastItem by remember { mutableStateOf(MenuItem.Resume) }
@@ -77,27 +80,35 @@ fun PauseMenu(
     when (page) {
         PausePage.Menu -> {
             val resume = itemFocus.getValue(MenuItem.Resume)
-            OverlayCard(onBack = onResume, width = 440.dp, default = resume) {
+            // With the history (Results) the card stays inside the 540 dp screen: 520 wide, 20 dp vertical padding.
+            OverlayCard(onBack = onResume, width = if (history.isEmpty()) 440.dp else 520.dp, default = resume, padV = if (history.isEmpty()) 28.dp else 20.dp) {
                 Text(stringResource(R.string.tv__pause_title), style = MishTheme.type.headline, color = MishColors.Text)
+                // Right under the title, before the first item: nothing pauses, so it must be read before "Back to game".
+                Text(stringResource(R.string.tv__pause_note), style = MishTheme.type.caption, color = MishColors.TextMuted)
+                if (history.isNotEmpty()) {
+                    Spacer(Modifier.height(MishSpace.s2))
+                    HistoryStrip(history, players)
+                }
                 Spacer(Modifier.height(MishSpace.s5))
                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(MishSpace.s3)) {
                     fun Modifier.item(i: MenuItem) = fillMaxWidth().focusRequester(itemFocus.getValue(i))
-                    MishButton(stringResource(R.string.tv__resume), onResume, Modifier.item(MenuItem.Resume), kind = ButtonKind.Primary)
+                    // Full-width items: row focus scale (1.02) so the start edge doesn't jump sideways (DESIGN §4.6).
+                    val row = FocusKind.Row
+                    MishButton(stringResource(R.string.tv__resume), onResume, Modifier.item(MenuItem.Resume), kind = ButtonKind.Primary, focusKind = row)
                     if (canSkip) {
-                        MishButton(stringResource(R.string.tv__skip), { onSkip(); onResume() }, Modifier.item(MenuItem.Skip))
+                        MishButton(stringResource(R.string.tv__skip), { onSkip(); onResume() }, Modifier.item(MenuItem.Skip), focusKind = row)
                     }
-                    MishButton(stringResource(R.string.tv__players), { open(MenuItem.Players, PausePage.Players) }, Modifier.item(MenuItem.Players), icon = MishIcons.Users)
+                    MishButton(stringResource(R.string.tv__players), { open(MenuItem.Players, PausePage.Players) }, Modifier.item(MenuItem.Players), icon = MishIcons.Users, focusKind = row)
                     MishButton(
                         stringResource(if (soundOn) R.string.tv__sound_on else R.string.tv__sound_off),
                         onToggleSound,
                         Modifier.item(MenuItem.Sound),
                         icon = if (soundOn) MishIcons.Volume else MishIcons.VolumeOff,
+                        focusKind = row,
                     )
-                    MishButton(stringResource(R.string.tv__end_game), { open(MenuItem.EndGame, PausePage.ConfirmEnd) }, Modifier.item(MenuItem.EndGame))
-                    MishButton(stringResource(R.string.tv__exit_app), onExit, Modifier.item(MenuItem.Exit), kind = ButtonKind.Danger, icon = MishIcons.DoorOut)
+                    MishButton(stringResource(R.string.tv__end_game), { open(MenuItem.EndGame, PausePage.ConfirmEnd) }, Modifier.item(MenuItem.EndGame), focusKind = row)
+                    MishButton(stringResource(R.string.tv__exit_app), onExit, Modifier.item(MenuItem.Exit), kind = ButtonKind.Danger, icon = MishIcons.DoorOut, focusKind = row)
                 }
-                Spacer(Modifier.height(MishSpace.s5))
-                Text(stringResource(R.string.tv__pause_note), style = MishTheme.type.caption, color = MishColors.TextMuted)
             }
             InitialFocus(itemFocus.getValue(lastItem), key = page)
         }
@@ -164,6 +175,7 @@ private fun PlayersList(players: List<PublicPlayer>, focusIndex: Int, onBack: ()
                     onClick = { onPick(i, p) },
                     modifier = Modifier.fillMaxWidth().focusRequester(rowFocus.getOrPut(p.id) { FocusRequester() }),
                     shape = MishShapes.row,
+                    kind = FocusKind.Row,
                 ) {
                     Row(Modifier.padding(horizontal = MishSpace.s4, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                         Avatar(p.color, 40.dp, state = AvatarState.of(p))

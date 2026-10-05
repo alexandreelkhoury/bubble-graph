@@ -44,8 +44,8 @@ enum class PlayerSwatch(val id: String) {
     val glyph: Color = if (spec.glyphIsCream) MishColors.Text else MishColors.Ink
     val shape: AvatarShape = spec.shape
 
-    /** Plum and grape fall below 3:1 on `elevated`: tiles get a cream ring at 24 % (DESIGN §2.3). */
-    val needsRingOnElevated: Boolean get() = this == Grape || this == Plum
+    /** Plum and grape fall below 3:1 on `surface`/`elevated`: their avatar gets a cream ring at 24 % (DESIGN §2.3). */
+    val needsRing: Boolean get() = this == Grape || this == Plum
 
     companion object {
         fun byId(id: String): PlayerSwatch = entries.firstOrNull { it.id == id } ?: Coral

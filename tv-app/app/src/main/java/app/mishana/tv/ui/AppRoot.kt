@@ -166,12 +166,13 @@ fun AppRoot(vm: GameViewModel) {
                     is TvUiState.Fatal -> FatalScreen(s.messageKey, vm::createRoom)
                 }
                 // The Lobby shows its toasts in its own header slot (never over the code, QR or grid). In a game they sit
-                // at the top centre under the top bar, one at a time (clear of the stage, the strip and the action bar).
+                // at the top centre in the top bar's band, one line at a time (clear of the stage, the strip and the action bar).
                 if (toasts.screenHosts == 0) {
                     when (gv?.phase) {
                         null, Phase.LOBBY -> ToastHost(toasts, Modifier.align(Alignment.BottomStart).padding(bottom = 64.dp))
                         Phase.RESULTS -> ToastHost(toasts, Modifier.align(Alignment.TopCenter), maxItems = 1)
-                        else -> ToastHost(toasts, Modifier.align(Alignment.TopCenter).padding(top = 56.dp), maxItems = 1)
+                        // In the top bar's band (6 dp down = centred in its 48 dp), one 36 dp line: never over the clue rule.
+                        else -> ToastHost(toasts, Modifier.align(Alignment.TopCenter).padding(top = 6.dp), maxWidth = 420.dp, maxItems = 1, compact = true)
                     }
                 }
             }
@@ -417,6 +418,7 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
             onExit = { activity?.finish() },
             soundOn = !soundMuted,
             onToggleSound = { vm.setSoundMuted(!soundMuted) },
+            history = if (view.phase == Phase.RESULTS) view.history else emptyList(),
         )
     }
 }
