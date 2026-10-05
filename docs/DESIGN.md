@@ -219,7 +219,7 @@ These ids, hexes, shapes and glyph colours are the canonical `COLORS` table in S
 | Numerals and the room code | Cairo with `tnum` (tabular figures) **[verify Cairo has `tnum`; if not, set fixed-width boxes per digit]** | Timers must not jitter |
 | Not used | Thin or Light weights, italics (Arabic has no italic), condensed widths | Unreadable at 10 ft |
 
-- **Web loading:** self-host two **woff2 subsets** per weight, `cairo-latin` (Basic Latin + Latin-1 + Œœ ’ « » … – — NBSP U+202F) and `cairo-arabic` (U+0600–06FF, U+FE70–FEFF subset, U+200C–200F), each with `unicode-range` and `font-display: swap`. Load **only 600 and 900** on the phone; 400 falls back to 600, because the phone UI doesn't use regular weight. Budget: ≤ 90 KB for all font files (fonts are outside the 60 KB JS budget in PLAN M2).
+- **Web loading:** self-host two **woff2 subsets** per weight, `cairo-latin` (Basic Latin + Latin-1 + Œœ ’ « » … – — NBSP U+202F) and `cairo-arabic` (U+0600–06FF, U+FE70–FEFF subset, U+200C–200F), each with `unicode-range` and `font-display: swap`. Load **600, 700 and 900** (the 700 tokens, e.g. `tv.headline`, `ph.h2`, labels, need the real Bold: without it the browser renders them Black and the browser TV no longer matches the native app); 400 falls back to 600, because the UI doesn't use regular weight. Budget: ≤ 90 KB for all font files (six files ≈ 77 KB) (fonts are outside the 60 KB JS budget in PLAN M2).
 - **Android:** `res/font/cairo_{regular,semibold,bold,black}.ttf` as static instances cut from the variable font with `fonttools varLib.instancer`. Static instances keep weight selection trivial (`Font(resId, FontWeight)`) and avoid variable-axis handling on minSdk 26 devices.
 
 ### 3.2 TV type scale (sp; designed on the 960 × 540 dp canvas; viewed at 2.5–3.5 m)
@@ -1847,6 +1847,12 @@ Same names on both platforms, so design QA, code and tests talk about the same t
   unicode-range: U+0000-00FF, U+0152-0153, U+2013-2014, U+2018-201E, U+2026, U+202F, U+20AC; }
 @font-face { font-family: "Cairo"; font-weight: 600; font-display: swap;
   src: url("/fonts/cairo-600-arabic.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+200C-200F, U+FE70-FEFF; }
+@font-face { font-family: "Cairo"; font-weight: 700; font-display: swap;
+  src: url("/fonts/cairo-700-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0152-0153, U+2013-2014, U+2018-201E, U+2026, U+202F, U+20AC; }
+@font-face { font-family: "Cairo"; font-weight: 700; font-display: swap;
+  src: url("/fonts/cairo-700-arabic.woff2") format("woff2");
   unicode-range: U+0600-06FF, U+200C-200F, U+FE70-FEFF; }
 @font-face { font-family: "Cairo"; font-weight: 900; font-display: swap;
   src: url("/fonts/cairo-900-latin.woff2") format("woff2");
