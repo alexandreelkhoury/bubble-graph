@@ -600,7 +600,9 @@ const Outro: React.FC<{L: FilmLayout; f: number; cta: Cta}> = ({L, f, cta}) => {
   const rowH = chipSize * 1.9, rowGap = chipSize * 0.45;
   const chipsH = rows.length * rowH + (rows.length - 1) * rowGap;
   const pre = cta === 'prelaunch';
-  const below = pre ? urlSize * 0.5 + urlSize * 1.2 + urlSize * 0.2 + urlSize * 0.75 : 0; // URL + "Google TV app coming soon"
+  // pre-launch (design-v3 E3): "Open on a laptop or TV browser:" + the URL in the ads' pill + "Google TV app coming soon"
+  const openSize = urlSize * 0.72, subSize = urlSize * 0.8, pillH = urlSize * 1.2 + 20;
+  const below = pre ? urlSize * 0.45 + openSize * 1.3 + urlSize * 0.2 + pillH + urlSize * 0.3 + subSize * 1.2 : 0;
   const gaps = [L.logo * 0.06, L.logo * 0.14, tagSize * 0.6, chipSize * 1.0];
   const total = L.logo + gaps[0] + wmH + gaps[1] + tagSize * 1.2 + gaps[2] + chipsH + gaps[3] + ctaH + below;
   const top = (L.H - total) / 2;
@@ -609,7 +611,9 @@ const Outro: React.FC<{L: FilmLayout; f: number; cta: Cta}> = ({L, f, cta}) => {
   const tagY = wmY + wmH / 2 + gaps[1] + tagSize * 0.6;
   const chipTop = tagY + tagSize * 0.6 + gaps[2];
   const ctaY = chipTop + chipsH + gaps[3] + ctaH / 2;
-  const urlY = ctaY + ctaH / 2 + urlSize * 0.5 + urlSize * 0.6;
+  const openTop = ctaY + ctaH / 2 + urlSize * 0.45;
+  const urlTop = openTop + openSize * 1.3 + urlSize * 0.2;
+  const subTop = urlTop + pillH + urlSize * 0.3;
 
   const bubble = spr(f, B(41), POP);
   const stroke = prog(f, B(41.2), B(41.75), easeOut);
@@ -651,17 +655,24 @@ const Outro: React.FC<{L: FilmLayout; f: number; cta: Cta}> = ({L, f, cta}) => {
           background: C.primary, color: C.ink, fontFamily: FONT, fontWeight: 900, fontSize: ctaH * 0.36, display: 'flex', alignItems: 'center',
           padding: `0 ${ctaH * 0.55}px`, gap: ctaH * 0.2, whiteSpace: 'nowrap', boxShadow: `0 0 ${ctaH * 0.6}px rgba(255,79,154,0.45)`}}>
           <svg width={ctaH * 0.3} height={ctaH * 0.33} viewBox="0 0 22 24"><path d="M2 2l18 10L2 22z" fill={C.ink} /></svg>
-          {cta === 'live' ? 'Available on Google TV' : 'Play free in your browser'}
+          {cta === 'live' ? 'Available on Google TV' : 'Play free on your TV'}
         </div>
       </At>
       {pre ? (
         <>
-          <div style={{position: 'absolute', left: 0, width: L.W, top: urlY - urlSize * 0.6, textAlign: 'center', fontFamily: FONT, fontWeight: 800,
-            fontSize: urlSize, lineHeight: 1.2, color: C.accent, zIndex: 84}}>
-            <Rise f={f} start={B(45.9)}>{PLAY_URL}</Rise>
+          <div style={{position: 'absolute', left: 0, width: L.W, top: openTop, textAlign: 'center', fontFamily: FONT, fontWeight: 700,
+            fontSize: openSize, lineHeight: 1.3, color: C.text2, zIndex: 84}}>
+            <Rise f={f} start={B(45.8)}>Open on a laptop or TV browser:</Rise>
           </div>
-          <div style={{position: 'absolute', left: 0, width: L.W, top: urlY + urlSize * 0.75, textAlign: 'center', fontFamily: FONT, fontWeight: 700,
-            fontSize: urlSize * 0.62, lineHeight: 1.2, color: C.text2, zIndex: 84}}>
+          {/* the ads' URL pill (EndCard.tsx): one recognisable "type this" object across ads and film */}
+          <div style={{position: 'absolute', left: 0, width: L.W, top: urlTop, textAlign: 'center', zIndex: 84}}>
+            <span style={{display: 'inline-block', boxSizing: 'border-box', height: pillH, fontFamily: FONT, fontWeight: 800, fontSize: urlSize, lineHeight: 1.2,
+              color: C.text, background: 'rgba(14,6,28,0.45)', border: `2px solid ${C.outline}`, borderRadius: 22, padding: `8px ${urlSize * 0.6}px`}}>
+              <Rise f={f} start={B(45.9)}>{PLAY_URL}</Rise>
+            </span>
+          </div>
+          <div style={{position: 'absolute', left: 0, width: L.W, top: subTop, textAlign: 'center', fontFamily: FONT, fontWeight: 700,
+            fontSize: subSize, lineHeight: 1.2, color: C.text2, zIndex: 84}}>
             <Rise f={f} start={B(46.2)}>Google TV app coming soon</Rise>
           </div>
         </>
@@ -678,7 +689,25 @@ const OPENING: Record<Cta, string> = {
   live: 'Turn your Google TV into a *party.*',
 };
 
-export const Film: React.FC<{cta?: Cta}> = ({cta = 'live'}) => {
+/** One on-screen caption: [id, text, start frame, end frame, accent]. Exported for the landing's caption-free hero loop. */
+export type CaptionSpec = {id: string; text: string; start: number; end: number; accent?: string; hook?: boolean};
+export const captionsFor = (cta: Cta, square = false): CaptionSpec[] => [
+  {id: 'opening', text: square && cta === 'live' ? 'Turn your Google TV | into a *party.*' : OPENING[cta], start: -90, end: b(5.5), hook: true,
+    accent: cta === 'prelaunch' ? C.primary : C.accent},
+  {id: 'friends', text: 'Friends join from their phones. *No\u00A0app.*', start: b(5.8), end: b(11.3)},
+  {id: 'secret', text: 'Everyone gets a *secret\u00A0word…*', start: b(11.55), end: b(15.8)},
+  {id: 'different', text: '…but one is *different.*', start: B(19.25), end: B(21.4), accent: C.primary},
+  {id: 'clues', text: 'Give one-word *clues.*', start: B(21.6), end: B(25.6)},
+  {id: 'fit', text: 'Spot who doesn’t *fit.*', start: B(25.8), end: B(28)},
+  {id: 'out', text: 'Vote them *out.*', start: B(28.2), end: B(31.8)},
+  {id: 'mole', text: 'Caught the *Mole!*', start: B(32.05), end: B(33.8), accent: C.primary},
+];
+/** "Sami was the Mole" (amber line under the Mole's tile): also hidden when `captions` is false. */
+export const MOLE_WORD = {text: 'Sami was the Mole', start: () => B(32.5), end: () => B(34.4)};
+
+/** `captions={false}`: the caption-free cut (landing hero, design-v3 C6); every caption and the "Sami was the Mole" line
+ * are hidden, everything else (slogan, outro) is unchanged. */
+export const Film: React.FC<{cta?: Cta; captions?: boolean}> = ({cta = 'live', captions = true}) => {
   const f = useCurrentFrame();
   const {width, height} = useVideoConfig();
   const L = filmLayout(width, height);
@@ -708,20 +737,15 @@ export const Film: React.FC<{cta?: Cta}> = ({cta = 'live'}) => {
       <Cards L={L} f={f} floodFrom={floodFrom} />
       <Clues L={L} f={f} />
       <Votes L={L} f={f} />
-      <MoleWord L={L} f={f} />
+      {captions ? <MoleWord L={L} f={f} /> : null}
       <Stamp L={L} f={f} />
       <Slogan L={L} f={f} />
       <Outro L={L} f={f} cta={cta} />
 
       {/* captions (screen space); on-screen times respect holdFrames() — see the hold table in the report */}
-      <Caption L={L} f={f} hook text={L.mode === 'square' && cta === 'live' ? 'Turn your Google TV | into a *party.*' : OPENING[cta]} start={-90} end={b(5.5)} accent={cta === 'prelaunch' ? C.primary : C.accent} />
-      <Caption L={L} f={f} text="Friends join from their phones. *No\u00A0app.*" start={b(5.8)} end={b(11.3)} />
-      <Caption L={L} f={f} text="Everyone gets a *secret\u00A0word…*" start={b(11.55)} end={b(15.8)} />
-      <Caption L={L} f={f} text="…but one is *different.*" start={B(19.25)} end={B(21.4)} accent={C.primary} />
-      <Caption L={L} f={f} text="Give one-word *clues.*" start={B(21.6)} end={B(25.6)} />
-      <Caption L={L} f={f} text="Spot who doesn’t *fit.*" start={B(25.8)} end={B(28)} />
-      <Caption L={L} f={f} text="Vote them *out.*" start={B(28.2)} end={B(31.8)} />
-      <Caption L={L} f={f} text="Caught the *Mole!*" start={B(32.05)} end={B(33.8)} accent={C.primary} />
+      {captions
+        ? captionsFor(cta, L.mode === 'square').map((c) => <Caption key={c.id} L={L} f={f} text={c.text} start={c.start} end={c.end} hook={c.hook} accent={c.accent} />)
+        : null}
     </AbsoluteFill>
   );
 };

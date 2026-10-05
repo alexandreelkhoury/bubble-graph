@@ -86,7 +86,7 @@ const EcOnly = (lang: Lang, mode: EcMode): React.FC<AdProps> => ({guide}) => (
 export const AdCompositions: React.FC = () => (
   <>
     <Folder name="Ads-9x16-prelaunch">
-      {(['en', 'ar'] as const).map((l) => (
+      {(['en', 'fr', 'ar'] as const).map((l) => (
         <Composition key={l} id={`EC-${l.toUpperCase()}`} component={EcOnly(l, 'prelaunch')} durationInFrames={EC_FRAMES} fps={FPS} width={AD_W} height={AD_H}
           defaultProps={{blur: 0, guide: false}} />
       ))}
@@ -96,7 +96,7 @@ export const AdCompositions: React.FC = () => (
       })}
     </Folder>
     <Folder name="Ads-9x16-live">
-      {(['en', 'ar'] as const).map((l) => (
+      {(['en', 'fr', 'ar'] as const).map((l) => (
         <Composition key={l} id={`EC-${l.toUpperCase()}-LIVE`} component={EcOnly(l, 'live')} durationInFrames={EC_FRAMES} fps={FPS} width={AD_W} height={AD_H}
           defaultProps={{blur: 0, guide: false}} />
       ))}

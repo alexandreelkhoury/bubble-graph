@@ -13,16 +13,16 @@ loadFont({family: 'Cairo', url: staticFile('fonts/cairo_bold.ttf'), weight: '700
 loadFont({family: 'Cairo', url: staticFile('fonts/cairo_extrabold.ttf'), weight: '800'});
 loadFont({family: 'Cairo', url: staticFile('fonts/cairo_black.ttf'), weight: '900'});
 
-type Props = {blur: number; cta?: 'live' | 'prelaunch'; guide?: boolean};
+type Props = {blur: number; cta?: 'live' | 'prelaunch'; guide?: boolean; captions?: boolean};
 
-const Main: React.FC<Props> = ({blur, cta = 'live'}) => (
+const Main: React.FC<Props> = ({blur, cta = 'live', captions = true}) => (
   <AbsoluteFill>
     {blur > 1 ? (
       <CameraMotionBlur samples={blur} shutterAngle={120}>
-        <Film cta={cta} />
+        <Film cta={cta} captions={captions} />
       </CameraMotionBlur>
     ) : (
-      <Film cta={cta} />
+      <Film cta={cta} captions={captions} />
     )}
     <Sound />
   </AbsoluteFill>
