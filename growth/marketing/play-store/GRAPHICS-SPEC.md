@@ -1,77 +1,95 @@
 # Mish Ana! — Play Store graphics spec (Android TV / Google TV)
 
-Prepared 2026-10-04. Sources, checked today:
+Prepared 2026-10-04, rebuilt 2026-10-06 for design-v3 (D1 feature graphic, D2 icon, D3 TV banner, D5 screenshot plan). Google's specs re-checked 2026-10-06:
 - Preview assets: [support.google.com/googleplay/android-developer/answer/9866151](https://support.google.com/googleplay/android-developer/answer/9866151)
-- TV distribution: [developer.android.com/training/tv/publishing/distribute](https://developer.android.com/training/tv/publishing/distribute)
+- Icon: [developer.android.com/distribute/google-play/resources/icon-design-specifications](https://developer.android.com/distribute/google-play/resources/icon-design-specifications)
+- TV launcher icon + banner: [developer.android.com/design/ui/tv/guides/system/tv-app-icon-guidelines](https://developer.android.com/design/ui/tv/guides/system/tv-app-icon-guidelines)
 - TV app quality (TV-LB, TV-BN, TV-G4): [developer.android.com/docs/quality-guidelines/tv-app-quality](https://developer.android.com/docs/quality-guidelines/tv-app-quality)
-- Metadata policy (no ranking or price claims in graphics): [answer/9898842](https://support.google.com/googleplay/android-developer/answer/9898842)
+- Metadata policy: [answer/9898842](https://support.google.com/googleplay/android-developer/answer/9898842); listing limits: [answer/9859152](https://support.google.com/googleplay/android-developer/answer/9859152)
 
-Brand tokens (`docs/DESIGN.md` §1–2): background `#120A1F`, glow `#2A0F3D`, magenta `#FF3D8B`, amber `#FFC23D` (only for the bang dot, timers and points), cream text `#FFF7EC`. Font: **Cairo Black 900** for headlines (OFL, already in `tv-app/app/src/main/res/font/`). Source vectors: `/home/alex/bubble-graph/assets/brand/` (`mark.svg`, `wordmark-bilingual.svg`, `wordmark-latin.svg`, `wordmark-ar.svg`, `banner-en.svg`, `banner-ar.svg`). Dark-only look, no cedar/flag clichés, no cartoon kids (keeps the listing from "appealing to children", see DATA-SAFETY.md §3).
+**Palette: marketing palette B** for every store graphic (same as the ads and the landing; `growth/video/src/brand.ts`, `review-v2/DECISIONS.md` #1): stage `#2E1856 → #1D1036` with a violet lift `rgba(160,95,245,.55)`, magenta `#FF4F9A` (hot word, bang stem), amber `#FFC94D` (the bang dot, small highlights only), cream `#FFF7EC`, muted `#D6CAE8`, ink `#1A0B2E`. Tokens: `src/brand.css`. **App screens shown inside a graphic stay exactly as captured.** Font: Cairo 900 (OFL, `src/fonts/`). No cedar/flag clichés, no cartoon kids (DATA-SAFETY.md §3).
 
-## 1. Required and optional assets
+## 1. Assets, Google's rules, our files
 
-| Asset | Required? | Exact spec | Notes for Mish Ana! |
+| Asset | Google's spec (checked 2026-10-06) | Our file(s) in `graphics/` | Status |
 |---|---|---|---|
-| **App icon** | **Required** | **512 × 512 px, 32-bit PNG (with alpha), ≤ 1024 KB** | Full-bleed square: fill the whole square with `#120A1F`; Play applies the rounded mask itself, so **do not** round the corners or add a drop shadow. Use `mark.svg` content (magenta speech bubble + cream bang + amber dot), no text. A ready candidate exists: `/home/alex/mishana-site/assets/img/icon-512.png` (512 × 512, RGBA, opaque `#120A1F` corners). Check the bubble keeps ~10 % padding so the mask does not clip the tail |
-| **Feature graphic** | **Required** | **1024 × 500 px, JPEG or 24-bit PNG (no alpha)** | Shown at the top of the listing and as the cover of the promo video (a play button is drawn in the centre when a video is set). See §3 |
-| **Android TV banner** | **Required for TV apps** | **1280 × 720 px, JPEG or 24-bit PNG (no alpha)** | Store banner, different from the in-app launcher banner. Must contain the app name (same rule as TV-BN for the launcher). Layout: copy `banner-en.svg` / `banner-ar.svg` scaled 4× (they are 320 × 180): diagonal `#120A1F → #2A0F3D` gradient, mark on the left (right in AR), wordmark centred vertically. Export a localized AR version for the `ar` listing |
-| **Android TV screenshots** | **Required: at least 1** (max 8) | JPEG or 24-bit PNG (no alpha), **16:9 landscape, 1920 × 1080** (3840 × 2160 also fine); each side 320–3840 px and the long side ≤ 2× the short side | TV-G4: at least **one unaltered, high-resolution screenshot of the current TV app**. Upload all 8 (plan in §4) |
-| Phone screenshots | Not shown to anyone for a TV-only app (leanback required, `AndroidManifest.xml:7`) | Same file rules; min 2 screenshots across all device types | **Uncertain:** Play's rule is "minimum of two screenshots across device types", and Play Console has historically blocked saving the main listing without phone screenshots. If the Phone screenshots field blocks Save, upload the same 1920 × 1080 TV screenshots there (16:9 landscape is a valid phone screenshot size). If Save works without them, leave it empty |
-| Tablet / Chromebook / Wear / XR screenshots | Not applicable | — | Leave empty |
-| Promo (preview) video | Optional, recommended | **YouTube URL only** (no playlist/channel); public or unlisted; **ads/monetization off**; not age-restricted; embedding allowed | A 23.8 s 1920 × 1080 cut exists: `/home/alex/mishana-video/out/MishAna-16x9-v1.mp4`. Upload it to YouTube yourself (unlisted is fine), turn monetization off, then paste the URL in Main store listing → Video. It must show the real game (TV + phones), which this cut does; double-check it shows no "Premium"/prices before billing ships |
-| Launcher assets inside the APK (not uploaded to Play) | TV-LB | 320 × 180 banner + 160 × 160 (xhdpi) icon | Already present: `res/drawable/banner.xml`, `res/drawable-ar/banner.xml`, adaptive `mipmap-anydpi-v26/ic_launcher.xml` (`AndroidManifest.xml:14-15`). Nothing to do |
+| **App icon** | 512 × 512, 32-bit PNG with alpha, sRGB, ≤ 1024 KB. Full square: Play applies the rounded mask (30 % radius) and the shadow, so no rounded corners or drop shadow in the file. No badges, ranking, price or text | `icon-512.png` (RGBA, opaque, 76 KB) | Ready (D2) |
+| **Feature graphic** | 1024 × 500, JPEG or 24-bit PNG (no alpha). Keep the focal point central-safe; Play draws a play button in the centre when a promo video is set | `feature-1024x500-{en,fr,ar}.png` (RGB, ~430 KB) | Ready (D1) |
+| **Android TV banner** | 1280 × 720, JPEG or 24-bit PNG (no alpha). Required to publish a TV app. Must contain the app name; one per language | `tv-banner-1280x720-{en,fr,ar}.png` (RGB) | Ready (D3) |
+| **Android TV screenshots** | ≥ 1 required (max 8), JPEG or 24-bit PNG (no alpha), each side 320–3840 px, long side ≤ 2 × short side. TV-G4: at least one **unaltered**, high-resolution screenshot of the current TV app | `screenshots/tv-0[1-8]-<name>-{en,fr,ar}.png` from `frames.tsv` | **Placeholders only** (`*-placeholder.jpg`): D4 is blocked until native captures exist |
+| Phone screenshots | Not shown for a TV-only app | — | If Play Console blocks saving without them, upload the same 1920 × 1080 TV screenshots there |
+| Promo video | YouTube URL, ads off, embeddable | — | D7 deferred (16:9 "live" cut at launch) |
+| In-APK launcher assets (not uploaded) | TV-LB: 320 × 180 banner (xhdpi) + ≥ 160 × 160 icon (xhdpi); adaptive icon content inside the safe zone; banner text per language | `tv-app/app/src/main/res/drawable{,-ar}/banner.xml`, `mipmap-anydpi-v26/ic_launcher.xml` + `drawable/ic_launcher_{background,foreground}.xml` | Ready (D2, D3), generated by `assets/brand/scripts/gen_brand.py` |
 
-## 2. Rules that apply to every graphic
+Text rules for every graphic: no "Best", "#1", "Top", "New", "Free", "Discount", "Sale", download counts, prices, Google Play badges, and no "Download now"/"Install now" style calls to action. No "Undercover", "Mr. White" or other apps' names (LISTING.md §0); roles are Mole/Taupe/جاسوس and Blank/Blanc/فاضي. Screenshots show the actual app (captions and a frame are fine, invented UI is not). Text ≥ 48 px on 1920 × 1080. Natural player names, never a live production room code.
 
-- **No** "#1", "Best", "Top", "App of the year", "Editor's choice", "Free", prices, discounts or Google Play program badges in the icon, feature graphic or screenshots.
-- **No** "Undercover", "Mr. White" or other apps' names/logos (trademark; see LISTING.md §0). The roles are "Mole" / "Taupe" / "جاسوس" and "Blank" / "Blanc" / "فاضي".
-- Screenshots must show the **actual** app. Captions and a device frame are fine; invented UI is not. Use real player names that look natural (e.g. Rami, Léa, Nour, Sam, Maya, Karim) — no real public figures.
-- Don't show the room code of a live production room you will keep using (rooms expire anyway, but use a test room).
-- Keep text ≥ 48 px tall on 1920 × 1080 (the store shows TV screenshots small on phones and the web).
-- Localize: EN and FR can share images if the caption is localized; AR gets **Arabic-UI screenshots** (switch the TV app to Arabic in Settings → Language) and RTL captions.
+## 2. Icon (D2) — `icon-512.png` and the launcher icon
 
-## 3. Feature graphic (1024 × 500)
+One source, `assets/brand/icon.svg` (160 × 160 artboard, generated by `gen_brand.py`):
+- Tile: radial gradient centre (0.5, 0.3), r 0.85: `#5A2E9A` → `#3A1E6A` (60 %) → `#2B1650`. Lighter than the old `#120A1F` tile, so it keeps a visible edge on dark launchers (`#121214`, Google TV `#1F1F1F`).
+- Bubble `#FF4F9A`, 4 % bigger than the in-app mark, tail tucked to (35, 134) so a circular mask never clips it.
+- Bang: cream stem 22 % wider, amber `#FFC94D` dot r 10, so the "!" still reads at 32 px.
+- Launcher (adaptive, minSdk 26): `ic_launcher_background.xml` = the same radial tile on 108 dp; `ic_launcher_foreground.xml` = bubble + bang at scale 0.43, farthest point 32 dp from the centre (inside the 66 dp safe circle).
+- The in-app mark (`drawable/ic_mark.xml`, `assets/brand/mark.svg`, `/brand/mark.svg` on the web) is **unchanged**: it follows the app palette, which moves to B only with DECISIONS-V3 B19.
 
-| Zone | Content |
+Check: `design-v3/after/play-store/icon-48-32-light-dark.png` (72/48/32 px, circle + squircle masks, on white, light grey, `#1F1F1F`, `#121214`).
+
+## 3. Feature graphic (D1) — `src/feature-graphic.html?lang=en|fr|ar`
+
+DECISIONS v2 #19 on palette B: the game in one glance (TV is the stage, phones hold the secret).
+
+| Zone (EN/FR; AR mirrored) | Content |
 |---|---|
-| Background | Radial/diagonal gradient `#120A1F → #2A0F3D`, subtle magenta glow behind the bang |
-| Left 55 % | `wordmark-bilingual.svg` (MISH ANA ! مش أنا) ~520 px wide; under it, the tagline in Cairo Black 40–44 px, cream: EN "The secret-word party game" · FR "Le jeu d'ambiance du mot secret" · AR "لعبة الكلمة السرّية للسهرات" |
-| Right 45 % | A TV showing the lobby (QR + player tiles) with 2–3 phones in front showing the hold-to-reveal word card (one phone shows "No word for you." for intrigue) |
-| Safe area | Keep the wordmark and tagline out of the centre 300 × 200 px if you add a promo video (Play draws a play button there) and ≥ 40 px from every edge |
-| AR version | Mirror the layout (wordmark/tagline right, TV left), Arabic tagline only |
+| Background | `#2E1856 → #1D1036`, violet lift top-right, faint amber/magenta corners, spotlight cone onto the TV, 6 % grain |
+| Text column x 48–358 (AR x 666–976) | Icon 64 px + "MISH ANA!" / "مش أنا!" Cairo 900 58 px at y 44 · hook 68 px at y 176: EN "Someone's **lying.**", FR "Quelqu'un **ment.**", AR "في حدا عم **يكذب.**" (hot word in a magenta box, ink text, −4°, +4° in AR) · sub 24 px at y 400: "The secret-word party game / **for your TV**" · "Le jeu d'ambiance du mot secret / **pour votre télé**" · "لعبة الكلمة السرّية للسهرات / **عالتلفزيون**" |
+| Art (x 440–990, AR mirrored) | TV 540 × 304 showing TV-07 vote reveal (EN capture for EN/FR, Arabic capture for AR) + two PH-04 phones: coral PIZZA (−7°) and azure PASTA with the amber "odd one" ring (+6°). FR PIZZA/PÂTES, AR بيتزا/باستا |
+| Safe zones | **No text in Play's play-button zone (x 362–662, y 150–350)**: only the TV crosses it. Everything ≥ 40 px from each edge. Overlay check: `design-v3/after/play-store/store-graphics-sheet.png` |
 
-## 4. TV screenshot sequence (conversion order)
+Follow-up after D4: swap `src/img/tv-vote-reveal-{en,ar}.png` (browser-TV captures) for native ones, and add a French one for the FR graphic.
 
-Capture on a **Google TV (1080p) emulator** or a real 1080p TV: `adb exec-out screencap -p > tv-02-lobby.png` (a 4K TV gives 3840 × 2160, which is also accepted). Use the **release** build pointed at production so no debug label shows. Play a real 4–6 player game with phones/browsers to reach each screen. Screen IDs are from `docs/DESIGN.md` §7.
+## 4. TV banner (D3) — `src/tv-banner.html?lang=en|fr|ar`
 
-**Caption layout** (for captioned shots): 1920 × 1080 canvas, `#120A1F` background; the real screenshot scaled to 1600 × 900 and placed at the bottom centre (y = 160), 24 px corner radius, 2 px `#4A3A66` outline; caption in the top 160 px band, Cairo Black 64–72 px, cream with the key word in magenta. AR: right-aligned, Arabic caption, RTL.
+The Play banner is the in-app launcher banner drawn at 4×, from the same generated vector (`assets/brand/banner-{en,ar}.svg` = `res/drawable{,-ar}/banner.xml`): palette-B stage (`#2E1856 → #1D1036` diagonal + violet lift), **no dark tile**: the magenta bubble sits directly on the stage over a soft magenta glow, wordmark beside it (Latin 168/320 px wide; Arabic at 1.2 × the Latin scale). AR mirrors the order (wordmark left, bubble right). FR uses the Latin banner (the name is the same); it is exported as its own file so each listing has one.
 
-| # | Screen | What must be visible | EN caption | FR caption | AR caption | Altered? |
-|---|---|---|---|---|---|---|
-| 1 | **TV-02 Lobby** | QR code, room code, 5–6 player tiles in different colours, "Everybody's in, start!" | Scan the code. **Your phone** is the controller. | Scannez le code. **Votre téléphone** sert de manette. | امسحوا الرمز… **وهاتفك** هو جهاز التحكم | Captioned |
-| 2 | **TV-04 Role reveal** + 2 phone frames (PH-04) | TV "Check your phones!", phone A showing a word card, phone B showing "No word for you." | Everyone gets a **secret word**. Almost everyone. | Chacun reçoit un **mot secret**. Ou presque. | كل واحد إلو **كلمة سرّية**… تقريبًا | Captioned (composite of real TV + real phone captures) |
-| 3 | **TV-05 Clues** | Speaker spotlight, order strip, timer | One clue each. **Who sounds off?** | Un indice chacun. **Qui sonne faux ?** | تلميح لكل واحد… **مين كلامو غريب؟** | Captioned |
-| 4 | **TV-06 Voting** | Vote grid with "voted" checks, countdown | **Vote** from the couch | **Votez** depuis le canapé | **صوّتوا** من عالكنبة | Captioned |
-| 5 | **TV-09 Elimination reveal** | OUT stamp, "…the Mole! Nice catch." | — | — | — | **Unaltered** (satisfies TV-G4) |
-| 6 | **TV-10 Blank guess** | "The Blank gets one guess" | Caught? The Blank gets **one last guess** | Démasqué ? Le Blanc a **une dernière chance** | انكشف؟ الفاضي إلو **فرصة أخيرة** | Captioned |
-| 7 | **TV-11 Results** | Both words, scoreboard with trophy, "Play again" | **Play again.** Scores carry over. | **Rejouez.** Les scores continuent. | **العبوا كمان مرّة**… والنقاط محفوظة | Captioned |
-| 8 | **TV-02 Lobby in Arabic** (EN/FR listings) / **TV-02 Lobby in English** (AR listing) | The full UI in the other script, RTL mirrored | — | — | — | **Unaltered** (shows the 3-language support) |
+## 5. TV screenshots (D5) — the one plan: `frames.tsv`
 
-A/B candidate for screenshot slot 1 (graphics experiment, LISTING.md §5): swap #1 and #5 (big reveal first vs "scan to join" first).
+`frames.tsv` is the **only** source (24 rows: 8 slots × EN/FR/AR). Story order: hook → how you join → privacy of the word → play loop → drama (unaltered) → twist → replay. Play on phones shows shots 1–3 without scrolling, the TV store shows 1–2.
 
-## 5. File naming and delivery
+| # | Screen (DESIGN ID) | Type | EN headline (*magenta*) | FR | AR |
+|---|---|---|---|---|---|
+| 1 | TV-05 Clues + 2 × PH-04 held (two different words) | composite | Everyone gets a secret word. *One is different.* | Chacun reçoit un mot secret. *Un seul est différent.* | كل واحد إلو كلمة سرّية… *وحدة مختلفة.* |
+| 2 | TV-02 Lobby, 6 players, QR | captioned | Scan the code. *Your phone is the controller.* | Scannez le code. *Votre téléphone sert de manette.* | امسحوا الكود… *وتلفونك هو الجويستيك.* |
+| 3 | TV-04 Role reveal + PH-04 hidden + held | composite | Your word stays *on your phone.* | Votre mot reste *sur votre téléphone.* | كلمتك بتضلّ *عتلفونك.* |
+| 4 | TV-05 Clues, speaker spotlight | captioned | One clue each. *Who sounds off?* | Un indice chacun. *Qui sonne faux ?* | تلميح لكل واحد… *مين كلامو غريب؟* |
+| 5 | TV-07 Vote reveal (arrows) | captioned | *Vote* from the couch. | *Votez* depuis le canapé. | *صوّتوا* من عالكنبة. |
+| 6 | TV-09 Elimination, OUT | **unaltered** (TV-G4) | — | — | — (Arabic-UI capture) |
+| 7 | TV-10 Blank guess | captioned | Caught? The Blank gets *one last guess.* | Démasqué ? Le Blanc a *une dernière chance.* | انكشف؟ الفاضي إلو *فرصة أخيرة.* |
+| 8 | TV-11 Results scoreboard | captioned | *Play again.* Scores carry over. | *Rejouez.* Les scores continuent. | *العبوا كمان مرّة…* والنقاط محفوظة. |
 
-Put finished files in `/home/alex/mishana-marketing/play-store/graphics/` (the folder exists):
-```
-icon-512.png                      32-bit PNG
-feature-1024x500-en.png  -fr.png  -ar.png      24-bit PNG (flatten alpha)
-tv-banner-1280x720-en.png  -ar.png             24-bit PNG (flatten alpha)
-tv-01-lobby-en.png … tv-08-…-en.png            (and -fr, -ar)
-```
-Flatten alpha for every non-icon asset: `convert in.png -background '#120A1F' -alpha remove -alpha off out.png` (ImageMagick) — Play rejects alpha in the feature graphic, banner and screenshots.
+**Frame** (`src/frame.html`, params `img`, `h`, `lang`, optional `p1`/`p2`/`ph`): 1920 × 1080 palette-B stage; capture scaled to **1600 × 900 at x 160, y 160**, radius 24, 2 px `#6B54A0` outline; headline Cairo 900 **68 px** centred in the top 160 px band (`text-wrap: balance`, two lines max), key words in `#FF4F9A`; bubble mark at the start edge. `lang=ar` sets `dir=rtl` (bubble and phones swap sides). No subline: under the 48 px minimum there is no room for one, so the review's sublines were dropped. Composites put two real phone captures (230 × 498, ±5°) at the lower end corner, below the TV's headline row. Unaltered shots are the raw capture re-encoded, nothing else.
 
-Quick check before upload:
+**Captures (D4, blocked on the owner's TV):** release build pointed at production, on the Google TV (1080p) or a 1080p emulator: `adb exec-out screencap -p > graphics/raw/<lang>/<name>.png`, named as in the `raw`/`phone1`/`phone2` columns (phones: 390 × 844 css at 2× from a real phone/browser). EN and FR need their own TV language; AR uses the Arabic UI for every shot. Use a 5–6 player test room with natural names.
+
+**Placeholders (now):** until `graphics/raw/` exists, the browser-TV captures listed in the `placeholder_*` columns (design-v3 shot pack) are used. Those outputs are named `*-placeholder.jpg` and carry an amber "PLACEHOLDER · browser capture" stamp (except the unaltered slot 6, marked by its name only). **Never upload a placeholder.** Rendering again after the raw captures land writes the final `*.png` files; then delete `screenshots/*-placeholder.jpg`.
+
+A/B candidate (LISTING.md §5 #3): shot 1 (word hook) vs shot 2 first (scan to join).
+
+## 6. Render and check
+
 ```sh
-for f in graphics/*.png; do python3 -c "from PIL import Image; im=Image.open('$f'); print('$f', im.size, im.mode)"; done
-# expect: icon RGBA 512x512; everything else RGB; banner 1280x720; feature 1024x500; screenshots 1920x1080
+# icon, feature graphics, TV banners
+node growth/marketing/play-store/src/render.mjs icon feature banner
+# screenshots (finals from graphics/raw/; placeholders from the design-v3 shot pack while raw/ is missing)
+node growth/marketing/play-store/src/render.mjs shots --placeholder-root=<path to design-v3/shots>
+# after changing icon/banner geometry: regenerate the vectors (Android res + assets/brand) and copy into src/brand/
+python3 assets/brand/scripts/gen_brand.py
+cp assets/brand/icon.svg growth/marketing/play-store/src/brand/icon.svg
+cp assets/brand/icon-bubble.svg growth/marketing/play-store/src/brand/bubble.svg
+cp assets/brand/banner-en.svg assets/brand/banner-ar.svg growth/marketing/play-store/src/brand/
+```
+`render.mjs` flattens every non-icon PNG to 24-bit RGB and writes the icon as 32-bit RGBA. Quick check:
+```sh
+cd growth/marketing/play-store/graphics
+python3 -c "from PIL import Image; import glob; [print(f, Image.open(f).size, Image.open(f).mode) for f in sorted(glob.glob('*.png')+glob.glob('screenshots/*'))]"
+# expect: icon-512 RGBA 512x512; feature 1024x500 RGB; banner 1280x720 RGB; screenshots 1920x1080 RGB
 ```

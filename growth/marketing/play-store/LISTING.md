@@ -14,6 +14,7 @@ Character counts are Unicode code points (what Play Console counts). Limits: tit
 | "Nothing to install on phones", "Android phones and iPhones" | Phones join through the browser page served by the Worker (`README.md:3`, `server/wrangler.jsonc` `assets`); the web client is plain web (Preact), iOS Safari is a supported target (`docs/PLAN.md:136`) |
 | "Your word never appears on the TV while you play" | Words never reach the TV projection; they are sent to the TV only in RESULTS (`docs/PLAN.md:97-101`, CI leak test `docs/PLAN.md:109`). Hence "while you play" |
 | "Rooms and nicknames are deleted automatically" | Alarm deletes all room storage on expiry (`server/src/room-core.ts:284-287`, `server/src/room-store.ts:70-71`; TTLs `shared/src/constants.ts:21-23`) |
+| **First 4 lines of every full description** = mechanic, "nothing to install on phones", facts, then "On your phone? Tap the arrow next to Install and choose your TV." (design-v3 D6) | Play shows only the first lines before "About this game ›", to TV and phone visitors alike. They now sell the mechanic and the no-app-on-phones promise; the slogan moves to line 6. Ad traffic lands on the listing on phones, where a TV-only app reads "not compatible": the 4th line tells them to pick their TV from the Install drop-down. It is an instruction, not a "Download now"-style call to action (those are banned in graphics and the title; [answer/9866151](https://support.google.com/googleplay/android-developer/answer/9866151)) |
 | Exclamation marks | Kept to the brand name and two hooks; body copy is plain, per the copywriting brief |
 | Keywords targeted (natural use, no stuffing) | party game, game night, TV game / game for TV, friends, family, word game, bluffing, who's the spy, secret word, phones as controllers, Android TV, Google TV, Lebanese, Arabic. FR: jeu d'ambiance, soirée jeux, jeu de mots, qui est l'espion, manette. AR: لعبة سهرات، لعبة جماعية، الكلمة السرّية، مين الجاسوس، العائلة |
 
@@ -30,8 +31,13 @@ Mish Ana! Party Game for TV
 Find who's lying! A secret-word party game for TV. Phones are the controllers.
 ```
 
-### Full description — 2521/4000
+### Full description — 2899/4000
 ```
+Everyone gets a secret word on their phone. One player's word is different. Give one clue each, vote, and find the liar on the big screen.
+Install it on your TV. Friends join by scanning the QR code: nothing to install on phones, iPhone or Android.
+3–12 players · English, French & Arabic · no ads, no accounts.
+On your phone? Tap the arrow next to Install and choose your TV.
+
 Everyone's innocent. Someone's lying.
 
 Mish Ana! (Lebanese for "Not me!") is the secret-word party game for Android TV and Google TV: a word game, a bluffing game and a "who's the spy?" game in one. Everyone gets a secret word on their phone, and almost everyone has the same one. The Mole has a slightly different word. The Blank has no word at all and has to bluff. Take turns giving one clue each, listen closely, and vote out whoever sounds off.
@@ -105,8 +111,13 @@ Mish Ana! Jeu d’ambiance TV
 Qui ment ? Le jeu d’ambiance du mot secret sur la télé, téléphone en main.
 ```
 
-### Full description — 2800/4000
+### Full description — 3213/4000
 ```
+Chacun reçoit un mot secret sur son téléphone. Un joueur a un mot différent. Un indice chacun, un vote, et démasquez le menteur sur grand écran.
+Installez-le sur la télé. Vos amis scannent le QR code : rien à installer sur les téléphones, iPhone ou Android.
+3 à 12 joueurs · français, anglais et arabe · sans pub, sans compte.
+Sur votre téléphone ? Touchez la flèche à côté d’Installer et choisissez votre télé.
+
 Tout le monde est innocent. Quelqu’un ment.
 
 Mish Ana! (« Pas moi ! » en libanais) est le jeu d’ambiance du mot secret pour Android TV et Google TV : un jeu de mots, de bluff et de « qui est l’espion ? » à la fois. Chaque joueur reçoit un mot secret sur son téléphone, et presque tout le monde a le même. La Taupe a un mot légèrement différent. Le Blanc n’a aucun mot et doit bluffer. Chacun donne un indice à son tour : écoutez bien, puis votez contre celui qui sonne faux.
@@ -180,11 +191,16 @@ Dites-nous ce qu’en pense votre groupe.
 مين عم يكذب؟ لعبة الكلمة السرّية للسهرات على التلفزيون، والهواتف للتحكم
 ```
 
-### Full description — 2251/4000
+### Full description — 2597/4000
 ```
+كل لاعب بتوصلو كلمة سرّية على تلفونو، وفي لاعب كلمتو مختلفة. تلميح لكل واحد، تصويت، واكشفوا الكذّاب على الشاشة الكبيرة.
+نزّلوها عالتلفزيون، والأصحاب بيفوتوا بمسح كود QR: ما في شي ينزّلوه عالتلفونات، آيفون أو أندرويد.
+من 3 لـ12 لاعب · عربي وإنجليزي وفرنسي · بلا إعلانات وبلا حسابات.
+عم تشوفها عالتلفون؟ اكبس عالسهم حدّ «تثبيت» واختار التلفزيون.
+
 كلّنا أبرياء… بس في حدا عم يكذب.
 
-«مش أنا!» هي لعبة الكلمة السرّية للسهرات على Android TV وGoogle TV: لعبة كلمات وخداع و«مين الجاسوس؟» بنفس الوقت. كل لاعب يحصل على كلمة سرّية على هاتفه، ومعظم اللاعبين لديهم الكلمة نفسها. «الجاسوس» لديه كلمة مختلفة قليلًا، و«الفاضي» ليس لديه أي كلمة وعليه أن يخدع الجميع. كل لاعب يقول تلميحًا واحدًا بدوره: ركّزوا جيدًا، ثم صوّتوا لإخراج من يبدو كلامه غريبًا.
+«مش أنا!» هي لعبة الكلمة السرّية للسهرات على Android TV و Google TV: لعبة كلمات وخداع و«مين الجاسوس؟» بنفس الوقت. كل لاعب يحصل على كلمة سرّية على هاتفه، ومعظم اللاعبين لديهم الكلمة نفسها. «الجاسوس» لديه كلمة مختلفة قليلًا، و«الفاضي» ليس لديه أي كلمة وعليه أن يخدع الجميع. كل لاعب يقول تلميحًا واحدًا بدوره: ركّزوا جيدًا، ثم صوّتوا لإخراج من يبدو كلامه غريبًا.
 
 السرّ عالتلفون… والدراما عالتلفزيون.
 
@@ -317,5 +333,8 @@ Play Console → **Grow users → Store presence → Store settings**.
 | Default language | English (United States) – en-US | Add translations: French (France) – fr-FR, Arabic – ar. Optionally en-GB and fr-CA by copying the same text |
 
 ### Store listing graphics per language
-- **EN/FR**: same images (Latin wordmark banner `drawable/banner.xml` look).
-- **AR**: upload Arabic-UI screenshots and the Arabic banner/feature graphic in the `ar` listing (Play Console → Main store listing → Manage translations → Arabic → "Add own graphics"). Otherwise Arabic users see English screenshots. See GRAPHICS-SPEC.md.
+Files in `graphics/` (spec and render command: GRAPHICS-SPEC.md). Upload per listing (Play Console → Main store listing → Manage translations → language → "Add own graphics"):
+- **en-US**: `icon-512.png`, `feature-1024x500-en.png`, `tv-banner-1280x720-en.png`, `screenshots/tv-0[1-8]-*-en.png`.
+- **fr-FR**: same icon, `feature-1024x500-fr.png`, `tv-banner-1280x720-fr.png` (Latin name, same art as EN), `screenshots/tv-0[1-8]-*-fr.png`.
+- **ar**: same icon, `feature-1024x500-ar.png`, `tv-banner-1280x720-ar.png`, `screenshots/tv-0[1-8]-*-ar.png` (Arabic-UI captures). Otherwise Arabic users see English graphics.
+- `*-placeholder.jpg` screenshots are browser-TV stand-ins: **never upload them** (D4: the real ones come from the native TV app).

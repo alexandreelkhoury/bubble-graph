@@ -1,7 +1,28 @@
-# raw capture (relative to graphics/)	output name	headline (*word* = magenta)	subline
-raw/en/pick-1-lobby.png	01-your-tv-is-the-stage	Your TV is *the stage*	Everyone joins with their phone. No app to install.
-raw/en/pick-2-role-reveal.png	02-phones-are-the-controllers	Phones are *the controllers*	Your secret word appears only on your screen.
-raw/en/pick-3-clues.png	03-one-word-is-different	One word is *different*	Give a clue. Don't give yourself away.
-raw/en/pick-4-voting.png	04-vote-out-the-mole	Vote out *the Mole*	Who's bluffing? The whole room decides.
-raw/en/pick-5-elimination.png	05-every-reveal-a-gasp	Every reveal, *a gasp*	Civilian, Mole or Blank — the TV tells all.
-raw/en/pick-6-results.png	06-play-again	Play again. *And again.*	3 to 12 players. Rounds take minutes.
+# The ONE Play TV screenshot plan (design-v3 D5). Source of truth for render.mjs; GRAPHICS-SPEC.md §4 explains it.
+# raw/phone paths are relative to graphics/ (native TV captures, D4). placeholder_* = browser-TV captures relative to --placeholder-root
+# (used only while raw/ is missing; the output then gets a -placeholder suffix and a visible stamp). headline: *word* = magenta.
+slot	lang	type	screen	raw	phone1	phone2	headline	output	placeholder_raw	placeholder_phone1	placeholder_phone2
+1	en	composite	TV-05 Clues + PH-04 held x2 (different words)	raw/en/tv-05-clues.png	raw/en/ph-04-held-civilian.png	raw/en/ph-04-held-mole.png	Everyone gets a secret word. *One is different.*	tv-01-secret-word-en	tv/tv-05-clues-mid.png	phone/ph-04-reveal-held-civilian.png	phone/ph-04-reveal-held-mole.png
+2	en	captioned	TV-02 Lobby, 6 players, QR	raw/en/tv-02-lobby.png			Scan the code. *Your phone is the controller.*	tv-02-scan-to-join-en	tv/tv-02-lobby-6-players.png		
+3	en	composite	TV-04 Role reveal + PH-04 hidden/held	raw/en/tv-04-role-reveal.png	raw/en/ph-04-hidden.png	raw/en/ph-04-held-civilian.png	Your word stays *on your phone.*	tv-03-word-on-phone-en	tv/tv-04-role-reveal-3-of-6-ready.png	phone/ph-04-reveal-hidden.png	phone/ph-04-reveal-held-civilian.png
+4	en	captioned	TV-05 Clues, speaker spotlight	raw/en/tv-05-clues-spotlight.png			One clue each. *Who sounds off?*	tv-04-clues-en	tv/tv-05-clues-round1.png		
+5	en	captioned	TV-07 Vote reveal (arrows)	raw/en/tv-07-vote-reveal.png			*Vote* from the couch.	tv-05-vote-en	tv/tv-07-vote-reveal.png		
+6	en	unaltered	TV-09 Elimination, OUT (TV-G4)	raw/en/tv-09-elimination.png				tv-06-elimination-en	tv/tv-09-elimination-mole.png		
+7	en	captioned	TV-10 Blank guess	raw/en/tv-10-blank-guess.png			Caught? The Blank gets *one last guess.*	tv-07-blank-guess-en	tv/tv-10-blank-guess.png		
+8	en	captioned	TV-11 Results scoreboard	raw/en/tv-11-results.png			*Play again.* Scores carry over.	tv-08-play-again-en	tv/tv-11-results-scoreboard.png		
+1	fr	composite	TV-05 Clues + PH-04 held x2 (different words)	raw/fr/tv-05-clues.png	raw/fr/ph-04-held-civilian.png	raw/fr/ph-04-held-mole.png	Chacun reçoit un mot secret. *Un seul est différent.*	tv-01-secret-word-fr	tv/tv-05-clues-mid.png	phone/ph-04-reveal-held-civilian.png	phone/ph-04-reveal-held-mole.png
+2	fr	captioned	TV-02 Lobby, 6 players, QR	raw/fr/tv-02-lobby.png			Scannez le code. *Votre téléphone sert de manette.*	tv-02-scan-to-join-fr	tv/tv-02-lobby-4-players-fr.png		
+3	fr	composite	TV-04 Role reveal + PH-04 hidden/held	raw/fr/tv-04-role-reveal.png	raw/fr/ph-04-hidden.png	raw/fr/ph-04-held-civilian.png	Votre mot reste *sur votre téléphone.*	tv-03-word-on-phone-fr	tv/tv-04-role-reveal-3-of-6-ready.png	phone/ph-04-reveal-hidden.png	phone/ph-04-reveal-held-civilian.png
+4	fr	captioned	TV-05 Clues, speaker spotlight	raw/fr/tv-05-clues-spotlight.png			Un indice chacun. *Qui sonne faux ?*	tv-04-clues-fr	tv/tv-05-clues-round1.png		
+5	fr	captioned	TV-07 Vote reveal (arrows)	raw/fr/tv-07-vote-reveal.png			*Votez* depuis le canapé.	tv-05-vote-fr	tv/tv-07-vote-reveal.png		
+6	fr	unaltered	TV-09 Elimination, OUT (TV-G4)	raw/fr/tv-09-elimination.png				tv-06-elimination-fr	tv/tv-09-elimination-mole.png		
+7	fr	captioned	TV-10 Blank guess	raw/fr/tv-10-blank-guess.png			Démasqué ? Le Blanc a *une dernière chance.*	tv-07-blank-guess-fr	tv/tv-10-blank-guess.png		
+8	fr	captioned	TV-11 Results scoreboard	raw/fr/tv-11-results.png			*Rejouez.* Les scores continuent.	tv-08-play-again-fr	tv/tv-11-results-scoreboard.png		
+1	ar	composite	TV-05 Clues + PH-04 held x2 (different words)	raw/ar/tv-05-clues.png	raw/ar/ph-04-held-civilian.png	raw/ar/ph-04-held-mole.png	كل واحد إلو كلمة سرّية… *وحدة مختلفة.*	tv-01-secret-word-ar	tv/e2e-ar-tv-05-clues.png	phone/e2e-ar-phone-04-reveal-held.png	phone/e2e-ar-phone-04-reveal-hidden.png
+2	ar	captioned	TV-02 Lobby, 6 players, QR	raw/ar/tv-02-lobby.png			امسحوا الكود… *وتلفونك هو الجويستيك.*	tv-02-scan-to-join-ar	tv/tv-02-lobby-6-players-ar.png		
+3	ar	composite	TV-04 Role reveal + PH-04 hidden/held	raw/ar/tv-04-role-reveal.png	raw/ar/ph-04-hidden.png	raw/ar/ph-04-held-civilian.png	كلمتك بتضلّ *عتلفونك.*	tv-03-word-on-phone-ar	tv/e2e-ar-tv-04-role-reveal.png	phone/e2e-ar-phone-04-reveal-hidden.png	phone/e2e-ar-phone-04-reveal-held.png
+4	ar	captioned	TV-05 Clues, speaker spotlight	raw/ar/tv-05-clues-spotlight.png			تلميح لكل واحد… *مين كلامو غريب؟*	tv-04-clues-ar	tv/e2e-ar-tv-05-clues.png		
+5	ar	captioned	TV-07 Vote reveal (arrows)	raw/ar/tv-07-vote-reveal.png			*صوّتوا* من عالكنبة.	tv-05-vote-ar	tv/e2e-ar-tv-07-vote-reveal.png		
+6	ar	unaltered	TV-09 Elimination, OUT (TV-G4)	raw/ar/tv-09-elimination.png				tv-06-elimination-ar	tv/e2e-ar-tv-09-elimination.png		
+7	ar	captioned	TV-10 Blank guess	raw/ar/tv-10-blank-guess.png			انكشف؟ الفاضي إلو *فرصة أخيرة.*	tv-07-blank-guess-ar	tv/e2e-ar-tv-10-guess.png		
+8	ar	captioned	TV-11 Results scoreboard	raw/ar/tv-11-results.png			*العبوا كمان مرّة…* والنقاط محفوظة.	tv-08-play-again-ar	tv/e2e-ar-tv-11-results.png		

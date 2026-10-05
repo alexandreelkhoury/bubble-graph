@@ -32,7 +32,7 @@ So the public Google TV launch is **about 3–6 weeks away** at best. The App co
 | **B2** | **The TV app has never run as a release build on a device** (README M3: "Code complete, not device-tested") | R8 minification + resource shrinking (`build.gradle.kts:33-38`) can break serialization/Compose at runtime; TV-G3 "works as described". The TV review tests D-pad only, Back→Home (TV-DB), no clipping (TV-OV) | Run the remote-only walkthrough in `docs/TV.md` "Remote-only checks" on a Google TV emulator **and** a real TV using the **signed release bundle** (step 5.6) against `https://play.mishana.workers.dev` |
 | **B3** | **No signing config** in `tv-app/app/build.gradle.kts` | `bundleRelease` produces an unsigned bundle; Play rejects it | Add the snippet in step 5.3 |
 | **B4** | Privacy policy not online | Required for every app, and the Worker's `/privacy` returns the phone app shell (HTTP 200, not a policy) | Publish PRIVACY-POLICY.md on the landing page `{{WEBSITE_URL}}/privacy` |
-| **B5** | Store graphics not produced | Icon 512, feature graphic 1024×500, **TV banner 1280×720**, ≥ 1 TV screenshot are mandatory | GRAPHICS-SPEC.md |
+| **B5** | TV screenshots not produced (icon, feature graphics and TV banners EN/FR/AR are ready in `graphics/`; screenshots are browser-TV placeholders) | ≥ 1 unaltered TV screenshot is mandatory (TV-G4); capture on the TV (design-v3 D4), then re-render | GRAPHICS-SPEC.md §5 |
 | B6 | Workers invocation logs decision | Keeps the privacy policy exact | DATA-SAFETY.md §0 "Uncertain item" |
 | B7 | Trademark / name searches not done | `docs/RESEARCH.md:115`: manual Play search + Lebanon MoET + WIPO (classes 9, 28, 41) before the listing | **YOU**, 1 hour: search Play for "Mish Ana"; WIPO Global Brand Database `https://branddb.wipo.int` |
 | B8 | AR packs are `status: "draft"` (`word-packs/packs/ar/*.json`) | Quality, not policy | Owner review (PLAN §8 Q7) |
@@ -80,7 +80,7 @@ Open **Policy → App content** (`https://play.google.com/console/u/0/developers
 ## Step 3 — Store presence (**YOU**, ~45 min once graphics exist)
 
 3.1 **Grow users → Store presence → Store settings**: Category **Game › Word** (alt: Casual), tags (LISTING.md §6), contact email `{{SUPPORT_EMAIL}}`, website `{{WEBSITE_URL}}` → Save.
-3.2 **Grow users → Store presence → Main store listing** (en-US): App name, Short description, Full description from **LISTING.md §1**; upload icon 512, feature graphic, phone screenshots only if Save demands them (GRAPHICS-SPEC.md §1), **Android TV banner 1280×720**, **Android TV screenshots** (8, GRAPHICS-SPEC.md §4); optional YouTube video URL → Save.
+3.2 **Grow users → Store presence → Main store listing** (en-US): App name, Short description, Full description from **LISTING.md §1**; upload icon 512, feature graphic, phone screenshots only if Save demands them (GRAPHICS-SPEC.md §1), **Android TV banner 1280×720**, **Android TV screenshots** (8, GRAPHICS-SPEC.md §5; never the `*-placeholder.jpg` files); optional YouTube video URL → Save.
 3.3 Same page → **Manage translations → Add your own translations** → French (France) – fr-FR and Arabic – ar → paste LISTING.md §2 and §3. For Arabic, open the translation → **Graphics → Add own graphics** → upload Arabic screenshots/banner/feature graphic → Save.
 
 ## Step 4 — Opt in to Android TV (**YOU**, do it now, before any release)

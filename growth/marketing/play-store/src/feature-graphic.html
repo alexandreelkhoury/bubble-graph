@@ -1,19 +1,82 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Feature Graphic</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Feature Graphic</title>
 <link rel="stylesheet" href="brand.css">
 <style>
-/* 1024x500. Content kept inside ~80px side / 60px top-bottom margins; the centre (Play's play-button overlay,
-   ~ 512,250) sits in the gap between wordmark and tagline. */
-.stage { width: 1024px; height: 500px; }
-.wm { position: absolute; left: 50%; top: 66px; transform: translateX(-50%); width: 760px; }
-.dots { position: absolute; left: 50%; top: 236px; transform: translateX(-50%); display: flex; gap: 22px; opacity: .9; }
-.dots i { width: 14px; height: 14px; border-radius: 50%; display: block; }
-.tag { position: absolute; left: 0; right: 0; top: 318px; text-align: center; font-weight: 900; font-size: 46px; letter-spacing: -.5px; line-height: 1.1; }
-.tag em { font-style: normal; color: var(--amber); }
-.sub { position: absolute; left: 0; right: 0; top: 380px; text-align: center; font-weight: 700; font-size: 25px; color: rgba(255,247,236,.72); }
+/* 1024x500, ?lang=en|fr|ar (design-v3 D1, DECISIONS v2 #19). Text lives in one 310 px column at the start edge
+   (EN/FR x 48-358, AR mirrored x 666-976), outside Play's centre play-button zone (x 362-662, y 150-350).
+   Only artwork (TV + phones) crosses the centre. Everything stays >= 40 px from the edges. */
+.stage { width: 1024px; height: 500px;
+  background:
+    radial-gradient(60% 75% at 72% 0%, rgba(160,95,245,.62), transparent 70%),
+    radial-gradient(40% 60% at 100% 100%, rgba(255,201,77,.18), transparent 70%),
+    radial-gradient(45% 70% at 0% 100%, rgba(255,79,154,.22), transparent 70%),
+    linear-gradient(180deg, var(--bg-top) 0%, var(--bg-deep) 100%); }
+[dir="rtl"] .stage { background:
+    radial-gradient(60% 75% at 28% 0%, rgba(160,95,245,.62), transparent 70%),
+    radial-gradient(40% 60% at 0% 100%, rgba(255,201,77,.18), transparent 70%),
+    radial-gradient(45% 70% at 100% 100%, rgba(255,79,154,.22), transparent 70%),
+    linear-gradient(180deg, var(--bg-top) 0%, var(--bg-deep) 100%); }
+.cone { inset-inline-start: 470px; top: -30px; width: 560px; height: 440px; }
+.col { position: absolute; inset-inline-start: 48px; top: 0; width: 310px; height: 100%; }
+.wm { position: absolute; inset-inline-start: 0; top: 44px; display: flex; align-items: center; gap: 14px; font-weight: 900; font-size: 58px; letter-spacing: -.01em; line-height: 1; white-space: nowrap; }
+.wm img { width: 64px; height: 64px; border-radius: 15px; }
+.wm b { color: var(--magenta); }
+.tagl { position: absolute; inset-inline-start: 0; top: 176px; width: 310px; font-weight: 900; font-size: 68px; line-height: .98; letter-spacing: -.035em; }
+.tagl .lie { margin-top: 8px; }
+.foot { position: absolute; inset-inline-start: 0; top: 400px; width: 310px; line-height: 1.2; font-weight: 800; font-size: 24px; color: var(--muted); }
+.foot b { color: var(--amber); }
+[lang="ar"] .wm { font-size: 60px; gap: 16px; }
+[lang="ar"] .tagl { letter-spacing: 0; line-height: 1.2; font-size: 64px; top: 160px; width: 330px; }
+[lang="ar"] .foot { line-height: 1.35; font-size: 25px; top: 392px; }
+[lang="fr"] .foot { font-size: 22px; width: 330px; }
+.tv { inset-inline-start: 440px; top: 48px; width: 540px; height: 304px; }
+.tv__foot { inset-inline-start: 640px; width: 140px; top: 360px; }
+.ph { width: 128px; height: 258px; border-radius: 24px; padding: 7px; }
+.ph__scr { border-radius: 18px; font-size: 9px; }
+.ph__lbl { font-size: 11px; }
+.ph__card { font-size: 25px; }
+.ph1 { inset-inline-start: 700px; top: 222px; rotate: -7deg; }
+.ph2 { inset-inline-start: 852px; top: 206px; rotate: 6deg; }
+[dir="rtl"] .ph1 { rotate: 7deg; }
+[dir="rtl"] .ph2 { rotate: -6deg; }
+[lang="ar"] .ph__lbl { font-size: 12px; }
+[lang="ar"] .ph__card { font-size: 30px; letter-spacing: 0; }
 </style></head><body>
 <div class="stage grain">
-  <img class="wm" src="brand/wordmark-bilingual.svg" alt="Mish Ana!">
-  <div class="dots"><i style="background:#F0183A"></i><i style="background:#478CFF"></i><i style="background:#FFF04D"></i><i style="background:#1FA88A"></i><i style="background:#7A43FF"></i><i style="background:#FF7A1F"></i></div>
-  <div class="tag">Everyone’s innocent. <em>Someone’s lying.</em></div>
-  <div class="sub">The secret-word party game for your TV</div>
-</div></body></html>
+  <div class="cone"></div>
+  <div class="tv"><img id="tv" alt=""></div>
+  <div class="tv__foot"></div>
+  <div class="ph ph1"><div class="ph__scr">
+    <div class="ph__top"><span class="ph__code code"></span><span class="ph__me"><i style="background:var(--coral)"></i><span id="n1">Ava</span></span></div>
+    <p class="ph__lbl" id="l1"></p>
+    <div class="ph__card" style="background:var(--coral)" id="w1"></div>
+  </div></div>
+  <div class="ph ph2 ph--odd"><div class="ph__scr">
+    <div class="ph__top"><span class="ph__code code"></span><span class="ph__me"><i style="background:var(--azure)"></i><span id="n2">Ben</span></span></div>
+    <p class="ph__lbl" id="l2"></p>
+    <div class="ph__card" style="background:var(--azure)" id="w2"></div>
+  </div></div>
+  <div class="col">
+    <div class="wm"><img src="brand/icon.svg" alt=""><span id="name"></span></div>
+    <div class="tagl" id="tag"></div>
+    <div class="foot" id="foot"></div>
+  </div>
+</div>
+<script>
+const T = {
+  en: { name: "MISH ANA<b>!</b>", tag: "Someone's <span class=lie>lying.</span>", foot: "The secret-word party game <b>for your TV</b>",
+        lbl: "Your secret word", w1: "PIZZA", w2: "PASTA", n1: "Ava", n2: "Ben", tv: "img/tv-vote-reveal-en.png" },
+  fr: { name: "MISH ANA<b>!</b>", tag: "Quelqu’un <span class=lie>ment.</span>", foot: "Le jeu d’ambiance du mot secret <b>pour votre télé</b>",
+        lbl: "Ton mot secret", w1: "PIZZA", w2: "PÂTES", n1: "Léa", n2: "Hugo", tv: "img/tv-vote-reveal-en.png" },
+  ar: { name: "مش أنا<b>!</b>", tag: "في حدا عم<br><span class=lie>يكذب.</span>", foot: "لعبة الكلمة السرّية للسهرات <b>عالتلفزيون</b>",
+        lbl: "كلمتك السرّية", w1: "بيتزا", w2: "باستا", n1: "رامي", n2: "نور", tv: "img/tv-vote-reveal-ar.png", code: "EHSS" },
+};
+const lang = new URLSearchParams(location.search).get("lang") || "en";
+const t = T[lang];
+document.documentElement.lang = lang;
+document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+for (const k of ["name", "tag", "foot"]) document.getElementById(k).innerHTML = t[k];
+for (const k of ["n1", "n2", "w1", "w2"]) document.getElementById(k).textContent = t[k];
+document.getElementById("l1").textContent = document.getElementById("l2").textContent = t.lbl;
+document.getElementById("tv").src = t.tv;
+for (const el of document.querySelectorAll(".code")) el.textContent = t.code || "PAHS";
+</script></body></html>

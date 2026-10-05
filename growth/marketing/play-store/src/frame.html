@@ -1,31 +1,58 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Screenshot Frame</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Screenshot Frame</title>
 <link rel="stylesheet" href="brand.css">
 <style>
-/* 1920x1080 marketing screenshot: benefit headline + the real TV capture, framed like a screen.
-   Params: ?img=<path to raw 1920x1080 PNG>&h=<headline, *word* = magenta>&s=<optional subline> */
+/* 1920x1080 Play TV screenshot (design-v3 D5): one-line benefit headline + the real TV capture at 1600x900.
+   Params: ?img=<raw 1920x1080 TV capture>&h=<headline, *word* = magenta>&lang=en|fr|ar
+           [&p1=<phone capture>&p2=<phone capture>]  composite: two real phone captures in front of the TV
+           [&ph=1]  placeholder stamp (browser-TV capture, not the native app)
+   Layout: headline Cairo 900 68 px centred in the top band (y 0-160); capture x 160-1760, y 160-1060,
+   radius 24, 2 px outline. Text never goes under 48 px (GRAPHICS-SPEC §2), so there is no subline. */
 .stage { width: 1920px; height: 1080px; }
-.head { position: absolute; left: 0; right: 0; top: 54px; text-align: center; font-weight: 900; font-size: 84px; line-height: 1; letter-spacing: -1px; }
+.head { position: absolute; left: 160px; right: 160px; top: 0; height: 160px; display: flex; align-items: center; justify-content: center;
+  text-align: center; font-weight: 900; font-size: 68px; line-height: 1.02; letter-spacing: -.015em; text-wrap: balance; }
+[lang="ar"] .head { letter-spacing: 0; line-height: 1.15; }
+.head span { display: block; max-width: 1600px; }
 .head b { color: var(--magenta); font-weight: 900; }
-.sub { position: absolute; left: 0; right: 0; top: 150px; text-align: center; font-weight: 700; font-size: 34px; color: rgba(255,247,236,.7); }
-.screen { position: absolute; left: 50%; bottom: 52px; transform: translateX(-50%); width: 1376px; height: 774px; /* 16:9 */
-  border-radius: 22px; padding: 10px; background: #07040D;
-  box-shadow: 0 0 0 2px rgba(255,247,236,.08), 0 40px 120px rgba(0,0,0,.6), 0 0 160px rgba(255,61,139,.18); }
-.screen img { width: 100%; height: 100%; display: block; border-radius: 13px; }
-.bang { position: absolute; left: 70px; top: 52px; width: 64px; }
-.nosub .screen { bottom: 60px; width: 1440px; height: 810px; }
+.bang { position: absolute; inset-inline-start: 56px; top: 44px; width: 70px; }
+.screen { position: absolute; left: 160px; top: 160px; width: 1600px; height: 900px; border-radius: 24px; overflow: hidden;
+  box-shadow: 0 0 0 2px #6B54A0, 0 40px 120px rgba(0,0,0,.55), 0 0 160px rgba(255,79,154,.16); }
+.screen img { width: 100%; height: 100%; display: block; }
+.phone { position: absolute; width: 230px; height: 498px; border-radius: 36px; padding: 10px; background: #0B0614;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.16), 0 40px 80px -10px rgba(0,0,0,.85); }
+.phone img { width: 100%; height: 100%; display: block; border-radius: 27px; }
+.p1 { inset-inline-end: 280px; top: 556px; rotate: -5deg; }
+.p2 { inset-inline-end: 56px; top: 548px; rotate: 5deg; }
+[dir="rtl"] .p1 { rotate: 5deg; }
+[dir="rtl"] .p2 { rotate: -5deg; }
+.stamp { position: absolute; left: 50%; translate: -50% 0; bottom: 40px; z-index: 60; font: 800 22px/1 Cairo, sans-serif; letter-spacing: .08em;
+  color: var(--ink); background: var(--amber); padding: 8px 14px; border-radius: 8px; direction: ltr; }
 </style></head><body>
 <div class="stage grain" id="st">
   <img class="bang" src="brand/bubble.svg" alt="">
   <div class="head" id="h"></div>
-  <div class="sub" id="s"></div>
   <div class="screen"><img id="img" alt=""></div>
 </div>
 <script>
 const q = new URLSearchParams(location.search);
+const lang = q.get("lang") || "en";
+document.documentElement.lang = lang;
+document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
 const esc = (t) => t.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
-document.getElementById("h").innerHTML = esc(q.get("h") || "").replace(/\*(.+?)\*/g, "<b>$1</b>");
-const s = q.get("s") || "";
-document.getElementById("s").textContent = s;
-if (!s) document.getElementById("st").classList.add("nosub");
+document.getElementById("h").innerHTML = "<span>" + esc(q.get("h") || "").replace(/\*(.+?)\*/g, "<b>$1</b>") + "</span>";
 document.getElementById("img").src = q.get("img") || "";
+const st = document.getElementById("st");
+for (const k of ["p1", "p2"]) {
+  if (!q.get(k)) continue;
+  const d = document.createElement("div");
+  d.className = "phone " + k;
+  d.innerHTML = '<img alt="">';
+  d.firstChild.src = q.get(k);
+  st.appendChild(d);
+}
+if (q.get("ph")) {
+  const s = document.createElement("div");
+  s.className = "stamp";
+  s.textContent = "PLACEHOLDER · browser capture";
+  st.appendChild(s);
+}
 </script></body></html>
