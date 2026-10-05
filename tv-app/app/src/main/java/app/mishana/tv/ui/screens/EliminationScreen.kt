@@ -346,7 +346,11 @@ private fun EndCountdown(view: TvView, deadline: app.mishana.tv.protocol.Deadlin
                 Spacer(Modifier.size(MishSpace.s4))
                 TimerChip(deadline, clockOffsetMs, size = 48.dp, urgent = false)
             }
-            AfterElimination.OTHER -> TimerChip(deadline, clockOffsetMs, size = 48.dp, urgent = false)
+            AfterElimination.OTHER -> {
+                // A calm "Next in 4" (auto-advance, never red): the stage is still the celebration beat.
+                val secs by rememberSecondsLeft(deadline, clockOffsetMs)
+                Text(stringResource(R.string.elim__next_in, secs), style = type.body, color = MishColors.TextSecondary, textAlign = TextAlign.Center)
+            }
         }
     }
 }

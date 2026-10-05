@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -227,7 +228,16 @@ private fun culprits(view: TvView): List<PublicPlayer> =
 @Composable
 private fun winnerText(view: TvView, result: ResultView): String = when (result.winner) {
     Winner.CIVILIANS -> stringResource(R.string.winner__civilians)
-    Winner.INFILTRATORS -> stringResource(R.string.winner__infiltrators)
+    // Named by the roles the room met ("The Mole & the Blank win!", plural on the Mole count); the generic
+    // infiltrators line only when the counts are unknown.
+    Winner.INFILTRATORS -> view.roleCounts?.takeIf { it.undercover >= 1 }?.let { rc ->
+        val res = when (rc.blank) {
+            0 -> R.plurals.winner__moles
+            1 -> R.plurals.winner__moles_blank
+            else -> R.plurals.winner__moles_blanks
+        }
+        pluralStringResource(res, rc.undercover)
+    } ?: stringResource(R.string.winner__infiltrators)
     Winner.BLANK -> stringResource(R.string.winner__blank, isolate(view.player(result.winnerIds.firstOrNull())?.name.orEmpty()))
 }
 

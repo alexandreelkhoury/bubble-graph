@@ -186,6 +186,13 @@ fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
                                         color = MishColors.TextSecondary,
                                         textAlign = TextAlign.Center,
                                     )
+                                    // The host's override only works if the room hears the guess: ask for it out loud.
+                                    Text(
+                                        stringResource(R.string.guess__say_aloud, isolate(Names.ellipsize(guesser?.name.orEmpty(), 20))),
+                                        style = type.body,
+                                        color = MishColors.Text,
+                                        textAlign = TextAlign.Center,
+                                    )
                                     Spacer(Modifier.height(6.dp))
                                     Text(stringResource(R.string.guess__silence), style = type.caption, color = MishColors.TextMuted)
                                 }

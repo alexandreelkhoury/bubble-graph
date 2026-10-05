@@ -1,5 +1,9 @@
 package app.mishana.tv.ui.screens
 
+import app.mishana.tv.game.Names
+import app.mishana.tv.protocol.TieBreak
+import androidx.compose.ui.text.style.TextOverflow
+import app.mishana.tv.i18n.nameList
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -86,7 +90,14 @@ fun VotingScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit
             if (view.revote) {
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    stringResource(R.string.vote__revote_among),
+                    // Who is in the re-vote and what a second tie does (a surprise random pick felt like a bug).
+                    stringResource(
+                        R.string.vote__revote_between,
+                        nameList(candidates.map { Names.ellipsize(it.name, 16) }, or = true, fallbackSeparator = " ${stringResource(R.string.tie__vs)} "),
+                        stringResource(if (view.settings.tieBreak == TieBreak.RANDOM) R.string.settings__tie_break_random else R.string.settings__tie_break_none),
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     style = type.caption,
                     color = MishColors.Ink,
                     modifier = Modifier.background(MishColors.Accent, MishShapes.pill).padding(horizontal = 14.dp, vertical = 2.dp),
@@ -123,6 +134,13 @@ fun VotingScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit
     InitialFocus(pill)
 }
 
+/**
+ * Who is expected to vote: the server counts connected voters, so with every phone asleep it says 0 ("0/0 voted"
+ * next to a running timer looks broken); then it is the living players ("0/4 voted").
+ */
+internal fun expectedVoters(view: TvView): Int =
+    if (view.votesExpected > 0) view.votesExpected else view.players.count { it.alive && !it.left }
+
 /** "x / y voted" (rolling), or `vote.tenLeft` in the last 10 s. */
 @Composable
 private fun VoteProgress(view: TvView, clockOffsetMs: Long, modifier: Modifier) {
@@ -143,7 +161,7 @@ private fun VoteProgress(view: TvView, clockOffsetMs: Long, modifier: Modifier) 
             } else {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     Text(
-                        stringResource(R.string.vote__progress, cast.toString(), view.votesExpected.toString()),
+                        stringResource(R.string.vote__progress, cast.toString(), expectedVoters(view).toString()),
                         style = MishTheme.type.title,
                         color = MishColors.Text,
                     )

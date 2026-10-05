@@ -378,7 +378,8 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
             }
             // TV-13f
             AnimatedVisibility(phonesAsleep && !degraded, Modifier.align(Alignment.TopCenter), enter = fadeIn(), exit = fadeOut()) {
-                StatusBanner(stringResource(R.string.conn__phones_asleep), icon = MishIcons.Phone)
+                // With a timer running the game is not waiting: it says so (`conn.phonesAsleepTimer`).
+                StatusBanner(stringResource(if (view?.deadline != null) R.string.conn__phones_asleep_timer else R.string.conn__phones_asleep), icon = MishIcons.Phone)
             }
         }
     }

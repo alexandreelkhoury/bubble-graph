@@ -61,6 +61,7 @@ import androidx.tv.material3.Text
 import app.mishana.tv.R
 import app.mishana.tv.game.Names
 import app.mishana.tv.i18n.isolate
+import app.mishana.tv.i18n.nameList
 import app.mishana.tv.protocol.ClientIntent
 import app.mishana.tv.protocol.HostAdvance
 import app.mishana.tv.protocol.Phase
@@ -153,8 +154,12 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
                 )
             }
             Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (tie) TieBadge()
+                // During a tie-break the rule line says who tied and what happens next (the top bar already says
+                // TIE-BREAK, so no second badge).
+                if (tie) {
+                    val names = nameList(view.tieCandidates.mapNotNull { view.player(it)?.name?.let { n -> Names.ellipsize(n, 16) } })
+                    Text(stringResource(R.string.tie__persist, names), style = type.caption, color = MishColors.TextSecondary, textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                } else {
                     Text(stringResource(R.string.clues__rule), style = type.caption, color = MishColors.TextMuted)
                 }
                 val firstTurn = view.round == 1 && !tie && view.players.none { it.alive && it.spoke }
@@ -200,18 +205,6 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
     }
 
     InitialFocus(pill)
-}
-
-@Composable
-private fun TieBadge() {
-    Row(
-        Modifier
-            .background(MishColors.Accent, MishShapes.pill)
-            .padding(horizontal = 14.dp, vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(stringResource(R.string.phase__tie_break), style = MishTheme.type.caption, color = MishColors.Ink)
-    }
 }
 
 /** The current speaker: 160 dp avatar inside a 216 dp / 8 dp ring (scaled together by [ring]), seconds at the ring's top end, name in displayM. */
