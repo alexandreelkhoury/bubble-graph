@@ -380,6 +380,18 @@ h1:focus, h1:focus-visible { outline: none; }
 /* ------------------------------------------------------------------ lobby */
 .screen--lobby { gap: var(--space-5); }
 
+/* PH-03 how to play */
+.howto { padding-block: 0; }
+.howto__title { display: flex; align-items: center; justify-content: space-between; min-height: 52px; font: var(--type-ph-h2); cursor: pointer; list-style: none; }
+.howto__title::-webkit-details-marker { display: none; }
+.howto__chev { color: var(--color-text-muted); transition: transform var(--motion-fast); }
+.howto[open] .howto__chev { transform: rotate(90deg); }
+[dir="rtl"] .howto[open] .howto__chev { transform: scaleX(-1) rotate(90deg); }
+.howto__list { display: flex; flex-direction: column; gap: var(--space-3); padding-bottom: var(--space-4); }
+.howto__step { display: flex; align-items: center; gap: var(--space-3); }
+.howto__icon { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--color-elevated); color: var(--color-accent); }
+.howto__text { color: var(--color-text-secondary); text-wrap: pretty; }
+
 /* settings */
 .settings { display: flex; flex-direction: column; gap: var(--space-3); }
 .setsection { border-radius: var(--radius-md); background: var(--color-elevated); box-shadow: var(--inner-hi); }

@@ -3,6 +3,8 @@ import { useState } from "preact/hooks";
 import { MAX_PLAYERS } from "@mishana/shared/constants";
 import type { PlayerView, PublicPlayer } from "@mishana/shared/protocol";
 import { fmtNum, isolate, locale, LOCALE_NATIVE_NAME, t } from "../i18n/t";
+import type { MessageKey } from "../i18n/t";
+import { RoleEmblem } from "../components/Role";
 import { blockerText, packsLine, roleSummaryText } from "../lib/lobby";
 import { act } from "../state/session";
 import { tvBusyHint } from "../lib/premium";
@@ -22,6 +24,31 @@ export function settingsSummary(view: PlayerView): [string, string] {
     `${packsLine(s, view.availablePacks, locale.value)} · ${LOCALE_NATIVE_NAME[s.wordLocale]}`,
     `${roleSummaryText(view)} · ${t("settings.clueSeconds")} ${clue}`,
   ];
+}
+
+const HOWTO: { key: MessageKey; icon: string | null }[] = [
+  { key: "howto.step1", icon: "eye-off" }, { key: "howto.step2", icon: "speech" },
+  { key: "howto.step3", icon: "vote" }, { key: "howto.step4", icon: null },
+];
+
+/**
+ * The rules, in the one moment the whole group is idle and looking down (DESIGN TV-15 copy). Open before the first
+ * game, folded into a "How to play" disclosure from game 2 on.
+ */
+function HowTo({ open }: { open: boolean }) {
+  return (
+    <details class="card howto" open={open}>
+      <summary class="howto__title"><span>{t("howto.title")}</span><Icon name="chevron-forward" size={20} class="howto__chev" /></summary>
+      <ol class="howto__list">
+        {HOWTO.map((s, i) => (
+          <li key={s.key} class="howto__step">
+            <span class="howto__icon" aria-hidden="true">{s.icon ? <Icon name={s.icon} size={20} /> : <RoleEmblem role="BLANK" size={20} />}</span>
+            <span class="howto__text"><span class="sr-only">{fmtNum(i + 1)}. </span>{t(s.key)}</span>
+          </li>
+        ))}
+      </ol>
+    </details>
+  );
 }
 
 export function Lobby({ view }: { view: PlayerView }) {
@@ -103,6 +130,7 @@ export function Lobby({ view }: { view: PlayerView }) {
             <p>{line2}</p>
           </section>
         )}
+        <HowTo open={view.gameNumber === 0} />
         {(!wakeLockSupported() || wakeLockDenied.value) && <p class="hint hint--tip"><Icon name="phone" size={18} />{t("phone.keepScreenOn")}</p>}
       </main>
       <footer class="actionbar">
