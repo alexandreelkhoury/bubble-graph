@@ -1,5 +1,7 @@
 # Arabic native check — design v3 (Lebanese colloquial, gender-neutral, DESIGN.md §1.5)
 
+**Status: checked and approved by the owner (native Lebanese speaker) on 2026-10-06. No corrections. "12" stays in Western digits.**
+
 Please mark each line OK or write the correction. Product strings are live now on play.mishana.workers.dev.
 
 ## 1. Game (phone + TV) — 43 new/changed strings (`shared/i18n/ar.json`)
