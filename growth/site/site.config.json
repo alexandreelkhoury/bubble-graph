@@ -1,8 +1,8 @@
 {
   "_README": "Single source of site-wide settings. Change `origin` when the domain is bought, then run `node build.mjs` (output: dist/). Everything absolute (canonical, hreflang, sitemap, OG/Twitter, JSON-LD, robots.txt, llms.txt) is built from it.",
 
-  "_origin_note": "PLACEHOLDER DOMAIN – replace with the real one (no trailing slash), e.g. https://www.example.com",
-  "origin": "https://www.mishana.app",
+  "_origin_note": "workers.dev until a domain is bought (then change it here, add the custom domain in wrangler.jsonc and set workers_dev false)",
+  "origin": "https://www.mishana.workers.dev",
 
   "_playStoreLive_note": "Set to true the day the Google Play listing is public. It switches guide CTAs, llms.txt wording and adds the Play URL to structured data (sameAs / installUrl).",
   "playStoreLive": false,
@@ -10,8 +10,8 @@
   "browserUrl": "https://play.mishana.workers.dev/tv",
 
   "_placeholders_note": "Leave null to keep {{CONTACT_EMAIL}} / {{OWNER_NAME}} / {{CF_BEACON_TOKEN}} in the output; set a string to fill them in at build time.",
-  "contactEmail": null,
-  "ownerName": null,
+  "contactEmail": "alexkhoury@hotmail.com",
+  "ownerName": "Alexandre Elkhoury",
   "cfBeaconToken": null,
 
   "_sameAs_note": "Official profiles to add once they exist (YouTube channel, X, Product Hunt, AlternativeTo page…). Used in Organization/VideoGame JSON-LD and llms.txt.",

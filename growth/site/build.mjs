@@ -619,8 +619,8 @@ Allow: /
 
 Sitemap: ${abs('/sitemap.xml')}
 `);
-write('llms.txt', llms(false));
-write('llms-full.txt', llms(true));
+write('llms.txt', fillPlaceholders(llms(false)));
+write('llms-full.txt', fillPlaceholders(llms(true)));
 
 /* ------------------------------------------------------------------ CHECKS */
 let errors = 0;
