@@ -4,3 +4,4 @@ out/
 *.raw.mp4
 /tmp/
 .DS_Store
+public/ai/*.mp4

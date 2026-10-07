@@ -14,6 +14,7 @@ import * as M4 from './M4';
 import * as M5 from './M5';
 import * as M6 from './M6';
 import * as M7 from './M7';
+import * as MA_A_H1 from './MA_A_H1';
 
 type AdProps = {blur: number; guide: boolean};
 
@@ -37,10 +38,15 @@ const BrandChip: React.FC<{lang: Lang}> = ({lang}) => {
   );
 };
 
-type AdModule = {Body: React.FC; frames: number; hits: Hit[]; vo: VoLine[]};
+/**
+ * `Audio` (optional): a sound layer rendered OUTSIDE the motion blur (e.g. the AI clips' own dialogue, which would
+ * otherwise be mixed once per blur sample). `duck` (optional): windows (no src) where the music ducks like under VO,
+ * always on, e.g. the on-camera lines of the AI footage.
+ */
+type AdModule = {Body: React.FC; frames: number; hits: Hit[]; vo: VoLine[]; Audio?: React.FC; duck?: VoLine[]};
 
 /** An ad = its body (+ brand chip), then the shared end card on the next frame, one music bed under both. */
-const makeAd = ({Body, frames, hits, vo}: AdModule, lang: Lang, mode: EcMode) => {
+const makeAd = ({Body, frames, hits, vo, Audio, duck = []}: AdModule, lang: Lang, mode: EcMode) => {
   const total = frames + EC_FRAMES;
   const voLines = VO_ENABLED ? vo.filter((l) => l.src) : [];
   const Ad: React.FC<AdProps> = ({blur, guide}) => {
@@ -54,7 +60,8 @@ const makeAd = ({Body, frames, hits, vo}: AdModule, lang: Lang, mode: EcMode) =>
     return (
       <AbsoluteFill style={{overflow: 'hidden'}}>
         {blur > 1 ? <CameraMotionBlur samples={blur} shutterAngle={120}>{visual}</CameraMotionBlur> : visual}
-        <AdSound hits={[...hits, ...ecHits(frames, mode)]} duration={total} vo={voLines} />
+        <AdSound hits={[...hits, ...ecHits(frames, mode)]} duration={total} vo={[...voLines, ...duck]} />
+        {Audio ? <Sequence durationInFrames={frames} layout="none"><Audio /></Sequence> : null}
         <SafeGuide on={guide} />
       </AbsoluteFill>
     );
@@ -67,6 +74,8 @@ const mod = (m: {[k: string]: unknown}, n: string): AdModule => ({
   frames: m[`${n}_BODY_FRAMES`] as number,
   hits: (m[`${n}_HITS`] as Hit[]) ?? [],
   vo: (m[`${n}_VO`] as VoLine[]) ?? [],
+  Audio: m[`${n}Audio`] as React.FC | undefined,
+  duck: m[`${n}_DUCK`] as VoLine[] | undefined,
 });
 
 const ADS: Array<{id: string; m: AdModule; lang: Lang}> = [
@@ -77,6 +86,7 @@ const ADS: Array<{id: string; m: AdModule; lang: Lang}> = [
   {id: 'MA-D-M5-TONIGHT', m: mod(M5, 'M5'), lang: 'en'},
   {id: 'MA-F-M6-AR-FAMILY', m: mod(M6, 'M6'), lang: 'ar'},
   {id: 'MA-G-M7-TEAM-PARTY', m: mod(M7, 'M7'), lang: 'en'},
+  {id: 'MA-A-H1-IT-WAS-YOU', m: mod(MA_A_H1, 'MA_A_H1'), lang: 'en'},
 ];
 
 const EcOnly = (lang: Lang, mode: EcMode): React.FC<AdProps> => ({guide}) => (
