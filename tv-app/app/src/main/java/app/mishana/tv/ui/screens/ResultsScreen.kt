@@ -167,7 +167,7 @@ fun ResultsScreen(
                     label = "resultsStage",
                 ) { st ->
                     if (st == 1) {
-                        VictoryMoment(winnerTitle, result, culprits(view))
+                        VictoryMoment(winnerTitle, result, culprits(view), hadUndercover(view))
                     } else {
                         Summary(view, result, players, winnerTitle)
                     }
@@ -221,23 +221,26 @@ internal fun winnerColor(winner: Winner): Color = when (winner) {
     Winner.INFILTRATORS -> MishColors.Undercover
 }
 
-/** Who the Mole(s) and the Blank were, Moles first: the reveal everyone waited for (TV-11 stage 1). */
+/** Who the Mole(s) (BLANK) and the Undercover(s) were, Moles first: the reveal everyone waited for (TV-11 stage 1). */
 private fun culprits(view: TvView): List<PublicPlayer> =
-    view.players.filter { it.revealedRole == Role.UNDERCOVER } + view.players.filter { it.revealedRole == Role.BLANK }
+    view.players.filter { it.revealedRole == Role.BLANK } + view.players.filter { it.revealedRole == Role.UNDERCOVER }
+
+/** Rules v2: whether this game dealt an Undercover (unknown counts → true, the two-word layout). */
+private fun hadUndercover(view: TvView): Boolean = (view.roleCounts?.undercover ?: 1) > 0
 
 @Composable
 private fun winnerText(view: TvView, result: ResultView): String = when (result.winner) {
     Winner.CIVILIANS -> stringResource(R.string.winner__civilians)
-    // Named by the roles the room met ("The Mole & the Blank win!", plural on the Mole count); the generic
-    // infiltrators line only when the counts are unknown.
-    Winner.INFILTRATORS -> view.roleCounts?.takeIf { it.undercover >= 1 }?.let { rc ->
-        val res = when (rc.blank) {
-            0 -> R.plurals.winner__moles
-            1 -> R.plurals.winner__moles_blank
-            else -> R.plurals.winner__moles_blanks
+    // Rules v2: named by the one role the room met ("The Mole wins!", plural on the Mole (BLANK) count; "The
+    // Undercover wins!", plural on the Undercover count); a mixed game or unknown counts → the team line.
+    Winner.INFILTRATORS -> {
+        val rc = view.roleCounts
+        when {
+            rc != null && rc.undercover == 0 && rc.blank > 0 -> pluralStringResource(R.plurals.winner__moles, rc.blank)
+            rc != null && rc.blank == 0 && rc.undercover > 0 -> pluralStringResource(R.plurals.winner__undercovers, rc.undercover)
+            else -> stringResource(R.string.winner__infiltrators)
         }
-        pluralStringResource(res, rc.undercover)
-    } ?: stringResource(R.string.winner__infiltrators)
+    }
     Winner.BLANK -> stringResource(R.string.winner__blank, isolate(view.player(result.winnerIds.firstOrNull())?.name.orEmpty()))
 }
 
@@ -300,7 +303,7 @@ private fun MaskPeek() {
  * and the Blank were ("Ben was the Mole · Eli was the Blank").
  */
 @Composable
-private fun VictoryMoment(title: String, result: ResultView, culprits: List<PublicPlayer>) {
+private fun VictoryMoment(title: String, result: ResultView, culprits: List<PublicPlayer>, showUndercoverWord: Boolean) {
     val type = MishTheme.type
     val reduce = MishTheme.reduceMotion
     val words = remember { Animatable(if (reduce) 1f else 0f) }
@@ -335,10 +338,13 @@ private fun VictoryMoment(title: String, result: ResultView, culprits: List<Publ
                 translationX = -(1f - words.value) * 500f
                 alpha = words.value
             })
-            WordCard(stringResource(R.string.results__undercover_word), result.undercoverWord, Role.UNDERCOVER, Modifier.graphicsLayer {
-                translationX = (1f - words.value) * 500f
-                alpha = words.value
-            })
+            // Rules v2: no Undercover this game → nobody held the second word, so only the Civilians' word shows.
+            if (showUndercoverWord) {
+                WordCard(stringResource(R.string.results__undercover_word), result.undercoverWord, Role.UNDERCOVER, Modifier.graphicsLayer {
+                    translationX = (1f - words.value) * 500f
+                    alpha = words.value
+                })
+            }
         }
         // The Blank who won is already named in the title; everyone else who was "not one of us" is named here.
         val shown = if (result.winner == Winner.BLANK) culprits.filter { it.revealedRole != Role.BLANK } else culprits
@@ -446,9 +452,11 @@ private fun Summary(view: TvView, result: ResultView, players: List<PublicPlayer
             verticalAlignment = Alignment.CenterVertically,
         ) {
             WordInline(stringResource(R.string.results__civilian_word), result.civilianWord, Role.CIVILIAN, Modifier.weight(1f))
-            Box(Modifier.width(2.dp).height(32.dp).background(MishColors.Outline))
-            Spacer(Modifier.width(20.dp))
-            WordInline(stringResource(R.string.results__undercover_word), result.undercoverWord, Role.UNDERCOVER, Modifier.weight(1f))
+            if (hadUndercover(view)) {
+                Box(Modifier.width(2.dp).height(32.dp).background(MishColors.Outline))
+                Spacer(Modifier.width(20.dp))
+                WordInline(stringResource(R.string.results__undercover_word), result.undercoverWord, Role.UNDERCOVER, Modifier.weight(1f))
+            }
         }
         Spacer(Modifier.height(MishSpace.s1))
         CaptionLine(view, result)

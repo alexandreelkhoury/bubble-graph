@@ -311,7 +311,7 @@ fun SettingsScreen(
                             style = type.body,
                             color = if (focusedRow?.helpIsError == true) MishColors.Danger else MishColors.TextSecondary,
                             modifier = Modifier.padding(horizontal = MishSpace.s5, vertical = 10.dp),
-                            maxLines = 3,
+                            maxLines = 4, // Roles: the preview + one line per role (rules v2)
                         )
                     }
                 }
@@ -422,51 +422,57 @@ private fun buildRows(
             RowModel("game.blankGuess", str(R.string.settings__blank_guess), onOff(s.blankGuess), step = { change(SettingsPatch(blankGuess = !s.blankGuess)) }),
         ) + if (pointsLocked) listOf(
             lockedRow("game.points.civilian", str(R.string.settings__points) + " · " + str(R.string.role__civilian)),
-            lockedRow("game.points.undercover", str(R.string.settings__points) + " · " + str(R.string.role__undercover)),
             lockedRow("game.points.blank", str(R.string.settings__points) + " · " + str(R.string.role__blank)),
+            lockedRow("game.points.undercover", str(R.string.settings__points) + " · " + str(R.string.role__undercover)),
         ) else listOf(
             RowModel(
                 "game.points.civilian", str(R.string.settings__points) + " · " + str(R.string.role__civilian), pointsText(s.points.civilian),
                 step = intStep(s.points.civilian, b.points) { SettingsPatch(points = s.points.copy(civilian = it)) },
             ),
             RowModel(
-                "game.points.undercover", str(R.string.settings__points) + " · " + str(R.string.role__undercover), pointsText(s.points.undercover),
-                step = intStep(s.points.undercover, b.points) { SettingsPatch(points = s.points.copy(undercover = it)) },
-            ),
-            RowModel(
                 "game.points.blank", str(R.string.settings__points) + " · " + str(R.string.role__blank), pointsText(s.points.blank),
                 step = intStep(s.points.blank, b.points) { SettingsPatch(points = s.points.copy(blank = it)) },
+            ),
+            RowModel(
+                "game.points.undercover", str(R.string.settings__points) + " · " + str(R.string.role__undercover), pointsText(s.points.undercover),
+                step = intStep(s.points.undercover, b.points) { SettingsPatch(points = s.points.copy(undercover = it)) },
             ),
         )
         SettingsCategory.Roles -> {
             val rc = view.roleCounts
             val n = view.players.count { !it.left }
             val preview = if (rc != null) {
-                str(R.string.settings__role_preview, rc.civilian + rc.undercover + rc.blank, rc.civilian.toString(), rc.undercover.toString(), rc.blank.toString())
+                str(R.string.settings__role_preview, rc.civilian + rc.undercover + rc.blank, rc.civilian.toString(), rc.blank.toString(), rc.undercover.toString())
             } else if (n >= Constants.MIN_PLAYERS) {
                 str(R.string.lobby__blocker_roles)
             } else {
                 null
             }
             val invalid = rc == null && n >= Constants.MIN_PLAYERS
+            // Rules v2: one line per role. The mode row shows the preview then both lines; a count row its own role's
+            // line then the preview. An invalid combination shows only the blocker.
+            val moleHelp = str(R.string.settings__blank_count_help)
+            val undercoverHelp = str(R.string.settings__undercover_count_help)
+            fun lines(vararg l: String?): String? = if (invalid) preview else l.filterNotNull().joinToString("\n").ifEmpty { null }
             val list = mutableListOf(
                 RowModel(
                     "roles.roleMode", str(R.string.settings__role_mode),
                     str(if (s.roleMode == RoleMode.AUTO) R.string.settings__role_mode_auto else R.string.settings__role_mode_custom),
-                    help = preview, helpIsError = invalid,
+                    help = lines(preview, moleHelp, undercoverHelp), helpIsError = invalid,
                     step = { d -> change(SettingsPatch(roleMode = SettingsStepper.cycle(RoleMode.entries, s.roleMode, d))) },
                 ),
             )
             if (s.roleMode == RoleMode.CUSTOM) {
-                list += RowModel(
-                    "roles.undercoverCount", str(R.string.settings__undercover_count), s.undercoverCount.toString(),
-                    help = preview, helpIsError = invalid,
-                    step = intStep(s.undercoverCount, b.undercoverCount) { SettingsPatch(undercoverCount = it) },
-                )
+                // The Mole (BLANK) is the default impostor, so its row comes first; the Undercover is optional.
                 list += RowModel(
                     "roles.blankCount", str(R.string.settings__blank_count), s.blankCount.toString(),
-                    help = preview, helpIsError = invalid,
+                    help = lines(moleHelp, preview), helpIsError = invalid,
                     step = intStep(s.blankCount, b.blankCount) { SettingsPatch(blankCount = it) },
+                )
+                list += RowModel(
+                    "roles.undercoverCount", str(R.string.settings__undercover_count), s.undercoverCount.toString(),
+                    help = lines(undercoverHelp, preview), helpIsError = invalid,
+                    step = intStep(s.undercoverCount, b.undercoverCount) { SettingsPatch(undercoverCount = it) },
                 )
             }
             list

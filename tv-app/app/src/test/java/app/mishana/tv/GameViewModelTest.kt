@@ -357,10 +357,10 @@ class GameViewModelTest {
         kind = "tv", roomCode = "KXRT", joinUrl = "https://mish-ana.example.workers.dev/KXRT", phase = phase,
         gameNumber = 0, round = round,
         settings = Settings(
-            winRule = WinRule.OFFICIAL, revealRoles = false, roleMode = RoleMode.AUTO, undercoverCount = 1, blankCount = 1,
+            winRule = WinRule.OFFICIAL, revealRoles = false, roleMode = RoleMode.AUTO, undercoverCount = 0, blankCount = 1,
             clueSeconds = 45, voteSeconds = 90, revealSeconds = 30, guessSeconds = 45, tieBreak = TieBreak.RANDOM,
             blankGuess = true, wordLocale = "en", packIds = emptyList(), difficulties = listOf(1, 2, 3),
-            familyFilter = true, swapSides = true, points = Points(2, 10, 6),
+            familyFilter = true, swapSides = true, points = Points(2, 10, 10),
         ),
         players = players, hostPlayerId = null, roleCounts = null, canStart = false, startBlocker = "NOT_ENOUGH_PLAYERS",
         speakingOrder = emptyList(), currentSpeakerId = null, revote = false, tieCandidates = emptyList(), deadline = null,

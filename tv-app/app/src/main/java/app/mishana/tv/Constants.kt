@@ -91,8 +91,8 @@ object Constants {
 
     /** `off: 0` means 0 is allowed and means "timer off". */
     val SETTINGS_BOUNDS = SettingsBounds(
-        undercoverCount = IntBounds(min = 1, max = 5, step = 1),
-        blankCount = IntBounds(min = 0, max = 2, step = 1),
+        undercoverCount = IntBounds(min = 0, max = 5, step = 1),
+        blankCount = IntBounds(min = 0, max = 5, step = 1),
         clueSeconds = IntBounds(min = 10, max = 120, step = 5, off = 0),
         voteSeconds = IntBounds(min = 15, max = 300, step = 15, off = 0),
         revealSeconds = IntBounds(min = 10, max = 120, step = 5, off = 0),

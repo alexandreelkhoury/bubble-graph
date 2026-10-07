@@ -57,7 +57,7 @@ fun RoleEmblem(role: Role, size: Dp, color: Color, modifier: Modifier = Modifier
     }
 }
 
-/** Card patterns: Mole = 45° stripes (6 dp, 12 % lighter); Blank = 4 dp dot grid (10 % darker); Civilian = solid. */
+/** Card patterns: Undercover = 45° stripes (6 dp, 12 % lighter); Mole (BLANK) = 4 dp dot grid (10 % darker); Civilian = solid. */
 @Composable
 fun RolePattern(role: Role, modifier: Modifier = Modifier) {
     Canvas(modifier) {

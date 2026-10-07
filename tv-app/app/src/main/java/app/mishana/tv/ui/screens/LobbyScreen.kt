@@ -424,7 +424,7 @@ private fun blockerText(view: TvView): String? = when (view.blocker) {
 
 /**
  * Top-end settings chips (DESIGN TV-02): [Premium room] [packs] [word language] [● 4 ● 1 ● 1] with role-colour dots
- * (the Blank's only when there is one). The win rule lives in Settings. The row flashes accent when the settings change.
+ * (Moles then Undercovers, each only when there is one). The win rule lives in Settings. The row flashes accent when the settings change.
  */
 @Composable
 private fun SettingsChips(view: TvView, premiumChip: Boolean, modifier: Modifier = Modifier) {
@@ -464,11 +464,11 @@ private fun SettingsChips(view: TvView, premiumChip: Boolean, modifier: Modifier
         SummaryChip { ChipText(stringResource(langNameRes(s.wordLocale))) }
         val rc = view.roleCounts
         if (rc != null) {
-            val a11y = stringResource(R.string.lobby__role_summary, rc.civilian.toString(), rc.undercover.toString(), rc.blank.toString())
+            val a11y = stringResource(R.string.lobby__role_summary, rc.civilian.toString(), rc.blank.toString(), rc.undercover.toString())
             SummaryChip(Modifier.semantics(mergeDescendants = true) { contentDescription = a11y }) {
                 RoleCount(MishColors.Civilian, rc.civilian)
-                RoleCount(MishColors.Undercover, rc.undercover, Modifier.padding(start = 10.dp))
                 if (rc.blank > 0) RoleCount(MishColors.Blank, rc.blank, Modifier.padding(start = 10.dp))
+                if (rc.undercover > 0) RoleCount(MishColors.Undercover, rc.undercover, Modifier.padding(start = 10.dp))
             }
         }
     }

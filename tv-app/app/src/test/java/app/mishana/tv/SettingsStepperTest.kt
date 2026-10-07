@@ -21,7 +21,9 @@ class SettingsStepperTest {
 
     @Test
     fun countsClampWithoutOff() {
-        assertEquals(1, SettingsStepper.stepInt(1, b.undercoverCount, -1))
+        assertEquals(0, SettingsStepper.stepInt(1, b.undercoverCount, -1)) // the Undercover is optional (rules v2)
+        assertEquals(0, SettingsStepper.stepInt(0, b.undercoverCount, -1))
+        assertEquals(5, SettingsStepper.stepInt(5, b.blankCount, +1))
         assertEquals(5, SettingsStepper.stepInt(5, b.undercoverCount, +1))
         assertEquals(0, SettingsStepper.stepInt(0, b.blankCount, -1))
         assertEquals(20, SettingsStepper.stepInt(20, b.points, +1))
