@@ -33,9 +33,9 @@
   try { CAPTIONS = JSON.parse((tvEl && tvEl.getAttribute('data-caps')) || '[]'); } catch (e) {}
 
   var EN = { // strings only used from JS (the rest of English is in the HTML)
-    capCiv: 'Most players got this word. One of them, the Mole, got a slightly different one and isn’t told.',
-    capMole: 'Psst – that’s the Mole’s word. In the game the Mole isn’t told, so they have to work it out from the clues.',
-    capBlank: 'The Blank gets no word, and knows it. Time to bluff.',
+    capCiv: 'Most players got this word. One of them is the Mole: no word at all, just a bluff.',
+    capMole: 'You’re the Mole: everyone else has a word, you don’t. Blend in with a vague clue, and if you’re caught, guess the word to steal the win.',
+    capUnder: 'Psst – that’s the Undercover’s word, an optional role: a slightly different word, and they aren’t told.',
     wordB: 'PASTA',
     pause: 'Pause video',
     play: 'Play video',
@@ -526,8 +526,9 @@
 
   /* ------------------------------------------------------------------
      DEAL DEMO – mirrors the phone's hold-to-peek card (PH-04).
-     The Mole's card looks exactly like everyone else's (roles aren't revealed by default);
-     only the caption under the phone tells the visitor. The Blank gets the blank face and IS told.
+     Rule change 2026-10-07: the Mole gets no word, only the "You're the Mole!" card (and knows it).
+     The optional Undercover's card looks exactly like everyone else's (a different word, not told);
+     only the caption under the phone tells the visitor.
      ------------------------------------------------------------------ */
   var deal = doc.querySelector('.deal');
   var cap = doc.getElementById('deal-cap');
@@ -537,16 +538,16 @@
   function renderDeal() {
     if (!deal) return;
     snapshot();
-    deal.querySelector('.deal__word').textContent = stripTags(t(role === 'mole' ? 'wordB' : 'wordA'));
-    if (role === 'blank') deal.setAttribute('data-blank', ''); else deal.removeAttribute('data-blank');
-    if (revealed) cap.textContent = t(role === 'civ' ? 'capCiv' : role === 'mole' ? 'capMole' : 'capBlank');
+    deal.querySelector('.deal__word').textContent = stripTags(t(role === 'under' ? 'wordB' : 'wordA'));
+    if (role === 'mole') deal.setAttribute('data-blank', ''); else deal.removeAttribute('data-blank');
+    if (revealed) cap.textContent = t(role === 'civ' ? 'capCiv' : role === 'mole' ? 'capMole' : 'capUnder');
     else cap.textContent = '';
   }
   function newDeal() {
     deals++;
-    // 1st deal: majority word, 2nd: the Mole's word, 3rd: Blank, then random (~1 in 4 Mole, 1 in 8 Blank)
+    // 1st deal: majority word, 2nd: the Mole card, 3rd: the (optional) Undercover's word, then random (~1 in 4 Mole, 1 in 8 Undercover)
     var r = Math.random();
-    role = deals === 1 ? 'civ' : deals === 2 ? 'mole' : deals === 3 ? 'blank' : r < 0.25 ? 'mole' : r < 0.375 ? 'blank' : 'civ';
+    role = deals === 1 ? 'civ' : deals === 2 ? 'mole' : deals === 3 ? 'under' : r < 0.25 ? 'mole' : r < 0.375 ? 'under' : 'civ';
     revealed = false; hide(); renderDeal();
   }
   function show() { clearTimeout(tapTimer); deal.dataset.state = 'shown'; }

@@ -237,6 +237,11 @@ main, .nav, .foot { position: relative; z-index: 1; }
 .wcard--lilac { background: var(--lilac); }
 :lang(ar) .phone__label, :lang(ar) .ph-code { letter-spacing: 0; }
 :lang(ar) .wcard__word { font-size: 5.4cqw; }
+/* the Mole's card (rule change 2026-10-07): mask icon + "YOU'RE THE MOLE!", no word */
+.wcard--mole { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.2cqw; }
+.wcard--mole svg { width: 11cqw; height: auto; }
+.wcard--mole .wcard__word { font-size: 3.1cqw; line-height: 1.05; overflow-wrap: normal; }
+:lang(ar) .wcard--mole .wcard__word { font-size: 3.4cqw; }
 /* the edit graphic is around the phones, never on them */
 .odd-tag { position: absolute; z-index: 3; inset-inline-start: 57cqw; top: 73cqw; margin: 0; display: inline-flex; align-items: center; gap: 5px; padding: 1px 9px 2px; border-radius: 8px; background: var(--amber); color: var(--ink);
   font-size: max(12px, 3.3cqw); font-weight: 900; line-height: 1.35; white-space: nowrap; rotate: 3deg; box-shadow: 0 8px 20px -6px rgba(0,0,0,.6); }
@@ -343,6 +348,7 @@ h3 { font-size: 1.375rem; line-height: 1.2; letter-spacing: -.01em; }
 .mini__back { background: var(--surface); background: linear-gradient(color-mix(in srgb, var(--pc) 22%, transparent), color-mix(in srgb, var(--pc) 22%, transparent)), var(--surface); box-shadow: 0 0 0 1px color-mix(in srgb, var(--pc) 45%, transparent) inset; animation: flipOut .5s var(--ease-out) both; }
 .mini__face { background: var(--pc); color: var(--ink); font-weight: 900; font-size: max(3.3cqw, 11px); line-height: 1; letter-spacing: -.01em; transform: rotateY(180deg); animation: flipIn .5s var(--ease-out) both; overflow-wrap: anywhere; text-align: center; padding: 2px; }
 .mini:nth-child(1) .mini__card > * { animation-delay: .35s; } .mini:nth-child(2) .mini__card > * { animation-delay: .65s; }
+.mini__face--mole { font-size: max(2.4cqw, 9px); line-height: 1.05; }
 .mini:nth-child(3) .mini__card > * { animation-delay: .95s; } .mini:nth-child(4) .mini__card > * { animation-delay: 1.25s; }
 @keyframes flipOut { from { transform: rotateY(0); } to { transform: rotateY(-180deg); } }
 @keyframes flipIn { from { transform: rotateY(180deg); } to { transform: rotateY(0); } }

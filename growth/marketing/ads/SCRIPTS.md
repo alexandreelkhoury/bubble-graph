@@ -1,5 +1,32 @@
 # Mish Ana! (مش أنا) — Paid Social Ad Scripts
 
+## Rule change 2026-10-07 (read first; overrides the game-accuracy and word-pair rules below)
+
+**New default rule.** Everyone gets the **same** secret word except **the Mole**. The Mole's phone shows a card that says **"YOU'RE THE MOLE!"** (FR « TU ES LA TAUPE ! », AR «دورك: الجاسوس!») and **no word**. The Mole **knows** they are the Mole, blends in with vague clues, and if voted out gets **one last guess** at the word to steal the win. **Optional** extra role, **the Undercover** (FR l'Infiltré, AR «المتخفّي»): gets a *different* word (PIZZA vs PASTA) and doesn't know it; groups can add Undercovers or mix both roles. The **Blank** role is gone (the Mole now has no word). Words are easy, everyday ones: moon, escalator, Paris, forest, pizza, coffee.
+
+**How every future ad shows it**
+- **The hook is the Mole card, not PIZZA/PASTA** (owner: "it's funnier"). Standard beat: 3 phones flip to PIZZA, the 4th flips to a big **"YOU'RE THE MOLE! 🕵️"** card.
+- **Filmed / Veo shots:** the Mole holds the phone close to the face, screen turned **only toward themselves and the lens behind their shoulder**, never toward the other players. Veo must not render readable text: frame the phone screen as a clean plate (or screen facing away) and **composite the real Mole card UI in post**.
+- **Clue round:** civilians give real clues ("Cheese.", "Oven."); the Mole bluffs a **vague** clue. Existing footage where an actor says a PASTA-ish clue (Sami's **"Fork"**, BODY_shot04) is kept and reframed as **the Mole's bluff**. Captions say "his bluff", never "his word is PASTA".
+- **Payoff:** OUT stamp → card flips to the Mole → **last guess**: "Is it… PIZZA?" ✅ ("He STILL won.") or ❌ ("…Lasagna?"). The group "No, no…" groan (A_H1_shot03 audio) fits the ✅ steal.
+- **Don't say** "one word is different", "nobody told him", "he doesn't know", "he had PASTA all along" for the default game. Those lines are only valid in a clearly labelled **Undercover variant** ad.
+- Arabic: «الجاسوس» / «المتخفّي», light Lebanese, gender-neutral (`docs/DESIGN.md` §1.5). Keep claims to `review-v2/DECISIONS.md`: free, 3–12 players, no app on phones, EN/FR/AR, browser now, Google TV app coming soon.
+- Game UI for the Mole card and the last-guess screen must come from the new build (other agents are changing the game now); don't mock it up from the old "different word" card.
+
+**Scripts in this file that still use PASTA (a different word) or the Blank as the twist — rework before producing:**
+- Header notes: "Game-accuracy rule" (Mole doesn't know, Blank) and "Word pairs" paragraph; §2 "How to read the tables" (role cards, results line "Mole word: Pasta", language versions).
+- Shared module **BODY-1 "The Round"** (grid PIZZA ×3 / PASTA).
+- **MA_A_H1** "IT WAS YOU?!" (13.3–16.0 "He had PASTA" insert; FR line « Lui, PÂTES »).
+- **MA_A_H2** POV: you're the Mole and nobody told you (whole premise; becomes "POV: your phone says YOU'RE THE MOLE").
+- **MA_A_H3** Rate his poker face (13.5–16.0 PASTA card) · **MA_A_H4** "He said FORK." (10.5–13.0 "Fork. For PASTA.").
+- **MA_F_H1** Lebanese family (تبولة / فتوش two-card hook) · **MA_F_H3** Family of 12 (Blank at 12 players).
+- §3 Filming guide: "Game settings for filming" (scripted PIZZA/PASTA rounds, shuffle word sides, Blank), shot list S3-02, S4-01, S4-04, S7-02, "make the Host the Mole … until PASTA".
+- §4 Motion-only: **MA_A_M1** "Everyone's word is PIZZA" (PASTA glitch), **MA_E_M2** checklist (PIZZA ×3 / PASTA ×1), **MA_C_M3** "Spot the Mole" (different word, PASTA reveal).
+- §5 Platform checklist: word-pair line.
+The v3 storyboards in Studio (v3-film, v3-m1…m7, ai-b1…b5) were already rewritten for the Mole card on 2026-10-07; use them as the reference.
+
+---
+
 TikTok + Instagram Reels, 9:16 (1080×1920). Version 2, revised 2026-10-04 after creative review (see `REVIEW.md`). Section 4 is unchanged from v1.
 
 > Fact rule for every ad: only claim what is in the product today. That means: 3–12 players, phones join by scanning a QR code on the TV (then type a name and pick a colour), no app on the phones, no account, no controllers, English / French / Arabic (including Lebanese word packs), free to play, Android TV / Google TV. Don't use user counts, ratings, reviews, awards, "#1", premium packs, or any device outside Android TV / Google TV. The app has optional in-app purchases (Premium), so say "free to play" or "free", never "100% free", "no catch" or "no in-app purchases".

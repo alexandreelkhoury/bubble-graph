@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Secret-Word Party Game for Android TV &amp; Google TV – Mish Ana!</title>
-<meta name="description" content="Everyone gets a secret word on their phone. One player's word is different. Give one-word clues, vote, catch the liar. Free-to-play party game for Android TV and Google TV, 3–12 players.">
+<meta name="description" content="Everyone gets the same secret word on their phone, except the Mole, who gets none. Give one-word clues, vote, catch the Mole. Free-to-play party game for Android TV and Google TV, 3–12 players.">
 <meta name="theme-color" content="#2B1650">
 <meta name="color-scheme" content="dark">
 <!-- SEO: canonical, hreflang, Open Graph/Twitter and JSON-LD are generated per language by build.mjs (origin from site.config.json). -->
@@ -71,7 +71,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
     <div class="hero__copy">
       <p class="kicker"><i aria-hidden="true"></i><span data-i18n="heroKicker">Party game for Android TV &amp; Google TV</span></p>
       <h1 id="hero-title" class="hero__title" data-i18n="heroTitle">Everyone’s innocent. <span class="hl">Someone’s <span class="hlb">lying.</span></span></h1>
-      <p class="hero__sub" id="hero-sub" data-i18n="heroSub">A secret word on every phone. <b>One is different.</b> Give one clue each, vote, and find the liar on the TV.</p>
+      <p class="hero__sub" id="hero-sub" data-i18n="heroSub">A secret word on every phone. <b>One just says “You’re the Mole!”</b> Give one clue each, vote, and catch the Mole on the TV.</p>
 
       <div class="ctas" id="hero-ctas">
         <a class="btn btn--play btn--lg btn--stack" href="https://play.google.com/store/apps/details?id=app.mishana.tv" data-play data-cta="hero" rel="noopener">
@@ -92,11 +92,11 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
       <script>
       /* Ad-angle message match + device-aware install hint. Runs before first paint; main.js reads window.__mishanaAngle. */
       (function(){var A={
-        reveal:['“It was you?!” <span class="hl">Find the liar on your TV<span class="dot">.</span></span>','Everyone gets a secret word on their phone. One player’s word is slightly different, and nobody tells them. One clue each, a vote, then the TV stamps the liar OUT.'],
+        reveal:['“It was you?!” <span class="hl">Find the liar on your TV<span class="dot">.</span></span>','Everyone gets the same secret word on their phone, except one player, whose phone says “You’re the Mole!”. One clue each, a vote, then the TV stamps the Mole OUT. Caught? One last guess at the word can still steal the win.'],
         passphone:['Stop passing the phone. <span class="hl">Everyone gets their own<span class="dot">.</span></span>','Your secret word goes straight to your own phone. No hands over screens, no peeking, no waiting your turn. The TV runs the game for 3–12 players.'],
         nohardware:['No controllers. No app. <span class="hl">Just your phones<span class="dot">.</span></span>','Open Mish Ana! on your Android TV or Google TV. Friends scan a QR code and play in their phone’s browser, iPhone or Android. Free to play.'],
         tonight:['5 phones. 0 plans? <span class="hl">Tonight’s sorted<span class="dot">.</span></span>','Put a party game on the TV and play with the phones already in your hands. One round teaches the rules. 3–12 players, free to play.'],
-        family:['Family game night <span class="hl">just got dangerous<span class="dot">.</span></span>','From Teta to the cousins, everyone gets a secret word on their own phone. Play in Arabic, English or French, with Lebanese word packs. Tabbouleh or fattoush? Someone’s lying.'],
+        family:['Family game night <span class="hl">just got dangerous<span class="dot">.</span></span>','From Teta to the cousins, everyone gets a secret word on their own phone. Play in Arabic, English or French, with Lebanese word packs. One of you has no word at all. Who’s the Mole?'],
         tvgame:['Looking for a game for your TV? <span class="hl">Here’s one<span class="dot">.</span></span>','Mish Ana! is a secret-word party game for Android TV and Google TV. 3–12 players use their phones as controllers. Free to play.']
       },a='',p,d=document;
       try{p=new URLSearchParams(location.search);a=(p.get('angle')||p.get('utm_campaign')||'').toLowerCase();}catch(e){}
@@ -126,7 +126,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
             <source media="(max-width: 700px)" srcset="/assets/img/hero-poster-16x9-sm.webp" type="image/webp">
             <source srcset="/assets/img/hero-poster-16x9.webp" type="image/webp">
             <img class="tv__poster" src="/assets/img/hero-poster-16x9.jpg" width="1280" height="720" fetchpriority="high" decoding="async"
-                 alt="Mish Ana!: six phones show their secret word. Five say PIZZA, one says PASTA, and that player is the Mole." data-i18n-alt="heroAlt">
+                 alt="Mish Ana!: six phones show their secret word. Five say PIZZA, one says PASTA." data-i18n-alt="heroAlt">
           </picture>
           <video class="tv__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
           <p class="tv__cap" aria-hidden="true" hidden></p>
@@ -138,7 +138,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
         </div>
         <div class="tv__foot" aria-hidden="true"></div>
       </div>
-      <!-- the whole mechanic in one still frame: two phones, two words (PH-04 held) -->
+      <!-- the whole mechanic in one still frame: a word phone and the Mole's card (rule change 2026-10-07; PH-04 held) -->
       <div class="phone phone--a" aria-hidden="true">
         <div class="ph-top"><span class="ph-code">JQPU</span><span class="ph-me"><span class="av av--coral"><span>M</span></span><span data-i18n="nameMaya">Maya</span></span></div>
         <p class="phone__label" data-i18n="yourWord">Your secret word</p>
@@ -146,10 +146,10 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
       </div>
       <div class="phone phone--b" aria-hidden="true">
         <div class="ph-top"><span class="ph-code">JQPU</span><span class="ph-me"><span class="av av--lilac av--hex"><span>S</span></span><span data-i18n="nameSami">Sami</span></span></div>
-        <p class="phone__label" data-i18n="yourWord">Your secret word</p>
-        <div class="wcard wcard--lilac"><span class="wcard__word" data-i18n="wordB">PASTA</span></div>
+        <p class="phone__label" data-i18n="yourRole">Your role</p>
+        <div class="wcard wcard--lilac wcard--mole"><svg viewBox="0 0 48 24" aria-hidden="true"><path d="M3 7c6-5 15-5 21 0 6-5 15-5 21 0 2 9-2 14-8 14-5 0-8-4-13-4s-8 4-13 4C5 21 1 16 3 7z" fill="#1A0B2E"/><ellipse cx="14" cy="11.5" rx="4.2" ry="3.2" fill="#FF8A3D"/><ellipse cx="34" cy="11.5" rx="4.2" ry="3.2" fill="#FF8A3D"/></svg><span class="wcard__word" data-i18n="moleCard">YOU’RE THE MOLE!</span></div>
       </div>
-      <p class="odd-tag" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="oddTag">one word is different</span></p>
+      <p class="odd-tag" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="oddTag">one of you is the Mole</span></p>
     </div>
   </div>
 </section>
@@ -198,13 +198,13 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
           </div>
           <div class="rph rph--scan"><span class="rph__code">JQPU</span><span class="rph__name">Sami</span><span class="rph__ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="youreIn">You’re in</span></span></div>
         </div>
-        <!-- 2 · secret words (the Mole's card looks like everyone else's) -->
+        <!-- 2 · secret words: same word for all, the Mole gets the "You're the Mole!" card -->
         <div class="sc sc--word">
           <div class="minis">
             <div class="mini" style="--pc:var(--coral)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordA">PIZZA</span></div><i>Maya</i></div>
             <div class="mini" style="--pc:var(--azure)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordA">PIZZA</span></div><i>Karim</i></div>
             <div class="mini" style="--pc:var(--lemon)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordA">PIZZA</span></div><i>Lea</i></div>
-            <div class="mini mini--mole" style="--pc:var(--lilac)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face" data-i18n="wordB">PASTA</span></div><i>Sami</i><b class="mini__tag" data-i18n="moleTag">The Mole. Nobody told him.</b></div>
+            <div class="mini mini--mole" style="--pc:var(--lilac)"><div class="mini__card"><span class="mini__back"></span><span class="mini__face mini__face--mole" data-i18n="moleCard">YOU’RE THE MOLE!</span></div><i>Sami</i><b class="mini__tag" data-i18n="moleTag">The Mole. No word, just a bluff.</b></div>
           </div>
         </div>
         <!-- 3 · clues, then the vote on phones -->
@@ -233,9 +233,9 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
       <div class="reel__bar">
         <ol class="reel__steps">
           <li><button type="button" data-step="0" aria-current="step"><span class="reel__prog"><i></i></span><span class="reel__lbl" data-i18n="r1">Scan</span><span class="reel__txt" data-i18n="r1Cap">Open it on the TV. Everyone scans the QR code with their phone.</span></button></li>
-          <li><button type="button" data-step="1"><span class="reel__prog"><i></i></span><span class="reel__lbl" data-i18n="r2">Secret word</span><span class="reel__txt" data-i18n="r2Cap">Everyone gets a secret word. One is different, and nobody tells them.</span></button></li>
+          <li><button type="button" data-step="1"><span class="reel__prog"><i></i></span><span class="reel__lbl" data-i18n="r2">Secret word</span><span class="reel__txt" data-i18n="r2Cap">Everyone gets the same secret word, except one player: their phone says “You’re the Mole!”</span></button></li>
           <li><button type="button" data-step="2"><span class="reel__prog"><i></i></span><span class="reel__lbl" data-i18n="r3">Clue &amp; vote</span><span class="reel__txt" data-i18n="r3Cap">One clue each, out loud. Then everyone votes on their phone.</span></button></li>
-          <li><button type="button" data-step="3"><span class="reel__prog"><i></i></span><span class="reel__lbl" data-i18n="r4">Reveal</span><span class="reel__txt" data-i18n="r4Cap">The TV stamps the most-voted player OUT and reveals who they were.</span></button></li>
+          <li><button type="button" data-step="3"><span class="reel__prog"><i></i></span><span class="reel__lbl" data-i18n="r4">Reveal</span><span class="reel__txt" data-i18n="r4Cap">The TV stamps the most-voted player OUT. A caught Mole gets one last guess at the word to steal the win.</span></button></li>
         </ol>
         <button class="reel__pause" type="button" aria-label="Pause the animation" data-i18n-aria="reelPause">
           <svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
@@ -248,10 +248,10 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
     <div class="try rv">
       <div class="try__txt">
         <h3 data-i18n="tryTitle">Try it: here's your phone</h3>
-        <p data-i18n="tryBody">Your word only ever shows on your own phone. Press and hold the card to peek, let go to hide it. Deal again to see what the Mole and the Blank get.</p>
+        <p data-i18n="tryBody">Your word only ever shows on your own phone. Press and hold the card to peek, let go to hide it. Deal again to see the Mole’s card, and the Undercover’s (an optional role).</p>
         <div class="try__deals">
           <button class="deal__as" type="button" data-role="mole"><span class="av av--lilac av--hex av--sm" aria-hidden="true"><span>?</span></span><span data-i18n="dealMole">Deal me the Mole’s card</span></button>
-          <button class="deal__as" type="button" data-role="blank"><span class="av av--cream av--sm" aria-hidden="true"><span>?</span></span><span data-i18n="dealBlank">Deal me the Blank’s card</span></button>
+          <button class="deal__as" type="button" data-role="under"><span class="av av--cream av--sm" aria-hidden="true"><span>?</span></span><span data-i18n="dealUnder">Deal me the Undercover’s card</span></button>
         </div>
       </div>
       <div class="step__art art-word">
@@ -267,8 +267,8 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
               <span class="deal__word"></span>
               <span class="deal__blank">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2.4"/></svg>
-                <b data-i18n="noWord">No word for you.</b>
-                <small data-i18n="blankBody">Listen. Blend in. Bluff.</small>
+                <b data-i18n="moleCard">YOU’RE THE MOLE!</b>
+                <small data-i18n="blankBody">No word. Listen, blend in, bluff.</small>
               </span>
             </span>
           </button>
@@ -443,6 +443,10 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
         <summary data-i18n="q4">How many people can play?</summary>
         <div class="qa__a" data-i18n="a4"><p>3 to 12 players. Everyone needs their own phone.</p></div>
       </details>
+      <details data-q="roles">
+        <summary data-i18n="qRoles">What’s the Mole? What’s the Undercover?</summary>
+        <div class="qa__a" data-i18n="aRoles"><p>In the default game everyone gets the same secret word except the Mole, whose phone just says “You’re the Mole!”. The Mole listens to the clues, gives a vague one to blend in and, if voted out, gets one last guess at the word to steal the win.</p><p>The Undercover is an optional extra role: they get a slightly different word (PASTA when everyone else has PIZZA) and don’t know it. Add one or more Undercovers before the game, or mix both roles.</p></div>
+      </details>
       <details data-q="languages">
         <summary data-i18n="q5">Which languages?</summary>
         <div class="qa__a" data-i18n="a5"><p>English, French and Arabic, with Lebanese word packs. The Arabic version is fully right-to-left.</p></div>
@@ -459,12 +463,12 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
 <section class="sec about" id="about" aria-labelledby="about-title">
   <div class="wrap wrap--narrow">
     <h2 id="about-title" data-i18n="aboutTitle">About Mish Ana!</h2>
-    <p class="about__def" data-i18n="aboutDef">Mish Ana! is a secret-word party game for Android TV and Google TV: 3–12 players join from their phones by scanning a QR code, get a secret word, and find the player whose word is different.</p>
+    <p class="about__def" data-i18n="aboutDef">Mish Ana! is a secret-word party game for Android TV and Google TV: 3–12 players join from their phones by scanning a QR code, get the same secret word, and find the Mole: the one player with no word.</p>
     <dl class="about__facts">
       <div><dt data-i18n="aboutNameT">Name</dt><dd data-i18n="aboutName">“Mish Ana!” (<bdi lang="ar">مش أنا!</bdi>) is Lebanese Arabic for “Not me!”, what everyone says when they’re accused.</dd></div>
       <div><dt data-i18n="aboutGenreT">Genre</dt><dd data-i18n="aboutGenre">Party game, social deduction, word game</dd></div>
       <div><dt data-i18n="aboutPlatT">Plays on</dt><dd data-i18n="aboutPlat">Android TV and Google TV (Google Play), or any web browser</dd></div>
-      <div><dt data-i18n="aboutRolesT">Roles</dt><dd data-i18n="aboutRoles">Civilians share a word. The Mole has a slightly different word and isn’t told. The Blank has no word and bluffs.</dd></div>
+      <div><dt data-i18n="aboutRolesT">Roles</dt><dd data-i18n="aboutRoles">Civilians share a word. The Mole gets no word, only a “You’re the Mole!” card, and bluffs; if voted out, one last guess at the word can steal the win. Optional: the Undercover gets a slightly different word and isn’t told.</dd></div>
       <div><dt data-i18n="aboutPriceT">Price</dt><dd data-i18n="aboutPrice">Free to play. No ads, no accounts.</dd></div>
     </dl>
     <p class="about__more" data-i18n="aboutMore"><a href="/how-to-play/">Full rules: how to play Mish Ana!</a></p>

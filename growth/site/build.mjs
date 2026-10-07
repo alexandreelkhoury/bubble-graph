@@ -263,7 +263,7 @@ const tpl = rd('index.html');
 const ctx = { window: {} }; vm.runInNewContext(rd('assets/js/i18n.js'), ctx);
 const DICTS = ctx.window.MISHANA_I18N;
 if (CUES) for (const c of CUES) for (const l of ['fr', 'ar']) if (DICTS[l][c.k] == null) throw new Error(`assets/js/i18n.js: ${l}.${c.k} is missing (caption of the hero loop)`);
-const JS_KEYS = ['capCiv', 'capMole', 'capBlank', 'wordA', 'wordB', 'pause', 'play', 'reelPause', 'reelPlay', 'shareTitle', 'shareText', 'copied',
+const JS_KEYS = ['capCiv', 'capMole', 'capUnder', 'wordA', 'wordB', 'pause', 'play', 'reelPause', 'reelPlay', 'shareTitle', 'shareText', 'copied',
   'sendTitle', 'sendText', 'sheetTitle', 'sheetBody', 'copyLink', 'linkCopied', 'emailLink', 'emailSubject', 'openHere', 'closeSheet',
   'sheetStep1', 'sheetStep2', 'waLink', 'moreShare', 'tapToCopy', 'nameMaya', 'nameSami',
   'cap_opening', 'cap_friends', 'cap_secret', 'cap_different', 'cap_clues', 'cap_fit', 'cap_out', 'cap_mole', 'cap_moleWord'];

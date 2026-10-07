@@ -1,11 +1,11 @@
 {
   "_README": "Per-language SEO meta for the home pages (/, /fr/, /ar/) and the shared entity facts used in JSON-LD, /about/ and llms.txt. Home body copy: EN in index.html, FR/AR in assets/js/i18n.js.",
-  "updated": "2026-10-04",
-  "privacyUpdated": "2026-10-05",
+  "updated": "2026-10-07",
+  "privacyUpdated": "2026-10-07",
   "definition": {
-    "en": "Mish Ana! is a secret-word party game for Android TV and Google TV: 3–12 players join from their phones by scanning a QR code, get a secret word, and find the player whose word is different.",
-    "fr": "Mish Ana! est un jeu d’ambiance du mot secret pour Android TV et Google TV : de 3 à 12 joueurs rejoignent la partie avec leur téléphone en scannant un QR code, reçoivent un mot secret et cherchent le joueur dont le mot est différent.",
-    "ar": "«مش أنا!» لعبة سهرات بالكلمة السرّية على Android TV و Google TV: من 3 لـ12 لاعب بيفوتوا من تلفوناتن بمسح كود QR، كل واحد بتوصلو كلمة سرّية، والهدف تكشفوا اللاعب اللي كلمتو مختلفة."
+    "en": "Mish Ana! is a secret-word party game for Android TV and Google TV: 3–12 players join from their phones by scanning a QR code, get the same secret word, and find the Mole: the one player with no word.",
+    "fr": "Mish Ana! est un jeu d’ambiance du mot secret pour Android TV et Google TV : de 3 à 12 joueurs rejoignent la partie avec leur téléphone en scannant un QR code, reçoivent le même mot secret et cherchent la Taupe, le seul joueur sans mot.",
+    "ar": "«مش أنا!» لعبة سهرات بالكلمة السرّية على Android TV و Google TV: من 3 لـ12 لاعب بيفوتوا من تلفوناتن بمسح كود QR، الكل بتوصلن نفس الكلمة السرّية، والهدف تكشفوا الجاسوس: اللاعب الوحيد اللي ما معو كلمة."
   },
   "facts": [
     "Name: Mish Ana! (Arabic: مش أنا!), Lebanese Arabic for \"Not me!\".",
@@ -13,7 +13,7 @@
     "Platforms: Android TV and Google TV app (Google Play package app.mishana.tv), plus a browser version that runs on any laptop or smart-TV browser.",
     "How it works: the TV shows a QR code; each player scans it and plays in their phone's web browser (iPhone or Android). Nothing to install on phones, no accounts, no controllers.",
     "Players: 3 to 12, one phone each, in the same room.",
-    "Roles: Civilians share the same secret word; the Mole gets a slightly different word and is not told; the Blank (from 5 players) gets no word, bluffs, and if voted out gets one guess at the Civilians' word to win alone.",
+    "Roles (default rule since 2026-10-07): Civilians share the same secret word; the Mole gets no word, only a \"You're the Mole!\" card, bluffs with vague clues, and if voted out gets one last guess at the word to steal the win. Optional extra role: the Undercover gets a slightly different word (e.g. PASTA vs PIZZA) and is not told; groups can add Undercovers or mix both roles.",
     "Round: everyone gives one spoken clue, then everyone votes on their phone; the TV reveals the role of the player voted out.",
     "Languages: English, French and Arabic (full right-to-left), with Lebanese word packs; 560+ word pairs.",
     "Price: free to play; no ads, no accounts. Optional in-app purchases may be added later.",

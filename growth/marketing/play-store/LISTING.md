@@ -1,6 +1,8 @@
 # Mish Ana! — Google Play store listing (EN / FR / AR)
 
 Package `app.mishana.tv` · prepared 2026-10-04 · paste-ready.
+**Rule change 2026-10-07.** Descriptions and short descriptions now follow the new default: everyone gets the same word except **the Mole**, whose phone shows "You're the Mole!" and no word; a caught Mole gets one last guess at the word to steal the win. The optional different-word role (in-game name "Undercover", AR «المتخفّي») is described, **not named**, in EN/FR (see §0: "Undercover" stays out of Play metadata for trademark reasons; the AR name is fine). The "Blank" role is gone from the copy. Check the "560+ word pairs" count against `word-packs/` once the new everyday-word packs land.
+
 Character counts are Unicode code points (what Play Console counts). Limits: title 30, short description 80, full description 4000, release notes 500 per language ([metadata policy](https://support.google.com/googleplay/android-developer/answer/9898842): title ≤ 30, no emojis / ALL CAPS / "#1" / "free" / price or ranking claims in the title or icon).
 
 ## 0. Decisions behind the copy (read once)
@@ -26,30 +28,32 @@ Character counts are Unicode code points (what Play Console counts). Limits: tit
 Mish Ana! Party Game for TV
 ```
 
-### Short description — 78/80
+### Short description — 76/80
 ```
-Find who's lying! A secret-word party game for TV. Phones are the controllers.
+Who's the Mole? A secret-word party game for TV. Phones are the controllers.
 ```
 
-### Full description — 2899/4000
+### Full description — 3140/4000
 ```
-Everyone gets a secret word on their phone. One player's word is different. Give one clue each, vote, and find the liar on the big screen.
+Everyone gets the same secret word on their phone, except the Mole: their phone just says "You're the Mole!". Give one clue each, vote, and catch the Mole on the big screen.
 Install it on your TV. Friends join by scanning the QR code: nothing to install on phones, iPhone or Android.
 3–12 players · English, French & Arabic · no ads, no accounts.
 On your phone? Tap the arrow next to Install and choose your TV.
 
 Everyone's innocent. Someone's lying.
 
-Mish Ana! (Lebanese for "Not me!") is the secret-word party game for Android TV and Google TV: a word game, a bluffing game and a "who's the spy?" game in one. Everyone gets a secret word on their phone, and almost everyone has the same one. The Mole has a slightly different word. The Blank has no word at all and has to bluff. Take turns giving one clue each, listen closely, and vote out whoever sounds off.
+Mish Ana! (Lebanese for "Not me!") is the secret-word party game for Android TV and Google TV: a word game, a bluffing game and a "who's the spy?" game in one. Everyone gets the same secret word on their phone, except the Mole. The Mole gets no word, just a card that says "You're the Mole!", and has to blend in with vague clues. Take turns giving one clue each, listen closely, and vote out whoever sounds off. A caught Mole gets one last guess at the word: get it right and steal the win.
 
 Your phone holds the secret. The TV holds the drama.
 
 HOW IT WORKS
 1. Open Mish Ana! on your TV. A room code and a QR code appear.
 2. Everyone scans the QR code with their phone camera. The game opens in the browser: no download, no account, just a nickname.
-3. Press and hold to see your secret word. Nobody else can see it.
+3. Press and hold to see your secret word, or to find out you're the Mole. Nobody else can see it.
 4. Take turns saying one clue out loud, then everyone votes on their phone.
-5. Catch the Mole and the Blank before they take over. A caught Blank gets one last chance: guess your word and steal the win.
+5. Catch the Mole before they blend in. A caught Mole gets one last guess at your word to steal the win.
+
+Want more chaos? Add a player who gets a different word and doesn't know it (pizza vs pasta), or mix both roles.
 
 WHY GROUPS LOVE IT
 • 3 to 12 players: game night, family gatherings, birthdays, dinner with friends.
@@ -60,13 +64,13 @@ WHY GROUPS LOVE IT
 
 WORDS IN THREE LANGUAGES
 • English, French and Arabic, with full right-to-left Arabic on the TV and on phones.
-• 560+ word pairs across the three languages: food, places and travel, sports and jobs, nature, everyday things.
-• Lebanese packs: falafel or shawarma? Lebanese food and Lebanese life, in the words people actually use.
+• 560+ word pairs across the three languages, in easy, everyday words: moon, escalator, Paris, forest, pizza, coffee.
+• Lebanese packs: Lebanese food and Lebanese life, in the words people actually use.
 • Difficulty from Easy to Subtle, plus a family-friendly filter.
 
 MAKE IT YOUR GAME
 • Timers for clues and votes, or no timer and the host moves things on.
-• Pick how many Moles and Blanks, or let the game decide.
+• Pick how many Moles, and add players with a different word if you want.
 • Official or Parity win rule.
 • Fully playable with the TV remote: D-pad, OK and Back.
 
@@ -79,7 +83,7 @@ WHAT YOU NEED
 • One smartphone per player with a web browser and internet (Wi-Fi or mobile data). Android phones and iPhones both work.
 • At least 3 players in the same room.
 
-Who's the spy at your table? Open Mish Ana!, scan, and find out.
+Who's the Mole at your table? Open Mish Ana!, scan, and find out.
 ```
 
 ### What's new (release notes, v0.1.0 / first release) — 283/500
@@ -97,7 +101,7 @@ Tell us what your group thinks.
 | Field | Control (above) | Variant A | Variant B |
 |---|---|---|---|
 | App name | Mish Ana! Party Game for TV (27) | Mish Ana! Secret Word Party (27) | Mish Ana!: TV Word Party Game (29) |
-| Short description | Find who's lying! A secret-word party game for TV. Phones are the controllers. (78) | Game night on your TV: 3-12 players, phones as controllers, nothing to install (78) | Everyone's innocent. Someone's lying. The secret-word party game for your TV. (77) |
+| Short description | Who's the Mole? A secret-word party game for TV. Phones are the controllers. (76) | Game night on your TV: 3-12 players, phones as controllers, nothing to install (78) | Everyone's innocent. Someone's lying. The secret-word party game for your TV. (77) |
 
 ## 2. French (France) – fr-FR (also copy to fr-CA if you add it)
 
@@ -106,30 +110,32 @@ Tell us what your group thinks.
 Mish Ana! Jeu d’ambiance TV
 ```
 
-### Short description — 74/80
+### Short description — 71/80
 ```
-Qui ment ? Le jeu d’ambiance du mot secret sur la télé, téléphone en main.
+Qui est la Taupe ? Le jeu du mot secret sur la télé, téléphone en main.
 ```
 
-### Full description — 3213/4000
+### Full description — 3542/4000
 ```
-Chacun reçoit un mot secret sur son téléphone. Un joueur a un mot différent. Un indice chacun, un vote, et démasquez le menteur sur grand écran.
+Tout le monde reçoit le même mot secret sur son téléphone, sauf la Taupe : son écran affiche juste « Tu es la Taupe ! ». Un indice chacun, un vote, et démasquez la Taupe sur grand écran.
 Installez-le sur la télé. Vos amis scannent le QR code : rien à installer sur les téléphones, iPhone ou Android.
 3 à 12 joueurs · français, anglais et arabe · sans pub, sans compte.
 Sur votre téléphone ? Touchez la flèche à côté d’Installer et choisissez votre télé.
 
 Tout le monde est innocent. Quelqu’un ment.
 
-Mish Ana! (« Pas moi ! » en libanais) est le jeu d’ambiance du mot secret pour Android TV et Google TV : un jeu de mots, de bluff et de « qui est l’espion ? » à la fois. Chaque joueur reçoit un mot secret sur son téléphone, et presque tout le monde a le même. La Taupe a un mot légèrement différent. Le Blanc n’a aucun mot et doit bluffer. Chacun donne un indice à son tour : écoutez bien, puis votez contre celui qui sonne faux.
+Mish Ana! (« Pas moi ! » en libanais) est le jeu d’ambiance du mot secret pour Android TV et Google TV : un jeu de mots, de bluff et de « qui est l’espion ? » à la fois. Tout le monde reçoit le même mot secret sur son téléphone, sauf la Taupe. La Taupe n’a aucun mot, juste une carte « Tu es la Taupe ! », et doit se fondre dans le groupe avec des indices vagues. Chacun donne un indice à son tour : écoutez bien, puis votez contre celui qui sonne faux. Une Taupe démasquée a une dernière chance de deviner le mot : si elle trouve, elle vole la victoire.
 
 Ton téléphone garde le secret. La télé fait le show.
 
 COMMENT ÇA MARCHE
 1. Lancez Mish Ana! sur la télé : un code de salle et un QR code s’affichent.
 2. Chacun scanne le QR code avec l’appareil photo de son téléphone. Le jeu s’ouvre dans le navigateur : rien à installer, pas de compte, juste un pseudo.
-3. Appuyez longuement pour voir votre mot secret. Personne d’autre ne le voit.
+3. Appuyez longuement pour voir votre mot secret, ou découvrir que vous êtes la Taupe. Personne d’autre ne le voit.
 4. À tour de rôle, dites un indice à voix haute, puis tout le monde vote sur son téléphone.
-5. Démasquez la Taupe et le Blanc avant qu’ils ne prennent le dessus. Un Blanc démasqué a une dernière chance : deviner votre mot et voler la victoire.
+5. Démasquez la Taupe avant qu’elle ne se fonde dans le groupe. Une Taupe démasquée a une dernière chance : deviner votre mot et voler la victoire.
+
+Envie de pimenter ? Ajoutez un joueur qui reçoit un mot différent sans le savoir (pizza contre pâtes), ou mélangez les deux rôles.
 
 POURQUOI ON ADORE
 • De 3 à 12 joueurs : soirées jeux, repas de famille, anniversaires, soirées entre amis.
@@ -140,13 +146,13 @@ POURQUOI ON ADORE
 
 DES MOTS EN TROIS LANGUES
 • Français, anglais et arabe, avec l’arabe de droite à gauche sur la télé comme sur les téléphones.
-• Plus de 560 paires de mots dans les trois langues : cuisine, lieux et voyages, sports et métiers, nature, objets du quotidien.
-• Des packs libanais : falafel ou chawarma ? La cuisine et la vie libanaises, avec les mots de tous les jours.
+• Plus de 560 paires de mots dans les trois langues, avec des mots simples du quotidien : lune, escalator, Paris, forêt, pizza, café.
+• Des packs libanais : la cuisine et la vie libanaises, avec les mots de tous les jours.
 • Difficulté de Facile à Subtil, et un filtre famille.
 
 À VOTRE FAÇON
 • Minuteurs pour les indices et les votes, ou pas de minuteur : l’hôte fait avancer la partie.
-• Choisissez le nombre de Taupes et de Blancs, ou laissez le jeu décider.
+• Choisissez le nombre de Taupes, et ajoutez des joueurs au mot différent si vous voulez.
 • Règle de victoire officielle ou à parité.
 • Entièrement jouable à la télécommande : flèches, OK et Retour.
 
@@ -159,7 +165,7 @@ CE QU’IL VOUS FAUT
 • Un smartphone par joueur avec un navigateur et Internet (Wi-Fi ou données mobiles). Android et iPhone.
 • Au moins 3 joueurs dans la même pièce.
 
-Qui est l’espion autour de vous ? Lancez Mish Ana!, scannez, et découvrez-le.
+Qui est la Taupe autour de vous ? Lancez Mish Ana!, scannez, et découvrez-le.
 ```
 
 ### What's new (release notes, v0.1.0 / first release) — 299/500
@@ -177,7 +183,7 @@ Dites-nous ce qu’en pense votre groupe.
 | Field | Control (above) | Variant A | Variant B |
 |---|---|---|---|
 | App name | Mish Ana! Jeu d’ambiance TV (27) | Mish Ana! Jeu du mot secret (27) | Mish Ana! Jeu de soirée TV (26) |
-| Short description | Qui ment ? Le jeu d’ambiance du mot secret sur la télé, téléphone en main. (74) | Soirée jeux sur la télé : 3 à 12 joueurs, le téléphone sert de manette. (71) | Tout le monde est innocent. Quelqu’un ment. Le jeu du mot secret sur la télé. (77) |
+| Short description | Qui est la Taupe ? Le jeu du mot secret sur la télé, téléphone en main. (71) | Soirée jeux sur la télé : 3 à 12 joueurs, le téléphone sert de manette. (71) | Tout le monde est innocent. Quelqu’un ment. Le jeu du mot secret sur la télé. (77) |
 
 ## 3. Arabic – ar (Lebanese-friendly Modern Standard Arabic; brand lines kept in Lebanese as in shared/i18n/ar.json)
 
@@ -188,28 +194,30 @@ Dites-nous ce qu’en pense votre groupe.
 
 ### Short description — 71/80
 ```
-مين عم يكذب؟ لعبة الكلمة السرّية للسهرات على التلفزيون، والهواتف للتحكم
+مين الجاسوس؟ لعبة الكلمة السرّية للسهرات على التلفزيون، والهواتف للتحكم
 ```
 
-### Full description — 2597/4000
+### Full description — 2770/4000
 ```
-كل لاعب بتوصلو كلمة سرّية على تلفونو، وفي لاعب كلمتو مختلفة. تلميح لكل واحد، تصويت، واكشفوا الكذّاب على الشاشة الكبيرة.
+الكل بتوصلو نفس الكلمة السرّية عالتلفون، إلّا الجاسوس: عتلفونو بس «دورك: الجاسوس!». تلميح لكل واحد، تصويت، واكشفوا الجاسوس على الشاشة الكبيرة.
 نزّلوها عالتلفزيون، والأصحاب بيفوتوا بمسح كود QR: ما في شي ينزّلوه عالتلفونات، آيفون أو أندرويد.
 من 3 لـ12 لاعب · عربي وإنجليزي وفرنسي · بلا إعلانات وبلا حسابات.
 عم تشوفها عالتلفون؟ اكبس عالسهم حدّ «تثبيت» واختار التلفزيون.
 
 كلّنا أبرياء… بس في حدا عم يكذب.
 
-«مش أنا!» هي لعبة الكلمة السرّية للسهرات على Android TV و Google TV: لعبة كلمات وخداع و«مين الجاسوس؟» بنفس الوقت. كل لاعب يحصل على كلمة سرّية على هاتفه، ومعظم اللاعبين لديهم الكلمة نفسها. «الجاسوس» لديه كلمة مختلفة قليلًا، و«الفاضي» ليس لديه أي كلمة وعليه أن يخدع الجميع. كل لاعب يقول تلميحًا واحدًا بدوره: ركّزوا جيدًا، ثم صوّتوا لإخراج من يبدو كلامه غريبًا.
+«مش أنا!» هي لعبة الكلمة السرّية للسهرات على Android TV و Google TV: لعبة كلمات وخداع و«مين الجاسوس؟» بنفس الوقت. كل اللاعبين يحصلون على الكلمة السرّية نفسها على هواتفهم، إلّا «الجاسوس»: لا كلمة له، فقط بطاقة «دورك: الجاسوس!»، وعليه أن يضيع بين الكل بتلميحات عامّة. كل لاعب يقول تلميحًا واحدًا بدوره: ركّزوا جيدًا، ثم صوّتوا لإخراج من يبدو كلامه غريبًا. وإذا انكشف الجاسوس تبقى له فرصة أخيرة لحزر الكلمة: إذا عرفها يخطف الفوز.
 
 السرّ عالتلفون… والدراما عالتلفزيون.
 
 كيف تلعبون؟
 1. افتحوا «مش أنا!» على التلفزيون، فيظهر رمز الغرفة ورمز QR.
 2. يمسح كل لاعب رمز QR بكاميرا هاتفه، فتُفتح اللعبة في المتصفح: بلا تحميل وبلا حساب، فقط اسم مستعار.
-3. اضغط مطوّلًا لترى كلمتك السرّية. لا أحد غيرك يراها.
+3. ضغطة مطوّلة تُظهر كلمتك السرّية، أو أنّ دورك الجاسوس. لا أحد غيرك يراها.
 4. بالدور، قل تلميحك بصوت عالٍ، ثم يصوّت الجميع من هواتفهم.
-5. اكشفوا الجاسوس والفاضي قبل أن يسيطروا على اللعبة. وإذا انكشف الفاضي تبقى له فرصة أخيرة: أن يخمّن كلمتكم ويخطف الفوز.
+5. اكشفوا الجاسوس قبل ما يضيع بينكم. وإذا انكشف تبقى له فرصة أخيرة لحزر كلمتكم وخطف الفوز.
+
+بدكن أكتر؟ زيدوا «المتخفّي»: بتوصلو كلمة مختلفة وما بيعرف (بيتزا وباستا)، أو اخلطوا الدورين.
 
 ليش رح تحبّوها؟
 • من 3 إلى 12 لاعبًا: سهرات الأصحاب، جمعات العائلة، أعياد الميلاد.
@@ -220,13 +228,13 @@ Dites-nous ce qu’en pense votre groupe.
 
 كلمات بثلاث لغات
 • العربية والإنجليزية والفرنسية، مع واجهة عربية كاملة من اليمين إلى اليسار على التلفزيون والهواتف.
-• أكثر من 560 زوجًا من الكلمات في اللغات الثلاث، منها أكثر من 130 بالعربية: أكل، أماكن وسفر، رياضة ومهن، طبيعة، وأغراض من كل يوم.
-• حزم لبنانية: فلافل أو شاورما؟ أكل لبناني وحياة لبنانية، بالكلمات اللي منحكيها كل يوم.
+• أكثر من 560 زوجًا من الكلمات في اللغات الثلاث، منها أكثر من 130 بالعربية، وكلها كلمات سهلة من كل يوم: قمر، درج كهربائي، باريس، غابة، بيتزا، قهوة.
+• حزم لبنانية: أكل لبناني وحياة لبنانية، بالكلمات اللي منحكيها كل يوم.
 • مستوى صعوبة من سهل إلى دقيق، وفلتر مناسب للعائلة.
 
 على ذوقكم
 • مؤقّت للتلميحات والتصويت، أو بلا مؤقّت ويتحكّم المضيف بالوقت.
-• اختاروا عدد الجواسيس والفاضيين، أو اتركوا اللعبة تقرّر.
+• اختاروا عدد الجواسيس، وزيدوا «المتخفّي» إذا بدكن.
 • قاعدة الفوز الرسمية أو قاعدة التساوي.
 • تُلعب بالكامل بجهاز التحكم: الأسهم وOK والرجوع.
 
@@ -257,7 +265,7 @@ Dites-nous ce qu’en pense votre groupe.
 | Field | Control (above) | Variant A | Variant B |
 |---|---|---|---|
 | App name | مش أنا! لعبة سهرات عالتلفزيون (29) | مش أنا! لعبة الكلمة السرّية (27) | مش أنا! لعبة جماعية للتلفزيون (29) |
-| Short description | مين عم يكذب؟ لعبة الكلمة السرّية للسهرات على التلفزيون، والهواتف للتحكم (71) | سهرة ألعاب على التلفزيون: من 3 إلى 12 لاعبًا، وهاتفك هو جهاز التحكم (67) | كلّنا أبرياء… بس في حدا عم يكذب. لعبة الكلمة السرّية على تلفزيونك. (66) |
+| Short description | مين الجاسوس؟ لعبة الكلمة السرّية للسهرات على التلفزيون، والهواتف للتحكم (71) | سهرة ألعاب على التلفزيون: من 3 إلى 12 لاعبًا، وهاتفك هو جهاز التحكم (67) | كلّنا أبرياء… بس في حدا عم يكذب. لعبة الكلمة السرّية على تلفزيونك. (66) |
 
 ### Release notes in Play Console's multi-language paste format
 Play Console → Release → (track) → Create release → Release notes → paste this whole block:

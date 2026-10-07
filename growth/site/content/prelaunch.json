@@ -30,7 +30,7 @@
     "stickyCta": "<span class=\"lbl-open\">Play free</span><span class=\"lbl-send\">Send to TV</span>",
     "aboutPlat": "Any web browser today; Android TV and Google TV app coming soon to Google Play",
     "_metaTitle": "Secret-Word Party Game on Your TV, Free – Mish Ana!",
-    "_metaDescription": "Everyone gets a secret word on their phone; one is different. Play free on any TV in your browser: 3–12 players, nothing to install. Google TV app soon.",
+    "_metaDescription": "Everyone gets the same secret word on their phone, except the Mole. Play free on any TV in your browser: 3–12 players, nothing to install. Google TV app soon.",
     "q1": "Do we need a smart TV?",
     "aboutDef": "Mish Ana! is a secret-word party game for the TV: open it in any web browser on the big screen, and 3–12 players join from their phones by scanning a QR code."
   },
@@ -64,7 +64,7 @@
     "stickyCta": "<span class=\"lbl-open\">Jouer</span><span class=\"lbl-send\">Envoyer à la télé</span>",
     "aboutPlat": "N’importe quel navigateur web dès aujourd’hui ; application Android TV et Google TV bientôt sur Google Play",
     "_metaTitle": "Jeu d’ambiance du mot secret sur ta télé, gratuit – Mish Ana!",
-    "_metaDescription": "Chacun reçoit un mot secret sur son téléphone ; un seul est différent. Joue gratuitement sur n’importe quelle télé, dans le navigateur : 3 à 12 joueurs, rien à installer.",
+    "_metaDescription": "Le même mot secret pour tous, sauf la Taupe. Joue gratuitement sur n’importe quelle télé, dans le navigateur : 3 à 12 joueurs, rien à installer.",
     "q1": "Faut-il une télé connectée ?",
     "aboutDef": "Mish Ana! est un jeu d’ambiance du mot secret pour la télé : ouvre-le dans n’importe quel navigateur sur grand écran, et de 3 à 12 joueurs rejoignent la partie avec leur téléphone en scannant un QR code."
   },
@@ -98,7 +98,7 @@
     "stickyCta": "<span class=\"lbl-open\">العب</span><span class=\"lbl-send\">ابعتها للتلفزيون</span>",
     "aboutPlat": "أي متصفّح إنترنت من هلّق؛ وتطبيق Android TV و Google TV جايي قريبًا على Google Play",
     "_metaTitle": "مش أنا! – لعبة سهرات بالكلمة السرّية عالتلفزيون، ببلاش",
-    "_metaDescription": "كل واحد بتوصلو كلمة سرّية عتلفونو، ووحدة مختلفة. العبوا ببلاش على أي تلفزيون من المتصفّح: من 3 لـ12 لاعب، وما في شي تنزّلوه. تطبيق Google TV قريبًا.",
+    "_metaDescription": "الكل بتوصلن نفس الكلمة السرّية عتلفوناتن، إلّا الجاسوس. العبوا ببلاش على أي تلفزيون من المتصفّح: من 3 لـ12 لاعب، وما في شي تنزّلوه. تطبيق Google TV قريبًا.",
     "q1": "لازم يكون عنّا تلفزيون ذكي؟",
     "aboutDef": "«مش أنا!» لعبة سهرات بالكلمة السرّية للتلفزيون: افتحوها بأي متصفّح عالشاشة الكبيرة، ومن 3 لـ12 لاعب بيفوتوا من تلفوناتن بمسح كود QR."
   },
@@ -109,6 +109,7 @@
     "iphone",
     "setup",
     "players",
+    "roles",
     "internet",
     "kids",
     "languages",

@@ -1,5 +1,23 @@
 # Mish Ana! — Veo 3.1 prompts for MA_A_H1 and MA_B_H1
 
+## Rule change 2026-10-07 (read first)
+
+**New default rule.** Everyone gets the same secret word except **the Mole**, whose phone shows **"YOU'RE THE MOLE!"** and no word. The Mole knows it, bluffs vague clues, and if caught gets **one last guess** at the word to steal the win. The **Undercover** (different word, e.g. PIZZA vs PASTA, doesn't know it) is now an **optional** role; the Blank is gone. Marketing hook = the Mole card, not PIZZA/PASTA.
+
+**How to prompt Veo from now on**
+- **The Mole card shot:** one player lifts the phone close to the face, screen angled **only toward themselves** (camera over the shoulder or from the side), the others visibly can't see it; a small private reaction (eyebrows up, tight smile, glance around). Prompt the screen as **"a plain bright screen, no text"** or facing away; **never ask Veo for the words "YOU'RE THE MOLE"**: the real card UI is composited in Remotion/HyperFrames, like every other game screen here.
+- **Clues:** civilians say concrete clues; the Mole says something **vague** after a beat of hesitation. Existing footage stays: **BODY_shot04 Sami "…Fork?"** is now read as **the Mole's bluff** (no reshoot needed). BODY_shot02/03 ("Cheese.", "Oven.") stay civilian clues for PIZZA.
+- **Payoff:** keep BODY_shot05 (vote) and BODY_shot06 (eruption). The last-guess beat ("Is it… PIZZA?" ✅/❌) is a real-UI composite over a reaction (A_H1_shot02 laugh); A_H1_shot03's group groan "No, no…" works as audio for a ✅ steal.
+- Undercover-variant shots (two different words) only for an ad explicitly labelled as the Undercover mode.
+
+**Prompts in this file that rely on PASTA as the twist (need rework before any new generation):**
+- §3.0 Shared BODY-1 table, row 1.5–3.0 "2×2 phone grid, PIZZA ×3 / PASTA, amber ring" → PIZZA ×3 + Mole card (motion, real UI).
+- §3.1 MA_A_H1 table, row 13.3–16.0 "Everyone had PIZZA. He had **PASTA**." → last guess "Is it… PIZZA?" ✅ "He STILL won."
+- **A_H1_shot03** "Sami busted, group groans (PASTA plate)": keep the plate (no phone in it), composite the **last-guess** UI instead of the PASTA card.
+- BODY_shot04's heading "Sami's clue: …Fork?" stays; only its meaning changes (bluff).
+
+---
+
 Written 2026-10-04. Goes with `SCRIPTS.md` (v2) and `REVIEW.md`. This file covers only the **people and the room**. Every game screen (TV lobby, QR, phone cards, votes, OUT stamp, role card, end card) is rendered in Remotion from the real UI, never by Veo.
 
 **What's in here:** 1 Setup · 2 Cast sheet and reference stills · 3 Shot lists and prompts (shared BODY-1 shots, MA_A_H1, MA_B_H1) · 4 Take-selection checklist · 5 AI label and honest-use rules · Sources.
