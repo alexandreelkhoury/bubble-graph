@@ -516,10 +516,7 @@
         "text": "Hotel"
       },
       "undercover": {
-        "text": "Campsite",
-        "alt": [
-          "Camping"
-        ]
+        "text": "Motel"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -1317,7 +1314,7 @@
         "text": "Cup"
       },
       "undercover": {
-        "text": "Mug"
+        "text": "Bowl"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -1893,7 +1890,7 @@
         "text": "Suitcase"
       },
       "undercover": {
-        "text": "Handbag"
+        "text": "Briefcase"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -1905,7 +1902,11 @@
         "text": "Passport"
       },
       "undercover": {
-        "text": "Visa"
+        "text": "ID card",
+        "alt": [
+          "ID",
+          "Identity card"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -1950,10 +1951,16 @@
     {
       "id": "p141",
       "civilian": {
-        "text": "Boat"
+        "text": "Helicopter",
+        "alt": [
+          "Chopper"
+        ]
       },
       "undercover": {
-        "text": "Raft"
+        "text": "Hot-air balloon",
+        "alt": [
+          "Hot air balloon"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2045,7 +2052,10 @@
         "text": "Souvenir"
       },
       "undercover": {
-        "text": "Postcard"
+        "text": "Gift",
+        "alt": [
+          "Present"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2213,10 +2223,10 @@
     {
       "id": "p160",
       "civilian": {
-        "text": "Baseball"
+        "text": "Karate"
       },
       "undercover": {
-        "text": "Cricket"
+        "text": "Judo"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2286,7 +2296,7 @@
         "text": "Karaoke"
       },
       "undercover": {
-        "text": "Disco"
+        "text": "Concert"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2307,10 +2317,16 @@
     {
       "id": "p167",
       "civilian": {
-        "text": "Camping"
+        "text": "Hiking",
+        "alt": [
+          "Hike"
+        ]
       },
       "undercover": {
-        "text": "Hiking"
+        "text": "Climbing",
+        "alt": [
+          "Rock climbing"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2346,10 +2362,7 @@
         "text": "Medal"
       },
       "undercover": {
-        "text": "Trophy",
-        "alt": [
-          "Cup"
-        ]
+        "text": "Trophy"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2382,10 +2395,14 @@
     {
       "id": "p173",
       "civilian": {
-        "text": "Gardening"
+        "text": "Chess"
       },
       "undercover": {
-        "text": "Cooking"
+        "text": "Dominoes",
+        "alt": [
+          "Domino",
+          "Dominos"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],

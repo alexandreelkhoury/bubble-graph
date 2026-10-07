@@ -94,10 +94,10 @@
     {
       "id": "p006",
       "civilian": {
-        "text": "Éclair"
+        "text": "Tonnerre"
       },
       "undercover": {
-        "text": "Tonnerre"
+        "text": "Éclair"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -238,10 +238,13 @@
     {
       "id": "p016",
       "civilian": {
-        "text": "Ballon"
+        "text": "Bougie"
       },
       "undercover": {
-        "text": "Cerf-volant"
+        "text": "Lampe de poche",
+        "alt": [
+          "Lampe torche"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -376,7 +379,11 @@
         "text": "École"
       },
       "undercover": {
-        "text": "Collège"
+        "text": "Université",
+        "alt": [
+          "Fac",
+          "Faculté"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -756,7 +763,10 @@
         "text": "Glace"
       },
       "undercover": {
-        "text": "Sorbet"
+        "text": "Milkshake",
+        "alt": [
+          "Milk-shake"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -888,10 +898,13 @@
     {
       "id": "p065",
       "civilian": {
-        "text": "Raclette"
+        "text": "Ketchup"
       },
       "undercover": {
-        "text": "Fondue"
+        "text": "Mayonnaise",
+        "alt": [
+          "Mayo"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -1364,9 +1377,9 @@
     {
       "id": "p102",
       "civilian": {
-        "text": "Serviette",
+        "text": "Serviette de bain",
         "alt": [
-          "Serviette de bain"
+          "Serviette"
         ]
       },
       "undercover": {
@@ -1394,9 +1407,9 @@
     {
       "id": "p104",
       "civilian": {
-        "text": "Brosse",
+        "text": "Brosse à cheveux",
         "alt": [
-          "Brosse à cheveux"
+          "Brosse"
         ]
       },
       "undercover": {
@@ -1539,10 +1552,14 @@
     {
       "id": "p114",
       "civilian": {
-        "text": "Boulanger"
+        "text": "Footballeur",
+        "alt": [
+          "Footballeuse",
+          "Joueur de foot"
+        ]
       },
       "undercover": {
-        "text": "Pâtissier"
+        "text": "Arbitre"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -1587,7 +1604,11 @@
         ]
       },
       "undercover": {
-        "text": "Gendarme"
+        "text": "Agent de sécurité",
+        "alt": [
+          "Vigile",
+          "Gardien"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -1836,7 +1857,7 @@
         "text": "Valise"
       },
       "undercover": {
-        "text": "Sac de sport"
+        "text": "Cartable"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -1848,7 +1869,11 @@
         "text": "Passeport"
       },
       "undercover": {
-        "text": "Visa"
+        "text": "Carte d’identité",
+        "alt": [
+          "Carte d'identité",
+          "Carte d identité"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -1983,7 +2008,7 @@
         "text": "Souvenir"
       },
       "undercover": {
-        "text": "Carte postale"
+        "text": "Cadeau"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2028,10 +2053,10 @@
     {
       "id": "p151",
       "civilian": {
-        "text": "Paquebot"
+        "text": "Bateau"
       },
       "undercover": {
-        "text": "Péniche"
+        "text": "Radeau"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2040,10 +2065,16 @@
     {
       "id": "p152",
       "civilian": {
-        "text": "Autoroute"
+        "text": "Ceinture de sécurité",
+        "alt": [
+          "Ceinture"
+        ]
       },
       "undercover": {
-        "text": "Péage"
+        "text": "Casque",
+        "alt": [
+          "Casque de moto"
+        ]
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2188,10 +2219,10 @@
     {
       "id": "p163",
       "civilian": {
-        "text": "Batterie"
+        "text": "Piano"
       },
       "undercover": {
-        "text": "Piano"
+        "text": "Batterie"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2236,10 +2267,13 @@
     {
       "id": "p167",
       "civilian": {
-        "text": "Camping"
+        "text": "Randonnée",
+        "alt": [
+          "Rando"
+        ]
       },
       "undercover": {
-        "text": "Randonnée"
+        "text": "Escalade"
       },
       "difficulty": 1,
       "reviewedBy": [],
@@ -2302,10 +2336,13 @@
     {
       "id": "p172",
       "civilian": {
-        "text": "Pêche"
+        "text": "Plongée",
+        "alt": [
+          "Plongée sous-marine"
+        ]
       },
       "undercover": {
-        "text": "Voile"
+        "text": "Pêche"
       },
       "difficulty": 1,
       "reviewedBy": [],

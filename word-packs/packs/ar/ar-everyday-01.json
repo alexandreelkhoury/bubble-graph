@@ -318,11 +318,14 @@
         ]
       },
       "undercover": {
-        "text": "كرت",
-        "translit": "Kart",
+        "text": "ظرف",
+        "translit": "Zarf",
         "alt": [
-          "card",
-          "بطاقة"
+          "zarf",
+          "zaref",
+          "مغلف",
+          "enveloppe",
+          "envelope"
         ]
       },
       "difficulty": 1,
@@ -362,12 +365,17 @@
         ]
       },
       "undercover": {
-        "text": "لعبة",
-        "translit": "Lobeh",
+        "text": "دمية",
+        "translit": "Domyeh",
         "alt": [
+          "domye",
+          "dumya",
+          "dimye",
+          "لعبة",
           "lo3be",
           "lo3beh",
-          "دمية"
+          "poupée",
+          "doll"
         ]
       },
       "difficulty": 1,
@@ -380,7 +388,9 @@
         "text": "سيران",
         "translit": "Seyran",
         "alt": [
-          "sairan"
+          "sairan",
+          "نزهة",
+          "picnic"
         ]
       },
       "undercover": {
@@ -1622,21 +1632,23 @@
     {
       "id": "p071",
       "civilian": {
-        "text": "دجاجة",
-        "translit": "Djeje",
+        "text": "قرد",
+        "translit": "Ird",
         "alt": [
-          "djeje",
-          "jeje",
-          "djejeh"
+          "2ird",
+          "2erd",
+          "ird",
+          "erd",
+          "sa3den",
+          "سعدان"
         ]
       },
       "undercover": {
-        "text": "حبش",
-        "translit": "Habash",
+        "text": "سنجاب",
+        "translit": "Senjab",
         "alt": [
-          "7abash",
-          "ديك حبش",
-          "ديك رومي"
+          "sinjab",
+          "senjeb"
         ]
       },
       "difficulty": 1,
@@ -1654,10 +1666,12 @@
         ]
       },
       "undercover": {
-        "text": "سنجاب",
-        "translit": "Senjab",
+        "text": "همستر",
+        "translit": "Hamster",
         "alt": [
-          "sinjab"
+          "hamster",
+          "hamstar",
+          "هامستر"
         ]
       },
       "difficulty": 1,
@@ -1781,18 +1795,19 @@
     {
       "id": "p078",
       "civilian": {
-        "text": "دب",
-        "translit": "Debb",
-        "alt": [
-          "dob",
-          "dibb"
-        ]
-      },
-      "undercover": {
         "text": "باندا",
         "translit": "Panda",
         "alt": [
-          "banda"
+          "banda",
+          "panda"
+        ]
+      },
+      "undercover": {
+        "text": "كوالا",
+        "translit": "Koala",
+        "alt": [
+          "koala",
+          "kwala"
         ]
       },
       "difficulty": 1,
@@ -2194,10 +2209,11 @@
         ]
       },
       "undercover": {
-        "text": "مكتب",
-        "translit": "Maktab",
+        "text": "سكملة",
+        "translit": "Skamleh",
         "alt": [
-          "bureau"
+          "skamle",
+          "eskamle"
         ]
       },
       "difficulty": 1,
@@ -2207,20 +2223,24 @@
     {
       "id": "p096",
       "civilian": {
-        "text": "سكملة",
-        "translit": "Skamleh",
+        "text": "مكنسة",
+        "translit": "Mekenseh",
         "alt": [
-          "skamle",
-          "eskamle"
+          "mekense",
+          "mekenseh",
+          "mukansa",
+          "مكنسي"
         ]
       },
       "undercover": {
-        "text": "كرسي",
-        "translit": "Kersi",
+        "text": "مكنسة كهربا",
+        "translit": "Mekenset kahraba",
         "alt": [
-          "korsi",
-          "kirsi",
-          "kerse"
+          "مكنسة كهربائية",
+          "mekenset kahraba",
+          "mekensit kahraba",
+          "vacuum",
+          "aspirateur"
         ]
       },
       "difficulty": 1,
@@ -2458,19 +2478,27 @@
     {
       "id": "p107",
       "civilian": {
-        "text": "شرشف",
-        "translit": "Sharshaf",
+        "text": "ستارة",
+        "translit": "Sitara",
         "alt": [
-          "sharshef",
-          "charchaf"
+          "sitara",
+          "stara",
+          "برداية",
+          "berdaye",
+          "rideau"
         ]
       },
       "undercover": {
-        "text": "لحاف",
-        "translit": "Lhaf",
+        "text": "شباك",
+        "translit": "Shebbek",
         "alt": [
-          "l7af",
-          "le7af"
+          "shebbek",
+          "chebbek",
+          "shibbak",
+          "شبّاك",
+          "نافذة",
+          "fenêtre",
+          "window"
         ]
       },
       "difficulty": 1,
@@ -2956,12 +2984,15 @@
     {
       "id": "p129",
       "civilian": {
-        "text": "مخبر",
-        "translit": "Mokhber",
+        "text": "محقق",
+        "translit": "Mohaqqeq",
         "alt": [
-          "mo5ber",
-          "mukhbir",
-          "تحري"
+          "mo7a22e2",
+          "mu7aqqiq",
+          "mohaqqeq",
+          "تحري",
+          "مخبر",
+          "detective"
         ]
       },
       "undercover": {
@@ -3101,11 +3132,15 @@
         ]
       },
       "undercover": {
-        "text": "فيزا",
-        "translit": "Visa",
+        "text": "هوية",
+        "translit": "Hawiyyeh",
         "alt": [
-          "viza",
-          "تأشيرة"
+          "hawiyye",
+          "hawiye",
+          "هويّة",
+          "بطاقة هوية",
+          "carte d identite",
+          "id"
         ]
       },
       "difficulty": 1,
@@ -3208,19 +3243,22 @@
     {
       "id": "p140",
       "civilian": {
+        "text": "هليكوبتر",
+        "translit": "Helicopter",
+        "alt": [
+          "helicopter",
+          "helikopter",
+          "طوافة",
+          "hélicoptère"
+        ]
+      },
+      "undercover": {
         "text": "تلفريك",
         "translit": "Teleferik",
         "alt": [
           "telefrik",
+          "teleferik",
           "téléphérique"
-        ]
-      },
-      "undercover": {
-        "text": "مترو",
-        "translit": "Metro",
-        "alt": [
-          "metro",
-          "متروا"
         ]
       },
       "difficulty": 1,
@@ -3231,9 +3269,10 @@
       "id": "p141",
       "civilian": {
         "text": "كريم شمس",
-        "translit": "Crème shams",
+        "translit": "Krem shams",
         "alt": [
-          "krem shams",
+          "crème shams",
+          "creme shams",
           "واقي شمس"
         ]
       },
@@ -3285,10 +3324,12 @@
         ]
       },
       "undercover": {
-        "text": "جيب",
-        "translit": "Jeep",
+        "text": "فان",
+        "translit": "Van",
         "alt": [
-          "jib"
+          "van",
+          "vane",
+          "ميني باص"
         ]
       },
       "difficulty": 1,
@@ -3515,7 +3556,6 @@
         "alt": [
           "tawle zahr",
           "tawlet zaher",
-          "طاولة",
           "طاولي"
         ]
       },
@@ -3777,11 +3817,15 @@
         ]
       },
       "undercover": {
-        "text": "كاس",
-        "translit": "Kas",
+        "text": "جايزة",
+        "translit": "Jayzeh",
         "alt": [
-          "كأس",
-          "trophy"
+          "jayze",
+          "jayzeh",
+          "جائزة",
+          "ja2iza",
+          "prix",
+          "prize"
         ]
       },
       "difficulty": 1,
