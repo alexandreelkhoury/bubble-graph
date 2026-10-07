@@ -1,16 +1,17 @@
 {
   "id": "en-places-01",
-  "version": 2,
+  "version": 3,
   "locale": "en",
   "script": "Latn",
   "title": {
-    "en": "Places & travel",
-    "fr": "Lieux et voyages",
-    "ar": "أماكن وسفر"
+    "en": "Hard · Places & travel",
+    "fr": "Difficile · Lieux et voyages",
+    "ar": "صعب · أماكن وسفر"
   },
   "tags": [
     "places",
-    "seeded"
+    "seeded",
+    "hard"
   ],
   "ageRating": "all",
   "license": "MIT",
@@ -188,17 +189,6 @@
         "alt": [
           "LA"
         ]
-      },
-      "difficulty": 1,
-      "reviewedBy": []
-    },
-    {
-      "id": "p014",
-      "civilian": {
-        "text": "Paris"
-      },
-      "undercover": {
-        "text": "London"
       },
       "difficulty": 1,
       "reviewedBy": []
@@ -413,6 +403,20 @@
         "text": "China"
       },
       "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Library"
+      },
+      "undercover": {
+        "text": "Bookshop",
+        "alt": [
+          "Bookstore"
+        ]
+      },
+      "difficulty": 3,
       "reviewedBy": []
     }
   ]

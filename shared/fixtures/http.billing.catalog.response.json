@@ -4,19 +4,19 @@
   "subscription": { "productId": "premium", "basePlanIds": ["monthly", "yearly"], "trialOfferId": "trial-7d" },
   "freePackIds": ["ar-everyday-01", "en-everyday-01", "fr-everyday-01"],
   "packs": [
-    {"packId": "ar-home-01", "productId": "pack_ar_home_01", "locale": "ar", "language": "ar", "title": {"en": "Things & home", "fr": "Objets et maison", "ar": "أغراض البيت"}, "pairCount": 28, "ageRating": "all"},
-    {"packId": "ar-nature-01", "productId": "pack_ar_nature_01", "locale": "ar", "language": "ar", "title": {"en": "Nature & animals", "fr": "Nature et animaux", "ar": "طبيعة وحيوانات"}, "pairCount": 29, "ageRating": "all"},
-    {"packId": "en-food-01", "productId": "pack_en_food_01", "locale": "en", "language": "en", "title": {"en": "Food & drinks", "fr": "À table", "ar": "أكل وشرب"}, "pairCount": 33, "ageRating": "all"},
-    {"packId": "en-leisure-01", "productId": "pack_en_leisure_01", "locale": "en", "language": "en", "title": {"en": "Sports, hobbies & jobs", "fr": "Sports, loisirs et métiers", "ar": "رياضة وهوايات ومهن"}, "pairCount": 33, "ageRating": "all"},
-    {"packId": "en-nature-01", "productId": "pack_en_nature_01", "locale": "en", "language": "en", "title": {"en": "Nature & animals", "fr": "Nature et animaux", "ar": "طبيعة وحيوانات"}, "pairCount": 33, "ageRating": "all"},
-    {"packId": "en-places-01", "productId": "pack_en_places_01", "locale": "en", "language": "en", "title": {"en": "Places & travel", "fr": "Lieux et voyages", "ar": "أماكن وسفر"}, "pairCount": 30, "ageRating": "all"},
-    {"packId": "en-things-01", "productId": "pack_en_things_01", "locale": "en", "language": "en", "title": {"en": "Things & home", "fr": "Objets et maison", "ar": "أغراض وبيت"}, "pairCount": 64, "ageRating": "all"},
-    {"packId": "fr-food-01", "productId": "pack_fr_food_01", "locale": "fr", "language": "fr", "title": {"en": "Food & drinks", "fr": "À table", "ar": "أكل وشرب"}, "pairCount": 33, "ageRating": "all"},
-    {"packId": "fr-leisure-01", "productId": "pack_fr_leisure_01", "locale": "fr", "language": "fr", "title": {"en": "Sports, hobbies & jobs", "fr": "Sports, loisirs et métiers", "ar": "رياضة وهوايات ومهن"}, "pairCount": 33, "ageRating": "all"},
-    {"packId": "fr-nature-01", "productId": "pack_fr_nature_01", "locale": "fr", "language": "fr", "title": {"en": "Nature & animals", "fr": "Nature et animaux", "ar": "طبيعة وحيوانات"}, "pairCount": 31, "ageRating": "all"},
-    {"packId": "fr-places-01", "productId": "pack_fr_places_01", "locale": "fr", "language": "fr", "title": {"en": "Places & travel", "fr": "Lieux et voyages", "ar": "أماكن وسفر"}, "pairCount": 30, "ageRating": "all"},
-    {"packId": "fr-things-01", "productId": "pack_fr_things_01", "locale": "fr", "language": "fr", "title": {"en": "Things & home", "fr": "Objets et maison", "ar": "أغراض وبيت"}, "pairCount": 64, "ageRating": "all"},
-    {"packId": "lb-food-01", "productId": "pack_lb_food_01", "locale": "ar-LB", "language": "ar", "title": {"en": "Lebanese food", "fr": "Cuisine libanaise", "ar": "أكل لبناني"}, "pairCount": 27, "ageRating": "all"},
-    {"packId": "lb-life-01", "productId": "pack_lb_life_01", "locale": "ar-LB", "language": "ar", "title": {"en": "Lebanese life", "fr": "La vie au Liban", "ar": "حياة لبنانية"}, "pairCount": 23, "ageRating": "all"}
+    {"packId": "ar-home-01", "productId": "pack_ar_home_01", "locale": "ar", "language": "ar", "title": {"en": "Hard · Things & home", "fr": "Difficile · Objets et maison", "ar": "صعب · أغراض البيت"}, "pairCount": 28, "ageRating": "all"},
+    {"packId": "ar-nature-01", "productId": "pack_ar_nature_01", "locale": "ar", "language": "ar", "title": {"en": "Hard · Nature & animals", "fr": "Difficile · Nature et animaux", "ar": "صعب · طبيعة وحيوانات"}, "pairCount": 30, "ageRating": "all"},
+    {"packId": "en-food-01", "productId": "pack_en_food_01", "locale": "en", "language": "en", "title": {"en": "Hard · Food & drinks", "fr": "Difficile · À table", "ar": "صعب · أكل وشرب"}, "pairCount": 35, "ageRating": "all"},
+    {"packId": "en-leisure-01", "productId": "pack_en_leisure_01", "locale": "en", "language": "en", "title": {"en": "Hard · Sports, hobbies & jobs", "fr": "Difficile · Sports, loisirs et métiers", "ar": "صعب · رياضة وهوايات ومهن"}, "pairCount": 35, "ageRating": "all"},
+    {"packId": "en-nature-01", "productId": "pack_en_nature_01", "locale": "en", "language": "en", "title": {"en": "Hard · Nature & animals", "fr": "Difficile · Nature et animaux", "ar": "صعب · طبيعة وحيوانات"}, "pairCount": 33, "ageRating": "all"},
+    {"packId": "en-places-01", "productId": "pack_en_places_01", "locale": "en", "language": "en", "title": {"en": "Hard · Places & travel", "fr": "Difficile · Lieux et voyages", "ar": "صعب · أماكن وسفر"}, "pairCount": 30, "ageRating": "all"},
+    {"packId": "en-things-01", "productId": "pack_en_things_01", "locale": "en", "language": "en", "title": {"en": "Hard · Things & home", "fr": "Difficile · Objets et maison", "ar": "صعب · أغراض وبيت"}, "pairCount": 63, "ageRating": "all"},
+    {"packId": "fr-food-01", "productId": "pack_fr_food_01", "locale": "fr", "language": "fr", "title": {"en": "Hard · Food & drinks", "fr": "Difficile · À table", "ar": "صعب · أكل وشرب"}, "pairCount": 35, "ageRating": "all"},
+    {"packId": "fr-leisure-01", "productId": "pack_fr_leisure_01", "locale": "fr", "language": "fr", "title": {"en": "Hard · Sports, hobbies & jobs", "fr": "Difficile · Sports, loisirs et métiers", "ar": "صعب · رياضة وهوايات ومهن"}, "pairCount": 34, "ageRating": "all"},
+    {"packId": "fr-nature-01", "productId": "pack_fr_nature_01", "locale": "fr", "language": "fr", "title": {"en": "Hard · Nature & animals", "fr": "Difficile · Nature et animaux", "ar": "صعب · طبيعة وحيوانات"}, "pairCount": 31, "ageRating": "all"},
+    {"packId": "fr-places-01", "productId": "pack_fr_places_01", "locale": "fr", "language": "fr", "title": {"en": "Hard · Places & travel", "fr": "Difficile · Lieux et voyages", "ar": "صعب · أماكن وسفر"}, "pairCount": 30, "ageRating": "all"},
+    {"packId": "fr-things-01", "productId": "pack_fr_things_01", "locale": "fr", "language": "fr", "title": {"en": "Hard · Things & home", "fr": "Difficile · Objets et maison", "ar": "صعب · أغراض وبيت"}, "pairCount": 63, "ageRating": "all"},
+    {"packId": "lb-food-01", "productId": "pack_lb_food_01", "locale": "ar-LB", "language": "ar", "title": {"en": "Hard · Lebanese food", "fr": "Difficile · Cuisine libanaise", "ar": "صعب · أكل لبناني"}, "pairCount": 28, "ageRating": "all"},
+    {"packId": "lb-life-01", "productId": "pack_lb_life_01", "locale": "ar-LB", "language": "ar", "title": {"en": "Hard · Lebanese life", "fr": "Difficile · La vie au Liban", "ar": "صعب · حياة لبنانية"}, "pairCount": 23, "ageRating": "all"}
   ]
 }

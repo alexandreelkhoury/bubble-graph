@@ -1,16 +1,17 @@
 {
   "id": "fr-things-01",
-  "version": 2,
+  "version": 3,
   "locale": "fr",
   "script": "Latn",
   "title": {
-    "en": "Things & home",
-    "fr": "Objets et maison",
-    "ar": "أغراض وبيت"
+    "en": "Hard · Things & home",
+    "fr": "Difficile · Objets et maison",
+    "ar": "صعب · أغراض وبيت"
   },
   "tags": [
     "things",
-    "seeded"
+    "seeded",
+    "hard"
   ],
   "ageRating": "all",
   "license": "MIT",
@@ -301,21 +302,6 @@
       },
       "undercover": {
         "text": "Journal"
-      },
-      "difficulty": 2,
-      "reviewedBy": []
-    },
-    {
-      "id": "p022",
-      "civilian": {
-        "text": "Ascenseur"
-      },
-      "undercover": {
-        "text": "Escalator",
-        "alt": [
-          "Escalier mécanique",
-          "Escalier roulant"
-        ]
       },
       "difficulty": 2,
       "reviewedBy": []

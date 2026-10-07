@@ -1,16 +1,17 @@
 {
   "id": "en-food-01",
-  "version": 1,
+  "version": 2,
   "locale": "en",
   "script": "Latn",
   "title": {
-    "en": "Food & drinks",
-    "fr": "À table",
-    "ar": "أكل وشرب"
+    "en": "Hard · Food & drinks",
+    "fr": "Difficile · À table",
+    "ar": "صعب · أكل وشرب"
   },
   "tags": [
     "food",
-    "seeded"
+    "seeded",
+    "hard"
   ],
   "ageRating": "all",
   "license": "MIT",
@@ -412,6 +413,28 @@
         "alt": [
           "Microwave oven"
         ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Lemon"
+      },
+      "undercover": {
+        "text": "Lime"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Butter"
+      },
+      "undercover": {
+        "text": "Margarine"
       },
       "difficulty": 3,
       "reviewedBy": []

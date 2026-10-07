@@ -66,25 +66,25 @@ Edits to the pack JSON files (A):
 
 | Pack id | Locale | Pairs | `tier` | Product id |
 |---|---|---|---|---|
-| `en-everyday-01` | en | 24 | **free** | — |
-| `fr-everyday-01` | fr | 24 | **free** | — |
-| `ar-everyday-01` | ar | 24 | **free** | — |
-| `en-food-01` | en | 33 | premium | `pack_en_food_01` |
-| `en-leisure-01` | en | 33 | premium | `pack_en_leisure_01` |
+| `en-everyday-01` | en | 176 | **free** | — |
+| `fr-everyday-01` | fr | 176 | **free** | — |
+| `ar-everyday-01` | ar | 170 | **free** | — |
+| `en-food-01` | en | 35 | premium | `pack_en_food_01` |
+| `en-leisure-01` | en | 35 | premium | `pack_en_leisure_01` |
 | `en-nature-01` | en | 33 | premium | `pack_en_nature_01` |
 | `en-places-01` | en | 30 | premium | `pack_en_places_01` |
-| `en-things-01` | en | 64 | premium | `pack_en_things_01` |
-| `fr-food-01` | fr | 33 | premium | `pack_fr_food_01` |
-| `fr-leisure-01` | fr | 33 | premium | `pack_fr_leisure_01` |
+| `en-things-01` | en | 63 | premium | `pack_en_things_01` |
+| `fr-food-01` | fr | 35 | premium | `pack_fr_food_01` |
+| `fr-leisure-01` | fr | 34 | premium | `pack_fr_leisure_01` |
 | `fr-nature-01` | fr | 31 | premium | `pack_fr_nature_01` |
 | `fr-places-01` | fr | 30 | premium | `pack_fr_places_01` |
-| `fr-things-01` | fr | 64 | premium | `pack_fr_things_01` |
+| `fr-things-01` | fr | 63 | premium | `pack_fr_things_01` |
 | `ar-home-01` | ar | 28 | premium | `pack_ar_home_01` |
-| `ar-nature-01` | ar | 29 | premium | `pack_ar_nature_01` |
-| `lb-food-01` | ar-LB | 27 | premium | `pack_lb_food_01` |
+| `ar-nature-01` | ar | 30 | premium | `pack_ar_nature_01` |
+| `lb-food-01` | ar-LB | 28 | premium | `pack_lb_food_01` |
 | `lb-life-01` | ar-LB | 23 | premium | `pack_lb_life_01` |
 
-Starter packs are the "Everyday" pack because it exists with the same theme in all three languages. **Release gate:** each starter pack must reach **at least 40 pairs** before the first production release. 24 pairs is about 24 games before repeats, and in a deduction game a remembered pair exposes the Mole at once. `pack-lint --release` (run by `pnpm run deploy`) fails below 40; dev runs only warn (§1.5). Growing the three starter packs is an owner/D content task; A only adds the gate.
+Starter packs are the "Everyday" pack because it exists with the same theme in all three languages. **Easy words (2026-10-07, owner):** the starter packs hold the easy, everyday words (concrete, 1–2 words, guessable by the word-less Mole; each pair's `notes` names its theme: Everyday, Places, Food, Animals, Things at home, Jobs, Travel, Sports and hobbies). They are the only words a free room plays by default. The premium packs are the "Hard" packs (titles prefixed "Hard · " / "Difficile · " / "صعب · ", tag `hard`); their ids and product ids are unchanged. **Release gate:** each starter pack must reach **at least 40 pairs** before the first production release. 24 pairs is about 24 games before repeats, and in a deduction game a remembered pair exposes the Mole at once. `pack-lint --release` (run by `pnpm run deploy`) fails below 40; dev runs only warn (§1.5). Growing the three starter packs is an owner/D content task; A only adds the gate.
 
 ### 1.3 Pack → product id mapping (shared, A; mirrored in Kotlin by B)
 

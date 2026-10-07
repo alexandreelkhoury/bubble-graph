@@ -1,16 +1,17 @@
 {
   "id": "fr-food-01",
-  "version": 1,
+  "version": 2,
   "locale": "fr",
   "script": "Latn",
   "title": {
-    "en": "Food & drinks",
-    "fr": "À table",
-    "ar": "أكل وشرب"
+    "en": "Hard · Food & drinks",
+    "fr": "Difficile · À table",
+    "ar": "صعب · أكل وشرب"
   },
   "tags": [
     "food",
-    "seeded"
+    "seeded",
+    "hard"
   ],
   "ageRating": "all",
   "license": "MIT",
@@ -415,6 +416,31 @@
           "Micro-onde",
           "Four à micro-ondes"
         ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Citron"
+      },
+      "undercover": {
+        "text": "Citron vert",
+        "alt": [
+          "Lime"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Beurre"
+      },
+      "undercover": {
+        "text": "Margarine"
       },
       "difficulty": 3,
       "reviewedBy": []

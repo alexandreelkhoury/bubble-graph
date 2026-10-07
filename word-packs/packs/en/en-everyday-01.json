@@ -1,6 +1,6 @@
 {
   "id": "en-everyday-01",
-  "version": 1,
+  "version": 2,
   "locale": "en",
   "script": "Latn",
   "title": {
@@ -9,7 +9,15 @@
     "ar": "من كل يوم"
   },
   "tags": [
-    "everyday"
+    "everyday",
+    "easy",
+    "places",
+    "food",
+    "animals",
+    "home",
+    "jobs",
+    "travel",
+    "sports"
   ],
   "ageRating": "all",
   "tier": "free",
@@ -26,21 +34,47 @@
         "text": "Tea"
       },
       "difficulty": 1,
-      "reviewedBy": []
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
     },
     {
       "id": "p002",
       "civilian": {
-        "text": "Cat"
+        "text": "Moon"
       },
       "undercover": {
-        "text": "Dog"
+        "text": "Sun"
       },
       "difficulty": 1,
-      "reviewedBy": []
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
     },
     {
       "id": "p003",
+      "civilian": {
+        "text": "Rain"
+      },
+      "undercover": {
+        "text": "Snow"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Birthday"
+      },
+      "undercover": {
+        "text": "Wedding"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p005",
       "civilian": {
         "text": "Beach"
       },
@@ -51,10 +85,560 @@
         ]
       },
       "difficulty": 1,
-      "reviewedBy": []
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
     },
     {
-      "id": "p004",
+      "id": "p006",
+      "civilian": {
+        "text": "Lightning"
+      },
+      "undercover": {
+        "text": "Thunder"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Summer"
+      },
+      "undercover": {
+        "text": "Winter"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Sunrise"
+      },
+      "undercover": {
+        "text": "Sunset"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Umbrella"
+      },
+      "undercover": {
+        "text": "Raincoat",
+        "alt": [
+          "Rain coat",
+          "Rain jacket"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Key"
+      },
+      "undercover": {
+        "text": "Lock"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Phone",
+        "alt": [
+          "Mobile phone",
+          "Mobile",
+          "Cellphone",
+          "Cell phone",
+          "Telephone"
+        ]
+      },
+      "undercover": {
+        "text": "Camera"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Hat"
+      },
+      "undercover": {
+        "text": "Cap",
+        "alt": [
+          "Baseball cap"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Shoe",
+        "alt": [
+          "Shoes"
+        ]
+      },
+      "undercover": {
+        "text": "Sock",
+        "alt": [
+          "Socks"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Toothbrush",
+        "alt": [
+          "Tooth brush"
+        ]
+      },
+      "undercover": {
+        "text": "Toothpaste",
+        "alt": [
+          "Tooth paste"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Soap"
+      },
+      "undercover": {
+        "text": "Shampoo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Coin"
+      },
+      "undercover": {
+        "text": "Banknote",
+        "alt": [
+          "Bank note",
+          "Bill",
+          "Note"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Letter"
+      },
+      "undercover": {
+        "text": "Postcard",
+        "alt": [
+          "Post card"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Balloon"
+      },
+      "undercover": {
+        "text": "Kite"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Teddy bear",
+        "alt": [
+          "Teddy"
+        ]
+      },
+      "undercover": {
+        "text": "Doll"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Picnic"
+      },
+      "undercover": {
+        "text": "Barbecue",
+        "alt": [
+          "BBQ",
+          "Barbeque"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Newspaper",
+        "alt": [
+          "Paper"
+        ]
+      },
+      "undercover": {
+        "text": "Magazine"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Snowman",
+        "alt": [
+          "Snow man"
+        ]
+      },
+      "undercover": {
+        "text": "Sandcastle",
+        "alt": [
+          "Sand castle"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Paris"
+      },
+      "undercover": {
+        "text": "London"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Escalator"
+      },
+      "undercover": {
+        "text": "Elevator",
+        "alt": [
+          "Lift"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Hospital"
+      },
+      "undercover": {
+        "text": "Pharmacy",
+        "alt": [
+          "Chemist",
+          "Drugstore"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "School"
+      },
+      "undercover": {
+        "text": "University",
+        "alt": [
+          "College"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Supermarket",
+        "alt": [
+          "Grocery store"
+        ]
+      },
+      "undercover": {
+        "text": "Market"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Cinema",
+        "alt": [
+          "Movie theater",
+          "Movies"
+        ]
+      },
+      "undercover": {
+        "text": "Theater",
+        "alt": [
+          "Theatre"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Restaurant"
+      },
+      "undercover": {
+        "text": "Café",
+        "alt": [
+          "Cafe",
+          "Coffee shop"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Zoo"
+      },
+      "undercover": {
+        "text": "Farm"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Playground"
+      },
+      "undercover": {
+        "text": "Park"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Castle"
+      },
+      "undercover": {
+        "text": "Palace"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Stadium"
+      },
+      "undercover": {
+        "text": "Gym"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Bank"
+      },
+      "undercover": {
+        "text": "Post office"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Hotel"
+      },
+      "undercover": {
+        "text": "Campsite",
+        "alt": [
+          "Camping"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "Skyscraper"
+      },
+      "undercover": {
+        "text": "Tower"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p037",
+      "civilian": {
+        "text": "Forest"
+      },
+      "undercover": {
+        "text": "Jungle"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p038",
+      "civilian": {
+        "text": "Village"
+      },
+      "undercover": {
+        "text": "Town"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p039",
+      "civilian": {
+        "text": "Rome"
+      },
+      "undercover": {
+        "text": "Venice"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p040",
+      "civilian": {
+        "text": "Police station"
+      },
+      "undercover": {
+        "text": "Fire station"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p041",
+      "civilian": {
+        "text": "Gas station",
+        "alt": [
+          "Petrol station",
+          "Filling station"
+        ]
+      },
+      "undercover": {
+        "text": "Car wash"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p042",
+      "civilian": {
+        "text": "Office"
+      },
+      "undercover": {
+        "text": "Factory"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p043",
+      "civilian": {
+        "text": "Museum"
+      },
+      "undercover": {
+        "text": "Aquarium"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p044",
+      "civilian": {
+        "text": "Lighthouse"
+      },
+      "undercover": {
+        "text": "Windmill"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p045",
       "civilian": {
         "text": "Pizza"
       },
@@ -65,60 +649,11 @@
         ]
       },
       "difficulty": 1,
-      "reviewedBy": []
+      "reviewedBy": [],
+      "notes": "Theme: Food"
     },
     {
-      "id": "p005",
-      "civilian": {
-        "text": "Train"
-      },
-      "undercover": {
-        "text": "Bus"
-      },
-      "difficulty": 1,
-      "reviewedBy": []
-    },
-    {
-      "id": "p006",
-      "civilian": {
-        "text": "Guitar"
-      },
-      "undercover": {
-        "text": "Violin",
-        "alt": [
-          "Fiddle"
-        ]
-      },
-      "difficulty": 2,
-      "reviewedBy": []
-    },
-    {
-      "id": "p007",
-      "civilian": {
-        "text": "Doctor",
-        "alt": [
-          "Physician"
-        ]
-      },
-      "undercover": {
-        "text": "Nurse"
-      },
-      "difficulty": 2,
-      "reviewedBy": []
-    },
-    {
-      "id": "p008",
-      "civilian": {
-        "text": "Moon"
-      },
-      "undercover": {
-        "text": "Sun"
-      },
-      "difficulty": 1,
-      "reviewedBy": []
-    },
-    {
-      "id": "p009",
+      "id": "p046",
       "civilian": {
         "text": "Apple"
       },
@@ -126,32 +661,308 @@
         "text": "Pear"
       },
       "difficulty": 1,
-      "reviewedBy": []
+      "reviewedBy": [],
+      "notes": "Theme: Food"
     },
     {
-      "id": "p010",
+      "id": "p047",
       "civilian": {
-        "text": "Pillow"
+        "text": "Honey"
       },
       "undercover": {
-        "text": "Blanket"
+        "text": "Jam",
+        "alt": [
+          "Jelly"
+        ]
       },
-      "difficulty": 2,
-      "reviewedBy": []
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
     },
     {
-      "id": "p011",
+      "id": "p048",
       "civilian": {
-        "text": "Wedding"
+        "text": "Orange"
       },
       "undercover": {
-        "text": "Birthday"
+        "text": "Mandarin",
+        "alt": [
+          "Tangerine",
+          "Clementine"
+        ]
       },
-      "difficulty": 2,
-      "reviewedBy": []
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
     },
     {
-      "id": "p012",
+      "id": "p049",
+      "civilian": {
+        "text": "Chocolate"
+      },
+      "undercover": {
+        "text": "Candy",
+        "alt": [
+          "Sweets",
+          "Sweet"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p050",
+      "civilian": {
+        "text": "Ice cream"
+      },
+      "undercover": {
+        "text": "Popsicle",
+        "alt": [
+          "Ice lolly",
+          "Ice pop"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p051",
+      "civilian": {
+        "text": "Cake"
+      },
+      "undercover": {
+        "text": "Pie"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p052",
+      "civilian": {
+        "text": "Cookie",
+        "alt": [
+          "Biscuit"
+        ]
+      },
+      "undercover": {
+        "text": "Cracker"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p053",
+      "civilian": {
+        "text": "Cheese"
+      },
+      "undercover": {
+        "text": "Yogurt",
+        "alt": [
+          "Yoghurt"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p054",
+      "civilian": {
+        "text": "French fries",
+        "alt": [
+          "Fries",
+          "Chips",
+          "French fry"
+        ]
+      },
+      "undercover": {
+        "text": "Mashed potato",
+        "alt": [
+          "Mashed potatoes",
+          "Mash"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p055",
+      "civilian": {
+        "text": "Soup"
+      },
+      "undercover": {
+        "text": "Salad"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p056",
+      "civilian": {
+        "text": "Sandwich"
+      },
+      "undercover": {
+        "text": "Wrap"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p057",
+      "civilian": {
+        "text": "Pancake"
+      },
+      "undercover": {
+        "text": "Waffle"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p058",
+      "civilian": {
+        "text": "Popcorn",
+        "alt": [
+          "Pop corn"
+        ]
+      },
+      "undercover": {
+        "text": "Nachos",
+        "alt": [
+          "Nacho"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p059",
+      "civilian": {
+        "text": "Watermelon"
+      },
+      "undercover": {
+        "text": "Melon"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p060",
+      "civilian": {
+        "text": "Grape",
+        "alt": [
+          "Grapes"
+        ]
+      },
+      "undercover": {
+        "text": "Cherry"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p061",
+      "civilian": {
+        "text": "Tomato"
+      },
+      "undercover": {
+        "text": "Cucumber"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p062",
+      "civilian": {
+        "text": "Peanut"
+      },
+      "undercover": {
+        "text": "Almond"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p063",
+      "civilian": {
+        "text": "Lemonade"
+      },
+      "undercover": {
+        "text": "Orange juice"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p064",
+      "civilian": {
+        "text": "Milkshake",
+        "alt": [
+          "Milk shake"
+        ]
+      },
+      "undercover": {
+        "text": "Smoothie"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p065",
+      "civilian": {
+        "text": "Spaghetti"
+      },
+      "undercover": {
+        "text": "Noodles",
+        "alt": [
+          "Noodle"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p066",
+      "civilian": {
+        "text": "Sausage"
+      },
+      "undercover": {
+        "text": "Bacon"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p067",
+      "civilian": {
+        "text": "Cat"
+      },
+      "undercover": {
+        "text": "Dog"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p068",
       "civilian": {
         "text": "Lion"
       },
@@ -159,10 +970,278 @@
         "text": "Tiger"
       },
       "difficulty": 1,
-      "reviewedBy": []
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
     },
     {
-      "id": "p013",
+      "id": "p069",
+      "civilian": {
+        "text": "Elephant"
+      },
+      "undercover": {
+        "text": "Hippo",
+        "alt": [
+          "Hippopotamus"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p070",
+      "civilian": {
+        "text": "Horse"
+      },
+      "undercover": {
+        "text": "Donkey"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p071",
+      "civilian": {
+        "text": "Sheep"
+      },
+      "undercover": {
+        "text": "Goat"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p072",
+      "civilian": {
+        "text": "Chicken",
+        "alt": [
+          "Hen"
+        ]
+      },
+      "undercover": {
+        "text": "Duck"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p073",
+      "civilian": {
+        "text": "Rabbit",
+        "alt": [
+          "Bunny"
+        ]
+      },
+      "undercover": {
+        "text": "Hamster"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p074",
+      "civilian": {
+        "text": "Bee"
+      },
+      "undercover": {
+        "text": "Wasp"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p075",
+      "civilian": {
+        "text": "Butterfly"
+      },
+      "undercover": {
+        "text": "Ladybug",
+        "alt": [
+          "Ladybird"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p076",
+      "civilian": {
+        "text": "Ant"
+      },
+      "undercover": {
+        "text": "Spider"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p077",
+      "civilian": {
+        "text": "Whale"
+      },
+      "undercover": {
+        "text": "Dolphin"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p078",
+      "civilian": {
+        "text": "Snake"
+      },
+      "undercover": {
+        "text": "Lizard"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p079",
+      "civilian": {
+        "text": "Penguin"
+      },
+      "undercover": {
+        "text": "Polar bear"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p080",
+      "civilian": {
+        "text": "Monkey"
+      },
+      "undercover": {
+        "text": "Gorilla"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p081",
+      "civilian": {
+        "text": "Panda"
+      },
+      "undercover": {
+        "text": "Koala"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p082",
+      "civilian": {
+        "text": "Owl"
+      },
+      "undercover": {
+        "text": "Eagle"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p083",
+      "civilian": {
+        "text": "Crab"
+      },
+      "undercover": {
+        "text": "Lobster"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p084",
+      "civilian": {
+        "text": "Octopus"
+      },
+      "undercover": {
+        "text": "Squid"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p085",
+      "civilian": {
+        "text": "Cow"
+      },
+      "undercover": {
+        "text": "Pig"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p086",
+      "civilian": {
+        "text": "Frog"
+      },
+      "undercover": {
+        "text": "Turtle",
+        "alt": [
+          "Tortoise"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p087",
+      "civilian": {
+        "text": "Squirrel"
+      },
+      "undercover": {
+        "text": "Hedgehog"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p088",
+      "civilian": {
+        "text": "Pigeon"
+      },
+      "undercover": {
+        "text": "Parrot"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p089",
+      "civilian": {
+        "text": "Pillow"
+      },
+      "undercover": {
+        "text": "Blanket"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p090",
       "civilian": {
         "text": "Shower"
       },
@@ -173,99 +1252,12 @@
           "Tub"
         ]
       },
-      "difficulty": 2,
-      "reviewedBy": []
-    },
-    {
-      "id": "p014",
-      "civilian": {
-        "text": "Rain"
-      },
-      "undercover": {
-        "text": "Snow"
-      },
       "difficulty": 1,
-      "reviewedBy": []
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
     },
     {
-      "id": "p015",
-      "civilian": {
-        "text": "Chess"
-      },
-      "undercover": {
-        "text": "Checkers",
-        "alt": [
-          "Draughts",
-          "Checker"
-        ]
-      },
-      "difficulty": 2,
-      "reviewedBy": []
-    },
-    {
-      "id": "p016",
-      "civilian": {
-        "text": "Library"
-      },
-      "undercover": {
-        "text": "Bookshop",
-        "alt": [
-          "Bookstore"
-        ]
-      },
-      "difficulty": 3,
-      "reviewedBy": []
-    },
-    {
-      "id": "p017",
-      "civilian": {
-        "text": "Lemon"
-      },
-      "undercover": {
-        "text": "Lime"
-      },
-      "difficulty": 2,
-      "reviewedBy": []
-    },
-    {
-      "id": "p018",
-      "civilian": {
-        "text": "Fork"
-      },
-      "undercover": {
-        "text": "Spoon"
-      },
-      "difficulty": 1,
-      "reviewedBy": []
-    },
-    {
-      "id": "p019",
-      "civilian": {
-        "text": "Airport"
-      },
-      "undercover": {
-        "text": "Train station",
-        "alt": [
-          "Station",
-          "Railway station"
-        ]
-      },
-      "difficulty": 2,
-      "reviewedBy": []
-    },
-    {
-      "id": "p020",
-      "civilian": {
-        "text": "Butter"
-      },
-      "undercover": {
-        "text": "Margarine"
-      },
-      "difficulty": 3,
-      "reviewedBy": []
-    },
-    {
-      "id": "p021",
+      "id": "p091",
       "civilian": {
         "text": "Sofa",
         "alt": [
@@ -276,44 +1268,1171 @@
       "undercover": {
         "text": "Armchair"
       },
-      "difficulty": 2,
-      "reviewedBy": []
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
     },
     {
-      "id": "p022",
+      "id": "p092",
       "civilian": {
-        "text": "Honey"
+        "text": "Fork"
       },
       "undercover": {
-        "text": "Jam",
-        "alt": [
-          "Jelly"
-        ]
+        "text": "Spoon"
       },
-      "difficulty": 2,
-      "reviewedBy": []
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
     },
     {
-      "id": "p023",
+      "id": "p093",
       "civilian": {
-        "text": "Painter"
+        "text": "Fridge",
+        "alt": [
+          "Refrigerator"
+        ]
+      },
+      "undercover": {
+        "text": "Freezer"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p094",
+      "civilian": {
+        "text": "Toaster"
+      },
+      "undercover": {
+        "text": "Kettle"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p095",
+      "civilian": {
+        "text": "Cup"
+      },
+      "undercover": {
+        "text": "Mug"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p096",
+      "civilian": {
+        "text": "Washing machine",
+        "alt": [
+          "Washer"
+        ]
+      },
+      "undercover": {
+        "text": "Dishwasher"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p097",
+      "civilian": {
+        "text": "Broom"
+      },
+      "undercover": {
+        "text": "Vacuum cleaner",
+        "alt": [
+          "Vacuum"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p098",
+      "civilian": {
+        "text": "Table"
+      },
+      "undercover": {
+        "text": "Desk"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p099",
+      "civilian": {
+        "text": "Chair"
+      },
+      "undercover": {
+        "text": "Stool"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p100",
+      "civilian": {
+        "text": "Carpet",
+        "alt": [
+          "Rug"
+        ]
+      },
+      "undercover": {
+        "text": "Curtain"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p101",
+      "civilian": {
+        "text": "Lamp"
+      },
+      "undercover": {
+        "text": "Light bulb",
+        "alt": [
+          "Lightbulb",
+          "Bulb"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p102",
+      "civilian": {
+        "text": "Towel"
+      },
+      "undercover": {
+        "text": "Bathrobe",
+        "alt": [
+          "Robe"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p103",
+      "civilian": {
+        "text": "Computer",
+        "alt": [
+          "PC"
+        ]
+      },
+      "undercover": {
+        "text": "Printer"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p104",
+      "civilian": {
+        "text": "Hairbrush",
+        "alt": [
+          "Hair brush",
+          "Brush"
+        ]
+      },
+      "undercover": {
+        "text": "Comb"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p105",
+      "civilian": {
+        "text": "Fan"
+      },
+      "undercover": {
+        "text": "Air conditioner",
+        "alt": [
+          "Air conditioning",
+          "AC",
+          "Aircon"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p106",
+      "civilian": {
+        "text": "Drawer"
+      },
+      "undercover": {
+        "text": "Shelf"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p107",
+      "civilian": {
+        "text": "Kitchen"
+      },
+      "undercover": {
+        "text": "Bathroom"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p108",
+      "civilian": {
+        "text": "Garden"
+      },
+      "undercover": {
+        "text": "Balcony"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p109",
+      "civilian": {
+        "text": "Basement",
+        "alt": [
+          "Cellar"
+        ]
+      },
+      "undercover": {
+        "text": "Attic"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p110",
+      "civilian": {
+        "text": "Iron"
+      },
+      "undercover": {
+        "text": "Hair dryer",
+        "alt": [
+          "Hairdryer",
+          "Blow dryer"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p111",
+      "civilian": {
+        "text": "Doctor",
+        "alt": [
+          "Physician"
+        ]
+      },
+      "undercover": {
+        "text": "Nurse"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p112",
+      "civilian": {
+        "text": "Dentist"
+      },
+      "undercover": {
+        "text": "Vet",
+        "alt": [
+          "Veterinarian"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p113",
+      "civilian": {
+        "text": "Teacher"
+      },
+      "undercover": {
+        "text": "Coach"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p114",
+      "civilian": {
+        "text": "Chef",
+        "alt": [
+          "Cook"
+        ]
+      },
+      "undercover": {
+        "text": "Waiter",
+        "alt": [
+          "Waitress"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p115",
+      "civilian": {
+        "text": "Baker"
+      },
+      "undercover": {
+        "text": "Butcher"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p116",
+      "civilian": {
+        "text": "Firefighter",
+        "alt": [
+          "Fireman"
+        ]
+      },
+      "undercover": {
+        "text": "Paramedic"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p117",
+      "civilian": {
+        "text": "Police officer",
+        "alt": [
+          "Policeman",
+          "Police",
+          "Cop"
+        ]
+      },
+      "undercover": {
+        "text": "Security guard",
+        "alt": [
+          "Guard"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p118",
+      "civilian": {
+        "text": "Pilot"
+      },
+      "undercover": {
+        "text": "Flight attendant",
+        "alt": [
+          "Stewardess",
+          "Steward"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p119",
+      "civilian": {
+        "text": "Farmer"
+      },
+      "undercover": {
+        "text": "Gardener"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p120",
+      "civilian": {
+        "text": "Sailor"
+      },
+      "undercover": {
+        "text": "Pirate"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p121",
+      "civilian": {
+        "text": "Hairdresser",
+        "alt": [
+          "Hair stylist"
+        ]
+      },
+      "undercover": {
+        "text": "Barber"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p122",
+      "civilian": {
+        "text": "Plumber"
+      },
+      "undercover": {
+        "text": "Electrician"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p123",
+      "civilian": {
+        "text": "Bus driver"
+      },
+      "undercover": {
+        "text": "Taxi driver"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p124",
+      "civilian": {
+        "text": "Singer"
+      },
+      "undercover": {
+        "text": "Dancer"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p125",
+      "civilian": {
+        "text": "Clown"
+      },
+      "undercover": {
+        "text": "Magician"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p126",
+      "civilian": {
+        "text": "Builder"
+      },
+      "undercover": {
+        "text": "Carpenter"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p127",
+      "civilian": {
+        "text": "Postman",
+        "alt": [
+          "Mailman",
+          "Mail carrier"
+        ]
+      },
+      "undercover": {
+        "text": "Delivery driver",
+        "alt": [
+          "Delivery man",
+          "Courier"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p128",
+      "civilian": {
+        "text": "Lawyer"
+      },
+      "undercover": {
+        "text": "Judge"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p129",
+      "civilian": {
+        "text": "Astronaut"
+      },
+      "undercover": {
+        "text": "Scientist"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p130",
+      "civilian": {
+        "text": "Journalist",
+        "alt": [
+          "Reporter"
+        ]
       },
       "undercover": {
         "text": "Photographer"
       },
-      "difficulty": 3,
-      "reviewedBy": []
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
     },
     {
-      "id": "p024",
+      "id": "p131",
       "civilian": {
-        "text": "Mountain"
+        "text": "Cashier"
       },
       "undercover": {
-        "text": "Hill"
+        "text": "Shopkeeper"
       },
-      "difficulty": 3,
-      "reviewedBy": []
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p132",
+      "civilian": {
+        "text": "Detective"
+      },
+      "undercover": {
+        "text": "Spy"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p133",
+      "civilian": {
+        "text": "Train"
+      },
+      "undercover": {
+        "text": "Bus"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p134",
+      "civilian": {
+        "text": "Airport"
+      },
+      "undercover": {
+        "text": "Train station",
+        "alt": [
+          "Station",
+          "Railway station"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p135",
+      "civilian": {
+        "text": "Plane",
+        "alt": [
+          "Airplane",
+          "Aeroplane"
+        ]
+      },
+      "undercover": {
+        "text": "Rocket"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p136",
+      "civilian": {
+        "text": "Suitcase"
+      },
+      "undercover": {
+        "text": "Handbag"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p137",
+      "civilian": {
+        "text": "Passport"
+      },
+      "undercover": {
+        "text": "Visa"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p138",
+      "civilian": {
+        "text": "Map"
+      },
+      "undercover": {
+        "text": "Globe"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p139",
+      "civilian": {
+        "text": "Tent"
+      },
+      "undercover": {
+        "text": "Sleeping bag"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p140",
+      "civilian": {
+        "text": "Scooter"
+      },
+      "undercover": {
+        "text": "Skateboard"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p141",
+      "civilian": {
+        "text": "Boat"
+      },
+      "undercover": {
+        "text": "Raft"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p142",
+      "civilian": {
+        "text": "Metro",
+        "alt": [
+          "Subway",
+          "Underground"
+        ]
+      },
+      "undercover": {
+        "text": "Tram"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p143",
+      "civilian": {
+        "text": "Sunscreen",
+        "alt": [
+          "Sun cream",
+          "Suncream"
+        ]
+      },
+      "undercover": {
+        "text": "Sunglasses",
+        "alt": [
+          "Shades"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p144",
+      "civilian": {
+        "text": "Traffic light",
+        "alt": [
+          "Traffic lights"
+        ]
+      },
+      "undercover": {
+        "text": "Stop sign"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p145",
+      "civilian": {
+        "text": "Car"
+      },
+      "undercover": {
+        "text": "Van"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p146",
+      "civilian": {
+        "text": "Taxi",
+        "alt": [
+          "Cab"
+        ]
+      },
+      "undercover": {
+        "text": "Limousine",
+        "alt": [
+          "Limo"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p147",
+      "civilian": {
+        "text": "Souvenir"
+      },
+      "undercover": {
+        "text": "Postcard"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p148",
+      "civilian": {
+        "text": "Hammock"
+      },
+      "undercover": {
+        "text": "Deck chair",
+        "alt": [
+          "Deckchair"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p149",
+      "civilian": {
+        "text": "Italy"
+      },
+      "undercover": {
+        "text": "Spain"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p150",
+      "civilian": {
+        "text": "Brazil"
+      },
+      "undercover": {
+        "text": "Mexico"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p151",
+      "civilian": {
+        "text": "Egypt"
+      },
+      "undercover": {
+        "text": "Morocco"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p152",
+      "civilian": {
+        "text": "Ship"
+      },
+      "undercover": {
+        "text": "Submarine"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p153",
+      "civilian": {
+        "text": "Bicycle",
+        "alt": [
+          "Bike"
+        ]
+      },
+      "undercover": {
+        "text": "Tricycle"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p154",
+      "civilian": {
+        "text": "Jet ski"
+      },
+      "undercover": {
+        "text": "Speedboat"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p155",
+      "civilian": {
+        "text": "Guitar"
+      },
+      "undercover": {
+        "text": "Violin",
+        "alt": [
+          "Fiddle"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p156",
+      "civilian": {
+        "text": "Skiing",
+        "alt": [
+          "Ski"
+        ]
+      },
+      "undercover": {
+        "text": "Snowboarding",
+        "alt": [
+          "Snowboard"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p157",
+      "civilian": {
+        "text": "Ice skating"
+      },
+      "undercover": {
+        "text": "Roller skating"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p158",
+      "civilian": {
+        "text": "Boxing"
+      },
+      "undercover": {
+        "text": "Wrestling"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p159",
+      "civilian": {
+        "text": "Swimming"
+      },
+      "undercover": {
+        "text": "Surfing"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p160",
+      "civilian": {
+        "text": "Baseball"
+      },
+      "undercover": {
+        "text": "Cricket"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p161",
+      "civilian": {
+        "text": "Tennis"
+      },
+      "undercover": {
+        "text": "Golf"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p162",
+      "civilian": {
+        "text": "Video game",
+        "alt": [
+          "Video games"
+        ]
+      },
+      "undercover": {
+        "text": "Board game",
+        "alt": [
+          "Board games"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p163",
+      "civilian": {
+        "text": "Drums",
+        "alt": [
+          "Drum",
+          "Drum kit"
+        ]
+      },
+      "undercover": {
+        "text": "Piano"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p164",
+      "civilian": {
+        "text": "Trumpet"
+      },
+      "undercover": {
+        "text": "Flute"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p165",
+      "civilian": {
+        "text": "Karaoke"
+      },
+      "undercover": {
+        "text": "Disco"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p166",
+      "civilian": {
+        "text": "Painting"
+      },
+      "undercover": {
+        "text": "Drawing"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p167",
+      "civilian": {
+        "text": "Camping"
+      },
+      "undercover": {
+        "text": "Hiking"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p168",
+      "civilian": {
+        "text": "Knitting"
+      },
+      "undercover": {
+        "text": "Sewing"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p169",
+      "civilian": {
+        "text": "Swing"
+      },
+      "undercover": {
+        "text": "Slide"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p170",
+      "civilian": {
+        "text": "Medal"
+      },
+      "undercover": {
+        "text": "Trophy",
+        "alt": [
+          "Cup"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p171",
+      "civilian": {
+        "text": "Cycling"
+      },
+      "undercover": {
+        "text": "Horse riding"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p172",
+      "civilian": {
+        "text": "Fishing"
+      },
+      "undercover": {
+        "text": "Sailing"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p173",
+      "civilian": {
+        "text": "Gardening"
+      },
+      "undercover": {
+        "text": "Cooking"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p174",
+      "civilian": {
+        "text": "Yoga"
+      },
+      "undercover": {
+        "text": "Stretching"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p175",
+      "civilian": {
+        "text": "Soccer",
+        "alt": [
+          "Football"
+        ]
+      },
+      "undercover": {
+        "text": "Handball"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p176",
+      "civilian": {
+        "text": "Bowling"
+      },
+      "undercover": {
+        "text": "Billiards",
+        "alt": [
+          "Billiard",
+          "Snooker"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
     }
   ]
 }

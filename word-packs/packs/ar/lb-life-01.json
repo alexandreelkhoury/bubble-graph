@@ -1,16 +1,17 @@
 {
   "id": "lb-life-01",
-  "version": 2,
+  "version": 3,
   "locale": "ar-LB",
   "script": "Arab",
   "title": {
-    "en": "Lebanese life",
-    "fr": "La vie au Liban",
-    "ar": "حياة لبنانية"
+    "en": "Hard · Lebanese life",
+    "fr": "Difficile · La vie au Liban",
+    "ar": "صعب · حياة لبنانية"
   },
   "tags": [
     "life",
-    "lebanese"
+    "lebanese",
+    "hard"
   ],
   "ageRating": "all",
   "license": "CC-BY-4.0",

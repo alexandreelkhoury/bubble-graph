@@ -1,16 +1,17 @@
 {
   "id": "en-things-01",
-  "version": 2,
+  "version": 3,
   "locale": "en",
   "script": "Latn",
   "title": {
-    "en": "Things & home",
-    "fr": "Objets et maison",
-    "ar": "أغراض وبيت"
+    "en": "Hard · Things & home",
+    "fr": "Difficile · Objets et maison",
+    "ar": "صعب · أغراض وبيت"
   },
   "tags": [
     "things",
-    "seeded"
+    "seeded",
+    "hard"
   ],
   "ageRating": "all",
   "license": "MIT",
@@ -295,20 +296,6 @@
       },
       "undercover": {
         "text": "Newspaper"
-      },
-      "difficulty": 2,
-      "reviewedBy": []
-    },
-    {
-      "id": "p022",
-      "civilian": {
-        "text": "Elevator",
-        "alt": [
-          "Lift"
-        ]
-      },
-      "undercover": {
-        "text": "Escalator"
       },
       "difficulty": 2,
       "reviewedBy": []

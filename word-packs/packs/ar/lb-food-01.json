@@ -1,49 +1,23 @@
 {
   "id": "lb-food-01",
-  "version": 2,
+  "version": 3,
   "locale": "ar-LB",
   "script": "Arab",
   "title": {
-    "en": "Lebanese food",
-    "fr": "Cuisine libanaise",
-    "ar": "أكل لبناني"
+    "en": "Hard · Lebanese food",
+    "fr": "Difficile · Cuisine libanaise",
+    "ar": "صعب · أكل لبناني"
   },
   "tags": [
     "food",
-    "lebanese"
+    "lebanese",
+    "hard"
   ],
   "ageRating": "all",
   "license": "CC-BY-4.0",
   "source": "original",
   "status": "draft",
   "pairs": [
-    {
-      "id": "p001",
-      "civilian": {
-        "text": "تبولة",
-        "translit": "Tabbouleh",
-        "alt": [
-          "تبولي",
-          "tabbouli",
-          "tabouleh",
-          "tabboule",
-          "tabboula",
-          "tabbuleh"
-        ]
-      },
-      "undercover": {
-        "text": "فتوش",
-        "translit": "Fattoush",
-        "alt": [
-          "fatoush",
-          "fattouch",
-          "fatouch",
-          "fattush"
-        ]
-      },
-      "difficulty": 2,
-      "reviewedBy": []
-    },
     {
       "id": "p002",
       "civilian": {
@@ -637,6 +611,54 @@
         ]
       },
       "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "زبدة",
+        "translit": "Zebdeh",
+        "alt": [
+          "zebde",
+          "zebda"
+        ]
+      },
+      "undercover": {
+        "text": "لبنة",
+        "translit": "Labneh",
+        "alt": [
+          "labne",
+          "labna"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "منقوشة",
+        "translit": "Man'ousheh",
+        "alt": [
+          "man2ushe",
+          "manoushe",
+          "man'ousha",
+          "man2usheh",
+          "man2usha",
+          "man'oucheh",
+          "man2uche",
+          "manouche"
+        ]
+      },
+      "undercover": {
+        "text": "فطيرة",
+        "translit": "Ftireh",
+        "alt": [
+          "ftire",
+          "ftira"
+        ]
+      },
+      "difficulty": 2,
       "reviewedBy": []
     }
   ]
