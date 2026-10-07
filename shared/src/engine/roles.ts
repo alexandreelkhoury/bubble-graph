@@ -1,10 +1,11 @@
-import { MAX_PLAYERS, MIN_PLAYERS } from "../constants";
+import { MAX_PLAYERS, MIN_PLAYERS, SETTINGS_BOUNDS } from "../constants";
 import type { Rng } from "./rng";
 import type { Player, Role, RoleCounts, Settings } from "./types";
 
+// Rules v2 (owner decision 2026-10-07): automatic mode deals Moles (BLANK) only; the Undercover is opt-in (custom).
 // n:            3  4  5  6  7  8  9 10 11 12
-const U_TABLE = [1, 1, 1, 1, 2, 2, 3, 3, 3, 3];
-const B_TABLE = [0, 0, 1, 1, 1, 1, 1, 1, 1, 2];
+const U_TABLE = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+const B_TABLE = [1, 1, 1, 1, 2, 2, 2, 2, 2, 2];
 
 export function defaultRoleCounts(n: number): RoleCounts | null {
   if (!Number.isInteger(n) || n < MIN_PLAYERS || n > MAX_PLAYERS) return null;
@@ -16,10 +17,12 @@ export function defaultRoleCounts(n: number): RoleCounts | null {
 export function validateRoleCounts(c: RoleCounts, n: number): boolean {
   return (
     c.civilian + c.undercover + c.blank === n &&
-    c.undercover >= 1 &&
-    c.undercover <= Math.floor((n - 1) / 2) &&
-    c.blank >= 0 &&
-    c.blank <= 2 &&
+    Number.isInteger(c.undercover) && Number.isInteger(c.blank) &&
+    c.undercover >= SETTINGS_BOUNDS.undercoverCount.min &&
+    c.undercover <= SETTINGS_BOUNDS.undercoverCount.max &&
+    c.blank >= SETTINGS_BOUNDS.blankCount.min &&
+    c.blank <= SETTINGS_BOUNDS.blankCount.max &&
+    c.undercover + c.blank >= 1 && // at least one impostor
     c.civilian > c.undercover + c.blank
   );
 }

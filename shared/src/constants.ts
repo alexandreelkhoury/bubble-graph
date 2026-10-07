@@ -78,8 +78,8 @@ export const PACK_ID_MAX = 40;
 
 // Settings bounds and UI step sizes (TV Left/Right, phone steppers). `off: 0` means 0 is allowed and means "timer off".
 export const SETTINGS_BOUNDS = {
-  undercoverCount: { min: 1, max: 5, step: 1 },
-  blankCount:      { min: 0, max: 2, step: 1 },
+  undercoverCount: { min: 0, max: 5, step: 1 },   // the Undercover is optional (rules v2)
+  blankCount:      { min: 0, max: 5, step: 1 },   // the Mole; ≥ 1 impostor in all is checked by validateRoleCounts
   clueSeconds:     { off: 0, min: 10, max: 120, step: 5 },
   voteSeconds:     { off: 0, min: 15, max: 300, step: 15 },
   revealSeconds:   { off: 0, min: 10, max: 120, step: 5 },

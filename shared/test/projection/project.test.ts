@@ -30,7 +30,7 @@ describe("projection (§5)", () => {
     expect(v.canStart).toBe(false);
     g.join(2);
     v = projectPublic(g.state, TEST_CATALOG, FULL);
-    expect(v.roleCounts).toEqual({ civilian: 2, undercover: 1, blank: 0 });
+    expect(v.roleCounts).toEqual({ civilian: 2, undercover: 0, blank: 1 });
     expect(v.canStart).toBe(true);
     expect(v.availablePacks.map((p) => p.id)).toEqual(["test-en-01", "test-en-prem-01"]);
     expect(v.availablePacks[0]).toEqual({ id: "test-en-01", locale: "en", title: { en: "Test pack", fr: "Paquet de test", ar: "حزمة اختبار" }, pairCount: 10, ageRating: "all", tier: "free" });

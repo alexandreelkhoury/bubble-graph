@@ -13,15 +13,15 @@ describe("settings", () => {
       "guessSeconds", "tieBreak", "blankGuess", "wordLocale", "packIds", "difficulties", "familyFilter", "swapSides", "points",
     ]);
     expect(DEFAULT_SETTINGS).toMatchObject({
-      winRule: "official", revealRoles: false, roleMode: "auto", undercoverCount: 1, blankCount: 1, clueSeconds: 45,
+      winRule: "official", revealRoles: false, roleMode: "auto", undercoverCount: 0, blankCount: 1, clueSeconds: 45,
       voteSeconds: 90, revealSeconds: 30, guessSeconds: 45, tieBreak: "random", blankGuess: true, wordLocale: "en",
-      packIds: [], difficulties: [1, 2, 3], familyFilter: true, swapSides: true, points: { civilian: 2, undercover: 10, blank: 6 },
+      packIds: [], difficulties: [1, 2, 3], familyFilter: true, swapSides: true, points: { civilian: 2, undercover: 10, blank: 10 },
     });
     expect(validateSettings(DEFAULT_SETTINGS, TEST_CATALOG)).toBe(true);
   });
 
   const intBounds: [keyof typeof SETTINGS_BOUNDS, number, number][] = [
-    ["undercoverCount", 1, 5], ["blankCount", 0, 2], ["clueSeconds", 10, 120], ["voteSeconds", 15, 300],
+    ["undercoverCount", 0, 5], ["blankCount", 0, 5], ["clueSeconds", 10, 120], ["voteSeconds", 15, 300],
     ["revealSeconds", 10, 120], ["guessSeconds", 10, 120],
   ];
   it.each(intBounds)("%s accepts min/max, rejects min−1/max+1", (key, min, max) => {

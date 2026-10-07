@@ -6,7 +6,7 @@ export const DEFAULT_SETTINGS: Settings = {
   winRule: "official",
   revealRoles: false,
   roleMode: "auto",
-  undercoverCount: 1,
+  undercoverCount: 0,
   blankCount: 1,
   clueSeconds: 45,
   voteSeconds: 90,
@@ -19,7 +19,7 @@ export const DEFAULT_SETTINGS: Settings = {
   difficulties: [1, 2, 3],
   familyFilter: true,
   swapSides: true,
-  points: { civilian: 2, undercover: 10, blank: 6 },
+  points: { civilian: 2, undercover: 10, blank: 10 },
 };
 
 /** Fresh deep copy of the defaults (the exported constant must never be mutated). */

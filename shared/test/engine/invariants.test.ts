@@ -18,7 +18,7 @@ const clone = (s: GameState): GameState => structuredClone(s);
 
 describe("assertInvariants detects each violation", () => {
   const L = lobby(4).state;
-  const C = inClues(5).state;
+  const C = inClues(5, { roleMode: "custom", undercoverCount: 1, blankCount: 1 }).state;
 
   it("1: size, uniqueness, order", () => {
     let s = clone(L);
@@ -65,7 +65,7 @@ describe("assertInvariants detects each violation", () => {
     s = clone(V); s.revote = true; s.tieCandidates = [pid(1)]; expectBroken(s, 7);
   });
   it("8: no winner while playing; 13: at least 3 alive", () => {
-    const g = inClues(5);
+    const g = inClues(5, { roleMode: "custom", undercoverCount: 1, blankCount: 1 });
     g.speakAll();
     const V = g.state;
     let s = clone(V);

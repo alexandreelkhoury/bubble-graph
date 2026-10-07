@@ -25,7 +25,7 @@ describe("checkWinner (§4.10)", () => {
       it(`${winRule} n=${n}: every alive composition`, () => {
         for (let c = 0; c <= n; c++) {
           for (let u = 0; u + c <= n; u++) {
-            for (let b = 0; b <= 2 && b + u + c <= n; b++) {
+            for (let b = 0; b <= 5 && b + u + c <= n; b++) {
               const w = checkWinner(stateWith(winRule, c, u, b, n - c - u - b));
               const i = u + b;
               const expected = i === 0 ? "CIVILIANS" : winRule === "official" ? (c <= 1 ? "INFILTRATORS" : null) : i >= c ? "INFILTRATORS" : null;
@@ -58,6 +58,72 @@ describe("checkWinner (§4.10)", () => {
   it("parity: forfeit of the last infiltrator → CIVILIANS", () => {
     const g = inClues(4, { winRule: "parity", roleMode: "custom", undercoverCount: 1, blankCount: 0 });
     g.tv({ type: "KICK", playerId: g.byRole("UNDERCOVER")[0] as string });
+    expect(g.state.result?.winner).toBe("CIVILIANS");
+  });
+});
+
+/** Rules v2: the default game has Moles (BLANK) and no Undercover. Every end must still resolve. */
+describe("Mole-only games (0 Undercovers, the default)", () => {
+  const out = (g: ReturnType<typeof inClues>, id: string): void => {
+    g.speakAll();
+    g.voteOut(id);
+    g.tv({ type: "HOST_ADVANCE" }); // ELIMINATION → guess or next step
+  };
+  it("defaults deal 1 Mole and no Undercover", () => {
+    const g = inClues(4);
+    expect(g.state.roleCounts).toEqual({ civilian: 3, undercover: 0, blank: 1 });
+    expect(g.byRole("UNDERCOVER")).toEqual([]);
+  });
+  it("the Mole is caught and guesses wrong → Civilians win, +2 each", () => {
+    const g = inClues(4);
+    const mole = g.byRole("BLANK")[0] as string;
+    out(g, mole);
+    expect(g.state.phase).toBe("MR_WHITE_GUESS");
+    g.p(mole, { type: "SUBMIT_GUESS", text: "zzwrong" });
+    g.expire();
+    expect(g.state.result?.winner).toBe("CIVILIANS");
+    expect(g.state.result?.winnerIds).toEqual(g.byRole("CIVILIAN"));
+    for (const c of g.byRole("CIVILIAN")) expect(g.state.result?.pointsAwarded[c]).toBe(2);
+    expect(g.state.result?.pointsAwarded[mole]).toBe(0);
+  });
+  it("the Mole is caught and guesses right → the Mole wins, +10", () => {
+    const g = inClues(4);
+    const mole = g.byRole("BLANK")[0] as string;
+    out(g, mole);
+    g.p(mole, { type: "SUBMIT_GUESS", text: g.state.pair?.civilian.text as string });
+    g.expire();
+    expect(g.state.result).toMatchObject({ winner: "BLANK", winnerIds: [mole] });
+    expect(g.state.result?.pointsAwarded[mole]).toBe(10);
+  });
+  it("the Mole survives to the end → infiltrators (the Mole) win, +10", () => {
+    const g = inClues(3);
+    const mole = g.byRole("BLANK")[0] as string;
+    out(g, g.byRole("CIVILIAN")[0] as string);
+    expect(g.state.result?.winner).toBe("INFILTRATORS");
+    expect(g.state.result?.winnerIds).toEqual([mole]);
+    expect(g.state.result?.pointsAwarded[mole]).toBe(10);
+  });
+  it("blankGuess off: catching the only Mole ends the game for the Civilians", () => {
+    const g = inClues(4, { blankGuess: false });
+    out(g, g.byRole("BLANK")[0] as string);
+    expect(g.state.result?.winner).toBe("CIVILIANS");
+  });
+  it("two Moles (7 players): the game goes on until both are out", () => {
+    const g = inClues(7);
+    expect(g.state.roleCounts).toEqual({ civilian: 5, undercover: 0, blank: 2 });
+    const [m1, m2] = g.byRole("BLANK") as [string, string];
+    out(g, m1);
+    g.p(m1, { type: "SUBMIT_GUESS", text: "zzwrong" });
+    g.expire();
+    expect(g.state.phase).toBe("CLUES");
+    out(g, m2);
+    g.p(m2, { type: "SUBMIT_GUESS", text: "zzwrong" });
+    g.expire();
+    expect(g.state.result?.winner).toBe("CIVILIANS");
+  });
+  it("an Undercover-only custom game still works (no Mole, no guess)", () => {
+    const g = inClues(4, { roleMode: "custom", undercoverCount: 1, blankCount: 0 });
+    out(g, g.byRole("UNDERCOVER")[0] as string);
     expect(g.state.result?.winner).toBe("CIVILIANS");
   });
 });

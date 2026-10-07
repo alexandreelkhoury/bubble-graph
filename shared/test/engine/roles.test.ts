@@ -3,8 +3,9 @@ import { DEFAULT_SETTINGS } from "../../src/engine/settings";
 import { assignRoles, defaultRoleCounts, effectiveRoleCounts, validateRoleCounts } from "../../src/engine/roles";
 import { createRng } from "../../src/engine/rng";
 
+// Rules v2: [undercover, blank (Mole), civilian]. Automatic mode deals Moles only: 1 for 3–6 players, 2 for 7–12.
 const TABLE: Record<number, [number, number, number]> = {
-  3: [1, 0, 2], 4: [1, 0, 3], 5: [1, 1, 3], 6: [1, 1, 4], 7: [2, 1, 4], 8: [2, 1, 5], 9: [3, 1, 5], 10: [3, 1, 6], 11: [3, 1, 7], 12: [3, 2, 7],
+  3: [0, 1, 2], 4: [0, 1, 3], 5: [0, 1, 4], 6: [0, 1, 5], 7: [0, 2, 5], 8: [0, 2, 6], 9: [0, 2, 7], 10: [0, 2, 8], 11: [0, 2, 9], 12: [0, 2, 10],
 };
 
 describe("roles", () => {
@@ -20,15 +21,22 @@ describe("roles", () => {
     expect(defaultRoleCounts(3.5)).toBeNull();
   });
   it("validateRoleCounts edges", () => {
-    expect(validateRoleCounts({ civilian: 2, undercover: 1, blank: 0 }, 3)).toBe(true);
+    expect(validateRoleCounts({ civilian: 2, undercover: 1, blank: 0 }, 3)).toBe(true); // Undercover only
+    expect(validateRoleCounts({ civilian: 2, undercover: 0, blank: 1 }, 3)).toBe(true); // Mole only
     expect(validateRoleCounts({ civilian: 2, undercover: 1, blank: 0 }, 4)).toBe(false); // sum
-    expect(validateRoleCounts({ civilian: 3, undercover: 0, blank: 0 }, 3)).toBe(false); // U >= 1
-    expect(validateRoleCounts({ civilian: 3, undercover: 2, blank: 0 }, 5)).toBe(true); // U <= floor(4/2)=2, 3 > 2
-    expect(validateRoleCounts({ civilian: 4, undercover: 2, blank: 0 }, 6)).toBe(true);
-    expect(validateRoleCounts({ civilian: 3, undercover: 3, blank: 0 }, 6)).toBe(false); // U > floor(5/2)
+    expect(validateRoleCounts({ civilian: 3, undercover: 0, blank: 0 }, 3)).toBe(false); // no impostor
+    expect(validateRoleCounts({ civilian: 3, undercover: 2, blank: 0 }, 5)).toBe(true);
+    expect(validateRoleCounts({ civilian: 3, undercover: 0, blank: 2 }, 5)).toBe(true);
+    expect(validateRoleCounts({ civilian: 3, undercover: 1, blank: 1 }, 5)).toBe(true); // mixed
+    expect(validateRoleCounts({ civilian: 3, undercover: 3, blank: 0 }, 6)).toBe(false); // C > U+B
+    expect(validateRoleCounts({ civilian: 3, undercover: 0, blank: 3 }, 6)).toBe(false); // C > U+B
     expect(validateRoleCounts({ civilian: 3, undercover: 1, blank: 2 }, 6)).toBe(false); // C > U+B
-    expect(validateRoleCounts({ civilian: 6, undercover: 1, blank: 3 }, 10)).toBe(false); // B <= 2
+    expect(validateRoleCounts({ civilian: 7, undercover: 0, blank: 5 }, 12)).toBe(true); // B at its max
+    expect(validateRoleCounts({ civilian: 7, undercover: 5, blank: 0 }, 12)).toBe(true); // U at its max
+    expect(validateRoleCounts({ civilian: 6, undercover: 0, blank: 6 }, 12)).toBe(false); // B > max (and C > U+B)
     expect(validateRoleCounts({ civilian: 5, undercover: 1, blank: -1 }, 5)).toBe(false);
+    expect(validateRoleCounts({ civilian: 5, undercover: -1, blank: 1 }, 5)).toBe(false);
+    expect(validateRoleCounts({ civilian: 3, undercover: 0.5, blank: 0.5 }, 4)).toBe(false);
   });
   it("custom mode: civilian = n − U − B and invalid combos are null", () => {
     const s = { ...DEFAULT_SETTINGS, roleMode: "custom" as const, undercoverCount: 2, blankCount: 2 };
@@ -37,6 +45,9 @@ describe("roles", () => {
     expect(effectiveRoleCounts({ ...s, undercoverCount: 5, blankCount: 0 }, 12)).toEqual({ civilian: 7, undercover: 5, blank: 0 });
     expect(effectiveRoleCounts({ ...s, undercoverCount: 5, blankCount: 1 }, 12)).toBeNull(); // 6 > 6 fails
     expect(effectiveRoleCounts({ ...s, undercoverCount: 5, blankCount: 2 }, 12)).toBeNull();
+    expect(effectiveRoleCounts({ ...s, undercoverCount: 0, blankCount: 5 }, 12)).toEqual({ civilian: 7, undercover: 0, blank: 5 });
+    expect(effectiveRoleCounts({ ...s, undercoverCount: 0, blankCount: 0 }, 6)).toBeNull(); // no impostor
+    expect(effectiveRoleCounts({ ...s, undercoverCount: 0, blankCount: 1 }, 3)).toEqual({ civilian: 2, undercover: 0, blank: 1 });
     expect(effectiveRoleCounts(s, 2)).toBeNull();
     expect(effectiveRoleCounts(s, 13)).toBeNull();
   });

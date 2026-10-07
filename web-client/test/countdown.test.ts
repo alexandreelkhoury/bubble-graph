@@ -33,7 +33,8 @@ describe("countdown", () => {
     expect(stepValue(0, b, -1)).toBe(0);
     expect(stepValue(120, b, 1)).toBe(120);
     expect(stepValue(45, b, 1)).toBe(50);
-    expect(stepValue(1, SETTINGS_BOUNDS.undercoverCount, -1)).toBe(1);
+    expect(stepValue(1, SETTINGS_BOUNDS.undercoverCount, -1)).toBe(0); // the Undercover is optional
+    expect(stepValue(0, SETTINGS_BOUNDS.undercoverCount, -1)).toBe(0);
     expect(canStep(0, b, -1)).toBe(false);
     expect(stepValue(15, SETTINGS_BOUNDS.voteSeconds, -1)).toBe(0);
   });
