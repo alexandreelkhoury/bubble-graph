@@ -60,7 +60,7 @@ If an agent needs something this file does not define, it chooses the most conse
 | "Clients only ever receive `correct: bool`" | Clients receive `guess.status` (`PENDING/CORRECT/WRONG/TIMEOUT`). The guess **text** is `null` in every view until RESULTS, where it appears in `result.guesses` | The verdict is public anyway; the text could leak the Civilian word to Undercovers before RESULTS |
 | Seat held 120 s, kicked/left players dropped | Players who LEAVE or are KICKed in-game or in RESULTS are marked `left:true` and removed at the next `resetToLobby` (never dealt in again) | Keeps role counts and results stable until the lobby |
 | Joins 5/min per IP per room; 20 msg/s | 30 joins/min per IP per room; 5 msg/s with burst 10; a per-IP WebSocket connect limiter | A whole party shares one public IP (home Wi-Fi NAT) |
-| — | EN shows the `UNDERCOVER` role as **"Mole"** (keys and enums stay `undercover`/`UNDERCOVER`) | RESEARCH §6: keep the trademarked word out of the UI |
+| — | **Rules v2 (owner decision 2026-10-07):** `BLANK` is shown as **the Mole** (EN "Mole", FR "Taupe", AR «جاسوس / الجاسوس») and is the default impostor; `UNDERCOVER` is shown as **the Undercover** (EN "Undercover", FR "Infiltré", AR «متخفّي / المتخفّي») and is optional (0 by default). Keys, enums and protocol fields stay `undercover`/`UNDERCOVER` and `blank`/`BLANK`, so there is no protocol break | The owner chose the classic "Mole has no word" game as the default. This supersedes the earlier "EN shows UNDERCOVER as Mole" rule (RESEARCH §6 kept the trademarked word out of the UI; the owner accepted "Undercover" as a role label) |
 
 ### 0.4 Build order (phase 0)
 Agents run in parallel and never talk, but A's typecheck and tests import D's files. So:
@@ -369,8 +369,8 @@ export type ColorId = (typeof COLORS)[number]["id"];
 
 // Settings bounds and UI step sizes (TV Left/Right, phone steppers). `off: 0` means 0 is allowed and means "timer off".
 export const SETTINGS_BOUNDS = {
-  undercoverCount: { min: 1, max: 5, step: 1 },
-  blankCount:      { min: 0, max: 2, step: 1 },
+  undercoverCount: { min: 0, max: 5, step: 1 },   // the Undercover is optional (rules v2)
+  blankCount:      { min: 0, max: 5, step: 1 },   // the Mole; ≥ 1 impostor in all is checked by validateRoleCounts
   clueSeconds:     { off: 0, min: 10, max: 120, step: 5 },
   voteSeconds:     { off: 0, min: 15, max: 300, step: 15 },
   revealSeconds:   { off: 0, min: 10, max: 120, step: 5 },
@@ -573,20 +573,20 @@ export { createRng, type Rng } from "./rng";
 | `winRule` | `"official"` \| `"parity"` | `"official"` |
 | `revealRoles` | boolean ("beginner mode") | `false` |
 | `roleMode` | `"auto"` \| `"custom"` | `"auto"` |
-| `undercoverCount` | int 1..5 (used only when `custom`) | `1` |
-| `blankCount` | int 0..2 (used only when `custom`) | `1` |
+| `undercoverCount` | int 0..5 (used only when `custom`): the Undercovers, who get the other word and don't know it | `0` |
+| `blankCount` | int 0..5 (used only when `custom`): the Moles, who get no word | `1` |
 | `clueSeconds` | `0` (off) or int 10..120 (UI step 5) | `45` |
 | `voteSeconds` | `0` or int 15..300 | `90` |
 | `revealSeconds` | `0` or int 10..120 | `30` |
 | `guessSeconds` | `0` or int 10..120 | `45` |
 | `tieBreak` | `"random"` \| `"none"` (what happens when the **re-vote** ties) | `"random"` |
-| `blankGuess` | boolean (an eliminated Blank may guess) | `true` |
+| `blankGuess` | boolean (an eliminated Mole may guess the Civilians' word) | `true` |
 | `wordLocale` | `"en"`\|`"fr"`\|`"ar"` | `"en"` (overridden by `POST /api/rooms` `locale`) |
 | `packIds` | ≤50 unique ids, each matching `^[a-z0-9-]{1,40}$`. Each must exist in the catalog with a matching language. `[]` = all packs for the locale | `[]` |
 | `difficulties` | non-empty, unique, ascending subset of `[1,2,3]` | `[1,2,3]` |
 | `familyFilter` | boolean. `true` → packs with `ageRating:"all"` only; `false` → `"all"`+`"teen"`. `"adult"` is never served in v1 | `true` |
 | `swapSides` | boolean. If true, 50% chance (rng) to swap civilian/undercover sides of the chosen pair | `true` |
-| `points` | `{civilian, undercover, blank}` each int 0..20 | `{2, 10, 6}` |
+| `points` | `{civilian, undercover, blank}` each int 0..20 | `{2, 10, 10}` (rules v2: a Mole win pays 10, like the Undercover's; it was 6) |
 
 `DEFAULT_SETTINGS` key order is exactly the table order. That order is used in fixtures. Bounds and UI step sizes are `SETTINGS_BOUNDS` (§3); B and C use those steps and no others.
 
@@ -595,19 +595,19 @@ export { createRng, type Rng } from "./rng";
 - Unknown keys cannot arrive, because the zod schema is strict.
 
 ### 4.5 Role distribution (`roles.ts`)
-Default table (`roleMode:"auto"`):
+Default table (`roleMode:"auto"`, rules v2): Moles only, **1 Mole for 3–6 players, 2 Moles for 7–12**, no Undercover. Undercovers (or a mix) are a Custom choice. `pnpm sim --games 400` with random bots gives the Civilians 25–52 % and the Moles (survival + guess) 48–75 % across n, with no stalemates.
 
 | n | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| undercover | 1 | 1 | 1 | 1 | 2 | 2 | 3 | 3 | 3 | 3 |
-| blank | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 2 |
-| civilian | 2 | 3 | 3 | 4 | 4 | 5 | 5 | 6 | 7 | 7 |
+| undercover | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| blank (Mole) | 1 | 1 | 1 | 1 | 2 | 2 | 2 | 2 | 2 | 2 |
+| civilian | 2 | 3 | 4 | 5 | 5 | 6 | 7 | 8 | 9 | 10 |
 
 Rules:
 - `validateRoleCounts(c, n)` requires all of the following:
   - `c.civilian + c.undercover + c.blank === n`
-  - `1 <= c.undercover <= floor((n-1)/2)`
-  - `0 <= c.blank <= 2`
+  - integer counts with `SETTINGS_BOUNDS.undercoverCount.min (0) <= c.undercover <= max (5)` and `SETTINGS_BOUNDS.blankCount.min (0) <= c.blank <= max (5)`
+  - at least one impostor: `c.undercover + c.blank >= 1`
   - `c.civilian > c.undercover + c.blank`
 - In custom mode, `civilian = n − U − B`.
 - `effectiveRoleCounts` returns null if n<3, n>12, or the counts are invalid.
@@ -763,7 +763,7 @@ RESULTS --PLAY_AGAIN--> LOBBY ;  any non-LOBBY --BACK_TO_LOBBY (TV)--> LOBBY
 **`enterResults(winner, ids?)`:**
 1. winnerIds (seat order), **excluding `left` players**:
    - CIVILIANS → every player with role CIVILIAN, alive or not.
-   - INFILTRATORS → every UNDERCOVER and BLANK.
+   - INFILTRATORS → every UNDERCOVER and BLANK (a Mole-only game: the Moles who survived to the end, and any caught Mole).
    - BLANK → `ids`.
 2. Each winner gains `points[roleKey]`, where roleKey is civilian/undercover/blank. Add it to `score`.
 3. `pointsAwarded` holds every player id (0 if they did not win or left).
@@ -857,6 +857,8 @@ It is called only:
 - in `forfeit`.
 
 A correct Blank guess is resolved **before** the civilian count is checked.
+
+Rules v2 (0 Undercovers is the default): `aliveI` counts the Moles alone, so the Civilians win when every Mole is out (after any wrong guess), and the Moles win by surviving to the end (official: one Civilian left; parity: as many as the Civilians) or by a right guess. No branch assumes an Undercover exists.
 
 **Consequence (asserted by invariant 13 and `win.test.ts`).** While a game continues into a new round, at least 3 players are alive: official needs `aliveC>=2 && aliveI>=1`, and parity needs `aliveC>aliveI>=1`. A forfeit that would drop below that always ends the game through step 6 of `forfeit`.
 
@@ -1472,7 +1474,7 @@ new PartySocket({
 | `me===null && phase!=="LOBBY"` | Join (locked) | `join.locked` + a read-only live line (`round.label` · phase name); the name field stays editable. When the phase becomes LOBBY: unlock, toast `join.unlocked`, haptic |
 | LOBBY | Lobby | players list; host sees Start (disabled + `startBlocker` text: `lobby.needPlayers` / `lobby.blockerRoles` / `lobby.blockerWords`), Settings, a kick ✕ per player; non-host sees `lobby.waitingHost` |
 | LOBBY + host taps Settings | Settings | every §4.4 setting, sends `UPDATE_SETTINGS` |
-| ROLE_REVEAL | Reveal | HoldToReveal card (word or `reveal.noWord` + `reveal.youAreBlank`), role line if `me.role`, Ready button |
+| ROLE_REVEAL | Reveal | HoldToReveal card (word, or for the Mole `reveal.youAreBlank` + `reveal.blankBody`, same colour treatment as every card), role line if `me.role`, Ready button |
 | CLUES / TIE_BREAK | Clues | if `currentSpeakerId===me.id`: big `clues.done` button; else `clues.speaking`; peek button (HoldToReveal) always available |
 | VOTING | Vote | alive targets except me (only `tieCandidates` if `revote`), select + confirm, `vote.youVoted` (restored from `me.myVote` after a reconnect); dead players → `vote.dead`. No "change vote" UI (the server allows overwrites; the phone does not offer them) |
 | ELIMINATION | Elimination | for everyone (survivors, the eliminated, spectators): outcome line (`elim.eliminated` + role, `elim.noElimination`, or `vote.nobodyVoted`), compact tally from `lastVote.tally` and `abstainIds`, deadline bar. The eliminated player additionally sees `elim.you` |
@@ -2051,16 +2053,16 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `game.label` | Game {count} |
 | **Roles, teams, winners, colours, phases** | |
 | `role.civilian` | Civilian |
-| `role.undercover` | Mole *(EN avoids the trademarked "Undercover" (RESEARCH §6))* |
-| `role.blank` | Blank |
+| `role.undercover` | Undercover |
+| `role.blank` | Mole |
 | `roleDesc.civilian` | You have the majority word. Find the infiltrators. |
 | `roleDesc.undercover` | Your word is slightly different. Blend in. |
-| `roleDesc.blank` | You have no word. Listen, bluff, and guess the word if you're caught. |
+| `roleDesc.blank` | You have no word. Blend in, then guess the word if you're caught. |
 | `team.civilians` | Civilians |
 | `team.infiltrators` | Infiltrators |
 | `winner.civilians` | Civilians win! |
 | `winner.infiltrators` | The infiltrators win! |
-| `winner.blank` | The Blank wins: {name}! |
+| `winner.blank` | The Mole wins: {name}! |
 | `color.coral` | Coral |
 | `color.azure` | Azure |
 | `color.lemon` | Lemon |
@@ -2094,7 +2096,7 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `lobby.waitingPlayers` | Waiting for players… |
 | `lobby.waitingHost` | Waiting for the host to start… |
 | `lobby.hostIs` | {name} is the host |
-| `lobby.roleSummary` | Civilians {civilian} · Moles {undercover} · Blank {blank} |
+| `lobby.roleSummary` | Civilians {civilian} · Moles {blank} · Undercover {undercover} |
 | `lobby.kick` | Remove |
 | `lobby.kickConfirm` | Remove {name}? |
 | `lobby.kickBody` | They can rejoin with the code in the lobby. |
@@ -2124,18 +2126,20 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `settings.roleMode` | Roles |
 | `settings.roleModeAuto` | Automatic |
 | `settings.roleModeCustom` | Custom |
-| `settings.undercoverCount` | Moles |
-| `settings.blankCount` | Blanks |
-| `settings.rolePreview` | With {count} players: {civilian} Civilians · {undercover} Moles · {blank} Blank |
+| `settings.undercoverCount` | Undercovers |
+| `settings.blankCount` | Moles |
+| `settings.blankCountHelp` | Mole: no word, just bluff. If caught, one guess at the word. |
+| `settings.undercoverCountHelp` | Undercover: a slightly different word, and they don't know it. |
+| `settings.rolePreview` | With {count} players: {civilian} Civilians · {blank} Moles · {undercover} Undercover |
 | `settings.clueSeconds` | Clue turn |
 | `settings.voteSeconds` | Vote |
 | `settings.revealSeconds` | Reading the word |
-| `settings.guessSeconds` | Blank's guess |
+| `settings.guessSeconds` | Mole's guess |
 | `settings.timerOffHelp` | Off = the host decides when to move on. |
 | `settings.tieBreak` | If the re-vote ties again |
 | `settings.tieBreakRandom` | Random pick |
 | `settings.tieBreakNone` | Nobody is out |
-| `settings.blankGuess` | Eliminated Blank may guess the word |
+| `settings.blankGuess` | Caught Mole may guess the word |
 | `settings.wordLocale` | Word language |
 | `settings.packs` | Word packs |
 | `settings.allPacks` | All packs |
@@ -2172,8 +2176,8 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `reveal.privacy` | Make sure nobody's looking. |
 | `reveal.firstTime` | That's your word. Don't show anyone. |
 | `reveal.noWord` | No word for you. |
-| `reveal.youAreBlank` | You're the Blank |
-| `reveal.blankBody` | Listen. Blend in. Bluff. |
+| `reveal.youAreBlank` | You're the Mole! |
+| `reveal.blankBody` | Everyone else has the same word. Blend in, then guess it. |
 | `reveal.yourRole` | Your role: {role} |
 | `reveal.ready` | Got it |
 | `reveal.tapAlt` | Tap to show for 5 s instead |
@@ -2182,10 +2186,10 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `reveal.readyCount` | {ready}/{total} ready |
 | `reveal.checkPhones` | Check your phones! |
 | `reveal.checkBody` | Hold the card to see your secret word. Don't show anyone! |
-| `reveal.blankHint` | The Blank has no word… and has to bluff. |
+| `reveal.blankHint` | The Mole has no word… and has to bluff. |
 | **Clues** | |
 | `clues.rule` | One word or short phrase. Don't say the word! |
-| `clues.firstHint` | Listen carefully. Someone has a different word… or none at all. |
+| `clues.firstHint` | Listen carefully. Someone here is bluffing. |
 | `clues.speaking` | {name}'s clue |
 | `clues.speakerSub` | Say it out loud, then tap Done |
 | `clues.noTimer` | No timer, tap Done when finished |
@@ -2227,12 +2231,12 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | **Elimination and history** | |
 | `elim.eliminated` | {name} is out! |
 | `elim.wasCivilian` | {name} was a Civilian |
-| `elim.wasUndercover` | {name} was the Mole |
-| `elim.wasBlank` | {name} was the Blank |
+| `elim.wasUndercover` | {name} was the Undercover |
+| `elim.wasBlank` | {name} was the Mole |
 | `elim.reactionCivilian` | …a Civilian. Oops. |
-| `elim.reactionUndercover` | …the Mole! Nice catch. |
-| `elim.reactionBlank` | …the Blank! But wait, one last chance… *(Only when `settings.blankGuess`)* |
-| `elim.reactionBlankNoGuess` | …the Blank! *(When `!settings.blankGuess`)* |
+| `elim.reactionUndercover` | …the Undercover! Nice catch. |
+| `elim.reactionBlank` | …the Mole! But wait, one last chance… *(Only when `settings.blankGuess`)* |
+| `elim.reactionBlankNoGuess` | …the Mole! *(When `!settings.blankGuess`)* |
 | `elim.noElimination` | Nobody's out this round |
 | `elim.randomPick` | Still tied, let fate decide! |
 | `elim.abstained` | P one: `{count} didn't vote` · other: `{count} didn't vote` |
@@ -2245,22 +2249,22 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `history.left` | {name} left |
 | `history.kicked` | {name} was removed |
 | **Blank guess** | |
-| `guess.title` | The Blank gets one guess |
+| `guess.title` | The Mole gets one guess |
 | `guess.guessing` | {name} is guessing the Civilians' word… |
 | `guess.silence` | Silence, please! |
-| `guess.waiting` | {name} is the Blank and gets one guess. Shh… |
+| `guess.waiting` | {name} is the Mole and gets one guess. Shh… |
 | `guess.prompt` | What's the Civilians' word? |
 | `guess.placeholder` | Your guess |
 | `guess.spelling` | Spelling doesn't need to be perfect. |
 | `guess.submit` | That's my answer |
 | `guess.sent` | Sent! Say your answer out loud for everyone. |
-| `guess.correct` | The Blank nailed it! |
+| `guess.correct` | The Mole nailed it! |
 | `guess.correctYou` | You got it! You win! |
 | `guess.wrong` | Wrong! The game goes on. |
 | `guess.wrongYou` | Not quite. The game goes on. |
 | `guess.timeout` | Time's up! No guess. |
-| `guess.accept` | It counts! |
-| `guess.acceptConfirm` | Accept {name}'s guess? The Blank wins. |
+| `guess.accept` | Count it: Mole wins |
+| `guess.acceptConfirm` | Accept {name}'s guess? The Mole wins. |
 | `guess.reject` | Doesn't count *(TV only)* |
 | `guess.rejectConfirm` | Reject the guess? The game goes on. |
 | `guess.overridden` | Host's decision |
@@ -2269,7 +2273,7 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | **Results** | |
 | `results.title` | Game over |
 | `results.civilianWord` | Civilian word |
-| `results.undercoverWord` | Mole word |
+| `results.undercoverWord` | Undercover word |
 | `results.scoreboard` | Scoreboard |
 | `results.colRank` | # |
 | `results.colPlayer` | Player |

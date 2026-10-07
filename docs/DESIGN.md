@@ -160,12 +160,13 @@ Marketing uses .62 / .20 / .16 for the three glows; the app is ~30 % lower. **Wh
 | Role (key) | EN / FR / AR label | Color | Emblem (silhouette) | Card pattern |
 |---|---|---|---|---|
 | `civilian` | Civilian / Civil / مدني | `color.civilian` `#5AB8FF` (sky blue) | **House**: pentagon roof on a square, with a door cut-out | Solid fill |
-| `undercover` | Mole / Taupe / جاسوس | `color.undercover` `#FF8A3D` (orange) | **Domino mask**: two eye holes | 45° diagonal stripes, 6 dp, 12 % lighter |
-| `blank` | Blank / Blanc / فاضي | `color.blank` `#ECE6F5` (paper white) | **Empty card**: a dashed rounded rect with nothing inside | 4 dp dot grid, 10 % darker |
-| team (`undercover` + `blank`) | Infiltrators / Infiltrés / المندسّين | Gradient orange → paper at 135° | Mask and empty card overlapping | — |
+| `undercover` | Undercover / Infiltré / متخفّي (المتخفّي) | `color.undercover` `#FF8A3D` (orange) | **Domino mask**: two eye holes | 45° diagonal stripes, 6 dp, 12 % lighter |
+| `blank` | Mole / Taupe / جاسوس (الجاسوس) | `color.blank` `#ECE6F5` (paper white) | **Empty card**: a dashed rounded rect with nothing inside | 4 dp dot grid, 10 % darker |
+| team (`undercover` + `blank`) | Infiltrators / Imposteurs / المندسّين | Gradient orange → paper at 135° | Mask and empty card overlapping | — |
 
 - **Why blue/orange:** it is the most robust hue pair under every CVD type. Measured CIEDE2000 ΔE between civilian and undercover: normal 49.7, protan 50.9, deutan 55.1, tritan 74.4. The Blank sits apart by lightness (it is near white).
-- **Display names vs keys.** Internal keys stay `civilian` / `undercover` / `blank` (PLAN). EN displays **"Mole"** rather than "Undercover", to keep the trademarked word out of screenshots and the store listing (RESEARCH §6). This is decided (Q1 resolved) and adopted in SPEC §11.2 (`role.undercover`, `results.undercoverWord`, `elim.wasUndercover`, `settings.undercoverCount`, `lobby.roleSummary`).
+- **Display names vs keys (rules v2, owner decision 2026-10-07).** Internal keys stay `civilian` / `undercover` / `blank` (PLAN) and the protocol is unchanged. **`blank` is shown as "the Mole"** (Taupe, الجاسوس): the default impostor, who gets **no word**, sees "You're the Mole!" on the card, and gets one last guess when caught. **`undercover` is shown as "the Undercover"** (Infiltré, المتخفّي): optional (0 by default), gets the other word and doesn't know it. This replaces the earlier rule that EN showed `undercover` as "Mole" to keep the trademarked "Undercover" out of the UI (RESEARCH §6); the owner accepted that label. The FR team name moved from "Infiltrés" to "Imposteurs" so it no longer collides with the Undercover's FR name.
+- **Defaults:** a new room deals 1 Mole for 3–6 players and 2 Moles for 7–12, no Undercover (SPEC §4.5). Points: Civilian 2, Undercover 10, Mole 10.
 
 ### 2.3 Player colors (12) — paired 1:1 with a shape
 These ids, hexes, shapes and glyph colours are the canonical `COLORS` table in SPEC §3 (same order), the i18n keys `color.coral` … `color.lilac`, and Kotlin `Constants.COLORS`. A player is identified by **shape + color + name**. Color is never the only cue. The pairing is fixed, so "Lemon" is always the Star. Pick order (the first free one is the default on join): 1 → 12.
@@ -450,7 +451,7 @@ In Compose, cubic-bezier tokens become `CubicBezierEasing(a, b, c, d)` used with
 | 150 ms | A haptic tick (10 ms). The card **flips on its Y axis** (`motion.base`, `ease.decel`, `perspective: 800px`) to show the face: the word in `type.ph.word`, on the player color for light colors and `elevated` for grape/plum |
 | while held | A face, no timer. A small "Release to hide" caption |
 | release | **Instant hide** (≤ 80 ms; the flip back plays at 2× speed). The first time, the card face says "That's your word. Don't show anyone." and the "Got it" button appears below |
-| Blank | The face is the **empty-card emblem** with "No word for you" + "Listen. Blend in. Bluff." The card face is `blank` paper white with the dot pattern |
+| Mole (`BLANK`) | The face is the **empty-card emblem** with "You're the Mole!" (`reveal.youAreBlank`) + "Everyone else has the same word. Blend in, then guess it." (`reveal.blankBody`). The face is the player's colour like every other card (only the text differs), so a held Mole card looks like any other from across the room |
 | Beginner mode | Below the word, a role chip (emblem + label), e.g. "You're a **Civilian**" |
 
 **Timing budget (binding).** The server does not wait for animations. ELIMINATION lasts `ELIMINATION_HOLD_MS` = 8 s (SPEC §3), and both B and C below must fit inside it: **B ≤ 3 s + C ≤ 4.5 s, leaving ≥ 0.5 s**. Every countdown on screen ("Next round in {count}…") is computed from `deadline.at − serverNow`, never from local constants. Reduced motion halves both.
@@ -594,7 +595,7 @@ Haptics come only from user gestures or right after one, as the API requires (RE
 ```text
 +------------------------------------------------------------------------+
 | <wordmark-latin 160dp>                     Lebanese Kitchen - AR words |
-|   SCAN TO JOIN                             1 Mole - 1 Blank - Official |
+|   SCAN TO JOIN                             4 Civilians - 1 Mole - Official |
 | +------------------+          PLAYERS 5/12          Need 1 more player |
 | | ## # ### #  ## # |       +--------+ +--------+ +--------+ +--------+ |
 | | # #  QR  CODE  # |       |  [O]   | |  [#]   | |  [*]   | |  [^]   | |
@@ -646,8 +647,8 @@ Haptics come only from user gestures or right after one, as the API requires (RE
 | |(• Game      )|  |  Win rule            <  Official (1 Civ left) > |  |
 | |  Roles       |  |  Beginner mode       <  Off                   > |  |
 | |  Timers      |  |  If the re-vote ties <  Random pick           > |  |
-| |  Words       |  |  Blank may guess     <  On                    > |  |
-| |              |  |  Points Civ/Mole/Blank   2 / 10 / 6    [Edit]   |  |
+| |  Words       |  |  Mole may guess      <  On                    > |  |
+| |              |  |  Points Civ/Mole/Und.    2 / 10 / 10   [Edit]   |  |
 | |              |  |  ---------------------------------------------  |  |
 | |              |  |  Official: the infiltrators win when only one   |  |
 | |              |  |  Civilian is left alive.                        |  |
@@ -660,8 +661,8 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 
 | Category (`settings.cat*`) | Rows (default in **bold**) |
 |---|---|
-| **Game** | Win rule (`winRule`): **Official** / Parity · Beginner mode (`revealRoles`): **Off** / On · If the re-vote ties (`tieBreak`): **Random pick** / Nobody is out · Blank may guess (`blankGuess`): **On** / Off · Points (`points`): Civilian **2**, Mole **10**, Blank **6** (0–20, step 1) |
-| **Roles** | Roles (`roleMode`): **Automatic** / Custom · Moles (`undercoverCount`, Custom only): **1**, 1–5 · Blanks (`blankCount`, Custom only): **1**, 0–2 · Inline preview `settings.rolePreview` from `view.roleCounts`. An invalid combination shows `lobby.blockerRoles` in `danger` (the server still accepts the setting; START is blocked) |
+| **Game** | Win rule (`winRule`): **Official** / Parity · Beginner mode (`revealRoles`): **Off** / On · If the re-vote ties (`tieBreak`): **Random pick** / Nobody is out · Caught Mole may guess (`blankGuess`): **On** / Off · Points (`points`): Civilian **2**, Mole **10**, Undercover **10** (0–20, step 1) |
+| **Roles** | Roles (`roleMode`): **Automatic** / Custom · Moles (`blankCount`, Custom only): **1**, 0–5 · Undercovers (`undercoverCount`, Custom only): **0**, 0–5 · At least one impostor, and more Civilians than impostors. Inline preview `settings.rolePreview` from `view.roleCounts`, plus one line per role (`settings.blankCountHelp`, `settings.undercoverCountHelp`): the phone shows both under the section; the TV shows the preview + both lines on the mode row and the role's own line + the preview on a count row. An invalid combination shows `lobby.blockerRoles` in `danger` (the server still accepts the setting; START is blocked) |
 | **Timers** | Clue turn (`clueSeconds`): Off, 10–120 step 5, **45** · Vote (`voteSeconds`): Off, 15–300 step 15, **90** · Reading the word (`revealSeconds`): Off, 10–120 step 5, **30** · Blank's guess (`guessSeconds`): Off, 10–120 step 5, **45**. Help line: `settings.timerOffHelp` |
 | **Words** | Word language (`wordLocale`): English / Français / العربية (default: the room's creation language) · Packs (`packIds`): **All packs** or a multi-select chip grid with the localised title + `pairCount` + a "Teen" badge (`settings.packTeen`) when `ageRating==="teen"` · Difficulty (`difficulties`): multi-select Easy / Medium / Subtle, **all** · Family friendly (`familyFilter`): **On** / Off · Shuffle word sides (`swapSides`): **On** / Off |
 
@@ -687,7 +688,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                       CHECK YOUR PHONES!              (displayL)       |
 |                                                                        |
 |            Hold the card to see your secret word. Don't show anyone!   |
-|             The Blank has no word... and has to bluff.   (body, muted) |
+|             The Mole has no word... and has to bluff.    (body, muted) |
 |                                                                        |
 |        [O]v   [#]v   [*]    [^]v   [<>]   [+]v   [~]                   |
 |        Maya   Rami   Lina   Joe    Nour   Ziad   Sara                  |
@@ -698,7 +699,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 +------------------------------------------------------------------------+
 ```
 - Avatars in one row (≤ 7) or two rows (8–12), 64 dp each. "v" marks the ready `check` badge, which pops in with `sfx.ready`. Away players show the away badge, never the check.
-- The second line about the Blank shows **only when `roleCounts.blank > 0`**.
+- The second line about the Mole shows **only when `roleCounts.blank > 0`** (every default game).
 - **Focus:** the action pill **Start now** (`tv.startNow`, double-OK → `HOST_ADVANCE`). Back → pause. The ready timer ring sits at the bottom end (48 dp).
 
 ### TV-05 Clues
@@ -820,7 +821,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                        |   T H E  M O L E |   (ink on role color)      |
 |                        +------------------+                            |
 |                                                                        |
-|                       ...the Mole! Nice catch.        (headline)       |
+|                       ...the Undercover! Nice catch.  (headline)       |
 |                                                                        |
 |                    Next round in 2...               ( Continue )       |
 +------------------------------------------------------------------------+
@@ -872,19 +873,19 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 | GAME OVER                                                         KXQP |
 |                  THE INFILTRATORS WIN!              (headline)         |
 |   +------------------------------------------------------------------+ |
-|   | CIVILIAN WORD  Manousheh (translit)  |  MOLE WORD  Ka'ke         | |
+|   | CIVILIAN WORD  Manousheh (translit)  |  UNDERCOVER WORD  Ka'ke   | |
 |   +------------------------------------------------------------------+ |
 |   Pack: Lebanese Kitchen   -   Lina guessed: "manoushe"   (caption)    |
 |   #  PLAYER     ROLE          THIS GAME    TOTAL                       |
-|   1  [^] Joe    (mask) Mole      +10        24                         |
-|   2  [*] Lina   (card) Blank      +6        18                         |
+|   1  [^] Joe    (mask) Undercover +10       24                         |
+|   2  [*] Lina   (card) Mole      +10        18                         |
 |   3  [O] Maya   (house) Civ        0        12                         |
 |   4  [#] Rami   (house) Civ        0         8    (focus-scroll)       |
 |   R1 [#]x(house)  R2 [*]x(card)  R3 [O] door-out   (history timeline)  |
 |      (•  Play again  )   [ Change settings ]   [ New room ]            |
 +------------------------------------------------------------------------+
 ```
-- **Stage 1 (≈ 5 s, local):** the victory moment (§6.2-E) in `displayL` (stepping down to `displayM` / `displayS` for longer titles, always one line) in the **solid** team colour (no gradient text), and the words meeting in the middle, with translit under each word whenever `translit !== null`; then (1 s) the **culprits row**: each Mole and Blank as a pill "[avatar 48] Ben was the Mole" (`elim.was*`) ringed in the role colour. The infiltrators' title names the roles: `winner.moles` / `winner.molesBlank` / `winner.molesBlanks` (plural on the Mole count; `winner.infiltrators` is the fallback).
+- **Stage 1 (≈ 5 s, local):** the victory moment (§6.2-E) in `displayL` (stepping down to `displayM` / `displayS` for longer titles, always one line) in the **solid** team colour (no gradient text), and the words meeting in the middle, with translit under each word whenever `translit !== null`; then (1 s) the **culprits row**: each Mole, then each Undercover, as a pill "[avatar 48] Sami was the Mole" / "Eli was the Undercover" (`elim.was*`) ringed in the role colour. The infiltrators' title names the role when the game had one kind: `winner.moles` (plural on the Mole count) or `winner.undercovers` (plural on the Undercover count); a mixed game uses `winner.infiltrators`. A right guess uses `winner.blank` ("The Mole wins: {name}!"). **Rules v2:** when the game dealt no Undercover, only the Civilians' word shows (nobody held the second word).
 - **Stage 2:** the title shrinks to `headline`; the words collapse into **one 56 dp strip**; a caption line shows `results.pack` and, if any, `guess.guessed` for each entry of `result.guesses`; the scoreboard shows **5 rows of 40 dp** (focus-scroll for more) with every player and their now-public role (emblem + label). Rank 1 gets an `accent` 8 % fill, the amber total and a `trophy` — **no glow** (tied winners stacked into a brown smear). The round **history** moved to the pause menu (TV-12).
 - **Focus:** initial **Play again** (→ PLAY_AGAIN → TV-02 with the same players and scores). Left/Right across the 3 buttons; Up enters the score list (scroll only). **Change settings** → PLAY_AGAIN, then TV-03. **New room** → TV-14b, then a new room (old phones keep the old room until it expires). **Back** → pause menu (TV-12). The VIP's phone can also Play again.
 - Must pass a 1.3× font-scale screenshot test with 12 players (§11).
@@ -930,7 +931,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 - **Back** = the safe option.
 
 ### TV-15 How to play **[not in v1, M4]**
-A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): ① Everyone gets a secret word except… ② Give one clue each, out loud. ③ Vote out the odd one. ④ The Blank gets one last guess. **Focus:** Left/Right pages; **OK = next page; on the last page, OK = back**. **Back:** back to the caller. Its i18n keys will be added to SPEC in M4.
+A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): ① Everyone gets the same word, except the Mole, who gets none… ② Give one clue each, out loud. ③ Vote out the odd one. ④ The Mole gets one last guess. **Focus:** Left/Right pages; **OK = next page; on the last page, OK = back**. **Back:** back to the caller. Its i18n keys will be added to SPEC in M4.
 
 ---
 
@@ -1019,7 +1020,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 |   [<>] Nour                        |
 |                                    |
 |   Lebanese Kitchen - AR words      |
-|   1 Mole - 1 Blank - Clue 30s      |
+|   Civilians 4 - Moles 1 - Clue 30s |
 |                                    |
 |                                    |
 |                                    |
@@ -1096,8 +1097,8 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 +------------------------------------+
 ```
 - **Card:** 100 % width, `aspect-ratio: 3/4`, max height 55 dvh, `radius.xl`. The interaction is §6.2-A. Use pointer events (`pointerdown` + `setPointerCapture`; hide on `pointerup`, `pointercancel`, `pointerleave` and `blur`). Set `user-select: none`, `-webkit-touch-callout: none` and `touch-action: none` on the card, and call `contextmenu` `preventDefault` so a long press doesn't open the OS menu.
-- **Every face is the player's colour, the Blank's too** (a near-white flash outed the Blank across the sofa; paper white stays for TV-09 and results). Civilian and Mole faces add `reveal.twist` under the word, identical for both: "Most of you have this word. Not everyone. Maybe not you." (not in beginner mode).
-- **The Blank's face:** the empty-card emblem, "**No word for you.**" and "Listen. Blend in. Bluff."
+- **Every face is the player's colour, the Mole's too** (a near-white flash outed the Blank across the sofa; paper white stays for TV-09 and results). **Privacy rule:** a held Mole card has the same colour treatment as every other card; only the text differs. Civilian and Undercover faces add `reveal.twist` under the word, identical for both: "Most of you have this word. Not everyone." (not in beginner mode). It names no role, so a Civilian learns nothing from it.
+- **The Mole's face (`BLANK`):** the empty-card emblem, "**You're the Mole!**" and "Everyone else has the same word. Blend in, then guess it." The Mole card says Mole openly (it has no word to hide).
 - **"Got it"** (sends READY) is disabled until the card has been revealed at least once. After that tap: "Ready! Waiting for the others… (4/7)". The card stays available to peek again.
 - **Accessibility alternative:** with a screen reader, the card is a `button` labelled "Show my word for 5 seconds". Activating it reveals the word for 5 s and announces the word through the live region. A visible "Tap to show for 5 s instead" link sits under the card for motor-impaired players (§11).
 
@@ -1151,7 +1152,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 - The screen **floods with the player's color** (§6.2-F). Text is `ink` on light colors and cream on grape and plum (both pass, §2.3).
 - **DONE** is a 50 dvh-tall rounded rectangle in `bg` with cream text (`type.ph.display`): the biggest target in the app. It sends `CLUE_DONE` and then returns to PH-05.
 - **Accidental-tap guard:** DONE is inert for the first 1.5 s of the turn (it shows a fill animation during that time), so a lingering tap can't end the turn.
-- **The Blank's variant:** an extra line "Bluff! Listen to the others' clues." Beginner mode adds a role chip.
+- **The Mole's variant:** an extra line "Bluff! Listen to the others' clues." Beginner mode adds a role chip.
 - **In a tie-break**, a tied speaker's body line is `tie.yourTurn` ("You're in the tie. Make this clue count!").
 - **Haptics (v3):** an armed DONE gives a 20 ms confirm bump; READY and a vote selection a 10 ms tick.
 - Timer at 5 s: the bar turns to `danger` and a 10 ms tick haptic fires each second (Android only).
@@ -1309,7 +1310,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 | LAST CHANCE                        |
 |                                    |
 |        (empty card, dashed)        |
-|    Lina is the Blank and gets      |
+|    Lina is the Mole and gets       |
 |    one guess. Shh...               |
 |                                    |
 |         ======-----  18s           |
@@ -1326,9 +1327,10 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 |     THE INFILTRATORS WIN!          |
 |         You won! +10               |
 |                                    |
-|   You were: [mask] Mole            |
+|   You were: [card] Mole            |
 |   Civilian word:  Manousheh        |
-|   Mole word:      Ka'ke            |
+|   (Undercover word only when one   |
+|    was dealt)                      |
 |                                    |
 |   1  [^] Joe        24             |
 |   2  [*] Lina (you) 18             |
@@ -1342,7 +1344,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 |   start the next game..."          |
 +------------------------------------+
 ```
-- The personal headline comes first ("You won! +{count}" in `success` / "You lost this one" in `textSecondary`), then the team result (solid team colour; infiltrators named by role as on TV-11), then **both words** (public at RESULTS), the **culprits** ("[avatar 32] Ben was the Mole" pills, above the fold), the pack (`results.pack`), any Blank guesses (`guess.guessed` from `result.guesses`), and the scoreboard.
+- The personal headline comes first ("You won! +{count}" in `success` / "You lost this one" in `textSecondary`), then the team result (solid team colour; infiltrators named by role as on TV-11), then **both words** (public at RESULTS; the Undercover word only when the game dealt an Undercover), the **culprits** ("[avatar 32] Sami was the Mole", "Eli was the Undercover" pills, Moles first, above the fold), the pack (`results.pack`), any Mole guesses (`guess.guessed` from `result.guesses`), and the scoreboard.
 - Non-VIP footer: `results.waitingHost` (the TV remote can also start the next game).
 - A win plays a confetti burst in the player's color and the win haptic.
 
@@ -1545,16 +1547,16 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | `game.label` | Partie {count} | اللعبة {count} |
 | **Roles, teams, winners, colours, phases** | | |
 | `role.civilian` | Civil | مدني |
-| `role.undercover` | Taupe | جاسوس |
-| `role.blank` | Blanc | فاضي |
-| `roleDesc.civilian` | Tu as le mot de la majorité. Trouve les infiltrés. | معك كلمة الأكثرية. المهمّة: تلاقي المندسّين. |
+| `role.undercover` | Infiltré | متخفّي |
+| `role.blank` | Taupe | جاسوس |
+| `roleDesc.civilian` | Tu as le mot de la majorité. Trouve les Imposteurs. | معك كلمة الأكثرية. المهمّة: تلاقي المندسّين. |
 | `roleDesc.undercover` | Ton mot est un peu différent. Fonds-toi dans la masse. | كلمتك شوي مختلفة. المهمّة: تضيع بين الكل. |
-| `roleDesc.blank` | Tu n'as pas de mot. Écoute, bluffe, et devine le mot si on te démasque. | ما في كلمة إلك. السلاح: السمع والتبليف، وإذا انكشف أمرك في فرصة تحزر الكلمة. |
+| `roleDesc.blank` | Tu n’as pas de mot. Fonds-toi dans la masse, puis devine le mot si on te démasque. | ما في كلمة إلك. السلاح: السمع والتبليف، وإذا انكشف أمرك في فرصة تحزر الكلمة. |
 | `team.civilians` | Civils | المدنيين |
-| `team.infiltrators` | Infiltrés | المندسّين |
+| `team.infiltrators` | Imposteurs | المندسّين |
 | `winner.civilians` | Les Civils gagnent ! | ربحوا المدنيين! |
-| `winner.infiltrators` | Les infiltrés gagnent ! | ربحوا المندسّين! |
-| `winner.blank` | Le Blanc gagne : {name} ! | ربح الفاضي: {name}! |
+| `winner.infiltrators` | Les Imposteurs gagnent ! | ربحوا المندسّين! |
+| `winner.blank` | La Taupe gagne : {name} ! | ربح الجاسوس: {name}! |
 | `color.coral` | Corail | مرجاني |
 | `color.azure` | Azur | أزرق |
 | `color.lemon` | Citron | ليموني |
@@ -1588,7 +1590,7 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | `lobby.waitingPlayers` | En attente des joueurs… | ناطرين اللاعبين… |
 | `lobby.waitingHost` | On attend que l'hôte lance la partie… | ناطرين المضيف يبلّش… |
 | `lobby.hostIs` | {name} est l'hôte | المضيف: {name} |
-| `lobby.roleSummary` | Civils {civilian} · Taupes {undercover} · Blancs {blank} | مدنيين {civilian} · جواسيس {undercover} · فاضي {blank} |
+| `lobby.roleSummary` | Civils {civilian} · Taupes {blank} · Infiltrés {undercover} | مدنيين {civilian} · جواسيس {blank} · متخفّيين {undercover} |
 | `lobby.kick` | Retirer | برّا |
 | `lobby.kickConfirm` | Retirer {name} ? | نطلّع {name}؟ |
 | `lobby.kickBody` | Cette personne pourra revenir avec le code, au salon. | الرجعة بالكود ممكنة بالصالون. |
@@ -1612,24 +1614,26 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | `settings.winRule` | Règle de victoire | شرط الربح |
 | `settings.winRuleOfficial` | Officielle (1 Civil restant) | الرسمي (بيبقى مدني واحد) |
 | `settings.winRuleParity` | Parité (autant que les Civils) | قدّ بقدّ (عددهن قد المدنيين) |
-| `settings.winRuleOfficialHelp` | Les infiltrés gagnent quand il ne reste qu'un seul Civil. | المندسّين بيربحوا لمّا يبقى مدني واحد بس. |
-| `settings.winRuleParityHelp` | Les infiltrés gagnent dès qu'ils sont aussi nombreux que les Civils. | المندسّين بيربحوا أوّل ما يصير عددهن قد المدنيين. |
+| `settings.winRuleOfficialHelp` | Les Imposteurs gagnent quand il ne reste qu’un seul Civil. | المندسّين بيربحوا لمّا يبقى مدني واحد بس. |
+| `settings.winRuleParityHelp` | Les Imposteurs gagnent dès qu’ils sont aussi nombreux que les Civils. | المندسّين بيربحوا أوّل ما يصير عددهن قدّ المدنيين. |
 | `settings.revealRoles` | Mode débutant (voir les rôles) | وضع المبتدئين (بيبيّن الأدوار) |
 | `settings.roleMode` | Rôles | الأدوار |
 | `settings.roleModeAuto` | Automatique | تلقائي |
 | `settings.roleModeCustom` | Personnalisé | مخصّص |
-| `settings.undercoverCount` | Taupes | الجواسيس |
-| `settings.blankCount` | Blancs | الفاضيين |
-| `settings.rolePreview` | Avec {count} joueurs : {civilian} Civils · {undercover} Taupes · {blank} Blanc | مع {count} لاعبين: {civilian} مدنيين · {undercover} جواسيس · {blank} فاضي |
+| `settings.undercoverCount` | Infiltrés | المتخفّيين |
+| `settings.blankCount` | Taupes | الجواسيس |
+| `settings.blankCountHelp` | Taupe : pas de mot, du bluff. Démasquée, un essai pour le deviner. | الجاسوس: ما إلو كلمة، بس تبليف. إذا انكشف، إلو محاولة يحزر الكلمة. |
+| `settings.undercoverCountHelp` | Infiltré : un mot un peu différent, sans le savoir. | المتخفّي: معو كلمة شوي مختلفة، وما بيعرف إنّو متخفّي. |
+| `settings.rolePreview` | Avec {count} joueurs : Civils {civilian} · Taupes {blank} · Infiltrés {undercover} | عدد اللاعبين: {count} · مدنيين: {civilian} · جواسيس: {blank} · متخفّيين: {undercover} |
 | `settings.clueSeconds` | Tour d'indice | دور التلميح |
 | `settings.voteSeconds` | Vote | التصويت |
 | `settings.revealSeconds` | Lecture du mot | قراءة الكلمة |
-| `settings.guessSeconds` | Essai du Blanc | محاولة الفاضي |
+| `settings.guessSeconds` | Essai de la Taupe | محاولة الجاسوس |
 | `settings.timerOffHelp` | Désactivé = l'hôte décide quand on avance. | مطفي = المضيف بيقرّر إيمتى منكمّل. |
 | `settings.tieBreak` | Si le revote est encore à égalité | إذا رجع التعادل بالتصويت التاني |
 | `settings.tieBreakRandom` | Tirage au sort | قرعة |
 | `settings.tieBreakNone` | Personne ne sort | ما حدا بيطلع |
-| `settings.blankGuess` | Le Blanc éliminé peut deviner le mot | الفاضي إذا طلع فيه يحزر الكلمة |
+| `settings.blankGuess` | La Taupe démasquée peut deviner le mot | الجاسوس إذا طلع فيه يحزر الكلمة |
 | `settings.wordLocale` | Langue des mots | لغة الكلمات |
 | `settings.packs` | Paquets de mots | باقات الكلمات |
 | `settings.allPacks` | Tous les paquets | كل الباقات |
@@ -1666,8 +1670,8 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | `reveal.privacy` | Vérifie que personne ne regarde. | الأحسن ما حدا يكون عم يتطلّع. |
 | `reveal.firstTime` | C'est ton mot. Ne le montre à personne. | هيدي كلمتك. ما حدا لازم يشوفها. |
 | `reveal.noWord` | Pas de mot pour toi. | ما في كلمة إلك. |
-| `reveal.youAreBlank` | Tu es le Blanc | دورك: الفاضي |
-| `reveal.blankBody` | Écoute. Fonds-toi dans la masse. Bluffe. | سلاحك: السمع، التمثيل، والتبليف. |
+| `reveal.youAreBlank` | Tu es la Taupe ! | دورك: الجاسوس! |
+| `reveal.blankBody` | Tous les autres ont le même mot. Fonds-toi dans la masse, puis devine-le. | كل الباقيين معهن نفس الكلمة. المهمّة: التمويه، وبعدين تحزير الكلمة. |
 | `reveal.yourRole` | Ton rôle : {role} | دورك: {role} |
 | `reveal.ready` | C'est bon | تمام |
 | `reveal.tapAlt` | Ou touche pour l'afficher 5 s | أو كبسة وحدة لـ5 ثواني |
@@ -1676,10 +1680,10 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | `reveal.readyCount` | {ready}/{total} prêts | {ready}/{total} جاهزين |
 | `reveal.checkPhones` | Regardez vos téléphones ! | شوفوا تلفوناتكن! |
 | `reveal.checkBody` | Maintenez la carte pour voir votre mot secret. Ne le montrez à personne ! | كبسوا عالكرت وضلّوا ماسكين لتشوفوا كلمتكن السرّية. ما تفرجوها لحدا! |
-| `reveal.blankHint` | Le Blanc n'a pas de mot… et doit bluffer. | الفاضي ما عندو كلمة… ولازم يبلّف. |
+| `reveal.blankHint` | La Taupe n’a pas de mot… et doit bluffer. | الجاسوس ما عندو كلمة… ولازم يبلّف. |
 | **Clues** | | |
 | `clues.rule` | Un mot ou une courte phrase. Sans dire le mot ! | كلمة وحدة أو جملة قصيرة. بلا ما تقولوا الكلمة! |
-| `clues.firstHint` | Écoutez bien. Quelqu'un a un autre mot… ou pas de mot du tout. | سمعوا منيح. في حدا كلمته غير… أو ما عندو كلمة أصلاً. |
+| `clues.firstHint` | Écoutez bien. Quelqu’un bluffe. | اسمعوا منيح. في حدا عم يبلّف. |
 | `clues.speaking` | L'indice de {name} | دور {name} |
 | `clues.speakerSub` | À voix haute, puis « Terminé » | بصوت عالي، وبعدها «خلصت» |
 | `clues.noTimer` | Sans chrono : « Terminé » quand c'est fini | بلا وقت: «خلصت» لمّا يخلص الدور |
@@ -1721,12 +1725,12 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | **Elimination and history** | | |
 | `elim.eliminated` | {name} quitte la partie ! | {name} برّا! |
 | `elim.wasCivilian` | {name} était Civil | {name}: مدني |
-| `elim.wasUndercover` | {name} était la Taupe | {name}: الجاسوس |
-| `elim.wasBlank` | {name} était le Blanc | {name}: الفاضي |
+| `elim.wasUndercover` | {name} était l’Infiltré | {name}: المتخفّي |
+| `elim.wasBlank` | {name} était la Taupe | {name}: الجاسوس |
 | `elim.reactionCivilian` | …un Civil. Oups. | …مدني. ضيعان! |
-| `elim.reactionUndercover` | …la Taupe ! Bien vu. | …الجاسوس! برافو عليكن! |
-| `elim.reactionBlank` | …le Blanc ! Mais attendez, une dernière chance… | …الفاضي! بس استنّوا… في فرصة أخيرة. |
-| `elim.reactionBlankNoGuess` | …le Blanc ! | …الفاضي! |
+| `elim.reactionUndercover` | …l’Infiltré ! Bien vu. | …المتخفّي! برافو عليكن! |
+| `elim.reactionBlank` | …la Taupe ! Mais attendez, une dernière chance… | …الجاسوس! بس استنّوا… في فرصة أخيرة. |
+| `elim.reactionBlankNoGuess` | …la Taupe ! | …الجاسوس! |
 | `elim.noElimination` | Personne ne sort ce tour-ci | ما حدا طلع هالجولة |
 | `elim.randomPick` | Toujours égalité : place au hasard ! | بعدو تعادل؟ خلّي الحظ يقرّر! |
 | `elim.abstained` | P one: `{count} n'a pas voté` · other: `{count} n'ont pas voté` | P zero: `الكل صوّت` · one: `واحد ما صوّت` · two: `اتنين ما صوّتوا` · few: `{count} ما صوّتوا` · many: `{count} ما صوّتوا` · other: `{count} ما صوّتوا` |
@@ -1739,22 +1743,22 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | `history.left` | {name} a quitté la partie | {name} برّا اللعبة |
 | `history.kicked` | L'hôte a retiré {name} | المضيف طلّع {name} |
 | **Blank guess** | | |
-| `guess.title` | Le Blanc a droit à un essai | الفاضي إلو محاولة وحدة |
+| `guess.title` | La Taupe a droit à un essai | الجاسوس إلو محاولة وحدة |
 | `guess.guessing` | {name} cherche le mot des Civils… | {name}: المحاولة الأخيرة لكلمة المدنيين… |
 | `guess.silence` | Silence, s'il vous plaît ! | هس… سكوت! |
-| `guess.waiting` | {name} est le Blanc et a un essai. Chut… | الفاضي: {name}. إلو محاولة وحدة. هس… |
+| `guess.waiting` | {name} est la Taupe et a un essai. Chut… | الجاسوس: {name}. إلو محاولة وحدة. هس… |
 | `guess.prompt` | Quel est le mot des Civils ? | شو كلمة المدنيين؟ |
 | `guess.placeholder` | Ta réponse | جوابك |
 | `guess.spelling` | Pas besoin d'une orthographe parfaite. | مش ضروري الإملا تكون مزبوطة. |
 | `guess.submit` | C'est ma réponse | هيدا جوابي |
 | `guess.sent` | Envoyé ! Dis ta réponse à voix haute. | انبعت! هلّق الجواب بصوت عالي للكل. |
-| `guess.correct` | Le Blanc a trouvé ! | الفاضي عرفها! |
+| `guess.correct` | La Taupe a trouvé ! | الجاسوس عرفها! |
 | `guess.correctYou` | Trouvé ! Tu gagnes ! | مزبوط! الربح إلك! |
 | `guess.wrong` | Raté ! La partie continue. | غلط! اللعبة مكمّلة. |
 | `guess.wrongYou` | Pas tout à fait. La partie continue. | مش هيك. اللعبة مكمّلة. |
 | `guess.timeout` | Temps écoulé ! Pas de réponse. | خلص الوقت! ما في جواب. |
-| `guess.accept` | On l'accepte ! | منقبلها! |
-| `guess.acceptConfirm` | Accepter la réponse de {name} ? Le Blanc gagne. | منقبل جواب {name}؟ الفاضي بيربح. |
+| `guess.accept` | Valider : la Taupe gagne | منقبلها: الجاسوس بيربح |
+| `guess.acceptConfirm` | Accepter la réponse de {name} ? La Taupe gagne. | منقبل جواب {name}؟ الجاسوس بيربح. |
 | `guess.reject` | Refusé | ما بتنحسب |
 | `guess.rejectConfirm` | Refuser la réponse ? La partie continue. | منرفض الجواب؟ اللعبة مكمّلة. |
 | `guess.overridden` | Décision de l'hôte | قرار المضيف |
@@ -1763,7 +1767,7 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | **Results** | | |
 | `results.title` | Fin de la partie | خلصت اللعبة |
 | `results.civilianWord` | Mot des Civils | كلمة المدنيين |
-| `results.undercoverWord` | Mot de la Taupe | كلمة الجاسوس |
+| `results.undercoverWord` | Mot de l’Infiltré | كلمة المتخفّي |
 | `results.scoreboard` | Classement | الترتيب |
 | `results.colRank` | # | # |
 | `results.colPlayer` | Joueur | اللاعب |
@@ -1861,7 +1865,8 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | `error.internal` | Un problème est survenu. Réessaie. | صار في مشكلة. منجرّب كمان مرة؟ |
 
 **Reviewer notes for AR (open drafts).** Every AR string above was checked against the gender-neutral rule (§1.5): named-player sentences use "{name}:" or "{name} معنا!" forms instead of agreeing verbs, and buttons speak in the first person or to the app. Please confirm or replace:
-- "جاسوس" (spy) for the Mole role, and "المندسّين" for the infiltrators team (§14 Q2).
+- "جاسوس" (spy) for the Mole role (now `blank`, rules v2), "متخفّي" for the Undercover (`undercover`), and "المندسّين" for the infiltrators team (§14 Q2).
+- Rules v2 Mole copy (gender-neutral: "دورك:" and nouns, no verb agreeing with the reader): `reveal.youAreBlank` «دورك: الجاسوس!», `reveal.blankBody` «كل الباقيين معهن نفس الكلمة. المهمّة: التمويه، وبعدين تحزير الكلمة.»
 - "باي {name}!" and "{name} برّا اللعبة" for a player leaving (replacing the masculine "فلّ").
 - "كمان جولة!" as Play again (replacing "كمان دقّة!").
 - "مين عم يغرّد برّا السرب؟" (the idiom is يغرّد, not يغنّي).
@@ -2216,8 +2221,8 @@ Each design need raised earlier is now settled in SPEC. This table records how.
 ---
 
 ## 14. Open design questions (non-blocking; defaults chosen)
-1. ~~EN role name~~ **Resolved: "Mole"** (RESEARCH §6), adopted in SPEC §11.2.
-2. **AR names:** "جاسوس" for the Mole and "المندسّين" for the infiltrators team? "مندسّين" carries 2019 political echoes; an alternative is "الغشّاشين" (the cheats).
+1. ~~EN role name~~ **Resolved, then revised (rules v2, 2026-10-07):** `blank` is "the Mole" and `undercover` is "the Undercover" (the owner accepted the trademark risk noted in RESEARCH §6).
+2. **AR names:** "جاسوس" for the Mole (`blank`), "متخفّي" for the Undercover, and "المندسّين" for the infiltrators team? "مندسّين" carries 2019 political echoes; an alternative is "الغشّاشين" (the cheats).
 3. ~~Show the Blank's typed guess on the TV after the verdict?~~ **Resolved:** never before RESULTS (SPEC §5.4). It is shown on TV-11 and PH-13 from `result.guesses`, and the Blank reads it aloud at the verdict.
 4. **Sound identity (M4):** commission the darbuka-based stings, or source CC0 percussion and edit it? It decides the M4 budget.
 5. ~~Phone sounds default Off~~ **Deferred:** phone sounds are not in v1.

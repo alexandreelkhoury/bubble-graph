@@ -1,6 +1,6 @@
 # Mish Ana! (مش أنا!)
 
-A social-deduction word party game for **Android TV**, for 3–12 players. The TV is the shared screen. Each player joins on their phone by scanning a QR code; no app install is needed. Everyone gets a secret word, except the **Undercover**, who has a slightly different one, and the **Blank**, who has none. Players take turns giving one-word clues, vote someone out, and try to find out who is "not me". Available in English, French and Arabic (RTL), with Lebanese word packs.
+A social-deduction word party game for **Android TV**, for 3–12 players. The TV is the shared screen. Each player joins on their phone by scanning a QR code; no app install is needed. Everyone gets the same secret word, except the **Mole**, who gets none and has to bluff (and gets one last guess at the word if caught). Hosts can also add an optional **Undercover**, who gets a slightly different word without knowing it. Players take turns giving one-word clues, vote someone out, and try to find out who is "not me". Available in English, French and Arabic (RTL), with Lebanese word packs.
 
 - **TV:** a Kotlin + Jetpack Compose for TV app (`tv-app/`). For development there is also a browser TV mock at `/tv`.
 - **Phones:** a small Preact web controller (`web-client/`), about 53 KB gzip.
