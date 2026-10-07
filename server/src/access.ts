@@ -3,7 +3,7 @@
 // or projected even with a bug elsewhere.
 import { PREMIUM_SETTING_KEYS, playableCatalog as filterCatalog } from "@mishana/shared/billing";
 import type { Catalog, GameState, Settings } from "@mishana/shared/engine";
-import { DEFAULT_SETTINGS } from "@mishana/shared/engine";
+import { DEFAULT_PACK_IDS, DEFAULT_SETTINGS } from "@mishana/shared/engine";
 import { lockedPackInfos } from "@mishana/shared/projection";
 import type { LockedPackInfo } from "@mishana/shared/projection";
 import type { RoomEntitlement } from "./billing/token";
@@ -46,7 +46,8 @@ export function lockedPacks(full: Catalog, a: RoomAccess, settings: Settings): L
 /** Non-null iff LOBBY and a pack filter id is not playable, or a free room has a premium setting off its default. */
 export function restrictionFor(state: GameState, playable: Catalog, a: RoomAccess): { allowedPackIds: string[]; resetPremiumSettings: boolean } | null {
   if (state.phase !== "LOBBY") return null;
-  const ids = new Set(playable.packs.map((p) => p.id));
+  // The default easy packs are free; an id of that list missing from the catalog is ignored by the engine, not locked.
+  const ids = new Set([...playable.packs.map((p) => p.id), ...DEFAULT_PACK_IDS]);
   const lockedFilter = state.settings.packIds.some((id) => !ids.has(id));
   const premiumOff = !a.premium && PREMIUM_SETTING_KEYS.some((k) => JSON.stringify(state.settings[k]) !== JSON.stringify(DEFAULT_SETTINGS[k]));
   if (!lockedFilter && !premiumOff) return null;

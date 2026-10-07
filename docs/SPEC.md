@@ -582,7 +582,7 @@ export { createRng, type Rng } from "./rng";
 | `tieBreak` | `"random"` \| `"none"` (what happens when the **re-vote** ties) | `"random"` |
 | `blankGuess` | boolean (an eliminated Mole may guess the Civilians' word) | `true` |
 | `wordLocale` | `"en"`\|`"fr"`\|`"ar"` | `"en"` (overridden by `POST /api/rooms` `locale`) |
-| `packIds` | ≤50 unique ids, each matching `^[a-z0-9-]{1,40}$`. Each must exist in the catalog with a matching language. `[]` = all packs for the locale | `[]` |
+| `packIds` | ≤50 unique ids, each matching `^[a-z0-9-]{1,40}$`. Each must exist in the catalog with a matching language, except the ids of `DEFAULT_PACK_IDS`, which are valid in any language and even when the catalog lacks them. `eligiblePacks` keeps only the ids of packs in the room language (`selectedPackIds`); when none is left, or for `[]`, every pack of the locale plays | `DEFAULT_PACK_IDS` = `["en-everyday-01","fr-everyday-01","ar-everyday-01"]` (the free easy pack of each language; owner decision 2026-10-07). Hard packs can be ticked next to it |
 | `difficulties` | non-empty, unique, ascending subset of `[1,2,3]` | `[1,2,3]` |
 | `familyFilter` | boolean. `true` → packs with `ageRating:"all"` only; `false` → `"all"`+`"teen"`. `"adult"` is never served in v1 | `true` |
 | `swapSides` | boolean. If true, 50% chance (rng) to swap civilian/undercover sides of the chosen pair | `true` |
@@ -591,7 +591,8 @@ export { createRng, type Rng } from "./rng";
 `DEFAULT_SETTINGS` key order is exactly the table order. That order is used in fixtures. Bounds and UI step sizes are `SETTINGS_BOUNDS` (§3); B and C use those steps and no others.
 
 `applySettingsPatch` merges the patch, then validates every bound.
-- If `wordLocale` changes and the patch has no `packIds`, `packIds` is reset to `[]`.
+- If `wordLocale` changes and the patch has no `packIds`, `packIds` is reset to `DEFAULT_PACK_IDS`.
+- PAYMENTS-SPEC §3.11 `restrictionFor` never counts a `DEFAULT_PACK_IDS` id as locked (they are free; a missing one is ignored).
 - Unknown keys cannot arrive, because the zod schema is strict.
 
 ### 4.5 Role distribution (`roles.ts`)

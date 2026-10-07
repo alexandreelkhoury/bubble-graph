@@ -10,7 +10,7 @@ import type { TvView } from "@mishana/shared/protocol";
 import { fmtNum, locale, t } from "../i18n/t";
 import { rolePreview } from "../lib/lobby";
 import {
-  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, ROLE_HELP, rowValueText, stepRow,
+  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, ROLE_HELP, rowValueText, selectedPacks, stepRow,
   toggleDifficulty, togglePack, visibleRows,
 } from "../lib/settingsModel";
 import type { RowDef, SettingsCategory } from "../lib/settingsModel";
@@ -62,7 +62,7 @@ function inlineDir(e: KeyboardEvent): 1 | -1 | 0 {
 }
 const swallow = (e: KeyboardEvent): void => { e.preventDefault(); e.stopPropagation(); };
 
-function SettingRow({ row, s, set, onOpen, onExit }: { row: RowDef; s: Settings; set(p: SettingsPatch): void; onOpen(sub: Exclude<Sub, null>): void; onExit(): void }) {
+function SettingRow({ row, s, set, onOpen, onExit, packs }: { row: RowDef; s: Settings; set(p: SettingsPatch): void; onOpen(sub: Exclude<Sub, null>): void; onExit(): void; packs: readonly { id: string }[] }) {
   const opens = row.kind === "packs" ? "packs" : row.kind === "difficulty" ? "difficulty" : null;
   const step = (dir: 1 | -1): void => { const p = stepRow(row, s, dir); if (p) set(p); };
   const onKey = (e: KeyboardEvent): void => {
@@ -78,7 +78,7 @@ function SettingRow({ row, s, set, onOpen, onExit }: { row: RowDef; s: Settings;
       <span class="setrowtv__label">{label}</span>
       <span class="setrowtv__value">
         {!opens && <span class="setrowtv__chev" onClick={(e) => { e.stopPropagation(); step(-1); }}><Icon name="chevron-back" size={22} /></span>}
-        <span class="tnum">{rowValueText(row, s)}</span>
+        <span class="tnum">{rowValueText(row, s, packs)}</span>
         <span class="setrowtv__chev" onClick={(e) => { e.stopPropagation(); if (opens) onOpen(opens); else step(1); }}><Icon name="chevron-forward" size={22} /></span>
       </span>
     </button>
@@ -235,7 +235,7 @@ export function TvSettings({ view }: { view: TvView }) {
         <div class={`tvsettings__rows${more ? " has-more" : ""}`} ref={rowsBox} onKeyDown={onRowsKey} onScroll={measureMore}>
           {sub === "packs" ? (
             <div class="tvsub">
-              <Toggle first={subFirst} on={s.packIds.length === 0} onClick={() => set({ packIds: [] })}>{t("settings.allPacks")}</Toggle>
+              <Toggle first={subFirst} on={selectedPacks(s, view.availablePacks).length === 0} onClick={() => set({ packIds: [] })}>{t("settings.allPacks")}</Toggle>
               {view.availablePacks.map((p) => (
                 <Toggle key={p.id} on={s.packIds.includes(p.id)} onClick={() => set(togglePack(s, p.id))}>
                   <bdi>{p.title[l]}</bdi><span class="muted num">{fmtNum(p.pairCount)}</span>
@@ -270,7 +270,7 @@ export function TvSettings({ view }: { view: TvView }) {
           ) : (
             rows.map((r) => (
               <div key={r.id} onFocusIn={() => { setFocusRow(r.id); lastRow.current[cat] = r.id; }}>
-                {locked(r) ? <LockedRow row={r} /> : <SettingRow row={r} s={s} set={set} onOpen={setSub} onExit={focusCategory} />}
+                {locked(r) ? <LockedRow row={r} /> : <SettingRow row={r} s={s} set={set} onOpen={setSub} onExit={focusCategory} packs={view.availablePacks} />}
               </div>
             ))
           )}

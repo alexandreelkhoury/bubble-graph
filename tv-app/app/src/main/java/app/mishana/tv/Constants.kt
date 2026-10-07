@@ -89,6 +89,9 @@ object Constants {
 
     fun colorById(id: String): PlayerColor = COLORS.firstOrNull { it.id == id } ?: COLORS[0]
 
+    /** Mirror of shared DEFAULT_PACK_IDS: the free easy pack of each language, the default `packIds` (the server ignores the other languages' ids). */
+    val DEFAULT_PACK_IDS: List<String> = listOf("en-everyday-01", "fr-everyday-01", "ar-everyday-01")
+
     /** `off: 0` means 0 is allowed and means "timer off". */
     val SETTINGS_BOUNDS = SettingsBounds(
         undercoverCount = IntBounds(min = 0, max = 5, step = 1),

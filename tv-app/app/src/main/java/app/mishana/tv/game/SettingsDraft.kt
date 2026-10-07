@@ -1,5 +1,6 @@
 package app.mishana.tv.game
 
+import app.mishana.tv.Constants
 import app.mishana.tv.protocol.Settings
 import app.mishana.tv.protocol.SettingsPatch
 
@@ -97,7 +98,7 @@ fun Settings.withDraft(p: SettingsPatch?): Settings {
         tieBreak = p.tieBreak ?: tieBreak,
         blankGuess = p.blankGuess ?: blankGuess,
         wordLocale = p.wordLocale ?: wordLocale,
-        packIds = p.packIds ?: if (p.wordLocale != null && p.wordLocale != wordLocale) emptyList() else packIds,
+        packIds = p.packIds ?: if (p.wordLocale != null && p.wordLocale != wordLocale) Constants.DEFAULT_PACK_IDS else packIds,
         difficulties = p.difficulties ?: difficulties,
         familyFilter = p.familyFilter ?: familyFilter,
         swapSides = p.swapSides ?: swapSides,

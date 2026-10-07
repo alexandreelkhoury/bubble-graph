@@ -24,7 +24,7 @@ class SettingsDraftTest {
         assertEquals(120, shown.voteSeconds)
         // A word-language change clears the packs unless the patch carries them (SPEC §4.4).
         val other = if (s.wordLocale == "fr") "en" else "fr"
-        assertEquals(emptyList<String>(), s.copy(packIds = listOf("x")).withDraft(SettingsPatch(wordLocale = other)).packIds)
+        assertEquals(Constants.DEFAULT_PACK_IDS, s.copy(packIds = listOf("x")).withDraft(SettingsPatch(wordLocale = other)).packIds)
         assertNull(merge(SettingsPatch(packIds = listOf("x")), SettingsPatch(wordLocale = other)).packIds)
     }
 

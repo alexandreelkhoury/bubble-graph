@@ -491,14 +491,12 @@ private fun buildRows(
             )
         }
         SettingsCategory.Words -> {
-            val packs = if (s.packIds.isEmpty()) {
-                str(R.string.settings__all_packs)
-            } else {
-                s.packIds.mapNotNull { id -> view.availablePacks.firstOrNull { it.id == id } }
-                    .map { it.title.inLanguage(lang) }
-                    .joinToString(", ")
-                    .ifEmpty { s.packIds.size.toString() }
-            }
+            // Only the room language's packs count: the default list holds one easy pack per language, and none
+            // selected plays every pack ("All packs").
+            val packs = s.packIds.mapNotNull { id -> view.availablePacks.firstOrNull { it.id == id } }
+                .map { it.title.inLanguage(lang) }
+                .joinToString(", ")
+                .ifEmpty { str(R.string.settings__all_packs) }
             val diffs = s.difficulties.sorted().mapNotNull { DIFFICULTY_NAMES.getOrNull(it - 1) }.joinToString(", ") { str(it) }
             val blocker = if (view.blocker == StartBlocker.NO_WORDS_AVAILABLE) str(R.string.lobby__blocker_words) else null
             listOf(
@@ -653,7 +651,7 @@ private fun PacksPanel(
                 ToggleRow(
                     label = stringResource(R.string.settings__all_packs),
                     trailing = null,
-                    checked = s.packIds.isEmpty(),
+                    checked = available.none { it.id in s.packIds },
                     onClick = { onToggle(emptyList()) },
                     modifier = Modifier.focusRequester(first),
                 )

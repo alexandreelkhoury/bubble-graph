@@ -1,6 +1,6 @@
 // PAYMENTS-SPEC §3.11 / §7.2: pure room access.
 import { describe, expect, it } from "vitest";
-import { DEFAULT_SETTINGS } from "@mishana/shared/engine";
+import { DEFAULT_PACK_IDS, DEFAULT_SETTINGS } from "@mishana/shared/engine";
 import { Game, TEST_CATALOG } from "@mishana/shared/testing";
 import { lockedPacks, playableCatalog, restrictionFor, roomAccess } from "../src/access";
 import type { RoomEntitlement } from "../src/billing/token";
@@ -49,7 +49,7 @@ describe("playableCatalog / lockedPacks / restrictionFor", () => {
     const freeCat = playableCatalog(TEST_CATALOG, freeA);
     expect(restrictionFor(g.state, freeCat, freeA)).toBeNull();
     g.tv({ type: "UPDATE_SETTINGS", patch: { packIds: ["test-en-01", "test-en-prem-01"] } });
-    expect(restrictionFor(g.state, freeCat, freeA)).toEqual({ allowedPackIds: freeCat.packs.map((p) => p.id), resetPremiumSettings: true });
+    expect(restrictionFor(g.state, freeCat, freeA)).toEqual({ allowedPackIds: [...freeCat.packs.map((p) => p.id), ...DEFAULT_PACK_IDS], resetPremiumSettings: true });
     g.tv({ type: "UPDATE_SETTINGS", patch: { packIds: ["test-en-01"], points: { civilian: 1, undercover: 1, blank: 1 } } });
     expect(restrictionFor(g.state, freeCat, freeA)?.resetPremiumSettings).toBe(true);
     const prem = roomAccess(ent(), NOW);

@@ -50,6 +50,8 @@ export function blockerText(view: Pick<LobbyView, "players" | "startBlocker">): 
 
 /** "All packs" or the selected pack titles in the UI locale. */
 export function packsLine(settings: Settings, packs: LobbyView["availablePacks"], l: Locale): string {
-  if (settings.packIds.length === 0) return t("settings.allPacks");
-  return settings.packIds.map((id) => packs.find((p) => p.id === id)?.title[l] ?? id).join(", ");
+  // Only the room language's packs count (the default list holds one easy pack per language).
+  const sel = settings.packIds.flatMap((id) => packs.filter((p) => p.id === id));
+  if (sel.length === 0) return t("settings.allPacks");
+  return sel.map((p) => p.title[l]).join(", ");
 }

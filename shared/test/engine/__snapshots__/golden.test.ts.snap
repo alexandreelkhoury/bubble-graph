@@ -343,7 +343,11 @@ exports[`golden seeded games > n=3 seed=101 official 1`] = `
       ],
       "familyFilter": true,
       "guessSeconds": 45,
-      "packIds": [],
+      "packIds": [
+        "en-everyday-01",
+        "fr-everyday-01",
+        "ar-everyday-01",
+      ],
       "points": {
         "blank": 10,
         "civilian": 2,
@@ -1025,7 +1029,11 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
       ],
       "familyFilter": true,
       "guessSeconds": 45,
-      "packIds": [],
+      "packIds": [
+        "en-everyday-01",
+        "fr-everyday-01",
+        "ar-everyday-01",
+      ],
       "points": {
         "blank": 10,
         "civilian": 2,
@@ -2130,7 +2138,11 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
       ],
       "familyFilter": true,
       "guessSeconds": 45,
-      "packIds": [],
+      "packIds": [
+        "en-everyday-01",
+        "fr-everyday-01",
+        "ar-everyday-01",
+      ],
       "points": {
         "blank": 10,
         "civilian": 2,
@@ -4118,7 +4130,11 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
       ],
       "familyFilter": true,
       "guessSeconds": 45,
-      "packIds": [],
+      "packIds": [
+        "en-everyday-01",
+        "fr-everyday-01",
+        "ar-everyday-01",
+      ],
       "points": {
         "blank": 10,
         "civilian": 2,

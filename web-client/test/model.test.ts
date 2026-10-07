@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_SETTINGS } from "@mishana/shared/engine";
 import type { PublicPlayer } from "@mishana/shared/protocol";
-import { SETTINGS_SCHEMA, rowValueText, stepRow, toggleDifficulty, togglePack, visibleRows } from "../src/lib/settingsModel";
+import { SETTINGS_SCHEMA, rowValueText, selectedPacks, stepRow, toggleDifficulty, togglePack, visibleRows } from "../src/lib/settingsModel";
+import { packsLine } from "../src/lib/lobby";
 import { afterElimination, competitionRank, culprits, hadUndercover, newForfeits, orderWindow, rankPlayers, tiedWithTally, topVoted, winnerMessage } from "../src/lib/view";
 import { ellipsizeName, graphemeCount } from "../src/lib/names";
 import { nearest } from "../src/tv-mock/dpad";
@@ -159,5 +160,22 @@ describe("rules v2: winner title, culprits and the second word", () => {
     expect(hadUndercover({ roleCounts: rc(0, 1) })).toBe(false);
     expect(hadUndercover({ roleCounts: rc(1, 0) })).toBe(true);
     expect(hadUndercover({ roleCounts: null })).toBe(true);
+  });
+});
+
+describe("default easy packs in the settings UI", () => {
+  const avail = [{ id: "en-everyday-01", title: { en: "Everyday", fr: "Quotidien", ar: "يومي" } }, { id: "en-food-01", title: { en: "Hard · Food", fr: "Food", ar: "Food" } }];
+  const s = { ...DEFAULT_SETTINGS };
+  it("shows the room language's easy pack as the selection, never the other languages' ids", () => {
+    expect(selectedPacks(s, avail).map((p) => p.id)).toEqual(["en-everyday-01"]);
+    expect(packsLine(s, avail as never, "en")).toBe("Everyday");
+    expect(rowValueText(SETTINGS_SCHEMA.words.find((r) => r.id === "packIds")!, s, avail)).toBe("1");
+  });
+  it("a Hard pack can be ticked next to it; no room-language pack selected reads All packs", () => {
+    const t2 = { ...s, ...togglePack(s, "en-food-01") } as typeof s;
+    expect(selectedPacks(t2, avail).map((p) => p.id)).toEqual(["en-everyday-01", "en-food-01"]);
+    const none = { ...s, packIds: ["fr-everyday-01", "ar-everyday-01"] };
+    expect(selectedPacks(none, avail)).toEqual([]);
+    expect(packsLine(none, avail as never, "en")).toBe("All packs");
   });
 });

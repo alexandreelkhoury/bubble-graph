@@ -359,7 +359,7 @@ class GameViewModelTest {
         settings = Settings(
             winRule = WinRule.OFFICIAL, revealRoles = false, roleMode = RoleMode.AUTO, undercoverCount = 0, blankCount = 1,
             clueSeconds = 45, voteSeconds = 90, revealSeconds = 30, guessSeconds = 45, tieBreak = TieBreak.RANDOM,
-            blankGuess = true, wordLocale = "en", packIds = emptyList(), difficulties = listOf(1, 2, 3),
+            blankGuess = true, wordLocale = "en", packIds = Constants.DEFAULT_PACK_IDS, difficulties = listOf(1, 2, 3),
             familyFilter = true, swapSides = true, points = Points(2, 10, 10),
         ),
         players = players, hostPlayerId = null, roleCounts = null, canStart = false, startBlocker = "NOT_ENOUGH_PLAYERS",

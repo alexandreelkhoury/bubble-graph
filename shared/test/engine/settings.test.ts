@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { SETTINGS_BOUNDS } from "../../src/constants";
-import { applySettingsPatch, DEFAULT_SETTINGS, validateSettings } from "../../src/engine/settings";
+import { applySettingsPatch, DEFAULT_PACK_IDS, DEFAULT_SETTINGS, defaultSettings, validateSettings } from "../../src/engine/settings";
+import { eligiblePacks, selectedPackIds } from "../../src/engine/catalog";
 import type { SettingsPatch } from "../../src/engine/types";
 import { TEST_CATALOG } from "../../src/testing";
 
@@ -15,7 +16,7 @@ describe("settings", () => {
     expect(DEFAULT_SETTINGS).toMatchObject({
       winRule: "official", revealRoles: false, roleMode: "auto", undercoverCount: 0, blankCount: 1, clueSeconds: 45,
       voteSeconds: 90, revealSeconds: 30, guessSeconds: 45, tieBreak: "random", blankGuess: true, wordLocale: "en",
-      packIds: [], difficulties: [1, 2, 3], familyFilter: true, swapSides: true, points: { civilian: 2, undercover: 10, blank: 10 },
+      packIds: ["en-everyday-01", "fr-everyday-01", "ar-everyday-01"], difficulties: [1, 2, 3], familyFilter: true, swapSides: true, points: { civilian: 2, undercover: 10, blank: 10 },
     });
     expect(validateSettings(DEFAULT_SETTINGS, TEST_CATALOG)).toBe(true);
   });
@@ -71,9 +72,9 @@ describe("settings", () => {
     expect(apply({ difficulties: [4 as 1] })).toBeNull();
     expect(apply({ difficulties: "1" as never })).toBeNull();
   });
-  it("changing wordLocale without packIds resets packIds", () => {
+  it("changing wordLocale without packIds resets packIds to the default easy packs", () => {
     const withPack = apply({ packIds: ["test-en-01"] })!;
-    expect(apply({ wordLocale: "fr" }, withPack)?.packIds).toEqual([]);
+    expect(apply({ wordLocale: "fr" }, withPack)?.packIds).toEqual([...DEFAULT_PACK_IDS]);
     expect(apply({ wordLocale: "en" }, withPack)?.packIds).toEqual(["test-en-01"]); // same locale: kept
     expect(apply({ wordLocale: "fr", packIds: ["test-fr-01"] }, withPack)?.packIds).toEqual(["test-fr-01"]);
   });
@@ -82,5 +83,37 @@ describe("settings", () => {
     expect(Object.keys(out)).toEqual(Object.keys(DEFAULT_SETTINGS));
     expect(DEFAULT_SETTINGS.winRule).toBe("official");
     expect(apply({ bogus: 1 } as never)).toBeNull();
+  });
+});
+
+describe("default easy packs (DEFAULT_PACK_IDS)", () => {
+  // TEST_CATALOG plus an easy pack per language, cloned from the test packs.
+  const easy = (lang: "en" | "fr" | "ar") => {
+    const src = TEST_CATALOG.packs.find((p) => p.id === `test-${lang}-01`)!;
+    return { ...src, id: `${lang}-everyday-01` };
+  };
+  const cat = { packs: [...TEST_CATALOG.packs, easy("en"), easy("fr"), easy("ar")] };
+  const ids = (s: typeof DEFAULT_SETTINGS) => eligiblePacks(cat, s).map((p) => p.id);
+  it("selects only the room language's easy pack", () => {
+    expect(validateSettings(DEFAULT_SETTINGS, cat)).toBe(true);
+    expect(ids(DEFAULT_SETTINGS)).toEqual(["en-everyday-01"]);
+    expect(ids({ ...DEFAULT_SETTINGS, wordLocale: "fr" })).toEqual(["fr-everyday-01"]);
+    expect(ids({ ...DEFAULT_SETTINGS, wordLocale: "ar" })).toEqual(["ar-everyday-01"]);
+  });
+  it("a Hard pack can be ticked next to the easy one; [] still means all packs", () => {
+    const s = applySettingsPatch(DEFAULT_SETTINGS, { packIds: [...DEFAULT_PACK_IDS, "test-en-prem-01"] }, cat)!;
+    expect(ids(s)).toEqual(["test-en-prem-01", "en-everyday-01"]);
+    expect(ids({ ...DEFAULT_SETTINGS, packIds: [] })).toContain("test-en-01");
+  });
+  it("default ids missing from the catalog are valid and ignored (all packs of the language)", () => {
+    expect(validateSettings(DEFAULT_SETTINGS, TEST_CATALOG)).toBe(true);
+    expect(selectedPackIds(TEST_CATALOG, DEFAULT_SETTINGS)).toEqual([]);
+    expect(eligiblePacks(TEST_CATALOG, DEFAULT_SETTINGS).map((p) => p.id)).toEqual(["test-en-01", "test-en-prem-01"]);
+    expect(applySettingsPatch(DEFAULT_SETTINGS, { packIds: ["fr-everyday-02"] }, TEST_CATALOG)).toBeNull(); // others still checked
+  });
+  it("defaultSettings() copies the list", () => {
+    const a = defaultSettings();
+    a.packIds.push("x");
+    expect(DEFAULT_SETTINGS.packIds).toEqual([...DEFAULT_PACK_IDS]);
   });
 });

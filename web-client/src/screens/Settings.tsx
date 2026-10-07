@@ -10,7 +10,7 @@ import { canStep } from "../lib/settings";
 import type { Bound } from "../lib/settings";
 import { rolePreview } from "../lib/lobby";
 import {
-  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, enumPatch, numValue, ROLE_HELP, rowBound, stepRow,
+  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, enumPatch, numValue, ROLE_HELP, rowBound, selectedPacks, stepRow,
   toggleDifficulty, togglePack, visibleRows,
 } from "../lib/settingsModel";
 import type { RowDef, SettingsCategory } from "../lib/settingsModel";
@@ -156,7 +156,7 @@ function Row({ row, s, set, view, groupStart }: { row: RowDef; s: Settings; set(
         <div class="setrow">
           <span class="setrow__label">{label}</span>
           <div class="chips">
-            <Chip on={s.packIds.length === 0} onClick={() => set({ packIds: [] })}>{t("settings.allPacks")}</Chip>
+            <Chip on={selectedPacks(s, view.availablePacks).length === 0} onClick={() => set({ packIds: [] })}>{t("settings.allPacks")}</Chip>
             {view.availablePacks.map((p) => (
               <Chip key={p.id} on={s.packIds.includes(p.id)} onClick={() => set(togglePack(s, p.id))}>
                 <bdi>{p.title[l]}</bdi>

@@ -115,14 +115,25 @@ export function stepRow(row: RowDef, s: Settings, dir: 1 | -1): SettingsPatch | 
   }
 }
 
-/** The row's current value as text (TV rows, summaries). */
-export function rowValueText(row: RowDef, s: Settings): string {
+/**
+ * The packs of the room language that `packIds` selects. The default list carries one easy pack per language, so ids
+ * of other languages are ignored; none selected means "All packs" (the engine plays every pack then).
+ */
+export function selectedPacks<P extends { id: string }>(s: Settings, available: readonly P[]): P[] {
+  return available.filter((p) => s.packIds.includes(p.id));
+}
+
+/** The row's current value as text (TV rows, summaries). `available`: the room's packs (for the packs row). */
+export function rowValueText(row: RowDef, s: Settings, available?: readonly { id: string }[]): string {
   switch (row.kind) {
     case "enum": return row.optionLabel(s[row.id]);
     case "bool": return s[row.id] ? t("common.on") : t("common.off");
     case "num": return row.format(s[row.id]);
     case "points": return fmtNum(s.points[row.key]);
-    case "packs": return s.packIds.length === 0 ? t("settings.allPacks") : fmtNum(s.packIds.length);
+    case "packs": {
+      const n = available ? selectedPacks(s, available).length : s.packIds.length;
+      return n === 0 ? t("settings.allPacks") : fmtNum(n);
+    }
     case "difficulty": return s.difficulties.map(difficultyLabel).join(" · ");
   }
 }
