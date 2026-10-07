@@ -92,7 +92,7 @@
     <string name="lobby__waiting_players">Waiting for players…</string>
     <string name="lobby__waiting_host">Waiting for the host to start…</string>
     <string name="lobby__host_is">%1$s is the host</string>
-    <string name="lobby__role_summary">Civilians %1$s · Moles %2$s · Undercover %3$s</string>
+    <string name="lobby__role_summary">Civilians %1$s · Moles %2$s · Undercovers %3$s</string>
     <string name="lobby__kick">Remove</string>
     <string name="lobby__kick_confirm">Remove %1$s?</string>
     <string name="lobby__kick_body">They can rejoin with the code in the lobby.</string>
@@ -135,7 +135,7 @@
     <string name="settings__blank_count">Moles</string>
     <string name="settings__blank_count_help">Mole: no word, just bluff. If caught, one guess at the word.</string>
     <string name="settings__undercover_count_help">Undercover: a slightly different word, and they don\'t know it.</string>
-    <string name="settings__role_preview">With %1$d players: %2$s Civilians · %3$s Moles · %4$s Undercover</string>
+    <string name="settings__role_preview">With %1$d players: Civilians %2$s · Moles %3$s · Undercovers %4$s</string>
     <string name="settings__clue_seconds">Clue turn</string>
     <string name="settings__vote_seconds">Vote</string>
     <string name="settings__reveal_seconds">Reading the word</string>

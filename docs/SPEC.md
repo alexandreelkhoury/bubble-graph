@@ -2097,7 +2097,7 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `lobby.waitingPlayers` | Waiting for players… |
 | `lobby.waitingHost` | Waiting for the host to start… |
 | `lobby.hostIs` | {name} is the host |
-| `lobby.roleSummary` | Civilians {civilian} · Moles {blank} · Undercover {undercover} |
+| `lobby.roleSummary` | Civilians {civilian} · Moles {blank} · Undercovers {undercover} |
 | `lobby.kick` | Remove |
 | `lobby.kickConfirm` | Remove {name}? |
 | `lobby.kickBody` | They can rejoin with the code in the lobby. |
@@ -2131,7 +2131,7 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `settings.blankCount` | Moles |
 | `settings.blankCountHelp` | Mole: no word, just bluff. If caught, one guess at the word. |
 | `settings.undercoverCountHelp` | Undercover: a slightly different word, and they don't know it. |
-| `settings.rolePreview` | With {count} players: {civilian} Civilians · {blank} Moles · {undercover} Undercover |
+| `settings.rolePreview` | With {count} players: Civilians {civilian} · Moles {blank} · Undercovers {undercover} |
 | `settings.clueSeconds` | Clue turn |
 | `settings.voteSeconds` | Vote |
 | `settings.revealSeconds` | Reading the word |
