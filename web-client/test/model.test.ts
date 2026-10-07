@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_SETTINGS } from "@mishana/shared/engine";
 import type { PublicPlayer } from "@mishana/shared/protocol";
 import { SETTINGS_SCHEMA, rowValueText, stepRow, toggleDifficulty, togglePack, visibleRows } from "../src/lib/settingsModel";
-import { afterElimination, competitionRank, newForfeits, orderWindow, rankPlayers, tiedWithTally, topVoted } from "../src/lib/view";
+import { afterElimination, competitionRank, culprits, hadUndercover, newForfeits, orderWindow, rankPlayers, tiedWithTally, topVoted, winnerMessage } from "../src/lib/view";
 import { ellipsizeName, graphemeCount } from "../src/lib/names";
 import { nearest } from "../src/tv-mock/dpad";
 import { displayInstallId, recreatesRoomOnFatal } from "../src/tv-mock/roomLife";
@@ -17,7 +17,7 @@ describe("settings model (one source for PH-03b and TV-03)", () => {
   it("lists the TV-03 categories and hides Custom-only rows in Automatic", () => {
     expect(Object.keys(SETTINGS_SCHEMA)).toEqual(["game", "roles", "timers", "words"]);
     expect(visibleRows("roles", { ...s, roleMode: "auto" }).map((r) => r.id)).toEqual(["roleMode"]);
-    expect(visibleRows("roles", { ...s, roleMode: "custom" }).map((r) => r.id)).toEqual(["roleMode", "undercoverCount", "blankCount"]);
+    expect(visibleRows("roles", { ...s, roleMode: "custom" }).map((r) => r.id)).toEqual(["roleMode", "blankCount", "undercoverCount"]);
   });
   it("steps every kind of row like the phone controls", () => {
     const row = (id: string) => Object.values(SETTINGS_SCHEMA).flat().find((r) => r.id === id)!;
@@ -133,5 +133,31 @@ describe("TV-13e: a lost room between games is re-created (SPEC §7.5)", () => {
 describe("Settings → About install id (PAYMENTS-SPEC §3.12)", () => {
   it("groups of four, like the TV app", () => {
     expect(displayInstallId("0123456789abcdef0123456789abcdef")).toBe("0123 4567 89ab cdef 0123 4567 89ab cdef");
+  });
+});
+
+describe("rules v2: winner title, culprits and the second word", () => {
+  const res = (winner: "CIVILIANS" | "INFILTRATORS" | "BLANK") => ({ winner }) as never;
+  const rc = (undercover: number, blank: number) => ({ civilian: 4, undercover, blank });
+  it("names the infiltrators by role, plural on that role's count; mixed or unknown → the team line", () => {
+    expect(winnerMessage({ result: res("INFILTRATORS"), roleCounts: rc(0, 1) })).toEqual({ key: "winner.moles", count: 1 });
+    expect(winnerMessage({ result: res("INFILTRATORS"), roleCounts: rc(0, 2) })).toEqual({ key: "winner.moles", count: 2 });
+    expect(winnerMessage({ result: res("INFILTRATORS"), roleCounts: rc(2, 0) })).toEqual({ key: "winner.undercovers", count: 2 });
+    expect(winnerMessage({ result: res("INFILTRATORS"), roleCounts: rc(1, 1) })).toEqual({ key: "winner.infiltrators", count: 0 });
+    expect(winnerMessage({ result: res("INFILTRATORS"), roleCounts: null })).toEqual({ key: "winner.infiltrators", count: 0 });
+    expect(winnerMessage({ result: res("BLANK"), roleCounts: rc(0, 1) }).key).toBe("winner.blank");
+    expect(winnerMessage({ result: res("CIVILIANS"), roleCounts: rc(0, 1) }).key).toBe("winner.civilians");
+  });
+  it("lists the Moles before the Undercovers", () => {
+    const players = [
+      { ...P("u", 0), revealedRole: "UNDERCOVER" as const }, { ...P("c", 1), revealedRole: "CIVILIAN" as const },
+      { ...P("m", 2), revealedRole: "BLANK" as const },
+    ];
+    expect(culprits({ players }).map((p) => p.id)).toEqual(["m", "u"]);
+  });
+  it("shows the Undercover word only when the game dealt an Undercover", () => {
+    expect(hadUndercover({ roleCounts: rc(0, 1) })).toBe(false);
+    expect(hadUndercover({ roleCounts: rc(1, 0) })).toBe(true);
+    expect(hadUndercover({ roleCounts: null })).toBe(true);
   });
 });

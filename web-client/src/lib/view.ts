@@ -31,21 +31,28 @@ export function competitionRank(players: readonly PublicPlayer[], p: PublicPlaye
 }
 
 /**
- * The winner title. The infiltrators are named by the roles the players met ("The Mole & the Blank win!", plural on the
- * Mole count); `winner.infiltrators` is only the fallback when the counts are unknown. `winner.blank` takes {name}.
+ * The winner title. Rules v2: the infiltrators are named by their role when the game had only one kind ("The Mole
+ * wins!", plural on the Mole (BLANK) count; "The Undercover wins!", plural on the Undercover count); a mixed game, or
+ * unknown counts, falls back to `winner.infiltrators`. `winner.blank` (a Mole's right guess) takes {name}.
  */
 export function winnerMessage(view: Pick<PublicView, "result" | "roleCounts">): { key: MessageKey; count: number } {
   const winner = view.result?.winner;
   if (winner === "CIVILIANS") return { key: "winner.civilians", count: 0 };
   if (winner === "BLANK") return { key: "winner.blank", count: 0 };
   const rc = view.roleCounts;
-  if (!rc || rc.undercover < 1) return { key: "winner.infiltrators", count: 0 };
-  return { key: rc.blank === 0 ? "winner.moles" : rc.blank === 1 ? "winner.molesBlank" : "winner.molesBlanks", count: rc.undercover };
+  if (rc && rc.undercover === 0 && rc.blank > 0) return { key: "winner.moles", count: rc.blank };
+  if (rc && rc.blank === 0 && rc.undercover > 0) return { key: "winner.undercovers", count: rc.undercover };
+  return { key: "winner.infiltrators", count: 0 };
 }
 
-/** The game's Moles then Blanks (revealed at RESULTS), in seat order: who the room was hunting. */
+/** Whether this game dealt an Undercover (unknown counts → true, the old two-word layout). */
+export function hadUndercover(view: Pick<PublicView, "roleCounts">): boolean {
+  return (view.roleCounts?.undercover ?? 1) > 0;
+}
+
+/** The game's Moles (BLANK) then Undercovers (revealed at RESULTS), in seat order: who the room was hunting. */
 export function culprits(view: Players): PublicPlayer[] {
-  const rank = (p: PublicPlayer): number => (p.revealedRole === "UNDERCOVER" ? 0 : 1);
+  const rank = (p: PublicPlayer): number => (p.revealedRole === "BLANK" ? 0 : 1);
   return view.players.filter((p) => p.revealedRole === "UNDERCOVER" || p.revealedRole === "BLANK").sort((a, b) => rank(a) - rank(b) || a.seat - b.seat);
 }
 

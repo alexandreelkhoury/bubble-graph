@@ -136,8 +136,8 @@ export function TvLobby({ view }: { view: TvView }) {
           {rc ? (
             <span class="tvsumchip tnum" role="img" aria-label={roleSummaryText(view)}>
               <i class="tvsumchip__dot tvsumchip__dot--civilian" />{fmtNum(rc.civilian)}
-              <i class="tvsumchip__dot tvsumchip__dot--undercover" />{fmtNum(rc.undercover)}
               {rc.blank > 0 && <><i class="tvsumchip__dot tvsumchip__dot--blank" />{fmtNum(rc.blank)}</>}
+              {rc.undercover > 0 && <><i class="tvsumchip__dot tvsumchip__dot--undercover" />{fmtNum(rc.undercover)}</>}
             </span>
           ) : <span class="tvsumchip">{roleSummaryText(view)}</span>}
         </div>

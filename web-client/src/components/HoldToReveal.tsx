@@ -99,8 +99,8 @@ export function WordCard({ word, isBlank, role, color, wordLocale, seenOnce, onR
     announce(isBlank || !word ? t("reveal.youAreBlank") : word.text, true);
     setTimeout(() => { assertiveMsg.value = ""; }, TAP_REVEAL_MS);
   });
-  // Every face is the player's own colour, the Blank's too: a white flash of screen light would out the Blank across
-  // the sofa. Paper white stays for the public reveal (TV-09, results).
+  // Every face is the player's own colour, the Mole's too: a white flash of screen light would out the Mole across
+  // the sofa. Only the text differs. Paper white stays for the public reveal (TV-09, results).
   const faceCls = `${LIGHT_GLYPH(color) ? "wordface--dark" : "wordface--color"}${isBlank ? " wordface--blank" : ""}`;
   return (
     <div class="wordcard-wrap">
@@ -122,13 +122,13 @@ export function WordCard({ word, isBlank, role, color, wordLocale, seenOnce, onR
               <>
                 <RoleEmblem role="BLANK" size={88} />
                 <span class="wordface__blank-title">{t("reveal.youAreBlank")}</span>
-                <span class="wordface__blank-body">{t("reveal.noWord")}<br />{t("reveal.blankBody")}</span>
+                <span class="wordface__blank-body">{t("reveal.blankBody")}</span>
               </>
             ) : (
               <>
                 <WordText word={word} wordLocale={wordLocale} />
-                {/* The twist, word for word the same for Civilians and Moles (it leaks nothing). Beginner mode names the
-                    role on the card instead. */}
+                {/* The twist, word for word the same for Civilians and Undercovers (it leaks nothing). Beginner mode
+                    names the role on the card instead. The Mole's card says Mole openly (it has no word to hide). */}
                 {!role && <span class="wordface__twist">{t("reveal.twist")}</span>}
               </>
             )}
@@ -143,9 +143,9 @@ export function WordCard({ word, isBlank, role, color, wordLocale, seenOnce, onR
 }
 
 /**
- * PH-05/06/10 bottom "Hold to peek my word" button; the word, or the Blank's card and bluffing tip, shows in a bubble
+ * PH-05/06/10 bottom "Hold to peek my word" button; the word, or the Mole's card and bluffing tip, shows in a bubble
  * above while held, never on the open screen. The label is the same for every role while alive (no tell); once out
- * (`out`, the role is public) the Blank's reads "Hold to see my card".
+ * (`out`, the role is public) the Mole's reads "Hold to see my card".
  */
 export function PeekButton({ word, isBlank, wordLocale, onDark = false, out = false }: { word: WordRef | null; isBlank: boolean; wordLocale: Locale; onDark?: boolean; out?: boolean }) {
   const h = useHoldReveal();

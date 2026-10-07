@@ -10,7 +10,7 @@ import { canStep } from "../lib/settings";
 import type { Bound } from "../lib/settings";
 import { rolePreview } from "../lib/lobby";
 import {
-  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, enumPatch, numValue, rowBound, stepRow,
+  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, enumPatch, numValue, ROLE_HELP, rowBound, stepRow,
   toggleDifficulty, togglePack, visibleRows,
 } from "../lib/settingsModel";
 import type { RowDef, SettingsCategory } from "../lib/settingsModel";
@@ -205,6 +205,7 @@ export function SettingsSheet({ view, open, onClose, section }: { view: PlayerVi
                   ? <p class="setrow__help setrow__help--danger" role="alert">{preview.text}</p>
                   : <p class="setrow__help setrow__help--preview">{preview.text}</p>
               )}
+              {cat === "roles" && <p class="setrow__help">{t(ROLE_HELP.blankCount)}<br />{t(ROLE_HELP.undercoverCount)}</p>}
             </Section>
           );
         })}

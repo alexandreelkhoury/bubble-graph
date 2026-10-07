@@ -10,8 +10,8 @@ import type { TvView } from "@mishana/shared/protocol";
 import { fmtNum, locale, t } from "../i18n/t";
 import { rolePreview } from "../lib/lobby";
 import {
-  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, rowValueText, stepRow, toggleDifficulty,
-  togglePack, visibleRows,
+  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, ROLE_HELP, rowValueText, stepRow,
+  toggleDifficulty, togglePack, visibleRows,
 } from "../lib/settingsModel";
 import type { RowDef, SettingsCategory } from "../lib/settingsModel";
 import { usePatcher } from "../hooks/usePatcher";
@@ -196,8 +196,16 @@ export function TvSettings({ view }: { view: TvView }) {
   const focused = rows.find((r) => r.id === focusRow);
   const rowHelp = focused?.kind === "enum" ? focused.help?.(s) : undefined;
   const catHelp = cat === "about" ? undefined : CATEGORY_HELP[cat];
-  const help = rowHelp ? t(rowHelp) : catHelp ? t(catHelp) : cat === "roles" ? preview?.text : undefined;
   const helpDanger = cat === "roles" && !rowHelp && !catHelp && preview?.invalid === true;
+  // Roles: a focused Moles/Undercovers row explains its role over the preview; otherwise the preview, then one line per
+  // role. An invalid combination shows only the blocker.
+  const roleLines = (): string[] => {
+    if (helpDanger || !preview) return preview ? [preview.text] : [];
+    if (focusRow === "blankCount" || focusRow === "undercoverCount") return [t(ROLE_HELP[focusRow]), preview.text];
+    return [preview.text, t(ROLE_HELP.blankCount), t(ROLE_HELP.undercoverCount)];
+  };
+  const helpLines = rowHelp ? [t(rowHelp)] : catHelp ? [t(catHelp)] : cat === "roles" ? roleLines() : [];
+  const help = helpLines.length > 0;
   const l = locale.value;
 
   return (
@@ -267,7 +275,7 @@ export function TvSettings({ view }: { view: TvView }) {
             ))
           )}
         </div>
-        {help && !sub && <p class={`tvsettings__help${helpDanger ? " is-danger" : ""}`}>{help}</p>}
+        {help && !sub && <p class={`tvsettings__help${helpDanger ? " is-danger" : ""}`}>{helpLines.map((l, i) => <span key={i}>{i > 0 && <br />}{l}</span>)}</p>}
       </section>
       {/* What Back does from here: rows → categories, categories (or Done) → lobby; a sub-panel closes itself. */}
       <p class="tvsettings__foot">{t("settings.applies")}{zone !== "sub" && <> · <span class="tv-muted">{t(zone === "rows" ? "tv.backToCategories" : "tv.backToLobby")}</span></>}</p>

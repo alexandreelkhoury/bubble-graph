@@ -6,7 +6,7 @@ import type { TvView } from "@mishana/shared/protocol";
 import { fmtNum, isolate, locale, t } from "../i18n/t";
 import { ROLE_KEY, ROLE_WAS_KEY } from "../lib/keys";
 import { ms, reduced } from "../lib/motion";
-import { byId, competitionRank, culprits, rankPlayers, winnerMessage } from "../lib/view";
+import { byId, competitionRank, culprits, hadUndercover, rankPlayers, winnerMessage } from "../lib/view";
 import { Avatar, avatarState } from "../components/PlayerChip";
 import { RoleEmblem } from "../components/Role";
 import { Icon } from "../components/Icon";
@@ -70,7 +70,7 @@ export function TvGuess({ view }: { view: TvView }) {
 /** TV-11 scoreboard rows in view (40 dp each): five, so the Mole of a 5–6 player game is never behind the fold. */
 export const SB_ROWS = 5;
 
-/** Stage 1 title steps down with its length so it always stays one line ("THE MOLES & THE BLANK WIN!" included). */
+/** Stage 1 title steps down with its length so it always stays one line ("THE MOLE WINS: {name}!" with a long name included). */
 export function titleSize(text: string): string {
   const n = [...text].length;
   return n <= 16 ? "tvt-displayL" : n <= 24 ? "tvt-displayM" : "tvt-displayS";
@@ -136,11 +136,14 @@ export function TvResults({ view }: { view: TvView }) {
             <span class="tvword__text" lang={view.settings.wordLocale}>{r.civilianWord.text}</span>
             {r.civilianWord.translit && <span class="tvword__translit">{r.civilianWord.translit}</span>}
           </div>
-          <div class="tvword tvword--undercover">
-            <span class="tvword__label">{t("results.undercoverWord")}</span>
-            <span class="tvword__text" lang={view.settings.wordLocale}>{r.undercoverWord.text}</span>
-            {r.undercoverWord.translit && <span class="tvword__translit">{r.undercoverWord.translit}</span>}
-          </div>
+          {/* Rules v2: no Undercover this game → nobody held the second word, so only the Civilians' word shows. */}
+          {hadUndercover(view) && (
+            <div class="tvword tvword--undercover">
+              <span class="tvword__label">{t("results.undercoverWord")}</span>
+              <span class="tvword__text" lang={view.settings.wordLocale}>{r.undercoverWord.text}</span>
+              {r.undercoverWord.translit && <span class="tvword__translit">{r.undercoverWord.translit}</span>}
+            </div>
+          )}
         </div>
         {/* The reveal everyone waited for ("it was Ben!"), under the words. */}
         {!stage2 && caught.length > 0 && (
