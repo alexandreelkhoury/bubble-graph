@@ -1,0 +1,1410 @@
+<title>Studio</title>
+<!--
+STUDIO — frame-accurate video review.
+Capabilities: { db:{}, user:{}, assets:{} }  (assets is declared for later; the page never calls it)
+
+DATA MODEL (db). Claude seeds and edits this with the ArtifactData tool.
+
+videos/{videoId}
+  { title: string,
+    format: "9:16" | "16:9" | "1:1",
+    fps: number,                       // e.g. 30 or 60; frame = round(t * fps)
+    order: number,                     // left-rail sort order (ascending), then title
+    versions: [ { v: 1, url: "/_blob/<assetId>" | any URL, createdAt: ISO string, note: string } ],
+    updatedAt: ISO string }
+  Newest version = highest v. The player defaults to it.
+
+storyboards/{videoId}                  // same id as the video it plans; may exist before any video version
+  { title: string, format: "9:16" | "16:9" | "1:1", fps: number,
+    order: number,                     // optional; rail sort when there is no video doc yet
+    status: "draft" | "approved" | "changes",   // page sets "approved" / "changes"; Claude sets "draft" on a new pass
+    updatedAt: ISO string,
+    frames: [ { id: string,            // stable panel id (comments point at it)
+                n: number,             // panel number shown to the reviewer
+                start: number, end: number,   // seconds in the planned cut
+                image: string | null,  // asset url ("/_blob/<id>") or any URL: sketch, still or reference
+                shot: string,          // what we see
+                caption: string,       // on-screen text
+                audio: string,         // VO / dialogue / music / SFX
+                notes: string } ] }
+  A rail entry with a storyboard but no video versions shows as "Storyboard only".
+
+comments/{commentId}                   // id made by the page: "c" + base36 time + "-" + random
+  { videoId: string,
+    v: number,                         // version the comment was left on; 0 = storyboard comment
+    frameId: string | null,            // storyboard panel id; set => storyboard comment (t, frame, x, y are null)
+    t: number | null,                  // seconds (frame / fps, 3 decimals)
+    frame: number | null,              // round(t * fps)
+    x: number | null, y: number | null,// 0..1 click position on the picture, null = no pin
+    text: string,
+    status: "open" | "fixed" | "approved" | "reopened" | "wontfix",
+    authorId: string | null,           // user.id() of the reviewer; never a name
+    createdAt: ISO string,
+    replies: [ { by: "claude" | <authorId>, text: string, at: ISO string } ],
+    fixedIn: number | null }           // version that fixes it (set by Claude with status "fixed")
+
+Status flow
+  open      reviewer created it            -> Claude: "fixed" (+ fixedIn, + reply) or "wontfix" (+ reply)
+  fixed     waiting for the reviewer       -> reviewer: "approved" or "reopened"
+  reopened  reviewer rejected the fix      -> Claude fixes again
+  approved / wontfix: closed (reviewer can still reopen)
+The page writes: new comments, status approved/reopened, replies, deletes its own open comments,
+and storyboards/{id}.status ("approved" | "changes") + updatedAt. It never writes videos/*.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: editor shell. Rail of cuts | dark viewer with transport + timeline | review notes. Phone: viewer, picker, notes stacked. */
+:root{
+  --bg:#0e0f12; --panel:#14161a; --raised:#1b1e24; --hover:#22262e;
+  --line:#24272f; --line-2:#323641;
+  --fg:#e8eaef; --muted:#9ba1ae; --faint:#676d7b;
+  --accent:#93a6ff; --accent-ink:#0b0d14; --accent-soft:rgba(147,166,255,.14);
+  --stage:#070809; --stage-line:#1a1c21; --transport:#101216;
+  --open:#f2b64e; --reopened:#ff7b5c; --fixed:#46cfc2; --approved:#6cce8c; --wontfix:#8b92a1;
+  --claude-bg:rgba(70,207,194,.08); --claude-line:rgba(70,207,194,.35);
+  --shadow:0 12px 40px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3);
+  --f-ui:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:10px; --r-sm:7px;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f3f4f7; --panel:#ffffff; --raised:#eef0f4; --hover:#e6e9ef;
+    --line:#e2e5eb; --line-2:#ced3dc;
+    --fg:#15171c; --muted:#555c6a; --faint:#878e9c;
+    --accent:#3f55d4; --accent-ink:#ffffff; --accent-soft:rgba(63,85,212,.1);
+    --stage:#17191e; --stage-line:#2a2d34; --transport:#1d2027;
+    --open:#b5761a; --reopened:#d24d2b; --fixed:#0f8a7f; --approved:#2b8c52; --wontfix:#6b7282;
+    --claude-bg:rgba(15,138,127,.07); --claude-line:rgba(15,138,127,.35);
+    --shadow:0 12px 40px rgba(20,24,40,.18),0 2px 6px rgba(20,24,40,.08);
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f3f4f7; --panel:#ffffff; --raised:#eef0f4; --hover:#e6e9ef;
+  --line:#e2e5eb; --line-2:#ced3dc;
+  --fg:#15171c; --muted:#555c6a; --faint:#878e9c;
+  --accent:#3f55d4; --accent-ink:#ffffff; --accent-soft:rgba(63,85,212,.1);
+  --stage:#17191e; --stage-line:#2a2d34; --transport:#1d2027;
+  --open:#b5761a; --reopened:#d24d2b; --fixed:#0f8a7f; --approved:#2b8c52; --wontfix:#6b7282;
+  --claude-bg:rgba(15,138,127,.07); --claude-line:rgba(15,138,127,.35);
+  --shadow:0 12px 40px rgba(20,24,40,.18),0 2px 6px rgba(20,24,40,.08);
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{height:100%}
+body{height:100%;margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 var(--f-ui);-webkit-font-smoothing:antialiased;overflow:hidden}
+button,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.mono,.tc{font-family:var(--f-mono);font-variant-numeric:tabular-nums;letter-spacing:0}
+svg{display:block;flex:none}
+
+/* ---------- shell ---------- */
+.app{height:100%;display:grid;grid-template-rows:auto auto minmax(0,1fr);grid-template-columns:232px minmax(0,1fr) 368px;grid-template-areas:"top top top" "banner banner banner" "rail main side"}
+.top{grid-area:top;display:flex;align-items:center;gap:16px;padding:0 16px;height:52px;border-bottom:1px solid var(--line);background:var(--panel);min-width:0}
+.brand{display:flex;align-items:center;gap:9px;font-weight:600;font-size:15px;letter-spacing:.01em}
+.brand-mark{width:22px;height:22px;border-radius:6px;background:var(--fg);color:var(--bg);display:grid;place-items:center}
+.top-title{min-width:0;display:flex;align-items:baseline;gap:10px;color:var(--muted);overflow:hidden}
+.top-title b{color:var(--fg);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sep{width:1px;height:20px;background:var(--line-2)}
+.counter{margin-left:auto;display:flex;align-items:center;gap:14px;white-space:nowrap;font-size:13px;color:var(--muted)}
+.counter .n{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.cnt-item{display:inline-flex;align-items:center;gap:7px}
+
+.banner{grid-area:banner;display:flex;gap:10px;align-items:center;padding:8px 16px;font-size:13px;background:var(--raised);border-bottom:1px solid var(--line);color:var(--muted)}
+.banner strong{color:var(--fg);font-weight:600}
+
+/* ---------- rail ---------- */
+.rail{grid-area:rail;border-right:1px solid var(--line);background:var(--panel);overflow:auto;min-height:0;padding:12px 10px}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--faint);font-weight:600;padding:4px 8px 8px}
+.vlist{display:flex;flex-direction:column;gap:2px}
+.vitem{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px;border-radius:var(--r-sm);text-align:left;width:100%;color:var(--muted)}
+.vitem:hover{background:var(--hover);color:var(--fg)}
+.vitem[aria-current="true"]{background:var(--accent-soft);color:var(--fg)}
+.vthumb{width:30px;height:30px;display:grid;place-items:center;border-radius:5px;background:var(--raised);border:1px solid var(--line)}
+.vthumb i{display:block;border:1.5px solid currentColor;border-radius:2px;opacity:.85}
+.vname{min-width:0}
+.vname b{display:block;font-weight:500;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px}
+.vname small{display:block;font-size:11.5px;color:var(--faint);font-family:var(--f-mono)}
+.vcount{min-width:22px;height:20px;padding:0 6px;border-radius:10px;font-size:11.5px;font-weight:600;display:grid;place-items:center;font-variant-numeric:tabular-nums;background:color-mix(in srgb,var(--open) 18%,transparent);color:var(--open)}
+.vcount.zero{background:none;color:var(--faint);font-weight:500}
+.vcount.check{background:color-mix(in srgb,var(--fixed) 18%,transparent);color:var(--fixed)}
+
+/* ---------- main / player ---------- */
+.main{grid-area:main;min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--stage)}
+.player{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
+.stage{position:relative;flex:1;min-height:0;display:grid;place-items:center;padding:20px;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--stage) 80%,#2a2f3d) 0%,var(--stage) 70%)}
+.frame{position:relative;background:#000;box-shadow:0 0 0 1px var(--stage-line),0 20px 60px rgba(0,0,0,.5);border-radius:4px;overflow:visible}
+.frame video{display:block;width:100%;height:100%;object-fit:contain;border-radius:4px;background:#000}
+.overlay{position:absolute;inset:0;cursor:crosshair;border-radius:4px}
+.overlay.playmode{cursor:pointer}
+.vmsg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#c9ccd4;font-size:13px;padding:20px;pointer-events:none}
+.pin{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50% 50% 50% 4px;transform:rotate(0);display:grid;place-items:center;
+  background:var(--pc,var(--open));color:#101114;font:600 11px/1 var(--f-mono);box-shadow:0 0 0 2px rgba(0,0,0,.55),0 4px 12px rgba(0,0,0,.5);transition:transform .12s ease}
+.pin:hover{transform:scale(1.12)}
+.pin.sel{box-shadow:0 0 0 2px #fff,0 0 0 5px color-mix(in srgb,var(--pc) 55%,transparent),0 4px 14px rgba(0,0,0,.5)}
+.pin.new{background:#fff;color:#101114;animation:pop .18s ease-out}
+.pin.old{opacity:.6}
+@keyframes pop{from{transform:scale(.4)}to{transform:scale(1)}}
+.verbanner{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:10px;padding:6px 6px 6px 12px;border-radius:999px;
+  background:rgba(20,22,27,.92);border:1px solid #33373f;color:#d7dae1;font-size:12.5px;white-space:nowrap;box-shadow:var(--shadow);max-width:calc(100% - 24px)}
+.verbanner span{overflow:hidden;text-overflow:ellipsis}
+
+/* transport */
+.transport{border-top:1px solid var(--stage-line);background:var(--transport);padding:10px 16px 14px;color:#e6e8ee;--tfg:#e6e8ee;--tmuted:#8d93a0}
+.tl{position:relative;height:38px;margin:0 2px 8px;cursor:pointer;touch-action:none;user-select:none}
+.tl-track{position:absolute;left:0;right:0;top:20px;height:6px;border-radius:3px;background:#2a2d35}
+.tl-fill{position:absolute;left:0;top:20px;height:6px;border-radius:3px;background:var(--accent);width:0}
+.tl-ticks{position:absolute;left:0;right:0;top:30px;height:6px;pointer-events:none}
+.tl-ticks i{position:absolute;top:0;width:1px;height:4px;background:#3b3f49}
+.tl-ticks i.major{height:6px;background:#565b67}
+.tl-head{position:absolute;top:2px;bottom:4px;width:2px;margin-left:-1px;background:#fff;pointer-events:none;border-radius:1px}
+.tl-head::before{content:"";position:absolute;top:0;left:50%;width:10px;height:10px;margin-left:-5px;background:#fff;border-radius:2px 2px 5px 5px}
+.tl:focus-visible{outline-offset:4px}
+.mk{position:absolute;top:4px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--pc);box-shadow:0 0 0 2px color-mix(in srgb,var(--stage) 80%,#000);z-index:2;transition:transform .12s ease}
+.mk:hover,.mk.sel{transform:scale(1.35)}
+.mk.sel{box-shadow:0 0 0 2px #fff}
+.tip{position:absolute;bottom:40px;transform:translateX(-50%);z-index:5;width:max-content;max-width:260px;padding:7px 10px;border-radius:8px;background:#f2f3f6;color:#15171c;font-size:12.5px;line-height:1.35;box-shadow:var(--shadow);pointer-events:none}
+.tip .mono{color:#5a606c;font-size:11px;display:block;margin-bottom:2px}
+.ctrls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cgroup{display:flex;align-items:center;gap:4px}
+.ibtn{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;color:var(--tfg)}
+.ibtn:hover{background:rgba(255,255,255,.08)}
+.ibtn:disabled{opacity:.35;cursor:default}
+.play{width:46px;height:46px;border-radius:50%;background:#fff;color:#0d0e11;display:grid;place-items:center}
+.play:hover{background:#dfe3ff}
+.time{display:flex;align-items:baseline;gap:10px;padding:0 6px;min-width:0}
+.time .tc{font-size:20px;font-weight:500;color:var(--tfg)}
+.time .dur{font-size:12.5px;color:var(--tmuted)}
+.fbadge{font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--tmuted);padding:3px 7px;border:1px solid #333742;border-radius:6px;white-space:nowrap}
+.spacer{flex:1}
+.seg{display:inline-flex;padding:3px;border-radius:9px;background:rgba(255,255,255,.06);gap:2px}
+.seg button{height:30px;padding:0 10px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--tmuted);font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:6px}
+.seg button:hover{color:var(--tfg)}
+.seg button[aria-pressed="true"]{background:rgba(255,255,255,.14);color:var(--tfg)}
+.addbtn{height:38px;padding:0 14px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.addbtn:hover{filter:brightness(1.08)}
+.addbtn:disabled{opacity:.4;cursor:default;filter:none}
+.vsel{max-width:150px;text-overflow:ellipsis;height:30px;border-radius:7px;background:rgba(255,255,255,.06);border:1px solid #333742;color:var(--tfg);padding:0 8px;font:500 12.5px var(--f-ui)}
+.vsel option{background:#1b1e24;color:#e8eaef}
+.modeswitch{display:none}
+.phonerow{display:none;margin-top:8px}
+.panel-time{display:none;font:500 11.5px var(--f-mono);color:var(--faint);font-variant-numeric:tabular-nums}
+.hint-keys{font-size:11.5px;color:var(--tmuted);display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+.hint-keys kbd{font:500 10.5px var(--f-mono);padding:1px 5px;border-radius:4px;border:1px solid #3a3e48;color:#c4c8d1;margin-right:4px}
+
+/* composer */
+.composer{position:absolute;z-index:6;width:300px;background:var(--panel);color:var(--fg);border:1px solid var(--line-2);border-radius:12px;box-shadow:var(--shadow);padding:10px}
+.composer-h{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px}
+.composer-h .tc{color:var(--fg);font-weight:500}
+.composer textarea{width:100%;min-height:68px;max-height:180px;resize:vertical;border:1px solid var(--line-2);border-radius:8px;background:var(--bg);padding:8px 10px;line-height:1.4;font-size:14px}
+.composer textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.composer-f{display:flex;align-items:center;gap:8px;margin-top:8px}
+.composer-f small{color:var(--faint);font-size:11.5px;margin-right:auto}
+.btn{height:32px;padding:0 12px;border-radius:8px;font-size:13px;font-weight:500;border:1px solid var(--line-2);background:var(--panel);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--hover)}
+.btn.primary{background:var(--accent);border-color:transparent;color:var(--accent-ink);font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.sm{height:28px;padding:0 10px;font-size:12.5px}
+.btn.ok{color:var(--approved);border-color:color-mix(in srgb,var(--approved) 45%,transparent)}
+.btn.ok:hover{background:color-mix(in srgb,var(--approved) 12%,transparent)}
+.btn.warn{color:var(--reopened);border-color:color-mix(in srgb,var(--reopened) 40%,transparent)}
+.btn.warn:hover{background:color-mix(in srgb,var(--reopened) 12%,transparent)}
+.btn.ghost{border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--fg)}
+.btn.danger{color:var(--reopened)}
+
+/* ---------- picker (phone) ---------- */
+.picker{display:none}
+
+/* ---------- side panel ---------- */
+.side{grid-area:side;border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0;min-width:0}
+.side-h{padding:14px 16px 10px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
+.side-h h2{margin:0;font-size:15px;font-weight:600;display:flex;align-items:baseline;gap:8px}
+.side-h h2 small{font-weight:500;font-size:12.5px;color:var(--faint)}
+.filters{display:flex;gap:2px;padding:3px;background:var(--raised);border-radius:9px}
+.filters button{flex:1;height:28px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--muted);white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.filters button[aria-pressed="true"]{background:var(--panel);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.2),0 0 0 1px var(--line)}
+.filters em{font-style:normal;color:var(--faint);font-variant-numeric:tabular-nums;font-size:11.5px}
+.clist{flex:1;overflow:auto;min-height:0;padding:8px 8px 16px;display:flex;flex-direction:column;gap:4px}
+.citem{border-radius:var(--r);padding:12px 12px 10px;border:1px solid transparent;display:flex;flex-direction:column;gap:8px;position:relative;scroll-margin:12px}
+.citem:hover{background:var(--hover)}
+.citem.sel{background:var(--raised);border-color:var(--line-2)}
+.citem-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chip{height:24px;padding:0 8px;border-radius:6px;background:var(--raised);border:1px solid var(--line);font:500 12px var(--f-mono);font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:6px;color:var(--fg)}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip .f{color:var(--faint)}
+.status{height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:11.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--pc);background:color-mix(in srgb,var(--pc) 14%,transparent);white-space:nowrap}
+.status .dot{background:var(--pc);width:6px;height:6px}
+.vtag{font:500 11px var(--f-mono);color:var(--faint);border:1px solid var(--line-2);padding:1px 5px;border-radius:5px}
+.who{margin-left:auto;font-size:11.5px;color:var(--faint)}
+.ctext{margin:0;font-size:14px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--fg)}
+.replies{display:flex;flex-direction:column;gap:6px}
+.reply{font-size:13px;line-height:1.45;padding:7px 10px;border-radius:8px;background:var(--raised);overflow-wrap:anywhere;white-space:pre-wrap}
+.reply b{font-weight:600;margin-right:6px}
+.reply.claude{background:var(--claude-bg);box-shadow:inset 0 0 0 1px var(--claude-line)}
+.reply.claude b{color:var(--fixed)}
+.reply time{display:block;font-size:11px;color:var(--faint);margin-top:2px}
+.cactions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.replybox{display:flex;flex-direction:column;gap:6px}
+.replybox textarea{width:100%;min-height:54px;resize:vertical;border:1px solid var(--line-2);border-radius:8px;background:var(--bg);padding:7px 9px;font-size:13.5px}
+.replybox textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.replybox div{display:flex;gap:6px;justify-content:flex-end}
+.empty{margin:auto;max-width:280px;text-align:center;color:var(--muted);padding:32px 12px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.empty b{color:var(--fg);font-weight:600;font-size:14.5px}
+.empty svg{color:var(--faint)}
+.done{margin:0 12px 12px;padding:14px 14px 14px 16px;border-radius:12px;border:1px solid var(--line-2);background:var(--raised);display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start}
+.done.ready{border-color:color-mix(in srgb,var(--approved) 50%,transparent);background:color-mix(in srgb,var(--approved) 9%,var(--raised))}
+.done-ic{grid-row:1/3;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--panel);color:var(--approved);border:1px solid var(--line-2)}
+.done b{font-size:14px;font-weight:600}
+.done p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.45}
+.done q{color:var(--fg);font-weight:600;quotes:"\201C" "\201D"}
+
+.centerempty{flex:1;display:grid;place-items:center;padding:24px;text-align:center;color:#9ba1ae}
+.centerempty b{display:block;color:#e8eaef;font-size:16px;font-weight:600;margin:14px 0 6px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:50;background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;align-items:flex-end;gap:4px;padding:0 16px;background:var(--panel);border-bottom:1px solid var(--line);flex:none}
+.tabs button{height:42px;padding:0 12px;font-size:13.5px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;display:inline-flex;align-items:center;gap:8px}
+.tabs button:hover{color:var(--fg)}
+.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+.tabs em{font-style:normal;font-size:11px;font-weight:600;color:var(--faint);font-variant-numeric:tabular-nums}
+.tabs .sbst{height:20px;font-size:11px}
+.tabvsel{margin:0 0 6px auto;align-self:center;max-width:280px;background:var(--raised);border-color:var(--line-2);color:var(--fg)}
+.tabvsel option{background:var(--panel);color:var(--fg)}
+
+/* ---------- storyboard ---------- */
+.sb{flex:1;min-height:0;overflow:auto;background:var(--bg);display:flex;flex-direction:column}
+.sb-h{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px 16px;flex-wrap:wrap;padding:14px 20px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.sb-meta{display:flex;flex-direction:column;gap:3px;min-width:0}
+.sb-meta b{font-size:16px;font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sb-meta span{font-size:12.5px;color:var(--muted)}
+.sb-meta .tc{color:var(--fg);font-weight:500}
+.sb-act{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.btn.lg{height:40px;padding:0 16px;font-size:14px;border-radius:10px}
+.btn.approve{background:var(--approved);color:#0b130e;border-color:transparent;font-weight:600}
+.btn.approve:hover{filter:brightness(1.07)}
+.sb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--cardw,184px),1fr));gap:18px;padding:20px;align-content:start}
+.panel{display:flex;flex-direction:column;border-radius:12px;background:var(--panel);border:1px solid var(--line);overflow:hidden;cursor:pointer;scroll-margin:80px;transition:border-color .12s ease}
+.panel:hover{border-color:var(--line-2)}
+.panel.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.panel-img{position:relative;aspect-ratio:var(--ar,9/16);background:var(--stage);overflow:hidden;max-width:100%}
+.panel-img img{width:100%;height:100%;object-fit:cover;display:block}
+.panel-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:14px;text-align:center;font-size:12.5px;line-height:1.45;color:#aab0bd;
+  background:repeating-linear-gradient(135deg,transparent 0 9px,rgba(255,255,255,.025) 9px 10px),linear-gradient(180deg,#1a1d24,#101217)}
+.panel-ph span{display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden}
+.panel-n{position:absolute;top:8px;left:8px;display:flex;gap:6px;align-items:center}
+.panel-n b{min-width:24px;height:24px;padding:0 6px;border-radius:6px;background:rgba(10,11,14,.82);color:#fff;font:600 12px/24px var(--f-mono);text-align:center}
+.panel-n span{height:24px;padding:0 7px;border-radius:6px;background:rgba(10,11,14,.66);color:#d6d9e0;font:500 11px/24px var(--f-mono);font-variant-numeric:tabular-nums}
+.panel-cc{position:absolute;top:8px;right:8px;height:22px;min-width:22px;padding:0 6px;border-radius:11px;font:600 11px/22px var(--f-ui);text-align:center;background:var(--open);color:#141006}
+.panel-cc.check{background:var(--fixed)}
+.panel-cc.zero{background:rgba(10,11,14,.66);color:#c3c7cf}
+.panel-b{padding:12px 12px 12px;display:flex;flex-direction:column;gap:7px;font-size:12.5px;line-height:1.45;min-width:0}
+.panel-cap{font-size:14px;font-weight:700;line-height:1.3;color:var(--fg);overflow-wrap:anywhere}
+.panel-cap.none{font-weight:400;color:var(--faint);font-style:italic;font-size:12.5px}
+.panel-row{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;color:var(--muted);overflow-wrap:anywhere}
+.panel-row i{font-style:normal;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);padding-top:1px;font-weight:600}
+.panel-f{display:flex;gap:6px;margin-top:auto;padding-top:4px;flex-wrap:wrap}
+.panel .composer-inline{display:flex;flex-direction:column;gap:6px}
+.panel .composer-inline textarea{width:100%;min-height:60px;resize:vertical;border:1px solid var(--line-2);border-radius:8px;background:var(--bg);padding:7px 9px;font-size:13.5px}
+.panel .composer-inline textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.panel .composer-inline div{display:flex;gap:6px;justify-content:flex-end}
+.sbstatus{--pc:var(--muted)}
+.vstate{font-size:11px;color:var(--faint)}
+.vitem .sbdot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:1px}
+
+/* timeline panel band */
+.tl.haspanels{height:52px}
+.tl-panels{position:absolute;left:0;right:0;top:12px;bottom:0;pointer-events:none}
+.tl-panels i{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(255,255,255,.18);font:500 10px/1 var(--f-mono);color:#7d8391;padding:28px 0 0 4px;font-style:normal;white-space:nowrap}
+.tl-panels i.cur{color:#e6e8ee;border-left-color:rgba(255,255,255,.4)}
+
+/* ---------- phone ---------- */
+@media (max-width:760px){
+  body{overflow:auto;height:auto}
+  html{height:auto}
+  .app{height:auto;display:flex;flex-direction:column}
+  .top{height:auto;min-height:50px;padding:8px 16px;gap:10px;flex-wrap:wrap;position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+  .top .sep,.top-title{display:none}
+  .counter{font-size:12.5px;gap:10px}
+  .rail{display:none}
+  .main{order:1}
+  .stage{height:min(62vh,600px);flex:none;padding:12px}
+  .transport{padding:8px 12px 12px}
+  .hint-keys,.desk{display:none!important}
+  .ctrls{gap:6px}
+  .time .tc{font-size:17px}
+  .time .dur{display:none}
+  .modeswitch{display:inline-flex}
+  .phonerow{display:flex}
+  .phonerow .vsel{flex:1;max-width:none}
+  .panel-n span{display:none}
+  .panel-time{display:block}
+  .ctrls .addbtn{flex:1;justify-content:center}
+  .composer{position:static;width:auto;margin:10px 12px 0;box-shadow:none}
+  .player{flex:none}
+  .picker{order:2;display:flex;gap:8px;overflow-x:auto;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel);scrollbar-width:none}
+  .picker::-webkit-scrollbar{display:none}
+  .picker button{flex:none;display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line-2);font-size:13px;font-weight:500;color:var(--muted);max-width:220px}
+  .picker button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .picker button[aria-current="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
+  .side{order:3;border-left:0;min-height:60vh}
+  .clist{overflow:visible}
+  .done{margin:4px 12px 16px}
+  .tabs{order:0;padding:0 12px}
+  .sb{overflow:visible;flex:none}
+  .sb-h{position:static;padding:12px 16px}
+  .sb-act{margin-left:0;width:100%}
+  .sb-act .btn{flex:1;justify-content:center}
+  .sb-grid{grid-template-columns:1fr;padding:12px 16px 16px;gap:12px}
+  .panel{flex-direction:row;align-items:stretch}
+  .panel-img{width:118px;flex:none;align-self:flex-start}
+  .panel.wide .panel-img{width:150px}
+  .panel-b{flex:1;padding:10px 12px}
+  .panel-row{grid-template-columns:40px minmax(0,1fr)}
+}
+@media (max-width:400px){
+  .seg button{padding:0 8px}
+  .ibtn{width:34px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+}
+</style>
+
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg></span>Studio</div>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="top-title" id="topTitle"></div>
+    <div class="counter" id="counter" aria-live="polite"></div>
+  </header>
+  <div class="banner" id="banner" role="status" hidden></div>
+
+  <nav class="rail" aria-label="Videos">
+    <div class="eyebrow">Videos</div>
+    <div class="vlist" id="vlist"></div>
+  </nav>
+
+  <main class="main" id="main">
+    <div class="tabs" role="tablist" aria-label="View" id="tabs" hidden>
+      <button role="tab" id="tabSb" data-tab="storyboard" aria-selected="false" aria-controls="sbView">Storyboard <span class="status sbst" id="tabSbSt"></span></button>
+      <button role="tab" id="tabVid" data-tab="video" aria-selected="true" aria-controls="player">Video <em id="tabVidV"></em></button>
+      <select class="vsel desk tabvsel" id="vsel" aria-label="Version"></select>
+    </div>
+    <section class="sb" id="sbView" role="tabpanel" aria-labelledby="tabSb" hidden>
+      <div class="sb-h" id="sbHead"></div>
+      <div class="sb-grid" id="sbGrid"></div>
+    </section>
+    <div class="centerempty" id="centerEmpty">
+      <div>
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style="margin:auto" aria-hidden="true"><rect x="4" y="8" width="32" height="24" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M17 15v10l8-5z" fill="currentColor"/></svg>
+        <b id="ceTitle">Connecting…</b>
+        <span id="ceText">Loading your review queue.</span>
+        <div id="ceAct" style="margin-top:14px"></div>
+      </div>
+    </div>
+    <section class="player" id="player" role="tabpanel" aria-label="Player" hidden>
+      <div class="stage" id="stage">
+        <div class="verbanner" id="verBanner" hidden></div>
+        <div class="frame" id="frame">
+          <video id="video" playsinline preload="auto"></video>
+          <div class="vmsg" id="vmsg" hidden></div>
+          <div class="overlay" id="overlay" role="button" tabindex="-1" aria-label="Video picture. Click to pin a comment at this frame."></div>
+        </div>
+      </div>
+      <div class="transport">
+        <div class="tl" id="tl" role="slider" tabindex="0" aria-label="Timeline" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="">
+          <div class="tl-track"></div>
+          <div class="tl-fill" id="tlFill"></div>
+          <div class="tl-ticks" id="tlTicks"></div>
+          <div class="tl-panels" id="tlPanels"></div>
+          <div id="tlMarks"></div>
+          <div class="tl-head" id="tlHead"></div>
+          <div class="tip" id="tip" hidden></div>
+        </div>
+        <div class="ctrls">
+          <div class="cgroup">
+            <button class="ibtn" id="bBack" aria-label="Previous frame (Left arrow)" title="Previous frame  ←"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M6 4v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15.5 4.5v11L8 10z" fill="currentColor"/></svg></button>
+            <button class="play" id="bPlay" aria-label="Play (Space)" title="Play / pause  Space"><svg id="icPlay" width="18" height="18" viewBox="0 0 18 18"><path d="M5 3v12l10-6z" fill="currentColor"/></svg><svg id="icPause" width="18" height="18" viewBox="0 0 18 18" hidden><rect x="4" y="3" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="10.5" y="3" width="3.5" height="12" rx="1" fill="currentColor"/></svg></button>
+            <button class="ibtn" id="bFwd" aria-label="Next frame (Right arrow)" title="Next frame  →"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M14 4v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4.5 4.5v11L12 10z" fill="currentColor"/></svg></button>
+          </div>
+          <div class="time"><span class="tc" id="tc" aria-label="Current time">00:00.00</span><span class="dur tc" id="dur">/ 00:00.00</span></div>
+          <span class="fbadge" id="fb" aria-label="Frame number">F 0</span>
+          <div class="spacer"></div>
+          <div class="seg desk" role="group" aria-label="Playback speed" id="speed">
+            <button data-rate="0.25" aria-pressed="false">¼×</button><button data-rate="0.5" aria-pressed="false">½×</button><button data-rate="1" aria-pressed="true">1×</button>
+          </div>
+          <button class="ibtn" id="bMute" aria-label="Mute" title="Mute"><svg id="icVol" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 7h3l4-3v10l-4-3H3z" fill="currentColor"/><path d="M12.5 6.5a3.5 3.5 0 0 1 0 5M14.5 4.5a6.5 6.5 0 0 1 0 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg id="icMute" width="18" height="18" viewBox="0 0 18 18" fill="none" hidden><path d="M3 7h3l4-3v10l-4-3H3z" fill="currentColor"/><path d="M12.5 7l4 4m0-4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+          <button class="addbtn desk" id="bAdd" title="Comment at current frame  C"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2.5 3.5h11v7.5h-6l-3 2.5V11h-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Comment at frame</button>
+        </div>
+        <div class="ctrls phonerow" id="phoneRow" hidden>
+          <div class="seg modeswitch" role="group" aria-label="Tap on video to" id="modeSw">
+            <button data-mode="play" aria-pressed="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg>Play</button>
+            <button data-mode="comment" aria-pressed="false"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2.5 3.5h11v7.5h-6l-3 2.5V11h-2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Comment</button>
+          </div>
+          <select class="vsel" id="vselM" aria-label="Version"></select>
+          <div class="seg" role="group" aria-label="Playback speed" id="speedM">
+            <button data-rate="0.25" aria-pressed="false">¼×</button><button data-rate="0.5" aria-pressed="false">½×</button><button data-rate="1" aria-pressed="true">1×</button>
+          </div>
+          <button class="addbtn" id="bAddM">Add comment at current frame</button>
+        </div>
+        <div class="hint-keys" aria-hidden="true"><span><kbd>Space</kbd>play</span><span><kbd>←</kbd><kbd>→</kbd>1 frame</span><span><kbd>⇧</kbd><kbd>←</kbd><kbd>→</kbd>1 second</span><span><kbd>C</kbd>comment</span><span>Click the picture to pin a note</span></div>
+      </div>
+      <form class="composer" id="composer" hidden aria-label="New comment">
+        <div class="composer-h"><span class="tc" id="cmpTc"></span><span class="fbadge" id="cmpF"></span><span id="cmpV" class="vtag"></span></div>
+        <textarea id="cmpText" rows="3" placeholder="What should change at this frame?" aria-label="Comment text"></textarea>
+        <div class="composer-f"><small>Enter to send · Shift+Enter new line</small><button type="button" class="btn sm ghost" id="cmpCancel">Cancel</button><button type="submit" class="btn sm primary" id="cmpSend">Comment</button></div>
+      </form>
+    </section>
+  </main>
+
+  <nav class="picker" id="picker" aria-label="Videos"></nav>
+
+  <aside class="side" aria-label="Comments">
+    <div class="side-h">
+      <h2>Comments <small id="sideSub"></small></h2>
+      <div class="filters" role="group" aria-label="Filter comments" id="filters">
+        <button data-f="review" aria-pressed="true">To review <em></em></button>
+        <button data-f="open" aria-pressed="false">Open <em></em></button>
+        <button data-f="fixed" aria-pressed="false">Fixed <em></em></button>
+        <button data-f="all" aria-pressed="false">All <em></em></button>
+      </div>
+    </div>
+    <div class="clist" id="clist" aria-live="polite"></div>
+    <div class="done" id="done">
+      <span class="done-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <b id="doneTitle">Done reviewing?</b>
+      <p>Go back to Claude and say <q>done</q>. Claude reads every comment here, fixes the video and posts a new version. This page can't notify Claude on its own.</p>
+    </div>
+  </aside>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(() => {
+"use strict";
+const $ = (id) => document.getElementById(id);
+const el = {
+  vlist:$("vlist"), picker:$("picker"), player:$("player"), centerEmpty:$("centerEmpty"), ceTitle:$("ceTitle"), ceText:$("ceText"), ceAct:$("ceAct"),
+  tabs:$("tabs"), tabSb:$("tabSb"), tabVid:$("tabVid"), tabSbSt:$("tabSbSt"), tabVidV:$("tabVidV"), sbView:$("sbView"), sbHead:$("sbHead"), sbGrid:$("sbGrid"),
+  stage:$("stage"), frame:$("frame"), video:$("video"), overlay:$("overlay"), vmsg:$("vmsg"), verBanner:$("verBanner"),
+  tl:$("tl"), tlFill:$("tlFill"), tlHead:$("tlHead"), tlMarks:$("tlMarks"), tlTicks:$("tlTicks"), tlPanels:$("tlPanels"), tip:$("tip"),
+  tc:$("tc"), dur:$("dur"), fb:$("fb"), bPlay:$("bPlay"), icPlay:$("icPlay"), icPause:$("icPause"), bBack:$("bBack"), bFwd:$("bFwd"),
+  bMute:$("bMute"), icVol:$("icVol"), icMute:$("icMute"), vsel:$("vsel"), vselM:$("vselM"), bAdd:$("bAdd"), bAddM:$("bAddM"), phoneRow:$("phoneRow"),
+  composer:$("composer"), cmpTc:$("cmpTc"), cmpF:$("cmpF"), cmpV:$("cmpV"), cmpText:$("cmpText"), cmpCancel:$("cmpCancel"), cmpSend:$("cmpSend"),
+  clist:$("clist"), filters:$("filters"), sideSub:$("sideSub"), counter:$("counter"), topTitle:$("topTitle"), banner:$("banner"),
+  done:$("done"), doneTitle:$("doneTitle"), toast:$("toast")
+};
+const V = el.video;
+
+const STATUS = {
+  open:{label:"Open", c:"var(--open)"},
+  reopened:{label:"Reopened", c:"var(--reopened)"},
+  fixed:{label:"Fixed · check", c:"var(--fixed)"},
+  approved:{label:"Approved", c:"var(--approved)"},
+  wontfix:{label:"Won't fix", c:"var(--wontfix)"}
+};
+const SB_STATUS = {
+  draft:{label:"Draft · to review", c:"var(--open)"},
+  changes:{label:"Changes requested", c:"var(--reopened)"},
+  approved:{label:"Approved", c:"var(--approved)"}
+};
+const FILTERS = {
+  review:(s)=>s==="open"||s==="reopened"||s==="fixed",
+  open:(s)=>s==="open"||s==="reopened",
+  fixed:(s)=>s==="fixed"||s==="approved"||s==="wontfix",
+  all:()=>true
+};
+
+const S = {
+  db:null, user:null, me:null, canWrite:false, dbState:"loading",
+  videos:new Map(), sbs:new Map(), entries:[], comments:[], cmap:new Map(), got:{videos:false, sbs:false, comments:false},
+  vid:null, ver:{}, tab:{}, sel:null, selPanel:null, filter:"review", mode:"play", rate:1,
+  draft:null, sbDraft:null, sbDraftText:{}, replyFor:null, replyDraft:{}, confirmDel:null, busy:new Set(),
+  frame:0, dur:0, fps:30, natW:0, natH:0
+};
+const phoneMQ = matchMedia("(max-width:760px)");
+const isPhone = () => phoneMQ.matches;
+const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- storage (per-viewer conveniences only) ---------- */
+const store = {
+  get(k){ try{ return JSON.parse(localStorage.getItem("studio:"+k)); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem("studio:"+k, JSON.stringify(v)); }catch(e){} }
+};
+S.filter = FILTERS[store.get("filter")] ? store.get("filter") : "review";
+
+/* ---------- helpers ---------- */
+function h(tag, attrs, ...kids){
+  const n = document.createElement(tag);
+  if (attrs) for (const k in attrs){
+    const v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k === "style") n.style.cssText = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+  return n;
+}
+function svg(w, vb, inner){
+  const s = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  s.setAttribute("width", w); s.setAttribute("height", w); s.setAttribute("viewBox", vb); s.setAttribute("fill","none"); s.setAttribute("aria-hidden","true");
+  s.innerHTML = inner; return s;
+}
+const iconCheck = () => svg(13, "0 0 16 16", '<path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>');
+const iconEmpty = () => svg(34, "0 0 34 34", '<path d="M6 8h22v14H16l-6 5v-5H6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 14h10M12 18h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>');
+const iconBubble = () => svg(13, "0 0 16 16", '<path d="M2.5 3.5h11v7.5h-6l-3 2.5V11h-2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>');
+const iconPlay = () => svg(12, "0 0 12 12", '<path d="M3 1.8v8.4L10 6z" fill="currentColor"/>');
+const pad = (n, w=2) => String(n).padStart(w, "0");
+function fmtTC(frame, fps){
+  fps = fps || 30;
+  const s = Math.floor(frame / fps), ff = frame - s*fps;
+  return pad(Math.floor(s/60)) + ":" + pad(s%60) + "." + pad(ff, fps > 99 ? 3 : 2);
+}
+function fmtSec(t){ t = Math.max(0, +t || 0); const m = Math.floor(t/60), s = t - m*60; return m + ":" + (s < 10 ? "0" : "") + (Number.isInteger(s) ? s : s.toFixed(1)); }
+function relTime(iso){
+  const t = Date.parse(iso); if (!t) return "";
+  const d = (Date.now() - t)/1000;
+  if (d < 60) return "just now";
+  if (d < 3600) return Math.floor(d/60) + " min ago";
+  if (d < 86400) return Math.floor(d/3600) + " h ago";
+  return new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+}
+function newId(){ return "c" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,8); }
+let toastT;
+function toast(msg){ el.toast.textContent = msg; el.toast.hidden = false; clearTimeout(toastT); toastT = setTimeout(()=>{ el.toast.hidden = true; }, 2600); }
+function errMsg(e){
+  const c = e && e.code;
+  if (c === "invalid_argument") return "You don't have permission to change this here.";
+  if (c === "quota_exceeded") return "Storage is full. Ask Claude to clear old comments.";
+  if (c === "revoked" || c === "not_granted") return "Access was withdrawn. Reload the page.";
+  return "Couldn't save. Check your connection and try again.";
+}
+
+/* ---------- entries: a video, a storyboard, or both, under one id ---------- */
+const versionsOf = (v) => (Array.isArray(v && v.versions) ? v.versions.slice() : []).filter(x => x && x.url).sort((a,b)=>(a.v||0)-(b.v||0));
+const newestV = (v) => { const vs = versionsOf(v); return vs.length ? vs[vs.length-1].v : 0; };
+const curVideo = () => S.videos.get(S.vid);
+const curSb = () => S.sbs.get(S.vid);
+const hasVideo = (id) => versionsOf(S.videos.get(id)).length > 0;
+const curVer = () => S.ver[S.vid] || newestV(curVideo());
+const metaOf = (id) => { const v = S.videos.get(id) || {}, sb = S.sbs.get(id) || {};
+  return {title: v.title || sb.title || id, format: v.format || sb.format || "16:9", fps: +(v.fps || sb.fps) > 0 ? +(v.fps || sb.fps) : 30}; };
+const panelsOf = (sb) => (Array.isArray(sb && sb.frames) ? sb.frames.filter(Boolean).slice() : []).sort((a,b)=>((a.n ?? 0)-(b.n ?? 0)) || ((a.start||0)-(b.start||0)));
+const isSbComment = (c) => !!c.frameId;
+const commentsOf = (id, kind) => S.comments.filter(c => c.videoId === id && (kind == null || (kind === "storyboard") === isSbComment(c)));
+const curTab = () => {
+  const id = S.vid; if (!id) return "video";
+  const t = S.tab[id];
+  if (t === "storyboard" && S.sbs.has(id)) return "storyboard";
+  if (t === "video") return "video";
+  return S.sbs.has(id) && (!hasVideo(id) || (S.sbs.get(id).status || "draft") !== "approved") ? "storyboard" : "video";
+};
+function ratioOf(fmt){
+  const m = /^(\d+(?:\.\d+)?):(\d+(?:\.\d+)?)$/.exec(fmt || "16:9");
+  return m ? (+m[1])/(+m[2]) : 16/9;
+}
+function frameRatio(){ return (S.natW && S.natH) ? S.natW / S.natH : ratioOf(metaOf(S.vid).format); }
+function formatGlyph(fmt){
+  const r = fmt === "9:16" ? [10,17] : fmt === "1:1" ? [15,15] : [19,11];
+  return h("i",{style:`width:${r[0]}px;height:${r[1]}px`});
+}
+function rebuildEntries(){
+  const ids = new Set([...S.videos.keys(), ...S.sbs.keys()]);
+  S.entries = [...ids].map(id => { const v = S.videos.get(id), sb = S.sbs.get(id);
+    return {id, order: (v && v.order != null) ? v.order : (sb && sb.order != null ? sb.order : 1e9), title: metaOf(id).title}; })
+    .sort((a,b)=>(a.order-b.order) || String(a.title).localeCompare(String(b.title)));
+}
+
+/* ---------- capabilities ---------- */
+async function boot(){
+  renderAll();
+  const cl = window.claude;
+  if (!cl || typeof cl.use !== "function"){ setNoDb(); return; }
+  let db = null, user = null;
+  try { [db, user] = await Promise.all([cl.use("db").catch(()=>null), cl.use("user").catch(()=>null)]); } catch(e){}
+  S.user = user;
+  if (user){ try { S.me = await user.id(); } catch(e){ S.me = null; } }
+  if (!db){ setNoDb(); return; }
+  S.db = db;
+  let can = null;
+  if (user){ try { can = await user.can("data.write"); } catch(e){ can = null; } }
+  S.canWrite = can !== false;
+  S.dbState = "live";
+  updateBanner();
+  subscribe();
+}
+function setNoDb(){
+  S.dbState = "none"; S.canWrite = false; S.got = {videos:true, sbs:true, comments:true};
+  updateBanner(); renderAll();
+}
+function updateBanner(){
+  const b = el.banner;
+  if (S.dbState === "none"){
+    b.replaceChildren(h("strong",{text:"Read-only."}), " Videos and comments can't be loaded or saved in this view. Open Studio on claude.ai while signed in with access to it.");
+    b.hidden = false;
+  } else if (S.dbState === "error"){
+    b.replaceChildren(h("strong",{text:"Disconnected."}), " Live updates stopped. Reload the page to reconnect.");
+    b.hidden = false;
+  } else if (!S.canWrite){
+    b.replaceChildren(h("strong",{text:"View only."}), " You can watch and read comments, but your access doesn't allow adding or changing them.");
+    b.hidden = false;
+  } else b.hidden = true;
+  const ro = !S.canWrite;
+  el.bAdd.disabled = ro; el.bAddM.disabled = ro;
+  el.overlay.setAttribute("aria-label", ro ? "Video picture" : "Video picture. Click to pin a comment at this frame.");
+}
+let unsubs = [], retried = false;
+function subscribe(){
+  const onErr = (e) => {
+    if (e && e.code === "unavailable" && !retried){ retried = true; unsubs.forEach(u=>{try{u()}catch(_){}}); setTimeout(subscribe, 1200 + Math.random()*800); return; }
+    S.dbState = "error"; updateBanner();
+  };
+  const docs = (snap) => snap.docs.filter(d=>d.exists).map(d=>({id:d.id, ...d.data()}));
+  try {
+    unsubs = [
+      S.db.collection("videos").onSnapshot((snap)=>{ S.videos = new Map(docs(snap).map(v=>[v.id, v])); S.got.videos = true; onData(); }, onErr),
+      S.db.collection("storyboards").onSnapshot((snap)=>{ S.sbs = new Map(docs(snap).map(v=>[v.id, v])); S.got.sbs = true; onData(); }, onErr),
+      S.db.collection("comments").onSnapshot((snap)=>{ S.comments = docs(snap); S.cmap = new Map(S.comments.map(c=>[c.id, c])); S.got.comments = true; onData(); }, onErr)
+    ];
+  } catch(e){ onErr(e); }
+}
+const ready = () => S.got.videos && S.got.sbs;
+function onData(){
+  rebuildEntries();
+  const exists = (id) => S.videos.has(id) || S.sbs.has(id);
+  if (S.vid && !exists(S.vid)) S.vid = null;
+  if (!S.vid && S.entries.length && ready()){
+    const last = store.get("vid");
+    selectVideo(exists(last) ? last : S.entries[0].id, true);
+    return;
+  }
+  if (S.vid){
+    const vs = versionsOf(curVideo()).map(x=>x.v);
+    if (S.ver[S.vid] && !vs.includes(S.ver[S.vid])) delete S.ver[S.vid];
+    if ((V.dataset.src || "") !== srcFor(curVer())) loadSrc(true);
+  }
+  renderAll();
+}
+
+/* ---------- selection ---------- */
+function selectVideo(id, quiet){
+  if (!S.videos.has(id) && !S.sbs.has(id)) return;
+  closeComposer();
+  S.vid = id; S.sel = null; S.selPanel = null; S.replyFor = null; S.confirmDel = null; S.sbDraft = null;
+  if (!S.tab[id]) S.tab[id] = curTab(); // pin the default so approving doesn't switch tabs under the reviewer
+  S.natW = S.natH = 0;
+  store.set("vid", id);
+  loadSrc(false);
+  renderAll();
+  if (!quiet && isPhone()) el.tabs.scrollIntoView({block:"start", behavior: reducedMotion() ? "auto" : "smooth"});
+}
+function setTab(t){
+  if (!S.vid) return;
+  S.tab[S.vid] = t;
+  if (t === "storyboard"){ V.pause(); closeComposer(); }
+  if (S.sel){ const c = S.cmap.get(S.sel); if (c && isSbComment(c) !== (t === "storyboard")) S.sel = null; }
+  renderAll();
+}
+function srcFor(ver){ const x = versionsOf(curVideo()).find(z=>z.v === ver); return x ? x.url : ""; }
+function loadSrc(keepTime){
+  S.fps = metaOf(S.vid).fps;
+  const src = S.vid ? srcFor(curVer()) : "";
+  if ((V.dataset.src || "") === src && (src || !V.getAttribute("src"))) return;
+  const t = keepTime ? V.currentTime : 0, wasPlaying = !V.paused;
+  V.pause();
+  V.dataset.src = src;
+  el.vmsg.hidden = true;
+  S.frame = Math.round(t * S.fps); S.dur = 0;
+  if (!src){ V.removeAttribute("src"); V.load(); return; }
+  V.src = src;
+  V.addEventListener("loadedmetadata", () => {
+    S.natW = V.videoWidth; S.natH = V.videoHeight; S.dur = V.duration || 0;
+    layoutFrame(); renderTimeline();
+    if (t > 0) seekFrame(Math.round(t*S.fps)); else updateTime();
+    if (wasPlaying) V.play().catch(()=>{});
+  }, {once:true});
+}
+function setVersion(ver){
+  if (!curVideo()) return;
+  S.ver[S.vid] = ver; loadSrc(true); renderAll();
+}
+
+/* ---------- frame-accurate transport ---------- */
+const hasRVFC = "requestVideoFrameCallback" in HTMLVideoElement.prototype;
+const lastFrame = () => Math.max(0, Math.floor((S.dur || 0) * S.fps) - 1);
+function frameFromTime(t){ return Math.floor(t * S.fps + 1e-3); }
+function seekFrame(f){
+  f = Math.max(0, Math.min(S.dur ? lastFrame() : Infinity, Math.round(f)));
+  S.frame = f;
+  // land inside the frame, not on its edge, so the decoder never shows the previous one
+  if (V.getAttribute("src")) V.currentTime = (f + 0.25) / S.fps;
+  updateTime();
+}
+function step(n){ if (!V.paused) V.pause(); seekFrame(frameFromTime(V.currentTime) + n); }
+function togglePlay(){
+  if (!V.getAttribute("src")) return;
+  if (V.paused){ closeComposer(); if (S.frame >= lastFrame()) seekFrame(0); V.play().catch(()=>{}); }
+  else V.pause();
+}
+function tick(now, meta){
+  if (meta && typeof meta.mediaTime === "number") S.frame = Math.round(meta.mediaTime * S.fps);
+  else S.frame = frameFromTime(V.currentTime);
+  updateTime();
+  if (!V.paused) schedule();
+}
+function schedule(){ if (hasRVFC) V.requestVideoFrameCallback(tick); else requestAnimationFrame(()=>tick()); }
+V.addEventListener("play", () => { updatePlayBtn(); renderPins(); schedule(); });
+V.addEventListener("pause", () => { S.frame = frameFromTime(V.currentTime); updatePlayBtn(); updateTime(); renderPins(); });
+V.addEventListener("seeked", () => { if (V.paused){ S.frame = frameFromTime(V.currentTime); updateTime(); } });
+V.addEventListener("ended", updatePlayBtn);
+V.addEventListener("durationchange", () => { S.dur = V.duration || 0; renderTimeline(); updateTime(); });
+V.addEventListener("error", () => { if (!V.dataset.src) return; el.vmsg.textContent = "This version's file couldn't load. Ask Claude to re-upload it."; el.vmsg.hidden = false; });
+V.addEventListener("volumechange", () => { el.icVol.hidden = V.muted; el.icMute.hidden = !V.muted; el.bMute.setAttribute("aria-label", V.muted ? "Unmute" : "Mute"); });
+
+function updatePlayBtn(){
+  const p = !V.paused;
+  el.icPlay.hidden = p; el.icPause.hidden = !p;
+  el.bPlay.setAttribute("aria-label", p ? "Pause (Space)" : "Play (Space)");
+}
+let lastPinKey = "", lastPanelCur = -1;
+function updateTime(){
+  const f = S.frame, fps = S.fps;
+  el.tc.textContent = fmtTC(f, fps);
+  el.fb.textContent = "F " + f;
+  el.dur.textContent = "/ " + fmtTC(Math.max(0, Math.round(S.dur * fps)), fps);
+  const pct = S.dur ? Math.min(100, (f / fps) / S.dur * 100) : 0;
+  el.tlFill.style.width = pct + "%";
+  el.tlHead.style.left = pct + "%";
+  el.tl.setAttribute("aria-valuemax", String(lastFrame()));
+  el.tl.setAttribute("aria-valuenow", String(f));
+  el.tl.setAttribute("aria-valuetext", fmtTC(f, fps) + ", frame " + f);
+  el.bBack.disabled = f <= 0; el.bFwd.disabled = S.dur > 0 && f >= lastFrame();
+  // highlight the storyboard panel under the playhead
+  const marks = el.tlPanels.children;
+  if (marks.length){
+    const t = f / fps; let cur = -1;
+    for (let i = 0; i < marks.length; i++) if (t >= +marks[i].dataset.start - 1e-6) cur = i;
+    if (cur !== lastPanelCur){ for (let i = 0; i < marks.length; i++) marks[i].classList.toggle("cur", i === cur); lastPanelCur = cur; }
+  }
+  if (V.paused){
+    const key = S.vid + ":" + f + ":" + S.sel;
+    if (key !== lastPinKey){ lastPinKey = key; renderPins(); }
+  }
+}
+
+/* ---------- layout ---------- */
+function layoutFrame(){
+  if (!S.vid || el.player.hidden) return;
+  const r = frameRatio();
+  const cs = getComputedStyle(el.stage);
+  const W = el.stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const H = el.stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  if (W <= 0 || H <= 0) return;
+  let w = W, hh = W / r;
+  if (hh > H){ hh = H; w = H * r; }
+  el.frame.style.width = Math.floor(w) + "px";
+  el.frame.style.height = Math.floor(hh) + "px";
+  positionComposer();
+}
+new ResizeObserver(() => layoutFrame()).observe(el.stage);
+
+/* ---------- timeline ---------- */
+function renderTimeline(){
+  el.tlMarks.replaceChildren(); el.tlTicks.replaceChildren(); el.tlPanels.replaceChildren(); lastPanelCur = -1;
+  const panels = panelsOf(curSb());
+  el.tl.classList.toggle("haspanels", panels.length > 0);
+  if (!S.vid || !S.dur) return;
+  if (panels.length){
+    for (const p of panels){
+      const s = +p.start || 0; if (s > S.dur) continue;
+      el.tlPanels.append(h("i",{style:`left:${s/S.dur*100}%`, "data-start":String(s), title:`Panel ${p.n ?? ""}`, text:String(p.n ?? "")}));
+    }
+  } else {
+    const secs = Math.floor(S.dur);
+    const stepS = S.dur > 120 ? 10 : S.dur > 40 ? 5 : 1;
+    for (let s = 0; s <= secs; s += stepS)
+      el.tlTicks.append(h("i",{class: s % (stepS*5) === 0 ? "major" : "", style:`left:${s/S.dur*100}%`}));
+  }
+  const fil = FILTERS[S.filter];
+  const list = commentsOf(S.vid, "video").filter(c => fil(c.status || "open")).sort((a,b)=>(a.t||0)-(b.t||0));
+  for (const c of list){
+    const st = STATUS[c.status] || STATUS.open;
+    const m = h("button",{class:"mk" + (c.id === S.sel ? " sel" : ""), style:`left:${Math.min(100,(c.t||0)/S.dur*100)}%;--pc:${st.c}`,
+      "aria-label": `${fmtTC(c.frame ?? Math.round((c.t||0)*S.fps), S.fps)} ${st.label}: ${c.text || ""}`, "data-cid": c.id, tabindex:"-1"});
+    m.addEventListener("pointerdown", (e)=>{ e.stopPropagation(); });
+    m.addEventListener("click", (e)=>{ e.stopPropagation(); hideTip(); selectComment(c.id); });
+    m.addEventListener("pointerenter", (e)=>{ if (e.pointerType === "mouse") showTip(c, m); });
+    m.addEventListener("pointerleave", hideTip);
+    el.tlMarks.append(m);
+  }
+}
+function showTip(c, m){
+  const fr = c.frame ?? Math.round((c.t||0)*S.fps);
+  const txt = (c.text || "").length > 120 ? c.text.slice(0,118) + "…" : (c.text || "");
+  el.tip.replaceChildren(h("span",{class:"mono", text:`${fmtTC(fr,S.fps)} · F ${fr} · v${c.v || 1}`}), txt);
+  el.tip.hidden = false;
+  const tlW = el.tl.clientWidth, x = m.offsetLeft + 6, tw = el.tip.offsetWidth;
+  el.tip.style.left = Math.max(tw/2, Math.min(tlW - tw/2, x)) + "px";
+}
+function hideTip(){ el.tip.hidden = true; }
+let dragging = false, resumeAfter = false;
+function tlFrameAt(clientX){
+  const r = el.tl.getBoundingClientRect();
+  const p = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+  return Math.round(p * S.dur * S.fps);
+}
+el.tl.addEventListener("pointerdown", (e) => {
+  if (!S.dur || e.button > 0) return;
+  dragging = true; resumeAfter = !V.paused; V.pause(); closeComposer();
+  el.tl.setPointerCapture(e.pointerId);
+  seekFrame(tlFrameAt(e.clientX));
+});
+el.tl.addEventListener("pointermove", (e) => { if (dragging) seekFrame(tlFrameAt(e.clientX)); });
+const endDrag = () => { if (!dragging) return; dragging = false; if (resumeAfter) V.play().catch(()=>{}); };
+el.tl.addEventListener("pointerup", endDrag);
+el.tl.addEventListener("pointercancel", endDrag);
+el.tl.addEventListener("keydown", (e) => {
+  if (e.key === "Home"){ e.preventDefault(); step(-1e9); }
+  else if (e.key === "End"){ e.preventDefault(); step(1e9); }
+});
+
+/* ---------- pins on the picture ---------- */
+function renderPins(){
+  [...el.overlay.querySelectorAll(".pin")].forEach(p=>p.remove());
+  if (!curVideo() || curTab() !== "video") return;
+  if (V.paused){
+    const t = S.frame / S.fps, ver = curVer();
+    const ordered = commentsOf(S.vid, "video").sort((a,b)=>(a.t||0)-(b.t||0));
+    for (const c of ordered){
+      if (c.x == null || c.y == null || Math.abs((c.t||0) - t) > 0.25) continue;
+      const st = STATUS[c.status] || STATUS.open;
+      const n = ordered.indexOf(c) + 1;
+      const p = h("button",{class:"pin" + (c.id === S.sel ? " sel" : "") + ((c.v||1) !== ver ? " old" : ""), style:`left:${c.x*100}%;top:${c.y*100}%;--pc:${st.c}`,
+        "aria-label": `Comment ${n}: ${c.text || ""}`, title: c.text || "", text:String(n)});
+      p.addEventListener("click", (e)=>{ e.stopPropagation(); selectComment(c.id); });
+      el.overlay.append(p);
+    }
+  }
+  if (S.draft && S.draft.x != null)
+    el.overlay.append(h("span",{class:"pin new", style:`left:${S.draft.x*100}%;top:${S.draft.y*100}%`, "aria-hidden":"true", text:"+"}));
+}
+
+/* ---------- video composer ---------- */
+function openComposer(x, y){
+  if (!S.canWrite){ toast("View only. You can't add comments here."); return; }
+  if (!curVideo() || !V.getAttribute("src") || curTab() !== "video") return;
+  V.pause();
+  const f = frameFromTime(V.currentTime);
+  S.frame = f;
+  S.draft = {x, y, frame:f, t:+(f / S.fps).toFixed(3), v:curVer(), vid:S.vid};
+  el.cmpTc.textContent = fmtTC(f, S.fps);
+  el.cmpF.textContent = "F " + f;
+  el.cmpV.textContent = "v" + S.draft.v;
+  el.composer.hidden = false;
+  positionComposer();
+  renderPins();
+  el.cmpText.focus({preventScroll: !isPhone()});
+  if (isPhone()) el.composer.scrollIntoView({block:"nearest", behavior: reducedMotion() ? "auto" : "smooth"});
+}
+function positionComposer(){
+  if (el.composer.hidden || isPhone()){ el.composer.style.left = el.composer.style.top = ""; return; }
+  const pr = el.player.getBoundingClientRect(), fr = el.frame.getBoundingClientRect();
+  const cw = el.composer.offsetWidth || 300, ch = el.composer.offsetHeight || 150;
+  let x, y;
+  if (S.draft && S.draft.x != null){
+    const px = fr.left + S.draft.x * fr.width - pr.left, py = fr.top + S.draft.y * fr.height - pr.top;
+    x = px + 22; y = py - 20;
+    if (x + cw > pr.width - 12) x = px - 22 - cw;
+  } else { x = fr.left - pr.left + fr.width/2 - cw/2; y = fr.bottom - pr.top - ch - 16; }
+  x = Math.max(12, Math.min(pr.width - cw - 12, x));
+  y = Math.max(12, Math.min(el.stage.offsetHeight - ch - 12, y));
+  el.composer.style.left = x + "px"; el.composer.style.top = y + "px";
+}
+function closeComposer(){
+  if (el.composer.hidden && !S.draft) return;
+  el.composer.hidden = true; S.draft = null; el.cmpText.value = "";
+  renderPins();
+}
+async function createComment(doc, onDone){
+  if (!S.db || !S.canWrite) return false;
+  const id = newId();
+  try {
+    await S.db.collection("comments").doc(id).set(doc);
+    S.sel = id;
+    if (!FILTERS[S.filter]("open")) setFilter("review");
+    onDone && onDone(id);
+    return true;
+  } catch(e){
+    if (e && e.code === "invalid_argument"){ S.canWrite = false; updateBanner(); }
+    toast(errMsg(e)); return false;
+  }
+}
+async function sendComment(){
+  const d = S.draft; const text = el.cmpText.value.trim();
+  if (!d || !text){ el.cmpText.focus(); return; }
+  el.cmpSend.disabled = true;
+  await createComment({ videoId:d.vid, v:d.v, frameId:null, t:d.t, frame:d.frame,
+    x:d.x == null ? null : +d.x.toFixed(4), y:d.y == null ? null : +d.y.toFixed(4),
+    text, status:"open", authorId:S.me || null, createdAt:new Date().toISOString(), replies:[], fixedIn:null },
+    (id) => { closeComposer(); renderAll(); scrollToComment(id); toast("Comment saved at " + fmtTC(d.frame, S.fps)); });
+  el.cmpSend.disabled = false;
+}
+el.composer.addEventListener("submit", (e)=>{ e.preventDefault(); sendComment(); });
+el.cmpCancel.addEventListener("click", closeComposer);
+el.cmpText.addEventListener("keydown", (e)=>{
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); sendComment(); }
+  else if (e.key === "Escape"){ e.preventDefault(); closeComposer(); el.tl.focus({preventScroll:true}); }
+});
+el.overlay.addEventListener("click", (e) => {
+  if (e.target !== el.overlay) return;
+  if ((isPhone() && S.mode === "play") || !S.canWrite){ togglePlay(); return; }
+  const r = el.overlay.getBoundingClientRect();
+  const x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+  const y = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+  S.sel = null;
+  openComposer(x, y);
+  renderList(); renderTimeline();
+});
+
+/* ---------- storyboard ---------- */
+function sbTotal(sb){ return panelsOf(sb).reduce((m,p)=>Math.max(m, +p.end || 0), 0); }
+function renderStoryboard(){
+  const sb = curSb();
+  if (!sb || curTab() !== "storyboard"){ el.sbView.hidden = true; return; }
+  el.sbView.hidden = false;
+  const panels = panelsOf(sb), meta = metaOf(S.vid), st = SB_STATUS[sb.status] || SB_STATUS.draft;
+  const sbc = commentsOf(S.vid, "storyboard"), openN = sbc.filter(c => FILTERS.open(c.status || "open")).length;
+  const busy = S.busy.has("sb:" + S.vid);
+  const acts = [];
+  if (S.canWrite){
+    acts.push(h("button",{class:"btn lg warn", disabled: busy || sb.status === "changes", onclick:()=>setSbStatus("changes")}, sb.status === "changes" ? "Changes requested" : "Request changes"));
+    acts.push(sb.status === "approved"
+      ? h("button",{class:"btn lg approve", disabled:true}, iconCheck(), "Storyboard approved")
+      : h("button",{class:"btn lg approve", disabled:busy, onclick:()=>setSbStatus("approved")}, iconCheck(), "Approve storyboard"));
+  }
+  el.sbHead.replaceChildren(
+    h("div",{class:"sb-meta"},
+      h("b",null, "Storyboard", h("span",{class:"status", style:`--pc:${st.c}`}, h("span",{class:"dot"}), st.label)),
+      h("span",null, `${panels.length} panel${panels.length === 1 ? "" : "s"} · `, h("span",{class:"tc", text:fmtSec(sbTotal(sb))}), ` total · ${meta.format} · ${meta.fps} fps`,
+        openN ? ` · ${openN} open note${openN === 1 ? "" : "s"}` : "", sb.updatedAt ? ` · updated ${relTime(sb.updatedAt)}` : "")),
+    acts.length ? h("div",{class:"sb-act"}, acts) : null);
+  const wide = ratioOf(meta.format) >= 1;
+  el.sbGrid.style.setProperty("--cardw", ratioOf(meta.format) > 1.2 ? "280px" : ratioOf(meta.format) > .9 ? "220px" : "184px");
+  if (!panels.length){
+    el.sbGrid.replaceChildren(h("div",{class:"empty"}, iconEmpty(), h("b",{text:"No panels yet"}), h("span",{text:"Claude adds the panels here before rendering."})));
+    return;
+  }
+  const active = document.activeElement, keep = active && active.id && active.id.startsWith("sbc-") ? active.id : null;
+  el.sbGrid.replaceChildren(...panels.map(p => panelCard(p, meta, wide, sbc.filter(c => c.frameId === p.id))));
+  if (keep){ const ta = document.getElementById(keep); if (ta) ta.focus({preventScroll:true}); }
+}
+function panelCard(p, meta, wide, pcs){
+  const open = pcs.filter(c => FILTERS.open(c.status || "open")).length, check = pcs.filter(c => c.status === "fixed").length;
+  const imgBox = h("div",{class:"panel-img", style:`--ar:${meta.format.replace(":", "/")}`});
+  const ph = h("div",{class:"panel-ph"}, h("span",{text: p.shot || "No image yet"}));
+  if (p.image){
+    const img = h("img",{src:p.image, alt: p.shot ? "Panel " + p.n + ": " + p.shot : "Panel " + p.n, loading:"lazy"});
+    img.addEventListener("error", ()=>{ img.replaceWith(ph); });
+    imgBox.append(img);
+  } else imgBox.append(ph);
+  imgBox.append(h("div",{class:"panel-n"}, h("b",{text:String(p.n ?? "")}), h("span",{text:`${fmtSec(p.start)}–${fmtSec(p.end)}`})));
+  if (pcs.length) imgBox.append(h("span",{class:"panel-cc" + (open ? "" : check ? " check" : " zero"), title:`${pcs.length} comment${pcs.length===1?"":"s"}`, text:String(open || check || pcs.length)}));
+  const rows = [];
+  if (p.image && p.shot) rows.push(h("div",{class:"panel-row"}, h("i",{text:"Shot"}), h("span",{text:p.shot})));
+  if (p.audio) rows.push(h("div",{class:"panel-row"}, h("i",{text:"Audio"}), h("span",{text:p.audio})));
+  if (p.notes) rows.push(h("div",{class:"panel-row"}, h("i",{text:"Notes"}), h("span",{text:p.notes})));
+  const foot = [];
+  if (S.sbDraft === p.id){
+    const ta = h("textarea",{id:"sbc-" + p.id, rows:"2", placeholder:`What should change in panel ${p.n}?`, "aria-label":`Comment on panel ${p.n}`});
+    ta.value = S.sbDraftText[p.id] || "";
+    ta.addEventListener("input", ()=>{ S.sbDraftText[p.id] = ta.value; });
+    const send = () => sendPanelComment(p);
+    ta.addEventListener("keydown", (e)=>{
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); send(); }
+      else if (e.key === "Escape"){ e.preventDefault(); S.sbDraft = null; renderStoryboard(); }
+    });
+    foot.push(h("div",{class:"composer-inline", onclick:(e)=>e.stopPropagation()}, ta,
+      h("div",null, h("button",{class:"btn sm ghost", onclick:()=>{ S.sbDraft = null; renderStoryboard(); }}, "Cancel"),
+        h("button",{class:"btn sm primary", onclick:send}, "Comment"))));
+  } else {
+    const btns = [];
+    if (S.canWrite) btns.push(h("button",{class:"btn sm", "aria-label":`Comment on panel ${p.n}`, onclick:(e)=>{ e.stopPropagation(); S.selPanel = p.id; S.sbDraft = p.id; renderStoryboard(); renderList(); const ta = document.getElementById("sbc-" + p.id); ta && ta.focus(); }}, iconBubble(), "Comment"));
+    if (hasVideo(S.vid)) btns.push(h("button",{class:"btn sm ghost", "aria-label":`Watch panel ${p.n} in the video at ${fmtSec(p.start)}`, onclick:(e)=>{ e.stopPropagation(); openPanelInVideo(p); }}, iconPlay(), "In video"));
+    if (btns.length) foot.push(h("div",{class:"panel-f"}, btns));
+  }
+  return h("article",{class:"panel" + (wide ? " wide" : "") + (S.selPanel === p.id ? " sel" : ""), "data-pid":p.id, tabindex:"0",
+      "aria-label":`Panel ${p.n}, ${fmtSec(p.start)} to ${fmtSec(p.end)}`,
+      onclick:()=>selectPanel(p.id), onkeydown:(e)=>{ if ((e.key === "Enter" || e.key === " ") && e.target === e.currentTarget){ e.preventDefault(); selectPanel(p.id); } }},
+    imgBox,
+    h("div",{class:"panel-b"},
+      h("span",{class:"panel-time", text:`Panel ${p.n} · ${fmtSec(p.start)}–${fmtSec(p.end)}`}),
+      p.caption ? h("div",{class:"panel-cap", text:p.caption}) : h("div",{class:"panel-cap none", text:"No on-screen text"}),
+      rows, foot));
+}
+function selectPanel(pid, scroll){
+  const p = panelsOf(curSb()).find(x => x.id === pid); if (!p) return;
+  S.selPanel = pid;
+  // keep the video in step so the Video tab opens on this panel
+  if (hasVideo(S.vid)){ V.pause(); seekFrame(Math.round((+p.start || 0) * S.fps)); }
+  const first = commentsOf(S.vid, "storyboard").filter(c => c.frameId === pid)[0];
+  S.sel = first ? first.id : null;
+  renderStoryboard(); renderList();
+  if (first) scrollToComment(first.id);
+  if (scroll){ const n = el.sbGrid.querySelector(`[data-pid="${CSS.escape(pid)}"]`); n && n.scrollIntoView({block:"nearest", behavior: reducedMotion() ? "auto" : "smooth"}); }
+}
+function openPanelInVideo(p){
+  S.selPanel = p.id; S.tab[S.vid] = "video"; S.sel = null;
+  renderAll();
+  V.pause(); seekFrame(Math.round((+p.start || 0) * S.fps));
+}
+async function sendPanelComment(p){
+  const ta = document.getElementById("sbc-" + p.id);
+  const text = (ta ? ta.value : "").trim();
+  if (!text){ ta && ta.focus(); return; }
+  await createComment({ videoId:S.vid, v:0, frameId:p.id, t:null, frame:null, x:null, y:null,
+    text, status:"open", authorId:S.me || null, createdAt:new Date().toISOString(), replies:[], fixedIn:null },
+    (id) => { S.sbDraft = null; delete S.sbDraftText[p.id]; renderAll(); scrollToComment(id); toast(`Comment saved on panel ${p.n}`); });
+}
+async function setSbStatus(status){
+  const key = "sb:" + S.vid, id = S.vid;
+  if (!S.db || !S.canWrite || S.busy.has(key)) return;
+  S.busy.add(key); renderStoryboard();
+  try {
+    await S.db.collection("storyboards").doc(id).update({status, updatedAt:new Date().toISOString()});
+    if (status === "approved") toast("Storyboard approved. Tell Claude to start the render.");
+    else {
+      const openN = commentsOf(id, "storyboard").filter(c => FILTERS.open(c.status || "open")).length;
+      toast(openN ? "Changes requested. Claude will revise the panels you commented on." : "Changes requested. Add a comment on each panel that needs work.");
+    }
+  } catch(e){ if (e && e.code === "invalid_argument"){ S.canWrite = false; updateBanner(); } toast(errMsg(e)); }
+  finally { S.busy.delete(key); renderAll(); }
+}
+
+/* ---------- comment actions ---------- */
+async function write(id, fn, okMsg){
+  if (!S.db || !S.canWrite || S.busy.has(id)) return;
+  S.busy.add(id); renderList();
+  try { await fn(S.db.collection("comments").doc(id)); if (okMsg) toast(okMsg); }
+  catch(e){ if (e && e.code === "invalid_argument"){ S.canWrite = false; updateBanner(); } toast(errMsg(e)); }
+  finally { S.busy.delete(id); renderAll(); }
+}
+const setStatus = (c, status, msg) => write(c.id, (ref)=>ref.update({status}), msg);
+function sendReply(c, then){
+  const ta = document.getElementById("rb-" + c.id);
+  const text = (ta ? ta.value : S.replyDraft[c.id] || "").trim();
+  if (!text){ ta && ta.focus(); return; }
+  const replies = (Array.isArray(c.replies) ? c.replies : []).concat([{by:S.me || "reviewer", text, at:new Date().toISOString()}]);
+  const patch = {replies}; if (then) patch.status = then;
+  delete S.replyDraft[c.id]; S.replyFor = null;
+  write(c.id, (ref)=>ref.update(patch), then === "reopened" ? "Reopened with your note" : "Reply added");
+}
+function selectComment(id){
+  const c = S.cmap.get(id); if (!c) return;
+  closeComposer();
+  if (c.videoId !== S.vid) selectVideo(c.videoId, true);
+  if (isSbComment(c)){
+    if (curTab() !== "storyboard") S.tab[S.vid] = "storyboard";
+    S.sel = id; S.selPanel = c.frameId;
+    renderAll();
+    const n = el.sbGrid.querySelector(`[data-pid="${CSS.escape(c.frameId)}"]`);
+    if (n && !isPhone()) n.scrollIntoView({block:"nearest", behavior: reducedMotion() ? "auto" : "smooth"});
+    scrollToComment(id);
+    return;
+  }
+  if (curTab() !== "video") S.tab[S.vid] = "video";
+  S.sel = id; V.pause();
+  renderAll();
+  seekFrame(c.frame ?? Math.round((c.t||0)*S.fps));
+  scrollToComment(id);
+}
+function scrollToComment(id){
+  const n = el.clist.querySelector(`[data-cid="${CSS.escape(id)}"]`);
+  if (n && !isPhone()) n.scrollIntoView({block:"nearest", behavior: reducedMotion() ? "auto" : "smooth"});
+}
+
+/* ---------- rendering ---------- */
+function counts(id, kind){
+  const cs = id ? commentsOf(id, kind) : S.comments;
+  let open = 0, check = 0, done = 0;
+  for (const c of cs){ const s = c.status || "open"; if (s === "open" || s === "reopened") open++; else if (s === "fixed") check++; else done++; }
+  return {open, check, done, total:cs.length};
+}
+function renderAll(){
+  renderRail(); renderHeader(); renderTabs(); renderPlayerChrome(); renderStoryboard(); renderList(); renderTimeline(); renderPins(); updateTime();
+}
+function entryLine(id){
+  const v = S.videos.get(id), sb = S.sbs.get(id), m = metaOf(id), nv = newestV(v);
+  if (!nv) return `Storyboard only · ${m.format}`;
+  return `v${nv} · ${m.format} · ${m.fps}fps`;
+}
+function renderRail(){
+  // Rebuilding the list would reset the scroll position (and drop focus): remember both and restore them after.
+  const scrollers = [el.vlist, el.vlist.closest(".rail"), el.picker].filter(Boolean);
+  const kept = scrollers.map(n => [n, n.scrollTop, n.scrollLeft]);
+  const focusedId = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.vid : null;
+  const items = S.entries.map(({id}) => {
+    const c = counts(id), m = metaOf(id), sb = S.sbs.get(id), sst = sb ? (SB_STATUS[sb.status] || SB_STATUS.draft) : null;
+    const badge = c.open ? h("span",{class:"vcount", title:`${c.open} open`, text:String(c.open)})
+      : c.check ? h("span",{class:"vcount check", title:`${c.check} fixed to check`, text:String(c.check)})
+      : h("span",{class:"vcount zero", text:"0"});
+    return h("button",{class:"vitem", "data-vid": id, "aria-current": id === S.vid ? "true" : "false", onclick:()=>selectVideo(id),
+      "aria-label": `${m.title}, ${entryLine(id)}${sst ? ", storyboard " + sst.label : ""}, ${c.open} open, ${c.check} fixed to check`},
+      h("span",{class:"vthumb", "aria-hidden":"true"}, formatGlyph(m.format)),
+      h("span",{class:"vname"}, h("b",{text:m.title}), h("small",{text:entryLine(id)}),
+        sst ? h("small",{style:"font-family:var(--f-ui)"}, h("span",{class:"sbdot", style:`background:${sst.c}`}), "Storyboard " + sst.label.toLowerCase()) : null),
+      badge);
+  });
+  el.vlist.replaceChildren(...items);
+  if (!S.entries.length) el.vlist.append(h("p",{style:"margin:4px 8px;color:var(--faint);font-size:12.5px", text: ready() || S.dbState === "none" ? "Nothing here yet." : "Loading…"}));
+  el.picker.replaceChildren(...S.entries.map(({id}) => {
+    const c = counts(id);
+    return h("button",{"data-vid": id, "aria-current": id === S.vid ? "true" : "false", onclick:()=>selectVideo(id)},
+      h("span",{text:metaOf(id).title}), h("span",{class:"vcount" + (c.open ? "" : c.check ? " check" : " zero"), text:String(c.open || c.check)}));
+  }));
+  el.picker.hidden = S.entries.length < 1;
+  for (const [n, top, left] of kept){ n.scrollTop = top; n.scrollLeft = left; }
+  if (focusedId){
+    const again = el.vlist.querySelector(`[data-vid="${CSS.escape(focusedId)}"]`) || el.picker.querySelector(`[data-vid="${CSS.escape(focusedId)}"]`);
+    if (again) again.focus({preventScroll: true});
+  }
+}
+function renderHeader(){
+  el.topTitle.replaceChildren(); el.counter.replaceChildren();
+  if (!S.vid) return;
+  const tab = curTab();
+  el.topTitle.append(h("b",{text:metaOf(S.vid).title}),
+    h("span",{class:"mono", style:"font-size:12px", text: tab === "storyboard" ? "storyboard" : hasVideo(S.vid) ? `v${curVer()} of ${newestV(curVideo())}` : "no render yet"}));
+  const c = counts(S.vid, tab);
+  if (!c.open && !c.check){
+    el.counter.append(h("span",{class:"cnt-item"}, h("span",{class:"dot", style:"background:var(--approved)"}), c.total ? "All clear" : "No comments yet"));
+  } else {
+    el.counter.append(
+      h("span",{class:"cnt-item"}, h("span",{class:"dot", style:"background:var(--open)"}), h("span",{class:"n", text:String(c.open)}), " open"),
+      h("span",{class:"cnt-item"}, h("span",{class:"dot", style:"background:var(--fixed)"}), h("span",{class:"n", text:String(c.check)}), " fixed to check"));
+  }
+}
+function renderTabs(){
+  const id = S.vid;
+  el.tabs.hidden = !id;
+  if (!id) return;
+  const sb = S.sbs.get(id), tab = curTab();
+  el.tabSb.hidden = !sb;
+  el.tabSb.setAttribute("aria-selected", String(tab === "storyboard"));
+  el.tabVid.setAttribute("aria-selected", String(tab === "video"));
+  el.tabSb.tabIndex = tab === "storyboard" ? 0 : -1; el.tabVid.tabIndex = tab === "video" ? 0 : -1;
+  if (sb){ const st = SB_STATUS[sb.status] || SB_STATUS.draft; el.tabSbSt.style.setProperty("--pc", st.c); el.tabSbSt.replaceChildren(h("span",{class:"dot"}), sb.status === "approved" ? "Approved" : sb.status === "changes" ? "Changes" : "Draft"); }
+  el.tabVidV.textContent = hasVideo(id) ? "v" + newestV(curVideo()) : "not rendered";
+}
+function renderPlayerChrome(){
+  const id = S.vid, tab = curTab();
+  const showPlayer = !!id && tab === "video" && hasVideo(id);
+  el.player.hidden = !showPlayer;
+  el.vsel.hidden = !showPlayer;
+  el.phoneRow.hidden = !showPlayer;
+  el.centerEmpty.hidden = !(!id || (tab === "video" && !hasVideo(id)));
+  el.ceAct.replaceChildren();
+  if (!id){
+    if (S.dbState === "none"){ el.ceTitle.textContent = "Nothing to show here"; el.ceText.textContent = "Videos and comments load when Studio opens on claude.ai with access."; }
+    else if (!ready()){ el.ceTitle.textContent = "Connecting…"; el.ceText.textContent = "Loading your review queue."; }
+    else { el.ceTitle.textContent = "No videos yet"; el.ceText.textContent = "Claude adds them here after each render, starting with a storyboard."; }
+  } else if (!showPlayer && tab === "video"){
+    const sb = curSb();
+    el.ceTitle.textContent = "No render yet";
+    el.ceText.textContent = sb && sb.status === "approved" ? "The storyboard is approved. Claude adds the first version here after rendering."
+      : sb ? "Claude renders the video once the storyboard is approved." : "Claude adds the first version here after rendering.";
+    if (sb) el.ceAct.append(h("button",{class:"btn", onclick:()=>setTab("storyboard")}, "Open storyboard"));
+  }
+  if (!showPlayer) return;
+  const v = curVideo(), vs = versionsOf(v), cv = curVer(), nv = newestV(v);
+  for (const sel of [el.vsel, el.vselM]){
+    sel.replaceChildren(...vs.slice().reverse().map(x => h("option",{value:String(x.v),
+      text:`v${x.v}${x.v === nv ? " · latest" : ""}${x.note ? " · " + x.note : ""}`, title:x.note || ""})));
+    sel.value = String(cv);
+    sel.disabled = vs.length < 2;
+  }
+  const c = S.sel && S.cmap.get(S.sel);
+  const has = (n) => vs.some(x=>x.v === n);
+  if (c && !isSbComment(c) && (c.v || 1) !== cv && has(c.v || 1)){
+    el.verBanner.replaceChildren(h("span",{text:`This note was left on v${c.v || 1}. You're watching v${cv}.`}),
+      h("button",{class:"btn sm primary", onclick:()=>setVersion(c.v || 1), text:`Watch v${c.v || 1}`}));
+    el.verBanner.hidden = false;
+  } else if (c && !isSbComment(c) && c.status === "fixed" && c.fixedIn && c.fixedIn !== cv && has(c.fixedIn)){
+    el.verBanner.replaceChildren(h("span",{text:`Claude fixed this in v${c.fixedIn}.`}),
+      h("button",{class:"btn sm primary", onclick:()=>setVersion(c.fixedIn), text:`Watch v${c.fixedIn}`}));
+    el.verBanner.hidden = false;
+  } else el.verBanner.hidden = true;
+  el.overlay.classList.toggle("playmode", isPhone() && S.mode === "play");
+  layoutFrame();
+}
+function statusBadge(s){
+  const st = STATUS[s] || STATUS.open;
+  return h("span",{class:"status", style:`--pc:${st.c}`}, h("span",{class:"dot"}), st.label);
+}
+function renderList(){
+  const active = document.activeElement;
+  const focusedReply = active && active.id && active.id.startsWith("rb-") ? active.id : null;
+  const selStart = focusedReply ? active.selectionStart : 0;
+
+  const id = S.vid, tab = curTab();
+  const all = id ? commentsOf(id, tab) : [];
+  const fil = FILTERS[S.filter];
+  const nums = {review:0, open:0, fixed:0, all:all.length};
+  for (const c of all){ const s = c.status || "open"; if (FILTERS.review(s)) nums.review++; if (FILTERS.open(s)) nums.open++; if (FILTERS.fixed(s)) nums.fixed++; }
+  for (const b of el.filters.querySelectorAll("button")){ b.setAttribute("aria-pressed", String(b.dataset.f === S.filter)); b.querySelector("em").textContent = nums[b.dataset.f] || ""; }
+  el.sideSub.textContent = id ? (tab === "storyboard" ? "on the storyboard" : "on the video") : "";
+  let ordered;
+  if (tab === "storyboard"){
+    const pidx = new Map(panelsOf(curSb()).map((p,i)=>[p.id, i]));
+    ordered = all.slice().sort((a,b)=>((pidx.get(a.frameId) ?? 1e9) - (pidx.get(b.frameId) ?? 1e9)) || String(a.createdAt).localeCompare(String(b.createdAt)));
+  } else ordered = all.slice().sort((a,b)=>(a.t||0)-(b.t||0) || String(a.createdAt).localeCompare(String(b.createdAt)));
+  const list = ordered.filter(c => fil(c.status || "open"));
+  const cv = curVer();
+  if (!id){
+    el.clist.replaceChildren(h("div",{class:"empty"}, h("b",{text: ready() ? "No comments yet" : "Loading comments…"}), h("span",{text:"Comments appear here once a video is open."})));
+  } else if (!list.length){
+    const how = tab === "storyboard" ? "Use Comment on any panel to leave a note." : hasVideo(id) ? "Click anywhere on the picture to pin a note to that exact frame." : "Comments on the video appear here once it's rendered.";
+    const msg = all.length ? (S.filter === "review" ? "Nothing waiting on you here." : "No comments match this filter.") : (S.canWrite ? how : "No one has commented here yet.");
+    el.clist.replaceChildren(h("div",{class:"empty"}, iconEmpty(),
+      h("b",{text: all.length ? (S.filter === "review" ? "All caught up" : "Nothing here") : "No comments yet"}), h("span",{text:msg})));
+  } else {
+    el.clist.replaceChildren(...list.map(c => commentItem(c, ordered.indexOf(c)+1, cv)));
+  }
+  const c = counts(id);
+  const sb = id && curSb();
+  const isReady = id && !c.open && !c.check && (c.total > 0 || (sb && sb.status === "approved"));
+  el.done.classList.toggle("ready", !!isReady);
+  el.done.hidden = !id;
+  el.doneTitle.textContent = isReady ? "Done reviewing" : "Done reviewing?";
+  if (focusedReply){ const ta = document.getElementById(focusedReply); if (ta){ ta.focus({preventScroll:true}); try{ ta.setSelectionRange(selStart, selStart); }catch(e){} } }
+}
+function commentItem(c, n, cv){
+  const s = c.status || "open", sbc = isSbComment(c);
+  const mine = S.me && c.authorId === S.me;
+  const busy = S.busy.has(c.id), ro = !S.canWrite;
+  let chip;
+  if (sbc){
+    const p = panelsOf(curSb()).find(x => x.id === c.frameId);
+    chip = h("button",{class:"chip", onclick:(e)=>{ e.stopPropagation(); selectComment(c.id); }, "aria-label": p ? `Go to panel ${p.n}` : "Panel removed"},
+      p ? ["Panel " + p.n, h("span",{class:"f", text:`${fmtSec(p.start)}–${fmtSec(p.end)}`})] : "Panel removed");
+  } else {
+    const fr = c.frame ?? Math.round((c.t||0)*S.fps);
+    chip = h("button",{class:"chip", onclick:(e)=>{ e.stopPropagation(); selectComment(c.id); }, "aria-label":`Go to ${fmtTC(fr,S.fps)}, frame ${fr}`},
+      h("span",{text:"#" + n, style:"color:var(--faint)"}), fmtTC(fr, S.fps), h("span",{class:"f", text:"F" + fr}));
+  }
+  const head = h("div",{class:"citem-h"}, chip, statusBadge(s),
+    !sbc && (c.v || 1) !== cv ? h("span",{class:"vtag", title:`Left on version ${c.v||1}`, text:"v" + (c.v || 1)}) : null,
+    s === "fixed" && c.fixedIn ? h("span",{class:"vtag", style:"color:var(--fixed);border-color:currentColor", text:"→ v" + c.fixedIn}) : null,
+    h("span",{class:"who", text: (mine ? "You" : "Reviewer") + (c.createdAt ? " · " + relTime(c.createdAt) : "")}));
+  const reps = (Array.isArray(c.replies) ? c.replies : []).map(r => {
+    const isC = r.by === "claude";
+    return h("div",{class:"reply" + (isC ? " claude" : "")}, h("b",{text: isC ? "Claude" : (S.me && r.by === S.me ? "You" : "Reviewer")}), r.text || "",
+      r.at ? h("time",{datetime:r.at, text:relTime(r.at)}) : null);
+  });
+  const acts = [];
+  const openBox = (kind) => (e) => { e.stopPropagation(); S.replyFor = c.id + ":" + kind; renderList(); const ta = document.getElementById("rb-" + c.id); ta && ta.focus(); };
+  if (!ro){
+    if (s === "fixed"){
+      acts.push(h("button",{class:"btn sm ok", disabled:busy, onclick:(e)=>{ e.stopPropagation(); setStatus(c,"approved","Fix approved"); }}, iconCheck(), "Approve fix"));
+      acts.push(h("button",{class:"btn sm warn", disabled:busy, onclick:openBox("reopen")}, "Reopen"));
+    } else if (s === "approved" || s === "wontfix"){
+      acts.push(h("button",{class:"btn sm ghost", disabled:busy, onclick:openBox("reopen")}, "Reopen"));
+    }
+    acts.push(h("button",{class:"btn sm ghost", disabled:busy, onclick:openBox("reply")}, "Reply"));
+    if (s === "open" && mine){
+      if (S.confirmDel === c.id){
+        acts.push(h("button",{class:"btn sm danger", disabled:busy, onclick:(e)=>{ e.stopPropagation(); S.confirmDel = null; if (S.sel === c.id) S.sel = null; write(c.id,(ref)=>ref.delete(),"Comment deleted"); }}, "Confirm delete"));
+        acts.push(h("button",{class:"btn sm ghost", onclick:(e)=>{ e.stopPropagation(); S.confirmDel = null; renderList(); }}, "Keep"));
+      } else acts.push(h("button",{class:"btn sm ghost", style:"margin-left:auto", disabled:busy, "aria-label":"Delete comment", onclick:(e)=>{ e.stopPropagation(); S.confirmDel = c.id; renderList(); }}, "Delete"));
+    }
+  }
+  let box = null;
+  if (S.replyFor && S.replyFor.startsWith(c.id + ":")){
+    const reopen = S.replyFor.endsWith(":reopen");
+    const ta = h("textarea",{id:"rb-" + c.id, rows:"2", "aria-label": reopen ? "What still needs to change?" : "Reply",
+      placeholder: reopen ? "What still needs to change? (optional)" : "Write a reply"});
+    ta.value = S.replyDraft[c.id] || "";
+    ta.addEventListener("input", ()=>{ S.replyDraft[c.id] = ta.value; });
+    const submit = () => {
+      if (!reopen) return sendReply(c);
+      if (ta.value.trim()) return sendReply(c, "reopened");
+      S.replyFor = null; write(c.id, (ref)=>ref.update({status:"reopened"}), "Reopened");
+    };
+    ta.addEventListener("keydown", (e)=>{
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); submit(); }
+      else if (e.key === "Escape"){ e.preventDefault(); S.replyFor = null; renderList(); }
+    });
+    box = h("div",{class:"replybox", onclick:(e)=>e.stopPropagation()}, ta,
+      h("div",null,
+        h("button",{class:"btn sm ghost", onclick:()=>{ S.replyFor = null; renderList(); }}, "Cancel"),
+        h("button",{class:"btn sm " + (reopen ? "warn" : "primary"), disabled:busy, onclick:submit}, reopen ? "Reopen" : "Reply")));
+  }
+  return h("article",{class:"citem" + (c.id === S.sel ? " sel" : ""), "data-cid":c.id, onclick:()=>selectComment(c.id),
+      "aria-label":`Comment ${n}, ${(STATUS[s]||STATUS.open).label}`},
+    head, h("p",{class:"ctext", text:c.text || ""}), reps.length ? h("div",{class:"replies"}, reps) : null, box,
+    acts.length && !box ? h("div",{class:"cactions"}, acts) : null);
+}
+function setFilter(f){ S.filter = f; store.set("filter", f); renderList(); renderTimeline(); }
+
+/* ---------- controls wiring ---------- */
+el.bPlay.addEventListener("click", togglePlay);
+el.bBack.addEventListener("click", ()=>step(-1));
+el.bFwd.addEventListener("click", ()=>step(1));
+el.bMute.addEventListener("click", ()=>{ V.muted = !V.muted; });
+el.bAdd.addEventListener("click", ()=>openComposer(null, null));
+el.bAddM.addEventListener("click", ()=>openComposer(null, null));
+for (const sel of [el.vsel, el.vselM]) sel.addEventListener("change", ()=>setVersion(+sel.value));
+function setRate(r){
+  S.rate = r; V.playbackRate = r;
+  for (const b of document.querySelectorAll("[data-rate]")) b.setAttribute("aria-pressed", String(+b.dataset.rate === r));
+}
+for (const b of document.querySelectorAll("[data-rate]")) b.addEventListener("click", ()=>setRate(+b.dataset.rate));
+V.addEventListener("loadeddata", ()=>{ V.playbackRate = S.rate; });
+for (const b of el.filters.querySelectorAll("button")) b.addEventListener("click", ()=>setFilter(b.dataset.f));
+for (const b of el.tabs.querySelectorAll("[data-tab]")) b.addEventListener("click", ()=>setTab(b.dataset.tab));
+el.tabs.addEventListener("keydown", (e)=>{
+  if ((e.key !== "ArrowLeft" && e.key !== "ArrowRight") || e.target.getAttribute("role") !== "tab") return;
+  e.preventDefault(); e.stopPropagation();
+  const t = curTab() === "video" && S.sbs.has(S.vid) ? "storyboard" : "video";
+  setTab(t); (t === "video" ? el.tabVid : el.tabSb).focus();
+});
+for (const b of document.querySelectorAll("[data-mode]")) b.addEventListener("click", ()=>{
+  S.mode = b.dataset.mode;
+  for (const x of document.querySelectorAll("[data-mode]")) x.setAttribute("aria-pressed", String(x.dataset.mode === S.mode));
+  if (S.mode === "comment") V.pause();
+  el.overlay.classList.toggle("playmode", isPhone() && S.mode === "play");
+  toast(S.mode === "comment" ? "Tap the picture to pin a comment" : "Tap the picture to play or pause");
+});
+phoneMQ.addEventListener("change", ()=>{ renderPlayerChrome(); positionComposer(); });
+
+const isTyping = (t) => t && (t.tagName === "TEXTAREA" || t.tagName === "INPUT" || t.tagName === "SELECT" || t.isContentEditable);
+document.addEventListener("keydown", (e) => {
+  if (isTyping(e.target) || e.metaKey || e.ctrlKey || e.altKey || !S.vid) return;
+  if (e.key === "Escape"){ if (S.draft) closeComposer(); else if (S.sbDraft){ S.sbDraft = null; renderStoryboard(); } else if (S.sel){ S.sel = null; renderAll(); } return; }
+  if (curTab() !== "video" || el.player.hidden) return;
+  if (e.key === " " || e.code === "Space"){ e.preventDefault(); togglePlay(); }
+  else if (e.key === "ArrowLeft"){ e.preventDefault(); if (e.shiftKey){ V.pause(); seekFrame(frameFromTime(V.currentTime) - S.fps); } else step(-1); }
+  else if (e.key === "ArrowRight"){ e.preventDefault(); if (e.shiftKey){ V.pause(); seekFrame(frameFromTime(V.currentTime) + S.fps); } else step(1); }
+  else if ((e.key === "c" || e.key === "C") && !e.shiftKey){ e.preventDefault(); openComposer(null, null); }
+});
+// Space on a focused button must not also "click" it after it toggled playback
+document.addEventListener("keyup", (e) => { if ((e.key === " " || e.code === "Space") && !isTyping(e.target) && curTab() === "video" && !(e.target.closest && e.target.closest(".panel"))) e.preventDefault(); });
+// relative times drift: re-render once a minute, never touching the store
+setInterval(()=>{ if (document.visibilityState === "visible" && !S.replyFor && !S.sbDraft) renderList(); }, 60000);
+
+boot();
+})();
+</script>
