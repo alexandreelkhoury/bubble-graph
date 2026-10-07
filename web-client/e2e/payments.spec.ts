@@ -301,7 +301,7 @@ test("1. a free room cannot get premium packs: locked rows only, PACK_LOCKED, no
   await expect.poll(() => errors(vip.frames)).toContain("PACK_LOCKED");
   vip.inject(act({ type: "UPDATE_SETTINGS", patch: { points: { civilian: 5, undercover: 5, blank: 5 } } }));
   await expect.poll(() => errors(vip.frames)).toContain("PREMIUM_REQUIRED");
-  expect(lastView(tv.frames)!.settings.packIds).toEqual([]);
+  expect(lastView(tv.frames)!.settings.packIds).toEqual(["en-everyday-01", "fr-everyday-01", "ar-everyday-01"]); // the default easy packs
 
   for (let g = 0; g < 3; g++) {
     await vip.page.locator(".actionbar .btn--primary").click();
@@ -391,7 +391,7 @@ test("4. expiry mid-game: the game finishes with its pack, then the lobby falls 
   const lobby = await expectView(tv, (v) => v.phase === "LOBBY", "lobby");
   expect(lobby.premium).toBe(false);
   expect(lobby.settings.packIds).toEqual([]);
-  expect(lobby.settings.points).toEqual({ civilian: 2, undercover: 10, blank: 6 });
+  expect(lobby.settings.points).toEqual({ civilian: 2, undercover: 10, blank: 10 }); // rules v2 defaults
   await expect.poll(async () => (await toastsOf(tv.page)).filter((x) => x === text("lobby.premiumEnded")).length).toBe(1);
   await expect.poll(async () => (await toastsOf(vip.page)).filter((x) => x === text("lobby.premiumEndedPhone")).length).toBe(1);
   for (const p of phones.slice(1)) expect((await toastsOf(p.page)).filter((x) => x === text("lobby.premiumEndedPhone"))).toEqual([]);

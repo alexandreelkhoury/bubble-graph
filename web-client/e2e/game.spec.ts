@@ -87,7 +87,7 @@ async function holdCard(p: Page): Promise<void> {
 
 async function playFullGame(browser: Browser, locale: string, tag: string): Promise<void> {
   const { tv, code } = await openTv(browser, locale);
-  // 5 players: the auto role table deals one Blank, which everyone then votes out to reach PH-11/PH-12/TV-10.
+  // 5 players: the auto role table deals one Mole (rules v2), whom everyone then votes out to reach PH-11/PH-12/TV-10.
   const names = locale === "ar" ? ["رامي", "Léa", "نور", "Sam", "مايا"] : ["Rami", "Léa", "Nour", "Sam", "Maya"];
   const phones: Page[] = [];
   // Phone PH-01 home and PH-02 join (before anyone joins).
@@ -321,9 +321,10 @@ type TvFrameView = {
   players: { id: string; name: string; alive: boolean; score: number }[];
   tieCandidates: string[];
   revote: boolean;
+  roleCounts: { civilian: number; undercover: number; blank: number } | null;
 };
 
-test("6 players: tie-break, Blank guess, results, play again; TV frames hold no secrets; reload resumes", async ({ browser }) => {
+test("6 players (Mole + Undercover): tie-break, Mole guess, results, play again; TV frames hold no secrets; reload resumes", async ({ browser }) => {
   test.setTimeout(420_000);
   const tvCtx = await context(browser, "tv", "en");
   const tv = await tvCtx.newPage();
@@ -357,7 +358,17 @@ test("6 players: tie-break, Blank guess, results, play again; TV frames hold no 
   const vip = phones[0]!;
   await expect(tv.locator(".tvgrid .tile--btn")).toHaveCount(6);
 
-  // Start, read every word (Blank has none), mark everyone ready.
+  // Rules v2: Automatic deals Moles only, so add an Undercover in Custom (1 Mole + 1 Undercover + 4 Civilians).
+  await vip.locator(".card--link").click();
+  await expect(vip.locator(".settings")).toBeVisible();
+  await vip.locator("#set-roles > summary").click();
+  await vip.locator("#set-roles [role=radio]", { hasText: "Custom" }).click();
+  await vip.locator('#set-roles .stepper__btn[aria-label="Undercovers +"]').click();
+  await expect.poll(() => JSON.stringify((view as TvFrameView | null)?.roleCounts ?? null)).toBe(JSON.stringify({ civilian: 4, undercover: 1, blank: 1 }));
+  await vip.keyboard.press("Escape");
+  await expect(vip.locator(".settings")).toHaveCount(0);
+
+  // Start, read every word (the Mole has none), mark everyone ready.
   await vip.locator(".actionbar .btn--primary").click();
   await waitPhase("ROLE_REVEAL");
   const words = new Map<string, string | null>();
