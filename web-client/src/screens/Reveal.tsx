@@ -21,7 +21,9 @@ export function Reveal({ view, me }: { view: PlayerView; me: Me }) {
   return (
     <>
       <main class="screen screen--reveal">
-        <Heading eyebrow={t("game.label", { count: view.gameNumber })} title={t("reveal.yourWord")} />
+        {/* The Mole has no word: once they have seen their card the heading names the role instead. Before the first
+            reveal every phone reads the same, and the card itself never differs at rest. */}
+        <Heading eyebrow={t("game.label", { count: view.gameNumber })} title={t(me.isBlank && seen ? "reveal.yourRoleTitle" : "reveal.yourWord")} />
         <WordCard
           word={me.word} isBlank={me.isBlank} role={me.role} color={p?.color ?? "coral"} wordLocale={view.settings.wordLocale}
           seenOnce={seen} onReveal={() => { seenGames.add(gameKey); setSeen(true); }}

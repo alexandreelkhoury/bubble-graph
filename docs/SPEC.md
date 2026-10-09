@@ -2175,11 +2175,12 @@ FR and AR drafts for every key are in DESIGN.md §12. FR uses U+202F before `! ?
 | `reveal.holdToSee` | Press and hold to see your word |
 | `reveal.release` | Release to hide |
 | `reveal.privacy` | Make sure nobody's looking. |
-| `reveal.firstTime` | That's your word. Don't show anyone. |
+| `reveal.firstTime` | That's your card. Don't show anyone. |
 | `reveal.noWord` | No word for you. |
 | `reveal.youAreBlank` | You're the Mole! |
 | `reveal.blankBody` | Everyone else has the same word. Blend in, then guess it. |
 | `reveal.yourRole` | Your role: {role} |
+| `reveal.yourRoleTitle` | Your role |
 | `reveal.ready` | Got it |
 | `reveal.tapAlt` | Tap to show for 5 s instead |
 | `reveal.showFor5` | Show my word for 5 seconds *(Screen-reader label)* |

@@ -1099,6 +1099,7 @@ A horizontal pager of 4 cards (480 × 300 dp each, the focused card centred): �
 - **Card:** 100 % width, `aspect-ratio: 3/4`, max height 55 dvh, `radius.xl`. The interaction is §6.2-A. Use pointer events (`pointerdown` + `setPointerCapture`; hide on `pointerup`, `pointercancel`, `pointerleave` and `blur`). Set `user-select: none`, `-webkit-touch-callout: none` and `touch-action: none` on the card, and call `contextmenu` `preventDefault` so a long press doesn't open the OS menu.
 - **Every face is the player's colour, the Mole's too** (a near-white flash outed the Blank across the sofa; paper white stays for TV-09 and results). **Privacy rule:** a held Mole card has the same colour treatment as every other card; only the text differs. Civilian and Undercover faces add `reveal.twist` under the word, identical for both: "Most of you have this word. Not everyone." (not in beginner mode). It names no role, so a Civilian learns nothing from it.
 - **The Mole's face (`BLANK`):** the empty-card emblem, "**You're the Mole!**" and "Everyone else has the same word. Blend in, then guess it." The Mole card says Mole openly (it has no word to hide).
+- **Heading:** "Your secret word" (`reveal.yourWord`) on every phone until the card is first revealed; from then on the Mole's reads "Your role" (`reveal.yourRoleTitle`). The card back after a first reveal reads "That's your card. Don't show anyone." (`reveal.firstTime`) for every role, so the card looks the same from a distance.
 - **"Got it"** (sends READY) is disabled until the card has been revealed at least once. After that tap: "Ready! Waiting for the others… (4/7)". The card stays available to peek again.
 - **Accessibility alternative:** with a screen reader, the card is a `button` labelled "Show my word for 5 seconds". Activating it reveals the word for 5 s and announces the word through the live region. A visible "Tap to show for 5 s instead" link sits under the card for motor-impaired players (§11).
 
@@ -1668,11 +1669,12 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | `reveal.holdToSee` | Appuie longuement pour voir ton mot | كبسة طويلة… وبتبيّن كلمتك |
 | `reveal.release` | Relâche pour cacher | بتختفي مع رفع الإصبع |
 | `reveal.privacy` | Vérifie que personne ne regarde. | الأحسن ما حدا يكون عم يتطلّع. |
-| `reveal.firstTime` | C'est ton mot. Ne le montre à personne. | هيدي كلمتك. ما حدا لازم يشوفها. |
+| `reveal.firstTime` | C'est ta carte. Ne la montre à personne. | هيدا كرتك. ما حدا لازم يشوفو. |
 | `reveal.noWord` | Pas de mot pour toi. | ما في كلمة إلك. |
 | `reveal.youAreBlank` | Tu es la Taupe ! | دورك: الجاسوس! |
 | `reveal.blankBody` | Tous les autres ont le même mot. Fonds-toi dans la masse, puis devine-le. | كل الباقيين معهن نفس الكلمة. المهمّة: التمويه، وبعدين تحزير الكلمة. |
 | `reveal.yourRole` | Ton rôle : {role} | دورك: {role} |
+| `reveal.yourRoleTitle` | Ton rôle | دورك باللعبة |
 | `reveal.ready` | C'est bon | تمام |
 | `reveal.tapAlt` | Ou touche pour l'afficher 5 s | أو كبسة وحدة لـ5 ثواني |
 | `reveal.showFor5` | Afficher mon mot 5 secondes | فرجيني كلمتي 5 ثواني |

@@ -208,11 +208,12 @@
     <string name="reveal__release">بتختفي مع رفع الإصبع</string>
     <string name="reveal__twist">الأغلبية معها هالكلمة. مش الكل.</string>
     <string name="reveal__privacy">الأحسن ما حدا يكون عم يتطلّع.</string>
-    <string name="reveal__first_time">هيدي كلمتك. ما حدا لازم يشوفها.</string>
+    <string name="reveal__first_time">هيدا كرتك. ما حدا لازم يشوفو.</string>
     <string name="reveal__no_word">ما في كلمة إلك.</string>
     <string name="reveal__you_are_blank">دورك: الجاسوس!</string>
     <string name="reveal__blank_body">كل الباقيين معهن نفس الكلمة. المهمّة: التمويه، وبعدين تحزير الكلمة.</string>
     <string name="reveal__your_role">دورك: %1$s</string>
+    <string name="reveal__your_role_title">دورك باللعبة</string>
     <string name="reveal__ready">تمام</string>
     <string name="reveal__tap_alt">أو كبسة وحدة لـ5 ثواني</string>
     <string name="reveal__show_for5">فرجيني كلمتي 5 ثواني</string>
