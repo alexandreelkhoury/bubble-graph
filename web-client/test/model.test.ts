@@ -178,4 +178,17 @@ describe("default easy packs in the settings UI", () => {
     expect(selectedPacks(none, avail)).toEqual([]);
     expect(packsLine(none, avail as never, "en")).toBe("All packs");
   });
+  it("labels only the packs selected AND in the room's word language, by title (never raw ids)", () => {
+    const mixed = [
+      { id: "en-everyday-01", locale: "en", title: { en: "Everyday", fr: "Quotidien", ar: "يومي" } },
+      { id: "fr-everyday-01", locale: "fr", title: { en: "Everyday (FR)", fr: "Quotidien", ar: "يومي" } },
+      { id: "ar-everyday-01", locale: "ar-LB", title: { en: "Everyday (AR)", fr: "Quotidien", ar: "يومي" } },
+    ];
+    expect(packsLine(s, mixed as never, "en")).toBe("Everyday");
+    expect(selectedPacks(s, mixed).map((p) => p.id)).toEqual(["en-everyday-01"]);
+    const ar = { ...s, wordLocale: "ar" as const };
+    expect(selectedPacks(ar, mixed).map((p) => p.id)).toEqual(["ar-everyday-01"]);
+    expect(packsLine({ ...s, packIds: ["fr-everyday-01", "ar-everyday-01"] }, mixed as never, "en")).toBe("All packs");
+    expect(packsLine(s, mixed as never, "en")).not.toMatch(/everyday-01/);
+  });
 });

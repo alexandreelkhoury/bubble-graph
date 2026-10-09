@@ -190,11 +190,12 @@
     <string name="reveal__release">Relâche pour cacher</string>
     <string name="reveal__twist">La plupart d’entre vous ont ce mot. Pas tous.</string>
     <string name="reveal__privacy">Vérifie que personne ne regarde.</string>
-    <string name="reveal__first_time">C’est ton mot. Ne le montre à personne.</string>
+    <string name="reveal__first_time">C’est ta carte. Ne la montre à personne.</string>
     <string name="reveal__no_word">Pas de mot pour toi.</string>
     <string name="reveal__you_are_blank">Tu es la Taupe !</string>
     <string name="reveal__blank_body">Tous les autres ont le même mot. Fonds-toi dans la masse, puis devine-le.</string>
     <string name="reveal__your_role">Ton rôle : %1$s</string>
+    <string name="reveal__your_role_title">Ton rôle</string>
     <string name="reveal__ready">C’est bon</string>
     <string name="reveal__tap_alt">Ou touche pour l’afficher 5 s</string>
     <string name="reveal__show_for5">Afficher mon mot 5 secondes</string>

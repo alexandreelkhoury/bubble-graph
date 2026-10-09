@@ -184,11 +184,12 @@
     <string name="reveal__release">Release to hide</string>
     <string name="reveal__twist">Most of you have this word. Not everyone.</string>
     <string name="reveal__privacy">Make sure nobody\'s looking.</string>
-    <string name="reveal__first_time">That\'s your word. Don\'t show anyone.</string>
+    <string name="reveal__first_time">That\'s your card. Don\'t show anyone.</string>
     <string name="reveal__no_word">No word for you.</string>
     <string name="reveal__you_are_blank">You\'re the Mole!</string>
     <string name="reveal__blank_body">Everyone else has the same word. Blend in, then guess it.</string>
     <string name="reveal__your_role">Your role: %1$s</string>
+    <string name="reveal__your_role_title">Your role</string>
     <string name="reveal__ready">Got it</string>
     <string name="reveal__tap_alt">Tap to show for 5 s instead</string>
     <string name="reveal__show_for5">Show my word for 5 seconds</string>

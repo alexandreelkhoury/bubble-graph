@@ -168,6 +168,7 @@ object I18nKeys {
         "reveal.youAreBlank" to R.string.reveal__you_are_blank,
         "reveal.blankBody" to R.string.reveal__blank_body,
         "reveal.yourRole" to R.string.reveal__your_role,
+        "reveal.yourRoleTitle" to R.string.reveal__your_role_title,
         "reveal.ready" to R.string.reveal__ready,
         "reveal.tapAlt" to R.string.reveal__tap_alt,
         "reveal.showFor5" to R.string.reveal__show_for5,

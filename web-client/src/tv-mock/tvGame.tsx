@@ -52,10 +52,14 @@ export function TvRoleReveal({ view }: { view: TvView }) {
           {active.map((p) => <Tile key={p.id} p={p} size={size.avatar} check={p.ready} class="tile--mini" />)}
         </div>
       </div>
-      <div class="tvbottom">
+      {/* The ready count is a flex item centred in the space left of the timer chip and the pill (not an absolute
+          full-width line), so it can never run under the timer when the pill is wide (it overlapped in Arabic). */}
+      <div class="tvbottom tvbottom--reveal">
         <span class="tvbottom__center tnum">{t("reveal.readyCount", { ready, total: active.length })}</span>
-        <TimerChip deadline={view.deadline} />
-        <ActionPill label={t("tv.startNow")} pillRef={pill} />
+        <span class="tvbottom__end">
+          <TimerChip deadline={view.deadline} />
+          <ActionPill label={t("tv.startNow")} pillRef={pill} />
+        </span>
       </div>
     </div>
   );
