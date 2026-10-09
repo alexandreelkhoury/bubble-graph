@@ -9,7 +9,8 @@ videos/{videoId}
   { title: string,
     format: "9:16" | "16:9" | "1:1",
     fps: number,                       // e.g. 30 or 60; frame = round(t * fps)
-    order: number,                     // left-rail sort order (ascending), then title
+    order: number,                     // left-rail sort order inside its project folder (ascending), then title
+    project: string,                   // optional; left-rail folder, e.g. "Mish Ana!", "Megamint". Missing/blank => "Other"
     versions: [ { v: 1, url: "/_blob/<assetId>" | any URL, createdAt: ISO string, note: string } ],
     updatedAt: ISO string }
   Newest version = highest v. The player defaults to it.
@@ -17,6 +18,7 @@ videos/{videoId}
 storyboards/{videoId}                  // same id as the video it plans; may exist before any video version
   { title: string, format: "9:16" | "16:9" | "1:1", fps: number,
     order: number,                     // optional; rail sort when there is no video doc yet
+    project: string,                   // optional; folder when there is no video doc yet (video doc's project wins)
     status: "draft" | "approved" | "changes",   // page sets "approved" / "changes"; Claude sets "draft" on a new pass
     updatedAt: ISO string,
     frames: [ { id: string,            // stable panel id (comments point at it)
@@ -50,6 +52,17 @@ Status flow
   approved / wontfix: closed (reviewer can still reopen)
 The page writes: new comments, status approved/reopened, replies, deletes its own open comments,
 and storyboards/{id}.status ("approved" | "changes") + updatedAt. It never writes videos/*.
+
+Left rail = project folders
+  Entries are grouped by project (videos/{id}.project, else storyboards/{id}.project, else "Other").
+  Folders sort by name with "Other" last; inside a folder entries keep order, then title.
+  Folders collapse/expand per viewer (localStorage "studio:folds" = collapsed project names); selecting
+  a video expands its folder. A title search filters across projects. Phone: project chips filter the picker.
+
+"Copy prompt" (comments panel header)
+  Copies a plain-text /studio message for Claude Code listing every comment that needs action
+  (status open | reopened; video and storyboard-panel comments) for the current video, or, from its menu,
+  for all videos grouped by project. Falls back to a selectable textarea when clipboard access is refused.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -105,7 +118,7 @@ button{cursor:pointer;background:none;border:0;padding:0}
 svg{display:block;flex:none}
 
 /* ---------- shell ---------- */
-.app{height:100%;display:grid;grid-template-rows:auto auto minmax(0,1fr);grid-template-columns:232px minmax(0,1fr) 368px;grid-template-areas:"top top top" "banner banner banner" "rail main side"}
+.app{height:100%;display:grid;grid-template-rows:auto auto minmax(0,1fr);grid-template-columns:248px minmax(0,1fr) 368px;grid-template-areas:"top top top" "banner banner banner" "rail main side"}
 .top{grid-area:top;display:flex;align-items:center;gap:16px;padding:0 16px;height:52px;border-bottom:1px solid var(--line);background:var(--panel);min-width:0}
 .brand{display:flex;align-items:center;gap:9px;font-weight:600;font-size:15px;letter-spacing:.01em}
 .brand-mark{width:22px;height:22px;border-radius:6px;background:var(--fg);color:var(--bg);display:grid;place-items:center}
@@ -121,9 +134,29 @@ svg{display:block;flex:none}
 .banner strong{color:var(--fg);font-weight:600}
 
 /* ---------- rail ---------- */
-.rail{grid-area:rail;border-right:1px solid var(--line);background:var(--panel);overflow:auto;min-height:0;padding:12px 10px}
+.rail{grid-area:rail;border-right:1px solid var(--line);background:var(--panel);overflow:auto;min-height:0;padding:0 10px 12px}
+.rail-h{position:sticky;top:0;z-index:2;background:var(--panel);padding:12px 0 8px}
 .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--faint);font-weight:600;padding:4px 8px 8px}
+.rsearch{position:relative;display:block}
+.rsearch svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--faint);pointer-events:none}
+.rsearch input{width:100%;height:32px;border:1px solid var(--line-2);border-radius:8px;background:var(--bg);color:var(--fg);padding:0 10px 0 30px;font:13px var(--f-ui)}
+.rsearch input::placeholder{color:var(--faint)}
+.rsearch input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.rsearch input::-webkit-search-cancel-button{cursor:pointer}
 .vlist{display:flex;flex-direction:column;gap:2px}
+.folder{display:flex;flex-direction:column}
+.folder + .folder{margin-top:2px;padding-top:4px;border-top:1px solid var(--line)}
+.fold-h{display:flex;align-items:center;gap:7px;width:100%;min-height:32px;padding:0 8px 0 6px;border-radius:var(--r-sm);color:var(--muted);text-align:left}
+button.fold-h:hover{background:var(--hover);color:var(--fg)}
+.fold-h .chev{color:var(--faint);transition:transform .15s ease}
+.fold-h[aria-expanded="false"] .chev{transform:rotate(-90deg)}
+.fold-name{flex:1;min-width:0;font-size:12.5px;font-weight:600;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fold-h.has-cur[aria-expanded="false"] .fold-name{color:var(--accent)}
+.fold-n{font:500 11px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--faint)}
+.fold-h .vcount{height:18px;min-width:20px;font-size:11px}
+.fold-b{display:flex;flex-direction:column;gap:2px;margin:2px 0 6px}
+.fold-b[hidden]{display:none!important}
+.rail-empty{margin:4px 8px;color:var(--faint);font-size:12.5px}
 .vitem{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px;border-radius:var(--r-sm);text-align:left;width:100%;color:var(--muted)}
 .vitem:hover{background:var(--hover);color:var(--fg)}
 .vitem[aria-current="true"]{background:var(--accent-soft);color:var(--fg)}
@@ -228,8 +261,25 @@ svg{display:block;flex:none}
 /* ---------- side panel ---------- */
 .side{grid-area:side;border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0;min-width:0}
 .side-h{padding:14px 16px 10px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
-.side-h h2{margin:0;font-size:15px;font-weight:600;display:flex;align-items:baseline;gap:8px}
-.side-h h2 small{font-weight:500;font-size:12.5px;color:var(--faint)}
+.side-row{display:flex;align-items:center;gap:10px;min-width:0}
+.side-h h2{margin:0;font-size:15px;font-weight:600;display:flex;align-items:baseline;gap:8px;min-width:0;flex:1}
+.cp{position:relative;display:inline-flex;flex:none}
+.cp .btn{border-radius:8px 0 0 8px}
+.cp .cp-more{border-radius:0 8px 8px 0;margin-left:-1px;padding:0 7px}
+.cp .btn:hover,.cp .btn:focus-visible{position:relative;z-index:1}
+.cp-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:250px;padding:5px;border-radius:10px;background:var(--panel);border:1px solid var(--line-2);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:2px}
+.cp-menu button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:8px 10px;border-radius:7px;text-align:left;font-size:13px;font-weight:500;color:var(--fg)}
+.cp-menu button:hover,.cp-menu button:focus-visible{background:var(--hover);outline:none}
+.cp-menu small{font-size:11.5px;font-weight:400;color:var(--faint)}
+.cpdlg{width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 48px);padding:0;border:1px solid var(--line-2);border-radius:14px;background:var(--panel);color:var(--fg);box-shadow:var(--shadow)}
+.cpdlg::backdrop{background:rgba(5,6,10,.55)}
+.cpdlg form{display:flex;flex-direction:column;gap:10px;padding:16px}
+.cpdlg h3{margin:0;font-size:15px;font-weight:600}
+.cpdlg p{margin:0;font-size:13px;color:var(--muted);line-height:1.45}
+.cpdlg textarea{width:100%;min-height:220px;max-height:50vh;resize:vertical;border:1px solid var(--line-2);border-radius:8px;background:var(--bg);color:var(--fg);padding:9px 10px;font:12.5px/1.5 var(--f-mono)}
+.cpdlg textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.cpdlg .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.side-h h2 small{font-weight:500;font-size:12.5px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .filters{display:flex;gap:2px;padding:3px;background:var(--raised);border-radius:9px}
 .filters button{flex:1;height:28px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--muted);white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:5px}
 .filters button[aria-pressed="true"]{background:var(--panel);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.2),0 0 0 1px var(--line)}
@@ -352,11 +402,16 @@ svg{display:block;flex:none}
   .ctrls .addbtn{flex:1;justify-content:center}
   .composer{position:static;width:auto;margin:10px 12px 0;box-shadow:none}
   .player{flex:none}
-  .picker{order:2;display:flex;gap:8px;overflow-x:auto;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel);scrollbar-width:none}
-  .picker::-webkit-scrollbar{display:none}
-  .picker button{flex:none;display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line-2);font-size:13px;font-weight:500;color:var(--muted);max-width:220px}
-  .picker button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .picker button[aria-current="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
+  .picker{order:2;display:flex;flex-direction:column;gap:8px;padding:10px 0 12px;border-bottom:1px solid var(--line);background:var(--panel);min-width:0}
+  .pk-row{display:flex;gap:8px;overflow-x:auto;padding:0 16px;scrollbar-width:none;min-width:0}
+  .pk-row::-webkit-scrollbar{display:none}
+  .pk-proj button{flex:none;height:28px;padding:0 10px;border-radius:7px;font-size:12px;font-weight:500;color:var(--muted);background:var(--raised);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .pk-proj button em{font-style:normal;font:500 11px var(--f-mono);color:var(--faint)}
+  .pk-proj button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+  .pk-proj button[aria-pressed="true"] em{color:inherit;opacity:.7}
+  .pk-items button{flex:none;display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line-2);font-size:13px;font-weight:500;color:var(--muted);max-width:220px}
+  .pk-items button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pk-items button[aria-current="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
   .side{order:3;border-left:0;min-height:60vh}
   .clist{overflow:visible}
   .done{margin:4px 12px 16px}
@@ -391,7 +446,10 @@ svg{display:block;flex:none}
   <div class="banner" id="banner" role="status" hidden></div>
 
   <nav class="rail" aria-label="Videos">
-    <div class="eyebrow">Videos</div>
+    <div class="rail-h">
+      <div class="eyebrow">Videos</div>
+      <label class="rsearch"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.6"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input type="search" id="rsearch" placeholder="Search titles" aria-label="Search videos by title" autocomplete="off" spellcheck="false"></label>
+    </div>
     <div class="vlist" id="vlist"></div>
   </nav>
 
@@ -442,7 +500,7 @@ svg{display:block;flex:none}
           <span class="fbadge" id="fb" aria-label="Frame number">F 0</span>
           <div class="spacer"></div>
           <div class="seg desk" role="group" aria-label="Playback speed" id="speed">
-            <button data-rate="0.25" aria-pressed="false">¼×</button><button data-rate="0.5" aria-pressed="false">½×</button><button data-rate="1" aria-pressed="true">1×</button>
+            <button data-rate="0.25" aria-pressed="false">¼×</button><button data-rate="0.5" aria-pressed="false">½×</button><button data-rate="1" aria-pressed="true">1×</button><button data-rate="1.5" aria-pressed="false">1.5×</button><button data-rate="2" aria-pressed="false">2×</button>
           </div>
           <button class="ibtn" id="bMute" aria-label="Mute" title="Mute"><svg id="icVol" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 7h3l4-3v10l-4-3H3z" fill="currentColor"/><path d="M12.5 6.5a3.5 3.5 0 0 1 0 5M14.5 4.5a6.5 6.5 0 0 1 0 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg id="icMute" width="18" height="18" viewBox="0 0 18 18" fill="none" hidden><path d="M3 7h3l4-3v10l-4-3H3z" fill="currentColor"/><path d="M12.5 7l4 4m0-4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
           <button class="addbtn desk" id="bAdd" title="Comment at current frame  C"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2.5 3.5h11v7.5h-6l-3 2.5V11h-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Comment at frame</button>
@@ -454,7 +512,7 @@ svg{display:block;flex:none}
           </div>
           <select class="vsel" id="vselM" aria-label="Version"></select>
           <div class="seg" role="group" aria-label="Playback speed" id="speedM">
-            <button data-rate="0.25" aria-pressed="false">¼×</button><button data-rate="0.5" aria-pressed="false">½×</button><button data-rate="1" aria-pressed="true">1×</button>
+            <button data-rate="0.25" aria-pressed="false">¼×</button><button data-rate="0.5" aria-pressed="false">½×</button><button data-rate="1" aria-pressed="true">1×</button><button data-rate="1.5" aria-pressed="false">1.5×</button><button data-rate="2" aria-pressed="false">2×</button>
           </div>
           <button class="addbtn" id="bAddM">Add comment at current frame</button>
         </div>
@@ -472,7 +530,17 @@ svg{display:block;flex:none}
 
   <aside class="side" aria-label="Comments">
     <div class="side-h">
-      <h2>Comments <small id="sideSub"></small></h2>
+      <div class="side-row">
+        <h2>Comments <small id="sideSub"></small></h2>
+        <div class="cp" id="cp">
+          <button type="button" class="btn sm" id="cpBtn" title="Copy a message for Claude listing the comments on this video that need action"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="3.5" y="2.5" width="9" height="11.5" rx="1.6" stroke="currentColor" stroke-width="1.5"/><path d="M6 2.5V2a.8.8 0 0 1 .8-.8h2.4A.8.8 0 0 1 10 2v.5a.8.8 0 0 1-.8.8H6.8A.8.8 0 0 1 6 2.5z" fill="currentColor"/><path d="M6 7h4M6 9.6h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Copy prompt</button>
+          <button type="button" class="btn sm cp-more" id="cpMore" aria-haspopup="menu" aria-expanded="false" aria-controls="cpMenu" aria-label="More copy options" title="More copy options"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="cp-menu" id="cpMenu" role="menu" aria-label="Copy prompt" hidden>
+            <button type="button" role="menuitem" id="cpThis">Copy prompt for this video<small id="cpThisN"></small></button>
+            <button type="button" role="menuitem" id="cpAll">Copy prompt for all videos<small id="cpAllN"></small></button>
+          </div>
+        </div>
+      </div>
       <div class="filters" role="group" aria-label="Filter comments" id="filters">
         <button data-f="review" aria-pressed="true">To review <em></em></button>
         <button data-f="open" aria-pressed="false">Open <em></em></button>
@@ -484,11 +552,19 @@ svg{display:block;flex:none}
     <div class="done" id="done">
       <span class="done-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       <b id="doneTitle">Done reviewing?</b>
-      <p>Go back to Claude and say <q>done</q>. Claude reads every comment here, fixes the video and posts a new version. This page can't notify Claude on its own.</p>
+      <p>Click <b>Copy prompt</b> above and paste it to Claude (or just say <q>done</q>). Claude reads every comment here, fixes the video and posts a new version. This page can't notify Claude on its own.</p>
     </div>
   </aside>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<dialog class="cpdlg" id="cpDlg" aria-labelledby="cpDlgT">
+  <form method="dialog">
+    <h3 id="cpDlgT">Copy this prompt</h3>
+    <p>This view can't copy to your clipboard on its own. The text is selected: press <b>Ctrl+C</b> (<b>⌘C</b> on a Mac), then paste it to Claude.</p>
+    <textarea id="cpText" readonly rows="12" aria-label="Prompt for Claude" spellcheck="false"></textarea>
+    <div class="row"><button type="button" class="btn" id="cpSel">Select all</button><button type="submit" class="btn primary" value="close">Done</button></div>
+  </form>
+</dialog>
 
 <script>
 (() => {
@@ -503,8 +579,12 @@ const el = {
   bMute:$("bMute"), icVol:$("icVol"), icMute:$("icMute"), vsel:$("vsel"), vselM:$("vselM"), bAdd:$("bAdd"), bAddM:$("bAddM"), phoneRow:$("phoneRow"),
   composer:$("composer"), cmpTc:$("cmpTc"), cmpF:$("cmpF"), cmpV:$("cmpV"), cmpText:$("cmpText"), cmpCancel:$("cmpCancel"), cmpSend:$("cmpSend"),
   clist:$("clist"), filters:$("filters"), sideSub:$("sideSub"), counter:$("counter"), topTitle:$("topTitle"), banner:$("banner"),
-  done:$("done"), doneTitle:$("doneTitle"), toast:$("toast")
+  done:$("done"), doneTitle:$("doneTitle"), toast:$("toast"),
+  rsearch:$("rsearch"), cpBtn:$("cpBtn"), cpMore:$("cpMore"), cpMenu:$("cpMenu"), cpThis:$("cpThis"), cpAll:$("cpAll"),
+  cpThisN:$("cpThisN"), cpAllN:$("cpAllN"), cpDlg:$("cpDlg"), cpText:$("cpText"), cpSel:$("cpSel")
 };
+const STUDIO_URL = "https://claude.ai/artifact/XoeTCFK3RtWzpfBZSS4scU";
+const OTHER = "Other";
 const V = el.video;
 
 const STATUS = {
@@ -543,6 +623,11 @@ const store = {
   set(k,v){ try{ localStorage.setItem("studio:"+k, JSON.stringify(v)); }catch(e){} }
 };
 S.filter = FILTERS[store.get("filter")] ? store.get("filter") : "review";
+// project folders: collapsed names (per viewer), title search, phone project filter
+S.collapsed = new Set((Array.isArray(store.get("folds")) ? store.get("folds") : []).filter(x => typeof x === "string"));
+S.q = "";
+S.pproj = typeof store.get("pproj") === "string" ? store.get("pproj") : "";
+const saveFolds = () => store.set("folds", [...S.collapsed]);
 
 /* ---------- helpers ---------- */
 function h(tag, attrs, ...kids){
@@ -622,11 +707,23 @@ function formatGlyph(fmt){
   const r = fmt === "9:16" ? [10,17] : fmt === "1:1" ? [15,15] : [19,11];
   return h("i",{style:`width:${r[0]}px;height:${r[1]}px`});
 }
+function projectOf(id){
+  const v = S.videos.get(id), sb = S.sbs.get(id);
+  const pick = (d) => (d && typeof d.project === "string") ? d.project.trim() : "";
+  return pick(v) || pick(sb) || OTHER;
+}
 function rebuildEntries(){
   const ids = new Set([...S.videos.keys(), ...S.sbs.keys()]);
   S.entries = [...ids].map(id => { const v = S.videos.get(id), sb = S.sbs.get(id);
-    return {id, order: (v && v.order != null) ? v.order : (sb && sb.order != null ? sb.order : 1e9), title: metaOf(id).title}; })
+    return {id, order: (v && v.order != null) ? v.order : (sb && sb.order != null ? sb.order : 1e9), title: metaOf(id).title, project: projectOf(id)}; })
     .sort((a,b)=>(a.order-b.order) || String(a.title).localeCompare(String(b.title)));
+}
+// Folders sorted by name, "Other" last; entries keep their order inside a folder.
+function groupEntries(entries){
+  const m = new Map();
+  for (const e of entries){ if (!m.has(e.project)) m.set(e.project, []); m.get(e.project).push(e); }
+  return [...m].map(([name, items]) => ({name, items}))
+    .sort((a,b)=>((a.name === OTHER) - (b.name === OTHER)) || a.name.localeCompare(b.name, undefined, {sensitivity:"base", numeric:true}));
 }
 
 /* ---------- capabilities ---------- */
@@ -689,7 +786,8 @@ function onData(){
   if (S.vid && !exists(S.vid)) S.vid = null;
   if (!S.vid && S.entries.length && ready()){
     const last = store.get("vid");
-    selectVideo(exists(last) ? last : S.entries[0].id, true);
+    // a restored selection keeps the viewer's folder state; a fresh pick opens its folder
+    if (exists(last)) selectVideo(last, true, true); else selectVideo(S.entries[0].id, true);
     return;
   }
   if (S.vid){
@@ -701,9 +799,10 @@ function onData(){
 }
 
 /* ---------- selection ---------- */
-function selectVideo(id, quiet){
+function selectVideo(id, quiet, restore){
   if (!S.videos.has(id) && !S.sbs.has(id)) return;
   closeComposer();
+  if (!restore && S.collapsed.delete(projectOf(id))) saveFolds();
   S.vid = id; S.sel = null; S.selPanel = null; S.replyFor = null; S.confirmDel = null; S.sbDraft = null;
   if (!S.tab[id]) S.tab[id] = curTab(); // pin the default so approving doesn't switch tabs under the reviewer
   S.natW = S.natH = 0;
@@ -1151,36 +1250,83 @@ function entryLine(id){
   if (!nv) return `Storyboard only · ${m.format}`;
   return `v${nv} · ${m.format} · ${m.fps}fps`;
 }
+function toggleFold(name){
+  if (S.collapsed.has(name)) S.collapsed.delete(name); else S.collapsed.add(name);
+  saveFolds(); renderRail();
+}
+function railItem(id){
+  const c = counts(id), m = metaOf(id), sb = S.sbs.get(id), sst = sb ? (SB_STATUS[sb.status] || SB_STATUS.draft) : null;
+  const badge = c.open ? h("span",{class:"vcount", title:`${c.open} open`, text:String(c.open)})
+    : c.check ? h("span",{class:"vcount check", title:`${c.check} fixed to check`, text:String(c.check)})
+    : h("span",{class:"vcount zero", text:"0"});
+  return h("button",{class:"vitem", "data-vid": id, "aria-current": id === S.vid ? "true" : "false", onclick:()=>selectVideo(id),
+    "aria-label": `${m.title}, ${entryLine(id)}${sst ? ", storyboard " + sst.label : ""}, ${c.open} open, ${c.check} fixed to check`},
+    h("span",{class:"vthumb", "aria-hidden":"true"}, formatGlyph(m.format)),
+    h("span",{class:"vname"}, h("b",{text:m.title}), h("small",{text:entryLine(id)}),
+      sst ? h("small",{style:"font-family:var(--f-ui)"}, h("span",{class:"sbdot", style:`background:${sst.c}`}), "Storyboard " + sst.label.toLowerCase()) : null),
+    badge);
+}
+const chevron = () => svg(12, "0 0 12 12", '<path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>');
 function renderRail(){
   // Rebuilding the list would reset the scroll position (and drop focus): remember both and restore them after.
-  const scrollers = [el.vlist, el.vlist.closest(".rail"), el.picker].filter(Boolean);
-  const kept = scrollers.map(n => [n, n.scrollTop, n.scrollLeft]);
-  const focusedId = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.vid : null;
-  const items = S.entries.map(({id}) => {
-    const c = counts(id), m = metaOf(id), sb = S.sbs.get(id), sst = sb ? (SB_STATUS[sb.status] || SB_STATUS.draft) : null;
-    const badge = c.open ? h("span",{class:"vcount", title:`${c.open} open`, text:String(c.open)})
-      : c.check ? h("span",{class:"vcount check", title:`${c.check} fixed to check`, text:String(c.check)})
-      : h("span",{class:"vcount zero", text:"0"});
-    return h("button",{class:"vitem", "data-vid": id, "aria-current": id === S.vid ? "true" : "false", onclick:()=>selectVideo(id),
-      "aria-label": `${m.title}, ${entryLine(id)}${sst ? ", storyboard " + sst.label : ""}, ${c.open} open, ${c.check} fixed to check`},
-      h("span",{class:"vthumb", "aria-hidden":"true"}, formatGlyph(m.format)),
-      h("span",{class:"vname"}, h("b",{text:m.title}), h("small",{text:entryLine(id)}),
-        sst ? h("small",{style:"font-family:var(--f-ui)"}, h("span",{class:"sbdot", style:`background:${sst.c}`}), "Storyboard " + sst.label.toLowerCase()) : null),
-      badge);
+  const scrollers = [el.vlist, el.vlist.closest(".rail"), el.picker, ...el.picker.querySelectorAll(".pk-row")].filter(Boolean);
+  const kept = scrollers.map(n => [n.className || n.id, n.scrollTop, n.scrollLeft]);
+  const ae = document.activeElement, ds = ae && ae.dataset ? ae.dataset : {};
+  const focusedId = ds.vid || null, focusedFold = ds.fold != null ? ds.fold : null, focusedProj = ds.proj != null ? ds.proj : null;
+
+  // ---- desktop rail: project folders
+  const q = S.q.trim().toLowerCase();
+  const shown = q ? S.entries.filter(e => String(e.title).toLowerCase().includes(q) || e.id.toLowerCase().includes(q)) : S.entries;
+  const groups = groupEntries(shown);
+  const nodes = groups.map((g, gi) => {
+    let open = 0; for (const e of g.items) open += counts(e.id).open;
+    const has = g.items.some(e => e.id === S.vid);
+    const expanded = q ? true : !S.collapsed.has(g.name);
+    const bodyId = "fold-" + gi;
+    const inner = [chevron(), h("span",{class:"fold-name", text:g.name}),
+      h("span",{class:"fold-n", text:String(g.items.length), title:`${g.items.length} item${g.items.length === 1 ? "" : "s"}`}),
+      open ? h("span",{class:"vcount", title:`${open} open`, text:String(open)}) : null];
+    const label = `${g.name}, ${g.items.length} item${g.items.length === 1 ? "" : "s"}, ${open} open`;
+    // While searching every folder shows its matches, so the header is a plain label.
+    const head = q
+      ? h("div",{class:"fold-h" + (has ? " has-cur" : ""), "aria-expanded":"true", role:"heading", "aria-level":"3", "aria-label":label}, inner)
+      : h("button",{type:"button", class:"fold-h" + (has ? " has-cur" : ""), "data-fold":g.name, "aria-expanded":String(expanded), "aria-controls":bodyId, "aria-label":label,
+          title: (expanded ? "Collapse " : "Expand ") + g.name, onclick:()=>toggleFold(g.name),
+          // Space: let the button's own click toggle the folder; keep it away from the page's play/pause shortcut
+          onkeydown:(e)=>{ if (e.key === " " || e.code === "Space") e.stopPropagation(); },
+          onkeyup:(e)=>{ if (e.key === " " || e.code === "Space") e.stopPropagation(); }}, inner);
+    const body = h("div",{class:"fold-b", id:bodyId, role:"group", "aria-label":g.name, hidden: !expanded}, expanded ? g.items.map(e => railItem(e.id)) : []);
+    return h("section",{class:"folder"}, head, body);
   });
-  el.vlist.replaceChildren(...items);
-  if (!S.entries.length) el.vlist.append(h("p",{style:"margin:4px 8px;color:var(--faint);font-size:12.5px", text: ready() || S.dbState === "none" ? "Nothing here yet." : "Loading…"}));
-  el.picker.replaceChildren(...S.entries.map(({id}) => {
-    const c = counts(id);
-    return h("button",{"data-vid": id, "aria-current": id === S.vid ? "true" : "false", onclick:()=>selectVideo(id)},
-      h("span",{text:metaOf(id).title}), h("span",{class:"vcount" + (c.open ? "" : c.check ? " check" : " zero"), text:String(c.open || c.check)}));
-  }));
+  el.vlist.replaceChildren(...nodes);
+  if (!S.entries.length) el.vlist.append(h("p",{class:"rail-empty", text: ready() || S.dbState === "none" ? "Nothing here yet." : "Loading…"}));
+  else if (!shown.length) el.vlist.append(h("p",{class:"rail-empty", text:`No titles match “${S.q.trim()}”.`}));
+
+  // ---- phone picker: project chips filter one row of items
+  const all = groupEntries(S.entries);
+  // a remembered project that no longer exists falls back to All (without forgetting it while data loads)
+  const pproj = S.pproj && all.some(g => g.name === S.pproj) ? S.pproj : "";
+  const pickRow = h("div",{class:"pk-row pk-items", role:"group", "aria-label":"Videos"},
+    (pproj ? S.entries.filter(e => e.project === pproj) : all.flatMap(g => g.items)).map(({id}) => {
+      const c = counts(id);
+      return h("button",{"data-vid": id, "aria-current": id === S.vid ? "true" : "false", onclick:()=>selectVideo(id)},
+        h("span",{text:metaOf(id).title}), h("span",{class:"vcount" + (c.open ? "" : c.check ? " check" : " zero"), text:String(c.open || c.check)}));
+    }));
+  const chip = (name, label, n) => h("button",{type:"button", "data-proj":name, "aria-pressed":String(pproj === name),
+      onclick:()=>{ S.pproj = name; store.set("pproj", name); renderRail(); const r = el.picker.querySelector(".pk-items"); if (r) r.scrollLeft = 0; }},
+    label, h("em",{text:String(n)}));
+  const chips = all.length > 1 ? h("div",{class:"pk-row pk-proj", role:"group", "aria-label":"Filter by project"},
+    chip("", "All", S.entries.length), all.map(g => chip(g.name, g.name, g.items.length))) : null;
+  el.picker.replaceChildren(...[chips, pickRow].filter(Boolean));
   el.picker.hidden = S.entries.length < 1;
-  for (const [n, top, left] of kept){ n.scrollTop = top; n.scrollLeft = left; }
-  if (focusedId){
-    const again = el.vlist.querySelector(`[data-vid="${CSS.escape(focusedId)}"]`) || el.picker.querySelector(`[data-vid="${CSS.escape(focusedId)}"]`);
-    if (again) again.focus({preventScroll: true});
-  }
+
+  const after = [el.vlist, el.vlist.closest(".rail"), el.picker, ...el.picker.querySelectorAll(".pk-row")].filter(Boolean);
+  for (const [key, top, left] of kept){ const n = after.find(x => (x.className || x.id) === key); if (n){ n.scrollTop = top; n.scrollLeft = left; } }
+  let again = null;
+  if (focusedId) again = el.vlist.querySelector(`[data-vid="${CSS.escape(focusedId)}"]`) || el.picker.querySelector(`[data-vid="${CSS.escape(focusedId)}"]`);
+  else if (focusedFold != null) again = el.vlist.querySelector(`[data-fold="${CSS.escape(focusedFold)}"]`);
+  else if (focusedProj != null) again = el.picker.querySelector(`[data-proj="${CSS.escape(focusedProj)}"]`);
+  if (again) again.focus({preventScroll: true});
 }
 function renderHeader(){
   el.topTitle.replaceChildren(); el.counter.replaceChildren();
@@ -1358,6 +1504,128 @@ function commentItem(c, n, cv){
     acts.length && !box ? h("div",{class:"cactions"}, acts) : null);
 }
 function setFilter(f){ S.filter = f; store.set("filter", f); renderList(); renderTimeline(); }
+
+/* ---------- copy prompt (plain text only: comment text is user data) ---------- */
+const needsAction = (c) => FILTERS.open(c.status || "open");
+const oneLine = (t, n) => { t = String(t || "").replace(/\s+/g, " ").trim(); return n && t.length > n ? t.slice(0, n).trimEnd() + "…" : t; };
+const indentRest = (t) => String(t || "").trim().replace(/\r\n?/g, "\n").split("\n").join("\n   ");
+function actionList(id, firstKind){
+  // the tab the reviewer is on comes first; video comments by time, panel comments by panel order
+  const pidx = new Map(panelsOf(S.sbs.get(id)).map((p,i)=>[p.id, i]));
+  const cs = commentsOf(id).filter(needsAction);
+  const vid = cs.filter(c => !isSbComment(c)).sort((a,b)=>(a.t||0)-(b.t||0) || String(a.createdAt).localeCompare(String(b.createdAt)));
+  const sb = cs.filter(isSbComment).sort((a,b)=>((pidx.get(a.frameId) ?? 1e9) - (pidx.get(b.frameId) ?? 1e9)) || String(a.createdAt).localeCompare(String(b.createdAt)));
+  return firstKind === "storyboard" ? sb.concat(vid) : vid.concat(sb);
+}
+function promptTag(c, id){
+  const st = c.status === "reopened" ? " · reopened" : "";
+  if (isSbComment(c)){
+    const p = panelsOf(S.sbs.get(id)).find(x => x.id === c.frameId);
+    if (!p) return `[Panel removed (${c.frameId})${st}]`;
+    const shot = oneLine(p.shot, 40);
+    return `[Panel ${p.n ?? "?"}${shot ? ` "${shot}"` : ""}${st}]`;
+  }
+  const fps = metaOf(id).fps, fr = c.frame ?? Math.round((c.t||0)*fps);
+  const pin = c.x != null && c.y != null ? ` · pin ${Math.round(c.x*100)}%,${Math.round(c.y*100)}%` : "";
+  return `[${fmtTC(fr, fps)} · F${fr} · v${c.v || 1}${pin}${st}]`;
+}
+function promptItems(list, id){
+  const out = [];
+  list.forEach((c, i) => {
+    out.push(`${i+1}. ${promptTag(c, id)} ${indentRest(c.text)}`);
+    if (c.status === "reopened"){
+      const r = (Array.isArray(c.replies) ? c.replies : []).filter(x => x && x.by !== "claude" && x.text).pop();
+      if (r) out.push(`   Reviewer's reopen note: ${indentRest(r.text)}`);
+    }
+  });
+  return out;
+}
+function tabLabel(id, tab){
+  if (tab === "storyboard") return "storyboard";
+  return hasVideo(id) ? `video v${id === S.vid ? curVer() : newestV(S.videos.get(id))}` : "video (not rendered)";
+}
+function buildPromptOne(id){
+  const tab = id === S.vid ? curTab() : (hasVideo(id) ? "video" : "storyboard");
+  const list = actionList(id, tab), title = metaOf(id).title, sb = S.sbs.get(id);
+  const L = [`/studio Review done for "${oneLine(title)}" (videoId: ${id}, project: ${projectOf(id)}) — ${tabLabel(id, tab)}.`, `Studio: ${STUDIO_URL}`];
+  if (tab === "storyboard" && sb) L.push(`Storyboard status: ${sb.status || "draft"}.`);
+  if (!list.length){
+    L.push(tab === "storyboard" && sb && sb.status === "approved" ? "No comments need action. The storyboard is approved: go ahead and build it." : "No comments need action right now.");
+    return {text: L.join("\n"), n: 0};
+  }
+  const what = list.every(isSbComment) ? "update the storyboard" : list.some(isSbComment) ? "update the storyboard, upload a new version" : "upload a new version";
+  L.push(`Please fix ${list.length === 1 ? "this 1 comment" : `these ${list.length} comments`}, ${what}, and mark each one fixed with a reply:`);
+  L.push(...promptItems(list, id));
+  L.push(`(Comment ids: ${list.map(c => c.id).join(", ")})`);
+  return {text: L.join("\n"), n: list.length};
+}
+function buildPromptAll(){
+  const groups = groupEntries(S.entries);
+  const blocks = []; let total = 0, vids = 0;
+  for (const g of groups){
+    const vb = [];
+    for (const e of g.items){
+      const tab = hasVideo(e.id) ? "video" : "storyboard";
+      const list = actionList(e.id, tab); if (!list.length) continue;
+      total += list.length; vids++;
+      vb.push("", `"${oneLine(e.title)}" (videoId: ${e.id}) — ${tabLabel(e.id, tab)}`, ...promptItems(list, e.id), `(Comment ids: ${list.map(c => c.id).join(", ")})`);
+    }
+    if (vb.length) blocks.push("", `## ${g.name}`, ...vb);
+  }
+  const L = [`/studio Review done for all videos (${vids} video${vids === 1 ? "" : "s"}).`, `Studio: ${STUDIO_URL}`];
+  if (!total){ L.push("No comments need action on any video right now."); return {text: L.join("\n"), n: 0, vids}; }
+  L.push(`Please fix ${total === 1 ? "this 1 comment" : `these ${total} comments`}, upload a new version of each video (or update its storyboard), and mark each one fixed with a reply:`);
+  return {text: L.concat(blocks).join("\n"), n: total, vids};
+}
+async function copyText(text){
+  try {
+    if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") throw new Error("no clipboard");
+    await navigator.clipboard.writeText(text);
+    toast("Copied: paste it to Claude");
+  } catch(e){ openCopyDialog(text); }
+}
+function openCopyDialog(text){
+  el.cpText.value = text;
+  clearTimeout(toastT); el.toast.hidden = true;
+  try { if (!el.cpDlg.open) el.cpDlg.showModal(); } catch(e){ el.cpDlg.setAttribute("open", ""); }
+  el.cpText.focus(); el.cpText.select();
+}
+el.cpSel.addEventListener("click", ()=>{ el.cpText.focus(); el.cpText.select(); });
+el.cpText.addEventListener("focus", ()=>el.cpText.select());
+el.cpDlg.addEventListener("close", ()=>{ el.cpBtn.focus({preventScroll:true}); });
+el.cpText.addEventListener("copy", ()=>{ setTimeout(()=>{ if (el.cpDlg.open) el.cpDlg.close(); toast("Copied: paste it to Claude"); }, 0); });
+function closeCpMenu(focusBtn){
+  if (el.cpMenu.hidden) return;
+  el.cpMenu.hidden = true; el.cpMore.setAttribute("aria-expanded", "false");
+  if (focusBtn) el.cpMore.focus();
+}
+function openCpMenu(){
+  const one = S.vid ? buildPromptOne(S.vid) : {n:0}, all = buildPromptAll();
+  el.cpThis.disabled = !S.vid;
+  el.cpThisN.textContent = S.vid ? `${one.n} comment${one.n === 1 ? "" : "s"} to fix` : "No video open";
+  el.cpAllN.textContent = `${all.n} comment${all.n === 1 ? "" : "s"} across ${all.vids} video${all.vids === 1 ? "" : "s"}`;
+  el.cpMenu.hidden = false; el.cpMore.setAttribute("aria-expanded", "true");
+  (S.vid ? el.cpThis : el.cpAll).focus();
+}
+const copyOne = () => { if (!S.vid){ toast("Open a video first"); return; } copyText(buildPromptOne(S.vid).text); };
+el.cpBtn.addEventListener("click", copyOne);
+el.cpMore.addEventListener("click", (e)=>{ e.stopPropagation(); if (el.cpMenu.hidden) openCpMenu(); else closeCpMenu(); });
+el.cpThis.addEventListener("click", ()=>{ closeCpMenu(); copyOne(); });
+el.cpAll.addEventListener("click", ()=>{ closeCpMenu(); copyText(buildPromptAll().text); });
+el.cpMenu.addEventListener("keydown", (e)=>{
+  const items = [...el.cpMenu.querySelectorAll("[role=menuitem]:not(:disabled)")], i = items.indexOf(document.activeElement);
+  if (e.key === "Escape"){ e.preventDefault(); e.stopPropagation(); closeCpMenu(true); }
+  else if (e.key === "ArrowDown" || e.key === "ArrowUp"){ e.preventDefault(); const d = e.key === "ArrowDown" ? 1 : -1; items[(i + d + items.length) % items.length].focus(); }
+  else if (e.key === "Tab") closeCpMenu();
+});
+document.addEventListener("pointerdown", (e)=>{ if (!el.cpMenu.hidden && !e.target.closest("#cp")) closeCpMenu(); });
+
+/* ---------- rail search ---------- */
+el.rsearch.addEventListener("input", ()=>{ S.q = el.rsearch.value; renderRail(); });
+el.rsearch.addEventListener("keydown", (e)=>{
+  if (e.key === "Escape" && el.rsearch.value){ e.preventDefault(); el.rsearch.value = ""; S.q = ""; renderRail(); }
+  else if (e.key === "Enter"){ const first = el.vlist.querySelector(".vitem"); if (first){ e.preventDefault(); first.click(); } }
+});
 
 /* ---------- controls wiring ---------- */
 el.bPlay.addEventListener("click", togglePlay);
