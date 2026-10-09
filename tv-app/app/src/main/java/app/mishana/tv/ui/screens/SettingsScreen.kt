@@ -493,7 +493,7 @@ private fun buildRows(
         SettingsCategory.Words -> {
             // Only the room language's packs count: the default list holds one easy pack per language, and none
             // selected plays every pack ("All packs").
-            val packs = s.packIds.mapNotNull { id -> view.availablePacks.firstOrNull { it.id == id } }
+            val packs = SettingsStepper.selectedPacks(s.packIds, s.wordLocale, view.availablePacks, { it.id }, { it.locale })
                 .map { it.title.inLanguage(lang) }
                 .joinToString(", ")
                 .ifEmpty { str(R.string.settings__all_packs) }

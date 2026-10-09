@@ -43,6 +43,14 @@ object SettingsStepper {
         }
     }
 
+    /**
+     * The packs a room's label names (the engine's `selectedPackIds` rule): selected in [packIds] AND in the room's
+     * [wordLocale] (a pack locale "ar-LB" is Arabic). Other languages' ids (the default list holds one easy pack per
+     * language) never show; an empty result reads "All packs".
+     */
+    fun <P> selectedPacks(packIds: List<String>, wordLocale: String, available: List<P>, id: (P) -> String, locale: (P) -> String): List<P> =
+        available.filter { id(it) in packIds && locale(it).substringBefore('-') == wordLocale }
+
     /** Toggles a difficulty (1..3); returns null when the result would be empty (not allowed). */
     fun toggleDifficulty(difficulties: List<Int>, d: Int): List<Int>? {
         val set = difficulties.toMutableSet()

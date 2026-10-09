@@ -84,6 +84,7 @@ import app.mishana.tv.R
 import app.mishana.tv.billing.StoreEntry
 import app.mishana.tv.billing.StoreOrigin
 import app.mishana.tv.game.Names
+import app.mishana.tv.game.SettingsStepper
 import app.mishana.tv.i18n.LocaleController
 import app.mishana.tv.i18n.Locales
 import app.mishana.tv.i18n.isolate
@@ -432,7 +433,7 @@ private fun SettingsChips(view: TvView, premiumChip: Boolean, modifier: Modifier
     val packs = if (s.packIds.isEmpty()) {
         stringResource(R.string.settings__all_packs)
     } else {
-        val titles = s.packIds.mapNotNull { id -> view.availablePacks.firstOrNull { it.id == id } }.map { localizedTitle(it.title) }
+        val titles = SettingsStepper.selectedPacks(s.packIds, s.wordLocale, view.availablePacks, { it.id }, { it.locale }).map { localizedTitle(it.title) }
         if (titles.isEmpty()) stringResource(R.string.settings__all_packs) else titles.take(2).joinToString(", ") + if (titles.size > 2) " +${titles.size - 2}" else ""
     }
     var flash by remember { mutableStateOf(false) }

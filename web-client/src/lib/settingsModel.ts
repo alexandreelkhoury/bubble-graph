@@ -2,6 +2,7 @@
 // renders each row as a segmented control / switch / stepper / chips; the TV mock as a ‹ value › row.
 import { LOCALES, SETTINGS_BOUNDS } from "@mishana/shared/constants";
 import type { Points, Settings, SettingsPatch } from "@mishana/shared/engine";
+import { languageOf } from "@mishana/shared/engine";
 import { fmtNum, LOCALE_NATIVE_NAME, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { stepValue } from "./settings";
@@ -119,8 +120,9 @@ export function stepRow(row: RowDef, s: Settings, dir: 1 | -1): SettingsPatch | 
  * The packs of the room language that `packIds` selects. The default list carries one easy pack per language, so ids
  * of other languages are ignored; none selected means "All packs" (the engine plays every pack then).
  */
-export function selectedPacks<P extends { id: string }>(s: Settings, available: readonly P[]): P[] {
-  return available.filter((p) => s.packIds.includes(p.id));
+export function selectedPacks<P extends { id: string; locale?: string }>(s: Settings, available: readonly P[]): P[] {
+  // The engine's selectedPackIds rule: selected AND in the room's word language (a pack's locale may be "ar-LB").
+  return available.filter((p) => s.packIds.includes(p.id) && (p.locale === undefined || languageOf(p.locale) === s.wordLocale));
 }
 
 /** The row's current value as text (TV rows, summaries). `available`: the room's packs (for the packs row). */

@@ -49,4 +49,14 @@ class SettingsStepperTest {
         assertEquals(listOf(1, 2, 3), SettingsStepper.toggleDifficulty(listOf(3, 1), 2))
         assertNull(SettingsStepper.toggleDifficulty(listOf(2), 2))
     }
+
+    @Test
+    fun packLabelShowsOnlyTheRoomLanguagesSelectedPacks() {
+        data class P(val id: String, val locale: String)
+        val avail = listOf(P("en-everyday-01", "en"), P("fr-everyday-01", "fr"), P("ar-everyday-01", "ar-LB"), P("en-food-01", "en"))
+        val defaults = listOf("en-everyday-01", "fr-everyday-01", "ar-everyday-01")
+        assertEquals(listOf("en-everyday-01"), SettingsStepper.selectedPacks(defaults, "en", avail, { it.id }, { it.locale }).map { it.id })
+        assertEquals(listOf("ar-everyday-01"), SettingsStepper.selectedPacks(defaults, "ar", avail, { it.id }, { it.locale }).map { it.id })
+        assertEquals(emptyList<P>(), SettingsStepper.selectedPacks(listOf("fr-everyday-01"), "en", avail, { it.id }, { it.locale }))
+    }
 }
