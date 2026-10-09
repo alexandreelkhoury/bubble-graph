@@ -10,8 +10,8 @@ import type { TvView } from "@mishana/shared/protocol";
 import { fmtNum, locale, t } from "../i18n/t";
 import { rolePreview } from "../lib/lobby";
 import {
-  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, rowValueText, stepRow, toggleDifficulty,
-  togglePack, visibleRows,
+  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, ROLE_HELP, rowValueText, selectedPacks, stepRow,
+  toggleDifficulty, togglePack, visibleRows,
 } from "../lib/settingsModel";
 import type { RowDef, SettingsCategory } from "../lib/settingsModel";
 import { usePatcher } from "../hooks/usePatcher";
@@ -62,7 +62,7 @@ function inlineDir(e: KeyboardEvent): 1 | -1 | 0 {
 }
 const swallow = (e: KeyboardEvent): void => { e.preventDefault(); e.stopPropagation(); };
 
-function SettingRow({ row, s, set, onOpen, onExit }: { row: RowDef; s: Settings; set(p: SettingsPatch): void; onOpen(sub: Exclude<Sub, null>): void; onExit(): void }) {
+function SettingRow({ row, s, set, onOpen, onExit, packs }: { row: RowDef; s: Settings; set(p: SettingsPatch): void; onOpen(sub: Exclude<Sub, null>): void; onExit(): void; packs: readonly { id: string }[] }) {
   const opens = row.kind === "packs" ? "packs" : row.kind === "difficulty" ? "difficulty" : null;
   const step = (dir: 1 | -1): void => { const p = stepRow(row, s, dir); if (p) set(p); };
   const onKey = (e: KeyboardEvent): void => {
@@ -78,7 +78,7 @@ function SettingRow({ row, s, set, onOpen, onExit }: { row: RowDef; s: Settings;
       <span class="setrowtv__label">{label}</span>
       <span class="setrowtv__value">
         {!opens && <span class="setrowtv__chev" onClick={(e) => { e.stopPropagation(); step(-1); }}><Icon name="chevron-back" size={22} /></span>}
-        <span class="tnum">{rowValueText(row, s)}</span>
+        <span class="tnum">{rowValueText(row, s, packs)}</span>
         <span class="setrowtv__chev" onClick={(e) => { e.stopPropagation(); if (opens) onOpen(opens); else step(1); }}><Icon name="chevron-forward" size={22} /></span>
       </span>
     </button>
@@ -196,8 +196,16 @@ export function TvSettings({ view }: { view: TvView }) {
   const focused = rows.find((r) => r.id === focusRow);
   const rowHelp = focused?.kind === "enum" ? focused.help?.(s) : undefined;
   const catHelp = cat === "about" ? undefined : CATEGORY_HELP[cat];
-  const help = rowHelp ? t(rowHelp) : catHelp ? t(catHelp) : cat === "roles" ? preview?.text : undefined;
   const helpDanger = cat === "roles" && !rowHelp && !catHelp && preview?.invalid === true;
+  // Roles: a focused Moles/Undercovers row explains its role over the preview; otherwise the preview, then one line per
+  // role. An invalid combination shows only the blocker.
+  const roleLines = (): string[] => {
+    if (helpDanger || !preview) return preview ? [preview.text] : [];
+    if (focusRow === "blankCount" || focusRow === "undercoverCount") return [t(ROLE_HELP[focusRow]), preview.text];
+    return [preview.text, t(ROLE_HELP.blankCount), t(ROLE_HELP.undercoverCount)];
+  };
+  const helpLines = rowHelp ? [t(rowHelp)] : catHelp ? [t(catHelp)] : cat === "roles" ? roleLines() : [];
+  const help = helpLines.length > 0;
   const l = locale.value;
 
   return (
@@ -227,7 +235,7 @@ export function TvSettings({ view }: { view: TvView }) {
         <div class={`tvsettings__rows${more ? " has-more" : ""}`} ref={rowsBox} onKeyDown={onRowsKey} onScroll={measureMore}>
           {sub === "packs" ? (
             <div class="tvsub">
-              <Toggle first={subFirst} on={s.packIds.length === 0} onClick={() => set({ packIds: [] })}>{t("settings.allPacks")}</Toggle>
+              <Toggle first={subFirst} on={selectedPacks(s, view.availablePacks).length === 0} onClick={() => set({ packIds: [] })}>{t("settings.allPacks")}</Toggle>
               {view.availablePacks.map((p) => (
                 <Toggle key={p.id} on={s.packIds.includes(p.id)} onClick={() => set(togglePack(s, p.id))}>
                   <bdi>{p.title[l]}</bdi><span class="muted num">{fmtNum(p.pairCount)}</span>
@@ -262,12 +270,12 @@ export function TvSettings({ view }: { view: TvView }) {
           ) : (
             rows.map((r) => (
               <div key={r.id} onFocusIn={() => { setFocusRow(r.id); lastRow.current[cat] = r.id; }}>
-                {locked(r) ? <LockedRow row={r} /> : <SettingRow row={r} s={s} set={set} onOpen={setSub} onExit={focusCategory} />}
+                {locked(r) ? <LockedRow row={r} /> : <SettingRow row={r} s={s} set={set} onOpen={setSub} onExit={focusCategory} packs={view.availablePacks} />}
               </div>
             ))
           )}
         </div>
-        {help && !sub && <p class={`tvsettings__help${helpDanger ? " is-danger" : ""}`}>{help}</p>}
+        {help && !sub && <p class={`tvsettings__help${helpDanger ? " is-danger" : ""}`}>{helpLines.map((l, i) => <span key={i}>{i > 0 && <br />}{l}</span>)}</p>}
       </section>
       {/* What Back does from here: rows → categories, categories (or Done) → lobby; a sub-panel closes itself. */}
       <p class="tvsettings__foot">{t("settings.applies")}{zone !== "sub" && <> · <span class="tv-muted">{t(zone === "rows" ? "tv.backToCategories" : "tv.backToLobby")}</span></>}</p>

@@ -1,16 +1,17 @@
 {
   "id": "en-leisure-01",
-  "version": 2,
+  "version": 3,
   "locale": "en",
   "script": "Latn",
   "title": {
-    "en": "Sports, hobbies & jobs",
-    "fr": "Sports, loisirs et métiers",
-    "ar": "رياضة وهوايات ومهن"
+    "en": "Hard · Sports, hobbies & jobs",
+    "fr": "Difficile · Sports, loisirs et métiers",
+    "ar": "صعب · رياضة وهوايات ومهن"
   },
   "tags": [
     "leisure",
-    "seeded"
+    "seeded",
+    "hard"
   ],
   "ageRating": "all",
   "license": "MIT",
@@ -439,6 +440,32 @@
         "text": "Frankenstein"
       },
       "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Chess"
+      },
+      "undercover": {
+        "text": "Checkers",
+        "alt": [
+          "Draughts",
+          "Checker"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Painter"
+      },
+      "undercover": {
+        "text": "Photographer"
+      },
+      "difficulty": 3,
       "reviewedBy": []
     }
   ]

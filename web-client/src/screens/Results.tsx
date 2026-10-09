@@ -7,7 +7,7 @@ import { Avatar, avatarState, COLOR_BY_ID } from "../components/PlayerChip";
 import { RoleChip, RoleEmblem } from "../components/Role";
 import { Button, Confetti, PALETTE, Slot } from "../components/UI";
 import { Icon } from "../components/Icon";
-import { byId, competitionRank, culprits, rankPlayers, winnerMessage } from "../lib/view";
+import { byId, competitionRank, culprits, hadUndercover, rankPlayers, winnerMessage } from "../lib/view";
 import { ROLE_WAS_KEY } from "../lib/keys";
 
 function Word({ label, word, cls, wordLocale }: { label: string; word: WordRef; cls: string; wordLocale: PlayerView["settings"]["wordLocale"] }) {
@@ -47,9 +47,10 @@ export function Results({ view, me }: { view: PlayerView; me: Me | null }) {
         </div>
         <div class="reswords">
           <Word label={t("results.civilianWord")} word={r.civilianWord} cls="resword--civilian" wordLocale={view.settings.wordLocale} />
-          <Word label={t("results.undercoverWord")} word={r.undercoverWord} cls="resword--undercover" wordLocale={view.settings.wordLocale} />
+          {/* Rules v2: the Undercover is optional; nobody held the second word in a Mole-only game, so it stays hidden. */}
+          {hadUndercover(view) && <Word label={t("results.undercoverWord")} word={r.undercoverWord} cls="resword--undercover" wordLocale={view.settings.wordLocale} />}
         </div>
-        {/* The payoff: who the Mole and the Blank were, above the fold (the scoreboard sorts them to the bottom). */}
+        {/* The payoff: who the Moles and Undercovers were, above the fold (the scoreboard sorts them to the bottom). */}
         {caught.length > 0 && (
           <ul class="culprits">
             {caught.map((p) => (

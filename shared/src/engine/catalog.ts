@@ -95,12 +95,22 @@ export function packAllowedByAge(pack: CatalogPack, settings: Settings): boolean
   return pack.ageRating === "all" || (!settings.familyFilter && pack.ageRating === "teen");
 }
 
+/**
+ * The packs `packIds` selects in the room language. Ids of other languages (the default list carries one easy pack
+ * per language) or absent from the catalog are ignored; when none is left, every pack of the language is selected
+ * (`[]` = all packs, as before).
+ */
+export function selectedPackIds(catalog: Catalog, settings: Settings): string[] {
+  return settings.packIds.filter((id) => catalog.packs.some((p) => p.id === id && p.language === settings.wordLocale));
+}
+
 export function eligiblePacks(catalog: Catalog, settings: Settings): CatalogPack[] {
+  const sel = selectedPackIds(catalog, settings);
   return catalog.packs.filter(
     (p) =>
       p.language === settings.wordLocale &&
       packAllowedByAge(p, settings) &&
-      (settings.packIds.length === 0 || settings.packIds.includes(p.id)),
+      (sel.length === 0 || sel.includes(p.id)),
   );
 }
 

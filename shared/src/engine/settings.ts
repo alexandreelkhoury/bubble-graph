@@ -2,11 +2,18 @@ import { LOCALES, SETTINGS_BOUNDS } from "../constants";
 import type { Catalog } from "./catalog";
 import type { Points, Settings, SettingsPatch } from "./types";
 
+/**
+ * The free easy pack of each language: the default word selection (owner decision 2026-10-07). One list for every
+ * language, so a word-language change keeps it; `eligiblePacks` keeps only the room language's packs. An id from this
+ * list is valid even when the catalog lacks it (test catalogs, a missing pack): it is then ignored, never "locked".
+ */
+export const DEFAULT_PACK_IDS: readonly string[] = ["en-everyday-01", "fr-everyday-01", "ar-everyday-01"];
+
 export const DEFAULT_SETTINGS: Settings = {
   winRule: "official",
   revealRoles: false,
   roleMode: "auto",
-  undercoverCount: 1,
+  undercoverCount: 0,
   blankCount: 1,
   clueSeconds: 45,
   voteSeconds: 90,
@@ -15,16 +22,16 @@ export const DEFAULT_SETTINGS: Settings = {
   tieBreak: "random",
   blankGuess: true,
   wordLocale: "en",
-  packIds: [],
+  packIds: [...DEFAULT_PACK_IDS],
   difficulties: [1, 2, 3],
   familyFilter: true,
   swapSides: true,
-  points: { civilian: 2, undercover: 10, blank: 6 },
+  points: { civilian: 2, undercover: 10, blank: 10 },
 };
 
 /** Fresh deep copy of the defaults (the exported constant must never be mutated). */
 export function defaultSettings(): Settings {
-  return { ...DEFAULT_SETTINGS, packIds: [], difficulties: [1, 2, 3], points: { ...DEFAULT_SETTINGS.points } };
+  return { ...DEFAULT_SETTINGS, packIds: [...DEFAULT_PACK_IDS], difficulties: [1, 2, 3], points: { ...DEFAULT_SETTINGS.points } };
 }
 
 const isInt = (v: unknown): v is number => typeof v === "number" && Number.isInteger(v);
@@ -59,6 +66,7 @@ export function validateSettings(s: Settings, catalog: Catalog): boolean {
   if (new Set(s.packIds).size !== s.packIds.length) return false;
   for (const id of s.packIds) {
     if (typeof id !== "string" || !PACK_ID_RE.test(id)) return false;
+    if (DEFAULT_PACK_IDS.includes(id)) continue; // any language, present or not (see DEFAULT_PACK_IDS)
     if (!catalog.packs.some((p) => p.id === id && p.language === s.wordLocale)) return false;
   }
   if (!Array.isArray(s.difficulties) || s.difficulties.length === 0) return false;
@@ -85,6 +93,6 @@ export function applySettingsPatch(s: Settings, patch: SettingsPatch, catalog: C
   for (const k of Object.keys(DEFAULT_SETTINGS)) ordered[k] = next[k as keyof Settings];
   for (const k of Object.keys(next)) if (!(k in ordered)) return null; // unknown key (cannot arrive via zod)
   const out = ordered as unknown as Settings;
-  if (patch.wordLocale !== undefined && patch.wordLocale !== s.wordLocale && patch.packIds === undefined) out.packIds = [];
+  if (patch.wordLocale !== undefined && patch.wordLocale !== s.wordLocale && patch.packIds === undefined) out.packIds = [...DEFAULT_PACK_IDS];
   return validateSettings(out, catalog) ? out : null;
 }

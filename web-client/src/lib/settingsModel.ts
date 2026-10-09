@@ -14,6 +14,10 @@ export const CATEGORY_LABEL: Record<SettingsCategory, MessageKey> = {
 };
 /** A help line for the whole category (the roles preview is computed from the view, see rolePreview()). */
 export const CATEGORY_HELP: Partial<Record<SettingsCategory, MessageKey>> = { timers: "settings.timerOffHelp" };
+/** One line per optional role (rules v2): what a Mole and an Undercover are. Shown with the roles preview. */
+export const ROLE_HELP: Record<"blankCount" | "undercoverCount", MessageKey> = {
+  blankCount: "settings.blankCountHelp", undercoverCount: "settings.undercoverCountHelp",
+};
 
 type EnumKey = "winRule" | "tieBreak" | "roleMode" | "wordLocale";
 type BoolKey = "revealRoles" | "blankGuess" | "familyFilter" | "swapSides";
@@ -48,13 +52,14 @@ export const SETTINGS_SCHEMA: Record<SettingsCategory, readonly RowDef[]> = {
     { kind: "enum", id: "tieBreak", label: "settings.tieBreak", options: ["random", "none"],
       optionLabel: keyed({ random: "settings.tieBreakRandom", none: "settings.tieBreakNone" }) },
     { kind: "bool", id: "blankGuess", label: "settings.blankGuess" },
-    points("civilian", "role.civilian"), points("undercover", "role.undercover"), points("blank", "role.blank"),
+    points("civilian", "role.civilian"), points("blank", "role.blank"), points("undercover", "role.undercover"),
   ],
   roles: [
     { kind: "enum", id: "roleMode", label: "settings.roleMode", options: ["auto", "custom"],
       optionLabel: keyed({ auto: "settings.roleModeAuto", custom: "settings.roleModeCustom" }) },
-    { kind: "num", id: "undercoverCount", label: "settings.undercoverCount", bound: B.undercoverCount, format: count, when: custom },
+    // The Mole (BLANK) is the default impostor, so it comes first; the Undercover is optional (0 by default).
     { kind: "num", id: "blankCount", label: "settings.blankCount", bound: B.blankCount, format: count, when: custom },
+    { kind: "num", id: "undercoverCount", label: "settings.undercoverCount", bound: B.undercoverCount, format: count, when: custom },
   ],
   timers: [
     { kind: "num", id: "clueSeconds", label: "settings.clueSeconds", bound: B.clueSeconds, format: formatSeconds },
@@ -110,14 +115,25 @@ export function stepRow(row: RowDef, s: Settings, dir: 1 | -1): SettingsPatch | 
   }
 }
 
-/** The row's current value as text (TV rows, summaries). */
-export function rowValueText(row: RowDef, s: Settings): string {
+/**
+ * The packs of the room language that `packIds` selects. The default list carries one easy pack per language, so ids
+ * of other languages are ignored; none selected means "All packs" (the engine plays every pack then).
+ */
+export function selectedPacks<P extends { id: string }>(s: Settings, available: readonly P[]): P[] {
+  return available.filter((p) => s.packIds.includes(p.id));
+}
+
+/** The row's current value as text (TV rows, summaries). `available`: the room's packs (for the packs row). */
+export function rowValueText(row: RowDef, s: Settings, available?: readonly { id: string }[]): string {
   switch (row.kind) {
     case "enum": return row.optionLabel(s[row.id]);
     case "bool": return s[row.id] ? t("common.on") : t("common.off");
     case "num": return row.format(s[row.id]);
     case "points": return fmtNum(s.points[row.key]);
-    case "packs": return s.packIds.length === 0 ? t("settings.allPacks") : fmtNum(s.packIds.length);
+    case "packs": {
+      const n = available ? selectedPacks(s, available).length : s.packIds.length;
+      return n === 0 ? t("settings.allPacks") : fmtNum(n);
+    }
     case "difficulty": return s.difficulties.map(difficultyLabel).join(" · ");
   }
 }

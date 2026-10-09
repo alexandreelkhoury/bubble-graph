@@ -1,16 +1,17 @@
 {
   "id": "ar-nature-01",
-  "version": 1,
+  "version": 2,
   "locale": "ar",
   "script": "Arab",
   "title": {
-    "en": "Nature & animals",
-    "fr": "Nature et animaux",
-    "ar": "طبيعة وحيوانات"
+    "en": "Hard · Nature & animals",
+    "fr": "Difficile · Nature et animaux",
+    "ar": "صعب · طبيعة وحيوانات"
   },
   "tags": [
     "nature",
-    "animals"
+    "animals",
+    "hard"
   ],
   "ageRating": "all",
   "license": "CC-BY-4.0",
@@ -649,6 +650,23 @@
         "translit": "Shammam",
         "alt": [
           "chammam"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "جبل",
+        "translit": "Jabal"
+      },
+      "undercover": {
+        "text": "تلة",
+        "translit": "Telleh",
+        "alt": [
+          "telle",
+          "tella"
         ]
       },
       "difficulty": 3,

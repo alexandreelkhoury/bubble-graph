@@ -23,7 +23,11 @@
       "tieBreak": "random",
       "blankGuess": true,
       "wordLocale": "en",
-      "packIds": [],
+      "packIds": [
+        "en-everyday-01",
+        "fr-everyday-01",
+        "ar-everyday-01"
+      ],
       "difficulties": [
         1,
         2,
@@ -34,7 +38,7 @@
       "points": {
         "civilian": 2,
         "undercover": 10,
-        "blank": 6
+        "blank": 10
       }
     },
     "players": [

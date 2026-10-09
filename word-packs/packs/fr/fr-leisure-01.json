@@ -1,16 +1,17 @@
 {
   "id": "fr-leisure-01",
-  "version": 1,
+  "version": 2,
   "locale": "fr",
   "script": "Latn",
   "title": {
-    "en": "Sports, hobbies & jobs",
-    "fr": "Sports, loisirs et métiers",
-    "ar": "رياضة وهوايات ومهن"
+    "en": "Hard · Sports, hobbies & jobs",
+    "fr": "Difficile · Sports, loisirs et métiers",
+    "ar": "صعب · رياضة وهوايات ومهن"
   },
   "tags": [
     "leisure",
-    "seeded"
+    "seeded",
+    "hard"
   ],
   "ageRating": "all",
   "license": "MIT",
@@ -484,6 +485,25 @@
       },
       "undercover": {
         "text": "Frankenstein"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Échecs",
+        "alt": [
+          "Échec",
+          "Jeu d’échecs"
+        ]
+      },
+      "undercover": {
+        "text": "Dames",
+        "alt": [
+          "Dame",
+          "Jeu de dames"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": []

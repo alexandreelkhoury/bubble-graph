@@ -185,7 +185,7 @@ describe("UPDATE_SETTINGS / START permissions", () => {
     g.tv({ type: "START" });
     expect(g.state.players.every((p) => p.role !== null)).toBe(true);
     expect(g.get(pid(2)).ready).toBe(true); // disconnected → ready
-    expect(g.state.roleCounts).toEqual({ civilian: 3, undercover: 1, blank: 0 });
+    expect(g.state.roleCounts).toEqual({ civilian: 3, undercover: 0, blank: 1 });
   });
   it("START: compacts seats, deals words, pushes the pair key, sets REVEAL deadline", () => {
     const g = lobby(4);
@@ -593,7 +593,7 @@ describe("MR_WHITE_GUESS", () => {
     g.expire();
     expect(g.state.phase).toBe("RESULTS");
     expect(g.state.result).toMatchObject({ winner: "BLANK", winnerIds: [blank] });
-    expect(g.state.result?.pointsAwarded[blank]).toBe(6);
+    expect(g.state.result?.pointsAwarded[blank]).toBe(10);
     expect(g.state.result?.guesses).toEqual([{ playerId: blank, status: "CORRECT", text: g.state.pair?.civilian.text.toUpperCase(), overridden: false }]);
   });
   it("GUESS deadline → TIMEOUT + VERDICT; TIMEOUT cannot be overridden", () => {
@@ -680,7 +680,8 @@ describe("MR_WHITE_GUESS", () => {
     g.tv({ type: "HOST_ADVANCE" });
     expect(g.state.guess?.status).toBe("PENDING");
     expect(g.state.deadline).toBeNull();
-    const h = lobby(5, { blankGuess: false });
+    // A Mole and an Undercover: catching the Mole without a guess leaves the Undercover, so the game goes on.
+    const h = lobby(5, { blankGuess: false, roleMode: "custom", undercoverCount: 1, blankCount: 1 });
     h.tv({ type: "START" });
     h.readyAll();
     h.speakAll();

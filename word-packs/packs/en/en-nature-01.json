@@ -1,16 +1,17 @@
 {
   "id": "en-nature-01",
-  "version": 1,
+  "version": 2,
   "locale": "en",
   "script": "Latn",
   "title": {
-    "en": "Nature & animals",
-    "fr": "Nature et animaux",
-    "ar": "طبيعة وحيوانات"
+    "en": "Hard · Nature & animals",
+    "fr": "Difficile · Nature et animaux",
+    "ar": "صعب · طبيعة وحيوانات"
   },
   "tags": [
     "nature",
-    "seeded"
+    "seeded",
+    "hard"
   ],
   "ageRating": "all",
   "license": "MIT",
@@ -141,17 +142,6 @@
         "text": "Hail"
       },
       "difficulty": 3,
-      "reviewedBy": []
-    },
-    {
-      "id": "p012",
-      "civilian": {
-        "text": "Jungle"
-      },
-      "undercover": {
-        "text": "Forest"
-      },
-      "difficulty": 2,
       "reviewedBy": []
     },
     {
@@ -402,6 +392,17 @@
         "text": "Park"
       },
       "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Mountain"
+      },
+      "undercover": {
+        "text": "Hill"
+      },
+      "difficulty": 3,
       "reviewedBy": []
     }
   ]

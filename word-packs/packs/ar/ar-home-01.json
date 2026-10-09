@@ -1,16 +1,17 @@
 {
   "id": "ar-home-01",
-  "version": 2,
+  "version": 3,
   "locale": "ar",
   "script": "Arab",
   "title": {
-    "en": "Things & home",
-    "fr": "Objets et maison",
-    "ar": "أغراض البيت"
+    "en": "Hard · Things & home",
+    "fr": "Difficile · Objets et maison",
+    "ar": "صعب · أغراض البيت"
   },
   "tags": [
     "home",
-    "objects"
+    "objects",
+    "hard"
   ],
   "ageRating": "all",
   "license": "CC-BY-4.0",
