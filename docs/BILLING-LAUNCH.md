@@ -38,9 +38,10 @@ Then play one game with the TV app and two phones. Every pack is playable and no
 
 1. Upload the AAB (versionCode 3, 1.0.0) to Internal or Closed testing. Products can only be created after a build that contains the Billing library has been uploaded.
 2. **Products** ([PAYMENTS-SPEC §8.B.5–6](PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps)). Use exactly these ids, because the code depends on them:
-   - subscription `premium`, with base plans `monthly` and `yearly`, and the offer `trial-7d` (new customers, 7-day free trial) on **each** plan. Turn Pause off.
-   - one one-time product per row of `pnpm --silent --filter @mishana/server billing:products` (14 packs: `pack_en_food_01` … `pack_lb_life_01`), each with one purchase option. **Activate** each one.
-   - Prices are yours to set and can change at any time in Play Console. The code never contains a price.
+   **Every product is a one-time in-app product** (Monetize → Products → **One-time products**). There is **no subscription**: do not create one.
+   - `premium`: lifetime Premium (non-consumable, one purchase option, "Buy"). Recommended price **$7.99**. Launch promo **$5.99**: set it as a sale / temporary price change in Play Console (no code involved), then end it to return to $7.99. **Activate** it.
+   - one one-time product per pack row of `pnpm --silent --filter @mishana/server billing:products` (14 packs: `pack_en_food_01` … `pack_lb_life_01`), each with one purchase option. Recommended **$1.99**, **$2.99** for the big packs (the script prints the suggestion). **Activate** each one.
+   - Prices are yours to set and can change at any time in Play Console (use per-country pricing; about 40% lower in Lebanon/ME). The code never contains a price.
 3. **License testing:** Settings → License testing → add your own Gmail and every tester's Gmail (see the release checklist).
 4. **Service account:** Users and permissions → invite `play-api@<project>.iam.gserviceaccount.com` with **View app information** and **View financial data** only.
 5. **RTDN** ([§8.C](PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps)): create the `play-rtdn` topic, the `rtdn-push` service account, and the push subscription to `https://play.mishana.workers.dev/api/billing/rtdn`. Then fill the three vars in `server/wrangler.jsonc`:
@@ -55,7 +56,7 @@ Then play one game with the TV app and two phones. Every pack is playable and no
    npx wrangler secret list                                     # the three names
    ```
    Save `ENTITLEMENT_KEYS` and `ADMIN_TOKEN` in your password manager.
-7. Optional: set `SUPPORT_EMAIL` in `shared/src/billing/products.ts` **and** `tv-app/.../billing/Products.kt` (the same address as the Play listing). While it is empty, the Store hides its help line.
+7. `SUPPORT_EMAIL` is set to `alexkhoury@hotmail.com` in `shared/src/billing/products.ts` **and** `tv-app/.../billing/Products.kt` (the Store's help line). Use the same address as the Play listing; change both together.
 
 ## Phase 3: switch billing on
 
@@ -67,8 +68,8 @@ curl -s https://play.mishana.workers.dev/api/config          # {"billing":true}
 
 1. Play Console → Monetization setup → Real-time developer notifications → topic `projects/<project>/topics/play-rtdn` → **Send test message**. The Worker logs show `{"code":"RTDN_TEST"}`.
 2. **Owner access** (right after the switch): see [DEV.md → Owner: free Premium on every device](DEV.md#owner-free-premium--every-pack-on-every-device). The install id only appears in Settings → About once billing is on.
-3. Run the end-to-end test in [PAYMENTS-SPEC §8.E](PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps) with a license-tester account (trial, pack, refund, cancel, restore).
-4. Set up alerts on `BILLING_ACK_OVERDUE`, `BILLING_ACK_REJECTED`, `BILLING_AUTH`, `BILLING_BUDGET`, `BILLING_SUB_STALE` and `RTDN_AUTH` (§8.D).
+3. Run the end-to-end test in [PAYMENTS-SPEC §8.E](PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps) with a license-tester account (premium, pack, pending, refund, restore).
+4. Set up alerts on `BILLING_ACK_OVERDUE`, `BILLING_ACK_REJECTED`, `BILLING_AUTH`, `BILLING_BUDGET`, `RTDN_AUTH` and `RTDN_UNEXPECTED` (a subscription notification: there should be none) (§8.D).
 
 Note: `BILLING_ENABLED` covers the whole Worker. Once it is `"1"`, every free room (the browser `/tv` and sideloaded TVs included) plays only the starter packs. The browser `/tv` shows "TV app only" in its store.
 

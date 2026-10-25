@@ -160,14 +160,14 @@ In fake mode the server serves synthetic Google purchases from the Billing DO an
 B=http://127.0.0.1:8787; I=0123456789abcdef0123456789abcdef   # installId: 32 lowercase hex
 curl -s $B/api/billing/catalog                                     # "mode":"fake"
 curl -s -X POST $B/api/billing/fake/purchase -H 'Content-Type: application/json' \
-  -d "{\"installId\":\"$I\",\"productId\":\"premium\",\"basePlanId\":\"yearly\",\"offerId\":\"trial-7d\"}"   # {"purchaseToken":"fake.sub.premium.1"}
+  -d "{\"installId\":\"$I\",\"productId\":\"premium\"}"   # {"purchaseToken":"fake.premium.1"}
 curl -s -X POST $B/api/billing/verify -H 'Content-Type: application/json' \
-  -d "{\"installId\":\"$I\",\"purchases\":[{\"productId\":\"premium\",\"purchaseToken\":\"fake.sub.premium.1\"}]}"
+  -d "{\"installId\":\"$I\",\"purchases\":[{\"productId\":\"premium\",\"purchaseToken\":\"fake.premium.1\"}]}"
 curl -s -X POST $B/api/billing/fake/set -H 'Content-Type: application/json' \
-  -d '{"purchaseToken":"fake.sub.premium.1","state":"SUBSCRIPTION_STATE_EXPIRED"}'          # 204; same path as an RTDN
+  -d '{"purchaseToken":"fake.premium.1","state":"REVOKED"}'          # 204; a refund, same path as an RTDN
 ```
 
-`fake/purchase` takes `outcome: "PENDING"` for a pending purchase; `fake/set` takes any `SUBSCRIPTION_STATE_*` for a subscription, or `PURCHASED | PENDING | CANCELLED | REVOKED` for a pack. Outside fake mode both routes answer 404 (or 503 when fake mode was asked for but refused).
+`fake/purchase` takes `outcome: "PENDING"` for a pending purchase; `fake/set` takes `PURCHASED | PENDING | CANCELLED | REVOKED` (every product, `premium` included, is one-time). Outside fake mode both routes answer 404 (or 503 when fake mode was asked for but refused).
 
 ### Cron (local)
 

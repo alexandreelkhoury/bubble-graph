@@ -117,23 +117,25 @@ For a France-based seller of digital goods to EU consumers, VAT is due at the bu
 
 ## 5. Recommendation
 
-### 5.1 v1 model — DECIDED by the owner (2026-10-04)
+### 5.1 v1 model — DECIDED by the owner (2026-10-04, revised 2026-10-26)
 
-The owner chose to combine a subscription with à-la-carte packs, replacing the "one Full SKU, no subscription" suggestion that was here before.
+**Decision log**
+- 2026-10-04: Premium subscription (monthly + yearly, 7-day trial) plus à-la-carte packs.
+- **2026-10-26: the subscription is dropped. Premium becomes a one-time lifetime unlock** (`premium`, Play in-app product, non-consumable): **$7.99 list, $5.99 launch promo** (the promo is a Play Console sale / temporary price change, not code). Packs stay one-time at $1.99–2.99. Reason: a party game is played a few nights a year, so a subscription reads as a trap; a lifetime price matches the market scan (growth/marketing/launch/MARKET-SCAN.md) and removes the trial/renewal/manage-subscription UI. The store is best offered after the first finished game (see PAYMENTS-SPEC §4.4).
 
 | Item | Decision |
 |---|---|
 | Free tier | Core game: full rules, 3–12 players, **one starter pack per language** (EN/FR/AR). |
-| **Premium subscription** | `premium` (Play subscription). Base plans: **monthly about $4.99** and **yearly about $29.99**, with a **7-day free trial** offer for new subscribers. Unlocks **every pack, including packs released later**, plus premium settings. |
-| **Single packs** | One-time **non-consumable** Play products `pack_<packId>` at about $1.99–2.99, **owned forever**, whether or not the buyer subscribes. Every premium pack is sold this way, including the Lebanese pack. |
-| Lifetime unlock | None. |
+| **Premium (lifetime)** | `premium`: one-time **non-consumable** Play in-app product. **$7.99** list, **$5.99** launch promo (Play Console sale). Unlocks **every pack, including packs released later**, plus premium settings, for good. No subscription, no trial. |
+| **Single packs** | One-time **non-consumable** Play products `pack_<packId>`, **owned forever**. Recommended: **$1.99** (packs under 60 pairs), **$2.99** (60+ pairs). Every premium pack is sold this way, including the Lebanese pack. |
+| Subscription | None (dropped 2026-10-26). |
 | Who pays | **The host TV only.** Phones never pay and never see a buy button. |
 | Prices by region | Use Play's per-country pricing. Suggested: about 40% lower in Lebanon and the Middle East. **Exact prices are set in Play Console (owner decision).** |
 | Seller | **The owner as an individual** Play developer account. Payouts go to a personal bank account. Check Play Console's current rules for individual accounts. For example, new personal accounts must run a closed test with testers before going to production (unverified for 2026; check in Play Console). |
 | Rail on Android TV | **Google Play Billing only.** |
 | Phone-web purchase | **None.** Not policy-safe (see §1.3). The phone only shows "Unlock on the TV". |
 
-Entitlement = `premium` if a subscription is active (including the trial and the grace period), **plus** the set of owned `pack_*` products. A room's playable packs are the free packs, plus all packs if premium, plus the host's owned packs.
+Entitlement = `premium` if the `premium` one-time product is owned (purchased, not refunded or voided), **plus** the set of owned `pack_*` products. A room's playable packs are the free packs, plus all packs if premium, plus the host's owned packs.
 
 ### 5.2 Entitlement architecture (account-less)
 
@@ -170,15 +172,15 @@ Cron Trigger (daily) ──Voided Purchases API──▶ revoke refunded tokens
 |---|---|---|
 | 1 | Seller | **Decided:** the owner, as an individual |
 | 2 | Free tier | **Decided:** core game, 1 starter pack per language |
-| 3 | Price points by region | Open: about $4.99/mo, $29.99/yr, packs $1.99–2.99; lower in Lebanon/ME |
-| 4 | Product split | **Decided:** `premium` subscription (monthly + yearly, 7-day trial) plus `pack_*` non-consumables |
+| 3 | Price points by region | **Decided (US):** premium $7.99 ($5.99 launch promo), packs $1.99–2.99; lower in Lebanon/ME via Play per-country pricing |
+| 4 | Product split | **Decided 2026-10-26:** `premium` lifetime one-time product plus `pack_*` non-consumables; no subscription |
 | 5 | Accounts in v1? | No (account-less, keyed by Google purchase token) |
 | 6 | Apple TV timing | After Android TV hits product-market fit |
 
 ### 5.5 Setup checklist
 
 1. **Play Console** developer account → **Payments profile / merchant account** (entity and bank, ideally French) → enrol in the **15% service-fee tier** (legacy regions).
-2. Create the in-app products (`full_unlock`, later `pack_*`). Set per-country prices and add license testers.
+2. Create the in-app products (`premium`, then every `pack_*`). Set per-country prices and add license testers.
 3. Upload to an internal or closed test track. Billing only works on builds distributed through Play.
 4. **Google Cloud project** linked in Play Console → enable the Google Play Android Developer API → create a **service account**, grant it "View financial data" and "Manage orders" in Play Console, and store its JSON key as a Workers secret.
 5. **Pub/Sub topic** for RTDN → grant `google-play-developer-notifications@system.gserviceaccount.com` publish rights → create a push subscription to `https://<worker>/play/rtdn` → set the topic in Play Console → Monetization setup.
