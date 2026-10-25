@@ -11,37 +11,28 @@ Everything below is run by the owner. Agents never deploy, set secrets or touch 
 | DO migration `v2` (`new_sqlite_classes: ["Billing"]`) | Creates the `Billing` Durable Object class (purchases, bindings, grants). **This is permanent.** From now on every deployed version must export `Billing` with the same binding. Removing it needs a `deleted_classes` migration, which deletes all purchase data. |
 | Rate limits `BILLING_LIMITER` (`1003`), `RTDN_LIMITER` (`1004`) | New namespaces. Keep them unique in the account (1001 and 1002 are already in use by this Worker). |
 | Crons `23 * * * *`, `17 3 * * *` | Ack retries, voided purchases, pruning. They do nothing while `BILLING_ENABLED` is `"0"`. |
-| `secrets.required: PLAY_SERVICE_ACCOUNT_JSON, ENTITLEMENT_KEYS` | `wrangler deploy` fails until **both** secrets exist, **even with billing off**. |
+| Billing secrets `PLAY_SERVICE_ACCOUNT_JSON`, `ENTITLEMENT_KEYS` | Not needed while billing is off. With `BILLING_ENABLED` `"1"`, `check-deploy.mjs` refuses to deploy until both exist (it checks `wrangler secret list`, names only). |
 | `GET /api/config` → `{"billing":false}` | Every client (TV 1.0.0, phone, `/tv`) hides premium UI while it is false. |
 
 Live rooms: the deploy restarts the Room DOs. Stored room state is compatible (the new fields are optional on disk), but deploy at a quiet hour anyway.
 
 ## Phase 1: deploy `main` dark (`BILLING_ENABLED` "0")
 
-Prerequisite: a Google Cloud service-account key. It does **not** need the Play Console app yet. Run only the first part of [PAYMENTS-SPEC §8.C](PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps), from `gcloud projects create` to `gcloud iam service-accounts keys create play-api.json …`. The Play Console invitation and the Pub/Sub steps come in phase 2.
+No prerequisites: with billing off, no secret is needed.
 
 ```sh
 cd ~/bubble-graph && git checkout main && git pull --rebase --autostash && pnpm install
 pnpm typecheck && pnpm lint && pnpm test                     # all green before a deploy
 
-# 1. Secrets (once). `secret put` on the live Worker is harmless: prod-rules-v2 ignores them.
-pnpm --filter @mishana/server gen:entitlement-key            # prints {"kid":"k1","x":"…","d":"…"}
-cd server
-npx wrangler secret put ENTITLEMENT_KEYS                     # paste {"active":"k1","keys":[ <that object> ]}
-npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json
-openssl rand -hex 32 | tee /dev/tty | npx wrangler secret put ADMIN_TOKEN   # optional, for owner grants; save it in your password manager
-npx wrangler secret list                                     # must list the three names
-cd ..
-
-# 2. Deploy (always `pnpm run deploy`, never bare `pnpm deploy`)
+# Deploy (always `pnpm run deploy`, never bare `pnpm deploy`)
 pnpm run deploy        # build + pack-lint --release + check-deploy + wrangler deploy
 
-# 3. Smoke test
+# Smoke test
 curl -s https://play.mishana.workers.dev/healthz             # {"ok":true,…}
 curl -s https://play.mishana.workers.dev/api/config          # {"billing":false}
 ```
 
-Then play one game with the TV app and two phones. Every pack is playable and no premium UI is shown. Store `ENTITLEMENT_KEYS` in your password manager too. Delete `play-api.json` from disk once phase 2 is done.
+Then play one game with the TV app and two phones. Every pack is playable and no premium UI is shown.
 
 ## Phase 2: Play Console and Google Cloud (while the closed test runs)
 
@@ -54,13 +45,23 @@ Then play one game with the TV app and two phones. Every pack is playable and no
 4. **Service account:** Users and permissions → invite `play-api@<project>.iam.gserviceaccount.com` with **View app information** and **View financial data** only.
 5. **RTDN** ([§8.C](PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps)): create the `play-rtdn` topic, the `rtdn-push` service account, and the push subscription to `https://play.mishana.workers.dev/api/billing/rtdn`. Then fill the three vars in `server/wrangler.jsonc`:
    `RTDN_AUDIENCE` = `https://play.mishana.workers.dev/api/billing/rtdn`, `RTDN_SA_EMAIL` = `rtdn-push@<project>.iam.gserviceaccount.com`, `RTDN_SUBSCRIPTION` = `projects/<project>/subscriptions/play-rtdn-push`.
-6. Optional: set `SUPPORT_EMAIL` in `shared/src/billing/products.ts` **and** `tv-app/.../billing/Products.kt` (the same address as the Play listing). While it is empty, the Store hides its help line.
+6. **Secrets** (`secret put` on the live Worker is harmless while billing is off):
+   ```sh
+   pnpm --filter @mishana/server gen:entitlement-key            # prints {"kid":"k1","x":"…","d":"…"}
+   cd server
+   npx wrangler secret put ENTITLEMENT_KEYS                     # paste {"active":"k1","keys":[ <that object> ]}
+   npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json   # key from §8.C; then delete play-api.json
+   openssl rand -hex 32 | tee /dev/tty | npx wrangler secret put ADMIN_TOKEN   # for owner grants
+   npx wrangler secret list                                     # the three names
+   ```
+   Save `ENTITLEMENT_KEYS` and `ADMIN_TOKEN` in your password manager.
+7. Optional: set `SUPPORT_EMAIL` in `shared/src/billing/products.ts` **and** `tv-app/.../billing/Products.kt` (the same address as the Play listing). While it is empty, the Store hides its help line.
 
 ## Phase 3: switch billing on
 
 ```sh
 # in server/wrangler.jsonc: "BILLING_ENABLED": "1" (plus the RTDN vars from phase 2); commit it on main, then:
-pnpm run deploy        # check-deploy warns (does not fail) if billing is on with empty RTDN vars
+pnpm run deploy        # check-deploy fails if a billing secret is missing; warns if the RTDN vars are empty
 curl -s https://play.mishana.workers.dev/api/config          # {"billing":true}
 ```
 
