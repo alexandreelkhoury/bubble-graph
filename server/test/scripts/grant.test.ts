@@ -1,6 +1,6 @@
 // PAYMENTS-SPEC §3.12: the `pnpm grant` CLI (argument parsing; the HTTP side is covered by admin.test.ts).
 import { describe, expect, it } from "vitest";
-import { buildRequest, normalizeId, parseExpires } from "../../scripts/grant.mjs";
+import { buildRequest, buildRequests, normalizeId, parseExpires } from "../../scripts/grant.mjs";
 
 const ID = "0123456789abcdef0123456789abcdef";
 const HASH = "f".repeat(64);
@@ -29,6 +29,17 @@ describe("pnpm grant", () => {
   it("the TV's grouped display form is accepted", () => {
     expect(normalizeId("0123 4567 89AB CDEF-0123 4567 89ab cdef")).toBe(ID);
     expect(body(buildRequest(["0123-4567-89ab-cdef-0123-4567-89ab-cdef"], ENV, NOW))).toMatchObject({ installId: ID });
+  });
+
+  it("grant: several install ids (the owner's TVs) → one POST each, same options; all validated first", () => {
+    const ID2 = "fedcba9876543210fedcba9876543210";
+    const rs = buildRequests([ID, "fedc ba98 7654 3210 fedc ba98 7654 3210", "--note", "owner"], ENV, NOW);
+    expect(rs.map((r) => body(r))).toEqual([{ installId: ID, premium: true, note: "owner" }, { installId: ID2, premium: true, note: "owner" }]);
+    expect(rs.every((r) => r.init.method === "POST")).toBe(true);
+    expect(() => buildRequests([ID, "nothex"], ENV, NOW)).toThrow(/32 hex/);
+    expect(() => buildRequests([ID, ID], ENV, NOW)).toThrow(/twice/);
+    expect(() => buildRequest([ID, ID2], ENV, NOW)).toThrow(/buildRequests/);
+    expect(() => buildRequests(["revoke", ID, ID2], ENV, NOW)).toThrow(/revoke/);
   });
 
   it("list and revoke (by install id or by the hash `list` prints)", () => {
