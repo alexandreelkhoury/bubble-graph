@@ -218,15 +218,35 @@ pnpm grant revoke 0123456789abcdef0123456789abcdef   # or the 64-hex hash printe
 
 4. The TV picks it up on its next entitlement refresh: open the Store and choose **Restore purchases**, or restart the app. A new room is then premium; a room already open gets it with the TV's next token.
 
+Admin routes, like every `/api/billing/*` route, answer 404 while `BILLING_ENABLED` is not `"1"`, and the TV only shows its install id in About once billing is on.
+
+### Owner: free Premium + every pack on every device
+
+Premium covers every premium pack, current and future, plus the premium settings. A grant with no end date gives it to an install for good. The grant survives app updates, server deploys and the daily prune, and it never touches Google or a purchase's install slots. One-time setup: `ADMIN_TOKEN` (step 1 above) and `BILLING_ENABLED` `"1"` ([BILLING-LAUNCH.md](BILLING-LAUNCH.md)).
+
+```sh
+export MISHANA_URL=https://play.mishana.workers.dev
+read -rs ADMIN_TOKEN && export ADMIN_TOKEN          # from your password manager
+pnpm grant "<id of TV 1>" "<id of TV 2>" --note "owner"   # each id: TV → Settings → About; spaces are fine
+```
+
+Then on each TV: Store → **Restore purchases** (or restart the app). Run the same command later for any new device: a new TV, a reinstall, cleared app data or a browser `/tv`. Each of these has a new install id. Use `pnpm grant list` and `pnpm grant revoke <hash>` to remove ids you no longer use.
+
+Why install ids and not your Google account: the app has no accounts, and the server never learns a Google identity (Play only sees `obfuscatedAccountId = sha256(installId)`), so a grant can only be tied to installs. Your Gmail as a **license tester** (Play Console → Settings → License testing) also lets you buy for free on any device signed into that account, with Restore. That path is for testing: test subscriptions stop after 6 short renewals (minutes), so it is not lasting Premium. Use the grant.
+
 ### Vars, observability and logs
 
 - Vars: `PLAY_PACKAGE_NAME` (`app.mishana.tv`), `RTDN_AUDIENCE` (`https://<your-domain>/api/billing/rtdn`), `RTDN_SA_EMAIL` (the push service account), `RTDN_SUBSCRIPTION` (`projects/<project>/subscriptions/play-rtdn-push`). Until the RTDN vars are set, `/api/billing/rtdn` answers 503 and Pub/Sub retries.
 - **Workers traces stay disabled** (`observability.traces.enabled: false`, enforced by `check-deploy.mjs`): traces record outbound fetch URLs, and every Google Play call carries a raw purchase token in its path. Do not add Logpush or a Tail Worker without revisiting PAYMENTS-SPEC §3.2.
 - Billing code logs only through `billingLog(code, fields)` (`server/src/billing/log.ts`), which keeps numbers, booleans and a few enum strings and redacts every other string. Alert on the codes `BILLING_ACK_OVERDUE`, `BILLING_ACK_REJECTED`, `BILLING_AUTH`, `BILLING_BUDGET`, `BILLING_SUB_STALE`, `RTDN_AUTH` (PAYMENTS-SPEC §8.D).
 
+### `BILLING_ENABLED` (the production switch)
+
+`vars.BILLING_ENABLED` in `server/wrangler.jsonc` (default `"0"`, see `server/src/config.ts`). Off: `/api/billing/*` and `/api/admin/*` answer 404, the crons do nothing, rooms play the whole catalog, and `GET /api/config` → `{"billing":false}` makes the TV, phone and `/tv` hide every premium UI. `"1"`: PAYMENTS-SPEC as written. The switch and the move from `prod-rules-v2` are covered in [BILLING-LAUNCH.md](BILLING-LAUNCH.md).
+
 ### Before the first production release
 
-- `pnpm run deploy` (never bare `pnpm deploy`: pnpm 10 runs its built-in `deploy` command instead of the script) runs `pack-lint --release`: each free starter pack (`*-everyday-01`) needs at least **40 pairs** (they have 24 today, so the deploy fails until they grow).
+- `pnpm run deploy` (never bare `pnpm deploy`: pnpm 10 runs its built-in `deploy` command instead of the script) runs `pack-lint --release`: each free starter pack (`*-everyday-01`) needs at least **40 pairs** (170–176 today, so the gate passes).
 - Create the Play products from `pnpm --filter @mishana/server billing:products` (PAYMENTS-SPEC §8.B).
 - Replace the rate-limit `namespace_id`s `1003`/`1004` like `1001`/`1002`.
 
