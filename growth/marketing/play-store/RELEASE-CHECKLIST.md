@@ -186,6 +186,7 @@ Internal testing does **not** count toward the 12×14 requirement.
 7.5 Send testers: the opt-in link + "Accept, then install on your Google TV from the Play Store (same Google account), keep it installed and stay opted in for at least 14 days, and host at least one game." Day 1 = the day the 12th tester opted in.
 7.6 Track progress on **Dashboard** ("Production access" card shows testers opted in / days).
 7.7 Ship fixes during the test as new AABs (versionCode 2, 3…) to the same closed track; testers stay opted in.
+7.8 **License testers (Premium and packs for free):** Setup → **License testing** → add **your own Gmail** and every tester's Gmail → License response `RESPOND_NORMALLY` → Save. Do it **before** anyone opens the Store: a license tester sees "Test card, always approves" in the purchase sheet and is never charged (this works in test tracks; **not** in production [VERIFY on the License testing page]). Test timings are short: the monthly plan renews every 5 min, the yearly every 30 min, the 7-day trial lasts 3 min, and a test subscription ends after 6 renewals. So license testing is for trying the flows (PAYMENTS-SPEC §8.E), **not** for your own lasting access. For that, use the admin grant: `pnpm grant <TV install id> --note owner` (docs/DEV.md → "Owner: free Premium + every pack on every device"). Billing must be switched on on the server first (docs/BILLING-LAUNCH.md phase 3), otherwise the TV shows no Store.
 
 ## Step 8 — Apply for production (**YOU**, after day 14)
 
