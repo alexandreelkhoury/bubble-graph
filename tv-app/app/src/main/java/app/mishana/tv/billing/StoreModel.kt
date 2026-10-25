@@ -99,6 +99,8 @@ data class StoreScreenModel(
     val pitchCount: Int,
     val pitchPairs: Int,
     val pendingFooter: Boolean,
+    /** No premium and no owned pack on this Google account: the footer shows `store.cardTip`. */
+    val ownsNothing: Boolean = false,
 )
 
 sealed interface StoreFocusTarget {
@@ -169,6 +171,7 @@ object StoreModel {
             pitchCount = source.size,
             pitchPairs = (pairs / 10) * 10,
             pendingFooter = s.pending.isNotEmpty(),
+            ownsNothing = !premium && owned.isEmpty(),
         )
     }
 

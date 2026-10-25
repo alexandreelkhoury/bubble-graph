@@ -411,6 +411,7 @@ object I18nKeys {
         "store.restored" to R.string.store__restored,
         "store.nothingToRestore" to R.string.store__nothing_to_restore,
         "store.help" to R.string.store__help,
+        "store.cardTip" to R.string.store__card_tip,
         "store.loading" to R.string.store__loading,
         "store.unavailable" to R.string.store__unavailable,
         "store.playUnavailable" to R.string.store__play_unavailable,

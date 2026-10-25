@@ -448,6 +448,7 @@
     <string name="store__restored">Purchases restored</string>
     <string name="store__nothing_to_restore">No purchases found on this Google account</string>
     <string name="store__help">Need help? %1$s</string>
+    <string name="store__card_tip">No card? Add one on your phone: %1$s</string>
     <string name="store__loading">Loading the store…</string>
     <string name="store__unavailable">The store isn\'t available right now. Try again later.</string>
     <string name="store__play_unavailable">To buy on this TV, sign in to Google Play in the TV\'s settings.</string>

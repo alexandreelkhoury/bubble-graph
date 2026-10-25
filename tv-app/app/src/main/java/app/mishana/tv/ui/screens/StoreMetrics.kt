@@ -39,17 +39,29 @@ object StoreMetrics {
 
     const val FOOTER_H = 48
 
-    /** The footer's single text line (§4.4): a pending purchase notice wins over `store.help`; no email hides help. */
-    enum class FooterLine { PENDING, HELP, NONE }
+    /**
+     * The footer's single text line (§4.4): a pending purchase notice wins; then, while nothing is bought on this
+     * account, `store.cardTip` (add a card on the phone, so nobody types a card number with the remote); else
+     * `store.help`, hidden when there is no email.
+     */
+    enum class FooterLine { PENDING, CARD_TIP, HELP, NONE }
 
-    fun footerLine(pending: Boolean, supportEmail: String): FooterLine = when {
+    /** Where `store.cardTip` sends the viewer: Google's own payment methods page (not another way to pay, so not steering). */
+    const val CARD_TIP_URL = "pay.google.com"
+
+    /** Widest the footer's text may be: the content width minus the Restore button and the Back label (both conservative). */
+    const val FOOTER_TEXT_W = 520
+
+    fun footerLine(pending: Boolean, supportEmail: String, ownsNothing: Boolean = false): FooterLine = when {
         pending -> FooterLine.PENDING
+        ownsNothing -> FooterLine.CARD_TIP
         supportEmail.isNotBlank() -> FooterLine.HELP
         else -> FooterLine.NONE
     }
 
     /** Text lines the footer shows (at most one, so it fits FOOTER_H in every script). */
-    fun footerLines(pending: Boolean, supportEmail: String): Int = if (footerLine(pending, supportEmail) == FooterLine.NONE) 0 else 1
+    fun footerLines(pending: Boolean, supportEmail: String, ownsNothing: Boolean = false): Int =
+        if (footerLine(pending, supportEmail, ownsNothing) == FooterLine.NONE) 0 else 1
 
     /** Line heights of the type scale used here (MishType: Latin / Arabic). */
     fun titleLh(arabic: Boolean) = if (arabic) 40 else 32

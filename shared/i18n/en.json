@@ -445,6 +445,7 @@
   "store.restored": "Purchases restored",
   "store.nothingToRestore": "No purchases found on this Google account",
   "store.help": "Need help? {email}",
+  "store.cardTip": "No card? Add one on your phone: {url}",
   "store.loading": "Loading the store…",
   "store.unavailable": "The store isn't available right now. Try again later.",
   "store.playUnavailable": "To buy on this TV, sign in to Google Play in the TV's settings.",

@@ -455,6 +455,7 @@
   "store.restored": "Achats restaurés",
   "store.nothingToRestore": "Aucun achat trouvé sur ce compte Google",
   "store.help": "Besoin d’aide ? {email}",
+  "store.cardTip": "Pas de carte ? Ajoutez-la sur votre mobile : {url}",
   "store.loading": "Chargement de la boutique…",
   "store.unavailable": "La boutique n’est pas disponible. Réessayez plus tard.",
   "store.playUnavailable": "Pour acheter sur ce téléviseur, connectez-vous à Google Play dans les paramètres du téléviseur.",

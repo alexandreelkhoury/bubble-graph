@@ -488,6 +488,7 @@
     <string name="store__restored">رجعت المشتريات</string>
     <string name="store__nothing_to_restore">ما في مشتريات على حساب Google هيدا</string>
     <string name="store__help">بدكن مساعدة؟ %1$s</string>
+    <string name="store__card_tip">ما عندكن بطاقة؟ زيدوها من تلفونكن: %1$s</string>
     <string name="store__loading">عم يحمّل المتجر…</string>
     <string name="store__unavailable">المتجر مش متاح هلّق. جرّبوا بعدين.</string>
     <string name="store__play_unavailable">لتشتروا عهالتلفزيون، فوتوا عحساب Google Play من إعدادات التلفزيون.</string>

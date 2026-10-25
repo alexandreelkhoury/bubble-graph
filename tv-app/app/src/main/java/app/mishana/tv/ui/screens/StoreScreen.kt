@@ -264,11 +264,13 @@ private fun ReadyBody(
         Spacer(Modifier.weight(1f))
         Row(Modifier.fillMaxWidth().height(StoreMetrics.FOOTER_H.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(MishSpace.s4)) {
             MishButton(stringResource(R.string.store__restore), onRestore, Modifier.focusRequester(restoreFocus), icon = MishIcons.Refresh)
-            // One caption line fits FOOTER_H (StoreMetrics.footerLine): the pending notice wins over the help line.
+            // One caption line fits FOOTER_H (StoreMetrics.footerLine): pending notice, then the card tip, then help.
             Box(Modifier.weight(1f)) {
-                when (StoreMetrics.footerLine(model.pendingFooter, Products.SUPPORT_EMAIL)) {
+                when (StoreMetrics.footerLine(model.pendingFooter, Products.SUPPORT_EMAIL, model.ownsNothing)) {
                     StoreMetrics.FooterLine.PENDING ->
                         Text(stringResource(R.string.store__pending_body), style = type.caption, color = MishColors.Accent, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    StoreMetrics.FooterLine.CARD_TIP ->
+                        Text(stringResource(R.string.store__card_tip, isolate(StoreMetrics.CARD_TIP_URL)), style = type.caption, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     StoreMetrics.FooterLine.HELP ->
                         Text(stringResource(R.string.store__help, isolate(Products.SUPPORT_EMAIL)), style = type.caption, color = MishColors.TextMuted, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     StoreMetrics.FooterLine.NONE -> Unit

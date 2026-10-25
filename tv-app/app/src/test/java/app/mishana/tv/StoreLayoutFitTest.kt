@@ -111,11 +111,25 @@ class StoreLayoutFitTest {
         assertEquals(StoreMetrics.FooterLine.HELP, StoreMetrics.footerLine(false, email))
         assertEquals(StoreMetrics.FooterLine.NONE, StoreMetrics.footerLine(false, ""))
         assertEquals(StoreMetrics.FooterLine.PENDING, StoreMetrics.footerLine(true, ""))
+        assertEquals(StoreMetrics.FooterLine.PENDING, StoreMetrics.footerLine(true, email, ownsNothing = true))
+        assertEquals(StoreMetrics.FooterLine.CARD_TIP, StoreMetrics.footerLine(false, email, ownsNothing = true))
+        assertEquals(StoreMetrics.FooterLine.CARD_TIP, StoreMetrics.footerLine(false, "", ownsNothing = true))
         // Both texts exist in every locale (the help one takes the email placeholder).
         for (dir in listOf("values", "values-fr", "values-ar")) {
             val x = xml(dir)
             assertTrue(string(x, "store__pending_body").isNotBlank())
             assertTrue(string(x, "store__help").contains("%1\$s"))
+        }
+    }
+
+    /** `store.cardTip` with the URL filled in stays on its one caption line (no ellipsis) in every locale. */
+    @Test
+    fun cardTipFitsTheFooterOnOneLine() {
+        for ((lang, dir) in listOf("en" to "values", "fr" to "values-fr", "ar" to "values-ar")) {
+            val tip = string(xml(dir), "store__card_tip").replace("%1\$s", StoreMetrics.CARD_TIP_URL)
+            val w = em(semibold, tip, if (lang == "ar") 0.0 else 0.01) * 20
+            println("card tip $lang: ${"%.0f".format(w)} dp of ${StoreMetrics.FOOTER_TEXT_W}")
+            assertTrue("card tip $lang is $w dp", w <= StoreMetrics.FOOTER_TEXT_W)
         }
     }
 }

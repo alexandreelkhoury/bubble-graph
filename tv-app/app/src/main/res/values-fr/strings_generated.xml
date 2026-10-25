@@ -458,6 +458,7 @@
     <string name="store__restored">Achats restaurés</string>
     <string name="store__nothing_to_restore">Aucun achat trouvé sur ce compte Google</string>
     <string name="store__help">Besoin d’aide ? %1$s</string>
+    <string name="store__card_tip">Pas de carte ? Ajoutez-la sur votre mobile : %1$s</string>
     <string name="store__loading">Chargement de la boutique…</string>
     <string name="store__unavailable">La boutique n’est pas disponible. Réessayez plus tard.</string>
     <string name="store__play_unavailable">Pour acheter sur ce téléviseur, connectez-vous à Google Play dans les paramètres du téléviseur.</string>

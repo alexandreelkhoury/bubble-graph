@@ -485,6 +485,7 @@
   "store.restored": "رجعت المشتريات",
   "store.nothingToRestore": "ما في مشتريات على حساب Google هيدا",
   "store.help": "بدكن مساعدة؟ {email}",
+  "store.cardTip": "ما عندكن بطاقة؟ زيدوها من تلفونكن: {url}",
   "store.loading": "عم يحمّل المتجر…",
   "store.unavailable": "المتجر مش متاح هلّق. جرّبوا بعدين.",
   "store.playUnavailable": "لتشتروا عهالتلفزيون، فوتوا عحساب Google Play من إعدادات التلفزيون.",
