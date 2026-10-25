@@ -1,7 +1,7 @@
 {
   "mode": "google",
   "packageName": "app.mishana.tv",
-  "subscription": { "productId": "premium", "basePlanIds": ["monthly", "yearly"], "trialOfferId": "trial-7d" },
+  "premium": { "productId": "premium" },
   "freePackIds": ["ar-everyday-01", "en-everyday-01", "fr-everyday-01"],
   "packs": [
     {"packId": "ar-home-01", "productId": "pack_ar_home_01", "locale": "ar", "language": "ar", "title": {"en": "Hard · Things & home", "fr": "Difficile · Objets et maison", "ar": "صعب · أغراض البيت"}, "pairCount": 28, "ageRating": "all"},

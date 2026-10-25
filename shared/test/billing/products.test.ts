@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  BASE_PLAN_IDS, packIdFromProductId, packProductId, PREMIUM_PACK_ID_MAX, PREMIUM_PRODUCT_ID, PREMIUM_SETTING_KEYS,
-  PRODUCT_ID_MAX, PRODUCT_ID_REGEX, TRIAL_OFFER_ID,
+  isSellableProductId, packIdFromProductId, packProductId, PREMIUM_PACK_ID_MAX, PREMIUM_PRODUCT_ID, PREMIUM_SETTING_KEYS,
+  PRODUCT_ID_MAX, PRODUCT_ID_REGEX, SUPPORT_EMAIL,
 } from "../../src/billing/products";
 import { DEFAULT_SETTINGS } from "../../src/engine/settings";
 import { TEST_CATALOG } from "../../src/testing";
@@ -9,8 +9,10 @@ import { TEST_CATALOG } from "../../src/testing";
 describe("billing products (PAYMENTS-SPEC §1.3)", () => {
   it("constants", () => {
     expect(PREMIUM_PRODUCT_ID).toBe("premium");
-    expect(BASE_PLAN_IDS).toEqual(["monthly", "yearly"]);
-    expect(TRIAL_OFFER_ID).toBe("trial-7d");
+    expect(SUPPORT_EMAIL).toBe("alexkhoury@hotmail.com");
+    expect(isSellableProductId("premium")).toBe(true);
+    expect(isSellableProductId("pack_lb_food_01")).toBe(true);
+    for (const bad of ["premium_monthly", "pack_", "monthly", ""]) expect(isSellableProductId(bad), bad).toBe(false);
     expect(PRODUCT_ID_MAX).toBe(40);
     expect(PREMIUM_PACK_ID_MAX).toBe(35);
     expect(PREMIUM_SETTING_KEYS).toEqual(["points"]);

@@ -7,7 +7,7 @@ import { normalizeProduct } from "../../src/billing/normalize";
 import { handleRtdn } from "../../src/billing/rtdn";
 import { verify } from "../../src/billing/routes";
 import { importFakeSigner } from "../../src/billing/token";
-import { INSTALL_A, NOW, ScriptedGoogle, hashOf, newCore, playToken, product, sub } from "../support/billing";
+import { INSTALL_A, NOW, ScriptedGoogle, hashOf, newCore, playToken, product } from "../support/billing";
 import { AUD, EMAIL, jwksFor, oidcToken, rsaKey } from "../support/oidc";
 
 const lines: string[] = [];
@@ -35,8 +35,8 @@ async function assertClean(secrets: string[]): Promise<void> {
 
 describe("billingLog redaction", () => {
   it("keeps numbers, booleans and allowed enum strings; redacts every other string", () => {
-    expect(sanitizeLogFields({ count: 3, ok: true, reason: "aud", op: "sub_get", token: TOKEN_150, reasonX: "aud", status: 503, n: null })).toEqual({
-      count: 3, ok: true, reason: "aud", op: "sub_get", token: REDACTED, reasonX: REDACTED, status: 503, n: null,
+    expect(sanitizeLogFields({ count: 3, ok: true, reason: "aud", op: "product_get", token: TOKEN_150, reasonX: "aud", status: 503, n: null })).toEqual({
+      count: 3, ok: true, reason: "aud", op: "product_get", token: REDACTED, reasonX: REDACTED, status: 503, n: null,
     });
     expect(sanitizeLogFields({ reason: TOKEN_HEX })).toEqual({ reason: REDACTED });
     billingLog("BILLING_AUTH", { code: "x", reason: TOKEN_150 } as Record<string, string>);
@@ -57,7 +57,8 @@ describe("no secret reaches the logs", () => {
       const u = String(url);
       if (u === GOOGLE_TOKEN_URL) return Response.json({ access_token: "at", expires_in: 3600 });
       n++;
-      if (u.includes("subscriptionsv2")) {
+      // The two `premium` reads fail (403/500/network); the pack read succeeds.
+      if (u.includes("productsv2") && !u.includes(`${encodeURIComponent(TOKEN_150)}p`)) {
         if (n % 3 === 0) throw new TypeError(`network down at ${u}`);
         return new Response(`{"error":{"message":"bad token ${u}"}}`, { status: n % 2 ? 403 : 500 });
       }
@@ -77,23 +78,23 @@ describe("no secret reaches the logs", () => {
   it("RTDN, ack and cron paths", async () => {
     const { core, store } = newCore();
     const google = new ScriptedGoogle();
-    google.subs.set(TOKEN_150, sub({ externalAccountIdentifiers: { obfuscatedExternalAccountId: await hashOf(INSTALL_A) } }));
-    google.subs.set(TOKEN_HEX, new GoogleHttpError(503, "sub_get"));
-    google.ackError = new GoogleHttpError(403, "sub_ack");
+    google.products.set(TOKEN_150, product({ productId: "premium", obfuscatedExternalAccountId: await hashOf(INSTALL_A) }));
+    google.products.set(TOKEN_HEX, new GoogleHttpError(503, "product_get"));
+    google.ackError = new GoogleHttpError(403, "product_ack");
     const k = await rsaKey("g1");
     const { jwks } = jwksFor(() => [k], () => NOW);
     const env = { RTDN_LIMITER: { limit: async () => ({ success: true }) }, RTDN_AUDIENCE: AUD, RTDN_SA_EMAIL: EMAIL, RTDN_SUBSCRIPTION: "projects/p/subscriptions/s", PLAY_PACKAGE_NAME: "app.mishana.tv" };
     const call = async (tok: string, id: string, auth?: string) => {
-      const data = btoa(JSON.stringify({ packageName: "app.mishana.tv", subscriptionNotification: { notificationType: 4, purchaseToken: tok } }));
+      const data = btoa(JSON.stringify({ packageName: "app.mishana.tv", oneTimeProductNotification: { notificationType: 1, purchaseToken: tok, sku: "premium" } }));
       const req = new Request("https://p.example/api/billing/rtdn", { method: "POST", headers: { Authorization: auth ?? `Bearer ${await oidcToken(k, NOW)}` }, body: JSON.stringify({ message: { data, messageId: id }, subscription: "projects/p/subscriptions/s" }) });
       return handleRtdn(req, env, { store, api: google, jwks, now: () => NOW, ip: "1.1.1.1" });
     };
     await call(TOKEN_150, "1");
     await call(TOKEN_HEX, "2");
     await call(TOKEN_150, "3", `Bearer ${await oidcToken(k, NOW, { aud: TOKEN_HEX })}`);
-    await ackPurchase(google, store, "sub", "premium", TOKEN_150, await hashOf(TOKEN_150), { timeoutMs: 1000 });
+    await ackPurchase(google, store, "premium", TOKEN_150, await hashOf(TOKEN_150), { timeoutMs: 1000 });
     const ph = await hashOf(TOKEN_HEX);
-    await core.applyPurchase({ tokenHash: ph, kind: "pack", productId: "pack_en_food_01", n: normalizeProduct(product({ purchaseCompletionTime: new Date(NOW - 49 * 3_600_000).toISOString() }), NOW - 49 * 3_600_000), callerInstallHash: null, rawTokenForAck: TOKEN_HEX, nowMs: NOW - 49 * 3_600_000 });
+    await core.applyPurchase({ tokenHash: ph, productId: "pack_en_food_01", n: normalizeProduct(product({ purchaseCompletionTime: new Date(NOW - 49 * 3_600_000).toISOString() }), NOW - 49 * 3_600_000), callerInstallHash: null, rawTokenForAck: TOKEN_HEX, nowMs: NOW - 49 * 3_600_000 });
     google.voidedPages = [{ voidedPurchases: [{ purchaseToken: TOKEN_150, orderId: "GPA.1234-5678" }, { purchaseToken: TOKEN_HEX }] }];
     const cronEnv = { BILLING_MODE: "google", ALLOW_FAKE_BILLING: "0", PLAY_SERVICE_ACCOUNT_JSON: "{}" };
     await runCron(cronEnv, CRON_HOURLY, { store, api: google, now: () => NOW });

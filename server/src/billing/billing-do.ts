@@ -20,18 +20,16 @@ export class Billing extends DurableObject<Env> implements BillingStore {
   googleBudget(n: number, nowMs: number): Promise<number> { return this.#s.googleBudget(n, nowMs); }
   ipReadCheck(ipKey: string, nowMs: number): Promise<boolean> { return this.#s.ipReadCheck(ipKey, nowMs); }
   installNetSeen(installHash: string, netKey: string, nowMs: number): Promise<number> { return this.#s.installNetSeen(installHash, netKey, nowMs); }
-  lookup(tokenHash: string, kind: "sub" | "pack", nowMs: number): Promise<{ invalid: boolean; row: PurchaseRow | null }> { return this.#s.lookup(tokenHash, kind, nowMs); }
-  markInvalid(tokenHash: string, kind: "sub" | "pack", nowMs: number): Promise<void> { return this.#s.markInvalid(tokenHash, kind, nowMs); }
+  lookup(tokenHash: string, nowMs: number): Promise<{ invalid: boolean; row: PurchaseRow | null }> { return this.#s.lookup(tokenHash, nowMs); }
+  markInvalid(tokenHash: string, nowMs: number): Promise<void> { return this.#s.markInvalid(tokenHash, nowMs); }
   applyPurchase(i: ApplyInput): Promise<ApplyResult> { return this.#s.applyPurchase(i); }
   bindOnly(a: { tokenHash: string; callerInstallHash: string; nowMs: number }): Promise<BindResult> { return this.#s.bindOnly(a); }
   markAcked(tokenHash: string): Promise<void> { return this.#s.markAcked(tokenHash); }
   entitlementFor(installHash: string, nowMs: number): Promise<Entitlement> { return this.#s.entitlementFor(installHash, nowMs); }
-  kindOf(tokenHash: string): Promise<"sub" | "pack" | null> { return this.#s.kindOf(tokenHash); }
   markRevoked(tokenHash: string, nowMs: number): Promise<void> { return this.#s.markRevoked(tokenHash, nowMs); }
   rtdnSeen(messageId: string): Promise<boolean> { return this.#s.rtdnSeen(messageId); }
   rtdnMark(messageId: string, nowMs: number): Promise<void> { return this.#s.rtdnMark(messageId, nowMs); }
   pendingAcks(nowMs: number): Promise<PendingAck[]> { return this.#s.pendingAcks(nowMs); }
-  staleSubs(nowMs: number): Promise<number> { return this.#s.staleSubs(nowMs); }
   cursorGet(): Promise<number | null> { return this.#s.cursorGet(); }
   cursorSet(ms: number): Promise<void> { return this.#s.cursorSet(ms); }
   prune(nowMs: number): Promise<void> { return this.#s.prune(nowMs); }

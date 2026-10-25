@@ -2,12 +2,10 @@
 // Mirrored exactly by tv-app `billing/Products.kt` (checked against shared/fixtures/billing.products.json).
 import type { Settings } from "../engine/types";
 
+/** Lifetime Premium: a one-time, non-consumable Play in-app product (owner decision 2026-10-26; no subscription). */
 export const PREMIUM_PRODUCT_ID = "premium" as const;
-export const BASE_PLAN_IDS = ["monthly", "yearly"] as const;          // display order on the TV
-export type BasePlanId = (typeof BASE_PLAN_IDS)[number];
-export const TRIAL_OFFER_ID = "trial-7d" as const;
 export const PACK_PRODUCT_PREFIX = "pack_" as const;
-export const PRODUCT_ID_MAX = 40;                                       // Play limit for subscriptions; applied to packs too
+export const PRODUCT_ID_MAX = 40;                                       // Play product id length limit
 export const PREMIUM_PACK_ID_MAX = PRODUCT_ID_MAX - PACK_PRODUCT_PREFIX.length; // 35
 export const PRODUCT_ID_REGEX = /^[a-z0-9][a-z0-9_.]{0,39}$/;
 
@@ -27,5 +25,10 @@ export function packIdFromProductId(productId: string): string | null {
 export const PREMIUM_SETTING_KEYS = ["points"] as const satisfies readonly (keyof Settings)[];
 export type PremiumSettingKey = (typeof PREMIUM_SETTING_KEYS)[number];
 
-/** §4.7 `{email}`: the support address shown in `store.help` / `store.installLimit`. The owner fills it (§8.D); empty hides help. */
-export const SUPPORT_EMAIL: string = "";
+/** True for every product id this app sells: `premium` or a well-formed `pack_*` id (all one-time products). */
+export function isSellableProductId(productId: string): boolean {
+  return productId === PREMIUM_PRODUCT_ID || packIdFromProductId(productId) !== null;
+}
+
+/** §4.7 `{email}`: the support address shown in `store.help` / `store.installLimit` (public on the landing page). */
+export const SUPPORT_EMAIL: string = "alexkhoury@hotmail.com";

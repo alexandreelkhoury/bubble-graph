@@ -16,10 +16,8 @@ import {
   PENDING_ACK_TOKEN_MAX_MS,
   RATE_MAP_MAX_ENTRIES,
 } from "@mishana/shared/constants";
-import { packIdFromProductId, packOwned, subscriptionAccessUntil } from "@mishana/shared/billing";
-import type { PackState, PurchaseResult, SubscriptionInfo, SubState } from "@mishana/shared/billing";
-import { sha256hex } from "../tokens";
-import { billingLog } from "./log";
+import { packIdFromProductId, PREMIUM_PRODUCT_ID, purchaseOwned } from "@mishana/shared/billing";
+import type { PurchaseResult, PurchaseState } from "@mishana/shared/billing";
 import type { NormalizedPurchase } from "./normalize";
 
 // ------------------------------------------------------------------ storage abstraction
@@ -31,14 +29,19 @@ export interface SqlLike {
 }
 export interface BillingStorage { sql: SqlLike; transactionSync<T>(fn: () => T): T }
 
+/** Every row is a one-time Play product (`premium` or a `pack_*`); `kind` is always PRODUCT_KIND. */
+export const PRODUCT_KIND = "product";
+
 export interface PurchaseRow {
-  token_hash: string; store: string; kind: "sub" | "pack"; product_id: string | null; state: string;
-  expiry_ms: number | null; auto_renew: number; base_plan_id: string | null; in_trial: number;
+  token_hash: string; store: string; kind: string; product_id: string | null; state: string;
   acknowledged: number; ack_token: string | null; ack_window_start_ms: number | null; revoked: number; test: number;
-  origin_install_hash: string | null; superseded_by: string | null; google_checked_ms: number; created_ms: number; updated_ms: number;
+  origin_install_hash: string | null; google_checked_ms: number; created_ms: number; updated_ms: number;
   [k: string]: SqlValue;
 }
 
+// The columns expiry_ms, auto_renew, base_plan_id, in_trial and superseded_by are unused leftovers of the dropped
+// subscription design (nothing shipped with them); they stay at their defaults. `kind` is always 'product', and the
+// negative cache keeps its `kind` key column with the same constant value.
 export const SCHEMA: readonly string[] = [
   `CREATE TABLE IF NOT EXISTS purchases (
     token_hash TEXT PRIMARY KEY, store TEXT NOT NULL DEFAULT 'google', kind TEXT NOT NULL, product_id TEXT, state TEXT NOT NULL,
@@ -49,8 +52,8 @@ export const SCHEMA: readonly string[] = [
   `CREATE TABLE IF NOT EXISTS bindings (token_hash TEXT NOT NULL, install_hash TEXT NOT NULL, first_seen_ms INTEGER NOT NULL,
     last_seen_ms INTEGER NOT NULL, PRIMARY KEY (token_hash, install_hash))`,
   `CREATE INDEX IF NOT EXISTS bindings_install ON bindings(install_hash)`,
-  // Negative cache keyed by (token hash, kind): a token posted under the wrong kind must not poison it for its owner.
-  // (Replaces the pre-release `invalid_tokens` table keyed by hash alone; it held only 24 h cache entries.)
+  // Negative cache (24 h) of tokens Google's productsv2 answered 400/404/410 for. (Replaces the pre-release
+  // `invalid_tokens` table; it held only 24 h cache entries.)
   `DROP TABLE IF EXISTS invalid_tokens`,
   `CREATE TABLE IF NOT EXISTS invalid_tokens_v2 (token_hash TEXT NOT NULL, kind TEXT NOT NULL, at_ms INTEGER NOT NULL,
     PRIMARY KEY (token_hash, kind))`,
@@ -64,59 +67,47 @@ export const SCHEMA: readonly string[] = [
 
 // ------------------------------------------------------------------ pure rules
 
-// [VERIFY] that Google accepts acknowledging a CANCELED-but-unexpired subscription; on a 4xx, ackPurchase's re-read settles it.
-const SUB_ACK_ELIGIBLE: ReadonlySet<string> = new Set(["SUBSCRIPTION_STATE_ACTIVE", "SUBSCRIPTION_STATE_IN_GRACE_PERIOD", "SUBSCRIPTION_STATE_CANCELED"]);
-const SUB_LIVE: ReadonlySet<string> = new Set([
-  "SUBSCRIPTION_STATE_ACTIVE", "SUBSCRIPTION_STATE_IN_GRACE_PERIOD", "SUBSCRIPTION_STATE_CANCELED", "SUBSCRIPTION_STATE_ON_HOLD", "SUBSCRIPTION_STATE_PAUSED",
-]);
-const SUB_SUSPENDED: ReadonlySet<string> = new Set(["SUBSCRIPTION_STATE_ON_HOLD", "SUBSCRIPTION_STATE_PAUSED", "SUBSCRIPTION_STATE_PENDING"]);
 const HEX64 = /^[0-9a-f]{64}$/;
 const DAY_MS = 86_400_000;
 export const RATE_WINDOW_MS = 10 * 60_000;
 export const RETENTION_MS = 400 * DAY_MS;
 export const RTDN_SEEN_TTL_MS = 30 * DAY_MS;
 /** `ack_token` is kept until 4 days after the ack window opened (§3.5). */
-// PAY-GAP: §3.5 says "dead" rows are those superseded or expired > 400 days ago; the supersession time is taken as
-// `updated_ms`, and cancelled packs older than 400 days count as dead too (revoked rows only shrink, never go).
+// PAY-GAP: "dead" rows are cancelled purchases last updated > 400 days ago (revoked rows only shrink, never go).
 export const ACK_TOKEN_KEEP_MS = 4 * DAY_MS;
 
-export function isAckEligible(kind: "sub" | "pack", state: string): boolean {
-  return kind === "pack" ? state === "PURCHASED" : SUB_ACK_ELIGIBLE.has(state);
+/** Google says paid and the purchase is not yet acknowledged → acknowledge it. */
+export function isAckEligible(state: string): boolean {
+  return state === "PURCHASED";
 }
-export function isPendingState(kind: "sub" | "pack", state: string): boolean {
-  return kind === "pack" ? state === "PENDING" : state === "SUBSCRIPTION_STATE_PENDING";
+export function isPendingState(state: string): boolean {
+  return state === "PENDING";
 }
 /** §3.4 "Which purchases bind on /verify". */
-export function isBindable(row: Pick<PurchaseRow, "kind" | "state" | "revoked">): boolean {
-  if (row.kind === "pack") return row.state !== "CANCELLED" && row.revoked === 0;
-  return row.state !== "SUBSCRIPTION_STATE_EXPIRED" && row.state !== "SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED";
+export function isBindable(row: Pick<PurchaseRow, "state" | "revoked">): boolean {
+  return row.state !== "CANCELLED" && row.revoked === 0;
 }
-export function rowAccessUntil(row: PurchaseRow, nowMs: number): number | null {
-  if (row.kind !== "sub") return null;
-  return subscriptionAccessUntil({ state: row.state as SubState, expiryMs: row.expiry_ms, autoRenew: row.auto_renew === 1 }, nowMs);
-}
-export function rowGrantsAccess(row: PurchaseRow, nowMs: number): boolean {
-  if (row.kind === "sub") return rowAccessUntil(row, nowMs) !== null;
-  return packOwned({ state: row.state as PackState, revoked: row.revoked === 1 });
+/** A one-time purchase grants access while PURCHASED and never revoked (revoked is sticky). */
+export function rowGrantsAccess(row: Pick<PurchaseRow, "state" | "revoked">): boolean {
+  return purchaseOwned({ state: row.state as PurchaseState, revoked: row.revoked === 1 });
 }
 
 // ------------------------------------------------------------------ types
 
 export interface ApplyInput {
   tokenHash: string;
-  kind: "sub" | "pack";
   productId: string;
   n: NormalizedPurchase;
   callerInstallHash: string | null;
-  /** The raw token to keep while an ack is or may become due; null for a linked (old) token, which is never stored. */
-  rawTokenForAck: string | null;
+  /** The raw token, kept only while an ack is or may become due. */
+  rawTokenForAck: string;
   nowMs: number;
   /** "fake" for FakeGoogleApi reads (§3.10); stored on insert only. */
   store?: "google" | "fake";
 }
-export interface ApplyResult { result: Exclude<PurchaseResult, "INVALID" | "UPSTREAM_ERROR">; ackDue: boolean; refreshLinked: boolean }
+export interface ApplyResult { result: Exclude<PurchaseResult, "INVALID" | "UPSTREAM_ERROR">; ackDue: boolean }
 export type BindResult = Exclude<PurchaseResult, "INVALID" | "UPSTREAM_ERROR">;
-export interface Entitlement { premiumUntilMs: number | null; packs: string[]; subscription: SubscriptionInfo | null }
+export interface Entitlement { premiumUntilMs: number | null; packs: string[] }
 /** §3.12: an admin grant (premium and/or packs) for one install, outside Google and outside the install limit. */
 export interface Grant { installHash: string; premium: boolean; packs: string[]; expiresAt: number | null; note: string | null; createdAt: number }
 interface GrantRow { install_hash: string; premium: number; packs: string; expires_ms: number | null; note: string | null; created_ms: number; [k: string]: SqlValue }
@@ -132,7 +123,7 @@ function grantFromRow(r: GrantRow): Grant {
   return { installHash: r.install_hash, premium: r.premium === 1, packs, expiresAt: r.expires_ms, note: r.note, createdAt: r.created_ms };
 }
 
-export interface PendingAck { tokenHash: string; kind: "sub" | "pack"; productId: string; token: string; windowStartMs: number }
+export interface PendingAck { tokenHash: string; productId: string; token: string; windowStartMs: number }
 
 type RateKind = "verify" | "entitlement";
 const RATE_LIMITS: Record<RateKind, number> = { verify: INSTALL_VERIFY_PER_10MIN, entitlement: INSTALL_ENTITLEMENT_PER_10MIN };
@@ -227,49 +218,38 @@ export class BillingCore {
 
   // ---------------------------------------------------------------- lookups and caches
 
-  /** `invalid` is the negative cache for this (hash, kind) only: Google's 404 for one resource type says nothing of the other. */
-  lookup(tokenHash: string, kind: "sub" | "pack", nowMs: number): { invalid: boolean; row: PurchaseRow | null } {
-    const inv = this.#q<{ at_ms: number }>("SELECT at_ms FROM invalid_tokens_v2 WHERE token_hash = ? AND kind = ?", tokenHash, kind)[0];
+  lookup(tokenHash: string, nowMs: number): { invalid: boolean; row: PurchaseRow | null } {
+    const inv = this.#q<{ at_ms: number }>("SELECT at_ms FROM invalid_tokens_v2 WHERE token_hash = ? AND kind = ?", tokenHash, PRODUCT_KIND)[0];
     return { invalid: inv !== undefined && inv.at_ms > nowMs - INVALID_TOKEN_TTL_MS, row: this.#row(tokenHash) };
   }
 
-  /** Only for Google's own 400/404/410 on the `kind` resource (never a product mismatch, never an auth failure). */
-  markInvalid(tokenHash: string, kind: "sub" | "pack", nowMs: number): void {
+  /** Only for Google's own 400/404/410 (never a product mismatch, never an auth failure). */
+  markInvalid(tokenHash: string, nowMs: number): void {
     this.#st.transactionSync(() => {
       if (this.#row(tokenHash)) return; // never for a hash that has a purchases row
       this.#q(
         "INSERT INTO invalid_tokens_v2 (token_hash, kind, at_ms) VALUES (?, ?, ?) ON CONFLICT(token_hash, kind) DO UPDATE SET at_ms = excluded.at_ms",
-        tokenHash, kind, nowMs,
+        tokenHash, PRODUCT_KIND, nowMs,
       );
     });
   }
 
-  kindOf(tokenHash: string): "sub" | "pack" | null {
-    return this.#row(tokenHash)?.kind ?? null;
-  }
-
   // ---------------------------------------------------------------- apply / bind
 
-  async applyPurchase(i: ApplyInput): Promise<ApplyResult> {
+  applyPurchase(i: ApplyInput): ApplyResult {
     const n = i.n;
-    // Hashes are computed before the transaction (WebCrypto is async); the raw linked tokens are never stored.
-    const linkedHash = n.linkedPurchaseToken ? await sha256hex(n.linkedPurchaseToken) : null;
-    const expiredHash = n.outOfAppExpiredPurchaseToken ? await sha256hex(n.outOfAppExpiredPurchaseToken) : null;
     return this.#st.transactionSync(() => {
-      const prev = this.#row(i.tokenHash);
-      const applied = prev === null || n.checkedMs >= prev.google_checked_ms;
-      const eligible = isAckEligible(i.kind, n.state);
-      const pending = isPendingState(i.kind, n.state);
-      const ackToken = !n.acknowledged && (eligible || pending) ? i.rawTokenForAck : null;
+      const eligible = isAckEligible(n.state);
+      const ackToken = !n.acknowledged && (eligible || isPendingState(n.state)) ? i.rawTokenForAck : null;
       const windowStart = eligible ? (n.completedMs ?? n.checkedMs) : null;
       const origin = n.obfuscatedAccountId && HEX64.test(n.obfuscatedAccountId) ? n.obfuscatedAccountId : null;
+      // A stale read (older than the stored one) changes nothing.
       this.#q(
-        `INSERT INTO purchases (token_hash, store, kind, product_id, state, expiry_ms, auto_renew, base_plan_id, in_trial, acknowledged,
-           ack_token, ack_window_start_ms, revoked, test, origin_install_hash, superseded_by, google_checked_ms, created_ms, updated_ms)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, NULL, ?, ?, ?)
+        `INSERT INTO purchases (token_hash, store, kind, product_id, state, acknowledged, ack_token, ack_window_start_ms, revoked, test,
+           origin_install_hash, google_checked_ms, created_ms, updated_ms)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)
          ON CONFLICT(token_hash) DO UPDATE SET
-           state = excluded.state, expiry_ms = excluded.expiry_ms, auto_renew = excluded.auto_renew, base_plan_id = excluded.base_plan_id,
-           in_trial = excluded.in_trial, test = excluded.test, origin_install_hash = excluded.origin_install_hash,
+           state = excluded.state, test = excluded.test, origin_install_hash = excluded.origin_install_hash,
            product_id = COALESCE(purchases.product_id, excluded.product_id),
            acknowledged = MAX(purchases.acknowledged, excluded.acknowledged),
            ack_token = CASE WHEN MAX(purchases.acknowledged, excluded.acknowledged) = 1 THEN NULL ELSE excluded.ack_token END,
@@ -277,52 +257,22 @@ export class BillingCore {
            ack_window_start_ms = COALESCE(purchases.ack_window_start_ms, excluded.ack_window_start_ms),
            google_checked_ms = excluded.google_checked_ms, updated_ms = excluded.updated_ms
          WHERE excluded.google_checked_ms >= purchases.google_checked_ms`,
-        i.tokenHash, i.store ?? "google", i.kind, i.productId, n.state, n.expiryMs, n.autoRenew ? 1 : 0, n.basePlanId, n.inTrial ? 1 : 0, n.acknowledged ? 1 : 0,
+        i.tokenHash, i.store ?? "google", PRODUCT_KIND, i.productId, n.state, n.acknowledged ? 1 : 0,
         ackToken, windowStart, n.test ? 1 : 0, origin, n.checkedMs, i.nowMs, i.nowMs,
       );
       // A purchase row now exists: the negative cache must not shadow it.
       this.#q("DELETE FROM invalid_tokens_v2 WHERE token_hash = ?", i.tokenHash);
-
-      // The caller binds BEFORE any link copy, so copied bindings of old tokens can never push the actual purchaser's
-      // TV over MAX_INSTALLS_PER_PURCHASE on its own new purchase (§3.5 step 4 runs on the row as stored below).
-      // Link handling below only touches other rows and bindings, so this row's columns are final here.
-      const callerResult = i.callerInstallHash === null ? null : this.#bindAndResult(this.#row(i.tokenHash) as PurchaseRow, i.callerInstallHash, i.nowMs);
-
-      // 2. Link handling (only for the read that was stored; a stale read carries stale links).
-      let refreshLinked = false;
-      if (applied && i.kind === "sub") {
-        if (linkedHash && linkedHash !== i.tokenHash && this.#row(linkedHash)) {
-          if (SUB_LIVE.has(n.state)) {
-            this.#q("UPDATE purchases SET superseded_by = ?, updated_ms = ? WHERE token_hash = ?", i.tokenHash, i.nowMs, linkedHash);
-            this.#copyBindings(linkedHash, i.tokenHash, i.nowMs);
-          } else if (n.state === "SUBSCRIPTION_STATE_PENDING") {
-            this.#copyBindings(linkedHash, i.tokenHash, i.nowMs);
-          } else if (n.state === "SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED") {
-            refreshLinked = true;
-          }
-        }
-        if (expiredHash && expiredHash !== i.tokenHash) {
-          this.#copyBindings(expiredHash, i.tokenHash, i.nowMs);
-        }
-      }
-
-      // 3. Everything else is computed from the row as stored.
       const row = this.#row(i.tokenHash) as PurchaseRow;
-      if (applied && i.kind === "sub" && isBindable(row)) {
-        const hint = n.outOfAppExpiredObfuscatedAccountId;
-        // The caller (bound above) does not count as "a binding" here, so the hint behaves as if it ran first.
-        if (hint && HEX64.test(hint)) this.#bindHint(i.tokenHash, hint, i.nowMs, i.callerInstallHash);
-      }
-      const ackDue = isAckEligible(row.kind, row.state) && row.acknowledged === 0;
-      // 4–5.
+      const ackDue = isAckEligible(row.state) && row.acknowledged === 0;
       let result: BindResult;
-      if (callerResult !== null) {
-        result = callerResult;
+      if (i.callerInstallHash !== null) {
+        result = this.#bindAndResult(row, i.callerInstallHash, i.nowMs);
       } else {
+        // No caller (RTDN, cron, fake set): the restricted origin-install hint binding (§3.4).
         if (isBindable(row) && row.origin_install_hash) this.#bindHint(i.tokenHash, row.origin_install_hash, i.nowMs);
-        result = this.#resultOf(row, i.nowMs);
+        result = this.#resultOf(row);
       }
-      return { result, ackDue, refreshLinked };
+      return { result, ackDue };
     });
   }
 
@@ -344,7 +294,7 @@ export class BillingCore {
 
   /** Caller binding (§3.5 step 4) and the result (step 5). */
   #bindAndResult(row: PurchaseRow, installHash: string, nowMs: number): BindResult {
-    if (row.kind === "pack" && row.revoked === 1) return "REVOKED";
+    if (row.revoked === 1) return "REVOKED";
     if (isBindable(row)) {
       const mine = this.#q<{ last_seen_ms: number }>("SELECT last_seen_ms FROM bindings WHERE token_hash = ? AND install_hash = ?", row.token_hash, installHash)[0];
       const activeMine = mine !== undefined && mine.last_seen_ms > nowMs - INSTALL_ACTIVE_WINDOW_MS;
@@ -355,41 +305,21 @@ export class BillingCore {
         row.token_hash, installHash, nowMs, nowMs,
       );
     }
-    return this.#resultOf(row, nowMs);
+    return this.#resultOf(row);
   }
 
-  #resultOf(row: PurchaseRow, nowMs: number): BindResult {
-    if (row.kind === "pack" && row.revoked === 1) return "REVOKED";
-    if (rowGrantsAccess(row, nowMs)) return "OK";
-    if (isPendingState(row.kind, row.state)) return "PENDING";
+  #resultOf(row: PurchaseRow): BindResult {
+    if (row.revoked === 1) return "REVOKED";
+    if (rowGrantsAccess(row)) return "OK";
+    if (isPendingState(row.state)) return "PENDING";
     return "NOT_OWNED";
   }
 
   /** The restricted RTDN-path binding (§3.4): only for a token with no binding at all, below the limit. */
-  #bindHint(tokenHash: string, installHash: string, nowMs: number, ignoreInstall: string | null = null): void {
-    const any = this.#q<{ n: number }>("SELECT COUNT(*) AS n FROM bindings WHERE token_hash = ? AND install_hash IS NOT ?", tokenHash, ignoreInstall)[0]?.n ?? 0;
+  #bindHint(tokenHash: string, installHash: string, nowMs: number): void {
+    const any = this.#q<{ n: number }>("SELECT COUNT(*) AS n FROM bindings WHERE token_hash = ?", tokenHash)[0]?.n ?? 0;
     if (any > 0 || this.#activeCount(tokenHash, nowMs) >= MAX_INSTALLS_PER_PURCHASE) return;
     this.#q("INSERT INTO bindings (token_hash, install_hash, first_seen_ms, last_seen_ms) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING", tokenHash, installHash, nowMs, nowMs);
-  }
-
-  /**
-   * Copies the old token's ACTIVE bindings (most recently seen first) to the new token, only while the new token stays
-   * under MAX_INSTALLS_PER_PURCHASE active bindings. Bindings already on the new token are refreshed, never counted twice.
-   */
-  #copyBindings(from: string, to: string, nowMs: number): void {
-    const src = this.#q<{ install_hash: string; first_seen_ms: number; last_seen_ms: number }>(
-      "SELECT install_hash, first_seen_ms, last_seen_ms FROM bindings WHERE token_hash = ? AND last_seen_ms > ? ORDER BY last_seen_ms DESC",
-      from, nowMs - INSTALL_ACTIVE_WINDOW_MS,
-    );
-    for (const b of src) {
-      const has = this.#q("SELECT 1 AS x FROM bindings WHERE token_hash = ? AND install_hash = ?", to, b.install_hash).length > 0;
-      if (!has && this.#activeCount(to, nowMs) >= MAX_INSTALLS_PER_PURCHASE) break;
-      this.#q(
-        `INSERT INTO bindings (token_hash, install_hash, first_seen_ms, last_seen_ms) VALUES (?, ?, ?, ?)
-         ON CONFLICT(token_hash, install_hash) DO UPDATE SET last_seen_ms = MAX(bindings.last_seen_ms, excluded.last_seen_ms)`,
-        to, b.install_hash, b.first_seen_ms, b.last_seen_ms,
-      );
-    }
   }
 
   markAcked(tokenHash: string): void {
@@ -398,22 +328,18 @@ export class BillingCore {
     });
   }
 
-  /** Packs only; sticky; a tombstone when the token was never seen (§3.5). */
+  /** Refund / chargeback of `premium` or a pack; sticky; a tombstone when the token was never seen (§3.5). */
   markRevoked(tokenHash: string, nowMs: number): void {
     this.#st.transactionSync(() => {
       const row = this.#row(tokenHash);
-      if (row && row.kind === "sub") {
-        billingLog("BILLING_REVOKE_SUB_IGNORED");
-        return;
-      }
       if (row) {
         this.#q("UPDATE purchases SET revoked = 1, updated_ms = ? WHERE token_hash = ?", nowMs, tokenHash);
         return;
       }
       this.#q(
         `INSERT INTO purchases (token_hash, store, kind, product_id, state, revoked, google_checked_ms, created_ms, updated_ms)
-         VALUES (?, 'google', 'pack', NULL, 'CANCELLED', 1, 0, ?, ?)`,
-        tokenHash, nowMs, nowMs,
+         VALUES (?, 'google', ?, NULL, 'CANCELLED', 1, 0, ?, ?)`,
+        tokenHash, PRODUCT_KIND, nowMs, nowMs,
       );
       this.#q("DELETE FROM invalid_tokens_v2 WHERE token_hash = ?", tokenHash);
     });
@@ -421,37 +347,40 @@ export class BillingCore {
 
   // ---------------------------------------------------------------- entitlement
 
-  /** Read-only: never touches `last_seen_ms`. */
+  /**
+   * Read-only: never touches `last_seen_ms`. Lifetime premium (an actively bound, owned `premium` purchase) and an
+   * open-ended admin grant both give premium for the token's own lifetime (`pu` = `exp`); the TV's refresh before
+   * `exp` renews it, and a refund (revoked) stops it at the next refresh.
+   */
   entitlementFor(installHash: string, nowMs: number): Entitlement {
     const rows = this.#q<PurchaseRow>(
       `SELECT p.* FROM purchases p JOIN bindings b ON b.token_hash = p.token_hash
-       WHERE b.install_hash = ? AND b.last_seen_ms > ? AND p.superseded_by IS NULL`,
+       WHERE b.install_hash = ? AND b.last_seen_ms > ?`,
       installHash, nowMs - INSTALL_ACTIVE_WINDOW_MS,
     );
+    const lifetimeUntil = nowMs + ENTITLEMENT_TTL_S * 1000;
     let premiumUntilMs: number | null = null;
     const packs = new Set<string>();
-    const subs: PurchaseRow[] = [];
     for (const r of rows) {
-      if (r.kind === "sub") {
-        subs.push(r);
-        const until = rowAccessUntil(r, nowMs);
-        if (until !== null && (premiumUntilMs === null || until > premiumUntilMs)) premiumUntilMs = until;
-      } else if (r.state === "PURCHASED" && r.revoked === 0 && r.product_id) {
-        const id = packIdFromProductId(r.product_id);
-        if (id && this.#premiumPackIds.has(id)) packs.add(id);
+      if (!r.product_id || !rowGrantsAccess(r)) continue;
+      if (r.product_id === PREMIUM_PRODUCT_ID) {
+        premiumUntilMs = lifetimeUntil;
+        continue;
       }
+      const id = packIdFromProductId(r.product_id);
+      if (id && this.#premiumPackIds.has(id)) packs.add(id);
     }
     // §3.12: an unexpired admin grant adds premium and/or packs. A grant without an end date gives premium for the
     // token's own lifetime (`pu` = `exp`); the TV's refresh before `exp` renews it.
     const g = this.grantFor(installHash);
     if (g && (g.expiresAt === null || g.expiresAt > nowMs)) {
       if (g.premium) {
-        const until = g.expiresAt ?? nowMs + ENTITLEMENT_TTL_S * 1000;
+        const until = g.expiresAt ?? lifetimeUntil;
         if (premiumUntilMs === null || until > premiumUntilMs) premiumUntilMs = until;
       }
       for (const id of g.packs) if (this.#premiumPackIds.has(id)) packs.add(id);
     }
-    return { premiumUntilMs, packs: [...packs].sort().slice(0, MAX_TOKEN_PACKS), subscription: pickSubscription(subs, nowMs) };
+    return { premiumUntilMs, packs: [...packs].sort().slice(0, MAX_TOKEN_PACKS) };
   }
 
   // ---------------------------------------------------------------- admin grants (§3.12)
@@ -496,26 +425,16 @@ export class BillingCore {
   }
 
   /**
-   * Rows the hourly cron retries. The window start is `max(ack_window_start_ms, created_ms)`: [VERIFY] (§3.5) whether
-   * `SubscriptionPurchaseV2.startTime` is the new token's purchase time for an upgrade, re-signup or out-of-app
-   * resubscribe; if Google carries over the original grant time, `created_ms` (our first sight of the token) still
-   * keeps the retry alive for the 3-day ack window.
+   * Rows the hourly cron retries. The window start is `max(ack_window_start_ms, created_ms)`: `created_ms` (our first
+   * sight of the token) keeps the retry alive for the 3-day ack window when Google reports an older completion time.
    */
   pendingAcks(nowMs: number): PendingAck[] {
-    return this.#q<{ token_hash: string; kind: "sub" | "pack"; product_id: string; ack_token: string; ack_window_start_ms: number }>(
-      `SELECT token_hash, kind, product_id, ack_token, ack_window_start_ms FROM purchases
+    return this.#q<{ token_hash: string; product_id: string; ack_token: string; ack_window_start_ms: number }>(
+      `SELECT token_hash, product_id, ack_token, ack_window_start_ms FROM purchases
        WHERE ack_token IS NOT NULL AND acknowledged = 0 AND ack_window_start_ms IS NOT NULL AND product_id IS NOT NULL
          AND MAX(ack_window_start_ms, created_ms) > ?`,
       nowMs - ACK_WINDOW_MS,
-    ).map((r) => ({ tokenHash: r.token_hash, kind: r.kind, productId: r.product_id, token: r.ack_token, windowStartMs: r.ack_window_start_ms }));
-  }
-
-  staleSubs(nowMs: number): number {
-    return this.#q<{ n: number }>(
-      `SELECT COUNT(*) AS n FROM purchases WHERE kind = 'sub' AND expiry_ms > ? AND expiry_ms < ?
-       AND state IN ('SUBSCRIPTION_STATE_ACTIVE', 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD') AND google_checked_ms < expiry_ms`,
-      nowMs - 3 * DAY_MS, nowMs - 3_600_000,
-    )[0]?.n ?? 0;
+    ).map((r) => ({ tokenHash: r.token_hash, productId: r.product_id, token: r.ack_token, windowStartMs: r.ack_window_start_ms }));
   }
 
   cursorGet(): number | null {
@@ -533,23 +452,15 @@ export class BillingCore {
       // ack_token retention (§3.5 / §6.3).
       this.#q("UPDATE purchases SET ack_token = NULL WHERE ack_token IS NOT NULL AND ack_window_start_ms IS NOT NULL AND ack_window_start_ms < ?", nowMs - ACK_TOKEN_KEEP_MS);
       this.#q("UPDATE purchases SET ack_token = NULL WHERE ack_token IS NOT NULL AND ack_window_start_ms IS NULL AND created_ms < ?", nowMs - PENDING_ACK_TOKEN_MAX_MS);
-      this.#q(
-        `UPDATE purchases SET ack_token = NULL WHERE ack_token IS NOT NULL AND (acknowledged = 1 OR state IN
-          ('CANCELLED', 'SUBSCRIPTION_STATE_EXPIRED', 'SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED', 'SUBSCRIPTION_STATE_UNSPECIFIED'))`,
-      );
+      this.#q("UPDATE purchases SET ack_token = NULL WHERE ack_token IS NOT NULL AND (acknowledged = 1 OR state = 'CANCELLED')");
       this.#q("DELETE FROM bindings WHERE last_seen_ms < ?", nowMs - RETENTION_MS);
-      // "Dead": superseded or expired, or a cancelled pack, more than 400 days ago. Plain `?` placeholders only.
+      // "Dead": a cancelled purchase last updated more than 400 days ago. Plain `?` placeholders only.
       const cut = nowMs - RETENTION_MS;
-      const dead = `((superseded_by IS NOT NULL AND updated_ms < ?) OR (expiry_ms IS NOT NULL AND expiry_ms < ?)
-        OR (kind = 'pack' AND state = 'CANCELLED' AND updated_ms < ?))`;
       // Revoked rows are never deleted: they shrink to a tombstone so a refunded token can never be re-granted.
-      this.#q(
-        `UPDATE purchases SET expiry_ms = NULL, base_plan_id = NULL, origin_install_hash = NULL, ack_token = NULL
-         WHERE revoked = 1 AND (${dead} OR updated_ms < ?)`,
-        cut, cut, cut, cut,
-      );
-      this.#q(`DELETE FROM bindings WHERE token_hash IN (SELECT token_hash FROM purchases WHERE revoked = 0 AND ${dead})`, cut, cut, cut);
-      this.#q(`DELETE FROM purchases WHERE revoked = 0 AND ${dead}`, cut, cut, cut);
+      this.#q("UPDATE purchases SET origin_install_hash = NULL, ack_token = NULL WHERE revoked = 1 AND updated_ms < ?", cut);
+      const dead = "revoked = 0 AND state = 'CANCELLED' AND updated_ms < ?";
+      this.#q(`DELETE FROM bindings WHERE token_hash IN (SELECT token_hash FROM purchases WHERE ${dead})`, cut);
+      this.#q(`DELETE FROM purchases WHERE ${dead}`, cut);
     });
   }
 
@@ -561,7 +472,7 @@ export class BillingCore {
   fakePut(token: string, json: string): void {
     this.#q("INSERT INTO fake_purchases (token, json) VALUES (?, ?) ON CONFLICT(token) DO UPDATE SET json = excluded.json", token, json);
   }
-  /** Per-DO counter for deterministic fake tokens (`fake.<kind>.<productId>.<n>`). */
+  /** Per-DO counter for deterministic fake tokens (`fake.<productId>.<n>`). */
   fakeNext(): number {
     return this.#st.transactionSync(() => {
       const cur = Number(this.#q<{ v: string }>("SELECT v FROM kv WHERE k = 'fake_counter'")[0]?.v ?? "0") + 1;
@@ -579,44 +490,6 @@ export class BillingCore {
   }
 }
 
-/** §3.4 `EntitlementBody.subscription` selection over actively bound, non-superseded subscription rows. */
-export function pickSubscription(subs: readonly PurchaseRow[], nowMs: number): SubscriptionInfo | null {
-  let pick: PurchaseRow | undefined;
-  let best = -Infinity;
-  for (const r of subs) {
-    const until = rowAccessUntil(r, nowMs);
-    if (until !== null && until > best) {
-      best = until;
-      pick = r;
-    }
-  }
-  if (!pick) {
-    best = -Infinity;
-    for (const r of subs) {
-      if (SUB_SUSPENDED.has(r.state) && r.updated_ms > best) {
-        best = r.updated_ms;
-        pick = r;
-      }
-    }
-  }
-  if (!pick) {
-    best = -Infinity;
-    for (const r of subs) {
-      const e = r.expiry_ms ?? -Infinity;
-      if (e > best) {
-        best = e;
-        pick = r;
-      }
-    }
-    if (!pick && subs.length > 0) pick = subs[0];
-  }
-  if (!pick) return null;
-  return {
-    state: pick.state as SubState, basePlanId: pick.base_plan_id, autoRenewing: pick.auto_renew === 1,
-    inTrial: pick.in_trial === 1, expiresAt: pick.expiry_ms,
-  };
-}
-
 function lruTrim(m: Map<string, unknown>): void {
   while (m.size > RATE_MAP_MAX_ENTRIES) {
     const oldest = m.keys().next().value as string;
@@ -632,18 +505,16 @@ export interface BillingStore {
   googleBudget(n: number, nowMs: number): Promise<number>;
   ipReadCheck(ipKey: string, nowMs: number): Promise<boolean>;
   installNetSeen(installHash: string, netKey: string, nowMs: number): Promise<number>;
-  lookup(tokenHash: string, kind: "sub" | "pack", nowMs: number): Promise<{ invalid: boolean; row: PurchaseRow | null }>;
-  markInvalid(tokenHash: string, kind: "sub" | "pack", nowMs: number): Promise<void>;
+  lookup(tokenHash: string, nowMs: number): Promise<{ invalid: boolean; row: PurchaseRow | null }>;
+  markInvalid(tokenHash: string, nowMs: number): Promise<void>;
   applyPurchase(i: ApplyInput): Promise<ApplyResult>;
   bindOnly(a: { tokenHash: string; callerInstallHash: string; nowMs: number }): Promise<BindResult>;
   markAcked(tokenHash: string): Promise<void>;
   entitlementFor(installHash: string, nowMs: number): Promise<Entitlement>;
-  kindOf(tokenHash: string): Promise<"sub" | "pack" | null>;
   markRevoked(tokenHash: string, nowMs: number): Promise<void>;
   rtdnSeen(messageId: string): Promise<boolean>;
   rtdnMark(messageId: string, nowMs: number): Promise<void>;
   pendingAcks(nowMs: number): Promise<PendingAck[]>;
-  staleSubs(nowMs: number): Promise<number>;
   cursorGet(): Promise<number | null>;
   cursorSet(ms: number): Promise<void>;
   prune(nowMs: number): Promise<void>;
@@ -661,18 +532,16 @@ export function storeFromCore(core: BillingCore): BillingStore {
     googleBudget: async (n, now) => core.googleBudget(n, now),
     ipReadCheck: async (k, now) => core.ipReadCheck(k, now),
     installNetSeen: async (h, k, now) => core.installNetSeen(h, k, now),
-    lookup: async (h, kind, now) => core.lookup(h, kind, now),
-    markInvalid: async (h, kind, now) => core.markInvalid(h, kind, now),
-    applyPurchase: (i) => core.applyPurchase(i),
+    lookup: async (h, now) => core.lookup(h, now),
+    markInvalid: async (h, now) => core.markInvalid(h, now),
+    applyPurchase: async (i) => core.applyPurchase(i),
     bindOnly: async (a) => core.bindOnly(a),
     markAcked: async (h) => core.markAcked(h),
     entitlementFor: async (h, now) => core.entitlementFor(h, now),
-    kindOf: async (h) => core.kindOf(h),
     markRevoked: async (h, now) => core.markRevoked(h, now),
     rtdnSeen: async (id) => core.rtdnSeen(id),
     rtdnMark: async (id, now) => core.rtdnMark(id, now),
     pendingAcks: async (now) => core.pendingAcks(now),
-    staleSubs: async (now) => core.staleSubs(now),
     cursorGet: async () => core.cursorGet(),
     cursorSet: async (ms) => core.cursorSet(ms),
     prune: async (now) => core.prune(now),

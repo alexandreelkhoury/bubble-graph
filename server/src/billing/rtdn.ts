@@ -2,15 +2,14 @@
 // and apply it" paths, used by RTDN, the fake `set` route (§3.10) and the cron (§3.8).
 import * as z from "zod";
 import { BILLING_BODY_MAX_BYTES } from "@mishana/shared/constants";
-import { packIdFromProductId, PREMIUM_PRODUCT_ID } from "@mishana/shared/billing";
 import { readBodyLimited } from "../http";
 import { sha256hex } from "../tokens";
 import type { BillingStore } from "./billing-core";
-import { billingPacks } from "./catalog-info";
+import { isSoldProductId } from "./catalog-info";
 import { ackPurchase, GOOGLE_CALL_TIMEOUT_BACKGROUND_MS, GoogleHttpError, isGoogleGone } from "./google";
 import type { CallOpts, GoogleApi } from "./google";
 import { billingLog } from "./log";
-import { normalizeProduct, normalizeSubscription } from "./normalize";
+import { normalizeProduct } from "./normalize";
 import { bearerFromHeader, verifyPubsubJwt } from "./pubsub-auth";
 import type { JwksCache } from "./pubsub-auth";
 
@@ -27,45 +26,9 @@ const bg = (c: SyncCtx): CallOpts => c.opts ?? { timeoutMs: GOOGLE_CALL_TIMEOUT_
 export const isGone = isGoogleGone;
 
 /**
- * Re-reads a subscription and applies it with no caller (RTDN rules), acknowledging when due and re-reading the
- * linked subscription when asked. "gone" when Google does not know the token; transient errors are thrown.
+ * Re-reads a one-time purchase (lifetime `premium` or a premium pack) and applies it with no caller, acknowledging
+ * when due. "gone" for an unknown token or a product this app does not sell; transient errors are thrown.
  */
-export async function refreshSubscription(c: SyncCtx, token: string): Promise<"ok" | "gone"> {
-  const tokenHash = await sha256hex(token);
-  const checkedMs = c.now();
-  let r;
-  try {
-    r = await c.api.getSubscriptionV2(token, bg(c));
-  } catch (e) {
-    if (isGone(e)) return "gone";
-    throw e;
-  }
-  const n = normalizeSubscription(r, checkedMs);
-  if (n.productId !== PREMIUM_PRODUCT_ID) return "gone";
-  const res = await c.store.applyPurchase({
-    tokenHash, kind: "sub", productId: PREMIUM_PRODUCT_ID, n, callerInstallHash: null, rawTokenForAck: token, nowMs: c.now(), store: c.source ?? "google",
-  });
-  if (res.ackDue) await ackPurchase(c.api, c.store, "sub", PREMIUM_PRODUCT_ID, token, tokenHash, bg(c));
-  if (res.refreshLinked && n.linkedPurchaseToken) await refreshLinked(c, n.linkedPurchaseToken);
-  return "ok";
-}
-
-/** §3.5 PENDING_PURCHASE_CANCELED: re-read the old subscription; the raw linked token is never stored. */
-export async function refreshLinked(c: SyncCtx, linked: string): Promise<void> {
-  const checkedMs = c.now();
-  try {
-    const n = normalizeSubscription(await c.api.getSubscriptionV2(linked, bg(c)), checkedMs);
-    if (n.productId !== PREMIUM_PRODUCT_ID) return;
-    await c.store.applyPurchase({
-      tokenHash: await sha256hex(linked), kind: "sub", productId: PREMIUM_PRODUCT_ID, n, callerInstallHash: null, rawTokenForAck: null, nowMs: c.now(),
-      store: c.source ?? "google",
-    });
-  } catch {
-    // Best effort: the old row stays as it was; the next RTDN or /verify for it settles it.
-  }
-}
-
-/** Re-reads a one-time purchase and applies it with no caller. "gone" for an unknown token or a non-premium-pack product. */
 export async function refreshProduct(c: SyncCtx, token: string): Promise<"ok" | "gone"> {
   const tokenHash = await sha256hex(token);
   const checkedMs = c.now();
@@ -77,12 +40,11 @@ export async function refreshProduct(c: SyncCtx, token: string): Promise<"ok" | 
     throw e;
   }
   const n = normalizeProduct(r, checkedMs);
-  const packId = packIdFromProductId(n.productId);
-  if (!packId || !billingPacks().premiumIds.has(packId)) return "gone";
+  if (!isSoldProductId(n.productId)) return "gone";
   const res = await c.store.applyPurchase({
-    tokenHash, kind: "pack", productId: n.productId, n, callerInstallHash: null, rawTokenForAck: token, nowMs: c.now(), store: c.source ?? "google",
+    tokenHash, productId: n.productId, n, callerInstallHash: null, rawTokenForAck: token, nowMs: c.now(), store: c.source ?? "google",
   });
-  if (res.ackDue) await ackPurchase(c.api, c.store, "pack", n.productId, token, tokenHash, bg(c));
+  if (res.ackDue) await ackPurchase(c.api, c.store, n.productId, token, tokenHash, bg(c));
   return "ok";
 }
 
@@ -93,7 +55,8 @@ const DeveloperNotification = z.object({
   version: z.string().optional(),
   packageName: z.string(),
   eventTimeMillis: z.union([z.string(), z.number()]).optional(),
-  subscriptionNotification: z.object({ notificationType: z.number().optional(), purchaseToken: TokenStr }).optional(),
+  // Not expected (this app sells no Play subscriptions); parsed loosely only so such a message is acked and ignored.
+  subscriptionNotification: z.object({}).optional(),
   oneTimeProductNotification: z.object({ notificationType: z.number().optional(), purchaseToken: TokenStr, sku: z.string().optional() }).optional(),
   voidedPurchaseNotification: z.object({ purchaseToken: TokenStr, productType: z.number(), refundType: z.number().optional() }).optional(),
   testNotification: z.object({}).optional(),
@@ -182,14 +145,16 @@ export async function handleRtdn(req: Request, env: RtdnEnv, d: RtdnDeps): Promi
   if (!d.api) return err("NOT_CONFIGURED", 503);
   const c: SyncCtx = { store: d.store, api: d.api, now: d.now };
   try {
-    if (n.subscriptionNotification) {
-      await refreshSubscription(c, n.subscriptionNotification.purchaseToken);
-    } else if (n.oneTimeProductNotification) {
+    if (n.oneTimeProductNotification) {
+      // PURCHASED, PENDING and CANCELED (a cancelled pending purchase) alike: re-read productsv2 and apply.
       await refreshProduct(c, n.oneTimeProductNotification.purchaseToken);
     } else if (n.voidedPurchaseNotification) {
+      // Refund or chargeback of `premium` or a pack (productType 2 = one-time): sticky revoke, lifetime premium included.
       const v = n.voidedPurchaseNotification;
       if (v.productType === 2) await d.store.markRevoked(await sha256hex(v.purchaseToken), d.now());
-      else if (v.productType === 1) await refreshSubscription(c, v.purchaseToken); // never markRevoked a subscription (§3.6)
+      else billingLog("RTDN_UNEXPECTED", { productType: v.productType });
+    } else if (n.subscriptionNotification) {
+      billingLog("RTDN_UNEXPECTED"); // no Play subscriptions exist: ack (2xx) and ignore
     } else if (n.testNotification) {
       billingLog("RTDN_TEST");
     }

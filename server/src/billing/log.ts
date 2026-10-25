@@ -4,8 +4,8 @@
 
 export type BillingLogCode =
   | "BILLING_BUDGET" | "BILLING_AUTH" | "BILLING_RESTORE_OTHER_INSTALL" | "BILLING_ACK_REJECTED" | "BILLING_ACK_OVERDUE"
-  | "BILLING_SUB_STALE" | "BILLING_NOT_CONFIGURED" | "BILLING_REVOKE_SUB_IGNORED" | "BILLING_UPSTREAM" | "BILLING_INTERNAL"
-  | "BILLING_CRON" | "BILLING_INSTALL_SHARED" | "RTDN_AUTH" | "RTDN_BAD" | "RTDN_WRONG_SUBSCRIPTION" | "RTDN_PACKAGE" | "RTDN_TEST" | "RTDN_UPSTREAM";
+  | "BILLING_NOT_CONFIGURED" | "BILLING_UPSTREAM" | "BILLING_INTERNAL" | "BILLING_CRON" | "BILLING_INSTALL_SHARED"
+  | "RTDN_AUTH" | "RTDN_BAD" | "RTDN_WRONG_SUBSCRIPTION" | "RTDN_PACKAGE" | "RTDN_TEST" | "RTDN_UNEXPECTED" | "RTDN_UPSTREAM";
 
 /** The only keys whose string values may be logged, each with its closed set of values. */
 const ENUM_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
@@ -13,7 +13,7 @@ const ENUM_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
     "header", "alg", "kid", "signature", "iss", "aud", "email", "email_verified", "time", "jwks", "malformed", "not_configured",
     "data", "body", "timeout", "network", "status", "deadline",
   ]),
-  op: new Set(["token", "sub_get", "product_get", "sub_ack", "product_ack", "voided_list", "jwks", "hourly", "daily", "verify", "rtdn", "cron"]),
+  op: new Set(["token", "product_get", "product_ack", "voided_list", "jwks", "hourly", "daily", "verify", "rtdn", "cron"]),
 };
 
 export const REDACTED = "[redacted]";

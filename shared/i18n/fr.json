@@ -420,22 +420,9 @@
     "many": "Les {count} packs de mots ({pairs}+ paires), et tous les nouveaux.",
     "other": "Les {count} packs de mots ({pairs}+ paires), et tous les nouveaux."
   },
-  "store.planMonthly": "Mensuel",
-  "store.planYearly": "Annuel",
-  "store.pricePerMonth": "{price} / mois",
-  "store.pricePerYear": "{price} / an",
-  "store.trialDays": {
-    "one": "{count} jour d’essai gratuit",
-    "many": "{count} jours d’essai gratuit",
-    "other": "{count} jours d’essai gratuit"
-  },
+  "store.unlockPremium": "Débloquer Premium · {price}",
+  "store.premiumLifetime": "Achat unique, à vous pour de bon. Sans abonnement.",
   "store.premiumActive": "Premium est activé",
-  "store.renewsOn": "Renouvellement le {date}",
-  "store.endsOn": "Se termine le {date}",
-  "store.manage": "Gérer l’abonnement",
-  "store.manageHint": "Sur un téléphone ou un ordinateur : ouvrez Google Play, puis Paiements et abonnements, puis Abonnements.",
-  "store.fixPayment": "Il y a un problème avec votre paiement. Corrigez-le dans Google Play pour garder Premium.",
-  "store.fixPaymentButton": "Corriger le paiement",
   "store.packsTitle": "Packs de mots",
   "store.otherLanguages": "Autres langues",
   "store.packPairs": {
@@ -467,16 +454,6 @@
   "store.verifyFailed": "Achat reçu. Le déblocage se termine dans un instant.",
   "store.installLimit": "Cet achat est déjà utilisé sur trop de téléviseurs. Besoin d’aide ? {email}",
   "store.installLimitNoHelp": "Cet achat est déjà utilisé sur trop de téléviseurs.",
-  "store.legalPriceRenew": "{price} par {period}, facturé sur votre compte Google Play. Renouvellement automatique jusqu’à résiliation.",
-  "store.legalTrialRenew": {
-    "one": "Gratuit pendant {count} jour, puis {price} par {period}, facturé sur votre compte Google Play. Renouvellement automatique jusqu’à résiliation.",
-    "many": "Gratuit pendant {count} jours, puis {price} par {period}, facturé sur votre compte Google Play. Renouvellement automatique jusqu’à résiliation.",
-    "other": "Gratuit pendant {count} jours, puis {price} par {period}, facturé sur votre compte Google Play. Renouvellement automatique jusqu’à résiliation."
-  },
-  "store.legalCancel": "Résiliez à tout moment dans vos abonnements Google Play.",
-  "store.legalCancelTrial": "Résiliez à tout moment dans vos abonnements Google Play. Résiliez avant la fin de l’essai pour ne rien payer.",
-  "store.periodMonth": "mois",
-  "store.periodYear": "an",
   "store.testMode": "Boutique de test : aucun paiement réel",
   "store.tvAppOnly": "Les achats sont disponibles dans l’application Android TV."
 }

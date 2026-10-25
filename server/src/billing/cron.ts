@@ -1,15 +1,12 @@
-// PAYMENTS-SPEC §3.8: scheduled(). Hourly: ack retries + overdue alert. Daily: voided purchases, stale-sub alert, prune.
+// PAYMENTS-SPEC §3.8: scheduled(). Hourly: ack retries + overdue alert. Daily: voided purchases, prune.
 import { ACK_OVERDUE_ALERT_MS } from "@mishana/shared/constants";
-import { packIdFromProductId } from "@mishana/shared/billing";
 import { sha256hex } from "../tokens";
 import type { BillingStore } from "./billing-core";
-import { billingPacks } from "./catalog-info";
 import { ackPurchase, GOOGLE_CALL_TIMEOUT_BACKGROUND_MS, GoogleHttpError } from "./google";
 import type { GoogleApi } from "./google";
 import { billingLog } from "./log";
 import { fakeAllowedByEnv } from "./mode";
 import type { BillingModeEnv } from "./mode";
-import { isGone, refreshSubscription } from "./rtdn";
 
 export const CRON_HOURLY = "23 * * * *";
 export const CRON_DAILY = "17 3 * * *";
@@ -35,8 +32,6 @@ export async function runCron(env: BillingModeEnv, cron: string, deps: CronDeps)
     await hourly(deps.store, api, deps.now);
   } else if (cron === CRON_DAILY) {
     await voided(deps.store, api, deps.now);
-    const stale = await deps.store.staleSubs(deps.now());
-    if (stale > 0) billingLog("BILLING_SUB_STALE", { count: stale }, "warn");
     await deps.store.prune(deps.now());
   }
 }
@@ -46,45 +41,29 @@ async function hourly(store: BillingStore, api: GoogleApi, now: () => number): P
   const o = { timeoutMs: GOOGLE_CALL_TIMEOUT_BACKGROUND_MS };
   let overdue = 0;
   for (const r of rows) {
-    const res = await ackPurchase(api, store, r.kind, r.productId, r.token, r.tokenHash, o);
+    const res = await ackPurchase(api, store, r.productId, r.token, r.tokenHash, o);
     if (res === "kept" && r.windowStartMs < now() - ACK_OVERDUE_ALERT_MS) overdue++;
   }
   if (overdue > 0) billingLog("BILLING_ACK_OVERDUE", { count: overdue }, "error");
 }
 
-/** Voided purchases since the cursor. A transient Google error stops paging without moving the cursor. */
+/**
+ * Voided purchases since the cursor (the list asks for type=0, one-time products only: lifetime `premium` and the
+ * packs). Each token is revoked (sticky), or tombstoned when never seen, with no Google re-read: every in-app product
+ * of this package is one this app sells. A transient Google error stops paging without moving the cursor.
+ */
 async function voided(store: BillingStore, api: GoogleApi, now: () => number): Promise<void> {
   const t = now();
   const cursor = await store.cursorGet();
   const start = Math.max(t - 30 * DAY_MS + HOUR_MS, cursor === null ? -Infinity : cursor - DAY_MS);
   const o = { timeoutMs: GOOGLE_CALL_TIMEOUT_BACKGROUND_MS };
-  const c = { store, api, now, opts: o };
   let pageToken: string | undefined;
   try {
     for (let page = 0; page < MAX_VOIDED_PAGES; page++) {
       const res = await api.listVoided({ startTimeMs: start, pageToken }, o);
       for (const v of res.voidedPurchases ?? []) {
         if (typeof v.purchaseToken !== "string" || v.purchaseToken === "") continue;
-        const h = await sha256hex(v.purchaseToken);
-        const kind = await store.kindOf(h);
-        if (kind === "pack") {
-          await store.markRevoked(h, now());
-        } else if (kind === "sub") {
-          await refreshSubscription(c, v.purchaseToken); // never markRevoked a subscription
-        } else {
-          // Unknown hash: VoidedPurchase has no product type. A one-time token of a premium pack → tombstone.
-          try {
-            const p = await api.getProductV2(v.purchaseToken, o);
-            const id = packIdFromProductId(p.productLineItem?.[0]?.productId ?? "");
-            if (id && billingPacks().premiumIds.has(id)) await store.markRevoked(h, now());
-          } catch (e) {
-            // [VERIFY] productsv2 answers 404/410 for a subscription token (§3.8). Only the purchases API's own
-            // 400/404/410 means "skip"; 401/403, token-endpoint failures, 429 and 5xx stop paging without moving
-            // the cursor, so a voided pack is never skipped during an auth outage.
-            if (isGone(e)) continue;
-            throw e;
-          }
-        }
+        await store.markRevoked(await sha256hex(v.purchaseToken), now());
       }
       pageToken = res.tokenPagination?.nextPageToken;
       if (!pageToken) {

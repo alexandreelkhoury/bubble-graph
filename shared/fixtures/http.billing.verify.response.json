@@ -6,14 +6,7 @@
     "packs": [
       "en-food-01"
     ],
-    "expiresAt": 1790028800000,
-    "subscription": {
-      "state": "SUBSCRIPTION_STATE_ACTIVE",
-      "basePlanId": "yearly",
-      "autoRenewing": true,
-      "inTrial": true,
-      "expiresAt": 1790604800000
-    }
+    "expiresAt": 1790028800000
   },
   "results": [
     {

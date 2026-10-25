@@ -42,22 +42,20 @@ describe("i18n keys (§11)", () => {
   it("PAYMENTS-SPEC §4.7 billing keys exist in every locale", () => {
     const keys = [
       "lobby.premium", "lobby.premiumRoom", "lobby.premiumEnded", "lobby.premiumEndedPhone", "lobby.wordsRepeating",
-      "store.title", "store.premiumTitle", "store.premiumPitch", "store.planMonthly", "store.planYearly", "store.pricePerMonth",
-      "store.pricePerYear", "store.trialDays", "store.premiumActive", "store.renewsOn", "store.endsOn", "store.manage",
-      "store.manageHint", "store.fixPayment", "store.fixPaymentButton", "store.packsTitle", "store.otherLanguages",
+      "store.title", "store.premiumTitle", "store.premiumPitch", "store.unlockPremium", "store.premiumLifetime",
+      "store.premiumActive", "store.packsTitle", "store.otherLanguages",
       "store.packPairs", "store.buy", "store.owned", "store.included", "store.pending", "store.pendingBody", "store.confirming",
       "store.unlocked", "store.addedToGame", "store.switchLanguage", "store.restore", "store.restored", "store.nothingToRestore",
       "store.help", "store.loading", "store.unavailable", "store.playUnavailable", "store.network", "store.itemUnavailable",
       "store.errorGeneric", "store.alreadyOwned", "store.verifyFailed", "store.installLimit", "store.installLimitNoHelp",
-      "store.legalPriceRenew", "store.legalTrialRenew", "store.legalCancel", "store.legalCancelTrial", "store.periodMonth",
-      "store.periodYear", "store.testMode", "store.tvAppOnly", "settings.locked", "settings.premiumOnly", "settings.unlockHint",
+      "store.testMode", "store.tvAppOnly", "settings.locked", "settings.premiumOnly", "settings.unlockHint",
       "settings.unlockOnTv", "settings.lockedPacks", "tv.packLocked", "tv.premiumRequired", "error.premiumRequired",
       "error.packLocked", "error.entitlementInvalid", "error.tvBusy",
     ];
     for (const m of [en, others.fr, others.ar, others.es]) for (const k of keys) expect(m[k], k).toBeDefined();
-    const plural = ["store.premiumPitch", "store.trialDays", "store.packPairs", "store.legalTrialRenew"];
+    const plural = ["store.premiumPitch", "store.packPairs"];
     for (const k of plural) expect(typeof en[k], k).toBe("object");
-    expect(sorted(union(en["store.legalTrialRenew"] as Value))).toEqual(["count", "period", "price"]);
+    expect(sorted(union(en["store.unlockPremium"] as Value))).toEqual(["price"]);
     expect(sorted(union(en["store.premiumPitch"] as Value))).toEqual(["count", "pairs"]);
   });
   it("FR uses U+202F, never an ordinary space, before ! ? : ; (all of fr.json)", () => {

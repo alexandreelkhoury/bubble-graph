@@ -412,21 +412,9 @@
     "one": "{count} word pack ({pairs}+ word pairs), and every new one.",
     "other": "All {count} word packs ({pairs}+ word pairs), and every new one."
   },
-  "store.planMonthly": "Monthly",
-  "store.planYearly": "Yearly",
-  "store.pricePerMonth": "{price} / month",
-  "store.pricePerYear": "{price} / year",
-  "store.trialDays": {
-    "one": "{count}-day free trial",
-    "other": "{count}-day free trial"
-  },
+  "store.unlockPremium": "Unlock Premium · {price}",
+  "store.premiumLifetime": "One-time purchase, yours for good. No subscription.",
   "store.premiumActive": "Premium is on",
-  "store.renewsOn": "Renews on {date}",
-  "store.endsOn": "Ends on {date}",
-  "store.manage": "Manage subscription",
-  "store.manageHint": "On a phone or computer: open Google Play, then Payments & subscriptions, then Subscriptions.",
-  "store.fixPayment": "There's a problem with your payment. Fix it in Google Play to keep Premium.",
-  "store.fixPaymentButton": "Fix payment",
   "store.packsTitle": "Word packs",
   "store.otherLanguages": "Other languages",
   "store.packPairs": {
@@ -457,15 +445,6 @@
   "store.verifyFailed": "Purchase received. We'll finish unlocking it shortly.",
   "store.installLimit": "This purchase is already used on too many TVs. Need help? {email}",
   "store.installLimitNoHelp": "This purchase is already used on too many TVs.",
-  "store.legalPriceRenew": "{price} per {period}, billed to your Google Play account. Renews automatically until you cancel.",
-  "store.legalTrialRenew": {
-    "one": "Free for {count} day, then {price} per {period}, billed to your Google Play account. Renews automatically until you cancel.",
-    "other": "Free for {count} days, then {price} per {period}, billed to your Google Play account. Renews automatically until you cancel."
-  },
-  "store.legalCancel": "Cancel anytime in your Google Play subscriptions.",
-  "store.legalCancelTrial": "Cancel anytime in your Google Play subscriptions. Cancel before the trial ends and you won't be charged.",
-  "store.periodMonth": "month",
-  "store.periodYear": "year",
   "store.testMode": "Test store: no real payments",
   "store.tvAppOnly": "Purchases are available in the Android TV app."
 }

@@ -1,13 +1,13 @@
 // PAYMENTS-SPEC §3.6 / §7.2: the RTDN push endpoint end to end (real SQLite core, scripted Google, real OIDC check).
 import { describe, expect, it } from "vitest";
 import { GoogleHttpError } from "../../src/billing/google";
-import { normalizeSubscription } from "../../src/billing/normalize";
+import { normalizeProduct } from "../../src/billing/normalize";
 import { handleRtdn, parsePush } from "../../src/billing/rtdn";
 import type { RtdnEnv } from "../../src/billing/rtdn";
-import { DAY, INSTALL_A, NOW, ScriptedGoogle, hashOf, newCore, product, sub } from "../support/billing";
+import { DAY, INSTALL_A, NOW, ScriptedGoogle, hashOf, newCore, product } from "../support/billing";
 import { AUD, EMAIL, jwksFor, oidcToken, rsaKey } from "../support/oidc";
 
-const SUBSCRIPTION = "projects/mish-ana-billing/subscriptions/play-rtdn-push";
+const SUBSCRIPTION = "projects/mish-ana-billing/subscriptions/play-rtdn-push"; // the Pub/Sub subscription
 const PKG = "app.mishana.tv";
 
 function env(over: Partial<RtdnEnv> = {}): RtdnEnv {
@@ -33,134 +33,155 @@ async function setup() {
   return { core, store, google, call };
 }
 
-const subN = (purchaseToken: string, notificationType = 4) => ({ subscriptionNotification: { version: "1.0", notificationType, purchaseToken } });
+// oneTimeProductNotification types: 1 = PURCHASED, 2 = CANCELED.
+const otp = (purchaseToken: string, notificationType = 1, sku = "premium") => ({ oneTimeProductNotification: { version: "1.0", notificationType, purchaseToken, sku } });
+const voided = (purchaseToken: string, productType = 2, refundType = 1) => ({ voidedPurchaseNotification: { purchaseToken, orderId: "GPA.1", productType, refundType } });
+const premium = (over: Parameters<typeof product>[0] = {}) => product({ productId: "premium", ...over });
 
 describe("RTDN parsing", () => {
   it("accepts eventTimeMillis as a string or a number; garbage → null", () => {
-    expect(parsePush(pushBody(subN("t")))?.n.subscriptionNotification?.purchaseToken).toBe("t");
-    expect(parsePush(pushBody({ ...subN("t"), eventTimeMillis: 1790000000000 }))?.messageId).toBe("136969346945");
+    expect(parsePush(pushBody(otp("t")))?.n.oneTimeProductNotification?.purchaseToken).toBe("t");
+    expect(parsePush(pushBody({ ...otp("t"), eventTimeMillis: 1790000000000 }))?.messageId).toBe("136969346945");
     expect(parsePush("{")).toBeNull();
     expect(parsePush(JSON.stringify({ message: { data: "!!!", messageId: "1" }, subscription: "s" }))).toBeNull();
   });
 });
 
 describe("POST /api/billing/rtdn", () => {
-  it("subscription notification → get + apply + ack; obfuscated id binds; dedupe by messageId", async () => {
+  it("premium one-time notification → productsv2 get + apply + ack; obfuscated id binds lifetime premium; dedupe by messageId", async () => {
     const { core, google, call } = await setup();
     const installHash = await hashOf(INSTALL_A);
-    google.subs.set("sub-1", sub({ externalAccountIdentifiers: { obfuscatedExternalAccountId: installHash } }));
-    expect((await call(pushBody(subN("sub-1")))).status).toBe(204);
-    expect(google.count("sub_get")).toBe(1);
-    expect(google.count("sub_ack")).toBe(1);
-    expect(core.rowFor(await hashOf("sub-1"))).toMatchObject({ acknowledged: 1, ack_token: null });
+    google.products.set("prem-1", premium({ obfuscatedExternalAccountId: installHash }));
+    expect((await call(pushBody(otp("prem-1")))).status).toBe(204);
+    expect(google.count("product_get")).toBe(1);
+    expect(google.count("product_ack")).toBe(1);
+    expect(core.rowFor(await hashOf("prem-1"))).toMatchObject({ product_id: "premium", acknowledged: 1, ack_token: null });
     expect(core.entitlementFor(installHash, NOW).premiumUntilMs).not.toBeNull();
-    expect((await call(pushBody(subN("sub-1")))).status).toBe(204);
-    expect(google.count("sub_get")).toBe(1); // deduped
+    expect((await call(pushBody(otp("prem-1")))).status).toBe(204);
+    expect(google.count("product_get")).toBe(1); // deduped
   });
 
-  it("one-time product notification → get + apply + ack", async () => {
+  it("pack one-time notification → get + apply + ack", async () => {
     const { core, google, call } = await setup();
     google.products.set("pack-1", product());
-    expect((await call(pushBody({ oneTimeProductNotification: { version: "1.0", notificationType: 1, purchaseToken: "pack-1", sku: "pack_en_food_01" } }))).status).toBe(204);
+    expect((await call(pushBody(otp("pack-1", 1, "pack_en_food_01")))).status).toBe(204);
     expect(google.count("product_ack")).toBe(1);
     expect(core.rowFor(await hashOf("pack-1"))?.state).toBe("PURCHASED");
   });
 
-  it("voided product → revoked; unknown hash → tombstone, a later /verify-style apply → REVOKED", async () => {
+  it("a product this app does not sell is ignored (204, no row)", async () => {
+    const { core, google, call } = await setup();
+    google.products.set("x-1", product({ productId: "pack_not_shipped_99" }));
+    expect((await call(pushBody(otp("x-1", 1, "pack_not_shipped_99")))).status).toBe(204);
+    expect(core.rowFor(await hashOf("x-1"))).toBeNull();
+    expect(google.count("product_ack")).toBe(0);
+  });
+
+  it("premium refund via oneTimeProductNotification CANCELED → premium off", async () => {
+    const { core, google, call } = await setup();
+    const inst = "2".repeat(64);
+    const h = await hashOf("prem-2");
+    core.applyPurchase({ tokenHash: h, productId: "premium", n: normalizeProduct(premium(), NOW - 1000), callerInstallHash: inst, rawTokenForAck: "prem-2", nowMs: NOW - 1000 });
+    expect(core.entitlementFor(inst, NOW).premiumUntilMs).not.toBeNull();
+    google.products.set("prem-2", premium({ state: "CANCELLED" }));
+    expect((await call(pushBody(otp("prem-2", 2)))).status).toBe(204);
+    expect(core.rowFor(h)?.state).toBe("CANCELLED");
+    expect(core.entitlementFor(inst, NOW + 1).premiumUntilMs).toBeNull();
+  });
+
+  it("voided premium → revoked (sticky): premium off, a later PURCHASED read → REVOKED", async () => {
+    const { core, google, call } = await setup();
+    const inst = "3".repeat(64);
+    google.products.set("prem-3", premium());
+    await call(pushBody(otp("prem-3"), "a1"));
+    const h = await hashOf("prem-3");
+    expect(core.bindOnly({ tokenHash: h, callerInstallHash: inst, nowMs: NOW })).toBe("OK");
+    expect((await call(pushBody(voided("prem-3"), "a2"))).status).toBe(204);
+    expect(core.rowFor(h)?.revoked).toBe(1);
+    expect(core.entitlementFor(inst, NOW + 1).premiumUntilMs).toBeNull();
+    await call(pushBody(otp("prem-3"), "a3"));
+    expect(core.rowFor(h)?.revoked).toBe(1);
+    expect(core.bindOnly({ tokenHash: h, callerInstallHash: inst, nowMs: NOW + 2 })).toBe("REVOKED");
+  });
+
+  it("voided pack → revoked; unknown hash → tombstone, a later /verify-style apply → REVOKED", async () => {
     const { core, google, call } = await setup();
     google.products.set("pack-2", product());
-    await call(pushBody({ oneTimeProductNotification: { notificationType: 1, purchaseToken: "pack-2" } }, "m1"));
-    await call(pushBody({ voidedPurchaseNotification: { purchaseToken: "pack-2", orderId: "GPA.1", productType: 2, refundType: 1 } }, "m2"));
+    await call(pushBody(otp("pack-2", 1, "pack_en_food_01"), "m1"));
+    await call(pushBody(voided("pack-2"), "m2"));
     expect(core.rowFor(await hashOf("pack-2"))?.revoked).toBe(1);
-    await call(pushBody({ voidedPurchaseNotification: { purchaseToken: "never-seen", orderId: "GPA.2", productType: 2, refundType: 1 } }, "m3"));
+    await call(pushBody(voided("never-seen"), "m3"));
     const h = await hashOf("never-seen");
     expect(core.rowFor(h)).toMatchObject({ revoked: 1, product_id: null });
     expect(core.bindOnly({ tokenHash: h, callerInstallHash: "1".repeat(64), nowMs: NOW })).toBe("REVOKED");
   });
 
-  it("voided sub, refundType 1, Google returns ACTIVE → premium kept, revoked stays 0", async () => {
+  it("subscription notifications and voided productType 1 are not expected: acked (204), logged, ignored", async () => {
     const { core, google, call } = await setup();
-    google.subs.set("sub-2", sub({ acknowledgementState: "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED" }));
-    const h = await hashOf("sub-2");
-    await core.applyPurchase({ tokenHash: h, kind: "sub", productId: "premium", n: normalizeSubscription(sub(), NOW - 1000), callerInstallHash: "2".repeat(64), rawTokenForAck: "sub-2", nowMs: NOW - 1000 });
-    expect((await call(pushBody({ voidedPurchaseNotification: { purchaseToken: "sub-2", orderId: "GPA.3..1", productType: 1, refundType: 1 } }))).status).toBe(204);
-    expect(google.count("sub_get")).toBe(1);
-    expect(core.rowFor(h)?.revoked).toBe(0);
-    expect(core.entitlementFor("2".repeat(64), NOW).premiumUntilMs).not.toBeNull();
-  });
-
-  it("voided sub with Google EXPIRED → premium ends", async () => {
-    const { core, google, call } = await setup();
-    google.subs.set("sub-3", sub());
-    await call(pushBody(subN("sub-3"), "a1"));
-    const h = await hashOf("sub-3");
-    core.bindOnly({ tokenHash: h, callerInstallHash: "3".repeat(64), nowMs: NOW });
-    google.subs.set("sub-3", sub({ subscriptionState: "SUBSCRIPTION_STATE_EXPIRED", expiryMs: NOW - 1000 }));
-    await call(pushBody({ voidedPurchaseNotification: { purchaseToken: "sub-3", orderId: "GPA.4", productType: 1, refundType: 2 } }, "a2"));
-    expect(core.rowFor(h)?.revoked).toBe(0);
-    expect(core.entitlementFor("3".repeat(64), NOW + 1).premiumUntilMs).toBeNull();
+    expect((await call(pushBody({ subscriptionNotification: { version: "1.0", notificationType: 4, purchaseToken: "s-1" } }, "s1"))).status).toBe(204);
+    expect((await call(pushBody(voided("s-1", 1), "s2"))).status).toBe(204);
+    expect(google.calls).toEqual([]);
+    expect(core.rowFor(await hashOf("s-1"))).toBeNull();
+    expect(core.rtdnSeen("s1") && core.rtdnSeen("s2")).toBe(true);
   });
 
   it("RTDN obfuscated-id binding skipped when the token already has a binding or is at the limit", async () => {
     const { core, google, call } = await setup();
-    google.subs.set("sub-4", sub({ externalAccountIdentifiers: { obfuscatedExternalAccountId: "9".repeat(64) } }));
-    const h = await hashOf("sub-4");
-    for (let i = 1; i <= 10; i++) await core.applyPurchase({ tokenHash: h, kind: "sub", productId: "premium", n: normalizeSubscription(sub(), NOW - 5000), callerInstallHash: String(i).padStart(64, "0"), rawTokenForAck: "sub-4", nowMs: NOW - 5000 });
-    await call(pushBody(subN("sub-4")));
+    google.products.set("prem-4", premium({ obfuscatedExternalAccountId: "9".repeat(64) }));
+    const h = await hashOf("prem-4");
+    for (let i = 1; i <= 10; i++) core.applyPurchase({ tokenHash: h, productId: "premium", n: normalizeProduct(premium(), NOW - 5000), callerInstallHash: String(i).padStart(64, "0"), rawTokenForAck: "prem-4", nowMs: NOW - 5000 });
+    await call(pushBody(otp("prem-4")));
     expect(core.bindingsFor(h).some((b) => b.install_hash === "9".repeat(64))).toBe(false);
   });
 
-  it("package mismatch → 204, no Google call; wrong subscription → 204; test notification → 204", async () => {
+  it("package mismatch → 204, no Google call; wrong Pub/Sub subscription → 204; test notification → 204", async () => {
     const { google, call } = await setup();
-    const other = JSON.stringify({ message: { data: btoa(JSON.stringify({ packageName: "com.other", ...subN("x") })), messageId: "p1" }, subscription: SUBSCRIPTION });
+    const other = JSON.stringify({ message: { data: btoa(JSON.stringify({ packageName: "com.other", ...otp("x") })), messageId: "p1" }, subscription: SUBSCRIPTION });
     expect((await call(other)).status).toBe(204);
-    expect((await call(pushBody(subN("x"), "p2", "projects/x/subscriptions/evil"))).status).toBe(204);
+    expect((await call(pushBody(otp("x"), "p2", "projects/x/subscriptions/evil"))).status).toBe(204);
     expect((await call(pushBody({ testNotification: { version: "1.0" } }, "p3"))).status).toBe(204);
     expect(google.calls).toEqual([]);
   });
 
-  it("body > 16 KB → 413; limiter → 429; garbage → 204; unset subscription var → 503", async () => {
+  it("body > 16 KB → 413; limiter → 429; garbage → 204; unset Pub/Sub subscription var → 503", async () => {
     const { call } = await setup();
     expect((await call("x".repeat(16_385))).status).toBe(413);
-    expect((await call(pushBody(subN("x")), env({ RTDN_LIMITER: { limit: async () => ({ success: false }) } }))).status).toBe(429);
+    expect((await call(pushBody(otp("x")), env({ RTDN_LIMITER: { limit: async () => ({ success: false }) } }))).status).toBe(429);
     expect((await call("not json")).status).toBe(204);
-    expect((await call(pushBody(subN("x")), env({ RTDN_SUBSCRIPTION: "" }))).status).toBe(503);
-    expect((await call(pushBody(subN("x")), env({ RTDN_AUDIENCE: "" }))).status).toBe(503);
+    expect((await call(pushBody(otp("x")), env({ RTDN_SUBSCRIPTION: "" }))).status).toBe(503);
+    expect((await call(pushBody(otp("x")), env({ RTDN_AUDIENCE: "" }))).status).toBe(503);
   });
 
   it("Google 503 → 503 and no rtdnMark (redelivery retries); Google 404 → 204", async () => {
     const { core, google, call } = await setup();
-    google.subs.set("sub-5", new GoogleHttpError(503, "sub_get"));
-    expect((await call(pushBody(subN("sub-5"), "r1"))).status).toBe(503);
+    google.products.set("prem-5", new GoogleHttpError(503, "product_get"));
+    expect((await call(pushBody(otp("prem-5"), "r1"))).status).toBe(503);
     expect(core.rtdnSeen("r1")).toBe(false);
-    expect((await call(pushBody(subN("unknown-token"), "r2"))).status).toBe(204);
+    expect((await call(pushBody(otp("unknown-token"), "r2"))).status).toBe(204);
     expect(core.rtdnSeen("r2")).toBe(true);
   });
 
-  it("an OAuth token-endpoint failure is never 'gone': 503 with no rtdnMark, for every notification kind", async () => {
+  it("an OAuth token-endpoint failure is never 'gone': 503 with no rtdnMark", async () => {
     const { core, google, call } = await setup();
     for (const status of [503, 400]) {
-      google.subs.set("sub-t", new GoogleHttpError(status, "token"));
       google.products.set("pack-t", new GoogleHttpError(status, "token"));
-      expect((await call(pushBody(subN("sub-t"), `t${status}a`))).status).toBe(503);
-      expect((await call(pushBody({ oneTimeProductNotification: { notificationType: 1, purchaseToken: "pack-t", sku: "pack_en_food_01" } }, `t${status}b`))).status).toBe(503);
-      expect((await call(pushBody({ voidedPurchaseNotification: { purchaseToken: "sub-t", productType: 1, refundType: 1 } }, `t${status}c`))).status).toBe(503);
-      for (const id of ["a", "b", "c"]) expect(core.rtdnSeen(`t${status}${id}`)).toBe(false);
+      expect((await call(pushBody(otp("pack-t", 1, "pack_en_food_01"), `t${status}`))).status).toBe(503);
+      expect(core.rtdnSeen(`t${status}`)).toBe(false);
     }
   });
 
   it("a failed ack → 204 with ack_token kept for the cron", async () => {
     const { core, google, call } = await setup();
-    google.subs.set("sub-6", sub());
-    google.ackError = new GoogleHttpError(500, "sub_ack");
-    expect((await call(pushBody(subN("sub-6")))).status).toBe(204);
-    expect(core.rowFor(await hashOf("sub-6"))).toMatchObject({ acknowledged: 0, ack_token: "sub-6" });
+    google.products.set("prem-6", premium());
+    google.ackError = new GoogleHttpError(500, "product_ack");
+    expect((await call(pushBody(otp("prem-6")))).status).toBe(204);
+    expect(core.rowFor(await hashOf("prem-6"))).toMatchObject({ acknowledged: 0, ack_token: "prem-6" });
     expect(core.pendingAcks(NOW + DAY).length).toBe(1);
   });
 
   it("401 for a token signed by an unknown key", async () => {
     const { call } = await setup();
     const evil = await rsaKey("g1");
-    expect((await call(pushBody(subN("x")), env(), `Bearer ${await oidcToken(evil, NOW)}`)).status).toBe(401);
+    expect((await call(pushBody(otp("x")), env(), `Bearer ${await oidcToken(evil, NOW)}`)).status).toBe(401);
   });
 });

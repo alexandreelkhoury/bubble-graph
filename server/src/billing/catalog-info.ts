@@ -4,6 +4,7 @@
 import { languageOf } from "@mishana/shared/engine";
 import type { AgeRating, LocalizedTitle, PackTier } from "@mishana/shared/engine";
 import type { Locale } from "@mishana/shared/constants";
+import { isSellableProductId, packIdFromProductId, PREMIUM_PRODUCT_ID } from "@mishana/shared/billing";
 import { PACKS } from "@mishana/word-packs";
 
 export interface BillingPackInfo {
@@ -34,4 +35,12 @@ export function billingPacks(): { all: BillingPackInfo[]; premiumIds: ReadonlySe
   if (cached) return cached;
   const all = extractPackInfo(PACKS);
   return (cached = { all, premiumIds: new Set(all.filter((p) => p.tier === "premium").map((p) => p.id)) });
+}
+
+/** A product this app sells right now: lifetime `premium`, or the product id of a shipped premium pack. */
+export function isSoldProductId(productId: string): boolean {
+  if (!isSellableProductId(productId)) return false;
+  if (productId === PREMIUM_PRODUCT_ID) return true;
+  const packId = packIdFromProductId(productId);
+  return packId !== null && billingPacks().premiumIds.has(packId);
 }

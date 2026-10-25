@@ -1,7 +1,7 @@
 // PAYMENTS-SPEC §3.7: Google Play Developer API v3 client. Service-account JWT (RS256, WebCrypto) → OAuth access
 // token (cached per isolate) → purchases.* calls. Raw purchase tokens appear in request URLs, so URLs are never
 // logged and never put in errors: failures throw GoogleHttpError { status, op } only.
-import type { ProductPurchaseV2, SubscriptionPurchaseV2, VoidedPurchasesListResponse } from "./google-types";
+import type { ProductPurchaseV2, VoidedPurchasesListResponse } from "./google-types";
 import { billingLog } from "./log";
 import { b64urlEncode } from "./token";
 
@@ -18,7 +18,7 @@ export const TOKEN_TIMEOUT_MS = 10_000;
 /** [VERIFY] the server's maximum page size is undocumented; any accepted value works because we paginate (§3.7). */
 export const VOIDED_MAX_RESULTS = 1000;
 
-export type GoogleOp = "token" | "sub_get" | "product_get" | "sub_ack" | "product_ack" | "voided_list";
+export type GoogleOp = "token" | "product_get" | "product_ack" | "voided_list";
 
 /** status 0 = network error or timeout. Carries no URL, token or body. */
 export class GoogleHttpError extends Error {
@@ -50,9 +50,7 @@ export interface CallOpts {
 }
 
 export interface GoogleApi {
-  getSubscriptionV2(token: string, o: CallOpts): Promise<SubscriptionPurchaseV2>;
   getProductV2(token: string, o: CallOpts): Promise<ProductPurchaseV2>;
-  ackSubscription(token: string, o: CallOpts): Promise<void>;
   ackProduct(productId: string, token: string, o: CallOpts): Promise<void>;
   listVoided(q: { startTimeMs: number; pageToken?: string | undefined }, o: CallOpts): Promise<VoidedPurchasesListResponse>;
 }
@@ -210,19 +208,9 @@ export class GoogleClient implements GoogleApi {
     return `androidpublisher/v3/applications/${encodeURIComponent(this.#pkg)}/purchases/`;
   }
 
-  async getSubscriptionV2(token: string, o: CallOpts): Promise<SubscriptionPurchaseV2> {
-    const res = await this.#call("sub_get", "GET", `${this.#app()}subscriptionsv2/tokens/${encodeURIComponent(token)}`, o);
-    return (await readJson(res, "sub_get")) as SubscriptionPurchaseV2;
-  }
-
   async getProductV2(token: string, o: CallOpts): Promise<ProductPurchaseV2> {
     const res = await this.#call("product_get", "GET", `${this.#app()}productsv2/tokens/${encodeURIComponent(token)}`, o);
     return (await readJson(res, "product_get")) as ProductPurchaseV2;
-  }
-
-  async ackSubscription(token: string, o: CallOpts): Promise<void> {
-    // `subscriptionId` is still a required path parameter of subscriptions.acknowledge.
-    await this.#call("sub_ack", "POST", `${this.#app()}subscriptions/premium/tokens/${encodeURIComponent(token)}:acknowledge`, o);
   }
 
   async ackProduct(productId: string, token: string, o: CallOpts): Promise<void> {
@@ -230,7 +218,9 @@ export class GoogleClient implements GoogleApi {
   }
 
   async listVoided(q: { startTimeMs: number; pageToken?: string | undefined }, o: CallOpts): Promise<VoidedPurchasesListResponse> {
-    let qs = `type=1&startTime=${Math.floor(q.startTimeMs)}&maxResults=${VOIDED_MAX_RESULTS}`;
+    // type=0: in-app (one-time) products only. Every product of this app is one-time (lifetime `premium` and the
+    // packs); there are no subscriptions to list, so type=1 (both kinds) would only add noise.
+    let qs = `type=0&startTime=${Math.floor(q.startTimeMs)}&maxResults=${VOIDED_MAX_RESULTS}`;
     if (q.pageToken) qs += `&token=${encodeURIComponent(q.pageToken)}`;
     const res = await this.#call("voided_list", "GET", `${this.#app()}voidedpurchases?${qs}`, o);
     return (await readJson(res, "voided_list")) as VoidedPurchasesListResponse;
@@ -271,11 +261,10 @@ export interface AckStore { markAcked(tokenHash: string): Promise<void> | void }
  * for the cron. 401/403, token-endpoint failures, 429/5xx/timeout → keep `ack_token` with no re-read. Never throws.
  */
 export async function ackPurchase(
-  api: GoogleApi, store: AckStore, kind: "sub" | "pack", productId: string, rawToken: string, tokenHash: string, o: CallOpts,
+  api: GoogleApi, store: AckStore, productId: string, rawToken: string, tokenHash: string, o: CallOpts,
 ): Promise<"acked" | "kept"> {
   try {
-    if (kind === "sub") await api.ackSubscription(rawToken, o);
-    else await api.ackProduct(productId, rawToken, o);
+    await api.ackProduct(productId, rawToken, o);
     await store.markAcked(tokenHash);
     return "acked";
   } catch (e) {
@@ -284,7 +273,7 @@ export async function ackPurchase(
       // 401/403 and token-endpoint failures: a re-read would fail the same way (BILLING_AUTH is already logged).
       if (!isGoogleAuthFailure(e)) {
         try {
-          const r = kind === "sub" ? await api.getSubscriptionV2(rawToken, o) : await api.getProductV2(rawToken, o);
+          const r = await api.getProductV2(rawToken, o);
           if (r.acknowledgementState === "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED") {
             await store.markAcked(tokenHash);
             return "acked";

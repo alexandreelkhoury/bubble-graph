@@ -444,25 +444,9 @@
     "many": "كل الباقات ({count})، أكتر من {pairs} زوج كلمات، وكل باقة جديدة.",
     "other": "كل الباقات ({count})، أكتر من {pairs} زوج كلمات، وكل باقة جديدة."
   },
-  "store.planMonthly": "شهري",
-  "store.planYearly": "سنوي",
-  "store.pricePerMonth": "{price} بالشهر",
-  "store.pricePerYear": "{price} بالسنة",
-  "store.trialDays": {
-    "zero": "تجربة مجانية {count} يوم",
-    "one": "تجربة مجانية يوم واحد",
-    "two": "تجربة مجانية يومين",
-    "few": "تجربة مجانية {count} أيام",
-    "many": "تجربة مجانية {count} يوم",
-    "other": "تجربة مجانية {count} يوم"
-  },
+  "store.unlockPremium": "افتح البريميوم · {price}",
+  "store.premiumLifetime": "دفعة وحدة، إلك للأبد. بلا اشتراك.",
   "store.premiumActive": "البريميوم شغّال",
-  "store.renewsOn": "بيتجدد بـ {date}",
-  "store.endsOn": "بيخلص بـ {date}",
-  "store.manage": "إدارة الاشتراك",
-  "store.manageHint": "من تلفون أو كمبيوتر: من Google Play، بعدين الدفع والاشتراكات، بعدين الاشتراكات.",
-  "store.fixPayment": "في مشكلة بالدفع. صلّحوها بـ Google Play لتضل البريميوم معكن.",
-  "store.fixPaymentButton": "تصليح الدفع",
   "store.packsTitle": "باقات الكلمات",
   "store.otherLanguages": "لغات تانية",
   "store.packPairs": {
@@ -497,19 +481,6 @@
   "store.verifyFailed": "وصل الشرا. رح نخلّص الفتح بعد شوي.",
   "store.installLimit": "هالشرا مستعمل على تلفزيونات كتير. بدكن مساعدة؟ {email}",
   "store.installLimitNoHelp": "هالشرا مستعمل على تلفزيونات كتير.",
-  "store.legalPriceRenew": "{price} كل {period}، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.",
-  "store.legalTrialRenew": {
-    "zero": "مجاني {count} يوم، بعدين {price} كل {period}، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.",
-    "one": "مجاني يوم واحد، بعدين {price} كل {period}، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.",
-    "two": "مجاني يومين، بعدين {price} كل {period}، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.",
-    "few": "مجاني {count} أيام، بعدين {price} كل {period}، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.",
-    "many": "مجاني {count} يوم، بعدين {price} كل {period}، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.",
-    "other": "مجاني {count} يوم، بعدين {price} كل {period}، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا."
-  },
-  "store.legalCancel": "فيكن تلغوا أي وقت من اشتراكات Google Play تبعكن.",
-  "store.legalCancelTrial": "فيكن تلغوا أي وقت من اشتراكات Google Play تبعكن. إذا لغيتوا قبل ما تخلص التجربة، ما بينخصم شي.",
-  "store.periodMonth": "شهر",
-  "store.periodYear": "سنة",
   "store.testMode": "متجر تجريبي: ما في دفع حقيقي",
   "store.tvAppOnly": "المشتريات متاحة بتطبيق Android TV."
 }

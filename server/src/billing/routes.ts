@@ -8,17 +8,7 @@ import {
   MAX_GOOGLE_READS_PER_VERIFY,
   VERIFY_DEADLINE_MS,
 } from "@mishana/shared/constants";
-import {
-  BASE_PLAN_IDS,
-  EntitlementRequest,
-  FakePurchaseRequest,
-  FakeSetRequest,
-  packIdFromProductId,
-  packProductId,
-  PREMIUM_PRODUCT_ID,
-  TRIAL_OFFER_ID,
-  VerifyRequest,
-} from "@mishana/shared/billing";
+import { EntitlementRequest, FakePurchaseRequest, FakeSetRequest, packProductId, PREMIUM_PRODUCT_ID, VerifyRequest } from "@mishana/shared/billing";
 import type { BillingErrorCode, CatalogResponseBody, EntitlementBody, PurchaseResult } from "@mishana/shared/billing";
 import type * as z from "zod";
 import type { Env } from "../env";
@@ -28,18 +18,18 @@ import { clientIp } from "../request";
 import { sha256hex } from "../tokens";
 import { isAckEligible, isPendingState } from "./billing-core";
 import type { BillingStore } from "./billing-core";
-import { billingPacks } from "./catalog-info";
+import { billingPacks, isSoldProductId } from "./catalog-info";
 import { fakePurchase, fakeSet, FakeGoogleApi } from "./fake";
 import { ackPurchase, googleClientFor, GoogleHttpError, isGoogleGone } from "./google";
 import type { GoogleApi } from "./google";
 import { billingLog } from "./log";
 import { billingRouteMode } from "./mode";
 import type { BillingMode } from "./mode";
-import { normalizeProduct, normalizeSubscription } from "./normalize";
+import { normalizeProduct } from "./normalize";
 import type { NormalizedPurchase } from "./normalize";
 import { googleJwks } from "./pubsub-auth";
 import type { JwksCache } from "./pubsub-auth";
-import { handleRtdn, refreshLinked } from "./rtdn";
+import { handleRtdn } from "./rtdn";
 import { buildClaims, importFakeSigner, importSigner, parseKeyring, signEntitlementToken } from "./token";
 import type { Signer } from "./token";
 
@@ -173,7 +163,7 @@ function catalog(env: Env, mode: BillingMode): Response {
   const body: CatalogResponseBody = {
     mode,
     packageName: env.PLAY_PACKAGE_NAME,
-    subscription: { productId: PREMIUM_PRODUCT_ID, basePlanIds: [...BASE_PLAN_IDS], trialOfferId: TRIAL_OFFER_ID },
+    premium: { productId: PREMIUM_PRODUCT_ID },
     freePackIds: packs.filter((p) => p.tier === "free").map((p) => p.id),
     packs: packs
       .filter((p) => p.tier === "premium")
@@ -193,7 +183,6 @@ export async function entitlementBody(store: BillingStore, installHash: string, 
     premiumUntil,
     packs: claims.packs,
     expiresAt: claims.exp * 1000,
-    subscription: e.subscription,
   };
 }
 
@@ -242,7 +231,6 @@ export async function verify(
   const ipKey = mode === "google" ? (client?.ipKey ?? null) : null;
   // Recorded for the installId-sharing check; /verify itself is never refused for it (it proves the purchase token).
   if (client) await store.installNetSeen(installHash, client.netKey, start);
-  const premiumIds = billingPacks().premiumIds;
   const opts = { timeoutMs: GOOGLE_CALL_TIMEOUT_VERIFY_MS, deadlineMs: deadline };
   let googleReads = 0;
   let budgetLogged = false;
@@ -270,33 +258,27 @@ export async function verify(
       push("UPSTREAM_ERROR");
       continue;
     }
-    // a. Kind.
-    let kind: "sub" | "pack";
-    if (p.productId === PREMIUM_PRODUCT_ID) kind = "sub";
-    else {
-      const packId = packIdFromProductId(p.productId);
-      if (!packId || !premiumIds.has(packId)) {
-        push("INVALID");
-        continue;
-      }
-      kind = "pack";
+    // a. A product this app sells (lifetime `premium` or a premium pack; all one-time products).
+    if (!isSoldProductId(p.productId)) {
+      push("INVALID");
+      continue;
     }
     const tokenHash = await sha256hex(p.purchaseToken);
     // b. Short-circuits.
     const t0 = now();
-    const lk = await store.lookup(tokenHash, kind, t0);
+    const lk = await store.lookup(tokenHash, t0);
     if (lk.invalid) {
       push("INVALID");
       continue;
     }
     const row = lk.row;
-    if (row && row.revoked === 1 && row.kind === "pack") {
+    if (row && row.revoked === 1) {
       push("REVOKED");
       continue;
     }
     if (
-      row && row.kind === kind && row.product_id === p.productId && row.google_checked_ms > t0 - GOOGLE_FRESH_MS &&
-      !isPendingState(row.kind, row.state) && (row.acknowledged === 1 || !isAckEligible(row.kind, row.state))
+      row && row.product_id === p.productId && row.google_checked_ms > t0 - GOOGLE_FRESH_MS &&
+      !isPendingState(row.state) && (row.acknowledged === 1 || !isAckEligible(row.state))
     ) {
       push(await store.bindOnly({ tokenHash, callerInstallHash: installHash, nowMs: t0 }));
       continue;
@@ -309,13 +291,11 @@ export async function verify(
     let n: NormalizedPurchase;
     const checkedMs = now();
     try {
-      n = kind === "sub"
-        ? normalizeSubscription(await api.getSubscriptionV2(p.purchaseToken, opts), checkedMs)
-        : normalizeProduct(await api.getProductV2(p.purchaseToken, opts), checkedMs);
+      n = normalizeProduct(await api.getProductV2(p.purchaseToken, opts), checkedMs);
     } catch (e) {
       // Only the purchases API's own 400/404/410 means "unknown token"; an OAuth failure is UPSTREAM_ERROR.
       if (isGoogleGone(e)) {
-        await store.markInvalid(tokenHash, kind, now());
+        await store.markInvalid(tokenHash, now());
         push("INVALID");
       } else {
         push("UPSTREAM_ERROR");
@@ -332,14 +312,11 @@ export async function verify(
       billingLog("BILLING_RESTORE_OTHER_INSTALL");
       otherInstallLogged = true;
     }
-    // e. Apply (+ link re-read).
-    const r = await store.applyPurchase({ tokenHash, kind, productId: p.productId, n, callerInstallHash: installHash, rawTokenForAck: p.purchaseToken, nowMs: now(), store: mode });
-    if (r.refreshLinked && n.linkedPurchaseToken && now() < deadline && (await takeRead())) {
-      await refreshLinked({ store, api, now, opts }, n.linkedPurchaseToken);
-    }
+    // e. Apply.
+    const r = await store.applyPurchase({ tokenHash, productId: p.productId, n, callerInstallHash: installHash, rawTokenForAck: p.purchaseToken, nowMs: now(), store: mode });
     // f. Acknowledge on Google state only (also for INSTALL_LIMIT / REVOKED / NOT_OWNED).
     if (r.ackDue && now() < deadline && (await store.googleBudget(1, now())) > 0) {
-      await ackPurchase(api, store, kind, p.productId, p.purchaseToken, tokenHash, opts);
+      await ackPurchase(api, store, p.productId, p.purchaseToken, tokenHash, opts);
     }
     push(r.result);
   }

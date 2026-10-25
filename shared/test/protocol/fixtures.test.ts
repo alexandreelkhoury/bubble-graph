@@ -6,7 +6,7 @@ import { PING_FRAME, PONG_FRAME } from "../../src/constants";
 import { ClientConfig, CreateRoomRequest, CreateRoomResponse, Healthz, HttpError } from "../../src/protocol/http";
 import { CatalogResponse, EntitlementRequest, VerifyRequest, VerifyResponse } from "../../src/billing/http";
 import {
-  BASE_PLAN_IDS, packIdFromProductId, packProductId, PREMIUM_PRODUCT_ID, TRIAL_OFFER_ID,
+  packIdFromProductId, packProductId, PREMIUM_PRODUCT_ID,
 } from "../../src/billing/products";
 import { ClientMessageSchema, ServerMessageSchema } from "../../src/protocol/messages";
 import { errorMessageKey } from "../../src/protocol/errors";
@@ -82,10 +82,8 @@ describe("fixtures (§10)", () => {
   });
 
   it("billing.products.json matches the shared product constants (§1.3)", () => {
-    const f = JSON.parse(read("billing.products.json")) as { premium: string; basePlans: string[]; trialOfferId: string; pairs: [string, string][] };
+    const f = JSON.parse(read("billing.products.json")) as { premium: string; pairs: [string, string][] };
     expect(f.premium).toBe(PREMIUM_PRODUCT_ID);
-    expect(f.basePlans).toEqual([...BASE_PLAN_IDS]);
-    expect(f.trialOfferId).toBe(TRIAL_OFFER_ID);
     for (const [packId, productId] of f.pairs) {
       expect(packProductId(packId)).toBe(productId);
       expect(packIdFromProductId(productId)).toBe(packId);

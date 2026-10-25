@@ -119,7 +119,6 @@ describe.each(["google", "fake"] as const)("grants in %s mode", (mode) => {
     expect(e.premium).toBe(true);
     expect(e.premiumUntil).toBe(e.expiresAt);
     expect(e.expiresAt).toBe((Math.floor(NOW / 1000) + ENTITLEMENT_TTL_S) * 1000);
-    expect(e.subscription).toBeNull();
     const keys = await verifyKeysFromSecret(c.env.ENTITLEMENT_KEYS);
     const v = await verifyEntitlementToken(e.token, keys, NOW, mode === "fake", new Set([PREMIUM_PACK]));
     expect(v).toMatchObject({ sub: await hashOf(INSTALL_A), mode, premiumUntilMs: e.premiumUntil });
@@ -186,7 +185,7 @@ describe.each(["google", "fake"] as const)("grants in %s mode", (mode) => {
     await handleAdmin(adminReq(c, "POST", { installId: INSTALL_A, premium: true }), c.env, c.admin);
     await entitlement(c);
     for (const t of ["purchases", "bindings"]) expect((c.db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).all()[0] as { n: number }).n).toBe(0);
-    for (const op of ["sub_get", "product_get", "sub_ack", "product_ack"] as const) expect(c.google.count(op)).toBe(0);
+    for (const op of ["product_get", "product_ack"] as const) expect(c.google.count(op)).toBe(0);
   });
 
   it("bad bodies → 400", async () => {

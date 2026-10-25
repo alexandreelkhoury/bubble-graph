@@ -3,8 +3,7 @@
 import * as z from "zod";
 import { MAX_PURCHASES_PER_VERIFY, PURCHASE_TOKEN_MAX_CHARS } from "../constants";
 import { AgeRatingSchema, LocaleSchema, LocalizedTitleSchema } from "../protocol/common";
-import { SUB_STATES } from "./entitlement";
-import { BASE_PLAN_IDS, PRODUCT_ID_REGEX, TRIAL_OFFER_ID } from "./products";
+import { PRODUCT_ID_REGEX } from "./products";
 
 export const BILLING_ERROR_CODES = ["BAD_REQUEST", "FORBIDDEN", "RATE_LIMITED", "UNAUTHORIZED", "NOT_CONFIGURED", "UPSTREAM_UNAVAILABLE", "INTERNAL"] as const;
 export type BillingErrorCode = (typeof BILLING_ERROR_CODES)[number];
@@ -21,13 +20,9 @@ export const VerifyRequest = z.strictObject({
   purchases: z.array(z.strictObject({ productId: ProductIdSchema, purchaseToken: PurchaseTokenSchema })).min(1).max(MAX_PURCHASES_PER_VERIFY),
 });
 export const EntitlementRequest = z.strictObject({ installId: InstallIdSchema });
-export const SubscriptionInfo = z.object({
-  state: z.enum(SUB_STATES), basePlanId: z.string().nullable(), autoRenewing: z.boolean(),
-  inTrial: z.boolean(), expiresAt: z.number().nullable() /* ms, raw Google expiry (no slack) */,
-});
 export const EntitlementBody = z.object({
-  token: z.string(), premium: z.boolean(), premiumUntil: z.number().nullable() /* ms, incl. slack */,
-  packs: z.array(z.string()), expiresAt: z.number() /* token exp, ms */, subscription: SubscriptionInfo.nullable(),
+  token: z.string(), premium: z.boolean(), premiumUntil: z.number().nullable() /* ms; lifetime premium or an open-ended grant: the token's exp */,
+  packs: z.array(z.string()), expiresAt: z.number() /* token exp, ms */,
 });
 export const VerifyResponse = z.object({
   entitlement: EntitlementBody,
@@ -40,27 +35,24 @@ export const CatalogPackSchema = z.object({
 });
 export const CatalogResponse = z.object({
   mode: z.enum(["google", "fake"]), packageName: z.string(),
-  subscription: z.object({ productId: z.literal("premium"), basePlanIds: z.array(z.string()), trialOfferId: z.string() }),
+  premium: z.object({ productId: z.literal("premium") }), // one-time lifetime unlock
   freePackIds: z.array(z.string()),
   packs: z.array(CatalogPackSchema), // premium packs only, catalog order
 });
 export const BillingHttpError = z.object({ error: z.enum(BILLING_ERROR_CODES) });
 
 // §3.10 fake-mode routes (dev / e2e only; 404 outside fake mode). PAY-GAP: the spec gives the shapes in prose only.
-export const FAKE_PACK_STATES = ["PURCHASED", "PENDING", "CANCELLED", "REVOKED"] as const;
+export const FAKE_PURCHASE_STATES = ["PURCHASED", "PENDING", "CANCELLED", "REVOKED"] as const;
 export const FakePurchaseRequest = z.strictObject({
-  installId: InstallIdSchema, productId: ProductIdSchema,
-  basePlanId: z.enum(BASE_PLAN_IDS).optional(), offerId: z.literal(TRIAL_OFFER_ID).nullable().optional(),
-  outcome: z.enum(["PURCHASED", "PENDING"]).optional(),
+  installId: InstallIdSchema, productId: ProductIdSchema, outcome: z.enum(["PURCHASED", "PENDING"]).optional(),
 });
 export const FakePurchaseResponse = z.object({ purchaseToken: z.string() });
 export const FakeSetRequest = z.strictObject({
-  purchaseToken: PurchaseTokenSchema, state: z.union([z.enum(SUB_STATES), z.enum(FAKE_PACK_STATES)]),
+  purchaseToken: PurchaseTokenSchema, state: z.enum(FAKE_PURCHASE_STATES),
 });
 
 export type VerifyRequestBody = z.infer<typeof VerifyRequest>;
 export type EntitlementRequestBody = z.infer<typeof EntitlementRequest>;
-export type SubscriptionInfo = z.infer<typeof SubscriptionInfo>;
 export type EntitlementBody = z.infer<typeof EntitlementBody>;
 export type VerifyResponseBody = z.infer<typeof VerifyResponse>;
 export type EntitlementResponseBody = z.infer<typeof EntitlementResponse>;

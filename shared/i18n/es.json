@@ -420,22 +420,9 @@
     "many": "Los {count} packs de palabras ({pairs}+ pares) y todos los nuevos.",
     "other": "Los {count} packs de palabras ({pairs}+ pares) y todos los nuevos."
   },
-  "store.planMonthly": "Mensual",
-  "store.planYearly": "Anual",
-  "store.pricePerMonth": "{price} / mes",
-  "store.pricePerYear": "{price} / año",
-  "store.trialDays": {
-    "one": "{count} día de prueba gratis",
-    "many": "{count} días de prueba gratis",
-    "other": "{count} días de prueba gratis"
-  },
+  "store.unlockPremium": "Desbloquear Premium · {price}",
+  "store.premiumLifetime": "Pago único, tuyo para siempre. Sin suscripción.",
   "store.premiumActive": "Premium está activo",
-  "store.renewsOn": "Se renueva el {date}",
-  "store.endsOn": "Termina el {date}",
-  "store.manage": "Administrar suscripción",
-  "store.manageHint": "En un teléfono o una computadora: abre Google Play, luego Pagos y suscripciones, luego Suscripciones.",
-  "store.fixPayment": "Hay un problema con tu pago. Corrígelo en Google Play para conservar Premium.",
-  "store.fixPaymentButton": "Corregir el pago",
   "store.packsTitle": "Packs de palabras",
   "store.otherLanguages": "Otros idiomas",
   "store.packPairs": {
@@ -467,16 +454,6 @@
   "store.verifyFailed": "Compra recibida. Terminaremos de desbloquearla en breve.",
   "store.installLimit": "Esta compra ya se usa en demasiadas teles. ¿Necesitas ayuda? {email}",
   "store.installLimitNoHelp": "Esta compra ya se usa en demasiadas teles.",
-  "store.legalPriceRenew": "{price} por {period}, cobrado en tu cuenta de Google Play. Se renueva automáticamente hasta que lo canceles.",
-  "store.legalTrialRenew": {
-    "one": "Gratis {count} día, luego {price} por {period}, cobrado en tu cuenta de Google Play. Se renueva automáticamente hasta que lo canceles.",
-    "many": "Gratis {count} días, luego {price} por {period}, cobrado en tu cuenta de Google Play. Se renueva automáticamente hasta que lo canceles.",
-    "other": "Gratis {count} días, luego {price} por {period}, cobrado en tu cuenta de Google Play. Se renueva automáticamente hasta que lo canceles."
-  },
-  "store.legalCancel": "Cancela cuando quieras en tus suscripciones de Google Play.",
-  "store.legalCancelTrial": "Cancela cuando quieras en tus suscripciones de Google Play. Si cancelas antes de que acabe la prueba, no se te cobrará.",
-  "store.periodMonth": "mes",
-  "store.periodYear": "año",
   "store.testMode": "Tienda de prueba: sin pagos reales",
   "store.tvAppOnly": "Las compras están disponibles en la app de Android TV."
 }
