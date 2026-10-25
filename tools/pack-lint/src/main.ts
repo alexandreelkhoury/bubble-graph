@@ -44,7 +44,7 @@ function main(): void {
   const { errors, warnings, counts } = lintDirectory(root, { release: args.includes("--release") });
   if (!quiet) for (const w of warnings) console.warn(`warning: ${w}`);
   for (const e of errors) console.error(`error: ${e}`);
-  console.log(`pack-lint: pairs en=${counts.en ?? 0} fr=${counts.fr ?? 0} ar=${counts.ar ?? 0} (ar-LB=${counts["ar-LB"] ?? 0}); ${errors.length} error(s), ${warnings.length} warning(s)`);
+  console.log(`pack-lint: pairs en=${counts.en ?? 0} fr=${counts.fr ?? 0} ar=${counts.ar ?? 0} (ar-LB=${counts["ar-LB"] ?? 0}) es=${counts.es ?? 0}; ${errors.length} error(s), ${warnings.length} warning(s)`);
   if (errors.length > 0) process.exitCode = 1;
 }
 

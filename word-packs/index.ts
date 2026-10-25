@@ -1,5 +1,5 @@
 // Pack registry. Each pack is validated with WordPackSchema by consumers (server, sim, tests).
-// Order: en, fr, ar; packs sorted by id within a language. pack-lint warns when a pack file is not listed here.
+// Order: en, fr, ar, es; packs sorted by id within a language. pack-lint warns when a pack file is not listed here.
 import enEveryday01 from "./packs/en/en-everyday-01.json";
 import enFood01 from "./packs/en/en-food-01.json";
 import enLeisure01 from "./packs/en/en-leisure-01.json";
@@ -17,6 +17,12 @@ import arHome01 from "./packs/ar/ar-home-01.json";
 import arNature01 from "./packs/ar/ar-nature-01.json";
 import lbFood01 from "./packs/ar/lb-food-01.json";
 import lbLife01 from "./packs/ar/lb-life-01.json";
+import esEveryday01 from "./packs/es/es-everyday-01.json";
+import esFood01 from "./packs/es/es-food-01.json";
+import esLeisure01 from "./packs/es/es-leisure-01.json";
+import esNature01 from "./packs/es/es-nature-01.json";
+import esPlaces01 from "./packs/es/es-places-01.json";
+import esThings01 from "./packs/es/es-things-01.json";
 
 export const PACKS: readonly unknown[] = [
   enEveryday01,
@@ -36,4 +42,10 @@ export const PACKS: readonly unknown[] = [
   arNature01,
   lbFood01,
   lbLife01,
+  esEveryday01,
+  esFood01,
+  esLeisure01,
+  esNature01,
+  esPlaces01,
+  esThings01,
 ];

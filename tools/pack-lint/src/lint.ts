@@ -43,19 +43,21 @@ function sideKeys(side: Side): Set<string> {
 }
 
 /**
- * Small EN/FR profanity lists, matched against whole Latin-script tokens (lowercase, accents dropped).
+ * Small EN/FR/ES profanity lists, matched against whole Latin-script tokens (lowercase, accents dropped).
  * Arabic-script packs are checked against both, because translit and Latin alts are read by EN and FR speakers.
  */
-export const PROFANITY: Readonly<Record<"en" | "fr", readonly string[]>> = {
+export const PROFANITY: Readonly<Record<"en" | "fr" | "es", readonly string[]>> = {
   en: ["arse", "arsehole", "ass", "asshole", "bastard", "bitch", "bollocks", "cock", "crap", "cunt", "dick", "fag", "fuck", "fucker", "fucking", "piss", "prick", "shit", "shite", "shitty", "slut", "twat", "wank", "wanker", "whore"],
   fr: ["bite", "bordel", "branleur", "chier", "con", "conasse", "connard", "connasse", "conne", "couille", "couilles", "cul", "encule", "enculer", "foutre", "merde", "nique", "niquer", "pd", "pute", "putain", "salaud", "salope", "zob"],
+  // Whole tokens only; words that are innocent in some countries (coger, concha, zorra, cono = cone) are left out.
+  es: ["boludo", "cabron", "cabrona", "carajo", "chingada", "chingar", "cojones", "culero", "culo", "follar", "gilipollas", "hijoputa", "hijueputa", "huevon", "joder", "malparido", "maricon", "mierda", "pelotudo", "pendejo", "pendeja", "pinche", "polla", "puta", "putada", "puto", "verga"],
 };
 
 const latinTokens = (w: string): string[] =>
   w.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
 
 /** Returns the profane tokens in `w` for the given lists. */
-export function profaneTokens(w: string, langs: readonly ("en" | "fr")[]): string[] {
+export function profaneTokens(w: string, langs: readonly ("en" | "fr" | "es")[]): string[] {
   const bad = new Set(langs.flatMap((l) => PROFANITY[l]));
   const toks = latinTokens(w);
   const out = toks.filter((t) => bad.has(t));
@@ -113,7 +115,7 @@ export function lintPacks(entries: readonly PackEntry[], registered: readonly st
     // PAYMENTS-SPEC §1.5: tiers and Play product ids.
     tiers.push({ id: pack.id, lang, locale: pack.locale, tier: pack.tier });
     if (pack.tier === "free") {
-      if (pack.locale !== "en" && pack.locale !== "fr" && pack.locale !== "ar") errors.push(`${pack.id}: a free pack must have locale en, fr or ar (starter packs are not regional), not ${pack.locale}`);
+      if (pack.locale !== "en" && pack.locale !== "fr" && pack.locale !== "ar" && pack.locale !== "es") errors.push(`${pack.id}: a free pack must have locale en, fr, ar or es (starter packs are not regional), not ${pack.locale}`);
       if (pack.ageRating !== "all") errors.push(`${pack.id}: a free pack must have ageRating "all"`);
       if (pack.pairs.length < STARTER_MIN_PAIRS) {
         const msg = `${pack.id}: free starter pack has ${pack.pairs.length} pairs (release gate: at least ${STARTER_MIN_PAIRS})`;
@@ -156,7 +158,7 @@ export function lintPacks(entries: readonly PackEntry[], registered: readonly st
       const latinWords = [pair.civilian, pair.undercover].flatMap((side) =>
         pack.script === "Arab" ? [...(side.translit ? [side.translit] : []), ...(side.alt ?? []).filter((w) => /[A-Za-z]/.test(w))] : sideWords(side),
       );
-      const profLangs: ("en" | "fr")[] = pack.script === "Arab" ? ["en", "fr"] : lang === "fr" ? ["fr"] : ["en"];
+      const profLangs: ("en" | "fr" | "es")[] = pack.script === "Arab" ? ["en", "fr"] : lang === "fr" ? ["fr"] : lang === "es" ? ["es", "en"] : ["en"];
       for (const w of latinWords) {
         const bad = profaneTokens(w, profLangs);
         if (bad.length > 0) warnings.push(`${at}: "${w}" contains a profane word (${bad.join(", ")})`);

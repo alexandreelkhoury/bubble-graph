@@ -212,7 +212,7 @@ describe("other routes", () => {
     expect(res.headers.get("Cache-Control")).toBe("public, max-age=300");
     const body = CatalogResponse.parse(await res.json());
     expect(body.mode).toBe("google");
-    expect(body.freePackIds).toEqual(["en-everyday-01", "fr-everyday-01", "ar-everyday-01"]);
+    expect(body.freePackIds).toEqual(["en-everyday-01", "fr-everyday-01", "ar-everyday-01", "es-everyday-01"]);
     expect(body.packs.map((p) => p.packId)).not.toContain("en-everyday-01");
     expect(body.packs[0]).toMatchObject({ packId: "en-food-01", productId: "pack_en_food_01", language: "en" });
     expect(body.packs.find((p) => p.packId === "lb-food-01")).toMatchObject({ locale: "ar-LB", language: "ar" });

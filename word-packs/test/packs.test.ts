@@ -13,10 +13,10 @@ const words = (p: WordPack): string[] =>
 describe("word packs", () => {
   it("PAYMENTS-SPEC §1.2/§1.5: exactly one free starter pack per language, unregional and for all ages", () => {
     const free = parsed.filter((p) => p.tier === "free");
-    expect(free.map((p) => p.id).sort()).toEqual(["ar-everyday-01", "en-everyday-01", "fr-everyday-01"]);
-    for (const lang of ["en", "fr", "ar"]) expect(free.filter((p) => language(p) === lang), lang).toHaveLength(1);
+    expect(free.map((p) => p.id).sort()).toEqual(["ar-everyday-01", "en-everyday-01", "es-everyday-01", "fr-everyday-01"]);
+    for (const lang of ["en", "fr", "ar", "es"]) expect(free.filter((p) => language(p) === lang), lang).toHaveLength(1);
     for (const p of free) {
-      expect(["en", "fr", "ar"], p.id).toContain(p.locale);
+      expect(["en", "fr", "ar", "es"], p.id).toContain(p.locale);
       expect(p.ageRating, p.id).toBe("all");
     }
   });

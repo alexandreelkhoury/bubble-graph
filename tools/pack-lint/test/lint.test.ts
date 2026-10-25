@@ -104,6 +104,13 @@ describe("pack-lint rules", () => {
     expect(lintPacks([entry(pack("ar-alt-01", "ar", ar), "ar")]).errors.join("\n")).toMatch(/ar-alt-01\/p001: .*share.*"bahr"/);
   });
 
+  it("warns about Spanish profanity in es packs, but not about words innocent somewhere (coger, concha)", () => {
+    const es: [Side | string, Side | string][] = [["Mierda", "Barro"], ["Coger", "Concha"], ...TEN.slice(2)];
+    const w = lintPacks([entry(pack("es-prof-01", "es", es), "es")]).warnings.join("\n");
+    expect(w).toMatch(/p001: "Mierda" contains a profane word \(mierda\)/);
+    expect(w).not.toMatch(/coger|concha/i);
+  });
+
   it("warns about profane translit or alt (EN and FR lists for Arabic packs)", () => {
     const ar: [Side | string, Side | string][] = [[{ text: "شتي", translit: "Shite" }, { text: "مقص", translit: "Ma'ass", alt: ["merde"] }], ...TEN.slice(1)];
     const w = lintPacks([entry(pack("ar-prof-01", "ar", ar), "ar")]).warnings.join("\n");
@@ -161,7 +168,7 @@ describe("pack-lint rules", () => {
     const lbFree = entry(pack("lb-f-01", "ar-LB", TEN.map(([x, y]) => [`ف${x}`, `ق${y}`] as [string, string])), "ar");
     const errs = lintPacks([arFree, lbFree]).errors.join("\n");
     expect(errs).toMatch(/language ar: exactly one free/);
-    expect(errs).toMatch(/lb-f-01: a free pack must have locale en, fr or ar/);
+    expect(errs).toMatch(/lb-f-01: a free pack must have locale en, fr, ar or es/);
   });
 
   it("PAYMENTS-SPEC §1.5: free packs are for all ages; premium id length; product ids", () => {
