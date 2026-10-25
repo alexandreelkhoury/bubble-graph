@@ -6,11 +6,12 @@ import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import type { Browser, BrowserContext, Page, Route } from "@playwright/test";
 
-type Lang = "en" | "fr" | "ar";
+type Lang = "en" | "fr" | "ar" | "es";
 const I18N: Record<Lang, Record<string, unknown>> = {
   en: JSON.parse(readFileSync(new URL("../../shared/i18n/en.json", import.meta.url), "utf8")) as Record<string, unknown>,
   fr: JSON.parse(readFileSync(new URL("../../shared/i18n/fr.json", import.meta.url), "utf8")) as Record<string, unknown>,
   ar: JSON.parse(readFileSync(new URL("../../shared/i18n/ar.json", import.meta.url), "utf8")) as Record<string, unknown>,
+  es: JSON.parse(readFileSync(new URL("../../shared/i18n/es.json", import.meta.url), "utf8")) as Record<string, unknown>,
 };
 const text = (k: string, lang: Lang = "en"): string => {
   const v = I18N[lang][k];
@@ -162,7 +163,7 @@ async function expectToastClear(tv: Page, what: string): Promise<void> {
   for (const c of controls) expect(overlap(t, c), `${what}: the toast covers a Store control`).toBe(false);
 }
 
-for (const lang of ["en", "fr", "ar"] as const) {
+for (const lang of ["en", "fr", "ar", "es"] as const) {
   test(`${lang}: the Store fits, the disclosure stays above the packs, the footer row ends where it ends`, async ({ browser }) => {
     const { ctx, tv } = await tvPage(browser, lang);
     await mockBilling(tv);
@@ -194,7 +195,7 @@ for (const lang of ["en", "fr", "ar"] as const) {
   });
 }
 
-for (const lang of ["en", "fr", "ar"] as const) {
+for (const lang of ["en", "fr", "ar", "es"] as const) {
   test(`${lang}: Premium active — every pack card says "Included" in full, nothing overflows`, async ({ browser }) => {
     const { ctx, tv } = await tvPage(browser, lang);
     await mockBilling(tv);
