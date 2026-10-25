@@ -391,6 +391,17 @@ class BillingRepositoryTest {
     }
 
     @Test
+    fun userRestoreWithOnlyAnOwnerGrantSaysRestored() = runTest {
+        // §3.12: no Play purchase, but the server merges an admin grant into the entitlement.
+        val e = env(FakeGateway()) { it.premium = true }
+        e.repo.restorePurchases()
+        advanceUntilIdle()
+        // First grant: "unlocked" (onSaved) then "restored"; never the contradicting "nothing to restore".
+        assertEquals(listOf("store.unlocked", "store.restored"), e.toasts())
+        assertTrue(e.repo.state.value.entitlement!!.premium)
+    }
+
+    @Test
     fun tokenForCreateNeedsAtLeastAMinuteLeft() = runTest {
         val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(sub)) })
         assertNull(e.repo.tokenForCreate())

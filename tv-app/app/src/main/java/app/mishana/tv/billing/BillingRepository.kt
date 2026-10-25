@@ -302,11 +302,21 @@ class BillingRepository(
                 toast("store.restored")
             }
         } else {
+            var refreshed = false
             if (force || stale() || changed) {
-                refreshEntitlement()
+                refreshed = refreshEntitlement()
                 lastVerified = emptySet()
             }
-            if (user) toast(if (pendingIds.isEmpty()) "store.nothingToRestore" else "store.pendingBody")
+            // An owner grant (PAYMENTS-SPEC §3.12) has no Play purchase behind it: the refreshed entitlement is the
+            // only sign of it, so "Restore" says restored rather than "nothing to restore" when it brought access.
+            val comped = refreshed && _state.value.entitlement.let { b ->
+                b != null && ((b.premium && (b.premiumUntil ?: 0L) > clock()) || b.packs.isNotEmpty())
+            }
+            if (user) toast(when {
+                pendingIds.isNotEmpty() -> "store.pendingBody"
+                comped -> "store.restored"
+                else -> "store.nothingToRestore"
+            })
         }
     }
 
