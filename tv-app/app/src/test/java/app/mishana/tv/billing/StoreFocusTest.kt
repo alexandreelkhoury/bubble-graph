@@ -3,7 +3,6 @@ package app.mishana.tv.billing
 import app.mishana.tv.protocol.EntitlementBody
 import app.mishana.tv.protocol.LocalizedTitle
 import app.mishana.tv.protocol.LockedPackInfo
-import app.mishana.tv.protocol.SubscriptionInfo
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -16,12 +15,11 @@ class StoreFocusTest {
     private val lobby = StoreEntry(null, StoreOrigin.LOBBY_BUTTON)
     private val allProducts = PlayProducts.all("pack_en_food_01", "pack_en_things_01", "pack_fr_food_01", "pack_lb_food_01")
 
-    private fun ready(entitlement: EntitlementBody? = null, products: ProductsSnapshot = allProducts, suspended: Boolean = false) =
-        StoreUiState(phase = StorePhase.Ready, storeVisible = true, catalog = catalog, products = products, entitlement = entitlement, subscriptionSuspended = suspended)
+    private fun ready(entitlement: EntitlementBody? = null, products: ProductsSnapshot = allProducts) =
+        StoreUiState(phase = StorePhase.Ready, storeVisible = true, catalog = catalog, products = products, entitlement = entitlement)
 
-    private fun ent(premium: Boolean, state: String? = null, packs: List<String> = emptyList()) = EntitlementBody(
-        "t", premium, if (premium) now + 86_400_000L else null, packs, now + 8 * 3_600_000L,
-        state?.let { SubscriptionInfo(it, "yearly", true, false, now + 86_400_000L) },
+    private fun ent(premium: Boolean, packs: List<String> = emptyList(), premiumUntil: Long = now + 8 * 3_600_000L) = EntitlementBody(
+        "t", premium, if (premium) premiumUntil else null, packs, now + 8 * 3_600_000L,
     )
 
     private fun focus(s: StoreUiState, entry: StoreEntry = lobby, word: String = "en", locked: List<LockedPackInfo> = emptyList()) =
@@ -37,38 +35,45 @@ class StoreFocusTest {
     @Test
     fun entryPoints() {
         val s = ready()
-        assertEquals(StoreFocusTarget.Plan("yearly"), focus(s))
-        assertEquals(StoreFocusTarget.Plan("yearly"), focus(s, StoreEntry("premium", StoreOrigin.LOCKED_SETTING)))
+        assertEquals(StoreFocusTarget.Unlock, focus(s))
+        assertEquals(StoreFocusTarget.Unlock, focus(s, StoreEntry("premium", StoreOrigin.LOCKED_SETTING)))
         assertEquals(StoreFocusTarget.Pack("pack_en_food_01"), focus(s, StoreEntry("pack_en_food_01", StoreOrigin.LOCKED_PACK)))
         // A product the Store does not list falls back to the Premium card.
-        assertEquals(StoreFocusTarget.Plan("yearly"), focus(s, StoreEntry("pack_zz_01", StoreOrigin.LOCKED_PACK)))
+        assertEquals(StoreFocusTarget.Unlock, focus(s, StoreEntry("pack_zz_01", StoreOrigin.LOCKED_PACK)))
     }
 
     @Test
     fun premiumCardStates() {
-        assertEquals(StoreFocusTarget.FixPayment, focus(ready(suspended = true)))
-        assertEquals(StoreFocusTarget.FixPayment, focus(ready(ent(false, "SUBSCRIPTION_STATE_ON_HOLD"))))
-        assertEquals(StoreFocusTarget.FixPayment, focus(ready(ent(false, "SUBSCRIPTION_STATE_PAUSED"))))
-        assertEquals(StoreFocusTarget.Manage, focus(ready(ent(true, "SUBSCRIPTION_STATE_IN_GRACE_PERIOD"))))
-        assertEquals(StoreFocusTarget.Manage, focus(ready(ent(true, "SUBSCRIPTION_STATE_ACTIVE"))))
-        assertEquals(PremiumCard.Grace, StoreModel.premiumCard(ready(ent(true, "SUBSCRIPTION_STATE_IN_GRACE_PERIOD")), now))
-        val active = StoreModel.premiumCard(ready(ent(true, "SUBSCRIPTION_STATE_ACTIVE")), now) as PremiumCard.Active
-        assertTrue(active.autoRenewing)
-        // Suspended never shows plan buttons (buying again would bill twice).
-        assertFalse(StoreModel.premiumCard(ready(suspended = true), now) is PremiumCard.Plans)
-        // The manage link only for non-expired subscriptions.
-        assertTrue(StoreModel.showsManage(PremiumCard.Grace))
-        assertTrue(StoreModel.showsManage(PremiumCard.Suspended))
-        assertFalse(StoreModel.showsManage(PremiumCard.NoProduct))
-        assertFalse(StoreModel.showsManage(PremiumCard.Plans(emptyList(), false)))
+        // Not premium: one Unlock button with Play's one-time price.
+        assertEquals(PremiumCard.Unlock("$7.99", pending = false), StoreModel.premiumCard(ready(), now))
+        assertTrue((StoreModel.premiumCard(ready(), now) as PremiumCard.Unlock).buyable)
+        // Pending: the button stays (focusable) as a pending chip and does not buy again.
+        val pending = StoreModel.premiumCard(ready().copy(pending = setOf("premium")), now) as PremiumCard.Unlock
+        assertTrue(pending.pending)
+        assertFalse(pending.buyable)
+        assertEquals(StoreFocusTarget.Unlock, focus(ready().copy(pending = setOf("premium"))))
+        // Being confirmed / slow confirmation.
+        assertTrue((StoreModel.premiumCard(ready().copy(purchaseInFlight = "premium"), now) as PremiumCard.Unlock).confirming)
+        assertTrue((StoreModel.premiumCard(ready().copy(slowConfirm = "premium"), now) as PremiumCard.Unlock).slow)
+        // Premium on (lifetime or grant): no button, focus goes to the first pack card.
+        assertEquals(PremiumCard.Active, StoreModel.premiumCard(ready(ent(true)), now))
+        assertEquals(StoreFocusTarget.Pack("pack_en_food_01"), focus(ready(ent(true))))
+        assertEquals(StoreFocusTarget.Pack("pack_en_food_01"), focus(ready(ent(true)), StoreEntry("premium", StoreOrigin.LOCKED_SETTING)))
+        // A grant that has ended (or a refund) is not premium: the Unlock button is back.
+        assertEquals(PremiumCard.Unlock("$7.99", pending = false), StoreModel.premiumCard(ready(ent(true, premiumUntil = now - 1)), now))
+        // Premium on and no pack listed: Restore.
+        assertEquals(StoreFocusTarget.Restore, focus(ready(ent(true)).copy(catalog = catalog.copy(packs = emptyList()))))
     }
 
     @Test
     fun noPremiumProductFocusesTheFirstPackCard() {
-        val noSub = allProducts.copy(subs = emptyMap(), unfetched = mapOf("premium" to 3))
-        val s = ready(products = noSub)
+        val noPremium = allProducts.copy(inapp = allProducts.inapp - "premium", unfetched = mapOf("premium" to 3))
+        val s = ready(products = noPremium)
         assertEquals(PremiumCard.NoProduct, StoreModel.premiumCard(s, now))
         assertEquals(StoreFocusTarget.Pack("pack_en_food_01"), focus(s))
+        // A premium product without a purchase option is not buyable either.
+        val noOffer = allProducts.copy(inapp = allProducts.inapp + ("premium" to InappProductInfo("premium", "$7.99", null)))
+        assertEquals(PremiumCard.NoProduct, StoreModel.premiumCard(ready(products = noOffer), now))
         // Nothing at all: Restore.
         val empty = s.copy(catalog = catalog.copy(packs = emptyList()))
         assertEquals(StoreFocusTarget.Restore, focus(empty))
@@ -90,7 +95,7 @@ class StoreFocusTest {
         assertTrue(m.showOtherLanguages)
         assertEquals("ar", byId.getValue("pack_lb_food_01").language) // ar-LB counts as ar
         // Premium: every pack reads Included.
-        val prem = StoreModel.build(ready(ent(true, "SUBSCRIPTION_STATE_ACTIVE")), "en", emptyList(), now)
+        val prem = StoreModel.build(ready(ent(true)), "en", emptyList(), now)
         assertTrue(prem.packs.all { it.trailing == PackTrailing.Included })
         // Pitch: 4 packs, 33 + 64 + 33 + 27 = 157 pairs → 150.
         assertEquals(4, m.pitchCount)

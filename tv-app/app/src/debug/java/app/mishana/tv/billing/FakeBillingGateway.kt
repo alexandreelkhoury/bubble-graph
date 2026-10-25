@@ -26,7 +26,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
  * and `GET /api/billing/catalog` answers `mode:"fake"` (`pnpm dev`); otherwise every call goes to [play] (so with a server
  * in Google mode the toggle is ignored, and DebugSettings says "Server is in Google mode").
  *
- * - [queryProducts]: synthetic products from the catalog, prices "$4.99" / "$29.99" / "$1.99", a 7-day trial on each plan;
+ * - [queryProducts]: synthetic one-time products: `premium` at "$7.99", each `pack_*` at "$1.99";
  * - [launch]: shows the remote-friendly confirm dialog ([fakePrompt]); Approve / Pending call
  *   `POST /api/billing/fake/purchase` and emit a [PurchaseUpdate] with the fake token; the client then calls `/verify`
  *   exactly as in production;
@@ -79,28 +79,12 @@ class FakeBillingGateway(
         return play.connect()
     }
 
-    override suspend fun queryProducts(subIds: List<String>, inappIds: List<String>): GatewayResult<ProductsSnapshot> {
-        if (!active()) return play.queryProducts(subIds, inappIds)
-        val subs = subIds.filter { it == Products.PREMIUM_PRODUCT_ID }.associateWith { id ->
-            SubProductInfo(
-                id,
-                listOf(
-                    plan(Products.BASE_PLAN_MONTHLY, null, "$4.99", "P1M"),
-                    plan(Products.BASE_PLAN_MONTHLY, Products.TRIAL_OFFER_ID, "$4.99", "P1M"),
-                    plan(Products.BASE_PLAN_YEARLY, null, "$29.99", "P1Y"),
-                    plan(Products.BASE_PLAN_YEARLY, Products.TRIAL_OFFER_ID, "$29.99", "P1Y"),
-                ),
-            )
+    override suspend fun queryProducts(ids: List<String>): GatewayResult<ProductsSnapshot> {
+        if (!active()) return play.queryProducts(ids)
+        val inapp = ids.filter { Products.isSellableProductId(it) }.associateWith { id ->
+            InappProductInfo(id, if (id == Products.PREMIUM_PRODUCT_ID) "$7.99" else "$1.99", "fake:$id")
         }
-        val inapp = inappIds.filter { Products.packIdFromProductId(it) != null }
-            .associateWith { InappProductInfo(it, "$1.99", "fake:$it") }
-        return GatewayResult.Ok(ProductsSnapshot(subs, inapp))
-    }
-
-    private fun plan(basePlan: String, offerId: String?, price: String, period: String): SubOfferInfo {
-        val recurring = PricingPhaseInfo(price, 1_000_000L, period)
-        val phases = if (offerId != null) listOf(PricingPhaseInfo("Free", 0L, "P7D"), recurring) else listOf(recurring)
-        return SubOfferInfo(basePlan, offerId, "fake:$basePlan:${offerId ?: "base"}", phases)
+        return GatewayResult.Ok(ProductsSnapshot(inapp))
     }
 
     override suspend fun queryOwned(): GatewayResult<List<OwnedPurchase>> {
@@ -134,7 +118,7 @@ class FakeBillingGateway(
                         _updates.emit(PurchaseUpdate(ResponseCodes.SERVICE_UNAVAILABLE, null, emptyList()))
                         return@launch
                     }
-                    val owned = OwnedPurchase(offer.productId, token, state, suspended = false)
+                    val owned = OwnedPurchase(offer.productId, token, state)
                     remember(owned)
                     _updates.emit(PurchaseUpdate(ResponseCodes.OK, null, listOf(owned)))
                 }
@@ -148,8 +132,6 @@ class FakeBillingGateway(
             FakePurchaseRequest(
                 installId = installId(),
                 productId = offer.productId,
-                basePlanId = offer.basePlanId,
-                offerId = offer.offerId,
                 outcome = if (state == OwnedState.PURCHASED) "PURCHASED" else "PENDING",
             ),
         )
@@ -168,7 +150,7 @@ class FakeBillingGateway(
         val parts = line.split('|')
         if (parts.size != 3) return@mapNotNull null
         val state = runCatching { OwnedState.valueOf(parts[1]) }.getOrNull() ?: return@mapNotNull null
-        OwnedPurchase(parts[0], parts[2], state, suspended = false)
+        OwnedPurchase(parts[0], parts[2], state)
     }
 
     private fun remember(p: OwnedPurchase) {

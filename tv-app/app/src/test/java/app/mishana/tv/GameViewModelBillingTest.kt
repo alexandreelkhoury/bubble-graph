@@ -78,7 +78,7 @@ class GameViewModelBillingTest {
         val inRoom = mutableListOf<Boolean>()
         var opened = 0
         var closed = 0
-        val bought = mutableListOf<Triple<String, String?, StoreOrigin>>()
+        val bought = mutableListOf<Pair<String, StoreOrigin>>()
         override fun tokenForCreate(): String? = token
         override fun onCreateRoomEntitlement(status: String?) {
             createStatuses += status
@@ -94,8 +94,8 @@ class GameViewModelBillingTest {
             closed += 1
             state.update { it.copy(storeVisible = false) }
         }
-        override fun buy(activity: Activity, productId: String, basePlanId: String?, origin: StoreOrigin) {
-            bought += Triple(productId, basePlanId, origin)
+        override fun buy(activity: Activity, productId: String, origin: StoreOrigin) {
+            bought += productId to origin
         }
         override fun restorePurchases() = Unit
     }
@@ -436,8 +436,8 @@ class GameViewModelBillingTest {
         conn.state(lobby)
         advanceUntilIdle()
         vm.openStore(StoreEntry("pack_en_food_01", StoreOrigin.LOCKED_PACK))
-        vm.buy(Activity(), "pack_en_food_01", null)
-        assertEquals(Triple("pack_en_food_01", null, StoreOrigin.LOCKED_PACK), billing.bought.single())
+        vm.buy(Activity(), "pack_en_food_01")
+        assertEquals("pack_en_food_01" to StoreOrigin.LOCKED_PACK, billing.bought.single())
         assertEquals(Phase.LOBBY, (vm.ui.value as TvUiState.InRoom).view!!.phase)
         vm.closeStore()
         runCurrent()

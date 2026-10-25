@@ -19,9 +19,10 @@ interface BillingGateway {
     val purchaseUpdates: SharedFlow<PurchaseUpdate>
 
     suspend fun connect(): GatewayResult<Unit>
-    suspend fun queryProducts(subIds: List<String>, inappIds: List<String>): GatewayResult<ProductsSnapshot>
+    /** One `queryProductDetailsAsync` for [ids], all one-time (INAPP) products: `premium` and the `pack_*` ids. */
+    suspend fun queryProducts(ids: List<String>): GatewayResult<ProductsSnapshot>
 
-    /** SUBS + INAPP, PURCHASED or PENDING. */
+    /** INAPP purchases, PURCHASED or PENDING. */
     suspend fun queryOwned(): GatewayResult<List<OwnedPurchase>>
 
     /** Main thread. `Ok` means the Play sheet is up; the outcome arrives on [purchaseUpdates]. */
@@ -40,7 +41,7 @@ interface BillingGateway {
 
 enum class OwnedState { PURCHASED, PENDING }
 
-data class OwnedPurchase(val productId: String, val purchaseToken: String, val state: OwnedState, val suspended: Boolean)
+data class OwnedPurchase(val productId: String, val purchaseToken: String, val state: OwnedState)
 
 /** One `onPurchasesUpdated(result, purchases)`. [sub] is the PBL 8 sub-response code, when any. */
 data class PurchaseUpdate(val code: Int, val sub: Int?, val purchases: List<OwnedPurchase>)
@@ -50,26 +51,19 @@ sealed interface GatewayResult<out T> {
     data class Err(val code: Int, val sub: Int?) : GatewayResult<Nothing>
 }
 
-/** What `launchBillingFlow` needs: the product, the chosen offer token, and (subs) the plan/offer for the fake store. */
-data class PurchasableOffer(val productId: String, val offerToken: String?, val basePlanId: String? = null, val offerId: String? = null)
-
-/** A pricing phase of a subscription offer (`ProductDetails.PricingPhase`). */
-data class PricingPhaseInfo(val formattedPrice: String, val priceAmountMicros: Long, val billingPeriod: String)
-
-/** `ProductDetails.SubscriptionOfferDetails`, Play-free. [offerId] null = the base plan's own offer. */
-data class SubOfferInfo(val basePlanId: String, val offerId: String?, val offerToken: String, val phases: List<PricingPhaseInfo>)
-
-data class SubProductInfo(val productId: String, val offers: List<SubOfferInfo>)
+/** What `launchBillingFlow` needs: the one-time product and its purchase option's offer token (when Play gave one). */
+data class PurchasableOffer(val productId: String, val offerToken: String?)
 
 /** A one-time product's single purchase option. */
-data class InappProductInfo(val productId: String, val formattedPrice: String, val offerToken: String?)
+data class InappProductInfo(val productId: String, val formattedPrice: String, val offerToken: String?) {
+    val offer: PurchasableOffer get() = PurchasableOffer(productId, offerToken)
+}
 
 /**
- * Both `queryProductDetailsAsync` answers. [unfetched] maps a product id Play did not return to its
+ * The `queryProductDetailsAsync` answer. [unfetched] maps a product id Play did not return to its
  * `UnfetchedProduct.StatusCode` (PRODUCT_NOT_FOUND = 3, NO_ELIGIBLE_OFFER = 4).
  */
 data class ProductsSnapshot(
-    val subs: Map<String, SubProductInfo> = emptyMap(),
     val inapp: Map<String, InappProductInfo> = emptyMap(),
     val unfetched: Map<String, Int> = emptyMap(),
 )

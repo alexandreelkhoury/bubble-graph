@@ -393,7 +393,7 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
             view = view,
             onClose = vm::closeStore,
             onRetry = vm::retryStore,
-            onBuy = { productId, basePlanId -> activity?.let { vm.buy(it, productId, basePlanId) } },
+            onBuy = { productId -> activity?.let { vm.buy(it, productId) } },
             onRestore = vm::restorePurchases,
         )
     }

@@ -4,7 +4,6 @@ import app.mishana.tv.protocol.CatalogResponse
 import app.mishana.tv.protocol.EntitlementBody
 import app.mishana.tv.protocol.LocalizedTitle
 import app.mishana.tv.protocol.LockedPackInfo
-import app.mishana.tv.protocol.SubStates
 
 // PAYMENTS-SPEC §4.4: the Store's state machine and screen model, pure (StoreFocusTest / BillingRepositoryTest).
 
@@ -32,8 +31,6 @@ data class StoreUiState(
     val entitlement: EntitlementBody? = null,
     /** Product ids with a PENDING Play purchase. */
     val pending: Set<String> = emptySet(),
-    /** A subscription Play reports as suspended (`Purchase.isSuspended`): Fix payment, never plan buttons. */
-    val subscriptionSuspended: Boolean = false,
     /** Play said BILLING_UNAVAILABLE: terminal until the next ON_START (locked rows show `settings.locked`). */
     val billingUnavailable: Boolean = false,
     /** The product whose Play sheet is up or whose purchase is being confirmed (`/verify` not answered yet). */
@@ -49,21 +46,19 @@ data class StoreUiState(
 
 sealed interface PremiumCard {
     /**
-     * Not premium and not suspended: plan buttons (yearly first). [pending]: a PENDING premium purchase;
-     * [confirming] / [slow]: the premium purchase is being confirmed (spinner + `store.confirming` / `store.verifyFailed`).
+     * Not premium: one primary button "Unlock Premium · {price}" (Play's INAPP `formattedPrice`) and the
+     * `store.premiumLifetime` line. [pending]: a PENDING premium purchase (`store.pending` chip);
+     * [confirming] / [slow]: the purchase is being confirmed (spinner + `store.confirming` / `store.verifyFailed`).
      */
-    data class Plans(val plans: List<PlanOffer>, val pending: Boolean, val confirming: Boolean = false, val slow: Boolean = false) : PremiumCard
+    data class Unlock(val price: String, val pending: Boolean, val confirming: Boolean = false, val slow: Boolean = false) : PremiumCard {
+        /** OK starts a purchase only when nothing is already under way for premium. */
+        val buyable: Boolean get() = !pending && !confirming
+    }
 
-    /** ON_HOLD / PAUSED / Play `isSuspended`: `store.fixPayment` + Fix payment. */
-    data object Suspended : PremiumCard
+    /** Premium is on (lifetime purchase or owner grant): `store.premiumActive`, no button. */
+    data object Active : PremiumCard
 
-    /** IN_GRACE_PERIOD (premium still on): `store.premiumActive`, `store.fixPayment`, Manage. */
-    data object Grace : PremiumCard
-
-    /** `store.premiumActive` + renews/ends on [untilMs] (raw Google expiry) + Manage. */
-    data class Active(val autoRenewing: Boolean, val untilMs: Long?) : PremiumCard
-
-    /** Play returned no usable `premium` product: `store.unavailable`, no buttons. */
+    /** Play returned no usable `premium` product: `store.unavailable`, no button. */
     data object NoProduct : PremiumCard
 }
 
@@ -108,32 +103,27 @@ sealed interface StoreFocusTarget {
     data object Loading : StoreFocusTarget
     data object Retry : StoreFocusTarget
     data object Ok : StoreFocusTarget
-    data class Plan(val basePlanId: String) : StoreFocusTarget
-    data object FixPayment : StoreFocusTarget
-    data object Manage : StoreFocusTarget
+    /** The Premium card's "Unlock Premium" button. */
+    data object Unlock : StoreFocusTarget
     data class Pack(val productId: String) : StoreFocusTarget
     data object Restore : StoreFocusTarget
 }
 
 object StoreModel {
-    private val SUSPENDED_STATES = setOf(SubStates.ON_HOLD, SubStates.PAUSED)
-
     fun premiumActive(e: EntitlementBody?, nowMs: Long): Boolean =
         e != null && e.premium && (e.premiumUntil == null || e.premiumUntil > nowMs)
 
     fun premiumCard(s: StoreUiState, nowMs: Long): PremiumCard {
-        val e = s.entitlement
-        val sub = e?.subscription
-        val active = premiumActive(e, nowMs)
+        if (premiumActive(s.entitlement, nowMs)) return PremiumCard.Active
+        val id = Products.PREMIUM_PRODUCT_ID
+        val product = s.products?.inapp?.get(id)
         return when {
-            sub?.state == SubStates.IN_GRACE_PERIOD && active -> PremiumCard.Grace
-            s.subscriptionSuspended || sub?.state in SUSPENDED_STATES -> PremiumCard.Suspended
-            active -> PremiumCard.Active(autoRenewing = sub?.autoRenewing ?: false, untilMs = sub?.expiresAt)
-            else -> {
-                val plans = OfferSelection.plans(s.products?.subs?.get(Products.PREMIUM_PRODUCT_ID))
-                val id = Products.PREMIUM_PRODUCT_ID
-                if (plans.isEmpty()) PremiumCard.NoProduct else PremiumCard.Plans(plans, id in s.pending, s.purchaseInFlight == id, s.slowConfirm == id)
-            }
+            // A pending / in-flight purchase keeps its card even if Play's details are missing this time.
+            id in s.pending || s.purchaseInFlight == id || s.slowConfirm == id ->
+                PremiumCard.Unlock(product?.formattedPrice.orEmpty(), id in s.pending, s.purchaseInFlight == id, s.slowConfirm == id)
+            // §1.4: not created in Play Console yet (or not returned): no button.
+            product == null || product.offerToken == null -> PremiumCard.NoProduct
+            else -> PremiumCard.Unlock(product.formattedPrice, pending = false)
         }
     }
 
@@ -190,15 +180,11 @@ object StoreModel {
         }
     }
 
-    private fun premiumFocus(m: StoreScreenModel): StoreFocusTarget = when (val c = m.premium) {
-        is PremiumCard.Plans -> StoreFocusTarget.Plan(c.plans.first().basePlanId)
-        PremiumCard.Suspended -> StoreFocusTarget.FixPayment
-        PremiumCard.Grace, is PremiumCard.Active -> StoreFocusTarget.Manage
-        PremiumCard.NoProduct -> m.packs.firstOrNull()?.let { StoreFocusTarget.Pack(it.productId) } ?: StoreFocusTarget.Restore
+    /** The Unlock button when it shows; else (premium on, or no product) the first pack card, else Restore. */
+    private fun premiumFocus(m: StoreScreenModel): StoreFocusTarget = when (m.premium) {
+        is PremiumCard.Unlock -> StoreFocusTarget.Unlock
+        PremiumCard.Active, PremiumCard.NoProduct -> m.packs.firstOrNull()?.let { StoreFocusTarget.Pack(it.productId) } ?: StoreFocusTarget.Restore
     }
-
-    /** §4.4: the manage link is offered only for a subscription that has not expired. */
-    fun showsManage(c: PremiumCard): Boolean = c is PremiumCard.Active || c == PremiumCard.Grace || c == PremiumCard.Suspended
 
     private class PackSource(val productId: String, val packId: String, val title: LocalizedTitle, val pairCount: Int, val language: String) {
         fun card(other: Boolean, trailing: PackTrailing) = PackCard(productId, packId, title, pairCount, language, other, trailing)

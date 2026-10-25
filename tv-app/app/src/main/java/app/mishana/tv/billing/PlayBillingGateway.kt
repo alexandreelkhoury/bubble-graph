@@ -27,8 +27,8 @@ import kotlin.coroutines.resume
  * ✔ Every PBL API used here exists with these signatures on the developer.android.com reference (pages dated
  * 2026-05-19, re-checked 2026-10-04): `enableAutoServiceReconnection` (8.0), `QueryProductDetailsResult`,
  * `UnfetchedProduct.getStatusCode`, `getOneTimePurchaseOfferDetailsList` (null unless several offers),
- * `OneTimePurchaseOfferDetails.getOfferToken/getOfferId/getPurchaseOptionId`, `includeSuspendedSubscriptions` and
- * `Purchase.isSuspended` (8.1), `FeatureType.INCLUDE_SUSPENDED_SUBSCRIPTIONS`, the `BillingResponseCode` values.
+ * `OneTimePurchaseOfferDetails.getOfferToken/getOfferId/getPurchaseOptionId`, the `BillingResponseCode` values.
+ * Every product is a one-time INAPP product (`premium` lifetime unlock + `pack_*`), so one product type everywhere.
  * [VERIFY] dependency resolution and compilation against the real `com.android.billingclient:billing:9.1.0` need a
  * Gradle build with Google Maven (blocked where this was written; type-checked against hand-written stubs only).
  */
@@ -79,28 +79,15 @@ class PlayBillingGateway(context: Context) : BillingGateway {
 
     override fun onLifecycleStart() = guard.onLifecycleStart()
 
-    override suspend fun queryProducts(subIds: List<String>, inappIds: List<String>): GatewayResult<ProductsSnapshot> {
-        // Two calls (one per type): mixing types in one params object is [VERIFY], so it is avoided.
-        val subs = if (subIds.isEmpty()) emptyList<ProductDetails>() to emptyMap() else
-            when (val r = queryDetails(subIds, BillingClient.ProductType.SUBS)) {
-                is GatewayResult.Err -> return r
-                is GatewayResult.Ok -> r.value
-            }
-        val inapp = if (inappIds.isEmpty()) emptyList<ProductDetails>() to emptyMap() else
-            when (val r = queryDetails(inappIds, BillingClient.ProductType.INAPP)) {
-                is GatewayResult.Err -> return r
-                is GatewayResult.Ok -> r.value
-            }
+    override suspend fun queryProducts(ids: List<String>): GatewayResult<ProductsSnapshot> {
+        if (ids.isEmpty()) return GatewayResult.Ok(ProductsSnapshot())
+        val (list, unfetched) = when (val r = queryDetails(ids, BillingClient.ProductType.INAPP)) {
+            is GatewayResult.Err -> return r
+            is GatewayResult.Ok -> r.value
+        }
         // Never cached across Store openings (stale objects make launchBillingFlow fail): replaced on every query.
-        // The queried ids are replaced (a Store opening queries SUBS and INAPP separately, so both survive).
-        details = details - (subIds + inappIds).toSet() + (subs.first + inapp.first).associateBy { it.productId }
-        return GatewayResult.Ok(
-            ProductsSnapshot(
-                subs = subs.first.associate { it.productId to toSubInfo(it) },
-                inapp = inapp.first.associate { it.productId to toInappInfo(it) },
-                unfetched = subs.second + inapp.second,
-            ),
-        )
+        details = list.associateBy { it.productId }
+        return GatewayResult.Ok(ProductsSnapshot(inapp = list.associate { it.productId to toInappInfo(it) }, unfetched = unfetched))
     }
 
     private suspend fun queryDetails(ids: List<String>, type: String): GatewayResult<Pair<List<ProductDetails>, Map<String, Int>>> {
@@ -115,7 +102,7 @@ class PlayBillingGateway(context: Context) : BillingGateway {
                     )
                 } else if (result.responseCode == BillingClient.BillingResponseCode.ITEM_UNAVAILABLE) {
                     // ✔ ProductDetailsResponseListener: ITEM_UNAVAILABLE "if no product details are found". Not an error:
-                    // none of these products exists yet (e.g. `premium` not created), so the other type still loads.
+                    // none of these products exists yet (not created in Play Console): the Store shows them as unavailable.
                     GatewayResult.Ok(emptyList<ProductDetails>() to ids.associateWith { UNFETCHED_PRODUCT_NOT_FOUND })
                 } else {
                     GatewayResult.Err(result.responseCode, null)
@@ -125,22 +112,11 @@ class PlayBillingGateway(context: Context) : BillingGateway {
         }
     }
 
-    override suspend fun queryOwned(): GatewayResult<List<OwnedPurchase>> {
-        val includeSuspended =
-            client.isFeatureSupported(BillingClient.FeatureType.INCLUDE_SUSPENDED_SUBSCRIPTIONS).responseCode == BillingClient.BillingResponseCode.OK
-        val subsParams = QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS)
-            .let { if (includeSuspended) it.includeSuspendedSubscriptions(true) else it }
-            .build()
-        val subs = when (val r = queryPurchases(subsParams)) {
-            is GatewayResult.Err -> return r
-            is GatewayResult.Ok -> r.value
+    override suspend fun queryOwned(): GatewayResult<List<OwnedPurchase>> =
+        when (val r = queryPurchases(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build())) {
+            is GatewayResult.Err -> r
+            is GatewayResult.Ok -> GatewayResult.Ok(r.value.flatMap(::toOwned))
         }
-        val inapp = when (val r = queryPurchases(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build())) {
-            is GatewayResult.Err -> return r
-            is GatewayResult.Ok -> r.value
-        }
-        return GatewayResult.Ok((subs + inapp).flatMap(::toOwned))
-    }
 
     private suspend fun queryPurchases(params: QueryPurchasesParams): GatewayResult<List<Purchase>> =
         suspendCancellableCoroutine { cont ->
@@ -184,25 +160,13 @@ class PlayBillingGateway(context: Context) : BillingGateway {
                 Purchase.PurchaseState.PENDING -> OwnedState.PENDING
                 else -> return emptyList()
             }
-            return p.products.map { OwnedPurchase(it, p.purchaseToken, state, p.isSuspended) }
+            return p.products.map { OwnedPurchase(it, p.purchaseToken, state) }
         }
-
-        fun toSubInfo(pd: ProductDetails): SubProductInfo = SubProductInfo(
-            productId = pd.productId,
-            offers = pd.subscriptionOfferDetails.orEmpty().map { o ->
-                SubOfferInfo(
-                    basePlanId = o.basePlanId,
-                    offerId = o.offerId,
-                    offerToken = o.offerToken,
-                    phases = o.pricingPhases.pricingPhaseList.map { PricingPhaseInfo(it.formattedPrice, it.priceAmountMicros, it.billingPeriod) },
-                )
-            },
-        )
 
         /** `UnfetchedProduct.StatusCode.PRODUCT_NOT_FOUND` (see [ProductsSnapshot.unfetched]). */
         private const val UNFETCHED_PRODUCT_NOT_FOUND = 3
 
-        /** §1.1: the pack's one purchase option (the code works with any id; this only orders the choice). */
+        /** §1.1: the product's one purchase option (the code works with any id; this only orders the choice). */
         private const val PACK_PURCHASE_OPTION_ID = "buy"
 
         /**

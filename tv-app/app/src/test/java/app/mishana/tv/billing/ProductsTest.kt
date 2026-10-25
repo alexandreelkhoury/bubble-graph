@@ -18,8 +18,10 @@ class ProductsTest {
     @Test
     fun constantsMatchTheFixture() {
         assertEquals(fixture["premium"]!!.jsonPrimitive.content, Products.PREMIUM_PRODUCT_ID)
-        assertEquals(fixture["basePlans"]!!.jsonArray.map { it.jsonPrimitive.content }, Products.BASE_PLAN_IDS)
-        assertEquals(fixture["trialOfferId"]!!.jsonPrimitive.content, Products.TRIAL_OFFER_ID)
+        // Lifetime premium is a one-time product: the fixture carries no subscription plan or trial data.
+        assertEquals(setOf("premium", "pairs"), fixture.keys)
+        assertTrue(Products.PRODUCT_ID_REGEX.matches(Products.PREMIUM_PRODUCT_ID))
+        assertEquals("alexkhoury@hotmail.com", Products.SUPPORT_EMAIL)
         assertEquals(listOf("points"), Products.PREMIUM_SETTING_KEYS)
         assertEquals(35, Products.PREMIUM_PACK_ID_MAX)
     }
@@ -65,12 +67,14 @@ class ProductsTest {
     }
 
     @Test
-    fun manageLinkNamesTheProductAndPackage() {
-        assertEquals(
-            "https://play.google.com/store/account/subscriptions?sku=premium&package=app.mishana.tv",
-            Products.MANAGE_SUBSCRIPTION_URL,
-        )
-        assertTrue(Products.MANAGE_SUBSCRIPTION_URL.endsWith("package=" + Products.PACKAGE_NAME))
+    fun sellableProductIds() {
+        assertTrue(Products.isSellableProductId("premium"))
+        assertTrue(Products.isSellableProductId("pack_lb_food_01"))
+        assertFalse(Products.isSellableProductId("Premium"))
+        assertFalse(Products.isSellableProductId("pack_"))
+        // The catalog fixture names the same premium product id.
+        val catalog = Json.parseToJsonElement(Fixtures.read("http.billing.catalog.response.json")).jsonObject
+        assertEquals(Products.PREMIUM_PRODUCT_ID, catalog["premium"]!!.jsonObject["productId"]!!.jsonPrimitive.content)
     }
 
     @Test

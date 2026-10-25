@@ -148,12 +148,13 @@ class ProtocolFixturesTest {
             return v
         }
         val catalog = strict("http.billing.catalog.response.json", CatalogResponse.serializer())
-        assertEquals("premium", catalog.subscription.productId)
-        assertEquals(listOf("monthly", "yearly"), catalog.subscription.basePlanIds)
+        assertEquals("premium", catalog.premium.productId)
+        assertEquals(app.mishana.tv.billing.Products.PREMIUM_PRODUCT_ID, catalog.premium.productId)
         assertEquals(3, catalog.freePackIds.size)
         val verify = strict("http.billing.verify.response.json", VerifyResponse.serializer())
         assertEquals(1790028800000L, verify.entitlement.expiresAt)
-        assertTrue(verify.entitlement.subscription!!.inTrial)
+        assertTrue(verify.entitlement.premium)
+        assertEquals(1790626400000L, verify.entitlement.premiumUntil)
         val req = strict("http.billing.verify.request.json", VerifyRequest.serializer())
         assertEquals(2, req.purchases.size)
         strict("http.billing.entitlement.request.json", EntitlementRequest.serializer())

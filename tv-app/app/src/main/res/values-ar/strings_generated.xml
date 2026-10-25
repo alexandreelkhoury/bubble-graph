@@ -447,25 +447,9 @@
         <item quantity="many">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
         <item quantity="other">كل الباقات (%1$d)، أكتر من %2$s زوج كلمات، وكل باقة جديدة.</item>
     </plurals>
-    <string name="store__plan_monthly">شهري</string>
-    <string name="store__plan_yearly">سنوي</string>
-    <string name="store__price_per_month">%1$s بالشهر</string>
-    <string name="store__price_per_year">%1$s بالسنة</string>
-    <plurals name="store__trial_days">
-        <item quantity="zero">تجربة مجانية %1$d يوم</item>
-        <item quantity="one">تجربة مجانية يوم واحد</item>
-        <item quantity="two">تجربة مجانية يومين</item>
-        <item quantity="few">تجربة مجانية %1$d أيام</item>
-        <item quantity="many">تجربة مجانية %1$d يوم</item>
-        <item quantity="other">تجربة مجانية %1$d يوم</item>
-    </plurals>
+    <string name="store__unlock_premium">افتح البريميوم · %1$s</string>
+    <string name="store__premium_lifetime">دفعة وحدة، إلك للأبد. بلا اشتراك.</string>
     <string name="store__premium_active">البريميوم شغّال</string>
-    <string name="store__renews_on">بيتجدد بـ %1$s</string>
-    <string name="store__ends_on">بيخلص بـ %1$s</string>
-    <string name="store__manage">إدارة الاشتراك</string>
-    <string name="store__manage_hint">من تلفون أو كمبيوتر: من Google Play، بعدين الدفع والاشتراكات، بعدين الاشتراكات.</string>
-    <string name="store__fix_payment">في مشكلة بالدفع. صلّحوها بـ Google Play لتضل البريميوم معكن.</string>
-    <string name="store__fix_payment_button">تصليح الدفع</string>
     <string name="store__packs_title">باقات الكلمات</string>
     <string name="store__other_languages">لغات تانية</string>
     <plurals name="store__pack_pairs">
@@ -500,19 +484,6 @@
     <string name="store__verify_failed">وصل الشرا. رح نخلّص الفتح بعد شوي.</string>
     <string name="store__install_limit">هالشرا مستعمل على تلفزيونات كتير. بدكن مساعدة؟ %1$s</string>
     <string name="store__install_limit_no_help">هالشرا مستعمل على تلفزيونات كتير.</string>
-    <string name="store__legal_price_renew">%1$s كل %2$s، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.</string>
-    <plurals name="store__legal_trial_renew">
-        <item quantity="zero">مجاني %1$d يوم، بعدين %2$s كل %3$s، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.</item>
-        <item quantity="one">مجاني يوم واحد، بعدين %2$s كل %3$s، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.</item>
-        <item quantity="two">مجاني يومين، بعدين %2$s كل %3$s، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.</item>
-        <item quantity="few">مجاني %1$d أيام، بعدين %2$s كل %3$s، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.</item>
-        <item quantity="many">مجاني %1$d يوم، بعدين %2$s كل %3$s، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.</item>
-        <item quantity="other">مجاني %1$d يوم، بعدين %2$s كل %3$s، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا.</item>
-    </plurals>
-    <string name="store__legal_cancel">فيكن تلغوا أي وقت من اشتراكات Google Play تبعكن.</string>
-    <string name="store__legal_cancel_trial">فيكن تلغوا أي وقت من اشتراكات Google Play تبعكن. إذا لغيتوا قبل ما تخلص التجربة، ما بينخصم شي.</string>
-    <string name="store__period_month">شهر</string>
-    <string name="store__period_year">سنة</string>
     <string name="store__test_mode">متجر تجريبي: ما في دفع حقيقي</string>
     <string name="store__tv_app_only">المشتريات متاحة بتطبيق Android TV.</string>
 </resources>

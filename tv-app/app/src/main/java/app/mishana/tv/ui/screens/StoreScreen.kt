@@ -1,9 +1,5 @@
 package app.mishana.tv.ui.screens
 
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,21 +14,16 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -45,12 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.mishana.tv.R
-import app.mishana.tv.billing.BillingPeriod
-import app.mishana.tv.billing.Disclosure
 import app.mishana.tv.billing.FakeChoice
 import app.mishana.tv.billing.PackCard
 import app.mishana.tv.billing.PackTrailing
-import app.mishana.tv.billing.PlanOffer
 import app.mishana.tv.billing.PremiumCard
 import app.mishana.tv.billing.Products
 import app.mishana.tv.billing.StoreEntry
@@ -65,7 +53,6 @@ import app.mishana.tv.protocol.TvView
 import app.mishana.tv.ui.components.ButtonKind
 import app.mishana.tv.ui.components.FocusTrap
 import app.mishana.tv.ui.components.InitialFocus
-import app.mishana.tv.ui.components.LocalFocusBlocked
 import app.mishana.tv.ui.components.MishButton
 import app.mishana.tv.ui.components.MishFocusSurface
 import app.mishana.tv.ui.components.MishIcons
@@ -73,21 +60,17 @@ import app.mishana.tv.ui.components.OverlayCard
 import app.mishana.tv.ui.components.Spinner
 import app.mishana.tv.ui.components.blockPointer
 import app.mishana.tv.ui.components.fullBleed
-import app.mishana.tv.ui.components.inertWhen
 import app.mishana.tv.ui.theme.LocalIsArabic
 import app.mishana.tv.ui.theme.MishColors
 import app.mishana.tv.ui.theme.MishShapes
 import app.mishana.tv.ui.theme.MishSpace
 import app.mishana.tv.ui.theme.MishTheme
-import java.text.DateFormat
-import java.util.Date
-import java.util.Locale
 
 /**
  * PAYMENTS-SPEC §4.4 Store overlay (LOBBY only), remote-only: Up/Down between the Premium card, the packs row and the
  * footer, Left/Right within a row (RTL mirrors), OK activates, Back closes and returns focus to the opener (AppRoot).
  * No element needs Menu or long-press. Layout at 960×540 dp inside the safe area: header (title + room code), the
- * full-width Premium card with the disclosure for the focused plan (§4.5), the packs row, the footer.
+ * full-width Premium card (one-time lifetime unlock: one button + the one-time purchase line), the packs row, the footer.
  */
 @Composable
 fun StoreScreen(
@@ -96,34 +79,27 @@ fun StoreScreen(
     view: TvView,
     onClose: () -> Unit,
     onRetry: () -> Unit,
-    onBuy: (productId: String, basePlanId: String?) -> Unit,
+    onBuy: (productId: String) -> Unit,
     onRestore: () -> Unit,
 ) {
     val now = System.currentTimeMillis()
     val model = if (state.phase == StorePhase.Ready) StoreModel.build(state, view.settings.wordLocale, view.lockedPacks, now) else null
     val target = StoreModel.initialFocus(entry, state.phase, model)
-    var manageHint by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     val closeFocus = remember { FocusRequester() }
     val retryFocus = remember { FocusRequester() }
     val okFocus = remember { FocusRequester() }
-    val fixFocus = remember { FocusRequester() }
-    val manageFocus = remember { FocusRequester() }
+    val unlockFocus = remember { FocusRequester() }
     val restoreFocus = remember { FocusRequester() }
-    val planFocus = remember { mutableMapOf<String, FocusRequester>() }
     val packFocus = remember { mutableMapOf<String, FocusRequester>() }
     val initial: FocusRequester = when (target) {
         StoreFocusTarget.Loading -> closeFocus
         StoreFocusTarget.Retry -> retryFocus
         StoreFocusTarget.Ok -> okFocus
-        StoreFocusTarget.FixPayment -> fixFocus
-        StoreFocusTarget.Manage -> manageFocus
+        StoreFocusTarget.Unlock -> unlockFocus
         StoreFocusTarget.Restore -> restoreFocus
-        is StoreFocusTarget.Plan -> planFocus.getOrPut(target.basePlanId) { FocusRequester() }
         is StoreFocusTarget.Pack -> packFocus.getOrPut(target.productId) { FocusRequester() }
     }
-    val openManage = { if (!openManageLink(context)) manageHint = true }
 
     Box(
         Modifier
@@ -132,71 +108,42 @@ fun StoreScreen(
             .background(MishColors.Bg)
             .blockPointer(),
     ) {
-        CompositionLocalProvider(LocalFocusBlocked provides (LocalFocusBlocked.current || manageHint)) {
-            FocusTrap(onBack = onClose, modifier = Modifier.fillMaxSize().inertWhen(manageHint), default = initial) {
-                Column(Modifier.fillMaxSize().padding(horizontal = MishSpace.SafeH, vertical = MishSpace.SafeV)) {
-                    StoreHeader(view.roomCode, state.fake)
-                    Spacer(Modifier.height(StoreMetrics.HEADER_GAP.dp))
-                    when (val phase = state.phase) {
-                        StorePhase.Loading -> CenterMessage(stringResource(R.string.store__loading), spinner = true) {
-                            MishButton(stringResource(R.string.common__close), onClose, Modifier.focusRequester(closeFocus), icon = MishIcons.X)
-                        }
-                        is StorePhase.Unavailable -> if (phase.reason == UnavailableReason.NETWORK) {
-                            CenterMessage(stringResource(R.string.store__unavailable)) {
-                                MishButton(
-                                    stringResource(R.string.common__retry), onRetry, Modifier.focusRequester(retryFocus),
-                                    kind = ButtonKind.Primary, icon = MishIcons.Refresh, minWidth = 220.dp,
-                                )
-                            }
-                        } else {
-                            CenterMessage(stringResource(R.string.store__play_unavailable)) {
-                                MishButton(stringResource(R.string.common__ok), onClose, Modifier.focusRequester(okFocus), kind = ButtonKind.Primary, minWidth = 220.dp)
-                            }
-                        }
-                        StorePhase.Ready -> if (model != null) {
-                            ReadyBody(
-                                model = model,
-                                onBuy = onBuy,
-                                onManage = openManage,
-                                onRestore = onRestore,
-                                planFocus = planFocus,
-                                packFocus = packFocus,
-                                fixFocus = fixFocus,
-                                manageFocus = manageFocus,
-                                restoreFocus = restoreFocus,
+        FocusTrap(onBack = onClose, modifier = Modifier.fillMaxSize(), default = initial) {
+            Column(Modifier.fillMaxSize().padding(horizontal = MishSpace.SafeH, vertical = MishSpace.SafeV)) {
+                StoreHeader(view.roomCode, state.fake)
+                Spacer(Modifier.height(StoreMetrics.HEADER_GAP.dp))
+                when (val phase = state.phase) {
+                    StorePhase.Loading -> CenterMessage(stringResource(R.string.store__loading), spinner = true) {
+                        MishButton(stringResource(R.string.common__close), onClose, Modifier.focusRequester(closeFocus), icon = MishIcons.X)
+                    }
+                    is StorePhase.Unavailable -> if (phase.reason == UnavailableReason.NETWORK) {
+                        CenterMessage(stringResource(R.string.store__unavailable)) {
+                            MishButton(
+                                stringResource(R.string.common__retry), onRetry, Modifier.focusRequester(retryFocus),
+                                kind = ButtonKind.Primary, icon = MishIcons.Refresh, minWidth = 220.dp,
                             )
                         }
+                    } else {
+                        CenterMessage(stringResource(R.string.store__play_unavailable)) {
+                            MishButton(stringResource(R.string.common__ok), onClose, Modifier.focusRequester(okFocus), kind = ButtonKind.Primary, minWidth = 220.dp)
+                        }
+                    }
+                    StorePhase.Ready -> if (model != null) {
+                        ReadyBody(
+                            model = model,
+                            onBuy = onBuy,
+                            onRestore = onRestore,
+                            unlockFocus = unlockFocus,
+                            packFocus = packFocus,
+                            restoreFocus = restoreFocus,
+                        )
                     }
                 }
             }
-            // Re-targets when the phase changes (Loading → Ready / Unavailable), so something is always focused.
-            InitialFocus(initial, key = target)
         }
-        if (manageHint) {
-            val ok = remember { FocusRequester() }
-            OverlayCard(onBack = { manageHint = false }, default = ok) {
-                Text(stringResource(R.string.store__manage), style = MishTheme.type.headline, color = MishColors.Text, textAlign = TextAlign.Center)
-                Spacer(Modifier.height(12.dp))
-                Text(stringResource(R.string.store__manage_hint), style = MishTheme.type.body, color = MishColors.TextSecondary, textAlign = TextAlign.Center)
-                Spacer(Modifier.height(24.dp))
-                MishButton(stringResource(R.string.common__ok), { manageHint = false }, Modifier.focusRequester(ok), kind = ButtonKind.Primary, minWidth = 180.dp)
-            }
-            InitialFocus(ok)
-        }
+        // Re-targets when the phase changes (Loading → Ready / Unavailable), so something is always focused.
+        InitialFocus(initial, key = target)
     }
-}
-
-/**
- * §4.4: `Intent.ACTION_VIEW` on the Play subscriptions link. False when nothing handles it (the caller then shows
- * `store.manageHint`: no QR code, no URL to type). [VERIFY] on a real Google TV that the Play Store handles the link.
- */
-private fun openManageLink(context: Context): Boolean = try {
-    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Products.MANAGE_SUBSCRIPTION_URL)))
-    true
-} catch (e: ActivityNotFoundException) {
-    false
-} catch (e: SecurityException) {
-    false
 }
 
 @Composable
@@ -245,18 +192,15 @@ private fun CenterMessage(text: String, spinner: Boolean = false, action: @Compo
 @Composable
 private fun ReadyBody(
     model: StoreScreenModel,
-    onBuy: (String, String?) -> Unit,
-    onManage: () -> Unit,
+    onBuy: (String) -> Unit,
     onRestore: () -> Unit,
-    planFocus: MutableMap<String, FocusRequester>,
+    unlockFocus: FocusRequester,
     packFocus: MutableMap<String, FocusRequester>,
-    fixFocus: FocusRequester,
-    manageFocus: FocusRequester,
     restoreFocus: FocusRequester,
 ) {
     val type = MishTheme.type
     Column(Modifier.fillMaxSize()) {
-        PremiumCardView(model, onBuy, onManage, planFocus, fixFocus, manageFocus)
+        PremiumCardView(model, onBuy, unlockFocus)
         Spacer(Modifier.height(StoreMetrics.CARD_TO_PACKS.dp))
         Text(stringResource(R.string.store__packs_title), style = type.label, color = MishColors.TextSecondary, maxLines = 1)
         Spacer(Modifier.height(StoreMetrics.PACKS_TITLE_GAP.dp))
@@ -282,14 +226,7 @@ private fun ReadyBody(
 }
 
 @Composable
-private fun PremiumCardView(
-    model: StoreScreenModel,
-    onBuy: (String, String?) -> Unit,
-    onManage: () -> Unit,
-    planFocus: MutableMap<String, FocusRequester>,
-    fixFocus: FocusRequester,
-    manageFocus: FocusRequester,
-) {
+private fun PremiumCardView(model: StoreScreenModel, onBuy: (String) -> Unit, unlockFocus: FocusRequester) {
     val type = MishTheme.type
     Column(
         Modifier
@@ -312,143 +249,67 @@ private fun PremiumCardView(
         }
         Spacer(Modifier.height(StoreMetrics.CARD_GAP.dp))
         when (val c = model.premium) {
-            is PremiumCard.Plans -> PlansBlock(c, onBuy, planFocus)
-            PremiumCard.Suspended -> {
-                Text(stringResource(R.string.store__fix_payment), style = type.body, color = MishColors.Danger)
-                Spacer(Modifier.height(MishSpace.s2))
-                MishButton(stringResource(R.string.store__fix_payment_button), onManage, Modifier.focusRequester(fixFocus), kind = ButtonKind.Primary)
+            is PremiumCard.Unlock -> {
+                UnlockButton(c, onClick = { if (c.buyable) onBuy(Products.PREMIUM_PRODUCT_ID) }, modifier = Modifier.focusRequester(unlockFocus))
+                Spacer(Modifier.height(StoreMetrics.CARD_GAP.dp))
+                Text(stringResource(R.string.store__premium_lifetime), style = type.caption, color = MishColors.TextSecondary)
             }
-            PremiumCard.Grace -> {
+            PremiumCard.Active -> Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(MishIcons.Check, contentDescription = null, tint = MishColors.Success, modifier = Modifier.size(24.dp))
+                Spacer(Modifier.width(MishSpace.s2))
                 Text(stringResource(R.string.store__premium_active), style = type.titleS, color = MishColors.Success)
-                Text(stringResource(R.string.store__fix_payment), style = type.body, color = MishColors.Danger)
-                Spacer(Modifier.height(MishSpace.s2))
-                MishButton(stringResource(R.string.store__manage), onManage, Modifier.focusRequester(manageFocus), kind = ButtonKind.Primary)
-            }
-            is PremiumCard.Active -> {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(MishIcons.Check, contentDescription = null, tint = MishColors.Success, modifier = Modifier.size(24.dp))
-                    Spacer(Modifier.width(MishSpace.s2))
-                    Text(stringResource(R.string.store__premium_active), style = type.titleS, color = MishColors.Success)
-                    val until = c.untilMs
-                    if (until != null) {
-                        Spacer(Modifier.width(MishSpace.s4))
-                        val date = isolate(formatDate(until, uiLanguage()))
-                        Text(
-                            stringResource(if (c.autoRenewing) R.string.store__renews_on else R.string.store__ends_on, date),
-                            style = type.body,
-                            color = MishColors.TextSecondary,
-                        )
-                    }
-                }
-                Spacer(Modifier.height(MishSpace.s2))
-                MishButton(stringResource(R.string.store__manage), onManage, Modifier.focusRequester(manageFocus))
             }
             PremiumCard.NoProduct -> Text(stringResource(R.string.store__unavailable), style = type.body, color = MishColors.TextSecondary)
         }
     }
 }
 
-/** §4.4/§4.5: yearly then monthly, side by side; one disclosure paragraph for the focused plan, always visible. */
+/**
+ * The one primary button "Unlock Premium · {price}" on a single line (titleS). It stays focusable in every state; while a
+ * purchase is pending or being confirmed it shows that status instead of the price, and OK does nothing.
+ */
 @Composable
-private fun PlansBlock(c: PremiumCard.Plans, onBuy: (String, String?) -> Unit, planFocus: MutableMap<String, FocusRequester>) {
-    var focused by remember { mutableStateOf(c.plans.first().basePlanId) }
-    val plan = c.plans.firstOrNull { it.basePlanId == focused } ?: c.plans.first()
-    Spacer(Modifier.height(StoreMetrics.BADGE_OVERHANG.dp)) // room for the trial badge sticker
-    Row(horizontalArrangement = Arrangement.spacedBy(MishSpace.s4)) { // 2 × 400 + 16 ≤ 824 dp
-        for (p in c.plans) {
-            PlanButton(
-                plan = p,
-                status = when {
-                    c.confirming -> PlanStatus.Confirming
-                    c.slow -> PlanStatus.Slow
-                    c.pending -> PlanStatus.Pending
-                    else -> PlanStatus.None
-                },
-                onClick = { if (!c.confirming && !c.pending) onBuy(Products.PREMIUM_PRODUCT_ID, p.basePlanId) },
-                modifier = Modifier
-                    .focusRequester(planFocus.getOrPut(p.basePlanId) { FocusRequester() })
-                    .onFocusChanged { if (it.isFocused) focused = p.basePlanId },
-            )
-        }
-    }
-    Spacer(Modifier.height(StoreMetrics.CARD_GAP.dp))
-    DisclosureText(Disclosure.of(plan), plan)
-}
-
-private enum class PlanStatus { None, Pending, Confirming, Slow }
-
-@Composable
-private fun PlanButton(plan: PlanOffer, status: PlanStatus, onClick: () -> Unit, modifier: Modifier) {
+private fun UnlockButton(c: PremiumCard.Unlock, onClick: () -> Unit, modifier: Modifier) {
     val type = MishTheme.type
-    val yearly = plan.basePlanId == Products.BASE_PLAN_YEARLY
-    val name = stringResource(if (yearly) R.string.store__plan_yearly else R.string.store__plan_monthly)
-    val price = stringResource(
-        if (periodOf(plan) == BillingPeriod.YEAR) R.string.store__price_per_year else R.string.store__price_per_month,
-        isolate(plan.price),
-    )
-    // The trial badge is a sticker on the top-end corner (§4.4 "a separate badge sits on the button"), so the one-line
-    // label keeps the full width; StoreMetrics.BADGE_OVERHANG reserves its overhang above the row.
-    Box {
-        MishFocusSurface(
-            onClick = onClick,
-            modifier = modifier.width(StoreMetrics.PLAN_W.dp).height(StoreMetrics.PLAN_H.dp).semantics(mergeDescendants = true) {},
-            shape = MishShapes.row,
-            container = if (yearly) MishColors.Elevated else MishColors.Surface,
+    val label = stringResource(R.string.store__unlock_premium, isolate(c.price))
+    MishFocusSurface(
+        onClick = onClick,
+        modifier = modifier
+            .widthIn(min = StoreMetrics.UNLOCK_MIN_W.dp, max = StoreMetrics.CARD_INNER_W.dp)
+            .height(StoreMetrics.UNLOCK_H.dp)
+            .semantics(mergeDescendants = true) {},
+        shape = MishShapes.pill,
+        container = if (c.buyable) MishColors.Primary else MishColors.Elevated,
+        content = if (c.buyable) MishColors.OnPrimary else MishColors.Text,
+        focusedContainer = if (c.buyable) MishColors.Primary else MishColors.Elevated,
+        focusedContent = if (c.buyable) MishColors.OnPrimary else MishColors.Text,
+    ) {
+        Row(
+            Modifier.align(Alignment.Center).padding(horizontal = StoreMetrics.UNLOCK_PAD_H.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            // One line: "Yearly · $29.99 / year" (the plan name + price, §4.4), or the purchase status in place of the price.
-            Row(Modifier.fillMaxSize().padding(horizontal = StoreMetrics.PLAN_PAD_H.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text(name, style = type.titleS, maxLines = 1)
-                Text("  ·  ", style = type.titleS, color = MishColors.TextMuted, maxLines = 1)
-                when (status) {
-                    PlanStatus.None -> Text(price, style = type.titleS, color = MishColors.Accent, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    PlanStatus.Pending -> Text(stringResource(R.string.store__pending), style = type.caption, color = MishColors.Accent, maxLines = 1)
-                    PlanStatus.Confirming -> {
-                        Spinner(size = 18.dp)
-                        Spacer(Modifier.width(MishSpace.s2))
-                        Text(stringResource(R.string.store__confirming), style = type.caption, maxLines = 1)
-                    }
-                    PlanStatus.Slow -> Text(stringResource(R.string.store__verify_failed), style = type.caption, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            when {
+                c.confirming -> {
+                    Spinner(size = 18.dp)
+                    Spacer(Modifier.width(MishSpace.s2))
+                    Text(stringResource(R.string.store__confirming), style = type.titleS, maxLines = 1)
                 }
+                c.pending -> Text(
+                    stringResource(R.string.store__pending),
+                    style = type.caption,
+                    color = MishColors.OnAccent,
+                    maxLines = 1,
+                    modifier = Modifier.background(MishColors.Accent, MishShapes.pill).padding(horizontal = 12.dp, vertical = 2.dp),
+                )
+                c.slow -> Text(stringResource(R.string.store__verify_failed), style = type.caption, color = MishColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                else -> Text(label, style = type.titleS, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
-        val days = plan.trialDays
-        if (days != null && status == PlanStatus.None) {
-            Text(
-                pluralStringResource(R.plurals.store__trial_days, days, days),
-                style = type.caption,
-                color = MishColors.OnAccent,
-                maxLines = 1,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = (-StoreMetrics.PLAN_PAD_H).dp, y = (-StoreMetrics.BADGE_OVERHANG).dp)
-                    .background(MishColors.Accent, MishShapes.pill)
-                    .padding(horizontal = 10.dp, vertical = 0.dp),
-            )
-        }
     }
 }
 
-/** §4.5: price, period, trial terms, auto-renewal and how to cancel, for the focused plan. Never truncated. */
 @Composable
-private fun DisclosureText(d: Disclosure, plan: PlanOffer) {
-    val period = isolate(stringResource(if (periodOf(plan) == BillingPeriod.YEAR) R.string.store__period_year else R.string.store__period_month))
-    val price = isolate(d.price)
-    val days = d.trialDays
-    val first = if (days != null) {
-        pluralStringResource(R.plurals.store__legal_trial_renew, days, days, price, period)
-    } else {
-        stringResource(R.string.store__legal_price_renew, price, period)
-    }
-    val cancel = stringResource(if (days != null) R.string.store__legal_cancel_trial else R.string.store__legal_cancel)
-    Text("$first $cancel", style = MishTheme.type.caption, color = MishColors.TextSecondary)
-}
-
-/** The plan's period from Play's billingPeriod, else from the base plan id. */
-private fun periodOf(plan: PlanOffer): BillingPeriod =
-    plan.period ?: if (plan.basePlanId == Products.BASE_PLAN_YEARLY) BillingPeriod.YEAR else BillingPeriod.MONTH
-
-@Composable
-private fun PacksRow(packs: List<PackCard>, showOther: Boolean, onBuy: (String, String?) -> Unit, packFocus: MutableMap<String, FocusRequester>) {
+private fun PacksRow(packs: List<PackCard>, showOther: Boolean, onBuy: (String) -> Unit, packFocus: MutableMap<String, FocusRequester>) {
     val firstOther = if (showOther) packs.indexOfFirst { it.otherLanguage } else -1
     val entry = packs.firstOrNull()?.let { packFocus.getOrPut(it.productId) { FocusRequester() } }
     LazyRow(
@@ -483,7 +344,7 @@ private fun OtherLanguagesCard() {
 
 /** A pack card: focusable in every state (it announces its state); OK buys only when a Buy button shows. */
 @Composable
-private fun PackCardView(p: PackCard, onBuy: (String, String?) -> Unit, modifier: Modifier) {
+private fun PackCardView(p: PackCard, onBuy: (String) -> Unit, modifier: Modifier) {
     val type = MishTheme.type
     val title = localizedTitle(p.title)
     val trailing = when (val t = p.trailing) {
@@ -496,7 +357,7 @@ private fun PackCardView(p: PackCard, onBuy: (String, String?) -> Unit, modifier
     }
     val pairs = pluralStringResource(R.plurals.store__pack_pairs, p.pairCount, p.pairCount)
     MishFocusSurface(
-        onClick = { if (p.buyable) onBuy(p.productId, null) },
+        onClick = { if (p.buyable) onBuy(p.productId) },
         modifier = modifier.width(StoreMetrics.PACK_CARD_W.dp).height(StoreMetrics.packCardH(LocalIsArabic.current).dp).semantics(mergeDescendants = true) { contentDescription = "$title, $pairs, $trailing" },
         shape = MishShapes.tile,
     ) {
@@ -525,12 +386,6 @@ private fun PackCardView(p: PackCard, onBuy: (String, String?) -> Unit, modifier
             }
         }
     }
-}
-
-/** §4.7: `DateFormat.MEDIUM`, Western digits in Arabic (`ar-LB-u-nu-latn`, DESIGN §3.5). */
-fun formatDate(ms: Long, lang: String): String {
-    val loc = if (lang == "ar") Locale.forLanguageTag("ar-LB-u-nu-latn") else Locale.forLanguageTag(lang)
-    return DateFormat.getDateInstance(DateFormat.MEDIUM, loc).format(Date(ms))
 }
 
 /** The Debug fake store's purchase dialog (§4.8; debug builds only reach it). English only: never shipped. */

@@ -423,22 +423,9 @@
         <item quantity="many">Los %1$d packs de palabras (%2$s+ pares) y todos los nuevos.</item>
         <item quantity="other">Los %1$d packs de palabras (%2$s+ pares) y todos los nuevos.</item>
     </plurals>
-    <string name="store__plan_monthly">Mensual</string>
-    <string name="store__plan_yearly">Anual</string>
-    <string name="store__price_per_month">%1$s / mes</string>
-    <string name="store__price_per_year">%1$s / año</string>
-    <plurals name="store__trial_days">
-        <item quantity="one">%1$d día de prueba gratis</item>
-        <item quantity="many">%1$d días de prueba gratis</item>
-        <item quantity="other">%1$d días de prueba gratis</item>
-    </plurals>
+    <string name="store__unlock_premium">Desbloquear Premium · %1$s</string>
+    <string name="store__premium_lifetime">Pago único, tuyo para siempre. Sin suscripción.</string>
     <string name="store__premium_active">Premium está activo</string>
-    <string name="store__renews_on">Se renueva el %1$s</string>
-    <string name="store__ends_on">Termina el %1$s</string>
-    <string name="store__manage">Administrar suscripción</string>
-    <string name="store__manage_hint">En un teléfono o una computadora: abre Google Play, luego Pagos y suscripciones, luego Suscripciones.</string>
-    <string name="store__fix_payment">Hay un problema con tu pago. Corrígelo en Google Play para conservar Premium.</string>
-    <string name="store__fix_payment_button">Corregir el pago</string>
     <string name="store__packs_title">Packs de palabras</string>
     <string name="store__other_languages">Otros idiomas</string>
     <plurals name="store__pack_pairs">
@@ -470,16 +457,6 @@
     <string name="store__verify_failed">Compra recibida. Terminaremos de desbloquearla en breve.</string>
     <string name="store__install_limit">Esta compra ya se usa en demasiadas teles. ¿Necesitas ayuda? %1$s</string>
     <string name="store__install_limit_no_help">Esta compra ya se usa en demasiadas teles.</string>
-    <string name="store__legal_price_renew">%1$s por %2$s, cobrado en tu cuenta de Google Play. Se renueva automáticamente hasta que lo canceles.</string>
-    <plurals name="store__legal_trial_renew">
-        <item quantity="one">Gratis %1$d día, luego %2$s por %3$s, cobrado en tu cuenta de Google Play. Se renueva automáticamente hasta que lo canceles.</item>
-        <item quantity="many">Gratis %1$d días, luego %2$s por %3$s, cobrado en tu cuenta de Google Play. Se renueva automáticamente hasta que lo canceles.</item>
-        <item quantity="other">Gratis %1$d días, luego %2$s por %3$s, cobrado en tu cuenta de Google Play. Se renueva automáticamente hasta que lo canceles.</item>
-    </plurals>
-    <string name="store__legal_cancel">Cancela cuando quieras en tus suscripciones de Google Play.</string>
-    <string name="store__legal_cancel_trial">Cancela cuando quieras en tus suscripciones de Google Play. Si cancelas antes de que acabe la prueba, no se te cobrará.</string>
-    <string name="store__period_month">mes</string>
-    <string name="store__period_year">año</string>
     <string name="store__test_mode">Tienda de prueba: sin pagos reales</string>
     <string name="store__tv_app_only">Las compras están disponibles en la app de Android TV.</string>
 </resources>

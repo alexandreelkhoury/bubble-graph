@@ -2,8 +2,9 @@ package app.mishana.tv.ui.screens
 
 /**
  * PAYMENTS-SPEC §4.4 Store layout metrics (dp), Android-free so StoreLayoutFitTest can check the hard fit rule with the
- * real Cairo fonts on the JVM: the Premium card, including the longest disclosure paragraph, fits above the packs row
- * without scrolling at the 20 sp floor in EN, FR and AR (960×540 dp canvas, 48/27 dp safe margins).
+ * real Cairo fonts on the JVM: the Premium card (title + pitch, the "Unlock Premium · {price}" button, the one-time
+ * purchase line) fits above the packs row without scrolling at the 20 sp floor in every shipped locale (960×540 dp
+ * canvas, 48/27 dp safe margins).
  * The Compose screenshot half of §4.9 StoreLayoutTest still runs on the owner's machine.
  */
 object StoreMetrics {
@@ -23,13 +24,16 @@ object StoreMetrics {
     const val CARD_GAP = 8
     const val TITLE_PITCH_GAP = 16
 
-    /** One plan button: a single line "Yearly · $29.99 / year" (titleS), 48 dp minimum. */
-    const val PLAN_W = 400
-    const val PLAN_H = 52
-    const val PLAN_PAD_H = 16
+    /**
+     * The one Premium button: a single line "Unlock Premium · $29.99" (titleS), at least [UNLOCK_MIN_W] wide and
+     * growing with its label up to the card's inner width; 48 dp minimum height.
+     */
+    const val UNLOCK_MIN_W = 360
+    const val UNLOCK_H = 52
+    const val UNLOCK_PAD_H = 24
 
-    /** The trial badge is a sticker on the button's top-end corner, overhanging it by this much (no label width used). */
-    const val BADGE_OVERHANG = 12
+    /** Font size (sp) of the button label (MishType titleS). */
+    const val UNLOCK_LABEL_SP = 22
 
     const val CARD_TO_PACKS = 6
     const val PACKS_TITLE_GAP = 0
@@ -76,8 +80,11 @@ object StoreMetrics {
     fun cardBudget(arabic: Boolean): Int =
         CONTENT_H - HEADER_H - HEADER_GAP - CARD_TO_PACKS - (labelLh(arabic) + PACKS_TITLE_GAP + packCardH(arabic) + 2 * PACK_ROW_PAD_V) - FOOTER_H
 
-    /** The Premium card's height with [pitchLines] lines of pitch and [disclosureLines] lines of disclosure. */
-    fun cardHeight(arabic: Boolean, pitchLines: Int, disclosureLines: Int): Int =
-        2 * CARD_PAD_V + maxOf(titleLh(arabic), pitchLines * captionLh(arabic)) + CARD_GAP + BADGE_OVERHANG + PLAN_H + CARD_GAP +
-            disclosureLines * captionLh(arabic)
+    /**
+     * The Premium card's tallest form (not premium: the Unlock button and the `store.premiumLifetime` line) with
+     * [pitchLines] lines of pitch and [lifetimeLines] lines of the one-time purchase note.
+     */
+    fun cardHeight(arabic: Boolean, pitchLines: Int, lifetimeLines: Int): Int =
+        2 * CARD_PAD_V + maxOf(titleLh(arabic), pitchLines * captionLh(arabic)) + CARD_GAP + UNLOCK_H + CARD_GAP +
+            lifetimeLines * captionLh(arabic)
 }

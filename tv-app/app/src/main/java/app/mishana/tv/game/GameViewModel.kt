@@ -561,9 +561,9 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         billing?.openStore(view.lockedPacks)
     }
 
-    fun buy(activity: Activity, productId: String, basePlanId: String?) {
+    fun buy(activity: Activity, productId: String) {
         val origin = (_ui.value as? TvUiState.InRoom)?.store?.origin ?: StoreOrigin.LOBBY_BUTTON
-        billing?.buy(activity, productId, basePlanId, origin)
+        billing?.buy(activity, productId, origin)
     }
 
     fun restorePurchases() {

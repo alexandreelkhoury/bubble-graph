@@ -36,7 +36,7 @@ class EntitlementApiTest {
         val r = api.verify(
             "5f2c8e1a9b0d4c3e7a6f1b2d3c4e5f60",
             listOf(
-                PurchaseRef("premium", "aBcDeFgHiJkLmNoPqRsTuVwX.AO-J1OyExampleSubscriptionPurchaseToken0123456789"),
+                PurchaseRef("premium", "aBcDeFgHiJkLmNoPqRsTuVwX.AO-J1OyExamplePremiumPurchaseToken000000123456789"),
                 PurchaseRef("pack_en_food_01", "zYxWvUtSrQpOnMlKjIhGfEdC.AO-J1OzExampleOneTimePurchaseToken9876543210"),
             ),
         )
@@ -49,7 +49,6 @@ class EntitlementApiTest {
         assertTrue(r.entitlement.premium)
         assertEquals(1790626400000L, r.entitlement.premiumUntil)
         assertEquals(listOf("en-food-01"), r.entitlement.packs)
-        assertEquals("SUBSCRIPTION_STATE_ACTIVE", r.entitlement.subscription!!.state)
         assertEquals(listOf("OK", "OK"), r.results.map { it.result })
     }
 

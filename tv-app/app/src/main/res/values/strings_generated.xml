@@ -415,21 +415,9 @@
         <item quantity="one">%1$d word pack (%2$s+ word pairs), and every new one.</item>
         <item quantity="other">All %1$d word packs (%2$s+ word pairs), and every new one.</item>
     </plurals>
-    <string name="store__plan_monthly">Monthly</string>
-    <string name="store__plan_yearly">Yearly</string>
-    <string name="store__price_per_month">%1$s / month</string>
-    <string name="store__price_per_year">%1$s / year</string>
-    <plurals name="store__trial_days">
-        <item quantity="one">%1$d-day free trial</item>
-        <item quantity="other">%1$d-day free trial</item>
-    </plurals>
+    <string name="store__unlock_premium">Unlock Premium · %1$s</string>
+    <string name="store__premium_lifetime">One-time purchase, yours for good. No subscription.</string>
     <string name="store__premium_active">Premium is on</string>
-    <string name="store__renews_on">Renews on %1$s</string>
-    <string name="store__ends_on">Ends on %1$s</string>
-    <string name="store__manage">Manage subscription</string>
-    <string name="store__manage_hint">On a phone or computer: open Google Play, then Payments &amp; subscriptions, then Subscriptions.</string>
-    <string name="store__fix_payment">There\'s a problem with your payment. Fix it in Google Play to keep Premium.</string>
-    <string name="store__fix_payment_button">Fix payment</string>
     <string name="store__packs_title">Word packs</string>
     <string name="store__other_languages">Other languages</string>
     <plurals name="store__pack_pairs">
@@ -460,15 +448,6 @@
     <string name="store__verify_failed">Purchase received. We\'ll finish unlocking it shortly.</string>
     <string name="store__install_limit">This purchase is already used on too many TVs. Need help? %1$s</string>
     <string name="store__install_limit_no_help">This purchase is already used on too many TVs.</string>
-    <string name="store__legal_price_renew">%1$s per %2$s, billed to your Google Play account. Renews automatically until you cancel.</string>
-    <plurals name="store__legal_trial_renew">
-        <item quantity="one">Free for %1$d day, then %2$s per %3$s, billed to your Google Play account. Renews automatically until you cancel.</item>
-        <item quantity="other">Free for %1$d days, then %2$s per %3$s, billed to your Google Play account. Renews automatically until you cancel.</item>
-    </plurals>
-    <string name="store__legal_cancel">Cancel anytime in your Google Play subscriptions.</string>
-    <string name="store__legal_cancel_trial">Cancel anytime in your Google Play subscriptions. Cancel before the trial ends and you won\'t be charged.</string>
-    <string name="store__period_month">month</string>
-    <string name="store__period_year">year</string>
     <string name="store__test_mode">Test store: no real payments</string>
     <string name="store__tv_app_only">Purchases are available in the Android TV app.</string>
 </resources>

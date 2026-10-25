@@ -58,7 +58,7 @@ interface RoomBilling {
     fun setInRoom(inRoom: Boolean)
     fun openStore(lockedPacks: List<LockedPackInfo>)
     fun closeStore()
-    fun buy(activity: Activity, productId: String, basePlanId: String?, origin: StoreOrigin)
+    fun buy(activity: Activity, productId: String, origin: StoreOrigin)
     fun restorePurchases()
 
     /** §4.8: the debug fake store's purchase dialog while it is active; null with Google Play. */
@@ -93,8 +93,8 @@ class BillingRepository(
 
     private val installId: String by lazy { store.installId() }
 
-    /** The `(token, state, suspended)` tuples of the last successful verify (§2.4 rule 1); null = never verified. */
-    private var lastVerified: Set<Triple<String, OwnedState, Boolean>>? = null
+    /** The `(token, state)` pairs of the last successful verify (§2.4 rule 1); null = never verified. */
+    private var lastVerified: Set<Pair<String, OwnedState>>? = null
 
     private val refreshMutex = Mutex()
     private var restoreJob: Job? = null
@@ -180,16 +180,12 @@ class BillingRepository(
         _state.update { it.copy(storeVisible = false) }
     }
 
-    override fun buy(activity: Activity, productId: String, basePlanId: String?, origin: StoreOrigin) {
+    override fun buy(activity: Activity, productId: String, origin: StoreOrigin) {
         val s = _state.value
         if (s.purchaseInFlight != null) return
         val products = s.products ?: return
-        val offer = if (productId == Products.PREMIUM_PRODUCT_ID) {
-            OfferSelection.planFor(products.subs[Products.PREMIUM_PRODUCT_ID], basePlanId ?: Products.BASE_PLAN_YEARLY)
-                ?.let { PurchasableOffer(productId, it.offerToken, it.basePlanId, it.offerId) }
-        } else {
-            OfferSelection.packOffer(products.inapp[productId])
-        }
+        // Premium and packs alike: one-time INAPP products, launched with their single purchase option.
+        val offer = products.inapp[productId]?.offer
         if (offer == null) {
             toast(BillingErrors.ITEM_UNAVAILABLE)
             return
@@ -213,47 +209,35 @@ class BillingRepository(
         val outcome = withTimeoutOrNull(STORE_TIMEOUT_MS) {
             coroutineScope {
                 val catalog = async { runCatchingApi { api.catalog() } }
-                val subs = async {
-                    when (val c = gateway.connect()) {
-                        is GatewayResult.Err -> c
-                        is GatewayResult.Ok -> gateway.queryProducts(listOf(Products.PREMIUM_PRODUCT_ID), emptyList())
-                    }
-                }
+                val connected = async { gateway.connect() }
                 val cat = catalog.await()
-                val subsResult = subs.await()
-                // PAY-GAP: the INAPP ids come from the catalog, so that query starts once the catalog answered
-                // (or from view.lockedPacks when it failed) instead of strictly in parallel.
-                val inappIds = cat?.packs?.map { it.productId } ?: lockedPacks.map { it.productId }
-                val inappResult = if (subsResult is GatewayResult.Ok && inappIds.isNotEmpty()) {
-                    gateway.queryProducts(emptyList(), inappIds)
-                } else {
-                    subsResult
+                // PAY-GAP: the pack ids come from the catalog (or view.lockedPacks when it failed), so the one
+                // INAPP query (premium + packs) starts once the catalog answered; the Play connection runs alongside.
+                val packIds = cat?.packs?.map { it.productId } ?: lockedPacks.map { it.productId }
+                val products = when (val c = connected.await()) {
+                    is GatewayResult.Err -> c
+                    is GatewayResult.Ok -> gateway.queryProducts(listOf(Products.PREMIUM_PRODUCT_ID) + packIds)
                 }
-                Triple(cat, subsResult, inappResult)
+                cat to products
             }
         }
         if (outcome == null) {
             _state.update { it.copy(phase = StorePhase.Unavailable(UnavailableReason.NETWORK)) }
             return
         }
-        val (catalog, subs, inapp) = outcome
-        val playErr = (subs as? GatewayResult.Err) ?: (inapp as? GatewayResult.Err)
+        val (catalog, products) = outcome
         when {
-            playErr?.code == ResponseCodes.BILLING_UNAVAILABLE -> _state.update {
+            products is GatewayResult.Err && products.code == ResponseCodes.BILLING_UNAVAILABLE -> _state.update {
                 it.copy(phase = StorePhase.Unavailable(UnavailableReason.BILLING_UNAVAILABLE), billingUnavailable = true, catalog = catalog)
             }
             // PAY-GAP: §4.4 names NETWORK for "catalog and Play both failed". When only Play failed nothing can be bought,
             // and every pack would read "Included with Premium": the conservative choice is NETWORK (Try again) too.
-            playErr != null -> {
-                warn("billing: product query failed code=${playErr.code}")
+            products is GatewayResult.Err -> {
+                warn("billing: product query failed code=${products.code}")
                 _state.update { it.copy(phase = StorePhase.Unavailable(UnavailableReason.NETWORK), catalog = catalog) }
             }
-            else -> {
-                val a = (subs as GatewayResult.Ok).value
-                val b = (inapp as GatewayResult.Ok).value
-                val merged = ProductsSnapshot(a.subs + b.subs, a.inapp + b.inapp, a.unfetched + b.unfetched)
-                _state.update { it.copy(phase = StorePhase.Ready, catalog = catalog, products = merged, fake = gateway.isFake) }
-            }
+            products is GatewayResult.Ok ->
+                _state.update { it.copy(phase = StorePhase.Ready, catalog = catalog, products = products.value, fake = gateway.isFake) }
         }
     }
 
@@ -288,12 +272,11 @@ class BillingRepository(
         }
         val list = (owned as GatewayResult.Ok).value
         val pendingIds = list.filter { it.state == OwnedState.PENDING }.map { it.productId }.toSet()
-        val suspended = list.any { it.suspended && it.productId == Products.PREMIUM_PRODUCT_ID }
-        _state.update { it.copy(pending = pendingIds, subscriptionSuspended = suspended, billingUnavailable = false) }
-        // Pending purchases grant nothing and are not posted as owned; suspended subscriptions are (§4.2).
+        _state.update { it.copy(pending = pendingIds, billingUnavailable = false) }
+        // Pending purchases grant nothing and are not posted as owned (§4.2).
         val postable = list.filter { it.state == OwnedState.PURCHASED }
-        val tuples = postable.map { Triple(it.purchaseToken, it.state, it.suspended) }.toSet()
-        val changed = tuples != (lastVerified ?: emptySet<Triple<String, OwnedState, Boolean>>())
+        val tuples = postable.map { it.purchaseToken to it.state }.toSet()
+        val changed = tuples != (lastVerified ?: emptySet<Pair<String, OwnedState>>())
         if (postable.isNotEmpty()) {
             if (force || changed || stale()) {
                 val ok = verify(postable, announce = user)
@@ -354,7 +337,7 @@ class BillingRepository(
             if (announce || _state.value.purchaseInFlight != null) announceVerifyFailed()
             scheduleRetry()
         } else {
-            lastVerified = postable.map { Triple(it.purchaseToken, it.state, it.suspended) }.toSet()
+            lastVerified = postable.map { it.purchaseToken to it.state }.toSet()
             retryAttempt = 0
             verifyFailedShown = false
         }
@@ -504,14 +487,13 @@ class BillingRepository(
         private const val HOUR = 60 * MINUTE
 
         /**
-         * §2.4 rule 3: `max(now + 1 min, min(expiresAt − 1 h, subscription.expiresAt + 10 min, premiumUntil − 30 min,
-         * now + 6 h))`, ignoring null terms. Lands before the room loses premium, never earlier than a minute away.
+         * §2.4 rule 3: `max(now + 1 min, min(expiresAt − 1 h, premiumUntil − 30 min, now + 6 h))`, ignoring null terms.
+         * Lands before the room loses premium (a timed grant), never earlier than a minute away.
          */
         fun nextRefreshAt(body: EntitlementBody?, nowMs: Long): Long {
             var m = nowMs + 6 * HOUR
             if (body != null) {
                 m = min(m, body.expiresAt - HOUR)
-                body.subscription?.expiresAt?.let { m = min(m, it + 10 * MINUTE) }
                 body.premiumUntil?.let { m = min(m, it - 30 * MINUTE) }
             }
             return max(nowMs + MINUTE, m)

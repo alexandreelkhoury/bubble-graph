@@ -7,13 +7,8 @@ import app.mishana.tv.i18n.Locales
  * shared/fixtures/billing.products.json. Pure.
  */
 object Products {
+    /** Lifetime Premium: a one-time, non-consumable Play in-app product (INAPP), like the `pack_*` products. */
     const val PREMIUM_PRODUCT_ID = "premium"
-
-    /** Display order on the TV is yearly first (§4.4); this list keeps the shared order. */
-    val BASE_PLAN_IDS: List<String> = listOf("monthly", "yearly")
-    const val BASE_PLAN_MONTHLY = "monthly"
-    const val BASE_PLAN_YEARLY = "yearly"
-    const val TRIAL_OFFER_ID = "trial-7d"
     const val PACK_PRODUCT_PREFIX = "pack_"
     const val PRODUCT_ID_MAX = 40
     const val PREMIUM_PACK_ID_MAX = PRODUCT_ID_MAX - PACK_PRODUCT_PREFIX.length // 35
@@ -24,16 +19,17 @@ object Products {
     val PREMIUM_SETTING_KEYS: List<String> = listOf("points")
 
     /**
-     * §4.7 `{email}` = shared `SUPPORT_EMAIL` (the owner fills both; empty hides `store.help` and selects
-     * `store.installLimitNoHelp`). Keep it equal to shared/src/billing/products.ts.
+     * §4.7 `{email}` = shared `SUPPORT_EMAIL` (empty would hide `store.help` and select `store.installLimitNoHelp`).
+     * Keep it equal to shared/src/billing/products.ts.
      */
-    const val SUPPORT_EMAIL = ""
+    const val SUPPORT_EMAIL = "alexkhoury@hotmail.com"
 
-    /** The Play package name (applicationId); also used in the manage-subscription link. */
+    /** The Play package name (applicationId). */
     const val PACKAGE_NAME = "app.mishana.tv"
 
-    /** §4.4: the Play subscriptions page for this product. */
-    const val MANAGE_SUBSCRIPTION_URL = "https://play.google.com/store/account/subscriptions?sku=premium&package=app.mishana.tv"
+    /** Every product this app sells: `premium` or a well-formed `pack_*` id (all one-time INAPP products). */
+    fun isSellableProductId(productId: String): Boolean =
+        productId == PREMIUM_PRODUCT_ID || packIdFromProductId(productId) != null
 
     /** "lb-food-01" → "pack_lb_food_01". */
     fun packProductId(packId: String): String = PACK_PRODUCT_PREFIX + packId.replace("-", "_")
