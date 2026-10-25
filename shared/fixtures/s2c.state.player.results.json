@@ -26,7 +26,8 @@
       "packIds": [
         "en-everyday-01",
         "fr-everyday-01",
-        "ar-everyday-01"
+        "ar-everyday-01",
+        "es-everyday-01"
       ],
       "difficulties": [
         1,
@@ -196,6 +197,11 @@
     "lockedPacks": [],
     "tvBusy": false,
     "poolExhausted": false,
+    "wordLocales": [
+      "en",
+      "fr",
+      "ar"
+    ],
     "me": {
       "id": "p_1b2c3d4e5f60718293a4b5c6",
       "word": {

@@ -14,7 +14,7 @@ import app.mishana.tv.i18n.Locales
 import app.mishana.tv.protocol.LocalizedTitle
 import app.mishana.tv.protocol.Role
 
-/** UI language of the current configuration: en | fr | ar. */
+/** UI language of the current configuration: en | fr | ar | es. */
 @Composable
 @ReadOnlyComposable
 fun uiLanguage(): String = Locales.normalize(LocalConfiguration.current.locales.get(0)?.language)
@@ -26,6 +26,7 @@ fun localizedTitle(t: LocalizedTitle): String = t.inLanguage(uiLanguage())
 fun LocalizedTitle.inLanguage(lang: String): String = when (lang) {
     "fr" -> fr
     "ar" -> ar
+    "es" -> es ?: en // `es` is optional in pack titles
     else -> en
 }
 
@@ -38,6 +39,7 @@ fun roleLabelRes(role: Role): Int = when (role) {
 fun langNameRes(tag: String): Int = when (tag) {
     "fr" -> R.string.lang__fr
     "ar" -> R.string.lang__ar
+    "es" -> R.string.lang__es
     else -> R.string.lang__en
 }
 

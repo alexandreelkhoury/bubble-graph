@@ -745,7 +745,7 @@ private fun EmptySlot(pulse: Boolean) {
     }
 }
 
-/** The Language list (3 items). Changing it recreates the activity with the new per-app locale. */
+/** The Language list (one item per UI language). Changing it recreates the activity with the new per-app locale. */
 @Composable
 private fun LanguagePicker(onDismiss: () -> Unit) {
     val current = uiLanguage()

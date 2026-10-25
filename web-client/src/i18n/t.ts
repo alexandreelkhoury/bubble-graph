@@ -1,5 +1,5 @@
 // §8.7 in-house t(): locale → en → key fallback, Intl.PluralRules plurals, {name} placeholders, latn digits.
-// Only English (the fallback) ships in the entry chunk; FR and AR are fetched on demand (each player needs one).
+// Only English (the fallback) ships in the entry chunk; FR, AR and ES are fetched on demand (each player needs one).
 import { signal } from "@preact/signals";
 import en from "@mishana/shared/i18n/en.json";
 import { LOCALES } from "@mishana/shared/constants";
@@ -15,6 +15,7 @@ const CATALOGS: Partial<Record<Locale, Catalog>> = { en };
 const LOADERS: Record<Exclude<Locale, "en">, () => Promise<{ default: unknown }>> = {
   fr: () => import("@mishana/shared/i18n/fr.json"),
   ar: () => import("@mishana/shared/i18n/ar.json"),
+  es: () => import("@mishana/shared/i18n/es.json"),
 };
 
 /** Loads a locale's catalog (once). Until it is in, translate() falls back to English. */
@@ -75,7 +76,7 @@ export function isLocale(v: unknown): v is Locale {
   return typeof v === "string" && (LOCALES as readonly string[]).includes(v);
 }
 
-/** Default from navigator.languages: first match of ar/fr/en, else en (DESIGN PH-17). */
+/** Default from navigator.languages: first match of ar/fr/es/en, else en (DESIGN PH-17). */
 export function detectLocale(langs: readonly string[] | undefined): Locale {
   for (const raw of langs ?? []) {
     const base = raw.toLowerCase().split("-")[0];
@@ -89,7 +90,12 @@ export function dirOf(l: Locale): "rtl" | "ltr" {
 }
 
 /** Each locale's name in its own language (language pickers, the word-language setting, summaries). */
-export const LOCALE_NATIVE_NAME: Readonly<Record<Locale, string>> = { en: "English", fr: "Français", ar: "العربية" };
+export const LOCALE_NATIVE_NAME: Readonly<Record<Locale, string>> = { en: "English", fr: "Français", ar: "العربية", es: "Español" };
+
+/** A pack title in UI language [l]; `es` is optional in pack titles, so it falls back to English. */
+export function titleIn(title: { en: string; fr: string; ar: string; es?: string | undefined }, l: Locale = locale.value): string {
+  return title[l] ?? title.en;
+}
 
 /** Wraps user text (a name, a guess) in FSI…PDI so it never reorders the sentence around it (DESIGN §3.5). */
 export function isolate(s: string): string {

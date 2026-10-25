@@ -347,6 +347,7 @@ exports[`golden seeded games > n=3 seed=101 official 1`] = `
         "en-everyday-01",
         "fr-everyday-01",
         "ar-everyday-01",
+        "es-everyday-01",
       ],
       "points": {
         "blank": 10,
@@ -1033,6 +1034,7 @@ exports[`golden seeded games > n=5 seed=202 official 1`] = `
         "en-everyday-01",
         "fr-everyday-01",
         "ar-everyday-01",
+        "es-everyday-01",
       ],
       "points": {
         "blank": 10,
@@ -2142,6 +2144,7 @@ exports[`golden seeded games > n=8 seed=303 parity 1`] = `
         "en-everyday-01",
         "fr-everyday-01",
         "ar-everyday-01",
+        "es-everyday-01",
       ],
       "points": {
         "blank": 10,
@@ -4134,6 +4137,7 @@ exports[`golden seeded games > n=12 seed=404 official 1`] = `
         "en-everyday-01",
         "fr-everyday-01",
         "ar-everyday-01",
+        "es-everyday-01",
       ],
       "points": {
         "blank": 10,

@@ -1,6 +1,6 @@
 import * as z from "zod";
 import {
-  AgeRatingSchema, ColorIdSchema, PackTierSchema, DeadlineKindSchema, LocalizedTitleSchema, ErrorCodeSchema, GuessStatusSchema, HistoryCauseSchema, PhaseSchema,
+  AgeRatingSchema, ColorIdSchema, PackTierSchema, DeadlineKindSchema, LocaleSchema, LocalizedTitleSchema, ErrorCodeSchema, GuessStatusSchema, HistoryCauseSchema, PhaseSchema,
   RoleCountsSchema, RoleSchema, SettingsSchema, VoteOutcomeSchema, WinnerSchema, WordRefSchema,
 } from "./common";
 
@@ -64,6 +64,8 @@ const publicViewShape = {
   lockedPacks: z.array(LockedPackInfoSchema),
   tvBusy: z.boolean(),
   poolExhausted: z.boolean(),
+  // The word languages with at least one shipped pack (playable or locked): the word-language picker offers only these.
+  wordLocales: z.array(LocaleSchema),
 };
 export const PublicViewSchema = z.object(publicViewShape);
 export const MeSchema = z.object({

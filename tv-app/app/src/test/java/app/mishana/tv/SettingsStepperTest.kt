@@ -36,6 +36,11 @@ class SettingsStepperTest {
         assertEquals("fr", SettingsStepper.cycle(langs, "en", +1))
         assertEquals("ar", SettingsStepper.cycle(langs, "en", -1))
         assertEquals("en", SettingsStepper.cycle(langs, "ar", +1))
+        // Only languages with packs (view.wordLocales) are offered, plus the current one; empty = an older server, all.
+        val all = listOf("en", "fr", "ar", "es")
+        assertEquals(listOf("en", "fr", "ar"), SettingsStepper.wordLanguages(all, listOf("en", "fr", "ar"), "en"))
+        assertEquals(all, SettingsStepper.wordLanguages(all, listOf("en", "fr", "ar"), "es"))
+        assertEquals(all, SettingsStepper.wordLanguages(all, emptyList(), "en"))
     }
 
     @Test

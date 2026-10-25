@@ -10,7 +10,7 @@ const union = (v: Value): Set<string> => (typeof v === "string" ? placeholders(v
 const sorted = (s: Set<string>): string[] => [...s].sort();
 
 const en = MESSAGES.en as Record<string, Value>;
-const others = { fr: MESSAGES.fr as Record<string, Value>, ar: MESSAGES.ar as Record<string, Value> };
+const others = { fr: MESSAGES.fr as Record<string, Value>, ar: MESSAGES.ar as Record<string, Value>, es: MESSAGES.es as Record<string, Value> };
 
 describe("i18n keys (§11)", () => {
   it("keys match the key regex", () => {
@@ -28,7 +28,7 @@ describe("i18n keys (§11)", () => {
     }
   });
   it("plural objects have `other`; no literal percent", () => {
-    for (const m of [en, others.fr, others.ar]) {
+    for (const m of [en, others.fr, others.ar, others.es]) {
       for (const [k, v] of Object.entries(m)) {
         if (typeof v !== "string") expect(v.other, k).toBeTypeOf("string");
         const strings = typeof v === "string" ? [v] : Object.values(v);
@@ -54,7 +54,7 @@ describe("i18n keys (§11)", () => {
       "settings.unlockOnTv", "settings.lockedPacks", "tv.packLocked", "tv.premiumRequired", "error.premiumRequired",
       "error.packLocked", "error.entitlementInvalid", "error.tvBusy",
     ];
-    for (const m of [en, others.fr, others.ar]) for (const k of keys) expect(m[k], k).toBeDefined();
+    for (const m of [en, others.fr, others.ar, others.es]) for (const k of keys) expect(m[k], k).toBeDefined();
     const plural = ["store.premiumPitch", "store.trialDays", "store.packPairs", "store.legalTrialRenew"];
     for (const k of plural) expect(typeof en[k], k).toBe("object");
     expect(sorted(union(en["store.legalTrialRenew"] as Value))).toEqual(["count", "period", "price"]);
@@ -64,6 +64,16 @@ describe("i18n keys (§11)", () => {
     for (const [k, v] of Object.entries(others.fr)) {
       for (const s of typeof v === "string" ? [v] : Object.values(v)) expect(/ [!?:;]/.test(s), `${k}: ${s}`).toBe(false);
     }
+  });
+  it("ES uses the house role names (Topo / Infiltrado), never trademarked ones, and no vosotros forms", () => {
+    const all = Object.values(others.es).flatMap((v) => (typeof v === "string" ? [v] : Object.values(v))).join("\n").replace(/\{[a-zA-Z]+\}/g, "");
+    expect(all).not.toMatch(/Undercover|Mr\.? ?White|Señor Blanco/i);
+    expect(all).not.toMatch(/\b(vosotros|vuestr[oa]s?|os)\b|\b\w+(áis|éis)\b/i);
+    expect(others.es["reveal.youAreBlank"]).toBe("¡Eres el Topo!");
+    expect(others.es["role.undercover"]).toBe("Infiltrado");
+  });
+  it("every locale names every UI language (lang.*)", () => {
+    for (const m of [en, others.fr, others.ar, others.es]) for (const l of ["en", "fr", "ar", "es"]) expect(m[`lang.${l}`], l).toBeTypeOf("string");
   });
   it("color.* keys match COLORS", () => {
     const colorKeys = Object.keys(en).filter((k) => k.startsWith("color.")).map((k) => k.slice(6)).sort();

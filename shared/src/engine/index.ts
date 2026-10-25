@@ -6,7 +6,7 @@ export { checkWinner } from "./win";
 export { normalizeGuess, isGuessCorrect } from "./normalize";
 export { sanitizeName, nameKey } from "./sanitize";
 export { assertInvariants, InvariantError } from "./invariants";
-export { buildCatalog, languageOf, PACK_TIERS } from "./catalog";
+export { buildCatalog, catalogLanguages, copyTitle, languageOf, PACK_TIERS } from "./catalog";
 export type { AgeRating, Catalog, CatalogPack, CatalogPair, PackTier, WordPackLike } from "./catalog";
 export { DEFAULT_PACK_IDS, DEFAULT_SETTINGS, applySettingsPatch } from "./settings";
 export { SETTINGS_BOUNDS } from "../constants";

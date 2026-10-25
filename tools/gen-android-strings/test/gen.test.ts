@@ -40,6 +40,12 @@ function mini(): MessageSet {
       "common.seconds": { zero: "{count} ثانية", one: "ثانية وحدة", two: "ثانيتين", few: "{count} ثواني", many: "{count} ثانية", other: "{count} ثانية" },
       "round.label": "الجولة {count}",
     },
+    es: {
+      "brand.appName": "Mish Ana!",
+      "guess.guessed": "{name} dijo: {text}",
+      "common.seconds": { one: "{count} segundo", other: "{count} segundos" },
+      "round.label": "Ronda {count}",
+    },
   };
 }
 
@@ -53,7 +59,7 @@ describe("resourceName", () => {
 
   it("detects collisions", () => {
     const set = mini();
-    for (const loc of ["en", "fr", "ar"] as const) {
+    for (const loc of ["en", "fr", "ar", "es"] as const) {
       set[loc]["a.bC"] = "x";
       set[loc]["a.b_c"] = "y"; // invalid key, but would also collide
     }
@@ -61,19 +67,19 @@ describe("resourceName", () => {
     expect(errs.some((e) => e.includes("collision"))).toBe(true);
     // A valid-key collision: "a.bC" vs "a.bC" can't repeat in JSON, so use segment boundaries.
     const set2 = mini();
-    for (const loc of ["en", "fr", "ar"] as const) {
+    for (const loc of ["en", "fr", "ar", "es"] as const) {
       set2[loc]["x.aB.c"] = "1";
       set2[loc]["x.a.bC"] = "2";
     }
     expect(validate(set2)).toEqual([]); // x__a_b__c vs x__a__b_c: distinct
     const set3 = mini();
-    for (const loc of ["en", "fr", "ar"] as const) set3[loc]["app.name"] = "z"; // app__name, fine
+    for (const loc of ["en", "fr", "ar", "es"] as const) set3[loc]["app.name"] = "z"; // app__name, fine
     expect(validate(set3)).toEqual([]);
   });
 
   it("rejects a key that collides with app_name-derived names via generate", () => {
     const set = mini();
-    for (const loc of ["en", "fr", "ar"] as const) {
+    for (const loc of ["en", "fr", "ar", "es"] as const) {
       set[loc]["lobby.startGame"] = "a";
       set[loc]["lobby.start_game"] = "b";
     }
@@ -205,7 +211,7 @@ describe("--check mode", () => {
     const root = mkdtempSync(join(tmpdir(), "gen-strings-"));
     mkdirSync(join(root, "shared/i18n"), { recursive: true });
     const set = mini();
-    for (const loc of ["en", "fr", "ar"] as const) writeFileSync(join(root, `shared/i18n/${loc}.json`), JSON.stringify(set[loc]));
+    for (const loc of ["en", "fr", "ar", "es"] as const) writeFileSync(join(root, `shared/i18n/${loc}.json`), JSON.stringify(set[loc]));
     return root;
   }
 
@@ -213,8 +219,8 @@ describe("--check mode", () => {
     const root = tmpRepo();
     const before = run(root, true);
     expect(before.changed.sort()).toEqual([...Object.values(OUTPUT_PATHS), KOTLIN_PATH].sort());
-    expect(run(root, true).changed.length).toBe(4); // still nothing written
-    expect(run(root, false).changed.length).toBe(4);
+    expect(run(root, true).changed.length).toBe(5); // still nothing written
+    expect(run(root, false).changed.length).toBe(5);
     expect(run(root, true).changed).toEqual([]);
     expect(readFileSync(join(root, OUTPUT_PATHS.fr), "utf8")).toContain("Tour %1$d");
   });

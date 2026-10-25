@@ -65,7 +65,7 @@ class StoreLayoutFitTest {
     fun premiumCardFitsAboveThePacksRowInEveryLocale() {
         // A long localised price on purpose (Play's formattedPrice is verbatim).
         val price = "US$ 299.99"
-        for ((lang, dir) in listOf("en" to "values", "fr" to "values-fr", "ar" to "values-ar")) {
+        for ((lang, dir) in listOf("en" to "values", "fr" to "values-fr", "ar" to "values-ar", "es" to "values-es")) {
             val x = xml(dir)
             val ar = lang == "ar"
             val track = if (ar) 0.0 else 0.01
@@ -115,7 +115,7 @@ class StoreLayoutFitTest {
         assertEquals(StoreMetrics.FooterLine.CARD_TIP, StoreMetrics.footerLine(false, email, ownsNothing = true))
         assertEquals(StoreMetrics.FooterLine.CARD_TIP, StoreMetrics.footerLine(false, "", ownsNothing = true))
         // Both texts exist in every locale (the help one takes the email placeholder).
-        for (dir in listOf("values", "values-fr", "values-ar")) {
+        for (dir in listOf("values", "values-fr", "values-ar", "values-es")) {
             val x = xml(dir)
             assertTrue(string(x, "store__pending_body").isNotBlank())
             assertTrue(string(x, "store__help").contains("%1\$s"))
@@ -125,7 +125,7 @@ class StoreLayoutFitTest {
     /** `store.cardTip` with the URL filled in stays on its one caption line (no ellipsis) in every locale. */
     @Test
     fun cardTipFitsTheFooterOnOneLine() {
-        for ((lang, dir) in listOf("en" to "values", "fr" to "values-fr", "ar" to "values-ar")) {
+        for ((lang, dir) in listOf("en" to "values", "fr" to "values-fr", "ar" to "values-ar", "es" to "values-es")) {
             val tip = string(xml(dir), "store__card_tip").replace("%1\$s", StoreMetrics.CARD_TIP_URL)
             val w = em(semibold, tip, if (lang == "ar") 0.0 else 0.01) * 20
             println("card tip $lang: ${"%.0f".format(w)} dp of ${StoreMetrics.FOOTER_TEXT_W}")

@@ -47,6 +47,7 @@
     <string name="lang__en">English</string>
     <string name="lang__fr">Français</string>
     <string name="lang__ar">العربية</string>
+    <string name="lang__es">Español</string>
     <string name="round__label">الجولة %1$d</string>
     <string name="round__short">ج%1$d</string>
     <string name="game__label">اللعبة %1$d</string>

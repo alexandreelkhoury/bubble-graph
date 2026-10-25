@@ -131,7 +131,8 @@ class ProtocolFixturesTest {
             assertEquals(setOf("id", "locale", "title", "pairCount", "ageRating", "productId"), p.jsonObject.keys)
         }
         val keys = raw.keys.toList()
-        assertEquals(listOf("availablePacks", "premium", "lockedPacks", "tvBusy", "poolExhausted"), keys.takeLast(5))
+        assertEquals(listOf("availablePacks", "premium", "lockedPacks", "tvBusy", "poolExhausted", "wordLocales"), keys.takeLast(6))
+        assertEquals(listOf("en", "fr", "ar"), (roundTrip("s2c.state.tv.lobby.json") as StateMsg).view.wordLocales)
         val voting = (roundTrip("s2c.state.tv.voting.json") as StateMsg).view
         assertFalse(voting.premium)
         assertEquals(emptyList<Any>(), voting.lockedPacks)

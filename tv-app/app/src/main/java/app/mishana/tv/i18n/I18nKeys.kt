@@ -26,6 +26,7 @@ object I18nKeys {
         "lang.en" to R.string.lang__en,
         "lang.fr" to R.string.lang__fr,
         "lang.ar" to R.string.lang__ar,
+        "lang.es" to R.string.lang__es,
         "round.label" to R.string.round__label,
         "round.short" to R.string.round__short,
         "game.label" to R.string.game__label,

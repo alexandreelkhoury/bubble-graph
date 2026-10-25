@@ -35,6 +35,7 @@
   "lang.en": "English",
   "lang.fr": "Français",
   "lang.ar": "العربية",
+  "lang.es": "Español",
   "round.label": "Tour {count}",
   "round.short": "T{count}",
   "game.label": "Partie {count}",

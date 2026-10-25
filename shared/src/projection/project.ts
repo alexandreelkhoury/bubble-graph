@@ -1,6 +1,6 @@
 // Pure projection: GameState → client views (§5). Never imports zod at runtime.
 import type { Catalog } from "../engine/catalog";
-import { candidatePairs, packAllowedByAge } from "../engine/catalog";
+import { candidatePairs, catalogLanguages, copyTitle, packAllowedByAge } from "../engine/catalog";
 import { currentSpeakerId, isInGame, isSpeakingPhase } from "../engine/queries";
 import { effectiveRoleCounts } from "../engine/roles";
 import type { GameState, Player, Settings } from "../engine/types";
@@ -41,7 +41,7 @@ function availablePacks(state: GameState, catalog: Catalog): PackInfo[] {
     .map((p) => ({
       id: p.id,
       locale: p.locale,
-      title: { en: p.title.en, fr: p.title.fr, ar: p.title.ar },
+      title: copyTitle(p.title),
       pairCount: p.pairs.filter((q) => s.difficulties.includes(q.difficulty)).length,
       ageRating: p.ageRating,
       tier: p.tier,
@@ -65,7 +65,7 @@ export function lockedPackInfos(full: Catalog, playable: Catalog, s: Settings): 
     .map((p) => ({
       id: p.id,
       locale: p.locale,
-      title: { en: p.title.en, fr: p.title.fr, ar: p.title.ar },
+      title: copyTitle(p.title),
       pairCount: p.pairs.filter((q) => s.difficulties.includes(q.difficulty)).length,
       ageRating: p.ageRating,
       productId: packProductId(p.id),
@@ -152,6 +152,7 @@ export function projectPublic(state: GameState, catalog: Catalog, access: ViewAc
     lockedPacks: lockedPacks(s, catalog, access),
     tvBusy: lobby && access.tvBusy,
     poolExhausted: poolExhausted(s, catalog, access),
+    wordLocales: catalogLanguages(access.fullCatalog),
   };
 }
 

@@ -55,6 +55,6 @@
     "premium": false,
     "lockedPacks": [],
     "tvBusy": false,
-    "poolExhausted": false
+    "poolExhausted": false, "wordLocales": ["en", "fr", "ar"]
   }
 }

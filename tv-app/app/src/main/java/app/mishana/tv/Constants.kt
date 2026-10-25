@@ -61,7 +61,7 @@ object Constants {
     const val SLOW_RECONNECT_MS = 10_000L
     const val PING_FRAME = """{"v":1,"t":"ping"}"""
     const val PONG_FRAME = """{"v":1,"t":"pong"}"""
-    val LOCALES: List<String> = listOf("en", "fr", "ar")
+    val LOCALES: List<String> = listOf("en", "fr", "ar", "es")
 
     // PAYMENTS-SPEC §3.3 mirrors.
     const val ENTITLEMENT_TOKEN_MAX_CHARS = 3000
@@ -90,7 +90,7 @@ object Constants {
     fun colorById(id: String): PlayerColor = COLORS.firstOrNull { it.id == id } ?: COLORS[0]
 
     /** Mirror of shared DEFAULT_PACK_IDS: the free easy pack of each language, the default `packIds` (the server ignores the other languages' ids). */
-    val DEFAULT_PACK_IDS: List<String> = listOf("en-everyday-01", "fr-everyday-01", "ar-everyday-01")
+    val DEFAULT_PACK_IDS: List<String> = listOf("en-everyday-01", "fr-everyday-01", "ar-everyday-01", "es-everyday-01")
 
     /** `off: 0` means 0 is allowed and means "timer off". */
     val SETTINGS_BOUNDS = SettingsBounds(

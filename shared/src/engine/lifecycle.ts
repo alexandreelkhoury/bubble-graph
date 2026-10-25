@@ -1,6 +1,6 @@
 // Game lifecycle: START, RESULTS and the return to LOBBY.
 import { MIN_PLAYERS } from "../constants";
-import { pickPair, toWordRef } from "./catalog";
+import { copyTitle, pickPair, toWordRef } from "./catalog";
 import type { Draft } from "./draft";
 import { setDeadline } from "./draft";
 import { reassignHost } from "./membership";
@@ -42,7 +42,7 @@ export function startGame(d: Draft): EngineError | null {
   if (s.settings.swapSides && d.rng.next() < 0.5) [civ, und] = [und, civ];
   const pack = d.catalog.packs.find((p) => p.id === cp.packId);
   /* v8 ignore next */
-  const title = pack ? { ...pack.title } : { en: cp.packId, fr: cp.packId, ar: cp.packId };
+  const title = pack ? copyTitle(pack.title) : { en: cp.packId, fr: cp.packId, ar: cp.packId };
   const pair = {
     key: cp.key, packId: cp.packId, packVersion: cp.packVersion, pairId: cp.pairId, packTitle: title,
     civilian: { text: civ.text, translit: civ.translit, alt: [...civ.alt] },

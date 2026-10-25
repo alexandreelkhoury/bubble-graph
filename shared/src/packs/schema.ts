@@ -14,9 +14,9 @@ export const PairSchema = z.strictObject({
 export const WordPackSchema = z.strictObject({
   id: z.string().max(PACK_ID_MAX).regex(/^[a-z0-9]+(-[a-z0-9]+)*$/), // e.g. "lb-food-01"; selectable by SETTINGS_BOUNDS.packIds
   version: z.number().int().min(1),
-  locale: z.enum(["en", "fr", "ar", "ar-LB"]),
+  locale: z.enum(["en", "fr", "ar", "ar-LB", "es"]),
   script: z.enum(["Latn", "Arab"]),
-  title: z.strictObject({ en: z.string().min(1), fr: z.string().min(1), ar: z.string().min(1) }),
+  title: z.strictObject({ en: z.string().min(1), fr: z.string().min(1), ar: z.string().min(1), es: z.string().min(1).optional() }),
   tags: z.array(z.string()).default([]),
   ageRating: z.enum(AGE_RATINGS),
   // PAYMENTS-SPEC §1.2: a pack without `tier` is premium; only the starter packs say "free".

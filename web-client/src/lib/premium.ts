@@ -9,7 +9,7 @@ import type { LockedPackInfo, PublicView } from "@mishana/shared/protocol";
 export interface LockedPackRow { id: string; title: string; pairCount: number; trailingKey: "settings.unlockOnTv" }
 
 export function lockedPackRows(packs: readonly LockedPackInfo[], l: Locale): LockedPackRow[] {
-  return packs.map((p) => ({ id: p.id, title: p.title[l], pairCount: p.pairCount, trailingKey: "settings.unlockOnTv" }));
+  return packs.map((p) => ({ id: p.id, title: p.title[l] ?? p.title.en, pairCount: p.pairCount, trailingKey: "settings.unlockOnTv" }));
 }
 
 /** §1.6: a premium-only setting is locked in a room without premium. */

@@ -16,7 +16,7 @@ describe("settings", () => {
     expect(DEFAULT_SETTINGS).toMatchObject({
       winRule: "official", revealRoles: false, roleMode: "auto", undercoverCount: 0, blankCount: 1, clueSeconds: 45,
       voteSeconds: 90, revealSeconds: 30, guessSeconds: 45, tieBreak: "random", blankGuess: true, wordLocale: "en",
-      packIds: ["en-everyday-01", "fr-everyday-01", "ar-everyday-01"], difficulties: [1, 2, 3], familyFilter: true, swapSides: true, points: { civilian: 2, undercover: 10, blank: 10 },
+      packIds: ["en-everyday-01", "fr-everyday-01", "ar-everyday-01", "es-everyday-01"], difficulties: [1, 2, 3], familyFilter: true, swapSides: true, points: { civilian: 2, undercover: 10, blank: 10 },
     });
     expect(validateSettings(DEFAULT_SETTINGS, TEST_CATALOG)).toBe(true);
   });

@@ -6,7 +6,7 @@ import app.mishana.tv.Constants
 object Locales {
     val ALL: List<String> get() = Constants.LOCALES
 
-    /** en | fr | ar: any other (or missing) language falls back to en. */
+    /** en | fr | ar | es: any other (or missing) language falls back to en. */
     fun normalize(lang: String?): String = lang?.lowercase()?.takeIf { it in ALL } ?: "en"
 }
 

@@ -19,7 +19,7 @@ const read = (f: string): string => readFileSync(join(dir, f), "utf8");
 const VIEW_KEYS = [
   "kind", "roomCode", "joinUrl", "phase", "gameNumber", "round", "settings", "players", "hostPlayerId", "roleCounts", "canStart",
   "startBlocker", "speakingOrder", "currentSpeakerId", "revote", "tieCandidates", "deadline", "votesCast", "votesExpected",
-  "lastVote", "eliminated", "guess", "result", "history", "availablePacks", "premium", "lockedPacks", "tvBusy", "poolExhausted",
+  "lastVote", "eliminated", "guess", "result", "history", "availablePacks", "premium", "lockedPacks", "tvBusy", "poolExhausted", "wordLocales",
 ];
 const ENTITLEMENT_FIXTURE_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImsxIn0.e30.c2ln";
 

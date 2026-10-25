@@ -7,7 +7,7 @@ import type { Points, Settings, SettingsPatch } from "./types";
  * language, so a word-language change keeps it; `eligiblePacks` keeps only the room language's packs. An id from this
  * list is valid even when the catalog lacks it (test catalogs, a missing pack): it is then ignored, never "locked".
  */
-export const DEFAULT_PACK_IDS: readonly string[] = ["en-everyday-01", "fr-everyday-01", "ar-everyday-01"];
+export const DEFAULT_PACK_IDS: readonly string[] = ["en-everyday-01", "fr-everyday-01", "ar-everyday-01", "es-everyday-01"];
 
 export const DEFAULT_SETTINGS: Settings = {
   winRule: "official",

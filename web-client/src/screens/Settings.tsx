@@ -2,7 +2,7 @@
 import type { ComponentChildren } from "preact";
 import type { Settings, SettingsPatch } from "@mishana/shared/engine";
 import type { PlayerView } from "@mishana/shared/protocol";
-import { fmtNum, locale, t } from "../i18n/t";
+import { fmtNum, locale, t, titleIn } from "../i18n/t";
 import { actId } from "../state/session";
 import { lastError, pushToast } from "../state/store";
 import { lockedPackRows, settingLocked } from "../lib/premium";
@@ -10,7 +10,7 @@ import { canStep } from "../lib/settings";
 import type { Bound } from "../lib/settings";
 import { rolePreview } from "../lib/lobby";
 import {
-  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, enumPatch, numValue, ROLE_HELP, rowBound, selectedPacks, stepRow,
+  CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, enumOptions, enumPatch, numValue, ROLE_HELP, rowBound, selectedPacks, stepRow,
   toggleDifficulty, togglePack, visibleRows,
 } from "../lib/settingsModel";
 import type { RowDef, SettingsCategory } from "../lib/settingsModel";
@@ -129,7 +129,7 @@ function Row({ row, s, set, view, groupStart }: { row: RowDef; s: Settings; set(
       return (
         <>
           <Segmented label={label} value={s[row.id]} onChange={(v) => set(enumPatch(row.id, v))}
-            options={row.options.map((v) => ({ value: v, label: row.optionLabel(v) }))} />
+            options={enumOptions(row, s, view.wordLocales).map((v) => ({ value: v, label: row.optionLabel(v) }))} />
           {help && <p class="setrow__help">{t(help)}</p>}
         </>
       );
@@ -159,7 +159,7 @@ function Row({ row, s, set, view, groupStart }: { row: RowDef; s: Settings; set(
             <Chip on={selectedPacks(s, view.availablePacks).length === 0} onClick={() => set({ packIds: [] })}>{t("settings.allPacks")}</Chip>
             {view.availablePacks.map((p) => (
               <Chip key={p.id} on={s.packIds.includes(p.id)} onClick={() => set(togglePack(s, p.id))}>
-                <bdi>{p.title[l]}</bdi>
+                <bdi>{titleIn(p.title, l)}</bdi>
                 <span class="chip__meta num">{fmtNum(p.pairCount)}</span>
                 {p.ageRating === "teen" && <span class="tag tag--warn">{t("settings.packTeen")}</span>}
               </Chip>

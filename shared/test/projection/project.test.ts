@@ -6,7 +6,7 @@ import { inClues, lobby, P, pid, TEST_CATALOG } from "../../src/testing";
 const KEYS = [
   "roomCode", "joinUrl", "phase", "gameNumber", "round", "settings", "players", "hostPlayerId", "roleCounts", "canStart",
   "startBlocker", "speakingOrder", "currentSpeakerId", "revote", "tieCandidates", "deadline", "votesCast", "votesExpected",
-  "lastVote", "eliminated", "guess", "result", "history", "availablePacks", "premium", "lockedPacks", "tvBusy", "poolExhausted",
+  "lastVote", "eliminated", "guess", "result", "history", "availablePacks", "premium", "lockedPacks", "tvBusy", "poolExhausted", "wordLocales",
 ];
 const FULL = fullAccess(TEST_CATALOG);
 

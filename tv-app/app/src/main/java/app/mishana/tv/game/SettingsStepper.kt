@@ -51,6 +51,13 @@ object SettingsStepper {
     fun <P> selectedPacks(packIds: List<String>, wordLocale: String, available: List<P>, id: (P) -> String, locale: (P) -> String): List<P> =
         available.filter { id(it) in packIds && locale(it).substringBefore('-') == wordLocale }
 
+    /**
+     * The word languages the setting cycles through: [all] restricted to [offered] (the view's `wordLocales`, languages
+     * that have packs) plus the [current] one. An empty [offered] (older server) keeps [all].
+     */
+    fun wordLanguages(all: List<String>, offered: List<String>, current: String): List<String> =
+        if (offered.isEmpty()) all else all.filter { it == current || it in offered }
+
     /** Toggles a difficulty (1..3); returns null when the result would be empty (not allowed). */
     fun toggleDifficulty(difficulties: List<Int>, d: Int): List<Int>? {
         val set = difficulties.toMutableSet()

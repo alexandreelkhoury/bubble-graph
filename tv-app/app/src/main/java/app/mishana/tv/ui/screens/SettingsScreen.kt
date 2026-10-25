@@ -501,7 +501,7 @@ private fun buildRows(
             val blocker = if (view.blocker == StartBlocker.NO_WORDS_AVAILABLE) str(R.string.lobby__blocker_words) else null
             listOf(
                 RowModel("words.wordLocale", str(R.string.settings__word_locale), str(langNameRes(s.wordLocale)), blocker, blocker != null,
-                    step = { d -> change(SettingsPatch(wordLocale = SettingsStepper.cycle(Locales.ALL, s.wordLocale, d))) }),
+                    step = { d -> change(SettingsPatch(wordLocale = SettingsStepper.cycle(SettingsStepper.wordLanguages(Locales.ALL, view.wordLocales, s.wordLocale), s.wordLocale, d))) }),
                 RowModel("words.packIds", str(R.string.settings__packs), packs, blocker, blocker != null, open = { open(SubPanel.Packs) }),
                 RowModel("words.difficulties", str(R.string.settings__difficulty), diffs, blocker, blocker != null, open = { open(SubPanel.Difficulty) }),
                 RowModel("words.familyFilter", str(R.string.settings__family_filter), onOff(s.familyFilter), blocker, blocker != null,

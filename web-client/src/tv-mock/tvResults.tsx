@@ -3,7 +3,7 @@
 import { Fragment } from "preact";
 import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import type { TvView } from "@mishana/shared/protocol";
-import { fmtNum, isolate, locale, t } from "../i18n/t";
+import { fmtNum, isolate, locale, t, titleIn } from "../i18n/t";
 import { ROLE_KEY, ROLE_WAS_KEY } from "../lib/keys";
 import { ms, reduced } from "../lib/motion";
 import { byId, competitionRank, culprits, hadUndercover, rankPlayers, winnerMessage } from "../lib/view";
@@ -159,7 +159,7 @@ export function TvResults({ view }: { view: TvView }) {
         {stage2 && (
           <>
             <p class="tvt-body tv-secondary tvresults__meta">
-              {t("results.pack", { title: r.pack.title[l] })}
+              {t("results.pack", { title: titleIn(r.pack.title, l) })}
               {r.guesses.map((g, i) => {
                 const gp = byId(view, g.playerId);
                 return gp && g.text !== null ? <Fragment key={i}>{"  ·  "}{t("guess.guessed", { name: isolate(gp.name), text: isolate(g.text) })}</Fragment> : null;

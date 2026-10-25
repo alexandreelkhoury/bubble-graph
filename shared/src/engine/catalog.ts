@@ -27,7 +27,7 @@ interface WordSideLike { text: string; translit?: string | null | undefined; alt
 export interface WordPackLike {
   id: string;
   version: number;
-  locale: "en" | "fr" | "ar" | "ar-LB";
+  locale: "en" | "fr" | "ar" | "ar-LB" | "es";
   script: "Latn" | "Arab";
   title: LocalizedTitle;
   tags: string[];
@@ -46,6 +46,11 @@ export interface WordPackLike {
   }[];
 }
 
+/** A detached copy of a title (no `es` key when the pack has no Spanish title). */
+export function copyTitle(t: LocalizedTitle): LocalizedTitle {
+  return t.es === undefined ? { en: t.en, fr: t.fr, ar: t.ar } : { en: t.en, fr: t.fr, ar: t.ar, es: t.es };
+}
+
 function toSide(s: WordSideLike): WordSide {
   return { text: s.text, translit: s.translit ?? null, alt: s.alt ? [...s.alt] : [] };
 }
@@ -59,7 +64,7 @@ export function toWordRef(side: WordSide): WordRef {
 export function languageOf(locale: string): Locale {
   const lang = locale.split("-")[0];
   const found = LOCALES.find((l) => l === lang);
-  // SPEC-GAP: a pack whose language is not en/fr/ar cannot be produced by WordPackSchema; fall back to "en" defensively.
+  // SPEC-GAP: a pack whose language is not in LOCALES cannot be produced by WordPackSchema; fall back to "en" defensively.
   return found ?? "en";
 }
 
@@ -71,7 +76,7 @@ export function buildCatalog(packs: readonly WordPackLike[]): Catalog {
     version: p.version,
     locale: p.locale,
     language: languageOf(p.locale),
-    title: { en: p.title.en, fr: p.title.fr, ar: p.title.ar },
+    title: copyTitle(p.title),
     ageRating: p.ageRating,
     tier: p.tier,
     pairs: p.pairs
@@ -88,6 +93,11 @@ export function buildCatalog(packs: readonly WordPackLike[]): Catalog {
   }));
   out.sort((a, b) => byStr(a.id, b.id));
   return { packs: out };
+}
+
+/** The word languages that have at least one pack in [catalog], in LOCALES order (the word-language picker). */
+export function catalogLanguages(catalog: Catalog): Locale[] {
+  return LOCALES.filter((l) => catalog.packs.some((p) => p.language === l));
 }
 
 /** Packs served for these settings, ignoring `packIds` (§12.4 step 1, minus the id filter). "adult" is never served in v1. */

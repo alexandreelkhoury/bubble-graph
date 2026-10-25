@@ -61,6 +61,8 @@ describe("t()", () => {
     expect(errorKeyOf("NOT_YOUR_TURN")).toBe("error.notYourTurn");
     expect(detectLocale(["de-DE", "fr-CA", "en"])).toBe("fr");
     expect(detectLocale(["ar-LB"])).toBe("ar");
+    expect(detectLocale(["es-MX", "en"])).toBe("es");
+    expect(detectLocale(["es-419"])).toBe("es");
     expect(detectLocale([])).toBe("en");
     expect(dirOf("ar")).toBe("rtl");
   });

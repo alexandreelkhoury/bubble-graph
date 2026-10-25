@@ -55,7 +55,7 @@
     "premium": false,
     "lockedPacks": [],
     "tvBusy": false,
-    "poolExhausted": false,
+    "poolExhausted": false, "wordLocales": ["en", "fr", "ar"],
     "me": { "id": "p_1b2c3d4e5f60718293a4b5c6", "word": { "text": "Cat", "translit": null }, "isBlank": false, "role": null, "myVote": null }
   }
 }

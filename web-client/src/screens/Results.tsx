@@ -1,7 +1,7 @@
 // PH-13 Results: personal headline, team result, both words, pack, Blank guesses, scoreboard.
 import type { Me, PlayerView } from "@mishana/shared/protocol";
 import type { WordRef } from "@mishana/shared/engine";
-import { dirOf, fmtNum, isolate, locale, t } from "../i18n/t";
+import { dirOf, fmtNum, isolate, locale, t, titleIn } from "../i18n/t";
 import { act } from "../state/session";
 import { Avatar, avatarState, COLOR_BY_ID } from "../components/PlayerChip";
 import { RoleChip, RoleEmblem } from "../components/Role";
@@ -61,7 +61,7 @@ export function Results({ view, me }: { view: PlayerView; me: Me | null }) {
             ))}
           </ul>
         )}
-        <p class="results__meta">{t("results.pack", { title: r.pack.title[locale.value] })}</p>
+        <p class="results__meta">{t("results.pack", { title: titleIn(r.pack.title, locale.value) })}</p>
         {r.guesses.map((g, i) => {
           const p = byId(view, g.playerId);
           return p && g.text !== null ? (

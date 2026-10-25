@@ -7,7 +7,7 @@ import type { BasePlanId } from "@mishana/shared/billing/products";
 import type { CatalogPackBody } from "@mishana/shared/billing";
 import type { Locale } from "@mishana/shared/constants";
 import type { TvView } from "@mishana/shared/protocol";
-import { isolate, locale, LOCALE_NATIVE_NAME, t } from "../i18n/t";
+import { isolate, locale, LOCALE_NATIVE_NAME, t, titleIn } from "../i18n/t";
 import { Icon } from "../components/Icon";
 import { billing } from "./billing";
 import {
@@ -133,7 +133,7 @@ function PackCard({ p, target, onBuy }: { p: CatalogPackBody; target: FocusId; o
   return (
     <button type="button" class={`tvshop__pack is-${state}`} data-focus={`pack:${p.productId}`} data-default-focus={defFocus(`pack:${p.productId}`, target)} data-pack={p.packId}
       onClick={() => { if (state === "buy") onBuy(p); }}>
-      <bdi class="tvshop__packtitle">{p.title[l]}</bdi>
+      <bdi class="tvshop__packtitle">{titleIn(p.title, l)}</bdi>
       <span class="tvshop__packmeta">{t("store.packPairs", { count: p.pairCount })}</span>
       <span class="tvshop__packend">{isInflight(p.productId) ? <Busy /> : packTrailing(state)}</span>
     </button>

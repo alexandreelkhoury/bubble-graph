@@ -24,6 +24,10 @@ describe("settings model (one source for PH-03b and TV-03)", () => {
     const row = (id: string) => Object.values(SETTINGS_SCHEMA).flat().find((r) => r.id === id)!;
     expect(stepRow(row("winRule"), s, 1)).toEqual({ winRule: s.winRule === "official" ? "parity" : "official" });
     expect(stepRow(row("blankGuess"), s, -1)).toEqual({ blankGuess: !s.blankGuess });
+    // The word language cycles only through languages that have packs (view.wordLocales), plus the current one.
+    expect(stepRow(row("wordLocale"), { ...s, wordLocale: "ar" }, 1, ["en", "fr", "ar"])).toEqual({ wordLocale: "en" });
+    expect(stepRow(row("wordLocale"), { ...s, wordLocale: "ar" }, 1, ["en", "fr", "ar", "es"])).toEqual({ wordLocale: "es" });
+    expect(stepRow(row("wordLocale"), { ...s, wordLocale: "ar" }, 1)).toEqual({ wordLocale: "es" });
     expect(stepRow(row("clueSeconds"), { ...s, clueSeconds: 10 }, -1)).toEqual({ clueSeconds: 0 }); // min → off
     expect(stepRow(row("points.blank"), s, 1)).toEqual({ points: { ...s.points, blank: s.points.blank + 1 } });
     expect(stepRow(row("points.civilian"), { ...s, points: { ...s.points, civilian: 0 } }, -1)).toBeNull();

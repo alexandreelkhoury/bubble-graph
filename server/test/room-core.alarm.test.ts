@@ -233,6 +233,12 @@ describe("RoomCore alarm", () => {
     expect(h.storage.map.size).toBe(0);
   });
 
+  it("initRoom: a UI language without word packs in the catalog (es before its packs ship) plays English words", async () => {
+    const h = new Harness();
+    expect(await h.core.initRoom({ tvTokenHash: await sha256hex(TV_TOKEN), joinUrl: "https://x.test/KXRT", locale: "es", now: h.now, entitlement: null, billingMode: "google" })).toEqual({ ok: true });
+    expect(h.state.settings.wordLocale).toBe("en");
+  });
+
   it("initRoom: EXISTS for a live room; on an expired room it closes old sockets 4010 and refreshes the cache", async () => {
     const h = await new Harness().init();
     const hash = await sha256hex(TV_TOKEN);

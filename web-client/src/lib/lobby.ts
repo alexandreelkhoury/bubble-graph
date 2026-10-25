@@ -4,7 +4,7 @@ import type { Locale } from "@mishana/shared/constants";
 import { effectiveRoleCounts } from "@mishana/shared/engine";
 import type { Settings } from "@mishana/shared/engine";
 import type { PublicView } from "@mishana/shared/protocol";
-import { t } from "../i18n/t";
+import { t, titleIn } from "../i18n/t";
 import { selectedPacks } from "./settingsModel";
 
 type LobbyView = Pick<PublicView, "players" | "startBlocker" | "settings" | "availablePacks" | "roleCounts">;
@@ -54,5 +54,5 @@ export function packsLine(settings: Settings, packs: LobbyView["availablePacks"]
   // Only the room language's packs count (the default list holds one easy pack per language), always by title.
   const sel = selectedPacks(settings, packs);
   if (sel.length === 0) return t("settings.allPacks");
-  return sel.map((p) => p.title[l]).join(", ");
+  return sel.map((p) => titleIn(p.title, l)).join(", ");
 }

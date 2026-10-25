@@ -17,8 +17,13 @@ export type GuessStatus = (typeof GUESS_STATUSES)[number];
 export const HISTORY_CAUSES = ["VOTE", "RANDOM", "KICK", "LEAVE", "NONE"] as const;
 export type HistoryCause = (typeof HISTORY_CAUSES)[number];
 
-/** A title in every UI locale (pack titles). */
-export type LocalizedTitle = Record<Locale, string>;
+/** A pack title per UI locale. `es` came later and is optional: show `titleIn(t, l)` (falls back to `en`). */
+export interface LocalizedTitle { en: string; fr: string; ar: string; es?: string }
+
+/** The title in UI language [l], or English when the pack has none for it. */
+export function titleIn(t: LocalizedTitle, l: Locale): string {
+  return t[l] ?? t.en;
+}
 
 export interface WordRef { text: string; translit: string | null }
 export interface WordSide { text: string; translit: string | null; alt: string[] }   // catalog-internal (alt never leaves server)

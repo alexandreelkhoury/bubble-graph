@@ -14,7 +14,7 @@ import {
   TV_BUSY_MAX_MS,
 } from "@mishana/shared/constants";
 import type { Locale } from "@mishana/shared/constants";
-import { assertInvariants, createInitialState, nextWakeAt, reduce, sanitizeName } from "@mishana/shared/engine";
+import { assertInvariants, catalogLanguages, createInitialState, nextWakeAt, reduce, sanitizeName } from "@mishana/shared/engine";
 import type { Action, Catalog, GameState } from "@mishana/shared/engine";
 import { PREMIUM_SETTING_KEYS } from "@mishana/shared/billing/products";
 import { projectForPlayer, projectForTv } from "@mishana/shared/projection";
@@ -245,7 +245,9 @@ export class RoomCore {
         createdAt: args.now, lastActivityAt: args.now, tvLeftAt: args.now,
         entitlement, billingMode: args.billingMode, tvBusyUntil: null, viewRev: 0,
       };
-      const state = createInitialState({ roomCode: this.#d.roomCode, joinUrl: args.joinUrl, seed, wordLocale: args.locale });
+      // A UI language without word packs yet (e.g. a new locale) plays English words; the host can switch later.
+      const wordLocale = catalogLanguages(this.#d.catalog).includes(args.locale) ? args.locale : "en";
+      const state = createInitialState({ roomCode: this.#d.roomCode, joinUrl: args.joinUrl, seed, wordLocale });
       const sessions: Sessions = {};
       await this.#store.write({ meta, state, sessions });
       this.#setCache(meta, state, sessions);

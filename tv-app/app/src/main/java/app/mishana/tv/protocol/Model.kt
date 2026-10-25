@@ -1,5 +1,9 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package app.mishana.tv.protocol
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -19,7 +23,11 @@ import kotlinx.serialization.Serializable
 @Serializable data class WordRef(val text: String, val translit: String?)
 @Serializable data class RoleCounts(val civilian: Int, val undercover: Int, val blank: Int)
 @Serializable data class Points(val civilian: Int, val undercover: Int, val blank: Int)
-@Serializable data class LocalizedTitle(val en: String, val fr: String, val ar: String)
+/** `es` came after en/fr/ar and is optional in pack titles (absent = show `en`). */
+@Serializable data class LocalizedTitle(
+    val en: String, val fr: String, val ar: String,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val es: String? = null,
+)
 
 @Serializable data class Settings(
     val winRule: WinRule,
@@ -129,4 +137,6 @@ import kotlinx.serialization.Serializable
     val lockedPacks: List<LockedPackInfo> = emptyList(),
     val tvBusy: Boolean = false,
     val poolExhausted: Boolean = false,
+    /** Word languages with at least one shipped pack; empty (an older server) = every language. */
+    val wordLocales: List<String> = emptyList(),
 )

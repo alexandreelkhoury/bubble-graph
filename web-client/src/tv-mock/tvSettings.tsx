@@ -7,7 +7,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import type { ComponentChildren, Ref } from "preact";
 import type { Settings, SettingsPatch } from "@mishana/shared/engine";
 import type { TvView } from "@mishana/shared/protocol";
-import { fmtNum, locale, t } from "../i18n/t";
+import { fmtNum, locale, t, titleIn } from "../i18n/t";
 import { rolePreview } from "../lib/lobby";
 import {
   CATEGORIES, CATEGORY_HELP, CATEGORY_LABEL, DIFFICULTIES, difficultyLabel, ROLE_HELP, rowValueText, selectedPacks, stepRow,
@@ -62,9 +62,9 @@ function inlineDir(e: KeyboardEvent): 1 | -1 | 0 {
 }
 const swallow = (e: KeyboardEvent): void => { e.preventDefault(); e.stopPropagation(); };
 
-function SettingRow({ row, s, set, onOpen, onExit, packs }: { row: RowDef; s: Settings; set(p: SettingsPatch): void; onOpen(sub: Exclude<Sub, null>): void; onExit(): void; packs: readonly { id: string }[] }) {
+function SettingRow({ row, s, set, onOpen, onExit, packs, wordLocales }: { row: RowDef; s: Settings; set(p: SettingsPatch): void; onOpen(sub: Exclude<Sub, null>): void; onExit(): void; packs: readonly { id: string }[]; wordLocales: readonly string[] }) {
   const opens = row.kind === "packs" ? "packs" : row.kind === "difficulty" ? "difficulty" : null;
-  const step = (dir: 1 | -1): void => { const p = stepRow(row, s, dir); if (p) set(p); };
+  const step = (dir: 1 | -1): void => { const p = stepRow(row, s, dir, wordLocales); if (p) set(p); };
   const onKey = (e: KeyboardEvent): void => {
     const dir = inlineDir(e);
     if (dir === 0) return;
@@ -238,7 +238,7 @@ export function TvSettings({ view }: { view: TvView }) {
               <Toggle first={subFirst} on={selectedPacks(s, view.availablePacks).length === 0} onClick={() => set({ packIds: [] })}>{t("settings.allPacks")}</Toggle>
               {view.availablePacks.map((p) => (
                 <Toggle key={p.id} on={s.packIds.includes(p.id)} onClick={() => set(togglePack(s, p.id))}>
-                  <bdi>{p.title[l]}</bdi><span class="muted num">{fmtNum(p.pairCount)}</span>
+                  <bdi>{titleIn(p.title, l)}</bdi><span class="muted num">{fmtNum(p.pairCount)}</span>
                   {p.ageRating === "teen" && <span class="tvtag">{t("settings.packTeen")}</span>}
                 </Toggle>
               ))}
@@ -249,7 +249,7 @@ export function TvSettings({ view }: { view: TvView }) {
                   {view.lockedPacks.map((p) => (
                     <button key={p.id} type="button" class="tvtoggle tvtoggle--locked" data-locked-pack={p.id}
                       onClick={() => openShop({ focusProductId: p.productId, origin: "LOCKED_PACK" })}>
-                      <Icon name="lock" size={20} /><bdi>{p.title[l]}</bdi>
+                      <Icon name="lock" size={20} /><bdi>{titleIn(p.title, l)}</bdi>
                       <span class="muted">{t("store.packPairs", { count: p.pairCount })}</span>
                       <span class="tvtoggle__hint">{t("settings.unlockHint")}</span>
                     </button>
@@ -270,7 +270,7 @@ export function TvSettings({ view }: { view: TvView }) {
           ) : (
             rows.map((r) => (
               <div key={r.id} onFocusIn={() => { setFocusRow(r.id); lastRow.current[cat] = r.id; }}>
-                {locked(r) ? <LockedRow row={r} /> : <SettingRow row={r} s={s} set={set} onOpen={setSub} onExit={focusCategory} packs={view.availablePacks} />}
+                {locked(r) ? <LockedRow row={r} /> : <SettingRow row={r} s={s} set={set} onOpen={setSub} onExit={focusCategory} packs={view.availablePacks} wordLocales={view.wordLocales} />}
               </div>
             ))
           )}

@@ -21,7 +21,7 @@ export const AgeRatingSchema = z.enum(AGE_RATINGS);
 export const PackTierSchema = z.enum(PACK_TIERS);
 export const ErrorCodeSchema = z.enum(ERROR_CODES);
 /** A title in every UI locale (engine `LocalizedTitle`). */
-export const LocalizedTitleSchema = z.object({ en: z.string(), fr: z.string(), ar: z.string() });
+export const LocalizedTitleSchema = z.object({ en: z.string(), fr: z.string(), ar: z.string(), es: z.string().optional() });
 
 export const WordRefSchema = z.object({ text: z.string(), translit: z.string().nullable() });
 export const PointsSchema = z.strictObject({ civilian: z.number().int(), undercover: z.number().int(), blank: z.number().int() });

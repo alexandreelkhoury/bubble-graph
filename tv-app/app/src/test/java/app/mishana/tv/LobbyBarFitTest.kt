@@ -38,7 +38,7 @@ class LobbyBarFitTest {
 
     @Test
     fun lobbyBarFitsInEveryLocale() {
-        for ((lang, dir) in listOf("en" to "values", "fr" to "values-fr", "ar" to "values-ar")) {
+        for ((lang, dir) in listOf("en" to "values", "fr" to "values-fr", "ar" to "values-ar", "es" to "values-es")) {
             val s = strings(dir)
             val ar = lang == "ar"
             val premium = em(s.getValue("lobby__premium"), ar)

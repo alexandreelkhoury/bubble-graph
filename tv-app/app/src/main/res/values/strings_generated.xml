@@ -35,6 +35,7 @@
     <string name="lang__en">English</string>
     <string name="lang__fr">Français</string>
     <string name="lang__ar">العربية</string>
+    <string name="lang__es">Español</string>
     <string name="round__label">Round %1$d</string>
     <string name="round__short">R%1$d</string>
     <string name="game__label">Game %1$d</string>

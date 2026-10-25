@@ -98,12 +98,23 @@ export function numPatch(row: Extract<RowDef, { kind: "num" | "points" }>, s: Se
   return row.kind === "num" ? { [row.id]: v } : { points: { ...s.points, [row.key]: v } };
 }
 
+/**
+ * The options an enum row offers. The word language lists only the languages that have packs (`view.wordLocales`),
+ * plus the current one, so a language whose packs are not shipped yet never shows up.
+ */
+export function enumOptions(row: Extract<RowDef, { kind: "enum" }>, s: Settings, wordLocales?: readonly string[]): readonly string[] {
+  if (row.id !== "wordLocale" || !wordLocales || wordLocales.length === 0) return row.options;
+  return row.options.filter((o) => o === s.wordLocale || wordLocales.includes(o));
+}
+
 /** One D-pad step (Left = -1, Right/OK = +1): enums cycle, switches flip, numbers follow SETTINGS_BOUNDS. */
-export function stepRow(row: RowDef, s: Settings, dir: 1 | -1): SettingsPatch | null {
+export function stepRow(row: RowDef, s: Settings, dir: 1 | -1, wordLocales?: readonly string[]): SettingsPatch | null {
   switch (row.kind) {
     case "enum": {
-      const i = row.options.indexOf(s[row.id]);
-      return enumPatch(row.id, row.options[(i + dir + row.options.length) % row.options.length]!);
+      const options = enumOptions(row, s, wordLocales);
+      if (options.length < 2) return null;
+      const i = options.indexOf(s[row.id]);
+      return enumPatch(row.id, options[(i + dir + options.length) % options.length]!);
     }
     case "bool": return { [row.id]: !s[row.id] };
     case "num":
