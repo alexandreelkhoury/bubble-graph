@@ -1,4 +1,4 @@
-# Mish Ana! — Google Play store listing (EN / FR / AR)
+# Mish Ana! — Google Play store listing (EN / FR / AR / ES)
 
 Package `app.mishana.tv` · prepared 2026-10-04 · paste-ready.
 **Rule change 2026-10-07.** Descriptions and short descriptions now follow the new default: everyone gets the same word except **the Mole**, whose phone shows "You're the Mole!" and no word; a caught Mole gets one last guess at the word to steal the win. The optional different-word role (in-game name "Undercover", AR «المتخفّي») is described, **not named**, in EN/FR (see §0: "Undercover" stays out of Play metadata for trademark reasons; the AR name is fine). The "Blank" role is gone from the copy. Check the "560+ word pairs" count against `word-packs/` once the new everyday-word packs land.
@@ -294,7 +294,188 @@ Dites-nous ce qu’en pense votre groupe.
 • بلا إعلانات وبلا حسابات
 خبّرونا شو رأي شلّتكم.
 </ar>
+<es-ES>
+¡Ya está aquí en español! El juego del impostor para tu tele.
+• Interfaz y palabras en español: más de 370 parejas pensadas para España y Latinoamérica
+• De 3 a 12 jugadores, los móviles hacen de mando (nada que instalar)
+• Temporizadores, modo principiante, filtro familiar
+• Sin anuncios, sin cuentas
+Cuéntanos qué tal lo pasa tu grupo.
+</es-ES>
+<es-419>
+¡Ya llegó en español! El juego del impostor para tu TV.
+• Interfaz y palabras en español: más de 370 parejas pensadas para Latinoamérica y España
+• De 3 a 12 jugadores, los celulares son los controles (nada que instalar)
+• Temporizadores, modo principiante, filtro familiar
+• Sin anuncios, sin cuentas
+Cuéntanos qué tal la pasa tu grupo.
+</es-419>
 ```
+(Leave out `<es-ES>` / `<es-419>` until the Spanish release; see §3b.)
+
+## 3b. Spanish – es-ES (Spain) and es-419 (Latin America: Mexico, Argentina, Colombia…)
+
+Publish **only when the Spanish UI and the Spanish word packs ship** (packs: `word-packs/staging/es/`, 379 pairs, not in the build yet). Same rules as §0: no "Undercover", "Mr White", "Imposter Party" / "Impostor Party", "Fakin' It", "The Mole", "Spyfall"; no Premium or prices while billing is off. **`{{BRAND}}` = the new app name** (the name is changing; do not write "Mish Ana" in the ES title). In-game names follow `shared/i18n/es.json`: **el Topo** (the Mole, no word), **el Infiltrado** (the optional different-word role), **los Impostores** (their team).
+
+The two listings share the title and most of the body; device words and the plural "you" differ: es-ES says *vosotros*, *móvil*, *tele*, *mando*; es-419 says *ustedes*, *celular*, *TV*, *control remoto*. Counts below are for the text with the literal `{{BRAND}}` replaced by nothing; add your brand's length.
+
+**Note on the description:** it says "Más de 370 parejas de palabras en español" (379 in `word-packs/staging/es/`); recount when the packs ship. It does not mention Premium (§0, §4); when billing ships, swap the first bullet of PALABRAS EN ESPAÑOL like §4.
+
+**Keyword notes.** Searched terms in ES/MX/AR: **"juego del impostor"**, **"impostor"**, "el impostor", "quién es el impostor", "juego espía" / "quién es el espía", "palabra secreta", "mentiroso", "juego para fiestas", "juegos en grupo", "noche de juegos", "juego familiar", "juego de TV". Spanish spells it **impostor**; the English spelling **imposter** is also typed (the trend's top apps use it), so the description uses both once, naturally. The title leads with the keyword, then the brand (MARKET-SCAN §(d), SMAK-PLAYBOOK: the leaders localise the title per storefront, keyword first). Do not copy a competitor's title ("Impostor: Juego Espía" is Fakeit's MX title). Hashtags for posts, not metadata: #juegodelimpostor #impostor.
+
+### App name (both) — 21/30 + brand (brand ≤ 9 characters)
+```
+Juego del Impostor · {{BRAND}}
+```
+If the brand is 10–16 characters: `Impostor TV · {{BRAND}}` (14/30 + brand). If it is longer, drop the brand from the title and keep `Juego del Impostor en la TV` (27/30).
+
+### Short description — es-ES — 79/80
+```
+¿Quién es el impostor? El juego de la palabra secreta en la tele, con tu móvil.
+```
+
+### Short description — es-419 — 79/80
+```
+¿Quién es el impostor? El juego de la palabra secreta en tu TV, con tu celular.
+```
+
+### Full description — es-ES — 3484/4000
+```
+Todos reciben la misma palabra secreta en el móvil, menos el Topo: su pantalla solo dice «¡Eres el Topo!». Una pista cada uno, una votación, y a desenmascarar al impostor en la pantalla grande.
+Se instala en la tele. Tus amigos escanean el código QR: no hay nada que instalar en los móviles, iPhone o Android.
+De 3 a 12 jugadores · español, inglés, francés y árabe · sin anuncios, sin cuentas.
+¿Estás en el móvil? Toca la flecha junto a Instalar y elige tu tele.
+
+Todos son inocentes. Alguien miente.
+
+{{BRAND}} es el juego del impostor para Android TV y Google TV: un juego de palabras, de faroles y de «¿quién es el espía?», todo en uno. Todos reciben la misma palabra secreta en el móvil, menos el Topo. El Topo no tiene palabra, solo una carta que dice «¡Eres el Topo!», y tiene que pasar desapercibido con pistas vagas. Por turnos, cada uno da una pista: escuchad bien y votad contra quien suene raro. Si pilláis al Topo, tiene una última oportunidad: si adivina la palabra, se lleva la victoria.
+
+Tu móvil guarda el secreto. La tele pone el drama.
+
+CÓMO SE JUEGA
+1. Abre {{BRAND}} en la tele: aparecen un código de sala y un código QR.
+2. Cada jugador escanea el QR con la cámara del móvil. El juego se abre en el navegador: sin descargas, sin cuenta, solo un apodo.
+3. Mantén pulsado para ver tu palabra secreta, o para descubrir que eres el Topo. Nadie más lo ve.
+4. Por turnos, decid una pista en voz alta y luego votad desde el móvil.
+5. Descubrid al Topo antes de que se camufle. Si lo pilláis, tiene una última oportunidad: adivinar vuestra palabra y robaros la victoria.
+
+¿Queréis más caos? Añadid un Infiltrado: recibe una palabra parecida y no lo sabe (pizza contra pasta). O mezclad los dos papeles.
+
+POR QUÉ ENGANCHA
+• De 3 a 12 jugadores: noches de juegos, reuniones familiares, cumpleaños, cenas con amigos.
+• Los móviles hacen de mando: todos juegan desde el sofá, sin mandos extra.
+• Se aprende en una ronda. El modo principiante muestra a cada uno su papel.
+• La tele es el escenario: revelaciones, cuenta atrás de las votaciones y un marcador que sigue cuando volvéis a jugar.
+• Los secretos siguen siendo secretos: tu palabra solo aparece en tu móvil, nunca en la tele mientras jugáis.
+
+PALABRAS EN ESPAÑOL
+• Más de 370 parejas de palabras en español neutro, pensadas para jugar igual en España y en Latinoamérica: luna y sol, playa y río, churro y buñuelo, tango y flamenco.
+• Categorías: día a día, lugares, comida, animales, casa, oficios, viajes, deportes y aficiones, y packs difíciles para expertos.
+• También en inglés, francés y árabe (con árabe de derecha a izquierda en la tele y en los móviles).
+• Dificultad de Fácil a Sutil, y un filtro apto para toda la familia.
+
+A TU MANERA
+• Temporizador para las pistas y los votos, o sin temporizador y el anfitrión decide cuándo seguir.
+• Elige cuántos Topos hay y añade Infiltrados si os apetece.
+• Regla de victoria oficial o por paridad.
+• Se juega entero con el mando de la tele: flechas, OK y Atrás.
+
+PRIVACIDAD
+• Sin anuncios. Sin cuentas. Sin rastreo.
+• Los jugadores solo escriben un apodo. Las salas y los apodos se borran solos cuando se cierra la sala.
+
+QUÉ NECESITAS
+• Una Android TV o Google TV conectada a internet.
+• Un smartphone por jugador con navegador e internet (wifi o datos). Sirven Android y iPhone.
+• Al menos 3 jugadores en la misma habitación.
+
+¿Buscas el juego del impostor (o «imposter», como lo llaman en inglés) para jugar en la tele? ¿Quién es el Topo en tu grupo? Abre {{BRAND}}, escanea y descúbrelo.
+```
+
+### Full description — es-419
+Same text as es-ES with Latin American wording: *celular*, *TV*, *control remoto*, and *ustedes* instead of *vosotros* (escuchen, voten, atrapan…). Ready-to-paste version — 3514/4000:
+```
+Todos reciben la misma palabra secreta en el celular, menos el Topo: su pantalla solo dice «¡Eres el Topo!». Una pista cada uno, una votación, y a desenmascarar al impostor en la pantalla grande.
+Se instala en la TV. Tus amigos escanean el código QR: no hay nada que instalar en los celulares, iPhone o Android.
+De 3 a 12 jugadores · español, inglés, francés y árabe · sin anuncios, sin cuentas.
+¿Estás en el celular? Toca la flecha junto a Instalar y elige tu TV.
+
+Todos son inocentes. Alguien miente.
+
+{{BRAND}} es el juego del impostor para Android TV y Google TV: un juego de palabras, de engaños y de «¿quién es el espía?», todo en uno. Todos reciben la misma palabra secreta en el celular, menos el Topo. El Topo no tiene palabra, solo una carta que dice «¡Eres el Topo!», y tiene que pasar desapercibido con pistas vagas. Por turnos, cada uno da una pista: escuchen bien y voten contra quien suene raro. Si atrapan al Topo, tiene una última oportunidad: si adivina la palabra, se lleva la victoria.
+
+Tu celular guarda el secreto. La TV pone el drama.
+
+CÓMO SE JUEGA
+1. Abre {{BRAND}} en la TV: aparecen un código de sala y un código QR.
+2. Cada jugador escanea el QR con la cámara del celular. El juego se abre en el navegador: sin descargas, sin cuenta, solo un apodo.
+3. Mantén presionado para ver tu palabra secreta, o para descubrir que eres el Topo. Nadie más lo ve.
+4. Por turnos, digan una pista en voz alta y luego voten desde el celular.
+5. Descubran al Topo antes de que se camufle. Si lo atrapan, tiene una última oportunidad: adivinar su palabra y robarles la victoria.
+
+¿Quieren más caos? Agreguen un Infiltrado: recibe una palabra parecida y no lo sabe (pizza contra pasta). O mezclen los dos papeles.
+
+POR QUÉ ENGANCHA
+• De 3 a 12 jugadores: noches de juegos, reuniones familiares, cumpleaños, cenas con amigos.
+• Los celulares son los controles: todos juegan desde el sofá, sin controles extra.
+• Se aprende en una ronda. El modo principiante muestra a cada uno su papel.
+• La TV es el escenario: revelaciones, cuenta regresiva de las votaciones y un marcador que sigue cuando vuelven a jugar.
+• Los secretos siguen siendo secretos: tu palabra solo aparece en tu celular, nunca en la TV mientras juegan.
+
+PALABRAS EN ESPAÑOL
+• Más de 370 parejas de palabras en español neutro, pensadas para jugar igual en España y en Latinoamérica: luna y sol, playa y río, churro y buñuelo, tango y flamenco.
+• Categorías: día a día, lugares, comida, animales, casa, oficios, viajes, deportes y pasatiempos, y packs difíciles para expertos.
+• También en inglés, francés y árabe (con árabe de derecha a izquierda en la TV y en los celulares).
+• Dificultad de Fácil a Sutil, y un filtro apto para toda la familia.
+
+A TU MANERA
+• Temporizador para las pistas y los votos, o sin temporizador y el anfitrión decide cuándo seguir.
+• Elige cuántos Topos hay y agrega Infiltrados si quieren.
+• Regla de victoria oficial o por paridad.
+• Se juega entero con el control remoto de la TV: flechas, OK y Atrás.
+
+PRIVACIDAD
+• Sin anuncios. Sin cuentas. Sin rastreo.
+• Los jugadores solo escriben un apodo. Las salas y los apodos se borran solos cuando se cierra la sala.
+
+QUÉ NECESITAS
+• Una Android TV o Google TV conectada a internet.
+• Un smartphone por jugador con navegador e internet (wifi o datos móviles). Sirven Android y iPhone.
+• Al menos 3 jugadores en la misma habitación.
+
+¿Buscas el juego del impostor (o «imposter», como lo llaman en inglés) para jugar en la TV? ¿Quién es el Topo en tu grupo? Abre {{BRAND}}, escanea y descúbrelo.
+```
+
+### What's new (release notes, first Spanish release) — es-ES 338/500 · es-419 337/500
+es-ES:
+```
+¡Ya está aquí en español! El juego del impostor para tu tele.
+• Interfaz y palabras en español: más de 370 parejas pensadas para España y Latinoamérica
+• De 3 a 12 jugadores, los móviles hacen de mando (nada que instalar)
+• Temporizadores, modo principiante, filtro familiar
+• Sin anuncios, sin cuentas
+Cuéntanos qué tal lo pasa tu grupo.
+```
+es-419:
+```
+¡Ya llegó en español! El juego del impostor para tu TV.
+• Interfaz y palabras en español: más de 370 parejas pensadas para Latinoamérica y España
+• De 3 a 12 jugadores, los celulares son los controles (nada que instalar)
+• Temporizadores, modo principiante, filtro familiar
+• Sin anuncios, sin cuentas
+Cuéntanos qué tal la pasa tu grupo.
+```
+
+### A/B alternatives
+
+| Field | Control (above) | Variant A | Variant B |
+|---|---|---|---|
+| App name | Juego del Impostor · {{BRAND}} | El Impostor en tu TV · {{BRAND}} (23 + brand) | Impostor: palabra secreta · {{BRAND}} (28 + brand, brand ≤ 2: only if the brand is tiny) |
+| Short description (es-ES) | ¿Quién es el impostor? El juego de la palabra secreta en la tele, con tu móvil. | Noche de juegos en la tele: de 3 a 12 jugadores y el móvil es el mando. (71) | Todos son inocentes. Alguien miente. El juego del impostor para tu tele. (72) |
+| Short description (es-419) | ¿Quién es el impostor? El juego de la palabra secreta en tu TV, con tu celular. | Noche de juegos en tu TV: de 3 a 12 jugadores y tu celular es el control. (73) | Todos son inocentes. Alguien miente. El juego del impostor para tu TV. (70) |
+
+Graphics: `feature-1024x500-es.png`, `tv-banner-1280x720-es.png`, `screenshots/tv-0[1-8]-*-es.png` (Spanish-UI captures; one set serves both es-ES and es-419). Screenshot 6 caption: "Más de 370 parejas de palabras en español".
+
 ## 4. Billing-release replacements (use only when Premium / packs ship)
 
 When the release with Play Billing goes live, update all three listings **in the same rollout** (otherwise the "560+ word pairs" bullet misdescribes the free tier, a Play policy issue, and TV-G3 requires the app to match its listing):
@@ -338,7 +519,7 @@ Play Console → **Grow users → Store presence → Store settings**.
 | Website | `{{WEBSITE_URL}}` (the landing page) | Optional but helps trust and the privacy-policy check |
 | Privacy policy URL (App content → Privacy policy) | `{{WEBSITE_URL}}/privacy` | Must be a public, non-geofenced, non-PDF web page. Note: `https://play.mishana.workers.dev/privacy` currently returns the phone app's SPA shell (HTTP 200, not a policy), so do **not** use the Worker URL |
 | External marketing | Leave on | Lets Google promote the app outside Play |
-| Default language | English (United States) – en-US | Add translations: French (France) – fr-FR, Arabic – ar. Optionally en-GB and fr-CA by copying the same text |
+| Default language | English (United States) – en-US | Add translations: French (France) – fr-FR, Arabic – ar, and with the Spanish release Spanish (Spain) – es-ES and Spanish (Latin America) – es-419 (§3b). Optionally en-GB and fr-CA by copying the same text |
 
 ### Store listing graphics per language
 Files in `graphics/` (spec and render command: GRAPHICS-SPEC.md). Upload per listing (Play Console → Main store listing → Manage translations → language → "Add own graphics"):
