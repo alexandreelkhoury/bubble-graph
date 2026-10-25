@@ -1,0 +1,376 @@
+{
+  "id": "es-places-01",
+  "version": 1,
+  "locale": "es",
+  "script": "Latn",
+  "title": {
+    "en": "Hard · Places & travel",
+    "fr": "Difficile · Lieux et voyages",
+    "ar": "صعب · أماكن وسفر",
+    "es": "Difícil · Lugares y viajes"
+  },
+  "tags": [
+    "places",
+    "hard"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Moto",
+        "alt": [
+          "Motocicleta"
+        ]
+      },
+      "undercover": {
+        "text": "Bicicleta",
+        "alt": [
+          "Bici"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Crucero"
+      },
+      "undercover": {
+        "text": "Safari"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Avión"
+      },
+      "undercover": {
+        "text": "Helicóptero"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Castillo"
+      },
+      "undercover": {
+        "text": "Fortaleza"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Pirámide"
+      },
+      "undercover": {
+        "text": "Templo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Biblioteca"
+      },
+      "undercover": {
+        "text": "Archivo"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Museo"
+      },
+      "undercover": {
+        "text": "Galería"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Velero"
+      },
+      "undercover": {
+        "text": "Yate"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Nueva York"
+      },
+      "undercover": {
+        "text": "Los Ángeles",
+        "alt": [
+          "LA"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Roma"
+      },
+      "undercover": {
+        "text": "Atenas"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Sídney",
+        "alt": [
+          "Sydney"
+        ]
+      },
+      "undercover": {
+        "text": "Melbourne"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Río de Janeiro"
+      },
+      "undercover": {
+        "text": "São Paulo",
+        "alt": [
+          "Sao Paulo"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Gran Cañón"
+      },
+      "undercover": {
+        "text": "Cataratas del Niágara",
+        "alt": [
+          "Niágara"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Taj Mahal"
+      },
+      "undercover": {
+        "text": "Gran Muralla China",
+        "alt": [
+          "Muralla China"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Torre Eiffel"
+      },
+      "undercover": {
+        "text": "Estatua de la Libertad"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Big Ben"
+      },
+      "undercover": {
+        "text": "Torre de Pisa"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Puente"
+      },
+      "undercover": {
+        "text": "Acueducto"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Teleférico"
+      },
+      "undercover": {
+        "text": "Funicular"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Canoa"
+      },
+      "undercover": {
+        "text": "Balsa"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Cabaña"
+      },
+      "undercover": {
+        "text": "Iglú"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Metro"
+      },
+      "undercover": {
+        "text": "Taxi"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Alemania"
+      },
+      "undercover": {
+        "text": "Francia"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Japón"
+      },
+      "undercover": {
+        "text": "China"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Machu Picchu"
+      },
+      "undercover": {
+        "text": "Chichén Itzá"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Sagrada Familia"
+      },
+      "undercover": {
+        "text": "Alhambra"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Coliseo"
+      },
+      "undercover": {
+        "text": "Partenón"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Puerto"
+      },
+      "undercover": {
+        "text": "Muelle"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Mercado"
+      },
+      "undercover": {
+        "text": "Centro comercial"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Hospital"
+      },
+      "undercover": {
+        "text": "Clínica"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Zoológico",
+        "alt": [
+          "Zoo"
+        ]
+      },
+      "undercover": {
+        "text": "Acuario"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    }
+  ]
+}

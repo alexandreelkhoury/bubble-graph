@@ -1,0 +1,428 @@
+{
+  "id": "es-nature-01",
+  "version": 1,
+  "locale": "es",
+  "script": "Latn",
+  "title": {
+    "en": "Hard · Nature & animals",
+    "fr": "Difficile · Nature et animaux",
+    "ar": "صعب · طبيعة وحيوانات",
+    "es": "Difícil · Naturaleza y animales"
+  },
+  "tags": [
+    "nature",
+    "animals",
+    "hard"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Playa"
+      },
+      "undercover": {
+        "text": "Montaña"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Virus"
+      },
+      "undercover": {
+        "text": "Bacteria"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Perro"
+      },
+      "undercover": {
+        "text": "Lobo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Río"
+      },
+      "undercover": {
+        "text": "Lago"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Océano"
+      },
+      "undercover": {
+        "text": "Mar"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Ratón"
+      },
+      "undercover": {
+        "text": "Rata"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Dragón"
+      },
+      "undercover": {
+        "text": "Dinosaurio"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Fantasma"
+      },
+      "undercover": {
+        "text": "Zombi",
+        "alt": [
+          "Zombie"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Volcán"
+      },
+      "undercover": {
+        "text": "Géiser"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Nube"
+      },
+      "undercover": {
+        "text": "Niebla"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Nieve"
+      },
+      "undercover": {
+        "text": "Granizo"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Loro"
+      },
+      "undercover": {
+        "text": "Guacamayo"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Murciélago"
+      },
+      "undercover": {
+        "text": "Búho"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Meteorito"
+      },
+      "undercover": {
+        "text": "Satélite"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Planeta"
+      },
+      "undercover": {
+        "text": "Estrella"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Terremoto",
+        "alt": [
+          "Sismo"
+        ]
+      },
+      "undercover": {
+        "text": "Tsunami",
+        "alt": [
+          "Maremoto"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Medusa"
+      },
+      "undercover": {
+        "text": "Pulpo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Lobo"
+      },
+      "undercover": {
+        "text": "Zorro"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Halcón"
+      },
+      "undercover": {
+        "text": "Buitre"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Lagartija"
+      },
+      "undercover": {
+        "text": "Camaleón"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Tiburón"
+      },
+      "undercover": {
+        "text": "Delfín"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Pingüino"
+      },
+      "undercover": {
+        "text": "Gaviota"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Luna"
+      },
+      "undercover": {
+        "text": "Planeta"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Cometa"
+      },
+      "undercover": {
+        "text": "Asteroide"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Fuente"
+      },
+      "undercover": {
+        "text": "Cascada"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Lago"
+      },
+      "undercover": {
+        "text": "Estanque"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Jirafa"
+      },
+      "undercover": {
+        "text": "Cebra"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Elefante"
+      },
+      "undercover": {
+        "text": "Rinoceronte"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Caimán"
+      },
+      "undercover": {
+        "text": "Cocodrilo"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Caracol"
+      },
+      "undercover": {
+        "text": "Babosa"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Ovni"
+      },
+      "undercover": {
+        "text": "Dron"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Desierto"
+      },
+      "undercover": {
+        "text": "Sabana"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Montaña"
+      },
+      "undercover": {
+        "text": "Colina"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Arcoíris"
+      },
+      "undercover": {
+        "text": "Aurora boreal"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Tornado"
+      },
+      "undercover": {
+        "text": "Huracán"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "Camello"
+      },
+      "undercover": {
+        "text": "Dromedario"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    }
+  ]
+}

@@ -1,0 +1,2319 @@
+{
+  "id": "es-everyday-01",
+  "version": 1,
+  "locale": "es",
+  "script": "Latn",
+  "title": {
+    "en": "Everyday",
+    "fr": "Le quotidien",
+    "ar": "من كل يوم",
+    "es": "Del día a día"
+  },
+  "tags": [
+    "everyday",
+    "easy",
+    "places",
+    "food",
+    "animals",
+    "home",
+    "jobs",
+    "travel",
+    "sports"
+  ],
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Café"
+      },
+      "undercover": {
+        "text": "Té"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Luna"
+      },
+      "undercover": {
+        "text": "Sol"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Lluvia"
+      },
+      "undercover": {
+        "text": "Nieve"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Cumpleaños"
+      },
+      "undercover": {
+        "text": "Boda"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Playa"
+      },
+      "undercover": {
+        "text": "Río"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Relámpago",
+        "alt": [
+          "Rayo"
+        ]
+      },
+      "undercover": {
+        "text": "Trueno"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Verano"
+      },
+      "undercover": {
+        "text": "Invierno"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Amanecer"
+      },
+      "undercover": {
+        "text": "Atardecer"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Paraguas"
+      },
+      "undercover": {
+        "text": "Impermeable"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Llave"
+      },
+      "undercover": {
+        "text": "Candado"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Teléfono",
+        "alt": [
+          "Celular",
+          "Móvil"
+        ]
+      },
+      "undercover": {
+        "text": "Cámara de fotos",
+        "alt": [
+          "Cámara"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Sombrero"
+      },
+      "undercover": {
+        "text": "Gorra"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Zapato"
+      },
+      "undercover": {
+        "text": "Bota"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Jabón"
+      },
+      "undercover": {
+        "text": "Champú"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Moneda"
+      },
+      "undercover": {
+        "text": "Billete"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Carta"
+      },
+      "undercover": {
+        "text": "Postal",
+        "alt": [
+          "Tarjeta postal"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Globo"
+      },
+      "undercover": {
+        "text": "Confeti"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Peluche",
+        "alt": [
+          "Oso de peluche"
+        ]
+      },
+      "undercover": {
+        "text": "Muñeca"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Pícnic",
+        "alt": [
+          "Picnic"
+        ]
+      },
+      "undercover": {
+        "text": "Fiesta"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Periódico",
+        "alt": [
+          "Diario"
+        ]
+      },
+      "undercover": {
+        "text": "Revista"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Muñeco de nieve"
+      },
+      "undercover": {
+        "text": "Castillo de arena"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Vela"
+      },
+      "undercover": {
+        "text": "Linterna"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Everyday"
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "París",
+        "alt": [
+          "Paris"
+        ]
+      },
+      "undercover": {
+        "text": "Londres",
+        "alt": [
+          "London"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Puente"
+      },
+      "undercover": {
+        "text": "Túnel"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Hospital"
+      },
+      "undercover": {
+        "text": "Farmacia"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Escuela",
+        "alt": [
+          "Colegio"
+        ]
+      },
+      "undercover": {
+        "text": "Universidad"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Supermercado"
+      },
+      "undercover": {
+        "text": "Mercado"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Cine"
+      },
+      "undercover": {
+        "text": "Teatro"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Restaurante"
+      },
+      "undercover": {
+        "text": "Cafetería"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Zoológico",
+        "alt": [
+          "Zoo"
+        ]
+      },
+      "undercover": {
+        "text": "Granja"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Parque"
+      },
+      "undercover": {
+        "text": "Plaza"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Castillo"
+      },
+      "undercover": {
+        "text": "Palacio"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Estadio"
+      },
+      "undercover": {
+        "text": "Gimnasio"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Banco"
+      },
+      "undercover": {
+        "text": "Cajero automático",
+        "alt": [
+          "Cajero"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Hotel"
+      },
+      "undercover": {
+        "text": "Cabaña"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "Rascacielos"
+      },
+      "undercover": {
+        "text": "Torre"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p037",
+      "civilian": {
+        "text": "Bosque"
+      },
+      "undercover": {
+        "text": "Selva"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p038",
+      "civilian": {
+        "text": "Pueblo"
+      },
+      "undercover": {
+        "text": "Ciudad"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p039",
+      "civilian": {
+        "text": "Roma"
+      },
+      "undercover": {
+        "text": "Venecia"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p040",
+      "civilian": {
+        "text": "Iglesia"
+      },
+      "undercover": {
+        "text": "Catedral"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p041",
+      "civilian": {
+        "text": "Biblioteca"
+      },
+      "undercover": {
+        "text": "Librería"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p042",
+      "civilian": {
+        "text": "Oficina"
+      },
+      "undercover": {
+        "text": "Fábrica"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p043",
+      "civilian": {
+        "text": "Museo"
+      },
+      "undercover": {
+        "text": "Acuario"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p044",
+      "civilian": {
+        "text": "Faro"
+      },
+      "undercover": {
+        "text": "Molino"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Places"
+    },
+    {
+      "id": "p045",
+      "civilian": {
+        "text": "Pizza"
+      },
+      "undercover": {
+        "text": "Hamburguesa"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p046",
+      "civilian": {
+        "text": "Manzana"
+      },
+      "undercover": {
+        "text": "Pera"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p047",
+      "civilian": {
+        "text": "Miel"
+      },
+      "undercover": {
+        "text": "Mermelada"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p048",
+      "civilian": {
+        "text": "Naranja"
+      },
+      "undercover": {
+        "text": "Mandarina"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p049",
+      "civilian": {
+        "text": "Chocolate"
+      },
+      "undercover": {
+        "text": "Chicle"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p050",
+      "civilian": {
+        "text": "Helado"
+      },
+      "undercover": {
+        "text": "Gelatina"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p051",
+      "civilian": {
+        "text": "Flan"
+      },
+      "undercover": {
+        "text": "Arroz con leche"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p052",
+      "civilian": {
+        "text": "Churro"
+      },
+      "undercover": {
+        "text": "Buñuelo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p053",
+      "civilian": {
+        "text": "Queso"
+      },
+      "undercover": {
+        "text": "Yogur",
+        "alt": [
+          "Yogurt"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p054",
+      "civilian": {
+        "text": "Sopa"
+      },
+      "undercover": {
+        "text": "Ensalada"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p055",
+      "civilian": {
+        "text": "Sándwich",
+        "alt": [
+          "Sandwich"
+        ]
+      },
+      "undercover": {
+        "text": "Empanada"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p056",
+      "civilian": {
+        "text": "Nachos",
+        "alt": [
+          "Nacho"
+        ]
+      },
+      "undercover": {
+        "text": "Guacamole"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p057",
+      "civilian": {
+        "text": "Sandía"
+      },
+      "undercover": {
+        "text": "Melón"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p058",
+      "civilian": {
+        "text": "Uva"
+      },
+      "undercover": {
+        "text": "Cereza"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p059",
+      "civilian": {
+        "text": "Tomate"
+      },
+      "undercover": {
+        "text": "Pepino"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p060",
+      "civilian": {
+        "text": "Almendra"
+      },
+      "undercover": {
+        "text": "Nuez"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p061",
+      "civilian": {
+        "text": "Agua"
+      },
+      "undercover": {
+        "text": "Hielo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p062",
+      "civilian": {
+        "text": "Espaguetis",
+        "alt": [
+          "Espagueti"
+        ]
+      },
+      "undercover": {
+        "text": "Fideos",
+        "alt": [
+          "Fideo"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p063",
+      "civilian": {
+        "text": "Huevo frito"
+      },
+      "undercover": {
+        "text": "Huevo duro"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p064",
+      "civilian": {
+        "text": "Arroz"
+      },
+      "undercover": {
+        "text": "Pasta"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p065",
+      "civilian": {
+        "text": "Pollo"
+      },
+      "undercover": {
+        "text": "Pescado"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p066",
+      "civilian": {
+        "text": "Sushi"
+      },
+      "undercover": {
+        "text": "Taco"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p067",
+      "civilian": {
+        "text": "Gato"
+      },
+      "undercover": {
+        "text": "Perro"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p068",
+      "civilian": {
+        "text": "León"
+      },
+      "undercover": {
+        "text": "Tigre"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p069",
+      "civilian": {
+        "text": "Elefante"
+      },
+      "undercover": {
+        "text": "Hipopótamo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p070",
+      "civilian": {
+        "text": "Caballo"
+      },
+      "undercover": {
+        "text": "Burro"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p071",
+      "civilian": {
+        "text": "Oveja"
+      },
+      "undercover": {
+        "text": "Cabra"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p072",
+      "civilian": {
+        "text": "Gallina"
+      },
+      "undercover": {
+        "text": "Pato"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p073",
+      "civilian": {
+        "text": "Conejo"
+      },
+      "undercover": {
+        "text": "Hámster"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p074",
+      "civilian": {
+        "text": "Abeja"
+      },
+      "undercover": {
+        "text": "Avispa"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p075",
+      "civilian": {
+        "text": "Mariposa"
+      },
+      "undercover": {
+        "text": "Libélula"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p076",
+      "civilian": {
+        "text": "Hormiga"
+      },
+      "undercover": {
+        "text": "Araña"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p077",
+      "civilian": {
+        "text": "Ballena"
+      },
+      "undercover": {
+        "text": "Delfín"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p078",
+      "civilian": {
+        "text": "Serpiente"
+      },
+      "undercover": {
+        "text": "Lagartija"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p079",
+      "civilian": {
+        "text": "Pingüino"
+      },
+      "undercover": {
+        "text": "Oso polar"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p080",
+      "civilian": {
+        "text": "Mono"
+      },
+      "undercover": {
+        "text": "Gorila"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p081",
+      "civilian": {
+        "text": "Panda"
+      },
+      "undercover": {
+        "text": "Koala"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p082",
+      "civilian": {
+        "text": "Búho"
+      },
+      "undercover": {
+        "text": "Águila"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p083",
+      "civilian": {
+        "text": "Cangrejo"
+      },
+      "undercover": {
+        "text": "Langosta"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p084",
+      "civilian": {
+        "text": "Pulpo"
+      },
+      "undercover": {
+        "text": "Calamar"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p085",
+      "civilian": {
+        "text": "Vaca"
+      },
+      "undercover": {
+        "text": "Toro"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p086",
+      "civilian": {
+        "text": "Rana"
+      },
+      "undercover": {
+        "text": "Tortuga"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p087",
+      "civilian": {
+        "text": "Ardilla"
+      },
+      "undercover": {
+        "text": "Erizo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p088",
+      "civilian": {
+        "text": "Paloma"
+      },
+      "undercover": {
+        "text": "Loro"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Animals"
+    },
+    {
+      "id": "p089",
+      "civilian": {
+        "text": "Almohada"
+      },
+      "undercover": {
+        "text": "Colchón"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p090",
+      "civilian": {
+        "text": "Sofá"
+      },
+      "undercover": {
+        "text": "Sillón"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p091",
+      "civilian": {
+        "text": "Tenedor"
+      },
+      "undercover": {
+        "text": "Cuchara"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p092",
+      "civilian": {
+        "text": "Horno"
+      },
+      "undercover": {
+        "text": "Microondas"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p093",
+      "civilian": {
+        "text": "Tostadora"
+      },
+      "undercover": {
+        "text": "Cafetera"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p094",
+      "civilian": {
+        "text": "Taza"
+      },
+      "undercover": {
+        "text": "Vaso"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p095",
+      "civilian": {
+        "text": "Plato"
+      },
+      "undercover": {
+        "text": "Bandeja"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p096",
+      "civilian": {
+        "text": "Escoba"
+      },
+      "undercover": {
+        "text": "Aspiradora"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p097",
+      "civilian": {
+        "text": "Mesa"
+      },
+      "undercover": {
+        "text": "Escritorio"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p098",
+      "civilian": {
+        "text": "Silla"
+      },
+      "undercover": {
+        "text": "Taburete"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p099",
+      "civilian": {
+        "text": "Alfombra"
+      },
+      "undercover": {
+        "text": "Cortina"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p100",
+      "civilian": {
+        "text": "Lámpara"
+      },
+      "undercover": {
+        "text": "Candelabro"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p101",
+      "civilian": {
+        "text": "Toalla"
+      },
+      "undercover": {
+        "text": "Servilleta"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p102",
+      "civilian": {
+        "text": "Impresora"
+      },
+      "undercover": {
+        "text": "Fotocopiadora"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p103",
+      "civilian": {
+        "text": "Cepillo"
+      },
+      "undercover": {
+        "text": "Peine"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p104",
+      "civilian": {
+        "text": "Ventilador"
+      },
+      "undercover": {
+        "text": "Aire acondicionado"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p105",
+      "civilian": {
+        "text": "Cajón"
+      },
+      "undercover": {
+        "text": "Estante"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p106",
+      "civilian": {
+        "text": "Cocina"
+      },
+      "undercover": {
+        "text": "Baño"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p107",
+      "civilian": {
+        "text": "Jardín"
+      },
+      "undercover": {
+        "text": "Balcón"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p108",
+      "civilian": {
+        "text": "Sótano"
+      },
+      "undercover": {
+        "text": "Ático",
+        "alt": [
+          "Desván"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p109",
+      "civilian": {
+        "text": "Plancha"
+      },
+      "undercover": {
+        "text": "Secador de pelo",
+        "alt": [
+          "Secador",
+          "Secadora"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p110",
+      "civilian": {
+        "text": "Puerta"
+      },
+      "undercover": {
+        "text": "Ventana"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Things at home"
+    },
+    {
+      "id": "p111",
+      "civilian": {
+        "text": "Médico",
+        "alt": [
+          "Médica",
+          "Doctor",
+          "Doctora"
+        ]
+      },
+      "undercover": {
+        "text": "Enfermero",
+        "alt": [
+          "Enfermera"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p112",
+      "civilian": {
+        "text": "Dentista"
+      },
+      "undercover": {
+        "text": "Veterinario",
+        "alt": [
+          "Veterinaria"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p113",
+      "civilian": {
+        "text": "Profesor",
+        "alt": [
+          "Profesora",
+          "Maestro",
+          "Maestra"
+        ]
+      },
+      "undercover": {
+        "text": "Entrenador",
+        "alt": [
+          "Entrenadora"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p114",
+      "civilian": {
+        "text": "Cocinero",
+        "alt": [
+          "Cocinera",
+          "Chef"
+        ]
+      },
+      "undercover": {
+        "text": "Pastelero",
+        "alt": [
+          "Pastelera",
+          "Repostero"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p115",
+      "civilian": {
+        "text": "Panadero",
+        "alt": [
+          "Panadera"
+        ]
+      },
+      "undercover": {
+        "text": "Carnicero",
+        "alt": [
+          "Carnicera"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p116",
+      "civilian": {
+        "text": "Bombero",
+        "alt": [
+          "Bombera"
+        ]
+      },
+      "undercover": {
+        "text": "Paramédico",
+        "alt": [
+          "Paramédica"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p117",
+      "civilian": {
+        "text": "Policía"
+      },
+      "undercover": {
+        "text": "Soldado"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p118",
+      "civilian": {
+        "text": "Piloto"
+      },
+      "undercover": {
+        "text": "Astronauta"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p119",
+      "civilian": {
+        "text": "Granjero",
+        "alt": [
+          "Granjera"
+        ]
+      },
+      "undercover": {
+        "text": "Jardinero",
+        "alt": [
+          "Jardinera"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p120",
+      "civilian": {
+        "text": "Marinero",
+        "alt": [
+          "Marinera"
+        ]
+      },
+      "undercover": {
+        "text": "Pirata"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p121",
+      "civilian": {
+        "text": "Peluquero",
+        "alt": [
+          "Peluquera"
+        ]
+      },
+      "undercover": {
+        "text": "Barbero"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p122",
+      "civilian": {
+        "text": "Electricista"
+      },
+      "undercover": {
+        "text": "Carpintero",
+        "alt": [
+          "Carpintera"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p123",
+      "civilian": {
+        "text": "Taxista"
+      },
+      "undercover": {
+        "text": "Camionero",
+        "alt": [
+          "Camionera"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p124",
+      "civilian": {
+        "text": "Cantante"
+      },
+      "undercover": {
+        "text": "Bailarín",
+        "alt": [
+          "Bailarina"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p125",
+      "civilian": {
+        "text": "Payaso",
+        "alt": [
+          "Payasa"
+        ]
+      },
+      "undercover": {
+        "text": "Mago",
+        "alt": [
+          "Maga"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p126",
+      "civilian": {
+        "text": "Albañil"
+      },
+      "undercover": {
+        "text": "Arquitecto",
+        "alt": [
+          "Arquitecta"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p127",
+      "civilian": {
+        "text": "Cartero",
+        "alt": [
+          "Cartera"
+        ]
+      },
+      "undercover": {
+        "text": "Repartidor",
+        "alt": [
+          "Repartidora"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p128",
+      "civilian": {
+        "text": "Abogado",
+        "alt": [
+          "Abogada"
+        ]
+      },
+      "undercover": {
+        "text": "Juez",
+        "alt": [
+          "Jueza"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p129",
+      "civilian": {
+        "text": "Científico",
+        "alt": [
+          "Científica"
+        ]
+      },
+      "undercover": {
+        "text": "Inventor",
+        "alt": [
+          "Inventora"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p130",
+      "civilian": {
+        "text": "Periodista"
+      },
+      "undercover": {
+        "text": "Fotógrafo",
+        "alt": [
+          "Fotógrafa"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p131",
+      "civilian": {
+        "text": "Cajero",
+        "alt": [
+          "Cajera"
+        ]
+      },
+      "undercover": {
+        "text": "Vendedor",
+        "alt": [
+          "Vendedora"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p132",
+      "civilian": {
+        "text": "Detective"
+      },
+      "undercover": {
+        "text": "Espía"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Jobs"
+    },
+    {
+      "id": "p133",
+      "civilian": {
+        "text": "Tren"
+      },
+      "undercover": {
+        "text": "Tranvía"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p134",
+      "civilian": {
+        "text": "Aeropuerto"
+      },
+      "undercover": {
+        "text": "Estación de tren",
+        "alt": [
+          "Estación"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p135",
+      "civilian": {
+        "text": "Avión"
+      },
+      "undercover": {
+        "text": "Cohete"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p136",
+      "civilian": {
+        "text": "Helicóptero"
+      },
+      "undercover": {
+        "text": "Globo aerostático"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p137",
+      "civilian": {
+        "text": "Mapa"
+      },
+      "undercover": {
+        "text": "Globo terráqueo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p138",
+      "civilian": {
+        "text": "Taxi"
+      },
+      "undercover": {
+        "text": "Limusina"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p139",
+      "civilian": {
+        "text": "Italia"
+      },
+      "undercover": {
+        "text": "Grecia"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p140",
+      "civilian": {
+        "text": "Brasil"
+      },
+      "undercover": {
+        "text": "México"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p141",
+      "civilian": {
+        "text": "Egipto"
+      },
+      "undercover": {
+        "text": "Marruecos"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p142",
+      "civilian": {
+        "text": "Barco"
+      },
+      "undercover": {
+        "text": "Submarino"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p143",
+      "civilian": {
+        "text": "Bicicleta",
+        "alt": [
+          "Bici"
+        ]
+      },
+      "undercover": {
+        "text": "Triciclo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p144",
+      "civilian": {
+        "text": "Kayak"
+      },
+      "undercover": {
+        "text": "Canoa"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p145",
+      "civilian": {
+        "text": "Crucero"
+      },
+      "undercover": {
+        "text": "Yate"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p146",
+      "civilian": {
+        "text": "Semáforo"
+      },
+      "undercover": {
+        "text": "Peaje"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p147",
+      "civilian": {
+        "text": "Mochila"
+      },
+      "undercover": {
+        "text": "Maletín"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p148",
+      "civilian": {
+        "text": "Isla"
+      },
+      "undercover": {
+        "text": "Península"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p149",
+      "civilian": {
+        "text": "Guía",
+        "alt": [
+          "Guía turístico"
+        ]
+      },
+      "undercover": {
+        "text": "Turista"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p150",
+      "civilian": {
+        "text": "Frontera"
+      },
+      "undercover": {
+        "text": "Aduana"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p151",
+      "civilian": {
+        "text": "Tokio"
+      },
+      "undercover": {
+        "text": "Seúl"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p152",
+      "civilian": {
+        "text": "Pirámide"
+      },
+      "undercover": {
+        "text": "Esfinge"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p153",
+      "civilian": {
+        "text": "Ancla"
+      },
+      "undercover": {
+        "text": "Timón"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p154",
+      "civilian": {
+        "text": "Autopista"
+      },
+      "undercover": {
+        "text": "Carretera"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Travel"
+    },
+    {
+      "id": "p155",
+      "civilian": {
+        "text": "Guitarra"
+      },
+      "undercover": {
+        "text": "Violín"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p156",
+      "civilian": {
+        "text": "Esquí"
+      },
+      "undercover": {
+        "text": "Snowboard"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p157",
+      "civilian": {
+        "text": "Patinaje sobre hielo"
+      },
+      "undercover": {
+        "text": "Patinaje sobre ruedas"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p158",
+      "civilian": {
+        "text": "Boxeo"
+      },
+      "undercover": {
+        "text": "Lucha libre"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p159",
+      "civilian": {
+        "text": "Natación"
+      },
+      "undercover": {
+        "text": "Surf"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p160",
+      "civilian": {
+        "text": "Kárate",
+        "alt": [
+          "Karate"
+        ]
+      },
+      "undercover": {
+        "text": "Judo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p161",
+      "civilian": {
+        "text": "Tenis"
+      },
+      "undercover": {
+        "text": "Golf"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p162",
+      "civilian": {
+        "text": "Videojuego"
+      },
+      "undercover": {
+        "text": "Juego de mesa"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p163",
+      "civilian": {
+        "text": "Batería"
+      },
+      "undercover": {
+        "text": "Piano"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p164",
+      "civilian": {
+        "text": "Trompeta"
+      },
+      "undercover": {
+        "text": "Flauta"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p165",
+      "civilian": {
+        "text": "Karaoke"
+      },
+      "undercover": {
+        "text": "Concierto"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p166",
+      "civilian": {
+        "text": "Pintura"
+      },
+      "undercover": {
+        "text": "Dibujo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p167",
+      "civilian": {
+        "text": "Escalada"
+      },
+      "undercover": {
+        "text": "Rápel"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p168",
+      "civilian": {
+        "text": "Tejer"
+      },
+      "undercover": {
+        "text": "Coser"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p169",
+      "civilian": {
+        "text": "Medalla"
+      },
+      "undercover": {
+        "text": "Trofeo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p170",
+      "civilian": {
+        "text": "Ciclismo"
+      },
+      "undercover": {
+        "text": "Equitación"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p171",
+      "civilian": {
+        "text": "Pesca"
+      },
+      "undercover": {
+        "text": "Buceo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p172",
+      "civilian": {
+        "text": "Ajedrez"
+      },
+      "undercover": {
+        "text": "Dominó"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p173",
+      "civilian": {
+        "text": "Yoga"
+      },
+      "undercover": {
+        "text": "Pilates",
+        "alt": [
+          "Método Pilates"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p174",
+      "civilian": {
+        "text": "Fútbol"
+      },
+      "undercover": {
+        "text": "Voleibol",
+        "alt": [
+          "Vóley",
+          "Vóleibol"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p175",
+      "civilian": {
+        "text": "Billar"
+      },
+      "undercover": {
+        "text": "Dardos",
+        "alt": [
+          "Dardo"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    },
+    {
+      "id": "p176",
+      "civilian": {
+        "text": "Baile"
+      },
+      "undercover": {
+        "text": "Gimnasia"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Sports and hobbies"
+    }
+  ]
+}

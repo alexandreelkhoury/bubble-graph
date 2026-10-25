@@ -1,0 +1,513 @@
+{
+  "id": "es-leisure-01",
+  "version": 1,
+  "locale": "es",
+  "script": "Latn",
+  "title": {
+    "en": "Hard · Sports, hobbies & jobs",
+    "fr": "Difficile · Sports, loisirs et métiers",
+    "ar": "صعب · رياضة وهوايات ومهن",
+    "es": "Difícil · Deportes, pasatiempos y oficios"
+  },
+  "tags": [
+    "leisure",
+    "hard"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Piano"
+      },
+      "undercover": {
+        "text": "Acordeón"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Fútbol"
+      },
+      "undercover": {
+        "text": "Rugby"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Ballet"
+      },
+      "undercover": {
+        "text": "Hip-hop",
+        "alt": [
+          "Hip hop"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Médico",
+        "alt": [
+          "Médica"
+        ]
+      },
+      "undercover": {
+        "text": "Cirujano",
+        "alt": [
+          "Cirujana"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Detective"
+      },
+      "undercover": {
+        "text": "Ladrón",
+        "alt": [
+          "Ladrona"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Tenis"
+      },
+      "undercover": {
+        "text": "Bádminton"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Natación"
+      },
+      "undercover": {
+        "text": "Waterpolo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Maratón"
+      },
+      "undercover": {
+        "text": "Triatlón"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Surf"
+      },
+      "undercover": {
+        "text": "Esquí acuático"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Béisbol"
+      },
+      "undercover": {
+        "text": "Fútbol americano"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Voleibol",
+        "alt": [
+          "Vóley"
+        ]
+      },
+      "undercover": {
+        "text": "Vóley playa",
+        "alt": [
+          "Voleibol de playa"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Tenis de mesa",
+        "alt": [
+          "Ping-pong"
+        ]
+      },
+      "undercover": {
+        "text": "Pádel"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Golf"
+      },
+      "undercover": {
+        "text": "Minigolf"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Esgrima"
+      },
+      "undercover": {
+        "text": "Tiro con arco"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Boxeo"
+      },
+      "undercover": {
+        "text": "Kickboxing"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Hockey"
+      },
+      "undercover": {
+        "text": "Curling"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Concierto"
+      },
+      "undercover": {
+        "text": "Festival"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Farmacéutico",
+        "alt": [
+          "Farmacéutica"
+        ]
+      },
+      "undercover": {
+        "text": "Químico",
+        "alt": [
+          "Química"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Ingeniero",
+        "alt": [
+          "Ingeniera"
+        ]
+      },
+      "undercover": {
+        "text": "Arquitecto",
+        "alt": [
+          "Arquitecta"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Bombero",
+        "alt": [
+          "Bombera"
+        ]
+      },
+      "undercover": {
+        "text": "Policía"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Piloto"
+      },
+      "undercover": {
+        "text": "Paracaidista"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Panadero",
+        "alt": [
+          "Panadera"
+        ]
+      },
+      "undercover": {
+        "text": "Pastelero",
+        "alt": [
+          "Pastelera"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Granjero",
+        "alt": [
+          "Granjera"
+        ]
+      },
+      "undercover": {
+        "text": "Pescador",
+        "alt": [
+          "Pescadora"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Herrero",
+        "alt": [
+          "Herrera"
+        ]
+      },
+      "undercover": {
+        "text": "Carpintero",
+        "alt": [
+          "Carpintera"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Rock"
+      },
+      "undercover": {
+        "text": "Pop"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Reguetón",
+        "alt": [
+          "Reggaetón"
+        ]
+      },
+      "undercover": {
+        "text": "Trap"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Tango"
+      },
+      "undercover": {
+        "text": "Flamenco"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Salsa"
+      },
+      "undercover": {
+        "text": "Bachata"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Ajedrez"
+      },
+      "undercover": {
+        "text": "Damas"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Pintor",
+        "alt": [
+          "Pintora"
+        ]
+      },
+      "undercover": {
+        "text": "Escultor",
+        "alt": [
+          "Escultora"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Fotógrafo",
+        "alt": [
+          "Fotógrafa"
+        ]
+      },
+      "undercover": {
+        "text": "Camarógrafo",
+        "alt": [
+          "Camarógrafa"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Actor",
+        "alt": [
+          "Actriz"
+        ]
+      },
+      "undercover": {
+        "text": "Director de cine",
+        "alt": [
+          "Directora de cine"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Futbolista"
+      },
+      "undercover": {
+        "text": "Árbitro",
+        "alt": [
+          "Árbitra"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Drácula"
+      },
+      "undercover": {
+        "text": "Frankenstein"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Sudoku"
+      },
+      "undercover": {
+        "text": "Crucigrama"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "Mago",
+        "alt": [
+          "Maga"
+        ]
+      },
+      "undercover": {
+        "text": "Malabarista"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p037",
+      "civilian": {
+        "text": "Montañismo",
+        "alt": [
+          "Alpinismo"
+        ]
+      },
+      "undercover": {
+        "text": "Escalada"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    }
+  ]
+}

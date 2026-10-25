@@ -1,0 +1,439 @@
+{
+  "id": "es-food-01",
+  "version": 1,
+  "locale": "es",
+  "script": "Latn",
+  "title": {
+    "en": "Hard · Food & drinks",
+    "fr": "Difficile · À table",
+    "ar": "صعب · أكل وشرب",
+    "es": "Difícil · Comida y bebida"
+  },
+  "tags": [
+    "food",
+    "hard"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Paella"
+      },
+      "undercover": {
+        "text": "Risotto"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Lasaña"
+      },
+      "undercover": {
+        "text": "Canelones",
+        "alt": [
+          "Canelón"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Sushi"
+      },
+      "undercover": {
+        "text": "Ceviche"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Chocolate"
+      },
+      "undercover": {
+        "text": "Vainilla"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Cebolla"
+      },
+      "undercover": {
+        "text": "Ajo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Sal"
+      },
+      "undercover": {
+        "text": "Pimienta"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Azúcar"
+      },
+      "undercover": {
+        "text": "Miel"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Pan"
+      },
+      "undercover": {
+        "text": "Baguette"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Pizza"
+      },
+      "undercover": {
+        "text": "Calzone"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Kiwi"
+      },
+      "undercover": {
+        "text": "Mango"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Sartén"
+      },
+      "undercover": {
+        "text": "Olla"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Lechuga"
+      },
+      "undercover": {
+        "text": "Espinaca"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Arándano"
+      },
+      "undercover": {
+        "text": "Frambuesa"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Aceite"
+      },
+      "undercover": {
+        "text": "Vinagre"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Mayonesa"
+      },
+      "undercover": {
+        "text": "Mostaza"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Café con leche"
+      },
+      "undercover": {
+        "text": "Capuchino",
+        "alt": [
+          "Cappuccino"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Té"
+      },
+      "undercover": {
+        "text": "Mate"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Taco"
+      },
+      "undercover": {
+        "text": "Burrito"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Empanada"
+      },
+      "undercover": {
+        "text": "Croqueta"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Guacamole"
+      },
+      "undercover": {
+        "text": "Hummus"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Arroz"
+      },
+      "undercover": {
+        "text": "Quinoa",
+        "alt": [
+          "Quinua"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Lenteja",
+        "alt": [
+          "Lentejas"
+        ]
+      },
+      "undercover": {
+        "text": "Garbanzo",
+        "alt": [
+          "Garbanzos"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Salmón"
+      },
+      "undercover": {
+        "text": "Atún"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Mejillón"
+      },
+      "undercover": {
+        "text": "Ostra"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Pollo asado"
+      },
+      "undercover": {
+        "text": "Pollo frito"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Queso"
+      },
+      "undercover": {
+        "text": "Requesón"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Yogur",
+        "alt": [
+          "Yogurt"
+        ]
+      },
+      "undercover": {
+        "text": "Kéfir"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Agua mineral"
+      },
+      "undercover": {
+        "text": "Agua con gas"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Galleta"
+      },
+      "undercover": {
+        "text": "Brownie"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Cereal"
+      },
+      "undercover": {
+        "text": "Avena"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Sopa"
+      },
+      "undercover": {
+        "text": "Caldo"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Panadería"
+      },
+      "undercover": {
+        "text": "Pastelería"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Ciruela"
+      },
+      "undercover": {
+        "text": "Higo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Nuez"
+      },
+      "undercover": {
+        "text": "Avellana"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Flan"
+      },
+      "undercover": {
+        "text": "Pudín",
+        "alt": [
+          "Budín"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "Chocolate blanco"
+      },
+      "undercover": {
+        "text": "Chocolate negro"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    }
+  ]
+}

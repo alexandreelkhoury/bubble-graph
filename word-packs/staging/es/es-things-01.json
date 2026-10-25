@@ -1,0 +1,742 @@
+{
+  "id": "es-things-01",
+  "version": 1,
+  "locale": "es",
+  "script": "Latn",
+  "title": {
+    "en": "Hard · Things & home",
+    "fr": "Difficile · Objets et maison",
+    "ar": "صعب · أغراض وبيت",
+    "es": "Difícil · Objetos y casa"
+  },
+  "tags": [
+    "things",
+    "hard"
+  ],
+  "ageRating": "all",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Perfume"
+      },
+      "undercover": {
+        "text": "Desodorante"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Sandalia"
+      },
+      "undercover": {
+        "text": "Bota"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Lápiz"
+      },
+      "undercover": {
+        "text": "Pincel"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Reloj"
+      },
+      "undercover": {
+        "text": "Anillo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Camisa"
+      },
+      "undercover": {
+        "text": "Corbata"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Cuchillo"
+      },
+      "undercover": {
+        "text": "Tijeras",
+        "alt": [
+          "Tijera"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Silla"
+      },
+      "undercover": {
+        "text": "Banco"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Espejo"
+      },
+      "undercover": {
+        "text": "Cuadro"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Reloj"
+      },
+      "undercover": {
+        "text": "Cronómetro"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Retrato"
+      },
+      "undercover": {
+        "text": "Paisaje"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Traje"
+      },
+      "undercover": {
+        "text": "Esmoquin"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Corona"
+      },
+      "undercover": {
+        "text": "Sombrero"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Vela"
+      },
+      "undercover": {
+        "text": "Incienso"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Radio"
+      },
+      "undercover": {
+        "text": "Pódcast",
+        "alt": [
+          "Podcast"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Mapa"
+      },
+      "undercover": {
+        "text": "GPS"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Cuaderno"
+      },
+      "undercover": {
+        "text": "Agenda"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Vaso"
+      },
+      "undercover": {
+        "text": "Copa"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Oro"
+      },
+      "undercover": {
+        "text": "Plata"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Platino"
+      },
+      "undercover": {
+        "text": "Oro"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Abrigo"
+      },
+      "undercover": {
+        "text": "Bufanda"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Bufanda"
+      },
+      "undercover": {
+        "text": "Gorro"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Casco"
+      },
+      "undercover": {
+        "text": "Gorra"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Collar"
+      },
+      "undercover": {
+        "text": "Pulsera"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Anillo"
+      },
+      "undercover": {
+        "text": "Broche"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Televisor",
+        "alt": [
+          "Televisión",
+          "Tele"
+        ]
+      },
+      "undercover": {
+        "text": "Radio"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Proyector"
+      },
+      "undercover": {
+        "text": "Pantalla"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Calculadora"
+      },
+      "undercover": {
+        "text": "Máquina de escribir"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Linterna"
+      },
+      "undercover": {
+        "text": "Farol"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Brújula"
+      },
+      "undercover": {
+        "text": "Mapa"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Recibo"
+      },
+      "undercover": {
+        "text": "Factura"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Rompecabezas"
+      },
+      "undercover": {
+        "text": "Cubo de Rubik"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Dado"
+      },
+      "undercover": {
+        "text": "Ficha"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Diccionario"
+      },
+      "undercover": {
+        "text": "Enciclopedia"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Novela"
+      },
+      "undercover": {
+        "text": "Poema"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Tablet",
+        "alt": [
+          "Tableta"
+        ]
+      },
+      "undercover": {
+        "text": "Libro electrónico"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "Baúl"
+      },
+      "undercover": {
+        "text": "Cofre"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p037",
+      "civilian": {
+        "text": "Chimenea"
+      },
+      "undercover": {
+        "text": "Calefactor"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p038",
+      "civilian": {
+        "text": "Lámpara"
+      },
+      "undercover": {
+        "text": "Vela"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p039",
+      "civilian": {
+        "text": "Micrófono"
+      },
+      "undercover": {
+        "text": "Cámara"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p040",
+      "civilian": {
+        "text": "Escalera"
+      },
+      "undercover": {
+        "text": "Rampa"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p041",
+      "civilian": {
+        "text": "Ventana"
+      },
+      "undercover": {
+        "text": "Persiana"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p042",
+      "civilian": {
+        "text": "Cama"
+      },
+      "undercover": {
+        "text": "Cuna"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p043",
+      "civilian": {
+        "text": "Libro"
+      },
+      "undercover": {
+        "text": "Revista"
+      },
+      "difficulty": 1,
+      "reviewedBy": []
+    },
+    {
+      "id": "p044",
+      "civilian": {
+        "text": "Jacuzzi"
+      },
+      "undercover": {
+        "text": "Sauna"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p045",
+      "civilian": {
+        "text": "Cerradura"
+      },
+      "undercover": {
+        "text": "Candado"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p046",
+      "civilian": {
+        "text": "Botella"
+      },
+      "undercover": {
+        "text": "Lata"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p047",
+      "civilian": {
+        "text": "Caja"
+      },
+      "undercover": {
+        "text": "Sobre"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p048",
+      "civilian": {
+        "text": "Clavo"
+      },
+      "undercover": {
+        "text": "Tornillo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p049",
+      "civilian": {
+        "text": "Martillo"
+      },
+      "undercover": {
+        "text": "Hacha"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p050",
+      "civilian": {
+        "text": "Aguja"
+      },
+      "undercover": {
+        "text": "Alfiler"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p051",
+      "civilian": {
+        "text": "Cinturón"
+      },
+      "undercover": {
+        "text": "Hebilla"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p052",
+      "civilian": {
+        "text": "Peluca"
+      },
+      "undercover": {
+        "text": "Sombrero"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p053",
+      "civilian": {
+        "text": "Pijama"
+      },
+      "undercover": {
+        "text": "Camisón"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p054",
+      "civilian": {
+        "text": "Pañuelo"
+      },
+      "undercover": {
+        "text": "Servilleta"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p055",
+      "civilian": {
+        "text": "Piñata"
+      },
+      "undercover": {
+        "text": "Regalo"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p056",
+      "civilian": {
+        "text": "Termómetro"
+      },
+      "undercover": {
+        "text": "Barómetro"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p057",
+      "civilian": {
+        "text": "Pila"
+      },
+      "undercover": {
+        "text": "Enchufe"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p058",
+      "civilian": {
+        "text": "Cable"
+      },
+      "undercover": {
+        "text": "Cuerda"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p059",
+      "civilian": {
+        "text": "Mantel"
+      },
+      "undercover": {
+        "text": "Servilleta"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p060",
+      "civilian": {
+        "text": "Almohada"
+      },
+      "undercover": {
+        "text": "Cojín"
+      },
+      "difficulty": 3,
+      "reviewedBy": []
+    },
+    {
+      "id": "p061",
+      "civilian": {
+        "text": "Llavero"
+      },
+      "undercover": {
+        "text": "Llave"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p062",
+      "civilian": {
+        "text": "Moneda"
+      },
+      "undercover": {
+        "text": "Medalla"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p063",
+      "civilian": {
+        "text": "Joya"
+      },
+      "undercover": {
+        "text": "Tesoro"
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    },
+    {
+      "id": "p064",
+      "civilian": {
+        "text": "Teléfono"
+      },
+      "undercover": {
+        "text": "Walkie-talkie",
+        "alt": [
+          "Walkie"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": []
+    }
+  ]
+}
