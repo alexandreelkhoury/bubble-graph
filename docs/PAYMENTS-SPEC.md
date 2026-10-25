@@ -172,7 +172,7 @@ export function packOwned(p: { state: "PURCHASED" | "PENDING" | "CANCELLED"; rev
 
 | `subscriptionState` ✔ | Access? | `accessUntil` |
 |---|---|---|
-| `ACTIVE`, including the free trial (`lineItems[].offerPhase.freeTrial` present) and the silent 24 h grace ✔ | yes | `expiryMs + (autoRenew ? RENEWAL_SLACK_MS : 0)` |
+| `ACTIVE`, including the free trial (`lineItems[].offerPhase.freeTrial` present) and the silent 24 h grace ✔ | yes | `expiryMs + (autoRenew ? max(RENEWAL_SLACK_MS, SILENT_GRACE_MS) : 0)`. **Owner decision 2026-10-25: keep 24 h** (`SILENT_GRACE_MS`) for auto-renewing subscriptions |
 | `IN_GRACE_PERIOD` (Google keeps extending `expiryTime` ✔) | yes | `expiryMs + RENEWAL_SLACK_MS` |
 | `CANCELED` (the user keeps access until `expiryTime` ✔) | yes, only if `expiryMs > now` | `expiryMs` |
 | `ON_HOLD` (account hold: block access ✔) | no | `null` |

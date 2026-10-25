@@ -19,7 +19,7 @@ export const RENEWAL_SLACK_MS = 6 * 3600_000;
  * for up to 24 h (developer.android.com/google/play/billing/lifecycle/subscriptions). [VERIFY] whether `expiryTime`
  * is extended during it (unlike IN_GRACE_PERIOD, the doc does not say so). Until verified, an auto-renewing ACTIVE
  * subscription keeps access for this long past `expiryTime`, so a user in the silent grace never loses Premium while
- * Google still says ACTIVE. A cancelled one (autoRenew=false) still gets no slack. PAY-GAP vs §2.2 (6 h slack).
+ * Google still says ACTIVE. A cancelled one (autoRenew=false) still gets no slack. Owner decision 2026-10-25: keep 24 h (PAYMENTS-SPEC §2.2).
  */
 export const SILENT_GRACE_MS = 24 * 3600_000;
 

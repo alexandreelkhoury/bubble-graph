@@ -4,6 +4,7 @@
 // BILLING_MODE "google", ALLOW_FAKE_BILLING "0" and observability.traces.enabled false (traces would record outbound
 // Google URLs, which carry raw purchase tokens), and has no `env` block (a named environment could override any of
 // these with `wrangler deploy --env`, and is not part of the deploy flow).
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -64,12 +65,47 @@ export function checkDeployConfig(jsoncText) {
   return errors;
 }
 
+/** Billing secrets a deploy needs when BILLING_ENABLED is "1" (PAYMENTS-SPEC §6.2). */
+export const BILLING_SECRETS = ["PLAY_SERVICE_ACCOUNT_JSON", "ENTITLEMENT_KEYS"];
+
+/** True when the shipped config turns billing on, so the billing secrets must exist remotely. */
+export function billingOn(jsoncText) {
+  try {
+    return JSON.parse(stripJsonc(jsoncText)).vars?.BILLING_ENABLED === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Given `wrangler secret list --format json` output, the billing secrets that are missing. */
+export function missingBillingSecrets(secretListJson) {
+  let names = [];
+  try {
+    const list = JSON.parse(secretListJson);
+    names = Array.isArray(list) ? list.map((x) => x?.name).filter((n) => typeof n === "string") : [];
+  } catch {
+    return [...BILLING_SECRETS];
+  }
+  return BILLING_SECRETS.filter((n) => !names.includes(n));
+}
+
 function main() {
   const file = resolve(join(dirname(fileURLToPath(import.meta.url)), "..", "wrangler.jsonc"));
-  const errors = checkDeployConfig(readFileSync(file, "utf8"));
+  const text = readFileSync(file, "utf8");
+  const errors = checkDeployConfig(text);
+  if (errors.length === 0 && billingOn(text)) {
+    // Billing on: the Worker needs its secrets. `wrangler secret list` prints names only, never values.
+    let out = "";
+    try {
+      out = execFileSync("npx", ["wrangler", "secret", "list", "--format", "json"], { cwd: dirname(file), encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+    } catch {
+      errors.push("BILLING_ENABLED is \"1\" but `wrangler secret list` failed (run `npx wrangler login`)");
+    }
+    if (out) for (const n of missingBillingSecrets(out)) errors.push(`BILLING_ENABLED is "1" but secret ${n} is not set (wrangler secret put ${n})`);
+  }
   for (const e of errors) console.error(`check-deploy: ${e}`);
   if (errors.length > 0) process.exit(1);
-  console.log("check-deploy: OK (google billing, fake billing off, traces off; ADMIN_TOKEN optional — unset = admin endpoints 404)");
+  console.log(`check-deploy: OK (billing ${billingOn(text) ? "ON, secrets present" : "OFF, no billing secrets needed"}; google mode, fake billing off, traces off; ADMIN_TOKEN optional)`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

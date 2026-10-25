@@ -192,7 +192,7 @@ cd server && npx wrangler secret put ENTITLEMENT_KEYS          # paste {"active"
 npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json
 ```
 
-- `wrangler.jsonc` lists both under `secrets.required`, so `wrangler deploy` fails when one is missing; local dev only warns.
+- They are needed only when `BILLING_ENABLED` is `"1"`: `check-deploy.mjs` then checks both exist (`wrangler secret list`, names only) and refuses the deploy otherwise. With billing off (the shipped `"0"`), the Worker deploys without them.
 - `ADMIN_TOKEN` is the one optional secret (see [Admin grants](#admin-grants-comp-premium-for-a-tv-payments-spec-312)).
 - **Key rotation:** generate `k2`, add it to `keys`, set `"active":"k2"`, deploy; remove `k1` (or keep only its `x`) after at least 16 h (2 × token TTL; 24 h recommended).
 - **Local Google mode:** put the secrets and non-fake vars in `server/.dev.vars` (git-ignored, `.dev.vars*`) and run `wrangler dev` without the fake `--var`s. Never use `pnpm dev` for this: it forces fake mode, and a configured service account disables fake mode (503).
@@ -234,7 +234,7 @@ pnpm grant revoke 0123456789abcdef0123456789abcdef   # or the 64-hex hash printe
 
 1. Log in once: `pnpm --filter @mishana/server exec wrangler login`.
 2. **Rate-limit namespaces.** `namespace_id` must be a positive integer string that is unique in your account. `"1001"` to `"1004"` in `server/wrangler.jsonc` work locally; change them if they collide with other Workers.
-3. **Billing secrets and vars:** see [Billing](#billing-payments-specmd). `wrangler deploy` fails while `PLAY_SERVICE_ACCOUNT_JSON` or `ENTITLEMENT_KEYS` is missing.
+3. **Billing secrets and vars:** see [Billing](#billing-payments-specmd). Only with `BILLING_ENABLED` `"1"`: the deploy is refused while `PLAY_SERVICE_ACCOUNT_JSON` or `ENTITLEMENT_KEYS` is missing. With billing off, no billing secret is needed.
 4. Deploy: `pnpm run deploy`. This builds the web client, dry-run bundles the Worker, runs `pack-lint --release` and `check-deploy.mjs` (google billing, fake billing off, traces off), then `wrangler deploy`. The Worker is served at `https://play.<your-subdomain>.workers.dev`.
 5. **Custom domain** (optional). Add the domain to the Worker in the Cloudflare dashboard, then set `JOIN_BASE_URL` (see below).
 6. Build the TV app against the deployed URL (see below and [TV.md](TV.md#production-server-url)).

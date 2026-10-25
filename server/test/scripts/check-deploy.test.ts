@@ -1,7 +1,7 @@
 // PAYMENTS-SPEC §3.2 / §3.10 / §7.2: the deploy guard.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { checkDeployConfig, stripJsonc } from "../../scripts/check-deploy.mjs";
+import { billingOn, checkDeployConfig, missingBillingSecrets, stripJsonc } from "../../scripts/check-deploy.mjs";
 
 const REAL = readFileSync(new URL("../../wrangler.jsonc", import.meta.url), "utf8");
 
@@ -11,7 +11,9 @@ describe("check-deploy", () => {
   });
   it("ADMIN_TOKEN stays optional: never a plain var, never a required secret", () => {
     expect(checkDeployConfig(REAL.replace('"DEBUG_INVARIANTS": "0",', '"DEBUG_INVARIANTS": "0", "ADMIN_TOKEN": "x",')).join()).toMatch(/vars.ADMIN_TOKEN/);
-    expect(checkDeployConfig(REAL.replace('"ENTITLEMENT_KEYS"]', '"ENTITLEMENT_KEYS", "ADMIN_TOKEN"]')).join()).toMatch(/secrets.required/);
+    const withReq = REAL.replace('"vars": {', '"secrets": { "required": ["ADMIN_TOKEN"] }, "vars": {');
+    expect(withReq).not.toBe(REAL);
+    expect(checkDeployConfig(withReq).join()).toMatch(/secrets.required/);
   });
   it("rejects non-google billing vars", () => {
     expect(checkDeployConfig(REAL.replace('"BILLING_MODE": "google"', '"BILLING_MODE": "fake"')).join()).toMatch(/BILLING_MODE/);
@@ -25,6 +27,17 @@ describe("check-deploy", () => {
     const withEnv = REAL.replace(/\}\s*$/, ', "env": { "staging": { "vars": { "BILLING_MODE": "fake", "ALLOW_FAKE_BILLING": "1" } } } }');
     expect(withEnv).not.toBe(REAL);
     expect(checkDeployConfig(withEnv).join()).toMatch(/env/);
+  });
+  it("billing secrets are not required by wrangler, so a billing-off deploy works", () => {
+    expect(JSON.parse(stripJsonc(REAL)).secrets?.required ?? []).not.toContain("PLAY_SERVICE_ACCOUNT_JSON");
+    expect(billingOn(REAL)).toBe(false);
+    expect(billingOn(REAL.replace('"BILLING_ENABLED": "0"', '"BILLING_ENABLED": "1"'))).toBe(true);
+  });
+  it("billing on: reports each missing billing secret from `wrangler secret list` output", () => {
+    expect(missingBillingSecrets("[]")).toEqual(["PLAY_SERVICE_ACCOUNT_JSON", "ENTITLEMENT_KEYS"]);
+    expect(missingBillingSecrets('[{"name":"ENTITLEMENT_KEYS","type":"secret_text"}]')).toEqual(["PLAY_SERVICE_ACCOUNT_JSON"]);
+    expect(missingBillingSecrets('[{"name":"PLAY_SERVICE_ACCOUNT_JSON"},{"name":"ENTITLEMENT_KEYS"}]')).toEqual([]);
+    expect(missingBillingSecrets("not json")).toEqual(["PLAY_SERVICE_ACCOUNT_JSON", "ENTITLEMENT_KEYS"]);
   });
   it("JSONC stripping keeps // inside strings and drops trailing commas", () => {
     expect(JSON.parse(stripJsonc('{ "a": "https://x//y", // c\n "b": [1,2,], /* z */ }'))).toEqual({ a: "https://x//y", b: [1, 2] });
