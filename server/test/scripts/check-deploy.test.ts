@@ -1,7 +1,7 @@
 // PAYMENTS-SPEC §3.2 / §3.10 / §7.2: the deploy guard.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { billingOn, checkDeployConfig, missingBillingSecrets, stripJsonc } from "../../scripts/check-deploy.mjs";
+import { billingOn, checkDeployConfig, deployWarnings, missingBillingSecrets, stripJsonc } from "../../scripts/check-deploy.mjs";
 
 const REAL = readFileSync(new URL("../../wrangler.jsonc", import.meta.url), "utf8");
 
@@ -39,6 +39,17 @@ describe("check-deploy", () => {
     expect(missingBillingSecrets('[{"name":"PLAY_SERVICE_ACCOUNT_JSON"},{"name":"ENTITLEMENT_KEYS"}]')).toEqual([]);
     expect(missingBillingSecrets("not json")).toEqual(["PLAY_SERVICE_ACCOUNT_JSON", "ENTITLEMENT_KEYS"]);
   });
+  it("warns (never fails) when billing is switched on with empty RTDN vars", () => {
+    expect(deployWarnings(REAL)).toEqual([]); // ships BILLING_ENABLED "0"
+    const on = REAL.replace('"BILLING_ENABLED": "0"', '"BILLING_ENABLED": "1"');
+    expect(on).not.toBe(REAL);
+    expect(deployWarnings(on)).toEqual([expect.stringMatching(/RTDN_AUDIENCE, RTDN_SA_EMAIL, RTDN_SUBSCRIPTION/)]);
+    expect(checkDeployConfig(on)).toEqual([]);
+    const configured = on.replace('"RTDN_AUDIENCE": ""', '"RTDN_AUDIENCE": "https://x/api/billing/rtdn"')
+      .replace('"RTDN_SA_EMAIL": ""', '"RTDN_SA_EMAIL": "a@b"').replace('"RTDN_SUBSCRIPTION": ""', '"RTDN_SUBSCRIPTION": "projects/p/subscriptions/s"');
+    expect(deployWarnings(configured)).toEqual([]);
+  });
+
   it("JSONC stripping keeps // inside strings and drops trailing commas", () => {
     expect(JSON.parse(stripJsonc('{ "a": "https://x//y", // c\n "b": [1,2,], /* z */ }'))).toEqual({ a: "https://x//y", b: [1, 2] });
   });

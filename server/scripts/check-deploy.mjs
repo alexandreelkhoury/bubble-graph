@@ -89,10 +89,29 @@ export function missingBillingSecrets(secretListJson) {
   return BILLING_SECRETS.filter((n) => !names.includes(n));
 }
 
+/**
+ * Non-blocking reminders (printed, never fail the deploy): billing switched on while the RTDN vars are still empty.
+ * That deploy is valid (the Play RTDN push answers 503 NOT_CONFIGURED and refunds/cancellations are only picked up by
+ * the daily cron and the TV's refreshes), but it should not stay that way (docs/BILLING-LAUNCH.md step 5).
+ */
+export function deployWarnings(jsoncText) {
+  let cfg;
+  try {
+    cfg = JSON.parse(stripJsonc(jsoncText));
+  } catch {
+    return [];
+  }
+  const vars = cfg.vars ?? {};
+  if (vars.BILLING_ENABLED !== "1") return [];
+  const empty = ["RTDN_AUDIENCE", "RTDN_SA_EMAIL", "RTDN_SUBSCRIPTION"].filter((k) => !vars[k]);
+  return empty.length > 0 ? [`BILLING_ENABLED is "1" but ${empty.join(", ")} empty: Play's RTDN push will answer 503 until set`] : [];
+}
+
 function main() {
   const file = resolve(join(dirname(fileURLToPath(import.meta.url)), "..", "wrangler.jsonc"));
   const text = readFileSync(file, "utf8");
   const errors = checkDeployConfig(text);
+  for (const w of deployWarnings(text)) console.warn(`check-deploy: warning: ${w}`);
   if (errors.length === 0 && billingOn(text)) {
     // Billing on: the Worker needs its secrets. `wrangler secret list` prints names only, never values.
     let out = "";
