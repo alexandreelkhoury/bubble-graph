@@ -5,8 +5,7 @@ import type { CatalogResponseBody, EntitlementBody } from "@mishana/shared/billi
 import { BillingController, BILLING_ERROR_WINDOW_MS, CONFIRM_SLOW_MS, BILLING_KEYS, BILLING_RESEND_MS, STORE_OPEN_RESEND_MS } from "../src/tv-mock/billing/controller";
 import type { BillingDeps, BillingRoomLink, BillingToast } from "../src/tv-mock/billing/controller";
 import {
-  afterPackPurchase, backoffMs, inflightKey, initialFocus, nextRefreshAt, packState, pitchParams, planPurchaseRequest,
-  premiumCard, splitPacks, tokenForCreate, ToastGate, trialOffered,
+  afterPackPurchase, backoffMs, initialFocus, nextRefreshAt, packState, pitchParams, premiumCard, splitPacks, tokenForCreate, ToastGate,
 } from "../src/tv-mock/billing/model";
 
 const MIN = 60_000;
@@ -15,7 +14,7 @@ const NOW = 1_790_000_000_000;
 
 const CATALOG = (mode: "fake" | "google"): CatalogResponseBody => ({
   mode, packageName: "app.mishana.tv",
-  subscription: { productId: "premium", basePlanIds: ["monthly", "yearly"], trialOfferId: "trial-7d" },
+  premium: { productId: "premium" },
   freePackIds: ["en-everyday-01", "fr-everyday-01", "ar-everyday-01"],
   packs: [
     { packId: "en-food-01", productId: "pack_en_food_01", locale: "en", language: "en", title: { en: "Food", fr: "Cuisine", ar: "أكل" }, pairCount: 33, ageRating: "all" },
@@ -25,17 +24,13 @@ const CATALOG = (mode: "fake" | "google"): CatalogResponseBody => ({
 });
 
 function body(over: Partial<EntitlementBody> = {}): EntitlementBody {
-  return { token: "tok.free", premium: false, premiumUntil: null, packs: [], expiresAt: NOW + 8 * HOUR, subscription: null, ...over };
+  return { token: "tok.free", premium: false, premiumUntil: null, packs: [], expiresAt: NOW + 8 * HOUR, ...over };
 }
 
 describe("model", () => {
-  it("nextRefreshAt: before premium ends for a renewing subscriber, never sooner than 1 min, never later than 6 h", () => {
-    const sub = { state: "SUBSCRIPTION_STATE_ACTIVE" as const, basePlanId: "monthly", autoRenewing: true, inTrial: false, expiresAt: NOW + 2 * HOUR };
-    const b = body({ premium: true, premiumUntil: NOW + 8 * HOUR, subscription: sub });
-    const at = nextRefreshAt(b, NOW);
-    expect(at).toBeLessThanOrEqual(sub.expiresAt + 10 * MIN);
-    expect(at).toBeLessThanOrEqual(b.premiumUntil! - 30 * MIN);
-    expect(at).toBe(sub.expiresAt + 10 * MIN);
+  it("nextRefreshAt: before premium or the token ends, never sooner than 1 min, never later than 6 h", () => {
+    const b = body({ premium: true, premiumUntil: NOW + 2 * HOUR });
+    expect(nextRefreshAt(b, NOW)).toBe(b.premiumUntil! - 30 * MIN);
     expect(nextRefreshAt(body({ expiresAt: NOW + 30 * MIN }), NOW)).toBe(NOW + MIN);
     expect(nextRefreshAt(body({ expiresAt: NOW + 48 * HOUR }), NOW)).toBe(NOW + 6 * HOUR);
     expect(nextRefreshAt(body(), NOW)).toBe(NOW + 6 * HOUR); // nulls ignored; token exp − 1 h = 7 h > 6 h
@@ -48,14 +43,9 @@ describe("model", () => {
   });
 
   it("the Premium card and the pack card states", () => {
-    expect(premiumCard(null)).toBe("plans");
-    expect(premiumCard(body())).toBe("plans");
-    const sub = (state: NonNullable<EntitlementBody["subscription"]>["state"]) => ({ state, basePlanId: "yearly", autoRenewing: true, inTrial: false, expiresAt: NOW });
-    expect(premiumCard(body({ premium: true, subscription: sub("SUBSCRIPTION_STATE_ACTIVE") }))).toBe("premium");
-    expect(premiumCard(body({ premium: true, subscription: sub("SUBSCRIPTION_STATE_IN_GRACE_PERIOD") }))).toBe("grace");
-    expect(premiumCard(body({ premium: false, subscription: sub("SUBSCRIPTION_STATE_ON_HOLD") }))).toBe("suspended");
-    expect(premiumCard(body({ premium: false, subscription: sub("SUBSCRIPTION_STATE_PAUSED") }))).toBe("suspended");
-    expect(premiumCard(body({ premium: false, subscription: sub("SUBSCRIPTION_STATE_EXPIRED") }))).toBe("plans");
+    expect(premiumCard(null)).toBe("unlock");
+    expect(premiumCard(body())).toBe("unlock");
+    expect(premiumCard(body({ premium: true }))).toBe("premium");
     const none = new Set<string>();
     expect(packState("en-food-01", "pack_en_food_01", body({ packs: ["en-food-01"] }), none)).toBe("owned");
     expect(packState("en-food-01", "pack_en_food_01", body({ premium: true }), none)).toBe("included");
@@ -65,14 +55,14 @@ describe("model", () => {
 
   it("initial focus per entry and state", () => {
     const packs = ["pack_en_food_01"];
-    expect(initialFocus({ focusProductId: null, origin: "LOBBY_BUTTON" }, { kind: "ready" }, "plans", packs)).toBe("plan:yearly");
-    expect(initialFocus({ focusProductId: "premium", origin: "LOCKED_SETTING" }, { kind: "ready" }, "suspended", packs)).toBe("fix");
-    expect(initialFocus({ focusProductId: "premium", origin: "LOCKED_SETTING" }, { kind: "ready" }, "grace", packs)).toBe("manage");
-    expect(initialFocus({ focusProductId: null, origin: "LOBBY_BUTTON" }, { kind: "ready" }, "premium", packs)).toBe("manage");
-    expect(initialFocus({ focusProductId: "pack_en_food_01", origin: "LOCKED_PACK" }, { kind: "ready" }, "plans", packs)).toBe("pack:pack_en_food_01");
-    expect(initialFocus({ focusProductId: "pack_xx_01", origin: "LOCKED_PACK" }, { kind: "ready" }, "plans", packs)).toBe("plan:yearly");
-    expect(initialFocus({ focusProductId: null, origin: "LOBBY_BUTTON" }, { kind: "unavailable" }, "plans", packs)).toBe("retry");
-    expect(initialFocus({ focusProductId: null, origin: "LOBBY_BUTTON" }, { kind: "google" }, "plans", packs)).toBe("ok");
+    expect(initialFocus({ focusProductId: null, origin: "LOBBY_BUTTON" }, { kind: "ready" }, "unlock", packs)).toBe("unlock");
+    expect(initialFocus({ focusProductId: "premium", origin: "LOCKED_SETTING" }, { kind: "ready" }, "unlock", packs)).toBe("unlock");
+    expect(initialFocus({ focusProductId: "premium", origin: "LOCKED_SETTING" }, { kind: "ready" }, "premium", packs)).toBe("pack:pack_en_food_01");
+    expect(initialFocus({ focusProductId: null, origin: "LOBBY_BUTTON" }, { kind: "ready" }, "premium", [])).toBe("restore");
+    expect(initialFocus({ focusProductId: "pack_en_food_01", origin: "LOCKED_PACK" }, { kind: "ready" }, "unlock", packs)).toBe("pack:pack_en_food_01");
+    expect(initialFocus({ focusProductId: "pack_xx_01", origin: "LOCKED_PACK" }, { kind: "ready" }, "unlock", packs)).toBe("unlock");
+    expect(initialFocus({ focusProductId: null, origin: "LOBBY_BUTTON" }, { kind: "unavailable" }, "unlock", packs)).toBe("retry");
+    expect(initialFocus({ focusProductId: null, origin: "LOBBY_BUTTON" }, { kind: "google" }, "unlock", packs)).toBe("ok");
   });
 
   it("packs: room language first (ar-LB counts as ar), pitch rounded down to 10", () => {
@@ -100,25 +90,6 @@ describe("model", () => {
     g.flush(true);
     g.flush(true);
     expect(shown).toEqual(["a", "c"]);
-  });
-
-  it("§4.5 trial offer: only with a catalog trial offer, a fresh install and no subscription row", () => {
-    const cat = CATALOG("fake");
-    expect(trialOffered(cat, null, false)).toBe(true);
-    expect(trialOffered(cat, body(), false)).toBe(true);
-    expect(trialOffered(cat, body(), true)).toBe(false);
-    const expired = { state: "SUBSCRIPTION_STATE_EXPIRED" as const, basePlanId: "yearly", autoRenewing: false, inTrial: false, expiresAt: NOW - HOUR };
-    expect(trialOffered(cat, body({ subscription: expired }), false)).toBe(false);
-    expect(trialOffered({ subscription: { ...cat.subscription, trialOfferId: "" } }, null, false)).toBe(false);
-    expect(trialOffered(null, null, false)).toBe(false);
-    expect(planPurchaseRequest("i", "monthly").offerId).toBe("trial-7d");
-    expect(planPurchaseRequest("i", "monthly", false).offerId).toBeNull();
-  });
-
-  it("the in-flight key names the plan, so only the button the user pressed confirms", () => {
-    expect(inflightKey("premium", "yearly")).toBe("premium:yearly");
-    expect(inflightKey("premium", "monthly")).not.toBe(inflightKey("premium", "yearly"));
-    expect(inflightKey("pack_en_food_01")).toBe("pack_en_food_01");
   });
 
   it("backoff: 1 s doubling, capped at 10 min", () => {
@@ -200,7 +171,7 @@ describe("BillingController", () => {
     const h = harness({ mode: "google" });
     expect(await h.c.loadCatalog()).toBe(true);
     expect(h.c.mode.value).toBe("google");
-    expect(await h.c.purchase("premium", "yearly")).toBeNull();
+    expect(await h.c.purchase("premium")).toBeNull();
     expect(await h.c.refresh(true)).toBe(false);
     expect(h.urls()).toEqual(["/api/billing/catalog"]);
   });
@@ -216,12 +187,12 @@ describe("BillingController", () => {
     const h = harness();
     await h.c.loadCatalog();
     h.c.attach(h.link);
-    const result = await h.c.purchase("premium", "yearly");
+    const result = await h.c.purchase("premium");
     expect(result).toBe("OK");
     expect(h.urls()).toEqual(["/api/billing/catalog", "/api/billing/fake/purchase", "/api/billing/verify"]);
     const installId = h.mem.get(BILLING_KEYS.installId)!;
     expect(installId).toMatch(/^[0-9a-f]{32}$/);
-    expect(h.calls[1]!.body).toEqual({ installId, productId: "premium", basePlanId: "yearly", offerId: "trial-7d" });
+    expect(h.calls[1]!.body).toEqual({ installId, productId: "premium" });
     expect(h.calls[2]!.body).toEqual({ installId, purchases: [{ productId: "premium", purchaseToken: "fake.x.premium.1" }] });
     const token = h.c.ent.value!.token;
     expect(h.mem.get(BILLING_KEYS.token)).toBe(token);
@@ -235,24 +206,15 @@ describe("BillingController", () => {
     expect(h.c.inflight.value).toBeNull();
   });
 
-  it("a plan purchase marks only that plan in flight, and the trial is used once per install", async () => {
+  it("the purchase in flight is keyed by its product id, so only the button the user pressed confirms", async () => {
     const h = harness();
     await h.c.loadCatalog();
     h.c.attach(h.link);
-    expect(h.c.trialOffered).toBe(true);
-    const p = h.c.purchase("premium", "monthly");
-    expect(h.c.inflight.value).toBe("premium:monthly");
+    const p = h.c.purchase("premium");
+    expect(h.c.inflight.value).toBe("premium");
+    expect(await h.c.purchase("pack_en_food_01")).toBeNull(); // one purchase at a time
     await p;
-    expect(h.c.trialUsed.value).toBe(true);
-    expect(h.mem.get(BILLING_KEYS.trialUsed)).toBe(h.mem.get(BILLING_KEYS.installId));
-    // A new controller on the same storage (a reload) still knows; a different install id does not inherit it.
-    expect(new BillingController(harnessDeps(h.mem)).trialUsed.value).toBe(true);
-    const other = new Map(h.mem);
-    other.set(BILLING_KEYS.installId, "f".repeat(32));
-    expect(new BillingController(harnessDeps(other)).trialUsed.value).toBe(false);
-    await h.c.testExpirePremium();
-    await h.c.purchase("premium", "yearly");
-    expect(h.calls.filter((x) => x.url === "/api/billing/fake/purchase").map((x) => (x.body as { offerId: unknown }).offerId)).toEqual(["trial-7d", null]);
+    expect(h.c.inflight.value).toBeNull();
   });
 
   it("the cached entitlement body is UI-only: only the stored token ever leaves the browser", async () => {
@@ -419,15 +381,15 @@ describe("BillingController", () => {
     expect(h.toasts.map((x) => x.key)).toEqual(["lobby.premiumEnded"]);
   });
 
-  it("test controls: Expire Premium now → fake/set EXPIRED → /entitlement → entitlement sent", async () => {
+  it("test controls: Refund Premium → fake/set REVOKED → /entitlement → entitlement sent", async () => {
     const h = harness();
     await h.c.loadCatalog();
     h.c.attach(h.link);
-    await h.c.purchase("premium", "monthly");
+    await h.c.purchase("premium");
     h.sent.length = 0;
-    expect(await h.c.testExpirePremium()).toBe(true);
+    expect(await h.c.testRefundPremium()).toBe(true);
     expect(h.urls().slice(-2)).toEqual(["/api/billing/fake/set", "/api/billing/entitlement"]);
-    expect(h.calls.at(-2)!.body).toEqual({ purchaseToken: "fake.x.premium.1", state: "SUBSCRIPTION_STATE_EXPIRED" });
+    expect(h.calls.at(-2)!.body).toEqual({ purchaseToken: "fake.x.premium.1", state: "REVOKED" });
     expect(h.sent).toEqual([{ v: 1, t: "entitlement", token: h.c.ent.value!.token }]);
     expect(h.c.hasTestTarget("premium")).toBe(false);
   });

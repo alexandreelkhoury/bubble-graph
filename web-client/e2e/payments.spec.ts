@@ -231,7 +231,7 @@ async function reach(tv: Page, sel: string, keys: string[], n = 6): Promise<void
   expect(await tv.evaluate((s) => document.activeElement?.matches(s) ?? false, sel), `D-pad reaches ${sel}`).toBe(true);
 }
 
-/** Lobby → Premium (D-pad) → the Store opens with the yearly plan focused. */
+/** Lobby → Premium (D-pad) → the Store opens with "Unlock Premium" focused. */
 async function openStoreByRemote(tv: Page): Promise<void> {
   await reach(tv, "[data-lobby=premium]", ["ArrowDown", "ArrowLeft"]);
   await tv.keyboard.press("Enter");
@@ -322,9 +322,10 @@ test("2. purchase → premium → a premium pack plays (D-pad only on the TV)", 
   const phones = await joinPhones(browser, code, ["Rami", "Léa", "Nour", "Sam"]);
   await openStoreByRemote(tv.page);
   await expect(tv.page.locator(".tvshop__test")).toHaveText(text("store.testMode"));
-  // §4.5: the disclosure for the focused (yearly) plan is on screen.
-  await expect(tv.page.locator(".tvshop__legal")).toContainText("$29.99");
-  await expect.poll(() => tv.page.evaluate(() => document.activeElement?.getAttribute("data-focus"))).toBe("plan:yearly");
+  // One-time lifetime unlock: one button with the price and the lifetime line.
+  await expect(tv.page.locator('[data-focus="unlock"]')).toContainText("$7.99");
+  await expect(tv.page.locator(".tvshop__legal")).toHaveText(text("store.premiumLifetime"));
+  await expect.poll(() => tv.page.evaluate(() => document.activeElement?.getAttribute("data-focus"))).toBe("unlock");
   await tv.page.keyboard.press("Enter");
   // Premium without a new room.
   await expectView(tv, (v) => v.premium && v.lockedPacks.length === 0, "premium:true, nothing locked");
@@ -367,7 +368,7 @@ test("3. a single pack purchase unlocks only that pack", async ({ browser }) => 
   await done([tv, ...phones]);
 });
 
-test("4. expiry mid-game: the game finishes with its pack, then the lobby falls back to free (notices once)", async ({ browser }) => {
+test("4. Premium refunded mid-game: the game finishes with its pack, then the lobby falls back to free (notices once)", async ({ browser }) => {
   test.setTimeout(400_000);
   const { tv, code } = await openTv(browser);
   const phones = await joinPhones(browser, code, ["Rami", "Léa", "Nour", "Sam"]);
@@ -382,8 +383,8 @@ test("4. expiry mid-game: the game finishes with its pack, then the lobby falls 
   await expect(tv.page.locator(".tvreveal")).toBeVisible();
   // Mid-game: the pause menu's fake-mode test control (the Store opens only in the lobby).
   await tv.page.keyboard.press("Escape");
-  await tv.page.locator(".tvmenu__item[data-test=expire]").click();
-  await expectView(tv, (v) => !v.premium, "premium:false after expiry");
+  await tv.page.locator(".tvmenu__item[data-test=refund-premium]").click();
+  await expectView(tv, (v) => !v.premium, "premium:false after the refund");
   await playToResults(tv.page, phones);
   const res = await expectView(tv, (v) => v.phase === "RESULTS" && v.result !== null, "results");
   expect(res.result!.pack.id).toBe("en-food-01");
@@ -405,7 +406,7 @@ test("4. expiry mid-game: the game finishes with its pack, then the lobby falls 
 test("5. fake billing is refused off-LAN (request level)", async ({ request }) => {
   const r = await request.post("/api/billing/fake/purchase", {
     headers: { Host: "example.com", "Content-Type": "application/json" },
-    data: { installId: "0".repeat(32), productId: "premium", basePlanId: "yearly" },
+    data: { installId: "0".repeat(32), productId: "premium" },
   });
   expect([404, 503]).toContain(r.status());
 });
@@ -441,7 +442,7 @@ test("7. open and close the Store 4 times by D-pad, then buy: premium arrives, n
     await expectView(vip, (v) => !v.tvBusy, `tvBusy off (${i + 1})`);
   }
   await openStoreByRemote(tv.page);
-  await expect.poll(() => tv.page.evaluate(() => document.activeElement?.getAttribute("data-focus"))).toBe("plan:yearly");
+  await expect.poll(() => tv.page.evaluate(() => document.activeElement?.getAttribute("data-focus"))).toBe("unlock");
   await tv.page.keyboard.press("Enter");
   await expectView(tv, (v) => v.premium && v.lockedPacks.length === 0, "premium:true after 4 Store visits");
   await expect(tv.page.locator(".tvshop__active")).toBeVisible();

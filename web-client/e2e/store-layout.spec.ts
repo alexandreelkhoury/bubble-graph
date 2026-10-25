@@ -19,11 +19,9 @@ const text = (k: string, lang: Lang = "en"): string => {
   return v;
 };
 
-const NOW = Date.now();
-const DAY = 86_400_000;
 const CATALOG = {
   mode: "fake", packageName: "app.mishana.tv",
-  subscription: { productId: "premium", basePlanIds: ["monthly", "yearly"], trialOfferId: "trial-7d" },
+  premium: { productId: "premium" },
   freePackIds: ["en-everyday-01", "fr-everyday-01", "ar-everyday-01"],
   packs: [
     { packId: "en-food-01", productId: "pack_en_food_01", locale: "en", language: "en", title: { en: "Food & drinks", fr: "À table", ar: "أكل وشرب" }, pairCount: 33, ageRating: "all" },
@@ -44,8 +42,7 @@ async function mockBilling(page: Page, opts: { holdVerify?: boolean } = {}): Pro
   const gate = new Promise<void>((r) => { open = r; });
   const posts: Billing["posts"] = [];
   const ent = () => ({
-    token: `fake.jwt.${posts.length}`, premium, premiumUntil: premium ? NOW + 30 * DAY : null, packs: [...packs].sort(), expiresAt: Date.now() + 8 * 3_600_000,
-    subscription: premium ? { state: "SUBSCRIPTION_STATE_ACTIVE", basePlanId: "yearly", autoRenewing: true, inTrial: true, expiresAt: NOW + 7 * DAY } : null,
+    token: `fake.jwt.${posts.length}`, premium, premiumUntil: premium ? Date.now() + 8 * 3_600_000 : null, packs: [...packs].sort(), expiresAt: Date.now() + 8 * 3_600_000,
   });
   await page.route("**/api/billing/**", async (route: Route) => {
     const url = new URL(route.request().url()).pathname;
@@ -83,14 +80,14 @@ const focusId = (p: Page): Promise<string | null> => p.evaluate(() => {
   return a ? (a.getAttribute("data-focus") ?? a.getAttribute("data-lobby") ?? a.getAttribute("data-test") ?? a.className) : null;
 });
 
-/** Lobby → Premium (D-pad only; in RTL the bar runs right to left) → the Store with the yearly plan focused. */
+/** Lobby → Premium (D-pad only; in RTL the bar runs right to left) → the Store with "Unlock Premium" focused. */
 async function openStore(tv: Page, lang: Lang): Promise<void> {
   const back = lang === "ar" ? "ArrowRight" : "ArrowLeft";
   for (let i = 0; i < 6 && (await focusId(tv)) !== "premium"; i++) { await tv.keyboard.press(i === 0 ? "ArrowDown" : back); await tv.waitForTimeout(120); }
   expect(await focusId(tv)).toBe("premium");
   await tv.keyboard.press("Enter");
   await expect(tv.locator(".tvshop__body")).toBeVisible();
-  await expect.poll(() => focusId(tv)).toBe("plan:yearly");
+  await expect.poll(() => focusId(tv)).toBe("unlock");
 }
 
 type Box = { top: number; bottom: number; left: number; right: number };
@@ -164,20 +161,21 @@ async function expectToastClear(tv: Page, what: string): Promise<void> {
 }
 
 for (const lang of ["en", "fr", "ar", "es"] as const) {
-  test(`${lang}: the Store fits, the disclosure stays above the packs, the footer row ends where it ends`, async ({ browser }) => {
+  test(`${lang}: the Store fits, the lifetime line stays above the packs, the footer row ends where it ends`, async ({ browser }) => {
     const { ctx, tv } = await tvPage(browser, lang);
     await mockBilling(tv);
     await openLobby(tv);
     await openStore(tv, lang);
-    await expectStoreFits(tv, `${lang} plans`);
-    // §4.5: the trial wording (a new install), at most three lines of 20 sp text.
+    await expectStoreFits(tv, `${lang} unlock`);
+    // One button with the price, and the one-time line (one line of 20 sp text); nothing else on the card.
+    await expect(tv.locator('[data-focus="unlock"]')).toHaveText(text("store.unlockPremium", lang).replace("{price}", "\u2068$7.99\u2069"));
     const legal = tv.locator(".tvshop__legal");
-    await expect(legal).toContainText(text("store.legalCancelTrial", lang));
+    await expect(legal).toHaveText(text("store.premiumLifetime", lang));
     const lines = await legal.evaluate((e) => Math.round((e as HTMLElement).offsetHeight / parseFloat(getComputedStyle(e).lineHeight)));
-    expect(lines, `${lang} disclosure lines`).toBeLessThanOrEqual(3);
-    await expect(tv.locator(".tvshop__badge")).toHaveCount(2);
+    expect(lines, `${lang} lifetime line`).toBeLessThanOrEqual(2);
+    await expect(tv.locator(".tvshop__card button")).toHaveCount(1);
 
-    // Down to the footer, then along it: Restore → Expire → Refund, and either end of the row stays put.
+    // Down to the footer, then along it: Restore → Refund Premium → Refund pack, and either end of the row stays put.
     const inFoot = (): Promise<boolean> => tv.evaluate(() => !!document.activeElement?.closest(".tvshop__foot"));
     for (let i = 0; i < 4 && !(await inFoot()); i++) { await tv.keyboard.press("ArrowDown"); await tv.waitForTimeout(120); }
     expect(await inFoot(), `${lang}: Down reaches the footer`).toBe(true);
@@ -188,7 +186,7 @@ for (const lang of ["en", "fr", "ar", "es"] as const) {
     expect(await focusId(tv), `${lang}: Back along the footer stops at Restore`).toBe("restore");
     const path: (string | null)[] = [];
     for (let i = 0; i < 4; i++) { await tv.keyboard.press(fwd); await tv.waitForTimeout(120); path.push(await focusId(tv)); }
-    expect(path, `${lang} footer path`).toEqual(["expire", "refund", "refund", "refund"]);
+    expect(path, `${lang} footer path`).toEqual(["refund-premium", "refund", "refund", "refund"]);
     await tv.keyboard.press("Escape");
     await expect(tv.locator(".tvshop")).toHaveCount(0);
     await ctx.close();
@@ -201,8 +199,9 @@ for (const lang of ["en", "fr", "ar", "es"] as const) {
     await mockBilling(tv);
     await openLobby(tv);
     await openStore(tv, lang);
-    await tv.keyboard.press("Enter"); // yearly
-    await expect(tv.locator(".tvshop__active")).toBeVisible();
+    await tv.keyboard.press("Enter"); // Unlock Premium
+    await expect(tv.locator(".tvshop__active")).toHaveText(text("store.premiumActive", lang));
+    await expect(tv.locator(".tvshop__card button")).toHaveCount(0);
     const chips = tv.locator(".tvshop__pack .tvshop__chip");
     await expect(chips.first()).toHaveText(text("store.included", lang));
     expect(await chips.count()).toBe(CATALOG.packs.length);
@@ -212,24 +211,23 @@ for (const lang of ["en", "fr", "ar", "es"] as const) {
 }
 
 for (const lang of ["en", "ar"] as const) {
-  test(`${lang}: a plan purchase in flight — only that plan confirms, nothing grows past the canvas, then verifyFailed`, async ({ browser }) => {
+  test(`${lang}: the Premium purchase in flight — the unlock button confirms, nothing grows past the canvas, then verifyFailed`, async ({ browser }) => {
     test.setTimeout(90_000);
     const { ctx, tv } = await tvPage(browser, lang);
     const billing = await mockBilling(tv, { holdVerify: true });
     await openLobby(tv);
     await openStore(tv, lang);
-    await tv.keyboard.press("Enter"); // yearly
-    const yearly = tv.locator('[data-focus="plan:yearly"]');
-    const monthly = tv.locator('[data-focus="plan:monthly"]');
-    await expect(yearly.locator(".tvshop__busy")).toHaveText(text("store.confirming", lang));
-    await expect(monthly.locator(".tvshop__busy")).toHaveCount(0);
-    expect((billing.posts.find((p) => p.url.endsWith("/fake/purchase"))?.body as { offerId?: unknown }).offerId).toBe("trial-7d");
-    await expectStoreFits(tv, `${lang} plan confirming`);
+    await tv.keyboard.press("Enter"); // Unlock Premium
+    const unlock = tv.locator('[data-focus="unlock"]');
+    await expect(unlock.locator(".tvshop__busy")).toHaveText(text("store.confirming", lang));
+    await expect(tv.locator(".tvshop__pack .tvshop__busy")).toHaveCount(0);
+    expect(billing.posts.find((p) => p.url.endsWith("/fake/purchase"))?.body).toEqual({ installId: expect.stringMatching(/^[0-9a-f]{32}$/), productId: "premium" });
+    await expectStoreFits(tv, `${lang} premium confirming`);
     // §4.4: after 15 s the button says verifyFailed (one line), and the same sentence is a toast in its own slot.
-    await expect(yearly.locator(".tvshop__busy")).toHaveAttribute("title", text("store.verifyFailed", lang), { timeout: 20_000 });
-    await expectStoreFits(tv, `${lang} plan verify slow`);
+    await expect(unlock.locator(".tvshop__busy")).toHaveAttribute("title", text("store.verifyFailed", lang), { timeout: 20_000 });
+    await expectStoreFits(tv, `${lang} premium verify slow`);
     await expect(tv.locator(".tvshop .tvtoast")).toHaveText(text("store.verifyFailed", lang));
-    await expectToastClear(tv, `${lang} plan verify slow`);
+    await expectToastClear(tv, `${lang} premium verify slow`);
     billing.release();
     await expect(tv.locator(".tvshop__active")).toBeVisible();
     await ctx.close();
@@ -265,28 +263,6 @@ for (const lang of ["en", "ar"] as const) {
     await ctx.close();
   });
 }
-
-test("en: no trial offer once this install had Premium — price wording, no badge, no offer id", async ({ browser }) => {
-  const { ctx, tv } = await tvPage(browser, "en", () => {
-    try {
-      const id = "ab".repeat(16);
-      localStorage.setItem("mishana:installId", id);
-      localStorage.setItem("mishana:trialUsed", id);
-    } catch { /* storage blocked */ }
-  });
-  const billing = await mockBilling(tv);
-  await openLobby(tv);
-  await openStore(tv, "en");
-  const legal = tv.locator(".tvshop__legal");
-  await expect(legal).toContainText(text("store.legalCancel"));
-  await expect(legal).not.toContainText(text("store.legalCancelTrial"));
-  await expect(legal).toContainText("$29.99");
-  await expect(tv.locator(".tvshop__badge")).toHaveCount(0);
-  await tv.keyboard.press("Enter");
-  await expect(tv.locator(".tvshop__active")).toBeVisible();
-  expect((billing.posts.find((p) => p.url.endsWith("/fake/purchase"))?.body as { offerId?: unknown }).offerId).toBeNull();
-  await ctx.close();
-});
 
 // The 20 dp between the grid's last row and the bar cannot hold a 20 sp label, so the focus tooltip of the icon-only
 // Premium button overlaps the last row's first tile while focus is on that button; it must at least be drawn on top

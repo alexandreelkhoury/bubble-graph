@@ -1,8 +1,6 @@
 // PAYMENTS-SPEC §2.4 / §4.4 / §5.2: the TV mock store's pure model (refresh timer, row and card states, initial focus,
 // what a pack bought from a locked row does to the lobby). No I/O; unit-tested in test/billing.test.ts.
-import { PREMIUM_PRODUCT_ID, TRIAL_OFFER_ID } from "@mishana/shared/billing/products";
-import type { BasePlanId } from "@mishana/shared/billing/products";
-import type { SubState } from "@mishana/shared/billing/entitlement";
+import { PREMIUM_PRODUCT_ID } from "@mishana/shared/billing/products";
 import type { CatalogPackBody, CatalogResponseBody, EntitlementBody } from "@mishana/shared/billing";
 import type { Locale } from "@mishana/shared/constants";
 import { languageOf } from "@mishana/shared/engine";
@@ -13,11 +11,10 @@ const HOUR = 60 * MIN;
 
 /**
  * §2.4 rule 3 (the TV's `BillingRepository.nextRefreshAt`, ported):
- * max(now + 1 min, min(expiresAt − 1 h, subscription.expiresAt + 10 min, premiumUntil − 30 min, now + 6 h)), nulls ignored.
+ * max(now + 1 min, min(expiresAt − 1 h, premiumUntil − 30 min, now + 6 h)), nulls ignored.
  */
-export function nextRefreshAt(body: Pick<EntitlementBody, "expiresAt" | "premiumUntil" | "subscription">, nowMs: number): number {
+export function nextRefreshAt(body: Pick<EntitlementBody, "expiresAt" | "premiumUntil">, nowMs: number): number {
   const terms = [body.expiresAt - HOUR, nowMs + 6 * HOUR];
-  if (body.subscription?.expiresAt != null) terms.push(body.subscription.expiresAt + 10 * MIN);
   if (body.premiumUntil !== null) terms.push(body.premiumUntil - 30 * MIN);
   return Math.max(nowMs + MIN, Math.min(...terms));
 }
@@ -34,20 +31,12 @@ export function tokenForCreate(body: Pick<EntitlementBody, "token" | "expiresAt"
 }
 
 /** Synthetic prices of the fake store (the TV's debug FakeBillingGateway uses the same ones, §4.8). Never on a phone. */
-export const FAKE_PRICES = { yearly: "$29.99", monthly: "$4.99", pack: "$1.99" } as const satisfies Record<BasePlanId | "pack", string>;
-export const FAKE_TRIAL_DAYS = 7;
-/** §4.4: the plan buttons side by side, yearly first (BASE_PLAN_IDS order is monthly, yearly). */
-export const PLAN_DISPLAY_ORDER: readonly BasePlanId[] = ["yearly", "monthly"];
+export const FAKE_PRICES = { premium: "$7.99", pack: "$1.99" } as const;
 
-/** §4.4 Premium card, one of. */
-export type PremiumCard = "plans" | "suspended" | "grace" | "premium";
-const SUSPENDED: readonly SubState[] = ["SUBSCRIPTION_STATE_ON_HOLD", "SUBSCRIPTION_STATE_PAUSED"];
-
-export function premiumCard(body: Pick<EntitlementBody, "premium" | "subscription"> | null): PremiumCard {
-  const state = body?.subscription?.state;
-  if (state && SUSPENDED.includes(state)) return "suspended";
-  if (!body?.premium) return "plans";
-  return state === "SUBSCRIPTION_STATE_IN_GRACE_PERIOD" ? "grace" : "premium";
+/** §4.4 Premium card, one of: the unlock button, or "Premium is active" (lifetime, nothing to manage). */
+export type PremiumCard = "unlock" | "premium";
+export function premiumCard(body: Pick<EntitlementBody, "premium"> | null): PremiumCard {
+  return body?.premium ? "premium" : "unlock";
 }
 
 /** §4.4 pack card trailing state, exactly one of. */
@@ -67,16 +56,16 @@ export interface StoreEntry { focusProductId: string | null; origin: StoreOrigin
 export type StorePhase = { kind: "loading" } | { kind: "ready" } | { kind: "unavailable" } | { kind: "google" };
 
 /** Focus targets, as `data-focus` ids on the store's controls. */
-export type FocusId = `plan:${BasePlanId}` | "fix" | "manage" | `pack:${string}` | "retry" | "ok";
+export type FocusId = "unlock" | `pack:${string}` | "restore" | "retry" | "ok";
 
-/** §4.4 initial focus: "premium" → yearly plan (or Fix payment / Manage); a pack product → that card; null → like premium. */
+/** §4.4 initial focus: "premium" → the unlock button (once Premium is active: the first pack, else Restore); a pack product → that card; null → like premium. */
 export function initialFocus(entry: StoreEntry, phase: StorePhase, card: PremiumCard, packProductIds: readonly string[]): FocusId {
   if (phase.kind === "unavailable") return "retry";
   if (phase.kind === "google") return "ok";
-  const premiumTarget: FocusId = card === "plans" ? "plan:yearly" : card === "suspended" ? "fix" : "manage";
   const f = entry.focusProductId;
   if (f && f !== PREMIUM_PRODUCT_ID && packProductIds.includes(f)) return `pack:${f}`;
-  return premiumTarget;
+  if (card === "unlock") return "unlock";
+  return packProductIds[0] ? `pack:${packProductIds[0]}` : "restore";
 }
 
 /** §4.4 packs row: the room's word language first, then the others (after the "Other languages" divider). */
@@ -91,29 +80,6 @@ export function splitPacks(packs: readonly CatalogPackBody[], wordLocale: Locale
 export function pitchParams(catalog: Pick<CatalogResponseBody, "packs">): { count: number; pairs: number } {
   const pairs = catalog.packs.reduce((n, p) => n + p.pairCount, 0);
   return { count: catalog.packs.length, pairs: Math.floor(pairs / 10) * 10 };
-}
-
-/**
- * §5.2: the fake-purchase request of a plan button. The trial offer exists on both plans (§1.1) but only for a new
- * customer, so a plan bought without one sends `offerId: null` (FakePurchaseRequest allows it).
- */
-export function planPurchaseRequest(installId: string, plan: BasePlanId, trial = true): { installId: string; productId: string; basePlanId: BasePlanId; offerId: typeof TRIAL_OFFER_ID | null } {
-  return { installId, productId: PREMIUM_PRODUCT_ID, basePlanId: plan, offerId: trial ? TRIAL_OFFER_ID : null };
-}
-
-/**
- * §4.5 "with a trial offer" vs "without": the fake store stands in for Play's offer eligibility ("new customer
- * acquisition → never had this subscription", §1.1). There is a trial only when the catalog names a trial offer, this
- * install never bought `premium` (the mock's per-install flag), and the entitlement carries no subscription row at all
- * (an expired, on-hold or paused one means "had this subscription").
- */
-export function trialOffered(catalog: Pick<CatalogResponseBody, "subscription"> | null, body: Pick<EntitlementBody, "subscription"> | null, trialUsed: boolean): boolean {
-  return !!catalog?.subscription.trialOfferId && !trialUsed && !body?.subscription;
-}
-
-/** The in-flight key of a purchase: `premium:<basePlanId>` for a plan, the product id for a pack (§4.4 "the button the user started from"). */
-export function inflightKey(productId: string, plan?: BasePlanId): string {
-  return plan ? `${productId}:${plan}` : productId;
 }
 
 /**

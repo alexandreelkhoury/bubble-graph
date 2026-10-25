@@ -158,10 +158,10 @@ export function PauseMenu({ view }: { view: TvView }) {
             })}><Icon name="door-out" />{t("tv.endGame")}</button>
             <button type="button" class="tvmenu__item" onClick={tvExit}><Icon name="x" />{t("tv.exitApp")}</button>
             {/* PAY-GAP: §5.2 puts the fake-mode test controls in the Store, which opens only in LOBBY, while §5.3 test 4
-                expires Premium mid-game. The same two debug controls (plain English, fake mode only) are here too. */}
+                ends Premium mid-game. The same two debug controls (plain English, fake mode only) are here too. */}
             {billing.fake && billing.hasTestTarget("premium") && (
-              <button type="button" class="tvmenu__item tvmenu__item--test" data-test="expire" onClick={() => { void billing.testExpirePremium(); closePause(); }}>
-                <Icon name="timer" />Expire Premium now
+              <button type="button" class="tvmenu__item tvmenu__item--test" data-test="refund-premium" onClick={() => { void billing.testRefundPremium(); closePause(); }}>
+                <Icon name="timer" />Refund Premium
               </button>
             )}
             {billing.fake && billing.hasTestTarget("pack") && (
