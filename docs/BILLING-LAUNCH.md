@@ -40,7 +40,7 @@ Then play one game with the TV app and two phones. Every pack is playable and no
 2. **Products** ([PAYMENTS-SPEC §8.B.5–6](PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps)). Use exactly these ids, because the code depends on them:
    **Every product is a one-time in-app product** (Monetize → Products → **One-time products**). There is **no subscription**: do not create one.
    - `premium`: lifetime Premium (non-consumable, one purchase option, "Buy"). Recommended price **$7.99**. Launch promo **$5.99**: set it as a sale / temporary price change in Play Console (no code involved), then end it to return to $7.99. **Activate** it.
-   - one one-time product per pack row of `pnpm --silent --filter @mishana/server billing:products` (14 packs: `pack_en_food_01` … `pack_lb_life_01`), each with one purchase option. Recommended **$1.99**, **$2.99** for the big packs (the script prints the suggestion). **Activate** each one.
+   - one one-time product per pack row of `pnpm --silent --filter @mishana/server billing:products` (19 packs today, Spanish included: `pack_en_food_01` … `pack_lb_life_01`), each with one purchase option. Recommended **$1.99**, **$2.99** for the big packs (the script prints the suggestion). **Activate** each one.
    - Prices are yours to set and can change at any time in Play Console (use per-country pricing; about 40% lower in Lebanon/ME). The code never contains a price.
 3. **License testing:** Settings → License testing → add your own Gmail and every tester's Gmail (see the release checklist).
 4. **Service account:** Users and permissions → invite `play-api@<project>.iam.gserviceaccount.com` with **View app information** and **View financial data** only.
