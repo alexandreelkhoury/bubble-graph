@@ -26,6 +26,30 @@ export default tseslint.config(
     rules: {
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/consistent-type-imports": "error",
+      // `_`-prefixed names are deliberately unused (stub signatures, destructuring that drops a key).
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_", destructuredArrayIgnorePattern: "^_" }],
+    },
+  },
+  // JAMAA-PLATFORM §2.1 phone bundle guard: no engine, registry, content or zod at runtime in the web client
+  // (type-only imports stay allowed, e.g. `import type { … } from "@jamaa/shared/protocol"`).
+  {
+    files: ["web-client/src/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            { name: "zod", message: "zod stays out of the phone bundle (JAMAA-PLATFORM §2.1).", allowTypeImports: true },
+            { name: "@jamaa/shared/games/registry", message: "Server/sim only: use @jamaa/shared/games/meta (JAMAA-PLATFORM §2.1).", allowTypeImports: true },
+            { name: "@jamaa/shared/content", message: "Server only (JAMAA-PLATFORM §2.1).", allowTypeImports: true },
+            { name: "@jamaa/shared/engine", message: "Engines stay on the server: use games/meta or games/<id>/meta (JAMAA-PLATFORM §2.1).", allowTypeImports: true },
+            { name: "@jamaa/shared/room", message: "Server only (JAMAA-PLATFORM §2.1).", allowTypeImports: true },
+          ],
+          patterns: [
+            { group: ["@jamaa/shared/games/*/definition", "**/engine", "**/engine/*", "**/content", "@jamaa/shared/content/*"], message: "Server only (JAMAA-PLATFORM §2.1).", allowTypeImports: true },
+          ],
+        },
+      ],
     },
   },
   // PAYMENTS-SPEC §3.9: billing code logs only through billingLog (log.ts), which redacts every free-form string.

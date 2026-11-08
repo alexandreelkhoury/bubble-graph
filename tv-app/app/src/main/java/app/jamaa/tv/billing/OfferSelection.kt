@@ -12,7 +12,12 @@ data class PlanOffer(
     val period: BillingPeriod?,
     /** Free-trial length in days, or null without an eligible trial. */
     val trialDays: Int?,
-)
+    /** The recurring price in micros (Play's `priceAmountMicros`), for "Save {n}%". 0 when unknown. */
+    val priceMicros: Long = 0L,
+) {
+    /** JAMAA-PLATFORM §4.1: the "7 days free" badge shows only when Play returned the eligible `trial-7d` offer. */
+    val trialBadge: Boolean get() = offerId == Products.TRIAL_OFFER_ID && trialDays != null
+}
 
 enum class BillingPeriod { MONTH, YEAR }
 
@@ -41,7 +46,21 @@ object OfferSelection {
             price = recurring.formattedPrice,
             period = periodOf(recurring.billingPeriod),
             trialDays = trial?.let { trialDays(it.phases) },
+            priceMicros = recurring.priceAmountMicros,
         )
+    }
+
+    /**
+     * JAMAA-PLATFORM §4.5 "Save {n}%" on the Yearly card: `round(100 × (1 − yearly / (12 × monthly)))` from the two
+     * `ProductDetails` prices (same currency, Play returns one per user). Null when either price is unknown or the
+     * yearly plan saves nothing.
+     */
+    fun savePercent(monthly: PlanOffer?, yearly: PlanOffer?): Int? {
+        val m = monthly?.priceMicros ?: return null
+        val y = yearly?.priceMicros ?: return null
+        if (m <= 0L || y <= 0L) return null
+        val pct = Math.round(100.0 * (1.0 - y.toDouble() / (12.0 * m.toDouble()))).toInt()
+        return pct.takeIf { it in 1..99 }
     }
 
     /** §4.4: yearly first, then monthly; plans Play did not return are left out. */

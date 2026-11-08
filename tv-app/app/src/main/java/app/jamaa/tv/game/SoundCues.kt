@@ -5,7 +5,9 @@ import app.jamaa.tv.protocol.GuessStatus
 import app.jamaa.tv.protocol.HistoryCause
 import app.jamaa.tv.protocol.Phase
 import app.jamaa.tv.protocol.Role
-import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.games.mishana.MishanaView
+import app.jamaa.tv.protocol.RoomPhase
+import app.jamaa.tv.protocol.RoomPublic
 import app.jamaa.tv.protocol.Winner
 import kotlin.math.max
 import kotlin.math.min
@@ -82,21 +84,28 @@ object SoundCues {
      */
     const val STAMP_LAND_MS = 150L
 
-    /** Cues for one broadcast (the ELIMINATION reveal plays its own timeline, [timeline]). */
-    fun viewCues(before: TvView?, after: TvView): List<CuePlay> {
+    /** Room-level cues: a pitched join per newcomer (by seat), one leave cue while gathering (HUB / SETUP). */
+    fun memberCues(before: RoomPublic?, after: RoomPublic): List<CuePlay> {
         if (before == null) return emptyList()
         val out = mutableListOf<CuePlay>()
-        if (before.phase == Phase.LOBBY && after.phase == Phase.LOBBY) {
-            val was = before.players.filter { !it.left }.associateBy { it.id }
-            val now = after.players.filter { !it.left }
-            var i = 0
-            for (p in now) if (p.id !in was) out += CuePlay(Cue.JOIN, joinRate(p.seat), 90L * i++)
-            val nowIds = now.map { it.id }.toSet()
-            if (was.keys.any { it !in nowIds }) out += CuePlay(Cue.LEAVE)
-            return out
+        val was = before.members.filter { !it.left }.associateBy { it.id }
+        val now = after.members.filter { !it.left }
+        var i = 0
+        for (m in now) if (m.id !in was) out += CuePlay(Cue.JOIN, joinRate(m.seat), 90L * i++)
+        val nowIds = now.map { it.id }.toSet()
+        if (before.phase != RoomPhase.PLAYING && after.phase != RoomPhase.PLAYING && was.keys.any { it !in nowIds }) out += CuePlay(Cue.LEAVE)
+        return out
+    }
+
+    /**
+     * Mish Ana! cues for one broadcast (the ELIMINATION reveal plays its own timeline, [timeline]). [before] null = the
+     * first view of an instance: the role cards flip.
+     */
+    fun viewCues(before: MishanaView?, after: MishanaView): List<CuePlay> {
+        if (before == null || before.gameNumber != after.gameNumber) {
+            return if (after.phase == Phase.ROLE_REVEAL) listOf(CuePlay(Cue.FLIP)) else emptyList()
         }
-        if (before.phase == Phase.LOBBY && after.phase == Phase.ROLE_REVEAL) return listOf(CuePlay(Cue.FLIP))
-        if (before.gameNumber != after.gameNumber) return out
+        val out = mutableListOf<CuePlay>()
 
         if (after.history.drop(before.history.size).any { it.cause == HistoryCause.LEAVE || it.cause == HistoryCause.KICK }) {
             out += CuePlay(Cue.LEAVE)

@@ -4,9 +4,14 @@ import { PREMIUM_PRODUCT_ID, TRIAL_OFFER_ID } from "@jamaa/shared/billing/produc
 import type { BasePlanId } from "@jamaa/shared/billing/products";
 import type { SubState } from "@jamaa/shared/billing/entitlement";
 import type { CatalogPackBody, CatalogResponseBody, EntitlementBody } from "@jamaa/shared/billing";
+import { LOCALES } from "@jamaa/shared/constants";
 import type { Locale } from "@jamaa/shared/constants";
-import { languageOf } from "@jamaa/shared/engine";
-import type { Settings } from "@jamaa/shared/engine";
+
+/** A pack locale's language ("ar-LB" → "ar"); unknown → "en" (the engine's languageOf, kept zod/engine-free). */
+export function languageOf(locale: string): Locale {
+  const lang = locale.split("-")[0];
+  return LOCALES.find((l) => l === lang) ?? "en";
+}
 
 const MIN = 60_000;
 const HOUR = 60 * MIN;
@@ -121,7 +126,7 @@ export function inflightKey(productId: string, plan?: BasePlanId): string {
  * language only say how to play it; with "all packs" ([]) nothing changes (it is already in the pool).
  */
 export type AfterPack = { kind: "add"; packIds: string[] } | { kind: "switch"; lang: Locale } | { kind: "none" };
-export function afterPackPurchase(settings: Pick<Settings, "packIds" | "wordLocale">, inLobby: boolean, packId: string, packLocale: string): AfterPack {
+export function afterPackPurchase(settings: { packIds: readonly string[]; wordLocale: Locale }, inLobby: boolean, packId: string, packLocale: string): AfterPack {
   const lang = languageOf(packLocale);
   if (lang !== settings.wordLocale) return { kind: "switch", lang };
   if (!inLobby || settings.packIds.length === 0 || settings.packIds.includes(packId)) return { kind: "none" };
@@ -131,6 +136,26 @@ export function afterPackPurchase(settings: Pick<Settings, "packIds" | "wordLoca
 /** §2.4 rule 1: the restore fingerprint; a change posts to /verify at once, else only a stale token refreshes. */
 export function purchasesKey(purchases: readonly { productId: string; purchaseToken: string; state: string }[]): string {
   return purchases.map((p) => `${p.productId}|${p.purchaseToken}|${p.state}`).sort().join(",");
+}
+
+/**
+ * JAMAA-PLATFORM §4.5 "Save {n}%": the yearly price against twelve monthly ones, rounded down; null when it is not a
+ * saving or the prices cannot be read (Play prices are localised strings: the digits are parsed, the currency ignored).
+ */
+export function yearlySavingPercent(monthly: string, yearly: string): number | null {
+  const num = (s: string): number | null => {
+    const m = /(\d+(?:[.,]\d+)?)/.exec(s.replace(/\s/g, ""));
+    return m ? Number(m[1]!.replace(",", ".")) : null;
+  };
+  const mo = num(monthly), yr = num(yearly);
+  if (mo === null || yr === null || mo <= 0) return null;
+  const pct = Math.floor((1 - yr / (12 * mo)) * 100);
+  return pct > 0 ? pct : null;
+}
+
+/** §4.5: the Store's pack rows grouped by game (registry order), each group's packs as given. */
+export function packsByGame<P extends { gameId: string }>(packs: readonly P[], order: readonly string[]): { gameId: string; packs: P[] }[] {
+  return order.map((gameId) => ({ gameId, packs: packs.filter((p) => p.gameId === gameId) })).filter((g) => g.packs.length > 0);
 }
 
 /** §4.4 billing toasts: shown at once only while the Store is open or in LOBBY/RESULTS, else the latest one waits. */

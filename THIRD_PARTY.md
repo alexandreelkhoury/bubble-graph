@@ -51,4 +51,4 @@ Every sound in `web-client/public/sounds` (including the per-game folders `web-c
 
 ## Characters, world palettes and choreography: none
 
-The JAMAA characters (bodies, faces, expressions), world palettes and motion curves are original data in `shared/src/{characters,worlds,motion}`; the Kotlin files `CharacterPaths.kt`, `WorldColors.kt` and `Choreo.kt` are generated from them by `tools/gen-characters` (`pnpm gen:characters`). The spring curves are a closed-form damped-oscillator formula; the cubic-bezier easing solver is our own code. No third-party art or animation library is used on product surfaces (JAMAA-PLATFORM §3.8).
+The JAMAA characters (bodies, faces, expressions), world palettes and motion curves are original data in `shared/src/{characters,worlds,motion}`; the Kotlin files `CharacterPaths.kt`, `WorldColors.kt` and `Choreo.kt` are generated from them by `tools/gen-characters` (`pnpm --filter @jamaa/gen-characters run gen`). The spring curves are a closed-form damped-oscillator formula; the cubic-bezier easing solver is our own code. No third-party art or animation library is used on product surfaces (JAMAA-PLATFORM §3.8).

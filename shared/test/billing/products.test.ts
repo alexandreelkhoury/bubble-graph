@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  BASE_PLAN_IDS, packIdFromProductId, packProductId, PREMIUM_PACK_ID_MAX, PREMIUM_PRODUCT_ID, PREMIUM_SETTING_KEYS,
+  BASE_PLAN_IDS, familyFromProductId, isSellableProductId, packIdFromProductId, PASS_PRODUCT_ID, packProductId, PREMIUM_PACK_ID_MAX, PREMIUM_PRODUCT_ID, PREMIUM_SETTING_KEYS,
   PRODUCT_ID_MAX, PRODUCT_ID_REGEX, TRIAL_OFFER_ID,
 } from "../../src/billing/products";
 import { DEFAULT_SETTINGS } from "../../src/games/mishana/engine/settings";
@@ -8,7 +8,8 @@ import { TEST_CATALOG } from "../../src/testing";
 
 describe("billing products (PAYMENTS-SPEC §1.3)", () => {
   it("constants", () => {
-    expect(PREMIUM_PRODUCT_ID).toBe("premium");
+    expect(PASS_PRODUCT_ID).toBe("jamaa_pass");
+    expect(PREMIUM_PRODUCT_ID).toBe(PASS_PRODUCT_ID); // deprecated alias; the lifetime `premium` product is gone
     expect(BASE_PLAN_IDS).toEqual(["monthly", "yearly"]);
     expect(TRIAL_OFFER_ID).toBe("trial-7d");
     expect(PRODUCT_ID_MAX).toBe(40);
@@ -29,6 +30,12 @@ describe("billing products (PAYMENTS-SPEC §1.3)", () => {
     for (const bad of ["pack_", "pack_A", "premium", "pack__x", "pack_x_", "pack_-x", "pak_x", "pack_x.y"]) {
       expect(packIdFromProductId(bad), bad).toBeNull();
     }
+  });
+  it("isSellableProductId: jamaa_pass and well-formed pack_* only (JAMAA-PLATFORM §4.2)", () => {
+    expect(isSellableProductId("jamaa_pass")).toBe(true);
+    expect(isSellableProductId("pack_lb_quiz_01")).toBe(true);
+    expect(familyFromProductId("pack_lb_quiz_01")).toBe("lb-quiz-01");
+    for (const bad of ["premium", "jamaa_pass_x", "pack_", "pack_A", "pack_" + "a".repeat(36)]) expect(isSellableProductId(bad), bad).toBe(false);
   });
   it("PRODUCT_ID_REGEX follows the Play format", () => {
     for (const ok of ["premium", "pack_en_food_01", "a", "0a.b_c", "a".repeat(40)]) expect(PRODUCT_ID_REGEX.test(ok), ok).toBe(true);

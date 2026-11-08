@@ -11,7 +11,7 @@ import app.jamaa.tv.protocol.RoomPublic
 
 /**
  * STUB created in milestone P (JAMAA-PLATFORM §6.1). The G4 lane C replaces this object with the real decoder of
- * `game.public` / `game.me` (GAME-TRIVIA §13) and sets [implemented] once its screens exist (games/trivia/**). Until then the
+ * `game.public` / `game.me` (GAME-TRIVIA §13) and sets [implemented] once its screens exist (games/trivia/). Until then the
  * hello does not declare "trivia", so the server never offers it to this TV.
  */
 object TriviaTv : TvGameModule {

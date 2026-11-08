@@ -326,15 +326,15 @@
     <string name="hub__close_confirm__body">الغرفة بتسكّر للكل.</string>
     <string name="hub__close_confirm__stay">خلّينا</string>
     <string name="hub__close_confirm__close">سكّروا جماعة</string>
-    <string name="hub__picking">%1$s عم ينقّي لعبة عالتلفزيون</string>
+    <string name="hub__picking">اللعبة عم تنّقى عالتلفزيون مع %1$s</string>
     <string name="hub__picking_no_host">نقّوا لعبة عالتلفزيون</string>
     <string name="hub__open_game">فتح هاللعبة</string>
     <string name="hub__tv_focus">التلفزيون: %1$s</string>
-    <string name="hub__game_unsupported">لازم تحديث جماعة لتنلعب هاللعبة</string>
+    <string name="hub__game_unsupported">بدّها تحديث لجماعة لتنلعب هاللعبة</string>
     <string name="hub__how_jamaa__title">كيف بتشتغل جماعة</string>
     <string name="hub__how_jamaa__join">كل واحد بيفوت من تلفونه: امسحوا الكود عالتلفزيون.</string>
-    <string name="hub__how_jamaa__pick">نقّوا لعبة بالريموت، وتلفوناتكن هني اليد.</string>
-    <string name="hub__how_jamaa__cup">كل لعبة بتربّح نجوم لكاس السهرة. غيّروا اللعبة وقت ما بدكن.</string>
+    <string name="hub__how_jamaa__pick">نقّوا لعبة بالريموت، وكل واحد بيلعب من تلفونه.</string>
+    <string name="hub__how_jamaa__cup">بكل لعبة بتجمعوا نجوم لكاس السهرة. غيّروا اللعبة وقت ما بدكن.</string>
     <string name="hub__close_confirm__a11y">تأكيد سكّر جماعة</string>
     <string name="setup__gang">الجماعة</string>
     <plurals name="setup__need_more">
@@ -373,11 +373,11 @@
         <item quantity="other">%1$d باقة</item>
     </plurals>
     <string name="setup__custom">مخصّص</string>
-    <string name="setup__unlock_with_pass">فتحها مع JAMAA Pass</string>
+    <string name="setup__unlock_with_pass">بتنفتح مع JAMAA Pass</string>
     <string name="setup__buy_pack">شراء هالباقة · %1$s</string>
     <string name="setup__read_only">المضيف عم يضبط اللعبة</string>
     <string name="rules__title">القواعد</string>
-    <string name="rules__you_are_here">إنتو هون: %1$s</string>
+    <string name="rules__you_are_here">نحنا هون: %1$s</string>
     <string name="rules__your_turn">دورك! ✕ للرجوع</string>
     <string name="rules__open">فتح القواعد</string>
     <string name="rules__points">النقاط</string>
@@ -394,21 +394,21 @@
     <plurals name="cup__stars_earned">
         <item quantity="zero">+%1$d نجوم</item>
         <item quantity="one">+%1$d نجمة</item>
-        <item quantity="two">+%1$d نجمتين</item>
+        <item quantity="two">+نجمتين</item>
         <item quantity="few">+%1$d نجوم</item>
         <item quantity="many">+%1$d نجمة</item>
         <item quantity="other">+%1$d نجمة</item>
     </plurals>
     <string name="cup__empty">خلّصوا لعبة لتبلّش الكاس</string>
-    <string name="cup__leader">%1$s متصدّر الكاس</string>
+    <string name="cup__leader">%1$s بصدارة الكاس</string>
     <string name="cup__by_game">النقاط حسب اللعبة</string>
     <plurals name="cup__games_played">
-        <item quantity="zero">%1$d ألعاب</item>
-        <item quantity="one">لعبة وحدة</item>
-        <item quantity="two">لعبتين</item>
-        <item quantity="few">%1$d ألعاب</item>
-        <item quantity="many">%1$d لعبة</item>
-        <item quantity="other">%1$d لعبة</item>
+        <item quantity="zero">ما لعبنا ولا لعبة</item>
+        <item quantity="one">لعبنا لعبة وحدة</item>
+        <item quantity="two">لعبنا لعبتين</item>
+        <item quantity="few">لعبنا %1$d ألعاب</item>
+        <item quantity="many">لعبنا %1$d لعبة</item>
+        <item quantity="other">لعبنا %1$d لعبة</item>
     </plurals>
     <string name="cup__other_games">ألعاب تانية</string>
     <string name="react__bar">ردّات فعل</string>
@@ -443,10 +443,10 @@
         <item quantity="other">%1$d يوم ببلاش</item>
     </plurals>
     <string name="pass__active">JAMAA Pass مفعّل</string>
-    <string name="pass__renews_on">بيتجدد بـ %1$s</string>
+    <string name="pass__renews_on">بيتجدّد بـ %1$s</string>
     <string name="pass__ends_on">بيخلص بـ %1$s</string>
     <string name="pass__manage">إدارة الاشتراك</string>
-    <string name="pass__manage_hint">من تلفون أو كمبيوتر: من Google Play، بعدين الدفع والاشتراكات، بعدين الاشتراكات.</string>
+    <string name="pass__manage_hint">من تلفون أو كمبيوتر: فوتوا عـ Google Play، بعدين «الدفع والاشتراكات»، بعدين «الاشتراكات».</string>
     <string name="pass__fix_payment">في مشكلة بالدفع. صلّحوها بـ Google Play ليضلّ JAMAA Pass شغّال.</string>
     <string name="pass__fix_payment_button">تصليح الدفع</string>
     <string name="pass__included">ضمن JAMAA Pass</string>

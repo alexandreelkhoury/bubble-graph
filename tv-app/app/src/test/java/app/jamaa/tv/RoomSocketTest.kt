@@ -82,7 +82,8 @@ class RoomSocketTest {
         awaitState(s) { it == ConnState.OPEN }
         val hello = side.received.poll(5, TimeUnit.SECONDS)
         assertEquals(
-            Json.parseToJsonElement("""{"v":1,"t":"hello","role":"tv","tvToken":"0123456789abcdef0123456789abcdef"}"""),
+            // §2.5: the hello declares this build's games (this build renders Mish Ana! only; the G lanes add theirs).
+            Json.parseToJsonElement(Fixtures.v2("c2s.hello.tv.mishana-only.json")),
             Json.parseToJsonElement(hello!!),
         )
         val request = server.takeRequest(5, TimeUnit.SECONDS)!!

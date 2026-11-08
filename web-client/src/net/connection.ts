@@ -1,5 +1,7 @@
 // §8.4 connection: partysocket with no queueing, seq filter, close-code fatality, heartbeat.
-import PartySocket from "partysocket";
+// The partysocket ReconnectingWebSocket (SPEC §8.4) without the PartySocket URL wrapper: the URL is built here (same
+// shape: /parties/<party>/<room>?_pk=…&cid=…), which keeps ~1 KB gz out of the phone budget (JAMAA-PLATFORM §3.8).
+import ReconnectingWebSocket from "partysocket/ws";
 // JAMAA-PLATFORM §2.5: protocol v2 frames (`v: 2`); the envelope, seq filter and close codes are unchanged.
 import {
   FATAL_CLOSE_CODES, HEARTBEAT_INTERVAL_MS, PARTY_NAME, PING_FRAME_V2 as PING_FRAME, PONG_FRAME_V2 as PONG_FRAME, PONG_TIMEOUT_MS,
@@ -244,14 +246,16 @@ export function bindWake(conn: Pick<Connection, "wake">, extra?: () => void): ()
 }
 
 /** The real socket (§8.4 options, all explicit). */
+/** The room socket URL (partysocket's layout): `<ws|wss>://<host>/parties/<party>/<room>?_pk=<id>&cid=<fresh>`. */
+export function partyUrl(loc: { host: string; protocol: string }, code: string, pk: string, cid: string): string {
+  const proto = loc.protocol === "https:" ? "wss" : "ws";
+  return `${proto}://${loc.host}/parties/${PARTY_NAME}/${code}?${new URLSearchParams({ _pk: pk, cid })}`;
+}
+
 export function partySocketFactory(code: string): SocketFactory {
   return (h) => {
-    const ps = new PartySocket({
-      host: location.host,
-      protocol: location.protocol === "https:" ? "wss" : "ws",
-      party: PARTY_NAME,
-      room: code,
-      query: () => ({ cid: randomId() }), // fresh per attempt
+    const pk = randomId();
+    const ps = new ReconnectingWebSocket(() => partyUrl(location, code, pk, randomId()), undefined, { // cid: fresh per attempt
       minReconnectionDelay: 500,
       maxReconnectionDelay: 10_000,
       reconnectionDelayGrowFactor: 2,

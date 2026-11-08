@@ -6,7 +6,7 @@ import { PING_FRAME_V1 as PING_FRAME, PONG_FRAME_V1 as PONG_FRAME } from "../../
 import { ClientConfig, CreateRoomRequest, CreateRoomResponse, Healthz, HttpError } from "../../src/protocol/http";
 import { CatalogResponse, EntitlementRequest, VerifyRequest, VerifyResponse } from "../../src/billing/http";
 import {
-  BASE_PLAN_IDS, packIdFromProductId, packProductId, PREMIUM_PRODUCT_ID, TRIAL_OFFER_ID,
+  BASE_PLAN_IDS, packIdFromProductId, PASS_PRODUCT_ID, packProductId, PREMIUM_PRODUCT_ID, TRIAL_OFFER_ID,
 } from "../../src/billing/products";
 import { ClientMessageSchema, ServerMessageSchema } from "../../src/protocol/messages";
 import { errorMessageKey } from "../../src/protocol/errors";
@@ -73,7 +73,9 @@ describe("fixtures (§10)", () => {
   it("billing fixtures parse with the billing HTTP schemas (PAYMENTS-SPEC §3.4)", () => {
     const catalog = CatalogResponse.parse(JSON.parse(read("http.billing.catalog.response.json")));
     expect(catalog.packs.length).toBeGreaterThan(0);
-    for (const p of catalog.packs) expect(p.productId).toBe(packProductId(p.packId));
+    expect(catalog.subscription.productId).toBe(PASS_PRODUCT_ID);
+    // JAMAA-PLATFORM §4.1: one product per content family (a word pack's family is its id).
+    for (const p of catalog.packs) expect(p.productId).toBe(packProductId(p.family));
     expect(catalog.freePackIds.some((id) => catalog.packs.some((p) => p.packId === id))).toBe(false);
     const req = VerifyRequest.parse(JSON.parse(read("http.billing.verify.request.json")));
     const res = VerifyResponse.parse(JSON.parse(read("http.billing.verify.response.json")));
@@ -82,8 +84,10 @@ describe("fixtures (§10)", () => {
   });
 
   it("billing.products.json matches the shared product constants (§1.3)", () => {
+    // The key stays "premium" (the internal name, JAMAA-PLATFORM §4.2; the TV ProductsTest reads it); the id is the Pass.
     const f = JSON.parse(read("billing.products.json")) as { premium: string; basePlans: string[]; trialOfferId: string; pairs: [string, string][] };
-    expect(f.premium).toBe(PREMIUM_PRODUCT_ID);
+    expect(f.premium).toBe(PASS_PRODUCT_ID);
+    expect(PREMIUM_PRODUCT_ID).toBe(PASS_PRODUCT_ID);
     expect(f.basePlans).toEqual([...BASE_PLAN_IDS]);
     expect(f.trialOfferId).toBe(TRIAL_OFFER_ID);
     for (const [packId, productId] of f.pairs) {

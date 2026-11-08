@@ -52,6 +52,8 @@ export const tvCupOpen = signal(false);
 export const tvPackPicker = signal(false);
 /** HUB-03 "Advanced" sheet (Mish Ana!'s extra settings). */
 export const tvAdvanced = signal(false);
+/** HUB-03 full-screen first-time intro, for this game (Back skips it). */
+export const tvIntro = signal<GameId | null>(null);
 /** The carousel's local focus (sent to the room as HUB_FOCUS after 300 ms of rest). */
 export const tvFocusGame = signal<GameId | null>(null);
 /** Games opened at least once this session (the portal plays 1 100 ms the first time, 700 ms afterwards). */
@@ -100,6 +102,7 @@ function closeLocalUi(): void {
   tvCupOpen.value = false;
   tvPackPicker.value = false;
   tvAdvanced.value = false;
+  tvIntro.value = null;
 }
 
 /** The game is running (no outcome yet): the Store and billing toasts wait. */
@@ -140,7 +143,8 @@ export async function tvCreateRoom(): Promise<void> {
       const next = msg.view;
       const prev = tvView.value;
       // Leaving SETUP closes setup-only sheets; leaving the game closes the pause menu.
-      if (next.room.phase !== "SETUP") { tvPackPicker.value = false; tvAdvanced.value = false; }
+      // START_GAME / CLOSE_GAME (e.g. from the VIP phone) collapses the intro instantly (§3.2 HUB-03).
+      if (next.room.phase !== "SETUP") { tvPackPicker.value = false; tvAdvanced.value = false; tvIntro.value = null; }
       if (next.room.phase !== "PLAYING" || next.game?.over) tvPaused.value = false;
       if (next.room.phase !== "HUB") { tvCupOpen.value = false; tvHubSettings.value = false; }
       if (tvFocusGame.value === null || (prev?.room.phase !== "HUB" && next.room.phase === "HUB")) tvFocusGame.value = next.room.focusedGameId;

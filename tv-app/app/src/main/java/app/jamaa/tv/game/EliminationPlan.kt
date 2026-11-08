@@ -5,7 +5,7 @@ import app.jamaa.tv.protocol.HistoryCause
 import app.jamaa.tv.protocol.Phase
 import app.jamaa.tv.protocol.PublicPlayer
 import app.jamaa.tv.protocol.Role
-import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.protocol.VoteOutcome
 import app.jamaa.tv.protocol.VoteSummary
 import app.jamaa.tv.protocol.WinRule
@@ -104,7 +104,7 @@ enum class AfterElimination { NEXT_ROUND, LAST_CHANCE, OTHER }
  * a game-over or a lobby reset, and never reveals more than the players could count themselves.
  * [OTHER] = the game ends (or returns to the lobby), or the counts are not known: the screen stays neutral.
  */
-fun afterElimination(view: TvView): AfterElimination {
+fun afterElimination(view: MishanaView): AfterElimination {
     if (view.phase != Phase.ELIMINATION) return AfterElimination.OTHER
     val elim = view.eliminated
     if (elim?.role == Role.BLANK && view.settings.blankGuess) return AfterElimination.LAST_CHANCE

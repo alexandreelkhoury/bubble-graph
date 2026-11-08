@@ -23,6 +23,7 @@
     "./games/registry": "./src/games/registry.ts",
     "./games/protocol": "./src/games/protocol.ts",
     "./games/*/meta": "./src/games/*/meta.ts",
+    "./games/*/protocol": "./src/games/*/protocol.ts",
     "./worlds": "./src/worlds/index.ts",
     "./content": "./src/content/index.ts",
     "./constants": "./src/constants.ts",

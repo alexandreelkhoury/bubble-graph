@@ -1,32 +1,38 @@
-// WS mode (§13.1): plays full games against a running server (`pnpm dev` / `wrangler dev`) through the wire
-// protocol only — the M1 "scripted WS client" acceptance test. No Origin header is sent (native-client path).
+// WS mode (JAMAA-PLATFORM §2.9 `--ws`): plays full Mish Ana! games against a running server (`pnpm dev` / `wrangler
+// dev`) through protocol v2 only: hub → OPEN_GAME → setup → START_GAME → GAME intents → REPLAY, and once BACK_TO_HUB
+// and back in. One player socket is killed and resumed mid-game, and one late joiner arrives while PLAYING (benched,
+// then dealt in at the next instance). Every server frame is validated with ServerMessageV2Schema; every TV frame is
+// checked for secrets. No Origin header is sent (native-client path).
 import WebSocket from "ws";
 import { COLORS, PING_FRAME, PONG_FRAME, WS_PATH_PREFIX } from "@jamaa/shared/constants";
-import type { ClientIntentMsg, ServerMessage, TvView, View } from "@jamaa/shared/protocol";
-import { CreateRoomResponse, ServerMessageSchema } from "@jamaa/shared/protocol";
+import { CreateRoomResponse } from "@jamaa/shared/protocol";
+import { HealthzV2, ServerMessageV2Schema } from "@jamaa/shared/protocol/v2";
+import type { RoomIntentMsg, RoomView, ServerMessageV2, TvRoomView } from "@jamaa/shared/protocol/v2";
+import type { MishanaMe, MishanaPublic } from "@jamaa/shared/games/mishana/protocol";
 import { createRng } from "@jamaa/shared/engine";
 import type { Rng } from "@jamaa/shared/engine";
-import { FORBIDDEN_KEYS, TIMERS_OFF } from "@jamaa/shared/testing";
+import { ALL_TV_GAMES, FORBIDDEN_KEYS, ROOM_FORBIDDEN_KEYS, TIMERS_OFF } from "@jamaa/shared/testing";
 import type { SimArgs } from "./args";
 import { formatColumns } from "./format";
 
-export interface WsGameStats { n: number; games: number; civilians: number; infiltrators: number; blank: number; stalemates: number; resumes: number; failures: string[] }
+export interface WsGameStats { n: number; games: number; civilians: number; infiltrators: number; blank: number; stalemates: number; resumes: number; lateJoins: number; failures: string[] }
 
 const STEP_TIMEOUT_MS = 10_000;
 const MIN_SEND_GAP_MS = 220; // stay under the 5 msg/s per-connection bucket
-
-function randomCid(): string {
-  return crypto.randomUUID();
-}
 
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-/** One protocol client (TV or phone). Validates every server frame with ServerMessageSchema. */
+/** The Mish Ana! public part of a view (null outside a Mish Ana! instance). */
+export function mishanaPub(v: RoomView | null): MishanaPublic | null {
+  return v?.game?.gameId === "mishana" ? (v.game.public as MishanaPublic) : null;
+}
+
+/** One protocol client (TV or phone). Validates every server frame with ServerMessageV2Schema. */
 export class WsClient {
   ws: WebSocket | null = null;
-  view: View | null = null;
+  view: RoomView | null = null;
   seq = -1;
   playerId: string | null = null;
   resumeToken: string | null = null;
@@ -43,12 +49,12 @@ export class WsClient {
     readonly label: string,
     readonly wsBase: string,
     readonly code: string,
-    readonly onView?: (c: WsClient, msg: ServerMessage & { t: "state" }) => void,
+    readonly onView?: (c: WsClient, msg: ServerMessageV2 & { t: "state" }) => void,
   ) {}
 
   async open(): Promise<void> {
     this.closed = null;
-    const url = `${this.wsBase}${WS_PATH_PREFIX}${this.code}?_pk=${crypto.randomUUID()}&cid=${randomCid()}`;
+    const url = `${this.wsBase}${WS_PATH_PREFIX}${this.code}?_pk=${crypto.randomUUID()}&cid=${crypto.randomUUID()}`;
     const ws = new WebSocket(url);
     this.ws = ws;
     ws.on("message", (data, isBinary) => {
@@ -69,14 +75,14 @@ export class WsClient {
         this.problems.push(`${this.label}: unparseable frame`);
         return;
       }
-      const r = ServerMessageSchema.safeParse(parsed);
+      const r = ServerMessageV2Schema.safeParse(parsed);
       if (!r.success) {
-        this.problems.push(`${this.label}: frame failed ServerMessageSchema: ${r.error.message.slice(0, 200)}`);
+        this.problems.push(`${this.label}: frame failed ServerMessageV2Schema: ${r.error.message.slice(0, 200)}`);
         return;
       }
       const m = r.data;
       if (m.t === "state") {
-        if (m.seq < this.seq) this.problems.push(`${this.label}: seq went backwards ${this.seq} → ${m.seq}`);
+        if (m.seq <= this.seq) this.problems.push(`${this.label}: seq did not increase ${this.seq} → ${m.seq}`);
         this.seq = m.seq;
         this.view = m.view;
         this.onView?.(this, m);
@@ -112,11 +118,16 @@ export class WsClient {
     return this.sendRaw(JSON.stringify(msg));
   }
 
-  /** Sends an action with a fresh id; returns the id (echoed as `ref` on errors). */
-  async act(a: ClientIntentMsg): Promise<string> {
+  /** Sends a v2 room intent with a fresh id; returns the id (echoed as `ref` on errors). */
+  async act(a: RoomIntentMsg): Promise<string> {
     const id = `${this.label}-${++this.#actionN}`.replace(/[^A-Za-z0-9-]/g, "-").slice(0, 36);
-    await this.send({ v: 1, t: "action", id, a });
+    await this.send({ v: 2, t: "action", id, a });
     return id;
+  }
+
+  /** A Mish Ana! in-game intent. */
+  game(i: Record<string, unknown>): Promise<string> {
+    return this.act({ type: "GAME", gameId: "mishana", i } as RoomIntentMsg);
   }
 
   closeSocket(): Promise<void> {
@@ -150,15 +161,19 @@ export class WsClient {
   }
 }
 
-/** §5.4 on a TV state: no secret word, no alive revealed role and no guess text before RESULTS; no forbidden keys. */
-export function tvViewProblems(view: TvView, secretWords: ReadonlySet<string>): string[] {
+/**
+ * SPEC §5.4 on a v2 TV frame: no secret word, no state-only key (room or game), no `me` anywhere, and before the
+ * instance is over no alive revealed role, no guess text and no result.
+ */
+export function tvViewProblems(view: TvRoomView, secretWords: ReadonlySet<string>): string[] {
   const out: string[] = [];
-  const results = view.phase === "RESULTS";
-  // Every state-only key, plus the per-player keys a TV view never carries.
-  const forbidden = new Set([...FORBIDDEN_KEYS, "word", "me"]);
+  const over = view.game?.over ?? false;
+  if (view.me !== null) out.push("TV view has a room me");
+  if (view.game && view.game.me !== null) out.push("TV view has a game me");
+  const forbidden = new Set([...FORBIDDEN_KEYS, ...ROOM_FORBIDDEN_KEYS, "word"]);
   const walk = (x: unknown, path: string): void => {
     if (typeof x === "string") {
-      if (!results && secretWords.has(x) && !path.endsWith(".name") && !path.includes(".title.")) out.push(`secret word at ${path}`);
+      if (!over && secretWords.has(x) && !path.endsWith(".name") && !path.includes(".title.")) out.push(`secret word at ${path}`);
     } else if (Array.isArray(x)) x.forEach((v, i) => walk(v, `${path}.${i}`));
     else if (x && typeof x === "object") {
       for (const [k, v] of Object.entries(x)) {
@@ -168,10 +183,11 @@ export function tvViewProblems(view: TvView, secretWords: ReadonlySet<string>): 
     }
   };
   walk(view, "view");
-  if (!results) {
-    for (const p of view.players) if (p.alive && p.revealedRole !== null) out.push(`alive player ${p.id} has a revealed role`);
-    if (view.guess && view.guess.text !== null) out.push("guess.text before RESULTS");
-    if (view.result !== null) out.push("result before RESULTS");
+  const pub = mishanaPub(view);
+  if (pub && !over) {
+    for (const p of pub.players) if (p.alive && p.revealedRole !== null) out.push(`alive player ${p.id} has a revealed role`);
+    if (pub.guess && pub.guess.text !== null) out.push("guess.text before RESULTS");
+    if (pub.result !== null) out.push("result before RESULTS");
   }
   return out;
 }
@@ -185,96 +201,134 @@ export async function createRoomHttp(httpBase: string): Promise<{ code: string; 
 }
 
 interface Table {
+  wsBase: string;
+  code: string;
   tv: WsClient;
   players: WsClient[];
   secretWords: Set<string>;
   rng: Rng;
   failures: string[];
+  onPlayerView: (c: WsClient, m: { view: RoomView }) => void;
 }
 
-/** Runs `games` consecutive games with `n` bots in one room, including one kill-and-resume mid-game. */
+const member = (v: RoomView | null, id: string | null) => v?.room.members.find((m) => m.id === id);
+
+async function newPlayer(t: Table, i: number): Promise<WsClient> {
+  const c = new WsClient(`p${i + 1}`, t.wsBase, t.code, t.onPlayerView);
+  await c.open();
+  await c.send({ v: 2, t: "hello", role: "player" });
+  await c.waitFor(() => c.view !== null, "spectator state");
+  if (c.view?.kind !== "player" || c.view.me !== null) t.failures.push(`${c.label}: spectator state should have me:null`);
+  await c.send({ v: 2, t: "join", name: `Bot ${i + 1}`, color: (COLORS[i] ?? COLORS[0]).id, locale: "en" });
+  await c.waitFor(() => c.playerId !== null, "welcome");
+  return c;
+}
+
+/** Runs `games` instances with `n` bots in one room: one kill-and-resume, one late joiner, one trip back to the hub. */
 export async function playRoom(httpBase: string, n: number, games: number, args: Pick<SimArgs, "seed" | "winRule" | "tieBreak" | "verbose">, log: (s: string) => void): Promise<WsGameStats> {
-  const stats: WsGameStats = { n, games: 0, civilians: 0, infiltrators: 0, blank: 0, stalemates: 0, resumes: 0, failures: [] };
+  const stats: WsGameStats = { n, games: 0, civilians: 0, infiltrators: 0, blank: 0, stalemates: 0, resumes: 0, lateJoins: 0, failures: [] };
   const wsBase = httpBase.replace(/^http/, "ws");
   const { code, tvToken } = await createRoomHttp(httpBase);
-  const t: Table = { tv: null as unknown as WsClient, players: [], secretWords: new Set(), rng: createRng((args.seed * 7919 + n) >>> 0), failures: stats.failures };
-
-  const onTvView = (_c: WsClient, m: { view: View }): void => {
+  const t: Table = {
+    wsBase, code, tv: null as unknown as WsClient, players: [], secretWords: new Set(), rng: createRng((args.seed * 7919 + n) >>> 0), failures: stats.failures,
+    onPlayerView: (_c, m) => {
+      if (m.view.kind !== "player" || !m.view.game || m.view.game.over) return;
+      const w = (m.view.game.me as MishanaMe | null)?.word;
+      if (w) {
+        t.secretWords.add(w.text);
+        if (w.translit) t.secretWords.add(w.translit);
+      }
+    },
+  };
+  const onTvView = (_c: WsClient, m: { view: RoomView }): void => {
     if (m.view.kind !== "tv") {
       t.failures.push(`TV received a ${m.view.kind} view`);
       return;
     }
     for (const p of tvViewProblems(m.view, t.secretWords)) t.failures.push(`TV §5.4: ${p}`);
   };
-  const onPlayerView = (_c: WsClient, m: { view: View }): void => {
-    if (m.view.kind !== "player") return;
-    const w = m.view.me?.word;
-    if (w && m.view.phase !== "RESULTS") {
-      t.secretWords.add(w.text);
-      if (w.translit) t.secretWords.add(w.translit);
-    }
-  };
 
   try {
-    // TV
     t.tv = new WsClient("tv", wsBase, code, onTvView);
     await t.tv.open();
     await t.tv.sendRaw(PING_FRAME);
     await t.tv.waitFor(() => t.tv.pongs > 0, "pong");
-    await t.tv.send({ v: 1, t: "hello", role: "tv", tvToken });
+    await t.tv.send({ v: 2, t: "hello", role: "tv", tvToken, games: ALL_TV_GAMES });
     await t.tv.waitFor(() => t.tv.view !== null, "TV state");
-    await t.tv.act({ type: "UPDATE_SETTINGS", patch: { ...TIMERS_OFF, winRule: args.winRule, tieBreak: args.tieBreak } });
-
-    // Players
-    for (let i = 0; i < n; i++) {
-      const c = new WsClient(`p${i + 1}`, wsBase, code, onPlayerView);
-      await c.open();
-      await c.send({ v: 1, t: "hello", role: "player" });
-      await c.waitFor(() => c.view !== null, "spectator state");
-      if (c.view?.kind !== "player" || c.view.me !== null) t.failures.push(`${c.label}: spectator state should have me:null`);
-      await c.send({ v: 1, t: "join", name: `Bot ${i + 1}`, color: (COLORS[i] ?? COLORS[0]).id, locale: "en" });
-      await c.waitFor(() => c.playerId !== null, "welcome");
-      t.players.push(c);
-    }
-    await t.tv.waitFor(() => (t.tv.view?.players.length ?? 0) === n, `${n} players in TV view`);
+    if (t.tv.view?.room.phase !== "HUB") t.failures.push(`a new room starts in ${t.tv.view?.room.phase}, not HUB`);
+    if (!t.tv.view?.room.games.some((g) => g.id === "mishana")) throw new Error("mishana is not offered in room.games");
+    for (let i = 0; i < n; i++) t.players.push(await newPlayer(t, i));
+    await t.tv.waitFor(() => (t.tv.view?.room.members.length ?? 0) === n, `${n} members in TV view`);
 
     const finished = new Set<number>();
     let resumed = false;
+    let late: WsClient | null = null;
+    let lateInstance = 0;
+    let hubTrip = false;
+    let configured = false;
     let stuck = false;
-    for (let steps = 0; steps < 2000; steps++) {
-      const v = t.tv.view as TvView;
-      if (v.phase === "RESULTS" || (v.phase === "LOBBY" && v.gameNumber > 0)) {
-        if (!finished.has(v.gameNumber)) {
-          finished.add(v.gameNumber);
+    for (let steps = 0; steps < 3000; steps++) {
+      const v = t.tv.view as TvRoomView;
+      const room = v.room;
+      const pub = mishanaPub(v);
+      // The late joiner is dealt in by the first instance after the one it joined.
+      if (late && v.game && v.game.n > lateInstance && member(v, late.playerId)?.benched === true) t.failures.push("late joiner still benched in a new instance");
+      if (late && v.game && v.game.n > lateInstance && !t.players.includes(late)) {
+        t.players.push(late);
+        await late.waitFor(() => late?.view?.game?.me !== null && late?.view?.game?.n === v.game?.n, "late joiner dealt in");
+      }
+      if (room.phase === "PLAYING" && v.game?.over && pub) {
+        if (!finished.has(v.game.n)) {
+          finished.add(v.game.n);
           stats.games++;
-          if (v.phase === "LOBBY") stats.stalemates++;
-          else if (v.result?.winner === "CIVILIANS") stats.civilians++;
-          else if (v.result?.winner === "INFILTRATORS") stats.infiltrators++;
-          else if (v.result?.winner === "BLANK") stats.blank++;
-          if (args.verbose) log(`n=${n} room=${code} game=${v.gameNumber} → ${v.phase === "LOBBY" ? "stalemate" : v.result?.winner}`);
+          if (pub.result?.winner === "CIVILIANS") stats.civilians++;
+          else if (pub.result?.winner === "INFILTRATORS") stats.infiltrators++;
+          else if (pub.result?.winner === "BLANK") stats.blank++;
+          if (args.verbose) log(`n=${n} room=${code} game=${v.game.n} → ${pub.result?.winner}`);
           t.secretWords.clear();
         }
         if (finished.size >= games) break;
       }
-
-      // Kill and resume one player socket in the first CLUES phase of the first game (§13.1).
-      if (!resumed && v.phase === "CLUES") {
+      // Kill and resume one player socket in the first CLUES phase (SPEC §13.1).
+      if (!resumed && pub?.phase === "CLUES") {
         resumed = true;
-        await killAndResume(t, v);
+        await killAndResume(t, pub);
         stats.resumes++;
         continue;
       }
-
+      // One late joiner while PLAYING: benched (public game view, no game me) until the next instance.
+      if (!late && resumed && pub && !v.game?.over && room.members.length < 12) {
+        late = await newPlayer(t, n);
+        lateInstance = v.game?.n ?? 0;
+        stats.lateJoins++;
+        await late.waitFor(() => late?.view?.me?.benched === true || (late?.view?.game?.me ?? null) !== null, "late joiner view");
+        if (late.view?.me?.benched !== true) t.failures.push("a member who joined while PLAYING is not benched");
+        if (late.view?.game?.me) t.failures.push("a benched member received a game me");
+        continue;
+      }
       const before = t.tv.seq;
-      const sent = await stepOnce(t, v, stuck);
+      let sent: { client: WsClient; id: string };
+      if (room.phase === "HUB") sent = { client: t.tv, id: await t.tv.act({ type: "OPEN_GAME", gameId: "mishana" }) };
+      else if (room.phase === "SETUP" && !configured) {
+        configured = true;
+        sent = { client: t.tv, id: await t.tv.act({ type: "UPDATE_GAME_SETTINGS", gameId: "mishana", patch: { ...TIMERS_OFF, winRule: args.winRule, tieBreak: args.tieBreak } } as RoomIntentMsg) };
+      } else if (room.phase === "SETUP") sent = { client: t.tv, id: await t.tv.act({ type: "START_GAME" }) };
+      else if (v.game?.over) {
+        // Once: back to the hub and in again; otherwise REPLAY.
+        if (!hubTrip && finished.size === 1) {
+          hubTrip = true;
+          sent = { client: t.tv, id: await t.tv.act({ type: "BACK_TO_HUB" }) };
+        } else sent = { client: t.tv, id: await t.tv.act({ type: "REPLAY" }) };
+      } else if (pub) sent = await stepOnce(t, v, pub, stuck);
+      else throw new Error(`unexpected view: phase ${room.phase}, game ${v.game?.gameId ?? "none"}`);
       const errorsBefore = sent.client.errors.length;
-      await t.tv.waitFor(() => t.tv.seq > before || sent.client.errors.slice(errorsBefore).some((e) => e.ref === sent.id), `state after an action in ${v.phase}`);
-      // A rejected bot action (e.g. a race with a phase change) makes the TV advance on the next step instead.
+      await t.tv.waitFor(() => t.tv.seq > before || sent.client.errors.slice(errorsBefore).some((e) => e.ref === sent.id), `state after an action in ${pub?.phase ?? room.phase}`);
       const rejected = t.tv.seq === before;
-      if (rejected && stuck) throw new Error(`TV HOST_ADVANCE rejected in ${v.phase}: ${sent.client.errors.at(-1)?.code}`);
+      if (rejected && stuck) throw new Error(`TV action rejected in ${pub?.phase ?? room.phase}: ${sent.client.errors.at(-1)?.code}`);
       stuck = rejected;
     }
     if (finished.size < games) t.failures.push(`only ${finished.size}/${games} games finished`);
+    if ((t.tv.view?.room.cup.last?.n ?? 0) < finished.size) t.failures.push("the cup did not record every finished instance");
   } catch (e) {
     t.failures.push(e instanceof Error ? e.message : String(e));
   } finally {
@@ -288,22 +342,23 @@ export async function playRoom(httpBase: string, n: number, games: number, args:
   return stats;
 }
 
-async function killAndResume(t: Table, v: TvView): Promise<void> {
-  const victim = t.players.find((c) => c.playerId !== v.currentSpeakerId && v.players.some((p) => p.id === c.playerId && p.alive));
+async function killAndResume(t: Table, pub: MishanaPublic): Promise<void> {
+  const victim = t.players.find((c) => c.playerId !== pub.currentSpeakerId && pub.players.some((p) => p.id === c.playerId && p.alive));
   if (!victim) throw new Error("no resume candidate");
   const pid = victim.playerId;
   const token = victim.resumeToken;
   if (!pid || !token) throw new Error("victim without welcome");
   await victim.closeSocket();
-  await t.tv.waitFor(() => t.tv.view?.players.find((p) => p.id === pid)?.connected === false, "victim shown disconnected");
+  await t.tv.waitFor(() => member(t.tv.view, pid)?.connected === false, "victim shown disconnected");
   const welcomesBefore = victim.welcomes;
   victim.playerId = null;
+  victim.seq = -1;
   await victim.open();
-  await victim.send({ v: 1, t: "hello", role: "player", resumeToken: token });
+  await victim.send({ v: 2, t: "hello", role: "player", resumeToken: token });
   await victim.waitFor(() => victim.welcomes > welcomesBefore, "welcome after resume");
   if (victim.playerId !== pid) throw new Error(`resume gave playerId ${victim.playerId}, expected ${pid}`);
   if (victim.resumeToken !== token) throw new Error("resume changed the token");
-  await t.tv.waitFor(() => t.tv.view?.players.find((p) => p.id === pid)?.connected === true, "victim shown connected again");
+  await t.tv.waitFor(() => member(t.tv.view, pid)?.connected === true, "victim shown connected again");
   await victim.waitFor(() => victim.view?.kind === "player" && victim.view.me?.id === pid, "resumed player view");
 }
 
@@ -311,59 +366,50 @@ function clientFor(t: Table, playerId: string | null): WsClient | undefined {
   return playerId === null ? undefined : t.players.find((c) => c.playerId === playerId && c.closed === null);
 }
 
-/** Issues exactly one action that should change the state. `stuck` → the TV advances. */
-async function stepOnce(t: Table, v: TvView, stuck: boolean): Promise<{ client: WsClient; id: string }> {
+/** Issues exactly one in-game action that should change the state. `stuck` → the TV advances. */
+async function stepOnce(t: Table, v: TvRoomView, pub: MishanaPublic, stuck: boolean): Promise<{ client: WsClient; id: string }> {
   const tv = t.tv;
   const pick = <T>(xs: readonly T[]): T | undefined => (xs.length ? xs[t.rng.int(xs.length)] : undefined);
-  switch (v.phase) {
-    case "LOBBY":
-      return { client: tv, id: await tv.act({ type: "START" }) };
-    case "RESULTS":
-      return { client: tv, id: await tv.act({ type: "PLAY_AGAIN" }) };
+  const advance = async (): Promise<{ client: WsClient; id: string }> => ({ client: tv, id: await tv.game({ type: "HOST_ADVANCE" }) });
+  const connected = (id: string): boolean => member(v, id)?.connected === true;
+  switch (pub.phase) {
     case "ROLE_REVEAL": {
-      const p = pick(v.players.filter((x) => x.connected && !x.left && !x.ready));
+      const p = pick(pub.players.filter((x) => connected(x.id) && !x.left && !x.ready));
       const c = p ? clientFor(t, p.id) : undefined;
-      if (c && !stuck) return { client: c, id: await c.act({ type: "READY" }) };
-      else return { client: tv, id: await tv.act({ type: "HOST_ADVANCE" }) };
+      return c && !stuck ? { client: c, id: await c.game({ type: "READY" }) } : advance();
     }
     case "CLUES":
     case "TIE_BREAK": {
-      const c = clientFor(t, v.currentSpeakerId);
-      if (c && !stuck && t.rng.next() > 0.05) return { client: c, id: await c.act({ type: "CLUE_DONE" }) };
-      else return { client: tv, id: await tv.act({ type: "HOST_ADVANCE" }) };
+      const c = clientFor(t, pub.currentSpeakerId);
+      return c && !stuck && t.rng.next() > 0.05 ? { client: c, id: await c.game({ type: "CLUE_DONE" }) } : advance();
     }
     case "VOTING": {
-      const voters = v.players.filter((p) => p.alive && !p.left && p.connected && !p.hasVoted);
-      const voter = pick(voters);
+      const voter = pick(pub.players.filter((p) => p.alive && !p.left && connected(p.id) && !p.hasVoted));
       const c = voter ? clientFor(t, voter.id) : undefined;
       if (voter && c && !stuck) {
-        const targets = v.players.filter((p) => p.alive && !p.left && p.id !== voter.id && (!v.revote || v.tieCandidates.includes(p.id)));
-        const target = pick(targets);
-        if (target) {
-          return { client: c, id: await c.act({ type: "CAST_VOTE", targetId: target.id }) };
-        }
+        const target = pick(pub.players.filter((p) => p.alive && !p.left && p.id !== voter.id && (!pub.revote || pub.tieCandidates.includes(p.id))));
+        if (target) return { client: c, id: await c.game({ type: "CAST_VOTE", targetId: target.id }) };
       }
-      return { client: tv, id: await tv.act({ type: "HOST_ADVANCE" }) };
+      return advance();
     }
-    case "ELIMINATION":
-      return { client: tv, id: await tv.act({ type: "HOST_ADVANCE" }) };
     case "MR_WHITE_GUESS": {
-      const g = v.guess;
+      const g = pub.guess;
       const c = g ? clientFor(t, g.playerId) : undefined;
       if (g?.status === "PENDING" && c && !stuck) {
         // 30%: the word most bots hold (the civilian word); otherwise a string that matches no word.
         const counts = new Map<string, number>();
         for (const pc of t.players) {
-          const w = pc.view?.kind === "player" ? pc.view.me?.word?.text : undefined;
+          const w = (pc.view?.game?.me as MishanaMe | null | undefined)?.word?.text;
           if (w) counts.set(w, (counts.get(w) ?? 0) + 1);
         }
         const majority = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
         const text = majority && t.rng.next() < 0.3 ? majority : `zzwrong${t.rng.int(1_000_000)}`;
-        return { client: c, id: await c.act({ type: "SUBMIT_GUESS", text }) };
-      } else {
-        return { client: tv, id: await tv.act({ type: "HOST_ADVANCE" }) };
+        return { client: c, id: await c.game({ type: "SUBMIT_GUESS", text }) };
       }
+      return advance();
     }
+    default:
+      return advance();
   }
 }
 
@@ -373,13 +419,15 @@ export async function runWsMode(args: SimArgs, log: (s: string) => void = consol
     throw new Error(`cannot reach ${httpBase}/healthz: ${e instanceof Error ? e.message : String(e)}`);
   });
   if (!health.ok) throw new Error(`${httpBase}/healthz → HTTP ${health.status}`);
+  const h = HealthzV2.safeParse(await health.json());
+  if (!h.success) throw new Error(`${httpBase}/healthz is not a protocol-2 JAMAA server`);
   const rows: WsGameStats[] = [];
-  for (const n of args.players) rows.push(await playRoom(httpBase, n, args.games, args, log));
+  for (const n of args.players.filter((x) => x >= 3)) rows.push(await playRoom(httpBase, n, args.games, args, log));
   return rows;
 }
 
 export function formatWsTable(rows: WsGameStats[]): string {
-  const header = ["n", "games", "civilians", "infiltrators", "blank", "stalemates", "resumes", "failures"];
-  const lines = rows.map((r) => [r.n, r.games, r.civilians, r.infiltrators, r.blank, r.stalemates, r.resumes, r.failures.length].map(String));
+  const header = ["n", "games", "civilians", "infiltrators", "blank", "stalemates", "resumes", "late joins", "failures"];
+  const lines = rows.map((r) => [r.n, r.games, r.civilians, r.infiltrators, r.blank, r.stalemates, r.resumes, r.lateJoins, r.failures.length].map(String));
   return formatColumns(header, lines);
 }

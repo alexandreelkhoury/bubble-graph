@@ -2,7 +2,9 @@ package app.jamaa.tv.net
 
 import app.jamaa.tv.Constants
 import app.jamaa.tv.protocol.ClientMessage
+import app.jamaa.tv.games.GameDecoders
 import app.jamaa.tv.protocol.HelloTv
+import app.jamaa.tv.protocol.TvGame
 import app.jamaa.tv.protocol.ProtocolJson
 import app.jamaa.tv.protocol.ServerMessage
 import kotlinx.coroutines.CoroutineScope
@@ -65,6 +67,8 @@ class RoomSocket(
     private val attemptResetMs: Long = 5_000L,
     private val slowReconnectMs: Long = Constants.SLOW_RECONNECT_MS,
     private val webSocketFactory: (Request, WebSocketListener) -> WebSocket = { r, l -> client.newWebSocket(r, l) },
+    /** JAMAA-PLATFORM §2.5: the games (and view versions) this build renders, declared in every hello. */
+    private val games: List<TvGame> = GameDecoders.supported(),
 ) : RoomConnection {
 
     companion object {
@@ -240,7 +244,7 @@ class RoomSocket(
                 heartbeatSocket = webSocket
                 heartbeat.start()
             }
-            webSocket.send(ProtocolJson.encodeClient(HelloTv(tvToken = token)))
+            webSocket.send(ProtocolJson.encodeClient(HelloTv(tvToken = token, games = games)))
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {

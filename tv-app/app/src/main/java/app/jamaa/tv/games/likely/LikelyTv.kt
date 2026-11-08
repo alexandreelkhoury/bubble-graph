@@ -11,7 +11,7 @@ import app.jamaa.tv.protocol.RoomPublic
 
 /**
  * STUB created in milestone P (JAMAA-PLATFORM §6.1). The G3 lane C replaces this object with the real decoder of
- * `game.public` / `game.me` (GAME-LIKELY §13) and sets [implemented] once its screens exist (games/likely/**). Until then the
+ * `game.public` / `game.me` (GAME-LIKELY §13) and sets [implemented] once its screens exist (games/likely/). Until then the
  * hello does not declare "likely", so the server never offers it to this TV.
  */
 object LikelyTv : TvGameModule {

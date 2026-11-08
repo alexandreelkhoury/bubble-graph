@@ -166,7 +166,8 @@
     "game.likely.title",
     "game.likely.tagline",
     "game.trivia.title",
-    "game.trivia.tagline"
+    "game.trivia.tagline",
+    "pass.manageHint"
   ],
   "es": [
     "brand.slogan",

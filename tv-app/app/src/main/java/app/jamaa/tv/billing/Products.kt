@@ -7,7 +7,11 @@ import app.jamaa.tv.i18n.Locales
  * shared/fixtures/billing.products.json. Pure.
  */
 object Products {
-    const val PREMIUM_PRODUCT_ID = "premium"
+    /** JAMAA-PLATFORM §4.1: the JAMAA Pass subscription (replaces the lifetime `premium` id). */
+    const val PASS_PRODUCT_ID = "jamaa_pass"
+
+    /** The internal name stays "premium" (§4.2: `RoomPublic.premium`, `EntitlementBody.premium`); same id as the Pass. */
+    const val PREMIUM_PRODUCT_ID = PASS_PRODUCT_ID
 
     /** Display order on the TV is yearly first (§4.4); this list keeps the shared order. */
     val BASE_PLAN_IDS: List<String> = listOf("monthly", "yearly")
@@ -33,9 +37,9 @@ object Products {
     const val PACKAGE_NAME = "app.jamaa.tv"
 
     /** §4.4: the Play subscriptions page for this product. */
-    const val MANAGE_SUBSCRIPTION_URL = "https://play.google.com/store/account/subscriptions?sku=premium&package=app.jamaa.tv"
+    const val MANAGE_SUBSCRIPTION_URL = "https://play.google.com/store/account/subscriptions?sku=jamaa_pass&package=app.jamaa.tv"
 
-    /** "lb-food-01" → "pack_lb_food_01". */
+    /** "lb-food-01" → "pack_lb_food_01" (§4.1: the argument is a pack FAMILY; a word pack's family defaults to its id). */
     fun packProductId(packId: String): String = PACK_PRODUCT_PREFIX + packId.replace("-", "_")
 
     /** "pack_lb_food_01" → "lb-food-01"; null for anything that is not a well-formed pack product id. */

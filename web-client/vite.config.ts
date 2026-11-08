@@ -5,7 +5,7 @@ import preact from "@preact/preset-vite";
 //   game-<id>[-shared]       a game's phone screens (lazy; counted per game, ≤ 14 KB gz)
 //   tv-mock*                 the /tv browser TV and its per-game screens (excluded from the phone budget)
 //   i18n-<id>-<locale>       one game's strings in one locale (lazy; the largest counts)
-//   <locale>                 the FR/AR/ES root catalogs (lazy; the largest counts)
+//   <locale>                 the EN/FR/AR/ES root catalogs (lazy; one per player, the largest counts)
 const norm = (p: string | null | undefined): string => (p ?? "").replace(/\\/g, "/");
 function chunkName(facade: string, modules: readonly string[]): string | null {
   const f = norm(facade);
@@ -20,7 +20,8 @@ function chunkName(facade: string, modules: readonly string[]): string | null {
   if (mods.length > 0) {
     const g = /\/src\/games\/([a-z]+)\//.exec(mods[0]!);
     if (g && mods.every((x) => x.includes(`/src/games/${g[1]}/`) && !x.includes("/tv/") && !x.endsWith("/tv.tsx"))) return `game-${g[1]}-shared`;
-    if (mods.every((x) => x.includes("/src/tv-mock/") || x.includes("/tv/") || x.endsWith("/tv.tsx"))) return "tv-mock-shared";
+    // The phone never imports /tv code, so any chunk holding a tv-mock module (or a game's TV screens) is TV-only.
+    if (mods.some((x) => x.includes("/src/tv-mock/") || /\/src\/games\/[a-z]+\/(tv\/|tv\.tsx)/.test(x))) return "tv-mock-shared";
   }
   return null;
 }

@@ -19,13 +19,13 @@ import java.io.File
 
 /** The same rules as web-client/test/sound.test.ts, on the same fixtures. */
 class SoundCuesTest {
-    private val lobby = TvFixtures.view("lobby")
-    private val reveal = TvFixtures.view("role_reveal")
-    private val clues = TvFixtures.view("clues")
-    private val voting = TvFixtures.view("voting")
-    private val guess = TvFixtures.view("mr_white_guess")
-    private val results = TvFixtures.view("results")
-    private val tie = TvFixtures.view("tie_break")
+    private val hub = TvFixtures.room("hub").room
+    private val reveal = TvFixtures.mishana("role_reveal")
+    private val clues = TvFixtures.mishana("clues")
+    private val voting = TvFixtures.mishana("voting")
+    private val guess = TvFixtures.guess(GuessStatus.WRONG)
+    private val results = TvFixtures.mishana("results")
+    private val tie = TvFixtures.tieBreak()
 
     private fun List<CuePlay>.cues() = map { it.cue }
 
@@ -41,23 +41,26 @@ class SoundCuesTest {
 
     @Test
     fun firstViewIsSilent() {
-        assertTrue(SoundCues.viewCues(null, lobby).isEmpty())
+        assertTrue(SoundCues.memberCues(null, hub).isEmpty())
+        assertTrue(SoundCues.viewCues(null, clues).isEmpty()) // joining a game mid-way: no flip
         assertTrue(SoundCues.viewCues(clues, clues).isEmpty())
     }
 
     @Test
-    fun lobbyJoinIsPitchedBySeatAndLeavePlucks() {
-        val two = lobby.copy(players = lobby.players.take(2))
-        val joined = SoundCues.viewCues(two, lobby)
+    fun hubJoinIsPitchedBySeatAndLeavePlucks() {
+        val two = hub.copy(members = hub.members.take(2))
+        val joined = SoundCues.memberCues(two, hub)
         assertEquals(listOf(Cue.JOIN, Cue.JOIN), joined.cues())
         assertEquals(SoundCues.joinRate(2), joined[0].rate, 1e-6f)
         assertNotEquals(joined[0].rate, joined[1].rate)
-        assertEquals(listOf(Cue.LEAVE), SoundCues.viewCues(lobby, two).cues())
+        assertEquals(listOf(Cue.LEAVE), SoundCues.memberCues(hub, two).cues())
     }
 
     @Test
     fun gameStartReadyAndFirstTurn() {
-        assertEquals(listOf(Cue.FLIP), SoundCues.viewCues(lobby, reveal).cues())
+        // The first view of an instance (also after REPLAY: a new n) flips the cards.
+        assertEquals(listOf(Cue.FLIP), SoundCues.viewCues(null, reveal).cues())
+        assertEquals(listOf(Cue.FLIP), SoundCues.viewCues(results, reveal.copy(gameNumber = results.gameNumber + 1)).cues())
         val one = reveal.copy(players = reveal.players.mapIndexed { i, p -> p.copy(ready = i == 0) })
         assertEquals(listOf(Cue.READY), SoundCues.viewCues(reveal, one).cues())
         val start = SoundCues.viewCues(one, clues)

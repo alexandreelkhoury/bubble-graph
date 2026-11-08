@@ -11,8 +11,6 @@ const P: Record<string, string> = {
   "chevron-forward": "M9.5 6l6 6-6 6",
   "chevron-back": "M14.5 6l-6 6 6 6",
   "chevron-down": "M6 9.5l6 6 6-6",
-  eye: "M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12zM12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 1 0 0-5.6z",
-  "eye-off": "M3 3l18 18M10.6 5.6A10 10 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-2.6 3.4M6.6 6.6C3.9 8.3 2.5 12 2.5 12S6 18.5 12 18.5c1.8 0 3.3-.5 4.6-1.3M9.9 9.9a2.8 2.8 0 0 0 4 4",
   "hand-press": "M12 8.2h.01M7.3 8.5a4.7 4.7 0 0 1 9.4 0M4.4 8.5a7.6 7.6 0 0 1 15.2 0M10 21.5v-7a2 2 0 0 1 4 0v3.5h1.8a2.2 2.2 0 0 1 2.2 2.2v1.3",
   // PAYMENTS-SPEC §4.7 DESIGN delta: Premium (cut gemstone outline; does not mirror). `crown` stays host/VIP only.
   gem: "M7 4h10l4.5 5.5L12 20.5 2.5 9.5zM2.5 9.5h19M9.5 4L8 9.5l4 11 4-11L14.5 4",
@@ -23,24 +21,13 @@ const P: Record<string, string> = {
   vibrate: "M9.5 4h5A1.5 1.5 0 0 1 16 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 8 18.5v-13A1.5 1.5 0 0 1 9.5 4zM4.5 9v6M19.5 9v6",
   trophy: "M8 4h8v5.5a4 4 0 0 1-8 0zM8 6H5.2a3 3 0 0 0 3.1 4.1M16 6h2.8a3 3 0 0 1-3.1 4.1M12 13.5V17M8.5 20h7M10 17h4",
   timer: "M12 5.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 1 0 0-15zM12 9.5V13l2.3 2.3M10 2.5h4M18.4 6.6l1.3-1.3",
-  users: "M9 4.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 1 0 0-7zM2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 20a6.5 6.5 0 0 0-2.2-4.9",
   settings: "M12 9a3 3 0 1 0 0 6 3 3 0 1 0 0-6zM10.3 3h3.4l.5 2.4 1.7 1 2.3-.8 1.7 2.9-1.8 1.6v2l1.8 1.6-1.7 2.9-2.3-.8-1.7 1-.5 2.4h-3.4l-.5-2.4-1.7-1-2.3.8-1.7-2.9 1.8-1.6v-2L4.1 8.5l1.7-2.9 2.3.8 1.7-1z",
-  dice: "M7 3.5h10A3.5 3.5 0 0 1 20.5 7v10a3.5 3.5 0 0 1-3.5 3.5H7A3.5 3.5 0 0 1 3.5 17V7A3.5 3.5 0 0 1 7 3.5zM8.5 8.5h.01M15.5 8.5h.01M12 12h.01M8.5 15.5h.01M15.5 15.5h.01",
   "user-x": "M9 4.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 1 0 0-7zM2.5 20a6.5 6.5 0 0 1 13 0M17 8.5l4 4M21 8.5l-4 4",
-  speech: "M5.5 4h13A2.5 2.5 0 0 1 21 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4h.5A2.5 2.5 0 0 1 3 14.5v-8A2.5 2.5 0 0 1 5.5 4z",
-  vote: "M4 12.5h7.5M8.5 9.5l3 3-3 3M15.5 9.5a3 3 0 1 0 0 6 3 3 0 1 0 0-6z",
   play: "M8 5.2v13.6a.8.8 0 0 0 1.2.7l10.6-6.8a.8.8 0 0 0 0-1.4L9.2 4.5A.8.8 0 0 0 8 5.2z",
-  pause: "M8 5v14M16 5v14",
   tv: "M4 5h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM8 21h8",
   phone: "M8.5 2.5h7A2 2 0 0 1 17.5 4.5v15a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-15a2 2 0 0 1 2-2zM11 18.5h2",
   info: "M12 3a9 9 0 1 0 0 18 9 9 0 1 0 0-18zM12 11v5.5M12 7.8h.01",
-  minus: "M6 12h12",
-  plus: "M12 6v12M6 12h12",
-  volume: "M4 9.5h3.5L12 5.5v13l-4.5-4H4zM15.5 9a4 4 0 0 1 0 6M18.2 6.3a7.8 7.8 0 0 1 0 11.4",
-  "volume-off": "M4 9.5h3.5L12 5.5v13l-4.5-4H4zM16 9.5l5 5M21 9.5l-5 5",
-  grid: "M4 4h6.5v6.5H4zM13.5 4H20v6.5h-6.5zM4 13.5h6.5V20H4zM13.5 13.5H20V20h-6.5z",
   star: "M12 3.2l2.6 5.5 6 .7-4.4 4.1 1.2 6L12 16.6l-5.4 2.9 1.2-6-4.4-4.1 6-.7z",
-  "arrow-back": "M19 12H5M11 6l-6 6 6 6",
   // JAMAA-PLATFORM §3.7 reaction bursts / the phone reaction bar (icons, never emoji).
   "r-laugh": "M12 3a9 9 0 1 0 0 18 9 9 0 1 0 0-18zM7.5 9l2 1.2-2 1.2M16.5 9l-2 1.2 2 1.2M7.5 14h9a4.5 4.5 0 0 1-9 0zM4.5 13.5c-.8 1.2-1 2.2-.4 2.8M19.5 13.5c.8 1.2 1 2.2.4 2.8",
   "r-shock": "M12 3a9 9 0 1 0 0 18 9 9 0 1 0 0-18zM9 9.5h.01M15 9.5h.01M12 13.2a1.8 2.3 0 1 0 0 4.6 1.8 2.3 0 1 0 0-4.6z",
@@ -48,12 +35,17 @@ const P: Record<string, string> = {
   "r-happy": "M12 20.5S3.5 15.3 3.5 9.4A4.4 4.4 0 0 1 12 7.1a4.4 4.4 0 0 1 8.5 2.3c0 5.9-8.5 11.1-8.5 11.1z",
   "r-sad": "M7 13.5a4 4 0 0 1-.4-8 5.5 5.5 0 0 1 10.6 1.4 3.3 3.3 0 0 1 .3 6.6zM8 17l-1 2.5M12 17l-1 2.5M16 17l-1 2.5",
   "r-cheer": "M4 20l4.5-11.5 7 7zM13 4.5l.8 2M18 6l-2 1.5M19.5 11h-2.2M10.5 3.5v.01M20.5 3.5v.01M15.5 10.5l1-1",
-  qr: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5z",
 };
 
 const MIRROR = new Set(["arrow-forward", "arrow-back", "chevron-forward", "chevron-back", "door-out", "speech", "vote"]);
 
 export type IconName = keyof typeof P | string;
+
+/** Icons only a lazy chunk draws (a game's phone screens, the /tv mock) register themselves there, which keeps their
+ *  paths out of the phone core (JAMAA-PLATFORM §3.8 budget). */
+export function registerIcons(paths: Readonly<Record<string, string>>): void {
+  Object.assign(P, paths);
+}
 
 export function Icon({ name, size = 24, class: cls, ...rest }: { name: IconName; size?: number; class?: string } & JSX.SVGAttributes<SVGSVGElement>) {
   const fat = name === "more" || name === "dice";

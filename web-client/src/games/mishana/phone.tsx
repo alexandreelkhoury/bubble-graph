@@ -15,6 +15,10 @@ import { Vote } from "./phone/Vote";
 import { Elimination } from "./phone/Elimination";
 import { Guess } from "./phone/Guess";
 import { Results } from "./phone/Results";
+import { registerIcons } from "../../components/Icon";
+import { MISHANA_ICONS } from "./icons";
+
+registerIcons(MISHANA_ICONS);
 
 /** A key that changes whenever the screen should reset (scroll to top, remount). */
 export function screenKey(v: PlayerRoomView): string {

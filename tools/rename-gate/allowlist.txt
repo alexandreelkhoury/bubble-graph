@@ -57,3 +57,18 @@ line: adb (-s \S+ )?uninstall app\.mishana\.tv
 # Words in the Mish Ana! word packs that the case-insensitive \bMish[A-Z] branch catches (Lebanese "misht" = comb,
 # "mishmish" = apricot). The packs move to content/mishana/** (allowlisted) with lane D's move (§5.1).
 line: "([Mm]isht|[Mm]ishmish)"
+
+# --- GAME1 context (P2, orchestrator request after lane E): game #1 keeps its name "Mish Ana!" («مش أنا!») and its
+# GameId `mishana` everywhere (JAMAA-PLATFORM §0), including identifiers derived from it (Mishana*, MISHANA*,
+# mishana_* per-game sound files, world_mishana_*). Allowed: the game name as written (with "!" or in quotes), the
+# Arabic name, and the id. A line that also carries an old BRAND identifier is refused whole: @mishana/,
+# app.mishana.tv (or app/mishana/tv), mishana.workers.dev, the "mishana: storage prefix, __mishana* globals,
+# mishana.prodServerUrl, the mishana_{billing,prefs,debug} prefs files, mishana-{tv,video,bots,keys} and mish-ana slugs.
+line: ^(?!.*(@mishana/|app[./]mishana|mishana\.workers|["'`]mishana:|__mishana|mishana\.prodServerUrl|mishana_(billing|prefs|debug|site)|mishana-(tv|video|bots|keys)|mish-ana)).*(Mish Ana!|MISH ANA!|Mish ana!|"Mish [Aa]na"|مش أنا)
+line: ^(?!.*(@mishana/|app[./]mishana|mishana\.workers|["'`]mishana:|__mishana|mishana\.prodServerUrl|mishana_(billing|prefs|debug|site)|mishana-(tv|video|bots|keys)|mish-ana)).*(mishana|Mishana|MISHANA)
+# The game name in curly quotes ("search “Mish Ana” on your TV") and in the ads' list of Latin words kept in captions
+line: “Mish Ana”
+line: \(JAMAA, Mish Ana, Arabizi
+# Owner-step rows (README, JAMAA-PLATFORM §1.6) and the release checklist's note name the OLD identifiers on purpose
+line: ^\| O[0-9]+ \| .*(mishana|app\.mishana\.tv)
+line: ~/\.mishana-keys/` for the old package

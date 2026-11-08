@@ -15,7 +15,15 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class EliminationPlanTest {
-    private val view = TvFixtures.view("elimination")
+    // The v2 fixture votes out the Undercover (game over); the plan tests use the civilian-out variant (same tally).
+    private val view = TvFixtures.mishana("elimination").let { v ->
+        val sam = v.eliminated!!.playerId
+        v.copy(
+            eliminated = Eliminated(sam, Role.CIVILIAN),
+            players = v.players.map { if (it.id == sam) it.copy(revealedRole = Role.CIVILIAN) else it },
+            history = v.history.map { it.copy(role = Role.CIVILIAN) },
+        )
+    }
     private val plan = EliminationPlan.of(view.lastVote, view.players, view.eliminated?.playerId)
 
     @Test

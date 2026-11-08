@@ -238,6 +238,55 @@ Palette B (web). `bgTop` is the lightest point of the stage, so it is the worst 
 
 The night palette's table (still the native TV's) had `text` 18.15 / 16.50 / 14.61 / 12.60 on bg / surface / elevated / overlay, `textMuted` 6.78 / 6.16 / 5.46 / 4.70 and `ink` on `primary` 5.78.
 
+### 2.5 World palettes (JAMAA platform)
+
+Each JAMAA game has a **world** (JAMAA-PLATFORM §3.4, DESIGN-JAMAA §1.5): a palette that replaces the stage while that game or its setup is on screen. Text, status colours, the focus ring (3 dp cream + `glow.primary`, §4.6) and the 12 player colours never change between worlds, so a player is the same colour everywhere. The hub keeps palette B (§2.1).
+
+**Source of truth:** `shared/src/worlds/palettes.ts` (each game lane edits only its own world). `tools/gen-characters` generates the TV's `WorldColors.kt` from it and refuses to write a palette that fails the rules below; the web sets the `--world-*` tokens from the same values (`[data-world="…"]` on the root, DESIGN-JAMAA §8). This table is a copy for review: `tools/gen-characters/test` parses it, checks every pair below, and checks it against `palettes.ts`.
+
+| Token (web `--world-*`, Compose `WorldColors`) | `night-market` Mish Ana! | `hakawati-cafe` Bluff | `rooftop` Most Likely | `quiz-studio` Trivia |
+|---|---|---|---|---|
+| `world.deep` | `#1D1036` (native `#120A1F`) | `#1C1209` | `#071A24` | `#0A0F2E` |
+| `world.stageTop` | `#2B1650` (native `#2A0F3D`) | `#2E1D0E` | `#0E2C3B` | `#141C52` |
+| `world.surface` | `#3A2266` (native `#1E1430`) | `#33230F` | `#0F2E3D` | `#161D4A` |
+| `world.elevated` | `#4A2E7A` (native `#2A1D42`) | `#4A3418` | `#17404F` | `#222B63` |
+| `world.accent` | `#FF4F9A` (native `#FF3D8B`) | `#E9A23B` | `#29D3C2` | `#5B7CFF` |
+| `world.accentText` | `#FF7AB3` | `#E9A23B` | `#29D3C2` | `#8FA8FF` |
+| `world.onAccent` | `#120A1F` | `#120A1F` | `#120A1F` | `#120A1F` |
+| `world.glow` | `#FFC94D` (native `#FFC23D`) | `#FFE3A3` | `#B8FFF6` | `#FFD84D` |
+| `world.signal` | — | `#FF5A5F` | `#FFC94D` | `#3DDC97` |
+
+`night-market` is the existing stage: palette B on the web, and the night palette on the native TV until palette B is checked on the owner's TV (§2 note; native values from `JamaaColors.kt`: `Bg`, `BgGlow` as the stage top, `Surface`, `Elevated`, `Primary`, `Accent`). `accentText` is the accent as text or a thin line on `surface`; the studio's base accent is only 4.41:1 there, so its text form is lighter. `signal` is the one game-specific accent: Bluff's **LIE** stamp red (`ink` on it 6.32:1), Most Likely's award gold, Trivia's correct green (= `success`).
+
+**Stage.** Linear 180° `world.stageTop` → `world.deep` (60 %), a top glow (radial 90 % × 55 % at 50 % −5 %, `world.glow` at 16 %), an accent bounce (radial 60 % × 50 % at −10 % 70 %, `world.accent` at 12 %), and the 6 % grain on the TV (one pre-rendered 128 × 128 tile; off in lite and calm motion and during the portal and the entrance).
+
+**Contrast (WCAG 2.x, computed by `tools/gen-characters/src/contrast.ts`).** Thresholds are §2.4's: body text ≥ 4.5:1, large text and graphics ≥ 3:1. `text` is `#FFF7EC`, `textMuted` `#B8A8D6`.
+
+| Pair (min) | night-market web | night-market native | hakawati-cafe | rooftop | quiz-studio |
+|---|---|---|---|---|---|
+| `text` on `deep` (≥ 4.5) | 16.76 | 18.15 | 17.34 | 16.72 | 17.64 |
+| `text` on `stageTop` (≥ 4.5) | 14.83 | 16.02 | 15.23 | 13.71 | 15.00 |
+| `text` on `surface` (≥ 4.5) | 12.35 | 16.50 | 14.24 | 13.37 | 15.10 |
+| `text` on `elevated` (≥ 4.5) | 10.07 | 14.61 | 11.01 | 10.50 | 12.40 |
+| `textMuted` on `surface` (≥ 4.5) | 6.00 | 8.02 | 6.92 | 6.50 | 7.34 |
+| `accentText` on `surface` (≥ 4.5) | 5.43 | 7.25 | 6.99 | 7.57 | 7.04 |
+| `onAccent` on `accent` (≥ 4.5) | 6.28 | 5.78 | 8.90 | 10.28 | 5.30 |
+| `accent` on `deep` (≥ 3) | 5.80 | 5.78 | 8.51 | 9.47 | 5.15 |
+| `glow` on `deep` (≥ 3) | 11.63 | 11.97 | 14.71 | 15.79 | 13.55 |
+| `signal` on `deep` (≥ 3) | — | — | 6.04 | 11.60 | 10.60 |
+
+The night-market web `accentText` (= `primaryText`) on `elevated` is 4.43:1, so as in §2.4 it is large text and lines only on raised fills.
+
+**Player colours on world surfaces.** As in §2.3, a player colour below 3:1 on the fill under it gets the 2 dp `color.text` ring at 24 %:
+
+| World | Below 3:1 on `world.surface` | Below 3:1 on `world.elevated` |
+|---|---|---|
+| night-market (web) | grape 2.55, plum 2.48 | coral 2.49, grape 2.08, plum 2.02 |
+| night-market (native) | none | plum 2.93 |
+| hakawati-cafe | grape 2.94, plum 2.86 | coral 2.73, grape 2.27, plum 2.21 |
+| rooftop | grape 2.76, plum 2.68 | coral 2.60, grape 2.16, plum 2.11 |
+| quiz-studio | none | grape 2.56, plum 2.49 |
+
 ---
 
 ## 3. Typography

@@ -1,16 +1,19 @@
 package app.jamaa.tv.game
 
+import app.jamaa.tv.games.mishana.MishanaView
+import app.jamaa.tv.games.mishana.player
 import app.jamaa.tv.protocol.HistoryCause
 import app.jamaa.tv.protocol.Phase
 import app.jamaa.tv.protocol.Role
+import app.jamaa.tv.protocol.RoomPhase
+import app.jamaa.tv.protocol.RoomPublic
 import app.jamaa.tv.protocol.Settings
-import app.jamaa.tv.protocol.TvView
-import app.jamaa.tv.protocol.player
+import app.jamaa.tv.protocol.member
 
 /**
  * Game events the TV announces as toasts, derived by diffing two consecutive views (pure; JVM-tested).
- * Living in the ViewModel, the diff sees every broadcast, whichever screen is showing (Settings over the Lobby,
- * the activity recreation a language change causes), so no join/leave/away/skip is lost.
+ * Living in the ViewModel, the diff sees every broadcast, whichever screen is showing (an overlay, the activity
+ * recreation a language change causes), so no join/leave/away/skip is lost.
  */
 sealed interface ViewEvent {
     /** `lobby.joined` */
@@ -31,18 +34,33 @@ sealed interface ViewEvent {
 
 private val CLUE_PHASES = setOf(Phase.CLUES, Phase.TIE_BREAK)
 
-fun diffViews(before: TvView?, after: TvView): List<ViewEvent> {
+/**
+ * Room-level events (JAMAA-PLATFORM §3.2 live join): joins and leaves while gathering (HUB / SETUP), and players who
+ * drop mid-game (PLAYING). Benched members count as joined: they are in the room.
+ */
+fun diffMembers(before: RoomPublic?, after: RoomPublic): List<ViewEvent> {
     if (before == null) return emptyList()
     val out = mutableListOf<ViewEvent>()
-
-    // Lobby roster (left players are dropped from the lobby list).
-    if (before.phase == Phase.LOBBY && after.phase == Phase.LOBBY) {
-        val was = before.players.filter { !it.left }.associateBy { it.id }
-        val now = after.players.filter { !it.left }.associateBy { it.id }
-        for ((id, p) in now) if (id !in was) out += ViewEvent.PlayerJoined(p.name)
-        for ((id, p) in was) if (id !in now) out += ViewEvent.PlayerLeft(p.name)
-        return out
+    val was = before.members.filter { !it.left }.associateBy { it.id }
+    val now = after.members.filter { !it.left }.associateBy { it.id }
+    for ((id, m) in now) if (id !in was) out += ViewEvent.PlayerJoined(m.name)
+    val playing = before.phase == RoomPhase.PLAYING && after.phase == RoomPhase.PLAYING
+    if (before.phase != RoomPhase.PLAYING && after.phase != RoomPhase.PLAYING) {
+        for ((id, m) in was) if (id !in now) out += ViewEvent.PlayerLeft(m.name)
     }
+    if (playing) {
+        for (m in after.members) {
+            val old = before.member(m.id) ?: continue
+            if (old.connected && !m.connected && !m.left) out += ViewEvent.PlayerAway(m.name)
+        }
+    }
+    return out
+}
+
+/** Mish Ana! in-game events between two views of the same instance: forfeits and skipped turns. */
+fun diffViews(before: MishanaView?, after: MishanaView): List<ViewEvent> {
+    if (before == null) return emptyList()
+    val out = mutableListOf<ViewEvent>()
     if (before.gameNumber != after.gameNumber) return out
 
     // Forfeits: new history entries caused by LEAVE / KICK (their role is public).
@@ -51,14 +69,6 @@ fun diffViews(before: TvView?, after: TvView): List<ViewEvent> {
         val p = after.player(h.eliminatedId) ?: continue
         val role = h.role ?: continue
         out += ViewEvent.Forfeit(p.name, role)
-    }
-
-    // Away: connected → disconnected during a game.
-    if (after.phase != Phase.LOBBY) {
-        for (p in after.players) {
-            val old = before.player(p.id) ?: continue
-            if (old.connected && !p.connected && !p.left) out += ViewEvent.PlayerAway(p.name)
-        }
     }
 
     // Skipped turns: the speaker jumped past away players within the same speaking order.

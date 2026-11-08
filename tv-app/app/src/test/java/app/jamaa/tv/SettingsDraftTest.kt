@@ -12,7 +12,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SettingsDraftTest {
-    private val s = TvFixtures.view("lobby").settings
+    private val s = TvFixtures.setup().settings
 
     @Test
     fun mergeAndOverlay() {

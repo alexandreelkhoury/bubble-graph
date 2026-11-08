@@ -82,6 +82,8 @@ importers:
         specifier: workspace:*
         version: link:../../shared
 
+  tools/gen-characters: {}
+
   tools/gen-sounds: {}
 
   tools/rename-gate: {}

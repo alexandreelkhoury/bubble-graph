@@ -17,7 +17,7 @@ import {
 import type { Locale } from "@jamaa/shared/constants";
 import { gameAvailable } from "@jamaa/shared/room";
 import { assertRoomInvariants, createRoomHistory, createRoomState, nextRoomWakeAt, normalizeLoaded, reduceRoom, roomGames } from "@jamaa/shared/room";
-import type { RoomAction, RoomActor, RoomCtx, RoomHistory, RoomIntent, RoomState, RoomSystemAction } from "@jamaa/shared/room";
+import type { RoomAction, RoomActor, RoomCtx, RoomHistory, RoomIntent, RoomState } from "@jamaa/shared/room";
 import type { ContentCatalog } from "@jamaa/shared/content";
 import { isGameId } from "@jamaa/shared/games/ids";
 import type { GameId } from "@jamaa/shared/games/ids";

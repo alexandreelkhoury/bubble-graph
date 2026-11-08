@@ -99,7 +99,7 @@ class StoreFocusTest {
 
     @Test
     fun catalogFailureBuildsPacksFromLockedPacksWithoutOtherLanguages() {
-        val locked = listOf(LockedPackInfo("en-food-01", "en", LocalizedTitle("Food", "À table", "أكل"), 33, "all", "pack_en_food_01"))
+        val locked = listOf(LockedPackInfo("en-food-01", "mishana", "en-food-01", "en", LocalizedTitle("Food", "À table", "أكل"), 33, "all", "pack_en_food_01", null, null, emptyList()))
         val s = ready().copy(catalog = null)
         val m = StoreModel.build(s, "en", locked, now)
         assertEquals(listOf("pack_en_food_01"), m.packs.map { it.productId })

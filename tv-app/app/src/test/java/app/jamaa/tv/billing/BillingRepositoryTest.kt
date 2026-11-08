@@ -436,7 +436,7 @@ class BillingRepositoryTest {
         assertEquals(StorePhase.Unavailable(UnavailableReason.NETWORK), e.repo.state.value.phase)
         // Catalog down, Play up: Ready, packs from view.lockedPacks (the INAPP query uses their product ids).
         gw.products = GatewayResult.Ok(PlayProducts.all("pack_test_en_prem_01"))
-        val locked = listOf(app.jamaa.tv.protocol.LockedPackInfo("test-en-prem-01", "en", app.jamaa.tv.protocol.LocalizedTitle("P", "P", "P"), 10, "all", "pack_test_en_prem_01"))
+        val locked = listOf(app.jamaa.tv.protocol.LockedPackInfo("test-en-prem-01", "mishana", "test-en-prem-01", "en", app.jamaa.tv.protocol.LocalizedTitle("P", "P", "P"), 10, "all", "pack_test_en_prem_01", null, null, emptyList()))
         e.repo.openStore(locked)
         advanceUntilIdle()
         assertEquals(StorePhase.Ready, e.repo.state.value.phase)

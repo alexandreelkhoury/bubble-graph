@@ -1,53 +1,73 @@
 package app.jamaa.tv
 
+import app.jamaa.tv.games.GameDecoders
+import app.jamaa.tv.games.mishana.MishanaTv
+import app.jamaa.tv.protocol.AbortGame
 import app.jamaa.tv.protocol.ActionMsg
-import app.jamaa.tv.protocol.BackToLobby
+import app.jamaa.tv.protocol.BackToHub
+import app.jamaa.tv.protocol.BackToSetup
 import app.jamaa.tv.protocol.ClientMessage
+import app.jamaa.tv.protocol.CloseGame
 import app.jamaa.tv.protocol.EntitlementMsg
-import app.jamaa.tv.protocol.StoreOpenMsg
 import app.jamaa.tv.protocol.HelloTv
-import app.jamaa.tv.protocol.HostAdvance
-import app.jamaa.tv.protocol.HostOverrideGuess
+import app.jamaa.tv.protocol.HubFocus
 import app.jamaa.tv.protocol.Kick
-import app.jamaa.tv.protocol.PlayAgain
+import app.jamaa.tv.protocol.OpenGame
 import app.jamaa.tv.protocol.ProtocolJson
+import app.jamaa.tv.protocol.Replay
+import app.jamaa.tv.protocol.RoleMode
+import app.jamaa.tv.protocol.SetContentLocale
 import app.jamaa.tv.protocol.SettingsPatch
-import app.jamaa.tv.protocol.Start
-import app.jamaa.tv.protocol.UpdateSettings
-import app.jamaa.tv.protocol.WinRule
+import app.jamaa.tv.protocol.StartGame
+import app.jamaa.tv.protocol.StoreOpenMsg
+import app.jamaa.tv.protocol.TvGame
+import app.jamaa.tv.protocol.UpdateGameSettings
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
-/** SPEC §10.1: encode-compare (structural JSON equality) for HelloTv and every TV intent. */
+/** SPEC §10.1 with protocol v2: encode-compare (structural JSON equality) for the hello and every TV intent. */
 class ClientEncodingTest {
 
     private fun assertEncodes(fixture: String, msg: ClientMessage) {
-        val expected = Json.parseToJsonElement(Fixtures.read(fixture))
+        val expected = Json.parseToJsonElement(Fixtures.v2(fixture))
         val actual = ProtocolJson.encoder.encodeToJsonElement(ClientMessage.serializer(), msg)
         assertEquals(fixture, expected, actual)
     }
 
-    @Test fun helloTv() = assertEncodes("c2s.hello.tv.json", HelloTv(tvToken = "0123456789abcdef0123456789abcdef"))
+    private val token = "0123456789abcdef0123456789abcdef"
 
-    @Test fun updateSettings() = assertEncodes(
-        "c2s.action.update_settings.json",
-        ActionMsg(id = "1", a = UpdateSettings(SettingsPatch(winRule = WinRule.PARITY, clueSeconds = 30))),
-    )
+    /** §2.5 capability negotiation: the hello declares the games this build renders, with their view versions. */
+    @Test fun helloTvDeclaresTheBuildsGames() {
+        assertEncodes("c2s.hello.tv.mishana-only.json", HelloTv(tvToken = token, games = GameDecoders.supported()))
+        assertEncodes(
+            "c2s.hello.tv.json",
+            HelloTv(tvToken = token, games = listOf(TvGame("mishana", 1), TvGame("bluff", 1), TvGame("likely", 1), TvGame("trivia", 1))),
+        )
+    }
 
-    @Test fun start() = assertEncodes("c2s.action.start.json", ActionMsg(id = "2", a = Start))
+    @Test fun hubFocus() = assertEncodes("c2s.action.hub_focus.json", ActionMsg(id = "1", a = HubFocus("mishana")))
+    @Test fun openGame() = assertEncodes("c2s.action.open_game.json", ActionMsg(id = "2", a = OpenGame("mishana")))
+    @Test fun closeGame() = assertEncodes("c2s.action.close_game.json", ActionMsg(id = "3", a = CloseGame))
+    @Test fun setContentLocale() = assertEncodes("c2s.action.set_content_locale.json", ActionMsg(id = "4", a = SetContentLocale("ar")))
 
+    @Test fun updateGameSettingsFromTheMishanaDraft() {
+        val patch = MishanaTv.wirePatch(SettingsPatch(roleMode = RoleMode.CUSTOM, undercoverCount = 1, blankCount = 1))!!
+        assertEncodes("c2s.action.update_game_settings.json", ActionMsg(id = "5", a = UpdateGameSettings("mishana", patch)))
+        // wordLocale never goes into the game patch (it is SET_CONTENT_LOCALE in v2).
+        assertNull(MishanaTv.wirePatch(SettingsPatch(wordLocale = "fr")))
+    }
+
+    @Test fun startGame() = assertEncodes("c2s.action.start_game.json", ActionMsg(id = "6", a = StartGame))
     @Test fun hostOverrideGuess() =
-        assertEncodes("c2s.action.host_override_guess.json", ActionMsg(id = "7", a = HostOverrideGuess(accept = true)))
-
-    @Test fun hostAdvance() = assertEncodes("c2s.action.host_advance.json", ActionMsg(id = "8", a = HostAdvance))
-
-    @Test fun kick() =
-        assertEncodes("c2s.action.kick.json", ActionMsg(id = "9", a = Kick(playerId = "p_2c3d4e5f60718293a4b5c6d7")))
-
-    @Test fun playAgain() = assertEncodes("c2s.action.play_again.json", ActionMsg(id = "10", a = PlayAgain))
-
-    @Test fun backToLobby() = assertEncodes("c2s.action.back_to_lobby.json", ActionMsg(id = "11", a = BackToLobby))
+        assertEncodes("c2s.action.game.mishana.host_override_guess.json", ActionMsg(id = "11", a = MishanaTv.hostOverrideGuess(accept = true)))
+    @Test fun hostAdvance() = assertEncodes("c2s.action.game.mishana.host_advance.json", ActionMsg(id = "12", a = MishanaTv.hostAdvance()))
+    @Test fun replay() = assertEncodes("c2s.action.replay.json", ActionMsg(id = "13", a = Replay))
+    @Test fun backToSetup() = assertEncodes("c2s.action.back_to_setup.json", ActionMsg(id = "14", a = BackToSetup))
+    @Test fun backToHub() = assertEncodes("c2s.action.back_to_hub.json", ActionMsg(id = "15", a = BackToHub))
+    @Test fun abortGame() = assertEncodes("c2s.action.abort_game.json", ActionMsg(id = "16", a = AbortGame))
+    @Test fun kick() = assertEncodes("c2s.action.kick.json", ActionMsg(id = "23", a = Kick(playerId = "p_3d4e5f60718293a4b5c6d7e8")))
 
     /** PAYMENTS-SPEC §3.11 / §4.9: the two TV-only messages. */
     @Test fun entitlement() = assertEncodes(
@@ -58,13 +78,13 @@ class ClientEncodingTest {
     @Test fun storeOpen() = assertEncodes("c2s.storeOpen.json", StoreOpenMsg(open = true))
 
     @Test fun pingFrameIsByteExact() {
-        assertEquals(Constants.PING_FRAME + "\n", Fixtures.read("c2s.ping.json"))
-        assertEquals("""{"v":1,"t":"ping"}""", Constants.PING_FRAME)
-        assertEquals("""{"v":1,"t":"pong"}""", Constants.PONG_FRAME)
+        assertEquals(Constants.PING_FRAME + "\n", Fixtures.v2("c2s.ping.json"))
+        assertEquals("""{"v":2,"t":"ping"}""", Constants.PING_FRAME)
+        assertEquals("""{"v":2,"t":"pong"}""", Constants.PONG_FRAME)
     }
 
     @Test fun nullActionIdIsOmitted() {
-        val text = ProtocolJson.encodeClient(ActionMsg(a = Start))
-        assertEquals(Json.parseToJsonElement("""{"v":1,"t":"action","a":{"type":"START"}}"""), Json.parseToJsonElement(text))
+        val text = ProtocolJson.encodeClient(ActionMsg(a = StartGame))
+        assertEquals(Json.parseToJsonElement("""{"v":2,"t":"action","a":{"type":"START_GAME"}}"""), Json.parseToJsonElement(text))
     }
 }

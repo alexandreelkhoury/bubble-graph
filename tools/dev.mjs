@@ -65,6 +65,19 @@ function main() {
     }
   }
 
+  // JAMAA-PLATFORM §5.6: the Worker ships the packs as Text modules from server/content-dist (gitignored): emit them
+  // (lane D's `content-lint --emit`), then regenerate the import list (server/scripts/gen-content-modules.mjs).
+  for (const [what, args] of [
+    ["content-lint --emit", ["--filter", "@jamaa/content-lint", "run", "lint", "--quiet", "--emit"]],
+    ["gen-content-modules", ["--filter", "@jamaa/server", "exec", "node", "scripts/gen-content-modules.mjs", "--require"]],
+  ]) {
+    const r = spawnSync(PNPM, args, { cwd: ROOT, stdio: "inherit", shell: isWin });
+    if (r.status !== 0) {
+      console.error(`${what} failed; fix the content first (pnpm lint:content).`);
+      process.exit(r.status ?? 1);
+    }
+  }
+
   const webOrigin = `http://${lanHost}:${VITE_PORT}`;
   const wranglerArgs = [
     "--filter", "@jamaa/server", "exec", "wrangler", "dev",

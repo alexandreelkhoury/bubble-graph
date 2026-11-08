@@ -17,6 +17,18 @@ import app.jamaa.tv.protocol.ServerMessage
 import app.jamaa.tv.protocol.StateMsg
 import app.jamaa.tv.protocol.WelcomeMsg
 import app.jamaa.tv.protocol.WinRule
+import app.jamaa.tv.protocol.RoleMode
+import app.jamaa.tv.protocol.RoomPhase
+import app.jamaa.tv.game.GameViewModel
+import app.jamaa.tv.games.GameDecoders
+import app.jamaa.tv.games.GameIds
+import app.jamaa.tv.games.UnsupportedGameView
+import app.jamaa.tv.games.UnsupportedReason
+import app.jamaa.tv.games.mishana.MishanaGameView
+import app.jamaa.tv.games.mishana.MishanaTv
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import java.io.File
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -24,22 +36,17 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** SPEC §10 / §14.4: Kotlin decodes the S2C fixtures with the strict decoder and re-encodes them identically. */
+/**
+ * SPEC §10 / §14.4 with protocol v2 (JAMAA-PLATFORM §2.5): Kotlin decodes the S2C fixtures of shared/fixtures/v2 with
+ * the strict decoder and re-encodes them identically; each game envelope decodes through GameDecoders.
+ */
 class ProtocolFixturesTest {
 
-    private val tvStateFixtures = listOf(
-        "s2c.state.tv.lobby.json",
-        "s2c.state.tv.role_reveal.json",
-        "s2c.state.tv.clues.json",
-        "s2c.state.tv.voting.json",
-        "s2c.state.tv.tie_break.json",
-        "s2c.state.tv.elimination.json",
-        "s2c.state.tv.mr_white_guess.json",
-        "s2c.state.tv.results.json",
-    )
+    private fun tvStateFixtures(): List<String> =
+        File(Fixtures.dir, "v2").listFiles { f -> f.name.startsWith("s2c.state.tv.") && f.name.endsWith(".json") }!!.map { it.name }.sorted()
 
     private fun roundTrip(name: String): ServerMessage {
-        val text = Fixtures.read(name)
+        val text = Fixtures.v2(name)
         val decoded = ProtocolJson.strict.decodeFromString(ServerMessage.serializer(), text)
         val reEncoded = ProtocolJson.strict.encodeToJsonElement(ServerMessage.serializer(), decoded)
         assertEquals("round trip of $name", Json.parseToJsonElement(text), reEncoded)
@@ -48,16 +55,147 @@ class ProtocolFixturesTest {
 
     @Test
     fun everyTvStateFixtureDecodesAndRoundTrips() {
-        for (name in tvStateFixtures) {
+        val names = tvStateFixtures()
+        assertTrue("hub, setup and playing fixtures exist", names.size >= 10)
+        for (name in names) {
             val msg = roundTrip(name)
             assertTrue("$name is a state message", msg is StateMsg)
-            assertEquals("$name view kind", "tv", (msg as StateMsg).view.kind)
+            val v = (msg as StateMsg).view
+            assertEquals("$name view kind", "tv", v.kind)
+            assertNull("$name: the TV never gets `me`", v.me)
+            // Every envelope decodes into a drawable game (this build renders mishana) or the update card, never throws.
+            v.game?.let { env ->
+                val g = GameDecoders.decode(env, v.room)
+                if (env.gameId == GameIds.MISHANA) assertTrue("$name decodes as Mish Ana!", g is MishanaGameView)
+                else assertTrue(g is UnsupportedGameView)
+            }
+            // SETUP carries the setup of `setupGameId`; HUB and PLAYING carry none (§2.5).
+            assertEquals(name, v.room.phase == RoomPhase.SETUP, v.room.setup != null)
+            if (v.room.setup != null) assertEquals(v.room.setupGameId, v.room.setup!!.gameId)
         }
-        // Any extra TV state fixture added later must also decode.
-        Fixtures.dir.listFiles { f -> f.name.startsWith("s2c.state.tv.") && f.name.endsWith(".json") }
-            ?.map { it.name }
-            ?.filter { it !in tvStateFixtures }
-            ?.forEach { roundTrip(it) }
+    }
+
+    @Test
+    fun hubFixture() {
+        val v = (roundTrip("s2c.state.tv.hub.json") as StateMsg).view
+        assertEquals(RoomPhase.HUB, v.room.phase)
+        assertEquals("mishana", v.room.focusedGameId)
+        assertNull(v.room.setupGameId)
+        assertNull(v.game)
+        assertEquals(listOf("mishana"), v.room.games.map { it.id })
+        assertEquals(listOf(10, 20), v.room.games[0].durationMinutes)
+        assertEquals(listOf("Rami", "Léa", "نور", "Sam"), v.room.members.map { it.name })
+        assertTrue(v.room.members.first().isHost)
+        assertTrue(v.room.cup.stars.isEmpty())
+        assertNull(v.room.cup.last)
+        // RoomPublic key order is part of the contract (fixtures round-trip byte-equal in TS and Kotlin).
+        val raw = Json.parseToJsonElement(Fixtures.v2("s2c.state.tv.hub.json")).jsonObject["view"]!!.jsonObject["room"]!!.jsonObject
+        assertEquals(
+            listOf("roomCode", "joinUrl", "phase", "focusedGameId", "setupGameId", "contentLocale", "members", "hostPlayerId",
+                "games", "setup", "cup", "premium", "tvBusy", "contentLocales"),
+            raw.keys.toList(),
+        )
+    }
+
+    @Test
+    fun cupAndReaction() {
+        val v = (roundTrip("s2c.state.tv.hub.cup.json") as StateMsg).view
+        assertEquals(3, v.room.cup.stars.values.count { it == 3 })
+        assertEquals("mishana", v.room.cup.last!!.gameId)
+        assertEquals(1, v.room.cup.last!!.ranking.size)
+    }
+
+    @Test
+    fun mishanaSetupFixture() {
+        val room = (roundTrip("s2c.state.tv.setup.mishana.json") as StateMsg).view.room
+        val setup = room.setup!!
+        assertTrue(setup.canStart)
+        assertNull(setup.startBlocker)
+        val sv = MishanaTv.setupView(room)!!
+        assertEquals("en", sv.settings.wordLocale) // = contentLocale
+        assertEquals(RoleMode.CUSTOM, sv.settings.roleMode)
+        assertEquals(1, sv.roleCounts!!.undercover)
+        assertFalse(sv.poolExhausted)
+        assertEquals(listOf("en", "fr", "ar"), sv.wordLocales)
+        assertEquals(4, sv.players.size)
+        // PackInfo / LockedPackInfo v2: + gameId, family, stars, domain, topics; locked = metadata only.
+        val raw = Json.parseToJsonElement(Fixtures.v2("s2c.state.tv.setup.mishana.json")).jsonObject["view"]!!.jsonObject["room"]!!
+            .jsonObject["setup"]!!.jsonObject
+        for (p in raw["lockedPacks"]!!.jsonArray) {
+            assertEquals(
+                setOf("id", "gameId", "family", "locale", "title", "pairCount", "ageRating", "productId", "stars", "domain", "topics"),
+                p.jsonObject.keys,
+            )
+        }
+        for (p in setup.lockedPacks) assertTrue(p.productId.startsWith("pack_"))
+        assertFalse(MishanaTv.poolExhausted(setup))
+    }
+
+    @Test
+    fun otherGamesSetupsDecodeWithoutTheirPackage() {
+        for (id in listOf("bluff", "likely", "trivia")) {
+            val room = (roundTrip("s2c.state.tv.setup.$id.json") as StateMsg).view.room
+            assertEquals(id, room.setup!!.gameId)
+            assertEquals(id, (room.setup!!.extras["gameId"] as kotlinx.serialization.json.JsonPrimitive).content)
+            assertNull(MishanaTv.setupView(room))
+            assertFalse(room.setup!!.canStart) // stubs: GAME_DISABLED
+        }
+    }
+
+    @Test
+    fun votingDeepAsserts() {
+        val msg = roundTrip("s2c.state.tv.playing.mishana.voting.json") as StateMsg
+        val env = msg.view.game!!
+        assertEquals("VOTING", env.phase)
+        assertEquals(4, env.awaitedIds.size)
+        assertFalse(env.over)
+        val v = TvFixtures.mishana("voting")
+        assertEquals(Phase.VOTING, v.phase)
+        assertEquals(4, v.players.size)
+        assertEquals("نور", v.players[2].name) // joined from room.members
+        assertEquals("coral", v.players[0].color)
+        assertTrue(v.players[0].isHost)
+        assertEquals(DeadlineKind.VOTE, v.deadline!!.kind)
+        assertEquals(WinRule.OFFICIAL, v.settings.winRule)
+        assertEquals(10, v.settings.points.undercover)
+        assertEquals(4, v.votesExpected)
+        assertNull(v.lastVote)
+        // The game's player entries carry only game fields (names live in the room).
+        val rawPlayer = env.public["players"]!!.jsonArray[0].jsonObject
+        assertEquals(setOf("id", "alive", "left", "ready", "spoke", "hasVoted", "revealedRole", "score"), rawPlayer.keys)
+    }
+
+    @Test
+    fun replayIsANewInstance() {
+        val v = TvFixtures.room("playing.mishana.replay")
+        assertEquals(2, v.game!!.n)
+        // The engine restarts its own counter; the TV keys its per-game state on the instance number.
+        assertEquals(2, TvFixtures.mishana("replay").gameNumber)
+        assertEquals(5, TvFixtures.mishana("replay").players.size)
+    }
+
+    @Test
+    fun benchedMemberIsNotAPlayer() {
+        val v = TvFixtures.room("playing.mishana.clues")
+        val zoe = v.room.members.first { it.name == "Zoé" }
+        assertTrue(zoe.benched)
+        assertTrue(TvFixtures.mishana("clues").players.none { it.id == zoe.id })
+    }
+
+    @Test
+    fun unknownGameIdRendersTheUpdateCard() {
+        val v = TvFixtures.room("playing.mishana.voting")
+        val env = v.game!!
+        val unknown = GameDecoders.decode(env.copy(gameId = "karaoke"), v.room)
+        assertEquals(UnsupportedReason.UNKNOWN_GAME, (unknown as UnsupportedGameView).reason)
+        val stub = GameDecoders.decode(env.copy(gameId = "bluff"), v.room) as UnsupportedGameView
+        assertEquals(UnsupportedReason.NOT_IMPLEMENTED, stub.reason)
+        val broken = GameDecoders.decode(env.copy(public = JsonObject(mapOf("phase" to JsonPrimitive("VOTING")))), v.room) as UnsupportedGameView
+        assertEquals(UnsupportedReason.DECODE_FAILED, broken.reason)
+        // A whole frame with an unknown game decodes in production (the room view stays usable).
+        val text = Fixtures.v2("s2c.state.tv.playing.mishana.voting.json").replace("\"gameId\": \"mishana\"", "\"gameId\": \"karaoke\"")
+        val msg = ProtocolJson.decodeServer(text) as StateMsg
+        assertEquals("karaoke", msg.view.game!!.gameId)
     }
 
     @Test
@@ -66,14 +204,15 @@ class ProtocolFixturesTest {
         assertEquals("p_1b2c3d4e5f60718293a4b5c6", welcome.playerId)
         assertEquals("KXRT", welcome.roomCode)
 
-        val error = roundTrip("s2c.error.json") as ErrorMsg
-        assertEquals("NOT_YOUR_TURN", error.code)
-        assertEquals("error.notYourTurn", error.messageKey)
-        assertEquals("4", error.ref)
+        for (code in listOf("game_unavailable", "not_in_game", "reaction_too_fast", "unsupported_version", "wrong_game")) {
+            val error = roundTrip("s2c.error.$code.json") as ErrorMsg
+            assertEquals(code.uppercase(), error.code)
+            assertEquals(GameViewModel.errorMessageKey(error.code), error.messageKey)
+        }
 
         val pong = roundTrip("s2c.pong.json")
         assertTrue(pong is PongMsg)
-        assertEquals(Constants.PONG_FRAME, Fixtures.read("s2c.pong.json").let { Json.parseToJsonElement(it).toString() })
+        assertEquals(Constants.PONG_FRAME, Fixtures.v2("s2c.pong.json").let { Json.parseToJsonElement(it).toString() })
     }
 
     @Test
@@ -89,53 +228,6 @@ class ProtocolFixturesTest {
             Json.parseToJsonElement(text),
             ProtocolJson.strict.encodeToJsonElement(CreateRoomResponse.serializer(), resp),
         )
-    }
-
-    @Test
-    fun votingDeepAsserts() {
-        val msg = roundTrip("s2c.state.tv.voting.json") as StateMsg
-        assertEquals(42L, msg.seq)
-        assertEquals(1790000040000L, msg.serverNow)
-        val v = msg.view
-        assertEquals(Phase.VOTING, v.phase)
-        assertEquals(4, v.players.size)
-        assertFalse(v.players[2].connected)
-        assertEquals("نور", v.players[2].name)
-        assertEquals(DeadlineKind.VOTE, v.deadline!!.kind)
-        assertEquals(1790000120000L, v.deadline.at)
-        assertEquals("coral", v.players[0].color)
-        assertFalse(v.players[0].left)
-        assertEquals(2, v.votesCast)
-        assertEquals(3, v.votesExpected)
-        assertEquals(WinRule.OFFICIAL, v.settings.winRule)
-        assertEquals(10, v.settings.points.undercover)
-        assertNull(v.lastVote)
-    }
-
-    /** PAYMENTS-SPEC §3.11 view keys, appended after availablePacks. */
-    @Test
-    fun billingViewKeys() {
-        val lobby = (roundTrip("s2c.state.tv.lobby.json") as StateMsg).view
-        assertFalse(lobby.premium)
-        assertFalse(lobby.tvBusy)
-        assertFalse(lobby.poolExhausted)
-        assertTrue(lobby.availablePacks.all { it.tier == "free" || it.tier == "premium" })
-        assertTrue("the free TEST_CATALOG lobby shows locked packs", lobby.lockedPacks.isNotEmpty())
-        for (p in lobby.lockedPacks) {
-            assertTrue(p.productId.startsWith("pack_"))
-            assertTrue(p.pairCount > 0)
-        }
-        // Metadata only: exactly these keys, never words or pair ids.
-        val raw = Json.parseToJsonElement(Fixtures.read("s2c.state.tv.lobby.json")).jsonObject["view"]!!.jsonObject
-        for (p in raw["lockedPacks"]!!.jsonArray) {
-            assertEquals(setOf("id", "locale", "title", "pairCount", "ageRating", "productId"), p.jsonObject.keys)
-        }
-        val keys = raw.keys.toList()
-        assertEquals(listOf("availablePacks", "premium", "lockedPacks", "tvBusy", "poolExhausted", "wordLocales"), keys.takeLast(6))
-        assertEquals(listOf("en", "fr", "ar"), (roundTrip("s2c.state.tv.lobby.json") as StateMsg).view.wordLocales)
-        val voting = (roundTrip("s2c.state.tv.voting.json") as StateMsg).view
-        assertFalse(voting.premium)
-        assertEquals(emptyList<Any>(), voting.lockedPacks)
     }
 
     /** PAYMENTS-SPEC §3.4: the billing HTTP fixtures round-trip strictly through the Kotlin mirrors. */
@@ -176,12 +268,12 @@ class ProtocolFixturesTest {
 
     @Test
     fun productionDecoderIgnoresUnknownTypesAndPartyserverErrors() {
-        assertNull(ProtocolJson.decodeServer("""{"v":1,"t":"brand-new","x":1}"""))
+        assertNull(ProtocolJson.decodeServer("""{"v":2,"t":"brand-new","x":1}"""))
         assertNull(ProtocolJson.decodeServer("""{"error":"Error: boom\n at x"}"""))
         assertNull(ProtocolJson.decodeServer("not json"))
         assertTrue(ProtocolJson.decodeServer(Constants.PONG_FRAME) is PongMsg)
         // New keys from a newer server are tolerated in production.
-        val withExtra = Fixtures.read("s2c.error.json").trim().removeSuffix("}") + ""","future":true}"""
+        val withExtra = Fixtures.v2("s2c.error.wrong_game.json").trim().removeSuffix("}") + ""","future":true}"""
         assertTrue(ProtocolJson.decodeServer(withExtra) is ErrorMsg)
     }
 }

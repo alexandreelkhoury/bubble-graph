@@ -1,18 +1,23 @@
-// PAYMENTS-SPEC §4.4 / §5.2: the TV mock Store (fake billing). A full-screen overlay over the lobby, driven by the
-// D-pad (arrows, Enter = OK, Escape = Back). Header: title + room code; the Premium card with the plans and the
-// required disclosure (§4.5); the packs row (room language first); footer: restore, help, pending note, test controls.
+// JAMAA-PLATFORM §4.5 HUB-08 / PAYMENTS-SPEC §4.4 / §5.2: the JAMAA Pass store on /tv (fake billing). A full-screen
+// overlay, remote only. A Pass hero with two plan cards (Yearly first and focused, "Save {n}%" from the two prices, the
+// trial badge only when eligible) and the required disclosure; then the pack rows grouped by game with the world
+// accent; footer: Restore, Manage subscription, Help, and the fake-mode test controls.
 import { useEffect, useRef, useState } from "preact/hooks";
 import { PREMIUM_PRODUCT_ID, SUPPORT_EMAIL } from "@jamaa/shared/billing/products";
 import type { BasePlanId } from "@jamaa/shared/billing/products";
 import type { CatalogPackBody } from "@jamaa/shared/billing";
 import type { Locale } from "@jamaa/shared/constants";
-import type { TvView } from "@jamaa/shared/protocol";
+import type { TvRoomView } from "@jamaa/shared/protocol/v2";
+import { GAME_IDS } from "@jamaa/shared/games/ids";
+import type { GameId } from "@jamaa/shared/games/ids";
+import type { MessageKey } from "../i18n/t";
+import { WORLD_OF } from "../components/Poster";
 import { isolate, locale, LOCALE_NATIVE_NAME, t, titleIn } from "../i18n/t";
 import { Icon } from "../components/Icon";
 import { billing } from "./billing";
 import {
-  afterPackPurchase, FAKE_PRICES, FAKE_TRIAL_DAYS, inflightKey, initialFocus, packState, PLAN_DISPLAY_ORDER, pitchParams,
-  premiumCard, splitPacks,
+  afterPackPurchase, FAKE_PRICES, FAKE_TRIAL_DAYS, inflightKey, initialFocus, packsByGame, packState, PLAN_DISPLAY_ORDER,
+  premiumCard, splitPacks, yearlySavingPercent,
 } from "./billing/model";
 import type { FocusId, PackState, StoreEntry, StorePhase } from "./billing/model";
 import { closeShop, loadStoreCatalog } from "./shopState";
@@ -36,9 +41,9 @@ function storePhase(): StorePhase {
 }
 
 const planPrice = (p: BasePlanId): string => FAKE_PRICES[p];
-const planLabel = (p: BasePlanId): string => t(p === "yearly" ? "store.planYearly" : "store.planMonthly");
-const planPriceText = (p: BasePlanId): string => t(p === "yearly" ? "store.pricePerYear" : "store.pricePerMonth", { price: isolate(planPrice(p)) });
-const planPeriod = (p: BasePlanId): string => t(p === "yearly" ? "store.periodYear" : "store.periodMonth");
+const planLabel = (p: BasePlanId): string => t(p === "yearly" ? "pass.planYearly" : "pass.planMonthly");
+const planPriceText = (p: BasePlanId): string => t(p === "yearly" ? "pass.pricePerYear" : "pass.pricePerMonth", { price: isolate(planPrice(p)) });
+const planPeriod = (p: BasePlanId): string => t(p === "yearly" ? "pass.periodYear" : "pass.periodMonth");
 
 /** §4.5: one paragraph for the focused plan, always visible under the plan buttons; the trial wording only with a trial offer. */
 function Disclosure({ plan, trial }: { plan: BasePlanId; trial: boolean }) {
@@ -46,8 +51,8 @@ function Disclosure({ plan, trial }: { plan: BasePlanId; trial: boolean }) {
   return (
     <p class="tvshop__legal">
       {trial
-        ? <>{t("store.legalTrialRenew", params)} {t("store.legalCancelTrial")}</>
-        : <>{t("store.legalPriceRenew", params)} {t("store.legalCancel")}</>}
+        ? <>{t("pass.legalTrialRenew", params)} {t("pass.legalCancelTrial")}</>
+        : <>{t("pass.legalPriceRenew", params)} {t("pass.legalCancel")}</>}
     </p>
   );
 }
@@ -69,49 +74,56 @@ const defFocus = (id: FocusId, target: FocusId): true | undefined => (id === tar
 function PremiumCardView({ plan, target, onBuy, onFocusPlan }: { plan: BasePlanId; target: FocusId; onBuy(plan: BasePlanId): void; onFocusPlan(p: BasePlanId): void }) {
   const ent = billing.ent.value;
   const card = premiumCard(ent);
-  const catalog = billing.catalog.value;
-  const pitch = catalog ? pitchParams(catalog) : null;
   const l = locale.value;
-  const manage = (): void => openDialog({ title: t("store.manage"), body: t("store.manageHint"), confirm: t("common.ok"), info: true, onConfirm: () => undefined });
+  const manage = (): void => openDialog({ title: t("pass.manage"), body: t("pass.manageHint"), confirm: t("common.ok"), info: true, onConfirm: () => undefined });
   const sub = ent?.subscription ?? null;
   const pending = billing.pending.value.has(PREMIUM_PRODUCT_ID);
   const trial = billing.trialOffered;
+  const save = yearlySavingPercent(FAKE_PRICES.monthly, FAKE_PRICES.yearly);
   return (
-    <section class="tvshop__card" aria-labelledby="tvshop-premium">
-      <div class="tvshop__cardhead">
-        <h2 id="tvshop-premium" class="tvshop__cardtitle"><Icon name="gem" />{t("store.premiumTitle")}</h2>
-        {pitch && <p class="tvshop__pitch">{t("store.premiumPitch", { count: pitch.count, pairs: isolate(String(pitch.pairs)) })}</p>}
+    <section class="tvpass" aria-labelledby="tvshop-premium">
+      <div class="tvpass__intro">
+        <h2 id="tvshop-premium" class="tvpass__title"><span class="tvpass__gem"><Icon name="gem" size={28} /></span>{t("pass.name")}</h2>
+        <p class="tvpass__pitch">{t("pass.pitch")}</p>
+        <ul class="tvpass__worlds" aria-hidden="true">
+          {GAME_IDS.map((g) => <li key={g} data-world={WORLD_OF[g]} />)}
+        </ul>
+        {card === "plans" && <Disclosure plan={plan} trial={trial} />}
       </div>
       {card === "plans" && (
-        <>
-          <div class="tvshop__plans">
-            {PLAN_DISPLAY_ORDER.map((p) => (
-              <button key={p} type="button" class="tvbtn tvshop__plan" data-focus={`plan:${p}`} data-default-focus={defFocus(`plan:${p}`, target)} onFocus={() => onFocusPlan(p)} onClick={() => onBuy(p)}
-                aria-disabled={billing.inflight.value !== null}>
-                <span class="tvshop__planname"><span class="tvshop__planlabel">{planLabel(p)}</span>&nbsp;·&nbsp;<span class="tvshop__planprice">{planPriceText(p)}</span></span>
+        <div class="tvpass__plans">
+          {PLAN_DISPLAY_ORDER.map((p) => (
+            <button key={p} type="button" class={`tvplan tvplan--${p}`} data-focus={`plan:${p}`} data-default-focus={defFocus(`plan:${p}`, target)} onFocus={() => onFocusPlan(p)} onClick={() => onBuy(p)}
+              aria-disabled={billing.inflight.value !== null}>
+              <span class="tvplan__top">
+                <span class="tvplan__label">{planLabel(p)}</span>
+                {p === "yearly" && save !== null && <span class="tvplan__save">{t("pass.save", { amount: `${save}%` })}</span>}
+              </span>
+              <span class="tvplan__price"><bdi>{planPrice(p)}</bdi></span>
+              <span class="tvplan__per">{planPriceText(p)}</span>
+              <span class="tvplan__end">
                 {isInflight(PREMIUM_PRODUCT_ID, p) ? <Busy />
                   : pending ? <span class="tvshop__chip">{t("store.pending")}</span>
-                  : trial && <span class="tvshop__badge">{t("store.trialDays", { count: FAKE_TRIAL_DAYS })}</span>}
-              </button>
-            ))}
-          </div>
-          <Disclosure plan={plan} trial={trial} />
-        </>
+                  : trial && <span class="tvplan__trial">{t("pass.trialBadge", { count: FAKE_TRIAL_DAYS })}</span>}
+              </span>
+            </button>
+          ))}
+        </div>
       )}
       {card === "suspended" && (
         <div class="tvshop__state">
-          <p>{t("store.fixPayment")}</p>
-          <button type="button" class="tvbtn tvbtn--primary" data-focus="fix" data-default-focus={defFocus("fix", target)} onClick={manage}>{t("store.fixPaymentButton")}</button>
+          <p>{t("pass.fixPayment")}</p>
+          <button type="button" class="tvbtn tvbtn--primary" data-focus="fix" data-default-focus={defFocus("fix", target)} onClick={manage}>{t("pass.fixPaymentButton")}</button>
         </div>
       )}
       {(card === "grace" || card === "premium") && (
         <div class="tvshop__state">
-          <p class="tvshop__active"><Icon name="check" />{t("store.premiumActive")}</p>
-          {card === "grace" && <p>{t("store.fixPayment")}</p>}
+          <p class="tvshop__active"><Icon name="check" />{t("pass.active")}</p>
+          {card === "grace" && <p>{t("pass.fixPayment")}</p>}
           {card === "premium" && sub?.expiresAt != null && (
-            <p class="tv-secondary">{t(sub.autoRenewing ? "store.renewsOn" : "store.endsOn", { date: isolate(fmtDate(sub.expiresAt, l)) })}</p>
+            <p class="tv-secondary">{t(sub.autoRenewing ? "pass.renewsOn" : "pass.endsOn", { date: isolate(fmtDate(sub.expiresAt, l)) })}</p>
           )}
-          <button type="button" class="tvbtn" data-focus="manage" data-default-focus={defFocus("manage", target)} onClick={manage}>{t("store.manage")}</button>
+          <button type="button" class="tvbtn" data-focus="manage" data-default-focus={defFocus("manage", target)} onClick={manage}>{t("pass.manage")}</button>
         </div>
       )}
     </section>
@@ -121,7 +133,7 @@ function PremiumCardView({ plan, target, onBuy, onFocusPlan }: { plan: BasePlanI
 function packTrailing(state: PackState) {
   switch (state) {
     case "owned": return <span class="tvshop__chip tvshop__chip--ok"><Icon name="check" size={18} />{t("store.owned")}</span>;
-    case "included": return <span class="tvshop__chip">{t("store.included")}</span>;
+    case "included": return <span class="tvshop__chip">{t("pass.included")}</span>;
     case "pending": return <span class="tvshop__chip">{t("store.pending")}</span>;
     case "buy": return <span class="tvshop__buy">{t("store.buy", { price: isolate(FAKE_PRICES.pack) })}</span>;
   }
@@ -140,13 +152,15 @@ function PackCard({ p, target, onBuy }: { p: CatalogPackBody; target: FocusId; o
   );
 }
 
-export function TvShop({ view, entry }: { view: TvView; entry: StoreEntry }) {
+export function TvShop({ view, entry }: { view: TvRoomView; entry: StoreEntry }) {
   const phase = storePhase();
   const box = useRef<HTMLDivElement>(null);
   // §4.5: the disclosure follows the focused plan (yearly until a plan takes focus).
   const [plan, setPlan] = useState<BasePlanId>("yearly");
   const catalog = billing.catalog.value;
-  const packs = catalog ? splitPacks(catalog.packs, view.settings.wordLocale) : { mine: [], other: [] };
+  const room = view.room;
+  const packs = catalog ? splitPacks(catalog.packs, room.contentLocale) : { mine: [], other: [] };
+  const groups = packsByGame([...packs.mine, ...packs.other], GAME_IDS);
   const card = premiumCard(billing.ent.value);
   const target: FocusId = initialFocus(entry, phase, card, [...packs.mine, ...packs.other].map((p) => p.productId));
   // Initial focus per §4.4, again whenever the state machine moves (loading → ready / unavailable).
@@ -159,10 +173,12 @@ export function TvShop({ view, entry }: { view: TvView; entry: StoreEntry }) {
     void billing.purchase(p.productId).then((r) => {
       if (r !== "OK" || entry.origin !== "LOCKED_PACK" || entry.focusProductId !== p.productId) return;
       const v = tvView.value;
-      if (!v) return;
-      const after = afterPackPurchase(v.settings, v.phase === "LOBBY", p.packId, p.locale);
+      const setup = v?.room.setup;
+      if (!v || !setup || setup.gameId !== p.gameId) return;
+      const ids = (setup.settings as { packIds?: string[] }).packIds ?? [];
+      const after = afterPackPurchase({ packIds: ids, wordLocale: v.room.contentLocale }, v.room.phase === "SETUP", p.packId, p.locale);
       if (after.kind === "add") {
-        tvAct({ type: "UPDATE_SETTINGS", patch: { packIds: after.packIds } });
+        tvAct({ type: "UPDATE_GAME_SETTINGS", gameId: setup.gameId, patch: { packIds: after.packIds } } as Parameters<typeof tvAct>[0]);
         billing.notify({ key: "store.addedToGame", tone: "success" });
       } else if (after.kind === "switch") {
         billing.notify({ key: "store.switchLanguage", params: { lang: isolate(LOCALE_NATIVE_NAME[after.lang]) }, tone: "info" });
@@ -195,12 +211,12 @@ export function TvShop({ view, entry }: { view: TvView; entry: StoreEntry }) {
   const anyPending = billing.pending.value.size > 0;
   const toast = toasts.value.at(-1);
   return (
-    <div class="tvoverlay tvoverlay--solid" role="dialog" aria-modal="true" aria-label={t("store.title")}>
+    <div class="tvoverlay tvoverlay--solid" role="dialog" aria-modal="true" aria-label={t("pass.storeTitle")}>
       <div class="tvshop" ref={box}>
         <header class="tvshop__head">
-          <h1 class="tvshop__title">{t("store.title")}</h1>
+          <h1 class="tvshop__title">{t("pass.storeTitle")}</h1>
           {fake && <span class="tvshop__test">{t("store.testMode")}</span>}
-          <RoomCode code={view.roomCode} />
+          <RoomCode code={room.roomCode} />
         </header>
         {phase.kind === "loading" && (
           <div class="tvshop__center"><p class="tvt-body"><Icon name="refresh" size={24} class="spin" />{t("store.loading")}</p></div>
@@ -223,12 +239,17 @@ export function TvShop({ view, entry }: { view: TvView; entry: StoreEntry }) {
         {fake && (
           <div class="tvshop__body">
             <PremiumCardView plan={plan} target={target} onBuy={buyPlan} onFocusPlan={setPlan} />
-            <section class="tvshop__packs" aria-label={t("store.packsTitle")}>
-              <h2 class="tvshop__packshead">{t("store.packsTitle")}</h2>
-              <div class="tvshop__row" data-scroll onKeyDown={onRowKey}>
-                {packs.mine.map((p) => <PackCard key={p.packId} p={p} target={target} onBuy={buyPack} />)}
-                {packs.other.length > 0 && <div class="tvshop__divider" aria-hidden="true">{t("store.otherLanguages")}</div>}
-                {packs.other.map((p) => <PackCard key={p.packId} p={p} target={target} onBuy={buyPack} />)}
+            <section class="tvshop__packs" aria-label={t("pass.packsByGame")}>
+              <h2 class="tvshop__packshead">{t("pass.packsByGame")}</h2>
+              <div class="tvshop__groups" data-scroll onKeyDown={onRowKey}>
+                {groups.map((g) => (
+                  <div key={g.gameId} class="tvshop__group" data-world={WORLD_OF[g.gameId as GameId]}>
+                    <span class="tvshop__gametitle">{t(`game.${g.gameId}.title` as MessageKey)}</span>
+                    <div class="tvshop__row">
+                      {g.packs.map((p) => <PackCard key={p.packId} p={p} target={target} onBuy={buyPack} />)}
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
             {/* Toast slot (DESIGN: never over the focused control): its own band between the packs row and the
@@ -238,12 +259,13 @@ export function TvShop({ view, entry }: { view: TvView; entry: StoreEntry }) {
             </div>
             <footer class="tvshop__foot" onKeyDown={onFootKey}>
               <button type="button" class="tvbtn" data-focus="restore" onClick={() => void billing.restore()}><Icon name="refresh" />{t("store.restore")}</button>
+              <button type="button" class="tvbtn" data-focus="manage-foot" onClick={() => openDialog({ title: t("pass.manage"), body: t("pass.manageHint"), confirm: t("common.ok"), info: true, onConfirm: () => undefined })}>{t("pass.manage")}</button>
               {SUPPORT_EMAIL && <span class="tvshop__help">{t("store.help", { email: isolate(SUPPORT_EMAIL) })}</span>}
               {anyPending && <span class="tvshop__help">{t("store.pendingBody")}</span>}
               {/* §5.2 debug-only controls (fake mode only). Plain English: they never ship in a real store. */}
               <span class="tvshop__testctl" role="group" aria-label="Test controls">
                 <span class="tvshop__testhead">Test controls</span>
-                <button type="button" class="tvbtn tvbtn--small" data-test="expire" onClick={() => void billing.testExpirePremium()}>Expire Premium now</button>
+                <button type="button" class="tvbtn tvbtn--small" data-test="expire" onClick={() => void billing.testExpirePremium()}>Expire Pass now</button>
                 <button type="button" class="tvbtn tvbtn--small" data-test="refund" onClick={() => void billing.testRefundPack()}>Refund pack</button>
               </span>
               <span class="tvshop__back tv-muted">{t("common.back")}</span>

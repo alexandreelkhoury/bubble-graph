@@ -6,8 +6,9 @@
   "engines": { "node": ">=22.12.0" },
   "scripts": {
     "dev": "node tools/dev.mjs",
-    "build": "pnpm --filter @jamaa/web-client run build && pnpm --filter @jamaa/server run build",
-    "test": "vitest run",
+    "content:emit": "pnpm --filter @jamaa/content-lint run lint --quiet --emit",
+    "build": "pnpm run content:emit && pnpm --filter @jamaa/web-client run build && pnpm --filter @jamaa/server run build",
+    "test": "pnpm run content:emit && vitest run",
     "test:coverage": "vitest run --coverage",
     "sim": "pnpm --filter @jamaa/sim run sim",
     "lint": "eslint .",

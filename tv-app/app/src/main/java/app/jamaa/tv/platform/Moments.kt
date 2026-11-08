@@ -29,6 +29,9 @@ data class MomentStep(val id: String, val startMs: Long, val durationMs: Long, v
     }
 }
 
+/** A moment playing on the TV: [completed] = OK snapped it to its end state (the UI jumps there, then reports the end). */
+data class ActiveMoment(val moment: Moment, val startedAt: Long, val gameId: String?, val completed: Boolean, val seq: Int)
+
 data class Moment(val id: String, val steps: List<MomentStep>) {
     val totalMs: Long get() = steps.maxOfOrNull { it.endMs } ?: 0L
     fun step(id: String): MomentStep? = steps.firstOrNull { it.id == id }

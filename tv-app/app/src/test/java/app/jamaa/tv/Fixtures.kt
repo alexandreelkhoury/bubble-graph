@@ -14,4 +14,7 @@ object Fixtures {
         check(f.isFile) { "Missing fixture ${f.absolutePath} (set JAMAA_FIXTURES to override the location)" }
         return f.readText(Charsets.UTF_8)
     }
+
+    /** A protocol v2 fixture (shared/fixtures/v2, JAMAA-PLATFORM §2.5). */
+    fun v2(name: String): String = read("v2/$name")
 }

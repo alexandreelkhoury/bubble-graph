@@ -176,11 +176,15 @@ object MishanaTv : TvGameModule {
 
     override fun decode(env: GameEnvelope, room: RoomPublic): MishanaGameView {
         val pub = ProtocolJson.decoder.decodeFromJsonElement(MishanaPub.serializer(), env.public)
-        return MishanaGameView(env, compose(room, pub, env.over))
+        return MishanaGameView(env, compose(room, pub, env.over, env.n))
     }
 
-    /** Joins the game's players to the room members (a player with no member left the room: shown as left). */
-    fun compose(room: RoomPublic, pub: MishanaPub, over: Boolean): MishanaView {
+    /**
+     * Joins the game's players to the room members (a player with no member left the room: shown as left).
+     * `gameNumber` becomes the envelope's instance number [n]: every REPLAY starts a fresh engine whose own counter
+     * restarts at 1, while the screens key their per-game state (and "Game n") on it.
+     */
+    fun compose(room: RoomPublic, pub: MishanaPub, over: Boolean, n: Int = pub.gameNumber): MishanaView {
         val players = pub.players.mapIndexed { i, p ->
             val m = room.member(p.id)
             PublicPlayer(
@@ -200,7 +204,7 @@ object MishanaTv : TvGameModule {
             )
         }.sortedBy { it.seat }
         return MishanaView(
-            roomCode = room.roomCode, joinUrl = room.joinUrl, phase = pub.phase, gameNumber = pub.gameNumber, round = pub.round,
+            roomCode = room.roomCode, joinUrl = room.joinUrl, phase = pub.phase, gameNumber = n, round = pub.round,
             settings = pub.settings, players = players, hostPlayerId = room.hostPlayerId, roleCounts = pub.roleCounts,
             speakingOrder = pub.speakingOrder, currentSpeakerId = pub.currentSpeakerId, revote = pub.revote,
             tieCandidates = pub.tieCandidates, deadline = pub.deadline, votesCast = pub.votesCast, votesExpected = pub.votesExpected,

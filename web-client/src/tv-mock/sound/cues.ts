@@ -8,6 +8,9 @@ export const CUE_IDS = [
   "sfx.voteCast", "sfx.drumroll", "sfx.chipLand", "sfx.stamp", "sfx.flip", "sfx.heartbeat", "sfx.wheel", "sfx.error",
   "sting.civilian", "sting.mole", "sting.blank", "sting.correct", "sting.wrong", "sting.winCivilians", "sting.winInfiltrators",
   "ui.move", "ui.select", "ui.back",
+  // JAMAA-PLATFORM §3.11 platform cues (tools/gen-sounds ids, used verbatim as file names).
+  "hub_move", "portal_open", "portal_close", "world_mishana_sting", "world_bluff_sting", "world_likely_sting", "world_trivia_sting",
+  "coin_fly", "coin_land", "counter_tick", "crown_drop", "cup_star", "reaction_pop",
 ] as const;
 export type CueId = (typeof CUE_IDS)[number];
 export type Bus = "sfx" | "sting" | "ui";

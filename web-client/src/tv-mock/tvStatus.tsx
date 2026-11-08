@@ -1,38 +1,13 @@
-// TV-01 splash, TV-13 connection states, fatal screens, and the presence toasts (TV-02 joins/leaves, TV-13c away).
+// TV-13 connection states, the closed and fatal screens, and the in-game presence toasts (TV-13c away, leaves).
+// The hub shows its own live-join toast above the members strip (tvHub).
 import { useEffect, useRef, useState } from "preact/hooks";
-import type { TvView } from "@jamaa/shared/protocol";
+import type { TvRoomView } from "@jamaa/shared/protocol/v2";
 import { isolate, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
-import { ROLE_KEY } from "../lib/keys";
-import { newForfeits } from "../lib/view";
 import { pushToast } from "../state/store";
 import { Icon } from "../components/Icon";
 import { tvConn, tvCreateRoom, tvDownSince, tvPaused, tvUi, tvWake } from "./tvStore";
 import { useInitialFocus } from "./dpad";
-
-export function Splash({ failed }: { failed: string | null }) {
-  const retry = useInitialFocus<HTMLButtonElement>(failed);
-  return (
-    <div class="tvscreen tvhome">
-      <div class="tvhome__pattern" aria-hidden="true" />
-      <img class="tvhome__mark" src="/brand/mark.svg" alt="" width={48} height={48} />
-      <img class="tvhome__wordmark" src="/brand/wordmark-bilingual.svg" alt="JAMAA جماعة" width={560} height={140} />
-      <p class="tvt-body tv-secondary tvhome__slogan">{t("brand.slogan")}</p>
-      <div class="tvhome__status">
-        {failed === null ? (
-          <p class="tvt-body"><Icon name="refresh" size={24} class="spin" />{t("tv.creatingRoom")}</p>
-        ) : (
-          <>
-            <p class="tvt-headline">{t("tv.createFailed")}</p>
-            <p class="tvt-caption tv-muted tnum">{failed}</p>
-            <button type="button" ref={retry} class="tvbtn tvbtn--primary" data-default-focus onClick={() => void tvCreateRoom()}><Icon name="refresh" />{t("common.retry")}</button>
-          </>
-        )}
-      </div>
-      <p class="tvt-caption tv-muted tvhome__foot">{t("brand.tagline")} · 3–12 · FR / EN / AR</p>
-    </div>
-  );
-}
 
 /** After Exit: what an Android TV launcher would show, reduced to the one thing the remote can do here. */
 export function Closed() {
@@ -60,7 +35,7 @@ export function Fatal({ messageKey }: { messageKey: MessageKey }) {
 }
 
 /** TV-13a reconnecting banner (frozen stage), then TV-13b after 30 s: a full-screen "Connection lost" with Retry. */
-export function ConnStates({ view }: { view: TvView | null }) {
+export function ConnStates({ view }: { view: TvRoomView | null }) {
   const down = tvConn.value !== "open" && tvUi.value.kind === "room";
   const [, force] = useState(0);
   useEffect(() => {
@@ -92,40 +67,20 @@ export function ConnStates({ view }: { view: TvView | null }) {
   );
 }
 
-/** TV-13d: every phone has been away for a minute mid-game. */
-export function PhonesAsleep({ view }: { view: TvView }) {
-  const inGame = view.phase !== "LOBBY" && view.phase !== "RESULTS";
-  const none = view.players.every((p) => !p.connected);
-  const since = useRef<number | null>(null);
-  const [, force] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => force((x) => x + 1), 5000);
-    return () => clearInterval(id);
-  }, []);
-  if (!(inGame && none)) { since.current = null; return null; }
-  since.current ??= Date.now();
-  // A running timer decides on its own: "the game is waiting" is only true with timers off.
-  return Date.now() - since.current > 60_000 ? <div class="tvconnbanner tvconnbanner--soft">{t(view.deadline ? "conn.phonesAsleepTimer" : "conn.phonesAsleep")}</div> : null;
-}
-
-/** Lobby join/leave toasts (TV-02 toast zone), in-game away toasts (TV-13c) and forfeits with the revealed role. */
-export function usePresenceToasts(view: TvView | null): void {
-  const prev = useRef<TvView | null>(null);
+/** In game: "Lost connection with {name}" (TV-13c) and "{name} left" toasts, from the room's members. */
+export function usePresenceToasts(view: TvRoomView | null): void {
+  const prev = useRef<TvRoomView | null>(null);
   useEffect(() => {
     const p = prev.current;
     prev.current = view;
-    if (!p || !view || p.roomCode !== view.roomCode) return;
-    const before = new Map(p.players.map((x) => [x.id, x]));
-    const after = new Set(view.players.map((x) => x.id));
-    if (view.phase === "LOBBY" && p.phase === "LOBBY") {
-      for (const x of view.players) if (!before.has(x.id)) pushToast(t("lobby.joined", { name: isolate(x.name) }), "success");
-      for (const x of p.players) if (!after.has(x.id)) pushToast(t("lobby.left", { name: isolate(x.name) }));
-    } else if (view.phase !== "LOBBY") {
-      for (const x of view.players) {
-        const b = before.get(x.id);
-        if (b && b.connected && !x.connected && !x.left) pushToast(t("conn.playerAway", { name: isolate(x.name) }));
-      }
-      for (const f of newForfeits(p, view)) pushToast(t("elim.forfeit", { name: isolate(f.player.name), role: t(ROLE_KEY[f.role]) }));
+    if (!p || !view || p.room.roomCode !== view.room.roomCode || view.room.phase === "HUB") return;
+    const before = new Map(p.room.members.map((x) => [x.id, x]));
+    const after = new Set(view.room.members.map((x) => x.id));
+    for (const x of view.room.members) {
+      const b = before.get(x.id);
+      if (b && b.connected && !x.connected && !x.left) pushToast(t("conn.playerAway", { name: isolate(x.name) }));
+      if (b && !b.left && x.left) pushToast(t("lobby.left", { name: isolate(x.name) }));
     }
+    for (const x of p.room.members) if (!after.has(x.id) && !x.left) pushToast(t("lobby.left", { name: isolate(x.name) }));
   }, [view]);
 }
