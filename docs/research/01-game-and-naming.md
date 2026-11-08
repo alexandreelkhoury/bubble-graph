@@ -1,5 +1,7 @@
 # 01 — Game rules, UX patterns, naming
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Research date: 2026-10-03. Method note: the sandbox egress proxy blocked direct fetches of yanstarstudio.com,
 apps.apple.com, play.google.com, wikipedia, EUIPO/USPTO/WIPO. Facts below come from **web-search result
 snippets** of those pages (URLs cited) plus one direct fetch (GitHub). Anything not backed by a snippet is

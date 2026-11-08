@@ -1,4 +1,4 @@
-// Mish Ana! site Worker. Serves the static site (env.ASSETS) and one tiny endpoint:
+// JAMAA site Worker. Serves the static site (env.ASSETS) and one tiny endpoint:
 //   POST /e  – cookieless page events from /assets/js/main.js, written to Workers Analytics Engine.
 // No cookies are read or set, nothing identifies a visitor, and the IP address is never stored.
 // Only /e reaches this code ("run_worker_first" in wrangler.jsonc); every other path is a static asset.

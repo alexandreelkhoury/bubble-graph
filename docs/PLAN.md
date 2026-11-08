@@ -145,7 +145,7 @@ All answered and approved. [SPEC.md](SPEC.md) records how each answer is impleme
 1. **Win rule.** Resolved: Default is the **official** rule (infiltrators win when alive Civilians ≤ 1). **Parity** (infiltrators ≥ Civilians) is a setting (`winRule`).
 2. **Role secrecy.** Resolved: Roles are **hidden by default**: players see only their word, and the Blank knows it has no word. A **"beginner mode"** setting (`revealRoles`) shows roles.
 3. **Name.** Resolved: **Mish Ana!** (مش أنا!), kept in one constant and asset set (SPEC §3 `BRAND`, `Brand.kt`, `brand.*` keys, `/assets/brand/`).
-4. **Production domain.** Resolved: `*.workers.dev` for now, configurable through `JOIN_BASE_URL` (and the TV's `mishana.prodServerUrl`). A Cloudflare account is needed only for deploys; LAN dev works without one.
+4. **Production domain.** Resolved: `*.workers.dev` for now, configurable through `JOIN_BASE_URL` (and the TV's `jamaa.prodServerUrl`). A Cloudflare account is needed only for deploys; LAN dev works without one.
 5. **Hosting the phone client.** Resolved: Served as static assets by the same Worker (single origin).
 6. **TCL model.** Resolved: Unknown, so `docs/TV.md` documents both paths: `adb pair` (Android TV 13+, wireless debugging) and `adb tcpip 5555` (older models, USB once).
 7. **AR packs reviewer.** Resolved: The user (Lebanese) reviews AR packs and AR UI strings; drafts are fine until then.

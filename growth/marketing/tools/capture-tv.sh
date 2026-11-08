@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Capture real Mish Ana! TV screenshots while bots play a game.
+# Capture real JAMAA TV screenshots (game #1 scenes) while bots play a game.
 # Usage: tools/capture-tv.sh <adb serial e.g. 192.168.0.3:39093> [en|ar] [pace_ms]
 # Takes a 1920x1080 screencap every 4 s into play-store/graphics/raw/<locale>/, drives the host
 # with the remote (OK on Start / Next), then stops the bots and restores the app locale to French.
@@ -9,13 +9,13 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 OUT="$HERE/../play-store/graphics/raw/$LOC"; mkdir -p "$OUT"
 A() { adb -s "$SERIAL" "$@"; }
 BOTS=""
-cleanup() { [ -n "$BOTS" ] && kill "$BOTS" 2>/dev/null || true; A shell cmd locale set-app-locales app.mishana.tv --locales fr || true; }
+cleanup() { [ -n "$BOTS" ] && kill "$BOTS" 2>/dev/null || true; A shell cmd locale set-app-locales app.jamaa.tv --locales fr || true; }
 trap cleanup EXIT
 
 A shell input keyevent KEYCODE_WAKEUP
-A shell cmd locale set-app-locales app.mishana.tv --locales "$LOC"
-A shell am force-stop app.mishana.tv; sleep 1
-A shell am start -n app.mishana.tv/.MainActivity; sleep 8
+A shell cmd locale set-app-locales app.jamaa.tv --locales "$LOC"
+A shell am force-stop app.jamaa.tv; sleep 1
+A shell am start -n app.jamaa.tv/.MainActivity; sleep 8
 CODE=""
 for _ in 1 2 3 4 5 6; do
   A shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || true
@@ -24,7 +24,7 @@ for _ in 1 2 3 4 5 6; do
 done
 [ -z "$CODE" ] && { echo "room code not found in UI dump"; exit 1; }
 echo "room $CODE"
-node "$HERE/mishana-bots.mjs" "$CODE" --pace "$PACE" --timeout 600 > "$OUT/bots.log" 2>&1 &
+node "$HERE/jamaa-bots.mjs" "$CODE" --pace "$PACE" --timeout 600 > "$OUT/bots.log" 2>&1 &
 BOTS=$!
 sleep 14  # 6 joins
 for i in $(seq -w 1 120); do

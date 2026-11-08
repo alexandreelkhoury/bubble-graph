@@ -41,7 +41,7 @@ Full guide: **[docs/TV.md](docs/TV.md)**. It covers the Gradle wrapper setup, th
 cd tv-app
 gradle wrapper --gradle-version 9.6.0                     # once (no wrapper jar is committed)
 ./gradlew :app:installDebug -PserverUrl=http://<lan-ip>:8787
-adb shell am start -n app.mishana.tv/.MainActivity
+adb shell am start -n app.jamaa.tv/.MainActivity
 
 # Real TV over Wi-Fi
 adb pair <tv-ip>:<pairPort>        # Android TV 13+: Developer options → Wireless debugging → pair with code
@@ -59,12 +59,12 @@ The arrow keys are the D-pad, Enter is OK and Esc is Back.
 ## Repository layout
 
 ```
-shared/          @mishana/shared: pure game engine (reducer, roles, votes, win, scoring, Arabic-aware guess
+shared/          @jamaa/shared: pure game engine (reducer, roles, votes, win, scoring, Arabic-aware guess
                  normalisation, invariants), zod wire protocol, per-client projections, i18n JSON, protocol fixtures
-server/          @mishana/server: Cloudflare Worker + Room Durable Object (partyserver), rate limits, tokens
-web-client/      @mishana/web-client: Preact phone controller + browser TV mock (/tv), Playwright e2e in e2e/
+server/          @jamaa/server: Cloudflare Worker + Room Durable Object (partyserver), rate limits, tokens
+web-client/      @jamaa/web-client: Preact phone controller + browser TV mock (/tv), Playwright e2e in e2e/
 tv-app/          Android TV app (Kotlin, Compose for TV, OkHttp WebSocket, kotlinx.serialization)
-word-packs/      @mishana/word-packs: EN / FR / AR (+ Lebanese) word-pair packs
+word-packs/      @jamaa/content: EN / FR / AR (+ Lebanese) word-pair packs
 tools/
   dev.mjs        `pnpm dev` (wrangler + vite on the LAN)
   sim/           headless game simulator (in-process, or over WebSocket against a running server)
@@ -92,8 +92,8 @@ docs/            SPEC.md (binding contract), DESIGN.md (visual/UX spec), PLAN.md
 | `pnpm lint:packs` | lint the word packs |
 | `pnpm gen:sounds` | re-render the synthesised sound cues (needs ffmpeg with libvorbis) |
 | `pnpm run deploy` | build, `pack-lint --release` (free starter packs need ≥ 40 pairs), `check-deploy.mjs` (Google billing, fake billing off), then `wrangler deploy` (fails if a required secret is missing). Always `run`: bare `pnpm deploy` is pnpm's built-in command |
-| `pnpm --filter @mishana/server billing:products` | CSV of the one-time Play products to create (one per premium pack) |
-| `pnpm --filter @mishana/server gen:entitlement-key` | new Ed25519 key for the `ENTITLEMENT_KEYS` secret |
+| `pnpm --filter @jamaa/server billing:products` | CSV of the one-time Play products to create (one per premium pack) |
+| `pnpm --filter @jamaa/server gen:entitlement-key` | new Ed25519 key for the `ENTITLEMENT_KEYS` secret |
 
 ## Status
 
@@ -128,7 +128,7 @@ No real domain is committed. Before shipping, set these (details: [docs/DEV.md �
 
 | What | Where | Ships as | Set to |
 |---|---|---|---|
-| TV app server (`BuildConfig.SERVER_URL`) | `mishana.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=` | placeholder `https://mish-ana.example.workers.dev`; `assembleRelease`/`bundleRelease` fail until it is replaced with an `https://` URL | the Worker origin `pnpm run deploy` prints (`https://play.<your-subdomain>.workers.dev`) or your custom domain |
+| TV app server (`BuildConfig.SERVER_URL`) | `jamaa.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=` | placeholder `https://play.example.workers.dev`; `assembleRelease`/`bundleRelease` fail until it is replaced with an `https://` URL | the Worker origin `pnpm run deploy` prints (`https://play.<your-subdomain>.workers.dev`) or your custom domain |
 | Phone join URL in the QR code | `JOIN_BASE_URL` in `server/wrangler.jsonc` `vars` | `""` (the origin the TV called) | leave empty on `workers.dev`; `https://<your-domain>` with a custom domain |
 | Extra browser origins | `ALLOWED_ORIGINS` in `server/wrangler.jsonc` `vars` | `""` (same-origin only) | leave empty unless the phone page is hosted on another origin |
 

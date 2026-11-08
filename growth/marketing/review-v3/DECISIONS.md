@@ -1,5 +1,7 @@
 # Design review v3 — decision table (pending owner approval)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Sources: 8 reviews in `reviews/` (product-{impeccable,uiux,frontend,polish}.md, marketing-{impeccable,uiux,frontend,polish}.md), 211 proposals. Screenshot pack: `shots/`. Mockups: `mockups/`.
 Legend: IMP = Impeccable, UX = UI/UX Pro Max, FE = Frontend Design, POL = Make Interfaces Feel Better. "p-" = product review, "m-" = marketing review (row numbers refer to each report's table).
 

@@ -1,6 +1,6 @@
 # Third-party material
 
-This file lists third-party content bundled with JAMAA (جماعة) and its games, starting with Mish Ana! (game #1), apart from npm/Gradle dependencies, which carry their own licenses in their packages.
+This file lists third-party content bundled with JAMAA (جماعة) and its games, apart from npm/Gradle dependencies, which carry their own licenses in their packages.
 
 ## Word pairs: antebrl/undercover-word-game (MIT)
 
@@ -36,7 +36,7 @@ SOFTWARE.
 
 ## Original word packs (CC-BY-4.0)
 
-All other Mish Ana! packs in `content/mishana/` (`en-everyday-01`, `fr-everyday-01`, every `ar-*` and `lb-*` pack, and every `es-*` pack) were written for this project. They are licensed under Creative Commons Attribution 4.0 (`"license": "CC-BY-4.0"`, `"source": "original"`). Packs marked `"status": "draft"` (the Arabic, Lebanese and Spanish packs among them) await review by native speakers.
+All other game #1 word packs in `content/mishana/` (`en-everyday-01`, `fr-everyday-01`, every `ar-*` and `lb-*` pack, and every `es-*` pack) were written for this project. They are licensed under Creative Commons Attribution 4.0 (`"license": "CC-BY-4.0"`, `"source": "original"`). Packs marked `"status": "draft"` (the Arabic, Lebanese and Spanish packs among them) await review by native speakers.
 
 ## Fonts
 

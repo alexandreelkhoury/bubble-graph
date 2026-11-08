@@ -1,5 +1,7 @@
 # Marketing: UI/UX Pro Max (conversion UX) review, v3
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Scope: landing `growth/site/` (EN/FR/AR at 390 and 1440, pre-launch build `dist/`, `content/prelaunch.json`), the Play listing (`growth/marketing/play-store/LISTING.md`, `GRAPHICS-SPEC.md`, `frames.tsv`, `src/*.html`, `graphics/*`), and the video end cards (`shots/video/*-endcard.png`, `growth/video/src/ads/EndCard.tsx`).
 Persona: someone taps a TikTok/Reels ad at 10 pm, on their phone, inside the in-app browser (about 390 x 670 css px usable once TikTok's top bar and bottom toolbar are drawn), with friends on the couch and a TV in the room.
 

@@ -1,5 +1,7 @@
 # Brief for every v2 motion designer (read fully before coding)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 You build ONE ad in the Remotion project `/home/alex/bubble-graph/growth/video` (React, 1080x1920, 60 fps). Read first:
 `review-v2/DECISIONS.md` (approved decisions), the four reviews `review-v2/{impeccable,uiux,frontend,polish}.md` (find every point about YOUR ad: exact timings, copy, sizes), and the Remotion rules in `/home/alex/.claude/skills/remotion-best-practices/rules/{animations,timing,sequencing,text-animations}.md`.
 

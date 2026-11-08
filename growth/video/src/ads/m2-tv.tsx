@@ -61,7 +61,7 @@ export const Lobby: React.FC<{f: number; t0: number}> = ({f, t0}) => {
         {ROOM_CODE.split('').map((ch, i) => <Rise key={i} f={f} start={b(6) + i * 4} cfg={POP}>{ch}</Rise>)}
       </div>
       <div style={{position: 'absolute', left: P(40), top: P(492), width: P(250), textAlign: 'center', fontSize: P(18), fontWeight: 600, color: C.muted}}>
-        <Rise f={f} start={b(6.4)}>play.mishana.workers.dev</Rise>
+        <Rise f={f} start={b(6.4)}>play.jamaa.workers.dev</Rise>
       </div>
       <div style={{position: 'absolute', left: P(380), top: P(48), fontSize: P(28), fontWeight: 800, color: C.text, display: 'flex', gap: P(8)}}>
         <Rise f={f} start={t0 + 3}>Players</Rise>

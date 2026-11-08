@@ -13,8 +13,8 @@ Policy references: [Data safety form](https://support.google.com/googleplay/andr
 | The TV app's only permission is `INTERNET`; no location, mic, camera, contacts, storage, AD_ID | `tv-app/app/src/main/AndroidManifest.xml:5`; merged debug manifest (`tv-app/app/build/outputs/logs/manifest-merger-debug-report.txt`) adds only AndroidX's internal `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` |
 | No ads, analytics, crash-reporting or attribution SDKs in the TV app (Compose, tv-material, AndroidX, kotlinx, OkHttp, ZXing only) | `tv-app/app/build.gradle.kts:86-110` |
 | The phone web page loads nothing third-party: CSP `default-src 'self'`, `font-src 'self'`, `Referrer-Policy: no-referrer`; no analytics code anywhere in `web-client/src` | `web-client/public/_headers:1-4`; grep for gtag/analytics/sentry/posthog/plausible/umami/mixpanel = 0 hits |
-| What the TV sends when creating a room: its UI language only (`{"locale":"en"}`) | `tv-app/app/src/main/java/app/mishana/tv/net/RoomApi.kt:35`; server parse `server/src/http.ts:88` |
-| The TV's connection ids are random UUIDs made fresh per connection (not a device id, not persisted) | `tv-app/app/src/main/java/app/mishana/tv/net/ServerUrls.kt:12-13` |
+| What the TV sends when creating a room: its UI language only (`{"locale":"en"}`) | `tv-app/app/src/main/java/app/jamaa/tv/net/RoomApi.kt:35`; server parse `server/src/http.ts:88` |
+| The TV's connection ids are random UUIDs made fresh per connection (not a device id, not persisted) | `tv-app/app/src/main/java/app/jamaa/tv/net/ServerUrls.kt:12-13` |
 | The TV stores locally only its sound on/off setting (and, in debug builds only, a server URL); backups disabled | `tv-app/.../settings/SoundPrefs.kt:5-7`, `settings/DebugPrefs.kt:6-8`; `AndroidManifest.xml:13` (`allowBackup="false"`) |
 | A player (on the phone web page) sends: a **nickname** (1–16 characters, sanitised), a colour, a language | `shared/src/protocol/messages.ts:33`, `shared/src/constants.ts:9`, `server/src/room-core.ts:476-487` |
 | The Blank's typed guess (1–200 chars) is sent and kept until the room ends; votes / "ready" / "done" actions are game actions | `shared/src/protocol/messages.ts:18`, `shared/src/engine/types.ts:86,123` |
@@ -23,7 +23,7 @@ Policy references: [Data safety form](https://support.google.com/googleplay/andr
 | The phone remembers locally (its own browser storage): nickname, colour, language, vibration setting, and a resume token per room for 6 h | `web-client/src/lib/storage.ts:6-16,52-73` |
 | IP address: used only as a rate-limit key and, inside a room, as a truncated salted SHA-256 (`roomCode:ip`, 16 hex chars) for join limiting; never stored in room storage, never logged by app code | `server/src/request.ts:3-6`, `server/src/http.ts:68-69`, `server/src/index.ts:53`, `server/src/room-core.ts:41,79,198` |
 | App logs contain only `{code, phase, roomCode}` on internal errors | `server/src/http.ts:112`, `server/src/room-core.ts:720-722`, rule `docs/SPEC.md:1321-1325` |
-| Transport is encrypted: release builds forbid cleartext and refuse to build with a non-`https://` server | `AndroidManifest.xml:19`; `tv-app/app/build.gradle.kts:71-84`; production `https://play.mishana.workers.dev` (`tv-app/gradle.properties`) |
+| Transport is encrypted: release builds forbid cleartext and refuse to build with a non-`https://` server | `AndroidManifest.xml:19`; `tv-app/app/build.gradle.kts:71-84`; production `https://play.jamaa.workers.dev` (`tv-app/gradle.properties`) |
 | No accounts, no login, no email, no payments **in the current build** | Billing not in TV deps (`build.gradle.kts:86-110`); server PAY-GAP, entitlement never verified (`server/src/http.ts:91-93`, `server/src/room-core.ts:654-657`) |
 
 ### ⚠ Uncertain item to resolve before submitting
@@ -66,7 +66,7 @@ Notes:
 
 ### 1.B Changes when Play Billing ships (do it in the same release)
 
-From `docs/PAYMENTS-SPEC.md` §6.3 (lines 1192-1216): the TV will create a random `installId` (stored in `mishana_billing` prefs, excluded from backup), the server stores only `sha256(installId)` and hashed purchase tokens; it never stores names, emails, Google account ids, order ids, prices or IPs.
+From `docs/PAYMENTS-SPEC.md` §6.3 (lines 1192-1216): the TV will create a random `installId` (stored in `jamaa_billing` prefs, excluded from backup), the server stores only `sha256(installId)` and hashed purchase tokens; it never stores names, emails, Google account ids, order ids, prices or IPs.
 
 Add:
 | Category › Data type | Collected | Shared | Ephemeral | Required/optional | Purposes |

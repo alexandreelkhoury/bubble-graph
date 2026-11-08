@@ -1,5 +1,7 @@
 # Product polish review: make-interfaces-feel-better lens
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Target: phone controller (`web-client/src/screens`, `styles.css`, `styles/tokens.css`), browser TV (`web-client/src/tv-mock`, `tv.css`), native TV (`tv-app/.../ui`). Skill checklist applied: concentric radii, optical alignment, shadows vs borders, split/stagger enters, soft exits, tabular numbers, font smoothing, text wrapping, image outlines, scale on press, skipping the enter animation on remount, no `transition: all`, `will-change`, 40 px hit areas. I also checked haptics, sound-to-animation sync, safe areas and TV focus.
 
 ## 1. Verdict

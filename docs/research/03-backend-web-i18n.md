@@ -1,5 +1,7 @@
 # 03 — Realtime backend, phone web client, i18n (FR/EN/AR + RTL)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Researched 2026-10-03. Legend: **[V]** verified against the cited source on that date; **[U]** unverified, estimated, or from a secondary source only.
 Method note: the sandbox blocked direct fetches of fly.io, supabase.com and developers.cloudflare.com. Cloudflare and Supabase claims were checked against those vendors' **official doc sources on GitHub** (same content as the docs sites), against the npm registry, and against local measurements. Fly.io claims come from search-engine snippets of fly.io pages, so they are marked **[U]** where it matters.
 

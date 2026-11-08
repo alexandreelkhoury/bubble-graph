@@ -1,5 +1,7 @@
 # Mish Ana! creative system: UX and conversion review (v2)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Reviewer lens: ui-ux-pro-max (viewer experience, comprehension, cognitive load) + copywriting (clarity, CTA). Reviewed 2026-10-04.
 
 **What I looked at**

@@ -1,5 +1,7 @@
 # RESEARCH — findings and decisions
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Researched 2026-10-03. This file summarises the conclusions. The detailed notes, with a source URL for every claim, are in:
 
 | File | Scope |

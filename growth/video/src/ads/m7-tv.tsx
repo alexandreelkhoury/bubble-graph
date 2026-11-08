@@ -8,7 +8,7 @@ import {SAFE_CX} from './common';
 /**
  * MA_G_M7 "Team party / office" helpers: the beat grid, the cast, the one meeting-room screen (it moves A -> B -> C)
  * and what it shows: the calendar ("Team event · Agenda: ???") -> the laptop's browser typing the URL -> the lobby ->
- * the Mish Ana! mark while words are out -> the vote board. Screen content is in TV design units (1040 x 585).
+ * game #1's speech-bubble mark while words are out -> the vote board. Screen content is in TV design units (1040 x 585).
  * Word pair: Coffee / Tea = pair p001 of word-packs/packs/en/en-everyday-01.json.
  */
 
@@ -128,7 +128,7 @@ export const CalendarScreen: React.FC<{f: number}> = ({f}) => {
 };
 
 // ---------------------------------------------------------------- 2. the laptop's browser (mirrored on the screen)
-export const URL_TEXT = 'play.mishana.workers.dev/tv';
+export const URL_TEXT = 'play.jamaa.workers.dev/tv';
 export const typedChars = (f: number) => Math.round(clamp((f - b(T.type)) / (b(T.enter) - 8 - b(T.type))) * URL_TEXT.length);
 
 export const BrowserScreen: React.FC<{f: number}> = ({f}) => {
@@ -186,7 +186,7 @@ export const Lobby: React.FC<{f: number}> = ({f}) => {
         {'JQPU'.split('').map((ch, i) => <Rise key={i} f={f} start={a + 10 + i * 3} cfg={POP}>{ch}</Rise>)}
       </div>
       <div style={{position: 'absolute', left: 30, top: 494, width: 270, textAlign: 'center', fontSize: 19, fontWeight: 700, color: C.muted}}>
-        play.mishana.workers.dev
+        play.jamaa.workers.dev
       </div>
       <div style={{position: 'absolute', left: 382, top: 46, fontSize: 32, fontWeight: 900, color: C.text, display: 'flex', gap: 10}}>
         Players

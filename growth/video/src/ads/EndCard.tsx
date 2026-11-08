@@ -11,30 +11,31 @@ import {Hit, SAFE_CX} from './common';
  * 1440 (clear of the TikTok/Reels bottom UI). No QR on screen (viewers would try to scan it).
  * - `prelaunch` (default until the Play listing is public): "Play free on your TV", then "Open on a laptop or TV
  *   browser:" above the one typeable URL (design-v3 E3: on a phone, "your browser" means the phone).
- * - `live`: the official Google Play badge + "Or search “Mish Ana” on your TV".
+ * - `live`: the official Google Play badge + "Or search “JAMAA” on your TV" (the app is JAMAA; the film's game is game #1).
+ * The wordmark is the JAMAA platform wordmark (public/wordmark-*.svg, from assets/brand).
  * design-v3 E1/E4: the TV mock shows no URL (one URL per card) and a smaller room code, centred against the players.
  */
 export type Lang = 'en' | 'fr' | 'ar';
 export type EcMode = 'prelaunch' | 'live';
 export const EC_BEATS = 12.25;
 export const EC_FRAMES = Math.round(b(EC_BEATS));
-export const PLAY_URL = 'play.mishana.workers.dev/tv';
+export const PLAY_URL = 'play.jamaa.workers.dev/tv';
 
 const T = {
   en: {
     players: 'Players', room: 'ROOM', cta: 'Play free on your TV', open: 'Open on a laptop or TV browser:', foot: 'Free to play · 3–12 players · Google TV app coming soon',
-    liveLine: 'Free to play · 3–12 players', search: 'Or search “Mish Ana” on your TV', badge: 'badges/google-play-badge-en.png', wordmark: 'wordmark-latin.svg',
+    liveLine: 'Free to play · 3–12 players', search: 'Or search “JAMAA” on your TV', badge: 'badges/google-play-badge-en.png', wordmark: 'wordmark-latin.svg',
   },
   // FR: no French Play badge in public/badges yet, the live card falls back to the English one.
   fr: {
     players: 'Joueurs', room: 'SALLE', cta: 'Jouez gratuitement sur la télé', open: 'Ouvrez sur un ordi ou le navigateur de la télé\u00A0:',
-    foot: 'Gratuit · 3 à 12 joueurs · appli Google TV bientôt', liveLine: 'Gratuit · 3 à 12 joueurs', search: 'Ou cherchez «\u00A0Mish Ana\u00A0» sur votre télé',
+    foot: 'Gratuit · 3 à 12 joueurs · appli Google TV bientôt', liveLine: 'Gratuit · 3 à 12 joueurs', search: 'Ou cherchez «\u00A0JAMAA\u00A0» sur votre télé',
     badge: 'badges/google-play-badge-en.png', wordmark: 'wordmark-latin.svg',
   },
   ar: {
     players: 'اللاعبين', room: 'الغرفة', cta: 'العبوا ببلاش عالتلفزيون', open: 'افتحوها عاللابتوب أو متصفّح التلفزيون:',
     foot: 'اللعب ببلاش · 3–12 لاعب · تطبيق Google TV قريبًا',
-    liveLine: 'اللعب ببلاش · 3–12 لاعب', search: 'أو فتّش عن «Mish Ana» عالتلفزيون', badge: 'badges/google-play-badge-ar.png', wordmark: 'wordmark-ar.svg',
+    liveLine: 'اللعب ببلاش · 3–12 لاعب', search: 'أو فتّش عن «جماعة» أو «JAMAA» عالتلفزيون', badge: 'badges/google-play-badge-ar.png', wordmark: 'wordmark-ar.svg',
   },
 };
 
@@ -105,7 +106,7 @@ export const EndCard: React.FC<{lang?: Lang; mode?: EcMode}> = ({lang = 'en', mo
   const cta = spr(f, b(2.2), POP);
   const glow = 0.45 + 0.15 * Math.sin((f / 60) * Math.PI * 1.2) * prog(f, b(3), b(4));
   const wmW = lang === 'ar' ? 520 : 600;
-  const wmH = lang === 'ar' ? wmW * 0.42 : wmW * (301.6 / 1001.8);
+  const wmH = lang === 'ar' ? wmW * (300 / 1000) : wmW * (260 / 1000); // JAMAA wordmark viewBoxes
   return (
     <div style={{position: 'absolute', inset: 0}}>
       {/* wordmark */}

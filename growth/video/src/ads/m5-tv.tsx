@@ -7,7 +7,7 @@ import {SAFE_CX} from './common';
 
 /**
  * MA_D_M5 v2 helpers: the beat grid, the one TV, and what its screen shows:
- * a bright streaming home (endless rows) -> the Mish Ana! lobby -> "Check your phones!" -> the vote board.
+ * a bright streaming home (endless rows) -> the game lobby -> "Check your phones!" -> the vote board.
  * The TV never shrinks below 900 px wide (review-v2: the v1 TV shrank to 500 px and went near-black), so every
  * readable TV string is set in TV design units (1040 x 585) at a size that stays >= 55 px on screen (scale 0.865).
  */
@@ -159,7 +159,7 @@ export const ScreenFlood: React.FC<{f: number}> = ({f}) => {
   return <div style={{position: 'absolute', left: 520 - r, top: 292.5 - r, width: 2 * r, height: 2 * r, borderRadius: 999, background: C.primary}} />;
 };
 
-// ---------------------------------------------------------------- 2. the Mish Ana! lobby
+// ---------------------------------------------------------------- 2. the game lobby
 export const SLOT = (i: number) => ({x: 486 + (i % 3) * 188, y: 230 + Math.floor(i / 3) * 196});
 const QR_R = {x: 190, y: 250, w: 270, h: 270};
 export const joinAt = (i: number) => b(T.join[i]);

@@ -1,11 +1,11 @@
-/* Mish Ana! landing – main.js (no dependencies) */
+/* JAMAA site – main.js (no dependencies) */
 (function () {
   'use strict';
 
   /* ------------------------------------------------------------------
      CONFIG
      ------------------------------------------------------------------ */
-  var PLAY_URL = 'https://play.google.com/store/apps/details?id=app.mishana.tv';
+  var PLAY_URL = 'https://play.google.com/store/apps/details?id=app.jamaa.tv';
 
   // Cloudflare Web Analytics (cookieless). Paste the site token from
   // Cloudflare dashboard → Analytics & Logs → Web Analytics → Add a site → "JS snippet" (the 32-hex "token").
@@ -41,13 +41,13 @@
     play: 'Play video',
     reelPause: 'Pause the animation',
     reelPlay: 'Play the animation',
-    shareTitle: 'Mish Ana! – play in your browser',
+    shareTitle: 'JAMAA – play in your browser',
     shareText: 'Open this on a laptop connected to the TV:',
     copied: 'Link copied. Open it on your laptop.',
-    sendTitle: 'Mish Ana! – play it on the big screen',
+    sendTitle: 'JAMAA – play it on the big screen',
     sendText: 'Open this link on a laptop or TV browser, put it on the big screen, and everyone scans the QR code with their phone.',
     sheetTitle: 'Play it on the big screen',
-    sheetBody: 'Mish Ana! is played on a big screen. Open this link there; phones join by scanning the QR code.',
+    sheetBody: 'JAMAA is played on a big screen. Open this link there; phones join by scanning the QR code.',
     sheetStep1: 'On your laptop or TV browser, type:',
     sheetStep2: 'Then scan the QR code on the screen with this phone.',
     tapToCopy: 'Tap to copy',
@@ -56,7 +56,7 @@
     linkCopied: 'Link copied',
     emailLink: 'Email it to me',
     moreShare: 'More…',
-    emailSubject: 'Mish Ana! – open this on your laptop or TV',
+    emailSubject: 'JAMAA – open this on your laptop or TV',
     openHere: 'Just looking? Open the game here',
     closeSheet: 'Close',
     cap_opening: 'Your TV. Everyone’s phone. <b>One liar.</b>',
@@ -108,8 +108,8 @@
      MEASUREMENT – cookieless, no identifiers, no storage.
      Skipped entirely with Global Privacy Control or Do Not Track, and on localhost.
      ------------------------------------------------------------------ */
-  var angle = window.__mishanaAngle || 'default';
-  var device = window.__mishanaDevice || 'other';
+  var angle = window.__jamaaAngle || 'default';
+  var device = window.__jamaaDevice || 'other';
   var optOut = navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' || window.doNotTrack === '1';
   var isLocal = /^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname) || location.protocol === 'file:';
   var trackOn = !!EVENT_URL && !optOut && !isLocal;
@@ -136,13 +136,13 @@
 
   // CTA clicks: data-play = Google Play, otherwise the browser version. data-cta = position on the page.
   doc.addEventListener('click', function (e) {
-    var a = e.target.closest && e.target.closest('a[data-play], a[href*="play.mishana.workers.dev"]');
+    var a = e.target.closest && e.target.closest('a[data-play], a[href*="play.jamaa.workers.dev"]');
     if (!a) return;
     if ((a.hasAttribute('data-send') && sendMode()) || a.closest('.send-sheet')) return; // phones: tracked by the send-link flow below
     var type = a.hasAttribute('data-play') ? 'play_store' : 'browser';
     var pos = a.getAttribute('data-cta') || 'other';
     track('cta', { t: type, p: pos });
-    try { doc.dispatchEvent(new CustomEvent('mishana:cta', { detail: { type: type, position: pos, angle: angle } })); } catch (err) {}
+    try { doc.dispatchEvent(new CustomEvent('jamaa:cta', { detail: { type: type, position: pos, angle: angle } })); } catch (err) {}
     if (window.dataLayer && window.dataLayer.push) window.dataLayer.push({ event: 'cta_click', cta: type, position: pos, angle: angle });
   });
 
@@ -179,7 +179,7 @@
   function metaDesc() { return doc.querySelector('meta[name="description"]'); }
 
   function t(key) {
-    var d = window.MISHANA_I18N && window.MISHANA_I18N[current];
+    var d = window.JAMAA_I18N && window.JAMAA_I18N[current];
     if (current !== 'en' && d && d[key] != null) return d[key];
     if (EN[key] != null) return EN[key];
     if (original && original.t[key] != null) return original.t[key];
@@ -189,7 +189,7 @@
   function applyLang(lang) {
     snapshot();
     current = lang;
-    var d = lang === 'en' ? null : window.MISHANA_I18N && window.MISHANA_I18N[lang];
+    var d = lang === 'en' ? null : window.JAMAA_I18N && window.JAMAA_I18N[lang];
     if (lang !== 'en' && !d) { lang = current = 'en'; }
     root.lang = lang;
     root.dir = lang === 'ar' ? 'rtl' : 'ltr';
@@ -227,8 +227,8 @@
   }
 
   function loadDict() {
-    return window.__mishanaI18n || new Promise(function (res) {
-      if (window.MISHANA_I18N) return res();
+    return window.__jamaaI18n || new Promise(function (res) {
+      if (window.JAMAA_I18N) return res();
       var s = doc.createElement('script'); s.src = '/assets/js/i18n.js'; s.onload = s.onerror = function () { res(); };
       doc.head.appendChild(s);
     });
@@ -236,7 +236,7 @@
 
   function setLang(lang, persist) {
     if (LANGS.indexOf(lang) < 0) lang = 'en';
-    if (persist) store.set('mishana:site-lang', lang);
+    if (persist) store.set('jamaa:site-lang', lang);
     if (lang === 'en') return applyLang('en');
     loadDict().then(function () { applyLang(lang); });
   }
@@ -244,7 +244,7 @@
   // Switching language = following the link to that language's page; remember the choice for next visits to "/".
   doc.querySelectorAll('.lang a').forEach(function (a) {
     a.addEventListener('click', function () {
-      store.set('mishana:site-lang', a.dataset.lang);
+      store.set('jamaa:site-lang', a.dataset.lang);
       track('lang', { p: a.dataset.lang });
     });
   });

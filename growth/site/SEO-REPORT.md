@@ -1,5 +1,7 @@
 # Mish Ana! site – SEO + AI search (GEO) report
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Date: 2026-10-04. Scope: `/home/alex/mishana-site` (not deployed, not pushed). Builds on the CRO pass (CRO-AUDIT.md); all CRO behaviour is kept (ad angles, device hints, reel, demo, sticky CTA, cookieless events).
 
 ## 1. What was done

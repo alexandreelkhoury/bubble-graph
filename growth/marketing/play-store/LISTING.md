@@ -1,6 +1,6 @@
 # Mish Ana! — Google Play store listing (EN / FR / AR / ES)
 
-Package `app.mishana.tv` · prepared 2026-10-04 · paste-ready.
+Package `app.jamaa.tv` · prepared 2026-10-04 · paste-ready.
 **Rule change 2026-10-07.** Descriptions and short descriptions now follow the new default: everyone gets the same word except **the Mole**, whose phone shows "You're the Mole!" and no word; a caught Mole gets one last guess at the word to steal the win. The optional different-word role (in-game name "Undercover", AR «المتخفّي») is described, **not named**, in EN/FR (see §0: "Undercover" stays out of Play metadata for trademark reasons; the AR name is fine). The "Blank" role is gone from the copy. Check the "560+ word pairs" count against `word-packs/` once the new everyday-word packs land.
 
 Character counts are Unicode code points (what Play Console counts). Limits: title 30, short description 80, full description 4000, release notes 500 per language ([metadata policy](https://support.google.com/googleplay/android-developer/answer/9898842): title ≤ 30, no emojis / ALL CAPS / "#1" / "free" / price or ranking claims in the title or icon).
@@ -517,7 +517,7 @@ Play Console → **Grow users → Store presence → Store settings**.
 | Email address (public, required) | `{{SUPPORT_EMAIL}}` (e.g. a dedicated `hello@<your-domain>`, not a personal Gmail) | Shown on the listing. Use the same address in `SUPPORT_EMAIL` (`shared/src/billing/products.ts:31`, currently empty) and the privacy policy |
 | Phone number | Leave empty | Optional; avoid exposing a personal number |
 | Website | `{{WEBSITE_URL}}` (the landing page) | Optional but helps trust and the privacy-policy check |
-| Privacy policy URL (App content → Privacy policy) | `{{WEBSITE_URL}}/privacy` | Must be a public, non-geofenced, non-PDF web page. Note: `https://play.mishana.workers.dev/privacy` currently returns the phone app's SPA shell (HTTP 200, not a policy), so do **not** use the Worker URL |
+| Privacy policy URL (App content → Privacy policy) | `{{WEBSITE_URL}}/privacy` | Must be a public, non-geofenced, non-PDF web page. Note: `https://play.jamaa.workers.dev/privacy` currently returns the phone app's SPA shell (HTTP 200, not a policy), so do **not** use the Worker URL |
 | External marketing | Leave on | Lets Google promote the app outside Play |
 | Default language | English (United States) – en-US | Add translations: French (France) – fr-FR, Arabic – ar, and with the Spanish release Spanish (Spain) – es-ES and Spanish (Latin America) – es-419 (§3b). Optionally en-GB and fr-CA by copying the same text |
 

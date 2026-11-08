@@ -12,7 +12,7 @@ import {
  * MA_G_M7 "Team party / office" (DECISIONS.md #14). One continuous take, ad beat 0 = the drop.
  * Hook (pre-settled on frame 0): the meeting-room screen shows the calendar — "Team event · 5:00 PM · Agenda: ???" —
  * above five colleagues at the table, each with a silent "…" bubble; the clock ticks 4:58 -> 4:59.
- * The laptop opens, an HDMI cable draws to the screen, the browser types play.mishana.workers.dev/tv -> lobby.
+ * The laptop opens, an HDMI cable draws to the screen, the browser types play.jamaa.workers.dev/tv -> lobby.
  * Each colleague holds up a phone and scans in -> Start -> the scan phones grow into the real word screens:
  * COFFEE x4 -> the boss's phone comes forward: TEA (amber ring, outside the phone) -> TV back as the vote board,
  * phones drop into a row, one clue each, votes fly from the phones -> OUT (one amber flash) -> "Dana was the Mole"

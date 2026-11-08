@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
-  Mish Ana! site build – no dependencies.  Run:  node build.mjs   (Node 18+)
+  JAMAA site build (Mish Ana! is the flagship game) – no dependencies.  Run:  node build.mjs   (Node 18+)
 
   Sources (edit these)                       Output (deploy this): dist/
   ─────────────────────────────────────────  ──────────────────────────────────────────────
@@ -39,33 +39,35 @@ const dateFmt = (d, lang) => new Intl.DateTimeFormat(lang === 'ar' ? 'ar-LB-u-nu
 
 /* ------------------------------------------------------------------ shared facts (one definition, reused everywhere) */
 const home = JSON.parse(rd('content/home.json'));
-const DEF = home.definition; // { en, fr, ar } one-sentence product definition
+const DEF = home.definition; // { en, fr, ar } one-sentence definition of game #1, Mish Ana! (GAME1)
+const PLATFORM_DEF = home.platform; // { en, fr, ar } one-sentence definition of JAMAA, the app (PLATFORM)
 const GAME_ID = abs('/#game');
+const APP_ID = abs('/#app');
 const ORG_ID = abs('/#org');
 const SITE_ID = abs('/#website');
 
 /* UI chrome for generated pages */
 const UI = {
   en: { skip: 'Skip to content', home: 'Home', guides: 'Guides', updated: 'Last updated', faq: 'Frequently asked questions', more: 'More guides',
-        langNav: 'Language', crumbs: 'Breadcrumb', footer: 'Footer', privacy: 'Privacy', contact: 'Contact', about: 'About', footTag: 'Mish Ana! – The secret-word party game',
+        langNav: 'Language', crumbs: 'Breadcrumb', footer: 'Footer', privacy: 'Privacy', contact: 'Contact', about: 'About', footTag: 'JAMAA – Party games for your TV',
         tm: 'Android TV, Google TV, Google Play and Chromecast are trademarks of Google LLC.',
         ctaTitle: 'Play Mish Ana! tonight', ctaInstall: 'Install on my TV', ctaInstallSub: 'Free to play · via Google Play', ctaBrowser: 'Play in your browser', ctaBrowserSub: 'Free · works on any TV with a laptop',
-        ctaBodyLive: 'Install it on your Android TV or Google TV from your phone, or open the free browser version on a laptop connected to the TV. Phones join by scanning a QR code.',
-        ctaBodySoon: 'The Android TV and Google TV app is coming to Google Play. You can play the full game today, free, in a browser: open it on a laptop connected to the TV and everyone joins by scanning the QR code with their phone.',
+        ctaBodyLive: 'Install JAMAA on your Android TV or Google TV from your phone, or open the free browser version on a laptop connected to the TV. Phones join by scanning a QR code.',
+        ctaBodySoon: 'The JAMAA app for Android TV and Google TV is coming to Google Play. You can play the full game today, free, in a browser: open it on a laptop connected to the TV and everyone joins by scanning the QR code with their phone.',
         navCta: LIVE ? 'Install on my TV' : 'Play free', aboutBox: 'About Mish Ana!', readIn: 'Also in' },
   fr: { skip: 'Aller au contenu', home: 'Accueil', guides: 'Guides', updated: 'Mis à jour le', faq: 'Questions fréquentes', more: 'À lire aussi',
-        langNav: 'Langue', crumbs: 'Fil d’Ariane', footer: 'Pied de page', privacy: 'Confidentialité', contact: 'Contact', about: 'À propos', footTag: 'Mish Ana! – Le jeu d’ambiance du mot secret',
+        langNav: 'Langue', crumbs: 'Fil d’Ariane', footer: 'Pied de page', privacy: 'Confidentialité', contact: 'Contact', about: 'À propos', footTag: 'JAMAA – Les jeux d’ambiance sur ta télé',
         tm: 'Android TV, Google TV, Google Play et Chromecast sont des marques de Google LLC.',
         ctaTitle: 'Jouez à Mish Ana! ce soir', ctaInstall: 'Installer sur ma télé', ctaInstallSub: 'Jeu gratuit · via Google Play', ctaBrowser: 'Jouer dans le navigateur', ctaBrowserSub: 'Gratuit · sur n’importe quelle télé avec un ordi',
-        ctaBodyLive: 'Installe-le sur ton Android TV ou Google TV depuis ton téléphone, ou ouvre la version navigateur gratuite sur un ordinateur branché à la télé. Les téléphones rejoignent la partie en scannant un QR code.',
-        ctaBodySoon: 'L’application Android TV et Google TV arrive bientôt sur Google Play. Le jeu complet est déjà jouable gratuitement dans un navigateur : ouvre-le sur un ordinateur branché à la télé, et chacun rejoint la partie en scannant le QR code avec son téléphone.',
+        ctaBodyLive: 'Installe JAMAA sur ton Android TV ou Google TV depuis ton téléphone, ou ouvre la version navigateur gratuite sur un ordinateur branché à la télé. Les téléphones rejoignent la partie en scannant un QR code.',
+        ctaBodySoon: 'L’application JAMAA pour Android TV et Google TV arrive bientôt sur Google Play. Le jeu complet est déjà jouable gratuitement dans un navigateur : ouvre-le sur un ordinateur branché à la télé, et chacun rejoint la partie en scannant le QR code avec son téléphone.',
         navCta: LIVE ? 'Installer' : 'Jouer', aboutBox: 'À propos de Mish Ana!', readIn: 'Aussi en' },
   ar: { skip: 'روح عالمحتوى', home: 'الرئيسية', guides: 'أدلّة', updated: 'آخر تحديث', faq: 'أسئلة متكرّرة', more: 'اقرأ كمان',
-        langNav: 'اللغة', crumbs: 'مسار التنقّل', footer: 'تذييل الصفحة', privacy: 'الخصوصية', contact: 'تواصل معنا', about: 'عن اللعبة', footTag: 'مش أنا! – لعبة الكلمة السرّية للسهرات',
+        langNav: 'اللغة', crumbs: 'مسار التنقّل', footer: 'تذييل الصفحة', privacy: 'الخصوصية', contact: 'تواصل معنا', about: 'عن جماعة', footTag: 'جماعة – ألعاب سهرة عالتلفزيون',
         tm: 'Android TV و Google TV و Google Play و Chromecast علامات تجارية تابعة لـ Google LLC.',
         ctaTitle: 'العبوا «مش أنا!» الليلة', ctaInstall: 'نزّلها عتلفزيوني', ctaInstallSub: 'اللعب ببلاش · عبر Google Play', ctaBrowser: 'العب بالمتصفّح', ctaBrowserSub: 'ببلاش · على أي تلفزيون مع لابتوب',
-        ctaBodyLive: 'نزّلها على Android TV أو Google TV من تلفونك، أو افتح نسخة المتصفّح المجانية على لابتوب موصول بالتلفزيون. التلفونات بتفوت بمسح كود QR.',
-        ctaBodySoon: 'تطبيق Android TV و Google TV جايي قريبًا على Google Play. بس فيكن تلعبوا اللعبة كاملة هلّق ببلاش بالمتصفّح: افتحوها على لابتوب موصول بالتلفزيون، وكل واحد بيفوت بمسح كود QR بتلفونو.',
+        ctaBodyLive: 'نزّلوا جماعة على Android TV أو Google TV من تلفونك، أو افتح نسخة المتصفّح المجانية على لابتوب موصول بالتلفزيون. التلفونات بتفوت بمسح كود QR.',
+        ctaBodySoon: 'تطبيق جماعة لـ Android TV و Google TV جايي قريبًا على Google Play. بس فيكن تلعبوا اللعبة كاملة هلّق ببلاش بالمتصفّح: افتحوها على لابتوب موصول بالتلفزيون، وكل واحد بيفوت بمسح كود QR بتلفونو.',
         navCta: LIVE ? 'نزّلها' : 'العب', aboutBox: 'عن «مش أنا!»', readIn: 'كمان بـ' }
 };
 const LANG_LABEL = { en: 'EN', fr: 'FR', ar: 'عربي' };
@@ -166,37 +168,51 @@ function footer(lang, extra = '') {
     <nav class="foot__guides" aria-label="${esc(u.guides)}">
       ${guidesNav(lang)}
     </nav>
-    <p class="foot__legal"><span dir="ltr">© 2026 <bdi>Mish Ana!</bdi></span> <span>${esc(u.tm)}</span>${extra}</p>
+    <p class="foot__legal"><span dir="ltr">© 2026 <bdi>JAMAA</bdi></span> <span>${esc(u.tm)}</span>${extra}</p>
   </div>
 </footer>`;
 }
 
-/* ------------------------------------------------------------------ JSON-LD builders */
+/* ------------------------------------------------------------------ JSON-LD builders
+   PLATFORM (JAMAA-PLATFORM §1.3): Organization, WebSite and the SoftwareApplication (the TV app) are JAMAA.
+   GAME1: the VideoGame node is Mish Ana!, game #1, which runs inside the JAMAA app (isPartOf). */
 const orgNode = () => ({
-  '@type': 'Organization', '@id': ORG_ID, name: 'Mish Ana!', url: abs('/'),
+  '@type': 'Organization', '@id': ORG_ID, name: 'JAMAA', alternateName: 'جماعة', url: abs('/'),
   logo: { '@type': 'ImageObject', url: abs('/assets/img/icon-512.png'), width: 512, height: 512 },
   ...(cfg.contactEmail ? { email: cfg.contactEmail } : {}),
   ...(cfg.sameAs.length ? { sameAs: cfg.sameAs } : {})
 });
+const APP_LANGS = ['en', 'fr', 'ar', 'es']; // languages of the app and its games (the site itself is EN/FR/AR)
+const appNode = (lang) => ({
+  '@type': 'SoftwareApplication', '@id': APP_ID,
+  name: 'JAMAA', alternateName: ['جماعة', 'Jamaa'],
+  description: PLATFORM_DEF[lang],
+  url: abs(HOME[lang]),
+  image: abs('/assets/img/icon-512.png'),
+  applicationCategory: 'GameApplication',
+  applicationSubCategory: 'Party games',
+  operatingSystem: 'Android TV, Google TV',
+  inLanguage: APP_LANGS,
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: LIVE ? PLAY : BROWSER },
+  ...(LIVE ? { installUrl: PLAY, downloadUrl: PLAY } : {}),
+  ...((LIVE || cfg.sameAs.length) ? { sameAs: [...(LIVE ? [PLAY] : []), ...cfg.sameAs] } : {}),
+  author: { '@id': ORG_ID }, publisher: { '@id': ORG_ID }
+});
 const gameNode = (lang) => ({
-  '@type': ['VideoGame', 'SoftwareApplication'], '@id': GAME_ID,
+  '@type': 'VideoGame', '@id': GAME_ID,
   name: 'Mish Ana!', alternateName: ['مش أنا!', 'Mish Ana'],
   description: DEF[lang],
   url: abs(HOME[lang]),
   image: abs(ogImage(lang)),
   screenshot: abs(HERO.jpg),
-  applicationCategory: 'GameApplication',
-  applicationSubCategory: 'Party game',
   genre: ['Party game', 'Social deduction', 'Word game'],
-  operatingSystem: 'Android TV, Google TV',
   gamePlatform: ['Android TV', 'Google TV', 'Web browser'],
   playMode: 'MultiPlayer',
   numberOfPlayers: { '@type': 'QuantitativeValue', minValue: 3, maxValue: 12 },
-  inLanguage: ['en', 'fr', 'ar'],
+  inLanguage: APP_LANGS,
   isAccessibleForFree: true,
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: LIVE ? PLAY : BROWSER },
-  ...(LIVE ? { installUrl: PLAY, downloadUrl: PLAY } : {}),
-  ...((LIVE || cfg.sameAs.length) ? { sameAs: [...(LIVE ? [PLAY] : []), ...cfg.sameAs] } : {}),
+  isPartOf: { '@id': APP_ID },
   author: { '@id': ORG_ID }, publisher: { '@id': ORG_ID },
   trailer: { '@id': abs('/#video') }
 });
@@ -251,7 +267,7 @@ const videoNode = (lang) => ({
   contentUrl: abs('/' + HERO_VIDEO),
   ...(HERO.caps ? {} : { inLanguage: 'en' }), publisher: { '@id': ORG_ID }
 });
-const websiteNode = () => ({ '@type': 'WebSite', '@id': SITE_ID, url: abs('/'), name: 'Mish Ana!', alternateName: 'مش أنا!', inLanguage: ['en', 'fr', 'ar'], publisher: { '@id': ORG_ID } });
+const websiteNode = () => ({ '@type': 'WebSite', '@id': SITE_ID, url: abs('/'), name: 'JAMAA', alternateName: 'جماعة', inLanguage: ['en', 'fr', 'ar'], publisher: { '@id': ORG_ID } });
 const faqNode = (url, items, lang) => ({
   '@type': 'FAQPage', '@id': url + '#faq', inLanguage: lang,
   mainEntity: items.map((x) => ({ '@type': 'Question', name: strip(x.q), acceptedAnswer: { '@type': 'Answer', text: absLinks(x.a) } }))
@@ -261,7 +277,7 @@ const absLinks = (h) => h.replace(/href="\//g, `href="${ORIGIN}/`);
 /* ------------------------------------------------------------------ HOME (EN / FR / AR from one template) */
 const tpl = rd('index.html');
 const ctx = { window: {} }; vm.runInNewContext(rd('assets/js/i18n.js'), ctx);
-const DICTS = ctx.window.MISHANA_I18N;
+const DICTS = ctx.window.JAMAA_I18N;
 if (CUES) for (const c of CUES) for (const l of ['fr', 'ar']) if (DICTS[l][c.k] == null) throw new Error(`assets/js/i18n.js: ${l}.${c.k} is missing (caption of the hero loop)`);
 const JS_KEYS = ['capCiv', 'capMole', 'capUnder', 'wordA', 'wordB', 'pause', 'play', 'reelPause', 'reelPlay', 'shareTitle', 'shareText', 'copied',
   'sendTitle', 'sendText', 'sheetTitle', 'sheetBody', 'copyLink', 'linkCopied', 'emailLink', 'emailSubject', 'openHere', 'closeSheet',
@@ -280,7 +296,7 @@ const ogImage = (lang) => (fileExists(`assets/img/og-${lang}.png`) ? `/assets/im
 function socialMeta({ lang, url, title, desc, type = 'website', imageAlt, alts }) {
   const otherLocales = Object.keys(alts || {}).filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternate" content="${OG_LOCALE[l]}">`).join('\n');
   return `<meta property="og:type" content="${type}">
-<meta property="og:site_name" content="Mish Ana!">
+<meta property="og:site_name" content="JAMAA">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${url}">
@@ -346,7 +362,7 @@ function renderHome(lang) {
     // strings main.js needs at runtime (the rest is already in the HTML): ~1 KB instead of loading i18n.js
     const mini = { metaTitle: m.title, metaDesc: m.description };
     for (const k of JS_KEYS) if (dict[k] != null) mini[k] = dict[k];
-    h = h.replace('<!--I18N_INLINE-->', `<script>window.MISHANA_I18N=${JSON.stringify({ [lang]: mini }).replace(/</g, '\\u003c')};</script>`);
+    h = h.replace('<!--I18N_INLINE-->', `<script>window.JAMAA_I18N=${JSON.stringify({ [lang]: mini }).replace(/</g, '\\u003c')};</script>`);
   } else {
     h = h.replace('<!--I18N_INLINE-->', '');
   }
@@ -366,7 +382,7 @@ function renderHome(lang) {
   const graph = {
     '@context': 'https://schema.org',
     '@graph': [
-      orgNode(), websiteNode(), gameNode(lang), videoNode(lang),
+      orgNode(), websiteNode(), appNode(lang), gameNode(lang), videoNode(lang),
       { '@type': 'WebPage', '@id': url + '#webpage', url, name: m.title, description: m.description, inLanguage: lang, isPartOf: { '@id': SITE_ID }, about: { '@id': GAME_ID }, primaryImageOfPage: abs(HERO.jpg), dateModified: home.updated },
       faqNode(url, faqItems, lang)
     ]
@@ -391,9 +407,10 @@ function headerBar(lang, alts) {
   return `<a class="skip" href="#main">${esc(u.skip)}</a>
 <header class="nav">
   <div class="nav__in wrap">
-    <a class="brand" href="${HOME[lang]}" aria-label="Mish Ana! – ${esc(u.home)}">
+    <a class="brand" href="${HOME[lang]}" aria-label="JAMAA – ${esc(u.home)}">
       <img class="brand__mark" src="/assets/img/mark.svg" alt="" width="36" height="36">
-      <img class="brand__word brand__word--latin" src="/assets/img/wordmark-latin.svg" alt="Mish Ana!" width="100" height="30">
+      <img class="brand__word brand__word--latin" src="/assets/img/wordmark-latin.svg" alt="JAMAA" width="115" height="30">
+      <img class="brand__word brand__word--ar" src="/assets/img/wordmark-ar.svg" alt="جماعة" width="100" height="30">
     </a>
     ${langSwitch(lang, alts)}
     <a class="btn btn--play btn--sm nav__cta" href="${LIVE ? PLAY : BROWSER}"${LIVE ? ' data-play' : ''} rel="noopener">${esc(u.navCta)}</a>
@@ -416,7 +433,7 @@ function aboutBox(lang) {
 }
 function crumbsFor(a) {
   const u = UI[a.lang];
-  const items = [{ name: 'Mish Ana!', path: HOME[a.lang] }];
+  const items = [{ name: 'JAMAA', path: HOME[a.lang] }];
   if (a.lang === 'en' && a.type === 'Article') items.push({ name: u.guides, path: '/guides/' });
   items.push({ name: a.crumb, path: a.path });
   return items;
@@ -442,7 +459,7 @@ ${a.faq.map((x) => `      <details>\n        <summary>${x.q}</summary>\n        
   if (!/<!--CTA-->/.test(body)) body += '\n<!--CTA-->';
   body = body.replace('<!--CTA-->', ctaBox(a.lang));
   body = body.replace('<!--ABOUT-->', aboutBox(a.lang));
-  body = body.replace('<!--DEFINITION-->', esc(DEF[a.lang])).replace('<!--FACTS-->', () => `<ul class="facts">${home.facts.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>`);
+  body = body.replace('<!--PLATFORM_DEFINITION-->', esc(PLATFORM_DEF[a.lang])).replace('<!--DEFINITION-->', esc(DEF[a.lang])).replace('<!--FACTS-->', () => `<ul class="facts">${home.facts.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>`);
   body = body.replace('<!--GUIDES_LIST-->', () => {
     const card = (x) => `<li><a href="${x.path}"${x.lang !== a.lang ? ` hreflang="${x.lang}" lang="${x.lang}"` : ''}>${esc(x.navLabel || x.crumb)}</a><span${x.lang !== a.lang ? ` lang="${x.lang}"` : ''}>${esc(x.description)}</span></li>`;
     const list = (l) => articles.filter((x) => x.lang === l && x.type === 'Article');
@@ -455,7 +472,7 @@ ${a.faq.map((x) => `      <details>\n        <summary>${x.q}</summary>\n        
     orgNode(),
     {
       '@type': a.type === 'AboutPage' ? 'AboutPage' : a.type === 'CollectionPage' ? 'CollectionPage' : 'WebPage', '@id': url + '#webpage', url, name: a.title, description: a.description, inLanguage: a.lang,
-      isPartOf: { '@id': SITE_ID }, about: { '@id': GAME_ID }, breadcrumb: { '@id': url + '#breadcrumb' }, dateModified: a.updated
+      isPartOf: { '@id': SITE_ID }, about: { '@id': a.type === 'AboutPage' ? APP_ID : GAME_ID }, breadcrumb: { '@id': url + '#breadcrumb' }, dateModified: a.updated
     },
     {
       '@type': 'BreadcrumbList', '@id': url + '#breadcrumb',
@@ -468,7 +485,7 @@ ${a.faq.map((x) => `      <details>\n        <summary>${x.q}</summary>\n        
     image: abs(ogImage(a.lang)), author: { '@id': ORG_ID }, publisher: { '@id': ORG_ID }, about: { '@id': GAME_ID },
     ...(a.mentions ? { mentions: a.mentions.map((x) => ({ '@type': x.type || 'VideoGame', name: x.name, ...(x.url ? { url: x.url } : {}) })) } : {})
   });
-  if (a.type === 'AboutPage') graph.push(gameNode(a.lang));
+  if (a.type === 'AboutPage') graph.push(appNode(a.lang), gameNode(a.lang));
   if (a.faq.length) graph.push(faqNode(url, a.faq, a.lang));
 
   const html = `<!doctype html>
@@ -532,24 +549,31 @@ function llms(full) {
   const F = home.facts;
   const en = articles.filter((a) => a.lang === 'en');
   const intl = articles.filter((a) => a.lang !== 'en');
-  let t = `# Mish Ana! (مش أنا!)
+  let t = `# JAMAA (جماعة)
 
-> ${DEF.en}
+> ${PLATFORM_DEF.en}
+
+Game #1: ${DEF.en}
 
 ${F.map((f) => `- ${f}`).join('\n')}
-- Status: ${LIVE ? `available on Google Play for Android TV / Google TV (${PLAY}) and free in any web browser (${BROWSER}).` : `the Android TV / Google TV app (package app.mishana.tv) is coming to Google Play; the full game is playable today, free, in any web browser at ${BROWSER}.`}
+- Status: ${LIVE ? `available on Google Play for Android TV / Google TV (${PLAY}) and free in any web browser (${BROWSER}).` : `the Android TV / Google TV app (package app.jamaa.tv) is coming to Google Play; the full app is playable today, free, in any web browser at ${BROWSER}.`}
 
-Short definitions for quoting:
+Short definitions for quoting (JAMAA, the app):
+- EN: ${PLATFORM_DEF.en}
+- FR: ${PLATFORM_DEF.fr}
+- AR: ${PLATFORM_DEF.ar}
+
+Short definitions for quoting (Mish Ana!, game #1):
 - EN: ${DEF.en}
 - FR: ${DEF.fr}
 - AR: ${DEF.ar}
 
 ## Main pages
 
-- [Mish Ana! home (English)](${abs('/')}): what the game is, which TVs it works on, how to install it from a phone, FAQ
-- [Mish Ana! (Français)](${abs('/fr/')}): page d'accueil en français
-- [مش أنا! (العربية)](${abs('/ar/')}): الصفحة الرئيسية بالعربي
-- [About Mish Ana!](${abs('/about/')}): entity facts, roles, platforms, languages, contact
+- [JAMAA home (English)](${abs('/')}): the app and its first game, Mish Ana!; which TVs it works on, how to install it from a phone, FAQ
+- [JAMAA (Français)](${abs('/fr/')}): page d'accueil en français
+- [جماعة (العربية)](${abs('/ar/')}): الصفحة الرئيسية بالعربي
+- [About JAMAA](${abs('/about/')}): entity facts, games, roles, platforms, languages, contact
 - [Play in a browser](${BROWSER}): host a game from a laptop or TV browser; phones scan the QR code
 
 ## Guides
@@ -608,7 +632,7 @@ ${pages.map((p) => {
 write('sitemap.xml', sitemap);
 
 const AI_BOTS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'Bingbot', 'DuckAssistBot', 'MistralAI-User', 'Meta-ExternalAgent', 'Amazonbot', 'CCBot'];
-write('robots.txt', `# Mish Ana! – every crawler is welcome, including AI search and assistant crawlers.
+write('robots.txt', `# JAMAA – every crawler is welcome, including AI search and assistant crawlers.
 # Short facts for language models: ${abs('/llms.txt')}
 
 User-agent: *

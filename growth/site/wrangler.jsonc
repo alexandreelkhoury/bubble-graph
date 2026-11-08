@@ -1,4 +1,4 @@
-// Cloudflare Workers static-assets site, live at https://www.mishana.workers.dev (Worker "www").
+// Cloudflare Workers static-assets site, live at https://www.jamaa.workers.dev (Worker "www").
 // Deploy later with:  npx wrangler deploy   (from this folder, after `npx wrangler login`)
 // `wrangler deploy` / `wrangler dev` first run `node build.mjs` (see "build"), which writes the site to dist/.
 // Only dist/ is uploaded: sources, .git, node_modules, *.md and the build script never reach the CDN.
@@ -19,7 +19,7 @@
   },
   // Workers Analytics Engine dataset for the events (created on first write; query it with the SQL API).
   "analytics_engine_datasets": [
-    { "binding": "EVENTS", "dataset": "mishana_site_events" }
+    { "binding": "EVENTS", "dataset": "jamaa_site_events" }
   ]
   // Custom domain: uncomment and set once the domain is on Cloudflare (same host as "origin" in site.config.json),
   // then set "workers_dev": false so the *.workers.dev copy of the site stops being served (duplicate content).

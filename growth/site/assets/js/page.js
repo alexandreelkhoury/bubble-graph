@@ -1,4 +1,4 @@
-/* Mish Ana! guide pages – page.js (no dependencies, ~1 KB).
+/* JAMAA site guide pages – page.js (no dependencies, ~1 KB).
    Same cookieless measurement as main.js (see CRO-AUDIT.md §4): a page view and CTA clicks, sent to /e.
    Angle "guide" + p=<page slug> tell guide traffic apart. Skipped with GPC / Do Not Track and on localhost. */
 (function () {
@@ -27,9 +27,9 @@
   d.addEventListener('click', function (ev) {
     var a = ev.target.closest && ev.target.closest('a');
     if (!a) return;
-    if (a.hasAttribute('data-lang')) { try { localStorage.setItem('mishana:site-lang', a.getAttribute('data-lang')); } catch (err) {} return; }
+    if (a.hasAttribute('data-lang')) { try { localStorage.setItem('jamaa:site-lang', a.getAttribute('data-lang')); } catch (err) {} return; }
     if (a.hasAttribute('data-play')) track('cta', { t: 'play_store' });
-    else if (/play\.mishana\.workers\.dev/.test(a.href)) track('cta', { t: 'browser' });
+    else if (/play\.jamaa\.workers\.dev/.test(a.href)) track('cta', { t: 'browser' });
   });
   d.querySelectorAll('details').forEach(function (el, i) {
     el.addEventListener('toggle', function () { if (el.open) track('faq', { p: page.slice(0, 20) + ':' + (i + 1) }); });

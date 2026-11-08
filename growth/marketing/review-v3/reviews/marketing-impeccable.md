@@ -1,5 +1,7 @@
 # Marketing review v3 · lens: IMPECCABLE (production quality)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Scope: landing `growth/site` (EN/FR/AR at 390 and 1440, privacy, 404, OG), Play Store (`growth/marketing/play-store`: icon, feature graphic, TV banner, screenshot template), video end cards (`growth/video/out/final`). Checked against: palette B (`growth/video/src/brand.ts`), `docs/DESIGN.md`, `review-v2/DECISIONS.md`, Google Play preview-asset specs (support.google.com/googleplay/android-developer/answer/9866151, fetched today) and TV quality TV-G4 / TV-BN (developer.android.com/docs/quality-guidelines/tv-app-quality). Contrast is WCAG 2.x, computed from the hex values.
 
 ## 1. Verdict

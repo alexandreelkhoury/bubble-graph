@@ -1,5 +1,7 @@
 # Product · Frontend design (visual craft) review — v3
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Target: phone controller (`web-client/src/screens`, `styles.css`), browser TV (`web-client/src/tv-mock`, `tv.css`), native TV (`tv-app/.../ui`). Lens: composition, weight, colour, hero moments, rhythm. Skill applied: `frontend-design` (commit to one aesthetic, dominant colour + sharp accents, atmosphere over flat fills, orchestrated hero moments, no generic admin look).
 
 Mockups (static HTML, palette B "lit stage" in the app, shot with headless Chrome via Playwright, `mockups/shoot.mjs`):

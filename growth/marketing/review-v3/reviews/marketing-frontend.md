@@ -1,5 +1,7 @@
 # Marketing: frontend-design review (v3)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Lens: visual craft (frontend-design skill). Surfaces: landing `growth/site/` (EN/FR/AR at 390 and 1440), Play icon, feature graphic, TV banner, video end cards.
 Mockups (HTML sources in `mockups/src/`, rendered with headless Chrome + Playwright via `mockups/src/render.mjs`):
 - `mockups/mkt-hero-desktop-1440.png`: desktop hero, 1440×900

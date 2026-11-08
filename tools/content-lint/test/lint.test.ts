@@ -2,7 +2,7 @@ import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { lintPacks, registeredPackFiles, type PackEntry } from "../src/lint";
+import { GAME1_DIR, lintPacks, registeredPackFiles, type PackEntry } from "../src/lint";
 import { lintDirectory } from "../src/main";
 
 const REPO_CONTENT = join(import.meta.dirname, "../../../content");
@@ -27,7 +27,7 @@ function pack(id: string, locale: string, pairs: [Side | string, Side | string][
   };
 }
 const TEN: [string, string][] = Array.from({ length: 10 }, (_, i) => [`Alpha${i}`, `Beta${i}`]);
-const entry = (data: Record<string, unknown>, dir = "en"): PackEntry => ({ file: `mishana/${dir}/${String(data.id)}.json`, data });
+const entry = (data: Record<string, unknown>, dir = "en"): PackEntry => ({ file: `${GAME1_DIR}/${dir}/${String(data.id)}.json`, data });
 
 describe("content-lint rules", () => {
   it("accepts a valid pack (only the M4 count warnings)", () => {
@@ -45,13 +45,13 @@ describe("content-lint rules", () => {
   });
 
   it("invalid JSON", () => {
-    const r = lintPacks([{ file: "mishana/en/x.json", data: null, parseError: "Unexpected token" }]);
+    const r = lintPacks([{ file: `${GAME1_DIR}/en/x.json`, data: null, parseError: "Unexpected token" }]);
     expect(r.errors[0]).toMatch(/invalid JSON/);
   });
 
   it("duplicate pack id", () => {
     const a = entry(pack("en-dup-01", "en", TEN));
-    const b = { file: "mishana/en/copy/en-dup-01.json", data: pack("en-dup-01", "en", TEN.map(([x, y]) => [`${x}x`, `${y}x`] as [string, string])) };
+    const b = { file: `${GAME1_DIR}/en/copy/en-dup-01.json`, data: pack("en-dup-01", "en", TEN.map(([x, y]) => [`${x}x`, `${y}x`] as [string, string])) };
     const r = lintPacks([a, b]);
     expect(r.errors.join("\n")).toMatch(/duplicate pack id "en-dup-01"/);
   });
@@ -91,10 +91,10 @@ describe("content-lint rules", () => {
   });
 
   it("file name and directory must match the pack", () => {
-    const r = lintPacks([{ file: "mishana/fr/wrong.json", data: pack("en-x-01", "en", TEN) }]);
+    const r = lintPacks([{ file: `${GAME1_DIR}/fr/wrong.json`, data: pack("en-x-01", "en", TEN) }]);
     const errs = r.errors.join("\n");
     expect(errs).toMatch(/file name must be en-x-01.json/);
-    expect(errs).toMatch(/must live in packs\/en\//);
+    expect(errs).toContain(`must live in ${GAME1_DIR}/en/`);
   });
 
   it("civilian and undercover sharing a guess form via alt or translit is an error", () => {
@@ -190,16 +190,16 @@ describe("content-lint rules", () => {
   });
 
   it("reads registered files from index.ts", () => {
-    const src = 'import a from "./mishana/en/en-a-01.json";\nimport b from \'./mishana/ar/lb-b-01.json\';\n';
-    expect(registeredPackFiles(src)).toEqual(["mishana/en/en-a-01.json", "mishana/ar/lb-b-01.json"]);
+    const src = `import a from "./${GAME1_DIR}/en/en-a-01.json";\nimport b from './${GAME1_DIR}/ar/lb-b-01.json';\n`;
+    expect(registeredPackFiles(src)).toEqual([`${GAME1_DIR}/en/en-a-01.json`, `${GAME1_DIR}/ar/lb-b-01.json`]);
   });
 
   it("lints a directory and reports bad JSON files", () => {
     const root = mkdtempSync(join(tmpdir(), "content-lint-"));
-    mkdirSync(join(root, "mishana/en"), { recursive: true });
-    writeFileSync(join(root, "mishana/en/en-ok-01.json"), JSON.stringify(pack("en-ok-01", "en", TEN)));
-    writeFileSync(join(root, "mishana/en/en-broken-01.json"), "{ nope");
-    writeFileSync(join(root, "index.ts"), 'import a from "./mishana/en/en-ok-01.json";');
+    mkdirSync(join(root, GAME1_DIR, "en"), { recursive: true });
+    writeFileSync(join(root, GAME1_DIR, "en/en-ok-01.json"), JSON.stringify(pack("en-ok-01", "en", TEN)));
+    writeFileSync(join(root, GAME1_DIR, "en/en-broken-01.json"), "{ nope");
+    writeFileSync(join(root, "index.ts"), `import a from "./${GAME1_DIR}/en/en-ok-01.json";`);
     const r = lintDirectory(root);
     expect(r.errors).toHaveLength(1);
     expect(r.errors[0]).toMatch(/en-broken-01.json: invalid JSON/);

@@ -1,5 +1,7 @@
 # Mish Ana! landing page – CRO audit (2026-10-04)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Scope: `index.html` (EN/FR/AR via `assets/js/i18n.js`), privacy page, `_headers`. Traffic assumption: paid TikTok/Instagram (≈90 % on a phone, usually **not** in front of the TV) plus organic. Primary conversion: click to Google Play ("install on your TV from your phone"). Secondary: "Play in your browser" (`play.mishana.workers.dev/tv`).
 
 Method: Playwright screenshots at 390×844 and 1440×900 in EN/FR/AR, Lighthouse mobile (before/after), code read, checks against `play-store/LISTING.md`, `ads/REVIEW.md`, `ads/SCRIPTS.md` and the game's UI rules (`bubble-graph/docs/DESIGN.md` §2, §6.2; `shared/i18n`).

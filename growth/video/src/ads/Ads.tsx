@@ -19,8 +19,8 @@ import * as MA_A_H1 from './MA_A_H1';
 type AdProps = {blur: number; guide: boolean};
 
 /**
- * Brand + category from frame 0 (DECISIONS.md #6): "Mish Ana! · party game for your TV", top-left inside the safe
- * zone, for the whole body (the end card carries the full logo).
+ * Brand + category from frame 0 (DECISIONS.md #6): the JAMAA mark and "JAMAA · party games for your TV", top-left
+ * inside the safe zone, for the whole body (the end card carries the full logo). The ad's game stays game #1 (GAME1).
  */
 const BrandChip: React.FC<{lang: Lang}> = ({lang}) => {
   const f = useCurrentFrame();
@@ -31,8 +31,8 @@ const BrandChip: React.FC<{lang: Lang}> = ({lang}) => {
       <div style={{display: 'flex', alignItems: 'center', gap: 12, padding: '8px 20px 8px 10px', borderRadius: 999, background: 'rgba(20,9,40,0.55)',
         border: '1.5px solid rgba(255,247,236,0.18)', fontFamily: FONT, fontWeight: 800, fontSize: 30, color: C.text, direction: lang === 'ar' ? 'rtl' : 'ltr'}}>
         <Img src={staticFile('mark.svg')} style={{width: 44, height: 44, borderRadius: 10}} />
-        {lang === 'ar' ? <span>مش أنا! · <span style={{color: C.text2, fontWeight: 700}}>لعبة سهرات للتلفزيون</span></span>
-          : <span>Mish Ana! · <span style={{color: C.text2, fontWeight: 700}}>party game for your TV</span></span>}
+        {lang === 'ar' ? <span>جماعة · <span style={{color: C.text2, fontWeight: 700}}>ألعاب سهرة عالتلفزيون</span></span>
+          : <span>JAMAA · <span style={{color: C.text2, fontWeight: 700}}>party games for your TV</span></span>}
       </div>
     </div>
   );

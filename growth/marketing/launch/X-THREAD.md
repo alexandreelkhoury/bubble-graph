@@ -3,13 +3,13 @@
 Voice: one solo dev talking to other people who make things. Lowercase-ish, plain, no hype words, no "game-changer", no exclamation marks except inside the name. Every number here is checked against the repo (README.md, docs/DEV.md, `web-client` size check); do not add user, download or revenue numbers you don't have.
 
 Placeholders: `{{NAME}}`, `{{X_HANDLE}}`.
-Play link: `https://play.mishana.workers.dev/tv` (open on a laptop or TV browser; phones scan the QR).
+Play link: `https://play.jamaa.workers.dev/tv` (open on a laptop or TV browser; phones scan the QR).
 
 ## Before you post: media check (important)
 
 | Asset | Use it? | Why |
 |---|---|---|
-| `/home/alex/mishana-video/out/final/MishAna-16x9.mp4` (23.8 s) | Yes, **after a fix** | The last 1.4 s (from ~22.4 s) shows a button "Available on Google TV". That is not true yet. Either change `growth/video/src/Film.tsx:571` to "Play free in your browser" and re-render all three cuts, or trim: `ffmpeg -i MishAna-16x9.mp4 -t 22.3 -af "afade=t=out:st=21.3:d=1" -c:v libx264 -crf 18 -c:a aac MishAna-16x9-web.mp4` (same for `-9x16` and `-1x1`). |
+| `/home/alex/jamaa-video/out/final/MishAna-16x9.mp4` (23.8 s) | Yes, **after a fix** | The last 1.4 s (from ~22.4 s) shows a button "Available on Google TV". That is not true yet. Either change `growth/video/src/Film.tsx:571` to "Play free in your browser" and re-render all three cuts, or trim: `ffmpeg -i MishAna-16x9.mp4 -t 22.3 -af "afade=t=out:st=21.3:d=1" -c:v libx264 -crf 18 -c:a aac MishAna-16x9-web.mp4` (same for `-9x16` and `-1x1`). |
 | `MishAna-9x16.mp4`, `MishAna-1x1.mp4` | Yes, same fix | Same end card. 1x1 is the safest crop on X. |
 | Ads `MA-*.mp4` | **Not until the Play listing is live** | They end on an "Install on TV" card with a Google Play badge and "Or search 'Mish Ana' on your TV". Posting them now would promise something people can't do yet. |
 | Landing screenshots `desktop-*`, `mobile-*` | Avoid for now | Every one shows a "Get it on Google TV" button and the landing site isn't deployed. `mobile-en-deal-mole.png` also says "You're the Mole!", which contradicts "the Mole isn't told" (it's the beginner-mode card) and will confuse people. |
@@ -107,7 +107,7 @@ Alt text: "A phone screen in Arabic, right to left, showing the secret word 'Ø¨Ù
 > You don't need the TV app to try it.
 >
 > Open this on a laptop or a smart TV browser, put it on the big screen, and everyone scans the QR:
-> https://play.mishana.workers.dev/tv
+> https://play.jamaa.workers.dev/tv
 >
 > Free, no account. Play it free in your browser tonight and tell me what broke. I read every reply.
 

@@ -4,7 +4,7 @@ Paste-ready. Same facts everywhere, checked against README.md and docs/DEV.md. S
 
 > Playable now, free, in any browser. The Android TV / Google TV app is in Google Play testing and not public yet.
 
-Link: `https://play.mishana.workers.dev/tv`
+Link: `https://play.jamaa.workers.dev/tv`
 Placeholders: `{{NAME}}`, `{{X_HANDLE}}`.
 
 Trademark rule (from `growth/marketing/play-store/LISTING.md` §0): never put "Undercover", "Mr. White", "Spyfall" or "Imposter Party" in a title, tagline, tag or keyword field. Naming them as "games in the same genre" inside a comparison (AlternativeTo's "alternative to" link, an honest FAQ answer) is fine; the AlternativeTo "alternative to" relation is exactly that, and it's how the site works.
@@ -22,7 +22,7 @@ Mish Ana!
 
 **Website**
 ```
-https://play.mishana.workers.dev/tv
+https://play.jamaa.workers.dev/tv
 ```
 (Swap to the landing page when `mishana-site` is deployed; keep the `/tv` link in the description.)
 
@@ -81,7 +81,7 @@ Everyone gets a secret word on their phone. One player's is slightly different a
 ```
 (231 characters. After the Play release, end with: "Free on Android TV and Google TV, or in your browser.")
 
-**Links**: Google Play listing + `https://play.mishana.workers.dev/tv`. Before the Play listing is public: the browser link only.
+**Links**: Google Play listing + `https://play.jamaa.workers.dev/tv`. Before the Play listing is public: the browser link only.
 **Pricing**: Free.
 **Topics**: Games, Board Games (or Party Games if available), Android, Web App, Indie Games.
 **Status**: if PH asks, it's a free product with a working web version; don't tick anything that implies the Play app is out.
@@ -105,7 +105,7 @@ Mish Ana! means "not me!" in Lebanese, which is what everyone says when they're 
 It's a secret-word social-deduction game for groups. Everyone gets a word on their own phone, one person (the Mole) has a slightly different word and doesn't know it, and you find them through one-word clues and a vote. The TV is the shared screen, phones are the controllers, and nobody installs anything on their phone: they scan a QR code.
 
 What's real today:
-- The browser version is free and playable now: open play.mishana.workers.dev/tv on a laptop or smart-TV browser and have everyone scan the QR. 3 to 12 players.
+- The browser version is free and playable now: open play.jamaa.workers.dev/tv on a laptop or smart-TV browser and have everyone scan the QR. 3 to 12 players.
 - The Android TV / Google TV app: [after Play release] "is on Google Play now: search Mish Ana on your TV or install it from the Play website onto your TV." [before] "is going through Google Play testing. It's not public yet."
 - English, French and Arabic, with right-to-left Arabic and Lebanese word packs.
 
@@ -138,7 +138,7 @@ Hi IH, I'm {{NAME}}, a solo developer from Lebanon. I've been building Mish Ana!
 Everyone gets a secret word on their phone. One player, the Mole, gets a slightly different word (PIZZA vs PASTA) and isn't told. Players give one-word clues, vote on their phones, and the TV reveals who's out. 3 to 12 players. English, French and Arabic.
 
 **Where it stands (honestly)**
-- Browser version: live and free. Any laptop or smart-TV browser can be the TV: play.mishana.workers.dev/tv
+- Browser version: live and free. Any laptop or smart-TV browser can be the TV: play.jamaa.workers.dev/tv
 - Android TV / Google TV app: built, heading into Google Play closed testing. Not public.
 - Users and revenue: [Day 10: put only what you actually measured in week one, e.g. rooms created, groups who reported playing, bugs fixed. Revenue: none, nothing is for sale.]
 - Money: free to play. In-app purchases (premium word packs) are planned for the TV app, not live.
@@ -164,7 +164,7 @@ If you have a group and a screen, try a round and tell me what broke or felt slo
 
 ## 4. itch.io (browser page)
 
-itch hosts HTML5 games as an uploaded ZIP with an `index.html` (https://itch.io/docs/creators/html5). Link-only pages are discouraged and can be removed from browse/search (https://itch.io/docs/creators/quality-guidelines), so upload a tiny `index.html` that embeds the TV page in a full-size iframe (`<iframe src="https://play.mishana.workers.dev/tv" allow="fullscreen; autoplay; screen-wake-lock" style="border:0;width:100%;height:100%">`). **Blocker found 2026-10-04:** `https://play.mishana.workers.dev/tv` sends `Content-Security-Policy: … frame-ancestors 'none'`, so it cannot be embedded on itch today. Options: (a) allow itch's game hosts in `frame-ancestors` for the `/tv` route only (itch serves HTML5 games from `*.itch.zone` / `*.hwcdn.net`; check the exact host in your browser's dev tools on your own uploaded page) and keep `'none'` for phone pages; or (b) skip itch until then. Don't publish a link-only page. After (a), test: the QR inside the iframe must still point to `play.mishana.workers.dev`, sound must start after a click, and fullscreen must work. A page gets indexed only once it's public, has a cover image and is playable (https://itch.io/docs/creators/getting-indexed).
+itch hosts HTML5 games as an uploaded ZIP with an `index.html` (https://itch.io/docs/creators/html5). Link-only pages are discouraged and can be removed from browse/search (https://itch.io/docs/creators/quality-guidelines), so upload a tiny `index.html` that embeds the TV page in a full-size iframe (`<iframe src="https://play.jamaa.workers.dev/tv" allow="fullscreen; autoplay; screen-wake-lock" style="border:0;width:100%;height:100%">`). **Blocker found 2026-10-04:** `https://play.jamaa.workers.dev/tv` sends `Content-Security-Policy: … frame-ancestors 'none'`, so it cannot be embedded on itch today. Options: (a) allow itch's game hosts in `frame-ancestors` for the `/tv` route only (itch serves HTML5 games from `*.itch.zone` / `*.hwcdn.net`; check the exact host in your browser's dev tools on your own uploaded page) and keep `'none'` for phone pages; or (b) skip itch until then. Don't publish a link-only page. After (a), test: the QR inside the iframe must still point to `play.jamaa.workers.dev`, sound must start after a click, and fullscreen must work. A page gets indexed only once it's public, has a cover image and is playable (https://itch.io/docs/creators/getting-indexed).
 
 - **Title**: `Mish Ana!`
 - **Short description**: `A secret-word party game for 3–12 players. One screen, everyone plays on their phone.`
@@ -207,7 +207,7 @@ Mish Ana! ("not me!" in Lebanese) is a secret-word party game for 3 to 12 player
 
 Everyone gets a secret word. One player, the Mole, has a slightly different word and doesn't know it. In bigger groups, a Blank gets no word at all. Give one-word clues, vote on your phones, and the TV reveals who's out.
 
-▶ Play free in your browser now: https://play.mishana.workers.dev/tv
+▶ Play free in your browser now: https://play.jamaa.workers.dev/tv
 Open it on a laptop or a smart-TV browser, put it on the big screen, and have everyone scan the QR.
 
 The Android TV / Google TV app is in Google Play testing and not public yet.
@@ -223,6 +223,6 @@ No chapters: YouTube needs at least three chapters of 10+ seconds each, so a 24-
 
 **Tags field**: party game, word game, social deduction, game night, Android TV game, Google TV game, browser party game, Lebanese, Arabic party game, secret word game.
 **Category**: Gaming. **Audience**: not made for kids (it's a general-audience party game; "made for kids" disables comments, which you want for feedback).
-**Pinned comment**: "Want to try it? Laptop or TV browser → play.mishana.workers.dev/tv → everyone scans the QR. Tell me what broke."
+**Pinned comment**: "Want to try it? Laptop or TV browser → play.jamaa.workers.dev/tv → everyone scans the QR. Tell me what broke."
 
 **Short (9:16)** title: `One of you has a different word. Who? #partygame` · description: first two lines + link + "Android TV app in testing, not public yet."

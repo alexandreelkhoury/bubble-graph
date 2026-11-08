@@ -70,7 +70,7 @@ In the prompt box, click the **model name** (it defaults to the image model, Nan
   - Ad-specific shots: `A_H1_shot01_take1.mp4`, `B_H1_shot04_take2.mp4`
   - Shared BODY-1 shots: `BODY_shot03_take1.mp4`
 - Rename the one take you choose per shot to end in `_PICK`, e.g. `A_H1_shot01_take3_PICK.mp4`. Keep the other takes.
-- **Drop everything into `/home/alex/mishana-video/public/ai/`.** Put the reference stills in `/home/alex/mishana-video/public/ai/refs/`.
+- **Drop everything into `/home/alex/jamaa-video/public/ai/`.** Put the reference stills in `/home/alex/jamaa-video/public/ai/refs/`.
 - Leave the clips untouched: no trims, no filters, no re-encoding. Veo outputs 24 fps; Remotion plays the clips inside the 60 fps composition. Don't speed-ramp AI clips in the edit, because ramps show the 24 fps judder.
 
 ### 1.6 Credit budget (Google AI Pro = 1,000 Flow credits a month; unused credits don't roll over)
@@ -488,7 +488,7 @@ Check each candidate take in this order and reject it at the first failure. Judg
 
 **Technical**
 - [ ] It's **9:16 portrait** (Flow defaults to landscape if you forget).
-- [ ] Downloaded at **1080p**, and the file is renamed per §1.5 and placed in `/home/alex/mishana-video/public/ai/`.
+- [ ] Downloaded at **1080p**, and the file is renamed per §1.5 and placed in `/home/alex/jamaa-video/public/ai/`.
 - [ ] The usable window has no morphing at the cut points. Check the first and last frame of the window.
 - [ ] For A_H1_shot03 option A: the **lower third stays empty and soft** for the whole 2.7 s.
 

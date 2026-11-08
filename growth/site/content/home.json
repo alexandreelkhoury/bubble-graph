@@ -1,21 +1,26 @@
 {
-  "_README": "Per-language SEO meta for the home pages (/, /fr/, /ar/) and the shared entity facts used in JSON-LD, /about/ and llms.txt. Home body copy: EN in index.html, FR/AR in assets/js/i18n.js.",
+  "_README": "Per-language SEO meta for the home pages (/, /fr/, /ar/) and the shared entity facts used in JSON-LD, /about/ and llms.txt. `platform` defines JAMAA (the app, Organization/SoftwareApplication JSON-LD, /about/); `definition` defines game #1, Mish Ana! (VideoGame JSON-LD, guide about-boxes). AR brand lines are drafts for native review. Home body copy: EN in index.html, FR/AR in assets/js/i18n.js.",
   "updated": "2026-10-07",
   "privacyUpdated": "2026-10-07",
+  "platform": {
+    "en": "JAMAA (ja-MAA, Arabic for “the gang, the gathering”) is a party-games app for Android TV and Google TV: 3–12 players join from their phones by scanning a QR code, with nothing to install on phones. Its first game is Mish Ana!, a secret-word game.",
+    "fr": "JAMAA (prononcé « ja-MAA », « la bande » en arabe) est une appli de jeux d’ambiance pour Android TV et Google TV : de 3 à 12 joueurs rejoignent la partie avec leur téléphone en scannant un QR code, sans rien installer. Son premier jeu est Mish Ana!, un jeu du mot secret.",
+    "ar": "«جماعة» تطبيق ألعاب سهرة على Android TV و Google TV: من 3 لـ12 لاعب بيفوتوا من تلفوناتن بمسح كود QR، بلا ما ينزّلوا شي. أوّل لعبة فيه «مش أنا!»، لعبة الكلمة السرّية."
+  },
   "definition": {
     "en": "Mish Ana! is a secret-word party game for Android TV and Google TV: 3–12 players join from their phones by scanning a QR code, get the same secret word, and find the Mole: the one player with no word.",
     "fr": "Mish Ana! est un jeu d’ambiance du mot secret pour Android TV et Google TV : de 3 à 12 joueurs rejoignent la partie avec leur téléphone en scannant un QR code, reçoivent le même mot secret et cherchent la Taupe, le seul joueur sans mot.",
     "ar": "«مش أنا!» لعبة سهرات بالكلمة السرّية على Android TV و Google TV: من 3 لـ12 لاعب بيفوتوا من تلفوناتن بمسح كود QR، الكل بتوصلن نفس الكلمة السرّية، والهدف تكشفوا الجاسوس: اللاعب الوحيد اللي ما معو كلمة."
   },
   "facts": [
-    "Name: Mish Ana! (Arabic: مش أنا!), Lebanese Arabic for \"Not me!\".",
-    "Genre: party game, social deduction, secret-word / impostor word game.",
-    "Platforms: Android TV and Google TV app (Google Play package app.mishana.tv), plus a browser version that runs on any laptop or smart-TV browser.",
+    "Name: JAMAA (Arabic: جماعة, said ja-MAA, \"the gang, the gathering\"), a party-games app for the TV. Game #1: Mish Ana! (Arabic: مش أنا!), Lebanese Arabic for \"Not me!\".",
+    "Genre: party games; game #1 (Mish Ana!) is a social deduction, secret-word / impostor word game.",
+    "Platforms: Android TV and Google TV app (Google Play package app.jamaa.tv), plus a browser version that runs on any laptop or smart-TV browser.",
     "How it works: the TV shows a QR code; each player scans it and plays in their phone's web browser (iPhone or Android). Nothing to install on phones, no accounts, no controllers.",
     "Players: 3 to 12, one phone each, in the same room.",
     "Roles (default rule since 2026-10-07): Civilians share the same secret word; the Mole gets no word, only a \"You're the Mole!\" card, bluffs with vague clues, and if voted out gets one last guess at the word to steal the win. Optional extra role: the Undercover gets a slightly different word (e.g. PASTA vs PIZZA) and is not told; groups can add Undercovers or mix both roles.",
     "Round: everyone gives one spoken clue, then everyone votes on their phone; the TV reveals the role of the player voted out.",
-    "Languages: English, French and Arabic (full right-to-left), with Lebanese word packs; 560+ word pairs.",
+    "Languages: English, French, Arabic (full right-to-left) and Spanish, with Lebanese word packs; 1,300+ word pairs for Mish Ana!.",
     "Price: free to play; no ads, no accounts. Optional in-app purchases may be added later.",
     "Privacy: players only type a nickname; rooms are deleted automatically.",
     "Requires: internet on the TV and on every phone.",
@@ -23,24 +28,24 @@
   ],
   "meta": {
     "en": {
-      "title": "Secret-Word Party Game for Android TV & Google TV – Mish Ana!",
-      "description": "Find the liar on your TV. A free-to-play party game for Android TV & Google TV: 3–12 players, phones are the controllers, nothing to install on phones.",
-      "ogTitle": "Mish Ana! – Everyone’s innocent. Someone’s lying.",
-      "ogDescription": "The secret-word party game for your TV. Phones are the controllers: scan the QR, get your word, find the liar. 3–12 players, free to play.",
+      "title": "Mish Ana!, the Secret-Word Party Game for TV – JAMAA",
+      "description": "Find the liar on your TV. JAMAA brings party games to Android TV & Google TV, starting with Mish Ana!: 3–12 players, phones are the controllers, free to play.",
+      "ogTitle": "Mish Ana! on JAMAA – Everyone’s innocent. Someone’s lying.",
+      "ogDescription": "JAMAA puts party games on your TV, starting with Mish Ana!, the secret-word game. Phones are the controllers: scan the QR, get your word, find the liar. 3–12 players, free to play.",
       "ogImageAlt": "Mish Ana! – Everyone’s innocent. Someone’s lying. A TV shows six phones: five say PIZZA, one says PASTA."
     },
     "fr": {
-      "title": "Jeu d’ambiance du mot secret sur la télé (Android TV) – Mish Ana!",
+      "title": "Mish Ana!, le jeu du mot secret sur la télé – JAMAA",
       "description": "Le jeu de soirée façon « qui est l’intrus » sur ta télé : de 3 à 12 joueurs, le téléphone sert de manette, rien à installer. Gratuit, Android TV et Google TV.",
-      "ogTitle": "Mish Ana! – Tout le monde est innocent. Quelqu’un ment.",
-      "ogDescription": "Le jeu d’ambiance du mot secret sur ta télé. Les téléphones servent de manettes : scanne le QR code, reçois ton mot, démasque le menteur. 3 à 12 joueurs, gratuit.",
+      "ogTitle": "Mish Ana! sur JAMAA – Tout le monde est innocent. Quelqu’un ment.",
+      "ogDescription": "JAMAA met les jeux d’ambiance sur ta télé, à commencer par Mish Ana!, le jeu du mot secret. Les téléphones servent de manettes : scanne le QR code, reçois ton mot, démasque le menteur. 3 à 12 joueurs, gratuit.",
       "ogImageAlt": "Mish Ana! – Tout le monde est innocent. Quelqu’un ment. Une télé montre six téléphones : cinq disent PIZZA, un dit PÂTES."
     },
     "ar": {
-      "title": "مش أنا! – لعبة سهرات بالكلمة السرّية على التلفزيون",
+      "title": "«مش أنا!» على جماعة – لعبة الكلمة السرّية عالتلفزيون",
       "description": "مين الجاسوس؟ لعبة سهرات عالـ Android TV والـ Google TV: من 3 لـ12 لاعب، التلفون هو الجويستيك، وما في شي تنزّلوه عالتلفونات. بالعربي واللبناني، ببلاش.",
-      "ogTitle": "مش أنا! – كلّنا أبرياء… بس في حدا عم يكذب",
-      "ogDescription": "لعبة الكلمة السرّية للسهرات على تلفزيونك. امسحوا كود QR، كل واحد بتوصلو كلمة عتلفونو، واكشفوا الكذّاب. من 3 لـ12 لاعب، ببلاش.",
+      "ogTitle": "«مش أنا!» على جماعة – كلّنا أبرياء… بس في حدا عم يكذب",
+      "ogDescription": "جماعة بتجيب ألعاب السهرة عتلفزيونك، وأوّلها «مش أنا!»، لعبة الكلمة السرّية. امسحوا كود QR، كل واحد بتوصلو كلمة عتلفونو، واكشفوا الكذّاب. من 3 لـ12 لاعب، ببلاش.",
       "ogImageAlt": "مش أنا! – كلّنا أبرياء… بس في حدا عم يكذب. تلفزيون عليه ستّ تلفونات: خمسة مكتوب عليها بيتزا، وواحد برغر."
     }
   },
@@ -48,9 +53,9 @@
     "_note": "Duration is read from assets/video/hero-16x9-720.mp4 at build time ({seconds} below). uploadDate: set it to the publish date of the current render, or remove the line to use the file date.",
     "uploadDate": "2026-10-04",
     "name": {
-      "en": "Mish Ana! – a round of the secret-word party game on TV",
-      "fr": "Mish Ana! – une partie du jeu d’ambiance du mot secret sur la télé",
-      "ar": "مش أنا! – جولة من لعبة الكلمة السرّية عالتلفزيون"
+      "en": "Mish Ana! on JAMAA – a round of the secret-word party game on TV",
+      "fr": "Mish Ana! sur JAMAA – une partie du jeu d’ambiance du mot secret sur la télé",
+      "ar": "«مش أنا!» على جماعة – جولة من لعبة الكلمة السرّية عالتلفزيون"
     },
     "description": {
       "en": "{seconds}-second preview: friends join from their phones by scanning the QR code on the TV, get a secret word, give one-word clues and vote a player out.",

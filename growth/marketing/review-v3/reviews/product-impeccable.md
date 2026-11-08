@@ -1,5 +1,7 @@
 # Product review: IMPECCABLE lens (production quality)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Target: phone controller (`web-client/src/screens`, `styles.css`), browser TV (`web-client/src/tv-mock/tv.css`), native TV (`tv-app/.../ui`).
 Method: `impeccable` skill (audit + product register). I computed every contrast ratio with the WCAG 2.x relative-luminance formula from the token hex values, compositing alpha and opacity over the real background. The script is `scratchpad/cr.py`. I read the screenshots in `shots/`. I read the code and did not edit it.
 

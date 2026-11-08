@@ -3,8 +3,11 @@ import { packProductId, PREMIUM_PACK_ID_MAX, PRODUCT_ID_REGEX } from "@jamaa/sha
 import { languageOf, normalizeGuess } from "@jamaa/shared/engine";
 import { WordPackSchema, type WordPack } from "@jamaa/shared/packs";
 
+/** Folder of game #1's word packs under the content root (JAMAA-PLATFORM §5.1: `content/<game id>/<lang>/`). */
+export const GAME1_DIR = "mishana";
+
 export interface PackEntry {
-  /** Path relative to the content root, e.g. `mishana/en/en-everyday-01.json`. */
+  /** Path relative to the content root, e.g. `<GAME1_DIR>/en/en-everyday-01.json`. */
   file: string;
   /** Parsed JSON, or the JSON parse error message. */
   data: unknown;
@@ -99,11 +102,11 @@ export function lintPacks(entries: readonly PackEntry[], registered: readonly st
     const lang = languageOf(pack.locale);
 
     // SPEC-GAP: §12.5 does not list layout checks; §12.2 fixes the layout, so a wrong file name or directory is an error here.
-    // Layout (§12.2): file name is `<id>.json` under mishana/<language>/ (JAMAA-PLATFORM §5.1).
+    // Layout (§12.2): file name is `<id>.json` under <GAME1_DIR>/<language>/ (JAMAA-PLATFORM §5.1).
     const parts = where.split("/");
     if (parts[parts.length - 1] !== `${pack.id}.json`) errors.push(`${where}: file name must be ${pack.id}.json`);
     const dir = parts.length >= 2 ? parts[parts.length - 2] : undefined;
-    if (dir !== undefined && dir !== lang) errors.push(`${where}: locale ${pack.locale} must live in mishana/${lang}/`);
+    if (dir !== undefined && dir !== lang) errors.push(`${where}: locale ${pack.locale} must live in ${GAME1_DIR}/${lang}/`);
     if (registered !== null && !registered.includes(where)) warnings.push(`${where}: not listed in content/index.ts (it will not ship)`);
 
     const prev = packIds.get(pack.id);
@@ -227,9 +230,11 @@ export function lintPacks(entries: readonly PackEntry[], registered: readonly st
   return { errors, warnings, counts };
 }
 
+const REGISTERED_IMPORT = new RegExp(`from\\s+["']\\./(${GAME1_DIR}/[^"']+\\.json)["']`, "g");
+
 /** Extracts the pack files imported by content/index.ts, relative to the content root. */
 export function registeredPackFiles(indexSource: string): string[] {
   const out: string[] = [];
-  for (const m of indexSource.matchAll(/from\s+["']\.\/(packs\/[^"']+\.json)["']/g)) out.push(m[1] as string);
+  for (const m of indexSource.matchAll(REGISTERED_IMPORT)) out.push(m[1] as string);
   return out;
 }

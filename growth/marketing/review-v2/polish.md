@@ -1,5 +1,7 @@
 # Mish Ana! polish review v2: motion, sound, end card, landing
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Lens: micro-details (spring tuning, dwell time, transition seams, text rendering, sound mix, CTA moment, landing finish).
 Method: 4 fps contact sheets of all 11 renders, 60 fps frame strips around every fast moment (60 fps, every 3rd frame),
 per-0.5 s luma measurement, EBU R128 loudness timelines, spring step responses computed with Remotion's own `spring()`,

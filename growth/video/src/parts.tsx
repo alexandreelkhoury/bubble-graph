@@ -98,7 +98,10 @@ export const PhoneFrame: React.FC<{w: number; h: number; bezel?: number; screen:
   );
 };
 
-/** The Mish Ana! mark (assets/brand/mark.svg) built in three parts so they can animate separately. */
+/**
+ * Game #1's speech-bubble mark (assets/games/mishana/mark.svg), built in three parts so they can animate
+ * separately. It is game art (GAME1, JAMAA-PLATFORM §1.2); the JAMAA platform mark is public/mark.svg.
+ */
 export const Mark: React.FC<{size: number; bubble: number; stroke: number; dot?: number; tile?: number}> = ({size, bubble, stroke, dot = 1, tile = 0}) => (
   <svg viewBox="0 0 160 160" width={size} height={size} style={{position: 'absolute', left: -size / 2, top: -size / 2, overflow: 'visible'}}>
     {tile > 0 ? <rect x="0" y="0" width="160" height="160" rx="36" fill={C.bgDeep} opacity={tile} /> : null}

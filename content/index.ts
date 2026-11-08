@@ -1,4 +1,4 @@
-// Content registry (JAMAA-PLATFORM §5.1). Mish Ana! word packs live in mishana/<lang>/. Each pack is validated with WordPackSchema by consumers (server, sim, tests).
+// Content registry (JAMAA-PLATFORM §5.1). Game #1 word packs live in content/<game id>/<lang>/. Each pack is validated with WordPackSchema by consumers (server, sim, tests).
 // Order: en, fr, ar, es; packs sorted by id within a language. content-lint warns when a pack file is not listed here.
 import enEveryday01 from "./mishana/en/en-everyday-01.json";
 import enFood01 from "./mishana/en/en-food-01.json";

@@ -1,5 +1,7 @@
 # Mish Ana! creative system: frontend-design review (visual craft + brand)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Reviewer lens: composition, colour and mood, type, logo and end card, how consistent the 6 ads and the film are with each other, the landing page, and the store graphics.
 Inputs: all 11 renders in `growth/video/out/final/` (contact sheets + key frames), `src/` (brand.ts, layout.ts, parts.tsx, ads/common.tsx, ads/EndCard.tsx, M1–M6), `docs/DESIGN.md` §1–3, the landing page (Playwright, 1440 and 390 px, after scrolling so the reveal animations fire), and the 3 Play Store graphics.
 

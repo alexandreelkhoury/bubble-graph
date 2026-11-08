@@ -1,5 +1,7 @@
 # Product review: UI/UX Pro Max lens (user experience)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Target: phone controller (`web-client/src/screens`), browser TV (`web-client/src/tv-mock`), native TV (`tv-app/.../ui/screens`, which mirrors /tv).
 Method: `ui-ux-pro-max` checklist (accessibility, touch and interaction, feedback and loading states, onboarding, empty states, copy), applied while walking the game as a first-time group (a host on the TV plus 5 friends who have never played), using the v3 screenshot pack and the code.
 Copy is in EN. FR is given where it is short. Every new key needs FR and AR from the translator before it ships.

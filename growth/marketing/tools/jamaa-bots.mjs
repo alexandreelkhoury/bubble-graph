@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Mish Ana! screenshot bots: join a TV room as 5-6 phone players over the real WebSocket protocol
+// JAMAA screenshot bots (game #1): join a TV room as 5-6 phone players over the real WebSocket protocol
 // (protocol v1, see bubble-graph/shared/src/protocol + docs/SPEC.md) and play along slowly so each
 // TV phase can be captured. No dependencies (Node >= 22 global WebSocket).
 //
-// Usage: node mishana-bots.mjs <ROOM> [--players 6] [--pace 7000] [--timeout 900] [--server https://play.mishana.workers.dev]
+// Usage: node jamaa-bots.mjs <ROOM> [--players 6] [--pace 7000] [--timeout 900] [--server https://play.jamaa.workers.dev]
 //   --pace     ms each bot waits before acting in a phase (ready, clue done, vote), staggered per bot
 //   --timeout  hard stop in seconds (bots always disconnect; never left running)
 // stdin: "p"+Enter toggles pause (bots stop acting, stay connected), "q"+Enter quits.
@@ -11,7 +11,7 @@
 const args = process.argv.slice(2);
 const code = (args[0] ?? "").toUpperCase();
 if (!/^[A-Z]{4}$/.test(code)) {
-  console.error("usage: node mishana-bots.mjs <ROOM CODE> [--players 6] [--pace 7000] [--timeout 900]");
+  console.error("usage: node jamaa-bots.mjs <ROOM CODE> [--players 6] [--pace 7000] [--timeout 900]");
   process.exit(2);
 }
 const opt = (name, def) => {
@@ -21,7 +21,7 @@ const opt = (name, def) => {
 const N = Math.min(6, Math.max(3, Number(opt("players", 6))));
 const PACE = Number(opt("pace", 7000));
 const TIMEOUT_S = Number(opt("timeout", 900));
-const SERVER = String(opt("server", "https://play.mishana.workers.dev")).replace(/\/$/, "");
+const SERVER = String(opt("server", "https://play.jamaa.workers.dev")).replace(/\/$/, "");
 const WS_BASE = SERVER.replace(/^http/, "ws") + "/parties/room/"; // WS_PATH_PREFIX
 const PING = '{"v":1,"t":"ping"}';
 const PONG = '{"v":1,"t":"pong"}';

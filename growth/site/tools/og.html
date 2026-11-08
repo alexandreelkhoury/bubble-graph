@@ -1,6 +1,6 @@
 <!doctype html>
 <!-- Share image template (1200×630), rendered per language by tools/og.mjs into assets/img/og-<lang>.png.
-     Palette B, the TV shows the caption-free loop's first frame (no caption to be cut), PIZZA / PASTA phones. -->
+     Brand row: the JAMAA mark and wordmark (assets/img, copied from assets/brand); the copy is about game #1. Palette B, the TV shows the caption-free loop's first frame (no caption to be cut), PIZZA / PASTA phones. -->
 <html><head><meta charset="utf-8">
 <style>
 @font-face { font-family: Cairo; font-weight: 600; src: url(../assets/fonts/cairo-semibold.woff2) format("woff2"); }
@@ -49,9 +49,9 @@ h1 span { display: block; }
 <div class="ph ph2"><div><p id="yw2"></p><i id="w2"></i></div></div>
 <script>
 const T = {
-  en: { h1: 'Everyone’s innocent.|Someone’s <span class="hlb">lying.</span>', sub: 'The secret-word party game for your TV.<br><b>Free in your browser.</b>', yw: 'Your secret word', a: 'PIZZA', b: 'PASTA' },
-  fr: { h1: 'Tout le monde est innocent.|Quelqu’un <span class="hlb">ment.</span>', sub: 'Le jeu d’ambiance du mot secret sur ta télé.<br><b>Gratuit dans le navigateur.</b>', yw: 'Ton mot secret', a: 'PIZZA', b: 'PÂTES' },
-  ar: { h1: 'كلّنا أبرياء…|بس في حدا عم <span class="hlb">يكذب.</span>', sub: 'لعبة الكلمة السرّية للسهرات عالتلفزيون.<br><b>ببلاش بالمتصفّح.</b>', yw: 'كلمتك السرّية', a: 'بيتزا', b: 'برغر' }
+  en: { h1: 'Everyone’s innocent.|Someone’s <span class="hlb">lying.</span>', sub: 'Mish Ana!, the secret-word party game on JAMAA.<br><b>Free in your browser.</b>', yw: 'Your secret word', a: 'PIZZA', b: 'PASTA' },
+  fr: { h1: 'Tout le monde est innocent.|Quelqu’un <span class="hlb">ment.</span>', sub: 'Mish Ana!, le jeu du mot secret sur JAMAA.<br><b>Gratuit dans le navigateur.</b>', yw: 'Ton mot secret', a: 'PIZZA', b: 'PÂTES' },
+  ar: { h1: 'كلّنا أبرياء…|بس في حدا عم <span class="hlb">يكذب.</span>', sub: '«مش أنا!»، لعبة الكلمة السرّية على جماعة.<br><b>ببلاش بالمتصفّح.</b>', yw: 'كلمتك السرّية', a: 'بيتزا', b: 'برغر' }
 };
 const q = new URLSearchParams(location.search), L = q.get('lang') || 'en', t = T[L];
 document.documentElement.lang = L; document.documentElement.dir = L === 'ar' ? 'rtl' : 'ltr';

@@ -3,7 +3,7 @@
 One post per community, each with a different angle. Rules and sources are in LAUNCH-PLAN.md §2. Read the live rules page of each sub on the day you post: the research couldn't load Reddit directly (Reddit blocks automated fetches), so the rules here come from dated archives and rule-mirror sites.
 
 Placeholders: `{{NAME}}`, `{{X_HANDLE}}`.
-Link: `https://play.mishana.workers.dev/tv`
+Link: `https://play.jamaa.workers.dev/tv`
 
 ## Rules for every post
 
@@ -39,7 +39,7 @@ What I cared about:
 
 Stack, for the curious: Android TV app in Kotlin + Jetpack Compose for TV, phones are a ~53 KB Preact page, server is a Cloudflare Worker with one Durable Object per room, and the rules are a pure TypeScript engine that a simulator runs 200 bot games per player count against.
 
-Status: the Android TV / Google TV app is heading into Google Play testing, so it's not public yet. But you can play today, free, no account: open play.mishana.workers.dev/tv on a laptop or a TV browser, put it on the big screen, and everyone scans the QR.
+Status: the Android TV / Google TV app is heading into Google Play testing, so it's not public yet. But you can play today, free, no account: open play.jamaa.workers.dev/tv on a laptop or a TV browser, put it on the big screen, and everyone scans the QR.
 
 I'd really like to know what breaks, and whether 3-player games are fun or too easy.
 ```
@@ -65,7 +65,7 @@ A few design problems that turned out harder than the game itself:
 3. The TV must never spoil anything. The server sends each screen only its own view of the game; the TV only sees words at the end. A simulator plays 200 bot games for each player count from 3 to 12 and fails if a secret ever reaches the TV.
 4. Arabic right to left on a TV, with Latin names and numbers inside Arabic text. Not a mirror button.
 
-It's free to play in a browser right now (any laptop or TV browser as the screen): play.mishana.workers.dev/tv
+It's free to play in a browser right now (any laptop or TV browser as the screen): play.jamaa.workers.dev/tv
 The Android TV / Google TV app is going into Play testing; not public yet.
 
 Happy to go deeper on any of these. What would you want from the TV side of a party game?
@@ -87,7 +87,7 @@ Mish Ana!, a secret-word party game for 3–12 players: the TV is the board, you
 ```
 I'm the solo developer. Everyone gets a secret word on their phone. One player, the Mole, has a slightly different word and doesn't know it. One-word clues, vote on your phone, and the TV stamps OUT.
 
-Free to play in your browser now (laptop or TV browser as the shared screen, phones scan a QR, no install): play.mishana.workers.dev/tv
+Free to play in your browser now (laptop or TV browser as the shared screen, phones scan a QR, no install): play.jamaa.workers.dev/tv
 Android TV / Google TV app in Play testing, not public yet. English, French and Arabic.
 ```
 
@@ -113,7 +113,7 @@ Everyone scans a QR code on the TV with their phone and gets a secret word. Ever
 
 The Arabic is right-to-left everywhere, and there are Lebanese packs: Lebanese food and Lebanese everyday life, the words we actually use. English and French too, so mixed groups work.
 
-It's free. The Android TV / Google TV app is still in testing, but you can play now from any laptop or TV browser: play.mishana.workers.dev/tv. Everyone scans the QR, no app to download.
+It's free. The Android TV / Google TV app is still in testing, but you can play now from any laptop or TV browser: play.jamaa.workers.dev/tv. Everyone scans the QR, no app to download.
 
 I'd love Lebanese words you think should be in the game, and any pair that feels wrong.
 
@@ -140,7 +140,7 @@ Mish Ana! is a secret-word party game for 3–12 players. The TV shows a QR code
 
 The TV app is native: Kotlin + Jetpack Compose for TV, everything works with the remote's D-pad and OK.
 
-Honest status: it's heading into Google Play closed testing and isn't public yet. In the meantime the same game runs in a browser: open play.mishana.workers.dev/tv on a laptop connected to the TV (or a TV browser), and phones scan the QR.
+Honest status: it's heading into Google Play closed testing and isn't public yet. In the meantime the same game runs in a browser: open play.jamaa.workers.dev/tv on a laptop connected to the TV (or a TV browser), and phones scan the QR.
 
 Two questions for this sub:
 - what TVs/boxes do you use? I want to test on the ones people actually own
@@ -161,7 +161,7 @@ I'm the solo dev of Mish Ana!, a secret-word party game for 3–12 players. The 
 
 The Google TV app is in Google Play closed testing and I want it to work on real devices before it's public: Chromecast with Google TV, Google TV Streamer, TCL/Hisense/Sony sets.
 
-If you'd like to test, comment with your device and I'll send the opt-in link. You can also see the game right now in a browser: play.mishana.workers.dev/tv.
+If you'd like to test, comment with your device and I'll send the opt-in link. You can also see the game right now in a browser: play.jamaa.workers.dev/tv.
 
 What I'll ask from testers: play one round, tell me what was confusing or slow with the remote.
 ```
@@ -180,7 +180,7 @@ Made a free secret-word party game for 3–12 players: everyone plays on their p
 ```
 Solo dev here. Everyone gets a word on their phone; one player's word is slightly different (PIZZA vs PASTA) and they don't know it; in bigger groups one player gets no word. One-word clues, then a vote.
 
-Free in your browser now: open play.mishana.workers.dev/tv on whatever screen everyone can see, phones scan the QR. English, French, Arabic.
+Free in your browser now: open play.jamaa.workers.dev/tv on whatever screen everyone can see, phones scan the QR. English, French, Arabic.
 
 If you play it with your group, I'd love to know: how many of you were there, and how many rounds before someone figured out the trick of the different word?
 ```
@@ -196,7 +196,7 @@ Rules: free to play (yes), description, your role on the project, direct link to
 ```
 **Body:**
 ```
-Link: https://play.mishana.workers.dev/tv
+Link: https://play.jamaa.workers.dev/tv
 
 Role: solo developer (design, code, art, sound).
 [Adjust if anyone helped or if any assets are third-party. Word lists: EN/FR were seeded from an MIT-licensed dataset and then edited; say so if asked.]
@@ -215,7 +215,7 @@ Rule P7 bans games that require a smartphone. Ours needs phones to play, so ask 
 
 > Hi mods, I'm the dev of a free browser party game. One browser tab is the shared screen and players join from their phones' browsers (no app, no sign-up). Does that count as "requires a smartphone" under P7? If it does, no problem, I won't post.
 
-If approved: **link post** to `https://play.mishana.workers.dev/tv`, title must start with the game's name:
+If approved: **link post** to `https://play.jamaa.workers.dev/tv`, title must start with the game's name:
 ```
 Mish Ana! – a secret-word party game: one screen, everyone joins from their phone's browser (3–12 players)
 ```
@@ -245,7 +245,7 @@ Alternative (tech-first):
 Show HN: A party game where each room is a Cloudflare Durable Object
 ```
 
-**URL:** `https://play.mishana.workers.dev/tv`
+**URL:** `https://play.jamaa.workers.dev/tv`
 
 **Text (first comment, posted right after submitting):**
 ```
@@ -265,7 +265,7 @@ Some technical notes:
 
 Happy to answer anything about Durable Objects for real-time games, the projection model, or building for Android TV.
 ```
-Note: check the phone-bundle sentence against your latest build (`pnpm --filter @mishana/web-client build` printed 52.55 KB gz on 2026-10-04) and simplify it; "about 53 KB gzipped" is enough.
+Note: check the phone-bundle sentence against your latest build (`pnpm --filter @jamaa/web-client build` printed 52.55 KB gz on 2026-10-04) and simplify it; "about 53 KB gzipped" is enough.
 
 Timing: Sunday around 12:00 UTC did best in a study of 157k Show HN posts (https://www.myriade.ai/blogs/when-is-it-the-best-time-to-post-on-show-hn). Weekend = less competition but less traffic. If it sinks, don't delete and repost; a single repost later is tolerated (HN FAQ).
 
@@ -279,7 +279,7 @@ Rewrite in your own words each time; these are the facts to stay inside.
 > Yes. Today everything is free and unlocked, no account. Later I plan optional paid word packs in the TV app; the game itself and a free set of words will stay free. Nothing is for sale right now.
 
 **"Where's the Play Store link?"** / **"Is it on Google TV?"**
-> Not yet. The Android TV / Google TV app is going into Google Play closed testing. Until it's public, the browser version is the way to play: open play.mishana.workers.dev/tv on a laptop or TV browser. If you want to be a tester, tell me your device.
+> Not yet. The Android TV / Google TV app is going into Google Play closed testing. Until it's public, the browser version is the way to play: open play.jamaa.workers.dev/tv on a laptop or TV browser. If you want to be a tester, tell me your device.
 
 **"Why not iOS / Apple TV?"**
 > Phones can be iPhones; the phone side is a web page, so any phone with a browser works. The TV app is Android TV / Google TV only because I'm one person and had to pick one TV platform first. On Apple TV today you can host from a Mac browser and mirror it with AirPlay. A native Apple TV app isn't planned right now.

@@ -1,5 +1,7 @@
 # Marketing: polish review (lens: make-interfaces-feel-better)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Scope: landing `growth/site/` (EN/FR/AR at 390 and 1440, privacy, 404), Play Store graphics, video end cards. I applied the skill's checklist: concentric radius, optical alignment, shadows vs borders, enter/exit and stagger, tabular numbers, font smoothing, text-wrap, image outlines, scale on press, no `transition: all`, hit areas. I also checked font loading, hand-off, in-app webview and RTL. Values were measured from the files (fontTools, ffprobe/ffmpeg pixel sampling, contrast maths), not guessed.
 
 ## 1. Verdict

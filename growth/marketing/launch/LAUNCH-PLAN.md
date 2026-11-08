@@ -2,7 +2,7 @@
 
 Prepared 2026-10-04. Companion files: `X-THREAD.md`, `REDDIT-POSTS.md`, `LISTINGS.md`.
 
-**The one thing we're launching:** the free browser version, `https://play.mishana.workers.dev/tv` (laptop or TV browser as the shared screen, phones scan the QR). The Android TV / Google TV app is "in Google Play testing, not public yet" in every post. No fake urgency, no numbers we don't have.
+**The one thing we're launching:** the free browser version, `https://play.jamaa.workers.dev/tv` (laptop or TV browser as the shared screen, phones scan the QR). The Android TV / Google TV app is "in Google Play testing, not public yet" in every post. No fake urgency, no numbers we don't have.
 
 **Goal of these 10 days:** real groups playing real rounds, bug reports, and a handful of durable public pages (Reddit threads, a YouTube video, an AlternativeTo entry) that describe the game the same way. Not "go viral".
 

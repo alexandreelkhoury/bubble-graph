@@ -1,5 +1,7 @@
 # Production-quality review: Mish Ana! ad creative, product film and landing page
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Reviewer lens: impeccable / production quality (contrast, type sizes, safe zones, pacing, sound-off comprehension, encoding, brand tokens, feed performance).
 Date: 2026-10-04. Inputs: `growth/video/out/final/*.mp4` (frames sampled at 2 fps plus key frames at full size), `growth/video/src/**`, `docs/DESIGN.md`, `growth/site/dist` (rendered at 390x844 mobile and 1440x900 desktop with Playwright).
 

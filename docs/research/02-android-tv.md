@@ -1,5 +1,7 @@
 # 02 — Android TV / Google TV requirements (researched 2026-10-03)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Scope: Kotlin + Jetpack Compose for TV app. The TV shows a lobby with a QR code, and phones join through a web page.
 Rule: every claim has a source URL. **[UNVERIFIED]** means no official page fetched in this session confirms it.
 Note: `support.google.com` was blocked by the network proxy in this session, so the Play Help Center claims rely on developer.android.com pages that link to it.

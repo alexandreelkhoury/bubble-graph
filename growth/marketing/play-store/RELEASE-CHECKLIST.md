@@ -1,6 +1,6 @@
 # Mish Ana! — Play Console release checklist (Android TV / Google TV)
 
-Prepared 2026-10-04 for package `app.mishana.tv`. Ordered: do the steps top to bottom. Everything marked **YOU** is a manual action in a browser or terminal; nothing here was run, uploaded or signed. `{{…}}` = fill in.
+Prepared 2026-10-04 for package `app.jamaa.tv`. Ordered: do the steps top to bottom. Everything marked **YOU** is a manual action in a browser or terminal; nothing here was run, uploaded or signed. `{{…}}` = fill in.
 
 Sources checked today: [testing requirements for new personal accounts](https://support.google.com/googleplay/android-developer/answer/14151465) · [TV distribution](https://developer.android.com/training/tv/publishing/distribute) · [TV app quality](https://developer.android.com/docs/quality-guidelines/tv-app-quality) · [dedicated form-factor tracks](https://support.google.com/googleplay/android-developer/answer/13295490) · [target API level](https://developer.android.com/google/play/requirements/target-sdk) · [preview assets](https://support.google.com/googleplay/android-developer/answer/9866151).
 
@@ -29,7 +29,7 @@ So the public Google TV launch is **about 3–6 weeks away** at best. The App co
 | # | Blocker | Why | Fix |
 |---|---|---|---|
 | **B1** | **`android:isGame` missing** from `<application>` in `tv-app/app/src/main/AndroidManifest.xml:12-20` | **TV-LG**: "If app is a game, it appears in the Games row in Android TV Launcher". Without the flag the app lands in the Apps row → likely TV-review rejection for a Game listing | Add `android:isGame="true"` (and `android:appCategory="game"`) to `<application>` |
-| **B2** | **The TV app has never run as a release build on a device** (README M3: "Code complete, not device-tested") | R8 minification + resource shrinking (`build.gradle.kts:33-38`) can break serialization/Compose at runtime; TV-G3 "works as described". The TV review tests D-pad only, Back→Home (TV-DB), no clipping (TV-OV) | Run the remote-only walkthrough in `docs/TV.md` "Remote-only checks" on a Google TV emulator **and** a real TV using the **signed release bundle** (step 5.6) against `https://play.mishana.workers.dev` |
+| **B2** | **The TV app has never run as a release build on a device** (README M3: "Code complete, not device-tested") | R8 minification + resource shrinking (`build.gradle.kts:33-38`) can break serialization/Compose at runtime; TV-G3 "works as described". The TV review tests D-pad only, Back→Home (TV-DB), no clipping (TV-OV) | Run the remote-only walkthrough in `docs/TV.md` "Remote-only checks" on a Google TV emulator **and** a real TV using the **signed release bundle** (step 5.6) against `https://play.jamaa.workers.dev` |
 | **B3** | **No signing config** in `tv-app/app/build.gradle.kts` | `bundleRelease` produces an unsigned bundle; Play rejects it | Add the snippet in step 5.3 |
 | **B4** | Privacy policy not online | Required for every app, and the Worker's `/privacy` returns the phone app shell (HTTP 200, not a policy) | Publish PRIVACY-POLICY.md on the landing page `{{WEBSITE_URL}}/privacy` |
 | **B5** | TV screenshots not produced (icon, feature graphics and TV banners EN/FR/AR are ready in `graphics/`; screenshots are browser-TV placeholders) | ≥ 1 unaltered TV screenshot is mandatory (TV-G4); capture on the TV (design-v3 D4), then re-render | GRAPHICS-SPEC.md §5 |
@@ -37,7 +37,7 @@ So the public Google TV launch is **about 3–6 weeks away** at best. The App co
 | B7 | Trademark / name searches not done | `docs/RESEARCH.md:115`: manual Play search + Lebanon MoET + WIPO (classes 9, 28, 41) before the listing | **YOU**, 1 hour: search Play for "Mish Ana"; WIPO Global Brand Database `https://branddb.wipo.int` |
 | B8 | AR packs are `status: "draft"` (`word-packs/packs/ar/*.json`) | Quality, not policy | Owner review (PLAN §8 Q7) |
 
-Already OK (verified today): `minSdk 26` ≤ 31 (TV-PS); `targetSdk 36` ≥ 34 required for TV apps from 31 Aug 2026; leanback launcher intent + touchscreen not required (TV-ML, TV-MT, `AndroidManifest.xml:7-10,27-30`); 320×180 banner + adaptive icon (TV-LB/BN, `AndroidManifest.xml:14-15`); landscape; only the `INTERNET` permission; release server URL `https://play.mishana.workers.dev` set (`tv-app/gradle.properties`) and live (`/healthz` → `{"ok":true,"app":"mish-ana","protocol":1}`); **TV-G6** 64-bit + 16 KB pages: the only native lib (`libandroidx.graphics.path.so`, from Compose) ships for arm64-v8a/x86_64 with 16 KB (0x4000) LOAD alignment (checked in the existing debug APK).
+Already OK (verified today): `minSdk 26` ≤ 31 (TV-PS); `targetSdk 36` ≥ 34 required for TV apps from 31 Aug 2026; leanback launcher intent + touchscreen not required (TV-ML, TV-MT, `AndroidManifest.xml:7-10,27-30`); 320×180 banner + adaptive icon (TV-LB/BN, `AndroidManifest.xml:14-15`); landscape; only the `INTERNET` permission; release server URL `https://play.jamaa.workers.dev` set (`tv-app/gradle.properties`) and live (`/healthz` → `{"ok":true,"app":"mish-ana","protocol":1}`); **TV-G6** 64-bit + 16 KB pages: the only native lib (`libandroidx.graphics.path.so`, from Compose) ships for arm64-v8a/x86_64 with 16 KB (0x4000) LOAD alignment (checked in the existing debug APK).
 
 ---
 
@@ -97,20 +97,20 @@ New apps use **Play App Signing** by default: Google creates and keeps the **app
 
 ### 5.2 Generate the upload key (**YOU**, terminal, once)
 ```sh
-mkdir -p ~/.mishana-keys && chmod 700 ~/.mishana-keys
+mkdir -p ~/.jamaa-keys && chmod 700 ~/.jamaa-keys
 keytool -genkeypair -v \
-  -keystore ~/.mishana-keys/mishana-upload.jks -storetype PKCS12 \
+  -keystore ~/.jamaa-keys/mishana-upload.jks -storetype PKCS12 \
   -alias mishana-upload -keyalg RSA -keysize 4096 -validity 10950 \
   -dname "CN={{OWNER_NAME}}, O=Mish Ana, C={{COUNTRY_CODE e.g. LB or FR}}"
 # PKCS12: use the same password for the store and the key when prompted.
-chmod 600 ~/.mishana-keys/mishana-upload.jks
-keytool -list -v -keystore ~/.mishana-keys/mishana-upload.jks -alias mishana-upload | grep -E "SHA256|Valid"
+chmod 600 ~/.jamaa-keys/mishana-upload.jks
+keytool -list -v -keystore ~/.jamaa-keys/mishana-upload.jks -alias mishana-upload | grep -E "SHA256|Valid"
 ```
 Back it up now: the `.jks` file + password in a password manager and one offline copy. Never commit it. (If lost, Play App Signing lets you request an upload-key reset from the App signing page.)
 
 Credentials go in your **user-level** Gradle properties, not in the repo — `~/.gradle/gradle.properties`:
 ```properties
-mishana.upload.storeFile=/home/{{you}}/.mishana-keys/mishana-upload.jks
+mishana.upload.storeFile=/home/{{you}}/.jamaa-keys/mishana-upload.jks
 mishana.upload.storePassword={{password}}
 mishana.upload.keyAlias=mishana-upload
 mishana.upload.keyPassword={{same password}}
@@ -137,7 +137,7 @@ and inside `buildTypes { release { … } }` (line 33) add one line:
 ```kotlin
             signingConfig = signingConfigs.findByName("upload") // null → unsigned bundle (Play will reject it)
 ```
-Nothing else in the file changes. The existing `preReleaseBuild` guard (`build.gradle.kts:71-84`) already enforces the production URL: `mishana.prodServerUrl=https://play.mishana.workers.dev` is set in `tv-app/gradle.properties`, so no `-PserverUrl` is needed; the build log must print `Mish Ana! release server URL: https://play.mishana.workers.dev`.
+Nothing else in the file changes. The existing `preReleaseBuild` guard (`build.gradle.kts:71-84`) already enforces the production URL: `jamaa.prodServerUrl=https://play.jamaa.workers.dev` is set in `tv-app/gradle.properties`, so no `-PserverUrl` is needed; the build log must print `Mish Ana! release server URL: https://play.jamaa.workers.dev`.
 
 ### 5.4 versionCode / versionName plan
 `defaultConfig` currently has `versionCode = 1`, `versionName = "0.1.0"` (`build.gradle.kts:27-28`). Play rejects any upload whose versionCode was used before **in any track**. Bump `versionCode` by 1 for **every new AAB** you build (promoting the same AAB between tracks needs no bump).
@@ -164,9 +164,9 @@ keytool -printcert -jarfile app/build/outputs/bundle/release/app-release.aab | h
 adb connect <tv-ip>:<port>      # docs/TV.md "Real TV"
 java -jar bundletool-all.jar build-apks --bundle=app/build/outputs/bundle/release/app-release.aab \
   --output=/tmp/mishana.apks --connected-device \
-  --ks=$HOME/.mishana-keys/mishana-upload.jks --ks-key-alias=mishana-upload
+  --ks=$HOME/.jamaa-keys/mishana-upload.jks --ks-key-alias=mishana-upload
 java -jar bundletool-all.jar install-apks --apks=/tmp/mishana.apks
-adb shell am start -n app.mishana.tv/.MainActivity
+adb shell am start -n app.jamaa.tv/.MainActivity
 ```
 Play a full 4-phone game with the remote only; check Back from the lobby returns to the TV home screen (TV-DB), nothing is clipped (TV-OV), the app appears in the **Games** row after B1 (TV-LG).
 
@@ -208,4 +208,4 @@ Internal testing does **not** count toward the 12×14 requirement.
 - Reply to reviews (Ratings and reviews → Reviews).
 - **Android vitals** (Monitor and improve → Android vitals): crashes/ANRs, since the app ships no crash reporter.
 - Cloudflare: watch Workers/Durable Objects usage and limits in the Cloudflare dashboard on launch day (every room is one DO).
-- **When Play Billing ships**: content rating questionnaire → digital purchases = Yes; Data safety → DATA-SAFETY.md §1.B; privacy policy Appendix B; listing LISTING.md §4; DSA trader status (0.6); create the products only after a build containing the Billing library is uploaded to a test track (`docs/PAYMENTS-SPEC.md` §8): **all one-time in-app products, no subscription**: `premium` (lifetime, $7.99; the $5.99 launch promo is a Play Console sale) plus one `pack_*` per row of `pnpm --silent --filter @mishana/server billing:products` ($1.99–2.99), each activated (docs/BILLING-LAUNCH.md phase 2).
+- **When Play Billing ships**: content rating questionnaire → digital purchases = Yes; Data safety → DATA-SAFETY.md §1.B; privacy policy Appendix B; listing LISTING.md §4; DSA trader status (0.6); create the products only after a build containing the Billing library is uploaded to a test track (`docs/PAYMENTS-SPEC.md` §8): **all one-time in-app products, no subscription**: `premium` (lifetime, $7.99; the $5.99 launch promo is a Play Console sale) plus one `pack_*` per row of `pnpm --silent --filter @jamaa/server billing:products` ($1.99–2.99), each activated (docs/BILLING-LAUNCH.md phase 2).

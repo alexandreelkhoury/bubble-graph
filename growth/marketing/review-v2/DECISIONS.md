@@ -1,5 +1,7 @@
 # v2 decisions (approved by the owner, 2026-10-04)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Source reviews (read them for exact values): `impeccable.md`, `uiux.md`, `frontend.md`, `polish.md` in this folder.
 
 ## Accepted

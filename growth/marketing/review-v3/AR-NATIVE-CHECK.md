@@ -1,5 +1,7 @@
 # Arabic native check — design v3 (Lebanese colloquial, gender-neutral, DESIGN.md §1.5)
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 **Status: checked and approved by the owner (native Lebanese speaker) on 2026-10-06. No corrections. "12" stays in Western digits.**
 
 Please mark each line OK or write the correction. Product strings are live now on play.mishana.workers.dev.

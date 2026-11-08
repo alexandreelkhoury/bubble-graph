@@ -1,5 +1,7 @@
 # Mish Ana! – AI search visibility (GEO) plan
 
+> Historical document (before 2026-11-08). The platform is now JAMAA; "Mish Ana!" is its game #1. See docs/JAMAA-PLATFORM.md.
+
 Goal: when someone asks ChatGPT, Perplexity, Gemini, Copilot or Google's AI Overviews for "a party game for Google TV", "a Mr. White game on the TV" or "لعبة سهرات عالتلفزيون", Mish Ana! is named, described correctly and linked.
 
 Prepared 2026-10-04. Coordinated with the launch drafts in `/home/alex/bubble-graph/growth/marketing/launch/` (LISTINGS.md, X-THREAD.md): same facts, same status wording, same trademark rule. This plan says **where** and **in what order**; the paste-ready copy for AlternativeTo, Product Hunt, Indie Hackers, YouTube and X already lives there and is not duplicated here.

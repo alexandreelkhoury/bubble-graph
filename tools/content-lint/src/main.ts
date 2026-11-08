@@ -3,18 +3,18 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { lintPacks, registeredPackFiles, type LintOptions, type LintResult, type PackEntry } from "./lint";
+import { GAME1_DIR, lintPacks, registeredPackFiles, type LintOptions, type LintResult, type PackEntry } from "./lint";
 
-/** Reads every Mish Ana! pack `mishana/<lang>/*.json` under the content root (JAMAA-PLATFORM §5.1). */
+/** Reads every game #1 word pack `<GAME1_DIR>/<lang>/*.json` under the content root (JAMAA-PLATFORM §5.1). */
 export function readPackEntries(contentRoot: string): PackEntry[] {
   const entries: PackEntry[] = [];
-  const packsDir = join(contentRoot, "mishana");
+  const packsDir = join(contentRoot, GAME1_DIR);
   for (const lang of readdirSync(packsDir).sort()) {
     const dir = join(packsDir, lang);
     if (!statSync(dir).isDirectory()) continue;
     for (const name of readdirSync(dir).sort()) {
       if (!name.endsWith(".json")) continue;
-      const file = `mishana/${lang}/${name}`;
+      const file = `${GAME1_DIR}/${lang}/${name}`;
       const text = readFileSync(join(dir, name), "utf8");
       try {
         entries.push({ file, data: JSON.parse(text) as unknown });

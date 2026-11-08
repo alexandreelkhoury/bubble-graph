@@ -10,7 +10,7 @@ videos/{videoId}
     format: "9:16" | "16:9" | "1:1",
     fps: number,                       // e.g. 30 or 60; frame = round(t * fps)
     order: number,                     // left-rail sort order inside its project folder (ascending), then title
-    project: string,                   // optional; left-rail folder, e.g. "Mish Ana!", "Megamint". Missing/blank => "Other"
+    project: string,                   // optional; left-rail folder, e.g. "JAMAA", "Megamint". Missing/blank => "Other"
     versions: [ { v: 1, url: "/_blob/<assetId>" | any URL, createdAt: ISO string, note: string } ],
     updatedAt: ISO string }
   Newest version = highest v. The player defaults to it.

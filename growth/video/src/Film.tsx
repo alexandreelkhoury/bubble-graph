@@ -178,7 +178,7 @@ const Lobby: React.FC<{L: FilmLayout; f: number}> = ({L, f}) => {
         {ROOM_CODE.split('').map((ch, i) => <span key={i}>{ch}</span>)}
       </div>
       <div style={{position: 'absolute', left: P(10), top: P(492), width: P(310), textAlign: 'center', fontSize: P(18 * U), fontWeight: 700, color: C.text2}}>
-        play.mishana.workers.dev
+        play.jamaa.workers.dev
       </div>
       {/* right: header + grid */}
       <div style={{position: 'absolute', left: P(380), top: P(48 - 8 * (U - 1) * 2), fontSize: P(28 * U), fontWeight: 800, color: C.text}}>
@@ -631,7 +631,7 @@ const Outro: React.FC<{L: FilmLayout; f: number; cta: Cta}> = ({L, f, cta}) => {
       <At x={L.W / 2} y={wmY} z={81}>
         <div style={{position: 'absolute', left: -wmW / 2, top: -wmH / 2, width: wmW, height: wmH,
           clipPath: `inset(0 ${50 * (1 - reveal)}% 0 ${50 * (1 - reveal)}%)`, transform: `translateY(${(1 - reveal) * 30}px)`}}>
-          <Img src={staticFile('wordmark-latin.svg')} style={{width: '100%', height: '100%'}} />
+          <Img src={staticFile('games/mishana/wordmark-latin.svg')} style={{width: '100%', height: '100%'}} />
         </div>
       </At>
       <div style={{position: 'absolute', left: 0, width: L.W, top: tagY - tagSize * 0.6, textAlign: 'center', fontFamily: FONT, fontWeight: 700,

@@ -17,7 +17,7 @@ Outputs (all text converted to outlines):
                                    ic_launcher_monochrome.xml, ic_mark.xml
   tv-app/app/src/main/java/app/jamaa/tv/ui/components/BrandPaths.kt
 
-Mish Ana!'s "shared bang" art is game art now: assets/games/mishana/scripts/gen_logo.py.
+Game #1 (id "mishana") keeps its "shared bang" art and its generator under assets/games/<id>/scripts/.
 
 Usage (from the repo root):
   pip install fonttools uharfbuzz skia-pathops

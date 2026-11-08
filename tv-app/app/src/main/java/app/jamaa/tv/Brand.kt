@@ -1,7 +1,10 @@
 package app.jamaa.tv
 
-/** Mirrors `BRAND` in shared/src/brand.ts (SPEC §3). The display name for the launcher is `@string/app_name`. */
+/**
+ * The platform brand; mirrors `BRAND` in shared/src/brand.ts (JAMAA-PLATFORM §1.3). The launcher label is
+ * `@string/app_name`. Game #1's own name ("Mish Ana!") comes from i18n `game.mishana.title`.
+ */
 object Brand {
-    const val NAME = "Mish Ana!"
-    const val NAME_AR = "مش أنا!"
+    const val NAME = "JAMAA"
+    const val NAME_AR = "جماعة"
 }

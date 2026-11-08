@@ -14,7 +14,7 @@ When Play Billing ships, insert the block in **Appendix B** under section 3 and 
 
 **Last updated: October 4, 2026**
 
-Mish Ana! ("the game") is a party game for Android TV and Google TV. The TV app hosts a game room; players join from their phones in a web browser. This policy explains what information the game uses, why, and for how long. It covers the Android TV app "Mish Ana!" (package `app.mishana.tv`) and the player web page that the TV's QR code opens.
+Mish Ana! ("the game") is a party game for Android TV and Google TV. The TV app hosts a game room; players join from their phones in a web browser. This policy explains what information the game uses, why, and for how long. It covers the Android TV app "Mish Ana!" (package `app.jamaa.tv`) and the player web page that the TV's QR code opens.
 
 **Who is responsible.** {{OWNER_NAME}} (the developer), contact: {{CONTACT_EMAIL}}.
 
@@ -114,7 +114,7 @@ If your browser sends Global Privacy Control or Do Not Track, none of this measu
 
 **Dernière mise à jour : 4 octobre 2026**
 
-Mish Ana! (« le jeu ») est un jeu d’ambiance pour Android TV et Google TV. L’application TV héberge une salle de jeu ; les joueurs la rejoignent depuis le navigateur de leur téléphone. Cette politique explique quelles informations le jeu utilise, pourquoi et pendant combien de temps. Elle couvre l’application Android TV « Mish Ana! » (package `app.mishana.tv`) et la page web joueur ouverte par le QR code affiché sur la télé.
+Mish Ana! (« le jeu ») est un jeu d’ambiance pour Android TV et Google TV. L’application TV héberge une salle de jeu ; les joueurs la rejoignent depuis le navigateur de leur téléphone. Cette politique explique quelles informations le jeu utilise, pourquoi et pendant combien de temps. Elle couvre l’application Android TV « Mish Ana! » (package `app.jamaa.tv`) et la page web joueur ouverte par le QR code affiché sur la télé.
 
 **Responsable du traitement.** {{OWNER_NAME}} (le développeur), contact : {{CONTACT_EMAIL}}.
 
@@ -215,7 +215,7 @@ Si votre navigateur envoie Global Privacy Control ou Do Not Track, aucune de ces
 | No accounts; nickname only | `docs/PLAN.md:117`; join message `shared/src/protocol/messages.ts:33` (`name`, `color`, `locale`) |
 | Nickname 1–16 characters, sanitised | `shared/src/constants.ts:9`; `server/src/room-core.ts:476` (`sanitizeName`) |
 | Blank's guess, votes, ready/done | `shared/src/protocol/messages.ts:18`; engine state `shared/src/engine/types.ts:49-61,86,123` |
-| TV sends only its language | `tv-app/app/src/main/java/app/mishana/tv/net/RoomApi.kt:35`; `server/src/http.ts:88` |
+| TV sends only its language | `tv-app/app/src/main/java/app/jamaa/tv/net/RoomApi.kt:35`; `server/src/http.ts:88` |
 | Random temporary ids, hashed tokens | `docs/PLAN.md:93-95`; `server/src/room-store.ts:5-16` (`tvTokenHash`, `SessionRecord.tokenHash`); `server/src/http.ts` step 4 (`sha256hex(tvToken)`) |
 | IP: rate limiting only; hashed ipKey; not logged | `server/src/request.ts:3-6`; `server/src/http.ts:68-69`; `server/src/index.ts:53`; `server/src/room-core.ts:41,79,198`; logging rule `docs/SPEC.md:1321-1325`; only log lines `server/src/http.ts:112`, `server/src/room-core.ts:722` |
 | [LOGS] hosting provider logs ≤ 7 days | `server/wrangler.jsonc:8` (`observability.enabled`); Cloudflare Workers Logs max retention 7 days |
