@@ -19,6 +19,11 @@ describe("check-deploy", () => {
     expect(checkDeployConfig(REAL.replace('"BILLING_MODE": "google"', '"BILLING_MODE": "fake"')).join()).toMatch(/BILLING_MODE/);
     expect(checkDeployConfig(REAL.replace('"ALLOW_FAKE_BILLING": "0"', '"ALLOW_FAKE_BILLING": "1"')).join()).toMatch(/ALLOW_FAKE_BILLING/);
   });
+  it("requires the JAMAA Play package (JAMAA-PLATFORM §1.6 O6)", () => {
+    const old = REAL.replace('"PLAY_PACKAGE_NAME": "app.jamaa.tv"', '"PLAY_PACKAGE_NAME": "app.example.tv"');
+    expect(old).not.toBe(REAL);
+    expect(checkDeployConfig(old).join()).toMatch(/PLAY_PACKAGE_NAME/);
+  });
   it("rejects traces that are not explicitly disabled", () => {
     expect(checkDeployConfig(REAL.replace('"traces": { "enabled": false }', '"traces": { "enabled": true }')).join()).toMatch(/traces/);
     expect(checkDeployConfig(REAL.replace(', "traces": { "enabled": false }', "")).join()).toMatch(/traces/);

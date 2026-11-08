@@ -1,6 +1,6 @@
 {
   "mode": "google",
-  "packageName": "app.mishana.tv",
+  "packageName": "app.jamaa.tv",
   "subscription": { "productId": "premium", "basePlanIds": ["monthly", "yearly"], "trialOfferId": "trial-7d" },
   "freePackIds": ["ar-everyday-01", "en-everyday-01", "fr-everyday-01"],
   "packs": [

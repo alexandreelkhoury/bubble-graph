@@ -6,7 +6,7 @@
   "view": {
     "kind": "tv",
     "roomCode": "KXRT",
-    "joinUrl": "https://mish-ana.example.workers.dev/KXRT",
+    "joinUrl": "https://play.example.workers.dev/KXRT",
     "phase": "VOTING",
     "gameNumber": 1,
     "round": 1,

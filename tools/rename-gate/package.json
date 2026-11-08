@@ -1,0 +1,4 @@
+{
+  "name": "@jamaa/rename-gate", "version": "0.0.0", "private": true, "type": "module",
+  "scripts": { "gate": "node src/main.mjs", "typecheck": "tsc -p ." }
+}

@@ -2,7 +2,9 @@ packages:
   - shared
   - server
   - web-client
+  # word-packs/ moves to content/ (JAMAA-PLATFORM §5.1); both entries stay until the move lands
   - word-packs
+  - content
   - tools/*
 onlyBuiltDependencies:
   - esbuild

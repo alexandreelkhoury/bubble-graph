@@ -4,7 +4,7 @@ import { COLORS, LOCALES } from "@jamaa/shared/constants";
 import type { ColorId, Locale } from "@jamaa/shared/constants";
 
 export const RESUME_MAX_AGE_MS = 6 * 60 * 60_000;
-const P = BRAND.storagePrefix; // "mishana"
+const P = BRAND.storagePrefix; // "jamaa"
 
 export const KEYS = {
   resume: (code: string) => `${P}:resume:${code}`,
@@ -50,6 +50,37 @@ export function removeRaw(key: string): void {
 }
 
 /** Returns the resume record for `code`, deleting it when it is malformed or older than 6 h. */
+/**
+ * JAMAA-PLATFORM §1.5: one-time migration from the pre-JAMAA prefix. Preferences are copied when the new key is not
+ * set yet (a new key always wins); every other legacy key (resume tokens, the TV mock's fake-billing cache) is dropped,
+ * since v1 resume tokens cannot join a v2 room and fake billing state is disposable. Every legacy key is removed, so a
+ * second run finds nothing to do. Never throws.
+ */
+export const LEGACY_PREFIX: string = "mishana";
+/** The preference keys carried over (§1.5 lists locale, name, color, tvSound; vibration is the SPEC-GAP key above). */
+export const MIGRATED_KEYS = ["locale", "name", "color", "tvSound", "vibration"] as const;
+
+export function migrateLegacyKeys(): void {
+  try {
+    const s = store();
+    if (!s || P === LEGACY_PREFIX) return;
+    const legacy: string[] = [];
+    for (let i = 0; i < s.length; i++) {
+      const k = s.key(i);
+      if (k !== null && k.startsWith(`${LEGACY_PREFIX}:`)) legacy.push(k);
+    }
+    for (const k of MIGRATED_KEYS) {
+      const old = s.getItem(`${LEGACY_PREFIX}:${k}`);
+      if (old !== null && s.getItem(`${P}:${k}`) === null) s.setItem(`${P}:${k}`, old);
+    }
+    for (const k of legacy) s.removeItem(k);
+  } catch {
+    /* blocked storage or quota: the old keys stay, the app reads the new (empty) ones */
+  }
+}
+// Runs once when this module is first evaluated: every reader imports this module, so this is before any read.
+migrateLegacyKeys();
+
 export function loadResume(code: string, now: number = Date.now()): ResumeRecord | null {
   const raw = readRaw(KEYS.resume(code));
   if (raw === null) return null;

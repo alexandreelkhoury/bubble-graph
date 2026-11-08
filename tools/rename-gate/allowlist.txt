@@ -1,0 +1,50 @@
+# Rename gate allowlist (JAMAA-PLATFORM §1.7 item 2). Owned by lane A, reviewed in P0.
+# One entry per line:
+#   <glob>          every hit in a file whose repo-relative path matches is allowed
+#   line: <regexp>  every hit on a line matching the regexp (case-sensitive) is allowed, in any file
+# Keep entries narrow: a GAME1 or ARCHIVE path, never a whole package.
+
+# --- The gate itself (it has to spell the pattern) ---
+tools/rename-gate/**
+
+# --- ARCHIVE (JAMAA-PLATFORM §1.2): historical documents, not edited beyond the header note ---
+growth/marketing/review-v2/**
+growth/marketing/review-v3/**
+docs/research/**
+docs/RESEARCH.md
+growth/site/{CRO-AUDIT,GEO-PLAN,NOTES-FOR-SEO,SEO-REPORT}.md
+
+# --- GAME1 paths: game #1 keeps the name "Mish Ana!" and the id "mishana" ---
+shared/src/games/mishana/**
+shared/test/games/mishana/**
+shared/i18n/games/mishana/**
+content/mishana/**
+assets/games/mishana/**
+web-client/public/games/mishana/**
+web-client/src/games/mishana/**
+tv-app/**/games/mishana/**
+# GAME1 site pages (§1.3 growth/site: pages about the game, framed as "Mish Ana!, on JAMAA")
+growth/site/content/en/{how-to-play,mr-white-game-on-tv,games-like-spyfall-undercover,lebanese-game-night}.html
+growth/site/content/fr/{comment-jouer,jeu-mr-white-tele}.html
+growth/site/content/ar/lebanese-game-night.html
+# Docs describing game #1 (SPEC: the Mish Ana! engine contract; DESIGN: its game sections)
+docs/SPEC.md
+docs/DESIGN.md
+
+# --- The rename's own specs (they describe the old names) ---
+docs/JAMAA-PLATFORM.md
+docs/DESIGN-JAMAA.md
+docs/GAME-*.md
+
+# --- Web storage migration (§1.5): reads and removes the legacy "mishana:" keys ---
+web-client/src/lib/storage.ts
+web-client/test/storage.test.ts
+
+# --- Lines ---
+# i18n keys of game #1 and the GameId literal
+line: game\.mishana\.
+line: "mishana"
+# Remotion compositions of the Mish Ana! film keep their ids (§1.3 growth/video)
+line: MishAna-(16x9|9x16|1x1)
+# TV.md documents removing the old test install (§6.3 acceptance)
+line: adb (-s \S+ )?uninstall app\.mishana\.tv
