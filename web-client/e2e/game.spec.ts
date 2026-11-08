@@ -25,7 +25,7 @@ async function context(browser: Browser, kind: "tv" | "phone", locale: string): 
   await ctx.addInitScript((l) => {
     try {
       if (!sessionStorage.getItem("e2e-init")) {
-        localStorage.setItem("mishana:locale", l);
+        localStorage.setItem("jamaa:locale", l);
         sessionStorage.setItem("e2e-init", "1");
       }
     } catch {

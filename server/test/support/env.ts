@@ -16,7 +16,7 @@ export function fakeEnv(over: Partial<Env> = {}): Env {
     RTDN_LIMITER: ok,
     BILLING_MODE: "google",
     ALLOW_FAKE_BILLING: "0",
-    PLAY_PACKAGE_NAME: "app.mishana.tv",
+    PLAY_PACKAGE_NAME: "app.jamaa.tv",
     RTDN_AUDIENCE: "",
     RTDN_SA_EMAIL: "",
     RTDN_SUBSCRIPTION: "",

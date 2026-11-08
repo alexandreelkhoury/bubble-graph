@@ -13,7 +13,7 @@ async function newPage(browser: Browser, kind: "tv" | "phone", locale: string): 
   );
   await ctx.addInitScript((l) => {
     try {
-      if (!sessionStorage.getItem("e2e-init")) { localStorage.setItem("mishana:locale", l); sessionStorage.setItem("e2e-init", "1"); }
+      if (!sessionStorage.getItem("e2e-init")) { localStorage.setItem("jamaa:locale", l); sessionStorage.setItem("e2e-init", "1"); }
     } catch { /* ignore */ }
   }, locale);
   return ctx.newPage();
@@ -143,7 +143,7 @@ async function remoteOnlyGame(browser: Browser, locale: "en" | "ar"): Promise<vo
   expect(await pressed()).toBe("true");
   await press(tv, "Enter", "mute");
   expect(await pressed()).toBe("false");
-  expect(await tv.evaluate(() => localStorage.getItem("mishana:tvSound"))).toBe("off");
+  expect(await tv.evaluate(() => localStorage.getItem("jamaa:tvSound"))).toBe("off");
   await press(tv, "Enter", "unmute");
   expect(await pressed()).toBe("true");
   // The first key press unlocked audio: every cue file was fetched (DESIGN §6.4, TV only).

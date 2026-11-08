@@ -1,6 +1,6 @@
 // PAYMENTS-SPEC §2.3 / §7.2: entitlement token sign/verify.
 import { describe, expect, it } from "vitest";
-import { ENTITLEMENT_TTL_S } from "@mishana/shared/constants";
+import { ENTITLEMENT_TTL_S } from "@jamaa/shared/constants";
 import {
   b64urlDecode, b64urlEncode, buildClaims, importFakeSigner, importSigner, importVerifyKeys, parseKeyring, signEntitlementToken,
   verifyEntitlementToken,
@@ -69,7 +69,7 @@ describe("entitlement token", () => {
     const good = payloadText(c);
     const bad = [
       good.replace('"mode":"google"', '"mode":"google","x":1'),
-      good.replace('"iss":"mish-ana"', '"iss":"mish-ana","iss":"mish-ana"'),
+      good.replace('"iss":"jamaa"', '"iss":"jamaa","iss":"jamaa"'),
       JSON.stringify({ v: c.v, iss: c.iss, sub: c.sub, iat: c.iat, exp: c.exp, pu: c.pu, packs: c.packs, mode: c.mode }),
       good.replace(`"pu":${c.pu}`, `"pu":"${c.pu}"`),
       good.replace(`"pu":${c.pu}`, `"pu":${c.pu}.5`),

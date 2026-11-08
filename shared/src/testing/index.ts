@@ -1,4 +1,4 @@
-// Test-support entry point (`@mishana/shared/testing`): scripted and bot engine drivers, the secret-leak
+// Test-support entry point (`@jamaa/shared/testing`): scripted and bot engine drivers, the secret-leak
 // checker and a deterministic catalog. Used by tests, tools/sim and the fixture generator; never by clients.
 export * from "./game";
 export * from "./bots";

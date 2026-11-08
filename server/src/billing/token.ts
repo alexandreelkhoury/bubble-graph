@@ -1,16 +1,16 @@
 // PAYMENTS-SPEC §2.3: the entitlement token, a compact Ed25519 JWS. Signed only by the Worker's billing routes,
 // verified by the Worker (createRoom) and the Room DO (WS `entitlement`). Clients never parse it.
 import * as z from "zod";
-import { ENTITLEMENT_TOKEN_MAX_CHARS, ENTITLEMENT_TTL_S, MAX_TOKEN_PACKS } from "@mishana/shared/constants";
+import { ENTITLEMENT_TOKEN_MAX_CHARS, ENTITLEMENT_TTL_S, MAX_TOKEN_PACKS } from "@jamaa/shared/constants";
 import { FAKE_ENTITLEMENT_KEY } from "./fake-key";
 
 /** The verified claims, in milliseconds (what a room stores as `meta.entitlement`). */
 export interface RoomEntitlement { sub: string; iatMs: number; expMs: number; premiumUntilMs: number | null; packs: string[]; mode: "google" | "fake" }
 
 /** The claims the signer writes (JWT time claims in seconds). */
-export interface EntitlementClaims { iss: "mish-ana"; v: 1; sub: string; iat: number; exp: number; pu: number | null; packs: string[]; mode: "google" | "fake" }
+export interface EntitlementClaims { iss: "jamaa"; v: 1; sub: string; iat: number; exp: number; pu: number | null; packs: string[]; mode: "google" | "fake" }
 
-export const ENTITLEMENT_ISSUER = "mish-ana";
+export const ENTITLEMENT_ISSUER = "jamaa";
 export const KID_REGEX = /^[a-z0-9]{1,16}$/;
 export const FAKE_KID = "fake";
 /** Future `iat` tolerated (§2.3 step 6). */

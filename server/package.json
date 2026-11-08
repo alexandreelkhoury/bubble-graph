@@ -1,5 +1,5 @@
 {
-  "name": "@mishana/server", "version": "0.0.0", "private": true, "type": "module",
+  "name": "@jamaa/server", "version": "0.0.0", "private": true, "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "build": "wrangler deploy --dry-run --outdir dist && node scripts/check-size.mjs",
@@ -9,6 +9,6 @@
     "billing:products": "node scripts/play-products.mjs",
     "typecheck": "tsc -p ."
   },
-  "dependencies": { "partyserver": "0.5.10", "zod": "4.6.5", "@mishana/shared": "workspace:*", "@mishana/word-packs": "workspace:*" },
+  "dependencies": { "partyserver": "0.5.10", "zod": "4.6.5", "@jamaa/shared": "workspace:*", "@jamaa/content": "workspace:*" },
   "devDependencies": { "wrangler": "4.147.0", "@cloudflare/workers-types": "5.20261003.1" }
 }

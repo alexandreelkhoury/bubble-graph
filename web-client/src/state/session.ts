@@ -1,7 +1,7 @@
 // Player session: wires the Connection to the store and derives one-shot UI effects from view changes.
-import { PROTOCOL_VERSION } from "@mishana/shared/constants";
-import type { ColorId } from "@mishana/shared/constants";
-import type { ClientIntentMsg, ErrorCode, ErrorMsg, PlayerView } from "@mishana/shared/protocol";
+import { PROTOCOL_VERSION } from "@jamaa/shared/constants";
+import type { ColorId } from "@jamaa/shared/constants";
+import type { ClientIntentMsg, ErrorCode, ErrorMsg, PlayerView } from "@jamaa/shared/protocol";
 import { bindWake, CLOSE, Connection, partySocketFactory } from "../net/connection";
 import type { SocketFactory } from "../net/connection";
 import { clearResume, loadResume, saveColor, saveName, saveResume } from "../lib/storage";

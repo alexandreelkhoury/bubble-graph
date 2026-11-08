@@ -1,11 +1,11 @@
 // PAYMENTS-SPEC §3.11: room access. Pure. Turns a room's verified entitlement into what it may play. Only the
 // playable catalog ever reaches `reduce`, `nextWakeAt` and the projections, so a locked pack's words cannot be picked
 // or projected even with a bug elsewhere.
-import { PREMIUM_SETTING_KEYS, playableCatalog as filterCatalog } from "@mishana/shared/billing";
-import type { Catalog, GameState, Settings } from "@mishana/shared/engine";
-import { DEFAULT_PACK_IDS, DEFAULT_SETTINGS } from "@mishana/shared/engine";
-import { lockedPackInfos } from "@mishana/shared/projection";
-import type { LockedPackInfo } from "@mishana/shared/projection";
+import { PREMIUM_SETTING_KEYS, playableCatalog as filterCatalog } from "@jamaa/shared/billing";
+import type { Catalog, GameState, Settings } from "@jamaa/shared/engine";
+import { DEFAULT_PACK_IDS, DEFAULT_SETTINGS } from "@jamaa/shared/engine";
+import { lockedPackInfos } from "@jamaa/shared/projection";
+import type { LockedPackInfo } from "@jamaa/shared/projection";
 import type { RoomEntitlement } from "./billing/token";
 
 export interface RoomAccess { premium: boolean; packs: ReadonlySet<string>; changesAt: number | null }

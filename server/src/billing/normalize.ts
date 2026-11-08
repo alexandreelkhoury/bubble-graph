@@ -1,6 +1,6 @@
 // PAYMENTS-SPEC §3.7: Google purchase resources → one flat shape the Billing DO stores.
-import { PACK_STATES, PREMIUM_PRODUCT_ID, SUB_STATES } from "@mishana/shared/billing";
-import type { PackState, SubState } from "@mishana/shared/billing";
+import { PACK_STATES, PREMIUM_PRODUCT_ID, SUB_STATES } from "@jamaa/shared/billing";
+import type { PackState, SubState } from "@jamaa/shared/billing";
 import type { ProductPurchaseV2, SubscriptionPurchaseV2 } from "./google-types";
 
 export interface NormalizedPurchase {

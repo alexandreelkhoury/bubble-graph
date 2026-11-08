@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CreateRoomResponse, Healthz } from "@mishana/shared/protocol";
+import { CreateRoomResponse, Healthz } from "@jamaa/shared/protocol";
 import { createRoom, healthz } from "../src/http";
 import type { CreateRoomDeps } from "../src/http";
 import type { InitRoomArgs } from "../src/room-core";
@@ -12,7 +12,7 @@ function deps(log: InitRoomArgs[] = []): CreateRoomDeps {
   return { getStub: async () => ({ initRoom: async (a: InitRoomArgs) => (log.push(a), { ok: true as const }) }), randomBytes, now: () => 42 };
 }
 const post = (body?: string, headers: Record<string, string> = {}): Request =>
-  new Request("https://mish-ana.test/api/rooms", { method: "POST", body, headers });
+  new Request("https://jamaa.test/api/rooms", { method: "POST", body, headers });
 
 describe("POST /api/rooms", () => {
   it("201 with no-store, a hashed token passed to the DO and the joinUrl", async () => {
@@ -21,7 +21,7 @@ describe("POST /api/rooms", () => {
     expect(res.status).toBe(201);
     expect(res.headers.get("Cache-Control")).toBe("no-store");
     const body = CreateRoomResponse.parse(await res.json());
-    expect(body.joinUrl).toBe(`https://mish-ana.test/${body.code}`);
+    expect(body.joinUrl).toBe(`https://jamaa.test/${body.code}`);
     expect(body.wsPath).toBe(`/parties/room/${body.code}`);
     expect(log[0]?.tvTokenHash).toBe(await sha256hex(body.tvToken));
     expect(log[0]?.locale).toBe("ar");
@@ -29,10 +29,10 @@ describe("POST /api/rooms", () => {
   });
   it("empty body is OK (locale en); JOIN_BASE_URL overrides the origin", async () => {
     const log: InitRoomArgs[] = [];
-    const res = await createRoom(post(), fakeEnv({ JOIN_BASE_URL: "https://mishana.app/" }), deps(log));
+    const res = await createRoom(post(), fakeEnv({ JOIN_BASE_URL: "https://jamaa.app/" }), deps(log));
     expect(res.status).toBe(201);
     const body = CreateRoomResponse.parse(await res.json());
-    expect(body.joinUrl).toBe(`https://mishana.app/${body.code}`);
+    expect(body.joinUrl).toBe(`https://jamaa.app/${body.code}`);
     expect(log[0]?.locale).toBe("en");
   });
   it("body ≤ 4096 bytes (PAYMENTS-SPEC §3.3): a 3000-char token fits; 4097 bytes → 400", async () => {
@@ -55,7 +55,7 @@ describe("POST /api/rooms", () => {
     const res = await createRoom(post(undefined, { Origin: "https://evil.example" }), fakeEnv(), deps());
     expect(res.status).toBe(403);
     expect(await res.json()).toEqual({ error: "BAD_MESSAGE" });
-    expect((await createRoom(post(undefined, { Origin: "https://mish-ana.test" }), fakeEnv(), deps())).status).toBe(201);
+    expect((await createRoom(post(undefined, { Origin: "https://jamaa.test" }), fakeEnv(), deps())).status).toBe(201);
     expect((await createRoom(post(undefined, { Origin: "http://localhost:5173" }), fakeEnv({ ALLOWED_ORIGINS: "http://localhost:5173" }), deps())).status).toBe(201);
   });
   it("rate limited → 429", async () => {
@@ -73,7 +73,7 @@ describe("POST /api/rooms", () => {
 describe("GET /healthz", () => {
   it("returns the app slug and protocol version", async () => {
     const body = Healthz.parse(await healthz().json());
-    expect(body).toEqual({ ok: true, app: "mish-ana", protocol: 1 });
+    expect(body).toEqual({ ok: true, app: "jamaa", protocol: 1 });
   });
 });
 

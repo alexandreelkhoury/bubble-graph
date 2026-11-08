@@ -1,6 +1,6 @@
 // PH-04 Your word (ROLE_REVEAL): hold-to-reveal card, "Got it" enabled after the first reveal.
 import { useState } from "preact/hooks";
-import type { Me, PlayerView } from "@mishana/shared/protocol";
+import type { Me, PlayerView } from "@jamaa/shared/protocol";
 import { t } from "../i18n/t";
 import { act } from "../state/session";
 import { HAPTIC, haptic } from "../lib/haptics";

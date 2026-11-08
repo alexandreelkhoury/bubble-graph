@@ -3,8 +3,8 @@
 // in the Authorization header, is compared in constant time and is never logged; grants are stored by install-id
 // hash only (Billing DO `grants` table) and merged into the normal signed entitlement (BillingCore.entitlementFor).
 import * as z from "zod";
-import { MAX_TOKEN_PACKS } from "@mishana/shared/constants";
-import { InstallIdSchema } from "@mishana/shared/billing";
+import { MAX_TOKEN_PACKS } from "@jamaa/shared/constants";
+import { InstallIdSchema } from "@jamaa/shared/billing";
 import type { BillingStore, Grant } from "./billing/billing-core";
 import { billingPacks } from "./billing/catalog-info";
 import { readJson } from "./billing/routes";

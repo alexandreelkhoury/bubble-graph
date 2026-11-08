@@ -3,7 +3,7 @@
 // subscribes to a computed of it and re-renders when that boolean flips, not five times a second.
 import { useMemo } from "preact/hooks";
 import { computed, signal } from "@preact/signals";
-import type { DeadlineView } from "@mishana/shared/protocol";
+import type { DeadlineView } from "@jamaa/shared/protocol";
 import { clockOffset } from "../state/store";
 import { fractionLeft, remainingMs, secondsLeft, timerTone } from "../lib/countdown";
 import { fmtNum } from "../i18n/t";

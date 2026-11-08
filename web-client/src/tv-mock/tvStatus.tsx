@@ -1,6 +1,6 @@
 // TV-01 splash, TV-13 connection states, fatal screens, and the presence toasts (TV-02 joins/leaves, TV-13c away).
 import { useEffect, useRef, useState } from "preact/hooks";
-import type { TvView } from "@mishana/shared/protocol";
+import type { TvView } from "@jamaa/shared/protocol";
 import { isolate, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { ROLE_KEY } from "../lib/keys";
@@ -16,7 +16,7 @@ export function Splash({ failed }: { failed: string | null }) {
     <div class="tvscreen tvhome">
       <div class="tvhome__pattern" aria-hidden="true" />
       <img class="tvhome__mark" src="/brand/mark.svg" alt="" width={48} height={48} />
-      <img class="tvhome__wordmark" src="/brand/wordmark-bilingual.svg" alt="Mish Ana! مش أنا!" width={560} height={140} />
+      <img class="tvhome__wordmark" src="/brand/wordmark-bilingual.svg" alt="JAMAA جماعة" width={560} height={140} />
       <p class="tvt-body tv-secondary tvhome__slogan">{t("brand.slogan")}</p>
       <div class="tvhome__status">
         {failed === null ? (

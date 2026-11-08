@@ -57,7 +57,7 @@ async function client(browser: Browser, kind: "tv" | "phone"): Promise<Client> {
     : { ...devices["Pixel 7"], viewport: { width: 390, height: 844 } });
   await ctx.addInitScript(() => {
     try {
-      if (!sessionStorage.getItem("e2e-init")) { localStorage.setItem("mishana:locale", "en"); sessionStorage.setItem("e2e-init", "1"); }
+      if (!sessionStorage.getItem("e2e-init")) { localStorage.setItem("jamaa:locale", "en"); sessionStorage.setItem("e2e-init", "1"); }
     } catch { /* ignore */ }
     // Count every toast that appears (TV and phone), to check "shown once".
     const seen: string[] = [];

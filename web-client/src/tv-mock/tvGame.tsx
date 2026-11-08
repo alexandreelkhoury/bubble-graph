@@ -3,7 +3,7 @@ import { Fragment } from "preact";
 import type { RefObject } from "preact";
 import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import { useDeadlineSelect } from "../components/Timer";
-import type { PublicPlayer, TvView } from "@mishana/shared/protocol";
+import type { PublicPlayer, TvView } from "@jamaa/shared/protocol";
 import { dirOf, fmtNum, isolate, locale, t } from "../i18n/t";
 import { revoteLine, tieLine } from "../lib/gameText";
 import { Avatar, avatarState } from "../components/PlayerChip";

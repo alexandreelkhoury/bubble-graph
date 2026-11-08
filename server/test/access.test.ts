@@ -1,7 +1,7 @@
 // PAYMENTS-SPEC §3.11 / §7.2: pure room access.
 import { describe, expect, it } from "vitest";
-import { DEFAULT_PACK_IDS, DEFAULT_SETTINGS } from "@mishana/shared/engine";
-import { Game, TEST_CATALOG } from "@mishana/shared/testing";
+import { DEFAULT_PACK_IDS, DEFAULT_SETTINGS } from "@jamaa/shared/engine";
+import { Game, TEST_CATALOG } from "@jamaa/shared/testing";
 import { lockedPacks, playableCatalog, restrictionFor, roomAccess } from "../src/access";
 import type { RoomEntitlement } from "../src/billing/token";
 

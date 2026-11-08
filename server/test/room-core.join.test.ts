@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { JOINS_PER_MIN_PER_IP, MAX_PLAYERS } from "@mishana/shared/constants";
+import { JOINS_PER_MIN_PER_IP, MAX_PLAYERS } from "@jamaa/shared/constants";
 import { Harness } from "./support/fakes";
 
 describe("RoomCore join", () => {

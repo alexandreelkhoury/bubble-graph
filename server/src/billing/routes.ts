@@ -7,7 +7,7 @@ import {
   INSTALL_PREFIXES_PER_DAY,
   MAX_GOOGLE_READS_PER_VERIFY,
   VERIFY_DEADLINE_MS,
-} from "@mishana/shared/constants";
+} from "@jamaa/shared/constants";
 import {
   BASE_PLAN_IDS,
   EntitlementRequest,
@@ -18,8 +18,8 @@ import {
   PREMIUM_PRODUCT_ID,
   TRIAL_OFFER_ID,
   VerifyRequest,
-} from "@mishana/shared/billing";
-import type { BillingErrorCode, CatalogResponseBody, EntitlementBody, PurchaseResult } from "@mishana/shared/billing";
+} from "@jamaa/shared/billing";
+import type { BillingErrorCode, CatalogResponseBody, EntitlementBody, PurchaseResult } from "@jamaa/shared/billing";
 import type * as z from "zod";
 import type { Env } from "../env";
 import { readBodyLimited } from "../http";

@@ -1,9 +1,9 @@
 // Lobby texts shared by PH-03 (phone) and TV-02 (TV mock): role summary, start blocker, packs line.
-import { MIN_PLAYERS } from "@mishana/shared/constants";
-import type { Locale } from "@mishana/shared/constants";
-import { effectiveRoleCounts } from "@mishana/shared/engine";
-import type { Settings } from "@mishana/shared/engine";
-import type { PublicView } from "@mishana/shared/protocol";
+import { MIN_PLAYERS } from "@jamaa/shared/constants";
+import type { Locale } from "@jamaa/shared/constants";
+import { effectiveRoleCounts } from "@jamaa/shared/engine";
+import type { Settings } from "@jamaa/shared/engine";
+import type { PublicView } from "@jamaa/shared/protocol";
 import { t, titleIn } from "../i18n/t";
 import { selectedPacks } from "./settingsModel";
 

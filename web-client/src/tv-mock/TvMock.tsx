@@ -2,7 +2,7 @@
 // so the game is playable without Android TV. Arrow keys = D-pad, Enter = OK, Escape/Backspace = Back.
 import "./tv.css";
 import { useEffect, useRef, useState } from "preact/hooks";
-import type { TvView } from "@mishana/shared/protocol";
+import type { TvView } from "@jamaa/shared/protocol";
 import { dirOf, locale, t } from "../i18n/t";
 import { toasts } from "../state/store";
 import { tvCreateRoom, tvExit, tvLangOpen, tvPaused, tvScale, tvScreen, tvShop, tvStop, tvUi, tvView } from "./tvStore";
@@ -79,7 +79,7 @@ export function TvMock() {
     // PAYMENTS-SPEC §5.2: the catalog (mode) and a token first, so the room can be created with it.
     // BILLING_ENABLED first: off → no billing calls at all (bootBilling returns at once).
     void loadBillingFlag().then(() => bootBilling()).then(() => tvCreateRoom());
-    document.title = "Mish Ana! · TV";
+    document.title = "JAMAA · TV";
     return () => tvStop();
   }, []);
   // Settings that come from PLAY_AGAIN → "Change settings" open only once the lobby arrives.

@@ -1,9 +1,9 @@
 // PH-02 Join (name + colour) and its locked variant (me===null, phase≠LOBBY).
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { MAX_PLAYERS, NAME_MAX_CHARS } from "@mishana/shared/constants";
-import type { ColorId } from "@mishana/shared/constants";
-import { sanitizeName } from "@mishana/shared/engine";
-import type { PlayerView } from "@mishana/shared/protocol";
+import { MAX_PLAYERS, NAME_MAX_CHARS } from "@jamaa/shared/constants";
+import type { ColorId } from "@jamaa/shared/constants";
+import { sanitizeName } from "@jamaa/shared/engine";
+import type { PlayerView } from "@jamaa/shared/protocol";
 import { errorKeyOf, fmtNum, isolateLtr, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { inlineError, joinPending } from "../state/store";

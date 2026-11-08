@@ -17,7 +17,7 @@ describe("billing mode guards", () => {
     expect(fakeAllowedByEnv({ ...FAKE_ENV, ALLOW_FAKE_BILLING: "0" })).toBe(false);
     expect(fakeAllowedByEnv({ ...FAKE_ENV, ALLOW_FAKE_BILLING: "true" })).toBe(false);
     expect(fakeAllowedByEnv({ ...FAKE_ENV, PLAY_SERVICE_ACCOUNT_JSON: "{}" })).toBe(false);
-    for (const host of ["example.com", "play.mishana.workers.dev", "172.32.0.1", "11.0.0.1", "192.169.0.1", "8.8.8.8", "localhost.evil.com"]) {
+    for (const host of ["example.com", "play.jamaa.workers.dev", "172.32.0.1", "11.0.0.1", "192.169.0.1", "8.8.8.8", "localhost.evil.com"]) {
       expect(billingModeForRequest(FAKE_ENV, req(host)), host).toBe("google");
       expect(billingRouteMode(FAKE_ENV, req(host)), host).toBe("not_configured");
     }

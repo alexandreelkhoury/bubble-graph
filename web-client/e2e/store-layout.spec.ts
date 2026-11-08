@@ -22,7 +22,7 @@ const text = (k: string, lang: Lang = "en"): string => {
 const NOW = Date.now();
 const DAY = 86_400_000;
 const CATALOG = {
-  mode: "fake", packageName: "app.mishana.tv",
+  mode: "fake", packageName: "app.jamaa.tv",
   subscription: { productId: "premium", basePlanIds: ["monthly", "yearly"], trialOfferId: "trial-7d" },
   freePackIds: ["en-everyday-01", "fr-everyday-01", "ar-everyday-01"],
   packs: [
@@ -67,7 +67,7 @@ async function mockBilling(page: Page, opts: { holdVerify?: boolean } = {}): Pro
 
 async function tvPage(browser: Browser, lang: Lang, init?: () => void): Promise<{ ctx: BrowserContext; tv: Page }> {
   const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
-  await ctx.addInitScript((l) => { try { localStorage.setItem("mishana:locale", l); } catch { /* storage blocked */ } }, lang);
+  await ctx.addInitScript((l) => { try { localStorage.setItem("jamaa:locale", l); } catch { /* storage blocked */ } }, lang);
   if (init) await ctx.addInitScript(init);
   const tv = await ctx.newPage();
   return { ctx, tv };
@@ -270,8 +270,8 @@ test("en: no trial offer once this install had Premium — price wording, no bad
   const { ctx, tv } = await tvPage(browser, "en", () => {
     try {
       const id = "ab".repeat(16);
-      localStorage.setItem("mishana:installId", id);
-      localStorage.setItem("mishana:trialUsed", id);
+      localStorage.setItem("jamaa:installId", id);
+      localStorage.setItem("jamaa:trialUsed", id);
     } catch { /* storage blocked */ }
   });
   const billing = await mockBilling(tv);

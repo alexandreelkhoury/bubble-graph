@@ -1,5 +1,5 @@
 // Per-connection token bucket and per-IP join window (§7.5). Pure functions over plain data.
-import { JOINS_PER_MIN_PER_IP, RATE_BURST, RATE_MSGS_PER_SEC } from "@mishana/shared/constants";
+import { JOINS_PER_MIN_PER_IP, RATE_BURST, RATE_MSGS_PER_SEC } from "@jamaa/shared/constants";
 
 export interface Bucket { tokens: number; ts: number }
 

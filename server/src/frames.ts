@@ -1,7 +1,7 @@
 // Server → client wire frames (§6.3) and socket I/O that never throws. Pure: no room state.
-import { PROTOCOL_VERSION } from "@mishana/shared/constants";
-import type { ErrorCode, ErrorMsg, StateMsg, View, WelcomeMsg } from "@mishana/shared/protocol";
-import { ERROR_INFO, errorMessageKey } from "@mishana/shared/protocol";
+import { PROTOCOL_VERSION } from "@jamaa/shared/constants";
+import type { ErrorCode, ErrorMsg, StateMsg, View, WelcomeMsg } from "@jamaa/shared/protocol";
+import { ERROR_INFO, errorMessageKey } from "@jamaa/shared/protocol";
 
 /** The subset of a socket the frames are written to (partyserver's Connection, or a test fake). */
 export interface FrameSink {

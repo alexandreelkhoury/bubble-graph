@@ -1,7 +1,7 @@
 // PAYMENTS-SPEC §3.12: /api/admin/grants (owner comps), merged into the normal signed entitlement.
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ENTITLEMENT_TTL_S } from "@mishana/shared/constants";
-import { EntitlementResponse } from "@mishana/shared/billing";
+import { ENTITLEMENT_TTL_S } from "@jamaa/shared/constants";
+import { EntitlementResponse } from "@jamaa/shared/billing";
 import { ADMIN_TOKEN_MIN_CHARS, handleAdmin } from "../src/admin";
 import type { AdminDeps } from "../src/admin";
 import type { BillingStore } from "../src/billing/billing-core";

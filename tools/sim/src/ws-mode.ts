@@ -1,12 +1,12 @@
 // WS mode (§13.1): plays full games against a running server (`pnpm dev` / `wrangler dev`) through the wire
 // protocol only — the M1 "scripted WS client" acceptance test. No Origin header is sent (native-client path).
 import WebSocket from "ws";
-import { COLORS, PING_FRAME, PONG_FRAME, WS_PATH_PREFIX } from "@mishana/shared/constants";
-import type { ClientIntentMsg, ServerMessage, TvView, View } from "@mishana/shared/protocol";
-import { CreateRoomResponse, ServerMessageSchema } from "@mishana/shared/protocol";
-import { createRng } from "@mishana/shared/engine";
-import type { Rng } from "@mishana/shared/engine";
-import { FORBIDDEN_KEYS, TIMERS_OFF } from "@mishana/shared/testing";
+import { COLORS, PING_FRAME, PONG_FRAME, WS_PATH_PREFIX } from "@jamaa/shared/constants";
+import type { ClientIntentMsg, ServerMessage, TvView, View } from "@jamaa/shared/protocol";
+import { CreateRoomResponse, ServerMessageSchema } from "@jamaa/shared/protocol";
+import { createRng } from "@jamaa/shared/engine";
+import type { Rng } from "@jamaa/shared/engine";
+import { FORBIDDEN_KEYS, TIMERS_OFF } from "@jamaa/shared/testing";
 import type { SimArgs } from "./args";
 import { formatColumns } from "./format";
 

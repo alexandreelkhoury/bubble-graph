@@ -2,10 +2,10 @@
 // hint while the TV is in the store, and `lobby.premiumEndedPhone` once per flip.
 import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
-import en from "@mishana/shared/i18n/en.json";
-import fr from "@mishana/shared/i18n/fr.json";
-import ar from "@mishana/shared/i18n/ar.json";
-import type { PlayerView } from "@mishana/shared/protocol";
+import en from "@jamaa/shared/i18n/en.json";
+import fr from "@jamaa/shared/i18n/fr.json";
+import ar from "@jamaa/shared/i18n/ar.json";
+import type { PlayerView } from "@jamaa/shared/protocol";
 import { errorKeyOf } from "../src/i18n/t";
 import { lockedPackRows, premiumEndedStep, settingLocked, tvBusyHint } from "../src/lib/premium";
 

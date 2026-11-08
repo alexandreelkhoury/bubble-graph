@@ -2,7 +2,7 @@
 // history and the next-game actions).
 import { Fragment } from "preact";
 import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
-import type { TvView } from "@mishana/shared/protocol";
+import type { TvView } from "@jamaa/shared/protocol";
 import { fmtNum, isolate, locale, t, titleIn } from "../i18n/t";
 import { ROLE_KEY, ROLE_WAS_KEY } from "../lib/keys";
 import { ms, reduced } from "../lib/motion";

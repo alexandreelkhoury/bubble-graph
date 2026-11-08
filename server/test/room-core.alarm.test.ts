@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { HELLO_TIMEOUT_MS, ROOM_TV_GONE_TTL_MS, ROOM_TV_MAX_TTL_MS } from "@mishana/shared/constants";
-import { nextWakeAt } from "@mishana/shared/engine";
+import { HELLO_TIMEOUT_MS, ROOM_TV_GONE_TTL_MS, ROOM_TV_MAX_TTL_MS } from "@jamaa/shared/constants";
+import { nextWakeAt } from "@jamaa/shared/engine";
 import { expiresAt } from "../src/room-core";
 import { FakeConnections, Harness, T0, TV_TOKEN } from "./support/fakes";
 import { sha256hex } from "../src/tokens";

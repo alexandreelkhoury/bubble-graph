@@ -2,7 +2,7 @@
 // policy); then every cue is fetched and decoded once. Mute is a per-device setting (Settings + pause menu).
 // Reduced motion is not a mute signal: sounds keep playing.
 import { signal } from "@preact/signals";
-import { BRAND } from "@mishana/shared/brand";
+import { BRAND } from "@jamaa/shared/brand";
 import { readRaw, writeRaw } from "../../lib/storage";
 import { busOf, CUE_IDS, cueFile } from "./cues";
 import type { Bus, CueId, CuePlay } from "./cues";

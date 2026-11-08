@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // PAYMENTS-SPEC §2.3: prints a new Ed25519 entitlement key as {"kid","x","d"} (Node WebCrypto). Usage:
-//   pnpm --filter @mishana/server gen:entitlement-key [-- --kid k2]
+//   pnpm --filter @jamaa/server gen:entitlement-key [-- --kid k2]
 // Add it to the ENTITLEMENT_KEYS secret ({"active":"<kid>","keys":[...]}). Never commit the output.
 import { webcrypto } from "node:crypto";
 

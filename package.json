@@ -1,24 +1,24 @@
 {
-  "name": "mishana",
+  "name": "jamaa",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.28.0",
   "engines": { "node": ">=22.12.0" },
   "scripts": {
     "dev": "node tools/dev.mjs",
-    "build": "pnpm --filter @mishana/web-client run build && pnpm --filter @mishana/server run build",
+    "build": "pnpm --filter @jamaa/web-client run build && pnpm --filter @jamaa/server run build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "sim": "pnpm --filter @mishana/sim run sim",
+    "sim": "pnpm --filter @jamaa/sim run sim",
     "lint": "eslint .",
     "typecheck": "pnpm -r --if-present run typecheck",
-    "fixtures": "pnpm --filter @mishana/shared run gen:fixtures",
-    "gen:strings": "pnpm --filter @mishana/gen-android-strings run gen",
-    "gen:sounds": "pnpm --filter @mishana/gen-sounds run gen",
-    "lint:packs": "pnpm --filter @mishana/pack-lint run lint",
-    "e2e": "pnpm --filter @mishana/web-client run e2e",
+    "fixtures": "pnpm --filter @jamaa/shared run gen:fixtures",
+    "gen:strings": "pnpm --filter @jamaa/gen-android-strings run gen",
+    "gen:sounds": "pnpm --filter @jamaa/gen-sounds run gen",
+    "lint:packs": "pnpm --filter @jamaa/content-lint run lint",
+    "e2e": "pnpm --filter @jamaa/web-client run e2e",
     "grant": "node server/scripts/grant.mjs",
-    "deploy": "pnpm run build && pnpm --filter @mishana/pack-lint run lint -- --release && pnpm --filter @mishana/server run deploy"
+    "deploy": "pnpm run build && pnpm --filter @jamaa/content-lint run lint -- --release && pnpm --filter @jamaa/server run deploy"
   },
   "devDependencies": {
     "typescript": "5.9.3", "vitest": "4.1.11", "@vitest/coverage-v8": "4.1.11",

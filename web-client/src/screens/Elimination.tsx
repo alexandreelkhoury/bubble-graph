@@ -1,6 +1,6 @@
 // PH-08b Elimination: "Look at the TV!" during the TV's head start (≈3 s), then the outcome, tally and the
 // countdown to what comes next. A voted-out Blank who may guess gets "Last chance coming…" instead of "You're out".
-import type { Me, PlayerView } from "@mishana/shared/protocol";
+import type { Me, PlayerView } from "@jamaa/shared/protocol";
 import { isolate, t } from "../i18n/t";
 import { ROLE_WAS_KEY } from "../lib/keys";
 import { afterElimination, byId, TV_VOTE_REVEAL_MS } from "../lib/view";

@@ -1,7 +1,7 @@
 // PAYMENTS-SPEC §3.10 / §3.11 / §7.2: room access in RoomCore (entitlement, storeOpen, restrictions, pre-checks).
 import { describe, expect, it } from "vitest";
-import { TV_BUSY_MAX_MS } from "@mishana/shared/constants";
-import { DEFAULT_SETTINGS } from "@mishana/shared/engine";
+import { TV_BUSY_MAX_MS } from "@jamaa/shared/constants";
+import { DEFAULT_SETTINGS } from "@jamaa/shared/engine";
 import { buildClaims, importFakeSigner, importSigner, importVerifyKeys, parseKeyring, signEntitlementToken } from "../src/billing/token";
 import type { Signer } from "../src/billing/token";
 import type { RoomBillingDeps } from "../src/room-core";

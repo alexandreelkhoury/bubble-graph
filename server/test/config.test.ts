@@ -1,6 +1,6 @@
 // BILLING_ENABLED (server/src/config.ts): the production switch for everything premium/billing.
 import { describe, expect, it } from "vitest";
-import { ClientConfig, CreateRoomResponse } from "@mishana/shared/protocol";
+import { ClientConfig, CreateRoomResponse } from "@jamaa/shared/protocol";
 import { ADMIN_PREFIX } from "../src/admin";
 import { BILLING_PREFIX } from "../src/billing/routes";
 import { buildClaims, importSigner, importVerifyKeys, parseKeyring, signEntitlementToken } from "../src/billing/token";

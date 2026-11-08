@@ -1,8 +1,8 @@
 // PAYMENTS-SPEC §3.6: Real-time developer notifications (Pub/Sub push) and the shared "re-read a token from Google
 // and apply it" paths, used by RTDN, the fake `set` route (§3.10) and the cron (§3.8).
 import * as z from "zod";
-import { BILLING_BODY_MAX_BYTES } from "@mishana/shared/constants";
-import { packIdFromProductId, PREMIUM_PRODUCT_ID } from "@mishana/shared/billing";
+import { BILLING_BODY_MAX_BYTES } from "@jamaa/shared/constants";
+import { packIdFromProductId, PREMIUM_PRODUCT_ID } from "@jamaa/shared/billing";
 import { readBodyLimited } from "../http";
 import { sha256hex } from "../tokens";
 import type { BillingStore } from "./billing-core";

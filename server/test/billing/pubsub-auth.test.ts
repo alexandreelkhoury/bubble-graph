@@ -115,7 +115,7 @@ describe("pre-auth guards", () => {
 
   it("missing, oversized or malformed header → 401 without reading the body or fetching JWKS", async () => {
     const { jwks, fetches } = jwksFor(() => [], () => NOW);
-    const env = { RTDN_LIMITER: { limit: async () => ({ success: true }) }, RTDN_AUDIENCE: AUD, RTDN_SA_EMAIL: EMAIL, RTDN_SUBSCRIPTION: "projects/p/subscriptions/s", PLAY_PACKAGE_NAME: "app.mishana.tv" };
+    const env = { RTDN_LIMITER: { limit: async () => ({ success: true }) }, RTDN_AUDIENCE: AUD, RTDN_SA_EMAIL: EMAIL, RTDN_SUBSCRIPTION: "projects/p/subscriptions/s", PLAY_PACKAGE_NAME: "app.jamaa.tv" };
     for (const auth of [undefined, "Bearer " + "x".repeat(5000), "Bearer not-a-jwt"]) {
       let bodyRead = false;
       const body = new ReadableStream({ pull() { bodyRead = true; } }, { highWaterMark: 0 });

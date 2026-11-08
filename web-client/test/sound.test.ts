@@ -1,14 +1,14 @@
 import { readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import type { TvView } from "@mishana/shared/protocol";
-import lobbyMsg from "@mishana/shared/fixtures/s2c.state.tv.lobby.json";
-import revealMsg from "@mishana/shared/fixtures/s2c.state.tv.role_reveal.json";
-import cluesMsg from "@mishana/shared/fixtures/s2c.state.tv.clues.json";
-import votingMsg from "@mishana/shared/fixtures/s2c.state.tv.voting.json";
-import guessMsg from "@mishana/shared/fixtures/s2c.state.tv.mr_white_guess.json";
-import resultsMsg from "@mishana/shared/fixtures/s2c.state.tv.results.json";
-import tieMsg from "@mishana/shared/fixtures/s2c.state.tv.tie_break.json";
+import type { TvView } from "@jamaa/shared/protocol";
+import lobbyMsg from "@jamaa/shared/fixtures/s2c.state.tv.lobby.json";
+import revealMsg from "@jamaa/shared/fixtures/s2c.state.tv.role_reveal.json";
+import cluesMsg from "@jamaa/shared/fixtures/s2c.state.tv.clues.json";
+import votingMsg from "@jamaa/shared/fixtures/s2c.state.tv.voting.json";
+import guessMsg from "@jamaa/shared/fixtures/s2c.state.tv.mr_white_guess.json";
+import resultsMsg from "@jamaa/shared/fixtures/s2c.state.tv.results.json";
+import tieMsg from "@jamaa/shared/fixtures/s2c.state.tv.tie_break.json";
 import {
   CUE_IDS, busOf, chipRate, cueFile, deadlineCue, joinRate, PENTATONIC, RateLimiter, timelineCues, turnRate, viewCues,
 } from "../src/tv-mock/sound/cues";

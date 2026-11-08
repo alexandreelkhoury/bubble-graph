@@ -1,12 +1,12 @@
 // PAYMENTS-SPEC §2.4 / §4.4 / §5.2: the TV mock store's pure model (refresh timer, row and card states, initial focus,
 // what a pack bought from a locked row does to the lobby). No I/O; unit-tested in test/billing.test.ts.
-import { PREMIUM_PRODUCT_ID, TRIAL_OFFER_ID } from "@mishana/shared/billing/products";
-import type { BasePlanId } from "@mishana/shared/billing/products";
-import type { SubState } from "@mishana/shared/billing/entitlement";
-import type { CatalogPackBody, CatalogResponseBody, EntitlementBody } from "@mishana/shared/billing";
-import type { Locale } from "@mishana/shared/constants";
-import { languageOf } from "@mishana/shared/engine";
-import type { Settings } from "@mishana/shared/engine";
+import { PREMIUM_PRODUCT_ID, TRIAL_OFFER_ID } from "@jamaa/shared/billing/products";
+import type { BasePlanId } from "@jamaa/shared/billing/products";
+import type { SubState } from "@jamaa/shared/billing/entitlement";
+import type { CatalogPackBody, CatalogResponseBody, EntitlementBody } from "@jamaa/shared/billing";
+import type { Locale } from "@jamaa/shared/constants";
+import { languageOf } from "@jamaa/shared/engine";
+import type { Settings } from "@jamaa/shared/engine";
 
 const MIN = 60_000;
 const HOUR = 60 * MIN;

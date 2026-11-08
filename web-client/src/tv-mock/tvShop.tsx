@@ -2,11 +2,11 @@
 // D-pad (arrows, Enter = OK, Escape = Back). Header: title + room code; the Premium card with the plans and the
 // required disclosure (§4.5); the packs row (room language first); footer: restore, help, pending note, test controls.
 import { useEffect, useRef, useState } from "preact/hooks";
-import { PREMIUM_PRODUCT_ID, SUPPORT_EMAIL } from "@mishana/shared/billing/products";
-import type { BasePlanId } from "@mishana/shared/billing/products";
-import type { CatalogPackBody } from "@mishana/shared/billing";
-import type { Locale } from "@mishana/shared/constants";
-import type { TvView } from "@mishana/shared/protocol";
+import { PREMIUM_PRODUCT_ID, SUPPORT_EMAIL } from "@jamaa/shared/billing/products";
+import type { BasePlanId } from "@jamaa/shared/billing/products";
+import type { CatalogPackBody } from "@jamaa/shared/billing";
+import type { Locale } from "@jamaa/shared/constants";
+import type { TvView } from "@jamaa/shared/protocol";
 import { isolate, locale, LOCALE_NATIVE_NAME, t, titleIn } from "../i18n/t";
 import { Icon } from "../components/Icon";
 import { billing } from "./billing";

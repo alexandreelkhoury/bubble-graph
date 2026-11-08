@@ -1,7 +1,7 @@
 // §8.6 Storage keys. Every access is wrapped in try/catch (private mode, blocked storage, quota).
-import { BRAND } from "@mishana/shared/brand";
-import { COLORS, LOCALES } from "@mishana/shared/constants";
-import type { ColorId, Locale } from "@mishana/shared/constants";
+import { BRAND } from "@jamaa/shared/brand";
+import { COLORS, LOCALES } from "@jamaa/shared/constants";
+import type { ColorId, Locale } from "@jamaa/shared/constants";
 
 export const RESUME_MAX_AGE_MS = 6 * 60 * 60_000;
 const P = BRAND.storagePrefix; // "mishana"

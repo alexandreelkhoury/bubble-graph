@@ -1,8 +1,8 @@
 // TV-07 vote reveal + TV-09 elimination: one local sequence inside the 8 s ELIMINATION hold. The animations are
 // local; OK on the pill jumps to the end state.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "preact/hooks";
-import type { TvView } from "@mishana/shared/protocol";
-import type { Role } from "@mishana/shared/engine";
+import type { TvView } from "@jamaa/shared/protocol";
+import type { Role } from "@jamaa/shared/engine";
 import { fmtNum, isolate, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { ROLE_KEY } from "../lib/keys";

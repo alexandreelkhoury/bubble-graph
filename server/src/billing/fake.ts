@@ -1,8 +1,8 @@
 // PAYMENTS-SPEC §3.10: FAKE billing for local dev and e2e. FakeGoogleApi serves synthetic Google resources from the
 // Billing DO's `fake_purchases` table, so /verify, RTDN-style re-reads, acks and the ack window run unchanged.
 // Reachable only when billingModeForRequest() says "fake" (mode.ts): never in production.
-import { packIdFromProductId, PREMIUM_PRODUCT_ID, SUB_STATES } from "@mishana/shared/billing";
-import type { FakePurchaseRequestBody, FakeSetRequestBody } from "@mishana/shared/billing";
+import { packIdFromProductId, PREMIUM_PRODUCT_ID, SUB_STATES } from "@jamaa/shared/billing";
+import type { FakePurchaseRequestBody, FakeSetRequestBody } from "@jamaa/shared/billing";
 import { sha256hex } from "../tokens";
 import type { BillingStore } from "./billing-core";
 import { billingPacks } from "./catalog-info";

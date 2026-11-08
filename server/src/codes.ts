@@ -1,5 +1,5 @@
 // §7.6 room codes: uniform over ROOM_CODE_ALPHABET by rejection sampling over bytes.
-import { ROOM_CODE_ALPHABET, ROOM_CODE_LENGTH } from "@mishana/shared/constants";
+import { ROOM_CODE_ALPHABET, ROOM_CODE_LENGTH } from "@jamaa/shared/constants";
 
 const ACCEPT_BELOW = 230; // §7.6: accept b < 230 (= 10 × 23), use ALPHABET[b % 23]
 

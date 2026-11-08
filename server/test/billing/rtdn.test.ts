@@ -7,8 +7,8 @@ import type { RtdnEnv } from "../../src/billing/rtdn";
 import { DAY, INSTALL_A, NOW, ScriptedGoogle, hashOf, newCore, product, sub } from "../support/billing";
 import { AUD, EMAIL, jwksFor, oidcToken, rsaKey } from "../support/oidc";
 
-const SUBSCRIPTION = "projects/mish-ana-billing/subscriptions/play-rtdn-push";
-const PKG = "app.mishana.tv";
+const SUBSCRIPTION = "projects/jamaa-billing/subscriptions/play-rtdn-push";
+const PKG = "app.jamaa.tv";
 
 function env(over: Partial<RtdnEnv> = {}): RtdnEnv {
   return { RTDN_LIMITER: { limit: async () => ({ success: true }) }, RTDN_AUDIENCE: AUD, RTDN_SA_EMAIL: EMAIL, RTDN_SUBSCRIPTION: SUBSCRIPTION, PLAY_PACKAGE_NAME: PKG, ...over };

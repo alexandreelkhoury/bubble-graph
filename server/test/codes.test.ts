@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ROOM_CODE_ALPHABET, ROOM_CODE_REGEX } from "@mishana/shared/constants";
+import { ROOM_CODE_ALPHABET, ROOM_CODE_REGEX } from "@jamaa/shared/constants";
 import { generateRoomCode } from "../src/codes";
 import { createRoom } from "../src/http";
 import type { InitRoomArgs } from "../src/room-core";

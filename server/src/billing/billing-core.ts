@@ -15,9 +15,9 @@ import {
   MAX_TOKEN_PACKS,
   PENDING_ACK_TOKEN_MAX_MS,
   RATE_MAP_MAX_ENTRIES,
-} from "@mishana/shared/constants";
-import { packIdFromProductId, packOwned, subscriptionAccessUntil } from "@mishana/shared/billing";
-import type { PackState, PurchaseResult, SubscriptionInfo, SubState } from "@mishana/shared/billing";
+} from "@jamaa/shared/constants";
+import { packIdFromProductId, packOwned, subscriptionAccessUntil } from "@jamaa/shared/billing";
+import type { PackState, PurchaseResult, SubscriptionInfo, SubState } from "@jamaa/shared/billing";
 import { sha256hex } from "../tokens";
 import { billingLog } from "./log";
 import type { NormalizedPurchase } from "./normalize";

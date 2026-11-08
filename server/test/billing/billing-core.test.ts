@@ -1,7 +1,7 @@
 // PAYMENTS-SPEC §3.5 / §7.2: BillingCore against real SQLite (node:sqlite).
 import { describe, expect, it } from "vitest";
-import { INSTALL_ACTIVE_WINDOW_MS, RATE_MAP_MAX_ENTRIES } from "@mishana/shared/constants";
-import { SILENT_GRACE_MS } from "@mishana/shared/billing";
+import { INSTALL_ACTIVE_WINDOW_MS, RATE_MAP_MAX_ENTRIES } from "@jamaa/shared/constants";
+import { SILENT_GRACE_MS } from "@jamaa/shared/billing";
 import type { ApplyInput } from "../../src/billing/billing-core";
 import { normalizeProduct, normalizeSubscription } from "../../src/billing/normalize";
 import { DAY, NOW, hashOf, iso, newCore, product, sub } from "../support/billing";

@@ -1,5 +1,5 @@
 // PAYMENTS-SPEC §3.6: Pub/Sub push OIDC verification (RS256 against Google's JWKS, cached per isolate).
-import { RTDN_AUTH_HEADER_MAX_CHARS } from "@mishana/shared/constants";
+import { RTDN_AUTH_HEADER_MAX_CHARS } from "@jamaa/shared/constants";
 import { b64urlDecode } from "./token";
 
 export const GOOGLE_JWKS_URL = "https://www.googleapis.com/oauth2/v3/certs";

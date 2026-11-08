@@ -64,7 +64,7 @@ describe("no secret reaches the logs", () => {
       if (u.includes(":acknowledge")) return new Response(`denied ${u}`, { status: 400 });
       return Response.json(product());
     }) as typeof fetch;
-    const api = new GoogleClient(sa, "app.mishana.tv", { fetch: fetchImpl, now: () => NOW, sleep: async () => undefined });
+    const api = new GoogleClient(sa, "app.jamaa.tv", { fetch: fetchImpl, now: () => NOW, sleep: async () => undefined });
     const res = await verify(
       { installId: INSTALL_A, purchases: [{ productId: "premium", purchaseToken: TOKEN_150 }, { productId: "premium", purchaseToken: TOKEN_HEX }, { productId: "pack_en_food_01", purchaseToken: TOKEN_150 + "p" }] },
       store, api, await importFakeSigner(), "google", () => NOW,
@@ -82,9 +82,9 @@ describe("no secret reaches the logs", () => {
     google.ackError = new GoogleHttpError(403, "sub_ack");
     const k = await rsaKey("g1");
     const { jwks } = jwksFor(() => [k], () => NOW);
-    const env = { RTDN_LIMITER: { limit: async () => ({ success: true }) }, RTDN_AUDIENCE: AUD, RTDN_SA_EMAIL: EMAIL, RTDN_SUBSCRIPTION: "projects/p/subscriptions/s", PLAY_PACKAGE_NAME: "app.mishana.tv" };
+    const env = { RTDN_LIMITER: { limit: async () => ({ success: true }) }, RTDN_AUDIENCE: AUD, RTDN_SA_EMAIL: EMAIL, RTDN_SUBSCRIPTION: "projects/p/subscriptions/s", PLAY_PACKAGE_NAME: "app.jamaa.tv" };
     const call = async (tok: string, id: string, auth?: string) => {
-      const data = btoa(JSON.stringify({ packageName: "app.mishana.tv", subscriptionNotification: { notificationType: 4, purchaseToken: tok } }));
+      const data = btoa(JSON.stringify({ packageName: "app.jamaa.tv", subscriptionNotification: { notificationType: 4, purchaseToken: tok } }));
       const req = new Request("https://p.example/api/billing/rtdn", { method: "POST", headers: { Authorization: auth ?? `Bearer ${await oidcToken(k, NOW)}` }, body: JSON.stringify({ message: { data, messageId: id }, subscription: "projects/p/subscriptions/s" }) });
       return handleRtdn(req, env, { store, api: google, jwks, now: () => NOW, ip: "1.1.1.1" });
     };

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_SETTINGS } from "@mishana/shared/engine";
-import type { PublicPlayer } from "@mishana/shared/protocol";
+import { DEFAULT_SETTINGS } from "@jamaa/shared/engine";
+import type { PublicPlayer } from "@jamaa/shared/protocol";
 import { SETTINGS_SCHEMA, rowValueText, selectedPacks, stepRow, toggleDifficulty, togglePack, visibleRows } from "../src/lib/settingsModel";
 import { packsLine } from "../src/lib/lobby";
 import { afterElimination, competitionRank, culprits, hadUndercover, newForfeits, orderWindow, rankPlayers, tiedWithTally, topVoted, winnerMessage } from "../src/lib/view";

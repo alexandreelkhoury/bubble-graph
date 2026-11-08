@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { isOriginAllowed, originCheck, parseAllowedOrigins } from "../src/origin";
 
 const req = (origin?: string): Request =>
-  new Request("https://mish-ana.example.workers.dev/parties/room/ABCD", origin ? { headers: { Origin: origin } } : {});
+  new Request("https://play.example.workers.dev/parties/room/ABCD", origin ? { headers: { Origin: origin } } : {});
 
 describe("origin check (§7.4)", () => {
   it("allows a request without Origin (TV app, sim)", () => {
@@ -10,7 +10,7 @@ describe("origin check (§7.4)", () => {
     expect(originCheck(req(), "")).toBeUndefined();
   });
   it("allows the same origin", () => {
-    expect(originCheck(req("https://mish-ana.example.workers.dev"), "")).toBeUndefined();
+    expect(originCheck(req("https://play.example.workers.dev"), "")).toBeUndefined();
   });
   it("allows allowlisted origins (comma list, trimmed)", () => {
     const list = " http://192.168.1.20:5173 , http://localhost:5173,";

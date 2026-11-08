@@ -1,5 +1,5 @@
-import type { CreateRoomResponseBody } from "@mishana/shared/protocol";
-import type { Locale } from "@mishana/shared/constants";
+import type { CreateRoomResponseBody } from "@jamaa/shared/protocol";
+import type { Locale } from "@jamaa/shared/constants";
 
 export type CreateRoomResult = { ok: true; room: CreateRoomResponseBody } | { ok: false; error: string };
 

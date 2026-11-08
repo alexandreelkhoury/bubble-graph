@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CLUE_GRACE_MS } from "@mishana/shared/constants";
+import { CLUE_GRACE_MS } from "@jamaa/shared/constants";
 import { FakeConnections, Harness } from "./support/fakes";
 import type { FakeConn } from "./support/fakes";
 

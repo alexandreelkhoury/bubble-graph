@@ -1,7 +1,7 @@
 // TV-mock state: room creation, the TV socket (hello tv), the TvView and local UI (pause, dialogs, settings).
 import { signal } from "@preact/signals";
-import { PROTOCOL_VERSION } from "@mishana/shared/constants";
-import type { ClientIntentMsg, CreateRoomResponseBody, ErrorCode, ErrorMsg, TvView } from "@mishana/shared/protocol";
+import { PROTOCOL_VERSION } from "@jamaa/shared/constants";
+import type { ClientIntentMsg, CreateRoomResponseBody, ErrorCode, ErrorMsg, TvView } from "@jamaa/shared/protocol";
 import { bindWake, CLOSE, Connection, partySocketFactory } from "../net/connection";
 import type { ConnStatus } from "../net/connection";
 import { createRoom } from "../net/api";

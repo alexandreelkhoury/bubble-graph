@@ -1,7 +1,7 @@
 // TV-02 Lobby.
 import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
-import { MAX_PLAYERS, MIN_PLAYERS } from "@mishana/shared/constants";
-import type { PublicPlayer, TvView } from "@mishana/shared/protocol";
+import { MAX_PLAYERS, MIN_PLAYERS } from "@jamaa/shared/constants";
+import type { PublicPlayer, TvView } from "@jamaa/shared/protocol";
 import { fmtNum, isolate, isolateLtr, locale, LOCALE_NATIVE_NAME, t } from "../i18n/t";
 import { activeCount, blockerText, packsLine, roleSummaryText } from "../lib/lobby";
 import { createArrivals, isFresh, noteArrivals } from "../lib/arrivals";
@@ -114,7 +114,7 @@ export function TvLobby({ view }: { view: TvView }) {
   };
   return (
     <div class="tvscreen tvlobby">
-      <img class="tvlobby__wordmark" src="/brand/wordmark-latin.svg" alt="Mish Ana!" width={196} height={59} />
+      <img class="tvlobby__wordmark" src="/brand/wordmark-latin.svg" alt="JAMAA" width={196} height={59} />
       {/* One join "ticket": the caption, QR, code and URL read as a single object. */}
       <div class="tvticket">
         <p class="tvticket__scan">{t("lobby.scanToJoin")}</p>

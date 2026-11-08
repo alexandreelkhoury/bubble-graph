@@ -1,6 +1,6 @@
 // PH-07 Vote (radiogroup + lock CTA) and PH-08 Vote locked; eliminated players follow along (vote.dead).
 import { useEffect, useState } from "preact/hooks";
-import type { Me, PlayerView } from "@mishana/shared/protocol";
+import type { Me, PlayerView } from "@jamaa/shared/protocol";
 import { t } from "../i18n/t";
 import { act } from "../state/session";
 import { HAPTIC, haptic } from "../lib/haptics";

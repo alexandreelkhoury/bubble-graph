@@ -1,7 +1,7 @@
 // PAYMENTS-SPEC §7.3 (TV mock store): the state machine, nextRefreshAt, the toast queue, storeOpen sends, fake-mode
 // gating from the catalog response, the purchase sequence calls in order, and the token persisted with try/catch.
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { CatalogResponseBody, EntitlementBody } from "@mishana/shared/billing";
+import type { CatalogResponseBody, EntitlementBody } from "@jamaa/shared/billing";
 import { BillingController, BILLING_ERROR_WINDOW_MS, CONFIRM_SLOW_MS, BILLING_KEYS, BILLING_RESEND_MS, STORE_OPEN_RESEND_MS } from "../src/tv-mock/billing/controller";
 import type { BillingDeps, BillingRoomLink, BillingToast } from "../src/tv-mock/billing/controller";
 import {
@@ -14,7 +14,7 @@ const HOUR = 60 * MIN;
 const NOW = 1_790_000_000_000;
 
 const CATALOG = (mode: "fake" | "google"): CatalogResponseBody => ({
-  mode, packageName: "app.mishana.tv",
+  mode, packageName: "app.jamaa.tv",
   subscription: { productId: "premium", basePlanIds: ["monthly", "yearly"], trialOfferId: "trial-7d" },
   freePackIds: ["en-everyday-01", "fr-everyday-01", "ar-everyday-01"],
   packs: [

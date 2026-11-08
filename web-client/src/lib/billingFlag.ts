@@ -3,7 +3,7 @@
 // Premium button, no Store, no install id, and the TV mock never calls /api/billing/* nor sends `entitlement` /
 // `storeOpen`. Zod-free (main bundle).
 import { signal } from "@preact/signals";
-import type { ClientConfigBody } from "@mishana/shared/protocol";
+import type { ClientConfigBody } from "@jamaa/shared/protocol";
 
 export const billingEnabled = signal(false);
 

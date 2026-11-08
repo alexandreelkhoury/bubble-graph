@@ -1,7 +1,7 @@
 // PH-11 Blank guess (guesser) and PH-12 watching the guess (everyone else, VIP may accept a WRONG guess once).
 import { useEffect, useRef, useState } from "preact/hooks";
-import { GUESS_MAX_CHARS } from "@mishana/shared/constants";
-import type { Me, PlayerView } from "@mishana/shared/protocol";
+import { GUESS_MAX_CHARS } from "@jamaa/shared/constants";
+import type { Me, PlayerView } from "@jamaa/shared/protocol";
 import { dirOf, isolate, t } from "../i18n/t";
 import { act } from "../state/session";
 import { inlineError, resyncs } from "../state/store";

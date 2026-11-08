@@ -1,6 +1,6 @@
 // Optimistic settings edits shared by the phone sheet (PH-03b) and the TV mock (TV-03).
 import { useEffect, useRef, useState } from "preact/hooks";
-import type { Settings, SettingsPatch } from "@mishana/shared/engine";
+import type { Settings, SettingsPatch } from "@jamaa/shared/engine";
 
 /** Order-insensitive deep equality for settings values (JSON-shaped). */
 export function same(a: unknown, b: unknown): boolean {

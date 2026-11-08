@@ -2,7 +2,7 @@
 // queued billing toast on the next LOBBY/RESULTS, the Store closing when the phase leaves LOBBY, and the §2.4 rule 1
 // refreshes (load, page visible again).
 import { useEffect, useRef } from "preact/hooks";
-import type { TvView } from "@mishana/shared/protocol";
+import type { TvView } from "@jamaa/shared/protocol";
 import { premiumEndedStep } from "../lib/premium";
 import { billing } from "./billing";
 import { closeShop, loadStoreCatalog } from "./shopState";

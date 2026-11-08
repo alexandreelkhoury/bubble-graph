@@ -1,6 +1,6 @@
 // PAYMENTS-SPEC §3.4 / §3.10 / §7.2: /api/billing/* handlers (real SQLite core, scripted or fake Google).
 import { describe, expect, it } from "vitest";
-import { CatalogResponse, EntitlementResponse, VerifyResponse } from "@mishana/shared/billing";
+import { CatalogResponse, EntitlementResponse, VerifyResponse } from "@jamaa/shared/billing";
 import type { BillingStore } from "../../src/billing/billing-core";
 import { GoogleHttpError } from "../../src/billing/google";
 import type { GoogleApi } from "../../src/billing/google";

@@ -1,7 +1,7 @@
 // PH-05 (someone else's turn, incl. next up), PH-06 (your turn), PH-09 (tie-break), PH-10 (eliminated / spectator).
 import { Fragment } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
-import type { Me, PlayerView, PublicPlayer } from "@mishana/shared/protocol";
+import type { Me, PlayerView, PublicPlayer } from "@jamaa/shared/protocol";
 import { t } from "../i18n/t";
 import { act } from "../state/session";
 import { HAPTIC, haptic } from "../lib/haptics";

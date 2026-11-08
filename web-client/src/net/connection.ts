@@ -3,8 +3,8 @@ import PartySocket from "partysocket";
 import {
   FATAL_CLOSE_CODES, HEARTBEAT_INTERVAL_MS, PARTY_NAME, PING_FRAME, PONG_FRAME, PONG_TIMEOUT_MS, PROTOCOL_VERSION,
   SLOW_RECONNECT_CLOSE_CODES, SLOW_RECONNECT_MS,
-} from "@mishana/shared/constants";
-import type { ClientIntentMsg, ClientMessage, ErrorMsg, HelloPlayerMsg, HelloTvMsg, StateMsg, WelcomeMsg } from "@mishana/shared/protocol";
+} from "@jamaa/shared/constants";
+import type { ClientIntentMsg, ClientMessage, ErrorMsg, HelloPlayerMsg, HelloTvMsg, StateMsg, WelcomeMsg } from "@jamaa/shared/protocol";
 import { nextActionId, randomId } from "./ids";
 
 export const WS_OPEN = 1;

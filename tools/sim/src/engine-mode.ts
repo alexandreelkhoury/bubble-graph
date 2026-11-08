@@ -1,10 +1,10 @@
 // Engine mode (§13.1): seeded bot games straight through `reduce`, invariants + leak checks after every step.
-import type { Catalog } from "@mishana/shared/engine";
-import { playableCatalog } from "@mishana/shared/billing";
-import { countRoles, effectiveRoleCounts } from "@mishana/shared/engine";
-import type { ViewAccess } from "@mishana/shared/projection";
-// The bot driver and the leak checker are the ones the @mishana/shared tests use (one implementation).
-import { findLeaks, playGame } from "@mishana/shared/testing";
+import type { Catalog } from "@jamaa/shared/engine";
+import { playableCatalog } from "@jamaa/shared/billing";
+import { countRoles, effectiveRoleCounts } from "@jamaa/shared/engine";
+import type { ViewAccess } from "@jamaa/shared/projection";
+// The bot driver and the leak checker are the ones the @jamaa/shared tests use (one implementation).
+import { findLeaks, playGame } from "@jamaa/shared/testing";
 import type { SimArgs } from "./args";
 import { formatColumns } from "./format";
 

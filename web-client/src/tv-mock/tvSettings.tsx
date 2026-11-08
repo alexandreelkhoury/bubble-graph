@@ -5,8 +5,8 @@
 // last row; a sub-panel traps the arrows (Kotlin FocusTrap), so only Back or a toggle's own action leaves it.
 import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import type { ComponentChildren, Ref } from "preact";
-import type { Settings, SettingsPatch } from "@mishana/shared/engine";
-import type { TvView } from "@mishana/shared/protocol";
+import type { Settings, SettingsPatch } from "@jamaa/shared/engine";
+import type { TvView } from "@jamaa/shared/protocol";
 import { fmtNum, locale, t, titleIn } from "../i18n/t";
 import { rolePreview } from "../lib/lobby";
 import {

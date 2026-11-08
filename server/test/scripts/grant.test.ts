@@ -4,7 +4,7 @@ import { buildRequest, buildRequests, normalizeId, parseExpires } from "../../sc
 
 const ID = "0123456789abcdef0123456789abcdef";
 const HASH = "f".repeat(64);
-const ENV = { ADMIN_TOKEN: "t".repeat(40), MISHANA_URL: "https://play.example.workers.dev/" };
+const ENV = { ADMIN_TOKEN: "t".repeat(40), JAMAA_URL: "https://play.example.workers.dev/" };
 const NOW = Date.parse("2026-10-04T00:00:00Z");
 const body = (r: ReturnType<typeof buildRequest>): unknown => JSON.parse(r.init.body ?? "null");
 
@@ -18,7 +18,7 @@ describe("pnpm grant", () => {
     expect(r.init.body).not.toContain(ENV.ADMIN_TOKEN);
   });
 
-  it("grant: --packs (packs only, or with --premium), --expires (date or ISO), --note, --url overrides MISHANA_URL", () => {
+  it("grant: --packs (packs only, or with --premium), --expires (date or ISO), --note, --url overrides JAMAA_URL", () => {
     const r = buildRequest([ID, "--packs", "en-food-01, fr-food-01", "--expires", "2027-01-01", "--note", "owner TV", "--url", "http://localhost:8787"], ENV, NOW);
     expect(r.url).toBe("http://localhost:8787/api/admin/grants");
     expect(body(r)).toEqual({ installId: ID, packs: ["en-food-01", "fr-food-01"], expiresAt: Date.parse("2027-01-01T00:00:00Z"), note: "owner TV" });
@@ -52,8 +52,8 @@ describe("pnpm grant", () => {
 
   it("refuses bad input", () => {
     const bad: [string[], Record<string, string | undefined>, RegExp][] = [
-      [[ID], { MISHANA_URL: ENV.MISHANA_URL }, /ADMIN_TOKEN/],
-      [[ID], { ADMIN_TOKEN: ENV.ADMIN_TOKEN }, /MISHANA_URL/],
+      [[ID], { JAMAA_URL: ENV.JAMAA_URL }, /ADMIN_TOKEN/],
+      [[ID], { ADMIN_TOKEN: ENV.ADMIN_TOKEN }, /JAMAA_URL/],
       [["nothex"], ENV, /32 hex/],
       [[], ENV, /missing/],
       [[ID, "--packs"], ENV, /needs a value/],

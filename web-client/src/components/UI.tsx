@@ -1,10 +1,10 @@
 // Shared phone UI pieces (DESIGN §9): Button, Sheet, Toasts, live regions, top bar, confetti.
 import { useEffect, useRef } from "preact/hooks";
 import type { ComponentChildren, JSX } from "preact";
-import { COLORS } from "@mishana/shared/constants";
-import type { ColorId } from "@mishana/shared/constants";
+import { COLORS } from "@jamaa/shared/constants";
+import type { ColorId } from "@jamaa/shared/constants";
 import { assertiveMsg, menuOpen, politeMsg, toasts } from "../state/store";
-import { BRAND } from "@mishana/shared/brand";
+import { BRAND } from "@jamaa/shared/brand";
 import { locale, t, tSplit } from "../i18n/t";
 import { reduced } from "../lib/motion";
 import type { MessageKey, Params } from "../i18n/t";

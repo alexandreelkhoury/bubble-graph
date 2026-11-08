@@ -1,5 +1,5 @@
 // In-game sentences shared by the phone and the TV mock (they need the view and t(), so they live outside lib/view).
-import type { PublicView } from "@mishana/shared/protocol";
+import type { PublicView } from "@jamaa/shared/protocol";
 import { listOf, t } from "../i18n/t";
 import { playersOf } from "./view";
 

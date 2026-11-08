@@ -1,6 +1,6 @@
 // PH-13 Results: personal headline, team result, both words, pack, Blank guesses, scoreboard.
-import type { Me, PlayerView } from "@mishana/shared/protocol";
-import type { WordRef } from "@mishana/shared/engine";
+import type { Me, PlayerView } from "@jamaa/shared/protocol";
+import type { WordRef } from "@jamaa/shared/engine";
 import { dirOf, fmtNum, isolate, locale, t, titleIn } from "../i18n/t";
 import { act } from "../state/session";
 import { Avatar, avatarState, COLOR_BY_ID } from "../components/PlayerChip";

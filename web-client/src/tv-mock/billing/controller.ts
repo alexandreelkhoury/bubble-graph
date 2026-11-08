@@ -2,14 +2,14 @@
 // server's FAKE store standing in for Google Play: install id, catalog, fake purchase → /verify → token → WS
 // `entitlement`, the §2.4 refresh rules, the `storeOpen` busy signal and the billing toast queue. All I/O is injected.
 import { signal } from "@preact/signals";
-import { PREMIUM_PRODUCT_ID, SUPPORT_EMAIL, packIdFromProductId } from "@mishana/shared/billing/products";
-import type { BasePlanId } from "@mishana/shared/billing/products";
+import { PREMIUM_PRODUCT_ID, SUPPORT_EMAIL, packIdFromProductId } from "@jamaa/shared/billing/products";
+import type { BasePlanId } from "@jamaa/shared/billing/products";
 import type {
   CatalogResponseBody, EntitlementBody, EntitlementResponseBody, FakePurchaseResponseBody, PurchaseResult, VerifyResponseBody,
-} from "@mishana/shared/billing";
-import { BRAND } from "@mishana/shared/brand";
-import { MAX_PURCHASES_PER_VERIFY, PROTOCOL_VERSION } from "@mishana/shared/constants";
-import type { EntitlementMsg, StoreOpenMsg } from "@mishana/shared/protocol";
+} from "@jamaa/shared/billing";
+import { BRAND } from "@jamaa/shared/brand";
+import { MAX_PURCHASES_PER_VERIFY, PROTOCOL_VERSION } from "@jamaa/shared/constants";
+import type { EntitlementMsg, StoreOpenMsg } from "@jamaa/shared/protocol";
 import type { MessageKey, Params } from "../../i18n/t";
 import { backoffMs, inflightKey, nextRefreshAt, planPurchaseRequest, purchasesKey, tokenForCreate, tokenStale, ToastGate, trialOffered } from "./model";
 
@@ -135,7 +135,7 @@ export class BillingController {
 
   // ------------------------------------------------------------------ identity and stored purchases
 
-  /** §5.2: 32 hex from crypto.getRandomValues, kept in localStorage `mishana:installId`. */
+  /** §5.2: 32 hex from crypto.getRandomValues, kept in localStorage `jamaa:installId`. */
   installId(): string {
     const v = this.d.read(BILLING_KEYS.installId);
     if (v !== null && INSTALL_ID_RE.test(v)) return v;

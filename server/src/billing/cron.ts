@@ -1,6 +1,6 @@
 // PAYMENTS-SPEC §3.8: scheduled(). Hourly: ack retries + overdue alert. Daily: voided purchases, stale-sub alert, prune.
-import { ACK_OVERDUE_ALERT_MS } from "@mishana/shared/constants";
-import { packIdFromProductId } from "@mishana/shared/billing";
+import { ACK_OVERDUE_ALERT_MS } from "@jamaa/shared/constants";
+import { packIdFromProductId } from "@jamaa/shared/billing";
 import { sha256hex } from "../tokens";
 import type { BillingStore } from "./billing-core";
 import { billingPacks } from "./catalog-info";

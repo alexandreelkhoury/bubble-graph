@@ -1,6 +1,6 @@
 // PH-02 colour grid: 12 swatches (shape + colour), taken ones hatched and disabled, selection = ring + check.
-import { COLORS } from "@mishana/shared/constants";
-import type { ColorId } from "@mishana/shared/constants";
+import { COLORS } from "@jamaa/shared/constants";
+import type { ColorId } from "@jamaa/shared/constants";
 import { t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { Icon } from "./Icon";

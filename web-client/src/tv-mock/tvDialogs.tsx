@@ -2,8 +2,8 @@
 // open on their safe option, close with Back, and give focus back to whatever opened them.
 import { signal } from "@preact/signals";
 import { useEffect, useRef } from "preact/hooks";
-import { LOCALES } from "@mishana/shared/constants";
-import type { TvView } from "@mishana/shared/protocol";
+import { LOCALES } from "@jamaa/shared/constants";
+import type { TvView } from "@jamaa/shared/protocol";
 import { isolate, locale, LOCALE_NATIVE_NAME, setLocale, t } from "../i18n/t";
 import { saveLocale } from "../lib/storage";
 import { Avatar, avatarState } from "../components/PlayerChip";

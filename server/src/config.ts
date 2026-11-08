@@ -2,7 +2,7 @@
 // Off (anything but "1"): /api/billing/* and /api/admin/* answer 404, the crons do nothing, createRoom ignores
 // entitlement tokens, rooms play the whole catalog (as before payments) and ignore `entitlement` / `storeOpen`, and
 // GET /api/config tells every client to hide its premium UI and never call billing. "1": PAYMENTS-SPEC as written.
-import type { ClientConfigBody } from "@mishana/shared/protocol";
+import type { ClientConfigBody } from "@jamaa/shared/protocol";
 import { notFound } from "./request";
 
 export const CONFIG_PATH = "/api/config";

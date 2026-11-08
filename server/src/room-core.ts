@@ -12,15 +12,15 @@ import {
   ROOM_TV_GONE_TTL_MS,
   ROOM_TV_MAX_TTL_MS,
   TV_BUSY_MAX_MS,
-} from "@mishana/shared/constants";
-import type { Locale } from "@mishana/shared/constants";
-import { assertInvariants, catalogLanguages, createInitialState, nextWakeAt, reduce, sanitizeName } from "@mishana/shared/engine";
-import type { Action, Catalog, GameState } from "@mishana/shared/engine";
-import { PREMIUM_SETTING_KEYS } from "@mishana/shared/billing/products";
-import { projectForPlayer, projectForTv } from "@mishana/shared/projection";
-import type { ViewAccess } from "@mishana/shared/projection";
-import type { ActionMsg, ClientMessage, EntitlementMsg, HelloPlayerMsg, HelloTvMsg, JoinMsg, StoreOpenMsg } from "@mishana/shared/protocol";
-import { ACTION_ID_REGEX, ClientMessageSchema } from "@mishana/shared/protocol";
+} from "@jamaa/shared/constants";
+import type { Locale } from "@jamaa/shared/constants";
+import { assertInvariants, catalogLanguages, createInitialState, nextWakeAt, reduce, sanitizeName } from "@jamaa/shared/engine";
+import type { Action, Catalog, GameState } from "@jamaa/shared/engine";
+import { PREMIUM_SETTING_KEYS } from "@jamaa/shared/billing/products";
+import { projectForPlayer, projectForTv } from "@jamaa/shared/projection";
+import type { ViewAccess } from "@jamaa/shared/projection";
+import type { ActionMsg, ClientMessage, EntitlementMsg, HelloPlayerMsg, HelloTvMsg, JoinMsg, StoreOpenMsg } from "@jamaa/shared/protocol";
+import { ACTION_ID_REGEX, ClientMessageSchema } from "@jamaa/shared/protocol";
 import { playableCatalog, restrictionFor, roomAccess } from "./access";
 import type { RoomAccess } from "./access";
 import { verifyEntitlementToken } from "./billing/token";

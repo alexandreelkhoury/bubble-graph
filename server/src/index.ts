@@ -1,7 +1,7 @@
 // Worker entry (§7.3). Static assets are served by the assets layer; the Worker runs first only for
 // /api/*, /parties/* and /healthz (wrangler.jsonc `run_worker_first`).
 import { getServerByName, routePartykitRequest } from "partyserver";
-import { ROOM_CODE_REGEX, WS_PATH_PREFIX } from "@mishana/shared/constants";
+import { ROOM_CODE_REGEX, WS_PATH_PREFIX } from "@jamaa/shared/constants";
 import { ADMIN_PREFIX, handleAdmin } from "./admin";
 import { BILLING_PREFIX, handleBilling, productionBillingDeps } from "./billing/routes";
 import { runCron } from "./billing/cron";

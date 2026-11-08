@@ -3,7 +3,7 @@
 //   pnpm grant <installId> [<installId>…] [--packs a,b] [--premium] [--expires 2027-01-01] [--note text] [--url URL]
 //   pnpm grant list [--url URL]
 //   pnpm grant revoke <installId|installHash> [--url URL]
-// The server URL comes from --url or MISHANA_URL; the token only from the ADMIN_TOKEN environment variable (never an
+// The server URL comes from --url or JAMAA_URL; the token only from the ADMIN_TOKEN environment variable (never an
 // argument, so it stays out of shell history and process lists). Without --packs a grant is premium; with --packs it
 // is those packs only, unless --premium is given too.
 import { resolve } from "node:path";
@@ -13,7 +13,7 @@ export const USAGE = `usage:
   pnpm grant <installId> [<installId>…] [--packs a,b] [--premium] [--expires YYYY-MM-DD|ISO] [--note text] [--url URL]
   pnpm grant list [--url URL]
   pnpm grant revoke <installId|installHash> [--url URL]
-env: ADMIN_TOKEN (required), MISHANA_URL (when --url is not given)`;
+env: ADMIN_TOKEN (required), JAMAA_URL (when --url is not given)`;
 
 const INSTALL_ID = /^[0-9a-f]{32}$/;
 const INSTALL_HASH = /^[0-9a-f]{64}$/;
@@ -34,7 +34,7 @@ export function parseExpires(raw, nowMs) {
 
 /**
  * Parses argv (without node and the script) into the HTTP request to make. Throws an Error (message = what is wrong)
- * on bad input, or when argv names several install ids (use buildRequests). `env` supplies MISHANA_URL and ADMIN_TOKEN.
+ * on bad input, or when argv names several install ids (use buildRequests). `env` supplies JAMAA_URL and ADMIN_TOKEN.
  */
 export function buildRequest(argv, env, nowMs = Date.now()) {
   const reqs = buildRequests(argv, env, nowMs);
@@ -62,8 +62,8 @@ export function buildRequests(argv, env, nowMs = Date.now()) {
   }
   const token = env.ADMIN_TOKEN ?? "";
   if (token === "") throw new Error("ADMIN_TOKEN is not set in the environment");
-  const base = (opts.url ?? env.MISHANA_URL ?? "").replace(/\/+$/, "");
-  if (!/^https?:\/\/[^/]+/.test(base)) throw new Error("set --url or MISHANA_URL to the server origin (e.g. https://play.example.workers.dev)");
+  const base = (opts.url ?? env.JAMAA_URL ?? "").replace(/\/+$/, "");
+  if (!/^https?:\/\/[^/]+/.test(base)) throw new Error("set --url or JAMAA_URL to the server origin (e.g. https://play.example.workers.dev)");
   const url = `${base}/api/admin/grants`;
   const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
   const [cmd, arg, ...rest] = positional;

@@ -1,6 +1,6 @@
 // PH-01 Enter code: one input drawn as 4 boxes; upper-cases, accepts only the room-code alphabet.
 import { useEffect, useRef, useState } from "preact/hooks";
-import { ROOM_CODE_LENGTH } from "@mishana/shared/constants";
+import { ROOM_CODE_LENGTH } from "@jamaa/shared/constants";
 import { t } from "../i18n/t";
 import { cleanCodeInput, navigate } from "../router";
 import { Icon } from "../components/Icon";

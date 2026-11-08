@@ -1,9 +1,9 @@
 // §8.7 in-house t(): locale → en → key fallback, Intl.PluralRules plurals, {name} placeholders, latn digits.
 // Only English (the fallback) ships in the entry chunk; FR, AR and ES are fetched on demand (each player needs one).
 import { signal } from "@preact/signals";
-import en from "@mishana/shared/i18n/en.json";
-import { LOCALES } from "@mishana/shared/constants";
-import type { Locale } from "@mishana/shared/constants";
+import en from "@jamaa/shared/i18n/en.json";
+import { LOCALES } from "@jamaa/shared/constants";
+import type { Locale } from "@jamaa/shared/constants";
 
 export type MessageKey = keyof typeof en;
 type PluralValue = Partial<Record<Intl.LDMLPluralRule, string>> & { other: string };
@@ -13,9 +13,9 @@ export type Params = Record<string, string | number>;
 
 const CATALOGS: Partial<Record<Locale, Catalog>> = { en };
 const LOADERS: Record<Exclude<Locale, "en">, () => Promise<{ default: unknown }>> = {
-  fr: () => import("@mishana/shared/i18n/fr.json"),
-  ar: () => import("@mishana/shared/i18n/ar.json"),
-  es: () => import("@mishana/shared/i18n/es.json"),
+  fr: () => import("@jamaa/shared/i18n/fr.json"),
+  ar: () => import("@jamaa/shared/i18n/ar.json"),
+  es: () => import("@jamaa/shared/i18n/es.json"),
 };
 
 /** Loads a locale's catalog (once). Until it is in, translate() falls back to English. */

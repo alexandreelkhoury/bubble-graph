@@ -38,7 +38,7 @@ describe("GoogleClient", () => {
     const { sa, publicKey } = await serviceAccount();
     const m = mockFetch((url) => (url === GOOGLE_TOKEN_URL ? tokenOk() : Response.json({ subscriptionState: "SUBSCRIPTION_STATE_ACTIVE" })));
     const now = 1_790_000_000_000;
-    const c = new GoogleClient(sa, "app.mishana.tv", { fetch: m.fetch, now: () => now, sleep: async () => undefined });
+    const c = new GoogleClient(sa, "app.jamaa.tv", { fetch: m.fetch, now: () => now, sleep: async () => undefined });
     await c.getSubscriptionV2(TOKEN, opts);
     const tokenCall = m.calls[0] as Call;
     expect(tokenCall.init.method).toBe("POST");
@@ -160,7 +160,7 @@ describe("GoogleClient", () => {
   it("URLs for get / ack / voided with an encoded token; voided pagination", async () => {
     const { sa } = await serviceAccount();
     const m = mockFetch((url) => (url === GOOGLE_TOKEN_URL ? tokenOk() : Response.json({})));
-    const c = new GoogleClient(sa, "app.mishana.tv", { fetch: m.fetch, now: () => 0, sleep: async () => undefined });
+    const c = new GoogleClient(sa, "app.jamaa.tv", { fetch: m.fetch, now: () => 0, sleep: async () => undefined });
     const enc = encodeURIComponent(TOKEN);
     await c.getSubscriptionV2(TOKEN, opts);
     await c.getProductV2(TOKEN, opts);
@@ -168,7 +168,7 @@ describe("GoogleClient", () => {
     await c.ackProduct("pack_en_food_01", TOKEN, opts);
     await c.listVoided({ startTimeMs: 1234 }, opts);
     await c.listVoided({ startTimeMs: 1234, pageToken: "next/1" }, opts);
-    const base = "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/app.mishana.tv/purchases/";
+    const base = "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/app.jamaa.tv/purchases/";
     const api = m.calls.filter((x) => x.url !== GOOGLE_TOKEN_URL);
     expect(api.map((x) => [x.init.method, x.url])).toEqual([
       ["GET", `${base}subscriptionsv2/tokens/${enc}`],

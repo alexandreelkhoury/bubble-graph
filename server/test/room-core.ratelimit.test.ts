@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MAX_CONNECTIONS_PER_ROOM, MAX_PENDING_CONNECTIONS, MSG_MAX_BYTES, PING_FRAME, PONG_FRAME, RATE_BURST } from "@mishana/shared/constants";
+import { MAX_CONNECTIONS_PER_ROOM, MAX_PENDING_CONNECTIONS, MSG_MAX_BYTES, PING_FRAME, PONG_FRAME, RATE_BURST } from "@jamaa/shared/constants";
 import { MAX_SPECTATORS_PER_ROOM } from "../src/room-core";
 import { Harness } from "./support/fakes";
 

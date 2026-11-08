@@ -1,10 +1,10 @@
 // Thin Durable Object adapter (§7.5): all behaviour lives in RoomCore. Only this file and index.ts import partyserver.
 import { Server } from "partyserver";
 import type { Connection, ConnectionContext, WSMessage } from "partyserver";
-import { PING_FRAME, PONG_FRAME } from "@mishana/shared/constants";
-import type { Catalog } from "@mishana/shared/engine";
-import { loadCatalog } from "@mishana/shared/packs";
-import { PACKS } from "@mishana/word-packs";
+import { PING_FRAME, PONG_FRAME } from "@jamaa/shared/constants";
+import type { Catalog } from "@jamaa/shared/engine";
+import { loadCatalog } from "@jamaa/shared/packs";
+import { PACKS } from "@jamaa/content";
 import type { Env } from "./env";
 import { clientIp, notFound } from "./request";
 import { fakeAllowedByEnv } from "./billing/mode";

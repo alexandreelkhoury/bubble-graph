@@ -1,10 +1,10 @@
 // The billing view of the shipped word packs (PAYMENTS-SPEC §1.2, §3.4 /catalog, §2.3 step 7), read straight from the
 // pack JSON without the zod parse, so the stateless Worker and the Billing DO stay cheap. Every shipped pack is
 // schema-validated at build time (word-packs tests, pack-lint) and again by the Room DO's loadCatalog.
-import { languageOf } from "@mishana/shared/engine";
-import type { AgeRating, LocalizedTitle, PackTier } from "@mishana/shared/engine";
-import type { Locale } from "@mishana/shared/constants";
-import { PACKS } from "@mishana/word-packs";
+import { languageOf } from "@jamaa/shared/engine";
+import type { AgeRating, LocalizedTitle, PackTier } from "@jamaa/shared/engine";
+import type { Locale } from "@jamaa/shared/constants";
+import { PACKS } from "@jamaa/content";
 
 export interface BillingPackInfo {
   id: string; locale: string; language: Locale; tier: PackTier; ageRating: AgeRating;

@@ -1,6 +1,6 @@
 // §8.3 tiny location.pathname router (no library).
 import { signal } from "@preact/signals";
-import { ROOM_CODE_ALPHABET, ROOM_CODE_LENGTH, ROOM_CODE_REGEX } from "@mishana/shared/constants";
+import { ROOM_CODE_ALPHABET, ROOM_CODE_LENGTH, ROOM_CODE_REGEX } from "@jamaa/shared/constants";
 
 export type Route =
   | { kind: "home"; prefill: string }

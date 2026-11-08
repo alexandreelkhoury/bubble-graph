@@ -1,7 +1,7 @@
 // Pure view helpers shared by the phone screens and the TV mock (both views extend PublicView).
-import type { PublicPlayer, PublicView } from "@mishana/shared/protocol";
-import type { Role } from "@mishana/shared/engine";
-import { MAX_NO_ELIMINATION_STREAK } from "@mishana/shared/constants";
+import type { PublicPlayer, PublicView } from "@jamaa/shared/protocol";
+import type { Role } from "@jamaa/shared/engine";
+import { MAX_NO_ELIMINATION_STREAK } from "@jamaa/shared/constants";
 import type { MessageKey } from "../i18n/t";
 
 type Players = Pick<PublicView, "players">;

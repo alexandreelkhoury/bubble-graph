@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ClockOffset, fractionLeft, remainingMs, secondsLeft, timerTone } from "../src/lib/countdown";
 import { canStep, stepValue } from "../src/lib/settings";
-import { SETTINGS_BOUNDS } from "@mishana/shared/constants";
+import { SETTINGS_BOUNDS } from "@jamaa/shared/constants";
 
 describe("countdown", () => {
   it("keeps the largest of the last 5 offset samples", () => {

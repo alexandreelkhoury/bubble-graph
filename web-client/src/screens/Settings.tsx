@@ -1,7 +1,7 @@
 // PH-03b settings sheet: the TV-03 rows (lib/settingsModel), SETTINGS_BOUNDS steps, sent immediately (debounced 300 ms).
 import type { ComponentChildren } from "preact";
-import type { Settings, SettingsPatch } from "@mishana/shared/engine";
-import type { PlayerView } from "@mishana/shared/protocol";
+import type { Settings, SettingsPatch } from "@jamaa/shared/engine";
+import type { PlayerView } from "@jamaa/shared/protocol";
 import { fmtNum, locale, t, titleIn } from "../i18n/t";
 import { actId } from "../state/session";
 import { lastError, pushToast } from "../state/store";

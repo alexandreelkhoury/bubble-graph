@@ -1,9 +1,9 @@
 // §6.6 / §7.6 HTTP handlers. Never imports partyserver.
-import { BRAND } from "@mishana/shared/brand";
-import { HTTP_BODY_MAX_BYTES, PROTOCOL_VERSION, WS_PATH_PREFIX } from "@mishana/shared/constants";
-import type { Locale } from "@mishana/shared/constants";
-import type { EntitlementStatus, ErrorCode } from "@mishana/shared/protocol";
-import { CreateRoomRequest } from "@mishana/shared/protocol";
+import { BRAND } from "@jamaa/shared/brand";
+import { HTTP_BODY_MAX_BYTES, PROTOCOL_VERSION, WS_PATH_PREFIX } from "@jamaa/shared/constants";
+import type { Locale } from "@jamaa/shared/constants";
+import type { EntitlementStatus, ErrorCode } from "@jamaa/shared/protocol";
+import { CreateRoomRequest } from "@jamaa/shared/protocol";
 import { billingPacks } from "./billing/catalog-info";
 import { billingModeForRequest } from "./billing/mode";
 import { verifyEntitlementToken, verifyKeysFromSecret } from "./billing/token";

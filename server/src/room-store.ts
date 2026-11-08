@@ -1,6 +1,6 @@
 // Durable storage of one room (§7.5): the three KV records and the alarm. Owns the storage keys, batches
 // writes into one multi-key put, and caches the scheduled alarm so it is not read back on every entry point.
-import type { GameState } from "@mishana/shared/engine";
+import type { GameState } from "@jamaa/shared/engine";
 import type { RoomEntitlement } from "./billing/token";
 
 export interface RoomMeta {

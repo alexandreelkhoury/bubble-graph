@@ -1,8 +1,8 @@
 // One declarative source for the settings rows (DESIGN: PH-03b shows "exactly the TV-03 rows"). The phone sheet
 // renders each row as a segmented control / switch / stepper / chips; the TV mock as a ‹ value › row.
-import { LOCALES, SETTINGS_BOUNDS } from "@mishana/shared/constants";
-import type { Points, Settings, SettingsPatch } from "@mishana/shared/engine";
-import { languageOf } from "@mishana/shared/engine";
+import { LOCALES, SETTINGS_BOUNDS } from "@jamaa/shared/constants";
+import type { Points, Settings, SettingsPatch } from "@jamaa/shared/engine";
+import { languageOf } from "@jamaa/shared/engine";
 import { fmtNum, LOCALE_NATIVE_NAME, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { stepValue } from "./settings";

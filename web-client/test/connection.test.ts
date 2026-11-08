@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { FATAL_CLOSE_CODES, PING_FRAME, PONG_FRAME, SLOW_RECONNECT_MS } from "@mishana/shared/constants";
+import { FATAL_CLOSE_CODES, PING_FRAME, PONG_FRAME, SLOW_RECONNECT_MS } from "@jamaa/shared/constants";
 import { Connection } from "../src/net/connection";
 import type { ConnStatus, SocketHandlers, SocketLike } from "../src/net/connection";
 

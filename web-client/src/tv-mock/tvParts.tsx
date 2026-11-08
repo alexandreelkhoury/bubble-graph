@@ -1,7 +1,7 @@
 // TV building blocks: top bar, action pill (double-OK), timer ring, player tile, stamp, room code.
 import { useEffect, useRef, useState } from "preact/hooks";
 import type { ComponentChildren, Ref } from "preact";
-import type { DeadlineView, PublicPlayer, TvView } from "@mishana/shared/protocol";
+import type { DeadlineView, PublicPlayer, TvView } from "@jamaa/shared/protocol";
 import { fmtNum, t } from "../i18n/t";
 import { PHASE_KEY } from "../lib/keys";
 import { Avatar, avatarState, colorVars } from "../components/PlayerChip";

@@ -1,7 +1,7 @@
 // PH-17 menu sheet: language (labels in their own language), vibration, leave.
 import { useState } from "preact/hooks";
-import { LOCALES } from "@mishana/shared/constants";
-import type { Locale } from "@mishana/shared/constants";
+import { LOCALES } from "@jamaa/shared/constants";
+import type { Locale } from "@jamaa/shared/constants";
 import { dirOf, locale, LOCALE_NATIVE_NAME, setLocale, t } from "../i18n/t";
 import { saveLocale } from "../lib/storage";
 import { setVibration, vibrationEnabled } from "../lib/haptics";

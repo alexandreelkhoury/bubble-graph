@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { StateSchema } from "@mishana/shared/protocol";
-import type { TvView } from "@mishana/shared/protocol";
+import { StateSchema } from "@jamaa/shared/protocol";
+import type { TvView } from "@jamaa/shared/protocol";
 import { playRoom, tvViewProblems } from "../src/ws-mode";
 
 const fixture = (name: string): TvView => {
@@ -30,8 +30,8 @@ describe("ws mode §5.4 checker", () => {
   });
 });
 
-// Integration (needs a running server): MISHANA_WS_URL=http://127.0.0.1:8787 pnpm test
-const WS_URL = process.env.MISHANA_WS_URL;
+// Integration (needs a running server): JAMAA_WS_URL=http://127.0.0.1:8787 pnpm test
+const WS_URL = process.env.JAMAA_WS_URL;
 describe.skipIf(!WS_URL)("ws mode against a live server", () => {
   it("plays full games over the protocol with a mid-game resume", { timeout: 120_000 }, async () => {
     const stats = await playRoom(WS_URL as string, 5, 2, { seed: 3, winRule: "official", tieBreak: "random", verbose: false }, () => {});

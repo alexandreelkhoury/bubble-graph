@@ -58,16 +58,16 @@ function main() {
   const distIndex = join(ROOT, "web-client", "dist", "index.html");
   if (!existsSync(distIndex)) {
     console.log("web-client/dist is missing: building the web client once (wrangler serves it as static assets)…");
-    const r = spawnSync(PNPM, ["--filter", "@mishana/web-client", "build"], { cwd: ROOT, stdio: "inherit", shell: isWin });
+    const r = spawnSync(PNPM, ["--filter", "@jamaa/web-client", "build"], { cwd: ROOT, stdio: "inherit", shell: isWin });
     if (r.status !== 0) {
-      console.error("Web client build failed; fix it or run `pnpm --filter @mishana/web-client build` manually.");
+      console.error("Web client build failed; fix it or run `pnpm --filter @jamaa/web-client build` manually.");
       process.exit(r.status ?? 1);
     }
   }
 
   const webOrigin = `http://${lanHost}:${VITE_PORT}`;
   const wranglerArgs = [
-    "--filter", "@mishana/server", "exec", "wrangler", "dev",
+    "--filter", "@jamaa/server", "exec", "wrangler", "dev",
     "--ip", "0.0.0.0", "--port", String(SERVER_PORT),
     "--show-interactive-dev-session=false",
     "--var", `JOIN_BASE_URL:${webOrigin}`,
@@ -80,7 +80,7 @@ function main() {
     // wrangler.jsonc ships BILLING_ENABLED "0" (premium hidden in production); local dev works on payments.
     "--var", "BILLING_ENABLED:1",
   ];
-  const viteArgs = ["--filter", "@mishana/web-client", "exec", "vite", "--host", "0.0.0.0", "--port", String(VITE_PORT), "--strictPort"];
+  const viteArgs = ["--filter", "@jamaa/web-client", "exec", "vite", "--host", "0.0.0.0", "--port", String(VITE_PORT), "--strictPort"];
 
   const children = [
     spawn(PNPM, wranglerArgs, { cwd: ROOT, stdio: "inherit", shell: isWin }),

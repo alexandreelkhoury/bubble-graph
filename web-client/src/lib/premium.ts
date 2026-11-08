@@ -1,9 +1,9 @@
 // PAYMENTS-SPEC §5.1: what the phone shows about a room's premium state. Pure, zod-free (main bundle).
 // The phone never sells: locked packs are rows with "Unlock on the TV", never a buy button, a price or a product id.
-import { PREMIUM_SETTING_KEYS } from "@mishana/shared/billing/products";
-import type { Locale } from "@mishana/shared/constants";
-import type { Phase, Settings } from "@mishana/shared/engine";
-import type { LockedPackInfo, PublicView } from "@mishana/shared/protocol";
+import { PREMIUM_SETTING_KEYS } from "@jamaa/shared/billing/products";
+import type { Locale } from "@jamaa/shared/constants";
+import type { Phase, Settings } from "@jamaa/shared/engine";
+import type { LockedPackInfo, PublicView } from "@jamaa/shared/protocol";
 
 /** One locked-pack row on the phone: exactly what it renders, nothing it could sell with. */
 export interface LockedPackRow { id: string; title: string; pairCount: number; trailingKey: "settings.unlockOnTv" }

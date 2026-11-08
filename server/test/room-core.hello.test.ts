@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SEAT_HOLD_MS } from "@mishana/shared/constants";
+import { SEAT_HOLD_MS } from "@jamaa/shared/constants";
 import { Harness, TV_TOKEN } from "./support/fakes";
 
 describe("RoomCore hello", () => {

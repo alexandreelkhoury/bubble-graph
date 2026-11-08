@@ -1,6 +1,6 @@
 // App-wide signals (§8.2): view, me, conn, lastError, locale (+ UI helpers: toasts, live region, clock).
 import { computed, signal } from "@preact/signals";
-import type { ErrorCode, ErrorMsg, PlayerView } from "@mishana/shared/protocol";
+import type { ErrorCode, ErrorMsg, PlayerView } from "@jamaa/shared/protocol";
 import type { ConnStatus } from "../net/connection";
 import { ClockOffset } from "../lib/countdown";
 

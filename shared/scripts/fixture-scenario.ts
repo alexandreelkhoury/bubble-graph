@@ -22,7 +22,7 @@ const LEA = "p_1b2c3d4e5f60718293a4b5c6";
 /** Returns generated file name → file content (pretty-printed, trailing newline). */
 export function generateFixtures(): Map<string, string> {
   const files = new Map<string, string>();
-  const g = new Game({ seed: FIXTURE_SEED, now: FIXTURE_T0, catalog: TEST_FREE_CATALOG, roomCode: "KXRT", joinUrl: "https://mish-ana.example.workers.dev/KXRT" });
+  const g = new Game({ seed: FIXTURE_SEED, now: FIXTURE_T0, catalog: TEST_FREE_CATALOG, roomCode: "KXRT", joinUrl: "https://play.example.workers.dev/KXRT" });
 
   const write = (name: string, view: unknown): void => {
     const msg = { v: 1, t: "state", seq: g.state.version, serverNow: g.now, view };

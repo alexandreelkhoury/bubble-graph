@@ -1,7 +1,7 @@
 // PH-03 Lobby (player and VIP variants) + kick sheet + settings sheet.
 import { useState } from "preact/hooks";
-import { MAX_PLAYERS } from "@mishana/shared/constants";
-import type { PlayerView, PublicPlayer } from "@mishana/shared/protocol";
+import { MAX_PLAYERS } from "@jamaa/shared/constants";
+import type { PlayerView, PublicPlayer } from "@jamaa/shared/protocol";
 import { fmtNum, isolate, locale, LOCALE_NATIVE_NAME, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { RoleEmblem } from "../components/Role";

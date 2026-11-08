@@ -1,7 +1,7 @@
 // In-memory fakes for driving RoomCore in Node (§7.5 "Dependency injection").
-import type { ClientIntentMsg } from "@mishana/shared/protocol";
-import type { GameState, SettingsPatch } from "@mishana/shared/engine";
-import { T0, TEST_CATALOG, TIMERS_OFF } from "@mishana/shared/testing";
+import type { ClientIntentMsg } from "@jamaa/shared/protocol";
+import type { GameState, SettingsPatch } from "@jamaa/shared/engine";
+import { T0, TEST_CATALOG, TIMERS_OFF } from "@jamaa/shared/testing";
 import type { RoomEntitlement } from "../../src/billing/token";
 import { RoomCore } from "../../src/room-core";
 import type { ConnHandle, ConnState, RoomBillingDeps, RoomStorage } from "../../src/room-core";

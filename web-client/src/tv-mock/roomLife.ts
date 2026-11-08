@@ -1,6 +1,6 @@
 // TV room lifetime helpers: TV-13e (SPEC §7.5 / §9.8) re-creation and the Settings → About install id (PAYMENTS-SPEC §3.12).
-import { CLOSE_CODES } from "@mishana/shared/constants";
-import type { TvView } from "@mishana/shared/protocol";
+import { CLOSE_CODES } from "@jamaa/shared/constants";
+import type { TvView } from "@jamaa/shared/protocol";
 
 /**
  * ROOM_EXPIRED (4010) or ROOM_NOT_FOUND (4004) while the TV shows LOBBY or RESULTS (or no view yet) → re-create the

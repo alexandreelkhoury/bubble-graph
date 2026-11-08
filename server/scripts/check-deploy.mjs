@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// PAYMENTS-SPEC §3.2 / §3.10: deploy guard, run first by `pnpm --filter @mishana/server run deploy` (always `run`:
+// PAYMENTS-SPEC §3.2 / §3.10: deploy guard, run first by `pnpm --filter @jamaa/server run deploy` (always `run`:
 // bare `pnpm deploy` is pnpm's built-in command, not this script). Refuses to deploy unless wrangler.jsonc ships
 // BILLING_MODE "google", ALLOW_FAKE_BILLING "0" and observability.traces.enabled false (traces would record outbound
 // Google URLs, which carry raw purchase tokens), and has no `env` block (a named environment could override any of

@@ -2,9 +2,9 @@
 // The word element is only mounted while revealed, so it never sits hidden in the DOM.
 import { useEffect, useRef, useState } from "preact/hooks";
 import type { JSX } from "preact";
-import type { ColorId, Locale } from "@mishana/shared/constants";
-import type { Role } from "@mishana/shared/engine";
-import type { WordRef } from "@mishana/shared/engine";
+import type { ColorId, Locale } from "@jamaa/shared/constants";
+import type { Role } from "@jamaa/shared/engine";
+import type { WordRef } from "@jamaa/shared/engine";
 import { HAPTIC, haptic } from "../lib/haptics";
 import { dirOf, t } from "../i18n/t";
 import { announce, assertiveMsg } from "../state/store";

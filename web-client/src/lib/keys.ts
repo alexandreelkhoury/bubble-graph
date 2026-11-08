@@ -1,5 +1,5 @@
 // Enum → message-key maps shared by the phone and the TV mock.
-import type { Phase, Role } from "@mishana/shared/engine";
+import type { Phase, Role } from "@jamaa/shared/engine";
 import type { MessageKey } from "../i18n/t";
 
 export const ROLE_KEY: Record<Role, MessageKey> = { CIVILIAN: "role.civilian", UNDERCOVER: "role.undercover", BLANK: "role.blank" };
