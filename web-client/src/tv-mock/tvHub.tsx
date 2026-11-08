@@ -76,6 +76,7 @@ export function readingDir(key: string, rtl: boolean): 1 | -1 | 0 {
 
 /** Position of game `i` relative to the focused one `f`: -1 (just off the start edge) … n-2 (wrapping). */
 export function carouselPos(i: number, f: number, n: number): number {
+  if (n <= 1) return 0;
   return (((i - f + 1) % n) + n) % n - 1;
 }
 

@@ -2,202 +2,73 @@ package app.jamaa.tv.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.jamaa.tv.R
-import app.jamaa.tv.game.Names
-import app.jamaa.tv.i18n.isolate
-import app.jamaa.tv.protocol.HistoryEntry
-import app.jamaa.tv.protocol.PublicPlayer
+import app.jamaa.tv.games.PauseItemSpec
+import app.jamaa.tv.platform.PauseRow
+import app.jamaa.tv.ui.platform.keyText
 import app.jamaa.tv.ui.theme.JamaaColors
-import app.jamaa.tv.ui.theme.JamaaShapes
 import app.jamaa.tv.ui.theme.JamaaSpace
 import app.jamaa.tv.ui.theme.JamaaTheme
 
-private enum class PausePage { Menu, Players, ConfirmEnd }
-
-private enum class MenuItem { Resume, Skip, Players, Sound, EndGame, Exit }
-
 /**
- * TV-12 pause menu (Back during a game or on Results). Local only: "The game keeps running" (`tv.pauseNote`, under the
- * title). On Results it also holds the round [history] (moved off the scoreboard).
- * Items: Resume · Skip turn/timer (HOST_ADVANCE; hidden on Results) · Players… (→ kick) · Sound on/off (DESIGN §6.4
- * global mute; the menu stays open) · End game (confirm) · Exit.
- * Coming back from a sub-page or a confirm puts focus on the item that opened it (DESIGN §7).
+ * HUB-06 pause menu (JAMAA-PLATFORM §3.2; Back in game). Rows come from [app.jamaa.tv.platform.PauseMenuModel]:
+ * **Resume** (initial focus), the game's own host items in declared order (enabled only in their phases), **Rules ⓘ**,
+ * Sound on/off, **Quit game** (confirm, initial focus "Keep playing", handled by AppRoot). Local: "The game keeps
+ * running" (no pause in the protocol). In game this is the only place host actions live.
  */
 @Composable
 fun PauseMenu(
-    players: List<PublicPlayer>,
-    canSkip: Boolean,
+    rows: List<PauseRow>,
     onResume: () -> Unit,
-    onSkip: () -> Unit,
-    onKick: (PublicPlayer) -> Unit,
-    onEndGame: () -> Unit,
-    onExit: () -> Unit,
+    onItem: (PauseItemSpec) -> Unit,
+    onRules: () -> Unit,
     soundOn: Boolean,
     onToggleSound: () -> Unit,
-    history: List<HistoryEntry> = emptyList(),
+    onQuit: () -> Unit,
 ) {
-    var page by remember { mutableStateOf(PausePage.Menu) }
-    var lastItem by remember { mutableStateOf(MenuItem.Resume) }
-    val itemFocus = remember { MenuItem.entries.associateWith { FocusRequester() } }
-    // Players page: the row last picked (focus returns there, or to its neighbour once that player is gone).
-    var pickedIndex by remember { mutableIntStateOf(0) }
-    var kickTarget by remember { mutableStateOf<PublicPlayer?>(null) }
-    // The confirm closes by itself when the picked player leaves meanwhile (it would have nothing to act on).
-    val activeTarget = kickTarget?.takeIf { k -> players.any { it.id == k.id && !it.left } }
-
-    fun open(item: MenuItem, next: PausePage) {
-        lastItem = item
-        page = next
-    }
-
-    when (page) {
-        PausePage.Menu -> {
-            val resume = itemFocus.getValue(MenuItem.Resume)
-            // With the history (Results) the card stays inside the 540 dp screen: 520 wide, 20 dp vertical padding.
-            OverlayCard(onBack = onResume, width = if (history.isEmpty()) 440.dp else 520.dp, default = resume, padV = if (history.isEmpty()) 28.dp else 20.dp) {
-                Text(stringResource(R.string.tv__pause_title), style = JamaaTheme.type.headline, color = JamaaColors.Text)
-                // Right under the title, before the first item: nothing pauses, so it must be read before "Back to game".
-                Text(stringResource(R.string.tv__pause_note), style = JamaaTheme.type.caption, color = JamaaColors.TextMuted)
-                if (history.isNotEmpty()) {
-                    Spacer(Modifier.height(JamaaSpace.s2))
-                    HistoryStrip(history, players)
-                }
-                Spacer(Modifier.height(JamaaSpace.s5))
-                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(JamaaSpace.s3)) {
-                    fun Modifier.item(i: MenuItem) = fillMaxWidth().focusRequester(itemFocus.getValue(i))
-                    // Full-width items: row focus scale (1.02) so the start edge doesn't jump sideways (DESIGN §4.6).
-                    val row = FocusKind.Row
-                    JamaaButton(stringResource(R.string.tv__resume), onResume, Modifier.item(MenuItem.Resume), kind = ButtonKind.Primary, focusKind = row)
-                    if (canSkip) {
-                        JamaaButton(stringResource(R.string.tv__skip), { onSkip(); onResume() }, Modifier.item(MenuItem.Skip), focusKind = row)
-                    }
-                    JamaaButton(stringResource(R.string.tv__players), { open(MenuItem.Players, PausePage.Players) }, Modifier.item(MenuItem.Players), icon = JamaaIcons.Users, focusKind = row)
-                    JamaaButton(
+    val resume = remember { FocusRequester() }
+    OverlayCard(onBack = onResume, width = 440.dp, default = resume) {
+        Text(stringResource(R.string.tv__pause_title), style = JamaaTheme.type.headline, color = JamaaColors.Text)
+        Text(stringResource(R.string.tv__pause_note), style = JamaaTheme.type.caption, color = JamaaColors.TextMuted)
+        Spacer(Modifier.height(JamaaSpace.s5))
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(JamaaSpace.s3)) {
+            val row = FocusKind.Row
+            for (r in rows) {
+                when (r) {
+                    PauseRow.Resume -> JamaaButton(
+                        stringResource(R.string.tv__resume), onResume, Modifier.fillMaxWidth().focusRequester(resume),
+                        kind = ButtonKind.Primary, focusKind = row,
+                    )
+                    is PauseRow.GameItem -> JamaaButton(
+                        keyText(r.item.labelKey),
+                        { if (r.enabled) onItem(r.item) },
+                        Modifier.fillMaxWidth(),
+                        dimmed = !r.enabled,
+                        focusKind = row,
+                    )
+                    PauseRow.Rules -> JamaaButton(stringResource(R.string.rules__open), onRules, Modifier.fillMaxWidth(), icon = JamaaIcons.Info, focusKind = row)
+                    PauseRow.Sound -> JamaaButton(
                         stringResource(if (soundOn) R.string.tv__sound_on else R.string.tv__sound_off),
                         onToggleSound,
-                        Modifier.item(MenuItem.Sound),
+                        Modifier.fillMaxWidth(),
                         icon = if (soundOn) JamaaIcons.Volume else JamaaIcons.VolumeOff,
                         focusKind = row,
                     )
-                    JamaaButton(stringResource(R.string.tv__end_game), { open(MenuItem.EndGame, PausePage.ConfirmEnd) }, Modifier.item(MenuItem.EndGame), focusKind = row)
-                    JamaaButton(stringResource(R.string.tv__exit_app), onExit, Modifier.item(MenuItem.Exit), kind = ButtonKind.Danger, icon = JamaaIcons.DoorOut, focusKind = row)
-                }
-            }
-            InitialFocus(itemFocus.getValue(lastItem), key = page)
-        }
-        PausePage.Players -> {
-            val t = activeTarget
-            if (t != null) {
-                JamaaDialog(
-                    title = stringResource(R.string.lobby__kick_confirm, isolate(Names.ellipsize(t.name, 20))),
-                    body = null,
-                    safeLabel = stringResource(R.string.common__cancel),
-                    actionLabel = stringResource(R.string.lobby__kick),
-                    onSafe = { kickTarget = null },
-                    onAction = {
-                        onKick(t)
-                        kickTarget = null
-                    },
-                )
-            } else {
-                PlayersList(
-                    players,
-                    focusIndex = pickedIndex,
-                    onBack = { page = PausePage.Menu },
-                    onPick = { i, p ->
-                        pickedIndex = i
-                        kickTarget = p
-                    },
-                )
-            }
-        }
-        PausePage.ConfirmEnd -> JamaaDialog(
-            title = stringResource(R.string.tv__end_game_confirm),
-            body = stringResource(R.string.tv__end_game_body),
-            safeLabel = stringResource(R.string.tv__keep_playing),
-            actionLabel = stringResource(R.string.tv__end_game),
-            onSafe = { page = PausePage.Menu },
-            onAction = {
-                onEndGame()
-                onResume()
-            },
-        )
-    }
-}
-
-/**
- * "Players…": pick someone who left for good, so the game stops skipping their turns. Focus starts on row
- * [focusIndex] (the one picked last; its neighbour when that player is gone).
- */
-@Composable
-private fun PlayersList(players: List<PublicPlayer>, focusIndex: Int, onBack: () -> Unit, onPick: (Int, PublicPlayer) -> Unit) {
-    val visible = players.filter { !it.left }
-    val rowFocus = remember { mutableMapOf<String, FocusRequester>() }
-    val back = remember { FocusRequester() }
-    val start = visible.getOrNull(focusIndex.coerceAtMost(visible.lastIndex))?.let { p -> rowFocus.getOrPut(p.id) { FocusRequester() } } ?: back
-    OverlayCard(onBack = onBack, width = 520.dp, default = back) {
-        Text(stringResource(R.string.tv__players), style = JamaaTheme.type.headline, color = JamaaColors.Text)
-        Spacer(Modifier.height(JamaaSpace.s3))
-        LazyColumn(
-            Modifier.fillMaxWidth().heightIn(max = 346.dp).focusRestorer(start),
-            contentPadding = PaddingValues(horizontal = JamaaFocus.ListPadH, vertical = JamaaFocus.ListPadV),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            itemsIndexed(visible, key = { _, p -> p.id }) { i, p ->
-                JamaaFocusSurface(
-                    onClick = { onPick(i, p) },
-                    modifier = Modifier.fillMaxWidth().focusRequester(rowFocus.getOrPut(p.id) { FocusRequester() }),
-                    shape = JamaaShapes.row,
-                    kind = FocusKind.Row,
-                ) {
-                    Row(Modifier.padding(horizontal = JamaaSpace.s4, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Avatar(p.color, 40.dp, state = AvatarState.of(p))
-                        Spacer(Modifier.width(JamaaSpace.s4))
-                        Text(
-                            Names.ellipsize(p.name, 20),
-                            style = JamaaTheme.type.titleS,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f),
-                        )
-                        if (!p.connected) {
-                            Text(stringResource(R.string.common__away), style = JamaaTheme.type.caption, color = JamaaColors.Danger)
-                        }
-                        Spacer(Modifier.width(JamaaSpace.s3))
-                        Icon(JamaaIcons.UserX, contentDescription = stringResource(R.string.lobby__kick), tint = JamaaColors.TextMuted, modifier = Modifier.size(22.dp))
-                    }
+                    PauseRow.Quit -> JamaaButton(stringResource(R.string.tv__end_game), onQuit, Modifier.fillMaxWidth(), kind = ButtonKind.Danger, icon = JamaaIcons.DoorOut, focusKind = row)
                 }
             }
         }
-        Spacer(Modifier.height(JamaaSpace.s2))
-        JamaaButton(stringResource(R.string.common__back), onBack, Modifier.focusRequester(back), icon = JamaaIcons.ChevronBack)
     }
-    InitialFocus(start)
+    InitialFocus(resume)
 }

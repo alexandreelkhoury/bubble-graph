@@ -31,7 +31,7 @@ object Products {
      * §4.7 `{email}` = shared `SUPPORT_EMAIL` (the owner fills both; empty hides `store.help` and selects
      * `store.installLimitNoHelp`). Keep it equal to shared/src/billing/products.ts.
      */
-    const val SUPPORT_EMAIL = ""
+    const val SUPPORT_EMAIL = "alexkhoury@hotmail.com"
 
     /** The Play package name (applicationId); also used in the manage-subscription link. */
     const val PACKAGE_NAME = "app.jamaa.tv"
