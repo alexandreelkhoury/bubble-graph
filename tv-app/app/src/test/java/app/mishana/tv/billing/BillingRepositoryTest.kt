@@ -3,6 +3,7 @@ package app.mishana.tv.billing
 import android.app.Activity
 import app.mishana.tv.net.ReconnectPolicy
 import app.mishana.tv.protocol.EntitlementBody
+import app.mishana.tv.protocol.SubscriptionInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -26,9 +27,9 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class BillingRepositoryTest {
     private val base = 1_790_000_000_000L
-    private val premium = OwnedPurchase("premium", "premium-token-1", OwnedState.PURCHASED)
-    private val pack = OwnedPurchase("pack_en_food_01", "pack-token-1", OwnedState.PURCHASED)
-    private val pendingPack = OwnedPurchase("pack_fr_food_01", "pack-token-2", OwnedState.PENDING)
+    private val sub = OwnedPurchase("premium", "sub-token-1", OwnedState.PURCHASED, suspended = false)
+    private val pack = OwnedPurchase("pack_en_food_01", "pack-token-1", OwnedState.PURCHASED, suspended = false)
+    private val pendingPack = OwnedPurchase("pack_fr_food_01", "pack-token-2", OwnedState.PENDING, suspended = false)
 
     private class Env(
         val repo: BillingRepository,
@@ -67,11 +68,11 @@ class BillingRepositoryTest {
 
     @Test
     fun restoreOnStartPostsAllPurchasesAndSavesTheToken() = runTest {
-        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(premium, pack, pendingPack)) })
+        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(sub, pack, pendingPack)) })
         e.repo.start()
         advanceUntilIdle()
         assertEquals(1, e.api.verifyCalls.size)
-        assertEquals(listOf("premium" to "premium-token-1", "pack_en_food_01" to "pack-token-1"), e.api.verifyCalls[0].map { it.productId to it.purchaseToken })
+        assertEquals(listOf("premium" to "sub-token-1", "pack_en_food_01" to "pack-token-1"), e.api.verifyCalls[0].map { it.productId to it.purchaseToken })
         assertEquals("tok1", e.store.saved!!.body.token)
         assertEquals(base, e.store.saved!!.savedAt)
         assertEquals("tok1", e.repo.state.value.entitlement!!.token)
@@ -91,22 +92,19 @@ class BillingRepositoryTest {
     }
 
     @Test
-    fun pendingPremiumShowsTheUnlockButtonAsPending() = runTest {
-        val pendingPremium = premium.copy(purchaseToken = "premium-token-p", state = OwnedState.PENDING)
-        val gw = FakeGateway().apply {
-            owned = GatewayResult.Ok(listOf(pendingPremium))
-            products = GatewayResult.Ok(PlayProducts.all())
-        }
-        val e = env(gw)
-        e.repo.openStore(emptyList())
+    fun suspendedSubscriptionsArePostedAndFlagged() = runTest {
+        val onHold = sub.copy(suspended = true)
+        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(onHold)) }) { it.results["premium"] = "NOT_OWNED" }
+        e.repo.start()
         advanceUntilIdle()
-        assertTrue(e.api.verifyCalls.isEmpty())
-        assertEquals(PremiumCard.Unlock("$7.99", pending = true), StoreModel.premiumCard(e.repo.state.value, base))
+        assertEquals(listOf("premium"), e.api.verifyCalls.single().map { it.productId })
+        assertTrue(e.repo.state.value.subscriptionSuspended)
+        assertEquals(PremiumCard.Suspended, StoreModel.premiumCard(e.repo.state.value, base))
     }
 
     @Test
     fun resumePostsOnlyChangedTuplesElseTheOneHourRule() = runTest {
-        val gw = FakeGateway().apply { owned = GatewayResult.Ok(listOf(premium)) }
+        val gw = FakeGateway().apply { owned = GatewayResult.Ok(listOf(sub)) }
         val e = env(gw)
         e.repo.start()
         advanceUntilIdle()
@@ -119,15 +117,19 @@ class BillingRepositoryTest {
         e.repo.onResume()
         advanceUntilIdle()
         assertEquals("older than 1 h: post again", 2, e.api.verifyCalls.size)
-        gw.owned = GatewayResult.Ok(listOf(premium, pack))
+        gw.owned = GatewayResult.Ok(listOf(sub, pack))
         e.repo.onResume()
         advanceUntilIdle()
         assertEquals("a new tuple: post at once", 3, e.api.verifyCalls.size)
+        gw.owned = GatewayResult.Ok(listOf(sub, pack.copy(suspended = true)))
+        e.repo.onResume()
+        advanceUntilIdle()
+        assertEquals("suspended flag changed: post", 4, e.api.verifyCalls.size)
     }
 
     @Test
     fun aRefreshInARoomEmitsTheTokenForSendEntitlement() = runTest {
-        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(premium)) })
+        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(sub)) })
         e.repo.start()
         advanceUntilIdle()
         assertEquals(listOf("tok1"), e.tokens())
@@ -144,7 +146,7 @@ class BillingRepositoryTest {
     @Test
     fun aRefreshFailureKeepsTheOldTokenAndBacksOff() = runTest {
         val store = MemoryStore()
-        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(premium)) }, store)
+        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(sub)) }, store)
         e.repo.start()
         advanceUntilIdle()
         val old = e.repo.state.value.entitlement!!
@@ -185,21 +187,27 @@ class BillingRepositoryTest {
         val now = base
         val h = 3_600_000L
         val m = 60_000L
-        fun body(exp: Long, pu: Long?) = EntitlementBody("t", pu != null, pu, emptyList(), exp)
+        fun body(exp: Long, pu: Long?, subExp: Long?) = EntitlementBody(
+            "t", pu != null, pu, emptyList(), exp,
+            subExp?.let { SubscriptionInfo("SUBSCRIPTION_STATE_ACTIVE", "monthly", true, false, it) },
+        )
         // No entitlement: 6 h.
         assertEquals(now + 6 * h, BillingRepository.nextRefreshAt(null, now))
         // Fresh 8 h token, free: exp − 1 h = 7 h, capped at 6 h.
-        assertEquals(now + 6 * h, BillingRepository.nextRefreshAt(body(now + 8 * h, null), now))
+        assertEquals(now + 6 * h, BillingRepository.nextRefreshAt(body(now + 8 * h, null, null), now))
         // An older token: exp − 1 h.
-        assertEquals(now + 2 * h, BillingRepository.nextRefreshAt(body(now + 3 * h, null), now))
-        // Lifetime premium (premiumUntil = the token's exp): exp − 1 h comes first.
-        assertEquals(now + 2 * h, BillingRepository.nextRefreshAt(body(now + 3 * h, now + 3 * h), now))
-        // A timed grant ending in 2 h: premiumUntil − 30 min wins, before the room loses premium.
-        assertEquals(now + 90 * m, BillingRepository.nextRefreshAt(body(now + 8 * h, now + 2 * h), now))
+        assertEquals(now + 2 * h, BillingRepository.nextRefreshAt(body(now + 3 * h, null, null), now))
+        // Renewing subscriber whose Google expiry is in 2 h (premiumUntil = +6 h slack): sub.expiresAt + 10 min,
+        // which is before premiumUntil − 30 min, so the refresh lands before the room loses premium.
+        val r = BillingRepository.nextRefreshAt(body(now + 8 * h, now + 8 * h, now + 2 * h), now)
+        assertEquals(now + 2 * h + 10 * m, r)
+        assertTrue(r <= now + 8 * h - 30 * m)
+        // premiumUntil − 30 min wins when it is earliest.
+        assertEquals(now + 90 * m, BillingRepository.nextRefreshAt(body(now + 8 * h, now + 2 * h, null), now))
         // Never earlier than now + 1 min (expired token / past expiry).
-        assertEquals(now + m, BillingRepository.nextRefreshAt(body(now - h, now - h), now))
+        assertEquals(now + m, BillingRepository.nextRefreshAt(body(now - h, now - h, now - h), now))
         // Never later than now + 6 h.
-        assertEquals(now + 6 * h, BillingRepository.nextRefreshAt(body(now + 100 * h, now + 100 * h), now))
+        assertEquals(now + 6 * h, BillingRepository.nextRefreshAt(body(now + 100 * h, now + 100 * h, now + 100 * h), now))
     }
 
     @Test
@@ -267,7 +275,7 @@ class BillingRepositoryTest {
         advanceUntilIdle()
         assertTrue(e.repo.state.value.busy)
         assertEquals(StorePhase.Ready, e.repo.state.value.phase)
-        e.repo.buy(Activity(), "pack_en_food_01", StoreOrigin.LOCKED_PACK)
+        e.repo.buy(Activity(), "pack_en_food_01", null, StoreOrigin.LOCKED_PACK)
         assertEquals("pack_en_food_01", e.repo.state.value.purchaseInFlight)
         assertEquals(PurchasableOffer("pack_en_food_01", "ot-pack_en_food_01"), gw.launched.single().first)
         assertEquals(InstallId.hash("5f2c8e1a9b0d4c3e7a6f1b2d3c4e5f60"), gw.launched.single().second) // obfuscatedAccountId
@@ -286,36 +294,13 @@ class BillingRepositoryTest {
     }
 
     @Test
-    fun premiumIsQueriedWithThePacksAsOneInappQueryAndBoughtWithItsOneTimeOffer() = runTest {
-        val gw = FakeGateway().apply { products = GatewayResult.Ok(PlayProducts.all("pack_en_food_01")) }
+    fun premiumPurchaseUsesTheTrialOfferOfTheChosenPlan() = runTest {
+        val gw = FakeGateway().apply { products = GatewayResult.Ok(PlayProducts.all()) }
         val e = env(gw)
         e.repo.openStore(emptyList())
         advanceUntilIdle()
-        // One query: premium first, then the catalog's packs.
-        assertEquals(1, gw.productQueries.size)
-        assertEquals(listOf("premium") + e.api.catalog.packs.map { it.productId }, gw.productQueries.single())
-        assertEquals(PremiumCard.Unlock("$7.99", pending = false), StoreModel.premiumCard(e.repo.state.value, base))
-        e.repo.buy(Activity(), "premium", StoreOrigin.LOBBY_BUTTON)
-        assertEquals(PurchasableOffer("premium", "ot-premium"), gw.launched.single().first)
-        assertEquals("premium", e.repo.state.value.purchaseInFlight)
-        assertEquals(PremiumCard.Unlock("$7.99", pending = false, confirming = true), StoreModel.premiumCard(e.repo.state.value, base))
-        gw.purchaseUpdates.emit(PurchaseUpdate(ResponseCodes.OK, null, listOf(premium)))
-        advanceUntilIdle()
-        assertNull(e.repo.state.value.purchaseInFlight)
-        assertEquals(PremiumCard.Active, StoreModel.premiumCard(e.repo.state.value, base))
-        assertEquals(setOf("premium"), e.events.filterIsInstance<BillingEvent.Granted>().single().productIds)
-    }
-
-    @Test
-    fun premiumNotInPlayCannotBeBought() = runTest {
-        val gw = FakeGateway().apply { products = GatewayResult.Ok(ProductsSnapshot(unfetched = mapOf("premium" to 3))) }
-        val e = env(gw)
-        e.repo.openStore(emptyList())
-        advanceUntilIdle()
-        assertEquals(PremiumCard.NoProduct, StoreModel.premiumCard(e.repo.state.value, base))
-        e.repo.buy(Activity(), "premium", StoreOrigin.LOBBY_BUTTON)
-        assertTrue(gw.launched.isEmpty())
-        assertEquals(listOf(BillingErrors.ITEM_UNAVAILABLE), e.toasts())
+        e.repo.buy(Activity(), "premium", "monthly", StoreOrigin.LOBBY_BUTTON)
+        assertEquals(PurchasableOffer("premium", "m-trial", "monthly", "trial-7d"), gw.launched.single().first)
     }
 
     @Test
@@ -324,18 +309,18 @@ class BillingRepositoryTest {
         val e = env(gw)
         e.repo.openStore(emptyList())
         advanceUntilIdle()
-        e.repo.buy(Activity(), "pack_en_food_01", StoreOrigin.LOBBY_BUTTON)
+        e.repo.buy(Activity(), "pack_en_food_01", null, StoreOrigin.LOBBY_BUTTON)
         gw.purchaseUpdates.emit(PurchaseUpdate(ResponseCodes.USER_CANCELED, null, emptyList()))
         advanceUntilIdle()
         assertNull(e.repo.state.value.purchaseInFlight)
         assertTrue("USER_CANCELED is silent", e.toasts().isEmpty())
-        e.repo.buy(Activity(), "pack_en_food_01", StoreOrigin.LOBBY_BUTTON)
+        e.repo.buy(Activity(), "pack_en_food_01", null, StoreOrigin.LOBBY_BUTTON)
         gw.purchaseUpdates.emit(PurchaseUpdate(ResponseCodes.ITEM_ALREADY_OWNED, null, emptyList()))
         advanceUntilIdle()
         assertEquals(listOf("store.alreadyOwned"), e.toasts())
         assertTrue("ITEM_ALREADY_OWNED runs restore", gw.ownedQueries >= 2)
         gw.launchResult = GatewayResult.Err(ResponseCodes.BILLING_UNAVAILABLE, null)
-        e.repo.buy(Activity(), "pack_en_food_01", StoreOrigin.LOBBY_BUTTON)
+        e.repo.buy(Activity(), "pack_en_food_01", null, StoreOrigin.LOBBY_BUTTON)
         assertEquals(StorePhase.Unavailable(UnavailableReason.BILLING_UNAVAILABLE), e.repo.state.value.phase)
         assertNull(e.repo.state.value.purchaseInFlight)
     }
@@ -347,7 +332,7 @@ class BillingRepositoryTest {
         e.repo.openStore(emptyList())
         advanceUntilIdle()
         val verifiesBefore = e.api.verifyCalls.size
-        e.repo.buy(Activity(), "pack_fr_food_01", StoreOrigin.LOBBY_BUTTON)
+        e.repo.buy(Activity(), "pack_fr_food_01", null, StoreOrigin.LOBBY_BUTTON)
         gw.purchaseUpdates.emit(PurchaseUpdate(ResponseCodes.OK, null, listOf(pendingPack)))
         advanceUntilIdle()
         assertEquals(setOf("pack_fr_food_01"), e.repo.state.value.pending)
@@ -366,7 +351,7 @@ class BillingRepositoryTest {
         advanceUntilIdle()
         e.api.fail = BillingApiException(null, null)
         gw.owned = GatewayResult.Ok(listOf(pack)) // Play lists it (unacknowledged) until the server acks it
-        e.repo.buy(Activity(), "pack_en_food_01", StoreOrigin.LOBBY_BUTTON)
+        e.repo.buy(Activity(), "pack_en_food_01", null, StoreOrigin.LOBBY_BUTTON)
         gw.purchaseUpdates.emit(PurchaseUpdate(ResponseCodes.OK, null, listOf(pack)))
         runCurrent()
         assertEquals("pack_en_food_01", e.repo.state.value.purchaseInFlight)
@@ -389,7 +374,7 @@ class BillingRepositoryTest {
         val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(pack)) }) { it.results["pack_en_food_01"] = "INSTALL_LIMIT" }
         e.repo.start()
         advanceUntilIdle()
-        assertEquals(listOf(BillingEvent.Toast("store.installLimit", Products.SUPPORT_EMAIL)), e.events.filterIsInstance<BillingEvent.Toast>())
+        assertEquals(listOf("store.installLimitNoHelp"), e.toasts()) // SUPPORT_EMAIL is empty until the owner sets it
     }
 
     @Test
@@ -418,7 +403,7 @@ class BillingRepositoryTest {
 
     @Test
     fun tokenForCreateNeedsAtLeastAMinuteLeft() = runTest {
-        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(premium)) })
+        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(sub)) })
         assertNull(e.repo.tokenForCreate())
         e.repo.start()
         advanceUntilIdle()
@@ -430,7 +415,7 @@ class BillingRepositoryTest {
 
     @Test
     fun createRoomInvalidTriggersARefresh() = runTest {
-        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(premium)) })
+        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(sub)) })
         e.repo.start()
         advanceUntilIdle()
         e.repo.onCreateRoomEntitlement("OK")
@@ -456,7 +441,7 @@ class BillingRepositoryTest {
         advanceUntilIdle()
         assertEquals(StorePhase.Ready, e.repo.state.value.phase)
         assertNull(e.repo.state.value.catalog)
-        assertEquals(listOf("premium", "pack_test_en_prem_01"), gw.productQueries.last())
+        assertEquals(listOf("pack_test_en_prem_01"), gw.productQueries.last().second)
     }
 
     @Test

@@ -1,11 +1,11 @@
 # DESIGN-JAMAA — the JAMAA platform look, motion and characters
 
-Status: **binding design spec**, draft 1, 2026-11-08. Brand: **JAMAA** (Latin), **جماعة** (Arabic): "the gathering, the group". Game #1 keeps its name **Mish Ana!**.
+Status: **binding design spec**, draft 2 (review applied), 2026-11-08. Brand: **JAMAA** (Latin), **جماعة** (Arabic): "the gathering, the group". Game #1 keeps its name **Mish Ana!**.
 
 **What this file is.** The visual, motion and character layer of the JAMAA platform: brand, worlds, hub screens, the "entering a game" transition, the player characters, the signature moments of games #2–#4, the animation technology per surface, and wireframes. It **extends** [DESIGN.md](DESIGN.md) and does not replace it.
 
 **Precedence (read this first).**
-1. [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) wins on the platform contract: flow, phases, protocol, settings limits, rules-overlay behaviour, the expression set, the animation stack and the budgets. This file only adds visual detail on top of it. Where this file **proposes** a change to it, the change is marked **[AMEND-PLATFORM]** and does not apply until the platform owner accepts it. Until then, the platform value applies.
+1. [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) wins on the platform contract: flow, phases, protocol, settings limits, rules-overlay behaviour, the expression set, the animation stack and the budgets. This file only adds visual detail on top of it. This file's earlier **[AMEND-PLATFORM]** proposals (poster size 210 × 290 dp with a side ticket column, the 1 100 ms first-open portal, the entrance order darken → door → title → characters, the 12 × 9 face space) were **accepted** in the platform's review revision and are now stated in both files (JAMAA-PLATFORM Appendix R). Any future proposal uses the same mark and does not apply until accepted.
 2. [GAME-BLUFF.md](GAME-BLUFF.md), [GAME-LIKELY.md](GAME-LIKELY.md) and [GAME-TRIVIA.md](GAME-TRIVIA.md) (which takes over JAMAA-PLATFORM §2.12's game rules) win on each game's rules, phase timings, scoring and per-step reveal scripts. This file adds easing, layout, character staging, sound mapping and reduced-motion detail.
 3. [DESIGN.md](DESIGN.md) stays the base system: tokens (§2–§4), focus (§4.6), icons and avatars (§5), motion tokens and reduced motion (§6), RTL (§10), accessibility (§11). Everything here reuses those token names. Mish Ana!'s screens TV-01…TV-15 and PH-01…PH-17 are unchanged except where the platform moves them inside the hub.
 4. [SPEC.md](SPEC.md) still wins on identifiers, i18n keys and protocol fields for Mish Ana!.
@@ -126,7 +126,7 @@ The voice rules of DESIGN §1.5 (group on TV, one person on phone, gender-neutra
 
 The **hub** keeps palette B (DESIGN §2.1) unchanged: violet stage, cream text, the same surfaces, focus ring and status colours. Two changes:
 
-1. **Brand accent = amber.** On hub surfaces the brand colour is `color.accent` `#FFC94D` (the lamp), not magenta. Magenta (`color.primary`) remains the **primary button** colour and the default focus glow everywhere (DESIGN §4.6 is unchanged), because changing the focus system would touch every Mish Ana! screen. The amber is used for the wordmark dots, "Tonight's cup", the session stars and the New badge.
+1. **Brand accent = amber.** On hub surfaces the brand colour is `color.accent` `#FFC94D` (the lamp), not magenta. Magenta (`color.primary`) remains the **primary button** colour, and **the focus indicator is one rule everywhere: the 3 dp cream ring + `glow.primary`** (DESIGN §4.6, unchanged), on posters, quiz cards, rows and buttons in every world. A world's accent may tint only a poster's or card's **art**, never the focus indicator. The amber is used for the wordmark dots, "Tonight's cup", the session stars and the New badge.
 2. **Worlds.** Each game owns a **world palette** that replaces the stage and adds three accents while the game (or its setup) is on screen. Text, status colours, focus ring and the 12 player colours never change between worlds, so a player is the same colour everywhere.
 
 **World tokens** (ids and accent/deep/glow from platform §3.4; surface/elevated/accentText added here; contrast computed with the WCAG 2.x formula on 2026-11-08):
@@ -145,7 +145,7 @@ The **hub** keeps palette B (DESIGN §2.1) unchanged: violet stage, cream text, 
 
 Measured: cream text `#FFF7EC` on `world.deep` 17.34 (café) / 16.72 (rooftop) / 17.64 (studio); on `world.surface` 14.24 / 13.37 / 15.10; on `world.elevated` 11.01 / 10.50 / 12.40. `textMuted` `#B8A8D6` on `world.surface` 6.92 / 6.50 / 7.34. Accent on deep 8.51 / 9.47 / 5.15. All pass DESIGN §2.4's thresholds (body ≥ 4.5:1, large/graphics ≥ 3:1). Player colours on world surfaces get the same 24 % cream ring rule as palette B (DESIGN §2.3) wherever they drop below 3:1; the check belongs in the colour test (§9).
 
-**World stage** (replaces `--stage-tv` / `.tv__bg` while a world is active): linear 180° `world.stageTop` → `world.deep` (60 %), a top glow (radial 90 % × 55 % at 50 % −5 %, `world.glow` at 16 %), an accent bounce (radial 60 % × 50 % at −10 % 70 %, `world.accent` at 12 %), and the 6 % grain on TV (against banding). The native TV keeps its night stage for `night-market` until palette B is checked on the owner's TV (DESIGN §2 note).
+**World stage** (replaces `--stage-tv` / `.tv__bg` while a world is active): linear 180° `world.stageTop` → `world.deep` (60 %), a top glow (radial 90 % × 55 % at 50 % −5 %, `world.glow` at 16 %), an accent bounce (radial 60 % × 50 % at −10 % 70 %, `world.accent` at 12 %), and a 6 % grain on TV (against banding). The grain is **one pre-rendered 128 × 128 tile** (generated once at startup into an `ImageBitmap`, or at build as a data-URI PNG on web) drawn with a repeat shader, never regenerated per frame; it is **off** in lite motion, in calm/reduced motion, and during the portal and the entrance. The native TV keeps its night stage for `night-market` until palette B is checked on the owner's TV (DESIGN §2 note).
 
 **Trivia answer tokens.** Shapes, positions and the never-mirrored 2 × 2 grid are binding in GAME-TRIVIA §8.2 (sun, wave, leaf, spark; True = check, False = cross). GAME-TRIVIA leaves the hex values `[VERIFY]` "against the JAMAA palette"; this file fixes them to palette B values, so the tokens match the phone and browser TV tokens:
 
@@ -156,7 +156,7 @@ Measured: cream text `#FFF7EC` on `world.deep` 17.34 (café) / 16.72 (rooftop) /
 | C | leaf | jade `#1FA88A` | C | ink (6.45:1) | 5.37 |
 | D | spark | magenta `#FF4F9A` (`color.primary`; native night value `#FF3D8B`) | D | ink (6.28:1) | 5.22 |
 | True | check | jade `#1FA88A` | — | ink | 5.37 |
-| False | cross | coral `#F0183A` + 2 dp cream ring at 24 % | — | ink (4.50:1) | 3.74 |
+| False | cross | coral `#F0183A` + 2 dp cream ring at 24 % | — | ink **4.497:1** (below 4.5: the cross glyph only on the fill; the word "False" sits on a cream label strip) | 3.74 |
 
 Amber/azure is the strongest CVD pair; jade and magenta can merge in hue under deutan/protan, so the **shape** (leaf vs spark) and the letter carry them. `[VERIFY with tools/color-check]` the minimum ΔE00 of the four under the Machado matrices and record it here. **The letters A–D stay Latin in all locales**, like the room code (أ ب ج د would not match between an Arabic phone and a French one in a mixed room).
 
@@ -181,29 +181,30 @@ Lockups are generated as outlines by `gen_brand.py` per locale into `assets/game
 
 ### 2.1 TV hub layout (HUB-02)
 
-Canvas 960 × 540 dp, safe area 864 × 486 (x 48–912, y 27–513), DESIGN §4.2.
+Canvas 960 × 540 dp, safe area 864 × 486 (x 48–912, y 27–513), DESIGN §4.2. Two states, driven by the join ticket (platform §3.2):
 
-| Zone | Rect (dp, LTR) | Content |
-|---|---|---|
-| Top bar | x 48–912, y 27–75 | Start: JAMAA wordmark 120 dp wide. End: "Tonight's cup" chip (hidden until a game ends), ⓘ (40 dp round), Pass button (billing on and not premium), Settings (gear) |
-| Carousel | x 48–688, y 91–425 | Game posters **210 × 290 dp**, gap 28 dp, the focused one scaled to **1.08** (227 × 313) with the 3 dp cream ring + `world.accent` glow 20 dp. About 2.6 posters visible, so the cut-off poster invites scrolling. The focused poster sits at the start edge + 24 dp (it never scrolls under the ticket column). Below the focused poster, a meta line (y 401–427, `type.tv.caption`): "3–12 players · 15 min · EN FR AR" |
-| Join ticket | x 712–912, y 91–425 | A ticket card (`elev.1`, `radius.lg`): "Join on your phone" (`type.tv.body`), QR **140 dp** on a cream inner panel (`radius.sm`, 8 dp quiet zone), the room code in `type.tv.code` scaled 0.6 (53 sp) `K X Q P`, then "play.jamaa…/KXQP" in caption |
-| Members strip | x 48–912, y 451–513 | Joined members as **48 dp characters** (faces on) with 8 dp gaps, idle animation (§4.4), VIP crown badge; up to 12 fit (12 × 56 = 672). Names are not shown here (no room); the focused member (Down from the carousel) shows a name tooltip above it. Empty: "Waiting for the gang…" with three ghost outlines |
+| Zone | Rect (dp, LTR), compact state | Gathering state (members < 3, or the first 60 s after launch) | Content |
+|---|---|---|---|
+| Top bar | x 48–912, y 27–75 | same | Start: JAMAA wordmark 120 dp wide. End: "Tonight's cup" chip (hidden until a game ends; OK → cup sheet), ⓘ (40 dp round), Pass button (billing on and not premium), Settings (gear) |
+| Carousel | x 48–688, y 87–405 | x 48–640 (about 2 posters visible) | Game posters **210 × 290 dp**, gap 28 dp, the focused one scaled to **1.08** (227 × 313) with the platform focus ring (3 dp cream + `glow.primary`). About 2.6 posters visible in the compact state, so the cut-off poster invites scrolling. The focused poster sits at the start edge + 24 dp. Below it, a meta line (y 405–427, `type.tv.caption`): "3–12 players · 15 min · EN FR AR" |
+| Join ticket | x 712–912 (200 wide), y 87–427 | x 664–912 (**248** wide) | A ticket card (`elev.1`, `radius.lg`), never focusable: "Join on your phone" (`type.tv.body`), the QR on a cream inner panel (`radius.sm`; the 4-module quiet zone is inside the panel), the room code in `type.tv.code` scaled 0.6 (53 sp) `K X Q P`, then "play.jamaa…/KXQP" in caption. **QR panel: 176 dp compact, ≥ 208 dp gathering.** SPEC §9.9 math, `module = floor(panel / (29 + 8))` for the production version-3 code: 208 → 5 dp modules, 176 → 4 dp (never smaller). The width change animates over 400 ms (`ease.standard`) and never while the carousel moves |
+| Members strip | x 48–912, y 435–513 | same | Joined members as **48 dp characters** (faces on) in 72 dp slots with **names under them** (caption; ≤ 8 graphemes when ≤ 8 members, ≤ 6 graphemes at 9–12), idle animation (§4.4), VIP crown badge; 12 × 72 = 864 fits. **Live join:** the joiner drops in (DESIGN §6.2 F), a 2.5 s toast above the strip ("Karim is with us!", `type.tv.body`), and a ring/glow on the newest member until the next join. Empty: "Waiting for the gang…" with three ghost outlines |
 
-**[AMEND-PLATFORM] Poster size.** Platform §3.2 says 300 × 400 dp. At 1.08 focus scale that is 432 dp tall, which does not fit the 486 dp safe area together with a 48 dp top bar and a join strip with a scannable QR. This file uses 210 × 290 dp and moves the QR to a side ticket column. The platform owner should adopt these numbers.
-
-**Focus and D-pad.**
+**Focus and D-pad** (RTL mirrors Left/Right; every edge is in the remote-only e2e).
 - Initial focus: the last played game, else `mishana`.
-- Left/Right move through posters and wrap (platform). In RTL the order reverses and Right moves to the previous poster in reading order.
-- Up from a poster → the top bar item nearest horizontally (the cup chip, ⓘ, Pass, Settings, in that order). Down → the members strip (first member). Down again → nothing (the strip is the bottom).
-- From the carousel, End-side (Right in LTR at the last visible poster) does **not** jump into the ticket: the ticket has no focusable element (the QR is not a button). This keeps Left/Right purely for games.
+- Left/Right move through posters and wrap. In RTL the order reverses and Right moves to the previous poster in reading order.
+- **Up from the carousel → ⓘ, always** (the rules entry point; it opens the focused game's rules ending with "How JAMAA works"). Left/Right move inside the top bar (wordmark is not focusable); Down from the top bar → the focused poster.
+- **Down → the members strip** (first member). OK on a member opens a small menu: **Kick** (confirm dialog, initial focus "Cancel") / **Cancel**. Up → the focused poster.
+- The ticket has no focusable element (the QR is not a button), so Left/Right stay purely for games.
+- Leaving the carousel keeps `focusedGameId` and the 40 % world tint.
+- **Back on the hub** → confirm "Close JAMAA? The room ends for everyone", initial focus **Stay**.
 - `hub_move` sound on each move (platform §3.11), at most one per 70 ms like `ui.move`.
 
 **When a poster gains focus** (the "world wakes up", platform §3.2):
 1. 0–240 ms: the hub stage crossfades **40 %** toward the focused world's stage (never 100 %: the hub stays recognisably the hub). `ease.standard`.
 2. The poster's art starts its ambient loop (≤ 4 moving elements on the poster itself; §5.1 "ambient").
 3. The meta line swaps with a 120 ms crossfade.
-4. After 300 ms of rest, the TV sends `HUB_FOCUS` (platform debounce) and phones slide their card.
+4. After 300 ms of rest, the TV sends `HUB_FOCUS` (platform debounce; ephemeral, not persisted) and phones slide their card.
 
 ### 2.2 Game cards (posters)
 
@@ -238,19 +239,23 @@ Three panes inside the safe area (platform §3.2), drawn on the **full world sta
 | Pane | Rect (dp, LTR) | Content |
 |---|---|---|
 | Title strip | x 48–912, y 27–91 | Back hint "‹ Games" (start, caption; not focusable, Back does it), the game title lockup 48 dp tall (centre), ⓘ (end, focusable) |
-| How to play | x 48–372 (324) | The current how-to card large (illustration 300 × 170 dp + one sentence `type.tv.body`) with dots for 3–4 cards; auto-advances every 4 s while not focused. Focusable as one item: OK opens the full-screen intro (§2.5) |
-| Players | x 384–600 (216) | The members as characters on a small stage (64 dp, 3 per row, names in caption below), one dashed ghost per missing player up to `minPlayers` ("Need {n} more"). While below `minPlayers`, a 200 dp QR replaces the bottom half of this pane (platform) |
-| Settings | x 612–912 (300) | "Content: English ▾" (room setting, 40 dp row), then **≤ 4 settings rows** (52 dp each, `type.tv.titleS`, value on the end with ‹ › affordances), then "Advanced ›" (only if the game has advanced settings), then **Start** (full pane width, 56 dp, `primary` fill, `ink` label). `startBlocker` text shows above Start in `dangerText` |
+| How to play | x 48–372 (324) | The current how-to card large (illustration 300 × 170 dp + one sentence `type.tv.body`) with dots for 3–4 cards; auto-advances every 6 s while not focused. Focusable as one item: OK replays the full-screen intro (§2.5) |
+| Players | x 384–600 (216) | Not focusable. The members as characters on a small stage (64 dp, 3 per row, names in caption below), one dashed ghost per missing player up to `minPlayers` ("Need {n} more"). While below `minPlayers`, a 200 dp QR replaces the bottom half of this pane (platform); otherwise a compact QR + code chip (120 dp QR) stays at the bottom |
+| Settings | x 612–912 (300) | "Content: English ▾" (room setting, 40 dp row), then (Trivia with one quiz) the quiz summary card (§2.3.1), then **≤ 4 settings rows** (52 dp each, `type.tv.titleS`, value on the end with ‹ › affordances; a row with one possible value is hidden), then "Advanced ›" (only if the game has advanced settings), then **Start** (full pane width, 56 dp, `primary` fill, `ink` label). `startBlocker` text shows above Start in `dangerText` |
 
 **Settings row style (all games).** Label on the start side, the current value on the end side between chevrons. Left/Right steps; OK on a pack row opens a pack picker sheet (§2.3.1). A setting that is premium shows a `gem` after its label and, when not unlocked, its value is shown greyed with "Pass" (OK opens the Pass store, HUB-08). The row height and focus scale (1.02) are DESIGN §4.6's full-width rule.
 
-**Initial focus:** Start when `canStart`, else the first settings row (platform). Back → hub with the reverse portal.
+**Initial focus (platform §3.10 E):** Start only if this TV has already seen the game's intro **and** `canStart`; on a first visit the intro is full screen (§2.5) and focus returns to the how-to pane after it; otherwise the first settings row. Input is ignored for `INPUT_GUARD_MS` (400 ms) after the portal ends.
+
+**Focus graph:** Content, the settings rows, Advanced and Start form one vertical column (Down from Start → nothing). Left from any of them → the how-to pane; Right from the how-to pane → the row it came from (else the first row). Up from Content or from the how-to pane → the title-strip ⓘ; Down from ⓘ → the how-to pane. The players pane is never focusable. Back → hub with the reverse portal. RTL mirrors Left/Right.
 
 #### 2.3.1 Pack picker (sheet) and the Trivia quiz shelf
 
 **Packs (Mish Ana!, Bluff, Most Likely):** an end-side sheet (420 dp, like the rules overlay) listing packs as rows: pack name, item count, content language chip, and, for locked packs when billing is on, a `lock` + "Pass" chip (OK on it opens HUB-08).
 
-**Trivia quizzes:** the shelf of GAME-TRIVIA §9.1 (one row per domain, 240 × 320 dp quiz cards) replaces the setup's settings pane for the `quizId` row: OK on "Quiz ‹ Lebanon ›" opens the shelf full screen over the world stage; Back returns with the choice. Visual details of a quiz card:
+**Trivia quizzes:**
+- **One playable quiz in the content language (launch):** no row and no shelf. The settings pane shows a **non-interactive summary card** (300 × 96 dp: cover thumbnail 72 × 96, title, ★★☆ + "Medium", the domain chip and the featured topic chips). Nothing to open, nothing to get lost in.
+- **Two or more:** the row "Quiz ‹ Lebanon ›" appears; OK opens the shelf of GAME-TRIVIA §9.1 full screen over the world stage (one row per domain, 240 × 320 dp quiz cards); Back returns without change, OK selects and returns. Visual details of a quiz card:
 
 ```
 ┌──────────────────────────┐  240 × 320 dp, radius.lg
@@ -260,41 +265,47 @@ Three panes inside the safe area (platform §3.2), drawn on the **full world sta
 │ Lebanon: the big quiz    │  type.tv.title, 2 lines
 │ ★ ★ ☆  Medium            │  stars 20 dp + word (accessibility)
 │ (◉ Lebanon)              │  domain chip: filled world.elevated + arch icon
-│ (Culture)(Music)(Food)+2 │  topic chips: outlined, max 3 + "+n"
-│ 63 questions      [lock] │  lock + "Pass" only on Pass quizzes in free rooms
+│ (Music)(Dance)(Football) │  featured topic chips: outlined, max 3 (+n if more)
+│ 75 questions      [lock] │  lock + "Pass" only on Pass quizzes in free rooms
 └──────────────────────────┘
 ```
 
 - **Stars:** 1–3 filled amber stars (the star glyph of DESIGN §5.2), empty ones as 2 dp `outlineStrong` outlines; the word Easy / Medium / Hard always follows (GAME-TRIVIA). Spoken label "Difficulty 2 of 3".
 - **Domain chip:** a filled pill; the domain icon is the arch glyph for `lebanon`, `globe` for every other domain (no national or religious symbols).
-- **Topic chips:** outlined pills from the controlled vocabulary, in vocabulary order; labels only, never filters (no extra setting).
-- Rows: the domain name as a row header (`type.tv.title`, `world.accentText`); with one quiz at launch, the row shows the Lebanon card plus the ghost "More quizzes soon" card (GAME-TRIVIA).
+- **Topic chips:** outlined pills for the pack's `featuredTopics`, **in the order the author lists them** (platform §5.4), then "+n"; labels only, never filters (no extra setting).
+- Focus: the platform ring (3 dp cream + `glow.primary`); the world accent only tints the cover.
+- Rows: the domain name as a row header (`type.tv.title`, `world.accentText`).
 
 ### 2.4 ⓘ rules overlay (HUB-07)
 
-Behaviour is binding in platform §3.6. Visuals:
-- TV: end-side sheet 420 dp × full height, `world.elevated` fill (or `elevated` on the hub), 30 % scrim **only behind the sheet**, the game remains visible and animated on the other side. Sheet enters with a 240 ms slide from the end edge (`ease.decel`); exit 180 ms (`ease.accel`). Reduced motion: 150 ms fade.
-- Header: the game's title lockup at 36 dp, then "Rules" (`type.tv.headline`).
-- "**You are here**" section (the current phase's rules) is first, with a 4 dp `world.accent` bar on the start edge and the label "You are here: Voting" in `world.accentText`.
+Behaviour is binding in platform §3.6 (what each ⓘ opens, the back stack). Visuals:
+- TV: end-side sheet, **420 dp on the hub and setup, 360 dp in game**, full height, opaque `world.elevated` fill (or `elevated` on the hub) with a **24 dp shadow edge** on its inner side and **no scrim**; the game remains visible and animated on the other side. In game the sheet covers the end-side content (score rail, Trivia tower, Bluff's right column) for everyone while one person reads; the phone remains the private place to read. Sheet enters with a 240 ms slide from the end edge (`ease.decel`); exit 180 ms (`ease.accel`). Reduced motion: 150 ms fade.
+- Header: the game's title lockup at 36 dp, then "Rules" (`type.tv.headline`). On the hub the last section is "How JAMAA works" (3 small cards).
+- "**You are here**" section (the rules for `game.phase`) is first, with a 4 dp `world.accent` bar on the start edge and the label "You are here: Voting" in `world.accentText`.
 - Sections: a heading (`type.tv.title`), 1–3 sentences (`type.tv.body`), and one small illustration (characters acting it) per section, 120 × 72 dp, static.
 - Scoring section: a mini table of points with the same coin glyph as the score moments.
-- "Close" button at the bottom (initial focus). Up/Down scroll by 1/3 of the screen with a 200 ms ease.
+- "Close" button at the bottom (initial focus). Up/Down scroll by 1/3 of the screen with a 200 ms ease. Back from a sheet opened through the pause menu returns to the game, not to the menu.
+- **In-game hint:** during round 1 and for 3 s after each phase change, the top bar's end corner shows "◁ Back: menu & rules" (`type.tv.caption`, `textMuted`, back-arrow icon mirrored in RTL), non-focusable.
 - Phone: a bottom sheet (≤ 85 % height), same content order, `radius.xl` top corners, a 36 × 4 px grabber. The "Your turn! ✕ to go back" sticky banner (platform) is `world.accent` fill with `onAccent` text and a 3-pulse glow.
 
 ### 2.5 First-time "How to play" intro
 
-Triggered per device the first time a game is opened (platform: `intro_seen_<gameId>` on TV, `jamaa:introSeen:<gameId>` on phone).
+Triggered **per device** the first time a game's **setup** opens (platform: `intro_seen_<gameId>` on TV, `jamaa:introSeen:<gameId>` on phone). There is no in-game intro phase in any game. The flag is set when the last card is reached **or** the intro is skipped (Back on TV, Skip on phone). Hub Settings and the phone ⋯ menu offer "Show how-to again" (clears the flags); OK on the collapsed how-to pane replays it.
 
-- **TV:** the how-to pane expands to full screen (a 400 ms FLIP from the pane rect, `ease.decel`). Each card: a **large animated scene** (characters acting the step; loops of ≤ 3 s using the character system, so no extra assets), step number "1/4" in `world.accentText`, one sentence in `type.tv.displayS` (44 sp) max 2 lines, a progress bar of 4 segments at the bottom that fills over 4 s. OK = next card, Back = skip to the setup, the last card shows "Got it" (initial focus, `primary`). Card change: the scene slides 48 dp toward the reading start and fades (240 ms), the next one arrives from the reading end (DESIGN §10: mirrors in RTL).
-- **Phone:** a swipeable sheet of the same cards (scene 280 × 160 px, sentence `type.ph.h2`), dots, **Skip** in the top-end corner, "Got it" at the bottom. Swipe direction follows the reading direction.
-- **Coach marks** (platform PHH-04): a 40 px pill at the top of the phone screen during the first round, `world.accent` 2 px border, `world.surface` fill, a 16 px `info` icon, dismissed by tap or at the end of the round.
+- **TV:** the how-to pane expands to full screen (a 400 ms FLIP from the pane rect, `ease.decel`). Each card: a **large animated scene** (characters acting the step; loops of ≤ 3 s using the character system, so no extra assets), step number "1/4" in `world.accentText`, one sentence in `type.tv.displayS` (44 sp) max 2 lines, a progress bar of segments at the bottom.
+  - **Auto-advance after 6 s** per card; **any D-pad input pauses** auto-advance for the rest of the intro; OK = next card; Back = skip to the setup. **The last card never auto-dismisses**: it shows "Got it" (initial focus, `primary`).
+  - Card change: the scene slides 48 dp toward the reading start and fades (240 ms), the next one arrives from the reading end (DESIGN §10: mirrors in RTL).
+  - **Gathering stays possible:** while members < `minPlayers`, a corner **join chip** (QR ≥ 144 dp on cream + the code) sits in the top-end corner, and a row of 48 dp member characters runs along the bottom (joins drop in with the live-join toast).
+  - If `START_GAME` or `CLOSE_GAME` arrives (e.g. from the VIP phone) while the intro is full screen, it **collapses instantly** (no animation) and the world entrance or reverse portal plays.
+- **Phone:** a swipeable sheet of the same cards (scene 280 × 160 px, sentence `type.ph.h2`), dots, **Skip** in the top-end corner, "Got it" at the bottom. Swipe direction follows the reading direction. The sheet closes by itself when the room enters PLAYING; the coach marks take over.
+- **Coach marks** (platform PHH-04): a 40 px pill at the top of the phone screen during the first round, keyed by `game.phase`, `world.accent` 2 px border, `world.surface` fill, a 16 px `info` icon, dismissed by tap or at the end of the round.
 
 ### 2.6 Phone counterparts
 
 | Phone screen | Visual spec |
 |---|---|
 | **PHH-01 Join** | DESIGN PH-02 with the colour grid replaced by a **character picker**: 4 × 3 grid of 72 px characters (faces on), taken ones greyed (desaturated 80 %, 50 % opacity, a "Taken" caption, no lock icon), the selected one turns `happy` and hops once (§4.4); name input above, "Let me in" bottom button |
-| **PHH-02 Hub follow** | A big poster card (the same art as the TV poster, 280 × 380 px, centred) that slides left/right when the TV focus moves (240 ms, `ease.standard`; direction follows the registry order, reversed in RTL), with the meta line under it and "{host} is picking a game on the TV". The phone's background takes 40 % of the world stage, like the TV. VIP: horizontal swipe browses locally, an "Open this game" primary button. Bottom: members (40 px characters) and the 6-button reactions bar (48 px each) |
+| **PHH-02 Hub follow** | A big poster card (the same art as the TV poster, 280 × 380 px, centred) that slides left/right when the TV focus moves (240 ms, `ease.standard`; direction follows the registry order, reversed in RTL), with the meta line under it and "{host} is picking a game on the TV". The phone's background takes 40 % of the world stage, like the TV. VIP: horizontal swipe browses locally and **holds for 6 s after the last swipe**, with a chip "TV: {game}" above the card (tap to resync); an "Open this game" primary button. Non-VIP phones always follow the TV. The ⓘ opens the rules of the card shown on this phone. Bottom: members (40 px characters) and the reactions bar: 6 buttons (48 px) drawn as icons for `laugh`, `shock`, `facepalm`, `happy` (heart), `sad`, `cheer` (confetti) |
 | **PHH-03 Setup follow** | Title lockup on the full world stage, then a read-only summary card of the settings (VIP: editable rows, Start). First time: the intro sheet (§2.5) |
 | **PHH-04 In game** | The game's screens (§7) under a constant top bar: room code chip (start), own character 28 px + name (centre), ⓘ (44 px) then "⋯" (end) |
 | **PHH-05 Results** | The game's results, then "Tonight's cup" with this player's stars flying in from the top (3 × 32 px amber stars, 120 ms stagger, `ease.overshoot`) |
@@ -303,11 +314,11 @@ Triggered per device the first time a game is opened (platform: `intro_seen_<gam
 
 ## 3. "Entering the game": the doorway transitions
 
-Two transitions together make the "you just walked into another world" feeling. Both are skippable with OK on the TV and both have a reduced-motion version.
+Two transitions together make the "you just walked into another world" feeling. Both have a reduced-motion version. **TV input rule (platform §3.10 E, binding):** while a choreography runs, OK only completes it to its end state and is consumed (it never also activates a control); the screen that follows ignores OK and D-pad for `INPUT_GUARD_MS = 400` after it becomes interactive; key-repeat events never activate buttons. So mashing OK on a poster lands on the setup screen, never on a started game.
 
 ### 3.1 A. The Bab portal (hub → setup)
 
-The signature: the focused poster becomes a **doorway arch** (the *bab* shape of the lilac character and of DESIGN §5.2) that grows to fill the screen, and the world is revealed through it. Platform §3.10 A fixes it at **700 ms**. **[AMEND-PLATFORM]** This file proposes **1 100 ms the first time a game is opened in a session** (the "wow"), and the 700 ms version afterwards (speed for repeat use). Until accepted: 700 ms, with every step's time scaled by 0.64.
+The signature: the focused poster becomes a **doorway arch** (the *bab* shape of the lilac character and of DESIGN §5.2) that grows to fill the screen, and the world is revealed through it. Platform §3.10 A (accepted): **1 100 ms the first time a game is opened in a session** (the "wow"), and **700 ms afterwards** (speed for repeat use), with every step's time scaled by 0.64.
 
 Timeline (first open, 1 100 ms):
 
@@ -322,29 +333,29 @@ Timeline (first open, 1 100 ms):
 | 900–1 100 | The three panes stagger in (60 ms apart) with the default phase transition (rise 24 dp + fade) | `motion.slow`, `ease.decel` |
 
 - **Back (setup → hub)** plays the reverse in 600 ms: the panes drop, the screen shrinks into the arch, the arch shrinks back into the poster, the other posters slide back. `portal_close` sound.
-- **Low-end (lite motion, platform §3.8):** the arch mask is a `clipPath` on one layer only; no blur anywhere; the parallax props are limited to 2 elements.
+- **Low-end (lite motion, platform §3.8):** the arch mask clips **only the world layer**; the hub layer outside it is replaced by a solid `#000` at 40 % (no live hub drawing under the mask); no blur and no grain anywhere; the parallax props are limited to 2 elements. The portal is part of the gfxinfo frame-time procedure (≥ 50 fps on the reference TV).
 - **Reduced motion:** a 150 ms crossfade hub → setup, no scale or mask (platform).
-- **Implementation:** TV: `Modifier.graphicsLayer { clip = true; shape = BabShape(progress) }` where `BabShape` is a `Shape` built from the bab `Path` scaled by an `Animatable` [VERIFY that `graphicsLayer` clip with a custom `Shape` performs on the reference TV; else draw with `clipPath` in `drawWithContent`]. Web `/tv`: CSS `clip-path: path(...)` cannot animate scale smoothly across browsers, so use an inline SVG `<clipPath>` with a `transform` animated by Motion (§6). Phone: see §3.3.
+- **Implementation:** TV: `Modifier.graphicsLayer { clip = true; shape = BabShape(progress) }` where `BabShape` is a `Shape` built from the bab `Path` scaled by an `Animatable` [VERIFY that `graphicsLayer` clip with a custom `Shape` performs on the reference TV; else draw with `clipPath` in `drawWithContent`]. Web `/tv`: CSS `clip-path: path(...)` cannot animate scale smoothly across browsers, so use an inline SVG `<clipPath>` with a `transform` driven by the shared choreography runner (§6). Phone: the 600 ms flood of §3.2.
 
 ### 3.2 B. World entrance (setup → game)
 
-Platform §3.10 B: **≤ 2.5 s**, skippable, covered by `ENTRANCE_GRACE_MS = 2_500` on the server. The **core signature lasts 1.4 s** (darken → the world's own "door" → title); the characters' run-in fills the remainder.
+Platform §3.10 B (accepted order): **≤ 2 000 ms**, OK completes it; the server adds `ENTRANCE_GRACE_MS = 2_500` to the first phase's deadline, which leaves 500 ms for network and render latency. The **core signature lasts 1 250 ms** (darken → the world's own "door" → title); the characters' run-in fills the remainder.
 
 Shared skeleton:
 
 | t (ms) | Step |
 |---|---|
-| 0–300 | The setup panes fall away (80 ms stagger), the stage darkens to 30 % brightness |
-| 300–1 100 | **The world's door** (per game, below), with `world_<id>_sting` |
-| 1 100–1 400 | The title lockup hits at scale 1.2 → 1, holds |
-| 1 200–2 300 | Characters run in from both sides to their seats (40 ms stagger, landing with `spring.bouncy`, a `happy` blink on landing) |
-| 2 300–2 500 | Title moves to its in-game place (top bar) or fades; the first phase's screen is live |
+| 0–250 | The setup panes fall away (60 ms stagger), the stage darkens to 30 % brightness |
+| 250–1 000 | **The world's door** (per game, below), with `world_<id>_sting` |
+| 1 000–1 250 | The title lockup hits at scale 1.2 → 1, holds |
+| 1 100–1 800 | Characters run in from both sides to their seats (40 ms stagger, landing with `spring.bouncy`, a `happy` blink on landing) |
+| 1 800–2 000 | Title moves to its in-game place (top bar) or fades; the first phase's screen is live |
 
-| World | The door (300–1 100 ms) |
+| World | The door (250–1 000 ms, 750 ms window) |
 |---|---|
 | Mish Ana! (`night-market`) | The amber bang dot drops from the top like a lamp on a cord, swings once (pendulum, damped spring), and its light cone turns the stage on |
-| Bluff (`hakawati-cafe`) | The café door (a tall rounded rect in `world.elevated` with a brass handle and a frosted panel where the "BLUFF!" neon is mounted) **swings open** toward the viewer (3D Y rotation 0 → −80°, perspective 1 200 dp, 800 ms, `ease.decel`), revealing warm lantern light; one neon flicker (GAME-BLUFF §12.1) |
-| Most Likely (`rooftop`) | A velvet curtain **drops closed** (400 ms, `ease.accel`) then **parts** to both sides (700 ms, `ease.decel`) revealing the rooftop stage under string lights; the bulbs of the gold arch light up from the centre outward (GAME-LIKELY §12.1; total ≤ 2 s) |
+| Bluff (`hakawati-cafe`) | The café door (a tall rounded rect in `world.elevated` with a brass handle and a frosted panel where the "BLUFF!" neon is mounted) **swings open** toward the viewer (3D Y rotation 0 → −80°, perspective 1 200 dp, 750 ms, `ease.door`), revealing warm lantern light; one neon flicker (GAME-BLUFF §12.1) |
+| Most Likely (`rooftop`) | A velvet curtain **drops closed** (250 ms, `ease.accel`) then **parts** to both sides (500 ms, `ease.door`) revealing the rooftop stage under string lights; the bulbs of the gold arch light up from the centre outward (GAME-LIKELY §12.1) |
 | Trivia (`quiz-studio`) | The screen goes dark for 150 ms, then **spotlights snap on one by one** (4 × 120 ms, `trivia.lightsOn` clunks, GAME-TRIVIA §12.1), the bulb arch chases from the reading start to the end, and the two big cones cross at the centre |
 
 **Phone (all worlds):** a 600 ms flood in `world.accent` rising from the bottom (like Mish Ana!'s "Your turn" flood, DESIGN §6.2 F), the title lockup at 70 % width pops in, a haptic `[20, 40, 20]`, then the game's first screen. The phone flood starts when the phone receives `room.phase = PLAYING`, not synced to the TV frame-by-frame.
@@ -394,7 +405,7 @@ Everything lives in `shared/src/characters/` (platform §3.7) as data: SVG path 
 | Brows (optional) | Rounded strokes 2.2 long, width 0.7, at y 1.4 |
 | Mouth | Stroke width 0.8, round caps. Soft smile: `M4.4 6.6 Q6 7.6 7.6 6.6` |
 | Cheeks (optional) | Circles r 0.9 at (2.2, 5.8) and (9.8, 5.8), cream at 35 % (on cream-eyed bodies: ink at 25 %) |
-| Size floor | Eye ry never renders below **1.6 dp** on TV / 1.4 px on phone; the bolt and star faces scale features ×1.2 to meet it at 48 dp |
+| Size floor | Below 64 dp, features scale **×1.5** so the eye height is ≥ **2.4 dp** on TV (≥ 2 px on phone); the bolt and star faces get a further ×1.2. Expressions are only *legible* from 72 dp up (§4.4) |
 
 **Rig (what code animates).** Every character is drawn as layers with these animatable properties, the same on TV and web:
 
@@ -424,7 +435,7 @@ The set and names are binding in platform §3.7 (`idle`, `think`, `done`, `happy
 | `sad` | default eyes, lids drooping (top 25 % cut at a slant toward the outside) | inner ends raised 0.7 (worried) | frown `M4.4 7.4 Q6 6.4 7.6 7.4` | sink: y +0.04 body, squash 0.96, 400 ms |
 | `facepalm` | closed lines | none | flat 2.4 | a **hand disc** (r = 0.28 × body width, the body colour, 1-unit glyph-colour outline) slides over the eyes in 200 ms; lean 4° forward |
 | `shy` | look down (0, +0.8) | none | tiny smile 1.6 | cheeks on, in rose `#FF96C5` at 60 %; small sway ±2° |
-| `point` | look toward the target | none | open small O | lean toward the target 10°; a short pointing nub (body colour, 0.2 × body) on the target side. `pointSelf`: lean back 6°, eyes at the camera, nub toward itself |
+| `point` | look toward the target | none | small open smile (`M4.6 6.6 Q6 7.6 7.4 6.6` closed into a half-ellipse 2.8 × 1.0; distinct from `shock`'s O) | lean toward the target 10°; a short pointing nub (body colour, 0.2 × body) on the target side. `pointSelf`: lean back 6°, eyes at the camera, nub toward itself |
 | `cheer` | 4-point stars (size 1.6) instead of eyes | none | wide open | hop loop (3 hops, 220 ms each), squash on landing; optional confetti puff |
 | `away` | closed lines | none | small flat | 60 % opacity, desaturated 80 %, a "z" glyph floating up every 2 s; `wifi-off` badge (DESIGN §5.2) |
 
@@ -435,9 +446,9 @@ All expression changes crossfade feature groups in 120 ms (platform). An express
 | Event (any game) | Who | Expression |
 |---|---|---|
 | Joined the room | the joiner | `happy` + DESIGN §6.2 F join drop |
-| `REACT` from a phone | the sender | the chosen reaction (`laugh`, `shock`, `facepalm`, `happy`, `sad`, `cheer`) + icon burst |
-| Submitted / voted / answered | the actor | `done` |
-| It's your turn / being waited on | the awaited | `think` + spotlight (last 10 s) |
+| `REACT` from a phone | the sender | the chosen reaction, which **is** the expression (platform `REACTIONS = [laugh, shock, facepalm, happy, sad, cheer]`), + its icon burst: laugh → tears, shock → "!", facepalm → sweat drop, happy → heart, sad → rain cloud, cheer → confetti |
+| Submitted / voted / answered | the actor (`game.doneIds`) | `done` |
+| It's your turn / being waited on | the awaited (`game.awaitedIds`) | `think` + spotlight (last 10 s) |
 | Scored by fooling / being right | the scorer | `smug` (fooling) / `happy` → `cheer` (right) |
 | Lost points' chance (fooled, wrong) | the player | `shock` (fooled) / `sad` (wrong) |
 | Picked as "most likely" | the target | `shy` (or `smug` if they voted for themselves, GAME-LIKELY) |
@@ -448,7 +459,7 @@ All expression changes crossfade feature groups in 120 ms (platform). An express
 
 ### 4.4 Readability
 
-- **10 ft:** faces only at ≥ 40 dp (platform). Main stage sizes: 64 dp (setup), 72–96 dp (game stages), 160 dp (spotlight, podium winner). At 48 dp the eyes are ≥ 1.6 dp tall (the floor above); the mouth stroke is ≥ 1.6 dp.
+- **10 ft:** on a 55" 1080p TV, 1 dp ≈ 1.26 mm, so a 1.6 dp eye is ~2 mm (≈ 2.3 arcmin at 3 m): enough to see eyes, not to tell ^ ^ from stars. Rule: **expressions are legible from 72 dp up**; faces are drawn from 40 dp (platform). **At 40–64 dp every expression is doubled by body motion and/or a badge**: hop for `happy`/`cheer`, sink for `sad`, jump-back for `shock`, the `check` badge for `done`, the `z` for `away`, a lean for `point`. Main stage sizes: 64 dp (setup), 72–96 dp (game stages), 160 dp (spotlight, podium winner). Below 64 dp the eyes are ≥ 2.4 dp (§4.2).
 - **Phone:** 40 px in lists, 72 px on the join picker, 96 px for "you" moments.
 - **CVD:** unchanged guarantees (shape + colour + name). Expressions never carry information alone: the text verdict (LIE!, "+500", "Correct") is always there.
 - **Motion budget:** ≤ 12 characters animating simultaneously on the TV, ≤ 24 moving sprites including coins (GAME-BLUFF §12.7); idle breathing of all 12 is cheap (one shared transform clock), blinks are staggered.
@@ -476,12 +487,12 @@ No props reference religion, flags or folklore clichés (DESIGN §1.1).
 
 ## 5. Signature animated moments per game
 
-General rules (DESIGN §6.1–§6.3 and platform §3.10): the server never waits for animations; OK on the remote skips to the end state; every countdown comes from server deadlines; reduced motion removes travel and keeps information; total per-moment durations live in `shared/src/motion/choreo.ts`. Tokens: `motion.*`, `ease.*`, `spring.bouncy` from DESIGN §6.1. New tokens in §8.
+General rules (DESIGN §6.1–§6.3 and platform §3.10): the server never waits for animations; OK on the remote completes the running choreography to its end state (platform input rule §3.10 E; host actions are pause-menu items, never on-screen buttons); every countdown comes from server deadlines; reduced motion removes travel and keeps information; total per-moment durations live in `shared/src/motion/choreo.ts`. Tokens: `motion.*`, `ease.*`, `spring.bouncy` from DESIGN §6.1. New tokens in §8.
 
 ### 5.1 Shared: points flight and counters (platform §3.10 C)
 
 - **Coin:** a disc of 10 dp (TV) / 8 px (phone) in the **scorer's** player colour, with a 1.5 dp cream rim and the player's shape glyph at 60 % inside (so a coin is identifiable without colour). Large awards (Bluff +500 × m, Trivia correct) show a label chip "+500" riding with the **first** coin only.
-- **Path:** a quadratic Bézier with the control point 90 dp above the chord midpoint (below it when both ends are in the top half), the same geometry as DESIGN §6.2 B. Flight 450 ms with `ease.coin` (accelerate slightly, then decelerate into the target; §8), stagger 70 ms, ≤ 24 coins on screen; when more are needed, coins represent bundles and the label carries the total.
+- **Path:** a quadratic Bézier with the control point 90 dp above the chord midpoint (below it when both ends are in the top half), the same geometry as DESIGN §6.2 B. Flight 450 ms with `ease.coin` (a soft accelerate/decelerate with a slight wind-up; §8), stagger 70 ms, ≤ 24 coins on screen; when more are needed, coins represent bundles and the label carries the total.
 - **Landing:** the target score badge pops (1.15, `ease.overshoot`, 160 ms), `coin_land` plays with pitch rising one pentatonic step per coin (≤ 10 per award).
 - **Counter:** integer tick over 600 ms with `ease.decel` (platform). For values ≥ 100 the counter uses an **odometer roll** (each digit column scrolls vertically; columns that do not change stay still), which is what makes Bluff's +500s exciting. Digits are tabular (`tnum`, DESIGN §3.5). Western digits in all locales.
 - **Reorder:** FLIP, 400 ms, `ease.standard`; a character that overtakes another does a little hop over it (−0.3 body height arc).
@@ -520,21 +531,21 @@ Staging on the TV (BL-TV-05), layered on GAME-BLUFF §12.2 step timings:
 | Count 600 ms | A counter bubble (`world.surface`, cream digits, 40 dp) above each target, odometer roll | `counter_tick` |
 | Spotlight 800 ms | Everything but the top target(s) dims to 35 %; a spotlight **drops from the rig** at the top: a radial gradient cone (`world.glow` at 40 %) slides down 120 dp and settles with a small overshoot | `likely.spot` |
 | Award stamp 600 ms | A gold rosette (`world.signal` gold, 96 dp, ribbon tails) spins in 180° → 0 and lands on the target's `front` anchor; the award name types in under it (Latin letter-by-letter, Arabic fades, DESIGN §6.2 F); target turns `shy` / `shock` / `smug` | `likely.rosette` |
-| Points 800 ms | "+100" coins in the **correct voters'** colours fly from the rosette to each correct voter's head (§5.1, reversed direction: from the award to the readers of the room) | `coin_fly`, `coin_land` |
-| Unanimous | A confetti cannon from both bottom corners (paper + gold, 36 pieces, 1.2 s), "+200" | `likely.confetti` |
+| Points 800 ms (public mode only) | Agreement coins (GAME-LIKELY §6): for each voter who scored, coins in **that voter's** colour fly from the head of the conga line they joined (their pick) to their own character, labelled "+50 × matches" (e.g. "+150") | `coin_fly`, `coin_land` |
+| Unanimous | A confetti cannon from both bottom corners (paper + gold, 36 pieces, 1.2 s), "+400" (public mode) | `likely.confetti` |
 | Hold ≥ 1 s | "{name}, defend yourself!" caption with a bouncing speech-bubble icon next to the target | — |
 
-Anonymous mode: identical cream envelopes burst from a ballot box (GAME-LIKELY). Chaos: characters scramble (1.2 s), no spotlight.
+Anonymous mode: identical cream envelopes burst from a ballot box (GAME-LIKELY), counts roll, spotlight and rosette as above, **no points step at all** and no score pills on screen ("Secret votes: awards only"). Chaos: characters scramble (1.2 s), no spotlight.
 
-**Phone (LK-PH-03):** "You got 3 votes!" with your character `shy` under a rosette, or "+100: you read the room" with one coin flying into your score. Haptic `[30, 60, 30]` if you topped.
+**Phone (LK-PH-03):** "You got 3 votes!" with your character `shy` under a rosette, or (public mode) "3 others agreed with you: +150" with coins flying into your score. Haptic `[30, 60, 30]` if you topped.
 
 **Reduced motion:** characters appear directly in their conga positions; the spotlight and rosette appear without travel; counts jump.
 
 ### 5.4 Trivia: countdown, reveal, streak (GAME-TRIVIA §12)
 
-Phases and timings are GAME-TRIVIA's: QUIZ_INTRO 4 s, READ 3–7 s (never skippable), ANSWER 15 s (`mc4`, pace normal; `tf` 10 s), REVEAL 6 s (+3 s with a fact), LEADERBOARD 6 s after questions 3/6/9/12 and before the final, FINAL_INTRO 4 s. Points: 500–1000 by speed (`tf` 250–500), ×2 on the final, streak bonus +100 per extra correct answer in a row (cap +500). This file adds staging detail.
+Phases and timings are GAME-TRIVIA's: QUIZ_INTRO 4 s, READ 3–7 s (never skippable), ANSWER 15 s (`mc4`, pace normal; `tf` 10 s), REVEAL 6 s (+3 s with a fact), LEADERBOARD 6 s after questions 3/6/9/12 and before the final, FINAL_INTRO 4 s. Points: 500–1000 by speed (`tf` 250–500), ×2 on the final, streak bonus +100 per extra correct answer in a row (cap +300). QUIZ_INTRO starts after the platform entrance (its deadline includes `ENTRANCE_GRACE_MS`). This file adds staging detail.
 
-**Quiz intro (TR-TV-01, 4 s).** The quiz card flies from its shelf position to the centre (FLIP, `motion.slow`, `ease.decel`), the ★ stars fill one by one (150 ms each, `ease.overshoot`, `cup_star` pitched up per star), domain and topic chips stagger in (60 ms), studio lights sweep on. Characters stand behind their podiums (`podium` prop).
+**Quiz intro (TR-TV-01, 4 s after the entrance).** The quiz card **scales in from the marquee** (0.6 → 1, `motion.slow`, `ease.decel`; the shelf is no longer on screen, so there is no FLIP), the ★ stars fill one by one (150 ms each, `ease.overshoot`, `cup_star` pitched up per star), domain and topic chips stagger in (60 ms), studio lights sweep on. Characters stand behind their podiums (`podium` prop).
 
 **Read (TR-TV-02a).** The question card slams in (GAME-TRIVIA §12.2); a thin "get ready" bar fills over the READ duration under the card; the four answer slots show as empty outlined ghosts so the layout does not jump at ANSWER.
 
@@ -559,7 +570,7 @@ Phases and timings are GAME-TRIVIA's: QUIZ_INTRO 4 s, READ 3–7 s (never skippa
 
 **Final.** FINAL_INTRO: the studio light shifts to `#FF7A1F`/amber, a drum build, a "×2" stamp (`sting.finalQuestion`).
 
-**Phone (TR-PH-01..03).** The answer pad of GAME-TRIVIA §8.4 (bottom 70 %, 2 × 2 tiles, tap = lock, no undo, 250 ms input guard). Visual detail: tiles use the §1.5 colours with the shape at 40 % of tile height and the Latin letter in the tile's top-start corner (20 px, ink); press feedback only during ANSWER (no other animation on the pad). REVEAL: full-screen verdict, jade "Correct! +870" with the coin flying into the score and the flame "×3", or coral "Not this time" with the right answer's token; own rank "You're 2nd".
+**Phone (TR-PH-01..03).** The answer pad of GAME-TRIVIA §8.4 (bottom 70 %, 2 × 2 tiles, tap = lock, no undo, 250 ms input guard). Visual detail: tiles use the §1.5 colours with the shape at 40 % of tile height and the Latin letter in the tile's top-start corner (20 px, ink); press feedback only during ANSWER. **After a tap all four tiles fade equally to 30 %** (no highlighted choice a neighbour could read), a centred "Locked in! 3.2 s" with a small neutral check appears, and the chosen shape shows only as a 24 px glyph in the top bar until REVEAL. REVEAL: full-screen verdict, jade "Correct! +870" with the coin flying into the score and the flame "×3", or coral "Not this time" with the right answer's token; own rank "You're 2nd".
 
 **Reduced motion:** tiles appear without flipping; wrong tiles fade (no scale); characters appear on their tiles (200 ms fade); no coin flights, scores crossfade; the bulbs still go dark.
 
@@ -589,7 +600,7 @@ Formats follow DESIGN §6.4 (OGG Vorbis 48 kHz mono, −16 LUFS, synthesised by 
 | Fact | Source | Result |
 |---|---|---|
 | GSAP version, licence | `npm view gsap version license` | **3.15.1**, licence field "Standard 'no charge' license: https://gsap.com/standard-license." The package README says GSAP is "100% FREE … even for commercial use" thanks to Webflow, including all bonus plugins |
-| GSAP licence restrictions | gsap.com/standard-license | **Not fetched**: the host is blocked from this container (DNS/proxy refusal). From prior knowledge the 2025 standard licence is free for commercial use but restricts use in products that compete with Webflow's visual animation tooling; **[VERIFY]** the exact text before any use. Either way it is not an OSI licence |
+| GSAP licence restrictions | gsap.com/standard-license | **Not fetched**: the host is blocked from this container (DNS/proxy refusal). Its restrictions are **[VERIFY]**; this file does not paraphrase them. It is not an OSI licence. The decision below does not depend on the text |
 | GSAP size | esbuild 0.25.12 `--bundle --minify --format=esm` + `gzip -9` | `gsap` (full) **27.7 KB gz**; `gsap/gsap-core` **20.2 KB gz** |
 | Motion version, licence | `npm view motion` | **14.10.1** latest (MIT); 14.6.0 published 2026-10-22 (the latest ≥ 2 weeks old, platform pin) |
 | Motion size | same method | `animate` from `motion`: **26.4 KB gz**; `animate + stagger + spring`: **26.7 KB gz**; `animate` from `motion/mini` (WAAPI): **3.3 KB gz** |
@@ -599,12 +610,12 @@ Formats follow DESIGN §6.4 (OGG Vorbis 48 kHz mono, −16 LUFS, synthesised by 
 | dotLottie web | same method | **0.82.1** (MIT), JS 12.7 KB gz **+ WASM 491 KB gz** (`dotlottie-player.wasm`, 1.23 MB raw) |
 | Lottie for Compose | Maven Central `maven-metadata.xml` + POM | `com.airbnb.android:lottie-compose` **6.7.1** (latest, updated 2025-10-31), AAR 133.6 KB; depends on `lottie` 6.7.1 (AAR ≈ 433 KB, platform) and Compose BOM 2024.02.01 `foundation`/`ui` (our BOM 2026.09.00 overrides upward; Gradle resolution from Google Maven **[VERIFY]**) |
 | Rive | (platform measurement) | web 62 KB gz + WASM 349 KB gz; Android AAR 13 MB |
-| Current stack | repo | phone: Preact 10.29.8, `@preact/signals` 2.11.3, ~52.6 KB gz (budget 60); TV: Compose BOM 2026.09.00, tv-material 1.1.0, minSdk 26 |
+| Current stack | repo | phone: Preact 10.29.8, `@preact/signals` 2.11.3, ~52.6 KB gz (budget 60); TV: Compose BOM 2026.09.00, tv-material 1.1.0, minSdk 26. `preact@11.2.0` is now latest on npm; **the phone stays on 10.x for this milestone** (no major upgrade mixed into the platform work) |
 
 ### 6.2 Evaluation (honest)
 
 - **GSAP** is the best timeline tool on the web, but: 20–28 KB gz is a third to a half of the phone's whole budget, it does not run on the native TV (Kotlin), so every moment would be written twice anyway, and its licence is proprietary with terms we could not read today. **Not on product surfaces.** Fine for `growth/` (site, video) if lane E wants it, with a THIRD_PARTY.md entry after reading the licence.
-- **Framer Motion** is React components. The phone is Preact; pulling in compat for animation is the wrong trade. **Rejected.** Its vanilla successor **Motion** (`motion`, same codebase) is MIT and works with Preact through `animate()`.
+- **Framer Motion** is React components. The phone is Preact; pulling in compat for animation is the wrong trade. **Rejected.** Its vanilla successor **Motion** (`motion`, same codebase) is MIT and works with Preact through `animate()`, but it brings its own spring solver: the browser TV would then run different curves from Compose on the native TV, and any parity fixture would test code the product does not run. For ~26 KB we would get nothing the shared sampler (§6.4) cannot give in ~1–2 KB. **Not used on product surfaces.**
 - **Three.js**: 132 KB gz, about 2.2× the phone budget, a WebGL context on cheap phones and on TV SoCs (Mali-G31-class GPUs with 1–2 GB RAM), and **nothing to share with Compose**. The doorway/world feeling is achieved with 2D masks, parallax, light and scale (§3), which run at 60 fps everywhere. **Rejected** for the phone and the native TV. On the browser TV it would also break parity with the native TV (the real product), so it is rejected there too. Revisit only for a future game whose core *is* 3D.
 - **Lottie** is the one format that plays on both Compose and web, but it needs authored files. Without After Effects, options are (a) **code-generated Lottie JSON** from a small TS generator using the same choreography data, or (b) skipping Lottie and drawing the same thing in code. Since (b) is what we do for characters and worlds anyway, Lottie is useful only for a handful of set-pieces (confetti, cup trophy, title stingers) and only once an asset exists. **Optional, not in the critical path** (platform §3.8 agrees).
 - **Compose animation** (`Animatable`, `animate*AsState`, `updateTransition`, `AnimatedContent`, `rememberInfiniteTransition`, `spring`, `tween`, `keyframes`, `graphicsLayer`, `Canvas`/`drawWithCache`, `PathMeasure` for arcs) covers every moment in §3–§5 with zero extra APK weight; the repo already uses it (`MishMotion.kt`). `SharedTransitionLayout` (shared-element transitions, in Compose 1.7+) could morph the poster into the setup title **[VERIFY availability and behaviour with tv-material 1.1.0 in BOM 2026.09.00]**; the Bab portal does not depend on it.
@@ -613,14 +624,14 @@ Formats follow DESIGN §6.4 (OGG Vorbis 48 kHz mono, −16 LUFS, synthesised by 
 
 | Surface | Stack | Budget | Why |
 |---|---|---|---|
-| **Phone** (Preact controller) | **CSS transitions/keyframes + Web Animations API**, characters as **inline SVG** from `shared/src/characters`; `motion/mini` (3.3 KB gz) **only** if a sequence cannot be expressed with WAAPI (e.g. promise-chained steps). No Lottie, no Motion full, no GSAP, no Three | Core + largest game chunk + locales ≤ **60 KB gz** (platform §3.8); each `game-<id>` chunk ≤ **14 KB gz**; the character renderer ≤ **3 KB gz** in core (paths are data: 12 bodies + ~13 expressions ≈ 6 KB raw) | Phones are the controllers: they must load instantly on 4G and old devices; their animations are small (floods, coins, stamps) |
-| **Browser TV** (`/tv` mock) | **Motion** `animate` (pin `motion@14.6.0`, MIT) for springs and timelines, lazy-loaded with the TV-mock chunks; inline SVG characters (same code as the phone); `lottie-web` **light** build lazy for optional set-pieces | soft cap **220 KB gz** for TV-mock chunks (platform), Motion ≈ 27 KB of it | Dev/demo host and the reference implementation of every choreography in TS, close to the shared data |
-| **Native TV** (Kotlin, Compose for TV) | **Compose animation APIs** + a `Canvas` character renderer from generated `CharacterPaths.kt`; timings from generated `Choreo.kt`; `lottie-compose` **6.7.1** optional for set-pieces only; **lite motion** on low-RAM devices (platform §3.8) | release APK **≤ +1.5 MB** (platform); ≥ **50 fps** in the portal, entrance and points moments on the reference low-end TV | The product. Native animation is the only thing that is smooth on cheap TV SoCs and costs no download |
+| **Phone** (Preact controller) | **The shared choreography runner** (`shared/src/motion/runner.ts`, ~1–2 KB gz: rAF over the deterministic sampler, or step lists pre-sampled into WAAPI keyframes) for every choreographed moment; plain CSS transitions for one-off fades and presses; characters as **inline SVG** from `shared/src/characters`. No Lottie, no Motion, no GSAP, no Three | Core + largest game chunk + locales ≤ **60 KB gz** (platform §3.8); each `game-<id>` chunk ≤ **14 KB gz**; the character renderer ≤ **3 KB gz** in core (paths are data: 12 bodies + ~13 expressions ≈ 6 KB raw) | Phones are the controllers: they must load instantly on 4G and old devices; their animations are small (floods, coins, stamps) |
+| **Browser TV** (`/tv` mock) | **The same shared runner** as the phone (springs and timelines from the sampler); inline SVG characters (same code as the phone); `lottie-web` **light** build lazy for optional set-pieces | soft cap **220 KB gz** for TV-mock chunks (platform) | Dev/demo host and the reference implementation of every choreography in TS, running exactly the curves the native TV runs |
+| **Native TV** (Kotlin, Compose for TV) | **Compose** (`withFrameNanos` + `graphicsLayer`, or the sampler wrapped as a custom `AnimationSpec`) driven by the **Kotlin port of the shared sampler** with the generated `Choreo.kt`, + a `Canvas` character renderer from generated `CharacterPaths.kt`; plain Compose animation APIs for non-choreographed UI (focus scale, sheet slides); `lottie-compose` **6.7.1** optional for set-pieces only; **lite motion** on low-RAM devices (platform §3.8) | release APK **≤ +1.5 MB** (platform); ≥ **50 fps** in the portal, entrance and points moments on the reference low-end TV | The product. Native animation is the only thing that is smooth on cheap TV SoCs and costs no download |
 
 ### 6.4 Parity between browser TV and native TV
 
 1. **One source of geometry.** Character bodies, face boxes, features, props and world props are path data in `shared/src/characters` and `shared/src/worlds`. `tools/gen-characters` generates Kotlin. A fixture (`shared/fixtures/v2/characters.json`) is asserted on both sides.
-2. **One source of time.** Every moment in §3–§5 is a **step list** in `shared/src/motion/choreo.ts`: `{id, startMs, durationMs, easing, staggerMs?}` with easing ids mapped to DESIGN §6.1 curves (and §8 new ones). `Choreo.kt` is generated. Both renderers implement `sample(stepList, tMs)`; a fixture of sampled values (`progress` at t = 0, 25 %, 50 %, 75 %, 100 % of each step) is compared in Vitest and in JVM unit tests.
+2. **One source of time, one sampler.** Every moment in §3–§5 is a **step list** in `shared/src/motion/choreo.ts`: `{id, startMs, durationMs, easing, staggerMs?, reduced, lite}` with easing ids mapped to DESIGN §6.1 curves (and §8 new ones). `choreo.ts` exports a deterministic `sample(step, tMs)` covering the cubic-bezier easings **and an analytic damped-spring solution** for `spring.hop` / `spring.bouncy` (fixed settle time). `Choreo.kt` and a Kotlin port of `sample()` are generated/ported; **both products drive their transforms from it** (web: the shared rAF runner; TV: `withFrameNanos`), so the fixture of sampled values (`progress` at t = 0, 25 %, 50 %, 75 %, 100 % of each step, `shared/fixtures/v2/choreo.json`) compared in Vitest and in JVM unit tests checks the curves users actually see.
 3. **One layout math.** Positions that depend on players (conga lines, jump-on rows, coin paths, podium order) come from pure functions in `shared/src/games/<id>/layout.ts`, mirrored in Kotlin with fixture tests (GAME-LIKELY §12.7 already requires this for Likely).
 4. **Keyframe screenshots.** Playwright captures the `/tv` mock at 3 named keyframes per moment (with a test clock), and the TV's screenshot tests (Roborazzi or Paparazzi, whichever the TV lane already runs [VERIFY]) capture the same keyframes; a reviewer compares them side by side in the PR. They are not pixel-diffed across platforms (fonts render differently), only reviewed.
 5. **Reduced motion and lite motion** are flags in the step list (`reduced: 'fade' | 'skip' | 'keep'`, `lite: 'keep' | 'drop'`), so both sides degrade identically.
@@ -647,10 +658,11 @@ Formats follow DESIGN §6.4 (OGG Vorbis 48 kHz mono, −16 LUFS, synthesised by 
 │ ╚═══════════════╝  └─────────────┘  └─────────────┘└──┘ │ play.jamaa…│ │
 │ 3–12 players · 15 min · EN FR AR                        └────────────┘ │
 │                                                                        │
-│ ▓  ▓  ▓  ▓  ▓  ▓   ♛                                                   │ members
+│ ▓     ▓     ▓     ▓     ▓     ▓♛      Karim is with us!                │ members
+│ Rami  Maya  Joe   Lina  Sami  Karim                                    │ (names)
 └────────────────────────────────────────────────────────────────────────┘
 ```
-Focused poster (double frame) at the reading start with its world waking up; the fourth poster is cut off at the ticket edge. RTL: the wordmark moves to the right, the ticket to the left, posters run right to left.
+Compact state. Focused poster (double frame, platform focus ring) at the reading start with its world waking up; the fourth poster is cut off at the ticket edge. In the gathering state (< 3 members or the first 60 s) the ticket widens to 248 dp with a ≥ 208 dp QR panel and about 2 posters show. No in-game screen draws focusable buttons: host actions live in the pause menu, and the wireframes below show the non-focusable "◁ Back: menu" hint where a button used to be. RTL: the wordmark moves to the right, the ticket to the left, posters run right to left.
 
 ### 7.2 Game detail / setup (HUB-03, Bluff)
 
@@ -700,7 +712,7 @@ Sheet 420 dp on the end side; RTL: on the left. The 30 % scrim covers only the s
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│ BLUFF! · How to play                                         2 / 4     │
+│ BLUFF! · How to play                              2 / 4   [QR] KXQP    │
 │                                                                        │
 │            ┌──────────────────────────────────────────────┐            │
 │            │                                              │            │
@@ -717,7 +729,7 @@ Sheet 420 dp on the end side; RTL: on the left. The 30 % scrim covers only the s
 │                                         OK: next · Back: skip          │
 └────────────────────────────────────────────────────────────────────────┘
 ```
-Last card: the hint is replaced by `[ Got it (•) ]`.
+Last card: the hint is replaced by `[ Got it (•) ]` and auto-advance stops. While members < `minPlayers`, the corner join chip (`[QR]` ≥ 144 dp + code) and a bottom row of 48 dp member characters stay visible. Any D-pad press pauses auto-advance (6 s per card).
 
 ### 7.5 Phone: hub follow (PHH-02) and setup intro (PHH-03)
 
@@ -738,13 +750,13 @@ Last card: the hint is replaced by `[ Got it (•) ]`.
 │   Maya is picking a game on TV     │ │                                    │
 │                                    │ │                                    │
 │  ▓ ▓ ▓ ▓ ▓                         │ │                                    │
-│ [ha][oh][fp][ok][:(][yay] (icons) │ │                                    │
+│ [lol][!][fp][♥][:(][yay]  (icons) │ │                                    │
 │ ┌────────────────────────────────┐ │ │ ┌────────────────────────────────┐ │
 │ │  Open this game (VIP only)     │ │ │ │            Next                │ │
 │ └────────────────────────────────┘ │ │ └────────────────────────────────┘ │
 └────────────────────────────────────┘ └────────────────────────────────────┘
 ```
-The reaction buttons are drawn icons (laugh, shock, facepalm, thumbs up, sad, party), not emoji; the labels above are placeholders.
+The reaction buttons are drawn icons for the six platform `REACTIONS` (laugh, shock, facepalm, happy = heart, sad, cheer = confetti), not emoji; the labels above are placeholders.
 
 ### 7.6 Bluff: TV
 
@@ -765,26 +777,28 @@ The reaction buttons are drawn icons (laugh, shock, facepalm, thumbs up, sad, pa
 │   ▓✎      ▓✎      ▓✉       ▓✎      ▓✉       ▓✎      │ ✉ ✉  │ 2/6 in    │
 │  Rami    Maya    Joe     Lina    Sami    Nour       └──────┘           │
 │  ═════   ═════   ═════   ═════   ═════   ═════   (café tables)         │
-│                                                    [ Skip prompt ]     │
+│                                                    ◁ Back: menu        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
-**BL-TV-03 Voting**
+**BL-TV-03 Voting** (≤ 6 options: 1 column; 7–13: 2 columns, GAME-BLUFF §8.2)
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│ ROUND 1 · VOTE: which one is real?                 ( 28 )   KXQP       │
-│ ┌──────────────────────────────┐  ┌──────────────────────────────┐     │
-│ │ A  …dances at every wedding. │  │ B  …asks for a second plate. │     │
-│ └──────────────────────────────┘  └──────────────────────────────┘     │
-│ ┌──────────────────────────────┐  ┌──────────────────────────────┐     │
-│ │ C  …gets called a know-it-all│  │ D  …pays for everyone.       │     │
-│ └──────────────────────────────┘  └──────────────────────────────┘     │
-│ ┌──────────────────────────────┐  ┌──────────────────────────────┐     │
-│ │ E  …says "inshallah".        │  │ F  …keeps quiet and eats.    │     │
-│ └──────────────────────────────┘  └──────────────────────────────┘     │
+│ ROUND 1 · VOTE: which one is real?   (A full sentence)  ( 28 )   KXQP  │
+│      ┌────────────────────────────────────────────────────────┐        │
+│      │ A  …dances at every wedding                            │        │
+│      ├────────────────────────────────────────────────────────┤        │
+│      │ B  …asks for a second plate                            │        │
+│      ├────────────────────────────────────────────────────────┤        │
+│      │ C  …gets called a know-it-all                          │        │
+│      ├────────────────────────────────────────────────────────┤        │
+│      │ D  …pays for everyone                                  │        │
+│      ├────────────────────────────────────────────────────────┤        │
+│      │ E  …keeps quiet and eats                               │        │
+│      └────────────────────────────────────────────────────────┘        │
 │                         (corkboard, pinned cards)                      │
 │   ▓▤      ▓       ▓▤       ▓▤      ▓        ▓▤      ▤ = holds ballot   │
 │  Rami    Maya    Joe     Lina    Sami    Nour                          │
-│                                                    [ Close vote ]      │
+│                                                    ◁ Back: menu        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 **BL-TV-05 Reveal (one lie)**
@@ -802,7 +816,7 @@ The reaction buttons are drawn icons (laugh, shock, facepalm, thumbs up, sad, pa
 │                                          coins "+500"                  │
 │   ░ ░ ░ ░  (other cards dimmed 35 %)                                   │
 │                                                                        │
-│                                                       [ Skip ]         │
+│                                                       ◁ menu           │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 **BL-TV-06 Scores race** (6 s): horizontal bars per player sorted by score, odometer numbers at the bar ends, crown on the leader. **BL-TV-07 Awards / BL-TV-08 Results**: trophy cards on velvet stands; podium 3-2-1 with `cheer` characters, buttons per HUB-05.
@@ -867,7 +881,7 @@ BL-PH-04 Reveal (own event)            BL-PH-05 Scores
 │        ▓✓      ▓       ▓✓      ▓✓      ▓       ▓✓      ▓               │
 │      Rami    Maya    Joe     Lina    Sami    Nour    Karim  (jury arc) │
 │                                                                        │
-│                                                   [ Skip card ]        │
+│                                                   ◁ Back: menu         │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 **LK-TV-03 Reveal (public)**
@@ -883,7 +897,7 @@ BL-PH-04 Reveal (own event)            BL-PH-05 Scores
 │                   Maya, defend yourself!                               │
 │                                                                        │
 │     coins +100 ──→ ▓Lina ▓Sami ▓Nour ▓Karim                            │
-│                                                       [ Next ]         │
+│                                                       ◁ menu           │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 ```
@@ -915,7 +929,7 @@ Tiles 3 per row at 360 px (≥ 96 × 112 px each), own tile dashed with "Me".
 │               │   LEBANON: THE BIG QUIZ              │                 │
 │               │   ★ ★ ☆   Medium                     │                 │
 │               │   (◉ Lebanon)                        │                 │
-│               │   (Culture) (Music) (Food) +2        │                 │
+│               │   (Music) (Dance) (Football) +8      │                 │
 │               │   10 questions                       │                 │
 │               └──────────────────────────────────────┘                 │
 │                                                                        │
@@ -923,7 +937,7 @@ Tiles 3 per row at 360 px (≥ 96 × 112 px each), own tile dashed with "Me".
 │    ┌───┐    ┌───┐    ┌───┐    ┌───┐    ┌───┐    ┌───┐   (podiums)     │
 │    │Ram│    │May│    │Joe│    │Lin│    │Sam│    │Nou│                  │
 │    └───┘    └───┘    └───┘    └───┘    └───┘    └───┘                  │
-│                                                   [ Start now ]        │
+│                                                   ◁ Back: menu         │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 **TR-TV-02 Answer** (READ looks the same with empty ghost tiles and a "get ready" bar)
@@ -942,7 +956,7 @@ Tiles 3 per row at 360 px (≥ 96 × 112 px each), own tile dashed with "Me".
 │  └───────────────────────────┘ └───────────────────────────┘           │
 │      ▓◌       ▓◉       ▓◉       ▓◌       ▓◉       ▓◌   ◉ = answered    │
 │    └Ram┘    └May┘    └Joe┘    └Lin┘    └Sam┘    └Nou┘                  │
-│                                                    [ Skip ]            │
+│                                                    ◁ menu              │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 `☼ ≈ ❦ ✦` stand for the drawn sun, wave, leaf and spark shapes. The A–D grid is never mirrored in RTL (GAME-TRIVIA §8.2); the leaderboard tower moves to the start side in RTL.
@@ -985,26 +999,29 @@ TR-PH-01 Answer pad                    TR-PH-03 Reveal
 │ └───────────────┘└───────────────┘ │ │                                    │
 └────────────────────────────────────┘ └────────────────────────────────────┘
 ```
-After a tap: the chosen tile stays bright with a check and scales 0.96, the others fade to 30 %, "Locked in! 3.2 s" replaces the time bar (GAME-TRIVIA §8.4).
+After a tap: all four tiles fade equally to 30 % (no highlighted choice), a centred "Locked in! 3.2 s" with a small neutral check replaces the time bar, and the chosen shape shows as a 24 px glyph in the top bar until REVEAL (GAME-TRIVIA §8.4).
 
 ---
 
 ## 8. Tokens to add
 
-**Web** (`web-client/src/styles/tokens.css`): `--world-deep`, `--world-stage-top`, `--world-surface`, `--world-elevated`, `--world-accent`, `--world-accent-text`, `--world-on-accent`, `--world-glow`, `--world-signal`, set by `[data-world="night-market|hakawati-cafe|rooftop|quiz-studio"]` on the root; `--trivia-opt-1..4`. **Compose** (`ui/theme/`): `WorldColors` data class + `LocalWorld` composition local; values generated from `shared/src/worlds/palettes.ts` by `tools/gen-characters` so both sides match (fixture test).
+**Web** (`web-client/src/styles/tokens.css`): `--world-deep`, `--world-stage-top`, `--world-surface`, `--world-elevated`, `--world-accent`, `--world-accent-text`, `--world-on-accent`, `--world-glow`, `--world-signal`, set by `[data-world="night-market|hakawati-cafe|rooftop|quiz-studio"]` on the root; `--trivia-opt-1..4`. **Compose** (`ui/theme/`): `WorldColors` data class + `LocalWorld` composition local; values generated from `shared/src/worlds/palettes.ts` (created by platform lane A in P; each G lane edits only its world) by `tools/gen-characters` so both sides match (fixture test). The TV design system itself is renamed `Jamaa*` (`JamaaColors`, `JamaaTheme`, `JamaaMotion`…; platform §1.4).
 
 **Motion tokens** (added to DESIGN §6.1, both platforms, in `choreo.ts`):
 
 | Token | Value | Use |
 |---|---|---|
-| `motion.portal` | 1 100 ms (first open) / 700 ms (repeat; platform value) | Bab portal |
-| `motion.entranceCore` | 1 400 ms | world door + title |
+| `motion.portal` | 1 100 ms (first open in a session) / 700 ms (repeat) | Bab portal (platform §3.10 A) |
+| `motion.entrance` | 2 000 ms (max) | world entrance (platform §3.10 B; server grace 2 500) |
+| `motion.entranceCore` | 1 250 ms | darken + world door + title |
+| `input.guard` | 400 ms (`INPUT_GUARD_MS`) | input ignored after a transition (platform §3.10 E) |
 | `motion.coin` | 450 ms | one coin flight |
 | `motion.counter` | 600 ms | counter tick / odometer |
 | `motion.reorder` | 400 ms | FLIP |
-| `ease.coin` | `cubic-bezier(0.45, 0, 0.2, 1)` | coins: slight wind-up, soft landing |
+| `ease.coin` | `cubic-bezier(0.4, -0.15, 0.2, 1)` | coins: a slight wind-up (y1 < 0), then a soft landing |
 | `ease.door` | `cubic-bezier(0.6, 0, 0.15, 1)` | door swing, curtain parting |
-| `spring.hop` (Compose) | `spring(dampingRatio = 0.5f, stiffness = 500f)`; web: Motion `{type: "spring", stiffness: 500, damping: 22, mass: 1}` (≈ ζ 0.5) | character hops |
+| `spring.hop` | damping ratio ζ = 0.5, stiffness 500, mass 1, solved analytically by the shared sampler (same curve and settle time on web and TV; platform §3.8) | character hops |
+| `spring.bouncy` | the DESIGN §6.1 parameters, solved by the same sampler | landings |
 
 ---
 
@@ -1012,18 +1029,17 @@ After a tap: the chosen tile stays bright with a check and scales 0.96, the othe
 
 - **Contrast:** a unit test (web and TV) computes the WCAG ratios of every world token pair listed in §1.5 and fails below the DESIGN §2.4 thresholds.
 - **CVD:** `tools/color-check` (or the unit test) verifies the four Trivia option colours' minimum ΔE00 ≥ 15 under the Machado matrices, and that every player colour on each `world.surface` gets the cream ring when < 3:1.
-- **Characters:** fixture equality of geometry (TS ↔ Kotlin); a render test at 48 dp asserts the eye height ≥ 1.6 dp for every shape; a snapshot of all 12 × 13 expressions (web) for review.
+- **Characters:** fixture equality of geometry (TS ↔ Kotlin, `characters.json`: 12 shapes, 13 expressions, the 12 × 9 face space); a render test at 40 dp asserts the eye height ≥ 2.4 dp for every shape; a snapshot of all 12 × 13 expressions (web) for review; every `REACTIONS` value maps to an expression and a burst.
 - **Secrecy:** a test drives each game's projection through all phases and asserts that the character state (expression, prop, look target) for every player is a function of the **public** view only (same output when only secret fields change).
-- **Choreography parity:** sampled-progress fixtures (§6.4) on both sides; Playwright keyframes for portal, entrance, Bluff reveal, Likely reveal, Trivia reveal.
-- **Reduced motion:** e2e with `prefers-reduced-motion: reduce` asserts no element has a running transform animation longer than 200 ms during the portal and the reveals; TV unit test with `ANIMATOR_DURATION_SCALE = 0` asserts the reduced step lists are used.
-- **Remote-only:** e2e drives hub → setup → rules overlay → start → pause → rules → back with D-pad/OK/Back only (EN and AR), and checks the initial focus of every screen in §2 and §7.
+- **Choreography parity:** sampled-progress fixtures (§6.4, springs included) on both sides, against the one sampler both products run; Playwright keyframes for portal, entrance, Bluff reveal, Likely reveal, Trivia reveal.
+- **Reduced motion:** e2e with `prefers-reduced-motion: reduce` (and, separately, the Calm animations toggle) asserts no element has a running transform animation longer than 200 ms during the portal and the reveals; TV unit test with `ANIMATOR_DURATION_SCALE = 0` **or** Calm animations on asserts the reduced step lists are used.
+- **Remote-only:** e2e drives hub → setup → rules overlay → start → pause → rules → back with D-pad/OK/Back only (EN and AR), checks the initial focus of every screen in §2 and §7 and every focus-graph edge of §2.1 and §2.3, and the input rule: OK ×3 within 300 ms on a poster ends on HUB-03, not PLAYING.
 - **Budgets:** `check-size.mjs` (platform rules) and a frame-time check on the reference TV (platform procedure).
 
 ## 10. Open questions (defaults chosen; non-blocking)
 
-1. **Portal duration** 1 100 ms first open vs platform 700 ms: [AMEND-PLATFORM], default 700 until accepted.
-2. **Poster size** 210 × 290 dp vs platform 300 × 400: [AMEND-PLATFORM], this file's layout assumes 210 × 290.
-3. **AR wordmark dot:** the ج dot as the amber head is a strong idea but an unusual treatment of a letter dot; needs a native typographer's look. Fallback: all-cream Arabic wordmark with an amber dot placed after the word.
-4. **GSAP licence text** could not be read (gsap.com blocked here); irrelevant to the product surfaces, needed only if `growth/` adopts it.
-5. **`SharedTransitionLayout`** on tv-material 1.1.0: nice-to-have for the title morph; the portal is specified without it.
-6. **Shilleh** as the internal/marketing name of the character cast: owner approval; it never appears as a UI label in v1.
+1. **AR wordmark dot:** the ج dot as the amber head is a strong idea but an unusual treatment of a letter dot; needs a native typographer's look. Fallback: all-cream Arabic wordmark with an amber dot placed after the word.
+2. **GSAP licence text** could not be read (gsap.com blocked here); irrelevant to the product surfaces, needed only if `growth/` adopts it.
+3. **`SharedTransitionLayout`** on tv-material 1.1.0: nice-to-have for the title morph; the portal is specified without it.
+4. **Shilleh** as the internal/marketing name of the character cast: owner approval; it never appears as a UI label in v1.
+5. Resolved in this revision (now binding in both files): poster size 210 × 290 dp and the side ticket column with a gathering state; portal 1 100 ms first open / 700 ms after; entrance ≤ 2 000 ms in the order darken → door → title → characters; the 12 × 9 face space; one focus rule (cream ring + `glow.primary`).

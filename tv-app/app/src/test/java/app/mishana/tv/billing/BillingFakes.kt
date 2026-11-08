@@ -3,11 +3,12 @@ package app.mishana.tv.billing
 import android.app.Activity
 import app.mishana.tv.protocol.CatalogPack
 import app.mishana.tv.protocol.CatalogResponse
-import app.mishana.tv.protocol.CatalogPremium
+import app.mishana.tv.protocol.CatalogSubscription
 import app.mishana.tv.protocol.EntitlementBody
 import app.mishana.tv.protocol.LocalizedTitle
 import app.mishana.tv.protocol.PurchaseRef
 import app.mishana.tv.protocol.PurchaseResultEntry
+import app.mishana.tv.protocol.SubscriptionInfo
 import app.mishana.tv.protocol.VerifyResponse
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -22,21 +23,22 @@ class FakeGateway : BillingGateway {
     var ownedQueries = 0
     var lifecycleStarts = 0
     val launched = mutableListOf<Pair<PurchasableOffer, String>>()
-    val productQueries = mutableListOf<List<String>>()
+    val productQueries = mutableListOf<Pair<List<String>, List<String>>>()
 
     override suspend fun connect(): GatewayResult<Unit> {
         connects += 1
         return connectResult
     }
 
-    override suspend fun queryProducts(ids: List<String>): GatewayResult<ProductsSnapshot> {
-        productQueries += ids
+    override suspend fun queryProducts(subIds: List<String>, inappIds: List<String>): GatewayResult<ProductsSnapshot> {
+        productQueries += subIds to inappIds
         val p = products
         if (p !is GatewayResult.Ok) return p
         return GatewayResult.Ok(
             ProductsSnapshot(
-                inapp = p.value.inapp.filterKeys { it in ids },
-                unfetched = p.value.unfetched.filterKeys { it in ids },
+                subs = p.value.subs.filterKeys { it in subIds },
+                inapp = p.value.inapp.filterKeys { it in inappIds },
+                unfetched = p.value.unfetched.filterKeys { it in subIds || it in inappIds },
             ),
         )
     }
@@ -72,14 +74,12 @@ class FakeApi(private val now: () -> Long) : BillingApi {
     /** What the server knows: premium + owned packs (grows with OK verifies). */
     var premium = false
     val packs = sortedSetOf<String>()
-
-    /** Overrides `premiumUntil` (e.g. a timed owner grant); null = 30 days ahead. */
-    var premiumUntil: Long? = null
+    var subscription: SubscriptionInfo? = null
 
     var catalog = CatalogResponse(
         mode = "google",
         packageName = "app.mishana.tv",
-        premium = CatalogPremium("premium"),
+        subscription = CatalogSubscription("premium", listOf("monthly", "yearly"), "trial-7d"),
         freePackIds = listOf("en-everyday-01", "fr-everyday-01", "ar-everyday-01"),
         packs = listOf(
             pack("en-food-01", "en", 33),
@@ -92,13 +92,13 @@ class FakeApi(private val now: () -> Long) : BillingApi {
     fun body(): EntitlementBody {
         tokenSeq += 1
         val t = now()
-        val exp = t + 8 * 3_600_000L
         return EntitlementBody(
             token = "tok$tokenSeq",
             premium = premium,
-            premiumUntil = if (premium) premiumUntil ?: (t + 30L * 86_400_000) else null,
+            premiumUntil = if (premium) t + 30L * 86_400_000 else null,
             packs = packs.toList(),
-            expiresAt = exp,
+            expiresAt = t + 8 * 3_600_000L,
+            subscription = subscription,
         )
     }
 
@@ -147,9 +147,21 @@ class MemoryStore(private var id: String = "5f2c8e1a9b0d4c3e7a6f1b2d3c4e5f60") :
 }
 
 object PlayProducts {
-    /** Lifetime `premium` ($7.99) plus one-time products for [packProductIds] ($1.99), all INAPP. */
+    private fun phase(price: String, micros: Long, period: String) = PricingPhaseInfo(price, micros, period)
+
+    /** Premium with both plans and a trial on each; one-time products for [packProductIds]. */
     fun all(vararg packProductIds: String): ProductsSnapshot = ProductsSnapshot(
-        inapp = mapOf("premium" to InappProductInfo("premium", "$7.99", "ot-premium")) +
-            packProductIds.associateWith { InappProductInfo(it, "$1.99", "ot-$it") },
+        subs = mapOf(
+            "premium" to SubProductInfo(
+                "premium",
+                listOf(
+                    SubOfferInfo("monthly", null, "m-base", listOf(phase("$4.99", 4_990_000, "P1M"))),
+                    SubOfferInfo("monthly", "trial-7d", "m-trial", listOf(phase("Free", 0, "P7D"), phase("$4.99", 4_990_000, "P1M"))),
+                    SubOfferInfo("yearly", null, "y-base", listOf(phase("$29.99", 29_990_000, "P1Y"))),
+                    SubOfferInfo("yearly", "trial-7d", "y-trial", listOf(phase("Free", 0, "P7D"), phase("$29.99", 29_990_000, "P1Y"))),
+                ),
+            ),
+        ),
+        inapp = packProductIds.associateWith { InappProductInfo(it, "$1.99", "ot-$it") },
     )
 }

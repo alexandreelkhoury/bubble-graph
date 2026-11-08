@@ -1,8 +1,8 @@
 # GAME-BLUFF — "Bluff the answer" (JAMAA game #2)
 
-Status: **binding design spec**, draft 1, 2026-11-08. Game id: `bluff`. Display names: EN **Bluff!**, FR **Bluff !**, AR **«بلوف!»** (the word is used as-is in Lebanese; `[native review]`: alternative «كذّبها!»).
+Status: **binding design spec**, draft 2 (review applied), 2026-11-08. Game id: `bluff`. Display names: EN **Bluff!**, FR **Bluff !**, AR **«بلوف!»** (the word is used as-is in Lebanese; `[native review]`: alternative «كذّبها!»).
 
-This file defines the rules, state machine, timers, scoring, edge cases, screens, settings, copy, content schema and first content for Bluff. Things the JAMAA hub owns are only referenced here: the lobby, game picker, player characters, the ⓘ rules button, entitlements (JAMAA Pass), sound mute, room lifetime and reconnect. **The platform contract is [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) (§2.10 for Bluff); where it names a shared concept differently, the platform name wins and this file maps to it.** In particular: i18n keys written `bluff.*` here live under `game.bluff.*`; intents travel as `GAME {gameId:"bluff", i}`; `HOST_ADVANCE` is the platform's host-advance intent; late joiners are the room's *benched* members. Everything that is specific to Bluff is fixed here.
+This file defines the rules, state machine, timers, scoring, edge cases, screens, settings, copy, content schema and first content for Bluff. Things the JAMAA hub owns are only referenced here: the lobby, game picker, player characters, the ⓘ rules button, entitlements (JAMAA Pass), sound mute, room lifetime and reconnect. **The platform contract is [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) (§2.10 for Bluff); where it names a shared concept differently, the platform name wins and this file maps to it.** In particular: i18n keys written `bluff.*` here live under `game.bluff.*`; intents travel as `GAME {gameId:"bluff", i}`; `HOST_ADVANCE` is the platform's host-advance intent; late joiners are the room's *benched* members, admitted through the `join` hook; "How to play" is the platform's per-device setup intro (there is **no in-game intro phase**); the no-repeat history is the platform `memory.usedKeys`. Everything that is specific to Bluff is fixed here.
 
 Conventions are those of [SPEC.md](SPEC.md): pure engine (`reduce(state, action, ctx:{now, catalog})`, RNG `rngState` in state, one idempotent `TICK`), server-authoritative Durable Object, per-client projections, every server→client key always present (`null` when empty), times in epoch ms, durations `*Ms`. `[VERIFY]` = check before shipping. `[native review]` = a native speaker must approve the text.
 
@@ -21,14 +21,17 @@ Players: **3–12** (platform bounds). Best at 4–8. Duration: about 15–20 mi
 | Hook | Bluff's value |
 |---|---|
 | `gameId` | `"bluff"` |
-| Players | min 3, max 12. Start is blocked under 3 **connected** players (platform `NOT_ENOUGH_PLAYERS`) |
+| Players | min 3, max 12. Start is blocked under 3 **connected** players (platform `NOT_ENOUGH_PLAYERS`); no playable prompt → platform `NO_CONTENT_AVAILABLE` |
 | Settings | 3 settings, §9 (`packIds`, `length`, `pace`) |
-| How to play | 4 steps, §10.1; shown once per room the first time Bluff starts (platform "first-time intro"), always reachable through ⓘ |
+| How to play | 4 steps, §10.1; shown **per device, the first time Bluff's setup opens** (platform §3.2 HUB-03 / PHH-03), never as a game phase; always reachable through ⓘ |
+| Score carry | `carriesScore: false`: every Bluff game starts at 0 (platform §2.4); stars come from this game's points |
+| Hooks | `join` (late joiners wait for the next WRITING, §7), `projectSetup` → `{available}`, `memory` → item ids, `projectStatus` (`doneIds` = submitted in WRITING / voted in VOTING; `awaitedIds` = the others), `leakCheck` |
+| Pause menu items (TV) | in order: "Skip prompt" (WRITING, `SKIP_PROMPT`), "Hide an answer" (VOTING, `HIDE_OPTION`, then pick a card), "Next" (ROUND_INTRO, REVEAL, SCORES, AWARDS, `HOST_ADVANCE`), "End game" (HOLD, `END_GAME`, confirm) |
 | ⓘ rules sheet | §10.2, keys `bluff.rules.*` |
-| Characters | One character per player (platform). Expressions Bluff uses: `idle`, `think`, `done`, `smug`, `shock`, `facepalm`, `cheer`, `laugh`, `sad`, `away` (§12.4). If the platform set differs, map to the closest |
+| Characters | One character per player (platform). Expressions Bluff uses (all in the platform set): `idle`, `think`, `done`, `smug`, `shock`, `facepalm`, `cheer`, `laugh`, `sad`, `away` (§12.4) |
 | Content language | The room's content language (platform setting; Mish Ana! calls it `wordLocale`). Packs list `playableIn` locales (§11) |
 | Entitlement | Free room: items with `tier:"free"` only. JAMAA Pass room: all items. **Pass items never reach a free room's clients** (same rule as Mish Ana! premium words) |
-| Host powers | TV remote (always) and the VIP phone (platform host player) |
+| Host powers | TV remote (always, through the pause menu) and the VIP phone (platform host player, `ctx.isHost`) |
 | Sounds | New cues in §12.6, synthesised by `tools/gen-sounds` like the existing ones |
 
 ---
@@ -51,24 +54,24 @@ The final is called **"The Big Bluff"** (FR «Le Grand Bluff», AR «البلو�
 
 ```mermaid
 stateDiagram-v2
-  [*] --> INTRO: start (≥3 connected)
-  INTRO --> ROUND_INTRO: deadline / host HOST_ADVANCE
+  [*] --> ROUND_INTRO: start (≥3 connected; first deadline + ENTRANCE_GRACE_MS)
   ROUND_INTRO --> WRITING: deadline / host HOST_ADVANCE
-  WRITING --> WRITING: host SKIP_PROMPT (new prompt, timer restarts)
+  WRITING --> WRITING: host SKIP_PROMPT, or auto "Too famous!" swap (new prompt, timer restarts)
   WRITING --> VOTING: all connected players submitted / deadline
   VOTING --> REVEAL: all connected eligible voters voted (+ like grace) / deadline
+  VOTING --> SCORES: host hid the truth (prompt voided, no points)
   REVEAL --> SCORES: deadline / host HOST_ADVANCE
   SCORES --> WRITING: next prompt, same round
   SCORES --> ROUND_INTRO: next round
   SCORES --> AWARDS: after the final
   AWARDS --> RESULTS: deadline / host HOST_ADVANCE
-  RESULTS --> [*]: back to hub lobby / play again
+  RESULTS --> [*]: platform REPLAY / BACK_TO_SETUP / BACK_TO_HUB
   WRITING --> HOLD: fewer than 3 connected at prompt start
   HOLD --> WRITING: 3 connected again
   HOLD --> AWARDS: host END_GAME
 ```
 
-`INTRO` is the platform's first-time "How to play" (skipped if this room already saw it, or immediately skippable). `HOLD` exists only at the **start** of a prompt; a prompt already running always finishes.
+There is **no INTRO phase**: How to play belongs to the platform (per device, in setup) and to ⓘ. The first phase is `ROUND_INTRO`, whose deadline is `4 000 + ENTRANCE_GRACE_MS` (2 500, platform §3.10 B) for the first round only, so the café entrance (≤ 2 s) never eats the round card. `HOLD` exists only at the **start** of a prompt; a prompt already running always finishes.
 
 ### 4.1 Phases, deadlines, who acts
 
@@ -76,24 +79,26 @@ Durations below are for `pace: "normal"`. `relaxed` multiplies WRITING and VOTIN
 
 | Phase | Deadline kind | Duration | Ends early when | Who can act |
 |---|---|---|---|---|
-| `INTRO` | `INTRO` | 20 000 ms | host `HOST_ADVANCE` | host |
-| `ROUND_INTRO` | `ROUND_INTRO` | 4 000 ms (final: 6 000) | host `HOST_ADVANCE` | host |
+| `ROUND_INTRO` | `ROUND_INTRO` | 4 000 ms (final: 6 000); **first round of the game: + `ENTRANCE_GRACE_MS`** | host `HOST_ADVANCE` | host |
 | `WRITING` | `WRITING` | 60 000 ms | every connected, non-`left` player has a submitted lie | players: `SUBMIT_LIE`, `REQUEST_HELP`; host: `SKIP_PROMPT` |
-| `VOTING` | `VOTING` | `clamp(20 000 + 2 000 × optionCount, 26 000, 45 000)` | every connected eligible voter has voted → deadline moves to `now + LIKE_GRACE_MS` (3 000) if that is earlier | players: `VOTE`, `LIKE`; host: `HIDE_OPTION` |
+| `VOTING` | `VOTING` | `clamp(20 000 + 2 500 × optionCount, 26 000, 50 000)` | every connected eligible voter has voted → deadline moves to `now + LIKE_GRACE_MS` (3 000) if that is earlier | players: `VOTE`, `LIKE`; host: `HIDE_OPTION` |
 | `REVEAL` | `REVEAL` | `revealDurationMs(reveal)` (§12.2) | host `HOST_ADVANCE` | host |
-| `SCORES` | `SCORES` | 6 000 ms | host `HOST_ADVANCE` | host |
+| `SCORES` | `SCORES` | 6 000 ms (voided prompt: 4 000) | host `HOST_ADVANCE` | host |
 | `HOLD` | none | — | 3 players connected | host: `END_GAME` |
 | `AWARDS` | `AWARDS` | `2 500 + 3 500 × awardCount` | host `HOST_ADVANCE` | host |
-| `RESULTS` | none | — | — | host: `PLAY_AGAIN`, `BACK_TO_HUB` (platform) |
+| `RESULTS` | none | — | — | host: platform `REPLAY`, `BACK_TO_SETUP`, `BACK_TO_HUB` |
 
-`host HOST_ADVANCE` sets `deadline.at = now` and the next `TICK` (sent immediately by the DO) advances. It is ignored in WRITING and VOTING (players must not be cut off by a remote press; the host uses `SKIP_PROMPT`, or simply waits).
+`host HOST_ADVANCE` **expires the phase inline** in the same reduce (like Mish Ana!'s `expire(kind)`; the room also runs a TICK in the same turn when `nextWakeAt <= now`, platform §2.6), so no extra alarm, persist or broadcast is needed. It is ignored in WRITING and VOTING (players must not be cut off by a remote press; the host uses `SKIP_PROMPT`, or simply waits).
 
 ### 4.2 Transitions in detail
 
 **Entering WRITING.**
 1. If fewer than 3 players are connected → `HOLD`.
 2. Draw the prompt (§11.4) with the state RNG. Store it in `state.prompt` (server only until REVEAL; see §8.1 for what is projected).
-3. Clear `lies`, `votes`, `likes`, `help`, `options`. Set the deadline.
+3. Clear `lies`, `votes`, `likes`, `help`, `options`, `tooCloseProbes`, `foundWhileWriting`. Set the deadline.
+4. Compute the public **length hint** from the truth's word count in the content locale: 1–2 words → `short` ("Short answer (1–2 words)"), 3–5 → `few` ("A few words"), 6+ → `sentence` ("A full sentence"). It is shown under the prompt on the TV and phones so lies take the same shape as the truth.
+
+**"Too famous!" auto-swap (safety net).** If, during WRITING, at least 50 % of connected players have received `LIE_TOO_CLOSE` on their **first** submission for this prompt (minimum 2 players), the server swaps the prompt itself: a new prompt is drawn, all lies, flags and probes are discarded, the WRITING timer restarts, and the TV shows "Too famous! New one". The swap does not use one of the host's skips and happens at most once per prompt slot. The famous item is recorded in `memory.usedKeys` like any drawn item.
 
 **WRITING → VOTING ("build options").**
 1. Collect submitted lies of every player (connected or not, `left` excluded).
@@ -104,7 +109,7 @@ Durations below are for `pace: "normal"`. `relaxed` multiplies WRITING and VOTIN
 
 **VOTING → REVEAL ("build reveal").** The engine computes the full reveal script (§12.2) and the score deltas in one step and stores them in `state.reveal`. Scores are applied to `players[].score` at this moment (so a crash/reconnect never loses points); the TV animates from `scoreBefore` to `scoreAfter`, both projected.
 
-**SCORES → next.** `promptIndex++`. Next phase per §3. Prompt ids used are appended to `room.usedPromptIds` (platform room history, kept across games in the same room, capped at 500 ids FIFO).
+**SCORES → next.** `promptIndex++`. Next phase per §3. Drawn item ids are recorded in the game's `memory.usedKeys` (platform history, kept across games in the same room, capped at 300 ids per game, oldest dropped; JAMAA-PLATFORM §2.2).
 
 ---
 
@@ -118,14 +123,18 @@ Durations below are for `pace: "normal"`. `relaxed` multiplies WRITING and VOTIN
 | Length | **1–60 graphemes** (`LIE_MAX_CHARS = 60`), ≤ 240 code points. Must contain at least 2 letters (`\p{L}`) — rejects "...", "??", "1" |
 | Count | One lie per player per prompt. It can be **edited** (re-submitted) until WRITING ends |
 | Case | Shown as typed, with the first letter upper-cased for Latin scripts (`toLocaleUpperCase(locale)` on the first grapheme) so a lowercase lie does not stand out against the content's style |
-| Script | Any script is accepted in any room (an English lie in an Arabic room is the author's problem) |
-| Rate | Platform rate limit applies; plus at most 10 `SUBMIT_LIE` per player per prompt (`LIE_EDITS_MAX`) → `TOO_MANY_EDITS` |
+| Script | **Content locale `ar`:** a lie with no Arabic letter (`\p{Script=Arabic}`) is rejected with `LIE_WRONG_SCRIPT` ("Write it in Arabic letters so it blends in!"): many players type Arabizi, and a Latin lie next to Arabic options is an instant tell. **Content locale `en`/`fr`:** a lie with no Latin letter is rejected the same way ("Write it in Latin letters so it blends in!") |
+| Rate | Platform rate limit applies; plus at most **5** `SUBMIT_LIE` per player per prompt (`LIE_EDITS_MAX = 5`) → `TOO_MANY_EDITS`. Within those, at most **3** `LIE_TOO_CLOSE` results per player per prompt (`TOO_CLOSE_PROBES_MAX = 3`); a further too-close attempt is answered `TOO_MANY_EDITS` |
 
-Error codes (new, namespaced; `messageKey` per SPEC §6.4 convention): `LIE_EMPTY`, `LIE_TOO_LONG`, `LIE_TOO_CLOSE`, `LIE_BLOCKED_WORD`, `TOO_MANY_EDITS`, `WRONG_PHASE` (platform).
+**Display normalisation (every option alike: truth, house lies and player lies).** Before options are built, each text is normalised for display so polish never betrays the authored truth: strip Arabic tashkeel including shadda (U+064B–U+065F, U+0670) and tatweel (U+0640); map typographic quotes and guillemets (`« » “ ” ‘ ’ „`) to plain `"` / `'`; drop trailing `.`, `!`, `…`; strip `Extended_Pictographic` (emoji: no truth ever has one); collapse spaces. Lint (§11.3) additionally forbids tashkeel in authored truths and house lies. Test vectors in §13.4.
+
+Error codes (namespaced in `games/bluff/errors.ts`; `messageKey` per SPEC §6.4 convention): `LIE_EMPTY`, `LIE_TOO_LONG`, `LIE_TOO_CLOSE`, `LIE_WRONG_SCRIPT`, `LIE_BLOCKED_WORD`, `TOO_MANY_EDITS`, `CANNOT_VOTE_OWN`, `CANNOT_HIDE`, `STALE_PROMPT`; plus the platform's `WRONG_PHASE`.
 
 ### 5.2 "Too close to the truth"
 
 A lie is **rejected** with `LIE_TOO_CLOSE` when it matches the truth or any `truthAlt` of the room locale **or** of the item's `sourceLocale` (so typing the original Arabic ending in an English room is also caught).
+
+**No truth oracle.** A too-close reply tells the player they found the truth, so it must never pay. The first `LIE_TOO_CLOSE` a player receives on a prompt sets a server-side flag `foundWhileWriting` for that player and prompt: **their vote for the truth on that prompt scores 0** (they can still score for fooling others with a real lie, and for likes). The phone says so at once: "Close to the truth! Write something else. Finding the truth now won't score." (`bluff.err.tooClose`). Probes are capped at 3 per prompt (§5.1). The flag is projected only to that player (`me.foundWhileWriting`) and appears in the reveal (a small "found it early" tag on their truth landing, no coin).
 
 ```ts
 // shared/src/games/bluff/similar.ts
@@ -138,11 +147,12 @@ export function isTooClose(lie: string, truths: string[]): boolean;
 
 `isTooClose` returns true if, for any truth `t` (both normalised; `L`, `T` = normalised strings):
 1. `L === T`; or
-2. `min(len(L), len(T)) ≥ 5` and `levenshtein(L, T) / max(len(L), len(T)) ≤ 0.2`; or
+2. `min(len(L), len(T)) ≥ 5` and `levenshtein(L, T) / max(len(L), len(T)) ≤ 0.2`; **for a truth shorter than 5 code points, `levenshtein(L, T) ≤ 1` instead**; or
 3. `len(T) ≥ 4` and `L.includes(T)` and `len(T) / len(L) ≥ 0.6`; or
-4. the truth has ≥ 3 tokens and the Jaccard index of the two token sets is ≥ 0.75.
+4. the truth has ≥ 3 tokens and the Jaccard index of the two token sets is ≥ 0.75; or
+5. **the truth has ≤ 3 tokens and every truth token appears in the lie** (token match = equal after `normalizeAnswer`, or Levenshtein ≤ 1 for tokens of ≥ 4 code points). This catches lies that wrap a short truth ("…a beautiful gazelle", «غزال حلو», «ماتوا كلّن»).
 
-Lengths are in code points of the normalised string. The phone shows: "Too close to the real answer! You know it, now invent a lie." (`bluff.err.tooClose`). Knowing the truth earns nothing extra; the player will simply find it in the vote.
+Lengths are in code points of the normalised string. For AR-sourced items played in EN/FR rooms, `truthAlt` also lists common **Arabizi** forms of the original ending (e.g. `ghazal`, `matu`), so typing the transliteration is caught too.
 
 Required test vectors (truth → lie → too close?):
 
@@ -155,6 +165,12 @@ Required test vectors (truth → lie → too close?):
 | `مش متل اللي بيعدّها` | `مش مثل اللي بيعدها` | true (rule 2) |
 | `مش متل اللي بيعدّها` | `بيوجعو أكتر` | false |
 | `Gardyloo` style: `A warning shout before throwing water from a window` | `warning shout before throwing water out a window` | true (rule 4) |
+| `is a gazelle` | `is a beautiful gazelle` | true (rule 5) |
+| `غزال` | `غزال حلو` | true (rule 5) |
+| `ماتوا` | `ماتو` | true (short truth, Levenshtein 1) |
+| `ماتوا` | `ماتوا كلّن` | true (rule 5) |
+| `مات` | `بات` | true (short truth, Levenshtein 1) — accepted cost: a 3-letter truth blocks its 1-letter neighbours |
+| `is a gazelle` (EN room, AR source) | `ghazal` | true (Arabizi `truthAlt`) |
 
 ### 5.3 Duplicates and collisions
 
@@ -168,7 +184,11 @@ Nobody is told at submission time that their lie duplicates another (that would 
 ### 5.4 Blocked words and the host skip
 
 - **Filter.** A small per-locale list of slurs and strong sexual or hateful terms (`shared/src/games/bluff/blocklist/{en,fr,ar}.json`, maintained with the word packs, ≤ 300 entries each, matched on `normalizeAnswer` tokens and on the normalised whole string for multi-word entries). A hit → `LIE_BLOCKED_WORD`; the phone says "Keep it party-friendly. Try another one." (`bluff.err.blocked`). Mild swearing is **not** blocked (it's a party game; the filter is for slurs).
-- **Host hide.** In VOTING, the TV remote (pause menu → "Hide an answer", then pick a card) or the VIP phone (long-press a card → "Hide this answer") sends `HIDE_OPTION{optionId}`. Truth and house lies cannot be hidden (`CANNOT_HIDE`; the UI does not offer it). Effects: the option disappears; its authors score 0 for being voted on this prompt (they keep any truth points); voters who had chosen it lose their vote and get a "Vote again" toast; if less than 10 s remain, the deadline becomes `now + 10 000`. Max 3 hides per prompt.
+- **Host hide.** In VOTING, the TV remote (pause menu → "Hide an answer", then pick a card) or the VIP phone (long-press **any** card → "Hide this answer") sends `HIDE_OPTION{optionId}`. **Every option is hideable through the same UI with the same visible effect (the card disappears)**, so neither the menu, the long-press sheet nor the server reply tells the VIP (a competing player) or the remote holder which card is the truth. Checks, in this order, before the option's kind is ever looked at: max 3 hides per prompt and at least 2 options must remain → otherwise `CANNOT_HIDE`. Then, by kind (server only):
+  - **player lie:** its authors score 0 for being voted on this prompt (they keep any truth points); voters who had chosen it lose their vote and get a "Vote again" toast; if less than 10 s remain, the deadline becomes `now + 10 000`;
+  - **house lie:** removed; its voters lose their vote and re-vote, same toast and deadline rule;
+  - **truth:** the prompt is **voided**: no points for anyone on this prompt (votes, fooled points and likes all void), the TV shows a "Prompt skipped by the host" card and the game goes to SCORES (4 s, unchanged scores), then the next prompt. A voided prompt pays nothing, so probing by hiding gains nothing.
+  - Property test: for the same option set, the hide UI state and the error code returned do not depend on option kind.
 - **Skip prompt.** In WRITING the host can `SKIP_PROMPT` (e.g. everyone knows this proverb). A new prompt is drawn, all lies are discarded, the WRITING timer restarts. Max 2 skips per prompt slot (`SKIPS_PER_PROMPT_MAX`); then the option is greyed out.
 
 ### 5.5 "Help me lie" (stuck players)
@@ -204,6 +224,8 @@ They have no option this prompt and simply vote. A player who has not submitted 
 | You voted for the truth | **+1000 × m** | |
 | Each player who voted for your lie | **+500 × m** | Split equally among co-authors (§5.3); halved if `helped` (§5.5); rounded down to 10 |
 | Each like your lie received | **+100** | Not multiplied. Split among co-authors. Max one like per liker per option |
+| You voted for the truth after a too-close probe on this prompt (`foundWhileWriting`) | 0 | §5.2: the probe already told you the truth |
+| Voided prompt (host hid the truth) | 0 for everyone | §5.4 |
 | You voted for a house lie | 0 | Your character gets the "hooked by the house" reaction |
 | Abstain / no lie | 0 | |
 
@@ -238,7 +260,7 @@ Then RESULTS: the podium. **Winner = highest score; equal scores share the place
 | Case | Behaviour |
 |---|---|
 | **3 players** | Always ≥ 1 house lie (§4.2), so each voter sees ≥ 3 votable options (2 other lies or house lies + truth). The ⓘ sheet says Bluff is best with 4+ |
-| **12 players** | Up to 12 player lies + truth = 13 options. TV switches to the dense 2-column layout (§8.2); text max 60 graphemes keeps cards to 2 lines at `type.tv.body`. VOTING timer caps at 45 s |
+| **12 players** | Up to 12 player lies + truth = 13 options. TV switches to the dense 2-column layout (§8.2); text max 60 graphemes keeps cards to 2 lines at `type.tv.body`. VOTING timer caps at 50 s. REVEAL groups 1-vote lies into a "quick hits" strip (§12.2). With ≥ 9 members the setup shows "Big group: short game recommended" next to the Length row (the default stays static) |
 | **Nobody submits** | House lies fill to `MIN_LIES` (3). The TV says "The house did all the lying this time!" |
 | **Everyone finds the truth** | Reveal skips straight to the truth with "Too easy!" (`bluff.reveal.tooEasy`); unpicked lies get the "Nobody bought it" montage |
 | **Nobody finds the truth** | Truth reveal plays with "Nobody saw that coming!" and every character does `shock` |
@@ -247,15 +269,17 @@ Then RESULTS: the podium. **Winner = highest score; equal scores share the place
 | **Disconnect in VOTING** | Abstains. Their lie stays an option and can still score. Reconnect during VOTING → can vote |
 | **Player leaves (`left`)** | Their lie stays for the current prompt (scores are kept for results, shown greyed); they get no new prompts. Merged co-author credit is unchanged |
 | **Fewer than 3 connected at prompt start** | `HOLD`: TV "Waiting for players… {count}/3" with the room code and QR; host can `END_GAME` → AWARDS with the scores so far |
-| **Late joiner** | Joining is allowed during a Bluff game (platform join flow). The new player is a spectator until the next WRITING starts, then plays with 0 points and a "New" ribbon on the scoreboard for one prompt. They are eligible for awards |
-| **Host hides the only player lie** | Allowed; options shrink; if total options < 2, the hide is refused (`CANNOT_HIDE`) |
-| **Prompt pool exhausted** | Draw prefers prompts not in `usedPromptIds`; if none left, re-use the least recently used and show a small "Rerun!" tag on the TV prompt card. `startBlocker = NO_PROMPTS_AVAILABLE` only when the selected packs have fewer items than the game length (free rooms: free items) |
+| **Late joiner** | Joining is allowed during a Bluff game. The platform calls `join` at once; the newcomer gets `me.waitingForNext: true` and watches until the next WRITING starts, then plays with 0 points and a "New" ribbon on the scoreboard for one prompt. They are eligible for awards |
+| **Host hides any option** | Allowed for every kind through the same UI (§5.4); refused with `CANNOT_HIDE` only when fewer than 2 options would remain or 3 hides were used. Hiding the truth voids the prompt |
+| **Prompt everyone knows** | The auto "Too famous!" swap (§4.2) when ≥ 50 % of connected players hit `LIE_TOO_CLOSE` on their first submission; otherwise the host can `SKIP_PROMPT` |
+| **Prompt pool exhausted** | Draw prefers prompts not in `memory.usedKeys`; if none left, re-use the least recently used and show a small "Rerun!" tag on the TV prompt card. `startBlocker = NO_CONTENT_AVAILABLE` (platform code) only when the selected packs have fewer playable items than the game length (free rooms: free items; items `knownIn` the content locale do not count) |
 | **Lie in RTL in an LTR room (or the reverse)** | Each option renders with its own direction (web `dir="auto"`, Compose `TextDirection.Content`) |
 | **Lie identical to a house lie** | Merged into the player's option; the house lie is dropped; the player gets full credit |
 | **Lie identical to the item's `note`** | No special case (the note is not the truth; it's shown after the reveal) |
 | **VIP disconnects** | Platform host transfer; the TV remote always keeps host powers |
 | **Final round ties** | Shared places (§6.4) |
 | **Room language changed mid-game** | Not allowed: content language is locked while a game runs (platform rule); UI language can change per device |
+| **Arabizi lie in an AR room / Arabic lie in an EN-FR room** | Rejected with `LIE_WRONG_SCRIPT` (§5.1) |
 
 ---
 
@@ -272,26 +296,27 @@ Then RESULTS: the podium. **Winner = highest score; equal scores share the place
 | Votes | `votedIds` only until REVEAL | own (`me.myVote`) | `votedIds` only |
 | Likes | hidden until REVEAL | own (`me.myLikes`) | hidden |
 | Help suggestion | never | own (`me.help`) | never |
+| "Found while writing" flag (§5.2) | REVEAL onwards (tag on the truth landing) | own (`me.foundWhileWriting`) from WRITING | REVEAL onwards |
+| Which option a hide removed, and why a prompt was voided | the card disappears / "Prompt skipped by the host"; the kind is never shown before REVEAL (a voided prompt never reveals) | same | same |
 | House lies not used | never | never | never |
 | Pass-tier items in a free room | never exist in the room | | |
 
-Option order and ids are random (RNG), so neither leaks the truth. The prompt (`display`, `original`, `translit`) is public from WRITING.
+Option order and ids are random (RNG), so neither leaks the truth. The prompt (`display`, `original`, `translit`) and the length hint are public from WRITING. Option texts are display-normalised (§5.1), so typography never marks the authored truth.
 
 ### 8.2 Per phase
 
 | Phase | TV (stage) | Phone (controller) |
 |---|---|---|
-| INTRO | The 4 how-to steps as animated cards (§10.1), "Press OK to start" | "How to play" with the same 4 steps, compact; VIP sees "Start" |
 | ROUND_INTRO | Full-screen round card: "Round 1", "Points ×1" (final: "The Big Bluff — points ×3", dramatic version) | "Round 1 — get your lies ready" + own character |
-| WRITING | Prompt card centre (type label chip, e.g. "Proverb", the prompt text big; AR pack in EN/FR rooms: the Arabic original, then translit, then the translation in smaller type). Timer ring top-end. Bottom row: every character at a little café table, scribbling (`think`); on submit, the character drops an envelope in a box (`done`). In the last 10 s, unsubmitted characters get a gentle spotlight and "Waiting for…" | Prompt text (same as TV, compact). Text field (60-grapheme counter), "Lock my lie" button, "Help me" link. After submit: "Lie locked! You can still edit it." + Edit. Error toasts per §5.1 |
-| VOTING | All options as cards on a corkboard: ≤ 6 options 1 column; 7–13 options 2 columns (RTL mirrored). No author, no counts. Bottom row: characters; a voted character holds up a ballot (`done`). Timer ring | Scrollable list of options as big tap targets. Own option(s) greyed with "Yours". Tap = vote (selected state + haptic 20). Each card has a heart-style "like" toggle (2 max, counter "Likes left: 1"). VIP: long-press → Hide (§5.4) |
+| WRITING | Prompt card centre (type label chip, e.g. "Proverb", the prompt text big; AR pack in EN/FR rooms: the Arabic original, then translit, then the translation in smaller type). Under it, the length hint chip ("Short answer (1–2 words)"). Timer ring top-end. Bottom row: every character at a little café table, scribbling (`think`); on submit, the character drops an envelope in a box (`done`). In the last 10 s, unsubmitted characters get a gentle spotlight and "Waiting for…" | Prompt text (same as TV, compact) and the length hint. Text field (60-grapheme counter), "Lock my lie" button, "Help me" link. After submit: "Lie locked! You can still edit it." + Edit. Error toasts per §5.1; after a too-close probe, a persistent line "Finding the truth now won't score" |
+| VOTING | All options as cards on a corkboard: ≤ 6 options 1 column; 7–13 options 2 columns (RTL mirrored). No author, no counts. Bottom row: characters; a voted character holds up a ballot (`done`). Timer ring | Scrollable list of options as big tap targets. Own option(s) greyed with "Yours". Tap = vote: the chosen card gets only a **subtle outline and a small check** (no full-colour fill, the list is not recoloured) so a neighbour on the couch cannot read your pick from 2 m; a "Vote in" line in the header; haptic 20. Each card has a heart-style "like" toggle (2 max, counter "Likes left: 1"). VIP: long-press **any** card → "Hide this answer" (§5.4) |
 | REVEAL | The reveal script (§12.2) | Mirrors the step in progress in compact form: "Is it… «text»?" then the stamp; own events are highlighted ("You fooled 2!" with points; "You fell for Rami's lie" with Rami's character). Ends with "+1 600 this round" |
 | SCORES | Leaderboard race (§12.3) | Own rank and score, delta, next prompt in {count} |
 | HOLD | "Waiting for players… {count}/3", code + QR | "Waiting for players…" |
 | AWARDS | Award cards one by one (§12.5) | The award card if the player won one, else "And the award goes to…" with the winner's character |
 | RESULTS | Podium (top 3 characters on steps, `cheer`), full scoreboard, host buttons "Play again" / "Choose another game" | Own place + stats ("You fooled 7 people tonight"), VIP buttons |
 
-The ⓘ button is visible on the phone top bar in every phase and reachable on the TV through the pause menu (Back) → "Rules", per platform.
+The ⓘ button is visible on the phone top bar in every phase and reachable on the TV through the pause menu (Back) → "Rules" (announced by the platform's "◁ Back: menu & rules" hint), per platform. The TV shows no focusable buttons in game; host actions are pause-menu items (§2).
 
 ---
 
@@ -299,11 +324,11 @@ The ⓘ button is visible on the phone top bar in every phase and reachable on t
 
 | Setting | Values | Default | UI |
 |---|---|---|---|
-| `packIds` | Bluff packs playable in the content language | All free packs for that language (Pass rooms: all packs) | Chips with a lock badge on Pass packs in free rooms |
+| `packIds` | Bluff pack ids playable in the content language (family ids; Bluff packs are their own family) | `[]` = "every playable pack in the content language" (a static default; the playable set depends on access at start time) | Pack picker sheet with a lock badge on Pass packs in free rooms; the row reads "All packs" for `[]`; hidden while only one pack is playable |
 | `length` | `short` · `normal` · `long` (§3) | `normal` | 3-way selector |
 | `pace` | `relaxed` · `normal` · `fast` (§4.1) | `normal` | 3-way selector, subtitle "Writing time: 90 s / 60 s / 45 s" |
 
-Everything else is fixed (likes on, house lies automatic, filter on). No family toggle in Bluff v1: every launch pack is `ageRating: "all"`.
+Everything else is fixed (likes on, house lies automatic, filter on). No family toggle in Bluff v1: every launch pack is `ageRating: "all"`. `SETTINGS_SCHEMA = 1`; `normalize` maps any unknown or missing key to these defaults.
 
 ---
 
@@ -322,27 +347,30 @@ Everything else is fixed (likes on, house lies automatic, filter on). No family 
 
 EN (authoritative; FR/AR drafted with the i18n pass):
 - **Goal.** Fool your friends, and don't get fooled.
-- **Writing.** You have {seconds} s to write a fake answer (max 60 characters). If your answer is too close to the real one, you'll be asked for another. Stuck? Tap "Help me" (your points for that lie are halved).
+- **Writing.** You have {seconds} s to write a fake answer (max 60 characters), in the same alphabet as the prompt. If your answer is too close to the real one, you'll be asked for another, and finding the truth that way won't score this time. Stuck? Tap "Help me" (your points for that lie are halved).
 - **Voting.** Vote for the answer you think is true. You can't vote for your own. You can also like up to 2 answers you find funny.
 - **Points.** Truth: +1000. Each player fooled by your lie: +500. Each like: +100. Round 2 doubles the points; the Big Bluff triples them.
 - **House lies.** With few players, the game adds its own lies. Don't fall for them!
 - **Same lie?** If two people write the same lie, it shows once and they share the points.
+- **Host.** The host can hide an answer; if the host hides the real one, the prompt is skipped and nobody scores.
 
 FR:
 - **But.** Piéger les autres, sans vous faire piéger.
-- **Écriture.** Vous avez {seconds} s pour écrire une fausse réponse (60 caractères max). Si elle ressemble trop à la vraie, il faudra en trouver une autre. En panne d'idée ? Touchez « Aide-moi » (les points de ce bluff sont divisés par deux).
+- **Écriture.** Vous avez {seconds} s pour écrire une fausse réponse (60 caractères max), dans le même alphabet que la question. Si elle ressemble trop à la vraie, il faudra en trouver une autre, et trouver la vérité de cette façon ne rapportera rien cette fois. En panne d'idée ? Touchez « Aide-moi » (les points de ce bluff sont divisés par deux).
 - **Vote.** Votez pour la réponse qui vous semble vraie. Impossible de voter pour la sienne. Vous pouvez aussi aimer jusqu'à 2 réponses drôles.
 - **Points.** Vérité : +1000. Chaque personne piégée : +500. Chaque « j'aime » : +100. Points doublés à la manche 2, triplés pour le Grand Bluff.
 - **Mensonges de la maison.** À peu de joueurs, le jeu ajoute ses propres pièges.
 - **Même bluff ?** S'il apparaît deux fois, il n'est affiché qu'une fois et les points sont partagés.
+- **Hôte.** L'hôte peut masquer une réponse ; s'il masque la vraie, la question est passée et personne ne marque.
 
 AR `[native review]`:
 - **الهدف.** ضحّكوا عرفقاتكن بكذبكن… وما تنضحك عليكن.
-- **الكتابة.** معكن {seconds} ثانية لتكتبوا جواب كذب (60 حرف بالكتير). إذا طلع قريب كتير من الصح، بدكن تكتبوا غيرو. علقتوا؟ اكبسوا «ساعدني» (بس نقاط هالكذبة بتنقسم عالنص).
+- **الكتابة.** معكن {seconds} ثانية لتكتبوا جواب كذب (60 حرف بالكتير)، بنفس حروف السؤال. إذا طلع قريب كتير من الصح، بدكن تكتبوا غيرو، والصح ما بيعود يحسبلكن بهالسؤال. علقتوا؟ اكبسوا «ساعدني» (بس نقاط هالكذبة بتنقسم عالنص).
 - **التصويت.** صوّتوا للجواب يلّي بتفكروه صحيح. ما فيكن تصوّتوا لجوابكن. وفيكن تعملوا «لايك» لجوابين مهضومين.
 - **النقاط.** الصح: ‎+1000. كل واحد بيصدّق كذبتك: ‎+500. كل لايك: ‎+100. بالجولة التانية النقاط دبل، وبالبلوف الكبير ×3.
 - **كذبات البيت.** إذا كنتو قلال، اللعبة بتزيد كذباتها. انتبهوا منها!
 - **نفس الكذبة؟** إذا تنين كتبوا نفس الشي، بتطلع مرّة وحدة وبيتقاسموا النقاط.
+- **المضيف.** فيه يخبّي جواب؛ وإذا خبّى الصح، بينلغى السؤال وما حدا بياخد نقاط.
 
 ### 10.3 Key microcopy (EN · FR · AR)
 
@@ -362,7 +390,13 @@ AR `[native review]`:
 | `bluff.reveal.nobody` | Nobody bought it… | Personne n'y a cru… | ما حدا صدّق… |
 | `bluff.reveal.tooEasy` | Too easy! | Trop facile ! | سهلة كتير! |
 | `bluff.reveal.houseLike` | The house thanks you. | La maison vous remercie. | البيت بيشكرك. |
-| `bluff.err.tooClose` | Too close to the real answer! You know it, now invent a lie. | Trop proche de la vraie réponse ! Tu la connais : invente un bluff. | قريبة كتير من الصح! منّك عارفها، هلّق اخترع كذبة. |
+| `bluff.err.tooClose` | Close to the truth! Write something else. Finding the truth now won't score. | Trop proche de la vérité ! Écris autre chose. Trouver la vérité ne rapportera plus rien ici. | قريبة كتير من الصح! اكتب شي تاني. الصح ما بيعود يحسبلك بهالسؤال. |
+| `bluff.err.wrongScriptAr` | Write it in Arabic letters so it blends in! | Écris-le en lettres arabes pour qu'il passe inaperçu ! | اكتبها بالحروف العربي لتمرق! |
+| `bluff.err.wrongScriptLatn` | Write it in Latin letters so it blends in! | Écris-le en lettres latines pour qu'il passe inaperçu ! | اكتبها بالحروف اللاتيني لتمرق! |
+| `bluff.hint.short` / `.few` / `.sentence` | Short answer (1–2 words) / A few words / A full sentence | Réponse courte (1–2 mots) / Quelques mots / Une phrase entière | جواب قصير (كلمة أو تنين) / كم كلمة / جملة كاملة |
+| `bluff.prompt.tooFamous` | Too famous! New one | Trop connu ! On change | معروفة كتير! غيرها |
+| `bluff.prompt.voided` | Prompt skipped by the host | Question passée par l'hôte | المضيف لغى هالسؤال |
+| `bluff.setup.bigGroup` | Big group: short game recommended | Grand groupe : partie courte conseillée | جماعة كبيرة: منصح بلعبة قصيرة |
 | `bluff.err.blocked` | Keep it party-friendly. Try another one. | On reste correct. Essaie autre chose. | خلّيها لطيفة. جرّب غيرها. |
 
 (`fooled` uses the platform plural mechanism, SPEC §11.2 "P" keys; FR body copy avoids gendered participles about the player: "{name} piège {count} personne(s)".)
@@ -382,12 +416,13 @@ AR `[native review]`:
 
 ### 11.2 Writing guide (binding for content authors)
 
-1. **Truths and house lies are written in player voice**: short (≤ 50 graphemes, hard max 60), plain, no dictionary jargon, no final period, sentence case. A truth that "sounds like a dictionary" is spotted instantly.
+1. **Truths and house lies are written in player voice**: short (≤ 50 graphemes, hard max 60), plain, no dictionary jargon, no final period, sentence case, **no Arabic tashkeel or shadda, no guillemets or typographic quotes** (players never type them). A truth that "sounds like a dictionary" is spotted instantly.
 2. **House lies must be plausible and funny, never offensive.** At least 3 per playable locale (lint warns under 3, errors under 2).
-3. **Obscure but fair.** Prefer prompts most players at the table won't know. Ban prompts whose truth is guessable from the prompt's words alone.
+3. **Obscure but fair.** Prefer prompts most players at the table won't know. Ban prompts whose truth is guessable from the prompt's words alone. **Mark sayings that everyone knows in a language with `knownIn`**: the draw skips an item whose `knownIn` contains the room's content locale. Famous Levantine proverbs are `knownIn: ["ar"]`: useless in an Arabic room of Lebanese players (everyone types the truth), but excellent in EN/FR rooms for the diaspora.
 4. **No politics, religion, sects, war, or real living private persons.** Proverbs mentioning God are skipped in v1 (`[native review]` checks this).
 5. **Every item has a `note`**: one line shown after the reveal ("It means: …" or a fun origin). Notes may be longer (≤ 140).
-6. **Facts are verified** (`review.status: "verified"` with a source URL in `review.source`) before an item can be `tier:"free"` or shipped.
+6. **Facts are verified** (`review.status: "verified"` with a source URL in `review.source`) before an item can be `tier:"free"` or shipped. (Bluff keeps its per-item `review`, in its own pack schema; the platform `PackHeader` per-pack status applies to Mish Ana! and Trivia packs.)
+7. **Truths come in mixed lengths** across a pack (one-word, a few words, full sentences), and the length hint (§4.2) tells players the shape; lint warns when more than 40 % of a pack's truths are one word.
 
 ### 11.3 Schema (`shared/src/games/bluff/schema.ts`, zod; packs in `content/bluff/<pack-id>.json`, read through the platform `ContentAdapter`, JAMAA-PLATFORM §5.2)
 
@@ -401,6 +436,7 @@ export const BluffItemSchema = z.strictObject({
   type: z.enum(["proverb_end", "word_meaning", "expression_meaning", "fact_blank"]),
   tier: z.enum(["free", "pass"]),
   difficulty: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  knownIn: z.array(Loc).default([]),                    // locales where this saying is common knowledge: never drawn there
   prompt: z.strictObject({
     original: z.string().min(1).max(120),               // in sourceLocale, as the TV shows it
     translit: z.string().max(160).nullable(),            // Latin transliteration (AR only), shown in EN/FR rooms
@@ -418,34 +454,36 @@ export const BluffItemSchema = z.strictObject({
 
 export const BluffPackSchema = z.strictObject({
   schemaVersion: z.literal(1),
-  id: z.string().regex(/^[a-z0-9-]{1,40}$/),
+  id: z.string().regex(/^[a-z0-9-]{1,35}$/),          // ≤ 35 so pack_<family> stays ≤ 40 (platform §4.1)
   game: z.literal("bluff"),
   title: z.strictObject({ en: z.string(), fr: z.string(), ar: z.string() }),
   description: z.strictObject({ en: z.string(), fr: z.string(), ar: z.string() }),
   sourceLocale: Loc,
   playableIn: z.array(Loc).min(1),
-  ageRating: z.enum(["all", "teen"]),
+  ageRating: z.enum(["all", "teen"]),                  // ⊂ platform AGE_RATINGS
   fallbackHouseLies: z.partialRecord(z.enum(["proverb_end", "word_meaning", "expression_meaning", "fact_blank"]), LocList),
   items: z.array(BluffItemSchema).min(20),
 });
 ```
 
-Pack lint (`pnpm lint:packs`, extended): ids unique across all Bluff packs; every playable locale has `truth` and ≥ 2 `houseLies`; no house lie collides (§5.3) with the truth or another house lie; truth and house lies ≤ 60 graphemes and match the casing rule; `tier:"free"` items must be `review.status !== "draft"`; ≥ 30 % of a pack's items are free (so free rooms can play a Normal game from one pack: ≥ 7 items with margin); no blocklist hit in any text.
+Pack lint (`pnpm lint:content`, `tools/content-lint/src/games/bluff.ts`): ids unique across all Bluff packs; every playable locale has `truth` and ≥ 2 `houseLies` (a pack whose items lack house lies in a locale may not list it in `playableIn`); no tashkeel (U+064B–U+065F, U+0670), tatweel, guillemets/typographic quotes, trailing `.`/`!`/`…` or emoji in truths and house lies; free items not `knownIn` the locale suffice for one Normal game (≥ 7) in **every** playable locale; no house lie collides (§5.3) with the truth or another house lie; truth and house lies ≤ 60 graphemes and match the casing rule; `tier:"free"` items must be `review.status !== "draft"`; ≥ 30 % of a pack's items are free (so free rooms can play a Normal game from one pack: ≥ 7 items with margin); no blocklist hit in any text.
 
 ### 11.4 Prompt draw
 
-`drawPrompt(catalog, settings, room, rng, roundIndex)`: candidates = items of the selected packs, playable in the content language, allowed by the entitlement, not in `usedPromptIds`, not drawn earlier in this game. Weighted by difficulty: round 1 prefers `difficulty 1–2` (weights 3:2:1), round 2 flat, final `difficulty ≥ 2` (0:1:2). Avoid two consecutive prompts of the same `type` when another type is available. Fallback per §7 "pool exhausted".
+`drawPrompt(catalog, settings, memory, rng, roundIndex)`: candidates = items of the selected packs (`[]` = all playable), playable in the content language, **not `knownIn` the content language**, allowed by the entitlement, not in `memory.usedKeys`, not drawn earlier in this game. Weighted by difficulty: round 1 prefers `difficulty 1–2` (weights 3:2:1), round 2 flat, final `difficulty ≥ 2` (0:1:2). Avoid two consecutive prompts of the same `type` when another type is available. Fallback per §7 "pool exhausted".
 
 ### 11.5 First content plan
 
 | Pack id | Title (EN · FR · AR) | Source → playable | Items | Free | Status |
 |---|---|---|---|---|---|
-| `bluff-lb-proverbs` | Lebanese Proverbs · Proverbes libanais · «أمتال لبنانية» | ar → ar, en, fr | 37 drafted (§14.1) | 16 | draft, `[native review]` |
+| `bluff-lb-proverbs` | Lebanese Proverbs · Proverbes libanais · «أمتال لبنانية» | ar → **ar** at launch; **en, fr added once their house lies exist** (G2 exit criterion) | 36 drafted (§14.1; #24 dropped) | 16 | draft, `[native review]` |
+| `bluff-lb-teta-words` | Teta's Words · Les mots de Teta · «كلمات تيتا» | ar → ar (type `word_meaning`: rare Lebanese dialect words, village proverbs and Turkish/French loanwords most young players don't know) | **40 to source** (G2 exit criterion) | ≥ 20 | to write, `[native review]` |
 | `bluff-fr-expressions` | Strange French Expressions · Expressions bizarres · «تعابير فرنسية غريبة» | fr → fr | 40 drafted (§14.2) | 14 | draft, `[native review]` |
 | `bluff-en-weird-words` | Weird English Words · Mots anglais étranges · «كلمات إنكليزية غريبة» | en → en | 40 drafted (§14.3) | 13 | draft, `[VERIFY]` definitions |
 | `bluff-world-facts` | Weird but True · Bizarre mais vrai · «غريب بس صحيح» | en → en, fr, ar | 5 seeds (§14.4); 30 before launch | 10 | later (M+1) |
 
-For the AR proverbs pack in EN/FR rooms, the truth is the translated ending and the TV also shows the Arabic original on reveal (diaspora delight: "so *that's* what Teta meant"). EN/FR house lies for this pack are written in the content pass (this draft has AR house lies only).
+- **AR rooms.** Famous proverbs in `bluff-lb-proverbs` are `knownIn: ["ar"]` (at least #2, 3, 5, 10, 11, 14, 19, 20, 21, 23, 30, 34, 37; the native reviewer adds others), so an AR room draws only the rarer ones. A free AR room must have **≥ 20 free prompts that are not `knownIn: ["ar"]`** across both AR packs; that is why `bluff-lb-teta-words` and 40+ rare or village proverbs are G2 exit criteria, not later items.
+- **EN/FR rooms.** The truth is the translated ending and the TV also shows the Arabic original on reveal (diaspora delight: "so *that's* what Teta meant"). The famous proverbs work best here. The pack is added to `playableIn` for `en` and `fr` only when every item has ≥ 3 house lies in that locale (G2 exit criterion; until then it would fail its own lint and EN/FR rooms of ≤ 4 players always need a house lie, §4.2).
 
 ---
 
@@ -455,11 +493,13 @@ The TV is the stage. All timings are budgets inside the server deadlines; **the 
 
 ### 12.1 Entering the world: "The Liars' Café"
 
-The Bluff world (platform world id `hakawati-cafe`) is a late-night Beirut café: dim warm light, a neon sign "BLUFF!" that flickers on letter by letter (one flicker only, no strobe), marble tables, a corkboard wall. Transition from the hub: the Bluff tile zooms to fill the screen (`motion.slow`), turns into the café door, the door swings open (800 ms) and the camera "walks in" (a 1.08→1.0 scale settle). Every player's character slides in to sit at a table, staggered 60 ms. Total ≤ 2.2 s, inside INTRO/ROUND_INTRO.
+The Bluff world (platform world id `hakawati-cafe`) is a late-night Beirut café: dim warm light, a neon sign "BLUFF!" that flickers on letter by letter (one flicker only, no strobe), marble tables, a corkboard wall. Entrance (platform world entrance, §3.10 B, ≤ 2 000 ms): the stage darkens, the café door swings open toward the viewer (750 ms, DESIGN-JAMAA §3.2) and the camera "walks in" (a 1.08→1.0 scale settle), the neon title flickers on once, then every player's character runs in to sit at a table (40 ms stagger). The first ROUND_INTRO deadline includes `ENTRANCE_GRACE_MS`, so the round card plays in full after it.
 
 ### 12.2 The reveal (centrepiece)
 
-**Order.** Only options with ≥ 1 vote are revealed one by one. Player lies and house lies first, **fewest votes first** (ties: RNG order), the truth **last**. Then the "Nobody bought it" montage, then the like tally.
+**Order.** Only options with ≥ 1 vote are revealed. Player lies and house lies first, **fewest votes first** (ties: RNG order), the truth **last**. Then the "Nobody bought it" montage, then the like tally.
+
+**Quick hits (big groups).** When more than 5 lies have votes, the lies with exactly **1 vote** are grouped first into a **quick-hits strip**: each card gets its stamp and its coin flight in **1.2 s** (no spotlight, no drumroll, no jump-on arc: the voter's face appears on the card). Only lies with ≥ 2 votes get the full sequence below.
 
 **Per lie (player or house), ≈ 3.5 s + 0.12 s × voters:**
 1. *Spotlight (0–400 ms):* the card slides to centre and grows (`ease.decel`); others dim to 35 %.
@@ -469,21 +509,23 @@ The Bluff world (platform world id `hakawati-cafe`) is a late-night Beirut café
 5. *The liar pops out (500 ms):* the author's character bursts from behind the card with `smug`, name plate below. Co-authors pop out together with "Great minds lie alike!".
 6. *Coins fly (600 ms + 80 ms per voter):* from each voter's character, a coin labelled "+500" (×m) flies along a Bézier arc into the author's score pill; the pill's odometer rolls up per coin with a coin "ding" stepping up a pentatonic scale. Split credit: the coin splits into two smaller coins mid-air. Helped lies: the coin halves with a little "poof" and the lifebuoy badge shows.
 
-**Truth, ≈ 4.5 s:** the card turns gold, a light sweep crosses it, the **TRUTH** stamp lands, confetti from the card corners for the finders (paper white + amber, 1.2 s), finders `cheer` and receive "+1000" (×m) bursts into their own pills; non-finders `sad`. The `note` slides in under the card ("It means: …"; AR pack in EN/FR rooms also shows the Arabic original).
+**Truth, ≈ 4.5 s:** the card turns gold, a light sweep crosses it, the **TRUTH** stamp lands, confetti from the card corners for the finders (paper white + amber, 1.2 s), finders `cheer` and receive "+1000" (×m) bursts into their own pills; a finder flagged `foundWhileWriting` lands with a small "found it early" tag and no coin; non-finders `sad`. The `note` slides in under the card ("It means: …"; AR pack in EN/FR rooms also shows the Arabic original).
 
 **Nobody bought it, 2.5 s:** unpicked lies fan out like cards in a hand, each with its author's tiny `sad` face; they fall off-screen together.
 
 **Like tally, 1.5 s (skipped if no likes):** small hearts drift from likers to the liked options' authors, "+100" each.
 
 ```
+quick = (lies_with_votes > 5) ? lies_with_exactly_1_vote : []
 revealDurationMs = 1500                                    // intro beat
-  + Σ_lies_with_votes (3500 + 120 × voters)
+  + 1200 × |quick|                                         // quick-hits strip
+  + Σ_other_lies_with_votes (3500 + 120 × voters)
   + 4500                                                   // truth
   + (unpicked > 0 ? 2500 : 0) + (likes > 0 ? 1500 : 0)
   (final prompt: × 1.25)
 ```
 
-Typical: 6 players, 3 picked lies with 1–2 voters → ≈ 20 s. 12 players worst case (12 picked lies) ≈ 63 s; host `HOST_ADVANCE` or OK-skip is the release valve.
+Typical: 6 players, 3 picked lies with 1–2 voters → ≈ 20 s. 12 players worst case (12 picked lies, 8 of them with 1 vote, 4 with 2–3) ≈ 1.5 + 9.6 + 4 × 3.8 + 4.5 + 1.5 ≈ 32 s (was ≈ 63 s); host "Next" (pause menu) or OK-completion is the release valve.
 
 ### 12.3 Scoreboard race (SCORES, 6 s)
 
@@ -515,7 +557,7 @@ Each card drops in like a trophy on a velvet stand (`ease.overshoot`), the winne
 
 - TV (Compose): reveal script = a list of timed steps driven by one `Animatable` timeline per step; arcs via `Path` + `PathMeasure`-like sampling on `Canvas`; ≤ 24 moving sprites at once; no blur or full-screen translucent layers (low-end TV SoCs); text never animates per letter in Arabic (DESIGN §6.2 F).
 - Web (`/tv` mock and phone): the same step list; CSS transforms/WAAPI; the reveal module is lazy-loaded with the Bluff game chunk (not in the phone main bundle).
-- Library choice is a platform decision (motion stack); this spec only fixes timings, order and content of each step.
+- Every step is a step list in the shared choreography (`shared/src/motion/choreo.ts`, platform §3.8), sampled by the same deterministic sampler on web and TV; this spec only fixes timings, order and content of each step.
 
 ---
 
@@ -531,18 +573,22 @@ Each card drops in like a trophy on a velvet stand (`ease.overshoot`), the winne
 | `LIKE` | `{ optionId, on: boolean }` | player | VOTING |
 | `SKIP_PROMPT` | `{ promptId }` | host | WRITING |
 | `HIDE_OPTION` | `{ optionId }` | host | VOTING |
-| `HOST_ADVANCE` | `{}` | host | INTRO, ROUND_INTRO, REVEAL, SCORES, AWARDS |
-| `END_GAME` | `{}` | host | HOLD (and RESULTS-equivalent via platform) |
+| `HOST_ADVANCE` | `{}` | host | ROUND_INTRO, REVEAL, SCORES, AWARDS (expires the phase inline) |
+| `END_GAME` | `{}` | host | HOLD |
 
 `promptId` guards against stale submissions after a skip (`STALE_PROMPT`, silent on the phone, it re-renders).
 
 ### 13.2 View (`BluffPublic`, every key always present)
 
-`phase, round, roundCount, promptIndex, promptCount, multiplier, deadline, prompt {id, type, original, translit, display} | null, submittedIds[], options [{id, text}] | [] (VOTING+), votedIds[], reveal | null (REVEAL+), scores [{playerId, score, scoreBefore}], awards [] (AWARDS+), skipsLeft, hidesLeft`.
+`schema, phase, round, roundCount, promptIndex, promptCount, multiplier, deadline, prompt {id, type, original, translit, display, lengthHint: "short"|"few"|"sentence"} | null, submittedIds[], options [{id, text}] | [] (VOTING+; texts display-normalised), votedIds[], voided: boolean, notice: "tooFamous"|"voided"|null, reveal | null (REVEAL+), scores [{playerId, score, scoreBefore}], awards [] (AWARDS+), skipsLeft, hidesLeft`.
 
-`reveal` = `{ steps: [{ optionId, kind: "lie"|"house"|"truth", text, authorIds[], helped, voterIds[], likerIds[], deltas: [{playerId, points, reason: "truth"|"fooled"|"like"}] }], unpicked: [{optionId, text, authorIds[]}], truth: {text, original | null, note | null} }`.
+Envelope status (`projectStatus`): `phase`; `doneIds` = submittedIds in WRITING, votedIds in VOTING, else `[]`; `awaitedIds` = connected non-left players not in `doneIds` during WRITING/VOTING.
 
-`me` (player view only) = `{ myLie | null, myLieStatus: "none"|"locked", help | null, myOptionIds[], myVote | null, myLikes[] }`.
+`reveal` = `{ steps: [{ optionId, kind: "lie"|"house"|"truth", quick: boolean, text, authorIds[], helped, voterIds[], likerIds[], foundEarlyIds[] /* truth step only */, deltas: [{playerId, points, reason: "truth"|"fooled"|"like"}] }], unpicked: [{optionId, text, authorIds[]}], truth: {text, original | null, note | null} }`.
+
+`me` (player view only) = `{ myLie | null, myLieStatus: "none"|"locked", help | null, myOptionIds[], myVote | null, myLikes[], foundWhileWriting: boolean, editsLeft: number, waitingForNext: boolean }`.
+
+State-only keys (platform `forbiddenKeys`): `truthAll`, `truthAlt`, `houseLies`, `housePool`, `lies`, `authors`, `votes`, `likes`, `tooCloseProbes`, `foundWhileWriting` (except the viewer's own boolean in `me`), `rngState`, `usedKeys`.
 
 ### 13.3 Engine invariants (added to the platform invariants)
 
@@ -551,17 +597,21 @@ Each card drops in like a trophy on a velvet stand (`ease.overshoot`), the winne
 3. In REVEAL: Σ deltas equals Σ `score − scoreBefore`; every score ≥ 0.
 4. Option ids are unique within a prompt; option order is a permutation produced by `rngState`.
 5. A free room's catalog view contains no `tier:"pass"` item.
+6. A player with `foundWhileWriting` on a prompt has no `truth` delta on that prompt; a voided prompt has no deltas at all.
+7. No drawn item is `knownIn` the content locale.
 
 ### 13.4 Test plan (Vitest, `shared` and `server` projects; e2e Playwright; TV unit tests)
 
-- **Similarity:** all §5.2 vectors; property test: `isTooClose(x, [x])` is always true for any non-empty string with ≥ 2 letters; Arabic diacritics/tatweel/hamza variants collide.
+- **Similarity:** all §5.2 vectors (rules 1–5, short truths, Arabizi alternatives); property test: `isTooClose(x, [x])` is always true for any non-empty string with ≥ 2 letters; Arabic diacritics/tatweel/hamza variants collide.
+- **Anti-oracle:** probe (LIE_TOO_CLOSE) then vote for the truth → 0 points; the 4th too-close attempt → `TOO_MANY_EDITS`; the 6th submission → `TOO_MANY_EDITS`; ≥ 50 % first-submission too-close → automatic swap that does not consume a skip.
+- **Script and display normalisation:** Latin-only lie in an AR room → `LIE_WRONG_SCRIPT`, Arabic-only lie in EN/FR → `LIE_WRONG_SCRIPT`; vectors: `بيعدّها` → `بيعدها`, `« …est une gazelle »` → `"…est une gazelle"`, `Gazelle!!` → `Gazelle`, `gazelle 🦌` → `gazelle`.
 - **Options build:** house-lie count for n = 3..12 and 0..n submissions; merge credit; house-lie replacement; shuffle determinism per seed; ≥ 2 options always.
 - **Scoring:** table tests for §6.3 incl. split credit, helped halving, likes on truth/house, multipliers; final scores across a seeded full game (golden snapshot).
-- **Secrecy (property, fast-check):** for random games, `projectForTv` and `projectForPlayer(x)` never contain the truth or any house lie text before REVEAL; never contain another player's lie text before VOTING; never mark authorship before REVEAL.
-- **Flow:** early end of WRITING/VOTING (incl. like grace); host HOST_ADVANCE ignored in WRITING/VOTING; SKIP_PROMPT limits; HIDE_OPTION effects and deadline extension; HOLD on < 3 connected; late joiner enters at next WRITING with 0; `left` player's lie still scores.
-- **Sim:** `pnpm sim --game bluff --players 3..12 --games 200` terminates, invariants hold after every reduce.
+- **Secrecy (property, fast-check, synthetic catalog `shared/src/testing/catalogs/bluff.ts`):** for random games, the TV and every player view never contain the truth or any house lie text before REVEAL (whole-leaf `secretsFor`); never contain another player's lie text before VOTING; never mark authorship, votes, likes or kinds before REVEAL (`leakCheck`).
+- **Flow:** the first ROUND_INTRO deadline = 4 000 + `ENTRANCE_GRACE_MS`; early end of WRITING/VOTING (incl. like grace); host HOST_ADVANCE ignored in WRITING/VOTING and expiring other phases inline; SKIP_PROMPT limits; HIDE_OPTION effects for each kind (player lie, house lie, truth → voided prompt) and deadline extension; **hide property**: for the same option set, the UI state and error code do not depend on option kind; HOLD on < 3 connected; late joiner (`join`) waits with `waitingForNext` and enters at the next WRITING with 0; `left` player's lie still scores; `knownIn` items never drawn in that locale.
+- **Sim:** `pnpm sim --game bluff --players 3..12 --games 300` terminates, invariants hold after every reduce.
 - **Packs:** schema + lint for every Bluff pack; free share ≥ 30 %.
-- **TV (Compose):** reveal script builder from a fixture `reveal` (order: fewest votes first, truth last); D-pad reachability of "Hide an answer" and ⓘ; RTL mirror of the 2-column layout.
+- **TV (Compose):** reveal script builder from a fixture `reveal` (order: quick hits, then fewest votes first, truth last); D-pad reachability of the pause items "Skip prompt", "Hide an answer", "Next", "End game" and of ⓘ; RTL mirror of the 2-column layout; 1 column for ≤ 6 options.
 - **Web e2e:** 4 phones + `/tv`: write, collide-merge, vote, like, reveal reaches SCORES; phone cannot vote own option (button disabled and server rejects).
 
 ---
@@ -574,43 +624,45 @@ All drafts: `review.status: "draft"`. `[native review]` for every AR and FR line
 
 Format: AR prompt → **AR truth** · translit (prompt) · EN literal → **EN truth** · FR literal → **FR truth** · meaning (note) · AR house lies.
 
+**K** = `knownIn: ["ar"]` (famous in the Levant: drawn only in EN/FR rooms). The JSON conversion strips tashkeel/shadda from truths and house lies (lint enforces it); the drafts keep them for review readability. EN/FR house lies are still to write (G2 exit criterion, §11.5).
+
 1. ★ F «اللي بياكل العصي…» → **«…مش متل اللي بيعدّها»** · *illi byekol el-3asé…* · "The one who takes the beating…" → **"…is not like the one counting the blows"** · « Celui qui reçoit les coups… » → **« …n'est pas comme celui qui les compte »** · Only the one who suffers knows how it feels. · HL: «…بينام بكّير» · «…بيصير أستاذ»
-2. ★ F «القرد بعين إمّو…» → **«…غزال»** · *el-2ird b3ein emmo…* · "In his mother's eyes, the monkey…" → **"…is a gazelle"** · « Aux yeux de sa mère, le singe… » → **« …est une gazelle »** · Every parent finds their child beautiful. · HL: «…ملك» · «…أذكى واحد بالصف»
-3. ★ F «اللي استحوا…» → **«…ماتوا»** · *illi stahu…* · "Those who had shame…" → **"…are all dead"** · « Ceux qui avaient honte… » → **« …sont morts »** · Nobody is embarrassed any more. · HL: «…هاجروا» · «…ضلّوا بالبيت»
+2. ★ F K «القرد بعين إمّو…» → **«…غزال»** · *el-2ird b3ein emmo…* · "In his mother's eyes, the monkey…" → **"…is a gazelle"** · « Aux yeux de sa mère, le singe… » → **« …est une gazelle »** · Every parent finds their child beautiful. · HL: «…ملك» · «…أذكى واحد بالصف»
+3. ★ F K «اللي استحوا…» → **«…ماتوا»** · *illi stahu…* · "Those who had shame…" → **"…are all dead"** · « Ceux qui avaient honte… » → **« …sont morts »** · Nobody is embarrassed any more. · HL: «…هاجروا» · «…ضلّوا بالبيت»
 4. ★★ F «يا رايح…» → **«…كتّر ملايح»** · *ya rayeh…* · "You who are leaving…" → **"…leave lots of kindness behind"** · « Toi qui t'en vas… » → **« …laisse beaucoup de gentillesse »** · Leave on good terms; people remember how you left. · HL: «…سكّر الباب وراك» · «…ما تنسى المفاتيح»
-5. ★ F «الجار…» → **«…قبل الدار»** · *ej-jar…* · "The neighbour…" → **"…comes before the house"** · « Le voisin… » → **« …avant la maison »** · Choose your neighbours before your home. · HL: «…بيعرف كل الأخبار» · «…ما بينام»
+5. ★ F K «الجار…» → **«…قبل الدار»** · *ej-jar…* · "The neighbour…" → **"…comes before the house"** · « Le voisin… » → **« …avant la maison »** · Choose your neighbours before your home. · HL: «…بيعرف كل الأخبار» · «…ما بينام»
 6. ★★ «كل ديك…» → **«…على مزبلتو صيّاح»** · *kel dik…* · "Every rooster…" → **"…crows loudest on its own dunghill"** · « Chaque coq… » → **« …chante fort sur son tas de fumier »** · Everyone is brave on home turf. · HL: «…إلو يوم» · «…بيصحى قبل الفجر»
 7. ★ F «إجا يكحّلها…» → **«…عماها»** · *eja ykahhela…* · "He came to put kohl on her eyes…" → **"…and blinded her"** · « Il est venu lui mettre du khôl… » → **« …et l'a rendue aveugle »** · Trying to fix something and making it worse. · HL: «…ونسي المراية» · «…زعّلها»
 8. ★★ «اللي ما بيعرف الصقر…» → **«…بيشويه»** · *illi ma bya3ref es-sa2er…* · "Whoever doesn't recognise the falcon…" → **"…grills it"** · « Qui ne reconnaît pas le faucon… » → **« …le fait griller »** · People who don't know your worth will waste you. · HL: «…بيفكّرو حمامة» · «…بيخاف منّو»
-9. ★★ F «بدّك عنب…» → **«…ولّا تقتل الناطور؟»** · *baddak 3enab…* · "Do you want the grapes…" → **"…or to kill the vineyard guard?"** · « Tu veux du raisin… » → **« …ou tuer le gardien ? »** · Focus on getting what you want, not on fighting. · HL: «…ولّا بدّك تين؟» · «…اطلع قطوف»
-10. ★ F «على قدّ بساطك…» → **«…مدّ إجريك»** · *3a 2add bsatak…* · "As far as your rug goes…" → **"…stretch your legs"** · « Selon la taille de ton tapis… » → **« …étends tes jambes »** · Live within your means. · HL: «…حطّ صينيتك» · «…نام مرتاح»
-11. ★ «عصفور باليد…» → **«…ولا عشرة عالشجرة»** · *3asfour bil-id…* · "A bird in the hand…" → **"…beats ten on the tree"** · « Un oiseau dans la main… » → **« …vaut mieux que dix sur l'arbre »** · Keep what you have rather than chase more. · HL: «…بيغنّيلك كل يوم» · «…بيعضّ»
+9. ★★ F «بدّك تاكل عنب…» → **«…ولّا تقتل الناطور؟»** · *baddak takol 3enab…* · "Do you want to eat the grapes…" → **"…or to kill the vineyard guard?"** · « Tu veux manger du raisin… » → **« …ou tuer le gardien ? »** · Focus on getting what you want, not on fighting. · HL: «…ولّا بدّك تين؟» · «…اطلع قطوف»
+10. ★ F K «على قدّ بساطك…» → **«…مدّ إجريك»** · *3a 2add bsatak…* · "As far as your rug goes…" → **"…stretch your legs"** · « Selon la taille de ton tapis… » → **« …étends tes jambes »** · Live within your means. · HL: «…حطّ صينيتك» · «…نام مرتاح»
+11. ★ K «عصفور باليد…» → **«…ولا عشرة عالشجرة»** · *3asfour bil-id…* · "A bird in the hand…" → **"…beats ten on the tree"** · « Un oiseau dans la main… » → **« …vaut mieux que dix sur l'arbre »** · Keep what you have rather than chase more. · HL: «…بيغنّيلك كل يوم» · «…بيعضّ»
 12. ★ F «يللي فات…» → **«…مات»** · *yalli fet…* · "What has passed…" → **"…is dead"** · « Ce qui est passé… » → **« …est mort »** · Let bygones be bygones. · HL: «…ما بيرجع إلا بالحلم» · «…خلّيه يدفع الحساب»
 13. ★★ F «بكرا بيدوب التلج…» → **«…وبيبان المرج»** · *bukra bidoub et-talj…* · "Tomorrow the snow melts…" → **"…and the meadow shows"** · « Demain la neige fondra… » → **« …et le pré apparaîtra »** · The truth always comes out. · HL: «…وبينزل الصيف عالبحر» · «…وبتطلع الطريق»
-14. ★ «حبل الكذب…» → **«…قصير»** · *habl el-kezb…* · "The rope of lies…" → **"…is short"** · « La corde du mensonge… » → **« …est courte »** · Lies don't last. · HL: «…بيلتفّ عالرقبة» · «…ما بينقطع»
+14. ★ K «حبل الكذب…» → **«…قصير»** · *habl el-kezb…* · "The rope of lies…" → **"…is short"** · « La corde du mensonge… » → **« …est courte »** · Lies don't last. · HL: «…بيلتفّ عالرقبة» · «…ما بينقطع»
 15. ★★ «اللي ما إلو كبير…» → **«…بيشتريلو كبير»** · *illi ma elo kbir…* · "Whoever has no elder…" → **"…should buy himself one"** · « Qui n'a pas d'aîné… » → **« …doit s'en acheter un »** · Everyone needs wise advice. · HL: «…بيضيع» · «…بيصير هوّي الكبير»
 16. ★★ F «طعمي التمّ…» → **«…بتستحي العين»** · *ta3mi et-temm…* · "Feed the mouth…" → **"…and the eye grows shy"** · « Nourris la bouche… » → **« …et l'œil devient timide »** · Generosity buys goodwill (or silence). · HL: «…بيسكت القلب» · «…بينام الجوعان»
 17. ★★ «لاقيني…» → **«…ولا تطعميني»** · *la2ini…* · "Greet me warmly…" → **"…rather than feed me"** · « Accueille-moi… » → **« …plutôt que de me nourrir »** · A warm welcome matters more than a feast. · HL: «…عند الباب» · «…وخدني مشوار»
 18. ★★ F «الحكي…» → **«…ما عليه جمرك»** · *el-haki…* · "Talk…" → **"…pays no customs duty"** · « La parole… » → **« …ne paie pas de douane »** · Talk is cheap. · HL: «…ببلاش» · «…بيطير مع الهوا»
-19. ★ «الإيد الوحدة…» → **«…ما بتصفّق»** · *el-id el-wahdé…* · "One hand…" → **"…can't clap"** · « Une seule main… » → **« …ne peut pas applaudir »** · Teamwork. · HL: «…ما بتشيل صينيّة» · «…بتتعب بسرعة»
-20. ★ «قلّي مين رفيقك…» → **«…بقلّك مين إنت»** · *2elli min rfi2ak…* · "Tell me who your friend is…" → **"…and I'll tell you who you are"** · « Dis-moi qui est ton ami… » → **« …je te dirai qui tu es »** · You are your company. · HL: «…بقلّك وين سهرت» · «…بقلّك قدّيش عمرك»
-21. ★ «اللي بيحفر حفرة لخيّو…» → **«…بيوقع فيها»** · *illi byehfor hefra la-khayyo…* · "Whoever digs a pit for his brother…" → **"…falls into it"** · « Qui creuse un trou pour son frère… » → **« …y tombe »** · Harm comes back to those who plan it. · HL: «…بيلاقي كنز» · «…بيوجعو ضهرو»
+19. ★ K «الإيد الوحدة…» → **«…ما بتصفّق»** · *el-id el-wahdé…* · "One hand…" → **"…can't clap"** · « Une seule main… » → **« …ne peut pas applaudir »** · Teamwork. · HL: «…ما بتشيل صينيّة» · «…بتتعب بسرعة»
+20. ★ K «قلّي مين رفيقك…» → **«…بقلّك مين إنت»** · *2elli min rfi2ak…* · "Tell me who your friend is…" → **"…and I'll tell you who you are"** · « Dis-moi qui est ton ami… » → **« …je te dirai qui tu es »** · You are your company. · HL: «…بقلّك وين سهرت» · «…بقلّك قدّيش عمرك»
+21. ★ K «اللي بيحفر حفرة لخيّو…» → **«…بيوقع فيها»** · *illi byehfor hefra la-khayyo…* · "Whoever digs a pit for his brother…" → **"…falls into it"** · « Qui creuse un trou pour son frère… » → **« …y tombe »** · Harm comes back to those who plan it. · HL: «…بيلاقي كنز» · «…بيوجعو ضهرو»
 22. ★★ F «اللي بيجرّب المجرّب…» → **«…عقلو مخرّب»** · *illi byjarreb el-mjarrab…* · "Whoever tries what's already been tried…" → **"…has a broken brain"** · « Qui réessaie ce qui a déjà échoué… » → **« …a la tête cassée »** · Don't trust what already failed you. · HL: «…بيوفّر وقت» · «…بيندم مرّتين»
-23. ★ «ابن البطّ…» → **«…عوّام»** · *ibn el-batt…* · "The duckling…" → **"…is a swimmer"** · « Le fils du canard… » → **« …sait nager »** · Like parent, like child. · HL: «…بيحب المي» · «…بيمشي متل أبوه»
-24. ★★★ «اللي إلو ضهر…» → **«…ما بينضرب على بطنو»** · *illi elo dahr…* · "Whoever has a back…" → **"…never gets punched in the belly"** · « Qui a un dos… » → **« …ne se fait pas frapper au ventre »** · People with backing are protected. · HL: «…بيقعد مرتاح» · «…ما بيتعب»
-25. ★★★ «شو جابرك عالمرّ؟…» → **«…الأمرّ منّو»** · *shu jabrak 3al-murr…* · "What drives you to the bitter?…" → **"…something even more bitter"** · « Qu'est-ce qui te pousse vers l'amer ?… » → **« …le plus amer encore »** · We choose the lesser evil. · HL: «…الطعمة الحلوة» · «…الجوع»
+23. ★ K «ابن البطّ…» → **«…عوّام»** · *ibn el-batt…* · "The duckling…" → **"…is a swimmer"** · « Le fils du canard… » → **« …sait nager »** · Like parent, like child. · HL: «…بيحب المي» · «…بيمشي متل أبوه»
+24. ~~«اللي إلو ضهر…»~~ **dropped**: in Lebanon it reads as political or sectarian patronage (*wasta*), which §11.2 rule 4 excludes.
+25. ★★★ `[native review: usually quoted with «قال:»; confirm the prompt form]` «شو جابرك عالمرّ؟…» → **«…الأمرّ منّو»** · *shu jabrak 3al-murr…* · "What drives you to the bitter?…" → **"…something even more bitter"** · « Qu'est-ce qui te pousse vers l'amer ?… » → **« …le plus amer encore »** · We choose the lesser evil. · HL: «…الطعمة الحلوة» · «…الجوع»
 26. ★★ F «اللي بياخد إمّي…» → **«…بقلّو يا عمّي»** · *illi byekhod emmi…* · "Whoever marries my mother…" → **"…I call him 'uncle'"** · « Celui qui épouse ma mère… » → **« …je l'appelle "oncle" »** · Going along with whoever is in charge. · HL: «…بيصير رفيقي» · «…بيدفع العشا»
 27. ★★★ «تحت السواهي…» → **«…دواهي»** · *taht es-sawahi…* · "Beneath the quiet ones…" → **"…lie disasters"** · « Sous les calmes… » → **« …se cachent les catastrophes »** · Still waters run deep. · HL: «…في كنز» · «…في نومة طويلة»
 28. ★★ «مين شاف بلاوي غيرو…» → **«…هانت عليه بلوتو»** · *min shaf balawi gheiro…* · "Whoever sees other people's troubles…" → **"…finds his own lighter"** · « Qui voit les malheurs des autres… » → **« …trouve les siens plus légers »** · Perspective. · HL: «…بيسكّر الشبّاك» · «…بيضحك»
 29. ★★★ «القلّة…» → **«…بتولّد النقار»** · *el-2illé…* · "Scarcity…" → **"…breeds bickering"** · « Le manque… » → **« …engendre les disputes »** · Money troubles cause fights. · HL: «…بتعلّم الصبر» · «…بتجيب الأفكار»
-30. ★ F «الدهب…» → **«…ما بيصدّي»** · *ed-dahab…* · "Gold…" → **"…never rusts"** · « L'or… » → **« …ne rouille pas »** · Good people stay good. · HL: «…بيغلى بالعيد» · «…بيلمع بالعتمة»
+30. ★ F K «الدهب…» → **«…ما بيصدّي»** · *ed-dahab…* · "Gold…" → **"…never rusts"** · « L'or… » → **« …ne rouille pas »** · Good people stay good. · HL: «…بيغلى بالعيد» · «…بيلمع بالعتمة»
 31. ★ «كل شي بوقتو…» → **«…حلو»** · *kel shi b-wa2to…* · "Everything in its own time…" → **"…is sweet"** · « Chaque chose en son temps… » → **« …est douce »** · Don't rush. · HL: «…بيخلص» · «…بيتأخّر»
 32. ★★ «ضربتين عالراس…» → **«…بيوجعوا»** · *darbtein 3ar-ras…* · "Two blows on the head…" → **"…hurt"** · « Deux coups sur la tête… » → **« …font mal »** · Two problems at once is too much. · HL: «…بيصحّوا» · «…بيعلّموا»
 33. ★★ «كتر الطبّاخين…» → **«…بيحرق الطبخة»** · *ketr et-tabbakhin…* · "Too many cooks…" → **"…burn the dish"** · « Trop de cuisiniers… » → **« …brûlent le plat »** · `[native review]` exact Lebanese form. · HL: «…بيكبّر الطبخة» · «…بيوسّخ المطبخ»
-34. ★ «ما في دخان…» → **«…بلا نار»** · *ma fi dukhkhan…* · "There's no smoke…" → **"…without fire"** · « Il n'y a pas de fumée… » → **« …sans feu »** · Rumours have a cause. · HL: «…بلا أركيلة» · «…بلا شوي»
+34. ★ K «ما في دخان…» → **«…بلا نار»** · *ma fi dukhkhan…* · "There's no smoke…" → **"…without fire"** · « Il n'y a pas de fumée… » → **« …sans feu »** · Rumours have a cause. · HL: «…بلا أركيلة» · «…بلا شوي»
 35. ★★ «البيت الضيّق…» → **«…بيساع ألف صديق»** · *el-beit ed-dayye2…* · "A narrow house…" → **"…fits a thousand friends"** · « Une maison étroite… » → **« …accueille mille amis »** · `[native review]` form. · HL: «…بيدفّي بالشتي» · «…ما بيساع حدا»
 36. ★★★ «اللي بدّو يعمل جمّال…» → **«…بدّو يعلّي باب دارو»** · *illi baddo ya3mel jammal…* · "Whoever wants to be a camel driver…" → **"…must raise his front door"** · « Qui veut être chamelier… » → **« …doit rehausser sa porte »** · If you take on something big, prepare for it. · HL: «…بدّو يشتري جمل» · «…بدّو يحبّ الرمل»
-37. ★★ F «الصبر…» → **«…مفتاح الفرج»** · *es-sabr…* · "Patience…" → **"…is the key to relief"** · « La patience… » → **« …est la clé du soulagement »** · Good things come to those who wait. · HL: «…بيجيب الخير» · «…بيعصّب»
+37. ★★ F K «الصبر…» → **«…مفتاح الفرج»** · *es-sabr…* · "Patience…" → **"…is the key to relief"** · « La patience… » → **« …est la clé du soulagement »** · Good things come to those who wait. · HL: «…بيجيب الخير» · «…بيعصّب»
 
 Fallback house lies (`proverb_end`, AR): «…ما بيرجع» · «…بيضحك آخر واحد» · «…بيبقى ببيتو» · «…بيوصل متأخر».
 
@@ -722,7 +774,7 @@ Fallback house lies (`proverb_end`, AR): «…ما بيرجع» · «…بيضح
 
 ## 15. Open items
 
-- `[native review]` all AR (proverb forms, translit spelling convention: Arabizi with 2/3/7 is proposed for EN/FR rooms) and FR copy.
+- `[native review]` all AR (proverb forms incl. #25 and #33, the `knownIn` list, translit spelling convention: Arabizi with 2/3/7 for EN/FR rooms) and FR copy.
 - `[VERIFY]` zod's record-with-optional-keys helper name for the installed zod version (§11.3).
-- Platform: confirm the late-join policy and host-power model match the hub spec; confirm character expression ids.
-- Content: EN/FR house lies for `bluff-lb-proverbs`; 30 verified `fact_blank` items.
+- Content (G2 exit criteria, not "later"): EN/FR house lies (≥ 3 per item) for `bluff-lb-proverbs`; the 40-item `bluff-lb-teta-words` pack and 40+ rare or village proverbs for AR rooms; Arabizi `truthAlt` forms for AR-sourced items.
+- Later: 30 verified `fact_blank` items.

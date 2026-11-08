@@ -1,8 +1,8 @@
 # GAME-TRIVIA — Trivia quiz (JAMAA game #4)
 
-Status: **binding design spec**, draft 1, 2026-11-08. Game id: `trivia`. Display names: EN **Quiz Night**, FR **Soirée quiz**, AR **«سهرة أسئلة»** (`[native review]`).
+Status: **binding design spec**, draft 2 (review applied), 2026-11-08. Game id: `trivia`. Display names: EN **Quiz Night**, FR **Soirée quiz**, AR **«سهرة أسئلة»** (`[native review]`).
 
-Rules, state machine, timers, speed scoring with streaks, quiz metadata (stars, domain, topics), the TV quiz picker, the phone answer pad, edge cases, settings, copy, content schema and the first quiz, **Lebanon** (63 questions in EN/FR/AR). The JAMAA hub owns lobby, game picker, characters, ⓘ, entitlements, mute, reconnect and room lifetime; **the platform contract is [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md): this file takes over the game rules of its §2.12 (settings, phases, timers, scoring, intents, view), while its §5.2 pack header and §5.4 metadata and vocabulary still apply.** Where the platform names a shared concept differently, the platform name wins: i18n keys written `trivia.*` here live under `game.trivia.*`; intents travel as `GAME {gameId:"trivia", i}`; late joiners are *benched* members. Conventions follow [SPEC.md](SPEC.md). `[VERIFY]` = fact or claim to check against a cited source before shipping; `[native review]` = native speaker approval.
+Rules, state machine, timers, speed scoring with streaks, quiz metadata (stars, domain, topics), the TV quiz picker, the phone answer pad, edge cases, settings, copy, content schema and the first quiz, **`lb-quiz-01` "Lebanon: the big quiz"** (75 questions in EN/FR/AR). The JAMAA hub owns lobby, game picker, characters, ⓘ, entitlements, mute, reconnect and room lifetime; **the platform contract is [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md): this file owns the game rules (settings, phases, timers, scoring, intents, view); platform §2.12 lists only the hooks, and its §5.2 pack header and §5.4 metadata and vocabulary still apply.** Where the platform names a shared concept differently, the platform name wins: i18n keys written `trivia.*` here live under `game.trivia.*`; intents travel as `GAME {gameId:"trivia", i}`; late joiners enter through the `join` hook; "How to play" is the platform's per-device setup intro (**no in-game intro phase**); the no-repeat history is the platform `memory.usedKeys`. Conventions follow [SPEC.md](SPEC.md). `[VERIFY]` = fact or claim to check against a cited source before shipping; `[native review]` = native speaker approval.
 
 ---
 
@@ -10,7 +10,7 @@ Rules, state machine, timers, speed scoring with streaks, quiz metadata (stars, 
 
 The host picks a quiz on the TV from a shelf of cards (stars for difficulty, chips for domain and topics). A question appears on the TV; a beat later four answers pop in, each with a big coloured shape. Everyone answers on their phone with one thumb. Right answers score more the faster they come, streaks add a bonus, and the last question counts double. After each question: the right answer lights up, every player's character jumps onto the answer they chose, the fastest correct player gets a lightning bolt, and points fly into the leaderboard, which reshuffles live.
 
-Players: **1–12** (JAMAA-PLATFORM §2.12; solo works as practice). Duration: 10 questions ≈ 6–7 minutes.
+Players: **1–12** (solo works as practice). Duration: 10 questions ≈ 6–7 minutes.
 
 ---
 
@@ -20,10 +20,13 @@ Players: **1–12** (JAMAA-PLATFORM §2.12; solo works as practice). Duration: 1
 |---|---|
 | `gameId` | `"trivia"` |
 | Players | min 1, max 12 |
-| Settings | 3 (§9): `quizId`, `length`, `pace` |
-| How to play | 4 steps (§10.1), first time per room; ⓘ always |
+| Settings | 3 (§9): `quizId`, `length`, `pace`; the `quizId` row is hidden while only one quiz is playable, so 2 visible rows at launch |
+| How to play | 4 steps (§10.1), shown **per device, the first time this game's setup opens** (platform §3.2), never as a game phase; ⓘ always |
+| Score carry | `carriesScore: false`: every game starts at 0; stars come from this game's points |
+| Hooks | `join` (late joiners wait for the next READ, §6), `projectSetup` → `{available, quiz}` ("7 questions available"), `memory` → question ids, `projectStatus` (`doneIds` = answeredIds in ANSWER), `leakCheck` |
+| Pause menu items (TV) | in order: "Next" (QUIZ_INTRO, REVEAL, LEADERBOARD, FINAL_INTRO, `HOST_ADVANCE`), "Void this question" (REVEAL, `VOID_QUESTION`, confirm), "End game" (HOLD, `END_GAME`, confirm) |
 | Characters | `idle`, `think`, `done`, `happy`, `cheer`, `sad`, `shock`, `smug`, `away` (platform set, JAMAA-PLATFORM §3.7). Streaks ≥ 3 add a flame **overlay** around the character (not an expression) |
-| Content language | One pack per locale sharing a `family` (`lb-quiz-01-en/-fr/-ar`, same question ids), JAMAA-PLATFORM §5.4. The room plays the pack of its content language |
+| Content language | One pack per locale sharing a `family` (`lb-quiz-01-en/-fr/-ar`, same question ids), JAMAA-PLATFORM §5.4. **`quizId` stores the family**; the engine resolves the pack of the content language at start, so changing the content language keeps the quiz when the family has that locale |
 | Entitlement | Pack-level `tier` (platform header). The Lebanon quiz `lb-quiz-01` is `free` in full (it is Trivia's starter content); later quizzes may be Pass-only. A Pass-only quiz never reaches a free room's clients |
 | Host | TV remote + VIP phone |
 
@@ -52,8 +55,7 @@ Capped by the quiz size. The **last question is the Final Question: points ×2**
 
 ```mermaid
 stateDiagram-v2
-  [*] --> INTRO: start (≥1 connected)
-  INTRO --> QUIZ_INTRO: deadline / host HOST_ADVANCE
+  [*] --> QUIZ_INTRO: start (≥1 connected; deadline = ENTRANCE_GRACE_MS + 4 000)
   QUIZ_INTRO --> READ: deadline / host HOST_ADVANCE
   READ --> ANSWER: deadline
   ANSWER --> REVEAL: all connected answered (+600 ms) / deadline
@@ -69,19 +71,22 @@ stateDiagram-v2
   HOLD --> RESULTS: host END_GAME
 ```
 
+There is **no INTRO phase**: How to play belongs to the platform (per device, in setup) and to ⓘ. The first phase is `QUIZ_INTRO`, and it runs **after** the platform entrance: its deadline is `ENTRANCE_GRACE_MS + 4 000` (platform §3.10 B), so the stars and chips get their full 4 s once the studio is lit.
+
 ### 4.1 Phases and deadlines (pace `normal`; `relaxed` = ANSWER × 4/3, `fast` = ANSWER × 2/3, rounded to the second)
 
 | Phase | Deadline kind | Duration | Ends early | Who acts |
 |---|---|---|---|---|
-| `INTRO` | `INTRO` | 15 000 ms | host `HOST_ADVANCE` | host |
-| `QUIZ_INTRO` | `QUIZ_INTRO` | 4 000 ms (quiz card + "10 questions") | host `HOST_ADVANCE` | host |
+| `QUIZ_INTRO` | `QUIZ_INTRO` | `ENTRANCE_GRACE_MS` + 4 000 ms (quiz card + "10 questions") | host `HOST_ADVANCE` | host |
 | `READ` | `READ` | `clamp(2 500 + 40 × questionChars, 3 000, 7 000)` | — (never skippable: fairness) | nobody |
 | `ANSWER` | `ANSWER` | `mc4` 15 000 ms, `tf` 10 000 ms | all connected non-`left` players answered → `deadline = now + 600` | players: `ANSWER` |
-| `REVEAL` | `REVEAL` | 6 000 ms (+3 000 if the question has a `fact`) | host `HOST_ADVANCE` | host |
+| `REVEAL` | `REVEAL` | 6 000 ms (+3 000 if the question has an `explain`) | host `HOST_ADVANCE` | host |
 | `LEADERBOARD` | `LEADERBOARD` | 6 000 ms | host `HOST_ADVANCE` | host |
 | `FINAL_INTRO` | `FINAL_INTRO` | 4 000 ms | host `HOST_ADVANCE` | host |
 | `HOLD` | none | — | ≥ 1 player connected | host: `END_GAME` |
-| `RESULTS` | none | — | — | host: platform play again / another quiz / back to hub |
+| `RESULTS` | none | — | — | host: platform `REPLAY`, `BACK_TO_SETUP`, `BACK_TO_HUB` |
+
+`HOST_ADVANCE` expires the phase inline (no extra alarm; platform §2.6).
 
 READ shows the question alone so everyone reads it together; the answers (and the phone pad) appear at ANSWER. `questionChars` = graphemes of the question in the content language.
 
@@ -104,13 +109,13 @@ mc4 points = 500 + round10(500 × speed)                    // 500..1000
 tf  points = 250 + round10(250 × speed)                    // 250..500
 final      = × 2 (base + speed)
 streak s   = consecutive correct answers including this one
-streakBonus= min(100 × (s − 1), 500)                       // 0, 100, 200, 300, 400, 500 (cap)
+streakBonus= min(100 × (s − 1), 300)                       // 0, 100, 200, 300 (cap)
 total      = points × finalMultiplier + streakBonus         (if correct; else 0 and s = 0)
 ```
 
 `round10(x)` = round half up to the nearest 10. Wrong or no answer: 0 points, streak resets. **No negative points.**
 
-**Why.** A correct answer is always worth at least half of the fastest one (500 vs 1000), so knowing beats tapping fast. The 300 ms grace absorbs Wi-Fi jitter between phones on the same network. Streaks reward consistency and give the "on fire" moment; the cap keeps a long streak from deciding the game alone. The ×2 final keeps a comeback possible (max 2000 + streak).
+**Why.** A correct answer is always worth at least half of the fastest one (500 vs 1000), so knowing beats tapping fast. The 300 ms grace absorbs Wi-Fi jitter between phones on the same network. Streaks reward consistency and give the "on fire" moment; the +300 cap keeps a long streak (which already earns the speed bonus) from snowballing the leader. The ×2 final keeps a comeback possible (max 2000 + streak), and it is drawn from the most-answered difficulty band (§11.4) so the swing actually happens.
 
 ### 5.3 Ranking and ties
 
@@ -135,14 +140,14 @@ Order: total points ↓, then number of correct answers ↓, then total answer t
 | **Disconnect in ANSWER** | No answer → 0, streak resets. Reconnect while ANSWER is open → can still answer (time counts from `answerOpenAt`, so no advantage) |
 | **Disconnect in READ** | Nothing happens; the pad appears on reconnect if ANSWER has opened |
 | **Player leaves** | Score frozen and shown greyed; not counted for "all answered" |
-| **Late joiner** | Joins at the next READ with 0 points; "New" ribbon for one question; ranked normally |
+| **Late joiner** | The platform calls `join` at once; the newcomer has `me.waitingForNext: true` until the next READ, then plays with 0 points; "New" ribbon for one question; ranked normally |
 | **Nobody connected at question start** | `HOLD` |
 | **Pool smaller than length** | Length is capped to the pool; the TV setting shows "7 questions available" |
 | **Question missing the content locale** | Not drawn (lint makes launch quizzes complete in all three locales) |
-| **Every question already played in this room** | Draw prefers questions not in `room.usedQuestionIds` (FIFO 1 000); if the pool is exhausted, least recently used first and the quiz card shows "Rerun" |
+| **Every question already played in this room** | Draw prefers questions not in `memory.usedKeys` (platform history, ≤ 300 ids per game); if the pool is exhausted, least recently used first and the quiz card shows "Rerun" |
 | **Tie at the top** | Shared first place, both on the top podium step |
-| **Host presses OK during READ/ANSWER** | Ignored (fairness); OK skips only reveal-type animations locally |
-| **Content error found mid-game** | Host pause menu → "Void this question" in REVEAL: points of that question are removed (scores revert to `scoreBefore`, streaks restored), question id added to a `voidedQuestionIds` report sent to the server log for content review |
+| **Host presses OK during READ/ANSWER** | Ignored (fairness); OK only completes reveal-type animations locally (platform input rule) |
+| **Content error found mid-game** | Host pause menu → "Void this question" (confirm) in REVEAL: points of that question are removed (scores revert to `scoreBefore`, streaks restored), question id added to a `voidedQuestionIds` report sent to the server log for content review |
 
 ---
 
@@ -154,8 +159,9 @@ Order: total points ↓, then number of correct answers ↓, then total answer t
 | Order giving it away (authoring has the correct answer first) | Choices shuffled with the room RNG; answer **positions** are random per question |
 | Tapping at random as fast as possible | Wrong = 0 and breaks the streak; correct-but-slow (≥ 500) beats wrong-but-fast (0) |
 | Two phones for one person | Platform: one seat per device, name uniqueness; host can kick |
+| Copying a neighbour's phone on the couch | After a tap all four tiles fade equally (§8.4); the chosen shape shows only as a small glyph until REVEAL |
 | Searching online | READ 3–7 s + ANSWER 15 s; questions favour knowledge over lookup-friendly trivia; speed scoring makes lookup costly |
-| Memorising a replayed quiz | Room-level used-question history; launch pool (63) > Long (15) × 4 games |
+| Memorising a replayed quiz | Room-level used-question history (`memory.usedKeys`); launch pool (75) ≈ Long (15) × 5 games |
 | Latency advantage | Server-side timing + 300 ms grace; READ phase gives everyone the question before the clock starts |
 | Late joiner farming | Starts at 0 |
 
@@ -183,19 +189,18 @@ Order: total points ↓, then number of correct answers ↓, then total answer t
 | C | **Leaf** | jade `#1FA88A` | ink |
 | D | **Spark** (4-point star) | magenta `#FF3D8B` | ink |
 | True | **Check** | jade | ink |
-| False | **Cross** | coral `#F0183A` | ink (+ 2 dp cream ring for contrast) |
+| False | **Cross** | coral `#F0183A` | ink icon only (+ 2 dp cream ring); ink on coral is 4.497:1, just under 4.5, so text is never drawn directly on the coral fill: the cross glyph sits on it (3:1 suffices for graphics) and the word "False" sits on a cream label strip inside the tile |
 
-Shapes, not colours, identify answers (CVD safety, DESIGN §2.3 rule). These are deliberately **not** the triangle/diamond/circle/square in red/blue/yellow/green used by a well-known quiz brand. Positions in the 2 × 2 grid are **the same on every device and never mirrored** (A top-left, B top-right, C bottom-left, D bottom-right): in a mixed-language room the TV and an Arabic phone must agree, and the shape is what players match, not the reading order. Text inside each tile follows its own direction (`dir="auto"` / `TextDirection.Content`). Hex values `[VERIFY]` against the JAMAA palette once the platform design pass lands.
+Shapes, not colours, identify answers (CVD safety, DESIGN §2.3 rule). These are deliberately **not** the triangle/diamond/circle/square in red/blue/yellow/green used by a well-known quiz brand. Positions in the 2 × 2 grid are **the same on every device and never mirrored** (A top-left, B top-right, C bottom-left, D bottom-right): in a mixed-language room the TV and an Arabic phone must agree, and the shape is what players match, not the reading order. Text inside each tile follows its own direction (`dir="auto"` / `TextDirection.Content`). The final hex values are fixed in DESIGN-JAMAA §1.5 (palette B values on web and native).
 
 ### 8.3 Per phase
 
 | Phase | TV | Phone |
 |---|---|---|
-| INTRO | How-to cards | How-to compact; VIP "Start" |
-| QUIZ_INTRO | The quiz card flies to centre: title, stars, domain and topic chips, "10 questions"; studio lights sweep on | "Get ready! Quiz: Lebanon ★★" |
+| QUIZ_INTRO | The quiz card scales in from the marquee (it is not on screen before), the stars fill, domain and featured topic chips stagger in, "10 questions" | "Get ready! Quiz: Lebanon ★★" |
 | READ | Question card big, top; topic chip; question counter "3 / 10"; a thin "get ready" bar fills | "Look at the TV!" + the question in small text (accessibility) |
 | ANSWER | The 4 answer tiles pop in (shape + text); timer as a ring of light bulbs switching off; characters row: `think`, then `done` when answered (no hint of which answer) | **Answer pad** (§8.4) |
-| REVEAL | Wrong tiles dim; the right one glows; characters jump onto the tile they picked; "Fastest finger" bolt; points fly into the side leaderboard, which re-sorts; optional fact line | Full-screen verdict: jade "Correct! +870" with streak flame "×3", or coral "Not this time" with the right answer's shape and text; own rank "You're 2nd" |
+| REVEAL | Wrong tiles dim; the right one glows; characters jump onto the tile they picked; "Fastest finger" bolt; points fly into the side leaderboard, which re-sorts; optional "Did you know?" (`explain`) line | Full-screen verdict: jade "Correct! +870" with streak flame "×3", or coral "Not this time" with the right answer's shape and text; own rank "You're 2nd" |
 | LEADERBOARD | Full leaderboard race (§12.3) | Own rank, points, gap to the player ahead ("120 behind Maya") |
 | FINAL_INTRO | "FINAL QUESTION — double points!" with a drum build | "Final question! Double points" |
 | RESULTS | Podium, stats ("Fastest finger: Rami ×4", "Longest streak: Lina 6"), host buttons | Place, points, correct count, best streak; VIP buttons |
@@ -205,11 +210,11 @@ Shapes, not colours, identify answers (CVD safety, DESIGN §2.3 rule). These are
 - Portrait, the pad fills the **bottom 70 %** of the viewport (thumb zone); question excerpt and timer bar above.
 - `mc4`: 2 × 2 tiles, each ≥ 44 % of width × 30 % of viewport height, full colour with a large shape (40 % of tile height) and the answer text (`type.ph.body`, max 2 lines, auto-shrink to 0.85 then ellipsis; answers are linted ≤ 40 graphemes).
 - `tf`: two tall tiles side by side (True left / False right, never mirrored, same rule as §8.2).
-- **Tap → lock:** the chosen tile scales 0.96 and stays bright, others fade to 30 %, haptic `20`, label "Locked in! 3.2 s". No undo.
+- **Tap → lock:** **all four tiles fade equally to 30 %** (the chosen one is not highlighted, so a neighbour 2 m away cannot read it), a centred "Locked in! 3.2 s" with a small neutral check appears, haptic `20`. The chosen shape shows only as a 24 px glyph in the top bar, and only until REVEAL. No undo.
 - Tap targets ignore `pointerdown` for 250 ms after the pad appears (avoids a tap meant for the previous screen).
 - The pad renders in < 100 ms of the ANSWER snapshot: shapes are inline SVG in the Trivia chunk; no network fetch.
 
-The ⓘ button sits in the phone top bar in every phase; on the TV it's in the pause menu (Back) → "Rules".
+The ⓘ button sits in the phone top bar in every phase; on the TV it's in the pause menu (Back) → "Rules" (announced by the platform hint). The TV shows no focusable buttons in game; host actions are pause-menu items (§2).
 
 ---
 
@@ -217,20 +222,21 @@ The ⓘ button sits in the phone top bar in every phase; on the TV it's in the p
 
 | Setting | Values | Default | UI |
 |---|---|---|---|
-| `quizId` | Any quiz playable in the content language | First featured quiz (Lebanon) | **Quiz shelf** (§9.1) |
-| `length` | `short` 7 · `normal` 10 · `long` 15 (capped by pool) | `normal` | 3-way selector |
+| `quizId` | Any quiz **family** playable in the content language (e.g. `lb-quiz-01`) | `null` = the first featured quiz playable in the content language, resolved at start (a static default) | **Hidden row** while only one quiz is playable: the settings pane shows a non-interactive **quiz summary card** instead. With ≥ 2 quizzes: the row "Quiz ‹ Lebanon ›" opens the **quiz shelf** (§9.1) |
+| `length` | `short` 7 · `normal` 10 · `long` 15 (capped by pool) | `normal` | 3-way selector; shows "7 questions available" when the pool caps it (`setup.extras.available`) |
 | `pace` | `relaxed` (20 s) · `normal` (15 s) · `fast` (10 s) — `tf` gets 2/3 of it | `normal` | 3-way selector |
+
+`SETTINGS_SCHEMA = 1`; `normalize` maps unknown or missing keys to the defaults; `restrict` resets a locked `quizId` to `null`.
 
 ### 9.1 Quiz selection UX (TV, D-pad)
 
-- The Trivia settings screen opens on a **shelf**: one horizontal row per domain ("Lebanon", later "World", "Arab world", "France"), Netflix-style. Up/Down moves between rows, Left/Right between cards, OK selects (a check badge), Back leaves.
-- **Quiz card** (240 × 320 dp): cover illustration (flat, palette-based; no flags or political symbols), title, **difficulty stars** (1–3 filled amber stars out of 3 + the word "Easy / Medium / Hard" for accessibility), a **domain chip** (filled), up to **3 topic chips** (outlined; "+2" if more), "63 questions", and a lock badge on Pass-only quizzes in free rooms (focusing one shows the platform's Pass upsell when billing is enabled).
-- Focused card: scale 1.06, `glow.primary`, the cover gently parallaxes (Compose `graphicsLayer` translation, ≤ 8 dp).
-- Below the shelf: `length` and `pace` selectors, then "Start".
-- With one quiz at launch the shelf shows the Lebanon card plus one non-focusable ghost card "More quizzes soon".
-- The VIP phone gets the same list as vertical cards with the same chips and stars.
+Layout belongs to DESIGN-JAMAA §2.3.1 (it wins on layout); behaviour:
 
----
+- **One playable quiz (launch):** no shelf. The HUB-03 settings pane shows a **summary card** above the rows: cover thumbnail, title, ★★☆ + "Medium", the domain chip and the featured topic chips. It is not focusable and opens nothing.
+- **Two or more playable quizzes:** OK on the `quizId` row of HUB-03 opens the **shelf** full screen over the world stage: one horizontal row per domain ("Lebanon", later "World", "Arab world", "France"). Up/Down moves between rows, Left/Right between cards, OK selects (a check badge) and returns to setup, Back returns without change.
+- **Quiz card** (240 × 320 dp): cover illustration (flat, palette-based; no flags or political symbols), title, **difficulty stars** (1–3 filled amber stars out of 3 + the word "Easy / Medium / Hard" for accessibility), a **domain chip** (filled), the **featured topic chips** (outlined, max 3, in author order; "+n" for the rest), "{count} questions", and a lock badge on Pass-only quizzes in free rooms (focusing one shows the platform's Pass upsell when billing is enabled).
+- Focused card: scale 1.06, the platform focus ring (cream 3 dp ring + `glow.primary`, DESIGN-JAMAA §1.5); the cover gently parallaxes (Compose `graphicsLayer` translation, ≤ 8 dp).
+- The VIP phone gets the same list as vertical cards with the same chips and stars (or the summary card when there is one quiz).
 
 ## 10. Copy
 
@@ -248,21 +254,21 @@ The ⓘ button sits in the phone top bar in every phase; on the TV it's in the p
 EN:
 - **Answer.** One answer per question; your first tap is final.
 - **Points.** Correct: 500 to 1000 points depending on speed (true/false: 250 to 500). Wrong: 0.
-- **Streaks.** Each correct answer in a row adds +100 (up to +500).
+- **Streaks.** Each correct answer in a row adds +100 (up to +300).
 - **Final question.** Double points.
 - **Ties.** Same points? More correct answers wins; then faster total time.
 
 FR:
 - **Réponse.** Une réponse par question ; le premier choix est définitif.
 - **Points.** Bonne réponse : de 500 à 1000 points selon la rapidité (vrai/faux : 250 à 500). Mauvaise : 0.
-- **Séries.** Chaque bonne réponse d'affilée ajoute +100 (jusqu'à +500).
+- **Séries.** Chaque bonne réponse d'affilée ajoute +100 (jusqu'à +300).
 - **Dernière question.** Points doublés.
 - **Égalité.** Même score ? Le plus de bonnes réponses l'emporte, puis le temps total le plus court.
 
 AR `[native review]`:
 - **الجواب.** جواب واحد عكل سؤال، وأوّل كبسة نهائية.
 - **النقاط.** الجواب الصح: من 500 لـ1000 نقطة حسب السرعة (صح/غلط: من 250 لـ500). الغلط: 0.
-- **السلسلة.** كل جواب صح ورا بعض بيزيد ‎+100 (لحدّ ‎+500).
+- **السلسلة.** كل جواب صح ورا بعض بيزيد ‎+100 (لحدّ ‎+300).
 - **السؤال الأخير.** النقاط دبل.
 - **التعادل.** نفس النقاط؟ بيربح يلّي جاوب صح أكتر، وبعدين الأسرع بالمجموع.
 
@@ -289,7 +295,7 @@ AR `[native review]`:
 ### 11.1 Controlled vocabulary (JAMAA-PLATFORM §5.4, `content/vocab.json`)
 
 - **Domains** (one per quiz; it is the shelf row): `lebanon`, `middle-east`, `arab-world`, `france`, `world`, `general`.
-- **Topics** (exactly one per question; a quiz's chips are its most frequent topics, top 3 shown): `culture`, `traditions`, `music`, `dance`, `football`, `sports`, `food`, `history`, `geography`, `places`, `language`, `cinema-tv`, `celebrities`, `science`, `nature`, `art`.
+- **Topics** (exactly one per question; a quiz's chips are its declared `featuredTopics`, max 3, in the order the author lists them): `culture`, `traditions`, `music`, `dance`, `football`, `sports`, `food`, `history`, `geography`, `places`, `language`, `cinema-tv`, `celebrities`, `science`, `nature`, `art`.
 - Labels come from i18n `content.domain.<id>` / `content.topic.<id>` (platform-owned). Proposed labels for the values this quiz uses:
 
 | Id | EN | FR | AR `[native review]` |
@@ -314,7 +320,7 @@ Adding a value is a `vocab.json` + i18n change, which keeps labels broad and the
 
 ### 11.2 Sensitivity rules (binding for every quiz, strict for `lebanon`)
 
-No questions about: wars and armed conflicts, political parties and politicians, religious communities and sects, borders and disputed territory, refugees, assassinations, militia or army, current economic crisis figures. Distractors follow the same rule (no war years as wrong answers). Famous people only for arts, sport and science achievements. Holidays only if national and non-religious. A reviewer from the target community signs off each quiz (`review.status: "verified"` per question with a `source`).
+No questions about: wars and armed conflicts, political parties and politicians (including places named after them), religious communities and sects, borders and disputed territory, refugees, assassinations, militia or army, current economic crisis figures. Distractors follow the same rule (no war years as wrong answers). Famous people only for arts, sport and science achievements. Holidays only if national and non-religious. **Regional balance:** place questions carry a `region` tag (`beirut`, `mount-lebanon`, `north`, `south`, `bekaa`) and no region may exceed 35 % of a quiz's tagged questions. Every question has a `source`; a reviewer from the target community signs off **the pack** (`status: "reviewed"`, their name in `reviewedBy`). There is no per-question review field.
 
 ### 11.3 Schema (platform `PackHeader` + Trivia items; `content/trivia/<locale>/<pack-id>.json`)
 
@@ -332,35 +338,35 @@ export const TriviaQuestionSchema = z.strictObject({
   answer: z.number().int().min(0).max(3),                 // authored index (the engine reshuffles for display)
   topic: Topic,                                           // must be in the pack's topics
   difficulty: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  easyIn: z.array(Locale).default([]),                    // locales where this question is trivial (e.g. "Teta" in ar)
+  region: z.enum(REGIONS).optional(),                     // place questions only (platform §5.4)
   explain: z.string().max(200).optional(),                // the "Did you know?" line in REVEAL
   source: z.string().min(1),                              // URL or reference; never projected
 });
 ```
 
-Lint (platform common checks + Trivia): options unique and non-empty; for `tf`, `options` are the localized True/False labels and `answer` ∈ {0, 1}; the correct index is spread (no index used for > 40 % of a pack's `mc4` questions); every question in all three locale packs of the family with identical ids, `type`, `answer` position, `topic` and `difficulty`; the stars rule; vocabulary membership; the §11.2 banned-keyword list on every string; `status: "reviewed"` (owner + Lebanese reviewer) before release.
+Lint (platform common checks + Trivia, `tools/content-lint/src/games/trivia.ts`): options unique and non-empty; for `tf`, `options` are the localized True/False labels and `answer` ∈ {0, 1}; **between 35 % and 65 % of a pack's `tf` answers are True**; the correct index is spread (no index used for > 40 % of a pack's `mc4` questions); `featuredTopics ⊂ topics` and `topics` = the set of question topics; no `region` above 35 % of tagged questions; **≥ 15 questions of difficulty 3** in a pack that offers Long; no option repeats a word of the question that gives the answer away (reviewer check, lint warns on shared tokens ≥ 4 letters between the question and the correct option); every question in all three locale packs of the family with identical ids, `type`, `answer` position, `topic`, `difficulty`, `easyIn` and `region`; the stars rule; vocabulary membership; the §11.2 banned-keyword list on every string; `status: "reviewed"` (owner + Lebanese reviewer) before release.
 
 **Authoring note.** The drafts in §14 list the correct option first (✓) for review readability. The conversion to JSON writes options in a spread order and sets `answer` accordingly (a `tools/content-lint --fix-spread` helper may permute deterministically by id).
 
 ### 11.4 Question draw
 
-`drawQuestions(quiz, settings, room, rng)` picks `length` questions:
-1. Candidates: the quiz pack for the content locale, not in `usedQuestionIds` (fallback LRU).
-2. **Difficulty curve:** first 30 % from difficulty 1 (fallback 2), middle 40 % from 2, last 30 % from 3 (fallback 2); the final question is the hardest remaining.
-3. **Topic spread:** never 3 consecutive questions on the same topic; `tf` at most 1 in 4.
-4. Options are shuffled per question with the RNG; the shuffled correct position stays server-side until REVEAL.
+`drawQuestions(quiz, settings, memory, locale, rng)` picks `length` questions:
+1. Candidates: the quiz pack for the content locale, not in `memory.usedKeys` (fallback LRU).
+2. **Effective difficulty:** a question whose `easyIn` contains the content locale counts as difficulty 1 in that room, and is never placed in the last 30 %.
+3. **Difficulty curve:** first 30 % from effective difficulty 1 (fallback 2), middle 40 % from 2, last 30 % from 3 (fallback 2). **The final question is drawn from difficulty 2** (the most-answered band; fallback 3, then 1), so the ×2 can actually swing the game instead of ending on "Stumped!".
+4. **Topic spread:** never 3 consecutive questions on the same topic; `tf` at most 1 in 4.
+5. Options are shuffled per question with the RNG; the shuffled correct position stays server-side until REVEAL.
 
 ### 11.5 First content plan
 
-| Quiz (family) | Domain | Stars | Questions | Tier | Status |
-|---|---|---|---|---|---|
-| `lb-quiz-01` (`-en`, `-fr`, `-ar`) — "Lebanon: the big quiz" · « Liban : le grand quiz » · «لبنان: المسابقة الكبيرة» | lebanon | ★★ (mean 1.76) | 63 (§14) | free | draft; every fact `[VERIFY]` |
-| `world-easy-01` — Around the World | world | ★ | 60 planned | free | later |
-| `arab-music-01` — Arab Music Legends | arab-world | ★★ | 40 planned | Pass | later |
+| Quiz (family) | Domain | Featured topics | Stars | Questions | Tier | Status |
+|---|---|---|---|---|---|---|
+| `lb-quiz-01` (`-en`, `-fr`, `-ar`) — "Lebanon: the big quiz" · « Liban : le grand quiz » · «لبنان: المسابقة الكبيرة» | lebanon | music, dance, football | ★★ (mean ≈ 1.84) | 75 (§14) | free (whole quiz) | draft; every fact `[VERIFY]` |
+| `world-easy-01` — Around the World | world | — | ★ | 60 planned | free | later |
+| `arab-music-01` — Arab Music Legends | arab-world | — | ★★ | 40 planned | Pass | later |
 
----|---|---|---|---|---|
-| `lebanon` — Lebanon · Liban · «لبنان», subtitle "A mezze of everything" · « Un mezzé de tout » · «مازة من كل شي» | lebanon | ★★ (mean 1.76) | 63 (§14) | 25 | draft; every fact `[VERIFY]` |
-| `world-easy` — Around the World | world | ★ | 60 planned | 20 | later |
-| `arab-music` — Arab Music Legends | arab-world | ★★ | 40 planned | 0 (Pass) | later |
+`lb-quiz-01` pack `topics` (exactly those its questions use): `geography`, `history`, `culture`, `music`, `dance`, `football`, `sports`, `food`, `cinema-tv`, `celebrities`, `nature`.
 
 ---
 
@@ -370,7 +376,7 @@ Server never waits for animations; OK skips reveal-type animations locally; redu
 
 ### 12.1 Entering the world: "The Studio"
 
-A TV game-show studio at night: a curved stage, a light-bulb arch, a big screen for questions, a leaderboard tower at the side; for the Lebanon quiz, the backdrop is a stylised sunset of the coast and mountains (no flags or political symbols). Transition from the hub: the tile zooms in, the screen goes dark for 150 ms, then **spotlights snap on one by one** (4 × 120 ms, each with a "clunk"), the light-bulb arch chases left to right and the characters walk on to their podium slots. ≤ 2.2 s.
+A TV game-show studio at night: a curved stage, a light-bulb arch, a big screen for questions, a leaderboard tower at the side; for the Lebanon quiz, the backdrop is a stylised sunset of the coast and mountains (no flags or political symbols). Entrance (platform world entrance, ≤ 2 000 ms): the screen goes dark for 150 ms, then **spotlights snap on one by one** (4 × 120 ms, each with a "clunk") inside the platform's 750 ms door window, the light-bulb arch chases from the reading start to the end, the title lands, and the characters walk on to their podium slots. QUIZ_INTRO starts only after `ENTRANCE_GRACE_MS`.
 
 ### 12.2 Question and answer
 
@@ -378,15 +384,15 @@ A TV game-show studio at night: a curved stage, a light-bulb arch, a big screen 
 - ANSWER: the 4 tiles flip in one after the other (A→D, 90 ms apart, Y-axis). The timer is a ring of 20 bulbs; each goes dark in turn; the last 5 s pulse amber with `sfx.tick`.
 - When a player answers, their character hits a buzzer (`done`) with a soft "bip" (no hint of the choice).
 
-### 12.3 Reveal (6 s; + fact 3 s)
+### 12.3 Reveal (6 s; + explain 3 s)
 
 1. *Lock (0–300 ms):* "Time!" stamp; the bulbs all flash once (single flash, no strobe).
 2. *Wrong out (300–900 ms):* wrong tiles dim to 30 % and shrink slightly; the correct tile glows and its shape spins once.
 3. *Jump-on (900–2 400 ms):* each character jumps from the podium row onto the tile it chose (stacked 2 rows of 6 max); on the correct tile `cheer`, on wrong ones `sad`/`shock`; no-answer characters stay with a "zzz" bubble.
 4. *Fastest finger (2 400–3 000 ms):* a lightning bolt strikes the fastest correct character; "Fastest finger: Rami".
-5. *Points fly (3 000–4 500 ms):* from each correct character, a "+870" chip flies to the leaderboard tower; streak ≥ 3 adds a flame trail and a flame overlay around the character (expression `happy`) until the streak breaks.
+5. *Points fly (3 000–4 500 ms):* from each correct character, a "+870" chip flies to the leaderboard tower; streak ≥ 3 adds a flame trail and a flame overlay around the character (expression `happy`, doubled by a hop at small sizes) until the streak breaks.
 6. *Tower re-sort (4 500–6 000 ms):* the side leaderboard re-orders with springs; overtakes show a little hop.
-7. *Fact (optional, +3 s):* "Did you know?" card slides up with the `fact`.
+7. *Explain (optional, +3 s):* "Did you know?" card slides up with the question's `explain`.
 
 Stumped: all tiles dim, the correct tile reveals with a comedic "dun-dun" and every character does `shock`. Genius: a confetti cannon.
 
@@ -415,7 +421,7 @@ TV Compose: answer tiles are fixed-size composables (no layout passes during ani
 | Action | Payload | Who | Phase |
 |---|---|---|---|
 | `ANSWER` | `{ choice: 0..3 }` (displayed position) | player | ANSWER |
-| `HOST_ADVANCE` | `{}` | host | INTRO, QUIZ_INTRO, REVEAL, LEADERBOARD, FINAL_INTRO |
+| `HOST_ADVANCE` | `{}` | host | QUIZ_INTRO, REVEAL, LEADERBOARD, FINAL_INTRO (expires the phase inline) |
 | `VOID_QUESTION` | `{ questionId }` | host | REVEAL |
 | `END_GAME` | `{}` | host | HOLD |
 
@@ -423,15 +429,17 @@ Errors (platform names): `ALREADY_ANSWERED`, `ANSWER_INVALID` (out of range, or 
 
 ### 13.2 View (`TriviaPublic`)
 
-`phase, quiz {id, title, stars, domain, topics[]}, index, total, isFinal, deadline, question {text, type, topic, difficulty} | null (READ+), options: string[] (ANSWER+, displayed order; position i is token A/B/C/D or True/False), answeredIds[], reveal | null, scores [{playerId, score, scoreBefore, streak, correct, rank}]` (names follow JAMAA-PLATFORM §2.12 `Pub`, extended).
+`schema, phase, quiz {id /* family */, title, stars, domain, featuredTopics[], topicCount, questionCount}, index, total, isFinal, deadline, question {text, type, topic, difficulty} | null (READ+), options: string[] (ANSWER+, displayed order; position i is token A/B/C/D or True/False), answeredIds[], reveal | null, scores [{playerId, score, scoreBefore, streak, correct, rank}]`.
+
+Envelope status (`projectStatus`): `phase`; `doneIds` = answeredIds in ANSWER, else `[]`; `awaitedIds` = connected non-left players not yet answered during ANSWER.
 
 `reveal = { correct: number, choices: [{id: playerId, choice: number | null, correct: boolean, timeMs: number | null, points, streakBonus}], fastestIds[], stumped, genius, explain: string | null }`.
 
-`me = { myChoice | null, myTimeMs | null }`.
+`me = { myChoice | null, myTimeMs | null, waitingForNext: boolean }`.
 
 ### 13.3 Invariants
 
-1. Before REVEAL, no projection contains the correct position, any per-option correctness or another player's choice (platform forbidden keys: `answers`, `correctIndex`, `order`, `rngState`, `usedKeys`, `source`).
+1. Before REVEAL, no projection contains the correct position, any per-option correctness or another player's choice (`leakCheck`; platform forbidden keys: `answers`, `correctIndex`, `order`, `rngState`, `usedKeys`, `source`).
 2. Exactly one correct choice per `mc4` question in server state; choice ids unique.
 3. Each player has ≤ 1 answer per question; `timeMs ∈ [0, T]`.
 4. Σ points of the question = Σ (score − scoreBefore); scores ≥ 0; voiding restores `scoreBefore` and streaks.
@@ -439,21 +447,21 @@ Errors (platform names): `ALREADY_ANSWERED`, `ANSWER_INVALID` (out of range, or 
 
 ### 13.4 Tests
 
-- Scoring table: t = 0, T/2, T, grace boundary, tf vs mc4, final ×2, streak 1..8 with cap, wrong resets.
+- Scoring table: t = 0, T/2, T, grace boundary, tf vs mc4, final ×2, streak 1..8 with the +300 cap, wrong resets.
 - Ranking tie-breaks (points → correct → time → shared).
-- Draw: difficulty curve and topic spread across seeds; LRU fallback; pool capping.
-- Secrecy property test: random games never project the correct position or others' choices before REVEAL.
-- Flow: READ not skippable; early end with 600 ms; reconnect mid-ANSWER keeps original `answerOpenAt`; HOLD; late joiner; VOID_QUESTION restores scores and streaks.
-- Sim: `pnpm sim --game trivia --players 3..12 --games 200` (random answers with random latencies).
-- Quiz lint on `lebanon` (all §11.3 rules, sensitivity keyword list).
-- TV: quiz shelf D-pad navigation (rows, ghost card not focusable, lock badge), answer tile positions unmirrored in AR, reveal stack layout for 12.
-- Web e2e: 3 phones + `/tv`; first tap locks; verdict screen; leaderboard after q3.
+- Draw: difficulty curve (with `easyIn` lowering effective difficulty and never in the last 30 %), the final from difficulty 2, topic spread across seeds; LRU fallback; pool capping.
+- Secrecy property test (synthetic catalog `shared/src/testing/catalogs/trivia.ts`): random games never project the correct position or others' choices before REVEAL.
+- Flow: QUIZ_INTRO deadline = `ENTRANCE_GRACE_MS` + 4 000; READ not skippable; early end with 600 ms; reconnect mid-ANSWER keeps original `answerOpenAt`; HOLD; late joiner via `join` (`waitingForNext` until the next READ); VOID_QUESTION restores scores and streaks; `quizId` (family) survives a content-locale change when the family has that locale.
+- Sim: `pnpm sim --game trivia --players 1..12 --games 300` (random answers with random latencies).
+- Quiz lint on `lb-quiz-01` (all §11.3 rules incl. the tf True share, region balance, ★★★ count, sensitivity keyword list).
+- TV: one-quiz summary card (not focusable); quiz shelf D-pad navigation with ≥ 2 quizzes (rows, lock badge); answer tile positions unmirrored in AR; reveal stack layout for 12; D-pad reach of the pause items "Next", "Void this question", "End game".
+- Web e2e: 3 phones + `/tv`; first tap locks and fades all tiles equally; verdict screen; leaderboard after q3.
 
 ---
 
-## 14. Content draft — quiz `lebanon` (63 questions)
+## 14. Content draft — quiz `lb-quiz-01` (75 questions)
 
-Authoring convention: for `mc4`, the **first** choice is correct (✓). For `tf`, the answer is given. Every row is `review.status: "draft"` with a `check` (what the verifier confirms) — **every fact must be verified against a cited source before shipping**. FR and AR `[native review]`. AR uses light Lebanese colloquial for questions, standard names for places and people. JSON ids are `q001`… in the order listed here; the draft ids (`lb-geo-001`…) are for review only. The **first topic** listed is the question's `topic`; draft names map to the platform vocabulary as `famous-people` → `celebrities`, `sport` → `sports`. The *fact* line becomes `explain`; the `check` line is for the verifier and the final `source` replaces it. The whole quiz is free.
+Authoring convention: for `mc4`, the **first** choice is correct (✓). For `tf`, the answer is given. The pack is `status: "draft"`; every row has a `check` (what the verifier confirms) — **every fact must be verified against a cited source before shipping**. FR and AR `[native review]`. AR uses light Lebanese colloquial for questions, standard names for places and people. JSON ids are `q001`… in the order listed here; the draft ids (`lb-geo-001`…) are for review only. The **first topic** listed is the question's `topic`; draft names map to the platform vocabulary as `famous-people` → `celebrities`, `sport` → `sports`. The *fact* line becomes `explain`; the `check` line is for the verifier and the final `source` replaces it. The whole quiz is free. `easyIn` and `region` tags are listed in the table at the end of this section.
 
 Format: **id** · type · ★ · topics (first = `topic`)
 EN · FR · AR (✓ first) · *fact* · `check`
@@ -508,11 +516,11 @@ EN · FR · AR (✓ first) · *fact* · `check`
 - AR: غابة «أرز الربّ» قريبة من أيّا بلدة؟ — ✓ بشرّي · زحلة · جزّين · صور
 - *fact*: It's a UNESCO World Heritage site with the Qadisha Valley. · `check`: location; UNESCO listing (Ouadi Qadisha and the Forest of the Cedars of God).
 
-**lb-geo-009** · tf · ★ · geography
-- EN: Lebanon has a coastline on the Mediterranean Sea. — True
-- FR : Le Liban a une côte sur la Méditerranée. — Vrai
-- AR: لبنان عندو شطّ عالبحر المتوسّط. — صح
-- `check`: trivial.
+**lb-geo-009** · tf · ★★ · geography
+- EN: The Litani river flows into Syria. — False
+- FR : Le Litani se jette en Syrie. — Faux
+- AR: نهر الليطاني بيصبّ بسوريا. — غلط
+- *fact*: The Litani stays in Lebanon from source to sea and reaches the Mediterranean north of Tyre. · `check`: course and mouth (Qasimiyeh).
 
 **lb-geo-010** · mc4 · ★ · geography, sport
 - EN: Which of these ski resorts is in Lebanon? — ✓ Mzaar Kfardebian · Courchevel · Zermatt · Cortina
@@ -531,7 +539,7 @@ EN · FR · AR (✓ first) · *fact* · `check`
 **lb-his-002** · mc4 · ★★ · history, language
 - EN: The word "Bible" is linked to the name of which Lebanese city? — ✓ Byblos · Tyre · Sidon · Baalbek
 - FR : Le mot « Bible » est lié au nom de quelle ville libanaise ? — ✓ Byblos · Tyr · Saïda · Baalbek
-- AR: كلمة «Bible» مرتبطة باسم أيّا مدينة لبنانية؟ — ✓ جبيل (بيبلوس) · صور · صيدا · بعلبك
+- AR: كلمة «Bible» مرتبطة باسم أيّا مدينة لبنانية؟ — ✓ جبيل · صور · صيدا · بعلبك (no «(بيبلوس)»: it echoed the Latin word in the question)
 - *fact*: In Greek, "byblos" meant papyrus, traded through the city's port. · `check`: etymology chain (city → Greek word for papyrus/book → "Bible"). Reviewer: confirm the topic is acceptable (word origin, not religion).
 
 **lb-his-003** · mc4 · ★ · history
@@ -702,6 +710,24 @@ EN · FR · AR (✓ first) · *fact* · `check`
 - AR: بالدبكة الراقصين بيدبكوا بإجريهن عالأرض عالإيقاع. — صح
 - `check`: trivial.
 
+**lb-dan-005** · mc4 · ★★ · dance, music
+- EN: Which instrument traditionally leads village dabke music? — ✓ The mijwiz (a double-reed pipe) · The harp · The bagpipe · The accordion
+- FR : Quel instrument mène traditionnellement la musique de la dabké au village ? — ✓ Le mijwiz (flûte double) · La harpe · La cornemuse · L'accordéon
+- AR: أيّا آلة بتقود موسيقى الدبكة بالضيعة تقليديًا؟ — ✓ المجوز · الهارب · القربة · الأكورديون
+- `check`: mijwiz as the traditional dabke instrument (with the tabl); AR term for bagpipe [native review].
+
+**lb-dan-006** · tf · ★ · dance
+- EN: Dabke is traditionally danced alone, never in a line. — False
+- FR : La dabké se danse traditionnellement seul, jamais en ligne. — Faux
+- AR: الدبكة تقليديًا بتنرقص لحال الواحد، مش بالصفّ. — غلط
+- *fact*: It is a line or circle dance, dancers linked by hands or shoulders. · `check`: trivial.
+
+**lb-dan-007** · mc4 · ★★ · dance, culture
+- EN: At a Lebanese wedding, the joyful procession with drums, singing and dancing that welcomes the couple is the… — ✓ zaffeh · mawwal · tarab · dabke
+- FR : Au mariage libanais, le cortège joyeux de tambours, chants et danses qui accueille les mariés s'appelle… — ✓ la zaffé · le mawwal · le tarab · la dabké
+- AR: بالعرس اللبناني، شو اسم الموكب يلّي بيستقبل العرسان بالطبل والغنا والرقص؟ — ✓ الزفّة · الموّال · الطرب · الدبكة
+- `check`: zaffeh definition.
+
 ### Football and sport
 
 **lb-fbl-001** · mc4 · ★★ · football
@@ -728,6 +754,30 @@ EN · FR · AR (✓ first) · *fact* · `check`
 - AR: بأيّا رياضة لعب منتخب لبنان بكذا كاس عالم؟ — ✓ كرة السلّة · هوكي الجليد · البيسبول · الكريكيت
 - `check`: FIBA World Cup appearances (2002, 2006, 2010, 2023).
 
+**lb-fbl-004** · mc4 · ★★ · football
+- EN: Which club has won the most Lebanese Premier League titles? — ✓ Al-Ansar · Nejmeh · Al-Ahed · Racing Beirut
+- FR : Quel club a remporté le plus de titres de champion du Liban ? — ✓ Al-Ansar · Nejmeh · Al-Ahed · Racing Beyrouth
+- AR: أيّا نادي ربح أكتر بطولات دوري لبنان؟ — ✓ الأنصار · النجمة · العهد · الراسينغ
+- `check`: [VERIFY] record title holder at time of review; keep distractors as real clubs.
+
+**lb-fbl-005** · mc4 · ★ · football
+- EN: The name of the Beirut football club Nejmeh means… — ✓ Star · Cedar · Lion · Wave
+- FR : Le nom du club de foot beyrouthin Nejmeh veut dire… — ✓ Étoile · Cèdre · Lion · Vague
+- AR: اسم نادي «النجمة» البيروتي يعني… — (AR: ask instead «شو لون قميص نادي النجمة الأساسي؟» — ✓ أحمر · أخضر · أزرق · أصفر, since the Arabic name gives the answer away) `[VERIFY]` the colour
+- `check`: name meaning; AR variant colour [VERIFY].
+
+**lb-fbl-006** · mc4 · ★★★ · football
+- EN: Which Lebanese club won the AFC Cup in 2019? — ✓ Al-Ahed · Nejmeh · Al-Ansar · Safa
+- FR : Quel club libanais a remporté la Coupe de l'AFC en 2019 ? — ✓ Al-Ahed · Nejmeh · Al-Ansar · Safa
+- AR: أيّا نادي لبناني ربح كاس الاتحاد الآسيوي سنة ٢٠١٩؟ — ✓ العهد · النجمة · الأنصار · الصفاء
+- `check`: [VERIFY] 2019 AFC Cup winner.
+
+**lb-fbl-007** · mc4 · ★★★ · football
+- EN: Lebanon first qualified for the AFC Asian Cup through qualifiers (not as host) for which edition? — ✓ 2019 · 2007 · 2011 · 2015
+- FR : Pour quelle édition le Liban s'est-il qualifié pour la première fois à la Coupe d'Asie par les éliminatoires (et non comme pays hôte) ? — ✓ 2019 · 2007 · 2011 · 2015
+- AR: لأيّا نسخة تأهّل لبنان لأوّل مرّة عكاس آسيا عن طريق التصفيات (مش كبلد مضيف)؟ — ✓ ٢٠١٩ · ٢٠٠٧ · ٢٠١١ · ٢٠١٥
+- `check`: [VERIFY] first qualification via qualifiers.
+
 ### Food
 
 **lb-foo-101** · mc4 · ★ · food
@@ -751,8 +801,8 @@ EN · FR · AR (✓ first) · *fact* · `check`
 **lb-foo-104** · mc4 · ★★ · food
 - EN: How is kibbeh nayyeh served? — ✓ Raw · Fried · Grilled · Baked
 - FR : Comment se sert la kebbé nayyé ? — ✓ Crue · Frite · Grillée · Au four
-- AR: الكبّة النيّة بتنعمل من… — ✓ لحمة نيّة وبرغل · دجاج مشوي وبرغل · سمك مقلي ورز · عدس وبصل
-- `check`: raw meat (the AR wording differs on purpose: the Arabic name already says "raw").
+- AR: شو بيحطّوا بالكبّة النيّة؟ — ✓ لحمة وبرغل · دجاج وبرغل · سمك ورز · عدس وبصل
+- `check`: raw meat and bulgur (the AR wording differs on purpose: the Arabic name already says "raw", so no option may repeat «نيّة»).
 
 **lb-foo-105** · mc4 · ★ · food
 - EN: Which salad is topped with crunchy toasted or fried bread? — ✓ Fattoush · Tabbouleh · Moutabbal · Hummus
@@ -799,10 +849,42 @@ EN · FR · AR (✓ first) · *fact* · `check`
 - *fact*: Many famous Lebanese singers started there. · `check`: show description and launch decade.
 
 **lb-cin-005** · tf · ★ · famous-people, music
-- EN: Shakira has Lebanese roots on her father's side. — True
-- FR : Shakira a des origines libanaises du côté de son père. — Vrai
-- AR: شاكيرا أصلها لبناني من جهة بيّها. — صح
-- `check`: paternal ancestry.
+- EN: Shakira's Lebanese roots are on her mother's side. — False
+- FR : Les origines libanaises de Shakira viennent de sa mère. — Faux
+- AR: شاكيرا أصلها اللبناني من جهة إمّها. — غلط
+- *fact*: They come from her father's side. · `check`: paternal ancestry.
+
+### Places beyond Beirut and the Mountain (regional balance)
+
+**lb-his-009** · mc4 · ★★★ · history
+- EN: Tyre's UNESCO-listed site includes one of the largest Roman… — ✓ hippodromes · lighthouses · aqueduct bridges · arenas for sea battles
+- FR : Le site de Tyr, classé par l'UNESCO, compte l'un des plus grands… romains — ✓ hippodromes · phares · ponts-aqueducs · bassins de batailles navales
+- AR: موقع صور المسجّل بالأونيسكو فيه واحد من أكبر… الرومانية — ✓ ميادين سباق الخيل · المناير · الجسور المائية · أحواض المعارك البحرية
+- `check`: [VERIFY] Tyre hippodrome size claim and UNESCO listing.
+
+**lb-his-010** · mc4 · ★★★ · history
+- EN: The ruined city of Anjar in the Bekaa dates from which dynasty? — ✓ Umayyad · Abbasid · Mamluk · Ottoman
+- FR : La cité en ruine d'Anjar, dans la Békaa, date de quelle dynastie ? — ✓ Omeyyade · Abbasside · Mamelouke · Ottomane
+- AR: آثار مدينة عنجر بالبقاع من أيّا عهد؟ — ✓ الأموي · العبّاسي · المملوكي · العثماني
+- `check`: [VERIFY] Umayyad (UNESCO). Reviewer: confirm a dynasty name is acceptable under §11.2 (history, not religion).
+
+**lb-cul-012** · mc4 · ★★ · culture, music
+- EN: Which palace in the Chouf hosts a famous summer festival? — ✓ Beiteddine · Moussa Castle · Sursock Palace · Byblos Castle
+- FR : Quel palais du Chouf accueille un célèbre festival d'été ? — ✓ Beiteddine · Le château de Moussa · Le palais Sursock · Le château de Byblos
+- AR: أيّا قصر بالشوف بيستقبل مهرجان صيفي مشهور؟ — ✓ بيت الدين · قلعة موسى · قصر سرسق · قلعة جبيل
+- `check`: [VERIFY] Beiteddine Festival.
+
+**lb-nat-002** · mc4 · ★ · nature
+- EN: The Shouf Biosphere Reserve is famous for its… — ✓ cedar forests · flamingos · volcanoes · glaciers
+- FR : La réserve de biosphère du Chouf est célèbre pour ses… — ✓ forêts de cèdres · flamants roses · volcans · glaciers
+- AR: محمية أرز الشوف مشهورة بـ… — ✓ غابات الأرز · طيور الفلامنغو · البراكين · الجليد (AR name gives it away: ask «محمية الشوف مشهورة بـ…»)
+- `check`: [VERIFY] reserve and cedars; AR wording.
+
+**lb-geo-013** · mc4 · ★★★ · geography
+- EN: Which river rises in the northern Bekaa and flows north out of Lebanon? — ✓ The Orontes (Assi) · The Litani · Nahr Ibrahim · The Awali
+- FR : Quel fleuve naît dans le nord de la Békaa et coule vers le nord, hors du Liban ? — ✓ L'Oronte (Assi) · Le Litani · Nahr Ibrahim · L'Awali
+- AR: أيّا نهر بينبع بشمال البقاع وبيمشي شمال لبرّا لبنان؟ — ✓ العاصي · الليطاني · نهر إبراهيم · الأوّلي
+- `check`: [VERIFY] source near Hermel; flows into Syria (a geography fact, no border dispute).
 
 ### More (to reach the pool)
 
@@ -854,13 +936,25 @@ EN · FR · AR (✓ first) · *fact* · `check`
 - AR: شو الشجرة يلّي بنصّ العلم اللبناني؟ — ✓ أرزة · زيتونة · نخلة · سنديانة
 - `check`: trivial; national symbol (non-partisan).
 
-Counts by id prefix: geography 12, culture and famous people 11, music 9, history 8, food 8, cinema-TV 6, dance 4, football 3, sport 1, nature 1 = **63 questions** (57 `mc4`, 6 `tf`). Mean difficulty 1.76 → declared **stars 2** (|2 − 1.76| ≤ 0.67). Topics with ≥ 4 questions: geography, culture, music, history, food, cinema-tv, dance (platform §5.4 requires ≥ 5 such topics).
+Counts by first topic: geography 13, culture 11, history 10, music 9, food 8, football 7, dance 7, cinema-tv 6, nature 2, sports 1, celebrities 1 = **75 questions** (68 `mc4`, 7 `tf`: 4 True, 3 False = 57 % True). Difficulty 3: **15** questions. Mean difficulty ≈ 1.84 → declared **stars 2** (|2 − 1.84| ≤ 0.67). Topics with ≥ 4 questions: geography, culture, history, music, food, cinema-tv, football, dance (platform §5.4 requires ≥ 5, football and dance included). `featuredTopics: ["music", "dance", "football"]`.
+
+**Tags** (per question; same in all three locale packs):
+
+| Tag | Questions |
+|---|---|
+| `easyIn: ["ar"]` | lb-geo-001 (capital), lb-cul-004 (Teta), lb-cul-010 (yalla), lb-foo-102 (toum), lb-dan-001 (dabke) |
+| `region: beirut` | lb-geo-001, lb-geo-006 |
+| `region: mount-lebanon` | lb-geo-004, lb-geo-005, lb-geo-010, lb-his-002, lb-his-008, lb-cul-012, lb-nat-002 |
+| `region: north` | lb-geo-002, lb-geo-008, lb-cul-002, lb-foo-106 |
+| `region: south` | lb-geo-009, lb-geo-011, lb-geo-012, lb-his-007, lb-his-009 |
+| `region: bekaa` | lb-geo-003, lb-geo-007, lb-geo-013, lb-his-005, lb-his-006, lb-his-010 |
+
+Regional share: mount-lebanon 7 / 24 = 29 % (≤ 35 %).
 
 ---
 
 ## 15. Open items
 
-- `[VERIFY]` every `check` in §14 with a cited source (encyclopedia, UNESCO, official festival/federation sites); replace the lb-his-003 distractor as noted.
-- `[native review]` all FR and AR; Lebanese reviewer signs off sensitivity (§11.2).
-- Answer token colours: align with the JAMAA palette (platform design pass).
-- Schema v1.1: `exclusiveWith` (mutually exclusive questions) and per-locale skips for questions that are trivial in one language.
+- `[VERIFY]` every `check` in §14 with a cited source (encyclopedia, UNESCO, official festival/federation sites), especially the new football items (record champion, 2019 AFC Cup, first Asian Cup qualification) and the regional items; replace the lb-his-003 distractor as noted.
+- `[native review]` all FR and AR; a Lebanese reviewer signs off sensitivity (§11.2) and the `easyIn` list.
+- Schema v1.1: `exclusiveWith` (mutually exclusive questions, e.g. lb-his-005 / lb-his-006 both on Baalbek).

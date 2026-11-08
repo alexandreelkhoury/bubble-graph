@@ -21,16 +21,23 @@ data class StoreOpenMsg(val v: Int = Constants.PROTOCOL_VERSION, val open: Boole
 
 @Serializable data class EntitlementRequest(val installId: String)
 
-/**
- * `EntitlementBody`. `premiumUntil` (ms): for lifetime premium or an open-ended grant it is the token's exp; a timed
- * owner grant ends earlier. `expiresAt` is the token's exp (ms).
- */
+/** `SubscriptionInfo`. `state` is a Play `SubscriptionState` name; `expiresAt` is the raw Google expiry (ms, no slack). */
+@Serializable data class SubscriptionInfo(
+    val state: String,
+    val basePlanId: String?,
+    val autoRenewing: Boolean,
+    val inTrial: Boolean,
+    val expiresAt: Long?,
+)
+
+/** `EntitlementBody`. `premiumUntil` includes RENEWAL_SLACK_MS; `expiresAt` is the token's exp (ms). */
 @Serializable data class EntitlementBody(
     val token: String,
     val premium: Boolean,
     val premiumUntil: Long?,
     val packs: List<String>,
     val expiresAt: Long,
+    val subscription: SubscriptionInfo?,
 )
 
 @Serializable data class PurchaseResultEntry(val productId: String, val result: String)
@@ -39,8 +46,7 @@ data class StoreOpenMsg(val v: Int = Constants.PROTOCOL_VERSION, val open: Boole
 
 @Serializable data class EntitlementResponse(val entitlement: EntitlementBody)
 
-/** The lifetime Premium product (a one-time INAPP product). */
-@Serializable data class CatalogPremium(val productId: String)
+@Serializable data class CatalogSubscription(val productId: String, val basePlanIds: List<String>, val trialOfferId: String)
 
 @Serializable data class CatalogPack(
     val packId: String,
@@ -56,7 +62,7 @@ data class StoreOpenMsg(val v: Int = Constants.PROTOCOL_VERSION, val open: Boole
 @Serializable data class CatalogResponse(
     val mode: String,
     val packageName: String,
-    val premium: CatalogPremium,
+    val subscription: CatalogSubscription,
     val freePackIds: List<String>,
     val packs: List<CatalogPack>,
 )
@@ -68,12 +74,14 @@ data class StoreOpenMsg(val v: Int = Constants.PROTOCOL_VERSION, val open: Boole
 @Serializable data class FakePurchaseRequest(
     val installId: String,
     val productId: String,
+    val basePlanId: String? = null,
+    val offerId: String? = null,
     val outcome: String? = null,
 )
 
 @Serializable data class FakePurchaseResponse(val purchaseToken: String)
 
-/** `PURCHASE_RESULTS` values the TV branches on. */
+/** `PURCHASE_RESULTS` and `SUB_STATES` values the TV branches on. */
 object PurchaseResults {
     const val OK = "OK"
     const val PENDING = "PENDING"
@@ -82,4 +90,14 @@ object PurchaseResults {
     const val REVOKED = "REVOKED"
     const val INSTALL_LIMIT = "INSTALL_LIMIT"
     const val UPSTREAM_ERROR = "UPSTREAM_ERROR"
+}
+
+object SubStates {
+    const val ACTIVE = "SUBSCRIPTION_STATE_ACTIVE"
+    const val IN_GRACE_PERIOD = "SUBSCRIPTION_STATE_IN_GRACE_PERIOD"
+    const val ON_HOLD = "SUBSCRIPTION_STATE_ON_HOLD"
+    const val PAUSED = "SUBSCRIPTION_STATE_PAUSED"
+    const val CANCELED = "SUBSCRIPTION_STATE_CANCELED"
+    const val EXPIRED = "SUBSCRIPTION_STATE_EXPIRED"
+    const val PENDING = "SUBSCRIPTION_STATE_PENDING"
 }
