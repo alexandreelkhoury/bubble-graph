@@ -1,13 +1,13 @@
 # Third-party material
 
-This file lists third-party content bundled with Mish Ana! (مش أنا!), apart from npm/Gradle dependencies, which carry their own licenses in their packages.
+This file lists third-party content bundled with JAMAA (جماعة) and its games, starting with Mish Ana! (game #1), apart from npm/Gradle dependencies, which carry their own licenses in their packages.
 
 ## Word pairs: antebrl/undercover-word-game (MIT)
 
 - Source: https://github.com/antebrl/undercover-word-game (`src/i18n/locales/{en,fr}/wordPairs.ts`, commit `bb3a72ce0bc5667e9cab4b605aba194198296fd2`).
 - Used in these packs, each marked `"license": "MIT"` and `"source": "antebrl/undercover-word-game"`:
-  - `word-packs/packs/en/en-food-01.json`, `en-things-01.json`, `en-nature-01.json`, `en-places-01.json`, `en-leisure-01.json`
-  - `word-packs/packs/fr/fr-food-01.json`, `fr-things-01.json`, `fr-nature-01.json`, `fr-places-01.json`, `fr-leisure-01.json`
+  - `content/mishana/en/en-food-01.json`, `en-things-01.json`, `en-nature-01.json`, `en-places-01.json`, `en-leisure-01.json`
+  - `content/mishana/fr/fr-food-01.json`, `fr-things-01.json`, `fr-nature-01.json`, `fr-places-01.json`, `fr-leisure-01.json`
 - Changes: we dropped brand names and trademarks (for example Jacuzzi → Hot tub / Bain à remous), products, copyrighted franchises and characters (public-domain characters such as Dracula and Frankenstein are kept), real people, alcohol, religious and violent pairs, pairs that were not "similar words" (such as Germany/Beer), and duplicates. We fixed casing and some French wording (for example Docteur → Médecin, Boeuf → Bœuf), grouped the pairs by theme, and added difficulty ratings.
 
 ```
@@ -36,7 +36,7 @@ SOFTWARE.
 
 ## Original word packs (CC-BY-4.0)
 
-All other packs (`en-everyday-01`, `fr-everyday-01`, every `ar-*` and `lb-*` pack) were written for this project. They are licensed under Creative Commons Attribution 4.0 (`"license": "CC-BY-4.0"`, `"source": "original"`). The Arabic and Lebanese packs are drafts (`"status": "draft"`) awaiting review by native speakers.
+All other Mish Ana! packs in `content/mishana/` (`en-everyday-01`, `fr-everyday-01`, every `ar-*` and `lb-*` pack, and every `es-*` pack) were written for this project. They are licensed under Creative Commons Attribution 4.0 (`"license": "CC-BY-4.0"`, `"source": "original"`). Packs marked `"status": "draft"` (the Arabic, Lebanese and Spanish packs among them) await review by native speakers.
 
 ## Fonts
 

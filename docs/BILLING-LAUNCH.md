@@ -1,6 +1,8 @@
 # Billing launch runbook: production from `prod-rules-v2` to `main`
 
-Production (`https://play.mishana.workers.dev`, Worker `play`) runs the branch `prod-rules-v2`, which has no billing code. `main` adds Play Billing ([PAYMENTS-SPEC.md](PAYMENTS-SPEC.md)) behind one switch, the `BILLING_ENABLED` var (`server/wrangler.jsonc`, default `"0"`). The plan is: **deploy `main` with billing switched off first** (it behaves like today's production), then switch billing on once Play Console is ready.
+Production (`https://play.jamaa.workers.dev`, Worker `play`) runs the branch `prod-rules-v2`, which has no billing code. `main` adds Play Billing ([PAYMENTS-SPEC.md](PAYMENTS-SPEC.md)) behind one switch, the `BILLING_ENABLED` var (`server/wrangler.jsonc`, default `"0"`). The plan is: **deploy `main` with billing switched off first** (it behaves like today's production), then switch billing on once Play Console is ready.
+
+> JAMAA rename (docs/JAMAA-PLATFORM.md §1.6): the URLs below assume owner step O1 (the account's workers.dev subdomain renamed to `jamaa`) is done; until then the live Worker answers on the old subdomain. The Play app is the new `app.jamaa.tv` app (step O4), so products, license testers, service-account access and RTDN are set up for it.
 
 Everything below is run by the owner. Agents never deploy, set secrets or touch Play Console.
 
@@ -28,8 +30,8 @@ pnpm typecheck && pnpm lint && pnpm test                     # all green before 
 pnpm run deploy        # build + pack-lint --release + check-deploy + wrangler deploy
 
 # Smoke test
-curl -s https://play.mishana.workers.dev/healthz             # {"ok":true,…}
-curl -s https://play.mishana.workers.dev/api/config          # {"billing":false}
+curl -s https://play.jamaa.workers.dev/healthz             # {"ok":true,…}
+curl -s https://play.jamaa.workers.dev/api/config          # {"billing":false}
 ```
 
 Then play one game with the TV app and two phones. Every pack is playable and no premium UI is shown.
@@ -40,15 +42,15 @@ Then play one game with the TV app and two phones. Every pack is playable and no
 2. **Products** ([PAYMENTS-SPEC §8.B.5–6](PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps)). Use exactly these ids, because the code depends on them:
    **Every product is a one-time in-app product** (Monetize → Products → **One-time products**). There is **no subscription**: do not create one.
    - `premium`: lifetime Premium (non-consumable, one purchase option, "Buy"). Recommended price **$7.99**. Launch promo **$5.99**: set it as a sale / temporary price change in Play Console (no code involved), then end it to return to $7.99. **Activate** it.
-   - one one-time product per pack row of `pnpm --silent --filter @mishana/server billing:products` (19 packs today, Spanish included: `pack_en_food_01` … `pack_lb_life_01`), each with one purchase option. Recommended **$1.99**, **$2.99** for the big packs (the script prints the suggestion). **Activate** each one.
+   - one one-time product per pack row of `pnpm --silent --filter @jamaa/server billing:products` (19 packs today, Spanish included: `pack_en_food_01` … `pack_lb_life_01`), each with one purchase option. Recommended **$1.99**, **$2.99** for the big packs (the script prints the suggestion). **Activate** each one.
    - Prices are yours to set and can change at any time in Play Console (use per-country pricing; about 40% lower in Lebanon/ME). The code never contains a price.
 3. **License testing:** Settings → License testing → add your own Gmail and every tester's Gmail (see the release checklist).
 4. **Service account:** Users and permissions → invite `play-api@<project>.iam.gserviceaccount.com` with **View app information** and **View financial data** only.
-5. **RTDN** ([§8.C](PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps)): create the `play-rtdn` topic, the `rtdn-push` service account, and the push subscription to `https://play.mishana.workers.dev/api/billing/rtdn`. Then fill the three vars in `server/wrangler.jsonc`:
-   `RTDN_AUDIENCE` = `https://play.mishana.workers.dev/api/billing/rtdn`, `RTDN_SA_EMAIL` = `rtdn-push@<project>.iam.gserviceaccount.com`, `RTDN_SUBSCRIPTION` = `projects/<project>/subscriptions/play-rtdn-push`.
+5. **RTDN** ([§8.C](PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps)): create the `play-rtdn` topic, the `rtdn-push` service account, and the push subscription to `https://play.jamaa.workers.dev/api/billing/rtdn`. Then fill the three vars in `server/wrangler.jsonc`:
+   `RTDN_AUDIENCE` = `https://play.jamaa.workers.dev/api/billing/rtdn`, `RTDN_SA_EMAIL` = `rtdn-push@<project>.iam.gserviceaccount.com`, `RTDN_SUBSCRIPTION` = `projects/<project>/subscriptions/play-rtdn-push`.
 6. **Secrets** (`secret put` on the live Worker is harmless while billing is off):
    ```sh
-   pnpm --filter @mishana/server gen:entitlement-key            # prints {"kid":"k1","x":"…","d":"…"}
+   pnpm --filter @jamaa/server gen:entitlement-key            # prints {"kid":"k1","x":"…","d":"…"}
    cd server
    npx wrangler secret put ENTITLEMENT_KEYS                     # paste {"active":"k1","keys":[ <that object> ]}
    npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json   # key from §8.C; then delete play-api.json
@@ -63,7 +65,7 @@ Then play one game with the TV app and two phones. Every pack is playable and no
 ```sh
 # in server/wrangler.jsonc: "BILLING_ENABLED": "1" (plus the RTDN vars from phase 2); commit it on main, then:
 pnpm run deploy        # check-deploy fails if a billing secret is missing; warns if the RTDN vars are empty
-curl -s https://play.mishana.workers.dev/api/config          # {"billing":true}
+curl -s https://play.jamaa.workers.dev/api/config          # {"billing":true}
 ```
 
 1. Play Console → Monetization setup → Real-time developer notifications → topic `projects/<project>/topics/play-rtdn` → **Send test message**. The Worker logs show `{"code":"RTDN_TEST"}`.

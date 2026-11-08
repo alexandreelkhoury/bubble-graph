@@ -1,57 +1,107 @@
 #!/usr/bin/env python3
-"""Generate the Mish Ana! brand vectors (DESIGN.md §1.3) from Cairo Black outlines.
+"""Generate the JAMAA platform brand (DESIGN-JAMAA §1.3, §1.4; JAMAA-PLATFORM §3.9) from Cairo Black outlines.
 
-Placeholder art until M5. Outputs (all text converted to outlines):
-  assets/brand/wordmark-bilingual.svg, wordmark-latin.svg, wordmark-ar.svg, mark.svg,
-  assets/brand/banner-en.svg, banner-ar.svg (320 x 180 px, TV-BN)
-  tv-app/app/src/main/res/drawable/banner.xml          (EN/FR banner, vector, 320x180 px @ xhdpi)
-  tv-app/app/src/main/res/drawable-ar/banner.xml       (AR banner: mark on the right)
-  tv-app/app/src/main/res/drawable/ic_launcher_foreground.xml
-  tv-app/app/src/main/res/drawable/ic_mark.xml         (the 160 x 160 mark, used in-app)
-  tv-app/app/src/main/java/app/mishana/tv/ui/components/BrandPaths.kt
+Wordmark "the three heads": "JAMAA" with the crossbar of each A removed and an amber dot (a head) in each counter;
+the Arabic «جماعة» carries the same amber dot as the dot of ج. Mark "the ring": five character bodies (circle,
+square, star, triangle, arch) in a closed ring around one amber dot.
+
+Outputs (all text converted to outlines):
+  assets/brand/wordmark-latin.svg      viewBox 0 0 1000 260
+  assets/brand/wordmark-ar.svg         viewBox 0 0 1000 300
+  assets/brand/wordmark-bilingual.svg  viewBox 0 0 1000 560 (Latin on top)
+  assets/brand/mark.svg                the ring on its tile, with faces (108 artboard, 512 px export)
+  assets/brand/icon.svg                launcher / Play icon: the ring on its tile, no faces (512 px export)
+  assets/brand/banner-en.svg, banner-ar.svg   TV banner 320 x 180 px (EN/FR, and AR mirrored)
+  tv-app/app/src/main/res/drawable/banner.xml, drawable-ar/banner.xml
+  tv-app/app/src/main/res/drawable/ic_launcher_foreground.xml, ic_launcher_background.xml,
+                                   ic_launcher_monochrome.xml, ic_mark.xml
+  tv-app/app/src/main/java/app/jamaa/tv/ui/components/BrandPaths.kt
+
+Mish Ana!'s "shared bang" art is game art now: assets/games/mishana/scripts/gen_logo.py.
 
 Usage (from the repo root):
-  pip install fonttools uharfbuzz
-  python3 assets/brand/scripts/gen_brand.py --font-dir <dir containing Cairo_900Black.ttf>
-The Cairo static instances ship in tv-app/app/src/main/res/font/ (cairo_black.ttf), which is the default.
+  pip install fonttools uharfbuzz skia-pathops
+  python3 assets/brand/scripts/gen_brand.py [--font-dir DIR] [--preview DIR]
+--font-dir defaults to tv-app/app/src/main/res/font (cairo_black.ttf). --preview writes PNG previews of the
+wordmarks, the icon and the banners (rendered with a headless Chromium; $CHROME overrides it) for the review that
+DESIGN-JAMAA §1.3 asks for (no crossbar fragment left, dots inside the counters at 120 dp).
 """
 import argparse
 import math
 import os
+import subprocess
 
+import pathops
 import uharfbuzz as hb
+from fontTools.pens.boundsPen import BoundsPen
+from fontTools.pens.recordingPen import DecomposingRecordingPen, RecordingPen
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
-from fontTools.pens.boundsPen import BoundsPen
+from fontTools.svgLib.path import parse_path
 from fontTools.ttLib import TTFont
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
-CREAM = "#FFF7EC"
-MAGENTA = "#FF3D8B"
-AMBER = "#FFC23D"
-BG = "#120A1F"
-BG_GLOW = "#2A0F3D"
+# Tokens (DESIGN.md §2, DESIGN-JAMAA §1.3-§1.5)
+CREAM = "#FFF7EC"      # color.text
+AMBER = "#FFC94D"      # color.accent, the lamp: wordmark dots and the ring's centre dot
+INK = "#120A1F"        # glyph ink (faces)
+STAGE_TOP = "#2E1856"  # palette B stage, banner diagonal
+STAGE_DEEP = "#1D1036"
+TILE_STOPS = ((0.0, "#5A2E9A"), (0.7, "#3A1E6A"), (1.0, "#2B1650"))  # icon tile, radial (DESIGN-JAMAA §1.4)
+TILE_CENTRE = (0.5, 0.3)  # as the previous launcher tile, so it keeps its edge on dark launchers
+TILE_RADIUS = 0.85
 
-# Launcher / Play icon and TV banner: marketing palette B (growth/video/src/brand.ts; design-v3 D2, D3).
-# The in-app mark (ic_mark.xml, mark.svg) keeps the app's own tokens above until the app moves to palette B.
-B_MAGENTA = "#FF4F9A"
-B_AMBER = "#FFC94D"
-B_BG_TOP = "#2E1856"
-B_BG_DEEP = "#1D1036"
-ICON_TILE_STOPS = ((0.0, "#5A2E9A"), (0.6, "#3A1E6A"), (1.0, "#2B1650"))  # radial, centre (0.5, 0.3), r 0.85
+# ---------- Latin wordmark (DESIGN-JAMAA §1.3) ----------
+LAT_VIEW = (1000.0, 260.0)
+LAT_SIZE = 220.0          # font size in artboard units
+LAT_TRACKING = -20.0      # 1/1000 em (-2 %)
+LAT_BASELINE = 200.0
+LAT_CX = 500.0
+HEAD_R_MAX = 19.0         # the three dots: r 19 at baseline - 62 in the spec, which assumes a wider counter than
+HEAD_RISE = 52.0          # Cairo Black's (31.7 units at that height); so the dot sits at baseline - 52 and takes
+HEAD_CLEAR = 3.0          # the largest r <= 19 that keeps 3 units of clearance from the letters (solved below)
+AR_DOT_R = 19.0           # the dot of ج (it sits outside the letters, so it keeps the spec's r 19)
+APEX_ROUND = 6.0          # apex round (open by 3, close by 3)
+BAND_PAD = 2.0            # crossbar cut: band top - 2 to bottom + 2 (artboard units)
 
-# Artboard constants (DESIGN §1.3, viewBox 0 0 1200 300)
-LATIN_RIGHT = 548.0
-LATIN_BASELINE = 210.0
-LATIN_CAP = 132.0
-AR_LEFT = 652.0
-AR_BASELINE = 214.0
-AR_ALEF_TOP = 140.0  # alef body height in artboard units (aligns with the Latin cap line)
-STEM = dict(x=576.0, y=36.0, w=48.0, h=150.0, r=24.0)
-DOT = dict(cx=594.0, cy=236.0, r=26.0)
-SKEW_DEG = -8.0
-SKEW_CENTER = (600.0, 111.0)
+# ---------- Arabic wordmark ----------
+AR_VIEW = (1000.0, 300.0)
+AR_BASELINE = 210.0
+AR_CX = 500.0
+
+# ---------- Bilingual lockup ----------
+BI_VIEW = (1000.0, 560.0)
+BI_LAT_BASELINE = 200.0
+BI_AR_BASELINE = 470.0
+BI_AR_SCALE = 0.82
+
+# ---------- Mark: the ring (108 artboard, the adaptive-icon canvas) ----------
+RING_C = 54.0
+RING_ANGLES = (-90.0, -18.0, 54.0, 126.0, 198.0)
+RING_OUTER_MAX = 29.0     # the ring + gaps stay inside radius 29 (66-unit safe circle minus 4 units margin)
+RING_OVERLAP = 1.0        # adjacent bodies overlap by 1 unit ...
+RING_GAP = 1.5            # ... with a 1.5-unit gap cut where they meet
+CENTRE_DOT_R = 5.0
+# (shape, colour, DESIGN §5.2 24-unit glyph, face box {x, y, w, h} of DESIGN-JAMAA §4.2)
+BODIES = (
+    ("circle", "#F0183A", "M21 12A9 9 0 1 1 3 12A9 9 0 1 1 21 12Z", (6, 7.5, 12, 9)),
+    ("square", "#478CFF", "M7 3.5H17A3.5 3.5 0 0 1 20.5 7V17A3.5 3.5 0 0 1 17 20.5H7A3.5 3.5 0 0 1 3.5 17V7A3.5 3.5 0 0 1 7 3.5Z",
+     (6, 7.5, 12, 9)),
+    ("star", "#FFF04D", "M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z", (8, 9, 8, 6)),
+    ("triangle", "#1FA88A", "M12 2.4 21.4 19H2.6z", (7.5, 11.5, 9, 6.75)),
+    ("arch", "#C9BFFF", "M5 20.75V10.25a7 7 0 0 1 14 0v10.5h-4.5v-6.5a2.5 2.5 0 0 0-5 0v6.5z", (7, 8.5, 10, 7.5)),
+)
+EYES = ((3.8, 3.6), (8.2, 3.6))  # face space 12 x 9
+EYE_RX, EYE_RY = 1.1, 1.45
+LOOK = 1.2                        # eyes look at the centre (face units)
+
+# ---------- TV banner (320 x 180 px) ----------
+BANNER_W, BANNER_H = 320.0, 180.0
+BANNER_RING_PX = 104.0
+BANNER_WM_W = 160.0
+BANNER_GAP = 16.0
+BANNER_AR_BOOST = 1.2
 
 K = 0.5522847498  # cubic approximation of a quarter circle
 
@@ -62,7 +112,7 @@ def fmt(v):
 
 
 class Affine:
-    def __init__(self, a=1, b=0, c=0, d=1, e=0, f=0):
+    def __init__(self, a=1.0, b=0.0, c=0.0, d=1.0, e=0.0, f=0.0):
         self.m = (a, b, c, d, e, f)
 
     def apply(self, x, y):
@@ -70,14 +120,10 @@ class Affine:
         return a * x + c * y + e, b * x + d * y + f
 
     def then(self, other):
-        """self followed by other."""
         a1, b1, c1, d1, e1, f1 = self.m
         a2, b2, c2, d2, e2, f2 = other.m
-        return Affine(
-            a2 * a1 + c2 * b1, b2 * a1 + d2 * b1,
-            a2 * c1 + c2 * d1, b2 * c1 + d2 * d1,
-            a2 * e1 + c2 * f1 + e2, b2 * e1 + d2 * f1 + f2,
-        )
+        return Affine(a2 * a1 + c2 * b1, b2 * a1 + d2 * b1, a2 * c1 + c2 * d1, b2 * c1 + d2 * d1,
+                      a2 * e1 + c2 * f1 + e2, b2 * e1 + d2 * f1 + f2)
 
     @staticmethod
     def scale(s, sy=None):
@@ -87,489 +133,637 @@ class Affine:
     def translate(x, y):
         return Affine(1, 0, 0, 1, x, y)
 
+    @staticmethod
+    def rotate(deg):
+        r = math.radians(deg)
+        return Affine(math.cos(r), math.sin(r), -math.sin(r), math.cos(r), 0, 0)
 
-def skew_about_center():
-    t = math.tan(math.radians(SKEW_DEG))
-    cx, cy = SKEW_CENTER
-    return Affine.translate(-cx, -cy).then(Affine(1, 0, t, 1, 0, 0)).then(Affine.translate(cx, cy))
+
+# ---------- path helpers (pathops) ----------
+
+def tf_path(path, tf):
+    out = pathops.Path()
+    path.draw(TransformPen(out.getPen(), tf.m))
+    return out
 
 
-def rounded_rect_cmds(x, y, w, h, r):
-    """Absolute command list: ("M",(x,y)), ("L",(x,y)), ("C",(x1,y1,x2,y2,x,y)), ("Z",())."""
+def op(a, b, kind):
+    return pathops.op(a, b, kind)
+
+
+def union(paths):
+    out = pathops.Path()
+    for p in paths:
+        out = op(out, p, pathops.PathOp.UNION)
+    return out
+
+
+def combine(contours):
+    """The contours of one glyph as one filled shape (non-zero winding keeps the counters open)."""
+    p = pathops.Path()
+    for c in contours:
+        c.draw(p.getPen())
+    return op(p, pathops.Path(), pathops.PathOp.UNION)
+
+
+def circle_path(cx, cy, r):
+    p = pathops.Path()
+    pen = p.getPen()
     k = r * K
-    return [
-        ("M", (x + r, y)),
-        ("L", (x + w - r, y)),
-        ("C", (x + w - r + k, y, x + w, y + r - k, x + w, y + r)),
-        ("L", (x + w, y + h - r)),
-        ("C", (x + w, y + h - r + k, x + w - r + k, y + h, x + w - r, y + h)),
-        ("L", (x + r, y + h)),
-        ("C", (x + r - k, y + h, x, y + h - r + k, x, y + h - r)),
-        ("L", (x, y + r)),
-        ("C", (x, y + r - k, x + r - k, y, x + r, y)),
-        ("Z", ()),
-    ]
+    pen.moveTo((cx + r, cy))
+    pen.curveTo((cx + r, cy + k), (cx + k, cy + r), (cx, cy + r))
+    pen.curveTo((cx - k, cy + r), (cx - r, cy + k), (cx - r, cy))
+    pen.curveTo((cx - r, cy - k), (cx - k, cy - r), (cx, cy - r))
+    pen.curveTo((cx + k, cy - r), (cx + r, cy - k), (cx + r, cy))
+    pen.closePath()
+    return p
 
 
-def circle_cmds(cx, cy, r):
-    k = r * K
-    return [
-        ("M", (cx + r, cy)),
-        ("C", (cx + r, cy + k, cx + k, cy + r, cx, cy + r)),
-        ("C", (cx - k, cy + r, cx - r, cy + k, cx - r, cy)),
-        ("C", (cx - r, cy - k, cx - k, cy - r, cx, cy - r)),
-        ("C", (cx + k, cy - r, cx + r, cy - k, cx + r, cy)),
-        ("Z", ()),
-    ]
+def ellipse_path(cx, cy, rx, ry):
+    return tf_path(circle_path(0, 0, 1), Affine.scale(rx, ry).then(Affine.translate(cx, cy)))
 
 
-def cmds_to_d(cmds, tf=None):
-    out = []
-    for op, pts in cmds:
-        if op == "Z":
-            out.append("Z")
-            continue
-        p = list(pts)
-        if tf is not None:
-            q = []
-            for i in range(0, len(p), 2):
-                q.extend(tf.apply(p[i], p[i + 1]))
-            p = q
-        out.append(op + " ".join(fmt(v) for v in p))
-    return "".join(out)
+def rect_path(x0, y0, x1, y1):
+    return poly_path([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
 
+
+def poly_path(pts):
+    p = pathops.Path()
+    pen = p.getPen()
+    pen.moveTo(pts[0])
+    for q in pts[1:]:
+        pen.lineTo(q)
+    pen.closePath()
+    return p
+
+
+def outline(path, width):
+    """The band of `width` centred on the outline of `path` (round joins)."""
+    s = pathops.Path()
+    path.draw(s.getPen())
+    s.stroke(width, pathops.LineCap.ROUND_CAP, pathops.LineJoin.ROUND_JOIN, 4)
+    s.convertConicsToQuads()
+    return op(s, pathops.Path(), pathops.PathOp.UNION)
+
+
+def offset(path, d):
+    """Grow (d > 0) or shrink (d < 0) a filled path by |d|."""
+    band = outline(path, 2 * abs(d))
+    return op(path, band, pathops.PathOp.UNION if d > 0 else pathops.PathOp.DIFFERENCE)
+
+
+def svg_d(path):
+    pen = SVGPathPen(None, ntos=fmt)
+    path.draw(pen)
+    return pen.getCommands()
+
+
+def bounds(path):
+    return path.bounds  # (xmin, ymin, xmax, ymax)
+
+
+def svg_to_path(d):
+    p = pathops.Path()
+    parse_path(d, p.getPen())
+    return op(p, pathops.Path(), pathops.PathOp.UNION)
+
+
+# ---------- shaping ----------
 
 class Shaper:
-    def __init__(self, path):
-        self.tt = TTFont(path)
+    def __init__(self, font_path):
+        self.tt = TTFont(font_path)
         self.gs = self.tt.getGlyphSet()
         self.order = self.tt.getGlyphOrder()
-        blob = hb.Blob.from_file_path(path)
-        self.hb_font = hb.Font(hb.Face(blob))
+        self.hb_font = hb.Font(hb.Face(hb.Blob.from_file_path(font_path)))
 
-    def shape(self, text):
+    def shape(self, text, tracking=0.0):
+        """[(glyph name, cluster, x, y)] in font units, pen from 0; tracking added between glyphs."""
         buf = hb.Buffer()
         buf.add_str(text)
         buf.guess_segment_properties()
         hb.shape(self.hb_font, buf)
-        glyphs = []
-        x = 0
-        for info, pos in zip(buf.glyph_infos, buf.glyph_positions):
-            glyphs.append((self.order[info.codepoint], x + pos.x_offset, pos.y_offset))
-            x += pos.x_advance
-        return glyphs, x
+        out, x = [], 0.0
+        n = len(buf.glyph_infos)
+        for i, (info, pos) in enumerate(zip(buf.glyph_infos, buf.glyph_positions)):
+            out.append((self.order[info.codepoint], info.cluster, x + pos.x_offset, pos.y_offset))
+            x += pos.x_advance + (tracking if i < n - 1 else 0.0)
+        return out
 
-    def path_d(self, text, tf_font_to_out):
-        """SVG path for shaped text; tf maps font units (y up, baseline 0, pen at 0) to output coords."""
-        glyphs, _ = self.shape(text)
-        pen = SVGPathPen(self.gs, ntos=fmt)
-        for name, gx, gy in glyphs:
-            g_tf = Affine.translate(gx, gy).then(tf_font_to_out)
-            self.gs[name].draw(TransformPen(pen, g_tf.m))
-        return pen.getCommands()
+    def contours(self, name):
+        """The decomposed contours of a glyph, each as a pathops.Path in font units."""
+        rec = DecomposingRecordingPen(self.gs)
+        self.gs[name].draw(rec)
+        out, cur = [], []
+        for opname, args in rec.value:
+            cur.append((opname, args))
+            if opname in ("closePath", "endPath"):
+                r = RecordingPen()
+                r.value = cur
+                p = pathops.Path()
+                r.replay(p.getPen())
+                out.append(p)
+                cur = []
+        return out
 
-    def bounds(self, text):
-        glyphs, adv = self.shape(text)
-        xmin = ymin = 1e9
-        xmax = ymax = -1e9
-        for name, gx, gy in glyphs:
-            bp = BoundsPen(self.gs)
-            self.gs[name].draw(bp)
-            if bp.bounds is None:
-                continue
-            a, b, c, d = bp.bounds
-            xmin, ymin, xmax, ymax = min(xmin, a + gx), min(ymin, b + gy), max(xmax, c + gx), max(ymax, d + gy)
-        return (xmin, ymin, xmax, ymax), adv
+    def glyph(self, name):
+        return combine(self.contours(name))
 
-    def glyph_top(self, gname):
+    def top(self, name):
         bp = BoundsPen(self.gs)
-        self.gs[gname].draw(bp)
+        self.gs[name].draw(bp)
         return bp.bounds[3]
 
 
-def build_wordmark(sh):
-    """Returns dict with latin/arabic path d (artboard coords) and their bounds."""
-    cap = sh.glyph_top("H")  # cap height in font units
-    s_lat = LATIN_CAP / cap
-    (lx0, ly0, lx1, ly1), _ = sh.bounds("MISH ANA")
-    # right-align the ink's right edge at LATIN_RIGHT; y flips (font y up -> svg y down)
-    tf_lat = Affine.scale(s_lat, -s_lat).then(Affine.translate(LATIN_RIGHT - lx1 * s_lat, LATIN_BASELINE))
-    latin = sh.path_d("MISH ANA", tf_lat)
-    lat_bounds = (LATIN_RIGHT - (lx1 - lx0) * s_lat, LATIN_BASELINE - ly1 * s_lat, LATIN_RIGHT, LATIN_BASELINE - ly0 * s_lat)
-
-    alef = sh.glyph_top("uniFE8E")
-    s_ar = AR_ALEF_TOP / alef
-    (ax0, ay0, ax1, ay1), _ = sh.bounds("مش أنا")
-    tf_ar = Affine.scale(s_ar, -s_ar).then(Affine.translate(AR_LEFT - ax0 * s_ar, AR_BASELINE))
-    arabic = sh.path_d("مش أنا", tf_ar)
-    ar_bounds = (AR_LEFT, AR_BASELINE - ay1 * s_ar, AR_LEFT + (ax1 - ax0) * s_ar, AR_BASELINE - ay0 * s_ar)
-    return dict(latin=latin, arabic=arabic, lat_bounds=lat_bounds, ar_bounds=ar_bounds)
+def font_to_art(scale, x, baseline):
+    """Font units (y up) -> artboard (y down)."""
+    return Affine.scale(scale, -scale).then(Affine.translate(x, baseline))
 
 
-def stem_d(tf=None):
-    sk = skew_about_center()
-    full = sk if tf is None else sk.then(tf)
-    return cmds_to_d(rounded_rect_cmds(STEM["x"], STEM["y"], STEM["w"], STEM["h"], STEM["r"]), full)
+# ---------- Latin: the three heads ----------
+
+def open_a(a, s):
+    """Removes the crossbar of one A (font units). Returns (path, report dict)."""
+    xmin, ymin, xmax, ymax = bounds(a)
+    cx = (xmin + xmax) / 2.0
+    step = 1.0
+    # The crossbar is the first filled run above the baseline on the A's vertical axis (between the legs).
+    y = ymin + step
+    while y < ymax and not a.contains((cx, y)):
+        y += step
+    band_bottom = y
+    while y < ymax and a.contains((cx, y)):
+        y += step
+    band_top = y
+    pad = BAND_PAD / s
+
+    def edge(yy, direction):
+        """x of the first ink from the axis outward (bisected to 0.01 font units)."""
+        x = cx
+        while xmin < x < xmax and not a.contains((x + direction * step, yy)):
+            x += direction * step
+        lo, hi = x, x + direction * step  # empty at lo, ink at hi
+        for _ in range(7):
+            mid = (lo + hi) / 2.0
+            if a.contains((mid, yy)):
+                hi = mid
+            else:
+                lo = mid
+        return hi
+
+    def inner_edges(yy):
+        return edge(yy, -1), edge(yy, 1)
+
+    yb, yt = band_bottom - pad, band_top + pad
+    lb, rb = inner_edges(yb)
+    lt, rt = inner_edges(yt)
+    # The legs are straight: the cut follows their inner edges, from below the band to above it.
+    cut = poly_path([(lb, yb), (rb, yb), (rt, yt), (lt, yt)])
+    opened = op(a, cut, pathops.PathOp.DIFFERENCE)
+    # Apex: round the convex corners of the top part only (open by 3, then close by 3).
+    r = APEX_ROUND / 2.0 / s
+    apex_zone = rect_path(xmin - 50, band_top + (ymax - band_top) * 0.5, xmax + 50, ymax + 50)
+    rounded = offset(offset(opened, -r), r)
+    opened = op(op(opened, apex_zone, pathops.PathOp.DIFFERENCE),
+                op(rounded, apex_zone, pathops.PathOp.INTERSECTION), pathops.PathOp.UNION)
+    # Check: nothing left on the axis between the legs, from the baseline to the counter's top.
+    leftovers = [yy for yy in range(int(ymin) + 1, int(band_top) + 1) if opened.contains((cx, yy))]
+    return opened, dict(cx=cx, band=(band_bottom, band_top), cut_bottom=(lb, rb), cut_top=(lt, rt),
+                        leftover=len(leftovers))
 
 
-def dot_d(tf=None):
-    return cmds_to_d(circle_cmds(DOT["cx"], DOT["cy"], DOT["r"]), tf)
+def build_latin(sh):
+    s = LAT_SIZE / 1000.0
+    glyphs = sh.shape("JAMAA", LAT_TRACKING)
+    paths, report, a_axes = [], [], []
+    for name, _, gx, gy in glyphs:
+        g = sh.glyph(name)
+        if name == "A":
+            g, rep = open_a(g, s)
+            report.append(rep)
+            a_axes.append(gx + rep["cx"])
+            rep["gx"] = gx
+        paths.append(tf_path(g, Affine.translate(gx, gy)))
+    word = union(paths)
+    xmin, _, xmax, _ = bounds(word)
+    dx = LAT_CX - (xmin + xmax) / 2.0 * s
+    tf = font_to_art(s, dx, LAT_BASELINE)
+    letters = tf_path(word, tf)
+    heads = [(tf.apply(x, 0)[0], LAT_BASELINE - HEAD_RISE) for x in a_axes]
+    head_r = HEAD_R_MAX
+    for hx, hy in heads:
+        lo, hi = 0.0, HEAD_R_MAX + HEAD_CLEAR
+        for _ in range(30):
+            mid = (lo + hi) / 2.0
+            if op(letters, circle_path(hx, hy, mid), pathops.PathOp.INTERSECTION).area > 0.0:
+                hi = mid
+            else:
+                lo = mid
+        head_r = min(head_r, lo - HEAD_CLEAR)
+    head_r = round(head_r, 1)
+    print("Heads: r = %s at baseline - %s (clearance %s)" % (fmt(head_r), fmt(HEAD_RISE), fmt(HEAD_CLEAR)))
+    for i, rep in enumerate(report):
+        (lb, rb), (lt, rt) = rep["cut_bottom"], rep["cut_top"]
+        x0 = tf.apply(rep["gx"] + min(lb, lt), 0)[0]
+        x1 = tf.apply(rep["gx"] + max(rb, rt), 0)[0]
+        yb = LAT_BASELINE - rep["band"][0] * s
+        yt = LAT_BASELINE - rep["band"][1] * s
+        print("A%d: x=%s w=%s cx=%s (crossbar band y %s..%s, %d%%..%d%% of cap height; leftover samples %d)" % (
+            i + 1, fmt(x0), fmt(x1 - x0), fmt(heads[i][0]), fmt(yt), fmt(yb),
+            round(rep["band"][0] / sh.top("H") * 100), round(rep["band"][1] / sh.top("H") * 100), rep["leftover"]))
+        if rep["leftover"]:
+            raise SystemExit("crossbar fragment left in A%d" % (i + 1))
+    # Each head must sit in the open counter (no letter ink under the dot).
+    for hx, hy in heads:
+        if op(letters, circle_path(hx, hy, head_r), pathops.PathOp.INTERSECTION).area > 1.0:
+            raise SystemExit("a head dot overlaps the letters at (%s, %s)" % (fmt(hx), fmt(hy)))
+    return dict(path=letters, heads=heads, r=head_r, cap=sh.top("H") * s)
 
 
-def bang_bounds():
-    sk = skew_about_center()
-    pts = [sk.apply(STEM["x"], STEM["y"]), sk.apply(STEM["x"] + STEM["w"], STEM["y"]),
-           sk.apply(STEM["x"], STEM["y"] + STEM["h"]), sk.apply(STEM["x"] + STEM["w"], STEM["y"] + STEM["h"])]
-    xs = [p[0] for p in pts] + [DOT["cx"] - DOT["r"], DOT["cx"] + DOT["r"]]
-    return min(xs), STEM["y"], max(xs), DOT["cy"] + DOT["r"]
+# ---------- Arabic: the dot of ج ----------
 
+def build_arabic(sh, cap_art):
+    s = cap_art / sh.top("uniFE8E")  # alef height = Latin cap height
+    glyphs = sh.shape("جماعة")
+    paths, dot = [], None
+    for name, cluster, gx, gy in glyphs:
+        cs = sh.contours(name)
+        if cluster == 0:  # ج: drop its smallest closed contour below the baseline, keep the rest
+            below = [c for c in cs if bounds(c)[3] <= 0]
+            if not below:
+                raise SystemExit("no dot found under the jeem")
+            d = min(below, key=lambda c: abs(c.area))
+            x0, y0, x1, y1 = bounds(d)
+            dot = (gx + (x0 + x1) / 2.0, gy + (y0 + y1) / 2.0)
+            cs = [c for c in cs if c is not d]
+        paths.append(tf_path(combine(cs), Affine.translate(gx, gy)))
+    word = union(paths)
+    xmin, _, xmax, _ = bounds(word)
+    # The dot may stick out past the letters; centre the ink including it.
+    xmin, xmax = min(xmin, dot[0] - AR_DOT_R / s), max(xmax, dot[0] + AR_DOT_R / s)
+    tf = font_to_art(s, AR_CX - (xmin + xmax) / 2.0 * s, AR_BASELINE)
+    letters = tf_path(word, tf)
+    head = tf.apply(*dot)
+    print("Arabic: font size %s (alef = cap height %s), jeem dot at (%s, %s)" % (
+        fmt(s * 1000), fmt(cap_art), fmt(head[0]), fmt(head[1])))
+    return dict(path=letters, head=head, r=AR_DOT_R)
+
+
+# ---------- the ring ----------
+
+def body_path(svg, size):
+    """A DESIGN §5.2 glyph scaled from its 24-unit box to `size`, centred on the origin."""
+    return tf_path(svg_to_path(svg), Affine.translate(-12, -12).then(Affine.scale(size / 24.0)))
+
+
+def ring_tf(i, radius, deg):
+    a = math.radians(deg)
+    # rotate so the glyph's "up" (-y) points outward, then move onto the ring
+    return Affine.rotate(deg + 90.0).then(Affine.translate(RING_C + radius * math.cos(a), RING_C + radius * math.sin(a)))
+
+
+def place_ring(size, radii):
+    return [tf_path(body_path(svg, size), ring_tf(i, radii[i], RING_ANGLES[i])) for i, (_, _, svg, _) in enumerate(BODIES)]
+
+
+def ring_layout():
+    """DESIGN-JAMAA §1.4 asks for five bodies that touch (1-unit overlap) around a r 5 dot, inside radius 29. Its
+    literal numbers (17-unit bodies on a radius-19 circle) leave about 9 units between neighbours, so the layout is
+    solved instead: each body slides along its ray (-90, -18, 54, 126, 198 degrees) toward the centre until it meets
+    a neighbour (overlap 1) or the dot's gap, and the body size is the largest that keeps the ring inside 29."""
+    inset = RING_OVERLAP / 2.0
+    hole = circle_path(RING_C, RING_C, CENTRE_DOT_R + RING_GAP + 0.1)
+
+    def jam(size):
+        bodies = [body_path(svg, size) for _, _, svg, _ in BODIES]
+        shrunk = [offset(b, -inset) for b in bodies]
+        radii = [size * 2.0] * 5
+
+        def at(i, r, path):
+            return tf_path(path, ring_tf(i, r, RING_ANGLES[i]))
+
+        for _ in range(12):
+            for i in range(5):
+                nbrs = [at(j, radii[j], shrunk[j]) for j in ((i - 1) % 5, (i + 1) % 5)]
+
+                def free(r):
+                    if op(at(i, r, bodies[i]), hole, pathops.PathOp.INTERSECTION).area > 0.0:
+                        return False
+                    me = at(i, r, shrunk[i])
+                    return all(op(me, n, pathops.PathOp.INTERSECTION).area <= 0.0 for n in nbrs)
+
+                lo, hi = 0.0, radii[i]  # free at hi (current), maybe not at lo
+                if free(lo):
+                    radii[i] = lo
+                    continue
+                for _ in range(22):
+                    mid = (lo + hi) / 2.0
+                    if free(mid):
+                        hi = mid
+                    else:
+                        lo = mid
+                radii[i] = hi
+        return radii
+
+    def outer(size, radii):
+        # the group is re-centred on the tile afterwards, so its half-extent is what must fit
+        x0, y0, x1, y1 = bounds(union(place_ring(size, radii)))
+        return max(x1 - x0, y1 - y0) / 2.0
+
+    size = 24.0
+    for _ in range(4):
+        radii = jam(size)
+        size *= RING_OUTER_MAX / outer(size, radii)
+    radii = jam(size)
+    while outer(size, radii) > RING_OUTER_MAX:
+        size *= 0.995
+        radii = jam(size)
+    x0, y0, x1, y1 = bounds(union(place_ring(size, radii)))
+    shift = Affine.translate(RING_C - (x0 + x1) / 2.0, RING_C - (y0 + y1) / 2.0)
+    print("Ring: bodies %s units (24-unit glyph box), radii %s, half-extent %s (max %s), group shift (%s, %s)" % (
+        fmt(size), " ".join(fmt(r) for r in radii), fmt(outer(size, radii)), fmt(RING_OUTER_MAX),
+        fmt(shift.m[4]), fmt(shift.m[5])))
+    return size, radii, shift
+
+
+def ring_layers(size, radii, shift, faces):
+    """[(path, colour)] in the 108 artboard: bodies with gaps where they meet, optional eyes, centre dot."""
+    placed = place_ring(size, radii)
+    out = []
+    for i, p in enumerate(placed):
+        # painted in order 0..4, each over the previous: cut every earlier body by the later neighbour + gap
+        later = [placed[j] for j in ((i + 1) % 5, (i - 1) % 5) if j > i]
+        for q in later:
+            p = op(p, offset(q, RING_GAP), pathops.PathOp.DIFFERENCE)
+        out.append([p, BODIES[i][1]])
+    centre = circle_path(RING_C, RING_C, CENTRE_DOT_R)
+    for layer in out:
+        if op(layer[0], offset(centre, RING_GAP), pathops.PathOp.INTERSECTION).area > 0.01:
+            raise SystemExit("the centre dot touches a body")
+    if faces:
+        for i, (_, _, _, (fx, fy, fw, _)) in enumerate(BODIES):
+            u = fw / 12.0
+            to_ring = Affine.translate(-12, -12).then(Affine.scale(size / 24.0)).then(ring_tf(i, radii[i], RING_ANGLES[i]))
+            body = place_ring(size, radii)[i]
+            # The eyes look at the centre (the body's "down"); where that would clip them on a cut-out (the arch's
+            # door), they move up in steps of 0.2 face units until they sit wholly on the body.
+            look = LOOK
+            while True:
+                eyes = tf_path(union([ellipse_path(fx + ex * u, fy + (ey + look) * u, EYE_RX * u, EYE_RY * u)
+                                      for ex, ey in EYES]), to_ring)
+                if op(eyes, body, pathops.PathOp.DIFFERENCE).area <= 0.001 or look < -3.0:
+                    break
+                look -= 0.2
+            out.append([op(eyes, out[i][0], pathops.PathOp.INTERSECTION), INK])
+    out.append([centre, AMBER])
+    return [(tf_path(p, shift), c) for p, c in out]
+
+
+# ---------- SVG ----------
 
 def svg_doc(view, body, w=None, h=None):
-    x, y, vw, vh = view
     size = "" if w is None else ' width="%s" height="%s"' % (fmt(w), fmt(h))
-    return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="%s %s %s %s"%s>\n%s</svg>\n'
-            % (fmt(x), fmt(y), fmt(vw), fmt(vh), size, body))
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="%s"%s>\n%s</svg>\n' % (
+        " ".join(fmt(v) for v in view), size, body)
 
 
-def wordmark_svgs(wm):
-    lat, ar = wm["lat_bounds"], wm["ar_bounds"]
-    bx0, by0, bx1, by1 = bang_bounds()
-    pad = 24
-    glow = ('  <defs><filter id="glow" x="-50%" y="-50%" width="200%" height="200%">'
-            '<feGaussianBlur stdDeviation="12"/></filter></defs>\n')
-    bang = ('  <path d="%s" fill="%s" opacity="0.4" filter="url(#glow)"/>\n'
-            '  <path d="%s" fill="%s"/>\n  <path d="%s" fill="%s"/>\n') % (stem_d(), MAGENTA, stem_d(), MAGENTA, dot_d(), AMBER)
-    latin = '  <path d="%s" fill="%s"/>\n' % (wm["latin"], CREAM)
-    arabic = '  <path d="%s" fill="%s"/>\n' % (wm["arabic"], CREAM)
-    top = min(lat[1], ar[1], by0) - pad
-    bottom = max(lat[3], ar[3], by1) + pad
-    out = {}
-    out["wordmark-bilingual.svg"] = svg_doc((lat[0] - pad, top, ar[2] - lat[0] + 2 * pad, bottom - top),
-                                            "<!-- Mish Ana! bilingual wordmark (the shared bang). Generated by scripts/gen_brand.py -->\n" + glow + latin + bang + arabic)
-    out["wordmark-latin.svg"] = svg_doc((lat[0] - pad, top, bx1 - lat[0] + 2 * pad, bottom - top),
-                                        "<!-- Latin wordmark. Generated by scripts/gen_brand.py -->\n" + glow + latin + bang)
-    out["wordmark-ar.svg"] = svg_doc((bx0 - pad, top, ar[2] - bx0 + 2 * pad, bottom - top),
-                                     "<!-- Arabic wordmark. Generated by scripts/gen_brand.py -->\n" + glow + bang + arabic)
+GLOW_DEFS = ('  <defs><filter id="glow" x="-100%" y="-100%" width="300%" height="300%">'
+             '<feGaussianBlur stdDeviation="9"/></filter></defs>\n')  # blur 18 units (DESIGN-JAMAA §1.3)
+
+
+def dots_svg(centres, r, glow):
+    out = ""
+    for cx, cy in centres:
+        c = circle_path(cx, cy, r)
+        if glow:
+            out += '  <path d="%s" fill="%s" opacity="0.35" filter="url(#glow)"/>\n' % (svg_d(c), AMBER)
+        out += '  <path d="%s" fill="%s"/>\n' % (svg_d(c), AMBER)
     return out
 
 
-# ---------- mark (icon): 160 x 160 ----------
-
-def bubble_cmds(x, y, w, h, r, tail):
-    cmds = rounded_rect_cmds(x, y, w, h, r)
-    (t1, t2, t3) = tail
-    cmds += [("M", t1), ("L", t2), ("L", t3), ("Z", ())]
-    return cmds
-
-
-MARK_BUBBLE = dict(x=24.0, y=20.0, w=112.0, h=96.0, r=30.0, tail=((36.0, 100.0), (70.0, 112.0), (26.0, 142.0)))
-MARK_BANG_SCALE = 0.32
-
-
-def mark_bang_tf():
-    # map the artboard bang (x 576..624+, y 36..262) into the bubble centre
-    bx0, by0, bx1, by1 = bang_bounds()
-    s = MARK_BANG_SCALE
-    cx_b = (bx0 + bx1) / 2.0
-    cy_b = (by0 + by1) / 2.0
-    cx_t = MARK_BUBBLE["x"] + MARK_BUBBLE["w"] / 2.0
-    cy_t = MARK_BUBBLE["y"] + MARK_BUBBLE["h"] / 2.0
-    return Affine.translate(-cx_b, -cy_b).then(Affine.scale(s)).then(Affine.translate(cx_t, cy_t))
+def wordmark_svgs(lat, ar):
+    out = {}
+    out["wordmark-latin.svg"] = svg_doc((0, 0) + LAT_VIEW, "<!-- JAMAA Latin wordmark (the three heads). Generated by scripts/gen_brand.py -->\n"
+                                        + GLOW_DEFS + '  <path d="%s" fill="%s"/>\n' % (svg_d(lat["path"]), CREAM)
+                                        + dots_svg(lat["heads"], lat["r"], True))
+    out["wordmark-ar.svg"] = svg_doc((0, 0) + AR_VIEW, "<!-- JAMAA Arabic wordmark. Generated by scripts/gen_brand.py -->\n"
+                                     + GLOW_DEFS + '  <path d="%s" fill="%s"/>\n' % (svg_d(ar["path"]), CREAM)
+                                     + dots_svg([ar["head"]], ar["r"], True))
+    bi_tf = bilingual_ar_tf()
+    ar_bi = tf_path(ar["path"], bi_tf)
+    head = bi_tf.apply(*ar["head"])
+    lat_tf = Affine.translate(0, BI_LAT_BASELINE - LAT_BASELINE)
+    out["wordmark-bilingual.svg"] = svg_doc((0, 0) + BI_VIEW, "<!-- JAMAA bilingual lockup (Latin on top). Generated by scripts/gen_brand.py -->\n"
+                                            + GLOW_DEFS
+                                            + '  <path d="%s" fill="%s"/>\n' % (svg_d(tf_path(lat["path"], lat_tf)), CREAM)
+                                            + dots_svg([lat_tf.apply(*h) for h in lat["heads"]], lat["r"], True)
+                                            + '  <path d="%s" fill="%s"/>\n' % (svg_d(ar_bi), CREAM)
+                                            + dots_svg([head], ar["r"] * BI_AR_SCALE, True))
+    return out
 
 
-def mark_layers(tf=None, with_square=True):
-    """[(d, fill)] in 160x160 space, mapped by tf."""
-    layers = []
-    if with_square:
-        layers.append((cmds_to_d(rounded_rect_cmds(0, 0, 160, 160, 36), tf), BG))
-    b = MARK_BUBBLE
-    layers.append((cmds_to_d(bubble_cmds(b["x"], b["y"], b["w"], b["h"], b["r"], b["tail"]), tf), MAGENTA))
-    btf = mark_bang_tf() if tf is None else mark_bang_tf().then(tf)
-    layers.append((stem_d(btf), CREAM))
-    layers.append((dot_d(btf), AMBER))
-    return layers
+def bilingual_ar_tf():
+    """Standalone Arabic artboard -> bilingual lockup: scaled 0.82 about (500, baseline), baseline moved to 470."""
+    return (Affine.translate(-AR_CX, -AR_BASELINE).then(Affine.scale(BI_AR_SCALE))
+            .then(Affine.translate(AR_CX, BI_AR_BASELINE)))
 
 
-def mark_svg():
-    body = "<!-- Mish Ana! mark (app icon). Generated by scripts/gen_brand.py -->\n"
-    for d, fill in mark_layers():
-        body += '  <path d="%s" fill="%s"/>\n' % (d, fill)
-    return svg_doc((0, 0, 160, 160), body, 160, 160)
+def tile_gradient_svg(gid, w, h):
+    return ('<radialGradient id="%s" cx="%s" cy="%s" r="%s">%s</radialGradient>' % (
+        gid, fmt(TILE_CENTRE[0]), fmt(TILE_CENTRE[1]), fmt(TILE_RADIUS),
+        "".join('<stop offset="%s" stop-color="%s"/>' % (fmt(o), c) for o, c in TILE_STOPS)))
 
 
-# ---------- launcher / Play icon (design-v3 D2): 160 x 160 ----------
-# Lighter violet tile (stays visible on dark launchers), bubble 4 % bigger with the tail tucked in so a circular
-# mask doesn't clip it, bang stem 22 % wider, amber dot r 10 (readable at 32 px).
-
-ICON_TAIL = ((40.0, 104.0), (72.0, 114.0), (35.0, 134.0))
-ICON_DOT = (77.6, 97.0, 10.0)
-# Visual centre of the bubble (incl. tail) after icon_group_tf(), used to centre it in other canvases.
-ICON_CENTRE = (80.0, 77.0)
-
-
-def icon_group_tf():
-    return Affine.translate(-80, -81).then(Affine.scale(1.04)).then(Affine.translate(80, 80))
+def mark_svg(layers, faces):
+    what = "mark (the ring, with faces)" if faces else "launcher / Play icon (the ring, no faces)"
+    body = "<!-- JAMAA %s on its tile; 108 artboard, export at 512 px. Generated by scripts/gen_brand.py -->\n" % what
+    body += "  <defs>%s</defs>\n  <rect width=\"108\" height=\"108\" fill=\"url(#tile)\"/>\n" % tile_gradient_svg("tile", 108, 108)
+    for p, c in layers:
+        body += '  <path d="%s" fill="%s"/>\n' % (svg_d(p), c)
+    return svg_doc((0, 0, 108, 108), body, 512, 512)
 
 
-def icon_layers(tf=None):
-    """[(d, fill)] bubble + bang (no tile) in 160x160 icon space, mapped by tf."""
-    g = icon_group_tf() if tf is None else icon_group_tf().then(tf)
-    b = MARK_BUBBLE
-    bubble = cmds_to_d(bubble_cmds(b["x"], b["y"], b["w"], b["h"], b["r"], ICON_TAIL), g)
-    widen = Affine.translate(-80, -68).then(Affine(1.22, 0, 0, 1.08, 0, 0)).then(Affine.translate(80, 68))
-    stem = stem_d(mark_bang_tf().then(widen).then(g))
-    dot = cmds_to_d(circle_cmds(*ICON_DOT), g)
-    return [(bubble, B_MAGENTA), (stem, CREAM), (dot, B_AMBER)]
+# ---------- banner ----------
 
-
-def icon_svg(with_tile=True):
-    body = "<!-- Mish Ana! launcher / Play icon (palette B). Generated by scripts/gen_brand.py -->\n"
-    if with_tile:
-        body += ('  <defs><radialGradient id="tile" cx="0.5" cy="0.3" r="0.85">%s</radialGradient></defs>\n'
-                 '  <rect width="160" height="160" fill="url(#tile)"/>\n') % "".join(
-            '<stop offset="%s" stop-color="%s"/>' % (fmt(o), c) for o, c in ICON_TILE_STOPS)
-        view = (0, 0, 160, 160)
-    else:
-        view = (20, 16, 120, 122)  # tight box around bubble + tail
-    for d, fill in icon_layers():
-        body += '  <path d="%s" fill="%s"/>\n' % (d, fill)
-    return svg_doc(view, body, view[2], view[3])
-
-
-def icon_background_xml():
-    stops = "\n".join('                <item android:offset="%s" android:color="%s"/>' % (fmt(o), android_color(c))
-                      for o, c in ICON_TILE_STOPS)
-    return """<?xml version="1.0" encoding="utf-8"?>
-<!-- Adaptive icon background (palette B violet tile). Generated by assets/brand/scripts/gen_brand.py; do not edit by hand. -->
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path android:pathData="M0,0h108v108h-108z">
-        <aapt:attr name="android:fillColor">
-            <gradient android:type="radial" android:centerX="54" android:centerY="32.4" android:gradientRadius="91.8">
-%s
-            </gradient>
-        </aapt:attr>
-    </path>
-</vector>
-""" % stops
-
-
-# ---------- banner: 320 x 180 ----------
-
-BANNER_W, BANNER_H = 320.0, 180.0
-BANNER_BUBBLE_H = 84.0   # bubble (incl. tail) height, no tile (design-v3 D3)
-BANNER_WM_W = 168.0      # Latin wordmark width; the Arabic one uses the same scale
-BANNER_GAP = 16.0
-BANNER_AR_BOOST = 1.2    # the Arabic name is short; give it the Latin one's visual weight
-
-
-def banner_parts(wm, arabic):
-    """Layout of the 320x180 banner: bubble + wordmark, centred as a group. Mirrored in Arabic."""
-    bx0, by0, bx1, by1 = bang_bounds()
-    lx0, lx1 = wm["lat_bounds"][0], bx1
-    s = BANNER_WM_W / (lx1 - lx0)
+def banner_layout(lat, ar, ring, arabic):
+    """[(path, colour)] in the 320 x 180 banner and the ring centre (for the lamp glow)."""
+    ring_box = (RING_C - RING_OUTER_MAX, RING_C - RING_OUTER_MAX, RING_C + RING_OUTER_MAX, RING_C + RING_OUTER_MAX)
+    rs = BANNER_RING_PX / (ring_box[2] - ring_box[0])
     if arabic:
-        x0, x1 = bx0, wm["ar_bounds"][2]
-        s *= BANNER_AR_BOOST
+        wpath, heads, r = ar["path"], [ar["head"]], ar["r"]
     else:
-        x0, x1 = lx0, lx1
-    y0 = min(wm["lat_bounds"][1], wm["ar_bounds"][1], by0)
-    y1 = max(wm["lat_bounds"][3], wm["ar_bounds"][3], by1)
-    wm_w = (x1 - x0) * s
-    ib = icon_bubble_bounds()
-    bs = BANNER_BUBBLE_H / (ib[3] - ib[1])
-    bub_w = (ib[2] - ib[0]) * bs
-    total = bub_w + BANNER_GAP + wm_w
+        wpath, heads, r = lat["path"], lat["heads"], lat["r"]
+    lx0, _, lx1, _ = bounds(lat["path"])
+    ws = BANNER_WM_W / (lx1 - lx0)
+    if arabic:
+        ws *= BANNER_AR_BOOST
+    x0, y0, x1, y1 = bounds(union([wpath] + [circle_path(hx, hy, r) for hx, hy in heads]))
+    wm_w = (x1 - x0) * ws
+    total = BANNER_RING_PX + BANNER_GAP + wm_w
     left = (BANNER_W - total) / 2.0
     if arabic:
-        wm_x, bub_x = left, left + wm_w + BANNER_GAP
+        wm_x, ring_x = left, left + wm_w + BANNER_GAP
     else:
-        bub_x, wm_x = left, left + bub_w + BANNER_GAP
-    bub_y = (BANNER_H - BANNER_BUBBLE_H) / 2.0
-    bub_tf = Affine.translate(-ib[0], -ib[1]).then(Affine.scale(bs)).then(Affine.translate(bub_x, bub_y))
-    wm_tf = Affine.translate(-x0, -y0).then(Affine.scale(s)).then(Affine.translate(wm_x, (BANNER_H - (y1 - y0) * s) / 2.0))
-    glow = (bub_x + bub_w / 2.0, bub_y + BANNER_BUBBLE_H / 2.0, BANNER_BUBBLE_H * 0.9)
-    return bub_tf, wm_tf, glow
+        ring_x, wm_x = left, left + BANNER_RING_PX + BANNER_GAP
+    ring_y = (BANNER_H - BANNER_RING_PX) / 2.0
+    rtf = Affine.translate(-ring_box[0], -ring_box[1]).then(Affine.scale(rs)).then(Affine.translate(ring_x, ring_y))
+    wtf = Affine.translate(-x0, -(y0 + y1) / 2.0).then(Affine.scale(ws)).then(Affine.translate(wm_x, BANNER_H / 2.0))
+    layers = [(tf_path(p, rtf), c) for p, c in ring]
+    layers.append((tf_path(wpath, wtf), CREAM))
+    for hx, hy in heads:
+        layers.append((tf_path(circle_path(hx, hy, r), wtf), AMBER))
+    centre = rtf.apply(RING_C, RING_C)
+    return layers, centre
 
 
-def icon_bubble_bounds():
-    """Ink bounds of the icon bubble (incl. tail) in 160 space after icon_group_tf()."""
-    g = icon_group_tf()
-    b = MARK_BUBBLE
-    pts = [g.apply(b["x"], b["y"]), g.apply(b["x"] + b["w"], b["y"] + b["h"])] + [g.apply(*p) for p in ICON_TAIL]
-    xs = [p[0] for p in pts]
-    ys = [p[1] for p in pts]
-    return min(xs), min(ys), max(xs), max(ys)
-
-
-def banner_layers(wm, arabic):
-    bub_tf, tf, _ = banner_parts(wm, arabic)
-    layers = list(icon_layers(bub_tf))
-    if arabic:
-        layers.append((stem_d(tf), B_MAGENTA))
-        layers.append((dot_d(tf), B_AMBER))
-        layers.append((transform_d(wm["arabic"], tf), CREAM))
-    else:
-        layers.append((transform_d(wm["latin"], tf), CREAM))
-        layers.append((stem_d(tf), B_MAGENTA))
-        layers.append((dot_d(tf), B_AMBER))
-    return layers
-
-
-def transform_d(d, tf):
-    """Re-emit an absolute SVG path (M/L/H/V/Q/C/Z, as SVGPathPen writes it) through an affine map."""
-    import re
-    toks = re.findall(r"[MLHVQCZ]|-?\d*\.?\d+(?:e-?\d+)?", d)
-    out = []
-    i = 0
-    op = None
-    cur = (0.0, 0.0)
-    start = (0.0, 0.0)
-    while i < len(toks):
-        t = toks[i]
-        if t in "MLHVQCZ":
-            op = t
-            i += 1
-            if op == "Z":
-                out.append("Z")
-                cur = start
-            continue
-        if op == "H":
-            nums = [float(toks[i]), cur[1]]
-            i += 1
-            emit = "L"
-        elif op == "V":
-            nums = [cur[0], float(toks[i])]
-            i += 1
-            emit = "L"
-        else:
-            n = {"M": 2, "L": 2, "Q": 4, "C": 6}[op]
-            nums = [float(v) for v in toks[i:i + n]]
-            i += n
-            emit = op
-        cur = (nums[-2], nums[-1])
-        if emit == "M":
-            start = cur
-            op = "L"  # implicit lineto after moveto
-        pts = []
-        for j in range(0, len(nums), 2):
-            pts.extend(tf.apply(nums[j], nums[j + 1]))
-        out.append(emit + " ".join(fmt(v) for v in pts))
-    return "".join(out)
-
-
-def banner_svg(wm, arabic):
-    _, _, (gx, gy, gr) = banner_parts(wm, arabic)
-    body = ('<!-- TV banner (320 x 180 px, contains the app name; palette B, no tile). Generated by scripts/gen_brand.py -->\n'
+def banner_svg(layers, centre):
+    gx, gy = centre
+    body = ('<!-- JAMAA TV banner, 320 x 180 px (contains the app name; palette B). Generated by scripts/gen_brand.py -->\n'
             '  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">'
             '<stop offset="0" stop-color="%s"/><stop offset="1" stop-color="%s"/></linearGradient>\n'
-            '  <radialGradient id="lift" gradientUnits="userSpaceOnUse" cx="%s" cy="36" r="200">'
-            '<stop offset="0" stop-color="#A05FF5" stop-opacity="0.55"/><stop offset="1" stop-color="#A05FF5" stop-opacity="0"/></radialGradient>\n'
-            '  <radialGradient id="glow" gradientUnits="userSpaceOnUse" cx="%s" cy="%s" r="%s">'
-            '<stop offset="0" stop-color="%s" stop-opacity="0.45"/><stop offset="1" stop-color="%s" stop-opacity="0"/></radialGradient></defs>\n'
-            '  <rect width="320" height="180" fill="url(#bg)"/>\n  <rect width="320" height="180" fill="url(#lift)"/>\n'
-            '  <rect width="320" height="180" fill="url(#glow)"/>\n') % (
-        B_BG_TOP, B_BG_DEEP, fmt(240 if arabic else 80), fmt(gx), fmt(gy), fmt(gr), B_MAGENTA, B_MAGENTA)
-    for d, fill in banner_layers(wm, arabic):
-        body += '  <path d="%s" fill="%s"/>\n' % (d, fill)
-    return svg_doc((0, 0, 320, 180), body, 320, 180)
+            '  <radialGradient id="lamp" gradientUnits="userSpaceOnUse" cx="%s" cy="%s" r="%s">'
+            '<stop offset="0" stop-color="%s" stop-opacity="0.18"/><stop offset="1" stop-color="%s" stop-opacity="0"/></radialGradient></defs>\n'
+            '  <rect width="320" height="180" fill="url(#bg)"/>\n  <rect width="320" height="180" fill="url(#lamp)"/>\n') % (
+        STAGE_TOP, STAGE_DEEP, fmt(gx), fmt(gy), fmt(lamp_radius()), AMBER, AMBER)
+    for p, c in layers:
+        body += '  <path d="%s" fill="%s"/>\n' % (svg_d(p), c)
+    return svg_doc((0, 0, BANNER_W, BANNER_H), body, BANNER_W, BANNER_H)
 
 
-def android_color(hexstr):
-    return "#FF" + hexstr[1:]
+def lamp_radius():
+    # radial 45 % x 60 % at the mark: one circle with the mean of the two radii (Android gradients are circular)
+    return (0.45 * BANNER_W + 0.60 * BANNER_H) / 2.0
 
 
-def _argb(hexstr, alpha):
+# ---------- Android vector drawables ----------
+
+def android_color(hexstr, alpha=1.0):
     return "#%02X%s" % (int(round(alpha * 255)), hexstr[1:])
 
 
-def vector_xml(width_dp, height_dp, vw, vh, layers, banner_bg=None, comment=""):
-    """banner_bg: None, or (lift_cx, glow_cx, glow_cy, glow_r) for the palette-B banner background."""
+def vector_xml(comment, w_dp, h_dp, vw, vh, layers, background=""):
     s = ['<?xml version="1.0" encoding="utf-8"?>',
          "<!-- %s Generated by assets/brand/scripts/gen_brand.py; do not edit by hand. -->" % comment,
          '<vector xmlns:android="http://schemas.android.com/apk/res/android"',
          '    xmlns:aapt="http://schemas.android.com/aapt"',
-         '    android:width="%sdp"' % fmt(width_dp),
-         '    android:height="%sdp"' % fmt(height_dp),
+         '    android:width="%sdp"' % fmt(w_dp),
+         '    android:height="%sdp"' % fmt(h_dp),
          '    android:viewportWidth="%s"' % fmt(vw),
          '    android:viewportHeight="%s">' % fmt(vh)]
-    if banner_bg is not None:
-        lift_cx, gx, gy, gr = banner_bg
-        rect = "M0,0h%sv%sh-%sz" % (fmt(vw), fmt(vh), fmt(vw))
-
-        def grad(attrs):
-            return ['    <path android:pathData="%s">' % rect,
-                    '        <aapt:attr name="android:fillColor">',
-                    '            <gradient %s/>' % attrs,
-                    '        </aapt:attr>',
-                    '    </path>']
-        s += grad('android:type="linear" android:startX="0" android:startY="0" android:endX="%s" android:endY="%s" '
-                  'android:startColor="%s" android:endColor="%s"' % (fmt(vw), fmt(vh), android_color(B_BG_TOP), android_color(B_BG_DEEP)))
-        s += grad('android:type="radial" android:centerX="%s" android:centerY="36" android:gradientRadius="200" '
-                  'android:startColor="%s" android:endColor="%s"' % (fmt(lift_cx), _argb("#A05FF5", .55), _argb("#A05FF5", 0)))
-        s += grad('android:type="radial" android:centerX="%s" android:centerY="%s" android:gradientRadius="%s" '
-                  'android:startColor="%s" android:endColor="%s"' % (fmt(gx), fmt(gy), fmt(gr), _argb(B_MAGENTA, .45), _argb(B_MAGENTA, 0)))
-    for d, fill in layers:
-        s.append('    <path android:fillColor="%s" android:pathData="%s"/>' % (android_color(fill), d))
+    if background:
+        s.append(background)
+    for p, c in layers:
+        s.append('    <path android:fillColor="%s" android:pathData="%s"/>' % (android_color(c), svg_d(p)))
     s.append("</vector>")
     return "\n".join(s) + "\n"
 
 
-def kotlin_paths(wm):
-    lat, ar = wm["lat_bounds"], wm["ar_bounds"]
-    bx0, by0, bx1, by1 = bang_bounds()
+def gradient_rect(rect, attrs, items=None):
+    inner = ('            <gradient %s/>' % attrs) if items is None else (
+        '            <gradient %s>\n%s\n            </gradient>' % (attrs, "\n".join(
+            '                <item android:offset="%s" android:color="%s"/>' % (fmt(o), android_color(c)) for o, c in items)))
+    return ('    <path android:pathData="%s">\n        <aapt:attr name="android:fillColor">\n%s\n'
+            '        </aapt:attr>\n    </path>') % (rect, inner)
 
+
+def tile_background(size, corner=0.0):
+    if corner:
+        rect = svg_d(rounded_rect(0, 0, size, size, corner))
+    else:
+        rect = "M0,0h%sv%sh-%sz" % (fmt(size), fmt(size), fmt(size))
+    return gradient_rect(rect, 'android:type="radial" android:centerX="%s" android:centerY="%s" android:gradientRadius="%s"' % (
+        fmt(TILE_CENTRE[0] * size), fmt(TILE_CENTRE[1] * size), fmt(TILE_RADIUS * size)), TILE_STOPS)
+
+
+def rounded_rect(x, y, w, h, r):
+    p = pathops.Path()
+    pen = p.getPen()
+    k = r * K
+    pen.moveTo((x + r, y))
+    pen.lineTo((x + w - r, y))
+    pen.curveTo((x + w - r + k, y), (x + w, y + r - k), (x + w, y + r))
+    pen.lineTo((x + w, y + h - r))
+    pen.curveTo((x + w, y + h - r + k), (x + w - r + k, y + h), (x + w - r, y + h))
+    pen.lineTo((x + r, y + h))
+    pen.curveTo((x + r - k, y + h), (x, y + h - r + k), (x, y + h - r))
+    pen.lineTo((x, y + r))
+    pen.curveTo((x, y + r - k), (x + r - k, y), (x + r, y))
+    pen.closePath()
+    return p
+
+
+def banner_background(centre):
+    rect = "M0,0h320v180h-320z"
+    return "\n".join([
+        gradient_rect(rect, 'android:type="linear" android:startX="0" android:startY="0" android:endX="320" android:endY="180" '
+                            'android:startColor="%s" android:endColor="%s"' % (android_color(STAGE_TOP), android_color(STAGE_DEEP))),
+        gradient_rect(rect, 'android:type="radial" android:centerX="%s" android:centerY="%s" android:gradientRadius="%s" '
+                            'android:startColor="%s" android:endColor="%s"' % (
+                                fmt(centre[0]), fmt(centre[1]), fmt(lamp_radius()), android_color(AMBER, 0.18), android_color(AMBER, 0))),
+    ])
+
+
+# ---------- Kotlin ----------
+
+def kotlin_paths(lat, ar):
     def chunk(s, n=180):
         parts = [s[i:i + n] for i in range(0, len(s), n)]
         return " +\n        ".join('"%s"' % p for p in parts)
 
+    lb, ab = bounds(lat["path"]), bounds(ar["path"])
+    heads = ", ".join("%sf, %sf" % (fmt(x), fmt(y)) for x, y in lat["heads"])
     return """// GENERATED by assets/brand/scripts/gen_brand.py from Cairo Black outlines (OFL). Do not edit by hand.
-package app.mishana.tv.ui.components
+package app.jamaa.tv.ui.components
 
-/** Wordmark geometry in the DESIGN §1.3 artboard (viewBox 0 0 1200 300, y down). */
+/**
+ * The JAMAA wordmark, "the three heads" (DESIGN-JAMAA §1.3): letter outlines (the A crossbars removed) plus amber
+ * dots. Latin artboard %s x %s, Arabic artboard %s x %s (y down); the bilingual lockup stacks them (Latin on top).
+ */
 internal object BrandPaths {
-    const val ARTBOARD_W = 1200f
-    const val ARTBOARD_H = 300f
+    const val LATIN_W = %sf
+    const val LATIN_H = %sf
+    const val ARABIC_W = %sf
+    const val ARABIC_H = %sf
 
-    // Ink bounds (left, top, right, bottom)
+    /** Dot radii: the three Latin heads, and the dot of ج (standalone artboards). */
+    const val LATIN_DOT_R = %sf
+    const val ARABIC_DOT_R = %sf
+
+    /** Bilingual lockup: the Arabic block is scaled by AR_SCALE about (%s, its baseline) and its baseline moves down by AR_SHIFT_Y. */
+    const val AR_SCALE = %sf
+    const val AR_BASELINE = %sf
+    const val AR_CX = %sf
+    const val AR_SHIFT_Y = %sf
+
+    /** Ink bounds of the letters (left, top, right, bottom). */
     val LATIN_BOUNDS = floatArrayOf(%sf, %sf, %sf, %sf)
     val ARABIC_BOUNDS = floatArrayOf(%sf, %sf, %sf, %sf)
-    val BANG_BOUNDS = floatArrayOf(%sf, %sf, %sf, %sf)
 
-    // The bang: stem rounded rect (skewed %s deg about (%s, %s)) and dot
-    const val STEM_X = %sf
-    const val STEM_Y = %sf
-    const val STEM_W = %sf
-    const val STEM_H = %sf
-    const val STEM_R = %sf
-    const val SKEW_DEG = %sf
-    const val SKEW_CX = %sf
-    const val SKEW_CY = %sf
-    const val DOT_CX = %sf
-    const val DOT_CY = %sf
-    const val DOT_R = %sf
+    /** Centres of the three heads (x, y pairs) in the Latin artboard. */
+    val LATIN_DOTS = floatArrayOf(%s)
 
-    /** "MISH ANA", right edge at x = 548, baseline y = 210. */
+    /** Centre of the dot of ج in the Arabic artboard. */
+    val ARABIC_DOT = floatArrayOf(%sf, %sf)
+
+    /** "JAMAA", centred on x = %s, baseline y = %s. */
     const val LATIN =
         %s
 
-    /** "مش أنا", left edge at x = 652, baseline y = 214. */
+    /** «جماعة» without the dot of ج, centred on x = %s, baseline y = %s. */
     const val ARABIC =
         %s
 }
-""" % (fmt(lat[0]), fmt(lat[1]), fmt(lat[2]), fmt(lat[3]),
-       fmt(ar[0]), fmt(ar[1]), fmt(ar[2]), fmt(ar[3]),
-       fmt(bx0), fmt(by0), fmt(bx1), fmt(by1),
-       fmt(SKEW_DEG), fmt(SKEW_CENTER[0]), fmt(SKEW_CENTER[1]),
-       fmt(STEM["x"]), fmt(STEM["y"]), fmt(STEM["w"]), fmt(STEM["h"]), fmt(STEM["r"]),
-       fmt(SKEW_DEG), fmt(SKEW_CENTER[0]), fmt(SKEW_CENTER[1]),
-       fmt(DOT["cx"]), fmt(DOT["cy"]), fmt(DOT["r"]),
-       chunk(wm["latin"]), chunk(wm["arabic"]))
+""" % (fmt(LAT_VIEW[0]), fmt(LAT_VIEW[1]), fmt(AR_VIEW[0]), fmt(AR_VIEW[1]),
+       fmt(LAT_VIEW[0]), fmt(LAT_VIEW[1]), fmt(AR_VIEW[0]), fmt(AR_VIEW[1]),
+       fmt(lat["r"]), fmt(ar["r"]), fmt(AR_CX), fmt(BI_AR_SCALE), fmt(AR_BASELINE), fmt(AR_CX),
+       fmt(BI_AR_BASELINE - AR_BASELINE),
+       fmt(lb[0]), fmt(lb[1]), fmt(lb[2]), fmt(lb[3]), fmt(ab[0]), fmt(ab[1]), fmt(ab[2]), fmt(ab[3]),
+       heads, fmt(ar["head"][0]), fmt(ar["head"][1]),
+       fmt(LAT_CX), fmt(LAT_BASELINE), chunk(svg_d(lat["path"])),
+       fmt(AR_CX), fmt(AR_BASELINE), chunk(svg_d(ar["path"])))
 
+
+# ---------- main ----------
 
 def write(path, text):
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -578,42 +772,91 @@ def write(path, text):
     print("wrote", os.path.relpath(path, ROOT))
 
 
+def find_chrome():
+    import glob
+    for pattern in (os.environ.get("CHROME", ""), "/opt/pw-browsers/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell",
+                    "/opt/pw-browsers/chromium-*/chrome-linux64/chrome"):
+        hits = sorted(glob.glob(pattern)) if pattern else []
+        if hits:
+            return hits[-1]
+    return None
+
+
+def preview(chrome, svg_path, png_path, width, height):
+    """Renders one SVG at width x height px on the hub stage colour with a headless Chromium."""
+    import tempfile
+    with open(svg_path, encoding="utf-8") as f:
+        svg = f.read()
+    html = ('<!doctype html><meta charset="utf-8"><style>html,body{margin:0;background:%s}svg{display:block;width:%dpx;'
+            'height:%dpx}</style>%s' % (STAGE_DEEP, width, height, svg))
+    with tempfile.NamedTemporaryFile("w", suffix=".html", delete=False, encoding="utf-8") as t:
+        t.write(html)
+    try:
+        subprocess.run([chrome, "--headless", "--no-sandbox", "--hide-scrollbars", "--window-size=%d,%d" % (width, height),
+                        "--screenshot=%s" % png_path, "file://" + t.name], check=True, capture_output=True, timeout=60)
+        print("preview", png_path)
+    except (OSError, subprocess.SubprocessError) as e:
+        print("preview failed for %s: %s" % (svg_path, e))
+    finally:
+        os.unlink(t.name)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--font-dir", default=os.path.join(ROOT, "tv-app/app/src/main/res/font"))
+    ap.add_argument("--preview", help="directory for PNG previews (needs ImageMagick)")
     args = ap.parse_args()
     font = os.path.join(args.font_dir, "cairo_black.ttf")
     if not os.path.exists(font):
         font = os.path.join(args.font_dir, "Cairo_900Black.ttf")
     sh = Shaper(font)
-    wm = build_wordmark(sh)
+    lat = build_latin(sh)
+    ar = build_arabic(sh, lat["cap"])
+    size, radii, shift = ring_layout()
+    ring_faces = ring_layers(size, radii, shift, True)
+    ring_plain = ring_layers(size, radii, shift, False)
 
     brand = os.path.join(ROOT, "assets/brand")
-    for name, text in wordmark_svgs(wm).items():
+    for name, text in wordmark_svgs(lat, ar).items():
         write(os.path.join(brand, name), text)
-    write(os.path.join(brand, "mark.svg"), mark_svg())
-    write(os.path.join(brand, "banner-en.svg"), banner_svg(wm, False))
-    write(os.path.join(brand, "banner-ar.svg"), banner_svg(wm, True))
-    write(os.path.join(brand, "icon.svg"), icon_svg(True))
-    write(os.path.join(brand, "icon-bubble.svg"), icon_svg(False))
+    write(os.path.join(brand, "mark.svg"), mark_svg(ring_faces, True))
+    write(os.path.join(brand, "icon.svg"), mark_svg(ring_plain, False))
+    banners = {}
+    for arabic, name in ((False, "banner-en.svg"), (True, "banner-ar.svg")):
+        layers, centre = banner_layout(lat, ar, ring_faces, arabic)
+        banners[arabic] = (layers, centre)
+        write(os.path.join(brand, name), banner_svg(layers, centre))
 
     res = os.path.join(ROOT, "tv-app/app/src/main/res")
     # banner: 320 x 180 px at xhdpi = 160 x 90 dp
-    for arabic, sub, label in ((False, "drawable", "EN/FR"), (True, "drawable-ar", "AR, mark on the right")):
-        _, _, (gx, gy, gr) = banner_parts(wm, arabic)
+    for arabic, sub, label in ((False, "drawable", "EN/FR"), (True, "drawable-ar", "AR, ring on the right")):
+        layers, centre = banners[arabic]
         write(os.path.join(res, sub, "banner.xml"),
-              vector_xml(160, 90, 320, 180, banner_layers(wm, arabic), (240 if arabic else 80, gx, gy, gr),
-                         "TV banner (%s), 320x180 px xhdpi, contains the app name; palette B, no tile." % label))
-    # mark (in-app, app palette)
-    write(os.path.join(res, "drawable/ic_mark.xml"), vector_xml(160, 160, 160, 160, mark_layers(), None, "The mark (icon)."))
-    # adaptive icon: palette-B violet tile background + bubble foreground. 108 dp canvas; the bubble (incl. tail)
-    # stays inside the 66 dp safe circle (farthest point ~75 icon units from ICON_CENTRE -> 75 * 0.43 = 32 dp).
-    s = 0.43
-    fg_tf = Affine.translate(-ICON_CENTRE[0], -ICON_CENTRE[1]).then(Affine.scale(s)).then(Affine.translate(54, 54))
+              vector_xml("JAMAA TV banner (%s), 320 x 180 px at xhdpi, contains the app name; palette B." % label,
+                         160, 90, 320, 180, layers, banner_background(centre)))
+    # in-app mark: the ring on its rounded tile (corner 24 of 108 = 22 %), no faces (shown at 48 dp)
+    write(os.path.join(res, "drawable/ic_mark.xml"),
+          vector_xml("The JAMAA mark (the ring) on its tile.", 108, 108, 108, 108, ring_plain, tile_background(108, 24)))
     write(os.path.join(res, "drawable/ic_launcher_foreground.xml"),
-          vector_xml(108, 108, 108, 108, icon_layers(fg_tf), None, "Adaptive icon foreground (palette B, design-v3 D2)."))
-    write(os.path.join(res, "drawable/ic_launcher_background.xml"), icon_background_xml())
-    write(os.path.join(ROOT, "tv-app/app/src/main/java/app/mishana/tv/ui/components/BrandPaths.kt"), kotlin_paths(wm))
+          vector_xml("Adaptive icon foreground: the ring inside the 66 dp safe circle, no faces.", 108, 108, 108, 108, ring_plain))
+    mono = union([p for p, _ in ring_plain])
+    write(os.path.join(res, "drawable/ic_launcher_monochrome.xml"),
+          vector_xml("Themed (monochrome) icon: the five bodies and the dot as one flat layer, gaps kept.", 108, 108, 108, 108,
+                     [(mono, "#000000")]))
+    write(os.path.join(res, "drawable/ic_launcher_background.xml"),
+          vector_xml("Adaptive icon background: the violet tile.", 108, 108, 108, 108, [], tile_background(108)))
+    write(os.path.join(ROOT, "tv-app/app/src/main/java/app/jamaa/tv/ui/components/BrandPaths.kt"), kotlin_paths(lat, ar))
+
+    if args.preview:
+        chrome = find_chrome()
+        if chrome is None:
+            print("no Chromium found for previews (set CHROME)")
+            return
+        os.makedirs(args.preview, exist_ok=True)
+        for name, w, h in (("wordmark-latin.svg", 1000, 260), ("wordmark-latin.svg", 240, 62), ("wordmark-latin.svg", 120, 31),
+                           ("wordmark-ar.svg", 1000, 300), ("wordmark-bilingual.svg", 500, 280), ("icon.svg", 512, 512),
+                           ("icon.svg", 48, 48), ("mark.svg", 512, 512), ("banner-en.svg", 640, 360), ("banner-ar.svg", 640, 360)):
+            preview(chrome, os.path.join(brand, name), os.path.join(args.preview, "%s-%d.png" % (name[:-4], w)), w, h)
 
 
 if __name__ == "__main__":

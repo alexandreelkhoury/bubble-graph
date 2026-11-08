@@ -1,6 +1,6 @@
 {
-  "brand.appName": "مش أنا!",
-  "brand.tagline": "لعبة الكلمة السرّية للسهرات",
+  "brand.appName": "جماعة",
+  "brand.tagline": "ألعاب سهرة عالتلفزيون",
   "brand.slogan": "كلّنا أبرياء… بس في حدا عم يكذب.",
   "common.ok": "تمام",
   "common.cancel": "إلغاء",
@@ -375,7 +375,7 @@
   "tv.soundOff": "الصوت: مطفي",
   "tv.playersTitle": "اللاعبين",
   "tv.backToLobby": "رجوع: الصالون",
-  "tv.appClosed": "مش أنا! مسكّرة",
+  "tv.appClosed": "جماعة مسكّرة",
   "tv.openAgain": "افتحوها من جديد",
   "tv.closeRoomConfirm": "نسكّر هالغرفة؟",
   "tv.closeRoomBody": "الكل رح يحتاج كود جديد.",

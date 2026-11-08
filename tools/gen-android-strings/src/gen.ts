@@ -17,7 +17,7 @@ export const OUTPUT_PATHS: Record<Locale, string> = {
   ar: "tv-app/app/src/main/res/values-ar/strings_generated.xml",
   es: "tv-app/app/src/main/res/values-es/strings_generated.xml",
 };
-export const KOTLIN_PATH = "tv-app/app/src/main/java/app/mishana/tv/i18n/I18nKeys.kt";
+export const KOTLIN_PATH = "tv-app/app/src/main/java/app/jamaa/tv/i18n/I18nKeys.kt";
 
 const KEY_RE = /^[a-z][a-zA-Z0-9]*(\.[a-z][a-zA-Z0-9]*)+$/;
 const PLACEHOLDER_RE = /\{([a-z][a-zA-Z0-9]*)\}/g;
@@ -204,9 +204,9 @@ export function buildKotlin(set: MessageSet): string {
   }
   return [
     KOTLIN_HEADER,
-    "package app.mishana.tv.i18n",
+    "package app.jamaa.tv.i18n",
     "",
-    "import app.mishana.tv.R",
+    "import app.jamaa.tv.R",
     "",
     "object I18nKeys {",
     "    val strings: Map<String, Int> = mapOf(",

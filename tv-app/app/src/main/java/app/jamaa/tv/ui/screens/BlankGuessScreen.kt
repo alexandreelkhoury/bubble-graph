@@ -1,0 +1,260 @@
+package app.jamaa.tv.ui.screens
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.tv.material3.Icon
+import androidx.tv.material3.Text
+import app.jamaa.tv.ui.components.fullBleed
+import app.jamaa.tv.R
+import app.jamaa.tv.game.Names
+import app.jamaa.tv.i18n.isolate
+import app.jamaa.tv.protocol.ClientIntent
+import app.jamaa.tv.protocol.GuessStatus
+import app.jamaa.tv.protocol.HostAdvance
+import app.jamaa.tv.protocol.HostOverrideGuess
+import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.protocol.player
+import app.jamaa.tv.ui.components.ActionPill
+import app.jamaa.tv.ui.components.Avatar
+import app.jamaa.tv.ui.components.AvatarState
+import app.jamaa.tv.ui.components.ButtonKind
+import app.jamaa.tv.ui.components.Confetti
+import app.jamaa.tv.ui.components.InitialFocus
+import app.jamaa.tv.ui.components.LocalFocusBlocked
+import app.jamaa.tv.ui.components.JamaaButton
+import app.jamaa.tv.ui.components.JamaaDialog
+import app.jamaa.tv.ui.components.JamaaIcons
+import app.jamaa.tv.ui.components.TimerBar
+import app.jamaa.tv.ui.components.TimerRing
+import app.jamaa.tv.ui.components.TimerSeconds
+import app.jamaa.tv.ui.components.InGameScaffold
+import app.jamaa.tv.ui.components.inertWhen
+import app.jamaa.tv.ui.theme.JamaaColors
+import app.jamaa.tv.ui.theme.JamaaTheme
+
+/**
+ * TV-10 Blank guess (MR_WHITE_GUESS). The guessed text is never shown before RESULTS (SPEC §5.4): the Blank reads it
+ * aloud and the host overrides from what was heard. The room light drops (AppRoot darkens the background).
+ */
+@Composable
+fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit) {
+    val type = JamaaTheme.type
+    val pill = remember { FocusRequester() }
+    val overrideButton = remember { FocusRequester() }
+    val guess = view.guess
+    val guesser = view.player(guess?.playerId)
+    val status = guess?.status ?: GuessStatus.PENDING
+    val reduce = JamaaTheme.reduceMotion
+    val density = LocalDensity.current
+    var confirm by remember { mutableStateOf(false) }
+    // Which action-bar control the user was last on (no recomposition needed): when an overlay (the override
+    // confirm or the pause menu) closes, focus returns there (DESIGN §7), not always to the override button.
+    val lastOnOverride = remember { booleanArrayOf(false) }
+
+    // Verdict effects: a single 25 % white flash (no strobe) + confetti for CORRECT; a shake for WRONG.
+    val flash = remember { Animatable(0f) }
+    val shake = remember { Animatable(0f) }
+    LaunchedEffect(status) {
+        when (status) {
+            GuessStatus.CORRECT -> if (!reduce) {
+                flash.animateTo(0.25f, tween(100))
+                flash.animateTo(0f, tween(400))
+            }
+            GuessStatus.WRONG -> if (!reduce) shake.shake(with(density) { 12.dp.toPx() })
+            else -> Unit
+        }
+    }
+
+    CompositionLocalProvider(LocalFocusBlocked provides (LocalFocusBlocked.current || confirm)) {
+        InGameScaffold(
+            modifier = Modifier.inertWhen(confirm),
+            defaultFocus = pill,
+            actionBar = {
+                val deadline = view.deadline
+                if (status != GuessStatus.PENDING && deadline != null) {
+                    Box(Modifier.weight(1f)) { TimerBar(deadline, clockOffsetMs, height = 6.dp) }
+                } else {
+                    Spacer(Modifier.weight(1f))
+                }
+                if (status != GuessStatus.PENDING && guess?.overridden == false && status != GuessStatus.TIMEOUT) {
+                    JamaaButton(
+                        text = stringResource(if (status == GuessStatus.WRONG) R.string.guess__accept else R.string.guess__reject),
+                        onClick = { confirm = true },
+                        modifier = Modifier
+                            .focusRequester(overrideButton)
+                            .onFocusChanged { if (it.isFocused) lastOnOverride[0] = true },
+                        kind = ButtonKind.Secondary,
+                        icon = if (status == GuessStatus.WRONG) JamaaIcons.Check else JamaaIcons.X,
+                    )
+                }
+                ActionPill(
+                    stringResource(if (status == GuessStatus.PENDING) R.string.guess__skip else R.string.common__continue),
+                    { send(HostAdvance) },
+                    pill,
+                    Modifier.onFocusChanged { if (it.hasFocus) lastOnOverride[0] = false },
+                )
+            },
+        ) {
+            Box(Modifier.fillMaxSize()) {
+                Column(
+                    Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    // One soft spotlight (radial, 340 dp) on the Blank, who wears a dashed paper ring.
+                    Box(Modifier.size(240.dp).shakeOffset(shake), contentAlignment = Alignment.Center) {
+                        Canvas(Modifier.requiredSize(340.dp).clearAndSetSemantics {}) {
+                            drawCircle(
+                                Brush.radialGradient(
+                                    colors = listOf(JamaaColors.Blank.copy(alpha = 0.16f), Color.Transparent),
+                                    center = center,
+                                    radius = size.minDimension / 2f,
+                                ),
+                            )
+                        }
+                        val deadline = view.deadline
+                        if (status == GuessStatus.PENDING && deadline != null) {
+                            TimerRing(deadline, clockOffsetMs, 220.dp, 8.dp)
+                            // The seconds at the ring's top end, as on TV-05 (DESIGN TV-10 "(o 18)").
+                            TimerSeconds(deadline, clockOffsetMs, Modifier.align(Alignment.TopEnd).offset(x = 8.dp, y = (-6).dp))
+                        }
+                        Canvas(Modifier.size(176.dp).clearAndSetSemantics {}) {
+                            drawCircle(
+                                color = JamaaColors.Blank,
+                                style = Stroke(width = 3.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(10.dp.toPx(), 8.dp.toPx()))),
+                            )
+                        }
+                        if (guesser != null) {
+                            Avatar(guesser.color, 128.dp, state = AvatarState(away = !guesser.connected))
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    AnimatedContent(
+                        targetState = status,
+                        transitionSpec = { fadeIn(tween(240)) togetherWith fadeOut(tween(150)) },
+                        label = "verdict",
+                    ) { st ->
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+                            when (st) {
+                                GuessStatus.PENDING -> {
+                                    Text(stringResource(R.string.guess__title), style = type.displayS, color = JamaaColors.Text, textAlign = TextAlign.Center)
+                                    Text(
+                                        stringResource(R.string.guess__guessing, isolate(Names.ellipsize(guesser?.name.orEmpty(), 20))),
+                                        style = type.body,
+                                        color = JamaaColors.TextSecondary,
+                                        textAlign = TextAlign.Center,
+                                    )
+                                    Spacer(Modifier.height(6.dp))
+                                    // The host's override relies on the room hearing the guess: the TV asks for it out loud
+                                    // too (it replaces "Don't help!", web parity).
+                                    Text(
+                                        stringResource(R.string.guess__say_aloud, isolate(Names.ellipsize(guesser?.name.orEmpty(), 20))),
+                                        style = type.caption,
+                                        color = JamaaColors.Accent,
+                                        textAlign = TextAlign.Center,
+                                    )
+                                }
+                                GuessStatus.CORRECT -> VerdictLine(R.string.guess__correct, JamaaColors.Success, JamaaIcons.Check)
+                                GuessStatus.WRONG -> VerdictLine(R.string.guess__wrong, JamaaColors.Danger, JamaaIcons.X)
+                                GuessStatus.TIMEOUT -> VerdictLine(R.string.guess__timeout, JamaaColors.TextSecondary, JamaaIcons.Timer)
+                            }
+                            if (guess?.overridden == true) {
+                                Text(stringResource(R.string.guess__overridden), style = type.caption, color = JamaaColors.Accent)
+                            }
+                        }
+                    }
+                }
+                if (status == GuessStatus.CORRECT) {
+                    Confetti(seed = view.round)
+                }
+                if (flash.value > 0f) {
+                    Box(Modifier.fillMaxSize().fullBleed().background(Color.White.copy(alpha = flash.value)))
+                }
+            }
+        }
+        // After an overlay closes (override confirm, pause menu), focus goes back to the control the user was on
+        // (DESIGN §7); tryFocus falls back to the pill once the override button has left with the deadline.
+        InitialFocus(pill, key = status, restore = { if (lastOnOverride[0]) overrideButton else pill })
+    }
+
+    if (confirm && guess != null) {
+        val accept = guess.status == GuessStatus.WRONG
+        JamaaDialog(
+            title = if (accept) {
+                stringResource(R.string.guess__accept_confirm, isolate(guesser?.name.orEmpty()))
+            } else {
+                stringResource(R.string.guess__reject_confirm)
+            },
+            body = null,
+            safeLabel = stringResource(R.string.common__cancel),
+            actionLabel = stringResource(if (accept) R.string.guess__accept else R.string.guess__reject),
+            onSafe = { confirm = false },
+            onAction = {
+                send(HostOverrideGuess(accept = accept))
+                confirm = false
+            },
+            // Accepting a wrong guess hands the Blank the win; rejecting a right one takes it away: both change the
+            // result, so the action looks destructive (like kick / end game).
+            actionKind = ButtonKind.Danger,
+        )
+    }
+    // The verdict buttons leave composition when the deadline ends; the dialog must not outlive its button.
+    LaunchedEffect(status, guess?.overridden) { if (status == GuessStatus.PENDING || guess?.overridden == true) confirm = false }
+}
+
+@Composable
+private fun VerdictLine(textRes: Int, color: Color, icon: androidx.compose.ui.graphics.vector.ImageVector) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(44.dp))
+        Spacer(Modifier.width(14.dp))
+        Text(
+            stringResource(textRes),
+            style = JamaaTheme.type.displayS,
+            color = JamaaColors.Text,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.widthIn(max = 720.dp),
+        )
+    }
+}

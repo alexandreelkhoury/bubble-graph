@@ -3,10 +3,10 @@
 
 Why: Cairo ships ascent/descent 1303/-571 (1.874 em) to cover Arabic marks. On Android 13+ StaticLayout's
 fallback line spacing never lets a line be shorter than the font's ascent + descent, and Compose cannot turn it
-off, so every `lineHeight` in MishType below 1.874 em was ignored: a 20 sp label took 37.5 dp instead of 24 dp,
+off, so every `lineHeight` in JamaaType below 1.874 em was ignored: a 20 sp label took 37.5 dp instead of 24 dp,
 and screens overflowed their DESIGN budgets (the lobby's bottom buttons were squeezed and clipped).
 
-With ascent/descent 880/-180 (1.06 em, at or below every line height in MishType) Compose's `lineHeight` decides
+With ascent/descent 880/-180 (1.06 em, at or below every line height in JamaaType) Compose's `lineHeight` decides
 the line box again, as CSS line-height does on the web client. ascent - descent = 700 = the cap height, so
 `LineHeightStyle.Alignment.Center` centres Latin capitals in the box. Glyphs are not clipped: they may draw past
 these metrics (Latin descenders reach -235, Arabic -484/+1020) into the line box's extra space.

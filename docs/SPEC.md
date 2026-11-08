@@ -1,4 +1,6 @@
-# SPEC — Mish Ana! (مش أنا!) v1 implementation contract
+# SPEC — Mish Ana! (game #1 of JAMAA) engine contract
+
+> **JAMAA platform.** Mish Ana! («مش أنا!», game id `mishana`) is game #1 of **JAMAA**. The room, the hub, protocol v2, the game registry, the JAMAA Pass and the content system are specified in [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md), which wins where it differs from this file. This file stays binding for the Mish Ana! engine rules, secrecy, the Blank never speaking first, the remote-only TV, room lifetimes and logging. Brand and package names below predate the rename (JAMAA-PLATFORM §1).
 
 Status: **binding** for the four implementer agents. It builds on [PLAN.md](PLAN.md) and [RESEARCH.md](RESEARCH.md) with the approved answers to PLAN §8. Where this file and PLAN differ, **this file wins**. Deviations from PLAN are listed in §0.3.
 

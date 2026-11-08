@@ -1,6 +1,6 @@
 {
-  "brand.appName": "Mish Ana!",
-  "brand.tagline": "Le jeu d’ambiance du mot secret",
+  "brand.appName": "JAMAA",
+  "brand.tagline": "Jeux de soirée sur ta télé",
   "brand.slogan": "Tout le monde est innocent. Quelqu’un ment.",
   "common.ok": "OK",
   "common.cancel": "Annuler",
@@ -354,7 +354,7 @@
   "tv.soundOff": "Son : coupé",
   "tv.playersTitle": "Joueurs",
   "tv.backToLobby": "Retour : salon",
-  "tv.appClosed": "Mish Ana! est fermé",
+  "tv.appClosed": "JAMAA est fermé",
   "tv.openAgain": "Rouvrir",
   "tv.closeRoomConfirm": "Fermer cette salle ?",
   "tv.closeRoomBody": "Tout le monde aura besoin d’un nouveau code.",

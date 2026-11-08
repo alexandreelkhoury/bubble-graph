@@ -10,28 +10,28 @@ plugins {
 
 // Server URL baked into BuildConfig.SERVER_URL (SPEC §9.1, §9.4; docs/TV.md "Production server URL"), first set wins:
 //   1. -PserverUrl=…  (or the env var ORG_GRADLE_PROJECT_serverUrl, e.g. in CI)
-//   2. mishana.prodServerUrl in tv-app/gradle.properties
+//   2. jamaa.prodServerUrl in tv-app/gradle.properties
 //   3. PLACEHOLDER_SERVER_URL below.
 // The placeholder is deliberately not a real host: release builds refuse it (see preReleaseBuild below).
-val PLACEHOLDER_SERVER_URL = "https://mish-ana.example.workers.dev"
+val PLACEHOLDER_SERVER_URL = "https://play.example.workers.dev"
 val serverUrl: String = ((project.findProperty("serverUrl") as String?)
-    ?: (project.findProperty("mishana.prodServerUrl") as String?)
+    ?: (project.findProperty("jamaa.prodServerUrl") as String?)
     ?: PLACEHOLDER_SERVER_URL).trim().trimEnd('/')
 
 // Upload key for Play App Signing (docs/TV.md "Release signing"). Never committed: the properties file lives outside
-// the repo, at -PsigningProps=… or ~/.mishana-keys/keystore.properties (storeFile, storePassword, keyAlias,
+// the repo, at -PsigningProps=… or ~/.jamaa-keys/keystore.properties (storeFile, storePassword, keyAlias,
 // keyPassword). Without it, release builds stay unsigned.
 val signingProps: Properties? = File(
-    (project.findProperty("signingProps") as String?) ?: "${System.getProperty("user.home")}/.mishana-keys/keystore.properties"
+    (project.findProperty("signingProps") as String?) ?: "${System.getProperty("user.home")}/.jamaa-keys/keystore.properties"
 ).takeIf { it.isFile }?.let { f -> Properties().apply { f.inputStream().use { load(it) } } }
 
 android {
-    namespace = "app.mishana.tv"
+    namespace = "app.jamaa.tv"
     // [VERIFY] AGP 9 DSL: if `compileSdk = 37` is deprecated, use `compileSdk { version = release(37) }`.
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "app.mishana.tv"
+        applicationId = "app.jamaa.tv"
         minSdk = 26
         targetSdk = 36
         versionCode = 3
@@ -89,19 +89,19 @@ composeCompiler {
 }
 
 // A release must never ship the placeholder server (SPEC §9.4), nor a cleartext one (release has no cleartext
-// network config, so http:// would fail at runtime): set mishana.prodServerUrl or pass -PserverUrl=https://….
+// network config, so http:// would fail at runtime): set jamaa.prodServerUrl or pass -PserverUrl=https://….
 tasks.matching { it.name == "preReleaseBuild" }.configureEach {
     val url = serverUrl // local copies: the task action captures no script object
     val placeholder = PLACEHOLDER_SERVER_URL
     doFirst {
         check(url != placeholder && !url.contains(".example.") && !url.contains("<")) {
-            "Release build with the placeholder server URL ($url): set mishana.prodServerUrl in tv-app/gradle.properties " +
+            "Release build with the placeholder server URL ($url): set jamaa.prodServerUrl in tv-app/gradle.properties " +
                 "to your deployed Worker (e.g. https://play.<your-subdomain>.workers.dev) or pass -PserverUrl=https://…"
         }
         check(url.startsWith("https://")) {
             "Release server URL must be https:// (release builds allow no cleartext traffic): $url"
         }
-        logger.lifecycle("Mish Ana! release server URL: $url")
+        logger.lifecycle("JAMAA release server URL: $url")
     }
 }
 

@@ -1,4 +1,4 @@
-# PAYMENTS-SPEC — Mish Ana! premium, packs and Google Play Billing (v1)
+# PAYMENTS-SPEC — JAMAA premium, packs and Google Play Billing (v1)
 
 Status: **binding** for three implementers, written 2026-10-04, revision 3 (2026-10-26; revision 2 applied the review findings, see the Review log appendix).
 
@@ -90,7 +90,7 @@ Starter packs are the "Everyday" pack because it exists with the same theme in a
 
 ### 1.3 Pack → product id mapping (shared, A; mirrored in Kotlin by B)
 
-`shared/src/billing/products.ts` (new module, exported as `@mishana/shared/billing`, added to `shared/package.json` `exports` as `"./billing": "./src/billing/index.ts"`):
+`shared/src/billing/products.ts` (new module, exported as `@jamaa/shared/billing`, added to `shared/package.json` `exports` as `"./billing": "./src/billing/index.ts"`):
 ```ts
 export const PREMIUM_PRODUCT_ID = "premium" as const;                  // lifetime unlock, one-time non-consumable
 export const PACK_PRODUCT_PREFIX = "pack_" as const;
@@ -119,7 +119,7 @@ Kotlin (B) `billing/Products.kt` mirrors these constants and the two functions e
 1. D/A adds a JSON pack (no `tier`, so premium) and lists it in `word-packs/index.ts`.
 2. Deploy. `GET /api/billing/catalog` (§3.4) lists it, and the TV store shows it as soon as Play returns `ProductDetails` for its product id. Until the owner creates the product in Play Console, `queryProductDetailsAsync` reports it in `unfetchedProductList` (`PRODUCT_NOT_FOUND` ✔). The TV then hides the row's Buy button and shows the row's trailing state as `store.included` ("Included with Premium"), for premium and non-premium hosts alike (§4.4 row states).
 3. Premium owners get the pack immediately, because premium means "every pack whose tier is premium".
-4. `pnpm --filter @mishana/server billing:products` (A, `server/scripts/play-products.mjs`) prints a CSV (`productId,kind,priceUsd,pairs,packId,locale,titleEn,titleFr,titleAr`) of every Play product to create: first `premium` (`kind` `lifetime`, `7.99`), then every premium pack (`kind` `pack`, `1.99`, or `2.99` from 60 pairs). Notes (including the US$5.99 launch-sale reminder) go to stderr, so stdout is the bare CSV.
+4. `pnpm --filter @jamaa/server billing:products` (A, `server/scripts/play-products.mjs`) prints a CSV (`productId,kind,priceUsd,pairs,packId,locale,titleEn,titleFr,titleAr`) of every Play product to create: first `premium` (`kind` `lifetime`, `7.99`), then every premium pack (`kind` `pack`, `1.99`, or `2.99` from 60 pairs). Notes (including the US$5.99 launch-sale reminder) go to stderr, so stdout is the bare CSV.
 
 ### 1.5 Pack lint additions (A, `tools/pack-lint`)
 
@@ -129,7 +129,7 @@ Errors:
 - A free pack whose `ageRating !== "all"`.
 - A premium pack whose `id.length > PREMIUM_PACK_ID_MAX` (35).
 - `packProductId(id)` fails `PRODUCT_ID_REGEX`, or two packs map to the same product id.
-- With the new flag `--release` only: a free pack with fewer than 40 pairs. The root `package.json` `deploy` script becomes `pnpm run build && pnpm --filter @mishana/pack-lint run lint -- --release && pnpm --filter @mishana/server run deploy`.
+- With the new flag `--release` only: a free pack with fewer than 40 pairs. The root `package.json` `deploy` script becomes `pnpm run build && pnpm --filter @jamaa/content-lint run lint -- --release && pnpm --filter @jamaa/server run deploy`.
 
 Warnings:
 - Without `--release`: a free pack with fewer than 40 pairs.
@@ -151,7 +151,7 @@ export const PREMIUM_SETTING_KEYS = ["points"] as const satisfies readonly (keyo
 ## 2. Entitlement model
 
 ### 2.1 Definitions
-- **installId**: 32 lowercase hex characters (16 bytes from `SecureRandom`), created on the TV's first launch. It is stored in SharedPreferences `"mishana_billing"`, key `install_id`, and excluded from Auto Backup (§4.1). Regex `INSTALL_ID_REGEX = /^[0-9a-f]{32}$/`.
+- **installId**: 32 lowercase hex characters (16 bytes from `SecureRandom`), created on the TV's first launch. It is stored in SharedPreferences `"jamaa_billing"`, key `install_id`, and excluded from Auto Backup (§4.1). Regex `INSTALL_ID_REGEX = /^[0-9a-f]{32}$/`.
 - **installHash**: `sha256hex(installId)`, 64 hex characters. It is the `obfuscatedAccountId` passed to `BillingFlowParams.Builder.setObfuscatedAccountId` (✔ limit 64 characters, no PII).
 - **Purchase**: one Google purchase token, stored only as `tokenHash = sha256hex(purchaseToken)`. The raw token is kept only while an acknowledgement is pending or may still become due (§3.5 `ack_token`).
 - **Binding**: (tokenHash, installHash). It is created when an install proves possession of a token by posting it to `/api/billing/verify`, or (restricted, §3.4) from `obfuscatedExternalAccountId` on an RTDN. Only `/verify` refreshes its `last_seen_ms`; `/entitlement` never does.
@@ -181,7 +181,7 @@ Access also requires `revoked === false` (voided, §3.6/§3.8), for `premium` an
 // header
 { "alg": "EdDSA", "typ": "JWT", "kid": "k1" }
 // payload (JWT time claims in SECONDS)
-{ "iss": "mish-ana", "v": 1, "sub": "<installHash 64 hex>",
+{ "iss": "jamaa", "v": 1, "sub": "<installHash 64 hex>",
   "iat": 1790000000, "exp": 1790028800,
   "pu": 1792592000,                 // premiumUntil, seconds, or null
   "packs": ["en-food-01", "lb-food-01"],   // sorted, unique, ≤ 64 (MAX_TOKEN_PACKS); owned packs only (premium covers the rest)
@@ -195,7 +195,7 @@ Access also requires `revoked === false` (voided, §3.6/§3.8), for `premium` an
   ```
   - Each key is an OKP JWK pair (`kty:"OKP", crv:"Ed25519"`). Sign with the `active` kid; verify with any listed kid. Verify entries need only `x`; `d` is required only for the `active` kid and may be omitted for retired kids.
   - **Import:** public keys only as `importKey("jwk", {kty:"OKP", crv:"Ed25519", x}, {name:"Ed25519"}, false, ["verify"])`; the active private key as `importKey("jwk", {kty:"OKP", crv:"Ed25519", x, d}, {name:"Ed25519"}, false, ["sign"])`. The keyring parser rejects any entry that is not `kty:"OKP", crv:"Ed25519"`, so an RSA or EC key can never verify an entitlement token (no algorithm confusion).
-  - **Rotation:** generate a new key (`pnpm --filter @mishana/server gen:entitlement-key` → `server/scripts/gen-entitlement-key.mjs` prints `{kid,x,d}` from Node WebCrypto), add it, set `active`, deploy, then remove the old kid after **≥ 16 h** (2 × TTL; 24 h recommended).
+  - **Rotation:** generate a new key (`pnpm --filter @jamaa/server gen:entitlement-key` → `server/scripts/gen-entitlement-key.mjs` prints `{kid,x,d}` from Node WebCrypto), add it, set `active`, deploy, then remove the old kid after **≥ 16 h** (2 × TTL; 24 h recommended).
   - `kid` matches `^[a-z0-9]{1,16}$`.
 - **Fake mode** signs with the fixed, public dev key `FAKE_ENTITLEMENT_KEY` (kid `fake`, constant in `server/src/billing/fake.ts`). The verifier accepts kid `fake` and `mode:"fake"` **only** when fake mode is active (§3.10). In google mode, a token with `mode:"fake"` or kid `fake` → `ENTITLEMENT_INVALID`.
 - **Verification** (server only, `server/src/billing/token.ts`, `verifyEntitlementToken(token, keys, nowMs, fakeActive)`):
@@ -207,7 +207,7 @@ Access also requires `revoked === false` (voided, §3.6/§3.8), for `premium` an
      ```ts
      const SafeInt = z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
      export const EntitlementClaimsSchema = z.strictObject({
-       iss: z.literal("mish-ana"), v: z.literal(1), sub: z.string().regex(/^[0-9a-f]{64}$/),
+       iss: z.literal("jamaa"), v: z.literal(1), sub: z.string().regex(/^[0-9a-f]{64}$/),
        iat: SafeInt, exp: SafeInt, pu: SafeInt.nullable(),
        packs: z.array(z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/).max(64)).max(MAX_TOKEN_PACKS),
        mode: z.enum(["google", "fake"]) })
@@ -284,7 +284,7 @@ server/scripts/{gen-entitlement-key.mjs, play-products.mjs, check-deploy.mjs}
 "secrets": { "required": ["PLAY_SERVICE_ACCOUNT_JSON", "ENTITLEMENT_KEYS"] },
 "observability": { "enabled": true, "logs": { "enabled": true, "invocation_logs": true }, "traces": { "enabled": false } },
 "vars": { …existing…, "BILLING_MODE": "google", "ALLOW_FAKE_BILLING": "0",
-          "PLAY_PACKAGE_NAME": "app.mishana.tv", "RTDN_AUDIENCE": "", "RTDN_SA_EMAIL": "", "RTDN_SUBSCRIPTION": "" }
+          "PLAY_PACKAGE_NAME": "app.jamaa.tv", "RTDN_AUDIENCE": "", "RTDN_SA_EMAIL": "", "RTDN_SUBSCRIPTION": "" }
 ```
 - `run_worker_first` already covers `/api/*`.
 - **Observability and token secrecy** (✔ cloudflare-docs sources): Workers **traces** record `url.full`, `url.path` and `url.query` for every outbound `fetch` span, and every Google call carries the raw purchase token in its URL path. Traces must therefore stay **disabled** (`observability.traces.enabled: false`, written explicitly because Cloudflare plans to turn tracing on with `observability.enabled` for newer compatibility dates ✔ tracing beta note). Workers **Logs** invocation logs record the *incoming* request's method and URL ✔; billing routes carry tokens only in request bodies, never in URLs or query strings, so invocation logs stay on. `check-deploy.mjs` fails if `observability.traces.enabled` is not `false`. No Logpush/Tail Worker may be added without revisiting this rule.
@@ -759,7 +759,7 @@ The owner can give premium and/or premium packs to specific installs (e.g. a sid
   - `GET` → `200 {grants: [{installHash, premium, packs, expiresAt, note, createdAt, active}]}`, newest first (expired grants stay listed with `active:false` until revoked).
 - **Storage:** Billing DO SQLite table `grants (install_hash TEXT PRIMARY KEY, premium INTEGER, packs TEXT /* JSON array */, expires_ms INTEGER NULL, note TEXT NULL, created_ms INTEGER)`. Only `sha256hex(installId)` is stored, like `bindings`. Grants never create `purchases` or `bindings` rows, so they never count toward `MAX_INSTALLS_PER_PURCHASE`, and they never call Google. `prune` leaves them alone.
 - **Entitlement:** `entitlementFor(installHash)` merges an unexpired grant into the result: premium → `premiumUntilMs = max(purchases, grant.expiresAt ?? now + ENTITLEMENT_TTL_S·1000)` (an open-ended grant lasts as long as the token itself, `pu = exp`, and every refresh extends it); packs → added (filtered to premium packs). The token is the normal signed entitlement token, so `/entitlement`, `/verify`, `createRoom` and the room's `entitlement` message need no change, in both google and fake mode. The TV picks a new grant up on its next refresh (§2.4: app start when stale, Store open, Restore purchases, or before the token expires).
-- **CLI:** `pnpm grant <installId> [--packs a,b] [--premium] [--expires YYYY-MM-DD|ISO] [--note text]`, `pnpm grant list`, `pnpm grant revoke <installId|installHash>`; server from `--url` or `MISHANA_URL`, token from the `ADMIN_TOKEN` environment variable only (docs/DEV.md "Admin grants").
+- **CLI:** `pnpm grant <installId> [--packs a,b] [--premium] [--expires YYYY-MM-DD|ISO] [--note text]`, `pnpm grant list`, `pnpm grant revoke <installId|installHash>`; server from `--url` or `JAMAA_URL`, token from the `ADMIN_TOKEN` environment variable only (docs/DEV.md "Admin grants").
 - **Install id on the TV:** Settings → **About** (DESIGN TV-03) shows it in groups of four; the CLI drops the spaces.
 
 ---
@@ -774,9 +774,9 @@ The owner can give premium and/or premium packs to specific installs (e.g. a sid
   - PBL 9's mapping of a blocked Play Store to `BILLING_UNAVAILABLE` needs **androidx.core ≥ 1.9** ✔ (9.0.0 release notes). The project pins `core-ktx` 1.19.1, which satisfies it; keep it ≥ 1.9.
 - Manifest:
   - The library merges the `com.android.vending.BILLING` permission [VERIFY in the merged manifest]. Nothing else is needed.
-  - Exclude `mishana_billing.xml` from Auto Backup: `android:fullBackupContent`/`dataExtractionRules` XML excluding `sharedpref` `mishana_billing.xml`. Then a restored backup on another TV gets a new installId; restore still works through Play.
+  - Exclude `jamaa_billing.xml` from Auto Backup: `android:fullBackupContent`/`dataExtractionRules` XML excluding `sharedpref` `jamaa_billing.xml`. Then a restored backup on another TV gets a new installId; restore still works through Play.
 
-Files (`app/src/main/java/app/mishana/tv/`):
+Files (`app/src/main/java/app/jamaa/tv/`):
 
 | Path | Contents |
 |---|---|
@@ -785,15 +785,15 @@ Files (`app/src/main/java/app/mishana/tv/`):
 | `billing/BillingGateway.kt` | interface (below) |
 | `billing/PlayBillingGateway.kt` | real implementation |
 | `billing/EntitlementApi.kt` | OkHttp client for `/api/billing/{catalog,verify,entitlement}` (IO dispatcher, same timeouts as `RoomApi`) |
-| `billing/EntitlementStore.kt` | SharedPreferences `mishana_billing`: `install_id`, `ent_token`, `ent_json` (last `EntitlementBody`), `ent_saved_at` |
-| `billing/BillingRepository.kt` | orchestration; `StateFlow<StoreUiState>`; owned by `MishAnaApp`/`ProductionDeps` (process-wide) |
+| `billing/EntitlementStore.kt` | SharedPreferences `jamaa_billing`: `install_id`, `ent_token`, `ent_json` (last `EntitlementBody`), `ent_saved_at` |
+| `billing/BillingRepository.kt` | orchestration; `StateFlow<StoreUiState>`; owned by `ProductionDeps` (process-wide) |
 | `billing/BillingErrors.kt` | response code → i18n key (§4.6) |
 | `protocol/BillingModels.kt` | kotlinx.serialization mirrors of §3.4 (`CatalogResponse`, `VerifyRequest`, …) and `EntitlementMsg` (`@SerialName("entitlement")` ClientMessage subclass) |
 | `ui/screens/StoreScreen.kt` | Store overlay (§4.4) |
 | `ui/components/LockBadge.kt` | lock icon + label |
-| `src/debug/java/app/mishana/tv/billing/GatewayFactory.kt` | returns `FakeBillingGateway` when `DebugPrefs.fakeBilling`, else `PlayBillingGateway` |
-| `src/debug/java/app/mishana/tv/billing/FakeBillingGateway.kt` | §4.8 |
-| `src/release/java/app/mishana/tv/billing/GatewayFactory.kt` | always `PlayBillingGateway` |
+| `src/debug/java/app/jamaa/tv/billing/GatewayFactory.kt` | returns `FakeBillingGateway` when `DebugPrefs.fakeBilling`, else `PlayBillingGateway` |
+| `src/debug/java/app/jamaa/tv/billing/FakeBillingGateway.kt` | §4.8 |
+| `src/release/java/app/jamaa/tv/billing/GatewayFactory.kt` | always `PlayBillingGateway` |
 
 ```kotlin
 interface BillingGateway {
@@ -1078,15 +1078,15 @@ Removed in revision 3 (no subscription): `store.planMonthly`, `store.planYearly`
 - **Start while the TV is in the store:** when `view.tvBusy`, the VIP's Start button stays enabled but shows the hint `error.tvBusy` under it; a press that still races returns `TV_BUSY`, shown as the same toast.
 - **Errors** `PREMIUM_REQUIRED`, `PACK_LOCKED`, `ENTITLEMENT_INVALID`, `TV_BUSY` → toasts (`t(messageKey)`), non-fatal (SPEC §6.4 client rule unchanged).
 - **Budget:** the phone bundle stays ≤ 60 KB gzip. The store code lives only in the lazy `tv-mock` chunk.
-- **Types:** `LockedPackInfo`, `premium` and the `PackInfo.tier` key come from `@mishana/shared/protocol` (`import type`).
+- **Types:** `LockedPackInfo`, `premium` and the `PackInfo.tier` key come from `@jamaa/shared/protocol` (`import type`).
 
 ### 5.2 `/tv` mock store (fake billing)
 - On load, `GET /api/billing/catalog`. With `mode:"google"`, the mock shows the `lobby.premium` button, and its dialog shows `store.tvAppOnly`: no store. With `mode:"fake"`, the full simulation below.
-- `installId`: localStorage `mishana:installId` (32 hex from `crypto.getRandomValues`; try/catch rules of SPEC §8.6).
+- `installId`: localStorage `jamaa:installId` (32 hex from `crypto.getRandomValues`; try/catch rules of SPEC §8.6).
 - The mock follows §4.4 (entry points, state machine, layout, room code in the header, toast rules, downgrade and pool-exhausted toasts, pack added to game, focus with the keyboard D-pad: arrows, Enter, Esc) using the same keys, with the banner `store.testMode`. It sends `storeOpen` exactly like the TV (§4.3). The Unlock Premium and pack buttons (all one-time products) call:
   1. `POST /api/billing/fake/purchase` `{installId, productId}`;
   2. `POST /api/billing/verify`;
-  3. store the token in memory and localStorage `mishana:entToken`;
+  3. store the token in memory and localStorage `jamaa:entToken`;
   4. send `{"v":1,"t":"entitlement","token":…}` on the TV socket.
 - Room creation sends `entitlement` in `POST /api/rooms` when a token exists.
 - **Debug-only controls** in the mock store, visible only in fake mode, under a "Test controls" heading (PAY-GAP: also in the TV mock's pause menu, so §5.3 test 4 can refund mid-game):
@@ -1226,7 +1226,7 @@ The client IP is used transiently for rate limiting and not stored. PRIVACY.md (
 - §4.9.
 
 ### 7.5 Repo gates
-SPEC §14.6, plus `pnpm --filter @mishana/server billing:products` exits 0.
+SPEC §14.6, plus `pnpm --filter @jamaa/server billing:products` exits 0.
 
 ---
 
@@ -1246,13 +1246,13 @@ Do these in order. Items marked [VERIFY] come from third-party summaries or bloc
 9. **New personal accounts must run a closed test before production:** at least **12 testers opted in for 14 continuous days**. This applies to personal accounts created after 2023-11-13; the tester count went from 20 to 12 in Dec 2024 (third-party summaries; Google's page was blocked here → [VERIFY]). Recruit 12+ testers early (friends, a Google Group). They also serve as purchase testers.
 
 **B. App and billing in Play Console**
-1. Create the app: name "Mish Ana!", default language, App, Free (in-app purchases are allowed in free apps), declarations.
+1. Create the app: name "JAMAA", default language, App, Free (in-app purchases are allowed in free apps), declarations.
 2. Fill **App content**: privacy policy URL (M5), ads = none, content rating questionnaire, target audience (13+, so that Families policy is avoided [VERIFY with the owner]), **Data safety** (§6.3), and the **TV** form factor (Release → Advanced settings → Form factors → Android TV; TV screenshots and banner are needed for review).
-3. Build a release AAB with the billing library (B's work) and upload it. `assembleRelease`/`bundleRelease` refuse to build until `mishana.prodServerUrl` in `tv-app/gradle.properties` (or `-PserverUrl=`) is the deployed `https://` Worker origin (docs/TV.md → Production server URL). The URL is known before the first deploy: `https://play.<your-workers-subdomain>.workers.dev` (Worker `name` in `wrangler.jsonc`) or your custom domain. Upload it to **Internal testing** (and to the closed test track for A.9). Billing products can be created only after an APK/AAB with the BILLING permission is uploaded [VERIFY; it was true historically].
+3. Build a release AAB with the billing library (B's work) and upload it. `assembleRelease`/`bundleRelease` refuse to build until `jamaa.prodServerUrl` in `tv-app/gradle.properties` (or `-PserverUrl=`) is the deployed `https://` Worker origin (docs/TV.md → Production server URL). The URL is known before the first deploy: `https://play.<your-workers-subdomain>.workers.dev` (Worker `name` in `wrangler.jsonc`) or your custom domain. Upload it to **Internal testing** (and to the closed test track for A.9). Billing products can be created only after an APK/AAB with the BILLING permission is uploaded [VERIFY; it was true historically].
 4. **License testers:** Settings → License testing → add the testers' Gmail addresses. License testers get test payment methods ✔ (developer.android.com/google/play/billing/test), including "slow test card, approves after a few minutes" (pending → purchased) and "always declines"; an unacknowledged **one-time** purchase is auto-refunded after **3 min** ✔ (the server acks immediately on `/verify`, so this only shows up when the Worker is misconfigured). Test purchases are flagged `test=1`. A license tester can buy `premium` again after a refund in Order management; a non-consumable cannot be bought twice while owned (`ITEM_ALREADY_OWNED` → restore).
 5. **No subscription.** Do **not** create anything under Products → Subscriptions: no subscription, no base plans, no offers (revision 3).
-6. **One-time products only:** Monetize with Play → Products → One-time products → Create, for each row of `pnpm --silent --filter @mishana/server billing:products` (CSV: `productId,kind,priceUsd,pairs,packId,locale,titleEn,titleFr,titleAr`; `premium` first, then 14 packs today):
-   - **first `premium`**: product id `premium`, name "Mish Ana! Premium" (description: all word packs, new packs included, custom scoring; one-time, no subscription), non-consumable, one purchase option (buy), price **US$7.99** ("Set prices" → Play converts per country; adjust LB/ME by hand if wanted). **Activate.** Launch promo: a Play Console **sale** (or a temporary price change) to **US$5.99** on `premium`; end it in Play Console. Never a second product, never code;
+6. **One-time products only:** Monetize with Play → Products → One-time products → Create, for each row of `pnpm --silent --filter @jamaa/server billing:products` (CSV: `productId,kind,priceUsd,pairs,packId,locale,titleEn,titleFr,titleAr`; `premium` first, then 14 packs today):
+   - **first `premium`**: product id `premium`, name "JAMAA Premium" (description: all word packs, new packs included, custom scoring; one-time, no subscription), non-consumable, one purchase option (buy), price **US$7.99** ("Set prices" → Play converts per country; adjust LB/ME by hand if wanted). **Activate.** Launch promo: a Play Console **sale** (or a temporary price change) to **US$5.99** on `premium`; end it in Play Console. Never a second product, never code;
    - then each pack: product id `pack_en_food_01` etc.; name = English title (add the FR/AR/ES translations); one purchase option (buy), price from the CSV (**US$1.99**, or **US$2.99** for ≥ 60 pairs). **Activate.**
 7. **RTDN** (after sections C and D: the Worker must be deployed with the `RTDN_*` vars, or the push answers 503 `NOT_CONFIGURED`): Monetize with Play → Monetization setup → Real-time developer notifications:
    - enable;
@@ -1262,42 +1262,42 @@ Do these in order. Items marked [VERIFY] come from third-party summaries or bloc
 
 **C. Google Cloud (Play Developer API + Pub/Sub)** — `gcloud` CLI flags ✔ verified with `gcloud … --help`:
 ```sh
-gcloud projects create mish-ana-billing            # or use an existing project
-gcloud config set project mish-ana-billing
+gcloud projects create jamaa-billing            # or use an existing project
+gcloud config set project jamaa-billing
 gcloud services enable androidpublisher.googleapis.com pubsub.googleapis.com
 # Service account the Worker uses to call the Play Developer API
-gcloud iam service-accounts create play-api --display-name="Mish Ana Play API"
-gcloud iam service-accounts keys create play-api.json --iam-account=play-api@mish-ana-billing.iam.gserviceaccount.com
+gcloud iam service-accounts create play-api --display-name="JAMAA Play API"
+gcloud iam service-accounts keys create play-api.json --iam-account=play-api@jamaa-billing.iam.gserviceaccount.com
 #   (if your org blocks key creation: constraint iam.disableServiceAccountKeyCreation [VERIFY]; a personal project has no org policy)
 # RTDN topic + Google Play publisher right (✔ the Play service account below)
 gcloud pubsub topics create play-rtdn
 gcloud pubsub topics add-iam-policy-binding play-rtdn \
   --member=serviceAccount:google-play-developer-notifications@system.gserviceaccount.com --role=roles/pubsub.publisher
 # Identity Pub/Sub uses to sign push OIDC tokens (needs no roles)
-gcloud iam service-accounts create rtdn-push --display-name="Mish Ana RTDN push"
+gcloud iam service-accounts create rtdn-push --display-name="JAMAA RTDN push"
 gcloud pubsub subscriptions create play-rtdn-push --topic=play-rtdn \
   --push-endpoint=https://<YOUR_DOMAIN>/api/billing/rtdn \
-  --push-auth-service-account=rtdn-push@mish-ana-billing.iam.gserviceaccount.com \
+  --push-auth-service-account=rtdn-push@jamaa-billing.iam.gserviceaccount.com \
   --push-auth-token-audience=https://<YOUR_DOMAIN>/api/billing/rtdn \
   --ack-deadline=30 --expiration-period=never --min-retry-delay=10s --max-retry-delay=600s
 ```
 - You (the person running gcloud) need `iam.serviceAccounts.actAs` on `rtdn-push`; project Owner has it. Very old projects may also need the Pub/Sub service agent to hold `roles/iam.serviceAccountTokenCreator` [VERIFY].
-- **Play Console → Users and permissions → Invite new users:** email `play-api@mish-ana-billing.iam.gserviceaccount.com`. Under **App permissions**, add the app with **only** "View app information (read-only)" and "View financial data, orders, and cancellation survey responses" ✔ (needed for billing). Do **not** grant "Manage orders and subscriptions": it allows refunding, revoking and cancelling every customer's purchase, and the code never does that. [VERIFY that acknowledge works with view-only permissions: in the internal test (E.2), check the Worker logs for `BILLING_ACK_REJECTED` with status 401/403. Only if acknowledge fails, add "Manage orders and subscriptions".] Click Invite. Permissions can take up to 24 h to propagate [VERIFY].
+- **Play Console → Users and permissions → Invite new users:** email `play-api@jamaa-billing.iam.gserviceaccount.com`. Under **App permissions**, add the app with **only** "View app information (read-only)" and "View financial data, orders, and cancellation survey responses" ✔ (needed for billing). Do **not** grant "Manage orders and subscriptions": it allows refunding, revoking and cancelling every customer's purchase, and the code never does that. [VERIFY that acknowledge works with view-only permissions: in the internal test (E.2), check the Worker logs for `BILLING_ACK_REJECTED` with status 401/403. Only if acknowledge fails, add "Manage orders and subscriptions".] Click Invite. Permissions can take up to 24 h to propagate [VERIFY].
 - **Audit:** enable Cloud Audit Logs (Data Access, `androidpublisher.googleapis.com`) in IAM → Audit Logs, so every API use of the key is recorded [VERIFY that androidpublisher emits data-access audit logs].
-- **Key rotation every 90 days** (calendar reminder): `gcloud iam service-accounts keys create play-api-new.json --iam-account=play-api@mish-ana-billing.iam.gserviceaccount.com` → `npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < play-api-new.json` → check a `/verify` works → `gcloud iam service-accounts keys list --iam-account=…` and `gcloud iam service-accounts keys delete <OLD_KEY_ID> --iam-account=…` → delete the local file. Rotate immediately if a leak is suspected.
+- **Key rotation every 90 days** (calendar reminder): `gcloud iam service-accounts keys create play-api-new.json --iam-account=play-api@jamaa-billing.iam.gserviceaccount.com` → `npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < play-api-new.json` → check a `/verify` works → `gcloud iam service-accounts keys list --iam-account=…` and `gcloud iam service-accounts keys delete <OLD_KEY_ID> --iam-account=…` → delete the local file. Rotate immediately if a leak is suspected.
 - **Delete `play-api.json` from your disk** after step D.
 
 **D. Cloudflare Worker**
 ```sh
 cd server
-pnpm --filter @mishana/server gen:entitlement-key           # prints {"kid":"k1","x":"…","d":"…"}
+pnpm --filter @jamaa/server gen:entitlement-key           # prints {"kid":"k1","x":"…","d":"…"}
 npx wrangler secret put ENTITLEMENT_KEYS                     # paste {"active":"k1","keys":[ <that object> ]}
 npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json   # stdin input [VERIFY that piping works on your wrangler; else paste]
 ```
 - Edit `server/wrangler.jsonc` vars:
   - `RTDN_AUDIENCE`: `https://<YOUR_DOMAIN>/api/billing/rtdn`;
-  - `RTDN_SA_EMAIL`: `rtdn-push@mish-ana-billing.iam.gserviceaccount.com`;
-  - `RTDN_SUBSCRIPTION`: `projects/mish-ana-billing/subscriptions/play-rtdn-push`;
+  - `RTDN_SA_EMAIL`: `rtdn-push@jamaa-billing.iam.gserviceaccount.com`;
+  - `RTDN_SUBSCRIPTION`: `projects/jamaa-billing/subscriptions/play-rtdn-push`;
   - keep `BILLING_MODE:"google"`, `ALLOW_FAKE_BILLING:"0"`.
 - Replace the ratelimit `namespace_id`s with unique account values.
 - `SUPPORT_EMAIL` in `shared/src/billing/products.ts` is set (`alexkhoury@hotmail.com`); use the same address on the Play listing.
@@ -1319,7 +1319,7 @@ npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json   # stdin i
 
 | Implementer | Writes | Must not touch |
 |---|---|---|
-| **A** | `shared/src/billing/**` (new), `shared/src/{constants,engine/*,packs/schema.ts,projection/project.ts,protocol/*,testing/*,i18n/index.ts}`, `shared/i18n/{en,fr,ar,es}.json` (§4.7 keys), `shared/fixtures/**` + `scripts/gen-fixtures.ts`, `shared/package.json` (`./billing` export), `server/**` (incl. `wrangler.jsonc`, `scripts/*`, `package.json` scripts `gen:entitlement-key`, `billing:products`, `deploy` = `node scripts/check-deploy.mjs && wrangler deploy`), `word-packs/packs/*/*-everyday-01.json` (`tier:"free"`), `word-packs/test/**`, `tools/pack-lint/**`, `tools/dev.mjs` (fake vars), `tools/sim/**` (adapt to the RoomCore deps), generated `tv-app/app/src/main/res/values*/strings_generated.xml` + `tv-app/app/src/main/java/app/mishana/tv/i18n/I18nKeys.kt` (run `pnpm gen:strings`), `.gitignore` (`.dev.vars*`), `docs/DEV.md` (fake billing + secrets section), root `package.json` `deploy` script (§1.5), `eslint.config.*` (billing `no-console`, Room secret rule), `docs/DESIGN.md` (only the §4.7 DESIGN deltas) | `tv-app/**` source, `web-client/**` |
+| **A** | `shared/src/billing/**` (new), `shared/src/{constants,engine/*,packs/schema.ts,projection/project.ts,protocol/*,testing/*,i18n/index.ts}`, `shared/i18n/{en,fr,ar,es}.json` (§4.7 keys), `shared/fixtures/**` + `scripts/gen-fixtures.ts`, `shared/package.json` (`./billing` export), `server/**` (incl. `wrangler.jsonc`, `scripts/*`, `package.json` scripts `gen:entitlement-key`, `billing:products`, `deploy` = `node scripts/check-deploy.mjs && wrangler deploy`), `word-packs/packs/*/*-everyday-01.json` (`tier:"free"`), `word-packs/test/**`, `tools/pack-lint/**`, `tools/dev.mjs` (fake vars), `tools/sim/**` (adapt to the RoomCore deps), generated `tv-app/app/src/main/res/values*/strings_generated.xml` + `tv-app/app/src/main/java/app/jamaa/tv/i18n/I18nKeys.kt` (run `pnpm gen:strings`), `.gitignore` (`.dev.vars*`), `docs/DEV.md` (fake billing + secrets section), root `package.json` `deploy` script (§1.5), `eslint.config.*` (billing `no-console`, Room secret rule), `docs/DESIGN.md` (only the §4.7 DESIGN deltas) | `tv-app/**` source, `web-client/**` |
 | **B** | `tv-app/**` except the generated files above; `docs/TV.md` (billing testing: license testers, fake toggle) | everything else |
 | **C** | `web-client/**` (screens, tv-mock store, net/api additions, e2e `payments.spec.ts`, `playwright.config.ts` vars) | everything else |
 

@@ -36,14 +36,20 @@ importers:
         specifier: 4.1.11
         version: 4.1.11(@types/node@22.20.5)(@vitest/coverage-v8@4.1.11)(vite@8.3.2(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15))
 
-  server:
-    dependencies:
-      '@mishana/shared':
+  content:
+    devDependencies:
+      '@jamaa/shared':
         specifier: workspace:*
         version: link:../shared
-      '@mishana/word-packs':
+
+  server:
+    dependencies:
+      '@jamaa/content':
         specifier: workspace:*
-        version: link:../word-packs
+        version: link:../content
+      '@jamaa/shared':
+        specifier: workspace:*
+        version: link:../shared
       partyserver:
         specifier: 0.5.10
         version: 0.5.10(@cloudflare/workers-types@5.20261003.1)
@@ -64,28 +70,30 @@ importers:
         specifier: 4.6.5
         version: 4.6.5
 
+  tools/content-lint:
+    dependencies:
+      '@jamaa/shared':
+        specifier: workspace:*
+        version: link:../../shared
+
   tools/gen-android-strings:
     dependencies:
-      '@mishana/shared':
+      '@jamaa/shared':
         specifier: workspace:*
         version: link:../../shared
 
   tools/gen-sounds: {}
 
-  tools/pack-lint:
-    dependencies:
-      '@mishana/shared':
-        specifier: workspace:*
-        version: link:../../shared
+  tools/rename-gate: {}
 
   tools/sim:
     dependencies:
-      '@mishana/shared':
+      '@jamaa/content':
+        specifier: workspace:*
+        version: link:../../content
+      '@jamaa/shared':
         specifier: workspace:*
         version: link:../../shared
-      '@mishana/word-packs':
-        specifier: workspace:*
-        version: link:../../word-packs
       ws:
         specifier: 8.20.0
         version: 8.20.0
@@ -96,7 +104,7 @@ importers:
 
   web-client:
     dependencies:
-      '@mishana/shared':
+      '@jamaa/shared':
         specifier: workspace:*
         version: link:../shared
       '@preact/signals':
@@ -121,12 +129,6 @@ importers:
       vite:
         specifier: 8.3.2
         version: 8.3.2(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)
-
-  word-packs:
-    devDependencies:
-      '@mishana/shared':
-        specifier: workspace:*
-        version: link:../shared
 
 packages:
 

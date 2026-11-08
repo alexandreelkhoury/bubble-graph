@@ -1,6 +1,8 @@
-# DESIGN — Mish Ana! (مش أنا!)
+# DESIGN — the JAMAA design system and Mish Ana! (مش أنا!), game #1
 
-Design system and screen specs for the **Android TV app** (Compose for TV, 10-foot, D-pad) and the **phone web controller** (Preact, portrait, one thumb), in **EN / FR / AR (RTL)**.
+> **JAMAA (2026-11-08).** The platform is now **JAMAA** («جماعة»); "Mish Ana!" is its game #1 (id `mishana`). Brand, hub, characters, worlds and platform motion are specified in [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) and [DESIGN-JAMAA.md](DESIGN-JAMAA.md), which win where they differ from this file. In this file, the design system (tokens, components, `Jamaa*` Kotlin objects) belongs to the platform; the wordmark of §1.3, the taglines' `brand.slogan` and the TV/phone screens of §7–§8 describe Mish Ana!. Languages are **EN / FR / AR / ES** everywhere (ES drafts are marked for native review).
+
+Design system and screen specs for the **Android TV app** (Compose for TV, 10-foot, D-pad) and the **phone web controller** (Preact, portrait, one thumb), in **EN / FR / AR (RTL) / ES**.
 
 This file builds on [PLAN.md](PLAN.md) and [RESEARCH.md](RESEARCH.md). It follows the approved answers: the official win rule is the default, roles are hidden by default with a beginner mode, the name lives in one constant and asset set, production is on `*.workers.dev`, the web client is served by the same Worker, and AR copy is a draft for native review.
 
@@ -44,11 +46,13 @@ The name must change in **one place** (PLAN §7):
 
 | Asset | Location | Content |
 |---|---|---|
-| Constants | SPEC §3: `BRAND` in `shared/src/brand.ts`, hand-written `Brand.kt` | Names and values are defined there (`BRAND.name`, `BRAND.nameAr`, `BRAND.slug = "mish-ana"`) |
-| i18n keys | `shared/i18n/*.json` (SPEC §11.2) | `brand.appName`, `brand.slogan`, `brand.tagline`; the store line is `extra.storeHook`. Every other string refers to the game as "the game" |
-| Vector assets | `/assets/brand/` (owned by agent C, SPEC §0.1; final art is M5) | `wordmark-bilingual.svg`, `wordmark-latin.svg`, `wordmark-ar.svg`, `mark.svg` (icon). Generated: `banner_{en,fr,ar}.png` (320 × 180 px), `ic_launcher` (160 × 160 px xhdpi), `favicon.svg`, `og.png` |
+| Constants | SPEC §3: `BRAND` in `shared/src/brand.ts`, hand-written `Brand.kt` | Names and values are defined there (`BRAND.name = "JAMAA"`, `BRAND.nameAr = "جماعة"`, `BRAND.slug = "jamaa"`); game #1's names live in `GAME1` (`shared/src/games/mishana/meta.ts`) |
+| i18n keys | `shared/i18n/*.json` (SPEC §11.2) | `brand.appName` ("JAMAA" / «جماعة»), `brand.tagline` (platform); `brand.slogan` is game #1's slogan and moves to `game.mishana.slogan` with the i18n split (JAMAA-PLATFORM §5.7); the store line is `extra.storeHook`. Every other string refers to the game as "the game" |
+| Vector assets | `/assets/brand/` (JAMAA platform art, JAMAA-PLATFORM §3.9) and `/assets/games/mishana/` (the Mish Ana! wordmark below; owned by lane C) | `wordmark-bilingual.svg`, `wordmark-latin.svg`, `wordmark-ar.svg`, `mark.svg` (icon). Generated: `banner_{en,fr,ar}.png` (320 × 180 px), `ic_launcher` (160 × 160 px xhdpi), `favicon.svg`, `og.png` |
 
-### 1.3 Wordmark: "the shared bang"
+### 1.3 Wordmark: "the shared bang" (game #1 logo)
+
+> Since the JAMAA rename this is **Mish Ana!'s logo**, shown on its setup screen and its own marketing; its generated outputs live in `assets/games/mishana/`. The platform wordmark and launcher art are JAMAA's (JAMAA-PLATFORM §3.9, DESIGN-JAMAA). The launcher icon and banner bullets below describe the pre-rename art and are kept for reference.
 **Concept.** The Latin name ends in "!" on the right. The Arabic name, read right to left, ends in "!" on the **left**. Placing the two halves side by side lets them **share one exclamation mark in the middle**: `MISH ANA ! مش أنا`. Each script reads correctly toward the same "!". It is the gesture of the game: everyone points at the middle and says "not me".
 
 **Construction** (artboard `viewBox="0 0 1200 300"`; all text converted to outlines for the final asset)
@@ -87,11 +91,11 @@ The name must change in **one place** (PLAN §7):
 
 ### 1.4 Taglines
 
-| Key | EN | FR | AR (Lebanese) |
-|---|---|---|---|
-| `brand.slogan` (TV splash) | Everyone's innocent. Someone's lying. | Tout le monde est innocent. Quelqu'un ment. | كلّنا أبرياء… بس في حدا عم يكذب. |
-| `brand.tagline` | The secret-word party game | Le jeu d'ambiance du mot secret | لعبة الكلمة السرّية للسهرات |
-| `extra.storeHook` (store listing only) | Your phone holds the secret. The TV holds the drama. | Ton téléphone garde le secret. La télé fait le show. | السرّ عالتلفون… والدراما عالتلفزيون. |
+| Key | EN | FR | AR (Lebanese) | ES (draft) |
+|---|---|---|---|---|
+| `brand.slogan` (game #1; becomes `game.mishana.slogan`) | Everyone's innocent. Someone's lying. | Tout le monde est innocent. Quelqu'un ment. | كلّنا أبرياء… بس في حدا عم يكذب. | Todos son inocentes. Alguien miente. |
+| `brand.tagline` (JAMAA) | Party games for your TV | Jeux de soirée sur ta télé | ألعاب سهرة عالتلفزيون (draft for owner review) | Juegos de fiesta en tu tele |
+| `extra.storeHook` (store listing only) | Your phone holds the secret. The TV holds the drama. | Ton téléphone garde le secret. La télé fait le show. | السرّ عالتلفون… والدراما عالتلفزيون. | Tu móvil guarda el secreto. La tele pone el drama. |
 
 ### 1.5 Voice
 
@@ -114,7 +118,7 @@ The name must change in **one place** (PLAN §7):
 
 Dark-first, and only dark: the TV must be opaque (TV-TR), and party rooms are dim. Since v3 (B19) the browser TV and the phone use **palette B, the "lit stage"**: the violet room of the ads and the landing, dialled down about 30 % so the content stays the brightest thing on screen. The phone uses the same tokens on a **darker stage** (below), so it matches the TV and its screen still doesn't light up faces in a dark room, which helps privacy.
 
-> **Native TV app:** `tv-app` keeps the previous night palette (`#120A1F` bg, `#1E1430` surface, `#FF3D8B` primary, `#FFC23D` accent, …; `MishColors.kt`) until palette B is checked on the owner's TV (8-bit panel at low backlight: gradient banding, milky blacks around the QR). Port it to `MishColors.kt` / `MishBackground` only after that test.
+> **Native TV app:** `tv-app` keeps the previous night palette (`#120A1F` bg, `#1E1430` surface, `#FF3D8B` primary, `#FFC23D` accent, …; `JamaaColors.kt`) until palette B is checked on the owner's TV (8-bit panel at low backlight: gradient banding, milky blacks around the QR). Port it to `JamaaColors.kt` / `JamaaBackground` only after that test.
 
 ### 2.1 Core tokens
 
@@ -332,7 +336,7 @@ Body text uses weight 600, not 400: at 10 ft, regular Cairo strokes break up on 
 ### 4.6 Interaction states
 **TV focus (the one focus style, everywhere):** scale **1.06** (tiles), **1.04** (buttons, pills) or **1.02** (full-width rows: settings rows, categories, menu items; at 1.04 their start edge jumped 9–12 dp), a 3 dp `color.focus` ring offset 2 dp outside, `glow.primary`, and the fill lifts to `elevated`. Takes `motion.fast` with `ease.standard`. Unfocused focusables sit at 100 % scale with no ring. Disabled: 40 % opacity, still focusable *only* if it explains why it's disabled (e.g. Start shows "Need 3 players"). **A disabled primary never uses alpha** (ink on 40 % pink was 1.35–1.82:1): rest = `surface` fill + `textSecondary`, focused = `elevated` + `text`, ring and glow at full strength (v3 A4).
 
-Compose for TV: use `androidx.tv.material3` `Surface` / `Button` / `Card` with `ClickableSurfaceDefaults.scale(focusedScale = 1.06f)`, `border(focusedBorder = Border(BorderStroke(3.dp, MishColors.Focus), inset = (-2).dp))` and `glow(focusedGlow = Glow(MishColors.Primary.copy(alpha = .45f), 18.dp))` **[verify these parameter names against tv-material 1.1.0]**.
+Compose for TV: use `androidx.tv.material3` `Surface` / `Button` / `Card` with `ClickableSurfaceDefaults.scale(focusedScale = 1.06f)`, `border(focusedBorder = Border(BorderStroke(3.dp, JamaaColors.Focus), inset = (-2).dp))` and `glow(focusedGlow = Glow(JamaaColors.Primary.copy(alpha = .45f), 18.dp))` **[verify these parameter names against tv-material 1.1.0]**.
 
 **Phone press:** scale 0.97 plus a 6 % brightness drop on `:active`, taking 80 ms; small controls (icon buttons, chips, segmented options, swatches, steppers) 0.96. A **disabled primary** button is `elevated` + `textMuted` (5.46:1), no opacity and no glow. `:focus-visible` shows a 3 px `color.focus` outline offset 3 px (keyboard and switch users). Selected rows get a 2 px `primary` border plus a check icon. Selection is never shown by color alone.
 
@@ -607,7 +611,7 @@ Haptics come only from user gestures or right after one, as the API requires (RE
 | +------------------+       +--------+ +- - - - + +- - - - + +- - - - + |
 |   K X Q P   <72sp amber>   +- - - - + +- - - - + +- - - - + +- - - - + |
 |                            :   +    : :   +    : :   +    : :   +    : |
-|   or open mish-ana.x.workers.dev                                       |
+|   or open play.jamaa.workers.dev                                       |
 |   and enter the code       [ Settings ]  [ (globe) English ]  (• Start)|
 +------------------------------------------------------------------------+
 ```
@@ -1442,7 +1446,7 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 
 | Component | TV (Compose; `ui/components/`) | Phone (Preact; `src/ui/`) | Notes |
 |---|---|---|---|
-| Button (primary / secondary / danger / ghost) | `MishButton(kind)` on `androidx.tv.material3.Button` | `<Button kind>` | Pill. Primary = `primary` fill + ink label. Secondary = `surface` + `text`. Danger = `danger` outline → fill on focus/press |
+| Button (primary / secondary / danger / ghost) | `JamaaButton(kind)` on `androidx.tv.material3.Button` | `<Button kind>` | Pill. Primary = `primary` fill + ink label. Secondary = `surface` + `text`. Danger = `danger` outline → fill on focus/press |
 | Avatar | `Avatar(player, size, state)` | `<Avatar>` | §5.2 states |
 | Player tile | `PlayerTile` | `<PlayerRow>` (list form) | TV tile; phone row |
 | Role card | `RoleCard(role, faceUp)` | `<RoleCard>` | Emblem + pattern + label |
@@ -1456,7 +1460,7 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | Vote chip | `VoteChip(from, to)` | — | Bézier flight |
 | Toast | `ToastHost` (bottom start, max 2) | `<Toast>` (top, under the top bar) | 3 s; never holds focus |
 | Banner (status) | `StatusBanner` | `<Banner>` | Connection, pause, "you're next" |
-| Dialog / sheet | `MishDialog` | `<Sheet>` | Safe option first |
+| Dialog / sheet | `JamaaDialog` | `<Sheet>` | Safe option first |
 | Setting row | `SettingRow(label, value, onPrev, onNext)` | `<Segmented>` / `<Stepper>` / `<Switch>` | Same keys and values |
 
 ---
@@ -1520,9 +1524,9 @@ Same names on both platforms, so design QA, code and tests talk about the same t
 | Key | FR | AR |
 |---|---|---|
 | **Brand, common, language** | | |
-| `brand.appName` | Mish Ana ! | مش أنا! |
-| `brand.tagline` | Le jeu d'ambiance du mot secret | لعبة الكلمة السرّية للسهرات |
-| `brand.slogan` | Tout le monde est innocent. Quelqu'un ment. | كلّنا أبرياء… بس في حدا عم يكذب. |
+| `brand.appName` | JAMAA | جماعة |
+| `brand.tagline` | Jeux de soirée sur ta télé | ألعاب سهرة عالتلفزيون |
+| `brand.slogan` (game #1 → `game.mishana.slogan`) | Tout le monde est innocent. Quelqu'un ment. | كلّنا أبرياء… بس في حدا عم يكذب. |
 | `common.ok` | OK | تمام |
 | `common.cancel` | Annuler | إلغاء |
 | `common.back` | Retour | رجوع |
@@ -2016,10 +2020,10 @@ There is no token generator in v1 (nobody owns `shared/design/`): B writes `toke
 ### 13.2 Compose for TV: `tv-app/app/src/main/java/<pkg>/ui/theme/`
 
 ```kotlin
-// MishColors.kt
+// JamaaColors.kt
 import androidx.compose.ui.graphics.Color
 
-object MishColors {
+object JamaaColors {
     val Bg = Color(0xFF120A1F)
     val BgGlow = Color(0xFF2A0F3D)
     val Surface = Color(0xFF1E1430)
@@ -2047,25 +2051,25 @@ object MishColors {
 enum class AvatarShape { Circle, Square, Star, Triangle, Diamond, Hexagon, Plus, Drop, Crescent, Bolt, Flower, Arch }
 
 enum class PlayerSwatch(val id: String, val color: Color, val glyph: Color, val shape: AvatarShape) {
-    Coral("coral", Color(0xFFF0183A), MishColors.Ink, AvatarShape.Circle),
-    Azure("azure", Color(0xFF478CFF), MishColors.Ink, AvatarShape.Square),
-    Lemon("lemon", Color(0xFFFFF04D), MishColors.Ink, AvatarShape.Star),
-    Jade("jade", Color(0xFF1FA88A), MishColors.Ink, AvatarShape.Triangle),
-    Grape("grape", Color(0xFF7A43FF), MishColors.Text, AvatarShape.Diamond),
-    Tangerine("tangerine", Color(0xFFFF7A1F), MishColors.Ink, AvatarShape.Hexagon),
-    Aqua("aqua", Color(0xFF7BFFF4), MishColors.Ink, AvatarShape.Plus),
-    Rose("rose", Color(0xFFFF96C5), MishColors.Ink, AvatarShape.Drop),
-    Mint("mint", Color(0xFFBDF5C8), MishColors.Ink, AvatarShape.Crescent),
-    Plum("plum", Color(0xFFC02A8F), MishColors.Text, AvatarShape.Bolt),
-    Sand("sand", Color(0xFFE6C486), MishColors.Ink, AvatarShape.Flower),
-    Lilac("lilac", Color(0xFFC9BFFF), MishColors.Ink, AvatarShape.Arch);
+    Coral("coral", Color(0xFFF0183A), JamaaColors.Ink, AvatarShape.Circle),
+    Azure("azure", Color(0xFF478CFF), JamaaColors.Ink, AvatarShape.Square),
+    Lemon("lemon", Color(0xFFFFF04D), JamaaColors.Ink, AvatarShape.Star),
+    Jade("jade", Color(0xFF1FA88A), JamaaColors.Ink, AvatarShape.Triangle),
+    Grape("grape", Color(0xFF7A43FF), JamaaColors.Text, AvatarShape.Diamond),
+    Tangerine("tangerine", Color(0xFFFF7A1F), JamaaColors.Ink, AvatarShape.Hexagon),
+    Aqua("aqua", Color(0xFF7BFFF4), JamaaColors.Ink, AvatarShape.Plus),
+    Rose("rose", Color(0xFFFF96C5), JamaaColors.Ink, AvatarShape.Drop),
+    Mint("mint", Color(0xFFBDF5C8), JamaaColors.Ink, AvatarShape.Crescent),
+    Plum("plum", Color(0xFFC02A8F), JamaaColors.Text, AvatarShape.Bolt),
+    Sand("sand", Color(0xFFE6C486), JamaaColors.Ink, AvatarShape.Flower),
+    Lilac("lilac", Color(0xFFC9BFFF), JamaaColors.Ink, AvatarShape.Arch);
     companion object { fun byId(id: String) = entries.firstOrNull { it.id == id } ?: Coral }
 }
 ```
 The protocol sends the color **`id` string** ("lemon"), never a hex value. `PlayerSwatch` must stay identical to SPEC §3 `COLORS` (C may implement it as `Constants.COLORS` plus this enum; a unit test compares them).
 
 ```kotlin
-// MishType.kt
+// JamaaType.kt
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
@@ -2085,7 +2089,7 @@ val Cairo = FontFamily(
 )
 
 @Immutable
-data class MishTypeScale(
+data class JamaaTypeScale(
     val code: TextStyle, val displayL: TextStyle, val displayM: TextStyle, val displayS: TextStyle,
     val headline: TextStyle, val title: TextStyle, val titleS: TextStyle, val body: TextStyle,
     val label: TextStyle, val caption: TextStyle, val timer: TextStyle,
@@ -2101,10 +2105,10 @@ private fun style(
 )
 
 /** Latin/Arabic variants per §3.2. Arabic: taller lines, zero tracking, ×1.08 on display sizes. */
-fun mishTypeScale(arabic: Boolean): MishTypeScale {
+fun jamaaTypeScale(arabic: Boolean): JamaaTypeScale {
     fun t(latin: Double) = if (arabic) 0.em else latin.em
     fun d(size: Int) = if (arabic) (size * 1.08).toInt() else size
-    return MishTypeScale(
+    return JamaaTypeScale(
         code     = style(88, 96, FontWeight.Black, 0.08.em, tnum = true), // always Latin
         displayL = style(d(72), if (arabic) 96 else 80, FontWeight.Black, t(-0.01)),
         displayM = style(d(56), if (arabic) 80 else 64, FontWeight.Black, t(-0.01)),
@@ -2119,11 +2123,11 @@ fun mishTypeScale(arabic: Boolean): MishTypeScale {
     )
 }
 
-val LocalMishType = staticCompositionLocalOf { mishTypeScale(arabic = false) }
+val LocalJamaaType = staticCompositionLocalOf { jamaaTypeScale(arabic = false) }
 ```
 
 ```kotlin
-// MishTheme.kt — maps tokens into tv-material so stock components inherit them.
+// JamaaTheme.kt — maps tokens into tv-material so stock components inherit them.
 // [verify] darkColorScheme / Typography / MaterialTheme parameter names against androidx.tv:tv-material:1.1.0 sources.
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -2134,17 +2138,17 @@ import androidx.tv.material3.Typography
 import androidx.tv.material3.darkColorScheme
 
 @Composable
-fun MishTheme(content: @Composable () -> Unit) {
+fun JamaaTheme(content: @Composable () -> Unit) {
     val arabic = LocalLayoutDirection.current == LayoutDirection.Rtl   // or the locale's language == "ar"
-    val type = mishTypeScale(arabic)
+    val type = jamaaTypeScale(arabic)
     val colors = darkColorScheme(
-        primary = MishColors.Primary, onPrimary = MishColors.OnPrimary,
-        secondary = MishColors.Accent, onSecondary = MishColors.OnAccent,
-        background = MishColors.Bg, onBackground = MishColors.Text,
-        surface = MishColors.Surface, onSurface = MishColors.Text,
-        surfaceVariant = MishColors.Elevated, onSurfaceVariant = MishColors.TextSecondary,
-        error = MishColors.Danger, onError = MishColors.Ink,
-        border = MishColors.Focus, scrim = MishColors.Scrim,
+        primary = JamaaColors.Primary, onPrimary = JamaaColors.OnPrimary,
+        secondary = JamaaColors.Accent, onSecondary = JamaaColors.OnAccent,
+        background = JamaaColors.Bg, onBackground = JamaaColors.Text,
+        surface = JamaaColors.Surface, onSurface = JamaaColors.Text,
+        surfaceVariant = JamaaColors.Elevated, onSurfaceVariant = JamaaColors.TextSecondary,
+        error = JamaaColors.Danger, onError = JamaaColors.Ink,
+        border = JamaaColors.Focus, scrim = JamaaColors.Scrim,
     )
     val m3Type = Typography(
         displayLarge = type.displayL, displayMedium = type.displayM, displaySmall = type.displayS,
@@ -2153,20 +2157,20 @@ fun MishTheme(content: @Composable () -> Unit) {
         bodyLarge = type.body, bodyMedium = type.body, bodySmall = type.caption,
         labelLarge = type.label, labelMedium = type.caption, labelSmall = type.caption,
     )
-    CompositionLocalProvider(LocalMishType provides type) {
+    CompositionLocalProvider(LocalJamaaType provides type) {
         MaterialTheme(colorScheme = colors, typography = m3Type, content = content)
     }
 }
 ```
 
 ```kotlin
-// MishMotion.kt
+// JamaaMotion.kt
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.ui.unit.dp
 
-object MishMotion {
+object JamaaMotion {
     const val Instant = 80; const val Fast = 150; const val Base = 240
     const val Slow = 400; const val Dramatic = 800; const val Hold = 1200
     val Standard = CubicBezierEasing(0.2f, 0f, 0f, 1f)
@@ -2176,14 +2180,14 @@ object MishMotion {
     fun <T> bouncy() = spring<T>(dampingRatio = 0.55f, stiffness = Spring.StiffnessMediumLow)
 }
 
-object MishSpace { /* dp */ val s1 = 4.dp; val s2 = 8.dp; val s3 = 12.dp; val s4 = 16.dp; val s5 = 20.dp
+object JamaaSpace { /* dp */ val s1 = 4.dp; val s2 = 8.dp; val s3 = 12.dp; val s4 = 16.dp; val s5 = 20.dp
     val s6 = 24.dp; val s7 = 32.dp; val s8 = 40.dp; val s9 = 48.dp; val s10 = 64.dp; val s11 = 80.dp; val s12 = 96.dp
     val SafeH = 48.dp; val SafeV = 27.dp }
-object MishRadius { val xs = 6.dp; val sm = 10.dp; val md = 16.dp; val lg = 24.dp; val xl = 32.dp }
+object JamaaRadius { val xs = 6.dp; val sm = 10.dp; val md = 16.dp; val lg = 24.dp; val xl = 32.dp }
 ```
 
 - **Reduced motion on TV:** `val reduce = Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f` (v1 has no in-app override). Provide it through `LocalReduceMotion`. Animations branch on it and don't just shorten durations.
-- **Focus helper:** a single `Modifier.mishFocusable()` (or the tv-material `Surface` defaults from §4.6) so the focus style can't drift between screens.
+- **Focus helper:** a single `Modifier.jamaaFocusable()` (or the tv-material `Surface` defaults from §4.6) so the focus style can't drift between screens.
 - **Avatars:** `AvatarShape` → `ImageVector`, generated from the same SVGs as the web (`tools/icons-to-kotlin`). Never hand-draw them twice.
 - **QR:** per SPEC §9.9: encode `view.joinUrl.uppercase()`, then draw the `BitMatrix` modules as rects inside the 240 dp cream panel with `module = floor(240 / (width + 8))` and a `4 × module` inset. **[verify]** the exact ZXing signature against 3.5.4.
 

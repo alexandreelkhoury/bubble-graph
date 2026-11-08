@@ -3,6 +3,6 @@ export const BRAND = {
   name: "JAMAA",
   nameAr: "جماعة",
   slug: "jamaa",               // URL slug (the Worker itself is named "play" in server/wrangler.jsonc)
-  storagePrefix: "jamaa",      // localStorage / prefs prefix (web migrates the old "mishana:" keys, JAMAA-PLATFORM §1.5)
+  storagePrefix: "jamaa",      // localStorage / prefs prefix (web migrates the legacy keys, JAMAA-PLATFORM §1.5)
   androidAppId: "app.jamaa.tv",
 } as const;

@@ -43,8 +43,17 @@ web-client/test/storage.test.ts
 # --- Lines ---
 # i18n keys of game #1 and the GameId literal
 line: game\.mishana\.
+# the same keys as generated Android resource names (tools/gen-android-strings: "." becomes "__")
+line: game__mishana__
 line: "mishana"
+# references to the GAME1 folders above (imports, package exports, docs)
+line: games/mishana/
+# the Kotlin package of the TV GAME1 folder (app.jamaa.tv.games.mishana)
+line: \.games\.mishana\b
 # Remotion compositions of the Mish Ana! film keep their ids (§1.3 growth/video)
 line: MishAna-(16x9|9x16|1x1)
 # TV.md documents removing the old test install (§6.3 acceptance)
 line: adb (-s \S+ )?uninstall app\.mishana\.tv
+# Words in the Mish Ana! word packs that the case-insensitive \bMish[A-Z] branch catches (Lebanese "misht" = comb,
+# "mishmish" = apricot). The packs move to content/mishana/** (allowlisted) with lane D's move (§5.1).
+line: "([Mm]isht|[Mm]ishmish)"

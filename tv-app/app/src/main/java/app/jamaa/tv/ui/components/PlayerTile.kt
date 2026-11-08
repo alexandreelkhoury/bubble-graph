@@ -1,0 +1,289 @@
+package app.jamaa.tv.ui.components
+
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.res.stringResource
+import app.jamaa.tv.R
+import app.jamaa.tv.ui.theme.JamaaShapes
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
+import androidx.compose.ui.platform.LocalDensity
+import androidx.tv.material3.Border
+import androidx.tv.material3.Icon
+import androidx.tv.material3.Text
+import app.jamaa.tv.game.Names
+import app.jamaa.tv.protocol.PublicPlayer
+import app.jamaa.tv.protocol.Role
+import app.jamaa.tv.ui.theme.JamaaColors
+import app.jamaa.tv.ui.theme.JamaaMotion
+import app.jamaa.tv.ui.theme.JamaaTheme
+import app.jamaa.tv.ui.theme.PlayerSwatch
+
+/** Mixes [this] toward its own luminance grey by [amount] (0 = unchanged, 1 = grey). */
+fun Color.desaturate(amount: Float): Color {
+    val l = 0.2126f * red + 0.7152f * green + 0.0722f * blue
+    return lerp(this, Color(l, l, l, alpha), amount.coerceIn(0f, 1f))
+}
+
+/** Avatar states (DESIGN §5.2). Away wins over ready. */
+data class AvatarState(
+    val away: Boolean = false,
+    val check: Boolean = false,
+    val host: Boolean = false,
+    val eliminated: Boolean = false,
+    val left: Boolean = false,
+    val speaking: Boolean = false,
+    val role: Role? = null,
+) {
+    companion object {
+        fun of(p: PublicPlayer, check: Boolean = false, showHost: Boolean = true, speaking: Boolean = false) = AvatarState(
+            away = !p.connected && !p.left,
+            check = check,
+            host = showHost && p.isHost,
+            eliminated = !p.alive,
+            left = p.left,
+            speaking = speaking,
+            role = p.revealedRole,
+        )
+    }
+}
+
+/**
+ * Geometric avatar: a squircle in the player colour with the paired shape glyph at 62 % (DESIGN §5.2).
+ * Corner badges carry a 2 dp `bg` ring so they separate from any tile colour.
+ */
+@Composable
+fun Avatar(
+    colorId: String,
+    size: Dp,
+    modifier: Modifier = Modifier,
+    state: AvatarState = AvatarState(),
+) {
+    val swatch = PlayerSwatch.byId(colorId)
+    val reduce = JamaaTheme.reduceMotion
+    val out = state.eliminated || state.left
+    val fill = when {
+        out -> swatch.color.desaturate(1f)
+        state.away -> swatch.color.desaturate(0.8f)
+        else -> swatch.color
+    }
+    val glyph = if (out) swatch.glyph.desaturate(1f) else swatch.glyph
+    val bodyAlpha = when {
+        out -> 0.45f
+        state.away -> 0.6f
+        else -> 1f
+    }
+    // Read in the layer only: the speaking avatar breathes without recomposing.
+    val breathe = if (state.speaking && !reduce) {
+        rememberInfiniteTransition(label = "breathe")
+            .animateFloat(1f, 1.03f, infiniteRepeatable(tween(800, easing = JamaaMotion.Standard), RepeatMode.Reverse), label = "b")
+    } else {
+        null
+    }
+    val shape = RoundedCornerShape(percent = 30)
+    val badge = (size * 0.36f).coerceIn(18.dp, 30.dp)
+    Box(modifier.size(size)) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    val b = breathe?.value ?: 1f
+                    scaleX = b
+                    scaleY = b
+                }
+                .then(
+                    if (state.speaking) {
+                        Modifier
+                            .shadow(18.dp, shape, ambientColor = JamaaColors.Primary, spotColor = JamaaColors.Primary)
+                            .border(BorderStroke(4.dp, JamaaColors.Primary), shape)
+                    } else {
+                        Modifier
+                    },
+                )
+                .alpha(bodyAlpha)
+                .background(fill, shape)
+                // Grape and plum fall under 3:1 on surface/elevated: a 2 dp cream ring at 24 % on the avatar itself
+                // (DESIGN §2.3, the web's `--avatar-ring`), on every surface. The speaking ring replaces it.
+                .then(if (swatch.needsRing && !state.speaking) Modifier.border(BorderStroke(2.dp, AVATAR_RING), shape) else Modifier),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = AvatarGlyphs.of(swatch.shape),
+                contentDescription = null,
+                tint = glyph,
+                modifier = Modifier.size(size * 0.62f),
+            )
+        }
+        // top-start: host crown
+        if (state.host && !out) {
+            CornerBadge(JamaaIcons.Crown, JamaaColors.Accent, JamaaColors.Ink, badge, Alignment.TopStart)
+        }
+        // top-end: away > left > check
+        when {
+            state.left -> CornerBadge(JamaaIcons.DoorOut, JamaaColors.TextMuted, JamaaColors.Ink, badge, Alignment.TopEnd)
+            state.away -> CornerBadge(JamaaIcons.WifiOff, JamaaColors.Danger, JamaaColors.Ink, badge, Alignment.TopEnd)
+            state.check && !out -> PopBadge(JamaaIcons.Check, JamaaColors.Success, JamaaColors.Ink, badge, Alignment.TopEnd)
+        }
+        // bottom-end: role emblem once a role is public (eliminated or left)
+        val role = state.role
+        if (out && role != null) {
+            Box(
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .offset(x = badge / 3, y = badge / 3)
+                    .size(badge * 1.25f)
+                    .background(JamaaColors.Bg, CircleShape)
+                    .padding(2.dp)
+                    .background(roleColor(role), CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                RoleEmblem(role, size = badge * 0.8f, color = JamaaColors.Ink)
+            }
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.CornerBadge(
+    icon: ImageVector,
+    disc: Color,
+    ink: Color,
+    size: Dp,
+    align: Alignment,
+    extra: Modifier = Modifier,
+) {
+    val dx = if (align == Alignment.TopStart) -size / 3 else size / 3
+    Box(
+        Modifier
+            .align(align)
+            .offset(x = dx, y = -size / 3)
+            .then(extra)
+            .size(size)
+            .background(JamaaColors.Bg, CircleShape)
+            .padding(2.dp)
+            .background(disc, CircleShape)
+            .clearAndSetSemantics {},
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(icon, contentDescription = null, tint = ink, modifier = Modifier.size(size * 0.62f))
+    }
+}
+
+/** Ready/voted check pops in with `ease.overshoot` (static in reduced motion). */
+@Composable
+private fun BoxScope.PopBadge(icon: ImageVector, disc: Color, ink: Color, size: Dp, align: Alignment) {
+    val reduce = JamaaTheme.reduceMotion
+    val scale = remember { Animatable(if (reduce) 1f else 0f) }
+    LaunchedEffect(Unit) {
+        if (!reduce) scale.animateTo(1f, tween(JamaaMotion.Base, easing = JamaaMotion.Overshoot))
+    }
+    CornerBadge(icon, disc, ink, size, align, Modifier.graphicsLayer { scaleX = scale.value; scaleY = scale.value })
+}
+
+/** Card/tile with avatar + name (DESIGN §9 `PlayerTile`). Focusable only when [onClick] is given (lobby kick, players list). */
+@Composable
+fun PlayerTile(
+    player: PublicPlayer,
+    width: Dp,
+    height: Dp,
+    avatarSize: Dp,
+    modifier: Modifier = Modifier,
+    state: AvatarState = AvatarState.of(player),
+    onClick: (() -> Unit)? = null,
+    nameMax: Int = 12,
+    contentAlpha: Float = 1f,
+    nameOverride: (@Composable () -> Unit)? = null,
+) {
+    val shape = JamaaShapes.tile
+    val a11y = listOfNotNull(
+        player.name,
+        stringResource(R.string.common__host).takeIf { player.isHost },
+        stringResource(R.string.common__away).takeIf { !player.connected },
+        stringResource(R.string.reveal__ready).takeIf { state.check },
+    ).joinToString(", ")
+    // Fixed tile size (grids must keep their geometry), so the avatar gives way when the name line is taller:
+    // Arabic line heights and the 1.3× font scale (DESIGN §11) never clip the name.
+    val nameStyle = if (height < 104.dp) JamaaTheme.type.titleS else JamaaTheme.type.title
+    val nameH = with(LocalDensity.current) { nameStyle.lineHeight.toDp() }
+    val fittedAvatar = min(avatarSize, height - 16.dp - nameH).coerceAtLeast(24.dp)
+    val content: @Composable BoxScope.() -> Unit = {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(top = 10.dp, bottom = 6.dp, start = 6.dp, end = 6.dp)
+                .alpha(contentAlpha),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Avatar(player.color, fittedAvatar, state = state)
+            if (nameOverride != null) {
+                nameOverride()
+            } else {
+                Text(
+                    text = Names.ellipsize(player.name, nameMax),
+                    style = nameStyle,
+                    color = JamaaColors.Text,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+    }
+    if (onClick != null) {
+        JamaaFocusSurface(
+            onClick = onClick,
+            modifier = modifier.size(width, height).semantics { contentDescription = a11y },
+            shape = shape,
+            kind = FocusKind.Tile,
+            body = content,
+        )
+    } else {
+        Box(
+            modifier
+                .size(width, height)
+                .background(JamaaColors.Surface, shape)
+                .border(BorderStroke(1.dp, JamaaColors.Text.copy(alpha = 0.06f)), shape)
+                .semantics { contentDescription = a11y },
+            content = content,
+        )
+    }
+}
+
+private val AVATAR_RING = JamaaColors.Text.copy(alpha = 0.24f)

@@ -1,4 +1,4 @@
-# Developing Mish Ana!
+# Developing JAMAA
 
 This page covers local development, testing and deployment for the TypeScript side of the repo (shared engine, Worker and Room Durable Object, web client, tools). The Android TV app has its own guide in [TV.md](TV.md). The binding contract is [SPEC.md](SPEC.md).
 
@@ -14,7 +14,7 @@ This page covers local development, testing and deployment for the TypeScript si
 pnpm install
 ```
 
-There is no build step for `@mishana/shared`: Vite, Wrangler (esbuild), Vitest and tsx compile its TypeScript source directly.
+There is no build step for `@jamaa/shared`: Vite, Wrangler (esbuild), Vitest and tsx compile its TypeScript source directly.
 
 ## Run locally: `pnpm dev`
 
@@ -49,12 +49,12 @@ Phones scan the QR code or open `http://<LAN_HOST>:5173/ABCD`.
 ### Running only the server
 
 ```sh
-pnpm --filter @mishana/server exec wrangler dev --port 8787
-curl -s localhost:8787/healthz                     # {"ok":true,"app":"mish-ana","protocol":1}
+pnpm --filter @jamaa/server exec wrangler dev --port 8787
+curl -s localhost:8787/healthz                     # {"ok":true,"app":"jamaa","protocol":1}
 curl -s -X POST localhost:8787/api/rooms           # {"code":"KXRT","tvToken":"…","joinUrl":"…","wsPath":"/parties/room/KXRT","entitlement":"NONE"}
 ```
 
-`wrangler.jsonc` points `assets.directory` at `../web-client/dist`, so build the web client first (`pnpm --filter @mishana/web-client build`). Wrangler refuses to start when that folder is missing.
+`wrangler.jsonc` points `assets.directory` at `../web-client/dist`, so build the web client first (`pnpm --filter @jamaa/web-client build`). Wrangler refuses to start when that folder is missing.
 
 ## Tests and checks
 
@@ -65,16 +65,17 @@ curl -s -X POST localhost:8787/api/rooms           # {"code":"KXRT","tvToken":"�
 | `pnpm lint` / `pnpm typecheck` | ESLint (flat config) and `tsc -p .` in every package |
 | `pnpm sim --players 3..12 --games 500` | Engine-mode bot games on the real packs with invariant, termination, role-count and leak checks, and the Blank-never-opens rule at every round and tie-break. The full catalog is equivalent to a Premium room; add `--access free` to play the free starter packs only (locked packs must never be picked, views carry locked-pack metadata only) |
 | `pnpm sim --ws http://127.0.0.1:8787 --players 4 --games 3` | **WS mode** against a running server (see below) |
-| `pnpm --filter @mishana/web-client build` | Vite production build into `web-client/dist`, then the 60 KB gzip phone budget (`web-client/scripts/check-size.mjs`, TV mock excluded) |
-| `pnpm --filter @mishana/server build` | Wrangler dry-run bundle (minified) into `server/dist`, then the 400 KB script budget (`server/scripts/check-size.mjs`) |
-| `pnpm fixtures` / `pnpm --filter @mishana/shared run check:fixtures` | Regenerate or verify `shared/fixtures/*.json` |
-| `pnpm lint:packs` / `pnpm --filter @mishana/pack-lint run lint -- --release` | Pack lint. `--release` (run by `pnpm run deploy`) fails when a free starter pack has fewer than 40 pairs |
-| `pnpm --filter @mishana/server billing:products` | CSV of every premium pack (`productId,packId,locale,titleEn,titleFr,titleAr`) for Play Console |
+| `pnpm --filter @jamaa/web-client build` | Vite production build into `web-client/dist`, then the 60 KB gzip phone budget (`web-client/scripts/check-size.mjs`, TV mock excluded) |
+| `pnpm --filter @jamaa/server build` | Wrangler dry-run bundle (minified) into `server/dist`, then the 400 KB script budget (`server/scripts/check-size.mjs`) |
+| `pnpm fixtures` / `pnpm --filter @jamaa/shared run check:fixtures` | Regenerate or verify `shared/fixtures/*.json` |
+| `pnpm rename:gate` (`-- --summary` for per-file counts) | JAMAA rename gate (JAMAA-PLATFORM §1.7): fails on any case-insensitive hit of the old brand outside `tools/rename-gate/allowlist.txt` |
+| `pnpm lint:packs` (alias `pnpm lint:content`) / `pnpm --filter @jamaa/content-lint run lint -- --release` | Pack lint. `--release` (run by `pnpm run deploy`) fails when a free starter pack has fewer than 40 pairs |
+| `pnpm --filter @jamaa/server billing:products` | CSV of every premium pack (`productId,packId,locale,titleEn,titleFr,titleAr`) for Play Console |
 | `pnpm grant <installId>` / `pnpm grant list` / `pnpm grant revoke <id>` | Owner comps through `/api/admin/grants` (needs the optional `ADMIN_TOKEN` secret; see [Admin grants](#admin-grants-comp-premium-for-a-tv-payments-spec-312)) |
 
 To run one project: `pnpm vitest run --project server` (or `shared`, `sim`, …).
 
-Test support lives in `shared/src/testing` and is imported as `@mishana/shared/testing` (from shared tests: `../../src/testing`): the scripted `Game` driver, the seeded bot driver `playGame` with its per-step checks, the secret-leak checker and the test catalogs. The server tests, `tools/sim` and the fixture generator use the same code.
+Test support lives in `shared/src/testing` and is imported as `@jamaa/shared/testing` (from shared tests: `../../src/testing`): the scripted `Game` driver, the seeded bot driver `playGame` with its per-step checks, the secret-leak checker and the test catalogs. The server tests, `tools/sim` and the fixture generator use the same code.
 
 ### Server tests (`server/test`)
 
@@ -112,7 +113,7 @@ Along the way it checks that:
 - `seq` never goes backwards;
 - every TV state satisfies SPEC §5.4: no secret word, no alive revealed role and no guess text before RESULTS.
 
-The same check is available as an opt-in Vitest case: `MISHANA_WS_URL=http://127.0.0.1:8787 pnpm vitest run --project sim`.
+The same check is available as an opt-in Vitest case: `JAMAA_WS_URL=http://127.0.0.1:8787 pnpm vitest run --project sim`.
 
 **Manual restart check** (a real DO reset):
 
@@ -187,7 +188,7 @@ In fake mode the cron only prunes.
 | `ADMIN_TOKEN` (optional) | ≥ 32 random characters (`openssl rand -hex 32`); unset = admin endpoints answer 404. See [Admin grants](#admin-grants-comp-premium-for-a-tv-payments-spec-312) |
 
 ```sh
-pnpm --filter @mishana/server gen:entitlement-key            # prints {"kid":"k1","x":"…","d":"…"}; -- --kid k2 for the next one
+pnpm --filter @jamaa/server gen:entitlement-key            # prints {"kid":"k1","x":"…","d":"…"}; -- --kid k2 for the next one
 cd server && npx wrangler secret put ENTITLEMENT_KEYS          # paste {"active":"k1","keys":[ <that object> ]}
 npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json
 ```
@@ -204,10 +205,10 @@ Optional. Lets the owner give premium and/or packs to specific TV installs (e.g.
 
 1. **Turn it on** (once): `cd server && openssl rand -hex 32 | npx wrangler secret put ADMIN_TOKEN`, and keep the value in your password manager. Without the secret (or with one shorter than 32 characters) every `/api/admin/*` path answers 404; `check-deploy.mjs` keeps it optional (never a var, never in `secrets.required`). To turn it off again: `npx wrangler secret delete ADMIN_TOKEN`. Locally, put `ADMIN_TOKEN=…` in `server/.dev.vars`.
 2. **Find the TV's install id:** on the TV, Lobby → **Settings** → **About** (last category, D-pad Down). It shows `Install ID` as eight groups of four hex characters. The `/tv` browser mock shows its own id in the same place. The id is created on first launch and survives updates; clearing the app's data creates a new one.
-3. **Grant / list / revoke** (the token is read from the environment only, so it stays out of shell history; the server from `--url` or `MISHANA_URL`):
+3. **Grant / list / revoke** (the token is read from the environment only, so it stays out of shell history; the server from `--url` or `JAMAA_URL`):
 
 ```sh
-export MISHANA_URL=https://play.<your-subdomain>.workers.dev   # or your custom domain
+export JAMAA_URL=https://play.<your-subdomain>.workers.dev   # or your custom domain
 read -rs ADMIN_TOKEN && export ADMIN_TOKEN                      # paste the token
 pnpm grant "0123 4567 89ab cdef 0123 4567 89ab cdef" --note "living-room TV"   # premium, no end date
 pnpm grant 0123456789abcdef0123456789abcdef --packs en-food-01,fr-food-01      # only these packs
@@ -225,7 +226,7 @@ Admin routes, like every `/api/billing/*` route, answer 404 while `BILLING_ENABL
 Premium covers every premium pack, current and future, plus the premium settings. A grant with no end date gives it to an install for good. The grant survives app updates, server deploys and the daily prune, and it never touches Google or a purchase's install slots. One-time setup: `ADMIN_TOKEN` (step 1 above) and `BILLING_ENABLED` `"1"` ([BILLING-LAUNCH.md](BILLING-LAUNCH.md)).
 
 ```sh
-export MISHANA_URL=https://play.mishana.workers.dev
+export JAMAA_URL=https://play.jamaa.workers.dev
 read -rs ADMIN_TOKEN && export ADMIN_TOKEN          # from your password manager
 pnpm grant "<id of TV 1>" "<id of TV 2>" --note "owner"   # each id: TV → Settings → About; spaces are fine
 ```
@@ -236,7 +237,7 @@ Why install ids and not your Google account: the app has no accounts, and the se
 
 ### Vars, observability and logs
 
-- Vars: `PLAY_PACKAGE_NAME` (`app.mishana.tv`), `RTDN_AUDIENCE` (`https://<your-domain>/api/billing/rtdn`), `RTDN_SA_EMAIL` (the push service account), `RTDN_SUBSCRIPTION` (`projects/<project>/subscriptions/play-rtdn-push`). Until the RTDN vars are set, `/api/billing/rtdn` answers 503 and Pub/Sub retries.
+- Vars: `PLAY_PACKAGE_NAME` (`app.jamaa.tv`), `RTDN_AUDIENCE` (`https://<your-domain>/api/billing/rtdn`), `RTDN_SA_EMAIL` (the push service account), `RTDN_SUBSCRIPTION` (`projects/<project>/subscriptions/play-rtdn-push`). Until the RTDN vars are set, `/api/billing/rtdn` answers 503 and Pub/Sub retries.
 - **Workers traces stay disabled** (`observability.traces.enabled: false`, enforced by `check-deploy.mjs`): traces record outbound fetch URLs, and every Google Play call carries a raw purchase token in its path. Do not add Logpush or a Tail Worker without revisiting PAYMENTS-SPEC §3.2.
 - Billing code logs only through `billingLog(code, fields)` (`server/src/billing/log.ts`), which keeps numbers, booleans and a few enum strings and redacts every other string. Alert on the codes `BILLING_ACK_OVERDUE`, `BILLING_ACK_REJECTED`, `BILLING_AUTH`, `BILLING_BUDGET`, `BILLING_SUB_STALE`, `RTDN_AUTH` (PAYMENTS-SPEC §8.D).
 
@@ -247,12 +248,12 @@ Why install ids and not your Google account: the app has no accounts, and the se
 ### Before the first production release
 
 - `pnpm run deploy` (never bare `pnpm deploy`: pnpm 10 runs its built-in `deploy` command instead of the script) runs `pack-lint --release`: each free starter pack (`*-everyday-01`) needs at least **40 pairs** (170–176 today, so the gate passes).
-- Create the Play products from `pnpm --filter @mishana/server billing:products` (PAYMENTS-SPEC §8.B).
+- Create the Play products from `pnpm --filter @jamaa/server billing:products` (PAYMENTS-SPEC §8.B).
 - Replace the rate-limit `namespace_id`s `1003`/`1004` like `1001`/`1002`.
 
 ## Deploy (Cloudflare)
 
-1. Log in once: `pnpm --filter @mishana/server exec wrangler login`.
+1. Log in once: `pnpm --filter @jamaa/server exec wrangler login`.
 2. **Rate-limit namespaces.** `namespace_id` must be a positive integer string that is unique in your account. `"1001"` to `"1004"` in `server/wrangler.jsonc` work locally; change them if they collide with other Workers.
 3. **Billing secrets and vars:** see [Billing](#billing-payments-specmd). Only with `BILLING_ENABLED` `"1"`: the deploy is refused while `PLAY_SERVICE_ACCOUNT_JSON` or `ENTITLEMENT_KEYS` is missing. With billing off, no billing secret is needed.
 4. Deploy: `pnpm run deploy`. This builds the web client, dry-run bundles the Worker, runs `pack-lint --release` and `check-deploy.mjs` (google billing, fake billing off, traces off), then `wrangler deploy`. The Worker is served at `https://play.<your-subdomain>.workers.dev`.
@@ -265,7 +266,7 @@ Nothing in the repo names a real domain. There are exactly three settings, all e
 
 | Setting | Where | Placeholder / default | Set it to |
 |---|---|---|---|
-| TV app server URL → `BuildConfig.SERVER_URL` | `mishana.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=…` / env `ORG_GRADLE_PROJECT_serverUrl` | `https://mish-ana.example.workers.dev` (placeholder; release builds refuse it, and refuse any non-`https://` URL) | The Worker origin: the `https://play.<your-subdomain>.workers.dev` URL printed by `pnpm run deploy`, or `https://<your-domain>`. No trailing slash, no path |
+| TV app server URL → `BuildConfig.SERVER_URL` | `jamaa.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=…` / env `ORG_GRADLE_PROJECT_serverUrl` | `https://play.example.workers.dev` (placeholder; release builds refuse it, and refuse any non-`https://` URL) | The Worker origin: the `https://play.<your-subdomain>.workers.dev` URL printed by `pnpm run deploy`, or `https://<your-domain>`. No trailing slash, no path |
 | Phone join base URL (QR code and join link) | `JOIN_BASE_URL` in `server/wrangler.jsonc` `vars` (or the dashboard) | `""` = the origin the TV called, i.e. the same URL as above | Leave empty on `*.workers.dev`. With a custom domain: `https://<your-domain>`, so QR codes do not show the `workers.dev` host |
 | Extra browser origins | `ALLOWED_ORIGINS` in `server/wrangler.jsonc` `vars` | `""` = same-origin only | Leave empty in production (the Worker serves the phone page itself). Only for a web client hosted elsewhere: a comma-separated list of exact origins |
 
@@ -275,7 +276,7 @@ Checklist after `pnpm run deploy`:
 
 1. `curl https://<worker-origin>/healthz` prints `{"ok":true,…}`.
 2. With a custom domain: set `JOIN_BASE_URL`, run `pnpm run deploy` again.
-3. Put the same origin in `tv-app/gradle.properties` (`mishana.prodServerUrl=https://…`) and run `./gradlew :app:bundleRelease`; the build log prints `Mish Ana! release server URL: …`.
+3. Put the same origin in `tv-app/gradle.properties` (`jamaa.prodServerUrl=https://…`) and run `./gradlew :app:bundleRelease`; the build log prints `JAMAA release server URL: …`.
 4. Open `/tv` on the deployed origin: the QR code must show the intended host.
 
 Keep `DEBUG_INVARIANTS` at `"0"` in production. Workers observability (logs) is enabled with traces off, and the logging rules above keep player data and purchase tokens out of it.

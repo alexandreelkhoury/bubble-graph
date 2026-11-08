@@ -22,7 +22,7 @@
         android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
         android:usesCleartextTraffic="false"
-        android:theme="@style/Theme.MishAna">
+        android:theme="@style/Theme.Jamaa">
 
         <activity
             android:name=".MainActivity"

@@ -1,0 +1,1 @@
+{"name":"@jamaa/content","version":"0.0.0","private":true,"type":"module","exports":{".":"./index.ts","./mishana/*":"./mishana/*"},"scripts":{"typecheck":"tsc -p ."},"devDependencies":{"@jamaa/shared":"workspace:*"}}

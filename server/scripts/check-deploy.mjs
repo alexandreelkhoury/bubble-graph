@@ -56,7 +56,7 @@ export function checkDeployConfig(jsoncText) {
   const vars = cfg.vars ?? {};
   if (vars.BILLING_MODE !== "google") errors.push(`vars.BILLING_MODE must be "google" (is ${JSON.stringify(vars.BILLING_MODE)})`);
   if (vars.ALLOW_FAKE_BILLING !== "0") errors.push(`vars.ALLOW_FAKE_BILLING must be "0" (is ${JSON.stringify(vars.ALLOW_FAKE_BILLING)})`);
-  // JAMAA-PLATFORM §1.6 O6: the Play package is app.jamaa.tv (the old app.mishana.tv was never published).
+  // JAMAA-PLATFORM §1.6 O6: the Play package is app.jamaa.tv (a new Play app; the old package was never published).
   if (vars.PLAY_PACKAGE_NAME !== "app.jamaa.tv") errors.push(`vars.PLAY_PACKAGE_NAME must be "app.jamaa.tv" (is ${JSON.stringify(vars.PLAY_PACKAGE_NAME)})`);
   if (cfg.observability?.traces?.enabled !== false) errors.push("observability.traces.enabled must be false (traces record outbound URLs with purchase tokens)");
   // PAYMENTS-SPEC §3.12: ADMIN_TOKEN is an OPTIONAL secret (unset = /api/admin/* answers 404). It must never be a plain
