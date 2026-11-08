@@ -51,7 +51,7 @@ export const SettingsSchema = z.object({
 export const SettingsPatchSchema = SettingsSchema.partial().strict();
 
 // Compile-time agreement between the zod schemas and the engine types.
-type Same<A, B> = [A] extends [B] ? ([B] extends [A] ? true : never) : never;
+export type Same<A, B> = [A] extends [B] ? ([B] extends [A] ? true : never) : never;
 export const _settingsAgree: Same<z.infer<typeof SettingsSchema>, Settings> = true;
 export const _pointsAgree: Same<z.infer<typeof PointsSchema>, Points> = true;
 export const _titleAgree: Same<z.infer<typeof LocalizedTitleSchema>, LocalizedTitle> = true;

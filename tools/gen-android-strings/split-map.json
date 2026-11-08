@@ -1,0 +1,1323 @@
+{
+  "$comment": "JAMAA-PLATFORM §5.7: every pre-P i18n key → its file (root = shared/i18n/<locale>.json, games/<id> = shared/i18n/games/<id>/<locale>.json) and its new name when it changes ('as'). Produced by lane D first in P1; tested by tools/gen-android-strings/test/split-map.test.ts.",
+  "count": 436,
+  "reusedNames": [
+    "brand.slogan"
+  ],
+  "keys": {
+    "brand.appName": {
+      "to": "root"
+    },
+    "brand.tagline": {
+      "to": "root"
+    },
+    "brand.slogan": {
+      "to": "games/mishana",
+      "as": "game.mishana.slogan"
+    },
+    "common.ok": {
+      "to": "root"
+    },
+    "common.cancel": {
+      "to": "root"
+    },
+    "common.back": {
+      "to": "root"
+    },
+    "common.close": {
+      "to": "root"
+    },
+    "common.continue": {
+      "to": "root"
+    },
+    "common.done": {
+      "to": "root"
+    },
+    "common.retry": {
+      "to": "root"
+    },
+    "common.on": {
+      "to": "root"
+    },
+    "common.off": {
+      "to": "root"
+    },
+    "common.loading": {
+      "to": "root"
+    },
+    "common.you": {
+      "to": "root"
+    },
+    "common.host": {
+      "to": "root"
+    },
+    "common.away": {
+      "to": "root"
+    },
+    "common.timerOff": {
+      "to": "root"
+    },
+    "common.seconds": {
+      "to": "root"
+    },
+    "common.points": {
+      "to": "root"
+    },
+    "common.aliveCount": {
+      "to": "games/mishana"
+    },
+    "common.language": {
+      "to": "root"
+    },
+    "lang.en": {
+      "to": "root"
+    },
+    "lang.fr": {
+      "to": "root"
+    },
+    "lang.ar": {
+      "to": "root"
+    },
+    "lang.es": {
+      "to": "root"
+    },
+    "round.label": {
+      "to": "games/mishana"
+    },
+    "round.short": {
+      "to": "games/mishana"
+    },
+    "game.label": {
+      "to": "root",
+      "as": "common.gameNumber"
+    },
+    "role.civilian": {
+      "to": "games/mishana"
+    },
+    "role.undercover": {
+      "to": "games/mishana"
+    },
+    "role.blank": {
+      "to": "games/mishana"
+    },
+    "roleDesc.civilian": {
+      "to": "games/mishana"
+    },
+    "roleDesc.undercover": {
+      "to": "games/mishana"
+    },
+    "roleDesc.blank": {
+      "to": "games/mishana"
+    },
+    "team.civilians": {
+      "to": "games/mishana"
+    },
+    "team.infiltrators": {
+      "to": "games/mishana"
+    },
+    "winner.civilians": {
+      "to": "games/mishana"
+    },
+    "winner.infiltrators": {
+      "to": "games/mishana"
+    },
+    "winner.blank": {
+      "to": "games/mishana"
+    },
+    "winner.moles": {
+      "to": "games/mishana"
+    },
+    "winner.undercovers": {
+      "to": "games/mishana"
+    },
+    "color.coral": {
+      "to": "root"
+    },
+    "color.azure": {
+      "to": "root"
+    },
+    "color.lemon": {
+      "to": "root"
+    },
+    "color.jade": {
+      "to": "root"
+    },
+    "color.grape": {
+      "to": "root"
+    },
+    "color.tangerine": {
+      "to": "root"
+    },
+    "color.aqua": {
+      "to": "root"
+    },
+    "color.rose": {
+      "to": "root"
+    },
+    "color.mint": {
+      "to": "root"
+    },
+    "color.plum": {
+      "to": "root"
+    },
+    "color.sand": {
+      "to": "root"
+    },
+    "color.lilac": {
+      "to": "root"
+    },
+    "phase.lobby": {
+      "to": "games/mishana"
+    },
+    "phase.roleReveal": {
+      "to": "games/mishana"
+    },
+    "phase.clues": {
+      "to": "games/mishana"
+    },
+    "phase.voting": {
+      "to": "games/mishana"
+    },
+    "phase.tieBreak": {
+      "to": "games/mishana"
+    },
+    "phase.elimination": {
+      "to": "games/mishana"
+    },
+    "phase.mrWhiteGuess": {
+      "to": "games/mishana"
+    },
+    "phase.results": {
+      "to": "games/mishana"
+    },
+    "lobby.scanToJoin": {
+      "to": "root"
+    },
+    "lobby.orVisit": {
+      "to": "root"
+    },
+    "lobby.roomCode": {
+      "to": "root"
+    },
+    "lobby.playerCount": {
+      "to": "root"
+    },
+    "lobby.needPlayers": {
+      "to": "root"
+    },
+    "lobby.blockerRoles": {
+      "to": "games/mishana"
+    },
+    "lobby.blockerWords": {
+      "to": "games/mishana"
+    },
+    "lobby.startGame": {
+      "to": "root"
+    },
+    "lobby.startAll": {
+      "to": "root"
+    },
+    "lobby.waitingPlayers": {
+      "to": "root"
+    },
+    "lobby.waitingHost": {
+      "to": "root"
+    },
+    "lobby.hostIs": {
+      "to": "root"
+    },
+    "lobby.roleSummary": {
+      "to": "games/mishana"
+    },
+    "lobby.kick": {
+      "to": "root"
+    },
+    "lobby.kickConfirm": {
+      "to": "root"
+    },
+    "lobby.kickBody": {
+      "to": "root"
+    },
+    "lobby.settings": {
+      "to": "root"
+    },
+    "lobby.joined": {
+      "to": "root"
+    },
+    "lobby.left": {
+      "to": "root"
+    },
+    "lobby.full": {
+      "to": "root"
+    },
+    "lobby.youreIn": {
+      "to": "root"
+    },
+    "lobby.lookTv": {
+      "to": "root"
+    },
+    "lobby.youHostSub": {
+      "to": "root"
+    },
+    "lobby.premium": {
+      "to": "root"
+    },
+    "lobby.premiumRoom": {
+      "to": "root"
+    },
+    "lobby.premiumEnded": {
+      "to": "root"
+    },
+    "howto.title": {
+      "to": "root"
+    },
+    "howto.step1": {
+      "to": "games/mishana",
+      "as": "game.mishana.howto.1"
+    },
+    "howto.step2": {
+      "to": "games/mishana",
+      "as": "game.mishana.howto.2"
+    },
+    "howto.step3": {
+      "to": "games/mishana",
+      "as": "game.mishana.howto.3"
+    },
+    "howto.step4": {
+      "to": "games/mishana",
+      "as": "game.mishana.howto.4"
+    },
+    "lobby.premiumEndedPhone": {
+      "to": "root"
+    },
+    "lobby.wordsRepeating": {
+      "to": "games/mishana"
+    },
+    "settings.title": {
+      "to": "root"
+    },
+    "settings.catGame": {
+      "to": "root"
+    },
+    "settings.catRoles": {
+      "to": "games/mishana"
+    },
+    "settings.catTimers": {
+      "to": "games/mishana"
+    },
+    "settings.catWords": {
+      "to": "games/mishana"
+    },
+    "settings.catAbout": {
+      "to": "root"
+    },
+    "settings.installId": {
+      "to": "root"
+    },
+    "settings.installIdHelp": {
+      "to": "root"
+    },
+    "settings.appVersion": {
+      "to": "root"
+    },
+    "settings.winRule": {
+      "to": "games/mishana"
+    },
+    "settings.winRuleOfficial": {
+      "to": "games/mishana"
+    },
+    "settings.winRuleParity": {
+      "to": "games/mishana"
+    },
+    "settings.winRuleOfficialHelp": {
+      "to": "games/mishana"
+    },
+    "settings.winRuleParityHelp": {
+      "to": "games/mishana"
+    },
+    "settings.revealRoles": {
+      "to": "games/mishana"
+    },
+    "settings.roleMode": {
+      "to": "games/mishana"
+    },
+    "settings.roleModeAuto": {
+      "to": "games/mishana"
+    },
+    "settings.roleModeCustom": {
+      "to": "games/mishana"
+    },
+    "settings.undercoverCount": {
+      "to": "games/mishana"
+    },
+    "settings.blankCount": {
+      "to": "games/mishana"
+    },
+    "settings.blankCountHelp": {
+      "to": "games/mishana"
+    },
+    "settings.undercoverCountHelp": {
+      "to": "games/mishana"
+    },
+    "settings.rolePreview": {
+      "to": "games/mishana"
+    },
+    "settings.clueSeconds": {
+      "to": "games/mishana"
+    },
+    "settings.voteSeconds": {
+      "to": "games/mishana"
+    },
+    "settings.revealSeconds": {
+      "to": "games/mishana"
+    },
+    "settings.guessSeconds": {
+      "to": "games/mishana"
+    },
+    "settings.timerOffHelp": {
+      "to": "root"
+    },
+    "settings.tieBreak": {
+      "to": "games/mishana"
+    },
+    "settings.tieBreakRandom": {
+      "to": "games/mishana"
+    },
+    "settings.tieBreakNone": {
+      "to": "games/mishana"
+    },
+    "settings.blankGuess": {
+      "to": "games/mishana"
+    },
+    "settings.wordLocale": {
+      "to": "games/mishana"
+    },
+    "settings.packs": {
+      "to": "games/mishana"
+    },
+    "settings.allPacks": {
+      "to": "root"
+    },
+    "settings.packTeen": {
+      "to": "root"
+    },
+    "settings.difficulty": {
+      "to": "games/mishana"
+    },
+    "settings.difficulty1": {
+      "to": "games/mishana"
+    },
+    "settings.difficulty2": {
+      "to": "games/mishana"
+    },
+    "settings.difficulty3": {
+      "to": "games/mishana"
+    },
+    "settings.familyFilter": {
+      "to": "root"
+    },
+    "settings.swapSides": {
+      "to": "games/mishana"
+    },
+    "settings.points": {
+      "to": "games/mishana"
+    },
+    "settings.applies": {
+      "to": "root"
+    },
+    "settings.changedBy": {
+      "to": "root"
+    },
+    "settings.locked": {
+      "to": "root"
+    },
+    "settings.premiumOnly": {
+      "to": "root"
+    },
+    "settings.unlockHint": {
+      "to": "root"
+    },
+    "settings.unlockOnTv": {
+      "to": "root"
+    },
+    "settings.lockedPacks": {
+      "to": "root"
+    },
+    "join.title": {
+      "to": "root"
+    },
+    "join.enterCode": {
+      "to": "root"
+    },
+    "join.codeLabel": {
+      "to": "root"
+    },
+    "join.codeInvalid": {
+      "to": "root"
+    },
+    "join.next": {
+      "to": "root"
+    },
+    "join.joiningCode": {
+      "to": "root"
+    },
+    "join.nameLabel": {
+      "to": "root"
+    },
+    "join.namePlaceholder": {
+      "to": "root"
+    },
+    "join.colorLabel": {
+      "to": "root"
+    },
+    "join.colorTaken": {
+      "to": "root"
+    },
+    "join.submit": {
+      "to": "root"
+    },
+    "join.joining": {
+      "to": "root"
+    },
+    "join.resuming": {
+      "to": "root"
+    },
+    "join.locked": {
+      "to": "root"
+    },
+    "join.unlocked": {
+      "to": "root"
+    },
+    "home.hostHint": {
+      "to": "root"
+    },
+    "reveal.yourWord": {
+      "to": "games/mishana"
+    },
+    "reveal.holdToSee": {
+      "to": "games/mishana"
+    },
+    "reveal.release": {
+      "to": "games/mishana"
+    },
+    "reveal.twist": {
+      "to": "games/mishana"
+    },
+    "reveal.privacy": {
+      "to": "games/mishana"
+    },
+    "reveal.firstTime": {
+      "to": "games/mishana"
+    },
+    "reveal.noWord": {
+      "to": "games/mishana"
+    },
+    "reveal.youAreBlank": {
+      "to": "games/mishana"
+    },
+    "reveal.blankBody": {
+      "to": "games/mishana"
+    },
+    "reveal.yourRole": {
+      "to": "games/mishana"
+    },
+    "reveal.yourRoleTitle": {
+      "to": "games/mishana"
+    },
+    "reveal.ready": {
+      "to": "games/mishana"
+    },
+    "reveal.tapAlt": {
+      "to": "games/mishana"
+    },
+    "reveal.showFor5": {
+      "to": "games/mishana"
+    },
+    "reveal.waitingOthers": {
+      "to": "games/mishana"
+    },
+    "reveal.readyCount": {
+      "to": "games/mishana"
+    },
+    "reveal.checkPhones": {
+      "to": "games/mishana"
+    },
+    "reveal.checkBody": {
+      "to": "games/mishana"
+    },
+    "reveal.blankHint": {
+      "to": "games/mishana"
+    },
+    "clues.rule": {
+      "to": "games/mishana"
+    },
+    "clues.firstHint": {
+      "to": "games/mishana"
+    },
+    "clues.speaking": {
+      "to": "games/mishana"
+    },
+    "clues.speakerSub": {
+      "to": "games/mishana"
+    },
+    "clues.noTimer": {
+      "to": "games/mishana"
+    },
+    "clues.nowSpeaking": {
+      "to": "games/mishana"
+    },
+    "clues.upNext": {
+      "to": "games/mishana"
+    },
+    "clues.youreNext": {
+      "to": "games/mishana"
+    },
+    "clues.listen": {
+      "to": "games/mishana"
+    },
+    "clues.yourTurn": {
+      "to": "games/mishana"
+    },
+    "clues.yourTurnBody": {
+      "to": "games/mishana"
+    },
+    "clues.blankBody": {
+      "to": "games/mishana"
+    },
+    "clues.done": {
+      "to": "games/mishana"
+    },
+    "clues.peek": {
+      "to": "games/mishana"
+    },
+    "clues.peekRole": {
+      "to": "games/mishana"
+    },
+    "tie.yourTurn": {
+      "to": "games/mishana"
+    },
+    "clues.skipTurn": {
+      "to": "games/mishana"
+    },
+    "clues.skipped": {
+      "to": "games/mishana"
+    },
+    "vote.title": {
+      "to": "games/mishana"
+    },
+    "vote.sub": {
+      "to": "games/mishana"
+    },
+    "vote.pick": {
+      "to": "games/mishana"
+    },
+    "vote.pickSub": {
+      "to": "games/mishana"
+    },
+    "vote.pickFirst": {
+      "to": "games/mishana"
+    },
+    "vote.confirm": {
+      "to": "games/mishana"
+    },
+    "vote.locked": {
+      "to": "games/mishana"
+    },
+    "vote.actNatural": {
+      "to": "games/mishana"
+    },
+    "vote.youVoted": {
+      "to": "games/mishana"
+    },
+    "vote.progress": {
+      "to": "games/mishana"
+    },
+    "vote.tenLeft": {
+      "to": "games/mishana"
+    },
+    "vote.timeUp": {
+      "to": "games/mishana"
+    },
+    "vote.lookTv": {
+      "to": "games/mishana"
+    },
+    "vote.dead": {
+      "to": "games/mishana"
+    },
+    "vote.revoteAmong": {
+      "to": "games/mishana"
+    },
+    "vote.revoteBetween": {
+      "to": "games/mishana"
+    },
+    "vote.close": {
+      "to": "games/mishana"
+    },
+    "vote.votesIn": {
+      "to": "games/mishana"
+    },
+    "vote.noVote": {
+      "to": "games/mishana"
+    },
+    "vote.nobodyVoted": {
+      "to": "games/mishana"
+    },
+    "stamp.out": {
+      "to": "games/mishana"
+    },
+    "stamp.tie": {
+      "to": "games/mishana"
+    },
+    "tie.title": {
+      "to": "games/mishana"
+    },
+    "tie.explain": {
+      "to": "games/mishana"
+    },
+    "tie.inTie": {
+      "to": "games/mishana"
+    },
+    "tie.persist": {
+      "to": "games/mishana"
+    },
+    "tie.vs": {
+      "to": "games/mishana"
+    },
+    "elim.eliminated": {
+      "to": "games/mishana"
+    },
+    "elim.wasCivilian": {
+      "to": "games/mishana"
+    },
+    "elim.wasUndercover": {
+      "to": "games/mishana"
+    },
+    "elim.wasBlank": {
+      "to": "games/mishana"
+    },
+    "elim.reactionCivilian": {
+      "to": "games/mishana"
+    },
+    "elim.reactionUndercover": {
+      "to": "games/mishana"
+    },
+    "elim.reactionBlank": {
+      "to": "games/mishana"
+    },
+    "elim.reactionBlankNoGuess": {
+      "to": "games/mishana"
+    },
+    "elim.noElimination": {
+      "to": "games/mishana"
+    },
+    "elim.randomPick": {
+      "to": "games/mishana"
+    },
+    "elim.abstained": {
+      "to": "games/mishana"
+    },
+    "elim.nextRound": {
+      "to": "games/mishana"
+    },
+    "elim.nextIn": {
+      "to": "games/mishana"
+    },
+    "elim.you": {
+      "to": "games/mishana"
+    },
+    "elim.youWere": {
+      "to": "games/mishana"
+    },
+    "elim.stay": {
+      "to": "games/mishana"
+    },
+    "elim.lastChance": {
+      "to": "games/mishana"
+    },
+    "elim.blankGetReady": {
+      "to": "games/mishana"
+    },
+    "elim.forfeit": {
+      "to": "games/mishana"
+    },
+    "history.title": {
+      "to": "games/mishana"
+    },
+    "history.left": {
+      "to": "games/mishana"
+    },
+    "history.kicked": {
+      "to": "games/mishana"
+    },
+    "guess.title": {
+      "to": "games/mishana"
+    },
+    "guess.guessing": {
+      "to": "games/mishana"
+    },
+    "guess.silence": {
+      "to": "games/mishana"
+    },
+    "guess.sayAloud": {
+      "to": "games/mishana"
+    },
+    "guess.waiting": {
+      "to": "games/mishana"
+    },
+    "guess.prompt": {
+      "to": "games/mishana"
+    },
+    "guess.placeholder": {
+      "to": "games/mishana"
+    },
+    "guess.spelling": {
+      "to": "games/mishana"
+    },
+    "guess.stakes": {
+      "to": "games/mishana"
+    },
+    "guess.submit": {
+      "to": "games/mishana"
+    },
+    "guess.sent": {
+      "to": "games/mishana"
+    },
+    "guess.correct": {
+      "to": "games/mishana"
+    },
+    "guess.correctYou": {
+      "to": "games/mishana"
+    },
+    "guess.wrong": {
+      "to": "games/mishana"
+    },
+    "guess.wrongYou": {
+      "to": "games/mishana"
+    },
+    "guess.timeout": {
+      "to": "games/mishana"
+    },
+    "guess.accept": {
+      "to": "games/mishana"
+    },
+    "guess.acceptConfirm": {
+      "to": "games/mishana"
+    },
+    "guess.reject": {
+      "to": "games/mishana"
+    },
+    "guess.rejectConfirm": {
+      "to": "games/mishana"
+    },
+    "guess.overridden": {
+      "to": "games/mishana"
+    },
+    "guess.skip": {
+      "to": "games/mishana"
+    },
+    "guess.guessed": {
+      "to": "games/mishana"
+    },
+    "results.title": {
+      "to": "root"
+    },
+    "results.civilianWord": {
+      "to": "games/mishana"
+    },
+    "results.undercoverWord": {
+      "to": "games/mishana"
+    },
+    "results.scoreboard": {
+      "to": "root"
+    },
+    "results.colRank": {
+      "to": "root"
+    },
+    "results.colPlayer": {
+      "to": "root"
+    },
+    "results.colRole": {
+      "to": "games/mishana"
+    },
+    "results.colGame": {
+      "to": "root"
+    },
+    "results.colTotal": {
+      "to": "root"
+    },
+    "results.pointsEarned": {
+      "to": "root"
+    },
+    "results.youWon": {
+      "to": "root"
+    },
+    "results.youLost": {
+      "to": "root"
+    },
+    "results.playAgain": {
+      "to": "root"
+    },
+    "results.changeSettings": {
+      "to": "root"
+    },
+    "results.newRoom": {
+      "to": "root"
+    },
+    "results.newRoomConfirm": {
+      "to": "root"
+    },
+    "results.waitingHost": {
+      "to": "root"
+    },
+    "results.pack": {
+      "to": "root"
+    },
+    "conn.connecting": {
+      "to": "root"
+    },
+    "conn.reconnecting": {
+      "to": "root"
+    },
+    "conn.lost": {
+      "to": "root"
+    },
+    "conn.tvReconnecting": {
+      "to": "root"
+    },
+    "conn.tvLostBody": {
+      "to": "root"
+    },
+    "conn.cantReach": {
+      "to": "root"
+    },
+    "conn.playerAway": {
+      "to": "root"
+    },
+    "conn.phonesAsleep": {
+      "to": "root"
+    },
+    "conn.phonesAsleepTimer": {
+      "to": "root"
+    },
+    "conn.seatSaved": {
+      "to": "root"
+    },
+    "conn.stillTrying": {
+      "to": "root"
+    },
+    "conn.back": {
+      "to": "root"
+    },
+    "conn.reload": {
+      "to": "root"
+    },
+    "tv.creatingRoom": {
+      "to": "root"
+    },
+    "tv.createFailed": {
+      "to": "root"
+    },
+    "tv.newRoom": {
+      "to": "root"
+    },
+    "tv.newCode": {
+      "to": "root"
+    },
+    "tv.startNow": {
+      "to": "root"
+    },
+    "tv.pressAgain": {
+      "to": "root"
+    },
+    "tv.pressAgainWeb": {
+      "to": "root"
+    },
+    "tv.skipHint": {
+      "to": "root"
+    },
+    "tv.skipHintWeb": {
+      "to": "root"
+    },
+    "tv.browserTip": {
+      "to": "root"
+    },
+    "tv.cluesSub": {
+      "to": "games/mishana"
+    },
+    "tv.cluesNoTimer": {
+      "to": "games/mishana"
+    },
+    "tv.backToCategories": {
+      "to": "root"
+    },
+    "tv.pauseTitle": {
+      "to": "root"
+    },
+    "tv.pauseNote": {
+      "to": "root"
+    },
+    "tv.resume": {
+      "to": "root"
+    },
+    "tv.skip": {
+      "to": "games/mishana"
+    },
+    "tv.players": {
+      "to": "root"
+    },
+    "tv.endGame": {
+      "to": "root"
+    },
+    "tv.endGameConfirm": {
+      "to": "root"
+    },
+    "tv.endGameBody": {
+      "to": "root"
+    },
+    "tv.keepPlaying": {
+      "to": "root"
+    },
+    "tv.exitApp": {
+      "to": "root"
+    },
+    "tv.soundOn": {
+      "to": "root"
+    },
+    "tv.soundOff": {
+      "to": "root"
+    },
+    "tv.playersTitle": {
+      "to": "root"
+    },
+    "tv.backToLobby": {
+      "to": "root"
+    },
+    "tv.appClosed": {
+      "to": "root"
+    },
+    "tv.openAgain": {
+      "to": "root"
+    },
+    "tv.closeRoomConfirm": {
+      "to": "root"
+    },
+    "tv.closeRoomBody": {
+      "to": "root"
+    },
+    "tv.keepRoom": {
+      "to": "root"
+    },
+    "tv.roomClosed": {
+      "to": "root"
+    },
+    "tv.debugTitle": {
+      "to": "root"
+    },
+    "tv.serverUrl": {
+      "to": "root"
+    },
+    "tv.packLocked": {
+      "to": "root"
+    },
+    "tv.premiumRequired": {
+      "to": "root"
+    },
+    "phone.menu": {
+      "to": "root"
+    },
+    "phone.leave": {
+      "to": "root"
+    },
+    "phone.leaveShort": {
+      "to": "root"
+    },
+    "phone.leaveConfirm": {
+      "to": "root"
+    },
+    "phone.leaveBody": {
+      "to": "root"
+    },
+    "phone.youAreHost": {
+      "to": "root"
+    },
+    "phone.keepScreenOn": {
+      "to": "root"
+    },
+    "phone.vibration": {
+      "to": "root"
+    },
+    "phone.kicked": {
+      "to": "root"
+    },
+    "phone.kickedBody": {
+      "to": "root"
+    },
+    "phone.roomGone": {
+      "to": "root"
+    },
+    "phone.roomGoneBody": {
+      "to": "root"
+    },
+    "phone.noRoom": {
+      "to": "root"
+    },
+    "phone.goHome": {
+      "to": "root"
+    },
+    "phone.rejoin": {
+      "to": "root"
+    },
+    "phone.differentCode": {
+      "to": "root"
+    },
+    "phone.replaced": {
+      "to": "root"
+    },
+    "phone.useHere": {
+      "to": "root"
+    },
+    "error.badMessage": {
+      "to": "root"
+    },
+    "error.unsupportedVersion": {
+      "to": "root"
+    },
+    "error.notAuthenticated": {
+      "to": "root"
+    },
+    "error.tvAuthFailed": {
+      "to": "root"
+    },
+    "error.roomNotFound": {
+      "to": "root"
+    },
+    "error.roomExpired": {
+      "to": "root"
+    },
+    "error.roomFull": {
+      "to": "root"
+    },
+    "error.roomLocked": {
+      "to": "root"
+    },
+    "error.alreadyJoined": {
+      "to": "root"
+    },
+    "error.nameInvalid": {
+      "to": "root"
+    },
+    "error.nameTaken": {
+      "to": "root"
+    },
+    "error.colorTaken": {
+      "to": "root"
+    },
+    "error.resumeInvalid": {
+      "to": "root"
+    },
+    "error.kicked": {
+      "to": "root"
+    },
+    "error.replaced": {
+      "to": "root"
+    },
+    "error.notHost": {
+      "to": "root"
+    },
+    "error.wrongPhase": {
+      "to": "root"
+    },
+    "error.notYourTurn": {
+      "to": "root"
+    },
+    "error.notAlive": {
+      "to": "root"
+    },
+    "error.invalidTarget": {
+      "to": "root"
+    },
+    "error.invalidSettings": {
+      "to": "root"
+    },
+    "error.notEnoughPlayers": {
+      "to": "root"
+    },
+    "error.invalidRoleConfig": {
+      "to": "root"
+    },
+    "error.noWordsAvailable": {
+      "to": "root"
+    },
+    "error.guessInvalid": {
+      "to": "root"
+    },
+    "error.rateLimited": {
+      "to": "root"
+    },
+    "error.internal": {
+      "to": "root"
+    },
+    "error.premiumRequired": {
+      "to": "root"
+    },
+    "error.packLocked": {
+      "to": "root"
+    },
+    "error.entitlementInvalid": {
+      "to": "root"
+    },
+    "error.tvBusy": {
+      "to": "root"
+    },
+    "store.title": {
+      "to": "root"
+    },
+    "store.premiumTitle": {
+      "to": "root"
+    },
+    "store.premiumPitch": {
+      "to": "root"
+    },
+    "store.planMonthly": {
+      "to": "root"
+    },
+    "store.planYearly": {
+      "to": "root"
+    },
+    "store.pricePerMonth": {
+      "to": "root"
+    },
+    "store.pricePerYear": {
+      "to": "root"
+    },
+    "store.trialDays": {
+      "to": "root"
+    },
+    "store.premiumActive": {
+      "to": "root"
+    },
+    "store.renewsOn": {
+      "to": "root"
+    },
+    "store.endsOn": {
+      "to": "root"
+    },
+    "store.manage": {
+      "to": "root"
+    },
+    "store.manageHint": {
+      "to": "root"
+    },
+    "store.fixPayment": {
+      "to": "root"
+    },
+    "store.fixPaymentButton": {
+      "to": "root"
+    },
+    "store.packsTitle": {
+      "to": "root"
+    },
+    "store.otherLanguages": {
+      "to": "root"
+    },
+    "store.packPairs": {
+      "to": "root"
+    },
+    "store.buy": {
+      "to": "root"
+    },
+    "store.owned": {
+      "to": "root"
+    },
+    "store.included": {
+      "to": "root"
+    },
+    "store.pending": {
+      "to": "root"
+    },
+    "store.pendingBody": {
+      "to": "root"
+    },
+    "store.confirming": {
+      "to": "root"
+    },
+    "store.unlocked": {
+      "to": "root"
+    },
+    "store.addedToGame": {
+      "to": "root"
+    },
+    "store.switchLanguage": {
+      "to": "root"
+    },
+    "store.restore": {
+      "to": "root"
+    },
+    "store.restored": {
+      "to": "root"
+    },
+    "store.nothingToRestore": {
+      "to": "root"
+    },
+    "store.help": {
+      "to": "root"
+    },
+    "store.cardTip": {
+      "to": "root"
+    },
+    "store.loading": {
+      "to": "root"
+    },
+    "store.unavailable": {
+      "to": "root"
+    },
+    "store.playUnavailable": {
+      "to": "root"
+    },
+    "store.network": {
+      "to": "root"
+    },
+    "store.itemUnavailable": {
+      "to": "root"
+    },
+    "store.errorGeneric": {
+      "to": "root"
+    },
+    "store.alreadyOwned": {
+      "to": "root"
+    },
+    "store.verifyFailed": {
+      "to": "root"
+    },
+    "store.installLimit": {
+      "to": "root"
+    },
+    "store.installLimitNoHelp": {
+      "to": "root"
+    },
+    "store.legalPriceRenew": {
+      "to": "root"
+    },
+    "store.legalTrialRenew": {
+      "to": "root"
+    },
+    "store.legalCancel": {
+      "to": "root"
+    },
+    "store.legalCancelTrial": {
+      "to": "root"
+    },
+    "store.periodMonth": {
+      "to": "root"
+    },
+    "store.periodYear": {
+      "to": "root"
+    },
+    "store.testMode": {
+      "to": "root"
+    },
+    "store.tvAppOnly": {
+      "to": "root"
+    }
+  }
+}

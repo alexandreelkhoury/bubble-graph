@@ -1,6 +1,8 @@
-// Durable storage of one room (§7.5): the three KV records and the alarm. Owns the storage keys, batches
+// Durable storage of one room (§7.5, JAMAA-PLATFORM §2.6): the KV records and the alarm. Owns the storage keys, batches
 // writes into one multi-key put, and caches the scheduled alarm so it is not read back on every entry point.
-import type { GameState } from "@jamaa/shared/engine";
+// Keys: `meta`, `state` (RoomState, rewritten on every change), `history` (RoomHistory: written only at game end,
+// REPLAY or ABORT) and `sessions`. RoomCore normalizes what it loads (shared/room `normalizeLoaded`).
+import type { RoomHistory, RoomState } from "@jamaa/shared/room";
 import type { RoomEntitlement } from "./billing/token";
 
 export interface RoomMeta {
@@ -37,13 +39,13 @@ export interface RoomStorage {
   deleteAlarm(): Promise<void>;
 }
 
-/** Everything a room persists. `null` meta: the room was never created (or has expired). */
-export interface RoomRecords { meta: RoomMeta | null; state: GameState | null; sessions: Sessions }
+/** Everything a room persists, as stored (unvalidated). `null` meta: the room was never created (or has expired). */
+export interface RoomRecords { meta: RoomMeta | null; state: unknown; history: unknown; sessions: Sessions }
 
-const KEY = { meta: "meta", state: "state", sessions: "sessions" } as const;
+const KEY = { meta: "meta", state: "state", history: "history", sessions: "sessions" } as const;
 
 /** Unset fields are left untouched. */
-export type RoomWrite = Partial<{ meta: RoomMeta; state: GameState; sessions: Sessions }>;
+export type RoomWrite = Partial<{ meta: RoomMeta; state: RoomState; history: RoomHistory; sessions: Sessions }>;
 
 export class RoomStore {
   readonly #s: RoomStorage;
@@ -56,16 +58,15 @@ export class RoomStore {
 
   async load(): Promise<RoomRecords> {
     const meta = (await this.#s.get<RoomMeta>(KEY.meta)) ?? null;
-    const state = (await this.#s.get<GameState>(KEY.state)) ?? null;
+    const state = (await this.#s.get<unknown>(KEY.state)) ?? null;
+    const history = (await this.#s.get<unknown>(KEY.history)) ?? null;
     const sessions = (await this.#s.get<Sessions>(KEY.sessions)) ?? {};
-    return { meta, state, sessions };
+    return { meta, state, history, sessions };
   }
 
-  /** Meta and state only (initRoom's existence check). */
-  async loadHead(): Promise<Pick<RoomRecords, "meta" | "state">> {
-    const meta = (await this.#s.get<RoomMeta>(KEY.meta)) ?? null;
-    const state = meta ? ((await this.#s.get<GameState>(KEY.state)) ?? null) : null;
-    return { meta, state };
+  /** Meta only (initRoom's existence check). */
+  async loadHead(): Promise<Pick<RoomRecords, "meta">> {
+    return { meta: (await this.#s.get<RoomMeta>(KEY.meta)) ?? null };
   }
 
   /** One atomic put of the given records; no-op when nothing is given. */
@@ -73,6 +74,7 @@ export class RoomStore {
     const entries: Record<string, unknown> = {};
     if (w.meta) entries[KEY.meta] = w.meta;
     if (w.state) entries[KEY.state] = w.state;
+    if (w.history) entries[KEY.history] = w.history;
     if (w.sessions) entries[KEY.sessions] = w.sessions;
     if (Object.keys(entries).length > 0) await this.#s.put(entries);
   }

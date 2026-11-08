@@ -1,0 +1,9 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "2",
+  "a": {
+    "type": "OPEN_GAME",
+    "gameId": "mishana"
+  }
+}

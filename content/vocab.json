@@ -1,0 +1,6 @@
+{
+  "$comment": "Controlled vocabulary (JAMAA-PLATFORM §5.4), mirrored as TS enums by lane A. Labels: i18n content.domain.<id> and content.topic.<id>, with the kebab-case id written in lowerCamel (middle-east → content.domain.middleEast). Regions are never shown as labels. A new value needs an edit here and in every locale's i18n file (content-lint checks both).",
+  "domains": ["lebanon", "middle-east", "arab-world", "france", "world", "general"],
+  "topics": ["culture", "traditions", "music", "dance", "football", "sports", "food", "history", "geography", "places", "language", "cinema-tv", "celebrities", "science", "nature", "art"],
+  "regions": ["beirut", "mount-lebanon", "north", "south", "bekaa"]
+}

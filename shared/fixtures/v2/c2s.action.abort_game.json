@@ -1,0 +1,8 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "16",
+  "a": {
+    "type": "ABORT_GAME"
+  }
+}

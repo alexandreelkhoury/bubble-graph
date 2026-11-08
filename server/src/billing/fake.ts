@@ -1,7 +1,7 @@
 // PAYMENTS-SPEC §3.10: FAKE billing for local dev and e2e. FakeGoogleApi serves synthetic Google resources from the
 // Billing DO's `fake_purchases` table, so /verify, RTDN-style re-reads, acks and the ack window run unchanged.
 // Reachable only when billingModeForRequest() says "fake" (mode.ts): never in production.
-import { packIdFromProductId, PREMIUM_PRODUCT_ID, SUB_STATES } from "@jamaa/shared/billing";
+import { familyFromProductId, PASS_PRODUCT_ID, SUB_STATES } from "@jamaa/shared/billing";
 import type { FakePurchaseRequestBody, FakeSetRequestBody } from "@jamaa/shared/billing";
 import { sha256hex } from "../tokens";
 import type { BillingStore } from "./billing-core";
@@ -47,7 +47,7 @@ export class FakeGoogleApi implements GoogleApi {
       acknowledgementState: r.acknowledged ? "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED" : "ACKNOWLEDGEMENT_STATE_PENDING",
       ...(r.completedMs !== null ? { startTime: iso(r.completedMs) } : {}),
       lineItems: [{
-        productId: PREMIUM_PRODUCT_ID,
+        productId: PASS_PRODUCT_ID,
         ...(r.expiryMs !== null ? { expiryTime: iso(r.expiryMs) } : {}),
         autoRenewingPlan: { autoRenewEnabled: r.autoRenew },
         offerDetails: { basePlanId: r.basePlanId ?? "monthly", ...(r.offerId ? { offerId: r.offerId } : {}) },
@@ -86,9 +86,9 @@ const badRequest = (): Response => jsonRes({ error: "BAD_REQUEST" }, 400);
 /** POST /api/billing/fake/purchase → `{ purchaseToken: "fake.<kind>.<productId>.<n>" }`. */
 export async function fakePurchase(body: FakePurchaseRequestBody, store: BillingStore, now: number): Promise<Response> {
   let kind: "sub" | "pack";
-  if (body.productId === PREMIUM_PRODUCT_ID) kind = "sub";
+  if (body.productId === PASS_PRODUCT_ID) kind = "sub";
   else {
-    const packId = packIdFromProductId(body.productId);
+    const packId = familyFromProductId(body.productId);
     if (!packId || !billingPacks().premiumIds.has(packId)) return badRequest();
     kind = "pack";
   }

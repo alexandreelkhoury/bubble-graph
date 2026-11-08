@@ -1,0 +1,12 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "7",
+  "a": {
+    "type": "GAME",
+    "gameId": "mishana",
+    "i": {
+      "type": "READY"
+    }
+  }
+}

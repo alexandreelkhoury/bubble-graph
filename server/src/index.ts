@@ -13,6 +13,11 @@ import { originCheck } from "./origin";
 import { clientIp, notFound } from "./request";
 import { CID_REGEX } from "./room-core";
 import { randomBytes } from "./tokens";
+import { installContent } from "./content";
+import { CONTENT_TEXT } from "./content-modules.gen";
+
+// JAMAA-PLATFORM §5.6: the packs ship as wrangler Text modules (content-dist/**.txt), parsed on first use per isolate.
+installContent((game) => CONTENT_TEXT[game] ?? []);
 
 export { Room } from "./room";
 export { Billing } from "./billing/billing-do";

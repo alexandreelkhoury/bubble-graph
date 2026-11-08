@@ -1,0 +1,8 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "6",
+  "a": {
+    "type": "START_GAME"
+  }
+}

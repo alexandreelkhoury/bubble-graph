@@ -3,20 +3,28 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  GAME_IDS,
   GenError,
   KOTLIN_PATH,
   OUTPUT_PATHS,
   argOrder,
+  buildGameKotlin,
   buildKotlin,
   buildXml,
   convert,
   escapeLiteral,
+  gameKotlinPath,
+  gameOutputPaths,
   generate,
   resourceName,
   validate,
+  validateTree,
+  type GameId,
+  type I18nTree,
   type MessageSet,
+  type SplitMap,
 } from "../src/gen";
-import { readMessages, run } from "../src/main";
+import { readMessages, readSplitMap, readTree, run } from "../src/main";
 
 const REPO = join(import.meta.dirname, "../../..");
 
@@ -47,6 +55,16 @@ function mini(): MessageSet {
       "round.label": "Ronda {count}",
     },
   };
+}
+
+const L4 = ["en", "fr", "ar", "es"] as const;
+function same(entries: Record<string, string>): MessageSet {
+  return { en: { ...entries }, fr: { ...entries }, ar: { ...entries }, es: { ...entries } };
+}
+function tree(): I18nTree {
+  const games = {} as Record<GameId, MessageSet>;
+  for (const id of GAME_IDS) games[id] = same({ [`game.${id}.title`]: id.toUpperCase() });
+  return { root: mini(), games };
 }
 
 describe("resourceName", () => {
@@ -83,7 +101,7 @@ describe("resourceName", () => {
       set[loc]["lobby.startGame"] = "a";
       set[loc]["lobby.start_game"] = "b";
     }
-    expect(() => generate(set)).toThrow(GenError);
+    expect(() => generate({ ...tree(), root: set })).toThrow(GenError);
   });
 });
 
@@ -206,21 +224,88 @@ describe("xml output", () => {
   });
 });
 
+describe("split layout (JAMAA-PLATFORM §5.7)", () => {
+  it("accepts numeric key segments (game.<id>.howto.1)", () => {
+    const t = tree();
+    for (const loc of L4) t.games.mishana[loc]["game.mishana.howto.1"] = "x";
+    expect(validateTree(t, null)).toEqual([]);
+    expect(resourceName("game.mishana.howto.1")).toBe("game__mishana__howto__1");
+  });
+
+  it("rejects game.* keys in the root file, foreign keys in a game file, and duplicates across files", () => {
+    const t = tree();
+    for (const loc of L4) {
+      t.root[loc]["game.bluff.extra"] = "x";
+      t.games.bluff[loc]["vote.title"] = "y";
+      t.games.likely[loc]["game.likely.dup"] = "z";
+      t.games.trivia[loc]["game.likely.dup"] = "z";
+    }
+    const errs = validateTree(t, null).join("\n");
+    expect(errs).toContain('root: "game.bluff.extra" is under game.*');
+    expect(errs).toContain('games/bluff: "vote.title" must start with "game.bluff."');
+    expect(errs).toContain('games/trivia: "game.likely.dup" must start with "game.trivia."');
+    expect(errs).toContain('duplicate key "game.likely.dup" in games/likely and games/trivia');
+  });
+
+  it("lets a game file keep the legacy names the split map assigns to it, and flags them in the root file", () => {
+    const map: SplitMap = { count: 2, reusedNames: [], keys: { "vote.title": { to: "games/mishana" }, "round.label": { to: "games/mishana" } } };
+    const t = tree();
+    for (const loc of L4) t.games.mishana[loc]["vote.title"] = "Who?";
+    const errs = validateTree(t, map).join("\n");
+    expect(errs).not.toContain("vote.title");
+    expect(errs).toContain('root: "round.label" is mapped to games/mishana by split-map.json');
+  });
+
+  it("checks each game's locales for completeness", () => {
+    const t = tree();
+    t.games.bluff.es = {};
+    expect(validateTree(t, null).join("\n")).toContain('games/bluff es: missing key "game.bluff.title"');
+  });
+
+  it("emits per-game XML without app_name and a per-game Kotlin object; the platform object merges them", () => {
+    const t = tree();
+    expect(buildXml(t.games.bluff, "en", { appName: false })).not.toContain("app_name");
+    const kt = buildGameKotlin(t.games.bluff, "bluff");
+    expect(kt).toContain("package app.jamaa.tv.i18n.games.bluff");
+    expect(kt).toContain("object I18nKeysBluff {");
+    expect(kt).toContain('"game.bluff.title" to R.string.game__bluff__title,');
+    const root = buildKotlin(t.root, GAME_IDS);
+    expect(root).toContain("import app.jamaa.tv.i18n.games.trivia.I18nKeysTrivia");
+    expect(root).toContain('"round.label" to R.string.round__label,');
+    expect(root).toContain("val strings: Map<String, Int> by lazy { platformStrings + I18nKeysMishana.strings + I18nKeysBluff.strings + I18nKeysLikely.strings + I18nKeysTrivia.strings }");
+    expect(gameKotlinPath("likely")).toBe("tv-app/app/src/main/java/app/jamaa/tv/i18n/games/likely/I18nKeysLikely.kt");
+    expect(gameOutputPaths("trivia").ar).toBe("tv-app/app/src/main/res/values-ar/strings_game_trivia.xml");
+  });
+
+  it("limits outputs to one game or the platform with a scope", () => {
+    const t = tree();
+    expect([...generate(t, null, "bluff").keys()].sort()).toEqual([...Object.values(gameOutputPaths("bluff")), gameKotlinPath("bluff")].sort());
+    expect([...generate(t, null, "platform").keys()].sort()).toEqual([...Object.values(OUTPUT_PATHS), KOTLIN_PATH].sort());
+    expect(generate(t).size).toBe(5 + GAME_IDS.length * 5);
+  });
+});
+
 describe("--check mode", () => {
   function tmpRepo(): string {
     const root = mkdtempSync(join(tmpdir(), "gen-strings-"));
     mkdirSync(join(root, "shared/i18n"), { recursive: true });
-    const set = mini();
-    for (const loc of ["en", "fr", "ar", "es"] as const) writeFileSync(join(root, `shared/i18n/${loc}.json`), JSON.stringify(set[loc]));
+    const t = tree();
+    for (const loc of L4) writeFileSync(join(root, `shared/i18n/${loc}.json`), JSON.stringify(t.root[loc]));
+    for (const id of GAME_IDS) {
+      mkdirSync(join(root, "shared/i18n/games", id), { recursive: true });
+      for (const loc of L4) writeFileSync(join(root, `shared/i18n/games/${id}/${loc}.json`), JSON.stringify(t.games[id][loc]));
+    }
     return root;
   }
+  const ALL = 5 + GAME_IDS.length * 5;
 
   it("reports every output as changed before generation, nothing after, and writes nothing in check mode", () => {
     const root = tmpRepo();
     const before = run(root, true);
-    expect(before.changed.sort()).toEqual([...Object.values(OUTPUT_PATHS), KOTLIN_PATH].sort());
-    expect(run(root, true).changed.length).toBe(5); // still nothing written
-    expect(run(root, false).changed.length).toBe(5);
+    const expected = [...Object.values(OUTPUT_PATHS), KOTLIN_PATH, ...GAME_IDS.flatMap((g) => [...Object.values(gameOutputPaths(g)), gameKotlinPath(g)])];
+    expect(before.changed.sort()).toEqual(expected.sort());
+    expect(run(root, true).changed.length).toBe(ALL); // still nothing written
+    expect(run(root, false).changed.length).toBe(ALL);
     expect(run(root, true).changed).toEqual([]);
     expect(readFileSync(join(root, OUTPUT_PATHS.fr), "utf8")).toContain("Tour %1$d");
   });
@@ -233,18 +318,44 @@ describe("--check mode", () => {
     writeFileSync(join(root, "shared/i18n/fr.json"), JSON.stringify(fr));
     expect(run(root, true).changed).toEqual([OUTPUT_PATHS.fr]);
   });
+
+  it("a game edit only touches that game's outputs", () => {
+    const root = tmpRepo();
+    run(root, false);
+    writeFileSync(join(root, "shared/i18n/games/bluff/es.json"), JSON.stringify({ "game.bluff.title": "¡Bluff!" }));
+    expect(run(root, true).changed).toEqual([gameOutputPaths("bluff").es]);
+    expect(run(root, true, "platform").changed).toEqual([]);
+  });
+
+  it("fails when a game folder is missing", () => {
+    const root = mkdtempSync(join(tmpdir(), "gen-strings-"));
+    mkdirSync(join(root, "shared/i18n"), { recursive: true });
+    for (const loc of L4) writeFileSync(join(root, `shared/i18n/${loc}.json`), JSON.stringify(mini()[loc]));
+    expect(() => run(root, true)).toThrow(/games\/mishana/);
+  });
 });
 
 describe("repository i18n files", () => {
   it("validate and the committed outputs are up to date", () => {
-    const set = readMessages(REPO);
-    expect(validate(set)).toEqual([]);
+    expect(validate(readMessages(REPO))).toEqual([]);
+    expect(validateTree(readTree(REPO), readSplitMap(REPO))).toEqual([]);
     expect(run(REPO, true).changed).toEqual([]);
   });
 
   it("FR plurals carry one, many and other (Android lint MissingQuantity)", () => {
-    const fr = readMessages(REPO).fr;
-    for (const [k, v] of Object.entries(fr)) if (typeof v === "object") expect(Object.keys(v).sort(), k).toEqual(["many", "one", "other"]);
+    const t = readTree(REPO);
+    for (const set of [t.root, ...GAME_IDS.map((g) => t.games[g])]) {
+      for (const [k, v] of Object.entries(set.fr)) if (typeof v === "object") expect(Object.keys(v).sort(), k).toEqual(["many", "one", "other"]);
+    }
+  });
+
+  it("FR uses U+202F, never an ordinary space, before ! ? : ; in every game file", () => {
+    const t = readTree(REPO);
+    for (const id of GAME_IDS) {
+      for (const [k, v] of Object.entries(t.games[id].fr)) {
+        for (const s of typeof v === "string" ? [v] : Object.values(v)) expect(/ [!?:;]/.test(s as string), `${id} ${k}: ${s}`).toBe(false);
+      }
+    }
   });
 
   it("brand.appName is identical in EN and FR (one brand name, SPEC §2)", () => {

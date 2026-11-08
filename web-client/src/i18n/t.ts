@@ -1,27 +1,98 @@
 // §8.7 in-house t(): locale → en → key fallback, Intl.PluralRules plurals, {name} placeholders, latn digits.
-// Only English (the fallback) ships in the entry chunk; FR, AR and ES are fetched on demand (each player needs one).
+// JAMAA-PLATFORM §5.7: the root catalog (platform keys) and one catalog per game (shared/i18n/games/<id>/<locale>.json).
+// Only the English root catalog ships in the entry chunk; every other catalog (FR/AR/ES root, every game file) is a
+// lazy chunk fetched on demand: a player needs one root locale plus the games of their room.
 import { signal } from "@preact/signals";
 import en from "@jamaa/shared/i18n/en.json";
 import { LOCALES } from "@jamaa/shared/constants";
 import type { Locale } from "@jamaa/shared/constants";
+import type { GameId } from "@jamaa/shared/games/ids";
+import type mishanaEn from "@jamaa/shared/i18n/games/mishana/en.json";
+import type bluffEn from "@jamaa/shared/i18n/games/bluff/en.json";
+import type likelyEn from "@jamaa/shared/i18n/games/likely/en.json";
+import type triviaEn from "@jamaa/shared/i18n/games/trivia/en.json";
 
-export type MessageKey = keyof typeof en;
+export type RootKey = keyof typeof en;
+export type MessageKey = RootKey | keyof typeof mishanaEn | keyof typeof bluffEn | keyof typeof likelyEn | keyof typeof triviaEn;
 type PluralValue = Partial<Record<Intl.LDMLPluralRule, string>> & { other: string };
 type Value = string | PluralValue;
 type Catalog = Record<string, Value | undefined>;
 export type Params = Record<string, string | number>;
+type Loader = () => Promise<{ default: unknown }>;
 
-const CATALOGS: Partial<Record<Locale, Catalog>> = { en };
-const LOADERS: Record<Exclude<Locale, "en">, () => Promise<{ default: unknown }>> = {
+/** Merged catalog per locale: the root file plus every game file loaded so far. */
+const CATALOGS: Partial<Record<Locale, Catalog>> = { en: { ...(en as Catalog) } };
+const ROOT_LOADERS: Record<Exclude<Locale, "en">, Loader> = {
   fr: () => import("@jamaa/shared/i18n/fr.json"),
   ar: () => import("@jamaa/shared/i18n/ar.json"),
   es: () => import("@jamaa/shared/i18n/es.json"),
 };
+/** One lazy chunk per (game, locale). Literal paths so the bundler can split them. */
+const GAME_LOADERS: Record<GameId, Record<Locale, Loader>> = {
+  mishana: {
+    en: () => import("@jamaa/shared/i18n/games/mishana/en.json"), fr: () => import("@jamaa/shared/i18n/games/mishana/fr.json"),
+    ar: () => import("@jamaa/shared/i18n/games/mishana/ar.json"), es: () => import("@jamaa/shared/i18n/games/mishana/es.json"),
+  },
+  bluff: {
+    en: () => import("@jamaa/shared/i18n/games/bluff/en.json"), fr: () => import("@jamaa/shared/i18n/games/bluff/fr.json"),
+    ar: () => import("@jamaa/shared/i18n/games/bluff/ar.json"), es: () => import("@jamaa/shared/i18n/games/bluff/es.json"),
+  },
+  likely: {
+    en: () => import("@jamaa/shared/i18n/games/likely/en.json"), fr: () => import("@jamaa/shared/i18n/games/likely/fr.json"),
+    ar: () => import("@jamaa/shared/i18n/games/likely/ar.json"), es: () => import("@jamaa/shared/i18n/games/likely/es.json"),
+  },
+  trivia: {
+    en: () => import("@jamaa/shared/i18n/games/trivia/en.json"), fr: () => import("@jamaa/shared/i18n/games/trivia/fr.json"),
+    ar: () => import("@jamaa/shared/i18n/games/trivia/ar.json"), es: () => import("@jamaa/shared/i18n/games/trivia/es.json"),
+  },
+};
+const rootLoaded = new Set<Locale>(["en"]);
+const gameLoaded = new Set<string>();
+const inflight = new Map<string, Promise<void>>();
+/** Bumps whenever a catalog lands, so components that rendered a fallback re-render (read inside t()). */
+export const catalogRev = signal(0);
 
-/** Loads a locale's catalog (once). Until it is in, translate() falls back to English. */
+function merge(l: Locale, table: unknown): void {
+  CATALOGS[l] = { ...CATALOGS[l], ...(table as Catalog) };
+  catalogRev.value++;
+}
+
+function once(key: string, run: () => Promise<void>): Promise<void> {
+  let p = inflight.get(key);
+  if (!p) {
+    p = run().finally(() => inflight.delete(key));
+    inflight.set(key, p);
+  }
+  return p;
+}
+
+/** Loads a locale's root catalog (once). Until it is in, translate() falls back to English. */
 export async function loadCatalog(l: Locale): Promise<void> {
-  if (CATALOGS[l] || l === "en") return;
-  CATALOGS[l] = (await LOADERS[l]()).default as Catalog;
+  if (rootLoaded.has(l) || l === "en") return;
+  await once(`root:${l}`, async () => {
+    const table = (await ROOT_LOADERS[l]()).default;
+    rootLoaded.add(l);
+    merge(l, table);
+  });
+}
+
+/** Loads one game's strings in `l` and in English (the fallback), once each. */
+export async function loadGameCatalog(id: GameId, l: Locale): Promise<void> {
+  const one = (x: Locale): Promise<void> => {
+    const key = `${id}:${x}`;
+    if (gameLoaded.has(key)) return Promise.resolve();
+    return once(key, async () => {
+      const table = (await GAME_LOADERS[id][x]()).default;
+      gameLoaded.add(key);
+      merge(x, table);
+    });
+  };
+  await Promise.all(l === "en" ? [one("en")] : [one("en"), one(l)]);
+}
+
+/** True once loadGameCatalog(id, l) has resolved. */
+export function gameCatalogReady(id: GameId, l: Locale): boolean {
+  return gameLoaded.has(`${id}:en`) && (l === "en" || gameLoaded.has(`${id}:${l}`));
 }
 
 export const locale = signal<Locale>("en");
@@ -48,7 +119,7 @@ export function translate(l: Locale, key: string, params?: Params): string {
   let value: Value | undefined = CATALOGS[l]?.[key];
   let used: Locale = l;
   if (value === undefined) {
-    value = en[key as MessageKey];
+    value = CATALOGS.en?.[key];
     used = "en";
   }
   if (value === undefined) return key;
@@ -69,6 +140,7 @@ export function translate(l: Locale, key: string, params?: Params): string {
 
 /** Translates with the current locale. Reading `locale.value` subscribes the calling component. */
 export function t(key: MessageKey, params?: Params): string {
+  void catalogRev.value;
   return translate(locale.value, key, params);
 }
 
@@ -120,7 +192,9 @@ export function isolateLtr(s: string): string {
 /** Loads the catalog if needed, then sets the locale and updates <html lang dir> (one switch, no English flash). */
 export async function setLocale(l: Locale): Promise<void> {
   try {
-    await loadCatalog(l);
+    // The root strings plus every game this page already shows (switching language never flashes English).
+    const games = [...new Set([...gameLoaded].map((k) => k.split(":")[0] as GameId))];
+    await Promise.all([loadCatalog(l), ...games.map((g) => loadGameCatalog(g, l))]);
   } catch {
     /* offline mid-switch: keep going, translate() falls back to English */
   }

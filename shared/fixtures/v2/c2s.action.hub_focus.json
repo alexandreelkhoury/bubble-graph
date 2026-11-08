@@ -1,0 +1,9 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "1",
+  "a": {
+    "type": "HUB_FOCUS",
+    "gameId": "mishana"
+  }
+}

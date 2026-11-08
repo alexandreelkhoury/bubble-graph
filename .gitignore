@@ -10,3 +10,5 @@ tv-app/app/build/
 tv-app/local.properties
 web-client/test-results/
 web-client/playwright-report/
+server/content-dist/
+server/src/content-modules.gen.ts

@@ -1,9 +1,9 @@
 // Timers from the server deadline and the clock offset (§8.5). Never local constants.
 // One shared 5 Hz clock signal ticks only while something reads it; a screen that only needs a boolean ("time's up")
 // subscribes to a computed of it and re-renders when that boolean flips, not five times a second.
+import type { DeadlineView } from "../games/mishana/view";
 import { useMemo } from "preact/hooks";
 import { computed, signal } from "@preact/signals";
-import type { DeadlineView } from "@jamaa/shared/protocol";
 import { clockOffset } from "../state/store";
 import { fractionLeft, remainingMs, secondsLeft, timerTone } from "../lib/countdown";
 import { fmtNum } from "../i18n/t";

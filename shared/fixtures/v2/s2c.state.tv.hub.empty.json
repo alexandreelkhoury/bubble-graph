@@ -1,0 +1,46 @@
+{
+  "v": 2,
+  "t": "state",
+  "seq": 1,
+  "serverNow": 1790000000000,
+  "view": {
+    "kind": "tv",
+    "room": {
+      "roomCode": "KXRT",
+      "joinUrl": "https://play.example.workers.dev/KXRT",
+      "phase": "HUB",
+      "focusedGameId": "mishana",
+      "setupGameId": null,
+      "contentLocale": "en",
+      "members": [],
+      "hostPlayerId": null,
+      "games": [
+        {
+          "id": "mishana",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 2,
+          "durationMinutes": [
+            10,
+            20
+          ]
+        }
+      ],
+      "setup": null,
+      "cup": {
+        "stars": {},
+        "last": null
+      },
+      "premium": false,
+      "tvBusy": false,
+      "contentLocales": [
+        "en",
+        "fr",
+        "ar"
+      ]
+    },
+    "game": null,
+    "me": null
+  }
+}

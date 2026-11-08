@@ -4,7 +4,8 @@ import { errorKey, MESSAGES } from "../../src/i18n/index";
 import { ERROR_CODES } from "../../src/protocol/errors";
 
 type Value = string | Record<string, string>;
-const KEY_RE = /^[a-z][a-zA-Z0-9]*(\.[a-z][a-zA-Z0-9]*)+$/;
+// JAMAA-PLATFORM §5.7: segments may be numeric ("game.<id>.howto.1").
+const KEY_RE = /^[a-z][a-zA-Z0-9]*(\.[a-zA-Z0-9][a-zA-Z0-9]*)+$/;
 const placeholders = (s: string): Set<string> => new Set([...s.matchAll(/\{([a-z][a-zA-Z0-9]*)\}/g)].map((m) => m[1] as string));
 const union = (v: Value): Set<string> => (typeof v === "string" ? placeholders(v) : new Set(Object.values(v).flatMap((x) => [...placeholders(x)])));
 const sorted = (s: Set<string>): string[] => [...s].sort();

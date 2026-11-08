@@ -1,0 +1,14 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "5",
+  "a": {
+    "type": "UPDATE_GAME_SETTINGS",
+    "gameId": "mishana",
+    "patch": {
+      "roleMode": "custom",
+      "undercoverCount": 1,
+      "blankCount": 1
+    }
+  }
+}

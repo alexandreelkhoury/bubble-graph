@@ -1,0 +1,9 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "23",
+  "a": {
+    "type": "KICK",
+    "playerId": "p_3d4e5f60718293a4b5c6d7e8"
+  }
+}

@@ -38,10 +38,20 @@ const P: Record<string, string> = {
   plus: "M12 6v12M6 12h12",
   volume: "M4 9.5h3.5L12 5.5v13l-4.5-4H4zM15.5 9a4 4 0 0 1 0 6M18.2 6.3a7.8 7.8 0 0 1 0 11.4",
   "volume-off": "M4 9.5h3.5L12 5.5v13l-4.5-4H4zM16 9.5l5 5M21 9.5l-5 5",
+  grid: "M4 4h6.5v6.5H4zM13.5 4H20v6.5h-6.5zM4 13.5h6.5V20H4zM13.5 13.5H20V20h-6.5z",
+  star: "M12 3.2l2.6 5.5 6 .7-4.4 4.1 1.2 6L12 16.6l-5.4 2.9 1.2-6-4.4-4.1 6-.7z",
+  "arrow-back": "M19 12H5M11 6l-6 6 6 6",
+  // JAMAA-PLATFORM §3.7 reaction bursts / the phone reaction bar (icons, never emoji).
+  "r-laugh": "M12 3a9 9 0 1 0 0 18 9 9 0 1 0 0-18zM7.5 9l2 1.2-2 1.2M16.5 9l-2 1.2 2 1.2M7.5 14h9a4.5 4.5 0 0 1-9 0zM4.5 13.5c-.8 1.2-1 2.2-.4 2.8M19.5 13.5c.8 1.2 1 2.2.4 2.8",
+  "r-shock": "M12 3a9 9 0 1 0 0 18 9 9 0 1 0 0-18zM9 9.5h.01M15 9.5h.01M12 13.2a1.8 2.3 0 1 0 0 4.6 1.8 2.3 0 1 0 0-4.6z",
+  "r-facepalm": "M12 3a9 9 0 1 0 0 18 9 9 0 1 0 0-18zM9.5 16h5M6.5 10.5c2-2.5 9-2.5 11 0v1.5c-2 1.5-9 1.5-11 0zM19 4.5v2.5",
+  "r-happy": "M12 20.5S3.5 15.3 3.5 9.4A4.4 4.4 0 0 1 12 7.1a4.4 4.4 0 0 1 8.5 2.3c0 5.9-8.5 11.1-8.5 11.1z",
+  "r-sad": "M7 13.5a4 4 0 0 1-.4-8 5.5 5.5 0 0 1 10.6 1.4 3.3 3.3 0 0 1 .3 6.6zM8 17l-1 2.5M12 17l-1 2.5M16 17l-1 2.5",
+  "r-cheer": "M4 20l4.5-11.5 7 7zM13 4.5l.8 2M18 6l-2 1.5M19.5 11h-2.2M10.5 3.5v.01M20.5 3.5v.01M15.5 10.5l1-1",
   qr: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5z",
 };
 
-const MIRROR = new Set(["arrow-forward", "chevron-forward", "chevron-back", "door-out", "speech", "vote"]);
+const MIRROR = new Set(["arrow-forward", "arrow-back", "chevron-forward", "chevron-back", "door-out", "speech", "vote"]);
 
 export type IconName = keyof typeof P | string;
 

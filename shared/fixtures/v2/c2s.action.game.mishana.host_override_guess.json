@@ -1,0 +1,13 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "11",
+  "a": {
+    "type": "GAME",
+    "gameId": "mishana",
+    "i": {
+      "type": "HOST_OVERRIDE_GUESS",
+      "accept": true
+    }
+  }
+}

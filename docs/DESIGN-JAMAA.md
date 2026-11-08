@@ -116,7 +116,7 @@ The voice rules of DESIGN §1.5 (group on TV, one person on phone, gender-neutra
 
 **Launcher / Play icon** (`assets/brand/icon.svg`, 512 × 512 export): the mark on its tile. Check legibility at 48 px: the five shapes must still be distinguishable (the star and the arch are the tell). The current icon (speech bubble + bang) becomes Mish Ana!'s **game icon** on its poster (`assets/games/mishana/`).
 
-**TV banner** (`banner_{en,fr,ar}.png`, 320 × 180 px; Play TV banner 1280 × 720):
+**TV banner** (`banner_{en,fr,ar}.png`; es and fr use the Latin wordmark of en, 320 × 180 px; Play TV banner 1280 × 720):
 - Background: the hub stage (palette B: `#2E1856` → `#1D1036` diagonal) with a soft amber lamp glow (radial 45 % × 60 % at the mark, `#FFC94D` at 18 %).
 - Left (EN/FR): the ring **with faces**, 104 px; right: `wordmark-latin`, 160 px wide, vertically centred on the ring; group centred.
 - AR: the order mirrors (ring on the right), `wordmark-ar` at 1.2× scale.
@@ -171,7 +171,7 @@ Amber/azure is the strongest CVD pair; jade and magenta can merge in hue under d
 | Most Likely | Cairo Black in **award gold**: a vertical gradient `#FFE7A0` → `#FFC94D` → `#C98A1A`, 2-unit `#7A4A00` inner line at the bottom for a stamped-metal edge |
 | Trivia | Cairo Black cream letters on a **marquee panel**: a rounded rect in `world.surface` with a row of 10-unit bulbs (`world.glow`) around the edge, bulbs chase on entrance |
 
-Lockups are generated as outlines by `gen_brand.py` per locale into `assets/games/<id>/title_{en,fr,ar}.svg` (platform §3.9). Arabic titles («بلوف!», «مين فينا؟», «مسابقة») get the same treatment, never letter-spaced, never uppercase-transformed.
+Lockups are generated as outlines by `gen_brand.py` per locale into `assets/games/<id>/title_{en,fr,ar,es}.svg` (platform §3.9). Arabic titles («بلوف!», «مين فينا؟», «مسابقة») get the same treatment, never letter-spaced, never uppercase-transformed.
 
 **Splash (HUB-01, ≤ 1.2 s; platform §3.2):** the 12 characters roll in from the screen edges (each on its own spring, 40 ms stagger, `spring.bouncy`) into a loose ring; three of them (coral, lemon, azure) jump into the three A counters as the wordmark letters draw in (stroke-reveal 400 ms, `ease.decel`) and shrink into the amber dots (scale 1 → dot size, colour crossfade to amber, 200 ms). The remaining nine scatter out of frame. Reduced motion: the final wordmark fades in (200 ms).
 
@@ -186,7 +186,7 @@ Canvas 960 × 540 dp, safe area 864 × 486 (x 48–912, y 27–513), DESIGN §4.
 | Zone | Rect (dp, LTR), compact state | Gathering state (members < 3, or the first 60 s after launch) | Content |
 |---|---|---|---|
 | Top bar | x 48–912, y 27–75 | same | Start: JAMAA wordmark 120 dp wide. End: "Tonight's cup" chip (hidden until a game ends; OK → cup sheet), ⓘ (40 dp round), Pass button (billing on and not premium), Settings (gear) |
-| Carousel | x 48–688, y 87–405 | x 48–640 (about 2 posters visible) | Game posters **210 × 290 dp**, gap 28 dp, the focused one scaled to **1.08** (227 × 313) with the platform focus ring (3 dp cream + `glow.primary`). About 2.6 posters visible in the compact state, so the cut-off poster invites scrolling. The focused poster sits at the start edge + 24 dp. Below it, a meta line (y 405–427, `type.tv.caption`): "3–12 players · 15 min · EN FR AR" |
+| Carousel | x 48–688, y 87–405 | x 48–640 (about 2 posters visible) | Game posters **210 × 290 dp**, gap 28 dp, the focused one scaled to **1.08** (227 × 313) with the platform focus ring (3 dp cream + `glow.primary`). About 2.6 posters visible in the compact state, so the cut-off poster invites scrolling. The focused poster sits at the start edge + 24 dp. Below it, a meta line (y 405–427, `type.tv.caption`): "3–12 players · 15 min · EN FR AR ES" |
 | Join ticket | x 712–912 (200 wide), y 87–427 | x 664–912 (**248** wide) | A ticket card (`elev.1`, `radius.lg`), never focusable: "Join on your phone" (`type.tv.body`), the QR on a cream inner panel (`radius.sm`; the 4-module quiet zone is inside the panel), the room code in `type.tv.code` scaled 0.6 (53 sp) `K X Q P`, then "play.jamaa…/KXQP" in caption. **QR panel: 176 dp compact, ≥ 208 dp gathering.** SPEC §9.9 math, `module = floor(panel / (29 + 8))` for the production version-3 code: 208 → 5 dp modules, 176 → 4 dp (never smaller). The width change animates over 400 ms (`ease.standard`) and never while the carousel moves |
 | Members strip | x 48–912, y 435–513 | same | Joined members as **48 dp characters** (faces on) in 72 dp slots with **names under them** (caption; ≤ 8 graphemes when ≤ 8 members, ≤ 6 graphemes at 9–12), idle animation (§4.4), VIP crown badge; 12 × 72 = 864 fits. **Live join:** the joiner drops in (DESIGN §6.2 F), a 2.5 s toast above the strip ("Karim is with us!", `type.tv.body`), and a ring/glow on the newest member until the next join. Empty: "Waiting for the gang…" with three ghost outlines |
 
@@ -656,7 +656,7 @@ Formats follow DESIGN §6.4 (OGG Vorbis 48 kHz mono, −16 LUFS, synthesised by 
 │ ║ Fool your     ║  │ Who's not   │  │ Who's the   ││  │ │ └────────┘ │ │
 │ ║ friends(•)    ║  │ one of us?  │  │ one…?       ││  │ │  K X Q P   │ │
 │ ╚═══════════════╝  └─────────────┘  └─────────────┘└──┘ │ play.jamaa…│ │
-│ 3–12 players · 15 min · EN FR AR                        └────────────┘ │
+│ 3–12 players · 15 min · EN FR AR ES                     └────────────┘ │
 │                                                                        │
 │ ▓     ▓     ▓     ▓     ▓     ▓♛      Karim is with us!                │ members
 │ Rami  Maya  Joe   Lina  Sami  Karim                                    │ (names)

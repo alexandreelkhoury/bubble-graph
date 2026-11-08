@@ -1,13 +1,23 @@
 // §8.4 connection: partysocket with no queueing, seq filter, close-code fatality, heartbeat.
 import PartySocket from "partysocket";
+// JAMAA-PLATFORM §2.5: protocol v2 frames (`v: 2`); the envelope, seq filter and close codes are unchanged.
 import {
-  FATAL_CLOSE_CODES, HEARTBEAT_INTERVAL_MS, PARTY_NAME, PING_FRAME, PONG_FRAME, PONG_TIMEOUT_MS, PROTOCOL_VERSION,
-  SLOW_RECONNECT_CLOSE_CODES, SLOW_RECONNECT_MS,
+  FATAL_CLOSE_CODES, HEARTBEAT_INTERVAL_MS, PARTY_NAME, PING_FRAME_V2 as PING_FRAME, PONG_FRAME_V2 as PONG_FRAME, PONG_TIMEOUT_MS,
+  PROTOCOL_VERSION_V2 as PROTOCOL_VERSION, SLOW_RECONNECT_CLOSE_CODES, SLOW_RECONNECT_MS,
 } from "@jamaa/shared/constants";
-import type { ClientIntentMsg, ClientMessage, ErrorMsg, HelloPlayerMsg, HelloTvMsg, StateMsg, WelcomeMsg } from "@jamaa/shared/protocol";
+import type { ClientMessageV2, ErrorMsgV2, RoomIntentMsg, StateV2Msg } from "@jamaa/shared/protocol/v2";
 import { nextActionId, randomId } from "./ids";
 
 export const WS_OPEN = 1;
+export { PROTOCOL_VERSION };
+
+export type ClientMessage = ClientMessageV2;
+export type ClientIntentMsg = RoomIntentMsg;
+export type StateMsg = StateV2Msg;
+export type ErrorMsg = ErrorMsgV2;
+export interface WelcomeMsg { v: 2; t: "welcome"; playerId: string; resumeToken: string; roomCode: string }
+export type HelloPlayerMsg = Extract<ClientMessageV2, { t: "hello"; role: "player" }>;
+export type HelloTvMsg = Extract<ClientMessageV2, { t: "hello"; role: "tv" }>;
 
 /** What the connection needs from a socket (PartySocket in the app, a fake in tests). */
 export interface SocketLike {

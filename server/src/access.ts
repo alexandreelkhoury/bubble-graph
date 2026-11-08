@@ -1,13 +1,14 @@
-// PAYMENTS-SPEC §3.11: room access. Pure. Turns a room's verified entitlement into what it may play. Only the
-// playable catalog ever reaches `reduce`, `nextWakeAt` and the projections, so a locked pack's words cannot be picked
-// or projected even with a bug elsewhere.
-import { PREMIUM_SETTING_KEYS, playableCatalog as filterCatalog } from "@jamaa/shared/billing";
-import type { Catalog, GameState, Settings } from "@jamaa/shared/engine";
-import { DEFAULT_PACK_IDS, DEFAULT_SETTINGS } from "@jamaa/shared/engine";
-import { lockedPackInfos } from "@jamaa/shared/projection";
-import type { LockedPackInfo } from "@jamaa/shared/projection";
+// JAMAA-PLATFORM §4.4 / PAYMENTS-SPEC §3.11: room access. Pure. Turns a room's verified entitlement into what it may
+// play. Only the playable content ever reaches `reduceRoom`, `nextWakeAt` and the projections, so a locked pack's items
+// cannot be picked or projected even with a bug elsewhere. Entitlements hold content FAMILIES (§4.2).
+import { playableContent } from "@jamaa/shared/content";
+import type { ContentCatalog } from "@jamaa/shared/content";
+import { GAME_CONTENT, GAME_DEFS } from "@jamaa/shared/games/registry";
+import type { GameId } from "@jamaa/shared/games/ids";
+import type { Locale } from "@jamaa/shared/constants";
 import type { RoomEntitlement } from "./billing/token";
 
+/** `packs` = owned families; `changesAt` = when premium or the token ends (the alarm re-checks then). */
 export interface RoomAccess { premium: boolean; packs: ReadonlySet<string>; changesAt: number | null }
 
 const NO_PACKS: ReadonlySet<string> = new Set();
@@ -20,36 +21,37 @@ export function roomAccess(e: RoomEntitlement | null, nowMs: number): RoomAccess
   return { premium, packs: new Set(e.packs), changesAt };
 }
 
-// Memoised per (full catalog, premium, sorted packs); the inner map is bounded so odd tokens cannot grow it.
-const memo = new WeakMap<Catalog, Map<string, Catalog>>();
-const MEMO_MAX = 64;
-
-/** Packs with tier "free", or every pack when premium, or the owned ones. */
-export function playableCatalog(full: Catalog, a: RoomAccess): Catalog {
-  if (a.premium) return full;
-  const key = [...a.packs].sort().join(",");
-  let m = memo.get(full);
-  if (!m) memo.set(full, (m = new Map()));
-  const hit = m.get(key);
-  if (hit) return hit;
-  const out = filterCatalog(full, false, a.packs);
-  if (m.size >= MEMO_MAX) m.clear();
-  m.set(key, out);
-  return out;
+/** §4.4 per game: the adapter's `playable` on every pack (memoised in shared/content). */
+export function playableFor(full: ContentCatalog, a: RoomAccess): ContentCatalog {
+  return playableContent(full, { premium: a.premium, packs: a.packs });
 }
 
-/** LOBBY only (the caller checks the phase): metadata of the packs the room may not play. */
-export function lockedPacks(full: Catalog, a: RoomAccess, settings: Settings): LockedPackInfo[] {
-  return lockedPackInfos(full, playableCatalog(full, a), settings);
+function families(catalog: ContentCatalog, id: GameId): Set<string> {
+  const adapter = GAME_CONTENT[id];
+  return new Set((catalog[id].packs as unknown[]).map((p) => adapter.meta(p).family));
 }
 
-/** Non-null iff LOBBY and a pack filter id is not playable, or a free room has a premium setting off its default. */
-export function restrictionFor(state: GameState, playable: Catalog, a: RoomAccess): { allowedPackIds: string[]; resetPremiumSettings: boolean } | null {
-  if (state.phase !== "LOBBY") return null;
-  // The default easy packs are free; an id of that list missing from the catalog is ignored by the engine, not locked.
-  const ids = new Set([...playable.packs.map((p) => p.id), ...DEFAULT_PACK_IDS]);
-  const lockedFilter = state.settings.packIds.some((id) => !ids.has(id));
-  const premiumOff = !a.premium && PREMIUM_SETTING_KEYS.some((k) => JSON.stringify(state.settings[k]) !== JSON.stringify(DEFAULT_SETTINGS[k]));
-  if (!lockedFilter && !premiumOff) return null;
-  return { allowedPackIds: [...ids], resetPremiumSettings: !a.premium };
+/**
+ * §4.4 UPDATE_GAME_SETTINGS pre-checks, before reduceRoom so clients get a precise error (INVALID_SETTINGS still covers
+ * unknown ids): PACK_LOCKED if a family of `def.settings.packIds(patch-applied settings)` is known but not playable, then
+ * PREMIUM_REQUIRED if a non-Pass room changes a `premiumKeys` value.
+ */
+export function settingsPrecheck(
+  gameId: GameId, current: unknown, patch: Record<string, unknown>, full: ContentCatalog, playable: ContentCatalog,
+  a: RoomAccess, locale: Locale,
+): "PACK_LOCKED" | "PREMIUM_REQUIRED" | null {
+  const def = GAME_DEFS[gameId];
+  const applied = def.settings.apply(current, patch, full[gameId], locale);
+  if (applied !== null) {
+    const known = families(full, gameId);
+    const ok = families(playable, gameId);
+    if (def.settings.packIds(applied).some((f: string) => known.has(f) && !ok.has(f))) return "PACK_LOCKED";
+  }
+  if (!a.premium) {
+    const cur = current as Record<string, unknown>;
+    for (const k of def.meta.settings.premiumKeys as readonly string[]) {
+      if (patch[k] !== undefined && JSON.stringify(patch[k]) !== JSON.stringify(cur[k])) return "PREMIUM_REQUIRED";
+    }
+  }
+  return null;
 }

@@ -1,13 +1,24 @@
 // App-wide signals (§8.2): view, me, conn, lastError, locale (+ UI helpers: toasts, live region, clock).
 import { computed, signal } from "@preact/signals";
-import type { ErrorCode, ErrorMsg, PlayerView } from "@jamaa/shared/protocol";
-import type { ConnStatus } from "../net/connection";
+import type { ErrorCode } from "@jamaa/shared/protocol";
+import type { PlayerRoomView } from "@jamaa/shared/protocol/v2";
+import type { ConnStatus, ErrorMsg } from "../net/connection";
 import { ClockOffset } from "../lib/countdown";
 
 export { locale } from "../i18n/t";
 
-export const view = signal<PlayerView | null>(null);
+/** The phone's v2 room view (JAMAA-PLATFORM §2.5). */
+export const view = signal<PlayerRoomView | null>(null);
+/** `{id, benched}` once this phone has joined (null before). */
 export const me = computed(() => view.value?.me ?? null);
+/** This phone's member row (name, character, host). */
+export const meMember = computed(() => {
+  const v = view.value;
+  const id = v?.me?.id;
+  return id ? v.room.members.find((m) => m.id === id) ?? null : null;
+});
+/** The ⓘ rules sheet: open for a game id (the card this phone shows), or null. */
+export const rulesFor = signal<string | null>(null);
 export const conn = signal<ConnStatus>("connecting");
 export const lastError = signal<ErrorMsg | null>(null);
 /** Fatal close code (§8.4), or null while the session is alive. */

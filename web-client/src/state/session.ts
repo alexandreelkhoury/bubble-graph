@@ -1,18 +1,19 @@
-// Player session: wires the Connection to the store and derives one-shot UI effects from view changes.
-import { PROTOCOL_VERSION } from "@jamaa/shared/constants";
+// Player session (protocol v2): wires the Connection to the store and derives one-shot UI effects from view changes.
+// Platform effects live here; each game's effects run in its lazy chunk (PhoneGameModule.onPhoneView).
 import type { ColorId } from "@jamaa/shared/constants";
-import type { ClientIntentMsg, ErrorCode, ErrorMsg, PlayerView } from "@jamaa/shared/protocol";
-import { bindWake, CLOSE, Connection, partySocketFactory } from "../net/connection";
-import type { SocketFactory } from "../net/connection";
+import type { ErrorCode } from "@jamaa/shared/protocol";
+import type { GameId } from "@jamaa/shared/games/ids";
+import type { PlayerRoomView } from "@jamaa/shared/protocol/v2";
+import { signal } from "@preact/signals";
+import { bindWake, CLOSE, Connection, partySocketFactory, PROTOCOL_VERSION } from "../net/connection";
+import type { ClientIntentMsg, ErrorMsg, SocketFactory } from "../net/connection";
 import { clearResume, loadResume, saveColor, saveName, saveResume } from "../lib/storage";
 import { HAPTIC, haptic } from "../lib/haptics";
 import { reacquireWakeLock, releaseWakeLock, requestWakeLock, wantWakeLock } from "../lib/wakelock";
-import { isolate, locale, t } from "../i18n/t";
-import { PHASE_KEY, ROLE_KEY } from "../lib/keys";
-import { newForfeits, TV_VERDICT_MS } from "../lib/view";
-import { ms } from "../lib/motion";
-import { premiumEndedStep } from "../lib/premium";
+import { loadGameCatalog, locale, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
+import type { PhoneGameModule } from "../games/types";
+import { PHONE_GAMES } from "../games/phoneLoaders";
 import {
   announce, conn, fatalCode, fatalError, inlineError, joinPending, lastError, pushToast, resetClock, resuming, resyncs,
   sampleClock, view,
@@ -25,8 +26,20 @@ const SILENT: readonly ErrorCode[] = ["RESUME_INVALID", "KICKED", "REPLACED", "R
 let current: { code: string; conn: Connection; detach: () => void } | null = null;
 let wasReconnecting = false;
 let awaitingResync = false;
-/** PAYMENTS-SPEC §5.1: a premium → free flip seen mid-game, shown to the VIP on the next LOBBY. */
-let premiumEndedPending = false;
+
+/** The loaded phone game modules (lazy `game-<id>` chunks), by id. */
+export const gameModules = signal<Partial<Record<GameId, PhoneGameModule>>>({});
+const loading = new Set<GameId>();
+
+/** Loads a game's phone chunk and its strings (once); resolves when both are in. */
+export function ensureGame(id: GameId): void {
+  void loadGameCatalog(id, locale.value);
+  if (gameModules.value[id] || loading.has(id)) return;
+  loading.add(id);
+  void PHONE_GAMES[id]().then((m) => {
+    gameModules.value = { ...gameModules.value, [id]: m };
+  }).finally(() => loading.delete(id));
+}
 
 export function startSession(code: string, factory: SocketFactory = partySocketFactory(code)): void {
   if (current?.code === code) return;
@@ -41,7 +54,6 @@ export function startSession(code: string, factory: SocketFactory = partySocketF
   resetClock();
   wasReconnecting = false;
   awaitingResync = false;
-  premiumEndedPending = false;
   const c = new Connection(factory, {
     hello: () => {
       const r = loadResume(code);
@@ -64,8 +76,6 @@ export function startSession(code: string, factory: SocketFactory = partySocketF
     onWelcome: (msg) => {
       saveResume(code, msg.playerId, msg.resumeToken);
       joinPending.value = false;
-      // A held seat wants the wake lock, also after a resume (no Join tap); browsers may need a gesture, so the
-      // pointerdown listener below retries on the next tap.
       wantWakeLock();
       reacquireWakeLock();
       inlineError.value = null;
@@ -73,7 +83,6 @@ export function startSession(code: string, factory: SocketFactory = partySocketF
     onError: (msg) => handleError(code, msg),
     onStatus: (s) => {
       conn.value = s;
-      // A join frame may be lost with the socket: never leave the CTA stuck on "Joining…".
       if (s !== "open") joinPending.value = false;
       if (s === "reconnecting") wasReconnecting = true;
       if (s === "open" && wasReconnecting) {
@@ -163,45 +172,35 @@ export function leave(): void {
   if (!c) return;
   c.conn.action({ type: "LEAVE" });
   clearResume(c.code);
-  // Give the frame a moment to flush before closing the socket.
   setTimeout(() => stopSession(), 150);
 }
 
-/** One-shot effects of a view change: haptics, toasts, live-region announcements. Pure on its inputs except for side effects. */
-export function onViewChange(prev: PlayerView | null, next: PlayerView): void {
+/** One-shot platform effects of a view change, then the active game's own (in its chunk). */
+export function onViewChange(prev: PlayerRoomView | null, next: PlayerRoomView): void {
   const myId = next.me?.id ?? null;
-  // Phase announcement.
-  if (prev && prev.phase !== next.phase) announce(t(PHASE_KEY[next.phase]));
-  // Locked join unlocks.
-  if (prev && next.me === null && prev.phase !== "LOBBY" && next.phase === "LOBBY") {
-    pushToast(t("join.unlocked"), "success");
+  const room = next.room;
+  // The phone needs the strings (titles, rules) of every game the hub shows, and the chunk of the game in play.
+  for (const g of room.games) void loadGameCatalog(g.id, locale.value);
+  if (room.setupGameId) ensureGame(room.setupGameId);
+  if (!myId) return;
+  const before = prev?.room;
+  if (before && before.phase !== room.phase && room.phase === "PLAYING") haptic([20, 40, 20]);
+  // A benched member is dealt in at the next game.
+  const wasBenched = prev?.me?.benched ?? false;
+  if (wasBenched && !next.me?.benched && room.phase === "PLAYING") {
+    pushToast(t("lobby.youreIn"), "success");
     haptic(HAPTIC.unlocked);
   }
-  if (!myId) return;
-  // §5.1: the VIP phone only, once per flip (in LOBBY, or on the first LOBBY after the game).
-  const ended = premiumEndedStep(premiumEndedPending, prev, next);
-  premiumEndedPending = ended.pending;
-  if (ended.show && next.hostPlayerId === myId) pushToast(t("lobby.premiumEndedPhone"), "info", 4000);
-  const isTurn = (v: PlayerView | null): boolean => v?.currentSpeakerId === myId && (v.phase === "CLUES" || v.phase === "TIE_BREAK");
-  if (isTurn(next) && !isTurn(prev)) {
-    haptic(HAPTIC.yourTurn);
-    announce(t("clues.yourTurn"), true);
+  // Host change: tell the new host once.
+  if (before && before.hostPlayerId !== myId && room.hostPlayerId === myId) {
+    pushToast(t("phone.youAreHost"), "info");
+    announce(t("phone.youAreHost"));
   }
-  // Next up: one turn before yours.
-  const nextUp = (v: PlayerView | null): boolean => {
-    if (!v || !(v.phase === "CLUES" || v.phase === "TIE_BREAK") || v.currentSpeakerId === null) return false;
-    const i = v.speakingOrder.indexOf(v.currentSpeakerId);
-    return i >= 0 && v.speakingOrder[i + 1] === myId;
-  };
-  if (nextUp(next) && !nextUp(prev)) haptic(HAPTIC.nextUp);
-  const meP = next.players.find((p) => p.id === myId);
-  const meWas = prev?.players.find((p) => p.id === myId);
-  if (meP && meWas && meWas.alive && !meP.alive && next.phase !== "LOBBY") {
-    // A vote-out waits for the TV's OUT stamp: buzzing on the table at t = 0 would give the verdict away.
-    const out = (): void => { haptic(HAPTIC.eliminated); announce(t("elim.you"), true); };
-    if (next.phase === "ELIMINATION") setTimeout(out, ms(TV_VERDICT_MS)); else out();
+  // JAMAA Pass ended for this room (PAYMENTS-SPEC §5.1): the VIP phone only, outside a game.
+  if (before?.premium && !room.premium && room.hostPlayerId === myId) pushToast(t("pass.endedPhone"), "info", 4000);
+  if (prev && before && before.phase === "HUB" && room.phase === "SETUP" && room.setupGameId) {
+    announce(t(`game.${room.setupGameId}.title` as MessageKey));
   }
-  // Forfeits (LEAVE/KICK in-game): toast with the revealed role.
-  if (prev) for (const f of newForfeits(prev, next)) pushToast(t("elim.forfeit", { name: isolate(f.player.name), role: t(ROLE_KEY[f.role]) }));
-  if (next.phase === "RESULTS" && prev?.phase !== "RESULTS" && next.result?.winnerIds.includes(myId)) haptic(HAPTIC.win);
+  const id = next.game?.gameId;
+  if (id) gameModules.value[id]?.onPhoneView?.(prev?.game?.gameId === id ? prev : null, next);
 }

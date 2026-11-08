@@ -1,0 +1,8 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "14",
+  "a": {
+    "type": "BACK_TO_SETUP"
+  }
+}

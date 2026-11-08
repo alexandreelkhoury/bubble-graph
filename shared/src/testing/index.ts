@@ -4,3 +4,5 @@ export * from "./game";
 export * from "./bots";
 export * from "./leak-check";
 export * from "./test-catalog";
+export * from "./room";
+export * from "./room-leaks";

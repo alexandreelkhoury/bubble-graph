@@ -70,6 +70,9 @@ export interface GameMeta<Settings> {
 export interface GameDefinition<S, Settings, Intent, Pub, Me, C, Extras> {
   meta: GameMeta<Settings>;
   enabled: boolean;                                // false = stub; the room also intersects with GAMES_ENABLED and the TV's support
+  /** JAMAA-GAP (P2): §2.2 says every game state carries `schema: number` and the room compares the stored value with
+   *  "the code's" on load, but the interface names no field for the code's value. This is it (= `state.schema`). */
+  stateSchema: number;
   settings: {
     apply(s: Settings, patch: Partial<Settings>, content: C, locale: Locale): Settings | null; // null = INVALID_SETTINGS
     /** Any stored value (old schema, missing/extra keys, unknown GameId slot) → valid Settings; falls back to defaults per key. */

@@ -2,7 +2,9 @@
 
 Status: **binding design spec**, draft 2 (review applied), 2026-11-08. Game id: `trivia`. Display names: EN **Quiz Night**, FR **Soirée quiz**, AR **«سهرة أسئلة»** (`[native review]`).
 
-Rules, state machine, timers, speed scoring with streaks, quiz metadata (stars, domain, topics), the TV quiz picker, the phone answer pad, edge cases, settings, copy, content schema and the first quiz, **`lb-quiz-01` "Lebanon: the big quiz"** (75 questions in EN/FR/AR). The JAMAA hub owns lobby, game picker, characters, ⓘ, entitlements, mute, reconnect and room lifetime; **the platform contract is [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md): this file owns the game rules (settings, phases, timers, scoring, intents, view); platform §2.12 lists only the hooks, and its §5.2 pack header and §5.4 metadata and vocabulary still apply.** Where the platform names a shared concept differently, the platform name wins: i18n keys written `trivia.*` here live under `game.trivia.*`; intents travel as `GAME {gameId:"trivia", i}`; late joiners enter through the `join` hook; "How to play" is the platform's per-device setup intro (**no in-game intro phase**); the no-repeat history is the platform `memory.usedKeys`. Conventions follow [SPEC.md](SPEC.md). `[VERIFY]` = fact or claim to check against a cited source before shipping; `[native review]` = native speaker approval.
+> **Owner decision (2026-11-08, after this draft): Spanish (es) is a full language everywhere**, including this game's UI copy and its content packs. Every EN/FR/AR list or copy table in this file is read as EN/FR/AR/ES; the game's lane D writes the ES copy and ES content, marked for native review in `shared/i18n/review.json` (copy) or with `status: "draft"` (packs). JAMAA-PLATFORM §3.12.
+
+Rules, state machine, timers, speed scoring with streaks, quiz metadata (stars, domain, topics), the TV quiz picker, the phone answer pad, edge cases, settings, copy, content schema and the first quiz, **`lb-quiz-01` "Lebanon: the big quiz"** (75 questions in EN/FR/AR; ES to be drafted from EN). The JAMAA hub owns lobby, game picker, characters, ⓘ, entitlements, mute, reconnect and room lifetime; **the platform contract is [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md): this file owns the game rules (settings, phases, timers, scoring, intents, view); platform §2.12 lists only the hooks, and its §5.2 pack header and §5.4 metadata and vocabulary still apply.** Where the platform names a shared concept differently, the platform name wins: i18n keys written `trivia.*` here live under `game.trivia.*`; intents travel as `GAME {gameId:"trivia", i}`; late joiners enter through the `join` hook; "How to play" is the platform's per-device setup intro (**no in-game intro phase**); the no-repeat history is the platform `memory.usedKeys`. Conventions follow [SPEC.md](SPEC.md). `[VERIFY]` = fact or claim to check against a cited source before shipping; `[native review]` = native speaker approval.
 
 ---
 
@@ -26,7 +28,7 @@ Players: **1–12** (solo works as practice). Duration: 10 questions ≈ 6–7 m
 | Hooks | `join` (late joiners wait for the next READ, §6), `projectSetup` → `{available, quiz}` ("7 questions available"), `memory` → question ids, `projectStatus` (`doneIds` = answeredIds in ANSWER), `leakCheck` |
 | Pause menu items (TV) | in order: "Next" (QUIZ_INTRO, REVEAL, LEADERBOARD, FINAL_INTRO, `HOST_ADVANCE`), "Void this question" (REVEAL, `VOID_QUESTION`, confirm), "End game" (HOLD, `END_GAME`, confirm) |
 | Characters | `idle`, `think`, `done`, `happy`, `cheer`, `sad`, `shock`, `smug`, `away` (platform set, JAMAA-PLATFORM §3.7). Streaks ≥ 3 add a flame **overlay** around the character (not an expression) |
-| Content language | One pack per locale sharing a `family` (`lb-quiz-01-en/-fr/-ar`, same question ids), JAMAA-PLATFORM §5.4. **`quizId` stores the family**; the engine resolves the pack of the content language at start, so changing the content language keeps the quiz when the family has that locale |
+| Content language | One pack per locale sharing a `family` (`lb-quiz-01-en/-fr/-ar/-es`, same question ids), JAMAA-PLATFORM §5.4. **`quizId` stores the family**; the engine resolves the pack of the content language at start, so changing the content language keeps the quiz when the family has that locale |
 | Entitlement | Pack-level `tier` (platform header). The Lebanon quiz `lb-quiz-01` is `free` in full (it is Trivia's starter content); later quizzes may be Pass-only. A Pass-only quiz never reaches a free room's clients |
 | Host | TV remote + VIP phone |
 
@@ -143,7 +145,7 @@ Order: total points ↓, then number of correct answers ↓, then total answer t
 | **Late joiner** | The platform calls `join` at once; the newcomer has `me.waitingForNext: true` until the next READ, then plays with 0 points; "New" ribbon for one question; ranked normally |
 | **Nobody connected at question start** | `HOLD` |
 | **Pool smaller than length** | Length is capped to the pool; the TV setting shows "7 questions available" |
-| **Question missing the content locale** | Not drawn (lint makes launch quizzes complete in all three locales) |
+| **Question missing the content locale** | Not drawn (lint makes launch quizzes complete in all four locales) |
 | **Every question already played in this room** | Draw prefers questions not in `memory.usedKeys` (platform history, ≤ 300 ids per game); if the pool is exhausted, least recently used first and the quiz card shows "Rerun" |
 | **Tie at the top** | Shared first place, both on the top podium step |
 | **Host presses OK during READ/ANSWER** | Ignored (fairness); OK only completes reveal-type animations locally (platform input rule) |
@@ -328,7 +330,7 @@ A quiz is one pack **per locale** with the JAMAA-PLATFORM §5.2 `PackHeader` (`i
 
 ```ts
 export const TriviaQuestionSchema = z.strictObject({
-  id: z.string().regex(/^q\d{3,4}$/),                    // same id across the -en/-fr/-ar packs of a family
+  id: z.string().regex(/^q\d{3,4}$/),                    // same id across the -en/-fr/-ar/-es packs of a family
   type: z.enum(["mc4", "tf"]),
   text: z.string().min(5).max(160),
   options: z.union([
@@ -362,7 +364,7 @@ Lint (platform common checks + Trivia, `tools/content-lint/src/games/trivia.ts`)
 
 | Quiz (family) | Domain | Featured topics | Stars | Questions | Tier | Status |
 |---|---|---|---|---|---|---|
-| `lb-quiz-01` (`-en`, `-fr`, `-ar`) — "Lebanon: the big quiz" · « Liban : le grand quiz » · «لبنان: المسابقة الكبيرة» | lebanon | music, dance, football | ★★ (mean ≈ 1.84) | 75 (§14) | free (whole quiz) | draft; every fact `[VERIFY]` |
+| `lb-quiz-01` (`-en`, `-fr`, `-ar`, `-es`) — "Lebanon: the big quiz" · « Liban : le grand quiz » · «لبنان: المسابقة الكبيرة» | lebanon | music, dance, football | ★★ (mean ≈ 1.84) | 75 (§14) | free (whole quiz) | draft; every fact `[VERIFY]` |
 | `world-easy-01` — Around the World | world | — | ★ | 60 planned | free | later |
 | `arab-music-01` — Arab Music Legends | arab-world | — | ★★ | 40 planned | Pass | later |
 

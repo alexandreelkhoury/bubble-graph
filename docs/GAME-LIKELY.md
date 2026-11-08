@@ -1,6 +1,8 @@
 # GAME-LIKELY — "Who's most likely to…" (JAMAA game #3)
 
-Status: **binding design spec**, draft 2 (review applied), 2026-11-08. Game id: `likely`. Display names: EN **Most Likely**, FR **Qui risque le plus ?**, AR **«مين فينا؟»** (`[native review]`).
+Status: **binding design spec**, draft 3 (owner decisions applied: secret-vote percentages, Spicy 18+ mode, ES copy for new keys), 2026-11-08. Game id: `likely`. Display names: EN **Most Likely**, FR **Qui risque le plus ?**, AR **«مين فينا؟»** (`[native review]`).
+
+> **Owner decision (2026-11-08, after this draft): Spanish (es) is a full language everywhere**, including this game's UI copy and its content packs. Every EN/FR/AR list or copy table in this file is read as EN/FR/AR/ES; the game's lane D writes the ES copy and ES content, marked for native review in `shared/i18n/review.json` (copy) or with `status: "draft"` (packs). JAMAA-PLATFORM §3.12.
 
 Rules, state machine, timers, scoring, edge cases, screens, settings, copy, content schema and the first 67 prompts for the "Who's most likely to…" game. The JAMAA hub owns the lobby, game picker, characters, ⓘ button, entitlements, mute, reconnect and room lifetime; **the platform contract is [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) (§2.11 for this game); where it names a shared concept differently, the platform name wins.** i18n keys written `likely.*` here live under `game.likely.*`; intents travel as `GAME {gameId:"likely", i}`; `HOST_ADVANCE` is the platform host-advance intent; late joiners enter through the `join` hook; "How to play" is the platform's per-device setup intro (**no in-game intro phase**); the no-repeat history is the platform `memory.usedKeys`. Conventions follow [SPEC.md](SPEC.md) (pure engine with `TICK`, RNG in state, authoritative Durable Object, per-client projections, all keys present). `[VERIFY]` = check before shipping; `[native review]` = native speaker approval needed.
 
@@ -8,7 +10,7 @@ Rules, state machine, timers, scoring, edge cases, screens, settings, copy, cont
 
 ## 1. The game in one paragraph
 
-A card appears on the TV: "Who's most likely to… **cry at a wedding**?" Everyone secretly taps a player on their phone (yourself included, if you're honest). Reveal: every character runs to the person they voted for, a conga line forms behind the "winner", a spotlight drops and they get the **Waterworks Award**. In the default public mode you score "Read the Room" points for every friend who picked the same person as you. At the end, everyone leaves with their signature award ("The Drama Award", "The Two-Minutes Award") and the best mind reader wins. In anonymous mode nobody sees who voted for whom, and there are awards but no points.
+A card appears on the TV: "Who's most likely to… **cry at a wedding**?" Everyone secretly taps a player on their phone (yourself included, if you're honest). Reveal: every character runs to the person they voted for, a conga line forms behind the "winner", a spotlight drops and they get the **Waterworks Award**. In the default public mode you score "Read the Room" points for every friend who picked the same person as you. At the end, everyone leaves with their signature award ("The Drama Award", "The Two-Minutes Award") and the best mind reader wins. In secret-vote mode nobody sees who voted for whom: after each card the TV shows only percentages ("50% voted for Alex"), there are awards but no points. Family mode is the default; an adult group can switch on **Spicy** (18+, confirmed on the TV), where some cards name another player ("Who's most likely to kiss Alex?"), suggestive but never explicit.
 
 Players: **3–12**. It's the warm-up game: no typing, one tap per card, ~6–10 minutes.
 
@@ -20,15 +22,15 @@ Players: **3–12**. It's the warm-up game: no typing, one tap per card, ~6–10
 |---|---|
 | `gameId` | `"likely"` |
 | Players | min 3, max 12 (platform). Start blocked under 3 connected; no playable card → platform `NO_CONTENT_AVAILABLE` |
-| Settings | 3 (§9); `packIds` is hidden while only one pack is playable, so 2 visible rows at launch |
+| Settings | 4 (§9): `packIds`, `length`, `showVoters`, `mode`; `packIds` is hidden while only one pack is playable, and `mode` is hidden while no Spicy card is playable (free rooms), so 2–3 visible rows at launch |
 | How to play | 4 steps (§10.1), shown **per device, the first time this game's setup opens** (platform §3.2), never as a game phase; ⓘ always |
 | Score carry | `carriesScore: false`: every game starts at 0; stars come from this game's points (none in anonymous mode) |
 | Hooks | `join` (late joiners wait for the next CARD, §7), `projectSetup` → `{available}`, `memory` → card ids, `projectStatus` (`doneIds` = votedIds in VOTING, `awaitedIds` = the others), `leakCheck` |
 | Pause menu items (TV) | in order: "Skip card" (CARD, VOTING, `SKIP_CARD`), "Next" (CARD, REVEAL, AWARDS, `HOST_ADVANCE`), "End game" (HOLD, `END_GAME`, confirm) |
 | Characters | Expressions used (platform set): `idle`, `done`, `point` (with its self variant `pointSelf`), `shock`, `laugh`, `smug`, `shy`, `cheer`, `away` |
-| Content language | Each card has EN/FR/AR text; the card shows in the room's content language |
-| Entitlement | Free room: `tier:"free"` cards of the Family pack. JAMAA Pass: all cards and packs (Spicy pack when it exists) |
-| Host | TV remote (always) + VIP phone |
+| Content language | Each card has EN/FR/AR/ES text; the card shows in the room's content language |
+| Entitlement | Free room: `tier:"free"` cards of the Family pack. JAMAA Pass: all cards and packs, including the Spicy pack (`ageRating: "adult"`), which is served **only** to a room whose `mode` is `spicy` (§9.1) |
+| Host | TV remote (always) + VIP phone. The host can **skip any card** at any time before its reveal (`SKIP_CARD`, unlimited); in Spicy mode the VIP phone also shows a one-tap "Skip this card" button on CARD and VOTING |
 
 ---
 
@@ -81,7 +83,7 @@ Why a separate CARD phase: everyone reads the prompt on the TV together and laug
 ## 5. Voting rules
 
 1. **Eligible voters:** every non-`left` player. Disconnected players abstain.
-2. **Eligible targets:** every non-`left` player **including yourself** and including disconnected players (being away doesn't save you).
+2. **Eligible targets:** every non-`left` player **including yourself** and including disconnected players (being away doesn't save you). **Exception, named cards (Spicy, §11.1):** the player named on the card (`namedPlayerId`) is not a target on that card (nobody is "most likely to kiss" themselves); they still vote.
 3. **One vote**, changeable until VOTING ends.
 4. **Voting for yourself is allowed** — decision: honesty is funny ("I know, it's me") and it makes 3-player games work. A self-vote is visible in the reveal (in public mode) as the character pointing at itself.
 5. Votes are hidden until REVEAL (the TV shows only who has voted).
@@ -93,6 +95,7 @@ Why a separate CARD phase: everyone reads the prompt on the TV together and laug
 - **Chaos:** if ≥ 3 votes were cast and every voted target has exactly 1 vote (everyone picked someone different), there is **no winner**: `topIds = []`, `chaos = true`. The TV says "Total chaos! You don't agree on anything." No award, no points.
 - **Unanimous:** ≥ 3 votes and all of them on one target → `unanimous = true`.
 - **Ties:** all tied top targets share the card's award.
+- **Percentages** (public in both modes; the main tally in secret-vote mode): for each target with ≥ 1 vote, `percent = round(100 × count / votesCast)` (half up). They are computed from the per-card tallies only, so they reveal nothing about who voted for whom. Sums may read 99–101 % (independent rounding, as in any poll); this is accepted rather than nudging one value. Order: percent descending, then seat order.
 
 ---
 
@@ -111,7 +114,7 @@ The **Mind Reader** (most points) is the game's "winner" on the results screen; 
 
 **Why agreement scoring.** It scales smoothly from 3 to 12 players: a real majority pays more than a 2-2-2 tie (with 12 voters, joining a group of 6 pays +250, a pair pays +50), Chaos pays 0 without a special rule, and a 3-player pact (two people always voting the same way) earns at most +50 a card. Round numbers keep it light: a Normal game (12 cards) tops out around 4 800, enough for a ranking without making anyone feel judged by their score. The Self-aware bonus rewards owning it, but only when the group agrees.
 
-**Anonymous mode (`showVoters: false`) awards no points at all.** Any public score (per card, or as a final total) would let the table work out who voted with whom, and a +100 on the top target would expose a self-vote. So in anonymous mode: no agreement, Unanimous or Self-aware points, no Mind Reader; the public `scores` stay at 0 for the whole game; the game is played for its **awards** (§6.2), which depend only on public tallies. Placement stars are not awarded for an anonymous game (no instance points, platform §2.4).
+**Secret-vote mode (`showVoters: false`, called "anonymous" in code) awards no points at all** (owner decision). Any public score (per card, or as a final total) would let the table work out who voted with whom, and a +100 on the top target would expose a self-vote. So in anonymous mode: no agreement, Unanimous or Self-aware points, no Mind Reader; the public `scores` stay at 0 for the whole game; the game is played for its **awards** (§6.2), which depend only on public tallies. Placement stars are not awarded for an anonymous game (no instance points, platform §2.4).
 
 ### 6.1 Herd behaviour
 
@@ -148,7 +151,12 @@ Signature awards, the Mystery Award and Tonight's Star use only per-card tallies
 | **Pool exhausted** | Prefer cards not in `memory.usedKeys` (platform history, ≤ 300 ids per game); then least recently used, with a "Rerun!" tag. `startBlocker = NO_CONTENT_AVAILABLE` (platform code) if the selected packs have fewer playable cards than the length (free rooms: free cards only) |
 | **Two players with the same name** | Impossible (platform `nameKey` uniqueness); characters also differ |
 | **Same player tops many cards** | Allowed; the "AGAIN?!" line (§6.1) |
-| **Anonymous-mode tie** | The tie reveal shows counts only; each tied target gets the award |
+| **Anonymous-mode tie** | The tie reveal shows percentages only ("33% voted for Alex · 33% voted for Maya"); each tied target gets the award |
+| **Named card (Spicy), fewer than 4 players in game** | Named cards are not drawn (a named card needs ≥ 3 eligible targets); unnamed Spicy cards still are |
+| **Named player leaves or disconnects during the card** | Disconnect: the card plays on (the name stays). `left`: the card is voided like a skip (new card drawn, votes discarded, counter unchanged) |
+| **Who gets named** | `namedPlayerId` is drawn with the RNG among connected non-left players who have been named the **fewest** times this game, never the same player on two consecutive named cards; at most 1 named card in 3 (§11.3) |
+| **Host skips a card in Spicy mode** | Same as any skip (unlimited, no reason asked, nothing shown but "Next card"); the skipped card goes to `memory.usedKeys` so it does not come back this session |
+| **A late joiner in Spicy mode** | Joins as usual (§7 row above); the TV's 18+ confirmation covered the room, and the joining phone shows a one-line notice "Spicy mode is on (18+)" before the player is admitted, with a "Leave" option |
 
 ---
 
@@ -161,7 +169,8 @@ Signature awards, the Mystery Award and Tonight's Star use only per-card tallies
 | Who has voted | `votedIds` (all) | — | — |
 | Your own vote | `me.myVote` (own phone only) | own phone + public | own phone only |
 | Voter → target | never | `reveal.ballots` | **never projected to anyone, ever** (not in AWARDS or RESULTS either) |
-| Counts per target, top targets, unanimous, chaos | never | `reveal.counts`, `topIds`… | `reveal.counts`, `topIds`… |
+| Counts and percentages per target, top targets, unanimous, chaos | never | `reveal.counts` (with `percent`), `topIds`… | `reveal.counts` (with `percent`), `topIds`… |
+| Named player (Spicy) | from CARD (it is part of the card text) | same | same |
 | Points | — | `reveal.deltas`, `scores` | **none exist** (scores stay 0; no deltas, no Mind Reader, no Self-aware) |
 
 **Anonymity guarantee (tested, platform §2.11).** In anonymous mode, two games with identical per-card tallies but a different voter→target mapping produce byte-identical TV views, and byte-identical views on every phone whose own vote is the same in both games, in every phase including AWARDS and RESULTS.
@@ -170,9 +179,9 @@ Signature awards, the Mystery Award and Tonight's Star use only per-card tallies
 
 | Phase | TV | Phone |
 |---|---|---|
-| CARD | The card flips in: small header "Who's most likely to…", the phrase big (`type.tv.display`), card counter "4 / 12". Jury arc of characters below, `idle` | "Read the TV…" with the phrase in small type (accessibility) and a countdown to voting |
-| VOTING | Same card, timer ring; characters who voted switch to `done` (arms crossed, sealed lips); no target is shown | Grid of every player tile (character + name), own tile labelled "Me" with a dashed outline. Tap = vote: the chosen tile gets only a **subtle outline and a small check** (no full-colour fill, the grid is not recoloured, so a neighbour cannot read the pick); a "Vote in" line in the header; haptic 20; tap another to change. Header repeats the phrase |
-| REVEAL | §12.2 conga reveal (public) or ballot rain (anonymous); award stamp on the top target(s); public mode: agreement coins fly to voters | "You got 3 votes!"; public mode: "3 others agreed with you: +150", "Self-aware! +100" when applicable; award banner if top. Anonymous mode: counts and awards only, never a point |
+| CARD | The card flips in: small header "Who's most likely to…", the phrase big (`type.tv.display`), card counter "4 / 12". Jury arc of characters below, `idle`. Named card: the named player's name is set in their character colour inside the phrase, and their character steps forward with `shy`; in Spicy mode a small flame-outline "Spicy" tag (an icon, never an emoji) sits on the card corner | "Read the TV…" with the phrase in small type (accessibility) and a countdown to voting |
+| VOTING | Same card, timer ring; characters who voted switch to `done` (arms crossed, sealed lips); no target is shown | Named card: the named player's tile is absent from the grid. Grid of every player tile (character + name), own tile labelled "Me" with a dashed outline. Tap = vote: the chosen tile gets only a **subtle outline and a small check** (no full-colour fill, the grid is not recoloured, so a neighbour cannot read the pick); a "Vote in" line in the header; haptic 20; tap another to change. Header repeats the phrase |
+| REVEAL | §12.2 conga reveal (public) or ballot rain (secret votes); award stamp on the top target(s); public mode: agreement coins fly to voters. **Secret votes:** after the counts, a percentage board under the card, one line per voted target, largest first: "50% voted for Alex", "25% voted for Maya"… (`likely.reveal.percent`), never who voted for whom | "You got 3 votes!"; public mode: "3 others agreed with you: +150", "Self-aware! +100" when applicable; award banner if top. Secret votes: "50% voted for you" and awards only, never a point |
 | HOLD | "Waiting for players… {count}/3" | Same |
 | AWARDS | One card per player, 3 at a time, 4 s per trio (§12.4), then the Mind Reader podium (public mode only) | Own signature award card, big, shareable look (no share button in v1) |
 | RESULTS | Public: Mind Reader ranking + all signature awards wall. Anonymous: the awards wall only. Then the platform cup panel and buttons (HUB-05) | Own award (+ points in public mode); VIP buttons |
@@ -181,17 +190,26 @@ Signature awards, the Mystery Award and Tonight's Star use only per-card tallies
 
 ---
 
-## 9. Settings (3)
+## 9. Settings (4)
 
 | Setting | Values | Default |
 |---|---|---|
-| `packIds` | Likely pack ids (Family; Spicy later, Pass-only, `ageRating: "teen"` (16+) with a confirmation dialog on the TV, default focus "Cancel") | `[]` = every playable pack in the content language (static default). **Hidden while only one pack is playable** (launch) |
+| `packIds` | Likely pack ids playable in the content language and allowed by `mode` (Family packs always; the Spicy pack only when `mode: "spicy"`) | `[]` = every playable pack for the current mode (static default). **Hidden while only one pack is playable** (launch) |
 | `length` | `short` 8 · `normal` 12 · `long` 16 | `normal` |
-| `showVoters` | `true` (public: who voted for whom, with points) · `false` (anonymous: counts only, awards only, no points) | `true` |
+| `showVoters` | `true` (public: who voted for whom, with points) · `false` (secret votes: percentages only, awards only, **no points**) | `true` |
+| `mode` | `family` · `spicy` (18+) | **`family`** |
 
-`SETTINGS_SCHEMA = 1`; `normalize` maps unknown or missing keys to the defaults. The row label for `showVoters` is "Show who voted", with the subtitle "Off: secret votes, no points".
+`SETTINGS_SCHEMA = 2` (was 1; `mode` added); `normalize` maps unknown or missing keys to the defaults, so every stored setting comes back as `family`. The row label for `showVoters` is "Show who voted", with the subtitle "Off: secret votes, no points". The `mode` row reads "Mode: Family · Spicy (18+)" and is hidden in rooms where no Spicy card is playable.
 
----
+### 9.1 Spicy mode: the 18+ gate (binding)
+
+1. **Turning it on happens on the TV, with an explicit 18+ confirmation.** Choosing "Spicy (18+)" on the TV setup opens a full-screen dialog: title "Spicy mode is for adults only", body "Cards can be suggestive and can name players. Everyone playing tonight must be 18 or older.", buttons **"Cancel"** (default focus) and **"We're all 18+"**. Only the second button sends the patch. On the VIP phone the Spicy option is shown disabled with "Turn it on from the TV" (the confirmation must be seen by the whole room).
+2. **Server rule.** A patch that moves `mode` to `spicy` is valid only if it carries `ageConfirmed: true` **and** comes from the TV actor; anything else → `INVALID_SETTINGS`. Moving back to `family` is always allowed, from the TV or the VIP. *Platform dependency:* JAMAA-PLATFORM §2.2 `settings.apply(s, patch, content, locale)` has no actor today; it must gain `by: GameActor` (open item). Until it does, G3 ships with Spicy compiled out (`LIKELY_SPICY_ENABLED = false`) rather than with a client-only gate.
+3. **The confirmation is asked again every time** Spicy is turned on (no "remember"). It lasts for the room: REPLAY keeps the mode (same group), a new room always starts in `family`, and the room drops back to `family` when it is closed or emptied.
+4. **Secret votes are suggested.** When Spicy is switched on, `showVoters` is set to `false` in the same patch (the host may switch it back): on a card such as "kiss {player}", a public ballot can embarrass people more than the card itself.
+5. **Family stays family.** In `family` mode the draw never serves a card with `spice > 0` or a named card, whatever the packs say; lint forbids `spice > 0` in `ageRating: "all"` packs.
+6. **The host can skip any card** (pause menu "Skip card" on the TV; in Spicy mode, also a one-tap button on the VIP phone during CARD and VOTING). Skips are unlimited and silent ("Next card").
+7. **Platform dependency:** `ageRating: "adult"` is "never served" in JAMAA-PLATFORM §5.2. That rule must become "served only to a room whose game settings carry a TV-confirmed 18+ mode" (open item). The previous plan (`teen`, 16+) is replaced by 18+ per the owner.
 
 ## 10. Copy
 
@@ -202,7 +220,7 @@ Signature awards, the Mystery Award and Tonight's Star use only per-card tallies
 | 1 | **A card appears:** "Who's most likely to…" | **Une carte s'affiche :** « Qui risque le plus… » | **بتطلع كرت:** «مين فينا ممكن…» |
 | 2 | **Vote on your phone** for the person who fits best. Yes, you can vote for yourself. | **Votez sur votre téléphone** pour la personne qui colle le mieux. Oui, on peut voter pour soi. | **صوّتوا عالتلفون** للشخص يلّي لابقلو أكتر. وإيه، فيكن تصوّتوا لحالكن. |
 | 3 | **Reveal!** See who got picked, and by whom. | **Révélation !** Découvrez sur qui tombe le choix, et qui l'a fait. | **الكشف!** شوفوا مين انختار، ومين اختارو. |
-| 3 anon (`likely.howto.3.anon`) | **Reveal!** See who got picked. Votes stay secret. | **Révélation !** Découvrez sur qui tombe le choix. Les votes restent secrets. | **الكشف!** شوفوا مين انختار. الأصوات بتضلّ سرّية. |
+| 3 anon (`likely.howto.3.anon`) | **Reveal!** See the percentages. Who voted for whom stays secret. | **Révélation !** Découvrez les pourcentages. Qui a voté pour qui reste secret. | **الكشف!** شوفوا النسب. مين صوّت لمين بيضلّ سرّ. |
 | 4 | **Agree with the others** to score, and collect your award at the end. | **Votez comme les autres** pour marquer des points, et repartez avec votre prix. | **صوّتوا متل الجماعة** لتربحوا نقاط، وكل واحد بياخد جايزتو بالآخر. |
 | 4 anon (`likely.howto.4.anon`) | **Collect your award** at the end. Secret votes: no points tonight. | **Repartez avec votre prix** à la fin. Votes secrets : pas de points. | **كل واحد بياخد جايزتو** بالآخر. تصويت سرّي: ما في نقاط. |
 
@@ -217,21 +235,24 @@ EN:
 - **Points.** +50 for each other player who picked the same person as you (up to +300 a card). Everyone agreed? +400 each. Voted for yourself and at least 2 others did too? +100 more. Secret votes: no points, only awards.
 - **Chaos.** If everyone votes for someone different, nobody wins the card.
 - **Awards.** Each card has an award. At the end, everyone gets their signature award. The most points wins the Mind Reader award.
-- **Secret votes.** If the host turned off "Show who voted", only the number of votes is shown, and nobody scores points.
+- **Secret votes.** If the host turned off "Show who voted", the TV shows only percentages ("50% voted for Alex"), never who voted for whom, and nobody scores points.
+- **Spicy mode (18+).** Only for adults, switched on from the TV. Some cards name a player; that player can't be voted for on that card. The host can skip any card.
 
 FR:
 - **Vote.** Un vote par carte, pour n'importe qui, vous compris. Modifiable jusqu'à la fin du temps.
 - **Points.** +50 pour chaque autre personne qui a choisi comme vous (jusqu'à +300 par carte). Tout le monde d'accord ? +400 chacun. Vous avez voté pour vous et au moins 2 autres aussi ? +100 de plus. Votes secrets : pas de points, seulement des prix.
 - **Chaos.** Si chaque vote va à une personne différente, personne ne gagne la carte.
 - **Prix.** Chaque carte a son prix. À la fin, chacun repart avec son prix signature. Le plus de points remporte le Prix télépathe.
-- **Votes secrets.** Si l'hôte a désactivé « Montrer les votes », seul le nombre de votes s'affiche, et personne ne marque de points.
+- **Votes secrets.** Si l'hôte a désactivé « Montrer les votes », la télé n'affiche que des pourcentages (« 50 % ont voté pour Alex »), jamais qui a voté pour qui, et personne ne marque de points.
+- **Mode Épicé (18+).** Réservé aux adultes, activé depuis la télé. Certaines cartes nomment une personne, pour qui on ne peut pas voter sur cette carte. L'hôte peut passer n'importe quelle carte.
 
 AR `[native review]`:
 - **التصويت.** صوت واحد عكل كرت، لأيّ حدا، حتى لحالك. فيك تغيّرو لآخر ثانية.
 - **النقاط.** ‎+50 عن كل واحد اختار متلك (لحدّ ‎+300 بالكرت). إذا الكل اتّفقوا: ‎+400 لكل واحد. صوّتت لحالك وتنين غيرك كمان؟ ‎+100 زيادة. بالتصويت السرّي: ما في نقاط، بس جوايز.
 - **فوضى.** إذا كل واحد صوّت لحدا غير، ما حدا بيربح الكرت.
 - **الجوايز.** كل كرت إلو جايزة. بالآخر كل واحد بياخد جايزتو. واللي معو أكتر نقاط بياخد جايزة قراءة الأفكار.
-- **تصويت سرّي.** إذا المضيف طفى «فرجي مين صوّت»، بيطلع بس عدد الأصوات، وما حدا بياخد نقاط.
+- **تصويت سرّي.** إذا المضيف طفى «فرجي مين صوّت»، التلفزيون بيفرجي بس النسب («50% صوّتوا لـAlex»)، أبداً مين صوّت لمين، وما حدا بياخد نقاط.
+- **وضع «حرّاق» (+18).** بس للكبار، وبينفتح من التلفزيون. في كروت بتذكر اسم حدا منكن، وما فيكن تصوّتوا إلو عهالكرت. والمضيف فيه ينطّ أيّ كرت.
 
 ### 10.3 Key microcopy
 
@@ -252,6 +273,28 @@ AR `[native review]`:
 
 ---
 
+### 10.4 New keys in draft 3 (EN · FR · AR · ES)
+
+ES is a full UI language on the platform; the older Likely keys above still need their ES column (open item). FR avoids gendered participles about players (« 50 % ont voté pour Alex » agrees with the voters, not the player).
+
+| Key | EN | FR | AR `[native review]` | ES `[native review]` |
+|---|---|---|---|---|
+| `likely.reveal.percent` | {percent}% voted for {name} | {percent} % ont voté pour {name} | {percent}% صوّتوا لـ{name} | El {percent} % votó por {name} |
+| `likely.reveal.percentYou` | {percent}% voted for you | {percent} % ont voté pour toi | {percent}% صوّتوا إلك | El {percent} % votó por ti |
+| `likely.setup.mode` | Mode | Mode | الوضع | Modo |
+| `likely.setup.mode.family` | Family | Famille | عيلة | Familia |
+| `likely.setup.mode.spicy` | Spicy (18+) | Épicé (18+) | حرّاق (+18) | Picante (+18) |
+| `likely.setup.spicyFromTv` | Turn it on from the TV | À activer depuis la télé | شغّلو من التلفزيون | Actívalo desde la tele |
+| `likely.spicy.gate.title` | Spicy mode is for adults only | Le mode Épicé est réservé aux adultes | وضع «حرّاق» بس للكبار | El modo Picante es solo para adultos |
+| `likely.spicy.gate.body` | Cards can be suggestive and can name players. Everyone playing tonight must be 18 or older. | Les cartes peuvent être coquines et nommer des joueurs. Tout le monde ce soir doit avoir 18 ans ou plus. | الكروت ممكن تكون جريئة وتذكر أسامي اللاعبين. لازم كل يلّي عم يلعبوا الليلة يكونوا +18. | Las cartas pueden ser atrevidas y nombrar a jugadores. Todos los que juegan esta noche deben tener 18 años o más. |
+| `likely.spicy.gate.cancel` | Cancel | Annuler | إلغاء | Cancelar |
+| `likely.spicy.gate.confirm` | We're all 18+ | On a tous 18 ans ou plus | كلّنا فوق الـ18 | Todos tenemos 18 o más |
+| `likely.spicy.joinNotice` | Spicy mode is on (18+) | Mode Épicé activé (18+) | وضع «حرّاق» شغّال (+18) | Modo Picante activado (+18) |
+| `likely.host.skip` | Skip this card | Passer cette carte | نطّ هالكرت | Saltar esta carta |
+| `likely.card.next` | Next card | Carte suivante | الكرت التاني | Siguiente carta |
+
+`[native review]` AR mode name: «حرّاق» (spicy-hot, playful) vs «جريء» (bold); ES "Picante" vs "Atrevido". FR « Épicé ». AR `{name}` and `{percent}` are wrapped in Unicode isolates (FSI…PDI) by the i18n layer so Latin names and digits do not reorder the line.
+
 ## 11. Content
 
 ### 11.1 Content rules (binding)
@@ -269,18 +312,23 @@ Banned in every pack (lint keyword list + human review):
 
 Style: verb phrase completing the header, ≤ 60 graphemes; affectionate; Lebanese-flavoured where it's universal (dabke, tawleh, Teta, Fairuz, "two minutes" culture) without folklore clichés.
 
-**Spicy pack (later, Pass, 16+):** cheeky not explicit (e.g. "stalk an ex's profile at 2 a.m.", "lie about their age", "pretend to know a song they don't"). Same banned list minus the romance/alcohol lines; never sexual acts, never about bodies.
+**Spicy pack (Pass, 18+, only in `mode: "spicy"`, §9.1): suggestive, never explicit.**
+- Allowed: flirting, crushes, kisses, dates, exes, romance, light innuendo that an adult table laughs at and nobody has to explain to a child walking in.
+- Banned (lint keyword list + human review): sexual acts or body parts, nudity, anything about bodies or attractiveness ranking ("hottest", "best body"), sexual orientation as a joke, cheating on a partner, jealousy or control (going through a phone), alcohol or drugs as the punchline, anything non-consensual or about minors, plus every line of the base banned list except "romantic behaviour".
+- **Named cards** may name another player with `{player}` ("Who's most likely to kiss {player}?"). Rules: the action must be something the named player could hear about themselves and laugh at; never a rating of the named player (no "find {player} attractive"), never anything they would have to deny in front of a partner. Max 1 named card in 3 (§11.3). The named player is not a target on that card (§5).
+- The "Teta test" becomes the **"wedding table test"**: you could read it aloud at a cousin's wedding table of adults and get laughs, not silence.
 
 ### 11.2 Schema (`shared/src/games/likely/schema.ts`; packs in `content/likely/<pack-id>.json`, read through the platform `ContentAdapter`, JAMAA-PLATFORM §5.2)
 
 ```ts
-const L3 = z.strictObject({ en: z.string().min(1).max(60), fr: z.string().min(1).max(70), ar: z.string().min(1).max(60) });
+const L3 = z.strictObject({ en: z.string().min(1).max(60), fr: z.string().min(1).max(70), ar: z.string().min(1).max(60), es: z.string().min(1).max(70).optional() }); // es required by lint when the pack lists es
 export const LikelyCardSchema = z.strictObject({
   id: z.string().regex(/^[a-z0-9-]{3,40}$/),       // "fam-001"
   tier: z.enum(["free", "pass"]),
-  spice: z.union([z.literal(0), z.literal(1), z.literal(2)]),   // 0 family, 1 cheeky, 2 spicy
-  tags: z.array(z.enum(["party", "food", "family", "travel", "habits", "lebanon", "tech", "music", "sport", "future"])).min(1).max(3),
-  prompt: L3,       // verb phrase completing likely.card.header (FR includes "de"/"d'")
+  spice: z.union([z.literal(0), z.literal(1), z.literal(2)]),   // 0 family, 1 cheeky (18+ pack, unnamed), 2 spicy (18+ pack)
+  namesPlayer: z.boolean().default(false),          // true ⇔ every locale of `prompt` contains "{player}" exactly once (lint); spice ≥ 1 only
+  tags: z.array(z.enum(["party", "food", "family", "travel", "habits", "lebanon", "tech", "music", "sport", "future", "romance"])).min(1).max(3), // romance: spice ≥ 1 only
+  prompt: L3,       // verb phrase completing likely.card.header (FR includes "de"/"d'"); may contain {player} if namesPlayer
   award: L3,        // "… Award" / "Prix …" / "جايزة …"
   review: z.strictObject({ status: z.enum(["draft", "native-reviewed"]) }),
 });
@@ -288,14 +336,15 @@ export const LikelyPackSchema = z.strictObject({
   schemaVersion: z.literal(1),
   id: z.string().regex(/^[a-z0-9-]{1,35}$/),          // ≤ 35 so pack_<family> stays ≤ 40 (platform §4.1)
   game: z.literal("likely"),
-  title: z.strictObject({ en: z.string(), fr: z.string(), ar: z.string() }),
-  description: z.strictObject({ en: z.string(), fr: z.string(), ar: z.string() }),
-  ageRating: z.enum(["all", "teen"]),                  // platform AGE_RATINGS; the Spicy pack (16+) is "teen"
+  title: z.strictObject({ en: z.string(), fr: z.string(), ar: z.string(), es: z.string().optional() }),
+  description: z.strictObject({ en: z.string(), fr: z.string(), ar: z.string(), es: z.string().optional() }),
+  locales: z.array(z.enum(["en", "fr", "ar", "es"])).min(3).default(["en", "fr", "ar"]), // es added once every card has es
+  ageRating: z.enum(["all", "adult"]),                 // platform AGE_RATINGS; the Spicy pack is "adult" (18+, served only in mode spicy, §9.1)
   cards: z.array(LikelyCardSchema).min(30),
 });
 ```
 
-Lint (`tools/content-lint/src/games/likely.ts`): ids unique; review-flag keywords reported as warnings; EN phrase starts with a lowercase letter or digit, doesn't start with "to " and has no trailing "?"; FR phrase starts with `de ` or `d'`; AR phrase does not contain «مين»; EN award ends with "Award", FR award starts with "Prix", AR award starts with «جايزة»; `spice:0` in `ageRating:"all"` packs only; banned-keyword list per locale; ≥ 40 % of the Family pack free (so a free room can play Long = 16 twice without reruns: 33 free cards).
+Lint (`tools/content-lint/src/games/likely.ts`): ids unique; review-flag keywords reported as warnings; EN phrase starts with a lowercase letter or digit, doesn't start with "to " and has no trailing "?"; FR phrase starts with `de ` or `d'`; AR phrase does not contain «مين»; EN award ends with "Award", FR award starts with "Prix", AR award starts with «جايزة»; `spice:0` and `namesPlayer:false` in `ageRating:"all"` packs, `spice ≥ 1` in `ageRating:"adult"` packs; `namesPlayer` ⇔ exactly one `{player}` in every locale's prompt and none in the award; Spicy banned-keyword list per locale (§11.1); ≤ 40 % of the Spicy pack's cards name a player; `es` present on every card when the pack lists `es`; banned-keyword list per locale; ≥ 40 % of the Family pack free (so a free room can play Long = 16 twice without reruns: 33 free cards).
 
 **AR grammar note.** After «مين» the verb takes the masculine 3rd person (`يبكي`, `ينسى عيد ميلادو`), which is the standard generic form for an unknown "who" and reads as neutral; no adjective about the subject is used. FR phrases avoid participles and adjectives that agree with the subject ("crier en premier", not « être le premier à crier »).
 
@@ -303,12 +352,16 @@ Lint (`tools/content-lint/src/games/likely.ts`): ids unique; review-flag keyword
 
 `drawCard`: from the selected packs (`[]` = all playable), allowed tier, not in `memory.usedKeys` nor drawn this game; no two consecutive cards sharing a tag when avoidable; the first card of a game is drawn from `tags` containing `party` or `habits` (easy openers).
 
+- **`mode: "family"`:** only `spice: 0`, `namesPlayer: false` cards (whatever the packs).
+- **`mode: "spicy"`:** about 2 Spicy cards for every Family card (a Family card at positions 3, 6, 9… gives the room a breather), and the first card of the game is an unnamed Spicy card. Named cards: at most 1 in any 3 consecutive cards, never two in a row, and only when ≥ 4 players are in the game. When a named card is drawn, the engine draws `namedPlayerId` (§7 "Who gets named") and resolves `{player}` into the projected `card.prompt` with that player's display name; the server keeps the raw template.
+- `startBlocker` in Spicy mode also requires ≥ `length` playable cards across the mix (Spicy pack locked in free rooms, so the `mode` row is hidden there, §9).
+
 ### 11.4 First content plan
 
 | Pack | Cards | Free | Status |
 |---|---|---|---|
 | `likely-family` — Family Night · Soirée en famille · «سهرة عيلة» | 67 drafted (§14) | 33 (marked F) | draft, `[native review]` FR/AR |
-| `likely-spicy` — After Midnight · Après minuit · «بعد نص الليل» | 60 planned | 0 | later, Pass, 16+ |
+| `likely-spicy` — After Midnight · Après minuit · «بعد نص الليل» · Después de medianoche | **24 drafted (§14.1)**, 60 before launch (≤ 40 % named) | 0 | draft, Pass, **18+** (`ageRating: "adult"`), `[native review]` FR/AR/ES; ships only once the two platform dependencies of §9.1 are done |
 | `likely-lebanon` — Lebanese Life · Vie libanaise · «عيشة لبنانية» | 40 planned (traffic, power-cut humour kept light, family lunches, weddings), plus the former Family #40 "move abroad and fly back for the food" pending a native reviewer's tone check | 10 | later |
 
 ---
@@ -333,7 +386,7 @@ The Likely world (platform world id `rooftop`) is a glitzy, slightly ridiculous 
 
 `revealDurationMs = 5 000 + 100 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0)`, max 9 500.
 
-**Anonymous mode:** a ballot box at the centre shakes, envelopes burst out and fly to targets (no voter colour, all identical cream envelopes), counts roll, then steps 4–5 identically; step 6 does not exist (no points).
+**Anonymous mode (secret votes):** a ballot box at the centre shakes, envelopes burst out and fly to targets (no voter colour, all identical cream envelopes), counts roll, then steps 4–5 identically; step 6 is replaced by the **percentage board** (1 200 ms): under the card, one line per voted target, largest first, each line sliding in with that target's character head: "50% voted for Alex" (`likely.reveal.percent`), the bar filling to its percent. No points. `revealDurationMs` is the same formula (the board takes the time the points step would take).
 
 **Chaos:** characters run in all directions and bump into each other (a 1.2 s scramble), "Total chaos!" title; no spotlight.
 
@@ -371,13 +424,13 @@ TV Compose: conga positions computed per target as a polyline behind the charact
 | `HOST_ADVANCE` | `{}` | host | CARD, REVEAL, AWARDS (expires the phase inline) |
 | `END_GAME` | `{}` | host | HOLD |
 
-Errors: `INVALID_TARGET` (unknown or `left`), `STALE_CARD`, `WRONG_PHASE`.
+Errors: `INVALID_TARGET` (unknown, `left`, or the card's named player), `STALE_CARD`, `WRONG_PHASE`. Settings (platform `SET_GAME_SETTINGS`): moving `mode` to `spicy` without `ageConfirmed: true` from the TV → `INVALID_SETTINGS` (§9.1).
 
 ### 13.2 View (`LikelyPublic`)
 
-`schema, phase, cardIndex, cardCount, deadline, card {id, prompt, award} | null (CARD+), votedIds[], reveal | null, scores [{playerId, score, scoreBefore}], awards [] (AWARDS+), showVoters`.
+`schema, phase, cardIndex, cardCount, deadline, card {id, prompt /* {player} already resolved */, award, spicy: boolean, namedPlayerId | null} | null (CARD+), votedIds[], reveal | null, scores [{playerId, score, scoreBefore}], awards [] (AWARDS+), showVoters, mode: "family"|"spicy"`.
 
-`reveal = { counts: [{playerId, count}], topIds[], unanimous, chaos, ballots: [{voterId, targetId}] | null, deltas: [{playerId, points, reason: "agree"|"unanimous"|"selfAware"}] }`.
+`reveal = { votesCast, counts: [{playerId, count, percent}] /* percent per §5.1, both modes */, topIds[], unanimous, chaos, ballots: [{voterId, targetId}] | null, deltas: [{playerId, points, reason: "agree"|"unanimous"|"selfAware"}] }`.
 - **Public mode:** `ballots` and `deltas` as computed; `scores` move.
 - **Anonymous mode:** `ballots: null`, `deltas: []`, every `score` and `scoreBefore` is 0 for the whole game, `awards` never contain Self-aware or Mind Reader. Nothing in any view depends on the voter→target mapping beyond the per-card tallies.
 
@@ -394,6 +447,8 @@ State-only keys (platform `forbiddenKeys`): `votes`, `ballotsAll`, `rngState`, `
 3. If `!showVoters`: no projection ever contains `ballots`, a non-zero score, a delta, or the Self-aware / Mind Reader award.
 4. `chaos ⇒ topIds = []`; `unanimous ⇒ topIds.length = 1`.
 5. Scores ≥ 0 and Σ deltas = Σ (score − scoreBefore); a player's agreement points on a card ≤ 300 (+100 Unanimous, +100 Self-aware).
+6. `mode = "family"` ⇒ the current card has `spice = 0` and no `namedPlayerId`; `namedPlayerId ≠ null` ⇒ it is a non-`left` player, not a vote target on that card, and the game has ≥ 4 players.
+7. Every `percent` equals `round(100 × count / votesCast)` of the same card's tallies.
 
 ### 13.4 Tests
 
@@ -401,11 +456,14 @@ State-only keys (platform `forbiddenKeys`): `votes`, `ballotsAll`, `rngState`, `
 - Scoring table tests (public mode): agreement +50 per matching other voter with the +300 cap; Unanimous = +400; Self-aware only with ≥ 2 others; Chaos and lone votes = 0; a 3-player pact earns ≤ +50 per card.
 - **Anonymity differential property (fast-check, synthetic catalog `shared/src/testing/catalogs/likely.ts`):** for `showVoters=false`, generate two games with identical per-card tallies but different voter→target mappings; the TV views and the views of every phone whose own vote matches are byte-identical in every phase, AWARDS and RESULTS included (platform §2.11).
 - Awards: signature-award selection (vote share, later-card tie), Mystery Award, Tonight's Star thresholds, Self-aware and Mind Reader absent in anonymous mode.
+- Percentages: `round(100 × count / votesCast)` half up for 1..12 voters; 3 × 1 vote → 33/33/33; ordering by percent then seat; present in both modes; the anonymity differential test includes `percent`.
+- Spicy: `mode` defaults to `family` and `normalize` of any old settings gives `family`; a `spicy` patch without `ageConfirmed` or from a VIP → `INVALID_SETTINGS`; switching to `spicy` sets `showVoters:false` in the same patch; `family` never draws `spice > 0` or a named card (property over 10 000 draws); Spicy pack absent from a family room's catalog view; named cards: never with < 4 players, never two in a row, ≤ 1 in 3, named player not a valid target (`INVALID_TARGET`), named player leaving voids the card; fewest-named fairness over a seeded game.
 - Flow: first CARD deadline = 3 500 + `ENTRANCE_GRACE_MS`; early end + 1 s window; SKIP_CARD discards votes; HOLD; late joiner via `join` (`waitingForNext` until the next CARD); `left` target rejected; AWARDS duration formula.
 - Sim: `pnpm sim --game likely --players 3..12 --games 300`, invariants after every reduce.
 - Pack lint for `likely-family` (all rules in §11.2, review flags reported).
 - TV: conga layout fixture shared with TS; D-pad reach of the pause items "Skip card", "Next", "End game" and of ⓘ; RTL arc mirrored.
-- Web e2e: 3 phones + `/tv`, self-vote, change vote, reveal, awards, one anonymous game.
+- Web e2e: 3 phones + `/tv`, self-vote, change vote, reveal, awards, one anonymous game (percentage board shown, no points). One Spicy game with 4 phones once the platform dependencies of §9.1 land: TV 18+ dialog (Cancel focused by default), a named card, a VIP skip.
+- TV: the 18+ dialog's default focus is "Cancel" and Back closes it without enabling Spicy.
 
 ---
 
@@ -486,9 +544,44 @@ Header: EN "Who's most likely to…" · FR « Qui risque le plus… » · AR «�
 
 Review changes: #19, #21 and #27 rewritten (they brushed against loss, money status and diet), #40 moved to `likely-lebanon`. Free count: 33 (F) of 67, 49 %. Native reviewers: check «الشدّة» (cards), «دقّ طاولة» (a tawleh game), «غرسون» (waiter, Lebanese from French), «لزّيق» (tape), and that award names read naturally as titles.
 
+### 14.1 Content draft — `likely-spicy` "After Midnight" (24 cards, 18+, Pass)
+
+Header as above. Each cell: prompt phrase / *award*. **N** = names a player (`namesPlayer: true`, `{player}` is replaced by a player's name; that player is not a target on the card). `spice` 1 = cheeky, 2 = spicy. All `review.status: "draft"`; FR, AR and ES `[native review]`. Tag `romance` unless noted. Suggestive, never explicit: every card passes the "wedding table test" (§11.1). AR uses the generic masculine after «مين» (§11.2); ES and FR avoid adjectives and participles that agree with the subject.
+
+| # | N | Spice | EN | FR | AR | ES |
+|---|---|---|---|---|---|---|
+| 1 | N | 2 | kiss {player} at midnight on New Year's Eve / *Midnight Award* | d'embrasser {player} à minuit le soir du Nouvel An / *Prix de minuit* | يبوس {player} عنص الليل براس السنة / *جايزة نص الليل* | besar a {player} a medianoche en Nochevieja / *Premio Medianoche* |
+| 2 | N | 2 | have a secret crush on {player} / *Secret Crush Award* | d'avoir un faible secret pour {player} / *Prix du béguin secret* | يكون مغروم بـ{player} بالسرّ / *جايزة الحب السرّي* | tener un crush secreto con {player} / *Premio Amor Secreto* |
+| 3 | N | 1 | slow-dance with {player} at a wedding / *Slow Dance Award* | de danser un slow avec {player} à un mariage / *Prix du slow* | يرقص سلو مع {player} بعرس / *جايزة السلو* | bailar una lenta con {player} en una boda / *Premio Baile Lento* |
+| 4 | N | 1 | flirt with {player} without even noticing / *Accidental Charm Award* | de draguer {player} sans même s'en rendre compte / *Prix du charme involontaire* | يغازل {player} بلا ما ينتبه / *جايزة الغزل بالغلط* | ligar con {player} sin darse ni cuenta / *Premio Ligue sin Querer* |
+| 5 | N | 1 | write a love song about {player} / *Ballad Award* | d'écrire une chanson d'amour sur {player} / *Prix de la ballade* | يكتب غنية حب عن {player} / *جايزة الأغنية* | escribirle una canción de amor a {player} / *Premio Balada* |
+| 6 | N | 1 | go on a blind date with {player} without realising / *Blind Date Award* | d'aller à un rendez-vous à l'aveugle avec {player} sans s'en rendre compte / *Prix du rendez-vous mystère* | يطلع بموعد أعمى مع {player} وما يعرف إلا بالآخر / *جايزة الموعد الأعمى* | tener una cita a ciegas con {player} sin darse cuenta / *Premio Cita a Ciegas* |
+| 7 | N | 1 | steal {player}'s hoodie and never give it back / *Hoodie Thief Award* | de piquer le sweat de {player} et ne jamais le rendre / *Prix du sweat volé* | يسرق كنزة {player} وما يرجّعها أبداً / *جايزة الكنزة المسروقة* | robarle la sudadera a {player} y no devolverla nunca / *Premio Sudadera Robada* |
+| 8 | | 1 | stare at their crush a little too long / *Long Look Award* | de regarder son béguin un peu trop longtemps / *Prix du regard insistant* | يبحلق بالشخص اللي عاجبو أكتر من اللزوم / *جايزة البحلقة* | quedarse mirando a su crush un poco demasiado / *Premio Mirada Larga* |
+| 9 | N | 1 | plan a surprise date for {player} / *Big Gesture Award* | d'organiser un rendez-vous surprise pour {player} / *Prix du grand geste* | يحضّر موعد مفاجأة لـ{player} / *جايزة الحركة الكبيرة* | organizarle una cita sorpresa a {player} / *Premio Gran Gesto* |
+| 10 | N | 1 | send {player} a 2 a.m. voice note and regret it / *2 a.m. Award* | d'envoyer un vocal à {player} à 2 h du matin, et de le regretter / *Prix de 2 h du mat* | يبعت لـ{player} فويس الساعة 2 الصبح ويندم / *جايزة الساعة 2* | mandarle un audio a {player} a las 2 de la mañana y arrepentirse / *Premio de las 2 a. m.* |
+| 11 | | 1 | check an ex's profile at 2 a.m. / *Night Detective Award* | d'aller voir le profil d'un ex à 2 h du matin / *Prix du détective de nuit* | يفوت عبروفايل الإكس الساعة 2 الصبح / *جايزة التحرّي الليلي* | mirar el perfil de su ex a las 2 de la mañana / *Premio Detective Nocturno* |
+| 12 | | 1 | lie about their age on a dating app / *Forever 25 Award* | de mentir sur son âge sur une appli de rencontre / *Prix des éternels 25 ans* | يكذب بعمرو عتطبيق تعارف / *جايزة الـ25 عالدوام* | mentir sobre su edad en una app de citas / *Premio Eternos 25* |
+| 13 | | 1 | fall head over heels in a single evening / *Love at First Sight Award* | d'avoir un coup de foudre en une seule soirée / *Prix du coup de foudre* | ينغرم من سهرة وحدة / *جايزة الحب من أوّل نظرة* | enamorarse en una sola noche / *Premio Flechazo* |
+| 14 | | 1 | have a secret playlist for date night / *Mood Music Award* | d'avoir une playlist secrète pour les rendez-vous / *Prix de l'ambiance tamisée* | يكون عندو بلايليست سرّية للمواعيد / *جايزة الجوّ الرايق* | tener una playlist secreta para las citas / *Premio Música de Cita* |
+| 15 | | 1 | text "I miss you" to the wrong person / *Wrong Inbox Award* | d'envoyer « tu me manques » à la mauvaise personne / *Prix du mauvais destinataire* | يبعت «اشتقتلك» للشخص الغلط / *جايزة الرقم الغلط* | mandar «te echo de menos» a la persona equivocada / *Premio Destinatario Equivocado* |
+| 16 | | 1 | still keep a love letter from school / *Time Capsule Award* | de garder encore une lettre d'amour du collège / *Prix de la capsule temporelle* | بعدو مخبّي مكتوب حب من أيام المدرسة / *جايزة الذكريات* | guardar todavía una carta de amor del colegio / *Premio Cápsula del Tiempo* |
+| 17 | | 1 | get back with an ex "just to talk" / *Boomerang Award* | de revoir un ex « juste pour parler » / *Prix boomerang* | يرجع يشوف الإكس «بس لنحكي» / *جايزة البومرانغ* | volver a quedar con su ex «solo para hablar» / *Premio Bumerán* |
+| 18 | | 2 | kiss on the first date / *First Date Award* | d'embrasser dès le premier rendez-vous / *Prix du premier rendez-vous* | يبوس من أوّل موعد / *جايزة أوّل موعد* | besar en la primera cita / *Premio Primera Cita* |
+| 19 | | 1 | have the most chaotic love life story / *Plot Twist Award* | d'avoir l'histoire amoureuse la plus chaotique / *Prix du rebondissement* | يكون عندو أكتر قصّة حب مخربطة / *جايزة الحبكة* | tener la historia amorosa más caótica / *Premio Giro de Guion* |
+| 20 | | 1 | charm their way out of a parking ticket / *Charm Offensive Award* | d'éviter une amende de stationnement grâce à son charme / *Prix de l'opération charme* | يزمط من ضبط سير بحلاوة لسانو / *جايزة اللسان الحلو* | librarse de una multa de aparcamiento a base de encanto / *Premio Operación Encanto* |
+| 21 | | 1 | fall asleep on a date / *Sleepy Date Award* | de s'endormir pendant un rendez-vous / *Prix du rendez-vous somnifère* | ينام بنص الموعد / *جايزة الموعد النعسان* | dormirse en una cita / *Premio Cita Somnífera* |
+| 22 | | 1 | have a crush on a cartoon character / *Animated Heart Award* | d'avoir le béguin pour un personnage de dessin animé / *Prix du cœur animé* | يكون مغروم بشخصية كرتون / *جايزة القلب الكرتوني* | tener un crush con un personaje de dibujos animados / *Premio Corazón Animado* |
+| 23 | | 1 | propose on the very first trip together / *Fast Forward Award* | de faire sa demande dès le premier voyage à deux / *Prix de l'avance rapide* | يطلب الإيد من أوّل سفرة سوا / *جايزة التقديم السريع* | pedir matrimonio en el primer viaje en pareja / *Premio Avance Rápido* |
+| 24 | | 2 | send a bold text and blame autocorrect / *Autocorrect Award* | d'envoyer un texto osé et d'accuser le correcteur / *Prix du correcteur* | يبعت مسج جريء ويقول «الأوتوكوريكت» / *جايزة التصحيح التلقائي* | mandar un mensaje atrevido y culpar al corrector / *Premio Autocorrector* |
+
+Counts: 24 cards × 4 locales (EN, FR, AR, ES); 9 named (37.5 %, under the 40 % lint cap). Native reviewers: «يبوس» tone in AR (Spicy only), «سلو», «حرّاق» mode name, FR « draguer » register, ES "crush" (anglicism common in Spain and Latin America) vs "estar colado" (gendered), ES "lenta" (slow dance, Spain) vs "canción lenta".
+
 ---
 
 ## 15. Open items
 
-- `[native review]` all FR and AR, including the rewritten cards #19, #21, #27 and the tone of the moved #40.
-- Spicy pack age gate: a confirmation dialog each time it's selected, default focus on "Cancel" (proposed; owner to confirm).
+- `[native review]` all FR and AR, including the rewritten cards #19, #21, #27 and the tone of the moved #40; FR/AR/ES of §10.4 and §14.1.
+- ES column for the Family pack (67 cards) and for the draft-2 keys in §10.1–10.3 (ES is a full platform UI language).
+- **Platform dependencies for Spicy (JAMAA-PLATFORM is not edited here):** (1) `settings.apply` must receive the actor so the server can require the TV for `mode: "spicy"` (§9.1 rule 2); (2) `ageRating: "adult"` must become "served only to a room with a TV-confirmed 18+ mode" instead of "never served" (§9.1 rule 7); (3) §2.11 there should list the `mode` setting and `SETTINGS_SCHEMA = 2`. Until (1) and (2) land, Spicy stays compiled out.
+- Owner checks: Spicy pack stays Pass-only (assumed, as in draft 2); switching to Spicy also turns votes secret by default (§9.1 rule 4); the named share (37.5 % in §14.1, lint cap 40 %).

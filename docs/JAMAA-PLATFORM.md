@@ -849,7 +849,7 @@ Reduced motion: the final numbers appear at once and the ranks swap with a cross
 
 ### 3.12 Accessibility, RTL and i18n
 
-- Every new screen exists in en, fr, ar (RTL) and es. Spanish is already a full UI language, so new keys are added in es too, where the i18n completeness tests require them.
+- Every new screen exists in en, fr, ar (RTL) and es. **Spanish is a full language everywhere** (owner decision after this spec was written): hub, rules, characters, all platform UI, every game's UI and every game's content packs. Wherever this file or a GAME doc lists "en/fr/ar", read "en/fr/ar/es". ES (and new AR) drafts are listed in `shared/i18n/review.json` until a native review removes them.
 - The carousel order reverses in RTL, and the "next" direction follows the layout.
 - Character faces are never the only signal: names, badges and text verdicts stay.
 - Trivia answers are colour + shape + letter on the TV and the phone.
@@ -901,7 +901,7 @@ Reduced motion: the final numbers appear at once and the ranks swap with a cross
 | Mish Ana! | `en-everyday-01`, `fr-everyday-01`, `ar-everyday-01`, `es-everyday-01` (= `DEFAULT_PACK_IDS` plus es) | ≥ 40 pairs per free starter pack (unchanged; it currently fails on purpose) |
 | Bluff | `tier:"free"` items, per GAME-BLUFF §11 (item-level tiers, ≥ 30 % of each pack free) | the GAME-BLUFF §11.3 lint rules; enough free items in every playable locale for one Normal-length game with margin; an AR room must have ≥ 20 free prompts not marked `knownIn: ["ar"]` (GAME-BLUFF §11.5) |
 | Most Likely | the `tier:"free"` cards of the Family pack (GAME-LIKELY §2, §11) | the GAME-LIKELY §11 lint rules |
-| Trivia | the Lebanon quiz family `lb-quiz-01` (en, fr, ar) is **free**: it is the only quiz at launch, and every game must be playable for free. Later quizzes are premium. | ≥ 30 questions per locale, every question with a `source`, `status: "reviewed"` |
+| Trivia | the Lebanon quiz family `lb-quiz-01` (en, fr, ar, es) is **free**: it is the only quiz at launch, and every game must be playable for free. Later quizzes are premium. | ≥ 30 questions per locale, every question with a `source`, `status: "reviewed"` |
 
 `premiumKeys`: Mish Ana! `["points"]` (unchanged); none for G2–G4. **With `BILLING_ENABLED` off**, every room plays the whole catalog, the Pass UI is hidden, and `GET /api/config` returns `billing:false` (unchanged behaviour).
 
@@ -946,7 +946,7 @@ content/
   mishana/{en,fr,ar,es}/*.json          # the current word packs, unchanged files and ids
   bluff/*.json                          # multi-locale packs (GAME-BLUFF §11.3: sourceLocale + playableIn)
   likely/*.json                         # multi-locale packs (GAME-LIKELY §11.2)
-  trivia/{en,fr,ar}/*.json
+  trivia/{en,fr,ar,es}/*.json
   vocab.json                            # controlled vocabulary (§5.4)
   test/**
 ```
@@ -1036,12 +1036,12 @@ export interface ContentAdapter<P> {
 - `stars` is required: the declared quiz difficulty. Lint: |stars − mean(question.difficulty)| ≤ 0.67.
 - Display: ★★☆ plus a domain chip and the featured topic chips (+n for the rest), on the setup quiz summary/shelf and the QUIZ_INTRO card.
 
-**First quiz.** `lb-quiz-01` (family) is shipped as `lb-quiz-01-en`, `lb-quiz-01-fr` and `lb-quiz-01-ar` (GAME-TRIVIA §11.5, §14):
+**First quiz.** `lb-quiz-01` (family) is shipped as `lb-quiz-01-en`, `lb-quiz-01-fr`, `lb-quiz-01-ar` and `lb-quiz-01-es` (GAME-TRIVIA §11.5, §14; es per the owner decision that Spanish is a full language, drafted from EN and marked for native review):
 - domain `lebanon`; `topics` = the topics its questions use (GAME-TRIVIA §14 lists them); `featuredTopics: ["music", "dance", "football"]`; stars 2; `ageRating: "all"`; tier `free` (whole quiz);
 - ≥ 40 questions per locale (the draft has more), covering at least 5 topics with ≥ 4 questions each, football and dance included;
 - the same question ids across locales (translations), each with a `source`;
 - `status: "draft"` until the owner and a Lebanese reviewer review it; the release gate needs `reviewed`;
-- titles: en "Lebanon: the big quiz", fr "Liban : le grand quiz", ar «لبنان: المسابقة الكبيرة».
+- titles: en "Lebanon: the big quiz", fr "Liban : le grand quiz", ar «لبنان: المسابقة الكبيرة», es "Líbano: el gran quiz".
 
 ### 5.5 Lint (`tools/content-lint`, was `pack-lint`; `pnpm lint:content`)
 
@@ -1075,6 +1075,13 @@ export interface ContentAdapter<P> {
 - **Web:** the per-game files become lazy chunks loaded with the game, except `title` and `tagline`, which are copied into core for the hub.
 - **Android (per-game generated outputs, so parallel G lanes never collide):** the generator writes the root `res/values*/strings_generated.xml` with platform keys only, plus **`res/values*/strings_game_<id>.xml`** per game (Android merges all values files), and `app/jamaa/tv/i18n/I18nKeys.kt` (platform) plus **`app/jamaa/tv/i18n/games/<id>/I18nKeys<Id>.kt`** per game. A G lane regenerates only its own game's files.
 - **New platform keys (P):** `hub.*`, `setup.*`, `rules.*`, `cup.*`, `react.*`, `pass.*` (restored subscription strings renamed from `store.*`), `content.domain.*`, `content.topic.*`, `settings.calmMotion`, `settings.showHowTo`, `hub.closeConfirm.*`, `hint.backMenu`, `hub.gameUnsupported` ("Update JAMAA to play this game").
+- **As built in P1 (lane D), binding for the loaders:**
+  - Mish Ana!'s legacy keys keep their old names inside `shared/i18n/games/mishana/<locale>.json` (e.g. `vote.title`); only `split-map.json` may place a non-`game.mishana.*` key there. New games' files hold only `game.<id>.*` keys.
+  - Key segments are lowerCamel words **or plain numbers** (`game.mishana.howto.1`): key regex `^[a-z][a-zA-Z0-9]*(\.([a-z][a-zA-Z0-9]*|[0-9]+))+$`. Vocabulary ids are kebab-case in `content/vocab.json` and lowerCamel in keys (`middle-east` → `content.domain.middleEast`).
+  - `brand.slogan` is a root key with the new platform copy (DESIGN-JAMAA §1.2); the old slogan is `game.mishana.slogan` (`split-map.json` lists `brand.slogan` under `reusedNames`).
+  - `pass.*` holds the Pass copy ("JAMAA Pass" wording, plus copies of the restored plan/legal `store.*` strings); the `store.*` keys stay for the pack store and are removed once no call site uses the subscription ones.
+  - Android: the platform `I18nKeys.strings`/`plurals` merge `platformStrings` with every `I18nKeys<Id>` object, so lookups need no change; `pnpm gen:strings -- --only <id>` regenerates one game's files.
+  - Per-locale drafts awaiting a native review are listed in `shared/i18n/review.json`.
 
 ---
 
@@ -1168,7 +1175,7 @@ The rule from SPEC §0.4 still holds: D's i18n keys and content stubs exist befo
 - **A:** the engine per GAME-BLUFF §4–§7 behind the `GameDefinition` (§2.10), with `join`, `projectSetup`, `memory`, `projectStatus`, `leakCheck` and the synthetic catalog. Also: protocol (intent and view schemas from GAME-BLUFF §13, replacing the stubs), `games/bluff/errors.ts`, `content.ts` adapter, fixtures, bot, sim, and tests (§2.8, plus GAME-BLUFF §13.4 and the §2.10 properties).
 - **B:** the phone and `/tv` screens of GAME-BLUFF §8 and §12 (reveal with the platform points flight, §3.10 C), in `web-client/src/games/bluff/`.
 - **C:** the same TV screens in Compose. The reveal runs on the TV against the snapshot: OK completes it locally, and the server timer runs regardless.
-- **D:** packs per GAME-BLUFF §11.5 and §14, `game.bluff.*` i18n in 4 locales (es may copy en until translated, if the completeness test allows a draft marker; otherwise translate), lint rules, sounds (GAME-BLUFF §12.6). **Exit criterion:** EN + FR house lies (≥ 3 per item) for `bluff-lb-proverbs` before it becomes playable in EN/FR rooms, and the second AR pack (`bluff-lb-teta-words`) so a free AR room has ≥ 20 free prompts not `knownIn: ["ar"]`.
+- **D:** packs per GAME-BLUFF §11.5 and §14, `game.bluff.*` i18n in 4 locales (es is translated like every locale; drafts are listed in `shared/i18n/review.json` for native review), lint rules, sounds (GAME-BLUFF §12.6). **Exit criterion:** EN + FR house lies (≥ 3 per item) for `bluff-lb-proverbs` before it becomes playable in EN/FR rooms, and the second AR pack (`bluff-lb-teta-words`) so a free AR room has ≥ 20 free prompts not `knownIn: ["ar"]`.
 - **Acceptance:**
   - `pnpm sim --game bluff --players 3..12 --games 300` gives 0 failures.
   - Leak tests per §2.10, for the TV and every phone, in every phase.
@@ -1189,7 +1196,7 @@ The rule from SPEC §0.4 still holds: D's i18n keys and content stubs exist befo
 - **A:** the engine per GAME-TRIVIA §4–§7 behind the `GameDefinition` (§2.12), protocol (§13), errors, content adapter, fixtures, bot, sim, tests (GAME-TRIVIA §13.4). A speed-bonus test checks that receipt time comes from `ctx.now` and that client time is ignored (the intent carries none).
 - **B:** the phone answer pad (GAME-TRIVIA §8.4) and `/tv` screens: quiz-studio world, QUIZ_INTRO card (stars, domain, featured topic chips), READ, ANSWER with the bulb ring, reveal, leaderboard, results.
 - **C:** the same TV screens, plus the setup quiz summary card (one quiz) and the shelf (≥ 2 quizzes, DESIGN-JAMAA §2.3.1).
-- **D:** the `lb-quiz-01` family (en, fr, ar; sources; owner + Lebanese review → `reviewed`); vocabulary and region labels in 4 locales; sounds.
+- **D:** the `lb-quiz-01` family (en, fr, ar, es; sources; owner + Lebanese review → `reviewed`); vocabulary and region labels in 4 locales; sounds.
 - **Acceptance:** `pnpm sim --game trivia --players 1..12 --games 300` with 0 failures; leak tests (correct index, others' choices); content-lint `--release` passes for `lb-quiz-01` once reviewed; e2e 1 game EN + 1 AR; chunk ≤ 14 KB gz.
 
 ### 6.8 Definition of done (every lane, every milestone)

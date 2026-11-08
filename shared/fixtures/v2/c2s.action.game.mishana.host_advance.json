@@ -1,0 +1,12 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "12",
+  "a": {
+    "type": "GAME",
+    "gameId": "mishana",
+    "i": {
+      "type": "HOST_ADVANCE"
+    }
+  }
+}

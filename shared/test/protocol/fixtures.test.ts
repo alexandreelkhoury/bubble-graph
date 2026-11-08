@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { PING_FRAME, PONG_FRAME } from "../../src/constants";
+import { PING_FRAME_V1 as PING_FRAME, PONG_FRAME_V1 as PONG_FRAME } from "../../src/constants";
 import { ClientConfig, CreateRoomRequest, CreateRoomResponse, Healthz, HttpError } from "../../src/protocol/http";
 import { CatalogResponse, EntitlementRequest, VerifyRequest, VerifyResponse } from "../../src/billing/http";
 import {

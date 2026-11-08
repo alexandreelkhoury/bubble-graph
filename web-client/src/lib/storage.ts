@@ -13,6 +13,11 @@ export const KEYS = {
   color: `${P}:color`,
   // SPEC-GAP: §8.6 lists no key for the PH-17 vibration toggle; stored under this extra key.
   vibration: `${P}:vibration`,
+  // JAMAA-PLATFORM §3.3: per-device first-time how-to and coach marks, per game.
+  introSeen: (gameId: string) => `${P}:introSeen:${gameId}`,
+  coached: (gameId: string) => `${P}:coached:${gameId}`,
+  // JAMAA-PLATFORM §3.8: the hub Settings "Calm animations" row (a platform setting, per device).
+  calm: `${P}:calm`,
 } as const;
 
 export interface ResumeRecord { playerId: string; resumeToken: string; savedAt: number }
@@ -124,3 +129,32 @@ export function saveColor(c: ColorId): void { writeRaw(KEYS.color, c); }
 
 export function loadVibration(): boolean { return readRaw(KEYS.vibration) !== "off"; }
 export function saveVibration(on: boolean): void { writeRaw(KEYS.vibration, on ? "on" : "off"); }
+
+/** JAMAA-PLATFORM §3.3: whether this device has seen `gameId`'s first-time how-to. */
+export function introSeen(gameId: string): boolean {
+  return readRaw(KEYS.introSeen(gameId)) === "1";
+}
+export function markIntroSeen(gameId: string): void {
+  writeRaw(KEYS.introSeen(gameId), "1");
+}
+export function coached(gameId: string): boolean {
+  return readRaw(KEYS.coached(gameId)) === "1";
+}
+export function markCoached(gameId: string): void {
+  writeRaw(KEYS.coached(gameId), "1");
+}
+/** "Show how-to again" (hub Settings, phone ⋯): clears every `introSeen:*` and `coached:*` flag. */
+export function clearHowToFlags(): void {
+  const s = store();
+  if (!s) return;
+  try {
+    const keys: string[] = [];
+    for (let i = 0; i < s.length; i++) {
+      const k = s.key(i);
+      if (k && (k.startsWith(`${P}:introSeen:`) || k.startsWith(`${P}:coached:`))) keys.push(k);
+    }
+    for (const k of keys) s.removeItem(k);
+  } catch {
+    /* ignore */
+  }
+}

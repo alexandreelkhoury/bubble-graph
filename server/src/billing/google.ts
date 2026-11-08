@@ -1,6 +1,7 @@
 // PAYMENTS-SPEC §3.7: Google Play Developer API v3 client. Service-account JWT (RS256, WebCrypto) → OAuth access
 // token (cached per isolate) → purchases.* calls. Raw purchase tokens appear in request URLs, so URLs are never
 // logged and never put in errors: failures throw GoogleHttpError { status, op } only.
+import { PASS_PRODUCT_ID } from "@jamaa/shared/billing/products";
 import type { ProductPurchaseV2, SubscriptionPurchaseV2, VoidedPurchasesListResponse } from "./google-types";
 import { billingLog } from "./log";
 import { b64urlEncode } from "./token";
@@ -222,7 +223,7 @@ export class GoogleClient implements GoogleApi {
 
   async ackSubscription(token: string, o: CallOpts): Promise<void> {
     // `subscriptionId` is still a required path parameter of subscriptions.acknowledge.
-    await this.#call("sub_ack", "POST", `${this.#app()}subscriptions/premium/tokens/${encodeURIComponent(token)}:acknowledge`, o);
+    await this.#call("sub_ack", "POST", `${this.#app()}subscriptions/${PASS_PRODUCT_ID}/tokens/${encodeURIComponent(token)}:acknowledge`, o);
   }
 
   async ackProduct(productId: string, token: string, o: CallOpts): Promise<void> {

@@ -1,0 +1,9 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "4",
+  "a": {
+    "type": "SET_CONTENT_LOCALE",
+    "locale": "ar"
+  }
+}

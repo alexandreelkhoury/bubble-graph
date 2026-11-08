@@ -4,7 +4,8 @@ import * as z from "zod";
 import { MAX_PURCHASES_PER_VERIFY, PURCHASE_TOKEN_MAX_CHARS } from "../constants";
 import { AgeRatingSchema, LocaleSchema, LocalizedTitleSchema } from "../protocol/common";
 import { SUB_STATES } from "./entitlement";
-import { BASE_PLAN_IDS, PRODUCT_ID_REGEX, TRIAL_OFFER_ID } from "./products";
+import { GAME_IDS } from "../games/ids";
+import { BASE_PLAN_IDS, PASS_PRODUCT_ID, PRODUCT_ID_REGEX, TRIAL_OFFER_ID } from "./products";
 
 export const BILLING_ERROR_CODES = ["BAD_REQUEST", "FORBIDDEN", "RATE_LIMITED", "UNAUTHORIZED", "NOT_CONFIGURED", "UPSTREAM_UNAVAILABLE", "INTERNAL"] as const;
 export type BillingErrorCode = (typeof BILLING_ERROR_CODES)[number];
@@ -34,15 +35,16 @@ export const VerifyResponse = z.object({
   results: z.array(z.object({ productId: z.string(), result: z.enum(PURCHASE_RESULTS) })), // same order as the request
 });
 export const EntitlementResponse = z.object({ entitlement: EntitlementBody });
+/** One row per shipped pack; `productId` = pack_<family> (translations of one family share it, JAMAA-PLATFORM §4.1). */
 export const CatalogPackSchema = z.object({
-  packId: z.string(), productId: z.string(), locale: z.string(), language: LocaleSchema,
+  packId: z.string(), gameId: z.enum(GAME_IDS), family: z.string(), productId: z.string(), locale: z.string(), language: LocaleSchema,
   title: LocalizedTitleSchema, pairCount: z.number().int(), ageRating: AgeRatingSchema,
 });
 export const CatalogResponse = z.object({
   mode: z.enum(["google", "fake"]), packageName: z.string(),
-  subscription: z.object({ productId: z.literal("premium"), basePlanIds: z.array(z.string()), trialOfferId: z.string() }),
+  subscription: z.object({ productId: z.literal(PASS_PRODUCT_ID), basePlanIds: z.array(z.string()), trialOfferId: z.string() }),
   freePackIds: z.array(z.string()),
-  packs: z.array(CatalogPackSchema), // premium packs only, catalog order
+  packs: z.array(CatalogPackSchema), // packs with sellable content (tier premium or mixed), game then id order
 });
 export const BillingHttpError = z.object({ error: z.enum(BILLING_ERROR_CODES) });
 

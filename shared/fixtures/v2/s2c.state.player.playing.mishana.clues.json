@@ -1,0 +1,229 @@
+{
+  "v": 2,
+  "t": "state",
+  "seq": 13,
+  "serverNow": 1790000008000,
+  "view": {
+    "kind": "player",
+    "room": {
+      "roomCode": "KXRT",
+      "joinUrl": "https://play.example.workers.dev/KXRT",
+      "phase": "PLAYING",
+      "focusedGameId": "mishana",
+      "setupGameId": "mishana",
+      "contentLocale": "en",
+      "members": [
+        {
+          "id": "p_0a1b2c3d4e5f60718293a4b5",
+          "name": "Rami",
+          "color": "coral",
+          "seat": 0,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": true,
+          "reaction": null
+        },
+        {
+          "id": "p_1b2c3d4e5f60718293a4b5c6",
+          "name": "Léa",
+          "color": "azure",
+          "seat": 1,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_2c3d4e5f60718293a4b5c6d7",
+          "name": "نور",
+          "color": "jade",
+          "seat": 2,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_3d4e5f60718293a4b5c6d7e8",
+          "name": "Sam",
+          "color": "lemon",
+          "seat": 3,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_4e5f60718293a4b5c6d7e8f9",
+          "name": "Zoé",
+          "color": "grape",
+          "seat": 4,
+          "connected": true,
+          "left": false,
+          "benched": true,
+          "isHost": false,
+          "reaction": null
+        }
+      ],
+      "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "games": [
+        {
+          "id": "mishana",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 2,
+          "durationMinutes": [
+            10,
+            20
+          ]
+        }
+      ],
+      "setup": null,
+      "cup": {
+        "stars": {},
+        "last": null
+      },
+      "premium": false,
+      "tvBusy": false,
+      "contentLocales": [
+        "en",
+        "fr",
+        "ar"
+      ]
+    },
+    "game": {
+      "gameId": "mishana",
+      "n": 1,
+      "phase": "CLUES",
+      "doneIds": [],
+      "awaitedIds": [
+        "p_2c3d4e5f60718293a4b5c6d7"
+      ],
+      "public": {
+        "phase": "CLUES",
+        "gameNumber": 1,
+        "round": 1,
+        "settings": {
+          "winRule": "official",
+          "revealRoles": false,
+          "roleMode": "custom",
+          "undercoverCount": 1,
+          "blankCount": 0,
+          "clueSeconds": 45,
+          "voteSeconds": 90,
+          "revealSeconds": 30,
+          "guessSeconds": 45,
+          "tieBreak": "random",
+          "blankGuess": true,
+          "wordLocale": "en",
+          "packIds": [
+            "en-everyday-01",
+            "fr-everyday-01",
+            "ar-everyday-01",
+            "es-everyday-01"
+          ],
+          "difficulties": [
+            1,
+            2,
+            3
+          ],
+          "familyFilter": true,
+          "swapSides": true,
+          "points": {
+            "civilian": 2,
+            "undercover": 10,
+            "blank": 10
+          }
+        },
+        "players": [
+          {
+            "id": "p_0a1b2c3d4e5f60718293a4b5",
+            "alive": true,
+            "left": false,
+            "ready": true,
+            "spoke": false,
+            "hasVoted": false,
+            "revealedRole": null,
+            "score": 0
+          },
+          {
+            "id": "p_1b2c3d4e5f60718293a4b5c6",
+            "alive": true,
+            "left": false,
+            "ready": true,
+            "spoke": false,
+            "hasVoted": false,
+            "revealedRole": null,
+            "score": 0
+          },
+          {
+            "id": "p_2c3d4e5f60718293a4b5c6d7",
+            "alive": true,
+            "left": false,
+            "ready": true,
+            "spoke": false,
+            "hasVoted": false,
+            "revealedRole": null,
+            "score": 0
+          },
+          {
+            "id": "p_3d4e5f60718293a4b5c6d7e8",
+            "alive": true,
+            "left": false,
+            "ready": true,
+            "spoke": false,
+            "hasVoted": false,
+            "revealedRole": null,
+            "score": 0
+          }
+        ],
+        "roleCounts": {
+          "civilian": 3,
+          "undercover": 1,
+          "blank": 0
+        },
+        "speakingOrder": [
+          "p_2c3d4e5f60718293a4b5c6d7",
+          "p_3d4e5f60718293a4b5c6d7e8",
+          "p_0a1b2c3d4e5f60718293a4b5",
+          "p_1b2c3d4e5f60718293a4b5c6"
+        ],
+        "currentSpeakerId": "p_2c3d4e5f60718293a4b5c6d7",
+        "revote": false,
+        "tieCandidates": [],
+        "deadline": {
+          "kind": "CLUE",
+          "at": 1790000052000,
+          "durationMs": 45000
+        },
+        "votesCast": 0,
+        "votesExpected": 0,
+        "lastVote": null,
+        "eliminated": null,
+        "guess": null,
+        "result": null,
+        "history": []
+      },
+      "me": {
+        "id": "p_1b2c3d4e5f60718293a4b5c6",
+        "word": {
+          "text": "Palace",
+          "translit": null
+        },
+        "isBlank": false,
+        "role": null,
+        "myVote": null
+      },
+      "over": false
+    },
+    "me": {
+      "id": "p_1b2c3d4e5f60718293a4b5c6",
+      "benched": false
+    }
+  }
+}

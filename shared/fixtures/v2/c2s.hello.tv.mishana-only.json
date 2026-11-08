@@ -1,0 +1,12 @@
+{
+  "v": 2,
+  "t": "hello",
+  "role": "tv",
+  "tvToken": "0123456789abcdef0123456789abcdef",
+  "games": [
+    {
+      "id": "mishana",
+      "v": 1
+    }
+  ]
+}

@@ -16,7 +16,7 @@ import {
   PENDING_ACK_TOKEN_MAX_MS,
   RATE_MAP_MAX_ENTRIES,
 } from "@jamaa/shared/constants";
-import { packIdFromProductId, packOwned, subscriptionAccessUntil } from "@jamaa/shared/billing";
+import { familyFromProductId, packOwned, subscriptionAccessUntil } from "@jamaa/shared/billing";
 import type { PackState, PurchaseResult, SubscriptionInfo, SubState } from "@jamaa/shared/billing";
 import { sha256hex } from "../tokens";
 import { billingLog } from "./log";
@@ -437,7 +437,7 @@ export class BillingCore {
         const until = rowAccessUntil(r, nowMs);
         if (until !== null && (premiumUntilMs === null || until > premiumUntilMs)) premiumUntilMs = until;
       } else if (r.state === "PURCHASED" && r.revoked === 0 && r.product_id) {
-        const id = packIdFromProductId(r.product_id);
+        const id = familyFromProductId(r.product_id);
         if (id && this.#premiumPackIds.has(id)) packs.add(id);
       }
     }

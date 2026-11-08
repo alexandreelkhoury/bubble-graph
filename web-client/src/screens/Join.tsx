@@ -1,24 +1,44 @@
-// PH-02 Join (name + colour) and its locked variant (me===null, phase≠LOBBY).
+// PHH-01 Join (JAMAA-PLATFORM §3.3): name + a character picker (12 faces in a 4 × 3 grid, taken ones greyed, the
+// selected one turns happy and hops). Joins are open in every phase: while PLAYING the newcomer is benched until the
+// next game (§2.3), so there is no locked variant any more.
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { MAX_PLAYERS, NAME_MAX_CHARS } from "@jamaa/shared/constants";
+import { COLORS, MAX_PLAYERS, NAME_MAX_CHARS } from "@jamaa/shared/constants";
 import type { ColorId } from "@jamaa/shared/constants";
-import { sanitizeName } from "@jamaa/shared/engine";
-import type { PlayerView } from "@jamaa/shared/protocol";
+import type { PlayerRoomView } from "@jamaa/shared/protocol/v2";
 import { errorKeyOf, fmtNum, isolateLtr, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { inlineError, joinPending } from "../state/store";
 import { join } from "../state/session";
-import { PHASE_KEY } from "../lib/keys";
 import { loadColor, loadName } from "../lib/storage";
-import { graphemeCount } from "../lib/names";
-import { ColorPicker, firstFree } from "../components/ColorPicker";
-import { Avatar } from "../components/PlayerChip";
+import { graphemeCount, sanitizeName } from "../lib/names";
+import { firstFree } from "../components/ColorPicker";
+import { Character } from "../components/Character";
 import { Button, Heading } from "../components/UI";
 import { Icon } from "../components/Icon";
 
-export function Join({ view }: { view: PlayerView }) {
-  const locked = view.phase !== "LOBBY";
-  const taken = useMemo(() => new Set(view.players.filter((p) => !p.left).map((p) => p.color)), [view.players]);
+export function CharacterPicker({ value, taken, onChange, shake }: { value: ColorId | null; taken: ReadonlySet<string>; onChange(c: ColorId): void; shake: boolean }) {
+  return (
+    <div class={`chargrid${shake ? " shake" : ""}`} role="radiogroup" aria-label={t("join.colorLabel")}>
+      {COLORS.map((c) => {
+        const isTaken = taken.has(c.id);
+        const sel = value === c.id;
+        const name = t(`color.${c.id}` as MessageKey);
+        return (
+          <button key={c.id} type="button" role="radio" aria-checked={sel} aria-disabled={isTaken}
+            aria-label={isTaken ? `${name}, ${t("join.colorTaken")}` : name}
+            class={`charpick${sel ? " is-selected" : ""}${isTaken ? " is-taken" : ""}`}
+            onClick={() => { if (!isTaken) onChange(c.id); }}>
+            <Character color={c.id} size={56} expression={sel ? "happy" : isTaken ? "away" : "idle"} key={sel ? "sel" : "idle"} />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+export function Join({ view }: { view: PlayerRoomView }) {
+  const room = view.room;
+  const taken = useMemo(() => new Set(room.members.filter((m) => !m.left).map((m) => m.color)), [room.members]);
   const [name, setName] = useState(() => loadName());
   const [color, setColor] = useState<ColorId | null>(() => firstFree(taken, loadColor()));
   const [shake, setShake] = useState(0);
@@ -27,7 +47,6 @@ export function Join({ view }: { view: PlayerView }) {
   const clean = sanitizeName(name);
   const nameRef = useRef<HTMLInputElement>(null);
 
-  // Keep the selection valid as colours get taken live; COLOR_TAKEN → first free + shake (CTA stays enabled).
   useEffect(() => {
     if (color === null || taken.has(color)) {
       const f = firstFree(taken);
@@ -41,32 +60,22 @@ export function Join({ view }: { view: PlayerView }) {
     }
   }, [err]);
 
-  const full = view.players.length >= MAX_PLAYERS;
-  const canSubmit = !locked && clean !== null && color !== null && !pending && !full;
+  const full = room.members.length >= MAX_PLAYERS;
+  const canSubmit = clean !== null && color !== null && !pending && !full;
   const submit = (): void => {
     if (!canSubmit || clean === null || color === null) return;
     join(clean, color);
   };
   const errKey: MessageKey | null =
-    err === "COLOR_TAKEN" ? "join.colorTaken" : err && err !== "ROOM_LOCKED" && err !== "GUESS_INVALID" ? errorKeyOf(err) : full && !locked ? "error.roomFull" : null;
+    err === "COLOR_TAKEN" ? "join.colorTaken" : err && err !== "GUESS_INVALID" ? errorKeyOf(err) : full ? "error.roomFull" : null;
   const count = clean ? graphemeCount(clean) : 0;
+  const playing = room.phase === "PLAYING";
 
   return (
     <>
       <main class="screen screen--join">
-        {locked ? (
-          <div class="locked">
-            <span class="locked__icon"><Icon name="lock" size={32} /></span>
-            <Heading title={t("join.locked")} />
-            <p class="liveline">
-              <span class="liveline__dot" aria-hidden="true" />
-              {view.round > 0 ? `${t("round.label", { count: view.round })} · ` : ""}{t(PHASE_KEY[view.phase])}
-            </p>
-          </div>
-        ) : (
-          <Heading title={<>{t("join.joiningCode", { code: isolateLtr(view.roomCode) })}</>} />
-        )}
-
+        <Heading title={<>{t("join.joiningCode", { code: isolateLtr(room.roomCode) })}</>} />
+        {playing && <p class="liveline"><span class="liveline__dot" aria-hidden="true" />{t("error.notInGame")}</p>}
         <label class="field-label" for="name">{t("join.nameLabel")}</label>
         <div class="field">
           <input
@@ -76,21 +85,10 @@ export function Join({ view }: { view: PlayerView }) {
             onInput={(e) => { setName(e.currentTarget.value); if (err === "NAME_INVALID" || err === "NAME_TAKEN") inlineError.value = null; }}
             onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
           />
-          {/* Under the field, at the end (never inside it: a dir=auto Arabic name would run under the counter). */}
           <p class={`field__count${count >= NAME_MAX_CHARS ? " is-max" : ""}`} aria-hidden="true"><bdi class="num">{fmtNum(count)}/{fmtNum(NAME_MAX_CHARS)}</bdi></p>
         </div>
-
         <p class="field-label" id="color-label">{t("join.colorLabel")}</p>
-        <ColorPicker value={color} taken={taken} onChange={(c) => { setColor(c); if (err === "COLOR_TAKEN") inlineError.value = null; }} shake={shake > 0} key={shake} />
-
-        <div class="preview" aria-hidden="true">
-          {color && (
-            <div class="preview__tile">
-              <Avatar color={color} size={56} />
-              <bdi class="preview__name">{clean ?? t("join.namePlaceholder")}</bdi>
-            </div>
-          )}
-        </div>
+        <CharacterPicker value={color} taken={taken} onChange={(c) => { setColor(c); if (err === "COLOR_TAKEN") inlineError.value = null; }} shake={shake > 0} key={shake} />
       </main>
       <footer class="actionbar">
         {errKey && <p class="inline-error" role="alert"><Icon name="info" size={18} />{t(errKey)}</p>}

@@ -1,0 +1,9 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "20",
+  "a": {
+    "type": "REACT",
+    "kind": "happy"
+  }
+}

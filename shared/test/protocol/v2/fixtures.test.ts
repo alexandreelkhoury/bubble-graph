@@ -1,0 +1,98 @@
+// JAMAA-PLATFORM §2.5 fixtures v2: up to date with the scenario, and every frame parses with the v2 schemas.
+import { readdirSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
+import { PING_FRAME_V2, PONG_FRAME_V2 } from "../../../src/constants";
+import { GAME_IDS } from "../../../src/games/ids";
+import { GAME_META } from "../../../src/games/meta";
+import { errorMessageKey } from "../../../src/protocol/errors";
+import type { ErrorCode } from "../../../src/protocol/errors";
+import { ClientConfigV2, ClientMessageV2Schema, HealthzV2, HelloTvV2Schema, ServerMessageV2Schema } from "../../../src/protocol/v2";
+import { ClientMessageSchema } from "../../../src/protocol/messages";
+import { REACTIONS } from "../../../src/room/types";
+import { generateFixturesV2 } from "../../../scripts/fixture-scenario-v2";
+
+const dir = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "fixtures", "v2");
+const files = readdirSync(dir).filter((f) => f.endsWith(".json")).sort();
+const read = (f: string): string => readFileSync(join(dir, f), "utf8");
+const parse = (f: string): unknown => JSON.parse(read(f));
+
+describe("fixtures v2 (§2.5)", () => {
+  it("are exactly what the scenario generates (`pnpm fixtures`)", () => {
+    const gen = generateFixturesV2();
+    expect(files).toEqual([...gen.keys()].map((k) => k.slice(3)).sort());
+    for (const [name, content] of gen) expect(read(name.slice(3)), name).toBe(content);
+  });
+  it("ping and pong are byte-exact", () => {
+    expect(read("c2s.ping.json").trimEnd()).toBe(PING_FRAME_V2);
+    expect(read("s2c.pong.json").trimEnd()).toBe(PONG_FRAME_V2);
+  });
+  it.each(files.filter((f) => f.startsWith("c2s.") && f !== "c2s.ping.json"))("%s parses as a strict v2 client message", (f) => {
+    const r = ClientMessageV2Schema.safeParse(parse(f));
+    expect(r.success, JSON.stringify(r.error?.issues)).toBe(true);
+  });
+  it.each(files.filter((f) => f.startsWith("s2c.") && f !== "s2c.pong.json"))("%s parses as a v2 server message", (f) => {
+    const r = ServerMessageV2Schema.safeParse(parse(f));
+    expect(r.success, JSON.stringify(r.error?.issues)).toBe(true);
+  });
+  it("error fixtures carry the messageKey rule", () => {
+    for (const f of files.filter((x) => x.startsWith("s2c.error."))) {
+      const m = parse(f) as { code: ErrorCode; messageKey: string };
+      expect(m.messageKey, f).toBe(errorMessageKey(m.code));
+    }
+  });
+  it("HTTP fixtures parse", () => {
+    expect(HealthzV2.parse(parse("http.healthz.json"))).toEqual({ ok: true, app: "jamaa", protocol: 2 });
+    expect(ClientConfigV2.safeParse(parse("http.config.json")).success).toBe(true);
+    expect(ClientConfigV2.safeParse(parse("http.config.billing_off.json")).success).toBe(true);
+  });
+  it("hello.tv declares all four games at the server VIEW_VERSION; mishana-only declares one", () => {
+    const all = HelloTvV2Schema.parse(parse("c2s.hello.tv.json"));
+    expect(all.games).toEqual(GAME_IDS.map((id) => ({ id, v: GAME_META[id].VIEW_VERSION })));
+    expect(HelloTvV2Schema.parse(parse("c2s.hello.tv.mishana-only.json")).games.map((g) => g.id)).toEqual(["mishana"]);
+  });
+  it("there is one REACT fixture per REACTIONS value", () => {
+    expect(files.filter((f) => f.startsWith("c2s.action.react.")).map((f) => f.split(".")[3]).sort()).toEqual([...REACTIONS].sort());
+  });
+  it("covers HUB, every SETUP extras, PLAYING and the benched view", () => {
+    for (const f of ["s2c.state.tv.hub.json", "s2c.state.player.playing.mishana.benched.json", "s2c.state.tv.playing.mishana.voting.json"]) expect(files).toContain(f);
+    for (const id of GAME_IDS) {
+      const v = (parse(`s2c.state.tv.setup.${id}.json`) as { view: { room: { setup: { extras: { gameId: string } } } } }).view;
+      expect(v.room.setup.extras.gameId).toBe(id);
+    }
+    const benched = (parse("s2c.state.player.playing.mishana.benched.json") as { view: { me: unknown; game: { me: unknown; phase: string } } }).view;
+    expect(benched.me).toMatchObject({ benched: true });
+    expect(benched.game.me).toBeNull();
+  });
+});
+
+describe("hello v2 capability negotiation (§2.5)", () => {
+  const base = { v: 2, t: "hello", role: "tv", tvToken: "0123456789abcdef0123456789abcdef" };
+  it("a missing `games` is a strict-schema failure", () => {
+    expect(ClientMessageV2Schema.safeParse(base).success).toBe(false);
+  });
+  it("rejects duplicate ids, unknown ids, empty and > 4 entries", () => {
+    expect(HelloTvV2Schema.safeParse({ ...base, games: [] }).success).toBe(false);
+    expect(HelloTvV2Schema.safeParse({ ...base, games: [{ id: "mishana", v: 1 }, { id: "mishana", v: 1 }] }).success).toBe(false);
+    expect(HelloTvV2Schema.safeParse({ ...base, games: [{ id: "chess", v: 1 }] }).success).toBe(false);
+    expect(HelloTvV2Schema.safeParse({ ...base, games: [...GAME_IDS, "mishana"].map((id) => ({ id, v: 1 })) }).success).toBe(false);
+  });
+  it("v1 and v2 frames do not cross-parse", () => {
+    expect(ClientMessageV2Schema.safeParse({ v: 1, t: "hello", role: "player" }).success).toBe(false);
+    expect(ClientMessageSchema.safeParse(parse("c2s.hello.player.json")).success).toBe(false);
+  });
+  it("stub games accept no in-game intent", () => {
+    for (const id of ["bluff", "likely", "trivia"]) {
+      const msg = { v: 2, t: "action", a: { type: "GAME", gameId: id, i: { type: "HOST_ADVANCE" } } };
+      expect(ClientMessageV2Schema.safeParse(msg).success, id).toBe(false);
+    }
+  });
+  it("Mish Ana!'s removed top-level intents are not v2 intents", () => {
+    for (const type of ["UPDATE_SETTINGS", "START", "PLAY_AGAIN", "BACK_TO_LOBBY", "READY"]) {
+      expect(ClientMessageV2Schema.safeParse({ v: 2, t: "action", a: { type } }).success, type).toBe(false);
+    }
+    const wordLocale = { v: 2, t: "action", a: { type: "UPDATE_GAME_SETTINGS", gameId: "mishana", patch: { wordLocale: "fr" } } };
+    expect(ClientMessageV2Schema.safeParse(wordLocale).success).toBe(false);
+  });
+});

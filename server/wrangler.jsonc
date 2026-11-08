@@ -5,6 +5,10 @@
   "compatibility_date": "2026-09-30",
   "workers_dev": true,
   "minify": true,
+  // JAMAA-PLATFORM §5.6: validated packs are emitted to content-dist/<game>/<id>.txt (`pnpm lint:content --emit`) and
+  // imported by src/content-modules.gen.ts as Text modules. wrangler 4.147.0's default rules already include **/*.txt
+  // (checked in its DEFAULT_MODULE_RULES); the rule is repeated here so the intent survives a default change.
+  "rules": [{ "type": "Text", "globs": ["**/*.txt"], "fallthrough": true }],
   // PAYMENTS-SPEC §3.2: traces record outbound fetch URLs, and every Google Play call carries a raw purchase token in
   // its path, so traces stay OFF (written explicitly; check-deploy.mjs enforces it). Invocation logs record only the
   // incoming URL; billing routes carry tokens in request bodies only.
@@ -39,11 +43,13 @@
   // and the e2e webServer pass the fake values with --var. check-deploy.mjs refuses a deploy otherwise.
   //  - RTDN_AUDIENCE: https://<your-domain>/api/billing/rtdn; RTDN_SA_EMAIL: the push service account;
   //    RTDN_SUBSCRIPTION: projects/<project>/subscriptions/play-rtdn-push (PAYMENTS-SPEC §8.C/§8.D).
+  //  - GAMES_ENABLED: comma list of the live games (JAMAA-PLATFORM §2.6; default "mishana"). Add bluff, likely, trivia as
+  //    each ships. Unknown ids are ignored at runtime (logged once) and refused by check-deploy.mjs.
   //  - BILLING_ENABLED: the production switch for everything premium/billing (server/src/config.ts). "0": billing and
   //    admin routes 404, crons idle, rooms play the whole catalog, GET /api/config says {"billing":false} and every
   //    client hides its premium UI. "1": payments as specified. `pnpm dev` and the e2e webServer pass "1".
   "vars": {
-    "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0", "BILLING_ENABLED": "0",
+    "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0", "BILLING_ENABLED": "0", "GAMES_ENABLED": "mishana",
     "BILLING_MODE": "google", "ALLOW_FAKE_BILLING": "0",
     "PLAY_PACKAGE_NAME": "app.jamaa.tv", "RTDN_AUDIENCE": "", "RTDN_SA_EMAIL": "", "RTDN_SUBSCRIPTION": ""
   }

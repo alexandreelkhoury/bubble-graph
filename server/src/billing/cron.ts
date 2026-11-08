@@ -1,6 +1,6 @@
 // PAYMENTS-SPEC §3.8: scheduled(). Hourly: ack retries + overdue alert. Daily: voided purchases, stale-sub alert, prune.
 import { ACK_OVERDUE_ALERT_MS } from "@jamaa/shared/constants";
-import { packIdFromProductId } from "@jamaa/shared/billing";
+import { familyFromProductId } from "@jamaa/shared/billing";
 import { sha256hex } from "../tokens";
 import type { BillingStore } from "./billing-core";
 import { billingPacks } from "./catalog-info";
@@ -75,7 +75,7 @@ async function voided(store: BillingStore, api: GoogleApi, now: () => number): P
           // Unknown hash: VoidedPurchase has no product type. A one-time token of a premium pack → tombstone.
           try {
             const p = await api.getProductV2(v.purchaseToken, o);
-            const id = packIdFromProductId(p.productLineItem?.[0]?.productId ?? "");
+            const id = familyFromProductId(p.productLineItem?.[0]?.productId ?? "");
             if (id && billingPacks().premiumIds.has(id)) await store.markRevoked(h, now());
           } catch (e) {
             // [VERIFY] productsv2 answers 404/410 for a subscription token (§3.8). Only the purchases API's own

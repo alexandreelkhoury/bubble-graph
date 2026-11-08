@@ -27,7 +27,7 @@ export function RoomCode({ code, size = "mini" }: { code: string; size?: "mini" 
  */
 export function TvTopBar({ view, title, stillAlive = null }: { view: TvView; title?: string; stillAlive?: string | null }) {
   const alive = view.players.filter((p) => (p.alive || p.id === stillAlive) && !p.left).length;
-  const label = title ?? (view.phase === "ROLE_REVEAL" ? t("game.label", { count: view.gameNumber }) : `${t("round.label", { count: view.round })} · ${t(PHASE_KEY[view.phase])}`);
+  const label = title ?? (view.phase === "ROLE_REVEAL" ? t("game.mishana.title") : `${t("round.label", { count: view.round })} · ${t(PHASE_KEY[view.phase])}`);
   const degraded = tvConn.value !== "open";
   return (
     <header class="tvtop">

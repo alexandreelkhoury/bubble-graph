@@ -1,0 +1,7 @@
+{
+  "v": 2,
+  "t": "error",
+  "code": "REACTION_TOO_FAST",
+  "messageKey": "error.reactionTooFast",
+  "ref": "12"
+}

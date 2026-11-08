@@ -14,7 +14,9 @@ export interface CatalogPair {
   civilian: WordSide; undercover: WordSide;
 }
 export interface CatalogPack {
-  id: string; version: number; locale: string; language: Locale;
+  id: string;
+  /** JAMAA-PLATFORM §5.2 content family (translations share it); absent = the pack id. Never read by the engine. */
+  family?: string; version: number; locale: string; language: Locale;
   title: LocalizedTitle;
   ageRating: AgeRating;
   tier: PackTier;
@@ -26,6 +28,7 @@ interface WordSideLike { text: string; translit?: string | null | undefined; alt
 /** Structural re-declaration of `z.infer<typeof WordPackSchema>` (the engine never imports zod). */
 export interface WordPackLike {
   id: string;
+  family?: string | undefined;
   version: number;
   locale: "en" | "fr" | "ar" | "ar-LB" | "es";
   script: "Latn" | "Arab";
@@ -73,6 +76,7 @@ const byStr = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
 export function buildCatalog(packs: readonly WordPackLike[]): Catalog {
   const out: CatalogPack[] = packs.map((p) => ({
     id: p.id,
+    ...(p.family !== undefined && p.family !== p.id ? { family: p.family } : {}),
     version: p.version,
     locale: p.locale,
     language: languageOf(p.locale),

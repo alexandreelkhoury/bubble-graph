@@ -1,4 +1,7 @@
-export const PROTOCOL_VERSION = 1;
+/** JAMAA-PLATFORM §2.5: protocol v2 (a clean break; a v1 frame gets UNSUPPORTED_VERSION and close 4002). */
+export const PROTOCOL_VERSION = 2;
+/** The retired v1 envelope: only the legacy v1 schemas and fixtures (`protocol/messages.ts`, `fixtures/*.json`) use it. */
+export const PROTOCOL_VERSION_V1 = 1;
 export const ROOM_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ"; // 23 letters, no I L O
 export const ROOM_CODE_LENGTH = 4;
 export const ROOM_CODE_REGEX = new RegExp(`^[${ROOM_CODE_ALPHABET}]{${ROOM_CODE_LENGTH}}$`);
@@ -52,8 +55,10 @@ export const FATAL_CLOSE_CODES = [
 /** Reconnect, but wait ≥ SLOW_RECONNECT_MS. */
 export const SLOW_RECONNECT_CLOSE_CODES = [CLOSE_CODES.RATE_LIMITED, CLOSE_CODES.CAPACITY] as const;
 export const SLOW_RECONNECT_MS = 10_000;
-export const PING_FRAME = '{"v":1,"t":"ping"}'; // byte-exact
-export const PONG_FRAME = '{"v":1,"t":"pong"}'; // byte-exact
+export const PING_FRAME = '{"v":2,"t":"ping"}'; // byte-exact (v2, JAMAA-PLATFORM §2.5; DO auto-response)
+export const PONG_FRAME = '{"v":2,"t":"pong"}'; // byte-exact
+export const PING_FRAME_V1 = '{"v":1,"t":"ping"}'; // legacy v1 fixtures only
+export const PONG_FRAME_V1 = '{"v":1,"t":"pong"}';
 export const LOCALES = ["en", "fr", "ar", "es"] as const;
 export type Locale = (typeof LOCALES)[number];
 // Player colours: DESIGN §2.3 palette (CVD- and contrast-checked), in pick order. glyph = avatar glyph colour.
@@ -121,13 +126,13 @@ export const TV_BUSY_MAX_MS = 5 * 60_000;
 
 // ---------------------------------------------------------------- JAMAA platform (JAMAA-PLATFORM §2)
 /**
- * §2.5 protocol v2. Transition (P1): the v2 contracts, fixtures and room engine exist next to v1; the server, `/tv`
- * mock, phone and TV still speak v1 (`PROTOCOL_VERSION`, `PING_FRAME`, `PONG_FRAME`) until they switch in P2, when
- * these become `PROTOCOL_VERSION` / `PING_FRAME` / `PONG_FRAME` and the v1 schemas are deleted.
+ * §2.5 protocol v2. P2: the server speaks v2 only, so `PROTOCOL_VERSION` / `PING_FRAME` / `PONG_FRAME` are the v2
+ * values. These aliases stay for code written against them in P1. The v1 schemas (`protocol/messages.ts`) remain only
+ * until every client has moved (JAMAA-GAP: deleted at the end of P, once the phone, `/tv` mock and TV no longer import them).
  */
-export const PROTOCOL_VERSION_V2 = 2;
-export const PING_FRAME_V2 = '{"v":2,"t":"ping"}'; // byte-exact
-export const PONG_FRAME_V2 = '{"v":2,"t":"pong"}'; // byte-exact
+export const PROTOCOL_VERSION_V2 = PROTOCOL_VERSION;
+export const PING_FRAME_V2 = PING_FRAME;
+export const PONG_FRAME_V2 = PONG_FRAME;
 /** §3.10 B: added by every game's `start` to its first phase's deadline (the 2 000 ms entrance plus 500 ms margin). */
 export const ENTRANCE_GRACE_MS = 2_500;
 /** §2.5 REACT: at most one reaction per member per this many ms, else REACTION_TOO_FAST. */

@@ -1,7 +1,8 @@
-// Server → client wire frames (§6.3) and socket I/O that never throws. Pure: no room state.
+// Server → client wire frames (§6.3, protocol v2: JAMAA-PLATFORM §2.5) and socket I/O that never throws. Pure.
 import { PROTOCOL_VERSION } from "@jamaa/shared/constants";
-import type { ErrorCode, ErrorMsg, StateMsg, View, WelcomeMsg } from "@jamaa/shared/protocol";
+import type { ErrorCode } from "@jamaa/shared/protocol";
 import { ERROR_INFO, errorMessageKey } from "@jamaa/shared/protocol";
+import type { ErrorMsgV2, RoomView, StateV2Msg, WelcomeV2Msg as WelcomeMsg } from "@jamaa/shared/protocol/v2";
 
 /** The subset of a socket the frames are written to (partyserver's Connection, or a test fake). */
 export interface FrameSink {
@@ -13,15 +14,15 @@ export interface FrameSink {
 export type FatalErrorCode = "UNSUPPORTED_VERSION" | "TV_AUTH_FAILED" | "ROOM_NOT_FOUND" | "ROOM_EXPIRED" | "KICKED" | "REPLACED";
 
 export function errorFrame(code: ErrorCode, ref: string | null = null): string {
-  return JSON.stringify({ v: PROTOCOL_VERSION, t: "error", code, messageKey: errorMessageKey(code), ref } satisfies ErrorMsg);
+  return JSON.stringify({ v: PROTOCOL_VERSION, t: "error", code, messageKey: errorMessageKey(code), ref } satisfies ErrorMsgV2);
 }
 
 export function welcomeFrame(playerId: string, resumeToken: string, roomCode: string): string {
   return JSON.stringify({ v: PROTOCOL_VERSION, t: "welcome", playerId, resumeToken, roomCode } satisfies WelcomeMsg);
 }
 
-export function stateFrame(seq: number, serverNow: number, view: View): string {
-  return JSON.stringify({ v: PROTOCOL_VERSION, t: "state", seq, serverNow, view } satisfies StateMsg);
+export function stateFrame(seq: number, serverNow: number, view: RoomView): string {
+  return JSON.stringify({ v: PROTOCOL_VERSION, t: "state", seq, serverNow, view } satisfies StateV2Msg);
 }
 
 export function safeSend(conn: FrameSink, msg: string): void {

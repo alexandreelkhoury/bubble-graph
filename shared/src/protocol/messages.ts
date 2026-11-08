@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { ENTITLEMENT_TOKEN_MAX_CHARS, NAME_MAX_CODEPOINTS, PROTOCOL_VERSION } from "../constants";
+import { ENTITLEMENT_TOKEN_MAX_CHARS, NAME_MAX_CODEPOINTS, PROTOCOL_VERSION_V1 as PROTOCOL_VERSION } from "../constants";
 import { ColorIdSchema, ErrorCodeSchema, LocaleSchema, PlayerId, SettingsPatchSchema, Token } from "./common";
 import { ViewSchema } from "./views";
 

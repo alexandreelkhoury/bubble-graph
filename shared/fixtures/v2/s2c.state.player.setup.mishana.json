@@ -1,0 +1,176 @@
+{
+  "v": 2,
+  "t": "state",
+  "seq": 7,
+  "serverNow": 1790000002000,
+  "view": {
+    "kind": "player",
+    "room": {
+      "roomCode": "KXRT",
+      "joinUrl": "https://play.example.workers.dev/KXRT",
+      "phase": "SETUP",
+      "focusedGameId": "mishana",
+      "setupGameId": "mishana",
+      "contentLocale": "en",
+      "members": [
+        {
+          "id": "p_0a1b2c3d4e5f60718293a4b5",
+          "name": "Rami",
+          "color": "coral",
+          "seat": 0,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": true,
+          "reaction": null
+        },
+        {
+          "id": "p_1b2c3d4e5f60718293a4b5c6",
+          "name": "Léa",
+          "color": "azure",
+          "seat": 1,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_2c3d4e5f60718293a4b5c6d7",
+          "name": "نور",
+          "color": "jade",
+          "seat": 2,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_3d4e5f60718293a4b5c6d7e8",
+          "name": "Sam",
+          "color": "lemon",
+          "seat": 3,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        }
+      ],
+      "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "games": [
+        {
+          "id": "mishana",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 2,
+          "durationMinutes": [
+            10,
+            20
+          ]
+        }
+      ],
+      "setup": {
+        "gameId": "mishana",
+        "settings": {
+          "winRule": "official",
+          "revealRoles": false,
+          "roleMode": "custom",
+          "undercoverCount": 1,
+          "blankCount": 0,
+          "clueSeconds": 45,
+          "voteSeconds": 90,
+          "revealSeconds": 30,
+          "guessSeconds": 45,
+          "tieBreak": "random",
+          "blankGuess": true,
+          "packIds": [
+            "en-everyday-01",
+            "fr-everyday-01",
+            "ar-everyday-01",
+            "es-everyday-01"
+          ],
+          "difficulties": [
+            1,
+            2,
+            3
+          ],
+          "familyFilter": true,
+          "swapSides": true,
+          "points": {
+            "civilian": 2,
+            "undercover": 10,
+            "blank": 10
+          }
+        },
+        "canStart": true,
+        "startBlocker": null,
+        "availablePacks": [
+          {
+            "id": "test-en-01",
+            "gameId": "mishana",
+            "family": "test-en-01",
+            "locale": "en",
+            "title": {
+              "en": "Test pack",
+              "fr": "Paquet de test",
+              "ar": "حزمة اختبار"
+            },
+            "pairCount": 10,
+            "ageRating": "all",
+            "tier": "free",
+            "stars": null,
+            "domain": null,
+            "topics": []
+          }
+        ],
+        "lockedPacks": [
+          {
+            "id": "test-en-prem-01",
+            "gameId": "mishana",
+            "family": "test-en-prem-01",
+            "locale": "en",
+            "title": {
+              "en": "Premium test",
+              "fr": "Test premium",
+              "ar": "اختبار بريميوم"
+            },
+            "pairCount": 10,
+            "ageRating": "all",
+            "productId": "pack_test_en_prem_01",
+            "stars": null,
+            "domain": null,
+            "topics": []
+          }
+        ],
+        "extras": {
+          "gameId": "mishana",
+          "roleCounts": {
+            "civilian": 3,
+            "undercover": 1,
+            "blank": 0
+          },
+          "poolExhausted": false
+        }
+      },
+      "cup": {
+        "stars": {},
+        "last": null
+      },
+      "premium": false,
+      "tvBusy": false,
+      "contentLocales": [
+        "en",
+        "fr",
+        "ar"
+      ]
+    },
+    "game": null,
+    "me": {
+      "id": "p_1b2c3d4e5f60718293a4b5c6",
+      "benched": false
+    }
+  }
+}

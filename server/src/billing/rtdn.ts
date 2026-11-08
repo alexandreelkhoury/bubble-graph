@@ -2,7 +2,7 @@
 // and apply it" paths, used by RTDN, the fake `set` route (§3.10) and the cron (§3.8).
 import * as z from "zod";
 import { BILLING_BODY_MAX_BYTES } from "@jamaa/shared/constants";
-import { packIdFromProductId, PREMIUM_PRODUCT_ID } from "@jamaa/shared/billing";
+import { familyFromProductId, PASS_PRODUCT_ID } from "@jamaa/shared/billing";
 import { readBodyLimited } from "../http";
 import { sha256hex } from "../tokens";
 import type { BillingStore } from "./billing-core";
@@ -41,11 +41,11 @@ export async function refreshSubscription(c: SyncCtx, token: string): Promise<"o
     throw e;
   }
   const n = normalizeSubscription(r, checkedMs);
-  if (n.productId !== PREMIUM_PRODUCT_ID) return "gone";
+  if (n.productId !== PASS_PRODUCT_ID) return "gone";
   const res = await c.store.applyPurchase({
-    tokenHash, kind: "sub", productId: PREMIUM_PRODUCT_ID, n, callerInstallHash: null, rawTokenForAck: token, nowMs: c.now(), store: c.source ?? "google",
+    tokenHash, kind: "sub", productId: PASS_PRODUCT_ID, n, callerInstallHash: null, rawTokenForAck: token, nowMs: c.now(), store: c.source ?? "google",
   });
-  if (res.ackDue) await ackPurchase(c.api, c.store, "sub", PREMIUM_PRODUCT_ID, token, tokenHash, bg(c));
+  if (res.ackDue) await ackPurchase(c.api, c.store, "sub", PASS_PRODUCT_ID, token, tokenHash, bg(c));
   if (res.refreshLinked && n.linkedPurchaseToken) await refreshLinked(c, n.linkedPurchaseToken);
   return "ok";
 }
@@ -55,9 +55,9 @@ export async function refreshLinked(c: SyncCtx, linked: string): Promise<void> {
   const checkedMs = c.now();
   try {
     const n = normalizeSubscription(await c.api.getSubscriptionV2(linked, bg(c)), checkedMs);
-    if (n.productId !== PREMIUM_PRODUCT_ID) return;
+    if (n.productId !== PASS_PRODUCT_ID) return;
     await c.store.applyPurchase({
-      tokenHash: await sha256hex(linked), kind: "sub", productId: PREMIUM_PRODUCT_ID, n, callerInstallHash: null, rawTokenForAck: null, nowMs: c.now(),
+      tokenHash: await sha256hex(linked), kind: "sub", productId: PASS_PRODUCT_ID, n, callerInstallHash: null, rawTokenForAck: null, nowMs: c.now(),
       store: c.source ?? "google",
     });
   } catch {
@@ -77,7 +77,7 @@ export async function refreshProduct(c: SyncCtx, token: string): Promise<"ok" | 
     throw e;
   }
   const n = normalizeProduct(r, checkedMs);
-  const packId = packIdFromProductId(n.productId);
+  const packId = familyFromProductId(n.productId);
   if (!packId || !billingPacks().premiumIds.has(packId)) return "gone";
   const res = await c.store.applyPurchase({
     tokenHash, kind: "pack", productId: n.productId, n, callerInstallHash: null, rawTokenForAck: token, nowMs: c.now(), store: c.source ?? "google",

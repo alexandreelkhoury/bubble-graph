@@ -1,9 +1,8 @@
 // DESIGN §5.2 avatars: a squircle in the player colour holding its shape glyph. Never colour alone.
+import type { PublicPlayer, Role } from "../games/mishana/view";
 import type { ComponentChildren } from "preact";
 import { COLORS } from "@jamaa/shared/constants";
 import type { ColorId } from "@jamaa/shared/constants";
-import type { Role } from "@jamaa/shared/engine";
-import type { PublicPlayer } from "@jamaa/shared/protocol";
 import { t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { Icon } from "./Icon";

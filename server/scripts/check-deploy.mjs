@@ -9,6 +9,9 @@ import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+/** = shared/src/games/ids.ts GAME_IDS (server/test/scripts/check-deploy.test.ts checks they agree). */
+export const GAME_IDS = ["mishana", "bluff", "likely", "trivia"];
+
 /** Strips // and block comments and trailing commas from JSONC, leaving string contents untouched. */
 export function stripJsonc(text) {
   let out = "";
@@ -58,6 +61,10 @@ export function checkDeployConfig(jsoncText) {
   if (vars.ALLOW_FAKE_BILLING !== "0") errors.push(`vars.ALLOW_FAKE_BILLING must be "0" (is ${JSON.stringify(vars.ALLOW_FAKE_BILLING)})`);
   // JAMAA-PLATFORM §1.6 O6: the Play package is app.jamaa.tv (a new Play app; the old package was never published).
   if (vars.PLAY_PACKAGE_NAME !== "app.jamaa.tv") errors.push(`vars.PLAY_PACKAGE_NAME must be "app.jamaa.tv" (is ${JSON.stringify(vars.PLAY_PACKAGE_NAME)})`);
+  // JAMAA-PLATFORM §2.6: GAMES_ENABLED lists known game ids only (the runtime ignores unknown ones; a deploy must not).
+  const games = String(vars.GAMES_ENABLED ?? "mishana").split(",").map((x) => x.trim()).filter((x) => x.length > 0);
+  const unknownGames = games.filter((x) => !GAME_IDS.includes(x));
+  if (unknownGames.length > 0) errors.push(`vars.GAMES_ENABLED has unknown game id(s) ${unknownGames.join(", ")} (known: ${GAME_IDS.join(", ")})`);
   if (cfg.observability?.traces?.enabled !== false) errors.push("observability.traces.enabled must be false (traces record outbound URLs with purchase tokens)");
   // PAYMENTS-SPEC §3.12: ADMIN_TOKEN is an OPTIONAL secret (unset = /api/admin/* answers 404). It must never be a plain
   // `vars` entry (that would publish it in the config) nor `secrets.required` (a deploy without it must still work).

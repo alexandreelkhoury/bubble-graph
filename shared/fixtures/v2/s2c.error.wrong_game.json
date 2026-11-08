@@ -1,0 +1,7 @@
+{
+  "v": 2,
+  "t": "error",
+  "code": "WRONG_GAME",
+  "messageKey": "error.wrongGame",
+  "ref": "7"
+}

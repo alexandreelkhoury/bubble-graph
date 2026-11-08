@@ -1,5 +1,5 @@
 // PAYMENTS-SPEC §3.7: Google purchase resources → one flat shape the Billing DO stores.
-import { PACK_STATES, PREMIUM_PRODUCT_ID, SUB_STATES } from "@jamaa/shared/billing";
+import { PACK_STATES, PASS_PRODUCT_ID, SUB_STATES } from "@jamaa/shared/billing";
 import type { PackState, SubState } from "@jamaa/shared/billing";
 import type { ProductPurchaseV2, SubscriptionPurchaseV2 } from "./google-types";
 
@@ -23,7 +23,7 @@ export function normalizeSubscription(r: SubscriptionPurchaseV2, checkedMs: numb
     ? (r.subscriptionState as SubState)
     : "SUBSCRIPTION_STATE_UNSPECIFIED";
   const items = Array.isArray(r.lineItems) ? r.lineItems : [];
-  const premium = items.filter((i) => i.productId === PREMIUM_PRODUCT_ID);
+  const premium = items.filter((i) => i.productId === PASS_PRODUCT_ID);
   let expiryMs: number | null = null;
   let latest = premium[0];
   for (const i of premium) {
@@ -36,7 +36,7 @@ export function normalizeSubscription(r: SubscriptionPurchaseV2, checkedMs: numb
   return {
     kind: "sub",
     // A response without a "premium" line item keeps the first product id, so the product check (§3.4 d) fails.
-    productId: premium.length > 0 ? PREMIUM_PRODUCT_ID : (str(items[0]?.productId) ?? ""),
+    productId: premium.length > 0 ? PASS_PRODUCT_ID : (str(items[0]?.productId) ?? ""),
     state,
     expiryMs,
     autoRenew: premium.some((i) => i.autoRenewingPlan?.autoRenewEnabled === true),

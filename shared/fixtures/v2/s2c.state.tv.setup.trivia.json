@@ -1,0 +1,140 @@
+{
+  "v": 2,
+  "t": "state",
+  "seq": 5,
+  "serverNow": 1790000001000,
+  "view": {
+    "kind": "tv",
+    "room": {
+      "roomCode": "KXRT",
+      "joinUrl": "https://play.example.workers.dev/KXRT",
+      "phase": "SETUP",
+      "focusedGameId": "mishana",
+      "setupGameId": "trivia",
+      "contentLocale": "en",
+      "members": [
+        {
+          "id": "p_0a1b2c3d4e5f60718293a4b5",
+          "name": "Rami",
+          "color": "coral",
+          "seat": 0,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": true,
+          "reaction": null
+        },
+        {
+          "id": "p_1b2c3d4e5f60718293a4b5c6",
+          "name": "Léa",
+          "color": "azure",
+          "seat": 1,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_2c3d4e5f60718293a4b5c6d7",
+          "name": "نور",
+          "color": "jade",
+          "seat": 2,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_3d4e5f60718293a4b5c6d7e8",
+          "name": "Sam",
+          "color": "lemon",
+          "seat": 3,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        }
+      ],
+      "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "games": [
+        {
+          "id": "mishana",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 2,
+          "durationMinutes": [
+            10,
+            20
+          ]
+        },
+        {
+          "id": "bluff",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": false,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            15,
+            20
+          ]
+        },
+        {
+          "id": "likely",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": false,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            6,
+            10
+          ]
+        },
+        {
+          "id": "trivia",
+          "minPlayers": 1,
+          "maxPlayers": 12,
+          "available": false,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            5,
+            10
+          ]
+        }
+      ],
+      "setup": {
+        "gameId": "trivia",
+        "settings": {
+          "quizId": null,
+          "length": "normal",
+          "pace": "normal"
+        },
+        "canStart": false,
+        "startBlocker": "GAME_DISABLED",
+        "availablePacks": [],
+        "lockedPacks": [],
+        "extras": {
+          "gameId": "trivia",
+          "available": 0,
+          "quiz": null
+        }
+      },
+      "cup": {
+        "stars": {},
+        "last": null
+      },
+      "premium": false,
+      "tvBusy": false,
+      "contentLocales": [
+        "en",
+        "fr",
+        "ar"
+      ]
+    },
+    "game": null,
+    "me": null
+  }
+}

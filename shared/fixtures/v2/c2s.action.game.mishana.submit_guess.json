@@ -1,0 +1,13 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "10",
+  "a": {
+    "type": "GAME",
+    "gameId": "mishana",
+    "i": {
+      "type": "SUBMIT_GUESS",
+      "text": "Bicycle"
+    }
+  }
+}

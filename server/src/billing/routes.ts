@@ -13,9 +13,9 @@ import {
   EntitlementRequest,
   FakePurchaseRequest,
   FakeSetRequest,
-  packIdFromProductId,
+  familyFromProductId,
   packProductId,
-  PREMIUM_PRODUCT_ID,
+  PASS_PRODUCT_ID,
   TRIAL_OFFER_ID,
   VerifyRequest,
 } from "@jamaa/shared/billing";
@@ -173,11 +173,14 @@ function catalog(env: Env, mode: BillingMode): Response {
   const body: CatalogResponseBody = {
     mode,
     packageName: env.PLAY_PACKAGE_NAME,
-    subscription: { productId: PREMIUM_PRODUCT_ID, basePlanIds: [...BASE_PLAN_IDS], trialOfferId: TRIAL_OFFER_ID },
+    subscription: { productId: PASS_PRODUCT_ID, basePlanIds: [...BASE_PLAN_IDS], trialOfferId: TRIAL_OFFER_ID },
     freePackIds: packs.filter((p) => p.tier === "free").map((p) => p.id),
     packs: packs
-      .filter((p) => p.tier === "premium")
-      .map((p) => ({ packId: p.id, productId: packProductId(p.id), locale: p.locale, language: p.language, title: { ...p.title }, pairCount: p.pairCount, ageRating: p.ageRating })),
+      .filter((p) => p.tier !== "free")
+      .map((p) => ({
+        packId: p.id, gameId: p.gameId, family: p.family, productId: packProductId(p.family), locale: p.locale, language: p.language,
+        title: { ...p.title }, pairCount: p.pairCount, ageRating: p.ageRating,
+      })),
   };
   return ok(body, "public, max-age=300");
 }
@@ -272,10 +275,10 @@ export async function verify(
     }
     // a. Kind.
     let kind: "sub" | "pack";
-    if (p.productId === PREMIUM_PRODUCT_ID) kind = "sub";
+    if (p.productId === PASS_PRODUCT_ID) kind = "sub";
     else {
-      const packId = packIdFromProductId(p.productId);
-      if (!packId || !premiumIds.has(packId)) {
+      const family = familyFromProductId(p.productId);
+      if (!family || !premiumIds.has(family)) {
         push("INVALID");
         continue;
       }

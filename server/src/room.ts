@@ -2,25 +2,19 @@
 import { Server } from "partyserver";
 import type { Connection, ConnectionContext, WSMessage } from "partyserver";
 import { PING_FRAME, PONG_FRAME } from "@jamaa/shared/constants";
-import type { Catalog } from "@jamaa/shared/engine";
-import { loadCatalog } from "@jamaa/shared/packs";
-import { PACKS } from "@jamaa/content";
 import type { Env } from "./env";
 import { clientIp, notFound } from "./request";
 import { fakeAllowedByEnv } from "./billing/mode";
-import { billingEnabled } from "./config";
+import { billingPacks } from "./billing/catalog-info";
+import { billingEnabled, enabledGames } from "./config";
+import { serverContent } from "./content";
 import { verifyKeysFromSecret } from "./billing/token";
 import { RoomCore } from "./room-core";
 import type { ConnHandle, ConnState, InitRoomArgs, InitRoomResult, RoomBillingDeps, RoomStorage } from "./room-core";
 import { randomBytes, sha256hex } from "./tokens";
 
-// §7.8: built once per isolate, on the first Room access (onStart), so the stateless Worker never pays the
-// schema parse. A schema failure throws there; word-packs tests and pack-lint catch it at build time.
-let catalog: Catalog | null = null;
-function roomCatalog(): Catalog {
-  return (catalog ??= loadCatalog(PACKS));
-}
-
+// §7.8 / JAMAA-PLATFORM §5.6: the content is parsed lazily, once per isolate, on first use by a Room (the stateless
+// Worker never pays the schema parse). A schema failure throws there; content tests and content-lint catch it first.
 // PAYMENTS-SPEC §3.2: built once per isolate. Public verify keys only (every private half is dropped while
 // parsing) and the env-level fake guard. The Play service account is never read here.
 let billingDeps: Promise<RoomBillingDeps> | null = null;
@@ -50,7 +44,9 @@ export class Room extends Server<Env> {
         connections: { list: () => [...this.getConnections<ConnState>()] as unknown as ConnHandle[] },
         clock: { now: () => Date.now() },
         crypto: { randomBytes, sha256hex },
-        catalog: roomCatalog(),
+        content: () => serverContent().catalog(),
+        premiumFamilies: () => billingPacks().premiumIds,
+        enabledGames: enabledGames(this.env),
         billing: () => roomBillingDeps(this.env),
         billingEnabled: billingEnabled(this.env),
         debugInvariants: this.env.DEBUG_INVARIANTS === "1",

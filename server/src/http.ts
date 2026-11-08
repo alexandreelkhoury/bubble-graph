@@ -4,6 +4,7 @@ import { HTTP_BODY_MAX_BYTES, PROTOCOL_VERSION, WS_PATH_PREFIX } from "@jamaa/sh
 import type { Locale } from "@jamaa/shared/constants";
 import type { EntitlementStatus, ErrorCode } from "@jamaa/shared/protocol";
 import { CreateRoomRequest } from "@jamaa/shared/protocol";
+import type { HealthzV2Body } from "@jamaa/shared/protocol/v2";
 import { billingPacks } from "./billing/catalog-info";
 import { billingModeForRequest } from "./billing/mode";
 import { verifyEntitlementToken, verifyKeysFromSecret } from "./billing/token";
@@ -35,8 +36,9 @@ export function httpError(code: ErrorCode, status: number): Response {
   return json({ error: code }, status, { "Cache-Control": "no-store" });
 }
 
+/** JAMAA-PLATFORM §2.5: `{ok:true, app:"jamaa", protocol:2}`. */
 export function healthz(): Response {
-  return json({ ok: true, app: BRAND.slug, protocol: PROTOCOL_VERSION }, 200, { "Cache-Control": "no-store" });
+  return json({ ok: true, app: BRAND.slug, protocol: PROTOCOL_VERSION } satisfies HealthzV2Body, 200, { "Cache-Control": "no-store" });
 }
 
 /** Reads at most `max` bytes of the body; `null` when the body is larger. */

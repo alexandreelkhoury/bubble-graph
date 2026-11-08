@@ -1,5 +1,5 @@
 // DESIGN §2.2 / §5.3: role = colour + emblem + pattern + label. Emblems on a 48 grid, filled.
-import type { Role } from "@jamaa/shared/engine";
+import type { Role } from "../games/mishana/view";
 import { t } from "../i18n/t";
 import { ROLE_KEY } from "../lib/keys";
 

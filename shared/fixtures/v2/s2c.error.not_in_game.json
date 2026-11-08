@@ -1,0 +1,7 @@
+{
+  "v": 2,
+  "t": "error",
+  "code": "NOT_IN_GAME",
+  "messageKey": "error.notInGame",
+  "ref": "9"
+}
