@@ -1,5 +1,6 @@
 @import "./styles/tokens.css";
 @import "./styles/platform.css";
+@import "./styles/phone-platform.css";
 
 /* ------------------------------------------------------------------ base */
 *, *::before, *::after { box-sizing: border-box; }

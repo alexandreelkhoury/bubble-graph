@@ -36,7 +36,7 @@ class EntitlementApiTest {
         val r = api.verify(
             "5f2c8e1a9b0d4c3e7a6f1b2d3c4e5f60",
             listOf(
-                PurchaseRef("premium", "aBcDeFgHiJkLmNoPqRsTuVwX.AO-J1OyExampleSubscriptionPurchaseToken0123456789"),
+                PurchaseRef("jamaa_pass", "aBcDeFgHiJkLmNoPqRsTuVwX.AO-J1OyExampleSubscriptionPurchaseToken0123456789"),
                 PurchaseRef("pack_en_food_01", "zYxWvUtSrQpOnMlKjIhGfEdC.AO-J1OzExampleOneTimePurchaseToken9876543210"),
             ),
         )
@@ -70,7 +70,8 @@ class EntitlementApiTest {
         val c = api.catalog()
         assertEquals("GET", server.takeRequest().method)
         assertEquals("google", c.mode)
-        assertEquals(14, c.packs.size)
+        assertEquals(19, c.packs.size)
+        assertTrue(c.packs.all { it.gameId == "mishana" && it.productId == "pack_" + it.family.replace("-", "_") })
         assertEquals("ar", c.packs.first { it.packId == "lb-food-01" }.language)
     }
 

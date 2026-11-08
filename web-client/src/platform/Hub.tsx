@@ -76,7 +76,7 @@ export function Hub({ view }: { view: PlayerRoomView }) {
       <div class="hubph__deck" onTouchStart={onStart} onTouchEnd={onEnd}>
         {vip && ids.length > 1 && <button type="button" class="hubph__nav hubph__nav--prev" aria-label={t("common.back")} onClick={() => step(-1)}><Icon name="chevron-back" class="flip-rtl" /></button>}
         <div class={`hubph__card${dir ? ` is-${dir}` : ""}`} key={shown} aria-live="polite">
-          <Poster id={shown} script={room.contentLocale} charSize={64} class="poster--phone"
+          <Poster id={shown} script={room.contentLocale} charSize={84} class="poster--phone"
             dim={card && !card.available ? t("hub.notAvailable", { language: lang }) : null} />
         </div>
         {vip && ids.length > 1 && <button type="button" class="hubph__nav hubph__nav--next" aria-label={t("setup.next")} onClick={() => step(1)}><Icon name="chevron-forward" class="flip-rtl" /></button>}

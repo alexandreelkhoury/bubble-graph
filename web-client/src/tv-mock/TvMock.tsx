@@ -2,6 +2,7 @@
 // Arrow keys = D-pad, Enter = OK, Escape/Backspace = Back, `i` = INFO (rules), F = full screen.
 // HUB-01 splash → HUB-02 hub → (portal) HUB-03 setup → (entrance) the game → HUB-05 results bar → hub/setup/replay.
 import "./tv.css";
+import "./tvPlatform.css";
 import { useEffect, useRef, useState } from "preact/hooks";
 import type { GameId } from "@jamaa/shared/games/ids";
 import type { RoomPhase } from "@jamaa/shared/room";
@@ -211,7 +212,7 @@ export function TvMock() {
   const setup = view?.room.setup ?? null;
   return (
     <div class={`tv${calm.value ? " is-calm" : ""}`} lang={l} dir={dirOf(l)}>
-      <div class="tv__canvas" ref={canvas} style={{ transform: `translate(${box.x}px, ${box.y}px) scale(${box.scale})` }}>
+      <div class="tv__canvas" ref={canvas} onScroll={(e) => { e.currentTarget.scrollTop = 0; e.currentTarget.scrollLeft = 0; }} style={{ transform: `translate(${box.x}px, ${box.y}px) scale(${box.scale})` }}>
         <div class="tv__bg" aria-hidden="true" />
         {/* Content behind an overlay is inert: neither the remote, Tab nor a pointer can reach it (the intro and the
             setup sheets render inside the screen and trap focus as .tvoverlay themselves). */}

@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_SETTINGS } from "@jamaa/shared/engine";
-import type { PublicPlayer } from "@jamaa/shared/protocol";
-import { SETTINGS_SCHEMA, rowValueText, selectedPacks, stepRow, toggleDifficulty, togglePack, visibleRows } from "../src/lib/settingsModel";
-import { packsLine } from "../src/lib/lobby";
-import { afterElimination, competitionRank, culprits, hadUndercover, newForfeits, orderWindow, rankPlayers, tiedWithTally, topVoted, winnerMessage } from "../src/lib/view";
+import type { PublicPlayer } from "../src/games/mishana/view";
+import { afterElimination, competitionRank, culprits, hadUndercover, newForfeits, orderWindow, rankPlayers, tiedWithTally, topVoted, winnerMessage } from "../src/games/mishana/lib";
 import { ellipsizeName, graphemeCount } from "../src/lib/names";
 import { nearest } from "../src/tv-mock/dpad";
 import { displayInstallId, recreatesRoomOnFatal } from "../src/tv-mock/roomLife";
@@ -11,35 +8,6 @@ import { displayInstallId, recreatesRoomOnFatal } from "../src/tv-mock/roomLife"
 const P = (id: string, seat: number, score = 0): PublicPlayer => ({
   id, name: id, color: "coral", seat, connected: true, alive: true, left: false, isHost: false, ready: false, spoke: false,
   hasVoted: false, revealedRole: null, score,
-});
-
-describe("settings model (one source for PH-03b and TV-03)", () => {
-  const s = { ...DEFAULT_SETTINGS, packIds: [], difficulties: [1, 2, 3] as (1 | 2 | 3)[], points: { ...DEFAULT_SETTINGS.points } };
-  it("lists the TV-03 categories and hides Custom-only rows in Automatic", () => {
-    expect(Object.keys(SETTINGS_SCHEMA)).toEqual(["game", "roles", "timers", "words"]);
-    expect(visibleRows("roles", { ...s, roleMode: "auto" }).map((r) => r.id)).toEqual(["roleMode"]);
-    expect(visibleRows("roles", { ...s, roleMode: "custom" }).map((r) => r.id)).toEqual(["roleMode", "blankCount", "undercoverCount"]);
-  });
-  it("steps every kind of row like the phone controls", () => {
-    const row = (id: string) => Object.values(SETTINGS_SCHEMA).flat().find((r) => r.id === id)!;
-    expect(stepRow(row("winRule"), s, 1)).toEqual({ winRule: s.winRule === "official" ? "parity" : "official" });
-    expect(stepRow(row("blankGuess"), s, -1)).toEqual({ blankGuess: !s.blankGuess });
-    // The word language cycles only through languages that have packs (view.wordLocales), plus the current one.
-    expect(stepRow(row("wordLocale"), { ...s, wordLocale: "ar" }, 1, ["en", "fr", "ar"])).toEqual({ wordLocale: "en" });
-    expect(stepRow(row("wordLocale"), { ...s, wordLocale: "ar" }, 1, ["en", "fr", "ar", "es"])).toEqual({ wordLocale: "es" });
-    expect(stepRow(row("wordLocale"), { ...s, wordLocale: "ar" }, 1)).toEqual({ wordLocale: "es" });
-    expect(stepRow(row("clueSeconds"), { ...s, clueSeconds: 10 }, -1)).toEqual({ clueSeconds: 0 }); // min → off
-    expect(stepRow(row("points.blank"), s, 1)).toEqual({ points: { ...s.points, blank: s.points.blank + 1 } });
-    expect(stepRow(row("points.civilian"), { ...s, points: { ...s.points, civilian: 0 } }, -1)).toBeNull();
-    expect(stepRow(row("packIds"), s, 1)).toBeNull();
-    expect(rowValueText(row("packIds"), s)).toBe("All packs");
-  });
-  it("keeps at least one difficulty and toggles packs", () => {
-    expect(toggleDifficulty({ ...s, difficulties: [2] }, 2)).toBeNull();
-    expect(toggleDifficulty({ ...s, difficulties: [3] }, 1)).toEqual({ difficulties: [1, 3] });
-    expect(togglePack({ ...s, packIds: ["a"] }, "a")).toEqual({ packIds: [] });
-    expect(togglePack(s, "b")).toEqual({ packIds: ["b"] });
-  });
 });
 
 describe("view helpers", () => {
@@ -122,16 +90,16 @@ describe("D-pad geometry", () => {
 });
 
 describe("TV-13e: a lost room between games is re-created (SPEC §7.5)", () => {
-  it("4010 / 4004 in LOBBY, RESULTS or before any view; never in-game or for other codes", () => {
+  it("4010 / 4004 in HUB, SETUP, after a game's outcome or before any view; never mid-game or for other codes", () => {
+    const v = (phase: "HUB" | "SETUP" | "PLAYING", over: boolean | null = null) => ({ room: { phase }, game: over === null ? null : { over } });
     for (const code of [4010, 4004]) {
       expect(recreatesRoomOnFatal(code, null)).toBe(true);
-      expect(recreatesRoomOnFatal(code, { phase: "LOBBY" })).toBe(true);
-      expect(recreatesRoomOnFatal(code, { phase: "RESULTS" })).toBe(true);
-      for (const phase of ["ROLE_REVEAL", "CLUES", "VOTING", "TIE_BREAK", "ELIMINATION", "MR_WHITE_GUESS"] as const) {
-        expect(recreatesRoomOnFatal(code, { phase })).toBe(false);
-      }
+      expect(recreatesRoomOnFatal(code, v("HUB"))).toBe(true);
+      expect(recreatesRoomOnFatal(code, v("SETUP"))).toBe(true);
+      expect(recreatesRoomOnFatal(code, v("PLAYING", true))).toBe(true);
+      expect(recreatesRoomOnFatal(code, v("PLAYING", false))).toBe(false);
     }
-    for (const code of [4002, 4003, 4005, 4006]) expect(recreatesRoomOnFatal(code, { phase: "LOBBY" })).toBe(false);
+    for (const code of [4002, 4003, 4005, 4006]) expect(recreatesRoomOnFatal(code, v("HUB"))).toBe(false);
   });
 });
 
@@ -167,32 +135,3 @@ describe("rules v2: winner title, culprits and the second word", () => {
   });
 });
 
-describe("default easy packs in the settings UI", () => {
-  const avail = [{ id: "en-everyday-01", title: { en: "Everyday", fr: "Quotidien", ar: "يومي" } }, { id: "en-food-01", title: { en: "Hard · Food", fr: "Food", ar: "Food" } }];
-  const s = { ...DEFAULT_SETTINGS };
-  it("shows the room language's easy pack as the selection, never the other languages' ids", () => {
-    expect(selectedPacks(s, avail).map((p) => p.id)).toEqual(["en-everyday-01"]);
-    expect(packsLine(s, avail as never, "en")).toBe("Everyday");
-    expect(rowValueText(SETTINGS_SCHEMA.words.find((r) => r.id === "packIds")!, s, avail)).toBe("1");
-  });
-  it("a Hard pack can be ticked next to it; no room-language pack selected reads All packs", () => {
-    const t2 = { ...s, ...togglePack(s, "en-food-01") } as typeof s;
-    expect(selectedPacks(t2, avail).map((p) => p.id)).toEqual(["en-everyday-01", "en-food-01"]);
-    const none = { ...s, packIds: ["fr-everyday-01", "ar-everyday-01"] };
-    expect(selectedPacks(none, avail)).toEqual([]);
-    expect(packsLine(none, avail as never, "en")).toBe("All packs");
-  });
-  it("labels only the packs selected AND in the room's word language, by title (never raw ids)", () => {
-    const mixed = [
-      { id: "en-everyday-01", locale: "en", title: { en: "Everyday", fr: "Quotidien", ar: "يومي" } },
-      { id: "fr-everyday-01", locale: "fr", title: { en: "Everyday (FR)", fr: "Quotidien", ar: "يومي" } },
-      { id: "ar-everyday-01", locale: "ar-LB", title: { en: "Everyday (AR)", fr: "Quotidien", ar: "يومي" } },
-    ];
-    expect(packsLine(s, mixed as never, "en")).toBe("Everyday");
-    expect(selectedPacks(s, mixed).map((p) => p.id)).toEqual(["en-everyday-01"]);
-    const ar = { ...s, wordLocale: "ar" as const };
-    expect(selectedPacks(ar, mixed).map((p) => p.id)).toEqual(["ar-everyday-01"]);
-    expect(packsLine({ ...s, packIds: ["fr-everyday-01", "ar-everyday-01"] }, mixed as never, "en")).toBe("All packs");
-    expect(packsLine(s, mixed as never, "en")).not.toMatch(/everyday-01/);
-  });
-});

@@ -1,33 +1,32 @@
 package app.jamaa.tv.ui.components
 
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
-import app.jamaa.tv.R
-import app.jamaa.tv.game.ArmedAction
-import kotlinx.coroutines.delay
 
-/** The action pill never grows wider than this; longer labels take a second line. */
+/** Kept for layouts that reserved the old pill's width. */
 val PILL_MAX_WIDTH = 300.dp
 
 /**
- * The in-game action pill (SPEC §9.6, DESIGN §7): a ghost pill that holds focus. The first OK arms it
- * (label → `tv.pressAgain` for 3 s), a second OK within 3 s calls [onConfirm] (HOST_ADVANCE).
- * [onFirstPress] lets a reveal animation consume the first OK to jump to its end state (returns true if consumed).
- * When the pill appears, or its [label] / [resetKey] (e.g. the speaker) changes, it disarms and ignores OK briefly,
- * so presses mashed to skip the previous reveal never arm and fire the new action ([ArmedAction.reset]).
+ * The in-game stage focus anchor (JAMAA-PLATFORM §3.2 HUB-06, §3.10 E rule 5). In game the TV shows **no focusable
+ * on-screen buttons**: host actions (Skip, Close the vote, Start now…) live only in the pause menu (Back), announced by
+ * the "◁ Back: menu & rules" hint (AppRoot). This keeps the former pill's signature so the Mish Ana! screens port
+ * unchanged, but draws nothing: it only holds D-pad focus for the stage, and OK on it calls [onFirstPress] so a reveal
+ * choreography completes locally. [label], [onConfirm] and [resetKey] are no longer used.
  */
+@Suppress("UNUSED_PARAMETER")
 @Composable
 fun ActionPill(
     label: String,
@@ -37,44 +36,17 @@ fun ActionPill(
     resetKey: Any? = null,
     onFirstPress: () -> Boolean = { false },
 ) {
-    val armed = remember { ArmedAction() }
-    var armedLabel by remember { mutableStateOf(false) }
-    var armToken by remember { mutableIntStateOf(0) }
-    val consume by rememberUpdatedState(onFirstPress)
-    val confirm by rememberUpdatedState(onConfirm)
-    LaunchedEffect(label, resetKey) {
-        armed.reset(System.currentTimeMillis())
-        armedLabel = false
-    }
-    LaunchedEffect(armToken) {
-        if (armToken > 0) {
-            delay(3_000)
-            armedLabel = false
-        }
-    }
-    val pressAgain = stringResource(R.string.tv__press_again)
-    JamaaButton(
-        text = if (armedLabel) pressAgain else label,
-        onClick = {
-            if (consume()) return@JamaaButton
-            val now = System.currentTimeMillis()
-            when (armed.press(now)) {
-                ArmedAction.Result.ARMED -> {
-                    armedLabel = true
-                    armToken++
-                }
-                ArmedAction.Result.FIRED -> {
-                    armedLabel = false
-                    confirm()
-                }
-                ArmedAction.Result.IGNORED -> Unit
+    val complete by rememberUpdatedState(onFirstPress)
+    androidx.compose.foundation.layout.Box(
+        modifier
+            .size(1.dp)
+            .clearAndSetSemantics {}
+            .focusRequester(focusRequester)
+            .onKeyEvent { e ->
+                val ok = e.key == Key.DirectionCenter || e.key == Key.Enter || e.key == Key.NumPadEnter
+                if (ok && e.type == KeyEventType.KeyUp) complete()
+                ok
             }
-        },
-        // Fixed footprint: sized for the longer of the two labels (2 lines max inside 300 dp), so arming never
-        // resizes the pill or reflows the action bar next to it.
-        modifier = modifier.focusRequester(focusRequester).widthIn(max = PILL_MAX_WIDTH),
-        kind = if (armedLabel) ButtonKind.Primary else ButtonKind.Ghost,
-        minWidth = 200.dp,
-        reserveText = if (armedLabel) label else pressAgain,
+            .focusable(),
     )
 }

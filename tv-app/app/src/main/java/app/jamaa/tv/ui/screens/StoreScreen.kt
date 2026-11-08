@@ -47,6 +47,7 @@ import androidx.tv.material3.Text
 import app.jamaa.tv.R
 import app.jamaa.tv.billing.BillingPeriod
 import app.jamaa.tv.billing.Disclosure
+import app.jamaa.tv.billing.OfferSelection
 import app.jamaa.tv.billing.FakeChoice
 import app.jamaa.tv.billing.PackCard
 import app.jamaa.tv.billing.PackTrailing
@@ -61,7 +62,7 @@ import app.jamaa.tv.billing.StoreScreenModel
 import app.jamaa.tv.billing.StoreUiState
 import app.jamaa.tv.billing.UnavailableReason
 import app.jamaa.tv.i18n.isolate
-import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.protocol.LockedPackInfo
 import app.jamaa.tv.ui.components.ButtonKind
 import app.jamaa.tv.ui.components.FocusTrap
 import app.jamaa.tv.ui.components.InitialFocus
@@ -93,14 +94,14 @@ import java.util.Locale
 fun StoreScreen(
     entry: StoreEntry,
     state: StoreUiState,
-    view: TvView,
+    view: StoreRoomContext,
     onClose: () -> Unit,
     onRetry: () -> Unit,
     onBuy: (productId: String, basePlanId: String?) -> Unit,
     onRestore: () -> Unit,
 ) {
     val now = System.currentTimeMillis()
-    val model = if (state.phase == StorePhase.Ready) StoreModel.build(state, view.settings.wordLocale, view.lockedPacks, now) else null
+    val model = if (state.phase == StorePhase.Ready) StoreModel.build(state, view.contentLocale, view.lockedPacks, now) else null
     val target = StoreModel.initialFocus(entry, state.phase, model)
     var manageHint by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -205,7 +206,7 @@ private fun StoreHeader(roomCode: String, testMode: Boolean) {
     Row(Modifier.fillMaxWidth().height(StoreMetrics.HEADER_H.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(JamaaIcons.Gem, contentDescription = null, tint = JamaaColors.Accent, modifier = Modifier.size(26.dp))
         Spacer(Modifier.width(JamaaSpace.s3))
-        Text(stringResource(R.string.store__title), style = type.title, color = JamaaColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(stringResource(R.string.pass__store_title), style = type.title, color = JamaaColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
         if (testMode) {
             Spacer(Modifier.width(JamaaSpace.s4))
             Text(
@@ -298,7 +299,7 @@ private fun PremiumCardView(
             .padding(horizontal = StoreMetrics.CARD_PAD_H.dp, vertical = StoreMetrics.CARD_PAD_V.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.store__premium_title), style = type.title, color = JamaaColors.Accent, maxLines = 1)
+            Text(stringResource(R.string.pass__name), style = type.title, color = JamaaColors.Accent, maxLines = 1)
             Spacer(Modifier.width(StoreMetrics.TITLE_PITCH_GAP.dp))
             if (model.pitchCount > 0) {
                 Text(
@@ -348,16 +349,25 @@ private fun PremiumCardView(
     }
 }
 
+/** What the Pass store needs from the room (JAMAA-PLATFORM §4.5): code, content language, the setup's locked packs. */
+data class StoreRoomContext(val roomCode: String, val contentLocale: String, val lockedPacks: List<LockedPackInfo>)
+
 /** §4.4/§4.5: yearly then monthly, side by side; one disclosure paragraph for the focused plan, always visible. */
 @Composable
 private fun PlansBlock(c: PremiumCard.Plans, onBuy: (String, String?) -> Unit, planFocus: MutableMap<String, FocusRequester>) {
     var focused by remember { mutableStateOf(c.plans.first().basePlanId) }
     val plan = c.plans.firstOrNull { it.basePlanId == focused } ?: c.plans.first()
     Spacer(Modifier.height(StoreMetrics.BADGE_OVERHANG.dp)) // room for the trial badge sticker
+    // JAMAA-PLATFORM §4.5 "Save {n}%" on the Yearly card, from the two ProductDetails prices.
+    val save = OfferSelection.savePercent(
+        c.plans.firstOrNull { it.basePlanId == Products.BASE_PLAN_MONTHLY },
+        c.plans.firstOrNull { it.basePlanId == Products.BASE_PLAN_YEARLY },
+    )
     Row(horizontalArrangement = Arrangement.spacedBy(JamaaSpace.s4)) { // 2 × 400 + 16 ≤ 824 dp
         for (p in c.plans) {
             PlanButton(
                 plan = p,
+                savePercent = if (p.basePlanId == Products.BASE_PLAN_YEARLY) save else null,
                 status = when {
                     c.confirming -> PlanStatus.Confirming
                     c.slow -> PlanStatus.Slow
@@ -378,7 +388,7 @@ private fun PlansBlock(c: PremiumCard.Plans, onBuy: (String, String?) -> Unit, p
 private enum class PlanStatus { None, Pending, Confirming, Slow }
 
 @Composable
-private fun PlanButton(plan: PlanOffer, status: PlanStatus, onClick: () -> Unit, modifier: Modifier) {
+private fun PlanButton(plan: PlanOffer, status: PlanStatus, onClick: () -> Unit, modifier: Modifier, savePercent: Int? = null) {
     val type = JamaaTheme.type
     val yearly = plan.basePlanId == Products.BASE_PLAN_YEARLY
     val name = stringResource(if (yearly) R.string.store__plan_yearly else R.string.store__plan_monthly)
@@ -412,9 +422,10 @@ private fun PlanButton(plan: PlanOffer, status: PlanStatus, onClick: () -> Unit,
             }
         }
         val days = plan.trialDays
-        if (days != null && status == PlanStatus.None) {
+        // §4.1: "7 days free" only when Play returned the eligible trial-7d offer for this user.
+        if (days != null && plan.trialBadge && status == PlanStatus.None) {
             Text(
-                pluralStringResource(R.plurals.store__trial_days, days, days),
+                pluralStringResource(R.plurals.pass__trial_badge, days, days),
                 style = type.caption,
                 color = JamaaColors.OnAccent,
                 maxLines = 1,
@@ -422,6 +433,19 @@ private fun PlanButton(plan: PlanOffer, status: PlanStatus, onClick: () -> Unit,
                     .align(Alignment.TopEnd)
                     .offset(x = (-StoreMetrics.PLAN_PAD_H).dp, y = (-StoreMetrics.BADGE_OVERHANG).dp)
                     .background(JamaaColors.Accent, JamaaShapes.pill)
+                    .padding(horizontal = 10.dp, vertical = 0.dp),
+            )
+        }
+        if (savePercent != null && status == PlanStatus.None) {
+            Text(
+                stringResource(R.string.pass__save, "$savePercent%"),
+                style = type.caption,
+                color = JamaaColors.Ink,
+                maxLines = 1,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .offset(x = StoreMetrics.PLAN_PAD_H.dp, y = (-StoreMetrics.BADGE_OVERHANG).dp)
+                    .background(JamaaColors.Success, JamaaShapes.pill)
                     .padding(horizontal = 10.dp, vertical = 0.dp),
             )
         }

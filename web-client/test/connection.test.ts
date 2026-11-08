@@ -41,7 +41,7 @@ function setup() {
   const errors: string[] = [];
   const welcomes: string[] = [];
   const conn = new Connection((h) => (sock = new FakeSocket(h)), {
-    hello: () => ({ v: 1, t: "hello", role: "player" }),
+    hello: () => ({ v: 2, t: "hello", role: "player" }),
     onState: (m) => states.push(m.seq),
     onWelcome: (m) => welcomes.push(m.playerId),
     onError: (m) => errors.push(m.code),
@@ -50,7 +50,7 @@ function setup() {
   });
   return { conn, sock: () => sock, states, statuses, fatal, errors, welcomes };
 }
-const state = (seq: number) => ({ v: 1, t: "state", seq, serverNow: 0, view: { kind: "player" } });
+const state = (seq: number) => ({ v: 2, t: "state", seq, serverNow: 0, view: { kind: "player" } });
 
 describe("Connection", () => {
   beforeEach(() => { vi.useFakeTimers(); });
@@ -58,15 +58,15 @@ describe("Connection", () => {
 
   it("sends hello on open and nothing while not OPEN", () => {
     const s = setup();
-    expect(s.conn.action({ type: "READY" })).toBeNull();
+    expect(s.conn.action({ type: "START_GAME" })).toBeNull();
     expect(s.conn.sendRaw(PING_FRAME)).toBe(false);
     expect(s.sock().sent).toEqual([]);
     s.sock().open();
-    expect(s.sock().sent[0]).toBe('{"v":1,"t":"hello","role":"player"}');
+    expect(s.sock().sent[0]).toBe('{"v":2,"t":"hello","role":"player"}');
     expect(s.statuses).toEqual(["open"]);
-    const id = s.conn.action({ type: "READY" });
+    const id = s.conn.action({ type: "START_GAME" });
     expect(id).not.toBeNull();
-    expect(JSON.parse(s.sock().sent[1]!)).toEqual({ v: 1, t: "action", id, a: { type: "READY" } });
+    expect(JSON.parse(s.sock().sent[1]!)).toEqual({ v: 2, t: "action", id, a: { type: "START_GAME" } });
   });
 
   it("stores state only when seq increases, resetting on each open", () => {
@@ -86,9 +86,9 @@ describe("Connection", () => {
   it("dispatches welcome and error, ignores unknown t and junk", () => {
     const s = setup();
     s.sock().open();
-    s.sock().msg({ v: 1, t: "welcome", playerId: "p_1", resumeToken: "x", roomCode: "KXQP" });
-    s.sock().msg({ v: 1, t: "error", code: "NOT_HOST", messageKey: "error.notHost", ref: null });
-    s.sock().msg({ v: 1, t: "future" });
+    s.sock().msg({ v: 2, t: "welcome", playerId: "p_1", resumeToken: "x", roomCode: "KXQP" });
+    s.sock().msg({ v: 2, t: "error", code: "NOT_HOST", messageKey: "error.notHost", ref: null });
+    s.sock().msg({ v: 2, t: "future" });
     s.sock().msg({ error: "stack" });
     s.sock().msg("not json");
     s.sock().h.message(new ArrayBuffer(2));
@@ -99,7 +99,7 @@ describe("Connection", () => {
   it("errors never decide fatality; close codes do", () => {
     const s = setup();
     s.sock().open();
-    s.sock().msg({ v: 1, t: "error", code: "KICKED", messageKey: "error.kicked", ref: null });
+    s.sock().msg({ v: 2, t: "error", code: "KICKED", messageKey: "error.kicked", ref: null });
     expect(s.fatal).toEqual([]);
     s.sock().serverClose(4006);
     expect(s.fatal).toEqual([4006]);
@@ -156,7 +156,7 @@ describe("Connection", () => {
     expect(s.fatal).toEqual([]);
     s.sock().open();
     expect(s.statuses.at(-1)).toBe("open");
-    expect(s.sock().sent.at(-1)).toBe('{"v":1,"t":"hello","role":"player"}');
+    expect(s.sock().sent.at(-1)).toBe('{"v":2,"t":"hello","role":"player"}');
   });
 
   it("a synthetic close from wake() while CONNECTING keeps reconnecting", () => {

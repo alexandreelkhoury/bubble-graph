@@ -38,6 +38,15 @@ object JamaaIcons {
     }
 
     val Check = stroke("check", "M5 12.5l4.5 4.5L19 7.5", width = 3f)
+
+    /** ⓘ (JAMAA-PLATFORM §3.6 rules entry point). */
+    val Info = stroke("info", "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z", "M12 11v5.5", "M12 7.6h.01", width = 2.2f)
+
+    /** ◁ the Back key, mirrored in RTL (the in-game "Back: menu & rules" hint). */
+    val BackKey = stroke("backKey", "M15 5l-7 7 7 7", autoMirror = true, width = 2.4f)
+
+    /** ★ the session stars ("Tonight's cup"). */
+    val Star = stroke("star", "M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z")
     val X = stroke("x", "M6 6l12 12M18 6L6 18", width = 2.5f)
     val WifiOff = stroke(
         "wifi-off",

@@ -1,9 +1,12 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { detectLocale, dirOf, errorKeyOf, isolate, isolateLtr, loadCatalog, translate, tSplit } from "../src/i18n/t";
+import { detectLocale, dirOf, errorKeyOf, isolate, isolateLtr, loadCatalog, loadGameCatalog, translate, tSplit } from "../src/i18n/t";
 
 beforeAll(async () => {
+  await loadCatalog("en");
   await loadCatalog("fr");
   await loadCatalog("ar");
+  // round.* and vote.* moved to the Mish Ana! game catalog (JAMAA-PLATFORM §5.7).
+  for (const l of ["en", "fr", "ar"] as const) await loadGameCatalog("mishana", l);
 });
 
 describe("t()", () => {

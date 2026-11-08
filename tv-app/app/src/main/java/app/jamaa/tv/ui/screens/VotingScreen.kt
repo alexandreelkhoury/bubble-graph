@@ -41,9 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
 import app.jamaa.tv.R
 import app.jamaa.tv.protocol.ClientIntent
-import app.jamaa.tv.protocol.HostAdvance
-import app.jamaa.tv.protocol.voteCandidates
-import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.games.mishana.MishanaTv
+import app.jamaa.tv.games.mishana.voteCandidates
+import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.ui.components.ActionPill
 import app.jamaa.tv.ui.components.AvatarState
 import app.jamaa.tv.ui.components.InitialFocus
@@ -60,7 +60,7 @@ import app.jamaa.tv.ui.theme.JamaaTheme
 
 /** TV-06 Voting. The check badge means "has voted", never for whom; no tallies until the vote closes. */
 @Composable
-fun VotingScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit) {
+fun VotingScreen(view: MishanaView, clockOffsetMs: Long, send: (ClientIntent) -> Unit) {
     val type = JamaaTheme.type
     val pill = remember { FocusRequester() }
     val candidates = view.voteCandidates()
@@ -69,7 +69,7 @@ fun VotingScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit
         defaultFocus = pill,
         actionBar = {
             VoteProgress(view, clockOffsetMs, Modifier.weight(1f))
-            ActionPill(stringResource(R.string.vote__close), { send(HostAdvance) }, pill)
+            ActionPill(stringResource(R.string.vote__close), { send(MishanaTv.hostAdvance()) }, pill)
         },
     ) {
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -138,12 +138,12 @@ fun VotingScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit
  * Who is expected to vote: the server counts connected voters, so with every phone asleep it says 0 ("0/0 voted"
  * next to a running timer looks broken); then it is the living players ("0/4 voted").
  */
-internal fun expectedVoters(view: TvView): Int =
+internal fun expectedVoters(view: MishanaView): Int =
     if (view.votesExpected > 0) view.votesExpected else view.players.count { it.alive && !it.left }
 
 /** "x / y voted" (rolling), or `vote.tenLeft` in the last 10 s. */
 @Composable
-private fun VoteProgress(view: TvView, clockOffsetMs: Long, modifier: Modifier) {
+private fun VoteProgress(view: MishanaView, clockOffsetMs: Long, modifier: Modifier) {
     val deadline = view.deadline
     // Changes once (at 10 s), not every frame.
     val tenLeft = deadline != null && rememberSecondsLeft(deadline, clockOffsetMs).value in 1..10

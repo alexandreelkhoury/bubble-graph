@@ -35,8 +35,8 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.jamaa.tv.R
 import app.jamaa.tv.protocol.ClientIntent
-import app.jamaa.tv.protocol.HostAdvance
-import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.games.mishana.MishanaTv
+import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.ui.components.ActionPill
 import app.jamaa.tv.ui.components.AvatarRow
 import app.jamaa.tv.ui.components.InGameScaffold
@@ -50,7 +50,7 @@ import app.jamaa.tv.ui.theme.JamaaTheme
 
 /** TV-04 Role reveal wait ("Check your phones!"). The pill (`tv.startNow`) double-OK → HOST_ADVANCE. */
 @Composable
-fun RoleRevealScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit) {
+fun RoleRevealScreen(view: MishanaView, clockOffsetMs: Long, send: (ClientIntent) -> Unit) {
     val type = JamaaTheme.type
     val pill = remember { FocusRequester() }
     val players = view.players.filter { !it.left }
@@ -83,7 +83,7 @@ fun RoleRevealScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
                     TimerChip(deadline, clockOffsetMs, size = 48.dp)
                 }
             }
-            ActionPill(stringResource(R.string.tv__start_now), { send(HostAdvance) }, pill)
+            ActionPill(stringResource(R.string.tv__start_now), { send(MishanaTv.hostAdvance()) }, pill)
         },
     ) {
         val twoRows = players.size > 7

@@ -20,6 +20,7 @@ import { focusGame, tvAct, tvCupOpen, tvFocusGame, tvHubSettings } from "./tvSto
 import { openDialog, openPicker, openRules, rememberSideOpener } from "./tvDialogs";
 import { openShop } from "./shopState";
 import { useInitialFocus } from "./dpad";
+import { soundCue } from "./sound/controller";
 import { cupStandings } from "../platform/Cup";
 
 /** DESIGN-JAMAA §2.1 numbers. */
@@ -142,6 +143,7 @@ export function TvHub({ view, portalOut, onOpen }: { view: TvRoomView; portalOut
 
   const moveTo = (id: GameId): void => {
     focusGame(id);
+    soundCue("hub_move");
     requestAnimationFrame(() => posterRefs.current[id]?.focus({ preventScroll: true }));
   };
   const onPosterKey = (e: KeyboardEvent, id: GameId): void => {
@@ -219,7 +221,7 @@ export function TvHub({ view, portalOut, onOpen }: { view: TvRoomView; portalOut
               onFocus={() => { if (!isF) focusGame(g.id); }}
               onKeyDown={(e) => onPosterKey(e, g.id)} onClick={() => open(g.id)}
               aria-label={`${t(`game.${g.id}.title` as MessageKey)}. ${t(`game.${g.id}.tagline` as MessageKey)}`}>
-              <Poster id={g.id} script={room.contentLocale} charSize={56}
+              <Poster id={g.id} script={room.contentLocale} charSize={64}
                 passChip={billing && g.lockedPackCount > 0}
                 dim={g.available ? null : t("hub.notAvailable", { language: lang })} />
             </button>
@@ -241,11 +243,11 @@ export function TvHub({ view, portalOut, onOpen }: { view: TvRoomView; portalOut
         </p>
       )}
 
-      <aside class="tvticket" aria-label={t("hub.joinOnPhone")}>
-        <p class="tvticket__head">{t("hub.joinOnPhone")}</p>
+      <aside class="tvjoin" aria-label={t("hub.joinOnPhone")}>
+        <p class="tvjoin__head">{t("hub.joinOnPhone")}</p>
         <Qr url={room.joinUrl} panel={gathering ? 208 : 176} />
         <RoomCode code={room.roomCode} size="big" />
-        <p class="tvticket__url" dir="ltr">{isolateLtr(`${hostOf(room.joinUrl)}/${room.roomCode}`)}</p>
+        <p class="tvjoin__url" dir="ltr">{isolateLtr(`${hostOf(room.joinUrl)}/${room.roomCode}`)}</p>
       </aside>
 
       <div class="tvhub__toast" aria-live="polite">{toast && <div key={toast.id} class={`tvtoast tvtoast--${toast.tone}`}>{toast.text}</div>}</div>

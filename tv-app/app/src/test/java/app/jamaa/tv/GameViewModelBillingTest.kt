@@ -26,8 +26,12 @@ import app.jamaa.tv.protocol.ServerMessage
 import app.jamaa.tv.protocol.SettingsPatch
 import app.jamaa.tv.protocol.StateMsg
 import app.jamaa.tv.protocol.StoreOpenMsg
-import app.jamaa.tv.protocol.TvView
-import app.jamaa.tv.protocol.UpdateSettings
+import app.jamaa.tv.protocol.RoomView
+import app.jamaa.tv.protocol.RoomPhase
+import app.jamaa.tv.protocol.UpdateGameSettings
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -129,9 +133,16 @@ class GameViewModelBillingTest {
     }
 
     private var seq = 0L
-    private suspend fun FakeConnection.state(view: TvView) = incoming.emit(StateMsg(seq = ++seq, serverNow = 1_790_000_000_000L, view = view))
+    private suspend fun FakeConnection.state(view: RoomView) = incoming.emit(StateMsg(seq = ++seq, serverNow = 1_790_000_000_000L, view = view))
 
-    private val lobby: TvView get() = TvFixtures.view("lobby")
+    /** v2: the Mish Ana! setup is where the v1 lobby's packs, premium settings and Store entry points live. */
+    private val lobby: RoomView get() = TvFixtures.room("setup.mishana")
+
+    private fun RoomView.premium(p: Boolean) = copy(room = room.copy(premium = p))
+    private fun RoomView.locked(l: List<LockedPackInfo>) = copy(room = room.copy(setup = room.setup!!.copy(lockedPacks = l)))
+    private fun RoomView.packIds(ids: List<String>) = copy(room = room.copy(setup = room.setup!!.copy(
+        settings = JsonObject(room.setup!!.settings + ("packIds" to JsonArray(ids.map { JsonPrimitive(it) }))),
+    )))
 
     @Test
     fun createRoomSendsTheStoredTokenAndReportsTheStatus() = runTest(dispatcher) {
@@ -195,7 +206,7 @@ class GameViewModelBillingTest {
         runCurrent()
         assertEquals(2, conn.sent.count { it == StoreOpenMsg(open = true) })
         // Store closed but the Play sheet is still up: stays busy.
-        billing.state.update { it.copy(purchaseInFlight = "premium") }
+        billing.state.update { it.copy(purchaseInFlight = "jamaa_pass") }
         vm.closeStore()
         runCurrent()
         assertTrue(conn.sent.none { it == StoreOpenMsg(open = false) })
@@ -242,16 +253,16 @@ class GameViewModelBillingTest {
         val vm = newVm()
         val conn = connections.single()
         conn.state.value = ConnState.OPEN
-        conn.incoming.emit(StateMsg(seq = 7, serverNow = 1_790_000_000_000L, view = lobby.copy(premium = false)))
+        conn.incoming.emit(StateMsg(seq = 7, serverNow = 1_790_000_000_000L, view = lobby.premium(false)))
         advanceUntilIdle()
         // The server broadcasts the entitlement upgrade without bumping the game version.
-        conn.incoming.emit(StateMsg(seq = 7, serverNow = 1_790_000_000_000L, view = lobby.copy(premium = true, lockedPacks = emptyList())))
+        conn.incoming.emit(StateMsg(seq = 7, serverNow = 1_790_000_000_000L, view = lobby.premium(true).locked(emptyList())))
         advanceUntilIdle()
-        assertTrue((vm.ui.value as TvUiState.InRoom).view!!.premium)
+        assertTrue((vm.ui.value as TvUiState.InRoom).view!!.room.premium)
         // An older frame is still dropped.
-        conn.incoming.emit(StateMsg(seq = 6, serverNow = 1_790_000_000_000L, view = lobby.copy(premium = false)))
+        conn.incoming.emit(StateMsg(seq = 6, serverNow = 1_790_000_000_000L, view = lobby.premium(false)))
         advanceUntilIdle()
-        assertTrue((vm.ui.value as TvUiState.InRoom).view!!.premium)
+        assertTrue((vm.ui.value as TvUiState.InRoom).view!!.room.premium)
     }
 
     @Test
@@ -331,20 +342,20 @@ class GameViewModelBillingTest {
     }
 
     @Test
-    fun storeOpensOnlyInLobbyAndClosesWhenThePhaseLeavesIt() = runTest(dispatcher) {
+    fun storeOpensOnlyBetweenGamesAndClosesWhenAGameStarts() = runTest(dispatcher) {
         val vm = newVm()
         val conn = connections.single()
         conn.state.value = ConnState.OPEN
-        conn.state(TvFixtures.view("clues"))
+        conn.state(TvFixtures.room("playing.mishana.clues"))
         advanceUntilIdle()
         vm.openStore(StoreEntry(null, StoreOrigin.LOBBY_BUTTON))
         assertNull((vm.ui.value as TvUiState.InRoom).store)
         conn.state(lobby)
         advanceUntilIdle()
-        vm.openStore(StoreEntry("premium", StoreOrigin.LOCKED_SETTING))
-        assertEquals("premium", (vm.ui.value as TvUiState.InRoom).store?.focusProductId)
+        vm.openStore(StoreEntry("jamaa_pass", StoreOrigin.LOCKED_SETTING))
+        assertEquals("jamaa_pass", (vm.ui.value as TvUiState.InRoom).store?.focusProductId)
         runCurrent()
-        conn.state(TvFixtures.view("role_reveal"))
+        conn.state(TvFixtures.room("playing.mishana.role_reveal"))
         runCurrent()
         assertNull((vm.ui.value as TvUiState.InRoom).store)
         assertEquals(1, billing.closed)
@@ -357,15 +368,15 @@ class GameViewModelBillingTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.events.collect { events += it } }
         val conn = connections.single()
         conn.state.value = ConnState.OPEN
-        val locked = LockedPackInfo("en-food-01", "en", LocalizedTitle("Food", "À table", "أكل"), 33, "all", "pack_en_food_01")
-        val lockedFr = LockedPackInfo("fr-food-01", "fr", LocalizedTitle("Food", "À table", "أكل"), 33, "all", "pack_fr_food_01")
-        val v = lobby.copy(settings = lobby.settings.copy(wordLocale = "en", packIds = listOf("test-en-01")), lockedPacks = listOf(locked, lockedFr))
+        val locked = LockedPackInfo("en-food-01", "mishana", "en-food-01", "en", LocalizedTitle("Food", "À table", "أكل"), 33, "all", "pack_en_food_01", null, null, emptyList())
+        val lockedFr = LockedPackInfo("fr-food-01", "mishana", "fr-food-01", "fr", LocalizedTitle("Food", "À table", "أكل"), 33, "all", "pack_fr_food_01", null, null, emptyList())
+        val v = lobby.packIds(listOf("test-en-01")).locked(listOf(locked, lockedFr))
         conn.state(v)
         advanceUntilIdle()
         billing.events.emit(BillingEvent.Granted(setOf("pack_en_food_01"), mapOf("pack_en_food_01" to StoreOrigin.LOCKED_PACK)))
         advanceUntilIdle()
         val update = conn.sent.filterIsInstance<ActionMsg>().single()
-        assertEquals(UpdateSettings(SettingsPatch(packIds = listOf("test-en-01", "en-food-01"))), update.a)
+        assertEquals(UpdateGameSettings("mishana", JsonObject(mapOf("packIds" to JsonArray(listOf(JsonPrimitive("test-en-01"), JsonPrimitive("en-food-01")))))), update.a)
         assertTrue(TvEvent.Billing(BillingToast("store.addedToGame")) in events)
         // Another word language: the hint, no settings change.
         billing.events.emit(BillingEvent.Granted(setOf("pack_fr_food_01"), mapOf("pack_fr_food_01" to StoreOrigin.LOCKED_PACK)))
@@ -373,7 +384,7 @@ class GameViewModelBillingTest {
         assertEquals(1, conn.sent.filterIsInstance<ActionMsg>().size)
         assertTrue(TvEvent.Billing(BillingToast("store.switchLanguage", "fr")) in events)
         // "All playable" ([]): nothing to change.
-        conn.state(v.copy(settings = v.settings.copy(packIds = emptyList())))
+        conn.state(v.packIds(emptyList()))
         advanceUntilIdle()
         billing.events.emit(BillingEvent.Granted(setOf("pack_en_food_01"), mapOf("pack_en_food_01" to StoreOrigin.LOCKED_PACK)))
         advanceUntilIdle()
@@ -381,19 +392,19 @@ class GameViewModelBillingTest {
     }
 
     @Test
-    fun billingToastsWaitForLobbyOrResults() = runTest(dispatcher) {
+    fun billingToastsWaitUntilBetweenGames() = runTest(dispatcher) {
         val vm = newVm()
         val events = mutableListOf<TvEvent>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.events.collect { events += it } }
         val conn = connections.single()
         conn.state.value = ConnState.OPEN
-        conn.state(TvFixtures.view("clues"))
+        conn.state(TvFixtures.room("playing.mishana.clues"))
         advanceUntilIdle()
         billing.events.emit(BillingEvent.Toast("store.verifyFailed"))
         billing.events.emit(BillingEvent.Toast("store.unlocked"))
         advanceUntilIdle()
         assertTrue(events.none { it is TvEvent.Billing })
-        conn.state(TvFixtures.view("results"))
+        conn.state(TvFixtures.room("playing.mishana.results"))
         advanceUntilIdle()
         assertEquals(listOf(TvEvent.Billing(BillingToast("store.unlocked"))), events.filterIsInstance<TvEvent.Billing>())
     }
@@ -405,8 +416,8 @@ class GameViewModelBillingTest {
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.events.collect { events += it } }
         val conn = connections.single()
         conn.state.value = ConnState.OPEN
-        conn.state(lobby.copy(premium = true))
-        conn.state(lobby.copy(premium = false))
+        conn.state(lobby.premium(true))
+        conn.state(lobby.premium(false))
         advanceUntilIdle()
         assertEquals(listOf(TvEvent.Billing(BillingToast("lobby.premiumEnded"))), events.filterIsInstance<TvEvent.Billing>())
     }
@@ -438,7 +449,7 @@ class GameViewModelBillingTest {
         vm.openStore(StoreEntry("pack_en_food_01", StoreOrigin.LOCKED_PACK))
         vm.buy(Activity(), "pack_en_food_01", null)
         assertEquals(Triple("pack_en_food_01", null, StoreOrigin.LOCKED_PACK), billing.bought.single())
-        assertEquals(Phase.LOBBY, (vm.ui.value as TvUiState.InRoom).view!!.phase)
+        assertEquals(RoomPhase.SETUP, (vm.ui.value as TvUiState.InRoom).view!!.room.phase)
         vm.closeStore()
         runCurrent()
     }

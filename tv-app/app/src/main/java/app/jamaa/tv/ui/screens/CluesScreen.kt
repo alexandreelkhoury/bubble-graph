@@ -63,12 +63,12 @@ import app.jamaa.tv.game.Names
 import app.jamaa.tv.i18n.isolate
 import app.jamaa.tv.i18n.nameList
 import app.jamaa.tv.protocol.ClientIntent
-import app.jamaa.tv.protocol.HostAdvance
+import app.jamaa.tv.games.mishana.MishanaTv
 import app.jamaa.tv.protocol.Phase
 import app.jamaa.tv.protocol.PublicPlayer
-import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.protocol.VoteOutcome
-import app.jamaa.tv.protocol.player
+import app.jamaa.tv.games.mishana.player
 import app.jamaa.tv.ui.components.ActionPill
 import app.jamaa.tv.ui.components.Avatar
 import app.jamaa.tv.ui.components.AvatarState
@@ -90,7 +90,7 @@ import kotlinx.coroutines.delay
  * the speaking-order strip at the bottom, and the `clues.skipTurn` pill. TIE_BREAK first plays the TV-08 overlay.
  */
 @Composable
-fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (ClientIntent) -> Unit) {
+fun CluesScreen(view: MishanaView, clockOffsetMs: Long, paused: Boolean, send: (ClientIntent) -> Unit) {
     val type = JamaaTheme.type
     val pill = remember { FocusRequester() }
     val speaker = view.player(view.currentSpeakerId)
@@ -126,7 +126,7 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
             OrderStrip(order, view.currentSpeakerId, Modifier.weight(1f).padding(top = 8.dp))
             ActionPill(
                 stringResource(R.string.clues__skip_turn),
-                { send(HostAdvance) },
+                { send(MishanaTv.hostAdvance()) },
                 pill,
                 // A new speaker is a new action: presses mashed through the hand-over never skip them.
                 resetKey = view.currentSpeakerId,
@@ -209,7 +209,7 @@ fun CluesScreen(view: TvView, clockOffsetMs: Long, paused: Boolean, send: (Clien
 
 /** The current speaker: 160 dp avatar inside a 216 dp / 8 dp ring (scaled together by [ring]), seconds at the ring's top end, name in displayM. */
 @Composable
-private fun SpeakerHero(sp: PublicPlayer, view: TvView, clockOffsetMs: Long, ring: Dp) {
+private fun SpeakerHero(sp: PublicPlayer, view: MishanaView, clockOffsetMs: Long, ring: Dp) {
     val type = JamaaTheme.type
     val deadline = view.deadline
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -336,7 +336,7 @@ private fun MoreCount(count: Int) {
 
 /** TV-08: "It's a tie!" with the tied players and their tallies, then it fades to reveal TV-05. */
 @Composable
-private fun TieOverlay(view: TvView) {
+private fun TieOverlay(view: MishanaView) {
     val type = JamaaTheme.type
     val tally = view.lastVote?.tally.orEmpty()
     val tied = view.tieCandidates.mapNotNull { view.player(it) }

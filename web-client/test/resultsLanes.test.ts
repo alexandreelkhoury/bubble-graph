@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { particleLanes } from "../src/tv-mock/tvResults";
+import { particleLanes } from "../src/games/mishana/tv/tvResults";
 
 describe("TV-11 civilian-win houses", () => {
   it("rise in two lanes that never overlap the title box", () => {

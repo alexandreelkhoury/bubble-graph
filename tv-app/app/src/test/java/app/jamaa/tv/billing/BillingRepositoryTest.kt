@@ -27,7 +27,7 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class BillingRepositoryTest {
     private val base = 1_790_000_000_000L
-    private val sub = OwnedPurchase("premium", "sub-token-1", OwnedState.PURCHASED, suspended = false)
+    private val sub = OwnedPurchase("jamaa_pass", "sub-token-1", OwnedState.PURCHASED, suspended = false)
     private val pack = OwnedPurchase("pack_en_food_01", "pack-token-1", OwnedState.PURCHASED, suspended = false)
     private val pendingPack = OwnedPurchase("pack_fr_food_01", "pack-token-2", OwnedState.PENDING, suspended = false)
 
@@ -72,7 +72,7 @@ class BillingRepositoryTest {
         e.repo.start()
         advanceUntilIdle()
         assertEquals(1, e.api.verifyCalls.size)
-        assertEquals(listOf("premium" to "sub-token-1", "pack_en_food_01" to "pack-token-1"), e.api.verifyCalls[0].map { it.productId to it.purchaseToken })
+        assertEquals(listOf("jamaa_pass" to "sub-token-1", "pack_en_food_01" to "pack-token-1"), e.api.verifyCalls[0].map { it.productId to it.purchaseToken })
         assertEquals("tok1", e.store.saved!!.body.token)
         assertEquals(base, e.store.saved!!.savedAt)
         assertEquals("tok1", e.repo.state.value.entitlement!!.token)
@@ -94,10 +94,10 @@ class BillingRepositoryTest {
     @Test
     fun suspendedSubscriptionsArePostedAndFlagged() = runTest {
         val onHold = sub.copy(suspended = true)
-        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(onHold)) }) { it.results["premium"] = "NOT_OWNED" }
+        val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(onHold)) }) { it.results["jamaa_pass"] = "NOT_OWNED" }
         e.repo.start()
         advanceUntilIdle()
-        assertEquals(listOf("premium"), e.api.verifyCalls.single().map { it.productId })
+        assertEquals(listOf("jamaa_pass"), e.api.verifyCalls.single().map { it.productId })
         assertTrue(e.repo.state.value.subscriptionSuspended)
         assertEquals(PremiumCard.Suspended, StoreModel.premiumCard(e.repo.state.value, base))
     }
@@ -299,8 +299,8 @@ class BillingRepositoryTest {
         val e = env(gw)
         e.repo.openStore(emptyList())
         advanceUntilIdle()
-        e.repo.buy(Activity(), "premium", "monthly", StoreOrigin.LOBBY_BUTTON)
-        assertEquals(PurchasableOffer("premium", "m-trial", "monthly", "trial-7d"), gw.launched.single().first)
+        e.repo.buy(Activity(), "jamaa_pass", "monthly", StoreOrigin.LOBBY_BUTTON)
+        assertEquals(PurchasableOffer("jamaa_pass", "m-trial", "monthly", "trial-7d"), gw.launched.single().first)
     }
 
     @Test

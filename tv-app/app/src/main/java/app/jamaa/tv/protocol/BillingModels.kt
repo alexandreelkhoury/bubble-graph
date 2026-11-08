@@ -48,8 +48,11 @@ data class StoreOpenMsg(val v: Int = Constants.PROTOCOL_VERSION, val open: Boole
 
 @Serializable data class CatalogSubscription(val productId: String, val basePlanIds: List<String>, val trialOfferId: String)
 
+/** JAMAA-PLATFORM §4.1: one row per shipped sellable pack; `productId` = pack_<family> (a family's translations share it). */
 @Serializable data class CatalogPack(
     val packId: String,
+    val gameId: String,
+    val family: String,
     val productId: String,
     val locale: String,
     val language: String,
@@ -58,7 +61,7 @@ data class StoreOpenMsg(val v: Int = Constants.PROTOCOL_VERSION, val open: Boole
     val ageRating: String,
 )
 
-/** `GET /api/billing/catalog`: premium packs only, in catalog order. */
+/** `GET /api/billing/catalog`: sellable packs only (game then id order). */
 @Serializable data class CatalogResponse(
     val mode: String,
     val packageName: String,

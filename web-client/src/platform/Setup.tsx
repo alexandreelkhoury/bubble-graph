@@ -45,7 +45,7 @@ export function IntroSheet({ id, onDone }: { id: GameId; onDone(): void }) {
           <h2 class="introsheet__title">{t("howto.title")}</h2>
           {!last && <button type="button" class="chipbtn introsheet__skip" onClick={skip}>{t("setup.skip")}</button>}
         </header>
-        <HowToCard id={id} index={i} size={64} class="howto__card--phone" />
+        <HowToCard id={id} index={i} size={76} class="howto__card--phone" />
         <Dots n={n} i={i} />
         <div class="introsheet__actions">
           {last ? <Button onClick={() => { markIntroSeen(id); onDone(); }}>{t("setup.gotIt")}</Button>

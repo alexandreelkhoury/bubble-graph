@@ -44,9 +44,28 @@ enum class Cue(val id: String, val bus: Bus) {
     UI_MOVE("ui.move", Bus.UI),
     UI_SELECT("ui.select", Bus.UI),
     UI_BACK("ui.back", Bus.UI),
+    // JAMAA-PLATFORM §3.11 platform cues (tools/gen-sounds, lane D): hub, portal, world stings, points, cup, reactions.
+    HUB_MOVE("hubMove", Bus.UI),
+    PORTAL_OPEN("portalOpen", Bus.SFX),
+    PORTAL_CLOSE("portalClose", Bus.SFX),
+    WORLD_MISHANA_STING("worldMishanaSting", Bus.STING),
+    WORLD_BLUFF_STING("worldBluffSting", Bus.STING),
+    WORLD_LIKELY_STING("worldLikelySting", Bus.STING),
+    WORLD_TRIVIA_STING("worldTriviaSting", Bus.STING),
+    COIN_FLY("coinFly", Bus.SFX),
+    COIN_LAND("coinLand", Bus.SFX),
+    COUNTER_TICK("counterTick", Bus.SFX),
+    CROWN_DROP("crownDrop", Bus.SFX),
+    CUP_STAR("cupStar", Bus.SFX),
+    REACTION_POP("reactionPop", Bus.SFX),
+    ANSWER_LOCK("answerLock", Bus.SFX),
+    TRUTH_REVEAL("truthReveal", Bus.STING),
+    HOUSE_GOT_YOU("houseGotYou", Bus.STING),
+    QUIZ_CORRECT("quizCorrect", Bus.STING),
+    QUIZ_WRONG("quizWrong", Bus.STING),
     ;
 
-    /** `sfx.allReady` → `sfx_all_ready` (the res/raw name). */
+    /** `sfx.allReady` → `sfx_all_ready`, `hubMove` → `hub_move` (the res/raw name). */
     val file: String get() = id.replace('.', '_').replace(Regex("[A-Z]")) { "_" + it.value.lowercase() }
 
     enum class Bus(val gain: Float) { SFX(0.85f), STING(1f), UI(0.55f) }
@@ -56,6 +75,15 @@ enum class Cue(val id: String, val bus: Bus) {
 data class CuePlay(val cue: Cue, val rate: Float = 1f, val delayMs: Long = 0L)
 
 object SoundCues {
+    /** §3.10 B: the world's entrance sting (`world_<gameId>_sting`), or null for a game without one. */
+    fun worldSting(gameId: String?): Cue? = when (gameId) {
+        "mishana" -> Cue.WORLD_MISHANA_STING
+        "bluff" -> Cue.WORLD_BLUFF_STING
+        "likely" -> Cue.WORLD_LIKELY_STING
+        "trivia" -> Cue.WORLD_TRIVIA_STING
+        else -> null
+    }
+
     /** Two octaves of a major pentatonic around the recorded pitch, inside SoundPool's rate range. */
     val PENTATONIC = intArrayOf(-12, -10, -8, -5, -3, 0, 2, 4, 7, 9, 12)
 

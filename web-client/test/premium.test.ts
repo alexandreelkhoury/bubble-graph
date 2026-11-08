@@ -5,14 +5,16 @@ import { describe, expect, it, vi } from "vitest";
 import en from "@jamaa/shared/i18n/en.json";
 import fr from "@jamaa/shared/i18n/fr.json";
 import ar from "@jamaa/shared/i18n/ar.json";
-import type { PlayerView } from "@jamaa/shared/protocol";
+import type { PlayerRoomView, RoomPublic } from "@jamaa/shared/protocol/v2";
+import { GAME_META } from "@jamaa/shared/games/meta";
 import { errorKeyOf } from "../src/i18n/t";
-import { lockedPackRows, premiumEndedStep, settingLocked, tvBusyHint } from "../src/lib/premium";
+import { lockedPackRows, premiumEndedStep, tvBusyHint } from "../src/lib/premium";
 
-const lobbyFixture = JSON.parse(readFileSync(new URL("../../shared/fixtures/s2c.state.player.lobby.json", import.meta.url), "utf8")) as { view: PlayerView };
+const hubFixture = JSON.parse(readFileSync(new URL("../../shared/fixtures/v2/s2c.state.player.hub.host.json", import.meta.url), "utf8")) as { view: PlayerRoomView };
+const extra = { gameId: "mishana" as const, stars: null, domain: null, topics: [] };
 const LOCKED = [
-  { id: "en-food-01", locale: "en", title: { en: "Food", fr: "Cuisine", ar: "أكل" }, pairCount: 33, ageRating: "all" as const, productId: "pack_en_food_01" },
-  { id: "lb-food-01", locale: "ar-LB", title: { en: "Lebanese food", fr: "Cuisine libanaise", ar: "أكل لبناني" }, pairCount: 27, ageRating: "all" as const, productId: "pack_lb_food_01" },
+  { id: "en-food-01", family: "en-food-01", locale: "en", title: { en: "Food", fr: "Cuisine", ar: "أكل" }, pairCount: 33, ageRating: "all" as const, productId: "pack_en_food_01", ...extra },
+  { id: "lb-food-01", family: "lb-food-01", locale: "ar-LB", title: { en: "Lebanese food", fr: "Cuisine libanaise", ar: "أكل لبناني" }, pairCount: 27, ageRating: "all" as const, productId: "pack_lb_food_01", ...extra },
 ];
 
 describe("locked pack rows (§5.1)", () => {
@@ -28,26 +30,22 @@ describe("locked pack rows (§5.1)", () => {
 
   it("the phone's unlock text never offers a purchase in any locale", () => {
     for (const cat of [en, fr, ar] as Record<string, unknown>[]) {
-      for (const k of ["settings.unlockOnTv", "error.packLocked", "error.premiumRequired", "lobby.premiumEndedPhone", "error.tvBusy"]) {
+      for (const k of ["settings.unlockOnTv", "error.packLocked", "error.premiumRequired", "pass.endedPhone", "error.tvBusy"]) {
         expect(typeof cat[k], k).toBe("string");
         expect(cat[k] as string, k).not.toMatch(/\{price\}|buy|achet|شراء/i);
       }
     }
   });
 
-  it("the lobby fixture parses into rows the same way (keys as the projection sends them)", () => {
-    const v = lobbyFixture.view;
-    expect(Array.isArray(v.lockedPacks)).toBe(true);
-    for (const r of lockedPackRows(v.lockedPacks, "en")) expect(r.trailingKey).toBe("settings.unlockOnTv");
+  it("the v2 hub fixture carries no locked packs outside SETUP (metadata only reaches setup)", () => {
+    expect(hubFixture.view.room.setup).toBeNull();
   });
 });
 
 describe("premium settings (§1.6)", () => {
-  it("points are locked only in a room without premium", () => {
-    expect(settingLocked({ premium: false }, "points")).toBe(true);
-    expect(settingLocked({ premium: true }, "points")).toBe(false);
-    expect(settingLocked({ premium: false }, "clueSeconds")).toBe(false);
-    expect(settingLocked({ premium: false }, "packIds")).toBe(false);
+  it("Mish Ana!'s premium keys are exactly ['points'] (JAMAA-PLATFORM §4.3); G2–G4 have none", () => {
+    expect(GAME_META.mishana.settings.premiumKeys).toEqual(["points"]);
+    for (const id of ["bluff", "likely", "trivia"] as const) expect(GAME_META[id].settings.premiumKeys).toEqual([]);
   });
 });
 
@@ -60,16 +58,16 @@ describe("error toasts (§5.1)", () => {
 });
 
 describe("Start while the TV is in the store (§5.1)", () => {
-  it("shows the hint under the VIP's (still enabled) Start, in the lobby only", () => {
-    expect(tvBusyHint({ tvBusy: true, phase: "LOBBY" }, true)).toBe(true);
-    expect(tvBusyHint({ tvBusy: true, phase: "LOBBY" }, false)).toBe(false);
-    expect(tvBusyHint({ tvBusy: false, phase: "LOBBY" }, true)).toBe(false);
-    expect(tvBusyHint({ tvBusy: true, phase: "CLUES" }, true)).toBe(false);
+  it("shows the hint under the VIP's (still enabled) Start, in SETUP only", () => {
+    expect(tvBusyHint({ tvBusy: true, phase: "SETUP" }, true)).toBe(true);
+    expect(tvBusyHint({ tvBusy: true, phase: "SETUP" }, false)).toBe(false);
+    expect(tvBusyHint({ tvBusy: false, phase: "SETUP" }, true)).toBe(false);
+    expect(tvBusyHint({ tvBusy: true, phase: "PLAYING" }, true)).toBe(false);
   });
 });
 
 describe("premium ended notice (§4.4, §5.1)", () => {
-  type V = { premium: boolean; phase: PlayerView["phase"] };
+  type V = { premium: boolean; phase: RoomPublic["phase"] };
   const run = (seq: V[]): number[] => {
     let pending = false;
     const shown: number[] = [];
@@ -82,39 +80,39 @@ describe("premium ended notice (§4.4, §5.1)", () => {
     });
     return shown;
   };
-  it("a flip in the lobby shows once", () => {
-    expect(run([{ premium: true, phase: "LOBBY" }, { premium: false, phase: "LOBBY" }, { premium: false, phase: "LOBBY" }])).toEqual([1]);
+  it("a flip outside a game shows once", () => {
+    expect(run([{ premium: true, phase: "HUB" }, { premium: false, phase: "HUB" }, { premium: false, phase: "HUB" }])).toEqual([1]);
   });
-  it("a flip mid-game shows on the first lobby after it, once", () => {
+  it("a flip mid-game shows on the first HUB/SETUP after it, once", () => {
     expect(run([
-      { premium: true, phase: "LOBBY" }, { premium: true, phase: "CLUES" }, { premium: false, phase: "VOTING" },
-      { premium: false, phase: "RESULTS" }, { premium: false, phase: "LOBBY" }, { premium: false, phase: "LOBBY" },
+      { premium: true, phase: "HUB" }, { premium: true, phase: "PLAYING" }, { premium: false, phase: "PLAYING" },
+      { premium: false, phase: "PLAYING" }, { premium: false, phase: "HUB" }, { premium: false, phase: "HUB" },
     ])).toEqual([4]);
   });
   it("a free room never shows it; a re-upgrade cancels a pending notice; a second flip shows again", () => {
-    expect(run([{ premium: false, phase: "LOBBY" }, { premium: false, phase: "CLUES" }, { premium: false, phase: "LOBBY" }])).toEqual([]);
-    expect(run([{ premium: true, phase: "CLUES" }, { premium: false, phase: "CLUES" }, { premium: true, phase: "RESULTS" }, { premium: true, phase: "LOBBY" }])).toEqual([]);
+    expect(run([{ premium: false, phase: "HUB" }, { premium: false, phase: "PLAYING" }, { premium: false, phase: "HUB" }])).toEqual([]);
+    expect(run([{ premium: true, phase: "PLAYING" }, { premium: false, phase: "PLAYING" }, { premium: true, phase: "PLAYING" }, { premium: true, phase: "HUB" }])).toEqual([]);
     expect(run([
-      { premium: true, phase: "LOBBY" }, { premium: false, phase: "LOBBY" }, { premium: true, phase: "LOBBY" }, { premium: false, phase: "LOBBY" },
+      { premium: true, phase: "HUB" }, { premium: false, phase: "HUB" }, { premium: true, phase: "HUB" }, { premium: false, phase: "HUB" },
     ])).toEqual([1, 3]);
   });
 });
 
 describe("VIP phone toast (session.onViewChange)", () => {
-  it("only the VIP gets lobby.premiumEndedPhone, once per flip", async () => {
+  it("only the VIP gets pass.endedPhone, once per flip", async () => {
     vi.stubGlobal("document", undefined);
     const { onViewChange } = await import("../src/state/session");
     const { toasts } = await import("../src/state/store");
-    const base = lobbyFixture.view;
+    await (await import("../src/i18n/t")).loadCatalog("en");
+    const base = hubFixture.view;
     const me = base.me!;
-    const asVip = (premium: boolean): PlayerView => ({ ...base, hostPlayerId: me.id, premium });
+    const as = (host: string, premium: boolean): PlayerRoomView => ({ ...base, room: { ...base.room, hostPlayerId: host, premium } });
     toasts.value = [];
-    onViewChange(asVip(true), asVip(false));
-    onViewChange(asVip(false), asVip(false));
-    expect(toasts.value.map((x) => x.text)).toEqual([en["lobby.premiumEndedPhone"]]);
+    onViewChange(as(me.id, true), as(me.id, false));
+    onViewChange(as(me.id, false), as(me.id, false));
+    expect(toasts.value.map((x) => x.text)).toEqual([en["pass.endedPhone"]]);
     toasts.value = [];
-    const notVip = (premium: boolean): PlayerView => ({ ...base, hostPlayerId: "someone-else", premium });
-    onViewChange(notVip(true), notVip(false));
+    onViewChange(as("someone-else", true), as("someone-else", false));
     expect(toasts.value).toEqual([]);
     vi.unstubAllGlobals();
   });

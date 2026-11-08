@@ -74,7 +74,7 @@ class SoundCuesTest {
         val turn = SoundCues.viewCues(clues, next).single()
         assertEquals(Cue.TURN, turn.cue)
         assertEquals(SoundCues.turnRate(1), turn.rate, 1e-6f)
-        assertEquals(listOf(Cue.VOTE_CAST, Cue.VOTE_CAST), SoundCues.viewCues(voting.copy(votesCast = 0), voting).cues())
+        assertEquals(listOf(Cue.VOTE_CAST, Cue.VOTE_CAST), SoundCues.viewCues(voting.copy(votesCast = 0), voting.copy(votesCast = 2)).cues())
         assertEquals(listOf(Cue.STAMP, Cue.TURN), SoundCues.viewCues(voting, tie).cues())
         assertEquals(SoundCues.STAMP_LAND_MS, SoundCues.viewCues(voting, tie).first().delayMs)
         val pending = guess.copy(guess = guess.guess!!.copy(status = GuessStatus.PENDING))

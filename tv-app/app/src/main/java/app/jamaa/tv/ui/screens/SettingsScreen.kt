@@ -89,9 +89,9 @@ import app.jamaa.tv.protocol.Settings
 import app.jamaa.tv.protocol.SettingsPatch
 import app.jamaa.tv.protocol.StartBlocker
 import app.jamaa.tv.protocol.TieBreak
-import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.games.mishana.MishanaSetupView
+import app.jamaa.tv.games.mishana.noContent
 import app.jamaa.tv.protocol.WinRule
-import app.jamaa.tv.protocol.blocker
 import app.jamaa.tv.ui.components.ButtonKind
 import app.jamaa.tv.ui.components.Divider
 import app.jamaa.tv.ui.components.FocusKind
@@ -144,7 +144,7 @@ private enum class SubPanel { None, Packs, Difficulty }
  */
 @Composable
 fun SettingsScreen(
-    view: TvView,
+    view: MishanaSetupView,
     draft: SettingsPatch?,
     events: Flow<TvEvent>,
     onChange: (SettingsPatch) -> Unit,
@@ -384,7 +384,7 @@ private fun buildRows(
     lang: String,
     category: SettingsCategory,
     s: Settings,
-    view: TvView,
+    view: MishanaSetupView,
     b: SettingsBounds,
     change: (SettingsPatch) -> Unit,
     open: (SubPanel) -> Unit,
@@ -498,7 +498,7 @@ private fun buildRows(
                 .joinToString(", ")
                 .ifEmpty { str(R.string.settings__all_packs) }
             val diffs = s.difficulties.sorted().mapNotNull { DIFFICULTY_NAMES.getOrNull(it - 1) }.joinToString(", ") { str(it) }
-            val blocker = if (view.blocker == StartBlocker.NO_WORDS_AVAILABLE) str(R.string.lobby__blocker_words) else null
+            val blocker = if (view.noContent) str(R.string.lobby__blocker_words) else null
             listOf(
                 RowModel("words.wordLocale", str(R.string.settings__word_locale), str(langNameRes(s.wordLocale)), blocker, blocker != null,
                     step = { d -> change(SettingsPatch(wordLocale = SettingsStepper.cycle(SettingsStepper.wordLanguages(Locales.ALL, view.wordLocales, s.wordLocale), s.wordLocale, d))) }),
@@ -626,7 +626,7 @@ private fun Chevron(icon: ImageVector, tint: Color, onClick: () -> Unit) {
 /** Packs sub-panel: "All packs" or a multi-select list (localised title + pairCount + Teen badge). */
 @Composable
 private fun PacksPanel(
-    view: TvView,
+    view: MishanaSetupView,
     s: Settings,
     onToggle: (List<String>) -> Unit,
     onClose: () -> Unit,

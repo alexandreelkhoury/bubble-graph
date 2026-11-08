@@ -1,14 +1,11 @@
-# PAYMENTS-SPEC — JAMAA premium, packs and Google Play Billing (v1)
+# PAYMENTS-SPEC — the JAMAA Pass, packs and Google Play Billing
+Status: **binding**, revision 4 (2026-11-08, the JAMAA platform; earlier: revision 1 2026-10-04, revision 2 the same day after review, revision 3 2026-10-26). Review logs: appendices.
 
-Status: **binding** for three implementers, written 2026-10-04, revision 3 (2026-10-26; revision 2 applied the review findings, see the Review log appendix).
-
-> **Revision 3 (2026-10-26), owner decision:** the Premium subscription is gone. Premium is a **one-time lifetime unlock**, the non-consumable Play in-app product `premium` (US$7.99 list; the US$5.99 launch promo is a Play Console sale/price change, never code). Packs stay one-time. There is **no subscription** anywhere. The code was changed first and is the source of truth; this revision describes it. Spanish (`es`) is now a 4th UI language.
-
- It extends [SPEC.md](SPEC.md). Where the two differ on payments, entitlements, packs, the room access model or the new protocol fields, **this file wins**. Everything SPEC.md says and this file does not change stays binding: the engine rules, the secrecy rules (§5.4), the Blank never speaking first, remote-only TV, the logging rules, and the rule that nobody commits to git.
+> **Revision 4 (2026-11-08): the JAMAA Pass.** JAMAA-PLATFORM.md §4 supersedes revision 3 (lifetime `premium`, no subscription). Premium is again a **subscription**, now called the **JAMAA Pass**: Play product `jamaa_pass`, base plans `monthly` (P1M) and `yearly` (P1Y), offer `trial-7d` on each. It unlocks every premium pack of **every game** (current and future) and every game's `premiumKeys` settings. Packs stay one-time products, now one per content **family** (`pack_<family>`). The subscription implementation was restored by whole reverse diffs of the revision-3 commits (`78e9a01`, `20c5988`, `adfd142`, JAMAA-PLATFORM §4.2) and renamed; **the code is the source of truth and this revision describes it**. The text below is revision 2 (the subscription spec) with the JAMAA renames applied; **§R4 right below lists every revision-4 change and wins over the older text where they differ.** Billing stays behind `BILLING_ENABLED` (§R4.7). Spanish (`es`) is a full UI and content language.
 
 | Implementer | Scope | Owns (write access, §9) |
 |---|---|---|
-| **A** | shared + server (+ packs, i18n, generated Android strings) | `shared/**`, `server/**`, `word-packs/**`, `tools/**`, generated `tv-app` string files, `docs/DEV.md` |
+| **A** | shared + server (+ packs, i18n, generated Android strings) | `shared/**`, `server/**`, `content/**` (lane D), `tools/**`, generated `tv-app` string files, `docs/DEV.md` |
 | **B** | Android TV app | `tv-app/**` except the generated files, `docs/TV.md` |
 | **C** | phone web client + browser TV mock (`/tv`) + e2e | `web-client/**` |
 
@@ -22,14 +19,54 @@ Implementers never talk to each other. Every name that crosses a package boundar
 
 ---
 
+## R4. Revision 4 changes (binding; they win over the sections below)
+
+**R4.1 Lanes.** The implementer letters of the table above are revision 1's. In the JAMAA milestones the lanes are those of JAMAA-PLATFORM §6.1: **A** = shared + server (this file's A), **B** = web (this file's C), **C** = TV (this file's B), **D** = content, i18n and generators (the packs, `shared/i18n/**`, the generated Android strings), **E** = growth. Gaps are marked `// JAMAA-GAP:` (old sites keep `PAY-GAP`).
+
+**R4.2 Products** (JAMAA-PLATFORM §4.1; ids verified in revision 2 against the Play discovery doc: product ids `[a-z0-9_.]` ≤ 40, base plans and offers `[a-z0-9-]` ≤ 63):
+
+| Product id | Type | Plans / options | Grants |
+|---|---|---|---|
+| `jamaa_pass` | Subscription | Base plans `monthly` (auto-renewing, P1M) and `yearly` (P1Y). Offer `trial-7d` on **each**: one free-trial phase of 7 days, eligibility "new customer acquisition: never had this subscription". Grace period and account hold at their defaults; pause disabled; resubscribe allowed. | Every premium pack of every game, current and future, plus every game's `premiumKeys` settings |
+| `pack_<family>` | One-time, non-consumable (never consumed) | purchase option `buy` | That content family (all its locales) forever |
+
+- Shared constants (`shared/src/billing/products.ts`, mirrored by the TV's `Products.kt`): `PASS_PRODUCT_ID = "jamaa_pass"` (with `PREMIUM_PRODUCT_ID` as a deprecated alias for one milestone), `BASE_PLAN_IDS = ["monthly", "yearly"]`, `TRIAL_OFFER_ID = "trial-7d"`, `PACK_PRODUCT_PREFIX = "pack_"`, `PRODUCT_ID_MAX = 40`, `PREMIUM_PACK_ID_MAX = 35` (now the **family** length cap), `packProductId(family)` (hyphens → `_`), `familyFromProductId(productId)` (alias `packIdFromProductId`), `isSellableProductId(productId)` (`jamaa_pass` or a well-formed `pack_*`), `PREMIUM_SETTING_KEYS = ["points"]` (Mish Ana!'s `premiumKeys`), `SUPPORT_EMAIL` (owner-filled; empty hides the help line).
+- Prices live in Play Console only. Starting point: about US$4.99/month and US$29.99/year, roughly 40 % lower in Lebanon and the Middle East (MONETIZATION.md); packs US$1.99 (US$2.99 for big packs). The owner decides. The TV shows `ProductDetails` prices and offer phases; "Save n %" is computed from the two plan prices; the "7 days free" badge appears only when an eligible `trial-7d` offer token is present.
+- **No lifetime `premium` product exists anywhere** (removed from code, fixtures and tests). Nothing was sold and the package id changed (`app.jamaa.tv`), so there is no customer migration (JAMAA-PLATFORM §4.6).
+- `billing.products.json` keeps its key names (`premium` = the Pass product id, `basePlans`, `trialOfferId`, `pairs` = family → product id).
+
+**R4.3 Families.** Every pack header may carry `family` (JAMAA-PLATFORM §5.2; default = the pack id), shared by the translations of one product. Products, entitlements (`packs[]` claim, `EntitlementBody.packs`), admin grants (`packs`), `LockedPackInfo.productId` and the `PACK_LOCKED` pre-check all use **families**. A word pack's family is its id, so every existing Mish Ana! product id is unchanged (`pack_en_food_01` …). The Billing DO accepts only families of sellable packs (tier `premium`, or item-level `mixed` for Bluff and Likely) as entitlement packs; unknown families in a token are dropped.
+
+**R4.4 Entitlement token.** Claims unchanged (§2.3) except `iss: "jamaa"` (tokens with the pre-rename issuer are INVALID; the TV refreshes on INVALID). `pu` = the Pass expiry from `subscriptionsv2.get` (`lineItems[].expiryTime` of the `jamaa_pass` line items) through the subscription states of §2.2: ACTIVE, IN_GRACE_PERIOD and CANCELED-before-expiry grant access; ON_HOLD, PAUSED, EXPIRED and PENDING do not. The internal boolean keeps the name `premium` (`RoomPublic.premium`, `EntitlementBody.premium`, `RoomAccess.premium`); every UI says "JAMAA Pass".
+
+**R4.5 Room access per game** (JAMAA-PLATFORM §4.4; replaces §3.11's catalog filter):
+- `playableContent(full, access)` (`shared/src/content/load.ts`, wrapped by `server/src/access.ts` `playableFor`) applies each game's `ContentAdapter.playable` to every pack: whole-pack tiers keep `free` packs, everything for a Pass room, and owned families; item-level tiers drop `pass` items unless the room has the Pass or owns the family. Memoised per (catalog, premium, owned families). **Only the playable content reaches `reduceRoom`, `nextWakeAt` and the projections**; locked packs reach clients as `LockedPackInfo` metadata only, in SETUP.
+- Pre-checks on `UPDATE_GAME_SETTINGS {gameId, patch}`: `PACK_LOCKED` when a family of `def.settings.packIds(patch-applied settings)` is known but not playable; then `PREMIUM_REQUIRED` when a non-Pass room changes a `premiumKeys` value; `TV_BUSY` for a VIP `START_GAME` while the Store is open.
+- Restriction (`RESTRICT_SETTINGS`): `def.settings.restrict` on the setup game in SETUP and on every game in HUB, in the same write; unchanged settings keep object identity (no write). Mid-game expiry: the running game finishes with what it started; the restriction applies back in SETUP or HUB.
+- `storeOpen` is honoured in HUB and SETUP (ignored while PLAYING); `tvBusy` reaches clients as `room.tvBusy`.
+
+**R4.6 Free starter content** (JAMAA-PLATFORM §4.3): every game is free to play. Mish Ana!: `en-everyday-01`, `fr-everyday-01`, `ar-everyday-01`, `es-everyday-01`; Bluff and Likely: their `tier:"free"` items; Trivia: the `lb-quiz-01` family. The release gate (`content-lint --release`, run by `pnpm run deploy`) requires ≥ 40 pairs per free Mish Ana! starter pack, `status: "reviewed"` for free content, and each game's gate.
+
+**R4.7 Switches.** `BILLING_ENABLED` (default `"0"`): off → `/api/billing/*` and `/api/admin/*` answer 404, the crons do nothing, rooms play every game's whole catalog with `premium: true` semantics for access (no locks, no premium-setting refusals) and ignore `entitlement` / `storeOpen`, and `GET /api/config` → `{billing: false, games}` hides every Pass UI. `GAMES_ENABLED` (default `"mishana"`) lists the live games (JAMAA-PLATFORM §2.6); it does not change billing: the Pass covers every game, live or future.
+
+**R4.8 HTTP shapes.** `GET /api/billing/catalog` → `{mode, packageName, subscription: {productId: "jamaa_pass", basePlanIds, trialOfferId}, freePackIds, packs: [{packId, gameId, family, productId: pack_<family>, locale, language, title (en, fr, ar, es?), pairCount, ageRating}]}` (sellable packs only, content order). `verify`, `entitlement`, `fake/purchase` (`basePlanId`, `offerId`, `outcome`) and `fake/set` (a `SubscriptionPurchaseV2` state for the Pass, `PURCHASED | PENDING | CANCELLED | REVOKED` for a pack) keep revision 2's shapes with the Pass id; fake tokens are `fake.sub.jamaa_pass.<n>` and `fake.pack.pack_<family>.<n>`. The WS `entitlement` and `storeOpen` messages are unchanged apart from protocol `v: 2` (JAMAA-PLATFORM §2.5).
+
+**R4.9 Play Console products CSV.** `pnpm --filter @jamaa/server billing:products` (`server/scripts/play-products.mjs`) prints `productId,type,gameId,family,locales,titleEn,titleFr,titleAr,titleEs`: row 1 is `jamaa_pass,subscription,…,JAMAA Pass…` (its base plans and offers are created by hand, §R4.2), then one `one-time` row per sellable family titled "JAMAA – <pack title>", read from the files `content/<game>/index.ts` lists.
+
+**R4.10 TV store** (JAMAA-PLATFORM §4.5): a Pass hero with two plan cards (Monthly / Yearly with "Save n %", the trial badge when eligible; initial focus on Yearly), then pack rows grouped by game with the world accent, then Restore, Manage subscription (Play subscriptions deep link with `sku=jamaa_pass`) and Help. Hub top bar: a "JAMAA Pass" button when billing is on and the room is not premium. Setup: a locked pack row → "Unlock with JAMAA Pass" / "Buy this pack {price}". Results: at most one soft line after the 2nd finished game of the session, never during play. Phones never show a price or a buy button ("Unlock on the TV").
+
+**R4.11 Unchanged.** Play Billing Library 9.1.0, the installId / installHash identity, the Billing DO schema and bindings (10 installs per purchase), RTDN (subscription and one-time notifications), acknowledge rules and the ack-retry and stale-subscription crons, the fake-mode guards, the logging and redaction rules, admin grants (`premium: true` grants the Pass, `packs` now holds families), secrets and key rotation.
+
+---
+
 ## 0. Decisions in one page
 
-**Owner's "Google Pay" question.** Inside an Android app distributed by Google Play, **digital goods such as a Premium unlock and word packs must be sold through Google Play Billing**. The Google Pay API is for physical goods and services, not for this (Payments policy, MONETIZATION.md [G7], snippet-level → **[VERIFY]** in Play Console policy pages). This costs the buyer nothing in convenience: the Play Billing purchase sheet already offers the payment methods saved in the user's Google account, including cards, Google Play balance and carrier billing where available. Integration needs only **one Google Play developer account** (§8) with a Play **payments profile** for payouts. You do **not** need a Google Pay merchant account, a Google Pay API integration, or any separate "Google Pay" setup.
+**Owner's "Google Pay" question.** Inside an Android app distributed by Google Play, **digital goods such as subscriptions and word packs must be sold through Google Play Billing**. The Google Pay API is for physical goods and services, not for this (Payments policy, MONETIZATION.md [G7], snippet-level → **[VERIFY]** in Play Console policy pages). This costs the buyer nothing in convenience: the Play Billing purchase sheet already offers the payment methods saved in the user's Google account, including cards, Google Play balance and carrier billing where available. Integration needs only **one Google Play developer account** (§8) with a Play **payments profile** for payouts. You do **not** need a Google Pay merchant account, a Google Pay API integration, or any separate "Google Pay" setup.
 
 | Topic | Decision |
 |---|---|
 | Rail | Google Play Billing Library **9.1.0** ✔ (latest per the release notes, 2026-06-18). Server checks go through the Google Play Developer API v3. There is no web checkout, no QR code to a payment page, and **no buy button on phones**. |
-| Products | **One-time products only** (revision 3; no subscription). `premium`: lifetime unlock, non-consumable, US$7.99 list, launch promo US$5.99 as a Play Console sale. `pack_<packId with - → _>` for every premium pack: US$1.99, US$2.99 for packs ≥ 60 pairs (§1). Prices live in Play Console only. |
+| Products | The **JAMAA Pass**: subscription `jamaa_pass` (base plans `monthly`, `yearly`; offer `trial-7d` on each), unlocking every premium pack of every game and every game's premium settings. One-time products `pack_<family with - → _>` for every sellable content family (§1). |
 | Free tier | Core game, 3–12 players, one starter pack per language: `en-everyday-01`, `fr-everyday-01`, `ar-everyday-01`. All other settings are free except the premium settings in §1.6. |
 | Who pays | Only the host TV. Phones show locked packs with "Unlock on the TV". |
 | Identity | No accounts. The TV generates an `installId` (128-bit random). The server sees the raw value only inside HTTPS request bodies and stores only `installHash = sha256hex(installId)`, which is also the `obfuscatedAccountId` sent to Google. |
@@ -43,14 +80,16 @@ Implementers never talk to each other. Every name that crosses a package boundar
 
 ### 1.1 Google Play products (created by the owner in Play Console, §8)
 
-Format verified ✔ in the discovery document: one-time `productId`: `[a-z0-9_.]`, starts with a letter or digit. **No hyphens.** We cap ids at 40 characters (`PRODUCT_ID_MAX`).
+Formats verified ✔ in the discovery document:
+- Subscription `productId`: `[a-z0-9_.]`, starts with a letter or digit, 1–40 characters.
+- One-time `productId`: `[a-z0-9_.]`, starts with a letter or digit. **No hyphens.**
+- `basePlanId`: `[a-z0-9-]`, ≤ 63 characters.
+- Offer id: `[a-z0-9-]`, ≤ 63 characters.
 
-Every product is a Play Console **one-time product**, non-consumable (**we never consume**), with one purchase option `buy` [VERIFY the default purchase-option id Play Console proposes; it is not used by the code]. There is no subscription, base plan or offer.
-
-| Product id | Recommended price (USD; owner sets it in Play Console, Play converts per country) | Grants |
-|---|---|---|
-| `premium` | **US$7.99** list. Launch promo **US$5.99**: a Play Console sale (or a temporary price change) on `premium`, never a second product and never in code | Lifetime: all packs, current and future, plus premium settings |
-| `pack_<id>` (one per premium pack, see §1.3) | **US$1.99**; **US$2.99** for a pack with ≥ 60 pairs (`play-products.mjs` prints the recommended price per row) | That pack, forever |
+| Product id | Play type | Plans / options | Price (owner sets per country) | Grants |
+|---|---|---|---|---|
+| `jamaa_pass` | Subscription | Base plan `monthly`: auto-renewing, 1 month. Base plan `yearly`: auto-renewing, 1 year. Offer `trial-7d` on **each** base plan: one phase "free trial, 7 days", eligibility "new customer acquisition → never had this subscription". Grace period and account hold stay at their defaults. Pause: **disable** it in Play Console (simplifies v1; the paused state is still mapped). Resubscribe: allowed | ~US$4.99 / month, ~US$29.99 / year; ~40% lower in LB/ME | All packs, current and future, plus premium settings |
+| `pack_<id>` (one per premium pack, see §1.3) | One-time product (Play Console: "one-time product", non-consumable; **we never consume**) | One purchase option `buy` [VERIFY the default purchase-option id Play Console proposes; it is not used by the code] | ~US$1.99–2.99 | That pack, forever |
 
 The code never hard-codes prices. The TV shows `ProductDetails` formatted prices only.
 
@@ -86,15 +125,19 @@ Edits to the pack JSON files (A):
 | `lb-food-01` | ar-LB | 28 | premium | `pack_lb_food_01` |
 | `lb-life-01` | ar-LB | 23 | premium | `pack_lb_life_01` |
 
-Starter packs are the "Everyday" pack because it exists with the same theme in all three languages. **Easy words (2026-10-07, owner):** the starter packs hold the easy, everyday words (concrete, 1–2 words, guessable by the word-less Mole; each pair's `notes` names its theme: Everyday, Places, Food, Animals, Things at home, Jobs, Travel, Sports and hobbies). They are the only words a free room plays by default. The premium packs are the "Hard" packs (titles prefixed "Hard · " / "Difficile · " / "صعب · ", tag `hard`); their ids and product ids are unchanged. **Release gate:** each starter pack must reach **at least 40 pairs** before the first production release. 24 pairs is about 24 games before repeats, and in a deduction game a remembered pair exposes the Mole at once. `pack-lint --release` (run by `pnpm run deploy`) fails below 40; dev runs only warn (§1.5). Growing the three starter packs is an owner/D content task; A only adds the gate.
+Starter packs are the "Everyday" pack because it exists with the same theme in all three languages. **Easy words (2026-10-07, owner):** the starter packs hold the easy, everyday words (concrete, 1–2 words, guessable by the word-less Mole; each pair's `notes` names its theme: Everyday, Places, Food, Animals, Things at home, Jobs, Travel, Sports and hobbies). They are the only words a free room plays by default. The premium packs are the "Hard" packs (titles prefixed "Hard · " / "Difficile · " / "صعب · ", tag `hard`); their ids and product ids are unchanged. **Release gate:** each starter pack must reach **at least 40 pairs** before the first production release. 24 pairs is about 24 games before repeats, and in a deduction game a remembered pair exposes the Mole at once. `content-lint --release` (run by `pnpm run deploy`) fails below 40; dev runs only warn (§1.5). Growing the three starter packs is an owner/D content task; A only adds the gate.
 
 ### 1.3 Pack → product id mapping (shared, A; mirrored in Kotlin by B)
 
 `shared/src/billing/products.ts` (new module, exported as `@jamaa/shared/billing`, added to `shared/package.json` `exports` as `"./billing": "./src/billing/index.ts"`):
 ```ts
-export const PREMIUM_PRODUCT_ID = "premium" as const;                  // lifetime unlock, one-time non-consumable
+export const PASS_PRODUCT_ID = "jamaa_pass" as const;
+export const PREMIUM_PRODUCT_ID = PASS_PRODUCT_ID;   // deprecated alias, one milestone
+export const BASE_PLAN_IDS = ["monthly", "yearly"] as const;          // display order on the TV
+export type BasePlanId = (typeof BASE_PLAN_IDS)[number];
+export const TRIAL_OFFER_ID = "trial-7d" as const;
 export const PACK_PRODUCT_PREFIX = "pack_" as const;
-export const PRODUCT_ID_MAX = 40;                                       // Play product id length limit
+export const PRODUCT_ID_MAX = 40;                                       // ✔ Play limit for subscriptions; applied to packs too
 export const PREMIUM_PACK_ID_MAX = PRODUCT_ID_MAX - PACK_PRODUCT_PREFIX.length; // 35
 export function packProductId(packId: string): string { return PACK_PRODUCT_PREFIX + packId.replaceAll("-", "_"); }
 export function packIdFromProductId(productId: string): string | null {
@@ -103,25 +146,22 @@ export function packIdFromProductId(productId: string): string | null {
   return /^[a-z0-9]+(_[a-z0-9]+)*$/.test(rest) ? rest.replaceAll("_", "-") : null;
 }
 export const PRODUCT_ID_REGEX = /^[a-z0-9][a-z0-9_.]{0,39}$/;
-/** `premium` or a well-formed `pack_*` id (all one-time products). The server further requires a premium catalog pack. */
-export function isSellableProductId(productId: string): boolean;
-export const SUPPORT_EMAIL: string = "alexkhoury@hotmail.com";   // §4.7 {email}
 ```
 The mapping is a bijection: pack ids match `^[a-z0-9]+(-[a-z0-9]+)*$` and contain no `_`. A test checks the round trip for every shipped pack.
 
 Kotlin (B) `billing/Products.kt` mirrors these constants and the two functions exactly. `ProductsTest` checks them against `shared/fixtures/billing.products.json` (V, written by A):
 ```json
-{ "premium": "premium",
+{ "premium": "jamaa_pass", "basePlans": ["monthly", "yearly"], "trialOfferId": "trial-7d",
   "pairs": [["lb-food-01", "pack_lb_food_01"], ["en-things-01", "pack_en_things_01"]] }
 ```
 
 ### 1.4 How a new pack becomes sellable
-1. D/A adds a JSON pack (no `tier`, so premium) and lists it in `word-packs/index.ts`.
+1. D/A adds a JSON pack (no `tier`, so premium) and lists it in `content/<game>/index.ts` (gathered by `content/index.ts`).
 2. Deploy. `GET /api/billing/catalog` (§3.4) lists it, and the TV store shows it as soon as Play returns `ProductDetails` for its product id. Until the owner creates the product in Play Console, `queryProductDetailsAsync` reports it in `unfetchedProductList` (`PRODUCT_NOT_FOUND` ✔). The TV then hides the row's Buy button and shows the row's trailing state as `store.included` ("Included with Premium"), for premium and non-premium hosts alike (§4.4 row states).
-3. Premium owners get the pack immediately, because premium means "every pack whose tier is premium".
-4. `pnpm --filter @jamaa/server billing:products` (A, `server/scripts/play-products.mjs`) prints a CSV (`productId,kind,priceUsd,pairs,packId,locale,titleEn,titleFr,titleAr`) of every Play product to create: first `premium` (`kind` `lifetime`, `7.99`), then every premium pack (`kind` `pack`, `1.99`, or `2.99` from 60 pairs). Notes (including the US$5.99 launch-sale reminder) go to stderr, so stdout is the bare CSV.
+3. Premium subscribers get the pack immediately, because premium means "every pack whose tier is premium".
+4. `pnpm --filter @jamaa/server billing:products` (A, `server/scripts/play-products.mjs`) prints a CSV (`productId,packId,locale,titleEn,titleFr,titleAr`) of every premium pack, for the owner to create in Play Console.
 
-### 1.5 Pack lint additions (A, `tools/pack-lint`)
+### 1.5 Pack lint additions (A, `tools/content-lint`)
 
 Errors:
 - Not exactly **one** `tier:"free"` pack per **language** (`languageOf(locale)`; `ar-LB` counts as `ar`).
@@ -135,7 +175,7 @@ Warnings:
 - Without `--release`: a free pack with fewer than 40 pairs.
 - A premium pack with fewer than 20 pairs.
 
-`word-packs/test/packs.test.ts` asserts the same error rules on the shipped packs.
+`content/test/**` asserts the same error rules on the shipped packs.
 
 ### 1.6 Premium settings
 ```ts
@@ -156,23 +196,42 @@ export const PREMIUM_SETTING_KEYS = ["points"] as const satisfies readonly (keyo
 - **Purchase**: one Google purchase token, stored only as `tokenHash = sha256hex(purchaseToken)`. The raw token is kept only while an acknowledgement is pending or may still become due (§3.5 `ack_token`).
 - **Binding**: (tokenHash, installHash). It is created when an install proves possession of a token by posting it to `/api/billing/verify`, or (restricted, §3.4) from `obfuscatedExternalAccountId` on an RTDN. Only `/verify` refreshes its `last_seen_ms`; `/entitlement` never does.
 - **Active binding**: a binding with `last_seen_ms > now − INSTALL_ACTIVE_WINDOW_MS` (30 days). The **same predicate** is used for the install limit and for access, so an install that stops proving possession stops counting and stops getting access at the same moment. A genuine TV re-proves possession on every app start and resume (restore posts its tokens, §2.4), so honest users never notice.
-- **Entitlement of an install**: computed over every purchase with an **active** binding to its installHash that is owned (`purchaseOwned`, §2.2), plus an unexpired admin grant (§3.12):
-  - `premiumUntil`: when an owned `premium` purchase (or an open-ended premium grant) exists, the token's own `exp` (lifetime premium lasts as long as each token and is extended by every refresh); a dated grant gives its `expiresAt` if later; else `null`;
-  - `packs`: the pack ids of owned `pack_*` purchases.
+- **Entitlement of an install**: computed over every purchase with an **active** binding to its installHash that is not superseded (and, for packs, not revoked):
+  - `premiumUntil`: the latest access-until time over subscription purchases with access (below), or `null`;
+  - `packs`: the pack ids of one-time purchases in state `PURCHASED`.
 
-### 2.2 Purchase state → access (shared pure function, A)
+### 2.2 Subscription state → access (shared pure function, A)
 
-Premium is an owned one-time `premium` purchase; a pack is an owned one-time `pack_*` purchase. Same rule for both. `shared/src/billing/entitlement.ts` holds only:
+`shared/src/billing/entitlement.ts`:
 ```ts
-export const PURCHASE_STATES = ["PURCHASED", "PENDING", "CANCELLED"] as const;   // ✔ ProductPurchaseV2.purchaseStateContext.purchaseState
-export type PurchaseState = (typeof PURCHASE_STATES)[number];
-export function purchaseOwned(p: { state: PurchaseState; revoked: boolean }): boolean;   // state === "PURCHASED" && !revoked
+export const SUB_STATES = ["SUBSCRIPTION_STATE_UNSPECIFIED","SUBSCRIPTION_STATE_PENDING","SUBSCRIPTION_STATE_ACTIVE",
+  "SUBSCRIPTION_STATE_PAUSED","SUBSCRIPTION_STATE_IN_GRACE_PERIOD","SUBSCRIPTION_STATE_ON_HOLD","SUBSCRIPTION_STATE_CANCELED",
+  "SUBSCRIPTION_STATE_EXPIRED","SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED"] as const;   // ✔ discovery enum
+export const RENEWAL_SLACK_MS = 6 * 3600_000;
+export function subscriptionAccessUntil(s: { state: SubState; expiryMs: number | null; autoRenew: boolean }, nowMs: number): number | null;
+export function packOwned(p: { state: "PURCHASED" | "PENDING" | "CANCELLED"; revoked: boolean }): boolean;   // state === "PURCHASED" && !revoked
 ```
+
+| `subscriptionState` ✔ | Access? | `accessUntil` |
+|---|---|---|
+| `ACTIVE`, including the free trial (`lineItems[].offerPhase.freeTrial` present) and the silent 24 h grace ✔ | yes | `expiryMs + (autoRenew ? max(RENEWAL_SLACK_MS, SILENT_GRACE_MS) : 0)`. **Owner decision 2026-10-25: keep 24 h** (`SILENT_GRACE_MS`) for auto-renewing subscriptions |
+| `IN_GRACE_PERIOD` (Google keeps extending `expiryTime` ✔) | yes | `expiryMs + RENEWAL_SLACK_MS` |
+| `CANCELED` (the user keeps access until `expiryTime` ✔) | yes, only if `expiryMs > now` | `expiryMs` |
+| `ON_HOLD` (account hold: block access ✔) | no | `null` |
+| `PAUSED` | no | `null` |
+| `EXPIRED` (also what a revocation looks like ✔) | no | `null` |
+| `PENDING`, `PENDING_PURCHASE_CANCELED`, `UNSPECIFIED` | no | `null` |
+
+The function returns `null` whenever the result is `≤ now`. **Subscriptions have no `revoked` input:** the server never marks a subscription revoked (§3.6). A refund of one renewal order does not end a subscription, and a real revocation by Google already shows as `EXPIRED` (and arrives as `SUBSCRIPTION_REVOKED`). The subscription state from Google is the only source of truth for premium. `expiryMs` is `max(Date.parse(lineItems[i].expiryTime))` over line items whose `productId === "jamaa_pass"`.
+
+`RENEWAL_SLACK_MS` exists because a token issued just before an auto-renewal would otherwise end premium at the old `expiryTime`, before the TV fetches a fresh token. A user who cancels auto-renew gets no slack.
+
+One-time products ✔ (`ProductPurchaseV2.purchaseStateContext.purchaseState`):
 - `PURCHASED`: owned.
 - `PENDING`: pending, no access.
-- `CANCELLED`: no access. `PURCHASE_STATE_UNSPECIFIED` or an unknown value is normalized to `CANCELLED` (`normalize.ts`, PAY-GAP).
+- `CANCELLED`: no access.
 
-Access also requires `revoked === false` (voided, §3.6/§3.8), for `premium` and packs alike: a refunded or charged-back lifetime Premium ends at the TV's next refresh (≤ 8 h, token TTL). `revoked` is **sticky**: once 1, nothing sets it back to 0 (§3.5). Whether `productsv2` reports `CANCELLED` for a refunded or charged-back one-time purchase is undocumented (the enum description says only "Purchase canceled.") → [VERIFY]; the sticky flag makes the answer irrelevant.
+Pack access also requires `revoked === false` (voided, §3.6/§3.8). For packs, `revoked` is **sticky**: once 1, nothing sets it back to 0 (§3.5). Whether `productsv2` reports `CANCELLED` for a refunded or charged-back one-time purchase is undocumented (the enum description says only "Purchase canceled.") → [VERIFY]; the sticky flag makes the answer irrelevant.
 
 ### 2.3 Entitlement token (server-signed, opaque to clients)
 
@@ -188,7 +247,7 @@ Access also requires `revoked === false` (voided, §3.6/§3.8), for `premium` an
   "mode": "google" }                // "google" | "fake"
 ```
 - **Algorithm:** Ed25519 via WebCrypto (`{ name: "Ed25519" }`, ✔ supported by Workers for sign/verify/importKey; ✔ Node 22.22 for tests). The signature covers the ASCII bytes of `header + "." + payload` (the base64url strings).
-- **TTL:** `exp = iat + ENTITLEMENT_TTL_S` (28 800 s = 8 h). Revocations (refunds, chargebacks) therefore reach new rooms within 8 h at most, even from a modded or offline TV, and usually immediately, because an honest TV refreshes often (§2.4). Honest TVs lose nothing: they refresh at least every 6 h in a room and on every start/resume.
+- **TTL:** `exp = iat + ENTITLEMENT_TTL_S` (28 800 s = 8 h). Revocations (refunds, chargebacks, holds) therefore reach new rooms within 8 h at most, even from a modded or offline TV, and usually immediately, because an honest TV refreshes often (§2.4). Honest TVs lose nothing: they refresh at least every 6 h in a room and on every start/resume.
 - **Keys:** the Workers secret `ENTITLEMENT_KEYS` (JSON):
   ```json
   { "active": "k2", "keys": [ { "kid": "k1", "x": "<b64url pub>", "d": "<b64url priv>" }, { "kid": "k2", "x": "…", "d": "…" } ] }
@@ -227,12 +286,12 @@ Access also requires `revoked === false` (voided, §3.6/§3.8), for `premium` an
 
 ### 2.4 Refresh rules (TV, B; the TV mock follows the same rules with fake billing)
 
-The TV calls `POST /api/billing/verify` (when it has `PURCHASED` purchases) or `POST /api/billing/entitlement` (when it has none):
-1. On app start **and on every `ON_START`/`ON_RESUME`**, run `queryPurchasesAsync` (INAPP only; a local Play cache call, ✔ the integrate guide says to call it in `onResume()` to catch PENDING → PURCHASED transitions). Post to `/verify` immediately when any `(purchaseToken, purchaseState)` differs from the last successful verify; otherwise refresh only if the stored token is older than 1 h.
+The TV calls `POST /api/billing/verify` (when it has purchases, including suspended subscriptions) or `POST /api/billing/entitlement` (when it has none):
+1. On app start **and on every `ON_START`/`ON_RESUME`**, run `queryPurchasesAsync` (SUBS + INAPP; a local Play cache call, ✔ the integrate guide says to call it in `onResume()` to catch PENDING → PURCHASED transitions and out-of-app purchases). Post to `/verify` immediately when any `(purchaseToken, purchaseState, isSuspended)` differs from the last successful verify; otherwise refresh only if the stored token is older than 1 h.
 2. After every `onPurchasesUpdated` with `PURCHASED` purchases.
 3. While in a room, on a timer at
-   `max(now + 1 min, min(expiresAt − 1 h, premiumUntil − 30 min, now + 6 h))`,
-   ignoring a `null` `premiumUntil`. For lifetime premium `premiumUntil` equals the token `exp`, so the refresh lands **before** the room loses premium and the new token carries it on. Pure function `BillingRepository.nextRefreshAt(body, nowMs)`.
+   `max(now + 1 min, min(expiresAt − 1 h, subscription.expiresAt + 10 min, premiumUntil − 30 min, now + 6 h))`,
+   ignoring terms that are `null`. `subscription.expiresAt` is the raw Google expiry (no slack); `premiumUntil` includes `RENEWAL_SLACK_MS`. The refresh therefore lands **before** the room loses premium: for a renewing subscriber, the server has already seen the renewal (RTDN, or the re-read that `/verify` triggers) and the slack keeps the old token valid until the new one arrives. Pure function `BillingRepository.nextRefreshAt(body, nowMs)`.
 4. When the Store opens.
 
 The phrase "older than 1 h" always refers to `ent_saved_at`.
@@ -255,23 +314,22 @@ server/src/billing/
   routes.ts          HTTP handlers for /api/billing/* (no partyserver import)
   billing-do.ts      `Billing` Durable Object (extends DurableObject from "cloudflare:workers"); thin adapter over BillingCore
   billing-core.ts    runtime-agnostic logic + SQL (tests drive it with a node:sqlite-backed fake, or an in-memory SqlLike fake)
-  google.ts          GoogleApi: service-account JWT → access token cache; productsv2.getproductpurchasev2,
-                     products.acknowledge, voidedpurchases.list (no subscription endpoint)
+  google.ts          GoogleApi: service-account JWT → access token cache; subscriptionsv2.get, productsv2.getproductpurchasev2,
+                     subscriptions.acknowledge, products.acknowledge, voidedpurchases.list
   google-types.ts    hand-written TS types for the fields we read (subset of the discovery schemas, names verbatim)
-  normalize.ts       ProductPurchaseV2 → NormalizedPurchase
-  catalog-info.ts    premium pack ids from the catalog; isSoldProductId (`premium` or a premium catalog pack)
+  normalize.ts       SubscriptionPurchaseV2 / ProductPurchaseV2 → NormalizedPurchase
   token.ts           sign/verify entitlement JWT (Ed25519), key parsing
   pubsub-auth.ts     Pub/Sub push OIDC verification (RS256, Google JWKS cache)
-  rtdn.ts            DeveloperNotification parsing + dispatch; refreshProduct (re-read + apply + ack, shared with fake/set)
-  cron.ts            scheduled(): hourly ack retries + overdue alert; daily voided purchases, pruning
-  fake.ts            FAKE billing: FakeGoogleApi + fake routes (FAKE_ENTITLEMENT_KEY in fake-key.ts)
+  rtdn.ts            DeveloperNotification parsing + dispatch
+  cron.ts            scheduled(): hourly ack retries + overdue alert; daily voided purchases, stale-sub alert, pruning
+  fake.ts            FAKE billing: FakeGoogleApi + fake routes + FAKE_ENTITLEMENT_KEY + guard
   mode.ts            billingModeForRequest(env, req) and fakeAllowedByEnv(env) guards (§3.10)
   log.ts             billingLog(code, fields): the ONLY logging entry point in server/src/billing; drops any string field
                      and any value matching the redaction patterns (§3.9)
 server/src/access.ts room access: playable catalog, locked pack metadata, settings restriction (used by RoomCore)
 server/scripts/{gen-entitlement-key.mjs, play-products.mjs, check-deploy.mjs}
 ```
-`shared/src/billing/{index,products,entitlement,http,access}.ts` holds the constants, the pure state mapping, and the zod schemas for the billing HTTP API, shared with C and with the fixtures.
+`shared/src/billing/{index,products,entitlement,http}.ts` holds the constants, the pure state mapping, and the zod schemas for the billing HTTP API, shared with C and with the fixtures.
 
 ### 3.2 `wrangler.jsonc` changes (exact keys; ✔ the wrangler 4.147.0 schema has `triggers.crons`, `secrets.required`, ratelimit `period` ∈ {10, 60})
 ```jsonc
@@ -341,27 +399,27 @@ export const ProductIdSchema = z.string().regex(/^[a-z0-9][a-z0-9_.]{0,39}$/);
 export const VerifyRequest = z.strictObject({ installId: InstallIdSchema,
   purchases: z.array(z.strictObject({ productId: ProductIdSchema, purchaseToken: PurchaseTokenSchema })).min(1).max(20) });
 export const EntitlementRequest = z.strictObject({ installId: InstallIdSchema });
-export const EntitlementBody = z.object({ token: z.string(), premium: z.boolean(),
-  premiumUntil: z.number().nullable() /* ms; lifetime premium or an open-ended grant: the token's exp */,
-  packs: z.array(z.string()), expiresAt: z.number() /* token exp, ms */ });   // no `subscription` field (revision 3)
+export const SubscriptionInfo = z.object({ state: z.enum(SUB_STATES), basePlanId: z.string().nullable(), autoRenewing: z.boolean(),
+  inTrial: z.boolean(), expiresAt: z.number().nullable() /* ms */ });
+export const EntitlementBody = z.object({ token: z.string(), premium: z.boolean(), premiumUntil: z.number().nullable() /* ms, incl. slack */,
+  packs: z.array(z.string()), expiresAt: z.number() /* token exp, ms */, subscription: SubscriptionInfo.nullable() });
 export const VerifyResponse = z.object({ entitlement: EntitlementBody,
   results: z.array(z.object({ productId: z.string(), result: z.enum(PURCHASE_RESULTS) })) });   // same order as the request
 export const EntitlementResponse = z.object({ entitlement: EntitlementBody });
-export const CatalogPackSchema = z.object({ packId: z.string(), productId: z.string(), locale: z.string(), language: LocaleSchema,
-  title: LocalizedTitleSchema, pairCount: z.number().int(), ageRating: AgeRatingSchema });
 export const CatalogResponse = z.object({ mode: z.enum(["google","fake"]), packageName: z.string(),
-  premium: z.object({ productId: z.literal("premium") }),   // one-time lifetime unlock
+  subscription: z.object({ productId: z.literal(PASS_PRODUCT_ID), basePlanIds: z.array(z.string()), trialOfferId: z.string() }),
   freePackIds: z.array(z.string()),
-  packs: z.array(CatalogPackSchema) });                        // premium packs only, catalog order
+  packs: z.array(z.object({ packId: z.string(), productId: z.string(), locale: z.string(), language: LocaleSchema,
+    title: LocalizedTitleSchema, pairCount: z.number().int(), ageRating: AgeRatingSchema })) });  // premium packs only, catalog order
 export const BillingHttpError = z.object({ error: z.enum(BILLING_ERROR_CODES) });
-// fake mode only (§3.10)
-export const FAKE_PURCHASE_STATES = ["PURCHASED", "PENDING", "CANCELLED", "REVOKED"] as const;
-export const FakePurchaseRequest = z.strictObject({ installId: InstallIdSchema, productId: ProductIdSchema,
-  outcome: z.enum(["PURCHASED", "PENDING"]).optional() });
-export const FakePurchaseResponse = z.object({ purchaseToken: z.string() });
-export const FakeSetRequest = z.strictObject({ purchaseToken: PurchaseTokenSchema, state: z.enum(FAKE_PURCHASE_STATES) });
 ```
-`premium` in `EntitlementBody` is `premiumUntil !== null && premiumUntil > now`.
+`subscription` in `EntitlementBody` is chosen among the install's **actively bound, non-superseded** (`superseded_by IS NULL`) `kind='sub'` rows, in this order:
+1. rows that grant access: the one with the latest `accessUntil`;
+2. else rows in `ON_HOLD`, `PAUSED`, `PENDING`: the most recently `updated_ms`;
+3. else the row with the latest `expiry_ms` (expired or canceled);
+4. else `null`.
+
+The TV uses it for "Renews on / Ends on / Fix payment" (§4.4).
 
 | Method + path | Request | Success | Errors |
 |---|---|---|---|
@@ -377,31 +435,35 @@ export const FakeSetRequest = z.strictObject({ purchaseToken: PurchaseTokenSchem
 1. Parse the request. `installHash = sha256hex(installId)`. Billing DO `rateCheck(installHash, "verify", now)` → false → 429.
 2. Mode guard (§3.10). Load the Google client (google) or the FakeGoogleApi (fake). `googleReads = 0`.
 3. For each purchase (`tokenHash = sha256hex(purchaseToken)`):
-   - a. `isSoldProductId(productId)` (`catalog-info.ts`): `premium`, or a `pack_*` id whose `packIdFromProductId` names a **premium** catalog pack. Otherwise → `INVALID` (no Google call). Every sold product is a one-time product.
+   - a. `productId === "jamaa_pass"` → kind `sub`. Otherwise `packIdFromProductId` must name a **premium** catalog pack → kind `pack`. Otherwise → `INVALID` (no Google call).
    - b. **Short-circuits** (no Google call), via DO `lookup(tokenHash, now)`:
-     - the hash is in the negative cache (`invalid_tokens_v2`, younger than `INVALID_TOKEN_TTL_MS`) → `INVALID`;
-     - a row exists with `revoked=1` → `REVOKED` (no binding, no Google call; `premium` and packs alike);
-     - a row exists with matching `product_id`, `google_checked_ms > now − GOOGLE_FRESH_MS`, a state that is not `PENDING`, and no ack due (`acknowledged=1` or the state is not ack-eligible) → DO `bindOnly({ tokenHash, callerInstallHash, now })` (same binding rules and `INSTALL_LIMIT` check as `applyPurchase`, refreshes `last_seen_ms`) → its result. Possession is proven, because the caller sent the raw token whose hash matches.
+     - the hash is in the negative cache (`invalid_tokens`, younger than `INVALID_TOKEN_TTL_MS`) → `INVALID`;
+     - a row exists with `revoked=1` and `kind='pack'` → `REVOKED` (no binding, no Google call);
+     - a row exists with matching `kind` and `product_id`, `google_checked_ms > now − GOOGLE_FRESH_MS`, a state that is not `PENDING`/`SUBSCRIPTION_STATE_PENDING`, and no ack due (`acknowledged=1` or the state is not ack-eligible) → DO `bindOnly({ tokenHash, callerInstallHash, now })` (same binding rules and `INSTALL_LIMIT` check as `applyPurchase`, refreshes `last_seen_ms`) → its result. Possession is proven, because the caller sent the raw token whose hash matches.
    - c. Otherwise, if `googleReads ≥ MAX_GOOGLE_READS_PER_VERIFY` (5), or DO `googleBudget(1, now)` returns 0 (the global bucket, §3.5) → `UPSTREAM_ERROR` (log `{code:"BILLING_BUDGET"}` once per request). Else `googleReads += 1`, then fetch from Google with a `GOOGLE_CALL_TIMEOUT_VERIFY_MS` (3 s) per-call timeout and the §3.7 retry only if the deadline allows:
      - `checkedMs = Date.now()` taken **immediately before** the fetch is sent;
-     - `productsv2.getproductpurchasev2`, for `premium` and packs alike;
-     - HTTP 400/404/410 from the purchases API → `INVALID`, and DO `markInvalid(tokenHash, now)` (negative cache);
-     - 401/403 or an OAuth token-endpoint failure → log `{code:"BILLING_AUTH"}`, `UPSTREAM_ERROR`;
+     - sub → `subscriptionsv2.get`; pack → `productsv2.getproductpurchasev2`;
+     - HTTP 400/404/410 → `INVALID`, and DO `markInvalid(tokenHash, now)` (negative cache);
+     - 401/403 → log `{code:"BILLING_AUTH"}`, `UPSTREAM_ERROR`;
      - 429/5xx/timeout → `UPSTREAM_ERROR`.
-   - d. `normalize` (§3.7). The product must match: `productLineItem[0].productId === productId`. Otherwise → `INVALID`, **not** negative-cached (only Google's own 400/404/410 is), so a hostile post of someone else's token under the wrong product id can never make the owner's verify `INVALID`.
-   - e. Billing DO `applyPurchase({ tokenHash, productId, n: normalized, callerInstallHash: installHash, rawTokenForAck: purchaseToken })` → `{ result, ackDue }`. `result` ∈ `OK` / `PENDING` / `NOT_OWNED` / `REVOKED` / `INSTALL_LIMIT` (§3.5).
-   - f. **Acknowledge based on Google state only**, never on `result`: if `ackDue` (the stored row is ack-eligible and `acknowledged=0`; §3.5) then acknowledge (`ackPurchase`, §3.7: `products.acknowledge`, also for `premium`). This also covers `INSTALL_LIMIT`, `REVOKED` and `NOT_OWNED` results: a purchase Google says is paid is always acknowledged, so Google never auto-refunds it because of our own binding policy. Ack calls do not count toward `MAX_GOOGLE_READS_PER_VERIFY` but do take from the global bucket. The `result` is unchanged by the ack outcome: the user paid, and we have three days to acknowledge ✔.
+   - d. `normalize` (§3.7). The product must match:
+     - sub: some `lineItems[].productId === "jamaa_pass"`;
+     - pack: `productLineItem[0].productId === productId`.
+
+     Otherwise → `INVALID` (and `markInvalid`).
+   - e. Billing DO `applyPurchase({ tokenHash, kind, productId, n: normalized, callerInstallHash: installHash, rawTokenForAck: purchaseToken })` → `{ result, ackDue, refreshLinked }`. If `refreshLinked` (link handling, §3.5), the Worker also runs `subscriptionsv2.get(n.linkedPurchaseToken)` (the raw linked token from the Google response; it counts as a Google read) and `applyPurchase` on that old row with `callerInstallHash: null`. `result` is one of `result` ∈ `OK` / `PENDING` / `NOT_OWNED` / `REVOKED` / `INSTALL_LIMIT` (§3.5).
+   - f. **Acknowledge based on Google state only**, never on `result`: if `ackDue` (the stored row is ack-eligible and `acknowledged=0`; §3.5) then acknowledge (`ackPurchase`, §3.7). This also covers `INSTALL_LIMIT`, `REVOKED` and `NOT_OWNED` results: a purchase Google says is paid is always acknowledged, so Google never auto-refunds it because of our own binding policy. Ack calls do not count toward `MAX_GOOGLE_READS_PER_VERIFY` but do take from the global bucket. The `result` is unchanged by the ack outcome: the user paid, and we have three days to acknowledge ✔.
 4. DO `entitlementFor(installHash, now)` → sign the token → 200.
 
-**Ack-eligible state:** `PURCHASED` (every product; `isAckEligible`).
+**Ack-eligible states:** pack `PURCHASED`; sub `SUBSCRIPTION_STATE_ACTIVE`, `SUBSCRIPTION_STATE_IN_GRACE_PERIOD`, `SUBSCRIPTION_STATE_CANCELED` [VERIFY that Google accepts acknowledging a CANCELED-but-unexpired subscription; if it answers 4xx, the re-read rule in §3.7 settles it].
 
 **obfuscatedAccountId rule.**
-- If the Google resource carries `obfuscatedExternalAccountId` (✔ `ProductPurchaseV2.obfuscatedExternalAccountId`), store it as `origin_install_hash`.
+- If the Google resource carries `obfuscatedExternalAccountId` (sub: `externalAccountIdentifiers.obfuscatedExternalAccountId`; product: `obfuscatedExternalAccountId`, ✔ field names), store it as `origin_install_hash`.
 - **Verify path:** the purchase binds to the **caller** (the one who proved possession). The obfuscated id is not bound here; a mismatch with the caller is **allowed** (a restore on another TV signed into the same Google account), counts toward `MAX_INSTALLS_PER_PURCHASE`, and the Worker logs `{code:"BILLING_RESTORE_OTHER_INSTALL"}` without hashes.
 - **RTDN path** (no caller): bind the obfuscated id (if it is 64-hex) **only if** the token has **no** binding yet **and** its active-binding count is below `MAX_INSTALLS_PER_PURCHASE`. The RTDN path can never exceed the limit. The obfuscated id is client-chosen (a modded APK can set any value), so such a binding is a hint, not a proof: it grants nothing unless an install whose `sha256hex(installId)` equals it calls `/entitlement`, and it expires with the active window unless that install later proves possession via `/verify`.
-- A purchase with **no** obfuscated id (a promo code redeemed in the Play Store) binds to the caller on `/verify`.
+- A purchase with **no** obfuscated id (a promo code redeemed in the Play Store, or an out-of-app resubscribe) binds to the caller on `/verify`.
 
-**Which purchases bind on `/verify`:** every Google-confirmed token of this package with a matching product binds to the caller (subject to `INSTALL_LIMIT`), **except** rows in `CANCELLED` or `revoked` (`isBindable`). A `PENDING` purchase therefore binds, and grants access as soon as it turns `PURCHASED`. Access is computed from state anyway (`purchaseOwned`).
+**Which purchases bind on `/verify`:** every Google-confirmed token of this package with a matching product binds to the caller (subject to `INSTALL_LIMIT`), **except** pack rows in `CANCELLED` or `revoked`, and sub rows in `SUBSCRIPTION_STATE_EXPIRED` or `SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED`. A TV that restores while the subscription is `ON_HOLD`, `PAUSED`, `PENDING` or `CANCELED` is therefore bound, and gets premium back automatically when the same token recovers (RTDN `RECOVERED`). Access is computed from state anyway.
 
 **Entitlement route:** `rateCheck(…, "entitlement")`, then `entitlementFor`, then sign.
 
@@ -411,37 +473,34 @@ Schema, created in the constructor with `CREATE TABLE IF NOT EXISTS`:
 ```sql
 CREATE TABLE purchases (
   token_hash TEXT PRIMARY KEY, store TEXT NOT NULL DEFAULT 'google',  -- 'google' | 'fake' | ('apple' in v2)
-  kind TEXT NOT NULL,              -- always 'product' (PRODUCT_KIND): `premium` and packs are all one-time products
+  kind TEXT NOT NULL,              -- 'sub' | 'pack'
   product_id TEXT,                 -- NULL only on a tombstone whose product is unknown
-  state TEXT NOT NULL,             -- 'PURCHASED' | 'PENDING' | 'CANCELLED'
-  expiry_ms INTEGER, auto_renew INTEGER NOT NULL DEFAULT 0, base_plan_id TEXT, in_trial INTEGER NOT NULL DEFAULT 0,  -- UNUSED (see below)
+  state TEXT NOT NULL,             -- sub: SUB_STATES value; pack: 'PURCHASED' | 'PENDING' | 'CANCELLED'
+  expiry_ms INTEGER, auto_renew INTEGER NOT NULL DEFAULT 0, base_plan_id TEXT, in_trial INTEGER NOT NULL DEFAULT 0,
   acknowledged INTEGER NOT NULL DEFAULT 0,
   ack_token TEXT,                  -- raw token ONLY while an ack is or may become due (rules below)
   ack_window_start_ms INTEGER,     -- start of Google's 3-day ack window (PENDING → PURCHASED), NULL while pending
-  revoked INTEGER NOT NULL DEFAULT 0,  -- `premium` and packs; sticky (never 1 → 0)
+  revoked INTEGER NOT NULL DEFAULT 0,  -- packs only; sticky (never 1 → 0)
   test INTEGER NOT NULL DEFAULT 0,
-  origin_install_hash TEXT, superseded_by TEXT,                      -- superseded_by: UNUSED
+  origin_install_hash TEXT, superseded_by TEXT,                      -- token_hash of the purchase that replaced this one
   google_checked_ms INTEGER NOT NULL,  -- 0 on a tombstone
   created_ms INTEGER NOT NULL, updated_ms INTEGER NOT NULL);
 CREATE TABLE bindings (token_hash TEXT NOT NULL, install_hash TEXT NOT NULL, first_seen_ms INTEGER NOT NULL, last_seen_ms INTEGER NOT NULL,
   PRIMARY KEY (token_hash, install_hash));
 CREATE INDEX bindings_install ON bindings(install_hash);
-CREATE TABLE invalid_tokens_v2 (token_hash TEXT NOT NULL, kind TEXT NOT NULL, at_ms INTEGER NOT NULL,
-  PRIMARY KEY (token_hash, kind));                                  -- negative cache, 24 h; kind always 'product'
+CREATE TABLE invalid_tokens (token_hash TEXT PRIMARY KEY, at_ms INTEGER NOT NULL);   -- negative cache, 24 h
 CREATE TABLE rtdn_seen (message_id TEXT PRIMARY KEY, at_ms INTEGER NOT NULL);
 CREATE TABLE kv (k TEXT PRIMARY KEY, v TEXT NOT NULL);               -- 'voided_cursor_ms'
 CREATE TABLE fake_purchases (token TEXT PRIMARY KEY, json TEXT NOT NULL);  -- used only in fake mode
 ```
-**Unused columns (revision 3):** `expiry_ms`, `auto_renew`, `base_plan_id`, `in_trial` and `superseded_by` are leftovers of the dropped subscription design. Nothing shipped with them, the code never writes or reads them, and they stay at their defaults (`CREATE TABLE IF NOT EXISTS` keeps one schema; no migration). `kind` is written as `'product'` on every row, tombstones included.
 
 **Upsert rules** (one SQL statement, so they hold even for code paths that forget them):
 ```sql
 INSERT INTO purchases (…) VALUES (…)
 ON CONFLICT(token_hash) DO UPDATE SET
-  state = excluded.state, test = excluded.test, origin_install_hash = excluded.origin_install_hash,   -- Google-derived columns
+  state = excluded.state, expiry_ms = excluded.expiry_ms, …,            -- Google-derived columns
   product_id = COALESCE(purchases.product_id, excluded.product_id),
   acknowledged = MAX(purchases.acknowledged, excluded.acknowledged),
-  ack_token = CASE WHEN MAX(purchases.acknowledged, excluded.acknowledged) = 1 THEN NULL ELSE excluded.ack_token END,
   revoked = MAX(purchases.revoked, excluded.revoked),                    -- sticky; applyPurchase always writes 0 here
   ack_window_start_ms = COALESCE(purchases.ack_window_start_ms, excluded.ack_window_start_ms),
   google_checked_ms = excluded.google_checked_ms, updated_ms = excluded.updated_ms
@@ -450,8 +509,8 @@ WHERE excluded.google_checked_ms >= purchases.google_checked_ms;       -- stale 
 `checkedMs` is the time taken **immediately before** the Google fetch was sent (§3.4 step c), so a slow, older read that completes late loses to a fresher one.
 
 **Ack window and `ack_token`:**
-- `ack_window_start_ms` is set on the first apply where the state is ack-eligible (§3.4), from `ProductPurchaseV2.purchaseCompletionTime` when present (✔; not set while pending), else from `checkedMs`. Google's 3-day window starts only at PENDING → PURCHASED ✔ (integrate guide).
-- `ack_token` (the raw token) is written when `acknowledged=0` and the state is ack-eligible **or pending**. It is NULLed: on ack; 4 days after `ack_window_start_ms`; for a row still pending, 30 days after `created_ms` (`PENDING_ACK_TOKEN_MAX_MS`); and when the state becomes `CANCELLED`.
+- `ack_window_start_ms` is set on the first apply where the state is ack-eligible (§3.4), from `ProductPurchaseV2.purchaseCompletionTime` (pack) or `SubscriptionPurchaseV2.startTime` (sub) when present (✔ both fields; neither is set while pending), else from `checkedMs`. Google's 3-day window starts only at PENDING → PURCHASED ✔ (integrate guide).
+- `ack_token` (the raw token) is written when `acknowledged=0` and the state is ack-eligible **or pending**. It is NULLed: on ack; 4 days after `ack_window_start_ms`; for a row still pending, 30 days after `created_ms` (`PENDING_ACK_TOKEN_MAX_MS`); and when the state becomes non-eligible and non-pending (e.g. `PENDING_PURCHASE_CANCELED`, pack `CANCELLED`).
 - `ackDue` (returned by `applyPurchase`) = stored row ack-eligible AND `acknowledged=0`.
 
 RPC methods (all synchronous SQL inside `transactionSync`; no `await` between read and write):
@@ -461,21 +520,29 @@ RPC methods (all synchronous SQL inside `transactionSync`; no `await` between re
 | `rateCheck(installHash, kind: "verify"\|"entitlement", nowMs): boolean` | In-memory sliding window (10 min) per hash; limits from §3.3. The map is an **LRU capped at `RATE_MAP_MAX_ENTRIES`** (10 000; evict least-recently-used), so random installIds cannot grow DO memory. Losing it on eviction is fine |
 | `googleBudget(n, nowMs): number` | Global token bucket for **verify-path** Google calls (`GOOGLE_VERIFY_BUCKET`: capacity 120, refill 60/min, in memory). Returns how many of `n` were granted. RTDN and cron calls do not take from it, so they always have headroom. 60/min ≈ 86 400/day, below the Play Developer API's default daily quota [VERIFY the project's quota in Cloud Console → APIs → Google Play Android Developer API → Quotas; lower the refill if it is smaller] |
 | `lookup(tokenHash, nowMs)` | `{ invalid: boolean, row: PurchaseRow \| null }` for the §3.4 short-circuits |
-| `ipReadCheck(ipKey, nowMs)` / `installNetSeen(installHash, netKey, nowMs)` | In-memory, LRU-bounded abuse brakes on the verify path (per-IP Google reads per minute; network prefixes seen per install per day, `BILLING_INSTALL_SHARED`). Keys are truncated hashes; the IP never reaches the DO |
-| `markInvalid(tokenHash, nowMs)` | Upsert `invalid_tokens_v2`. Never written for a hash that has a `purchases` row |
-| `applyPurchase(i: ApplyInput): { result, ackDue }` | 1. Conditional upsert (above), with `kind='product'`, `revoked=0` and `ack_token` per the rules. 2. **Re-read the row as stored** (it may differ from `i.n` when `i.n` was stale) and compute everything else from it. 3. Binding: if `i.callerInstallHash` and the stored row is bindable (§3.4 "Which purchases bind"), upsert `bindings` (refresh `last_seen_ms`). Before inserting a **new** binding, count **active** bindings for the token; if ≥ `MAX_INSTALLS_PER_PURCHASE` → result `INSTALL_LIMIT` (the purchase row is still stored, and `ackDue` is still returned). With `callerInstallHash: null` (RTDN/cron/fake set) apply the restricted obfuscated-id rule of §3.4. 4. Result from the stored row: `REVOKED` if `revoked=1`; else `OK` if `purchaseOwned`; else `PENDING` if pending; else `NOT_OWNED` |
-| `bindOnly({ tokenHash, callerInstallHash, nowMs })` | Steps 3–4 of `applyPurchase` for a cached row (§3.4 step b) |
+| `markInvalid(tokenHash, nowMs)` | Upsert `invalid_tokens`. Never written for a hash that has a `purchases` row |
+| `applyPurchase(i: ApplyInput): { result, ackDue, refreshLinked }` | 1. Conditional upsert (above), with `revoked=0` and `ack_token` per the rules. 2. Link handling (below). 3. **Re-read the row as stored** (it may differ from `i.n` when `i.n` was stale) and compute everything else from it. 4. Binding: if `i.callerInstallHash` and the stored row is bindable (§3.4 "Which purchases bind"), upsert `bindings` (refresh `last_seen_ms`). Before inserting a **new** binding, count **active** bindings for the token; if ≥ `MAX_INSTALLS_PER_PURCHASE` → result `INSTALL_LIMIT` (the purchase row is still stored, and `ackDue` is still returned). With `callerInstallHash: null` (RTDN/cron) apply the restricted obfuscated-id rule of §3.4. 5. Result from the stored row: `REVOKED` if pack `revoked=1`; else `OK` if it grants access; else `PENDING` if pending; else `NOT_OWNED` |
+| `bindOnly({ tokenHash, callerInstallHash, nowMs })` | Step 4–5 of `applyPurchase` for a cached row (§3.4 step b) |
 | `markAcked(tokenHash)` | `acknowledged=1, ack_token=NULL` |
-| `entitlementFor(installHash, nowMs): { premiumUntilMs, packs }` | Rows joined through **active** bindings only (`last_seen_ms > now − INSTALL_ACTIVE_WINDOW_MS`, the same predicate as the limit), owned only (`purchaseOwned`). An owned `premium` row → `premiumUntilMs = now + ENTITLEMENT_TTL_S·1000` (= the token `exp`: lifetime). `packs` = sorted pack ids of owned `pack_*` rows that still exist as premium catalog packs, truncated to `MAX_TOKEN_PACKS` (note below). Then the §3.12 grant merge. **Read-only: never touches `last_seen_ms`** |
-| `markRevoked(tokenHash, nowMs)` | **Every product, `premium` included.** If a row exists → `revoked=1`. If no row exists → insert a **tombstone** `{kind:'product', product_id:NULL, state:'CANCELLED', revoked:1, google_checked_ms:0}` (and drop any negative-cache entry). A later `/verify` of that token then hits the §3.4 short-circuit and returns `REVOKED`; a later Google read cannot clear `revoked` (sticky upsert) |
+| `entitlementFor(installHash, nowMs): Claims` | Rows joined through **active** bindings only (`last_seen_ms > now − INSTALL_ACTIVE_WINDOW_MS`, the same predicate as the limit), with `superseded_by IS NULL`. `premiumUntil = max(subscriptionAccessUntil(row))` over `kind='sub'`. `packs` = sorted pack ids of `kind='pack' AND state='PURCHASED' AND revoked=0` that still exist as premium catalog packs, truncated to `MAX_TOKEN_PACKS` (note below). `subscription` per the §3.4 selection order. **Read-only: never touches `last_seen_ms`** |
+| `kindOf(tokenHash): 'sub'\|'pack'\|null` | For voided purchases |
+| `markRevoked(tokenHash, nowMs)` | **Packs only.** If a row exists with `kind='pack'` → `revoked=1`. If it exists with `kind='sub'` → no-op + log `{code:"BILLING_REVOKE_SUB_IGNORED"}`. If no row exists → insert a **tombstone** `{kind:'pack', product_id:NULL, state:'CANCELLED', revoked:1, google_checked_ms:0}`. A later `/verify` of that token then hits the §3.4 short-circuit and returns `REVOKED`; a later Google read cannot clear `revoked` (sticky upsert) |
 | `rtdnSeen(messageId): boolean` / `rtdnMark(messageId, nowMs)` | Dedupe |
-| `pendingAcks(nowMs): {tokenHash, productId, token, windowStartMs}[]` | `ack_token NOT NULL AND acknowledged=0 AND ack_window_start_ms NOT NULL AND product_id NOT NULL AND MAX(ack_window_start_ms, created_ms) > now − ACK_WINDOW_MS` (`created_ms` keeps the retry alive when Google reports an older completion time) |
+| `pendingAcks(nowMs): {tokenHash, kind, productId, token, windowStartMs}[]` | `ack_token NOT NULL AND acknowledged=0 AND ack_window_start_ms NOT NULL AND ack_window_start_ms > now − ACK_WINDOW_MS` |
+| `staleSubs(nowMs): number` | Count of `kind='sub'` rows with `expiry_ms` in `(now − 3 d, now − 1 h)`, state ACTIVE/IN_GRACE, and `google_checked_ms < expiry_ms` (a renewal or expiry RTDN was probably missed). Count only, for the alert log |
 | `cursorGet()/cursorSet(ms)` | `kv.voided_cursor_ms` |
-| `prune(nowMs)` | Delete `rtdn_seen` older than 30 days and `invalid_tokens_v2` older than 24 h. NULL `ack_token` per the rules above. Delete bindings with `last_seen_ms` older than 400 days. Delete `CANCELLED`, non-revoked purchases (and their bindings) last updated more than 400 days ago, **never revoked rows**: those shrink to a tombstone (`origin_install_hash`, `ack_token` NULLed) so the same refunded token can never be re-granted (retention, §6.3) |
-| `fakeGet/fakePut/fakeNext` | Fake store rows and the fake token counter (§3.10) |
-| `grantPut/grantDelete/grantFor/grantList` | §3.12 |
+| `prune(nowMs)` | Delete `rtdn_seen` older than 30 days and `invalid_tokens` older than 24 h. NULL `ack_token` per the rules above. Delete bindings with `last_seen_ms` older than 400 days. Delete purchases that are `superseded_by` or expired more than 400 days ago, **except revoked rows**: those are never deleted; instead their non-essential columns (`expiry_ms`, `base_plan_id`, `origin_install_hash`, `ack_token`) are NULLed, leaving a ~100-byte tombstone so the same refunded token can never be re-granted (retention, §6.3) |
+| `fakeGet/fakePut` | Fake store rows (§3.10) |
 
-There is no link handling, supersession or out-of-app logic: one-time purchases have none (revision 3). The RTDN path binds only through `obfuscatedExternalAccountId` (§3.4 rule).
+**Link handling** (inside `applyPurchase`, which must run on the **first, pre-ack** read, because `outOfAppPurchaseContext` is present only for resubscription purchases and removed after acknowledgement ✔):
+- If `n.linkedPurchaseToken` is set (upgrade, downgrade, re-signup before lapse ✔; it can also be set on a **pending** purchase for an existing subscription, as the ✔ `PENDING_PURCHASE_CANCELED` enum description implies): `old = sha256hex(linked)`. If a row `old` exists:
+  - new state ∈ {`ACTIVE`, `IN_GRACE_PERIOD`, `CANCELED`, `ON_HOLD`, `PAUSED`} → set `old.superseded_by = token_hash` and copy every binding of `old` to the new token (keeping `last_seen_ms`);
+  - new state `PENDING` → copy the bindings, **do not** supersede (the old subscription is still the valid one);
+  - new state `PENDING_PURCHASE_CANCELED` → do not supersede, do not copy; return `refreshLinked: true` so the Worker re-reads the old subscription ✔ ("use linked_purchase_token to get the current state of that subscription").
+- If `n.outOfAppExpiredPurchaseToken` is set (resubscribe after expiry, made from the Play subscriptions center ✔ `outOfAppPurchaseContext.expiredPurchaseToken`): copy the bindings of that token's hash the same way. Do not mark it superseded, because it is already expired. **Also**, if `n.outOfAppExpiredObfuscatedAccountId` (✔ `outOfAppPurchaseContext.expiredExternalAccountIdentifiers.obfuscatedExternalAccountId`) is 64-hex, bind it under the RTDN rule (no existing binding, below the limit). This covers an old row that was pruned or never seen.
+- If none of these applies, the RTDN path also binds through `obfuscatedExternalAccountId` (§3.4 rule).
+
+`linkedPurchaseToken` is hashed in the DO; the raw linked token is never stored (the Worker keeps it in memory only for `refreshLinked`).
 
 The owned-pack cap (`MAX_TOKEN_PACKS = 64`) is a v1 limit. It is far above the 14 premium packs. **PAY-GAP for A** if the catalog ever approaches 64: switch the claim to a bitmap.
 
@@ -519,13 +586,13 @@ Processing (the zod schema is non-strict; unknown fields are ignored):
 3. `rtdnSeen(messageId)` → 204.
 4. `packageName !== env.PLAY_PACKAGE_NAME` → 204 + log.
 5. Dispatch (Google calls here use a 10 s timeout and do not take from the verify bucket):
-   - `oneTimeProductNotification` (any `notificationType`: 1 `PURCHASED`, 2 `CANCELED` ✔; no switch on type), for `premium` and packs alike: `refreshProduct` = `productsv2.getproductpurchasev2(token)` → normalize → `isSoldProductId` (else ignore) → `applyPurchase({ callerInstallHash: null, … })` → `ackPurchase` if `ackDue`. Only the owner's Play Console choice "Get all notifications for subscriptions and one-time products" ✔ sends these.
+   - `subscriptionNotification`, any `notificationType` (1–13, 17–20, 22 ✔; there is no switch on type, because "call the API to get the full status" ✔): `subscriptionsv2.get(token)` → normalize → `applyPurchase({ callerInstallHash: null, … })` → `ackPurchase` if `ackDue` → `refreshLinked` if asked. This covers out-of-app resubscribes ✔, which must be acknowledged server-side within 3 days.
+   - `oneTimeProductNotification` (1 `PURCHASED`, 2 `CANCELED` ✔): `productsv2.getproductpurchasev2(token)` → `applyPurchase` → `ackPurchase` if `ackDue`. Only the owner's Play Console choice "Get all notifications for subscriptions and one-time products" ✔ sends these.
    - `voidedPurchaseNotification`:
-     - `productType` 2 (one-time ✔; `premium` and packs) → `markRevoked(hash)`, sticky (inserts a tombstone when the token was never seen, e.g. a chargeback while the TV is offline). A refunded lifetime Premium ends at the TV's next refresh;
-     - any other `productType` (1 = subscription; this app sells none) → 204 + log `{code:"RTDN_UNEXPECTED", productType}`, nothing changes.
-   - `subscriptionNotification` (unexpected: no Play subscription exists) → 204 + log `{code:"RTDN_UNEXPECTED"}`, no Google call. It is parsed loosely only so such a message is acked and never redelivered.
+     - `productType` 2 (one-time ✔) → `markRevoked(hash)` (inserts a tombstone when the token was never seen, e.g. a chargeback while the TV is offline);
+     - `productType` 1 (subscription ✔) → `subscriptionsv2.get` + `applyPurchase` **only**, whatever `refundType` is. **Never `markRevoked` a subscription.** A voided subscription notification names one **order** ✔ ("a new order ID is generated for each renewal transaction"), while the purchase token is shared by every renewal; a refund of one renewal (`refundType` 1) can leave the subscription `ACTIVE` and renewing. A real revocation shows as `SUBSCRIPTION_STATE_EXPIRED` ✔ (and also arrives as `SUBSCRIPTION_REVOKED` = 12). The Google state decides.
    - `testNotification` → log `{code:"RTDN_TEST"}`.
-   - otherwise (incl. `pendingRefundReviewNotification`) → 204.
+   - otherwise → 204.
 6. Google failure (429/5xx/timeout/401/403) → **503**, so Pub/Sub redelivers ✔ (a non-2xx response is a nack). A Google 404/410 for the token → ignore → 204. A failed **ack** is not a failure here: the row keeps `ack_token` and the hourly cron retries it.
 7. Success → `rtdnMark(messageId)` → 204.
 
@@ -548,32 +615,34 @@ Processing is idempotent (`applyPurchase` ordering by `google_checked_ms`, stick
 
 | Function | Request ✔ | Response |
 |---|---|---|
-| `getProductV2(token)` | `GET androidpublisher/v3/applications/{pkg}/purchases/productsv2/tokens/{token}` (`premium` and packs) | `ProductPurchaseV2` |
-| `ackProduct(productId, token)` | `POST androidpublisher/v3/applications/{pkg}/purchases/products/{productId}/tokens/{token}:acknowledge`, body `{}` (productsv2 has no acknowledge method ✔); `productId` is `premium` or the pack id | empty |
-| `listVoided({startTimeMs, pageToken})` | `GET androidpublisher/v3/applications/{pkg}/purchases/voidedpurchases?type=0&startTime=<ms>&maxResults=1000[&token=<pageToken>]`. `type=0` = in-app (one-time) products only ✔ (`type=1` would add subscriptions; none exist). [VERIFY that `type=0` returns voided **non-consumable** one-time products such as `premium`, not only consumables.] `startTime` can be at most 30 days back ✔ | `{ voidedPurchases?: VoidedPurchase[], tokenPagination?: { nextPageToken?: string } }` |
-
-No subscription endpoint (`subscriptionsv2.get`, `subscriptions.acknowledge`) is called (revision 3). The package name comes from `PLAY_PACKAGE_NAME`.
+| `getSubscriptionV2(pkg, token)` | `GET androidpublisher/v3/applications/{pkg}/purchases/subscriptionsv2/tokens/{token}` | `SubscriptionPurchaseV2` |
+| `getProductV2(pkg, token)` | `GET androidpublisher/v3/applications/{pkg}/purchases/productsv2/tokens/{token}` | `ProductPurchaseV2` |
+| `ackSubscription(pkg, token)` | `POST androidpublisher/v3/applications/{pkg}/purchases/subscriptions/premium/tokens/{token}:acknowledge`, body `{}` (✔ `subscriptionId` is still a required path param; "not required/recommended" only for add-ons) | empty |
+| `ackProduct(pkg, productId, token)` | `POST androidpublisher/v3/applications/{pkg}/purchases/products/{productId}/tokens/{token}:acknowledge`, body `{}` (productsv2 has no acknowledge method ✔) | empty |
+| `listVoided(pkg, {startTimeMs, pageToken})` | `GET androidpublisher/v3/applications/{pkg}/purchases/voidedpurchases?type=1&startTime=<ms>&maxResults=1000[&token=<pageToken>]`. `type=1` includes subscriptions ✔; `startTime` can be at most 30 days back ✔ | `{ voidedPurchases?: VoidedPurchase[], tokenPagination?: { nextPageToken?: string } }` |
 
 The `maxResults=1000` value is [VERIFY] (the server's maximum is undocumented; any accepted value works, because we paginate).
 
 - Every call: `Authorization: Bearer <access_token>`, a timeout (`AbortController` + `setTimeout`; the caller passes it: 3 s on the verify path, 10 s for RTDN/cron), and one retry after 500 ms on 429/5xx/network errors (verify path: only if `VERIFY_DEADLINE_MS` still allows it). A 401 drops the cached access token and retries once.
-- **`ackPurchase(productId, rawToken, tokenHash)`** (shared by verify, RTDN and cron):
+- **`ackPurchase(kind, productId, rawToken, tokenHash)`** (shared by verify, RTDN and cron):
   - 2xx → DO `markAcked(tokenHash)`;
-  - 4xx → re-GET the purchase (`getProductV2`). If `acknowledgementState === "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED"` → `markAcked` (a concurrent verify and RTDN both acked; the exact error Google returns for an already-acknowledged purchase is [VERIFY]). Otherwise keep `ack_token` for the cron and log `{code:"BILLING_ACK_REJECTED", status}`;
+  - 4xx → re-GET the purchase (`getSubscriptionV2`/`getProductV2`). If `acknowledgementState === "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED"` → `markAcked` (a concurrent verify and RTDN both acked; the exact error Google returns for an already-acknowledged purchase is [VERIFY]). Otherwise keep `ack_token` for the cron and log `{code:"BILLING_ACK_REJECTED", status}`;
   - 429/5xx/timeout → keep `ack_token` for the cron.
 - `GoogleApi` is an interface; `FakeGoogleApi` implements it. Tests inject `fetch`.
 - **Token secrecy:** the raw purchase token appears in Google request URLs, so these URLs are never logged, never put in error messages or thrown `Error`s (`google.ts` throws `GoogleHttpError { status, op }` only), and tracing stays off (§3.2).
 
 **Fields read** (`google-types.ts`, names verbatim ✔):
+- `SubscriptionPurchaseV2`: `subscriptionState`, `acknowledgementState`, `linkedPurchaseToken`, `startTime`, `lineItems[].{productId, expiryTime, autoRenewingPlan.autoRenewEnabled, offerDetails.{basePlanId, offerId}, offerPhase.freeTrial}`, `externalAccountIdentifiers.obfuscatedExternalAccountId`, `outOfAppPurchaseContext.{expiredPurchaseToken, expiredExternalAccountIdentifiers.obfuscatedExternalAccountId}`, `testPurchase`.
 - `ProductPurchaseV2`: `purchaseStateContext.purchaseState`, `acknowledgementState`, `purchaseCompletionTime`, `productLineItem[].productId`, `obfuscatedExternalAccountId`, `testPurchaseContext`.
 - `VoidedPurchase`: `purchaseToken`, `orderId`, `voidedTimeMillis`.
 
 **`normalize.ts`:**
 ```ts
-export function normalizeProduct(r: ProductPurchaseV2, checkedMs: number): NormalizedPurchase;
 export interface NormalizedPurchase {
-  productId: string; state: PurchaseState; acknowledged: boolean; test: boolean; obfuscatedAccountId: string | null;
-  completedMs: number | null;   // Date.parse(purchaseCompletionTime) when PURCHASED; null while pending
+  kind: "sub" | "pack"; productId: string; state: string; expiryMs: number | null; autoRenew: boolean; basePlanId: string | null;
+  inTrial: boolean; acknowledged: boolean; test: boolean; obfuscatedAccountId: string | null;
+  linkedPurchaseToken: string | null; outOfAppExpiredPurchaseToken: string | null; outOfAppExpiredObfuscatedAccountId: string | null;
+  completedMs: number | null;   // Date.parse(purchaseCompletionTime) for packs, Date.parse(startTime) for subs; null while pending
   checkedMs: number }           // taken immediately BEFORE the Google fetch was sent
 ```
 `acknowledged = acknowledgementState === "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED"`. Test purchases (license testers) are accepted in every mode and flagged `test=1`.
@@ -589,12 +658,17 @@ export interface NormalizedPurchase {
 **Daily `"17 3 * * *"`:**
 1. **Voided purchases:**
    - `start = max(now − 30 d + 1 h, cursor − 1 d)`;
-   - page through `listVoided` (`type=0`: one-time products only, §3.7), at most 50 pages per run. For each item: `markRevoked(sha256hex(purchaseToken))`, sticky, a tombstone when never seen. No Google re-read: every in-app product of this package is one this app sells (`premium` or a pack);
-   - a Google error (429/5xx/timeout/auth) → log `{code:"BILLING_UPSTREAM", op:"voided_list"}` and stop paging without moving the cursor (next run retries); more than 50 pages → keep the cursor (PAY-GAP);
+   - page through `listVoided`. For each item: `h = sha256hex(purchaseToken)`; `kindOf(h)`:
+     - `pack` → `markRevoked`;
+     - `sub` → `getSubscriptionV2` + `applyPurchase` (never `markRevoked`; same rule as §3.6);
+     - `null` → `VoidedPurchase` carries no product type ✔ (fields: `purchaseToken`, `orderId`, `purchaseTimeMillis`, `voidedTimeMillis`, `voidedSource`, `voidedReason`, `voidedQuantity`, `kind`), so call `getProductV2(token)`: a 2xx whose `productLineItem[0].productId` maps to a premium pack → `markRevoked` (inserts the tombstone); a 404/410 → it is a subscription (or unknown) → skip [VERIFY that `productsv2` answers 404/410 for a subscription token and 2xx for a voided one-time token; if it answers otherwise, any non-2xx means skip], because a sub with no row grants nothing and a later `/verify` re-reads its true state; 429/5xx → stop paging without moving the cursor (next run retries);
    - after the last page → `cursorSet(now)`.
-2. `prune(now)`.
 
-**Accepted risk: missed RTDN.** If a `PURCHASED` (pending → paid) notification is lost, the row stays `PENDING` until the TV posts the token again (it does on every start/resume, §2.4). A lost voided notification is caught by the daily voided sweep. Keeping an encrypted raw token for reconciliation was rejected (Review log R-12).
+   Subscription orders share one token ✔, so the same token may repeat; this is harmless.
+2. **Stale-subscription alert:** `staleSubs(now) > 0` → log `{code:"BILLING_SUB_STALE", count}`. The server cannot re-read these by itself (only hashes are kept after ack); see the accepted risk below.
+3. `prune(now)`.
+
+**Accepted risk: missed RTDN.** If a `RENEWED`/`EXPIRED` notification is lost, the stored row stays stale until some TV posts the token again. This is bounded: access requires an active binding refreshed by `/verify` (§2.1), and every honest TV posts its tokens on each start/resume and before premium ends in a room (§2.4), and `/verify` re-reads Google whenever the stored read is older than 10 min. Keeping an encrypted raw token for reconciliation was rejected (Review log R-12).
 
 Local test: `curl "http://localhost:8787/cdn-cgi/local/scheduled?cron=23+*+*+*+*"` ✔ (the `cron` query parameter selects the expression; cron-triggers.mdx).
 
@@ -630,19 +704,20 @@ Defence in depth:
 - A unit test asserts that each condition alone disables fake mode, and a room-core test asserts that the WS `entitlement` message with a fake-kid token is **accepted** with `billingMode:"fake"` + fake env (the e2e config) and **rejected** (`ENTITLEMENT_INVALID`) with `billingMode:"google"` or with prod env vars.
 - In the TV app, the fake gateway exists only in the `debug` source set (§4.8).
 
-**Fake tokens** are deterministic: `fake.<productId>.<n>`, where `<n>` is a per-DO counter (`fakeNext`), for example `fake.premium.1` or `fake.pack_en_food_01.2`.
+**Fake tokens** are deterministic: `fake.<kind>.<productId>.<n>`, where `<n>` is a per-DO counter, for example `fake.sub.premium.1` or `fake.pack.pack_en_food_01.2`.
 
-`FakeGoogleApi` serves a synthetic `ProductPurchaseV2` from the `fake_purchases` table (`premium` and packs alike):
+`FakeGoogleApi` serves a synthetic `SubscriptionPurchaseV2` / `ProductPurchaseV2` from the `fake_purchases` table:
 - `obfuscatedExternalAccountId` = the installHash given at fake purchase;
 - `acknowledgementState` starts `PENDING`; acks flip it;
-- `purchaseCompletionTime` = the time the fake purchase became `PURCHASED` (absent while `PENDING`), so the ack-window logic runs unchanged;
-- `testPurchaseContext` present; `listVoided` returns nothing.
+- sub `expiryTime` = now + 30 days (`monthly`) or 365 days (`yearly`); `offerPhase.freeTrial` when `offerId === "trial-7d"`.
+- `startTime` / `purchaseCompletionTime` = the time the fake purchase became `PURCHASED`/`ACTIVE` (absent while `PENDING`), so the ack-window logic runs unchanged.
 
 Routes:
-- `POST /api/billing/fake/purchase` `FakePurchaseRequest` `{installId, productId, outcome?: "PURCHASED"|"PENDING"}` (`productId` must be sold: `premium` or a premium pack, else 400) → creates the fake row → `{purchaseToken}`. The client then calls `/verify` exactly as in production.
-- `POST /api/billing/fake/set` `FakeSetRequest` `{purchaseToken, state}`:
-  - `state` ∈ `PURCHASED|PENDING|CANCELLED|REVOKED`, for `premium` and packs alike (`REVOKED` stores `CANCELLED`; `PURCHASED` sets the completion time if unset);
-  - the server then runs the **same** code path as an RTDN for that token (`refreshProduct`: re-read, `applyPurchase`, ack), and `markRevoked` for `REVOKED`.
+- `POST /api/billing/fake/purchase` `{installId, productId, basePlanId?: "monthly"|"yearly", offerId?: "trial-7d"|null, outcome?: "PURCHASED"|"PENDING"}` → creates the fake row → `{purchaseToken}`. The client then calls `/verify` exactly as in production.
+- `POST /api/billing/fake/set` `{purchaseToken, state}`:
+  - `state` ∈ `SUB_STATES` for subs, or `PURCHASED|PENDING|CANCELLED|REVOKED` for packs;
+  - `"SUBSCRIPTION_STATE_EXPIRED"` also sets `expiryTime = now − 1 s`;
+  - the server then runs the **same** code path as an RTDN for that token (`applyPurchase`, and `markRevoked` for `REVOKED`).
 
 ### 3.11 Room integration (A: `server/src/access.ts`, `room-core.ts`, `http.ts`, shared engine and projection)
 
@@ -741,7 +816,7 @@ export function restrictionFor(state: GameState, playable: Catalog, a: RoomAcces
   - `c2s.storeOpen.json`: `{ "v": 1, "t": "storeOpen", "open": true }`
   - `http.create_room.request.json` → `{ "locale": "fr", "entitlement": "<same token>" }`
   - `http.create_room.response.json` gains `"entitlement": "OK"`
-  - `http.billing.catalog.response.json` (`premium: { productId: "premium" }`), `http.billing.verify.request.json` (one `premium` + one pack purchase), `http.billing.verify.response.json` (no `subscription` key), `http.billing.entitlement.request.json`, `billing.products.json` (§1.3)
+  - `http.billing.catalog.response.json`, `http.billing.verify.request.json`, `http.billing.verify.response.json`, `http.billing.entitlement.request.json`, `billing.products.json` (§1.3)
 
   A writes them from the §3.4 shapes. B decodes `catalog`, `verify.response` and `create_room.response` in `ProtocolFixturesTest`.
 
@@ -758,8 +833,8 @@ The owner can give premium and/or premium packs to specific installs (e.g. a sid
   - `DELETE` `{ installId }` or `{ installHash }` (the 64-hex hash that `GET` lists) → `200 {revoked: boolean, installHash}`.
   - `GET` → `200 {grants: [{installHash, premium, packs, expiresAt, note, createdAt, active}]}`, newest first (expired grants stay listed with `active:false` until revoked).
 - **Storage:** Billing DO SQLite table `grants (install_hash TEXT PRIMARY KEY, premium INTEGER, packs TEXT /* JSON array */, expires_ms INTEGER NULL, note TEXT NULL, created_ms INTEGER)`. Only `sha256hex(installId)` is stored, like `bindings`. Grants never create `purchases` or `bindings` rows, so they never count toward `MAX_INSTALLS_PER_PURCHASE`, and they never call Google. `prune` leaves them alone.
-- **Entitlement:** `entitlementFor(installHash)` merges an unexpired grant into the result: premium → `premiumUntilMs = max(purchases, grant.expiresAt ?? now + ENTITLEMENT_TTL_S·1000)` (an open-ended grant lasts as long as the token itself, `pu = exp`, and every refresh extends it); packs → added (filtered to premium packs). The token is the normal signed entitlement token, so `/entitlement`, `/verify`, `createRoom` and the room's `entitlement` message need no change, in both google and fake mode. The TV picks a new grant up on its next refresh (§2.4: app start when stale, Store open, Restore purchases, or before the token expires).
-- **CLI:** `pnpm grant <installId> [--packs a,b] [--premium] [--expires YYYY-MM-DD|ISO] [--note text]`, `pnpm grant list`, `pnpm grant revoke <installId|installHash>`; server from `--url` or `JAMAA_URL`, token from the `ADMIN_TOKEN` environment variable only (docs/DEV.md "Admin grants").
+- **Entitlement:** `entitlementFor(installHash)` merges an unexpired grant into the result: premium → `premiumUntilMs = max(purchases, grant.expiresAt ?? now + ENTITLEMENT_TTL_S·1000)` (an open-ended grant lasts as long as the token itself, `pu = exp`, and every refresh renews it); packs → added (filtered to premium packs). `subscription` is unaffected (null for a grant alone). The token is the normal signed entitlement token, so `/entitlement`, `/verify`, `createRoom` and the room's `entitlement` message need no change, in both google and fake mode. The TV picks a new grant up on its next refresh (§2.4: app start when stale, Store open, Restore purchases, or before the token expires).
+- **CLI:** `pnpm grant <installId> [--packs a,b] [--premium] [--expires YYYY-MM-DD|ISO] [--note text]`, `pnpm grant list`, `pnpm grant revoke <installId|installHash>`; server from `--url` or `MISHANA_URL`, token from the `ADMIN_TOKEN` environment variable only (docs/DEV.md "Admin grants").
 - **Install id on the TV:** Settings → **About** (DESIGN TV-03) shows it in groups of four; the CLI drops the spaces.
 
 ---
@@ -786,7 +861,7 @@ Files (`app/src/main/java/app/jamaa/tv/`):
 | `billing/PlayBillingGateway.kt` | real implementation |
 | `billing/EntitlementApi.kt` | OkHttp client for `/api/billing/{catalog,verify,entitlement}` (IO dispatcher, same timeouts as `RoomApi`) |
 | `billing/EntitlementStore.kt` | SharedPreferences `jamaa_billing`: `install_id`, `ent_token`, `ent_json` (last `EntitlementBody`), `ent_saved_at` |
-| `billing/BillingRepository.kt` | orchestration; `StateFlow<StoreUiState>`; owned by `ProductionDeps` (process-wide) |
+| `billing/BillingRepository.kt` | orchestration; `StateFlow<StoreUiState>`; owned by the app-level `ProductionDeps` (process-wide) |
 | `billing/BillingErrors.kt` | response code → i18n key (§4.6) |
 | `protocol/BillingModels.kt` | kotlinx.serialization mirrors of §3.4 (`CatalogResponse`, `VerifyRequest`, …) and `EntitlementMsg` (`@SerialName("entitlement")` ClientMessage subclass) |
 | `ui/screens/StoreScreen.kt` | Store overlay (§4.4) |
@@ -799,14 +874,12 @@ Files (`app/src/main/java/app/jamaa/tv/`):
 interface BillingGateway {
   val purchaseUpdates: SharedFlow<PurchaseUpdate>               // from PurchasesUpdatedListener
   suspend fun connect(): GatewayResult<Unit>
-  suspend fun queryProducts(ids: List<String>): GatewayResult<ProductsSnapshot>   // one INAPP query: `premium` + pack ids
-  suspend fun queryOwned(): GatewayResult<List<OwnedPurchase>>  // INAPP, PURCHASED or PENDING
+  suspend fun queryProducts(subIds: List<String>, inappIds: List<String>): GatewayResult<ProductsSnapshot>
+  suspend fun queryOwned(): GatewayResult<List<OwnedPurchase>>  // SUBS + INAPP, PURCHASED or PENDING
   fun launch(activity: Activity, offer: PurchasableOffer, obfuscatedAccountId: String): GatewayResult<Unit>
   fun end()
-  fun onLifecycleStart() {}                                       // BILLING_UNAVAILABLE retry (§4.2)
-  val isFake: Boolean get() = false; val fakePrompt: FakePurchasePrompt? get() = null   // §4.8
 }
-data class OwnedPurchase(val productId: String, val purchaseToken: String, val state: OwnedState /* PURCHASED, PENDING */)
+data class OwnedPurchase(val productId: String, val purchaseToken: String, val state: OwnedState /* PURCHASED, PENDING */, val suspended: Boolean)
 sealed interface GatewayResult<out T> { data class Ok<T>(val value: T) : GatewayResult<T>; data class Err(val code: Int, val sub: Int?) : GatewayResult<Nothing> }
 ```
 
@@ -825,11 +898,18 @@ sealed interface GatewayResult<out T> { data class Ok<T>(val value: T) : Gateway
   - Retry manually **only** when `onBillingSetupFinished` reports `SERVICE_UNAVAILABLE`/`SERVICE_DISCONNECTED`/`ERROR`/`NETWORK_ERROR`: `ReconnectPolicy.delayMs(attempt)`, up to 5 times, never while a call is in flight; then expose `StoreUiState.Unavailable(NETWORK)`.
   - `BILLING_UNAVAILABLE` (3) is terminal **until the next `ON_START`** (no Play Store, no Google account, kids profile or a blocked Play Store ✔ PBL 9 mapping). The user may sign in or leave the kids profile and come back, so the next `ON_START` tries once more.
 - Connect on app start (`MainActivity.onCreate` → repository `start()`) and in `onStart` when not ready. Keep the connection for the whole process; the docs recommend an active connection while in the foreground ✔. Call `endConnection()` only in `MainActivity.onDestroy` when `isFinishing`.
-- **Products** (INAPP only; there is no SUBS query anywhere):
-  - **One** `queryProductDetailsAsync(QueryProductDetailsParams.newBuilder().setProductList(list).build(), listener)` for `premium` + every pack product id, one `Product` per id built with `QueryProductDetailsParams.Product.newBuilder().setProductId(id).setProductType(BillingClient.ProductType.INAPP).build()`. The pack ids come from the catalog (or `view.lockedPacks` when it failed), so the query starts once the catalog answered; `connect()` runs alongside (PAY-GAP).
+- **Products:**
+  - `queryProductDetailsAsync(QueryProductDetailsParams.newBuilder().setProductList(list).build(), listener)`, one `Product` per id built with `QueryProductDetailsParams.Product.newBuilder().setProductId(id).setProductType(BillingClient.ProductType.SUBS | INAPP).build()`.
+  - Make **two calls** (one SUBS, one INAPP); mixing types in one params object is [VERIFY], so avoid it.
   - Listener: `onProductDetailsResponse(BillingResult, QueryProductDetailsResult)` → `productDetailsList` + `unfetchedProductList` (`statusCode` `PRODUCT_NOT_FOUND` = 3, `NO_ELIGIBLE_OFFER` = 4 ✔).
   - Do **not** cache `ProductDetails` across store openings ✔ (stale objects make `launchBillingFlow` fail).
-- **Offer:** `productDetails.oneTimePurchaseOfferDetails` (single offer), for `premium` and packs alike. `oneTimePurchaseOfferDetailsList` is non-null **only** with multiple offers ✔, so use `oneTimePurchaseOfferDetailsList?.firstOrNull() ?: oneTimePurchaseOfferDetails`. Price = `formattedPrice` (a Play Console sale on `premium` shows here automatically), token = `offerToken`.
+- **Offers:**
+  - Subscription → `productDetails.subscriptionOfferDetails` (list). For each base plan id in `BASE_PLAN_IDS`:
+    - trial offer = the entry with `basePlanId == id && offerId == TRIAL_OFFER_ID` (present only if the user is eligible: Play returns user-eligible offers);
+    - base offer = the entry with `basePlanId == id && offerId == null`.
+    - Price text = `pricingPhases.pricingPhaseList.last().formattedPrice`. Period = `billingPeriod` (ISO 8601: `P1M` → month, `P1Y` → year ✔).
+    - Trial days come from the first phase with `priceAmountMicros == 0L`: parse `billingPeriod` `P{n}D`/`P{n}W` (7 × n).
+  - One-time → `productDetails.oneTimePurchaseOfferDetails` (single offer). `oneTimePurchaseOfferDetailsList` is non-null **only** with multiple offers ✔, so use `oneTimePurchaseOfferDetailsList?.firstOrNull() ?: oneTimePurchaseOfferDetails`. Price = `formattedPrice`, token = `offerToken`.
 - **Launch (main thread):**
   ```kotlin
   BillingFlowParams.newBuilder()
@@ -838,18 +918,22 @@ sealed interface GatewayResult<out T> { data class Ok<T>(val value: T) : Gateway
     .setObfuscatedAccountId(InstallId.hash(installId))
     .build()
   ```
-  Then `launchBillingFlow(activity, params)` returns a `BillingResult`; non-OK is mapped with §4.6. No product (or no `offerToken`) → toast `store.itemUnavailable`.
+  Then `launchBillingFlow(activity, params)` returns a `BillingResult`; non-OK is mapped with §4.6. Subscription choice:
+  - trial offer token if present;
+  - else the base offer token.
+  - No `setSubscriptionUpdateParams` in v1: an existing subscriber never sees plan buttons (§4.4).
 - **`onPurchasesUpdated(result, purchases)`:**
   - `OK` → for each purchase: `purchaseState == PURCHASED` → verify; `PENDING` → `StoreUiState.pending += productIds`;
   - `USER_CANCELED` → silent;
   - `ITEM_ALREADY_OWNED` → run restore;
   - others → toast (§4.6).
 - **Restore:**
-  - `queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(INAPP).build(), listener)` ✔ (one call; `premium` and packs). Listener: `onQueryPurchasesResponse(BillingResult, List<Purchase>)`.
-  - Read `purchase.products`, `purchaseToken`, `purchaseState` ✔.
-  - `PURCHASED` purchases are posted to `/verify`; `PENDING` ones only set `StoreUiState.pending` (never posted as owned).
-  - Play unreachable → refresh through `/entitlement` when forced or stale (the server still knows this TV's bindings).
+  - `queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(SUBS)[.includeSuspendedSubscriptions(true)].build(), listener)` and the same for `INAPP` ✔. Listener: `onQueryPurchasesResponse(BillingResult, List<Purchase>)`.
+  - Call `includeSuspendedSubscriptions(true)` only when `isFeatureSupported(BillingClient.FeatureType.INCLUDE_SUSPENDED_SUBSCRIPTIONS).responseCode == OK` ✔.
+  - Read `purchase.products`, `purchaseToken`, `purchaseState`, `isSuspended` ✔.
+  - Suspended subs **are** posted to `/verify` (the server returns `NOT_OWNED` for them, keeps its state and `subscription` info fresh, and binds this TV so access returns automatically on recovery). They also set `StoreUiState.subscriptionSuspended = true` (§4.4 Fix payment).
   - Runs on app start and on every `ON_START`/`ON_RESUME` (§2.4 rule 1).
+  - Optional: on `ON_START`, `billingClient.showInAppMessages(activity, InAppMessageParams.newBuilder().addInAppMessageCategoryToShow(InAppMessageParams.InAppMessageCategoryId.TRANSACTIONAL).build(), listener)` ✔ (API exists) to let Play prompt grace/hold users to fix payment. [VERIFY that it renders and is remote-operable on Google TV; ship it behind `DebugPrefs`-style flag `inAppMessages` default **off** until verified.]
 - **Acknowledgement:** the **server** acknowledges (§3.4). The TV never calls `acknowledgePurchase`. An unacknowledged purchase stays in `queryPurchasesAsync` until the server acks it, so the next launch reposts it. That is the retry.
 - **Verify call:**
   - `EntitlementApi.verify(installId, purchases)`, at most 20 per call; chunk if more.
@@ -873,44 +957,44 @@ The Store is an overlay in `InRoom` (`TvUiState.InRoom.store: StoreEntry?`, `dat
 - **Back** closes it and returns focus to the element that opened it (remember that element's `FocusRequester`).
 
 **Entry points:**
-1. **Lobby bottom bar:** a new button with the new icon `gem` (24×24 stroke style, does **not** mirror; added to DESIGN §5.1, see the DESIGN deltas below) and the **fixed** label `lobby.premium` (short in all 3 locales; never swapped for a longer label). Order: **Premium · Settings · Language · Start** (Premium at the start of the bar, so Start stays at the end where focus already expects it). `focusProductId = null` puts the initial focus on the **Unlock Premium** button (Focus below).
+1. **Lobby bottom bar:** a new button with the new icon `gem` (24×24 stroke style, does **not** mirror; added to DESIGN §5.1, see the DESIGN deltas below) and the **fixed** label `lobby.premium` (short in all 3 locales; never swapped for a longer label). Order: **Premium · Settings · Language · Start** (Premium at the start of the bar, so Start stays at the end where focus already expects it). `focusProductId = null` puts the initial focus on the yearly plan button (or Manage when premium).
    - **Fit rule:** the bar starts at x ≥ 370 dp and must fit in 960 − 48 − 370 = 542 dp with Start at 200 dp, in EN/FR/AR. If the labelled Premium button does not fit next to Settings and Language (B's measurement test, §4.9), Premium becomes an **icon-only 48 × 48 dp** button with a focus tooltip (`lobby.premium`) and `contentDescription`.
    - **Premium status** is not shown on the button. When `view.premium`, the top-end **settings summary** (DESIGN TV-02) gains a chip `gem` + `lobby.premiumRoom` as its first line; phones already show the same chip (§5.1).
 2. **Settings → Words → Packs sub-panel:** the playable packs (`availablePacks`) appear as today. Below a divider, `lockedPacks` rows show a `LockBadge`, the title, `store.packPairs` and `settings.unlockHint` (or `settings.locked` while billing is unavailable, see the state machine). OK on a locked row → Store with `focusProductId = lockedPack.productId`, `origin = LOCKED_PACK`.
 3. **Settings → Game → Points rows** (each `PREMIUM_SETTING_KEYS` row) when `!view.premium`: moved to the **bottom** of the Game category (so the category's initial focus never lands on a lock). The row shows `LockBadge` + `settings.premiumOnly`; **Left/Right** play the DESIGN "disabled shake" + `sfx.error` (as Start does for `NOT_ENOUGH_PLAYERS`); **OK** opens the Store with `focusProductId = "premium"`, `origin = LOCKED_SETTING`. (DESIGN TV-03 "OK also steps" does not apply to locked rows; see the DESIGN deltas.)
 4. **Error `PREMIUM_REQUIRED` / `PACK_LOCKED`** received while in Settings: toast `tv.premiumRequired` / `tv.packLocked` (TV register, no "on the TV"). The TV does not auto-open the Store.
 
-**Paywall timing (market study, revision 3):** the TV **never** auto-opens the Store (unchanged); the Store opens only from the entry points above. A light, dismissible "after the first finished game" prompt on Results is a **FOLLOW-UP, not specified yet**; implementers must not build it from this revision.
-
 **Store state machine** (`StoreUiState.phase`, pure, tested in `StoreFocusTest`/`BillingRepositoryTest`):
-- `Loading`: spinner + `store.loading`; Back works; it starts `GET /api/billing/catalog` and `connect()` in parallel, then the one INAPP `queryProductDetailsAsync` (§4.2). Timeout 10 s → `Unavailable(NETWORK)`.
+- `Loading`: spinner + `store.loading`; Back works; it starts `GET /api/billing/catalog`, `connect()` and both `queryProductDetailsAsync` calls in parallel. Timeout 10 s → `Unavailable(NETWORK)`.
 - `Ready`: the layout below.
 - `Unavailable(reason)`:
-  - `NETWORK` (the Play product query failed with anything but `BILLING_UNAVAILABLE`, whether or not the catalog answered (PAY-GAP: with no Play data nothing is buyable), or the timeout): text `store.unavailable` + a focused **Try again** button (`common.retry`) → back to `Loading`.
+  - `NETWORK` (catalog fetch failed **and** Play products failed, or the timeout): text `store.unavailable` + a focused **Try again** button (`common.retry`) → back to `Loading`.
   - `BILLING_UNAVAILABLE` (Play reports 3): text `store.playUnavailable` ("To buy on this TV, sign in to Google Play in the TV's settings."), **no** Try again; the focus target is a single **OK** button (`common.ok`) that closes the Store. While in this state for the session (until the next `ON_START`), locked rows in Settings show `settings.locked` instead of `settings.unlockHint`, and OK on them shows the toast `store.playUnavailable` instead of opening the Store.
 - **Partial data** stays `Ready`:
   - catalog fetch failed but Play answered → build the pack list from `view.lockedPacks` (it carries `productId`, `title`, `pairCount`) for the room's word language only, and hide "Other languages";
-  - Play returned no `premium` `ProductDetails` (`PRODUCT_NOT_FOUND`, or no `offerToken`) → the Premium card shows `store.unavailable` and no button; pack cards stay buyable.
+  - Play returned no `jamaa_pass` `ProductDetails` (`PRODUCT_NOT_FOUND`, or `NO_ELIGIBLE_OFFER` for every base plan) → the Premium card shows `store.unavailable` and no plan buttons; pack rows stay buyable.
 - Something is always focused (DESIGN rule): in every state, the initial focus target is defined above or in Focus below.
 
-**Layout** (960×540 dp canvas, 48/27 dp safe margins; DESIGN tokens). Header: `store.title` at the start, and the **room code** at the end (same style as the in-game top-bar mini code, LTR-isolated), so the host can still read it out to late arrivals; the QR stays reachable by closing the Store. Footer row: `store.restore` button and **one** caption line (`StoreMetrics.footerLine`), first match wins: `store.pendingBody` (a pending purchase); `store.cardTip` with `{url}` = `pay.google.com` while nothing is owned on this account (no premium, no pack; so nobody types a card number with the remote; Google's own page, not another way to pay); `store.help` (support email); nothing when the email is empty. Footer hint "Back".
+**Layout** (960×540 dp canvas, 48/27 dp safe margins; DESIGN tokens). Header: `store.title` at the start, and the **room code** at the end (same style as the in-game top-bar mini code, LTR-isolated), so the host can still read it out to late arrivals; the QR stays reachable by closing the Store. Footer row: `store.restore` button, `store.help` text (support email), and the pending body when relevant; footer hint "Back".
 
 1. **Premium card**, full width, top:
-   - `store.premiumTitle`, then `store.premiumPitch` (with the concrete counts from `CatalogResponse`: `{count}` = number of premium packs, `{pairs}` = their total `pairCount` rounded **down** to a multiple of 10).
-   - **Not premium:** **one** primary button `store.unlockPremium` ("Unlock Premium · {price}", Play's INAPP `formattedPrice`, single line), then the line `store.premiumLifetime` ("One-time purchase, yours for good. No subscription."). A pending `premium` purchase shows `store.pending` on the button instead of the price; while confirming it shows the spinner + `store.confirming` (then `store.verifyFailed`); in those states the button stays focusable and OK does nothing.
-   - **Premium** (lifetime purchase or owner grant; `premium && premiumUntil > now`): `store.premiumActive`, no button (no Manage: there is nothing to manage).
-   - **No premium product** (partial data above): `store.unavailable`, no button.
+   - `store.premiumTitle`, then `store.premiumPitch` (with the concrete counts from `CatalogResponse`: `{packs}` = number of premium packs, `{pairs}` = their total `pairCount` rounded **down** to a multiple of 10).
+   - **Not premium and not suspended:** two plan buttons **side by side** (`store.planYearly` first, then `store.planMonthly`). Each button's primary label is the plan name + price (`store.pricePerYear`/`store.pricePerMonth`); if a trial offer exists, a separate badge `store.trialDays` sits on the button. Directly under the buttons, **one disclosure paragraph** for the **focused** plan (§4.5).
+   - **Suspended** (`subscriptionSuspended`, or `EntitlementBody.subscription.state` ∈ {`ON_HOLD`, `PAUSED`}): no plan buttons; text `store.fixPayment` and a primary, focused **Fix payment** button (`store.fixPaymentButton`) that opens the manage link (below). Buying again would create a second subscription and bill twice, so plan buttons are never shown in this state.
+   - **In grace** (`subscription.state === IN_GRACE_PERIOD`; premium still on): `store.premiumActive`, `store.fixPayment`, and **Manage** (`store.manage`) focused.
+   - **Premium:** `store.premiumActive`, `store.renewsOn`/`store.endsOn` (from `subscription.autoRenewing`), button `store.manage`.
+   - **No premium product** (partial data above): `store.unavailable`.
 2. **Packs**, below the card: a horizontal `LazyRow` of pack cards (`focusRestorer()`), the room's word language first, then the other languages after a `store.otherLanguages` divider card. Card: title (in the UI locale), `store.packPairs`, and the trailing state, exactly one of:
    - `store.owned` (owned);
    - `store.included` (premium active, **or** the product was not fetched from Play: §1.4);
    - `store.pending` chip (pending purchase);
    - Buy button `store.buy` with `{price}` (fetched, not owned, not premium).
 
-**Fit rule (hard):** the Premium card (title + pitch, the Unlock button, the `store.premiumLifetime` line) must fit **without scrolling** above the packs row at the 20 sp TV floor in every shipped UI locale (EN, FR, AR, ES). B's measurement test (`StoreLayoutFitTest`, `StoreMetrics`) checks it at 960 dp (§4.9).
+**Fit rule (hard):** the Premium card including the disclosure paragraph must fit **without scrolling** above the packs row at the 20 sp TV floor in EN, FR and AR. B's screenshot/measurement test checks it at 960 dp (§4.9).
 
 **Focus and D-pad:**
-- The initial focus follows `focusProductId`: a pack product id present in the Store → that pack card; otherwise (`"premium"`, `null`, or an unknown id) → the **Unlock Premium** button when it shows, else (premium on, or no premium product) the first pack card, else **Restore**.
-- Left/Right move within a row (pack cards); Up/Down move between the card, the packs row and the footer (Compose geometry; RTL mirrors Left/Right). OK activates.
+- The initial focus follows `focusProductId`: `"jamaa_pass"` → yearly plan (or Fix payment / Manage); a pack product id → that pack card; `null` → yearly plan, Fix payment or Manage.
+- Left/Right move within a row (plan buttons; pack cards); Up/Down move between the card, the packs row and the footer (Compose geometry; RTL mirrors Left/Right). OK activates.
 - Cards without a Buy button stay focusable and announce their state. OK on them does nothing.
 - No element needs a Menu key or long-press.
 
@@ -924,7 +1008,7 @@ The Store is an overlay in `InRoom` (`TvUiState.InRoom.store: StoreEntry?`, `dat
 - with `packIds: []` ("all playable") nothing needs to change: the pack is already in the pool.
 
 **PENDING purchases:**
-- the Unlock button or pack card shows `store.pending`, and the footer shows `store.pendingBody`;
+- the plan or pack shows the chip `store.pending`, and the footer shows `store.pendingBody`;
 - no access is granted;
 - when the payment completes, `onPurchasesUpdated` fires again (if running) or the next start/resume restore picks it up ✔.
 
@@ -934,9 +1018,21 @@ The Store is an overlay in `InRoom` (`TvUiState.InRoom.store: StoreEntry?`, `dat
 
 **Free pool exhausted:** when `view.poolExhausted` becomes true in LOBBY, show the toast `lobby.wordsRepeating` once per room session. Never auto-open the Store.
 
-### 4.5 Purchase disclosure
+**Manage subscription link** ✔ (developer.android.com/google/play/billing/subscriptions):
+```
+https://play.google.com/store/account/subscriptions?sku=jamaa_pass&package=app.jamaa.tv
+```
+- Used by **Manage** and **Fix payment**. Open it with `Intent(Intent.ACTION_VIEW, Uri.parse(url))`.
+- On `ActivityNotFoundException`, or if nothing resolves, show a dialog with the text `store.manageHint`: no QR code and no URL to type. [VERIFY on a real Google TV that the Play Store handles this link; if it does not, the dialog is the fallback.]
+- Show the link only when the subscription is not expired (premium active, in grace, or ON_HOLD/PAUSED, for fixing payment) ✔ ("for non-expired subscriptions").
 
-One-time purchase: the line `store.premiumLifetime` under the Unlock button says so; no subscription disclosure (price period, renewal, cancel) is needed, and no manage-subscription link exists (revision 3).
+### 4.5 Required subscription disclosure (directly under the plan buttons, always visible, never behind a "more" link)
+
+Values come from the **focused** plan's `ProductDetails` (`formattedPrice`, period, trial days). One paragraph, at most two lines of sentence text plus one line for cancelling:
+1. With a trial offer: `store.legalTrialRenew` ("Free for {days} days, then {price}/{period}, billed to your Google Play account. Renews automatically until you cancel."). Without: `store.legalPriceRenew` ("{price}/{period}, billed to your Google Play account. Renews automatically until you cancel.").
+2. `store.legalCancel`: "Cancel anytime in your Google Play subscriptions. Cancel before the trial ends and you won't be charged." (the second sentence only with a trial: `store.legalCancelTrial` vs `store.legalCancel`).
+
+This covers the Play subscriptions policy items: price, period, trial terms, auto-renewal, how to cancel. The cancel path is phrased device-neutrally, because the Play menu path on Google TV differs from phones [VERIFY on Google TV]. [VERIFY the current policy wording in Play Console → Policy; support.google.com is blocked here.]
 
 ### 4.6 Error mapping (`BillingErrors.kt`; codes ✔ `BillingClient.BillingResponseCode`)
 
@@ -958,8 +1054,6 @@ One-time purchase: the line `store.premiumLifetime` under the Unlock button says
 
 ### 4.7 i18n keys (A adds them to `shared/i18n/{en,fr,ar,es}.json` and regenerates the Android strings)
 
-Revision 3: Spanish (`es`) is a 4th UI language. The table lists EN/FR/AR; `es.json` carries the same keys with matching placeholders and plural forms (`i18n/keys.test.ts` checks all four).
-
 Register rules (DESIGN §1.5): FR uses *vous* on TV-only keys and *tu* on phone-only keys; keys marked (TV)/(phone) follow that, unmarked keys are neutral. AR never uses a masculine-singular imperative: buttons are nouns or first person, TV text uses the plural, phone text uses noun or impersonal forms. AR drafts follow DESIGN's Levantine tone; **the owner reviews every AR string before release**. FR values below already contain **U+202F** (narrow no-break space) before `! ? : ;`; A writes them byte-exact.
 
 | Key | EN | FR | AR |
@@ -972,9 +1066,18 @@ Register rules (DESIGN §1.5): FR uses *vous* on TV-only keys and *tu* on phone-
 | `store.title` | Premium & word packs | Premium et packs de mots | بريميوم وباقات كلمات |
 | `store.premiumTitle` | Premium | Premium | بريميوم |
 | `store.premiumPitch` (P on `{count}` = premium packs; `{pairs}` = pairs, rounded down to 10) | one: {count} word pack ({pairs}+ word pairs), and every new one. / other: All {count} word packs ({pairs}+ word pairs), and every new one. | one: {count} pack de mots ({pairs}+ paires), et tous les nouveaux. / other: Les {count} packs de mots ({pairs}+ paires), et tous les nouveaux. | other: كل الباقات ({count}) و{pairs}+ زوج كلمات، وكل باقة جديدة. (same text for every AR form; the count is shown as a number in brackets to avoid noun agreement) |
-| `store.unlockPremium` | Unlock Premium · {price} | Débloquer Premium · {price} | افتح البريميوم · {price} |
-| `store.premiumLifetime` | One-time purchase, yours for good. No subscription. | Achat unique, à vous pour de bon. Sans abonnement. | دفعة وحدة، إلك للأبد. بلا اشتراك. |
+| `store.planMonthly` | Monthly | Mensuel | شهري |
+| `store.planYearly` | Yearly | Annuel | سنوي |
+| `store.pricePerMonth` | {price} / month | {price} / mois | {price} بالشهر |
+| `store.pricePerYear` | {price} / year | {price} / an | {price} بالسنة |
+| `store.trialDays` (P) | one/other: {count}-day free trial | one: {count} jour d'essai gratuit / other: {count} jours d'essai gratuit | zero/one/two/few/many/other: تجربة مجانية {count} يوم (AR forms: one "تجربة مجانية يوم واحد", two "تجربة مجانية يومين", few "تجربة مجانية {count} أيام") |
 | `store.premiumActive` | Premium is on | Premium est activé | البريميوم شغّال |
+| `store.renewsOn` | Renews on {date} | Renouvellement le {date} | بيتجدد بـ {date} |
+| `store.endsOn` | Ends on {date} | Se termine le {date} | بيخلص بـ {date} |
+| `store.manage` | Manage subscription | Gérer l'abonnement | إدارة الاشتراك |
+| `store.manageHint` | On a phone or computer: open Google Play, then Payments & subscriptions, then Subscriptions. | Sur un téléphone ou un ordinateur : ouvrez Google Play, puis Paiements et abonnements, puis Abonnements. | من تلفون أو كمبيوتر: من Google Play، بعدين الدفع والاشتراكات، بعدين الاشتراكات. |
+| `store.fixPayment` | There's a problem with your payment. Fix it in Google Play to keep Premium. | Il y a un problème avec votre paiement. Corrigez-le dans Google Play pour garder Premium. | في مشكلة بالدفع. صلّحوها بـ Google Play لتضل البريميوم معكن. |
+| `store.fixPaymentButton` | Fix payment | Corriger le paiement | تصليح الدفع |
 | `store.packsTitle` | Word packs | Packs de mots | باقات الكلمات |
 | `store.otherLanguages` | Other languages | Autres langues | لغات تانية |
 | `store.packPairs` (P) | one: {count} word pair / other: {count} word pairs | one: {count} paire de mots / other: {count} paires de mots | zero/one/two/few/many/other drafts (other: "{count} زوج كلمات") |
@@ -991,7 +1094,6 @@ Register rules (DESIGN §1.5): FR uses *vous* on TV-only keys and *tu* on phone-
 | `store.restored` | Purchases restored | Achats restaurés | رجعت المشتريات |
 | `store.nothingToRestore` | No purchases found on this Google account | Aucun achat trouvé sur ce compte Google | ما في مشتريات على حساب Google هيدا |
 | `store.help` | Need help? {email} | Besoin d'aide ? {email} | بدكن مساعدة؟ {email} |
-| `store.cardTip` (TV footer; `{url}` = `pay.google.com`) | No card? Add one on your phone: {url} | Pas de carte ? Ajoutez-la sur votre mobile : {url} | ما عندكن بطاقة؟ زيدوها من تلفونكن: {url} |
 | `store.loading` | Loading the store… | Chargement de la boutique… | عم يحمّل المتجر… |
 | `store.unavailable` | The store isn't available right now. Try again later. | La boutique n'est pas disponible. Réessayez plus tard. | المتجر مش متاح هلّق. جرّبوا بعدين. |
 | `store.playUnavailable` | To buy on this TV, sign in to Google Play in the TV's settings. | Pour acheter sur ce téléviseur, connectez-vous à Google Play dans les paramètres du téléviseur. | لتشتروا عهالتلفزيون، فوتوا عحساب Google Play من إعدادات التلفزيون. |
@@ -1001,7 +1103,12 @@ Register rules (DESIGN §1.5): FR uses *vous* on TV-only keys and *tu* on phone-
 | `store.alreadyOwned` | You already own this. Restoring… | Vous l'avez déjà. Restauration… | هيدا معكن من قبل. عم نرجّعه… |
 | `store.verifyFailed` | Purchase received. We'll finish unlocking it shortly. | Achat reçu. Le déblocage se termine dans un instant. | وصل الشرا. رح نخلّص الفتح بعد شوي. |
 | `store.installLimit` | This purchase is already used on too many TVs. Need help? {email} | Cet achat est déjà utilisé sur trop de téléviseurs. Besoin d'aide ? {email} | هالشرا مستعمل على تلفزيونات كتير. بدكن مساعدة؟ {email} |
-| `store.installLimitNoHelp` | This purchase is already used on too many TVs. | (first sentence of `store.installLimit`) | (first sentence of `store.installLimit`) |
+| `store.legalPriceRenew` | {price} per {period}, billed to your Google Play account. Renews automatically until you cancel. | {price} par {period}, facturé sur votre compte Google Play. Renouvellement automatique jusqu'à résiliation. | {price} كل {period}، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا. |
+| `store.legalTrialRenew` (P on `{count}` = trial days) | one: Free for {count} day, then … / other: Free for {count} days, then {price} per {period}, billed to your Google Play account. Renews automatically until you cancel. | one: Gratuit pendant {count} jour, puis … / other: Gratuit pendant {count} jours, puis {price} par {period}, facturé sur votre compte Google Play. Renouvellement automatique jusqu'à résiliation. | one: مجاني يوم واحد، بعدين … / two: مجاني يومين، بعدين … / few: مجاني {count} أيام، بعدين … / other: مجاني {count} يوم، بعدين {price} كل {period}، عحساب Google Play تبعكن. بيتجدد لحاله لحتى تلغوا. |
+| `store.legalCancel` | Cancel anytime in your Google Play subscriptions. | Résiliez à tout moment dans vos abonnements Google Play. | فيكن تلغوا أي وقت من اشتراكات Google Play تبعكن. |
+| `store.legalCancelTrial` | Cancel anytime in your Google Play subscriptions. Cancel before the trial ends and you won't be charged. | Résiliez à tout moment dans vos abonnements Google Play. Résiliez avant la fin de l'essai pour ne rien payer. | فيكن تلغوا أي وقت من اشتراكات Google Play تبعكن. إذا لغيتوا قبل ما تخلص التجربة، ما بينخصم شي. |
+| `store.periodMonth` | month | mois | شهر |
+| `store.periodYear` | year | an | سنة |
 | `store.testMode` | Test store: no real payments | Boutique de test : aucun paiement réel | متجر تجريبي: ما في دفع حقيقي |
 | `store.tvAppOnly` (TV mock, google mode) | Purchases are available in the Android TV app. | Les achats sont disponibles dans l'application Android TV. | المشتريات متاحة بتطبيق Android TV. |
 | `settings.locked` | Locked | Verrouillé | مقفول |
@@ -1016,12 +1123,12 @@ Register rules (DESIGN §1.5): FR uses *vous* on TV-only keys and *tu* on phone-
 | `error.entitlementInvalid` | Couldn't check purchases. Free packs still work. | Impossible de vérifier les achats. Les packs gratuits marchent toujours. | ما قدرنا نتأكد من المشتريات. الباقات المجانية شغالة. |
 | `error.tvBusy` (phone) | The TV is in the store. The game can start once it closes. | La télé est dans la boutique. La partie pourra commencer quand elle sera fermée. | التلفزيون بالمتجر هلّق. اللعبة بتبلّش بس يسكّر. |
 
-Removed in revision 3 (no subscription): `store.planMonthly`, `store.planYearly`, `store.pricePerMonth`, `store.pricePerYear`, `store.trialDays`, `store.renewsOn`, `store.endsOn`, `store.manage`, `store.manageHint`, `store.fixPayment`, `store.fixPaymentButton`, `store.legal*` (`legalPriceRenew`, `legalTrialRenew`, `legalCancel`, `legalCancelTrial`) and `store.period*` (`periodMonth`, `periodYear`). Removed earlier (revision 1 → 2): `store.startTrial`, `store.subscribe`, `store.onHold`, `store.legalPrice`/`legalTrial`/`legalRenew`.
+Removed from revision 1: `store.startTrial`, `store.subscribe` (plan buttons now show plan + price, with the trial as a badge), `store.onHold` (replaced by `store.fixPayment`), and `store.legalPrice`/`legalTrial`/`legalRenew` (merged into `store.legalPriceRenew`/`store.legalTrialRenew`).
 
 **Placeholders and bidi:**
-- `{price}` is Play's `formattedPrice`, verbatim (a Play Console sale on `premium` shows its sale price there). No billing string has a `{date}` any more (revision 3).
-- Every interpolated value (`{price}`, `{count}`, `{pairs}`, `{email}`, `{lang}`, `{url}`) is bidi-isolated: Android `BidiFormatter.getInstance(isRtl).unicodeWrap(value)` before substitution; web `<bdi>` (or FSI…PDI in plain strings), per DESIGN §3.4.
-- `{email}` is `SUPPORT_EMAIL` in `shared/src/billing/products.ts` (`alexkhoury@hotmail.com`, the same address as the Play listing; public on the landing page). An empty value hides `store.help` and drops the "Need help?" sentence from `store.installLimit` (A generates the variant key `store.installLimitNoHelp` = first sentence only).
+- `{price}` is Play's `formattedPrice`, verbatim. `{date}` is formatted on the client: Kotlin `DateFormat.getDateInstance(DateFormat.MEDIUM, loc)` with `loc = Locale.forLanguageTag("ar-LB-u-nu-latn")` for Arabic (Western digits, DESIGN §3.5) and the UI locale otherwise; web `Intl.DateTimeFormat(locale, {dateStyle:"medium", numberingSystem:"latn"})`.
+- Every interpolated value (`{price}`, `{date}`, `{count}`, `{pairs}`, `{email}`, `{lang}`, `{period}`) is bidi-isolated: Android `BidiFormatter.getInstance(isRtl).unicodeWrap(value)` before substitution; web `<bdi>` (or FSI…PDI in plain strings), per DESIGN §3.4.
+- `{email}` is `SUPPORT_EMAIL` in `shared/src/billing/products.ts` (owner fills it; the same address as the Play listing). An empty value hides `store.help` and drops the "Need help?" sentence from `store.installLimit` (A generates the variant key `store.installLimitNoHelp` = first sentence only).
 - `{lang}` is the language's own name (`common.language.<code>` if present, else `English`/`Français`/`العربية`).
 
 **FR typography test:** `i18n/keys.test.ts` fails on any FR value matching `/ [!?:;]/` (an ordinary space before those marks). Existing FR values that break it (e.g. `settings.rolePreview`, `elim.eliminated`, `elim.wasCivilian`, `elim.blankGetReady`, `guess.silence`, `tv.cluesNoTimer`, `tv.backToCategories`, `tv.soundOn`, `tv.soundOff`, `tv.backToLobby`) are normalised to U+202F by A in the same change.
@@ -1030,12 +1137,12 @@ Removed in revision 3 (no subscription): `store.planMonthly`, `store.planYearly`
 - §5.1 icon table: add `gem` (cut gemstone outline, 24×24 stroke style, does not mirror) for Premium. `crown` stays reserved for host/VIP.
 - TV-02 bottom bar: "Premium (`gem`) · Settings · Language · Start", Premium icon-only if the fit rule (§4.4) requires it; the settings summary gains the `lobby.premiumRoom` chip when premium.
 - TV-03: locked rows (premium settings) do not step on OK/Left/Right; Left/Right shake + `sfx.error`, OK opens the Store.
-- §10 test list: add a bidi screenshot case for a billing string with `{price}` in AR.
+- §10 test list: add a bidi screenshot case for a billing string with `{price}` and `{date}` in AR.
 
 ### 4.8 DebugSettings and fake billing (debug builds only)
 - `DebugSettingsScreen` gains the toggle `Billing: Google Play / Fake (server test store)`, stored as `DebugPrefs.fakeBilling`.
 - `FakeBillingGateway` (debug source set):
-  - `queryProducts` returns synthetic one-time products: `premium` at "$7.99", each `pack_*` at "$1.99";
+  - `queryProducts` returns synthetic products from `CatalogResponse` with prices "$4.99"/"$29.99"/"$1.99" and a trial offer;
   - `launch` shows a remote-friendly confirm dialog ("Fake purchase: Approve / Pending / Cancel / Error"), then calls `POST /api/billing/fake/purchase` and emits a `PurchaseUpdate` with the fake token;
   - `queryOwned` returns the tokens remembered in debug prefs.
 - The Store shows the banner `store.testMode`.
@@ -1043,7 +1150,7 @@ Removed in revision 3 (no subscription): `store.planMonthly`, `store.planYearly`
 
 ### 4.9 TV tests (B; JVM unit tests; also run in the pure-Kotlin harness `scratchpad/tv-verify` where possible, since Gradle cannot run here)
 - `ProductsTest` (fixture `billing.products.json`).
-- (Revision 3: `OfferSelectionTest` is gone; there is one one-time offer per product.)
+- `OfferSelectionTest`: given synthetic offer lists (trial present or absent, ineligible) → the chosen offer token, trial days from `P7D`/`P1W`, period from `P1M`/`P1Y`.
 - `BillingErrorsTest`: every row of §4.6.
 - `EntitlementApiTest` (MockWebServer): verify request body shape, response decoding, `INSTALL_LIMIT`.
 - `ProtocolFixturesTest` additions: the new view keys, `c2s.entitlement.json` encode-compare, and the billing HTTP fixtures.
@@ -1052,16 +1159,16 @@ Removed in revision 3 (no subscription): `store.planMonthly`, `store.planYearly`
   - pending purchases are not posted as owned;
   - a refresh while in a room emits `sendEntitlement`;
   - a refresh failure keeps the old token and backs off.
-  - a pending `premium` shows `store.pending` and grants nothing; a refunded (revoked) `premium` turns premium off at the next refresh;
-  - restore runs on `ON_RESUME` and posts only changed `(token, state)` tuples (else the 1 h rule);
-  - `nextRefreshAt`: lands before `premiumUntil − 30 min` and `expiresAt − 1 h`, never earlier than `now + 1 min`, at most `now + 6 h`;
+  - suspended (ON_HOLD) subscriptions **are** posted and set `subscriptionSuspended`;
+  - restore runs on `ON_RESUME` and posts only changed `(token, state, suspended)` tuples (else the 1 h rule);
+  - `nextRefreshAt`: lands before `premiumUntil` for a renewing subscriber (never after `subscription.expiresAt + 10 min` or `premiumUntil − 30 min`), never earlier than `now + 1 min`, at most `now + 6 h`;
   - `BILLING_UNAVAILABLE` is terminal until the next `ON_START`, then retried once; only one `startConnection` in flight;
   - billing toasts are queued (latest only) outside the Store/LOBBY/RESULTS and flushed on the next LOBBY/RESULTS;
   - `premium` true → false in LOBBY (or across a game) emits `lobby.premiumEnded` once; `poolExhausted` emits `lobby.wordsRepeating` once per room session;
   - a pack bought from a locked row is added to a non-empty `packIds` (same language) and shows `store.addedToGame`; another language → `store.switchLanguage`, no settings change;
   - `storeOpen` is true while the Store is visible or a purchase flow is in flight, and false after both end.
-- `StoreFocusTest` (pure model): the initial focus target for each `StoreEntry` and each state-machine state (`Loading`, `Ready`, `Unavailable(NETWORK)` → Try again, `Unavailable(BILLING_UNAVAILABLE)` → OK); not premium → Unlock; premium on or no premium product → the first pack card, else Restore; a pack `focusProductId` → that card; a not-fetched product → `store.included`, focusable, no Buy; catalog failure → packs from `lockedPacks`, no "Other languages"; Back returns to the opener.
-- `StoreLayoutFitTest` (JVM, real Cairo fonts, `StoreMetrics`): at 960×540 dp and 20 sp, in EN/FR/AR/ES, the Premium card (title + pitch, the Unlock button with a long price, `store.premiumLifetime`) and the single footer line fit without scrolling. The Compose screenshot half (`StoreLayoutTest`: also the lobby bottom bar from x 370 dp, else the icon-only Premium variant) runs on the owner's machine.
+- `StoreFocusTest` (pure model): the initial focus target for each `StoreEntry` and each state-machine state (`Loading`, `Ready`, `Unavailable(NETWORK)` → Try again, `Unavailable(BILLING_UNAVAILABLE)` → OK); suspended → Fix payment; grace → Manage; no premium product → the first pack card; a not-fetched product → `store.included`, focusable, no Buy; catalog failure → packs from `lockedPacks`, no "Other languages"; Back returns to the opener.
+- `StoreLayoutTest` (Compose screenshot/measurement test, Robolectric or Paparazzi, run by the owner on macOS): at 960×540 dp and 20 sp, in EN/FR/AR, (a) the lobby bottom bar fits from x 370 dp to the end margin (else the test asserts the icon-only Premium variant), and (b) the Premium card with the longest disclosure paragraph fits above the packs row without scrolling.
 
 ---
 
@@ -1083,27 +1190,26 @@ Removed in revision 3 (no subscription): `store.planMonthly`, `store.planYearly`
 ### 5.2 `/tv` mock store (fake billing)
 - On load, `GET /api/billing/catalog`. With `mode:"google"`, the mock shows the `lobby.premium` button, and its dialog shows `store.tvAppOnly`: no store. With `mode:"fake"`, the full simulation below.
 - `installId`: localStorage `jamaa:installId` (32 hex from `crypto.getRandomValues`; try/catch rules of SPEC §8.6).
-- The mock follows §4.4 (entry points, state machine, layout, room code in the header, toast rules, downgrade and pool-exhausted toasts, pack added to game, focus with the keyboard D-pad: arrows, Enter, Esc) using the same keys, with the banner `store.testMode`. It sends `storeOpen` exactly like the TV (§4.3). The Unlock Premium and pack buttons (all one-time products) call:
-  1. `POST /api/billing/fake/purchase` `{installId, productId}`;
+- The mock follows §4.4 (entry points, state machine, layout, room code in the header, toast rules, downgrade and pool-exhausted toasts, pack added to game, Fix payment, focus with the keyboard D-pad: arrows, Enter, Esc) using the same keys, with the banner `store.testMode`. It sends `storeOpen` exactly like the TV (§4.3). Plan and pack buttons call:
+  1. `POST /api/billing/fake/purchase` (`basePlanId`, and `offerId: "trial-7d"` on the plan buttons);
   2. `POST /api/billing/verify`;
   3. store the token in memory and localStorage `jamaa:entToken`;
   4. send `{"v":1,"t":"entitlement","token":…}` on the TV socket.
 - Room creation sends `entitlement` in `POST /api/rooms` when a token exists.
-- **Debug-only controls** in the mock store, visible only in fake mode, under a "Test controls" heading (PAY-GAP: also in the TV mock's pause menu, so §5.3 test 4 can refund mid-game):
-  - "Refund Premium": `POST /api/billing/fake/set {purchaseToken, state:"REVOKED"}` on the latest `premium` purchase, forget the token locally (Play no longer lists it), then `/api/billing/entitlement`, then send `entitlement`;
-  - "Refund pack": same, on the latest pack purchase.
+- **Debug-only controls** in the mock store, visible only in fake mode, under a "Test controls" heading:
+  - "Expire Premium now": `POST /api/billing/fake/set {purchaseToken, state:"SUBSCRIPTION_STATE_EXPIRED"}`, then `/api/billing/entitlement`, then send `entitlement`;
+  - "Refund pack": same, with `state:"REVOKED"`.
 - The mock reproduces §2.4 refresh rules 1 (on load and on `visibilitychange` to visible), 2 and 3 (timer, same `nextRefreshAt` formula; C ports it to TS with a unit test).
 
 ### 5.3 E2E (C, Playwright, `web-client/e2e/payments.spec.ts`)
 - `webServer.command` adds `--var BILLING_MODE:fake --var ALLOW_FAKE_BILLING:1`. The host is `127.0.0.1`, so the Worker decides fake mode per request and passes it to the room (§3.10); no `JOIN_BASE_URL` var is needed. Existing specs keep passing.
 - Tests:
-  1. **Free room cannot get premium packs.** The TV mock creates a room with no token. 4 phones join. A phone VIP opens Settings: `lockedPacks` is non-empty and has no Buy buttons. Sending `UPDATE_SETTINGS {packIds:["en-food-01"]}` via the page's socket → error `PACK_LOCKED`. Play 3 games; every TV and phone WS frame (collected with `page.on("websocket")`) contains no word from any premium pack. The test reads the premium words from `word-packs/packs/**/*.json` with `tier` ≠ free.
-  2. **Purchase → premium → premium pack plays.** In the TV mock store, press **Unlock Premium** (the one button, with the price and `store.premiumLifetime`) with the D-pad only. `view.premium` becomes true without a new room; `lockedPacks` is `[]`. Select `en-food-01` only, start, and assert that the RESULTS `result.pack.id === "en-food-01"`.
+  1. **Free room cannot get premium packs.** The TV mock creates a room with no token. 4 phones join. A phone VIP opens Settings: `lockedPacks` is non-empty and has no Buy buttons. Sending `UPDATE_SETTINGS {packIds:["en-food-01"]}` via the page's socket → error `PACK_LOCKED`. Play 3 games; every TV and phone WS frame (collected with `page.on("websocket")`) contains no word from any premium pack. The test reads the premium words from `content/packs/**/*.json` with `tier` ≠ free.
+  2. **Purchase → premium → premium pack plays.** In the TV mock store, buy `jamaa_pass` yearly (trial) with the D-pad only. `view.premium` becomes true without a new room; `lockedPacks` is `[]`. Select `en-food-01` only, start, and assert that the RESULTS `result.pack.id === "en-food-01"`.
   3. **Single pack purchase.** Buy `pack_en_food_01` in a fresh free room. Only that pack unlocks; others stay locked.
-  4. **Refund fallback.** In a premium room with `packIds:["en-food-01"]` and custom points, start a game, then "Refund Premium" mid-game. The game continues to RESULTS with the same pack. After PLAY_AGAIN (lobby): `premium:false`, `packIds:[]`, points at the defaults, the TV mock shows `lobby.premiumEnded` and the VIP phone shows `lobby.premiumEndedPhone` (each once), and START works with the free pack.
+  4. **Expiry fallback.** In a premium room with `packIds:["en-food-01"]` and custom points, start a game, then "Expire Premium now" mid-game. The game continues to RESULTS with the same pack. After PLAY_AGAIN (lobby): `premium:false`, `packIds:[]`, points at the defaults, the TV mock shows `lobby.premiumEnded` and the VIP phone shows `lobby.premiumEndedPhone` (each once), and START works with the free pack.
   5. **Fake mode refused off-LAN** (request-level): call `/api/billing/fake/purchase` with `Host: example.com` via `request.post(..., {headers})` → 404 or 503. (A's unit test is the primary guard; this is a smoke test.)
   6. **No start behind the store.** With the mock Store open, the VIP phone's START → error `TV_BUSY` and the phase stays LOBBY; after closing the Store, START works.
-  7. **Store churn.** Open and close the Store 4 times by D-pad, then buy: premium arrives, nothing is rate-limited.
 
 ---
 
@@ -1118,7 +1224,7 @@ Removed in revision 3 (no subscription): `store.planMonthly`, `store.planYearly`
 | Forged purchase token | Every token is checked with Google (package taken from the URL path, product id matched). Unknown → `INVALID`. |
 | Token replay or sharing across devices | **Policy:** one Google purchase may unlock **up to 10 TVs** (active bindings: re-proved via `/verify` within 30 days). This covers a household with several TVs on the same Google account (restore is legitimate and required ✔). Beyond that → `INSTALL_LIMIT`. Access and the limit use the **same** active-binding predicate, and `/entitlement` never refreshes a binding, so a freeloader that verified once and then only polls `/entitlement` loses access and frees its slot after 30 days; to stay entitled it must keep presenting the purchase token, which means keeping the purchaser's Google account on that TV. Entitlement tokens are bound to `sub = installHash`; a room only accepts a token whose `sub` matches the room's current sub. A copied entitlement token works for at most 8 h on rooms created with it; that is accepted risk. |
 | Stolen installId | It is a 128-bit secret on the TV only; the server stores only its hash. Worst case: someone gets that TV's entitlement. |
-| Refund or chargeback | `premium` and packs alike: RTDN `voidedPurchaseNotification` (productType 2) → sticky revoke (a tombstone if the token was never seen); the daily voided-purchases cron (`type=0`) is a backup; revoked rows are never pruned. Rooms drop access within 8 h at most (token TTL), or immediately on the TV's next refresh. |
+| Refund or chargeback | Packs: RTDN `voidedPurchaseNotification` → sticky revoke (a tombstone if the token was never seen); the daily voided-purchases cron is a backup; revoked rows are never pruned. Subscriptions: re-read from Google, the state decides (§3.6). Rooms drop access within 8 h at most (token TTL), or immediately on the TV's next refresh. |
 | RTDN spoofing and floods | Cheap pre-auth checks (IP limiter 120/min, header shape and length) before any crypto; OIDC JWT verified (signature, iss, aud, email, email_verified, time); body read only after auth, capped at 16 KB; `subscription` field and package name checked. Every notification is re-read from Google, never trusted as state. |
 | Replay of RTDN | `messageId` dedupe and idempotent upserts. |
 | API abuse, Google quota exhaustion | IP and install rate limits (§3.9, LRU-bounded), body caps, strict zod schemas. Google reads: 10-min positive cache and 24 h negative cache by token hash, at most 5 reads per verify with a 12 s deadline, and a global verify bucket (60/min) in the Billing DO, so RTDN and cron always keep quota headroom. |
@@ -1146,18 +1252,18 @@ Local dev (fake) needs no secrets. Local Google-mode testing uses `server/.dev.v
 **Stored**, in the Billing DO only:
 - SHA-256 of purchase tokens;
 - SHA-256 of install ids;
-- product id, state, ack and revoke flags, test flag;
+- product id, state, expiry, ack and revoke flags, test flag;
 - binding timestamps;
 - RTDN message ids (30 days);
 - raw purchase tokens only while an acknowledgement is pending or may become due (≤ 4 days after the purchase completes; ≤ 30 days for a purchase that stays pending);
-- for revoked purchases (`premium` or a pack), a permanent ~100-byte tombstone (token hash, kind, revoked flag), so a refunded purchase cannot be re-granted.
+- for revoked packs, a permanent ~100-byte tombstone (token hash, kind, revoked flag), so a refunded purchase cannot be re-granted.
 
 **Not stored:**
-- names, emails, Google account ids, order ids, prices, region codes, IPs (the rate limiter uses the IP transiently, as today).
+- names, emails, Google account ids, order ids, prices, region codes, IPs (the rate limiter uses the IP transiently, as today), `subscribeWithGoogleInfo`, cancel-survey answers.
 
 **Retention:**
 - bindings: 400 days after last seen;
-- dead purchases (`CANCELLED`, not revoked): 400 days after the last update; revoked tombstones are kept (reduced to the hash and flags);
+- dead purchases: 400 days after expiry or supersession; revoked pack tombstones are kept (reduced to the hash and flags);
 - negative-cache hashes: 24 h;
 - RTDN ids: 30 days.
 
@@ -1168,10 +1274,10 @@ Play Data safety declares, each as collected, not shared, encrypted in transit [
 The client IP is used transiently for rate limiting and not stored. PRIVACY.md (M5) mentions the install id, its purpose, that only its hash is stored, and that clearing the app's data creates a new one.
 
 ### 6.4 Refund and chargeback
-- Full refund or chargeback of `premium` or a pack → `revoked=1` (sticky; tombstone if unseen) → premium / the pack disappears from the next token (the TV shows `lobby.premiumEnded` when premium flips off in LOBBY) and can never be re-granted for that token.
-- Partial refunds (`refundType=2`) apply to multi-quantity purchases only ✔ and do not occur here (every product is non-consumable, quantity 1).
-- Voluntary refunds by the owner in Play Console (Order management) flow through the same voided notification and end access [VERIFY that a Play Console refund of a one-time product always emits `voidedPurchaseNotification` and a `voidedpurchases` entry].
-- A voided entry for a subscription cannot occur (none is sold); RTDN logs it as `RTDN_UNEXPECTED` and changes nothing (§3.6).
+- Full refund or chargeback of a pack → `revoked=1` (sticky; tombstone if unseen) → the pack disappears from the next token and can never be re-granted for that token.
+- Subscriptions: **state only.** A voided subscription notification or voided-list entry triggers a Google re-read; the server never sets `revoked` on a subscription. A refund **with** revocation shows as `EXPIRED` → premium ends. A refund of one renewal order **without** revocation leaves the subscription `ACTIVE` → premium stays (the customer keeps paying for the next periods).
+- Partial refunds (`refundType=2`) apply to multi-quantity purchases only ✔ and do not occur here; they would be handled as "re-read, state decides".
+- Voluntary refunds by the owner in Play Console flow through the same RTDN. To end a subscriber's access, the owner chooses **Refund and revoke** in Play Console; a refund alone keeps access.
 
 ---
 
@@ -1181,14 +1287,14 @@ The client IP is used transiently for rate limiting and not stored. PRIVACY.md (
 
 | File | Covers |
 |---|---|
-| `billing/products.test.ts` | `packProductId`/`packIdFromProductId` round trip for every shipped pack; rejects `pack_`, `pack_A`, `premium`; `isSellableProductId`; `PRODUCT_ID_REGEX`; `billing.products.json` fixture |
-| `billing/entitlement.test.ts` | §2.2: `purchaseOwned` for every `PURCHASE_STATES` value × revoked |
+| `billing/products.test.ts` | `packProductId`/`packIdFromProductId` round trip for every shipped pack; rejects `pack_`, `pack_A`, `premium`; `PRODUCT_ID_REGEX`; `billing.products.json` fixture |
+| `billing/entitlement.test.ts` | §2.2 table: every state × (expiry past/future) × autoRenew; slack applied only to ACTIVE+autoRenew and IN_GRACE; `packOwned` × revoked |
 | `packs/schema.test.ts` | `tier` defaults to premium; strict object still rejects unknown keys |
 | `engine/restrict.test.ts` | RESTRICT_SETTINGS: LOBBY only; same object when nothing changes; premium keys reset to the defaults; packIds filtered |
 | `projection/pool.test.ts` | `poolExhausted`: false when premium, outside LOBBY, or with any unused pair; true when every filtered playable pair is used; the view carries a boolean only |
 | `projection/leak.test.ts` (extend) | **Premium leak test:** a synthetic catalog with free tokens `zzfree0001…` and premium tokens `zzprem0001…`. Run 1,000 seeded sim games through a **free** RoomAccess (playable catalog) with settings `packIds: []`. At every step, `JSON.stringify` of the TV view and of every player view contains **no** `zzprem` token, and `lockedPacks` items have exactly the keys `id, locale, title, pairCount, ageRating, productId` |
 | `protocol/fixtures.test.ts` | the new fixtures parse (`EntitlementMsgSchema`, `StoreOpenMsgSchema`, the billing HTTP schemas, the updated views) |
-| `i18n/keys.test.ts` | the new keys exist in all four locales (en/fr/ar/es) with matching placeholders and plural forms; `error.*` exists for the 4 new codes; FR values contain no ordinary space before `! ? : ;` (all of fr.json) |
+| `i18n/keys.test.ts` | the new keys exist in all three locales with matching placeholders and plural forms; `error.*` exists for the 4 new codes; FR values contain no ordinary space before `! ? : ;` (all of fr.json) |
 
 `TEST_CATALOG` (`shared/src/testing/test-catalog.ts`): every language gets one `tier:"free"` and one `tier:"premium"` pack. Existing tests that need all packs pass a premium `RoomAccess` (or the full catalog).
 
@@ -1198,13 +1304,13 @@ The client IP is used transiently for rate limiting and not stored. PRIVACY.md (
 |---|---|
 | `billing/token.test.ts` | sign → verify round trip; wrong kid, alg, typ; extra header or payload claim; duplicate claim; reordered claims; `pu` as string or float; `exp − iat > TTL`; unsorted or duplicate `packs`; > 64 packs; non-canonical base64url (padding, `+`/`/`, trailing bits); tampered payload or signature; `exp` past; `iat` in the future (>300 s); length > 3000; kid `fake` rejected unless fake; a non-Ed25519 JWK in the keyring is rejected at parse time; rotation (verify old kid without `d`, sign new) |
 | `billing/google.test.ts` | mocked `fetch`: JWT claims exactly as in §3.7 (decode the assertion, verify the RS256 signature with the generated test key pair); form body; token cached until `expires_in − 300`; one in-flight request; 401 → refresh + retry; 5xx → one retry; per-call timeout honoured; URLs for get/ack/voided with an encoded token; thrown errors contain no URL or token; voided pagination; `ackPurchase`: 2xx → markAcked, 4xx + re-read ACKNOWLEDGED → markAcked, 4xx + re-read PENDING → kept |
-| `billing/normalize.test.ts` | `ProductPurchaseV2` samples from ✔ doc examples: PURCHASED / PENDING / CANCELLED (unspecified → CANCELLED), `purchaseCompletionTime` → `completedMs`, test purchase |
+| `billing/normalize.test.ts` | samples built from ✔ doc examples: new sub (trial, ack pending), grace, canceled-future, revoked → EXPIRED, linked token, out-of-app resubscribe (with `expiredExternalAccountIdentifiers`), `startTime`/`purchaseCompletionTime` → `completedMs`; product PURCHASED/PENDING/CANCELLED, test purchase |
 | `billing/pubsub-auth.test.ts` | locally generated RSA JWKS served by mocked fetch: valid; wrong aud, iss, email; `email_verified:false`; expired; unknown kid triggers one refetch (and at most one per 60 s); missing, oversized (> 4096) or malformed header → 401 **without** reading the body or fetching JWKS |
-| `billing/rtdn.test.ts` | parse (string and number `eventTimeMillis`); dedupe; package mismatch → 204; wrong `subscription` → 204; body > 16 KB → 413; limiter → 429; `premium` and pack one-time notifications → productsv2 get + apply + ack (obfuscated id binds lifetime premium); a product this app does not sell → 204, no row; `premium` CANCELED → premium off; **voided `premium` → revoked (sticky): premium off, a later PURCHASED read → `REVOKED`**; voided pack → revoked; unknown hash → tombstone, later `/verify` → `REVOKED`; **`subscriptionNotification` and voided productType 1 → 204 + `RTDN_UNEXPECTED`, nothing changes**; RTDN obfuscated-id binding skipped when the token already has a binding or is at the limit; test notification; Google 503 or OAuth failure → 503 and no `rtdnMark`; Google 404 → 204; failed ack → 204 with `ack_token` kept; garbage → 204 |
-| `billing/billing-core.test.ts` | SQL against `node:sqlite` (Node 22.22 ships `node:sqlite` [VERIFY flag-free in 22.22; else use a small in-memory `SqlLike` fake]): apply/bind (every row `kind='product'`); `INSTALL_LIMIT` at 11 active bindings; **a binding older than 30 days gives no access and its slot is reusable**; `entitlementFor` never refreshes `last_seen_ms`; stale `checkedMs` ignored; **a stale PURCHASED read after a stored CANCELLED row → `NOT_OWNED`, no new binding; after a revoked row → `REVOKED`**; verify after revoke → `REVOKED` (sticky `MAX`), for `premium` and packs; void before verify → tombstone → `REVOKED`; prune keeps revoked tombstones; owned `premium` → `premiumUntil` = token `exp`; packs; grant merge; `pendingAcks` uses `ack_window_start_ms` (a purchase pending 5 days then completed is still retried); `ackDue` returned for `INSTALL_LIMIT`; `invalid_tokens_v2` TTL; rate map LRU eviction at 10 000; `googleBudget` refill |
-| `billing/routes.test.ts` | verify happy path (`premium` + pack) with FakeGoogleApi; `UPSTREAM_ERROR` keeps 200; fresh cached row → no Google call; negative cache → `INVALID` with no Google call; 20 tokens → at most 5 Google reads, the rest `UPSTREAM_ERROR`; deadline exceeded → remaining `UPSTREAM_ERROR`; empty global bucket → `UPSTREAM_ERROR`; ack is sent for an `INSTALL_LIMIT` result; bad body 400; rate limit 429; catalog lists premium packs only; entitlement for an unknown install = free |
+| `billing/rtdn.test.ts` | parse (string and number `eventTimeMillis`); dedupe; package mismatch → 204; wrong `subscription` → 204; body > 16 KB → 413; limiter → 429; sub notification → get + apply + ack; one-time; voided product → revoked; voided product with unknown hash → tombstone, later `/verify` → `REVOKED`; **voided sub, `refundType` 1, Google returns ACTIVE → premium kept, `revoked` stays 0**; voided sub with Google EXPIRED → premium ends; RTDN obfuscated-id binding skipped when the token already has a binding or is at the limit; test notification; Google 503 → 503 and no `rtdnMark`; failed ack → 204 with `ack_token` kept; garbage → 204 |
+| `billing/billing-core.test.ts` | SQL against `node:sqlite` (Node 22.22 ships `node:sqlite` [VERIFY flag-free in 22.22; else use a small in-memory `SqlLike` fake]): apply/bind; `INSTALL_LIMIT` at 11 active bindings; **a binding older than 30 days gives no access and its slot is reusable**; `entitlementFor` never refreshes `last_seen_ms`; stale `checkedMs` ignored; **a stale ACTIVE read after a stored EXPIRED row → `NOT_OWNED`, no new binding; after a revoked pack → `REVOKED`**; verify after revoke → `REVOKED` (sticky `MAX`); void before verify → tombstone → `REVOKED`; prune keeps revoked tombstones; linked token: ACTIVE supersedes + copies bindings, PENDING copies without superseding, PENDING_PURCHASE_CANCELED neither and returns `refreshLinked`; out-of-app resubscribe binds via `expiredExternalAccountIdentifiers` when the old row is gone; ON_HOLD restore binds the caller, RECOVERED later grants access; `entitlementFor` premium/packs and the `subscription` selection order (access > hold/paused/pending > latest expired; superseded excluded); `pendingAcks` uses `ack_window_start_ms` (a purchase pending 5 days then completed is still retried); `ackDue` returned for `INSTALL_LIMIT`; `invalid_tokens` TTL; rate map LRU eviction at 10 000; `googleBudget` refill |
+| `billing/routes.test.ts` | verify happy path (sub + pack) with FakeGoogleApi; `UPSTREAM_ERROR` keeps 200; fresh cached row → no Google call; negative cache → `INVALID` with no Google call; 20 tokens → at most 5 Google reads, the rest `UPSTREAM_ERROR`; deadline exceeded → remaining `UPSTREAM_ERROR`; empty global bucket → `UPSTREAM_ERROR`; ack is sent for an `INSTALL_LIMIT` result; bad body 400; rate limit 429; catalog lists premium packs only; entitlement for an unknown install = free |
 | `billing/mode.test.ts` | fake mode on only when all 4 conditions hold; each single failure → google or `NOT_CONFIGURED`; `check-deploy.mjs` rejects non-google vars |
-| `billing/cron.test.ts` | dispatch on `controller.cron` (fake env → prune only); voided window and cursor; voided `premium` and packs → sticky revoke, unknown tokens → tombstone, no Google re-read; a 5xx or auth failure stops paging without moving the cursor; hourly ack retries; `BILLING_ACK_OVERDUE` after 48 h |
+| `billing/cron.test.ts` | dispatch on `controller.cron`; voided window and cursor; pack → revoke; sub → re-read only, never revoke; unknown hash + one-time product → tombstone; unknown hash + 404 → skip; hourly ack retries; `BILLING_ACK_OVERDUE` after 48 h; `BILLING_SUB_STALE` count |
 | `billing/log.test.ts` | §3.9 redaction: no token, token hash, install id/hash, 64-hex or `tokens/` string reaches `console.*` on any billing path |
 | `access.test.ts` | `roomAccess` time edges; `playableCatalog`; `lockedPacks` metadata-only; `restrictionFor` |
 | `room-core.access.test.ts` | createRoom with valid, invalid or no token; fake-kid token accepted only with `billingMode:"fake"` and fake env, rejected with prod config; `storeOpen` from a player → `NOT_AUTHENTICATED`; phone START while `tvBusy` → `TV_BUSY`; busy flag cleared on TV close, phase change and alarm; `entitlement` WS message from a player → `NOT_AUTHENTICATED`; sub mismatch / older iat → `ENTITLEMENT_INVALID`; upgrade mid-lobby broadcasts `premium:true`; `PACK_LOCKED`/`PREMIUM_REQUIRED` pre-checks; **expiry mid-game: the game finishes with its pair, the restriction applies in LOBBY**; alarm scheduled at `changesAt`; hibernation reload keeps `meta.entitlement`; VIP reassignment leaves entitlement unchanged |
@@ -1240,24 +1346,31 @@ Do these in order. Items marked [VERIFY] come from third-party summaries or bloc
 3. Complete **identity verification**: legal name and address matching a government ID, plus a verified email and phone. Personal accounts need no D-U-N-S number [VERIFY].
 4. Answer the developer questions (experience, number of apps, monetisation: "in-app purchases").
 5. **Payments profile:** Play Console → Settings → Payments profile → create or link one. Pick the country of your bank account; MONETIZATION.md recommends the French one for easier payouts; Lebanon is a listed merchant country [VERIFY]. Add the bank account and confirm the test deposit.
-6. **Service fee:** enrol in the **15% service fee tier** (Play Console → Settings → Developer account → Account groups / Service fee program) [VERIFY the menu path]. Every product here is one-time, so the tier matters for all of them.
+6. **Service fee:** enrol in the **15% service fee tier** (Play Console → Settings → Developer account → Account groups / Service fee program) [VERIFY the menu path]. Subscriptions are 15% anyway.
 7. **Verify a physical Android device** with the **Play Console mobile app** (required for new personal accounts) [VERIFY the current requirement on the signup checklist]. An Android phone is enough; the TV is not needed for this step.
-8. **EU Digital Services Act trader status:** Play Console → Account details → declare whether you are a **trader**. Selling Premium and packs makes you a trader for EU purposes; as a trader, Google Play shows your **name, address, phone number and email publicly** on the store listing to EU users. For a personal account that is your own address, so consider a business address, a domiciliation address or a PO box first [VERIFY the exact wording and which fields are shown in Play Console].
+8. **EU Digital Services Act trader status:** Play Console → Account details → declare whether you are a **trader**. Selling subscriptions and packs makes you a trader for EU purposes; as a trader, Google Play shows your **name, address, phone number and email publicly** on the store listing to EU users. For a personal account that is your own address, so consider a business address, a domiciliation address or a PO box first [VERIFY the exact wording and which fields are shown in Play Console].
 9. **New personal accounts must run a closed test before production:** at least **12 testers opted in for 14 continuous days**. This applies to personal accounts created after 2023-11-13; the tester count went from 20 to 12 in Dec 2024 (third-party summaries; Google's page was blocked here → [VERIFY]). Recruit 12+ testers early (friends, a Google Group). They also serve as purchase testers.
 
 **B. App and billing in Play Console**
 1. Create the app: name "JAMAA", default language, App, Free (in-app purchases are allowed in free apps), declarations.
 2. Fill **App content**: privacy policy URL (M5), ads = none, content rating questionnaire, target audience (13+, so that Families policy is avoided [VERIFY with the owner]), **Data safety** (§6.3), and the **TV** form factor (Release → Advanced settings → Form factors → Android TV; TV screenshots and banner are needed for review).
 3. Build a release AAB with the billing library (B's work) and upload it. `assembleRelease`/`bundleRelease` refuse to build until `jamaa.prodServerUrl` in `tv-app/gradle.properties` (or `-PserverUrl=`) is the deployed `https://` Worker origin (docs/TV.md → Production server URL). The URL is known before the first deploy: `https://play.<your-workers-subdomain>.workers.dev` (Worker `name` in `wrangler.jsonc`) or your custom domain. Upload it to **Internal testing** (and to the closed test track for A.9). Billing products can be created only after an APK/AAB with the BILLING permission is uploaded [VERIFY; it was true historically].
-4. **License testers:** Settings → License testing → add the testers' Gmail addresses. License testers get test payment methods ✔ (developer.android.com/google/play/billing/test), including "slow test card, approves after a few minutes" (pending → purchased) and "always declines"; an unacknowledged **one-time** purchase is auto-refunded after **3 min** ✔ (the server acks immediately on `/verify`, so this only shows up when the Worker is misconfigured). Test purchases are flagged `test=1`. A license tester can buy `premium` again after a refund in Order management; a non-consumable cannot be bought twice while owned (`ITEM_ALREADY_OWNED` → restore).
-5. **No subscription.** Do **not** create anything under Products → Subscriptions: no subscription, no base plans, no offers (revision 3).
-6. **One-time products only:** Monetize with Play → Products → One-time products → Create, for each row of `pnpm --silent --filter @jamaa/server billing:products` (CSV: `productId,kind,priceUsd,pairs,packId,locale,titleEn,titleFr,titleAr`; `premium` first, then 14 packs today):
-   - **first `premium`**: product id `premium`, name "JAMAA Premium" (description: all word packs, new packs included, custom scoring; one-time, no subscription), non-consumable, one purchase option (buy), price **US$7.99** ("Set prices" → Play converts per country; adjust LB/ME by hand if wanted). **Activate.** Launch promo: a Play Console **sale** (or a temporary price change) to **US$5.99** on `premium`; end it in Play Console. Never a second product, never code;
-   - then each pack: product id `pack_en_food_01` etc.; name = English title (add the FR/AR/ES translations); one purchase option (buy), price from the CSV (**US$1.99**, or **US$2.99** for ≥ 60 pairs). **Activate.**
+4. **License testers:** Settings → License testing → add the testers' Gmail addresses. License testers get test payment methods and shortened timings ✔ (developer.android.com/google/play/billing/test): renewals monthly = 5 min, yearly = 30 min; free trial = 3 min; grace period 5 min; account hold 10 min; test subscriptions renew at most 6 times; an unacknowledged **one-time** purchase is refunded after 3 min, an unacknowledged **subscription** after 5 min.
+5. **Subscription:** Monetize with Play → Products → Subscriptions → Create subscription:
+   - Product ID `jamaa_pass`, name "JAMAA Pass" (benefits: "Every pack of every game", "New packs and games included", "Custom scoring").
+   - Add base plan `monthly`: auto-renewing, billing period 1 month, set prices (use "Set prices" → per-country, ~40% lower in LB/ME), grace period default, account hold default. **Activate.**
+   - Add base plan `yearly`: auto-renewing, 1 year, prices. **Activate.**
+   - Add offer `trial-7d` on `monthly`: eligibility "New customer acquisition → Never had this subscription", phase "Free trial", duration 7 days. **Activate.** Repeat on `yearly` (same offer id).
+   - Subscription settings: turn **Pause off**. Keep Resubscribe on.
+6. **One-time products:** Monetize with Play → Products → One-time products → Create, for each row of `pnpm --silent --filter @jamaa/server billing:products` (CSV: `productId,packId,locale,titleEn,titleFr,titleAr`; 14 packs today):
+   - product id `pack_en_food_01` etc.;
+   - name = English title (add the FR/AR translations);
+   - one purchase option (buy), price ~US$1.99–2.99.
+   - **Activate.**
 7. **RTDN** (after sections C and D: the Worker must be deployed with the `RTDN_*` vars, or the push answers 503 `NOT_CONFIGURED`): Monetize with Play → Monetization setup → Real-time developer notifications:
    - enable;
    - Topic name `projects/<PROJECT_ID>/topics/play-rtdn`;
-   - choose **"Get all notifications for subscriptions and one-time products"** ✔ (the Play label; we need the one-time-product notifications, and no subscription exists);
+   - choose **"Get all notifications for subscriptions and one-time products"** ✔;
    - **Send test message** ✔, then Save.
 
 **C. Google Cloud (Play Developer API + Pub/Sub)** — `gcloud` CLI flags ✔ verified with `gcloud … --help`:
@@ -1300,18 +1413,20 @@ npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json   # stdin i
   - `RTDN_SUBSCRIPTION`: `projects/jamaa-billing/subscriptions/play-rtdn-push`;
   - keep `BILLING_MODE:"google"`, `ALLOW_FAKE_BILLING:"0"`.
 - Replace the ratelimit `namespace_id`s with unique account values.
-- `SUPPORT_EMAIL` in `shared/src/billing/products.ts` is set (`alexkhoury@hotmail.com`); use the same address on the Play listing.
-- From the repo root, `pnpm run deploy` (always `run`: bare `pnpm deploy` is pnpm's built-in command, not the script): this builds, runs pack-lint `--release` (starter packs ≥ 40 pairs; the three `*-everyday-01` packs have 24 today, so the deploy fails until they grow), `check-deploy.mjs` (`BILLING_MODE:"google"`, `ALLOW_FAKE_BILLING:"0"`, traces off, no `env` block), and `secrets.required` blocks a deploy with missing secrets ✔.
+- Set `SUPPORT_EMAIL` in `shared/src/billing/products.ts` (the same address as the Play listing).
+- From the repo root, `pnpm run deploy` (always `run`: bare `pnpm deploy` is pnpm's built-in command, not the script): this builds, runs content-lint `--release` (starter packs ≥ 40 pairs; the three `*-everyday-01` packs have 24 today, so the deploy fails until they grow), `check-deploy.mjs` (`BILLING_MODE:"google"`, `ALLOW_FAKE_BILLING:"0"`, traces off, no `env` block), and `secrets.required` blocks a deploy with missing secrets ✔.
 - Then send the Play Console **test RTDN** (B.7). The Worker logs `{code:"RTDN_TEST"}`.
-- In the Cloudflare dashboard → Workers → Observability, create alerts (or a saved query you check weekly) on the codes `BILLING_ACK_OVERDUE`, `BILLING_ACK_REJECTED`, `BILLING_AUTH`, `BILLING_BUDGET`, `BILLING_INSTALL_SHARED`, `RTDN_AUTH`, `RTDN_UNEXPECTED` [VERIFY alerting availability on your plan].
+- In the Cloudflare dashboard → Workers → Observability, create alerts (or a saved query you check weekly) on the codes `BILLING_ACK_OVERDUE`, `BILLING_ACK_REJECTED`, `BILLING_AUTH`, `BILLING_BUDGET`, `BILLING_SUB_STALE`, `RTDN_AUTH` [VERIFY alerting availability on your plan].
 
 **E. End-to-end on a real Google TV (closed or internal test install from Play)**
 1. Sign in to the TV with a **license tester** account and install from the internal test link.
-2. **Buy Premium:** Store → **Unlock Premium** → test card "always approves" → `premium` on; the room unlocks without a new code; `store.premiumActive` shows and the button is gone. Check the Worker logs for no `BILLING_ACK_REJECTED` and wait 5 min: premium stays on (acknowledged, so no 3-min auto-refund).
-3. **Pending:** buy a pack with "slow test card, approves after a few minutes" → `store.pending` on the card + `store.pendingBody` → unlocks later ✔ (test instruments). Repeat once on a second tester for `premium` (pending chip on the Unlock button).
+2. Store → yearly trial → Test card "always approves" → premium on; the room unlocks without a new code. Wait about 3 min: the trial converts; check `premium` stays on.
+3. Buy a pack with "slow test card, approves after a few minutes" → Pending shown → unlocks later ✔ (test instruments).
 4. Refund the pack in Play Console → Order management → it disappears within seconds (RTDN) or by the next daily cron.
-5. **Restore:** reinstall the app or use a second TV on the same account → Restore purchases → premium restored (`store.restored`).
-6. **Refund Premium** (last, it ends the tester's premium): refund `premium` in Order management → the server revokes it within seconds (RTDN; the daily cron is the backup); the TV drops premium at its next refresh (open the Store, or resume the app; ≤ 8 h) and in LOBBY shows `lobby.premiumEnded`; the next game falls back to the free pack; the Store shows Unlock again. Restore on the second TV no longer grants premium (`REVOKED`).
+5. Refund **one renewal** of the subscription **without** revoking → premium stays on. Then "Refund and revoke" → premium ends (state `EXPIRED`).
+6. Cancel the subscription via Manage subscription → `endsOn` is shown; after expiry the next game falls back to the free pack and the TV shows `lobby.premiumEnded`.
+7. Reinstall the app or use a second TV on the same account → Restore purchases → premium restored.
+8. With a test card that declines renewals, let the subscription enter grace (5 min) and hold (10 min): the Store shows `store.fixPayment`, Fix payment opens Play, no plan buttons are shown on hold.
 
 ---
 
@@ -1319,7 +1434,7 @@ npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json   # stdin i
 
 | Implementer | Writes | Must not touch |
 |---|---|---|
-| **A** | `shared/src/billing/**` (new), `shared/src/{constants,engine/*,packs/schema.ts,projection/project.ts,protocol/*,testing/*,i18n/index.ts}`, `shared/i18n/{en,fr,ar,es}.json` (§4.7 keys), `shared/fixtures/**` + `scripts/gen-fixtures.ts`, `shared/package.json` (`./billing` export), `server/**` (incl. `wrangler.jsonc`, `scripts/*`, `package.json` scripts `gen:entitlement-key`, `billing:products`, `deploy` = `node scripts/check-deploy.mjs && wrangler deploy`), `word-packs/packs/*/*-everyday-01.json` (`tier:"free"`), `word-packs/test/**`, `tools/pack-lint/**`, `tools/dev.mjs` (fake vars), `tools/sim/**` (adapt to the RoomCore deps), generated `tv-app/app/src/main/res/values*/strings_generated.xml` + `tv-app/app/src/main/java/app/jamaa/tv/i18n/I18nKeys.kt` (run `pnpm gen:strings`), `.gitignore` (`.dev.vars*`), `docs/DEV.md` (fake billing + secrets section), root `package.json` `deploy` script (§1.5), `eslint.config.*` (billing `no-console`, Room secret rule), `docs/DESIGN.md` (only the §4.7 DESIGN deltas) | `tv-app/**` source, `web-client/**` |
+| **A** | `shared/src/billing/**` (new), `shared/src/{constants,engine/*,packs/schema.ts,projection/project.ts,protocol/*,testing/*,i18n/index.ts}`, `shared/i18n/{en,fr,ar,es}.json` (§4.7 keys), `shared/fixtures/**` + `scripts/gen-fixtures.ts`, `shared/package.json` (`./billing` export), `server/**` (incl. `wrangler.jsonc`, `scripts/*`, `package.json` scripts `gen:entitlement-key`, `billing:products`, `deploy` = `node scripts/check-deploy.mjs && wrangler deploy`), `content/packs/*/*-everyday-01.json` (`tier:"free"`), `content/test/**`, `tools/content-lint/**`, `tools/dev.mjs` (fake vars), `tools/sim/**` (adapt to the RoomCore deps), generated `tv-app/app/src/main/res/values*/strings_generated.xml` + `tv-app/app/src/main/java/app/jamaa/tv/i18n/I18nKeys.kt` (run `pnpm gen:strings`), `.gitignore` (`.dev.vars*`), `docs/DEV.md` (fake billing + secrets section), root `package.json` `deploy` script (§1.5), `eslint.config.*` (billing `no-console`, Room secret rule), `docs/DESIGN.md` (only the §4.7 DESIGN deltas) | `tv-app/**` source, `web-client/**` |
 | **B** | `tv-app/**` except the generated files above; `docs/TV.md` (billing testing: license testers, fake toggle) | everything else |
 | **C** | `web-client/**` (screens, tv-mock store, net/api additions, e2e `payments.spec.ts`, `playwright.config.ts` vars) | everything else |
 
@@ -1342,9 +1457,6 @@ npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json   # stdin i
 ---
 
 ## 10. Sources (fetched 2026-10-04)
-
-Revision 2 sources, kept as history; the subscription-related items no longer apply (revision 3 calls only `productsv2`, `products.acknowledge` and `voidedpurchases`).
-
 - Play Billing Library: integrate guide, release notes (9.1.0 = 2026-06-18; 9.0.0; 8.x), reference pages for `BillingClient`, `BillingClient.Builder`, `PendingPurchasesParams.Builder`, `QueryProductDetailsParams.Product.Builder`, `ProductDetails` (+`SubscriptionOfferDetails`, `OneTimePurchaseOfferDetails`, `PricingPhase`), `QueryProductDetailsResult`, `UnfetchedProduct(.StatusCode)`, `BillingFlowParams.Builder`, `BillingFlowParams.ProductDetailsParams.Builder`, `Purchase`, `Purchase.PurchaseState`, `AccountIdentifiers`, `QueryPurchasesParams.Builder`, `PurchasesResponseListener`, `PurchasesUpdatedListener`, `ProductDetailsResponseListener`, `BillingClientStateListener`, `BillingClient.BillingResponseCode`, `BillingClient.ProductType`, `BillingClient.FeatureType`. All at developer.android.com/google/play/billing/* and developer.android.com/reference/com/android/billingclient/api/*.
 - Subscription lifecycle, RTDN reference, getting-ready (RTDN setup, `google-play-developer-notifications@system.gserviceaccount.com`), subscriptions (deep link), testing (license testers and renewal times), security (obfuscated id check): developer.android.com/google/play/billing/{lifecycle/subscriptions, rtdn-reference, getting-ready, subscriptions, test, security}.
 - Google Play Developer API v3 discovery document, revision 20261001: `purchases.subscriptionsv2.{get,cancel,revoke,defer}`, `purchases.productsv2.getproductpurchasev2`, `purchases.subscriptions.acknowledge`, `purchases.products.{get,acknowledge,consume}`, `purchases.voidedpurchases.list`; schemas `SubscriptionPurchaseV2`, `ProductPurchaseV2`, `VoidedPurchase`; product/base plan/offer id rules; scope `androidpublisher`.
@@ -1386,7 +1498,7 @@ The review findings were applied as follows. "Applied" means the fix is in the r
 | M15 | Silent downgrade: `lobby.premiumEnded` (TV) / `lobby.premiumEndedPhone` (VIP), shown once per flip; e2e test 4 asserts them | §4.4, §4.7, §5.1, §5.3 |
 | M16 | Billing-unavailable/offline: Store state machine (Loading/Ready/Unavailable), Try again, actionable `store.playUnavailable`, locked rows show `settings.locked`, catalog fallback from `lockedPacks`, missing premium product handled | §4.4, §4.6, §4.7, §4.9 |
 | M17 | AR/FR register: AR buttons as nouns, phone keys in noun/impersonal form, separate TV toasts `tv.packLocked`/`tv.premiumRequired`; owner reviews all AR | §4.3, §4.4, §4.7 |
-| M18 | Free tier generosity: ≥ 40 starter pairs is a release gate (`pack-lint --release` in `pnpm run deploy`); `poolExhausted` view flag + `lobby.wordsRepeating` toast | §1.2, §1.5, §3.11, §4.4, §4.7 |
+| M18 | Free tier generosity: ≥ 40 starter pairs is a release gate (`content-lint --release` in `pnpm run deploy`); `poolExhausted` view flag + `lobby.wordsRepeating` toast | §1.2, §1.5, §3.11, §4.4, §4.7 |
 
 **Minors**
 | # | Finding | Decision |
@@ -1435,3 +1547,22 @@ The review findings were applied as follows. "Applied" means the fix is in the r
 Superseded revision-2 items: B1 (voided subscription must not revoke), M7 (linked tokens), M10 (suspended subscriptions / Fix payment), M13's disclosure paragraph, m6 (bind on hold), m7 (out-of-app resubscribe), m9's `BILLING_SUB_STALE`, m14 (subscription selection order) and the renewal reasoning of R-12 no longer apply: there is no subscription.
 
 **New [VERIFY] items introduced by revision 3:** `voidedpurchases` `type=0` returns voided **non-consumable** one-time products (not only consumables); a Play Console refund of a one-time product always emits `voidedPurchaseNotification` and a voided-list entry.
+
+## Appendix: Review log (revision 4, 2026-11-08)
+
+**Owner decisions 2026-11-08:** the platform is JAMAA; pricing is the **JAMAA Pass** subscription (monthly + yearly, 7-day trial) unlocking every game's packs and premium settings, product id `jamaa_pass`, behind `BILLING_ENABLED`; packs are one-time per content family; Spanish is a full language. JAMAA-PLATFORM §4 is binding; this revision describes the restored and renamed code.
+
+| Area | Change | Where |
+|---|---|---|
+| Restore | Revision-3 commits reversed whole (`78e9a01` server/shared/i18n, `20c5988` TV, `adfd142` `/tv` mock), conflicts resolved toward the subscription, then the rename | JAMAA-PLATFORM §4.2 |
+| Catalog | `jamaa_pass` subscription; `PASS_PRODUCT_ID`; families; `familyFromProductId`; `isSellableProductId`; catalog rows carry `gameId` and `family`; CSV with a Pass row and one row per family | §R4.2, §R4.3, §R4.8, §R4.9 |
+| Token | `iss: "jamaa"`; `pu` from the Pass line items; `packs` = families | §R4.4 |
+| Rooms | per-game `playableContent`, `PACK_LOCKED` by family, `PREMIUM_REQUIRED` per game's `premiumKeys`, restriction of the setup game (SETUP) or every game (HUB) | §R4.5 |
+| Free tier | every game free to play with starter content; `es-everyday-01` joins the starter packs; draft free content fails the release gate | §R4.6 |
+| Switches | `BILLING_ENABLED` unchanged; `GAMES_ENABLED` added (rollout only) | §R4.7 |
+| Docs | BILLING-LAUNCH (Pass setup, phase 4: turning on a game), DEV (fake Pass curl, switches) | BILLING-LAUNCH.md, DEV.md |
+
+Revision-3 items superseded: the lifetime `premium` product, `PURCHASE_STATES`-only entitlement, the one-time-only RTDN handling (`RTDN_UNEXPECTED`), the "Refund Premium" mock control and the US$7.99 / US$5.99 prices. Revision 2's subscription items (B1, M7, M10, M13, m6, m7, m9, m14, R-12) apply again with the Pass id.
+
+**[VERIFY] carried over:** the Play Console subscription UI labels used in §8; Google's silent 24 h grace (`SILENT_GRACE_MS`, §2.2) and whether `expiryTime` moves during it.
+

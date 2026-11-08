@@ -52,10 +52,9 @@ import app.jamaa.tv.game.Names
 import app.jamaa.tv.i18n.isolate
 import app.jamaa.tv.protocol.ClientIntent
 import app.jamaa.tv.protocol.GuessStatus
-import app.jamaa.tv.protocol.HostAdvance
-import app.jamaa.tv.protocol.HostOverrideGuess
-import app.jamaa.tv.protocol.TvView
-import app.jamaa.tv.protocol.player
+import app.jamaa.tv.games.mishana.MishanaTv
+import app.jamaa.tv.games.mishana.MishanaView
+import app.jamaa.tv.games.mishana.player
 import app.jamaa.tv.ui.components.ActionPill
 import app.jamaa.tv.ui.components.Avatar
 import app.jamaa.tv.ui.components.AvatarState
@@ -79,7 +78,7 @@ import app.jamaa.tv.ui.theme.JamaaTheme
  * aloud and the host overrides from what was heard. The room light drops (AppRoot darkens the background).
  */
 @Composable
-fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> Unit) {
+fun BlankGuessScreen(view: MishanaView, clockOffsetMs: Long, send: (ClientIntent) -> Unit) {
     val type = JamaaTheme.type
     val pill = remember { FocusRequester() }
     val overrideButton = remember { FocusRequester() }
@@ -131,7 +130,7 @@ fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
                 }
                 ActionPill(
                     stringResource(if (status == GuessStatus.PENDING) R.string.guess__skip else R.string.common__continue),
-                    { send(HostAdvance) },
+                    { send(MishanaTv.hostAdvance()) },
                     pill,
                     Modifier.onFocusChanged { if (it.hasFocus) lastOnOverride[0] = false },
                 )
@@ -232,7 +231,7 @@ fun BlankGuessScreen(view: TvView, clockOffsetMs: Long, send: (ClientIntent) -> 
             actionLabel = stringResource(if (accept) R.string.guess__accept else R.string.guess__reject),
             onSafe = { confirm = false },
             onAction = {
-                send(HostOverrideGuess(accept = accept))
+                send(MishanaTv.hostOverrideGuess(accept = accept))
                 confirm = false
             },
             // Accepting a wrong guess hands the Blank the win; rejecting a right one takes it away: both change the

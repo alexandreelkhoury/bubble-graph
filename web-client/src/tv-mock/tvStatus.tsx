@@ -5,6 +5,7 @@ import type { TvRoomView } from "@jamaa/shared/protocol/v2";
 import { isolate, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { pushToast } from "../state/store";
+import { soundCue } from "./sound/controller";
 import { Icon } from "../components/Icon";
 import { tvConn, tvCreateRoom, tvDownSince, tvPaused, tvUi, tvWake } from "./tvStore";
 import { useInitialFocus } from "./dpad";
@@ -73,8 +74,14 @@ export function usePresenceToasts(view: TvRoomView | null): void {
   useEffect(() => {
     const p = prev.current;
     prev.current = view;
-    if (!p || !view || p.room.roomCode !== view.room.roomCode || view.room.phase === "HUB") return;
+    if (!p || !view || p.room.roomCode !== view.room.roomCode) return;
     const before = new Map(p.room.members.map((x) => [x.id, x]));
+    // §3.11 reaction_pop: a new REACT (reaction.n moved) on any member.
+    if (view.room.members.some((x) => x.reaction && x.reaction.n !== before.get(x.id)?.reaction?.n)) soundCue("reaction_pop");
+    // §3.10 D crown_drop: the cup leader changed.
+    const lead = (v: TvRoomView): string | null => Object.entries(v.room.cup.stars).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+    if (lead(view) !== null && lead(view) !== lead(p)) soundCue("crown_drop");
+    if (view.room.phase === "HUB") return;
     const after = new Set(view.room.members.map((x) => x.id));
     for (const x of view.room.members) {
       const b = before.get(x.id);

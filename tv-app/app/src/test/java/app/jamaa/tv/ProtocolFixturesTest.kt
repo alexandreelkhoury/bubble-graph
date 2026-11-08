@@ -1,5 +1,6 @@
 package app.jamaa.tv
 
+import app.jamaa.tv.billing.Products
 import app.jamaa.tv.protocol.CatalogResponse
 import app.jamaa.tv.protocol.CreateRoomRequest
 import app.jamaa.tv.protocol.CreateRoomResponse
@@ -240,9 +241,9 @@ class ProtocolFixturesTest {
             return v
         }
         val catalog = strict("http.billing.catalog.response.json", CatalogResponse.serializer())
-        assertEquals("premium", catalog.subscription.productId)
+        assertEquals(Products.PASS_PRODUCT_ID, catalog.subscription.productId)
         assertEquals(listOf("monthly", "yearly"), catalog.subscription.basePlanIds)
-        assertEquals(3, catalog.freePackIds.size)
+        assertEquals(4, catalog.freePackIds.size) // en, fr, ar, es
         val verify = strict("http.billing.verify.response.json", VerifyResponse.serializer())
         assertEquals(1790028800000L, verify.entitlement.expiresAt)
         assertTrue(verify.entitlement.subscription!!.inTrial)

@@ -179,6 +179,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     /** The hub carousel's local focus (instant; the server's `focusedGameId` follows after the debounce). */
     val focusedGameId: StateFlow<String?> = _focusedGameId.asStateFlow()
     private var hubFocusJob: Job? = null
+    private var hubFocusSent: String? = null
 
     private val _moment = MutableStateFlow<ActiveMoment?>(null)
 
@@ -358,6 +359,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         genericDraftGame = null
         hubFocusJob?.cancel()
         hubFocusJob = null
+        hubFocusSent = null
         _focusedGameId.value = null
         portalsPlayed.clear()
         lastPlayedGameId = null
@@ -409,7 +411,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 }
                 // OPEN_GAME refused (GAME_UNAVAILABLE…) while our portal plays: the hub stays (the portal is dropped).
                 val m = _moment.value
-                if (m != null && m.moment.id.startsWith("portal") && currentView()?.room?.phase == RoomPhase.HUB) {
+                if (m != null && m.moment.id in OPEN_PORTALS && currentView()?.room?.phase == RoomPhase.HUB) {
                     _moment.value = null
                     gate.reset()
                     gate.becameInteractive()
@@ -425,6 +427,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         val to = after.room.phase
         val reduced = _motion.value.reduced
         if (_focusedGameId.value == null) _focusedGameId.value = after.room.focusedGameId
+        if (after.room.focusedGameId == hubFocusSent || to != RoomPhase.HUB) hubFocusSent = null
         if (from != to) {
             // Overlays belong to the screen they opened on: entering a game closes them all; leaving one closes the
             // game's menus; hub ↔ setup closes the rules sheet and the hub dialogs.
@@ -443,20 +446,27 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 val id = after.room.setupGameId
                 val running = _moment.value
                 // Our own OK already started this portal (openGame): keep it.
-                if (running == null || running.gameId != id || !running.moment.id.startsWith("portal")) {
+                if (running == null || running.gameId != id || running.moment.id !in OPEN_PORTALS) {
                     startMoment(Moments.portal(id !in portalsPlayed, reduced), id)
+                    playCue(CuePlay(Cue.PORTAL_OPEN))
                 }
                 id?.let { portalsPlayed += it }
             }
-            from == RoomPhase.SETUP && to == RoomPhase.HUB -> startMoment(Moments.portalBack(reduced), before.room.setupGameId)
+            from == RoomPhase.SETUP && to == RoomPhase.HUB -> {
+                startMoment(Moments.portalBack(reduced), before.room.setupGameId)
+                playCue(CuePlay(Cue.PORTAL_CLOSE))
+            }
             to == RoomPhase.PLAYING && (from != RoomPhase.PLAYING || before.game?.n != after.game?.n) -> {
                 lastPlayedGameId = after.game?.gameId ?: lastPlayedGameId
                 startMoment(Moments.entrance(reduced), after.game?.gameId)
+                // The sting plays in calm motion too (sound is not motion); the door opens at 250 ms.
+                SoundCues.worldSting(after.game?.gameId)?.let { playCue(CuePlay(it, delayMs = if (reduced) 0L else 250L)) }
             }
             to == RoomPhase.PLAYING && before?.game?.over == false && after.game?.over == true -> {
                 finishedGames++
                 val gained = after.room.cup.stars.values.sum() - (before.room.cup.stars.values.sum())
                 startMoment(Moments.cup(gained, reduced), after.game.gameId)
+                for (i in 0 until minOf(gained, 10)) playCue(CuePlay(Cue.CUP_STAR, SoundCues.semitones(i), delayMs = 70L * i))
                 overlayStack.closeAll { it == Overlay.PauseMenu || it == Overlay.AbortConfirm || it is Overlay.PauseItemConfirm }
                 publishOverlays()
             }
@@ -473,8 +483,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     /** Toast-worthy differences between two consecutive views, emitted whichever screen is showing. */
     private fun announce(before: RoomView?, beforeGame: GameView?, after: RoomView, game: GameView?) {
         val now = deps.clock()
-        // JAMAA-GAP: `reaction_pop` comes from lane D's gen-sounds (not generated yet); a high join blip stands in.
-        for (id in reactions.update(after.room.members, now)) playCue(CuePlay(Cue.JOIN, 1.5f))
+        for (id in reactions.update(after.room.members, now)) playCue(CuePlay(Cue.REACTION_POP))
         for (e in diffMembers(before?.room, after.room)) _events.tryEmit(TvEvent.Game(e))
         for (c in SoundCues.memberCues(before?.room, after.room)) playCue(c)
         val mvBefore = (beforeGame as? MishanaGameView)?.view
@@ -597,7 +606,11 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         hubFocusJob = viewModelScope.launch {
             delay(Constants.HUB_FOCUS_DEBOUNCE_MS)
             val r = room() ?: return@launch
-            if (r.phase == RoomPhase.HUB && r.focusedGameId != gameId) send(HubFocus(gameId))
+            // Compare with what the server has, or with our last message it has not echoed yet.
+            if (r.phase == RoomPhase.HUB && gameId != (hubFocusSent ?: r.focusedGameId)) {
+                send(HubFocus(gameId))
+                hubFocusSent = gameId
+            }
         }
     }
 
@@ -608,6 +621,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         hubFocusJob?.cancel()
         send(OpenGame(gameId))
         startMoment(Moments.portal(gameId !in portalsPlayed, _motion.value.reduced), gameId)
+        playCue(CuePlay(Cue.PORTAL_OPEN))
         portalsPlayed += gameId
     }
 
@@ -936,6 +950,9 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     }
 
     companion object {
+        /** The hub → setup portal variants (not the reverse portal). */
+        val OPEN_PORTALS: Set<String> = setOf("portal", "portal.repeat", "portal.reduced")
+
         const val SETTINGS_DEBOUNCE_MS = 300L
         const val SETTINGS_FALLBACK_MS = 1_500L
 

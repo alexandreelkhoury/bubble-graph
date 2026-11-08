@@ -114,6 +114,8 @@ export function ResultsBar({ view }: { view: TvRoomView }) {
     if (!shown) return;
     if (reduced() || flights.length === 0) { setReady(true); armGuard(); return; }
     const el = root.current;
+    soundCue("coin_fly");
+    const tickAt = setTimeout(() => soundCue("counter_tick"), 450 + 70 * (flights.length - 1));
     const r = run(POINTS, (p) => {
       el?.querySelectorAll<HTMLElement>(".tvflight").forEach((f, i) => f.style.setProperty("--p", String(p("coin", i))));
       el?.style.setProperty("--tick", String(p("counter")));
@@ -123,7 +125,7 @@ export function ResultsBar({ view }: { view: TvRoomView }) {
       });
     }, () => { setChoreo(null); setReady(true); armGuard(); soundCue("cup_star"); }, flights.length);
     setChoreo(r);
-    return () => { r.cancel(); setChoreo(null); };
+    return () => { clearTimeout(tickAt); r.cancel(); setChoreo(null); };
   }, [shown]);
   useEffect(() => {
     if (!ready) return;

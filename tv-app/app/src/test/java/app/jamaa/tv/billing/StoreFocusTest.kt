@@ -38,7 +38,7 @@ class StoreFocusTest {
     fun entryPoints() {
         val s = ready()
         assertEquals(StoreFocusTarget.Plan("yearly"), focus(s))
-        assertEquals(StoreFocusTarget.Plan("yearly"), focus(s, StoreEntry("premium", StoreOrigin.LOCKED_SETTING)))
+        assertEquals(StoreFocusTarget.Plan("yearly"), focus(s, StoreEntry("jamaa_pass", StoreOrigin.LOCKED_SETTING)))
         assertEquals(StoreFocusTarget.Pack("pack_en_food_01"), focus(s, StoreEntry("pack_en_food_01", StoreOrigin.LOCKED_PACK)))
         // A product the Store does not list falls back to the Premium card.
         assertEquals(StoreFocusTarget.Plan("yearly"), focus(s, StoreEntry("pack_zz_01", StoreOrigin.LOCKED_PACK)))
@@ -65,7 +65,7 @@ class StoreFocusTest {
 
     @Test
     fun noPremiumProductFocusesTheFirstPackCard() {
-        val noSub = allProducts.copy(subs = emptyMap(), unfetched = mapOf("premium" to 3))
+        val noSub = allProducts.copy(subs = emptyMap(), unfetched = mapOf("jamaa_pass" to 3))
         val s = ready(products = noSub)
         assertEquals(PremiumCard.NoProduct, StoreModel.premiumCard(s, now))
         assertEquals(StoreFocusTarget.Pack("pack_en_food_01"), focus(s))

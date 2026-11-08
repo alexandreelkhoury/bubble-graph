@@ -35,13 +35,15 @@ class FakeSocket implements SocketLike {
   msg(o: unknown) { this.h.message(JSON.stringify(o)); }
 }
 
-const SETTINGS = {};
 function playerView(me: { id: string } | null, seq = 1) {
   return {
-    v: 1, t: "state", seq, serverNow: Date.now(),
+    v: 2, t: "state", seq, serverNow: Date.now(),
     view: {
-      kind: "player", roomCode: "KXQP", phase: "LOBBY", me, players: [], history: [], speakingOrder: [], currentSpeakerId: null,
-      gameNumber: 0, round: 0, settings: SETTINGS, result: null, hostPlayerId: null,
+      kind: "player", game: null, me: me ? { id: me.id, benched: false } : null,
+      room: {
+        roomCode: "KXQP", joinUrl: "http://x/KXQP", phase: "HUB", focusedGameId: "mishana", setupGameId: null, contentLocale: "en",
+        members: [], hostPlayerId: null, games: [], setup: null, cup: { stars: {}, last: null }, premium: false, tvBusy: false, contentLocales: ["en"],
+      },
     },
   };
 }
@@ -79,11 +81,11 @@ describe("session", () => {
   it("a resumed seat (welcome without a Join tap) wants the wake lock and retries it on a tap", async () => {
     const { store, sock } = await load();
     sock().open();
-    sock().msg({ v: 1, t: "welcome", playerId: "p_1", resumeToken: "tok", roomCode: "KXQP" });
+    sock().msg({ v: 2, t: "welcome", playerId: "p_1", resumeToken: "tok", roomCode: "KXQP" });
     sock().msg(playerView({ id: "p_1" }, 2));
     await Promise.resolve();
     expect(wakeRequests.length).toBeGreaterThanOrEqual(1);
-    expect(store.view.value?.me).toEqual({ id: "p_1" });
+    expect(store.view.value?.me).toEqual({ id: "p_1", benched: false });
     const before = wakeRequests.length;
     fire("pointerdown");
     await Promise.resolve();

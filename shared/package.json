@@ -25,6 +25,8 @@
     "./games/*/meta": "./src/games/*/meta.ts",
     "./games/*/protocol": "./src/games/*/protocol.ts",
     "./worlds": "./src/worlds/index.ts",
+    "./characters": "./src/characters/index.ts",
+    "./motion": "./src/motion/index.ts",
     "./content": "./src/content/index.ts",
     "./constants": "./src/constants.ts",
     "./i18n": "./src/i18n/index.ts",

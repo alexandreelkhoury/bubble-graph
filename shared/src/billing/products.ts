@@ -40,4 +40,4 @@ export const PREMIUM_SETTING_KEYS = ["points"] as const satisfies readonly (keyo
 export type PremiumSettingKey = (typeof PREMIUM_SETTING_KEYS)[number];
 
 /** §4.7 `{email}`: the support address shown in `store.help` / `store.installLimit`. The owner fills it (§8.D); empty hides help. */
-export const SUPPORT_EMAIL: string = "";
+export const SUPPORT_EMAIL: string = "alexkhoury@hotmail.com"; // owner value (lost by the P0 reverse diff of 78e9a01, restored in P2)

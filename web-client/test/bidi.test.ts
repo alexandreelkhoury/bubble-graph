@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { loadCatalog, translate } from "../src/i18n/t";
+import { loadCatalog, loadGameCatalog, translate } from "../src/i18n/t";
 
 function files(dir: string): string[] {
   return readdirSync(dir).flatMap((f) => {
@@ -35,6 +35,7 @@ describe("bidi", () => {
 
   it("AR vote progress reads cast-of-expected in logical (RTL) order", async () => {
     await loadCatalog("ar");
+    await loadGameCatalog("mishana", "ar"); // vote.* lives in the Mish Ana! game catalog (JAMAA-PLATFORM §5.7)
     const s = translate("ar", "vote.progress", { cast: 1, expected: 4 });
     expect(s.indexOf("1")).toBeLessThan(s.indexOf("4"));
     expect(s.indexOf("1")).toBeLessThan(s.indexOf("من"));

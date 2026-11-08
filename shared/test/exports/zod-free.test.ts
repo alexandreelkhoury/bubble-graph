@@ -12,7 +12,7 @@ const exportsMap = pkg.exports as Record<string, string>;
 
 /** Client-safe entries (§2.1). `./games/*\/meta` is expanded to every game folder. */
 const GAMES = ["mishana", "bluff", "likely", "trivia"];
-const CLIENT_SAFE = ["./games/ids", "./games/meta", "./games/types", "./worlds", "./constants", "./brand", "./billing/products", ...GAMES.map((g) => `./games/${g}/meta`)];
+const CLIENT_SAFE = ["./games/ids", "./games/meta", "./games/types", "./worlds", "./characters", "./motion", "./constants", "./brand", "./billing/products", ...GAMES.map((g) => `./games/${g}/meta`)];
 
 function entryFile(key: string): string {
   const direct = exportsMap[key];

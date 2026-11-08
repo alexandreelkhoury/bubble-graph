@@ -67,7 +67,7 @@ class ProductsTest {
     @Test
     fun manageLinkNamesTheProductAndPackage() {
         assertEquals(
-            "https://play.google.com/store/account/subscriptions?sku=premium&package=app.jamaa.tv",
+            "https://play.google.com/store/account/subscriptions?sku=jamaa_pass&package=app.jamaa.tv",
             Products.MANAGE_SUBSCRIPTION_URL,
         )
         assertTrue(Products.MANAGE_SUBSCRIPTION_URL.endsWith("package=" + Products.PACKAGE_NAME))

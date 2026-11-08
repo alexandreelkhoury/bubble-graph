@@ -1,0 +1,292 @@
+/* /tv platform screens (JAMAA-PLATFORM §3.2, DESIGN-JAMAA §2–§3, §7): splash, hub, setup, intro, rules sheet, portal,
+   entrance, results bar, pass store, side sheets. 1 px = 1 dp on the 960 × 540 canvas. */
+
+.tv :is(.tvposter, .tvround, .tvcupchip, .tvmember__btn, .tvpane--how, .tvsrow, .tvplan) { outline: none; }
+.tv :is(.tvround, .tvcupchip, .tvmember__btn, .tvpane--how, .tvsrow, .tvplan):focus { box-shadow: var(--tv-focus-ring); }
+
+/* ------------------------------------------------------------------ HUB-01 splash */
+.tvsplash { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+.tvsplash__ring { position: absolute; left: 50%; top: 42%; width: 0; height: 0; }
+.tvsplash__ch { position: absolute; left: -24px; top: -24px; animation: splash-roll 900ms var(--ease-overshoot) both; animation-delay: calc(var(--i) * 40ms);
+  --r: 190px; transform: rotate(var(--a)) translateX(var(--r)) rotate(calc(-1 * var(--a))); opacity: 0.9; }
+@keyframes splash-roll { from { transform: rotate(var(--a)) translateX(720px) rotate(calc(-1 * var(--a) - 360deg)); opacity: 0; } to { transform: rotate(var(--a)) translateX(var(--r)) rotate(calc(-1 * var(--a))); opacity: 0.9; } }
+.tvsplash__wordmark { position: relative; height: 105px; width: auto; animation: splash-mark 500ms 650ms var(--ease-decel) both; filter: drop-shadow(0 8px 30px rgb(0 0 0 / 0.5)); }
+@keyframes splash-mark { from { opacity: 0; transform: scale(0.85); clip-path: inset(0 100% 0 0); } to { opacity: 1; transform: none; clip-path: inset(0 0 0 0); } }
+.tvsplash__slogan { position: relative; animation: fade-in 400ms 900ms both; }
+.tvsplash__status { position: absolute; bottom: 48px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+/* ------------------------------------------------------------------ HUB-02 hub */
+.tvhub__tint { position: absolute; inset: 0; background: var(--w-stage); opacity: 0.4; animation: hub-tint 240ms var(--ease-standard) both; pointer-events: none; }
+@keyframes hub-tint { from { opacity: 0; } to { opacity: 0.4; } }
+.tvhubtop { position: absolute; top: 27px; inset-inline: 48px; height: 48px; display: flex; align-items: center; justify-content: space-between; }
+.tvhubtop__mark { height: 34px; width: auto; }
+.tvhubtop__end { display: flex; align-items: center; gap: 12px; }
+.tvround { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--color-surface); color: var(--color-text); box-shadow: inset 0 0 0 1px var(--color-outline); transition: transform var(--motion-fast) var(--ease-standard), background var(--motion-fast); }
+.tvround:focus { transform: scale(1.08); background: var(--color-elevated); }
+.tvbtn--pass { height: 44px; padding-inline: 16px; background: linear-gradient(180deg, #FFD978, #FFC94D); color: var(--color-ink); font-weight: 900; }
+.tvcupchip { display: inline-flex; align-items: center; gap: 10px; height: 44px; padding-inline: 12px 14px; border: 0; border-radius: 99px; background: rgb(var(--rgb-accent) / 0.14); color: var(--color-accent); box-shadow: inset 0 0 0 1px rgb(var(--rgb-accent) / 0.35); font: 900 18px/1 var(--font-sans); }
+.tvcupchip__who { display: inline-flex; align-items: center; gap: 2px; color: var(--color-text); }
+.tvcarousel { position: absolute; top: 87px; inset-inline-start: 48px; width: 640px; height: 318px; overflow: hidden; transition: width 400ms var(--ease-standard); }
+.tvhub.is-gathering .tvcarousel { width: 592px; }
+.tvposter { position: absolute; top: 14px; inset-inline-start: 0; width: 210px; height: 290px; padding: 0; border: 0; border-radius: var(--radius-lg); background: transparent; color: inherit;
+  transform: translateX(var(--x)) scale(1); transition: transform 320ms var(--ease-standard), opacity 320ms, box-shadow 200ms; }
+[dir="rtl"] .tvposter { transform: translateX(calc(-1 * var(--x))) scale(1); }
+.tvposter.no-anim { transition: none; }
+.tvposter.is-focused { transform: translateX(var(--x)) scale(1.08); z-index: 2; }
+[dir="rtl"] .tvposter.is-focused { transform: translateX(calc(-1 * var(--x))) scale(1.08); }
+.tv .tvposter.is-focused:focus { box-shadow: 0 0 0 3px var(--color-focus), 0 0 18px 2px rgb(var(--rgb-primary) / 0.45); }
+.tvposter:not(.is-focused) { opacity: 0.8; }
+.tvposter--ghost { border: 2px dashed rgb(255 247 236 / 0.12); opacity: 1; background: rgb(255 247 236 / 0.02); }
+/* portal: the other posters slide out sideways, the ticket and members drop (§3.10 A step 2) */
+.tvhub.is-portal .tvposter[data-side="start"] { translate: calc(var(--out, 0) * -260px) 0; opacity: calc(0.8 - var(--out, 0)); }
+.tvhub.is-portal .tvposter[data-side="end"], .tvhub.is-portal .tvposter--ghost { translate: calc(var(--out, 0) * 300px) 0; opacity: calc(0.8 - var(--out, 0)); }
+[dir="rtl"] .tvhub.is-portal .tvposter[data-side="start"] { translate: calc(var(--out, 0) * 260px) 0; }
+[dir="rtl"] .tvhub.is-portal .tvposter[data-side="end"] { translate: calc(var(--out, 0) * -300px) 0; }
+.tvhub.is-portal .tvposter.is-focused { scale: calc(1 - var(--press, 0) * 0.046); }
+.tvhub.is-portal :is(.tvjoin, .tvmembers, .tvhub__meta, .tvhubtop) { translate: 0 calc(var(--out, 0) * 24px); opacity: calc(1 - var(--out, 0)); }
+.tvposter .poster__title { font-size: 30px; }
+.tvhub__meta { position: absolute; top: 405px; inset-inline-start: 72px; height: 26px; display: flex; align-items: center; gap: 8px; font: var(--tv-caption); color: var(--color-text-secondary); animation: fade-in 120ms both; }
+.tvhub__dot { color: var(--color-outline-strong); }
+.tvlangchip { height: 22px; padding-inline: 6px; border-radius: 6px; font: 900 13px/22px var(--font-sans); letter-spacing: 0.04em; color: var(--color-text-muted); box-shadow: inset 0 0 0 1px var(--color-outline); }
+.tvlangchip.is-on { color: var(--color-ink); background: var(--color-text-secondary); box-shadow: none; }
+.tvjoin { position: absolute; top: 87px; inset-inline-end: 48px; width: 200px; height: 340px; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--color-elevated), var(--color-surface)); box-shadow: var(--elev-2-shadow), inset 0 1px 0 rgb(255 247 236 / 0.08); transition: width 400ms var(--ease-standard); }
+.tvhub.is-gathering .tvjoin { width: 248px; }
+.tvjoin::before, .tvjoin::after { content: ""; position: absolute; top: 62%; width: 18px; height: 18px; border-radius: 50%; background: var(--color-bg); }
+.tvjoin::before { inset-inline-start: -9px; } .tvjoin::after { inset-inline-end: -9px; }
+.tvjoin__head { font: var(--tv-titleS); font-weight: 900; text-align: center; }
+.tvjoin .qr { border-radius: var(--radius-sm); background: #FFF7EC; }
+.tvjoin .tvcode--big { font: 900 44px/1 var(--font-sans); letter-spacing: 0.12em; color: var(--color-accent); }
+.tvjoin__url { font: 600 14px/1.2 var(--font-sans); color: var(--color-text-muted); }
+.tvhub__toast { position: absolute; bottom: 44px; inset-inline-end: 48px; height: 40px; display: flex; align-items: center; pointer-events: none; }
+.tvhub__toast .tvtoast { position: static; transform: none; }
+.tvmembers { position: absolute; bottom: 27px; inset-inline: 48px; height: 78px; display: flex; align-items: flex-end; gap: 0; }
+.tvmember { width: 72px; display: flex; justify-content: center; }
+.tvmember.is-drop { animation: member-drop 600ms var(--ease-overshoot) both; }
+@keyframes member-drop { from { transform: translateY(-60px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tvmember__btn { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 68px; padding: 2px 0; border: 0; border-radius: 14px; background: transparent; color: var(--color-text-secondary); }
+.tvmember__btn:focus { background: var(--color-elevated); color: var(--color-text); }
+.tvmember.is-new .ch { filter: drop-shadow(0 0 8px rgb(var(--rgb-accent) / 0.9)); }
+.tvmember__name { max-width: 66px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 14px/1.2 var(--font-sans); }
+.tvmembers__empty { display: flex; align-items: center; gap: 12px; height: 60px; }
+.tvmembers__ghost { width: 44px; height: 44px; border-radius: 50%; border: 2px dashed rgb(255 247 236 / 0.2); }
+
+/* ------------------------------------------------------------------ side sheets (cup, settings, packs, advanced) */
+.tvoverlay--sheet, .tvoverlay--clear { display: flex !important; background: transparent !important; backdrop-filter: none !important; justify-content: flex-end; align-items: stretch; animation: none; }
+.tvsheet { display: flex; flex-direction: column; gap: 14px; width: 420px; height: 100%; min-height: 0; overflow: hidden; padding: 32px 32px 27px; background: var(--color-elevated); box-shadow: -24px 0 48px rgb(0 0 0 / 0.45); animation: sheet-in 240ms var(--ease-decel) both; }
+[dir="rtl"] .tvsheet { box-shadow: 24px 0 48px rgb(0 0 0 / 0.45); animation-name: sheet-in-rtl; }
+@keyframes sheet-in { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes sheet-in-rtl { from { transform: translateX(-100%); } to { transform: none; } }
+.tvsheet__title { display: flex; align-items: center; gap: 10px; font: var(--tv-headline); }
+.tvsheet__close { margin-top: auto; align-self: stretch; justify-content: center; }
+.tvmenu__value { margin-inline-start: auto; color: var(--color-text-secondary); font-weight: 600; }
+.tvswitch { margin-inline-start: auto; width: 44px; height: 26px; border-radius: 99px; background: var(--color-outline); position: relative; transition: background var(--motion-fast); }
+.tvswitch span { position: absolute; top: 3px; inset-inline-start: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--color-text); transition: transform var(--motion-fast) var(--ease-standard); }
+.tvswitch.is-on { background: var(--color-success); }
+.tvswitch.is-on span { transform: translateX(18px); }
+[dir="rtl"] .tvswitch.is-on span { transform: translateX(-18px); }
+.tvmenu--scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; }
+.tvcuplist { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+.tvcuplist__row { display: flex; align-items: center; gap: 12px; height: 52px; padding-inline: 8px; border-radius: 12px; background: rgb(255 247 236 / 0.04); }
+.tvcuplist__rank { width: 24px; color: var(--color-text-muted); font-weight: 900; }
+.tvcuplist__name { flex: 1; font: var(--tv-titleS); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tvcuplist__stars { display: inline-flex; align-items: center; gap: 4px; color: var(--color-accent); font-weight: 900; }
+.tvcuplist__stars svg, .tvresultsbar__stars svg, .tvflight svg { fill: currentColor; }
+.tvpack { gap: 12px; }
+.tvpack__box { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; box-shadow: inset 0 0 0 2px var(--color-outline-strong); flex: none; }
+.tvpack.is-on .tvpack__box { background: var(--color-primary); color: var(--color-ink); box-shadow: none; }
+.tvpack__title { flex: 1; text-align: start; }
+.tvpack__meta { color: var(--color-text-muted); font: var(--tv-caption); }
+.tvpasschip { display: inline-flex; align-items: center; gap: 4px; height: 26px; padding-inline: 10px; border-radius: 99px; background: rgb(var(--rgb-accent) / 0.16); color: var(--color-accent); font: 900 15px/1 var(--font-sans); }
+.tvsheet--solid { background: var(--w-elevated, var(--color-elevated)); }
+.tvabout { display: flex; flex-direction: column; gap: 2px; font: var(--tv-caption); color: var(--color-text-muted); }
+.tvabout__id { color: var(--color-text-secondary); letter-spacing: 0.05em; }
+
+/* ------------------------------------------------------------------ HUB-07 rules sheet */
+.tvrules__sheet { width: 420px; height: 100%; min-height: 0; overflow: hidden; display: flex; flex-direction: column; background: var(--w-elevated); box-shadow: -24px 0 48px rgb(0 0 0 / 0.5); animation: sheet-in 240ms var(--ease-decel) both; }
+[dir="rtl"] .tvrules__sheet { box-shadow: 24px 0 48px rgb(0 0 0 / 0.5); animation-name: sheet-in-rtl; }
+.tvrules--game .tvrules__sheet { width: 360px; }
+.tvrules__head { display: flex; flex-direction: column; gap: 6px; padding: 28px 28px 10px; }
+.tvrules__lockup { font-size: 30px; align-self: flex-start; }
+.tvrules__lockup.lockup--mishana { height: 36px; }
+.tvrules__body { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 28px 12px; scrollbar-width: none; }
+.tvrules__body .rules__h { font: var(--tv-title); }
+.tvrules__body .rules__p { font: var(--tv-body); }
+.tvrules__body .rules__hereLabel { font-size: 15px; }
+.tvrules__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 28px 27px; border-top: 1px solid rgb(255 247 236 / 0.08); }
+.tvrules__foot .tvbtn { margin-inline-start: auto; }
+
+/* ------------------------------------------------------------------ HUB-03 setup */
+.tvworld { position: absolute; inset: 0; background: var(--w-stage); }
+.tvworld::after { content: ""; position: absolute; inset: 0; opacity: 0.06; mix-blend-mode: overlay; background-image: var(--grain); }
+.tvsetup__strip { position: absolute; top: 27px; inset-inline: 48px; height: 64px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+.tvsetup__back { justify-self: start; }
+.tvsetup__lockup { font-size: 40px; }
+.tvsetup__lockup.lockup--mishana { height: 52px; }
+.tvsetup__strip .tvround { justify-self: end; }
+.tvpane { position: absolute; top: 103px; bottom: 27px; border-radius: var(--radius-lg); }
+.tvpane__label { display: flex; align-items: center; gap: 8px; font: 900 15px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--w-accent-text); }
+.tv:lang(ar) .tvpane__label { text-transform: none; letter-spacing: 0; }
+.tvpane--how { inset-inline-start: 48px; width: 324px; padding: 16px; display: flex; flex-direction: column; gap: 10px; border: 0; color: inherit; text-align: center;
+  background: rgb(0 0 0 / 0.22); box-shadow: inset 0 0 0 1px rgb(255 247 236 / 0.08); transition: transform var(--motion-fast) var(--ease-standard); }
+.tvpane--how:focus { transform: scale(1.02); }
+.howto__card--pane .howto__text { font: var(--tv-body); min-height: 84px; }
+.howto__card--pane .howto__step { font-size: 15px; }
+.tvpane--players { inset-inline-start: 384px; width: 216px; padding: 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; background: rgb(0 0 0 / 0.16); }
+.tvcast { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px 2px; width: 100%; }
+.tvcast li { display: flex; flex-direction: column; align-items: center; gap: 2px; font: 700 13px/1.2 var(--font-sans); color: var(--color-text-secondary); min-width: 0; }
+.tvcast bdi { max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tvcast__ghost span { display: block; width: 52px; height: 52px; margin-block: 6px; border-radius: 50%; border: 2px dashed rgb(255 247 236 / 0.25); }
+.tvcast__need { font-weight: 900; }
+.tvpane__qr { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 14px; background: rgb(0 0 0 / 0.25); }
+.tvpane__qr.is-big { flex-direction: column; gap: 6px; }
+.tvpane__qr .qr { border-radius: 8px; background: #FFF7EC; }
+.tvpane--settings { inset-inline-end: 48px; width: 300px; display: flex; flex-direction: column; gap: 6px; }
+.tvsrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 52px; padding: 0 14px; border: 0; border-radius: 14px; background: rgb(0 0 0 / 0.22); color: var(--color-text); font: var(--tv-titleS); text-align: start;
+  transition: transform var(--motion-fast) var(--ease-standard), background var(--motion-fast); }
+.tvsrow:focus { transform: scale(1.02); background: var(--w-elevated); }
+.tvsrow--content { min-height: 40px; font-size: 18px; }
+.tvsrow--sub { padding-inline-start: 28px; min-height: 44px; font-size: 19px; }
+.tvsrow__label { display: inline-flex; align-items: center; gap: 6px; }
+.tvsrow__value { display: inline-flex; align-items: center; gap: 4px; color: var(--color-text-secondary); font-weight: 700; }
+.tvsrow:focus .tvsrow__value { color: var(--color-text); }
+.tvsrow__chev { color: var(--color-outline-strong); }
+.tvsrow:focus .tvsrow__chev { color: var(--w-accent-text); }
+.tvsrow.is-locked .tvsrow__value bdi { opacity: 0.55; }
+.tvsrow--adv { color: var(--color-text-secondary); }
+.tvsetup__startwrap { margin-top: auto; display: flex; flex-direction: column; gap: 6px; }
+.tvsetup__blocker { justify-content: center; }
+.tvbtn--start { width: 100%; height: 56px; justify-content: center; font-size: 24px; }
+/* the portal hand-off: title lands, panes stagger in (DESIGN-JAMAA §3.1 steps 5–6; --k = 1 or 0.64) */
+.tvsetup.is-entering .tvsetup__lockup { animation: title-land calc(200ms * var(--k)) calc(100ms * var(--k)) var(--ease-overshoot) both; }
+.tvsetup.is-entering .tvpane { animation: pane-in calc(400ms * var(--k)) var(--ease-decel) both; }
+.tvsetup.is-entering .tvpane--how { animation-delay: calc(200ms * var(--k)); }
+.tvsetup.is-entering .tvpane--players { animation-delay: calc(260ms * var(--k)); }
+.tvsetup.is-entering .tvpane--settings { animation-delay: calc(320ms * var(--k)); }
+@keyframes title-land { from { opacity: 0; transform: scale(1.15); } to { opacity: 1; transform: none; } }
+@keyframes pane-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.tv__stage.is-transition { animation: none; }
+
+/* full-screen intro (DESIGN-JAMAA §2.5, §7.4) */
+.tvintro { display: block !important; background: var(--w-deep) !important; animation: fade-in 200ms both; }
+.tvintro__stage { position: absolute; inset: 0; background: var(--w-stage); }
+.tvintro__head { position: absolute; top: 27px; inset-inline: 48px; display: flex; align-items: center; justify-content: space-between; }
+.tvintro__lockup { font-size: 34px; }
+.tvintro__lockup.lockup--mishana { height: 44px; }
+.tvintro__card { position: absolute; top: 84px; left: 50%; width: 600px; translate: -50% 0; }
+.howto__card--tv { gap: 16px; }
+.howto__card--tv .howto__scene { width: 520px; height: 190px; aspect-ratio: auto; border-radius: 28px; }
+.howto__card--tv .howto__step { font-size: 20px; }
+.howto__card--tv .howto__text { font: var(--tv-displayS); font-size: 32px; line-height: 40px; max-width: 640px; }
+.tvintro__progress { position: absolute; bottom: 96px; left: 50%; translate: -50% 0; display: flex; gap: 8px; }
+.tvintro__progress i { width: 64px; height: 6px; border-radius: 6px; background: rgb(255 247 236 / 0.18); overflow: hidden; position: relative; }
+.tvintro__progress i.is-done { background: var(--w-accent); }
+.tvintro__progress i.is-on::after { content: ""; position: absolute; inset: 0; background: var(--w-accent); transform-origin: 0 50%; animation: intro-bar 6s linear both; }
+[dir="rtl"] .tvintro__progress i.is-on::after { transform-origin: 100% 50%; }
+.tvintro__progress i.is-held::after { animation: none; transform: none; }
+@keyframes intro-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.tvintro__actions { position: absolute; bottom: 24px; left: 50%; translate: -50% 0; }
+.tvintro__join { position: absolute; top: 80px; inset-inline-end: 48px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px; border-radius: 16px; background: rgb(0 0 0 / 0.3); }
+.tvintro__join .qr { border-radius: 8px; background: #FFF7EC; }
+.tvintro__members { position: absolute; bottom: 30px; inset-inline-start: 48px; display: flex; gap: 6px; }
+.tvintro__members li { display: flex; flex-direction: column; align-items: center; font: 700 13px/1.2 var(--font-sans); color: var(--color-text-secondary); width: 60px; }
+
+/* ------------------------------------------------------------------ A. portal */
+.tvportal { position: absolute; inset: 0; z-index: 30; pointer-events: none; }
+.tvportal__dark { position: absolute; inset: 0; background: #000; opacity: var(--dark, 0); }
+.tvportal__svg { position: absolute; }
+.tvportal__world { position: absolute; inset: 0; }
+.tvportal__bg { position: absolute; inset: -40px; background: var(--w-stage); transform: scale(calc(1 + var(--bg, 0) * 0.08)); }
+.tvportal__props { position: absolute; inset: 0; transform: scale(calc(0.9 + var(--fg, 0) * 0.25)); transform-origin: 50% 70%; opacity: calc(1 - var(--handoff, 0)); }
+.tvportal__props .poster__art { inset: 10% 0 10% 0; }
+.tvportal.is-calm .tvportal__world { opacity: 1; }
+.tvportal--back .tvportal__world { opacity: 1; }
+
+/* ------------------------------------------------------------------ B. world entrance */
+.tventr { position: absolute; inset: 0; z-index: 30; pointer-events: none; opacity: calc(1 - var(--settle, 0)); }
+.tventr__dark { position: absolute; inset: 0; background: var(--w-deep); opacity: calc(var(--darken, 0) * 0.92); }
+.tventr__door { position: absolute; inset: 0; opacity: calc(var(--darken, 0)); }
+.tventr__door span { position: absolute; }
+/* night market: the amber bang dot drops on its cord and its cone turns the stage on */
+.tventr__door--night-market .tventr__d1 { left: 50%; top: 0; width: 2px; height: calc(var(--door, 0) * 150px); background: rgb(255 201 77 / 0.6); }
+.tventr__door--night-market .tventr__d2 { left: calc(50% - 22px); top: calc(var(--door, 0) * 150px - 22px); width: 44px; height: 44px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #FFF2C2, #FFC94D 55%, #C98A1A); box-shadow: 0 0 40px 12px rgb(255 201 77 / 0.6); }
+.tventr__door--night-market .tventr__d3 { left: calc(50% - 300px); top: 150px; width: 600px; height: 390px; background: linear-gradient(180deg, rgb(255 201 77 / 0.35), transparent 90%); clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%); opacity: var(--door, 0); }
+/* café: the door swings open toward the viewer */
+.tventr__door--hakawati-cafe { perspective: 1200px; }
+.tventr__door--hakawati-cafe .tventr__d4 { left: calc(50% - 120px); top: 60px; width: 240px; height: 420px; background: radial-gradient(circle, #FFE3A3, #E9A23B 70%); box-shadow: 0 0 80px 20px rgb(255 227 163 / 0.4); opacity: var(--door, 0); border-radius: 120px 120px 8px 8px; }
+.tventr__door--hakawati-cafe .tventr__d1 { left: calc(50% - 120px); top: 60px; width: 240px; height: 420px; border-radius: 120px 120px 8px 8px; background: linear-gradient(90deg, #4A3418, #33230F); box-shadow: inset 0 0 0 6px #2E1D0E; transform-origin: 0 50%; transform: rotateY(calc(var(--door, 0) * -80deg)); }
+.tventr__door--hakawati-cafe .tventr__d2 { left: calc(50% + 80px); top: 270px; width: 14px; height: 14px; border-radius: 50%; background: #E9A23B; transform-origin: -200px 50%; transform: rotateY(calc(var(--door, 0) * -80deg)); opacity: calc(1 - var(--door, 0)); }
+/* rooftop: a velvet curtain drops closed then parts */
+.tventr__door--rooftop .tventr__d1, .tventr__door--rooftop .tventr__d2 { top: 0; width: 52%; height: 100%; background: repeating-linear-gradient(90deg, #7A1030 0 22px, #5A0A22 22px 44px); box-shadow: inset 0 -30px 60px rgb(0 0 0 / 0.5); }
+.tventr__door--rooftop .tventr__d1 { left: 0; transform: translateX(calc(var(--door, 0) * -100%)); }
+.tventr__door--rooftop .tventr__d2 { right: 0; transform: translateX(calc(var(--door, 0) * 100%)); }
+.tventr__door--rooftop .tventr__d3 { left: 0; right: 0; top: 40px; height: 24px; background: radial-gradient(circle, #B8FFF6 4px, transparent 5px) 0 50% / 40px 24px repeat-x; opacity: var(--door, 0); filter: drop-shadow(0 0 6px #B8FFF6); }
+/* studio: spotlights snap on one by one */
+.tventr__door--quiz-studio span { top: -20px; width: 260px; height: 580px; background: linear-gradient(180deg, rgb(255 216 77 / 0.55), transparent 85%); clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%); mix-blend-mode: screen; }
+.tventr__door--quiz-studio .tventr__d1 { left: 40px; opacity: clamp(0, calc(var(--door, 0) * 4), 1); transform: rotate(-14deg); }
+.tventr__door--quiz-studio .tventr__d2 { left: 260px; opacity: clamp(0, calc(var(--door, 0) * 4 - 1), 1); transform: rotate(-5deg); }
+.tventr__door--quiz-studio .tventr__d3 { left: 440px; opacity: clamp(0, calc(var(--door, 0) * 4 - 2), 1); transform: rotate(5deg); }
+.tventr__door--quiz-studio .tventr__d4 { left: 660px; opacity: clamp(0, calc(var(--door, 0) * 4 - 3), 1); transform: rotate(14deg); }
+.tventr__title { position: absolute; top: 170px; inset-inline: 0; display: grid; place-items: center; font-size: 72px; opacity: var(--title, 0); transform: scale(calc(1.2 - var(--title, 0) * 0.2)); filter: drop-shadow(0 10px 30px rgb(0 0 0 / 0.6)); }
+.tventr__title .lockup--mishana { height: 110px; }
+.tventr__cast { position: absolute; bottom: 70px; inset-inline: 0; display: flex; justify-content: center; gap: 10px; }
+.tventr__ch { transform: translateX(calc((1 - var(--run, 0)) * var(--from) * 620px)); opacity: clamp(0, calc(var(--run, 0) * 3), 1); }
+.tventr.is-calm { background: var(--w-deep); }
+.tventr.is-calm > :not(.tventr__title) { display: none; }
+.tventr.is-calm .tventr__title { opacity: 1; transform: none; }
+
+/* ------------------------------------------------------------------ in game: back hint + HUB-05 results bar */
+.tvhint { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding-inline: 10px; border-radius: 99px; background: rgb(0 0 0 / 0.25); color: var(--color-text-muted); font: 600 15px/1 var(--font-sans); animation: fade-in 300ms both; }
+.tvgamehost, .tvgamehost__screen { position: absolute; inset: 0; }
+.tvloadinggame { display: grid; place-items: center; }
+.tvresultsbar { position: absolute; bottom: 20px; inset-inline: 40px; height: 68px; z-index: 5; display: flex; align-items: center; gap: 14px; padding: 6px 10px 6px 14px; border-radius: 20px;
+  background: linear-gradient(180deg, rgb(58 34 102 / 0.96), rgb(42 22 80 / 0.98)); box-shadow: var(--elev-3-shadow), inset 0 0 0 1px rgb(var(--rgb-accent) / 0.22); animation: bar-up 360ms var(--ease-decel) both; }
+@keyframes bar-up { from { transform: translateY(100px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tvresultsbar__cup { display: flex; align-items: center; gap: 12px; }
+.tvresultsbar__title { display: inline-flex; align-items: center; gap: 6px; font: 900 16px/1 var(--font-sans); color: var(--color-accent); white-space: nowrap; }
+.tvresultsbar__rows { display: flex; gap: 6px; }
+.tvresultsbar__row { display: flex; align-items: center; gap: 2px; }
+.tvresultsbar__stars { display: inline-flex; align-items: center; gap: 2px; color: var(--color-accent); font: 900 18px/1 var(--font-sans); }
+.tvresultsbar__hook { flex: 1; min-width: 0; font-size: 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tvresultsbar__actions { margin-inline-start: auto; display: flex; gap: 10px; }
+.tvresultsbar__actions .tvbtn { height: 50px; padding-inline: 16px; font-size: 18px; }
+.tvresultsbar:not(.is-ready) .tvresultsbar__actions { opacity: 0.45; }
+.tvflight { position: absolute; left: 50%; bottom: 40px; color: var(--color-accent); z-index: 6; pointer-events: none; filter: drop-shadow(0 0 8px rgb(var(--rgb-accent) / 0.8));
+  --p: 0; transform: translate(calc(var(--dx) + (-380px - var(--dx)) * var(--p)), calc(-260px * (1 - var(--p)) + -180px * var(--p) * (1 - var(--p)))) scale(calc(1.4 - var(--p) * 0.6)); opacity: calc(1 - max(0, var(--p) - 0.92) * 12); }
+[dir="rtl"] .tvflight { transform: translate(calc(var(--dx) + (380px - var(--dx)) * var(--p)), calc(-260px * (1 - var(--p)) + -180px * var(--p) * (1 - var(--p)))) scale(calc(1.4 - var(--p) * 0.6)); }
+.tvgamehost.is-over .tvbottom { display: none; }
+
+/* ------------------------------------------------------------------ HUB-08 pass store */
+.tvpass { display: grid; grid-template-columns: 1fr 420px; gap: 20px; align-items: stretch; padding: 16px; border-radius: 22px;
+  background: radial-gradient(80% 120% at 100% 0%, rgb(var(--rgb-accent) / 0.16), transparent 60%), linear-gradient(135deg, #3A2266, #2B1650); box-shadow: inset 0 0 0 1px rgb(var(--rgb-accent) / 0.25); }
+.tvpass__intro { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tvpass__title { display: flex; align-items: center; gap: 10px; font: var(--tv-headline); }
+.tvpass__gem { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(180deg, #FFD978, #FFC94D); color: var(--color-ink); }
+.tvpass__pitch { font: var(--tv-body); color: var(--color-text-secondary); }
+.tvpass__worlds { display: flex; gap: 6px; }
+.tvpass__worlds li { width: 42px; height: 8px; border-radius: 8px; background: var(--w-accent); }
+.tvpass .tvshop__legal { margin-top: auto; font-size: 13px; line-height: 1.35; color: var(--color-text-muted); }
+.tvpass__plans { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tvplan { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 14px; border: 0; border-radius: 18px; background: rgb(0 0 0 / 0.25); color: var(--color-text); text-align: start; box-shadow: inset 0 0 0 1px rgb(255 247 236 / 0.12); transition: transform var(--motion-fast) var(--ease-standard), background var(--motion-fast); }
+.tvplan:focus { transform: scale(1.04); background: var(--color-elevated); }
+.tvplan--yearly { background: rgb(var(--rgb-accent) / 0.12); box-shadow: inset 0 0 0 2px rgb(var(--rgb-accent) / 0.55); }
+.tvplan__top { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 6px; }
+.tvplan__label { font: var(--tv-titleS); font-weight: 900; }
+.tvplan__save { height: 24px; padding-inline: 8px; border-radius: 99px; background: var(--color-success); color: var(--color-ink); font: 900 13px/24px var(--font-sans); white-space: nowrap; }
+.tvplan__price { font: 900 34px/1.1 var(--font-sans); }
+.tvplan__per { font: var(--tv-caption); font-size: 15px; color: var(--color-text-secondary); }
+.tvplan__end { margin-top: 6px; min-height: 26px; }
+.tvplan__trial { display: inline-flex; align-items: center; height: 26px; padding-inline: 10px; border-radius: 99px; background: var(--color-accent); color: var(--color-ink); font: 900 14px/1 var(--font-sans); }
+.tvshop__groups { display: flex; flex-direction: column; gap: 8px; }
+.tvshop__group { display: flex; align-items: center; gap: 12px; padding-inline-start: 12px; border-inline-start: 4px solid var(--w-accent); }
+.tvshop__gametitle { flex: none; width: 120px; font: 900 16px/1.2 var(--font-sans); color: var(--w-accent-text); }
+.tvshop__group .tvshop__row { flex: 1; min-width: 0; }
+
+.tvposter .poster__title .lockup--mishana { height: 52px; }
+.tv__canvas { contain: paint; }
+.tvshop__foot { gap: 10px; flex-wrap: nowrap; }
+.tvshop__foot > .tvbtn { height: 44px; padding-inline: 14px; font-size: 17px; flex: none; }
+.tvshop__foot .tvshop__help { font-size: 14px; line-height: 1.25; max-width: 200px; }
+.tvshop__foot .tvbtn--small { height: 36px; font-size: 14px; padding-inline: 10px; }
+.tvshop__foot .tvshop__back { display: none; }
+.tvshop__foot .tvshop__testhead { display: none; }

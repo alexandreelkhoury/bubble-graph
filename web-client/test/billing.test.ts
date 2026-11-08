@@ -15,12 +15,12 @@ const NOW = 1_790_000_000_000;
 
 const CATALOG = (mode: "fake" | "google"): CatalogResponseBody => ({
   mode, packageName: "app.jamaa.tv",
-  subscription: { productId: "premium", basePlanIds: ["monthly", "yearly"], trialOfferId: "trial-7d" },
+  subscription: { productId: "jamaa_pass", basePlanIds: ["monthly", "yearly"], trialOfferId: "trial-7d" },
   freePackIds: ["en-everyday-01", "fr-everyday-01", "ar-everyday-01"],
   packs: [
-    { packId: "en-food-01", productId: "pack_en_food_01", locale: "en", language: "en", title: { en: "Food", fr: "Cuisine", ar: "أكل" }, pairCount: 33, ageRating: "all" },
-    { packId: "fr-food-01", productId: "pack_fr_food_01", locale: "fr", language: "fr", title: { en: "Food FR", fr: "Cuisine", ar: "أكل" }, pairCount: 33, ageRating: "all" },
-    { packId: "lb-food-01", productId: "pack_lb_food_01", locale: "ar-LB", language: "ar", title: { en: "Lebanese food", fr: "Cuisine libanaise", ar: "أكل لبناني" }, pairCount: 27, ageRating: "all" },
+    { packId: "en-food-01", gameId: "mishana", family: "en-food-01", productId: "pack_en_food_01", locale: "en", language: "en", title: { en: "Food", fr: "Cuisine", ar: "أكل" }, pairCount: 33, ageRating: "all" },
+    { packId: "fr-food-01", gameId: "mishana", family: "fr-food-01", productId: "pack_fr_food_01", locale: "fr", language: "fr", title: { en: "Food FR", fr: "Cuisine", ar: "أكل" }, pairCount: 33, ageRating: "all" },
+    { packId: "lb-food-01", gameId: "mishana", family: "lb-food-01", productId: "pack_lb_food_01", locale: "ar-LB", language: "ar", title: { en: "Lebanese food", fr: "Cuisine libanaise", ar: "أكل لبناني" }, pairCount: 27, ageRating: "all" },
   ],
 });
 
@@ -148,7 +148,7 @@ function harness(opts: { mode?: "fake" | "google"; catalogStatus?: number; purch
         case "/api/billing/fake/set": return res(204, null);
         case "/api/billing/verify": {
           const purchases = (b as { purchases: { productId: string }[] }).purchases;
-          const premium = purchases.some((p) => p.productId === "premium");
+          const premium = purchases.some((p) => p.productId === "jamaa_pass");
           return res(200, {
             entitlement: body({ token: `tok.v${calls.length}`, premium, premiumUntil: premium ? now + 30 * 86_400_000 : null, packs: purchases.filter((p) => p.productId.startsWith("pack_")).map((p) => p.productId.slice(5).replaceAll("_", "-")).sort(), expiresAt: now + 8 * HOUR }),
             results: purchases.map((p) => ({ productId: p.productId, result: opts.purchaseResult ?? "OK" })),
@@ -200,7 +200,7 @@ describe("BillingController", () => {
     const h = harness({ mode: "google" });
     expect(await h.c.loadCatalog()).toBe(true);
     expect(h.c.mode.value).toBe("google");
-    expect(await h.c.purchase("premium", "yearly")).toBeNull();
+    expect(await h.c.purchase("jamaa_pass", "yearly")).toBeNull();
     expect(await h.c.refresh(true)).toBe(false);
     expect(h.urls()).toEqual(["/api/billing/catalog"]);
   });
@@ -216,20 +216,20 @@ describe("BillingController", () => {
     const h = harness();
     await h.c.loadCatalog();
     h.c.attach(h.link);
-    const result = await h.c.purchase("premium", "yearly");
+    const result = await h.c.purchase("jamaa_pass", "yearly");
     expect(result).toBe("OK");
     expect(h.urls()).toEqual(["/api/billing/catalog", "/api/billing/fake/purchase", "/api/billing/verify"]);
     const installId = h.mem.get(BILLING_KEYS.installId)!;
     expect(installId).toMatch(/^[0-9a-f]{32}$/);
-    expect(h.calls[1]!.body).toEqual({ installId, productId: "premium", basePlanId: "yearly", offerId: "trial-7d" });
-    expect(h.calls[2]!.body).toEqual({ installId, purchases: [{ productId: "premium", purchaseToken: "fake.x.premium.1" }] });
+    expect(h.calls[1]!.body).toEqual({ installId, productId: "jamaa_pass", basePlanId: "yearly", offerId: "trial-7d" });
+    expect(h.calls[2]!.body).toEqual({ installId, purchases: [{ productId: "jamaa_pass", purchaseToken: "fake.x.jamaa_pass.1" }] });
     const token = h.c.ent.value!.token;
     expect(h.mem.get(BILLING_KEYS.token)).toBe(token);
     expect(h.c.ent.value!.premium).toBe(true);
     expect(h.sent).toEqual([
-      { v: 1, t: "storeOpen", open: true },
-      { v: 1, t: "entitlement", token },
-      { v: 1, t: "storeOpen", open: false },
+      { v: 2, t: "storeOpen", open: true },
+      { v: 2, t: "entitlement", token },
+      { v: 2, t: "storeOpen", open: false },
     ]);
     expect(h.toasts.map((x) => x.key)).toEqual(["store.unlocked"]);
     expect(h.c.inflight.value).toBeNull();
@@ -240,8 +240,8 @@ describe("BillingController", () => {
     await h.c.loadCatalog();
     h.c.attach(h.link);
     expect(h.c.trialOffered).toBe(true);
-    const p = h.c.purchase("premium", "monthly");
-    expect(h.c.inflight.value).toBe("premium:monthly");
+    const p = h.c.purchase("jamaa_pass", "monthly");
+    expect(h.c.inflight.value).toBe("jamaa_pass:monthly");
     await p;
     expect(h.c.trialUsed.value).toBe(true);
     expect(h.mem.get(BILLING_KEYS.trialUsed)).toBe(h.mem.get(BILLING_KEYS.installId));
@@ -251,7 +251,7 @@ describe("BillingController", () => {
     other.set(BILLING_KEYS.installId, "f".repeat(32));
     expect(new BillingController(harnessDeps(other)).trialUsed.value).toBe(false);
     await h.c.testExpirePremium();
-    await h.c.purchase("premium", "yearly");
+    await h.c.purchase("jamaa_pass", "yearly");
     expect(h.calls.filter((x) => x.url === "/api/billing/fake/purchase").map((x) => (x.body as { offerId: unknown }).offerId)).toEqual(["trial-7d", null]);
   });
 
@@ -316,7 +316,7 @@ describe("BillingController", () => {
     h.setOpen(true);
     h.c.roomOpened();
     // No `storeOpen:false`: nothing was ever sent as true, so there is nothing to clear (§3.9 budget).
-    expect(h.sent).toEqual([{ v: 1, t: "entitlement", token: h.c.ent.value!.token }]);
+    expect(h.sent).toEqual([{ v: 2, t: "entitlement", token: h.c.ent.value!.token }]);
   });
 
   it("attach + reconnect with the Store closed sends no storeOpen; after an open:true it clears once", async () => {
@@ -330,7 +330,7 @@ describe("BillingController", () => {
     h.c.setStoreVisible(false); // dropped: the socket is down
     h.setOpen(true);
     h.c.roomOpened();
-    expect(h.sent).toEqual([{ v: 1, t: "storeOpen", open: true }, { v: 1, t: "storeOpen", open: false }]);
+    expect(h.sent).toEqual([{ v: 2, t: "storeOpen", open: true }, { v: 2, t: "storeOpen", open: false }]);
     h.c.roomOpened();
     expect(h.sent.length).toBe(2);
   });
@@ -369,7 +369,7 @@ describe("BillingController", () => {
     h.advance(9_999);
     expect(h.sent.length).toBe(n);
     h.advance(BILLING_RESEND_MS);
-    expect(h.sent.slice(n)).toEqual([{ v: 1, t: "entitlement", token }, { v: 1, t: "storeOpen", open: true }]);
+    expect(h.sent.slice(n)).toEqual([{ v: 2, t: "entitlement", token }, { v: 2, t: "storeOpen", open: true }]);
     expect(h.toasts.map((x) => x.key)).not.toContain("error.rateLimited");
     // Long after any billing send, a RATE_LIMITED is not ours: the caller shows its usual toast.
     h.advance(BILLING_ERROR_WINDOW_MS + 1);
@@ -381,14 +381,14 @@ describe("BillingController", () => {
     await h.c.loadCatalog();
     h.c.attach(h.link);
     h.c.setStoreVisible(true);
-    expect(h.sent).toEqual([{ v: 1, t: "storeOpen", open: true }]);
+    expect(h.sent).toEqual([{ v: 2, t: "storeOpen", open: true }]);
     h.advance(STORE_OPEN_RESEND_MS);
     h.advance(STORE_OPEN_RESEND_MS);
     expect(h.sent.length).toBe(3);
     h.c.roomOpened();
-    expect(h.sent.at(-1)).toEqual({ v: 1, t: "storeOpen", open: true });
+    expect(h.sent.at(-1)).toEqual({ v: 2, t: "storeOpen", open: true });
     h.c.setStoreVisible(false);
-    expect(h.sent.at(-1)).toEqual({ v: 1, t: "storeOpen", open: false });
+    expect(h.sent.at(-1)).toEqual({ v: 2, t: "storeOpen", open: false });
     const n = h.sent.length;
     h.advance(10 * STORE_OPEN_RESEND_MS);
     expect(h.sent.length).toBe(n);
@@ -423,12 +423,12 @@ describe("BillingController", () => {
     const h = harness();
     await h.c.loadCatalog();
     h.c.attach(h.link);
-    await h.c.purchase("premium", "monthly");
+    await h.c.purchase("jamaa_pass", "monthly");
     h.sent.length = 0;
     expect(await h.c.testExpirePremium()).toBe(true);
     expect(h.urls().slice(-2)).toEqual(["/api/billing/fake/set", "/api/billing/entitlement"]);
-    expect(h.calls.at(-2)!.body).toEqual({ purchaseToken: "fake.x.premium.1", state: "SUBSCRIPTION_STATE_EXPIRED" });
-    expect(h.sent).toEqual([{ v: 1, t: "entitlement", token: h.c.ent.value!.token }]);
+    expect(h.calls.at(-2)!.body).toEqual({ purchaseToken: "fake.x.jamaa_pass.1", state: "SUBSCRIPTION_STATE_EXPIRED" });
+    expect(h.sent).toEqual([{ v: 2, t: "entitlement", token: h.c.ent.value!.token }]);
     expect(h.c.hasTestTarget("premium")).toBe(false);
   });
 

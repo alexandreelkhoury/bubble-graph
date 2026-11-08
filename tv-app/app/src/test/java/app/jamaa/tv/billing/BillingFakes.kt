@@ -79,7 +79,7 @@ class FakeApi(private val now: () -> Long) : BillingApi {
     var catalog = CatalogResponse(
         mode = "google",
         packageName = "app.jamaa.tv",
-        subscription = CatalogSubscription("premium", listOf("monthly", "yearly"), "trial-7d"),
+        subscription = CatalogSubscription(Products.PASS_PRODUCT_ID, listOf("monthly", "yearly"), "trial-7d"),
         freePackIds = listOf("en-everyday-01", "fr-everyday-01", "ar-everyday-01"),
         packs = listOf(
             pack("en-food-01", "en", 33),
@@ -131,7 +131,7 @@ class FakeApi(private val now: () -> Long) : BillingApi {
 
     companion object {
         fun pack(id: String, locale: String, pairs: Int, language: String = locale) =
-            CatalogPack(id, Products.packProductId(id), locale, language, LocalizedTitle(id, id, id), pairs, "all")
+            CatalogPack(id, "mishana", id, Products.packProductId(id), locale, language, LocalizedTitle(id, id, id), pairs, "all")
     }
 }
 
@@ -152,8 +152,8 @@ object PlayProducts {
     /** Premium with both plans and a trial on each; one-time products for [packProductIds]. */
     fun all(vararg packProductIds: String): ProductsSnapshot = ProductsSnapshot(
         subs = mapOf(
-            "premium" to SubProductInfo(
-                "premium",
+            "jamaa_pass" to SubProductInfo(
+                "jamaa_pass",
                 listOf(
                     SubOfferInfo("monthly", null, "m-base", listOf(phase("$4.99", 4_990_000, "P1M"))),
                     SubOfferInfo("monthly", "trial-7d", "m-trial", listOf(phase("Free", 0, "P7D"), phase("$4.99", 4_990_000, "P1M"))),

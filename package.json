@@ -16,6 +16,7 @@
     "fixtures": "pnpm --filter @jamaa/shared run gen:fixtures",
     "gen:strings": "pnpm --filter @jamaa/gen-android-strings run gen",
     "gen:sounds": "pnpm --filter @jamaa/gen-sounds run gen",
+    "gen:characters": "pnpm --filter @jamaa/gen-characters run gen",
     "lint:packs": "pnpm --filter @jamaa/content-lint run lint",
     "lint:content": "pnpm --filter @jamaa/content-lint run lint",
     "rename:gate": "node tools/rename-gate/src/main.mjs",

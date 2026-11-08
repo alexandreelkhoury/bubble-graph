@@ -24,7 +24,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.jamaa.tv.R
 import app.jamaa.tv.protocol.Phase
-import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.ui.theme.JamaaColors
 import app.jamaa.tv.ui.theme.JamaaShapes
 import app.jamaa.tv.ui.theme.JamaaTheme
@@ -46,7 +46,7 @@ fun phaseNameRes(phase: Phase): Int = when (phase) {
  */
 @Composable
 fun TopBar(
-    view: TvView,
+    view: MishanaView,
     degraded: Boolean,
     modifier: Modifier = Modifier,
     phaseOverride: String? = null,

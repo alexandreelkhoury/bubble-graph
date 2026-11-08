@@ -97,6 +97,24 @@ class SoundPoolPlayer(context: Context) : SoundSink {
             Cue.UI_MOVE -> R.raw.ui_move
             Cue.UI_SELECT -> R.raw.ui_select
             Cue.UI_BACK -> R.raw.ui_back
+            Cue.HUB_MOVE -> R.raw.hub_move
+            Cue.PORTAL_OPEN -> R.raw.portal_open
+            Cue.PORTAL_CLOSE -> R.raw.portal_close
+            Cue.WORLD_MISHANA_STING -> R.raw.world_mishana_sting
+            Cue.WORLD_BLUFF_STING -> R.raw.world_bluff_sting
+            Cue.WORLD_LIKELY_STING -> R.raw.world_likely_sting
+            Cue.WORLD_TRIVIA_STING -> R.raw.world_trivia_sting
+            Cue.COIN_FLY -> R.raw.coin_fly
+            Cue.COIN_LAND -> R.raw.coin_land
+            Cue.COUNTER_TICK -> R.raw.counter_tick
+            Cue.CROWN_DROP -> R.raw.crown_drop
+            Cue.CUP_STAR -> R.raw.cup_star
+            Cue.REACTION_POP -> R.raw.reaction_pop
+            Cue.ANSWER_LOCK -> R.raw.answer_lock
+            Cue.TRUTH_REVEAL -> R.raw.truth_reveal
+            Cue.HOUSE_GOT_YOU -> R.raw.house_got_you
+            Cue.QUIZ_CORRECT -> R.raw.quiz_correct
+            Cue.QUIZ_WRONG -> R.raw.quiz_wrong
         }
     }
 }

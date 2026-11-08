@@ -1,0 +1,455 @@
+{
+  "viewBox": 24,
+  "faceSpace": {
+    "w": 12,
+    "h": 9
+  },
+  "bodies": {
+    "circle": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0Z",
+    "square": "M7 3.5H17A3.5 3.5 0 0 1 20.5 7V17A3.5 3.5 0 0 1 17 20.5H7A3.5 3.5 0 0 1 3.5 17V7A3.5 3.5 0 0 1 7 3.5Z",
+    "star": "M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z",
+    "triangle": "M12 2.4 21.4 19H2.6z",
+    "diamond": "M12 2.2 21.8 12 12 21.8 2.2 12z",
+    "hexagon": "M12 2.6 20.2 7.3v9.4L12 21.4 3.8 16.7V7.3z",
+    "plus": "M9 3h6v6h6v6h-6v6H9v-6H3V9h6z",
+    "drop": "M12 1.25S5 9.15 5 13.75a7 7 0 0 0 14 0c0-4.6-7-12.5-7-12.5z",
+    "crescent": "M15 2.7a9.5 9.5 0 1 0 6.3 13.6A7.6 7.6 0 0 1 15 2.7z",
+    "bolt": "M13.5 2 5 13.5h6L10 22l9-12h-6.2z",
+    "flower": "M7.4 7.4a4.6 4.6 0 1 0 9.2 0a4.6 4.6 0 1 0 -9.2 0ZM12.000000000000002 12a4.6 4.6 0 1 0 9.2 0a4.6 4.6 0 1 0 -9.2 0ZM7.4 16.6a4.6 4.6 0 1 0 9.2 0a4.6 4.6 0 1 0 -9.2 0ZM2.8000000000000007 12a4.6 4.6 0 1 0 9.2 0a4.6 4.6 0 1 0 -9.2 0ZM8 12a4 4 0 1 0 8 0a4 4 0 1 0 -8 0Z",
+    "arch": "M5 20.75V10.25a7 7 0 0 1 14 0v10.5h-4.5v-6.5a2.5 2.5 0 0 0-5 0v6.5z"
+  },
+  "faceBoxes": {
+    "circle": {
+      "x": 6,
+      "y": 7.5,
+      "w": 12,
+      "h": 9
+    },
+    "square": {
+      "x": 6,
+      "y": 7.5,
+      "w": 12,
+      "h": 9
+    },
+    "star": {
+      "x": 8,
+      "y": 9,
+      "w": 8,
+      "h": 6
+    },
+    "triangle": {
+      "x": 7.5,
+      "y": 11.5,
+      "w": 9,
+      "h": 6.75
+    },
+    "diamond": {
+      "x": 7,
+      "y": 8,
+      "w": 10,
+      "h": 7.5
+    },
+    "hexagon": {
+      "x": 6.5,
+      "y": 7.5,
+      "w": 11,
+      "h": 8.25
+    },
+    "plus": {
+      "x": 8.5,
+      "y": 8.5,
+      "w": 7,
+      "h": 7
+    },
+    "drop": {
+      "x": 7,
+      "y": 11,
+      "w": 10,
+      "h": 7.5
+    },
+    "crescent": {
+      "x": 4,
+      "y": 9,
+      "w": 8,
+      "h": 6
+    },
+    "bolt": {
+      "x": 8.5,
+      "y": 9.5,
+      "w": 6,
+      "h": 4.5
+    },
+    "flower": {
+      "x": 7.5,
+      "y": 7.5,
+      "w": 9,
+      "h": 9
+    },
+    "arch": {
+      "x": 7,
+      "y": 8.5,
+      "w": 10,
+      "h": 7.5
+    }
+  },
+  "expressions": [
+    {
+      "id": "idle",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M2.6999999999999997 3.6a1.1 1.45 0 1 0 2.2 0a1.1 1.45 0 1 0 -2.2 0ZM7.1 3.6a1.1 1.45 0 1 0 2.2 0a1.1 1.45 0 1 0 -2.2 0Z",
+          "style": "fill"
+        },
+        {
+          "part": "mouth",
+          "d": "M4.4 6.6Q6 7.6 7.6 6.6",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        }
+      ]
+    },
+    {
+      "id": "think",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M3.6 2.8a1.1 1.45 0 1 0 2.2 0a1.1 1.45 0 1 0 -2.2 0ZM8 2.8a1.1 1.45 0 1 0 2.2 0a1.1 1.45 0 1 0 -2.2 0Z",
+          "style": "fill"
+        },
+        {
+          "part": "brows",
+          "d": "M7.4 0.9L9.6 0.5",
+          "style": "stroke",
+          "strokeWidth": 0.7
+        },
+        {
+          "part": "mouth",
+          "d": "M5.4 6.8H7.8",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        }
+      ]
+    },
+    {
+      "id": "done",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M2.7 3.8Q3.8 2.8 4.9 3.8M7.1 3.8Q8.2 2.8 9.3 3.8",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        },
+        {
+          "part": "mouth",
+          "d": "M4.8 6.6Q6 7.4 7.2 6.6",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        }
+      ]
+    },
+    {
+      "id": "happy",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M2.7 4.2Q3.8 2.6 4.9 4.2M7.1 4.2Q8.2 2.6 9.3 4.2",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        },
+        {
+          "part": "mouth",
+          "d": "M4.2 6H7.8A1.8 1.8 0 0 1 4.2 6Z",
+          "style": "fill"
+        },
+        {
+          "part": "cheeks",
+          "d": "M1.3000000000000003 5.8a0.9 0.9 0 1 0 1.8 0a0.9 0.9 0 1 0 -1.8 0ZM8.9 5.8a0.9 0.9 0 1 0 1.8 0a0.9 0.9 0 1 0 -1.8 0Z",
+          "style": "fill",
+          "alpha": 0.35
+        }
+      ]
+    },
+    {
+      "id": "laugh",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M3 2.9L4.4 3.6L3 4.3M9 2.9L7.6 3.6L9 4.3",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        },
+        {
+          "part": "mouth",
+          "d": "M3.8 5.8H8.2A2.2 2.4 0 0 1 3.8 5.8Z",
+          "style": "fill"
+        },
+        {
+          "part": "cheeks",
+          "d": "M1.3000000000000003 5.8a0.9 0.9 0 1 0 1.8 0a0.9 0.9 0 1 0 -1.8 0ZM8.9 5.8a0.9 0.9 0 1 0 1.8 0a0.9 0.9 0 1 0 -1.8 0Z",
+          "style": "fill",
+          "alpha": 0.35
+        }
+      ]
+    },
+    {
+      "id": "smug",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M2.7 3.2H4.9A1.1 1.1 0 0 1 2.7 3.2ZM7.1 3.2H9.3A1.1 1.1 0 0 1 7.1 3.2Z",
+          "style": "fill"
+        },
+        {
+          "part": "brows",
+          "d": "M2.7 1.6H4.9M7.1 1.2L9.3 0.6",
+          "style": "stroke",
+          "strokeWidth": 0.7
+        },
+        {
+          "part": "mouth",
+          "d": "M4.6 6.8Q6.8 7.4 7.8 6",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        }
+      ]
+    },
+    {
+      "id": "shock",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M2.4 3.6a1.4 1.4 0 1 0 2.8 0a1.4 1.4 0 1 0 -2.8 0ZM6.799999999999999 3.6a1.4 1.4 0 1 0 2.8 0a1.4 1.4 0 1 0 -2.8 0Z",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        },
+        {
+          "part": "eyes",
+          "d": "M3.3 3.6a0.5 0.5 0 1 0 1 0a0.5 0.5 0 1 0 -1 0ZM7.699999999999999 3.6a0.5 0.5 0 1 0 1 0a0.5 0.5 0 1 0 -1 0Z",
+          "style": "fill"
+        },
+        {
+          "part": "brows",
+          "d": "M2.8 0.6H4.8M7.2 0.6H9.2",
+          "style": "stroke",
+          "strokeWidth": 0.7
+        },
+        {
+          "part": "mouth",
+          "d": "M5.3 6.9a0.7 0.9 0 1 0 1.4 0a0.7 0.9 0 1 0 -1.4 0Z",
+          "style": "fill"
+        }
+      ]
+    },
+    {
+      "id": "sad",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M2.7 3.4L4.9 3A1.1 1.2 0 0 1 2.7 3.4ZM7.1 3L9.3 3.4A1.1 1.2 0 0 1 7.1 3Z",
+          "style": "fill"
+        },
+        {
+          "part": "brows",
+          "d": "M2.8 1.9L4.6 1.2M9.2 1.9L7.4 1.2",
+          "style": "stroke",
+          "strokeWidth": 0.7
+        },
+        {
+          "part": "mouth",
+          "d": "M4.4 7.4Q6 6.4 7.6 7.4",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        }
+      ]
+    },
+    {
+      "id": "facepalm",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M2.8 3.6H4.8M7.2 3.6H9.2",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        },
+        {
+          "part": "mouth",
+          "d": "M4.8 6.8H7.2",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        }
+      ]
+    },
+    {
+      "id": "shy",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M2.6999999999999997 4.4a1.1 1.45 0 1 0 2.2 0a1.1 1.45 0 1 0 -2.2 0ZM7.1 4.4a1.1 1.45 0 1 0 2.2 0a1.1 1.45 0 1 0 -2.2 0Z",
+          "style": "fill"
+        },
+        {
+          "part": "mouth",
+          "d": "M5.2 6.9Q6 7.4 6.8 6.9",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        },
+        {
+          "part": "cheeks",
+          "d": "M1.3000000000000003 5.8a0.9 0.9 0 1 0 1.8 0a0.9 0.9 0 1 0 -1.8 0ZM8.9 5.8a0.9 0.9 0 1 0 1.8 0a0.9 0.9 0 1 0 -1.8 0Z",
+          "style": "fill",
+          "alpha": 0.6
+        }
+      ]
+    },
+    {
+      "id": "point",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M3.6999999999999997 3.6a1.1 1.45 0 1 0 2.2 0a1.1 1.45 0 1 0 -2.2 0ZM8.1 3.6a1.1 1.45 0 1 0 2.2 0a1.1 1.45 0 1 0 -2.2 0Z",
+          "style": "fill"
+        },
+        {
+          "part": "mouth",
+          "d": "M4.6 6.4H7.4A1.4 1 0 0 1 4.6 6.4Z",
+          "style": "fill"
+        }
+      ]
+    },
+    {
+      "id": "cheer",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M3.8 2L4.25 3.15L5.4 3.6L4.25 4.05L3.8 5.2L3.3499999999999996 4.05L2.1999999999999997 3.6L3.3499999999999996 3.15ZM8.2 2L8.649999999999999 3.15L9.799999999999999 3.6L8.649999999999999 4.05L8.2 5.2L7.749999999999999 4.05L6.6 3.6L7.749999999999999 3.15Z",
+          "style": "fill"
+        },
+        {
+          "part": "mouth",
+          "d": "M3.8 5.8H8.2A2.2 2.4 0 0 1 3.8 5.8Z",
+          "style": "fill"
+        },
+        {
+          "part": "cheeks",
+          "d": "M1.3000000000000003 5.8a0.9 0.9 0 1 0 1.8 0a0.9 0.9 0 1 0 -1.8 0ZM8.9 5.8a0.9 0.9 0 1 0 1.8 0a0.9 0.9 0 1 0 -1.8 0Z",
+          "style": "fill",
+          "alpha": 0.35
+        }
+      ]
+    },
+    {
+      "id": "away",
+      "features": [
+        {
+          "part": "eyes",
+          "d": "M2.8 3.6H4.8M7.2 3.6H9.2",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        },
+        {
+          "part": "mouth",
+          "d": "M5.2 6.8H6.8",
+          "style": "stroke",
+          "strokeWidth": 0.8
+        }
+      ]
+    }
+  ],
+  "reactions": [
+    {
+      "reaction": "laugh",
+      "expression": "laugh",
+      "burst": "burst.tears"
+    },
+    {
+      "reaction": "shock",
+      "expression": "shock",
+      "burst": "burst.exclaim"
+    },
+    {
+      "reaction": "facepalm",
+      "expression": "facepalm",
+      "burst": "burst.sweat"
+    },
+    {
+      "reaction": "happy",
+      "expression": "happy",
+      "burst": "burst.heart"
+    },
+    {
+      "reaction": "sad",
+      "expression": "sad",
+      "burst": "burst.raincloud"
+    },
+    {
+      "reaction": "cheer",
+      "expression": "cheer",
+      "burst": "burst.confetti"
+    }
+  ],
+  "worlds": {
+    "night-market": {
+      "deep": {
+        "web": "#1D1036",
+        "native": "#120A1F"
+      },
+      "stageTop": {
+        "web": "#2B1650",
+        "native": "#2A0F3D"
+      },
+      "surface": {
+        "web": "#3A2266",
+        "native": "#1E1430"
+      },
+      "elevated": {
+        "web": "#4A2E7A",
+        "native": "#2A1D42"
+      },
+      "accent": {
+        "web": "#FF4F9A",
+        "native": "#FF3D8B"
+      },
+      "accentText": "#FF7AB3",
+      "onAccent": "#120A1F",
+      "glow": {
+        "web": "#FFC94D",
+        "native": "#FFC23D"
+      },
+      "signal": null
+    },
+    "hakawati-cafe": {
+      "deep": "#1C1209",
+      "stageTop": "#2E1D0E",
+      "surface": "#33230F",
+      "elevated": "#4A3418",
+      "accent": "#E9A23B",
+      "accentText": "#E9A23B",
+      "onAccent": "#120A1F",
+      "glow": "#FFE3A3",
+      "signal": "#FF5A5F"
+    },
+    "rooftop": {
+      "deep": "#071A24",
+      "stageTop": "#0E2C3B",
+      "surface": "#0F2E3D",
+      "elevated": "#17404F",
+      "accent": "#29D3C2",
+      "accentText": "#29D3C2",
+      "onAccent": "#120A1F",
+      "glow": "#B8FFF6",
+      "signal": "#FFC94D"
+    },
+    "quiz-studio": {
+      "deep": "#0A0F2E",
+      "stageTop": "#141C52",
+      "surface": "#161D4A",
+      "elevated": "#222B63",
+      "accent": "#5B7CFF",
+      "accentText": "#8FA8FF",
+      "onAccent": "#120A1F",
+      "glow": "#FFD84D",
+      "signal": "#3DDC97"
+    }
+  }
+}

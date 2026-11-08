@@ -11,6 +11,10 @@ import { projectRoomForTv } from "../src/projection/room";
 import { REACTIONS } from "../src/room/types";
 import type { RoomIntent } from "../src/room/types";
 import { ALL_TV_GAMES, RoomHarness } from "../src/testing/room";
+import { BODY_PATHS, CHARACTER_VIEWBOX, EXPRESSION_FEATURES, EXPRESSIONS, FACE_BOXES, FACE_SPACE, REACTION_BURST, REACTION_EXPRESSION } from "../src/characters";
+import { CHOREO, EASINGS, sample } from "../src/motion";
+import type { Step } from "../src/motion";
+import { WORLD_PALETTES } from "../src/worlds";
 
 export const FIXTURE_V2_SEED = 12345;
 export const FIXTURE_V2_T0 = 1_790_000_000_000;
@@ -156,5 +160,24 @@ export function generateFixturesV2(): Map<string, string> {
   h.now += 1000;
   h.p(LEA, { type: "REACT", kind: "laugh" });
   player("hub.reaction", RAMI);
+
+  // ---------------- characters, worlds and the choreography sampler (§3.7, §3.4, §3.8): parity fixtures for web and TV
+  put("characters.json", {
+    viewBox: CHARACTER_VIEWBOX, faceSpace: FACE_SPACE, bodies: BODY_PATHS, faceBoxes: FACE_BOXES,
+    expressions: EXPRESSIONS.map((id) => ({ id, features: EXPRESSION_FEATURES[id] })),
+    reactions: REACTIONS.map((r) => ({ reaction: r, expression: REACTION_EXPRESSION[r], burst: REACTION_BURST[r] })),
+    worlds: WORLD_PALETTES,
+  });
+  // Progress at 0/25/50/75/100 % of every step (index 0), plus index 1 at the midpoint for staggered steps.
+  const r6 = (x: number): number => Math.round(x * 1e6) / 1e6;
+  const sampled = (st: Step) => {
+    const at = [0, 0.25, 0.5, 0.75, 1].map((f) => st.startMs + f * st.durationMs);
+    return {
+      ...st,
+      samples: at.map((tMs) => ({ tMs, p: r6(sample(st, tMs)) })),
+      ...(st.staggerMs ? { staggered: { index: 1, tMs: st.startMs + st.staggerMs + 0.5 * st.durationMs, p: r6(sample(st, st.startMs + st.staggerMs + 0.5 * st.durationMs, 1)) } } : {}),
+    };
+  };
+  put("choreo.json", { easings: EASINGS, moments: Object.fromEntries(Object.entries(CHOREO).map(([id, steps]) => [id, (steps as readonly Step[]).map(sampled)])) });
   return files;
 }

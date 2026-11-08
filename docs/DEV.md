@@ -1,6 +1,6 @@
 # Developing JAMAA
 
-This page covers local development, testing and deployment for the TypeScript side of the repo (shared engine, Worker and Room Durable Object, web client, tools). The Android TV app has its own guide in [TV.md](TV.md). The binding contract is [SPEC.md](SPEC.md).
+This page covers local development, testing and deployment for the TypeScript side of the repo (shared room and game engines, Worker and Room Durable Object, web client, tools). The Android TV app has its own guide in [TV.md](TV.md). The binding contracts are [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) (rooms, hub, protocol v2, the JAMAA Pass, content) and, for game #1, [SPEC.md](SPEC.md) (the Mish Ana! engine rules); billing is [PAYMENTS-SPEC.md](PAYMENTS-SPEC.md) revision 4.
 
 ## Prerequisites
 
@@ -24,12 +24,13 @@ pnpm dev
 
 `tools/dev.mjs`:
 
-1. Picks the LAN address: `LAN_HOST` from `/.env` wins. Otherwise it uses the first non-internal IPv4 address, preferring `192.168.*`, then `10.*`, then `172.16–31.*`.
-2. Builds the web client once if `web-client/dist/index.html` is missing. Wrangler serves that folder as static assets.
-3. Starts both processes and stops both on Ctrl+C:
-   - `wrangler dev --ip 0.0.0.0 --port 8787` with `JOIN_BASE_URL=http://<LAN_HOST>:5173`, `ALLOWED_ORIGINS=http://<LAN_HOST>:5173,http://localhost:5173`, `DEBUG_INVARIANTS=1` (the engine invariants run after every state change) and **fake billing** (`BILLING_MODE=fake`, `ALLOW_FAKE_BILLING=1`; see [Billing](#billing-payments-specmd)).
+1. Emits the content (JAMAA-PLATFORM §5.6): `content-lint --emit` writes every registered, validated pack to `server/content-dist/<game>/<id>.txt` (gitignored), then `server/scripts/gen-content-modules.mjs` regenerates `server/src/content-modules.gen.ts` (one Text-module import per pack). Both also run before `pnpm build` and `pnpm test` (root script `content:emit`).
+2. Picks the LAN address: `LAN_HOST` from `/.env` wins. Otherwise it uses the first non-internal IPv4 address, preferring `192.168.*`, then `10.*`, then `172.16–31.*`.
+3. Builds the web client once if `web-client/dist/index.html` is missing. Wrangler serves that folder as static assets.
+4. Starts both processes and stops both on Ctrl+C:
+   - `wrangler dev --ip 0.0.0.0 --port 8787` with `JOIN_BASE_URL=http://<LAN_HOST>:5173`, `ALLOWED_ORIGINS=http://<LAN_HOST>:5173,http://localhost:5173`, `DEBUG_INVARIANTS=1` (the room and game invariants run after every state change), billing on and **fake billing** (`BILLING_ENABLED=1`, `BILLING_MODE=fake`, `ALLOW_FAKE_BILLING=1`; see [Billing](#billing-payments-specmd)). `GAMES_ENABLED` keeps its `wrangler.jsonc` value (`"mishana"`); add `--var GAMES_ENABLED:mishana,bluff` by hand to try a game whose G milestone is done.
    - `vite --host 0.0.0.0 --port 5173 --strictPort` (hot reload for the phone UI).
-4. Prints the URLs:
+5. Prints the URLs:
    - `TV server URL: http://<LAN_HOST>:8787`. Build the Android TV app with `-PserverUrl=http://<LAN_HOST>:8787`.
    - `Phone/TV-mock: http://<LAN_HOST>:5173/tv`. Open it on a laptop or TV browser to host without the Android app.
 
@@ -43,14 +44,15 @@ Phones scan the QR code or open `http://<LAN_HOST>:5173/ABCD`.
   - check that the router has no "client/AP isolation" (guest networks usually do);
   - mobile data must be off on the phone.
 - **Origins.** Browsers send `Origin`. The Worker accepts same-origin requests, the origins in `ALLOWED_ORIGINS` and requests without an `Origin` (the TV app and the sim). When you open Vite through a different host name, add it to `ALLOWED_ORIGINS`. Otherwise the WebSocket upgrade gets **403**.
-- **Local state.** Wrangler keeps Durable Object storage in `server/.wrangler/state`. Delete that folder to drop all local rooms.
+- **Local state.** Wrangler keeps Durable Object storage in `server/.wrangler/state`. Delete that folder to drop all local rooms. Rooms stored by an older build (protocol v1, `state` without `schema: 2`) are expired on their next wake-up and log `room_schema_expired` once each: that is the intended deploy behaviour (JAMAA-PLATFORM §2.6), not an error.
 - **Proxy warnings.** Behind an HTTP proxy, wrangler logs `Unable to fetch the Request.cf object` and `Request was cancelled`. Both are harmless.
 
 ### Running only the server
 
 ```sh
-pnpm --filter @jamaa/server exec wrangler dev --port 8787
-curl -s localhost:8787/healthz                     # {"ok":true,"app":"jamaa","protocol":1}
+pnpm run content:emit && pnpm --filter @jamaa/server run dev   # gen-content-modules, then wrangler dev on :8787
+curl -s localhost:8787/healthz                     # {"ok":true,"app":"jamaa","protocol":2}
+curl -s localhost:8787/api/config                  # {"billing":false,"games":["mishana"]}
 curl -s -X POST localhost:8787/api/rooms           # {"code":"KXRT","tvToken":"…","joinUrl":"…","wsPath":"/parties/room/KXRT","entitlement":"NONE"}
 ```
 
@@ -60,36 +62,40 @@ curl -s -X POST localhost:8787/api/rooms           # {"code":"KXRT","tvToken":"�
 
 | Command | What it runs |
 |---|---|
-| `pnpm test` | Every Vitest project: `shared`, `server`, `web-client`, `word-packs`, `tools/*` |
-| `pnpm test:coverage` | The same, with the engine coverage gate (≥ 90 %) |
+| `pnpm test` | `content:emit`, then every Vitest project: `shared`, `server`, `web-client`, `content`, `tools/*` |
+| `pnpm test:coverage` | The same, with the coverage gate (≥ 90 %) on `shared/src/games/*/engine/**` and `shared/src/room/**` |
+| `ROOM_PROPS_RUNS=2000 pnpm vitest run --project shared shared/test/room/props.test.ts` | The room property tests at the P acceptance size (JAMAA-PLATFORM §6.4: ≥ 2 000 runs; the default run is 150) |
 | `pnpm lint` / `pnpm typecheck` | ESLint (flat config) and `tsc -p .` in every package |
-| `pnpm sim --players 3..12 --games 500` | Engine-mode bot games on the real packs with invariant, termination, role-count and leak checks, and the Blank-never-opens rule at every round and tie-break. The full catalog is equivalent to a Premium room; add `--access free` to play the free starter packs only (locked packs must never be picked, views carry locked-pack metadata only) |
-| `pnpm sim --ws http://127.0.0.1:8787 --players 4 --games 3` | **WS mode** against a running server (see below) |
+| `pnpm sim [--game mishana\|bluff\|likely\|trivia\|all] --players 3..12 --games 500` | Engine-mode bot games of each selected game on the real packs with invariant, termination, role-count and leak checks, and the Blank-never-opens rule at every round and tie-break. `--game` defaults to `mishana`; `all` reports the G2–G4 stubs as skipped until their G milestone. The full catalog is equivalent to a Pass room; add `--access free` to play the free starter content only (locked packs must never be picked, views carry locked-pack metadata only) |
+| `pnpm sim --session --games 50 [--access free]` | **Session mode** (JAMAA-PLATFORM §2.9): rooms through the platform engine (`reduceRoom`), hub → a live game → setup → play → replay, back to setup or back to hub, about 10 games per room, with random reactions, disconnects, benched late joins, leaves and aborts. Room invariants and the generic leak checker after every step, and the cup arithmetic (stars recomputed from each outcome's ranking) after every finished instance |
+| `pnpm sim --ws http://127.0.0.1:8787 --players 4 --games 3` | **WS mode** against a running server, over protocol v2 (see below) |
 | `pnpm --filter @jamaa/web-client build` | Vite production build into `web-client/dist`, then the 60 KB gzip phone budget (`web-client/scripts/check-size.mjs`, TV mock excluded) |
-| `pnpm --filter @jamaa/server build` | Wrangler dry-run bundle (minified) into `server/dist`, then the 400 KB script budget (`server/scripts/check-size.mjs`) |
-| `pnpm fixtures` / `pnpm --filter @jamaa/shared run check:fixtures` | Regenerate or verify `shared/fixtures/*.json` |
+| `pnpm --filter @jamaa/server build` | `gen-content-modules --require`, the Wrangler dry-run bundle (minified) into `server/dist` (the script plus one `.txt` Text module per pack), then `server/scripts/check-size.mjs`: script code ≤ 400 KB, content modules ≤ 2 MB raw, whole upload ≤ 3 MB gzip (the Free-plan limit, [VERIFY] the owner's plan) |
+| `pnpm fixtures` / `pnpm --filter @jamaa/shared run check:fixtures` | Regenerate or verify the generated fixtures: `shared/fixtures/*.json` (v1, kept for one milestone) and `shared/fixtures/v2/**` (the protocol v2 contract the web client and the TV test against). The billing fixtures (`billing.products.json`, `http.billing.*`) are hand-maintained |
 | `pnpm rename:gate` (`-- --summary` for per-file counts) | JAMAA rename gate (JAMAA-PLATFORM §1.7): fails on any case-insensitive hit of the old brand outside `tools/rename-gate/allowlist.txt` |
-| `pnpm lint:packs` (alias `pnpm lint:content`) / `pnpm --filter @jamaa/content-lint run lint -- --release` | Pack lint. `--release` (run by `pnpm run deploy`) fails when a free starter pack has fewer than 40 pairs |
-| `pnpm --filter @jamaa/server billing:products` | CSV of every premium pack (`productId,packId,locale,titleEn,titleFr,titleAr`) for Play Console |
+| `pnpm lint:content` (alias `pnpm lint:packs`, one milestone) / `pnpm --filter @jamaa/content-lint run lint -- --release` | Content lint over every game. `--release` (run by `pnpm run deploy`) applies the release gates of JAMAA-PLATFORM §4.3 and fails on a free starter pack with fewer than 40 pairs **or still `status: "draft"`**. Today the four free `*-everyday-01` packs are drafts awaiting the owner's review, so **`pnpm run deploy` fails on purpose** until they are reviewed |
+| `pnpm gen:characters` (`--filter @jamaa/gen-characters run check` / `check:kotlin`) | Regenerates the TV's `CharacterPaths.kt`, `WorldColors.kt` and `Choreo.kt` from `shared/src/{characters,worlds,motion}` (lane D's generator; `check:kotlin` compiles the Kotlin sampler port and compares it with the TS `sample()`) |
+| `pnpm --filter @jamaa/server billing:products` | CSV for Play Console (PAYMENTS-SPEC §1.4): `productId,type,gameId,family,locales,titleEn,titleFr,titleAr,titleEs`. Row 1 is the `jamaa_pass` subscription (create its base plans and offers by hand), then one one-time `pack_<family>` per sellable content family, titled "JAMAA – <pack title>" |
 | `pnpm grant <installId>` / `pnpm grant list` / `pnpm grant revoke <id>` | Owner comps through `/api/admin/grants` (needs the optional `ADMIN_TOKEN` secret; see [Admin grants](#admin-grants-comp-premium-for-a-tv-payments-spec-312)) |
 
 To run one project: `pnpm vitest run --project server` (or `shared`, `sim`, …).
 
-Test support lives in `shared/src/testing` and is imported as `@jamaa/shared/testing` (from shared tests: `../../src/testing`): the scripted `Game` driver, the seeded bot driver `playGame` with its per-step checks, the secret-leak checker and the test catalogs. The server tests, `tools/sim` and the fixture generator use the same code.
+Test support lives in `shared/src/testing` and is imported as `@jamaa/shared/testing` (from shared tests: `../../src/testing`): the room harness `RoomHarness` (a scripted clock over `reduceRoom` that checks `assertRoomInvariants` after every dispatch, with `nextMishanaAction` / `playMishanaToResults`), the generic room leak checker `findRoomLeaks` (`secretsFor`, `leakCheck` and `forbiddenKeys` of the active game, for the TV, spectators and every member), the scripted Mish Ana! `Game` driver, the seeded bot driver `playGame`, and the test catalogs. The server tests, `tools/sim` and the fixture generator use the same code.
 
 ### Server tests (`server/test`)
 
-The server tests run in Node. They drive `RoomCore` (`server/src/room-core.ts`) through in-memory fakes in `server/test/support/fakes.ts`: storage with an alarm, sockets, a clock and real WebCrypto. `Harness.startedGame({ n, settings, ready })` sets up a TV, `n` players and a started game with the timers off. They never import `room.ts` or `index.ts`, so no workerd is needed. The suites cover:
+The server tests run in Node. `server/test/support/setup.ts` installs the content loader over the `@jamaa/content` JSON (the Worker installs one over its Text modules). They drive `RoomCore` (`server/src/room-core.ts`) through in-memory fakes in `server/test/support/fakes.ts`: storage with an alarm, sockets, a clock and real WebCrypto, speaking protocol v2 (`h.tv(games?)` says hello with every game at its `VIEW_VERSION` by default, `h.open(tv)`, `h.settings(tv, patch)`, `h.game(conn, intent)`; `h.room` is the `RoomState`, `h.state` the running Mish Ana! engine state, `h.history` the `RoomHistory`). `Harness.startedGame({ n, settings, ready })` sets up a TV, `n` players, OPEN_GAME mishana, the timers off and START_GAME. Options: `{ entitlement, billingMode, billing, billingEnabled, enabledGames, content }`. They never import `room.ts` or `index.ts`, so no workerd is needed. The suites cover:
 
-- hello, join, actions and KICK/LEAVE;
+- hello (a v1 frame closes with 4002; a TV hello without `games` is refused), join (a join while PLAYING is benched, then dealt in at REPLAY), actions and KICK/LEAVE;
+- the platform (`room-core.platform.test.ts`): the two storage keys (`history` written only at game end, REPLAY or ABORT), a schema-1 room expires (4010), stale settings and a missing game slot normalize on load, a game-state schema mismatch aborts to SETUP (`game_schema_reset`), the three `GAMES_ENABLED` runtime cases, TV capability negotiation (a TV without a game or at another view version never gets it), `WRONG_GAME` / `NOT_IN_GAME`, `HUB_FOCUS` without any storage write, and one full session hub → mishana → replay → hub;
 - rate limits and frame checks;
 - connection caps;
 - alarms and expiry;
 - `initRoom` on live and expired rooms;
 - concurrency (the mutex);
 - hibernation: a fresh `RoomCore` on the same storage behaves identically, and a restart with no live sockets marks players disconnected and applies the speaker grace rule;
-- HTTP handlers, room codes, tokens and the Origin check;
-- room access (PAYMENTS-SPEC §3.11): entitlement and `storeOpen` messages, locked-pack and premium-setting pre-checks, restrictions, the TV-busy flag (`room-core.access.test.ts`, `access.test.ts`);
+- HTTP handlers (healthz v2, `/api/config` with `games`, `GAMES_ENABLED` parsing), room codes, tokens, the Origin check, the content loader, and the deploy scripts (`check-deploy`, `check-size`, `play-products`);
+- room access (PAYMENTS-SPEC §3.11, JAMAA-PLATFORM §4.4): entitlement and `storeOpen` messages, the `PACK_LOCKED` (by family) and `PREMIUM_REQUIRED` pre-checks on `UPDATE_GAME_SETTINGS`, restrictions of the setup game in SETUP and of every game in HUB, the TV-busy flag (`room-core.access.test.ts`, `access.test.ts`);
 - billing (`server/test/billing/*`): the Billing DO core against real SQLite (`node:sqlite`, flag-free in Node 22.22; it prints an `ExperimentalWarning`), the Google client with a mocked `fetch`, RTDN with locally generated OIDC keys, routes, cron, the fake mode guards and the log redaction test. `Harness` takes `{ entitlement, billingMode, billing }`; a room with no entitlement is a free room.
 
 ### WS mode: end-to-end over the protocol
@@ -104,14 +110,16 @@ For each player count the sim:
 
 - creates a room over HTTP and checks `Cache-Control: no-store`;
 - opens a TV socket and N phone sockets (no `Origin`) and checks ping/pong;
-- plays full games with all timers off (bots READY, give clues, vote and guess; the TV advances ELIMINATION and verdicts) and runs PLAY_AGAIN between games.
+- says hello as a v2 TV (every game at its `VIEW_VERSION`) and checks the room starts in HUB with `mishana` in `room.games`;
+- OPEN_GAME mishana, sets the timers off, START_GAME, and plays full games through `GAME {gameId:"mishana", i}` (bots READY, give clues, vote and guess; the TV advances ELIMINATION and verdicts), REPLAY between games and once BACK_TO_HUB and in again.
 
 Along the way it checks that:
 
 - **killing and resuming a player socket mid-game** restores the same `playerId` and token through `welcome`;
-- every server frame parses with `ServerMessageSchema`;
-- `seq` never goes backwards;
-- every TV state satisfies SPEC §5.4: no secret word, no alive revealed role and no guess text before RESULTS.
+- **a late joiner while PLAYING** is benched (no game `me`) and dealt in at the next instance;
+- every server frame parses with `ServerMessageV2Schema`;
+- `seq` strictly increases on every socket;
+- every TV state satisfies SPEC §5.4: no secret word, no room or game `me`, no state-only key, no alive revealed role and no guess text before RESULTS.
 
 The same check is available as an opt-in Vitest case: `JAMAA_WS_URL=http://127.0.0.1:8787 pnpm vitest run --project sim`.
 
@@ -127,22 +135,25 @@ The room comes back in the same phase with the same words. On the first connecti
 
 - `server/src/index.ts`: the Worker. In order:
   1. `GET /healthz`;
-  2. `POST /api/rooms`, `/api/billing/*` (PAYMENTS-SPEC §3.4), and 405 for any other request under `/api/*`;
+  2. `POST /api/rooms`, `GET /api/config` (`{billing, games}`), `/api/billing/*` (PAYMENTS-SPEC §3.4), `/api/admin/*`, and 405 for any other request under `/api/*`;
   3. WebSocket upgrades to `/parties/room/{CODE}`: the Worker checks the code regex, returns 400 unless `_pk` matches `^[A-Za-z0-9_-]{1,64}$` and `cid` matches `^[A-Za-z0-9-]{8,64}$`, applies the per-IP `CONNECT_LIMITER`, then routes through partyserver, which runs the Origin check in `onBeforeConnect`.
 
   Everything else is served by the static-assets layer, with SPA fallback.
 - `server/src/http.ts`: room creation. It draws a code by rejection sampling, hashes the TV token, calls `initRoom` over native RPC (retrying up to 10 codes on collision) and returns 201 with `no-store`.
 - `server/src/room.ts`: a thin partyserver `Server` (`hibernate: true`). It sets the ping/pong auto-response and forwards every entry point to `RoomCore`.
-- `server/src/room-core.ts`: all behaviour. Every entry point runs through one FIFO mutex. Each change goes read → reduce → persist (`meta`, `state` and `sessions` in DO storage) → broadcast per-connection projections → reschedule the alarm (the minimum of the engine wake time, the room expiry and the hello deadline).
+- `server/src/content.ts` (JAMAA-PLATFORM §5.6): the content behind an injected loader. `index.ts` installs a loader over `content-modules.gen.ts` (the Text modules), Node installs one over `@jamaa/content`; each game's packs are `JSON.parse`d on first use and schema-validated once per isolate (`loadGameContent`). The packs never ship as JS object literals or as static assets.
+- `server/src/room-core.ts`: all behaviour. Every entry point runs through one FIFO mutex. Each change goes read → `reduceRoom(state, action, {now, content: playable, enabledGames, access, history})` → inline expiry (a result whose wake time is already due TICKs in the same turn) → persist → broadcast per-connection projections (`projectRoomForTv` / `projectRoomForPlayer`) → reschedule the alarm (the minimum of the room wake time, the room expiry, the access change and the hello deadline).
+- Storage (`server/src/room-store.ts`, JAMAA-PLATFORM §2.6): `meta`, `state` (`RoomState`, rewritten on every change), `history` (`RoomHistory`: memory and the last 20 cup entries, written only at game end, REPLAY or ABORT) and `sessions`. On load (`normalizeLoaded`): a `state` without `schema: 2` expires the room (4010), every `gameSettings[K]` passes through `GAMES[K].settings.normalize`, and a running game whose state `schema` differs from the code's is aborted to SETUP. The TV's carousel focus (`HUB_FOCUS`) is in-memory meta only: it is broadcast (with a higher `seq`) but never written.
+- `GAMES_ENABLED` (`server/src/config.ts`): the live games, `GAMES_ENABLED` ∩ registry `enabled`. The room offers that ∩ the games the TV's hello declares at the server's `VIEW_VERSION`. Unknown ids are ignored at runtime (one `games_enabled_unknown_id` log per isolate) and fail `check-deploy.mjs`. A game removed by a redeploy: an instance already PLAYING finishes; a room in SETUP for it returns to HUB on its next write.
 - Per-socket data lives in the hibernation-safe attachment: role, playerId, `cid`, a truncated IP hash, epoch and rate-limit bucket. Resume and TV tokens are stored only as SHA-256 hashes and compared in constant time.
 - Connection caps: at most `MAX_CONNECTIONS_PER_ROOM` (40) non-spectator sockets (pending, TV, joined players) and, separately, `MAX_SPECTATORS_PER_ROOM` (16) spectators (said hello as a player but have not joined). A spectator flood therefore cannot lock out the TV or a resume-token reconnect. When `MAX_PENDING_CONNECTIONS` is reached, a new socket evicts the oldest pending one (4009). Every inbound frame takes a rate-limit token; binary and oversize frames also count as strikes (three in 10 s → 4008). Room activity (idle TTL) is refreshed only by a TV hello, a resume, a join or an accepted action.
 - Known local-dev effect: on `wrangler dev`, a close sent from inside `onConnect` (4004 room not found, 4009 room full) reaches the client about 10 s late, because it is issued before partyserver returns the 101. Closes sent from `onMessage` arrive at once. Bad `_pk` and `cid` values are rejected with 400 before the upgrade, so they are not affected. This has not been checked against a deployed Worker; check it before shipping.
 - Server code never logs message bodies, state, words, guesses, tokens, names or IPs. The catch-all logs `{code, phase, roomCode}` only.
-- Billing (PAYMENTS-SPEC §3): `/api/billing/*` is handled by `server/src/billing/routes.ts`; purchase state lives in the single `Billing` Durable Object (`env.BILLING.getByName("global")`, SQLite). The Room DO only gets the public entitlement verify keys and plays `playableCatalog(full, access)` (`server/src/access.ts`), so a locked pack's words can never be picked or projected.
+- Billing (PAYMENTS-SPEC §3): `/api/billing/*` is handled by `server/src/billing/routes.ts`; purchase state lives in the single `Billing` Durable Object (`env.BILLING.getByName("global")`, SQLite). The Room DO only gets the public entitlement verify keys and plays `playableFor(full, access)` (`server/src/access.ts`: each game's `ContentAdapter.playable` on every pack), so a locked pack's items can never be picked or projected.
 
 ## Billing (PAYMENTS-SPEC.md)
 
-The binding contract is [PAYMENTS-SPEC.md](PAYMENTS-SPEC.md). The server stores purchase state in the `Billing` DO, checks every purchase token with Google, and signs an 8-hour Ed25519 **entitlement token** that the TV sends with `POST /api/rooms` and the WS `entitlement` message.
+The binding contract is [PAYMENTS-SPEC.md](PAYMENTS-SPEC.md) revision 4: the **JAMAA Pass** subscription `jamaa_pass` (base plans `monthly` and `yearly`, offer `trial-7d` on each) unlocks every pack of every game and the premium settings; one-time `pack_<family>` products unlock one content family. The server stores purchase state in the `Billing` DO, checks every purchase token with Google, and signs an 8-hour Ed25519 **entitlement token** (`iss: "jamaa"`; `pu` = the Pass expiry, `packs` = owned families) that the TV sends with `POST /api/rooms` and the WS `entitlement` message.
 
 ### Fake billing (local dev and e2e)
 
@@ -161,14 +172,14 @@ In fake mode the server serves synthetic Google purchases from the Billing DO an
 B=http://127.0.0.1:8787; I=0123456789abcdef0123456789abcdef   # installId: 32 lowercase hex
 curl -s $B/api/billing/catalog                                     # "mode":"fake"
 curl -s -X POST $B/api/billing/fake/purchase -H 'Content-Type: application/json' \
-  -d "{\"installId\":\"$I\",\"productId\":\"premium\"}"   # {"purchaseToken":"fake.premium.1"}
+  -d "{\"installId\":\"$I\",\"productId\":\"jamaa_pass\",\"basePlanId\":\"yearly\",\"offerId\":\"trial-7d\"}"   # {"purchaseToken":"fake.sub.jamaa_pass.1"}
 curl -s -X POST $B/api/billing/verify -H 'Content-Type: application/json' \
-  -d "{\"installId\":\"$I\",\"purchases\":[{\"productId\":\"premium\",\"purchaseToken\":\"fake.premium.1\"}]}"
+  -d "{\"installId\":\"$I\",\"purchases\":[{\"productId\":\"jamaa_pass\",\"purchaseToken\":\"fake.sub.jamaa_pass.1\"}]}"
 curl -s -X POST $B/api/billing/fake/set -H 'Content-Type: application/json' \
-  -d '{"purchaseToken":"fake.premium.1","state":"REVOKED"}'          # 204; a refund, same path as an RTDN
+  -d '{"purchaseToken":"fake.sub.jamaa_pass.1","state":"SUBSCRIPTION_STATE_EXPIRED"}'   # 204; the Pass ends, same path as an RTDN
 ```
 
-`fake/purchase` takes `outcome: "PENDING"` for a pending purchase; `fake/set` takes `PURCHASED | PENDING | CANCELLED | REVOKED` (every product, `premium` included, is one-time). Outside fake mode both routes answer 404 (or 503 when fake mode was asked for but refused).
+`fake/purchase` takes `basePlanId` (`monthly` | `yearly`), `offerId` (`trial-7d` or null) and `outcome: "PENDING"` for a pending purchase. `fake/set` takes a `SubscriptionPurchaseV2` state for the Pass (`SUBSCRIPTION_STATE_ACTIVE | IN_GRACE_PERIOD | ON_HOLD | PAUSED | CANCELED | EXPIRED | …`) and `PURCHASED | PENDING | CANCELLED | REVOKED` for a `pack_*` product. Outside fake mode both routes answer 404 (or 503 when fake mode was asked for but refused).
 
 ### Cron (local)
 
@@ -221,9 +232,9 @@ pnpm grant revoke 0123456789abcdef0123456789abcdef   # or the 64-hex hash printe
 
 Admin routes, like every `/api/billing/*` route, answer 404 while `BILLING_ENABLED` is not `"1"`, and the TV only shows its install id in About once billing is on.
 
-### Owner: free Premium + every pack on every device
+### Owner: free JAMAA Pass + every pack on every device
 
-Premium covers every premium pack, current and future, plus the premium settings. A grant with no end date gives it to an install for good. The grant survives app updates, server deploys and the daily prune, and it never touches Google or a purchase's install slots. One-time setup: `ADMIN_TOKEN` (step 1 above) and `BILLING_ENABLED` `"1"` ([BILLING-LAUNCH.md](BILLING-LAUNCH.md)).
+The Pass (`premium` in code and protocol) covers every premium pack of every game, current and future, plus the premium settings. A grant with no end date gives it to an install for good. The grant survives app updates, server deploys and the daily prune, and it never touches Google or a purchase's install slots. One-time setup: `ADMIN_TOKEN` (step 1 above) and `BILLING_ENABLED` `"1"` ([BILLING-LAUNCH.md](BILLING-LAUNCH.md)).
 
 ```sh
 export JAMAA_URL=https://play.jamaa.workers.dev
@@ -233,7 +244,7 @@ pnpm grant "<id of TV 1>" "<id of TV 2>" --note "owner"   # each id: TV → Sett
 
 Then on each TV: Store → **Restore purchases** (or restart the app). Run the same command later for any new device: a new TV, a reinstall, cleared app data or a browser `/tv`. Each of these has a new install id. Use `pnpm grant list` and `pnpm grant revoke <hash>` to remove ids you no longer use.
 
-Why install ids and not your Google account: the app has no accounts, and the server never learns a Google identity (Play only sees `obfuscatedAccountId = sha256(installId)`), so a grant can only be tied to installs. Your Gmail as a **license tester** (Play Console → Settings → License testing) also lets you buy for free on any device signed into that account, with Restore. That path is for testing: test subscriptions stop after 6 short renewals (minutes), so it is not lasting Premium. Use the grant.
+Why install ids and not your Google account: the app has no accounts, and the server never learns a Google identity (Play only sees `obfuscatedAccountId = sha256(installId)`), so a grant can only be tied to installs. Your Gmail as a **license tester** (Play Console → Settings → License testing) also lets you buy for free on any device signed into that account, with Restore. That path is for testing: test subscriptions stop after 6 short renewals (minutes), so it is not a lasting Pass. Use the grant.
 
 ### Vars, observability and logs
 
@@ -243,12 +254,16 @@ Why install ids and not your Google account: the app has no accounts, and the se
 
 ### `BILLING_ENABLED` (the production switch)
 
-`vars.BILLING_ENABLED` in `server/wrangler.jsonc` (default `"0"`, see `server/src/config.ts`). Off: `/api/billing/*` and `/api/admin/*` answer 404, the crons do nothing, rooms play the whole catalog, and `GET /api/config` → `{"billing":false}` makes the TV, phone and `/tv` hide every premium UI. `"1"`: PAYMENTS-SPEC as written. The switch and the move from `prod-rules-v2` are covered in [BILLING-LAUNCH.md](BILLING-LAUNCH.md).
+`vars.BILLING_ENABLED` in `server/wrangler.jsonc` (default `"0"`, see `server/src/config.ts`). Off: `/api/billing/*` and `/api/admin/*` answer 404, the crons do nothing, rooms play the whole catalog of every game, and `GET /api/config` → `{"billing":false,"games":[…]}` makes the TV, phone and `/tv` hide every Pass UI.
+
+### `GAMES_ENABLED` (the rollout switch)
+
+`vars.GAMES_ENABLED` in `server/wrangler.jsonc` (comma list, default `"mishana"`, JAMAA-PLATFORM §2.6). A game ships by adding its id once its G milestone is accepted (owner order: `bluff`, `likely`, `trivia`); a registry stub (`enabled: false`) is never live whatever the var says. `GET /api/config` → `games` = `GAMES_ENABLED` ∩ registry enabled; the TV intersects with its own build's games before it creates a room. `"1"`: PAYMENTS-SPEC as written. The switch and the move from `prod-rules-v2` are covered in [BILLING-LAUNCH.md](BILLING-LAUNCH.md).
 
 ### Before the first production release
 
-- `pnpm run deploy` (never bare `pnpm deploy`: pnpm 10 runs its built-in `deploy` command instead of the script) runs `pack-lint --release`: each free starter pack (`*-everyday-01`) needs at least **40 pairs** (170–176 today, so the gate passes).
-- Create the Play products from `pnpm --filter @jamaa/server billing:products` (PAYMENTS-SPEC §8.B).
+- `pnpm run deploy` (never bare `pnpm deploy`: pnpm 10 runs its built-in `deploy` command instead of the script) runs `content-lint --release`: each free starter pack (`*-everyday-01`) needs at least **40 pairs** and `status: "reviewed"`, plus the per-game release gates of JAMAA-PLATFORM §4.3. The deploy is refused until the owner (and a native reviewer for AR/ES) marks the free starter packs reviewed; this is intended, not a bug.
+- Create the JAMAA Pass and the pack products from `pnpm --filter @jamaa/server billing:products` (PAYMENTS-SPEC §8.B, [BILLING-LAUNCH.md](BILLING-LAUNCH.md)).
 - Replace the rate-limit `namespace_id`s `1003`/`1004` like `1001`/`1002`.
 
 ## Deploy (Cloudflare)
@@ -256,7 +271,7 @@ Why install ids and not your Google account: the app has no accounts, and the se
 1. Log in once: `pnpm --filter @jamaa/server exec wrangler login`.
 2. **Rate-limit namespaces.** `namespace_id` must be a positive integer string that is unique in your account. `"1001"` to `"1004"` in `server/wrangler.jsonc` work locally; change them if they collide with other Workers.
 3. **Billing secrets and vars:** see [Billing](#billing-payments-specmd). Only with `BILLING_ENABLED` `"1"`: the deploy is refused while `PLAY_SERVICE_ACCOUNT_JSON` or `ENTITLEMENT_KEYS` is missing. With billing off, no billing secret is needed.
-4. Deploy: `pnpm run deploy`. This builds the web client, dry-run bundles the Worker, runs `pack-lint --release` and `check-deploy.mjs` (google billing, fake billing off, traces off), then `wrangler deploy`. The Worker is served at `https://play.<your-subdomain>.workers.dev`.
+4. Deploy: `pnpm run deploy`. This emits the content, builds the web client, dry-run bundles the Worker with the size checks, runs `content-lint --release` and `check-deploy.mjs` (google billing, fake billing off, traces off, `PLAY_PACKAGE_NAME` `app.jamaa.tv`, known `GAMES_ENABLED` ids), then `wrangler deploy`. The Worker is served at `https://play.<your-subdomain>.workers.dev`.
 5. **Custom domain** (optional). Add the domain to the Worker in the Cloudflare dashboard, then set `JOIN_BASE_URL` (see below).
 6. Build the TV app against the deployed URL (see below and [TV.md](TV.md#production-server-url)).
 
@@ -274,7 +289,7 @@ The phone client has no server URL of its own: it is served by the Worker and co
 
 Checklist after `pnpm run deploy`:
 
-1. `curl https://<worker-origin>/healthz` prints `{"ok":true,…}`.
+1. `curl https://<worker-origin>/healthz` prints `{"ok":true,"app":"jamaa","protocol":2}` and `/api/config` lists the live games.
 2. With a custom domain: set `JOIN_BASE_URL`, run `pnpm run deploy` again.
 3. Put the same origin in `tv-app/gradle.properties` (`jamaa.prodServerUrl=https://…`) and run `./gradlew :app:bundleRelease`; the build log prints `JAMAA release server URL: …`.
 4. Open `/tv` on the deployed origin: the QR code must show the intended host.

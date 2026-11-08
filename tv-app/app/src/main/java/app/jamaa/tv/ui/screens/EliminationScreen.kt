@@ -82,13 +82,13 @@ import app.jamaa.tv.game.Names
 import app.jamaa.tv.game.afterElimination
 import app.jamaa.tv.i18n.isolate
 import app.jamaa.tv.protocol.ClientIntent
-import app.jamaa.tv.protocol.HostAdvance
+import app.jamaa.tv.games.mishana.MishanaTv
 import app.jamaa.tv.protocol.PublicPlayer
 import app.jamaa.tv.protocol.Role
-import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.protocol.VoteOutcome
 import app.jamaa.tv.protocol.VoteSummary
-import app.jamaa.tv.protocol.player
+import app.jamaa.tv.games.mishana.player
 import app.jamaa.tv.ui.components.ActionPill
 import app.jamaa.tv.ui.components.Avatar
 import app.jamaa.tv.ui.components.AvatarGlyphs
@@ -250,7 +250,7 @@ private fun LayoutCoordinates.centerInRoot(): Offset {
  */
 @Composable
 fun EliminationScreen(
-    view: TvView,
+    view: MishanaView,
     clockOffsetMs: Long,
     paused: Boolean,
     send: (ClientIntent) -> Unit,
@@ -291,7 +291,7 @@ fun EliminationScreen(
             }
             ActionPill(
                 stringResource(R.string.common__continue),
-                { send(HostAdvance) },
+                { send(MishanaTv.hostAdvance()) },
                 pill,
                 onFirstPress = {
                     if (seq.stage != Stage.Done) {
@@ -333,7 +333,7 @@ private fun EliminationPlan.topIds(vote: VoteSummary): List<String> {
 
 /** "Next round in {count}…" only when a round really follows; the Blank's last chance; else just the seconds. */
 @Composable
-private fun EndCountdown(view: TvView, deadline: app.jamaa.tv.protocol.DeadlineView, clockOffsetMs: Long, modifier: Modifier) {
+private fun EndCountdown(view: MishanaView, deadline: app.jamaa.tv.protocol.DeadlineView, clockOffsetMs: Long, modifier: Modifier) {
     val type = JamaaTheme.type
     Row(modifier, horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
         when (afterElimination(view)) {
@@ -358,7 +358,7 @@ private fun EndCountdown(view: TvView, deadline: app.jamaa.tv.protocol.DeadlineV
 /** TV-07: the board, the chip flights and their trails, the "No vote" bin and the verdict stamp. */
 @Composable
 private fun VoteRevealBoard(
-    view: TvView,
+    view: MishanaView,
     vote: VoteSummary,
     board: List<PublicPlayer>,
     seq: EliminationSequence,
@@ -498,7 +498,7 @@ private fun BoardTile(
 /** TV-09: the card flies from the tile, grows, flips to the role face; the role-colour wash; the reaction line. */
 @Composable
 private fun EliminationCard(
-    view: TvView,
+    view: MishanaView,
     player: PublicPlayer,
     role: Role,
     tileWidthDp: Float,
@@ -666,7 +666,7 @@ private fun reaction(role: Role, blankGuess: Boolean): String = stringResource(
  * (clockwise). Only the highlighted index is derived from [progress], so it recomposes per step, not per frame.
  */
 @Composable
-private fun WheelPick(view: TvView, ids: List<String>, pickId: String?, progress: State<Float>) {
+private fun WheelPick(view: MishanaView, ids: List<String>, pickId: String?, progress: State<Float>) {
     val players = ids.mapNotNull { view.player(it) }
     if (players.isEmpty()) return
     val n = players.size

@@ -72,7 +72,7 @@ import app.jamaa.tv.ui.components.JamaaFocusSurface
 import app.jamaa.tv.ui.components.inertWhen
 import app.jamaa.tv.ui.theme.JamaaShapes
 import app.jamaa.tv.ui.theme.JamaaSpace
-import app.jamaa.tv.protocol.player
+import app.jamaa.tv.games.mishana.player
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import app.jamaa.tv.game.Names
@@ -82,11 +82,10 @@ import app.jamaa.tv.i18n.isolate
 import app.jamaa.tv.protocol.ClientIntent
 import app.jamaa.tv.protocol.GuessStatus
 import app.jamaa.tv.protocol.HistoryCause
-import app.jamaa.tv.protocol.PlayAgain
 import app.jamaa.tv.protocol.PublicPlayer
 import app.jamaa.tv.protocol.ResultView
 import app.jamaa.tv.protocol.Role
-import app.jamaa.tv.protocol.TvView
+import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.protocol.Winner
 import app.jamaa.tv.protocol.WordRef
 import app.jamaa.tv.ui.components.Avatar
@@ -119,16 +118,20 @@ private const val STAGE2_GUARD_MS = 800L
  */
 @Composable
 fun ResultsScreen(
-    view: TvView,
-    send: (ClientIntent) -> Unit,
+    view: MishanaView,
+    onReplay: () -> Unit,
     onChangeSettings: () -> Unit,
-    onNewRoom: () -> Unit,
+    onOtherGames: () -> Unit,
+    /** HUB-05: the platform's cup panel (Tonight's cup) under the summary, or null. */
+    cupPanel: (@Composable () -> Unit)? = null,
+    /** §4.5: at most one soft line after the 2nd finished game ("Love it? JAMAA Pass unlocks every pack"). */
+    passHook: String? = null,
 ) {
     val result = view.result ?: return
     val type = JamaaTheme.type
     val reduce = JamaaTheme.reduceMotion
     val playAgain = remember { FocusRequester() }
-    var confirmNewRoom by remember { mutableStateOf(false) }
+    val confirmNewRoom = false
     val key = "${view.gameNumber}"
     var stage by remember(key) { mutableIntStateOf(1) }
     // When stage 2 appeared: the press that skipped stage 1 (or a mashed second one) must not chain into PLAY_AGAIN
@@ -169,7 +172,13 @@ fun ResultsScreen(
                     if (st == 1) {
                         VictoryMoment(winnerTitle, result, culprits(view), hadUndercover(view))
                     } else {
-                        Summary(view, result, players, winnerTitle)
+                        Column(Modifier.fillMaxSize()) {
+                            Box(Modifier.weight(1f).fillMaxWidth()) { Summary(view, result, players, winnerTitle) }
+                            cupPanel?.invoke()
+                            if (passHook != null) {
+                                Text(passHook, style = type.caption, color = JamaaColors.TextMuted, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                            }
+                        }
                     }
                 }
                 Row(
@@ -180,7 +189,7 @@ fun ResultsScreen(
                     JamaaButton(
                         stringResource(R.string.results__play_again),
                         {
-                            if (stage == 1) toStage2() else if (ready()) send(PlayAgain)
+                            if (stage == 1) toStage2() else if (ready()) onReplay()
                         },
                         Modifier.focusRequester(playAgain),
                         kind = ButtonKind.Primary,
@@ -190,27 +199,14 @@ fun ResultsScreen(
                     JamaaButton(stringResource(R.string.results__change_settings), {
                         if (stage == 1) toStage2() else if (ready()) onChangeSettings()
                     }, icon = JamaaIcons.Settings)
-                    JamaaButton(stringResource(R.string.results__new_room), {
-                        if (stage == 1) toStage2() else if (ready()) confirmNewRoom = true
-                    }, icon = JamaaIcons.Plus)
+                    // HUB-05: Play again (REPLAY) · Change settings (BACK_TO_SETUP) · Other games (BACK_TO_HUB).
+                    JamaaButton(stringResource(R.string.cup__other_games), {
+                        if (stage == 1) toStage2() else if (ready()) onOtherGames()
+                    }, icon = JamaaIcons.Users)
                 }
             }
         }
         InitialFocus(playAgain)
-    }
-    if (confirmNewRoom) {
-        JamaaDialog(
-            title = stringResource(R.string.results__new_room_confirm),
-            body = null,
-            safeLabel = stringResource(R.string.common__cancel),
-            actionLabel = stringResource(R.string.results__new_room),
-            onSafe = { confirmNewRoom = false },
-            onAction = {
-                confirmNewRoom = false
-                onNewRoom()
-            },
-            actionKind = ButtonKind.Primary,
-        )
     }
 }
 
@@ -222,14 +218,14 @@ internal fun winnerColor(winner: Winner): Color = when (winner) {
 }
 
 /** Who the Mole(s) (BLANK) and the Undercover(s) were, Moles first: the reveal everyone waited for (TV-11 stage 1). */
-private fun culprits(view: TvView): List<PublicPlayer> =
+private fun culprits(view: MishanaView): List<PublicPlayer> =
     view.players.filter { it.revealedRole == Role.BLANK } + view.players.filter { it.revealedRole == Role.UNDERCOVER }
 
 /** Rules v2: whether this game dealt an Undercover (unknown counts → true, the two-word layout). */
-private fun hadUndercover(view: TvView): Boolean = (view.roleCounts?.undercover ?: 1) > 0
+private fun hadUndercover(view: MishanaView): Boolean = (view.roleCounts?.undercover ?: 1) > 0
 
 @Composable
-private fun winnerText(view: TvView, result: ResultView): String = when (result.winner) {
+private fun winnerText(view: MishanaView, result: ResultView): String = when (result.winner) {
     Winner.CIVILIANS -> stringResource(R.string.winner__civilians)
     // Rules v2: named by the one role the room met ("The Mole wins!", plural on the Mole (BLANK) count; "The
     // Undercover wins!", plural on the Undercover count); a mixed game or unknown counts → the team line.
@@ -442,7 +438,7 @@ private fun WordCard(label: String, word: WordRef, role: Role, modifier: Modifie
  * out (Arabic line heights, a large font scale), the header goes (DESIGN TV-11, §11).
  */
 @Composable
-private fun Summary(view: TvView, result: ResultView, players: List<PublicPlayer>, title: String) {
+private fun Summary(view: MishanaView, result: ResultView, players: List<PublicPlayer>, title: String) {
     val type = JamaaTheme.type
     Column(Modifier.fillMaxSize()) {
         Text(title, style = type.headline, color = winnerColor(result.winner), maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -476,7 +472,7 @@ private const val LARGE_FONT_SCALE = 1.15f
  * primary text colour and measured first, so when the line is too long it is the pack name that ellipsizes.
  */
 @Composable
-private fun CaptionLine(view: TvView, result: ResultView) {
+private fun CaptionLine(view: MishanaView, result: ResultView) {
     val type = JamaaTheme.type
     val guesses = result.guesses.mapNotNull { g ->
         val name = view.player(g.playerId)?.name ?: return@mapNotNull null
