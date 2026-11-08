@@ -374,7 +374,8 @@ class BillingRepositoryTest {
         val e = env(FakeGateway().apply { owned = GatewayResult.Ok(listOf(pack)) }) { it.results["pack_en_food_01"] = "INSTALL_LIMIT" }
         e.repo.start()
         advanceUntilIdle()
-        assertEquals(listOf("store.installLimitNoHelp"), e.toasts()) // SUPPORT_EMAIL is empty until the owner sets it
+        // The owner set SUPPORT_EMAIL (shared/src/billing/products.ts): the toast carries the help address.
+        assertEquals(listOf(if (Products.SUPPORT_EMAIL.isEmpty()) "store.installLimitNoHelp" else "store.installLimit"), e.toasts())
     }
 
     @Test

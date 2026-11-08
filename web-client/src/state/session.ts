@@ -14,6 +14,7 @@ import { loadGameCatalog, locale, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import type { PhoneGameModule } from "../games/types";
 import { PHONE_GAMES } from "../games/phoneLoaders";
+import { ensureMeta } from "../lib/meta";
 import {
   announce, conn, fatalCode, fatalError, inlineError, joinPending, lastError, pushToast, resetClock, resuming, resyncs,
   sampleClock, view,
@@ -180,7 +181,7 @@ export function onViewChange(prev: PlayerRoomView | null, next: PlayerRoomView):
   const myId = next.me?.id ?? null;
   const room = next.room;
   // The phone needs the strings (titles, rules) of every game the hub shows, and the chunk of the game in play.
-  for (const g of room.games) void loadGameCatalog(g.id, locale.value);
+  for (const g of room.games) { void loadGameCatalog(g.id, locale.value); void ensureMeta(g.id); }
   if (room.setupGameId) ensureGame(room.setupGameId);
   if (!myId) return;
   const before = prev?.room;

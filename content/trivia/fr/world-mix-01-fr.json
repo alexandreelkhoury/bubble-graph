@@ -1,0 +1,1245 @@
+{
+  "id": "world-mix-01-fr",
+  "family": "world-mix-01",
+  "game": "trivia",
+  "version": 1,
+  "locale": "fr",
+  "script": "Latn",
+  "title": {
+    "en": "World Mix",
+    "fr": "Le monde en vrac",
+    "ar": "خلطة من العالم",
+    "es": "Mezcla mundial"
+  },
+  "description": {
+    "en": "Planets, paintings, penalties and paella: one quick lap around everything.",
+    "fr": "Planètes, tableaux, penalties et paella : un petit tour de tout, en vitesse.",
+    "ar": "كواكب ولوحات وركلات ترجيح وباييا: جولة سريعة حول كلّ شيء.",
+    "es": "Planetas, cuadros, penaltis y paella: una vuelta rápida por todo."
+  },
+  "domain": "world",
+  "topics": [
+    "geography",
+    "science",
+    "cinema-tv",
+    "nature",
+    "food",
+    "history",
+    "art",
+    "language",
+    "music",
+    "dance",
+    "football",
+    "sports",
+    "places"
+  ],
+  "featuredTopics": [
+    "geography",
+    "science",
+    "cinema-tv"
+  ],
+  "stars": 2,
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "reviewedBy": [],
+  "questions": [
+    {
+      "id": "q001",
+      "type": "mc4",
+      "text": "Quel est le plus grand océan de la planète ?",
+      "options": [
+        "L'Atlantique",
+        "L'océan Indien",
+        "Le Pacifique",
+        "L'Arctique"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 1,
+      "explain": "Il est plus vaste que toutes les terres émergées réunies.",
+      "source": "[VERIFY] NOAA Ocean Service 'largest ocean' (Pacific)"
+    },
+    {
+      "id": "q002",
+      "type": "mc4",
+      "text": "Quel pays a la plus grande superficie ?",
+      "options": [
+        "La Russie",
+        "Le Canada",
+        "La Chine",
+        "Le Brésil"
+      ],
+      "answer": 0,
+      "topic": "geography",
+      "difficulty": 1,
+      "explain": "Onze fuseaux horaires : quelque part en Russie, quelqu'un prend toujours son petit-déjeuner.",
+      "source": "[VERIFY] CIA World Factbook area ranking (Russia #1)"
+    },
+    {
+      "id": "q003",
+      "type": "mc4",
+      "text": "Quelle est la capitale de l'Australie ?",
+      "options": [
+        "Sydney",
+        "Melbourne",
+        "Perth",
+        "Canberra"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "Elle a été construite pour départager les rivales Sydney et Melbourne.",
+      "source": "[VERIFY] Britannica 'Canberra' (purpose-built capital, compromise Sydney/Melbourne)"
+    },
+    {
+      "id": "q004",
+      "type": "mc4",
+      "text": "Quel est le plus grand désert chaud du monde ?",
+      "options": [
+        "Le Gobi",
+        "Le Sahara",
+        "Le Kalahari",
+        "L'Atacama"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "Si l'on compte les déserts froids, le plus grand de tous est l'Antarctique.",
+      "source": "[VERIFY] Britannica 'Sahara' (largest hot desert); 'desert' (Antarctica largest overall)"
+    },
+    {
+      "id": "q005",
+      "type": "mc4",
+      "text": "En comptant l'outre-mer, quel pays a le plus de fuseaux horaires ?",
+      "options": [
+        "La Russie",
+        "Les États-Unis",
+        "La France",
+        "La Chine"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 3,
+      "explain": "Grâce à ses îles dispersées sur les océans, la France en compte 12.",
+      "source": "[VERIFY] French government / time-zone references (France: 12 zones incl. overseas, 13 with Adélie Land)"
+    },
+    {
+      "id": "q006",
+      "type": "tf",
+      "text": "Sur Vénus, une journée dure plus longtemps qu'une année.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 0,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "Vénus tourne si lentement sur elle-même qu'elle fait le tour du Soleil avant d'avoir fini un tour.",
+      "source": "[VERIFY] NASA 'Venus' (sidereal day ~243 Earth days; year ~225 Earth days)"
+    },
+    {
+      "id": "q007",
+      "type": "mc4",
+      "text": "Quel est le plus petit pays du monde ?",
+      "options": [
+        "Le Vatican",
+        "Monaco",
+        "Saint-Marin",
+        "Le Liechtenstein"
+      ],
+      "answer": 0,
+      "topic": "geography",
+      "difficulty": 1,
+      "explain": "Il fait moins d'un demi-kilomètre carré.",
+      "source": "[VERIFY] CIA World Factbook 'Holy See' (~0.44 km²)"
+    },
+    {
+      "id": "q008",
+      "type": "mc4",
+      "text": "Quel pays a la forme d'une botte ?",
+      "options": [
+        "La Grèce",
+        "Le Portugal",
+        "Le Chili",
+        "L'Italie"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 1,
+      "explain": "La Sicile, au bout du pied, ressemble au ballon qu'elle va frapper.",
+      "source": "[VERIFY] trivial (map of Italy)"
+    },
+    {
+      "id": "q009",
+      "type": "mc4",
+      "text": "Quel pays a trois capitales ?",
+      "options": [
+        "Le Nigeria",
+        "L'Afrique du Sud",
+        "Le Kenya",
+        "Le Maroc"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 3,
+      "explain": "Pretoria, Le Cap et Bloemfontein se partagent le rôle.",
+      "source": "[VERIFY] South African Government 'Capital cities' (Pretoria, Cape Town, Bloemfontein)"
+    },
+    {
+      "id": "q010",
+      "type": "mc4",
+      "text": "Quelle est la plus haute chute d'eau du monde ?",
+      "options": [
+        "Les chutes du Niagara",
+        "Les chutes Victoria",
+        "Le Salto Ángel",
+        "Les chutes d'Iguazú"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "Elle plonge d'environ 979 m au Venezuela, au point que l'eau se change en brume.",
+      "source": "[VERIFY] Britannica 'Angel Falls' (Venezuela, ~979 m)"
+    },
+    {
+      "id": "q011",
+      "type": "mc4",
+      "text": "Les fourmis vivent sur tous les continents, sauf…",
+      "options": [
+        "L'Antarctique",
+        "L'Australie",
+        "L'Afrique",
+        "L'Europe"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "L'Australie, elle, abrite certaines des fourmis les plus variées du monde.",
+      "source": "[VERIFY] encyclopedia 'ant' (on every continent except Antarctica)"
+    },
+    {
+      "id": "q012",
+      "type": "mc4",
+      "text": "Quel gaz les plantes prennent-elles dans l'air pour fabriquer leur nourriture ?",
+      "options": [
+        "L'oxygène",
+        "L'azote",
+        "L'hélium",
+        "Le dioxyde de carbone"
+      ],
+      "answer": 3,
+      "topic": "science",
+      "difficulty": 1,
+      "explain": "En échange, elles rejettent l'oxygène que nous respirons.",
+      "source": "[VERIFY] school biology 'photosynthesis'"
+    },
+    {
+      "id": "q013",
+      "type": "mc4",
+      "text": "Combien de pattes a une araignée ?",
+      "options": [
+        "6",
+        "8",
+        "10",
+        "12"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Les insectes en ont six : l'araignée n'en est pas un, c'est un arachnide.",
+      "source": "[VERIFY] trivial (arachnids: 8 legs)"
+    },
+    {
+      "id": "q014",
+      "type": "mc4",
+      "text": "Quel est le matériau naturel le plus dur ?",
+      "options": [
+        "L'or",
+        "Le granit",
+        "Le diamant",
+        "Le quartz"
+      ],
+      "answer": 2,
+      "topic": "science",
+      "difficulty": 1,
+      "explain": "Il trône en haut de l'échelle de Mohs, avec la note 10.",
+      "source": "[VERIFY] Mohs scale (diamond = 10)"
+    },
+    {
+      "id": "q015",
+      "type": "mc4",
+      "text": "Quelle planète possède une tempête géante appelée la Grande Tache rouge ?",
+      "options": [
+        "Jupiter",
+        "Mars",
+        "Saturne",
+        "Vénus"
+      ],
+      "answer": 0,
+      "topic": "science",
+      "difficulty": 2,
+      "explain": "Cette tempête est plus large que la Terre entière.",
+      "source": "[VERIFY] NASA 'Jupiter: Great Red Spot' (storm wider than Earth)"
+    },
+    {
+      "id": "q016",
+      "type": "mc4",
+      "text": "Quelle planète tourne couchée sur le côté, comme si elle roulait autour du Soleil ?",
+      "options": [
+        "Neptune",
+        "Saturne",
+        "Mercure",
+        "Uranus"
+      ],
+      "answer": 3,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "Son axe est incliné d'environ 98 degrés.",
+      "source": "[VERIFY] NASA 'Uranus' (axial tilt ~98°)"
+    },
+    {
+      "id": "q017",
+      "type": "tf",
+      "text": "Les chauves-souris sont des mammifères.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Ce sont les seuls mammifères capables de vraiment voler.",
+      "source": "[VERIFY] encyclopedia 'bat' (only mammals capable of true flight)"
+    },
+    {
+      "id": "q018",
+      "type": "mc4",
+      "text": "Quel est le plus grand animal ayant jamais existé ?",
+      "options": [
+        "L'argentinosaure",
+        "La baleine bleue",
+        "L'éléphant d'Afrique",
+        "Le mégalodon"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "Son cœur seul a à peu près la taille d'une petite voiture.",
+      "source": "[VERIFY] NOAA Fisheries 'blue whale' (largest animal known to have lived)"
+    },
+    {
+      "id": "q019",
+      "type": "mc4",
+      "text": "Combien de cœurs a une pieuvre ?",
+      "options": [
+        "Un",
+        "Deux",
+        "Trois",
+        "Huit"
+      ],
+      "answer": 2,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "Et son sang est bleu. Noblesse oblige.",
+      "source": "[VERIFY] encyclopedia 'octopus' (three hearts; copper-based blue blood)"
+    },
+    {
+      "id": "q020",
+      "type": "mc4",
+      "text": "Quel métal est liquide à température ambiante ?",
+      "options": [
+        "Le mercure",
+        "L'étain",
+        "L'aluminium",
+        "L'argent"
+      ],
+      "answer": 0,
+      "topic": "science",
+      "difficulty": 2,
+      "explain": "On le trouvait autrefois dans la plupart des thermomètres.",
+      "source": "[VERIFY] Royal Society of Chemistry periodic table 'Mercury'"
+    },
+    {
+      "id": "q021",
+      "type": "mc4",
+      "text": "Quel est le symbole chimique de l'or ?",
+      "options": [
+        "Ag",
+        "Gd",
+        "Go",
+        "Au"
+      ],
+      "answer": 3,
+      "topic": "science",
+      "difficulty": 2,
+      "explain": "Il vient d'« aurum », le mot latin pour l'or.",
+      "source": "[VERIFY] RSC periodic table 'Gold' (Au, Latin aurum)"
+    },
+    {
+      "id": "q022",
+      "type": "mc4",
+      "text": "Quel pays produit le plus de café ?",
+      "options": [
+        "La Colombie",
+        "Le Brésil",
+        "L'Éthiopie",
+        "L'Italie"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "C'est d'Éthiopie que le caféier serait originaire.",
+      "source": "[VERIFY] FAO / USDA coffee production data (Brazil #1)"
+    },
+    {
+      "id": "q023",
+      "type": "mc4",
+      "text": "Quelle partie du corps humain n'a pas de vaisseaux sanguins et prend l'oxygène directement dans l'air ?",
+      "options": [
+        "Le lobe de l'oreille",
+        "La langue",
+        "La cornée",
+        "Les lèvres"
+      ],
+      "answer": 2,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "C'est pour ça qu'elle reste parfaitement transparente.",
+      "source": "[VERIFY] ophthalmology refs (cornea is avascular; oxygen from air via tear film)"
+    },
+    {
+      "id": "q024",
+      "type": "tf",
+      "text": "Le son se propage plus vite dans l'eau que dans l'air.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 0,
+      "topic": "science",
+      "difficulty": 2,
+      "explain": "Environ quatre fois plus vite.",
+      "source": "[VERIFY] physics refs (speed of sound ~1,480 m/s in water vs ~343 m/s in air)"
+    },
+    {
+      "id": "q025",
+      "type": "tf",
+      "text": "La foudre ne tombe jamais deux fois au même endroit.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 1,
+      "topic": "science",
+      "difficulty": 1,
+      "explain": "L'Empire State Building est frappé une vingtaine de fois par an.",
+      "source": "[VERIFY] NOAA / NWS lightning myths (Empire State Building struck ~20-25 times a year)"
+    },
+    {
+      "id": "q026",
+      "type": "mc4",
+      "text": "Quel animal a des empreintes digitales si proches des nôtres qu'elles pourraient tromper un expert ?",
+      "options": [
+        "Le koala",
+        "Le panda",
+        "Le kangourou",
+        "Le paresseux"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 3,
+      "explain": "Même au microscope, difficile de faire la différence.",
+      "source": "[VERIFY] Henneberg et al. 1997 / encyclopedia 'koala' (human-like fingerprints)"
+    },
+    {
+      "id": "q027",
+      "type": "mc4",
+      "text": "Quelle est l'étoile la plus proche de la Terre ?",
+      "options": [
+        "Proxima du Centaure",
+        "Sirius",
+        "L'étoile Polaire",
+        "Le Soleil"
+      ],
+      "answer": 3,
+      "topic": "science",
+      "difficulty": 2,
+      "explain": "La suivante, Proxima du Centaure, est à plus de quatre années-lumière.",
+      "source": "[VERIFY] NASA 'Sun' / 'Proxima Centauri' (nearest star beyond the Sun)"
+    },
+    {
+      "id": "q028",
+      "type": "mc4",
+      "text": "Laquelle des Sept Merveilles du monde antique est encore debout ?",
+      "options": [
+        "Le colosse de Rhodes",
+        "La grande pyramide de Gizeh",
+        "Le phare d'Alexandrie",
+        "Les jardins suspendus"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "C'est aussi la plus ancienne des sept.",
+      "source": "[VERIFY] Britannica 'Seven Wonders of the World'"
+    },
+    {
+      "id": "q029",
+      "type": "mc4",
+      "text": "Qui a peint La Joconde ?",
+      "options": [
+        "Michel-Ange",
+        "Raphaël",
+        "Léonard de Vinci",
+        "Botticelli"
+      ],
+      "answer": 2,
+      "topic": "art",
+      "difficulty": 1,
+      "explain": "Léonard était aussi inventeur et dessinait des machines volantes.",
+      "source": "[VERIFY] Musée du Louvre 'Mona Lisa' (Leonardo da Vinci)"
+    },
+    {
+      "id": "q030",
+      "type": "mc4",
+      "text": "Dans quelle ville peut-on voir La Joconde ?",
+      "options": [
+        "Paris",
+        "Florence",
+        "Rome",
+        "Madrid"
+      ],
+      "answer": 0,
+      "topic": "art",
+      "difficulty": 1,
+      "explain": "Elle est exposée derrière une vitre de protection, au Louvre.",
+      "source": "[VERIFY] Musée du Louvre (Mona Lisa location, protective glass)"
+    },
+    {
+      "id": "q031",
+      "type": "mc4",
+      "text": "Qui a été le premier à marcher sur la Lune ?",
+      "options": [
+        "Buzz Aldrin",
+        "Youri Gagarine",
+        "John Glenn",
+        "Neil Armstrong"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "Buzz Aldrin l'a suivi quelques minutes plus tard.",
+      "source": "[VERIFY] NASA 'Apollo 11'"
+    },
+    {
+      "id": "q032",
+      "type": "mc4",
+      "text": "En quelle année l'homme s'est-il posé sur la Lune pour la première fois ?",
+      "options": [
+        "1959",
+        "1969",
+        "1972",
+        "1981"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "C'était en juillet, avec Apollo 11.",
+      "source": "[VERIFY] NASA 'Apollo 11' (July 1969)"
+    },
+    {
+      "id": "q033",
+      "type": "mc4",
+      "text": "Qui a mis au point l'imprimerie à caractères mobiles en métal en Europe ?",
+      "options": [
+        "Galilée",
+        "Isaac Newton",
+        "Johannes Gutenberg",
+        "Léonard de Vinci"
+      ],
+      "answer": 2,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "Il travaillait à Mayence, vers les années 1450.",
+      "source": "[VERIFY] Britannica 'Johannes Gutenberg' (movable metal type, ~1450, Mainz)"
+    },
+    {
+      "id": "q034",
+      "type": "mc4",
+      "text": "Quelle ville romaine a été ensevelie par le Vésuve en 79 ?",
+      "options": [
+        "Pompéi",
+        "Athènes",
+        "Carthage",
+        "Troie"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "Les cendres ont conservé rues, boulangeries et même des graffitis.",
+      "source": "[VERIFY] Britannica 'Pompeii' (AD 79)"
+    },
+    {
+      "id": "q035",
+      "type": "mc4",
+      "text": "Qui a inventé le World Wide Web ?",
+      "options": [
+        "Bill Gates",
+        "Steve Jobs",
+        "Alan Turing",
+        "Tim Berners-Lee"
+      ],
+      "answer": 3,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "Il l'a proposé en 1989, alors qu'il travaillait au CERN.",
+      "source": "[VERIFY] CERN 'The birth of the Web' (Tim Berners-Lee, 1989)"
+    },
+    {
+      "id": "q036",
+      "type": "mc4",
+      "text": "Le mot « algèbre » vient d'un livre de quel savant ?",
+      "options": [
+        "Ibn Sina",
+        "Al-Khwarizmi",
+        "Pythagore",
+        "Euclide"
+      ],
+      "answer": 1,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "Son propre nom nous a donné un autre mot : « algorithme ».",
+      "source": "[VERIFY] Britannica 'al-Khwārizmī' (al-jabr → algebra; name → algorithm)"
+    },
+    {
+      "id": "q037",
+      "type": "mc4",
+      "text": "Le mot « café » remonte à quelle langue ?",
+      "options": [
+        "L'espagnol",
+        "L'hindi",
+        "L'arabe",
+        "Le grec"
+      ],
+      "answer": 2,
+      "topic": "language",
+      "difficulty": 3,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "Il est passé de « qahwa » au turc « kahve », puis en Europe.",
+      "source": "[VERIFY] Online Etymology Dictionary 'coffee' (Arabic qahwa via Turkish kahve)"
+    },
+    {
+      "id": "q038",
+      "type": "mc4",
+      "text": "Qui a peint « La Nuit étoilée » ?",
+      "options": [
+        "Vincent van Gogh",
+        "Claude Monet",
+        "Pablo Picasso",
+        "Salvador Dalí"
+      ],
+      "answer": 0,
+      "topic": "art",
+      "difficulty": 1,
+      "explain": "Il l'a peinte en 1889, de mémoire, d'après la vue de sa fenêtre.",
+      "source": "[VERIFY] MoMA 'The Starry Night' (Van Gogh, 1889)"
+    },
+    {
+      "id": "q039",
+      "type": "mc4",
+      "text": "De quel pays venait la peintre Frida Kahlo ?",
+      "options": [
+        "L'Espagne",
+        "L'Argentine",
+        "Cuba",
+        "Le Mexique"
+      ],
+      "answer": 3,
+      "topic": "art",
+      "difficulty": 2,
+      "explain": "Sa Maison bleue, à Mexico, est aujourd'hui un musée.",
+      "source": "[VERIFY] Britannica 'Frida Kahlo' (Mexico; Casa Azul)"
+    },
+    {
+      "id": "q040",
+      "type": "mc4",
+      "text": "Quel artiste est célèbre pour ses montres molles ?",
+      "options": [
+        "René Magritte",
+        "Salvador Dalí",
+        "Pablo Picasso",
+        "Joan Miró"
+      ],
+      "answer": 1,
+      "topic": "art",
+      "difficulty": 2,
+      "explain": "Le tableau s'appelle « La Persistance de la mémoire » (1931).",
+      "source": "[VERIFY] MoMA 'The Persistence of Memory' (Dalí, 1931)"
+    },
+    {
+      "id": "q041",
+      "type": "mc4",
+      "text": "Combien de touches compte un piano standard ?",
+      "options": [
+        "76",
+        "100",
+        "88",
+        "64"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "52 blanches et 36 noires.",
+      "source": "[VERIFY] trivial (standard piano: 88 keys = 52 white + 36 black)"
+    },
+    {
+      "id": "q042",
+      "type": "mc4",
+      "text": "Quel grand compositeur a continué à écrire après avoir perdu l'ouïe ?",
+      "options": [
+        "Beethoven",
+        "Mozart",
+        "Bach",
+        "Chopin"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "Il a composé sa Neuvième Symphonie presque entièrement sourd.",
+      "source": "[VERIFY] Britannica 'Ludwig van Beethoven' (deafness; Ninth Symphony)"
+    },
+    {
+      "id": "q043",
+      "type": "mc4",
+      "text": "Combien de cordes a une guitare classique standard ?",
+      "options": [
+        "4",
+        "5",
+        "8",
+        "6"
+      ],
+      "answer": 3,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "Une basse standard en a généralement quatre.",
+      "source": "[VERIFY] trivial (standard guitar: 6 strings)"
+    },
+    {
+      "id": "q044",
+      "type": "mc4",
+      "text": "Le tango est né sur le Río de la Plata, en Argentine et dans quel pays voisin ?",
+      "options": [
+        "Le Brésil",
+        "L'Uruguay",
+        "Le Chili",
+        "Le Paraguay"
+      ],
+      "answer": 1,
+      "topic": "dance",
+      "difficulty": 2,
+      "explain": "L'UNESCO l'inscrit comme patrimoine commun de l'Argentine et de l'Uruguay. Buenos Aires et Montevideo se disputent encore la première danse.",
+      "source": "[VERIFY] UNESCO ICH 'Tango' (Argentina and Uruguay, 2009)"
+    },
+    {
+      "id": "q045",
+      "type": "mc4",
+      "text": "Le flamenco vient de quelle région d'Espagne ?",
+      "options": [
+        "La Catalogne",
+        "La Galice",
+        "L'Andalousie",
+        "Le Pays basque"
+      ],
+      "answer": 2,
+      "topic": "dance",
+      "difficulty": 2,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "Il mêle chant, guitare, danse et claquements de mains appelés « palmas ».",
+      "source": "[VERIFY] UNESCO ICH 'Flamenco' (Spain, 2010; Andalusian roots)"
+    },
+    {
+      "id": "q046",
+      "type": "mc4",
+      "text": "De quel pays vient le groupe BTS ?",
+      "options": [
+        "La Corée du Sud",
+        "Le Japon",
+        "La Chine",
+        "La Thaïlande"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "Leurs fans se surnomment l'ARMY.",
+      "source": "[VERIFY] trivial (BTS, South Korea)"
+    },
+    {
+      "id": "q047",
+      "type": "mc4",
+      "text": "Dans « Le Roi lion », comment s'appelle le père de Simba ?",
+      "options": [
+        "Scar",
+        "Rafiki",
+        "Pumbaa",
+        "Mufasa"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "Le film de 1994 se déroule dans la savane africaine.",
+      "source": "[VERIFY] Disney 'The Lion King' (1994) characters"
+    },
+    {
+      "id": "q048",
+      "type": "mc4",
+      "text": "Qui a réalisé « Jurassic Park » (1993) ?",
+      "options": [
+        "James Cameron",
+        "Steven Spielberg",
+        "George Lucas",
+        "Ridley Scott"
+      ],
+      "answer": 1,
+      "topic": "cinema-tv",
+      "difficulty": 2,
+      "explain": "Il a aussi réalisé « E.T. » et « Les Dents de la mer ».",
+      "source": "[VERIFY] AFI catalog 'Jurassic Park' (1993, Spielberg)"
+    },
+    {
+      "id": "q049",
+      "type": "mc4",
+      "text": "« Bollywood » mélange « Hollywood » et l'ancien nom de quelle ville ?",
+      "options": [
+        "Bangalore",
+        "Bhopal",
+        "Bombay",
+        "Bénarès"
+      ],
+      "answer": 2,
+      "topic": "cinema-tv",
+      "difficulty": 2,
+      "explain": "Bombay s'appelle officiellement Mumbai depuis 1995.",
+      "source": "[VERIFY] OED / Britannica 'Bollywood' (Bombay + Hollywood)"
+    },
+    {
+      "id": "q050",
+      "type": "mc4",
+      "text": "Quel a été le premier long métrage d'animation de Walt Disney ?",
+      "options": [
+        "Blanche-Neige et les Sept Nains",
+        "Pinocchio",
+        "Bambi",
+        "Cendrillon"
+      ],
+      "answer": 0,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "Il est sorti en 1937.",
+      "source": "[VERIFY] Walt Disney Archives 'Snow White and the Seven Dwarfs' (1937)"
+    },
+    {
+      "id": "q051",
+      "type": "mc4",
+      "text": "Quel a été le premier film non anglophone à remporter l'Oscar du meilleur film ?",
+      "options": [
+        "Roma",
+        "Amélie Poulain",
+        "Tigre et Dragon",
+        "Parasite"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "Le film sud-coréen l'a emporté en 2020.",
+      "source": "[VERIFY] Academy Awards database, 92nd ceremony (Parasite, Best Picture)"
+    },
+    {
+      "id": "q052",
+      "type": "mc4",
+      "text": "Combien de joueurs chaque équipe de foot a-t-elle sur le terrain ?",
+      "options": [
+        "9",
+        "11",
+        "10",
+        "12"
+      ],
+      "answer": 1,
+      "topic": "football",
+      "difficulty": 1,
+      "explain": "Dont le gardien, le seul autorisé à jouer à la main.",
+      "source": "[VERIFY] IFAB Laws of the Game, Law 3"
+    },
+    {
+      "id": "q053",
+      "type": "mc4",
+      "text": "Quel pays a remporté le plus de Coupes du monde ?",
+      "options": [
+        "L'Allemagne",
+        "L'Italie",
+        "Le Brésil",
+        "L'Argentine"
+      ],
+      "answer": 2,
+      "topic": "football",
+      "difficulty": 2,
+      "explain": "Le Brésil compte cinq titres.",
+      "source": "[VERIFY] FIFA World Cup records (Brazil, 5 titles)"
+    },
+    {
+      "id": "q054",
+      "type": "mc4",
+      "text": "Quel pays a accueilli la toute première Coupe du monde, en 1930 ?",
+      "options": [
+        "L'Uruguay",
+        "Le Brésil",
+        "L'Italie",
+        "L'Angleterre"
+      ],
+      "answer": 0,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "L'Uruguay l'a aussi remportée.",
+      "source": "[VERIFY] FIFA '1930 FIFA World Cup Uruguay' (host and winner)"
+    },
+    {
+      "id": "q055",
+      "type": "mc4",
+      "text": "Quel pays a remporté la Coupe du monde 2022 au Qatar ?",
+      "options": [
+        "La France",
+        "La Croatie",
+        "Le Maroc",
+        "L'Argentine"
+      ],
+      "answer": 3,
+      "topic": "football",
+      "difficulty": 1,
+      "explain": "La finale contre la France s'est jouée aux tirs au but.",
+      "source": "[VERIFY] FIFA 'Qatar 2022 final' (Argentina beat France on penalties)"
+    },
+    {
+      "id": "q056",
+      "type": "mc4",
+      "text": "En 2022, quelle équipe est devenue la première d'Afrique à atteindre les demi-finales du Mondial ?",
+      "options": [
+        "Le Sénégal",
+        "Le Maroc",
+        "Le Cameroun",
+        "Le Ghana"
+      ],
+      "answer": 1,
+      "topic": "football",
+      "difficulty": 2,
+      "explain": "Une première aussi pour une équipe arabe.",
+      "source": "[VERIFY] FIFA Qatar 2022 (Morocco: first African and Arab semi-finalist)"
+    },
+    {
+      "id": "q057",
+      "type": "mc4",
+      "text": "Tous les combien se tiennent normalement les Jeux olympiques d'été ?",
+      "options": [
+        "Tous les 2 ans",
+        "Tous les 3 ans",
+        "Tous les 4 ans",
+        "Tous les 5 ans"
+      ],
+      "answer": 2,
+      "topic": "sports",
+      "difficulty": 1,
+      "explain": "Tokyo 2020 a été une rare exception : ils ont eu lieu en 2021.",
+      "source": "[VERIFY] IOC (Summer Games every 4 years; Tokyo 2020 held in 2021)"
+    },
+    {
+      "id": "q058",
+      "type": "mc4",
+      "text": "Combien d'anneaux figurent sur le drapeau olympique ?",
+      "options": [
+        "Cinq",
+        "Quatre",
+        "Six",
+        "Sept"
+      ],
+      "answer": 0,
+      "topic": "sports",
+      "difficulty": 1,
+      "explain": "Ils symbolisent l'union des continents.",
+      "source": "[VERIFY] IOC 'Olympic rings'"
+    },
+    {
+      "id": "q059",
+      "type": "mc4",
+      "text": "Au tennis, comment appelle-t-on un score de zéro en anglais ?",
+      "options": [
+        "Nil",
+        "Duck",
+        "Blank",
+        "Love"
+      ],
+      "answer": 3,
+      "topic": "sports",
+      "difficulty": 2,
+      "explain": "Ensuite, un jeu compte 15, 30, 40… et personne ne sait vraiment pourquoi.",
+      "source": "[VERIFY] ITF Rules of Tennis (scoring terms)"
+    },
+    {
+      "id": "q060",
+      "type": "mc4",
+      "text": "Quelle est la distance approximative d'un marathon ?",
+      "options": [
+        "21 km",
+        "42 km",
+        "30 km",
+        "50 km"
+      ],
+      "answer": 1,
+      "topic": "sports",
+      "difficulty": 2,
+      "explain": "Exactement 42,195 km.",
+      "source": "[VERIFY] World Athletics (marathon 42.195 km)"
+    },
+    {
+      "id": "q061",
+      "type": "mc4",
+      "text": "La pizza Margherita vient de quelle ville italienne ?",
+      "options": [
+        "Rome",
+        "Milan",
+        "Naples",
+        "Venise"
+      ],
+      "answer": 2,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "Tomate, mozzarella et basilic : les couleurs du drapeau italien.",
+      "source": "[VERIFY] AVPN / encyclopedia 'pizza Margherita' (Naples)"
+    },
+    {
+      "id": "q062",
+      "type": "mc4",
+      "text": "Le guacamole est surtout fait à base de…",
+      "options": [
+        "Avocat",
+        "Petits pois",
+        "Concombre",
+        "Poivron vert"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "Il vient du Mexique, berceau de l'avocat.",
+      "source": "[VERIFY] trivial (guacamole = avocado)"
+    },
+    {
+      "id": "q063",
+      "type": "mc4",
+      "text": "Le safran, l'épice la plus chère au poids, vient de quelle partie d'une fleur ?",
+      "options": [
+        "Les pétales",
+        "Les racines",
+        "Les graines",
+        "Les stigmates"
+      ],
+      "answer": 3,
+      "topic": "food",
+      "difficulty": 3,
+      "explain": "Chaque fleur de crocus ne donne que trois filaments, cueillis à la main.",
+      "source": "[VERIFY] Britannica 'saffron' (stigmas of Crocus sativus; priciest spice by weight)"
+    },
+    {
+      "id": "q064",
+      "type": "mc4",
+      "text": "La paella vient de quelle région d'Espagne ?",
+      "options": [
+        "L'Andalousie",
+        "Valence",
+        "La Catalogne",
+        "La Galice"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "On la cuit traditionnellement dehors, dans une grande poêle plate.",
+      "source": "[VERIFY] encyclopedia 'paella' (Valencia)"
+    },
+    {
+      "id": "q065",
+      "type": "mc4",
+      "text": "Quel fruit sec est la base du massepain ?",
+      "options": [
+        "La noisette",
+        "La noix",
+        "L'amande",
+        "La pistache"
+      ],
+      "answer": 2,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "Amandes moulues et sucre, modelés en fruits, animaux et plus encore.",
+      "source": "[VERIFY] encyclopedia 'marzipan' (almonds, sugar)"
+    },
+    {
+      "id": "q066",
+      "type": "tf",
+      "text": "D'un point de vue botanique, la tomate est un fruit.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "Les botanistes la classent même parmi les baies.",
+      "source": "[VERIFY] botany refs (tomato = berry, a fruit)"
+    },
+    {
+      "id": "q067",
+      "type": "tf",
+      "text": "La Grande Muraille de Chine est visible à l'œil nu depuis la Lune.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 1,
+      "topic": "places",
+      "difficulty": 2,
+      "explain": "Même depuis une orbite basse, elle est très difficile à repérer à l'œil nu.",
+      "source": "[VERIFY] NASA Earth Observatory 'Great Wall from space' myth"
+    },
+    {
+      "id": "q068",
+      "type": "tf",
+      "text": "Les poissons rouges n'ont que trois secondes de mémoire.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "Des expériences montrent qu'ils se souviennent de choses pendant des mois.",
+      "source": "[VERIFY] animal-cognition studies on goldfish memory (months, not seconds)"
+    },
+    {
+      "id": "q069",
+      "type": "mc4",
+      "text": "Quelle langue compte le plus de locuteurs natifs ?",
+      "options": [
+        "Le chinois mandarin",
+        "L'anglais",
+        "L'espagnol",
+        "L'hindi"
+      ],
+      "answer": 0,
+      "topic": "language",
+      "difficulty": 2,
+      "explain": "L'anglais gagne si l'on compte tous ceux qui le parlent en langue seconde.",
+      "source": "[VERIFY] Ethnologue (most native speakers: Mandarin)"
+    },
+    {
+      "id": "q070",
+      "type": "mc4",
+      "text": "Avec quel alphabet écrit-on le russe ?",
+      "options": [
+        "Le latin",
+        "Le grec",
+        "Le géorgien",
+        "Le cyrillique"
+      ],
+      "answer": 3,
+      "topic": "language",
+      "difficulty": 2,
+      "explain": "Il porte le nom de Cyrille, un savant du IXe siècle né à Thessalonique.",
+      "source": "[VERIFY] Britannica 'Cyrillic alphabet'"
+    },
+    {
+      "id": "q071",
+      "type": "mc4",
+      "text": "Comment dit-on « merci » en japonais ?",
+      "options": [
+        "Konnichiwa",
+        "Arigatō",
+        "Sayōnara",
+        "Kawaii"
+      ],
+      "answer": 1,
+      "topic": "language",
+      "difficulty": 1,
+      "explain": "« Konnichiwa » veut dire bonjour, « sayōnara » au revoir et « kawaii » mignon.",
+      "source": "[VERIFY] trivial (Japanese 'arigatō')"
+    },
+    {
+      "id": "q072",
+      "type": "mc4",
+      "text": "Quelle planète a la journée la plus courte ?",
+      "options": [
+        "Mercure",
+        "La Terre",
+        "Jupiter",
+        "Vénus"
+      ],
+      "answer": 2,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "Elle tourne sur elle-même en dix heures environ, malgré sa taille record.",
+      "source": "[VERIFY] NASA 'Jupiter' (rotation ~10 hours)"
+    },
+    {
+      "id": "q073",
+      "type": "mc4",
+      "text": "Quelle lettre n'apparaît dans aucun nom (en anglais) des 50 États américains ?",
+      "options": [
+        "Q",
+        "Z",
+        "X",
+        "J"
+      ],
+      "answer": 0,
+      "topic": "language",
+      "difficulty": 3,
+      "explain": "Le Z est dans Arizona, le X dans Texas et le J dans New Jersey.",
+      "source": "[VERIFY] list of US state names (no letter Q)"
+    },
+    {
+      "id": "q074",
+      "type": "mc4",
+      "text": "Quel oiseau sait voler en marche arrière ?",
+      "options": [
+        "L'aigle",
+        "Le perroquet",
+        "L'hirondelle",
+        "Le colibri"
+      ],
+      "answer": 3,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "Ses ailes peuvent battre des dizaines de fois par seconde.",
+      "source": "[VERIFY] encyclopedia 'hummingbird' (can fly backwards)"
+    },
+    {
+      "id": "q075",
+      "type": "mc4",
+      "text": "Dans quel pays se trouve le Machu Picchu ?",
+      "options": [
+        "Le Mexique",
+        "Le Pérou",
+        "La Bolivie",
+        "Le Chili"
+      ],
+      "answer": 1,
+      "topic": "places",
+      "difficulty": 1,
+      "explain": "La citadelle inca est perchée dans les Andes, vers 2 400 m d'altitude.",
+      "source": "[VERIFY] UNESCO WHC 'Historic Sanctuary of Machu Picchu' (Peru)"
+    }
+  ]
+}

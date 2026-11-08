@@ -51,7 +51,7 @@ import app.jamaa.tv.platform.ReactionTracker
 import app.jamaa.tv.platform.RemoteKey
 import app.jamaa.tv.platform.TicketState
 import app.jamaa.tv.platform.TopBarItem
-import app.jamaa.tv.platform.Worlds
+import app.jamaa.tv.ui.theme.worldOf
 import app.jamaa.tv.protocol.GameCard
 import app.jamaa.tv.protocol.MemberPublic
 import app.jamaa.tv.protocol.RoomPublic
@@ -114,7 +114,7 @@ fun HubScreen(
     val barFocus = remember { TopBarItem.entries.associateWith { FocusRequester() } }
     val memberFocus = remember(strip.size) { List(strip.size) { FocusRequester() } }
     val focusedCard = cards.getOrNull(posterIndex)
-    val world = Worlds.of(GameCatalog.meta(focusedCard?.id)?.world)
+    val world = worldOf(GameCatalog.meta(focusedCard?.id)?.world)
 
     // Gathering → compact after 60 s and 3 members; re-evaluated every second.
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }

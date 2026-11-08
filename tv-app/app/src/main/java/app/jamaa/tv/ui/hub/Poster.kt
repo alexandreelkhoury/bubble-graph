@@ -29,7 +29,7 @@ import app.jamaa.tv.games.GameIds
 import app.jamaa.tv.games.mishana.MishanaLogo
 import app.jamaa.tv.platform.Expression
 import app.jamaa.tv.platform.HubModel
-import app.jamaa.tv.platform.Worlds
+import app.jamaa.tv.ui.theme.worldOf
 import app.jamaa.tv.protocol.GameCard
 import app.jamaa.tv.protocol.RoomPublic
 import app.jamaa.tv.ui.characters.Character
@@ -41,7 +41,6 @@ import app.jamaa.tv.ui.platform.keyText
 import app.jamaa.tv.ui.theme.JamaaColors
 import app.jamaa.tv.ui.theme.JamaaShapes
 import app.jamaa.tv.ui.theme.JamaaTheme
-import app.jamaa.tv.ui.theme.toColor
 
 /**
  * A game poster (DESIGN-JAMAA §2.2), 210 × 290 dp, focus scale 1.08 with the platform ring: the world stage, three
@@ -52,20 +51,20 @@ import app.jamaa.tv.ui.theme.toColor
 @Composable
 fun Poster(card: GameCard, room: RoomPublic, showPass: Boolean, focused: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val meta = GameCatalog.meta(card.id)
-    val world = Worlds.of(meta?.world)
+    val world = worldOf(meta?.world)
     JamaaFocusSurface(
         onClick = onClick,
         modifier = modifier.size(HubModel.POSTER_W_DP.dp, HubModel.POSTER_H_DP.dp),
         shape = JamaaShapes.tile,
         kind = FocusKind.Tile,
-        container = world.deep.toColor(),
-        focusedContainer = world.deep.toColor(),
+        container = world.deep,
+        focusedContainer = world.deep,
     ) {
         Box(Modifier.fillMaxSize().alpha(if (card.available) 1f else 0.5f)) {
             Canvas(Modifier.fillMaxSize()) {
-                drawRect(Brush.verticalGradient(listOf(world.stageTop.toColor(), world.deep.toColor())))
-                drawRect(Brush.radialGradient(listOf(world.glow.toColor().copy(alpha = 0.28f), Color.Transparent), center = Offset(size.width / 2f, 0f), radius = size.width * 0.8f))
-                drawCircle(world.accent.toColor().copy(alpha = 0.18f), size.width * 0.32f, Offset(size.width * 0.5f, size.height * 0.42f))
+                drawRect(Brush.verticalGradient(listOf(world.stageTop, world.deep)))
+                drawRect(Brush.radialGradient(listOf(world.glow.copy(alpha = 0.28f), Color.Transparent), center = Offset(size.width / 2f, 0f), radius = size.width * 0.8f))
+                drawCircle(world.accent.copy(alpha = 0.18f), size.width * 0.32f, Offset(size.width * 0.5f, size.height * 0.42f))
             }
             Column(Modifier.fillMaxSize().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(Modifier.height(36.dp))
@@ -80,7 +79,7 @@ fun Poster(card: GameCard, room: RoomPublic, showPass: Boolean, focused: Boolean
                     Text(
                         meta?.let { keyText(it.titleKey) } ?: card.id,
                         style = JamaaTheme.type.title,
-                        color = world.accentText.toColor(),
+                        color = world.accentText,
                         textAlign = TextAlign.Center,
                         maxLines = 2,
                     )

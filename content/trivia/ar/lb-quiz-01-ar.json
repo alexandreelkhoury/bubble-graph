@@ -1,0 +1,1277 @@
+{
+  "id": "lb-quiz-01-ar",
+  "family": "lb-quiz-01",
+  "game": "trivia",
+  "version": 1,
+  "locale": "ar",
+  "script": "Arab",
+  "title": {
+    "en": "Lebanon: the big quiz",
+    "fr": "Liban : le grand quiz",
+    "ar": "لبنان: المسابقة الكبيرة",
+    "es": "Líbano: el gran quiz"
+  },
+  "description": {
+    "en": "From Fairuz to the Cedars: songs, dabke, football, food and every corner of the map.",
+    "fr": "De Fairouz aux Cèdres : chansons, dabké, foot, bonne bouffe et tous les coins du pays.",
+    "ar": "من فيروز لرجال الأرز: غناني، دبكة، فوتبول، أكل طيّب وكل زاوية من لبنان.",
+    "es": "De Fairuz a los Cedros: canciones, dabke, fútbol, buena mesa y cada rincón del país."
+  },
+  "domain": "lebanon",
+  "topics": [
+    "music",
+    "dance",
+    "football",
+    "geography",
+    "history",
+    "culture",
+    "cinema-tv",
+    "sports",
+    "food",
+    "celebrities",
+    "nature"
+  ],
+  "featuredTopics": [
+    "music",
+    "dance",
+    "football"
+  ],
+  "stars": 2,
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "reviewedBy": [],
+  "questions": [
+    {
+      "id": "q001",
+      "type": "mc4",
+      "text": "شو عاصمة لبنان؟",
+      "options": [
+        "طرابلس",
+        "صيدا",
+        "بيروت",
+        "جبيل"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
+      "region": "beirut",
+      "explain": "بيروت قاعدة على راس فايت بالبحر، كأنّها بدّها تشوف البحر أحسن.",
+      "source": "[VERIFY] trivial; any encyclopedia (Britannica: Beirut)"
+    },
+    {
+      "id": "q002",
+      "type": "mc4",
+      "text": "شو أعلى قمّة بلبنان؟",
+      "options": [
+        "القرنة السودا",
+        "جبل صنّين",
+        "جبل الباروك",
+        "جبل الكنيسة"
+      ],
+      "answer": 0,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "north",
+      "explain": "علوّها حوالي 3088 متر، فوق وادي قاديشا بالشمال.",
+      "source": "[VERIFY] Britannica 'Qurnat al-Sawdāʾ' (name, ~3,088 m, location above Qadisha)"
+    },
+    {
+      "id": "q003",
+      "type": "mc4",
+      "text": "شو أطول نهر بيمشي كلّو جوّا لبنان؟",
+      "options": [
+        "نهر إبراهيم",
+        "الأوّلي",
+        "نهر الكلب",
+        "الليطاني"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "bekaa",
+      "explain": "نبعو بالبقاع، قريب من بعلبك.",
+      "source": "[VERIFY] Britannica 'Līṭānī River' (longest entirely within Lebanon; source near Baalbek)"
+    },
+    {
+      "id": "q004",
+      "type": "mc4",
+      "text": "شو الاسم العربي لمدينة «بيبلوس» القديمة؟",
+      "options": [
+        "جونية",
+        "جبيل",
+        "البترون",
+        "عمشيت"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 1,
+      "region": "mount-lebanon",
+      "explain": "نفس المدينة باسمين: اليونان قالوا بيبلوس، وأهل المينا بيقولوا جبيل.",
+      "source": "[VERIFY] UNESCO WHC 'Byblos' (Byblos = Jbeil)"
+    },
+    {
+      "id": "q005",
+      "type": "mc4",
+      "text": "شو هيّي مغارة جعيتا؟",
+      "options": [
+        "معبد روماني",
+        "غابة أرز",
+        "مغاور كلسية",
+        "منتجع تزلّج"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 1,
+      "region": "mount-lebanon",
+      "explain": "المغارة التحتانية بتزورها بالشختورة، على نهر تحت الأرض. إيه، نهر. جوّا جبل.",
+      "source": "[VERIFY] Jeita Grotto official site / Britannica (limestone karst caves; lower grotto by boat)"
+    },
+    {
+      "id": "q006",
+      "type": "mc4",
+      "text": "«صخرة الحمام» المشهورة قبال أيّا منطقة ببيروت؟",
+      "options": [
+        "الروشة",
+        "الأشرفية",
+        "الحمرا",
+        "الجمّيزة"
+      ],
+      "answer": 0,
+      "topic": "geography",
+      "difficulty": 1,
+      "region": "beirut",
+      "explain": "أحلى محطّة غروب عالكورنيش… وأحلى محطّة سيلفي كمان.",
+      "source": "[VERIFY] Britannica / Lebanon Ministry of Tourism (Pigeon Rocks off Raouché)"
+    },
+    {
+      "id": "q007",
+      "type": "mc4",
+      "text": "أيّا مدينة بيلقّبوها «عروس البقاع»؟",
+      "options": [
+        "بعلبك",
+        "شتورة",
+        "الهرمل",
+        "زحلة"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "bekaa",
+      "explain": "نهر البردوني بيقطع فيها، وعلى طرفو مطاعم وطاولات مليانة مازة.",
+      "source": "[VERIFY] Zahlé municipality / Britannica (nickname 'Bride of the Bekaa'; Berdawni river)"
+    },
+    {
+      "id": "q008",
+      "type": "mc4",
+      "text": "غابة «أرز الربّ» قريبة من أيّا بلدة؟",
+      "options": [
+        "زحلة",
+        "بشرّي",
+        "جزّين",
+        "صور"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "north",
+      "explain": "هيّي ووادي قاديشا مسجّلين عالتراث العالمي بالأونيسكو.",
+      "source": "[VERIFY] UNESCO WHC 'Ouadi Qadisha and the Forest of the Cedars of God' (near Bsharri)"
+    },
+    {
+      "id": "q009",
+      "type": "tf",
+      "text": "نهر الليطاني بيصبّ بسوريا.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "south",
+      "explain": "ولا نقطة بتفلّ: الليطاني بيمشي من البقاع للبحر، شمال صور بشوي.",
+      "source": "[VERIFY] Britannica 'Līṭānī River' (course; mouth at Qasimiyeh, north of Tyre)"
+    },
+    {
+      "id": "q010",
+      "type": "mc4",
+      "text": "أيّا منتجع تزلّج من هودي موجود بلبنان؟",
+      "options": [
+        "كورشوفيل",
+        "زيرمات",
+        "مزار كفردبيان",
+        "كورتينا"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 1,
+      "region": "mount-lebanon",
+      "explain": "المفخرة اللبنانية: تزلّج الصبح وسباحة بالبحر بعد الضهر.",
+      "source": "[VERIFY] Mzaar Kfardebian official site (location in Keserwan, Lebanon)"
+    },
+    {
+      "id": "q011",
+      "type": "mc4",
+      "text": "الفينيقيين مشهورين إنّن نشروا…",
+      "options": [
+        "الأبجدية",
+        "الورق",
+        "الدولاب",
+        "البارود"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "كل رسالة بتبعتها، اشكرن عليها: الأبجدية اليونانية، وبعدها اللاتينية، طلعوا منها.",
+      "source": "[VERIFY] Britannica 'Phoenician alphabet' (ancestor of Greek, then Latin)"
+    },
+    {
+      "id": "q012",
+      "type": "mc4",
+      "text": "عيد الاستقلال بلبنان بـ…",
+      "options": [
+        "10 آذار",
+        "1 أيّار",
+        "31 آب",
+        "22 تشرين التاني"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "من سنة 1943، وكل البلد بياخد فرصة.",
+      "source": "[VERIFY] Lebanese government / Britannica (Independence Day 22 November); reviewer: distractor dates neutral"
+    },
+    {
+      "id": "q013",
+      "type": "mc4",
+      "text": "معابد بعلبك الكبيرة انبنت بزمن أيّا إمبراطورية؟",
+      "options": [
+        "العثمانية",
+        "الرومانية",
+        "الفارسية",
+        "المغولية"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 1,
+      "region": "bekaa",
+      "explain": "الرومان سمّوا المدينة «هليوبوليس»، يعني مدينة الشمس.",
+      "source": "[VERIFY] UNESCO WHC 'Baalbek' (Roman temples; Heliopolis)"
+    },
+    {
+      "id": "q014",
+      "type": "mc4",
+      "text": "معبد أيّا إله ببعلبك من أحسن المعابد الرومانية المحفوظة بالعالم؟",
+      "options": [
+        "مارس",
+        "نبتون",
+        "باخوس",
+        "أبولو"
+      ],
+      "answer": 2,
+      "topic": "history",
+      "difficulty": 3,
+      "region": "bekaa",
+      "explain": "واقف حدّ العواميد الستّة العملاقة يلّي بقيو من معبد جوبيتر.",
+      "source": "[VERIFY] UNESCO WHC 'Baalbek' / Britannica (Temple of Bacchus preservation; beside the Temple of Jupiter columns)"
+    },
+    {
+      "id": "q015",
+      "type": "mc4",
+      "text": "صور القديمة كانت مشهورة بأيّا صبغة غالية؟",
+      "options": [
+        "الأرجوان",
+        "الأزرق النيلي",
+        "الأصفر الزعفراني",
+        "الأخضر الزمرّدي"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "region": "south",
+      "explain": "كانوا يطلّعوها من صدف المُريق، وكانت غالية لدرجة صار الأرجوان لون الأباطرة.",
+      "source": "[VERIFY] Britannica 'Tyrian purple' (murex sea snails; imperial/royal purple)"
+    },
+    {
+      "id": "q016",
+      "type": "tf",
+      "text": "جبيل من أقدم المدن يلّي ضلّت مسكونة بلا انقطاع بالعالم.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 2,
+      "region": "mount-lebanon",
+      "explain": "الأونيسكو بتذكر آثار سكن فيها من العصر الحجري الحديث.",
+      "source": "[VERIFY] UNESCO WHC 'Byblos' ('continuously inhabited since Neolithic times')"
+    },
+    {
+      "id": "q017",
+      "type": "mc4",
+      "text": "مين كتب «النبي»؟",
+      "options": [
+        "ميخائيل نعيمة",
+        "أمين معلوف",
+        "أمين الريحاني",
+        "جبران خليل جبران"
+      ],
+      "answer": 3,
+      "topic": "culture",
+      "difficulty": 1,
+      "explain": "طلع سنة 1923، وانترجم لعشرات اللغات.",
+      "source": "[VERIFY] Britannica 'Khalil Gibran' (The Prophet, 1923; translations claim)"
+    },
+    {
+      "id": "q018",
+      "type": "mc4",
+      "text": "بأيّا بلدة خلق جبران خليل جبران؟",
+      "options": [
+        "زحلة",
+        "بشرّي",
+        "البترون",
+        "دير القمر"
+      ],
+      "answer": 1,
+      "topic": "culture",
+      "difficulty": 2,
+      "region": "north",
+      "explain": "متحفو ببشرّي في لوحاتو، وهوّي مدفون هونيك.",
+      "source": "[VERIFY] Gibran Museum, Bsharri (birthplace; museum and resting place)"
+    },
+    {
+      "id": "q019",
+      "type": "mc4",
+      "text": "عن أيّا رواية ربح أمين معلوف جايزة غونكور؟",
+      "options": [
+        "ليون الإفريقي",
+        "سمرقند",
+        "صخرة طانيوس",
+        "حدائق النور"
+      ],
+      "answer": 2,
+      "topic": "culture",
+      "difficulty": 3,
+      "explain": "ربحها سنة 1993، وسنة 2023 صار أمين السرّ الدائم للأكاديمية الفرنسية.",
+      "source": "[VERIFY] Académie Goncourt laureates (1993, Le Rocher de Tanios); Académie française (Maalouf, secrétaire perpétuel 2023)"
+    },
+    {
+      "id": "q020",
+      "type": "mc4",
+      "text": "«تيتا» بلبنان مين هيّي؟",
+      "options": [
+        "الجدّة",
+        "العمّة",
+        "الجارة",
+        "البيبي"
+      ],
+      "answer": 0,
+      "topic": "culture",
+      "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "وجدّو؟ «جدّو». والتنين رح يقولولك: ضعفان، كول شي!",
+      "source": "[VERIFY] common Lebanese usage (reviewer)"
+    },
+    {
+      "id": "q021",
+      "type": "mc4",
+      "text": "شو بيسمّوا الباكغامون بلبنان؟",
+      "options": [
+        "شطرنج",
+        "داما",
+        "تريكس",
+        "طاولة"
+      ],
+      "answer": 3,
+      "topic": "culture",
+      "difficulty": 1,
+      "explain": "ستّة وخمسة إلها اسم لحالها: «شيش بيش».",
+      "source": "[VERIFY] tawleh = backgammon; 'shesh besh' = a roll of six and five (Persian/Turkish numbers)"
+    },
+    {
+      "id": "q022",
+      "type": "tf",
+      "text": "في تحية لبنانية مشهورة بتخلط تلات لغات: «Hi، كيفك، ça va؟»",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "culture",
+      "difficulty": 1,
+      "explain": "وإذا خلصت الجملة بـ«merci، يلّا باي»، بونص.",
+      "source": "[VERIFY] widely cited Lebanese code-switching phrase (keep as culture, not a statistic)"
+    },
+    {
+      "id": "q023",
+      "type": "mc4",
+      "text": "شو هوّي «الزجل»؟",
+      "options": [
+        "نوع خبز",
+        "شعر مغنّى مرتجل",
+        "رقصة عرس",
+        "لعبة ورق"
+      ],
+      "answer": 1,
+      "topic": "culture",
+      "difficulty": 2,
+      "explain": "الزجل اللبناني مسجّل عالتراث غير المادّي بالأونيسكو.",
+      "source": "[VERIFY] UNESCO ICH 'Al-Zajal, recited or sung poetry' (Lebanon, 2014)"
+    },
+    {
+      "id": "q024",
+      "type": "tf",
+      "text": "مهرجانات بعلبك الدولية، بقلب المعابد الرومانية، تأسّست بالخمسينات.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "culture",
+      "difficulty": 3,
+      "region": "bekaa",
+      "explain": "فيروز والأخوين رحباني غنّوا فيها من أوّل سنينها.",
+      "source": "[VERIFY] Baalbeck International Festival official site (founded 1956; early Rahbani/Fairuz nights)"
+    },
+    {
+      "id": "q025",
+      "type": "mc4",
+      "text": "أيّا ممثّل هوليوودي خلق ببيروت؟",
+      "options": [
+        "براد بيت",
+        "توم هانكس",
+        "كيانو ريفز",
+        "جوني ديب"
+      ],
+      "answer": 2,
+      "topic": "cinema-tv",
+      "difficulty": 2,
+      "explain": "عيلتو فلّت وهوّي زغير وكبر أكتر شي بتورونتو. بس بتنحسب!",
+      "source": "[VERIFY] Britannica 'Keanu Reeves' (born Beirut 1964; raised mainly in Toronto)"
+    },
+    {
+      "id": "q026",
+      "type": "mc4",
+      "text": "شو اسم فيروز الحقيقي؟",
+      "options": [
+        "نهاد حدّاد",
+        "جانيت فغالي",
+        "ماجدة الرومي",
+        "سميرة توفيق"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "جانيت فغالي هوّي اسم صباح الحقيقي.",
+      "source": "[VERIFY] Britannica 'Fairuz' (Nouhad Haddad); Britannica 'Sabah' (Jeanette Feghali)"
+    },
+    {
+      "id": "q027",
+      "type": "mc4",
+      "text": "أشهر ناس اشتغلت معن فيروز هنّي…",
+      "options": [
+        "الجيبسي كينغز",
+        "الجاكسون فايف",
+        "البي جيز",
+        "الأخوين رحباني"
+      ],
+      "answer": 3,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "عاصي الرحباني كان كمان جوزها. والبي جيز كانوا مشغولين.",
+      "source": "[VERIFY] Britannica 'Fairuz' (Assi and Mansour Rahbani; married Assi)"
+    },
+    {
+      "id": "q028",
+      "type": "mc4",
+      "text": "غنية فيروز «لبيروت» مأخوذ لحنها من أيّا مقطوعة كلاسيكية؟",
+      "options": [
+        "بوليرو",
+        "كونشرتو أرانخويز",
+        "من أجل إليز",
+        "الفصول الأربعة"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "الكونشرتو للمؤلّف الإسباني خواكين رودريغو.",
+      "source": "[VERIFY] song credits 'Li Beirut' (melody: Rodrigo, Concierto de Aranjuez, 2nd mvt)"
+    },
+    {
+      "id": "q029",
+      "type": "mc4",
+      "text": "مين المطربة يلّي كان لقبها «الشحرورة»؟",
+      "options": [
+        "فيروز",
+        "نانسي عجرم",
+        "صباح",
+        "إليسا"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "ومثّلت كمان بعشرات الأفلام المصرية واللبنانية.",
+      "source": "[VERIFY] Britannica 'Sabah' (nickname al-Shahrourah; film career)"
+    },
+    {
+      "id": "q030",
+      "type": "mc4",
+      "text": "على أيّا آلة بيعزف إبراهيم معلوف؟",
+      "options": [
+        "الترومبيت",
+        "العود",
+        "البيانو",
+        "الكمان"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "بيعزف على ترومبيت بربع الصوت، بتقدر تعزف المقامات العربية.",
+      "source": "[VERIFY] ibrahimmaalouf.com bio (trumpet; quarter-tone trumpet)"
+    },
+    {
+      "id": "q031",
+      "type": "mc4",
+      "text": "مين نجم البوب المولود ببيروت يلّي غنّى «Grace Kelly»؟",
+      "options": [
+        "مساري",
+        "راغب علامة",
+        "وائل كفوري",
+        "ميكا"
+      ],
+      "answer": 3,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "راح وهوّي زغير عباريس، وبعدها علندن.",
+      "source": "[VERIFY] Britannica / official bio 'Mika' (born Beirut 1983; Paris then London; 'Grace Kelly' 2007)"
+    },
+    {
+      "id": "q032",
+      "type": "mc4",
+      "text": "شو هوّي العود؟",
+      "options": [
+        "طبلة",
+        "آلة وترية بلا دساتين",
+        "ناي",
+        "خطوة رقص"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "آلة «اللوت» الأوروبية أخدت اسمها منّو.",
+      "source": "[VERIFY] Britannica 'ʿūd' (fretless; name 'the wood'; root of the word 'lute')"
+    },
+    {
+      "id": "q033",
+      "type": "mc4",
+      "text": "أيّا غنية من هودي كانت ضربة لنانسي عجرم بالألفين؟",
+      "options": [
+        "تملّي معاك",
+        "يا رايح",
+        "آه ونص",
+        "دي دي"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "نزلت سنة 2004 وضلّت عم تنسمع كل الصيف، حتّى بسيّارة خالتك.",
+      "source": "[VERIFY] album credits 'Ah W Noss' (Nancy Ajram, 2004); distractors by other artists"
+    },
+    {
+      "id": "q034",
+      "type": "mc4",
+      "text": "شو هيّي الدبكة؟",
+      "options": [
+        "رقصة شعبية بالصفّ",
+        "صلصة حارّة",
+        "لعبة طاولة",
+        "نوع طبلة"
+      ],
+      "answer": 0,
+      "topic": "dance",
+      "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "اسمها جايي من الدبك بالإجرين عالأرض.",
+      "source": "[VERIFY] trivial; Britannica 'dabke' (name linked to stamping)"
+    },
+    {
+      "id": "q035",
+      "type": "mc4",
+      "text": "يلّي ماسك راس الدبكة غالبًا بيلوّح بـ…",
+      "options": [
+        "مروحة",
+        "علم",
+        "سيف",
+        "محرمة"
+      ],
+      "answer": 3,
+      "topic": "dance",
+      "difficulty": 2,
+      "explain": "يلّي عالراس بيرتجل خطوات، والصفّ ماسك الإيقاع.",
+      "source": "[VERIFY] folk-dance references (handkerchief/mandil of the line leader); reviewer: «محرمة»"
+    },
+    {
+      "id": "q036",
+      "type": "mc4",
+      "text": "أيّا فرقة رقص لبنانية مشهورة إنها بتخلط الدبكة بالرقص الحديث؟",
+      "options": [
+        "البولشوي",
+        "كركلا",
+        "ألفين أيلي",
+        "ريفردانس"
+      ],
+      "answer": 1,
+      "topic": "dance",
+      "difficulty": 3,
+      "explain": "أسّسها عبد الحليم كركلا.",
+      "source": "[VERIFY] Caracalla Dance Theatre official site (founder Abdel-Halim Caracalla)"
+    },
+    {
+      "id": "q037",
+      "type": "mc4",
+      "text": "أيّا آلة بتقود موسيقى الدبكة بالضيعة تقليديًا؟",
+      "options": [
+        "الهارب",
+        "القربة",
+        "المجوز",
+        "الأكورديون"
+      ],
+      "answer": 2,
+      "topic": "dance",
+      "difficulty": 2,
+      "explain": "العازف بيتنفّس من مناخيرو وهوّي عم ينفخ، فالصوت ما بيوقف.",
+      "source": "[VERIFY] ethnomusicology refs on the mijwiz (dabke; circular breathing); AR term for bagpipe [native review]"
+    },
+    {
+      "id": "q038",
+      "type": "tf",
+      "text": "الدبكة تقليديًا بيرقصها واحد لحالو، بلا صفّ.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 1,
+      "topic": "dance",
+      "difficulty": 1,
+      "explain": "الدبكة صفّ أو دايرة، إيد بإيد أو كتف بكتف. ما في حدا بيدبك لحالو!",
+      "source": "[VERIFY] trivial"
+    },
+    {
+      "id": "q039",
+      "type": "mc4",
+      "text": "بالعرس اللبناني، شو اسم الموكب يلّي بيستقبل العرسان بالطبل والغنا والرقص؟",
+      "options": [
+        "الزفّة",
+        "الموّال",
+        "الطرب",
+        "الدبكة"
+      ],
+      "answer": 0,
+      "topic": "dance",
+      "difficulty": 2,
+      "explain": "والمعازيم بيزيدوا عليها الزلغوطة.",
+      "source": "[VERIFY] wedding-custom references (zaffeh; zalghouta = ululation)"
+    },
+    {
+      "id": "q040",
+      "type": "mc4",
+      "text": "شو لقب منتخب لبنان بالفوتبول؟",
+      "options": [
+        "الصقور",
+        "الأسود",
+        "النسور",
+        "رجال الأرز"
+      ],
+      "answer": 3,
+      "topic": "football",
+      "difficulty": 2,
+      "explain": "والأرزة كمان بنصّ العلم اللبناني.",
+      "source": "[VERIFY] FIFA / Lebanese FA (team nickname; AR «رجال الأرز»)"
+    },
+    {
+      "id": "q041",
+      "type": "mc4",
+      "text": "بأيّا سنة استضاف لبنان كاس آسيا؟",
+      "options": [
+        "1996",
+        "2000",
+        "2004",
+        "2011"
+      ],
+      "answer": 1,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "اليابان ربحت هيديك النسخة.",
+      "source": "[VERIFY] AFC 'AFC Asian Cup 2000' (host Lebanon; winner Japan)"
+    },
+    {
+      "id": "q042",
+      "type": "mc4",
+      "text": "لاعب الوسط اللبناني رضا عنتر لعب بدوري أيّا بلد؟",
+      "options": [
+        "إسبانيا",
+        "إيطاليا",
+        "ألمانيا",
+        "إنكلترا"
+      ],
+      "answer": 2,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "لعب مع هامبورغ وفرايبورغ وكولن.",
+      "source": "[VERIFY] Transfermarkt / Kicker 'Roda Antar' (Hamburger SV, SC Freiburg, 1. FC Köln)"
+    },
+    {
+      "id": "q043",
+      "type": "mc4",
+      "text": "بأيّا رياضة لعب منتخب لبنان بكذا كاس عالم؟",
+      "options": [
+        "كرة السلّة",
+        "هوكي الجليد",
+        "البيسبول",
+        "الكريكيت"
+      ],
+      "answer": 0,
+      "topic": "sports",
+      "difficulty": 2,
+      "explain": "ولبنان استضاف كمان كاس آسيا لكرة السلّة سنة 2017.",
+      "source": "[VERIFY] FIBA archive (World Cup 2002, 2006, 2010, 2023; FIBA Asia Cup 2017 hosted by Lebanon)"
+    },
+    {
+      "id": "q044",
+      "type": "mc4",
+      "text": "أيّا نادي ربح أكتر بطولات دوري لبنان؟",
+      "options": [
+        "النجمة",
+        "العهد",
+        "الراسينغ",
+        "الأنصار"
+      ],
+      "answer": 3,
+      "topic": "football",
+      "difficulty": 2,
+      "explain": "الأنصار ربح مرّة إحدعشر بطولة ورا بعض.",
+      "source": "[VERIFY] RSSSF 'Lebanon - List of Champions' (record holder Al-Ansar; 11 straight titles from 1988)"
+    },
+    {
+      "id": "q045",
+      "type": "mc4",
+      "text": "أيّا نادي لبناني ربح كاس الاتحاد الآسيوي سنة 2019؟",
+      "options": [
+        "النجمة",
+        "العهد",
+        "الأنصار",
+        "الصفاء"
+      ],
+      "answer": 1,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "ربح النهائي 1-0.",
+      "source": "[VERIFY] AFC 'AFC Cup 2019 final' (Al-Ahed 1-0 April 25)"
+    },
+    {
+      "id": "q046",
+      "type": "mc4",
+      "text": "لأيّا نسخة تأهّل لبنان لأوّل مرّة عكاس آسيا عن طريق التصفيات (مش كبلد مضيف)؟",
+      "options": [
+        "2007",
+        "2011",
+        "2019",
+        "2015"
+      ],
+      "answer": 2,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "هيديك البطولة انلعبت بالإمارات.",
+      "source": "[VERIFY] AFC 'AFC Asian Cup 2019' (Lebanon's first qualification via qualifiers; hosted by UAE)"
+    },
+    {
+      "id": "q047",
+      "type": "mc4",
+      "text": "شو المكوّن الأساسي بالتبّولة؟",
+      "options": [
+        "البقدونس",
+        "الخسّ",
+        "الرزّ",
+        "الحمّص"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "البرغل رشّة بس، البطل هوّي البقدونس. والتبّولة بالسميد؟ ما منحكي عنها.",
+      "source": "[VERIFY] cookbook/encyclopedia 'tabbouleh' (parsley-based Lebanese version)"
+    },
+    {
+      "id": "q048",
+      "type": "mc4",
+      "text": "شو هوّي الطوم؟",
+      "options": [
+        "كعكة سمسم",
+        "شوربة عدس",
+        "لبن عيران",
+        "صلصة توم"
+      ],
+      "answer": 3,
+      "topic": "food",
+      "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "توم وزيت وحامض وملح، بلا ولا بيضة. وريحتك رح تتذكّرو لبكرا.",
+      "source": "[VERIFY] cookbook refs 'toum' (garlic, oil, lemon, salt; no egg)"
+    },
+    {
+      "id": "q049",
+      "type": "mc4",
+      "text": "شو بيعطي الصفوف لونو الأصفر؟",
+      "options": [
+        "الزعفران",
+        "العقدة الصفرا (الكركم)",
+        "صفار البيض",
+        "قشر الليمون"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "قالب سميد، وعادةً بيزيّنوه بالصنوبر أو اللوز.",
+      "source": "[VERIFY] cookbook refs 'sfouf' (turmeric, semolina; AR «عقدة صفرا»)"
+    },
+    {
+      "id": "q050",
+      "type": "mc4",
+      "text": "شو بيحطّوا بالكبّة النيّة؟",
+      "options": [
+        "دجاج وبرغل",
+        "سمك ورز",
+        "لحمة وبرغل",
+        "عدس وبصل"
+      ],
+      "answer": 2,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "بتنوكل مع نعنع وبصل وشوية زيت زيتون.",
+      "source": "[VERIFY] cookbook refs 'kibbeh nayyeh' (raw meat + fine bulgur); AR options differ on purpose (name says 'raw')"
+    },
+    {
+      "id": "q051",
+      "type": "mc4",
+      "text": "أيّا سلطة منحطّ عليها خبز محمّص أو مقلي؟",
+      "options": [
+        "الفتّوش",
+        "التبّولة",
+        "المتبّل",
+        "الحمّص"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "السمّاق بيعطي صلصتها طعمة حامضة ولون أحمر.",
+      "source": "[VERIFY] trivial; cookbook refs 'fattoush' (sumac dressing)"
+    },
+    {
+      "id": "q052",
+      "type": "mc4",
+      "text": "مين أخرجت فيلمَي «سكّر بنات» و«كفرناحوم»؟",
+      "options": [
+        "زياد دويري",
+        "مارون بغدادي",
+        "فيليب عرقتنجي",
+        "نادين لبكي"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 2,
+      "explain": "وبتمثّل كمان بأفلامها.",
+      "source": "[VERIFY] IMDb / Britannica 'Nadine Labaki' (director and actress of Caramel, Capernaum)"
+    },
+    {
+      "id": "q053",
+      "type": "mc4",
+      "text": "شو الجايزة يلّي ربحها «كفرناحوم» بمهرجان كان 2018؟",
+      "options": [
+        "السعفة الذهبية",
+        "جايزة لجنة التحكيم",
+        "أفضل ممثّل",
+        "الكاميرا الذهبية"
+      ],
+      "answer": 1,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "السنة يلّي بعدها مثّل لبنان بالأوسكار.",
+      "source": "[VERIFY] Festival de Cannes palmarès 2018 (Prix du jury: Capharnaüm)"
+    },
+    {
+      "id": "q054",
+      "type": "mc4",
+      "text": "أيّا نجمة هوليوودية بيّها من أصل لبناني؟",
+      "options": [
+        "بينيلوبي كروز",
+        "إيفا منديز",
+        "سلمى حايك",
+        "جينيفر لوبيز"
+      ],
+      "answer": 2,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "عيلة بيّها من لبنان، وهيّي خلقت بالمكسيك.",
+      "source": "[VERIFY] Britannica 'Salma Hayek' (father of Lebanese descent; born Mexico)"
+    },
+    {
+      "id": "q055",
+      "type": "mc4",
+      "text": "شو كان «ستوديو الفنّ»؟",
+      "options": [
+        "برنامج مواهب عالتلفزيون",
+        "ستوديو بهوليوود",
+        "مسرحية كوميدية",
+        "جريدة"
+      ],
+      "answer": 0,
+      "topic": "cinema-tv",
+      "difficulty": 2,
+      "explain": "كتير مطربين لبنانيين مشهورين بلّشوا منّو.",
+      "source": "[VERIFY] Télé Liban / press archives 'Studio El Fan' (Simon Asmar, launched 1970s)"
+    },
+    {
+      "id": "q056",
+      "type": "tf",
+      "text": "شاكيرا أصلها اللبناني من جهة إمّها.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 1,
+      "topic": "celebrities",
+      "difficulty": 1,
+      "explain": "أصلها اللبناني من جهة بيّها.",
+      "source": "[VERIFY] Britannica 'Shakira' (paternal Lebanese ancestry)"
+    },
+    {
+      "id": "q057",
+      "type": "mc4",
+      "text": "موقع صور المسجّل بالأونيسكو فيه واحد من أكبر… الرومانية",
+      "options": [
+        "المناير",
+        "الجسور المائية",
+        "أحواض المعارك البحرية",
+        "ميادين سباق الخيل"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 3,
+      "region": "south",
+      "explain": "مدرّجاتو كانت تساع حوالي 20 ألف متفرّج على سباق العربيات.",
+      "source": "[VERIFY] UNESCO WHC 'Tyre' (Roman hippodrome; size/seating claim)"
+    },
+    {
+      "id": "q058",
+      "type": "mc4",
+      "text": "آثار مدينة عنجر بالبقاع من أيّا عهد؟",
+      "options": [
+        "العبّاسي",
+        "الأموي",
+        "المملوكي",
+        "العثماني"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 3,
+      "region": "bekaa",
+      "explain": "شوارعها وقناطرها ودكاكينها انخطّطت بأوّل القرن التامن.",
+      "source": "[VERIFY] UNESCO WHC 'Anjar' (Umayyad, early 8th century); reviewer: dynasty name OK under §11.2"
+    },
+    {
+      "id": "q059",
+      "type": "mc4",
+      "text": "أيّا قصر بالشوف بيستقبل مهرجان صيفي مشهور؟",
+      "options": [
+        "قلعة موسى",
+        "قصر سرسق",
+        "بيت الدين",
+        "قلعة جبيل"
+      ],
+      "answer": 2,
+      "topic": "culture",
+      "difficulty": 2,
+      "region": "mount-lebanon",
+      "explain": "كل صيف، باحاتو بتصير مسرح بالهوا الطلق.",
+      "source": "[VERIFY] Beiteddine Art Festival official site (Beiteddine palace, Chouf)"
+    },
+    {
+      "id": "q060",
+      "type": "mc4",
+      "text": "محمية الشوف للمحيط الحيوي مشهورة بـ…",
+      "options": [
+        "غابات الأرز",
+        "طيور الفلامنغو",
+        "البراكين",
+        "الجليد"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 1,
+      "region": "mount-lebanon",
+      "explain": "بتحمي حوالي ربع غابات الأرز الباقية بلبنان.",
+      "source": "[VERIFY] Shouf Biosphere Reserve official site / UNESCO MAB (cedar share claim ~25%)"
+    },
+    {
+      "id": "q061",
+      "type": "mc4",
+      "text": "أيّا نهر بينبع بشمال البقاع وبيمشي شمال لبرّا لبنان؟",
+      "options": [
+        "الليطاني",
+        "نهر إبراهيم",
+        "الأوّلي",
+        "العاصي"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 3,
+      "region": "bekaa",
+      "explain": "سمّوه «العاصي» لأنو بيمشي عكس، صوب الشمال.",
+      "source": "[VERIFY] Britannica 'Orontes River' (source near Hermel; flows north; 'al-Assi' = the rebel)"
+    },
+    {
+      "id": "q062",
+      "type": "mc4",
+      "text": "قلعة البحر من معالم أيّا مدينة؟",
+      "options": [
+        "طرابلس",
+        "صيدا",
+        "بيروت",
+        "جونية"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "south",
+      "explain": "مبنية على جزيرة زغيرة موصولة بالشطّ بممرّ من حجر.",
+      "source": "[VERIFY] Lebanon Ministry of Tourism 'Sidon Sea Castle' (island + causeway)"
+    },
+    {
+      "id": "q063",
+      "type": "mc4",
+      "text": "شو يعني «يلّا»؟",
+      "options": [
+        "شكرًا",
+        "تصبح على خير",
+        "يلّا نمشي",
+        "انتبه"
+      ],
+      "answer": 2,
+      "topic": "culture",
+      "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "وكل تلفون لبناني بيخلص بـ«يلّا باي».",
+      "source": "[VERIFY] trivial; common usage ('yalla bye')"
+    },
+    {
+      "id": "q064",
+      "type": "mc4",
+      "text": "زعتر المنقوشة خلطة زعتر وسمّاق و…",
+      "options": [
+        "سمسم",
+        "قرفة",
+        "كاكاو",
+        "جوز هند"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "المنقوشة ترويقة كلاسيكية، سخنة من الفرن.",
+      "source": "[VERIFY] cookbook refs 'za'atar' blend (thyme, sumac, sesame)"
+    },
+    {
+      "id": "q065",
+      "type": "mc4",
+      "text": "شو الشجرة يلّي بنصّ العلم اللبناني؟",
+      "options": [
+        "زيتونة",
+        "نخلة",
+        "سنديانة",
+        "أرزة"
+      ],
+      "answer": 3,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "الأرزة الخضرا عالخطّ الأبيض بين خطّين حمر.",
+      "source": "[VERIFY] Lebanese Constitution art. 5 / Britannica 'flag of Lebanon'"
+    },
+    {
+      "id": "q066",
+      "type": "mc4",
+      "text": "أيّا بلدة عالساحل الشمالي مشهورة بالليموناضة؟",
+      "options": [
+        "صور",
+        "البترون",
+        "زحلة",
+        "عاليه"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "region": "north",
+      "explain": "والبترون كمان من أقدم البلدات عالساحل.",
+      "source": "[VERIFY] Lebanon Ministry of Tourism / travel guides (Batroun lemonade; 'one of the oldest coastal towns')"
+    },
+    {
+      "id": "q067",
+      "type": "mc4",
+      "text": "أسواق طرابلس القديمة مشهورة بأيّا صنعة يدوية، بتنباع قطع ريحتها طيّبة؟",
+      "options": [
+        "الشمع",
+        "الشوكولا",
+        "صابون زيت الزيتون",
+        "البخور"
+      ],
+      "answer": 2,
+      "topic": "culture",
+      "difficulty": 2,
+      "region": "north",
+      "explain": "خان الصابون بطرابلس عمرو مئات السنين.",
+      "source": "[VERIFY] Khan al-Saboun, Tripoli (soap khan; olive-oil soap craft)"
+    },
+    {
+      "id": "q068",
+      "type": "tf",
+      "text": "السلاحف البحرية بتجي تبيّض على شطوط محمية شاطئ صور.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 2,
+      "region": "south",
+      "explain": "سلاحف الكاريتا والسلاحف الخضرا بيدفنوا بيضن بالرمل هونيك.",
+      "source": "[VERIFY] Tyre Coast Nature Reserve (loggerhead and green turtle nesting)"
+    },
+    {
+      "id": "q069",
+      "type": "mc4",
+      "text": "أيّا بلدة جبلية بالجنوب مشهورة بشلّالها العالي؟",
+      "options": [
+        "جزّين",
+        "البترون",
+        "شتورة",
+        "جونية"
+      ],
+      "answer": 0,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "south",
+      "explain": "ومشهورة كمان بسكاكينها اليدوية يلّي إيدها على شكل عصفور.",
+      "source": "[VERIFY] Jezzine municipality / Ministry of Tourism (waterfall; bird-handled cutlery craft)"
+    },
+    {
+      "id": "q070",
+      "type": "mc4",
+      "text": "شو المعلم الأثري يلّي واقف لحالو على تلّة قرب الهرمل؟",
+      "options": [
+        "مسرح روماني",
+        "قناية مي من حجر",
+        "تمثال عملاق",
+        "برج حجر راسو هرم"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 3,
+      "region": "bekaa",
+      "explain": "اسمو «قاموع الهرمل»، وعمرو حوالي ألفين سنة.",
+      "source": "[VERIFY] Lebanon DGA / archaeology refs 'Qamouaa el-Hermel' (pyramid-topped tower, ~1st c. BC)"
+    },
+    {
+      "id": "q071",
+      "type": "mc4",
+      "text": "زياد الرحباني، الملحّن والمسرحي، ابن أيّا مطربة؟",
+      "options": [
+        "صباح",
+        "فيروز",
+        "ماجدة الرومي",
+        "سميرة توفيق"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "بيّو عاصي الرحباني.",
+      "source": "[VERIFY] Britannica 'Fairuz' / 'Ziad Rahbani' (son of Fairuz and Assi Rahbani)"
+    },
+    {
+      "id": "q072",
+      "type": "mc4",
+      "text": "مين المطرب يلّي كانوا يسمّوه «صوت لبنان»؟",
+      "options": [
+        "ملحم بركات",
+        "عاصي الحلاني",
+        "وديع الصافي",
+        "راغب علامة"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "ضلّ يغنّي أكتر من ستّين سنة.",
+      "source": "[VERIFY] press obituaries 2013 'Wadih El Safi' (nickname 'the Voice of Lebanon'; career length)"
+    },
+    {
+      "id": "q073",
+      "type": "mc4",
+      "text": "متحف سرسق، متحف الفنّ الحديث بالفيلّا البيضا، بأيّا منطقة ببيروت؟",
+      "options": [
+        "الأشرفية",
+        "الحمرا",
+        "الروشة",
+        "فردان"
+      ],
+      "answer": 0,
+      "topic": "culture",
+      "difficulty": 2,
+      "region": "beirut",
+      "explain": "الفيلّا بتجمع بين الطراز البندقي والعثماني.",
+      "source": "[VERIFY] Sursock Museum official site (Achrafieh; modern and contemporary art)"
+    },
+    {
+      "id": "q074",
+      "type": "mc4",
+      "text": "مين الهدّاف التاريخي لمنتخب لبنان بالفوتبول؟",
+      "options": [
+        "رضا عنتر",
+        "يوسف محمد",
+        "محمد غدار",
+        "حسن معتوق"
+      ],
+      "answer": 3,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "اشتهر كمهاجم وجناح.",
+      "source": "[VERIFY] RSSSF / national-team records (Hassan Maatouk all-time top scorer)"
+    },
+    {
+      "id": "q075",
+      "type": "mc4",
+      "text": "عالترويقة، الكنافة غالبًا بتنحطّ بـ…",
+      "options": [
+        "كرواسان",
+        "كعكة بسمسم",
+        "وافل",
+        "كعكة رز"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "جبنة وسميد وقطر وكعك: أطيب صباح.",
+      "source": "[VERIFY] food refs 'knefeh / ka'ak' (Lebanese breakfast)"
+    }
+  ]
+}

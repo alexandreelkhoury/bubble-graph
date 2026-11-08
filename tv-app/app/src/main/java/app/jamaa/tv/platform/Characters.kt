@@ -3,14 +3,13 @@ package app.jamaa.tv.platform
 import app.jamaa.tv.AvatarShape
 import app.jamaa.tv.protocol.GameEnvelope
 import app.jamaa.tv.protocol.MemberPublic
+import app.jamaa.tv.ui.characters.CharacterPaths
 
 // JAMAA-PLATFORM §3.7 characters, the pure part (JVM-tested): the 13 expressions, the reaction bursts, the per-shape
 // face boxes (DESIGN-JAMAA §4.2) and the expression a character shows. Secrecy (§3.7, DESIGN-JAMAA §4.3): the
 // expression is a function of public data only — the member (connected, reaction) and the envelope's
 // doneIds/awaitedIds — never of a game's secret fields.
-// JAMAA-GAP: lane D's generated CharacterPaths.kt (body paths, face boxes and feature paths from shared/src/characters,
-// pinned by shared/fixtures/v2/characters.json) is not in the tree yet; the face boxes below are DESIGN-JAMAA §4.2's
-// binding table and the renderer (ui/characters) draws the §4.2/§4.3 feature geometry until the generated file lands.
+// Geometry (body paths, face boxes, feature paths) is lane D's generated ui/characters/CharacterPaths.kt.
 
 enum class Expression { IDLE, THINK, DONE, HAPPY, LAUGH, SMUG, SHOCK, SAD, FACEPALM, SHY, POINT, CHEER, AWAY }
 
@@ -53,20 +52,10 @@ object CharacterRules {
         else -> null
     }
 
-    /** DESIGN-JAMAA §4.2 face boxes. */
-    fun faceBox(shape: AvatarShape): FaceBox = when (shape) {
-        AvatarShape.Circle -> FaceBox(6f, 7.5f, 12f, 9f)
-        AvatarShape.Square -> FaceBox(6f, 7.5f, 12f, 9f)
-        AvatarShape.Star -> FaceBox(8f, 9f, 8f, 6f)
-        AvatarShape.Triangle -> FaceBox(7.5f, 11.5f, 9f, 6.75f)
-        AvatarShape.Diamond -> FaceBox(7f, 8f, 10f, 7.5f)
-        AvatarShape.Hexagon -> FaceBox(6.5f, 7.5f, 11f, 8.25f)
-        AvatarShape.Plus -> FaceBox(8.5f, 8.5f, 7f, 7f)
-        AvatarShape.Drop -> FaceBox(7f, 11f, 10f, 7.5f)
-        AvatarShape.Crescent -> FaceBox(4f, 9f, 8f, 6f)
-        AvatarShape.Bolt -> FaceBox(8.5f, 9.5f, 6f, 4.5f)
-        AvatarShape.Flower -> FaceBox(7.5f, 7.5f, 9f, 9f)
-        AvatarShape.Arch -> FaceBox(7f, 8.5f, 10f, 7.5f)
+    /** The face box of a shape, from the generated [CharacterPaths] (DESIGN-JAMAA §4.2). */
+    fun faceBox(shape: AvatarShape): FaceBox {
+        val b = CharacterPaths.faceBoxes.getValue(shape.name.lowercase())
+        return FaceBox(b.x, b.y, b.w, b.h)
     }
 
     /** Feature scale multiplier: ×1.5 below 64 dp, and a further ×1.2 for the bolt and star faces. */

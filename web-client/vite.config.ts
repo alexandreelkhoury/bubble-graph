@@ -35,6 +35,18 @@ export default defineConfig({
     outDir: "dist", target: "es2022",
     rollupOptions: {
       output: {
+        // One "core" chunk for every module the phone shell needs (one gzip stream instead of a dozen tiny shared
+        // chunks, ~1–2 KB gz less). TV-only and per-game modules stay out so phones never download them.
+        codeSplitting: {
+          groups: [{
+            name: "core",
+            test: (id: string) => {
+              const f = norm(id);
+              if (!/(\/web-client\/src\/|\/shared\/src\/|\/node_modules\/)/.test(f)) return false;
+              return !/\/tv-mock\/|\/src\/games\/[a-z]+\/|\/motion\/|iconsTv|qrcode|\.json$|\/shared\/src\/games\/(meta|registry|[a-z]+\/)|\/shared\/src\/(billing|room|content|projection|protocol\/)|\/src\/games\/tvLoaders/.test(f);
+            },
+          }],
+        },
         chunkFileNames: (chunk) => `assets/${chunkName(chunk.facadeModuleId ?? "", chunk.moduleIds ?? []) ?? "[name]"}-[hash].js`,
       },
     },

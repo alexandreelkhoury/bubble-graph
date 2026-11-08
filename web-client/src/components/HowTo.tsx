@@ -2,7 +2,7 @@
 // with a small scene of characters acting the step (no extra assets), shared by the TV intro and the phone sheet.
 import type { ColorId } from "@jamaa/shared/constants";
 import type { GameId } from "@jamaa/shared/games/ids";
-import { GAME_META } from "@jamaa/shared/games/meta";
+import { metaOf } from "../lib/meta";
 import { t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import type { Expression } from "../characters/data";
@@ -18,7 +18,7 @@ const SCENES: readonly (readonly [ColorId, Expression][])[] = [
 ];
 
 export function howToKeys(id: GameId): readonly string[] {
-  return GAME_META[id].rules.howToKeys;
+  return metaOf(id)?.rules.howToKeys ?? [];
 }
 
 export function HowToScene({ index, size }: { index: number; size: number }) {
@@ -33,6 +33,7 @@ export function HowToScene({ index, size }: { index: number; size: number }) {
 /** One card: the scene, "1/4", the sentence. */
 export function HowToCard({ id, index, size, class: cls }: { id: GameId; index: number; size: number; class?: string }) {
   const keys = howToKeys(id);
+  if (keys.length === 0) return <div class={`howto__card${cls ? ` ${cls}` : ""}`} data-world={WORLD_OF[id]} />;
   return (
     <div class={`howto__card${cls ? ` ${cls}` : ""}`} data-world={WORLD_OF[id]} key={index}>
       <HowToScene index={index} size={size} />

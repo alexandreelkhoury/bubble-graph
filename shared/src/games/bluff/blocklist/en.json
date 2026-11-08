@@ -1,0 +1,8 @@
+{
+  "_note": "GAME-BLUFF §5.4: slurs and strong sexual or hateful terms only (mild swearing is allowed). Matched on normalizeAnswer tokens; multi-word entries on the normalised whole string. Maintained with the word packs (lane D review).",
+  "words": [
+    "nigger", "nigga", "faggot", "fag", "kike", "spic", "chink", "wetback", "gook", "raghead", "towelhead", "tranny",
+    "retard", "rapist", "rape", "paedophile", "pedophile", "porn", "porno", "blowjob", "dildo", "cum", "jizz", "cunt",
+    "white power", "heil hitler"
+  ]
+}

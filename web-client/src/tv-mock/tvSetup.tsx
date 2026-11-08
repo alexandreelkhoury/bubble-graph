@@ -209,8 +209,11 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
     return () => clearTimeout(tm);
   }, [card, howFocused, intro]);
   // §3.10 E rule 4: initial focus after the portal (and after the intro closes).
+  // DESIGN-JAMAA §2.3: after a first-visit intro, focus returns to the how-to pane.
+  const introShown = useRef(intro);
+  if (intro) introShown.current = true;
   const focusInitial = (): void => {
-    const seen = tvIntroSeen(id);
+    const seen = tvIntroSeen(id) && !introShown.current;
     const target = seen && setup?.canStart ? startRef.current : !seen ? howRef.current : firstRowRef.current ?? contentRef.current ?? startRef.current;
     target?.focus();
   };

@@ -4,9 +4,8 @@ import app.jamaa.tv.games.WorldIds
 
 /**
  * World tokens (JAMAA-PLATFORM §3.4, DESIGN-JAMAA §1.5) as ARGB, pure (JVM-tested for contrast).
- * JAMAA-GAP: the binding source is `shared/src/worlds/palettes.ts` → lane D's generated `WorldColors.kt`. Neither exists
- * yet (shared/src/worlds has ids only), so the values are DESIGN-JAMAA §1.5's table; `night-market` keeps the native
- * night stage (DESIGN-JAMAA §1.5 note). Replace this table with a delegation to WorldColors.kt when it lands.
+ * The UI draws from lane D's generated `ui/theme/WorldColors.kt` (Compose colours); this pure ARGB mirror exists for
+ * the JVM contrast test and the hub tint maths, and WorldsParityTest keeps it equal to the generated file.
  */
 data class WorldPalette(
     val id: String,
@@ -22,7 +21,7 @@ data class WorldPalette(
     val signal: Long?,
 )
 
-object Worlds {
+object WorldPalettes {
     val NIGHT_MARKET = WorldPalette(
         WorldIds.NIGHT_MARKET, deep = 0xFF120A1F, stageTop = 0xFF2A0F3D, surface = 0xFF1E1430, elevated = 0xFF2A1D42,
         accent = 0xFFFF3D8B, accentText = 0xFFFF7AB3, onAccent = 0xFF120A1F, glow = 0xFFFFC23D, signal = null,

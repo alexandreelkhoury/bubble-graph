@@ -2,7 +2,6 @@
 // game, the title lockup and the tagline. Used by the TV hub carousel, the setup title and the phone hub card.
 import type { ColorId } from "@jamaa/shared/constants";
 import type { GameId } from "@jamaa/shared/games/ids";
-import { GAME_META } from "@jamaa/shared/games/meta";
 import type { Locale } from "@jamaa/shared/constants";
 import { t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
@@ -17,9 +16,8 @@ const CAST: Record<GameId, readonly [ColorId, Expression][]> = {
   trivia: [["grape", "idle"], ["coral", "cheer"], ["mint", "idle"]],
 };
 
-export const WORLD_OF: Record<GameId, string> = {
-  mishana: GAME_META.mishana.rules.world, bluff: GAME_META.bluff.rules.world, likely: GAME_META.likely.rules.world, trivia: GAME_META.trivia.rules.world,
-};
+export { WORLD_OF } from "../lib/meta";
+import { WORLD_OF } from "../lib/meta";
 
 /** The game's title lockup: Mish Ana!'s "shared bang" wordmark; for G2–G4 the world's treatment in CSS (§1.6). */
 export function TitleLockup({ id, script, class: cls }: { id: GameId; script?: Locale; class?: string }) {

@@ -3,9 +3,8 @@
 // hidden. Mish Ana!'s virtual "timers" row maps onto its four seconds settings (TIMER_PRESETS); its "Custom" impostors
 // mode opens the two counts inline.
 import type { GameId } from "@jamaa/shared/games/ids";
-import { GAME_META } from "@jamaa/shared/games/meta";
+import { metaOf, mishanaMod } from "./meta";
 import type { SettingField } from "@jamaa/shared/games/types";
-import { TIMER_PRESETS, TIMER_PRESET_IDS, timerPresetOf } from "@jamaa/shared/games/mishana/meta";
 import type { RoomSetup } from "@jamaa/shared/protocol/v2";
 import { fmtNum, t, titleIn } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
@@ -52,7 +51,7 @@ function packRow(f: Extract<SettingField, { kind: "packs" }>, s: Settings, setup
 }
 
 function fieldRow(id: GameId, f: SettingField, s: Settings, setup: RoomSetup): Row | null {
-  const premium = (GAME_META[id].settings.premiumKeys as readonly string[]).includes(f.key);
+  const premium = ((metaOf(id)?.settings.premiumKeys ?? []) as readonly string[]).includes(f.key);
   const base = { id: f.key, field: f, label: tk(f.labelKey), packs: false, premium };
   switch (f.kind) {
     case "packs": {
@@ -81,6 +80,9 @@ function fieldRow(id: GameId, f: SettingField, s: Settings, setup: RoomSetup): R
       if (f.options.length <= 1) return null;
       // Mish Ana!'s virtual timers row.
       if (id === "mishana" && f.key === "timers") {
+        const mod = mishanaMod;
+        if (!mod) return null;
+        const { TIMER_PRESETS, TIMER_PRESET_IDS, timerPresetOf } = mod;
         const cur = timerPresetOf(s as Parameters<typeof timerPresetOf>[0]);
         const label = cur === "custom" ? t("setup.custom") : tk(f.options.find((o) => o.value === cur)?.labelKey ?? "");
         return { ...base, value: label, step: (dir) => ({ ...TIMER_PRESETS[cycle(TIMER_PRESET_IDS, cur === "custom" ? "normal" : cur, dir)] }) };
@@ -109,13 +111,13 @@ export function basicRows(setup: RoomSetup): Row[] {
   const id = setup.gameId;
   const s = setup.settings as Settings;
   const out: Row[] = [];
-  for (const f of GAME_META[id].settings.basic) {
+  for (const f of metaOf(id)?.settings.basic ?? []) {
     const r = fieldRow(id, f, s, setup);
     if (!r) continue;
     out.push(r);
     if (id === "mishana" && f.key === "roleMode" && s.roleMode === "custom") {
       for (const key of ["blankCount", "undercoverCount"]) {
-        const adv = GAME_META.mishana.settings.advanced.find((x) => x.key === key);
+        const adv = metaOf("mishana")?.settings.advanced.find((x) => x.key === key);
         const sub = adv ? fieldRow(id, adv, s, setup) : null;
         if (sub) out.push({ ...sub, sub: true });
       }
@@ -130,7 +132,7 @@ export function advancedRows(setup: RoomSetup): Row[] {
   const s = setup.settings as Settings;
   const inline = id === "mishana" && s.roleMode === "custom" ? new Set(["blankCount", "undercoverCount"]) : new Set<string>();
   const out: Row[] = [];
-  for (const f of GAME_META[id].settings.advanced) {
+  for (const f of metaOf(id)?.settings.advanced ?? []) {
     if (inline.has(f.key)) continue;
     const r = fieldRow(id, f, s, setup);
     if (r) out.push(r);

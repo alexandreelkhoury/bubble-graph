@@ -1,6 +1,10 @@
 package app.jamaa.tv.game
 
+import android.app.ActivityManager
 import android.app.Application
+import android.content.Context
+import app.jamaa.tv.platform.MotionMode
+import app.jamaa.tv.settings.SharedPlatformPrefs
 import android.util.Log
 import app.jamaa.tv.BuildConfig
 import app.jamaa.tv.billing.BillingRepository
@@ -33,7 +37,16 @@ internal fun productionDeps(app: Application): GameDeps {
         saveMuted = { soundPrefs.muted = it },
         billing = BillingRuntime.get(app),
         installId = { PrefsEntitlementStore(app).installId() },
+        prefs = SharedPlatformPrefs(app),
+        motion = { calm -> deviceMotion(app, calm) },
     )
+}
+
+/** JAMAA-PLATFORM §3.8: reduced (animator scale 0 or Calm animations) and lite (low-RAM device) motion. */
+private fun deviceMotion(app: Application, calm: Boolean): MotionMode {
+    val am = app.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val scale = android.provider.Settings.Global.getFloat(app.contentResolver, android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f)
+    return MotionMode.decide(scale, calm, am.isLowRamDevice, am.memoryClass)
 }
 
 /**

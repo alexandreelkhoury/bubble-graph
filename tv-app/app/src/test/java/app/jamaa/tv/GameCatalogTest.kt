@@ -30,7 +30,14 @@ class GameCatalogTest {
     @Test
     fun mirrorsTheSharedMetas() {
         for (m in GameCatalog.ALL) {
-            val ts = File(shared, "${m.id}/meta.ts").readText()
+            // A G lane may move values into games/<id>/constants.ts: inline them (`minPlayers: MIN_PLAYERS`, `VIEW_VERSION,`).
+            var ts = File(shared, "${m.id}/meta.ts").readText()
+            val consts = File(shared, "${m.id}/constants.ts").takeIf { it.isFile }?.readText().orEmpty()
+            for (c in Regex("""export const ([A-Z_]+)\s*=\s*([0-9_]+)""").findAll(consts)) {
+                val (name, value) = c.destructured
+                val v = value.replace("_", "")
+                ts = ts.replace(Regex(""": $name,"""), ": $v,").replace(Regex("""\b$name,"""), "$name: $v,")
+            }
             assertTrue(m.id, ts.contains("VIEW_VERSION: ${m.viewVersion},"))
             assertTrue(m.id, ts.contains("minPlayers: ${m.minPlayers},") && ts.contains("maxPlayers: ${m.maxPlayers},"))
             assertTrue(m.id, ts.contains("durationMinutes: [${m.durationMinutes.first}, ${m.durationMinutes.second}]"))

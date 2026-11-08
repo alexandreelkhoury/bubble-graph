@@ -19,28 +19,18 @@ class MomentsCharactersWorldsTest {
         assertEquals(704L, Moments.portal(false, false).totalMs) // × 0.64 ≈ 700 ms
         assertEquals(150L, Moments.portal(true, reduced = true).totalMs)
         assertEquals(600L, Moments.portalBack(false).totalMs)
-        val e = Moments.entrance(false)
-        assertEquals(2_000L, e.totalMs)
+        val e = Moments.entrance(false, characters = 12)
+        assertEquals(2_000L, e.totalMs) // 12 characters at 40 ms still land before the title settles
         assertTrue(e.totalMs + 500 <= Constants.ENTRANCE_GRACE_MS)
-        assertEquals(listOf("darken", "door", "title", "characters", "settle"), e.steps.map { it.id })
-        assertEquals(450L + 2 * 70 + 400, Moments.cup(3, false).totalMs)
-        assertEquals(450L + 23 * 70 + 400, Moments.cup(99, false).totalMs) // at most 24 flying stars
-    }
-
-    @Test
-    fun cubicBezierMatchesTheTokens() {
-        for (e in EasingId.entries) {
-            assertEquals(0f, CubicBezier.ease(e, 0f), 1e-6f)
-            assertEquals(1f, CubicBezier.ease(e, 1f), 1e-6f)
-        }
-        assertEquals(0.5f, CubicBezier.ease(EasingId.LINEAR, 0.5f), 1e-4f)
-        // Monotone easings stay in [0, 1]; the overshoot token passes 1 before settling.
-        assertTrue((1..99).all { CubicBezier.ease(EasingId.DECEL, it / 100f) in 0f..1f })
-        assertTrue((1..99).any { CubicBezier.ease(EasingId.OVERSHOOT, it / 100f) > 1f })
-        assertTrue(CubicBezier.ease(EasingId.DECEL, 0.25f) > CubicBezier.ease(EasingId.ACCEL, 0.25f))
-        val step = Moments.PORTAL_FIRST.step("arch")!!
-        assertEquals(0f, step.progress(100))
-        assertEquals(1f, step.progress(700))
+        assertEquals(750L, Moments.entrance(true).totalMs) // calm: crossfade + the title for 600 ms
+        assertEquals(maxOf(450L + 2 * 70, 450L + 160), Moments.cup(3, false).totalMs) // the cup pop ends last
+        assertEquals(450L + 23 * 70, Moments.cup(99, false).totalMs) // at most 24 flying stars
+        // The repeat portal samples the same curve on a 0.64 clock.
+        val first = Moments.portal(true, false).step("arch")!!
+        val repeat = Moments.portal(false, false).step("arch")!!
+        assertEquals(first.progress(400), repeat.progress(256), 1e-4f)
+        assertEquals(0f, first.progress(100))
+        assertEquals(1f, first.progress(700))
     }
 
     @Test
@@ -91,16 +81,16 @@ class MomentsCharactersWorldsTest {
 
     @Test
     fun worldPalettesPassTheContrastRules() {
-        for (w in Worlds.ALL) {
-            assertTrue(w.id, Worlds.contrast(Worlds.TEXT, w.deep) >= 4.5)
-            assertTrue(w.id, Worlds.contrast(Worlds.TEXT, w.surface) >= 4.5)
-            assertTrue(w.id, Worlds.contrast(Worlds.TEXT, w.elevated) >= 4.5)
-            assertTrue(w.id, Worlds.contrast(w.accentText, w.surface) >= 4.5)
-            assertTrue(w.id, Worlds.contrast(w.accent, w.deep) >= 3.0)
-            assertTrue(w.id, Worlds.contrast(w.onAccent, w.accent) >= 4.5)
+        for (w in WorldPalettes.ALL) {
+            assertTrue(w.id, WorldPalettes.contrast(WorldPalettes.TEXT, w.deep) >= 4.5)
+            assertTrue(w.id, WorldPalettes.contrast(WorldPalettes.TEXT, w.surface) >= 4.5)
+            assertTrue(w.id, WorldPalettes.contrast(WorldPalettes.TEXT, w.elevated) >= 4.5)
+            assertTrue(w.id, WorldPalettes.contrast(w.accentText, w.surface) >= 4.5)
+            assertTrue(w.id, WorldPalettes.contrast(w.accent, w.deep) >= 3.0)
+            assertTrue(w.id, WorldPalettes.contrast(w.onAccent, w.accent) >= 4.5)
         }
-        assertEquals(Worlds.NIGHT_MARKET, Worlds.of("nope"))
-        assertEquals(0xFF7F7F7FL, Worlds.mix(0xFF000000, 0xFFFFFFFF, 0.5f))
-        assertEquals(Worlds.HAKAWATI_CAFE.deep, Worlds.mix(Worlds.NIGHT_MARKET.deep, Worlds.HAKAWATI_CAFE.deep, 1f))
+        assertEquals(WorldPalettes.NIGHT_MARKET, WorldPalettes.of("nope"))
+        assertEquals(0xFF7F7F7FL, WorldPalettes.mix(0xFF000000, 0xFFFFFFFF, 0.5f))
+        assertEquals(WorldPalettes.HAKAWATI_CAFE.deep, WorldPalettes.mix(WorldPalettes.NIGHT_MARKET.deep, WorldPalettes.HAKAWATI_CAFE.deep, 1f))
     }
 }

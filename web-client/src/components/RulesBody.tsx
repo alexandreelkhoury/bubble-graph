@@ -2,7 +2,7 @@
 // The sections for the current phase come first, marked "You are here"; on the hub the content ends with
 // "How JAMAA works".
 import type { GameId } from "@jamaa/shared/games/ids";
-import { GAME_META } from "@jamaa/shared/games/meta";
+import { metaOf } from "../lib/meta";
 import { t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { PHASE_KEY } from "../lib/keys";
@@ -17,7 +17,8 @@ function phaseName(id: GameId, phase: string): string {
 }
 
 export function RulesBody({ id, phase, hub }: { id: GameId; phase: string | null; hub: boolean }) {
-  const rules = GAME_META[id].rules;
+  const rules = metaOf(id)?.rules;
+  if (!rules) return <div class="rules" aria-busy="true" />;
   const here = phase ? rules.ruleSections.filter((s) => s.phases.includes(phase)) : [];
   const rest = rules.ruleSections.filter((s) => !here.includes(s));
   return (

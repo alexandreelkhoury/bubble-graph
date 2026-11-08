@@ -45,7 +45,7 @@ import app.jamaa.tv.platform.Overlay
 import app.jamaa.tv.platform.RemoteKey
 import app.jamaa.tv.platform.RulesContent
 import app.jamaa.tv.platform.RulesContext
-import app.jamaa.tv.platform.Worlds
+import app.jamaa.tv.ui.theme.worldOf
 import app.jamaa.tv.ui.components.ButtonKind
 import app.jamaa.tv.ui.components.FocusKind
 import app.jamaa.tv.ui.components.FocusTrap
@@ -58,7 +58,6 @@ import app.jamaa.tv.ui.platform.remoteKey
 import app.jamaa.tv.ui.theme.JamaaColors
 import app.jamaa.tv.ui.theme.JamaaMotion
 import app.jamaa.tv.ui.theme.JamaaTheme
-import app.jamaa.tv.ui.theme.toColor
 import kotlinx.coroutines.launch
 
 /**
@@ -100,14 +99,14 @@ fun EndSheet(width: Dp, fill: Color, onBack: () -> Unit, content: @Composable Co
 @Composable
 fun RulesSheet(rules: Overlay.Rules, phase: String?, onClose: () -> Unit) {
     val meta = GameCatalog.meta(rules.gameId)
-    val world = Worlds.of(meta?.world)
-    val fill = if (rules.context == RulesContext.HUB) JamaaColors.Elevated else world.elevated.toColor()
+    val world = worldOf(meta?.world)
+    val fill = if (rules.context == RulesContext.HUB) JamaaColors.Elevated else world.elevated
     val close = remember { FocusRequester() }
     val scroll = rememberScrollState()
     val scope = rememberCoroutineScope()
     val third = with(LocalDensity.current) { (LocalConfiguration.current.screenHeightDp / 3).dp.toPx() }
     EndSheet(RulesContent.widthDp(rules.context).dp, fill, onClose) {
-        Text(gameTitle(rules.gameId), style = JamaaTheme.type.title, color = world.accentText.toColor(), maxLines = 1)
+        Text(gameTitle(rules.gameId), style = JamaaTheme.type.title, color = world.accentText, maxLines = 1)
         Text(stringResource(R.string.rules__title), style = JamaaTheme.type.headline, color = JamaaColors.Text)
         Spacer(Modifier.height(8.dp))
         Column(
@@ -128,9 +127,9 @@ fun RulesSheet(rules: Overlay.Rules, phase: String?, onClose: () -> Unit) {
             if (meta != null) {
                 for (s in RulesContent.sections(meta, phase)) {
                     Row {
-                        if (s.youAreHere) Box(Modifier.width(4.dp).height(64.dp).background(world.accent.toColor()))
+                        if (s.youAreHere) Box(Modifier.width(4.dp).height(64.dp).background(world.accent))
                         Column(Modifier.padding(start = if (s.youAreHere) 10.dp else 0.dp)) {
-                            if (s.youAreHere) Text(stringResource(R.string.rules__you_are_here, keyText(s.spec.titleKey)), style = JamaaTheme.type.caption, color = world.accentText.toColor())
+                            if (s.youAreHere) Text(stringResource(R.string.rules__you_are_here, keyText(s.spec.titleKey)), style = JamaaTheme.type.caption, color = world.accentText)
                             Text(keyText(s.spec.titleKey), style = JamaaTheme.type.title, color = JamaaColors.Text)
                             Text(keyText(s.spec.bodyKey), style = JamaaTheme.type.body, color = JamaaColors.TextSecondary)
                         }

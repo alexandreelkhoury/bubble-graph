@@ -10,6 +10,7 @@ import type { ErrorMsgV2, RoomIntentMsg, TvRoomView } from "@jamaa/shared/protoc
 import { bindWake, CLOSE, Connection, partySocketFactory } from "../net/connection";
 import type { ConnStatus } from "../net/connection";
 import { createRoom } from "../net/api";
+import { ensureMeta } from "../lib/meta";
 import { loadGameCatalog, locale, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { pushToast, resetClock, sampleClock } from "../state/store";
@@ -143,7 +144,7 @@ export async function tvCreateRoom(): Promise<void> {
       const next = msg.view;
       const prev = tvView.value;
       // Titles, taglines and rules of every game the hub shows (per-game catalogs, §5.7).
-      for (const g of next.room.games) void loadGameCatalog(g.id, locale.value);
+      for (const g of next.room.games) { void loadGameCatalog(g.id, locale.value); void ensureMeta(g.id); }
       // Leaving SETUP closes setup-only sheets; leaving the game closes the pause menu.
       // START_GAME / CLOSE_GAME (e.g. from the VIP phone) collapses the intro instantly (§3.2 HUB-03).
       if (next.room.phase !== "SETUP") { tvPackPicker.value = false; tvAdvanced.value = false; tvIntro.value = null; }

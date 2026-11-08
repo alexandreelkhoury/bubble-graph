@@ -1,5 +1,4 @@
-// Bluff the Answer (JAMAA-PLATFORM §2.10, GAME-BLUFF). STUB created in P: the G2 lane replaces this file's values
-// (rule sections, settings rows) from GAME-BLUFF. Zod-free and engine-free.
+// Bluff the Answer (JAMAA-PLATFORM §2.10, GAME-BLUFF §2, §3, §9, §10.2). Zod-free and engine-free: clients import it.
 import type { GameMeta } from "../types";
 
 export interface BluffSettings { packIds: string[]; length: "short" | "normal" | "long"; pace: "relaxed" | "normal" | "fast" }
@@ -14,7 +13,19 @@ export const BLUFF_META: GameMeta<BluffSettings> = {
     titleKey: `${K}.title`,
     taglineKey: `${K}.tagline`,
     howToKeys: [`${K}.howto.1`, `${K}.howto.2`, `${K}.howto.3`, `${K}.howto.4`],
-    ruleSections: [],
+    // GAME-BLUFF §10.2, in the sheet's order; `phases` = where the ⓘ sheet opens on that section.
+    ruleSections: [
+      { id: "goal", titleKey: `${K}.rules.goal.title`, bodyKey: `${K}.rules.goal.body`, phases: ["ROUND_INTRO", "HOLD"] },
+      { id: "round1", titleKey: `${K}.rules.round1.title`, bodyKey: `${K}.rules.round1.body`, phases: [] },
+      { id: "round2", titleKey: `${K}.rules.round2.title`, bodyKey: `${K}.rules.round2.body`, phases: [] },
+      { id: "writing", titleKey: `${K}.rules.writing.title`, bodyKey: `${K}.rules.writing.body`, phases: ["WRITING"] },
+      { id: "voting", titleKey: `${K}.rules.voting.title`, bodyKey: `${K}.rules.voting.body`, phases: ["VOTING"] },
+      { id: "points", titleKey: `${K}.rules.points.title`, bodyKey: `${K}.rules.points.body`, phases: ["REVEAL", "SCORES"] },
+      { id: "final", titleKey: `${K}.rules.final.title`, bodyKey: `${K}.rules.final.body`, phases: ["AWARDS", "RESULTS"] },
+      { id: "house", titleKey: `${K}.rules.house.title`, bodyKey: `${K}.rules.house.body`, phases: [] },
+      { id: "same", titleKey: `${K}.rules.same.title`, bodyKey: `${K}.rules.same.body`, phases: [] },
+      { id: "host", titleKey: `${K}.rules.host.title`, bodyKey: `${K}.rules.host.body`, phases: [] },
+    ],
     durationMinutes: [15, 20],
     world: "hakawati-cafe",
     pauseItems: [

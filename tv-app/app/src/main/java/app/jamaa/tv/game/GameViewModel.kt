@@ -458,7 +458,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
             }
             to == RoomPhase.PLAYING && (from != RoomPhase.PLAYING || before.game?.n != after.game?.n) -> {
                 lastPlayedGameId = after.game?.gameId ?: lastPlayedGameId
-                startMoment(Moments.entrance(reduced), after.game?.gameId)
+                startMoment(Moments.entrance(reduced, after.room.members.count { !it.benched && !it.left }), after.game?.gameId)
                 // The sting plays in calm motion too (sound is not motion); the door opens at 250 ms.
                 SoundCues.worldSting(after.game?.gameId)?.let { playCue(CuePlay(it, delayMs = if (reduced) 0L else 250L)) }
             }

@@ -326,5 +326,57 @@ test("JAMAA Pass with fake billing: the store opens from the hub on the Yearly p
   // The hub drops the Pass button once the room is a Pass room; the VIP phone never shows a price.
   await expect(tv.locator("[data-pass]")).toHaveCount(0, { timeout: 15_000 });
   expect(await vip.content()).not.toMatch(/\$\d/);
+  // Expiry mid-game: the running game finishes with what it started; the restriction applies back in SETUP/HUB.
+  const others = [(await joinPhone(browser, code, "Two", "en")).page, (await joinPhone(browser, code, "Three", "en")).page];
+  await press(tv, "Enter"); // open Mish Ana! (first visit: intro)
+  await expect(tv.locator(".tvsetup")).toBeVisible();
+  if (await visible(tv, "[data-intro]")) await press(tv, "Escape"); // Back skips the intro
+  await expect(tv.locator("[data-intro]")).toHaveCount(0);
+  await tv.locator("[data-howto]").evaluate((el) => (el as HTMLElement).focus());
+  await press(tv, "ArrowRight");
+  await dpadTo(tv, "[data-start]", "ArrowDown");
+  await press(tv, "Enter");
+  await expect(tv.locator(".tvgamehost")).toBeVisible();
+  await tv.waitForTimeout(2500);
+  await press(tv, "Escape");
+  await dpadTo(tv, "[data-test=expire]", "ArrowDown", 10);
+  await press(tv, "Enter");
+  await tv.waitForTimeout(1500);
+  await expect(tv.locator(".tvgamehost")).toBeVisible(); // still playing
+  await press(tv, "Escape");
+  await dpadTo(tv, "[data-pause-quit]", "ArrowDown", 10);
+  await press(tv, "Enter");
+  await press(tv, "ArrowRight");
+  await press(tv, "Enter");
+  await expect(tv.locator(".tvsetup")).toBeVisible();
+  await tv.waitForTimeout(600);
+  await press(tv, "Escape");
+  await expect(tv.locator("[data-pass]")).toBeVisible({ timeout: 15_000 }); // a free room again
+  for (const p of [vip, ...others, tv]) await p.context().close();
+});
+
+test("a locked pack in setup opens the Pass store on that pack; buying it adds it to the game", async ({ browser }) => {
+  const { tv, code } = await openTv(browser, "en");
+  const vip = (await joinPhone(browser, code, "Pack", "en")).page;
+  test.skip((await tv.locator("[data-pass]").count()) === 0, "BILLING_ENABLED is off on this server");
+  await tv.evaluate(() => localStorage.setItem("jamaa:tv:introSeen:mishana", "1"));
+  await press(tv, "Enter");
+  await expect(tv.locator(".tvsetup")).toBeVisible();
+  await tv.waitForTimeout(700);
+  await dpadTo(tv, "[data-row=packIds]", "ArrowUp", 6);
+  await press(tv, "Enter");
+  const locked = tv.locator("[data-locked-pack]").first();
+  await expect(locked).toBeVisible();
+  const packId = await locked.getAttribute("data-locked-pack");
+  await dpadTo(tv, `[data-locked-pack="${packId}"]`, "ArrowDown", 30);
+  await press(tv, "Enter");
+  await expect(tv.locator(".tvpass")).toBeVisible();
+  const focusedPack = await tv.evaluate(() => (document.activeElement as HTMLElement | null)?.dataset.pack ?? null);
+  expect(focusedPack).toBe(packId);
+  await press(tv, "Enter");
+  await expect(tv.locator(`[data-pack="${packId}"].is-owned`)).toBeVisible({ timeout: 20_000 });
+  await press(tv, "Escape");
+  // The pack is now playable (no longer a locked row) for this room.
+  await expect(tv.locator(`[data-locked-pack="${packId}"]`)).toHaveCount(0, { timeout: 15_000 });
   for (const p of [vip, tv]) await p.context().close();
 });

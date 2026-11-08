@@ -53,7 +53,7 @@ import app.jamaa.tv.platform.SetupFocusGraph
 import app.jamaa.tv.platform.SetupFocusRule
 import app.jamaa.tv.platform.SetupRow
 import app.jamaa.tv.platform.SetupTarget
-import app.jamaa.tv.platform.Worlds
+import app.jamaa.tv.ui.theme.worldOf
 import app.jamaa.tv.platform.steps
 import app.jamaa.tv.protocol.RoomPublic
 import app.jamaa.tv.protocol.RoomSetup
@@ -80,7 +80,6 @@ import app.jamaa.tv.ui.theme.JamaaColors
 import app.jamaa.tv.ui.theme.JamaaShapes
 import app.jamaa.tv.ui.theme.JamaaTheme
 import app.jamaa.tv.ui.theme.WorldStage
-import app.jamaa.tv.ui.theme.toColor
 
 /** What the setup screen asks for; everything else (focus, the intro) is local. */
 class SetupActions(
@@ -109,7 +108,7 @@ fun SetupScreen(
     prefs: PlatformPrefs,
     actions: SetupActions,
 ) {
-    val world = Worlds.of(meta.world)
+    val world = worldOf(meta.world)
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     // Read once per opening: decides the intro and the initial focus (the intro sets the flag as it goes).
     val seenBefore = remember(meta.id) { prefs.introSeen(meta.id) }
@@ -157,7 +156,7 @@ fun SetupScreen(
             Row(Modifier.fillMaxWidth().height(56.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text("‹ " + stringResource(R.string.hub__title), style = JamaaTheme.type.caption, color = JamaaColors.TextMuted)
                 Spacer(Modifier.weight(1f))
-                Text(gameTitle(meta.id), style = JamaaTheme.type.headline, color = world.accentText.toColor(), maxLines = 1)
+                Text(gameTitle(meta.id), style = JamaaTheme.type.headline, color = world.accentText, maxLines = 1)
                 Spacer(Modifier.weight(1f))
                 RoundIconButton(
                     JamaaIcons.Info, stringResource(R.string.rules__open), actions.onRules,

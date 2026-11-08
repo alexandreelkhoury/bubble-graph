@@ -1,18 +1,29 @@
-// JAMAA-PLATFORM §5.2: this game's content adapter. STUB created in P (no packs yet; `content/<id>/` is empty); the G
-// lane of this game replaces it with its pack schema (game doc §11).
+// JAMAA-PLATFORM §5.2 / §4.4: Bluff's content adapter (server, sim and tests only). Item-level tiers (GAME-BLUFF §2):
+// a free room keeps only `tier: "free"` items; owning the pack's family (= its id) or a Pass room keeps everything.
 import type { ContentAdapter, PackMeta } from "../../content/types";
+import type { BluffPack } from "./engine/catalog";
+import type { BluffSettings } from "./meta";
+import { BluffPackSchema } from "./schema";
 
-/** Stub pack type: no pack of this game exists yet. */
-export type StubPack = never;
+export type { BluffPack };
 
-export const content: ContentAdapter<StubPack> = {
-  parse(): StubPack {
-    throw new Error("no content schema yet (stub game)");
+export const content: ContentAdapter<BluffPack, BluffSettings> = {
+  parse(raw: unknown): BluffPack {
+    return BluffPackSchema.parse(raw);
   },
-  meta(p: StubPack): PackMeta {
-    return p;
+  meta(p: BluffPack): PackMeta {
+    const free = p.items.filter((i) => i.tier === "free").length;
+    return {
+      id: p.id, family: p.id, gameId: "bluff", languages: [...p.playableIn], locale: p.sourceLocale, title: p.title, ageRating: p.ageRating,
+      tier: free === p.items.length ? "free" : free === 0 ? "premium" : "mixed",
+      itemCount: p.items.length, freeItemCount: free,
+      stars: null, domain: null, topics: [],
+    };
   },
-  playable(p: StubPack): StubPack | null {
-    return p;
+  playable(p, a) {
+    if (a.premium || a.ownedFamilies.has(p.id)) return p;
+    const items = p.items.filter((i) => i.tier === "free");
+    if (items.length === p.items.length) return p;
+    return items.length === 0 ? null : { ...p, items };
   },
 };

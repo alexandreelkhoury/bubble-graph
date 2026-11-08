@@ -3,7 +3,6 @@
 // the rows read-only; the VIP edits them (≤ 4 + Advanced), starts the game (START_GAME) or goes back to the games.
 import { useEffect, useRef, useState } from "preact/hooks";
 import type { GameId } from "@jamaa/shared/games/ids";
-import { GAME_META } from "@jamaa/shared/games/meta";
 import type { PlayerRoomView } from "@jamaa/shared/protocol/v2";
 import { locale, t } from "../i18n/t";
 import { act } from "../state/session";
@@ -63,10 +62,10 @@ export function Setup({ view }: { view: PlayerRoomView }) {
   const myId = view.me?.id ?? null;
   const vip = myId !== null && room.hostPlayerId === myId;
   const [intro, setIntro] = useState(() => !introSeen(id));
-  const meta = GAME_META[id];
+  const minPlayers = room.games.find((g) => g.id === id)?.minPlayers ?? 3;
   const active = room.members.filter((m) => !m.left);
-  const missing = Math.max(0, meta.minPlayers - active.length);
-  const blocker = setup ? blockerLine(setup, active.length, meta.minPlayers) : null;
+  const missing = Math.max(0, minPlayers - active.length);
+  const blocker = setup ? blockerLine(setup, active.length, minPlayers) : null;
   return (
     <>
       <main class="screen screen--setup" data-world={WORLD_OF[id]}>

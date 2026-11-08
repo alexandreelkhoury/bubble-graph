@@ -24,12 +24,11 @@ import app.jamaa.tv.games.GameCatalog
 import app.jamaa.tv.platform.ActiveMoment
 import app.jamaa.tv.platform.Moment
 import app.jamaa.tv.platform.MotionMode
-import app.jamaa.tv.platform.Worlds
+import app.jamaa.tv.ui.theme.worldOf
 import app.jamaa.tv.ui.components.fullBleed
 import app.jamaa.tv.ui.hub.gameTitle
 import app.jamaa.tv.ui.theme.JamaaColors
 import app.jamaa.tv.ui.theme.JamaaTheme
-import app.jamaa.tv.ui.theme.toColor
 
 /**
  * Draws the signature moment the ViewModel is playing (JAMAA-PLATFORM §3.10 A/B/D) over the current screen and reports
@@ -39,7 +38,7 @@ import app.jamaa.tv.ui.theme.toColor
  * only has to hide it and reveal it: the portal's arch mask grows until it covers the canvas, the entrance darkens,
  * shows the world's door and the title, then fades. Lite motion: the arch clips the world layer only over a solid
  * 40 % black (no live hub under the mask) — which is what this layer always does, so lite and full share one path here.
- * JAMAA-GAP: driven by the transcribed step lists until lane D's Choreo.kt sampler lands (see platform/Moments.kt).
+ * Progress comes from lane D's generated Choreo.kt sampler (platform/Moments.kt picks the variant).
  */
 @Composable
 fun MomentLayer(active: ActiveMoment?, motion: MotionMode, onEnded: (Int) -> Unit) {
@@ -57,13 +56,13 @@ fun MomentLayer(active: ActiveMoment?, motion: MotionMode, onEnded: (Int) -> Uni
         }
         onEnded(m.seq)
     }
-    val world = Worlds.of(GameCatalog.meta(m.gameId)?.world)
+    val world = worldOf(GameCatalog.meta(m.gameId)?.world)
     val id = m.moment.id
     Box(Modifier.fillMaxSize().fullBleed().clearAndSetSemantics {}) {
         when {
-            id.startsWith("portalBack") -> PortalLayer(m.moment, elapsed, world.stageTop.toColor(), world.deep.toColor(), reverse = true)
-            id.startsWith("portal") -> PortalLayer(m.moment, elapsed, world.stageTop.toColor(), world.deep.toColor(), reverse = false)
-            id.startsWith("entrance") -> EntranceLayer(m, elapsed, world.accent.toColor(), world.glow.toColor(), motion)
+            id.startsWith("portalBack") -> PortalLayer(m.moment, elapsed, world.stageTop, world.deep, reverse = true)
+            id.startsWith("portal") -> PortalLayer(m.moment, elapsed, world.stageTop, world.deep, reverse = false)
+            id.startsWith("entrance") -> EntranceLayer(m, elapsed, world.accent, world.glow, motion)
             else -> Unit // the cup: the results screen animates its own panel; the layer only holds the input rule
         }
     }
@@ -74,14 +73,13 @@ fun MomentLayer(active: ActiveMoment?, motion: MotionMode, onEnded: (Int) -> Uni
 
 @Composable
 private fun PortalLayer(moment: Moment, t: Long, top: Color, deep: Color, reverse: Boolean) {
-    val steps = moment.steps
-    if (steps.size == 1) { // reduced motion: a 150 ms crossfade
-        val p = steps[0].progress(t)
+    if (moment.reduced) { // calm motion: a 150 ms crossfade
+        val p = moment.step("fade")?.progress(t) ?: 1f
         Canvas(Modifier.fillMaxSize().graphicsLayer { alpha = if (reverse) p * (1f - p) * 4f else 1f - p }) { drawRect(deep) }
         return
     }
     val arch = moment.step("arch")?.progress(t) ?: 1f
-    val fade = moment.step("crossfade")?.progress(t) ?: 0f
+    val fade = moment.step("handoff")?.progress(t) ?: 0f
     val grow = if (reverse) 1f - arch else arch
     Canvas(Modifier.fillMaxSize().graphicsLayer { alpha = if (reverse) 1f - (moment.step("othersIn")?.progress(t) ?: 0f) else 1f - fade }) {
         // Outside the arch the hub darkens to #000 at 40 %.
@@ -106,8 +104,8 @@ private fun PortalLayer(moment: Moment, t: Long, top: Color, deep: Color, revers
 @Composable
 private fun EntranceLayer(m: ActiveMoment, t: Long, accent: Color, glow: Color, motion: MotionMode) {
     val mo = m.moment
-    if (mo.id.endsWith("reduced")) {
-        val fade = mo.step("crossfade")?.progress(t) ?: 1f
+    if (mo.reduced) {
+        val fade = mo.step("fade")?.progress(t) ?: 1f
         val title = mo.step("title")?.progress(t) ?: 1f
         Box(Modifier.fillMaxSize().graphicsLayer { alpha = if (title >= 1f) 0f else 1f }, contentAlignment = Alignment.Center) {
             Canvas(Modifier.fillMaxSize().graphicsLayer { alpha = 1f - fade }) { drawRect(JamaaColors.Bg) }
@@ -118,7 +116,7 @@ private fun EntranceLayer(m: ActiveMoment, t: Long, accent: Color, glow: Color, 
     val darken = mo.step("darken")?.progress(t) ?: 1f
     val door = mo.step("door")?.progress(t) ?: 1f
     val title = mo.step("title")?.progress(t) ?: 1f
-    val settle = mo.step("settle")?.progress(t) ?: 1f
+    val settle = mo.step("titleSettle")?.progress(t) ?: 1f
     Box(Modifier.fillMaxSize().graphicsLayer { alpha = 1f - settle }, contentAlignment = Alignment.Center) {
         Canvas(Modifier.fillMaxSize()) {
             drawRect(Color.Black.copy(alpha = 0.7f * darken))

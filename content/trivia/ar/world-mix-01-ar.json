@@ -1,0 +1,1245 @@
+{
+  "id": "world-mix-01-ar",
+  "family": "world-mix-01",
+  "game": "trivia",
+  "version": 1,
+  "locale": "ar",
+  "script": "Arab",
+  "title": {
+    "en": "World Mix",
+    "fr": "Le monde en vrac",
+    "ar": "خلطة من العالم",
+    "es": "Mezcla mundial"
+  },
+  "description": {
+    "en": "Planets, paintings, penalties and paella: one quick lap around everything.",
+    "fr": "Planètes, tableaux, penalties et paella : un petit tour de tout, en vitesse.",
+    "ar": "كواكب ولوحات وركلات ترجيح وباييا: جولة سريعة حول كلّ شيء.",
+    "es": "Planetas, cuadros, penaltis y paella: una vuelta rápida por todo."
+  },
+  "domain": "world",
+  "topics": [
+    "geography",
+    "science",
+    "cinema-tv",
+    "nature",
+    "food",
+    "history",
+    "art",
+    "language",
+    "music",
+    "dance",
+    "football",
+    "sports",
+    "places"
+  ],
+  "featuredTopics": [
+    "geography",
+    "science",
+    "cinema-tv"
+  ],
+  "stars": 2,
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "reviewedBy": [],
+  "questions": [
+    {
+      "id": "q001",
+      "type": "mc4",
+      "text": "ما أكبر محيط على الأرض؟",
+      "options": [
+        "المحيط الأطلسي",
+        "المحيط الهندي",
+        "المحيط الهادئ",
+        "المحيط المتجمّد الشمالي"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 1,
+      "explain": "مساحته أكبر من مساحة كلّ اليابسة مجتمعة.",
+      "source": "[VERIFY] NOAA Ocean Service 'largest ocean' (Pacific)"
+    },
+    {
+      "id": "q002",
+      "type": "mc4",
+      "text": "ما أكبر دولة في العالم من حيث المساحة؟",
+      "options": [
+        "روسيا",
+        "كندا",
+        "الصين",
+        "البرازيل"
+      ],
+      "answer": 0,
+      "topic": "geography",
+      "difficulty": 1,
+      "explain": "تمتدّ على إحدى عشرة منطقة زمنية: في مكان ما من روسيا، هناك دائمًا من يتناول فطوره.",
+      "source": "[VERIFY] CIA World Factbook area ranking (Russia #1)"
+    },
+    {
+      "id": "q003",
+      "type": "mc4",
+      "text": "ما عاصمة أستراليا؟",
+      "options": [
+        "سيدني",
+        "ملبورن",
+        "بيرث",
+        "كانبيرا"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "بُنيت حلًّا وسطًا بين المدينتين المتنافستين سيدني وملبورن.",
+      "source": "[VERIFY] Britannica 'Canberra' (purpose-built capital, compromise Sydney/Melbourne)"
+    },
+    {
+      "id": "q004",
+      "type": "mc4",
+      "text": "ما أكبر صحراء حارّة في العالم؟",
+      "options": [
+        "صحراء غوبي",
+        "الصحراء الكبرى",
+        "صحراء كالاهاري",
+        "صحراء أتاكاما"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "وإذا حسبنا الصحارى الباردة، فأكبرها على الإطلاق هي القارّة القطبية الجنوبية.",
+      "source": "[VERIFY] Britannica 'Sahara' (largest hot desert); 'desert' (Antarctica largest overall)"
+    },
+    {
+      "id": "q005",
+      "type": "mc4",
+      "text": "مع احتساب الأقاليم ما وراء البحار، أيّ دولة لديها أكبر عدد من المناطق الزمنية؟",
+      "options": [
+        "روسيا",
+        "الولايات المتحدة",
+        "فرنسا",
+        "الصين"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 3,
+      "explain": "بفضل جزرها المنتشرة في المحيطات، لدى فرنسا 12 منطقة.",
+      "source": "[VERIFY] French government / time-zone references (France: 12 zones incl. overseas, 13 with Adélie Land)"
+    },
+    {
+      "id": "q006",
+      "type": "tf",
+      "text": "على كوكب الزهرة، يدوم اليوم أطول من السنة.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "تدور الزهرة حول نفسها ببطء شديد، فتُكمل دورتها حول الشمس قبل أن تُنهي دورة واحدة حول نفسها.",
+      "source": "[VERIFY] NASA 'Venus' (sidereal day ~243 Earth days; year ~225 Earth days)"
+    },
+    {
+      "id": "q007",
+      "type": "mc4",
+      "text": "ما أصغر دولة في العالم؟",
+      "options": [
+        "الفاتيكان",
+        "موناكو",
+        "سان مارينو",
+        "ليختنشتاين"
+      ],
+      "answer": 0,
+      "topic": "geography",
+      "difficulty": 1,
+      "explain": "مساحتها أقلّ من نصف كيلومتر مربّع.",
+      "source": "[VERIFY] CIA World Factbook 'Holy See' (~0.44 km²)"
+    },
+    {
+      "id": "q008",
+      "type": "mc4",
+      "text": "أيّ دولة شكلها مثل الجزمة؟",
+      "options": [
+        "اليونان",
+        "البرتغال",
+        "تشيلي",
+        "إيطاليا"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 1,
+      "explain": "وصقلية عند طرف القدم تبدو كأنّها كرة على وشك أن تُركل.",
+      "source": "[VERIFY] trivial (map of Italy)"
+    },
+    {
+      "id": "q009",
+      "type": "mc4",
+      "text": "أيّ دولة لديها ثلاث عواصم؟",
+      "options": [
+        "نيجيريا",
+        "جنوب أفريقيا",
+        "كينيا",
+        "المغرب"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 3,
+      "explain": "بريتوريا وكيب تاون وبلومفونتين تتقاسم المهمّة.",
+      "source": "[VERIFY] South African Government 'Capital cities' (Pretoria, Cape Town, Bloemfontein)"
+    },
+    {
+      "id": "q010",
+      "type": "mc4",
+      "text": "ما أعلى شلّال في العالم؟",
+      "options": [
+        "شلّالات نياغرا",
+        "شلّالات فيكتوريا",
+        "شلّال سالتو أنخل",
+        "شلّالات إغوازو"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "ينحدر نحو 979 مترًا في فنزويلا، حتّى يتحوّل الماء إلى رذاذ.",
+      "source": "[VERIFY] Britannica 'Angel Falls' (Venezuela, ~979 m)"
+    },
+    {
+      "id": "q011",
+      "type": "mc4",
+      "text": "يعيش النمل في كلّ القارّات ما عدا…",
+      "options": [
+        "القارّة القطبية الجنوبية",
+        "أستراليا",
+        "أفريقيا",
+        "أوروبا"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "أمّا أستراليا فتضمّ بعضًا من أكثر أنواع النمل تنوّعًا.",
+      "source": "[VERIFY] encyclopedia 'ant' (on every continent except Antarctica)"
+    },
+    {
+      "id": "q012",
+      "type": "mc4",
+      "text": "ما الغاز الذي تأخذه النباتات من الهواء لتصنع غذاءها؟",
+      "options": [
+        "الأكسجين",
+        "النيتروجين",
+        "الهيليوم",
+        "ثاني أكسيد الكربون"
+      ],
+      "answer": 3,
+      "topic": "science",
+      "difficulty": 1,
+      "explain": "وفي المقابل تطلق الأكسجين الذي نتنفّسه.",
+      "source": "[VERIFY] school biology 'photosynthesis'"
+    },
+    {
+      "id": "q013",
+      "type": "mc4",
+      "text": "كم رجلًا للعنكبوت؟",
+      "options": [
+        "6",
+        "8",
+        "10",
+        "12"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "للحشرات ستّ أرجل، فالعنكبوت ليس حشرة بل من العنكبيات.",
+      "source": "[VERIFY] trivial (arachnids: 8 legs)"
+    },
+    {
+      "id": "q014",
+      "type": "mc4",
+      "text": "ما أصلب مادّة طبيعية؟",
+      "options": [
+        "الذهب",
+        "الغرانيت",
+        "الألماس",
+        "الكوارتز"
+      ],
+      "answer": 2,
+      "topic": "science",
+      "difficulty": 1,
+      "explain": "يتصدّر مقياس موس للصلابة بالدرجة 10.",
+      "source": "[VERIFY] Mohs scale (diamond = 10)"
+    },
+    {
+      "id": "q015",
+      "type": "mc4",
+      "text": "أيّ كوكب فيه عاصفة عملاقة اسمها البقعة الحمراء العظيمة؟",
+      "options": [
+        "المشتري",
+        "المرّيخ",
+        "زحل",
+        "الزهرة"
+      ],
+      "answer": 0,
+      "topic": "science",
+      "difficulty": 2,
+      "explain": "هذه العاصفة أعرض من الأرض كلّها.",
+      "source": "[VERIFY] NASA 'Jupiter: Great Red Spot' (storm wider than Earth)"
+    },
+    {
+      "id": "q016",
+      "type": "mc4",
+      "text": "أيّ كوكب يدور وهو مائل على جنبه كأنّه يتدحرج حول الشمس؟",
+      "options": [
+        "نبتون",
+        "زحل",
+        "عطارد",
+        "أورانوس"
+      ],
+      "answer": 3,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "محوره مائل بنحو 98 درجة.",
+      "source": "[VERIFY] NASA 'Uranus' (axial tilt ~98°)"
+    },
+    {
+      "id": "q017",
+      "type": "tf",
+      "text": "الخفافيش من الثدييات.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "وهي الثدييات الوحيدة القادرة على الطيران الحقيقي.",
+      "source": "[VERIFY] encyclopedia 'bat' (only mammals capable of true flight)"
+    },
+    {
+      "id": "q018",
+      "type": "mc4",
+      "text": "ما أكبر حيوان عُرف أنّه عاش على الأرض؟",
+      "options": [
+        "الأرجنتينوصور",
+        "الحوت الأزرق",
+        "الفيل الأفريقي",
+        "الميغالودون"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "قلبه وحده بحجم سيّارة صغيرة تقريبًا.",
+      "source": "[VERIFY] NOAA Fisheries 'blue whale' (largest animal known to have lived)"
+    },
+    {
+      "id": "q019",
+      "type": "mc4",
+      "text": "كم قلبًا للأخطبوط؟",
+      "options": [
+        "واحد",
+        "اثنان",
+        "ثلاثة",
+        "ثمانية"
+      ],
+      "answer": 2,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "ودمه أزرق أيضًا… من نبلاء البحر!",
+      "source": "[VERIFY] encyclopedia 'octopus' (three hearts; copper-based blue blood)"
+    },
+    {
+      "id": "q020",
+      "type": "mc4",
+      "text": "أيّ معدن يكون سائلًا في درجة حرارة الغرفة؟",
+      "options": [
+        "الزئبق",
+        "القصدير",
+        "الألومنيوم",
+        "الفضّة"
+      ],
+      "answer": 0,
+      "topic": "science",
+      "difficulty": 2,
+      "explain": "كان يُستعمل قديمًا في معظم موازين الحرارة.",
+      "source": "[VERIFY] Royal Society of Chemistry periodic table 'Mercury'"
+    },
+    {
+      "id": "q021",
+      "type": "mc4",
+      "text": "ما الرمز الكيميائي للذهب؟",
+      "options": [
+        "Ag",
+        "Gd",
+        "Go",
+        "Au"
+      ],
+      "answer": 3,
+      "topic": "science",
+      "difficulty": 2,
+      "explain": "مأخوذ من «أوروم»، أي الذهب باللاتينية.",
+      "source": "[VERIFY] RSC periodic table 'Gold' (Au, Latin aurum)"
+    },
+    {
+      "id": "q022",
+      "type": "mc4",
+      "text": "أيّ دولة تنتج أكبر كمّية من البنّ؟",
+      "options": [
+        "كولومبيا",
+        "البرازيل",
+        "إثيوبيا",
+        "إيطاليا"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "ويُعتقد أنّ شجرة البنّ أصلها من إثيوبيا.",
+      "source": "[VERIFY] FAO / USDA coffee production data (Brazil #1)"
+    },
+    {
+      "id": "q023",
+      "type": "mc4",
+      "text": "أيّ جزء من جسم الإنسان ليس فيه أوعية دموية ويأخذ الأكسجين من الهواء مباشرة؟",
+      "options": [
+        "شحمة الأذن",
+        "اللسان",
+        "القرنية",
+        "الشفتان"
+      ],
+      "answer": 2,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "لهذا تبقى شفّافة تمامًا.",
+      "source": "[VERIFY] ophthalmology refs (cornea is avascular; oxygen from air via tear film)"
+    },
+    {
+      "id": "q024",
+      "type": "tf",
+      "text": "ينتقل الصوت في الماء أسرع منه في الهواء.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "science",
+      "difficulty": 2,
+      "explain": "أسرع بنحو أربع مرّات.",
+      "source": "[VERIFY] physics refs (speed of sound ~1,480 m/s in water vs ~343 m/s in air)"
+    },
+    {
+      "id": "q025",
+      "type": "tf",
+      "text": "البرق لا يضرب المكان نفسه مرّتين أبدًا.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 1,
+      "topic": "science",
+      "difficulty": 1,
+      "explain": "مبنى إمباير ستيت يُضرب نحو عشرين مرّة في السنة.",
+      "source": "[VERIFY] NOAA / NWS lightning myths (Empire State Building struck ~20-25 times a year)"
+    },
+    {
+      "id": "q026",
+      "type": "mc4",
+      "text": "أيّ حيوان بصماته تشبه بصماتنا لدرجة أنّها قد تخدع خبيرًا؟",
+      "options": [
+        "الكوالا",
+        "الباندا",
+        "الكنغر",
+        "الكسلان"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 3,
+      "explain": "حتّى تحت المجهر يصعب التفريق بينها.",
+      "source": "[VERIFY] Henneberg et al. 1997 / encyclopedia 'koala' (human-like fingerprints)"
+    },
+    {
+      "id": "q027",
+      "type": "mc4",
+      "text": "ما أقرب نجم إلى الأرض؟",
+      "options": [
+        "بروكسيما سنتوري",
+        "الشعرى اليمانية",
+        "النجم القطبي",
+        "الشمس"
+      ],
+      "answer": 3,
+      "topic": "science",
+      "difficulty": 2,
+      "explain": "النجم التالي، بروكسيما سنتوري، يبعد أكثر من أربع سنوات ضوئية.",
+      "source": "[VERIFY] NASA 'Sun' / 'Proxima Centauri' (nearest star beyond the Sun)"
+    },
+    {
+      "id": "q028",
+      "type": "mc4",
+      "text": "أيّ عجائب الدنيا السبع القديمة ما زالت قائمة حتّى اليوم؟",
+      "options": [
+        "تمثال رودس",
+        "هرم الجيزة الأكبر",
+        "منارة الإسكندرية",
+        "الحدائق المعلّقة"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "وهو أيضًا أقدم العجائب السبع.",
+      "source": "[VERIFY] Britannica 'Seven Wonders of the World'"
+    },
+    {
+      "id": "q029",
+      "type": "mc4",
+      "text": "من رسم لوحة الموناليزا؟",
+      "options": [
+        "مايكل أنجلو",
+        "رافائيل",
+        "ليوناردو دافنشي",
+        "بوتيتشيلي"
+      ],
+      "answer": 2,
+      "topic": "art",
+      "difficulty": 1,
+      "explain": "كان ليوناردو مخترعًا أيضًا ورسم آلات طائرة.",
+      "source": "[VERIFY] Musée du Louvre 'Mona Lisa' (Leonardo da Vinci)"
+    },
+    {
+      "id": "q030",
+      "type": "mc4",
+      "text": "في أيّ مدينة يمكنك رؤية الموناليزا؟",
+      "options": [
+        "باريس",
+        "فلورنسا",
+        "روما",
+        "مدريد"
+      ],
+      "answer": 0,
+      "topic": "art",
+      "difficulty": 1,
+      "explain": "معلّقة خلف زجاج واقٍ في متحف اللوفر.",
+      "source": "[VERIFY] Musée du Louvre (Mona Lisa location, protective glass)"
+    },
+    {
+      "id": "q031",
+      "type": "mc4",
+      "text": "من أوّل إنسان مشى على القمر؟",
+      "options": [
+        "باز ألدرين",
+        "يوري غاغارين",
+        "جون غلين",
+        "نيل أرمسترونغ"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "لحق به باز ألدرين بعد دقائق.",
+      "source": "[VERIFY] NASA 'Apollo 11'"
+    },
+    {
+      "id": "q032",
+      "type": "mc4",
+      "text": "في أيّ سنة هبط الإنسان على القمر أوّل مرّة؟",
+      "options": [
+        "1959",
+        "1969",
+        "1972",
+        "1981"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "كان ذلك في تمّوز/يوليو مع رحلة أبولو 11.",
+      "source": "[VERIFY] NASA 'Apollo 11' (July 1969)"
+    },
+    {
+      "id": "q033",
+      "type": "mc4",
+      "text": "من طوّر آلة الطباعة بالحروف المعدنية المتحرّكة في أوروبا؟",
+      "options": [
+        "غاليليو غاليلي",
+        "إسحاق نيوتن",
+        "يوهانس غوتنبرغ",
+        "ليوناردو دافنشي"
+      ],
+      "answer": 2,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "عمل في مدينة ماينتس نحو خمسينيات القرن الخامس عشر.",
+      "source": "[VERIFY] Britannica 'Johannes Gutenberg' (movable metal type, ~1450, Mainz)"
+    },
+    {
+      "id": "q034",
+      "type": "mc4",
+      "text": "أيّ مدينة رومانية دفنها بركان فيزوف سنة 79 م؟",
+      "options": [
+        "بومبي",
+        "أثينا",
+        "قرطاج",
+        "طروادة"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "حفظ الرماد شوارعها ومخابزها وحتّى الكتابات على جدرانها.",
+      "source": "[VERIFY] Britannica 'Pompeii' (AD 79)"
+    },
+    {
+      "id": "q035",
+      "type": "mc4",
+      "text": "من اخترع الشبكة العنكبوتية العالمية (الويب)؟",
+      "options": [
+        "بيل غيتس",
+        "ستيف جوبز",
+        "آلان تورينغ",
+        "تيم بيرنرز لي"
+      ],
+      "answer": 3,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "اقترحها سنة 1989 حين كان يعمل في مختبر سيرن.",
+      "source": "[VERIFY] CERN 'The birth of the Web' (Tim Berners-Lee, 1989)"
+    },
+    {
+      "id": "q036",
+      "type": "mc4",
+      "text": "كلمة «Algebra» مأخوذة من كتاب أيّ عالم؟",
+      "options": [
+        "ابن سينا",
+        "الخوارزمي",
+        "فيثاغورس",
+        "إقليدس"
+      ],
+      "answer": 1,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "واسمه هو أعطانا كلمة أخرى: «Algorithm» أي الخوارزمية.",
+      "source": "[VERIFY] Britannica 'al-Khwārizmī' (al-jabr → algebra; name → algorithm)"
+    },
+    {
+      "id": "q037",
+      "type": "mc4",
+      "text": "كلمة «Coffee» الإنجليزية ترجع في أصلها إلى أيّ لغة؟",
+      "options": [
+        "الإسبانية",
+        "الهندية",
+        "العربية",
+        "اليونانية"
+      ],
+      "answer": 2,
+      "topic": "language",
+      "difficulty": 3,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "انتقلت من «قهوة» إلى التركية «kahve» ثمّ إلى أوروبا.",
+      "source": "[VERIFY] Online Etymology Dictionary 'coffee' (Arabic qahwa via Turkish kahve)"
+    },
+    {
+      "id": "q038",
+      "type": "mc4",
+      "text": "من رسم لوحة «ليلة النجوم»؟",
+      "options": [
+        "فنسنت فان غوخ",
+        "كلود مونيه",
+        "بابلو بيكاسو",
+        "سلفادور دالي"
+      ],
+      "answer": 0,
+      "topic": "art",
+      "difficulty": 1,
+      "explain": "رسمها سنة 1889 من ذاكرته للمنظر من نافذته.",
+      "source": "[VERIFY] MoMA 'The Starry Night' (Van Gogh, 1889)"
+    },
+    {
+      "id": "q039",
+      "type": "mc4",
+      "text": "من أيّ بلد كانت الرسّامة فريدا كاهلو؟",
+      "options": [
+        "إسبانيا",
+        "الأرجنتين",
+        "كوبا",
+        "المكسيك"
+      ],
+      "answer": 3,
+      "topic": "art",
+      "difficulty": 2,
+      "explain": "بيتها الأزرق في مكسيكو أصبح اليوم متحفًا.",
+      "source": "[VERIFY] Britannica 'Frida Kahlo' (Mexico; Casa Azul)"
+    },
+    {
+      "id": "q040",
+      "type": "mc4",
+      "text": "أيّ فنّان اشتهر برسم الساعات الذائبة؟",
+      "options": [
+        "رينيه ماغريت",
+        "سلفادور دالي",
+        "بابلو بيكاسو",
+        "خوان ميرو"
+      ],
+      "answer": 1,
+      "topic": "art",
+      "difficulty": 2,
+      "explain": "اسم اللوحة «إصرار الذاكرة» (1931).",
+      "source": "[VERIFY] MoMA 'The Persistence of Memory' (Dalí, 1931)"
+    },
+    {
+      "id": "q041",
+      "type": "mc4",
+      "text": "كم مفتاحًا في البيانو العادي؟",
+      "options": [
+        "76",
+        "100",
+        "88",
+        "64"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "52 أبيض و36 أسود.",
+      "source": "[VERIFY] trivial (standard piano: 88 keys = 52 white + 36 black)"
+    },
+    {
+      "id": "q042",
+      "type": "mc4",
+      "text": "أيّ مؤلّف موسيقي كبير واصل التأليف بعد أن فقد سمعه؟",
+      "options": [
+        "بيتهوفن",
+        "موتسارت",
+        "باخ",
+        "شوبان"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "كتب سمفونيّته التاسعة وهو أصمّ تقريبًا.",
+      "source": "[VERIFY] Britannica 'Ludwig van Beethoven' (deafness; Ninth Symphony)"
+    },
+    {
+      "id": "q043",
+      "type": "mc4",
+      "text": "كم وترًا في الغيتار العادي؟",
+      "options": [
+        "4",
+        "5",
+        "8",
+        "6"
+      ],
+      "answer": 3,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "أمّا غيتار الباص فعادةً له أربعة.",
+      "source": "[VERIFY] trivial (standard guitar: 6 strings)"
+    },
+    {
+      "id": "q044",
+      "type": "mc4",
+      "text": "وُلد التانغو على ضفاف ريو دي لا بلاتا، في الأرجنتين وأيّ بلد مجاور؟",
+      "options": [
+        "البرازيل",
+        "الأوروغواي",
+        "تشيلي",
+        "الباراغواي"
+      ],
+      "answer": 1,
+      "topic": "dance",
+      "difficulty": 2,
+      "explain": "تسجّله الأونيسكو تراثًا مشتركًا بين الأرجنتين والأوروغواي، وما زالت بوينس آيرس ومونتيفيديو تتنازعان على الرقصة الأولى.",
+      "source": "[VERIFY] UNESCO ICH 'Tango' (Argentina and Uruguay, 2009)"
+    },
+    {
+      "id": "q045",
+      "type": "mc4",
+      "text": "من أيّ منطقة في إسبانيا جاء الفلامنكو؟",
+      "options": [
+        "كاتالونيا",
+        "غاليسيا",
+        "الأندلس",
+        "إقليم الباسك"
+      ],
+      "answer": 2,
+      "topic": "dance",
+      "difficulty": 2,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "يجمع الغناء والغيتار والرقص والتصفيق الإيقاعي المسمّى «بالماس».",
+      "source": "[VERIFY] UNESCO ICH 'Flamenco' (Spain, 2010; Andalusian roots)"
+    },
+    {
+      "id": "q046",
+      "type": "mc4",
+      "text": "من أيّ بلد فرقة BTS؟",
+      "options": [
+        "كوريا الجنوبية",
+        "اليابان",
+        "الصين",
+        "تايلاند"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "معجبوهم يسمّون أنفسهم «آرمي».",
+      "source": "[VERIFY] trivial (BTS, South Korea)"
+    },
+    {
+      "id": "q047",
+      "type": "mc4",
+      "text": "في فيلم «الأسد الملك»، ما اسم والد سيمبا؟",
+      "options": [
+        "سكار",
+        "رفيقي",
+        "بومبا",
+        "موفاسا"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "تدور أحداث فيلم 1994 في السافانا الأفريقية.",
+      "source": "[VERIFY] Disney 'The Lion King' (1994) characters"
+    },
+    {
+      "id": "q048",
+      "type": "mc4",
+      "text": "من أخرج فيلم «جوراسيك بارك» (1993)؟",
+      "options": [
+        "جيمس كاميرون",
+        "ستيفن سبيلبرغ",
+        "جورج لوكاس",
+        "ريدلي سكوت"
+      ],
+      "answer": 1,
+      "topic": "cinema-tv",
+      "difficulty": 2,
+      "explain": "وأخرج أيضًا «إي تي» و«الفكّ المفترس».",
+      "source": "[VERIFY] AFI catalog 'Jurassic Park' (1993, Spielberg)"
+    },
+    {
+      "id": "q049",
+      "type": "mc4",
+      "text": "كلمة «بوليوود» تدمج «هوليوود» مع الاسم القديم لأيّ مدينة؟",
+      "options": [
+        "بنغالور",
+        "بوبال",
+        "بومباي",
+        "بنارس"
+      ],
+      "answer": 2,
+      "topic": "cinema-tv",
+      "difficulty": 2,
+      "explain": "أصبح اسم بومباي الرسمي مومباي منذ 1995.",
+      "source": "[VERIFY] OED / Britannica 'Bollywood' (Bombay + Hollywood)"
+    },
+    {
+      "id": "q050",
+      "type": "mc4",
+      "text": "ما أوّل فيلم رسوم متحرّكة طويل لوالت ديزني؟",
+      "options": [
+        "سنو وايت والأقزام السبعة",
+        "بينوكيو",
+        "بامبي",
+        "سندريلا"
+      ],
+      "answer": 0,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "صدر سنة 1937.",
+      "source": "[VERIFY] Walt Disney Archives 'Snow White and the Seven Dwarfs' (1937)"
+    },
+    {
+      "id": "q051",
+      "type": "mc4",
+      "text": "ما أوّل فيلم بلغة غير الإنجليزية يفوز بأوسكار أفضل فيلم؟",
+      "options": [
+        "روما",
+        "أميلي",
+        "النمر الرابض والتنين الخفي",
+        "طفيلي"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "فاز الفيلم الكوري الجنوبي بها سنة 2020.",
+      "source": "[VERIFY] Academy Awards database, 92nd ceremony (Parasite, Best Picture)"
+    },
+    {
+      "id": "q052",
+      "type": "mc4",
+      "text": "كم لاعبًا لكلّ فريق كرة قدم في الملعب؟",
+      "options": [
+        "9",
+        "11",
+        "10",
+        "12"
+      ],
+      "answer": 1,
+      "topic": "football",
+      "difficulty": 1,
+      "explain": "منهم حارس المرمى، الوحيد المسموح له باستعمال يديه.",
+      "source": "[VERIFY] IFAB Laws of the Game, Law 3"
+    },
+    {
+      "id": "q053",
+      "type": "mc4",
+      "text": "أيّ دولة فازت بكأس العالم أكثر من غيرها؟",
+      "options": [
+        "ألمانيا",
+        "إيطاليا",
+        "البرازيل",
+        "الأرجنتين"
+      ],
+      "answer": 2,
+      "topic": "football",
+      "difficulty": 2,
+      "explain": "للبرازيل خمسة ألقاب.",
+      "source": "[VERIFY] FIFA World Cup records (Brazil, 5 titles)"
+    },
+    {
+      "id": "q054",
+      "type": "mc4",
+      "text": "أيّ دولة استضافت أوّل كأس عالم سنة 1930؟",
+      "options": [
+        "الأوروغواي",
+        "البرازيل",
+        "إيطاليا",
+        "إنجلترا"
+      ],
+      "answer": 0,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "وفازت بها الأوروغواي أيضًا.",
+      "source": "[VERIFY] FIFA '1930 FIFA World Cup Uruguay' (host and winner)"
+    },
+    {
+      "id": "q055",
+      "type": "mc4",
+      "text": "أيّ دولة فازت بكأس العالم 2022 في قطر؟",
+      "options": [
+        "فرنسا",
+        "كرواتيا",
+        "المغرب",
+        "الأرجنتين"
+      ],
+      "answer": 3,
+      "topic": "football",
+      "difficulty": 1,
+      "explain": "حُسم النهائي أمام فرنسا بركلات الترجيح.",
+      "source": "[VERIFY] FIFA 'Qatar 2022 final' (Argentina beat France on penalties)"
+    },
+    {
+      "id": "q056",
+      "type": "mc4",
+      "text": "في كأس العالم 2022، أيّ منتخب أصبح أوّل منتخب أفريقي يصل إلى نصف النهائي؟",
+      "options": [
+        "السنغال",
+        "المغرب",
+        "الكاميرون",
+        "غانا"
+      ],
+      "answer": 1,
+      "topic": "football",
+      "difficulty": 2,
+      "explain": "وكانت أيضًا سابقة لمنتخب عربي.",
+      "source": "[VERIFY] FIFA Qatar 2022 (Morocco: first African and Arab semi-finalist)"
+    },
+    {
+      "id": "q057",
+      "type": "mc4",
+      "text": "كلّ كم سنة تُقام الألعاب الأولمبية الصيفية عادةً؟",
+      "options": [
+        "كلّ سنتين",
+        "كلّ 3 سنوات",
+        "كلّ 4 سنوات",
+        "كلّ 5 سنوات"
+      ],
+      "answer": 2,
+      "topic": "sports",
+      "difficulty": 1,
+      "explain": "طوكيو 2020 كانت استثناءً نادرًا، إذ أُقيمت سنة 2021.",
+      "source": "[VERIFY] IOC (Summer Games every 4 years; Tokyo 2020 held in 2021)"
+    },
+    {
+      "id": "q058",
+      "type": "mc4",
+      "text": "كم حلقة على العلم الأولمبي؟",
+      "options": [
+        "خمس",
+        "أربع",
+        "ستّ",
+        "سبع"
+      ],
+      "answer": 0,
+      "topic": "sports",
+      "difficulty": 1,
+      "explain": "ترمز إلى اتّحاد القارّات.",
+      "source": "[VERIFY] IOC 'Olympic rings'"
+    },
+    {
+      "id": "q059",
+      "type": "mc4",
+      "text": "في التنس، ماذا يُسمّى الصفر بالإنجليزية؟",
+      "options": [
+        "Nil",
+        "Duck",
+        "Blank",
+        "Love"
+      ],
+      "answer": 3,
+      "topic": "sports",
+      "difficulty": 2,
+      "explain": "ثمّ يُحتسب الشوط 15 و30 و40… ولا أحد متأكّد تمامًا من السبب.",
+      "source": "[VERIFY] ITF Rules of Tennis (scoring terms)"
+    },
+    {
+      "id": "q060",
+      "type": "mc4",
+      "text": "كم طول الماراثون تقريبًا؟",
+      "options": [
+        "21 كم",
+        "42 كم",
+        "30 كم",
+        "50 كم"
+      ],
+      "answer": 1,
+      "topic": "sports",
+      "difficulty": 2,
+      "explain": "بالضبط 42.195 كم.",
+      "source": "[VERIFY] World Athletics (marathon 42.195 km)"
+    },
+    {
+      "id": "q061",
+      "type": "mc4",
+      "text": "من أيّ مدينة إيطالية جاءت بيتزا مارغريتا؟",
+      "options": [
+        "روما",
+        "ميلانو",
+        "نابولي",
+        "البندقية"
+      ],
+      "answer": 2,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "طماطم وموزاريلا وريحان: ألوان العلم الإيطالي.",
+      "source": "[VERIFY] AVPN / encyclopedia 'pizza Margherita' (Naples)"
+    },
+    {
+      "id": "q062",
+      "type": "mc4",
+      "text": "الغواكامولي مصنوعة أساسًا من…",
+      "options": [
+        "الأفوكادو",
+        "البازلاء",
+        "الخيار",
+        "الفلفل الأخضر"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "أصلها من المكسيك، موطن الأفوكادو.",
+      "source": "[VERIFY] trivial (guacamole = avocado)"
+    },
+    {
+      "id": "q063",
+      "type": "mc4",
+      "text": "الزعفران، أغلى التوابل وزنًا، يأتي من أيّ جزء من الزهرة؟",
+      "options": [
+        "البتلات",
+        "الجذور",
+        "البذور",
+        "المياسم"
+      ],
+      "answer": 3,
+      "topic": "food",
+      "difficulty": 3,
+      "explain": "كلّ زهرة كروكوس تعطي ثلاث شعيرات فقط تُقطف باليد.",
+      "source": "[VERIFY] Britannica 'saffron' (stigmas of Crocus sativus; priciest spice by weight)"
+    },
+    {
+      "id": "q064",
+      "type": "mc4",
+      "text": "من أيّ منطقة إسبانية جاءت الباييا؟",
+      "options": [
+        "الأندلس",
+        "فالنسيا",
+        "كاتالونيا",
+        "غاليسيا"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "تُطبخ تقليديًا في الهواء الطلق في مقلاة واسعة ومسطّحة.",
+      "source": "[VERIFY] encyclopedia 'paella' (Valencia)"
+    },
+    {
+      "id": "q065",
+      "type": "mc4",
+      "text": "أيّ نوع من المكسّرات يُصنع منه المرزبان؟",
+      "options": [
+        "البندق",
+        "الجوز",
+        "اللوز",
+        "الفستق"
+      ],
+      "answer": 2,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "لوز مطحون وسكّر يُشكَّل فواكه وحيوانات وأكثر.",
+      "source": "[VERIFY] encyclopedia 'marzipan' (almonds, sugar)"
+    },
+    {
+      "id": "q066",
+      "type": "tf",
+      "text": "من الناحية النباتية، الطماطم فاكهة.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "بل يصنّفها علماء النبات من التوتيّات.",
+      "source": "[VERIFY] botany refs (tomato = berry, a fruit)"
+    },
+    {
+      "id": "q067",
+      "type": "tf",
+      "text": "يمكن رؤية سور الصين العظيم من القمر بالعين المجرّدة.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 1,
+      "topic": "places",
+      "difficulty": 2,
+      "explain": "حتّى من المدار المنخفض يصعب جدًّا رؤيته بالعين المجرّدة.",
+      "source": "[VERIFY] NASA Earth Observatory 'Great Wall from space' myth"
+    },
+    {
+      "id": "q068",
+      "type": "tf",
+      "text": "ذاكرة السمكة الذهبية لا تتجاوز ثلاث ثوانٍ.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "أثبتت التجارب أنّها تتذكّر أشياء لشهور.",
+      "source": "[VERIFY] animal-cognition studies on goldfish memory (months, not seconds)"
+    },
+    {
+      "id": "q069",
+      "type": "mc4",
+      "text": "أيّ لغة لها أكبر عدد من الناطقين الأصليين؟",
+      "options": [
+        "الصينية الماندرينية",
+        "الإنجليزية",
+        "الإسبانية",
+        "الهندية"
+      ],
+      "answer": 0,
+      "topic": "language",
+      "difficulty": 2,
+      "explain": "أمّا إذا حسبنا من يتكلّمها لغةً ثانية، فالإنجليزية تتصدّر.",
+      "source": "[VERIFY] Ethnologue (most native speakers: Mandarin)"
+    },
+    {
+      "id": "q070",
+      "type": "mc4",
+      "text": "بأيّ أبجدية تُكتب اللغة الروسية؟",
+      "options": [
+        "اللاتينية",
+        "اليونانية",
+        "الجورجية",
+        "السيريلية"
+      ],
+      "answer": 3,
+      "topic": "language",
+      "difficulty": 2,
+      "explain": "سُمّيت باسم كيرلس، عالم من القرن التاسع وُلد في سالونيك.",
+      "source": "[VERIFY] Britannica 'Cyrillic alphabet'"
+    },
+    {
+      "id": "q071",
+      "type": "mc4",
+      "text": "كيف نقول «شكرًا» باليابانية؟",
+      "options": [
+        "كونيتشيوا",
+        "أريغاتو",
+        "سايونارا",
+        "كاواي"
+      ],
+      "answer": 1,
+      "topic": "language",
+      "difficulty": 1,
+      "explain": "«كونيتشيوا» تعني مرحبًا، و«سايونارا» وداعًا، و«كاواي» لطيف.",
+      "source": "[VERIFY] trivial (Japanese 'arigatō')"
+    },
+    {
+      "id": "q072",
+      "type": "mc4",
+      "text": "أيّ كوكب له أقصر يوم؟",
+      "options": [
+        "عطارد",
+        "الأرض",
+        "المشتري",
+        "الزهرة"
+      ],
+      "answer": 2,
+      "topic": "science",
+      "difficulty": 3,
+      "explain": "يدور حول نفسه في نحو عشر ساعات رغم أنّه أكبر الكواكب.",
+      "source": "[VERIFY] NASA 'Jupiter' (rotation ~10 hours)"
+    },
+    {
+      "id": "q073",
+      "type": "mc4",
+      "text": "أيّ حرف لا يظهر في أسماء الولايات الأمريكية الخمسين (بالإنجليزية)؟",
+      "options": [
+        "Q",
+        "Z",
+        "X",
+        "J"
+      ],
+      "answer": 0,
+      "topic": "language",
+      "difficulty": 3,
+      "explain": "حرف Z في Arizona، وX في Texas، وJ في New Jersey.",
+      "source": "[VERIFY] list of US state names (no letter Q)"
+    },
+    {
+      "id": "q074",
+      "type": "mc4",
+      "text": "أيّ طائر يستطيع الطيران إلى الخلف؟",
+      "options": [
+        "النسر",
+        "الببغاء",
+        "السنونو",
+        "الطائر الطنّان"
+      ],
+      "answer": 3,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "قد ترفرف أجنحته عشرات المرّات في الثانية.",
+      "source": "[VERIFY] encyclopedia 'hummingbird' (can fly backwards)"
+    },
+    {
+      "id": "q075",
+      "type": "mc4",
+      "text": "في أيّ بلد تقع ماتشو بيتشو؟",
+      "options": [
+        "المكسيك",
+        "البيرو",
+        "بوليفيا",
+        "تشيلي"
+      ],
+      "answer": 1,
+      "topic": "places",
+      "difficulty": 1,
+      "explain": "قلعة الإنكا عالية في جبال الأنديز، على ارتفاع نحو 2400 متر.",
+      "source": "[VERIFY] UNESCO WHC 'Historic Sanctuary of Machu Picchu' (Peru)"
+    }
+  ]
+}

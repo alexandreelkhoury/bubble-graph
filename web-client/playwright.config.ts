@@ -18,8 +18,10 @@ function chromiumExecutable(): string | undefined {
   if (!root || !existsSync(root)) return undefined;
   const dirs = readdirSync(root).filter((d) => /^chromium-\d+$/.test(d)).sort((a, b) => Number(b.split("-")[1]) - Number(a.split("-")[1]));
   for (const d of dirs) {
-    const exe = join(root, d, "chrome-linux", "chrome");
-    if (existsSync(exe)) return exe;
+    for (const sub of ["chrome-linux", "chrome-linux64"]) {
+      const exe = join(root, d, sub, "chrome");
+      if (existsSync(exe)) return exe;
+    }
   }
   return undefined;
 }

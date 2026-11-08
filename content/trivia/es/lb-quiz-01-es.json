@@ -1,0 +1,1277 @@
+{
+  "id": "lb-quiz-01-es",
+  "family": "lb-quiz-01",
+  "game": "trivia",
+  "version": 1,
+  "locale": "es",
+  "script": "Latn",
+  "title": {
+    "en": "Lebanon: the big quiz",
+    "fr": "Liban : le grand quiz",
+    "ar": "لبنان: المسابقة الكبيرة",
+    "es": "Líbano: el gran quiz"
+  },
+  "description": {
+    "en": "From Fairuz to the Cedars: songs, dabke, football, food and every corner of the map.",
+    "fr": "De Fairouz aux Cèdres : chansons, dabké, foot, bonne bouffe et tous les coins du pays.",
+    "ar": "من فيروز لرجال الأرز: غناني، دبكة، فوتبول، أكل طيّب وكل زاوية من لبنان.",
+    "es": "De Fairuz a los Cedros: canciones, dabke, fútbol, buena mesa y cada rincón del país."
+  },
+  "domain": "lebanon",
+  "topics": [
+    "music",
+    "dance",
+    "football",
+    "geography",
+    "history",
+    "culture",
+    "cinema-tv",
+    "sports",
+    "food",
+    "celebrities",
+    "nature"
+  ],
+  "featuredTopics": [
+    "music",
+    "dance",
+    "football"
+  ],
+  "stars": 2,
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "reviewedBy": [],
+  "questions": [
+    {
+      "id": "q001",
+      "type": "mc4",
+      "text": "¿Cuál es la capital del Líbano?",
+      "options": [
+        "Trípoli",
+        "Sidón",
+        "Beirut",
+        "Biblos"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
+      "region": "beirut",
+      "explain": "Beirut se asoma al Mediterráneo sobre un cabo, como si quisiera mejores vistas al mar.",
+      "source": "[VERIFY] trivial; any encyclopedia (Britannica: Beirut)"
+    },
+    {
+      "id": "q002",
+      "type": "mc4",
+      "text": "¿Cuál es la cumbre más alta del Líbano?",
+      "options": [
+        "Qornet es-Saouda",
+        "Monte Sannine",
+        "Jabal Barouk",
+        "Jabal Knaisseh"
+      ],
+      "answer": 0,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "north",
+      "explain": "Se eleva a unos 3088 m, sobre el valle de la Qadisha, en el norte.",
+      "source": "[VERIFY] Britannica 'Qurnat al-Sawdāʾ' (name, ~3,088 m, location above Qadisha)"
+    },
+    {
+      "id": "q003",
+      "type": "mc4",
+      "text": "¿Cuál es el río más largo que discurre íntegramente por el Líbano?",
+      "options": [
+        "Nahr Ibrahim",
+        "El Awali",
+        "Nahr el-Kalb",
+        "El Litani"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "bekaa",
+      "explain": "Nace en la Bekaa, cerca de Baalbek.",
+      "source": "[VERIFY] Britannica 'Līṭānī River' (longest entirely within Lebanon; source near Baalbek)"
+    },
+    {
+      "id": "q004",
+      "type": "mc4",
+      "text": "¿Cuál es el nombre árabe de la antigua ciudad de Biblos?",
+      "options": [
+        "Yunieh",
+        "Jbeil",
+        "Batrún",
+        "Amchit"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 1,
+      "region": "mount-lebanon",
+      "explain": "Misma ciudad, dos nombres: los griegos decían Biblos; en el puerto todos dicen Jbeil.",
+      "source": "[VERIFY] UNESCO WHC 'Byblos' (Byblos = Jbeil)"
+    },
+    {
+      "id": "q005",
+      "type": "mc4",
+      "text": "¿Qué es la gruta de Jeita?",
+      "options": [
+        "Un templo romano",
+        "Un bosque de cedros",
+        "Un sistema de cuevas calizas",
+        "Una estación de esquí"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 1,
+      "region": "mount-lebanon",
+      "explain": "La cueva inferior se recorre en barca, por un río subterráneo. Sí, un río. Dentro de una montaña.",
+      "source": "[VERIFY] Jeita Grotto official site / Britannica (limestone karst caves; lower grotto by boat)"
+    },
+    {
+      "id": "q006",
+      "type": "mc4",
+      "text": "¿Frente a qué zona de Beirut se alzan las famosas Rocas de las Palomas?",
+      "options": [
+        "Raouché",
+        "Achrafieh",
+        "Hamra",
+        "Gemmayzeh"
+      ],
+      "answer": 0,
+      "topic": "geography",
+      "difficulty": 1,
+      "region": "beirut",
+      "explain": "El rincón favorito del paseo marítimo para ver el atardecer… y para hacerse selfis.",
+      "source": "[VERIFY] Britannica / Lebanon Ministry of Tourism (Pigeon Rocks off Raouché)"
+    },
+    {
+      "id": "q007",
+      "type": "mc4",
+      "text": "¿Qué ciudad es conocida como «la novia de la Bekaa»?",
+      "options": [
+        "Baalbek",
+        "Chtaura",
+        "Hermel",
+        "Zahlé"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "bekaa",
+      "explain": "La cruza el río Berdawni, con restaurantes al aire libre y mesas llenas hasta arriba.",
+      "source": "[VERIFY] Zahlé municipality / Britannica (nickname 'Bride of the Bekaa'; Berdawni river)"
+    },
+    {
+      "id": "q008",
+      "type": "mc4",
+      "text": "¿Cerca de qué localidad está el antiguo bosque de los «Cedros de Dios»?",
+      "options": [
+        "Zahlé",
+        "Bsharri",
+        "Jezzine",
+        "Tiro"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "north",
+      "explain": "Junto con el valle de la Qadisha, es Patrimonio Mundial de la UNESCO.",
+      "source": "[VERIFY] UNESCO WHC 'Ouadi Qadisha and the Forest of the Cedars of God' (near Bsharri)"
+    },
+    {
+      "id": "q009",
+      "type": "tf",
+      "text": "El río Litani desemboca en Siria.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "south",
+      "explain": "No se escapa ni una gota: el Litani va de la Bekaa al mar, justo al norte de Tiro.",
+      "source": "[VERIFY] Britannica 'Līṭānī River' (course; mouth at Qasimiyeh, north of Tyre)"
+    },
+    {
+      "id": "q010",
+      "type": "mc4",
+      "text": "¿Cuál de estas estaciones de esquí está en el Líbano?",
+      "options": [
+        "Courchevel",
+        "Zermatt",
+        "Mzaar Kfardebian",
+        "Cortina"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 1,
+      "region": "mount-lebanon",
+      "explain": "El orgullo local: esquiar por la mañana y bañarse en el mar por la tarde.",
+      "source": "[VERIFY] Mzaar Kfardebian official site (location in Keserwan, Lebanon)"
+    },
+    {
+      "id": "q011",
+      "type": "mc4",
+      "text": "Los fenicios son famosos por difundir…",
+      "options": [
+        "un alfabeto",
+        "el papel",
+        "la rueda",
+        "la pólvora"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "Cada mensaje que mandas se lo debes a ellos: de ahí salieron el alfabeto griego y luego el latino.",
+      "source": "[VERIFY] Britannica 'Phoenician alphabet' (ancestor of Greek, then Latin)"
+    },
+    {
+      "id": "q012",
+      "type": "mc4",
+      "text": "El Día de la Independencia del Líbano se celebra el…",
+      "options": [
+        "10 de marzo",
+        "1 de mayo",
+        "31 de agosto",
+        "22 de noviembre"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "Se remonta a 1943, y todo el país tiene el día libre.",
+      "source": "[VERIFY] Lebanese government / Britannica (Independence Day 22 November); reviewer: distractor dates neutral"
+    },
+    {
+      "id": "q013",
+      "type": "mc4",
+      "text": "¿En tiempos de qué imperio se construyeron los grandes templos de Baalbek?",
+      "options": [
+        "Otomano",
+        "Romano",
+        "Persa",
+        "Mongol"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 1,
+      "region": "bekaa",
+      "explain": "Los romanos llamaban a la ciudad Heliópolis, «la ciudad del sol».",
+      "source": "[VERIFY] UNESCO WHC 'Baalbek' (Roman temples; Heliopolis)"
+    },
+    {
+      "id": "q014",
+      "type": "mc4",
+      "text": "¿El templo de qué dios, en Baalbek, es uno de los templos romanos mejor conservados del mundo?",
+      "options": [
+        "Marte",
+        "Neptuno",
+        "Baco",
+        "Apolo"
+      ],
+      "answer": 2,
+      "topic": "history",
+      "difficulty": 3,
+      "region": "bekaa",
+      "explain": "Se alza junto a las seis columnas gigantes que quedan del templo de Júpiter.",
+      "source": "[VERIFY] UNESCO WHC 'Baalbek' / Britannica (Temple of Bacchus preservation; beside the Temple of Jupiter columns)"
+    },
+    {
+      "id": "q015",
+      "type": "mc4",
+      "text": "¿Por qué tinte precioso era famosa la antigua Tiro?",
+      "options": [
+        "La púrpura",
+        "El azul índigo",
+        "El amarillo azafrán",
+        "El verde esmeralda"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "region": "south",
+      "explain": "Salía de caracolas de múrice y costaba tanto que la púrpura se volvió el color de los emperadores.",
+      "source": "[VERIFY] Britannica 'Tyrian purple' (murex sea snails; imperial/royal purple)"
+    },
+    {
+      "id": "q016",
+      "type": "tf",
+      "text": "Biblos se considera una de las ciudades habitadas sin interrupción más antiguas del mundo.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 2,
+      "region": "mount-lebanon",
+      "explain": "La UNESCO señala restos de asentamientos allí desde el Neolítico.",
+      "source": "[VERIFY] UNESCO WHC 'Byblos' ('continuously inhabited since Neolithic times')"
+    },
+    {
+      "id": "q017",
+      "type": "mc4",
+      "text": "¿Quién escribió «El profeta»?",
+      "options": [
+        "Mijaíl Naimy",
+        "Amin Maalouf",
+        "Amín Rihani",
+        "Khalil Gibran"
+      ],
+      "answer": 3,
+      "topic": "culture",
+      "difficulty": 1,
+      "explain": "Publicado en 1923, se ha traducido a decenas de idiomas.",
+      "source": "[VERIFY] Britannica 'Khalil Gibran' (The Prophet, 1923; translations claim)"
+    },
+    {
+      "id": "q018",
+      "type": "mc4",
+      "text": "¿En qué localidad nació Khalil Gibran?",
+      "options": [
+        "Zahlé",
+        "Bsharri",
+        "Batrún",
+        "Deir el-Qamar"
+      ],
+      "answer": 1,
+      "topic": "culture",
+      "difficulty": 2,
+      "region": "north",
+      "explain": "Un museo en Bsharri guarda sus cuadros, y allí descansa.",
+      "source": "[VERIFY] Gibran Museum, Bsharri (birthplace; museum and resting place)"
+    },
+    {
+      "id": "q019",
+      "type": "mc4",
+      "text": "¿Por qué novela ganó Amin Maalouf el premio Goncourt?",
+      "options": [
+        "León el Africano",
+        "Samarcanda",
+        "La roca de Tanios",
+        "Los jardines de luz"
+      ],
+      "answer": 2,
+      "topic": "culture",
+      "difficulty": 3,
+      "explain": "Lo ganó en 1993. En 2023 se convirtió en secretario perpetuo de la Academia Francesa.",
+      "source": "[VERIFY] Académie Goncourt laureates (1993, Le Rocher de Tanios); Académie française (Maalouf, secrétaire perpétuel 2023)"
+    },
+    {
+      "id": "q020",
+      "type": "mc4",
+      "text": "En el Líbano, ¿quién es «Teta»?",
+      "options": [
+        "La abuela",
+        "La tía",
+        "La vecina",
+        "El bebé"
+      ],
+      "answer": 0,
+      "topic": "culture",
+      "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "¿Y el abuelo? «Jeddo». Los dos te dirán que has adelgazado y que comas algo.",
+      "source": "[VERIFY] common Lebanese usage (reviewer)"
+    },
+    {
+      "id": "q021",
+      "type": "mc4",
+      "text": "¿Cómo llaman los libaneses al backgammon?",
+      "options": [
+        "Shatranj",
+        "Dama",
+        "Trix",
+        "Tawleh"
+      ],
+      "answer": 3,
+      "topic": "culture",
+      "difficulty": 1,
+      "explain": "Un seis y un cinco tienen nombre propio: «shesh besh».",
+      "source": "[VERIFY] tawleh = backgammon; 'shesh besh' = a roll of six and five (Persian/Turkish numbers)"
+    },
+    {
+      "id": "q022",
+      "type": "tf",
+      "text": "Un saludo libanés clásico mezcla tres idiomas: «Hi, kifak, ça va?»",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 0,
+      "topic": "culture",
+      "difficulty": 1,
+      "explain": "Puntos extra si la frase termina con «merci, yalla bye».",
+      "source": "[VERIFY] widely cited Lebanese code-switching phrase (keep as culture, not a statistic)"
+    },
+    {
+      "id": "q023",
+      "type": "mc4",
+      "text": "¿Qué es el «zajal» libanés?",
+      "options": [
+        "Un tipo de pan",
+        "Poesía cantada e improvisada",
+        "Un baile de boda",
+        "Un juego de cartas"
+      ],
+      "answer": 1,
+      "topic": "culture",
+      "difficulty": 2,
+      "explain": "El zajal libanés figura en la lista del patrimonio inmaterial de la UNESCO.",
+      "source": "[VERIFY] UNESCO ICH 'Al-Zajal, recited or sung poetry' (Lebanon, 2014)"
+    },
+    {
+      "id": "q024",
+      "type": "tf",
+      "text": "El Festival Internacional de Baalbek, en los templos romanos, se fundó en los años cincuenta.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 0,
+      "topic": "culture",
+      "difficulty": 3,
+      "region": "bekaa",
+      "explain": "Fairuz y los hermanos Rahbani actuaron allí desde sus primeros años.",
+      "source": "[VERIFY] Baalbeck International Festival official site (founded 1956; early Rahbani/Fairuz nights)"
+    },
+    {
+      "id": "q025",
+      "type": "mc4",
+      "text": "¿Qué actor de Hollywood nació en Beirut?",
+      "options": [
+        "Brad Pitt",
+        "Tom Hanks",
+        "Keanu Reeves",
+        "Johnny Depp"
+      ],
+      "answer": 2,
+      "topic": "cinema-tv",
+      "difficulty": 2,
+      "explain": "Su familia se mudó cuando era pequeño y creció sobre todo en Toronto. Cuenta igual.",
+      "source": "[VERIFY] Britannica 'Keanu Reeves' (born Beirut 1964; raised mainly in Toronto)"
+    },
+    {
+      "id": "q026",
+      "type": "mc4",
+      "text": "¿Cuál es el nombre real de Fairuz?",
+      "options": [
+        "Nouhad Haddad",
+        "Jeanette Feghali",
+        "Majida El Roumi",
+        "Samira Tawfik"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "Jeanette Feghali es el nombre real de Sabah.",
+      "source": "[VERIFY] Britannica 'Fairuz' (Nouhad Haddad); Britannica 'Sabah' (Jeanette Feghali)"
+    },
+    {
+      "id": "q027",
+      "type": "mc4",
+      "text": "Los colaboradores más famosos de Fairuz fueron…",
+      "options": [
+        "los Gipsy Kings",
+        "los Jackson 5",
+        "los Bee Gees",
+        "los hermanos Rahbani"
+      ],
+      "answer": 3,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "Assi Rahbani fue también su marido. Los Bee Gees estaban ocupados.",
+      "source": "[VERIFY] Britannica 'Fairuz' (Assi and Mansour Rahbani; married Assi)"
+    },
+    {
+      "id": "q028",
+      "type": "mc4",
+      "text": "¿La canción «Li Beirut» de Fairuz usa la melodía de qué obra clásica?",
+      "options": [
+        "El Bolero",
+        "El Concierto de Aranjuez",
+        "Para Elisa",
+        "Las cuatro estaciones"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "El concierto es del compositor español Joaquín Rodrigo.",
+      "source": "[VERIFY] song credits 'Li Beirut' (melody: Rodrigo, Concierto de Aranjuez, 2nd mvt)"
+    },
+    {
+      "id": "q029",
+      "type": "mc4",
+      "text": "¿Qué cantante legendaria tenía el apodo de «Al-Shahrourah» (el mirlo)?",
+      "options": [
+        "Fairuz",
+        "Nancy Ajram",
+        "Sabah",
+        "Elissa"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "También protagonizó decenas de películas egipcias y libanesas.",
+      "source": "[VERIFY] Britannica 'Sabah' (nickname al-Shahrourah; film career)"
+    },
+    {
+      "id": "q030",
+      "type": "mc4",
+      "text": "¿Qué instrumento toca la estrella libanesa-francesa Ibrahim Maalouf?",
+      "options": [
+        "La trompeta",
+        "El laúd árabe",
+        "El piano",
+        "El violín"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "Toca una trompeta de cuartos de tono que permite las escalas árabes.",
+      "source": "[VERIFY] ibrahimmaalouf.com bio (trumpet; quarter-tone trumpet)"
+    },
+    {
+      "id": "q031",
+      "type": "mc4",
+      "text": "¿Qué estrella del pop nacida en Beirut triunfó con «Grace Kelly»?",
+      "options": [
+        "Massari",
+        "Ragheb Alama",
+        "Wael Kfoury",
+        "Mika"
+      ],
+      "answer": 3,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "De niño se mudó a París y después a Londres.",
+      "source": "[VERIFY] Britannica / official bio 'Mika' (born Beirut 1983; Paris then London; 'Grace Kelly' 2007)"
+    },
+    {
+      "id": "q032",
+      "type": "mc4",
+      "text": "¿Qué es un oud?",
+      "options": [
+        "Un tambor",
+        "Un instrumento de cuerda sin trastes",
+        "Una flauta",
+        "Un paso de baile"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "El laúd europeo le debe su nombre.",
+      "source": "[VERIFY] Britannica 'ʿūd' (fretless; name 'the wood'; root of the word 'lute')"
+    },
+    {
+      "id": "q033",
+      "type": "mc4",
+      "text": "¿Cuál de estas canciones fue un éxito de Nancy Ajram en los 2000?",
+      "options": [
+        "Tamally Maak",
+        "Ya Rayah",
+        "Ah W Noss",
+        "Didi"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "Salió en 2004 y sonó todo el verano, hasta en el coche de tu tía.",
+      "source": "[VERIFY] album credits 'Ah W Noss' (Nancy Ajram, 2004); distractors by other artists"
+    },
+    {
+      "id": "q034",
+      "type": "mc4",
+      "text": "¿Qué es el dabke?",
+      "options": [
+        "Un baile folclórico en fila",
+        "Una salsa picante",
+        "Un juego de mesa",
+        "Un tipo de tambor"
+      ],
+      "answer": 0,
+      "topic": "dance",
+      "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "Su nombre viene del zapateo contra el suelo.",
+      "source": "[VERIFY] trivial; Britannica 'dabke' (name linked to stamping)"
+    },
+    {
+      "id": "q035",
+      "type": "mc4",
+      "text": "Quien encabeza la fila del dabke suele agitar…",
+      "options": [
+        "un abanico",
+        "una bandera",
+        "una espada",
+        "un pañuelo"
+      ],
+      "answer": 3,
+      "topic": "dance",
+      "difficulty": 2,
+      "explain": "El que dirige improvisa pasos mientras la fila mantiene el ritmo base.",
+      "source": "[VERIFY] folk-dance references (handkerchief/mandil of the line leader); reviewer: «محرمة»"
+    },
+    {
+      "id": "q036",
+      "type": "mc4",
+      "text": "¿Qué compañía de danza libanesa es famosa por mezclar el dabke con la danza moderna?",
+      "options": [
+        "El Bolshói",
+        "Caracalla",
+        "Alvin Ailey",
+        "Riverdance"
+      ],
+      "answer": 1,
+      "topic": "dance",
+      "difficulty": 3,
+      "explain": "La fundó Abdel-Halim Caracalla.",
+      "source": "[VERIFY] Caracalla Dance Theatre official site (founder Abdel-Halim Caracalla)"
+    },
+    {
+      "id": "q037",
+      "type": "mc4",
+      "text": "¿Qué instrumento lleva tradicionalmente la música del dabke en los pueblos?",
+      "options": [
+        "El arpa",
+        "La gaita",
+        "El mijwiz (flauta doble)",
+        "El acordeón"
+      ],
+      "answer": 2,
+      "topic": "dance",
+      "difficulty": 2,
+      "explain": "Se respira por la nariz mientras se sopla, así el sonido nunca se corta.",
+      "source": "[VERIFY] ethnomusicology refs on the mijwiz (dabke; circular breathing); AR term for bagpipe [native review]"
+    },
+    {
+      "id": "q038",
+      "type": "tf",
+      "text": "El dabke se baila tradicionalmente en solitario: un bailarín, sin fila.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 1,
+      "topic": "dance",
+      "difficulty": 1,
+      "explain": "Es una fila o un círculo, de la mano o por los hombros. Nadie baila dabke solo.",
+      "source": "[VERIFY] trivial"
+    },
+    {
+      "id": "q039",
+      "type": "mc4",
+      "text": "En una boda libanesa, el cortejo alegre de tambores, cantos y bailes que recibe a los novios es la…",
+      "options": [
+        "zaffeh",
+        "mawwal",
+        "tarab",
+        "dabke"
+      ],
+      "answer": 0,
+      "topic": "dance",
+      "difficulty": 2,
+      "explain": "Los invitados suelen añadir la zalghouta, el ululato de alegría.",
+      "source": "[VERIFY] wedding-custom references (zaffeh; zalghouta = ululation)"
+    },
+    {
+      "id": "q040",
+      "type": "mc4",
+      "text": "¿Cuál es el apodo de la selección libanesa de fútbol?",
+      "options": [
+        "Los Halcones",
+        "Los Leones",
+        "Las Águilas",
+        "Los Cedros"
+      ],
+      "answer": 3,
+      "topic": "football",
+      "difficulty": 2,
+      "explain": "El cedro también ocupa el centro de la bandera nacional.",
+      "source": "[VERIFY] FIFA / Lebanese FA (team nickname; AR «رجال الأرز»)"
+    },
+    {
+      "id": "q041",
+      "type": "mc4",
+      "text": "¿En qué año fue el Líbano anfitrión de la Copa Asiática?",
+      "options": [
+        "1996",
+        "2000",
+        "2004",
+        "2011"
+      ],
+      "answer": 1,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "Japón ganó esa edición.",
+      "source": "[VERIFY] AFC 'AFC Asian Cup 2000' (host Lebanon; winner Japan)"
+    },
+    {
+      "id": "q042",
+      "type": "mc4",
+      "text": "¿En la liga de qué país jugó el centrocampista libanés Roda Antar?",
+      "options": [
+        "España",
+        "Italia",
+        "Alemania",
+        "Inglaterra"
+      ],
+      "answer": 2,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "Jugó en el Hamburgo, el Friburgo y el Colonia.",
+      "source": "[VERIFY] Transfermarkt / Kicker 'Roda Antar' (Hamburger SV, SC Freiburg, 1. FC Köln)"
+    },
+    {
+      "id": "q043",
+      "type": "mc4",
+      "text": "¿En qué deporte ha jugado la selección libanesa varios Mundiales?",
+      "options": [
+        "Baloncesto",
+        "Hockey sobre hielo",
+        "Béisbol",
+        "Críquet"
+      ],
+      "answer": 0,
+      "topic": "sports",
+      "difficulty": 2,
+      "explain": "El Líbano también acogió la Copa Asiática FIBA en 2017.",
+      "source": "[VERIFY] FIBA archive (World Cup 2002, 2006, 2010, 2023; FIBA Asia Cup 2017 hosted by Lebanon)"
+    },
+    {
+      "id": "q044",
+      "type": "mc4",
+      "text": "¿Qué club ha ganado más ligas libanesas?",
+      "options": [
+        "Nejmeh",
+        "Al-Ahed",
+        "Racing Beirut",
+        "Al-Ansar"
+      ],
+      "answer": 3,
+      "topic": "football",
+      "difficulty": 2,
+      "explain": "Al-Ansar llegó a encadenar once ligas seguidas.",
+      "source": "[VERIFY] RSSSF 'Lebanon - List of Champions' (record holder Al-Ansar; 11 straight titles from 1988)"
+    },
+    {
+      "id": "q045",
+      "type": "mc4",
+      "text": "¿Qué club libanés ganó la Copa AFC en 2019?",
+      "options": [
+        "Nejmeh",
+        "Al-Ahed",
+        "Al-Ansar",
+        "Safa"
+      ],
+      "answer": 1,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "Ganó la final por 1-0.",
+      "source": "[VERIFY] AFC 'AFC Cup 2019 final' (Al-Ahed 1-0 April 25)"
+    },
+    {
+      "id": "q046",
+      "type": "mc4",
+      "text": "¿Para qué edición se clasificó el Líbano por primera vez a la Copa Asiática vía eliminatorias (no como anfitrión)?",
+      "options": [
+        "2007",
+        "2011",
+        "2019",
+        "2015"
+      ],
+      "answer": 2,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "Ese torneo se jugó en los Emiratos Árabes Unidos.",
+      "source": "[VERIFY] AFC 'AFC Asian Cup 2019' (Lebanon's first qualification via qualifiers; hosted by UAE)"
+    },
+    {
+      "id": "q047",
+      "type": "mc4",
+      "text": "¿Cuál es el ingrediente principal del tabulé libanés?",
+      "options": [
+        "El perejil",
+        "La lechuga",
+        "El arroz",
+        "Los garbanzos"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "El bulgur es solo un toque: la estrella es el perejil. ¿Tabulé de cuscús? Mejor ni hablar.",
+      "source": "[VERIFY] cookbook/encyclopedia 'tabbouleh' (parsley-based Lebanese version)"
+    },
+    {
+      "id": "q048",
+      "type": "mc4",
+      "text": "¿Qué es el toum?",
+      "options": [
+        "Una galleta de sésamo",
+        "Una sopa de lentejas",
+        "Una bebida de yogur",
+        "Una salsa de ajo"
+      ],
+      "answer": 3,
+      "topic": "food",
+      "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "Ajo, aceite, limón, sal y ni un huevo. Tu aliento lo recordará mañana.",
+      "source": "[VERIFY] cookbook refs 'toum' (garlic, oil, lemon, salt; no egg)"
+    },
+    {
+      "id": "q049",
+      "type": "mc4",
+      "text": "¿Qué le da al bizcocho sfouf su color amarillo?",
+      "options": [
+        "El azafrán",
+        "La cúrcuma",
+        "Las yemas de huevo",
+        "La ralladura de limón"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "Es un bizcocho de sémola, a menudo con piñones o almendras.",
+      "source": "[VERIFY] cookbook refs 'sfouf' (turmeric, semolina; AR «عقدة صفرا»)"
+    },
+    {
+      "id": "q050",
+      "type": "mc4",
+      "text": "¿Cómo se sirve el kibbeh nayyeh?",
+      "options": [
+        "Frito",
+        "A la parrilla",
+        "Crudo",
+        "Al horno"
+      ],
+      "answer": 2,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "Se acompaña de menta fresca, cebolla y un chorrito de aceite de oliva.",
+      "source": "[VERIFY] cookbook refs 'kibbeh nayyeh' (raw meat + fine bulgur); AR options differ on purpose (name says 'raw')"
+    },
+    {
+      "id": "q051",
+      "type": "mc4",
+      "text": "¿Qué ensalada lleva pan tostado o frito crujiente por encima?",
+      "options": [
+        "Fattoush",
+        "Tabulé",
+        "Mutabal",
+        "Hummus"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "El zumaque da a su aliño un toque ácido y rojizo.",
+      "source": "[VERIFY] trivial; cookbook refs 'fattoush' (sumac dressing)"
+    },
+    {
+      "id": "q052",
+      "type": "mc4",
+      "text": "¿Quién dirigió las películas «Caramel» y «Cafarnaúm»?",
+      "options": [
+        "Ziad Doueiri",
+        "Maroun Baghdadi",
+        "Philippe Aractingi",
+        "Nadine Labaki"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 2,
+      "explain": "También actúa en sus propias películas.",
+      "source": "[VERIFY] IMDb / Britannica 'Nadine Labaki' (director and actress of Caramel, Capernaum)"
+    },
+    {
+      "id": "q053",
+      "type": "mc4",
+      "text": "¿Qué premio ganó «Cafarnaúm» en el Festival de Cannes de 2018?",
+      "options": [
+        "La Palma de Oro",
+        "El Premio del Jurado",
+        "Mejor actor",
+        "La Cámara de Oro"
+      ],
+      "answer": 1,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "Al año siguiente fue la candidata del Líbano a los Óscar.",
+      "source": "[VERIFY] Festival de Cannes palmarès 2018 (Prix du jury: Capharnaüm)"
+    },
+    {
+      "id": "q054",
+      "type": "mc4",
+      "text": "¿Qué estrella de Hollywood tiene padre de origen libanés?",
+      "options": [
+        "Penélope Cruz",
+        "Eva Mendes",
+        "Salma Hayek",
+        "Jennifer Lopez"
+      ],
+      "answer": 2,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "La familia de su padre venía del Líbano; ella nació en México.",
+      "source": "[VERIFY] Britannica 'Salma Hayek' (father of Lebanese descent; born Mexico)"
+    },
+    {
+      "id": "q055",
+      "type": "mc4",
+      "text": "¿Qué era «Studio El Fan»?",
+      "options": [
+        "Un concurso de talentos en la tele",
+        "Un estudio de Hollywood",
+        "Una obra cómica",
+        "Un periódico"
+      ],
+      "answer": 0,
+      "topic": "cinema-tv",
+      "difficulty": 2,
+      "explain": "Muchos cantantes libaneses famosos empezaron allí.",
+      "source": "[VERIFY] Télé Liban / press archives 'Studio El Fan' (Simon Asmar, launched 1970s)"
+    },
+    {
+      "id": "q056",
+      "type": "tf",
+      "text": "Las raíces libanesas de Shakira vienen de su madre.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 1,
+      "topic": "celebrities",
+      "difficulty": 1,
+      "explain": "Vienen del lado de su padre.",
+      "source": "[VERIFY] Britannica 'Shakira' (paternal Lebanese ancestry)"
+    },
+    {
+      "id": "q057",
+      "type": "mc4",
+      "text": "El sitio de Tiro, en la lista de la UNESCO, tiene uno de los mayores… romanos",
+      "options": [
+        "faros",
+        "puentes acueducto",
+        "estanques de batallas navales",
+        "hipódromos"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 3,
+      "region": "south",
+      "explain": "Sus gradas acogían a unos 20 000 aficionados a las carreras de carros.",
+      "source": "[VERIFY] UNESCO WHC 'Tyre' (Roman hippodrome; size/seating claim)"
+    },
+    {
+      "id": "q058",
+      "type": "mc4",
+      "text": "¿De qué dinastía data la ciudad en ruinas de Anjar, en la Bekaa?",
+      "options": [
+        "Abasí",
+        "Omeya",
+        "Mameluca",
+        "Otomana"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 3,
+      "region": "bekaa",
+      "explain": "Su cuadrícula de calles, arcos y tiendas se trazó a principios del siglo VIII.",
+      "source": "[VERIFY] UNESCO WHC 'Anjar' (Umayyad, early 8th century); reviewer: dynasty name OK under §11.2"
+    },
+    {
+      "id": "q059",
+      "type": "mc4",
+      "text": "¿Qué palacio del Chouf acoge un famoso festival de verano?",
+      "options": [
+        "El castillo de Moussa",
+        "El palacio Sursock",
+        "Beiteddine",
+        "El castillo de Biblos"
+      ],
+      "answer": 2,
+      "topic": "culture",
+      "difficulty": 2,
+      "region": "mount-lebanon",
+      "explain": "Cada verano sus patios se convierten en un escenario al aire libre.",
+      "source": "[VERIFY] Beiteddine Art Festival official site (Beiteddine palace, Chouf)"
+    },
+    {
+      "id": "q060",
+      "type": "mc4",
+      "text": "La Reserva de la Biosfera del Chouf es famosa por sus…",
+      "options": [
+        "bosques de cedros",
+        "flamencos",
+        "volcanes",
+        "glaciares"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 1,
+      "region": "mount-lebanon",
+      "explain": "Protege cerca de una cuarta parte de los bosques de cedros que quedan en el Líbano.",
+      "source": "[VERIFY] Shouf Biosphere Reserve official site / UNESCO MAB (cedar share claim ~25%)"
+    },
+    {
+      "id": "q061",
+      "type": "mc4",
+      "text": "¿Qué río nace en el norte de la Bekaa y fluye hacia el norte, fuera del Líbano?",
+      "options": [
+        "El Litani",
+        "Nahr Ibrahim",
+        "El Awali",
+        "El Orontes (Assi)"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 3,
+      "region": "bekaa",
+      "explain": "Lo llaman al-Assi, «el rebelde», porque corre hacia el norte.",
+      "source": "[VERIFY] Britannica 'Orontes River' (source near Hermel; flows north; 'al-Assi' = the rebel)"
+    },
+    {
+      "id": "q062",
+      "type": "mc4",
+      "text": "¿De qué ciudad es emblema el Castillo del Mar?",
+      "options": [
+        "Trípoli",
+        "Saida",
+        "Beirut",
+        "Yunieh"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "south",
+      "explain": "Se alza sobre un islote unido a la costa por una calzada de piedra.",
+      "source": "[VERIFY] Lebanon Ministry of Tourism 'Sidon Sea Castle' (island + causeway)"
+    },
+    {
+      "id": "q063",
+      "type": "mc4",
+      "text": "¿Qué significa «yalla»?",
+      "options": [
+        "Gracias",
+        "Buenas noches",
+        "¡Vamos!",
+        "Ten cuidado"
+      ],
+      "answer": 2,
+      "topic": "culture",
+      "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "También cierra cada llamada libanesa: «yalla bye».",
+      "source": "[VERIFY] trivial; common usage ('yalla bye')"
+    },
+    {
+      "id": "q064",
+      "type": "mc4",
+      "text": "El za'atar de la man'oushe mezcla sobre todo tomillo, zumaque y…",
+      "options": [
+        "sésamo",
+        "canela",
+        "cacao",
+        "coco"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "La man'oushe es el desayuno clásico, recién salida del horno.",
+      "source": "[VERIFY] cookbook refs 'za'atar' blend (thyme, sumac, sesame)"
+    },
+    {
+      "id": "q065",
+      "type": "mc4",
+      "text": "¿Qué árbol aparece en el centro de la bandera libanesa?",
+      "options": [
+        "Un olivo",
+        "Una palmera",
+        "Un roble",
+        "Un cedro"
+      ],
+      "answer": 3,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "El cedro verde está sobre una franja blanca, entre dos franjas rojas.",
+      "source": "[VERIFY] Lebanese Constitution art. 5 / Britannica 'flag of Lebanon'"
+    },
+    {
+      "id": "q066",
+      "type": "mc4",
+      "text": "¿Qué pueblo costero del norte es famoso por su limonada fresca?",
+      "options": [
+        "Tiro",
+        "Batrún",
+        "Zahlé",
+        "Aley"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "region": "north",
+      "explain": "Batrún presume también de ser una de las villas más antiguas de la costa.",
+      "source": "[VERIFY] Lebanon Ministry of Tourism / travel guides (Batroun lemonade; 'one of the oldest coastal towns')"
+    },
+    {
+      "id": "q067",
+      "type": "mc4",
+      "text": "¿Por qué artesanía, vendida en pastillas perfumadas, son famosos los viejos zocos de Trípoli?",
+      "options": [
+        "Velas",
+        "Chocolate",
+        "Jabón de aceite de oliva",
+        "Incienso"
+      ],
+      "answer": 2,
+      "topic": "culture",
+      "difficulty": 2,
+      "region": "north",
+      "explain": "Su Khan al-Saboun, el caravasar del jabón, tiene siglos de historia.",
+      "source": "[VERIFY] Khan al-Saboun, Tripoli (soap khan; olive-oil soap craft)"
+    },
+    {
+      "id": "q068",
+      "type": "tf",
+      "text": "Las tortugas marinas anidan en las playas de la Reserva Natural de la Costa de Tiro.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 2,
+      "region": "south",
+      "explain": "Tortugas bobas y verdes entierran allí sus huevos en la arena.",
+      "source": "[VERIFY] Tyre Coast Nature Reserve (loggerhead and green turtle nesting)"
+    },
+    {
+      "id": "q069",
+      "type": "mc4",
+      "text": "¿Qué pueblo de montaña del sur es famoso por su alta cascada?",
+      "options": [
+        "Jezzine",
+        "Batrún",
+        "Chtaura",
+        "Yunieh"
+      ],
+      "answer": 0,
+      "topic": "geography",
+      "difficulty": 2,
+      "region": "south",
+      "explain": "También es conocido por sus cuchillos artesanos con mango en forma de pájaro.",
+      "source": "[VERIFY] Jezzine municipality / Ministry of Tourism (waterfall; bird-handled cutlery craft)"
+    },
+    {
+      "id": "q070",
+      "type": "mc4",
+      "text": "¿Qué monumento antiguo se alza solitario en una colina cerca de Hermel?",
+      "options": [
+        "Un teatro romano",
+        "Un acueducto de piedra",
+        "Una estatua gigante",
+        "Una torre rematada en pirámide"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 3,
+      "region": "bekaa",
+      "explain": "Lo llaman Qamouaa el-Hermel; tiene unos 2000 años.",
+      "source": "[VERIFY] Lebanon DGA / archaeology refs 'Qamouaa el-Hermel' (pyramid-topped tower, ~1st c. BC)"
+    },
+    {
+      "id": "q071",
+      "type": "mc4",
+      "text": "¿De qué cantante es hijo el compositor y dramaturgo Ziad Rahbani?",
+      "options": [
+        "Sabah",
+        "Fairuz",
+        "Majida El Roumi",
+        "Samira Tawfik"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "Su padre fue Assi Rahbani.",
+      "source": "[VERIFY] Britannica 'Fairuz' / 'Ziad Rahbani' (son of Fairuz and Assi Rahbani)"
+    },
+    {
+      "id": "q072",
+      "type": "mc4",
+      "text": "¿Qué cantante era conocido como «la Voz del Líbano»?",
+      "options": [
+        "Melhem Barakat",
+        "Assi El Hallani",
+        "Wadih El Safi",
+        "Ragheb Alama"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "Siguió cantando durante más de sesenta años.",
+      "source": "[VERIFY] press obituaries 2013 'Wadih El Safi' (nickname 'the Voice of Lebanon'; career length)"
+    },
+    {
+      "id": "q073",
+      "type": "mc4",
+      "text": "El Museo Sursock, de arte moderno y en una villa blanca, ¿en qué zona de Beirut está?",
+      "options": [
+        "Achrafieh",
+        "Hamra",
+        "Raouché",
+        "Verdun"
+      ],
+      "answer": 0,
+      "topic": "culture",
+      "difficulty": 2,
+      "region": "beirut",
+      "explain": "La villa mezcla estilo veneciano y otomano.",
+      "source": "[VERIFY] Sursock Museum official site (Achrafieh; modern and contemporary art)"
+    },
+    {
+      "id": "q074",
+      "type": "mc4",
+      "text": "¿Quién es el máximo goleador histórico de la selección libanesa?",
+      "options": [
+        "Roda Antar",
+        "Youssef Mohamad",
+        "Mohamad Ghaddar",
+        "Hassan Maatouk"
+      ],
+      "answer": 3,
+      "topic": "football",
+      "difficulty": 3,
+      "explain": "Se hizo un nombre como delantero y extremo.",
+      "source": "[VERIFY] RSSSF / national-team records (Hassan Maatouk all-time top scorer)"
+    },
+    {
+      "id": "q075",
+      "type": "mc4",
+      "text": "En el desayuno, el knefeh suele servirse dentro de…",
+      "options": [
+        "Un cruasán",
+        "Un pan ka'ak con sésamo",
+        "Un gofre",
+        "Una tortita de arroz"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 1,
+      "explain": "Queso, sémola, almíbar y pan de sésamo: el despertar más dulce.",
+      "source": "[VERIFY] food refs 'knefeh / ka'ak' (Lebanese breakfast)"
+    }
+  ]
+}

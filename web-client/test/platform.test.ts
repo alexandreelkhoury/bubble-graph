@@ -3,7 +3,7 @@
 // (§3.5), the Pass store maths (§4.5), the room socket URL, and the phone import guard (§2.1).
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { REACTIONS } from "@jamaa/shared/room";
 import { GAME_META } from "@jamaa/shared/games/meta";
 import type { RoomPublic, RoomSetup } from "@jamaa/shared/protocol/v2";
@@ -137,6 +137,7 @@ describe("§2.4 cup", () => {
 });
 
 describe("§3.5 settings rows", () => {
+  beforeAll(async () => { const m = await import("../src/lib/meta"); await m.ensureMeta("mishana"); });
   const setup = (packs: number, roleMode: "auto" | "custom" = "auto"): RoomSetup => ({
     gameId: "mishana",
     settings: { ...GAME_META.mishana.settings.defaults, roleMode },
@@ -201,5 +202,15 @@ describe("§2.1 phone bundle guard (web-client/src)", () => {
       }
     }
     expect(bad).toEqual([]);
+  });
+});
+
+describe("lazy per-game metas (phone budget)", () => {
+  it("the fixed world table and every lazily loaded meta equal GAME_META", async () => {
+    const { WORLD_OF, ensureMeta } = await import("../src/lib/meta");
+    for (const id of ["mishana", "bluff", "likely", "trivia"] as const) {
+      expect(WORLD_OF[id]).toBe(GAME_META[id].rules.world);
+      expect(await ensureMeta(id)).toBe(GAME_META[id]);
+    }
   });
 });

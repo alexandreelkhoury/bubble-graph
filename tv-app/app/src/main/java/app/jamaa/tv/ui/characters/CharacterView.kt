@@ -49,8 +49,7 @@ import kotlin.random.Random
  * A player character (JAMAA-PLATFORM §3.7, DESIGN-JAMAA §4): the DESIGN §5.2 glyph body in the player colour with a
  * face drawn in the per-shape face box, one of the 13 expressions, the body motion that doubles it at small sizes, and
  * the reaction burst. Below 40 dp the classic avatar tile is drawn (faces off).
- * JAMAA-GAP: the feature geometry comes from lane D's generated `CharacterPaths.kt` (shared/src/characters, pinned by
- * characters.json) once it exists; until then this draws DESIGN-JAMAA §4.2/§4.3's binding feature table directly.
+ * Geometry: lane D's generated [CharacterPaths] (shared/src/characters, pinned by shared/fixtures/v2/characters.json).
  * [expression] must come from public data only (CharacterRules.expression).
  */
 @Composable
@@ -154,85 +153,35 @@ fun Character(
 private val parsed = HashMap<String, Path>()
 private fun p(d: String): Path = parsed.getOrPut(d) { PathParser().parsePathString(d).toPath() }
 
-/** Draws one expression's features in the 12 × 9 face space (DESIGN-JAMAA §4.2/§4.3). */
+/**
+ * Draws one expression's features from the generated [CharacterPaths] (12 × 9 face space). Eyes follow [look] and the
+ * idle [blink] (ry × 0.15–1 around the eye line); cheeks are cream on ink faces (ink on cream faces), rose for `shy`;
+ * `facepalm` adds the body-coloured hand disc over the eyes (DESIGN-JAMAA §4.3).
+ */
 private fun DrawScope.drawFace(e: Expression, ink: Color, body: Color, blink: Float, look: Offset) {
-    val line = Stroke(width = 0.8f, cap = StrokeCap.Round)
+    val features = CharacterPaths.expressions[e.name.lowercase()] ?: return
     val creamEyes = ink == JamaaColors.Text
-    fun eyes(dx: Float = 0f, dy: Float = 0f, ry: Float = 1.45f) {
-        for (x in floatArrayOf(3.8f, 8.2f)) {
-            val c = Offset(x + dx + look.x, 3.6f + dy + look.y)
-            drawOval(ink, topLeft = Offset(c.x - 1.1f, c.y - ry * blink), size = Size(2.2f, 2f * ry * blink))
-            if (!creamEyes && blink > 0.5f) drawCircle(JamaaColors.Text, 0.35f, Offset(c.x + 0.35f, c.y - 0.45f))
+    for (f in features) {
+        val color = when (f.part) {
+            "cheeks" -> if (e == Expression.SHY) Color(0xFFFF96C5) else if (creamEyes) ink else JamaaColors.Text
+            else -> ink
+        }
+        val path = p(f.d)
+        val draw: DrawScope.() -> Unit = {
+            if (f.style == CharacterPaths.FeatureStyle.FILL) drawPath(path, color, alpha = f.alpha)
+            else drawPath(path, color, alpha = f.alpha, style = Stroke(width = f.strokeWidth, cap = StrokeCap.Round))
+        }
+        if (f.part == "eyes") {
+            withTransform({
+                translate(look.x, look.y)
+                scale(1f, blink, pivot = Offset(6f, 3.6f))
+            }, draw)
+        } else {
+            draw()
         }
     }
-    fun closed() {
-        drawPath(p("M2.7 3.8 Q3.8 2.8 4.9 3.8"), ink, style = line)
-        drawPath(p("M7.1 3.8 Q8.2 2.8 9.3 3.8"), ink, style = line)
-    }
-    fun flatLines() {
-        drawLine(ink, Offset(2.8f, 3.8f), Offset(4.8f, 3.8f), 0.8f, StrokeCap.Round)
-        drawLine(ink, Offset(7.2f, 3.8f), Offset(9.2f, 3.8f), 0.8f, StrokeCap.Round)
-    }
-    fun mouthFlat(w: Float, dx: Float = 0f) = drawLine(ink, Offset(6f - w / 2 + dx, 6.8f), Offset(6f + w / 2 + dx, 6.8f), 0.8f, StrokeCap.Round)
-    fun mouthSmile(w: Float) = drawPath(p("M${6 - w / 2} 6.6 Q6 7.4 ${6 + w / 2} 6.6"), ink, style = line)
-    fun openHalf(w: Float, h: Float) = drawPath(p("M${6 - w / 2} 6.2 A${w / 2} $h 0 0 0 ${6 + w / 2} 6.2 Z"), ink)
-
-    when (e) {
-        Expression.IDLE -> { eyes(); drawPath(p("M4.4 6.6 Q6 7.6 7.6 6.6"), ink, style = line) }
-        Expression.THINK -> {
-            eyes(dx = 0.9f, dy = -0.8f)
-            drawLine(ink, Offset(7.4f, 0.8f), Offset(9.4f, 0.8f), 0.7f, StrokeCap.Round)
-            mouthFlat(2.4f, dx = 0.6f)
-        }
-        Expression.DONE -> { closed(); mouthSmile(2.4f) }
-        Expression.HAPPY -> {
-            drawPath(p("M2.7 4.2 Q3.8 2.6 4.9 4.2"), ink, style = line)
-            drawPath(p("M7.1 4.2 Q8.2 2.6 9.3 4.2"), ink, style = line)
-            openHalf(3.6f, 1.8f)
-        }
-        Expression.LAUGH -> {
-            drawPath(p("M3.1 2.9 L4.5 3.6 L3.1 4.3"), ink, style = line)
-            drawPath(p("M8.9 2.9 L7.5 3.6 L8.9 4.3"), ink, style = line)
-            openHalf(4.4f, 2.4f)
-        }
-        Expression.SMUG -> {
-            for (x in floatArrayOf(3.8f, 8.2f)) drawPath(p("M${x - 1.1f} 3.6 A1.1 1.45 0 0 0 ${x + 1.1f} 3.6 Z"), ink)
-            drawLine(ink, Offset(7.2f, 0.8f), Offset(9.2f, 0.6f), 0.7f, StrokeCap.Round)
-            drawPath(p("M4.6 6.8 Q6.8 7.4 7.8 6.0"), ink, style = line)
-        }
-        Expression.SHOCK -> {
-            for (x in floatArrayOf(3.8f, 8.2f)) {
-                drawCircle(ink, 1.4f, Offset(x, 3.6f), style = Stroke(0.6f))
-                drawCircle(ink, 0.5f, Offset(x + look.x * 0.4f, 3.6f + look.y * 0.4f))
-            }
-            drawOval(ink, topLeft = Offset(5.3f, 5.9f), size = Size(1.4f, 1.8f))
-        }
-        Expression.SAD -> {
-            eyes(ry = 1.1f, dy = 0.3f)
-            drawLine(ink, Offset(3.0f, 1.6f), Offset(4.6f, 1.0f), 0.7f, StrokeCap.Round)
-            drawLine(ink, Offset(9.0f, 1.6f), Offset(7.4f, 1.0f), 0.7f, StrokeCap.Round)
-            drawPath(p("M4.4 7.4 Q6 6.4 7.6 7.4"), ink, style = line)
-        }
-        Expression.FACEPALM -> {
-            flatLines()
-            mouthFlat(2.4f)
-            // The hand disc (body colour, glyph-colour outline) over the eyes.
-            drawCircle(body, 3.4f, Offset(6f, 3.4f))
-            drawCircle(ink, 3.4f, Offset(6f, 3.4f), style = Stroke(0.4f))
-        }
-        Expression.SHY -> {
-            eyes(dy = 0.8f)
-            drawCircle(Color(0xFFFF96C5).copy(alpha = 0.6f), 0.9f, Offset(2.2f, 5.8f))
-            drawCircle(Color(0xFFFF96C5).copy(alpha = 0.6f), 0.9f, Offset(9.8f, 5.8f))
-            mouthSmile(1.6f)
-        }
-        Expression.POINT -> { eyes(); openHalf(2.8f, 1.0f) }
-        Expression.CHEER -> {
-            for (x in floatArrayOf(3.8f, 8.2f)) {
-                drawPath(p("M$x 2.8 L${x + 0.25f} 3.35 L${x + 0.8f} 3.6 L${x + 0.25f} 3.85 L$x 4.4 L${x - 0.25f} 3.85 L${x - 0.8f} 3.6 L${x - 0.25f} 3.35 Z"), ink)
-            }
-            openHalf(4.4f, 2.4f)
-        }
-        Expression.AWAY -> { flatLines(); mouthFlat(1.6f) }
+    if (e == Expression.FACEPALM) {
+        drawCircle(body, 3.4f, Offset(6f, 3.4f))
+        drawCircle(ink, 3.4f, Offset(6f, 3.4f), style = Stroke(0.4f))
     }
 }
