@@ -38,8 +38,8 @@ flowchart LR
 /server        TS: Cloudflare Worker + Room DO (partyserver), wrangler.jsonc, rate limiting
 /web-client    TS: Vite + Preact phone controller, plus /tv-mock (browser TV view for M2)
 /tv-app        Kotlin: Gradle project (AGP 9.4, Compose for TV)
-/word-packs    JSON packs per locale + validator
-/tools         CLI simulator, strings.xml generator, pack linter
+/word-packs    JSON packs per locale + validator (2026-11-08: moved to /content, @jamaa/content, one folder per game)
+/tools         CLI simulator, strings.xml generator, pack linter (now content-lint), rename gate
 /docs          RESEARCH.md, PLAN.md, PRIVACY.md, release checklist
 ```
 
@@ -128,6 +128,8 @@ Transport: WebSocket carrying JSON. Each message is `{v:1, t:"<type>", ...}`. Th
 | **M3** | Android TV app | Runs on the Google TV emulator (API 34+) and on the TCL via `adb connect`. Lobby with QR and code. The full game flow is usable with the D-pad only. Back behaves per TV-DB. No clipping at 48/27 dp margins. Reconnects after Wi-Fi drops. Documented commands: `./gradlew :app:installDebug -PserverUrl=http://<mac-ip>:8787` |
 | **M4** | i18n FR/EN/AR + RTL; word packs; polish | All screens in 3 languages on TV and phone, with RTL mirrored correctly (screenshot tests for AR). Packs: EN ≥150, FR ≥150, AR ≥100 including a Lebanese pack ≥40, all lint-clean. Sounds (with mute), reveal animations, configurable timers, Blank-guess matching with Arabic normalisation |
 | **M5** | Play Store readiness | Banners (localised, name included), icon, TV screenshots, privacy policy page, quality checklist doc with every TV-* item ticked, signed release AAB under a Play App Signing setup, production deploy to Cloudflare with a custom domain, internal-testing track upload instructions |
+
+| **M6** (JAMAA) | The platform and games #2–#4, planned in [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) §6: **P0** rename (done), **P** platform (hub, protocol v2, registry, JAMAA Pass), **G2** Bluff!, **G3** Most Likely, **G4** Quiz Night | JAMAA-PLATFORM §6.3–§6.8. Each game ships by adding its id to `GAMES_ENABLED` |
 
 Each milestone ends with tests and builds green, a short report, and ⛔ a stop for your approval.
 

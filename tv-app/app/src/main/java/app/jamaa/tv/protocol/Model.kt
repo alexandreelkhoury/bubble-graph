@@ -7,7 +7,8 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// Kotlin mirror of shared/src/protocol views (SPEC §5, §9.5). Exact names; S2C JSON never omits keys.
+// Mish Ana! view types (SPEC §5, §9.5), shared by the Mish Ana! package and the components it uses. Exact names;
+// S2C JSON never omits keys. Since protocol v2 they live inside `game.public` (games/mishana/MishanaProtocol.kt).
 
 @Serializable enum class Phase { LOBBY, ROLE_REVEAL, CLUES, VOTING, TIE_BREAK, ELIMINATION, MR_WHITE_GUESS, RESULTS }
 @Serializable enum class Role { CIVILIAN, UNDERCOVER, BLANK }
@@ -49,6 +50,10 @@ import kotlinx.serialization.Serializable
     val points: Points,
 )
 
+/**
+ * A Mish Ana! player as the screens draw it: the room member (name, colour, seat, connected, host) joined with the
+ * game's own player fields (JAMAA-PLATFORM §2.5). Composed on the TV, never on the wire.
+ */
 @Serializable data class PublicPlayer(
     val id: String,
     val name: String,
@@ -92,51 +97,3 @@ import kotlinx.serialization.Serializable
 )
 
 @Serializable data class HistoryEntry(val round: Int, val eliminatedId: String?, val role: Role?, val cause: HistoryCause)
-/** PAYMENTS-SPEC §3.11: `tier` ("free" | "premium") is the final key. Default only for a pre-billing server. */
-@Serializable data class PackInfo(val id: String, val locale: String, val title: LocalizedTitle, val pairCount: Int, val ageRating: String, val tier: String = "free")
-
-/** PAYMENTS-SPEC §3.11: a pack this room may not play. Metadata only: never words, never pair ids. */
-@Serializable data class LockedPackInfo(
-    val id: String,
-    val locale: String,
-    val title: LocalizedTitle,
-    val pairCount: Int,
-    val ageRating: String,
-    val productId: String,
-)
-
-@Serializable data class TvView(
-    val kind: String, // always "tv"
-    val roomCode: String,
-    val joinUrl: String,
-    val phase: Phase,
-    val gameNumber: Int,
-    val round: Int,
-    val settings: Settings,
-    val players: List<PublicPlayer>,
-    val hostPlayerId: String?,
-    val roleCounts: RoleCounts?,
-    val canStart: Boolean,
-    val startBlocker: String?,
-    val speakingOrder: List<String>,
-    val currentSpeakerId: String?,
-    val revote: Boolean,
-    val tieCandidates: List<String>,
-    val deadline: DeadlineView?,
-    val votesCast: Int,
-    val votesExpected: Int,
-    val lastVote: VoteSummary?,
-    val eliminated: Eliminated?,
-    val guess: GuessView?,
-    val result: ResultView?,
-    val history: List<HistoryEntry>,
-    val availablePacks: List<PackInfo>,
-    // PAYMENTS-SPEC §3.11, appended after availablePacks in this order. Defaults only so a pre-billing server's
-    // view still decodes in production (free, nothing locked); fixtures always carry every key.
-    val premium: Boolean = false,
-    val lockedPacks: List<LockedPackInfo> = emptyList(),
-    val tvBusy: Boolean = false,
-    val poolExhausted: Boolean = false,
-    /** Word languages with at least one shipped pack; empty (an older server) = every language. */
-    val wordLocales: List<String> = emptyList(),
-)

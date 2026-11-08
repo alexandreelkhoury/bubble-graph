@@ -66,7 +66,7 @@ describe("no secret reaches the logs", () => {
     }) as typeof fetch;
     const api = new GoogleClient(sa, "app.jamaa.tv", { fetch: fetchImpl, now: () => NOW, sleep: async () => undefined });
     const res = await verify(
-      { installId: INSTALL_A, purchases: [{ productId: "premium", purchaseToken: TOKEN_150 }, { productId: "premium", purchaseToken: TOKEN_HEX }, { productId: "pack_en_food_01", purchaseToken: TOKEN_150 + "p" }] },
+      { installId: INSTALL_A, purchases: [{ productId: "jamaa_pass", purchaseToken: TOKEN_150 }, { productId: "jamaa_pass", purchaseToken: TOKEN_HEX }, { productId: "pack_en_food_01", purchaseToken: TOKEN_150 + "p" }] },
       store, api, await importFakeSigner(), "google", () => NOW,
     );
     expect(res.status).toBe(200);
@@ -91,7 +91,7 @@ describe("no secret reaches the logs", () => {
     await call(TOKEN_150, "1");
     await call(TOKEN_HEX, "2");
     await call(TOKEN_150, "3", `Bearer ${await oidcToken(k, NOW, { aud: TOKEN_HEX })}`);
-    await ackPurchase(google, store, "sub", "premium", TOKEN_150, await hashOf(TOKEN_150), { timeoutMs: 1000 });
+    await ackPurchase(google, store, "sub", "jamaa_pass", TOKEN_150, await hashOf(TOKEN_150), { timeoutMs: 1000 });
     const ph = await hashOf(TOKEN_HEX);
     await core.applyPurchase({ tokenHash: ph, kind: "pack", productId: "pack_en_food_01", n: normalizeProduct(product({ purchaseCompletionTime: new Date(NOW - 49 * 3_600_000).toISOString() }), NOW - 49 * 3_600_000), callerInstallHash: null, rawTokenForAck: TOKEN_HEX, nowMs: NOW - 49 * 3_600_000 });
     google.voidedPages = [{ voidedPurchases: [{ purchaseToken: TOKEN_150, orderId: "GPA.1234-5678" }, { purchaseToken: TOKEN_HEX }] }];

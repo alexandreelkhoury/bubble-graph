@@ -1,5 +1,6 @@
 {
   "id": "lb-food-01",
+  "game": "mishana",
   "version": 3,
   "locale": "ar-LB",
   "script": "Arab",
@@ -13,6 +14,9 @@
     "food",
     "lebanese",
     "hard"
+  ],
+  "topics": [
+    "food"
   ],
   "ageRating": "all",
   "license": "CC-BY-4.0",

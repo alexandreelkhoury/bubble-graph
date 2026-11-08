@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Harness, TV_TOKEN, seqs, strictlyIncreasing } from "./support/fakes";
+import { ALL_TV_GAMES, Harness, TV_TOKEN, seqs, strictlyIncreasing } from "./support/fakes";
 import type { RoomStorage } from "../src/room-core";
 
 describe("RoomCore concurrency", () => {
@@ -20,16 +20,16 @@ describe("RoomCore concurrency", () => {
     const existing = await h.player(0);
     const [tvConn, p1, p2] = await Promise.all([h.connect({ label: "tv" }), h.connect({ label: "p1" }), h.connect({ label: "p2" })]);
     const sends = [
-      h.core.onMessage(tvConn, JSON.stringify({ v: 1, t: "hello", role: "tv", tvToken: TV_TOKEN })),
-      h.core.onMessage(p1, JSON.stringify({ v: 1, t: "hello", role: "player" })),
-      h.core.onMessage(p2, JSON.stringify({ v: 1, t: "hello", role: "player" })),
-      h.core.onMessage(p1, JSON.stringify({ v: 1, t: "join", name: "Alpha", color: "azure", locale: "en" })),
-      h.core.onMessage(p2, JSON.stringify({ v: 1, t: "join", name: "Beta", color: "lemon", locale: "en" })),
-      h.core.onMessage(existing.conn, JSON.stringify({ v: 1, t: "action", a: { type: "UPDATE_SETTINGS", patch: { clueSeconds: 60 } } })),
+      h.core.onMessage(tvConn, JSON.stringify({ v: 2, t: "hello", role: "tv", tvToken: TV_TOKEN, games: ALL_TV_GAMES })),
+      h.core.onMessage(p1, JSON.stringify({ v: 2, t: "hello", role: "player" })),
+      h.core.onMessage(p2, JSON.stringify({ v: 2, t: "hello", role: "player" })),
+      h.core.onMessage(p1, JSON.stringify({ v: 2, t: "join", name: "Alpha", color: "azure", locale: "en" })),
+      h.core.onMessage(p2, JSON.stringify({ v: 2, t: "join", name: "Beta", color: "lemon", locale: "en" })),
+      h.core.onMessage(existing.conn, JSON.stringify({ v: 2, t: "action", a: { type: "SET_CONTENT_LOCALE", locale: "fr" } })),
     ];
     await Promise.all(sends);
-    expect(h.state.players.map((p) => p.name).sort()).toEqual(["Alpha", "Beta", "Player 0"]);
-    expect(h.state.settings.clueSeconds).toBe(60);
+    expect(h.room.members.map((p) => p.name).sort()).toEqual(["Alpha", "Beta", "Player 0"]);
+    expect(h.room.contentLocale).toBe("fr");
     expect(p1.last("welcome")).toBeDefined();
     expect(p2.last("welcome")).toBeDefined();
     for (const c of [tvConn, p1, p2, existing.conn]) {
@@ -37,9 +37,9 @@ describe("RoomCore concurrency", () => {
       expect(strictlyIncreasing(seqs(c))).toBe(true);
     }
     // The last frame everyone saw is the final version.
-    for (const c of [tvConn, p1, p2, existing.conn]) expect(seqs(c).at(-1)).toBe(h.state.version);
+    for (const c of [tvConn, p1, p2, existing.conn]) expect(seqs(c).at(-1)).toBe(h.room.version);
     // Storage matches the cache.
-    expect((await h.storage.get<{ version: number }>("state"))?.version).toBe(h.state.version);
+    expect((await h.storage.get<{ version: number }>("state"))?.version).toBe(h.room.version);
     expect(Object.keys((await h.storage.get<Record<string, unknown>>("sessions")) ?? {})).toHaveLength(3);
   });
 });

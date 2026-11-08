@@ -1,7 +1,8 @@
 // PAYMENTS-SPEC §3.2 / §3.10 / §7.2: the deploy guard.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { billingOn, checkDeployConfig, deployWarnings, missingBillingSecrets, stripJsonc } from "../../scripts/check-deploy.mjs";
+import { GAME_IDS as SHARED_GAME_IDS } from "@jamaa/shared/games/ids";
+import { billingOn, checkDeployConfig, deployWarnings, GAME_IDS, missingBillingSecrets, stripJsonc } from "../../scripts/check-deploy.mjs";
 
 const REAL = readFileSync(new URL("../../wrangler.jsonc", import.meta.url), "utf8");
 
@@ -53,6 +54,18 @@ describe("check-deploy", () => {
     const configured = on.replace('"RTDN_AUDIENCE": ""', '"RTDN_AUDIENCE": "https://x/api/billing/rtdn"')
       .replace('"RTDN_SA_EMAIL": ""', '"RTDN_SA_EMAIL": "a@b"').replace('"RTDN_SUBSCRIPTION": ""', '"RTDN_SUBSCRIPTION": "projects/p/subscriptions/s"');
     expect(deployWarnings(configured)).toEqual([]);
+  });
+
+  it("GAMES_ENABLED: known ids only (JAMAA-PLATFORM §2.6: the runtime ignores unknown ids, a deploy fails on them)", () => {
+    expect(GAME_IDS).toEqual([...SHARED_GAME_IDS]);
+    expect(JSON.parse(stripJsonc(REAL)).vars.GAMES_ENABLED).toBe("mishana");
+    const all = REAL.replace('"GAMES_ENABLED": "mishana"', '"GAMES_ENABLED": "mishana, bluff,likely,trivia"');
+    expect(all).not.toBe(REAL);
+    expect(checkDeployConfig(all)).toEqual([]);
+    expect(checkDeployConfig(REAL.replace('"GAMES_ENABLED": "mishana"', '"GAMES_ENABLED": "mishana,chess"')).join()).toMatch(/GAMES_ENABLED has unknown game id\(s\) chess/);
+    const unset = REAL.replace(' "GAMES_ENABLED": "mishana",', "");
+    expect(unset).not.toBe(REAL);
+    expect(checkDeployConfig(unset)).toEqual([]); // unset → the default
   });
 
   it("JSONC stripping keeps // inside strings and drops trailing commas", () => {

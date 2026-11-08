@@ -1,7 +1,7 @@
 // Sound cues (DESIGN §6.4), pure: which cue a view change, a deadline or a reveal timeline calls for.
 // Mirrored in Kotlin (tv-app game/SoundCues.kt); the files come from tools/gen-sounds.
 import type { DeadlineKind, Role } from "@jamaa/shared/engine";
-import type { TvView } from "@jamaa/shared/protocol";
+import type { TvView } from "../../games/mishana/view";
 
 export const CUE_IDS = [
   "sfx.join", "sfx.leave", "sfx.ready", "sfx.allReady", "sfx.turn", "sfx.tick", "sfx.tickLast", "sfx.timeUp",

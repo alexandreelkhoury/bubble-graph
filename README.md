@@ -1,17 +1,31 @@
 # JAMAA (جماعة)
 
-**JAMAA** ("the gang, the gathering") is a multi-game party platform for **Android TV**, for 3–12 players. The TV is the shared screen. Each player joins on their phone by scanning a QR code; no app install is needed. Available in English, French, Arabic (RTL) and Spanish. The platform design (hub, game registry, protocol v2, JAMAA Pass, content system, build order) is **[docs/JAMAA-PLATFORM.md](docs/JAMAA-PLATFORM.md)**, with the visual spec in [docs/DESIGN-JAMAA.md](docs/DESIGN-JAMAA.md).
+**JAMAA** (Arabic for "the gang, the gathering") is a party-games platform for **Android TV and Google TV**, for 3–12 players. The TV is the shared screen. Each player joins by scanning a QR code with their phone and plays in the phone's browser, so nobody installs anything on a phone. JAMAA has four languages: English, French, Arabic (fully right-to-left) and Spanish.
 
-**Game #1: Mish Ana! (مش أنا!)**, a social-deduction word game. Everyone gets the same secret word, except the **Mole**, who gets none and has to bluff (and gets one last guess at the word if caught). Hosts can also add an optional **Undercover**, who gets a slightly different word without knowing it. Players take turns giving one-word clues, vote someone out, and try to find out who is "not me". Lebanese word packs included. Its engine contract is [docs/SPEC.md](docs/SPEC.md). Games #2–#4 (Bluff the Answer, Who's Most Likely To…, Trivia) are specified in `docs/GAME-*.md` and not built yet.
+One TV session is one **room**. The room opens on a **hub** where the group picks a game. Each game has a short setup ("How to play", players, up to four settings), then one game runs at a time. Players, characters, the host and the night's scores ("Tonight's cup") belong to the room, so the group can move from one game to the next without rejoining.
 
-The rename from "Mish Ana!" to JAMAA (milestone P0, JAMAA-PLATFORM §1) is in progress: some identifiers and docs may still use the old names until every lane has landed it.
+- **Binding platform spec:** [docs/JAMAA-PLATFORM.md](docs/JAMAA-PLATFORM.md) (rename, hub, game registry, protocol v2, JAMAA Pass, content system, lanes and build order). The visual spec is [docs/DESIGN-JAMAA.md](docs/DESIGN-JAMAA.md).
+- **Strategy:** [docs/BLUEPRINT.md](docs/BLUEPRINT.md) (what we copy, what we never copy, pricing, roadmap), based on the evidence in [docs/JACKBOX-STUDY.md](docs/JACKBOX-STUDY.md).
 
-- **TV:** a Kotlin + Jetpack Compose for TV app (`tv-app/`). For development there is also a browser TV mock at `/tv`.
-- **Phones:** a small Preact web controller (`web-client/`), about 53 KB gzip.
-- **Server:** a Cloudflare Worker with one Durable Object per room (`server/`, using partyserver). It is authoritative: it runs the pure game engine from `shared/` and sends each client only its own projection of the state.
-- **JAMAA Pass:** a subscription (`jamaa_pass`, monthly or yearly, 7-day free trial) that unlocks every pack of every game, plus one-time packs, sold on the TV only through Google Play Billing and verified by the server (a Billing Durable Object). Everything is behind `BILLING_ENABLED`. Free rooms get the free starter content; locked content never reaches a free room's clients. See [JAMAA Pass and packs](#jamaa-pass-and-packs-payments).
+## The games
 
-## Quick start (local LAN)
+| # | Game (id) | What it is | Spec | Status |
+|---|---|---|---|---|
+| G1 | **Mish Ana!** «مش أنا!» (`mishana`) | Social deduction with a secret word. Everyone gets the same word except the **Mole**, who gets none and has to bluff. A caught Mole gets one last guess at the word. Hosts can add an optional **Undercover**, who gets a slightly different word and doesn't know it. One-word clues, a vote, and "not me!" from everyone. Word packs in EN / FR / AR (with Lebanese packs) / ES | [SPEC.md](docs/SPEC.md) | **Built and live** (`GAMES_ENABLED="mishana"`). It is being moved onto the platform (milestone P) |
+| G2 | **Bluff!** (`bluff`) | Everyone writes a fake answer to a real prompt (Lebanese proverbs, word meanings, expressions), then votes for the one they think is true. You score for finding the truth and for every player your lie fools. The final round has no true answer | [GAME-BLUFF.md](docs/GAME-BLUFF.md) | Specified. The platform has a stub registered (`enabled: false`); the engine is not built (milestone G2) |
+| G3 | **Most Likely** «مين فينا؟» (`likely`) | "Who's most likely to…?" Everyone votes for a player in the room with one tap. You score for reading the room. Anonymous mode available | [GAME-LIKELY.md](docs/GAME-LIKELY.md) | Specified, stub registered (milestone G3) |
+| G4 | **Quiz Night** «سهرة أسئلة» (`trivia`) | Speed trivia with streaks, played on a colour + shape + letter answer pad. The first quiz is "Lebanon: the big quiz" (`lb-quiz-01`), which is free | [GAME-TRIVIA.md](docs/GAME-TRIVIA.md) | Specified, stub registered (milestone G4) |
+
+Every game is **free to play** with starter content. The display names above are working titles until the name clearance (BLUEPRINT §9 D4). A game goes live when the owner adds its id to `GAMES_ENABLED`, in the order bluff, likely, trivia (JAMAA-PLATFORM §6.2).
+
+## How it is built
+
+- **TV:** a Kotlin + Jetpack Compose for TV app (`tv-app/`, application id `app.jamaa.tv`). For development there is also a browser TV at `/tv`, which works the same way with the keyboard as the remote.
+- **Phones:** a small Preact web controller (`web-client/`), about 53 KB gzip. Each game's screens load lazily.
+- **Server:** a Cloudflare Worker with one Durable Object per room (`server/`, using partyserver; Worker name `play`). The server is authoritative. It runs the pure engines from `shared/` and sends each client only its own view of the state, so secrets never reach the TV or other phones.
+- **JAMAA Pass:** an optional subscription (`jamaa_pass`, monthly or yearly, with a 7-day free trial) that unlocks every pack of every game, current and future. One-time `pack_<family>` packs are also sold. Everything is sold **on the TV only**, through Google Play Billing, and verified by the server. Phones never show a price. Everything is behind `BILLING_ENABLED` (see [Switches](#switches-billing_enabled-and-games_enabled)).
+
+## Quick start (one command, local LAN)
 
 Requirements: Node ≥ 22.12 and pnpm 10.28 (`corepack enable`). Put the computer, the phones and the TV on the same Wi-Fi.
 
@@ -19,14 +33,14 @@ Requirements: Node ≥ 22.12 and pnpm 10.28 (`corepack enable`). Put the compute
 pnpm i && pnpm dev
 ```
 
-`pnpm dev` starts `wrangler dev` (Worker + Room DO, port **8787**) and Vite (phone UI with hot reload, port **5173**). Both listen on `0.0.0.0`. It then prints the URLs to use:
+`pnpm dev` starts `wrangler dev` (Worker + Room DO, port **8787**) and Vite (phone UI with hot reload, port **5173**). Both listen on `0.0.0.0`, and fake billing is on. It then prints the URLs to use:
 
 ```
 TV server URL: http://<lan-ip>:8787   (Android TV: -PserverUrl=http://<lan-ip>:8787)
 Phone/TV-mock: http://<lan-ip>:5173/tv
 ```
 
-Open `http://<lan-ip>:5173/tv` on a laptop or a TV browser to host a room without the Android app. Phones scan the QR code or open `http://<lan-ip>:5173/ABCD`.
+To host a room without the Android app, open `http://<lan-ip>:5173/tv` on a laptop or in a TV browser. Phones scan the QR code or open `http://<lan-ip>:5173/ABCD`.
 
 ### LAN notes
 
@@ -35,18 +49,20 @@ Open `http://<lan-ip>:5173/tv` on a laptop or a TV browser to host a room withou
 - **403 on the WebSocket:** the page was opened through a host name that is not in `ALLOWED_ORIGINS`. `pnpm dev` allows `http://<lan-ip>:5173` and `http://localhost:5173`.
 - **Reset local rooms:** delete `server/.wrangler/state`.
 
-More detail is in [docs/DEV.md](docs/DEV.md).
+More detail: [docs/DEV.md](docs/DEV.md).
 
-## Android TV app
+## Android TV app (`app.jamaa.tv`)
 
-Full guide: **[docs/TV.md](docs/TV.md)**. It covers the Gradle wrapper setup, the emulator, pairing a real TV over Wi-Fi, logs and troubleshooting. The essentials:
+The full guide is **[docs/TV.md](docs/TV.md)**: Gradle wrapper setup, the emulator, pairing a real TV over Wi-Fi, logs and troubleshooting. The essentials:
 
 ```sh
 cd tv-app
 gradle wrapper --gradle-version 9.6.0                     # once (no wrapper jar is committed)
 ./gradlew :app:installDebug -PserverUrl=http://<lan-ip>:8787
-adb uninstall app.mishana.tv                              # once, on test TVs that had the old package
 adb shell am start -n app.jamaa.tv/.MainActivity
+
+# Once, on test TVs that still have a build from before the rename (it is a separate app):
+adb uninstall app.mishana.tv
 
 # Real TV over Wi-Fi
 adb pair <tv-ip>:<pairPort>        # Android TV 13+: Developer options → Wireless debugging → pair with code
@@ -57,93 +73,161 @@ adb connect <tv-ip>:<port>
 ./gradlew :app:installDebug -PserverUrl=http://10.0.2.2:8787
 
 ./gradlew :app:testDebugUnitTest :app:assembleDebug       # CI-style check
+./gradlew :app:bundleRelease                              # Play AAB (needs jamaa.prodServerUrl, see below)
 ```
 
-The arrow keys are the D-pad, Enter is OK and Esc is Back.
+On the emulator and in the `/tv` browser TV, the arrow keys are the D-pad, Enter is OK and Esc is Back. In the browser TV, `i` is the remote's INFO key.
 
-## Repository layout
+## Deploy
 
-```
-shared/          @jamaa/shared: pure game engine (reducer, roles, votes, win, scoring, Arabic-aware guess
-                 normalisation, invariants), zod wire protocol, per-client projections, i18n JSON, protocol fixtures
-server/          @jamaa/server: Cloudflare Worker + Room Durable Object (partyserver), rate limits, tokens
-web-client/      @jamaa/web-client: Preact phone controller + browser TV mock (/tv), Playwright e2e in e2e/
-tv-app/          Android TV app (Kotlin, Compose for TV, OkHttp WebSocket, kotlinx.serialization)
-content/         @jamaa/content: game content packs (content/mishana/: EN / FR / AR (+ Lebanese) / ES word-pair packs)
-tools/
-  dev.mjs        `pnpm dev` (wrangler + vite on the LAN)
-  sim/           headless game simulator (in-process, or over WebSocket against a running server)
-  gen-android-strings/  shared/i18n → tv-app res/values*/strings_generated.xml
-  gen-sounds/    synthesised sound cues → web-client/public/sounds + tv-app res/raw (OGG)
-  content-lint/  content-pack linter (was pack-lint)
-  rename-gate/   `pnpm rename:gate`: the P0 rename acceptance grep (JAMAA-PLATFORM §1.7)
-assets/brand/    JAMAA logo and brand assets (generated by assets/brand/scripts/gen_brand.py)
-assets/games/    per-game art (assets/games/mishana/: the Mish Ana! wordmark and bubble)
-growth/          marketing: the JAMAA site, store listing, videos and ads (see growth/README.md)
-docs/            JAMAA-PLATFORM.md + DESIGN-JAMAA.md (platform, binding), GAME-*.md (games #2–#4), SPEC.md (Mish Ana! engine
-                 contract), DESIGN.md, PAYMENTS-SPEC.md, PLAN.md, RESEARCH.md, MONETIZATION.md, DEV.md, TV.md
-```
+| What | Command | Served at |
+|---|---|---|
+| Game server + phone page (Worker `play`) | `pnpm run deploy`: build, `content-lint --release`, `check-deploy.mjs` (Google billing, fake billing off, `PLAY_PACKAGE_NAME` = `app.jamaa.tv`, `GAMES_ENABLED` lists only known ids), then `wrangler deploy`. Always use `run`, because bare `pnpm deploy` is pnpm's built-in command | `https://play.jamaa.workers.dev` |
+| Site (Worker `www`) | `cd growth/site && npx wrangler deploy` (runs `node build.mjs` first) | `https://www.jamaa.workers.dev` |
+
+The release gate requires at least 40 pairs in each free Mish Ana! starter pack, so `pnpm run deploy` fails on purpose until that is true.
+
+### Production configuration
+
+| What | Where | Value |
+|---|---|---|
+| TV app server (`BuildConfig.SERVER_URL`) | `jamaa.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=` | `https://play.jamaa.workers.dev` (valid once owner step O1 is done). Release builds refuse the `play.example.workers.dev` placeholder and any non-`https://` URL |
+| Phone join URL in the QR code | `JOIN_BASE_URL` in `server/wrangler.jsonc` `vars` | `""` (the origin the TV called). Set `https://<your-domain>` only with a custom domain |
+| Extra browser origins | `ALLOWED_ORIGINS` in `server/wrangler.jsonc` `vars` | `""` (same origin only) |
+| Site origin, browser-version link, Play link | `growth/site/site.config.json` (`origin`, `browserUrl`, `playUrl`, `playStoreLive`) | `https://www.jamaa.workers.dev`, `https://play.jamaa.workers.dev/tv`, `…?id=app.jamaa.tv`, `false` until the Play listing is public |
+
+The phone client has no URL setting: the Worker serves it and it connects back to its own origin. Details: [DEV.md → Production URLs](docs/DEV.md#production-urls), [TV.md → Production server URL](docs/TV.md#production-server-url).
+
+## Switches: `BILLING_ENABLED` and `GAMES_ENABLED`
+
+Both switches are Worker vars in `server/wrangler.jsonc`. Change one and redeploy with `pnpm run deploy`; no app update is needed.
+
+| Var | Default | Effect |
+|---|---|---|
+| `BILLING_ENABLED` | `"0"` | `"0"`: no Pass or pack UI anywhere (TV, phone, `/tv`), `/api/billing/*` and `/api/admin/*` answer 404, crons do nothing, and every room plays the whole catalog. `"1"`: JAMAA Pass and packs are sold on the TV, and free rooms get only the free starter content. The deploy is then refused until the secrets `PLAY_SERVICE_ACCOUNT_JSON` and `ENTITLEMENT_KEYS` exist. Launch steps: [docs/BILLING-LAUNCH.md](docs/BILLING-LAUNCH.md) |
+| `GAMES_ENABLED` | `"mishana"` | Comma list of the live game ids. A room offers `GAMES_ENABLED` ∩ the games enabled in the registry ∩ the games the TV build can draw. Add `bluff`, then `likely`, then `trivia` as each game ships. Unknown ids fail `check-deploy.mjs` |
+
+**When a game is turned on**, also update the README games table, the site and the store listings in the same release ([growth/marketing/play-store/LISTING.md](growth/marketing/play-store/LISTING.md) §0). When billing is turned on, swap in the billing copy from LISTING.md §4, Data safety §1.B and privacy policy Appendix B.
+
+## Owner steps (outside the repo)
+
+These are from JAMAA-PLATFORM §1.6. Only the owner can do them.
+
+| # | Step | Where |
+|---|---|---|
+| O1 | **Rename the Cloudflare workers.dev subdomain `mishana` → `jamaa`.** This changes the URLs of every Worker on the account (`play.jamaa.workers.dev`, `www.jamaa.workers.dev`). **The Worker names `play` and `www` stay as they are**: renaming a Worker would create new Durable Object namespaces and lose the room and Billing DO data. Old `*.mishana.workers.dev` URLs stop working. If `jamaa` is taken, pick another subdomain and change the config points in O3 | Cloudflare dashboard → Workers & Pages → Overview → *Subdomain* → Change (check the label in the current dashboard) |
+| O2 | (Recommended) Attach a custom domain to `play` and `www`. Shorter QR URLs scan better | Cloudflare → Workers → *play* / *www* → Settings → Domains & Routes |
+| O3 | Point the config at the final origins: `tv-app/gradle.properties` `jamaa.prodServerUrl`, `growth/site/site.config.json` `origin` and `browserUrl`, `server/wrangler.jsonc` `JOIN_BASE_URL` (custom domain only) and `RTDN_AUDIENCE` | repo (lane A or E makes the edit; the owner supplies the values) |
+| O4 | Create the Play app **JAMAA**, package `app.jamaa.tv` (Android TV form factor). Leave any `app.mishana.tv` draft unpublished. License testers, service-account access and RTDN are set up again for the new app | Play Console → Create app; [RELEASE-CHECKLIST.md](growth/marketing/play-store/RELEASE-CHECKLIST.md) |
+| O5 | Create the products: subscription `jamaa_pass` with base plans `monthly` and `yearly` and a `trial-7d` offer on each. One-time packs come from the CSV printed by `pnpm --filter @jamaa/server billing:products`. Prices: [MONETIZATION.md §5.1](docs/MONETIZATION.md) | Play Console → Monetize |
+| O6 | Redeploy both Workers (see [Deploy](#deploy)) | terminal |
+| O7 | Delete `growth/marketing/release/mishana-tv-0.1.0-vc1.*` (built with the old package id), then `./gradlew :app:bundleRelease` | repo + terminal |
+| O8 | (Optional) Rename the GitHub repo `bubble-graph` → `jamaa` | GitHub → Settings |
+| O9 | Name clearance for "JAMAA" (Play search, EUIPO/INPI, USPTO, classes 9 and 41), and for the game names (BLUEPRINT §3.10, §9 D4) | IP counsel |
+
+Billing also needs the Google Cloud service account, the RTDN Pub/Sub topic and the Worker secrets: see [PAYMENTS-SPEC §8](docs/PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps).
+
+## JAMAA Pass and packs (payments)
+
+The binding design is [JAMAA-PLATFORM §4](docs/JAMAA-PLATFORM.md), on top of [docs/PAYMENTS-SPEC.md](docs/PAYMENTS-SPEC.md). The decision and the price recommendation are in [docs/MONETIZATION.md](docs/MONETIZATION.md). The server verifies and acknowledges every Google purchase, then gives the TV a signed entitlement token that the room checks. A room without a valid token is a free room: its packs list shows Pass content as locked, and no locked content is ever sent to its clients.
+
+### Testing with fake billing (no Play account needed)
+
+Fake billing is a test store inside the Worker. It is on only when **all** of these hold: `BILLING_MODE=fake`, `ALLOW_FAKE_BILLING=1`, no `PLAY_SERVICE_ACCOUNT_JSON`, and a request host of `localhost`, `127.0.0.1`, `[::1]` or a private IPv4 address. Otherwise the billing routes answer 503. `wrangler.jsonc` ships `google` / `0`, and `pnpm run deploy` refuses anything else.
+
+1. `pnpm dev` (it passes the fake vars to `wrangler dev`).
+2. **Browser TV:** open `http://<lan-ip>:5173/tv`, then open **JAMAA Pass** with the D-pad (arrow keys + Enter). The Store says "Test store: no real payments". Buying a plan or a pack is approved at once and the room unlocks without a new code. The Store footer has **Test controls** (*Expire Pass now*, *Refund pack*).
+3. **Android TV app (debug build):** splash screen → long-press OK on the version label → set the server URL to `http://<lan-ip>:8787` and switch **Billing: Fake (server test store)** on. Details: [docs/TV.md → Billing](docs/TV.md). Release builds do not contain the fake gateway.
+4. **From a shell:** see [docs/DEV.md → Fake billing](docs/DEV.md#fake-billing-local-dev-and-e2e).
+5. **Automated:** `pnpm e2e` runs `web-client/e2e/payments.spec.ts` and `store-layout.spec.ts` with fake billing.
 
 ## Scripts (repo root)
 
 | Command | What it does |
 |---|---|
 | `pnpm dev` | LAN dev stack: wrangler :8787 + Vite :5173 |
-| `pnpm lint` | ESLint over the whole repo |
+| `pnpm lint` | ESLint over the whole repo (except `growth/`, which has its own tooling) |
 | `pnpm typecheck` | `tsc` in every package |
-| `pnpm test` | Vitest across all projects (engine, server, web-client, packs, tools) |
-| `pnpm test:coverage` | the same, with v8 coverage (engine ≥ 90% branches) |
-| `pnpm build` | web-client production build + Worker dry-run bundle, each checked against its size budget (phone JS 60 KB gzip, Worker script 400 KB) |
-| `pnpm sim` | simulate 200 games per player count from 3 to 12 and check invariants, termination and secrecy (`--games N`, `--access free` plays a free room and checks no locked pack is picked, `--ws http://host:8787` plays over the real protocol) |
-| `pnpm e2e` | Playwright: builds the web client, starts `wrangler dev` on :8788 with fake billing, then a TV mock and 5–6 browser phones play full games (two of them drive the TV mock with the keyboard D-pad, OK and Back only), plus the payments specs (locked packs, purchases, expiry, fake mode refused off-LAN, Store layout in EN/FR/AR) |
-| `pnpm fixtures` | regenerate `shared/fixtures/*.json` (the TS ↔ Kotlin protocol contract) |
+| `pnpm test` | Vitest across all projects (engines, room, server, web client, content, tools) |
+| `pnpm test:coverage` | the same, with v8 coverage (engine ≥ 90 % branches) |
+| `pnpm build` | web-client production build + Worker dry-run bundle, each checked against its size budget |
+| `pnpm sim` | headless simulator: plays many games per player count and checks invariants, termination and secrecy (`--games N`, `--access free`, `--ws http://host:8787` plays over the real protocol) |
+| `pnpm e2e` | Playwright: builds the web client, starts `wrangler dev` on :8788 with fake billing, then a TV mock and browser phones play full games (driven by keyboard D-pad, OK and Back only), plus the payments specs |
+| `pnpm fixtures` | regenerate the protocol fixtures in `shared/fixtures/` (the TS ↔ Kotlin contract) |
 | `pnpm gen:strings` | regenerate the Android string resources from `shared/i18n` |
 | `pnpm lint:content` | lint the content packs (`lint:packs` is kept as an alias) |
-| `pnpm rename:gate` | the P0 rename gate: fails on any old-name hit outside `tools/rename-gate/allowlist.txt` |
+| `pnpm rename:gate` | the rename gate: fails on any old-name hit outside `tools/rename-gate/allowlist.txt` (JAMAA-PLATFORM §1.7) |
 | `pnpm gen:sounds` | re-render the synthesised sound cues (needs ffmpeg with libvorbis) |
-| `pnpm run deploy` | build, `content-lint --release` (free starter packs need ≥ 40 pairs), `check-deploy.mjs` (Google billing, fake billing off), then `wrangler deploy` (fails if a required secret is missing). Always `run`: bare `pnpm deploy` is pnpm's built-in command |
-| `pnpm --filter @jamaa/server billing:products` | CSV of the one-time Play products to create (one per premium pack family); the `jamaa_pass` subscription is created by hand (JAMAA-PLATFORM §4.1) |
+| `pnpm run deploy` | see [Deploy](#deploy) |
+| `pnpm --filter @jamaa/server billing:products` | CSV of the one-time Play products to create; `jamaa_pass` is created by hand (JAMAA-PLATFORM §4.1) |
 | `pnpm --filter @jamaa/server gen:entitlement-key` | new Ed25519 key for the `ENTITLEMENT_KEYS` secret |
 
 ## Status
 
 | Milestone | Scope | Status |
 |---|---|---|
-| **P0** Rename to JAMAA | billing restore by reverse diff, then the mechanical rename (JAMAA-PLATFORM §1, §6.3) | **In progress** (all lanes). Gate: `pnpm rename:gate` plus the usual checks |
-| **M1** Engine + server | shared engine, protocol, projections, Worker + Room DO, sim | **Done.** `pnpm test` green, `pnpm sim` 3–12 players with zero invariant, termination or leak failures, resume tokens |
-| **M2** Phone client + TV mock | Preact controller, browser TV mock, wake lock, reconnect | **Done.** 52.6 KB gzip (budget 60). Playwright e2e plays full games (EN and AR/RTL, remote-only TV in EN and AR, tie-break → revote → Blank guess → results → play again, reload resume, dropped-socket reconnect) and checks that no secret reaches the TV over WebSocket. Not yet tried on a real phone on a LAN |
-| **M3** Android TV app | Compose for TV screens, D-pad flow, QR lobby, reconnects | **Code complete, not device-tested.** The protocol models, socket, ViewModel, billing module and lobby/Store metrics pass 161 JVM unit tests against the shared fixtures (including the sound-cue mapping and mute), run in a pure-JVM harness. The UI type-checks against stubs. The APK has not been built here because Google Maven / the Android SDK were unavailable; see docs/TV.md |
-| **M4** i18n + packs + polish | FR/EN/AR + RTL, packs, sounds, motion | **Done** (except on-device checks). All three locales on phone and TV, with motion and reduced-motion fallbacks. **Sounds done:** 26 original cues synthesised by `pnpm gen:sounds` (OGG, `tv-app/app/src/main/res/raw` and `web-client/public/sounds`), played through SoundPool on the TV and Web Audio in the `/tv` mock, with remote feedback cues (move / OK / Back) and one global mute in Settings and the pause menu (persisted). Packs (2026-11-08, `content/mishana/`): EN 372, FR 369, AR 279 (51 Lebanese), ES 379 pairs (Spanish packs are drafts for native review); review/"draft" warnings remain. **Pending:** AR RTL screenshot checks and sound levels on a real TV |
-| **Payments** JAMAA Pass + packs ([PAYMENTS-SPEC](docs/PAYMENTS-SPEC.md), [JAMAA-PLATFORM §4](docs/JAMAA-PLATFORM.md)) | Play Billing on the TV, Billing DO, signed entitlement tokens, RTDN, cron, room access, locked UI on phone and TV, fake billing | **Code complete, verified with fake billing only.** `pnpm test` (server billing core on real SQLite, Google client with mocked `fetch`, RTDN OIDC, token signing, room access), `pnpm sim --access free`, and Playwright with fake billing (purchase, single pack, expiry mid-game, locked packs with no premium word in any WS frame, remote-only Store) are green. **Not done:** a real Play purchase (needs the Play Console setup in [PAYMENTS-SPEC §8](docs/PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps)), the TV APK build, and the release gate of 40 pairs per free starter pack (24 today, so `pnpm run deploy` fails on purpose) |
-| **M5** Play Store readiness | banners, signing, prod deploy, listing | Not started. Banners exist. The production server URL is wired and documented but still a **placeholder** (see [Production configuration](#production-configuration)); release builds refuse to build until it is set |
+| **M1–M4** Mish Ana! | engine, server, phone client, `/tv` mock, Android TV app, i18n, packs, sounds | **Done**, except the on-device checks. `pnpm test`, `pnpm sim` (3–12 players, no invariant, termination or leak failures) and the Playwright e2e (EN and AR/RTL, remote-only TV) are green. The TV app passes its JVM unit tests against the shared fixtures, but the APK has not been built or tried on a real TV here, because Google Maven and the Android SDK were unavailable (see [docs/TV.md](docs/TV.md)). Packs (`content/mishana/`): EN 372, FR 369, AR 279 (51 Lebanese), ES 379 pairs; the Spanish packs are drafts for native review |
+| **Payments** | JAMAA Pass + packs, Billing DO, entitlement tokens, RTDN, cron, room access, fake billing | **Code complete, verified with fake billing only.** Not done yet: a real Play purchase (needs owner steps O4–O5), the TV APK build, and 40 pairs per free starter pack |
+| **P0** Rename to JAMAA | billing restore, then the mechanical rename (JAMAA-PLATFORM §1, §6.3) | **Done.** Gate: `pnpm rename:gate` |
+| **P** Platform | room + hub, protocol v2, `GameDefinition` registry, characters, ⓘ rules, session cup, content system, Pass store (JAMAA-PLATFORM §6.4) | **In progress** (lanes A–E). It can ship with `GAMES_ENABLED="mishana"` |
+| **G2 / G3 / G4** | Bluff!, Most Likely, Quiz Night (JAMAA-PLATFORM §6.5–6.7) | Specified; platform stubs only |
+| **M5** Play Store readiness | banners, signing, prod deploy, listing | Not started. The listing (EN/FR/AR/ES), graphics, Data safety and release checklist are drafted in `growth/marketing/play-store/` |
 
-## JAMAA Pass and packs (payments)
+## Repository layout
 
-The binding design is [docs/JAMAA-PLATFORM.md §4](docs/JAMAA-PLATFORM.md) (products: the `jamaa_pass` subscription with `monthly`/`yearly` base plans and a `trial-7d` offer, plus `pack_<family>`), on top of [docs/PAYMENTS-SPEC.md](docs/PAYMENTS-SPEC.md). With `BILLING_ENABLED` off, every room plays the whole catalog and the Pass UI is hidden. The TV is the only place anything is sold; phones never show a price or a buy button. The server verifies every Google purchase, acknowledges it, and gives the TV a signed entitlement token that the room checks. Rooms without a valid token are free rooms: their packs list shows Pass content as locked, and no locked word is ever sent to their clients.
+```
+shared/          @jamaa/shared: room engine (hub, members, cup), game registry (games/<id>/: mishana engine,
+                 bluff/likely/trivia stubs), zod wire protocol v2, per-client projections, billing, characters,
+                 worlds, i18n (shared/i18n/ + shared/i18n/games/<id>/), protocol fixtures
+server/          @jamaa/server: Cloudflare Worker "play" + Room DO + Billing DO (partyserver), access, rate limits
+web-client/      @jamaa/web-client: Preact phone controller + browser TV (/tv), per-game screens in src/games/<id>/,
+                 Playwright e2e in e2e/
+tv-app/          Android TV app app.jamaa.tv (Kotlin, Compose for TV, OkHttp WebSocket, Play Billing)
+content/         @jamaa/content: content packs per game (content/mishana/{en,fr,ar,es}; bluff, likely, trivia to come)
+tools/
+  dev.mjs        `pnpm dev` (wrangler + vite on the LAN)
+  sim/           headless game simulator (in-process, or over WebSocket against a running server)
+  gen-android-strings/  shared/i18n → tv-app res/values*/strings_generated.xml
+  gen-sounds/    synthesised sound cues → web-client/public/sounds + tv-app res/raw (OGG)
+  content-lint/  content-pack linter
+  rename-gate/   `pnpm rename:gate` (JAMAA-PLATFORM §1.7)
+assets/brand/    JAMAA logo, wordmarks, banner, icon (generated by assets/brand/scripts/gen_brand.py)
+assets/games/    per-game art (assets/games/mishana/: the Mish Ana! wordmark)
+growth/          the JAMAA site (Worker "www"), Play listing, ads, launch plan, videos (see growth/README.md)
+docs/            specs, plans and research (index below)
+```
 
-### Testing with fake billing (no Play account needed)
+## Docs index
 
-Fake billing is a synthetic test store inside the Worker. It is on only when **all** of these hold: `BILLING_MODE=fake`, `ALLOW_FAKE_BILLING=1`, no `PLAY_SERVICE_ACCOUNT_JSON`, and a request host of `localhost`, `127.0.0.1`, `[::1]` or a private IPv4. Otherwise the billing routes answer 503 and rooms treat every token as invalid. `wrangler.jsonc` ships `google` / `0`, and `pnpm run deploy` refuses anything else, so it cannot be on in production.
+| Doc | What it is |
+|---|---|
+| [JAMAA-PLATFORM.md](docs/JAMAA-PLATFORM.md) | **Binding.** Platform spec: rename, architecture, hub UX, JAMAA Pass, content, lanes, build order |
+| [DESIGN-JAMAA.md](docs/DESIGN-JAMAA.md) | **Binding.** Platform look: worlds, characters, motion, wireframes |
+| [ART-DIRECTION.md](docs/ART-DIRECTION.md) | Art direction for worlds, characters and posters |
+| [SPEC.md](docs/SPEC.md) | Mish Ana! (game #1) engine contract: rules, secrecy, room lifetimes |
+| [GAME-BLUFF.md](docs/GAME-BLUFF.md), [GAME-LIKELY.md](docs/GAME-LIKELY.md), [GAME-TRIVIA.md](docs/GAME-TRIVIA.md) | Binding rules for games #2–#4 |
+| [BLUEPRINT.md](docs/BLUEPRINT.md) | Strategy: what we copy and never copy, pricing grid, roadmap, open owner decisions |
+| [JACKBOX-STUDY.md](docs/JACKBOX-STUDY.md) | Evidence behind the blueprint (business, games, UX, legal), with sources |
+| [MONETIZATION.md](docs/MONETIZATION.md) | Store rules research and the JAMAA Pass decision (the earlier lifetime decision is archived there) |
+| [PAYMENTS-SPEC.md](docs/PAYMENTS-SPEC.md) | Billing implementation spec (Play Billing, Billing DO, tokens, RTDN, owner setup §8) |
+| [BILLING-LAUNCH.md](docs/BILLING-LAUNCH.md) | Steps to turn `BILLING_ENABLED` on |
+| [DESIGN.md](docs/DESIGN.md) | Original Mish Ana! design system (TV and phone), world palettes |
+| [DEV.md](docs/DEV.md) | Local development, tests, fake billing, secrets, deploy |
+| [TV.md](docs/TV.md) | Android TV build, install, signing, debugging |
+| [PLAN.md](docs/PLAN.md) | History of the Mish Ana! build (M1–M5) |
+| [RESEARCH.md](docs/RESEARCH.md), [research/](docs/research/) | Archived research from before the rename (game, Android TV, backend, i18n) |
+| [growth/README.md](growth/README.md) | Marketing: site, Play listing, ads, videos |
 
-1. `pnpm dev` (it passes the fake vars to `wrangler dev`).
-2. **Browser TV mock:** open `http://<lan-ip>:5173/tv`, then in the lobby open **JAMAA Pass** with the D-pad (arrow keys + Enter). The Store shows "Test store: no real payments". Buy a plan or a pack: it is approved at once and the room unlocks without a new code. The Store footer has **Test controls** (*Expire Pass now*, *Refund pack*) to check expiry and refunds.
-3. **Android TV app (debug build):** splash screen → long-press OK on the version label → set the server URL to `http://<lan-ip>:8787` and switch **Billing: Fake (server test store)** on. The fake purchase dialog offers Approve / Pending / Cancel / Error. Details: [docs/TV.md → Billing](docs/TV.md). Release builds do not contain the fake gateway.
-4. **From a shell** (state changes go through the same path as an RTDN): see [docs/DEV.md → Fake billing](docs/DEV.md#fake-billing-local-dev-and-e2e) for `POST /api/billing/fake/purchase`, `/verify` and `/fake/set`.
-5. **Automated:** `pnpm e2e` runs `web-client/e2e/payments.spec.ts` and `store-layout.spec.ts` against `wrangler dev` with fake billing.
+## Blueprint: Jackbox-proven, JAMAA-made
 
-Real Google Play testing needs the owner setup in [PAYMENTS-SPEC §8](docs/PAYMENTS-SPEC.md#8-owner-setup-checklist-exact-steps) (Play Console products, license testers, a Google Cloud service account, the RTDN Pub/Sub topic and the Worker secrets `ENTITLEMENT_KEYS` and `PLAY_SERVICE_ACCOUNT_JSON`).
+JAMAA follows the formula that made Jackbox Games a hit with 200M+ players (one TV, everyone's phone, 15-minute comedy games, one payer) and aims it at the markets Jackbox ignores. Jackbox has no Arabic, no RTL and no Middle East content, and Netflix's Jackbox games list no MENA country.
 
-## Production configuration
+- **We copy mechanics and patterns:** bluff-and-find, room votes, ×1/×2/×3 rounds, staged reveals, stuck-player help, audience and streamer modes. Copyright does not protect game rules.
+- **We never copy names, text, art, characters, music, sound or look-and-feel.** Everything is written, drawn and composed by us, rooted in Levantine and Mediterranean culture. Marketing never names Jackbox (BLUEPRINT §3).
+- **We undercut on price:** free games with starter content, plus one JAMAA Pass for every game. The yearly Pass costs less than one $29.99 Jackbox pack, with regional prices (Gulf, Levant, Egypt, LatAm).
+- **Roadmap:** Mish Ana! → Bluff → Who's Most Likely To → Trivia (Lebanon quiz) → candidates.
 
-No real domain is committed. Before shipping, set these (details: [docs/DEV.md → Production URLs](docs/DEV.md#production-urls), [docs/TV.md → Production server URL](docs/TV.md#production-server-url)):
-
-| What | Where | Ships as | Set to |
-|---|---|---|---|
-| TV app server (`BuildConfig.SERVER_URL`) | `jamaa.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=` | placeholder `https://play.example.workers.dev`; `assembleRelease`/`bundleRelease` fail until it is replaced with an `https://` URL | the Worker origin `pnpm run deploy` prints (`https://play.<your-subdomain>.workers.dev`) or your custom domain |
-| Phone join URL in the QR code | `JOIN_BASE_URL` in `server/wrangler.jsonc` `vars` | `""` (the origin the TV called) | leave empty on `workers.dev`; `https://<your-domain>` with a custom domain |
-| Extra browser origins | `ALLOWED_ORIGINS` in `server/wrangler.jsonc` `vars` | `""` (same-origin only) | leave empty unless the phone page is hosted on another origin |
-
-The phone client itself has no URL setting: the Worker serves it and it connects back to its own origin.
+Read [docs/JACKBOX-STUDY.md](docs/JACKBOX-STUDY.md) (evidence) and [docs/BLUEPRINT.md](docs/BLUEPRINT.md) (decisions).
 
 ## License
 

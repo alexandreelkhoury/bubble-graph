@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { HELLO_TIMEOUT_MS, ROOM_TV_GONE_TTL_MS, ROOM_TV_MAX_TTL_MS } from "@jamaa/shared/constants";
 import { nextWakeAt } from "@jamaa/shared/engine";
 import { expiresAt } from "../src/room-core";
-import { FakeConnections, Harness, T0, TV_TOKEN } from "./support/fakes";
+import { ALL_TV_GAMES, FakeConnections, Harness, T0, TV_TOKEN } from "./support/fakes";
 import { sha256hex } from "../src/tokens";
 
 describe("RoomCore alarm", () => {
@@ -16,21 +16,22 @@ describe("RoomCore alarm", () => {
     const h = await new Harness().init();
     const tv = await h.tv();
     for (let i = 0; i < 3; i++) await h.player(i);
-    await h.act(tv, { type: "START" });
+    await h.open(tv);
+    await h.act(tv, { type: "START_GAME" });
     expect(h.state.phase).toBe("ROLE_REVEAL");
     const dl = h.state.deadline!;
     expect(dl.kind).toBe("REVEAL");
     expect(h.storage.alarm).toBe(dl.at);
-    const before = h.state.version;
+    const before = h.room.version;
     // An early alarm is a harmless no-op.
     h.now = dl.at - 1000;
     await h.core.onAlarm();
-    expect(h.state.version).toBe(before);
+    expect(h.room.version).toBe(before);
     expect(h.storage.alarm).toBe(dl.at);
     h.now = dl.at;
     await h.core.onAlarm();
     expect(h.state.phase).toBe("CLUES");
-    expect(tv.last("state")?.seq).toBe(h.state.version);
+    expect(tv.last("state")?.seq).toBe(h.room.version);
     expect(h.storage.alarm).toBe(nextWakeAt(h.state));
   });
 
@@ -89,6 +90,22 @@ describe("RoomCore alarm", () => {
     expect(h.storage.map.size).toBe(0);
   });
 
+  it("inline expiry: a HOST_ADVANCE whose result is already due ticks in the same turn (one broadcast)", async () => {
+    const h = await new Harness().init();
+    const tv = await h.tv();
+    for (let i = 0; i < 3; i++) await h.player(i);
+    await h.open(tv);
+    await h.act(tv, { type: "START_GAME" });
+    // The REVEAL deadline passed while nothing woke the room (the alarm is late); the next accepted intent
+    // must not leave a due deadline behind for an extra alarm round.
+    h.now = h.state.deadline!.at + 5;
+    tv.clear();
+    await h.game(tv, { type: "HOST_ADVANCE" });
+    const wake = nextWakeAt(h.state);
+    expect(wake === null || wake > h.now).toBe(true);
+    expect(tv.of("state").length).toBe(1);
+  });
+
   it("TV connected: RESULTS and a long idle game stay alive for hours", async () => {
     const h = await new Harness().init();
     const { tv, ps } = await h.startedGame();
@@ -112,7 +129,8 @@ describe("RoomCore alarm", () => {
     expect((await h.storage.get<{ tvLeftAt: number | null }>("meta"))!.tvLeftAt).toBe(leftAt);
     expect(h.storage.alarm).toBe(leftAt + ROOM_TV_GONE_TTL_MS);
     h.advance(2 * 60_000);
-    await h.act(a.conn, { type: "UPDATE_SETTINGS", patch: { clueSeconds: 30 } });
+    await h.act(a.conn, { type: "SET_CONTENT_LOCALE", locale: "fr" });
+    expect(h.room.contentLocale).toBe("fr");
     expect(h.storage.alarm).toBe(leftAt + ROOM_TV_GONE_TTL_MS);
     h.now = leftAt + ROOM_TV_GONE_TTL_MS - 1;
     await h.core.onAlarm();
@@ -216,10 +234,10 @@ describe("RoomCore alarm", () => {
     await h.tv();
     const a = await h.player(0);
     const m0 = h.core.peek().meta!.lastActivityAt;
-    await h.act(a.conn, { type: "UPDATE_SETTINGS", patch: { clueSeconds: 30 } });
+    await h.act(a.conn, { type: "SET_CONTENT_LOCALE", locale: "fr" });
     expect(h.core.peek().meta!.lastActivityAt).toBe(m0);
     h.advance(61_000);
-    await h.act(a.conn, { type: "UPDATE_SETTINGS", patch: { clueSeconds: 35 } });
+    await h.act(a.conn, { type: "SET_CONTENT_LOCALE", locale: "en" });
     expect(h.core.peek().meta!.lastActivityAt).toBe(h.now);
     expect((await h.storage.get<{ lastActivityAt: number }>("meta"))!.lastActivityAt).toBe(h.now);
     expect(h.storage.alarm).toBe(h.now + ROOM_TV_MAX_TTL_MS);
@@ -236,7 +254,7 @@ describe("RoomCore alarm", () => {
   it("initRoom: a UI language without word packs in the catalog (es before its packs ship) plays English words", async () => {
     const h = new Harness();
     expect(await h.core.initRoom({ tvTokenHash: await sha256hex(TV_TOKEN), joinUrl: "https://x.test/KXRT", locale: "es", now: h.now, entitlement: null, billingMode: "google" })).toEqual({ ok: true });
-    expect(h.state.settings.wordLocale).toBe("en");
+    expect(h.room.contentLocale).toBe("en");
   });
 
   it("initRoom: EXISTS for a live room; on an expired room it closes old sockets 4010 and refreshes the cache", async () => {
@@ -260,14 +278,14 @@ describe("RoomCore alarm", () => {
     expect(meta.createdAt).toBe(h.now);
     expect(meta.createdAt).not.toBe(oldEpoch);
     expect(meta.tvTokenHash).toBe(newHash);
-    expect(h.state.settings.wordLocale).toBe("fr");
-    expect(h.state.version).toBe(0);
+    expect(h.room.contentLocale).toBe("fr");
+    expect(h.room.version).toBe(0);
     // New TV token works; the old one does not.
     const c1 = await h.connect();
-    await h.send(c1, { v: 1, t: "hello", role: "tv", tvToken: TV_TOKEN });
+    await h.send(c1, { v: 2, t: "hello", role: "tv", tvToken: TV_TOKEN, games: ALL_TV_GAMES });
     expect(c1.closeCode).toBe(4003);
     const c2 = await h.connect();
-    await h.send(c2, { v: 1, t: "hello", role: "tv", tvToken: "f".repeat(32) });
+    await h.send(c2, { v: 2, t: "hello", role: "tv", tvToken: "f".repeat(32), games: ALL_TV_GAMES });
     expect(c2.lastView().kind).toBe("tv");
   });
 

@@ -24,8 +24,14 @@ function token(signer: Signer, nowMs: number, o: { sub?: string; pu?: number | n
   return signEntitlementToken(buildClaims(o.sub ?? SUB_A, nowMs, o.pu === undefined ? nowMs + 30 * 24 * H : o.pu, o.packs ?? [], o.mode ?? "google"), signer);
 }
 
-const sendEnt = (h: Harness, c: FakeConn, t: string) => h.send(c, { v: 1, t: "entitlement", token: t });
-const view = (c: FakeConn) => c.lastView() as { premium: boolean; lockedPacks: { id: string }[]; tvBusy: boolean; availablePacks: { id: string }[]; settings: { packIds: string[]; points: unknown } };
+const sendEnt = (h: Harness, c: FakeConn, t: string) => h.send(c, { v: 2, t: "entitlement", token: t });
+type Setup = { lockedPacks: { id: string }[]; availablePacks: { id: string }[]; settings: { packIds: string[]; points: unknown } };
+type RoomV = { premium: boolean; tvBusy: boolean; phase: string; setup: Setup | null; games: { id: string; lockedPackCount: number }[] };
+/** The v2 room view, with the SETUP pack lists flattened (empty outside SETUP). */
+const view = (c: FakeConn) => {
+  const room = c.lastView().room as RoomV;
+  return { ...room, lockedPacks: room.setup?.lockedPacks ?? [], availablePacks: room.setup?.availablePacks ?? [], settings: room.setup?.settings };
+};
 
 describe("WS entitlement", () => {
   it("only the TV may send it; a player gets NOT_AUTHENTICATED (and storeOpen too)", async () => {
@@ -34,16 +40,18 @@ describe("WS entitlement", () => {
     await h.tv();
     const p = await h.player(0);
     await sendEnt(h, p.conn, await token(signer, h.now));
-    await h.send(p.conn, { v: 1, t: "storeOpen", open: true });
+    await h.send(p.conn, { v: 2, t: "storeOpen", open: true });
     expect(p.conn.errors()).toEqual(["NOT_AUTHENTICATED", "NOT_AUTHENTICATED"]);
   });
 
-  it("upgrade mid-lobby broadcasts premium:true and unlocks packs without a new room", async () => {
+  it("upgrade mid-setup broadcasts premium:true and unlocks packs without a new room", async () => {
     const { signer, billing } = await keys();
     const h = await new Harness({ billing }).init();
     const tv = await h.tv();
     const p = await h.player(0);
     expect(view(tv).premium).toBe(false);
+    expect(view(tv).games.find((g) => g.id === "mishana")?.lockedPackCount).toBeGreaterThan(0);
+    await h.open(tv);
     expect(view(p.conn).lockedPacks.map((x) => x.id)).toEqual(["test-en-prem-01"]);
     await sendEnt(h, tv, await token(signer, h.now));
     expect(tv.errors()).toEqual([]);
@@ -94,9 +102,9 @@ describe("WS entitlement", () => {
     const { signer, billing } = await keys();
     const h = await new Harness({ billing }).init();
     const tv = await h.tv();
-    for (let i = 0; i < STORE_OPEN_MSGS_PER_MIN + 1; i++) await h.send(tv, { v: 1, t: "storeOpen", open: true });
+    for (let i = 0; i < STORE_OPEN_MSGS_PER_MIN + 1; i++) await h.send(tv, { v: 2, t: "storeOpen", open: true });
     expect(tv.errors()).toEqual(["RATE_LIMITED"]);
-    for (let i = 0; i < 20; i++) await h.send(tv, { v: 1, t: "storeOpen", open: false });
+    for (let i = 0; i < 20; i++) await h.send(tv, { v: 2, t: "storeOpen", open: false });
     expect(tv.errors()).toEqual(["RATE_LIMITED"]);
     for (let i = 0; i < BILLING_MSGS_PER_MIN + 1; i++) {
       h.advance(1);
@@ -104,7 +112,7 @@ describe("WS entitlement", () => {
     }
     expect(tv.errors()).toEqual(["RATE_LIMITED", "RATE_LIMITED"]);
     h.advance(60_001);
-    await h.send(tv, { v: 1, t: "storeOpen", open: true });
+    await h.send(tv, { v: 2, t: "storeOpen", open: true });
     expect(tv.errors()).toHaveLength(2);
   });
 
@@ -114,14 +122,14 @@ describe("WS entitlement", () => {
     const tv = await h.tv();
     const p = await h.player(0);
     for (let i = 0; i < 8; i++) {
-      await h.send(tv, { v: 1, t: "storeOpen", open: true });
+      await h.send(tv, { v: 2, t: "storeOpen", open: true });
       expect(view(p.conn).tvBusy).toBe(true);
-      await h.send(tv, { v: 1, t: "storeOpen", open: false });
+      await h.send(tv, { v: 2, t: "storeOpen", open: false });
       expect(view(p.conn).tvBusy).toBe(false);
     }
-    await h.send(tv, { v: 1, t: "storeOpen", open: true });
+    await h.send(tv, { v: 2, t: "storeOpen", open: true });
     await sendEnt(h, tv, await token(signer, h.now));
-    await h.send(tv, { v: 1, t: "storeOpen", open: false });
+    await h.send(tv, { v: 2, t: "storeOpen", open: false });
     expect(tv.errors()).toEqual([]);
     expect(view(tv).premium).toBe(true);
     expect(view(p.conn).premium).toBe(true);
@@ -136,9 +144,9 @@ describe("state frame seq (SPEC §8.4: clients keep a frame only when seq > last
     const tv = await h.tv();
     const p = await h.player(0);
     await sendEnt(h, tv, await token(signer, h.now));
-    await h.send(tv, { v: 1, t: "storeOpen", open: true });
-    await h.send(tv, { v: 1, t: "storeOpen", open: false });
-    await h.send(tv, { v: 1, t: "storeOpen", open: true });
+    await h.send(tv, { v: 2, t: "storeOpen", open: true });
+    await h.send(tv, { v: 2, t: "storeOpen", open: false });
+    await h.send(tv, { v: 2, t: "storeOpen", open: true });
     await h.core.onClose(tv);
     expect(view(p.conn).premium).toBe(true);
     expect(view(p.conn).tvBusy).toBe(false);
@@ -162,7 +170,7 @@ describe("state frame seq (SPEC §8.4: clients keep a frame only when seq > last
     // A fresh RoomCore (hibernation) keeps the counter: the next frame is still higher.
     const last = seqs(tv).at(-1) as number;
     h.core = h.makeCore();
-    await h.send(tv, { v: 1, t: "storeOpen", open: true });
+    await h.send(tv, { v: 2, t: "storeOpen", open: true });
     expect(seqs(tv).at(-1)).toBeGreaterThan(last);
   });
 });
@@ -194,18 +202,21 @@ describe("pre-checks and restrictions", () => {
     const h = await new Harness().init();
     const tv = await h.tv();
     const p = await h.player(0);
-    await h.act(p.conn, { type: "UPDATE_SETTINGS", patch: { packIds: ["test-en-prem-01"] } }, "a1");
-    await h.act(tv, { type: "UPDATE_SETTINGS", patch: { packIds: ["test-en-prem-01"], points: { civilian: 1, undercover: 1, blank: 1 } } });
-    await h.act(tv, { type: "UPDATE_SETTINGS", patch: { points: { civilian: 1, undercover: 1, blank: 1 } } });
-    await h.act(tv, { type: "UPDATE_SETTINGS", patch: { points: { ...DEFAULT_SETTINGS.points }, packIds: ["test-en-01"] } });
-    await h.act(tv, { type: "UPDATE_SETTINGS", patch: { packIds: ["no-such-pack"] } });
+    await h.open(tv);
+    await h.settings(p.conn, { packIds: ["test-en-prem-01"] }, "a1");
+    await h.settings(tv, { packIds: ["test-en-prem-01"], points: { civilian: 1, undercover: 1, blank: 1 } });
+    await h.settings(tv, { points: { civilian: 1, undercover: 1, blank: 1 } });
+    await h.settings(tv, { points: { ...DEFAULT_SETTINGS.points }, packIds: ["test-en-01"] });
+    await h.settings(tv, { packIds: ["no-such-pack"] });
+    // Another game's settings while Mish Ana! is in SETUP → WRONG_GAME (reduceRoom; no pre-check runs).
+    await h.act(tv, { type: "UPDATE_GAME_SETTINGS", gameId: "trivia", patch: { length: "short" } });
     expect(p.conn.errors()).toEqual(["PACK_LOCKED"]);
     expect(p.conn.last("error")?.ref).toBe("a1");
-    expect(tv.errors()).toEqual(["PACK_LOCKED", "PREMIUM_REQUIRED", "INVALID_SETTINGS"]);
-    expect(h.state.settings.packIds).toEqual(["test-en-01"]);
+    expect(tv.errors()).toEqual(["PACK_LOCKED", "PREMIUM_REQUIRED", "INVALID_SETTINGS", "WRONG_GAME"]);
+    expect(h.room.gameSettings.mishana.packIds).toEqual(["test-en-01"]);
   });
 
-  it("expiry mid-game: the game finishes with its pair; the restriction applies back in LOBBY", async () => {
+  it("expiry mid-game: the game finishes with its pair; the restriction applies back in SETUP", async () => {
     const { billing } = await keys();
     const h = new Harness({ billing });
     h.entitlement = { sub: SUB_A, iatMs: T0, expMs: T0 + 8 * H, premiumUntilMs: T0 + H, packs: [], mode: "google" };
@@ -213,37 +224,40 @@ describe("pre-checks and restrictions", () => {
     const tv = await h.tv();
     const ps = [];
     for (let i = 0; i < 4; i++) ps.push(await h.player(i));
-    await h.act(tv, { type: "UPDATE_SETTINGS", patch: { packIds: ["test-en-prem-01"], points: { civilian: 3, undercover: 3, blank: 3 }, clueSeconds: 0, voteSeconds: 0, revealSeconds: 0, guessSeconds: 0 } });
+    await h.open(tv);
+    await h.settings(tv, { packIds: ["test-en-prem-01"], points: { civilian: 3, undercover: 3, blank: 3 }, clueSeconds: 0, voteSeconds: 0, revealSeconds: 0, guessSeconds: 0 });
     expect(tv.errors()).toEqual([]);
-    await h.act(tv, { type: "START" });
+    await h.act(tv, { type: "START_GAME" });
     const pair = h.state.pair;
     expect(pair?.packId).toBe("test-en-prem-01");
     h.now = T0 + H + 1;
     await h.core.onAlarm(); // premium ended
     expect(h.state.pair).toEqual(pair);
     expect(view(tv).premium).toBe(false);
-    for (const p of ps) await h.act(p.conn, { type: "READY" });
+    for (const p of ps) await h.game(p.conn, { type: "READY" });
     await h.playToResults(tv, ps);
     expect((h.state.result?.pack.id)).toBe("test-en-prem-01");
-    await h.act(tv, { type: "PLAY_AGAIN" });
-    expect(h.state.phase).toBe("LOBBY");
-    expect(h.state.settings.packIds).toEqual([]);
-    expect(h.state.settings.points).toEqual(DEFAULT_SETTINGS.points);
+    await h.act(tv, { type: "BACK_TO_SETUP" });
+    expect(h.room.phase).toBe("SETUP");
+    expect(h.room.gameSettings.mishana.packIds).toEqual([]);
+    expect(h.room.gameSettings.mishana.points).toEqual(DEFAULT_SETTINGS.points);
     expect(view(tv).lockedPacks.map((x) => x.id)).toEqual(["test-en-prem-01"]);
-    await h.act(tv, { type: "START" });
+    await h.act(tv, { type: "START_GAME" });
     expect(h.state.pair?.packId).toBe("test-en-01");
   });
 
-  it("the alarm is scheduled at changesAt and downgrades an idle lobby on time", async () => {
+  it("the alarm is scheduled at changesAt and downgrades an idle setup on time; in HUB every game is restricted", async () => {
     const h = new Harness();
     h.entitlement = { sub: SUB_A, iatMs: T0, expMs: T0 + 8 * H, premiumUntilMs: T0 + 2000, packs: [], mode: "google" };
     await h.init();
     const tv = await h.tv();
-    await h.act(tv, { type: "UPDATE_SETTINGS", patch: { packIds: ["test-en-prem-01"] } });
+    await h.open(tv);
+    await h.settings(tv, { packIds: ["test-en-prem-01"] });
+    // `h.send` advances the clock 250 ms per frame.
     expect(h.storage.alarm).toBe(T0 + 2000);
     h.now = T0 + 2000;
     await h.core.onAlarm();
-    expect(h.state.settings.packIds).toEqual([]);
+    expect(h.room.gameSettings.mishana.packIds).toEqual([]);
     expect(view(tv).premium).toBe(false);
     expect(h.storage.alarm).toBeGreaterThan(T0 + 2000);
   });
@@ -260,34 +274,35 @@ describe("pre-checks and restrictions", () => {
     expect(fresh.peek().meta?.entitlement).toEqual(h.entitlement);
     h.core = fresh;
     await h.act(p0.conn, { type: "LEAVE" });
-    expect(h.state.hostPlayerId).not.toBe(p0.pid);
+    expect(h.room.hostPlayerId).not.toBe(p0.pid);
     expect(h.core.peek().meta?.entitlement).toEqual(h.entitlement);
     expect(view(tv).premium).toBe(true);
   });
 });
 
 describe("storeOpen / TV busy", () => {
-  it("phone START while tvBusy → TV_BUSY; cleared by open:false", async () => {
+  it("phone START_GAME while tvBusy → TV_BUSY; cleared by open:false", async () => {
     const h = await new Harness().init();
     const tv = await h.tv();
     const ps = [];
     for (let i = 0; i < 3; i++) ps.push(await h.player(i));
-    await h.send(tv, { v: 1, t: "storeOpen", open: true });
+    await h.open(tv);
+    await h.send(tv, { v: 2, t: "storeOpen", open: true });
     expect(view(ps[0]!.conn).tvBusy).toBe(true);
-    await h.act(ps[0]!.conn, { type: "START" });
+    await h.act(ps[0]!.conn, { type: "START_GAME" });
     expect(ps[0]!.conn.errors()).toEqual(["TV_BUSY"]);
-    expect(h.state.phase).toBe("LOBBY");
-    await h.send(tv, { v: 1, t: "storeOpen", open: false });
+    expect(h.room.phase).toBe("SETUP");
+    await h.send(tv, { v: 2, t: "storeOpen", open: false });
     expect(view(ps[0]!.conn).tvBusy).toBe(false);
-    await h.act(ps[0]!.conn, { type: "START" });
+    await h.act(ps[0]!.conn, { type: "START_GAME" });
     expect(h.state.phase).toBe("ROLE_REVEAL");
   });
 
-  it("cleared when the TV connection closes (not by a replacing TV), by the alarm, and when the phase leaves LOBBY", async () => {
+  it("cleared when the TV connection closes (not by a replacing TV), by the alarm, and when the room starts playing", async () => {
     const h = await new Harness().init();
     const tv = await h.tv();
     const p = await h.player(0);
-    await h.send(tv, { v: 1, t: "storeOpen", open: true });
+    await h.send(tv, { v: 2, t: "storeOpen", open: true });
     const tv2 = await h.tv(); // replaces tv (REPLACED close)
     await h.core.onClose(tv);
     expect(h.core.peek().meta?.tvBusyUntil).not.toBeNull();
@@ -297,7 +312,7 @@ describe("storeOpen / TV busy", () => {
     expect(view(p.conn).tvBusy).toBe(false);
 
     const tv3 = await h.tv();
-    await h.send(tv3, { v: 1, t: "storeOpen", open: true });
+    await h.send(tv3, { v: 2, t: "storeOpen", open: true });
     expect(h.storage.alarm).toBeLessThanOrEqual(h.now + TV_BUSY_MAX_MS);
     h.now += TV_BUSY_MAX_MS;
     await h.core.onAlarm();
@@ -306,11 +321,12 @@ describe("storeOpen / TV busy", () => {
 
     await h.player(1);
     await h.player(2);
-    await h.send(tv3, { v: 1, t: "storeOpen", open: true });
-    await h.act(tv3, { type: "START" });
+    await h.open(tv3);
+    await h.send(tv3, { v: 2, t: "storeOpen", open: true });
+    await h.act(tv3, { type: "START_GAME" });
     expect(h.state.phase).toBe("ROLE_REVEAL");
     expect(h.core.peek().meta?.tvBusyUntil).toBeNull();
-    await h.send(tv3, { v: 1, t: "storeOpen", open: true }); // ignored outside LOBBY
+    await h.send(tv3, { v: 2, t: "storeOpen", open: true }); // ignored while PLAYING
     expect(h.core.peek().meta?.tvBusyUntil).toBeNull();
   });
 });

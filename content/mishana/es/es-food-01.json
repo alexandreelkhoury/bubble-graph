@@ -1,5 +1,6 @@
 {
   "id": "es-food-01",
+  "game": "mishana",
   "version": 1,
   "locale": "es",
   "script": "Latn",
@@ -12,6 +13,9 @@
   "tags": [
     "food",
     "hard"
+  ],
+  "topics": [
+    "food"
   ],
   "ageRating": "all",
   "license": "CC-BY-4.0",

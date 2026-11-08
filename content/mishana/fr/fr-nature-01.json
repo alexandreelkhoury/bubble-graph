@@ -1,5 +1,6 @@
 {
   "id": "fr-nature-01",
+  "game": "mishana",
   "version": 2,
   "locale": "fr",
   "script": "Latn",
@@ -13,6 +14,9 @@
     "nature",
     "seeded",
     "hard"
+  ],
+  "topics": [
+    "nature"
   ],
   "ageRating": "all",
   "license": "MIT",

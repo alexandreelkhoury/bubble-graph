@@ -9,7 +9,8 @@ import type {
 } from "@jamaa/shared/billing";
 import { BRAND } from "@jamaa/shared/brand";
 import { MAX_PURCHASES_PER_VERIFY, PROTOCOL_VERSION } from "@jamaa/shared/constants";
-import type { EntitlementMsg, StoreOpenMsg } from "@jamaa/shared/protocol";
+// JAMAA-PLATFORM §2.5: `entitlement` and `storeOpen` keep their shapes in protocol v2 (`v: 2`).
+import type { EntitlementV2Msg as EntitlementMsg, StoreOpenV2Msg as StoreOpenMsg } from "@jamaa/shared/protocol/v2";
 import type { MessageKey, Params } from "../../i18n/t";
 import { backoffMs, inflightKey, nextRefreshAt, planPurchaseRequest, purchasesKey, tokenForCreate, tokenStale, ToastGate, trialOffered } from "./model";
 

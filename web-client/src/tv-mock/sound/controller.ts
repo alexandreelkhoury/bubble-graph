@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "preact/hooks";
 import { effect } from "@preact/signals";
 import type { RefObject } from "preact";
-import type { TvView } from "@jamaa/shared/protocol";
+import type { TvView } from "../../games/mishana/view";
 import { remainingMs } from "../../lib/countdown";
 import { clockOffset } from "../../state/store";
 import { now } from "../../components/Timer";

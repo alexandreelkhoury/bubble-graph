@@ -22,10 +22,10 @@
 <link rel="preload" as="image" href="/assets/img/hero-poster-16x9.webp" type="image/webp" media="(min-width: 701px)" fetchpriority="high">
 <link rel="stylesheet" href="/assets/css/site.css">
 <script>
-/* Language routing. Each language is its own pre-rendered page: / (EN), /fr/, /ar/ (build.mjs).
-   ?lang=fr|ar|en (used in ad links) sends visitors to that page, keeping the other parameters.
+/* Language routing. Each language is its own pre-rendered page: / (EN), /fr/, /ar/, /es/ (build.mjs).
+   ?lang=fr|ar|es|en (used in ad links) sends visitors to that page, keeping the other parameters.
    On "/" only: a language picked earlier (localStorage) or, once per session, the browser language. */
-(function(){var d=document.documentElement,L=d.lang||'en',P={en:'/',fr:'/fr/',ar:'/ar/'},to='',p,q;
+(function(){var d=document.documentElement,L=d.lang||'en',P={en:'/',fr:'/fr/',ar:'/ar/',es:'/es/'},to='',p,q;
 d.classList.add('js');d.setAttribute('data-lang-init',L);
 try{p=new URLSearchParams(location.search);q=p.get('lang');
 if(q&&P[q]){if(q!==L)to=q;}
@@ -54,6 +54,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
       <a href="?lang=en" data-lang="en" hreflang="en" lang="en" aria-current="true">EN</a>
       <a href="?lang=fr" data-lang="fr" hreflang="fr" lang="fr">FR</a>
       <a href="?lang=ar" data-lang="ar" hreflang="ar" lang="ar">عربي</a>
+      <a href="?lang=es" data-lang="es" hreflang="es" lang="es">ES</a>
     </nav>
     <a class="btn btn--play btn--sm nav__cta" href="https://play.google.com/store/apps/details?id=app.jamaa.tv" data-play data-cta="nav" rel="noopener" data-i18n="navCta">Install on my TV</a>
   </div>
@@ -64,7 +65,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
 <!-- ============ HERO ============
      Headline + sub swap with ?angle=reveal|passphone|nohardware|tonight|family|tvgame
      (or a utm_campaign that starts with one of those slugs). EN copy: inline script below.
-     FR/AR copy: assets/js/i18n.js (keys heroTitle_<angle>, heroSub_<angle>). -->
+     FR/AR/ES copy: assets/js/i18n.js (keys heroTitle_<angle>, heroSub_<angle>). -->
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero__glow" aria-hidden="true"></div>
   <div class="wrap hero__grid">
@@ -400,6 +401,46 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
   </div>
 </section>
 
+<!-- ============ GAMES (the JAMAA line-up; Mish Ana! is game #1)
+     Upcoming games are announced as "coming soon" only. Names are working titles (docs/BLUEPRINT.md §9 D4): keep them in
+     sync with shared/i18n/games/<id>/*.json "game.<id>.title". When the owner adds a game to GAMES_ENABLED, switch its
+     badge to gameLive in the same release (README "Switches"). Never name a competitor here (BLUEPRINT §3.7). ============ -->
+<section class="sec games" id="games" aria-labelledby="games-title">
+  <div class="wrap">
+    <header class="sec__head">
+      <h2 id="games-title" class="rv" data-i18n="gamesTitle">One app on the TV. More games every season<span class="dot">.</span></h2>
+      <p class="sec__lede rv" data-i18n="gamesLede">Mish Ana! is the first JAMAA game. The next ones play the same way: one TV, everyone’s phone, nothing to install.</p>
+    </header>
+    <ul class="feats games__list">
+      <li class="feat rv">
+        <div class="av av--lilac av--hex av--lg" aria-hidden="true"><span>?</span></div>
+        <h3 data-i18n="game1Name">Mish Ana!</h3>
+        <p data-i18n="game1Desc">Everyone gets the same secret word, except the Mole. One clue each, a vote, and everyone swears “Not me!”.</p>
+        <span class="gbadge gbadge--live" data-i18n="gameLive">Play now</span>
+      </li>
+      <li class="feat rv">
+        <div class="av av--coral av--lg" aria-hidden="true"><span>!</span></div>
+        <h3 data-i18n="game2Name">Bluff!</h3>
+        <p data-i18n="game2Desc">Make up a fake answer to a real question, then find the true one. Every friend your lie fools wins you points.</p>
+        <span class="gbadge" data-i18n="gameSoon">Coming soon</span>
+      </li>
+      <li class="feat rv">
+        <div class="av av--azure av--square av--lg" aria-hidden="true"><span>%</span></div>
+        <h3 data-i18n="game3Name">Most Likely</h3>
+        <p data-i18n="game3Desc">“Who’s most likely to…?” Everyone picks someone in the room with one tap. Read the room to score.</p>
+        <span class="gbadge" data-i18n="gameSoon">Coming soon</span>
+      </li>
+      <li class="feat rv">
+        <div class="av av--jade av--tri av--lg" aria-hidden="true"><span>Q</span></div>
+        <h3 data-i18n="game4Name">Quiz Night</h3>
+        <p data-i18n="game4Desc">Fast trivia on your phones, starting with a big quiz about Lebanon. The fastest right answer wins.</p>
+        <span class="gbadge" data-i18n="gameSoon">Coming soon</span>
+      </li>
+    </ul>
+    <p class="games__note rv" data-i18n="gamesNote">Every game is free to play. Upcoming games and their names may change before release.</p>
+  </div>
+</section>
+
 <!-- ============ FAQ ============ -->
 <section class="sec faq" id="faq" aria-labelledby="faq-title">
   <div class="wrap wrap--narrow">
@@ -421,7 +462,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
       </details>
       <details data-q="cost">
         <summary data-i18n="q2">How much does it cost?</summary>
-        <div class="qa__a" data-i18n="a2"><p>JAMAA and its games are free to play, with no account to create. Optional in-app purchases may add extra content.</p></div>
+        <div class="qa__a" data-i18n="a2"><p>Every JAMAA game is free to play, with no account and no ads. Later, an optional JAMAA Pass may unlock extra packs for every game. It is only ever offered on the TV: phones never pay.</p></div>
       </details>
       <details data-q="friends">
         <summary data-i18n="q3">Do my friends need to download anything?</summary>
@@ -466,6 +507,7 @@ if(to){p.delete('lang');var s=p.toString();location.replace(P[to]+(s?'?'+s:'')+l
     <p class="about__def" data-i18n="aboutDef">JAMAA is a party-games app for Android TV and Google TV: 3–12 players join from their phones by scanning a QR code. Its first game, Mish Ana!, is a secret-word game: everyone gets the same word and hunts the Mole, the one player with no word.</p>
     <dl class="about__facts">
       <div><dt data-i18n="aboutNameT">Name</dt><dd data-i18n="aboutName">“JAMAA” (ja-MAA, <bdi lang="ar">جماعة</bdi>) is Arabic for “the gang, the gathering”. Its first game, “Mish Ana!” (<bdi lang="ar">مش أنا!</bdi>), is Lebanese Arabic for “Not me!”, what everyone says when they’re accused.</dd></div>
+      <div><dt data-i18n="aboutGamesT">Games</dt><dd data-i18n="aboutGames">Mish Ana! (secret word, available now). Coming soon: Bluff!, Most Likely and Quiz Night.</dd></div>
       <div><dt data-i18n="aboutGenreT">Genre</dt><dd data-i18n="aboutGenre">Party games: social deduction, word games</dd></div>
       <div><dt data-i18n="aboutPlatT">Plays on</dt><dd data-i18n="aboutPlat">Android TV and Google TV (Google Play), or any web browser</dd></div>
       <div><dt data-i18n="aboutRolesT">Roles</dt><dd data-i18n="aboutRoles">Civilians share a word. The Mole gets no word, only a “You’re the Mole!” card, and bluffs; if voted out, one last guess at the word can steal the win. Optional: the Undercover gets a slightly different word and isn’t told.</dd></div>

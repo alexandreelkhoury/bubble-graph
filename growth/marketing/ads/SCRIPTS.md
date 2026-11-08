@@ -739,7 +739,7 @@ Why it works: Sami's "Fork" is a red herring and Karim's "Sauce" fits both words
 **Claims and accuracy**
 - [ ] The app is **live** on Google Play for TV before any ad runs. Use "Available on Google TV" / "Get it on Google Play" only once it's live. The ads link to the store, so pre-launch ads would lead to a dead end.
 - [ ] Every claim is true today: free to play, 3–12 players, no app on the phones, no account, no controllers, EN/FR/AR.
-- [ ] "Free" is worded as "Free" or "Free to play". The app has optional in-app purchases (Premium), and the Play listing will say so: never write "100% free", "no in-app purchases" or "no catch".
+- [ ] "Free" is worded as "Free" or "Free to play". The app has optional in-app purchases (the JAMAA Pass subscription and packs, sold on the TV only), and the Play listing will say so once billing is on: never write "100% free", "no in-app purchases" or "no catch".
 - [ ] State the device: "Android TV & Google TV" on the end card. Never imply Samsung Tizen, LG webOS, Apple TV, Roku, Fire TV or the original app-less Chromecast.
 - [ ] Recreated UI matches the real app screens (see "Game UI must match the real app" in section 2): face-down card + hold to see, identical cards for the Mole, votes on the phones, OUT stamp, role card flip, "The infiltrators win!". No "MOLE!" stamp, no colour-coded Mole phone, no features, word packs or modes that don't exist (no premium packs).
 - [ ] Every word pair shown exists in the pack for that language (EN Pizza/Pasta, FR Pizza/Pâtes, AR بيتزا/برغر, Lebanese تبولة/فتوش). No PIZZA/PASTA in Arabic ads.

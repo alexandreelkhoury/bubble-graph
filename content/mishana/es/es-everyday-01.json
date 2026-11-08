@@ -1,5 +1,6 @@
 {
   "id": "es-everyday-01",
+  "game": "mishana",
   "version": 1,
   "locale": "es",
   "script": "Latn",
@@ -18,6 +19,11 @@
     "home",
     "jobs",
     "travel",
+    "sports"
+  ],
+  "topics": [
+    "places",
+    "food",
     "sports"
   ],
   "ageRating": "all",

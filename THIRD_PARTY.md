@@ -47,4 +47,8 @@ All other game #1 word packs in `content/mishana/` (`en-everyday-01`, `fr-everyd
 
 ## Sound cues: none
 
-Every sound in `web-client/public/sounds` and `tv-app/app/src/main/res/raw` is original: synthesised from oscillators, seeded noise and filters by `tools/gen-sounds` (`pnpm gen:sounds`). No samples or third-party recordings are used.
+Every sound in `web-client/public/sounds` (including the per-game folders `web-client/public/sounds/<game>/`) and `tv-app/app/src/main/res/raw` is original: synthesised from oscillators, seeded noise and filters by `tools/gen-sounds` (`pnpm gen:sounds`), including the JAMAA platform cues (hub, portal, world stings, points flight, cup, reactions; `tools/gen-sounds/src/platform-cues.ts`) and the per-game manifests (`tools/gen-sounds/cues/<game>.mjs`). The darbuka strokes, plucked strings and brass are synthesis models, not recordings. No samples or third-party recordings are used.
+
+## Characters, world palettes and choreography: none
+
+The JAMAA characters (bodies, faces, expressions), world palettes and motion curves are original data in `shared/src/{characters,worlds,motion}`; the Kotlin files `CharacterPaths.kt`, `WorldColors.kt` and `Choreo.kt` are generated from them by `tools/gen-characters` (`pnpm gen:characters`). The spring curves are a closed-form damped-oscillator formula; the cubic-bezier easing solver is our own code. No third-party art or animation library is used on product surfaces (JAMAA-PLATFORM §3.8).

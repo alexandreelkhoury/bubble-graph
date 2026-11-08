@@ -67,7 +67,7 @@ export function sub(over: Partial<SubscriptionPurchaseV2> & { expiryMs?: number;
     acknowledgementState: "ACKNOWLEDGEMENT_STATE_PENDING",
     startTime: iso(NOW - DAY),
     lineItems: [{
-      productId: "premium",
+      productId: "jamaa_pass",
       expiryTime: iso(expiryMs ?? NOW + 30 * DAY),
       autoRenewingPlan: { autoRenewEnabled: autoRenew ?? true },
       offerDetails: { basePlanId: basePlanId ?? "monthly", ...(trial ? { offerId: "trial-7d" } : {}) },

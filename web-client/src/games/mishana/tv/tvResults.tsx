@@ -11,11 +11,13 @@ import { Avatar, avatarState } from "../../../components/PlayerChip";
 import { RoleEmblem } from "../../../components/Role";
 import { Icon } from "../../../components/Icon";
 import { Confetti, PALETTE } from "../../../components/UI";
-import { TimerRing, TvTimerBar, TvTopBar, ActionPill } from "../../../tv-mock/tvParts";
+import { TimerRing, TvTimerBar, TvTopBar, ActionPill, useInGameOk } from "../../../tv-mock/tvParts";
+import { resultsSettled } from "../../../tv-mock/tvPlatform";
 import { openDialog } from "../../../tv-mock/tvDialogs";
 import { tvAct } from "../../../tv-mock/tvStore";
 import { gameIntent } from "../act";
 import { useInitialFocus } from "../../../tv-mock/dpad";
+
 
 /** TV-10 Blank guess. */
 export function TvGuess({ view }: { view: TvView }) {
@@ -91,7 +93,6 @@ export function TvResults({ view }: { view: TvView }) {
   const r = view.result;
   const [stage2, setStage2] = useState(false);
   const [sbEnd, setSbEnd] = useState(false);
-  const playRef = useInitialFocus<HTMLButtonElement>();
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [lanes, setLanes] = useState<number[]>([]);
   useEffect(() => {
@@ -99,8 +100,10 @@ export function TvResults({ view }: { view: TvView }) {
     const id = setTimeout(() => setStage2(true), ms(5000));
     return () => clearTimeout(id);
   }, [stage2]);
-  // Stage 1 already shows the action bar with Play again focused (Kotlin): any OK there only skips to stage 2.
-  const guard = (f: () => void) => (): void => { if (stage2) f(); else setStage2(true); };
+  // JAMAA-PLATFORM §3.10 E: OK in stage 1 only completes the reveal (stage 2). The platform's results bar (cup panel,
+  // Play again / Change settings / Other games) appears once stage 2 has settled.
+  useInGameOk(!stage2, () => setStage2(true));
+  useEffect(() => { resultsSettled.value = stage2; return () => { resultsSettled.value = false; }; }, [stage2]);
   const showHouses = !!r && r.winner === "CIVILIANS" && !stage2 && !reduced();
   useLayoutEffect(() => {
     const h = titleRef.current;
@@ -193,11 +196,6 @@ export function TvResults({ view }: { view: TvView }) {
             </div>
           </>
         )}
-      </div>
-      <div class="tvbottom tvbottom--results">
-        <button type="button" ref={playRef} class="tvbtn tvbtn--primary" data-default-focus onClick={guard(() => tvAct({ type: "REPLAY" }))}><Icon name="refresh" />{t("results.playAgain")}</button>
-        <button type="button" class="tvbtn" onClick={guard(() => tvAct({ type: "BACK_TO_SETUP" }))}><Icon name="settings" />{t("results.changeSettings")}</button>
-        <button type="button" class="tvbtn" onClick={guard(() => tvAct({ type: "BACK_TO_HUB" }))}><Icon name="grid" />{t("cup.otherGames")}</button>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 {
   "id": "ar-everyday-01",
+  "game": "mishana",
   "version": 3,
   "locale": "ar",
   "script": "Arab",
@@ -18,6 +19,11 @@
     "home",
     "jobs",
     "travel",
+    "sports"
+  ],
+  "topics": [
+    "places",
+    "food",
     "sports"
   ],
   "ageRating": "all",

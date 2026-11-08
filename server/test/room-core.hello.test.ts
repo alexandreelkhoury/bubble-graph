@@ -1,20 +1,41 @@
 import { describe, expect, it } from "vitest";
 import { SEAT_HOLD_MS } from "@jamaa/shared/constants";
-import { Harness, TV_TOKEN } from "./support/fakes";
+import { ALL_TV_GAMES, Harness, TV_TOKEN } from "./support/fakes";
 
 describe("RoomCore hello", () => {
-  it("TV auth ok → tv state", async () => {
+  it("TV auth ok → tv state (v2 RoomView in HUB)", async () => {
     const h = await new Harness().init();
     const tv = await h.tv();
     expect(tv.state?.role).toBe("tv");
     expect(tv.lastView().kind).toBe("tv");
+    expect((tv.lastView().room as { phase: string }).phase).toBe("HUB");
+    expect(tv.last("state")?.v).toBe(2);
     expect(tv.open).toBe(true);
+  });
+
+  it("a v1 hello (or any v other than 2) → UNSUPPORTED_VERSION + 4002 (JAMAA-PLATFORM §2.5)", async () => {
+    const h = await new Harness().init();
+    const c = await h.connect();
+    await h.send(c, { v: 1, t: "hello", role: "tv", tvToken: TV_TOKEN });
+    expect(c.errors()).toEqual(["UNSUPPORTED_VERSION"]);
+    expect(c.closeCode).toBe(4002);
+    const p = await h.connect();
+    await h.send(p, { v: 3, t: "hello", role: "player" });
+    expect(p.closeCode).toBe(4002);
+  });
+
+  it("a TV hello without `games` is a strict-schema failure (BAD_MESSAGE, not authenticated)", async () => {
+    const h = await new Harness().init();
+    const c = await h.connect();
+    await h.send(c, { v: 2, t: "hello", role: "tv", tvToken: TV_TOKEN });
+    expect(c.errors()).toEqual(["BAD_MESSAGE"]);
+    expect(c.state?.role).toBe("pending");
   });
 
   it("TV auth fail → TV_AUTH_FAILED + 4003", async () => {
     const h = await new Harness().init();
     const c = await h.connect();
-    await h.send(c, { v: 1, t: "hello", role: "tv", tvToken: "f".repeat(32) });
+    await h.send(c, { v: 2, t: "hello", role: "tv", tvToken: "f".repeat(32), games: ALL_TV_GAMES });
     expect(c.errors()).toEqual(["TV_AUTH_FAILED"]);
     expect(c.closeCode).toBe(4003);
     expect(c.of("state")).toHaveLength(0);
@@ -52,7 +73,7 @@ describe("RoomCore hello", () => {
     expect(a.conn.closeCode).toBe(4005);
     // The old socket's close does not disconnect the player: the new one is live.
     await h.core.onClose(a.conn);
-    expect(h.state.players[0]?.connected).toBe(true);
+    expect(h.room.members[0]?.connected).toBe(true);
     // welcome comes before state on the resumed socket
     const order = r.msgs.map((m) => m.t);
     expect(order.indexOf("welcome")).toBeLessThan(order.lastIndexOf("state"));
@@ -65,12 +86,12 @@ describe("RoomCore hello", () => {
     const a = await h.player(0);
     a.conn.close(1001);
     await h.core.onClose(a.conn);
-    expect(h.state.players[0]?.connected).toBe(false);
-    const seqBefore = h.state.version;
+    expect(h.room.members[0]?.connected).toBe(false);
+    const seqBefore = h.room.version;
     await h.resume(a.token);
-    expect(h.state.players[0]?.connected).toBe(true);
-    expect(h.state.version).toBe(seqBefore + 1);
-    const tvPlayers = tv.lastView().players as { id: string; connected: boolean }[];
+    expect(h.room.members[0]?.connected).toBe(true);
+    expect(h.room.version).toBe(seqBefore + 1);
+    const tvPlayers = (tv.lastView().room as { members: { id: string; connected: boolean }[] }).members;
     expect(tvPlayers[0]).toMatchObject({ id: a.pid, connected: true });
   });
 
@@ -87,7 +108,8 @@ describe("RoomCore hello", () => {
     const h = await new Harness().init();
     const tv = await h.tv();
     const ps = [await h.player(0), await h.player(1), await h.player(2)];
-    await h.act(tv, { type: "START" });
+    await h.open(tv);
+    await h.act(tv, { type: "START_GAME" });
     expect(h.state.phase).toBe("ROLE_REVEAL");
     await h.act(tv, { type: "KICK", playerId: ps[0]!.pid });
     expect(h.core.peek().sessions[ps[0]!.pid]?.kicked).toBe(true);
@@ -100,10 +122,10 @@ describe("RoomCore hello", () => {
     const h = await new Harness().init();
     const a = await h.player(0);
     const b = await h.player(1);
-    await h.send(b.conn, { v: 1, t: "hello", role: "player", resumeToken: a.token });
+    await h.send(b.conn, { v: 2, t: "hello", role: "player", resumeToken: a.token });
     expect(b.conn.errors()).toEqual(["BAD_MESSAGE"]);
     expect(b.conn.state?.playerId).toBe(b.pid);
-    await h.send(b.conn, { v: 1, t: "hello", role: "tv", tvToken: TV_TOKEN });
+    await h.send(b.conn, { v: 2, t: "hello", role: "tv", tvToken: TV_TOKEN, games: ALL_TV_GAMES });
     expect(b.conn.errors()).toEqual(["BAD_MESSAGE", "BAD_MESSAGE"]);
     expect(b.conn.state?.role).toBe("player");
     expect(a.conn.open).toBe(true);
@@ -118,12 +140,12 @@ describe("RoomCore hello", () => {
     await h.core.onClose(a.conn);
     h.advance(SEAT_HOLD_MS + 1);
     await h.core.onAlarm();
-    expect(h.state.players.map((p) => p.id)).not.toContain(a.pid);
+    expect(h.room.members.map((p) => p.id)).not.toContain(a.pid);
     // Session pruned with the seat (§7.5 session pruning).
     expect(h.core.peek().sessions[a.pid]).toBeUndefined();
     const r = await h.resume(a.token);
     expect(r.errors()).toEqual(["RESUME_INVALID"]);
-    await h.send(r, { v: 1, t: "join", name: "Back Again", color: "coral", locale: "en" });
+    await h.send(r, { v: 2, t: "join", name: "Back Again", color: "coral", locale: "en" });
     expect(r.last("welcome")).toBeDefined();
     expect(r.last("welcome")?.playerId).not.toBe(a.pid);
   });
@@ -132,8 +154,8 @@ describe("RoomCore hello", () => {
     const h = await new Harness().init();
     const a = await h.player(0);
     // Simulate a stale record: the session survives in storage but the player is no longer in the state.
-    const state = await h.storage.get<{ players: unknown[] }>("state");
-    await h.storage.put("state", { ...state!, players: [], hostPlayerId: null });
+    const state = await h.storage.get<{ members: unknown[] }>("state");
+    await h.storage.put("state", { ...state!, members: [], hostPlayerId: null });
     a.conn.close(1001);
     const h2 = new Harness({ storage: h.storage, conns: h.conns, now: h.now });
     await h2.core.start();
@@ -147,8 +169,8 @@ describe("RoomCore hello", () => {
   it("pending socket: join/action before hello → NOT_AUTHENTICATED", async () => {
     const h = await new Harness().init();
     const c = await h.connect();
-    await h.send(c, { v: 1, t: "join", name: "X", color: "coral", locale: "en" });
-    await h.act(c, { type: "START" }, "a1");
+    await h.send(c, { v: 2, t: "join", name: "X", color: "coral", locale: "en" });
+    await h.act(c, { type: "START_GAME" }, "a1");
     expect(c.errors()).toEqual(["NOT_AUTHENTICATED", "NOT_AUTHENTICATED"]);
     expect(c.last("error")?.ref).toBe("a1");
   });

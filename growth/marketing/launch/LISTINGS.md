@@ -52,12 +52,12 @@ Made by a solo developer from Lebanon.
 **Categories / tags**: Games → Party game; tags: `party-game`, `word-game`, `social-deduction`, `multiplayer`, `local-multiplayer`, `tv`, `browser-game`, `arabic`.
 
 **"Alternative to" relations to add** (on the target app's page: "Contribute to this page" → "Suggest Alternatives"; never create entries for other people's apps). Checked 2026-10-04:
-- **The Jackbox Party Pack**: https://alternativeto.net/software/the-jackbox-party-pack/ (25+ alternatives incl. AirConsole, HappyFunTimes; same shared-screen + phones format). Best target.
-- **Imposter Game**: https://alternativeto.net/software/imposter-game/ (browser-based, added July 2026). Same genre.
+- ~~A competitor's party-pack page~~: **dropped 2026-11-08.** BLUEPRINT §3 rule 7 forbids using a competitor's mark to market JAMAA (no "alternative to …" positioning on its name, no bidding on its marks). Target genre and platform pages only.
+- **Imposter Game**: https://alternativeto.net/software/imposter-game/ (browser-based, added July 2026). Same genre. Best target.
 - **HappyFunTimes**: https://alternativeto.net/software/happyfuntimes and **Gametje**: https://alternativeto.net/software/gametje (phones-as-controllers party platforms).
 - Not available: there is no AlternativeTo entry for the Undercover word party app, and `/software/spyfall/` is an unrelated Steam spy game. Don't target those.
 
-**Why this matters**: an AlternativeTo page ranks in Google for "alternatives to Jackbox / imposter game" searches, and it gives the game a stable third-party description that search engines and AI assistants can pick up. Be realistic: citation studies show Reddit and YouTube as the most-cited sites by AI assistants; no study found shows AlternativeTo or Product Hunt being cited often (see LAUNCH-PLAN.md §4). Ask two or three people who actually played to leave an honest comment; fake accounts or vote incentives lower your ranking there (FAQ).
+**Why this matters**: an AlternativeTo page ranks in Google for "alternatives to imposter game" and "party games for TV" searches, and it gives the game a stable third-party description that search engines and AI assistants can pick up. Be realistic: citation studies show Reddit and YouTube as the most-cited sites by AI assistants; no study found shows AlternativeTo or Product Hunt being cited often (see LAUNCH-PLAN.md §4). Ask two or three people who actually played to leave an honest comment; fake accounts or vote incentives lower your ranking there (FAQ).
 
 ---
 
@@ -143,7 +143,7 @@ Everyone gets a secret word on their phone. One player, the Mole, gets a slightl
 - Browser version: live and free. Any laptop or smart-TV browser can be the TV: play.jamaa.workers.dev/tv
 - Android TV / Google TV app: built, heading into Google Play closed testing. Not public.
 - Users and revenue: [Day 10: put only what you actually measured in week one, e.g. rooms created, groups who reported playing, bugs fixed. Revenue: none, nothing is for sale.]
-- Money: free to play. In-app purchases (premium word packs) are planned for the TV app, not live.
+- Money: free to play. An optional subscription, the JAMAA Pass (monthly or yearly, 7-day free trial, sold on the TV only), and single packs are planned for the TV app, not live.
 
 **Stack, and why**
 - TV: native Android TV app, Kotlin + Jetpack Compose for TV. A D-pad is the only input, so every screen is designed for the remote.

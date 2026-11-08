@@ -25,7 +25,8 @@ data class SettingsBounds(
 
 /** Kotlin mirror of shared/src/constants.ts (SPEC §3). Keep in sync by hand; ConstantsTest guards the colours. */
 object Constants {
-    const val PROTOCOL_VERSION = 1
+    /** JAMAA-PLATFORM §2.5: protocol v2 (a v1 hello is closed with 4002). */
+    const val PROTOCOL_VERSION = 2
     const val ROOM_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ" // 23 letters, no I L O
     const val ROOM_CODE_LENGTH = 4
     val ROOM_CODE_REGEX = Regex("^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$")
@@ -59,8 +60,18 @@ object Constants {
     val FATAL_CLOSE_CODES: Set<Int> = setOf(4002, 4003, 4004, 4005, 4006, 4010)
     val SLOW_RECONNECT_CLOSE_CODES: Set<Int> = setOf(4008, 4009)
     const val SLOW_RECONNECT_MS = 10_000L
-    const val PING_FRAME = """{"v":1,"t":"ping"}"""
-    const val PONG_FRAME = """{"v":1,"t":"pong"}"""
+    const val PING_FRAME = """{"v":2,"t":"ping"}"""
+    const val PONG_FRAME = """{"v":2,"t":"pong"}"""
+
+    // JAMAA-PLATFORM §2.5 / §3.10 platform constants (shared/src/constants.ts).
+    /** §3.10 B: the server adds this to the first phase's deadline; the TV entrance must end before it. */
+    const val ENTRANCE_GRACE_MS = 2_500L
+    /** §2.5: REACT at most once per this gap per member. */
+    const val REACTION_MIN_GAP_MS = 1_500L
+    /** §2.5 HUB_FOCUS: at most one message per this much carousel rest. */
+    const val HUB_FOCUS_DEBOUNCE_MS = 300L
+    /** §3.10 E: every screen reached through a transition ignores OK and D-pad for this long. */
+    const val INPUT_GUARD_MS = 400L
     val LOCALES: List<String> = listOf("en", "fr", "ar", "es")
 
     // PAYMENTS-SPEC §3.3 mirrors.

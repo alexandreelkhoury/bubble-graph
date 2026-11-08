@@ -7,11 +7,11 @@ import kotlinx.serialization.Serializable
 // Kotlin mirrors of PAYMENTS-SPEC §3.4 (shared/src/billing/http.ts) and the two TV-only WS messages of §3.11.
 // Exact names. Responses are decoded with ProtocolJson.decoder (tolerant of new keys); the fixtures round-trip strictly.
 
-/** `{"v":1,"t":"entitlement","token":"…"}` (C2S, TV only). The server answers only with an error when it rejects it. */
+/** `{"v":2,"t":"entitlement","token":"…"}` (C2S, TV only). The server answers only with an error when it rejects it. */
 @Serializable @SerialName("entitlement")
 data class EntitlementMsg(val v: Int = Constants.PROTOCOL_VERSION, val token: String) : ClientMessage()
 
-/** `{"v":1,"t":"storeOpen","open":true}` (C2S, TV only): the host-busy signal while the Store / Play sheet is up. */
+/** `{"v":2,"t":"storeOpen","open":true}` (C2S, TV only): the host-busy signal while the Store / Play sheet is up. */
 @Serializable @SerialName("storeOpen")
 data class StoreOpenMsg(val v: Int = Constants.PROTOCOL_VERSION, val open: Boolean) : ClientMessage()
 

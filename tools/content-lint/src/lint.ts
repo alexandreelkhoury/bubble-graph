@@ -19,6 +19,8 @@ export interface LintResult {
   warnings: string[];
   /** Pair counts per language (`en`, `fr`, `ar`) plus `ar-LB`. */
   counts: Record<string, number>;
+  /** §5.2 report: legacy `tags` values that are not vocabulary topics, with their pack counts (lintDirectory only). */
+  legacyTags?: string[];
 }
 
 /** PAYMENTS-SPEC §1.2 release gate: every free starter pack needs at least this many pairs (error with --release). */

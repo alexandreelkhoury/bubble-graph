@@ -1,19 +1,44 @@
-// TV building blocks: top bar, action pill (double-OK), timer ring, player tile, stamp, room code.
-import { useEffect, useRef, useState } from "preact/hooks";
+// TV building blocks: top bar (with the in-game "◁ Back: menu & rules" hint), the in-game OK hook, timer ring, player
+// tile, stamp, room code. JAMAA-PLATFORM §3.2 HUB-06: in game the TV shows no focusable buttons; host actions live in
+// the pause menu, and OK only completes a local reveal choreography (§3.10 E).
+import { useEffect, useRef } from "preact/hooks";
+import { signal } from "@preact/signals";
 import type { ComponentChildren, Ref } from "preact";
-import type { DeadlineView, PublicPlayer, TvView } from "@jamaa/shared/protocol";
+import type { DeadlineView, PublicPlayer, TvView } from "../games/mishana/view";
 import { fmtNum, t } from "../i18n/t";
 import { PHASE_KEY } from "../lib/keys";
 import { Avatar, avatarState, colorVars } from "../components/PlayerChip";
 import { useDeadline } from "../components/Timer";
 import { timerTone } from "../lib/countdown";
 import { Icon } from "../components/Icon";
-import { tvAct, tvConn, tvPaused } from "./tvStore";
+import { tvConn, tvPaused } from "./tvStore";
 import { openPause } from "./tvDialogs";
-import { pushToast } from "../state/store";
 import { ellipsizeName } from "../lib/names";
 
-export const PRESS_AGAIN_MS = 3000;
+/** §3.2 HUB-06 discoverability: the top bar's end corner shows "◁ Back: menu & rules" (round 1, 3 s after each phase). */
+export const backHintOn = signal(false);
+
+/** The current in-game OK handler (a running reveal registers "complete it"), or null: OK then does nothing. */
+let okHandler: (() => void) | null = null;
+/** Called by the platform on OK in game; true when a local choreography consumed it. */
+export function inGameOk(): boolean {
+  const h = okHandler;
+  if (!h) return false;
+  h();
+  return true;
+}
+/** Registers `onOk` while `active` (a reveal that OK completes locally). */
+export function useInGameOk(active: boolean, onOk: (() => void) | undefined): void {
+  const ref = useRef(onOk);
+  ref.current = onOk;
+  useEffect(() => {
+    if (!active || !onOk) return;
+    const h = (): void => ref.current?.();
+    okHandler = h;
+    return () => { if (okHandler === h) okHandler = null; };
+  }, [active, !!onOk]);
+}
+
 /** DESIGN TV-06/07: names on vote tiles are cut to 12 graphemes. */
 export const VOTE_NAME_MAX = 12;
 
@@ -36,6 +61,7 @@ export function TvTopBar({ view, title, stillAlive = null }: { view: TvView; tit
         {degraded && <span class="tvchip tvchip--danger"><Icon name="wifi-off" size={20} /></span>}
         <RoomCode code={view.roomCode} />
         {view.phase !== "RESULTS" && <><span class="tvtop__dot" aria-hidden="true">·</span><span class="tnum">{t("common.aliveCount", { count: alive })}</span></>}
+        {backHintOn.value && !tvPaused.value && <span class="tvhint" role="note"><Icon name="arrow-back" size={18} class="flip-rtl" />{t("hint.backMenu")}</span>}
         {!tvPaused.value && (
           <button type="button" class="tvmenu-btn" tabIndex={-1} aria-label={t("tv.pauseTitle")} onClick={openPause}><Icon name="pause" size={20} /></button>
         )}
@@ -45,32 +71,12 @@ export function TvTopBar({ view, title, stillAlive = null }: { view: TvView; tit
 }
 
 /**
- * One ghost pill in the bottom-end action bar: first OK arms (or skips a running animation), second OK within 3 s sends
- * HOST_ADVANCE. Both labels share one grid cell, so arming never reflows the bar (Kotlin reserveText). While the socket
- * is down (TV-13a) a press is not dropped silently: it says "Reconnecting…" and does not arm.
+ * Formerly the double-OK action pill. JAMAA-PLATFORM §3.2 HUB-06: in game the TV has no focusable buttons ("Skip" is a
+ * pause-menu item now), so this renders nothing; a running animation registers OK = "skip it" (§3.10 E rule 5).
  */
-export function ActionPill({ label, onSkipAnimation, animating = false, pillRef, onAdvance }: { label: string; animating?: boolean; onSkipAnimation?(): void; pillRef?: Ref<HTMLButtonElement>; onAdvance?(): void }) {
-  const [armed, setArmed] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
-  const press = (): void => {
-    if (animating && onSkipAnimation) { onSkipAnimation(); return; }
-    if (tvConn.value !== "open") { pushToast(t("conn.tvReconnecting"), "error"); return; }
-    if (armed) {
-      if (timer.current) clearTimeout(timer.current);
-      setArmed(false);
-      if (onAdvance) onAdvance(); else tvAct({ type: "HOST_ADVANCE" });
-      return;
-    }
-    setArmed(true);
-    timer.current = setTimeout(() => setArmed(false), PRESS_AGAIN_MS);
-  };
-  return (
-    <button type="button" ref={pillRef} class={`tvpill${armed ? " is-armed" : ""}`} onClick={press} data-pill="1">
-      <span class="tvpill__label" aria-hidden={armed}>{label}</span>
-      <span class="tvpill__label tvpill__label--armed" aria-hidden={!armed}>{t("tv.pressAgainWeb")}</span>
-    </button>
-  );
+export function ActionPill({ animating = false, onSkipAnimation }: { label: string; animating?: boolean; onSkipAnimation?(): void; pillRef?: Ref<HTMLButtonElement>; onAdvance?(): void }) {
+  useInGameOk(animating, onSkipAnimation);
+  return null;
 }
 
 /** Ring depletes clockwise from 12 o'clock in every locale; text → accent (≤10 s) → danger + pulse (≤5 s). */

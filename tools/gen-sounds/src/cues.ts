@@ -2,6 +2,7 @@
 // Lebanese signature: a darbuka motif runs through the stings.
 import { brass, darbuka, fm, noise, note, pluck, snap, snare, tone } from "./dsp";
 import type { Buf } from "./dsp";
+import { PLATFORM_CUES } from "./platform-cues";
 
 export type Bus = "sfx" | "sting" | "ui";
 
@@ -22,7 +23,8 @@ export function fileName(id: string): string {
 
 const C5 = note(3), E5 = note(7), G5 = note(10), C6 = note(15);
 
-export const CUES: readonly CueDef[] = [
+/** Mish Ana!'s cues and the remote UI cues (M2, unprefixed file names kept so existing call sites stay valid). */
+export const MISHANA_CUES: readonly CueDef[] = [
   {
     id: "sfx.join", bus: "sfx", seconds: 0.45, targetDb: -16,
     render(b) {
@@ -256,3 +258,6 @@ export const CUES: readonly CueDef[] = [
     },
   },
 ];
+
+/** Every root cue: Mish Ana!'s and the UI cues, then the JAMAA platform cues (JAMAA-PLATFORM §3.11). */
+export const CUES: readonly CueDef[] = [...MISHANA_CUES, ...PLATFORM_CUES];

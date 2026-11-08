@@ -1,9 +1,41 @@
 import { defineConfig } from "vite";
 import preact from "@preact/preset-vite";
+
+// JAMAA-PLATFORM §3.8: chunk names the budget script (scripts/check-size.mjs) understands.
+//   game-<id>[-shared]       a game's phone screens (lazy; counted per game, ≤ 14 KB gz)
+//   tv-mock*                 the /tv browser TV and its per-game screens (excluded from the phone budget)
+//   i18n-<id>-<locale>       one game's strings in one locale (lazy; the largest counts)
+//   <locale>                 the FR/AR/ES root catalogs (lazy; the largest counts)
+const norm = (p: string | null | undefined): string => (p ?? "").replace(/\\/g, "/");
+function chunkName(facade: string, modules: readonly string[]): string | null {
+  const f = norm(facade);
+  let m = /\/src\/games\/([a-z]+)\/phone\.tsx$/.exec(f);
+  if (m) return `game-${m[1]}`;
+  m = /\/src\/games\/([a-z]+)\/tv\.tsx$/.exec(f);
+  if (m) return `tv-mock-game-${m[1]}`;
+  m = /\/i18n\/games\/([a-z]+)\/([a-z]{2})\.json$/.exec(f);
+  if (m) return `i18n-${m[1]}-${m[2]}`;
+  if (/\/src\/tv-mock\//.test(f)) return "tv-mock";
+  const mods = modules.map(norm);
+  if (mods.length > 0) {
+    const g = /\/src\/games\/([a-z]+)\//.exec(mods[0]!);
+    if (g && mods.every((x) => x.includes(`/src/games/${g[1]}/`) && !x.includes("/tv/") && !x.endsWith("/tv.tsx"))) return `game-${g[1]}-shared`;
+    if (mods.every((x) => x.includes("/src/tv-mock/") || x.includes("/tv/") || x.endsWith("/tv.tsx"))) return "tv-mock-shared";
+  }
+  return null;
+}
+
 export default defineConfig({
   plugins: [preact()],
   server: { host: true, port: 5173, strictPort: true,
     proxy: { "/api": "http://127.0.0.1:8787", "/healthz": "http://127.0.0.1:8787",
              "/parties": { target: "ws://127.0.0.1:8787", ws: true } } },
-  build: { outDir: "dist", target: "es2022" },
+  build: {
+    outDir: "dist", target: "es2022",
+    rollupOptions: {
+      output: {
+        chunkFileNames: (chunk) => `assets/${chunkName(chunk.facadeModuleId ?? "", chunk.moduleIds ?? []) ?? "[name]"}-[hash].js`,
+      },
+    },
+  },
 });

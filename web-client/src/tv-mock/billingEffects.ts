@@ -1,12 +1,12 @@
 // PAYMENTS-SPEC §4.4 / §5.2 view-driven billing effects of the TV mock: the downgrade and pool-exhausted toasts, the
-// queued billing toast on the next LOBBY/RESULTS, the Store closing when the phase leaves LOBBY, and the §2.4 rule 1
-// refreshes (load, page visible again).
+// queued billing toast outside a running game, the Store closing when a game starts, and the §2.4 rule 1 refreshes.
+// JAMAA-PLATFORM §2.5: the pool-exhausted flag is Mish Ana!'s `room.setup.extras.poolExhausted`.
 import { useEffect, useRef } from "preact/hooks";
-import type { TvView } from "@jamaa/shared/protocol";
+import type { TvRoomView } from "@jamaa/shared/protocol/v2";
 import { premiumEndedStep } from "../lib/premium";
 import { billing } from "./billing";
 import { closeShop, loadStoreCatalog } from "./shopState";
-import { tvShop } from "./tvStore";
+import { inRunningGame, tvShop } from "./tvStore";
 import { billingEnabled } from "../lib/billingFlag";
 
 /**
@@ -27,26 +27,32 @@ export function useBillingVisibility(): void {
   }, []);
 }
 
-export function useBillingView(view: TvView | null): void {
-  const prev = useRef<TvView | null>(null);
+/** Mish Ana!'s free word pool is exhausted (setup extras, §2.5). */
+export function poolExhausted(v: TvRoomView): boolean {
+  const s = v.room.setup;
+  return s?.gameId === "mishana" && s.extras.gameId === "mishana" && s.extras.poolExhausted;
+}
+
+export function useBillingView(view: TvRoomView | null): void {
+  const prev = useRef<TvRoomView | null>(null);
   const endedPending = useRef(false);
   const poolShownFor = useRef<string | null>(null);
   useEffect(() => {
     const p = prev.current;
     prev.current = view;
     if (!view || !billingEnabled.value) return;
-    const sameRoom = p !== null && p.roomCode === view.roomCode;
+    const sameRoom = p !== null && p.room.roomCode === view.room.roomCode;
     if (!sameRoom) endedPending.current = false;
-    if (view.phase !== "LOBBY" && tvShop.value) closeShop();
-    // Downgrade notice, once per flip (in LOBBY, or on the first LOBBY after the game). Never opens the Store.
-    const ended = premiumEndedStep(endedPending.current, sameRoom ? p : null, view);
+    if (inRunningGame(view) && tvShop.value) closeShop();
+    // Downgrade notice, once per flip (outside a game, or on the first HUB/SETUP after it). Never opens the Store.
+    const ended = premiumEndedStep(endedPending.current, sameRoom ? p.room : null, view.room);
     endedPending.current = ended.pending;
-    if (ended.show) billing.notify({ key: "lobby.premiumEnded", tone: "info" });
+    if (ended.show) billing.notify({ key: "pass.ended", tone: "info" });
     // Free pool exhausted: once per room session.
-    if (view.phase === "LOBBY" && view.poolExhausted && poolShownFor.current !== view.roomCode) {
-      poolShownFor.current = view.roomCode;
-      billing.notify({ key: "lobby.wordsRepeating", tone: "info" });
+    if (view.room.phase === "SETUP" && poolExhausted(view) && poolShownFor.current !== view.room.roomCode) {
+      poolShownFor.current = view.room.roomCode;
+      billing.notify({ key: "game.mishana.wordsRepeatingPass", tone: "info" });
     }
-    if (view.phase === "LOBBY" || view.phase === "RESULTS") billing.flushToasts();
+    if (!inRunningGame(view)) billing.flushToasts();
   }, [view]);
 }

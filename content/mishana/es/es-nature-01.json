@@ -1,5 +1,6 @@
 {
   "id": "es-nature-01",
+  "game": "mishana",
   "version": 1,
   "locale": "es",
   "script": "Latn",
@@ -13,6 +14,9 @@
     "nature",
     "animals",
     "hard"
+  ],
+  "topics": [
+    "nature"
   ],
   "ageRating": "all",
   "license": "CC-BY-4.0",

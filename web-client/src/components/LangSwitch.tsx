@@ -3,7 +3,8 @@ import { useState } from "preact/hooks";
 import { LOCALES } from "@jamaa/shared/constants";
 import type { Locale } from "@jamaa/shared/constants";
 import { dirOf, locale, LOCALE_NATIVE_NAME, setLocale, t } from "../i18n/t";
-import { saveLocale } from "../lib/storage";
+import { clearHowToFlags, saveLocale } from "../lib/storage";
+import { pushToast } from "../state/store";
 import { setVibration, vibrationEnabled } from "../lib/haptics";
 import { Icon } from "./Icon";
 import { ConfirmSheet, Sheet } from "./UI";
@@ -48,6 +49,16 @@ export function MenuSheet({ open, onClose, onLeave, joined }: { open: boolean; o
               <Icon name="vibrate" />
               <span>{t("phone.vibration")}</span>
               <span class={`switch${vib ? " is-on" : ""}`} aria-hidden="true"><span /></span>
+            </button>
+          </>
+        )}
+        {joined && (
+          <>
+            <hr class="sheet__rule" />
+            <button type="button" class="switchrow" onClick={() => { clearHowToFlags(); pushToast(t("settings.showHowToDone"), "success"); onClose(); }}>
+              <Icon name="play" />
+              <span>{t("settings.showHowTo")}</span>
+              <Icon name="refresh" size={20} />
             </button>
           </>
         )}

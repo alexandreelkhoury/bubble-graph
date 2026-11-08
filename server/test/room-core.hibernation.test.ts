@@ -27,10 +27,10 @@ describe("RoomCore hibernation / restore", () => {
       h.core = core;
       const speaker = (): FakeConn => ps.find((p) => p.pid === h.state.speakingOrder[h.state.turnIdx])!.conn;
       for (let i = 0; i < 3; i++) {
-        await h.act(speaker(), { type: "CLUE_DONE" });
+        await h.game(speaker(), { type: "CLUE_DONE" });
         out.push(structuredClone(h.state));
       }
-      await h.act(tv, { type: "HOST_ADVANCE" });
+      await h.game(tv, { type: "HOST_ADVANCE" });
       out.push(structuredClone(h.state));
       out.push(all.map((c) => c.last("state")?.seq));
       return out;
@@ -51,13 +51,14 @@ describe("RoomCore hibernation / restore", () => {
     const { h, tv } = await midGame();
     const fresh = h.makeCore();
     await fresh.start();
-    expect(fresh.peek().state).toEqual(h.state);
+    expect(fresh.peek().state).toEqual(h.room);
+    expect(fresh.peek().history).toEqual(h.history);
     expect(fresh.peek().meta).toEqual(h.core.peek().meta);
     expect(fresh.peek().sessions).toEqual(h.core.peek().sessions);
     // And it keeps serving existing sockets (attachments survived).
     h.core = fresh;
     tv.clear();
-    await h.act(tv, { type: "HOST_ADVANCE" });
+    await h.game(tv, { type: "HOST_ADVANCE" });
     expect(tv.last("state")).toBeDefined();
   });
 
@@ -65,24 +66,28 @@ describe("RoomCore hibernation / restore", () => {
     const { h } = await midGame(0);
     expect(h.state.deadline).toBeNull();
     const speaker = h.state.speakingOrder[h.state.turnIdx];
-    const v = h.state.version;
+    const v = h.room.version;
     const revived = h.makeCore(new FakeConnections());
     await revived.start();
-    const s = revived.peek().state!;
+    const room = revived.peek().state!;
+    const s = room.game!.state as typeof h.state;
+    expect(room.members.every((p) => !p.connected)).toBe(true);
     expect(s.players.every((p) => !p.connected)).toBe(true);
-    expect(s.version).toBeGreaterThan(v);
+    expect(room.version).toBeGreaterThan(v);
     expect(s.speakingOrder[s.turnIdx]).toBe(speaker);
     expect(s.deadline).toMatchObject({ kind: "CLUE", at: h.now + CLUE_GRACE_MS });
     // Persisted and the alarm follows the grace deadline.
-    expect((await h.storage.get<{ version: number }>("state"))!.version).toBe(s.version);
+    expect((await h.storage.get<{ version: number }>("state"))!.version).toBe(room.version);
     expect(h.storage.alarm).toBe(h.now + CLUE_GRACE_MS);
   });
 
   it("restart with all sockets alive → no change at all", async () => {
     const { h } = await midGame();
-    const v = h.state.version;
+    const v = h.room.version;
+    const writes = h.storage.map.get("state");
     const revived = h.makeCore();
     await revived.start();
     expect(revived.peek().state!.version).toBe(v);
+    expect(h.storage.map.get("state")).toBe(writes);
   });
 });

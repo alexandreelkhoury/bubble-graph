@@ -10,7 +10,7 @@ const H = (c: string): string => c.repeat(64).slice(0, 64); // fake 64-hex hashe
 const INST = (i: number): string => i.toString(16).padStart(64, "0");
 
 function subInput(tokenHash: string, s = sub(), caller: string | null = INST(1), checkedMs = NOW, raw: string | null = "raw-" + tokenHash.slice(0, 6)): ApplyInput {
-  return { tokenHash, kind: "sub", productId: "premium", n: normalizeSubscription(s, checkedMs), callerInstallHash: caller, rawTokenForAck: raw, nowMs: checkedMs };
+  return { tokenHash, kind: "sub", productId: "jamaa_pass", n: normalizeSubscription(s, checkedMs), callerInstallHash: caller, rawTokenForAck: raw, nowMs: checkedMs };
 }
 function packInput(tokenHash: string, p = product(), caller: string | null = INST(1), checkedMs = NOW): ApplyInput {
   return { tokenHash, kind: "pack", productId: "pack_en_food_01", n: normalizeProduct(p, checkedMs), callerInstallHash: caller, rawTokenForAck: "raw-" + tokenHash.slice(0, 6), nowMs: checkedMs };

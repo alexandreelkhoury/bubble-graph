@@ -1,5 +1,6 @@
 {
   "id": "fr-food-01",
+  "game": "mishana",
   "version": 2,
   "locale": "fr",
   "script": "Latn",
@@ -13,6 +14,9 @@
     "food",
     "seeded",
     "hard"
+  ],
+  "topics": [
+    "food"
   ],
   "ageRating": "all",
   "license": "MIT",

@@ -1,5 +1,6 @@
 {
   "id": "fr-things-01",
+  "game": "mishana",
   "version": 3,
   "locale": "fr",
   "script": "Latn",

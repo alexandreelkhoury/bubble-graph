@@ -1,9 +1,13 @@
-// Routes (§8.3) and the phone screen-by-phase switch (§8.5).
+// Routes (§8.3) and the phone platform shell (JAMAA-PLATFORM §3.3): Join, then the screen follows `room.phase`
+// (HUB → PHH-02, SETUP → PHH-03, PLAYING → the game's lazy chunk, PHH-04/05). The ⓘ rules sheet is reachable from
+// the top bar on every screen.
 import { useEffect, useState } from "preact/hooks";
 import type { ComponentType } from "preact";
+import type { GameId } from "@jamaa/shared/games/ids";
+import type { PlayerRoomView } from "@jamaa/shared/protocol/v2";
 import { goHome, route } from "./router";
-import { conn, fatalCode, me, menuOpen, resuming, view } from "./state/store";
-import { leave, startSession, stopSession } from "./state/session";
+import { conn, fatalCode, me, meMember, menuOpen, resuming, rulesFor, shownCard, view } from "./state/store";
+import { gameModules, leave, startSession, stopSession } from "./state/session";
 import { loadBillingFlag } from "./lib/billingFlag";
 import { CLOSE } from "./net/connection";
 import { t } from "./i18n/t";
@@ -11,19 +15,15 @@ import { ConnBanner } from "./components/ConnBanner";
 import { MenuSheet } from "./components/LangSwitch";
 import { LiveRegions, Toasts, TopBar } from "./components/UI";
 import { Icon } from "./components/Icon";
-import { avatarState } from "./components/PlayerChip";
 import { Home } from "./screens/Home";
 import { Join } from "./screens/Join";
-import { Lobby } from "./screens/Lobby";
-import { Reveal } from "./screens/Reveal";
-import { Clues } from "./screens/Clues";
-import { Vote } from "./screens/Vote";
-import { Elimination } from "./screens/Elimination";
-import { Guess } from "./screens/Guess";
-import { Results } from "./screens/Results";
 import { Kicked } from "./screens/Kicked";
 import { RoomGone } from "./screens/RoomGone";
 import { Replaced } from "./screens/Replaced";
+import { Hub } from "./platform/Hub";
+import { Setup } from "./platform/Setup";
+import { InGame } from "./platform/InGame";
+import { RulesSheet } from "./platform/RulesSheet";
 
 function Loading() {
   return (
@@ -32,6 +32,25 @@ function Loading() {
       <p class="loading__text"><Icon name="refresh" size={20} class="spin" />{resuming.value ? t("join.resuming") : conn.value === "reconnecting" ? t("conn.reconnecting") : t("conn.connecting")}</p>
     </main>
   );
+}
+
+/** Which game the ⓘ shows, and the phase to highlight (§3.6). */
+function rulesTarget(v: PlayerRoomView | null): { id: GameId; phase: string | null; hub: boolean } {
+  const room = v?.room;
+  if (room?.phase === "PLAYING" && v?.game) return { id: v.game.gameId, phase: v.game.phase, hub: false };
+  if (room?.phase === "SETUP" && room.setupGameId) return { id: room.setupGameId, phase: null, hub: false };
+  return { id: shownCard.value ?? room?.focusedGameId ?? "mishana", phase: null, hub: true };
+}
+
+/** The screen for this phone, and a key that changes when the screen should reset. */
+function phoneScreen(v: PlayerRoomView): { key: string; content: preact.JSX.Element } {
+  const room = v.room;
+  if (room.phase === "HUB") return { key: "hub", content: <Hub view={v} /> };
+  if (room.phase === "SETUP") return { key: `setup:${room.setupGameId}`, content: <Setup view={v} /> };
+  const g = v.game;
+  const mod = g ? gameModules.value[g.gameId] : undefined;
+  const sub = g && mod && !v.me?.benched ? mod.screenKey(v) : v.me?.benched ? "benched" : "loading";
+  return { key: `play:${g?.gameId}:${g?.n}:${sub}:${g?.over ? "over" : ""}`, content: <InGame view={v} /> };
 }
 
 function Room({ code }: { code: string }) {
@@ -52,37 +71,31 @@ function Room({ code }: { code: string }) {
     key = "loading";
     content = <Loading />;
   } else if (!m) {
-    key = `join:${v.phase === "LOBBY" ? "open" : "locked"}`;
+    key = "join";
     content = <Join view={v} />;
   } else {
-    const p = v.players.find((x) => x.id === m.id);
-    const turn = (v.phase === "CLUES" || v.phase === "TIE_BREAK") && v.currentSpeakerId === m.id;
-    key = `${v.phase}:${v.gameNumber}:${v.round}:${turn ? "turn" : ""}:${p?.alive ? "" : "out"}:${m.myVote ? "voted" : ""}`;
-    switch (v.phase) {
-      case "LOBBY": content = <Lobby view={v} />; break;
-      case "ROLE_REVEAL": content = <Reveal view={v} me={m} />; break;
-      case "CLUES":
-      case "TIE_BREAK": content = <Clues view={v} me={m} />; break;
-      case "VOTING": content = <Vote view={v} me={m} />; break;
-      case "ELIMINATION": content = <Elimination view={v} me={m} />; break;
-      case "MR_WHITE_GUESS": content = <Guess view={v} me={m} />; break;
-      case "RESULTS": content = <Results view={v} me={m} />; break;
-    }
+    ({ key, content } = phoneScreen(v));
   }
   useEffect(() => { window.scrollTo(0, 0); }, [key]);
-  const p = v && m ? v.players.find((x) => x.id === m.id) : undefined;
-  const joined = !!p && fc === null;
+  const mm = meMember.value;
+  const joined = !!mm && fc === null;
+  const rules = rulesFor.value;
+  const target = rulesTarget(v);
+  const g = v?.game;
+  const yourTurn = !!(v && g && rules && gameModules.value[g.gameId]?.needsMe?.(v));
   return (
-    <div class="page">
+    <div class="page" data-phase={v?.room.phase ?? "none"}>
       <TopBar
         code={fc === null ? code : null}
-        name={joined ? p.name : undefined} color={joined ? p.color : undefined} host={joined && p.isHost}
-        state={p ? avatarState(p) : "normal"} showLang={!joined}
+        name={joined ? mm.name : undefined} color={joined ? mm.color : undefined} host={joined && mm.isHost}
+        state={mm && !mm.connected ? "away" : "normal"} showLang={!joined}
         onLang={() => { menuOpen.value = true; }}
+        onRules={v && fc === null ? () => { rulesFor.value = target.id; } : undefined}
       />
       <div class="stage" key={key}>{content}</div>
       <ConnBanner />
       <Toasts />
+      {rules && v && <RulesSheet id={target.hub ? rules : target.id} phase={target.phase} hub={target.hub} yourTurn={yourTurn} onClose={() => { rulesFor.value = null; }} />}
       <MenuSheet open={menuOpen.value} joined={joined} onClose={() => { menuOpen.value = false; }}
         onLeave={() => { leave(); menuOpen.value = false; setTimeout(() => goHome(), 200); }} />
       <LiveRegions />

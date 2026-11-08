@@ -51,7 +51,7 @@ describe("cron", () => {
     const packH = await hashOf("pack-a");
     await core.applyPurchase({ tokenHash: packH, kind: "pack", productId: "pack_en_food_01", n: normalizeProduct(product(), NOW - DAY), callerInstallHash: "1".repeat(64), rawTokenForAck: "pack-a", nowMs: NOW - DAY });
     const subH = await hashOf("sub-a");
-    await core.applyPurchase({ tokenHash: subH, kind: "sub", productId: "premium", n: normalizeSubscription(sub(), NOW - DAY), callerInstallHash: "1".repeat(64), rawTokenForAck: "sub-a", nowMs: NOW - DAY });
+    await core.applyPurchase({ tokenHash: subH, kind: "sub", productId: "jamaa_pass", n: normalizeSubscription(sub(), NOW - DAY), callerInstallHash: "1".repeat(64), rawTokenForAck: "sub-a", nowMs: NOW - DAY });
     google.subs.set("sub-a", sub({ acknowledgementState: "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED" }));
     google.products.set("unknown-pack", product({ productId: "pack_lb_food_01" }));
     google.voidedPages = [{ voidedPurchases: [{ purchaseToken: "pack-a" }, { purchaseToken: "sub-a" }, { purchaseToken: "unknown-pack" }, { purchaseToken: "unknown-sub" }] }];
@@ -98,7 +98,7 @@ describe("cron", () => {
     expect(core.rowFor(h1)).toMatchObject({ acknowledged: 1, ack_token: null });
     // Stale subscription: ACTIVE, expired 2 h ago, never re-read since.
     const h2 = await hashOf("stale");
-    await core.applyPurchase({ tokenHash: h2, kind: "sub", productId: "premium", n: normalizeSubscription(sub({ expiryMs: NOW - 2 * 3_600_000, acknowledgementState: "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED" }), NOW - DAY), callerInstallHash: null, rawTokenForAck: null, nowMs: NOW - DAY });
+    await core.applyPurchase({ tokenHash: h2, kind: "sub", productId: "jamaa_pass", n: normalizeSubscription(sub({ expiryMs: NOW - 2 * 3_600_000, acknowledgementState: "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED" }), NOW - DAY), callerInstallHash: null, rawTokenForAck: null, nowMs: NOW - DAY });
     google.voidedPages = [{}];
     logs.length = 0;
     await run(CRON_DAILY);

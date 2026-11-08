@@ -2,7 +2,11 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { CUES, fileName } from "../src/cues";
 import { SR } from "../src/dsp";
-import { render, verify } from "../src/main";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { cueIndex, GAME_IDS, loadGameCues, render, soundCuesKt, verify } from "../src/main";
+import { ALIASES, PLATFORM_CUES } from "../src/platform-cues";
 
 const root = resolve(__dirname, "../../..");
 
@@ -38,7 +42,35 @@ describe("gen-sounds", () => {
     expect(a.length).toBe(Math.round(CUES.find((c) => c.id === id)!.seconds * SR));
   });
 
-  it("the committed OGG files match the catalogue and fit the 400 KB budget", () => {
-    expect(verify(root)).toEqual([]);
+  it("the committed OGG files match the catalogue and fit the 400 KB budget", async () => {
+    expect(verify(root, await loadGameCues())).toEqual([]);
+  });
+
+  it("has every JAMAA-PLATFORM §3.11 platform cue, with game-doc names as aliases of real cues", () => {
+    const want = ["hub_move", "portal_open", "portal_close", ...GAME_IDS.map((g) => `world_${g}_sting`), "coin_fly", "coin_land", "counter_tick",
+      "crown_drop", "cup_star", "reaction_pop", "answer_lock", "truth_reveal", "house_got_you", "quiz_correct", "quiz_wrong"];
+    expect(PLATFORM_CUES.map((c) => c.id).sort()).toEqual([...want].sort());
+    for (const id of want) expect(fileName(id)).toBe(id);
+    for (const target of Object.values(ALIASES)) expect(CUES.some((c) => c.id === target), target).toBe(true);
+    // The portal sound fits the first-open portal (§3.10 A, 1 100 ms); world stings fit the entrance (≤ 2 000 ms).
+    expect(PLATFORM_CUES.find((c) => c.id === "portal_open")?.seconds).toBeLessThanOrEqual(1.1);
+    for (const g of GAME_IDS) expect(PLATFORM_CUES.find((c) => c.id === `world_${g}_sting`)?.seconds).toBeLessThanOrEqual(2);
+  });
+
+  it("loads the per-game manifests (P: empty stubs) and emits per-game indexes", async () => {
+    const games = await loadGameCues();
+    expect(Object.keys(games)).toEqual([...GAME_IDS]);
+    const dir = mkdtempSync(join(tmpdir(), "gen-sounds-cues-"));
+    for (const g of GAME_IDS) writeFileSync(join(dir, `${g}.mjs`), g === "trivia" ? `export const CUES = [{ id: "trivia.lightsOn", bus: "sfx", seconds: 0.2, targetDb: -20, render() {} }];` : "export const CUES = [];");
+    const loaded = await loadGameCues(dir);
+    expect(loaded.trivia.map((c) => c.id)).toEqual(["trivia.lightsOn"]);
+    expect(soundCuesKt("trivia", loaded.trivia)).toContain(`"trivia.lightsOn" to R.raw.trivia_lights_on,`);
+    expect(soundCuesKt("trivia", loaded.trivia)).toContain("package app.jamaa.tv.games.trivia");
+    expect(JSON.parse(cueIndex(loaded.trivia, null))).toEqual({ generatedBy: "tools/gen-sounds", cues: { "trivia.lightsOn": "trivia_lights_on" } });
+    // A missing generated game file is reported.
+    expect(verify(root, loaded).some((p) => p.includes("trivia_lights_on.ogg is missing"))).toBe(true);
+    const bad = mkdtempSync(join(tmpdir(), "gen-sounds-bad-"));
+    for (const g of GAME_IDS) writeFileSync(join(bad, `${g}.mjs`), g === "bluff" ? `export const CUES = [{ id: "trivia.x", bus: "sfx", seconds: 0.1, targetDb: -20, render() {} }];` : "export const CUES = [];");
+    await expect(loadGameCues(bad)).rejects.toThrow('must start with "bluff."');
   });
 });

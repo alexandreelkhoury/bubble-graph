@@ -82,7 +82,7 @@ describe("POST /api/billing/rtdn", () => {
     const { core, google, call } = await setup();
     google.subs.set("sub-2", sub({ acknowledgementState: "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED" }));
     const h = await hashOf("sub-2");
-    await core.applyPurchase({ tokenHash: h, kind: "sub", productId: "premium", n: normalizeSubscription(sub(), NOW - 1000), callerInstallHash: "2".repeat(64), rawTokenForAck: "sub-2", nowMs: NOW - 1000 });
+    await core.applyPurchase({ tokenHash: h, kind: "sub", productId: "jamaa_pass", n: normalizeSubscription(sub(), NOW - 1000), callerInstallHash: "2".repeat(64), rawTokenForAck: "sub-2", nowMs: NOW - 1000 });
     expect((await call(pushBody({ voidedPurchaseNotification: { purchaseToken: "sub-2", orderId: "GPA.3..1", productType: 1, refundType: 1 } }))).status).toBe(204);
     expect(google.count("sub_get")).toBe(1);
     expect(core.rowFor(h)?.revoked).toBe(0);
@@ -105,7 +105,7 @@ describe("POST /api/billing/rtdn", () => {
     const { core, google, call } = await setup();
     google.subs.set("sub-4", sub({ externalAccountIdentifiers: { obfuscatedExternalAccountId: "9".repeat(64) } }));
     const h = await hashOf("sub-4");
-    for (let i = 1; i <= 10; i++) await core.applyPurchase({ tokenHash: h, kind: "sub", productId: "premium", n: normalizeSubscription(sub(), NOW - 5000), callerInstallHash: String(i).padStart(64, "0"), rawTokenForAck: "sub-4", nowMs: NOW - 5000 });
+    for (let i = 1; i <= 10; i++) await core.applyPurchase({ tokenHash: h, kind: "sub", productId: "jamaa_pass", n: normalizeSubscription(sub(), NOW - 5000), callerInstallHash: String(i).padStart(64, "0"), rawTokenForAck: "sub-4", nowMs: NOW - 5000 });
     await call(pushBody(subN("sub-4")));
     expect(core.bindingsFor(h).some((b) => b.install_hash === "9".repeat(64))).toBe(false);
   });

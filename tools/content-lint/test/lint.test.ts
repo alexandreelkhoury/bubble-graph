@@ -12,6 +12,7 @@ function pack(id: string, locale: string, pairs: [Side | string, Side | string][
   const side = (s: Side | string): Side => (typeof s === "string" ? { text: s } : s);
   return {
     id,
+    game: "mishana",
     version: 1,
     locale,
     script: locale.startsWith("ar") ? "Arab" : "Latn",

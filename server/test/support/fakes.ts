@@ -1,13 +1,20 @@
-// In-memory fakes for driving RoomCore in Node (§7.5 "Dependency injection").
-import type { ClientIntentMsg } from "@jamaa/shared/protocol";
+// In-memory fakes for driving RoomCore in Node (§7.5 "Dependency injection"), protocol v2 (JAMAA-PLATFORM §2.5).
 import type { GameState, SettingsPatch } from "@jamaa/shared/engine";
-import { T0, TEST_CATALOG, TIMERS_OFF } from "@jamaa/shared/testing";
+import { contentCatalog } from "@jamaa/shared/content";
+import type { ContentCatalog } from "@jamaa/shared/content";
+import type { GameId } from "@jamaa/shared/games/ids";
+import type { RoomHistory, RoomState } from "@jamaa/shared/room";
+import type { RoomIntentMsg } from "@jamaa/shared/protocol/v2";
+import { ALL_TV_GAMES, T0, TEST_CATALOG, TIMERS_OFF } from "@jamaa/shared/testing";
 import type { RoomEntitlement } from "../../src/billing/token";
 import { RoomCore } from "../../src/room-core";
 import type { ConnHandle, ConnState, RoomBillingDeps, RoomStorage } from "../../src/room-core";
 import { randomBytes, sha256hex } from "../../src/tokens";
 
-export { T0 };
+export { T0, ALL_TV_GAMES };
+/** The v2 test content: the Mish Ana! test catalog, no packs for the other games. */
+export const TEST_CONTENT: ContentCatalog = contentCatalog(TEST_CATALOG);
+export const TEST_PREMIUM_FAMILIES: ReadonlySet<string> = new Set(TEST_CATALOG.packs.filter((p) => p.tier !== "free").map((p) => p.family ?? p.id));
 export const TV_TOKEN = "0123456789abcdef0123456789abcdef";
 export const ROOM = "KXRT";
 
@@ -107,9 +114,13 @@ export class Harness {
   billing: RoomBillingDeps;
   /** BILLING_ENABLED (undefined = the RoomCore default, on). */
   billingEnabled: boolean | undefined;
+  /** GAMES_ENABLED ∩ registry enabled (undefined = the RoomCore default, ["mishana"]). */
+  enabledGames: readonly GameId[] | undefined;
+  content: ContentCatalog = TEST_CONTENT;
+  logs: { code: string; fields: Record<string, string | number | null> }[] = [];
   #n = 0;
 
-  constructor(opts: { storage?: FakeStorage; conns?: FakeConnections; now?: number; entitlement?: RoomEntitlement | null; billingMode?: "google" | "fake"; billing?: RoomBillingDeps; billingEnabled?: boolean } = {}) {
+  constructor(opts: { storage?: FakeStorage; conns?: FakeConnections; now?: number; entitlement?: RoomEntitlement | null; billingMode?: "google" | "fake"; billing?: RoomBillingDeps; billingEnabled?: boolean; enabledGames?: readonly GameId[]; content?: ContentCatalog } = {}) {
     if (opts.storage) this.storage = opts.storage;
     if (opts.conns) this.conns = opts.conns;
     if (opts.now !== undefined) this.now = opts.now;
@@ -117,6 +128,8 @@ export class Harness {
     this.billingMode = opts.billingMode ?? "google";
     this.billing = opts.billing ?? { verifyKeys: new Map(), fakeAllowedByEnv: false };
     this.billingEnabled = opts.billingEnabled;
+    this.enabledGames = opts.enabledGames;
+    if (opts.content) this.content = opts.content;
     this.core = this.makeCore();
   }
 
@@ -126,9 +139,12 @@ export class Harness {
       connections,
       clock: { now: () => this.now },
       crypto: { randomBytes, sha256hex },
-      catalog: TEST_CATALOG,
+      content: () => this.content,
+      premiumFamilies: () => TEST_PREMIUM_FAMILIES,
       billing: async () => this.billing,
+      log: (code, fields) => void this.logs.push({ code, fields }),
       ...(this.billingEnabled === undefined ? {} : { billingEnabled: this.billingEnabled }),
+      ...(this.enabledGames === undefined ? {} : { enabledGames: this.enabledGames }),
       debugInvariants: this.debugInvariants,
       roomCode: ROOM,
     });
@@ -147,10 +163,22 @@ export class Harness {
     this.now += ms;
   }
 
-  get state(): GameState {
+  /** The room state (RoomState v2). */
+  get room(): RoomState {
     const s = this.core.peek().state;
     if (!s) throw new Error("no state");
     return s;
+  }
+
+  get history(): RoomHistory {
+    return this.core.peek().history;
+  }
+
+  /** The active Mish Ana! engine state (throws when no Mish Ana! instance runs). */
+  get state(): GameState {
+    const g = this.room.game;
+    if (!g || g.id !== "mishana") throw new Error(`no Mish Ana! instance (room phase ${this.room.phase})`);
+    return g.state as GameState;
   }
 
   async connect(opts: { cid?: string | null; ip?: string; label?: string } = {}): Promise<FakeConn> {
@@ -169,26 +197,41 @@ export class Harness {
     await this.core.onMessage(c, typeof msg === "string" || msg instanceof ArrayBuffer ? msg : JSON.stringify(msg));
   }
 
-  async act(c: FakeConn, a: ClientIntentMsg, id?: string): Promise<void> {
-    await this.send(c, id === undefined ? { v: 1, t: "action", a } : { v: 1, t: "action", id, a });
+  async act(c: FakeConn, a: RoomIntentMsg, id?: string): Promise<void> {
+    await this.send(c, id === undefined ? { v: 2, t: "action", a } : { v: 2, t: "action", id, a });
   }
 
-  async tv(): Promise<FakeConn> {
+  /** A Mish Ana! in-game intent (`GAME {gameId:"mishana", i}`). */
+  async game(c: FakeConn, i: Record<string, unknown>, id?: string): Promise<void> {
+    await this.act(c, { type: "GAME", gameId: "mishana", i } as RoomIntentMsg, id);
+  }
+
+  /** OPEN_GAME mishana (TV) → SETUP. */
+  async open(c: FakeConn, gameId: GameId = "mishana"): Promise<void> {
+    await this.act(c, { type: "OPEN_GAME", gameId });
+  }
+
+  /** UPDATE_GAME_SETTINGS for Mish Ana! (the room must be in its SETUP). */
+  async settings(c: FakeConn, patch: SettingsPatch, id?: string): Promise<void> {
+    await this.act(c, { type: "UPDATE_GAME_SETTINGS", gameId: "mishana", patch } as RoomIntentMsg, id);
+  }
+
+  async tv(games: { id: GameId; v: number }[] = ALL_TV_GAMES): Promise<FakeConn> {
     const c = await this.connect({ label: "tv" });
-    await this.send(c, { v: 1, t: "hello", role: "tv", tvToken: TV_TOKEN });
+    await this.send(c, { v: 2, t: "hello", role: "tv", tvToken: TV_TOKEN, games });
     return c;
   }
 
   async spectator(opts: { ip?: string; label?: string } = {}): Promise<FakeConn> {
     const c = await this.connect(opts);
-    await this.send(c, { v: 1, t: "hello", role: "player" });
+    await this.send(c, { v: 2, t: "hello", role: "player" });
     return c;
   }
 
   async player(i: number, opts: { ip?: string } = {}): Promise<{ conn: FakeConn; pid: string; token: string }> {
     const colors = ["coral", "azure", "lemon", "jade", "grape", "tangerine", "aqua", "rose", "mint", "plum", "sand", "lilac"];
     const conn = await this.spectator({ ip: opts.ip, label: `p${i}` });
-    await this.send(conn, { v: 1, t: "join", name: `Player ${i}`, color: colors[i % 12], locale: "en" });
+    await this.send(conn, { v: 2, t: "join", name: `Player ${i}`, color: colors[i % 12], locale: "en" });
     const w = conn.last("welcome");
     if (!w) throw new Error(`join failed: ${conn.errors().join(",")}`);
     return { conn, pid: w.playerId as string, token: w.resumeToken as string };
@@ -196,21 +239,23 @@ export class Harness {
 
   async resume(token: string, label = "resume"): Promise<FakeConn> {
     const c = await this.connect({ label });
-    await this.send(c, { v: 1, t: "hello", role: "player", resumeToken: token });
+    await this.send(c, { v: 2, t: "hello", role: "player", resumeToken: token });
     return c;
   }
 
   /**
-   * TV + `n` joined players, timers off (plus `settings`), then START; with `ready`, every player is READY
-   * so the game is in CLUES round 1.
+   * TV + `n` joined players, hub → OPEN_GAME mishana, timers off (plus `settings`), then START_GAME; with `ready`,
+   * every player is READY so the game is in CLUES round 1.
    */
   async startedGame(opts: { n?: number; settings?: SettingsPatch; ready?: boolean } = {}): Promise<{ tv: FakeConn; ps: { conn: FakeConn; pid: string; token: string }[] }> {
     const tv = await this.tv();
     const ps = [];
     for (let i = 0; i < (opts.n ?? 4); i++) ps.push(await this.player(i));
-    await this.act(tv, { type: "UPDATE_SETTINGS", patch: { ...TIMERS_OFF, ...opts.settings } });
-    await this.act(tv, { type: "START" });
-    if (opts.ready) for (const p of ps) await this.act(p.conn, { type: "READY" });
+    await this.open(tv);
+    await this.settings(tv, { ...TIMERS_OFF, ...opts.settings });
+    await this.act(tv, { type: "START_GAME" });
+    if (this.room.phase !== "PLAYING") throw new Error(`START_GAME failed: ${tv.errors().join(",")}`);
+    if (opts.ready) for (const p of ps) await this.game(p.conn, { type: "READY" });
     return { tv, ps };
   }
 
@@ -226,12 +271,12 @@ export class Harness {
         if (voter && vc && target) {
           const t2 = voter.id === target.id ? s.players.find((p) => p.alive && p.id !== voter.id) : target;
           if (t2) {
-            await this.act(vc.conn, { type: "CAST_VOTE", targetId: t2.id });
+            await this.game(vc.conn, { type: "CAST_VOTE", targetId: t2.id });
             continue;
           }
         }
       }
-      await this.act(tv, { type: "HOST_ADVANCE" });
+      await this.game(tv, { type: "HOST_ADVANCE" });
     }
     if (this.state.phase !== "RESULTS") throw new Error(`did not reach RESULTS (phase ${this.state.phase})`);
   }

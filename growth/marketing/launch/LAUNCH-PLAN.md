@@ -1,5 +1,7 @@
 # JAMAA launch plan (browser version first; game #1: Mish Ana!)
 
+> **Marketing rule (2026-11-08, [docs/BLUEPRINT.md](../../../docs/BLUEPRINT.md) §3 rule 7):** never name Jackbox or its games in public copy, ads, listings or keywords; the subreddit notes below are only there so we stay out of it.
+>
 > **Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1): the product is **JAMAA** (جماعة), the TV party-games app; **Mish Ana!** is its game #1. Product names, listing titles, search lines and end cards say JAMAA ("Search JAMAA on your TV"); lines about the game itself stay "Mish Ana!" (framed as "Mish Ana!, on JAMAA"), and the Remotion ids `MishAna-*` are kept. Some copy below predates the 2026-10-07 rule change (the Mole now gets no word; the Blank is gone): check it against `play-store/LISTING.md` before posting.
 
 Prepared 2026-10-04. Companion files: `X-THREAD.md`, `REDDIT-POSTS.md`, `LISTINGS.md`.
@@ -42,7 +44,7 @@ Ranked by fit × reach × chance of not being removed, for **a free browser game
 | 8 | r/indiegames (~338k) | Yes, with gameplay media | Max 2 posts/week; no dev-focused posts, no "promo disguised as feedback", **no generative-AI content** | Player audience. Skip if the AI rule applies to you |
 | 9 | r/playmygame (~143k) | Yes, free games only | Link first, your role, truthful AI/art claims; 1 post/month; no clones/reskins | Feedback-oriented players |
 | 10 | r/partygames (~1.6k, low activity) | Devs do post their games | No custom rules seen | Small but exactly on topic; good first test of the post |
-| 11 | AlternativeTo | Yes, for released apps | Closed-beta apps rejected; free queue takes months, $5 priority 1–2 business days | Long-tail Google traffic ("Jackbox alternatives"); slow |
+| 11 | AlternativeTo | Yes, for released apps | Closed-beta apps rejected; free queue takes months, $5 priority 1–2 business days | Long-tail Google traffic (genre alternatives, e.g. "imposter game"); slow |
 | 12 | Indie Hackers | Story posts yes, bare promo no | Posts may be reviewed; groups have own rules | Good for the "week one, honest numbers" write-up |
 | 13 | r/GoogleTV (~17k, growing) | Unverified rules | Has an app-recommendation flair | Save for the **tester call** when closed testing opens |
 | 14 | Product Hunt | Yes | Beta/waitlist launches aren't featured; launch 12:01 a.m. PT; no upvote asking | One-shot: wait for the public Play release |
@@ -110,7 +112,7 @@ One-off tasks:
 - [ ] Record the real 20–30 s round. Take 3 clean `/tv` screenshots: lobby with QR, clues row, OUT stamp.
 - [ ] Upload the fixed film to YouTube as **unlisted** (LISTINGS.md §5) and the 9:16 as a Short (unlisted/scheduled).
 - [ ] Modmail **r/lebanon**, **r/AndroidTV** (and r/WebGames if you want to try) with the messages in REDDIT-POSTS.md.
-- [ ] Submit the **AlternativeTo** listing (browser version only; pay the $5 priority review if you want it live during the launch). Then suggest it as an alternative on the Jackbox Party Pack and Imposter Game pages.
+- [ ] Submit the **AlternativeTo** listing (browser version only; pay the $5 priority review if you want it live during the launch). Then suggest it as an alternative on the Imposter Game, HappyFunTimes and Gametje pages (never on a competitor's party-pack page: BLUEPRINT §3 rule 7).
 - [ ] Create the Product Hunt account (personal) and use it normally; don't launch yet.
 - [ ] Play 2–3 full rounds on the live URL with real people on different phones (iPhone + Android). Fix anything embarrassing before Day 1.
 
@@ -154,7 +156,7 @@ What the data says (cite these, don't overclaim):
 | Reddit threads | Public threads where real people describe the game in their words, with your honest answers | Strongest documented source for Perplexity and Google AI Overviews. A thread like "party game for Android TV where phones are controllers" answers exactly the questions people ask assistants. Your FAQ replies become the quoted text, so keep them factual |
 | YouTube | A video page with a text description and (later) captions | Second most-cited source; Google's AI Mode favours YouTube. Upload captions (auto + corrected) so the content is readable. Use the same one-line description everywhere |
 | Show HN | A permanent HN item page + comments | HN pages rank well and get scraped; the technical comments describe the architecture for developer queries |
-| AlternativeTo | An "alternative to Jackbox / Imposter Game" listing | Ranks for "alternatives to …" searches; gives a third-party description and platform list |
+| AlternativeTo | An "alternative to Imposter Game" listing (genre pages only) | Ranks for "alternatives to …" searches; gives a third-party description and platform list |
 | Product Hunt | A product page with maker comment and reviews | Ranks for the product name; useful once the Play app is public |
 | Indie Hackers | Story post | Ranks for "solo dev / Cloudflare / Android TV game" story searches; minor |
 | X | Thread | Little search value; mostly reach and relationships |

@@ -173,7 +173,7 @@ describe("GoogleClient", () => {
     expect(api.map((x) => [x.init.method, x.url])).toEqual([
       ["GET", `${base}subscriptionsv2/tokens/${enc}`],
       ["GET", `${base}productsv2/tokens/${enc}`],
-      ["POST", `${base}subscriptions/premium/tokens/${enc}:acknowledge`],
+      ["POST", `${base}subscriptions/jamaa_pass/tokens/${enc}:acknowledge`],
       ["POST", `${base}products/pack_en_food_01/tokens/${enc}:acknowledge`],
       ["GET", `${base}voidedpurchases?type=1&startTime=1234&maxResults=1000`],
       ["GET", `${base}voidedpurchases?type=1&startTime=1234&maxResults=1000&token=next%2F1`],
@@ -197,7 +197,7 @@ describe("ackPurchase", () => {
   it("2xx → markAcked", async () => {
     const g = new ScriptedGoogle();
     const s = store();
-    expect(await ackPurchase(g, s, "sub", "premium", "t", "h", opts)).toBe("acked");
+    expect(await ackPurchase(g, s, "sub", "jamaa_pass", "t", "h", opts)).toBe("acked");
     expect(s.acked).toEqual(["h"]);
   });
   it("4xx + re-read ACKNOWLEDGED → markAcked; 4xx + re-read PENDING → kept", async () => {
@@ -216,7 +216,7 @@ describe("ackPurchase", () => {
       const g = new ScriptedGoogle();
       g.ackError = e;
       const s = store();
-      expect(await ackPurchase(g, s, "sub", "premium", "t", "h", opts)).toBe("kept");
+      expect(await ackPurchase(g, s, "sub", "jamaa_pass", "t", "h", opts)).toBe("kept");
       expect(g.count("sub_get")).toBe(0);
     }
   });
@@ -225,7 +225,7 @@ describe("ackPurchase", () => {
       const g = new ScriptedGoogle();
       g.ackError = new GoogleHttpError(status, "sub_ack");
       const s = store();
-      expect(await ackPurchase(g, s, "sub", "premium", "t", "h", opts)).toBe("kept");
+      expect(await ackPurchase(g, s, "sub", "jamaa_pass", "t", "h", opts)).toBe("kept");
       expect(g.count("sub_get")).toBe(0);
     }
   });

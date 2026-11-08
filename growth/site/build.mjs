@@ -4,9 +4,9 @@
 
   Sources (edit these)                       Output (deploy this): dist/
   ─────────────────────────────────────────  ──────────────────────────────────────────────
-  site.config.json   origin + switches       /index.html, /fr/index.html, /ar/index.html
+  site.config.json   origin + switches       /index.html, /fr/, /ar/, /es/ (index.html each)
   index.html         home template (EN copy) /<slug>/index.html, /fr/<slug>/…, /ar/<slug>/…
-  assets/js/i18n.js  FR + AR home copy       /guides/, /privacy/, /404.html
+  assets/js/i18n.js  FR + AR + ES home copy      /guides/, /privacy/, /404.html
   content/home.json  per-language SEO meta   /sitemap.xml, /robots.txt, /llms.txt, /llms-full.txt
   content/<lang>/*.html  guide pages         /assets/**, icons, manifest, _headers
 
@@ -29,18 +29,18 @@ const LIVE = !!cfg.playStoreLive;
 const PLAY = cfg.playUrl;
 const BROWSER = cfg.browserUrl;
 const BROWSER_SHORT = BROWSER.replace(/^https?:\/\//, '');
-const LANGS = ['en', 'fr', 'ar'];
-const HOME = { en: '/', fr: '/fr/', ar: '/ar/' };
-const OG_LOCALE = { en: 'en_US', fr: 'fr_FR', ar: 'ar_LB' };
+const LANGS = ['en', 'fr', 'ar', 'es'];
+const HOME = { en: '/', fr: '/fr/', ar: '/ar/', es: '/es/' };
+const OG_LOCALE = { en: 'en_US', fr: 'fr_FR', ar: 'ar_LB', es: 'es_ES' };
 const abs = (p) => ORIGIN + p;
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const strip = (s) => String(s).replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/\s+/g, ' ').trim();
-const dateFmt = (d, lang) => new Intl.DateTimeFormat(lang === 'ar' ? 'ar-LB-u-nu-latn' : lang === 'fr' ? 'fr-FR' : 'en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(d + 'T00:00:00Z'));
+const dateFmt = (d, lang) => new Intl.DateTimeFormat(lang === 'ar' ? 'ar-LB-u-nu-latn' : lang === 'fr' ? 'fr-FR' : lang === 'es' ? 'es-ES' : 'en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(d + 'T00:00:00Z'));
 
 /* ------------------------------------------------------------------ shared facts (one definition, reused everywhere) */
 const home = JSON.parse(rd('content/home.json'));
-const DEF = home.definition; // { en, fr, ar } one-sentence definition of game #1, Mish Ana! (GAME1)
-const PLATFORM_DEF = home.platform; // { en, fr, ar } one-sentence definition of JAMAA, the app (PLATFORM)
+const DEF = home.definition; // { en, fr, ar, es } one-sentence definition of game #1, Mish Ana! (GAME1)
+const PLATFORM_DEF = home.platform; // { en, fr, ar, es } one-sentence definition of JAMAA, the app (PLATFORM)
 const GAME_ID = abs('/#game');
 const APP_ID = abs('/#app');
 const ORG_ID = abs('/#org');
@@ -68,10 +68,17 @@ const UI = {
         ctaTitle: 'العبوا «مش أنا!» الليلة', ctaInstall: 'نزّلها عتلفزيوني', ctaInstallSub: 'اللعب ببلاش · عبر Google Play', ctaBrowser: 'العب بالمتصفّح', ctaBrowserSub: 'ببلاش · على أي تلفزيون مع لابتوب',
         ctaBodyLive: 'نزّلوا جماعة على Android TV أو Google TV من تلفونك، أو افتح نسخة المتصفّح المجانية على لابتوب موصول بالتلفزيون. التلفونات بتفوت بمسح كود QR.',
         ctaBodySoon: 'تطبيق جماعة لـ Android TV و Google TV جايي قريبًا على Google Play. بس فيكن تلعبوا اللعبة كاملة هلّق ببلاش بالمتصفّح: افتحوها على لابتوب موصول بالتلفزيون، وكل واحد بيفوت بمسح كود QR بتلفونو.',
-        navCta: LIVE ? 'نزّلها' : 'العب', aboutBox: 'عن «مش أنا!»', readIn: 'كمان بـ' }
+        navCta: LIVE ? 'نزّلها' : 'العب', aboutBox: 'عن «مش أنا!»', readIn: 'كمان بـ' },
+  es: { skip: 'Ir al contenido', home: 'Inicio', guides: 'Guías', updated: 'Actualizado el', faq: 'Preguntas frecuentes', more: 'Más guías',
+        langNav: 'Idioma', crumbs: 'Ruta de navegación', footer: 'Pie de página', privacy: 'Privacidad', contact: 'Contacto', about: 'Acerca de', footTag: 'JAMAA – Juegos de fiesta en tu tele',
+        tm: 'Android TV, Google TV, Google Play y Chromecast son marcas de Google LLC.',
+        ctaTitle: 'Jueguen a Mish Ana! esta noche', ctaInstall: 'Instalar en mi tele', ctaInstallSub: 'Gratis · en Google Play', ctaBrowser: 'Jugar en el navegador', ctaBrowserSub: 'Gratis · en cualquier tele con un portátil',
+        ctaBodyLive: 'Instala JAMAA en tu Android TV o Google TV desde el móvil, o abre la versión gratuita para navegador en un portátil conectado a la tele. Los móviles se unen escaneando un código QR.',
+        ctaBodySoon: 'La app de JAMAA para Android TV y Google TV llega pronto a Google Play. Ya puedes jugar el juego completo gratis en un navegador: ábrelo en un portátil conectado a la tele y cada uno se une escaneando el código QR con su móvil.',
+        navCta: LIVE ? 'Instalar' : 'Jugar', aboutBox: 'Sobre Mish Ana!', readIn: 'También en' }
 };
-const LANG_LABEL = { en: 'EN', fr: 'FR', ar: 'عربي' };
-const LANG_NAME = { en: 'English', fr: 'Français', ar: 'العربية' };
+const LANG_LABEL = { en: 'EN', fr: 'FR', ar: 'عربي', es: 'ES' };
+const LANG_NAME = { en: 'English', fr: 'Français', ar: 'العربية', es: 'Español' };
 
 /* ------------------------------------------------------------------ helpers */
 function rmrf(p) { fs.rmSync(p, { recursive: true, force: true }); }
@@ -182,7 +189,7 @@ const orgNode = () => ({
   ...(cfg.contactEmail ? { email: cfg.contactEmail } : {}),
   ...(cfg.sameAs.length ? { sameAs: cfg.sameAs } : {})
 });
-const APP_LANGS = ['en', 'fr', 'ar', 'es']; // languages of the app and its games (the site itself is EN/FR/AR)
+const APP_LANGS = ['en', 'fr', 'ar', 'es']; // languages of the app and its games (the site home is EN/FR/AR/ES; guides EN/FR/AR)
 const appNode = (lang) => ({
   '@type': 'SoftwareApplication', '@id': APP_ID,
   name: 'JAMAA', alternateName: ['جماعة', 'Jamaa'],
@@ -267,23 +274,24 @@ const videoNode = (lang) => ({
   contentUrl: abs('/' + HERO_VIDEO),
   ...(HERO.caps ? {} : { inLanguage: 'en' }), publisher: { '@id': ORG_ID }
 });
-const websiteNode = () => ({ '@type': 'WebSite', '@id': SITE_ID, url: abs('/'), name: 'JAMAA', alternateName: 'جماعة', inLanguage: ['en', 'fr', 'ar'], publisher: { '@id': ORG_ID } });
+const websiteNode = () => ({ '@type': 'WebSite', '@id': SITE_ID, url: abs('/'), name: 'JAMAA', alternateName: 'جماعة', inLanguage: LANGS, publisher: { '@id': ORG_ID } });
 const faqNode = (url, items, lang) => ({
   '@type': 'FAQPage', '@id': url + '#faq', inLanguage: lang,
   mainEntity: items.map((x) => ({ '@type': 'Question', name: strip(x.q), acceptedAnswer: { '@type': 'Answer', text: absLinks(x.a) } }))
 });
 const absLinks = (h) => h.replace(/href="\//g, `href="${ORIGIN}/`);
 
-/* ------------------------------------------------------------------ HOME (EN / FR / AR from one template) */
+/* ------------------------------------------------------------------ HOME (EN / FR / AR / ES from one template) */
 const tpl = rd('index.html');
 const ctx = { window: {} }; vm.runInNewContext(rd('assets/js/i18n.js'), ctx);
 const DICTS = ctx.window.JAMAA_I18N;
-if (CUES) for (const c of CUES) for (const l of ['fr', 'ar']) if (DICTS[l][c.k] == null) throw new Error(`assets/js/i18n.js: ${l}.${c.k} is missing (caption of the hero loop)`);
+if (CUES) for (const c of CUES) for (const l of ['fr', 'ar', 'es']) if (DICTS[l][c.k] == null) throw new Error(`assets/js/i18n.js: ${l}.${c.k} is missing (caption of the hero loop)`);
 const JS_KEYS = ['capCiv', 'capMole', 'capUnder', 'wordA', 'wordB', 'pause', 'play', 'reelPause', 'reelPlay', 'shareTitle', 'shareText', 'copied',
   'sendTitle', 'sendText', 'sheetTitle', 'sheetBody', 'copyLink', 'linkCopied', 'emailLink', 'emailSubject', 'openHere', 'closeSheet',
   'sheetStep1', 'sheetStep2', 'waLink', 'moreShare', 'tapToCopy', 'nameMaya', 'nameSami',
   'cap_opening', 'cap_friends', 'cap_secret', 'cap_different', 'cap_clues', 'cap_fit', 'cap_out', 'cap_mole', 'cap_moleWord'];
-// every caption the loop needs must exist in FR and AR (the build fails otherwise, see below)
+// every caption the loop needs must exist in FR, AR and ES (the build fails otherwise, see above)
+// every data-i18n key of the home template must exist in FR, AR and ES too (checked below, after the build)
 
 function hreflangLinks(alts) { // alts: {en:'/x/', fr:'/fr/y/'}
   const ls = Object.keys(alts);
@@ -465,7 +473,8 @@ ${a.faq.map((x) => `      <details>\n        <summary>${x.q}</summary>\n        
     const list = (l) => articles.filter((x) => x.lang === l && x.type === 'Article');
     return `<ul class="guide-list">${list('en').map(card).join('')}</ul>
     <h2>En français</h2><ul class="guide-list">${list('fr').map(card).join('')}</ul>
-    <h2>بالعربي</h2><ul class="guide-list">${list('ar').map(card).join('')}</ul>`;
+    <h2>بالعربي</h2><ul class="guide-list">${list('ar').map(card).join('')}</ul>${list('es').length ? `
+    <h2>En español</h2><ul class="guide-list">${list('es').map(card).join('')}</ul>` : ''}`;
   });
 
   const graph = [
@@ -562,17 +571,20 @@ Short definitions for quoting (JAMAA, the app):
 - EN: ${PLATFORM_DEF.en}
 - FR: ${PLATFORM_DEF.fr}
 - AR: ${PLATFORM_DEF.ar}
+- ES: ${PLATFORM_DEF.es}
 
 Short definitions for quoting (Mish Ana!, game #1):
 - EN: ${DEF.en}
 - FR: ${DEF.fr}
 - AR: ${DEF.ar}
+- ES: ${DEF.es}
 
 ## Main pages
 
-- [JAMAA home (English)](${abs('/')}): the app and its first game, Mish Ana!; which TVs it works on, how to install it from a phone, FAQ
+- [JAMAA home (English)](${abs('/')}): the app, its games (Mish Ana! first), which TVs it works on, how to install it from a phone, FAQ
 - [JAMAA (Français)](${abs('/fr/')}): page d'accueil en français
 - [جماعة (العربية)](${abs('/ar/')}): الصفحة الرئيسية بالعربي
+- [JAMAA (Español)](${abs('/es/')}): página de inicio en español
 - [About JAMAA](${abs('/about/')}): entity facts, games, roles, platforms, languages, contact
 - [Play in a browser](${BROWSER}): host a game from a laptop or TV browser; phones scan the QR code
 
@@ -683,6 +695,12 @@ for (const f of files.filter((x) => /\.(html|txt|xml|js)$/.test(x))) {
     if ([...title].length > 70) console.warn(`! ${rel}: title is ${[...title].length} chars: ${title}`);
     if ([...strip(desc)].length > 170) console.warn(`! ${rel}: description is ${[...strip(desc)].length} chars`);
   }
+}
+// every translatable key of the home template exists in each non-English dictionary (i18n.js, plus prelaunch.json before the launch)
+const TPL_KEYS = new Set([...tpl.matchAll(/\sdata-i18n(?:-alt|-aria)?="([^"]+)"/g)].map((m) => m[1]));
+for (const l of LANGS.filter((x) => x !== 'en')) {
+  const dict = { ...DICTS[l], ...(PRE ? PRE[l] : {}) };
+  for (const k of TPL_KEYS) if (dict[k] == null) fail(`assets/js/i18n.js: ${l}.${k} is missing (data-i18n key of index.html)`);
 }
 if (errors) { console.error(`\nBuild finished with ${errors} error(s).`); process.exit(1); }
 console.log(`✓ Built ${pages.length} pages + sitemap, robots, llms.txt into ${path.relative(ROOT, OUT)}/ for ${ORIGIN} (${ldCount} JSON-LD blocks valid, internal links OK)${LIVE ? '' : ' · playStoreLive=false'}`);

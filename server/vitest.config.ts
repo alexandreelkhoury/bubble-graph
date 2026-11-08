@@ -1,2 +1,2 @@
 import { defineProject } from "vitest/config";
-export default defineProject({ test: { name: "server", environment: "node", passWithNoTests: true } });
+export default defineProject({ test: { name: "server", environment: "node", passWithNoTests: true, setupFiles: ["./test/support/setup.ts"] } });

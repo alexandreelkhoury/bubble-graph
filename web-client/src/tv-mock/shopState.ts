@@ -1,8 +1,9 @@
-// PAYMENTS-SPEC §4.4 / §5.2: opening and closing the mock Store overlay (LOBBY only), remembering what opened it.
+// PAYMENTS-SPEC §4.4 / §5.2 / JAMAA-PLATFORM §4.5: opening and closing the Pass store overlay (HUB-08; never during a
+// running game), remembering what opened it.
 import { billing } from "./billing";
 import type { StoreEntry } from "./billing/model";
 import { refocus } from "./dpad";
-import { tvShop, tvView } from "./tvStore";
+import { inRunningGame, tvShop, tvView } from "./tvStore";
 import { billingEnabled } from "../lib/billingFlag";
 
 let opener: Element | null = null;
@@ -20,7 +21,7 @@ export async function loadStoreCatalog(): Promise<void> {
 }
 
 export function openShop(entry: StoreEntry): void {
-  if (tvView.value?.phase !== "LOBBY" || !billingEnabled.value) return;
+  if (!tvView.value || inRunningGame(tvView.value) || !billingEnabled.value) return;
   opener = document.activeElement;
   tvShop.value = entry;
   billing.setStoreVisible(true);

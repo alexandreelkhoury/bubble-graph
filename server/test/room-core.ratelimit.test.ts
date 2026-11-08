@@ -46,13 +46,13 @@ describe("RoomCore rate limits and frame checks", () => {
     const c = await h.spectator();
     // 2049 chars but 4098 UTF-8 bytes: a char-length check would let it through.
     const name = "é".repeat(2049);
-    const frame = JSON.stringify({ v: 1, t: "join", name, color: "coral", locale: "en" });
+    const frame = JSON.stringify({ v: 2, t: "join", name, color: "coral", locale: "en" });
     expect(frame.length).toBeLessThan(MSG_MAX_BYTES + 100);
     expect(new TextEncoder().encode(frame).length).toBeGreaterThan(MSG_MAX_BYTES);
     await h.send(c, frame);
     expect(c.errors()).toEqual(["BAD_MESSAGE"]);
     expect(c.open).toBe(true);
-    expect(h.state.players).toHaveLength(0);
+    expect(h.room.members).toHaveLength(0);
   });
 
   it("binary frame → BAD_MESSAGE", async () => {
@@ -63,16 +63,16 @@ describe("RoomCore rate limits and frame checks", () => {
     expect(c.open).toBe(true);
   });
 
-  it("v:2 → UNSUPPORTED_VERSION + 4002 (not BAD_MESSAGE); garbage → BAD_MESSAGE", async () => {
+  it("v:1 → UNSUPPORTED_VERSION + 4002 (not BAD_MESSAGE); garbage → BAD_MESSAGE", async () => {
     const h = await new Harness().init();
     const c = await h.connect();
     await h.send(c, "{not json");
     await h.send(c, "[1,2]");
     await h.send(c, '"str"');
-    await h.send(c, JSON.stringify({ v: 1, t: "nope" }));
+    await h.send(c, JSON.stringify({ v: 2, t: "nope" }));
     expect(c.errors()).toEqual(["BAD_MESSAGE", "BAD_MESSAGE", "BAD_MESSAGE", "BAD_MESSAGE"]);
     expect(c.open).toBe(true);
-    await h.send(c, JSON.stringify({ v: 2, t: "hello", role: "player" }));
+    await h.send(c, JSON.stringify({ v: 1, t: "hello", role: "player" }));
     expect(c.errors().at(-1)).toBe("UNSUPPORTED_VERSION");
     expect(c.closeCode).toBe(4002);
   });
@@ -113,7 +113,7 @@ describe("RoomCore rate limits and frame checks", () => {
     expect(r.last("welcome")?.playerId).toBe(a.pid);
     // A pre-join phone that joins frees its spectator slot.
     expect((await h.spectator()).closeCode).toBe(4009);
-    await h.send(specs[0]!, { v: 1, t: "join", name: "Late", color: "azure", locale: "en" });
+    await h.send(specs[0]!, { v: 2, t: "join", name: "Late", color: "azure", locale: "en" });
     expect(specs[0]!.last("welcome")).toBeDefined();
     expect((await h.spectator()).open).toBe(true);
   });
@@ -157,7 +157,7 @@ describe("RoomCore rate limits and frame checks", () => {
     const m0 = h.core.peek().meta!.lastActivityAt;
     for (let i = 0; i < 3; i++) {
       h.advance(61_000);
-      await h.send(c, { v: 1, t: "hello", role: "player" });
+      await h.send(c, { v: 2, t: "hello", role: "player" });
     }
     expect(c.errors()).toEqual(["BAD_MESSAGE", "BAD_MESSAGE", "BAD_MESSAGE"]);
     expect(h.core.peek().meta!.lastActivityAt).toBe(m0);
@@ -167,7 +167,7 @@ describe("RoomCore rate limits and frame checks", () => {
     const h = await new Harness().init();
     const c = await h.spectator();
     c.setState({ ...c.state!, epoch: c.state!.epoch - 1 });
-    await h.send(c, { v: 1, t: "join", name: "X", color: "coral", locale: "en" });
+    await h.send(c, { v: 2, t: "join", name: "X", color: "coral", locale: "en" });
     expect(c.errors()).toEqual(["ROOM_EXPIRED"]);
     expect(c.closeCode).toBe(4010);
   });

@@ -2,6 +2,7 @@
 import { computed, signal } from "@preact/signals";
 import type { ErrorCode } from "@jamaa/shared/protocol";
 import type { PlayerRoomView } from "@jamaa/shared/protocol/v2";
+import type { GameId } from "@jamaa/shared/games/ids";
 import type { ConnStatus, ErrorMsg } from "../net/connection";
 import { ClockOffset } from "../lib/countdown";
 
@@ -18,7 +19,9 @@ export const meMember = computed(() => {
   return id ? v.room.members.find((m) => m.id === id) ?? null : null;
 });
 /** The ⓘ rules sheet: open for a game id (the card this phone shows), or null. */
-export const rulesFor = signal<string | null>(null);
+export const rulesFor = signal<GameId | null>(null);
+/** PHH-02: the game card this phone shows right now (the TV's focus, or the VIP's local browse). */
+export const shownCard = signal<GameId | null>(null);
 export const conn = signal<ConnStatus>("connecting");
 export const lastError = signal<ErrorMsg | null>(null);
 /** Fatal close code (§8.4), or null while the session is alive. */

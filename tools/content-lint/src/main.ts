@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, wri
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { GAME1_DIR, lintPacks, registeredPackFiles, type LintOptions, type LintResult, type PackEntry } from "./lint";
+import { legacyTags, lintCommon, type GameEntry } from "./common";
 import { GAME_IDS, I18N_LOCALES, lintGameI18n, lintRootIndex, lintVocab, registeredGameFiles, unlistedFiles, type GameId, type I18nFiles } from "./platform";
 
 /** Reads every game #1 word pack `<GAME1_DIR>/<lang>/*.json` under the content root (JAMAA-PLATFORM §5.1). */
@@ -27,6 +28,22 @@ export function readPackEntries(contentRoot: string): PackEntry[] {
     }
   }
   return entries;
+}
+
+/** Every pack file of every game (every JSON file under `content/<game>/`), parsed or with its JSON error. */
+export function readGameEntries(contentRoot: string): GameEntry[] {
+  const out: GameEntry[] = [];
+  for (const game of GAME_IDS) {
+    for (const file of jsonFiles(contentRoot, game)) {
+      const text = readFileSync(join(contentRoot, file), "utf8");
+      try {
+        out.push({ game, file, data: JSON.parse(text) as unknown });
+      } catch (e) {
+        out.push({ game, file, data: null, parseError: e instanceof Error ? e.message : String(e) });
+      }
+    }
+  }
+  return out;
 }
 
 function readOrNull(path: string): string | null {
@@ -91,6 +108,15 @@ export function lintDirectory(contentRoot: string, opts: DirectoryOptions = {}):
       for (const f of unlistedFiles(jsonFiles(contentRoot, id), registeredGameFiles(src, id))) result.warnings.push(`${f}: not listed in content/${id}/index.ts (it will not ship)`);
     }
   }
+  // Common checks over every game's packs (§5.5) and the legacy `tags` report (§5.2).
+  const entries = readGameEntries(contentRoot);
+  add(lintCommon(entries, { release: opts.release === true }));
+  const vocabTopics = (JSON.parse(readOrNull(join(contentRoot, "vocab.json")) ?? "{}") as { topics?: string[] }).topics ?? [];
+  const dropped = new Map<string, string[]>();
+  for (const e of entries) {
+    for (const t of legacyTags(e.data, vocabTopics).dropped) dropped.set(t, [...(dropped.get(t) ?? []), String((e.data as { id?: unknown }).id)]);
+  }
+  result.legacyTags = [...dropped.keys()].sort().map((t) => `${t} (${(dropped.get(t) ?? []).length} pack(s))`);
   const i18nDir = opts.i18nRoot === undefined ? join(contentRoot, "../shared/i18n") : opts.i18nRoot;
   const root = i18nDir === null ? null : readI18n(i18nDir);
   const vocabText = readOrNull(join(contentRoot, "vocab.json"));
@@ -106,23 +132,28 @@ export function lintDirectory(contentRoot: string, opts: DirectoryOptions = {}):
   return result;
 }
 
+/** Pack files listed in `content/<game>/index.ts` (Mish Ana!: also the old flat layout). */
+function registeredFor(contentRoot: string, game: GameId): string[] {
+  if (game === GAME1_DIR) return registeredMishana(contentRoot) ?? [];
+  const src = readOrNull(join(contentRoot, game, "index.ts"));
+  return src === null ? [] : registeredGameFiles(src, game);
+}
+
 /** §5.6: writes every registered pack of a lint-clean tree as minified JSON to `<outDir>/<game>/<id>.txt`. */
 export function emitContent(contentRoot: string, outDir: string): string[] {
-  const registered = new Set(registeredMishana(contentRoot) ?? []);
   const written: string[] = [];
   for (const id of GAME_IDS) {
     const dir = join(outDir, id);
     rmSync(dir, { recursive: true, force: true });
     mkdirSync(dir, { recursive: true });
   }
-  for (const e of readPackEntries(contentRoot)) {
-    if (!registered.has(e.file) || e.data === null) continue;
-    const packId = (e.data as { id: string }).id;
-    const rel = `${GAME1_DIR}/${packId}.txt`;
+  const registered = new Map(GAME_IDS.map((g) => [g, new Set(registeredFor(contentRoot, g))] as const));
+  for (const e of readGameEntries(contentRoot)) {
+    if (!registered.get(e.game)?.has(e.file) || e.data === null) continue;
+    const rel = `${e.game}/${(e.data as { id: string }).id}.txt`;
     writeFileSync(join(outDir, rel), JSON.stringify(e.data), "utf8");
     written.push(rel);
   }
-  // SPEC-GAP: bluff/likely/trivia packs are emitted once their G milestone adds a ContentAdapter-based reader here.
   return written;
 }
 
@@ -131,10 +162,11 @@ function main(): void {
   const quiet = args.includes("--quiet");
   const dirIdx = args.indexOf("--dir");
   const root = dirIdx >= 0 && args[dirIdx + 1] ? resolve(args[dirIdx + 1] as string) : resolve(dirname(fileURLToPath(import.meta.url)), "../../../content");
-  const { errors, warnings, counts } = lintDirectory(root, { release: args.includes("--release") });
+  const { errors, warnings, counts, legacyTags } = lintDirectory(root, { release: args.includes("--release") });
   const outIdx = args.indexOf("--out");
   const out = outIdx >= 0 && args[outIdx + 1] ? resolve(args[outIdx + 1] as string) : resolve(root, "../server/content-dist");
   if (!quiet) for (const w of warnings) console.warn(`warning: ${w}`);
+  if (!quiet && legacyTags?.length) console.log(`content-lint: legacy tags that are not vocabulary topics (kept for the Mish Ana! engine, not shown): ${legacyTags.join(", ")}`);
   for (const e of errors) console.error(`error: ${e}`);
   console.log(`content-lint: pairs en=${counts.en ?? 0} fr=${counts.fr ?? 0} ar=${counts.ar ?? 0} (ar-LB=${counts["ar-LB"] ?? 0}) es=${counts.es ?? 0}; ${errors.length} error(s), ${warnings.length} warning(s)`);
   if (errors.length > 0) process.exitCode = 1;

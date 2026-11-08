@@ -7,7 +7,7 @@ describe("normalizeSubscription", () => {
   it("new subscription in a free trial, ack pending", () => {
     const n = normalizeSubscription(sub({ trial: true, basePlanId: "yearly", expiryMs: NOW + 7 * DAY, startTime: iso(NOW - 1000) }), 123);
     expect(n).toEqual({
-      kind: "sub", productId: "premium", state: "SUBSCRIPTION_STATE_ACTIVE", expiryMs: NOW + 7 * DAY, autoRenew: true, basePlanId: "yearly",
+      kind: "sub", productId: "jamaa_pass", state: "SUBSCRIPTION_STATE_ACTIVE", expiryMs: NOW + 7 * DAY, autoRenew: true, basePlanId: "yearly",
       inTrial: true, acknowledged: false, test: false, obfuscatedAccountId: null, linkedPurchaseToken: null,
       outOfAppExpiredPurchaseToken: null, outOfAppExpiredObfuscatedAccountId: null, completedMs: NOW - 1000, checkedMs: 123,
     });
@@ -34,13 +34,13 @@ describe("normalizeSubscription", () => {
   it("expiry = max over premium line items; no premium line item keeps the foreign product id; pending has no completedMs", () => {
     const s = sub();
     s.lineItems = [
-      { productId: "premium", expiryTime: iso(NOW + DAY), offerDetails: { basePlanId: "monthly" } },
-      { productId: "premium", expiryTime: iso(NOW + 9 * DAY), offerDetails: { basePlanId: "yearly" } },
+      { productId: "jamaa_pass", expiryTime: iso(NOW + DAY), offerDetails: { basePlanId: "monthly" } },
+      { productId: "jamaa_pass", expiryTime: iso(NOW + 9 * DAY), offerDetails: { basePlanId: "yearly" } },
       { productId: "addon", expiryTime: iso(NOW + 99 * DAY) },
     ];
     expect(normalizeSubscription(s, 0)).toMatchObject({ expiryMs: NOW + 9 * DAY, basePlanId: "yearly", autoRenew: false });
     expect(normalizeSubscription({ lineItems: [{ productId: "other" }] }, 0).productId).toBe("other");
-    expect(normalizeSubscription({ subscriptionState: "SUBSCRIPTION_STATE_PENDING", lineItems: [{ productId: "premium" }] }, 0)).toMatchObject({ completedMs: null, expiryMs: null });
+    expect(normalizeSubscription({ subscriptionState: "SUBSCRIPTION_STATE_PENDING", lineItems: [{ productId: "jamaa_pass" }] }, 0)).toMatchObject({ completedMs: null, expiryMs: null });
   });
 });
 

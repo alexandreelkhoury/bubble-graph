@@ -1,5 +1,6 @@
 {
   "id": "fr-places-01",
+  "game": "mishana",
   "version": 2,
   "locale": "fr",
   "script": "Latn",
@@ -13,6 +14,9 @@
     "places",
     "seeded",
     "hard"
+  ],
+  "topics": [
+    "places"
   ],
   "ageRating": "all",
   "license": "MIT",

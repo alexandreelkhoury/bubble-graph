@@ -90,3 +90,9 @@ export function needsMe(view: PlayerRoomView): boolean {
     default: return false;
   }
 }
+
+/** Coach marks show during round 1 only (§3.3 PHH-04). */
+export function firstRound(view: PlayerRoomView): boolean {
+  const v = mishanaPlayerView(view);
+  return !v || v.round <= 1;
+}

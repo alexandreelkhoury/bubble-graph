@@ -166,7 +166,7 @@
   /* ------------------------------------------------------------------
      I18N
      ------------------------------------------------------------------ */
-  var LANGS = ['en', 'fr', 'ar'];
+  var LANGS = ['en', 'fr', 'ar', 'es'];
   var original = null; // English snapshot
   var current = 'en';
 
@@ -216,7 +216,7 @@
     root.classList.remove('i18n-wait');
   }
 
-  // Each language has its own URL (/, /fr/, /ar/, pre-rendered by build.mjs). Keep ad params (utm_*, angle) when switching.
+  // Each language has its own URL (/, /fr/, /ar/, /es/, pre-rendered by build.mjs). Keep ad params (utm_*, angle) when switching.
   function updateLangLinks() {
     doc.querySelectorAll('.lang a').forEach(function (a) {
       if (!a.dataset.path) a.dataset.path = (a.getAttribute('href') || '/').split('?')[0];

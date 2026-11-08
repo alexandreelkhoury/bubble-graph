@@ -815,3 +815,14 @@ h3 { font-size: 1.375rem; line-height: 1.2; letter-spacing: -.01em; }
 .nf .btn { margin-top: 26px; }
 .nf__langs { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; margin-top: 18px; }
 .nf__langs a { min-height: 44px; display: inline-flex; align-items: center; color: var(--cream); font-weight: 800; text-decoration-color: var(--magenta); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+
+/* ============ GAMES (line-up: game #1 live, the next games "coming soon") ============ */
+.games__list .feat:nth-child(1) { --fc: 201, 191, 255; }
+.games__list .feat:nth-child(2) { --fc: 255, 51, 85; }
+.games__list .feat:nth-child(3) { --fc: 90, 155, 255; }
+.games__list .feat:nth-child(4) { --fc: 43, 196, 159; }
+.games__list .av span { font-size: 1.1em; }
+.gbadge { grid-column: 2; justify-self: start; align-self: end; margin-top: 10px; padding: 2px 12px; border-radius: 999px; font-size: .8125rem; font-weight: 800; color: var(--muted); background: rgba(255,247,236,.06); box-shadow: 0 0 0 1px var(--line-2) inset; }
+.gbadge--live { color: var(--ink); background: var(--jade); box-shadow: none; }
+.games__note { margin-top: 18px; color: var(--muted); font-size: .9375rem; }
+@media (min-width: 900px) { .gbadge { grid-column: auto; } }

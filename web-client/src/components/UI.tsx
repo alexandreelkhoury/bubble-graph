@@ -115,7 +115,7 @@ export function Wordmark({ class: cls }: { class?: string }) {
   return <img class={cls} src={ar ? "/brand/wordmark-ar.svg" : "/brand/wordmark-latin.svg"} alt={ar ? BRAND.nameAr : BRAND.name} height={42} />;
 }
 
-export function TopBar({ code, name, color, host = false, state = "normal", showLang = false, onLang }: { code: string | null; name?: string; color?: ColorId; host?: boolean; state?: AvatarState; showLang?: boolean; onLang?(): void }) {
+export function TopBar({ code, name, color, host = false, state = "normal", showLang = false, onLang, onRules }: { code: string | null; name?: string; color?: ColorId; host?: boolean; state?: AvatarState; showLang?: boolean; onLang?(): void; onRules?(): void }) {
   return (
     <header class="topbar">
       <div class="topbar__start">{code ? <CodeChip code={code} /> : <Wordmark class="topbar__wordmark" />}</div>
@@ -128,6 +128,11 @@ export function TopBar({ code, name, color, host = false, state = "normal", show
         )}
       </div>
       <div class="topbar__end">
+        {onRules && (
+          <button type="button" class="iconbtn topbar__rules" onClick={onRules} aria-label={t("rules.open")} aria-haspopup="dialog">
+            <Icon name="info" />
+          </button>
+        )}
         {showLang ? (
           <button type="button" class="chipbtn" onClick={onLang} aria-label={t("common.language")}>
             <Icon name="globe" size={20} />

@@ -50,10 +50,10 @@ describe("POST /api/billing/verify (google mode, scripted Google)", () => {
     const c = await google();
     c.google.subs.set("sub-tok", sub({ trial: true, basePlanId: "yearly" }));
     c.google.products.set("pack-tok", product());
-    const { status, body } = await verifyCall(c, [{ productId: "premium", purchaseToken: "sub-tok" }, { productId: "pack_en_food_01", purchaseToken: "pack-tok" }]);
+    const { status, body } = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "sub-tok" }, { productId: "pack_en_food_01", purchaseToken: "pack-tok" }]);
     expect(status).toBe(200);
     const b = body as ReturnType<typeof VerifyResponse.parse>;
-    expect(b.results).toEqual([{ productId: "premium", result: "OK" }, { productId: "pack_en_food_01", result: "OK" }]);
+    expect(b.results).toEqual([{ productId: "jamaa_pass", result: "OK" }, { productId: "pack_en_food_01", result: "OK" }]);
     expect(b.entitlement).toMatchObject({ premium: true, packs: ["en-food-01"], subscription: { state: "SUBSCRIPTION_STATE_ACTIVE", inTrial: true, basePlanId: "yearly" } });
     expect(c.google.count("sub_ack") + c.google.count("product_ack")).toBe(2);
     const keys = await verifyKeysFromSecret(c.env.ENTITLEMENT_KEYS);
@@ -66,13 +66,13 @@ describe("POST /api/billing/verify (google mode, scripted Google)", () => {
     const c = await google();
     c.google.subs.set("down", new GoogleHttpError(503, "sub_get"));
     const { status, body } = await verifyCall(c, [
-      { productId: "premium", purchaseToken: "down" },
+      { productId: "jamaa_pass", purchaseToken: "down" },
       { productId: "pack_en_everyday_01", purchaseToken: "free-pack" },
       { productId: "pack_nope_01", purchaseToken: "x" },
     ]);
     expect(status).toBe(200);
     expect((body as { results: unknown }).results).toEqual([
-      { productId: "premium", result: "UPSTREAM_ERROR" }, { productId: "pack_en_everyday_01", result: "INVALID" }, { productId: "pack_nope_01", result: "INVALID" },
+      { productId: "jamaa_pass", result: "UPSTREAM_ERROR" }, { productId: "pack_en_everyday_01", result: "INVALID" }, { productId: "pack_nope_01", result: "INVALID" },
     ]);
     expect(c.google.count("sub_get")).toBe(1);
     expect(c.google.count("product_get")).toBe(0);
@@ -81,14 +81,14 @@ describe("POST /api/billing/verify (google mode, scripted Google)", () => {
   it("a fresh cached row → no Google call; Google 404 → INVALID and the negative cache answers next time", async () => {
     const c = await google();
     c.google.subs.set("sub-tok", sub({ acknowledgementState: "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED" }));
-    await verifyCall(c, [{ productId: "premium", purchaseToken: "sub-tok" }]);
+    await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "sub-tok" }]);
     expect(c.google.count("sub_get")).toBe(1);
-    const again = await verifyCall(c, [{ productId: "premium", purchaseToken: "sub-tok" }], INSTALL_B);
-    expect((again.body as { results: unknown }).results).toEqual([{ productId: "premium", result: "OK" }]);
+    const again = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "sub-tok" }], INSTALL_B);
+    expect((again.body as { results: unknown }).results).toEqual([{ productId: "jamaa_pass", result: "OK" }]);
     expect(c.google.count("sub_get")).toBe(1);
-    await verifyCall(c, [{ productId: "premium", purchaseToken: "bogus" }]);
-    const r = await verifyCall(c, [{ productId: "premium", purchaseToken: "bogus" }]);
-    expect((r.body as { results: unknown }).results).toEqual([{ productId: "premium", result: "INVALID" }]);
+    await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "bogus" }]);
+    const r = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "bogus" }]);
+    expect((r.body as { results: unknown }).results).toEqual([{ productId: "jamaa_pass", result: "INVALID" }]);
     expect(c.google.calls.filter((x) => x.token === "bogus")).toHaveLength(1);
   });
 
@@ -105,8 +105,8 @@ describe("POST /api/billing/verify (google mode, scripted Google)", () => {
     const c = await google();
     c.google.subs.set("pk", new GoogleHttpError(404, "sub_get"));
     c.google.products.set("pk", product());
-    const wrong = await verifyCall(c, [{ productId: "premium", purchaseToken: "pk" }]);
-    expect((wrong.body as { results: unknown }).results).toEqual([{ productId: "premium", result: "INVALID" }]);
+    const wrong = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "pk" }]);
+    expect((wrong.body as { results: unknown }).results).toEqual([{ productId: "jamaa_pass", result: "INVALID" }]);
     const owner = await verifyCall(c, [{ productId: "pack_en_food_01", purchaseToken: "pk" }], INSTALL_B);
     expect((owner.body as { results: unknown }).results).toEqual([{ productId: "pack_en_food_01", result: "OK" }]);
   });
@@ -114,17 +114,17 @@ describe("POST /api/billing/verify (google mode, scripted Google)", () => {
   it("an OAuth token-endpoint failure → UPSTREAM_ERROR and no negative cache (the next verify reads Google again)", async () => {
     const c = await google();
     c.google.subs.set("real", new GoogleHttpError(503, "token"));
-    const r = await verifyCall(c, [{ productId: "premium", purchaseToken: "real" }]);
-    expect((r.body as { results: unknown }).results).toEqual([{ productId: "premium", result: "UPSTREAM_ERROR" }]);
+    const r = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "real" }]);
+    expect((r.body as { results: unknown }).results).toEqual([{ productId: "jamaa_pass", result: "UPSTREAM_ERROR" }]);
     expect(c.core.lookup(await hashOf("real"), "sub", NOW).invalid).toBe(false);
     // Even a 400 tagged op "token" (a client that did not remap it) is never "gone".
     c.google.subs.set("real", new GoogleHttpError(400, "token"));
-    const r2 = await verifyCall(c, [{ productId: "premium", purchaseToken: "real" }]);
-    expect((r2.body as { results: unknown }).results).toEqual([{ productId: "premium", result: "UPSTREAM_ERROR" }]);
+    const r2 = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "real" }]);
+    expect((r2.body as { results: unknown }).results).toEqual([{ productId: "jamaa_pass", result: "UPSTREAM_ERROR" }]);
     expect(c.core.lookup(await hashOf("real"), "sub", NOW).invalid).toBe(false);
     c.google.subs.set("real", sub());
-    const ok = await verifyCall(c, [{ productId: "premium", purchaseToken: "real" }]);
-    expect((ok.body as { results: unknown }).results).toEqual([{ productId: "premium", result: "OK" }]);
+    const ok = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "real" }]);
+    expect((ok.body as { results: unknown }).results).toEqual([{ productId: "jamaa_pass", result: "OK" }]);
   });
 
   it("one IP cannot drain the global Google bucket: 10 reads/min per IP, other IPs unaffected", async () => {
@@ -132,7 +132,7 @@ describe("POST /api/billing/verify (google mode, scripted Google)", () => {
     let junk = 0;
     const results: string[] = [];
     for (let i = 0; i < 4; i++) {
-      const purchases = Array.from({ length: 5 }, () => ({ productId: "premium", purchaseToken: `junk-${junk++}` }));
+      const purchases = Array.from({ length: 5 }, () => ({ productId: "jamaa_pass", purchaseToken: `junk-${junk++}` }));
       for (const p of purchases) c.google.subs.set(p.purchaseToken, new GoogleHttpError(404, "sub_get"));
       const r = await verifyCall(c, purchases, `${i.toString(16).padStart(32, "0")}`, "198.51.100.9");
       results.push(...(r.body as { results: { result: string }[] }).results.map((x) => x.result));
@@ -140,13 +140,13 @@ describe("POST /api/billing/verify (google mode, scripted Google)", () => {
     expect(c.google.count("sub_get")).toBe(10);
     expect(results.filter((x) => x === "UPSTREAM_ERROR")).toHaveLength(10);
     c.google.subs.set("buyer", sub());
-    const buyer = await verifyCall(c, [{ productId: "premium", purchaseToken: "buyer" }], INSTALL_B, "203.0.113.50");
-    expect((buyer.body as { results: unknown }).results).toEqual([{ productId: "premium", result: "OK" }]);
+    const buyer = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "buyer" }], INSTALL_B, "203.0.113.50");
+    expect((buyer.body as { results: unknown }).results).toEqual([{ productId: "jamaa_pass", result: "OK" }]);
   });
 
   it("20 tokens → at most 5 Google reads, the rest UPSTREAM_ERROR", async () => {
     const c = await google();
-    const purchases = Array.from({ length: 20 }, (_, i) => ({ productId: "premium", purchaseToken: `t${i}` }));
+    const purchases = Array.from({ length: 20 }, (_, i) => ({ productId: "jamaa_pass", purchaseToken: `t${i}` }));
     for (const p of purchases) c.google.subs.set(p.purchaseToken, sub());
     const r = await verifyCall(c, purchases);
     const results = (r.body as { results: { result: string }[] }).results.map((x) => x.result);
@@ -162,7 +162,7 @@ describe("POST /api/billing/verify (google mode, scripted Google)", () => {
       return sub();
     });
     c.google.subs.set("next", sub());
-    const r = await verifyCall(c, [{ productId: "premium", purchaseToken: "slow" }, { productId: "premium", purchaseToken: "next" }]);
+    const r = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "slow" }, { productId: "jamaa_pass", purchaseToken: "next" }]);
     expect((r.body as { results: { result: string }[] }).results.map((x) => x.result)).toEqual(["OK", "UPSTREAM_ERROR"]);
     expect(c.google.calls.some((x) => x.token === "next")).toBe(false);
   });
@@ -171,8 +171,8 @@ describe("POST /api/billing/verify (google mode, scripted Google)", () => {
     const c = await google();
     c.core.googleBudget(120, NOW);
     c.google.subs.set("t", sub());
-    const r = await verifyCall(c, [{ productId: "premium", purchaseToken: "t" }]);
-    expect((r.body as { results: unknown }).results).toEqual([{ productId: "premium", result: "UPSTREAM_ERROR" }]);
+    const r = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "t" }]);
+    expect((r.body as { results: unknown }).results).toEqual([{ productId: "jamaa_pass", result: "UPSTREAM_ERROR" }]);
     expect(c.google.count("sub_get")).toBe(0);
   });
 
@@ -190,17 +190,17 @@ describe("POST /api/billing/verify (google mode, scripted Google)", () => {
 
   it("bad body → 400; IP limiter or per-install window → 429; foreign Origin → 403", async () => {
     const c = await google();
-    for (const body of ["{", { installId: "XYZ", purchases: [] }, { installId: INSTALL_A, purchases: [{ productId: "premium", purchaseToken: "a" }], extra: 1 }]) {
+    for (const body of ["{", { installId: "XYZ", purchases: [] }, { installId: INSTALL_A, purchases: [{ productId: "jamaa_pass", purchaseToken: "a" }], extra: 1 }]) {
       expect((await handleBilling(post("verify", body), c.env, c.deps)).status).toBe(400);
     }
     expect((await handleBilling(post("verify", "{}", "play.example", { "Content-Type": "text/plain" }), c.env, c.deps)).status).toBe(400);
-    expect((await handleBilling(post("verify", { installId: INSTALL_A, purchases: [{ productId: "premium", purchaseToken: "x".repeat(20_000) }] }), c.env, c.deps)).status).toBe(400);
+    expect((await handleBilling(post("verify", { installId: INSTALL_A, purchases: [{ productId: "jamaa_pass", purchaseToken: "x".repeat(20_000) }] }), c.env, c.deps)).status).toBe(400);
     const limited = { ...c.env, BILLING_LIMITER: { limit: async () => ({ success: false }) } };
-    const res = await handleBilling(post("verify", { installId: INSTALL_A, purchases: [{ productId: "premium", purchaseToken: "a" }] }), limited, c.deps);
+    const res = await handleBilling(post("verify", { installId: INSTALL_A, purchases: [{ productId: "jamaa_pass", purchaseToken: "a" }] }), limited, c.deps);
     expect(res.status).toBe(429);
     expect(await res.json()).toEqual({ error: "RATE_LIMITED" });
     for (let i = 0; i < 20; i++) c.core.rateCheck(await hashOf(INSTALL_B), "verify", NOW);
-    expect((await verifyCall(c, [{ productId: "premium", purchaseToken: "a" }], INSTALL_B)).status).toBe(429);
+    expect((await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "a" }], INSTALL_B)).status).toBe(429);
     expect((await handleBilling(post("entitlement", { installId: INSTALL_A }, "play.example", { Origin: "https://evil.example" }), c.env, c.deps)).status).toBe(403);
   });
 });
@@ -216,7 +216,7 @@ describe("other routes", () => {
     expect(body.packs.map((p) => p.packId)).not.toContain("en-everyday-01");
     expect(body.packs[0]).toMatchObject({ packId: "en-food-01", productId: "pack_en_food_01", language: "en" });
     expect(body.packs.find((p) => p.packId === "lb-food-01")).toMatchObject({ locale: "ar-LB", language: "ar" });
-    expect(body.subscription).toEqual({ productId: "premium", basePlanIds: ["monthly", "yearly"], trialOfferId: "trial-7d" });
+    expect(body.subscription).toEqual({ productId: "jamaa_pass", basePlanIds: ["monthly", "yearly"], trialOfferId: "trial-7d" });
   });
 
   it("an installId used from more than 4 networks a day: /entitlement → 429 RATE_LIMITED, /verify still works", async () => {
@@ -228,7 +228,7 @@ describe("other routes", () => {
     expect(res.status).toBe(429);
     expect(await res.json()).toEqual({ error: "RATE_LIMITED" });
     c.google.subs.set("tv-tok", sub());
-    const v = await verifyCall(c, [{ productId: "premium", purchaseToken: "tv-tok" }], INSTALL_A, "198.51.100.7");
+    const v = await verifyCall(c, [{ productId: "jamaa_pass", purchaseToken: "tv-tok" }], INSTALL_A, "198.51.100.7");
     expect(v.status).toBe(200);
     // Once flagged, the installId gets no /entitlement from any network while the window is full (the real TV keeps
     // getting its entitlement from /verify, which needs the purchase token).
@@ -258,7 +258,7 @@ describe("other routes", () => {
     expect(r405.status).toBe(405);
     expect(await r405.json()).toEqual({ error: "BAD_REQUEST" });
     expect((await handleBilling(post("nope", {}), c2.env, c2.deps)).status).toBe(405);
-    expect((await handleBilling(post("fake/purchase", { installId: INSTALL_A, productId: "premium" }), c2.env, c2.deps)).status).toBe(404);
+    expect((await handleBilling(post("fake/purchase", { installId: INSTALL_A, productId: "jamaa_pass" }), c2.env, c2.deps)).status).toBe(404);
   });
 });
 
@@ -267,12 +267,12 @@ describe("fake mode (§3.10)", () => {
     const c = await fakeMode();
     const cat = CatalogResponse.parse(await (await handleBilling(new Request("http://localhost:8787/api/billing/catalog"), c.env, c.deps)).json());
     expect(cat.mode).toBe("fake");
-    const p = await handleBilling(localPost("fake/purchase", { installId: INSTALL_A, productId: "premium", basePlanId: "yearly", offerId: "trial-7d" }), c.env, c.deps);
+    const p = await handleBilling(localPost("fake/purchase", { installId: INSTALL_A, productId: "jamaa_pass", basePlanId: "yearly", offerId: "trial-7d" }), c.env, c.deps);
     const { purchaseToken } = (await p.json()) as { purchaseToken: string };
-    expect(purchaseToken).toBe("fake.sub.premium.1");
-    const v = await handleBilling(localPost("verify", { installId: INSTALL_A, purchases: [{ productId: "premium", purchaseToken }] }), c.env, c.deps);
+    expect(purchaseToken).toBe("fake.sub.jamaa_pass.1");
+    const v = await handleBilling(localPost("verify", { installId: INSTALL_A, purchases: [{ productId: "jamaa_pass", purchaseToken }] }), c.env, c.deps);
     const vb = VerifyResponse.parse(await v.json());
-    expect(vb.results).toEqual([{ productId: "premium", result: "OK" }]);
+    expect(vb.results).toEqual([{ productId: "jamaa_pass", result: "OK" }]);
     expect(vb.entitlement).toMatchObject({ premium: true, subscription: { basePlanId: "yearly", inTrial: true } });
     const e = await verifyEntitlementToken(vb.entitlement.token, new Map(), NOW, true, new Set());
     expect(e?.mode).toBe("fake");
@@ -307,8 +307,8 @@ describe("fake mode (§3.10)", () => {
 
   it("fake env on a public host → every billing route 503 (fail closed), fake routes included", async () => {
     const c = await fakeMode();
-    expect((await handleBilling(post("fake/purchase", { installId: INSTALL_A, productId: "premium" }, "example.com"), c.env, c.deps)).status).toBe(503);
+    expect((await handleBilling(post("fake/purchase", { installId: INSTALL_A, productId: "jamaa_pass" }, "example.com"), c.env, c.deps)).status).toBe(503);
     expect((await handleBilling(new Request("https://example.com/api/billing/catalog"), c.env, c.deps)).status).toBe(503);
-    expect((await handleBilling(localPost("fake/purchase", { installId: INSTALL_A, productId: "premium" }), { ...c.env, ALLOW_FAKE_BILLING: "0" }, c.deps)).status).toBe(503);
+    expect((await handleBilling(localPost("fake/purchase", { installId: INSTALL_A, productId: "jamaa_pass" }), { ...c.env, ALLOW_FAKE_BILLING: "0" }, c.deps)).status).toBe(503);
   });
 });

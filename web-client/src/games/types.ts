@@ -13,6 +13,8 @@ export interface PhoneGameModule {
   onPhoneView?(prev: PlayerRoomView | null, next: PlayerRoomView): void;
   /** Whether this phone owes an action now: the ⓘ sheet's sticky "Your turn!" banner (§3.6). */
   needsMe?(view: PlayerRoomView): boolean;
+  /** Whether the game is still in its first round (coach marks show only then, §3.3 PHH-04). Default: true. */
+  firstRound?(view: PlayerRoomView): boolean;
 }
 
 /** `games/<id>/tv.tsx` (a `tv-mock-game-<id>` chunk: excluded from the phone budget). */
@@ -25,4 +27,8 @@ export interface TvGameModule {
   onTvView?(prev: TvRoomView | null, next: TvRoomView): void;
   /** A host dialog the TV must answer now (e.g. Mish Ana!'s guess override): the rules sheet closes for it (§3.6). */
   hostDialogOpen?(view: TvRoomView): boolean;
+  /** Whether the TV shows the in-game "◁ Back: menu & rules" hint all the time (round 1, §3.2 HUB-06). */
+  firstRound?(view: TvRoomView): boolean;
+  /** OK pressed in game (no focusable buttons): completes a local reveal choreography. True when consumed. */
+  onOk?(): boolean;
 }

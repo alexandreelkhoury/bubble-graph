@@ -1,8 +1,9 @@
 // PAYMENTS-SPEC §3.11 / §7.2: pure room access.
 import { describe, expect, it } from "vitest";
-import { DEFAULT_PACK_IDS, DEFAULT_SETTINGS } from "@jamaa/shared/engine";
-import { Game, TEST_CATALOG } from "@jamaa/shared/testing";
-import { lockedPacks, playableCatalog, restrictionFor, roomAccess } from "../src/access";
+import { DEFAULT_SETTINGS } from "@jamaa/shared/engine";
+import { contentCatalog } from "@jamaa/shared/content";
+import { TEST_CATALOG } from "@jamaa/shared/testing";
+import { playableFor, roomAccess, settingsPrecheck } from "../src/access";
 import type { RoomEntitlement } from "../src/billing/token";
 
 const NOW = 1_790_000_000_000;
@@ -25,36 +26,28 @@ describe("roomAccess time edges", () => {
   });
 });
 
-describe("playableCatalog / lockedPacks / restrictionFor", () => {
-  it("free → free packs + owned; premium → everything; memoised", () => {
-    const free = playableCatalog(TEST_CATALOG, roomAccess(null, NOW));
-    expect(free.packs.every((p) => p.tier === "free")).toBe(true);
-    expect(playableCatalog(TEST_CATALOG, roomAccess(null, NOW))).toBe(free);
-    const owned = playableCatalog(TEST_CATALOG, roomAccess(ent({ premiumUntilMs: null, packs: ["test-en-prem-01"] }), NOW));
-    expect(owned.packs.map((p) => p.id)).toContain("test-en-prem-01");
-    expect(owned.packs.map((p) => p.id)).not.toContain("test-fr-prem-01");
-    expect(playableCatalog(TEST_CATALOG, roomAccess(ent(), NOW))).toBe(TEST_CATALOG);
+describe("playableFor / settingsPrecheck (JAMAA-PLATFORM §4.4)", () => {
+  const full = contentCatalog(TEST_CATALOG);
+  it("free → free packs + owned families; premium → the full catalog itself; memoised", () => {
+    const free = playableFor(full, roomAccess(null, NOW));
+    expect(free.mishana.packs.every((p) => p.tier === "free")).toBe(true);
+    expect(playableFor(full, roomAccess(null, NOW))).toBe(free);
+    const owned = playableFor(full, roomAccess(ent({ premiumUntilMs: null, packs: ["test-en-prem-01"] }), NOW));
+    expect(owned.mishana.packs.map((p) => p.id)).toContain("test-en-prem-01");
+    expect(owned.mishana.packs.map((p) => p.id)).not.toContain("test-fr-prem-01");
+    expect(playableFor(full, roomAccess(ent(), NOW))).toBe(full);
   });
-  it("lockedPacks is metadata only, for the word language", () => {
-    const l = lockedPacks(TEST_CATALOG, roomAccess(null, NOW), DEFAULT_SETTINGS);
-    expect(l.map((p) => p.id)).toEqual(["test-en-prem-01"]);
-    expect(Object.keys(l[0]!).sort()).toEqual(["ageRating", "id", "locale", "pairCount", "productId", "title"]);
-    expect(l[0]?.productId).toBe("pack_test_en_prem_01");
-    expect(JSON.stringify(l)).not.toContain("Prem A");
-  });
-  it("restrictionFor: non-null only in LOBBY with a locked filter id or a premium setting off its default", () => {
-    const g = new Game({ catalog: TEST_CATALOG });
-    for (let i = 0; i < 3; i++) g.join(i);
-    const freeA = roomAccess(null, NOW);
-    const freeCat = playableCatalog(TEST_CATALOG, freeA);
-    expect(restrictionFor(g.state, freeCat, freeA)).toBeNull();
-    g.tv({ type: "UPDATE_SETTINGS", patch: { packIds: ["test-en-01", "test-en-prem-01"] } });
-    expect(restrictionFor(g.state, freeCat, freeA)).toEqual({ allowedPackIds: [...freeCat.packs.map((p) => p.id), ...DEFAULT_PACK_IDS], resetPremiumSettings: true });
-    g.tv({ type: "UPDATE_SETTINGS", patch: { packIds: ["test-en-01"], points: { civilian: 1, undercover: 1, blank: 1 } } });
-    expect(restrictionFor(g.state, freeCat, freeA)?.resetPremiumSettings).toBe(true);
+  it("PACK_LOCKED for a known but locked family, then PREMIUM_REQUIRED for a premium key; null when allowed", () => {
+    const a = roomAccess(null, NOW);
+    const playable = playableFor(full, a);
+    const cur = DEFAULT_SETTINGS;
+    expect(settingsPrecheck("mishana", cur, { packIds: ["test-en-prem-01"] }, full, playable, a, "en")).toBe("PACK_LOCKED");
+    expect(settingsPrecheck("mishana", cur, { points: { civilian: 1, undercover: 1, blank: 1 } }, full, playable, a, "en")).toBe("PREMIUM_REQUIRED");
+    expect(settingsPrecheck("mishana", cur, { points: { ...cur.points } }, full, playable, a, "en")).toBeNull();
+    expect(settingsPrecheck("mishana", cur, { packIds: ["test-en-01"] }, full, playable, a, "en")).toBeNull();
+    // An unknown id is not PACK_LOCKED (reduceRoom answers INVALID_SETTINGS).
+    expect(settingsPrecheck("mishana", cur, { packIds: ["no-such-pack"] }, full, playable, a, "en")).toBeNull();
     const prem = roomAccess(ent(), NOW);
-    expect(restrictionFor(g.state, TEST_CATALOG, prem)).toBeNull();
-    g.tv({ type: "START" });
-    expect(restrictionFor(g.state, freeCat, freeA)).toBeNull();
+    expect(settingsPrecheck("mishana", cur, { packIds: ["test-en-prem-01"], points: { civilian: 1, undercover: 1, blank: 1 } }, full, full, prem, "en")).toBeNull();
   });
 });

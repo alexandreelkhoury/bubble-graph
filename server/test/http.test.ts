@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { CreateRoomResponse, Healthz } from "@jamaa/shared/protocol";
+import { CreateRoomResponse } from "@jamaa/shared/protocol";
+import { HealthzV2 } from "@jamaa/shared/protocol/v2";
 import { createRoom, healthz } from "../src/http";
 import type { CreateRoomDeps } from "../src/http";
 import type { InitRoomArgs } from "../src/room-core";
@@ -71,9 +72,9 @@ describe("POST /api/rooms", () => {
 });
 
 describe("GET /healthz", () => {
-  it("returns the app slug and protocol version", async () => {
-    const body = Healthz.parse(await healthz().json());
-    expect(body).toEqual({ ok: true, app: "jamaa", protocol: 1 });
+  it("returns the app slug and protocol version 2 (JAMAA-PLATFORM §2.5)", async () => {
+    const body = HealthzV2.parse(await healthz().json());
+    expect(body).toEqual({ ok: true, app: "jamaa", protocol: 2 });
   });
 });
 

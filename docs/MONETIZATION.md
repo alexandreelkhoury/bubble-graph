@@ -1,8 +1,8 @@
 # JAMAA — Monetization & Payments Research
 
-> **Rename and model update (2026-11-08).** The app is now **JAMAA**, a multi-game platform; "Mish Ana!" is its game #1 ([JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) §1). The product model is the **JAMAA Pass** subscription (`jamaa_pass`: base plans `monthly` and `yearly`, offer `trial-7d` on each) unlocking every pack of every game, plus one-time `pack_<family>` packs, all behind `BILLING_ENABLED` (JAMAA-PLATFORM §4, which supersedes the "v1 model" row below and PAYMENTS-SPEC revision 3). The research itself is unchanged; prices stay the owner's call, starting from the revision-2 recommendation (about US$4.99/month and US$29.99/year, roughly 40 % lower in LB and the Middle East).
+> **Rename and model update (2026-11-08).** The app is now **JAMAA**, a multi-game party platform, and "Mish Ana!" is its game #1 ([JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) §1). **The current decision is the JAMAA Pass** (§5.1): a subscription (`jamaa_pass`, base plans `monthly` and `yearly`, a 7-day free trial on each) that unlocks every pack of every game, plus one-time `pack_<family>` packs. Every game stays free to play with starter content, and everything is behind `BILLING_ENABLED` (JAMAA-PLATFORM §4, which supersedes PAYMENTS-SPEC revision 3). The 2026-10-26 lifetime decision is archived in §5.1.1. The store-policy research in §1–§4 is unchanged.
 
-Status: research note, written 2026-10-04. Covers the Android TV / Google TV host app (Kotlin, Compose for TV), browser-only phone controllers, a Cloudflare Workers + Durable Objects backend, a developer based in Lebanon / France, and players in Lebanon, the Middle East and France.
+Status: research note, written 2026-10-04; decision section (§5) updated 2026-11-08. Covers the Android TV / Google TV host app (Kotlin, Compose for TV), browser-only phone controllers, a Cloudflare Workers + Durable Objects backend, a developer based in Lebanon / France, and players in Lebanon, the Middle East and France.
 
 > **How to read this.** App-store payment rules changed several times in 2024–2026. The network proxy for this research blocked `support.google.com`, `play.google.com`, `android-developers.googleblog.com`, `stripe.com`, `paddle.com`, `apple.com/newsroom` and most news sites. Those facts come from **search-engine snippets** of the official pages and are marked **(snippet)**. Pages fetched in full are `developer.android.com`, `developers.google.com` (via snippet) and `developer.apple.com`. **(unverified)** marks anything I could not confirm from a source. Re-check every policy row in Play Console and App Store Connect before launch.
 
@@ -16,8 +16,8 @@ Status: research note, written 2026-10-04. Covers the Android TV / Google TV hos
 | Can the TV app show a QR code that sends the user to a web page to pay? | **No, not in v1.** Outside the enrolled programs, steering users to another payment method is prohibited. A QR code is a link in effect. [G7] |
 | Play fee for a small developer | Rest of world (Lebanon/ME): 15% (15% tier) and 15% for subscriptions. US/EEA/UK new installs since 2026-06-30: 10% service fee **+ 5% billing fee** when Play Billing is used, so 15% in total. [G2][G3][G8] |
 | Can a Lebanon-based developer be a Play merchant? | Yes. Lebanon is a merchant country (snippet) and also a buyer country for paid apps (snippet). [G9][G10] |
-| v1 model | **Current (2026-11-08, JAMAA-PLATFORM §4):** host-only **JAMAA Pass** subscription (monthly or yearly, 7-day free trial) unlocking every game's packs, plus one-time packs; every game stays free to play with starter content; phones always play free; no web checkout. *Original 2026-10-04 recommendation, superseded:* a one-time Play Billing unlock ("Mish Ana! Full", about US$4.99) and optional word packs, no subscription. |
-| v2 (Apple TV) | A SwiftUI tvOS host with StoreKit 2 non-consumable IAP (required by 3.1.1), plus the same server entitlement model. Enrol through a **French** entity. |
+| v1 model | **JAMAA Pass (decided 2026-11-08, §5.1):** a host-only subscription (monthly or yearly, 7-day free trial) unlocking every pack of every game, plus one-time packs. Every game is free to play with starter content. Phones always play free and never see a price. No web checkout. *Superseded:* the 2026-10-04 one-time "Full" unlock and the 2026-10-26 lifetime `premium` unlock (archived in §5.1.1). |
+| v2 (Apple TV) | A SwiftUI tvOS host with StoreKit 2 IAP (an auto-renewable subscription for the Pass, non-consumables for packs; required by 3.1.1), plus the same server entitlement model. Enrol through a **French** entity. |
 
 ---
 
@@ -119,52 +119,73 @@ For a France-based seller of digital goods to EU consumers, VAT is due at the bu
 
 ## 5. Recommendation
 
-### 5.1 v1 model — DECIDED by the owner (2026-10-04, revised 2026-10-26)
+### 5.1 v1 model: the JAMAA Pass (DECIDED by the owner, 2026-11-08)
 
 **Decision log**
 - 2026-10-04: Premium subscription (monthly + yearly, 7-day trial) plus à-la-carte packs.
-- **2026-10-26: the subscription is dropped. Premium becomes a one-time lifetime unlock** (`premium`, Play in-app product, non-consumable): **$7.99 list, $5.99 launch promo** (the promo is a Play Console sale / temporary price change, not code). Packs stay one-time at $1.99–2.99. Reason: a party game is played a few nights a year, so a subscription reads as a trap; a lifetime price matches the market scan (growth/marketing/launch/MARKET-SCAN.md) and removes the trial/renewal/manage-subscription UI. The store is best offered after the first finished game (see PAYMENTS-SPEC §4.4).
+- 2026-10-26: subscription dropped for a one-time lifetime unlock. **Archived** in §5.1.1.
+- **2026-11-08: back to a subscription, now for the whole platform: the JAMAA Pass** (JAMAA-PLATFORM §0 and §4). Why it changed: with four games and more coming, the offer is a growing catalog rather than one game played a few nights a year. One Pass for every game is the strongest price story against per-pack competitors (BLUEPRINT §2, §5). The yearly plan is the default in the TV store and answers the "a subscription is a trap" objection that drove the lifetime decision. The trial lets a household try every pack during one party night. A short "Party Night" pass is planned for phase 2 (BLUEPRINT §5.2, D3).
 
 | Item | Decision |
 |---|---|
-| Free tier | Core game: full rules, 3–12 players, **one starter pack per language** (EN/FR/AR). |
-| **Premium (lifetime)** | `premium`: one-time **non-consumable** Play in-app product. **$7.99** list, **$5.99** launch promo (Play Console sale). Unlocks **every pack, including packs released later**, plus premium settings, for good. No subscription, no trial. |
-| **Single packs** | One-time **non-consumable** Play products `pack_<packId>`, **owned forever**. Recommended: **$1.99** (packs under 60 pairs), **$2.99** (60+ pairs). Every premium pack is sold this way, including the Lebanese pack. |
-| Subscription | None (dropped 2026-10-26). |
-| Who pays | **The host TV only.** Phones never pay and never see a buy button. |
-| Prices by region | Use Play's per-country pricing. Suggested: about 40% lower in Lebanon and the Middle East. **Exact prices are set in Play Console (owner decision).** |
-| Seller | **The owner as an individual** Play developer account. Payouts go to a personal bank account. Check Play Console's current rules for individual accounts. For example, new personal accounts must run a closed test with testers before going to production (unverified for 2026; check in Play Console). |
+| Free tier | **Every game is free to play** with starter content: Mish Ana! `*-everyday-01` in EN/FR/AR/ES, the free items of Bluff and Most Likely, and the whole first Lebanon quiz for Trivia (JAMAA-PLATFORM §4.3). Unlimited rooms, 3–12 players. |
+| **JAMAA Pass** | Play subscription `jamaa_pass` with base plans `monthly` (P1M) and `yearly` (P1Y), and the offer `trial-7d` on each (one 7-day free phase for new subscribers). Grace period and account hold stay at their defaults, pause is off, resubscribe is on. Unlocks **every premium pack of every game, current and future**, plus each game's premium settings. |
+| **Single packs** | One-time **non-consumable** Play products `pack_<family>`, owned forever (all locales of that content family). Existing Mish Ana! pack ids are unchanged (`pack_en_food_01` …). |
+| Lifetime unlock | **None** (removed everywhere, JAMAA-PLATFORM §4.2). |
+| Who pays | **The host TV only.** Phones never pay, never see a price or a buy button, and say "Unlock on the TV". |
+| Where it is sold | The TV store: a Pass hero with Monthly / Yearly cards (Yearly focused, "Save n %", trial badge when eligible), then packs grouped by game, Restore and Manage subscription (JAMAA-PLATFORM §4.5). At most one soft upsell line on results, after the 2nd finished game of the night, never during play. |
+| Prices | Set in Play Console by the owner. The recommended grid is BLUEPRINT §5.2 (owner decision D2, open). The rule: the yearly Pass costs less than one $29.99 competitor pack in every region, and the monthly Pass costs less than $4.99. US targets: **$3.99 / month, $24.99 / year, $2.99 per pack**. Gulf: about $3.49 / $19.99. Lebanon, Jordan, Iraq: $1.49 / $9.99 (in USD). Egypt and the Maghreb: about $0.99 / $7.99. LatAm: about $1.99 / $12.99. EU: €3.49 / €22.99. The earlier starting point (about $4.99 / $29.99, roughly 40 % lower in Lebanon and the Middle East) is the upper bound. Packs stay at or below a third of the yearly price. |
+| Seller | **The owner as an individual** Play developer account (unchanged; check Play Console's current rules for individual accounts, such as the closed-test requirement). |
 | Rail on Android TV | **Google Play Billing only.** |
-| Phone-web purchase | **None.** Not policy-safe (see §1.3). The phone only shows "Unlock on the TV". |
+| Phone-web purchase | **None.** Not policy-safe (§1.3). |
+| Switch | `BILLING_ENABLED` (default `"0"`): off = every room plays the whole catalog and the Pass UI is hidden. |
 
-Entitlement = `premium` if the `premium` one-time product is owned (purchased, not refunded or voided), **plus** the set of owned `pack_*` products. A room's playable packs are the free packs, plus all packs if premium, plus the host's owned packs.
+Entitlement = the Pass is active if `subscriptionsv2.get` gives an expiry in the future and a state that grants access (ACTIVE, IN_GRACE_PERIOD, or CANCELED before expiry; not ON_HOLD, PAUSED, EXPIRED or PENDING), **plus** the set of owned `pack_*` families. A room's playable content is the free content, plus everything with the Pass, plus the host's owned families.
+
+**Later levers** (BLUEPRINT §5.2, not v1): the 48-hour Party Night pass (needs a server-side expiring entitlement), gift codes before Ramadan, Eid and Christmas, a Ramadan trial promo, and a B2B venue licence. No ads during play.
+
+#### 5.1.1 Archived: the lifetime decision (2026-10-26, superseded 2026-11-08)
+
+> Archived 2026-11-08. This was the decision for the single-game app "Mish Ana!". It was replaced by the JAMAA Pass above. Nothing was ever sold under it, and the `premium` product was never created on the new Play app (`app.jamaa.tv`), so no customer migration is needed (JAMAA-PLATFORM §4.6).
+
+- 2026-10-26: the subscription is dropped. Premium becomes a one-time lifetime unlock (`premium`, Play in-app product, non-consumable): $7.99 list, $5.99 launch promo (a Play Console sale, not code). Packs stay one-time at $1.99–2.99. Reason given: a party game is played a few nights a year, so a subscription reads as a trap; a lifetime price matched the market scan (growth/marketing/launch/MARKET-SCAN.md) and removed the trial/renewal/manage-subscription UI.
+
+| Item | Decision (archived) |
+|---|---|
+| Free tier | Core game: full rules, 3–12 players, one starter pack per language (EN/FR/AR). |
+| Premium (lifetime) | `premium`: one-time non-consumable. $7.99 list, $5.99 launch promo. Unlocked every pack, including later ones, plus premium settings, for good. No subscription, no trial. |
+| Single packs | `pack_<packId>`, non-consumable, owned forever. $1.99 (under 60 pairs), $2.99 (60+ pairs). |
+| Subscription | None. |
+| Who pays | The host TV only. |
+| Prices by region | Play per-country pricing, about 40 % lower in Lebanon and the Middle East. |
 
 ### 5.2 Entitlement architecture (account-less)
 
 ```
 TV app ──launchBillingFlow(obfuscatedAccountId = sha256(installId))──▶ Google Play
 TV app ──POST /play/verify {productId, purchaseToken, installId}──▶ Worker
-Worker ──GET androidpublisher …/purchases/productsv2/tokens/{token}──▶ Google (service-account JWT, RS256 via WebCrypto)
-Worker: check packageName, productId, purchaseState=PURCHASED, obfuscatedAccountId
+Worker ──GET androidpublisher …/purchases/subscriptionsv2/tokens/{token} (Pass)
+         or …/purchases/productsv2/tokens/{token} (packs)──▶ Google (service-account JWT, RS256 via WebCrypto)
+Worker: check packageName (app.jamaa.tv), productId, state, expiry (Pass), obfuscatedAccountId
 Worker ──acknowledge──▶ Google   (must happen < 3 days, or the purchase is refunded)
 Worker ──store──▶ EntitlementDO (key = purchaseToken; index installId → tokens)
-Worker ──▶ TV: signed entitlement (HMAC/Ed25519 JWT: installId, products, iat)
+Worker ──▶ TV: signed entitlement (Ed25519, iss "jamaa": installId, pu = Pass expiry, packs = families, iat)
 TV ──createRoom {entitlementJWT}──▶ RoomDO: verify signature → room.premium = true, packs = [...]
 RoomDO ──room state {premium, packs}──▶ phones (UI only; words served by DO)
-Google Pub/Sub (RTDN) ──push──▶ Worker /play/rtdn (verify push OIDC token) → revoke on cancel/void
+Google Pub/Sub (RTDN) ──push──▶ Worker /play/rtdn (verify push OIDC token) → update on renew/hold/expire, revoke on void
 Cron Trigger (daily) ──Voided Purchases API──▶ revoke refunded tokens
 ```
 
 - **The server is the source of truth.** Premium word lists live server-side and the RoomDO hands them out only when `room.premium`. A modded APK therefore cannot unlock content.
 - **Restore:** on each launch, `queryPurchasesAsync()` runs and the tokens are re-posted to `/play/verify`. This works on any TV signed into the same Google account. No JAMAA account is needed in v1. [G17]
-- **RTDN / one-time products:** `ONE_TIME_PRODUCT_PURCHASED` and `ONE_TIME_PRODUCT_CANCELED`, then call `purchases.productsv2.getproductpurchasev2`. De-duplicate on `messageId`. [G18][G19]
+- **RTDN:** `subscriptionNotification` (Pass renewals, grace, hold, cancel, expiry; then `subscriptionsv2.get`) and `ONE_TIME_PRODUCT_PURCHASED` / `ONE_TIME_PRODUCT_CANCELED` for packs (then `productsv2.getproductpurchasev2`). De-duplicate on `messageId`. A daily cron re-checks stale subscriptions. Implementation: PAYMENTS-SPEC rev 4. [G18][G19]
 - **Short-lived JWT** (e.g. 7 days), refreshed on launch, so revocations take effect.
 - **v2 cross-platform:** add an optional account (e.g. email magic link) only when Apple TV ships. Map Play tokens and Apple `originalTransactionId` to the account. Under 3.1.3(b) Apple allows honouring a Play purchase if the same item is also sold as IAP on tvOS.
 
 ### 5.3 v2: Apple TV
 
 1. Build a SwiftUI tvOS host that reuses the same WebSocket protocol and the phone web client unchanged.
-2. Add a StoreKit 2 non-consumable with the same product IDs. The server verifies signed transactions through the App Store Server API, receives App Store Server Notifications v2, and issues the same entitlement JWT.
+2. Add StoreKit 2 products with the same ids (an auto-renewable subscription for the Pass, non-consumables for packs). The server verifies signed transactions through the App Store Server API, receives App Store Server Notifications v2, and issues the same entitlement JWT.
 3. Enrol in the Small Business Program (15%).
 4. In the **US storefront only**, the app may also link or QR to a web checkout. Watch the court-set commission. Elsewhere the app must use IAP only.
 
@@ -173,21 +194,21 @@ Cron Trigger (daily) ──Voided Purchases API──▶ revoke refunded tokens
 | # | Decision | Suggested default |
 |---|---|---|
 | 1 | Seller | **Decided:** the owner, as an individual |
-| 2 | Free tier | **Decided:** core game, 1 starter pack per language |
-| 3 | Price points by region | **Decided (US):** premium $7.99 ($5.99 launch promo), packs $1.99–2.99; lower in Lebanon/ME via Play per-country pricing |
-| 4 | Product split | **Decided 2026-10-26:** `premium` lifetime one-time product plus `pack_*` non-consumables; no subscription |
+| 2 | Free tier | **Decided:** every game free to play with starter content (JAMAA-PLATFORM §4.3) |
+| 3 | Price points by region | **Open (BLUEPRINT D2):** recommended grid in §5.1 (US $3.99 / month, $24.99 / year, packs $2.99), set in Play Console |
+| 4 | Product split | **Decided 2026-11-08:** `jamaa_pass` subscription (monthly + yearly, `trial-7d`) plus `pack_<family>` non-consumables; no lifetime product (the 2026-10-26 lifetime split is archived in §5.1.1) |
 | 5 | Accounts in v1? | No (account-less, keyed by Google purchase token) |
 | 6 | Apple TV timing | After Android TV hits product-market fit |
 
 ### 5.5 Setup checklist
 
 1. **Play Console** developer account → **Payments profile / merchant account** (entity and bank, ideally French) → enrol in the **15% service-fee tier** (legacy regions).
-2. Create the in-app products (`premium`, then every `pack_*`). Set per-country prices and add license testers.
+2. On the Play app **JAMAA** (`app.jamaa.tv`): create the subscription `jamaa_pass` (base plans `monthly`, `yearly`; offer `trial-7d` on each), then every `pack_*` from `pnpm --filter @jamaa/server billing:products`. Set per-country prices and add license testers.
 3. Upload to an internal or closed test track. Billing only works on builds distributed through Play.
 4. **Google Cloud project** linked in Play Console → enable the Google Play Android Developer API → create a **service account**, grant it "View financial data" and "Manage orders" in Play Console, and store its JSON key as a Workers secret.
 5. **Pub/Sub topic** for RTDN → grant `google-play-developer-notifications@system.gserviceaccount.com` publish rights → create a push subscription to `https://<worker>/play/rtdn` → set the topic in Play Console → Monetization setup.
-6. Workers: `/play/verify`, `/play/rtdn`, an EntitlementDO, a daily Cron for voided purchases, and an entitlement-JWT signing key secret.
-7. TV app: Play Billing Library 9.1+ and a purchase UI that works with the D-pad. Test purchase, refund and restore on a real Google TV device.
+6. Workers: the billing routes, the Billing DO, the daily crons (voided purchases, stale subscriptions) and the `ENTITLEMENT_KEYS` secret (all implemented; see PAYMENTS-SPEC §8 and BILLING-LAUNCH.md).
+7. TV app: Play Billing Library 9.1+ and a D-pad purchase UI (implemented). Test the trial, a renewal, a cancellation, a refund and restore on a real Google TV device.
 8. (v2) Apple Developer Program (French entity), Paid Apps agreement, Small Business Program, App Store Server API key, and the Server Notifications URL.
 
 ---
