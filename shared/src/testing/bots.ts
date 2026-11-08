@@ -1,12 +1,12 @@
 // Seeded bot driver shared by the property, golden and leak tests and by tools/sim (engine mode, §13.1).
 import { COLORS } from "../constants";
-import type { Catalog } from "../engine/catalog";
-import { assertInvariants } from "../engine/invariants";
-import { createInitialState, reduce } from "../engine/reduce";
-import type { Rng } from "../engine/rng";
-import { createRng } from "../engine/rng";
-import type { Action, ClientIntent, GameState, ReduceResult, SettingsPatch, Winner } from "../engine/types";
-import { checkWinner } from "../engine/win";
+import type { Catalog } from "../games/mishana/engine/catalog";
+import { assertInvariants } from "../games/mishana/engine/invariants";
+import { createInitialState, reduce } from "../games/mishana/engine/reduce";
+import type { Rng } from "../games/mishana/engine/rng";
+import { createRng } from "../games/mishana/engine/rng";
+import type { Action, ClientIntent, GameState, ReduceResult, SettingsPatch, Winner } from "../games/mishana/engine/types";
+import { checkWinner } from "../games/mishana/engine/win";
 import { P, SYS, TV } from "./game";
 
 export interface BotOptions {

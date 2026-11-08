@@ -1,6 +1,6 @@
 // PAYMENTS-SPEC §1.3 / §1.6: Play product ids and the pack ↔ product mapping. Zod-free (safe for the web client at runtime).
 // Mirrored exactly by tv-app `billing/Products.kt` (checked against shared/fixtures/billing.products.json).
-import type { Settings } from "../engine/types";
+import type { Settings } from "../games/mishana/engine/types";
 
 export const PREMIUM_PRODUCT_ID = "premium" as const;
 export const BASE_PLAN_IDS = ["monthly", "yearly"] as const;          // display order on the TV

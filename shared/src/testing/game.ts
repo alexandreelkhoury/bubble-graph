@@ -1,10 +1,10 @@
 // Scripted engine driver and actor helpers for engine unit tests and the fixture generator.
 import { COLORS } from "../constants";
-import { assertInvariants } from "../engine/invariants";
-import { createInitialState, reduce } from "../engine/reduce";
-import type { Catalog } from "../engine/catalog";
-import { isSpeakingPhase } from "../engine/queries";
-import type { Action, ClientIntent, EngineError, GameState, Player, ReduceResult, Role, SettingsPatch, SystemAction } from "../engine/types";
+import { assertInvariants } from "../games/mishana/engine/invariants";
+import { createInitialState, reduce } from "../games/mishana/engine/reduce";
+import type { Catalog } from "../games/mishana/engine/catalog";
+import { isSpeakingPhase } from "../games/mishana/engine/queries";
+import type { Action, ClientIntent, EngineError, GameState, Player, ReduceResult, Role, SettingsPatch, SystemAction } from "../games/mishana/engine/types";
 import { TEST_FREE_CATALOG } from "./test-catalog";
 
 /** Default scripted clock origin shared by engine, server and fixture drivers. */

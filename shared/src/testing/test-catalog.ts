@@ -1,5 +1,5 @@
 // Deterministic catalog for engine/server tests and the fixture generator (independent of the shipped word-packs/).
-import type { Catalog } from "../engine/catalog";
+import type { Catalog } from "../games/mishana/engine/catalog";
 import { playableCatalog } from "../billing/access";
 import { loadCatalog } from "../packs";
 

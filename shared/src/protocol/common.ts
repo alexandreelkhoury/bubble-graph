@@ -1,8 +1,8 @@
 import * as z from "zod";
 import { COLORS, LOCALES, SETTINGS_BOUNDS } from "../constants";
-import { AGE_RATINGS, PACK_TIERS } from "../engine/catalog";
-import type { LocalizedTitle, Points, Settings } from "../engine/types";
-import { DEADLINE_KINDS, GUESS_STATUSES, HISTORY_CAUSES, PHASES, ROLES, VOTE_OUTCOMES, WINNERS } from "../engine/types";
+import { AGE_RATINGS, PACK_TIERS } from "../games/mishana/engine/catalog";
+import type { LocalizedTitle, Points, Settings } from "../games/mishana/engine/types";
+import { DEADLINE_KINDS, GUESS_STATUSES, HISTORY_CAUSES, PHASES, ROLES, VOTE_OUTCOMES, WINNERS } from "../games/mishana/engine/types";
 import { ERROR_CODES } from "./errors";
 
 export const Token = z.string().regex(/^[0-9a-f]{32}$/);

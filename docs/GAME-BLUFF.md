@@ -1,6 +1,6 @@
 # GAME-BLUFF — "Bluff the answer" (JAMAA game #2)
 
-Status: **binding design spec**, draft 2 (review applied), 2026-11-08. Game id: `bluff`. Display names: EN **Bluff!**, FR **Bluff !**, AR **«بلوف!»** (the word is used as-is in Lebanese; `[native review]`: alternative «كذّبها!»).
+Status: **binding design spec**, draft 3 (owner decisions applied: three distinct rounds, own point values per BLUEPRINT D7, no-truth final per D1, ES locale), 2026-11-08. Game id: `bluff`. Display names: EN **Bluff!**, FR **Bluff !**, AR **«بلوف!»** (the word is used as-is in Lebanese; `[native review]`: alternative «كذّبها!»).
 
 This file defines the rules, state machine, timers, scoring, edge cases, screens, settings, copy, content schema and first content for Bluff. Things the JAMAA hub owns are only referenced here: the lobby, game picker, player characters, the ⓘ rules button, entitlements (JAMAA Pass), sound mute, room lifetime and reconnect. **The platform contract is [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) (§2.10 for Bluff); where it names a shared concept differently, the platform name wins and this file maps to it.** In particular: i18n keys written `bluff.*` here live under `game.bluff.*`; intents travel as `GAME {gameId:"bluff", i}`; `HOST_ADVANCE` is the platform's host-advance intent; late joiners are the room's *benched* members, admitted through the `join` hook; "How to play" is the platform's per-device setup intro (there is **no in-game intro phase**); the no-repeat history is the platform `memory.usedKeys`. Everything that is specific to Bluff is fixed here.
 
@@ -10,7 +10,13 @@ Conventions are those of [SPEC.md](SPEC.md): pure engine (`reduce(state, action,
 
 ## 1. The game in one paragraph
 
-The TV shows a strange prompt: the end of a Lebanese proverb, the meaning of a rare English word, a French expression nobody uses any more. Everyone secretly types a **fake** answer on their phone, good enough to fool the others. The TV then shows all the fakes mixed with the **real** answer (plus a few "house lies" when there are not enough players). Everyone votes for what they think is the truth. You score for finding the truth, and you score more for every friend who falls for **your** lie. Then the reveal: one answer at a time, voters' characters jump onto it, it is stamped LIE or TRUTH, the liar pops out grinning and coins fly from the fooled players into the liar's pile.
+Three rounds, three ways to lie.
+
+1. **"Finish the saying."** The TV shows the start of a real proverb or saying. Everyone types the ending. If you **know** the real ending, type it: you score on the spot ("Spot on!") and sit out the vote. Everyone else's endings are fakes; they go on the board next to the real one and the table votes.
+2. **"Impossible but true."** A very hard, obscure, **real** fact with a blank. Everyone writes a fake that sounds truer than the truth; the vote hunts for the real one.
+3. **Final: "No truth."** The TV says it out loud: **there is no right answer this time.** The question is absurd or impossible ("What did the first cat ever say to a human?"). Everyone writes the most convincing answer, the table votes for the one that *sounds* most true, and the most-voted answer wins big.
+
+Answers stay anonymous until the vote is over. Then the reveal: one answer at a time, it is stamped LIE or TRUTH, the liar pops out grinning and coins fly from the fooled players into the liar's pile.
 
 Players: **3–12** (platform bounds). Best at 4–8. Duration: about 15–20 minutes (Normal length).
 
@@ -25,7 +31,8 @@ Players: **3–12** (platform bounds). Best at 4–8. Duration: about 15–20 mi
 | Settings | 3 settings, §9 (`packIds`, `length`, `pace`) |
 | How to play | 4 steps, §10.1; shown **per device, the first time Bluff's setup opens** (platform §3.2 HUB-03 / PHH-03), never as a game phase; always reachable through ⓘ |
 | Score carry | `carriesScore: false`: every Bluff game starts at 0 (platform §2.4); stars come from this game's points |
-| Hooks | `join` (late joiners wait for the next WRITING, §7), `projectSetup` → `{available}`, `memory` → item ids, `projectStatus` (`doneIds` = submitted in WRITING / voted in VOTING; `awaitedIds` = the others), `leakCheck` |
+| Hooks | `join` (late joiners wait for the next WRITING, §7), `projectSetup` → `{available, bigGroup}` (`bigGroup` = ≥ 8 members, §7), `memory` → item ids, `projectStatus` (`doneIds` = submitted in WRITING / voted in VOTING; `awaitedIds` = the others; Spot-on players are never awaited in VOTING, §5.0), `leakCheck` |
+| Reactions | The platform reactions bar (`REACT`, the 6 `REACTIONS`, each one a **character face** plus its icon burst, platform §3.7) is shown on phones in REVEAL, SCORES and AWARDS. No emoji anywhere in Bluff. Reactions never score |
 | Pause menu items (TV) | in order: "Skip prompt" (WRITING, `SKIP_PROMPT`), "Hide an answer" (VOTING, `HIDE_OPTION`, then pick a card), "Next" (ROUND_INTRO, REVEAL, SCORES, AWARDS, `HOST_ADVANCE`), "End game" (HOLD, `END_GAME`, confirm) |
 | ⓘ rules sheet | §10.2, keys `bluff.rules.*` |
 | Characters | One character per player (platform). Expressions Bluff uses (all in the platform set): `idle`, `think`, `done`, `smug`, `shock`, `facepalm`, `cheer`, `laugh`, `sad`, `away` (§12.4) |
@@ -38,7 +45,7 @@ Players: **3–12** (platform bounds). Best at 4–8. Duration: about 15–20 mi
 
 ## 3. Structure
 
-| Length setting | Round 1 (×1) | Round 2 (×2) | Final (×3) | Prompts |
+| Length setting | Round 1 "Finish the saying" | Round 2 "Impossible but true" | Final "No truth" | Prompts |
 |---|---|---|---|---|
 | Short | 2 | 2 | 1 | 5 |
 | **Normal** (default) | 3 | 3 | 1 | 7 |
@@ -46,7 +53,15 @@ Players: **3–12** (platform bounds). Best at 4–8. Duration: about 15–20 mi
 
 Each **prompt** runs the loop WRITING → VOTING → REVEAL → SCORES. A round starts with a ROUND_INTRO card. After the final prompt: AWARDS → RESULTS.
 
-The final is called **"The Big Bluff"** (FR «Le Grand Bluff», AR «البلوف الكبير»). Same mechanics, ×3 points, slower reveal and its own music sting. The final prompt is drawn with `difficulty >= 2` when the pool allows it.
+| Round | `roundKind` | Prompt types drawn (§11.1) | Truth? | Special rule | Points (§6.3) |
+|---|---|---|---|---|---|
+| 1 | `saying` | `proverb_end` | yes | **Spot on**: a player whose **first** submission matches the real ending scores at once and does not vote on that prompt (§5.0) | base values ×1 |
+| 2 | `fact` | `fact_blank`, then `word_meaning` / `expression_meaning` (§11.4) | yes | Hidden truth; "too close" rejection (§5.2) | base values ×2 |
+| 3 | `noTruth` | `no_truth` | **no** | No truth exists: the TV announces it; vote for the answer that sounds most true; ballots stay anonymous in the reveal (§6.5) | own table (§6.5) |
+
+The final is called **"No truth"** (FR «Aucune vérité», AR «ما في صحّ», ES «Ninguna es verdad»; `[native review]`). Its ROUND_INTRO card says it in full, in the room language, for 6 s: "Final round. **There is no right answer.** Write the answer that sounds the most true. The most votes wins big." (`bluff.round.noTruth.intro`). Slower reveal and its own music sting.
+
+**Why this structure is ours** (JACKBOX-STUDY §3.1 and the "stacked identical structure" row of the legal matrix): round 1 rewards *knowing* (the Spot-on rule has no Fibbage equivalent), round 2 is the genre's hidden-truth mechanic (Fictionary, Balderdash; free), and the final has no truth at all (the study notes Jackbox has no such final). Point values are our own (§6.3, BLUEPRINT D7).
 
 ---
 
@@ -56,8 +71,9 @@ The final is called **"The Big Bluff"** (FR «Le Grand Bluff», AR «البلو�
 stateDiagram-v2
   [*] --> ROUND_INTRO: start (≥3 connected; first deadline + ENTRANCE_GRACE_MS)
   ROUND_INTRO --> WRITING: deadline / host HOST_ADVANCE
-  WRITING --> WRITING: host SKIP_PROMPT, or auto "Too famous!" swap (new prompt, timer restarts)
+  WRITING --> WRITING: host SKIP_PROMPT, or auto "Too famous!" swap in round 2 (new prompt, timer restarts)
   WRITING --> VOTING: all connected players submitted / deadline
+  WRITING --> REVEAL: round 1, no connected eligible voter left (everyone was Spot on)
   VOTING --> REVEAL: all connected eligible voters voted (+ like grace) / deadline
   VOTING --> SCORES: host hid the truth (prompt voided, no points)
   REVEAL --> SCORES: deadline / host HOST_ADVANCE
@@ -79,9 +95,9 @@ Durations below are for `pace: "normal"`. `relaxed` multiplies WRITING and VOTIN
 
 | Phase | Deadline kind | Duration | Ends early when | Who can act |
 |---|---|---|---|---|
-| `ROUND_INTRO` | `ROUND_INTRO` | 4 000 ms (final: 6 000); **first round of the game: + `ENTRANCE_GRACE_MS`** | host `HOST_ADVANCE` | host |
-| `WRITING` | `WRITING` | 60 000 ms | every connected, non-`left` player has a submitted lie | players: `SUBMIT_LIE`, `REQUEST_HELP`; host: `SKIP_PROMPT` |
-| `VOTING` | `VOTING` | `clamp(20 000 + 2 500 × optionCount, 26 000, 50 000)` | every connected eligible voter has voted → deadline moves to `now + LIKE_GRACE_MS` (3 000) if that is earlier | players: `VOTE`, `LIKE`; host: `HIDE_OPTION` |
+| `ROUND_INTRO` | `ROUND_INTRO` | 4 000 ms (final "No truth": 6 000, so the "no right answer" sentence can be read); **first round of the game: + `ENTRANCE_GRACE_MS`** | host `HOST_ADVANCE` | host |
+| `WRITING` | `WRITING` | 60 000 ms (final: 75 000) | every connected, non-`left` player has a submitted lie (a Spot-on counts as submitted) | players: `SUBMIT_LIE`, `REQUEST_HELP`; host: `SKIP_PROMPT` |
+| `VOTING` | `VOTING` | `clamp(20 000 + 2 500 × optionCount, 26 000, 50 000)` | every connected **eligible** voter (§6.1: not Spot on) has voted → deadline moves to `now + LIKE_GRACE_MS` (3 000) if that is earlier | players: `VOTE`, `LIKE`; host: `HIDE_OPTION` |
 | `REVEAL` | `REVEAL` | `revealDurationMs(reveal)` (§12.2) | host `HOST_ADVANCE` | host |
 | `SCORES` | `SCORES` | 6 000 ms (voided prompt: 4 000) | host `HOST_ADVANCE` | host |
 | `HOLD` | none | — | 3 players connected | host: `END_GAME` |
@@ -95,16 +111,16 @@ Durations below are for `pace: "normal"`. `relaxed` multiplies WRITING and VOTIN
 **Entering WRITING.**
 1. If fewer than 3 players are connected → `HOLD`.
 2. Draw the prompt (§11.4) with the state RNG. Store it in `state.prompt` (server only until REVEAL; see §8.1 for what is projected).
-3. Clear `lies`, `votes`, `likes`, `help`, `options`, `tooCloseProbes`, `foundWhileWriting`. Set the deadline.
-4. Compute the public **length hint** from the truth's word count in the content locale: 1–2 words → `short` ("Short answer (1–2 words)"), 3–5 → `few` ("A few words"), 6+ → `sentence` ("A full sentence"). It is shown under the prompt on the TV and phones so lies take the same shape as the truth.
+3. Clear `lies`, `votes`, `likes`, `help`, `options`, `tooCloseProbes`, `foundWhileWriting`, `spotOn`, `firstSubmitDone`. Set the deadline.
+4. Compute the public **length hint** from the truth's word count in the content locale: 1–2 words → `short` ("Short answer (1–2 words)"), 3–5 → `few` ("A few words"), 6+ → `sentence` ("A full sentence"). It is shown under the prompt on the TV and phones so lies take the same shape as the truth. **Final (`no_truth`):** no truth exists, so the hint is always `free` ("Any length, max 60 characters").
 
-**"Too famous!" auto-swap (safety net).** If, during WRITING, at least 50 % of connected players have received `LIE_TOO_CLOSE` on their **first** submission for this prompt (minimum 2 players), the server swaps the prompt itself: a new prompt is drawn, all lies, flags and probes are discarded, the WRITING timer restarts, and the TV shows "Too famous! New one". The swap does not use one of the host's skips and happens at most once per prompt slot. The famous item is recorded in `memory.usedKeys` like any drawn item.
+**"Too famous!" auto-swap (safety net, round 2 only).** Round 1 does not need it (knowing pays there, §5.0) and the final has no truth. If, during round-2 WRITING, at least 50 % of connected players have received `LIE_TOO_CLOSE` on their **first** submission for this prompt (minimum 2 players), the server swaps the prompt itself: a new prompt is drawn, all lies, flags and probes are discarded, the WRITING timer restarts, and the TV shows "Too famous! New one". The swap does not use one of the host's skips and happens at most once per prompt slot. The famous item is recorded in `memory.usedKeys` like any drawn item.
 
 **WRITING → VOTING ("build options").**
-1. Collect submitted lies of every player (connected or not, `left` excluded).
+1. Collect submitted lies of every player (connected or not, `left` excluded). **Spot-on players (round 1) have no lie**: their entry is the truth and never becomes an option. Their Spot-on points are applied to `players[].score` now (§5.0), before VOTING starts. If no connected eligible voter remains, skip VOTING and go straight to REVEAL ("Everyone knew it!", `bluff.reveal.allKnew`).
 2. Merge duplicates (§5.3). A lie that matches a house lie replaces it (the player keeps the credit).
-3. `houseCount = max(MIN_LIES − distinctPlayerLies, playersInGame ≤ 4 ? 1 : 0)`, `MIN_LIES = 3`. House lies are drawn with the RNG from `item.houseLies[locale]`, skipping any that collide (§5.3) with a player lie or the truth. If the item has too few, take from the pack's `fallbackHouseLies` for that type and locale; if still short, show fewer options (never fewer than 2 in total; at 2 the TV shows "Easy one!" and the prompt still scores normally).
-4. Options = merged player lies + house lies + truth. **Shuffle with the RNG.** Give each option a fresh random id (8 hex chars from the RNG); ids carry no order or kind information.
+3. `houseCount = max(MIN_LIES − distinctPlayerLies, playersInGame ≤ 4 ? 1 : 0)`, `MIN_LIES = 3`. **Final (`no_truth`):** there is no truth option, so `houseCount = max(0, 3 − distinctPlayerAnswers)` (every voter then sees ≥ 2 options that are not their own), drawn from the item's `houseLies` ("house answers"). House lies are drawn with the RNG from `item.houseLies[locale]`, skipping any that collide (§5.3) with a player lie or the truth. If the item has too few, take from the pack's `fallbackHouseLies` for that type and locale; if still short, show fewer options (never fewer than 2 in total; at 2 the TV shows "Easy one!" and the prompt still scores normally).
+4. Options = merged player lies + house lies + truth (final: no truth). **Shuffle with the RNG.** Give each option a fresh random id (8 hex chars from the RNG); ids carry no order or kind information.
 5. If **no** player submitted and no house lie exists for the item, the prompt is discarded silently and a new one is drawn (WRITING restarts once; a second failure goes to VOTING with whatever exists).
 
 **VOTING → REVEAL ("build reveal").** The engine computes the full reveal script (§12.2) and the score deltas in one step and stores them in `state.reveal`. Scores are applied to `players[].score` at this moment (so a crash/reconnect never loses points); the TV animates from `scoreBefore` to `scoreAfter`, both projected.
@@ -115,6 +131,23 @@ Durations below are for `pace: "normal"`. `relaxed` multiplies WRITING and VOTIN
 
 ## 5. Submitting a lie
 
+### 5.0 Round 1: "Spot on" (knowing the real ending)
+
+In round 1 the phone says "Know the ending? Type it and score now. Don't know it? Make one up." (`bluff.write.sayingHint`). One function decides both "Spot on" and "too close": `matchesTruth(text, truths)` = `isTooClose` of §5.2 (normalised fuzzy match, aware of AR/FR/ES/EN stop words, Arabic letter variants, Spanish/French accents and Arabizi `truthAlt`).
+
+| Submission | Matches the real ending? | Result |
+|---|---|---|
+| The player's **first** `SUBMIT_LIE` on this prompt | yes | **Spot on.** `spotOn[playerId] = true`; the entry is locked (a further `SUBMIT_LIE` or `REQUEST_HELP` → `WRONG_PHASE`, silent on the phone); phone: "Spot on! +150. You sit this vote out." (`bluff.write.spotOn`). The player has **no option** on the board and **does not vote** on this prompt (they may still like answers) |
+| first | no | A normal lie (editable as in §5.1). Nothing tells the player it did not match (the phone shows the usual "Lie locked!") |
+| any **later** submission (an edit) | yes | Rejected with `LIE_TOO_CLOSE` and `foundWhileWriting` is set (§5.2): their truth vote on this prompt scores 0 |
+| later | no | A normal edit |
+
+**Why only the first submission can be Spot on.** If every edit could match, a player could fire five guesses and learn the ending from the replies (an oracle). With one shot, guessing costs the player their only lie on that prompt; after that, a match is a "too close" warning and the truth stops paying, exactly as in round 2.
+
+**Why Spot on is worth 150 and costs the vote** (§6.3): a player who knows the ending could instead write a fake and then vote for the truth (100 + 60 per player fooled). 150 sits at "truth + about one player fooled", so a knower is roughly indifferent, and typing the real ending is the fun, fast choice. It is paid at once and is certain.
+
+**Secrecy.** During WRITING, a Spot-on player looks like any submitted player (`submittedIds`); the flag is in their own `me.spotOn` only, so nobody is pushed by "Rami already knows it". From VOTING onwards `spotOnIds` is public: the TV opens VOTING with a 1.5 s banner "Knew it! {names} +150" (`bluff.vote.knewIt`, inside the VOTING deadline) and those characters sit with a small gold "knew it" pin and are never awaited. Their text is never shown before REVEAL (it is the truth).
+
 ### 5.1 Input rules
 
 | Rule | Value |
@@ -123,24 +156,27 @@ Durations below are for `pace: "normal"`. `relaxed` multiplies WRITING and VOTIN
 | Length | **1–60 graphemes** (`LIE_MAX_CHARS = 60`), ≤ 240 code points. Must contain at least 2 letters (`\p{L}`) — rejects "...", "??", "1" |
 | Count | One lie per player per prompt. It can be **edited** (re-submitted) until WRITING ends |
 | Case | Shown as typed, with the first letter upper-cased for Latin scripts (`toLocaleUpperCase(locale)` on the first grapheme) so a lowercase lie does not stand out against the content's style |
-| Script | **Content locale `ar`:** a lie with no Arabic letter (`\p{Script=Arabic}`) is rejected with `LIE_WRONG_SCRIPT` ("Write it in Arabic letters so it blends in!"): many players type Arabizi, and a Latin lie next to Arabic options is an instant tell. **Content locale `en`/`fr`:** a lie with no Latin letter is rejected the same way ("Write it in Latin letters so it blends in!") |
+| Script | **Content locale `ar`:** a lie with no Arabic letter (`\p{Script=Arabic}`) is rejected with `LIE_WRONG_SCRIPT` ("Write it in Arabic letters so it blends in!"): many players type Arabizi, and a Latin lie next to Arabic options is an instant tell. **Content locale `en`/`fr`/`es`:** a lie with no Latin letter is rejected the same way ("Write it in Latin letters so it blends in!") |
 | Rate | Platform rate limit applies; plus at most **5** `SUBMIT_LIE` per player per prompt (`LIE_EDITS_MAX = 5`) → `TOO_MANY_EDITS`. Within those, at most **3** `LIE_TOO_CLOSE` results per player per prompt (`TOO_CLOSE_PROBES_MAX = 3`); a further too-close attempt is answered `TOO_MANY_EDITS` |
 
 **Display normalisation (every option alike: truth, house lies and player lies).** Before options are built, each text is normalised for display so polish never betrays the authored truth: strip Arabic tashkeel including shadda (U+064B–U+065F, U+0670) and tatweel (U+0640); map typographic quotes and guillemets (`« » “ ” ‘ ’ „`) to plain `"` / `'`; drop trailing `.`, `!`, `…`; strip `Extended_Pictographic` (emoji: no truth ever has one); collapse spaces. Lint (§11.3) additionally forbids tashkeel in authored truths and house lies. Test vectors in §13.4.
 
-Error codes (namespaced in `games/bluff/errors.ts`; `messageKey` per SPEC §6.4 convention): `LIE_EMPTY`, `LIE_TOO_LONG`, `LIE_TOO_CLOSE`, `LIE_WRONG_SCRIPT`, `LIE_BLOCKED_WORD`, `TOO_MANY_EDITS`, `CANNOT_VOTE_OWN`, `CANNOT_HIDE`, `STALE_PROMPT`; plus the platform's `WRONG_PHASE`.
+Error codes (namespaced in `games/bluff/errors.ts`; `messageKey` per SPEC §6.4 convention): `LIE_EMPTY`, `LIE_TOO_LONG`, `LIE_TOO_CLOSE`, `LIE_WRONG_SCRIPT`, `LIE_BLOCKED_WORD`, `TOO_MANY_EDITS`, `CANNOT_VOTE_OWN`, `CANNOT_VOTE_SPOT_ON`, `CANNOT_HIDE`, `STALE_PROMPT`; plus the platform's `WRONG_PHASE`. (`CANNOT_VOTE_SPOT_ON` is new in draft 3: JAMAA-PLATFORM §2.2's per-game list must add it.)
 
 ### 5.2 "Too close to the truth"
 
-A lie is **rejected** with `LIE_TOO_CLOSE` when it matches the truth or any `truthAlt` of the room locale **or** of the item's `sourceLocale` (so typing the original Arabic ending in an English room is also caught).
+A lie is **rejected** with `LIE_TOO_CLOSE` when it matches the truth or any `truthAlt` of the room locale **or** of the item's `sourceLocale` (so typing the original Arabic ending in an English room is also caught). **Per round:** round 2, every submission; round 1, every submission **except the first**, which is Spot on instead (§5.0); the final has no truth, so `LIE_TOO_CLOSE` never happens there.
 
-**No truth oracle.** A too-close reply tells the player they found the truth, so it must never pay. The first `LIE_TOO_CLOSE` a player receives on a prompt sets a server-side flag `foundWhileWriting` for that player and prompt: **their vote for the truth on that prompt scores 0** (they can still score for fooling others with a real lie, and for likes). The phone says so at once: "Close to the truth! Write something else. Finding the truth now won't score." (`bluff.err.tooClose`). Probes are capped at 3 per prompt (§5.1). The flag is projected only to that player (`me.foundWhileWriting`) and appears in the reveal (a small "found it early" tag on their truth landing, no coin).
+**No truth oracle (owner rule: a shown warning means the truth scores 0 on that prompt).** A too-close reply tells the player they found the truth, so it must never pay. The first `LIE_TOO_CLOSE` a player receives on a prompt sets a server-side flag `foundWhileWriting` for that player and prompt: **their vote for the truth on that prompt scores 0** (they can still score for fooling others with a real lie, and for likes). The phone says so at once: "Close to the truth! Write something else. Finding the truth now won't score." (`bluff.err.tooClose`). Probes are capped at 3 per prompt (§5.1). The flag is projected only to that player (`me.foundWhileWriting`) and appears in the reveal (a small "found it early" tag on their truth landing, no coin).
 
 ```ts
 // shared/src/games/bluff/similar.ts
 export function normalizeAnswer(s: string): string; // = normalizeGuess (SPEC §4.12) with STOP extended by
 // ["of","to","and","is","it","et","d","qu","que","est","en","au","aux","il","elle","on"]
+// + Spanish ["el","la","los","las","un","una","y","de","del","al","que","se","es","lo","le","no"]
+//   (accents are already folded by normalizeGuess: "más" = "mas", "ñ" kept as "n" [VERIFY normalizeGuess folds ñ])
 // and Arabic: strip a leading "و" or "ف" conjunction from tokens of ≥ 4 letters, after the "ال" rule.
+// Spanish/French elision and inverted punctuation: "¿", "¡", "l'", "d'", "qu'" are dropped before tokenising.
 export function tokens(s: string): string[];        // the same pipeline, stopping before the final join
 export function isTooClose(lie: string, truths: string[]): boolean;
 ```
@@ -171,6 +207,10 @@ Required test vectors (truth → lie → too close?):
 | `ماتوا` | `ماتوا كلّن` | true (rule 5) |
 | `مات` | `بات` | true (short truth, Levenshtein 1) — accepted cost: a 3-letter truth blocks its 1-letter neighbours |
 | `is a gazelle` (EN room, AR source) | `ghazal` | true (Arabizi `truthAlt`) |
+| `se lo lleva la corriente` | `se lo lleva la corriente!` | true (rule 1 after normalisation) |
+| `se lo lleva la corriente` | `lo lleva la corriente` | true (rule 1 after Spanish stop words) |
+| `se lo lleva la corriente` | `se lo come el pez` | false |
+| `ménage sa monture` | `menage sa monture` | true (accents folded) |
 
 ### 5.3 Duplicates and collisions
 
@@ -187,7 +227,8 @@ Nobody is told at submission time that their lie duplicates another (that would 
 - **Host hide.** In VOTING, the TV remote (pause menu → "Hide an answer", then pick a card) or the VIP phone (long-press **any** card → "Hide this answer") sends `HIDE_OPTION{optionId}`. **Every option is hideable through the same UI with the same visible effect (the card disappears)**, so neither the menu, the long-press sheet nor the server reply tells the VIP (a competing player) or the remote holder which card is the truth. Checks, in this order, before the option's kind is ever looked at: max 3 hides per prompt and at least 2 options must remain → otherwise `CANNOT_HIDE`. Then, by kind (server only):
   - **player lie:** its authors score 0 for being voted on this prompt (they keep any truth points); voters who had chosen it lose their vote and get a "Vote again" toast; if less than 10 s remain, the deadline becomes `now + 10 000`;
   - **house lie:** removed; its voters lose their vote and re-vote, same toast and deadline rule;
-  - **truth:** the prompt is **voided**: no points for anyone on this prompt (votes, fooled points and likes all void), the TV shows a "Prompt skipped by the host" card and the game goes to SCORES (4 s, unchanged scores), then the next prompt. A voided prompt pays nothing, so probing by hiding gains nothing.
+  - (final "No truth": only the two kinds above exist)
+  - **truth:** the prompt is **voided** (round 1: Spot-on points already paid at VOTING start are **kept**: they were earned before the vote, and scores never go down): no points for anyone on this prompt (votes, fooled points and likes all void), the TV shows a "Prompt skipped by the host" card and the game goes to SCORES (4 s, unchanged scores), then the next prompt. A voided prompt pays nothing, so probing by hiding gains nothing.
   - Property test: for the same option set, the hide UI state and the error code returned do not depend on option kind.
 - **Skip prompt.** In WRITING the host can `SKIP_PROMPT` (e.g. everyone knows this proverb). A new prompt is drawn, all lies are discarded, the WRITING timer restarts. Max 2 skips per prompt slot (`SKIPS_PER_PROMPT_MAX`); then the option is greyed out.
 
@@ -195,7 +236,8 @@ Nobody is told at submission time that their lie duplicates another (that would 
 
 A player who has not submitted can tap **"Help me"** once per prompt (`REQUEST_HELP`). The server picks one unused house lie for this item (RNG) and puts it in that player's `me.help` only. The player may submit it as-is or edit it. Rules:
 - That house lie is then **removed** from the house pool for this prompt, so it cannot appear twice.
-- If the submitted text still collides with the helped text, the lie is flagged `helped: true` and its "fooled" points are **halved** (rounded down to 10). The reveal shows a small lifebuoy badge next to the author ("with a little help", `bluff.reveal.helped`).
+- If the submitted text still collides with the helped text, the lie is flagged `helped: true` and pays a **flat help fee**: `HELP_FEE = 40 × m` is taken once from that lie's total "fooled" points on this prompt, never below 0 (final: 60 from its vote points). A flat fee instead of halving (BLUEPRINT D7): a borrowed lie that fools one player still pays a little (60 − 40 = 20), and one that fools many is barely taxed, which is fair because the player still chose and placed it. Split credit: the fee is split like the points. The reveal shows a small lifebuoy badge next to the author ("with a little help", `bluff.reveal.helped`).
+- Round 1: not available after a Spot on (the entry is locked). Final: the suggestion is one of the item's house answers.
 - If no house lie is available, the button shows "No ideas left, you're on your own!" (`bluff.help.none`).
 
 ### 5.6 Players who do not submit
@@ -208,7 +250,7 @@ They have no option this prompt and simply vote. A player who has not submitted 
 
 ### 6.1 Vote
 
-- Each eligible voter (every non-`left` player, connected or not; disconnected ones just abstain) casts **one vote** for one option. It can be changed until VOTING ends (there is no speed component, so changing costs nothing).
+- Each eligible voter (every non-`left` player, connected or not, **except round-1 Spot-on players on that prompt**; disconnected ones just abstain) casts **one vote** for one option. In the final the question on the phones is "Which one sounds the most true?" (`bluff.vote.titleNoTruth`), never "Which one is true?". It can be changed until VOTING ends (there is no speed component, so changing costs nothing).
 - You **cannot vote for an option you authored** (incl. merged ones): the phone shows it greyed with "Yours" and the server rejects `CANNOT_VOTE_OWN`.
 - Not voting = abstain (no points, no penalty).
 
@@ -217,39 +259,64 @@ They have no option this prompt and simply vote. A player who has not submitted 
 - During VOTING, after voting (or not), a player can **like up to 2 options** (`LIKE{optionId, on}` toggles), never their own. Likes are hidden until REVEAL.
 - Likes on the truth or on a house lie are allowed (the liker does not know which is which) and score nothing; the reveal shows "The house thanks you" (`bluff.reveal.houseLike`) — a small joke that keeps likes from leaking information.
 
-### 6.3 Points (per prompt; `m` = round multiplier 1, 2, 3)
+### 6.3 Points, rounds 1 and 2 (per prompt; `m` = 1 in round 1, 2 in round 2)
+
+These values replace the earlier draft, which copied Fibbage's numbers (BLUEPRINT D7). Coins are shown as plain numbers.
 
 | Event | Points | Notes |
 |---|---|---|
-| You voted for the truth | **+1000 × m** | |
-| Each player who voted for your lie | **+500 × m** | Split equally among co-authors (§5.3); halved if `helped` (§5.5); rounded down to 10 |
-| Each like your lie received | **+100** | Not multiplied. Split among co-authors. Max one like per liker per option |
-| You voted for the truth after a too-close probe on this prompt (`foundWhileWriting`) | 0 | §5.2: the probe already told you the truth |
-| Voided prompt (host hid the truth) | 0 for everyone | §5.4 |
+| **Spot on** (round 1 only): your first entry matched the real ending | **+150** | Paid at the start of VOTING; you do not vote on that prompt (§5.0) |
+| You voted for the truth | **+100 × m** | |
+| You voted for the truth after a "too close" warning on this prompt (`foundWhileWriting`) | **0** | Owner rule: the warning already told you the truth (§5.2) |
+| Each player who voted for your lie | **+60 × m** | Split equally among co-authors (§5.3), rounded down to 10; a helped lie pays the flat help fee once (§5.5) |
+| Each like your lie received | **+10** | Not multiplied. Split among co-authors (rounded down, min 0). Max one like per liker per option |
+| Voided prompt (host hid the truth) | 0 for everyone (Spot-on already paid is kept) | §5.4 |
 | You voted for a house lie | 0 | Your character gets the "hooked by the house" reaction |
 | Abstain / no lie | 0 | |
 
 Scores never go down (engine invariant `score >= 0`, as in SPEC §4.13).
 
-**Why these numbers.**
-- **Truth (1000) > one fooled player (500).** Voting for a friend's lie to "gift" them 500 costs you 1000 that you would get by voting the truth, so collusion is a bad trade.
-- **Two fooled players = one truth.** A good liar in a group of 6 who fools 2–3 people beats a truth-finder, so lying well is the main skill, as in the genre.
-- **Multipliers ×1/×2/×3** keep the game open until the end: the final alone is worth up to 3000 + 500 × 3 × (n−1). A player 3000 points behind can still win.
-- **Big round numbers** make the counters fun to watch (odometer rolls of hundreds), and they read the same in every language.
-- **Likes are small (+100)** so they reward the funniest answer without deciding the game.
+### 6.4 Why these numbers
 
-Worked example (6 players, round 1): Rami's lie fools Maya and Karim and gets 1 like → Rami +500 +500 +100 = 1100. Maya and Karim found nothing. Lina, Sami and Joe voted the truth → +1000 each. In round 2 the same outcome gives Rami 2100 and the truth-finders 2000.
+- **Finding the truth (100) is worth more than fooling one player (60)** (owner rule). Voting for a friend's lie to "gift" them 60 costs you 100, so collusion is a bad trade.
+- **Fooling two players (120) beats finding the truth (100)**, so writing a great lie stays the main skill. The 100 : 60 ratio is not the genre's 2 : 1: one fooled friend is worth more than half a truth here, which makes a decent lie pay even in a small group.
+- **Spot on = 150** (round 1): about "truth + one fooled player" (160), paid for sure and at once. A knower gains nothing by pretending not to know, and nobody can farm it (only the first entry counts, §5.0).
+- **×1 then ×2, then a final with its own scoring** instead of ×1/×2/×3: round 2's facts are harder, so doubling them rewards the round where finding the truth is a real feat. The final has no truth, so a multiplier on "truth" would mean nothing; it pays per vote with a big winner's bonus (§6.5).
+- **Small, clean numbers** (10, 60, 100, 150): the odometer still rolls on every coin, totals stay readable from the couch (a Normal game ends around 1 000–2 000), and they read the same in all four languages.
+- **Likes = +10** (+20 in the final): a nod to the funniest answer, never decisive. A player with 6 likes in a round gains less than one fooled player in round 2.
 
-### 6.4 Awards (AWARDS phase, after the final)
+Worked example (6 players, round 1): Rami's lie fools Maya and Karim and gets 1 like → Rami +60 +60 +10 = 130. Nour typed the real ending first → Spot on +150 and sat out the vote. Lina, Sami and Joe voted the truth → +100 each; Sami had seen the "too close" warning on an edit → 0. In round 2 the same lie outcome gives Rami 250 and the truth-finders 200.
+
+### 6.5 The final "No truth" (rules and points)
+
+- **The TV says it clearly**, three times: on the ROUND_INTRO card (§3), as a permanent chip on the prompt card during WRITING and VOTING ("No right answer", `bluff.noTruth.chip`), and on the phones' writing screen ("There is no right answer. Write the one that sounds most true.", `bluff.write.noTruthHint`).
+- **Write:** every player writes one answer (same input rules, §5.1; no "too close" check; duplicates merge, §5.3; "Help me" offers a house answer, §5.5).
+- **Vote:** each player votes for the answer that **sounds most true**, never their own. Likes as usual.
+- **Anonymous ballots.** In the final reveal, nobody's vote is shown: votes land on the cards as identical cream envelopes (no voter character jumps on), only counts and authors are revealed. Voters' points do not depend on their choice (they earn nothing for voting), so no score leaks a ballot. `reveal.steps[].voterIds` is `[]` for the final, and `leakCheck` asserts it.
+- **Answers anonymous until after the vote** (as in every round, §8.1).
+
+| Event (final) | Points |
+|---|---|
+| Each vote your answer received | **+150** (split among co-authors, rounded down to 10; helped answer pays a flat 60 once) |
+| **Most convincing**: your answer has the most votes (≥ 1) | **+400** bonus; ties: every tied top answer's authors get the full +400 (split among co-authors) |
+| Each like your answer received | **+20** |
+| A vote for a house answer | 0 for everyone (the house cannot win; if a house answer has the most votes, the bonus goes to the best player answer only if it has ≥ 1 vote) |
+| Voting itself | 0 |
+
+**Why.** "Most votes wins big" (owner): with 6 players the top answer typically takes 2–3 votes → 300–450 + 400 = 700–850, about one strong round-2 prompt and a half, enough for a comeback but not a lottery (a leader who also lands 1–2 votes keeps a real chance). Paying per vote keeps every answer worth writing; the +400 makes the crown the moment of the night.
+
+Worked example (6 players, final): "What did the first cat ever say to a human?" Maya's answer gets 3 votes → 450 + 400 = 850; Rami's gets 2 → 300; Joe's 1 → 150 and 2 likes → +40.
+
+### 6.6 Awards (AWARDS phase, after the final)
 
 Shown as up to 4 cards, in this order, each skipped if nobody qualifies:
 
 | Award (EN · FR · AR) | Rule | Tie-break |
 |---|---|---|
-| **Bluff of the Night** · Bluff de la soirée · «بلوف السهرة» | The single lie (one prompt) that fooled the most players, ≥ 2. The card replays that lie and the prompt | More likes, then the later prompt (bigger multiplier); still tied → all authors share |
-| **Lie Detector** · Détecteur de mensonges · «كاشف الكذب» | Most truths found, ≥ 2 | Shared |
+| **Bluff of the Night** · Bluff de la soirée · «بلوف السهرة» | The single answer (one prompt: a round-1/2 lie, or a final answer) that got the most votes, ≥ 2. The card replays that answer and the prompt | More likes, then the later prompt; still tied → all authors share |
+| **Lie Detector** · Détecteur de mensonges · «كاشف الكذب» | Most truths found, Spot-ons included (round 1), ≥ 2 | Shared |
 | **Crowd Favourite** · Chouchou du public · «حبيب الجمهور» | Most likes received over the game, ≥ 2 | Shared |
-| **Hook, Line and Sinker** · Tombé dans le panneau · «بلعها» | Fooled most often (voted for a player lie or house lie), ≥ 3 — said with love | Shared |
+| **Hook, Line and Sinker** · Tombé dans le panneau · «بلعها» | Fooled most often in rounds 1–2 (voted for a player lie or house lie), ≥ 3, said with love | Shared |
 
 Then RESULTS: the podium. **Winner = highest score; equal scores share the place** (no hidden tie-break: it's a party).
 
@@ -260,10 +327,16 @@ Then RESULTS: the podium. **Winner = highest score; equal scores share the place
 | Case | Behaviour |
 |---|---|
 | **3 players** | Always ≥ 1 house lie (§4.2), so each voter sees ≥ 3 votable options (2 other lies or house lies + truth). The ⓘ sheet says Bluff is best with 4+ |
-| **12 players** | Up to 12 player lies + truth = 13 options. TV switches to the dense 2-column layout (§8.2); text max 60 graphemes keeps cards to 2 lines at `type.tv.body`. VOTING timer caps at 50 s. REVEAL groups 1-vote lies into a "quick hits" strip (§12.2). With ≥ 9 members the setup shows "Big group: short game recommended" next to the Length row (the default stays static) |
+| **12 players** | Up to 12 player lies + truth = 13 options. TV switches to the dense 2-column layout (§8.2); text max 60 graphemes keeps cards to 2 lines at `type.tv.body`. VOTING timer caps at 50 s. REVEAL groups 1-vote lies into a "quick hits" strip (§12.2). **With ≥ 8 members** the setup shows "Big group: we suggest a Short game" next to the Length row (`projectSetup.bigGroup`); the host decides, the default stays static (`normal`) |
 | **Nobody submits** | House lies fill to `MIN_LIES` (3). The TV says "The house did all the lying this time!" |
 | **Everyone finds the truth** | Reveal skips straight to the truth with "Too easy!" (`bluff.reveal.tooEasy`); unpicked lies get the "Nobody bought it" montage |
 | **Nobody finds the truth** | Truth reveal plays with "Nobody saw that coming!" and every character does `shock` |
+| **Round 1: everyone connected is Spot on** | No vote: straight to REVEAL with the truth card and "Everyone knew it!" (`bluff.reveal.allKnew`); house lies are not shown. Lies of disconnected players go to the "Nobody bought it" montage |
+| **Round 1: only one eligible voter left** | Normal VOTING with that one voter (options: the lies + house lies + truth). The TV keeps the Spot-on pins visible so the table watches the lone voter |
+| **Round 1: a player who is Spot on disconnects** | Points already paid; nothing changes |
+| **Final: fewer than 2 player answers** | House answers fill to 3 options (§4.2 step 3). If nobody submits: "The house wrote everything. Nobody wins the crown." and no bonus |
+| **Final: one answer gets every vote** | "Unanimous! Nobody doubted it." The author gets every vote's points + 400 |
+| **Final: all answers tie** (incl. 1 vote each) | Every tied answer with ≥ 1 vote gets the +400 bonus (party rule; a 12-way tie is rare and funny) |
 | **A lie nobody picked** | Not revealed individually; shown in the 2.5 s "Nobody bought it" montage with its author's `sad` face (montage capped at 6 cards; the rest are listed in small text) |
 | **Disconnect in WRITING** | The phase does not wait for disconnected players. A lie already submitted stays. On reconnect within the phase, the phone restores the draft from `sessionStorage` (`jamaa.bluff.draft.<promptId>`) and `me.myLie` |
 | **Disconnect in VOTING** | Abstains. Their lie stays an option and can still score. Reconnect during VOTING → can vote |
@@ -277,7 +350,7 @@ Then RESULTS: the podium. **Winner = highest score; equal scores share the place
 | **Lie identical to a house lie** | Merged into the player's option; the house lie is dropped; the player gets full credit |
 | **Lie identical to the item's `note`** | No special case (the note is not the truth; it's shown after the reveal) |
 | **VIP disconnects** | Platform host transfer; the TV remote always keeps host powers |
-| **Final round ties** | Shared places (§6.4) |
+| **Final round ties** | Most-convincing ties all get the bonus (§6.5); podium ties share places (§6.6) |
 | **Room language changed mid-game** | Not allowed: content language is locked while a game runs (platform rule); UI language can change per device |
 | **Arabizi lie in an AR room / Arabic lie in an EN-FR room** | Rejected with `LIE_WRONG_SCRIPT` (§5.1) |
 
@@ -289,7 +362,9 @@ Then RESULTS: the podium. **Winner = highest score; equal scores share the place
 
 | Data | TV | Author's phone | Other phones |
 |---|---|---|---|
-| The truth (`item.truth`, `truthAlt`, `note`) | REVEAL onwards only | REVEAL onwards only | REVEAL onwards only |
+| The truth (`item.truth`, `truthAlt`, `note`) | REVEAL onwards only | REVEAL onwards only (a Spot-on player typed it, but the server never echoes it back as "the truth" before REVEAL) | REVEAL onwards only |
+| Spot on (round 1) | `spotOnIds` from VOTING onwards | own `me.spotOn` from the moment it happens | `spotOnIds` from VOTING onwards |
+| Final ballots (who voted for which answer) | **never** (counts only) | own `me.myVote` | never |
 | A player's lie text | VOTING onwards, **as an anonymous option** | Own lie from WRITING (`me.myLie`) | VOTING onwards, anonymous |
 | Which option is the truth / a house lie / whose | REVEAL onwards | own options only (`me.myOptionIds`) | REVEAL onwards |
 | Who submitted | `submittedIds` (no text) | same | same |
@@ -307,10 +382,10 @@ Option order and ids are random (RNG), so neither leaks the truth. The prompt (`
 
 | Phase | TV (stage) | Phone (controller) |
 |---|---|---|
-| ROUND_INTRO | Full-screen round card: "Round 1", "Points ×1" (final: "The Big Bluff — points ×3", dramatic version) | "Round 1 — get your lies ready" + own character |
-| WRITING | Prompt card centre (type label chip, e.g. "Proverb", the prompt text big; AR pack in EN/FR rooms: the Arabic original, then translit, then the translation in smaller type). Under it, the length hint chip ("Short answer (1–2 words)"). Timer ring top-end. Bottom row: every character at a little café table, scribbling (`think`); on submit, the character drops an envelope in a box (`done`). In the last 10 s, unsubmitted characters get a gentle spotlight and "Waiting for…" | Prompt text (same as TV, compact) and the length hint. Text field (60-grapheme counter), "Lock my lie" button, "Help me" link. After submit: "Lie locked! You can still edit it." + Edit. Error toasts per §5.1; after a too-close probe, a persistent line "Finding the truth now won't score" |
-| VOTING | All options as cards on a corkboard: ≤ 6 options 1 column; 7–13 options 2 columns (RTL mirrored). No author, no counts. Bottom row: characters; a voted character holds up a ballot (`done`). Timer ring | Scrollable list of options as big tap targets. Own option(s) greyed with "Yours". Tap = vote: the chosen card gets only a **subtle outline and a small check** (no full-colour fill, the list is not recoloured) so a neighbour on the couch cannot read your pick from 2 m; a "Vote in" line in the header; haptic 20. Each card has a heart-style "like" toggle (2 max, counter "Likes left: 1"). VIP: long-press **any** card → "Hide this answer" (§5.4) |
-| REVEAL | The reveal script (§12.2) | Mirrors the step in progress in compact form: "Is it… «text»?" then the stamp; own events are highlighted ("You fooled 2!" with points; "You fell for Rami's lie" with Rami's character). Ends with "+1 600 this round" |
+| ROUND_INTRO | Full-screen round card with the round's name and rule in one line: "Round 1 · Finish the saying. Know it? Score now." / "Round 2 · Impossible but true. Points ×2." / final, dramatic version: "Final · **No truth.** There is no right answer. The answer that sounds most true wins big." | Same line in compact form + own character |
+| WRITING | Prompt card centre (type label chip, e.g. "Proverb", the prompt text big; AR pack in EN/FR rooms: the Arabic original, then translit, then the translation in smaller type). Under it, the length hint chip ("Short answer (1–2 words)"). Timer ring top-end. Bottom row: every character at a little café table, scribbling (`think`); on submit, the character drops an envelope in a box (`done`). In the last 10 s, unsubmitted characters get a gentle spotlight and "Waiting for…". Final: a permanent "No right answer" chip on the prompt card | Prompt text (same as TV, compact) and the length hint. Text field (60-grapheme counter), "Lock my lie" button, "Help me" link. After submit: "Lie locked! You can still edit it." + Edit. Error toasts per §5.1; after a too-close probe, a persistent line "Finding the truth now won't score". Round 1: the hint line "Know the ending? Type it and score now." and, after a Spot on, a gold card "Spot on! +150. You sit this vote out." Final: "There is no right answer. Write the one that sounds most true." |
+| VOTING | Round 1: opens with the 1.5 s "Knew it! {names} +150" banner (if any). All options as cards on a corkboard: ≤ 6 options 1 column; 7–13 options 2 columns (RTL mirrored). No author, no counts. Bottom row: characters; a voted character holds up a ballot (`done`). Timer ring | Scrollable list of options as big tap targets. Own option(s) greyed with "Yours". Tap = vote: the chosen card gets only a **subtle outline and a small check** (no full-colour fill, the list is not recoloured) so a neighbour on the couch cannot read your pick from 2 m; a "Vote in" line in the header; haptic 20. Each card has a heart-style "like" toggle (2 max, counter "Likes left: 1"). VIP: long-press **any** card → "Hide this answer" (§5.4). Spot-on players see the options read-only with likes only ("You knew it: enjoy the show"). Final title: "Which one sounds the most true?" |
+| REVEAL | The reveal script (§12.2; final: §12.2.1) | Mirrors the step in progress in compact form: "Is it… «text»?" then the stamp; own events are highlighted ("You fooled 2!" with points; "You fell for Rami's lie" with Rami's character; final: "3 people believed you!", never who). Ends with "+160 this prompt". Reactions bar (platform `REACT`, character faces) under it |
 | SCORES | Leaderboard race (§12.3) | Own rank and score, delta, next prompt in {count} |
 | HOLD | "Waiting for players… {count}/3", code + QR | "Waiting for players…" |
 | AWARDS | Award cards one by one (§12.5) | The award card if the player won one, else "And the award goes to…" with the winner's character |
@@ -334,72 +409,110 @@ Everything else is fixed (likes on, house lies automatic, filter on). No family 
 
 ## 10. Copy
 
+All copy exists in EN, FR, AR (Lebanese, RTL) and ES. EN is authoritative; FR, AR and ES are `[native review]`. FR uses *vous* on the TV and *tu* on phones; ES uses *tú* (neutral, no *vosotros*; `[native review]` Spain vs Latin America).
+
 ### 10.1 How to play (4 steps; keys `bluff.howto.1..4`)
 
-| # | EN | FR (neutre, *vous* on TV) | AR (Lebanese, `[native review]`) |
-|---|---|---|---|
-| 1 | **A weird prompt appears.** A proverb, a rare word, a strange expression. | **Une question bizarre s'affiche.** Un proverbe, un mot rare, une expression étrange. | **بيطلع سؤال غريب.** مَتَل، كلمة نادرة، أو تعبير غريب. |
-| 2 | **Write a fake answer** on your phone. Make it believable! | **Écrivez une fausse réponse** sur votre téléphone. Rendez-la crédible ! | **اكتبوا جواب كذب** عالتلفون. خلّوه يمشي عالكل! |
-| 3 | **Find the real answer** among all the fakes. | **Trouvez la vraie réponse** parmi les fausses. | **لاقوا الجواب الصحيح** بين كل الكذبات. |
-| 4 | **Score twice:** +1000 for the truth, +500 for every friend who falls for your lie. | **Marquez deux fois :** +1000 pour la vérité, +500 pour chaque personne piégée par votre bluff. | **سجّلوا مرّتين:** ‎+1000 إذا لقيتوا الصح، و‎+500 عن كل واحد بيصدّق كذبتكن. |
+| # | EN | FR | AR `[native review]` | ES `[native review]` |
+|---|---|---|---|---|
+| 1 | **Three rounds, three ways to lie.** Finish a saying, crack an impossible fact, then a final with no truth at all. | **Trois manches, trois façons de bluffer.** Finir un proverbe, démasquer un fait impossible, puis une finale sans aucune vérité. | **تلات جولات، تلات طرق للكذب.** كمّلوا متل، اكشفوا معلومة مستحيلة، وبالآخر جولة ما فيها ولا جواب صح. | **Tres rondas, tres formas de mentir.** Termina un refrán, descubre un dato imposible y, al final, una ronda sin ninguna verdad. |
+| 2 | **Write a fake answer** on your phone. Know the real ending of the saying? Type it: you score right away. | **Écrivez une fausse réponse** sur votre téléphone. Vous connaissez la vraie fin du proverbe ? Tapez-la : vous marquez tout de suite. | **اكتبوا جواب كذب** عالتلفون. بتعرفوا آخر المتل الحقيقي؟ اكتبوه وبتاخدوا النقاط دغري. | **Escribe una respuesta falsa** en tu móvil. ¿Te sabes el final del refrán? Escríbelo y sumas al instante. |
+| 3 | **Find the real answer** among the fakes. Nobody knows who wrote what until the vote is over. | **Trouvez la vraie réponse** parmi les fausses. Personne ne sait qui a écrit quoi avant la fin du vote. | **لاقوا الجواب الصح** بين الكذبات. ما حدا بيعرف مين كتب شو لآخر التصويت. | **Encuentra la respuesta real** entre las falsas. Nadie sabe quién escribió qué hasta que termina la votación. |
+| 4 | **Score twice:** +100 for the truth, +60 for every friend who falls for your lie. In the final, the most convincing answer wins big. | **Marquez deux fois :** +100 pour la vérité, +60 par personne piégée. En finale, la réponse la plus crédible rafle la mise. | **سجّلوا مرّتين:** ‎+100 إذا لقيتوا الصح، و‎+60 عن كل واحد بيصدّق كذبتكن. وبالآخر، الجواب اللي بيقنع أكتر بيربح الكبيرة. | **Suma dos veces:** +100 por la verdad y +60 por cada amigo que se trague tu mentira. En la final, la respuesta más creíble se lo lleva todo. |
 
 ### 10.2 ⓘ Rules sheet (keys `bluff.rules.*`)
 
-EN (authoritative; FR/AR drafted with the i18n pass):
+EN (authoritative):
 - **Goal.** Fool your friends, and don't get fooled.
-- **Writing.** You have {seconds} s to write a fake answer (max 60 characters), in the same alphabet as the prompt. If your answer is too close to the real one, you'll be asked for another, and finding the truth that way won't score this time. Stuck? Tap "Help me" (your points for that lie are halved).
-- **Voting.** Vote for the answer you think is true. You can't vote for your own. You can also like up to 2 answers you find funny.
-- **Points.** Truth: +1000. Each player fooled by your lie: +500. Each like: +100. Round 2 doubles the points; the Big Bluff triples them.
+- **Round 1: Finish the saying.** Type the ending. If your first answer is the real one, you get +150 at once and sit that vote out. If not, your answer becomes a fake on the board.
+- **Round 2: Impossible but true.** A very hard but real fact. Write a fake that sounds truer than the truth. Points ×2.
+- **Writing.** {seconds} s, max 60 characters, in the same alphabet as the prompt. Too close to the real answer? You'll be asked for another one, and finding the truth on that prompt won't score. Stuck? "Help me" suggests a lie (a small fee comes off what it earns).
+- **Voting.** Vote for the answer you think is true, never your own. Like up to 2 answers you find funny.
+- **Points.** Truth: +100 (round 2: +200). Each player fooled: +60 (round 2: +120). Each like: +10.
+- **Final: No truth.** There is no right answer. Write the most convincing answer, then vote for the one that sounds most true. Each vote: +150. Most votes: +400. Nobody sees who voted for what.
 - **House lies.** With few players, the game adds its own lies. Don't fall for them!
-- **Same lie?** If two people write the same lie, it shows once and they share the points.
-- **Host.** The host can hide an answer; if the host hides the real one, the prompt is skipped and nobody scores.
+- **Same lie?** It shows once and the authors share the points.
+- **Host.** The host can skip a prompt or hide an answer; if the host hides the real one, the prompt is cancelled and nobody scores on it.
 
 FR:
 - **But.** Piéger les autres, sans vous faire piéger.
-- **Écriture.** Vous avez {seconds} s pour écrire une fausse réponse (60 caractères max), dans le même alphabet que la question. Si elle ressemble trop à la vraie, il faudra en trouver une autre, et trouver la vérité de cette façon ne rapportera rien cette fois. En panne d'idée ? Touchez « Aide-moi » (les points de ce bluff sont divisés par deux).
-- **Vote.** Votez pour la réponse qui vous semble vraie. Impossible de voter pour la sienne. Vous pouvez aussi aimer jusqu'à 2 réponses drôles.
-- **Points.** Vérité : +1000. Chaque personne piégée : +500. Chaque « j'aime » : +100. Points doublés à la manche 2, triplés pour le Grand Bluff.
-- **Mensonges de la maison.** À peu de joueurs, le jeu ajoute ses propres pièges.
-- **Même bluff ?** S'il apparaît deux fois, il n'est affiché qu'une fois et les points sont partagés.
-- **Hôte.** L'hôte peut masquer une réponse ; s'il masque la vraie, la question est passée et personne ne marque.
+- **Manche 1 : Finis le proverbe.** Tapez la fin. Si votre première réponse est la bonne, +150 tout de suite et vous ne votez pas sur celle-ci. Sinon, votre réponse devient un bluff au tableau.
+- **Manche 2 : Impossible mais vrai.** Un fait très difficile, mais réel. Écrivez un bluff plus crédible que la vérité. Points ×2.
+- **Écriture.** {seconds} s, 60 caractères max, dans le même alphabet que la question. Trop proche de la vraie réponse ? Il faudra en écrire une autre, et trouver la vérité sur cette question ne rapportera rien. En panne ? « Aide-moi » propose un bluff (une petite commission est retirée de ses gains).
+- **Vote.** Votez pour la réponse qui vous semble vraie, jamais la vôtre. Aimez jusqu'à 2 réponses drôles.
+- **Points.** Vérité : +100 (manche 2 : +200). Chaque personne piégée : +60 (manche 2 : +120). Chaque « j'aime » : +10.
+- **Finale : Aucune vérité.** Il n'y a pas de bonne réponse. Écrivez la réponse la plus crédible, puis votez pour celle qui sonne le plus vrai. Chaque vote : +150. Le plus de votes : +400. Personne ne voit qui a voté pour quoi.
+- **Bluffs de la maison.** À peu de joueurs, le jeu ajoute ses propres pièges.
+- **Même bluff ?** Il s'affiche une fois et les points sont partagés.
+- **Hôte.** L'hôte peut passer une question ou masquer une réponse ; s'il masque la vraie, la question est annulée et personne n'y marque.
 
 AR `[native review]`:
 - **الهدف.** ضحّكوا عرفقاتكن بكذبكن… وما تنضحك عليكن.
-- **الكتابة.** معكن {seconds} ثانية لتكتبوا جواب كذب (60 حرف بالكتير)، بنفس حروف السؤال. إذا طلع قريب كتير من الصح، بدكن تكتبوا غيرو، والصح ما بيعود يحسبلكن بهالسؤال. علقتوا؟ اكبسوا «ساعدني» (بس نقاط هالكذبة بتنقسم عالنص).
-- **التصويت.** صوّتوا للجواب يلّي بتفكروه صحيح. ما فيكن تصوّتوا لجوابكن. وفيكن تعملوا «لايك» لجوابين مهضومين.
-- **النقاط.** الصح: ‎+1000. كل واحد بيصدّق كذبتك: ‎+500. كل لايك: ‎+100. بالجولة التانية النقاط دبل، وبالبلوف الكبير ×3.
+- **الجولة الأولى: كمّل المتل.** اكتبوا آخر المتل. إذا أوّل جواب كتبتوه طلع الصح، بتاخدوا ‎+150 دغري وما بتصوّتوا عهالسؤال. وإذا لأ، جوابكن بيصير كذبة عاللوح.
+- **الجولة التانية: مستحيل بس صحيح.** معلومة صعبة كتير بس حقيقية. اكتبوا كذبة بتبيّن أصدق من الحقيقة. النقاط دبل.
+- **الكتابة.** معكن {seconds} ثانية، 60 حرف بالكتير، بنفس حروف السؤال. إذا طلع جوابكن قريب كتير من الصح، بدكن تكتبوا غيرو، والصح ما بيعود يحسبلكن بهالسؤال. علقتوا؟ «ساعدني» بيقترح كذبة (وبينقصلها شوي من نقاطها).
+- **التصويت.** صوّتوا للجواب يلّي بتفكروه صحيح، أبداً مش لجوابكن. وفيكن تعملوا «لايك» لجوابين مهضومين.
+- **النقاط.** الصح: ‎+100 (الجولة التانية: ‎+200). كل واحد بيصدّق كذبتك: ‎+60 (الجولة التانية: ‎+120). كل لايك: ‎+10.
+- **الجولة الأخيرة: ما في صح.** ما في ولا جواب صحيح. اكتبوا الجواب اللي بيقنع أكتر، وصوّتوا للجواب اللي بيبيّن صحيح أكتر شي. كل صوت: ‎+150. أكتر أصوات: ‎+400. ما حدا بيعرف مين صوّت لمين.
 - **كذبات البيت.** إذا كنتو قلال، اللعبة بتزيد كذباتها. انتبهوا منها!
-- **نفس الكذبة؟** إذا تنين كتبوا نفس الشي، بتطلع مرّة وحدة وبيتقاسموا النقاط.
-- **المضيف.** فيه يخبّي جواب؛ وإذا خبّى الصح، بينلغى السؤال وما حدا بياخد نقاط.
+- **نفس الكذبة؟** بتطلع مرّة وحدة وبيتقاسموا النقاط.
+- **المضيف.** فيه ينطّ سؤال أو يخبّي جواب؛ وإذا خبّى الصح، بينلغى السؤال وما حدا بياخد نقاط عليه.
 
-### 10.3 Key microcopy (EN · FR · AR)
+ES `[native review]`:
+- **Objetivo.** Engaña a tus amigos y que no te engañen.
+- **Ronda 1: Termina el refrán.** Escribe el final. Si tu primera respuesta es la real, +150 al instante y no votas en esa. Si no, tu respuesta pasa a ser una mentira más en el tablero.
+- **Ronda 2: Imposible pero cierto.** Un dato muy difícil, pero real. Escribe una mentira que suene más cierta que la verdad. Puntos ×2.
+- **Escribir.** {seconds} s, máx. 60 caracteres, con el mismo alfabeto que la pregunta. ¿Demasiado cerca de la respuesta real? Tendrás que escribir otra, y acertar la verdad en esa pregunta ya no suma. ¿Atascado? «Ayúdame» te sugiere una mentira (se descuenta una pequeña comisión de lo que gane).
+- **Votar.** Vota la respuesta que creas verdadera, nunca la tuya. Dale «me gusta» a hasta 2 respuestas graciosas.
+- **Puntos.** Verdad: +100 (ronda 2: +200). Cada jugador engañado: +60 (ronda 2: +120). Cada «me gusta»: +10.
+- **Final: Ninguna es verdad.** No hay respuesta correcta. Escribe la respuesta más creíble y vota la que suene más a verdad. Cada voto: +150. La más votada: +400. Nadie ve quién votó qué.
+- **Mentiras de la casa.** Con pocos jugadores, el juego añade sus propias mentiras. ¡No piques!
+- **¿Misma mentira?** Sale una sola vez y los autores se reparten los puntos.
+- **Anfitrión.** Puede saltar una pregunta u ocultar una respuesta; si oculta la real, la pregunta se anula y nadie suma en ella.
 
-| Key | EN | FR | AR `[native review]` |
-|---|---|---|---|
-| `bluff.write.cta` | Lock my lie | Valider mon bluff | ثبّت كذبتي |
-| `bluff.write.help` | Help me | Aide-moi | ساعدني |
-| `bluff.write.locked` | Lie locked! You can still edit it. | Bluff validé ! Tu peux encore le modifier. | كذبتك تثبّتت! بعد فيك تغيّرها. |
-| `bluff.vote.title` | Which one is true? | Laquelle est vraie ? | أيّا الصحيحة؟ |
-| `bluff.vote.yours` | Yours | Le tien | جوابك |
-| `bluff.vote.likesLeft` | Likes left: {count} | J'aime restants : {count} | باقيلك {count} لايك |
-| `bluff.reveal.lie` (stamp) | LIE! | BLUFF ! | كذب! |
-| `bluff.reveal.truth` (stamp) | TRUTH | VRAI | صحّ |
-| `bluff.reveal.house` (stamp) | HOUSE LIE | PIÈGE MAISON | كذبة البيت |
-| `bluff.reveal.fooled` (P) | {name} fooled {count}! | {name} piège {count} personne(s) ! | {name} ضحك على {count}! |
-| `bluff.reveal.sameLie` | Great minds lie alike! | Les grands esprits bluffent pareil ! | العقول الكبيرة بتكذب متل بعض! |
-| `bluff.reveal.nobody` | Nobody bought it… | Personne n'y a cru… | ما حدا صدّق… |
-| `bluff.reveal.tooEasy` | Too easy! | Trop facile ! | سهلة كتير! |
-| `bluff.reveal.houseLike` | The house thanks you. | La maison vous remercie. | البيت بيشكرك. |
-| `bluff.err.tooClose` | Close to the truth! Write something else. Finding the truth now won't score. | Trop proche de la vérité ! Écris autre chose. Trouver la vérité ne rapportera plus rien ici. | قريبة كتير من الصح! اكتب شي تاني. الصح ما بيعود يحسبلك بهالسؤال. |
-| `bluff.err.wrongScriptAr` | Write it in Arabic letters so it blends in! | Écris-le en lettres arabes pour qu'il passe inaperçu ! | اكتبها بالحروف العربي لتمرق! |
-| `bluff.err.wrongScriptLatn` | Write it in Latin letters so it blends in! | Écris-le en lettres latines pour qu'il passe inaperçu ! | اكتبها بالحروف اللاتيني لتمرق! |
-| `bluff.hint.short` / `.few` / `.sentence` | Short answer (1–2 words) / A few words / A full sentence | Réponse courte (1–2 mots) / Quelques mots / Une phrase entière | جواب قصير (كلمة أو تنين) / كم كلمة / جملة كاملة |
-| `bluff.prompt.tooFamous` | Too famous! New one | Trop connu ! On change | معروفة كتير! غيرها |
-| `bluff.prompt.voided` | Prompt skipped by the host | Question passée par l'hôte | المضيف لغى هالسؤال |
-| `bluff.setup.bigGroup` | Big group: short game recommended | Grand groupe : partie courte conseillée | جماعة كبيرة: منصح بلعبة قصيرة |
-| `bluff.err.blocked` | Keep it party-friendly. Try another one. | On reste correct. Essaie autre chose. | خلّيها لطيفة. جرّب غيرها. |
+### 10.3 Key microcopy (EN · FR · AR · ES)
 
-(`fooled` uses the platform plural mechanism, SPEC §11.2 "P" keys; FR body copy avoids gendered participles about the player: "{name} piège {count} personne(s)".)
+| Key | EN | FR | AR `[native review]` | ES `[native review]` |
+|---|---|---|---|---|
+| `bluff.round.saying` | Finish the saying | Finis le proverbe | كمّل المتل | Termina el refrán |
+| `bluff.round.fact` | Impossible but true | Impossible mais vrai | مستحيل بس صحيح | Imposible pero cierto |
+| `bluff.round.noTruth` | No truth | Aucune vérité | ما في صحّ | Ninguna es verdad |
+| `bluff.round.noTruth.intro` | Final round. There is no right answer. Write the answer that sounds the most true. The most votes wins big. | Finale. Il n'y a pas de bonne réponse. Écrivez la réponse la plus crédible. Le plus de votes rafle la mise. | الجولة الأخيرة. ما في جواب صح. اكتبوا الجواب اللي بيقنع أكتر، واللي بياخد أكتر أصوات بيربح الكبيرة. | Ronda final. No hay respuesta correcta. Escribe la respuesta más creíble. La más votada se lo lleva todo. |
+| `bluff.noTruth.chip` | No right answer | Aucune bonne réponse | ما في جواب صح | No hay respuesta correcta |
+| `bluff.write.cta` | Lock my lie | Valider mon bluff | ثبّت كذبتي | Fijar mi mentira |
+| `bluff.write.help` | Help me | Aide-moi | ساعدني | Ayúdame |
+| `bluff.write.locked` | Lie locked! You can still edit it. | Bluff validé ! Tu peux encore le modifier. | كذبتك تثبّتت! بعد فيك تغيّرها. | ¡Mentira fijada! Aún puedes cambiarla. |
+| `bluff.write.sayingHint` | Know the ending? Type it and score now. Don't know it? Make one up. | Tu connais la fin ? Tape-la et marque tout de suite. Sinon, invente ! | بتعرف آخرها؟ اكتبو وخود النقاط هلّق. ما بتعرف؟ ألّف شي. | ¿Te sabes el final? Escríbelo y suma ya. ¿No? Invéntatelo. |
+| `bluff.write.spotOn` | Spot on! +150. You sit this vote out. | Dans le mille ! +150. Tu ne votes pas sur celle-ci. | بالضبط! ‎+150. هالمرّة ما بتصوّت. | ¡Clavado! +150. Esta vez no votas. |
+| `bluff.write.noTruthHint` | There is no right answer. Write the one that sounds most true. | Il n'y a pas de bonne réponse. Écris celle qui sonne le plus vrai. | ما في جواب صح. اكتب الجواب اللي بيبيّن صحيح أكتر شي. | No hay respuesta correcta. Escribe la que suene más a verdad. |
+| `bluff.vote.title` | Which one is true? | Laquelle est vraie ? | أيّا الصحيحة؟ | ¿Cuál es la verdadera? |
+| `bluff.vote.titleNoTruth` | Which one sounds the most true? | Laquelle sonne le plus vrai ? | أيّا بتبيّن الأصدق؟ | ¿Cuál suena más a verdad? |
+| `bluff.vote.knewIt` | Knew it! {names} +150 | Dans le mille : {names} +150 | كانوا عارفينها! {names} ‎+150 | ¡Se lo sabían! {names} +150 |
+| `bluff.vote.spotOnWatch` | You knew it: enjoy the show | Tu la connaissais : profite du spectacle | كنت عارفها: اقعد اتفرّج | Te lo sabías: disfruta del show |
+| `bluff.vote.yours` | Yours | Le tien | جوابك | La tuya |
+| `bluff.vote.likesLeft` | Likes left: {count} | J'aime restants : {count} | باقيلك {count} لايك | Te quedan {count} «me gusta» |
+| `bluff.reveal.lie` (stamp) | LIE! | BLUFF ! | كذب! | ¡MENTIRA! |
+| `bluff.reveal.truth` (stamp) | TRUTH | VRAI | صحّ | VERDAD |
+| `bluff.reveal.house` (stamp) | HOUSE LIE | PIÈGE MAISON | كذبة البيت | MENTIRA DE LA CASA |
+| `bluff.reveal.mostConvincing` (stamp, final) | MOST CONVINCING | LA PLUS CRÉDIBLE | الأكتر إقناع | LA MÁS CREÍBLE |
+| `bluff.reveal.noTruthStamp` (final) | No truth: it was all made up! | Aucune vérité : tout était inventé ! | ما في ولا صح: كلّو تأليف! | Ninguna era verdad: ¡todo era inventado! |
+| `bluff.reveal.fooled` (P) | {name} fooled {count}! | {name} piège {count} personne(s) ! | {name} ضحك على {count}! | ¡{name} engañó a {count}! |
+| `bluff.reveal.believed` (P, final, phone) | {count} people believed you! | {count} vote(s) pour toi ! | {count} صدّقوك! | ¡{count} te creyeron! |
+| `bluff.reveal.allKnew` | Everyone knew it! | Tout le monde la connaissait ! | كلّكن كنتو عارفينها! | ¡Todos se lo sabían! |
+| `bluff.reveal.sameLie` | Great minds lie alike! | Les grands esprits bluffent pareil ! | العقول الكبيرة بتكذب متل بعض! | ¡Las grandes mentes mienten igual! |
+| `bluff.reveal.nobody` | Nobody bought it… | Personne n'y a cru… | ما حدا صدّق… | Nadie se lo creyó… |
+| `bluff.reveal.tooEasy` | Too easy! | Trop facile ! | سهلة كتير! | ¡Demasiado fácil! |
+| `bluff.reveal.houseLike` | The house thanks you. | La maison vous remercie. | البيت بيشكرك. | La casa te lo agradece. |
+| `bluff.err.tooClose` | Close to the truth! Write something else. Finding the truth now won't score. | Trop proche de la vérité ! Écris autre chose. Trouver la vérité ne rapportera plus rien ici. | قريبة كتير من الصح! اكتب شي تاني. الصح ما بيعود يحسبلك بهالسؤال. | ¡Muy cerca de la verdad! Escribe otra cosa. Acertar la verdad ya no suma aquí. |
+| `bluff.err.wrongScriptAr` | Write it in Arabic letters so it blends in! | Écris-le en lettres arabes pour qu'il passe inaperçu ! | اكتبها بالحروف العربي لتمرق! | ¡Escríbelo con letras árabes para que pase desapercibido! |
+| `bluff.err.wrongScriptLatn` | Write it in Latin letters so it blends in! | Écris-le en lettres latines pour qu'il passe inaperçu ! | اكتبها بالحروف اللاتيني لتمرق! | ¡Escríbelo con letras latinas para que pase desapercibido! |
+| `bluff.hint.short` / `.few` / `.sentence` / `.free` | Short answer (1–2 words) / A few words / A full sentence / Any length (max 60 characters) | Réponse courte (1–2 mots) / Quelques mots / Une phrase entière / Longueur libre (60 caractères max) | جواب قصير (كلمة أو تنين) / كم كلمة / جملة كاملة / أيّ طول (60 حرف بالكتير) | Respuesta corta (1–2 palabras) / Unas pocas palabras / Una frase entera / Largo libre (máx. 60 caracteres) |
+| `bluff.prompt.tooFamous` | Too famous! New one | Trop connu ! On change | معروفة كتير! غيرها | ¡Demasiado conocido! Otra |
+| `bluff.prompt.voided` | Prompt skipped by the host | Question passée par l'hôte | المضيف لغى هالسؤال | El anfitrión anuló esta pregunta |
+| `bluff.setup.bigGroup` | Big group: we suggest a Short game | Grand groupe : partie courte conseillée | جماعة كبيرة: منصح بلعبة قصيرة | Grupo grande: te sugerimos una partida corta |
+| `bluff.err.blocked` | Keep it party-friendly. Try another one. | On reste correct. Essaie autre chose. | خلّيها لطيفة. جرّب غيرها. | Que sea apto para todos. Prueba otra. |
+
+(`fooled` and `believed` use the platform plural mechanism, SPEC §11.2 "P" keys; FR body copy avoids gendered participles about the player: "{name} piège {count} personne(s)", "{count} vote(s) pour toi"; `knewIt` avoids « Ils le savaient ».)
 
 ---
 
@@ -407,33 +520,40 @@ AR `[native review]`:
 
 ### 11.1 Prompt types
 
-| `type` | TV label (EN · FR · AR) | Prompt shows | Truth is | Example |
-|---|---|---|---|---|
-| `proverb_end` | Finish the proverb · Finis le proverbe · «كمّل المتل» | The first half, ending with "…" | The second half | «القرد بعين أمّو…» → «…غزال» |
-| `word_meaning` | What does it mean? · Ça veut dire quoi ? · «شو يعني؟» | A rare word | A short definition in player voice | *Gongoozler* → "Someone who idly watches canal boats" |
-| `expression_meaning` | What does it mean? · Ça veut dire quoi ? · «شو يعني؟» | An expression | Its meaning | « Peigner la girafe » → « Faire un travail inutile » |
-| `fact_blank` | Fill the blank · Complète · «كمّل الفراغ» | A true fact with `___` | The missing words | "A group of flamingos is called a ___" → "flamboyance" |
+| `type` | Round | TV label (EN · FR · AR · ES) | Prompt shows | Truth is | Example |
+|---|---|---|---|---|---|
+| `proverb_end` | 1 | Finish the saying · Finis le proverbe · «كمّل المتل» · Termina el refrán | The first half of a **real** proverb or saying, ending with "…" | The real second half (Spot on if typed first, §5.0) | «القرد بعين إمّو…» → «…غزال» |
+| `fact_blank` | 2 | Impossible but true · Impossible mais vrai · «مستحيل بس صحيح» · Imposible pero cierto | A very hard, obscure, **real** fact with `___` | The missing words | "Wombat droppings are shaped like ___" → "cubes" |
+| `word_meaning` | 2 (filler, §11.4) | What does it mean? · Ça veut dire quoi ? · «شو يعني؟» · ¿Qué significa? | A rare word | A short definition in player voice | *Gongoozler* → "Someone who idly watches canal boats" |
+| `expression_meaning` | 2 (filler, §11.4) | What does it mean? · Ça veut dire quoi ? · «شو يعني؟» · ¿Qué significa? | An expression | Its meaning | « Peigner la girafe » → « Faire un travail inutile » |
+| `no_truth` | 3 (final) | No truth · Aucune vérité · «ما في صحّ» · Ninguna es verdad | An absurd or impossible question, with the "No right answer" chip | **none** (the item has no `truth`) | "What did the first cat ever say to a human?" |
+
+`ROUND_OF_TYPE = { proverb_end: 1, fact_blank: 2, word_meaning: 2, expression_meaning: 2, no_truth: 3 }` (shared constant; the draw and lint both use it).
 
 ### 11.2 Writing guide (binding for content authors)
 
 1. **Truths and house lies are written in player voice**: short (≤ 50 graphemes, hard max 60), plain, no dictionary jargon, no final period, sentence case, **no Arabic tashkeel or shadda, no guillemets or typographic quotes** (players never type them). A truth that "sounds like a dictionary" is spotted instantly.
 2. **House lies must be plausible and funny, never offensive.** At least 3 per playable locale (lint warns under 3, errors under 2).
 3. **Obscure but fair.** Prefer prompts most players at the table won't know. Ban prompts whose truth is guessable from the prompt's words alone. **Mark sayings that everyone knows in a language with `knownIn`**: the draw skips an item whose `knownIn` contains the room's content locale. Famous Levantine proverbs are `knownIn: ["ar"]`: useless in an Arabic room of Lebanese players (everyone types the truth), but excellent in EN/FR rooms for the diaspora.
-4. **No politics, religion, sects, war, or real living private persons.** Proverbs mentioning God are skipped in v1 (`[native review]` checks this).
+4. **No politics, religion, sects, war, or real living private persons.** Proverbs mentioning God are skipped in v1 (`[native review]` checks this). **Family-friendly by default** (every launch pack `ageRating: "all"`): no sex, no drugs, no gore, no insults about bodies or groups, in prompts, truths, house lies and notes alike.
 5. **Every item has a `note`**: one line shown after the reveal ("It means: …" or a fun origin). Notes may be longer (≤ 140).
 6. **Facts are verified** (`review.status: "verified"` with a source URL in `review.source`) before an item can be `tier:"free"` or shipped. (Bluff keeps its per-item `review`, in its own pack schema; the platform `PackHeader` per-pack status applies to Mish Ana! and Trivia packs.)
 7. **Truths come in mixed lengths** across a pack (one-word, a few words, full sentences), and the length hint (§4.2) tells players the shape; lint warns when more than 40 % of a pack's truths are one word.
+8. **Round 1 sayings are real and "half-known".** Every `proverb_end` item is a real proverb or saying in use, with `review.source` (a dictionary of proverbs, a national language academy page or a recognised collection). Best items are known to *some* of the table, not all: that is what makes Spot on exciting. Famous-to-everyone items stay `knownIn` that locale and are skipped there (rule 3).
+9. **Round 2 facts are very hard, obscure and true.** Never invent or embellish. Each `fact_blank` item carries `review.source` (a primary or reference source: a museum, agency, university, peer-reviewed paper or major encyclopaedia) and stays `draft` until a second person checks it; numbers are given only at the precision the source supports. Avoid famous "fun facts" that are actually myths (lint keeps a deny-list, e.g. "goldfish 3-second memory", "Great Wall visible from space").
+10. **Final `no_truth` prompts are absurd, impossible or unknowable**, so no answer can be checked ("What did the first cat ever say to a human?"). They must invite *plausible-sounding* answers, not just jokes: the vote is for the most convincing one. Never about a real person, never a question with a real answer, never a trap for mean answers about players. Each has ≥ 3 house answers per playable locale (they fill small games and power "Help me").
 
 ### 11.3 Schema (`shared/src/games/bluff/schema.ts`, zod; packs in `content/bluff/<pack-id>.json`, read through the platform `ContentAdapter`, JAMAA-PLATFORM §5.2)
 
 ```ts
-const Loc = z.enum(["en", "fr", "ar"]);
+const Loc = z.enum(["en", "fr", "ar", "es"]);                              // es added (owner: EN/FR/AR/ES)
+const BluffType = z.enum(["proverb_end", "fact_blank", "word_meaning", "expression_meaning", "no_truth"]);
 const LocText = z.partialRecord(Loc, z.string().min(1).max(60));          // zod 4.6.5 (shared/package.json): z.partialRecord [VERIFY at implementation]
 const LocList = z.partialRecord(Loc, z.array(z.string().min(1).max(60)));
 
 export const BluffItemSchema = z.strictObject({
   id: z.string().regex(/^[a-z0-9-]{3,40}$/),          // e.g. "lb-prov-007"
-  type: z.enum(["proverb_end", "word_meaning", "expression_meaning", "fact_blank"]),
+  type: BluffType,                                     // round = ROUND_OF_TYPE[type] (§11.1)
   tier: z.enum(["free", "pass"]),
   difficulty: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   knownIn: z.array(Loc).default([]),                    // locales where this saying is common knowledge: never drawn there
@@ -442,50 +562,59 @@ export const BluffItemSchema = z.strictObject({
     translit: z.string().max(160).nullable(),            // Latin transliteration (AR only), shown in EN/FR rooms
     display: z.partialRecord(Loc, z.string().max(160)),  // translation shown under the original in other rooms; for sourceLocale omit
   }),
-  truth: LocText,                // required for every locale in pack.playableIn
-  truthAlt: LocList,             // other accepted forms (for too-close detection only)
-  houseLies: LocList,            // ≥ 2 (lint error) / ≥ 3 (lint warning) per playable locale
+  truth: LocText,                // required for every locale in pack.playableIn; MUST be {} for no_truth (refine below)
+  truthAlt: LocList,             // other accepted forms (Spot-on and too-close detection only); {} for no_truth
+  houseLies: LocList,            // ≥ 2 (lint error) / ≥ 3 (lint warning) per playable locale; for no_truth = "house answers"
   note: z.partialRecord(Loc, z.string().max(140)),
   review: z.strictObject({
     status: z.enum(["draft", "native-reviewed", "verified"]),
-    source: z.string().url().nullable(),
+    source: z.string().min(1).nullable(),               // URL, or a precise reference ("Larousse des proverbes, 2005, p. 112")
   }),
+}).superRefine((it, ctx) => {
+  const hasTruth = Object.keys(it.truth).length > 0;
+  if (it.type === "no_truth" && (hasTruth || Object.keys(it.truthAlt).length > 0)) ctx.addIssue({ code: "custom", message: "no_truth items have no truth" });
+  if (it.type !== "no_truth" && !hasTruth) ctx.addIssue({ code: "custom", message: "truth required" });
+  if (it.type === "no_truth" && it.knownIn.length > 0) ctx.addIssue({ code: "custom", message: "knownIn is meaningless without a truth" });
 });
 
 export const BluffPackSchema = z.strictObject({
   schemaVersion: z.literal(1),
   id: z.string().regex(/^[a-z0-9-]{1,35}$/),          // ≤ 35 so pack_<family> stays ≤ 40 (platform §4.1)
   game: z.literal("bluff"),
-  title: z.strictObject({ en: z.string(), fr: z.string(), ar: z.string() }),
-  description: z.strictObject({ en: z.string(), fr: z.string(), ar: z.string() }),
+  title: z.strictObject({ en: z.string(), fr: z.string(), ar: z.string(), es: z.string().optional() }),       // es required by lint when "es" ∈ playableIn
+  description: z.strictObject({ en: z.string(), fr: z.string(), ar: z.string(), es: z.string().optional() }),
   sourceLocale: Loc,
   playableIn: z.array(Loc).min(1),
   ageRating: z.enum(["all", "teen"]),                  // ⊂ platform AGE_RATINGS
-  fallbackHouseLies: z.partialRecord(z.enum(["proverb_end", "word_meaning", "expression_meaning", "fact_blank"]), LocList),
-  items: z.array(BluffItemSchema).min(20),
+  fallbackHouseLies: z.partialRecord(BluffType, LocList),
+  items: z.array(BluffItemSchema).min(12),            // 12: a no_truth pack is small by nature (12 finals = 12 games); truth packs: lint warns under 20
 });
 ```
 
-Pack lint (`pnpm lint:content`, `tools/content-lint/src/games/bluff.ts`): ids unique across all Bluff packs; every playable locale has `truth` and ≥ 2 `houseLies` (a pack whose items lack house lies in a locale may not list it in `playableIn`); no tashkeel (U+064B–U+065F, U+0670), tatweel, guillemets/typographic quotes, trailing `.`/`!`/`…` or emoji in truths and house lies; free items not `knownIn` the locale suffice for one Normal game (≥ 7) in **every** playable locale; no house lie collides (§5.3) with the truth or another house lie; truth and house lies ≤ 60 graphemes and match the casing rule; `tier:"free"` items must be `review.status !== "draft"`; ≥ 30 % of a pack's items are free (so free rooms can play a Normal game from one pack: ≥ 7 items with margin); no blocklist hit in any text.
+Pack lint (`pnpm lint:content`, `tools/content-lint/src/games/bluff.ts`): ids unique across all Bluff packs; every playable locale has `truth` and ≥ 2 `houseLies` (a pack whose items lack house lies in a locale may not list it in `playableIn`); no tashkeel (U+064B–U+065F, U+0670), tatweel, guillemets/typographic quotes, trailing `.`/`!`/`…` or emoji in truths and house lies; free items not `knownIn` the locale suffice for one Normal game (≥ 7) in **every** playable locale; no house lie collides (§5.3) with the truth or another house lie; truth and house lies ≤ 60 graphemes and match the casing rule; `tier:"free"` items must be `review.status !== "draft"`; ≥ 30 % of a pack's items are free (so free rooms can play a Normal game from one pack: ≥ 7 items with margin); no blocklist hit in any text; **`proverb_end` and `fact_blank` items need a non-null `review.source` before leaving `draft`**; `fact_blank` truths contain no digit grouping or unit that the source does not state; every locale in `playableIn` has its `title`/`description` (es included); a pack with `no_truth` items has only `no_truth` items (finals are their own packs, so the draw per round stays simple).
 
 ### 11.4 Prompt draw
 
-`drawPrompt(catalog, settings, memory, rng, roundIndex)`: candidates = items of the selected packs (`[]` = all playable), playable in the content language, **not `knownIn` the content language**, allowed by the entitlement, not in `memory.usedKeys`, not drawn earlier in this game. Weighted by difficulty: round 1 prefers `difficulty 1–2` (weights 3:2:1), round 2 flat, final `difficulty ≥ 2` (0:1:2). Avoid two consecutive prompts of the same `type` when another type is available. Fallback per §7 "pool exhausted".
+`drawPrompt(catalog, settings, memory, rng, roundIndex)`: candidates = items of the selected packs (`[]` = all playable) whose `ROUND_OF_TYPE[type]` is this round, playable in the content language, **not `knownIn` the content language**, allowed by the entitlement, not in `memory.usedKeys`, not drawn earlier in this game. Weighted by difficulty: round 1 flat (1:1:1, "half-known" sayings are the point), round 2 prefers hard (1:2:3), final flat. Round 2 draws `fact_blank` first; `word_meaning` / `expression_meaning` items fill round 2 only when fewer than `round2Count + 2` unused `fact_blank` items are playable (so FR/EN rooms keep their strong word packs while the fact pack grows). Avoid two consecutive prompts of the same `type` when another type is available.
+
+**Short pools.** If round 1 has too few playable `proverb_end` items, its missing slots draw from round 2's pool (and vice versa); the round keeps its own rules (a round-1 slot filled with a fact still uses Spot on). The final requires ≥ 1 playable `no_truth` item. `startBlocker = NO_CONTENT_AVAILABLE` when `proverb_end + round-2 items < round1Count + round2Count` or no `no_truth` item is playable. Reruns per §7 "pool exhausted".
 
 ### 11.5 First content plan
 
-| Pack id | Title (EN · FR · AR) | Source → playable | Items | Free | Status |
-|---|---|---|---|---|---|
-| `bluff-lb-proverbs` | Lebanese Proverbs · Proverbes libanais · «أمتال لبنانية» | ar → **ar** at launch; **en, fr added once their house lies exist** (G2 exit criterion) | 36 drafted (§14.1; #24 dropped) | 16 | draft, `[native review]` |
-| `bluff-lb-teta-words` | Teta's Words · Les mots de Teta · «كلمات تيتا» | ar → ar (type `word_meaning`: rare Lebanese dialect words, village proverbs and Turkish/French loanwords most young players don't know) | **40 to source** (G2 exit criterion) | ≥ 20 | to write, `[native review]` |
-| `bluff-fr-expressions` | Strange French Expressions · Expressions bizarres · «تعابير فرنسية غريبة» | fr → fr | 40 drafted (§14.2) | 14 | draft, `[native review]` |
-| `bluff-en-weird-words` | Weird English Words · Mots anglais étranges · «كلمات إنكليزية غريبة» | en → en | 40 drafted (§14.3) | 13 | draft, `[VERIFY]` definitions |
-| `bluff-world-facts` | Weird but True · Bizarre mais vrai · «غريب بس صحيح» | en → en, fr, ar | 5 seeds (§14.4); 30 before launch | 10 | later (M+1) |
+| Pack id | Round | Title (EN · FR · AR · ES) | Source → playable | Items | Free | Status |
+|---|---|---|---|---|---|---|
+| `bluff-lb-proverbs` | 1 | Lebanese Proverbs · Proverbes libanais · «أمتال لبنانية» · Refranes libaneses | ar → **ar** at launch; **en, fr, es added once their house lies exist** (G2 exit criterion) | 36 drafted (§14.1; #24 dropped) | 16 | draft, `[native review]` |
+| `bluff-fr-proverbes` | 1 | Proverbes d'ici et d'ailleurs · French Sayings · «أمتال فرنسية» · Refranes franceses | fr → fr | **12 drafted (§14.5)**; 30 before launch | 6 | draft, `[native review]`, `[VERIFY]` sources |
+| `bluff-en-sayings` | 1 | Old Sayings · Vieux dictons anglais · «أقوال إنكليزية قديمة» · Dichos ingleses | en → en | **12 drafted (§14.6)**; 30 before launch | 6 | draft, `[VERIFY]` sources |
+| `bluff-es-refranes` | 1 | Refranes de la abuela · Spanish Sayings · «أمتال إسبانية» · Proverbes espagnols | es → es | **12 drafted (§14.7)**; 30 before launch | 6 | draft, `[native review]`, `[VERIFY]` sources |
+| `bluff-world-facts` | 2 | Impossible but True · Impossible mais vrai · «مستحيل بس صحيح» · Imposible pero cierto | en → en, fr, ar, es | **14 drafted (§14.4)**; 30 before launch | 7 | draft, every item `[VERIFY]` |
+| `bluff-lb-teta-words` | 2 | Teta's Words · Les mots de Teta · «كلمات تيتا» · Las palabras de la abuela | ar → ar (type `word_meaning`: rare Lebanese dialect words and Turkish/French loanwords most young players don't know) | **40 to source** (G2 exit criterion) | ≥ 20 | to write, `[native review]` |
+| `bluff-fr-expressions` | 2 | Strange French Expressions · Expressions bizarres · «تعابير فرنسية غريبة» · Expresiones francesas raras | fr → fr | 40 drafted (§14.2) | 14 | draft, `[native review]` |
+| `bluff-en-weird-words` | 2 | Weird English Words · Mots anglais étranges · «كلمات إنكليزية غريبة» · Palabras inglesas raras | en → en | 40 drafted (§14.3) | 13 | draft, `[VERIFY]` definitions |
+| `bluff-no-truth` | final | No Truth · Aucune vérité · «ما في صحّ» · Ninguna es verdad | en → en, fr, ar, es (each locale written natively, not translated word for word) | **12 drafted (§14.8)**; 24 before launch | 12 (all: every room needs a final) | draft, `[native review]` |
 
-- **AR rooms.** Famous proverbs in `bluff-lb-proverbs` are `knownIn: ["ar"]` (at least #2, 3, 5, 10, 11, 14, 19, 20, 21, 23, 30, 34, 37; the native reviewer adds others), so an AR room draws only the rarer ones. A free AR room must have **≥ 20 free prompts that are not `knownIn: ["ar"]`** across both AR packs; that is why `bluff-lb-teta-words` and 40+ rare or village proverbs are G2 exit criteria, not later items.
-- **EN/FR rooms.** The truth is the translated ending and the TV also shows the Arabic original on reveal (diaspora delight: "so *that's* what Teta meant"). The famous proverbs work best here. The pack is added to `playableIn` for `en` and `fr` only when every item has ≥ 3 house lies in that locale (G2 exit criterion; until then it would fail its own lint and EN/FR rooms of ≤ 4 players always need a house lie, §4.2).
-
----
+- **AR rooms.** Round 1: famous proverbs in `bluff-lb-proverbs` are `knownIn: ["ar"]` (at least #2, 3, 5, 10, 11, 14, 19, 20, 21, 23, 30, 34, 37; the native reviewer adds others), so an AR room draws only the rarer ones; 40+ rare or village proverbs are a G2 exit criterion. Round 2: `bluff-world-facts` (AR column) and `bluff-lb-teta-words`. A free AR room needs ≥ 3 free round-1 items not `knownIn: ["ar"]` and ≥ 3 free round-2 items.
+- **EN/FR/ES rooms.** Round 1 uses the room's own sayings pack; `bluff-lb-proverbs` joins once its EN/FR/ES house lies exist (the truth is the translated ending and the TV shows the Arabic original on reveal: "so *that's* what Teta meant"). Round 2: `bluff-world-facts`, plus the EN/FR word packs as fillers (§11.4). ES has no word pack at launch; `bluff-world-facts` must reach 30 items with ES house lies before ES Bluff ships (G2 exit criterion for ES).
 
 ## 12. Signature moments (animation spec)
 
@@ -507,9 +636,9 @@ The Bluff world (platform world id `hakawati-cafe`) is a late-night Beirut café
 3. *Drumroll (600 ms).*
 4. *Stamp (400 ms):* a red **LIE!** stamp lands at −8° (house lie: a violet **HOUSE LIE** stamp, and a cartoon house character with a moustache pops up and laughs). Voters switch to `facepalm` / `shock`.
 5. *The liar pops out (500 ms):* the author's character bursts from behind the card with `smug`, name plate below. Co-authors pop out together with "Great minds lie alike!".
-6. *Coins fly (600 ms + 80 ms per voter):* from each voter's character, a coin labelled "+500" (×m) flies along a Bézier arc into the author's score pill; the pill's odometer rolls up per coin with a coin "ding" stepping up a pentatonic scale. Split credit: the coin splits into two smaller coins mid-air. Helped lies: the coin halves with a little "poof" and the lifebuoy badge shows.
+6. *Coins fly (600 ms + 80 ms per voter):* from each voter's character, a coin labelled "+60" (×m) flies along a Bézier arc into the author's score pill; the pill's odometer rolls up per coin with a coin "ding" stepping up a pentatonic scale. Split credit: the coin splits into two smaller coins mid-air. Helped lies: after the last coin, a small "−40" (×m) chip flies back to the house with a little "poof" and the lifebuoy badge shows.
 
-**Truth, ≈ 4.5 s:** the card turns gold, a light sweep crosses it, the **TRUTH** stamp lands, confetti from the card corners for the finders (paper white + amber, 1.2 s), finders `cheer` and receive "+1000" (×m) bursts into their own pills; a finder flagged `foundWhileWriting` lands with a small "found it early" tag and no coin; non-finders `sad`. The `note` slides in under the card ("It means: …"; AR pack in EN/FR rooms also shows the Arabic original).
+**Truth, ≈ 4.5 s:** the card turns gold, a light sweep crosses it, the **TRUTH** stamp lands, confetti from the card corners for the finders (paper white + amber, 1.2 s), finders `cheer` and receive "+100" (×m) bursts into their own pills; round 1: Spot-on players stand on the truth card first with a gold "knew it" pin (their +150 was already paid, so no new coin); a finder flagged `foundWhileWriting` lands with a small "found it early" tag and no coin; non-finders `sad`. The `note` slides in under the card ("It means: …"; AR pack in EN/FR rooms also shows the Arabic original).
 
 **Nobody bought it, 2.5 s:** unpicked lies fan out like cards in a hand, each with its author's tiny `sad` face; they fall off-screen together.
 
@@ -522,14 +651,28 @@ revealDurationMs = 1500                                    // intro beat
   + Σ_other_lies_with_votes (3500 + 120 × voters)
   + 4500                                                   // truth
   + (unpicked > 0 ? 2500 : 0) + (likes > 0 ? 1500 : 0)
-  (final prompt: × 1.25)
+  (rounds 1–2)
 ```
 
 Typical: 6 players, 3 picked lies with 1–2 voters → ≈ 20 s. 12 players worst case (12 picked lies, 8 of them with 1 vote, 4 with 2–3) ≈ 1.5 + 9.6 + 4 × 3.8 + 4.5 + 1.5 ≈ 32 s (was ≈ 63 s); host "Next" (pause menu) or OK-completion is the release valve.
 
+### 12.2.1 The final reveal ("No truth")
+
+No TRUTH stamp exists. Ballots stay anonymous (§6.5).
+1. *Intro (1.5 s):* the corkboard dims; the host card reads "Which one did you believe?".
+2. *Per answer with votes, fewest votes first (≈ 2.8 s each):* spotlight; **identical cream envelopes** drop onto the card one per vote (no characters jump on, no voter colour); counter rolls; the author pops out (`smug`, or `laugh`); "+150" coins fly from a neutral ballot box (not from voters) into the author's pill. House answers: the moustached house character pops out instead, "The house wrote that one!".
+3. *The crown (3 s):* the top answer(s) grow, a golden **MOST CONVINCING** stamp lands (`bluff.reveal.mostConvincing`), a crown hops onto the author, "+400" burst, confetti.
+4. *The twist card (2 s):* every card flips over at once to show the stamp "No truth: it was all made up!" (`bluff.reveal.noTruthStamp`); all characters `laugh`.
+5. Nobody-bought-it montage and like tally (+20 hearts) as in §12.2.
+
+```
+revealDurationMsFinal = 1500 + Σ_answers_with_votes (2800) + 3000 + 2000
+  + (unpicked > 0 ? 2500 : 0) + (likes > 0 ? 1500 : 0)
+```
+
 ### 12.3 Scoreboard race (SCORES, 6 s)
 
-Horizontal bars (or rows on narrow layouts) start at `scoreBefore`, grow to `scoreAfter` over 1.2 s with an odometer number; then rows **re-sort with a spring** so overtakes are visible (an overtaking character jumps over the other). A new leader gets a crown that hops onto their head ("New leader!"). Last place gets a supportive "Comeback time!" bubble if behind by > 2000.
+Horizontal bars (or rows on narrow layouts) start at `scoreBefore` (round 1: before the Spot-on points, so they are animated here too), grow to `scoreAfter` over 1.2 s with an odometer number; then rows **re-sort with a spring** so overtakes are visible (an overtaking character jumps over the other). A new leader gets a crown that hops onto their head ("New leader!"). Last place gets a supportive "Comeback time!" bubble if behind by > 400. Before the final, the TV adds "The final pays up to +400 for one answer!" so nobody gives up.
 
 ### 12.4 Character reactions used
 
@@ -551,7 +694,7 @@ Each card drops in like a trophy on a velvet stand (`ease.overshoot`), the winne
 
 ### 12.6 Sounds (new cues; `tools/gen-sounds`, same format as DESIGN §6.4)
 
-`bluff.envelope` (paper slide + thunk), `bluff.tok` (landing, pitch by order), `bluff.stampLie`, `bluff.stampHouse` (stamp + cartoon chuckle), `bluff.truth` (bright chord + shimmer), `bluff.coin` (pitch steps), `bluff.like` (soft pop), `sting.bluffIntro` (café jazz-darbuka loop head, ≤ 3 s), `sting.bigBluff` (final round), `sting.award`.
+`bluff.envelope` (paper slide + thunk), `bluff.tok` (landing, pitch by order), `bluff.stampLie`, `bluff.stampHouse` (stamp + cartoon chuckle), `bluff.truth` (bright chord + shimmer), `bluff.coin` (pitch steps), `bluff.like` (soft pop), `sting.bluffIntro` (café jazz-darbuka loop head, ≤ 3 s), `sting.noTruth` (final round: the music drops out for a beat on "no right answer"), `sting.award`.
 
 ### 12.7 Implementation notes (both platforms)
 
@@ -580,33 +723,38 @@ Each card drops in like a trophy on a velvet stand (`ease.overshoot`), the winne
 
 ### 13.2 View (`BluffPublic`, every key always present)
 
-`schema, phase, round, roundCount, promptIndex, promptCount, multiplier, deadline, prompt {id, type, original, translit, display, lengthHint: "short"|"few"|"sentence"} | null, submittedIds[], options [{id, text}] | [] (VOTING+; texts display-normalised), votedIds[], voided: boolean, notice: "tooFamous"|"voided"|null, reveal | null (REVEAL+), scores [{playerId, score, scoreBefore}], awards [] (AWARDS+), skipsLeft, hidesLeft`.
+`schema, phase, round, roundCount, roundKind: "saying"|"fact"|"noTruth", promptIndex, promptCount, multiplier (1, 2; final: 1, unused), deadline, prompt {id, type, original, translit, display, lengthHint: "short"|"few"|"sentence"|"free"} | null, submittedIds[], spotOnIds[] ([] before VOTING), options [{id, text}] | [] (VOTING+; texts display-normalised), votedIds[], voided: boolean, notice: "tooFamous"|"voided"|"allKnew"|null, reveal | null (REVEAL+), scores [{playerId, score, scoreBefore}], awards [] (AWARDS+), skipsLeft, hidesLeft`.
 
-Envelope status (`projectStatus`): `phase`; `doneIds` = submittedIds in WRITING, votedIds in VOTING, else `[]`; `awaitedIds` = connected non-left players not in `doneIds` during WRITING/VOTING.
+Envelope status (`projectStatus`): `phase`; `doneIds` = submittedIds in WRITING, votedIds in VOTING, else `[]`; `awaitedIds` = connected non-left players not in `doneIds` during WRITING/VOTING (VOTING also excludes `spotOnIds`).
 
-`reveal` = `{ steps: [{ optionId, kind: "lie"|"house"|"truth", quick: boolean, text, authorIds[], helped, voterIds[], likerIds[], foundEarlyIds[] /* truth step only */, deltas: [{playerId, points, reason: "truth"|"fooled"|"like"}] }], unpicked: [{optionId, text, authorIds[]}], truth: {text, original | null, note | null} }`.
+`reveal` = `{ final: boolean, steps: [{ optionId, kind: "lie"|"house"|"truth", quick: boolean, text, authorIds[], helped, voteCount, voterIds[] /* [] when final */, likerIds[], foundEarlyIds[] /* truth step only */, spotOnIds[] /* truth step only, round 1 */, top: boolean /* final: most convincing */, deltas: [{playerId, points, reason: "truth"|"fooled"|"like"|"convincing"}] }], spotOnDeltas: [{playerId, points: 150}] /* already applied at VOTING start; shown here */, unpicked: [{optionId, text, authorIds[]}], truth: {text, original | null, note | null} | null /* null when final */ }`. A helped lie's `fooled` delta is already net of the help fee.
 
-`me` (player view only) = `{ myLie | null, myLieStatus: "none"|"locked", help | null, myOptionIds[], myVote | null, myLikes[], foundWhileWriting: boolean, editsLeft: number, waitingForNext: boolean }`.
+`me` (player view only) = `{ myLie | null, myLieStatus: "none"|"locked"|"spotOn", spotOn: boolean, help | null, myOptionIds[], myVote | null, myLikes[], foundWhileWriting: boolean, editsLeft: number, waitingForNext: boolean }`.
 
-State-only keys (platform `forbiddenKeys`): `truthAll`, `truthAlt`, `houseLies`, `housePool`, `lies`, `authors`, `votes`, `likes`, `tooCloseProbes`, `foundWhileWriting` (except the viewer's own boolean in `me`), `rngState`, `usedKeys`.
+State-only keys (platform `forbiddenKeys`): `truthAll`, `truthAlt`, `houseLies`, `housePool`, `lies`, `authors`, `votes`, `likes`, `tooCloseProbes`, `foundWhileWriting` (except the viewer's own boolean in `me`), `spotOn` (projected only as `spotOnIds` from VOTING and as the viewer's own `me.spotOn`), `firstSubmitDone`, `rngState`, `usedKeys`. In the final, `votes` never leaves the state in any form other than `voteCount`.
 
 ### 13.3 Engine invariants (added to the platform invariants)
 
 1. In WRITING, `options` is empty and `reveal` is null; no projection contains the truth (`prompt` projection has no `truth*`, `houseLies`, `note`).
-2. In VOTING: options ≥ 2; exactly one option is the truth (server state); every vote target exists, and no voter votes an option they authored; each liker has ≤ 2 likes, none on own options.
-3. In REVEAL: Σ deltas equals Σ `score − scoreBefore`; every score ≥ 0.
+2. In VOTING: options ≥ 2; exactly one option is the truth (server state) in rounds 1–2, **none** in the final; no Spot-on player has a vote or an option on that prompt; every vote target exists, and no voter votes an option they authored; each liker has ≤ 2 likes, none on own options.
+3. In REVEAL: Σ step deltas + Σ `spotOnDeltas` equals Σ `score − scoreBefore` (`scoreBefore` = score at the start of the prompt); every score ≥ 0.
 4. Option ids are unique within a prompt; option order is a permutation produced by `rngState`.
 5. A free room's catalog view contains no `tier:"pass"` item.
-6. A player with `foundWhileWriting` on a prompt has no `truth` delta on that prompt; a voided prompt has no deltas at all.
+6. A player with `foundWhileWriting` on a prompt has no `truth` delta on that prompt; a voided prompt has no step deltas at all (Spot-on deltas paid before the vote are kept).
 7. No drawn item is `knownIn` the content locale.
+8. Every drawn item's `ROUND_OF_TYPE` equals its round, except slots filled under the short-pool rule (§11.4), and the final's item is always `no_truth`.
+9. `spotOn[p]` ⇒ it was set by `p`'s first submission on that prompt; at most one Spot-on delta (150) per player per prompt; never in rounds 2–3.
+10. Final: every `steps[].voterIds` is `[]`; every player's final delta depends only on vote counts and likes of their own answers.
 
 ### 13.4 Test plan (Vitest, `shared` and `server` projects; e2e Playwright; TV unit tests)
 
 - **Similarity:** all §5.2 vectors (rules 1–5, short truths, Arabizi alternatives); property test: `isTooClose(x, [x])` is always true for any non-empty string with ≥ 2 letters; Arabic diacritics/tatweel/hamza variants collide.
+- **Spot on (round 1):** first submission matching → `spotOn`, +150 applied at VOTING start, no vote accepted (`WRONG_PHASE`-style refusal: `CANNOT_VOTE_SPOT_ON`), entry locked, no option built; first non-match then a matching edit → `LIE_TOO_CLOSE`, `foundWhileWriting`, truth vote 0; all connected Spot on → REVEAL without VOTING; `spotOnIds` absent from every view during WRITING.
+- **Final:** no truth option; house answers fill to 3; `voterIds` empty; +150 per vote, +400 to every tied top answer with ≥ 1 vote; likes +20; help fee 60; anonymity differential test as in Likely (two finals with identical per-answer counts but different ballots → byte-identical views for the TV and every phone whose own vote matches).
 - **Anti-oracle:** probe (LIE_TOO_CLOSE) then vote for the truth → 0 points; the 4th too-close attempt → `TOO_MANY_EDITS`; the 6th submission → `TOO_MANY_EDITS`; ≥ 50 % first-submission too-close → automatic swap that does not consume a skip.
 - **Script and display normalisation:** Latin-only lie in an AR room → `LIE_WRONG_SCRIPT`, Arabic-only lie in EN/FR → `LIE_WRONG_SCRIPT`; vectors: `بيعدّها` → `بيعدها`, `« …est une gazelle »` → `"…est une gazelle"`, `Gazelle!!` → `Gazelle`, `gazelle 🦌` → `gazelle`.
 - **Options build:** house-lie count for n = 3..12 and 0..n submissions; merge credit; house-lie replacement; shuffle determinism per seed; ≥ 2 options always.
-- **Scoring:** table tests for §6.3 incl. split credit, helped halving, likes on truth/house, multipliers; final scores across a seeded full game (golden snapshot).
+- **Scoring:** table tests for §6.3 and §6.5 incl. split credit (rounded down to 10), the flat help fee (never below 0), likes on truth/house, ×1/×2, Spot on; final scores across a seeded full game (golden snapshot).
 - **Secrecy (property, fast-check, synthetic catalog `shared/src/testing/catalogs/bluff.ts`):** for random games, the TV and every player view never contain the truth or any house lie text before REVEAL (whole-leaf `secretsFor`); never contain another player's lie text before VOTING; never mark authorship, votes, likes or kinds before REVEAL (`leakCheck`).
 - **Flow:** the first ROUND_INTRO deadline = 4 000 + `ENTRANCE_GRACE_MS`; early end of WRITING/VOTING (incl. like grace); host HOST_ADVANCE ignored in WRITING/VOTING and expiring other phases inline; SKIP_PROMPT limits; HIDE_OPTION effects for each kind (player lie, house lie, truth → voided prompt) and deadline extension; **hide property**: for the same option set, the UI state and error code do not depend on option kind; HOLD on < 3 connected; late joiner (`join`) waits with `waitingForNext` and enters at the next WRITING with 0; `left` player's lie still scores; `knownIn` items never drawn in that locale.
 - **Sim:** `pnpm sim --game bluff --players 3..12 --games 300` terminates, invariants hold after every reduce.

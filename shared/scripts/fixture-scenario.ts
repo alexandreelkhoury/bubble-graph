@@ -1,8 +1,8 @@
 // Scripted scenario for the generated (G) fixtures (§10). Deterministic: seed 12345, test catalog, scripted clock.
 import type { ColorId, Locale } from "../src/constants";
-import { isGuessCorrect } from "../src/engine/normalize";
-import { projectForPlayer, projectForTv } from "../src/projection/project";
-import type { ViewAccess } from "../src/projection/project";
+import { isGuessCorrect } from "../src/games/mishana/engine/normalize";
+import { projectForPlayer, projectForTv } from "../src/games/mishana/projection/project";
+import type { ViewAccess } from "../src/games/mishana/projection/project";
 import { Game, SYS, TEST_CATALOG, TEST_FREE_CATALOG } from "../src/testing";
 
 export const FIXTURE_SEED = 12345;

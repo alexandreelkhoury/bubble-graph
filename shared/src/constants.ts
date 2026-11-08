@@ -118,3 +118,27 @@ export const PENDING_ACK_TOKEN_MAX_MS = 30 * 86_400_000;
 export const RTDN_AUTH_HEADER_MAX_CHARS = 4096;
 /** §3.11 `storeOpen`: the TV-busy flag lapses after this even if `open:false` never arrives. */
 export const TV_BUSY_MAX_MS = 5 * 60_000;
+
+// ---------------------------------------------------------------- JAMAA platform (JAMAA-PLATFORM §2)
+/**
+ * §2.5 protocol v2. Transition (P1): the v2 contracts, fixtures and room engine exist next to v1; the server, `/tv`
+ * mock, phone and TV still speak v1 (`PROTOCOL_VERSION`, `PING_FRAME`, `PONG_FRAME`) until they switch in P2, when
+ * these become `PROTOCOL_VERSION` / `PING_FRAME` / `PONG_FRAME` and the v1 schemas are deleted.
+ */
+export const PROTOCOL_VERSION_V2 = 2;
+export const PING_FRAME_V2 = '{"v":2,"t":"ping"}'; // byte-exact
+export const PONG_FRAME_V2 = '{"v":2,"t":"pong"}'; // byte-exact
+/** §3.10 B: added by every game's `start` to its first phase's deadline (the 2 000 ms entrance plus 500 ms margin). */
+export const ENTRANCE_GRACE_MS = 2_500;
+/** §2.5 REACT: at most one reaction per member per this many ms, else REACTION_TOO_FAST. */
+export const REACTION_MIN_GAP_MS = 1_500;
+/** §2.2 GameMemory: item ids kept per game in RoomHistory (oldest dropped). */
+export const MEMORY_MAX_KEYS = 300;
+/** §2.3 RoomHistory.games: finished instances kept for the cup sheet. */
+export const HISTORY_GAMES_MAX = 20;
+/** §2.5 HUB_FOCUS: the TV sends at most one message per this much carousel rest. */
+export const HUB_FOCUS_DEBOUNCE_MS = 300;
+/** §3.10 E: every TV screen reached through a transition ignores OK and D-pad for this long. */
+export const INPUT_GUARD_MS = 400;
+/** §2.4: stars for 1st, 2nd and 3rd place (standard competition ranking on this instance's points). */
+export const CUP_STARS = [3, 2, 1] as const;

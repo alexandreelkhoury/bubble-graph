@@ -3,7 +3,7 @@ import {
   BASE_PLAN_IDS, packIdFromProductId, packProductId, PREMIUM_PACK_ID_MAX, PREMIUM_PRODUCT_ID, PREMIUM_SETTING_KEYS,
   PRODUCT_ID_MAX, PRODUCT_ID_REGEX, TRIAL_OFFER_ID,
 } from "../../src/billing/products";
-import { DEFAULT_SETTINGS } from "../../src/engine/settings";
+import { DEFAULT_SETTINGS } from "../../src/games/mishana/engine/settings";
 import { TEST_CATALOG } from "../../src/testing";
 
 describe("billing products (PAYMENTS-SPEC §1.3)", () => {

@@ -1,8 +1,8 @@
 // Secret-leak checker (§5.4, §14.1). Used by projection/leak.test.ts and tools/sim.
-import type { Catalog } from "../engine/catalog";
-import type { GameState } from "../engine/types";
-import { fullAccess, projectForPlayer, projectForTv } from "../projection/project";
-import type { ViewAccess } from "../projection/project";
+import type { Catalog } from "../games/mishana/engine/catalog";
+import type { GameState } from "../games/mishana/engine/types";
+import { fullAccess, projectForPlayer, projectForTv } from "../games/mishana/projection/project";
+import type { ViewAccess } from "../games/mishana/projection/project";
 
 // Enum-valued keys whose values can never be secret words (guards against accidental collisions with real words).
 const ENUM_KEYS = new Set([

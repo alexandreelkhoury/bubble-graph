@@ -1,7 +1,7 @@
 {
   "_README": "Home copy used while site.config.json has \"playStoreLive\": false. Keys override the same data-i18n keys as index.html (EN) and assets/js/i18n.js (FR/AR). build.mjs also: points every Google Play button to the browser version, removes the install-from-phone section, replaces the hero 'No Android TV?' link and the final ghost button with the 'soon' line. With playStoreLive: true none of this applies (CRO behaviour, unchanged). Keys starting with '_meta' override content/home.json meta (title/description) on the home pages before the launch. 'faqOrder' is the FAQ order in pre-launch (data-q ids; missing ones are dropped).",
   "en": {
-    "heroKicker": "TV party game · free, no download",
+    "heroKicker": "JAMAA · TV party games · free, no download",
     "navCta": "Play free",
     "ctaInstall": "<span class=\"lbl-open\">Play free in your browser</span><span class=\"lbl-send\">Play on the big screen</span>",
     "ctaInstallSub": "<span class=\"lbl-open\">Laptop or TV browser · no download</span><span class=\"lbl-send\">Send the link to your laptop or TV · free</span>",
@@ -35,7 +35,7 @@
     "aboutDef": "JAMAA is a party-games app for the TV: open it in any web browser on the big screen, and 3–12 players join from their phones by scanning a QR code. Its first game, Mish Ana!, is a secret-word game."
   },
   "fr": {
-    "heroKicker": "Jeu d’ambiance télé · gratuit",
+    "heroKicker": "JAMAA · jeux d’ambiance télé · gratuit",
     "navCta": "Jouer gratuitement",
     "ctaInstall": "<span class=\"lbl-open\">Jouer gratuitement dans le navigateur</span><span class=\"lbl-send\">Jouer sur grand écran</span>",
     "ctaInstallSub": "<span class=\"lbl-open\">Sur ordi ou télé · rien à télécharger</span><span class=\"lbl-send\">Envoie le lien à ton ordi ou ta télé · gratuit</span>",
@@ -69,7 +69,7 @@
     "aboutDef": "JAMAA est une appli de jeux d’ambiance pour la télé : ouvre-la dans n’importe quel navigateur sur grand écran, et de 3 à 12 joueurs rejoignent la partie avec leur téléphone en scannant un QR code. Son premier jeu, Mish Ana!, est un jeu du mot secret."
   },
   "ar": {
-    "heroKicker": "لعبة سهرات عالتلفزيون · ببلاش",
+    "heroKicker": "جماعة · ألعاب سهرة عالتلفزيون · ببلاش",
     "navCta": "العب ببلاش",
     "ctaInstall": "<span class=\"lbl-open\">العب ببلاش بالمتصفّح</span><span class=\"lbl-send\">العبوا عالشاشة الكبيرة</span>",
     "ctaInstallSub": "<span class=\"lbl-open\">عاللابتوب أو متصفّح التلفزيون · بلا تنزيل</span><span class=\"lbl-send\">ابعت الرابط للّابتوب أو التلفزيون · ببلاش</span>",

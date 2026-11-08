@@ -1,6 +1,6 @@
 // PAYMENTS-SPEC §3.11: the pure catalog filter behind room access. Zod-free. The server's access.ts builds
 // RoomAccess from the entitlement token and memoises this; tests and the fixture generator call it directly.
-import type { Catalog } from "../engine/catalog";
+import type { Catalog } from "../games/mishana/engine/catalog";
 
 /**
  * The packs a room may play: every free pack, plus every premium pack when `premium`, else only `ownedPacks`.

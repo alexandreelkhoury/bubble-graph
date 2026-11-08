@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { PACK_ID_MAX } from "../constants";
-import { AGE_RATINGS, PACK_TIERS } from "../engine/catalog";
-import type { WordPackLike } from "../engine/catalog";
+import { AGE_RATINGS, PACK_TIERS } from "../games/mishana/engine/catalog";
+import type { WordPackLike } from "../games/mishana/engine/catalog";
 
 export const WordSideSchema = z.strictObject({ text: z.string().min(1).max(40), translit: z.string().min(1).max(40).nullable().optional(), alt: z.array(z.string().min(1).max(40)).max(8).optional() });
 export const PairSchema = z.strictObject({

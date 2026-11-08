@@ -9,7 +9,7 @@ export default defineConfig({
     projects: ["shared", "server", "web-client", contentDir, "tools/*/vitest.config.ts"],
     coverage: {
       provider: "v8",
-      include: ["shared/src/engine/**"],
+      include: ["shared/src/games/*/engine/**", "shared/src/room/**"],
       thresholds: { branches: 90, lines: 90, functions: 90, statements: 90 },
     },
   },

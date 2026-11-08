@@ -1,5 +1,5 @@
-import { buildCatalog } from "../engine/catalog";
-import type { Catalog } from "../engine/catalog";
+import { buildCatalog } from "../games/mishana/engine/catalog";
+import type { Catalog } from "../games/mishana/engine/catalog";
 import { WordPackSchema } from "./schema";
 
 export { WordSideSchema, PairSchema, WordPackSchema, type WordPack } from "./schema";
