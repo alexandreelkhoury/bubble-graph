@@ -1,4 +1,6 @@
-# Mish Ana! — Privacy policy (EN + FR) for `/privacy`
+# JAMAA — Privacy policy (EN + FR) for `/privacy`
+
+**Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1, §4): the policy now names the app **JAMAA** (package `app.jamaa.tv`); "Mish Ana!" is its game #1. Appendix B now describes the **JAMAA Pass** subscription (monthly or yearly, 7-day free trial) and single packs; insert it only when billing ships (`BILLING_ENABLED`). The published copy is `growth/site/privacy/index.html` (keep both in step).
 
 Publish both language versions on the landing page at `/privacy` (one page with an EN/FR switch, or `/privacy` + `/fr/privacy`). Replace only `{{OWNER_NAME}}` and `{{CONTACT_EMAIL}}`. The text is written to match the code at `/home/alex/bubble-graph` HEAD `672b09c` (2026-10-04); the source for every statement is listed in the appendix at the bottom (do not publish the appendix).
 
@@ -10,11 +12,11 @@ When Play Billing ships, insert the block in **Appendix B** under section 3 and 
 
 ## English
 
-# Privacy policy — Mish Ana!
+# Privacy policy — JAMAA
 
 **Last updated: October 4, 2026**
 
-Mish Ana! ("the game") is a party game for Android TV and Google TV. The TV app hosts a game room; players join from their phones in a web browser. This policy explains what information the game uses, why, and for how long. It covers the Android TV app "Mish Ana!" (package `app.jamaa.tv`) and the player web page that the TV's QR code opens.
+JAMAA ("the game", "the app") is a party-games app for Android TV and Google TV; its first game is Mish Ana!. The TV app hosts a game room; players join from their phones in a web browser. This policy explains what information the game uses, why, and for how long. It covers the Android TV app "JAMAA" (package `app.jamaa.tv`) and the player web page that the TV's QR code opens.
 
 **Who is responsible.** {{OWNER_NAME}} (the developer), contact: {{CONTACT_EMAIL}}.
 
@@ -76,7 +78,7 @@ Our hosting provider may process data outside your country, including in the Uni
 
 ## 8. Children
 
-Mish Ana! is a party game for teenagers and adults, often played with the whole family. It is not directed at children under 13 and does not knowingly collect personal information from them; players only enter a nickname, which is deleted automatically with the room. If you believe a child has entered personal information (for example a full name as a nickname), contact us and we will delete it if it still exists.
+JAMAA and its games are made for teenagers and adults, often played with the whole family. They are not directed at children under 13 and does not knowingly collect personal information from them; players only enter a nickname, which is deleted automatically with the room. If you believe a child has entered personal information (for example a full name as a nickname), contact us and we will delete it if it still exists.
 
 ## 9. Your rights
 
@@ -110,11 +112,11 @@ If your browser sends Global Privacy Control or Do Not Track, none of this measu
 
 ## Français
 
-# Politique de confidentialité — Mish Ana!
+# Politique de confidentialité — JAMAA
 
 **Dernière mise à jour : 4 octobre 2026**
 
-Mish Ana! (« le jeu ») est un jeu d’ambiance pour Android TV et Google TV. L’application TV héberge une salle de jeu ; les joueurs la rejoignent depuis le navigateur de leur téléphone. Cette politique explique quelles informations le jeu utilise, pourquoi et pendant combien de temps. Elle couvre l’application Android TV « Mish Ana! » (package `app.jamaa.tv`) et la page web joueur ouverte par le QR code affiché sur la télé.
+JAMAA (« le jeu », « l’application ») est une appli de jeux d’ambiance pour Android TV et Google TV ; son premier jeu est Mish Ana!. L’application TV héberge une salle de jeu ; les joueurs la rejoignent depuis le navigateur de leur téléphone. Cette politique explique quelles informations le jeu utilise, pourquoi et pendant combien de temps. Elle couvre l’application Android TV « JAMAA » (package `app.jamaa.tv`) et la page web joueur ouverte par le QR code affiché sur la télé.
 
 **Responsable du traitement.** {{OWNER_NAME}} (le développeur), contact : {{CONTACT_EMAIL}}.
 
@@ -176,7 +178,7 @@ Notre hébergeur peut traiter des données hors de votre pays, notamment aux Ét
 
 ## 8. Enfants
 
-Mish Ana! est un jeu d’ambiance destiné aux adolescents et aux adultes, souvent joué en famille. Il ne s’adresse pas aux enfants de moins de 13 ans et ne collecte pas sciemment de données personnelles les concernant ; les joueurs saisissent seulement un pseudo, supprimé automatiquement avec la salle. Si vous pensez qu’un enfant a saisi une information personnelle (par exemple son nom complet comme pseudo), contactez-nous et nous la supprimerons si elle existe encore.
+JAMAA et ses jeux sont destinés aux adolescents et aux adultes, et souvent joués en famille. Ils ne s’adressent pas aux enfants de moins de 13 ans et ne collecte pas sciemment de données personnelles les concernant ; les joueurs saisissent seulement un pseudo, supprimé automatiquement avec la salle. Si vous pensez qu’un enfant a saisi une information personnelle (par exemple son nom complet comme pseudo), contactez-nous et nous la supprimerons si elle existe encore.
 
 ## 9. Vos droits
 
@@ -233,10 +235,10 @@ Si votre navigateur envoie Global Privacy Control ou Do Not Track, aucune de ces
 
 **EN** (insert as a new subsection of section 2, and add "Purchases" to sections 4 and 6):
 
-> **If you buy Premium or a word pack on the TV**
-> Purchases are made through Google Play; we never see your card details, name, email or Google account. To unlock what you bought, the TV app creates a random installation identifier. Our server stores only a one-way hash of it and of your purchase token, together with the product, its status and expiry date. We use this only to unlock your purchases, restore them on your TVs and prevent fraud. Purchase records are deleted 400 days after the purchase is last used or expires; for refunded word packs we keep a minimal record (a hash and a "refunded" flag) so a refunded purchase cannot be unlocked again. Clearing the TV app's data creates a new identifier; your purchases can be restored through Google Play.
+> **If you subscribe to the JAMAA Pass or buy a pack on the TV**
+> Subscriptions (the JAMAA Pass, monthly or yearly, with a free trial for new subscribers) and pack purchases are made through Google Play; you manage or cancel the subscription in Google Play. Purchases are made through Google Play; we never see your card details, name, email or Google account. To unlock what you bought, the TV app creates a random installation identifier. Our server stores only a one-way hash of it and of your purchase token, together with the product, its status (for the JAMAA Pass: active, in grace period, on hold, cancelled or expired) and expiry date. We use this only to unlock your purchases, restore them on your TVs and prevent fraud. Purchase records are deleted 400 days after the purchase is last used or expires; for refunded word packs we keep a minimal record (a hash and a "refunded" flag) so a refunded purchase cannot be unlocked again. Clearing the TV app's data creates a new identifier; your purchases can be restored through Google Play.
 
 **FR:**
 
-> **Si vous achetez Premium ou un pack de mots sur la télé**
-> Les achats passent par Google Play ; nous ne voyons jamais vos coordonnées bancaires, votre nom, votre e-mail ou votre compte Google. Pour débloquer vos achats, l’application TV crée un identifiant d’installation aléatoire. Notre serveur ne conserve qu’une empreinte à sens unique de cet identifiant et de votre jeton d’achat, avec le produit, son statut et sa date d’expiration. Ces données servent uniquement à débloquer et restaurer vos achats et à prévenir la fraude. Les données d’achat sont supprimées 400 jours après la dernière utilisation ou l’expiration de l’achat ; pour les packs remboursés, nous gardons un enregistrement minimal (une empreinte et un indicateur « remboursé ») afin qu’un achat remboursé ne puisse pas être débloqué à nouveau. Effacer les données de l’application TV crée un nouvel identifiant ; vos achats peuvent être restaurés via Google Play.
+> **Si vous vous abonnez au JAMAA Pass ou achetez un pack sur la télé**
+> L’abonnement (le JAMAA Pass, mensuel ou annuel, avec un essai gratuit pour les nouveaux abonnés) et les achats de packs passent par Google Play ; vous gérez ou résiliez l’abonnement dans Google Play. Les achats passent par Google Play ; nous ne voyons jamais vos coordonnées bancaires, votre nom, votre e-mail ou votre compte Google. Pour débloquer vos achats, l’application TV crée un identifiant d’installation aléatoire. Notre serveur ne conserve qu’une empreinte à sens unique de cet identifiant et de votre jeton d’achat, avec le produit, son statut (pour le JAMAA Pass : actif, en délai de grâce, suspendu, résilié ou expiré) et sa date d’expiration. Ces données servent uniquement à débloquer et restaurer vos achats et à prévenir la fraude. Les données d’achat sont supprimées 400 jours après la dernière utilisation ou l’expiration de l’achat ; pour les packs remboursés, nous gardons un enregistrement minimal (une empreinte et un indicateur « remboursé ») afin qu’un achat remboursé ne puisse pas être débloqué à nouveau. Effacer les données de l’application TV crée un nouvel identifiant ; vos achats peuvent être restaurés via Google Play.

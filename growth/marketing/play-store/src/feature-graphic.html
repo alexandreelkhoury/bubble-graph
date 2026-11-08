@@ -63,11 +63,14 @@
 </div>
 <script>
 const T = {
-  en: { name: "MISH ANA<b>!</b>", tag: "Someone's <span class=lie>lying.</span>", foot: "The secret-word party game <b>for your TV</b>",
+  en: { name: "JAMAA", tag: "Someone's <span class=lie>lying.</span>", foot: "Party games for your TV, <b>starting with Mish Ana!</b>",
         lbl: "Your secret word", w1: "PIZZA", w2: "PASTA", n1: "Ava", n2: "Ben", tv: "img/tv-vote-reveal-en.png" },
-  fr: { name: "MISH ANA<b>!</b>", tag: "Quelqu’un <span class=lie>ment.</span>", foot: "Le jeu d’ambiance du mot secret <b>pour votre télé</b>",
+  fr: { name: "JAMAA", tag: "Quelqu’un <span class=lie>ment.</span>", foot: "Les jeux d’ambiance sur votre télé, <b>à commencer par Mish Ana!</b>",
         lbl: "Ton mot secret", w1: "PIZZA", w2: "PÂTES", n1: "Léa", n2: "Hugo", tv: "img/tv-vote-reveal-en.png" },
-  ar: { name: "مش أنا<b>!</b>", tag: "في حدا عم<br><span class=lie>يكذب.</span>", foot: "لعبة الكلمة السرّية للسهرات <b>عالتلفزيون</b>",
+  // es: draft for native review (es-ES / es-419 share it); no Spanish TV capture yet, the EN one stands in.
+  es: { name: "JAMAA", tag: "Alguien <span class=lie>miente.</span>", foot: "Juegos de fiesta en tu tele, <b>empezando por Mish Ana!</b>",
+        lbl: "Tu palabra secreta", w1: "PIZZA", w2: "PASTA", n1: "Lucía", n2: "Mateo", tv: "img/tv-vote-reveal-en.png" },
+  ar: { name: "جماعة", tag: "في حدا عم<br><span class=lie>يكذب.</span>", foot: "ألعاب سهرة عالتلفزيون، <b>وأوّلها «مش أنا!»</b>",
         lbl: "كلمتك السرّية", w1: "بيتزا", w2: "باستا", n1: "رامي", n2: "نور", tv: "img/tv-vote-reveal-ar.png", code: "EHSS" },
 };
 const lang = new URLSearchParams(location.search).get("lang") || "en";

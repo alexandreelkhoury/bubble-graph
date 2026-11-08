@@ -1,4 +1,6 @@
-# Mish Ana! — Data safety, content rating, target audience and other App content answers
+# JAMAA — Data safety, content rating, target audience and other App content answers
+
+**Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1, §4): these answers are for the new Play app **JAMAA** (`app.jamaa.tv`); "Mish Ana!" is its game #1. When billing ships (`BILLING_ENABLED`), the purchases are the **JAMAA Pass** subscription (`jamaa_pass`, base plans `monthly`/`yearly`, offer `trial-7d`) and one-time `pack_<family>` products (§1.B); no new data type is collected for the subscription. File paths below are at their renamed locations.
 
 Prepared 2026-10-04 from the code in `/home/alex/bubble-graph` (HEAD `672b09c`). All paths below are relative to that repo. Where to click: Play Console → your app → **Policy → App content** (direct: `https://play.google.com/console/u/0/developers/<DEV_ID>/app/<APP_ID>/app-content/overview`).
 
@@ -65,6 +67,8 @@ Notes:
 4. *Security practices section* (optional badges): "Independent security review" = No.
 
 ### 1.B Changes when Play Billing ships (do it in the same release)
+
+Products: the JAMAA Pass subscription and single packs (JAMAA-PLATFORM §4.1). The subscription adds no data type: its state (active, grace, hold, cancelled, expired) and expiry are stored with the same hashed records as a pack purchase.
 
 From `docs/PAYMENTS-SPEC.md` §6.3 (lines 1192-1216): the TV will create a random `installId` (stored in `jamaa_billing` prefs, excluded from backup), the server stores only `sha256(installId)` and hashed purchase tokens; it never stores names, emails, Google account ids, order ids, prices or IPs.
 

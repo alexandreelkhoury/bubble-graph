@@ -1,5 +1,7 @@
 # X: build-in-public thread + follow-ups
 
+> **Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1): the product is **JAMAA** (جماعة), the TV party-games app; **Mish Ana!** is its game #1. Product names, listing titles, search lines and end cards say JAMAA ("Search JAMAA on your TV"); lines about the game itself stay "Mish Ana!" (framed as "Mish Ana!, on JAMAA"), and the Remotion ids `MishAna-*` are kept. Some copy below predates the 2026-10-07 rule change (the Mole now gets no word; the Blank is gone): check it against `play-store/LISTING.md` before posting.
+
 Voice: one solo dev talking to other people who make things. Lowercase-ish, plain, no hype words, no "game-changer", no exclamation marks except inside the name. Every number here is checked against the repo (README.md, docs/DEV.md, `web-client` size check); do not add user, download or revenue numbers you don't have.
 
 Placeholders: `{{NAME}}`, `{{X_HANDLE}}`.
@@ -9,12 +11,12 @@ Play link: `https://play.jamaa.workers.dev/tv` (open on a laptop or TV browser; 
 
 | Asset | Use it? | Why |
 |---|---|---|
-| `/home/alex/jamaa-video/out/final/MishAna-16x9.mp4` (23.8 s) | Yes, **after a fix** | The last 1.4 s (from ~22.4 s) shows a button "Available on Google TV". That is not true yet. Either change `growth/video/src/Film.tsx:571` to "Play free in your browser" and re-render all three cuts, or trim: `ffmpeg -i MishAna-16x9.mp4 -t 22.3 -af "afade=t=out:st=21.3:d=1" -c:v libx264 -crf 18 -c:a aac MishAna-16x9-web.mp4` (same for `-9x16` and `-1x1`). |
+| `growth/video/out/final/MishAna-16x9.mp4` (23.8 s) | Yes, **after a fix** | The last 1.4 s (from ~22.4 s) shows a button "Available on Google TV". That is not true yet. Either change `growth/video/src/Film.tsx:571` to "Play free in your browser" and re-render all three cuts, or trim: `ffmpeg -i MishAna-16x9.mp4 -t 22.3 -af "afade=t=out:st=21.3:d=1" -c:v libx264 -crf 18 -c:a aac MishAna-16x9-web.mp4` (same for `-9x16` and `-1x1`). |
 | `MishAna-9x16.mp4`, `MishAna-1x1.mp4` | Yes, same fix | Same end card. 1x1 is the safest crop on X. |
-| Ads `MA-*.mp4` | **Not until the Play listing is live** | They end on an "Install on TV" card with a Google Play badge and "Or search 'Mish Ana' on your TV". Posting them now would promise something people can't do yet. |
+| Ads `MA-*.mp4` | **Not until the Play listing is live** | They end on an "Install on TV" card with a Google Play badge and "Or search 'JAMAA' on your TV" (since 2026-11-08). Posting them now would promise something people can't do yet. |
 | Landing screenshots `desktop-*`, `mobile-*` | Avoid for now | Every one shows a "Get it on Google TV" button and the landing site isn't deployed. `mobile-en-deal-mole.png` also says "You're the Mole!", which contradicts "the Mole isn't told" (it's the beginner-mode card) and will confuse people. |
 | `demo-en-pizza-held.png`, `demo-en-mole-held.png`, `demo-ar-pizza-held.png`, `demo-fr-*` | Yes | Clean phone cards: PIZZA vs PASTA, Arabic, French. Crop the "Deal again" button off if you like. |
-| `/home/alex/mishana-marketing/play-store/graphics/feature-graphic-1024x500.png` | Yes | Brand image, no store claim. |
+| `growth/marketing/play-store/graphics/feature-1024x500-en.png` | Yes | Brand image, no store claim. |
 | Your own screen recording of `/tv` + 2 phones | Strongly recommended | Real footage of the browser version beats any motion graphic for trust. 20–30 s, phone + laptop in one shot. |
 
 ---
@@ -28,7 +30,7 @@ Post on a weekday morning US Eastern or early afternoon Beirut time (LAUNCH-PLAN
 >
 > One of you has a slightly different secret word and doesn't know it.
 >
-> It's called Mish Ana! ("not me!" in Lebanese). You can play it tonight, free, in a browser. 🧵
+> It's called Mish Ana! ("not me!" in Lebanese), the first game on JAMAA. You can play it tonight, free, in a browser. 🧵
 
 Media: `MishAna-1x1.mp4` (fixed end card).
 Alt text: "Short animated film of the game. A TV shows a QR code and a room code, players join from their phones, everyone sees a secret word, they give one-word clues like Cheese, Slice, Oven, and a yellow OUT stamp lands on the player who was voted out."
@@ -84,8 +86,8 @@ Alt text: "Terminal output of the game simulator: rows for 3 to 12 players, each
 >
 > It's going into Google Play closed testing soon. Not live yet.
 
-Media: `/home/alex/mishana-marketing/play-store/graphics/feature-graphic-1024x500.png`.
-Alt text: "Mish Ana! logo, a pink speech bubble with an exclamation mark, and the line 'the secret-word party game for your TV'."
+Media: `growth/marketing/play-store/graphics/feature-1024x500-en.png`.
+Alt text: "The JAMAA logo, five smiling shapes around a lamp, and the line 'Party games for your TV, starting with Mish Ana!', next to a TV showing a vote and two phones with secret words."
 
 **8/ (Arabic)**
 > I'm a solo dev from Lebanon, so Arabic wasn't an afterthought: full right-to-left on the TV and on phones, plus Lebanese word packs.
@@ -168,11 +170,11 @@ Media: 10–15 s screen recording of an elimination with the sound on (record it
 Alt text: "A round ends: votes are revealed together on the TV, one player tile shakes, and a yellow OUT stamp lands on it with a thump."
 
 **Day +5: honest status**
-> Status check on Mish Ana!:
+> Status check on JAMAA (and Mish Ana!):
 > - browser version: playable now, free
 > - Android TV / Google TV app: going into Play closed testing
 > - next: [the one thing feedback asked for most]
 >
 > If you have a Google TV and want to test the app early, reply and I'll add you when testing opens.
 
-No media, or the TV banner `/home/alex/mishana-marketing/play-store/graphics/tv-banner-1280x720.png` (alt: "Mish Ana! TV banner with the logo on a dark purple background").
+No media, or the TV banner `growth/marketing/play-store/graphics/tv-banner-1280x720-en.png` (alt: "JAMAA TV banner: five smiling shapes around a lamp and the JAMAA wordmark on a dark purple background").

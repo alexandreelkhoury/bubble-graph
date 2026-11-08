@@ -1,4 +1,6 @@
-# Mish Ana! — Monetization & Payments Research
+# JAMAA — Monetization & Payments Research
+
+> **Rename and model update (2026-11-08).** The app is now **JAMAA**, a multi-game platform; "Mish Ana!" is its game #1 ([JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) §1). The product model is the **JAMAA Pass** subscription (`jamaa_pass`: base plans `monthly` and `yearly`, offer `trial-7d` on each) unlocking every pack of every game, plus one-time `pack_<family>` packs, all behind `BILLING_ENABLED` (JAMAA-PLATFORM §4, which supersedes the "v1 model" row below and PAYMENTS-SPEC revision 3). The research itself is unchanged; prices stay the owner's call, starting from the revision-2 recommendation (about US$4.99/month and US$29.99/year, roughly 40 % lower in LB and the Middle East).
 
 Status: research note, written 2026-10-04. Covers the Android TV / Google TV host app (Kotlin, Compose for TV), browser-only phone controllers, a Cloudflare Workers + Durable Objects backend, a developer based in Lebanon / France, and players in Lebanon, the Middle East and France.
 
@@ -14,7 +16,7 @@ Status: research note, written 2026-10-04. Covers the Android TV / Google TV hos
 | Can the TV app show a QR code that sends the user to a web page to pay? | **No, not in v1.** Outside the enrolled programs, steering users to another payment method is prohibited. A QR code is a link in effect. [G7] |
 | Play fee for a small developer | Rest of world (Lebanon/ME): 15% (15% tier) and 15% for subscriptions. US/EEA/UK new installs since 2026-06-30: 10% service fee **+ 5% billing fee** when Play Billing is used, so 15% in total. [G2][G3][G8] |
 | Can a Lebanon-based developer be a Play merchant? | Yes. Lebanon is a merchant country (snippet) and also a buyer country for paid apps (snippet). [G9][G10] |
-| v1 model | **Host-only, one-time Play Billing unlock** ("Mish Ana! Full", about US$4.99). Phones always play free. Optional extra word packs later. No subscription and no web checkout in v1. |
+| v1 model | **Current (2026-11-08, JAMAA-PLATFORM §4):** host-only **JAMAA Pass** subscription (monthly or yearly, 7-day free trial) unlocking every game's packs, plus one-time packs; every game stays free to play with starter content; phones always play free; no web checkout. *Original 2026-10-04 recommendation, superseded:* a one-time Play Billing unlock ("Mish Ana! Full", about US$4.99) and optional word packs, no subscription. |
 | v2 (Apple TV) | A SwiftUI tvOS host with StoreKit 2 non-consumable IAP (required by 3.1.1), plus the same server entitlement model. Enrol through a **French** entity. |
 
 ---
@@ -31,7 +33,7 @@ Status: research note, written 2026-10-04. Covers the Android TV / Google TV hos
 | Australia; Japan and South Korea | Billing choice rollout on 2026-09-30, then 2026-12-31. | — | [G6] (snippet) |
 | India, Indonesia, etc. | Legacy **user choice billing** (mobile/tablet). Not relevant to us. | No | [G14] (snippet) |
 
-**Bottom line for Mish Ana!:** our audience is Lebanon and the Middle East (legacy rules), plus France (EEA billing choice, but mobile/tablet only). So **Play Billing is the only safe rail on the TV app** until at least 2027-09-30, or until Google opens a program to TV.
+**Bottom line for JAMAA:** our audience is Lebanon and the Middle East (legacy rules), plus France (EEA billing choice, but mobile/tablet only). So **Play Billing is the only safe rail on the TV app** until at least 2027-09-30, or until Google opens a program to TV.
 
 ### 1.2 Service fees
 
@@ -154,7 +156,7 @@ Cron Trigger (daily) ──Voided Purchases API──▶ revoke refunded tokens
 ```
 
 - **The server is the source of truth.** Premium word lists live server-side and the RoomDO hands them out only when `room.premium`. A modded APK therefore cannot unlock content.
-- **Restore:** on each launch, `queryPurchasesAsync()` runs and the tokens are re-posted to `/play/verify`. This works on any TV signed into the same Google account. No Mish Ana! account is needed in v1. [G17]
+- **Restore:** on each launch, `queryPurchasesAsync()` runs and the tokens are re-posted to `/play/verify`. This works on any TV signed into the same Google account. No JAMAA account is needed in v1. [G17]
 - **RTDN / one-time products:** `ONE_TIME_PRODUCT_PURCHASED` and `ONE_TIME_PRODUCT_CANCELED`, then call `purchases.productsv2.getproductpurchasev2`. De-duplicate on `messageId`. [G18][G19]
 - **Short-lived JWT** (e.g. 7 days), refreshed on launch, so revocations take effect.
 - **v2 cross-platform:** add an optional account (e.g. email magic link) only when Apple TV ships. Map Play tokens and Apple `originalTransactionId` to the account. Under 3.1.3(b) Apple allows honouring a Play purchase if the same item is also sold as IAP on tvOS.

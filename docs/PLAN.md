@@ -1,4 +1,6 @@
-# PLAN — Mish Ana! (working title)
+# PLAN — JAMAA (game #1: Mish Ana!)
+
+> **2026-11-08:** the project is now **JAMAA**, a multi-game TV party platform, and "Mish Ana!" is its game #1. The platform plan, lanes and build order (P0 rename → P platform → G2–G4 games) are in [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) §6, which wins where it differs from this file on the brand, rooms, protocol, billing, content or the hub. This file stays the history of the Mish Ana! build (M1–M5).
 
 The decisions behind this plan and their sources are in [RESEARCH.md](RESEARCH.md).
 
@@ -137,14 +139,14 @@ Each milestone ends with tests and builds green, a short report, and ⛔ a stop 
 | Kotlin and TS protocol types drift apart | Shared JSON fixtures tested on both sides, and a version field `v` in every message |
 | Arabic word quality, sensitive pairs | Native-speaker review, `ageRating` labels, a family filter |
 | Play TV review rejection | Follow the TV-* checklist from M3 on; internal track first |
-| Name conflict or trademark | Formal searches before the M5 listing; the name is a single constant and asset set, so it's easy to change |
+| Name conflict or trademark | Formal searches before the M5 listing; the name is a single constant and asset set, so it's easy to change. **2026-11-08:** the platform name JAMAA still needs its own clearance (Play search, EUIPO/INPI, USPTO classes 9 and 41: JAMAA-PLATFORM §1.6 O9) |
 | Phones and TV on different networks or guest Wi-Fi in prod | Production goes through the cloud, so this only matters for LAN dev; documented |
 
 ## 8. Open questions (resolved 2026-10-03)
 All answered and approved. [SPEC.md](SPEC.md) records how each answer is implemented.
 1. **Win rule.** Resolved: Default is the **official** rule (infiltrators win when alive Civilians ≤ 1). **Parity** (infiltrators ≥ Civilians) is a setting (`winRule`).
 2. **Role secrecy.** Resolved: Roles are **hidden by default**: players see only their word, and the Blank knows it has no word. A **"beginner mode"** setting (`revealRoles`) shows roles.
-3. **Name.** Resolved: **Mish Ana!** (مش أنا!), kept in one constant and asset set (SPEC §3 `BRAND`, `Brand.kt`, `brand.*` keys, `/assets/brand/`).
+3. **Name.** Resolved: **Mish Ana!** (مش أنا!), kept in one constant and asset set (SPEC §3 `BRAND`, `Brand.kt`, `brand.*` keys, `/assets/brand/`). **Changed 2026-11-08:** the platform is **JAMAA** (جماعة) and Mish Ana! is its game #1 (JAMAA-PLATFORM §1); `BRAND` and `/assets/brand/` now hold JAMAA, the Mish Ana! art lives in `assets/games/mishana/`.
 4. **Production domain.** Resolved: `*.workers.dev` for now, configurable through `JOIN_BASE_URL` (and the TV's `jamaa.prodServerUrl`). A Cloudflare account is needed only for deploys; LAN dev works without one.
 5. **Hosting the phone client.** Resolved: Served as static assets by the same Worker (single origin).
 6. **TCL model.** Resolved: Unknown, so `docs/TV.md` documents both paths: `adb pair` (Android TV 13+, wireless debugging) and `adb tcpip 5555` (older models, USB once).

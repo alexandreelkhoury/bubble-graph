@@ -1,4 +1,6 @@
-# Mish Ana! — Veo 3.1 prompts for MA_A_H1 and MA_B_H1
+# JAMAA (game #1: Mish Ana!) — Veo 3.1 prompts for MA_A_H1 and MA_B_H1
+
+> **Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1): the product is **JAMAA** (جماعة), the TV party-games app; **Mish Ana!** is its game #1. Product names, listing titles, search lines and end cards say JAMAA ("Search JAMAA on your TV"); lines about the game itself stay "Mish Ana!" (framed as "Mish Ana!, on JAMAA"), and the Remotion ids `MishAna-*` are kept. Some copy below predates the 2026-10-07 rule change (the Mole now gets no word; the Blank is gone): check it against `play-store/LISTING.md` before posting.
 
 ## Rule change 2026-10-07 (read first)
 
@@ -43,7 +45,7 @@ Expected spend for one clean pass: **about 45 video generations, about 930 Flow 
 - Check that Flow is available in your country (Flow Help → "Where you can use Google Flow").
 
 ### 1.2 One-time project setup
-1. Open Flow → **New project** → name it `MishAna Ads R1`.
+1. Open Flow → **New project** → name it `Jamaa Ads R1`.
 2. Upload the reference stills from §2 (`LINA.png`, `SAMI.png`, `MAYA.png`, `OMAR.png`, `KARIM.png`, `ROOM.png`, plus the two start frames `A01_start.png` and `A02_start.png`). They stay in the project as assets.
 3. In the prompt box, make sure **Agent is off**. You want your prompt sent exactly as written.
 
@@ -70,7 +72,7 @@ In the prompt box, click the **model name** (it defaults to the image model, Nan
   - Ad-specific shots: `A_H1_shot01_take1.mp4`, `B_H1_shot04_take2.mp4`
   - Shared BODY-1 shots: `BODY_shot03_take1.mp4`
 - Rename the one take you choose per shot to end in `_PICK`, e.g. `A_H1_shot01_take3_PICK.mp4`. Keep the other takes.
-- **Drop everything into `/home/alex/jamaa-video/public/ai/`.** Put the reference stills in `/home/alex/jamaa-video/public/ai/refs/`.
+- **Drop everything into `growth/video/public/ai/`.** Put the reference stills in `growth/video/public/ai/refs/`.
 - Leave the clips untouched: no trims, no filters, no re-encoding. Veo outputs 24 fps; Remotion plays the clips inside the 60 fps composition. Don't speed-ramp AI clips in the edit, because ramps show the 24 fps judder.
 
 ### 1.6 Credit budget (Google AI Pro = 1,000 Flow credits a month; unused credits don't roll over)
@@ -488,7 +490,7 @@ Check each candidate take in this order and reject it at the first failure. Judg
 
 **Technical**
 - [ ] It's **9:16 portrait** (Flow defaults to landscape if you forget).
-- [ ] Downloaded at **1080p**, and the file is renamed per §1.5 and placed in `/home/alex/jamaa-video/public/ai/`.
+- [ ] Downloaded at **1080p**, and the file is renamed per §1.5 and placed in `growth/video/public/ai/`.
 - [ ] The usable window has no morphing at the cut points. Check the first and last frame of the window.
 - [ ] For A_H1_shot03 option A: the **lower third stays empty and soft** for the whole 2.7 s.
 

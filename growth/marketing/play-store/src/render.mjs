@@ -24,7 +24,7 @@ const flatten = (f, bg = "#1D1036") => execFileSync("convert", [f, "-background"
 
 const jobs = [];
 if (on("icon")) jobs.push({ src: url("icon.html"), out: "icon-512.png", w: 512, h: 512, alpha: true });
-for (const lang of ["en", "fr", "ar"]) {
+for (const lang of ["en", "fr", "ar", "es"]) {
   if (on("feature")) jobs.push({ src: url("feature-graphic.html", { lang }), out: `feature-1024x500-${lang}.png`, w: 1024, h: 500 });
   if (on("banner")) jobs.push({ src: url("tv-banner.html", { lang }), out: `tv-banner-1280x720-${lang}.png`, w: 1280, h: 720 });
 }

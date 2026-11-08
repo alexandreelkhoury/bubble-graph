@@ -1,4 +1,6 @@
-# Mish Ana! — Play Console release checklist (Android TV / Google TV)
+# JAMAA — Play Console release checklist (Android TV / Google TV)
+
+**Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1.6): this checklist is for the **new Play app "JAMAA"**, package `app.jamaa.tv` (owner step O4). Any draft for `app.mishana.tv` stays unpublished or is deleted; Play App Signing, products (O5: subscription `jamaa_pass` with base plans `monthly`/`yearly` and offer `trial-7d` on each, plus `pack_<family>`), license testers, service-account access and RTDN are set up again for the new app. The old builds `growth/marketing/release/mishana-tv-0.1.0-vc1.{aab,apk}` were built with the old package id: delete them and rebuild (O7). On test TVs, `adb uninstall app.mishana.tv` first.
 
 Prepared 2026-10-04 for package `app.jamaa.tv`. Ordered: do the steps top to bottom. Everything marked **YOU** is a manual action in a browser or terminal; nothing here was run, uploaded or signed. `{{…}}` = fill in.
 
@@ -34,10 +36,10 @@ So the public Google TV launch is **about 3–6 weeks away** at best. The App co
 | **B4** | Privacy policy not online | Required for every app, and the Worker's `/privacy` returns the phone app shell (HTTP 200, not a policy) | Publish PRIVACY-POLICY.md on the landing page `{{WEBSITE_URL}}/privacy` |
 | **B5** | TV screenshots not produced (icon, feature graphics and TV banners EN/FR/AR are ready in `graphics/`; screenshots are browser-TV placeholders) | ≥ 1 unaltered TV screenshot is mandatory (TV-G4); capture on the TV (design-v3 D4), then re-render | GRAPHICS-SPEC.md §5 |
 | B6 | Workers invocation logs decision | Keeps the privacy policy exact | DATA-SAFETY.md §0 "Uncertain item" |
-| B7 | Trademark / name searches not done | `docs/RESEARCH.md:115`: manual Play search + Lebanon MoET + WIPO (classes 9, 28, 41) before the listing | **YOU**, 1 hour: search Play for "Mish Ana"; WIPO Global Brand Database `https://branddb.wipo.int` |
+| B7 | Trademark / name searches not done | `docs/RESEARCH.md:115`: manual Play search + Lebanon MoET + WIPO (classes 9, 28, 41) before the listing | **YOU**, 1 hour: search Play for "JAMAA" (and "Jamaa", "جماعة"), plus EUIPO/INPI and USPTO for classes 9 and 41 (JAMAA-PLATFORM §1.6 O9); WIPO Global Brand Database `https://branddb.wipo.int` |
 | B8 | AR packs are `status: "draft"` (`word-packs/packs/ar/*.json`) | Quality, not policy | Owner review (PLAN §8 Q7) |
 
-Already OK (verified today): `minSdk 26` ≤ 31 (TV-PS); `targetSdk 36` ≥ 34 required for TV apps from 31 Aug 2026; leanback launcher intent + touchscreen not required (TV-ML, TV-MT, `AndroidManifest.xml:7-10,27-30`); 320×180 banner + adaptive icon (TV-LB/BN, `AndroidManifest.xml:14-15`); landscape; only the `INTERNET` permission; release server URL `https://play.jamaa.workers.dev` set (`tv-app/gradle.properties`) and live (`/healthz` → `{"ok":true,"app":"mish-ana","protocol":1}`); **TV-G6** 64-bit + 16 KB pages: the only native lib (`libandroidx.graphics.path.so`, from Compose) ships for arm64-v8a/x86_64 with 16 KB (0x4000) LOAD alignment (checked in the existing debug APK).
+Already OK (verified today): `minSdk 26` ≤ 31 (TV-PS); `targetSdk 36` ≥ 34 required for TV apps from 31 Aug 2026; leanback launcher intent + touchscreen not required (TV-ML, TV-MT, `AndroidManifest.xml:7-10,27-30`); 320×180 banner + adaptive icon (TV-LB/BN, `AndroidManifest.xml:14-15`); landscape; only the `INTERNET` permission; release server URL `https://play.jamaa.workers.dev` set (`tv-app/gradle.properties`) and live (`/healthz` → `{"ok":true,"app":"jamaa","protocol":…}` after the P0 redeploy (protocol 2 from milestone P)); **TV-G6** 64-bit + 16 KB pages: the only native lib (`libandroidx.graphics.path.so`, from Compose) ships for arm64-v8a/x86_64 with 16 KB (0x4000) LOAD alignment (checked in the existing debug APK).
 
 ---
 
@@ -47,14 +49,14 @@ Already OK (verified today): `minSdk 26` ≤ 31 (TV-PS); `targetSdk 36` ≥ 34 r
 0.2 Identity verification: legal name and address exactly as on your government ID; upload the ID; verify phone (OTP) and the developer contact email (OTP; it is shown on Google Play).
 0.3 **Verify an Android device**: install the **Google Play Console** app on an Android phone, sign in with the same account, and complete the device check shown on the Console dashboard (required for new personal accounts; a phone is enough, not the TV).
 0.4 Note the account creation date: if it is before 13 Nov 2023 the 12×14 rule doesn't apply.
-0.5 Console → **Settings (gear) → Developer account → Account details**: developer name shown on Play = `{{DEVELOPER_NAME}}` (e.g. "Mish Ana Games" or your name). It cannot contain "Google" or ranking claims.
-0.6 **EU Digital Services Act trader status** (Settings → Developer account → Account details → *Trader status*): with a free app and **no** in-app sales you can declare **not a trader**. When Premium/packs ship you become a trader and Play shows your name, address, phone and email to EU users → consider a business/domiciliation address first. Re-declare before the billing release.
+0.5 Console → **Settings (gear) → Developer account → Account details**: developer name shown on Play = `{{DEVELOPER_NAME}}` (e.g. "JAMAA Games" or your name). It cannot contain "Google" or ranking claims.
+0.6 **EU Digital Services Act trader status** (Settings → Developer account → Account details → *Trader status*): with a free app and **no** in-app sales you can declare **not a trader**. When the JAMAA Pass/packs ship you become a trader and Play shows your name, address, phone and email to EU users → consider a business/domiciliation address first. Re-declare before the billing release.
 0.7 (Billing later, not now) Settings → Payments profile, then Monetize setup → 15% service-fee tier enrolment.
 
 ## Step 1 — Create the app (**YOU**)
 
 1.1 **https://play.google.com/console** → **Home → Create app**.
-1.2 App name: `Mish Ana! Party Game for TV` (LISTING.md §1; you can edit it later in the store listing).
+1.2 App name: `JAMAA: Party Games for TV` (LISTING.md §1; you can edit it later in the store listing).
 1.3 Default language: **English (United States) – en-US**.
 1.4 App or game: **Game**. Free or paid: **Free** (a free app can still sell in-app products later; it can never become paid).
 1.5 Tick both declarations (Developer Program Policies, US export laws) → **Create app**.
@@ -99,45 +101,24 @@ New apps use **Play App Signing** by default: Google creates and keeps the **app
 ```sh
 mkdir -p ~/.jamaa-keys && chmod 700 ~/.jamaa-keys
 keytool -genkeypair -v \
-  -keystore ~/.jamaa-keys/mishana-upload.jks -storetype PKCS12 \
-  -alias mishana-upload -keyalg RSA -keysize 4096 -validity 10950 \
-  -dname "CN={{OWNER_NAME}}, O=Mish Ana, C={{COUNTRY_CODE e.g. LB or FR}}"
+  -keystore ~/.jamaa-keys/upload.jks -storetype PKCS12 \
+  -alias upload -keyalg RSA -keysize 4096 -validity 10950 \
+  -dname "CN={{OWNER_NAME}}, O=JAMAA, C={{COUNTRY_CODE e.g. LB or FR}}"
 # PKCS12: use the same password for the store and the key when prompted.
-chmod 600 ~/.jamaa-keys/mishana-upload.jks
-keytool -list -v -keystore ~/.jamaa-keys/mishana-upload.jks -alias mishana-upload | grep -E "SHA256|Valid"
+chmod 600 ~/.jamaa-keys/upload.jks
+keytool -list -v -keystore ~/.jamaa-keys/upload.jks -alias upload | grep -E "SHA256|Valid"
 ```
-Back it up now: the `.jks` file + password in a password manager and one offline copy. Never commit it. (If lost, Play App Signing lets you request an upload-key reset from the App signing page.)
+Back it up now: the `.jks` file + password in a password manager and one offline copy. Never commit it. (If lost, Play App Signing lets you request an upload-key reset from the App signing page.) If you already made a key under `~/.mishana-keys/` for the old package, move the folder to `~/.jamaa-keys/` (JAMAA-PLATFORM §1.4); the new Play app enrols Play App Signing fresh, so a new upload key is also fine.
 
-Credentials go in your **user-level** Gradle properties, not in the repo — `~/.gradle/gradle.properties`:
+### 5.3 Signing config (already in the build)
+`tv-app/app/build.gradle.kts` signs release builds when it finds a properties file (never committed): `-PsigningProps=/path/to/keystore.properties`, else `~/.jamaa-keys/keystore.properties` (see [docs/TV.md](../../../docs/TV.md) "Release signing"):
 ```properties
-mishana.upload.storeFile=/home/{{you}}/.jamaa-keys/mishana-upload.jks
-mishana.upload.storePassword={{password}}
-mishana.upload.keyAlias=mishana-upload
-mishana.upload.keyPassword={{same password}}
+storeFile=/home/{{you}}/.jamaa-keys/upload.jks
+storePassword={{password}}
+keyAlias=upload
+keyPassword={{same password}}
 ```
-(CI alternative: `ORG_GRADLE_PROJECT_mishana.upload.storeFile=…` etc. as secrets.)
-
-### 5.3 Gradle signing config the build needs (blocker B3; to be applied in the repo by its owner)
-In `tv-app/app/build.gradle.kts`, inside `android { … }`, **between `defaultConfig { … }` (ends line 30) and `buildTypes {` (line 32)** add:
-```kotlin
-    // Upload key for Play App Signing. Credentials come from ~/.gradle/gradle.properties (never from the repo).
-    val uploadStoreFile = providers.gradleProperty("mishana.upload.storeFile").orNull
-    signingConfigs {
-        if (uploadStoreFile != null) {
-            create("upload") {
-                storeFile = file(uploadStoreFile)
-                storePassword = providers.gradleProperty("mishana.upload.storePassword").get()
-                keyAlias = providers.gradleProperty("mishana.upload.keyAlias").get()
-                keyPassword = providers.gradleProperty("mishana.upload.keyPassword").get()
-            }
-        }
-    }
-```
-and inside `buildTypes { release { … } }` (line 33) add one line:
-```kotlin
-            signingConfig = signingConfigs.findByName("upload") // null → unsigned bundle (Play will reject it)
-```
-Nothing else in the file changes. The existing `preReleaseBuild` guard (`build.gradle.kts:71-84`) already enforces the production URL: `jamaa.prodServerUrl=https://play.jamaa.workers.dev` is set in `tv-app/gradle.properties`, so no `-PserverUrl` is needed; the build log must print `Mish Ana! release server URL: https://play.jamaa.workers.dev`.
+Without the file the bundle is unsigned and Play rejects it. The `preReleaseBuild` guard enforces the production URL: `jamaa.prodServerUrl=https://play.jamaa.workers.dev` is set in `tv-app/gradle.properties` (after owner step O1), so no `-PserverUrl` is needed; the build log prints `JAMAA release server URL: https://play.jamaa.workers.dev`.
 
 ### 5.4 versionCode / versionName plan
 `defaultConfig` currently has `versionCode = 1`, `versionName = "0.1.0"` (`build.gradle.kts:27-28`). Play rejects any upload whose versionCode was used before **in any track**. Bump `versionCode` by 1 for **every new AAB** you build (promoting the same AAB between tracks needs no bump).
@@ -163,9 +144,9 @@ keytool -printcert -jarfile app/build/outputs/bundle/release/app-release.aab | h
 # bundletool: https://github.com/google/bundletool/releases  (java -jar bundletool-all-<ver>.jar …)
 adb connect <tv-ip>:<port>      # docs/TV.md "Real TV"
 java -jar bundletool-all.jar build-apks --bundle=app/build/outputs/bundle/release/app-release.aab \
-  --output=/tmp/mishana.apks --connected-device \
-  --ks=$HOME/.jamaa-keys/mishana-upload.jks --ks-key-alias=mishana-upload
-java -jar bundletool-all.jar install-apks --apks=/tmp/mishana.apks
+  --output=/tmp/jamaa.apks --connected-device \
+  --ks=$HOME/.jamaa-keys/upload.jks --ks-key-alias=upload
+java -jar bundletool-all.jar install-apks --apks=/tmp/jamaa.apks
 adb shell am start -n app.jamaa.tv/.MainActivity
 ```
 Play a full 4-phone game with the remote only; check Back from the lobby returns to the TV home screen (TV-DB), nothing is clipped (TV-OV), the app appears in the **Games** row after B1 (TV-LG).
@@ -174,19 +155,19 @@ Play a full 4-phone game with the remote only; check Back from the lobby returns
 
 6.1 **Test and release → Testing → Internal testing → Testers** → create an email list (you + 2–3 people) → copy the **opt-in link**.
 6.2 **Create new release** → accept Play App Signing (step 5.1) → upload `app-release.aab` (versionCode 1) → release name `0.1.0 (1)` → release notes: paste the block from LISTING.md "Release notes in Play Console's multi-language paste format" → **Next → Save → Start rollout to Internal testing**.
-6.3 On your TV: open the opt-in link on a phone/computer logged into the same Google account → *Accept* → open the Play Store on the TV → search "Mish Ana" or use play.google.com → *Install* → choose the TV.
+6.3 On your TV: open the opt-in link on a phone/computer logged into the same Google account → *Accept* → open the Play Store on the TV → search "JAMAA" or use play.google.com → *Install* → choose the TV.
 Internal testing does **not** count toward the 12×14 requirement.
 
 ## Step 7 — Closed testing: the 12 testers × 14 days gate
 
 7.1 **Test and release → Testing → Closed testing → Create track** (or use the default "Closed testing - Alpha") → **Manage track**.
-7.2 **Testers** tab → *Email lists* (paste ≥ 15 Gmail addresses) **or** *Google Groups* (create `mishana-testers@googlegroups.com`, recommended: people join themselves) → **Feedback URL or email**: `{{SUPPORT_EMAIL}}` → Save → copy the **opt-in link** ("Join on the web").
+7.2 **Testers** tab → *Email lists* (paste ≥ 15 Gmail addresses) **or** *Google Groups* (create `jamaa-testers@googlegroups.com`, recommended: people join themselves) → **Feedback URL or email**: `{{SUPPORT_EMAIL}}` → Save → copy the **opt-in link** ("Join on the web").
 7.3 **Countries/regions** tab → add Lebanon, France and every country where testers live.
 7.4 **Releases** → **Create new release** → *Add from library* → pick versionCode 1 (promote, no rebuild) → release notes → **Next → Save → Send for review / Start rollout to Closed testing**. The first closed release is reviewed by Google (hours to a few days).
 7.5 Send testers: the opt-in link + "Accept, then install on your Google TV from the Play Store (same Google account), keep it installed and stay opted in for at least 14 days, and host at least one game." Day 1 = the day the 12th tester opted in.
 7.6 Track progress on **Dashboard** ("Production access" card shows testers opted in / days).
 7.7 Ship fixes during the test as new AABs (versionCode 2, 3…) to the same closed track; testers stay opted in.
-7.8 **License testers (Premium and packs for free):** Setup → **License testing** → add **your own Gmail** and every tester's Gmail → License response `RESPOND_NORMALLY` → Save. Do it **before** anyone opens the Store: a license tester sees "Test card, always approves" in the purchase sheet and is never charged (this works in test tracks; **not** in production [VERIFY on the License testing page]). A test purchase of a one-time product (lifetime `premium`, a pack) stays owned until you refund it in Order management, so license testing is for trying the flows (PAYMENTS-SPEC §8.E: buy, pending, refund, restore), **not** for your own lasting access. For that, use the admin grant: `pnpm grant <TV install id> --note owner` (docs/DEV.md → "Owner: free Premium + every pack on every device"). Billing must be switched on on the server first (docs/BILLING-LAUNCH.md phase 3), otherwise the TV shows no Store.
+7.8 **License testers (JAMAA Pass and packs for free):** Setup → **License testing** → add **your own Gmail** and every tester's Gmail → License response `RESPOND_NORMALLY` → Save. Do it **before** anyone opens the Store: a license tester sees "Test card, always approves" in the purchase sheet and is never charged (this works in test tracks; **not** in production [VERIFY on the License testing page]). A test purchase of a one-time product (lifetime `premium`, a pack) stays owned until you refund it in Order management, so license testing is for trying the flows (PAYMENTS-SPEC §8.E: buy, pending, refund, restore), **not** for your own lasting access. For that, use the admin grant: `pnpm grant <TV install id> --note owner` (docs/DEV.md → "Owner: free Premium + every pack on every device"). Billing must be switched on on the server first (docs/BILLING-LAUNCH.md phase 3), otherwise the TV shows no Store.
 
 ## Step 8 — Apply for production (**YOU**, after day 14)
 

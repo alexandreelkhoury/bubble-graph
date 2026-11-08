@@ -1,5 +1,7 @@
 # Listings: AlternativeTo, Product Hunt, Indie Hackers, itch.io, YouTube
 
+> **Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1): the product is **JAMAA** (جماعة), the TV party-games app; **Mish Ana!** is its game #1. Product names, listing titles, search lines and end cards say JAMAA ("Search JAMAA on your TV"); lines about the game itself stay "Mish Ana!" (framed as "Mish Ana!, on JAMAA"), and the Remotion ids `MishAna-*` are kept. Some copy below predates the 2026-10-07 rule change (the Mole now gets no word; the Blank is gone): check it against `play-store/LISTING.md` before posting.
+
 Paste-ready. Same facts everywhere, checked against README.md and docs/DEV.md. Status wording to keep consistent across every listing:
 
 > Playable now, free, in any browser. The Android TV / Google TV app is in Google Play testing and not public yet.
@@ -17,14 +19,14 @@ Where: alternativeto.net → sign in with a verified email → add a new app. Pe
 
 **Name**
 ```
-Mish Ana!
+JAMAA
 ```
 
 **Website**
 ```
 https://play.jamaa.workers.dev/tv
 ```
-(Swap to the landing page when `mishana-site` is deployed; keep the `/tv` link in the description.)
+(Swap to the landing page `https://www.jamaa.workers.dev` (`growth/site`) once it is deployed; keep the `/tv` link in the description.)
 
 **Short description / tagline**
 ```
@@ -67,7 +69,7 @@ If you do launch before the Play app is public, present the browser version as t
 
 **Name**
 ```
-Mish Ana!
+JAMAA
 ```
 
 **Tagline** (PH limit: 60 characters)
@@ -94,19 +96,19 @@ Everyone gets a secret word on their phone. One player's is slightly different a
 5. **"Arabic, French, English"**: `demo-ar-pizza-held.png`, `demo-fr-pizza-held.png`, `demo-en-pizza-held.png` in a row.
 6. **"Built with"**: simple card listing TV: Kotlin + Compose for TV · Phones: Preact web page · Server: Cloudflare Worker + Durable Objects.
 
-**Thumbnail**: `app-icon-512.png` from `/home/alex/mishana-marketing/play-store/graphics/` (square, 240×240 recommended, under 3 MB).
+**Thumbnail**: `icon-512.png` from `growth/marketing/play-store/graphics/` (the JAMAA icon) (square, 240×240 recommended, under 3 MB).
 
 **Maker's first comment**
 ```
 Hi Product Hunt, I'm {{NAME}}, a solo dev from Lebanon.
 
-Mish Ana! means "not me!" in Lebanese, which is what everyone says when they're accused in this game.
+JAMAA (ja-MAA) means "the gang, the gathering" in Arabic: party games for the whole room on one TV. Its first game, Mish Ana!, means "not me!" in Lebanese, which is what everyone says when they're accused in it.
 
 It's a secret-word social-deduction game for groups. Everyone gets a word on their own phone, one person (the Mole) has a slightly different word and doesn't know it, and you find them through one-word clues and a vote. The TV is the shared screen, phones are the controllers, and nobody installs anything on their phone: they scan a QR code.
 
 What's real today:
 - The browser version is free and playable now: open play.jamaa.workers.dev/tv on a laptop or smart-TV browser and have everyone scan the QR. 3 to 12 players.
-- The Android TV / Google TV app: [after Play release] "is on Google Play now: search Mish Ana on your TV or install it from the Play website onto your TV." [before] "is going through Google Play testing. It's not public yet."
+- The Android TV / Google TV app: [after Play release] "is on Google Play now: search JAMAA on your TV or install it from the Play website onto your TV." [before] "is going through Google Play testing. It's not public yet."
 - English, French and Arabic, with right-to-left Arabic and Lebanese word packs.
 
 For the builders here: the server is a Cloudflare Worker with one Durable Object per room, the rules are a pure TypeScript engine that a simulator hammers with 200 bot games per player count, and the phone page is about 53 KB gzipped.
@@ -132,7 +134,7 @@ Alternative: `Solo dev from Lebanon: shipped a browser version first while the A
 
 **Body**
 ```
-Hi IH, I'm {{NAME}}, a solo developer from Lebanon. I've been building Mish Ana! ("not me!" in Lebanese), a secret-word party game where the TV is the shared screen and everyone plays from their own phone.
+Hi IH, I'm {{NAME}}, a solo developer from Lebanon. I've been building JAMAA, a party-games app for the TV, and its first game, Mish Ana! ("not me!" in Lebanese), a secret-word party game where the TV is the shared screen and everyone plays from their own phone.
 
 **The game in 20 seconds**
 Everyone gets a secret word on their phone. One player, the Mole, gets a slightly different word (PIZZA vs PASTA) and isn't told. Players give one-word clues, vote on their phones, and the TV reveals who's out. 3 to 12 players. English, French and Arabic.
@@ -166,7 +168,7 @@ If you have a group and a screen, try a round and tell me what broke or felt slo
 
 itch hosts HTML5 games as an uploaded ZIP with an `index.html` (https://itch.io/docs/creators/html5). Link-only pages are discouraged and can be removed from browse/search (https://itch.io/docs/creators/quality-guidelines), so upload a tiny `index.html` that embeds the TV page in a full-size iframe (`<iframe src="https://play.jamaa.workers.dev/tv" allow="fullscreen; autoplay; screen-wake-lock" style="border:0;width:100%;height:100%">`). **Blocker found 2026-10-04:** `https://play.jamaa.workers.dev/tv` sends `Content-Security-Policy: … frame-ancestors 'none'`, so it cannot be embedded on itch today. Options: (a) allow itch's game hosts in `frame-ancestors` for the `/tv` route only (itch serves HTML5 games from `*.itch.zone` / `*.hwcdn.net`; check the exact host in your browser's dev tools on your own uploaded page) and keep `'none'` for phone pages; or (b) skip itch until then. Don't publish a link-only page. After (a), test: the QR inside the iframe must still point to `play.jamaa.workers.dev`, sound must start after a click, and fullscreen must work. A page gets indexed only once it's public, has a cover image and is playable (https://itch.io/docs/creators/getting-indexed).
 
-- **Title**: `Mish Ana!`
+- **Title**: `JAMAA: Mish Ana!` (the game page; the developer/brand is JAMAA)
 - **Short description**: `A secret-word party game for 3–12 players. One screen, everyone plays on their phone.`
 - **Kind**: HTML · "This file will be played in the browser" · viewport 1280×720, fullscreen button on.
 - **Pricing**: No payments (or "donate" off; HTML5 games can only take donations anyway).
@@ -195,9 +197,9 @@ Upload the fixed 16:9 film (end card says "Play free in your browser" or is trim
 
 **Title** (keep the important part in the first ~60 characters; longer titles get cut in search results)
 ```
-Mish Ana! – secret-word party game for your TV, free in your browser
+Mish Ana! on JAMAA – secret-word party game for your TV, free in your browser
 ```
-Shorter alternative: `Mish Ana! | Secret-word party game for TV and phones`
+Shorter alternative: `Mish Ana! on JAMAA | Secret-word party game for TV`
 
 **Description**
 ```

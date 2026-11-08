@@ -1,5 +1,7 @@
 # Reddit posts (+ Show HN)
 
+> **Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1): the product is **JAMAA** (جماعة), the TV party-games app; **Mish Ana!** is its game #1. Product names, listing titles, search lines and end cards say JAMAA ("Search JAMAA on your TV"); lines about the game itself stay "Mish Ana!" (framed as "Mish Ana!, on JAMAA"), and the Remotion ids `MishAna-*` are kept. Some copy below predates the 2026-10-07 rule change (the Mole now gets no word; the Blank is gone): check it against `play-store/LISTING.md` before posting.
+
 One post per community, each with a different angle. Rules and sources are in LAUNCH-PLAN.md §2. Read the live rules page of each sub on the day you post: the research couldn't load Reddit directly (Reddit blocks automated fetches), so the rules here come from dated archives and rule-mirror sites.
 
 Placeholders: `{{NAME}}`, `{{X_HANDLE}}`.
@@ -28,7 +30,7 @@ I built a party game where the TV is the board and everyone's phone holds a secr
 ```
 **Body:**
 ```
-Hi, I'm a solo dev from Lebanon. This is Mish Ana! ("not me!" in Lebanese), a secret-word party game for 3 to 12 people.
+Hi, I'm a solo dev from Lebanon. This is Mish Ana! ("not me!" in Lebanese), a secret-word party game for 3 to 12 people, and the first game of my TV party-games app, JAMAA.
 
 How a round goes: everyone scans a QR code on the big screen and gets a word on their own phone, say PIZZA. One player, the Mole, gets PASTA and isn't told. In bigger groups a Blank gets no word at all. You go around giving one-word clues, vote on your phones, and the TV reveals who's out.
 
@@ -227,7 +229,7 @@ Comment right after: "I'm the dev. You need at least 3 people with phones in the
 
 Rules: title starts with `[DEV]`, 1 promo post per 30 days, promo under 10% of your activity, account 1+ month old with 50+ karma in the sub, Play Store link preferred, never an APK link. Don't post until the Play listing is live.
 ```
-[DEV] Mish Ana! – a free party game for Android TV: the TV is the board, everyone plays from their phone
+[DEV] JAMAA – free party games for Android TV, starting with Mish Ana!: the TV is the board, everyone plays from their phone
 ```
 
 ---
@@ -238,7 +240,7 @@ Not Reddit, but the same "posts" pile. HN restricted Show HN posts from new acco
 
 **Title** (no "!", no superlatives; HN strips them anyway):
 ```
-Show HN: Mish Ana – a party game on your TV, phones join by QR, no install
+Show HN: JAMAA – party games on your TV, phones join by QR, no install
 ```
 Alternative (tech-first):
 ```
@@ -249,7 +251,7 @@ Show HN: A party game where each room is a Cloudflare Durable Object
 
 **Text (first comment, posted right after submitting):**
 ```
-Hi HN, I'm a solo dev from Lebanon. Mish Ana! ("not me!") is a secret-word social-deduction game: everyone gets a word on their phone, one player gets a slightly different one and doesn't know it, and you find them through one-word clues and a vote. The TV (or any browser tab on a big screen) is the shared board.
+Hi HN, I'm a solo dev from Lebanon. JAMAA is a party-games app for the TV; its first game, Mish Ana! ("not me!"), is a secret-word social-deduction game: everyone gets a word on their phone, one player gets a slightly different one and doesn't know it, and you find them through one-word clues and a vote. The TV (or any browser tab on a big screen) is the shared board.
 
 To try it you need a screen and at least 3 phones: open the link, everyone scans the QR. No account.
 

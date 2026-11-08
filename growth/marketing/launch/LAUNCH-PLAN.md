@@ -1,4 +1,6 @@
-# Mish Ana! launch plan (browser version first)
+# JAMAA launch plan (browser version first; game #1: Mish Ana!)
+
+> **Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1): the product is **JAMAA** (جماعة), the TV party-games app; **Mish Ana!** is its game #1. Product names, listing titles, search lines and end cards say JAMAA ("Search JAMAA on your TV"); lines about the game itself stay "Mish Ana!" (framed as "Mish Ana!, on JAMAA"), and the Remotion ids `MishAna-*` are kept. Some copy below predates the 2026-10-07 rule change (the Mole now gets no word; the Blank is gone): check it against `play-store/LISTING.md` before posting.
 
 Prepared 2026-10-04. Companion files: `X-THREAD.md`, `REDDIT-POSTS.md`, `LISTINGS.md`.
 
@@ -13,9 +15,9 @@ Prepared 2026-10-04. Companion files: `X-THREAD.md`, `REDDIT-POSTS.md`, `LISTING
 | # | Problem | Where | Fix |
 |---|---|---|---|
 | 1 | The film's last ~1.4 s shows a button **"Available on Google TV"**. Not true yet | `growth/video/src/Film.tsx:571` → `MishAna-16x9/9x16/1x1.mp4` | Change the text to "Play free in your browser" and re-render, or trim at 22.3 s (command in X-THREAD.md) |
-| 2 | The six ads `MA-*.mp4` end on an "Install on TV" card with a Google Play badge and "Or search 'Mish Ana' on your TV" | `growth/video/src/ads/EndCard.tsx` | Don't post them until the Play listing is public |
-| 3 | Every landing screenshot shows "Get it on Google TV"; `mobile-en-deal-mole.png` shows "You're the Mole!" (beginner-mode card), which contradicts "the Mole isn't told" | `/home/alex/mishana-site-screens/` | Use the `demo-*` phone cards and your own `/tv` screenshots instead |
-| 4 | The landing site isn't deployed (`/home/alex/mishana-site/wrangler.jsonc`: "NOT deployed yet") and its main button is "Get it on Google TV" | `mishana-site` | Before deploying: make "Try it now in your browser" the primary button and label the Google TV one "Coming soon". A real homepage is what Google and AI assistants can describe; the `/tv` app page has no readable text for them |
+| 2 | The six ads `MA-*.mp4` end on an "Install on TV" card with a Google Play badge and "Or search 'JAMAA' on your TV" (since 2026-11-08) | `growth/video/src/ads/EndCard.tsx` | Don't post them until the Play listing is public |
+| 3 | Every landing screenshot shows "Get it on Google TV"; `mobile-en-deal-mole.png` shows "You're the Mole!" (beginner-mode card), which contradicts "the Mole isn't told" | the old landing screenshots | Use the `demo-*` phone cards and your own `/tv` screenshots instead |
+| 4 | The landing site isn't deployed (`growth/site/wrangler.jsonc`) and its main button is "Get it on Google TV" | `growth/site` | Before deploying: make "Try it now in your browser" the primary button and label the Google TV one "Coming soon". A real homepage is what Google and AI assistants can describe; the `/tv` app page has no readable text for them |
 | 5 | `/tv` sends `frame-ancestors 'none'`, so it can't be embedded on itch.io | server CSP | Only matters for itch (LISTINGS.md §4). Optional |
 | 6 | The phone page is **~53 KB gzipped** (52.55 KB on today's build), not 49 KB | `web-client/scripts/check-size.mjs` | All copy here says "about 53 KB". Keep it that way unless you shrink it |
 | 7 | Decide your one-line honest answer to "did you use AI?" | REDDIT-POSTS.md FAQ | Several subs restrict AI content (see §2). Answer before you post, not in the comments |
@@ -158,7 +160,7 @@ What the data says (cite these, don't overclaim):
 | X | Thread | Little search value; mostly reach and relationships |
 | Landing site (once deployed) | The page you control | The page assistants and Google need to describe what the game *is*. Add plain text (what, players, languages, price, status), FAQ, and VideoGame/SoftwareApplication structured data |
 
-**Consistency rule** (so search engines and assistants connect the pages to one thing): always the same name `Mish Ana!` + the same one-liner, "a secret-word party game for your TV; phones are the controllers, no app needed", + the same facts (3–12 players, EN/FR/AR, free). Link every profile and listing back to the same URL (the landing page once deployed, the `/tv` link until then).
+**Consistency rule** (so search engines and assistants connect the pages to one thing): always the same name `JAMAA` for the app (`Mish Ana!` for game #1) + the same one-liner, "party games for your TV; phones are the controllers, no app needed" (game: "a secret-word party game"), + the same facts (3–12 players, EN/FR/AR/ES, free). Link every profile and listing back to the same URL (the landing page once deployed, the `/tv` link until then).
 
 ---
 

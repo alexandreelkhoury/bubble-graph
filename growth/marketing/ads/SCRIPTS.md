@@ -1,4 +1,6 @@
-# Mish Ana! (مش أنا) — Paid Social Ad Scripts
+# JAMAA — Paid Social Ad Scripts (game #1: Mish Ana! / مش أنا)
+
+> **Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1): the product is **JAMAA** (جماعة), the TV party-games app; **Mish Ana!** is its game #1. Product names, listing titles, search lines and end cards say JAMAA ("Search JAMAA on your TV"); lines about the game itself stay "Mish Ana!" (framed as "Mish Ana!, on JAMAA"), and the Remotion ids `MishAna-*` are kept. Some copy below predates the 2026-10-07 rule change (the Mole now gets no word; the Blank is gone): check it against `play-store/LISTING.md` before posting.
 
 ## Rule change 2026-10-07 (read first; overrides the game-accuracy and word-pair rules below)
 
@@ -179,14 +181,14 @@ Every ad ends on this. People watch ads on their phone, so this card shows the p
 | 0.0–0.8 | `PhoneFrame` 620 px wide, centered at y 860, springs up from the bottom (SNAPPY). Screen: the real Play Store listing on a phone | "Install it from your phone" | `click` |
 | 0.8–1.8 | Real recording: tap the install button, pick the TV in the device list (exact labels as recorded). A magenta check draws on the TV row (edit graphic) | "Pick your TV" | `tick`, `pop_a` |
 | 1.8–2.6 | Real recording: the install starts | — | `swoosh_short` |
-| 2.6–4.0 | Pull back: the phone shrinks to the bottom-left, and a TV mockup (900 px wide, y 520) lights up with the real Mish Ana! lobby + QR. Below it: logo + wordmark, the official **Get it on Google Play** badge (unaltered), and two lines: "Free to play · Android TV & Google TV" and, smaller, "Or search “Mish Ana” on your TV" | "Free on Android TV & Google TV" | `sparkle`, `bass_hit` on the logo |
+| 2.6–4.0 | Pull back: the phone shrinks to the bottom-left, and a TV mockup (900 px wide, y 520) lights up with the real Mish Ana! lobby + QR. Below it: the JAMAA logo + wordmark, the official **Get it on Google Play** badge (unaltered), and two lines: "Free to play · Android TV & Google TV" and, smaller, "Or search “Mish Ana” on your TV" | "Free on Android TV & Google TV" | `sparkle`, `bass_hit` on the logo |
 
 Until the app is live, don't run ads (see section 5). For the motion ads that ship before the recording exists, keep the phone screen abstract (icon + "Install on your TV" in brand type, no Play Store look-alike), then swap in the recording.
 
 Standard CTA lines (adjust per script where noted):
-- **EN:** "Install it from your phone, straight to your TV. Free." + small line "Or search “Mish Ana” on your TV"
-- **FR:** « Installe-le depuis ton téléphone, direct sur ta télé. Gratuit. » + « Ou cherche “Mish Ana” sur ta télé »
-- **AR:** «نزّلها من تلفونك عالتلفزيون، ببلاش.» + «أو دوّر على "Mish Ana" عالتلفزيون»
+- **EN:** "Install it from your phone, straight to your TV. Free." + small line "Or search “JAMAA” on your TV"
+- **FR:** « Installe-le depuis ton téléphone, direct sur ta télé. Gratuit. » + « Ou cherche “JAMAA” sur ta télé »
+- **AR:** «نزّلها من تلفونك عالتلفزيون، ببلاش.» + «أو دوّر على "جماعة" أو "JAMAA" عالتلفزيون»
 
 ---
 
@@ -203,7 +205,7 @@ Standard CTA lines (adjust per script where noted):
 | 3.0–3.8 | MOTION | Fast rewind: the frame scrubs backward with an amber "2 MINUTES EARLIER" chip | "2 minutes earlier" | — | `whoosh_fast` reversed |
 | 3.8–13.3 | BODY-1 | — | — | — | — |
 | 13.3–16.0 | FILMED S3-02 | Insert, filmed during the clue round: Sami's thumb holds his card to the lens: **PASTA** (real screen). Group groans over it | "Everyone had PIZZA. He had **PASTA**." | group: "Nooo" | `wrong` |
-| 16.0–20.0 | EC | — | — | Host VO: "Mish Ana. Free on your TV." | `bass_hit` |
+| 16.0–20.0 | EC | — | — | Host VO: "Mish Ana!, on JAMAA. Free on your TV." | `bass_hit` |
 
 - **FR hook:** « C'ÉTAIT TOI ?! » · reveal line « Tout le monde avait PIZZA. Lui, PÂTES. » · **FR CTA:** standard
 - **AR hook:** «ولك إنتَ؟! طلعت إنتَ!» · reveal line «كلّن معن بيتزا… وهوّي معو برغر.» · **AR CTA:** standard
@@ -365,7 +367,7 @@ Standard CTA lines (adjust per script where noted):
 |---|---|---|---|---|---|
 | 0.0–0.6 | FILMED S6-01 + MOTION screen replace | OTS with remote. The TV is replaced in post with generic grey tiles whip-scrolling (no real app logos) | "Looking for a fun game for your TV?" | Host VO: "Looking for a game for your TV?" | `tick` ×3 |
 | 0.6–1.5 | same | Click. The screen snaps to the real Mish Ana! lobby with QR | "**Here's one.**" | VO: "Here's one." | `click`, `bass_hit` |
-| 1.5–4.5 | FILMED S6-02 | Host turns to camera, waist-up, lobby on the TV behind | "Mish Ana! · 3 to 12 players" | Host: "It's called Mish Ana. Everyone plays on their own phone." | bed in |
+| 1.5–4.5 | FILMED S6-02 | Host turns to camera, waist-up, lobby on the TV behind | "Mish Ana! · 3 to 12 players" | Host: "It's called Mish Ana!, on JAMAA. Everyone plays on their own phone." | bed in |
 | 4.5–14.0 | BODY-1 | — | — | — | — |
 | 14.0–16.0 | FILMED S6-02b | Host to camera | "No controllers. Free." | Host: "No controllers, and it's free." | — |
 | 16.0–20.0 | EC | — | — | VO: "Install it from your phone, straight to your TV." | — |
@@ -565,7 +567,7 @@ Film it at night, keep it respectful, and show no eating outside iftar. Don't ad
 
 ### Before the evening
 - **Signed releases from everyone who appears**, collected before filming. A one-page form is enough: name, signature, date, and "I allow [your company] to use video/photos/voice of me in paid advertising on social media and the web, worldwide, for [24 months / unlimited], without payment." Anyone under 18 needs a parent or guardian signature. Better still, keep minors out of the ads entirely, except as background in the family scenes with guardian consent.
-- **Room prep:** remove anything with a brand (logo hoodies, posters, snack packaging, consoles with logos). Clear any alcohol off the table and out of shot. The TV may only show Mish Ana! or a plain screen, never a show, a match, or another app.
+- **Room prep:** remove anything with a brand (logo hoodies, posters, snack packaging, consoles with logos). Clear any alcohol off the table and out of shot. The TV may only show JAMAA / Mish Ana! or a plain screen, never a show, a match, or another app.
 - **Brand light:** put one cheap RGB LED strip behind the TV set to magenta (#FF3D8B is close to preset "pink"), plus one warm lamp (amber) beside the couch. That gives you the brand palette for free.
 - **Props:** 6 phones with the game ready and the screens cleaned; a pile of controllers, cables and dongles for S3-05 (borrowed is fine, logos taped over); a remote; snacks in plain bowls; a hoodie for S5-08.
 - **Phones (cameras):** 2 phones that are **not** players. **Cam A** on a tripod or shelf for locked wide shots, **Cam B** handheld for close-ups and POV.
@@ -772,7 +774,7 @@ Why it works: Sami's "Fork" is a red herring and Karim's "Sauce" fits both words
 - [ ] Keep text and key action out of the **top ~150 px** (account/status UI), the **bottom ~300 px** (caption, CTA button, music ticker) and the **right ~120 px** (like/comment/share rail). Also keep about 60 px from the left edge.
 - [ ] Build a Remotion guide overlay (toggleable, never rendered) showing these zones and check every frame of the hook.
 - [ ] The hook's caption is on screen from frame 1 (thumbnails and autoplay previews start there).
-- [ ] Arabic captions: right-to-left (`direction: rtl`), Cairo font, keep Latin words (Mish Ana, Arabizi chat) as isolated runs. The platform UI rail stays on the right in Arabic too, so the same safe zones apply.
+- [ ] Arabic captions: right-to-left (`direction: rtl`), Cairo font, keep Latin words (JAMAA, Mish Ana, Arabizi chat) as isolated runs. The platform UI rail stays on the right in Arabic too, so the same safe zones apply.
 - [ ] Export H.264, 1080×1920, 30 or 60 fps, AAC 48 kHz, under 500 MB. Length 15–20 s.
 - [ ] TikTok ad text ≤ 100 characters. Check emoji rendering in the Ads Manager preview before launch.
 - [ ] Ad text examples (EN): "Everyone gets a secret word. One of you has a different one. Free on Android TV & Google TV." / "Scan the TV, play on your phone. 3–12 players. Free to play." / "No controllers. No app on your phone. Just your TV and your friends."

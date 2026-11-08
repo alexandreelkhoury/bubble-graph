@@ -1,4 +1,6 @@
-# Creative review — Mish Ana! ad scripts (v1 → v2)
+# Creative review — JAMAA ad scripts for game #1, Mish Ana! (v1 → v2)
+
+> **Rename 2026-11-08** ([docs/JAMAA-PLATFORM.md](../../../docs/JAMAA-PLATFORM.md) §1): the product is **JAMAA** (جماعة), the TV party-games app; **Mish Ana!** is its game #1. Product names, listing titles, search lines and end cards say JAMAA ("Search JAMAA on your TV"); lines about the game itself stay "Mish Ana!" (framed as "Mish Ana!, on JAMAA"), and the Remotion ids `MishAna-*` are kept. Some copy below predates the 2026-10-07 rule change (the Mole now gets no word; the Blank is gone): check it against `play-store/LISTING.md` before posting.
 
 Reviewed 2026-10-04 against the game repo (`bubble-graph/README.md`, `docs/SPEC.md`, `docs/DESIGN.md`, `shared/i18n/*.json`, `word-packs/`). Sections 1, 2, 3 and 5 of `SCRIPTS.md` are rewritten in place. Section 4 is untouched; notes on it are below.
 
