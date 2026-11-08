@@ -6,6 +6,7 @@
 import { signal } from "@preact/signals";
 import { INPUT_GUARD_MS } from "@jamaa/shared/constants";
 import type { GameId } from "@jamaa/shared/games/ids";
+import type { RoomPhase } from "@jamaa/shared/room";
 import { BRAND } from "@jamaa/shared/brand";
 import type { Run } from "../motion/runner";
 import { readRaw, removeRaw, writeRaw } from "../lib/storage";
@@ -62,3 +63,12 @@ const introKey = (id: GameId): string => `${BRAND.storagePrefix}:tv:introSeen:${
 export function tvIntroSeen(id: GameId): boolean { return readRaw(introKey(id)) === "1"; }
 export function markTvIntroSeen(id: GameId): void { writeRaw(introKey(id), "1"); }
 export function clearTvIntroFlags(ids: readonly GameId[]): void { for (const id of ids) removeRaw(introKey(id)); }
+
+/** Which transition a room phase change plays on /tv (§3.10): A portal / reverse portal, B entrance, else the guard. */
+export function transitionFor(prev: RoomPhase | null, next: RoomPhase): "portal" | "back" | "entrance" | "guard" | null {
+  if (prev === null || prev === next) return null;
+  if (prev === "HUB" && next === "SETUP") return "portal";
+  if (prev === "SETUP" && next === "HUB") return "back";
+  if (prev === "SETUP" && next === "PLAYING") return "entrance";
+  return "guard";
+}

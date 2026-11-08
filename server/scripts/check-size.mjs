@@ -9,6 +9,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { Buffer } from "node:buffer";
 import { gzipSync } from "node:zlib";
 
 const KB = 1024;
@@ -18,9 +19,12 @@ export const UPLOAD_GZ_BUDGET = 3 * KB * KB;
 
 /** Pure check over the dist listing (exported for tests): returns the report lines and whether every budget holds. */
 export function checkSizes(files) {
+  files = files.map((f) => ({ ...f, bytes: Buffer.from(f.bytes) }));
   const js = files.find((f) => f.name === "index.js");
   if (!js) return { ok: false, lines: ["dist/index.js not found"] };
-  const mods = files.filter((f) => f.name.endsWith(".txt"));
+  // wrangler never cleans --outdir, so modules of earlier builds linger: count only those this script imports.
+  const code = js.bytes.toString("latin1");
+  const mods = files.filter((f) => f.name.endsWith(".txt") && code.includes(f.name));
   const contentRaw = mods.reduce((n, f) => n + f.bytes.length, 0);
   const jsGz = gzipSync(js.bytes, { level: 9 }).length;
   const uploadGz = jsGz + mods.reduce((n, f) => n + gzipSync(f.bytes, { level: 9 }).length, 0);

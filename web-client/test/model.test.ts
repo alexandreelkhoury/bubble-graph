@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { PublicPlayer } from "../src/games/mishana/view";
+import { MISHANA_META } from "@jamaa/shared/games/mishana/meta";
+const DEFAULT_SETTINGS = { ...MISHANA_META.settings.defaults, wordLocale: "en" as const };
 import { afterElimination, competitionRank, culprits, hadUndercover, newForfeits, orderWindow, rankPlayers, tiedWithTally, topVoted, winnerMessage } from "../src/games/mishana/lib";
 import { ellipsizeName, graphemeCount } from "../src/lib/names";
 import { nearest } from "../src/tv-mock/dpad";

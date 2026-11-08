@@ -29,7 +29,7 @@ import { Closed, ConnStates, Fatal, usePresenceToasts } from "./tvStatus";
 import { isBackKey, useDpad } from "./dpad";
 import { useRemoteSounds, soundCue } from "./sound/controller";
 import { inGameOk } from "./tvParts";
-import { applyInputRule, armGuard } from "./tvPlatform";
+import { applyInputRule, armGuard, transitionFor } from "./tvPlatform";
 import { calm } from "../lib/motion";
 import { registerIcons } from "../components/Icon";
 import { TV_ICONS } from "../components/iconsTv";
@@ -73,15 +73,6 @@ type Tr =
   | { kind: "portal"; id: GameId; from: Box | null; first: boolean; handed: boolean; hub: TvRoomView }
   | { kind: "back"; id: GameId }
   | { kind: "entrance"; id: GameId };
-
-/** Which transition a phase change plays (§3.10). Pure. */
-export function transitionFor(prev: RoomPhase | null, next: RoomPhase): "portal" | "back" | "entrance" | "guard" | null {
-  if (prev === null || prev === next) return null;
-  if (prev === "HUB" && next === "SETUP") return "portal";
-  if (prev === "SETUP" && next === "HUB") return "back";
-  if (prev === "SETUP" && next === "PLAYING") return "entrance";
-  return "guard";
-}
 
 export function TvMock() {
   const box = useCanvasBox();
