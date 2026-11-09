@@ -1,0 +1,14 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "102",
+  "a": {
+    "type": "UPDATE_GAME_SETTINGS",
+    "gameId": "trivia",
+    "patch": {
+      "quizId": "demo-quiz-01",
+      "length": "short",
+      "pace": "normal"
+    }
+  }
+}

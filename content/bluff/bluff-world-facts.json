@@ -1,0 +1,3273 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-world-facts",
+  "game": "bluff",
+  "title": {
+    "en": "Impossible but True",
+    "fr": "Impossible mais vrai",
+    "ar": "مستحيل بس صحيح",
+    "es": "Imposible pero cierto"
+  },
+  "description": {
+    "en": "Real facts that sound made up. Write a lie that sounds truer than the truth.",
+    "fr": "Des faits réels qui ont l'air inventés. Écris un mensonge plus crédible que la vérité.",
+    "ar": "معلومات حقيقية بتسمعها بتقول مألّفة. اكتب كذبة بتنصدّق أكتر من الحقيقة.",
+    "es": "Datos reales que parecen inventados. Escribe una mentira más creíble que la verdad."
+  },
+  "sourceLocale": "en",
+  "playableIn": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {
+    "fact_blank": {
+      "en": [
+        "Socks",
+        "A small horse",
+        "Purple",
+        "Seventeen",
+        "The Romans"
+      ],
+      "fr": [
+        "Des chaussettes",
+        "Un petit cheval",
+        "Violet",
+        "Dix-sept",
+        "Les Romains"
+      ],
+      "ar": [
+        "كلسات",
+        "حصان زغير",
+        "بنفسجي",
+        "سبعتعش",
+        "الرومان"
+      ],
+      "es": [
+        "Calcetines",
+        "Un caballo pequeño",
+        "Morado",
+        "Diecisiete",
+        "Los romanos"
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "wf-001",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Wombat droppings are shaped like ___",
+        "translit": null,
+        "display": {
+          "fr": "Les crottes de wombat ont la forme de ___",
+          "ar": "فضلات حيوان الومبات شكلها ___",
+          "es": "Las cacas del wombat tienen forma de ___"
+        }
+      },
+      "truth": {
+        "en": "Cubes",
+        "fr": "Cubes",
+        "ar": "مكعبات",
+        "es": "Cubos"
+      },
+      "truthAlt": {
+        "en": [
+          "Cube",
+          "Little cubes",
+          "Squares"
+        ],
+        "fr": [
+          "Des cubes",
+          "Petits cubes",
+          "Carrés"
+        ],
+        "ar": [
+          "مكعب",
+          "مربعات"
+        ],
+        "es": [
+          "Cubo",
+          "Cubitos",
+          "Cuadrados"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Tiny stars",
+          "Perfect marbles",
+          "Little hearts"
+        ],
+        "fr": [
+          "Petites étoiles",
+          "Billes parfaites",
+          "Petits cœurs"
+        ],
+        "ar": [
+          "نجوم زغار",
+          "طابات مدورة",
+          "قلوب زغار"
+        ],
+        "es": [
+          "Estrellitas",
+          "Canicas perfectas",
+          "Corazoncitos"
+        ]
+      },
+      "note": {
+        "en": "Their intestines mould the corners, which helps the poo stay put on rocks",
+        "fr": "Leur intestin façonne les angles : les crottes ne roulent pas des rochers",
+        "ar": "الأمعاء بتعمل الزوايا، فما بتتدحرج عن الصخر",
+        "es": "Su intestino moldea las esquinas: así no ruedan de las rocas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Yang et al., Soft Matter 2021, Intestines of non-uniform stiffness mold the corners of wombat feces ; Ig Nobel Physics 2019"
+      }
+    },
+    {
+      "id": "wf-002",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "An octopus has ___ hearts",
+        "translit": null,
+        "display": {
+          "fr": "Une pieuvre a ___ cœurs",
+          "ar": "الأخطبوط عندو ___ قلوب",
+          "es": "Un pulpo tiene ___ corazones"
+        }
+      },
+      "truth": {
+        "en": "Three",
+        "fr": "Trois",
+        "ar": "تلاتة",
+        "es": "Tres"
+      },
+      "truthAlt": {
+        "en": [
+          "3"
+        ],
+        "fr": [
+          "3"
+        ],
+        "ar": [
+          "3",
+          "تلات",
+          "ثلاثة"
+        ],
+        "es": [
+          "3"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Two",
+          "Eight",
+          "Five"
+        ],
+        "fr": [
+          "Deux",
+          "Huit",
+          "Cinq"
+        ],
+        "ar": [
+          "تنين",
+          "تمانية",
+          "خمسة"
+        ],
+        "es": [
+          "Dos",
+          "Ocho",
+          "Cinco"
+        ]
+      },
+      "note": {
+        "en": "Two pump blood to the gills, one to the rest of the body",
+        "fr": "Deux pour les branchies, un pour le reste du corps",
+        "ar": "تنين للخياشيم وواحد لباقي الجسم",
+        "es": "Dos para las branquias y uno para el resto del cuerpo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Smithsonian Ocean, Octopuses ; NOAA Ocean Service"
+      }
+    },
+    {
+      "id": "wf-003",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Scotland's official national animal is the ___",
+        "translit": null,
+        "display": {
+          "fr": "L'animal national officiel de l'Écosse est ___",
+          "ar": "الحيوان الوطني الرسمي لاسكتلندا هو ___",
+          "es": "El animal nacional oficial de Escocia es ___"
+        }
+      },
+      "truth": {
+        "en": "Unicorn",
+        "fr": "La licorne",
+        "ar": "اليونيكورن",
+        "es": "El unicornio"
+      },
+      "truthAlt": {
+        "en": [
+          "The unicorn",
+          "A unicorn"
+        ],
+        "fr": [
+          "Licorne",
+          "Une licorne"
+        ],
+        "ar": [
+          "يونيكورن",
+          "الحصان أبو قرن",
+          "وحيد القرن"
+        ],
+        "es": [
+          "Unicornio",
+          "Un unicornio"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Red deer",
+          "Golden eagle",
+          "Highland cow"
+        ],
+        "fr": [
+          "Le cerf",
+          "L'aigle royal",
+          "La vache des Highlands"
+        ],
+        "ar": [
+          "الغزال الأحمر",
+          "النسر الذهبي",
+          "بقرة الهايلاندز"
+        ],
+        "es": [
+          "El ciervo rojo",
+          "El águila real",
+          "La vaca de las Highlands"
+        ]
+      },
+      "note": {
+        "en": "It has been a Scottish heraldic symbol since the 1300s",
+        "fr": "Symbole héraldique écossais depuis le XIVe siècle",
+        "ar": "رمز اسكتلندي من القرن الرابع عشر",
+        "es": "Es símbolo heráldico escocés desde el siglo XIV"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Scottish Government / VisitScotland, national symbols of Scotland ; [native review] wording"
+      }
+    },
+    {
+      "id": "wf-004",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "On Venus, a single day lasts longer than a ___",
+        "translit": null,
+        "display": {
+          "fr": "Sur Vénus, une seule journée dure plus longtemps qu'___",
+          "ar": "عكوكب الزهرة، النهار الواحد أطول من ___",
+          "es": "En Venus, un solo día dura más que ___"
+        }
+      },
+      "truth": {
+        "en": "Year",
+        "fr": "Une année",
+        "ar": "السنة",
+        "es": "Un año"
+      },
+      "truthAlt": {
+        "en": [
+          "A year",
+          "Venus year"
+        ],
+        "fr": [
+          "Un an",
+          "Année"
+        ],
+        "ar": [
+          "سنة",
+          "سنة كاملة"
+        ],
+        "es": [
+          "Año",
+          "Un año entero"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Human lifetime",
+          "Summer on Earth",
+          "School term"
+        ],
+        "fr": [
+          "Une vie humaine",
+          "Un été sur Terre",
+          "Un trimestre scolaire"
+        ],
+        "ar": [
+          "عمر الإنسان",
+          "صيفية عالأرض",
+          "فصل مدرسي"
+        ],
+        "es": [
+          "Una vida humana",
+          "Un verano en la Tierra",
+          "Un trimestre escolar"
+        ]
+      },
+      "note": {
+        "en": "A Venus day (243 Earth days) outlasts its year (225)",
+        "fr": "Un jour vénusien (243 jours) dure plus qu'une année (225)",
+        "ar": "يوم الزهرة 243 يوم أرضي، وسنتها 225",
+        "es": "Un día en Venus (243 días) dura más que su año (225)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] NASA Science, Venus facts (rotation ~243 Earth days, orbit ~225)"
+      }
+    },
+    {
+      "id": "wf-005",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "The University of Oxford is older than the ___ Empire",
+        "translit": null,
+        "display": {
+          "fr": "L'université d'Oxford est plus ancienne que l'Empire ___",
+          "ar": "جامعة أكسفورد أقدم من الإمبراطورية ___",
+          "es": "La Universidad de Oxford es más antigua que el Imperio ___"
+        }
+      },
+      "truth": {
+        "en": "Aztec",
+        "fr": "Aztèque",
+        "ar": "الأزتيكية",
+        "es": "Azteca"
+      },
+      "truthAlt": {
+        "en": [
+          "The aztec empire"
+        ],
+        "fr": [
+          "Aztec",
+          "Des aztèques"
+        ],
+        "ar": [
+          "الازتيك",
+          "الأزتكية"
+        ],
+        "es": [
+          "Los aztecas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Roman",
+          "Byzantine",
+          "Persian"
+        ],
+        "fr": [
+          "Romain",
+          "Byzantin",
+          "Perse"
+        ],
+        "ar": [
+          "الرومانية",
+          "البيزنطية",
+          "الفارسية"
+        ],
+        "es": [
+          "Romano",
+          "Bizantino",
+          "Persa"
+        ]
+      },
+      "note": {
+        "en": "Teaching at Oxford existed by 1096, Tenochtitlan was founded around 1325",
+        "fr": "On enseignait à Oxford dès 1096 ; Tenochtitlan date d'environ 1325",
+        "ar": "التعليم بأكسفورد بلش سنة 1096، وتينوتشتيتلان تأسست حوالي 1325",
+        "es": "En Oxford ya se enseñaba en 1096 ; Tenochtitlan se fundó hacia 1325"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] ox.ac.uk, History of the University (teaching from 1096) ; Britannica, Tenochtitlan (c. 1325)"
+      }
+    },
+    {
+      "id": "wf-006",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Butterflies taste their food with their ___",
+        "translit": null,
+        "display": {
+          "fr": "Les papillons goûtent leur nourriture avec leurs ___",
+          "ar": "الفراشات بتدوق أكلها بـ___",
+          "es": "Las mariposas saborean la comida con ___"
+        }
+      },
+      "truth": {
+        "en": "Feet",
+        "fr": "Pattes",
+        "ar": "إجريها",
+        "es": "Las patas"
+      },
+      "truthAlt": {
+        "en": [
+          "Legs",
+          "Their feet"
+        ],
+        "fr": [
+          "Pieds",
+          "Les pattes"
+        ],
+        "ar": [
+          "اجريها",
+          "رجليها",
+          "الإجرين"
+        ],
+        "es": [
+          "Patas",
+          "Los pies"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Wings",
+          "Eyes",
+          "Tails"
+        ],
+        "fr": [
+          "Ailes",
+          "Yeux",
+          "Écailles"
+        ],
+        "ar": [
+          "جوانحها",
+          "عيونها",
+          "ذنبها"
+        ],
+        "es": [
+          "Las alas",
+          "Los ojos",
+          "La cola"
+        ]
+      },
+      "note": {
+        "en": "Taste sensors on their feet tell them if a leaf is good to lay eggs on",
+        "fr": "Des capteurs sur leurs pattes leur disent si une feuille est bonne",
+        "ar": "عندها حساسات طعم بإجريها",
+        "es": "Tienen sensores de sabor en las patas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Natural History Museum (London) or Smithsonian, how butterflies taste"
+      }
+    },
+    {
+      "id": "wf-007",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The word robot comes from a Czech word meaning ___",
+        "translit": null,
+        "display": {
+          "fr": "Le mot robot vient d'un mot tchèque qui veut dire ___",
+          "ar": "كلمة روبوت جاية من كلمة تشيكية معناها ___",
+          "es": "La palabra robot viene de una palabra checa que significa ___"
+        }
+      },
+      "truth": {
+        "en": "Forced labour",
+        "fr": "Travail forcé",
+        "ar": "الشغل بالسخرة",
+        "es": "Trabajo forzado"
+      },
+      "truthAlt": {
+        "en": [
+          "Forced labor",
+          "Drudgery",
+          "Hard work",
+          "Servitude"
+        ],
+        "fr": [
+          "Corvée",
+          "Servitude",
+          "Travail pénible"
+        ],
+        "ar": [
+          "السخرة",
+          "شغل بالسخرة",
+          "الشغل الإجباري"
+        ],
+        "es": [
+          "Trabajo forzoso",
+          "Servidumbre",
+          "Trabajo pesado"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Tin man",
+          "Obedient friend",
+          "Thinking machine"
+        ],
+        "fr": [
+          "Homme de fer",
+          "Ami obéissant",
+          "Machine qui pense"
+        ],
+        "ar": [
+          "رجل التنك",
+          "الصاحب المطيع",
+          "الآلة اللي بتفكر"
+        ],
+        "es": [
+          "Hombre de hojalata",
+          "Amigo obediente",
+          "Máquina que piensa"
+        ]
+      },
+      "note": {
+        "en": "Coined for Karel Capek's 1920 play R.U.R.",
+        "fr": "Inventé pour la pièce R.U.R. de Karel Capek (1920)",
+        "ar": "من مسرحية كاريل تشابيك R.U.R. سنة 1920",
+        "es": "Se creó para la obra R.U.R. de Karel Capek (1920)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Merriam-Webster, etymology of robot ; Capek, R.U.R. (1920)"
+      }
+    },
+    {
+      "id": "wf-008",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "To change calendars in 1752, Britain simply skipped ___ days",
+        "translit": null,
+        "display": {
+          "fr": "Pour changer de calendrier en 1752, la Grande-Bretagne a sauté ___ jours",
+          "ar": "سنة 1752، بريطانيا شطبت ___ يوم لتغير الروزنامة",
+          "es": "Para cambiar de calendario en 1752, Gran Bretaña se saltó ___ días"
+        }
+      },
+      "truth": {
+        "en": "Eleven",
+        "fr": "Onze",
+        "ar": "حداعش",
+        "es": "Once"
+      },
+      "truthAlt": {
+        "en": [
+          "11"
+        ],
+        "fr": [
+          "11"
+        ],
+        "ar": [
+          "11",
+          "احدعش",
+          "إحدى عشر"
+        ],
+        "es": [
+          "11"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Three",
+          "Seven",
+          "Thirty"
+        ],
+        "fr": [
+          "Trois",
+          "Sept",
+          "Trente"
+        ],
+        "ar": [
+          "تلات",
+          "سبعة",
+          "تلاتين"
+        ],
+        "es": [
+          "Tres",
+          "Siete",
+          "Treinta"
+        ]
+      },
+      "note": {
+        "en": "2 September was followed by 14 September",
+        "fr": "Le 2 septembre a été suivi du 14 septembre",
+        "ar": "بعد 2 أيلول إجا 14 أيلول",
+        "es": "Al 2 de septiembre le siguió el 14 de septiembre"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Royal Museums Greenwich, Calendar (New Style) Act 1750"
+      }
+    },
+    {
+      "id": "wf-009",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "From east to west, Australia is wider than the ___",
+        "translit": null,
+        "display": {
+          "fr": "D'est en ouest, l'Australie est plus large que ___",
+          "ar": "من الشرق للغرب، أستراليا أعرض من ___",
+          "es": "De este a oeste, Australia es más ancha que ___"
+        }
+      },
+      "truth": {
+        "en": "Moon",
+        "fr": "La Lune",
+        "ar": "القمر",
+        "es": "La Luna"
+      },
+      "truthAlt": {
+        "en": [
+          "The moon"
+        ],
+        "fr": [
+          "Lune"
+        ],
+        "ar": [
+          "قمر"
+        ],
+        "es": [
+          "Luna"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sahara",
+          "Atlantic Ocean",
+          "Planet Mars"
+        ],
+        "fr": [
+          "Le Sahara",
+          "L'océan Atlantique",
+          "La planète Mars"
+        ],
+        "ar": [
+          "الصحرا الكبرى",
+          "المحيط الأطلسي",
+          "كوكب المريخ"
+        ],
+        "es": [
+          "El Sáhara",
+          "El océano Atlántico",
+          "El planeta Marte"
+        ]
+      },
+      "note": {
+        "en": "Mainland Australia is about 4,000 km wide, the Moon about 3,474 km across",
+        "fr": "L'Australie fait environ 4 000 km de large, la Lune 3 474 km",
+        "ar": "عرض أستراليا حوالي 4000 كلم، وقطر القمر 3474 كلم",
+        "es": "Australia mide unos 4000 km de ancho, la Luna 3474 km"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] NASA Moon facts (diameter ~3,474 km) ; Geoscience Australia (mainland ~4,000 km east-west). House lies checked: all wider than Australia"
+      }
+    },
+    {
+      "id": "wf-010",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Bubble wrap was first sold as ___",
+        "translit": null,
+        "display": {
+          "fr": "Le papier bulle a d'abord été vendu comme ___",
+          "ar": "النايلون أبو الفقاقيع انباع بالأول كـ___",
+          "es": "El plástico de burbujas se vendió primero como ___"
+        }
+      },
+      "truth": {
+        "en": "Wallpaper",
+        "fr": "Papier peint",
+        "ar": "ورق جدران",
+        "es": "Papel pintado"
+      },
+      "truthAlt": {
+        "en": [
+          "Textured wallpaper"
+        ],
+        "fr": [
+          "Du papier peint"
+        ],
+        "ar": [
+          "ورق حيطان",
+          "ورق للحيط"
+        ],
+        "es": [
+          "Papel de pared"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A pool float",
+          "A raincoat",
+          "A camping mattress"
+        ],
+        "fr": [
+          "Bouée de piscine",
+          "Imperméable",
+          "Matelas de camping"
+        ],
+        "ar": [
+          "عوامة مسبح",
+          "كبوت شتي",
+          "فرشة تخييم"
+        ],
+        "es": [
+          "Flotador de piscina",
+          "Impermeable",
+          "Colchón de camping"
+        ]
+      },
+      "note": {
+        "en": "Its inventors tried wallpaper and greenhouse insulation before packaging",
+        "fr": "Ses inventeurs voulaient en faire du papier peint",
+        "ar": "المخترعين كانوا بدهن ياه ورق حيطان",
+        "es": "Sus inventores querían venderlo como papel pintado"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Smithsonian Magazine, history of Bubble Wrap (Fielding and Chavannes, 1957) ; Sealed Air history ; [native review] AR name"
+      }
+    },
+    {
+      "id": "wf-011",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Sea otters sometimes sleep holding ___",
+        "translit": null,
+        "display": {
+          "fr": "Les loutres de mer dorment parfois en se tenant ___",
+          "ar": "قضاعات البحر أحياناً بتنام وهيي ماسكة ___",
+          "es": "Las nutrias marinas a veces duermen tomadas de ___"
+        }
+      },
+      "truth": {
+        "en": "Hands",
+        "fr": "La main",
+        "ar": "إيدين بعض",
+        "es": "La mano"
+      },
+      "truthAlt": {
+        "en": [
+          "Paws",
+          "Each other's paws",
+          "Each other's hands"
+        ],
+        "fr": [
+          "Les mains",
+          "Les pattes",
+          "Par la patte"
+        ],
+        "ar": [
+          "ايدين بعض",
+          "إيد بعض",
+          "الإيدين"
+        ],
+        "es": [
+          "Las manos",
+          "Las patas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Their tails",
+          "Their noses",
+          "A fish"
+        ],
+        "fr": [
+          "La queue",
+          "Le nez",
+          "Un poisson"
+        ],
+        "ar": [
+          "ذنبها",
+          "مناخيرها",
+          "سمكة"
+        ],
+        "es": [
+          "La cola",
+          "La nariz",
+          "Un pez"
+        ]
+      },
+      "note": {
+        "en": "Holding paws keeps them from drifting apart while they float",
+        "fr": "Elles se tiennent pour ne pas dériver en dormant",
+        "ar": "بيمسكوا إيدين بعض لحتى ما يبعدوا عن بعض",
+        "es": "Se agarran para no separarse mientras flotan"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Monterey Bay Aquarium, sea otter FAQ. Avoid seaweed or rock as lies (both true habits) ; [native review] animal name"
+      }
+    },
+    {
+      "id": "wf-012",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Koala fingerprints are almost impossible to tell apart from ___",
+        "translit": null,
+        "display": {
+          "fr": "Les empreintes digitales du koala sont presque impossibles à distinguer de celles ___",
+          "ar": "بصمات أصابع الكوالا تقريباً مستحيل تفرقها عن بصمات ___",
+          "es": "Las huellas dactilares del koala son casi imposibles de distinguir de las ___"
+        }
+      },
+      "truth": {
+        "en": "Human ones",
+        "fr": "Des humains",
+        "ar": "البشر",
+        "es": "Humanas"
+      },
+      "truthAlt": {
+        "en": [
+          "Humans",
+          "Human fingerprints",
+          "People's"
+        ],
+        "fr": [
+          "Humains",
+          "Des hommes",
+          "Humaines"
+        ],
+        "ar": [
+          "الإنسان",
+          "الناس",
+          "بني آدم"
+        ],
+        "es": [
+          "De los humanos",
+          "De las personas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Kangaroo ones",
+          "Panda ones",
+          "Lion ones"
+        ],
+        "fr": [
+          "Des kangourous",
+          "Des pandas",
+          "Des lions"
+        ],
+        "ar": [
+          "الكنغر",
+          "الباندا",
+          "الأسد"
+        ],
+        "es": [
+          "Del canguro",
+          "Del panda",
+          "Del león"
+        ]
+      },
+      "note": {
+        "en": "Even under a microscope the ridges look alike",
+        "fr": "Même au microscope, les crêtes se ressemblent",
+        "ar": "حتى تحت المجهر بيتشابهوا",
+        "es": "Incluso al microscopio se parecen"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Henneberg, Lambert & Leigh, Fingerprint homoplasy: koalas and humans, Nature 1996"
+      }
+    },
+    {
+      "id": "wf-013",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Before rubber erasers, people rubbed out pencil marks with ___",
+        "translit": null,
+        "display": {
+          "fr": "Avant la gomme, on effaçait le crayon avec de la ___",
+          "ar": "قبل الممحاية، كانوا يمحوا قلم الرصاص بـ___",
+          "es": "Antes de la goma de borrar, el lápiz se borraba con ___"
+        }
+      },
+      "truth": {
+        "en": "Bread",
+        "fr": "Mie de pain",
+        "ar": "الخبز",
+        "es": "Miga de pan"
+      },
+      "truthAlt": {
+        "en": [
+          "Breadcrumbs",
+          "Stale bread",
+          "Bread crumbs"
+        ],
+        "fr": [
+          "Pain",
+          "Du pain",
+          "Pain rassis"
+        ],
+        "ar": [
+          "خبز",
+          "لب الخبز",
+          "خبز يابس"
+        ],
+        "es": [
+          "Pan",
+          "Pan duro",
+          "Migas de pan"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Candle wax",
+          "Lemon juice",
+          "Sand"
+        ],
+        "fr": [
+          "Cire de bougie",
+          "Jus de citron",
+          "Sable"
+        ],
+        "ar": [
+          "شمع",
+          "عصير حامض",
+          "رمل"
+        ],
+        "es": [
+          "Cera de vela",
+          "Zumo de limón",
+          "Arena"
+        ]
+      },
+      "note": {
+        "en": "Damp bread did the job until rubber erasers arrived around 1770",
+        "fr": "La mie de pain humide faisait l'affaire jusqu'aux gommes vers 1770",
+        "ar": "الخبز الطري كان يمحي لحد ما طلعت الممحاية حوالي سنة 1770",
+        "es": "El pan húmedo hacía el trabajo hasta que llegó la goma, hacia 1770"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Science Museum Group / Britannica, eraser (Priestley and Nairne, 1770; bread used before)"
+      }
+    },
+    {
+      "id": "wf-014",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In summer heat, the Eiffel Tower can grow by up to ___",
+        "translit": null,
+        "display": {
+          "fr": "Avec la chaleur de l'été, la tour Eiffel peut grandir jusqu'à ___",
+          "ar": "بحر الصيف، برج إيفل فيه يطول لحد ___",
+          "es": "Con el calor del verano, la torre Eiffel puede crecer hasta ___"
+        }
+      },
+      "truth": {
+        "en": "15 centimetres",
+        "fr": "15 centimètres",
+        "ar": "15 سنتيمتر",
+        "es": "15 centímetros"
+      },
+      "truthAlt": {
+        "en": [
+          "15 cm",
+          "Fifteen centimetres",
+          "15 centimeters",
+          "Six inches"
+        ],
+        "fr": [
+          "15 cm",
+          "Quinze centimètres"
+        ],
+        "ar": [
+          "15 سم",
+          "خمسطعش سنتي",
+          "15 سنتي"
+        ],
+        "es": [
+          "15 cm",
+          "Quince centímetros"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "One metre",
+          "Two metres",
+          "Half a metre"
+        ],
+        "fr": [
+          "Un mètre",
+          "Deux mètres",
+          "Un demi-mètre"
+        ],
+        "ar": [
+          "متر",
+          "مترين",
+          "نص متر"
+        ],
+        "es": [
+          "Un metro",
+          "Dos metros",
+          "Medio metro"
+        ]
+      },
+      "note": {
+        "en": "The iron expands in the heat",
+        "fr": "Le fer se dilate à la chaleur",
+        "ar": "الحديد بيتمدد مع الشوب",
+        "es": "El hierro se dilata con el calor"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] toureiffel.paris official site, thermal expansion figure (check: up to 15 cm)"
+      }
+    },
+    {
+      "id": "wf-015",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Flamingos get their pink colour from ___",
+        "translit": null,
+        "display": {
+          "fr": "Les flamants roses doivent leur couleur à ___",
+          "ar": "طير الفلامنغو بيطلع زهري بسبب ___",
+          "es": "Los flamencos deben su color rosa a ___"
+        }
+      },
+      "truth": {
+        "en": "What they eat",
+        "fr": "Ce qu'ils mangent",
+        "ar": "أكلو",
+        "es": "Su comida"
+      },
+      "truthAlt": {
+        "en": [
+          "Their food",
+          "Food",
+          "Their diet",
+          "Shrimp",
+          "Algae"
+        ],
+        "fr": [
+          "La nourriture",
+          "Leur alimentation",
+          "Les crevettes",
+          "Leur nourriture"
+        ],
+        "ar": [
+          "الأكل",
+          "اللي بياكلو",
+          "أكله",
+          "القريدس"
+        ],
+        "es": [
+          "La comida",
+          "Lo que comen",
+          "Su dieta",
+          "Las gambas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sunburn",
+          "The cold",
+          "Blushing"
+        ],
+        "fr": [
+          "Un coup de soleil",
+          "Le froid",
+          "La timidité"
+        ],
+        "ar": [
+          "ضربة شمس",
+          "البرد",
+          "الخجل"
+        ],
+        "es": [
+          "Las quemaduras del sol",
+          "El frío",
+          "La vergüenza"
+        ]
+      },
+      "note": {
+        "en": "Pigments in algae and tiny shrimp turn their feathers pink",
+        "fr": "Les pigments des algues et des petites crevettes colorent leurs plumes",
+        "ar": "الصبغات بالطحالب والقريدس الزغير بتلون الريش",
+        "es": "Los pigmentos de algas y gambitas tiñen sus plumas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] San Diego Zoo Wildlife Alliance, flamingo fact sheet (carotenoids)"
+      }
+    },
+    {
+      "id": "wf-016",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "On Venus, the Sun rises in the ___",
+        "translit": null,
+        "display": {
+          "fr": "Sur Vénus, le Soleil se lève à l'___",
+          "ar": "عكوكب الزهرة، الشمس بتطلع من ___",
+          "es": "En Venus, el Sol sale por el ___"
+        }
+      },
+      "truth": {
+        "en": "West",
+        "fr": "Ouest",
+        "ar": "الغرب",
+        "es": "Oeste"
+      },
+      "truthAlt": {
+        "en": [
+          "The west"
+        ],
+        "fr": [
+          "L'ouest"
+        ],
+        "ar": [
+          "غرب",
+          "المغرب"
+        ],
+        "es": [
+          "El oeste",
+          "Poniente"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "North",
+          "South",
+          "It never rises"
+        ],
+        "fr": [
+          "Nord",
+          "Sud",
+          "Il ne se lève jamais"
+        ],
+        "ar": [
+          "الشمال",
+          "الجنوب",
+          "ما بتطلع أبدا"
+        ],
+        "es": [
+          "Norte",
+          "Sur",
+          "Nunca sale"
+        ]
+      },
+      "note": {
+        "en": "Venus spins backwards compared with most planets",
+        "fr": "Vénus tourne à l'envers par rapport à la plupart des planètes",
+        "ar": "الزهرة بتبرم بالعكس عن أغلب الكواكب",
+        "es": "Venus gira al revés que la mayoría de los planetas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] NASA Science, Venus (retrograde rotation)"
+      }
+    },
+    {
+      "id": "wf-017",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "One year on Neptune lasts about ___",
+        "translit": null,
+        "display": {
+          "fr": "Une année sur Neptune dure environ ___",
+          "ar": "السنة الوحدة على نبتون بتطول حوالي ___",
+          "es": "Un año en Neptuno dura unos ___"
+        }
+      },
+      "truth": {
+        "en": "165 Earth years",
+        "fr": "165 années terrestres",
+        "ar": "165 سنة أرضية",
+        "es": "165 años terrestres"
+      },
+      "truthAlt": {
+        "en": [
+          "165 years",
+          "One hundred sixty five years"
+        ],
+        "fr": [
+          "165 ans",
+          "Cent soixante-cinq ans"
+        ],
+        "ar": [
+          "165 سنة",
+          "مية وخمسة وستين سنة"
+        ],
+        "es": [
+          "165 años",
+          "Ciento sesenta y cinco años"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A dozen Earth years",
+          "Eighty Earth years",
+          "A thousand Earth years"
+        ],
+        "fr": [
+          "Une douzaine d'années",
+          "Quatre-vingts ans",
+          "Un siècle pile"
+        ],
+        "ar": [
+          "طنعش سنة",
+          "تمانين سنة",
+          "ألف سنة أرضية"
+        ],
+        "es": [
+          "Una docena de años",
+          "Ochenta años",
+          "Un siglo justo"
+        ]
+      },
+      "note": {
+        "en": "It has done only one full orbit since its discovery in 1846",
+        "fr": "Elle n'a fait qu'un tour complet depuis sa découverte en 1846",
+        "ar": "عمل دورة وحدة بس من وقت اكتشافو سنة 1846",
+        "es": "Solo ha dado una vuelta completa desde que se descubrió en 1846"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] NASA Science, Neptune facts (orbital period ~165 years)"
+      }
+    },
+    {
+      "id": "wf-018",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Nintendo was founded in 1889 to make ___",
+        "translit": null,
+        "display": {
+          "fr": "Nintendo a été fondée en 1889 pour fabriquer des ___",
+          "ar": "نينتندو تأسست سنة 1889 لتصنع ___",
+          "es": "Nintendo se fundó en 1889 para fabricar ___"
+        }
+      },
+      "truth": {
+        "en": "Playing cards",
+        "fr": "Cartes à jouer",
+        "ar": "ورق لعب",
+        "es": "Naipes"
+      },
+      "truthAlt": {
+        "en": [
+          "Cards",
+          "Hanafuda cards",
+          "Card games"
+        ],
+        "fr": [
+          "Cartes",
+          "Cartes hanafuda",
+          "Jeux de cartes"
+        ],
+        "ar": [
+          "ورق الشدة",
+          "شدة",
+          "كوتشينة",
+          "ورق هانافودا"
+        ],
+        "es": [
+          "Cartas",
+          "Cartas de juego",
+          "Barajas",
+          "Cartas hanafuda"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Umbrellas",
+          "Sewing machines",
+          "Wooden toys"
+        ],
+        "fr": [
+          "Parapluies",
+          "Machines à coudre",
+          "Jouets en bois"
+        ],
+        "ar": [
+          "شمسيات",
+          "ماكينات خياطة",
+          "ألعاب خشب"
+        ],
+        "es": [
+          "Paraguas",
+          "Máquinas de coser",
+          "Juguetes de madera"
+        ]
+      },
+      "note": {
+        "en": "It sold hand-made hanafuda cards in Kyoto",
+        "fr": "Elle vendait des cartes hanafuda faites main à Kyoto",
+        "ar": "كانت تبيع ورق هانافودا معمول باليد بكيوتو",
+        "es": "Vendía cartas hanafuda hechas a mano en Kioto"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Nintendo corporate history page (nintendo.co.jp, company history)"
+      }
+    },
+    {
+      "id": "wf-019",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In the 1830s, tomato ketchup was sold in the United States as ___",
+        "translit": null,
+        "display": {
+          "fr": "Dans les années 1830, le ketchup était vendu aux États-Unis comme ___",
+          "ar": "بالـ1830، الكاتشب كان ينباع بأميركا كـ___",
+          "es": "En la década de 1830, el kétchup se vendía en EE. UU. como ___"
+        }
+      },
+      "truth": {
+        "en": "Medicine",
+        "fr": "Médicament",
+        "ar": "دوا",
+        "es": "Medicina"
+      },
+      "truthAlt": {
+        "en": [
+          "A medicine",
+          "A cure",
+          "Medicinal pills",
+          "Tomato pills"
+        ],
+        "fr": [
+          "Un médicament",
+          "Remède",
+          "Pilules"
+        ],
+        "ar": [
+          "دواء",
+          "علاج",
+          "حبوب دوا"
+        ],
+        "es": [
+          "Medicamento",
+          "Remedio",
+          "Pastillas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Hair dye",
+          "Furniture polish",
+          "Ink"
+        ],
+        "fr": [
+          "Teinture pour cheveux",
+          "Colle à papier peint",
+          "Encre"
+        ],
+        "ar": [
+          "صبغة شعر",
+          "ملمع موبيليا",
+          "حبر"
+        ],
+        "es": [
+          "Tinte para el pelo",
+          "Cera para muebles",
+          "Tinta"
+        ]
+      },
+      "note": {
+        "en": "Tomato pills and extracts were sold as cures for indigestion",
+        "fr": "Des pilules à la tomate étaient vendues contre l'indigestion",
+        "ar": "كانوا يبيعوا حبوب بندورة للمعدة",
+        "es": "Se vendían píldoras de tomate contra la indigestión"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Andrew F. Smith, The Tomato in America (1994) ; Smithsonian Magazine article on ketchup as medicine"
+      }
+    },
+    {
+      "id": "wf-020",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The first cultivated carrots were mostly ___ or yellow, not orange",
+        "translit": null,
+        "display": {
+          "fr": "Les premières carottes cultivées étaient surtout ___ ou jaunes, pas orange",
+          "ar": "أول جزر انزرع كان أغلبو ___ أو أصفر، مش برتقاني",
+          "es": "Las primeras zanahorias cultivadas eran sobre todo ___ o amarillas, no naranjas"
+        }
+      },
+      "truth": {
+        "en": "Purple",
+        "fr": "Violettes",
+        "ar": "بنفسجي",
+        "es": "Moradas"
+      },
+      "truthAlt": {
+        "en": [
+          "Violet",
+          "Dark purple"
+        ],
+        "fr": [
+          "Violet",
+          "Pourpres"
+        ],
+        "ar": [
+          "موف",
+          "ليلكي"
+        ],
+        "es": [
+          "Morado",
+          "Violetas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Blue",
+          "Green",
+          "Pink"
+        ],
+        "fr": [
+          "Bleues",
+          "Vertes",
+          "Roses"
+        ],
+        "ar": [
+          "أزرق",
+          "أخضر",
+          "زهري"
+        ],
+        "es": [
+          "Azules",
+          "Verdes",
+          "Rosas"
+        ]
+      },
+      "note": {
+        "en": "Orange carrots became common in Europe in the 1600s",
+        "fr": "Les carottes orange se sont répandues en Europe au XVIIe siècle",
+        "ar": "الجزر البرتقاني انتشر بأوروبا بالقرن السابع عشر",
+        "es": "Las naranjas se extendieron en Europa en el siglo XVII"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, carrot (history of cultivation) ; Banga, Origin of the European cultivated carrot (Euphytica 1957)"
+      }
+    },
+    {
+      "id": "wf-021",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The world's shortest scheduled flight, between two Scottish islands, is planned to last ___",
+        "translit": null,
+        "display": {
+          "fr": "Le vol régulier le plus court du monde, entre deux îles écossaises, dure moins de ___",
+          "ar": "أقصر رحلة طيران منتظمة بالعالم، بين جزيرتين باسكتلندا، مدتها أقل من ___",
+          "es": "El vuelo regular más corto del mundo, entre dos islas escocesas, dura menos de ___"
+        }
+      },
+      "truth": {
+        "en": "Under two minutes",
+        "fr": "Deux minutes",
+        "ar": "دقيقتين",
+        "es": "Dos minutos"
+      },
+      "truthAlt": {
+        "en": [
+          "Two minutes",
+          "2 minutes",
+          "90 seconds",
+          "One and a half minutes"
+        ],
+        "fr": [
+          "2 minutes",
+          "90 secondes"
+        ],
+        "ar": [
+          "2 دقيقة",
+          "دقيقة ونص"
+        ],
+        "es": [
+          "2 minutos",
+          "90 segundos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Half an hour",
+          "Five minutes",
+          "Twenty seconds"
+        ],
+        "fr": [
+          "Une demi-heure",
+          "Cinq minutes",
+          "Vingt secondes"
+        ],
+        "ar": [
+          "نص ساعة",
+          "خمس دقايق",
+          "عشرين ثانية"
+        ],
+        "es": [
+          "Media hora",
+          "Cinco minutos",
+          "Veinte segundos"
+        ]
+      },
+      "note": {
+        "en": "Westray to Papa Westray, in Orkney",
+        "fr": "Westray-Papa Westray, dans les Orcades",
+        "ar": "بين ويستراي وبابا ويستراي بجزر أوركني",
+        "es": "Westray-Papa Westray, en las Orcadas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Loganair, Westray to Papa Westray route page ; Guinness World Records, shortest scheduled flight"
+      }
+    },
+    {
+      "id": "wf-022",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Saturn's average density is lower than that of ___",
+        "translit": null,
+        "display": {
+          "fr": "La densité moyenne de Saturne est plus faible que celle de ___",
+          "ar": "كثافة زحل أخف من كثافة ___",
+          "es": "La densidad media de Saturno es menor que la del ___"
+        }
+      },
+      "truth": {
+        "en": "Water",
+        "fr": "L'eau",
+        "ar": "المي",
+        "es": "Agua"
+      },
+      "truthAlt": {
+        "en": [
+          "Liquid water"
+        ],
+        "fr": [
+          "Eau"
+        ],
+        "ar": [
+          "مي",
+          "الماء"
+        ],
+        "es": [
+          "El agua"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Air",
+          "Steam",
+          "Helium"
+        ],
+        "fr": [
+          "L'air",
+          "La vapeur",
+          "L'hélium"
+        ],
+        "ar": [
+          "الهوا",
+          "البخار",
+          "الهيليوم"
+        ],
+        "es": [
+          "Aire",
+          "Vapor",
+          "Helio"
+        ]
+      },
+      "note": {
+        "en": "In a big enough bathtub it would, in theory, float",
+        "fr": "Dans une baignoire assez grande, elle flotterait en théorie",
+        "ar": "بمغطس كبير كفاية، نظرياً بيطوف",
+        "es": "En una bañera lo bastante grande, en teoría flotaría"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] NASA Science, Saturn facts (mean density ~0.69 g/cm3)"
+      }
+    },
+    {
+      "id": "wf-023",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Switzerland, it is illegal to keep just one ___",
+        "translit": null,
+        "display": {
+          "fr": "En Suisse, il est interdit d'avoir un seul ___",
+          "ar": "بسويسرا، ممنوع تربي ___ واحد لحالو",
+          "es": "En Suiza es ilegal tener un solo ___"
+        }
+      },
+      "truth": {
+        "en": "Guinea pig",
+        "fr": "Cochon d'Inde",
+        "ar": "خنزير غينيا",
+        "es": "Cobaya"
+      },
+      "truthAlt": {
+        "en": [
+          "Guinea pigs",
+          "A guinea pig",
+          "Cavy"
+        ],
+        "fr": [
+          "Cobaye",
+          "Cochons d'Inde",
+          "Un cochon d'Inde"
+        ],
+        "ar": [
+          "خنزير الغينيا",
+          "أرنب هندي",
+          "كوباي"
+        ],
+        "es": [
+          "Conejillo de Indias",
+          "Cobayas",
+          "Una cobaya"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Hamster",
+          "Tortoise",
+          "Garden gnome"
+        ],
+        "fr": [
+          "Hamster",
+          "Tortue",
+          "Nain de jardin"
+        ],
+        "ar": [
+          "هامستر",
+          "سلحفاية",
+          "تمثال قزم"
+        ],
+        "es": [
+          "Hámster",
+          "Tortuga",
+          "Gnomo de jardín"
+        ]
+      },
+      "note": {
+        "en": "They are social animals, so Swiss animal-welfare law says they need company",
+        "fr": "Ce sont des animaux sociaux : la loi suisse exige qu'ils aient de la compagnie",
+        "ar": "حيوان اجتماعي، والقانون السويسري بيفرض يكون عندو رفيق",
+        "es": "Son animales sociales y la ley suiza exige que tengan compañía"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Swiss Animal Welfare Ordinance (TSchV, 2008), social species ; Swiss FSVO guinea pig leaflet"
+      }
+    },
+    {
+      "id": "wf-024",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Tiny animals called tardigrades have survived being exposed to ___",
+        "translit": null,
+        "display": {
+          "fr": "De minuscules animaux appelés tardigrades ont survécu à une exposition à ___",
+          "ar": "حيوانات زغيرة كتير اسمها تارديغراد عاشت بعد ما انعرضت لـ___",
+          "es": "Unos animalitos llamados tardígrados han sobrevivido a ___"
+        }
+      },
+      "truth": {
+        "en": "Outer space",
+        "fr": "L'espace",
+        "ar": "الفضاء",
+        "es": "El espacio exterior"
+      },
+      "truthAlt": {
+        "en": [
+          "Space",
+          "The vacuum of space",
+          "Open space"
+        ],
+        "fr": [
+          "Le vide spatial"
+        ],
+        "ar": [
+          "فضاء",
+          "الفضاء الخارجي"
+        ],
+        "es": [
+          "El espacio",
+          "El vacío del espacio"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Molten lava",
+          "The surface of the Sun",
+          "A black hole"
+        ],
+        "fr": [
+          "La lave en fusion",
+          "La surface du Soleil",
+          "Un trou noir"
+        ],
+        "ar": [
+          "الحمم الدايبة",
+          "سطح الشمس",
+          "التقب الأسود"
+        ],
+        "es": [
+          "La lava fundida",
+          "La superficie del Sol",
+          "Un agujero negro"
+        ]
+      },
+      "note": {
+        "en": "In 2007 they rode outside a satellite and some came back alive",
+        "fr": "En 2007, certains ont survécu à un voyage dehors, sur un satellite",
+        "ar": "سنة 2007 طلعوا برا قمر صناعي ورجع بعضن طيبين",
+        "es": "En 2007 viajaron por fuera de un satélite y algunos volvieron vivos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Jönsson et al., Tardigrades survive exposure to space in low Earth orbit, Current Biology 2008 (FOTON-M3)"
+      }
+    },
+    {
+      "id": "wf-025",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Velcro was invented after an engineer studied the ___ stuck to his dog's fur",
+        "translit": null,
+        "display": {
+          "fr": "Le Velcro a été inventé par un ingénieur qui a observé les ___ collées aux poils de son chien",
+          "ar": "الفيلكرو انخترع بعد ما مهندس درس ___ اللي علقت بفرو كلبو",
+          "es": "El velcro se inventó cuando un ingeniero estudió los ___ pegados al pelo de su perro"
+        }
+      },
+      "truth": {
+        "en": "Burrs",
+        "fr": "Boules de bardane",
+        "ar": "بزور شوكية",
+        "es": "Cardillos"
+      },
+      "truthAlt": {
+        "en": [
+          "Burs",
+          "Burdock burrs",
+          "Seed burrs",
+          "Plant burrs"
+        ],
+        "fr": [
+          "Bardane",
+          "Graines de bardane",
+          "Teignes",
+          "Glouterons"
+        ],
+        "ar": [
+          "بزر شوكي",
+          "شوك البرية",
+          "بزور الأرقطيون"
+        ],
+        "es": [
+          "Abrojos",
+          "Semillas de bardana",
+          "Cadillos",
+          "Erizos de bardana"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Chewing gum",
+          "Pine needles",
+          "Ticks"
+        ],
+        "fr": [
+          "Chewing-gums",
+          "Aiguilles de pin",
+          "Tiques"
+        ],
+        "ar": [
+          "علكة",
+          "ورق صنوبر",
+          "قراد"
+        ],
+        "es": [
+          "Chicles",
+          "Agujas de pino",
+          "Garrapatas"
+        ]
+      },
+      "note": {
+        "en": "George de Mestral looked at burdock burrs under a microscope",
+        "fr": "George de Mestral a observé la bardane au microscope",
+        "ar": "جورج دو ميسترال اتفرج عليها تحت المجهر",
+        "es": "George de Mestral los miró al microscopio"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Velcro company history ; Smithsonian, de Mestral and burdock (1941/1955 patent) ; [native review] plant word"
+      }
+    },
+    {
+      "id": "wf-026",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "The microwave oven was invented after a radar engineer noticed a melted ___ in his pocket",
+        "translit": null,
+        "display": {
+          "fr": "Le micro-ondes a été inventé après qu'un ingénieur radar a trouvé ___ fondue dans sa poche",
+          "ar": "فرن المايكروويف انخترع بعد ما مهندس رادار لقى ___ دايبة بجيبتو",
+          "es": "El microondas se inventó cuando un ingeniero de radares notó ___ derretida en su bolsillo"
+        }
+      },
+      "truth": {
+        "en": "Chocolate bar",
+        "fr": "Une barre chocolatée",
+        "ar": "لوح شوكولا",
+        "es": "Una barrita de chocolate"
+      },
+      "truthAlt": {
+        "en": [
+          "Chocolate",
+          "Candy bar",
+          "Peanut bar"
+        ],
+        "fr": [
+          "Du chocolat",
+          "Une barre de chocolat",
+          "Tablette de chocolat"
+        ],
+        "ar": [
+          "شوكولا",
+          "شوكولاتة",
+          "لوح شوكولاتة"
+        ],
+        "es": [
+          "Chocolate",
+          "Una chocolatina",
+          "Tableta de chocolate"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Ice cream",
+          "Candle",
+          "Butter"
+        ],
+        "fr": [
+          "Une glace",
+          "Une bougie",
+          "Du beurre"
+        ],
+        "ar": [
+          "بوظة",
+          "شمعة",
+          "زبدة"
+        ],
+        "es": [
+          "Una vela",
+          "Mantequilla",
+          "Una pastilla de jabón"
+        ]
+      },
+      "note": {
+        "en": "Percy Spencer, in the 1940s",
+        "fr": "Percy Spencer, dans les années 1940",
+        "ar": "بيرسي سبنسر، بالأربعينات",
+        "es": "Percy Spencer, en los años cuarenta"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Smithsonian Magazine, history of the microwave oven (Percy Spencer, Raytheon)"
+      }
+    },
+    {
+      "id": "wf-027",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The Popsicle was invented by accident by a boy aged ___",
+        "translit": null,
+        "display": {
+          "fr": "L'esquimau glacé à l'eau (Popsicle) a été inventé par accident par un garçon de ___ ans",
+          "ar": "البوظة عالعود (بوبسيكل) انخترعت بالغلط على إيد ولد عمرو ___",
+          "es": "El polo de hielo (Popsicle) lo inventó por accidente un niño de ___ años"
+        }
+      },
+      "truth": {
+        "en": "Eleven",
+        "fr": "Onze",
+        "ar": "حداعش سنة",
+        "es": "Once"
+      },
+      "truthAlt": {
+        "en": [
+          "11"
+        ],
+        "fr": [
+          "11"
+        ],
+        "ar": [
+          "11",
+          "حداعش",
+          "11 سنة"
+        ],
+        "es": [
+          "11"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Six",
+          "Eight",
+          "Fourteen"
+        ],
+        "fr": [
+          "Six",
+          "Huit",
+          "Quatorze"
+        ],
+        "ar": [
+          "ست سنين",
+          "تمن سنين",
+          "أربعتعش سنة"
+        ],
+        "es": [
+          "Seis",
+          "Ocho",
+          "Catorce"
+        ]
+      },
+      "note": {
+        "en": "Frank Epperson left a drink with a stirrer outside on a cold night in 1905",
+        "fr": "Frank Epperson a oublié sa boisson dehors une nuit froide de 1905",
+        "ar": "فرانك إبرسون نسي كباية عصير برا بليلة باردة سنة 1905",
+        "es": "Frank Epperson dejó un refresco fuera en una noche fría de 1905"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Popsicle brand history ; Smithsonian / NPR on Frank Epperson (age 11 in 1905 in most accounts)"
+      }
+    },
+    {
+      "id": "wf-028",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Cats cannot taste ___",
+        "translit": null,
+        "display": {
+          "fr": "Les chats ne sentent pas le goût ___",
+          "ar": "البسينات ما بيدوقوا ___",
+          "es": "Los gatos no pueden saborear lo ___"
+        }
+      },
+      "truth": {
+        "en": "Sweetness",
+        "fr": "Sucré",
+        "ar": "الطعمة الحلوة",
+        "es": "Dulce"
+      },
+      "truthAlt": {
+        "en": [
+          "Sweet",
+          "Sweet things",
+          "Sugar",
+          "Sweets"
+        ],
+        "fr": [
+          "Du sucré",
+          "Du sucre",
+          "Le sucré"
+        ],
+        "ar": [
+          "الحلو",
+          "السكر",
+          "الحلويات",
+          "الطعم الحلو"
+        ],
+        "es": [
+          "El dulce",
+          "El azúcar",
+          "Lo dulce"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Salt",
+          "Sourness",
+          "Bitterness"
+        ],
+        "fr": [
+          "Salé",
+          "Acide",
+          "Amer"
+        ],
+        "ar": [
+          "المالح",
+          "الحامض",
+          "المر"
+        ],
+        "es": [
+          "Salado",
+          "Ácido",
+          "Amargo"
+        ]
+      },
+      "note": {
+        "en": "A broken gene means they lack a working sweet receptor",
+        "fr": "Un gène inactif les prive du récepteur du sucré",
+        "ar": "في جين معطل عندن فما بيحسوا بالحلو",
+        "es": "Un gen inactivo les quita el receptor del dulce"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Li et al., Pseudogenization of a sweet-receptor gene..., PLoS Genetics 2005"
+      }
+    },
+    {
+      "id": "wf-029",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Honeybees can learn to recognise ___",
+        "translit": null,
+        "display": {
+          "fr": "Les abeilles peuvent apprendre à reconnaître ___",
+          "ar": "النحل فيه يتعلم يميز ___",
+          "es": "Las abejas pueden aprender a reconocer ___"
+        }
+      },
+      "truth": {
+        "en": "Human faces",
+        "fr": "Des visages humains",
+        "ar": "وجوه البشر",
+        "es": "Caras humanas"
+      },
+      "truthAlt": {
+        "en": [
+          "Faces",
+          "People's faces",
+          "A human face"
+        ],
+        "fr": [
+          "Les visages",
+          "Des visages",
+          "Visages humains"
+        ],
+        "ar": [
+          "وجوه",
+          "الوجوه",
+          "وجوه الناس"
+        ],
+        "es": [
+          "Caras",
+          "Rostros humanos",
+          "Las caras"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Human voices",
+          "Footsteps",
+          "Handwriting"
+        ],
+        "fr": [
+          "Des voix humaines",
+          "Des bruits de pas",
+          "Des écritures"
+        ],
+        "ar": [
+          "أصوات البشر",
+          "خطوات الناس",
+          "خط الإيد"
+        ],
+        "es": [
+          "Voces humanas",
+          "Pasos humanos",
+          "La letra de una persona"
+        ]
+      },
+      "note": {
+        "en": "In a 2005 study, bees learned to pick out one face among several photos",
+        "fr": "Dans une étude de 2005, des abeilles ont appris à repérer un visage parmi plusieurs photos",
+        "ar": "بدراسة سنة 2005، النحل تعلم يلاقي وجه واحد بين كذا صورة",
+        "es": "En un estudio de 2005, las abejas aprendieron a distinguir una cara entre varias fotos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Dyer, Neumeyer & Chittka, Honeybee vision can discriminate between and recognise images of human faces, J Exp Biol 208 (2005)"
+      }
+    },
+    {
+      "id": "wf-030",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Hippos make their own sunscreen, a fluid that looks ___",
+        "translit": null,
+        "display": {
+          "fr": "Les hippopotames fabriquent leur propre crème solaire, un liquide qui a l'air ___",
+          "ar": "فرس النهر بيعمل كريم شمس طبيعي، سايل لونو ___",
+          "es": "Los hipopótamos fabrican su propio protector solar, un líquido que parece ___"
+        }
+      },
+      "truth": {
+        "en": "Red",
+        "fr": "Rouge",
+        "ar": "أحمر",
+        "es": "Rojo"
+      },
+      "truthAlt": {
+        "en": [
+          "Reddish",
+          "Blood red",
+          "Pink"
+        ],
+        "fr": [
+          "Rougeâtre",
+          "Rouge sang",
+          "Rose"
+        ],
+        "ar": [
+          "حمرا",
+          "أحمر متل الدم",
+          "زهري"
+        ],
+        "es": [
+          "Rojizo",
+          "Rojo sangre",
+          "Rosa"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Blue",
+          "Milky white",
+          "Green"
+        ],
+        "fr": [
+          "Bleu",
+          "Blanc laiteux",
+          "Vert"
+        ],
+        "ar": [
+          "أزرق",
+          "أبيض متل الحليب",
+          "أخضر"
+        ],
+        "es": [
+          "Azul",
+          "Blanco lechoso",
+          "Verde"
+        ]
+      },
+      "note": {
+        "en": "It is not blood or sweat: the pigment blocks sunlight and germs",
+        "fr": "Ce n'est ni du sang ni de la sueur : le pigment filtre le soleil",
+        "ar": "مش دم ولا عرق، الصبغة بتحمي من الشمس",
+        "es": "No es sangre ni sudor: el pigmento filtra el sol"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Saikawa et al., The red sweat of the hippopotamus, Nature 2004. Avoid orange as a lie (an orange pigment exists too)"
+      }
+    },
+    {
+      "id": "wf-031",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Bananas are very slightly ___",
+        "translit": null,
+        "display": {
+          "fr": "Les bananes sont très légèrement ___",
+          "ar": "الموز شوي شوي ___",
+          "es": "Los plátanos son ligerísimamente ___"
+        }
+      },
+      "truth": {
+        "en": "Radioactive",
+        "fr": "Radioactives",
+        "ar": "مشع",
+        "es": "Radiactivos"
+      },
+      "truthAlt": {
+        "en": [
+          "A bit radioactive"
+        ],
+        "fr": [
+          "Radioactive"
+        ],
+        "ar": [
+          "فيه إشعاع",
+          "إشعاعي",
+          "مشعة"
+        ],
+        "es": [
+          "Radiactivo",
+          "Radioactivos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Magnetic",
+          "Electric",
+          "Hollow"
+        ],
+        "fr": [
+          "Magnétiques",
+          "Électriques",
+          "Creuses"
+        ],
+        "ar": [
+          "ممغنط",
+          "فيه كهربا",
+          "مجوف"
+        ],
+        "es": [
+          "Magnéticos",
+          "Eléctricos",
+          "Huecos"
+        ]
+      },
+      "note": {
+        "en": "They contain potassium-40, completely harmless in fruit amounts",
+        "fr": "Elles contiennent du potassium 40, sans danger",
+        "ar": "فيه بوتاسيوم 40، ما بيضر أبداً",
+        "es": "Tienen potasio 40, totalmente inofensivo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] US EPA, Radioactivity in food (potassium-40) ; a university physics page"
+      }
+    },
+    {
+      "id": "wf-032",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Each year, the Moon drifts about 3.8 ___ farther from Earth",
+        "translit": null,
+        "display": {
+          "fr": "Chaque année, la Lune s'éloigne de la Terre d'environ 3,8 ___",
+          "ar": "كل سنة، القمر بيبعد عن الأرض حوالي 3.8 ___",
+          "es": "Cada año, la Luna se aleja de la Tierra unos 3,8 ___"
+        }
+      },
+      "truth": {
+        "en": "Centimetres",
+        "fr": "Centimètres",
+        "ar": "سنتيمتر",
+        "es": "Centímetros"
+      },
+      "truthAlt": {
+        "en": [
+          "Centimeters",
+          "Cm",
+          "Centimetre"
+        ],
+        "fr": [
+          "Cm",
+          "Centimètre"
+        ],
+        "ar": [
+          "سم",
+          "سنتي",
+          "سانتيمتر"
+        ],
+        "es": [
+          "Cm",
+          "Centímetro"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Metres",
+          "Kilometres",
+          "Millimetres"
+        ],
+        "fr": [
+          "Mètres",
+          "Kilomètres",
+          "Millimètres"
+        ],
+        "ar": [
+          "متر",
+          "كيلومتر",
+          "مليمتر"
+        ],
+        "es": [
+          "Metros",
+          "Kilómetros",
+          "Milímetros"
+        ]
+      },
+      "note": {
+        "en": "Measured by bouncing lasers off mirrors left by Apollo astronauts",
+        "fr": "Mesuré avec des lasers renvoyés par les miroirs d'Apollo",
+        "ar": "بيقيسوها بليزر بينعكس عمرايات تركوها رواد أبولو",
+        "es": "Se mide con láseres que rebotan en espejos de las misiones Apolo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] NASA, Lunar Laser Ranging (~3.8 cm per year)"
+      }
+    },
+    {
+      "id": "wf-033",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Russia stretches across ___ time zones",
+        "translit": null,
+        "display": {
+          "fr": "La Russie s'étend sur ___ fuseaux horaires",
+          "ar": "روسيا ممتدة على ___ منطقة زمنية",
+          "es": "Rusia abarca ___ husos horarios"
+        }
+      },
+      "truth": {
+        "en": "Eleven",
+        "fr": "Onze",
+        "ar": "حداعش",
+        "es": "Once"
+      },
+      "truthAlt": {
+        "en": [
+          "11"
+        ],
+        "fr": [
+          "11"
+        ],
+        "ar": [
+          "11",
+          "احدعش",
+          "إحدى عشر"
+        ],
+        "es": [
+          "11"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Seven",
+          "Nine",
+          "Fourteen"
+        ],
+        "fr": [
+          "Sept",
+          "Neuf",
+          "Quatorze"
+        ],
+        "ar": [
+          "سبعة",
+          "تسعة",
+          "أربعتعش"
+        ],
+        "es": [
+          "Siete",
+          "Nueve",
+          "Catorce"
+        ]
+      },
+      "note": {
+        "en": "When it's breakfast in the west, it's dinner in the far east",
+        "fr": "Quand on petit-déjeune à l'ouest, on dîne à l'extrême est",
+        "ar": "لما يكون فطور بالغرب، بيكون عشا بأقصى الشرق",
+        "es": "Cuando en el oeste desayunan, en el extremo este cenan"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] timeanddate.com, time zones in Russia ; Russian federal law on time calculation (2014)"
+      }
+    },
+    {
+      "id": "wf-034",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Counting its overseas territories, the country with the most time zones is ___",
+        "translit": null,
+        "display": {
+          "fr": "En comptant ses territoires d'outre-mer, le pays qui a le plus de fuseaux horaires est ___",
+          "ar": "إذا حسبنا أراضيها برا البحار، البلد اللي عندو أكتر مناطق زمنية هو ___",
+          "es": "Contando sus territorios de ultramar, el país con más husos horarios es ___"
+        }
+      },
+      "truth": {
+        "en": "France",
+        "fr": "La France",
+        "ar": "فرنسا",
+        "es": "Francia"
+      },
+      "truthAlt": {
+        "fr": [
+          "France"
+        ],
+        "ar": [
+          "فرنسه"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Russia",
+          "The United States",
+          "China"
+        ],
+        "fr": [
+          "La Russie",
+          "Les États-Unis",
+          "La Chine"
+        ],
+        "ar": [
+          "روسيا",
+          "أميركا",
+          "الصين"
+        ],
+        "es": [
+          "Rusia",
+          "Estados Unidos",
+          "China"
+        ]
+      },
+      "note": {
+        "en": "Twelve time zones, from French Polynesia to New Caledonia",
+        "fr": "Douze fuseaux, de la Polynésie à la Nouvelle-Calédonie",
+        "ar": "طنعش منطقة، من بولينيزيا لكاليدونيا الجديدة",
+        "es": "Doce husos, de la Polinesia Francesa a Nueva Caledonia"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] timeanddate.com, countries with the most time zones (France 12)"
+      }
+    },
+    {
+      "id": "wf-035",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Iceland has no native ___",
+        "translit": null,
+        "display": {
+          "fr": "L'Islande n'a pas de ___",
+          "ar": "بإيسلندا ما في ___",
+          "es": "En Islandia no hay ___"
+        }
+      },
+      "truth": {
+        "en": "Mosquitoes",
+        "fr": "Moustiques",
+        "ar": "بق",
+        "es": "Mosquitos"
+      },
+      "truthAlt": {
+        "en": [
+          "Mosquito",
+          "Mozzies"
+        ],
+        "fr": [
+          "Moustique"
+        ],
+        "ar": [
+          "بقة",
+          "ناموس",
+          "بعوض"
+        ],
+        "es": [
+          "Mosquito"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Spiders",
+          "Bees",
+          "Owls"
+        ],
+        "fr": [
+          "Araignées",
+          "Abeilles",
+          "Hiboux"
+        ],
+        "ar": [
+          "عناكب",
+          "نحل",
+          "بوم"
+        ],
+        "es": [
+          "Arañas",
+          "Abejas",
+          "Búhos"
+        ]
+      },
+      "note": {
+        "en": "Scientists aren't sure why: maybe the freeze-thaw cycles",
+        "fr": "Les scientifiques hésitent encore : peut-être le gel et dégel",
+        "ar": "العلما مش متأكدين ليش، يمكن من التلج اللي بيدوب وبيجمد",
+        "es": "Los científicos no saben bien por qué: quizá por las heladas y deshielos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Icelandic Institute of Natural History (ni.is) ; BBC or National Geographic on mosquito-free Iceland. Avoid snakes as a lie (also absent) ; [native review] بق vs ناموس"
+      }
+    },
+    {
+      "id": "wf-036",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "A bull charges at the matador's cape because of its ___, not its colour",
+        "translit": null,
+        "display": {
+          "fr": "Le taureau charge la cape à cause de son ___, pas de sa couleur",
+          "ar": "التور بيهجم عالقماشة بسبب ___، مش لونها",
+          "es": "El toro embiste la capa por su ___, no por su color"
+        }
+      },
+      "truth": {
+        "en": "Movement",
+        "fr": "Mouvement",
+        "ar": "حركتها",
+        "es": "Movimiento"
+      },
+      "truthAlt": {
+        "en": [
+          "Motion",
+          "The movement",
+          "Moving"
+        ],
+        "fr": [
+          "Les mouvements",
+          "Le mouvement"
+        ],
+        "ar": [
+          "الحركة",
+          "لأنها بتتحرك"
+        ],
+        "es": [
+          "El movimiento",
+          "Porque se mueve"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Smell",
+          "Sound",
+          "Size"
+        ],
+        "fr": [
+          "Odeur",
+          "Bruit",
+          "Taille"
+        ],
+        "ar": [
+          "ريحتها",
+          "صوتها",
+          "حجمها"
+        ],
+        "es": [
+          "Olor",
+          "Sonido",
+          "Tamaño"
+        ]
+      },
+      "note": {
+        "en": "Bulls are red-green colour-blind",
+        "fr": "Les taureaux ne distinguent pas le rouge du vert",
+        "ar": "التيران ما بيميزوا الأحمر من الأخضر",
+        "es": "Los toros no distinguen el rojo del verde"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica or a veterinary source on bovine dichromatic vision ; MythBusters test (2007)"
+      }
+    },
+    {
+      "id": "wf-037",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Archaeologists have found honey in ancient Egyptian tombs that was still ___",
+        "translit": null,
+        "display": {
+          "fr": "Des archéologues ont trouvé dans des tombes égyptiennes du miel encore ___",
+          "ar": "علماء الآثار لقوا عسل بقبور مصرية قديمة بعدو ___",
+          "es": "Los arqueólogos han encontrado en tumbas egipcias miel que todavía era ___"
+        }
+      },
+      "truth": {
+        "en": "Edible",
+        "fr": "Comestible",
+        "ar": "بينوكل",
+        "es": "Comestible"
+      },
+      "truthAlt": {
+        "en": [
+          "Good to eat",
+          "Safe to eat",
+          "Eatable"
+        ],
+        "fr": [
+          "Mangeable",
+          "Bon à manger"
+        ],
+        "ar": [
+          "منيح للأكل",
+          "صالح للأكل",
+          "بيتاكل"
+        ],
+        "es": [
+          "Se podía comer",
+          "Apta para comer"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Full of live bees",
+          "Warm to the touch",
+          "Labelled with a price"
+        ],
+        "fr": [
+          "Plein d'abeilles vivantes",
+          "Tiède au toucher",
+          "Étiqueté avec un prix"
+        ],
+        "ar": [
+          "فيه نحل عايش",
+          "دافي",
+          "عليه سعر"
+        ],
+        "es": [
+          "Llena de abejas vivas",
+          "Tibia al tacto",
+          "Con el precio puesto"
+        ]
+      },
+      "note": {
+        "en": "Low water and high acidity keep honey from spoiling",
+        "fr": "Peu d'eau et beaucoup d'acidité : le miel ne se gâte pas",
+        "ar": "قلة المي والحموضة بيخلوا العسل ما يخرب",
+        "es": "Poca agua y mucha acidez: la miel no se estropea"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Smithsonian Magazine, The Science Behind Honey's Eternal Shelf Life (2013). Check the edible claim is sourced, not folklore"
+      }
+    },
+    {
+      "id": "wf-038",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "A pineapple plant takes about ___ to grow one fruit",
+        "translit": null,
+        "display": {
+          "fr": "Un plant d'ananas met environ ___ pour donner un fruit",
+          "ar": "شجرة الأناناس بدها حوالي ___ لتطلع تمرة وحدة",
+          "es": "Una planta de piña tarda unos ___ en dar un fruto"
+        }
+      },
+      "truth": {
+        "en": "Two years",
+        "fr": "Deux ans",
+        "ar": "سنتين",
+        "es": "Dos años"
+      },
+      "truthAlt": {
+        "en": [
+          "2 years",
+          "18 months",
+          "Eighteen months"
+        ],
+        "fr": [
+          "2 ans",
+          "18 mois"
+        ],
+        "ar": [
+          "2 سنين",
+          "سنة ونص",
+          "18 شهر"
+        ],
+        "es": [
+          "2 años",
+          "18 meses",
+          "Año y medio"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Two weeks",
+          "Two months",
+          "Ten years"
+        ],
+        "fr": [
+          "Deux semaines",
+          "Deux mois",
+          "Dix ans"
+        ],
+        "ar": [
+          "جمعتين",
+          "شهرين",
+          "عشرين سنة"
+        ],
+        "es": [
+          "Dos semanas",
+          "Dos meses",
+          "Diez años"
+        ]
+      },
+      "note": {
+        "en": "And each plant usually gives one main pineapple at a time",
+        "fr": "Et chaque plant ne donne en général qu'un ananas à la fois",
+        "ar": "وكل نبتة عادة بتعطي أناناسة وحدة بالمرة",
+        "es": "Y cada planta suele dar una sola piña a la vez"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] University of Hawaii CTAHR, pineapple growing guide (18-24 months)"
+      }
+    },
+    {
+      "id": "wf-039",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "A bolt of lightning can be about five times hotter than ___",
+        "translit": null,
+        "display": {
+          "fr": "Un éclair peut être environ cinq fois plus chaud que ___",
+          "ar": "البرق فيه يكون أسخن بحوالي خمس مرات من ___",
+          "es": "Un rayo puede estar unas cinco veces más caliente que ___"
+        }
+      },
+      "truth": {
+        "en": "The surface of the Sun",
+        "fr": "La surface du Soleil",
+        "ar": "سطح الشمس",
+        "es": "La superficie del Sol"
+      },
+      "truthAlt": {
+        "en": [
+          "The sun",
+          "The sun's surface",
+          "Sun surface"
+        ],
+        "fr": [
+          "Le soleil",
+          "La surface solaire"
+        ],
+        "ar": [
+          "الشمس",
+          "وج الشمس"
+        ],
+        "es": [
+          "El sol",
+          "La superficie solar"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Lava",
+          "A pizza oven",
+          "A candle flame"
+        ],
+        "fr": [
+          "La lave",
+          "Un four à pizza",
+          "La flamme d'une bougie"
+        ],
+        "ar": [
+          "الحمم",
+          "فرن البيتزا",
+          "شعلة الشمعة"
+        ],
+        "es": [
+          "La lava",
+          "Un horno de pizza",
+          "La llama de una vela"
+        ]
+      },
+      "note": {
+        "en": "Around 30,000 kelvin for a split second",
+        "fr": "Environ 30 000 kelvins pendant une fraction de seconde",
+        "ar": "حوالي 30 ألف كلفن لجزء من التانية",
+        "es": "Unos 30 000 kelvin durante una fracción de segundo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] US National Weather Service (weather.gov), Lightning: temperature"
+      }
+    },
+    {
+      "id": "wf-040",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Elephants are among the very few mammals that cannot ___",
+        "translit": null,
+        "display": {
+          "fr": "Les éléphants font partie des rares mammifères incapables de ___",
+          "ar": "الفيل من التدييات القليلة كتير اللي ما بتقدر ___",
+          "es": "Los elefantes están entre los pocos mamíferos que no pueden ___"
+        }
+      },
+      "truth": {
+        "en": "Jump",
+        "fr": "Sauter",
+        "ar": "تنط",
+        "es": "Saltar"
+      },
+      "truthAlt": {
+        "en": [
+          "Leap",
+          "Hop"
+        ],
+        "fr": [
+          "Bondir"
+        ],
+        "ar": [
+          "تقفز",
+          "تنطنط",
+          "النط"
+        ],
+        "es": [
+          "Brincar"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Swim",
+          "Sneeze",
+          "Sleep standing up"
+        ],
+        "fr": [
+          "Nager",
+          "Éternuer",
+          "Dormir debout"
+        ],
+        "ar": [
+          "تسبح",
+          "تعطس",
+          "تنام واقفة"
+        ],
+        "es": [
+          "Nadar",
+          "Estornudar",
+          "Dormir de pie"
+        ]
+      },
+      "note": {
+        "en": "At least one foot always stays on the ground",
+        "fr": "Au moins une patte reste toujours au sol",
+        "ar": "دايماً في إجر وحدة عالأرض",
+        "es": "Siempre tienen al menos una pata en el suelo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] San Diego Zoo or Smithsonian National Zoo, elephant locomotion ; Hutchinson et al., Nature 2003"
+      }
+    },
+    {
+      "id": "wf-041",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Emperor penguin dads keep the egg warm on their ___ for about two months",
+        "translit": null,
+        "display": {
+          "fr": "Les papas manchots empereurs couvent l'œuf sur leurs ___ pendant environ deux mois",
+          "ar": "بي البطريق الإمبراطور بيدفي البيضة على ___ لمدة شهرين تقريباً",
+          "es": "Los papás pingüino emperador incuban el huevo sobre sus ___ durante unos dos meses"
+        }
+      },
+      "truth": {
+        "en": "Feet",
+        "fr": "Pattes",
+        "ar": "إجريه",
+        "es": "Patas"
+      },
+      "truthAlt": {
+        "en": [
+          "Their feet",
+          "Toes"
+        ],
+        "fr": [
+          "Pieds",
+          "Les pattes"
+        ],
+        "ar": [
+          "اجريه",
+          "رجليه",
+          "الإجرين"
+        ],
+        "es": [
+          "Pies",
+          "Las patas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Backs",
+          "Heads",
+          "Wings"
+        ],
+        "fr": [
+          "Dos",
+          "Têtes",
+          "Ailes"
+        ],
+        "ar": [
+          "ضهرو",
+          "راسو",
+          "جوانحو"
+        ],
+        "es": [
+          "Espaldas",
+          "Cabezas",
+          "Alas"
+        ]
+      },
+      "note": {
+        "en": "Under a warm fold of belly skin, while they barely eat",
+        "fr": "Sous un repli de peau du ventre, presque sans manger",
+        "ar": "تحت طية جلد من بطنو، وتقريباً بلا أكل",
+        "es": "Bajo un pliegue de piel del vientre, casi sin comer"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] British Antarctic Survey or Australian Antarctic Division, emperor penguin breeding"
+      }
+    },
+    {
+      "id": "wf-042",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "A shrimp's heart is located in its ___",
+        "translit": null,
+        "display": {
+          "fr": "Le cœur de la crevette se trouve dans sa ___",
+          "ar": "قلب القريدسة موجود بـ___",
+          "es": "El corazón de la gamba está en la ___"
+        }
+      },
+      "truth": {
+        "en": "Head",
+        "fr": "Tête",
+        "ar": "راسها",
+        "es": "Cabeza"
+      },
+      "truthAlt": {
+        "en": [
+          "The head",
+          "Head area"
+        ],
+        "fr": [
+          "La tête"
+        ],
+        "ar": [
+          "الراس",
+          "راس"
+        ],
+        "es": [
+          "La cabeza"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Tail",
+          "Legs",
+          "Shell"
+        ],
+        "fr": [
+          "Queue",
+          "Patte",
+          "Carapace"
+        ],
+        "ar": [
+          "ذنبها",
+          "إجريها",
+          "قشرتها"
+        ],
+        "es": [
+          "Cola",
+          "Pata",
+          "Cáscara"
+        ]
+      },
+      "note": {
+        "en": "Shrimp organs are mostly packed into the head end (cephalothorax)",
+        "fr": "La plupart des organes sont dans le céphalothorax",
+        "ar": "أغلب أعضاءها محطوطة بالراس",
+        "es": "Casi todos sus órganos están en el cefalotórax"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, decapod anatomy (heart in the cephalothorax). [VERIFY] wording head vs head-and-thorax"
+      }
+    },
+    {
+      "id": "wf-043",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "A garden snail can have thousands of ___",
+        "translit": null,
+        "display": {
+          "fr": "Un escargot de jardin peut avoir des milliers de ___",
+          "ar": "البزاقة بالجنينة فيه يكون عندها آلاف ___",
+          "es": "Un caracol de jardín puede tener miles de ___"
+        }
+      },
+      "truth": {
+        "en": "Teeth",
+        "fr": "Dents",
+        "ar": "السنان",
+        "es": "Dientes"
+      },
+      "truthAlt": {
+        "en": [
+          "Tiny teeth",
+          "Tooth"
+        ],
+        "fr": [
+          "Petites dents"
+        ],
+        "ar": [
+          "سنان",
+          "أسنان",
+          "سن"
+        ],
+        "es": [
+          "Dientecitos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Eyes",
+          "Hearts",
+          "Legs"
+        ],
+        "fr": [
+          "Yeux",
+          "Cœurs",
+          "Pattes"
+        ],
+        "ar": [
+          "العيون",
+          "القلوب",
+          "الإجرين"
+        ],
+        "es": [
+          "Ojos",
+          "Corazones",
+          "Patas"
+        ]
+      },
+      "note": {
+        "en": "They sit on a ribbon-like tongue called a radula",
+        "fr": "Elles sont sur une langue en ruban, la radula",
+        "ar": "محطوطين على لسان متل الشريط اسمو راديولا",
+        "es": "Están en una lengua en forma de cinta, la rádula"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Natural History Museum (London) or Britannica, gastropod radula"
+      }
+    },
+    {
+      "id": "wf-044",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The Eiffel Tower was only meant to stand for ___",
+        "translit": null,
+        "display": {
+          "fr": "La tour Eiffel ne devait rester debout que ___",
+          "ar": "برج إيفل كان مفروض يضل واقف بس ___",
+          "es": "La torre Eiffel solo debía quedarse en pie ___"
+        }
+      },
+      "truth": {
+        "en": "Twenty years",
+        "fr": "Vingt ans",
+        "ar": "عشرين سنة",
+        "es": "Veinte años"
+      },
+      "truthAlt": {
+        "en": [
+          "20 years",
+          "Two decades"
+        ],
+        "fr": [
+          "20 ans",
+          "Deux décennies"
+        ],
+        "ar": [
+          "20 سنة",
+          "عشرين عام"
+        ],
+        "es": [
+          "20 años",
+          "Dos décadas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "One summer",
+          "Six months",
+          "Until the next fair"
+        ],
+        "fr": [
+          "Un été",
+          "Six mois",
+          "Jusqu'à la prochaine foire"
+        ],
+        "ar": [
+          "صيفية وحدة",
+          "ست شهور",
+          "لحد المعرض الجاي"
+        ],
+        "es": [
+          "Un verano",
+          "Seis meses",
+          "Hasta la próxima feria"
+        ]
+      },
+      "note": {
+        "en": "Its 20-year permit ran out in 1909; its radio antennas saved it",
+        "fr": "Son permis de 20 ans expirait en 1909 ; ses antennes radio l'ont sauvée",
+        "ar": "رخصتو كانت لعشرين سنة وخلصت سنة 1909، وأنطينات الراديو خلصتو",
+        "es": "Su permiso de 20 años vencía en 1909; sus antenas de radio la salvaron"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] toureiffel.paris, history of the tower (20-year concession, saved by radiotelegraphy)"
+      }
+    }
+  ]
+}

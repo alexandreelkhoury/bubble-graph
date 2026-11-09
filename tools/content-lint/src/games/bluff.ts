@@ -389,6 +389,30 @@ export function lintBluffRaw(entries: readonly { file: string; raw: unknown }[],
         else c.warnings.push(`${at}: ${it.type} without review.source`);
       }
       if (it.type === "fact_blank" && it.review.status !== "verified" && it.review.source !== null && !it.review.source.includes("[VERIFY]")) c.warnings.push(`${at}: an unverified fact's source should carry a [VERIFY] note`);
+      // §11.3: a fact's numbers are given only at the precision the source supports (the source note must state them).
+      if (it.type === "fact_blank") {
+        const src = (it.review.source ?? "").replace(/(\d)[,\s.](?=\d{3}\b)/g, "$1");
+        for (const n of (it.truth[pack.sourceLocale] ?? "").replace(/(\d)[,\s.](?=\d{3}\b)/g, "$1").match(/\d+/g) ?? [])
+          if (!new RegExp(`(^|\\D)${n}(\\D|$)`).test(src)) c.warnings.push(`${at}: the truth's number ${n} is not stated in review.source`);
+      }
+      // §11.2 rule 3: a round-2 truth guessable from the prompt's own words (e.g. "a goatherd's ___" → "goats"). Not for
+      // sayings, where echoing a word of the first half is the nature of a proverb.
+      if (it.type === "fact_blank" || it.type === "word_meaning" || it.type === "expression_meaning") {
+        for (const l of playable) {
+          const t = it.truth[l];
+          const p = l === pack.sourceLocale ? o : it.prompt.display[l];
+          if (!t || !p) continue;
+          const pt = answerTokens(p.replace(/_+/g, " "));
+          const stem = (x: string, y: string): boolean => {
+            const a = [...x], b = [...y];
+            let k = 0;
+            while (k < a.length && k < b.length && a[k] === b[k]) k++;
+            return k >= Math.max(4, Math.ceil(0.8 * Math.min(a.length, b.length)));
+          };
+          const hit = answerTokens(t).find((x) => cp(x) >= 4 && pt.some((y) => y === x || stem(x, y)));
+          if (hit) c.warnings.push(`${at}: truth.${l} word "${hit}" already appears in the prompt (guessable, §11.2 rule 3)`);
+        }
+      }
       if (it.tier === "free" && it.review.status === "draft") {
         // SPEC-GAP: §11.3 makes a draft free item an error, while every launch item is still a draft (nothing has been
         // reviewed yet). It is an error with --release (the ship gate) and a counted warning otherwise.

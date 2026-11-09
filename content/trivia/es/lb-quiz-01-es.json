@@ -7,13 +7,13 @@
   "script": "Latn",
   "title": {
     "en": "Lebanon: the big quiz",
-    "fr": "Liban : le grand quiz",
+    "fr": "Liban : le grand quiz",
     "ar": "لبنان: المسابقة الكبيرة",
     "es": "Líbano: el gran quiz"
   },
   "description": {
     "en": "From Fairuz to the Cedars: songs, dabke, football, food and every corner of the map.",
-    "fr": "De Fairouz aux Cèdres : chansons, dabké, foot, bonne bouffe et tous les coins du pays.",
+    "fr": "De Fairouz aux Cèdres : chansons, dabké, foot, bonne bouffe et tous les coins du pays.",
     "ar": "من فيروز لرجال الأرز: غناني، دبكة، فوتبول، أكل طيّب وكل زاوية من لبنان.",
     "es": "De Fairuz a los Cedros: canciones, dabke, fútbol, buena mesa y cada rincón del país."
   },
@@ -72,7 +72,7 @@
         "Qornet es-Saouda",
         "Monte Sannine",
         "Jabal Barouk",
-        "Jabal Knaisseh"
+        "Jabal Terbol"
       ],
       "answer": 0,
       "topic": "geography",
@@ -186,17 +186,17 @@
     {
       "id": "q009",
       "type": "tf",
-      "text": "El río Litani desemboca en Siria.",
+      "text": "Saida está al norte de Beirut, camino de Biblos.",
       "options": [
         "Verdadero",
         "Falso"
       ],
       "answer": 1,
       "topic": "geography",
-      "difficulty": 2,
+      "difficulty": 1,
       "region": "south",
-      "explain": "No se escapa ni una gota: el Litani va de la Bekaa al mar, justo al norte de Tiro.",
-      "source": "[VERIFY] Britannica 'Līṭānī River' (course; mouth at Qasimiyeh, north of Tyre)"
+      "explain": "Al revés: Saida queda unos 40 km al sur de Beirut, bajando por la costa hacia Tiro.",
+      "source": "[VERIFY] Britannica 'Sidon' (port city about 40 km south of Beirut)"
     },
     {
       "id": "q010",
@@ -766,18 +766,18 @@
     {
       "id": "q045",
       "type": "mc4",
-      "text": "¿Qué club libanés ganó la Copa AFC en 2019?",
+      "text": "En la Copa Asiática 2023, ¿contra qué país anfitrión jugó el Líbano el partido inaugural?",
       "options": [
-        "Nejmeh",
-        "Al-Ahed",
-        "Al-Ansar",
-        "Safa"
+        "Emiratos Árabes Unidos",
+        "Catar",
+        "Arabia Saudí",
+        "Japón"
       ],
       "answer": 1,
       "topic": "football",
       "difficulty": 3,
-      "explain": "Ganó la final por 1-0.",
-      "source": "[VERIFY] AFC 'AFC Cup 2019 final' (Al-Ahed 1-0 April 25)"
+      "explain": "El torneo arrancó en el estadio de Lusail, el mismo de la final del Mundial 2022.",
+      "source": "[VERIFY] AFC match report: Qatar 3-0 Lebanon, 12 January 2024, Lusail Stadium (AFC Asian Cup 2023 opening match)"
     },
     {
       "id": "q046",
@@ -897,7 +897,7 @@
     {
       "id": "q053",
       "type": "mc4",
-      "text": "¿Qué premio ganó «Cafarnaúm» en el Festival de Cannes de 2018?",
+      "text": "¿Qué galardón ganó «Cafarnaúm» en el Festival de Cannes de 2018?",
       "options": [
         "La Palma de Oro",
         "El Premio del Jurado",
@@ -1195,7 +1195,7 @@
     {
       "id": "q071",
       "type": "mc4",
-      "text": "¿De qué cantante es hijo el compositor y dramaturgo Ziad Rahbani?",
+      "text": "¿De qué cantante era hijo el difunto compositor y dramaturgo Ziad Rahbani?",
       "options": [
         "Sabah",
         "Fairuz",
@@ -1205,8 +1205,8 @@
       "answer": 1,
       "topic": "music",
       "difficulty": 2,
-      "explain": "Su padre fue Assi Rahbani.",
-      "source": "[VERIFY] Britannica 'Fairuz' / 'Ziad Rahbani' (son of Fairuz and Assi Rahbani)"
+      "explain": "Su padre fue Assi Rahbani. Ziad convirtió la música familiar en un teatro mordaz y muy divertido.",
+      "source": "[VERIFY] Britannica 'Fairuz' / 'Ziad Rahbani' (son of Fairuz and Assi Rahbani; died July 2025)"
     },
     {
       "id": "q072",

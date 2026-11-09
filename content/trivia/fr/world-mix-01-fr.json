@@ -13,7 +13,7 @@
   },
   "description": {
     "en": "Planets, paintings, penalties and paella: one quick lap around everything.",
-    "fr": "Planètes, tableaux, penalties et paella : un petit tour de tout, en vitesse.",
+    "fr": "Planètes, tableaux, penalties et paella : un petit tour de tout, en vitesse.",
     "ar": "كواكب ولوحات وركلات ترجيح وباييا: جولة سريعة حول كلّ شيء.",
     "es": "Planetas, cuadros, penaltis y paella: una vuelta rápida por todo."
   },
@@ -49,7 +49,7 @@
     {
       "id": "q001",
       "type": "mc4",
-      "text": "Quel est le plus grand océan de la planète ?",
+      "text": "Quel est le plus grand océan de la planète ?",
       "options": [
         "L'Atlantique",
         "L'océan Indien",
@@ -65,7 +65,7 @@
     {
       "id": "q002",
       "type": "mc4",
-      "text": "Quel pays a la plus grande superficie ?",
+      "text": "Quel pays a la plus grande superficie ?",
       "options": [
         "La Russie",
         "Le Canada",
@@ -75,13 +75,13 @@
       "answer": 0,
       "topic": "geography",
       "difficulty": 1,
-      "explain": "Onze fuseaux horaires : quelque part en Russie, quelqu'un prend toujours son petit-déjeuner.",
+      "explain": "Onze fuseaux horaires : quelque part en Russie, quelqu'un prend toujours son petit-déjeuner.",
       "source": "[VERIFY] CIA World Factbook area ranking (Russia #1)"
     },
     {
       "id": "q003",
       "type": "mc4",
-      "text": "Quelle est la capitale de l'Australie ?",
+      "text": "Quelle est la capitale de l'Australie ?",
       "options": [
         "Sydney",
         "Melbourne",
@@ -97,7 +97,7 @@
     {
       "id": "q004",
       "type": "mc4",
-      "text": "Quel est le plus grand désert chaud du monde ?",
+      "text": "Quel est le plus grand désert chaud du monde ?",
       "options": [
         "Le Gobi",
         "Le Sahara",
@@ -113,7 +113,7 @@
     {
       "id": "q005",
       "type": "mc4",
-      "text": "En comptant l'outre-mer, quel pays a le plus de fuseaux horaires ?",
+      "text": "En comptant l'outre-mer, quel pays a le plus de fuseaux horaires ?",
       "options": [
         "La Russie",
         "Les États-Unis",
@@ -143,7 +143,7 @@
     {
       "id": "q007",
       "type": "mc4",
-      "text": "Quel est le plus petit pays du monde ?",
+      "text": "Quel est le plus petit pays du monde ?",
       "options": [
         "Le Vatican",
         "Monaco",
@@ -159,7 +159,7 @@
     {
       "id": "q008",
       "type": "mc4",
-      "text": "Quel pays a la forme d'une botte ?",
+      "text": "Quel pays a la forme d'une botte ?",
       "options": [
         "La Grèce",
         "Le Portugal",
@@ -175,7 +175,7 @@
     {
       "id": "q009",
       "type": "mc4",
-      "text": "Quel pays a trois capitales ?",
+      "text": "Quel pays a trois capitales ?",
       "options": [
         "Le Nigeria",
         "L'Afrique du Sud",
@@ -191,7 +191,7 @@
     {
       "id": "q010",
       "type": "mc4",
-      "text": "Quelle est la plus haute chute d'eau du monde ?",
+      "text": "Quelle est la plus haute chute d'eau du monde ?",
       "options": [
         "Les chutes du Niagara",
         "Les chutes Victoria",
@@ -223,7 +223,7 @@
     {
       "id": "q012",
       "type": "mc4",
-      "text": "Quel gaz les plantes prennent-elles dans l'air pour fabriquer leur nourriture ?",
+      "text": "Quel gaz les plantes prennent-elles dans l'air pour fabriquer leur nourriture ?",
       "options": [
         "L'oxygène",
         "L'azote",
@@ -239,7 +239,7 @@
     {
       "id": "q013",
       "type": "mc4",
-      "text": "Combien de pattes a une araignée ?",
+      "text": "Combien de pattes a une araignée ?",
       "options": [
         "6",
         "8",
@@ -249,13 +249,13 @@
       "answer": 1,
       "topic": "nature",
       "difficulty": 1,
-      "explain": "Les insectes en ont six : l'araignée n'en est pas un, c'est un arachnide.",
+      "explain": "Les insectes en ont six : l'araignée n'en est pas un, c'est un arachnide.",
       "source": "[VERIFY] trivial (arachnids: 8 legs)"
     },
     {
       "id": "q014",
       "type": "mc4",
-      "text": "Quel est le matériau naturel le plus dur ?",
+      "text": "Quel est le matériau naturel le plus dur ?",
       "options": [
         "L'or",
         "Le granit",
@@ -271,7 +271,7 @@
     {
       "id": "q015",
       "type": "mc4",
-      "text": "Quelle planète possède une tempête géante appelée la Grande Tache rouge ?",
+      "text": "Quelle planète possède une tempête géante appelée la Grande Tache rouge ?",
       "options": [
         "Jupiter",
         "Mars",
@@ -287,7 +287,7 @@
     {
       "id": "q016",
       "type": "mc4",
-      "text": "Quelle planète tourne couchée sur le côté, comme si elle roulait autour du Soleil ?",
+      "text": "Quelle planète tourne couchée sur le côté, comme si elle roulait autour du Soleil ?",
       "options": [
         "Neptune",
         "Saturne",
@@ -317,7 +317,7 @@
     {
       "id": "q018",
       "type": "mc4",
-      "text": "Quel est le plus grand animal ayant jamais existé ?",
+      "text": "Quel est le plus grand animal ayant jamais existé ?",
       "options": [
         "L'argentinosaure",
         "La baleine bleue",
@@ -333,7 +333,7 @@
     {
       "id": "q019",
       "type": "mc4",
-      "text": "Combien de cœurs a une pieuvre ?",
+      "text": "Combien de cœurs a une pieuvre ?",
       "options": [
         "Un",
         "Deux",
@@ -349,7 +349,7 @@
     {
       "id": "q020",
       "type": "mc4",
-      "text": "Quel métal est liquide à température ambiante ?",
+      "text": "Quel métal est liquide à température ambiante ?",
       "options": [
         "Le mercure",
         "L'étain",
@@ -365,7 +365,7 @@
     {
       "id": "q021",
       "type": "mc4",
-      "text": "Quel est le symbole chimique de l'or ?",
+      "text": "Quel est le symbole chimique de l'or ?",
       "options": [
         "Ag",
         "Gd",
@@ -381,7 +381,7 @@
     {
       "id": "q022",
       "type": "mc4",
-      "text": "Quel pays produit le plus de café ?",
+      "text": "Quel pays produit le plus de café ?",
       "options": [
         "La Colombie",
         "Le Brésil",
@@ -397,7 +397,7 @@
     {
       "id": "q023",
       "type": "mc4",
-      "text": "Quelle partie du corps humain n'a pas de vaisseaux sanguins et prend l'oxygène directement dans l'air ?",
+      "text": "Quelle partie du corps humain n'a pas de vaisseaux sanguins et prend l'oxygène directement dans l'air ?",
       "options": [
         "Le lobe de l'oreille",
         "La langue",
@@ -441,7 +441,7 @@
     {
       "id": "q026",
       "type": "mc4",
-      "text": "Quel animal a des empreintes digitales si proches des nôtres qu'elles pourraient tromper un expert ?",
+      "text": "Quel animal a des empreintes digitales si proches des nôtres qu'elles pourraient tromper un expert ?",
       "options": [
         "Le koala",
         "Le panda",
@@ -457,7 +457,7 @@
     {
       "id": "q027",
       "type": "mc4",
-      "text": "Quelle est l'étoile la plus proche de la Terre ?",
+      "text": "Quelle est l'étoile la plus proche de la Terre ?",
       "options": [
         "Proxima du Centaure",
         "Sirius",
@@ -473,7 +473,7 @@
     {
       "id": "q028",
       "type": "mc4",
-      "text": "Laquelle des Sept Merveilles du monde antique est encore debout ?",
+      "text": "Laquelle des Sept Merveilles du monde antique est encore debout ?",
       "options": [
         "Le colosse de Rhodes",
         "La grande pyramide de Gizeh",
@@ -489,7 +489,7 @@
     {
       "id": "q029",
       "type": "mc4",
-      "text": "Qui a peint La Joconde ?",
+      "text": "Qui a peint La Joconde ?",
       "options": [
         "Michel-Ange",
         "Raphaël",
@@ -505,7 +505,7 @@
     {
       "id": "q030",
       "type": "mc4",
-      "text": "Dans quelle ville peut-on voir La Joconde ?",
+      "text": "Dans quelle ville peut-on voir La Joconde ?",
       "options": [
         "Paris",
         "Florence",
@@ -521,7 +521,7 @@
     {
       "id": "q031",
       "type": "mc4",
-      "text": "Qui a été le premier à marcher sur la Lune ?",
+      "text": "Qui a été le premier à marcher sur la Lune ?",
       "options": [
         "Buzz Aldrin",
         "Youri Gagarine",
@@ -537,7 +537,7 @@
     {
       "id": "q032",
       "type": "mc4",
-      "text": "En quelle année l'homme s'est-il posé sur la Lune pour la première fois ?",
+      "text": "En quelle année l'homme s'est-il posé sur la Lune pour la première fois ?",
       "options": [
         "1959",
         "1969",
@@ -553,7 +553,7 @@
     {
       "id": "q033",
       "type": "mc4",
-      "text": "Qui a mis au point l'imprimerie à caractères mobiles en métal en Europe ?",
+      "text": "Qui a mis au point l'imprimerie à caractères mobiles en métal en Europe ?",
       "options": [
         "Galilée",
         "Isaac Newton",
@@ -569,7 +569,7 @@
     {
       "id": "q034",
       "type": "mc4",
-      "text": "Quelle ville romaine a été ensevelie par le Vésuve en 79 ?",
+      "text": "Quelle ville romaine a été ensevelie par le Vésuve en 79 ?",
       "options": [
         "Pompéi",
         "Athènes",
@@ -585,7 +585,7 @@
     {
       "id": "q035",
       "type": "mc4",
-      "text": "Qui a inventé le World Wide Web ?",
+      "text": "Qui a inventé le World Wide Web ?",
       "options": [
         "Bill Gates",
         "Steve Jobs",
@@ -601,7 +601,7 @@
     {
       "id": "q036",
       "type": "mc4",
-      "text": "Le mot « algèbre » vient d'un livre de quel savant ?",
+      "text": "Le mot « algèbre » vient d'un livre de quel savant ?",
       "options": [
         "Ibn Sina",
         "Al-Khwarizmi",
@@ -611,13 +611,13 @@
       "answer": 1,
       "topic": "science",
       "difficulty": 3,
-      "explain": "Son propre nom nous a donné un autre mot : « algorithme ».",
+      "explain": "Son propre nom nous a donné un autre mot : « algorithme ».",
       "source": "[VERIFY] Britannica 'al-Khwārizmī' (al-jabr → algebra; name → algorithm)"
     },
     {
       "id": "q037",
       "type": "mc4",
-      "text": "Le mot « café » remonte à quelle langue ?",
+      "text": "Le mot « café » remonte à quelle langue ?",
       "options": [
         "L'espagnol",
         "L'hindi",
@@ -636,7 +636,7 @@
     {
       "id": "q038",
       "type": "mc4",
-      "text": "Qui a peint « La Nuit étoilée » ?",
+      "text": "Qui a peint « La Nuit étoilée » ?",
       "options": [
         "Vincent van Gogh",
         "Claude Monet",
@@ -652,7 +652,7 @@
     {
       "id": "q039",
       "type": "mc4",
-      "text": "De quel pays venait la peintre Frida Kahlo ?",
+      "text": "De quel pays venait la peintre Frida Kahlo ?",
       "options": [
         "L'Espagne",
         "L'Argentine",
@@ -668,7 +668,7 @@
     {
       "id": "q040",
       "type": "mc4",
-      "text": "Quel artiste est célèbre pour ses montres molles ?",
+      "text": "Quel artiste est célèbre pour ses montres molles ?",
       "options": [
         "René Magritte",
         "Salvador Dalí",
@@ -684,7 +684,7 @@
     {
       "id": "q041",
       "type": "mc4",
-      "text": "Combien de touches compte un piano standard ?",
+      "text": "Combien de touches compte un piano standard ?",
       "options": [
         "76",
         "100",
@@ -700,7 +700,7 @@
     {
       "id": "q042",
       "type": "mc4",
-      "text": "Quel grand compositeur a continué à écrire après avoir perdu l'ouïe ?",
+      "text": "Quel grand compositeur a continué à écrire après avoir perdu l'ouïe ?",
       "options": [
         "Beethoven",
         "Mozart",
@@ -716,7 +716,7 @@
     {
       "id": "q043",
       "type": "mc4",
-      "text": "Combien de cordes a une guitare classique standard ?",
+      "text": "Combien de cordes a une guitare classique standard ?",
       "options": [
         "4",
         "5",
@@ -732,7 +732,7 @@
     {
       "id": "q044",
       "type": "mc4",
-      "text": "Le tango est né sur le Río de la Plata, en Argentine et dans quel pays voisin ?",
+      "text": "Le tango est né sur le Río de la Plata, en Argentine et dans quel pays voisin ?",
       "options": [
         "Le Brésil",
         "L'Uruguay",
@@ -748,7 +748,7 @@
     {
       "id": "q045",
       "type": "mc4",
-      "text": "Le flamenco vient de quelle région d'Espagne ?",
+      "text": "Le flamenco vient de quelle région d'Espagne ?",
       "options": [
         "La Catalogne",
         "La Galice",
@@ -767,7 +767,7 @@
     {
       "id": "q046",
       "type": "mc4",
-      "text": "De quel pays vient le groupe BTS ?",
+      "text": "De quel pays vient le groupe BTS ?",
       "options": [
         "La Corée du Sud",
         "Le Japon",
@@ -777,13 +777,13 @@
       "answer": 0,
       "topic": "music",
       "difficulty": 1,
-      "explain": "Leurs fans se surnomment l'ARMY.",
-      "source": "[VERIFY] trivial (BTS, South Korea)"
+      "explain": "Leur tube « Dynamite », en 2020, était leur premier titre entièrement en anglais.",
+      "source": "[VERIFY] trivial (BTS, South Korea); Billboard/Big Hit: \"Dynamite\" (Aug 2020), first all-English single"
     },
     {
       "id": "q047",
       "type": "mc4",
-      "text": "Dans « Le Roi lion », comment s'appelle le père de Simba ?",
+      "text": "Dans « Le Roi lion », comment s'appelle le père de Simba ?",
       "options": [
         "Scar",
         "Rafiki",
@@ -799,7 +799,7 @@
     {
       "id": "q048",
       "type": "mc4",
-      "text": "Qui a réalisé « Jurassic Park » (1993) ?",
+      "text": "Qui a réalisé « Jurassic Park » (1993) ?",
       "options": [
         "James Cameron",
         "Steven Spielberg",
@@ -815,7 +815,7 @@
     {
       "id": "q049",
       "type": "mc4",
-      "text": "« Bollywood » mélange « Hollywood » et l'ancien nom de quelle ville ?",
+      "text": "« Bollywood » mélange « Hollywood » et l'ancien nom de quelle ville ?",
       "options": [
         "Bangalore",
         "Bhopal",
@@ -831,7 +831,7 @@
     {
       "id": "q050",
       "type": "mc4",
-      "text": "Quel a été le premier long métrage d'animation de Walt Disney ?",
+      "text": "Quel a été le premier long métrage d'animation de Walt Disney ?",
       "options": [
         "Blanche-Neige et les Sept Nains",
         "Pinocchio",
@@ -847,7 +847,7 @@
     {
       "id": "q051",
       "type": "mc4",
-      "text": "Quel a été le premier film non anglophone à remporter l'Oscar du meilleur film ?",
+      "text": "Quel a été le premier film non anglophone à remporter l'Oscar du meilleur film ?",
       "options": [
         "Roma",
         "Amélie Poulain",
@@ -863,7 +863,7 @@
     {
       "id": "q052",
       "type": "mc4",
-      "text": "Combien de joueurs chaque équipe de foot a-t-elle sur le terrain ?",
+      "text": "Combien de joueurs chaque équipe de foot a-t-elle sur le terrain ?",
       "options": [
         "9",
         "11",
@@ -879,7 +879,7 @@
     {
       "id": "q053",
       "type": "mc4",
-      "text": "Quel pays a remporté le plus de Coupes du monde ?",
+      "text": "Quel pays a remporté le plus de Coupes du monde ?",
       "options": [
         "L'Allemagne",
         "L'Italie",
@@ -895,7 +895,7 @@
     {
       "id": "q054",
       "type": "mc4",
-      "text": "Quel pays a accueilli la toute première Coupe du monde, en 1930 ?",
+      "text": "Quel pays a accueilli la toute première Coupe du monde, en 1930 ?",
       "options": [
         "L'Uruguay",
         "Le Brésil",
@@ -911,7 +911,7 @@
     {
       "id": "q055",
       "type": "mc4",
-      "text": "Quel pays a remporté la Coupe du monde 2022 au Qatar ?",
+      "text": "Quel pays a remporté la Coupe du monde 2022 au Qatar ?",
       "options": [
         "La France",
         "La Croatie",
@@ -927,7 +927,7 @@
     {
       "id": "q056",
       "type": "mc4",
-      "text": "En 2022, quelle équipe est devenue la première d'Afrique à atteindre les demi-finales du Mondial ?",
+      "text": "En 2022, quelle équipe est devenue la première d'Afrique à atteindre les demi-finales du Mondial ?",
       "options": [
         "Le Sénégal",
         "Le Maroc",
@@ -943,7 +943,7 @@
     {
       "id": "q057",
       "type": "mc4",
-      "text": "Tous les combien se tiennent normalement les Jeux olympiques d'été ?",
+      "text": "Tous les combien se tiennent normalement les Jeux olympiques d'été ?",
       "options": [
         "Tous les 2 ans",
         "Tous les 3 ans",
@@ -953,13 +953,13 @@
       "answer": 2,
       "topic": "sports",
       "difficulty": 1,
-      "explain": "Tokyo 2020 a été une rare exception : ils ont eu lieu en 2021.",
+      "explain": "Tokyo 2020 a été une rare exception : ils ont eu lieu en 2021.",
       "source": "[VERIFY] IOC (Summer Games every 4 years; Tokyo 2020 held in 2021)"
     },
     {
       "id": "q058",
       "type": "mc4",
-      "text": "Combien d'anneaux figurent sur le drapeau olympique ?",
+      "text": "Combien d'anneaux figurent sur le drapeau olympique ?",
       "options": [
         "Cinq",
         "Quatre",
@@ -975,7 +975,7 @@
     {
       "id": "q059",
       "type": "mc4",
-      "text": "Au tennis, comment appelle-t-on un score de zéro en anglais ?",
+      "text": "Au tennis, comment appelle-t-on un score de zéro en anglais ?",
       "options": [
         "Nil",
         "Duck",
@@ -991,7 +991,7 @@
     {
       "id": "q060",
       "type": "mc4",
-      "text": "Quelle est la distance approximative d'un marathon ?",
+      "text": "Quelle est la distance approximative d'un marathon ?",
       "options": [
         "21 km",
         "42 km",
@@ -1007,7 +1007,7 @@
     {
       "id": "q061",
       "type": "mc4",
-      "text": "La pizza Margherita vient de quelle ville italienne ?",
+      "text": "La pizza Margherita vient de quelle ville italienne ?",
       "options": [
         "Rome",
         "Milan",
@@ -1017,7 +1017,7 @@
       "answer": 2,
       "topic": "food",
       "difficulty": 2,
-      "explain": "Tomate, mozzarella et basilic : les couleurs du drapeau italien.",
+      "explain": "Tomate, mozzarella et basilic : les couleurs du drapeau italien.",
       "source": "[VERIFY] AVPN / encyclopedia 'pizza Margherita' (Naples)"
     },
     {
@@ -1039,7 +1039,7 @@
     {
       "id": "q063",
       "type": "mc4",
-      "text": "Le safran, l'épice la plus chère au poids, vient de quelle partie d'une fleur ?",
+      "text": "Le safran, l'épice la plus chère au poids, vient de quelle partie d'une fleur ?",
       "options": [
         "Les pétales",
         "Les racines",
@@ -1055,7 +1055,7 @@
     {
       "id": "q064",
       "type": "mc4",
-      "text": "La paella vient de quelle région d'Espagne ?",
+      "text": "La paella vient de quelle région d'Espagne ?",
       "options": [
         "L'Andalousie",
         "Valence",
@@ -1074,7 +1074,7 @@
     {
       "id": "q065",
       "type": "mc4",
-      "text": "Quel fruit sec est la base du massepain ?",
+      "text": "Quel fruit sec est la base du massepain ?",
       "options": [
         "La noisette",
         "La noix",
@@ -1132,7 +1132,7 @@
     {
       "id": "q069",
       "type": "mc4",
-      "text": "Quelle langue compte le plus de locuteurs natifs ?",
+      "text": "Quelle langue compte le plus de locuteurs natifs ?",
       "options": [
         "Le chinois mandarin",
         "L'anglais",
@@ -1148,7 +1148,7 @@
     {
       "id": "q070",
       "type": "mc4",
-      "text": "Avec quel alphabet écrit-on le russe ?",
+      "text": "Avec quel alphabet écrit-on le russe ?",
       "options": [
         "Le latin",
         "Le grec",
@@ -1164,7 +1164,7 @@
     {
       "id": "q071",
       "type": "mc4",
-      "text": "Comment dit-on « merci » en japonais ?",
+      "text": "Comment dit-on « merci » en japonais ?",
       "options": [
         "Konnichiwa",
         "Arigatō",
@@ -1180,7 +1180,7 @@
     {
       "id": "q072",
       "type": "mc4",
-      "text": "Quelle planète a la journée la plus courte ?",
+      "text": "Quelle planète a la journée la plus courte ?",
       "options": [
         "Mercure",
         "La Terre",
@@ -1196,7 +1196,7 @@
     {
       "id": "q073",
       "type": "mc4",
-      "text": "Quelle lettre n'apparaît dans aucun nom (en anglais) des 50 États américains ?",
+      "text": "Quelle lettre n'apparaît dans aucun nom (en anglais) des 50 États américains ?",
       "options": [
         "Q",
         "Z",
@@ -1212,7 +1212,7 @@
     {
       "id": "q074",
       "type": "mc4",
-      "text": "Quel oiseau sait voler en marche arrière ?",
+      "text": "Quel oiseau sait voler en marche arrière ?",
       "options": [
         "L'aigle",
         "Le perroquet",
@@ -1228,7 +1228,7 @@
     {
       "id": "q075",
       "type": "mc4",
-      "text": "Dans quel pays se trouve le Machu Picchu ?",
+      "text": "Dans quel pays se trouve le Machu Picchu ?",
       "options": [
         "Le Mexique",
         "Le Pérou",

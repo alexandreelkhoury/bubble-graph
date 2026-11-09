@@ -1,0 +1,31 @@
+{
+  "scores": [
+    {
+      "playerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "score": 510
+    },
+    {
+      "playerId": "p_1b2c3d4e5f60718293a4b5c6",
+      "score": 940
+    },
+    {
+      "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+      "score": 10
+    },
+    {
+      "playerId": "p_3d4e5f60718293a4b5c6d7e8",
+      "score": 10
+    },
+    {
+      "playerId": "p_4e5f60718293a4b5c6d7e8f9",
+      "score": 0
+    }
+  ],
+  "cup": {
+    "p_1b2c3d4e5f60718293a4b5c6": 3,
+    "p_0a1b2c3d4e5f60718293a4b5": 2,
+    "p_2c3d4e5f60718293a4b5c6d7": 1,
+    "p_3d4e5f60718293a4b5c6d7e8": 1
+  },
+  "viewVersion": 1
+}

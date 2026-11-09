@@ -1,0 +1,13 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "3",
+  "a": {
+    "type": "GAME",
+    "gameId": "likely",
+    "i": {
+      "type": "SKIP_CARD",
+      "cardId": "fam-001"
+    }
+  }
+}

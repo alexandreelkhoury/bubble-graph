@@ -196,7 +196,6 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
   const infoRef = useRef<HTMLButtonElement>(null);
   const startRef = useRef<HTMLButtonElement>(null);
   const contentRef = useRef<HTMLButtonElement>(null);
-  const firstRowRef = useRef<HTMLButtonElement | null>(null);
   const cameFrom = useRef<HTMLElement | null>(null);
   const members = room.members.filter((m) => !m.left);
   const missing = Math.max(0, meta.minPlayers - members.length);
@@ -212,10 +211,18 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
   // DESIGN-JAMAA §2.3: after a first-visit intro, focus returns to the how-to pane.
   const introShown = useRef(intro);
   if (intro) introShown.current = true;
-  const focusInitial = (): void => {
+  const rootRef = useRef<HTMLDivElement>(null);
+  /** The first settings row on screen (refs to rows can go stale when the row list changes, so ask the DOM). */
+  const firstRow = (): HTMLElement | null =>
+    rootRef.current?.querySelector<HTMLElement>(".tvpane--settings [data-row]:not([data-row=content])") ?? contentRef.current;
+  const live = (el: HTMLElement | null): HTMLElement | null => (el?.isConnected ? el : null);
+  const initialTarget = (): "start" | "how" | "row" => {
     const seen = tvIntroSeen(id) && !introShown.current;
-    const target = seen && setup?.canStart ? startRef.current : !seen ? howRef.current : firstRowRef.current ?? contentRef.current ?? startRef.current;
-    target?.focus();
+    return seen && setup?.canStart ? "start" : !seen ? "how" : "row";
+  };
+  const focusInitial = (): void => {
+    const k = initialTarget();
+    (k === "start" ? startRef.current : k === "how" ? howRef.current : firstRow() ?? startRef.current)?.focus();
   };
   useEffect(() => {
     if (intro || choreoActive.value) return;
@@ -243,7 +250,7 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
   });
   const k = entering ?? 1;
   return (
-    <div class={`tvscreen tvsetup${entering !== null ? " is-entering" : ""}`} data-world={WORLD_OF[id]} style={{ "--k": k }}>
+    <div ref={rootRef} class={`tvscreen tvsetup${entering !== null ? " is-entering" : ""}`} data-world={WORLD_OF[id]} style={{ "--k": k }}>
       <div class="tvworld" data-world={WORLD_OF[id]} aria-hidden="true" />
       <header class="tvsetup__strip">
         <span class="tvt-caption tv-muted tvsetup__back"><Icon name="chevron-back" size={20} class="flip-rtl" />{t("hub.title")}</span>
@@ -253,10 +260,10 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
           onClick={() => openRules({ id, hub: false, fromPause: false })}><Icon name="info" size={24} /></button>
       </header>
 
-      <button type="button" ref={howRef} class="tvpane tvpane--how" data-howto aria-label={t("howto.title")}
+      <button type="button" ref={howRef} class="tvpane tvpane--how" data-howto data-default-focus={initialTarget() === "how" ? true : undefined} aria-label={t("howto.title")}
         onFocus={() => setHowFocused(true)} onBlur={() => setHowFocused(false)}
         onKeyDown={(e) => {
-          if (readingDir(e.key, isRtl()) === 1) { e.preventDefault(); (cameFrom.current ?? firstRowRef.current ?? contentRef.current)?.focus(); }
+          if (readingDir(e.key, isRtl()) === 1) { e.preventDefault(); (live(cameFrom.current) ?? firstRow())?.focus(); }
           else if (e.key === "ArrowUp") { e.preventDefault(); infoRef.current?.focus(); }
           else if (e.key === "ArrowDown" || readingDir(e.key, isRtl()) === -1) e.preventDefault();
         }}
@@ -286,9 +293,9 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
           <span class="tvsrow__label">{t("setup.contentTitle")}</span>
           <span class="tvsrow__value"><bdi lang={room.contentLocale}>{LOCALE_NATIVE_NAME[room.contentLocale]}</bdi><Icon name="chevron-down" size={20} class="tvsrow__chev" /></span>
         </button>
-        {basic.map((r, i) => (
+        {basic.map((r) => (
           <SettingRow key={r.id} row={r} setup={setup} locked={r.premium && !room.premium}
-            refCb={i === 0 ? (el) => { firstRowRef.current = el; } : undefined} onLeft={toHow}
+            onLeft={toHow}
             onPacks={() => { rememberSideOpener(); tvPackPicker.value = true; }} />
         ))}
         {hasAdvanced && (
@@ -298,7 +305,7 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
         )}
         <div class="tvsetup__startwrap">
           {blocker && <p class="tvt-caption tv-danger tvsetup__blocker">{blocker}</p>}
-          <button type="button" ref={startRef} class={`tvbtn tvbtn--primary tvbtn--start${setup.canStart ? "" : " is-disabled"}`} data-start
+          <button type="button" ref={startRef} class={`tvbtn tvbtn--primary tvbtn--start${setup.canStart ? "" : " is-disabled"}`} data-start data-default-focus={initialTarget() !== "how" ? true : undefined}
             aria-disabled={!setup.canStart} onKeyDown={(e) => columnKey(e)} onClick={() => { if (setup.canStart) tvAct({ type: "START_GAME" }); }}>
             <Icon name="play" />{t("setup.start")}
           </button>

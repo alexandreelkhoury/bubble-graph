@@ -1,0 +1,7 @@
+{
+  "v": 2,
+  "t": "error",
+  "code": "CANNOT_VOTE_OWN",
+  "messageKey": "error.cannotVoteOwn",
+  "ref": "4"
+}

@@ -1,0 +1,251 @@
+{
+  "v": 2,
+  "t": "state",
+  "seq": 31,
+  "serverNow": 1790000035000,
+  "view": {
+    "kind": "tv",
+    "room": {
+      "roomCode": "KXRT",
+      "joinUrl": "https://play.example.workers.dev/KXRT",
+      "phase": "PLAYING",
+      "focusedGameId": "likely",
+      "setupGameId": "likely",
+      "contentLocale": "en",
+      "members": [
+        {
+          "id": "p_0a1b2c3d4e5f60718293a4b5",
+          "name": "Rami",
+          "color": "coral",
+          "seat": 0,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": true,
+          "reaction": null
+        },
+        {
+          "id": "p_1b2c3d4e5f60718293a4b5c6",
+          "name": "Léa",
+          "color": "azure",
+          "seat": 1,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_2c3d4e5f60718293a4b5c6d7",
+          "name": "نور",
+          "color": "jade",
+          "seat": 2,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_3d4e5f60718293a4b5c6d7e8",
+          "name": "Sam",
+          "color": "lemon",
+          "seat": 3,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_4e5f60718293a4b5c6d7e8f9",
+          "name": "Zoé",
+          "color": "grape",
+          "seat": 4,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        }
+      ],
+      "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "games": [
+        {
+          "id": "mishana",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 2,
+          "durationMinutes": [
+            10,
+            20
+          ]
+        },
+        {
+          "id": "likely",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            6,
+            10
+          ]
+        }
+      ],
+      "setup": null,
+      "cup": {
+        "stars": {},
+        "last": null
+      },
+      "premium": false,
+      "tvBusy": false,
+      "contentLocales": [
+        "en",
+        "fr",
+        "ar",
+        "es"
+      ]
+    },
+    "game": {
+      "gameId": "likely",
+      "n": 1,
+      "phase": "REVEAL",
+      "doneIds": [],
+      "awaitedIds": [],
+      "public": {
+        "schema": 1,
+        "phase": "REVEAL",
+        "cardIndex": 2,
+        "cardCount": 8,
+        "deadline": 1790000041600,
+        "card": {
+          "id": "fam-005",
+          "prompt": "get lost even with GPS",
+          "award": "Lost & Found Award",
+          "spicy": false,
+          "namedPlayerId": null,
+          "rerun": false
+        },
+        "newIds": [],
+        "votedIds": [],
+        "reveal": {
+          "votesCast": 4,
+          "counts": [
+            {
+              "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+              "count": 4,
+              "percent": 100
+            }
+          ],
+          "topIds": [
+            "p_2c3d4e5f60718293a4b5c6d7"
+          ],
+          "unanimous": true,
+          "chaos": false,
+          "none": false,
+          "againId": null,
+          "ballots": [
+            {
+              "voterId": "p_0a1b2c3d4e5f60718293a4b5",
+              "targetId": "p_2c3d4e5f60718293a4b5c6d7"
+            },
+            {
+              "voterId": "p_1b2c3d4e5f60718293a4b5c6",
+              "targetId": "p_2c3d4e5f60718293a4b5c6d7"
+            },
+            {
+              "voterId": "p_2c3d4e5f60718293a4b5c6d7",
+              "targetId": "p_2c3d4e5f60718293a4b5c6d7"
+            },
+            {
+              "voterId": "p_3d4e5f60718293a4b5c6d7e8",
+              "targetId": "p_2c3d4e5f60718293a4b5c6d7"
+            }
+          ],
+          "deltas": [
+            {
+              "playerId": "p_0a1b2c3d4e5f60718293a4b5",
+              "points": 300,
+              "reason": "agree"
+            },
+            {
+              "playerId": "p_0a1b2c3d4e5f60718293a4b5",
+              "points": 100,
+              "reason": "unanimous"
+            },
+            {
+              "playerId": "p_1b2c3d4e5f60718293a4b5c6",
+              "points": 300,
+              "reason": "agree"
+            },
+            {
+              "playerId": "p_1b2c3d4e5f60718293a4b5c6",
+              "points": 100,
+              "reason": "unanimous"
+            },
+            {
+              "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+              "points": 300,
+              "reason": "agree"
+            },
+            {
+              "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+              "points": 100,
+              "reason": "unanimous"
+            },
+            {
+              "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+              "points": 100,
+              "reason": "selfAware"
+            },
+            {
+              "playerId": "p_3d4e5f60718293a4b5c6d7e8",
+              "points": 300,
+              "reason": "agree"
+            },
+            {
+              "playerId": "p_3d4e5f60718293a4b5c6d7e8",
+              "points": 100,
+              "reason": "unanimous"
+            }
+          ]
+        },
+        "scores": [
+          {
+            "playerId": "p_0a1b2c3d4e5f60718293a4b5",
+            "score": 600,
+            "scoreBefore": 200
+          },
+          {
+            "playerId": "p_1b2c3d4e5f60718293a4b5c6",
+            "score": 500,
+            "scoreBefore": 100
+          },
+          {
+            "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+            "score": 600,
+            "scoreBefore": 100
+          },
+          {
+            "playerId": "p_3d4e5f60718293a4b5c6d7e8",
+            "score": 400,
+            "scoreBefore": 0
+          },
+          {
+            "playerId": "p_4e5f60718293a4b5c6d7e8f9",
+            "score": 0,
+            "scoreBefore": 0
+          }
+        ],
+        "awards": [],
+        "showVoters": true,
+        "mode": "family"
+      },
+      "me": null,
+      "over": false
+    },
+    "me": null
+  }
+}

@@ -1,0 +1,1237 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-no-truth-fr",
+  "game": "bluff",
+  "title": {
+    "en": "No Truth (French)",
+    "fr": "Aucune vérité",
+    "ar": "ما في صحّ (فرنساوي)",
+    "es": "Ninguna es verdad (francés)"
+  },
+  "description": {
+    "en": "The French final. No right answer: the most convincing lie wins.",
+    "fr": "La finale. Il n'y a pas de bonne réponse : le mensonge le plus crédible remporte tout.",
+    "ar": "النهائي بالفرنساوي. ما في جواب صح، الكذبة اللي بتنصدّق أكتر بتربح.",
+    "es": "La final en francés. No hay respuesta correcta: gana la mentira más creíble."
+  },
+  "sourceLocale": "fr",
+  "playableIn": [
+    "fr"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {
+    "no_truth": {
+      "fr": [
+        "Personne ne sait, c'est tout le principe",
+        "C'était un mardi",
+        "Demandez au chat"
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "nt-fr-001",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quelle est la toute première phrase qu'un chat a dite à un humain ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Tu peux me nourrir maintenant",
+          "Cette chaise est à moi",
+          "J'étais là avant toi"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-002",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quel est le vrai métier de la Lune ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Veilleuse pour les hiboux",
+          "Surveillante de nuit",
+          "Gardienne des marées"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-003",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Pourquoi les chaussettes disparaissent-elles dans la machine à laver ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Elles partent en vacances sans prévenir",
+          "La machine en garde une en pourboire",
+          "Elles filent par le tuyau la nuit"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-004",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que se racontent les pigeons sur la place du marché ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Celui-là a un croissant",
+          "Fais le mignon, il mange",
+          "Rendez-vous sur la statue à midi"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-005",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que dit la baguette quand on lui croque le bout sur le chemin du retour ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Pas encore, on n'est pas arrivés",
+          "Ça chatouille",
+          "Encore toi"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-006",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que font les nuages pendant leur jour de congé ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "La sieste sur une montagne",
+          "Ils se déguisent en moutons",
+          "Ils rendent visite au brouillard"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-007",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quelle est la règle n° 1 du manuel secret des grands-mères ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Personne ne repart le ventre vide",
+          "Toujours dire tu as maigri",
+          "La belle vaisselle, c'est pour les invités"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-008",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "De quoi se disputent les manchots ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Qui porte le mieux le smoking",
+          "À qui le tour de garder l'œuf",
+          "Si l'eau est trop froide aujourd'hui"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-009",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "À quoi pensent les poissons rouges toute la journée ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Au caillou qui a changé de place",
+          "À celui qui tape sur la vitre",
+          "À comment avoir l'air occupé"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-010",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quel est le mot de passe Wi-Fi de la tour Eiffel ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ferraille4ever",
+          "PasDAscenseur",
+          "330metresdebonheur"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-011",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que se disent les plantes quand on part travailler ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Enfin un peu de calme",
+          "Quelqu'un a eu de l'eau ?",
+          "Il nous parle beaucoup trop"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-012",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Où vont les parapluies perdus ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Sur une plage où il ne pleut jamais",
+          "Au magasin qui les a vendus",
+          "Là où sont parties les chaussettes"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-013",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "De quoi rêvent les chiens ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "D'un facteur qui reste pour discuter",
+          "D'une saucisse sans fin",
+          "Du droit de monter sur le canapé"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-014",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qu'est-ce qui est écrit à la première page du mode d'emploi des bébés ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ni repris ni échangé",
+          "Piles non fournies",
+          "Résultats variables"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-015",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que pense secrètement le GPS quand on ne l'écoute pas ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Très bien, perds-toi",
+          "Je m'en souviendrai",
+          "Je recalcule ma vie"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-016",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quel est le sport préféré des fourmis ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Le lancer de miettes",
+          "La marche synchronisée",
+          "Le pillage de goûters"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-017",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "De quoi parlent tes chaussures pendant que tu dors ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "De là où on est allées",
+          "De qui sent le plus fort",
+          "D'une fugue à la plage"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-018",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Pourquoi les chats font-ils tomber les objets des tables ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ils vérifient la gravité chaque matin",
+          "C'est de la décoration",
+          "Pour se venger du bain"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-019",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qu'a dit la toute première personne qui a goûté une olive ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "On réessaie dans un an",
+          "Cet arbre se moque de moi",
+          "Il manque du sel et beaucoup de patience"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-020",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quel est l'hymne national de la Lune ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Quatre minutes de silence total",
+          "Un long bourdonnement grave",
+          "Une chanson sur le fromage"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-021",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Pourquoi les ascenseurs sont-ils si gênants ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ils entendent trop de secrets",
+          "Personne ne sait où regarder",
+          "La musique nous juge"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-022",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que fait un escargot quand il est pressé ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Il laisse un mot",
+          "Il enlève sa coquille",
+          "Il demande à une tortue de le déposer"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-023",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quel est le plus gros mensonge d'un chat ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "On ne m'a pas nourri",
+          "Ce n'est pas moi qui l'ai cassé",
+          "Je t'aime, maintenant ouvre la porte"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-024",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quelle est la première règle du club secret des grands-pères ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Toujours avoir un mouchoir",
+          "Ne jamais payer le parking",
+          "S'endormir le premier aux mariages"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-025",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que voient les miroirs quand personne ne regarde ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Le fond de la pièce, enfin",
+          "Un mur qui s'ennuie",
+          "Leur cousin, le miroir d'en face"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-026",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quel est le plat préféré des volcans ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Les cailloux épicés",
+          "Tout ce qui s'approche trop",
+          "La soupe bien brûlante"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-027",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que pensent vraiment les arbres des oiseaux ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Des locataires bruyants mais fidèles",
+          "Ils ne paient jamais le loyer",
+          "Des décorations vivantes"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-028",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que font les vers de terre les jours de pluie ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Une fête à la piscine",
+          "Du tourisme sur le trottoir",
+          "Des longueurs de bassin"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-029",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quel est le super-pouvoir le plus ennuyeux ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Toujours savoir l'heure",
+          "Réchauffer un tout petit peu le pain",
+          "Parler aux poignées de porte"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-030",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "De quoi rêvent les théières ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "De devenir fontaine",
+          "De jouer de la trompette",
+          "De devenir montgolfière"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-031",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Pourquoi les clés se cachent-elles quand on est en retard ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Elles détestent qu'on les presse",
+          "Elles veulent des vacances",
+          "Elles sont jalouses du téléphone"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-032",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que comptent les moutons quand ils n'arrivent pas à dormir ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Des humains",
+          "Des nuages",
+          "Des clôtures"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-033",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "De quoi les extraterrestres se plaindraient-ils en premier sur Terre ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "La gravité est bien trop forte",
+          "Personne ne met son clignotant",
+          "Pourquoi le ciel est bleu ?"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-034",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que font les bonshommes de neige en été ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ils déménagent au congélateur",
+          "Ils prennent leur retraite à la montagne",
+          "Ils deviennent des flaques nostalgiques"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-035",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quel est le dessert préféré des robots ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Les cookies aux puces",
+          "La crème aux boulons",
+          "La gelée à piles"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-036",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qu'a dit le premier poisson qui a marché sur la terre ferme ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Qui a laissé couler l'eau ?",
+          "Pieds tout neufs, soyez patients",
+          "Je reviens dans cinq minutes"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-037",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que se disent les bébés au parc ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Regarde, je le refais tomber",
+          "Le mien crie plus fort",
+          "Ne leur dis pas qu'on parle"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-038",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Comment s'appelle en secret le dernier croissant de la boulangerie ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Le Convoité",
+          "Le Tant-pis-pour-toi",
+          "Celui de 19 heures pile"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-039",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que dit le fromage quand il vieillit ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Je deviens plus intéressant",
+          "Ouvrez les fenêtres",
+          "Respectez vos aînés"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-040",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Que fait la tour Eiffel la nuit quand tout le monde dort ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Elle compte ses boulons",
+          "Elle s'étire un peu",
+          "Elle bavarde avec la Lune"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-041",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quel est le secret des escargots pour garder leur maison si propre ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ils ne reçoivent jamais",
+          "Ils sortent quand il pleut",
+          "Ils passent la serpillière tous les soirs"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-042",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qu'écrivent les fantômes sur leur CV ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Excellent en courants d'air",
+          "Disponible uniquement la nuit",
+          "Très discret en réunion"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-fr-043",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quel est le premier mot que les dinosaures ont appris ?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Miam",
+          "Attention",
+          "Pardon pour la queue"
+        ]
+      },
+      "note": {
+        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    }
+  ]
+}

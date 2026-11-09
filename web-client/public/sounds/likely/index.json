@@ -1,0 +1,14 @@
+{
+  "generatedBy": "tools/gen-sounds",
+  "cues": {
+    "likely.deal": "likely_deal",
+    "likely.tok": "likely_tok",
+    "likely.spot": "likely_spot",
+    "likely.rosette": "likely_rosette",
+    "likely.confetti": "likely_confetti",
+    "likely.scramble": "likely_scramble",
+    "likely.ballot": "likely_ballot",
+    "likely.puff": "likely_puff",
+    "likely.glint": "likely_glint"
+  }
+}

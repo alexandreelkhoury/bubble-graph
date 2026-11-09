@@ -1,0 +1,3441 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-me-facts",
+  "game": "bluff",
+  "title": {
+    "en": "Lebanon and Beyond",
+    "fr": "Le Liban et au-delà",
+    "ar": "من لبنان وجيرانو",
+    "es": "El Líbano y más allá"
+  },
+  "description": {
+    "en": "True stories from Lebanon and the Middle East that sound like Teta made them up.",
+    "fr": "Des vérités du Liban et du Moyen-Orient qui sonnent comme des histoires de Teta.",
+    "ar": "قصص حقيقية من لبنان والمنطقة، بتسمعها بتقول تيتا عم تألّف.",
+    "es": "Verdades del Líbano y Oriente Medio que suenan a cuento de la abuela."
+  },
+  "sourceLocale": "en",
+  "playableIn": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {
+    "fact_blank": {
+      "en": [
+        "Pistachios",
+        "The Romans",
+        "A camel",
+        "Seven",
+        "Olive oil"
+      ],
+      "fr": [
+        "Des pistaches",
+        "Les Romains",
+        "Un chameau",
+        "Sept",
+        "L'huile d'olive"
+      ],
+      "ar": [
+        "فستق حلبي",
+        "الرومان",
+        "جمل",
+        "سبعة",
+        "زيت زيتون"
+      ],
+      "es": [
+        "Pistachos",
+        "Los romanos",
+        "Un camello",
+        "Siete",
+        "Aceite de oliva"
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "me-001",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "The Greek word for book, biblion, comes from the name of the Lebanese port ___",
+        "translit": null,
+        "display": {
+          "fr": "Le mot grec pour livre, biblion, vient du nom du port libanais ___",
+          "ar": "الكلمة اليونانية يلي معناها كتاب، بيبليون، جاية من اسم مرفأ لبناني: ___",
+          "es": "La palabra griega para libro, biblion, viene del nombre del puerto libanés de ___"
+        }
+      },
+      "truth": {
+        "en": "Byblos",
+        "fr": "Byblos",
+        "ar": "جبيل",
+        "es": "Biblos"
+      },
+      "truthAlt": {
+        "en": [
+          "Jbeil",
+          "Jbail",
+          "Gebal"
+        ],
+        "fr": [
+          "Jbeil",
+          "Jbail"
+        ],
+        "ar": [
+          "بيبلوس",
+          "جبيل بيبلوس"
+        ],
+        "es": [
+          "Byblos",
+          "Jbeil"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Tyre",
+          "Sidon",
+          "Batroun"
+        ],
+        "fr": [
+          "Tyr",
+          "Sidon",
+          "Batroun"
+        ],
+        "ar": [
+          "صور",
+          "صيدا",
+          "البترون"
+        ],
+        "es": [
+          "Tiro",
+          "Sidón",
+          "Batrún"
+        ]
+      },
+      "note": {
+        "en": "Byblos traded papyrus, which the Greeks called byblos",
+        "fr": "Byblos faisait le commerce du papyrus, que les Grecs appelaient byblos",
+        "ar": "جبيل كانت تتاجر بورق البردي، واليونان سموه بيبلوس",
+        "es": "Biblos comerciaba con papiro, que los griegos llamaban byblos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Byblos ; Etymonline, Bible"
+      }
+    },
+    {
+      "id": "me-002",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "The Greek and Latin alphabets both descend from the alphabet of the ___",
+        "translit": null,
+        "display": {
+          "fr": "Les alphabets grec et latin descendent tous deux de l'alphabet des ___",
+          "ar": "الأبجدية اليونانية واللاتينية التنتين أصلن من أبجدية ___",
+          "es": "Los alfabetos griego y latino descienden del alfabeto de los ___"
+        }
+      },
+      "truth": {
+        "en": "Phoenicians",
+        "fr": "Phéniciens",
+        "ar": "الفينيقيين",
+        "es": "Fenicios"
+      },
+      "truthAlt": {
+        "en": [
+          "Phoenician",
+          "The phoenicians",
+          "Canaanites"
+        ],
+        "fr": [
+          "Les phéniciens",
+          "Phénicien"
+        ],
+        "ar": [
+          "فينيقيين",
+          "الفينيقية",
+          "الكنعانيين"
+        ],
+        "es": [
+          "Los fenicios",
+          "Fenicio"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sumerians",
+          "Babylonians",
+          "Persians"
+        ],
+        "fr": [
+          "Sumériens",
+          "Babyloniens",
+          "Perses"
+        ],
+        "ar": [
+          "السومريين",
+          "البابليين",
+          "الفرس"
+        ],
+        "es": [
+          "Sumerios",
+          "Babilonios",
+          "Persas"
+        ]
+      },
+      "note": {
+        "en": "The Greeks adapted it around the 8th century BC",
+        "fr": "Les Grecs l'ont adapté vers le VIIIe siècle av. J.-C.",
+        "ar": "اليونان اقتبسوها حوالي القرن التامن قبل الميلاد",
+        "es": "Los griegos lo adaptaron hacia el siglo VIII a. C."
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Phoenician alphabet"
+      }
+    },
+    {
+      "id": "me-003",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The famous Phoenician purple dye was made from ___",
+        "translit": null,
+        "display": {
+          "fr": "La célèbre pourpre phénicienne était fabriquée à partir de ___",
+          "ar": "الصبغة الأرجوانية الفينيقية المشهورة كانت تنعمل من ___",
+          "es": "La famosa púrpura fenicia se hacía con ___"
+        }
+      },
+      "truth": {
+        "en": "Sea snails",
+        "fr": "Escargots de mer",
+        "ar": "بزاق البحر",
+        "es": "Caracoles de mar"
+      },
+      "truthAlt": {
+        "en": [
+          "Snails",
+          "Murex",
+          "Murex snails",
+          "Shellfish"
+        ],
+        "fr": [
+          "Murex",
+          "Coquillages",
+          "Escargots"
+        ],
+        "ar": [
+          "الموريكس",
+          "صدف البحر",
+          "حلزون بحري",
+          "بزاق"
+        ],
+        "es": [
+          "Caracoles marinos",
+          "Múrex",
+          "Caracolas",
+          "Moluscos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Crushed beetles",
+          "Beetroot",
+          "Octopus ink"
+        ],
+        "fr": [
+          "Scarabées écrasés",
+          "Betteraves",
+          "Encre de pieuvre"
+        ],
+        "ar": [
+          "خنافس مدقوقة",
+          "شمندر",
+          "حبر أخطبوط"
+        ],
+        "es": [
+          "Escarabajos triturados",
+          "Remolacha",
+          "Tinta de pulpo"
+        ]
+      },
+      "note": {
+        "en": "Thousands of murex snails gave just a few grams of dye, worth more than gold",
+        "fr": "Des milliers de murex pour quelques grammes de teinture",
+        "ar": "آلاف الصدفات لكم غرام صبغة، أغلى من الدهب",
+        "es": "Miles de múrex para unos gramos de tinte"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Tyrian purple ; Smithsonian Magazine on murex dye"
+      }
+    },
+    {
+      "id": "me-004",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "One of the biggest stones ever cut by humans, in Baalbek, is nicknamed the Stone of the ___",
+        "translit": null,
+        "display": {
+          "fr": "L'une des plus grosses pierres jamais taillées, à Baalbek, est surnommée la Pierre de la ___",
+          "ar": "وحدة من أكبر الحجار اللي قطعها الإنسان، ببعلبك، اسمها حجر ___",
+          "es": "Una de las piedras más grandes jamás cortadas, en Baalbek, se llama la Piedra de la ___"
+        }
+      },
+      "truth": {
+        "en": "Pregnant Woman",
+        "fr": "Femme enceinte",
+        "ar": "الحبلى",
+        "es": "Mujer embarazada"
+      },
+      "truthAlt": {
+        "en": [
+          "Pregnant lady",
+          "Hajar el-hibla",
+          "Hibla",
+          "Pregnant one"
+        ],
+        "fr": [
+          "Hajar el-hibla",
+          "Enceinte"
+        ],
+        "ar": [
+          "حجر الحبلى",
+          "الحبلة",
+          "المرا الحبلى"
+        ],
+        "es": [
+          "Embarazada",
+          "Hajar el-hibla"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sleeping Giant",
+          "Lazy Camel",
+          "Forgotten King"
+        ],
+        "fr": [
+          "Géante endormie",
+          "Chamelle paresseuse",
+          "Reine oubliée"
+        ],
+        "ar": [
+          "العملاق النايم",
+          "الجمل الكسلان",
+          "الملك المنسي"
+        ],
+        "es": [
+          "Giganta dormida",
+          "Camella perezosa",
+          "Reina olvidada"
+        ]
+      },
+      "note": {
+        "en": "It weighs about 1,000 tonnes, and an even bigger one was found next to it in 2014",
+        "fr": "Environ 1 000 tonnes, et une plus grosse encore a été trouvée à côté en 2014",
+        "ar": "وزنو حوالي ألف طن، وسنة 2014 لقوا حجر أكبر حدو",
+        "es": "Pesa unas mil toneladas, y en 2014 hallaron otra aún mayor al lado"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] German Archaeological Institute (DAI) 2014 Baalbek quarry report ; Britannica, Baalbek"
+      }
+    },
+    {
+      "id": "me-005",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "Visitors explore the lower cave of Jeita Grotto by ___",
+        "translit": null,
+        "display": {
+          "fr": "On visite la grotte inférieure de Jeita en ___",
+          "ar": "الزوار بيزوروا المغارة التحتانية بجعيتا بـ___",
+          "es": "La cueva inferior de la gruta de Jeita se visita en ___"
+        }
+      },
+      "truth": {
+        "en": "Boat",
+        "fr": "Bateau",
+        "ar": "الفلوكة",
+        "es": "Barca"
+      },
+      "truthAlt": {
+        "en": [
+          "Rowing boat",
+          "Small boat",
+          "On a boat"
+        ],
+        "fr": [
+          "Barque",
+          "Petit bateau"
+        ],
+        "ar": [
+          "فلوكة",
+          "شختورة",
+          "القارب",
+          "زورق"
+        ],
+        "es": [
+          "Bote",
+          "Barquita"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Mine cart",
+          "Mule",
+          "Zip line"
+        ],
+        "fr": [
+          "Wagonnet",
+          "Mulet",
+          "Tyrolienne"
+        ],
+        "ar": [
+          "عربية منجم",
+          "بغل",
+          "زيب لاين"
+        ],
+        "es": [
+          "Vagoneta",
+          "Mula",
+          "Tirolina"
+        ]
+      },
+      "note": {
+        "en": "The underground river is the source of the Nahr al-Kalb",
+        "fr": "La rivière souterraine alimente le Nahr el-Kalb",
+        "ar": "النهر اللي تحت الأرض بيغذي نهر الكلب",
+        "es": "El río subterráneo alimenta el Nahr al-Kalb"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] jeitagrotto.com official site"
+      }
+    },
+    {
+      "id": "me-006",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Khalil Gibran's The Prophet was first published in 1923 in ___",
+        "translit": null,
+        "display": {
+          "fr": "Le Prophète de Khalil Gibran a été publié pour la première fois en 1923 à ___",
+          "ar": "كتاب النبي لجبران خليل جبران انطبع لأول مرة سنة 1923 بـ___",
+          "es": "El profeta de Khalil Gibran se publicó por primera vez en 1923 en ___"
+        }
+      },
+      "truth": {
+        "en": "New York",
+        "fr": "New York",
+        "ar": "نيويورك",
+        "es": "Nueva York"
+      },
+      "truthAlt": {
+        "en": [
+          "Nyc",
+          "New york city"
+        ],
+        "ar": [
+          "نيو يورك"
+        ],
+        "es": [
+          "New york"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Paris",
+          "Beirut",
+          "Boston"
+        ],
+        "fr": [
+          "Paris",
+          "Beyrouth",
+          "Boston"
+        ],
+        "ar": [
+          "باريس",
+          "بيروت",
+          "بوسطن"
+        ],
+        "es": [
+          "París",
+          "Beirut",
+          "Boston"
+        ]
+      },
+      "note": {
+        "en": "Published by Alfred A. Knopf, in English",
+        "fr": "Publié en anglais par Alfred A. Knopf",
+        "ar": "طبعتو دار ألفرد كنوبف بالإنكليزي",
+        "es": "Lo publicó Alfred A. Knopf, en inglés"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Khalil Gibran ; Knopf / Penguin Random House publication history"
+      }
+    },
+    {
+      "id": "me-007",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 2010, Lebanon set a world record with one plate of hummus weighing over ___",
+        "translit": null,
+        "display": {
+          "fr": "En 2010, le Liban a battu un record du monde avec une assiette de houmous de plus de ___",
+          "ar": "سنة 2010، لبنان كسر رقم قياسي بصحن حمص وزنو أكتر من ___",
+          "es": "En 2010, el Líbano batió un récord mundial con un plato de hummus de más de ___"
+        }
+      },
+      "truth": {
+        "en": "10 tonnes",
+        "fr": "10 tonnes",
+        "ar": "10 طن",
+        "es": "10 toneladas"
+      },
+      "truthAlt": {
+        "en": [
+          "10 tons",
+          "Ten tonnes",
+          "10000 kilos",
+          "10,452 kg"
+        ],
+        "fr": [
+          "Dix tonnes",
+          "10 000 kilos"
+        ],
+        "ar": [
+          "عشر طن",
+          "10 أطنان",
+          "عشرة آلاف كيلو"
+        ],
+        "es": [
+          "Diez toneladas",
+          "10 000 kilos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Two tonnes",
+          "500 kilos",
+          "Forty tonnes"
+        ],
+        "fr": [
+          "Trois tonnes",
+          "500 kilos",
+          "Quarante tonnes"
+        ],
+        "ar": [
+          "طنين",
+          "500 كيلو",
+          "أربعين طن"
+        ],
+        "es": [
+          "Tres toneladas",
+          "500 kilos",
+          "Cuarenta toneladas"
+        ]
+      },
+      "note": {
+        "en": "Over 10,450 kg, made by hundreds of chefs",
+        "fr": "Plus de 10 450 kg, préparés par des centaines de chefs",
+        "ar": "أكتر من 10450 كيلو، عملوه مئات الطباخين",
+        "es": "Más de 10 450 kg, preparado por cientos de cocineros"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Guinness World Records, largest serving of hummus (Lebanon, 8 May 2010, 10,452 kg). Check whether a later record exists and keep the 2010 framing (over 10 tonnes)"
+      }
+    },
+    {
+      "id": "me-008",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Tulips first arrived in the Netherlands in the 1500s from ___",
+        "translit": null,
+        "display": {
+          "fr": "Les tulipes sont arrivées aux Pays-Bas au XVIe siècle depuis ___",
+          "ar": "التوليب وصل لهولندا بالقرن السادس عشر من ___",
+          "es": "Los tulipanes llegaron a los Países Bajos en el siglo XVI desde ___"
+        }
+      },
+      "truth": {
+        "en": "The Ottoman Empire",
+        "fr": "L'Empire ottoman",
+        "ar": "السلطنة العتمانية",
+        "es": "El Imperio otomano"
+      },
+      "truthAlt": {
+        "en": [
+          "Ottoman empire",
+          "Turkey",
+          "Istanbul",
+          "Constantinople",
+          "The ottomans"
+        ],
+        "fr": [
+          "Empire ottoman",
+          "La turquie",
+          "Istanbul",
+          "Constantinople"
+        ],
+        "ar": [
+          "العثمانيين",
+          "تركيا",
+          "اسطنبول",
+          "الدولة العثمانية"
+        ],
+        "es": [
+          "Imperio otomano",
+          "Turquía",
+          "Estambul",
+          "Constantinopla"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "China",
+          "Egypt",
+          "India"
+        ],
+        "fr": [
+          "La Chine",
+          "L'Égypte",
+          "L'Inde"
+        ],
+        "ar": [
+          "الصين",
+          "مصر",
+          "الهند"
+        ],
+        "es": [
+          "China",
+          "Egipto",
+          "La India"
+        ]
+      },
+      "note": {
+        "en": "The flower's name comes from the Turkish word for turban, via French",
+        "fr": "Leur nom viendrait du mot turc pour turban",
+        "ar": "اسمها جاي من كلمة تركية معناها عمامة",
+        "es": "Su nombre vendría de la palabra turca para turbante"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, tulip ; Etymonline, tulip"
+      }
+    },
+    {
+      "id": "me-009",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Mocha coffee is named after a port in ___",
+        "translit": null,
+        "display": {
+          "fr": "Le café moka doit son nom à un port du ___",
+          "ar": "قهوة الموكا اسمها جاي من مرفأ بـ___",
+          "es": "El café moca se llama así por un puerto de ___"
+        }
+      },
+      "truth": {
+        "en": "Yemen",
+        "fr": "Yémen",
+        "ar": "اليمن",
+        "es": "Yemen"
+      },
+      "truthAlt": {
+        "en": [
+          "Mokha",
+          "Al-makha",
+          "Mocha yemen"
+        ],
+        "fr": [
+          "Yemen",
+          "Moka"
+        ],
+        "ar": [
+          "يمن",
+          "المخا",
+          "مخا"
+        ],
+        "es": [
+          "El yemen",
+          "Moca"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Ethiopia",
+          "Oman",
+          "Morocco"
+        ],
+        "fr": [
+          "Éthiopie",
+          "Oman",
+          "Maroc"
+        ],
+        "ar": [
+          "الحبشة",
+          "عمان",
+          "المغرب"
+        ],
+        "es": [
+          "Etiopía",
+          "Omán",
+          "Marruecos"
+        ]
+      },
+      "note": {
+        "en": "Mokha was the great coffee port of the Red Sea",
+        "fr": "Moka était le grand port du café sur la mer Rouge",
+        "ar": "المخا كان أكبر مرفأ قهوة عالبحر الأحمر",
+        "es": "Moca era el gran puerto cafetero del mar Rojo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Mocha (Al-Mukha), Yemen"
+      }
+    },
+    {
+      "id": "me-010",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "The word algebra comes from an Arabic word meaning ___",
+        "translit": null,
+        "display": {
+          "fr": "Le mot algèbre vient d'un mot arabe qui veut dire ___",
+          "ar": "كلمة algebra جاية من كلمة عربية: ___",
+          "es": "La palabra álgebra viene de una palabra árabe que significa ___"
+        }
+      },
+      "truth": {
+        "en": "Restoration",
+        "fr": "Restauration",
+        "ar": "الجبر",
+        "es": "Restauración"
+      },
+      "truthAlt": {
+        "en": [
+          "Restoring",
+          "Reunion of broken parts",
+          "Bone setting",
+          "Setting broken bones",
+          "Al-jabr"
+        ],
+        "fr": [
+          "Réparation",
+          "Réduction",
+          "Remettre en place",
+          "Al-jabr"
+        ],
+        "ar": [
+          "جبر",
+          "جبر الكسر",
+          "تجبير"
+        ],
+        "es": [
+          "Reparar",
+          "Recomponer",
+          "Al-jabr",
+          "Arreglar huesos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Counting",
+          "The unknown",
+          "Sand writing"
+        ],
+        "fr": [
+          "Compter",
+          "L'inconnu",
+          "Écrire dans le sable"
+        ],
+        "ar": [
+          "الحساب",
+          "المجهول",
+          "الكتابة عالرمل"
+        ],
+        "es": [
+          "Contar",
+          "Lo desconocido",
+          "Escribir en la arena"
+        ]
+      },
+      "note": {
+        "en": "From al-jabr in the title of al-Khwarizmi's book (around 820)",
+        "fr": "De al-jabr, dans le titre du livre d'al-Khwarizmi (vers 820)",
+        "ar": "من عنوان كتاب الخوارزمي حوالي سنة 820",
+        "es": "De al-jabr, en el título del libro de al-Juarismi (hacia 820)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Etymonline, algebra ; Britannica, al-Khwarizmi. AR prompt asks for the Arabic word itself (the meaning would give it away in Arabic)"
+      }
+    },
+    {
+      "id": "me-011",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The word algorithm comes from the name of a scholar who worked in ___ around 820",
+        "translit": null,
+        "display": {
+          "fr": "Le mot algorithme vient du nom d'un savant qui travaillait à ___ vers 820",
+          "ar": "كلمة algorithm جاية من اسم عالم كان يشتغل بـ___ حوالي سنة 820",
+          "es": "La palabra algoritmo viene del nombre de un sabio que trabajaba en ___ hacia el año 820"
+        }
+      },
+      "truth": {
+        "en": "Baghdad",
+        "fr": "Bagdad",
+        "ar": "بغداد",
+        "es": "Bagdad"
+      },
+      "truthAlt": {
+        "en": [
+          "Bagdad"
+        ],
+        "fr": [
+          "Baghdad"
+        ],
+        "ar": [
+          "بغدد"
+        ],
+        "es": [
+          "Baghdad"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Cairo",
+          "Cordoba",
+          "Damascus"
+        ],
+        "fr": [
+          "Le Caire",
+          "Cordoue",
+          "Damas"
+        ],
+        "ar": [
+          "القاهرة",
+          "قرطبة",
+          "الشام"
+        ],
+        "es": [
+          "El Cairo",
+          "Córdoba",
+          "Damasco"
+        ]
+      },
+      "note": {
+        "en": "Al-Khwarizmi, at the House of Wisdom",
+        "fr": "Al-Khwarizmi, à la Maison de la sagesse",
+        "ar": "الخوارزمي، ببيت الحكمة",
+        "es": "Al-Juarismi, en la Casa de la Sabiduría"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, al-Khwarizmi ; Etymonline, algorithm"
+      }
+    },
+    {
+      "id": "me-012",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The shore of the Dead Sea lies more than ___ below sea level",
+        "translit": null,
+        "display": {
+          "fr": "Le rivage de la mer Morte se trouve à plus de ___ sous le niveau de la mer",
+          "ar": "شط البحر الميت أوطى من سطح البحر بأكتر من ___",
+          "es": "La orilla del mar Muerto está a más de ___ bajo el nivel del mar"
+        }
+      },
+      "truth": {
+        "en": "400 metres",
+        "fr": "400 mètres",
+        "ar": "400 متر",
+        "es": "400 metros"
+      },
+      "truthAlt": {
+        "en": [
+          "400 m",
+          "Four hundred metres",
+          "430 metres",
+          "400 meters"
+        ],
+        "fr": [
+          "400 m",
+          "Quatre cents mètres",
+          "430 mètres"
+        ],
+        "ar": [
+          "400 م",
+          "أربعمية متر",
+          "430 متر"
+        ],
+        "es": [
+          "400 m",
+          "Cuatrocientos metros",
+          "430 metros"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Fifty metres",
+          "A hundred metres",
+          "A whole kilometre"
+        ],
+        "fr": [
+          "Cinquante mètres",
+          "Cent mètres",
+          "Un kilomètre"
+        ],
+        "ar": [
+          "خمسين متر",
+          "مية متر",
+          "كيلومتر كامل"
+        ],
+        "es": [
+          "Cincuenta metros",
+          "Cien metros",
+          "Un kilómetro"
+        ]
+      },
+      "note": {
+        "en": "The lowest land on Earth, and still sinking",
+        "fr": "Le point le plus bas des terres émergées, et il baisse encore",
+        "ar": "أوطى أرض عالكوكب، وعم تنزل أكتر",
+        "es": "Es la tierra más baja del planeta, y sigue bajando"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Dead Sea (shore ~430 m below sea level, falling) ; USGS (more than 400 m)"
+      }
+    },
+    {
+      "id": "me-013",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Petra, in Jordan, is nicknamed the ___ City",
+        "translit": null,
+        "display": {
+          "fr": "Pétra, en Jordanie, est surnommée la cité ___",
+          "ar": "البترا بالأردن لقبها المدينة ___",
+          "es": "Petra, en Jordania, es conocida como la ciudad ___"
+        }
+      },
+      "truth": {
+        "en": "Rose",
+        "fr": "Rose",
+        "ar": "الوردية",
+        "es": "Rosa"
+      },
+      "truthAlt": {
+        "en": [
+          "Rose red",
+          "Rose-red",
+          "Pink"
+        ],
+        "fr": [
+          "Cité rose"
+        ],
+        "ar": [
+          "وردية",
+          "الزهرية",
+          "الحمرا"
+        ],
+        "es": [
+          "Rosada",
+          "Color rosa"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Golden",
+          "Sleeping",
+          "Whispering"
+        ],
+        "fr": [
+          "Dorée",
+          "Endormie",
+          "Murmurante"
+        ],
+        "ar": [
+          "الدهبية",
+          "النايمة",
+          "اللي بتوشوش"
+        ],
+        "es": [
+          "Dorada",
+          "Dormida",
+          "Susurrante"
+        ]
+      },
+      "note": {
+        "en": "From the colour of the sandstone it is carved into",
+        "fr": "À cause de la couleur du grès dans lequel elle est taillée",
+        "ar": "من لون الصخر الرملي اللي محفورة فيه",
+        "es": "Por el color de la arenisca en la que está tallada"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] UNESCO World Heritage, Petra ; Britannica, Petra (rose-red city, Burgon's poem 1845)"
+      }
+    },
+    {
+      "id": "me-014",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Saudi Arabia, one of the largest countries on Earth, has no permanent ___",
+        "translit": null,
+        "display": {
+          "fr": "L'Arabie saoudite, l'un des plus grands pays du monde, n'a aucune ___ permanente",
+          "ar": "السعودية، من أكبر بلدان العالم، ما فيها ولا ___ دايم",
+          "es": "Arabia Saudí, uno de los países más grandes del mundo, no tiene ningún ___ permanente"
+        }
+      },
+      "truth": {
+        "en": "Rivers",
+        "fr": "Rivière",
+        "ar": "نهر",
+        "es": "Río"
+      },
+      "truthAlt": {
+        "en": [
+          "River",
+          "Natural rivers",
+          "Rivers at all"
+        ],
+        "fr": [
+          "Rivières",
+          "Cours d'eau",
+          "Fleuve"
+        ],
+        "ar": [
+          "أنهار",
+          "نهر طبيعي"
+        ],
+        "es": [
+          "Ríos",
+          "Río natural"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Mountains",
+          "Islands",
+          "Forests"
+        ],
+        "fr": [
+          "Montagne",
+          "Île",
+          "Forêt"
+        ],
+        "ar": [
+          "جبل",
+          "جزيرة",
+          "غابة"
+        ],
+        "es": [
+          "Monte",
+          "Isla",
+          "Bosque"
+        ]
+      },
+      "note": {
+        "en": "Water comes from aquifers and desalination instead",
+        "fr": "L'eau vient des nappes souterraines et du dessalement",
+        "ar": "الميّ من الآبار الجوفية ومن تحلية البحر",
+        "es": "El agua sale de acuíferos y de desaladoras"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] CIA World Factbook, Saudi Arabia (no permanent rivers). [VERIFY] size comparison wording"
+      }
+    },
+    {
+      "id": "me-015",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "A camel's hump stores ___",
+        "translit": null,
+        "display": {
+          "fr": "La bosse du chameau contient de la ___",
+          "ar": "سنام الجمل فيه ___",
+          "es": "La joroba del camello guarda ___"
+        }
+      },
+      "truth": {
+        "en": "Fat",
+        "fr": "Graisse",
+        "ar": "دهن",
+        "es": "Grasa"
+      },
+      "truthAlt": {
+        "en": [
+          "Fat reserves",
+          "Body fat"
+        ],
+        "fr": [
+          "Gras",
+          "Réserve de graisse"
+        ],
+        "ar": [
+          "دهون",
+          "شحم",
+          "شحمة"
+        ],
+        "es": [
+          "Grasas",
+          "Reservas de grasa"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Water",
+          "Milk",
+          "Air"
+        ],
+        "fr": [
+          "L'eau",
+          "Lait",
+          "L'air"
+        ],
+        "ar": [
+          "مي",
+          "حليب",
+          "هوا"
+        ],
+        "es": [
+          "Agua",
+          "Leche",
+          "Aire"
+        ]
+      },
+      "note": {
+        "en": "Not water: the fat is energy for long trips without food",
+        "fr": "Pas de l'eau : la graisse sert de réserve d'énergie",
+        "ar": "مش مي: الدهن مخزون طاقة للمشاوير الطويلة",
+        "es": "No es agua: la grasa es su reserva de energía"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Smithsonian National Zoo or San Diego Zoo, camel fact sheet"
+      }
+    },
+    {
+      "id": "me-016",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "The digits 0 to 9 used across Europe came via Arab scholars from ___",
+        "translit": null,
+        "display": {
+          "fr": "Les chiffres de 0 à 9 utilisés en Europe sont arrivés via les savants arabes depuis ___",
+          "ar": "الأرقام من 0 لـ9 اللي بتستعملها أوروبا وصلت عن طريق العلماء العرب من ___",
+          "es": "Las cifras del 0 al 9 que se usan en Europa llegaron a través de sabios árabes desde ___"
+        }
+      },
+      "truth": {
+        "en": "India",
+        "fr": "L'Inde",
+        "ar": "الهند",
+        "es": "La India"
+      },
+      "truthAlt": {
+        "en": [
+          "Indian mathematicians",
+          "The indians"
+        ],
+        "fr": [
+          "Inde",
+          "Les indiens"
+        ],
+        "ar": [
+          "هند",
+          "الهنود"
+        ],
+        "es": [
+          "India",
+          "Los indios"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "China",
+          "Greece",
+          "Egypt"
+        ],
+        "fr": [
+          "La Chine",
+          "La Grèce",
+          "L'Égypte"
+        ],
+        "ar": [
+          "الصين",
+          "اليونان",
+          "مصر"
+        ],
+        "es": [
+          "China",
+          "Grecia",
+          "Egipto"
+        ]
+      },
+      "note": {
+        "en": "That is why they are called Hindu-Arabic numerals",
+        "fr": "D'où leur nom de chiffres indo-arabes",
+        "ar": "لهيك اسمها الأرقام الهندية العربية",
+        "es": "Por eso se llaman números indoarábigos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Hindu-Arabic numerals"
+      }
+    },
+    {
+      "id": "me-017",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "According to Herodotus, Phoenician sailors hired by an Egyptian pharaoh sailed all the way around ___",
+        "translit": null,
+        "display": {
+          "fr": "Selon Hérodote, des marins phéniciens au service d'un pharaon ont fait le tour de ___",
+          "ar": "حسب هيرودوت، بحارة فينيقيين شغلن فرعون مصري لفوا حول ___",
+          "es": "Según Heródoto, marineros fenicios al servicio de un faraón dieron la vuelta a ___"
+        }
+      },
+      "truth": {
+        "en": "Africa",
+        "fr": "L'Afrique",
+        "ar": "أفريقيا",
+        "es": "África"
+      },
+      "truthAlt": {
+        "en": [
+          "The african continent"
+        ],
+        "fr": [
+          "Afrique",
+          "Le continent africain"
+        ],
+        "ar": [
+          "افريقيا",
+          "القارة الأفريقية"
+        ],
+        "es": [
+          "Africa",
+          "El continente africano"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Britain",
+          "Sicily",
+          "India"
+        ],
+        "fr": [
+          "La Bretagne",
+          "La Sicile",
+          "L'Inde"
+        ],
+        "ar": [
+          "بريطانيا",
+          "صقلية",
+          "الهند"
+        ],
+        "es": [
+          "Britania",
+          "Sicilia",
+          "La India"
+        ]
+      },
+      "note": {
+        "en": "Herodotus doubted it because they said the Sun was on their right",
+        "fr": "Hérodote n'y croyait pas : ils disaient avoir eu le soleil à leur droite",
+        "ar": "هيرودوت ما صدق لأنن قالوا الشمس كانت عيمينن",
+        "es": "Heródoto no se lo creyó: decían que el sol les quedaba a la derecha"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Herodotus, Histories IV.42 (Pharaoh Necho II) ; Britannica summary"
+      }
+    },
+    {
+      "id": "me-018",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The ancient city of Carthage, in today's Tunisia, was founded by settlers from ___",
+        "translit": null,
+        "display": {
+          "fr": "La cité antique de Carthage, dans l'actuelle Tunisie, a été fondée par des colons venus de ___",
+          "ar": "مدينة قرطاج القديمة، بتونس اليوم، أسسوها ناس جايين من ___",
+          "es": "La antigua Cartago, en la actual Túnez, la fundaron colonos llegados de ___"
+        }
+      },
+      "truth": {
+        "en": "Tyre",
+        "fr": "Tyr",
+        "ar": "صور",
+        "es": "Tiro"
+      },
+      "truthAlt": {
+        "en": [
+          "Sour",
+          "Phoenicia",
+          "The phoenicians"
+        ],
+        "fr": [
+          "Sour",
+          "Phénicie",
+          "Les phéniciens"
+        ],
+        "ar": [
+          "من صور",
+          "فينيقيا",
+          "الفينيقيين"
+        ],
+        "es": [
+          "Sour",
+          "Fenicia",
+          "Los fenicios"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sidon",
+          "Athens",
+          "Rome"
+        ],
+        "fr": [
+          "Sidon",
+          "Athènes",
+          "Rome"
+        ],
+        "ar": [
+          "صيدا",
+          "أتينا",
+          "روما"
+        ],
+        "es": [
+          "Sidón",
+          "Atenas",
+          "Roma"
+        ]
+      },
+      "note": {
+        "en": "Traditionally dated to 814 BC",
+        "fr": "Traditionnellement datée de 814 av. J.-C.",
+        "ar": "التاريخ التقليدي 814 قبل الميلاد",
+        "es": "Fecha tradicional: 814 a. C."
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Carthage"
+      }
+    },
+    {
+      "id": "me-019",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The Spanish city of Cadiz, one of the oldest in Western Europe, was founded by the ___",
+        "translit": null,
+        "display": {
+          "fr": "La ville espagnole de Cadix, l'une des plus anciennes d'Europe occidentale, a été fondée par les ___",
+          "ar": "مدينة قادش الإسبانية، من أقدم مدن أوروبا الغربية، أسسوها ___",
+          "es": "Cádiz, una de las ciudades más antiguas de Europa occidental, la fundaron los ___"
+        }
+      },
+      "truth": {
+        "en": "Phoenicians",
+        "fr": "Phéniciens",
+        "ar": "الفينيقيين",
+        "es": "Fenicios"
+      },
+      "truthAlt": {
+        "en": [
+          "Phoenician",
+          "Phoenician sailors",
+          "People from tyre"
+        ],
+        "fr": [
+          "Phénicien",
+          "Marins phéniciens"
+        ],
+        "ar": [
+          "فينيقيين",
+          "الفينيقية",
+          "بحارة من صور"
+        ],
+        "es": [
+          "Fenicio",
+          "Marineros fenicios"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Romans",
+          "Vikings",
+          "Greeks"
+        ],
+        "fr": [
+          "Romains",
+          "Vikings",
+          "Grecs"
+        ],
+        "ar": [
+          "الرومان",
+          "الفايكنغ",
+          "اليونان"
+        ],
+        "es": [
+          "Romanos",
+          "Vikingos",
+          "Griegos"
+        ]
+      },
+      "note": {
+        "en": "They called it Gadir",
+        "fr": "Ils l'appelaient Gadir",
+        "ar": "سموها جادير",
+        "es": "La llamaron Gadir"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Cádiz ; Ayuntamiento de Cádiz history page"
+      }
+    },
+    {
+      "id": "me-020",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Greek myth, Europe is named after Europa, a princess from ___",
+        "translit": null,
+        "display": {
+          "fr": "Dans la mythologie grecque, l'Europe doit son nom à Europe, une princesse de ___",
+          "ar": "بالأساطير اليونانية، أوروبا مسمية على اسم أوروبا، أميرة من ___",
+          "es": "En el mito griego, Europa debe su nombre a Europa, una princesa de ___"
+        }
+      },
+      "truth": {
+        "en": "Tyre",
+        "fr": "Tyr",
+        "ar": "صور",
+        "es": "Tiro"
+      },
+      "truthAlt": {
+        "en": [
+          "Phoenicia",
+          "Sour",
+          "Lebanon"
+        ],
+        "fr": [
+          "Phénicie",
+          "Sour",
+          "Liban"
+        ],
+        "ar": [
+          "فينيقيا",
+          "لبنان"
+        ],
+        "es": [
+          "Fenicia",
+          "Sour",
+          "Líbano"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Athens",
+          "Crete",
+          "Troy"
+        ],
+        "fr": [
+          "Athènes",
+          "Crète",
+          "Troie"
+        ],
+        "ar": [
+          "أتينا",
+          "كريت",
+          "طروادة"
+        ],
+        "es": [
+          "Atenas",
+          "Creta",
+          "Troya"
+        ]
+      },
+      "note": {
+        "en": "Zeus, disguised as a bull, carried her off to Crete",
+        "fr": "Zeus, déguisé en taureau, l'a emmenée en Crète",
+        "ar": "زيوس تنكر بتور وخطفها لكريت",
+        "es": "Zeus, disfrazado de toro, se la llevó a Creta"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Europa (Greek mythology). Note: a myth, framed as such"
+      }
+    },
+    {
+      "id": "me-021",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "The Umayyad town of Anjar, in the Bekaa, was built in ___",
+        "translit": null,
+        "display": {
+          "fr": "La ville omeyyade d'Anjar, dans la Bekaa, a été construite ___",
+          "ar": "مدينة عنجر الأموية بالبقاع انبنت بالقرن ___",
+          "es": "La ciudad omeya de Anjar, en la Bekaa, se construyó en el ___"
+        }
+      },
+      "truth": {
+        "en": "The 8th century",
+        "fr": "Au 8e siècle",
+        "ar": "التامن",
+        "es": "Siglo VIII"
+      },
+      "truthAlt": {
+        "en": [
+          "8th century",
+          "Eighth century",
+          "The 700s",
+          "The early 700s"
+        ],
+        "fr": [
+          "8e siècle",
+          "VIIIe siècle",
+          "Au VIIIe siècle",
+          "Huitième siècle"
+        ],
+        "ar": [
+          "الثامن",
+          "تامن",
+          "القرن الثامن"
+        ],
+        "es": [
+          "Siglo 8",
+          "Octavo siglo"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Roman times",
+          "The Bronze Age",
+          "The 1800s"
+        ],
+        "fr": [
+          "L'époque romaine",
+          "L'âge du bronze",
+          "Les années 1800"
+        ],
+        "ar": [
+          "التاني",
+          "الطنعش",
+          "الخمسطعش"
+        ],
+        "es": [
+          "Siglo II",
+          "Siglo XII",
+          "Siglo XV"
+        ]
+      },
+      "note": {
+        "en": "A rare example of a planned city from that era (UNESCO site)",
+        "fr": "Un rare exemple de ville planifiée de cette époque (UNESCO)",
+        "ar": "من أندر المدن المخططة بهيداك الزمن (يونسكو)",
+        "es": "Un raro ejemplo de ciudad planificada de esa época (UNESCO)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] UNESCO World Heritage, Anjar (early 8th century)"
+      }
+    },
+    {
+      "id": "me-022",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "The word safari comes from an Arabic word meaning ___",
+        "translit": null,
+        "display": {
+          "fr": "Le mot safari vient d'un mot arabe qui veut dire ___",
+          "ar": "كلمة سفاري جاية من كلمة عربية معناها ___",
+          "es": "La palabra safari viene de una palabra árabe que significa ___"
+        }
+      },
+      "truth": {
+        "en": "Journey",
+        "fr": "Voyage",
+        "ar": "السفر",
+        "es": "Viaje"
+      },
+      "truthAlt": {
+        "en": [
+          "Travel",
+          "Trip",
+          "Voyage",
+          "Safar"
+        ],
+        "fr": [
+          "Trajet",
+          "Safar"
+        ],
+        "ar": [
+          "سفر",
+          "رحلة",
+          "سفرة"
+        ],
+        "es": [
+          "Travesía",
+          "Safar"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Hunting",
+          "Lion",
+          "Camp"
+        ],
+        "fr": [
+          "Chasse",
+          "Lion",
+          "Campement"
+        ],
+        "ar": [
+          "الصيد",
+          "الأسد",
+          "المخيم"
+        ],
+        "es": [
+          "Caza",
+          "León",
+          "Campamento"
+        ]
+      },
+      "note": {
+        "en": "Via Swahili, from the Arabic safar",
+        "fr": "Par le swahili, depuis l'arabe safar",
+        "ar": "عن طريق السواحيلي، من كلمة سفر",
+        "es": "A través del suajili, del árabe safar"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Etymonline, safari ; Merriam-Webster. knownIn ar candidate (native reviewer decides)"
+      }
+    },
+    {
+      "id": "me-023",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "The word magazine comes from an Arabic word meaning ___",
+        "translit": null,
+        "display": {
+          "fr": "Le mot magasin vient d'un mot arabe qui veut dire ___",
+          "ar": "كلمة magazine بالإنكليزي جاية من كلمة عربية: ___",
+          "es": "La palabra inglesa magazine viene de una palabra árabe que significa ___"
+        }
+      },
+      "truth": {
+        "en": "Storehouses",
+        "fr": "Entrepôts",
+        "ar": "مخازن",
+        "es": "Almacenes"
+      },
+      "truthAlt": {
+        "en": [
+          "Storehouse",
+          "Warehouses",
+          "Stores",
+          "Depots",
+          "Makhazin"
+        ],
+        "fr": [
+          "Entrepôt",
+          "Dépôts",
+          "Réserves",
+          "Makhazin"
+        ],
+        "ar": [
+          "مخزن",
+          "المخازن"
+        ],
+        "es": [
+          "Almacén",
+          "Depósitos",
+          "Makhazin"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Newspapers",
+          "Pictures",
+          "Gossip"
+        ],
+        "fr": [
+          "Marchés",
+          "Comptoirs",
+          "Échoppes"
+        ],
+        "ar": [
+          "مجلات",
+          "جرايد",
+          "صور"
+        ],
+        "es": [
+          "Periódicos",
+          "Imágenes",
+          "Chismes"
+        ]
+      },
+      "note": {
+        "en": "Same root as the French magasin, shop",
+        "fr": "Même racine que l'anglais magazine",
+        "ar": "نفس أصل كلمة magasin بالفرنساوي يعني محل",
+        "es": "Igual que el español almacén, del árabe al-majzan"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Etymonline, magazine ; CNRTL, magasin ; DLE, almacén"
+      }
+    },
+    {
+      "id": "me-024",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "The word admiral comes from the Arabic amir, meaning ___",
+        "translit": null,
+        "display": {
+          "fr": "Le mot amiral vient de l'arabe amir, qui veut dire ___",
+          "ar": "كلمة admiral جاية من كلمة عربية: ___",
+          "es": "La palabra almirante viene del árabe amir, que significa ___"
+        }
+      },
+      "truth": {
+        "en": "Commander",
+        "fr": "Commandant",
+        "ar": "أمير",
+        "es": "Comandante"
+      },
+      "truthAlt": {
+        "en": [
+          "Leader",
+          "Prince",
+          "Emir",
+          "Chief"
+        ],
+        "fr": [
+          "Chef",
+          "Prince",
+          "Émir"
+        ],
+        "ar": [
+          "امير",
+          "أمير البحر",
+          "الأمير"
+        ],
+        "es": [
+          "Jefe",
+          "Príncipe",
+          "Emir"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sailor",
+          "Wave",
+          "Ship"
+        ],
+        "fr": [
+          "Marin",
+          "Vague",
+          "Navire"
+        ],
+        "ar": [
+          "بحار",
+          "موج",
+          "سفينة"
+        ],
+        "es": [
+          "Marinero",
+          "Ola",
+          "Barco"
+        ]
+      },
+      "note": {
+        "en": "From amir al-, as in commander of the sea",
+        "fr": "De amir al-, comme dans commandant de la mer",
+        "ar": "من أمير البحر أو أمير الـ...",
+        "es": "De amir al-, como en comandante del mar"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Etymonline, admiral ; DLE, almirante"
+      }
+    },
+    {
+      "id": "me-025",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The word mattress comes from an Arabic word meaning ___",
+        "translit": null,
+        "display": {
+          "fr": "Le mot matelas vient d'un mot arabe qui veut dire ___",
+          "ar": "كلمة mattress جاية من كلمة عربية: ___",
+          "es": "La palabra inglesa mattress (y el español colchón no) viene de un árabe que significa ___"
+        }
+      },
+      "truth": {
+        "en": "Something thrown down",
+        "fr": "Chose jetée par terre",
+        "ar": "مطرح",
+        "es": "Algo tirado en el suelo"
+      },
+      "truthAlt": {
+        "en": [
+          "A place where things are thrown",
+          "Thrown down",
+          "Cushion",
+          "Mat",
+          "Matrah"
+        ],
+        "fr": [
+          "Ce qu'on jette",
+          "Coussin",
+          "Tapis",
+          "Matrah"
+        ],
+        "ar": [
+          "المطرح",
+          "طرح",
+          "مطرحة"
+        ],
+        "es": [
+          "Cosa arrojada",
+          "Cojín",
+          "Estera",
+          "Matrah"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Bed of kings",
+          "Deep sleep",
+          "Soft stone"
+        ],
+        "fr": [
+          "Lit des rois",
+          "Sommeil profond",
+          "Pierre douce"
+        ],
+        "ar": [
+          "مخدة",
+          "فرشة",
+          "نومة"
+        ],
+        "es": [
+          "Cama de reyes",
+          "Sueño profundo",
+          "Piedra blanda"
+        ]
+      },
+      "note": {
+        "en": "From matrah, a cushion or mat laid on the floor",
+        "fr": "De matrah, coussin posé au sol",
+        "ar": "من مطرح، المحل اللي بينرمى فيه شي أو فرشة عالأرض",
+        "es": "Del árabe matrah, cojín o estera en el suelo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Etymonline, mattress (Arabic matrah) ; CNRTL, matelas"
+      }
+    },
+    {
+      "id": "me-026",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Frankincense, from Oman and Yemen, is made from the dried ___ of a tree",
+        "translit": null,
+        "display": {
+          "fr": "L'encens, d'Oman et du Yémen, est fait à partir de la ___ séchée d'un arbre",
+          "ar": "البخور (اللبان) من عمان واليمن بينعمل من ___ شجرة ناشفة",
+          "es": "El incienso de Omán y Yemen se hace con la ___ seca de un árbol"
+        }
+      },
+      "truth": {
+        "en": "Sap",
+        "fr": "Résine",
+        "ar": "صمغ",
+        "es": "Resina"
+      },
+      "truthAlt": {
+        "en": [
+          "Resin",
+          "Gum",
+          "Tree resin"
+        ],
+        "fr": [
+          "Sève",
+          "Gomme"
+        ],
+        "ar": [
+          "الصمغ",
+          "راتنج",
+          "نسغ"
+        ],
+        "es": [
+          "Savia",
+          "Goma"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Roots",
+          "Flowers",
+          "Seeds"
+        ],
+        "fr": [
+          "Racine",
+          "Fleur",
+          "Graine"
+        ],
+        "ar": [
+          "جذور",
+          "زهر",
+          "بزر"
+        ],
+        "es": [
+          "Raíz",
+          "Flor",
+          "Semilla"
+        ]
+      },
+      "note": {
+        "en": "Cut the bark, wait for the tears of resin to harden",
+        "fr": "On entaille l'écorce et on attend que les larmes de résine durcissent",
+        "ar": "بيجرحوا القشرة وبيستنوا الدموع تجمد",
+        "es": "Se corta la corteza y se espera a que se endurezcan las lágrimas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] UNESCO World Heritage, Land of Frankincense (Oman) ; Britannica, frankincense"
+      }
+    },
+    {
+      "id": "me-027",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 2011, the Arabian oryx became the first animal once extinct in the wild to be upgraded to ___",
+        "translit": null,
+        "display": {
+          "fr": "En 2011, l'oryx d'Arabie est devenu le premier animal éteint à l'état sauvage à repasser en catégorie ___",
+          "ar": "سنة 2011، المها العربي صار أول حيوان انقرض بالبرية وبعدين رجع صنفوه ___",
+          "es": "En 2011, el órice árabe fue el primer animal extinto en estado salvaje en pasar a la categoría ___"
+        }
+      },
+      "truth": {
+        "en": "Vulnerable",
+        "fr": "Vulnérable",
+        "ar": "معرض للخطر",
+        "es": "Vulnerable"
+      },
+      "truthAlt": {
+        "en": [
+          "Vulnerable status",
+          "The vulnerable list"
+        ],
+        "fr": [
+          "Vulnerable"
+        ],
+        "ar": [
+          "مهدد بدرجة ضعيفة",
+          "ضعيف",
+          "هش"
+        ],
+        "es": []
+      },
+      "houseLies": {
+        "en": [
+          "Endangered",
+          "Least concern",
+          "Domesticated"
+        ],
+        "fr": [
+          "En danger",
+          "Préoccupation mineure",
+          "Domestique"
+        ],
+        "ar": [
+          "بخطر الانقراض",
+          "ما في خوف عليه",
+          "أليف"
+        ],
+        "es": [
+          "En peligro",
+          "Preocupación menor",
+          "Doméstico"
+        ]
+      },
+      "note": {
+        "en": "It was wiped out in the wild in 1972, then bred back and released",
+        "fr": "Disparu à l'état sauvage en 1972, puis réintroduit",
+        "ar": "انقرض بالبرية سنة 1972، ربوه ورجعوا طلقوه",
+        "es": "Desapareció en libertad en 1972 y luego fue reintroducido"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] IUCN Red List press release, Arabian oryx (June 2011) ; [native review] IUCN AR term"
+      }
+    },
+    {
+      "id": "me-028",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Jordan's Wadi Rum desert has stood in for the planet ___ in films",
+        "translit": null,
+        "display": {
+          "fr": "Le désert du Wadi Rum, en Jordanie, a joué la planète ___ au cinéma",
+          "ar": "صحرا وادي رم بالأردن لعبت دور كوكب ___ بالأفلام",
+          "es": "El desierto de Wadi Rum, en Jordania, ha hecho de planeta ___ en el cine"
+        }
+      },
+      "truth": {
+        "en": "Mars",
+        "fr": "Mars",
+        "ar": "المريخ",
+        "es": "Marte"
+      },
+      "truthAlt": {
+        "en": [
+          "The planet mars"
+        ],
+        "fr": [
+          "La planète mars"
+        ],
+        "ar": [
+          "مريخ"
+        ],
+        "es": [
+          "El planeta marte"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Venus",
+          "Jupiter",
+          "Mercury"
+        ],
+        "fr": [
+          "Vénus",
+          "Jupiter",
+          "Mercure"
+        ],
+        "ar": [
+          "الزهرة",
+          "المشتري",
+          "عطارد"
+        ],
+        "es": [
+          "Venus",
+          "Júpiter",
+          "Mercurio"
+        ]
+      },
+      "note": {
+        "en": "Including The Martian (2015)",
+        "fr": "Notamment dans Seul sur Mars (2015)",
+        "ar": "منها فيلم The Martian سنة 2015",
+        "es": "Por ejemplo en Marte (The Martian, 2015)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Jordan Tourism Board / Royal Film Commission Jordan, Wadi Rum filmography"
+      }
+    },
+    {
+      "id": "me-029",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Cuneiform, one of the first writing systems, was made by pressing reeds into ___",
+        "translit": null,
+        "display": {
+          "fr": "Le cunéiforme, l'une des premières écritures, se faisait en pressant un roseau dans ___",
+          "ar": "الكتابة المسمارية، من أول أنواع الكتابة، كانت تنعمل بضغط قصبة بـ___",
+          "es": "La escritura cuneiforme, una de las primeras, se hacía presionando una caña sobre ___"
+        }
+      },
+      "truth": {
+        "en": "Wet clay",
+        "fr": "L'argile humide",
+        "ar": "طين طري",
+        "es": "Arcilla húmeda"
+      },
+      "truthAlt": {
+        "en": [
+          "Clay",
+          "Clay tablets",
+          "Soft clay"
+        ],
+        "fr": [
+          "Argile",
+          "Tablettes d'argile",
+          "Terre glaise"
+        ],
+        "ar": [
+          "الطين",
+          "ألواح طين",
+          "صلصال"
+        ],
+        "es": [
+          "Arcilla",
+          "Tablillas de arcilla",
+          "Barro"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sand",
+          "Papyrus",
+          "Tree bark"
+        ],
+        "fr": [
+          "Le sable",
+          "Le papyrus",
+          "L'écorce"
+        ],
+        "ar": [
+          "الرمل",
+          "ورق البردي",
+          "قشر الشجر"
+        ],
+        "es": [
+          "Arena",
+          "Papiro",
+          "Corteza"
+        ]
+      },
+      "note": {
+        "en": "Invented in Mesopotamia over 5,000 years ago",
+        "fr": "Inventé en Mésopotamie il y a plus de 5 000 ans",
+        "ar": "انخترعت ببلاد ما بين النهرين من أكتر من 5000 سنة",
+        "es": "Se inventó en Mesopotamia hace más de 5000 años"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] British Museum, cuneiform ; Britannica"
+      }
+    },
+    {
+      "id": "me-030",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "We have 60 minutes in an hour because the ancient ___ counted in sixties",
+        "translit": null,
+        "display": {
+          "fr": "Une heure fait 60 minutes parce que les anciens ___ comptaient par soixante",
+          "ar": "الساعة فيها 60 دقيقة لأن ___ القدام كانوا يعدوا بالستينات",
+          "es": "Una hora tiene 60 minutos porque los antiguos ___ contaban de sesenta en sesenta"
+        }
+      },
+      "truth": {
+        "en": "Babylonians",
+        "fr": "Babyloniens",
+        "ar": "البابليين",
+        "es": "Babilonios"
+      },
+      "truthAlt": {
+        "en": [
+          "Sumerians",
+          "Mesopotamians",
+          "Babylonian"
+        ],
+        "fr": [
+          "Sumériens",
+          "Mésopotamiens"
+        ],
+        "ar": [
+          "السومريين",
+          "أهل بلاد ما بين النهرين",
+          "بابل"
+        ],
+        "es": [
+          "Sumerios",
+          "Mesopotámicos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Egyptians",
+          "Romans",
+          "Greeks"
+        ],
+        "fr": [
+          "Égyptiens",
+          "Romains",
+          "Grecs"
+        ],
+        "ar": [
+          "المصريين",
+          "الرومان",
+          "اليونان"
+        ],
+        "es": [
+          "Egipcios",
+          "Romanos",
+          "Griegos"
+        ]
+      },
+      "note": {
+        "en": "Base 60 is easy to divide by 2, 3, 4, 5 and 6",
+        "fr": "La base 60 se divise par 2, 3, 4, 5 et 6",
+        "ar": "الستين بتنقسم على 2 و3 و4 و5 و6",
+        "es": "La base 60 se divide entre 2, 3, 4, 5 y 6"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, sexagesimal system ; Scientific American, why 60 minutes"
+      }
+    },
+    {
+      "id": "me-031",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Cleopatra, queen of Egypt, came from a family that was originally ___",
+        "translit": null,
+        "display": {
+          "fr": "Cléopâtre, reine d'Égypte, venait d'une famille d'origine ___",
+          "ar": "كليوباترا، ملكة مصر، عيلتها أصلها ___",
+          "es": "Cleopatra, reina de Egipto, venía de una familia de origen ___"
+        }
+      },
+      "truth": {
+        "en": "Macedonian Greek",
+        "fr": "Grecque macédonienne",
+        "ar": "يونانية مقدونية",
+        "es": "Griego macedonio"
+      },
+      "truthAlt": {
+        "en": [
+          "Greek",
+          "Macedonian",
+          "From macedonia",
+          "From greece"
+        ],
+        "fr": [
+          "Grecque",
+          "Macédonienne",
+          "De macédoine"
+        ],
+        "ar": [
+          "يونانية",
+          "مقدونية",
+          "من مقدونيا",
+          "من اليونان"
+        ],
+        "es": [
+          "Griego",
+          "Macedonio",
+          "De macedonia"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Nubian",
+          "Persian",
+          "Roman"
+        ],
+        "fr": [
+          "Nubienne",
+          "Perse",
+          "Romaine"
+        ],
+        "ar": [
+          "نوبية",
+          "فارسية",
+          "رومانية"
+        ],
+        "es": [
+          "Nubio",
+          "Persa",
+          "Romano"
+        ]
+      },
+      "note": {
+        "en": "The Ptolemies descended from one of Alexander the Great's generals",
+        "fr": "Les Ptolémées descendaient d'un général d'Alexandre le Grand",
+        "ar": "البطالمة من نسل جنرال عند الإسكندر الكبير",
+        "es": "Los Ptolomeos descendían de un general de Alejandro Magno"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Cleopatra ; Britannica, Ptolemaic dynasty"
+      }
+    },
+    {
+      "id": "me-032",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The city of Sidon has a museum dedicated to ___",
+        "translit": null,
+        "display": {
+          "fr": "La ville de Saïda a un musée consacré au ___",
+          "ar": "بصيدا في متحف مخصص لـ___",
+          "es": "La ciudad de Sidón tiene un museo dedicado al ___"
+        }
+      },
+      "truth": {
+        "en": "Soap",
+        "fr": "Savon",
+        "ar": "الصابون",
+        "es": "Jabón"
+      },
+      "truthAlt": {
+        "en": [
+          "Olive oil soap",
+          "Soap making"
+        ],
+        "fr": [
+          "Savon à l'huile d'olive",
+          "Savonnerie"
+        ],
+        "ar": [
+          "صابون",
+          "صابون الزيت",
+          "صناعة الصابون"
+        ],
+        "es": [
+          "Jabón de aceite de oliva"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Umbrellas",
+          "Keys",
+          "Lemons"
+        ],
+        "fr": [
+          "Parapluie",
+          "Clés",
+          "Citron"
+        ],
+        "ar": [
+          "الشمسيات",
+          "المفاتيح",
+          "الليمون"
+        ],
+        "es": [
+          "Paraguas",
+          "Llavero",
+          "Limón"
+        ]
+      },
+      "note": {
+        "en": "Housed in an old soap factory in the souks",
+        "fr": "Installé dans une ancienne savonnerie des souks",
+        "ar": "بمصبنة قديمة بالأسواق",
+        "es": "En una antigua fábrica de jabón del zoco"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Audi Foundation, Soap Museum, Saida (fondationaudi.org)"
+      }
+    },
+    {
+      "id": "me-033",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "According to Pliny the Elder, glass was discovered by accident by ___ merchants cooking on a beach",
+        "translit": null,
+        "display": {
+          "fr": "Selon Pline l'Ancien, le verre a été découvert par hasard par des marchands ___ qui cuisinaient sur une plage",
+          "ar": "حسب بلينيوس الأكبر، القزاز انكتشف بالصدفة على إيد تجار ___ كانوا عم يطبخوا عالشط",
+          "es": "Según Plinio el Viejo, el vidrio lo descubrieron por casualidad unos mercaderes ___ que cocinaban en una playa"
+        }
+      },
+      "truth": {
+        "en": "Phoenician",
+        "fr": "Phéniciens",
+        "ar": "فينيقيين",
+        "es": "Fenicios"
+      },
+      "truthAlt": {
+        "en": [
+          "Phoenicians",
+          "From phoenicia"
+        ],
+        "fr": [
+          "Phénicien",
+          "De phénicie"
+        ],
+        "ar": [
+          "الفينيقيين",
+          "من فينيقيا"
+        ],
+        "es": [
+          "Fenicio",
+          "De fenicia"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Roman",
+          "Egyptian",
+          "Greek"
+        ],
+        "fr": [
+          "Romains",
+          "Égyptiens",
+          "Grecs"
+        ],
+        "ar": [
+          "رومان",
+          "مصريين",
+          "يونان"
+        ],
+        "es": [
+          "Romanos",
+          "Egipcios",
+          "Griegos"
+        ]
+      },
+      "note": {
+        "en": "A legend: their cooking fire melted sand and soda into glass",
+        "fr": "Une légende : leur feu aurait fondu le sable et la soude",
+        "ar": "أسطورة: نارن دوبت الرمل والصودا وعملت قزاز",
+        "es": "Una leyenda: su fuego fundió arena y sosa"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Pliny the Elder, Natural History XXXVI.65 ; Corning Museum of Glass. Framed as a legend"
+      }
+    },
+    {
+      "id": "me-034",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "The name Lebanon comes from an ancient root meaning ___",
+        "translit": null,
+        "display": {
+          "fr": "Le nom Liban vient d'une racine ancienne qui veut dire ___",
+          "ar": "اسم لبنان جاي من جذر قديم معناه ___",
+          "es": "El nombre Líbano viene de una raíz antigua que significa ___"
+        }
+      },
+      "truth": {
+        "en": "White",
+        "fr": "Blanc",
+        "ar": "أبيض",
+        "es": "Blanco"
+      },
+      "truthAlt": {
+        "en": [
+          "Whiteness",
+          "Laban",
+          "The white one"
+        ],
+        "fr": [
+          "Blancheur",
+          "Laban"
+        ],
+        "ar": [
+          "البياض",
+          "بياض",
+          "لبن"
+        ],
+        "es": [
+          "Blancura",
+          "Laban"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Cedar",
+          "High",
+          "Green"
+        ],
+        "fr": [
+          "Cèdre",
+          "Haut",
+          "Vert"
+        ],
+        "ar": [
+          "أرز",
+          "عالي",
+          "أخضر"
+        ],
+        "es": [
+          "Cedro",
+          "Alto",
+          "Verde"
+        ]
+      },
+      "note": {
+        "en": "Probably for the snow on its mountains",
+        "fr": "Sans doute pour la neige de ses montagnes",
+        "ar": "على الأرجح من التلج عجبالو",
+        "es": "Probablemente por la nieve de sus montañas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Lebanon (name) ; Etymonline, Lebanon"
+      }
+    },
+    {
+      "id": "me-035",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "The name Beirut probably comes from an old Semitic word meaning ___",
+        "translit": null,
+        "display": {
+          "fr": "Le nom Beyrouth viendrait d'un ancien mot sémitique qui veut dire ___",
+          "ar": "اسم بيروت على الأرجح جاي من كلمة سامية قديمة معناها ___",
+          "es": "El nombre Beirut vendría de una antigua palabra semítica que significa ___"
+        }
+      },
+      "truth": {
+        "en": "Wells",
+        "fr": "Puits",
+        "ar": "آبار",
+        "es": "Pozos"
+      },
+      "truthAlt": {
+        "en": [
+          "Well",
+          "Water wells",
+          "Springs"
+        ],
+        "fr": [
+          "Les puits",
+          "Sources"
+        ],
+        "ar": [
+          "بير",
+          "بيار",
+          "الآبار",
+          "ينابيع"
+        ],
+        "es": [
+          "Pozo",
+          "Manantiales"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Harbour",
+          "Pine trees",
+          "Seven hills"
+        ],
+        "fr": [
+          "Port",
+          "Pins",
+          "Sept collines"
+        ],
+        "ar": [
+          "مرفأ",
+          "صنوبر",
+          "سبع تلال"
+        ],
+        "es": [
+          "Puerto",
+          "Pinos",
+          "Siete colinas"
+        ]
+      },
+      "note": {
+        "en": "The city sat on underground water",
+        "fr": "La ville reposait sur des nappes d'eau",
+        "ar": "المدينة كانت قاعدة على مي جوفية",
+        "es": "La ciudad estaba sobre aguas subterráneas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Beirut (name from Canaanite/Phoenician be'erot, wells). knownIn ar candidate"
+      }
+    },
+    {
+      "id": "me-036",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Pharaoh Khufu's 4,500-year-old boat, found beside the Great Pyramid, is built mostly of ___",
+        "translit": null,
+        "display": {
+          "fr": "La barque du pharaon Khéops, vieille de 4 500 ans et retrouvée au pied de la Grande Pyramide, est faite surtout de ___",
+          "ar": "مركب الفرعون خوفو، عمرو 4500 سنة ولاقوه حد الهرم الكبير، معمول بأغلبو من ___",
+          "es": "La barca del faraón Keops, de 4500 años y hallada junto a la Gran Pirámide, está hecha sobre todo de ___"
+        }
+      },
+      "truth": {
+        "en": "Lebanese cedar",
+        "fr": "Cèdre du Liban",
+        "ar": "أرز لبنان",
+        "es": "Cedro del Líbano"
+      },
+      "truthAlt": {
+        "en": [
+          "Cedar",
+          "Cedar of Lebanon",
+          "Cedar wood"
+        ],
+        "fr": [
+          "Cèdre",
+          "Bois de cèdre",
+          "Cèdre libanais"
+        ],
+        "ar": [
+          "الأرز",
+          "خشب الأرز",
+          "أرز",
+          "أرز لبناني"
+        ],
+        "es": [
+          "Cedro",
+          "Madera de cedro",
+          "Cedro libanés"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Nile papyrus",
+          "Date palm",
+          "Oak from Crete"
+        ],
+        "fr": [
+          "Papyrus du Nil",
+          "Palmier dattier",
+          "Chêne de Crète"
+        ],
+        "ar": [
+          "بردي النيل",
+          "خشب النخل",
+          "سنديان من كريت"
+        ],
+        "es": [
+          "Papiro del Nilo",
+          "Palmera datilera",
+          "Roble de Creta"
+        ]
+      },
+      "note": {
+        "en": "Egypt imported Lebanese cedar for its finest boats and doors",
+        "fr": "L'Égypte importait le cèdre du Liban pour ses plus beaux bateaux et ses portes",
+        "ar": "مصر كانت تجيب أرز لبنان لأحلى مراكبها وبوابها",
+        "es": "Egipto importaba cedro del Líbano para sus mejores barcos y puertas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Khufu ship ; Grand Egyptian Museum, Khufu boat (Lebanese cedar)"
+      }
+    },
+    {
+      "id": "me-037",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "The Rub al Khali desert's name means the Empty ___",
+        "translit": null,
+        "display": {
+          "fr": "Le nom du désert du Rub al-Khali veut dire le ___ vide",
+          "ar": "صحرا ___ الخالي",
+          "es": "El nombre del desierto Rub al Jali significa el ___ vacío"
+        }
+      },
+      "truth": {
+        "en": "Quarter",
+        "fr": "Quart",
+        "ar": "الربع",
+        "es": "Cuarto"
+      },
+      "truthAlt": {
+        "en": [
+          "Empty quarter"
+        ],
+        "fr": [
+          "Quartier",
+          "Quart vide"
+        ],
+        "ar": [
+          "ربع"
+        ],
+        "es": [
+          "Cuarto vacío"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Ocean",
+          "Kingdom",
+          "Sky"
+        ],
+        "fr": [
+          "Océan",
+          "Royaume",
+          "Ciel"
+        ],
+        "ar": [
+          "البحر",
+          "الملك",
+          "السما"
+        ],
+        "es": [
+          "Océano",
+          "Reino",
+          "Cielo"
+        ]
+      },
+      "note": {
+        "en": "The largest continuous sand desert in the world",
+        "fr": "Le plus grand désert de sable continu au monde",
+        "ar": "أكبر صحرا رمل متصلة بالعالم",
+        "es": "El mayor desierto de arena continua del mundo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Rub al-Khali"
+      }
+    },
+    {
+      "id": "me-038",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Ski Dubai, an indoor ski slope inside a shopping mall, is home to real ___",
+        "translit": null,
+        "display": {
+          "fr": "Ski Dubai, une piste de ski couverte dans un centre commercial, abrite de vrais ___",
+          "ar": "سكي دبي، منحدر تزلج مسكر جوا مول، فيه ___ حقيقيين",
+          "es": "Ski Dubai, una pista de esquí cubierta dentro de un centro comercial, tiene ___ de verdad"
+        }
+      },
+      "truth": {
+        "en": "Penguins",
+        "fr": "Manchots",
+        "ar": "بطاريق",
+        "es": "Pingüinos"
+      },
+      "truthAlt": {
+        "en": [
+          "Penguin",
+          "Gentoo penguins",
+          "King penguins"
+        ],
+        "fr": [
+          "Pingouins",
+          "Manchots papous"
+        ],
+        "ar": [
+          "بطريق",
+          "بطاريق جنتو"
+        ],
+        "es": [
+          "Pingüino",
+          "Pingüinos papúa"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Polar bears",
+          "Huskies",
+          "Reindeer"
+        ],
+        "fr": [
+          "Ours polaires",
+          "Huskies",
+          "Rennes"
+        ],
+        "ar": [
+          "دببة قطبية",
+          "كلاب هاسكي",
+          "غزلان رنة"
+        ],
+        "es": [
+          "Osos polares",
+          "Huskies",
+          "Renos"
+        ]
+      },
+      "note": {
+        "en": "Visitors can book a session to meet them",
+        "fr": "On peut réserver une rencontre avec eux",
+        "ar": "فيك تحجز جلسة لتشوفن",
+        "es": "Se puede reservar una visita para conocerlos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] skidxb.com official site (Penguin Encounter)"
+      }
+    },
+    {
+      "id": "me-039",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Legend says coffee was discovered when an Ethiopian herder noticed his ___ dancing after eating the berries",
+        "translit": null,
+        "display": {
+          "fr": "Selon la légende, le café a été découvert quand un berger éthiopien a vu ses ___ danser après avoir mangé les baies",
+          "ar": "بتقول الأسطورة إنو القهوة انكتشفت لما راعي حبشي شاف ___ عم يرقصوا بعد ما أكلوا الحبوب",
+          "es": "Según la leyenda, el café se descubrió cuando un pastor etíope vio a sus ___ bailar tras comer las bayas"
+        }
+      },
+      "truth": {
+        "en": "Goats",
+        "fr": "Chèvres",
+        "ar": "معزاتو",
+        "es": "Cabras"
+      },
+      "truthAlt": {
+        "en": [
+          "Goat",
+          "Flock",
+          "Herd"
+        ],
+        "fr": [
+          "Chèvre",
+          "Troupeau"
+        ],
+        "ar": [
+          "المعزة",
+          "الماعز",
+          "معز",
+          "القطيع"
+        ],
+        "es": [
+          "Cabra",
+          "Rebaño"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Camels",
+          "Sheep",
+          "Donkeys"
+        ],
+        "fr": [
+          "Chameaux",
+          "Moutons",
+          "Ânes"
+        ],
+        "ar": [
+          "جمالو",
+          "غنماتو",
+          "حميرو"
+        ],
+        "es": [
+          "Camellos",
+          "Ovejas",
+          "Burros"
+        ]
+      },
+      "note": {
+        "en": "The legend of Kaldi, set in Ethiopia",
+        "fr": "La légende de Kaldi, en Éthiopie",
+        "ar": "أسطورة كالدي بالحبشة",
+        "es": "La leyenda de Kaldi, en Etiopía"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] National Coffee Association USA, history of coffee (Kaldi legend). Framed as a legend"
+      }
+    },
+    {
+      "id": "me-040",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Al-Qarawiyyin in Fez, often called the oldest existing university, was founded in 859 by ___",
+        "translit": null,
+        "display": {
+          "fr": "Al-Quaraouiyine à Fès, souvent dite la plus ancienne université encore active, a été fondée en 859 par ___",
+          "ar": "جامعة القرويين بفاس، اللي بيقولوا عنها أقدم جامعة بعدها شغالة، أسستها سنة 859 ___",
+          "es": "Al Qarawiyyin, en Fez, a menudo llamada la universidad más antigua en activo, la fundó en 859 ___"
+        }
+      },
+      "truth": {
+        "en": "A woman",
+        "fr": "Une femme",
+        "ar": "مرا",
+        "es": "Una mujer"
+      },
+      "truthAlt": {
+        "en": [
+          "Fatima al-fihri",
+          "A young woman",
+          "Fatima"
+        ],
+        "fr": [
+          "Fatima al-fihri",
+          "Fatima"
+        ],
+        "ar": [
+          "امرأة",
+          "فاطمة الفهرية",
+          "ست",
+          "صبية"
+        ],
+        "es": [
+          "Fátima al-fihri",
+          "Fátima"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A king",
+          "A poet",
+          "A sailor"
+        ],
+        "fr": [
+          "Un roi",
+          "Un poète",
+          "Un marin"
+        ],
+        "ar": [
+          "ملك",
+          "شاعر",
+          "بحار"
+        ],
+        "es": [
+          "Un rey",
+          "Un poeta",
+          "Un marinero"
+        ]
+      },
+      "note": {
+        "en": "Fatima al-Fihri used her inheritance to build it",
+        "fr": "Fatima al-Fihri l'a financée avec son héritage",
+        "ar": "فاطمة الفهرية عمرتها من ورتتها",
+        "es": "Fátima al-Fihri la pagó con su herencia"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Guinness World Records, oldest existing university ; UNESCO, Medina of Fez"
+      }
+    },
+    {
+      "id": "me-041",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "Checkmate comes from Persian words meaning the king is ___",
+        "translit": null,
+        "display": {
+          "fr": "Échec et mat vient de mots persans qui veulent dire le roi est ___",
+          "ar": "كلمة checkmate بالشطرنج جاية من الفارسية: الشاه ___",
+          "es": "Jaque mate viene de palabras persas que significan el rey está ___"
+        }
+      },
+      "truth": {
+        "en": "Helpless",
+        "fr": "Impuissant",
+        "ar": "مات",
+        "es": "Indefenso"
+      },
+      "truthAlt": {
+        "en": [
+          "Stuck",
+          "Defeated",
+          "Dead",
+          "Trapped",
+          "Finished"
+        ],
+        "fr": [
+          "Coincé",
+          "Vaincu",
+          "Mort",
+          "Piégé",
+          "Fini"
+        ],
+        "ar": [
+          "مغلوب",
+          "محاصر"
+        ],
+        "es": [
+          "Acorralado",
+          "Vencido",
+          "Muerto",
+          "Perdido"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Tired",
+          "Hungry",
+          "Laughing"
+        ],
+        "fr": [
+          "Fatigué",
+          "Affamé",
+          "En train de rire"
+        ],
+        "ar": [
+          "تعب",
+          "جاع",
+          "ضحك"
+        ],
+        "es": [
+          "Cansado",
+          "Hambriento",
+          "Riéndose"
+        ]
+      },
+      "note": {
+        "en": "Shah mat: the king is left helpless (popularly, the king is dead)",
+        "fr": "Shah mat : le roi est sans recours (on dit souvent : le roi est mort)",
+        "ar": "شاه مات: الملك ما عاد إلو مخرج",
+        "es": "Shah mat: el rey se queda sin salida (se suele decir: el rey ha muerto)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Etymonline, checkmate ; Britannica, chess terminology"
+      }
+    },
+    {
+      "id": "me-042",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar",
+        "fr",
+        "es"
+      ],
+      "prompt": {
+        "original": "The patterned fabric damask is named after the city of ___",
+        "translit": null,
+        "display": {
+          "fr": "Le tissu damassé (damas) doit son nom à la ville de ___",
+          "ar": "قماش الدامسكو المشجر مسمى على اسم مدينة ___",
+          "es": "La tela adamascada (damasco) debe su nombre a la ciudad de ___"
+        }
+      },
+      "truth": {
+        "en": "Damascus",
+        "fr": "Damas",
+        "ar": "الشام",
+        "es": "Damasco"
+      },
+      "truthAlt": {
+        "en": [
+          "Dimashq",
+          "Sham",
+          "Ash-sham"
+        ],
+        "fr": [
+          "Dimashq",
+          "Sham"
+        ],
+        "ar": [
+          "دمشق",
+          "شام"
+        ],
+        "es": [
+          "Dimashq",
+          "Sham"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Damietta",
+          "Amman",
+          "Baghdad"
+        ],
+        "fr": [
+          "Damiette",
+          "Amman",
+          "Bagdad"
+        ],
+        "ar": [
+          "دمياط",
+          "عمان",
+          "بغداد"
+        ],
+        "es": [
+          "Damieta",
+          "Amán",
+          "Bagdad"
+        ]
+      },
+      "note": {
+        "en": "Damascus weavers made it famous along the trade routes",
+        "fr": "Les tisserands de Damas l'ont rendu célèbre",
+        "ar": "حياكين الشام شهروه على طرق التجارة",
+        "es": "Los tejedores de Damasco la hicieron famosa"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Etymonline, damask ; Britannica, damask"
+      }
+    },
+    {
+      "id": "me-043",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "Traditional Aleppo soap is made from olive oil and the oil of ___",
+        "translit": null,
+        "display": {
+          "fr": "Le savon d'Alep traditionnel est fait d'huile d'olive et d'huile de ___",
+          "ar": "صابون حلب التقليدي بينعمل من زيت زيتون وزيت ___",
+          "es": "El jabón de Alepo tradicional se hace con aceite de oliva y aceite de ___"
+        }
+      },
+      "truth": {
+        "en": "Laurel berries",
+        "fr": "Baies de laurier",
+        "ar": "الغار",
+        "es": "Bayas de laurel"
+      },
+      "truthAlt": {
+        "en": [
+          "Laurel",
+          "Bay laurel",
+          "Bay leaves",
+          "Laurel oil"
+        ],
+        "fr": [
+          "Laurier",
+          "Laurier-sauce"
+        ],
+        "ar": [
+          "غار",
+          "حب الغار"
+        ],
+        "es": [
+          "Laurel",
+          "Semillas de laurel"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sesame seeds",
+          "Rose petals",
+          "Almonds"
+        ],
+        "fr": [
+          "Graines de sésame",
+          "Pétales de rose",
+          "Amandes"
+        ],
+        "ar": [
+          "السمسم",
+          "الورد",
+          "اللوز"
+        ],
+        "es": [
+          "Semillas de sésamo",
+          "Pétalos de rosa",
+          "Almendras"
+        ]
+      },
+      "note": {
+        "en": "The bars are left to dry for months, turning gold outside and staying green inside",
+        "fr": "Les pains sèchent des mois : dorés dehors, verts dedans",
+        "ar": "بينشف أشهر، بيصير دهبي من برا وبيضل أخضر من جوا",
+        "es": "Las pastillas se secan durante meses: doradas por fuera, verdes por dentro"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica or a museum page on Aleppo soap (olive and laurel oil)"
+      }
+    },
+    {
+      "id": "me-044",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "fr"
+      ],
+      "prompt": {
+        "original": "Beirut's seaside district of Raouché takes its name from the French word for ___",
+        "translit": null,
+        "display": {
+          "fr": "Le quartier de Raouché, à Beyrouth, tire son nom du mot français ___",
+          "ar": "منطقة الروشة ببيروت أخدت اسمها من كلمة فرنساوية معناها ___",
+          "es": "El barrio costero de Raouché, en Beirut, debe su nombre a la palabra francesa para ___"
+        }
+      },
+      "truth": {
+        "en": "Rock",
+        "fr": "Rocher",
+        "ar": "صخرة",
+        "es": "Roca"
+      },
+      "truthAlt": {
+        "en": [
+          "Rocks",
+          "A rock",
+          "Rocher",
+          "Boulder"
+        ],
+        "fr": [
+          "Rochers",
+          "Roche",
+          "Le rocher"
+        ],
+        "ar": [
+          "صخر",
+          "الصخرة",
+          "روشيه",
+          "صخور"
+        ],
+        "es": [
+          "Rocas",
+          "Peñasco",
+          "Una roca"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Wave",
+          "Breeze",
+          "Pink"
+        ],
+        "fr": [
+          "Rideau",
+          "Rouge",
+          "Roseau"
+        ],
+        "ar": [
+          "موجة",
+          "نسمة",
+          "زهري"
+        ],
+        "es": [
+          "Ola",
+          "Brisa",
+          "Arrecife"
+        ]
+      },
+      "note": {
+        "en": "Rocher: the famous Pigeon Rocks stand just offshore",
+        "fr": "Rocher : la célèbre Grotte aux Pigeons est juste en face",
+        "ar": "من rocher، وصخرة الروشة الشهيرة قبالها بالبحر",
+        "es": "De rocher: las famosas Rocas de las Palomas están justo enfrente"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica or Lebanese Ministry of Tourism, Raouché and Pigeon Rocks (name from French rocher)"
+      }
+    },
+    {
+      "id": "me-045",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "Lebanon is one of the very few countries in the Middle East with no ___",
+        "translit": null,
+        "display": {
+          "fr": "Le Liban est l'un des très rares pays du Moyen-Orient sans ___",
+          "ar": "لبنان من البلدان القليلة بالشرق الأوسط اللي ما فيها ___",
+          "es": "El Líbano es uno de los poquísimos países de Oriente Medio sin ___"
+        }
+      },
+      "truth": {
+        "en": "Desert",
+        "fr": "Désert",
+        "ar": "صحرا",
+        "es": "Desierto"
+      },
+      "truthAlt": {
+        "en": [
+          "Deserts",
+          "A desert",
+          "Sand desert"
+        ],
+        "fr": [
+          "Déserts",
+          "Aucun désert"
+        ],
+        "ar": [
+          "صحراء",
+          "صحاري",
+          "الصحرا"
+        ],
+        "es": [
+          "Desiertos",
+          "Ningún desierto"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Rivers",
+          "Islands",
+          "Traffic lights"
+        ],
+        "fr": [
+          "Rivières",
+          "Îles",
+          "Feux rouges"
+        ],
+        "ar": [
+          "نهر",
+          "جزر",
+          "إشارات سير"
+        ],
+        "es": [
+          "Ríos",
+          "Islas",
+          "Semáforos"
+        ]
+      },
+      "note": {
+        "en": "Mountains, snow and the sea, but not one desert",
+        "fr": "Des montagnes, de la neige et la mer, mais pas un seul désert",
+        "ar": "جبال وتلج وبحر، بس ولا صحرا",
+        "es": "Montañas, nieve y mar, pero ni un solo desierto"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Britannica, Lebanon (land and relief) ; CIA World Factbook, Lebanon (terrain)"
+      }
+    }
+  ]
+}

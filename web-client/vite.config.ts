@@ -1,5 +1,18 @@
 import { defineConfig } from "vite";
+import type { Plugin } from "vite";
 import preact from "@preact/preset-vite";
+import { WORLD_IDS, worldColor } from "../shared/src/worlds/index";
+import { worldCss } from "./src/lib/worlds";
+
+/** JAMAA-PLATFORM §3.4: `virtual:jamaa-worlds.css` = the shared world palettes as CSS (build time, zero phone JS). */
+function worlds(): Plugin {
+  const id = "virtual:jamaa-worlds.css";
+  return {
+    name: "jamaa-worlds",
+    resolveId: (s) => (s === id ? `\0${id}` : null),
+    load: (s) => (s === `\0${id}` ? worldCss(WORLD_IDS, worldColor) : null),
+  };
+}
 
 // JAMAA-PLATFORM §3.8: chunk names the budget script (scripts/check-size.mjs) understands.
 //   game-<id>[-shared]       a game's phone screens (lazy; counted per game, ≤ 14 KB gz)
@@ -27,7 +40,7 @@ function chunkName(facade: string, modules: readonly string[]): string | null {
 }
 
 export default defineConfig({
-  plugins: [preact()],
+  plugins: [worlds(), preact()],
   server: { host: true, port: 5173, strictPort: true,
     proxy: { "/api": "http://127.0.0.1:8787", "/healthz": "http://127.0.0.1:8787",
              "/parties": { target: "ws://127.0.0.1:8787", ws: true } } },

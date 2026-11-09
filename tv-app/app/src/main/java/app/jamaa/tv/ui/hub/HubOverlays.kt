@@ -1,5 +1,16 @@
 package app.jamaa.tv.ui.hub
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.ui.res.pluralStringResource
+import androidx.tv.material3.Icon
+import app.jamaa.tv.games.GameView
+import app.jamaa.tv.platform.GameChrome
+import app.jamaa.tv.ui.platform.Chip
+import app.jamaa.tv.ui.theme.JamaaShapes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -249,4 +260,82 @@ fun PackPickerSheet(
         }
     }
     if (available.any { it.gameId == gameId }) InitialFocus(first)
+}
+
+/**
+ * HUB-05 cup panel under a game's results: "Tonight's cup", the standings (character, name, stars) with the stars this
+ * game earned (`cup.last.points`). Not focusable; the results buttons stay the only targets.
+ */
+@Composable
+fun CupPanel(room: RoomPublic, modifier: Modifier = Modifier) {
+    val rows = HubModel.cupTop(room.cup, room.members, n = 5)
+    val earned = room.cup.last?.points.orEmpty()
+    Column(modifier.background(JamaaColors.Surface.copy(alpha = 0.7f), JamaaShapes.tile).padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Icon(JamaaIcons.Trophy, contentDescription = null, tint = JamaaColors.Accent, modifier = Modifier.size(20.dp))
+            Text(stringResource(R.string.cup__title), style = JamaaTheme.type.titleS, color = JamaaColors.Accent)
+        }
+        if (rows.isEmpty()) Text(stringResource(R.string.cup__empty), style = JamaaTheme.type.caption, color = JamaaColors.TextMuted)
+        for ((m, stars) in rows) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Character(m.color, 28.dp, app.jamaa.tv.platform.Expression.IDLE)
+                Text(isolate(Names.ellipsize(m.name, 12)), style = JamaaTheme.type.label, color = JamaaColors.Text, maxLines = 1, modifier = Modifier.width(140.dp))
+                Text("★ $stars", style = JamaaTheme.type.label, color = JamaaColors.Accent)
+                val plus = earned[m.id] ?: 0
+                if (plus > 0) Text(pluralStringResource(R.plurals.cup__stars_earned, plus, plus), style = JamaaTheme.type.caption, color = JamaaColors.Success)
+            }
+        }
+    }
+}
+
+/**
+ * A dimmed poster's dialog (HUB-02): "Change the content language?" — "{game} can be played in:" one button per room
+ * content language other than the current one, then "Keep {current}" (initial focus, Back). JAMAA-GAP: `GameCard`
+ * carries no per-game locale list, so every room content language is offered; picking one the game lacks leaves the
+ * poster dimmed.
+ */
+@Composable
+fun SwitchLanguageDialog(room: RoomPublic, gameTitle: String, onPick: (String) -> Unit, onKeep: () -> Unit) {
+    val keep = remember { FocusRequester() }
+    OverlayCard(onBack = onKeep, default = keep) {
+        Text(stringResource(R.string.hub__switch_language__title), style = JamaaTheme.type.headline, color = JamaaColors.Text)
+        Spacer(Modifier.height(8.dp))
+        Text(stringResource(R.string.hub__switch_language__body, isolate(gameTitle)), style = JamaaTheme.type.body, color = JamaaColors.TextSecondary)
+        Spacer(Modifier.height(16.dp))
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            for (tag in room.contentLocales.ifEmpty { Locales.ALL }.filter { it != room.contentLocale }) {
+                JamaaButton(stringResource(langNameRes(tag)), { onPick(tag) }, Modifier.fillMaxWidth(), icon = JamaaIcons.Globe, focusKind = FocusKind.Row)
+            }
+            JamaaButton(
+                stringResource(R.string.hub__switch_language__keep, stringResource(langNameRes(room.contentLocale))),
+                onKeep,
+                Modifier.fillMaxWidth().focusRequester(keep),
+                kind = ButtonKind.Primary,
+                focusKind = FocusKind.Row,
+            )
+        }
+    }
+    InitialFocus(keep)
+}
+
+/**
+ * HUB-06 discoverability: the low-emphasis, non-focusable "◁ Back: menu & rules" hint at the top bar's end corner during
+ * round 1 and for 3 s after each phase change ([GameChrome.backHintVisible]); mirrored in RTL by the auto-mirrored icon.
+ */
+@Composable
+fun BackMenuHint(game: GameView, modifier: Modifier = Modifier) {
+    val phase = game.envelope.phase
+    val changedAt = remember(game.envelope.n, phase) { System.currentTimeMillis() }
+    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(game.envelope.n, phase) {
+        now = System.currentTimeMillis()
+        while (now - changedAt < GameChrome.HINT_AFTER_PHASE_MS) {
+            kotlinx.coroutines.delay(250)
+            now = System.currentTimeMillis()
+        }
+    }
+    val visible = GameChrome.backHintVisible(game, now - changedAt)
+    androidx.compose.animation.AnimatedVisibility(visible, modifier, enter = androidx.compose.animation.fadeIn(), exit = androidx.compose.animation.fadeOut()) {
+        Chip(stringResource(R.string.hint__back_menu), fill = JamaaColors.Surface.copy(alpha = 0.6f), ink = JamaaColors.TextMuted, icon = JamaaIcons.BackKey)
+    }
 }

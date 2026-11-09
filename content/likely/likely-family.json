@@ -1,0 +1,4262 @@
+{
+  "schemaVersion": 1,
+  "id": "likely-family",
+  "game": "likely",
+  "title": {
+    "en": "Family Night",
+    "fr": "Soirée en famille",
+    "ar": "سهرة عيلة",
+    "es": "Noche en familia"
+  },
+  "description": {
+    "en": "Teta-approved chaos: habits, food, parties and phones.",
+    "fr": "Le chaos validé par Teta : manies, bouffe, fêtes et téléphones.",
+    "ar": "فوضى بموافقة تيتا: عادات، أكل، سهرات وتلفونات.",
+    "es": "Caos aprobado por la abuela: manías, comida, fiestas y móviles."
+  },
+  "locales": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "all",
+  "cards": [
+    {
+      "id": "fam-001",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "cry at a wedding",
+        "fr": "de pleurer à un mariage",
+        "ar": "يبكي بعرس",
+        "es": "llorar en una boda"
+      },
+      "award": {
+        "en": "Waterworks Award",
+        "fr": "Prix des grandes eaux",
+        "ar": "جايزة الدموع",
+        "es": "Premio Magdalena"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-002",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "forget their own birthday",
+        "fr": "d'oublier son propre anniversaire",
+        "ar": "ينسى عيد ميلادو",
+        "es": "olvidarse de su propio cumpleaños"
+      },
+      "award": {
+        "en": "Goldfish Award",
+        "fr": "Prix poisson rouge",
+        "ar": "جايزة السمكة الحمرا",
+        "es": "Premio Memoria de Pez"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-003",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "go viral on social media",
+        "fr": "de faire le buzz sur les réseaux",
+        "ar": "يصير ترند عالسوشيال ميديا",
+        "es": "hacerse viral en redes"
+      },
+      "award": {
+        "en": "Viral Award",
+        "fr": "Prix du buzz",
+        "ar": "جايزة الترند",
+        "es": "Premio Viral"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-004",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "eat the last piece without asking",
+        "fr": "de manger le dernier morceau sans demander",
+        "ar": "ياكل آخر شقفة بلا ما يسأل",
+        "es": "comerse el último trozo sin preguntar"
+      },
+      "award": {
+        "en": "Last Bite Award",
+        "fr": "Prix du dernier morceau",
+        "ar": "جايزة آخر لقمة",
+        "es": "Premio Último Bocado"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-005",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel"
+      ],
+      "prompt": {
+        "en": "get lost even with GPS",
+        "fr": "de se perdre même avec le GPS",
+        "ar": "يضيع حتى مع الـGPS",
+        "es": "perderse incluso con GPS"
+      },
+      "award": {
+        "en": "Lost & Found Award",
+        "fr": "Prix de l'orientation",
+        "ar": "جايزة الضياع",
+        "es": "Premio Brújula Rota"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-006",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "talk their way into the VIP area",
+        "fr": "d'entrer dans le carré VIP au culot",
+        "ar": "يفوت عالـVIP بالحكي",
+        "es": "colarse en la zona VIP a base de labia"
+      },
+      "award": {
+        "en": "Smooth Talker Award",
+        "fr": "Prix du baratin",
+        "ar": "جايزة الحكي الحلو",
+        "es": "Premio Labia"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-007",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "still be dancing at sunrise",
+        "fr": "de danser encore au lever du soleil",
+        "ar": "يضلّ يرقص لطلوع الضو",
+        "es": "seguir bailando al amanecer"
+      },
+      "award": {
+        "en": "Sunrise Award",
+        "fr": "Prix de l'aube",
+        "ar": "جايزة طلوع الضو",
+        "es": "Premio Amanecer"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-008",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "arrive late to their own party",
+        "fr": "d'arriver en retard à sa propre fête",
+        "ar": "يوصل متأخر عحفلتو",
+        "es": "llegar tarde a su propia fiesta"
+      },
+      "award": {
+        "en": "Fashionably Late Award",
+        "fr": "Prix du retard chic",
+        "ar": "جايزة التأخير",
+        "es": "Premio Tardanza con Estilo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-009",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "text \"on my way\" while still in bed",
+        "fr": "d'écrire « j'arrive » encore au lit",
+        "ar": "يبعت «واصل» وهوّي بعدو بالتخت",
+        "es": "escribir «ya voy» todavía en la cama"
+      },
+      "award": {
+        "en": "On My Way Award",
+        "fr": "Prix du « j'arrive »",
+        "ar": "جايزة «واصل»",
+        "es": "Premio Ya Voy"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-010",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future"
+      ],
+      "prompt": {
+        "en": "adopt five cats",
+        "fr": "d'adopter cinq chats",
+        "ar": "يتبنّى خمس قطط",
+        "es": "adoptar cinco gatos"
+      },
+      "award": {
+        "en": "Cat Colony Award",
+        "fr": "Prix de la colonie de chats",
+        "ar": "جايزة بيت القطط",
+        "es": "Premio Gatuno"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-011",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "lead the dabke line",
+        "fr": "de mener la dabké",
+        "ar": "يمسك راس الدبكة",
+        "es": "encabezar la fila del dabke"
+      },
+      "award": {
+        "en": "Dabke Leader Award",
+        "fr": "Prix de la dabké",
+        "ar": "جايزة راس الدبكة",
+        "es": "Premio Dabke"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-012",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "know the gossip before anyone else",
+        "fr": "de connaître les potins avant tout le monde",
+        "ar": "يعرف الأخبار قبل الكل",
+        "es": "enterarse de los chismes antes que nadie"
+      },
+      "award": {
+        "en": "Breaking News Award",
+        "fr": "Prix du scoop",
+        "ar": "جايزة الخبر العاجل",
+        "es": "Premio Exclusiva"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-013",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "win a cooking show",
+        "fr": "de gagner une émission de cuisine",
+        "ar": "يربح برنامج طبخ",
+        "es": "ganar un concurso de cocina en la tele"
+      },
+      "award": {
+        "en": "Golden Ladle Award",
+        "fr": "Prix de la louche d'or",
+        "ar": "جايزة المغرفة الدهب",
+        "es": "Premio Cucharón de Oro"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-014",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "fall asleep during a movie",
+        "fr": "de s'endormir devant un film",
+        "ar": "ينام بنص الفيلم",
+        "es": "dormirse en mitad de una peli"
+      },
+      "award": {
+        "en": "Nap Award",
+        "fr": "Prix de la sieste",
+        "ar": "جايزة نومة الفيلم",
+        "es": "Premio Siesta de Cine"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-015",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "laugh at their own joke before the punchline",
+        "fr": "de rire de sa propre blague avant la chute",
+        "ar": "يضحك عنكتتو قبل ما يخلّصها",
+        "es": "reírse de su propio chiste antes del final"
+      },
+      "award": {
+        "en": "Self-Laugh Award",
+        "fr": "Prix de l'autorire",
+        "ar": "جايزة الضحكة المبكرة",
+        "es": "Premio Risa Anticipada"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-016",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "send a five-minute voice note",
+        "fr": "d'envoyer un vocal de cinq minutes",
+        "ar": "يبعت فويس خمس دقايق",
+        "es": "mandar un audio de cinco minutos"
+      },
+      "award": {
+        "en": "Podcast Award",
+        "fr": "Prix du podcast",
+        "ar": "جايزة البودكاست",
+        "es": "Premio Pódcast"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-017",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "look for their phone while holding it",
+        "fr": "de chercher son téléphone en le tenant",
+        "ar": "يدوّر عتلفونو وهوّي بإيدو",
+        "es": "buscar el móvil teniéndolo en la mano"
+      },
+      "award": {
+        "en": "Phone Hunt Award",
+        "fr": "Prix du téléphone perdu",
+        "ar": "جايزة وين تلفوني؟",
+        "es": "Premio ¿Dónde Está mi Móvil?"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-018",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "haggle in a fixed-price shop",
+        "fr": "de marchander dans un magasin à prix fixes",
+        "ar": "يفاصل بمحلّ أسعارو ثابتة",
+        "es": "regatear en una tienda de precios fijos"
+      },
+      "award": {
+        "en": "Haggling Award",
+        "fr": "Prix du marchandage",
+        "ar": "جايزة المفاصلة",
+        "es": "Premio Regateo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-019",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "answer the family group chat within a second",
+        "fr": "de répondre au groupe de la famille en une seconde",
+        "ar": "يردّ عغروب العيلة بثانية",
+        "es": "contestar al grupo de la familia en un segundo"
+      },
+      "award": {
+        "en": "Family Hotline Award",
+        "fr": "Prix de la hotline familiale",
+        "ar": "جايزة خطّ العيلة الساخن",
+        "es": "Premio Línea Directa Familiar"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-020",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future"
+      ],
+      "prompt": {
+        "en": "make a fortune",
+        "fr": "de faire fortune",
+        "ar": "يعمل ثروة",
+        "es": "hacer una fortuna"
+      },
+      "award": {
+        "en": "Big Money Award",
+        "fr": "Prix du gros lot",
+        "ar": "جايزة المليون",
+        "es": "Premio Lotería"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-021",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "buy something useless on a night out",
+        "fr": "d'acheter un truc inutile pendant une soirée",
+        "ar": "يشتري شي ما إلو لزوم بسهرة",
+        "es": "comprar algo inútil en plena noche de fiesta"
+      },
+      "award": {
+        "en": "Impulse Award",
+        "fr": "Prix du coup de tête",
+        "ar": "جايزة الشروة عالطاير",
+        "es": "Premio Compra Impulsiva"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-022",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future"
+      ],
+      "prompt": {
+        "en": "survive a zombie invasion",
+        "fr": "de survivre à une invasion de zombies",
+        "ar": "يضلّ عايش إذا هجموا الزومبي",
+        "es": "sobrevivir a una invasión zombi"
+      },
+      "award": {
+        "en": "Survivor Award",
+        "fr": "Prix du survivant",
+        "ar": "جايزة الصمود",
+        "es": "Premio Superviviente"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-023",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "scream first in a horror movie",
+        "fr": "de crier en premier devant un film d'horreur",
+        "ar": "يصرّخ أوّل واحد بفيلم رعب",
+        "es": "gritar antes que nadie en una peli de miedo"
+      },
+      "award": {
+        "en": "Scream Award",
+        "fr": "Prix du cri",
+        "ar": "جايزة الصرخة",
+        "es": "Premio Grito"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-024",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel"
+      ],
+      "prompt": {
+        "en": "take 200 selfies on one trip",
+        "fr": "de prendre 200 selfies en un seul voyage",
+        "ar": "ياخد ٢٠٠ سيلفي بسفرة وحدة",
+        "es": "hacerse 200 selfis en un solo viaje"
+      },
+      "award": {
+        "en": "Selfie Award",
+        "fr": "Prix du selfie",
+        "ar": "جايزة السيلفي",
+        "es": "Premio Selfi"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-025",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "show up with food for the whole street",
+        "fr": "d'arriver avec à manger pour toute la rue",
+        "ar": "يجي ومعو أكل لكل الحارة",
+        "es": "presentarse con comida para todo el barrio"
+      },
+      "award": {
+        "en": "Hospitality Award",
+        "fr": "Prix de l'hospitalité",
+        "ar": "جايزة الكرم",
+        "es": "Premio Hospitalidad"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-026",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music"
+      ],
+      "prompt": {
+        "en": "sing at the top of their lungs in the car",
+        "fr": "de chanter à tue-tête en voiture",
+        "ar": "يغنّي بأعلى صوت بالسيارة",
+        "es": "cantar a grito pelado en el coche"
+      },
+      "award": {
+        "en": "Car Karaoke Award",
+        "fr": "Prix karaoké-voiture",
+        "ar": "جايزة كاريوكي السيارة",
+        "es": "Premio Karaoke al Volante"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-027",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "order for the whole table without asking",
+        "fr": "de commander pour toute la table sans demander",
+        "ar": "يطلب للطاولة كلّها بلا ما يسأل",
+        "es": "pedir para toda la mesa sin preguntar"
+      },
+      "award": {
+        "en": "Big Order Award",
+        "fr": "Prix de la grosse commande",
+        "ar": "جايزة الطلبية الكبيرة",
+        "es": "Premio Pedido Gigante"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-028",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "forget why they walked into a room",
+        "fr": "d'oublier pourquoi on est entré dans une pièce",
+        "ar": "ينسى ليش فات عالغرفة",
+        "es": "olvidar a qué ha entrado en una habitación"
+      },
+      "award": {
+        "en": "Why-Am-I-Here Award",
+        "fr": "Prix du trou de mémoire",
+        "ar": "جايزة «ليش جيت؟»",
+        "es": "Premio ¿A Qué Venía Yo?"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-029",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music"
+      ],
+      "prompt": {
+        "en": "become president of a fan club",
+        "fr": "de présider un fan-club",
+        "ar": "يصير رئيس فان كلوب",
+        "es": "presidir un club de fans"
+      },
+      "award": {
+        "en": "Superfan Award",
+        "fr": "Prix du fan absolu",
+        "ar": "جايزة المعجب الأوّل",
+        "es": "Premio Fan Número Uno"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-030",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "sport"
+      ],
+      "prompt": {
+        "en": "still argue about a football match a week later",
+        "fr": "de débattre d'un match de foot une semaine après",
+        "ar": "يضلّ يتناقش بماتش فوتبول بعد جمعة",
+        "es": "seguir discutiendo un partido una semana después"
+      },
+      "award": {
+        "en": "Pundit Award",
+        "fr": "Prix du consultant foot",
+        "ar": "جايزة المحلّل الرياضي",
+        "es": "Premio Tertulia Futbolera"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-031",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "cheat at cards",
+        "fr": "de tricher aux cartes",
+        "ar": "يغشّ بالشدّة",
+        "es": "hacer trampas a las cartas"
+      },
+      "award": {
+        "en": "Card Shark Award",
+        "fr": "Prix de la triche",
+        "ar": "جايزة الغشّ بالشدّة",
+        "es": "Premio As en la Manga"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-032",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "win every game of tawleh",
+        "fr": "de gagner toutes les parties de tawlé (backgammon)",
+        "ar": "يربح كل دقّ طاولة",
+        "es": "ganar todas las partidas de tawleh (backgammon)"
+      },
+      "award": {
+        "en": "Tawleh Master Award",
+        "fr": "Prix du tawlé",
+        "ar": "جايزة الطاولة",
+        "es": "Premio Tawleh"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-033",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "get everyone on the dance floor",
+        "fr": "de faire danser tout le monde",
+        "ar": "يقوّم الكل يرقصوا",
+        "es": "sacar a todo el mundo a la pista"
+      },
+      "award": {
+        "en": "Party Starter Award",
+        "fr": "Prix de l'ambiance",
+        "ar": "جايزة مولّع الجوّ",
+        "es": "Premio Ambientazo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-034",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "send a message to the wrong group chat",
+        "fr": "d'envoyer un message dans le mauvais groupe",
+        "ar": "يبعت رسالة عالغروب الغلط",
+        "es": "mandar un mensaje al grupo equivocado"
+      },
+      "award": {
+        "en": "Wrong Chat Award",
+        "fr": "Prix du mauvais groupe",
+        "ar": "جايزة الغروب الغلط",
+        "es": "Premio Grupo Equivocado"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-035",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel"
+      ],
+      "prompt": {
+        "en": "plan the whole trip down to the minute",
+        "fr": "de planifier tout le voyage à la minute près",
+        "ar": "يخطّط كل السفرة بالدقيقة",
+        "es": "planear todo el viaje al minuto"
+      },
+      "award": {
+        "en": "Tour Guide Award",
+        "fr": "Prix du guide",
+        "ar": "جايزة الدليل السياحي",
+        "es": "Premio Itinerario"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-036",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "bring a gift for no reason",
+        "fr": "d'offrir un cadeau sans raison",
+        "ar": "يجيب هدية بلا مناسبة",
+        "es": "hacer un regalo sin motivo"
+      },
+      "award": {
+        "en": "Generosity Award",
+        "fr": "Prix de la générosité",
+        "ar": "جايزة القلب الكبير",
+        "es": "Premio Generosidad"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-037",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "take the longest to order",
+        "fr": "de mettre le plus de temps à commander",
+        "ar": "ياخد أكتر وقت ليطلب من المنيو",
+        "es": "tardar más que nadie en pedir"
+      },
+      "award": {
+        "en": "Menu Marathon Award",
+        "fr": "Prix du marathon du menu",
+        "ar": "جايزة المنيو",
+        "es": "Premio Maratón de Carta"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-038",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "organise a surprise party",
+        "fr": "d'organiser une fête surprise",
+        "ar": "ينظّم حفلة مفاجأة",
+        "es": "organizar una fiesta sorpresa"
+      },
+      "award": {
+        "en": "Surprise Award",
+        "fr": "Prix de la surprise",
+        "ar": "جايزة المفاجأة",
+        "es": "Premio Sorpresa"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-039",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "accidentally spoil the surprise",
+        "fr": "de gâcher la surprise sans faire exprès",
+        "ar": "يخرب المفاجأة بلا قصد",
+        "es": "fastidiar la sorpresa sin querer"
+      },
+      "award": {
+        "en": "Spoiler Award",
+        "fr": "Prix du spoiler",
+        "ar": "جايزة الحرق",
+        "es": "Premio Spoiler"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-041",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "talk to animals like they're people",
+        "fr": "de parler aux animaux comme à des humains",
+        "ar": "يحكي مع الحيوانات متل البشر",
+        "es": "hablar con los animales como si fueran personas"
+      },
+      "award": {
+        "en": "Animal Whisperer Award",
+        "fr": "Prix de l'ami des bêtes",
+        "ar": "جايزة صديق الحيوانات",
+        "es": "Premio Lenguaje Animal"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-042",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future"
+      ],
+      "prompt": {
+        "en": "end up on TV by accident",
+        "fr": "de passer à la télé par hasard",
+        "ar": "يطلع عالتلفزيون بالصدفة",
+        "es": "salir en la tele por casualidad"
+      },
+      "award": {
+        "en": "Headline Award",
+        "fr": "Prix de la célébrité",
+        "ar": "جايزة الشهرة",
+        "es": "Premio Fama Instantánea"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-043",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "give advice nobody asked for",
+        "fr": "de donner des conseils que personne n'a demandés",
+        "ar": "يعطي نصايح ما حدا طلبها",
+        "es": "dar consejos que nadie ha pedido"
+      },
+      "award": {
+        "en": "Free Advice Award",
+        "fr": "Prix du conseil gratuit",
+        "ar": "جايزة النصيحة ببلاش",
+        "es": "Premio Consejo Gratis"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-044",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "have relatives in every city on earth",
+        "fr": "d'avoir de la famille dans chaque ville du monde",
+        "ar": "يكون إلو قرايب بكل بلد بالعالم",
+        "es": "tener familia en cada ciudad del mundo"
+      },
+      "award": {
+        "en": "Cousin Network Award",
+        "fr": "Prix du réseau familial",
+        "ar": "جايزة القرايب",
+        "es": "Premio Red de Primos"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-045",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "say \"two minutes\" and take an hour",
+        "fr": "de dire « deux minutes » et mettre une heure",
+        "ar": "يقول «دقيقتين» وياخد ساعة",
+        "es": "decir «dos minutos» y tardar una hora"
+      },
+      "award": {
+        "en": "Two-Minutes Award",
+        "fr": "Prix des deux minutes",
+        "ar": "جايزة «دقيقتين»",
+        "es": "Premio Dos Minutos"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-046",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "keep a plant alive for ten years",
+        "fr": "de garder une plante en vie dix ans",
+        "ar": "يخلّي زرعة عايشة عشر سنين",
+        "es": "mantener viva una planta diez años"
+      },
+      "award": {
+        "en": "Green Thumb Award",
+        "fr": "Prix main verte",
+        "ar": "جايزة الإيد الخضرا",
+        "es": "Premio Mano Verde"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-047",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music"
+      ],
+      "prompt": {
+        "en": "bring a speaker to the beach",
+        "fr": "d'apporter une enceinte à la plage",
+        "ar": "ياخد سبيكر عالبحر",
+        "es": "llevar un altavoz a la playa"
+      },
+      "award": {
+        "en": "DJ Award",
+        "fr": "Prix du DJ",
+        "ar": "جايزة الدي جي",
+        "es": "Premio DJ"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-048",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "win a staring contest",
+        "fr": "de gagner un duel de regards",
+        "ar": "يربح تحدّي التحديق بلا ما يرمش",
+        "es": "ganar un duelo de miradas"
+      },
+      "award": {
+        "en": "Poker Face Award",
+        "fr": "Prix du regard d'acier",
+        "ar": "جايزة العين القوية",
+        "es": "Premio Mirada de Acero"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-049",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "keep a secret forever",
+        "fr": "de garder un secret pour toujours",
+        "ar": "يكتم سرّ لآخر العمر",
+        "es": "guardar un secreto para siempre"
+      },
+      "award": {
+        "en": "Vault Award",
+        "fr": "Prix du coffre-fort",
+        "ar": "جايزة بير الأسرار",
+        "es": "Premio Caja Fuerte"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-050",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "get the giggles at the worst moment",
+        "fr": "d'avoir le fou rire au pire moment",
+        "ar": "ياكلو الضحك بأسوأ وقت",
+        "es": "tener un ataque de risa en el peor momento"
+      },
+      "award": {
+        "en": "Giggles Award",
+        "fr": "Prix du fou rire",
+        "ar": "جايزة الضحكة بغير محلّها",
+        "es": "Premio Ataque de Risa"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-051",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future"
+      ],
+      "prompt": {
+        "en": "write a bestseller",
+        "fr": "d'écrire un best-seller",
+        "ar": "يكتب كتاب بيبيع ملايين",
+        "es": "escribir un superventas"
+      },
+      "award": {
+        "en": "Bestseller Award",
+        "fr": "Prix du best-seller",
+        "ar": "جايزة الكتابة",
+        "es": "Premio Superventas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-052",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music"
+      ],
+      "prompt": {
+        "en": "know every Fairuz song by heart",
+        "fr": "de connaître toutes les chansons de Fairouz par cœur",
+        "ar": "يحفظ كل غنيات فيروز",
+        "es": "saberse todas las canciones de Fairuz"
+      },
+      "award": {
+        "en": "Fairuz Award",
+        "fr": "Prix Fairouz",
+        "ar": "جايزة فيروز",
+        "es": "Premio Fairuz"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-053",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "wake up before the alarm",
+        "fr": "de se réveiller avant le réveil",
+        "ar": "يفيق قبل المنبّه",
+        "es": "despertarse antes que el despertador"
+      },
+      "award": {
+        "en": "Early Bird Award",
+        "fr": "Prix lève-tôt",
+        "ar": "جايزة الفيقة بكّير",
+        "es": "Premio Madrugón"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-054",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "snooze the alarm ten times",
+        "fr": "de repousser le réveil dix fois",
+        "ar": "يأجّل المنبّه عشر مرّات",
+        "es": "posponer la alarma diez veces"
+      },
+      "award": {
+        "en": "Snooze Award",
+        "fr": "Prix du snooze",
+        "ar": "جايزة «خمس دقايق كمان»",
+        "es": "Premio Cinco Minutos Más"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-055",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "try every new restaurant in town",
+        "fr": "d'essayer tous les nouveaux restos de la ville",
+        "ar": "يجرّب كل مطعم جديد بالبلد",
+        "es": "probar todos los restaurantes nuevos de la ciudad"
+      },
+      "award": {
+        "en": "Foodie Award",
+        "fr": "Prix gourmand",
+        "ar": "جايزة الذوق",
+        "es": "Premio Paladar"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-056",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "say yes to every plan",
+        "fr": "de dire oui à tous les plans",
+        "ar": "يقول «إيه أكيد» لكل طلعة",
+        "es": "apuntarse a todos los planes"
+      },
+      "award": {
+        "en": "Yes Award",
+        "fr": "Prix du oui",
+        "ar": "جايزة «إيه أكيد»",
+        "es": "Premio Me Apunto"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-057",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "cry at a cartoon",
+        "fr": "de pleurer devant un dessin animé",
+        "ar": "يبكي عرسوم متحرّكة",
+        "es": "llorar con una peli de dibujos"
+      },
+      "award": {
+        "en": "Soft Heart Award",
+        "fr": "Prix du cœur tendre",
+        "ar": "جايزة القلب الطري",
+        "es": "Premio Corazón Blandito"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-058",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "become best friends with the waiter",
+        "fr": "de devenir pote avec le serveur",
+        "ar": "يصير رفيق الغرسون",
+        "es": "hacerse colega del camarero"
+      },
+      "award": {
+        "en": "Social Butterfly Award",
+        "fr": "Prix du papillon social",
+        "ar": "جايزة الاجتماعية",
+        "es": "Premio Mariposa Social"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-059",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "win an argument while being wrong",
+        "fr": "de gagner un débat en ayant tort",
+        "ar": "يربح نقاش وهوّي غلطان",
+        "es": "ganar una discusión sin tener razón"
+      },
+      "award": {
+        "en": "Debate Award",
+        "fr": "Prix de la mauvaise foi",
+        "ar": "جايزة الجدل",
+        "es": "Premio Cara Dura"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-060",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future"
+      ],
+      "prompt": {
+        "en": "invent something genius",
+        "fr": "d'inventer un truc génial",
+        "ar": "يخترع شي عبقري",
+        "es": "inventar algo genial"
+      },
+      "award": {
+        "en": "Inventor Award",
+        "fr": "Prix de l'invention",
+        "ar": "جايزة الاختراع",
+        "es": "Premio Invento"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-061",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "spoil the grandkids rotten one day",
+        "fr": "de gâter ses petits-enfants plus tard",
+        "ar": "يدلّع أحفادو كتير لمّا يكبر",
+        "es": "malcriar a sus nietos algún día"
+      },
+      "award": {
+        "en": "Teta & Jeddo Award",
+        "fr": "Prix papi-mamie",
+        "ar": "جايزة تيتا وجدّو",
+        "es": "Premio Abuelos de Oro"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-062",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "dance until the band packs up",
+        "fr": "de danser jusqu'à ce que l'orchestre remballe",
+        "ar": "يرقص لحتى الفرقة تلمّ غراضها",
+        "es": "bailar hasta que la orquesta recoja"
+      },
+      "award": {
+        "en": "Last Dance Award",
+        "fr": "Prix de la dernière danse",
+        "ar": "جايزة آخر رقصة",
+        "es": "Premio Último Baile"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-063",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "answer a question with another question",
+        "fr": "de répondre à une question par une question",
+        "ar": "يجاوب عالسؤال بسؤال",
+        "es": "responder a una pregunta con otra pregunta"
+      },
+      "award": {
+        "en": "Riddle Award",
+        "fr": "Prix de l'énigme",
+        "ar": "جايزة الحزّورة",
+        "es": "Premio Enigma"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-064",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "eat dessert before dinner",
+        "fr": "de manger le dessert avant le plat",
+        "ar": "ياكل الحلو قبل العشا",
+        "es": "comerse el postre antes de la cena"
+      },
+      "award": {
+        "en": "Sweet Tooth Award",
+        "fr": "Prix bec sucré",
+        "ar": "جايزة السنّ الحلو",
+        "es": "Premio Postre Primero"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-065",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "remember everyone's birthday",
+        "fr": "de se souvenir de tous les anniversaires",
+        "ar": "يتذكّر أعياد ميلاد الكل",
+        "es": "acordarse de todos los cumpleaños"
+      },
+      "award": {
+        "en": "Calendar Award",
+        "fr": "Prix du calendrier",
+        "ar": "جايزة الروزنامة",
+        "es": "Premio Calendario"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-066",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "turn a 10-minute visit into a 3-hour stay",
+        "fr": "de transformer une visite de 10 minutes en 3 heures",
+        "ar": "يحوّل زيارة عشر دقايق لتلات ساعات",
+        "es": "convertir una visita de 10 minutos en una de 3 horas"
+      },
+      "award": {
+        "en": "Long Visit Award",
+        "fr": "Prix de la visite éternelle",
+        "ar": "جايزة السهرة الطويلة",
+        "es": "Premio Visita Eterna"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-067",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "fix anything with tape",
+        "fr": "de tout réparer avec du scotch",
+        "ar": "يصلّح كل شي باللزّيق",
+        "es": "arreglarlo todo con cinta americana"
+      },
+      "award": {
+        "en": "Fix-It Award",
+        "fr": "Prix du bricolage",
+        "ar": "جايزة التصليح",
+        "es": "Premio Cinta Americana"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-068",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future"
+      ],
+      "prompt": {
+        "en": "start a business at 70",
+        "fr": "de lancer une entreprise à 70 ans",
+        "ar": "يفتح بزنس بعمر السبعين",
+        "es": "montar un negocio a los 70"
+      },
+      "award": {
+        "en": "Never Too Late Award",
+        "fr": "Prix jamais trop tard",
+        "ar": "جايزة «بعدها بكّير»",
+        "es": "Premio Nunca es Tarde"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-101",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "reply \"hahaha\" without even smiling",
+        "fr": "de répondre « mdr » sans même sourire",
+        "ar": "يكتب «ههههه» ووجّو ما تحرّك",
+        "es": "responder «jajaja» sin mover un músculo"
+      },
+      "award": {
+        "en": "Deadpan Award",
+        "fr": "Prix du mdr de façade",
+        "ar": "جايزة الضحكة المكتوبة",
+        "es": "Premio Jajaja de Mentira"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-102",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "have 4,000 unread emails and sleep just fine",
+        "fr": "d'avoir 4 000 mails non lus et de dormir comme un bébé",
+        "ar": "يكون عندو ٤٠٠٠ إيميل مش مقري ونايم مرتاح",
+        "es": "tener 4.000 correos sin leer y dormir a pierna suelta"
+      },
+      "award": {
+        "en": "Inbox Zen Award",
+        "fr": "Prix zen de la boîte mail",
+        "ar": "جايزة البال الرايق",
+        "es": "Premio Bandeja Zen"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-103",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "judge a restaurant by its bread basket",
+        "fr": "de juger un resto sur sa corbeille de pain",
+        "ar": "يحكم عالمطعم من الخبز يلّي بيجيبوه",
+        "es": "juzgar un restaurante por su cesta de pan"
+      },
+      "award": {
+        "en": "Bread Critic Award",
+        "fr": "Prix du critique de mie",
+        "ar": "جايزة ناقد الخبز",
+        "es": "Premio Crítica de Miga"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-104",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "rehearse a phone call before making it",
+        "fr": "de répéter un coup de fil avant de le passer",
+        "ar": "يتمرّن عالحكي قبل ما يتّصل",
+        "es": "ensayar una llamada antes de hacerla"
+      },
+      "award": {
+        "en": "Dress Rehearsal Award",
+        "fr": "Prix de la répétition générale",
+        "ar": "جايزة البروفا",
+        "es": "Premio Ensayo General"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-105",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon",
+        "habits"
+      ],
+      "prompt": {
+        "en": "park in a spot that doesn't technically exist",
+        "fr": "de se garer sur une place qui n'existe pas",
+        "ar": "يصفّ بمحلّ مش موجود أصلاً",
+        "es": "aparcar en un hueco que técnicamente no existe"
+      },
+      "award": {
+        "en": "Creative Parking Award",
+        "fr": "Prix du créneau imaginaire",
+        "ar": "جايزة الصفّة الإبداعية",
+        "es": "Premio Aparcamiento Creativo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-106",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "always know where the scissors are",
+        "fr": "de savoir toujours où sont les ciseaux",
+        "ar": "يعرف دايماً وين المقصّ",
+        "es": "saber siempre dónde están las tijeras"
+      },
+      "award": {
+        "en": "Scissors Keeper Award",
+        "fr": "Prix du gardien des ciseaux",
+        "ar": "جايزة حارس المقصّ",
+        "es": "Premio Guardián de las Tijeras"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-107",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "start a conga line at a serious event",
+        "fr": "de lancer une chenille à un événement sérieux",
+        "ar": "يبلّش ترين رقص بحفلة رسمية",
+        "es": "montar una conga en un acto serio"
+      },
+      "award": {
+        "en": "Conga Award",
+        "fr": "Prix de la chenille",
+        "ar": "جايزة ترين الرقص",
+        "es": "Premio Conga"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-108",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "habits"
+      ],
+      "prompt": {
+        "en": "photograph the food before anyone takes a bite",
+        "fr": "de photographier les plats avant que quiconque y touche",
+        "ar": "يصوّر الأكل قبل ما حدا يمدّ إيدو",
+        "es": "hacerle fotos a la comida antes de que nadie pruebe bocado"
+      },
+      "award": {
+        "en": "Food Paparazzi Award",
+        "fr": "Prix du paparazzi des assiettes",
+        "ar": "جايزة مصوّر الصحون",
+        "es": "Premio Paparazzi del Plato"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-109",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "still use their very first ringtone",
+        "fr": "d'avoir encore sa toute première sonnerie",
+        "ar": "بعدو حاطط نفس رنّة أوّل تلفون",
+        "es": "seguir con su primer tono de llamada"
+      },
+      "award": {
+        "en": "Retro Ringtone Award",
+        "fr": "Prix de la sonnerie vintage",
+        "ar": "جايزة الرنّة العتيقة",
+        "es": "Premio Tono Retro"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-110",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel"
+      ],
+      "prompt": {
+        "en": "pack for a weekend like it's a month",
+        "fr": "de faire une valise d'un mois pour un week-end",
+        "ar": "يوضّب شنطة شهر لويك إند",
+        "es": "hacer la maleta de un mes para un finde"
+      },
+      "award": {
+        "en": "Overpacker Award",
+        "fr": "Prix de la valise XXL",
+        "ar": "جايزة الشنطة الكبيرة",
+        "es": "Premio Maleta XXL"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-111",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "say \"last episode\" and still be watching at 4 in the morning",
+        "fr": "de dire « dernier épisode » et finir à 4 h du matin",
+        "ar": "يقول «آخر حلقة» ويكمّل للأربعة الصبح",
+        "es": "decir «el último capítulo» y acabar a las 4 de la mañana"
+      },
+      "award": {
+        "en": "Last Episode Award",
+        "fr": "Prix du dernier épisode",
+        "ar": "جايزة آخر حلقة",
+        "es": "Premio Último Capítulo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-112",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon",
+        "travel"
+      ],
+      "prompt": {
+        "en": "give directions using landmarks that closed years ago",
+        "fr": "d'indiquer le chemin avec des repères disparus depuis longtemps",
+        "ar": "يدلّ عالطريق بمحلّات مسكّرة من زمان",
+        "es": "dar indicaciones con sitios que cerraron hace años"
+      },
+      "award": {
+        "en": "Old Landmark Award",
+        "fr": "Prix du GPS d'antan",
+        "ar": "جايزة «حدّ الفرن القديم»",
+        "es": "Premio GPS Antiguo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-113",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "eat the garnish nobody else touches",
+        "fr": "de manger la déco de l'assiette",
+        "ar": "ياكل زينة الصحن يلّي ما حدا بيقرّبها",
+        "es": "comerse la decoración del plato"
+      },
+      "award": {
+        "en": "Parsley Award",
+        "fr": "Prix du persil",
+        "ar": "جايزة البقدونس",
+        "es": "Premio Perejil"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-114",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "guard the TV remote like a crown",
+        "fr": "de garder la télécommande comme une couronne",
+        "ar": "يمسك الريموت وما يتركو لحدا",
+        "es": "custodiar el mando de la tele como si fuera una corona"
+      },
+      "award": {
+        "en": "Remote Control Award",
+        "fr": "Prix de la télécommande",
+        "ar": "جايزة الريموت",
+        "es": "Premio Mando a Distancia"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-115",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "win musical chairs by any means necessary",
+        "fr": "de gagner aux chaises musicales par tous les moyens",
+        "ar": "يربح لعبة الكراسي بأيّ طريقة",
+        "es": "ganar a las sillas musicales cueste lo que cueste"
+      },
+      "award": {
+        "en": "Musical Chairs Award",
+        "fr": "Prix des chaises musicales",
+        "ar": "جايزة الكرسي الأخير",
+        "es": "Premio Silla Musical"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-116",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "habits"
+      ],
+      "prompt": {
+        "en": "vanish right when it's time to do the dishes",
+        "fr": "de disparaître pile à l'heure de la vaisselle",
+        "ar": "يختفي بس يجي وقت جلي الصحون",
+        "es": "desaparecer justo cuando toca fregar"
+      },
+      "award": {
+        "en": "Great Escape Award",
+        "fr": "Prix de l'évasion",
+        "ar": "جايزة الاختفاء",
+        "es": "Premio Escapista"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-117",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "fix everything by turning it off and on again",
+        "fr": "de tout régler en éteignant et en rallumant",
+        "ar": "يحلّ كل شي بـ«طفّيه وولّعو»",
+        "es": "arreglarlo todo apagando y volviendo a encender"
+      },
+      "award": {
+        "en": "IT Department Award",
+        "fr": "Prix du service informatique",
+        "ar": "جايزة «طفّيه وولّعو»",
+        "es": "Premio Reinicio"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-118",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music"
+      ],
+      "prompt": {
+        "en": "dance to a stranger's ringtone",
+        "fr": "de danser sur la sonnerie du téléphone d'un inconnu",
+        "ar": "يرقص على رنّة تلفون حدا غريب",
+        "es": "bailar con el tono del móvil de un desconocido"
+      },
+      "award": {
+        "en": "Ringtone Groove Award",
+        "fr": "Prix du groove de sonnerie",
+        "ar": "جايزة الرقص عالرنّة",
+        "es": "Premio Baile de Tono"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-119",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "read the last page of a book first",
+        "fr": "de lire la dernière page d'un livre en premier",
+        "ar": "يقرا آخر صفحة من الكتاب أوّل شي",
+        "es": "leer la última página de un libro antes que nada"
+      },
+      "award": {
+        "en": "Ending First Award",
+        "fr": "Prix de la fin d'abord",
+        "ar": "جايزة النهاية أوّلاً",
+        "es": "Premio Final Primero"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-120",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "say \"yalla bye\" and keep talking for 20 minutes",
+        "fr": "de dire « yalla bye » et parler encore vingt minutes",
+        "ar": "يقول «يلّا باي» ويكمّل عشرين دقيقة",
+        "es": "decir «venga, adiós» y seguir hablando veinte minutos"
+      },
+      "award": {
+        "en": "Yalla Bye Award",
+        "fr": "Prix du « yalla bye »",
+        "ar": "جايزة «يلّا باي»",
+        "es": "Premio Adiós Eterno"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-121",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "put ketchup on food that never asked for it",
+        "fr": "de mettre du ketchup sur des plats qui n'ont rien demandé",
+        "ar": "يحطّ كاتشب عأكل ما عملّو شي",
+        "es": "echarle kétchup a platos que no se lo merecen"
+      },
+      "award": {
+        "en": "Ketchup Award",
+        "fr": "Prix du ketchup",
+        "ar": "جايزة الكاتشب",
+        "es": "Premio Kétchup"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-122",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "sport"
+      ],
+      "prompt": {
+        "en": "celebrate a goal before the ball goes in",
+        "fr": "de fêter un but avant que le ballon entre",
+        "ar": "يحتفل بالغول قبل ما يفوت",
+        "es": "celebrar un gol antes de que entre"
+      },
+      "award": {
+        "en": "Too Soon Award",
+        "fr": "Prix du but imaginaire",
+        "ar": "جايزة الغول الوهمي",
+        "es": "Premio Gol Fantasma"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-123",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "sport"
+      ],
+      "prompt": {
+        "en": "turn a friendly kickabout into the World Cup final",
+        "fr": "de transformer un match amical en finale de Coupe du monde",
+        "ar": "يحوّل ماتش ودّي لنهائي كاس العالم",
+        "es": "convertir un partidillo en la final del Mundial"
+      },
+      "award": {
+        "en": "Final Whistle Award",
+        "fr": "Prix de la finale",
+        "ar": "جايزة النهائي",
+        "es": "Premio Final del Mundial"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-124",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech",
+        "habits"
+      ],
+      "prompt": {
+        "en": "keep 47 tabs open \"just in case\"",
+        "fr": "de garder 47 onglets ouverts « au cas où »",
+        "ar": "يخلّي ٤٧ تاب مفتوحين «للاحتياط»",
+        "es": "tener 47 pestañas abiertas «por si acaso»"
+      },
+      "award": {
+        "en": "Tab Hoarder Award",
+        "fr": "Prix des onglets",
+        "ar": "جايزة التابات",
+        "es": "Premio Pestañas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-125",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel"
+      ],
+      "prompt": {
+        "en": "befriend half the plane before landing",
+        "fr": "de se faire des amis dans tout l'avion avant l'atterrissage",
+        "ar": "يتعرّف عنصّ الطيّارة قبل ما تنزل",
+        "es": "hacer amigos en medio avión antes de aterrizar"
+      },
+      "award": {
+        "en": "Frequent Friend Award",
+        "fr": "Prix de l'ami en altitude",
+        "ar": "جايزة رفيق السما",
+        "es": "Premio Amigo en las Alturas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-126",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "still keep their childhood teddy bear",
+        "fr": "de garder encore son doudou d'enfance",
+        "ar": "بعدو محتفظ بالدبدوب تبع صغرو",
+        "es": "seguir guardando su peluche de la infancia"
+      },
+      "award": {
+        "en": "Teddy Award",
+        "fr": "Prix du doudou",
+        "ar": "جايزة الدبدوب",
+        "es": "Premio Peluche"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-127",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "talk through the entire movie",
+        "fr": "de commenter tout le film en direct",
+        "ar": "يحكي من أوّل الفيلم لآخرو",
+        "es": "comentar la peli de principio a fin"
+      },
+      "award": {
+        "en": "Director's Commentary Award",
+        "fr": "Prix du commentaire audio",
+        "ar": "جايزة التعليق المباشر",
+        "es": "Premio Comentarista"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-128",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "bring a board game nobody knows the rules of",
+        "fr": "d'apporter un jeu de société dont personne ne connaît les règles",
+        "ar": "يجيب لعبة ما حدا بيعرف قوانينها",
+        "es": "traer un juego de mesa que nadie sabe jugar"
+      },
+      "award": {
+        "en": "Rulebook Award",
+        "fr": "Prix du mode d'emploi",
+        "ar": "جايزة دفتر القوانين",
+        "es": "Premio Manual de Instrucciones"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-129",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "finish other people's plates \"so nothing goes to waste\"",
+        "fr": "de finir l'assiette des autres « pour pas gâcher »",
+        "ar": "يخلّص صحون غيرو «حرام ينكبّ»",
+        "es": "terminarse el plato de otro «para no tirarlo»"
+      },
+      "award": {
+        "en": "Clean Plate Award",
+        "fr": "Prix de l'assiette propre",
+        "ar": "جايزة «حرام ينكبّ»",
+        "es": "Premio Plato Limpio"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-130",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "invite the delivery guy in for coffee",
+        "fr": "d'inviter le livreur à prendre un café",
+        "ar": "يعزم الدليفري عفنجان قهوة",
+        "es": "invitar al repartidor a un café"
+      },
+      "award": {
+        "en": "Open Door Award",
+        "fr": "Prix de la porte ouverte",
+        "ar": "جايزة الباب المفتوح",
+        "es": "Premio Puerta Abierta"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-131",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "apologise to a chair after bumping into it",
+        "fr": "de s'excuser auprès d'une chaise après l'avoir cognée",
+        "ar": "يعتذر من الكرسي إذا خبط فيه",
+        "es": "pedirle perdón a una silla tras chocar con ella"
+      },
+      "award": {
+        "en": "Good Manners Award",
+        "fr": "Prix de la politesse",
+        "ar": "جايزة التهذيب",
+        "es": "Premio Educación Exquisita"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-132",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "video-call someone by accident at 7 in the morning",
+        "fr": "de passer un appel vidéo par erreur à 7 h du matin",
+        "ar": "يعمل فيديو كول بالغلط الساعة سبعة الصبح",
+        "es": "hacer una videollamada sin querer a las 7 de la mañana"
+      },
+      "award": {
+        "en": "Wake-Up Call Award",
+        "fr": "Prix du réveil vidéo",
+        "ar": "جايزة الفيقة بالفيديو",
+        "es": "Premio Videollamada Madrugadora"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-133",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future",
+        "food"
+      ],
+      "prompt": {
+        "en": "open a café with a menu nobody understands",
+        "fr": "d'ouvrir un café avec une carte incompréhensible",
+        "ar": "يفتح كافيه والمنيو ما حدا بيفهمو",
+        "es": "abrir un café con una carta que nadie entiende"
+      },
+      "award": {
+        "en": "Mystery Menu Award",
+        "fr": "Prix de la carte mystère",
+        "ar": "جايزة المنيو الغامض",
+        "es": "Premio Carta Misteriosa"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-134",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future",
+        "music"
+      ],
+      "prompt": {
+        "en": "go viral for a dance move they invented",
+        "fr": "de faire le buzz avec un pas de danse inventé",
+        "ar": "يشتهر بحركة رقص من اختراعو",
+        "es": "hacerse viral con un paso de baile inventado"
+      },
+      "award": {
+        "en": "Signature Move Award",
+        "fr": "Prix du pas signature",
+        "ar": "جايزة الحركة المسجّلة",
+        "es": "Premio Paso Estrella"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-135",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "leave one last bite \"to be polite\"",
+        "fr": "de laisser la dernière bouchée « par politesse »",
+        "ar": "يترك لقمة بالصحن «عيب خلّصو»",
+        "es": "dejar el trozo de la vergüenza «por educación»"
+      },
+      "award": {
+        "en": "Polite Bite Award",
+        "fr": "Prix de la bouchée de politesse",
+        "ar": "جايزة اللقمة الخجلانة",
+        "es": "Premio Trozo de la Vergüenza"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-136",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "do the same magic trick at every party",
+        "fr": "de faire le même tour de magie à chaque soirée",
+        "ar": "يعمل نفس خدعة السحر بكل سهرة",
+        "es": "hacer el mismo truco de magia en cada fiesta"
+      },
+      "award": {
+        "en": "Abracadabra Award",
+        "fr": "Prix abracadabra",
+        "ar": "جايزة أبراكادابرا",
+        "es": "Premio Abracadabra"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-137",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "lose a game and demand a rematch on the spot",
+        "fr": "de perdre et d'exiger une revanche sur-le-champ",
+        "ar": "يخسر ويطلب «وحدة كمان» فوراً",
+        "es": "perder y pedir la revancha al instante"
+      },
+      "award": {
+        "en": "Rematch Award",
+        "fr": "Prix de la revanche",
+        "ar": "جايزة «وحدة كمان»",
+        "es": "Premio Revancha"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-138",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "ask for \"just a taste\" and eat half",
+        "fr": "de demander « juste pour goûter » et manger la moitié",
+        "ar": "يقول «بس بدّي دوق» وياكل النصّ",
+        "es": "pedir «solo un poquito» y comerse la mitad"
+      },
+      "award": {
+        "en": "Just a Taste Award",
+        "fr": "Prix du « juste pour goûter »",
+        "ar": "جايزة «بس دوقة»",
+        "es": "Premio Solo un Poquito"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-139",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "food",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "leave a family lunch with three boxes of leftovers",
+        "fr": "de repartir d'un déjeuner de famille avec trois boîtes de restes",
+        "ar": "يطلع من غدا العيلة ومعو تلات علب أكل",
+        "es": "salir de una comida familiar con tres táperes de sobras"
+      },
+      "award": {
+        "en": "Leftovers Award",
+        "fr": "Prix des tupperwares",
+        "ar": "جايزة العلب",
+        "es": "Premio Táper"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-140",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "write \"make a list\" on a list just to cross it off",
+        "fr": "d'écrire « faire une liste » sur sa liste pour le cocher",
+        "ar": "يكتب «أعمل لايحة» عاللايحة ليشطبها",
+        "es": "apuntar «hacer una lista» en la lista para tacharlo"
+      },
+      "award": {
+        "en": "To-Do Award",
+        "fr": "Prix de la liste",
+        "ar": "جايزة اللايحة",
+        "es": "Premio Lista de Tareas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-141",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "reply three days later with \"sorry, just saw this\"",
+        "fr": "de répondre trois jours après : « pardon, je viens de voir »",
+        "ar": "يردّ بعد تلات إيّام «سوري هلّق شفتها»",
+        "es": "contestar tres días después con «perdona, lo acabo de ver»"
+      },
+      "award": {
+        "en": "Just Saw This Award",
+        "fr": "Prix du « je viens de voir »",
+        "ar": "جايزة «هلّق شفتها»",
+        "es": "Premio Lo Acabo de Ver"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-142",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music"
+      ],
+      "prompt": {
+        "en": "turn any word into a song",
+        "fr": "de transformer n'importe quel mot en chanson",
+        "ar": "يحوّل أيّ كلمة لغنية",
+        "es": "convertir cualquier palabra en una canción"
+      },
+      "award": {
+        "en": "Musical Award",
+        "fr": "Prix de la comédie musicale",
+        "ar": "جايزة الغنية عالطاير",
+        "es": "Premio Musical"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-143",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel"
+      ],
+      "prompt": {
+        "en": "nearly miss a flight for one last coffee",
+        "fr": "de presque rater l'avion pour un dernier café",
+        "ar": "يقرّب يضيّع الطيّارة كرمال آخر قهوة",
+        "es": "casi perder el avión por un último café"
+      },
+      "award": {
+        "en": "Final Call Award",
+        "fr": "Prix du dernier appel",
+        "ar": "جايزة النداء الأخير",
+        "es": "Premio Última Llamada"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-144",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music",
+        "habits"
+      ],
+      "prompt": {
+        "en": "hum the same song for an entire week",
+        "fr": "de fredonner la même chanson pendant une semaine",
+        "ar": "يدندن نفس الغنية جمعة كاملة",
+        "es": "tararear la misma canción toda la semana"
+      },
+      "award": {
+        "en": "Earworm Award",
+        "fr": "Prix du refrain collant",
+        "ar": "جايزة الدندنة",
+        "es": "Premio Canción Pegadiza"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-145",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "have every aunt wrapped around their finger",
+        "fr": "d'avoir toutes les tantes dans sa poche",
+        "ar": "يحطّ كل العمّات والخالات بجيبتو",
+        "es": "tener a todas las tías en el bolsillo"
+      },
+      "award": {
+        "en": "Aunties' Pick Award",
+        "fr": "Prix des tatas",
+        "ar": "جايزة قلب الخالات",
+        "es": "Premio Tías Conquistadas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-146",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "habits"
+      ],
+      "prompt": {
+        "en": "open the fridge every ten minutes hoping for news",
+        "fr": "d'ouvrir le frigo toutes les dix minutes en espérant du nouveau",
+        "ar": "يفتح البرّاد كل عشر دقايق ناطر شي جديد",
+        "es": "abrir la nevera cada diez minutos por si hay algo nuevo"
+      },
+      "award": {
+        "en": "Fridge Patrol Award",
+        "fr": "Prix de la ronde du frigo",
+        "ar": "جايزة دورية البرّاد",
+        "es": "Premio Patrulla de la Nevera"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-147",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "take every photo of the night without being asked",
+        "fr": "de prendre toutes les photos de la soirée sans qu'on le demande",
+        "ar": "ياخد كل صور السهرة بلا ما حدا يطلب",
+        "es": "hacer todas las fotos de la fiesta sin que nadie lo pida"
+      },
+      "award": {
+        "en": "Photo Reporter Award",
+        "fr": "Prix du reportage photo",
+        "ar": "جايزة عدسة السهرة",
+        "es": "Premio Reportaje Gráfico"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-148",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "live on 3% battery and refuse to charge",
+        "fr": "de vivre à 3 % de batterie sans jamais recharger",
+        "ar": "يضلّ عـ٣٪ شحن وما يحطّ عالشريج",
+        "es": "ir con el móvil al 3 % y negarse a cargarlo"
+      },
+      "award": {
+        "en": "Living on the Edge Award",
+        "fr": "Prix des 3 %",
+        "ar": "جايزة الـ٣٪",
+        "es": "Premio 3 % de Batería"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-149",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "honk to say hi, thanks, sorry and bye",
+        "fr": "de klaxonner pour dire bonjour, merci, pardon et au revoir",
+        "ar": "يزمّر ليقول مرحبا، ميرسي، سوري وباي",
+        "es": "pitar para decir hola, gracias, perdón y adiós"
+      },
+      "award": {
+        "en": "Honk Language Award",
+        "fr": "Prix du klaxon",
+        "ar": "جايزة الزمّور",
+        "es": "Premio Claxon"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-150",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future",
+        "party"
+      ],
+      "prompt": {
+        "en": "still be dancing at their 90th birthday",
+        "fr": "de danser encore à ses 90 ans",
+        "ar": "يضلّ يرقص بعيد ميلادو التسعين",
+        "es": "seguir bailando en su 90 cumpleaños"
+      },
+      "award": {
+        "en": "Forever Young Award",
+        "fr": "Prix de l'éternelle jeunesse",
+        "ar": "جايزة الشباب الدايم",
+        "es": "Premio Eterna Juventud"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-151",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "put something in a \"safe place\" and never see it again",
+        "fr": "de ranger un truc « en lieu sûr » et ne jamais le retrouver",
+        "ar": "يخبّي شي «بمحلّ آمن» وما يلاقيه بحياتو",
+        "es": "guardar algo «en un sitio seguro» y no volver a encontrarlo"
+      },
+      "award": {
+        "en": "Safe Place Award",
+        "fr": "Prix de la cachette parfaite",
+        "ar": "جايزة المحلّ الآمن",
+        "es": "Premio Sitio Seguro"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-152",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "start a debate about the best hummus in town",
+        "fr": "de lancer un débat sur le meilleur houmous de la ville",
+        "ar": "يفتح نقاش عن أطيب حمّص بالبلد",
+        "es": "montar un debate sobre el mejor hummus de la ciudad"
+      },
+      "award": {
+        "en": "Hummus Judge Award",
+        "fr": "Prix du houmous",
+        "ar": "جايزة الحمّص",
+        "es": "Premio Hummus"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-153",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "show up in costume to a party that wasn't a costume party",
+        "fr": "de venir en costume à une soirée pas déguisée",
+        "ar": "يلبس تنكّرة عسهرة عادية",
+        "es": "presentarse con disfraz en una fiesta que no era de disfraces"
+      },
+      "award": {
+        "en": "Costume Award",
+        "fr": "Prix du déguisement",
+        "ar": "جايزة التنكّرة",
+        "es": "Premio Disfraz"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-154",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits",
+        "party"
+      ],
+      "prompt": {
+        "en": "have a nickname for everyone in the room",
+        "fr": "d'avoir un surnom pour tout le monde ici",
+        "ar": "يكون عندو لقب لكل واحد بالغرفة",
+        "es": "tener un mote para cada persona de la sala"
+      },
+      "award": {
+        "en": "Nickname Award",
+        "fr": "Prix des surnoms",
+        "ar": "جايزة الألقاب",
+        "es": "Premio Motes"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-155",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "lose a game and blame the Wi-Fi",
+        "fr": "de perdre une partie et accuser le Wi-Fi",
+        "ar": "يخسر ويقول «النت تقيل»",
+        "es": "perder una partida y echarle la culpa al wifi"
+      },
+      "award": {
+        "en": "Lag Award",
+        "fr": "Prix du lag",
+        "ar": "جايزة النت التقيل",
+        "es": "Premio Culpa del Wifi"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-156",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future",
+        "travel"
+      ],
+      "prompt": {
+        "en": "forget their passport on the way to the Moon",
+        "fr": "d'oublier son passeport en partant pour la Lune",
+        "ar": "ينسى الباسبور وهوّي رايح عالقمر",
+        "es": "olvidarse el pasaporte de camino a la Luna"
+      },
+      "award": {
+        "en": "Lost in Space Award",
+        "fr": "Prix de la tête dans la Lune",
+        "ar": "جايزة السرحان عالقمر",
+        "es": "Premio Despiste Lunar"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-157",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "correct everyone's grammar mid-sentence",
+        "fr": "de corriger la grammaire des autres en pleine phrase",
+        "ar": "يصحّح لغة غيرو بنصّ الجملة",
+        "es": "corregir la gramática de los demás a mitad de frase"
+      },
+      "award": {
+        "en": "Grammar Police Award",
+        "fr": "Prix de la police de la grammaire",
+        "ar": "جايزة شرطة القواعد",
+        "es": "Premio Policía Gramatical"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-158",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "food"
+      ],
+      "prompt": {
+        "en": "help in the kitchen by tasting everything",
+        "fr": "d'« aider » en cuisine en ne faisant que goûter",
+        "ar": "يقول «بساعد» بالمطبخ وبس يدوق",
+        "es": "«ayudar» en la cocina solo probando cosas"
+      },
+      "award": {
+        "en": "Taste Tester Award",
+        "fr": "Prix de la dégustation",
+        "ar": "جايزة التذويق",
+        "es": "Premio Degustación"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-159",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel"
+      ],
+      "prompt": {
+        "en": "come back from a trip with a brand-new accent",
+        "fr": "de revenir de voyage avec un nouvel accent",
+        "ar": "يرجع من السفر بلهجة جديدة",
+        "es": "volver de un viaje con acento nuevo"
+      },
+      "award": {
+        "en": "Instant Accent Award",
+        "fr": "Prix de l'accent express",
+        "ar": "جايزة اللهجة الجديدة",
+        "es": "Premio Acento Exprés"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-160",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "take a kids' game way too seriously",
+        "fr": "de prendre un jeu d'enfants beaucoup trop au sérieux",
+        "ar": "ياخد لعبة ولاد عالجدّ زيادة",
+        "es": "tomarse un juego de niños demasiado en serio"
+      },
+      "award": {
+        "en": "Competition Mode Award",
+        "fr": "Prix de l'esprit de compétition",
+        "ar": "جايزة الجدّية",
+        "es": "Premio Modo Competición"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-161",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "take every online quiz to find out which cheese they are",
+        "fr": "de faire tous les quiz en ligne pour savoir quel fromage on est",
+        "ar": "يعمل كل كويز عالنت ليعرف أيّ نوع جبنة هوّي",
+        "es": "hacer todos los test online para saber qué queso le toca"
+      },
+      "award": {
+        "en": "Personality Quiz Award",
+        "fr": "Prix du quiz",
+        "ar": "جايزة الكويز",
+        "es": "Premio Test Online"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-162",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "family"
+      ],
+      "prompt": {
+        "en": "plan dinner while still eating lunch",
+        "fr": "de prévoir le dîner en plein déjeuner",
+        "ar": "يخطّط للعشا وهوّي بعدو عم ياكل الغدا",
+        "es": "planear la cena en mitad de la comida"
+      },
+      "award": {
+        "en": "Next Meal Award",
+        "fr": "Prix du repas suivant",
+        "ar": "جايزة العشا",
+        "es": "Premio Próxima Comida"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-163",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "wave back at someone who was waving at someone else",
+        "fr": "de répondre au coucou de quelqu'un qui saluait une autre personne",
+        "ar": "يردّ عـ«هاي» ما كانت إلو",
+        "es": "devolver un saludo que era para otra persona"
+      },
+      "award": {
+        "en": "Wrong Wave Award",
+        "fr": "Prix du coucou raté",
+        "ar": "جايزة السلام الغلط",
+        "es": "Premio Saludo Equivocado"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-164",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music"
+      ],
+      "prompt": {
+        "en": "air-guitar every solo",
+        "fr": "de jouer de l'air guitar sur chaque solo",
+        "ar": "يعزف غيتار بالهوا عكل صولو",
+        "es": "tocar la guitarra invisible en cada solo"
+      },
+      "award": {
+        "en": "Air Guitar Award",
+        "fr": "Prix de la guitare invisible",
+        "ar": "جايزة الغيتار الوهمي",
+        "es": "Premio Guitarra Invisible"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-165",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "sport"
+      ],
+      "prompt": {
+        "en": "buy all the gear for a sport and play it once",
+        "fr": "d'acheter tout l'équipement pour un sport et y jouer une fois",
+        "ar": "يشتري كل عدّة رياضة ويلعبها مرّة وحدة",
+        "es": "comprarse todo el equipo de un deporte y practicarlo una vez"
+      },
+      "award": {
+        "en": "All the Gear Award",
+        "fr": "Prix de l'équipement complet",
+        "ar": "جايزة العدّة الكاملة",
+        "es": "Premio Equipación Completa"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-166",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "sport",
+        "party"
+      ],
+      "prompt": {
+        "en": "do warm-up stretches before a card game",
+        "fr": "de s'échauffer avant une partie de cartes",
+        "ar": "يعمل إحماء قبل دقّ الشدّة",
+        "es": "hacer estiramientos antes de una partida de cartas"
+      },
+      "award": {
+        "en": "Warm-Up Award",
+        "fr": "Prix de l'échauffement",
+        "ar": "جايزة الإحماء",
+        "es": "Premio Calentamiento"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-167",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "reply to the group chat with stickers only",
+        "fr": "de répondre au groupe uniquement avec des stickers",
+        "ar": "يردّ عالغروب بس بالستيكرز",
+        "es": "contestar en el grupo solo con stickers"
+      },
+      "award": {
+        "en": "Sticker Award",
+        "fr": "Prix du sticker",
+        "ar": "جايزة الستيكر",
+        "es": "Premio Sticker"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-168",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "tell the same childhood story at every gathering",
+        "fr": "de raconter la même anecdote d'enfance à chaque réunion",
+        "ar": "يخبّر نفس القصّة تبع صغرو بكل جمعة",
+        "es": "contar la misma anécdota de la infancia en cada reunión"
+      },
+      "award": {
+        "en": "Rerun Award",
+        "fr": "Prix de la rediffusion",
+        "ar": "جايزة الإعادة",
+        "es": "Premio Reposición"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-169",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "have a system for loading the dishwasher",
+        "fr": "d'avoir une méthode pour remplir le lave-vaisselle",
+        "ar": "يكون عندو نظام خاصّ لترتيب الجلّاية",
+        "es": "tener una teoría sobre cómo cargar el lavavajillas"
+      },
+      "award": {
+        "en": "Dishwasher Award",
+        "fr": "Prix du lave-vaisselle",
+        "ar": "جايزة الجلّاية",
+        "es": "Premio Lavavajillas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-170",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future",
+        "family"
+      ],
+      "prompt": {
+        "en": "host a podcast only the family listens to",
+        "fr": "d'animer un podcast écouté seulement par la famille",
+        "ar": "يعمل بودكاست ما بيسمعو غير العيلة",
+        "es": "tener un pódcast que solo escucha su familia"
+      },
+      "award": {
+        "en": "Loyal Audience Award",
+        "fr": "Prix de l'audience fidèle",
+        "ar": "جايزة الجمهور الوفي",
+        "es": "Premio Audiencia Fiel"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-171",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "laugh so hard no sound comes out",
+        "fr": "de rire si fort qu'aucun son ne sort",
+        "ar": "يضحك لدرجة ما يطلع منّو صوت",
+        "es": "reírse tanto que no le sale ni el sonido"
+      },
+      "award": {
+        "en": "Silent Laugh Award",
+        "fr": "Prix du fou rire muet",
+        "ar": "جايزة الضحكة الصامتة",
+        "es": "Premio Risa Silenciosa"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-172",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "keep score in a game nobody is scoring",
+        "fr": "de compter les points d'un jeu où personne ne compte",
+        "ar": "يعدّ النقاط بلعبة ما حدا عم يعدّ فيها",
+        "es": "llevar la cuenta en un juego donde nadie cuenta puntos"
+      },
+      "award": {
+        "en": "Scorekeeper Award",
+        "fr": "Prix du tableau des scores",
+        "ar": "جايزة العدّاد",
+        "es": "Premio Marcador"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-173",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "eat cereal for dinner and call it cooking",
+        "fr": "de manger des céréales au dîner et appeler ça cuisiner",
+        "ar": "يتعشّى كورن فليكس ويسمّيها طبخة",
+        "es": "cenar cereales y llamarlo cocinar"
+      },
+      "award": {
+        "en": "Express Chef Award",
+        "fr": "Prix du chef pressé",
+        "ar": "جايزة الطبخة السريعة",
+        "es": "Premio Chef Exprés"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-174",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "defend their village's figs like a national treasure",
+        "fr": "de défendre les figues de son village comme un trésor national",
+        "ar": "يدافع عن تين ضيعتو كأنّو كنز وطني",
+        "es": "defender los higos de su pueblo como un tesoro nacional"
+      },
+      "award": {
+        "en": "Village Pride Award",
+        "fr": "Prix de la fierté villageoise",
+        "ar": "جايزة تين الضيعة",
+        "es": "Premio Orgullo de Pueblo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-175",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "use the fancy guest cups on a normal Tuesday",
+        "fr": "de sortir le service des invités un mardi ordinaire",
+        "ar": "يطلّع فناجين الضيوف بيوم تلاتا عادي",
+        "es": "sacar la vajilla buena un martes cualquiera"
+      },
+      "award": {
+        "en": "Fancy Cups Award",
+        "fr": "Prix du beau service",
+        "ar": "جايزة فناجين الضيوف",
+        "es": "Premio Vajilla Buena"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-176",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "have more photos of their pet than of people",
+        "fr": "d'avoir plus de photos de son animal que d'humains",
+        "ar": "يكون عندو صور لحيوانو أكتر من البشر",
+        "es": "tener más fotos de su mascota que de personas"
+      },
+      "award": {
+        "en": "Pet Album Award",
+        "fr": "Prix de l'album animalier",
+        "ar": "جايزة ألبوم الحيوانات",
+        "es": "Premio Álbum Mascotero"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-177",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music"
+      ],
+      "prompt": {
+        "en": "sing the wrong lyrics with total confidence",
+        "fr": "de chanter les mauvaises paroles avec un aplomb total",
+        "ar": "يغنّي الكلمات غلط وبكل ثقة",
+        "es": "cantar la letra mal con total seguridad"
+      },
+      "award": {
+        "en": "Lyric Remix Award",
+        "fr": "Prix du remix de paroles",
+        "ar": "جايزة الكلمات الغلط",
+        "es": "Premio Letra Inventada"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-178",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel",
+        "food"
+      ],
+      "prompt": {
+        "en": "find the tiny local restaurant with no sign",
+        "fr": "de trouver le petit resto local sans enseigne",
+        "ar": "يلاقي المطعم الصغير يلّي ما عليه يافطة",
+        "es": "encontrar el restaurante local que no tiene ni cartel"
+      },
+      "award": {
+        "en": "Hidden Gem Award",
+        "fr": "Prix de la pépite cachée",
+        "ar": "جايزة الكنز المخبّى",
+        "es": "Premio Joya Escondida"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-179",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party",
+        "food"
+      ],
+      "prompt": {
+        "en": "bring a cake with a slice already missing",
+        "fr": "d'apporter un gâteau avec une part déjà mangée",
+        "ar": "يجيب قالب كاتو ناقصو شقفة",
+        "es": "llevar una tarta a la que ya le falta un trozo"
+      },
+      "award": {
+        "en": "Missing Slice Award",
+        "fr": "Prix de la part manquante",
+        "ar": "جايزة الشقفة الناقصة",
+        "es": "Premio Trozo Perdido"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-180",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "narrate their day like a nature documentary",
+        "fr": "de commenter sa journée comme un documentaire animalier",
+        "ar": "يحكي نهارو كأنّو برنامج وثائقي عن الحيوانات",
+        "es": "narrar su día como un documental de animales"
+      },
+      "award": {
+        "en": "Voice-Over Award",
+        "fr": "Prix de la voix off",
+        "ar": "جايزة الراوي",
+        "es": "Premio Voz en Off"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-181",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future",
+        "sport"
+      ],
+      "prompt": {
+        "en": "win gold in a sport that doesn't exist yet",
+        "fr": "de gagner l'or dans un sport qui n'existe pas encore",
+        "ar": "يربح ميدالية دهب برياضة بعدها مش موجودة",
+        "es": "ganar un oro en un deporte que aún no existe"
+      },
+      "award": {
+        "en": "Future Games Award",
+        "fr": "Prix des jeux du futur",
+        "ar": "جايزة ألعاب المستقبل",
+        "es": "Premio Juegos del Futuro"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-182",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "win the kids over in five minutes flat",
+        "fr": "de se mettre les enfants dans la poche en cinq minutes",
+        "ar": "يربح قلب الولاد بخمس دقايق",
+        "es": "ganarse a los niños en cinco minutos"
+      },
+      "award": {
+        "en": "Kid Magnet Award",
+        "fr": "Prix de l'aimant à enfants",
+        "ar": "جايزة قلب الولاد",
+        "es": "Premio Imán de Niños"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-183",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "type a whole essay, delete it and send \"ok\"",
+        "fr": "d'écrire un roman, tout effacer et envoyer « ok »",
+        "ar": "يكتب رسالة طويلة، يمحيها ويبعت «أوكي»",
+        "es": "escribir un párrafo enorme, borrarlo y mandar «vale»"
+      },
+      "award": {
+        "en": "Ok Award",
+        "fr": "Prix du « ok »",
+        "ar": "جايزة «أوكي»",
+        "es": "Premio Vale"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-184",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "have a secret system for everything",
+        "fr": "d'avoir un « système » pour tout, que personne ne comprend",
+        "ar": "يكون عندو «سيستيم» لكل شي وما حدا فاهمو",
+        "es": "tener un «sistema» para todo que nadie entiende"
+      },
+      "award": {
+        "en": "Secret System Award",
+        "fr": "Prix du système",
+        "ar": "جايزة السيستيم",
+        "es": "Premio Sistema Propio"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-185",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "always carry gum, tissues and a charger",
+        "fr": "d'avoir toujours chewing-gum, mouchoirs et chargeur sur soi",
+        "ar": "يكون دايماً معو علكة ومحارم وشريج",
+        "es": "llevar siempre chicles, pañuelos y cargador encima"
+      },
+      "award": {
+        "en": "Survival Kit Award",
+        "fr": "Prix de la trousse de survie",
+        "ar": "جايزة شنطة الطوارئ",
+        "es": "Premio Kit de Supervivencia"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-186",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "get a whole restaurant singing for a stranger's birthday",
+        "fr": "de faire chanter toute la salle pour l'anniversaire d'un inconnu",
+        "ar": "يخلّي كل المطعم يغنّي «هابي بيرثداي» لحدا غريب",
+        "es": "poner a todo el bar a cantarle el cumpleaños a un desconocido"
+      },
+      "award": {
+        "en": "Birthday Choir Award",
+        "fr": "Prix de la chorale",
+        "ar": "جايزة الكورال",
+        "es": "Premio Coro"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-187",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "own 30 mugs and only ever use one",
+        "fr": "d'avoir 30 tasses et toujours utiliser la même",
+        "ar": "يكون عندو ٣٠ ماغ وما يستعمل إلّا واحد",
+        "es": "tener 30 tazas y usar siempre la misma"
+      },
+      "award": {
+        "en": "Favourite Mug Award",
+        "fr": "Prix de la tasse fétiche",
+        "ar": "جايزة الماغ المفضّل",
+        "es": "Premio Taza Favorita"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-188",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "eat half the man'oushe before getting home",
+        "fr": "de manger la moitié de la man'ouché avant d'arriver",
+        "ar": "ياكل نصّ المنقوشة قبل ما يوصل عالبيت",
+        "es": "comerse media man'ushe antes de llegar a casa"
+      },
+      "award": {
+        "en": "Man'oushe Award",
+        "fr": "Prix de la man'ouché",
+        "ar": "جايزة المنقوشة",
+        "es": "Premio Man'ushe"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-189",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel"
+      ],
+      "prompt": {
+        "en": "fall asleep the second any vehicle starts moving",
+        "fr": "de s'endormir dès qu'un véhicule démarre",
+        "ar": "ينام أوّل ما تمشي السيارة",
+        "es": "dormirse en cuanto arranca cualquier vehículo"
+      },
+      "award": {
+        "en": "Instant Nap Award",
+        "fr": "Prix du sommeil express",
+        "ar": "جايزة النومة السريعة",
+        "es": "Premio Siesta Exprés"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-190",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "quit it all to make labneh in the mountains",
+        "fr": "de tout plaquer pour faire du labné à la montagne",
+        "ar": "يترك كل شي ويطلع عالضيعة يعمل لبنة",
+        "es": "dejarlo todo para hacer labneh en la montaña"
+      },
+      "award": {
+        "en": "Labneh Dream Award",
+        "fr": "Prix du rêve labné",
+        "ar": "جايزة حلم اللبنة",
+        "es": "Premio Sueño Labneh"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-191",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "keep every receipt \"in case we need it\"",
+        "fr": "de garder tous les tickets de caisse « au cas où »",
+        "ar": "يحتفظ بكل فاتورة «يمكن نحتاجها»",
+        "es": "guardar todos los tiques, por si las moscas"
+      },
+      "award": {
+        "en": "Receipt Archive Award",
+        "fr": "Prix des archives",
+        "ar": "جايزة الأرشيف",
+        "es": "Premio Archivo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-192",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party",
+        "music"
+      ],
+      "prompt": {
+        "en": "win karaoke with a song nobody has heard of",
+        "fr": "de gagner au karaoké avec une chanson inconnue",
+        "ar": "يربح الكاريوكي بغنية ما حدا سامع فيها",
+        "es": "ganar el karaoke con una canción que nadie conoce"
+      },
+      "award": {
+        "en": "Deep Cut Award",
+        "fr": "Prix du morceau rare",
+        "ar": "جايزة الغنية النادرة",
+        "es": "Premio Canción Rara"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-193",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "sport",
+        "habits"
+      ],
+      "prompt": {
+        "en": "trip on flat ground and turn it into a dance move",
+        "fr": "de trébucher sur un sol plat et en faire un pas de danse",
+        "ar": "يتعتّر عالأرض المستوية ويعمل حالو عم يرقص",
+        "es": "tropezar en suelo liso y convertirlo en un paso de baile"
+      },
+      "award": {
+        "en": "Smooth Recovery Award",
+        "fr": "Prix de la belle récup",
+        "ar": "جايزة «كنت قاصدها»",
+        "es": "Premio Arte del Disimulo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-194",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "say \"I'll do it tomorrow\" for an entire year",
+        "fr": "de dire « je le fais demain » pendant un an",
+        "ar": "يقول «بكرا بعملها» سنة كاملة",
+        "es": "decir «mañana lo hago» durante un año entero"
+      },
+      "award": {
+        "en": "Tomorrow Award",
+        "fr": "Prix du « demain »",
+        "ar": "جايزة «بكرا»",
+        "es": "Premio Mañana Sin Falta"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-195",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "know \"a guy\" for absolutely everything",
+        "fr": "de connaître « quelqu'un » pour absolument tout",
+        "ar": "يعرف «حدا» لكل شي بالدني",
+        "es": "conocer a «alguien» para absolutamente todo"
+      },
+      "award": {
+        "en": "Know-a-Guy Award",
+        "fr": "Prix du carnet d'adresses",
+        "ar": "جايزة «عندي حدا»",
+        "es": "Premio Tengo un Contacto"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-196",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "tech"
+      ],
+      "prompt": {
+        "en": "teach Teta how to send voice notes",
+        "fr": "d'apprendre à Teta à envoyer des vocaux",
+        "ar": "يعلّم تيتا كيف تبعت فويس",
+        "es": "enseñar a la abuela a mandar audios"
+      },
+      "award": {
+        "en": "Teta Tech Award",
+        "fr": "Prix techno-Teta",
+        "ar": "جايزة تيتا الديجيتال",
+        "es": "Premio Abuela Digital"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-197",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits",
+        "party"
+      ],
+      "prompt": {
+        "en": "laugh at a joke without getting it",
+        "fr": "de rire à une blague sans l'avoir comprise",
+        "ar": "يضحك عنكتة ما فهمها",
+        "es": "reírse de un chiste sin haberlo entendido"
+      },
+      "award": {
+        "en": "Polite Laugh Award",
+        "fr": "Prix du rire poli",
+        "ar": "جايزة الضحكة المجاملة",
+        "es": "Premio Risa de Cortesía"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-198",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "live to see flying cars and still be stuck in traffic",
+        "fr": "de voir les voitures volantes et finir quand même dans les bouchons",
+        "ar": "يعيش لحتى تطير السيارات ويضلّ عالق بالعجقة",
+        "es": "ver coches voladores y seguir en un atasco"
+      },
+      "award": {
+        "en": "Traffic Forever Award",
+        "fr": "Prix des bouchons éternels",
+        "ar": "جايزة العجقة",
+        "es": "Premio Atasco Eterno"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-199",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "have genius ideas in the shower and forget them all",
+        "fr": "d'avoir ses meilleures idées sous la douche et de tout oublier",
+        "ar": "تجيه أحلى الأفكار تحت الدوش وينساها كلّها",
+        "es": "tener sus mejores ideas en la ducha y olvidarlas todas"
+      },
+      "award": {
+        "en": "Shower Genius Award",
+        "fr": "Prix du génie de la douche",
+        "ar": "جايزة أفكار الدوش",
+        "es": "Premio Genio de la Ducha"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-200",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music",
+        "food"
+      ],
+      "prompt": {
+        "en": "dance in the kitchen while cooking",
+        "fr": "de danser en cuisine en préparant à manger",
+        "ar": "يرقص بالمطبخ وهوّي عم يطبخ",
+        "es": "bailar en la cocina mientras prepara la comida"
+      },
+      "award": {
+        "en": "Kitchen Disco Award",
+        "fr": "Prix de la cuisine disco",
+        "ar": "جايزة ديسكو المطبخ",
+        "es": "Premio Cocina Disco"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-201",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "give their pet a first name and a surname",
+        "fr": "de donner un prénom et un nom de famille à son animal",
+        "ar": "يعطي حيوانو اسم وشهرة متل البشر",
+        "es": "ponerle nombre y apellido a su mascota"
+      },
+      "award": {
+        "en": "Full Name Award",
+        "fr": "Prix de l'état civil",
+        "ar": "جايزة الهويّة",
+        "es": "Premio Nombre Completo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-202",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "put toum on absolutely everything",
+        "fr": "de mettre de la toum sur absolument tout",
+        "ar": "يحطّ توم على كل شي",
+        "es": "echarle toum (salsa de ajo) a absolutamente todo"
+      },
+      "award": {
+        "en": "Toum Award",
+        "fr": "Prix de la toum",
+        "ar": "جايزة التوم",
+        "es": "Premio Toum"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-203",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel"
+      ],
+      "prompt": {
+        "en": "take the long way and call it a shortcut",
+        "fr": "de prendre le chemin le plus long et l'appeler raccourci",
+        "ar": "ياخد أطول طريق ويسمّيه «طريق مختصر»",
+        "es": "tomar el camino largo y llamarlo atajo"
+      },
+      "award": {
+        "en": "Shortcut Award",
+        "fr": "Prix du raccourci",
+        "ar": "جايزة الطريق المختصر",
+        "es": "Premio Atajo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-204",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "check the weather app and refuse to believe it",
+        "fr": "de vérifier la météo puis refuser d'y croire",
+        "ar": "يشوف الطقس عالتلفون وما يصدّق",
+        "es": "mirar el tiempo en el móvil y no creérselo"
+      },
+      "award": {
+        "en": "Weather Report Award",
+        "fr": "Prix du bulletin météo",
+        "ar": "جايزة النشرة الجوّية",
+        "es": "Premio Parte Meteorológico"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-205",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "win hide-and-seek by falling asleep in the hiding spot",
+        "fr": "de gagner à cache-cache en s'endormant dans sa cachette",
+        "ar": "يربح الغمّيضة لأنّو نام بالمخبى",
+        "es": "ganar al escondite echándose una siesta donde se escondió"
+      },
+      "award": {
+        "en": "Best Hiding Spot Award",
+        "fr": "Prix de la meilleure cachette",
+        "ar": "جايزة أحسن مخبى",
+        "es": "Premio Mejor Escondite"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-206",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "travel"
+      ],
+      "prompt": {
+        "en": "organise the big family trip and its group chat",
+        "fr": "d'organiser le grand voyage en famille et son groupe de discussion",
+        "ar": "ينظّم سفرة العيلة الكبيرة وغروب السفرة",
+        "es": "organizar el gran viaje familiar y su grupo de chat"
+      },
+      "award": {
+        "en": "Trip Captain Award",
+        "fr": "Prix du capitaine de voyage",
+        "ar": "جايزة قبطان السفرة",
+        "es": "Premio Capitán de Viaje"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-207",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music",
+        "party"
+      ],
+      "prompt": {
+        "en": "clap on the wrong beat with total confidence",
+        "fr": "de taper des mains à contretemps avec aplomb",
+        "ar": "يزقّف عالإيقاع الغلط وبكل ثقة",
+        "es": "dar palmas a destiempo con mucho arte"
+      },
+      "award": {
+        "en": "Off-Beat Award",
+        "fr": "Prix du contretemps",
+        "ar": "جايزة الإيقاع الخاصّ",
+        "es": "Premio Contratiempo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "fam-208",
+      "tier": "pass",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits",
+        "future"
+      ],
+      "prompt": {
+        "en": "start a new hobby every single month",
+        "fr": "de commencer un nouveau hobby chaque mois",
+        "ar": "يبلّش هواية جديدة كل شهر",
+        "es": "empezar un hobby nuevo cada mes"
+      },
+      "award": {
+        "en": "Hobby Hopper Award",
+        "fr": "Prix du touche-à-tout",
+        "ar": "جايزة الهوايات",
+        "es": "Premio Hobby del Mes"
+      },
+      "review": {
+        "status": "draft"
+      }
+    }
+  ]
+}

@@ -1,0 +1,287 @@
+{
+  "v": 2,
+  "t": "state",
+  "seq": 42,
+  "serverNow": 1790000085300,
+  "view": {
+    "kind": "tv",
+    "room": {
+      "roomCode": "QZNT",
+      "joinUrl": "https://play.example.workers.dev/QZNT",
+      "phase": "PLAYING",
+      "focusedGameId": "mishana",
+      "setupGameId": "trivia",
+      "contentLocale": "en",
+      "members": [
+        {
+          "id": "p_0a1b2c3d4e5f60718293a4b5",
+          "name": "Rami",
+          "color": "coral",
+          "seat": 0,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": true,
+          "reaction": null
+        },
+        {
+          "id": "p_1b2c3d4e5f60718293a4b5c6",
+          "name": "Léa",
+          "color": "azure",
+          "seat": 1,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_2c3d4e5f60718293a4b5c6d7",
+          "name": "نور",
+          "color": "jade",
+          "seat": 2,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_3d4e5f60718293a4b5c6d7e8",
+          "name": "Sam",
+          "color": "lemon",
+          "seat": 3,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_4e5f60718293a4b5c6d7e8f9",
+          "name": "Zoé",
+          "color": "grape",
+          "seat": 4,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        }
+      ],
+      "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "games": [
+        {
+          "id": "mishana",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            10,
+            20
+          ]
+        },
+        {
+          "id": "trivia",
+          "minPlayers": 1,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            5,
+            10
+          ]
+        }
+      ],
+      "setup": null,
+      "cup": {
+        "stars": {},
+        "last": null
+      },
+      "premium": false,
+      "tvBusy": false,
+      "contentLocales": [
+        "en",
+        "fr",
+        "ar",
+        "es"
+      ]
+    },
+    "game": {
+      "gameId": "trivia",
+      "n": 1,
+      "phase": "REVEAL",
+      "doneIds": [],
+      "awaitedIds": [],
+      "public": {
+        "schema": 1,
+        "phase": "REVEAL",
+        "quiz": {
+          "id": "demo-quiz-01",
+          "title": {
+            "en": "Studio warm-up",
+            "fr": "Échauffement en studio",
+            "ar": "تحمية الاستوديو",
+            "es": "Calentamiento en el estudio"
+          },
+          "stars": 2,
+          "domain": "general",
+          "featuredTopics": [
+            "science",
+            "geography",
+            "music"
+          ],
+          "topicCount": 6,
+          "questionCount": 9
+        },
+        "rerun": false,
+        "index": 3,
+        "total": 7,
+        "isFinal": false,
+        "deadline": 1790000094300,
+        "durationMs": 9000,
+        "question": {
+          "id": "q004",
+          "text": "Which planet has the shortest year?",
+          "type": "mc4",
+          "topic": "science",
+          "difficulty": 2
+        },
+        "options": [
+          "Mars",
+          "Venus",
+          "Mercury",
+          "Earth"
+        ],
+        "answeredIds": [
+          "p_0a1b2c3d4e5f60718293a4b5",
+          "p_1b2c3d4e5f60718293a4b5c6",
+          "p_2c3d4e5f60718293a4b5c6d7",
+          "p_3d4e5f60718293a4b5c6d7e8",
+          "p_4e5f60718293a4b5c6d7e8f9"
+        ],
+        "reveal": {
+          "correct": 2,
+          "choices": [
+            {
+              "id": "p_0a1b2c3d4e5f60718293a4b5",
+              "choice": 3,
+              "correct": false,
+              "timeMs": 2700,
+              "points": 0,
+              "streakBonus": 0
+            },
+            {
+              "id": "p_1b2c3d4e5f60718293a4b5c6",
+              "choice": 3,
+              "correct": false,
+              "timeMs": 3200,
+              "points": 0,
+              "streakBonus": 0
+            },
+            {
+              "id": "p_2c3d4e5f60718293a4b5c6d7",
+              "choice": 3,
+              "correct": false,
+              "timeMs": 3700,
+              "points": 0,
+              "streakBonus": 0
+            },
+            {
+              "id": "p_3d4e5f60718293a4b5c6d7e8",
+              "choice": 3,
+              "correct": false,
+              "timeMs": 4700,
+              "points": 0,
+              "streakBonus": 0
+            },
+            {
+              "id": "p_4e5f60718293a4b5c6d7e8f9",
+              "choice": 3,
+              "correct": false,
+              "timeMs": 5700,
+              "points": 0,
+              "streakBonus": 0
+            }
+          ],
+          "fastestIds": [],
+          "onFireIds": [],
+          "stumped": true,
+          "genius": false,
+          "tooSlow": false,
+          "explain": "It circles the Sun in about 88 days.",
+          "voided": true
+        },
+        "scores": [
+          {
+            "playerId": "p_0a1b2c3d4e5f60718293a4b5",
+            "score": 3180,
+            "scoreBefore": 3180,
+            "rankBefore": 1,
+            "streak": 3,
+            "bestStreak": 3,
+            "correct": 3,
+            "fastest": 3,
+            "rank": 1,
+            "left": false
+          },
+          {
+            "playerId": "p_1b2c3d4e5f60718293a4b5c6",
+            "score": 1880,
+            "scoreBefore": 1880,
+            "rankBefore": 2,
+            "streak": 2,
+            "bestStreak": 2,
+            "correct": 2,
+            "fastest": 0,
+            "rank": 2,
+            "left": false
+          },
+          {
+            "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+            "score": 1820,
+            "scoreBefore": 1820,
+            "rankBefore": 3,
+            "streak": 1,
+            "bestStreak": 1,
+            "correct": 2,
+            "fastest": 0,
+            "rank": 3,
+            "left": false
+          },
+          {
+            "playerId": "p_3d4e5f60718293a4b5c6d7e8",
+            "score": 1620,
+            "scoreBefore": 1620,
+            "rankBefore": 4,
+            "streak": 0,
+            "bestStreak": 2,
+            "correct": 2,
+            "fastest": 0,
+            "rank": 4,
+            "left": false
+          },
+          {
+            "playerId": "p_4e5f60718293a4b5c6d7e8f9",
+            "score": 880,
+            "scoreBefore": 880,
+            "rankBefore": 5,
+            "streak": 0,
+            "bestStreak": 1,
+            "correct": 1,
+            "fastest": 0,
+            "rank": 5,
+            "left": false
+          }
+        ],
+        "newIds": [],
+        "waitingIds": [],
+        "endedEarly": false
+      },
+      "me": null,
+      "over": false
+    },
+    "me": null
+  }
+}

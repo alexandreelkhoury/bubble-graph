@@ -1,0 +1,4818 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-lb-proverbs",
+  "game": "bluff",
+  "title": {
+    "en": "Lebanese Proverbs",
+    "fr": "Proverbes libanais",
+    "ar": "أمتال لبنانية",
+    "es": "Refranes libaneses"
+  },
+  "description": {
+    "en": "Teta's sayings, half finished. Know the ending? Score now. Don't? Lie like a local.",
+    "fr": "Les dictons de Teta, à moitié finis. Tu connais la fin ? Marque. Sinon, mens comme un vrai Libanais.",
+    "ar": "أمتال تيتا نصّها ناقص. بتعرف الكملة؟ خود النقاط. ما بتعرف؟ ألّف متل ابن البلد.",
+    "es": "Los refranes de la abuela libanesa, a medias. ¿Sabes el final? Puntúa. ¿No? Miente como un local."
+  },
+  "sourceLocale": "ar",
+  "playableIn": [
+    "ar",
+    "en",
+    "fr",
+    "es"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {
+    "proverb_end": {
+      "en": [
+        "Never comes back",
+        "Laughs last",
+        "Stays home",
+        "Always arrives late",
+        "Never sleeps a wink"
+      ],
+      "fr": [
+        "Ne revient jamais",
+        "Rit le dernier",
+        "Reste chez lui",
+        "Arrive toujours en retard",
+        "Ne dort jamais"
+      ],
+      "ar": [
+        "ما بيرجع",
+        "بيضحك آخر واحد",
+        "بيبقى ببيتو",
+        "بيوصل متأخر",
+        "ما بينام الليل"
+      ],
+      "es": [
+        "Nunca vuelve",
+        "Ríe el último",
+        "Se queda en casa",
+        "Siempre llega tarde",
+        "No pega ojo"
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "lbp-001",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "اللي بياكل العصي…",
+        "translit": "illi byekol el-3asé…",
+        "display": {
+          "en": "The one who takes the beating…",
+          "fr": "Celui qui reçoit les coups…",
+          "es": "El que recibe los golpes…"
+        }
+      },
+      "truth": {
+        "ar": "مش متل اللي بيعدها",
+        "en": "Is not like the one counting the blows",
+        "fr": "N'est pas comme celui qui les compte",
+        "es": "No es como el que los cuenta"
+      },
+      "truthAlt": {
+        "ar": [
+          "مش مثل اللي بيعدها",
+          "مش متل يلي بيعدها"
+        ],
+        "en": [
+          "Not like the one who counts them",
+          "Mish metl elli bi3eddha"
+        ],
+        "fr": [
+          "Pas comme celui qui compte"
+        ],
+        "es": [
+          "No es igual que el que cuenta"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بينام بكير",
+          "بيصير أستاذ",
+          "بيعرف قيمة الكف"
+        ],
+        "en": [
+          "Learns to duck faster",
+          "Remembers every single one",
+          "Sleeps better at night"
+        ],
+        "fr": [
+          "Apprend vite à esquiver",
+          "Se souvient de chacun",
+          "Finit par les rendre"
+        ],
+        "es": [
+          "Aprende a esquivar rápido",
+          "Se acuerda de cada uno",
+          "Acaba devolviéndolos"
+        ]
+      },
+      "note": {
+        "ar": "الموجوع بيعرف الوجع أكتر من اللي عم يتفرج",
+        "en": "Only the one who suffers really knows how it feels",
+        "fr": "Seul celui qui souffre sait vraiment ce que ça fait",
+        "es": "Solo quien sufre sabe de verdad lo que duele"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs (form and wording)"
+      }
+    },
+    {
+      "id": "lbp-002",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "القرد بعين إمو…",
+        "translit": "el-2ird b3ein emmo…",
+        "display": {
+          "en": "In his mother's eyes, the monkey…",
+          "fr": "Aux yeux de sa mère, le singe…",
+          "es": "A los ojos de su madre, el mono…"
+        }
+      },
+      "truth": {
+        "ar": "غزال",
+        "en": "Is a gazelle",
+        "fr": "Est une gazelle",
+        "es": "Es una gacela"
+      },
+      "truthAlt": {
+        "ar": [
+          "غزالة"
+        ],
+        "en": [
+          "A gazelle",
+          "Ghazal",
+          "Ghazel"
+        ],
+        "fr": [
+          "Une gazelle",
+          "Ghazal"
+        ],
+        "es": [
+          "Una gacela",
+          "Ghazal"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ملك",
+          "أذكى واحد بالصف",
+          "عريس"
+        ],
+        "en": [
+          "Is a lion",
+          "Is a prince",
+          "Is a genius"
+        ],
+        "fr": [
+          "Est un lion",
+          "Est un prince",
+          "Est un génie"
+        ],
+        "es": [
+          "Es un león",
+          "Es un príncipe",
+          "Es un genio"
+        ]
+      },
+      "note": {
+        "ar": "كل إم شايفة ابنها أحلى واحد",
+        "en": "Every parent finds their own child beautiful",
+        "fr": "Chaque parent trouve son enfant magnifique",
+        "es": "Para toda madre, su hijo es el más guapo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-003",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "اللي استحوا…",
+        "translit": "illi stahu…",
+        "display": {
+          "en": "Those who had shame…",
+          "fr": "Ceux qui avaient honte…",
+          "es": "Los que tenían vergüenza…"
+        }
+      },
+      "truth": {
+        "ar": "ماتوا",
+        "en": "Are all dead",
+        "fr": "Sont morts",
+        "es": "Ya se murieron"
+      },
+      "truthAlt": {
+        "ar": [
+          "ماتو",
+          "كلن ماتوا"
+        ],
+        "en": [
+          "Died",
+          "Are dead",
+          "Matu"
+        ],
+        "fr": [
+          "Sont tous morts",
+          "Matu"
+        ],
+        "es": [
+          "Se murieron",
+          "Murieron",
+          "Matu"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "هاجروا",
+          "ضلوا بالبيت",
+          "فلوا بكير"
+        ],
+        "en": [
+          "Emigrated",
+          "Stayed home",
+          "Left early"
+        ],
+        "fr": [
+          "Ont émigré",
+          "Sont restés chez eux",
+          "Sont partis tôt"
+        ],
+        "es": [
+          "Emigraron",
+          "Se quedaron en casa",
+          "Se fueron pronto"
+        ]
+      },
+      "note": {
+        "ar": "ما عاد حدا يستحي",
+        "en": "Nobody gets embarrassed any more",
+        "fr": "Plus personne n'a honte de rien",
+        "es": "Ya nadie tiene vergüenza de nada"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-004",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "يا رايح…",
+        "translit": "ya rayeh…",
+        "display": {
+          "en": "You who are leaving…",
+          "fr": "Toi qui t'en vas…",
+          "es": "Tú que te vas…"
+        }
+      },
+      "truth": {
+        "ar": "كتر ملايح",
+        "en": "Leave lots of kindness behind",
+        "fr": "Laisse beaucoup de gentillesse derrière toi",
+        "es": "Deja mucha bondad detrás"
+      },
+      "truthAlt": {
+        "ar": [
+          "كتر الملايح",
+          "كتر ملايحك"
+        ],
+        "en": [
+          "Leave kindness behind",
+          "Kattir malayeh"
+        ],
+        "fr": [
+          "Laisse de la gentillesse",
+          "Kattir malayeh"
+        ],
+        "es": [
+          "Deja bondad",
+          "Kattir malayeh"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "سكر الباب وراك",
+          "ما تنسى المفاتيح",
+          "خود معك زوادة"
+        ],
+        "en": [
+          "Close the door behind you",
+          "Don't forget your keys",
+          "Take some food for the road"
+        ],
+        "fr": [
+          "Ferme la porte derrière toi",
+          "N'oublie pas tes clés",
+          "Emporte de quoi manger"
+        ],
+        "es": [
+          "Cierra la puerta al salir",
+          "No olvides las llaves",
+          "Llévate algo de comer"
+        ]
+      },
+      "note": {
+        "ar": "فل عالمنيح، الناس بتتذكر كيف تركتهن",
+        "en": "Leave on good terms: people remember how you left",
+        "fr": "Pars en bons termes : on se souvient de la façon dont tu es parti",
+        "es": "Vete en buenos términos: la gente recuerda cómo te fuiste"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-005",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "الجار…",
+        "translit": "ej-jar…",
+        "display": {
+          "en": "The neighbour…",
+          "fr": "Le voisin…",
+          "es": "El vecino…"
+        }
+      },
+      "truth": {
+        "ar": "قبل الدار",
+        "en": "Comes before the house",
+        "fr": "Avant la maison",
+        "es": "Antes que la casa"
+      },
+      "truthAlt": {
+        "ar": [
+          "قبل البيت"
+        ],
+        "en": [
+          "Before the house",
+          "Abl ed-dar"
+        ],
+        "fr": [
+          "Passe avant la maison",
+          "Abl ed-dar"
+        ],
+        "es": [
+          "Va antes que la casa",
+          "Abl ed-dar"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيعرف كل الأخبار",
+          "ما بينام",
+          "أقرب من الخي"
+        ],
+        "en": [
+          "Knows all your news",
+          "Never sleeps",
+          "Is closer than a brother"
+        ],
+        "fr": [
+          "Sait tout de toi",
+          "Ne dort jamais",
+          "Est plus proche qu'un frère"
+        ],
+        "es": [
+          "Lo sabe todo",
+          "Nunca duerme",
+          "Está más cerca que un hermano"
+        ]
+      },
+      "note": {
+        "ar": "نقي جيرانك قبل ما تشتري بيتك",
+        "en": "Choose your neighbours before you choose your home",
+        "fr": "Choisis tes voisins avant ta maison",
+        "es": "Elige a tus vecinos antes que tu casa"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-006",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "كل ديك…",
+        "translit": "kel dik…",
+        "display": {
+          "en": "Every rooster…",
+          "fr": "Chaque coq…",
+          "es": "Cada gallo…"
+        }
+      },
+      "truth": {
+        "ar": "على مزبلتو صياح",
+        "en": "Crows loudest on its own dunghill",
+        "fr": "Chante fort sur son tas de fumier",
+        "es": "Canta fuerte en su propio estiércol"
+      },
+      "truthAlt": {
+        "ar": [
+          "على مزبلته صياح"
+        ],
+        "en": [
+          "Crows on its own dunghill",
+          "Crows loudest at home"
+        ],
+        "fr": [
+          "Chante sur son fumier"
+        ],
+        "es": [
+          "Canta en su estercolero"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "إلو يوم",
+          "بيصحى قبل الفجر",
+          "بيحسب حالو مختار"
+        ],
+        "en": [
+          "Has its day",
+          "Wakes before dawn",
+          "Thinks he runs the village"
+        ],
+        "fr": [
+          "A son jour",
+          "Se lève avant l'aube",
+          "Se prend pour le maire"
+        ],
+        "es": [
+          "Tiene su día",
+          "Madruga más que el sol",
+          "Se cree el alcalde"
+        ]
+      },
+      "note": {
+        "ar": "كل واحد بطل عأرضو",
+        "en": "Everyone is brave on home turf",
+        "fr": "Tout le monde est courageux chez soi",
+        "es": "Todos son valientes en su casa (como en español: cada gallo canta en su muladar)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-007",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "إجا يكحلها…",
+        "translit": "eja ykahhela…",
+        "display": {
+          "en": "He came to put kohl on her eyes…",
+          "fr": "Il est venu lui mettre du khôl…",
+          "es": "Vino a ponerle kohl en los ojos…"
+        }
+      },
+      "truth": {
+        "ar": "عماها",
+        "en": "And blinded her",
+        "fr": "Et l'a rendue aveugle",
+        "es": "Y la dejó ciega"
+      },
+      "truthAlt": {
+        "ar": [
+          "عماها بالمرة"
+        ],
+        "en": [
+          "Blinded her",
+          "3amaha"
+        ],
+        "fr": [
+          "L'a aveuglée",
+          "3amaha"
+        ],
+        "es": [
+          "La cegó",
+          "3amaha"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "نسي المراية",
+          "زعلها",
+          "خرب الحفلة"
+        ],
+        "en": [
+          "And forgot the mirror",
+          "And made her cry",
+          "And did his own instead"
+        ],
+        "fr": [
+          "Et a oublié le miroir",
+          "Et l'a fait pleurer",
+          "Et s'en est mis lui-même"
+        ],
+        "es": [
+          "Y olvidó el espejo",
+          "Y la hizo llorar",
+          "Y se lo puso él"
+        ]
+      },
+      "note": {
+        "ar": "جرب يصلح شي، خربو أكتر",
+        "en": "Trying to fix something and making it worse",
+        "fr": "Vouloir arranger les choses et tout gâcher",
+        "es": "Querer arreglar algo y empeorarlo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-008",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي ما بيعرف الصقر…",
+        "translit": "illi ma bya3ref es-sa2er…",
+        "display": {
+          "en": "Whoever doesn't recognise the falcon…",
+          "fr": "Qui ne reconnaît pas le faucon…",
+          "es": "Quien no reconoce al halcón…"
+        }
+      },
+      "truth": {
+        "ar": "بيشويه",
+        "en": "Grills it",
+        "fr": "Le fait griller",
+        "es": "Lo asa a la parrilla"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيشويه وبياكلو"
+        ],
+        "en": [
+          "Grills it for dinner",
+          "Bishwih"
+        ],
+        "fr": [
+          "Le met sur le grill",
+          "Bishwih"
+        ],
+        "es": [
+          "Lo asa",
+          "Bishwih"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيفكرو حمامة",
+          "بيخاف منو",
+          "بيبيعو بالسوق"
+        ],
+        "en": [
+          "Mistakes it for a pigeon",
+          "Is scared of it",
+          "Sells it at the market"
+        ],
+        "fr": [
+          "Le prend pour un pigeon",
+          "En a peur",
+          "Le vend au marché"
+        ],
+        "es": [
+          "Lo confunde con una paloma",
+          "Le tiene miedo",
+          "Lo vende en el mercado"
+        ]
+      },
+      "note": {
+        "ar": "اللي ما بيعرف قيمتك بيضيعك",
+        "en": "People who don't know your worth will waste you",
+        "fr": "Ceux qui ignorent ta valeur te gaspillent",
+        "es": "Quien no sabe lo que vales te desperdicia"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-009",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "بدك تاكل عنب…",
+        "translit": "baddak takol 3enab…",
+        "display": {
+          "en": "Do you want to eat the grapes…",
+          "fr": "Tu veux manger du raisin…",
+          "es": "¿Quieres comer uvas…"
+        }
+      },
+      "truth": {
+        "ar": "ولا تقتل الناطور",
+        "en": "Or kill the vineyard guard",
+        "fr": "Ou tuer le gardien",
+        "es": "O matar al guarda"
+      },
+      "truthAlt": {
+        "ar": [
+          "ولا بدك تقتل الناطور"
+        ],
+        "en": [
+          "Or fight the guard",
+          "Walla t2atel en-natour"
+        ],
+        "fr": [
+          "Ou te battre avec le gardien",
+          "Walla t2atel en-natour"
+        ],
+        "es": [
+          "O pelearte con el guarda",
+          "Walla t2atel en-natour"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ولا بدك تين",
+          "اطلع قطوف",
+          "استنى أيلول"
+        ],
+        "en": [
+          "Or sell the vineyard",
+          "Or wait for September",
+          "Or make jam"
+        ],
+        "fr": [
+          "Ou vendre la vigne",
+          "Ou attendre septembre",
+          "Ou faire de la confiture"
+        ],
+        "es": [
+          "O vender la viña",
+          "O esperar a septiembre",
+          "O hacer mermelada"
+        ]
+      },
+      "note": {
+        "ar": "ركز عاللي بدك ياه، مش عالخناقة",
+        "en": "Focus on getting what you want, not on picking fights",
+        "fr": "Concentre-toi sur ce que tu veux, pas sur la bagarre",
+        "es": "Céntrate en lo que quieres, no en la pelea"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-010",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "على قد بساطك…",
+        "translit": "3a 2add bsatak…",
+        "display": {
+          "en": "As far as your rug goes…",
+          "fr": "Selon la taille de ton tapis…",
+          "es": "Según lo largo de tu alfombra…"
+        }
+      },
+      "truth": {
+        "ar": "مد إجريك",
+        "en": "Stretch your legs",
+        "fr": "Étends tes jambes",
+        "es": "Estira las piernas"
+      },
+      "truthAlt": {
+        "ar": [
+          "مد رجليك",
+          "مد اجرك"
+        ],
+        "en": [
+          "Stretch out your legs",
+          "Medd ejreik"
+        ],
+        "fr": [
+          "Allonge tes jambes",
+          "Medd ejreik"
+        ],
+        "es": [
+          "Estira tus piernas",
+          "Medd ejreik"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "حط صينيتك",
+          "نام مرتاح",
+          "فرش ضيوفك"
+        ],
+        "en": [
+          "Lay out your dinner",
+          "Invite your guests",
+          "Sleep like a king"
+        ],
+        "fr": [
+          "Pose ton plateau",
+          "Invite tes amis",
+          "Dors comme un roi"
+        ],
+        "es": [
+          "Pon la bandeja",
+          "Invita a tus amigos",
+          "Duerme como un rey"
+        ]
+      },
+      "note": {
+        "ar": "عيش على قد مصاريك",
+        "en": "Live within your means",
+        "fr": "Vis selon tes moyens",
+        "es": "Vive según tus posibilidades"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-011",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "عصفور باليد…",
+        "translit": "3asfour bil-id…",
+        "display": {
+          "en": "A bird in the hand…",
+          "fr": "Un oiseau dans la main…",
+          "es": "Pájaro en mano…"
+        }
+      },
+      "truth": {
+        "ar": "ولا عشرة عالشجرة",
+        "en": "Beats ten on the tree",
+        "fr": "Vaut mieux que dix sur l'arbre",
+        "es": "Mejor que diez en el árbol"
+      },
+      "truthAlt": {
+        "ar": [
+          "ولا عشرة على الشجرة"
+        ],
+        "en": [
+          "Better than ten on the tree",
+          "Is worth ten on the tree"
+        ],
+        "fr": [
+          "Mieux que dix sur l'arbre"
+        ],
+        "es": [
+          "Vale más que diez en el árbol"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيغنيلك كل يوم",
+          "بيعض",
+          "بيطير أول فرصة"
+        ],
+        "en": [
+          "Sings for you every day",
+          "Will bite you",
+          "Flies off at the first chance"
+        ],
+        "fr": [
+          "Chante pour toi chaque matin",
+          "Finit par te mordre",
+          "S'envole à la première occasion"
+        ],
+        "es": [
+          "Te canta cada mañana",
+          "Acaba picándote",
+          "Se escapa a la primera"
+        ]
+      },
+      "note": {
+        "ar": "خلي اللي معك ولا تركض ورا الزيادة",
+        "en": "Keep what you have rather than chase more (here it's ten, not two)",
+        "fr": "Garde ce que tu as plutôt que courir après plus (ici, dix sur l'arbre)",
+        "es": "Mejor lo seguro que lo prometido (en libanés son diez, no cien volando)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-012",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "يللي فات…",
+        "translit": "yalli fet…",
+        "display": {
+          "en": "What has passed…",
+          "fr": "Ce qui est passé…",
+          "es": "Lo que pasó…"
+        }
+      },
+      "truth": {
+        "ar": "مات",
+        "en": "Is dead",
+        "fr": "Est mort",
+        "es": "Ya murió"
+      },
+      "truthAlt": {
+        "ar": [
+          "فات مات"
+        ],
+        "en": [
+          "Is gone and dead",
+          "Mat"
+        ],
+        "fr": [
+          "Est bien mort",
+          "Mat"
+        ],
+        "es": [
+          "Murió",
+          "Está muerto",
+          "Mat"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ما بيرجع إلا بالحلم",
+          "خليه يدفع الحساب",
+          "بيرجع بالصيفية"
+        ],
+        "en": [
+          "Comes back every summer",
+          "Pays the bill",
+          "Returns in dreams only"
+        ],
+        "fr": [
+          "Revient dans les rêves",
+          "Paie l'addition",
+          "Revient chaque été"
+        ],
+        "es": [
+          "Vuelve en sueños",
+          "Paga la cuenta",
+          "Vuelve cada verano"
+        ]
+      },
+      "note": {
+        "ar": "اللي صار صار، خلينا نكفي",
+        "en": "Let bygones be bygones",
+        "fr": "Ce qui est fait est fait, tournons la page",
+        "es": "Lo pasado, pasado está"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-013",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "بكرا بيدوب التلج…",
+        "translit": "bukra bidoub et-talj…",
+        "display": {
+          "en": "Tomorrow the snow melts…",
+          "fr": "Demain la neige fondra…",
+          "es": "Mañana se derrite la nieve…"
+        }
+      },
+      "truth": {
+        "ar": "وبيبان المرج",
+        "en": "And the meadow shows",
+        "fr": "Et le pré apparaîtra",
+        "es": "Y se verá el prado"
+      },
+      "truthAlt": {
+        "ar": [
+          "وبيبين المرج"
+        ],
+        "en": [
+          "And you'll see the meadow",
+          "W byban el-marj"
+        ],
+        "fr": [
+          "Et on verra le pré",
+          "W byban el-marj"
+        ],
+        "es": [
+          "Y aparecerá el prado",
+          "W byban el-marj"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "وبينزل الصيف عالبحر",
+          "وبتطلع الطريق",
+          "وبتزهر الكرزات"
+        ],
+        "en": [
+          "And the road opens again",
+          "And the cherries bloom",
+          "And summer goes to the beach"
+        ],
+        "fr": [
+          "Et la route rouvrira",
+          "Et les cerisiers fleuriront",
+          "Et l'été descendra à la plage"
+        ],
+        "es": [
+          "Y se abrirá el camino",
+          "Y florecerán los cerezos",
+          "Y el verano bajará a la playa"
+        ]
+      },
+      "note": {
+        "ar": "الحقيقة دايماً بتبين",
+        "en": "The truth always comes out in the end",
+        "fr": "La vérité finit toujours par se voir",
+        "es": "Tarde o temprano, la verdad sale a la luz"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-014",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "حبل الكذب…",
+        "translit": "habl el-kezb…",
+        "display": {
+          "en": "The rope of lies…",
+          "fr": "La corde du mensonge…",
+          "es": "La cuerda de la mentira…"
+        }
+      },
+      "truth": {
+        "ar": "قصير",
+        "en": "Is short",
+        "fr": "Est courte",
+        "es": "Es corta"
+      },
+      "truthAlt": {
+        "ar": [
+          "كتير قصير"
+        ],
+        "en": [
+          "Is very short",
+          "2asir"
+        ],
+        "fr": [
+          "Est très courte",
+          "2asir"
+        ],
+        "es": [
+          "Es muy corta",
+          "2asir"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيلتف عالرقبة",
+          "ما بينقطع",
+          "بيوصل لبيروت"
+        ],
+        "en": [
+          "Always gets tangled",
+          "Never snaps",
+          "Reaches all the way to Beirut"
+        ],
+        "fr": [
+          "S'emmêle toujours",
+          "Ne casse jamais",
+          "Va jusqu'à Beyrouth"
+        ],
+        "es": [
+          "Siempre se enreda",
+          "Nunca se rompe",
+          "Llega hasta Beirut"
+        ]
+      },
+      "note": {
+        "ar": "الكذب ما بيطول",
+        "en": "Lies don't last long",
+        "fr": "Les mensonges ne durent pas",
+        "es": "La mentira tiene las patas cortas, dicen en español"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-015",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي ما إلو كبير…",
+        "translit": "illi ma elo kbir…",
+        "display": {
+          "en": "Whoever has no elder…",
+          "fr": "Qui n'a pas d'aîné…",
+          "es": "Quien no tiene un mayor…"
+        }
+      },
+      "truth": {
+        "ar": "بيشتريلو كبير",
+        "en": "Should buy himself one",
+        "fr": "Doit s'en acheter un",
+        "es": "Que se compre uno"
+      },
+      "truthAlt": {
+        "ar": [
+          "يشتريلو كبير",
+          "بيشتري كبير"
+        ],
+        "en": [
+          "Buys one",
+          "Byeshtereelo kbir"
+        ],
+        "fr": [
+          "S'en achète un",
+          "Byeshtereelo kbir"
+        ],
+        "es": [
+          "Se compra uno",
+          "Byeshtereelo kbir"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيضيع",
+          "بيصير هوي الكبير",
+          "بيسأل جدو"
+        ],
+        "en": [
+          "Gets lost",
+          "Becomes the elder",
+          "Asks the neighbours"
+        ],
+        "fr": [
+          "Se perd",
+          "Devient l'aîné",
+          "Demande aux voisins"
+        ],
+        "es": [
+          "Se pierde",
+          "Se convierte en el mayor",
+          "Pregunta a los vecinos"
+        ]
+      },
+      "note": {
+        "ar": "كل واحد بحاجة لحدا يستشيرو",
+        "en": "Everyone needs someone wise to ask",
+        "fr": "Tout le monde a besoin d'un sage à consulter",
+        "es": "Todos necesitamos a alguien sabio a quien consultar"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-016",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "طعمي التم…",
+        "translit": "ta3mi et-temm…",
+        "display": {
+          "en": "Feed the mouth…",
+          "fr": "Nourris la bouche…",
+          "es": "Alimenta la boca…"
+        }
+      },
+      "truth": {
+        "ar": "بتستحي العين",
+        "en": "And the eye grows shy",
+        "fr": "Et l'œil devient timide",
+        "es": "Y el ojo se avergüenza"
+      },
+      "truthAlt": {
+        "ar": [
+          "تستحي العين"
+        ],
+        "en": [
+          "The eye feels shy",
+          "Btesteḥi el-3ein"
+        ],
+        "fr": [
+          "L'œil a honte",
+          "Btesteḥi el-3ein"
+        ],
+        "es": [
+          "El ojo se vuelve tímido",
+          "Btesteḥi el-3ein"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيسكت القلب",
+          "بينام الجوعان",
+          "بيضحك الضيف"
+        ],
+        "en": [
+          "And the heart goes quiet",
+          "And the guest stays forever",
+          "And the feet follow"
+        ],
+        "fr": [
+          "Et le cœur se tait",
+          "Et l'invité ne part plus",
+          "Et les pieds suivent"
+        ],
+        "es": [
+          "Y el corazón se calla",
+          "Y el invitado no se va",
+          "Y los pies te siguen"
+        ]
+      },
+      "note": {
+        "ar": "الكرم بيشتري الخاطر (أو السكوت)",
+        "en": "Generosity buys goodwill, or silence",
+        "fr": "La générosité achète la bienveillance, ou le silence",
+        "es": "La generosidad compra simpatía, o silencio"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-017",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "لاقيني…",
+        "translit": "la2ini…",
+        "display": {
+          "en": "Greet me warmly…",
+          "fr": "Accueille-moi…",
+          "es": "Recíbeme con cariño…"
+        }
+      },
+      "truth": {
+        "ar": "ولا تطعميني",
+        "en": "Rather than feed me",
+        "fr": "Plutôt que de me nourrir",
+        "es": "Más que darme de comer"
+      },
+      "truthAlt": {
+        "ar": [
+          "وما تطعميني"
+        ],
+        "en": [
+          "Instead of feeding me",
+          "Wala tta3mini"
+        ],
+        "fr": [
+          "Au lieu de me nourrir",
+          "Wala tta3mini"
+        ],
+        "es": [
+          "En vez de darme de comer",
+          "Wala tta3mini"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "عند الباب",
+          "وخدني مشوار",
+          "بالمناسبات"
+        ],
+        "en": [
+          "At the door",
+          "And take me for a drive",
+          "On special occasions"
+        ],
+        "fr": [
+          "Sur le pas de la porte",
+          "Et emmène-moi en balade",
+          "Pour les grandes occasions"
+        ],
+        "es": [
+          "En la puerta",
+          "Y llévame de paseo",
+          "En las ocasiones especiales"
+        ]
+      },
+      "note": {
+        "ar": "الاستقبال الحلو أهم من العزيمة",
+        "en": "A warm welcome matters more than a feast",
+        "fr": "Un bon accueil vaut mieux qu'un festin",
+        "es": "Una buena acogida vale más que un banquete"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-018",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "الحكي…",
+        "translit": "el-haki…",
+        "display": {
+          "en": "Talk…",
+          "fr": "La parole…",
+          "es": "Hablar…"
+        }
+      },
+      "truth": {
+        "ar": "ما عليه جمرك",
+        "en": "Pays no customs duty",
+        "fr": "Ne paie pas de douane",
+        "es": "No paga aduana"
+      },
+      "truthAlt": {
+        "ar": [
+          "ما عليه جمرك ولا ضريبة"
+        ],
+        "en": [
+          "Has no customs duty",
+          "Ma 3alei jomrok"
+        ],
+        "fr": [
+          "N'a pas de douane",
+          "Ma 3alei jomrok"
+        ],
+        "es": [
+          "No paga impuestos",
+          "Ma 3alei jomrok"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ببلاش",
+          "بيطير مع الهوا",
+          "أغلى من الدهب"
+        ],
+        "en": [
+          "Is free on Sundays",
+          "Flies off with the wind",
+          "Is dearer than gold"
+        ],
+        "fr": [
+          "Est gratuite le dimanche",
+          "S'envole avec le vent",
+          "Vaut plus que l'or"
+        ],
+        "es": [
+          "Es gratis los domingos",
+          "Se lo lleva el viento",
+          "Vale más que el oro"
+        ]
+      },
+      "note": {
+        "ar": "الحكي سهل، الفعل هو المهم",
+        "en": "Talk is cheap",
+        "fr": "Parler ne coûte rien",
+        "es": "Hablar no cuesta nada"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-019",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "الإيد الوحدة…",
+        "translit": "el-id el-wahdé…",
+        "display": {
+          "en": "One hand…",
+          "fr": "Une seule main…",
+          "es": "Una sola mano…"
+        }
+      },
+      "truth": {
+        "ar": "ما بتصفق",
+        "en": "Can't clap",
+        "fr": "Ne peut pas applaudir",
+        "es": "No puede aplaudir"
+      },
+      "truthAlt": {
+        "ar": [
+          "ما بتزقف"
+        ],
+        "en": [
+          "Cannot clap",
+          "Ma bet sa22e2"
+        ],
+        "fr": [
+          "N'applaudit pas",
+          "Ma bet sa22e2"
+        ],
+        "es": [
+          "No aplaude",
+          "Ma bet sa22e2"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ما بتشيل صينية",
+          "بتتعب بسرعة",
+          "ما بتكتب منيح"
+        ],
+        "en": [
+          "Can't carry a tray",
+          "Gets tired fast",
+          "Can't tie a shoelace"
+        ],
+        "fr": [
+          "Ne porte pas un plateau",
+          "Se fatigue vite",
+          "Ne fait pas de nœud"
+        ],
+        "es": [
+          "No lleva una bandeja",
+          "Se cansa rápido",
+          "No ata un zapato"
+        ]
+      },
+      "note": {
+        "ar": "الشغل بدو تعاون",
+        "en": "It takes teamwork",
+        "fr": "Il faut s'entraider",
+        "es": "Hace falta trabajar juntos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-020",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "قلي مين رفيقك…",
+        "translit": "2elli min rfi2ak…",
+        "display": {
+          "en": "Tell me who your friend is…",
+          "fr": "Dis-moi qui est ton ami…",
+          "es": "Dime quién es tu amigo…"
+        }
+      },
+      "truth": {
+        "ar": "بقلك مين إنت",
+        "en": "And I'll tell you who you are",
+        "fr": "Je te dirai qui tu es",
+        "es": "Y te diré quién eres"
+      },
+      "truthAlt": {
+        "ar": [
+          "بقلك مين انت"
+        ],
+        "en": [
+          "I'll tell you who you are"
+        ],
+        "fr": [
+          "Et je te dirai qui tu es"
+        ],
+        "es": [
+          "Te diré quién eres"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بقلك وين سهرت",
+          "بقلك قديش عمرك",
+          "بقلك شو بتاكل"
+        ],
+        "en": [
+          "And I'll tell you where you were last night",
+          "And I'll guess your age",
+          "And I'll tell you what you eat"
+        ],
+        "fr": [
+          "Je te dirai où tu étais hier soir",
+          "Je devinerai ton âge",
+          "Je te dirai ce que tu manges"
+        ],
+        "es": [
+          "Y te diré dónde estuviste anoche",
+          "Y adivinaré tu edad",
+          "Y te diré qué comes"
+        ]
+      },
+      "note": {
+        "ar": "قول لي مع مين بتمشي",
+        "en": "You are the company you keep",
+        "fr": "On est ce que sont nos amis",
+        "es": "Eres la gente con la que andas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-021",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "اللي بيحفر حفرة لخيو…",
+        "translit": "illi byehfor hefra la-khayyo…",
+        "display": {
+          "en": "Whoever digs a pit for his brother…",
+          "fr": "Qui creuse un trou pour son frère…",
+          "es": "Quien cava un hoyo para su hermano…"
+        }
+      },
+      "truth": {
+        "ar": "بيوقع فيها",
+        "en": "Falls into it",
+        "fr": "Y tombe",
+        "es": "Cae en él"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيقع فيها"
+        ],
+        "en": [
+          "Falls in it himself",
+          "Byo2a3 fiha"
+        ],
+        "fr": [
+          "Tombe dedans",
+          "Byo2a3 fiha"
+        ],
+        "es": [
+          "Se cae dentro",
+          "Byo2a3 fiha"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيلاقي كنز",
+          "بيوجعو ضهرو",
+          "بيطلع منها مي"
+        ],
+        "en": [
+          "Finds treasure",
+          "Hurts his back",
+          "Strikes water"
+        ],
+        "fr": [
+          "Trouve un trésor",
+          "Se fait mal au dos",
+          "Trouve de l'eau"
+        ],
+        "es": [
+          "Encuentra un tesoro",
+          "Acaba con dolor de espalda",
+          "Encuentra agua"
+        ]
+      },
+      "note": {
+        "ar": "الأذى بيرجع لصاحبو",
+        "en": "Harm comes back to whoever plans it",
+        "fr": "Le mal revient à celui qui le prépare",
+        "es": "El mal vuelve a quien lo prepara"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-022",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بيجرب المجرب…",
+        "translit": "illi byjarreb el-mjarrab…",
+        "display": {
+          "en": "Whoever tries what's already been tried…",
+          "fr": "Qui réessaie ce qui a déjà échoué…",
+          "es": "Quien prueba lo ya probado…"
+        }
+      },
+      "truth": {
+        "ar": "عقلو مخرب",
+        "en": "Has a broken brain",
+        "fr": "A la tête cassée",
+        "es": "Tiene el cerebro roto"
+      },
+      "truthAlt": {
+        "ar": [
+          "عقله مخرب"
+        ],
+        "en": [
+          "His mind is broken",
+          "3a2lo mkharrab"
+        ],
+        "fr": [
+          "A le cerveau en panne",
+          "3a2lo mkharrab"
+        ],
+        "es": [
+          "Tiene la cabeza rota",
+          "3a2lo mkharrab"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيوفر وقت",
+          "بيندم مرتين",
+          "بيعرف النتيجة"
+        ],
+        "en": [
+          "Saves time",
+          "Regrets it twice",
+          "Already knows the ending"
+        ],
+        "fr": [
+          "Gagne du temps",
+          "Le regrette deux fois",
+          "Connaît déjà la fin"
+        ],
+        "es": [
+          "Ahorra tiempo",
+          "Se arrepiente dos veces",
+          "Ya sabe el final"
+        ]
+      },
+      "note": {
+        "ar": "ما تجرب شي خانك قبل",
+        "en": "Don't trust what already failed you",
+        "fr": "Ne refais pas confiance à ce qui t'a déjà déçu",
+        "es": "No vuelvas a fiarte de lo que ya te falló"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-023",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "ابن البط…",
+        "translit": "ibn el-batt…",
+        "display": {
+          "en": "The duckling…",
+          "fr": "Le fils du canard…",
+          "es": "El hijo del pato…"
+        }
+      },
+      "truth": {
+        "ar": "عوام",
+        "en": "Is a swimmer",
+        "fr": "Sait nager",
+        "es": "Sabe nadar"
+      },
+      "truthAlt": {
+        "ar": [
+          "سباح"
+        ],
+        "en": [
+          "Swims",
+          "Can swim",
+          "3awwam"
+        ],
+        "fr": [
+          "Est nageur",
+          "Nage",
+          "3awwam"
+        ],
+        "es": [
+          "Nada",
+          "Es nadador",
+          "3awwam"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيحب المي",
+          "بيمشي متل أبوه",
+          "بيطير بكير"
+        ],
+        "en": [
+          "Loves the rain",
+          "Walks like his dad",
+          "Flies early"
+        ],
+        "fr": [
+          "Adore la pluie",
+          "Marche comme son père",
+          "Vole très tôt"
+        ],
+        "es": [
+          "Adora la lluvia",
+          "Camina como su padre",
+          "Vuela muy pronto"
+        ]
+      },
+      "note": {
+        "ar": "الولد بيطلع لأهلو",
+        "en": "Like parent, like child",
+        "fr": "Tel père, tel fils",
+        "es": "De tal palo, tal astilla"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-024",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو جابرك عالمر؟…",
+        "translit": "shu jabrak 3al-murr…",
+        "display": {
+          "en": "What drives you to the bitter?…",
+          "fr": "Qu'est-ce qui te pousse vers l'amer ?…",
+          "es": "¿Qué te obliga a lo amargo?…"
+        }
+      },
+      "truth": {
+        "ar": "الأمر منو",
+        "en": "Something even more bitter",
+        "fr": "Le plus amer encore",
+        "es": "Algo todavía más amargo"
+      },
+      "truthAlt": {
+        "ar": [
+          "اللي أمر منو"
+        ],
+        "en": [
+          "The more bitter",
+          "El-amarr minno"
+        ],
+        "fr": [
+          "Encore plus amer",
+          "El-amarr minno"
+        ],
+        "es": [
+          "Lo más amargo",
+          "El-amarr minno"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "الطعمة الحلوة",
+          "الجوع",
+          "العادة"
+        ],
+        "en": [
+          "The sweet aftertaste",
+          "Hunger",
+          "Habit"
+        ],
+        "fr": [
+          "Le goût sucré après",
+          "La faim",
+          "L'habitude"
+        ],
+        "es": [
+          "El regusto dulce",
+          "El hambre",
+          "La costumbre"
+        ]
+      },
+      "note": {
+        "ar": "منختار الأهون بين شرين",
+        "en": "We choose the lesser evil",
+        "fr": "On choisit le moindre mal",
+        "es": "Elegimos el mal menor"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs (prompt form) ; [native review] usually quoted with قال"
+      }
+    },
+    {
+      "id": "lbp-025",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بياخد إمي…",
+        "translit": "illi byekhod emmi…",
+        "display": {
+          "en": "Whoever marries my mother…",
+          "fr": "Celui qui épouse ma mère…",
+          "es": "El que se case con mi madre…"
+        }
+      },
+      "truth": {
+        "ar": "بقلو يا عمي",
+        "en": "I call him uncle",
+        "fr": "Je l'appelle tonton",
+        "es": "Le llamo tío"
+      },
+      "truthAlt": {
+        "ar": [
+          "بقلو عمي",
+          "بقول له يا عمي"
+        ],
+        "en": [
+          "I call him 3ammo",
+          "B2ello ya 3ammi"
+        ],
+        "fr": [
+          "Je l'appelle oncle",
+          "B2ello ya 3ammi"
+        ],
+        "es": [
+          "Lo llamo tío",
+          "B2ello ya 3ammi"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيصير رفيقي",
+          "بيدفع العشا",
+          "بيغسل الصحون"
+        ],
+        "en": [
+          "Pays for dinner",
+          "Does the dishes",
+          "Becomes my best friend"
+        ],
+        "fr": [
+          "Paie le dîner",
+          "Fait la vaisselle",
+          "Devient mon meilleur ami"
+        ],
+        "es": [
+          "Paga la cena",
+          "Friega los platos",
+          "Será mi mejor amigo"
+        ]
+      },
+      "note": {
+        "ar": "بتمشي مع اللي ماسك الأمور",
+        "en": "Going along with whoever is in charge",
+        "fr": "S'accommoder de celui qui commande",
+        "es": "Adaptarse a quien mande"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-026",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "تحت السواهي…",
+        "translit": "taht es-sawahi…",
+        "display": {
+          "en": "Beneath the quiet ones…",
+          "fr": "Sous les calmes…",
+          "es": "Debajo de los tranquilos…"
+        }
+      },
+      "truth": {
+        "ar": "دواهي",
+        "en": "Lie disasters",
+        "fr": "Se cachent les catastrophes",
+        "es": "Se esconden desastres"
+      },
+      "truthAlt": {
+        "ar": [
+          "في دواهي"
+        ],
+        "en": [
+          "Lie calamities",
+          "Dawahi"
+        ],
+        "fr": [
+          "Les catastrophes",
+          "Dawahi"
+        ],
+        "es": [
+          "Desastres",
+          "Dawahi"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "في كنز",
+          "في نومة طويلة",
+          "في ضحكة"
+        ],
+        "en": [
+          "Lies treasure",
+          "Lies a long nap",
+          "Lies a big laugh"
+        ],
+        "fr": [
+          "Se cache un trésor",
+          "Dort une longue sieste",
+          "Se cache un fou rire"
+        ],
+        "es": [
+          "Se esconde un tesoro",
+          "Duerme una siesta larga",
+          "Hay una carcajada"
+        ]
+      },
+      "note": {
+        "ar": "الهادي لا تستهين فيه",
+        "en": "Still waters run deep",
+        "fr": "Il n'est pire eau que l'eau qui dort",
+        "es": "Del agua mansa líbrame"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-027",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "مين شاف بلاوي غيرو…",
+        "translit": "min shaf balawi gheiro…",
+        "display": {
+          "en": "Whoever sees other people's troubles…",
+          "fr": "Qui voit les malheurs des autres…",
+          "es": "Quien ve las desgracias ajenas…"
+        }
+      },
+      "truth": {
+        "ar": "هانت عليه بلوتو",
+        "en": "Finds his own lighter",
+        "fr": "Trouve les siens plus légers",
+        "es": "Encuentra las suyas más ligeras"
+      },
+      "truthAlt": {
+        "ar": [
+          "بتهون عليه بلوتو"
+        ],
+        "en": [
+          "Finds his own easier",
+          "Hanet 3alei balwto"
+        ],
+        "fr": [
+          "Trouve les siens légers",
+          "Hanet 3alei balwto"
+        ],
+        "es": [
+          "Las suyas pesan menos",
+          "Hanet 3alei balwto"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيسكر الشباك",
+          "بيضحك",
+          "بينام مرتاح"
+        ],
+        "en": [
+          "Closes the curtains",
+          "Starts laughing",
+          "Sleeps better"
+        ],
+        "fr": [
+          "Ferme les rideaux",
+          "Se met à rire",
+          "Dort mieux"
+        ],
+        "es": [
+          "Cierra las cortinas",
+          "Se echa a reír",
+          "Duerme mejor"
+        ]
+      },
+      "note": {
+        "ar": "لما تشوف همّ غيرك، بيصغر همّك",
+        "en": "Perspective makes your own problems smaller",
+        "fr": "Relativiser rend ses soucis plus petits",
+        "es": "Ver lo de otros relativiza lo tuyo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-028",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "القلة…",
+        "translit": "el-2illé…",
+        "display": {
+          "en": "Scarcity…",
+          "fr": "Le manque…",
+          "es": "La escasez…"
+        }
+      },
+      "truth": {
+        "ar": "بتولد النقار",
+        "en": "Breeds bickering",
+        "fr": "Engendre les disputes",
+        "es": "Trae peleas"
+      },
+      "truthAlt": {
+        "ar": [
+          "بتجيب النقار"
+        ],
+        "en": [
+          "Causes bickering",
+          "Btwalled en-n2ar"
+        ],
+        "fr": [
+          "Fait les disputes",
+          "Btwalled en-n2ar"
+        ],
+        "es": [
+          "Provoca riñas",
+          "Btwalled en-n2ar"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بتعلم الصبر",
+          "بتجيب الأفكار",
+          "بتنحف"
+        ],
+        "en": [
+          "Teaches patience",
+          "Breeds ideas",
+          "Keeps you slim"
+        ],
+        "fr": [
+          "Apprend la patience",
+          "Donne des idées",
+          "Fait maigrir"
+        ],
+        "es": [
+          "Enseña paciencia",
+          "Da ideas",
+          "Adelgaza"
+        ]
+      },
+      "note": {
+        "ar": "قلة المصاري بتعمل مشاكل بالبيت",
+        "en": "Money troubles cause family fights",
+        "fr": "Les soucis d'argent font les disputes",
+        "es": "Cuando falta el dinero, sobran las discusiones"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-029",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "الدهب…",
+        "translit": "ed-dahab…",
+        "display": {
+          "en": "Gold…",
+          "fr": "L'or…",
+          "es": "El oro…"
+        }
+      },
+      "truth": {
+        "ar": "ما بيصدي",
+        "en": "Never rusts",
+        "fr": "Ne rouille pas",
+        "es": "No se oxida"
+      },
+      "truthAlt": {
+        "ar": [
+          "ما بيصدا"
+        ],
+        "en": [
+          "Doesn't rust",
+          "Ma bisaddi"
+        ],
+        "fr": [
+          "Ne rouille jamais",
+          "Ma bisaddi"
+        ],
+        "es": [
+          "Nunca se oxida",
+          "Ma bisaddi"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيغلى كل سنة",
+          "بيلمع بالعتمة",
+          "ما بيبرد"
+        ],
+        "en": [
+          "Gets pricier every year",
+          "Shines in the dark",
+          "Never gets cold"
+        ],
+        "fr": [
+          "Brille dans le noir",
+          "Coûte plus cher en été",
+          "Ne refroidit jamais"
+        ],
+        "es": [
+          "Brilla en la oscuridad",
+          "Sube en verano",
+          "Nunca se enfría"
+        ]
+      },
+      "note": {
+        "ar": "الأصيل بيضل أصيل",
+        "en": "A good person stays good",
+        "fr": "Les gens bien restent bien",
+        "es": "La gente buena sigue siendo buena"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-030",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "كل شي بوقتو…",
+        "translit": "kel shi b-wa2to…",
+        "display": {
+          "en": "Everything in its own time…",
+          "fr": "Chaque chose en son temps…",
+          "es": "Cada cosa a su tiempo…"
+        }
+      },
+      "truth": {
+        "ar": "حلو",
+        "en": "Is sweet",
+        "fr": "Est douce",
+        "es": "Es dulce"
+      },
+      "truthAlt": {
+        "ar": [
+          "منيح"
+        ],
+        "en": [
+          "Is nice",
+          "Helo"
+        ],
+        "fr": [
+          "Est bonne",
+          "Helo"
+        ],
+        "es": [
+          "Es buena",
+          "Helo"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيخلص",
+          "بيتأخر",
+          "بيبرد"
+        ],
+        "en": [
+          "Runs late",
+          "Gets cold",
+          "Ends badly"
+        ],
+        "fr": [
+          "Arrive en retard",
+          "Refroidit",
+          "Finit mal"
+        ],
+        "es": [
+          "Llega tarde",
+          "Se enfría",
+          "Acaba mal"
+        ]
+      },
+      "note": {
+        "ar": "لا تستعجل",
+        "en": "Don't rush things",
+        "fr": "Ne te presse pas",
+        "es": "No hay que tener prisa"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-031",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "ضربتين عالراس…",
+        "translit": "darbtein 3ar-ras…",
+        "display": {
+          "en": "Two blows on the head…",
+          "fr": "Deux coups sur la tête…",
+          "es": "Dos golpes en la cabeza…"
+        }
+      },
+      "truth": {
+        "ar": "بيوجعوا",
+        "en": "Hurt",
+        "fr": "Font mal",
+        "es": "Duelen"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيوجعو"
+        ],
+        "en": [
+          "They hurt",
+          "Bywaj3o"
+        ],
+        "fr": [
+          "Ça fait mal",
+          "Bywaj3o"
+        ],
+        "es": [
+          "Duelen mucho",
+          "Bywaj3o"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيصحوا",
+          "بيعلموا",
+          "بيدوخوا"
+        ],
+        "en": [
+          "Wake you up",
+          "Teach you something",
+          "Make you dizzy"
+        ],
+        "fr": [
+          "Réveillent",
+          "Instruisent",
+          "Donnent le vertige"
+        ],
+        "es": [
+          "Despiertan",
+          "Enseñan",
+          "Marean"
+        ]
+      },
+      "note": {
+        "ar": "مشكلتين بنفس الوقت كتير",
+        "en": "Two problems at once is too much",
+        "fr": "Deux soucis à la fois, c'est trop",
+        "es": "Dos problemas a la vez son demasiado"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-032",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "كتر الطباخين…",
+        "translit": "ketr et-tabbakhin…",
+        "display": {
+          "en": "Too many cooks…",
+          "fr": "Trop de cuisiniers…",
+          "es": "Demasiados cocineros…"
+        }
+      },
+      "truth": {
+        "ar": "بيحرق الطبخة",
+        "en": "Burn the dish",
+        "fr": "Brûlent le plat",
+        "es": "Queman el guiso"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيحرقو الطبخة",
+          "بيشوط الطبخة"
+        ],
+        "en": [
+          "Burn the food",
+          "Byehre2 et-tabkha"
+        ],
+        "fr": [
+          "Brûlent la cuisine",
+          "Byehre2 et-tabkha"
+        ],
+        "es": [
+          "Queman la comida",
+          "Byehre2 et-tabkha"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيكبر الطبخة",
+          "بيوسخ المطبخ",
+          "بيخلص الملح"
+        ],
+        "en": [
+          "Make the dish bigger",
+          "Dirty the kitchen",
+          "Use up the salt"
+        ],
+        "fr": [
+          "Agrandissent le plat",
+          "Salissent la cuisine",
+          "Finissent le sel"
+        ],
+        "es": [
+          "Agrandan el guiso",
+          "Ensucian la cocina",
+          "Se acaban la sal"
+        ]
+      },
+      "note": {
+        "ar": "كل ما كتروا المسؤولين خرب الشغل",
+        "en": "Too many people in charge ruin the job (Lebanese cooks burn, English ones spoil)",
+        "fr": "Trop de chefs gâchent le travail",
+        "es": "Muchos mandando estropean el trabajo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs ; [native review] exact Lebanese form"
+      }
+    },
+    {
+      "id": "lbp-033",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "ما في دخان…",
+        "translit": "ma fi dukhkhan…",
+        "display": {
+          "en": "There's no smoke…",
+          "fr": "Il n'y a pas de fumée…",
+          "es": "No hay humo…"
+        }
+      },
+      "truth": {
+        "ar": "بلا نار",
+        "en": "Without fire",
+        "fr": "Sans feu",
+        "es": "Sin fuego"
+      },
+      "truthAlt": {
+        "ar": [
+          "من غير نار"
+        ],
+        "en": [
+          "Without a fire",
+          "Bala nar"
+        ],
+        "fr": [
+          "Sans un feu",
+          "Bala nar"
+        ],
+        "es": [
+          "Sin un fuego",
+          "Bala nar"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بلا أركيلة",
+          "بلا شوي",
+          "بلا فحم"
+        ],
+        "en": [
+          "Without a barbecue",
+          "Without charcoal",
+          "Without a neighbour"
+        ],
+        "fr": [
+          "Sans barbecue",
+          "Sans charbon",
+          "Sans voisin"
+        ],
+        "es": [
+          "Sin barbacoa",
+          "Sin carbón",
+          "Sin vecino"
+        ]
+      },
+      "note": {
+        "ar": "الإشاعة إلها سبب",
+        "en": "Rumours always have a cause",
+        "fr": "Il n'y a pas de rumeur sans raison",
+        "es": "Cuando el río suena, agua lleva"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-034",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "البيت الضيق…",
+        "translit": "el-beit ed-dayye2…",
+        "display": {
+          "en": "A narrow house…",
+          "fr": "Une maison étroite…",
+          "es": "Una casa estrecha…"
+        }
+      },
+      "truth": {
+        "ar": "بيساع ألف صديق",
+        "en": "Fits a thousand friends",
+        "fr": "Accueille mille amis",
+        "es": "Cabe mil amigos"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيساع ألف صاحب",
+          "بيوسع ألف صديق"
+        ],
+        "en": [
+          "Holds a thousand friends",
+          "Byesa3 alf sadi2"
+        ],
+        "fr": [
+          "Contient mille amis",
+          "Byesa3 alf sadi2"
+        ],
+        "es": [
+          "Caben mil amigos",
+          "Byesa3 alf sadi2"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيدفي بالشتي",
+          "ما بيساع حدا",
+          "بينضف بسرعة"
+        ],
+        "en": [
+          "Is warm in winter",
+          "Fits nobody",
+          "Is quick to clean"
+        ],
+        "fr": [
+          "Est chaude en hiver",
+          "N'accueille personne",
+          "Se nettoie vite"
+        ],
+        "es": [
+          "Es calentita en invierno",
+          "No cabe nadie",
+          "Se limpia rápido"
+        ]
+      },
+      "note": {
+        "ar": "القلب الكبير بيوسع الكل",
+        "en": "A big heart makes room for everyone",
+        "fr": "Un grand cœur fait de la place pour tous",
+        "es": "Un corazón grande hace sitio para todos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs ; [native review] form"
+      }
+    },
+    {
+      "id": "lbp-035",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بدو يعمل جمال…",
+        "translit": "illi baddo ya3mel jammal…",
+        "display": {
+          "en": "Whoever wants to be a camel driver…",
+          "fr": "Qui veut être chamelier…",
+          "es": "Quien quiere ser camellero…"
+        }
+      },
+      "truth": {
+        "ar": "بدو يعلي باب دارو",
+        "en": "Must raise his front door",
+        "fr": "Doit rehausser sa porte",
+        "es": "Tiene que subir su puerta"
+      },
+      "truthAlt": {
+        "ar": [
+          "لازم يعلي باب دارو"
+        ],
+        "en": [
+          "Should raise his door",
+          "Ya3alli bab daro"
+        ],
+        "fr": [
+          "Doit agrandir sa porte",
+          "Ya3alli bab daro"
+        ],
+        "es": [
+          "Debe agrandar la puerta",
+          "Ya3alli bab daro"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بدو يشتري جمل",
+          "بدو يحب الرمل",
+          "بدو يتعلم يغني"
+        ],
+        "en": [
+          "Must buy a camel first",
+          "Must love sand",
+          "Must learn to sing"
+        ],
+        "fr": [
+          "Doit d'abord acheter un chameau",
+          "Doit aimer le sable",
+          "Doit apprendre à chanter"
+        ],
+        "es": [
+          "Primero compra un camello",
+          "Tiene que amar la arena",
+          "Debe aprender a cantar"
+        ]
+      },
+      "note": {
+        "ar": "إذا بدك تعمل شي كبير، حضرلو",
+        "en": "If you take on something big, prepare for it",
+        "fr": "Qui vise grand doit s'y préparer",
+        "es": "Si apuntas alto, prepárate"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-036",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "الصبر…",
+        "translit": "es-sabr…",
+        "display": {
+          "en": "Patience…",
+          "fr": "La patience…",
+          "es": "La paciencia…"
+        }
+      },
+      "truth": {
+        "ar": "مفتاح الفرج",
+        "en": "Is the key to relief",
+        "fr": "Est la clé du soulagement",
+        "es": "Es la llave del alivio"
+      },
+      "truthAlt": {
+        "ar": [
+          "مفتاح الفرح"
+        ],
+        "en": [
+          "The key to relief",
+          "Meftah el-faraj"
+        ],
+        "fr": [
+          "La clé de la délivrance",
+          "Meftah el-faraj"
+        ],
+        "es": [
+          "La llave del consuelo",
+          "Meftah el-faraj"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيجيب الخير",
+          "بيعصب",
+          "طعمو مر"
+        ],
+        "en": [
+          "Is bitter but cheap",
+          "Runs out on Mondays",
+          "Opens every door"
+        ],
+        "fr": [
+          "Est amère mais gratuite",
+          "S'épuise le lundi",
+          "Ouvre toutes les portes"
+        ],
+        "es": [
+          "Es amarga pero gratis",
+          "Se acaba los lunes",
+          "Abre todas las puertas"
+        ]
+      },
+      "note": {
+        "ar": "اللي بيستنى بيوصل",
+        "en": "Good things come to those who wait",
+        "fr": "Tout vient à point à qui sait attendre",
+        "es": "Quien espera, alcanza"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-037",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بيطلع من تيابو…",
+        "translit": "illi byetla3 min tyabo…",
+        "display": {
+          "en": "Whoever steps out of his clothes…",
+          "fr": "Celui qui sort de ses habits…",
+          "es": "Quien se sale de su ropa…"
+        }
+      },
+      "truth": {
+        "ar": "بيبرد",
+        "en": "Catches cold",
+        "fr": "Attrape froid",
+        "es": "Pasa frío"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيبرد بالشتي"
+        ],
+        "en": [
+          "Gets cold",
+          "Byebrad"
+        ],
+        "fr": [
+          "A froid",
+          "Byebrad"
+        ],
+        "es": [
+          "Se resfría",
+          "Byebrad"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيرتاح",
+          "بيلبس جديد",
+          "ما بيلاقيهن"
+        ],
+        "en": [
+          "Feels lighter",
+          "Buys new ones",
+          "Can't find them again"
+        ],
+        "fr": [
+          "Se sent plus léger",
+          "S'en achète des neufs",
+          "Ne les retrouve plus"
+        ],
+        "es": [
+          "Se siente más ligero",
+          "Se compra otra",
+          "Ya no la encuentra"
+        ]
+      },
+      "note": {
+        "ar": "اللي بيترك أصلو بيندم",
+        "en": "Whoever turns his back on his roots regrets it",
+        "fr": "Renier ses racines, ça se paie",
+        "es": "Quien reniega de sus raíces lo lamenta"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-038",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "طنجرة…",
+        "translit": "tanjara…",
+        "display": {
+          "en": "A pot…",
+          "fr": "Une casserole…",
+          "es": "Una olla…"
+        }
+      },
+      "truth": {
+        "ar": "ولقيت غطاها",
+        "en": "Found its lid",
+        "fr": "A trouvé son couvercle",
+        "es": "Encontró su tapa"
+      },
+      "truthAlt": {
+        "ar": [
+          "لقيت غطاها"
+        ],
+        "en": [
+          "That found its lid",
+          "W l2it ghataha"
+        ],
+        "fr": [
+          "Qui a trouvé son couvercle",
+          "W l2it ghataha"
+        ],
+        "es": [
+          "Que encontró su tapa",
+          "W l2it ghataha"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "وما إلها مسكة",
+          "ونسيوها عالنار",
+          "وطلعت مستعارة"
+        ],
+        "en": [
+          "With no handle",
+          "Left on the stove",
+          "Borrowed from the neighbours"
+        ],
+        "fr": [
+          "Sans poignée",
+          "Oubliée sur le feu",
+          "Empruntée aux voisins"
+        ],
+        "es": [
+          "Sin asa",
+          "Olvidada en el fuego",
+          "Prestada por la vecina"
+        ]
+      },
+      "note": {
+        "ar": "تنين لايقين لبعض تماماً",
+        "en": "Two people who are a perfect match",
+        "fr": "Deux personnes faites l'une pour l'autre",
+        "es": "Dos que están hechos el uno para el otro"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-039",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "لا تقول فول…",
+        "translit": "la t2oul foul…",
+        "display": {
+          "en": "Don't say \"beans\"…",
+          "fr": "Ne dis pas « fèves »…",
+          "es": "No digas «habas»…"
+        }
+      },
+      "truth": {
+        "ar": "ليصير بالمكيول",
+        "en": "Until they're in the sack",
+        "fr": "Tant qu'elles ne sont pas pesées",
+        "es": "Hasta que estén en el saco"
+      },
+      "truthAlt": {
+        "ar": [
+          "لا يصير بالمكيول",
+          "حتى يصير بالمكيول",
+          "تيصير بالمكيول"
+        ],
+        "en": [
+          "Until it's in the measure",
+          "Until they're measured",
+          "La yseer bel makyoul"
+        ],
+        "fr": [
+          "Avant qu'elles soient pesées",
+          "Tant que ce n'est pas pesé"
+        ],
+        "es": [
+          "Hasta que estén medidas",
+          "Hasta que estén pesadas"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "قبل الترويقة",
+          "إذا كان في حمص",
+          "قدام بياع الفول"
+        ],
+        "en": [
+          "Before breakfast",
+          "If there's hummus around",
+          "In front of the bean seller"
+        ],
+        "fr": [
+          "Avant le petit-déjeuner",
+          "S'il y a du houmous",
+          "Devant le marchand de fèves"
+        ],
+        "es": [
+          "Antes del desayuno",
+          "Si hay hummus cerca",
+          "Delante del vendedor de habas"
+        ]
+      },
+      "note": {
+        "ar": "ما تحسب الشي إلك قبل ما يصير بإيدك",
+        "en": "Don't count on something until it's really yours",
+        "fr": "Ne compte sur rien tant que ce n'est pas vraiment à toi",
+        "es": "No cuentes con algo hasta que sea de verdad tuyo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (Librairie du Liban, 1974): form and wording ; [native review]"
+      }
+    },
+    {
+      "id": "lbp-040",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بيعرف بيعرف، واللي ما بيعرف…",
+        "translit": "illi bya3ref bya3ref, w illi ma bya3ref…",
+        "display": {
+          "en": "Those who know, know. And those who don't…",
+          "fr": "Ceux qui savent savent. Et ceux qui ne savent pas…",
+          "es": "El que sabe, sabe. Y el que no sabe…"
+        }
+      },
+      "truth": {
+        "ar": "بيقول كف عدس",
+        "en": "Say it's just a handful of lentils",
+        "fr": "Disent que c'est une poignée de lentilles",
+        "es": "Dice que es un puñado de lentejas"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيقول كف عدس وبس"
+        ],
+        "en": [
+          "Say a handful of lentils",
+          "Bi2oul kaff 3adas"
+        ],
+        "fr": [
+          "Une poignée de lentilles",
+          "Bi2oul kaff 3adas"
+        ],
+        "es": [
+          "Un puñado de lentejas",
+          "Bi2oul kaff 3adas"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيسكت",
+          "بيسأل جدو",
+          "بيعمل حالو بيعرف"
+        ],
+        "en": [
+          "Stay quiet",
+          "Ask their grandad",
+          "Pretend they know"
+        ],
+        "fr": [
+          "Se taisent",
+          "Demandent à leur grand-père",
+          "Font semblant"
+        ],
+        "es": [
+          "Se calla",
+          "Le pregunta al abuelo",
+          "Hace como que sabe"
+        ]
+      },
+      "note": {
+        "ar": "اللي ما بيعرف القصة بيستخف فيها",
+        "en": "People who don't know the story think it's trivial",
+        "fr": "Qui ne connaît pas l'histoire la trouve banale",
+        "es": "Quien no conoce la historia la cree una tontería"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-041",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بدو يزمر…",
+        "translit": "illi baddo yzammer…",
+        "display": {
+          "en": "Whoever wants to play the pipe…",
+          "fr": "Qui veut jouer de la flûte…",
+          "es": "Quien quiere tocar la flauta…"
+        }
+      },
+      "truth": {
+        "ar": "ما بيخبي دقنو",
+        "en": "Doesn't hide his chin",
+        "fr": "Ne cache pas son menton",
+        "es": "No esconde la barbilla"
+      },
+      "truthAlt": {
+        "ar": [
+          "ما بيخبي دقنه"
+        ],
+        "en": [
+          "Can't hide his chin",
+          "Ma bykhabbi da2no"
+        ],
+        "fr": [
+          "Ne peut pas cacher son menton",
+          "Ma bykhabbi da2no"
+        ],
+        "es": [
+          "No puede esconder la barbilla",
+          "Ma bykhabbi da2no"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيشتري زمورة",
+          "بيصحي الجيران",
+          "بيطلع عالسطح"
+        ],
+        "en": [
+          "Wakes the neighbours",
+          "Goes up on the roof",
+          "Buys earplugs for others"
+        ],
+        "fr": [
+          "Réveille les voisins",
+          "Monte sur le toit",
+          "Offre des bouchons d'oreilles"
+        ],
+        "es": [
+          "Despierta a los vecinos",
+          "Sube a la azotea",
+          "Regala tapones"
+        ]
+      },
+      "note": {
+        "ar": "إذا قررت تعمل شي، اعملو عالمكشوف",
+        "en": "If you're going to do something, own it openly",
+        "fr": "Si tu fais quelque chose, assume-le",
+        "es": "Si vas a hacer algo, hazlo dando la cara"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-042",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "يا ماخد القرد على مالو…",
+        "translit": "ya mekhed el-2ird 3ala malo…",
+        "display": {
+          "en": "You who marry the monkey for his money…",
+          "fr": "Toi qui épouses le singe pour son argent…",
+          "es": "Tú que te casas con el mono por su dinero…"
+        }
+      },
+      "truth": {
+        "ar": "بيروح المال وبيبقى القرد على حالو",
+        "en": "The money goes and the monkey stays",
+        "fr": "L'argent part et le singe reste",
+        "es": "El dinero se va y el mono se queda"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيروح المال وبيضل القرد على حالو"
+        ],
+        "en": [
+          "Money goes, monkey stays"
+        ],
+        "fr": [
+          "L'argent s'en va, le singe reste"
+        ],
+        "es": [
+          "Se va el dinero, queda el mono"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بتصير غني بقرد",
+          "بيعلمك الرقص",
+          "بتشتري موز كل يوم"
+        ],
+        "en": [
+          "Buy bananas every day",
+          "Learn to dance",
+          "Become a rich monkey"
+        ],
+        "fr": [
+          "Achète des bananes chaque jour",
+          "Apprends à danser",
+          "Deviens riche en singes"
+        ],
+        "es": [
+          "Compra plátanos a diario",
+          "Aprende a bailar",
+          "Te haces rico en monos"
+        ]
+      },
+      "note": {
+        "ar": "اللي بتاخدو عشان مصرياتو، المصاري بتروح وهو بيبقى",
+        "en": "Marry for money and you keep the person long after the money's gone",
+        "fr": "L'argent s'en va, la personne reste",
+        "es": "El dinero se acaba, la persona se queda"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-043",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "إذا صاحبك عسل…",
+        "translit": "iza sahbak 3asal…",
+        "display": {
+          "en": "If your friend is honey…",
+          "fr": "Si ton ami est du miel…",
+          "es": "Si tu amigo es miel…"
+        }
+      },
+      "truth": {
+        "ar": "لا تلحسو كلو",
+        "en": "Don't lick him all up",
+        "fr": "Ne le lèche pas en entier",
+        "es": "No te lo comas entero"
+      },
+      "truthAlt": {
+        "ar": [
+          "ما تلحسو كلو"
+        ],
+        "en": [
+          "Don't eat it all",
+          "La tel7aso kello"
+        ],
+        "fr": [
+          "Ne le mange pas tout",
+          "La tel7aso kello"
+        ],
+        "es": [
+          "No lo lamas todo",
+          "La tel7aso kello"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "خبيه للشتوية",
+          "حطو عالكنافة",
+          "خليه بالبراد"
+        ],
+        "en": [
+          "Keep him for winter",
+          "Put him on your knefeh",
+          "Keep him in the fridge"
+        ],
+        "fr": [
+          "Garde-le pour l'hiver",
+          "Mets-le sur ta knéfé",
+          "Mets-le au frigo"
+        ],
+        "es": [
+          "Guárdalo para el invierno",
+          "Échaselo al postre",
+          "Mételo en la nevera"
+        ]
+      },
+      "note": {
+        "ar": "ما تستغل طيبة الناس للآخر",
+        "en": "Don't take advantage of kind people to the last drop",
+        "fr": "N'abuse pas de la gentillesse des gens",
+        "es": "No abuses de la gente buena"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-044",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "بعد ما شاب…",
+        "translit": "ba3d ma shab…",
+        "display": {
+          "en": "After his hair turned grey…",
+          "fr": "Une fois ses cheveux blancs…",
+          "es": "Cuando ya tenía canas…"
+        }
+      },
+      "truth": {
+        "ar": "ودوه عالكتاب",
+        "en": "They sent him to school",
+        "fr": "On l'a envoyé à l'école",
+        "es": "Lo mandaron a la escuela"
+      },
+      "truthAlt": {
+        "ar": [
+          "بعتوه عالكتاب",
+          "ودوه عالمدرسة"
+        ],
+        "en": [
+          "They sent him to the kuttab",
+          "Waddouh 3al-kuttab"
+        ],
+        "fr": [
+          "On l'a mis à l'école",
+          "Waddouh 3al-kuttab"
+        ],
+        "es": [
+          "Lo llevaron al colegio",
+          "Waddouh 3al-kuttab"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "جوزوه",
+          "اشترولو موتو",
+          "علموه السباحة"
+        ],
+        "en": [
+          "They got him married",
+          "They bought him a scooter",
+          "They taught him to swim"
+        ],
+        "fr": [
+          "On l'a marié",
+          "On lui a acheté un scooter",
+          "On lui a appris à nager"
+        ],
+        "es": [
+          "Lo casaron",
+          "Le compraron una moto",
+          "Le enseñaron a nadar"
+        ]
+      },
+      "note": {
+        "ar": "شي إجا متأخر كتير",
+        "en": "Something that comes far too late",
+        "fr": "Quelque chose qui arrive bien trop tard",
+        "es": "Algo que llega demasiado tarde"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-045",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "من برا رخام…",
+        "translit": "min barra rkham…",
+        "display": {
+          "en": "Marble on the outside…",
+          "fr": "Du marbre dehors…",
+          "es": "Mármol por fuera…"
+        }
+      },
+      "truth": {
+        "ar": "ومن جوا سخام",
+        "en": "Soot on the inside",
+        "fr": "De la suie dedans",
+        "es": "Hollín por dentro"
+      },
+      "truthAlt": {
+        "ar": [
+          "من جوا سخام"
+        ],
+        "en": [
+          "And soot inside",
+          "W min jouwwa skham"
+        ],
+        "fr": [
+          "Et de la suie dedans",
+          "W min jouwwa skham"
+        ],
+        "es": [
+          "Y hollín por dentro",
+          "W min jouwwa skham"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ومن جوا غبرة",
+          "ومن جوا زلزال",
+          "ومن جوا ورق"
+        ],
+        "en": [
+          "Plaster on the inside",
+          "Dust on the inside",
+          "Cardboard on the inside"
+        ],
+        "fr": [
+          "Du plâtre dedans",
+          "De la poussière dedans",
+          "Du carton dedans"
+        ],
+        "es": [
+          "Yeso por dentro",
+          "Polvo por dentro",
+          "Cartón por dentro"
+        ]
+      },
+      "note": {
+        "ar": "شكلها حلو وجوّاتها خربانة",
+        "en": "Looks great, rotten underneath",
+        "fr": "Belle façade, intérieur pourri",
+        "es": "Mucha fachada y poco fondo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-046",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "زيوان بلدك…",
+        "translit": "zayawan baladak…",
+        "display": {
+          "en": "The weeds of your own country…",
+          "fr": "L'ivraie de ton pays…",
+          "es": "La cizaña de tu tierra…"
+        }
+      },
+      "truth": {
+        "ar": "ولا قمح الغريب",
+        "en": "Beat the wheat of strangers",
+        "fr": "Plutôt que le blé de l'étranger",
+        "es": "Antes que el trigo del extranjero"
+      },
+      "truthAlt": {
+        "ar": [
+          "ولا القمح الغريب",
+          "ولا قمح الصليبي"
+        ],
+        "en": [
+          "Better than foreign wheat",
+          "Wala 2am7 el-gharib"
+        ],
+        "fr": [
+          "Mieux que le blé étranger",
+          "Wala 2am7 el-gharib"
+        ],
+        "es": [
+          "Mejor que el trigo ajeno",
+          "Wala 2am7 el-gharib"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "أطيب من الكعك",
+          "بيطلع بالربيع",
+          "بيعمل خبز مرقوق"
+        ],
+        "en": [
+          "Taste better than cake",
+          "Bloom first in spring",
+          "Make the best bread"
+        ],
+        "fr": [
+          "Est meilleure que le gâteau",
+          "Fleurit la première",
+          "Fait le meilleur pain"
+        ],
+        "es": [
+          "Sabe mejor que el pastel",
+          "Florece la primera",
+          "Hace el mejor pan"
+        ]
+      },
+      "note": {
+        "ar": "خيرات بلدك أحسن من أحسن شي برا",
+        "en": "Home, even at its worst, beats the best abroad",
+        "fr": "Le pire de chez soi vaut mieux que le meilleur d'ailleurs",
+        "es": "Lo peor de tu tierra vale más que lo mejor de fuera"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-047",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "أول الرقص…",
+        "translit": "awwal er-ra2s…",
+        "display": {
+          "en": "The start of dancing…",
+          "fr": "Le début de la danse…",
+          "es": "El principio del baile…"
+        }
+      },
+      "truth": {
+        "ar": "حنجلة",
+        "en": "Is a little hop",
+        "fr": "C'est un petit sautillement",
+        "es": "Es un saltito"
+      },
+      "truthAlt": {
+        "ar": [
+          "حنجلي"
+        ],
+        "en": [
+          "A hop",
+          "Is hopping",
+          "7anjale"
+        ],
+        "fr": [
+          "Un sautillement",
+          "7anjale"
+        ],
+        "es": [
+          "Un saltito",
+          "Dar saltitos",
+          "7anjale"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "دبكة",
+          "تصفيق",
+          "دوخة"
+        ],
+        "en": [
+          "Is a sprained ankle",
+          "Is clapping",
+          "Is dizziness"
+        ],
+        "fr": [
+          "C'est une entorse",
+          "C'est d'applaudir",
+          "C'est le vertige"
+        ],
+        "es": [
+          "Es un esguince",
+          "Son las palmas",
+          "Es el mareo"
+        ]
+      },
+      "note": {
+        "ar": "كل شي كبير بيبلش بخطوة صغيرة",
+        "en": "Every big thing starts with a small first step",
+        "fr": "Tout commence par un petit pas",
+        "es": "Todo lo grande empieza con un pasito"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-048",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "العين…",
+        "translit": "el-3ein…",
+        "display": {
+          "en": "The eye…",
+          "fr": "L'œil…",
+          "es": "El ojo…"
+        }
+      },
+      "truth": {
+        "ar": "ما بتعلى عالحاجب",
+        "en": "Can't rise above the eyebrow",
+        "fr": "Ne monte pas plus haut que le sourcil",
+        "es": "No sube por encima de la ceja"
+      },
+      "truthAlt": {
+        "ar": [
+          "ما بتعلا على الحاجب"
+        ],
+        "en": [
+          "Never rises above the brow",
+          "Ma bte3la 3al-7ajeb"
+        ],
+        "fr": [
+          "Ne dépasse pas le sourcil",
+          "Ma bte3la 3al-7ajeb"
+        ],
+        "es": [
+          "No pasa de la ceja",
+          "Ma bte3la 3al-7ajeb"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ما بتنام بالعرس",
+          "بتشوف كل شي",
+          "بتبكي عالبصل"
+        ],
+        "en": [
+          "Sees everything",
+          "Cries at onions",
+          "Never sleeps at weddings"
+        ],
+        "fr": [
+          "Voit tout",
+          "Pleure devant les oignons",
+          "Ne dort pas aux mariages"
+        ],
+        "es": [
+          "Lo ve todo",
+          "Llora con las cebollas",
+          "No duerme en las bodas"
+        ]
+      },
+      "note": {
+        "ar": "كل واحد بيعرف حدودو مع الأكبر منو",
+        "en": "Know your place with those above you",
+        "fr": "Chacun sa place face aux aînés",
+        "es": "Cada uno en su sitio ante los mayores"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-049",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "بيضة اليوم…",
+        "translit": "baydet el-yom…",
+        "display": {
+          "en": "An egg today…",
+          "fr": "Un œuf aujourd'hui…",
+          "es": "Un huevo hoy…"
+        }
+      },
+      "truth": {
+        "ar": "ولا جاجة بكرا",
+        "en": "Beats a chicken tomorrow",
+        "fr": "Plutôt qu'une poule demain",
+        "es": "Mejor que una gallina mañana"
+      },
+      "truthAlt": {
+        "ar": [
+          "أحسن من جاجة بكرا",
+          "ولا دجاجة بكرا"
+        ],
+        "en": [
+          "Rather than a chicken tomorrow",
+          "Wala jeje bukra"
+        ],
+        "fr": [
+          "Vaut mieux qu'une poule demain",
+          "Wala jeje bukra"
+        ],
+        "es": [
+          "Antes que una gallina mañana",
+          "Wala jeje bukra"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بتنقلي الصبح",
+          "ولا خروف السنة الجاية",
+          "بتفقس بكير"
+        ],
+        "en": [
+          "Fries best in the morning",
+          "Hatches early",
+          "Beats a whole sheep next year"
+        ],
+        "fr": [
+          "Se cuit mieux le matin",
+          "Éclot plus tôt",
+          "Vaut plus qu'un mouton"
+        ],
+        "es": [
+          "Se fríe mejor por la mañana",
+          "Eclosiona antes",
+          "Vale más que un cordero"
+        ]
+      },
+      "note": {
+        "ar": "اللي بإيدك هلق أحسن من وعد بكرا",
+        "en": "What you have now beats a promise",
+        "fr": "Un tiens vaut mieux que deux tu l'auras",
+        "es": "Más vale pájaro en mano que ciento volando"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-050",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بيسأل…",
+        "translit": "illi bys2al…",
+        "display": {
+          "en": "Whoever asks…",
+          "fr": "Celui qui demande…",
+          "es": "El que pregunta…"
+        }
+      },
+      "truth": {
+        "ar": "ما بيتوه",
+        "en": "Never gets lost",
+        "fr": "Ne se perd pas",
+        "es": "No se pierde"
+      },
+      "truthAlt": {
+        "ar": [
+          "ما بيضيع"
+        ],
+        "en": [
+          "Doesn't get lost",
+          "Ma bitouh"
+        ],
+        "fr": [
+          "Ne se perd jamais",
+          "Ma bitouh"
+        ],
+        "es": [
+          "Nunca se pierde",
+          "Ma bitouh"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيتعب",
+          "بيوصل متأخر",
+          "بيعصب الناس"
+        ],
+        "en": [
+          "Gets tired",
+          "Arrives late",
+          "Annoys everyone"
+        ],
+        "fr": [
+          "Se fatigue",
+          "Arrive en retard",
+          "Énerve tout le monde"
+        ],
+        "es": [
+          "Se cansa",
+          "Llega tarde",
+          "Molesta a todos"
+        ]
+      },
+      "note": {
+        "ar": "السؤال بيوفر عليك كتير",
+        "en": "Asking the way saves you a lot of trouble",
+        "fr": "Qui demande son chemin arrive",
+        "es": "Preguntando se llega a Roma, dicen en español"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-051",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "الشاطرة…",
+        "translit": "esh-shatra…",
+        "display": {
+          "en": "A clever woman…",
+          "fr": "La femme habile…",
+          "es": "La mujer lista…"
+        }
+      },
+      "truth": {
+        "ar": "بتغزل بإجر حمار",
+        "en": "Can spin wool with a donkey's leg",
+        "fr": "File la laine avec une patte d'âne",
+        "es": "Hila con la pata de un burro"
+      },
+      "truthAlt": {
+        "ar": [
+          "بتغزل برجل حمار",
+          "بتغزل بإجر الحمار"
+        ],
+        "en": [
+          "Spins with a donkey's leg",
+          "Btghzel b-ejr 7mar"
+        ],
+        "fr": [
+          "File avec une patte d'âne",
+          "Btghzel b-ejr 7mar"
+        ],
+        "es": [
+          "Hila con una pata de burro",
+          "Btghzel b-ejr 7mar"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بتطبخ بلا غاز",
+          "بتنضف بلا مي",
+          "بتخبز بلا طحين"
+        ],
+        "en": [
+          "Cooks without gas",
+          "Cleans without water",
+          "Bakes without flour"
+        ],
+        "fr": [
+          "Cuisine sans gaz",
+          "Nettoie sans eau",
+          "Fait du pain sans farine"
+        ],
+        "es": [
+          "Cocina sin gas",
+          "Limpia sin agua",
+          "Hace pan sin harina"
+        ]
+      },
+      "note": {
+        "ar": "اللي عندو موهبة بيدبر حالو بأي شي",
+        "en": "Real skill makes do with whatever's at hand",
+        "fr": "Le vrai talent se débrouille avec n'importe quoi",
+        "es": "El talento se apaña con lo que haya"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-052",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بيطبخ السم…",
+        "translit": "illi byetbokh es-semm…",
+        "display": {
+          "en": "Whoever cooks poison…",
+          "fr": "Qui cuisine du poison…",
+          "es": "Quien cocina veneno…"
+        }
+      },
+      "truth": {
+        "ar": "بيدوقو",
+        "en": "Tastes it",
+        "fr": "Y goûte",
+        "es": "Lo prueba"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيدوقه"
+        ],
+        "en": [
+          "Ends up tasting it",
+          "Bydou2o"
+        ],
+        "fr": [
+          "Finit par y goûter",
+          "Bydou2o"
+        ],
+        "es": [
+          "Acaba probándolo",
+          "Bydou2o"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيبيعو",
+          "بيكتب وصفتو",
+          "بيعزم الجيران"
+        ],
+        "en": [
+          "Sells the recipe",
+          "Invites the neighbours",
+          "Writes a cookbook"
+        ],
+        "fr": [
+          "Vend la recette",
+          "Invite les voisins",
+          "Écrit un livre de cuisine"
+        ],
+        "es": [
+          "Vende la receta",
+          "Invita a los vecinos",
+          "Escribe un recetario"
+        ]
+      },
+      "note": {
+        "ar": "اللي بيأذي غيرو بيتأذى",
+        "en": "Harm you prepare for others comes back to you",
+        "fr": "Le mal qu'on prépare nous revient",
+        "es": "El mal que preparas te alcanza"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-053",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "اللي بيتو من قزاز…",
+        "translit": "illi beito min 2ezez…",
+        "display": {
+          "en": "Whoever's house is made of glass…",
+          "fr": "Celui dont la maison est en verre…",
+          "es": "Quien tiene la casa de cristal…"
+        }
+      },
+      "truth": {
+        "ar": "ما بيراشق الناس بالحجار",
+        "en": "Doesn't throw stones at people",
+        "fr": "Ne lance pas de pierres aux gens",
+        "es": "No tira piedras a la gente"
+      },
+      "truthAlt": {
+        "ar": [
+          "ما بيضرب الناس بالحجار",
+          "ما بيرشق الناس بحجار"
+        ],
+        "en": [
+          "Doesn't throw stones",
+          "Shouldn't throw stones"
+        ],
+        "fr": [
+          "Ne jette pas de pierres"
+        ],
+        "es": [
+          "No tira piedras"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ما بيعزم حدا",
+          "بينضفو كل يوم",
+          "ما بيقعد بالشمس"
+        ],
+        "en": [
+          "Cleans it every day",
+          "Never invites anyone",
+          "Never sits in the sun"
+        ],
+        "fr": [
+          "La nettoie tous les jours",
+          "N'invite personne",
+          "Ne s'assoit pas au soleil"
+        ],
+        "es": [
+          "La limpia a diario",
+          "No invita a nadie",
+          "No se sienta al sol"
+        ]
+      },
+      "note": {
+        "ar": "اللي فيه عيوب ما بيعيب الناس",
+        "en": "Don't criticise others for faults you have",
+        "fr": "On ne critique pas les défauts qu'on a soi-même",
+        "es": "No critiques los defectos que tú también tienes"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-054",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "حاميها…",
+        "translit": "7amiha…",
+        "display": {
+          "en": "Its guard…",
+          "fr": "Son gardien…",
+          "es": "Su guardián…"
+        }
+      },
+      "truth": {
+        "ar": "حراميها",
+        "en": "Is its thief",
+        "fr": "Est son voleur",
+        "es": "Es su ladrón"
+      },
+      "truthAlt": {
+        "ar": [
+          "هوي حراميها"
+        ],
+        "en": [
+          "Is the thief",
+          "7aramiha"
+        ],
+        "fr": [
+          "C'est le voleur",
+          "7aramiha"
+        ],
+        "es": [
+          "Es el ladrón",
+          "7aramiha"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ناطورها",
+          "بايعها",
+          "نايم عنها"
+        ],
+        "en": [
+          "Is asleep",
+          "Is its owner",
+          "Sold it already"
+        ],
+        "fr": [
+          "Dort",
+          "Est son propriétaire",
+          "L'a déjà vendue"
+        ],
+        "es": [
+          "Está dormido",
+          "Es el dueño",
+          "Ya la vendió"
+        ]
+      },
+      "note": {
+        "ar": "اللي مأمّن عالشي هوي اللي عم يسرقو",
+        "en": "The one trusted to protect it is the one stealing it",
+        "fr": "Celui qui protège est celui qui vole",
+        "es": "El que debía protegerlo es quien lo roba"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-055",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "إذا بدك تحيرو…",
+        "translit": "iza baddak t7ayyro…",
+        "display": {
+          "en": "If you want to confuse him…",
+          "fr": "Si tu veux le faire hésiter…",
+          "es": "Si quieres confundirlo…"
+        }
+      },
+      "truth": {
+        "ar": "خيرو",
+        "en": "Give him a choice",
+        "fr": "Donne-lui le choix",
+        "es": "Dale a elegir"
+      },
+      "truthAlt": {
+        "ar": [
+          "خيره"
+        ],
+        "en": [
+          "Give him choices",
+          "Khayyro"
+        ],
+        "fr": [
+          "Laisse-le choisir",
+          "Khayyro"
+        ],
+        "es": [
+          "Dale opciones",
+          "Khayyro"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "جوعو",
+          "سكتلو",
+          "اعزمو عالعشا"
+        ],
+        "en": [
+          "Feed him",
+          "Ignore him",
+          "Invite him to dinner"
+        ],
+        "fr": [
+          "Nourris-le",
+          "Ignore-le",
+          "Invite-le à dîner"
+        ],
+        "es": [
+          "Dale de comer",
+          "Ignóralo",
+          "Invítalo a cenar"
+        ]
+      },
+      "note": {
+        "ar": "كتر الخيارات بتحير",
+        "en": "Too many options leave people stuck",
+        "fr": "Trop de choix paralysent",
+        "es": "Demasiadas opciones bloquean a cualquiera"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-056",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "كل عقدة…",
+        "translit": "kel 3o2de…",
+        "display": {
+          "en": "Every knot…",
+          "fr": "Chaque nœud…",
+          "es": "Cada nudo…"
+        }
+      },
+      "truth": {
+        "ar": "ولها حلال",
+        "en": "Has someone to untie it",
+        "fr": "A quelqu'un pour le défaire",
+        "es": "Tiene quien lo desate"
+      },
+      "truthAlt": {
+        "ar": [
+          "إلها حلال",
+          "ولها حل"
+        ],
+        "en": [
+          "Has its untier",
+          "W-ela 7allal"
+        ],
+        "fr": [
+          "A son dénoueur",
+          "W-ela 7allal"
+        ],
+        "es": [
+          "Tiene su desatador",
+          "W-ela 7allal"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ولها مقص",
+          "بتتعب الإيد",
+          "ولها قصة"
+        ],
+        "en": [
+          "Has scissors waiting",
+          "Tires your fingers",
+          "Has a story"
+        ],
+        "fr": [
+          "A ses ciseaux",
+          "Fatigue les doigts",
+          "A son histoire"
+        ],
+        "es": [
+          "Tiene sus tijeras",
+          "Cansa los dedos",
+          "Tiene su historia"
+        ]
+      },
+      "note": {
+        "ar": "ما في مشكلة بلا حل",
+        "en": "Every problem has a solution",
+        "fr": "Tout problème a sa solution",
+        "es": "Todo problema tiene solución"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-057",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "الغايب…",
+        "translit": "el-ghayeb…",
+        "display": {
+          "en": "The absent one…",
+          "fr": "L'absent…",
+          "es": "El ausente…"
+        }
+      },
+      "truth": {
+        "ar": "عذرو معو",
+        "en": "Has his excuse with him",
+        "fr": "A son excuse avec lui",
+        "es": "Lleva su excusa consigo"
+      },
+      "truthAlt": {
+        "ar": [
+          "عذره معه"
+        ],
+        "en": [
+          "Has an excuse",
+          "3ozro ma3o"
+        ],
+        "fr": [
+          "A son excuse",
+          "3ozro ma3o"
+        ],
+        "es": [
+          "Tiene su excusa",
+          "3ozro ma3o"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيخسر حصتو",
+          "ما إلو كرسي",
+          "بيحكوا عنو"
+        ],
+        "en": [
+          "Loses his share",
+          "Gets talked about",
+          "Has no chair"
+        ],
+        "fr": [
+          "Perd sa part",
+          "Fait parler de lui",
+          "N'a pas de chaise"
+        ],
+        "es": [
+          "Pierde su parte",
+          "Da que hablar",
+          "Se queda sin silla"
+        ]
+      },
+      "note": {
+        "ar": "لا تحكم عحدا مش موجود",
+        "en": "Don't judge someone who isn't there to explain",
+        "fr": "Ne juge pas quelqu'un qui n'est pas là",
+        "es": "No juzgues a quien no está para explicarse"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-058",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "ما حدا بيقول…",
+        "translit": "ma 7ada bi2oul…",
+        "display": {
+          "en": "Nobody says…",
+          "fr": "Personne ne dit…",
+          "es": "Nadie dice…"
+        }
+      },
+      "truth": {
+        "ar": "عن زيتو عكر",
+        "en": "Their own oil is cloudy",
+        "fr": "Que son huile est trouble",
+        "es": "Que su aceite está turbio"
+      },
+      "truthAlt": {
+        "ar": [
+          "عن زيته عكر"
+        ],
+        "en": [
+          "Their oil is cloudy",
+          "3an zeito 3akar"
+        ],
+        "fr": [
+          "Que son huile n'est pas claire",
+          "3an zeito 3akar"
+        ],
+        "es": [
+          "Que su aceite es turbio",
+          "3an zeito 3akar"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "إنو تعبان",
+          "إنو جوعان",
+          "إنو غلطان"
+        ],
+        "en": [
+          "They're wrong",
+          "They're tired",
+          "They're full"
+        ],
+        "fr": [
+          "Qu'il a tort",
+          "Qu'il est fatigué",
+          "Qu'il n'a plus faim"
+        ],
+        "es": [
+          "Que se equivoca",
+          "Que está cansado",
+          "Que ya no tiene hambre"
+        ]
+      },
+      "note": {
+        "ar": "كل واحد بيمدح شغلو",
+        "en": "Everyone praises their own stuff",
+        "fr": "Chacun vante sa marchandise",
+        "es": "Cada uno alaba lo suyo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, Dictionary of Modern Lebanese Proverbs"
+      }
+    },
+    {
+      "id": "lbp-059",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "دود الخل…",
+        "translit": "dood el-khall…",
+        "display": {
+          "en": "The worm in the vinegar…",
+          "fr": "Le ver du vinaigre…",
+          "es": "El gusano del vinagre…"
+        }
+      },
+      "truth": {
+        "ar": "منو وفيه",
+        "en": "Comes from the vinegar itself",
+        "fr": "Vient du vinaigre lui-même",
+        "es": "Sale del propio vinagre"
+      },
+      "truthAlt": {
+        "ar": [
+          "منه وفيه",
+          "منو وفيو",
+          "من الخل نفسو"
+        ],
+        "en": [
+          "Comes from the vinegar",
+          "Mennou w fih"
+        ],
+        "fr": [
+          "Vient du vinaigre"
+        ],
+        "es": [
+          "Sale del vinagre"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيطلع بالصيف",
+          "ما بيموت",
+          "بيحب الحامض"
+        ],
+        "en": [
+          "Only comes out in summer",
+          "Never dies",
+          "Prefers lemon"
+        ],
+        "fr": [
+          "Ne sort qu'en été",
+          "Ne meurt jamais",
+          "Préfère le citron"
+        ],
+        "es": [
+          "Solo sale en verano",
+          "No muere nunca",
+          "Prefiere el limón"
+        ]
+      },
+      "note": {
+        "ar": "المشكلة بتجي من جوا، من أهل البيت",
+        "en": "Trouble often comes from inside, from your own people",
+        "fr": "Les ennuis viennent souvent de l'intérieur, des siens",
+        "es": "Los problemas suelen venir de dentro, de los tuyos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (Librairie du Liban, 1974): form and wording ; [native review]"
+      }
+    },
+    {
+      "id": "lbp-060",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "الولد ولد…",
+        "translit": "el-walad walad…",
+        "display": {
+          "en": "A kid is a kid…",
+          "fr": "Un gamin reste un gamin…",
+          "es": "Un niño es un niño…"
+        }
+      },
+      "truth": {
+        "ar": "ولو حكم بلد",
+        "en": "Even if he runs a country",
+        "fr": "Même s'il dirige un pays",
+        "es": "Aunque gobierne un país"
+      },
+      "truthAlt": {
+        "ar": [
+          "لو حكم بلد",
+          "ولو حكم دولة"
+        ],
+        "en": [
+          "Even if he rules a country",
+          "Wa law 7akam balad"
+        ],
+        "fr": [
+          "Même s'il gouverne un pays"
+        ],
+        "es": [
+          "Aunque dirija un país"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ولو صار أطول منك",
+          "ولو طلعلو شوارب",
+          "ولو جاب العلامة الكاملة"
+        ],
+        "en": [
+          "Even with a moustache",
+          "Even taller than you",
+          "Even with straight As"
+        ],
+        "fr": [
+          "Même avec une moustache",
+          "Même plus grand que toi",
+          "Même avec 20 sur 20"
+        ],
+        "es": [
+          "Aunque tenga bigote",
+          "Aunque te saque una cabeza",
+          "Aunque saque dieces"
+        ]
+      },
+      "note": {
+        "ar": "مهما كبر وصار مهم، بيبقى ولد بعيون أهلو",
+        "en": "However important he gets, he's still a child to his parents",
+        "fr": "Aussi important soit-il, il reste un enfant pour ses parents",
+        "es": "Por importante que llegue a ser, para sus padres sigue siendo un niño"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (Librairie du Liban, 1974): form and wording ; [native review]"
+      }
+    },
+    {
+      "id": "lbp-061",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "خود الحكمة…",
+        "translit": "khod el-7ekmé…",
+        "display": {
+          "en": "Take wisdom…",
+          "fr": "Prends la sagesse…",
+          "es": "Toma la sabiduría…"
+        }
+      },
+      "truth": {
+        "ar": "من تم المجانين",
+        "en": "From the mouths of fools",
+        "fr": "De la bouche des fous",
+        "es": "De la boca de los locos"
+      },
+      "truthAlt": {
+        "ar": [
+          "من تم المجنون",
+          "من فم المجانين",
+          "من تم المهابيل"
+        ],
+        "en": [
+          "From the mouth of a fool",
+          "From fools",
+          "Men tem el-majanin"
+        ],
+        "fr": [
+          "De la bouche d'un fou",
+          "Des fous"
+        ],
+        "es": [
+          "De la boca de un loco",
+          "De los locos"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "من تيتا",
+          "من الكتب العتيقة",
+          "من الختيارية"
+        ],
+        "en": [
+          "From your grandmother",
+          "From old books",
+          "From the village elders"
+        ],
+        "fr": [
+          "De ta grand-mère",
+          "Des vieux livres",
+          "Des anciens du village"
+        ],
+        "es": [
+          "De tu abuela",
+          "De los libros viejos",
+          "De los ancianos del pueblo"
+        ]
+      },
+      "note": {
+        "ar": "الكلمة الصح فيها تجي من أغرب مطرح",
+        "en": "Good advice can come from the unlikeliest people",
+        "fr": "Un bon conseil peut venir des gens les plus inattendus",
+        "es": "Un buen consejo puede venir de quien menos lo esperas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (Librairie du Liban, 1974): form and wording ; [native review]"
+      }
+    },
+    {
+      "id": "lbp-062",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "يا داخل بين البصلة وقشرتها…",
+        "translit": "ya dakhel bein el-basalé w 2eshreta…",
+        "display": {
+          "en": "You who slip between the onion and its skin…",
+          "fr": "Toi qui te glisses entre l'oignon et sa pelure…",
+          "es": "Tú que te metes entre la cebolla y su piel…"
+        }
+      },
+      "truth": {
+        "ar": "ما بينوبك إلا ريحتها",
+        "en": "All you'll get is the smell",
+        "fr": "Tu n'en gardes que l'odeur",
+        "es": "Solo te llevas el olor"
+      },
+      "truthAlt": {
+        "ar": [
+          "ما بينوبك غير ريحتها",
+          "ما بيطلعلك إلا ريحتها",
+          "ما بتطلع إلا بريحتها"
+        ],
+        "en": [
+          "Only the smell",
+          "You get only the smell",
+          "Ma bynoubak illa ri7eta"
+        ],
+        "fr": [
+          "Seulement l'odeur",
+          "Juste l'odeur"
+        ],
+        "es": [
+          "Solo el olor",
+          "Te quedas con el olor"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بتبكي قبل العشا",
+          "بتخلص بالشوربة",
+          "بتصير شيف"
+        ],
+        "en": [
+          "You'll cry before dinner",
+          "You end up in the soup",
+          "You'll become a chef"
+        ],
+        "fr": [
+          "Tu pleures avant le dîner",
+          "Tu finis dans la soupe",
+          "Tu deviens chef"
+        ],
+        "es": [
+          "Lloras antes de la cena",
+          "Acabas en la sopa",
+          "Te haces cocinero"
+        ]
+      },
+      "note": {
+        "ar": "ما تفوت بين اتنين قراب من بعض، ما رح يطلعلك إلا الأذية",
+        "en": "Don't get between two people who are close: you'll only come off worse",
+        "fr": "Ne te mets pas entre deux proches : tu n'y gagneras que des ennuis",
+        "es": "No te metas entre dos personas unidas: solo saldrás perdiendo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (Librairie du Liban, 1974): form and wording ; [native review]"
+      }
+    },
+    {
+      "id": "lbp-063",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "متل اللي عم يبيع مي…",
+        "translit": "metl elli 3am ybi3 mayy…",
+        "display": {
+          "en": "Like someone selling water…",
+          "fr": "Comme celui qui vend de l'eau…",
+          "es": "Como quien vende agua…"
+        }
+      },
+      "truth": {
+        "ar": "بحارة السقايين",
+        "en": "In the water carriers' street",
+        "fr": "Dans la rue des porteurs d'eau",
+        "es": "En la calle de los aguadores"
+      },
+      "truthAlt": {
+        "ar": [
+          "بحارة السقايه",
+          "بحارة السقاية",
+          "بحي السقايين"
+        ],
+        "en": [
+          "To the water carriers",
+          "In the water sellers' street"
+        ],
+        "fr": [
+          "Aux porteurs d'eau",
+          "Chez les porteurs d'eau"
+        ],
+        "es": [
+          "A los aguadores",
+          "En el barrio de los aguadores"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بنص الشتوية",
+          "عشط البحر",
+          "لسمكة"
+        ],
+        "en": [
+          "In the middle of winter",
+          "On the beach",
+          "To a fish"
+        ],
+        "fr": [
+          "En plein hiver",
+          "Sur la plage",
+          "À un poisson"
+        ],
+        "es": [
+          "En pleno invierno",
+          "En la playa",
+          "A un pez"
+        ]
+      },
+      "note": {
+        "ar": "عم تحاول تبهر أهل الصنعة بصنعتن",
+        "en": "Trying to impress the experts with their own trade",
+        "fr": "Vouloir épater les experts avec leur propre métier",
+        "es": "Querer impresionar a los expertos con su propio oficio"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (Librairie du Liban, 1974): form and wording ; [native review]"
+      }
+    },
+    {
+      "id": "lbp-064",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "الجمل ما بيشوف…",
+        "translit": "ej-jamal ma bishouf…",
+        "display": {
+          "en": "The camel can't see…",
+          "fr": "Le chameau ne voit pas…",
+          "es": "El camello no ve…"
+        }
+      },
+      "truth": {
+        "ar": "حردبتو",
+        "en": "His own hump",
+        "fr": "Sa propre bosse",
+        "es": "Su propia joroba"
+      },
+      "truthAlt": {
+        "ar": [
+          "حدبتو",
+          "سنامو",
+          "حردبته",
+          "حدبته"
+        ],
+        "en": [
+          "His hump",
+          "The hump on his back",
+          "7ardabto"
+        ],
+        "fr": [
+          "Sa bosse"
+        ],
+        "es": [
+          "Su joroba",
+          "Su chepa"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "آخر الطريق",
+          "الواحة",
+          "إجريه"
+        ],
+        "en": [
+          "The end of the road",
+          "The oasis",
+          "His own feet"
+        ],
+        "fr": [
+          "La fin de la route",
+          "L'oasis",
+          "Le bout de ses pieds"
+        ],
+        "es": [
+          "El final del camino",
+          "El oasis",
+          "La punta de sus patas"
+        ]
+      },
+      "note": {
+        "ar": "كل واحد بيشوف عيوب غيرو وما بيشوف عيوبو",
+        "en": "Everyone spots other people's flaws but never their own",
+        "fr": "Chacun voit les défauts des autres, jamais les siens",
+        "es": "Todos ven los defectos ajenos, nunca los propios"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (Librairie du Liban, 1974): form and wording ; [native review]"
+      }
+    },
+    {
+      "id": "lbp-065",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "طول عمرك يا زبيبة…",
+        "translit": "tool 3omrek ya zbibé…",
+        "display": {
+          "en": "All your life, little raisin…",
+          "fr": "Toute ta vie, petit raisin sec…",
+          "es": "Toda tu vida, pasita…"
+        }
+      },
+      "truth": {
+        "ar": "وفيكي هالعودة",
+        "en": "You've had that little stalk",
+        "fr": "Tu as gardé ce bout de tige",
+        "es": "Has tenido ese palito"
+      },
+      "truthAlt": {
+        "ar": [
+          "فيكي هالعودة",
+          "وفيكي هالعود",
+          "وفيكي هالعودي"
+        ],
+        "en": [
+          "You've had that stalk",
+          "With that little stalk",
+          "Fiki hal-3oudé"
+        ],
+        "fr": [
+          "Tu as eu ce bout de tige",
+          "Avec ce bout de tige"
+        ],
+        "es": [
+          "Con ese palito",
+          "Tienes ese palito"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "وإنتي ناشفة",
+          "وإنتي حلوة",
+          "بقلب الكعكة"
+        ],
+        "en": [
+          "You've been sweet",
+          "You've been wrinkled",
+          "You've hidden in the cake"
+        ],
+        "fr": [
+          "Tu as été sucré",
+          "Tu as été tout ridé",
+          "Tu t'es caché dans le gâteau"
+        ],
+        "es": [
+          "Has sido dulce",
+          "Has estado arrugada",
+          "Te has escondido en el bizcocho"
+        ]
+      },
+      "note": {
+        "ar": "يعني هالعيب مش جديد، طول عمرك هيك",
+        "en": "That flaw is old news: you've always been like this",
+        "fr": "Ce défaut n'a rien de nouveau : tu as toujours été comme ça",
+        "es": "Ese defecto no es nuevo: siempre has sido así"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (Librairie du Liban, 1974): form and wording ; [native review]"
+      }
+    },
+    {
+      "id": "lbp-066",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "القرش الأبيض…",
+        "translit": "el-2ersh el-abyad…",
+        "display": {
+          "en": "The white piastre…",
+          "fr": "La piastre blanche…",
+          "es": "La piastra blanca…"
+        }
+      },
+      "truth": {
+        "ar": "لليوم الأسود",
+        "en": "Is for the black day",
+        "fr": "C'est pour le jour noir",
+        "es": "Es para el día negro"
+      },
+      "truthAlt": {
+        "ar": [
+          "لليوم الاسود",
+          "بينفع لليوم الأسود"
+        ],
+        "en": [
+          "For the dark day",
+          "For a rainy day",
+          "Lal-yom el-aswad"
+        ],
+        "fr": [
+          "Pour les jours sombres",
+          "Pour le jour noir"
+        ],
+        "es": [
+          "Para los días negros",
+          "Para el día malo"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "لبياع الكعك",
+          "للبوسطة",
+          "بيضيع بالجيبة"
+        ],
+        "en": [
+          "Is for the ka'ak seller",
+          "Gets lost in your pocket",
+          "Is for the bus fare"
+        ],
+        "fr": [
+          "C'est pour le marchand de kaak",
+          "Se perd dans la poche",
+          "C'est pour le bus"
+        ],
+        "es": [
+          "Es para el vendedor de kaak",
+          "Se pierde en el bolsillo",
+          "Es para el autobús"
+        ]
+      },
+      "note": {
+        "ar": "خبي شوي من وقت الرخا لوقت الضيق",
+        "en": "Put a little aside in good times for the hard times",
+        "fr": "Mets un peu de côté dans les bons jours pour les mauvais",
+        "es": "Guarda un poco en los buenos tiempos para los malos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (Librairie du Liban, 1974): form and wording ; [native review]"
+      }
+    }
+  ]
+}

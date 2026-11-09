@@ -7,13 +7,13 @@
   "script": "Arab",
   "title": {
     "en": "Lebanon: the big quiz",
-    "fr": "Liban : le grand quiz",
+    "fr": "Liban : le grand quiz",
     "ar": "لبنان: المسابقة الكبيرة",
     "es": "Líbano: el gran quiz"
   },
   "description": {
     "en": "From Fairuz to the Cedars: songs, dabke, football, food and every corner of the map.",
-    "fr": "De Fairouz aux Cèdres : chansons, dabké, foot, bonne bouffe et tous les coins du pays.",
+    "fr": "De Fairouz aux Cèdres : chansons, dabké, foot, bonne bouffe et tous les coins du pays.",
     "ar": "من فيروز لرجال الأرز: غناني، دبكة، فوتبول، أكل طيّب وكل زاوية من لبنان.",
     "es": "De Fairuz a los Cedros: canciones, dabke, fútbol, buena mesa y cada rincón del país."
   },
@@ -72,7 +72,7 @@
         "القرنة السودا",
         "جبل صنّين",
         "جبل الباروك",
-        "جبل الكنيسة"
+        "جبل تربل"
       ],
       "answer": 0,
       "topic": "geography",
@@ -186,17 +186,17 @@
     {
       "id": "q009",
       "type": "tf",
-      "text": "نهر الليطاني بيصبّ بسوريا.",
+      "text": "صيدا بتقع شمال بيروت، عطريق جبيل.",
       "options": [
         "صح",
         "غلط"
       ],
       "answer": 1,
       "topic": "geography",
-      "difficulty": 2,
+      "difficulty": 1,
       "region": "south",
-      "explain": "ولا نقطة بتفلّ: الليطاني بيمشي من البقاع للبحر، شمال صور بشوي.",
-      "source": "[VERIFY] Britannica 'Līṭānī River' (course; mouth at Qasimiyeh, north of Tyre)"
+      "explain": "لأ، نزول عالجنوب: صيدا على بعد شي أربعين كيلومتر من بيروت عالساحل، عطريق صور.",
+      "source": "[VERIFY] Britannica 'Sidon' (port city about 40 km south of Beirut)"
     },
     {
       "id": "q010",
@@ -766,18 +766,18 @@
     {
       "id": "q045",
       "type": "mc4",
-      "text": "أيّا نادي لبناني ربح كاس الاتحاد الآسيوي سنة 2019؟",
+      "text": "بكاس آسيا 2023، لبنان لعب ماتش الافتتاح ضدّ أيّا بلد مضيف؟",
       "options": [
-        "النجمة",
-        "العهد",
-        "الأنصار",
-        "الصفاء"
+        "الإمارات",
+        "قطر",
+        "السعودية",
+        "اليابان"
       ],
       "answer": 1,
       "topic": "football",
       "difficulty": 3,
-      "explain": "ربح النهائي 1-0.",
-      "source": "[VERIFY] AFC 'AFC Cup 2019 final' (Al-Ahed 1-0 April 25)"
+      "explain": "البطولة افتتحت بملعب لوسيل، نفس الملعب يلّي انلعب فيه نهائي مونديال 2022.",
+      "source": "[VERIFY] AFC match report: Qatar 3-0 Lebanon, 12 January 2024, Lusail Stadium (AFC Asian Cup 2023 opening match)"
     },
     {
       "id": "q046",
@@ -1195,7 +1195,7 @@
     {
       "id": "q071",
       "type": "mc4",
-      "text": "زياد الرحباني، الملحّن والمسرحي، ابن أيّا مطربة؟",
+      "text": "الملحّن والمسرحي الراحل زياد الرحباني كان ابن أيّا مطربة؟",
       "options": [
         "صباح",
         "فيروز",
@@ -1205,8 +1205,8 @@
       "answer": 1,
       "topic": "music",
       "difficulty": 2,
-      "explain": "بيّو عاصي الرحباني.",
-      "source": "[VERIFY] Britannica 'Fairuz' / 'Ziad Rahbani' (son of Fairuz and Assi Rahbani)"
+      "explain": "بيّو عاصي الرحباني. وزياد عمل من موسيقى العيلة مسرح لاذع وبيموّت من الضحك.",
+      "source": "[VERIFY] Britannica 'Fairuz' / 'Ziad Rahbani' (son of Fairuz and Assi Rahbani; died July 2025)"
     },
     {
       "id": "q072",

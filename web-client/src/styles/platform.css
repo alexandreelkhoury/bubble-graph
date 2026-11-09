@@ -1,28 +1,9 @@
 /* JAMAA platform look shared by the phone and the /tv mock (JAMAA-PLATFORM §3.4 / §3.7, DESIGN-JAMAA §1.5–§2.6, §4):
-   world palettes, characters, posters and title lockups, how-to cards and the rules body.
-   JAMAA-GAP: lane A's `shared/src/worlds/palettes.ts` had not landed; the values below are DESIGN-JAMAA §1.5's table. */
+   world stage, characters, posters and title lockups, how-to cards and the rules body. */
 
-/* ------------------------------------------------------------------ worlds (§1.5 tokens) */
-:root, [data-world="night-market"] {
-  --w-deep: var(--color-bg); --w-top: var(--color-bg-top); --w-surface: var(--color-surface); --w-elevated: var(--color-elevated);
-  --w-accent: #FF4F9A; --w-accent-text: #FF7AB3; --w-on-accent: #120A1F; --w-glow: #FFC94D; --w-signal: #FFC94D;
-  --w-rgb-accent: 255 79 154; --w-rgb-glow: 255 201 77;
-}
-[data-world="hakawati-cafe"] {
-  --w-deep: #1C1209; --w-top: #2E1D0E; --w-surface: #33230F; --w-elevated: #4A3418;
-  --w-accent: #E9A23B; --w-accent-text: #E9A23B; --w-on-accent: #120A1F; --w-glow: #FFE3A3; --w-signal: #FF5A5F;
-  --w-rgb-accent: 233 162 59; --w-rgb-glow: 255 227 163;
-}
-[data-world="rooftop"] {
-  --w-deep: #071A24; --w-top: #0E2C3B; --w-surface: #0F2E3D; --w-elevated: #17404F;
-  --w-accent: #29D3C2; --w-accent-text: #29D3C2; --w-on-accent: #120A1F; --w-glow: #B8FFF6; --w-signal: #FFC94D;
-  --w-rgb-accent: 41 211 194; --w-rgb-glow: 184 255 246;
-}
-[data-world="quiz-studio"] {
-  --w-deep: #0A0F2E; --w-top: #141C52; --w-surface: #161D4A; --w-elevated: #222B63;
-  --w-accent: #5B7CFF; --w-accent-text: #8FA8FF; --w-on-accent: #120A1F; --w-glow: #FFD84D; --w-signal: #3DDC97;
-  --w-rgb-accent: 91 124 255; --w-rgb-glow: 255 216 77;
-}
+/* ------------------------------------------------------------------ worlds (§1.5 tokens)
+   The --w-* tokens of each [data-world] (and :root = night-market) are written at startup from
+   `@jamaa/shared/worlds` WORLD_PALETTES by src/lib/worlds.ts (installWorlds). */
 /* §1.5 "World stage": stageTop → deep, a top glow (world.glow 16 %) and an accent bounce (world.accent 12 %). */
 [data-world] {
   --w-stage:

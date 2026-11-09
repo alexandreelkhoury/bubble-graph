@@ -1,0 +1,9 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "101",
+  "a": {
+    "type": "OPEN_GAME",
+    "gameId": "trivia"
+  }
+}

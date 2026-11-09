@@ -158,6 +158,12 @@ h1:focus, h1:focus-visible { outline: none; }
 .avatar--out .avatar__tile, .avatar--left .avatar__tile { filter: grayscale(1); opacity: 0.45; }
 .avatar--speaking .avatar__tile { box-shadow: 0 0 0 4px var(--color-primary), var(--glow-primary); animation: breathe 1.6s ease-in-out infinite; }
 @keyframes breathe { 50% { transform: scale(1.03); } }
+/* ≥ 40 px: the character is the avatar (DESIGN-JAMAA §4.1); the badges of DESIGN §5.2 stay on top. */
+/* The character SVG keeps padding for the crown and bursts; scale it so the body fills the box like the old tile did. */
+.avatar--char > .ch { width: 100%; height: 100%; scale: 1.3; transform-origin: 50% 62%; transition: filter var(--motion-base), opacity var(--motion-base); }
+.avatar--out.avatar--char > .ch, .avatar--left.avatar--char > .ch { filter: grayscale(1); opacity: 0.45; }
+.avatar--speaking.avatar--char > .ch { filter: drop-shadow(0 0 6px rgb(var(--rgb-primary) / 0.95)) drop-shadow(0 0 16px rgb(var(--rgb-primary) / 0.5)); animation: breathe 1.6s ease-in-out infinite; }
+.avatar--char .badge--host { top: -4%; inset-inline-start: -4%; }
 .badge {
   position: absolute; display: grid; place-items: center; width: var(--badge-size); height: var(--badge-size);
   border-radius: 50%; box-shadow: 0 0 0 2px var(--color-bg); color: var(--color-ink);

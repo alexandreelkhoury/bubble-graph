@@ -61,14 +61,14 @@ describe("gen-sounds", () => {
     const games = await loadGameCues();
     expect(Object.keys(games)).toEqual([...GAME_IDS]);
     const dir = mkdtempSync(join(tmpdir(), "gen-sounds-cues-"));
-    for (const g of GAME_IDS) writeFileSync(join(dir, `${g}.mjs`), g === "trivia" ? `export const CUES = [{ id: "trivia.lightsOn", bus: "sfx", seconds: 0.2, targetDb: -20, render() {} }];` : "export const CUES = [];");
+    for (const g of GAME_IDS) writeFileSync(join(dir, `${g}.mjs`), g === "trivia" ? `export const CUES = [{ id: "trivia.fixtureOnly", bus: "sfx", seconds: 0.2, targetDb: -20, render() {} }];` : "export const CUES = [];");
     const loaded = await loadGameCues(dir);
-    expect(loaded.trivia.map((c) => c.id)).toEqual(["trivia.lightsOn"]);
-    expect(soundCuesKt("trivia", loaded.trivia)).toContain(`"trivia.lightsOn" to R.raw.trivia_lights_on,`);
+    expect(loaded.trivia.map((c) => c.id)).toEqual(["trivia.fixtureOnly"]);
+    expect(soundCuesKt("trivia", loaded.trivia)).toContain(`"trivia.fixtureOnly" to R.raw.trivia_fixture_only,`);
     expect(soundCuesKt("trivia", loaded.trivia)).toContain("package app.jamaa.tv.games.trivia");
-    expect(JSON.parse(cueIndex(loaded.trivia, null))).toEqual({ generatedBy: "tools/gen-sounds", cues: { "trivia.lightsOn": "trivia_lights_on" } });
+    expect(JSON.parse(cueIndex(loaded.trivia, null))).toEqual({ generatedBy: "tools/gen-sounds", cues: { "trivia.fixtureOnly": "trivia_fixture_only" } });
     // A missing generated game file is reported.
-    expect(verify(root, loaded).some((p) => p.includes("trivia_lights_on.ogg is missing"))).toBe(true);
+    expect(verify(root, loaded).some((p) => p.includes("trivia_fixture_only.ogg is missing"))).toBe(true);
     const bad = mkdtempSync(join(tmpdir(), "gen-sounds-bad-"));
     for (const g of GAME_IDS) writeFileSync(join(bad, `${g}.mjs`), g === "bluff" ? `export const CUES = [{ id: "trivia.x", bus: "sfx", seconds: 0.1, targetDb: -20, render() {} }];` : "export const CUES = [];");
     await expect(loadGameCues(bad)).rejects.toThrow('must start with "bluff."');

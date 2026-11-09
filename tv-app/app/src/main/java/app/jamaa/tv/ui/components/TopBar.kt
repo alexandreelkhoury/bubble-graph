@@ -54,7 +54,7 @@ fun TopBar(
 ) {
     val type = JamaaTheme.type
     val start = if (view.phase == Phase.ROLE_REVEAL || view.round == 0) {
-        stringResource(R.string.game__label, view.gameNumber)
+        stringResource(R.string.common__game_number, view.gameNumber)
     } else {
         stringResource(R.string.round__label, view.round) + "  ·  " + (phaseOverride ?: stringResource(phaseNameRes(view.phase)))
     }

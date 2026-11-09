@@ -215,7 +215,7 @@ export function TvHub({ view, portalOut, onOpen }: { view: TvRoomView; portalOut
           const isF = g.id === focused;
           return (
             <button key={g.id} type="button" role="option" aria-selected={isF} ref={(el) => { posterRefs.current[g.id] = el; }}
-              class={`tvposter${isF ? " is-focused" : ""}${jump ? " no-anim" : ""}`} data-game={g.id} data-poster-focus={isF ? "" : undefined}
+              class={`tvposter${isF ? " is-focused" : ""}${jump ? " no-anim" : ""}`} data-game={g.id} data-poster-focus={isF ? "" : undefined} data-default-focus={isF ? true : undefined}
               data-side={i < fi ? "start" : i > fi ? "end" : "self"}
               style={{ "--x": `${24 + pos * STEP}px` }}
               tabIndex={isF ? 0 : -1}

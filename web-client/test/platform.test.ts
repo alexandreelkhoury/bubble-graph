@@ -9,8 +9,8 @@ import { GAME_META } from "@jamaa/shared/games/meta";
 import type { RoomPublic, RoomSetup } from "@jamaa/shared/protocol/v2";
 import { carouselPos, readingDir } from "../src/tv-mock/tvHub";
 import { keyVerdict, transitionFor } from "../src/tv-mock/tvPlatform";
-import { ENTRANCE, PORTAL, endMs, sample, scaled, spring, variant } from "../src/motion/choreo";
-import { EXPRESSIONS, FEATURES, REACTION_BURST } from "../src/characters/data";
+import { CHOREO, PORTAL_REPEAT_SCALE, endMs, run, sample, scaled, variant } from "@jamaa/shared/motion";
+import { EXPRESSIONS, EXPRESSION_FEATURES, REACTION_BURST, REACTION_EXPRESSION } from "@jamaa/shared/characters";
 import { expressionOf } from "../src/components/Character";
 import { cupStandings, starsOfLast } from "../src/platform/Cup";
 import { basicRows } from "../src/lib/gameSettings";
@@ -60,26 +60,38 @@ describe("§3.10 E TV input rule", () => {
   });
 });
 
-describe("§3.8 choreography sampler + §3.10 A/B timings", () => {
-  it("the portal lasts 1 100 ms the first time and 700 ms (× 0.64) after", () => {
-    expect(endMs(PORTAL, 3)).toBe(1100 + 120);
-    expect(Math.round(endMs(scaled(PORTAL, 0.64)))).toBe(Math.round(0.64 * 1100));
+describe("§3.8 shared choreography (@jamaa/shared/motion) + §3.10 A/B timings", () => {
+  const PORTAL = CHOREO.portal, ENTRANCE = CHOREO.entrance;
+  it("the portal lasts 1 100 ms the first time and about 700 ms (× 0.64) after", () => {
+    expect(endMs(PORTAL, 3)).toBe(1100); // three panes staggered by 60 ms
+    expect(Math.abs(endMs(scaled(PORTAL, PORTAL_REPEAT_SCALE), 3) - 700)).toBeLessThan(10);
   });
   it("the entrance fits in 2 000 ms with up to 12 characters (the server grace is 2 500 ms)", () => {
     expect(endMs(ENTRANCE)).toBeLessThanOrEqual(2000);
     expect(endMs(ENTRANCE, 12)).toBeLessThanOrEqual(2500);
   });
-  it("samples 0 → 1, with an overshooting spring that lands exactly on 1", () => {
+  it("samples 0 → 1, ease.decel is past half-way at mid-time", () => {
     const s = PORTAL.find((x) => x.id === "arch")!;
     expect(sample(s, 0)).toBe(0);
     expect(sample(s, 10_000)).toBe(1);
-    const mid = sample(s, s.startMs + s.durationMs / 2);
-    expect(mid).toBeGreaterThan(0.5); // ease.decel
-    expect(spring("spring.bouncy", 1)).toBe(1);
-    expect(Math.max(...Array.from({ length: 50 }, (_, i) => spring("spring.bouncy", i / 50)))).toBeGreaterThan(1);
+    expect(sample(s, s.startMs + s.durationMs / 2)).toBeGreaterThan(0.5);
   });
   it("calm motion selects the 150 ms crossfade", () => {
     expect(variant(PORTAL, { reduced: true }).map((s) => [s.id, s.durationMs])).toEqual([["fade", 150]]);
+  });
+  it("the runner: complete() jumps to the end state once and calls onDone once (the OK rule)", () => {
+    const frames: number[] = [];
+    let done = 0;
+    let pending: ((t: number) => void) | null = null;
+    const clock = { request: (cb: (t: number) => void) => { pending = cb; return 1; }, cancel: () => { pending = null; } };
+    const r = run(PORTAL, (p) => frames.push(p("arch")), () => done++, 1, clock);
+    expect(frames).toEqual([0]);
+    (pending as unknown as (t: number) => void)(0);
+    r.complete();
+    r.complete();
+    expect(frames.at(-1)).toBe(1);
+    expect(done).toBe(1);
+    expect(r.running).toBe(false);
   });
   it("the arch path grows from the poster to a box that covers the canvas", () => {
     const from = { x: 72, y: 82, w: 227, h: 313 };
@@ -96,12 +108,12 @@ describe("§3.8 choreography sampler + §3.10 A/B timings", () => {
 describe("§3.7 characters", () => {
   it("has the 13 expressions, each with features", () => {
     expect(EXPRESSIONS).toHaveLength(13);
-    for (const e of EXPRESSIONS) expect(FEATURES[e].length).toBeGreaterThan(0);
+    for (const e of EXPRESSIONS) expect(EXPRESSION_FEATURES[e].length).toBeGreaterThan(0);
   });
   it("every reaction is an expression and has an icon burst", () => {
     for (const r of REACTIONS) {
-      expect(EXPRESSIONS as readonly string[]).toContain(r);
-      expect(REACTION_BURST[r]).toBeTruthy();
+      expect(EXPRESSIONS as readonly string[]).toContain(REACTION_EXPRESSION[r]);
+      expect(REACTION_BURST[r]).toMatch(/^burst\./);
     }
   });
   it("expressions read only the public view: away → reaction → done → think → idle", () => {
@@ -180,8 +192,8 @@ describe("room socket URL (partysocket layout)", () => {
 });
 
 describe("§2.1 phone bundle guard (web-client/src)", () => {
-  // JAMAA-GAP: the spec puts this in an eslint no-restricted-imports rule in the root config (lane A); until it lands,
-  // this test enforces the same list over web-client/src (type-only imports stay allowed).
+  // The root eslint config carries the same rule (no-restricted-imports on web-client/src); this test keeps the list
+  // enforced even when lint is not run (type-only imports stay allowed).
   const BANNED = [/@jamaa\/shared\/games\/registry/, /@jamaa\/shared\/games\/[a-z]+\/definition/, /\/engine["']/, /@jamaa\/shared\/engine["']/, /@jamaa\/shared\/content["']/, /["']zod["']/, /\/content["']/];
   const files: string[] = [];
   const walk = (d: string): void => {
@@ -212,5 +224,21 @@ describe("lazy per-game metas (phone budget)", () => {
       expect(WORLD_OF[id]).toBe(GAME_META[id].rules.world);
       expect(await ensureMeta(id)).toBe(GAME_META[id]);
     }
+  });
+});
+
+describe("§3.4 world palettes from @jamaa/shared/worlds", () => {
+  it("builds every world's web tokens (virtual:jamaa-worlds.css) (night-market is also :root), with rgb triplets for the glows", async () => {
+    const { WORLD_IDS, worldColor } = await import("@jamaa/shared/worlds");
+    const { worldCss } = await import("../src/lib/worlds");
+    const css = worldCss(WORLD_IDS, worldColor);
+    for (const w of WORLD_IDS) {
+      expect(css).toContain(`[data-world="${w}"]`);
+      expect(css).toContain(`--w-accent:${worldColor(w, "accent", "web")}`);
+      expect(css).toContain(`--w-deep:${worldColor(w, "deep", "web")}`);
+    }
+    expect(css).toMatch(/^:root,\[data-world="night-market"\]\{--w-deep:#1D1036;/);
+    expect(css).toContain("--w-rgb-accent:41 211 194"); // rooftop #29D3C2
+    expect(css).not.toContain("null");
   });
 });

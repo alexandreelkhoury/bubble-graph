@@ -1,18 +1,26 @@
-// JAMAA-PLATFORM §5.2: this game's content adapter. STUB created in P (no packs yet; `content/<id>/` is empty); the G
-// lane of this game replaces it with its pack schema (game doc §11).
+// JAMAA-PLATFORM §5.2 / §4.4: Trivia's content adapter (server, sim and tests only). Tiers are PACK-level
+// (GAME-TRIVIA §2): a free quiz is playable everywhere; a Pass-only quiz needs the Pass or its `pack_<family>` purchase.
+// A quiz the room may not play is dropped whole, so it never reaches a free room's clients (§13.3 invariant 5).
 import type { ContentAdapter, PackMeta } from "../../content/types";
+import { familyOf, languageOf } from "./engine/quiz";
+import type { TriviaPack } from "./engine/types";
+import type { TriviaSettings } from "./meta";
+import { toTriviaPack } from "./schema";
 
-/** Stub pack type: no pack of this game exists yet. */
-export type StubPack = never;
+export type { TriviaPack };
 
-export const content: ContentAdapter<StubPack> = {
-  parse(): StubPack {
-    throw new Error("no content schema yet (stub game)");
+export const content: ContentAdapter<TriviaPack, TriviaSettings> = {
+  parse(raw: unknown): TriviaPack {
+    return toTriviaPack(raw);
   },
-  meta(p: StubPack): PackMeta {
-    return p;
+  meta(p: TriviaPack): PackMeta {
+    return {
+      id: p.id, family: familyOf(p), gameId: "trivia", languages: [languageOf(p)], locale: p.locale, title: p.title,
+      ageRating: p.ageRating, tier: p.tier, itemCount: p.questions.length, freeItemCount: p.tier === "free" ? p.questions.length : 0,
+      stars: p.stars, domain: p.domain, topics: [...p.topics],
+    };
   },
-  playable(p: StubPack): StubPack | null {
-    return p;
+  playable(p, a) {
+    return p.tier === "free" || a.premium || a.ownedFamilies.has(familyOf(p)) ? p : null;
   },
 };

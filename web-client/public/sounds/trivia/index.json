@@ -1,0 +1,14 @@
+{
+  "generatedBy": "tools/gen-sounds",
+  "cues": {
+    "trivia.lightsOn": "trivia_lights_on",
+    "trivia.slam": "trivia_slam",
+    "trivia.tileFlip": "trivia_tile_flip",
+    "trivia.timeUp": "trivia_time_up",
+    "trivia.zap": "trivia_zap",
+    "trivia.flame": "trivia_flame",
+    "trivia.genius": "trivia_genius",
+    "trivia.finalQuestion": "trivia_final_question",
+    "trivia.podium": "trivia_podium"
+  }
+}

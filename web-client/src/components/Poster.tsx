@@ -5,7 +5,7 @@ import type { GameId } from "@jamaa/shared/games/ids";
 import type { Locale } from "@jamaa/shared/constants";
 import { t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
-import type { Expression } from "../characters/data";
+import type { Expression } from "@jamaa/shared/characters";
 import { Character } from "./Character";
 
 /** Three characters acting each game (DESIGN-JAMAA §2.2 "Art"). */

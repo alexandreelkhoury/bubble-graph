@@ -1,0 +1,13 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "3",
+  "a": {
+    "type": "GAME",
+    "gameId": "bluff",
+    "i": {
+      "type": "VOTE",
+      "optionId": "9c01d2e3"
+    }
+  }
+}

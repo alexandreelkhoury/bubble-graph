@@ -1,0 +1,11 @@
+{
+  "generatedBy": "tools/gen-sounds",
+  "cues": {
+    "bluff.envelope": "bluff_envelope",
+    "bluff.tok": "bluff_tok",
+    "bluff.stampLie": "bluff_stamp_lie",
+    "bluff.like": "bluff_like",
+    "bluff.noTruth": "bluff_no_truth",
+    "bluff.award": "bluff_award"
+  }
+}

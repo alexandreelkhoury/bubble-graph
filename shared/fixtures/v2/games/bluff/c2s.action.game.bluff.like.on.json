@@ -1,0 +1,14 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "4",
+  "a": {
+    "type": "GAME",
+    "gameId": "bluff",
+    "i": {
+      "type": "LIKE",
+      "optionId": "9c01d2e3",
+      "on": true
+    }
+  }
+}

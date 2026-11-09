@@ -9,8 +9,7 @@ import { fmtNum, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { TV_GAMES } from "../games/tvLoaders";
 import type { TvGameModule } from "../games/types";
-import { POINTS } from "../motion/choreo";
-import { run } from "../motion/runner";
+import { CHOREO, run } from "@jamaa/shared/motion";
 import { reduced } from "../lib/motion";
 import { billingEnabled } from "../lib/billingFlag";
 import { Icon } from "../components/Icon";
@@ -18,7 +17,7 @@ import { Character } from "../components/Character";
 import { cupStandings, starsOfLast } from "../platform/Cup";
 import { backHintOn } from "./tvParts";
 import { tvAct } from "./tvStore";
-import { armGuard, resultsSettled, setChoreo } from "./tvPlatform";
+import { armGuard, clearChoreo, resultsSettled, setChoreo } from "./tvPlatform";
 import { soundCue } from "./sound/controller";
 
 export const HINT_AFTER_PHASE_MS = 3000;
@@ -116,16 +115,17 @@ export function ResultsBar({ view }: { view: TvRoomView }) {
     const el = root.current;
     soundCue("coin_fly");
     const tickAt = setTimeout(() => soundCue("counter_tick"), 450 + 70 * (flights.length - 1));
-    const r = run(POINTS, (p) => {
-      el?.querySelectorAll<HTMLElement>(".tvflight").forEach((f, i) => f.style.setProperty("--p", String(p("coin", i))));
+    // §3.10 D: the stars fly (CHOREO.cup "star") and the counters tick with the points "counter" step.
+    const r = run([...CHOREO.cup, ...CHOREO.points.filter((s) => s.id === "counter")], (p) => {
+      el?.querySelectorAll<HTMLElement>(".tvflight").forEach((f, i) => f.style.setProperty("--p", String(p("star", i))));
       el?.style.setProperty("--tick", String(p("counter")));
       el?.querySelectorAll<HTMLElement>("[data-count]").forEach((c) => {
         const from = Number(c.dataset.from), to = Number(c.dataset.count);
         c.textContent = fmtNum(Math.round(from + (to - from) * p("counter")));
       });
-    }, () => { setChoreo(null); setReady(true); armGuard(); soundCue("cup_star"); }, flights.length);
+    }, () => { clearChoreo(r); setReady(true); armGuard(); soundCue("cup_star"); }, flights.length);
     setChoreo(r);
-    return () => { clearTimeout(tickAt); r.cancel(); setChoreo(null); };
+    return () => { clearTimeout(tickAt); r.cancel(); clearChoreo(r); };
   }, [shown]);
   useEffect(() => {
     if (!ready) return;
@@ -140,7 +140,7 @@ export function ResultsBar({ view }: { view: TvRoomView }) {
       <div class="tvresultsbar__cup" aria-label={t("cup.title")}>
         <span class="tvresultsbar__title"><Icon name="trophy" size={22} />{t("cup.title")}</span>
         <ol class="tvresultsbar__rows">
-          {rows.slice(0, 4).map((r, i) => (
+          {rows.slice(0, 3).map((r, i) => (
             <li key={r.id} class="tvresultsbar__row" style={{ "--rank": i }}>
               <Character color={r.color} size={40} expression={i === 0 && r.stars > 0 ? "cheer" : (earned[r.id] ?? 0) > 0 ? "happy" : "idle"} crown={i === 0 && r.stars > 0} />
               <span class="tvresultsbar__stars tnum"><Icon name="star" size={18} />
@@ -149,15 +149,15 @@ export function ResultsBar({ view }: { view: TvRoomView }) {
           ))}
         </ol>
       </div>
-      {!reduced() && flights.map((pid, i) => (
+      {!reduced() && !ready && flights.map((pid, i) => (
         <span key={i} class="tvflight" style={{ "--i": i, "--dx": `${(i % 5) * 18 - 36}px` }} aria-hidden="true"><Icon name="star" size={22} /></span>
       ))}
       {hook && <p class="tvt-caption tv-muted tvresultsbar__hook"><Icon name="gem" size={18} />{t("pass.resultsHook")}</p>}
       <div class="tvresultsbar__actions">
         <button type="button" ref={playRef} class="tvbtn tvbtn--primary" data-default-focus={ready ? true : undefined} data-replay tabIndex={ready ? 0 : -1}
           onClick={() => { if (ready) tvAct({ type: "REPLAY" }); }}><Icon name="refresh" />{t("results.playAgain")}</button>
-        <button type="button" class="tvbtn" data-back-setup tabIndex={ready ? 0 : -1} onClick={() => { if (ready) tvAct({ type: "BACK_TO_SETUP" }); }}><Icon name="settings" />{t("results.changeSettings")}</button>
-        <button type="button" class="tvbtn" data-back-hub tabIndex={ready ? 0 : -1} onClick={() => { if (ready) tvAct({ type: "BACK_TO_HUB" }); }}><Icon name="grid" />{t("cup.otherGames")}</button>
+        <button type="button" class="tvbtn" data-back-setup tabIndex={ready ? 0 : -1} onClick={() => { if (ready) tvAct({ type: "BACK_TO_SETUP" }); }}>{t("results.changeSettings")}</button>
+        <button type="button" class="tvbtn" data-back-hub tabIndex={ready ? 0 : -1} onClick={() => { if (ready) tvAct({ type: "BACK_TO_HUB" }); }}>{t("cup.otherGames")}</button>
       </div>
     </div>
   );

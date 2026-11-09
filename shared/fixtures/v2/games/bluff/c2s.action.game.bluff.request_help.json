@@ -1,0 +1,13 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "2",
+  "a": {
+    "type": "GAME",
+    "gameId": "bluff",
+    "i": {
+      "type": "REQUEST_HELP",
+      "promptId": "3fa2b0c1"
+    }
+  }
+}

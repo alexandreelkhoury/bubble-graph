@@ -6,3 +6,4 @@ export * from "./scoring";
 export * from "./draw";
 export * from "./reduce";
 export * from "./invariants";
+export * from "./view";

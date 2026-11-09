@@ -1,0 +1,7 @@
+{
+  "v": 2,
+  "t": "error",
+  "code": "ALREADY_ANSWERED",
+  "messageKey": "error.alreadyAnswered",
+  "ref": "103"
+}

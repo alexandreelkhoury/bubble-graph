@@ -1,0 +1,2682 @@
+{
+  "schemaVersion": 1,
+  "id": "likely-spicy",
+  "game": "likely",
+  "title": {
+    "en": "After Midnight",
+    "fr": "Après minuit",
+    "ar": "بعد نصّ الليل",
+    "es": "Después de medianoche"
+  },
+  "description": {
+    "en": "Crushes, dates and bold moves. Suggestive, never explicit. 18+.",
+    "fr": "Béguins, rencards et coups d'audace. Coquin, jamais cru. 18+.",
+    "ar": "غرام، مواعيد وحركات جريئة. بتلمّح وما بتفضح. +18.",
+    "es": "Flechazos, citas y jugadas atrevidas. Pícaro, nunca explícito. +18."
+  },
+  "locales": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "adult",
+  "cards": [
+    {
+      "id": "spc-001",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "party"
+      ],
+      "prompt": {
+        "en": "kiss {player} at midnight on New Year's Eve",
+        "fr": "d'embrasser {player} à minuit le soir du Nouvel An",
+        "ar": "يبوس {player} عنص الليل براس السنة",
+        "es": "besar a {player} a medianoche en Nochevieja"
+      },
+      "award": {
+        "en": "Midnight Award",
+        "fr": "Prix de minuit",
+        "ar": "جايزة نص الليل",
+        "es": "Premio Medianoche"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-002",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "have a secret crush on {player}",
+        "fr": "d'avoir un faible secret pour {player}",
+        "ar": "يكون مغروم بـ{player} بالسرّ",
+        "es": "tener un crush secreto con {player}"
+      },
+      "award": {
+        "en": "Secret Crush Award",
+        "fr": "Prix du béguin secret",
+        "ar": "جايزة الحب السرّي",
+        "es": "Premio Amor Secreto"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-003",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "slow-dance with {player} at a wedding",
+        "fr": "de danser un slow avec {player} à un mariage",
+        "ar": "يرقص سلو مع {player} بعرس",
+        "es": "bailar una lenta con {player} en una boda"
+      },
+      "award": {
+        "en": "Slow Dance Award",
+        "fr": "Prix du slow",
+        "ar": "جايزة السلو",
+        "es": "Premio Baile Lento"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-004",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "flirt with {player} without even noticing",
+        "fr": "de draguer {player} sans même s'en rendre compte",
+        "ar": "يغازل {player} بلا ما ينتبه",
+        "es": "ligar con {player} sin darse ni cuenta"
+      },
+      "award": {
+        "en": "Accidental Charm Award",
+        "fr": "Prix du charme involontaire",
+        "ar": "جايزة الغزل بالغلط",
+        "es": "Premio Ligue sin Querer"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-005",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "write a love song about {player}",
+        "fr": "d'écrire une chanson d'amour sur {player}",
+        "ar": "يكتب غنية حب عن {player}",
+        "es": "escribirle una canción de amor a {player}"
+      },
+      "award": {
+        "en": "Ballad Award",
+        "fr": "Prix de la ballade",
+        "ar": "جايزة الأغنية",
+        "es": "Premio Balada"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-006",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "go on a blind date with {player} without realising",
+        "fr": "d'avoir un rendez-vous à l'aveugle avec {player} sans le savoir",
+        "ar": "يطلع بموعد أعمى مع {player} وما يعرف إلا بالآخر",
+        "es": "tener una cita a ciegas con {player} sin darse cuenta"
+      },
+      "award": {
+        "en": "Blind Date Award",
+        "fr": "Prix du rendez-vous mystère",
+        "ar": "جايزة الموعد الأعمى",
+        "es": "Premio Cita a Ciegas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-007",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "steal {player}'s hoodie and never give it back",
+        "fr": "de piquer le sweat de {player} et ne jamais le rendre",
+        "ar": "يسرق كنزة {player} وما يرجّعها أبداً",
+        "es": "robarle la sudadera a {player} y no devolverla nunca"
+      },
+      "award": {
+        "en": "Hoodie Thief Award",
+        "fr": "Prix du sweat volé",
+        "ar": "جايزة الكنزة المسروقة",
+        "es": "Premio Sudadera Robada"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-008",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "stare at their crush a little too long",
+        "fr": "de regarder son béguin un peu trop longtemps",
+        "ar": "يبحلق بالشخص اللي عاجبو أكتر من اللزوم",
+        "es": "quedarse mirando a su crush un poco demasiado"
+      },
+      "award": {
+        "en": "Long Look Award",
+        "fr": "Prix du regard insistant",
+        "ar": "جايزة البحلقة",
+        "es": "Premio Mirada Larga"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-009",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "plan a surprise date for {player}",
+        "fr": "d'organiser un rendez-vous surprise pour {player}",
+        "ar": "يحضّر موعد مفاجأة لـ{player}",
+        "es": "organizarle una cita sorpresa a {player}"
+      },
+      "award": {
+        "en": "Big Gesture Award",
+        "fr": "Prix du grand geste",
+        "ar": "جايزة الحركة الكبيرة",
+        "es": "Premio Gran Gesto"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-010",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "send {player} a 2 a.m. voice note and regret it",
+        "fr": "d'envoyer un vocal à {player} à 2 h du matin et de le regretter",
+        "ar": "يبعت لـ{player} فويس الساعة 2 الصبح ويندم",
+        "es": "mandarle un audio a {player} a las 2 de la mañana y arrepentirse"
+      },
+      "award": {
+        "en": "2 a.m. Award",
+        "fr": "Prix de 2 h du mat",
+        "ar": "جايزة الساعة 2",
+        "es": "Premio de las 2 a. m."
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-011",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "check an ex's profile at 2 in the morning",
+        "fr": "d'aller voir le profil d'un ex à 2 h du matin",
+        "ar": "يفوت عبروفايل الإكس الساعة 2 الصبح",
+        "es": "mirar el perfil de su ex a las 2 de la mañana"
+      },
+      "award": {
+        "en": "Night Detective Award",
+        "fr": "Prix du détective de nuit",
+        "ar": "جايزة التحرّي الليلي",
+        "es": "Premio Detective Nocturno"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-012",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "lie about their age on a dating app",
+        "fr": "de mentir sur son âge sur une appli de rencontre",
+        "ar": "يكذب بعمرو عتطبيق تعارف",
+        "es": "mentir sobre su edad en una app de citas"
+      },
+      "award": {
+        "en": "Forever 25 Award",
+        "fr": "Prix des éternels 25 ans",
+        "ar": "جايزة الـ25 عالدوام",
+        "es": "Premio Eternos 25"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-013",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "fall head over heels in a single evening",
+        "fr": "d'avoir un coup de foudre en une seule soirée",
+        "ar": "ينغرم من سهرة وحدة",
+        "es": "enamorarse en una sola noche"
+      },
+      "award": {
+        "en": "Love at First Sight Award",
+        "fr": "Prix du coup de foudre",
+        "ar": "جايزة الحب من أوّل نظرة",
+        "es": "Premio Flechazo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-014",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "have a secret playlist for date night",
+        "fr": "d'avoir une playlist secrète pour les rendez-vous",
+        "ar": "يكون عندو بلايليست سرّية للمواعيد",
+        "es": "tener una playlist secreta para las citas"
+      },
+      "award": {
+        "en": "Mood Music Award",
+        "fr": "Prix de l'ambiance tamisée",
+        "ar": "جايزة الجوّ الرايق",
+        "es": "Premio Música de Cita"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-015",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "text \"I miss you\" to the wrong person",
+        "fr": "d'envoyer « tu me manques » à la mauvaise personne",
+        "ar": "يبعت «اشتقتلك» للشخص الغلط",
+        "es": "mandar «te echo de menos» a la persona equivocada"
+      },
+      "award": {
+        "en": "Wrong Inbox Award",
+        "fr": "Prix du mauvais destinataire",
+        "ar": "جايزة الرقم الغلط",
+        "es": "Premio Destinatario Equivocado"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-016",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "still keep a love letter from school",
+        "fr": "de garder encore une lettre d'amour du collège",
+        "ar": "بعدو مخبّي مكتوب حب من أيام المدرسة",
+        "es": "guardar todavía una carta de amor del colegio"
+      },
+      "award": {
+        "en": "Time Capsule Award",
+        "fr": "Prix de la capsule temporelle",
+        "ar": "جايزة الذكريات",
+        "es": "Premio Cápsula del Tiempo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-017",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "get back with an ex \"just to talk\"",
+        "fr": "de revoir un ex « juste pour parler »",
+        "ar": "يرجع يشوف الإكس «بس لنحكي»",
+        "es": "volver a quedar con su ex «solo para hablar»"
+      },
+      "award": {
+        "en": "Boomerang Award",
+        "fr": "Prix boomerang",
+        "ar": "جايزة البومرانغ",
+        "es": "Premio Bumerán"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-018",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "kiss on the first date",
+        "fr": "d'embrasser dès le premier rendez-vous",
+        "ar": "يبوس من أوّل موعد",
+        "es": "besar en la primera cita"
+      },
+      "award": {
+        "en": "First Date Award",
+        "fr": "Prix du premier rendez-vous",
+        "ar": "جايزة أوّل موعد",
+        "es": "Premio Primera Cita"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-019",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "have the most chaotic love life story",
+        "fr": "d'avoir l'histoire amoureuse la plus chaotique",
+        "ar": "يكون عندو أكتر قصّة حب مخربطة",
+        "es": "tener la historia amorosa más caótica"
+      },
+      "award": {
+        "en": "Plot Twist Award",
+        "fr": "Prix du rebondissement",
+        "ar": "جايزة الحبكة",
+        "es": "Premio Giro de Guion"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-020",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "charm their way out of a parking ticket",
+        "fr": "d'éviter une amende de stationnement grâce à son charme",
+        "ar": "يزمط من ضبط سير بحلاوة لسانو",
+        "es": "librarse de una multa de aparcamiento a base de encanto"
+      },
+      "award": {
+        "en": "Charm Offensive Award",
+        "fr": "Prix de l'opération charme",
+        "ar": "جايزة اللسان الحلو",
+        "es": "Premio Operación Encanto"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-021",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "fall asleep on a date",
+        "fr": "de s'endormir pendant un rendez-vous",
+        "ar": "ينام بنص الموعد",
+        "es": "dormirse en una cita"
+      },
+      "award": {
+        "en": "Sleepy Date Award",
+        "fr": "Prix du rendez-vous somnifère",
+        "ar": "جايزة الموعد النعسان",
+        "es": "Premio Cita Somnífera"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-022",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "have a crush on a cartoon character",
+        "fr": "d'avoir le béguin pour un personnage de dessin animé",
+        "ar": "يكون مغروم بشخصية كرتون",
+        "es": "tener un crush con un personaje de dibujos animados"
+      },
+      "award": {
+        "en": "Animated Heart Award",
+        "fr": "Prix du cœur animé",
+        "ar": "جايزة القلب الكرتوني",
+        "es": "Premio Corazón Animado"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-023",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "travel"
+      ],
+      "prompt": {
+        "en": "propose on the very first trip together",
+        "fr": "de faire sa demande dès le premier voyage à deux",
+        "ar": "يطلب الإيد من أوّل سفرة سوا",
+        "es": "pedir matrimonio en el primer viaje en pareja"
+      },
+      "award": {
+        "en": "Fast Forward Award",
+        "fr": "Prix de l'avance rapide",
+        "ar": "جايزة التقديم السريع",
+        "es": "Premio Avance Rápido"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-024",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "send a bold text and blame autocorrect",
+        "fr": "d'envoyer un texto osé et d'accuser le correcteur",
+        "ar": "يبعت مسج جريء ويقول «الأوتوكوريكت»",
+        "es": "mandar un mensaje atrevido y culpar al corrector"
+      },
+      "award": {
+        "en": "Autocorrect Award",
+        "fr": "Prix du correcteur",
+        "ar": "جايزة التصحيح التلقائي",
+        "es": "Premio Autocorrector"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-101",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "set {player} up on a date without telling them",
+        "fr": "d'arranger un rencard à {player} sans prévenir",
+        "ar": "يرتّب موعد لـ{player} بلا ما يخبّرو",
+        "es": "organizarle una cita a {player} sin avisar"
+      },
+      "award": {
+        "en": "Cupid Award",
+        "fr": "Prix Cupidon",
+        "ar": "جايزة كيوبيد",
+        "es": "Premio Cupido"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-102",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "teach {player} a pickup line that actually works",
+        "fr": "d'apprendre à {player} une phrase de drague qui marche vraiment",
+        "ar": "يعلّم {player} جملة غزل بتزبط عن جد",
+        "es": "enseñarle a {player} una frase para ligar que funciona"
+      },
+      "award": {
+        "en": "Killer Line Award",
+        "fr": "Prix de la phrase qui tue",
+        "ar": "جايزة جملة الغزل",
+        "es": "Premio Frase Ganadora"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-103",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "give {player} love advice that totally backfires",
+        "fr": "de donner à {player} un conseil de drague qui tourne mal",
+        "ar": "يعطي {player} نصيحة بالحب بتطلع عكسية",
+        "es": "darle a {player} un consejo amoroso que sale fatal"
+      },
+      "award": {
+        "en": "Bad Advice Award",
+        "fr": "Prix du conseil foireux",
+        "ar": "جايزة النصيحة العكسية",
+        "es": "Premio Consejo Desastroso"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-104",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "serenade {player} under a balcony",
+        "fr": "de chanter une sérénade à {player} sous un balcon",
+        "ar": "يغنّي لـ{player} تحت البلكون",
+        "es": "darle una serenata a {player} bajo un balcón"
+      },
+      "award": {
+        "en": "Balcony Award",
+        "fr": "Prix du balcon",
+        "ar": "جايزة البلكون",
+        "es": "Premio Balcón"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-105",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "food"
+      ],
+      "prompt": {
+        "en": "try to win {player} over with a home-cooked dinner",
+        "fr": "de séduire {player} avec un dîner fait maison",
+        "ar": "يحاول يوقّع {player} بعشا من طبخ إيدو",
+        "es": "conquistar a {player} con una cena casera"
+      },
+      "award": {
+        "en": "Home Cooking Award",
+        "fr": "Prix du fait maison",
+        "ar": "جايزة طبخ البيت",
+        "es": "Premio Cocina Casera"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-106",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "call {player} \"habibi\" all night long",
+        "fr": "d'appeler {player} « mon cœur » toute la soirée",
+        "ar": "ينادي {player} «حياتي» طول السهرة",
+        "es": "llamar a {player} «cariño» toda la noche"
+      },
+      "award": {
+        "en": "Pet Name Award",
+        "fr": "Prix du petit nom",
+        "ar": "جايزة «حياتي»",
+        "es": "Premio Cariño"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-107",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "food"
+      ],
+      "prompt": {
+        "en": "share a dessert with {player} using one spoon",
+        "fr": "de partager un dessert avec {player} avec une seule cuillère",
+        "ar": "يتقاسم صحن حلو مع {player} بمعلقة وحدة",
+        "es": "compartir un postre con {player} con una sola cuchara"
+      },
+      "award": {
+        "en": "One Spoon Award",
+        "fr": "Prix de la cuillère partagée",
+        "ar": "جايزة المعلقة الوحدة",
+        "es": "Premio Una Cuchara"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-108",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "party"
+      ],
+      "prompt": {
+        "en": "win a giant teddy bear at the fair for {player}",
+        "fr": "de gagner une peluche géante à la fête foraine pour {player}",
+        "ar": "يربح دبدوب كبير بمدينة الملاهي لـ{player}",
+        "es": "ganar un peluche gigante en la feria para {player}"
+      },
+      "award": {
+        "en": "Fairground Award",
+        "fr": "Prix de la fête foraine",
+        "ar": "جايزة مدينة الملاهي",
+        "es": "Premio Feria"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-109",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "accidentally like {player}'s photo from three years ago",
+        "fr": "de liker par accident une photo de {player} vieille de trois ans",
+        "ar": "يعمل لايك بالغلط لصورة {player} من تلات سنين",
+        "es": "darle like sin querer a una foto de {player} de hace tres años"
+      },
+      "award": {
+        "en": "Deep Scroll Award",
+        "fr": "Prix du scroll profond",
+        "ar": "جايزة السكرول العميق",
+        "es": "Premio Scroll Profundo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-110",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "blush every time {player} says their name",
+        "fr": "de rougir chaque fois que {player} prononce son prénom",
+        "ar": "يحمرّ وجّو كل ما {player} يقول اسمو",
+        "es": "sonrojarse cada vez que {player} dice su nombre"
+      },
+      "award": {
+        "en": "Blush Award",
+        "fr": "Prix du rougissement",
+        "ar": "جايزة الخجل",
+        "es": "Premio Sonrojo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-111",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "send {player} a song that says it all",
+        "fr": "d'envoyer à {player} une chanson qui dit tout à sa place",
+        "ar": "يبعت لـ{player} غنية بتقول يلّي ما بينقال",
+        "es": "mandarle a {player} una canción que lo dice todo"
+      },
+      "award": {
+        "en": "Dedication Award",
+        "fr": "Prix de la dédicace",
+        "ar": "جايزة الإهدا",
+        "es": "Premio Dedicatoria"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-112",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "save {player}'s number with a heart emoji",
+        "fr": "d'enregistrer le numéro de {player} avec un cœur",
+        "ar": "يسيّف رقم {player} مع قلب أحمر",
+        "es": "guardar el número de {player} con un corazoncito"
+      },
+      "award": {
+        "en": "Heart Emoji Award",
+        "fr": "Prix de l'émoji cœur",
+        "ar": "جايزة القلب الأحمر",
+        "es": "Premio Emoji Corazón"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-113",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "plan a candlelit picnic with {player} and forget the matches",
+        "fr": "d'organiser un pique-nique aux bougies avec {player}, sans allumettes",
+        "ar": "يحضّر بيكنيك عالشمع مع {player} وينسى الكبريت",
+        "es": "preparar un pícnic con velas con {player} y olvidar el mechero"
+      },
+      "award": {
+        "en": "Forgotten Matches Award",
+        "fr": "Prix des allumettes oubliées",
+        "ar": "جايزة الكبريت",
+        "es": "Premio Mechero Olvidado"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-114",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "fake a phone call to rescue {player} from a bad date",
+        "fr": "de faire un faux appel pour sauver {player} d'un rencard raté",
+        "ar": "يعمل اتّصال مزيّف ليخلّص {player} من موعد بايخ",
+        "es": "hacer una llamada falsa para rescatar a {player} de una mala cita"
+      },
+      "award": {
+        "en": "Rescue Call Award",
+        "fr": "Prix de l'appel de secours",
+        "ar": "جايزة اتّصال الإنقاذ",
+        "es": "Premio Llamada de Rescate"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-115",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "kiss {player}'s hand like in an old black-and-white film",
+        "fr": "de faire un baisemain à {player} comme dans un vieux film",
+        "ar": "يبوس إيد {player} متل أفلام الأبيض والأسود",
+        "es": "besarle la mano a {player} como en las pelis antiguas"
+      },
+      "award": {
+        "en": "Classic Cinema Award",
+        "fr": "Prix du baisemain",
+        "ar": "جايزة الأبيض والأسود",
+        "es": "Premio Cine Clásico"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-116",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "food"
+      ],
+      "prompt": {
+        "en": "lose a bet and owe {player} a dinner date",
+        "fr": "de perdre un pari et devoir un dîner en tête-à-tête à {player}",
+        "ar": "يخسر رهان ويصير مديون لـ{player} بعشوة",
+        "es": "perder una apuesta y deberle una cena a {player}"
+      },
+      "award": {
+        "en": "Lost Bet Award",
+        "fr": "Prix du pari perdu",
+        "ar": "جايزة الرهان",
+        "es": "Premio Apuesta Perdida"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-117",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "get matching keychains with {player}",
+        "fr": "d'avoir des porte-clés assortis avec {player}",
+        "ar": "يجيب ميداليتين متل بعض إلو ولـ{player}",
+        "es": "tener llaveros a juego con {player}"
+      },
+      "award": {
+        "en": "Matching Award",
+        "fr": "Prix du duo assorti",
+        "ar": "جايزة الميداليتين",
+        "es": "Premio A Juego"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-118",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "carry {player} over a puddle like in the movies",
+        "fr": "de porter {player} au-dessus d'une flaque comme au cinéma",
+        "ar": "يحمل {player} فوق جورة مي متل الأفلام",
+        "es": "llevar en brazos a {player} sobre un charco como en las pelis"
+      },
+      "award": {
+        "en": "Movie Moment Award",
+        "fr": "Prix du moment ciné",
+        "ar": "جايزة اللقطة السينمائية",
+        "es": "Premio Escena de Peli"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-119",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "learn {player}'s favourite song on guitar",
+        "fr": "d'apprendre la chanson préférée de {player} à la guitare",
+        "ar": "يتعلّم الغنية المفضّلة لـ{player} عالغيتار",
+        "es": "aprender a tocar a la guitarra la canción favorita de {player}"
+      },
+      "award": {
+        "en": "Guitar Award",
+        "fr": "Prix de la guitare",
+        "ar": "جايزة الغيتار",
+        "es": "Premio Guitarra"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-120",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "travel"
+      ],
+      "prompt": {
+        "en": "write {player}'s name in the sand",
+        "fr": "d'écrire le prénom de {player} dans le sable",
+        "ar": "يكتب اسم {player} عالرمل",
+        "es": "escribir el nombre de {player} en la arena"
+      },
+      "award": {
+        "en": "Sand Writing Award",
+        "fr": "Prix du sable",
+        "ar": "جايزة الرمل",
+        "es": "Premio Arena"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-121",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "challenge {player} to a dance-off that ends in a tango",
+        "fr": "de défier {player} en battle de danse qui finit en tango",
+        "ar": "يتحدّى {player} برقص وتخلص القصّة بتانغو",
+        "es": "retar a {player} a un duelo de baile que acaba en tango"
+      },
+      "award": {
+        "en": "Tango Award",
+        "fr": "Prix du tango",
+        "ar": "جايزة التانغو",
+        "es": "Premio Tango"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-122",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "share an umbrella with {player} and walk extra slowly",
+        "fr": "de partager un parapluie avec {player} en marchant très lentement",
+        "ar": "يتقاسم الشمسية مع {player} ويمشي عالخفيف",
+        "es": "compartir paraguas con {player} y caminar muy despacio"
+      },
+      "award": {
+        "en": "Umbrella Award",
+        "fr": "Prix du parapluie",
+        "ar": "جايزة الشمسية",
+        "es": "Premio Paraguas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-123",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "almost kiss {player} and get interrupted by a ringtone",
+        "fr": "de presque embrasser {player} avant qu'un téléphone sonne",
+        "ar": "يقرّب يبوس {player} ويرنّ التلفون",
+        "es": "casi besar a {player} hasta que suena un móvil"
+      },
+      "award": {
+        "en": "Bad Timing Award",
+        "fr": "Prix du mauvais timing",
+        "ar": "جايزة التوقيت الغلط",
+        "es": "Premio Mal Momento"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-124",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "teach {player} salsa, very very slowly",
+        "fr": "d'apprendre la salsa à {player}, très très lentement",
+        "ar": "يعلّم {player} السالسا، عالخفيف كتير",
+        "es": "enseñarle salsa a {player}, muy muy despacio"
+      },
+      "award": {
+        "en": "Salsa Lesson Award",
+        "fr": "Prix du cours de salsa",
+        "ar": "جايزة درس السالسا",
+        "es": "Premio Clase de Salsa"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-125",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "food"
+      ],
+      "prompt": {
+        "en": "steal {player}'s fries and call it flirting",
+        "fr": "de piquer les frites de {player} et appeler ça de la drague",
+        "ar": "يسرق بطاطا {player} ويقول «هيدا غزل»",
+        "es": "robarle las patatas a {player} y llamarlo ligar"
+      },
+      "award": {
+        "en": "Fry Thief Award",
+        "fr": "Prix des frites volées",
+        "ar": "جايزة البطاطا المسروقة",
+        "es": "Premio Patatas Robadas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-126",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "party"
+      ],
+      "prompt": {
+        "en": "spend the whole party talking to {player} in a corner",
+        "fr": "de passer toute la soirée à parler avec {player} dans un coin",
+        "ar": "يقضّي كل السهرة عم يحكي مع {player} بالزاوية",
+        "es": "pasarse toda la fiesta hablando con {player} en un rincón"
+      },
+      "award": {
+        "en": "Cosy Corner Award",
+        "fr": "Prix du petit coin",
+        "ar": "جايزة الزاوية",
+        "es": "Premio Rincón"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-127",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "party"
+      ],
+      "prompt": {
+        "en": "confess feelings to {player} during truth or dare",
+        "fr": "d'avouer ses sentiments à {player} pendant un action ou vérité",
+        "ar": "يعترف بمشاعرو لـ{player} بلعبة «حقيقة أو تحدّي»",
+        "es": "confesarle sus sentimientos a {player} jugando a verdad o reto"
+      },
+      "award": {
+        "en": "Confession Award",
+        "fr": "Prix de l'aveu",
+        "ar": "جايزة الاعتراف",
+        "es": "Premio Confesión"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-128",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "write {player} a poem and sign it \"anonymous\"",
+        "fr": "d'écrire un poème à {player} signé « anonyme »",
+        "ar": "يكتب قصيدة لـ{player} ويمضيها «مجهول»",
+        "es": "escribirle un poema a {player} firmado «anónimo»"
+      },
+      "award": {
+        "en": "Secret Poem Award",
+        "fr": "Prix du poème anonyme",
+        "ar": "جايزة القصيدة المجهولة",
+        "es": "Premio Poema Anónimo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-129",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "party"
+      ],
+      "prompt": {
+        "en": "pick {player} first for every team, \"for strategy\"",
+        "fr": "de choisir {player} en premier dans chaque équipe, « par stratégie »",
+        "ar": "يختار {player} أوّل واحد بكل فريق «لأسباب استراتيجية»",
+        "es": "elegir a {player} primero en cada equipo «por estrategia»"
+      },
+      "award": {
+        "en": "Strategic Reasons Award",
+        "fr": "Prix de la stratégie",
+        "ar": "جايزة الاستراتيجية",
+        "es": "Premio Estrategia"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-130",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "call a movie star \"the love of my life\"",
+        "fr": "d'appeler une star de cinéma « l'amour de ma vie »",
+        "ar": "يسمّي ممثّل مشهور «حبّ حياتي»",
+        "es": "llamar a una estrella de cine «el amor de mi vida»"
+      },
+      "award": {
+        "en": "Long-Distance Love Award",
+        "fr": "Prix de l'amour de loin",
+        "ar": "جايزة حبّ من بعيد",
+        "es": "Premio Amor a Distancia"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-131",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "food"
+      ],
+      "prompt": {
+        "en": "crush on the barista and order six coffees a day",
+        "fr": "d'avoir un faible pour le barista et prendre six cafés par jour",
+        "ar": "ينغرم بالباريستا ويطلب ست قهوات بالنهار",
+        "es": "colgarse del barista y pedir seis cafés al día"
+      },
+      "award": {
+        "en": "Sixth Coffee Award",
+        "fr": "Prix du sixième café",
+        "ar": "جايزة القهوة السادسة",
+        "es": "Premio Sexto Café"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-132",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "rehearse a love confession in the mirror",
+        "fr": "de répéter une déclaration d'amour devant le miroir",
+        "ar": "يتمرّن عاعتراف حبّ قدّام المراية",
+        "es": "ensayar una declaración de amor delante del espejo"
+      },
+      "award": {
+        "en": "Mirror Rehearsal Award",
+        "fr": "Prix du miroir",
+        "ar": "جايزة المراية",
+        "es": "Premio Espejo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-133",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "fall for someone's voice from a single voice note",
+        "fr": "de craquer pour une voix sur un simple vocal",
+        "ar": "ينغرم بصوت حدا من فويس واحد",
+        "es": "enamorarse de una voz por un solo audio"
+      },
+      "award": {
+        "en": "Sweet Voice Award",
+        "fr": "Prix de la voix",
+        "ar": "جايزة الصوت الحلو",
+        "es": "Premio Voz Bonita"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-134",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "bring a bouquet too big to fit through the door",
+        "fr": "d'offrir un bouquet si grand qu'il ne passe pas la porte",
+        "ar": "يجيب بوكيه ورد ما بيفوت من الباب",
+        "es": "regalar un ramo tan grande que no cabe por la puerta"
+      },
+      "award": {
+        "en": "Giant Bouquet Award",
+        "fr": "Prix du bouquet XXL",
+        "ar": "جايزة البوكيه",
+        "es": "Premio Ramo XXL"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-135",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "have a \"type\" that is always the same person",
+        "fr": "d'avoir un « genre » qui est toujours la même personne",
+        "ar": "يحبّ نفس النوع كل مرّة، متل نسخة طبق الأصل",
+        "es": "tener un «tipo» que siempre es la misma persona"
+      },
+      "award": {
+        "en": "Copy-Paste Award",
+        "fr": "Prix du copier-coller",
+        "ar": "جايزة النسخة طبق الأصل",
+        "es": "Premio Copia y Pega"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-136",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "future"
+      ],
+      "prompt": {
+        "en": "pick baby names on the third date",
+        "fr": "de choisir les prénoms des enfants au troisième rendez-vous",
+        "ar": "يختار أسامي الولاد من تالت موعد",
+        "es": "elegir nombres para los hijos en la tercera cita"
+      },
+      "award": {
+        "en": "Baby Names Award",
+        "fr": "Prix des prénoms",
+        "ar": "جايزة أسامي الولاد",
+        "es": "Premio Nombres de Bebé"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-137",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "flirt using only movie quotes",
+        "fr": "de draguer uniquement avec des répliques de films",
+        "ar": "يغازل بس بجمل من أفلام",
+        "es": "ligar solo con frases de películas"
+      },
+      "award": {
+        "en": "Movie Quote Award",
+        "fr": "Prix des répliques",
+        "ar": "جايزة جمل الأفلام",
+        "es": "Premio Frase de Peli"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-138",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "forget their own name when their crush says hi",
+        "fr": "d'oublier son propre prénom quand son crush dit bonjour",
+        "ar": "ينسى اسمو بس يسلّم عليه الشخص يلّي عاجبو",
+        "es": "olvidar su propio nombre cuando su crush le saluda"
+      },
+      "award": {
+        "en": "Mind Blank Award",
+        "fr": "Prix du trou noir",
+        "ar": "جايزة نسيان الاسم",
+        "es": "Premio Mente en Blanco"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-139",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "triple-text, then send a meme to play it cool",
+        "fr": "d'envoyer trois messages, puis un mème pour faire genre",
+        "ar": "يبعت تلات رسايل ورا بعض، وبعدين ميم ليعمل حالو «كول»",
+        "es": "mandar tres mensajes seguidos y luego un meme para disimular"
+      },
+      "award": {
+        "en": "Play It Cool Award",
+        "fr": "Prix du faux détachement",
+        "ar": "جايزة الكول",
+        "es": "Premio Relax Fingido"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-140",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "talk about their ex for an entire date",
+        "fr": "de parler de son ex pendant tout un rendez-vous",
+        "ar": "يحكي عن الإكس طول الموعد",
+        "es": "hablar de su ex durante toda la cita"
+      },
+      "award": {
+        "en": "Ex Files Award",
+        "fr": "Prix du dossier ex",
+        "ar": "جايزة ملفّ الإكس",
+        "es": "Premio Expediente Ex"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-141",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "travel"
+      ],
+      "prompt": {
+        "en": "fall for someone at the airport and change flights",
+        "fr": "de craquer pour quelqu'un à l'aéroport et changer de vol",
+        "ar": "ينغرم بحدا بالمطار ويغيّر رحلتو",
+        "es": "enamorarse en el aeropuerto y cambiar de vuelo"
+      },
+      "award": {
+        "en": "Change of Plans Award",
+        "fr": "Prix du vol changé",
+        "ar": "جايزة تغيير الرحلة",
+        "es": "Premio Cambio de Vuelo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-142",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "kiss someone in the rain like in a movie",
+        "fr": "d'embrasser quelqu'un sous la pluie comme au cinéma",
+        "ar": "يبوس حدا تحت الشتي متل الأفلام",
+        "es": "besar a alguien bajo la lluvia como en las pelis"
+      },
+      "award": {
+        "en": "Rain Kiss Award",
+        "fr": "Prix du baiser sous la pluie",
+        "ar": "جايزة بوسة الشتي",
+        "es": "Premio Beso Bajo la Lluvia"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-143",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "have a signature wink",
+        "fr": "d'avoir un clin d'œil signature",
+        "ar": "يكون عندو غمزة خاصّة فيه",
+        "es": "tener un guiño marca de la casa"
+      },
+      "award": {
+        "en": "Wink Award",
+        "fr": "Prix du clin d'œil",
+        "ar": "جايزة الغمزة",
+        "es": "Premio Guiño"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-144",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "use the same pickup line for ten years",
+        "fr": "d'utiliser la même phrase de drague depuis dix ans",
+        "ar": "يستعمل نفس جملة الغزل من عشر سنين",
+        "es": "usar la misma frase para ligar desde hace diez años"
+      },
+      "award": {
+        "en": "Golden Oldie Award",
+        "fr": "Prix du grand classique",
+        "ar": "جايزة الجملة الكلاسيك",
+        "es": "Premio Clásico"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-145",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "go on a date thinking it was a work meeting",
+        "fr": "d'aller à un rencard en croyant que c'était une réunion de travail",
+        "ar": "يروح عموعد وهوّي مفكّر إنّو اجتماع شغل",
+        "es": "ir a una cita creyendo que era una reunión de trabajo"
+      },
+      "award": {
+        "en": "Mixed Signals Award",
+        "fr": "Prix du malentendu",
+        "ar": "جايزة سوء التفاهم",
+        "es": "Premio Malentendido"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-146",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "answer a flirty text with a thumbs-up",
+        "fr": "de répondre à un message charmeur par un pouce levé",
+        "ar": "يردّ على مسج غزل بلايك",
+        "es": "responder a un mensaje coqueto con un pulgar arriba"
+      },
+      "award": {
+        "en": "Thumbs-Up Award",
+        "fr": "Prix du pouce levé",
+        "ar": "جايزة اللايك",
+        "es": "Premio Pulgar Arriba"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-147",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "travel"
+      ],
+      "prompt": {
+        "en": "fall in love on holiday and plan to move there",
+        "fr": "de tomber sous le charme en vacances et vouloir s'installer là-bas",
+        "ar": "ينغرم بالعطلة ويقرّر يسكن هونيك",
+        "es": "enamorarse en vacaciones y querer mudarse allí"
+      },
+      "award": {
+        "en": "Summer Love Award",
+        "fr": "Prix de l'amour de vacances",
+        "ar": "جايزة حبّ الصيفية",
+        "es": "Premio Amor de Verano"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-148",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "brush someone's hand \"by accident\"",
+        "fr": "de frôler une main « par hasard »",
+        "ar": "يلمس إيد حدا «بالغلط»",
+        "es": "rozar una mano «sin querer»"
+      },
+      "award": {
+        "en": "Casual Touch Award",
+        "fr": "Prix du frôlement",
+        "ar": "جايزة اللمسة بالغلط",
+        "es": "Premio Roce Casual"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-149",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "overthink a single emoji for an hour",
+        "fr": "d'analyser un seul émoji pendant une heure",
+        "ar": "يحلّل إيموجي وحدة ساعة كاملة",
+        "es": "analizar un solo emoji durante una hora"
+      },
+      "award": {
+        "en": "Emoji Analyst Award",
+        "fr": "Prix de l'analyse d'émoji",
+        "ar": "جايزة تحليل الإيموجي",
+        "es": "Premio Analista de Emojis"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-150",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "crush on someone just for being nice to waiters",
+        "fr": "de craquer pour quelqu'un de gentil avec les serveurs",
+        "ar": "ينغرم بحدا بس لأنّو منيح مع الغرسونية",
+        "es": "colgarse de alguien por ser amable con los camareros"
+      },
+      "award": {
+        "en": "Green Flag Award",
+        "fr": "Prix du bon signe",
+        "ar": "جايزة «هيدا منيح»",
+        "es": "Premio Buena Señal"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-151",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "screenshot a flirty chat for a group opinion",
+        "fr": "de faire des captures d'une conversation pour avoir l'avis du groupe",
+        "ar": "ياخد سكرين شوت للمحادثة ويسأل الشلّة",
+        "es": "hacer capturas de un chat para pedir opinión al grupo"
+      },
+      "award": {
+        "en": "War Council Award",
+        "fr": "Prix du conseil de guerre",
+        "ar": "جايزة مجلس الشلّة",
+        "es": "Premio Consejo de Sabios"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-152",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "have a year-long crush on a stranger on the bus",
+        "fr": "d'avoir un faible pour un inconnu du bus pendant un an",
+        "ar": "يكون مغروم بحدا غريب بالفان سنة كاملة",
+        "es": "tener un flechazo de un año con alguien del autobús"
+      },
+      "award": {
+        "en": "Daily Crush Award",
+        "fr": "Prix du bus",
+        "ar": "جايزة الفان",
+        "es": "Premio Autobús"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-153",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "write a love note and rewrite it twelve times",
+        "fr": "d'écrire un mot doux et le réécrire douze fois",
+        "ar": "يكتب رسالة حبّ ويعدّلها ١٢ مرّة",
+        "es": "escribir una nota de amor y reescribirla doce veces"
+      },
+      "award": {
+        "en": "Twelve Drafts Award",
+        "fr": "Prix des douze brouillons",
+        "ar": "جايزة المسودّات",
+        "es": "Premio Doce Borradores"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-154",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "bring a guitar to a date and know one song",
+        "fr": "d'apporter une guitare à un rencard et ne savoir qu'une chanson",
+        "ar": "ياخد غيتار عالموعد وما بيعرف إلّا غنية وحدة",
+        "es": "llevar una guitarra a una cita y saberse una sola canción"
+      },
+      "award": {
+        "en": "One Song Award",
+        "fr": "Prix de la chanson unique",
+        "ar": "جايزة الغنية الوحدة",
+        "es": "Premio Canción Única"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-155",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "get caught slow-dancing alone to a love song",
+        "fr": "de se faire surprendre en plein slow en solo",
+        "ar": "ينمسك عم يرقص سلو لحالو على غنية حبّ",
+        "es": "bailar una lenta sin pareja y que le pillen"
+      },
+      "award": {
+        "en": "Solo Romance Award",
+        "fr": "Prix du slow en solo",
+        "ar": "جايزة الرقصة الفردية",
+        "es": "Premio Baile en Solitario"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-156",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "travel",
+        "food"
+      ],
+      "prompt": {
+        "en": "flirt with the cabin crew for an extra dessert",
+        "fr": "de draguer le personnel de bord pour un dessert en plus",
+        "ar": "يغازل المضيفين ليجيبولو حلو زيادة",
+        "es": "ligar con la tripulación para conseguir un postre extra"
+      },
+      "award": {
+        "en": "Extra Dessert Award",
+        "fr": "Prix du dessert en plus",
+        "ar": "جايزة الحلو الزيادة",
+        "es": "Premio Postre Extra"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-157",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "confess a crush by accident on speakerphone",
+        "fr": "d'avouer un béguin par erreur sur haut-parleur",
+        "ar": "يعترف بغرامو بالغلط والتلفون عالسبيكر",
+        "es": "confesar un crush sin querer con el altavoz puesto"
+      },
+      "award": {
+        "en": "Speakerphone Award",
+        "fr": "Prix du haut-parleur",
+        "ar": "جايزة السبيكر",
+        "es": "Premio Altavoz"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-158",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "keep a spreadsheet of first-date ideas",
+        "fr": "de tenir un tableur d'idées de premiers rendez-vous",
+        "ar": "يكون عندو جدول بأفكار لأوّل موعد",
+        "es": "tener una hoja de cálculo con ideas para primeras citas"
+      },
+      "award": {
+        "en": "Spreadsheet Award",
+        "fr": "Prix du tableur",
+        "ar": "جايزة الجدول",
+        "es": "Premio Hoja de Cálculo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-159",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "pretend to love a band to impress a date",
+        "fr": "de faire semblant d'adorer un groupe pour séduire",
+        "ar": "يعمل حالو بيحبّ فرقة ليعجب حدا",
+        "es": "fingir que le encanta un grupo para impresionar a alguien"
+      },
+      "award": {
+        "en": "Fake Fan Award",
+        "fr": "Prix du faux fan",
+        "ar": "جايزة الإعجاب المزيّف",
+        "es": "Premio Fan de Mentira"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-160",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "wear their best perfume to go buy bread",
+        "fr": "de mettre son meilleur parfum pour aller chercher du pain",
+        "ar": "يتعطّر بأطيب ريحة ليروح عالفرن",
+        "es": "ponerse su mejor perfume para ir a por pan"
+      },
+      "award": {
+        "en": "Bakery Glam Award",
+        "fr": "Prix du parfum",
+        "ar": "جايزة الريحة الطيّبة",
+        "es": "Premio Perfume"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-161",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "write their number on a napkin",
+        "fr": "de donner son numéro sur une serviette en papier",
+        "ar": "يكتب رقمو لحدا على محرمة",
+        "es": "dar su número apuntado en una servilleta"
+      },
+      "award": {
+        "en": "Napkin Award",
+        "fr": "Prix de la serviette",
+        "ar": "جايزة المحرمة",
+        "es": "Premio Servilleta"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-162",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "family",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "turn a date into a family dinner by accident",
+        "fr": "de transformer un rencard en dîner de famille par accident",
+        "ar": "يحوّل موعد لعزيمة عيلة بالغلط",
+        "es": "convertir una cita en una cena familiar sin querer"
+      },
+      "award": {
+        "en": "Family Dinner Award",
+        "fr": "Prix du dîner surprise",
+        "ar": "جايزة العزيمة",
+        "es": "Premio Cena Familiar"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-163",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "lebanon",
+        "music"
+      ],
+      "prompt": {
+        "en": "fall for someone who leads the dabke like a pro",
+        "fr": "de craquer pour quelqu'un qui mène la dabké comme un pro",
+        "ar": "ينغرم بحدا لأنّو بيمسك راس الدبكة متل المحترفين",
+        "es": "colgarse de alguien que lleva el dabke como un profesional"
+      },
+      "award": {
+        "en": "Dabke Crush Award",
+        "fr": "Prix du coup de dabké",
+        "ar": "جايزة غرام الدبكة",
+        "es": "Premio Flechazo de Dabke"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-164",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "flirt in Arabic, French and English in one sentence",
+        "fr": "de draguer en arabe, français et anglais dans la même phrase",
+        "ar": "يغازل بالعربي والفرنساوي والإنكليزي بجملة وحدة",
+        "es": "ligar en árabe, francés e inglés en la misma frase"
+      },
+      "award": {
+        "en": "Trilingual Award",
+        "fr": "Prix du trilingue",
+        "ar": "جايزة «هاي كيفك ça va»",
+        "es": "Premio Trilingüe"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-165",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "music"
+      ],
+      "prompt": {
+        "en": "get serenaded and hide under the table",
+        "fr": "de recevoir une sérénade et se cacher sous la table",
+        "ar": "يتخبّى تحت الطاولة إذا حدا غنّالو",
+        "es": "recibir una serenata y esconderse debajo de la mesa"
+      },
+      "award": {
+        "en": "Hiding Spot Award",
+        "fr": "Prix de la cachette",
+        "ar": "جايزة التخبّاية",
+        "es": "Premio Escondite"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-166",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "send a fake \"wrong number\" text to restart a chat",
+        "fr": "d'envoyer un faux « oups, mauvais numéro » pour relancer la discussion",
+        "ar": "يبعت «سوري غلطت بالرقم» عن قصد ليرجع يفتح حديث",
+        "es": "mandar un «uy, número equivocado» a propósito para retomar la charla"
+      },
+      "award": {
+        "en": "On Purpose Award",
+        "fr": "Prix de l'erreur volontaire",
+        "ar": "جايزة الغلطة المقصودة",
+        "es": "Premio Error Intencionado"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-167",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "melt over a simple \"good morning\" text",
+        "fr": "de fondre pour un simple « bonjour » par texto",
+        "ar": "يطير من الفرحة عمسج «صباح الخير»",
+        "es": "derretirse con un simple mensaje de «buenos días»"
+      },
+      "award": {
+        "en": "Good Morning Award",
+        "fr": "Prix du bonjour",
+        "ar": "جايزة صباح الخير",
+        "es": "Premio Buenos Días"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-168",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "family"
+      ],
+      "prompt": {
+        "en": "cry harder than the couple at a proposal",
+        "fr": "de pleurer plus fort que le couple pendant une demande en mariage",
+        "ar": "يبكي أكتر من العرسان وقت طلب الإيد",
+        "es": "llorar más que la pareja en una pedida de mano"
+      },
+      "award": {
+        "en": "Happy Tears Award",
+        "fr": "Prix des larmes de joie",
+        "ar": "جايزة دموع الفرح",
+        "es": "Premio Lágrimas de Alegría"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-169",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "food"
+      ],
+      "prompt": {
+        "en": "join a cooking class just because their crush is in it",
+        "fr": "de s'inscrire à un cours de cuisine juste pour son crush",
+        "ar": "يتسجّل بصفّ طبخ بس لأنّو الشخص يلّي عاجبو فيه",
+        "es": "apuntarse a clases de cocina solo por su crush"
+      },
+      "award": {
+        "en": "Cooking Class Award",
+        "fr": "Prix du cours de cuisine",
+        "ar": "جايزة صفّ الطبخ",
+        "es": "Premio Clase de Cocina"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-170",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "slide into someone's DMs to talk about the weather",
+        "fr": "d'écrire en privé à quelqu'un pour parler de la météo",
+        "ar": "يفتح حديث بالخاص عن الطقس",
+        "es": "escribirle a alguien por privado para hablar del tiempo"
+      },
+      "award": {
+        "en": "Small Talk Award",
+        "fr": "Prix de la météo",
+        "ar": "جايزة الطقس",
+        "es": "Premio Charla del Tiempo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-171",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "say \"I love you\" first, then claim it was a joke",
+        "fr": "de dire « je t'aime » en premier puis prétendre que c'était une blague",
+        "ar": "يقول «بحبّك» أوّل واحد وبعدين «عم بمزح»",
+        "es": "decir «te quiero» primero y luego fingir que era broma"
+      },
+      "award": {
+        "en": "Just Kidding Award",
+        "fr": "Prix du rétropédalage",
+        "ar": "جايزة «عم بمزح»",
+        "es": "Premio Era Broma"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-172",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "wear a shirt and pyjama bottoms to a video date",
+        "fr": "de porter chemise et bas de pyjama pour un rendez-vous en visio",
+        "ar": "يلبس قميص وبنطلون بيجاما لموعد أونلاين",
+        "es": "ponerse camisa y pantalón de pijama para una cita por videollamada"
+      },
+      "award": {
+        "en": "Video Date Award",
+        "fr": "Prix du rendez-vous en visio",
+        "ar": "جايزة الموعد أونلاين",
+        "es": "Premio Cita Virtual"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-173",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "tech"
+      ],
+      "prompt": {
+        "en": "play hard to get, then reply in two seconds",
+        "fr": "de jouer les inaccessibles et répondre en deux secondes",
+        "ar": "يتقّل، وبعدين يردّ بثانيتين",
+        "es": "hacerse de rogar y contestar en dos segundos"
+      },
+      "award": {
+        "en": "Hard to Get Award",
+        "fr": "Prix de l'inaccessible",
+        "ar": "جايزة التقل",
+        "es": "Premio Hacerse de Rogar"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-174",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "make a pros-and-cons list about their crush",
+        "fr": "de faire une liste de pour et de contre sur son crush",
+        "ar": "يعمل لايحة إيجابيات وسلبيات عن الشخص يلّي عاجبو",
+        "es": "hacer una lista de pros y contras sobre su crush"
+      },
+      "award": {
+        "en": "Pros and Cons Award",
+        "fr": "Prix du pour et contre",
+        "ar": "جايزة الإيجابيات والسلبيات",
+        "es": "Premio Pros y Contras"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-175",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "family"
+      ],
+      "prompt": {
+        "en": "get caught kissing by Teta",
+        "fr": "de se faire surprendre en train d'embrasser par Teta",
+        "ar": "تقفشو تيتا وهوّي عم يبوس",
+        "es": "dejarse pillar por la abuela dándose un beso"
+      },
+      "award": {
+        "en": "Caught Red-Handed Award",
+        "fr": "Prix du flagrant délit",
+        "ar": "جايزة «انقفشنا»",
+        "es": "Premio In Fraganti"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-176",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "steam up the car windows \"just talking\"",
+        "fr": "de faire de la buée sur les vitres de la voiture « en discutant »",
+        "ar": "يغبّش قزاز السيارة «بس عم نحكي»",
+        "es": "empañar los cristales del coche «solo hablando»"
+      },
+      "award": {
+        "en": "Foggy Windows Award",
+        "fr": "Prix de la buée",
+        "ar": "جايزة القزاز المغبّش",
+        "es": "Premio Cristales Empañados"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-177",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "party"
+      ],
+      "prompt": {
+        "en": "come home at sunrise in last night's outfit",
+        "fr": "de rentrer au petit matin avec la tenue de la veille",
+        "ar": "يرجع عالبيت مع الشمس بتياب مبارح",
+        "es": "volver a casa al amanecer con la ropa de anoche"
+      },
+      "award": {
+        "en": "Walk of Fame Award",
+        "fr": "Prix du retour à l'aube",
+        "ar": "جايزة تياب مبارح",
+        "es": "Premio Paseo de la Fama"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-178",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "kiss through an entire red light",
+        "fr": "de s'embrasser pendant tout un feu rouge",
+        "ar": "يبوس طول ما الإشارة حمرا",
+        "es": "besarse durante todo un semáforo en rojo"
+      },
+      "award": {
+        "en": "Green Light Award",
+        "fr": "Prix du feu vert",
+        "ar": "جايزة «ضوّت خضرا»",
+        "es": "Premio Semáforo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-179",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "party"
+      ],
+      "prompt": {
+        "en": "kiss someone on a dare and swear it meant nothing",
+        "fr": "d'embrasser quelqu'un pour un gage et jurer que ça ne compte pas",
+        "ar": "يبوس حدا بتحدّي ويحلف إنّو «ما إلها معنى»",
+        "es": "besar a alguien por un reto y jurar que no significó nada"
+      },
+      "award": {
+        "en": "Just a Dare Award",
+        "fr": "Prix du simple gage",
+        "ar": "جايزة «كان تحدّي»",
+        "es": "Premio Solo Era un Reto"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-180",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "party"
+      ],
+      "prompt": {
+        "en": "slip out of a party early with someone they just met",
+        "fr": "de filer tôt d'une soirée avec quelqu'un rencontré le soir même",
+        "ar": "يفلّ من السهرة بكّير مع حدا لسّا متعرّف عليه",
+        "es": "irse pronto de una fiesta con alguien que acaba de conocer"
+      },
+      "award": {
+        "en": "Quiet Exit Award",
+        "fr": "Prix de la sortie discrète",
+        "ar": "جايزة الفلّة عالسكت",
+        "es": "Premio Mutis por el Foro"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-181",
+      "tier": "pass",
+      "spice": 2,
+      "namesPlayer": true,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "kiss {player} goodnight on the doorstep",
+        "fr": "de faire un bisou de bonne nuit à {player} sur le pas de la porte",
+        "ar": "يعطي {player} بوسة «تصبح على خير» عالباب",
+        "es": "darle a {player} un beso de buenas noches en el portal"
+      },
+      "award": {
+        "en": "Doorstep Award",
+        "fr": "Prix du pas de la porte",
+        "ar": "جايزة عتبة الباب",
+        "es": "Premio Despedida en el Portal"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-182",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": true,
+      "tags": [
+        "romance",
+        "party"
+      ],
+      "prompt": {
+        "en": "go as {player}'s plus-one and play the perfect couple",
+        "fr": "d'accompagner {player} à une soirée et jouer le couple parfait",
+        "ar": "يروح مع {player} عسهرة ويعملوا حالن كوبل",
+        "es": "ir de acompañante de {player} y hacer de pareja perfecta"
+      },
+      "award": {
+        "en": "Plus-One Award",
+        "fr": "Prix du +1",
+        "ar": "جايزة البلاس وان",
+        "es": "Premio Más Uno"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-183",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance"
+      ],
+      "prompt": {
+        "en": "be in a \"situationship\" that needs a 12-page recap",
+        "fr": "d'avoir une « relation floue » qui demande douze pages de résumé",
+        "ar": "يكون بعلاقة مش مفهومة بدها ١٢ صفحة شرح",
+        "es": "tener un «algo» que necesita doce páginas de resumen"
+      },
+      "award": {
+        "en": "What Are We Award",
+        "fr": "Prix du flou artistique",
+        "ar": "جايزة «شو نحنا؟»",
+        "es": "Premio ¿Qué Somos?"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "spc-184",
+      "tier": "pass",
+      "spice": 1,
+      "namesPlayer": false,
+      "tags": [
+        "romance",
+        "habits"
+      ],
+      "prompt": {
+        "en": "keep a spare outfit in the car, \"just in case\"",
+        "fr": "de garder une tenue de rechange dans la voiture, « au cas où »",
+        "ar": "يخبّي تياب احتياط بالسيارة «إذا تأخّرنا»",
+        "es": "llevar una muda en el coche «por si acaso»"
+      },
+      "award": {
+        "en": "Overnight Bag Award",
+        "fr": "Prix du sac de secours",
+        "ar": "جايزة شنطة الاحتياط",
+        "es": "Premio Muda de Repuesto"
+      },
+      "review": {
+        "status": "draft"
+      }
+    }
+  ]
+}

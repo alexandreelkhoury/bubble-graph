@@ -5,7 +5,7 @@ import type { GameId } from "@jamaa/shared/games/ids";
 import { metaOf } from "../lib/meta";
 import { t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
-import type { Expression } from "../characters/data";
+import type { Expression } from "@jamaa/shared/characters";
 import { Character } from "./Character";
 import { WORLD_OF } from "./Poster";
 

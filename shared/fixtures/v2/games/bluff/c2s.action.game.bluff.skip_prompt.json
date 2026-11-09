@@ -1,0 +1,13 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "6",
+  "a": {
+    "type": "GAME",
+    "gameId": "bluff",
+    "i": {
+      "type": "SKIP_PROMPT",
+      "promptId": "3fa2b0c1"
+    }
+  }
+}

@@ -1,0 +1,287 @@
+{
+  "v": 2,
+  "t": "state",
+  "seq": 63,
+  "serverNow": 1790000160360,
+  "view": {
+    "kind": "tv",
+    "room": {
+      "roomCode": "QZNT",
+      "joinUrl": "https://play.example.workers.dev/QZNT",
+      "phase": "PLAYING",
+      "focusedGameId": "mishana",
+      "setupGameId": "trivia",
+      "contentLocale": "en",
+      "members": [
+        {
+          "id": "p_0a1b2c3d4e5f60718293a4b5",
+          "name": "Rami",
+          "color": "coral",
+          "seat": 0,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": true,
+          "reaction": null
+        },
+        {
+          "id": "p_1b2c3d4e5f60718293a4b5c6",
+          "name": "Léa",
+          "color": "azure",
+          "seat": 1,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_2c3d4e5f60718293a4b5c6d7",
+          "name": "نور",
+          "color": "jade",
+          "seat": 2,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_3d4e5f60718293a4b5c6d7e8",
+          "name": "Sam",
+          "color": "lemon",
+          "seat": 3,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_4e5f60718293a4b5c6d7e8f9",
+          "name": "Zoé",
+          "color": "grape",
+          "seat": 4,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        }
+      ],
+      "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "games": [
+        {
+          "id": "mishana",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            10,
+            20
+          ]
+        },
+        {
+          "id": "trivia",
+          "minPlayers": 1,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            5,
+            10
+          ]
+        }
+      ],
+      "setup": null,
+      "cup": {
+        "stars": {},
+        "last": null
+      },
+      "premium": false,
+      "tvBusy": false,
+      "contentLocales": [
+        "en",
+        "fr",
+        "ar",
+        "es"
+      ]
+    },
+    "game": {
+      "gameId": "trivia",
+      "n": 1,
+      "phase": "REVEAL",
+      "doneIds": [],
+      "awaitedIds": [],
+      "public": {
+        "schema": 1,
+        "phase": "REVEAL",
+        "quiz": {
+          "id": "demo-quiz-01",
+          "title": {
+            "en": "Studio warm-up",
+            "fr": "Échauffement en studio",
+            "ar": "تحمية الاستوديو",
+            "es": "Calentamiento en el estudio"
+          },
+          "stars": 2,
+          "domain": "general",
+          "featuredTopics": [
+            "science",
+            "geography",
+            "music"
+          ],
+          "topicCount": 6,
+          "questionCount": 9
+        },
+        "rerun": false,
+        "index": 6,
+        "total": 7,
+        "isFinal": true,
+        "deadline": 1790000169360,
+        "durationMs": 9000,
+        "question": {
+          "id": "q009",
+          "text": "Bananas grow on trees.",
+          "type": "tf",
+          "topic": "nature",
+          "difficulty": 2
+        },
+        "options": [
+          "True",
+          "False"
+        ],
+        "answeredIds": [
+          "p_0a1b2c3d4e5f60718293a4b5",
+          "p_1b2c3d4e5f60718293a4b5c6",
+          "p_2c3d4e5f60718293a4b5c6d7",
+          "p_3d4e5f60718293a4b5c6d7e8",
+          "p_4e5f60718293a4b5c6d7e8f9"
+        ],
+        "reveal": {
+          "correct": 1,
+          "choices": [
+            {
+              "id": "p_0a1b2c3d4e5f60718293a4b5",
+              "choice": 0,
+              "correct": false,
+              "timeMs": 1700,
+              "points": 0,
+              "streakBonus": 0
+            },
+            {
+              "id": "p_1b2c3d4e5f60718293a4b5c6",
+              "choice": 1,
+              "correct": true,
+              "timeMs": 2200,
+              "points": 900,
+              "streakBonus": 0
+            },
+            {
+              "id": "p_2c3d4e5f60718293a4b5c6d7",
+              "choice": 1,
+              "correct": true,
+              "timeMs": 2700,
+              "points": 860,
+              "streakBonus": 0
+            },
+            {
+              "id": "p_3d4e5f60718293a4b5c6d7e8",
+              "choice": 1,
+              "correct": true,
+              "timeMs": 7700,
+              "points": 620,
+              "streakBonus": 0
+            },
+            {
+              "id": "p_4e5f60718293a4b5c6d7e8f9",
+              "choice": 0,
+              "correct": false,
+              "timeMs": 700,
+              "points": 0,
+              "streakBonus": 0
+            }
+          ],
+          "fastestIds": [
+            "p_1b2c3d4e5f60718293a4b5c6"
+          ],
+          "onFireIds": [],
+          "stumped": false,
+          "genius": false,
+          "tooSlow": false,
+          "explain": "The banana plant is a giant herb: its \"trunk\" is rolled-up leaves.",
+          "voided": false
+        },
+        "scores": [
+          {
+            "playerId": "p_0a1b2c3d4e5f60718293a4b5",
+            "score": 4420,
+            "scoreBefore": 4420,
+            "rankBefore": 1,
+            "streak": 0,
+            "bestStreak": 4,
+            "correct": 4,
+            "fastest": 4,
+            "rank": 1,
+            "left": false
+          },
+          {
+            "playerId": "p_1b2c3d4e5f60718293a4b5c6",
+            "score": 3920,
+            "scoreBefore": 3020,
+            "rankBefore": 2,
+            "streak": 1,
+            "bestStreak": 3,
+            "correct": 4,
+            "fastest": 1,
+            "rank": 2,
+            "left": false
+          },
+          {
+            "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+            "score": 3710,
+            "scoreBefore": 2850,
+            "rankBefore": 3,
+            "streak": 1,
+            "bestStreak": 2,
+            "correct": 4,
+            "fastest": 0,
+            "rank": 3,
+            "left": false
+          },
+          {
+            "playerId": "p_3d4e5f60718293a4b5c6d7e8",
+            "score": 3160,
+            "scoreBefore": 2540,
+            "rankBefore": 4,
+            "streak": 1,
+            "bestStreak": 2,
+            "correct": 4,
+            "fastest": 0,
+            "rank": 4,
+            "left": false
+          },
+          {
+            "playerId": "p_4e5f60718293a4b5c6d7e8f9",
+            "score": 1800,
+            "scoreBefore": 1800,
+            "rankBefore": 5,
+            "streak": 0,
+            "bestStreak": 1,
+            "correct": 2,
+            "fastest": 0,
+            "rank": 5,
+            "left": false
+          }
+        ],
+        "newIds": [],
+        "waitingIds": [],
+        "endedEarly": false
+      },
+      "me": null,
+      "over": false
+    },
+    "me": null
+  }
+}

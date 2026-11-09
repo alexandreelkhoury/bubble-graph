@@ -1,0 +1,12 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "104",
+  "a": {
+    "type": "GAME",
+    "gameId": "trivia",
+    "i": {
+      "type": "HOST_ADVANCE"
+    }
+  }
+}

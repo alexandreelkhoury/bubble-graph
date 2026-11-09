@@ -1,0 +1,13 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "10",
+  "a": {
+    "type": "UPDATE_GAME_SETTINGS",
+    "gameId": "bluff",
+    "patch": {
+      "length": "short",
+      "pace": "relaxed"
+    }
+  }
+}

@@ -1,0 +1,1523 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-lb-teta-words",
+  "game": "bluff",
+  "title": {
+    "en": "Teta's Words",
+    "fr": "Les mots de Teta",
+    "ar": "كلمات تيتا",
+    "es": "Las palabras de la abuela"
+  },
+  "description": {
+    "en": "Old Lebanese words only your grandmother still uses. Guess the meaning, or invent a better one.",
+    "fr": "Les vieux mots libanais que seule ta grand-mère utilise encore. Devine le sens, ou invente mieux.",
+    "ar": "كلمات لبنانية عتيقة بس تيتا بعدها بتقولها. بتعرف معناها؟ وإذا لأ، ألف معنى بيمرق.",
+    "es": "Palabras libanesas antiguas que solo tu abuela sigue usando. Adivina el significado o invéntate uno mejor."
+  },
+  "sourceLocale": "ar",
+  "playableIn": [
+    "ar"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {
+    "word_meaning": {
+      "ar": [
+        "نوع حلو عتيق",
+        "غرض للمطبخ",
+        "لعبة ولاد زمان",
+        "لقب للختيار",
+        "أكلة جبلية"
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "ltw-001",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "بلكي",
+        "translit": "balki",
+        "display": {}
+      },
+      "truth": {
+        "ar": "يمكن، مش أكيد"
+      },
+      "truthAlt": {
+        "ar": [
+          "يمكن",
+          "ممكن",
+          "ربما"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "عالسريع",
+          "يا ريت",
+          "بكرا الصبح"
+        ]
+      },
+      "note": {
+        "ar": "من التركي belki يعني ربما: «بلكي بيجي بكرا»"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-002",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "قبضاي",
+        "translit": "2abaday",
+        "display": {}
+      },
+      "truth": {
+        "ar": "شب قوي وجريء بيحمي حارتو"
+      },
+      "truthAlt": {
+        "ar": [
+          "زلمة قوي",
+          "شجاع",
+          "بطل الحارة",
+          "قبضاي الحارة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بياع قهوة عالطريق",
+          "حارس البستان",
+          "اللي بيقبض المصاري"
+        ]
+      },
+      "note": {
+        "ar": "من التركي kabadayı. قبضاي الحارة كان يحل المشاكل بزنودو"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-003",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "كركون",
+        "translit": "karakon",
+        "display": {}
+      },
+      "truth": {
+        "ar": "مخفر الدرك"
+      },
+      "truthAlt": {
+        "ar": [
+          "مخفر",
+          "مركز الشرطة",
+          "المخفر",
+          "مخفر شرطة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "كركدن صغير",
+          "سوق الخضرة",
+          "مطحنة القمح"
+        ]
+      },
+      "note": {
+        "ar": "من التركي karakol: «أخدوه عالكركون» يعني عالمخفر"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-004",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "بوسطة",
+        "translit": "bosta",
+        "display": {}
+      },
+      "truth": {
+        "ar": "باص ركاب كبير"
+      },
+      "truthAlt": {
+        "ar": [
+          "باص",
+          "أوتوبيس",
+          "البريد",
+          "بريد"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "رسالة غرام",
+          "سوق الأحد",
+          "طاولة الزهر"
+        ]
+      },
+      "note": {
+        "ar": "من الإيطالي posta: أول شي كانت عربة البريد، وبعدين صارت الباص"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-005",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "لوكندة",
+        "translit": "lokanda",
+        "display": {}
+      },
+      "truth": {
+        "ar": "فندق صغير"
+      },
+      "truthAlt": {
+        "ar": [
+          "أوتيل صغير",
+          "نزل",
+          "فندق",
+          "أوتيل"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "شوكولا إيطالية",
+          "مكتبة عتيقة",
+          "قارب صيد"
+        ]
+      },
+      "note": {
+        "ar": "من الإيطالي locanda، يعني نزل للمسافرين"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-006",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "بابور",
+        "translit": "babour",
+        "display": {}
+      },
+      "truth": {
+        "ar": "موقدة كاز صغيرة للطبخ"
+      },
+      "truthAlt": {
+        "ar": [
+          "بابور الكاز",
+          "موقدة",
+          "غاز صغير",
+          "مركب بخاري",
+          "باخرة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "فرن الضيعة",
+          "طاحونة صغيرة",
+          "مكواية حديد"
+        ]
+      },
+      "note": {
+        "ar": "من vapeur عن طريق التركي. كانت كمان تعني المركب البخاري"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-007",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "بقجة",
+        "translit": "bo2ja",
+        "display": {}
+      },
+      "truth": {
+        "ar": "صرة تياب ملفوفة بقماشة"
+      },
+      "truthAlt": {
+        "ar": [
+          "صرة",
+          "صرة تياب",
+          "بقشة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "كعكة بالسمسم",
+          "طاسة نحاس",
+          "مخدة صغيرة"
+        ]
+      },
+      "note": {
+        "ar": "من التركي bohça. العروس كانت تاخد جهازها ببقجة"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-008",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "طرمبة",
+        "translit": "trombé",
+        "display": {}
+      },
+      "truth": {
+        "ar": "مضخة مي"
+      },
+      "truthAlt": {
+        "ar": [
+          "مضخة",
+          "موتور مي",
+          "طرمبة مي",
+          "ترمبة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "آلة موسيقية نحاس",
+          "خيمة صغيرة",
+          "زهرة جبلية"
+        ]
+      },
+      "note": {
+        "ar": "من الإيطالي tromba، اللي بتعني كمان بوق"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-009",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "صوبيا",
+        "translit": "sobya",
+        "display": {}
+      },
+      "truth": {
+        "ar": "مدفاية حطب أو مازوت"
+      },
+      "truthAlt": {
+        "ar": [
+          "مدفاية",
+          "صوبيا مازوت",
+          "وجاق",
+          "مدفأة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "شوربة عدس",
+          "سجادة عجمية",
+          "طنجرة فخار"
+        ]
+      },
+      "note": {
+        "ar": "من التركي soba. والكستنا عالصوبيا أطيب شي بالشتي"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-010",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "دوزان",
+        "translit": "douzan",
+        "display": {}
+      },
+      "truth": {
+        "ar": "ضبط أوتار العود"
+      },
+      "truthAlt": {
+        "ar": [
+          "دوزنة",
+          "ضبط الأوتار",
+          "تدوزين",
+          "دوزان العود"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "قهوة مغلية كتير",
+          "عطر الياسمين",
+          "ميزان الدهب"
+        ]
+      },
+      "note": {
+        "ar": "من التركي düzen يعني ترتيب. «مش عدوزانو» يعني مش مظبوط"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-011",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "طنبر",
+        "translit": "tanbar",
+        "display": {}
+      },
+      "truth": {
+        "ar": "عربة بيجرها حمار أو حصان"
+      },
+      "truthAlt": {
+        "ar": [
+          "عربة",
+          "عربانة",
+          "كارة",
+          "عربية خيل"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "طبل كبير",
+          "مخزن قمح",
+          "سلة قش"
+        ]
+      },
+      "note": {
+        "ar": "عربة الخضرجي أو الفحام بالحارات العتيقة"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-012",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شختورة",
+        "translit": "sha5toura",
+        "display": {}
+      },
+      "truth": {
+        "ar": "قارب صغير"
+      },
+      "truthAlt": {
+        "ar": [
+          "فلوكة",
+          "مركب صغير",
+          "قارب",
+          "زورق"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "مصيدة عصافير",
+          "مرجوحة",
+          "فستان عرس"
+        ]
+      },
+      "note": {
+        "ar": "قارب الصياد الصغير بالضيع البحرية"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-013",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "سكربينة",
+        "translit": "skarbiné",
+        "display": {}
+      },
+      "truth": {
+        "ar": "صباط خفيف للنسوان"
+      },
+      "truthAlt": {
+        "ar": [
+          "صباط",
+          "حذاء",
+          "كندرة نسواني",
+          "صباط نسواني"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "فرشاية شعر",
+          "مسكة الباب",
+          "كيس طحين"
+        ]
+      },
+      "note": {
+        "ar": "من الإيطالي scarpina، يعني صباط صغير"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-014",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "بالطو",
+        "translit": "balto",
+        "display": {}
+      },
+      "truth": {
+        "ar": "كبوت طويل"
+      },
+      "truthAlt": {
+        "ar": [
+          "معطف",
+          "جاكيت طويلة",
+          "كبوت",
+          "معطف طويل"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "كرسي هزاز",
+          "شنتة سفر",
+          "قبعة صوف"
+        ]
+      },
+      "note": {
+        "ar": "من الفرنساوي paletot"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-015",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "قطرميز",
+        "translit": "2atramiz",
+        "display": {}
+      },
+      "truth": {
+        "ar": "مرطبان إزاز للمونة"
+      },
+      "truthAlt": {
+        "ar": [
+          "مرطبان",
+          "برطمان",
+          "مطربان",
+          "مرتبان"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "حلو بالفستق",
+          "طير صغير",
+          "نوع حامض"
+        ]
+      },
+      "note": {
+        "ar": "فيه بيحطوا المكدوس والمربيات، وما حدا متأكد من أصل الكلمة"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-016",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "كندرجي",
+        "translit": "kondorji",
+        "display": {}
+      },
+      "truth": {
+        "ar": "اللي بيصلح الصبابيط"
+      },
+      "truthAlt": {
+        "ar": [
+          "إسكافي",
+          "مصلح أحذية",
+          "سكافي",
+          "مصلح صبابيط"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بياع الكاز",
+          "معلم البنا",
+          "حارس الكركون"
+        ]
+      },
+      "note": {
+        "ar": "من كندرة يعني صباط، والـجي التركية يعني صاحب المهنة"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-017",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "سنكري",
+        "translit": "sankari",
+        "display": {}
+      },
+      "truth": {
+        "ar": "اللي بيصلح القساطل والتمديدات"
+      },
+      "truthAlt": {
+        "ar": [
+          "سمكري",
+          "سباك",
+          "مصلح قساطل",
+          "بلومبيه"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بياع سكاكر",
+          "طباخ عرس",
+          "حداد الخيل"
+        ]
+      },
+      "note": {
+        "ar": "أول شي كان يشتغل بالتنك، وبعدين صار يصلح المي"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-018",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "كومودينا",
+        "translit": "komodina",
+        "display": {}
+      },
+      "truth": {
+        "ar": "خزانة صغيرة حد التخت"
+      },
+      "truthAlt": {
+        "ar": [
+          "كومودينو",
+          "طاولة صغيرة",
+          "خزانة صغيرة",
+          "طاولة التخت"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "دوا للسعلة",
+          "فستان سهرة",
+          "مقعد البيانو"
+        ]
+      },
+      "note": {
+        "ar": "من الإيطالي comodino"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-019",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "كشتبان",
+        "translit": "keshtben",
+        "display": {}
+      },
+      "truth": {
+        "ar": "غطا حديد للإصبع وقت الخياطة"
+      },
+      "truthAlt": {
+        "ar": [
+          "كشتبان الخياطة",
+          "كستبان",
+          "غطا الإصبع",
+          "قمع الإصبع"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "سكينة صغيرة للفواكه",
+          "نوع بزورات",
+          "قبعة ولاد"
+        ]
+      },
+      "note": {
+        "ar": "الخياطين بيحطوه عإصبعن ليدفشوا الإبرة بلا ما ينجرحوا"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-020",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "برداية",
+        "translit": "bardaye",
+        "display": {}
+      },
+      "truth": {
+        "ar": "ستارة"
+      },
+      "truthAlt": {
+        "ar": [
+          "برادي",
+          "ستارة الشباك",
+          "ستاير",
+          "برداية الشباك"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "مكنسة قش",
+          "قطعة حلو",
+          "شرشف الطاولة"
+        ]
+      },
+      "note": {
+        "ar": "من التركي perde. وبرادي الصالون كانت خط أحمر عند تيتا"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-021",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "شرشف",
+        "translit": "sharshaf",
+        "display": {}
+      },
+      "truth": {
+        "ar": "غطا التخت القماش"
+      },
+      "truthAlt": {
+        "ar": [
+          "شرشف التخت",
+          "ملاية",
+          "غطا",
+          "غطا التخت"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "مشط شعر",
+          "فوطة مطبخ",
+          "طابة شرايط"
+        ]
+      },
+      "note": {
+        "ar": "من التركي çarşaf"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-022",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "دشك",
+        "translit": "doshak",
+        "display": {}
+      },
+      "truth": {
+        "ar": "فرشة عالأرض للقعدة"
+      },
+      "truthAlt": {
+        "ar": [
+          "فرشة",
+          "دوشك",
+          "مطرح",
+          "فرشة أرض"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "دبس العنب",
+          "خزانة الحيط",
+          "قنينة المي"
+        ]
+      },
+      "note": {
+        "ar": "من التركي döşek. بالضيعة كانوا يقعدوا عالدشك حد الصوبيا"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-023",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "أنتيكا",
+        "translit": "antika",
+        "display": {}
+      },
+      "truth": {
+        "ar": "غرض عتيق ونادر"
+      },
+      "truthAlt": {
+        "ar": [
+          "تحفة",
+          "غرض قديم",
+          "أنتيك",
+          "شي عتيق"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "نوع جبنة",
+          "رقصة إيطالية",
+          "حلوى بالقطر"
+        ]
+      },
+      "note": {
+        "ar": "من الإيطالي antica. وإذا حدا قلك «إنت أنتيكا» يعني إنت شخصية نادرة"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-024",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "يازجي",
+        "translit": "yazji",
+        "display": {}
+      },
+      "truth": {
+        "ar": "كاتب أو خطاط"
+      },
+      "truthAlt": {
+        "ar": [
+          "كاتب",
+          "خطاط",
+          "كاتب عمومي",
+          "كاتب العرايض"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بياع ياسمين",
+          "صياد سمك",
+          "حارس الليل"
+        ]
+      },
+      "note": {
+        "ar": "من التركي yazıcı يعني اللي بيكتب، وصار كمان اسم عيلة"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-025",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "مسلة",
+        "translit": "msallé",
+        "display": {}
+      },
+      "truth": {
+        "ar": "إبرة كبيرة لخياطة الأكياس"
+      },
+      "truthAlt": {
+        "ar": [
+          "إبرة كبيرة",
+          "مسلة الخيش",
+          "إبرة الخيش",
+          "عمود حجر"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "مقص الصوف",
+          "سلة قش صغيرة",
+          "مغرفة الشوربة"
+        ]
+      },
+      "note": {
+        "ar": "إبرة الخيش. والمسلة كمان هيي عمود الحجر تبع الفراعنة"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-026",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "ماكوك",
+        "translit": "makouk",
+        "display": {}
+      },
+      "truth": {
+        "ar": "قطعة النول اللي بتروح وبترجع"
+      },
+      "truthAlt": {
+        "ar": [
+          "مكوك",
+          "مكوك النول",
+          "مكوك الحياكة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "كعكة بالتمر",
+          "طير بحري",
+          "سكينة الكبة"
+        ]
+      },
+      "note": {
+        "ar": "«متل الماكوك» يعني رايح جاي طول النهار"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-027",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "قبقاب",
+        "translit": "2ab2ab",
+        "display": {}
+      },
+      "truth": {
+        "ar": "صباط خشب للحمام"
+      },
+      "truthAlt": {
+        "ar": [
+          "صباط خشب",
+          "قباقيب",
+          "كبكاب",
+          "شحاطة خشب"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "طبل صغير",
+          "لعبة ولاد",
+          "صحن نحاس"
+        ]
+      },
+      "note": {
+        "ar": "إلو صوت «قب قب» عالبلاط، ومن هون اسمو"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-028",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "شروال",
+        "translit": "sherwal",
+        "display": {}
+      },
+      "truth": {
+        "ar": "بنطلون عريض تقليدي"
+      },
+      "truthAlt": {
+        "ar": [
+          "سروال",
+          "شروال الضيعة",
+          "بنطلون عريض"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "حزام جلد",
+          "جاكيت صوف",
+          "عصاية راعي"
+        ]
+      },
+      "note": {
+        "ar": "لبس الضيعة، والدبكة ما بتزبط بلاه"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-029",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "صدرية",
+        "translit": "sadriyye",
+        "display": {}
+      },
+      "truth": {
+        "ar": "مريول أو جيليه فوق التياب"
+      },
+      "truthAlt": {
+        "ar": [
+          "مريول",
+          "جيليه",
+          "صدرية المدرسة",
+          "مريول المدرسة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "قلادة دهب",
+          "صينية قهوة",
+          "حزام عريض"
+        ]
+      },
+      "note": {
+        "ar": "صدرية المدرسة الزرقا اللي كل جيل بيتذكرها"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-030",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "لكن",
+        "translit": "legen",
+        "display": {}
+      },
+      "truth": {
+        "ar": "طشت كبير للغسيل"
+      },
+      "truthAlt": {
+        "ar": [
+          "طشت",
+          "لجن",
+          "لقن",
+          "طشت غسيل"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "يعني بس",
+          "كمان مرة",
+          "صحن الحمص"
+        ]
+      },
+      "note": {
+        "ar": "مش «لكن» تبع بس! هيدا طشت الغسيل العتيق"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-031",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "جرن",
+        "translit": "jern",
+        "display": {}
+      },
+      "truth": {
+        "ar": "حجر محفور لدق الكبة"
+      },
+      "truthAlt": {
+        "ar": [
+          "جرن الكبة",
+          "جرن حجر",
+          "هاون حجر",
+          "هاون"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بير مي",
+          "شجرة سنديان",
+          "عمود الخيمة"
+        ]
+      },
+      "note": {
+        "ar": "والمدقة بتدق فيه. صوت الجرن الصبح كان منبه الضيعة"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-032",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "مونة",
+        "translit": "mouné",
+        "display": {}
+      },
+      "truth": {
+        "ar": "أكل الشتي اللي منخزنو"
+      },
+      "truthAlt": {
+        "ar": [
+          "المونة",
+          "مؤونة",
+          "مؤونة الشتوية",
+          "أكل مخزن"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "عزيمة العرس",
+          "بنت الجيران",
+          "ضريبة البلدية"
+        ]
+      },
+      "note": {
+        "ar": "كشك وزيت وزعتر ومكدوس: البيت اللبناني ما بيعيش بلاها"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-033",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "علية",
+        "translit": "3elliyyé",
+        "display": {}
+      },
+      "truth": {
+        "ar": "أوضة فوق السطح"
+      },
+      "truthAlt": {
+        "ar": [
+          "أوضة فوق",
+          "غرفة علوية",
+          "علية البيت",
+          "طابق فوق"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بنت عمك",
+          "طاولة عالية",
+          "شجرة تين"
+        ]
+      },
+      "note": {
+        "ar": "أوضة فوق البيت بتطل عالضيعة كلها"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-034",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "يوك",
+        "translit": "yook",
+        "display": {}
+      },
+      "truth": {
+        "ar": "رف بالحيط للفرش واللحف"
+      },
+      "truthAlt": {
+        "ar": [
+          "خزانة الفرش",
+          "يوك الفرش",
+          "كوة بالحيط",
+          "رف الفرشات"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "حبل الغسيل",
+          "جرس البقرة",
+          "نوع حلو"
+        ]
+      },
+      "note": {
+        "ar": "من التركي yük يعني حمل. بالنهار كانوا يكدسوا عليه الفرش واللحف"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-035",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "كالون",
+        "translit": "kaloon",
+        "display": {}
+      },
+      "truth": {
+        "ar": "قفل الباب"
+      },
+      "truthAlt": {
+        "ar": [
+          "قفل",
+          "كلون",
+          "غال"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "مصباح كاز",
+          "فرشاية دهان",
+          "جرة فخار"
+        ]
+      },
+      "note": {
+        "ar": "«سكر الكالون» يعني قفل الباب منيح"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-036",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "ترباس",
+        "translit": "terbes",
+        "display": {}
+      },
+      "truth": {
+        "ar": "سكرة حديد بتنزلق عالباب"
+      },
+      "truthAlt": {
+        "ar": [
+          "مزلاج",
+          "سقاطة",
+          "سكرة",
+          "سكرة الباب"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "كيس قمح كبير",
+          "قماشة للطاولة",
+          "حجر الطاحون"
+        ]
+      },
+      "note": {
+        "ar": "بتسكر الباب من جوا"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-037",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "قازان",
+        "translit": "2azan",
+        "display": {}
+      },
+      "truth": {
+        "ar": "طنجرة كبيرة كتير للطبخ"
+      },
+      "truthAlt": {
+        "ar": [
+          "حلة كبيرة",
+          "قدر كبير",
+          "دست",
+          "طنجرة كبيرة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "مدفع عتيق",
+          "قصر بالجبل",
+          "طير كبير"
+        ]
+      },
+      "note": {
+        "ar": "من التركي kazan، بيطبخوا فيه لعرس الضيعة كلها"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-038",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "مسطبة",
+        "translit": "mastabé",
+        "display": {}
+      },
+      "truth": {
+        "ar": "قعدة حجر قدام البيت"
+      },
+      "truthAlt": {
+        "ar": [
+          "مصطبة",
+          "دكة",
+          "مقعد حجر",
+          "قعدة حجر"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "مخزن تبن",
+          "زاروب ضيق",
+          "جسر صغير"
+        ]
+      },
+      "note": {
+        "ar": "عليها بتقعد الجارات يشربوا قهوة ويحللوا أخبار الضيعة"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-039",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "مزراب",
+        "translit": "mezrab",
+        "display": {}
+      },
+      "truth": {
+        "ar": "قسطل بينزل مي الشتي عن السطح"
+      },
+      "truthAlt": {
+        "ar": [
+          "مزراب المي",
+          "ميزاب",
+          "مسيل المي",
+          "قسطل السطح"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "عصاية الراعي",
+          "طبل عرس",
+          "مغرفة كبيرة"
+        ]
+      },
+      "note": {
+        "ar": "ومنو المتل: «من تحت الدلفة لتحت المزراب»"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-040",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "قنباز",
+        "translit": "2ombaz",
+        "display": {}
+      },
+      "truth": {
+        "ar": "تياب طويلة للرجال متل الجلابية"
+      },
+      "truthAlt": {
+        "ar": [
+          "جلابية",
+          "قمباز",
+          "ثوب طويل",
+          "جلابية رجالي"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "طاقية صوف",
+          "حزام عريض",
+          "صحن قش"
+        ]
+      },
+      "note": {
+        "ar": "كانوا يلبسوه رجال الضيعة مع الطربوش"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    }
+  ]
+}

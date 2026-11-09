@@ -1,0 +1,12 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "9",
+  "a": {
+    "type": "GAME",
+    "gameId": "bluff",
+    "i": {
+      "type": "END_GAME"
+    }
+  }
+}

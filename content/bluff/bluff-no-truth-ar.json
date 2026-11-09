@@ -1,0 +1,1237 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-no-truth-ar",
+  "game": "bluff",
+  "title": {
+    "en": "No Truth (Lebanese Arabic)",
+    "fr": "Aucune vérité (arabe libanais)",
+    "ar": "ما في صحّ",
+    "es": "Ninguna es verdad (árabe libanés)"
+  },
+  "description": {
+    "en": "The Lebanese final. No right answer: the most convincing lie wins.",
+    "fr": "La finale en libanais. Aucune bonne réponse : le mensonge le plus crédible gagne.",
+    "ar": "النهائي. ما في ولا جواب صح، الكذبة اللي بتنصدّق أكتر بتاخد كل شي.",
+    "es": "La final en libanés. No hay respuesta correcta: gana la mentira más creíble."
+  },
+  "sourceLocale": "ar",
+  "playableIn": [
+    "ar"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {
+    "no_truth": {
+      "ar": [
+        "ما حدا بيعرف وهيدا هوي القصد",
+        "كان نهار تلاتا",
+        "اسألوا البسة"
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "nt-ar-001",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو أول جملة قالها بس لإنسان؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "هلق فيك تطعميني",
+          "هالكرسي إلي",
+          "أنا كنت هون قبلك"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-002",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو شغلة القمر الحقيقية؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "ناطور الليل",
+          "ضو سهر للبوم",
+          "بيراقب البحر"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-003",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "ليش الكلسات بيختفوا بالغسالة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "بيسافروا بلا ما يخبروا حدا",
+          "الغسالة بتاخد وحدة بخشيش",
+          "بيهربوا من البربيش بالليل"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-004",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيحكوا الزرعات عنا لما نطلع من البيت؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "أخيرا شوية هدوء",
+          "حدا شرب مي؟",
+          "بيحكوا معنا كتير"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-005",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو القاعدة رقم واحد بالكتيب اللي بتستلمو كل تيتا؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "ما في ضيف بيفل جوعان",
+          "اسأل أكلت مرتين",
+          "الصحون الحلوين للضيوف بس"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-006",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو المكون السري بطبخ كل تيتا؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "رشة عتاب",
+          "صبر وكتير سمنة",
+          "الخطوة اللي ما بتخبر حدا فيها"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-007",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بتعمل الغيوم بيوم العطلة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "بتنام عراس جبل",
+          "بتعمل حالها غنم",
+          "بتزور بنت عمها الضباب"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-008",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كانت أول نكتة بالتاريخ؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "انتبه في حجر",
+          "مين أخد النار؟",
+          "ماموث تزحلق عالتلج"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-009",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيقول الزمور لما حدا يزمرلو بعجقة السير؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "ما في مطرح، بدك ياني طير؟",
+          "خلص سمعناك",
+          "روق، رح نوصل بكرا"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-010",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "ليش العرس اللبناني ما بيخلص قبل الفجر؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "لأن الدبكة ما إلها فرام",
+          "لأن السفرة بعدها ما خلصت",
+          "لأن العريس ضايع بين الضيوف"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-011",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيفكر البيض بالمقلاية قبل ما ينقلى؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "ليش أنا مش جاجة؟",
+          "خلوا الصفار بالنص",
+          "ما تنسوا الملح"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-012",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بتقول المنقوشة للكعكة بالفرن؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "أنا الأصل وإنتي النسخة",
+          "زعتري أطيب من سمسمك",
+          "منلتقي عالترويقة"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-013",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "لوين بيروحوا الريموتات الضايعة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "عند الكلسات",
+          "تحت الكنباية من سنين",
+          "عند الجيران بلا ما نعرف"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-014",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كلمة سر الواي فاي بالأهرامات؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "فرعون123",
+          "مثلث للأبد",
+          "ممنوع الدخول"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-015",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيحلموا الكلاب؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "بوسطجي بيوقف يدردش معن",
+          "سجق ما بيخلص",
+          "يطلعوا عالكنباية"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-016",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو مكتوب بأول صفحة من كتيب تعليمات الولاد؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "ممنوع الإرجاع أو التبديل",
+          "البطاريات مش مع المنتج",
+          "النتيجة بتختلف من بيت لبيت"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-017",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيقول الـGPS بقلبو لما ما تسمع منو؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "ضيع حالك إذا",
+          "رح إتذكرلك ياها",
+          "عم عيد حساب حياتي"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-018",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو أكتر رياضة بيحبوها النمل؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "شيل الفتافيت",
+          "المشي بالصف",
+          "الهجوم عالسيران"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-019",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "عشو بيحكوا الصبابيط وإنت نايم؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "وين رحنا اليوم",
+          "مين ريحتو أبشع",
+          "كيف منهرب عالبحر"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-020",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "ليش البسينات بيوقعوا الغراض عن الطاولة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "عم يجربوا الجاذبية كل يوم",
+          "ديكور",
+          "انتقام من الحمام"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-021",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو قال أول واحد داق الزيتون؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "جربوا كمان سنة",
+          "هالشجرة عم تضحك علي",
+          "بدها ملح وصبر"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-022",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بتحكي النجوم عن بعضها؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "مين عم يضوي أقل هالإيام",
+          "مين الكوكب اللي عندو أكتر أقمار",
+          "المذنب اللي ما بيتصل أبدا"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-023",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "ليش الأسانسير بيعمل جو محرج؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "بيسمع أسرار كتير",
+          "ما حدا بيعرف وين يتطلع",
+          "لما تقطع الكهربا بنصو"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-024",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيعمل الحلزون إذا كان مستعجل؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "بيترك ورقة",
+          "بيشلح بيتو",
+          "بيطلب توصيلة من سلحفاة"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-025",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيوشوشوا الحمام بساحة الضيعة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "هيداك معو كعكة",
+          "اعمل حالك مسكين، عم ياكل",
+          "منلتقي عالتمثال الضهر"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-026",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو أكبر كذبة بتقولها البسة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "ما حدا طعماني اليوم",
+          "مش أنا اللي كسرتها",
+          "بحبك، يلا افتح الباب"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-027",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو القاعدة الأولى بنادي الجدود السري؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "دايما معك محرمة",
+          "ما تدفع باركينغ أبدا",
+          "أول واحد بينام بالعرس"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-028",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بتشوف المرايات لما ما حدا عم يتطلع فيها؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "آخر الأوضة أخيرا",
+          "حيط زهقان",
+          "بنت عمها المراية اللي مقابيلها"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-029",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو الأكلة المفضلة عند البركان؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "حجار حرة",
+          "كل شي بيقرب كتير",
+          "شوربة سخنة كتير"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-030",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو رأي الشجر بالعصافير؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "جيران عجقة بس أوفيا",
+          "ما بيدفعوا إيجار",
+          "زينة عايشة"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-031",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيعملوا الدود بأيام الشتي؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "بيعملوا حفلة مسبح",
+          "سياحة عالرصيف",
+          "بيتمرنوا عالسباحة"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-032",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو أسخف قوة خارقة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "تعرف الساعة دايما",
+          "تدفي الخبز شوي",
+          "تحكي مع مسكات البواب"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-033",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "ليش المفاتيح بتتخبى لما تكون متأخر؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "ما بتحب حدا يستعجلها",
+          "بدها فرصة",
+          "غيرانة من التلفون"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-034",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيعدوا الغنمات إذا ما إجاهن نوم؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "بشر",
+          "غيوم",
+          "سياجات"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-035",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو أول شي رح يتشكوا منو الفضائيين عالأرض؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "الجاذبية تقيلة كتير",
+          "ما حدا بيضوي الغماز",
+          "ليش السما زرقا؟"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-036",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيعمل رجل التلج بالصيف؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "بينتقل عالفريزر",
+          "بيتقاعد بالجرد",
+          "بيصير بركة عندها ذكريات"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-037",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو التحلاية المفضلة عند الروبوتات؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "بسكوت بالشيبس",
+          "مهلبية بالبراغي",
+          "جيلو عالبطارية"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-038",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو قالت أول سمكة مشيت عاليابسة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "مين تارك الحنفية مفتوحة؟",
+          "إجريي جداد، طولوا بالكن",
+          "راجعة بعد خمس دقايق"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-039",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيقولوا الأطفال لبعض بالجنينة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "تطلع، رح وقعها كمان مرة",
+          "تبعي صوتو أعلى",
+          "ما تخبرن إنو منحكي"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-040",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيقول صحن التبولة لصحن الحمص عالسفرة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "أنا الخفيف وإنت التقيل",
+          "كل الخبز عليك",
+          "ما حدا بيجي لعندي قبلك"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-041",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو أول كلمة بتقولها الكهربا لما ترجع؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "اشتقتولي؟",
+          "ما تفرحوا كتير",
+          "شحنوا التلفونات بسرعة"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-042",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "ليش السرفيس دايماً بيوقف حدك ولو ما أشرتلو؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "بيحس إنك تعبان",
+          "بدو رفقة",
+          "عندو مطرح واحد وبدو ياه إلك"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-043",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بتفكر آخر حبة كبة بالصحن؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "ما حدا تجرأ علي",
+          "أنا المختارة",
+          "حدا يخلصني"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    }
+  ]
+}

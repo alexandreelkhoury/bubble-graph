@@ -1,0 +1,176 @@
+{
+  "v": 2,
+  "t": "state",
+  "seq": 6,
+  "serverNow": 1790000001000,
+  "view": {
+    "kind": "player",
+    "room": {
+      "roomCode": "KXRT",
+      "joinUrl": "https://play.example.workers.dev/KXRT",
+      "phase": "SETUP",
+      "focusedGameId": "bluff",
+      "setupGameId": "bluff",
+      "contentLocale": "en",
+      "members": [
+        {
+          "id": "p_0a1b2c3d4e5f60718293a4b5",
+          "name": "Rami",
+          "color": "coral",
+          "seat": 0,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": true,
+          "reaction": null
+        },
+        {
+          "id": "p_1b2c3d4e5f60718293a4b5c6",
+          "name": "Léa",
+          "color": "azure",
+          "seat": 1,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_2c3d4e5f60718293a4b5c6d7",
+          "name": "نور",
+          "color": "jade",
+          "seat": 2,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_3d4e5f60718293a4b5c6d7e8",
+          "name": "Sam",
+          "color": "lemon",
+          "seat": 3,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        }
+      ],
+      "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "games": [
+        {
+          "id": "mishana",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 2,
+          "durationMinutes": [
+            10,
+            20
+          ]
+        },
+        {
+          "id": "bluff",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            15,
+            20
+          ]
+        }
+      ],
+      "setup": {
+        "gameId": "bluff",
+        "settings": {
+          "packIds": [],
+          "length": "normal",
+          "pace": "normal"
+        },
+        "canStart": true,
+        "startBlocker": null,
+        "availablePacks": [
+          {
+            "id": "demo-lb-proverbs",
+            "gameId": "bluff",
+            "family": "demo-lb-proverbs",
+            "locale": "ar",
+            "title": {
+              "en": "demo-lb-proverbs",
+              "fr": "demo-lb-proverbs",
+              "ar": "demo-lb-proverbs",
+              "es": "demo-lb-proverbs"
+            },
+            "pairCount": 3,
+            "ageRating": "all",
+            "tier": "free",
+            "stars": null,
+            "domain": null,
+            "topics": []
+          },
+          {
+            "id": "demo-world-facts",
+            "gameId": "bluff",
+            "family": "demo-world-facts",
+            "locale": "en",
+            "title": {
+              "en": "demo-world-facts",
+              "fr": "demo-world-facts",
+              "ar": "demo-world-facts",
+              "es": "demo-world-facts"
+            },
+            "pairCount": 3,
+            "ageRating": "all",
+            "tier": "free",
+            "stars": null,
+            "domain": null,
+            "topics": []
+          },
+          {
+            "id": "demo-no-truth",
+            "gameId": "bluff",
+            "family": "demo-no-truth",
+            "locale": "en",
+            "title": {
+              "en": "demo-no-truth",
+              "fr": "demo-no-truth",
+              "ar": "demo-no-truth",
+              "es": "demo-no-truth"
+            },
+            "pairCount": 2,
+            "ageRating": "all",
+            "tier": "free",
+            "stars": null,
+            "domain": null,
+            "topics": []
+          }
+        ],
+        "lockedPacks": [],
+        "extras": {
+          "gameId": "bluff",
+          "available": 6,
+          "bigGroup": false
+        }
+      },
+      "cup": {
+        "stars": {},
+        "last": null
+      },
+      "premium": false,
+      "tvBusy": false,
+      "contentLocales": [
+        "en",
+        "fr",
+        "ar"
+      ]
+    },
+    "game": null,
+    "me": {
+      "id": "p_0a1b2c3d4e5f60718293a4b5",
+      "benched": false
+    }
+  }
+}

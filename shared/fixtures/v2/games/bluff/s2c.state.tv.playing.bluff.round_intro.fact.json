@@ -1,0 +1,171 @@
+{
+  "v": 2,
+  "t": "state",
+  "seq": 37,
+  "serverNow": 1790000090140,
+  "view": {
+    "kind": "tv",
+    "room": {
+      "roomCode": "KXRT",
+      "joinUrl": "https://play.example.workers.dev/KXRT",
+      "phase": "PLAYING",
+      "focusedGameId": "bluff",
+      "setupGameId": "bluff",
+      "contentLocale": "en",
+      "members": [
+        {
+          "id": "p_0a1b2c3d4e5f60718293a4b5",
+          "name": "Rami",
+          "color": "coral",
+          "seat": 0,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": true,
+          "reaction": null
+        },
+        {
+          "id": "p_1b2c3d4e5f60718293a4b5c6",
+          "name": "Léa",
+          "color": "azure",
+          "seat": 1,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_2c3d4e5f60718293a4b5c6d7",
+          "name": "نور",
+          "color": "jade",
+          "seat": 2,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_3d4e5f60718293a4b5c6d7e8",
+          "name": "Sam",
+          "color": "lemon",
+          "seat": 3,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_4e5f60718293a4b5c6d7e8f9",
+          "name": "Zoé",
+          "color": "grape",
+          "seat": 4,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        }
+      ],
+      "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "games": [
+        {
+          "id": "mishana",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 2,
+          "durationMinutes": [
+            10,
+            20
+          ]
+        },
+        {
+          "id": "bluff",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            15,
+            20
+          ]
+        }
+      ],
+      "setup": null,
+      "cup": {
+        "stars": {},
+        "last": null
+      },
+      "premium": false,
+      "tvBusy": false,
+      "contentLocales": [
+        "en",
+        "fr",
+        "ar"
+      ]
+    },
+    "game": {
+      "gameId": "bluff",
+      "n": 1,
+      "phase": "ROUND_INTRO",
+      "doneIds": [],
+      "awaitedIds": [],
+      "public": {
+        "schema": 1,
+        "phase": "ROUND_INTRO",
+        "round": 2,
+        "roundCount": 3,
+        "roundKind": "fact",
+        "promptIndex": 2,
+        "promptCount": 5,
+        "multiplier": 2,
+        "deadline": 1790000094140,
+        "prompt": null,
+        "submittedIds": [],
+        "spotOnIds": [],
+        "options": [],
+        "votedIds": [],
+        "voided": false,
+        "notice": null,
+        "reveal": null,
+        "scores": [
+          {
+            "playerId": "p_0a1b2c3d4e5f60718293a4b5",
+            "score": 150,
+            "scoreBefore": 150
+          },
+          {
+            "playerId": "p_1b2c3d4e5f60718293a4b5c6",
+            "score": 220,
+            "scoreBefore": 220
+          },
+          {
+            "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+            "score": 0,
+            "scoreBefore": 0
+          },
+          {
+            "playerId": "p_3d4e5f60718293a4b5c6d7e8",
+            "score": 10,
+            "scoreBefore": 10
+          },
+          {
+            "playerId": "p_4e5f60718293a4b5c6d7e8f9",
+            "score": 0,
+            "scoreBefore": 0
+          }
+        ],
+        "newIds": [],
+        "awards": [],
+        "skipsLeft": 0,
+        "hidesLeft": 0
+      },
+      "me": null,
+      "over": false
+    },
+    "me": null
+  }
+}

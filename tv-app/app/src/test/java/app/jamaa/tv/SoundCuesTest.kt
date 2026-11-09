@@ -4,6 +4,7 @@ import app.jamaa.tv.game.Cue
 import app.jamaa.tv.game.CuePlay
 import app.jamaa.tv.game.RateLimiter
 import app.jamaa.tv.game.SoundCues
+import app.jamaa.tv.games.GameIds
 import app.jamaa.tv.protocol.DeadlineKind
 import app.jamaa.tv.protocol.GuessStatus
 import app.jamaa.tv.protocol.HistoryCause
@@ -33,7 +34,9 @@ class SoundCuesTest {
     fun everyCueHasAGeneratedRawFile() {
         val raw = File(System.getProperty("user.dir"), "src/main/res/raw").takeIf { it.isDirectory }
             ?: File(Fixtures.dir, "../../tv-app/app/src/main/res/raw")
-        val files = raw.listFiles().orEmpty().filter { it.name.endsWith(".ogg") }.map { it.name.removeSuffix(".ogg") }.sorted()
+        // `<gameId>_*.ogg` belong to each game's generated SoundCues<Id>.kt (JAMAA-PLATFORM §6.1, D in G); [Cue] is the platform's.
+        val files = raw.listFiles().orEmpty().filter { it.name.endsWith(".ogg") }.map { it.name.removeSuffix(".ogg") }
+            .filter { name -> GameIds.ALL.none { name.startsWith(it + "_") } }.sorted()
         assertEquals(Cue.entries.map { it.file }.sorted(), files)
         assertEquals("sfx_all_ready", Cue.ALL_READY.file)
         assertEquals("sting_win_infiltrators", Cue.STING_WIN_INFILTRATORS.file)

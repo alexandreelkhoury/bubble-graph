@@ -73,7 +73,9 @@ export function buildPrompt(rng: Rng, cand: Candidate, locale: Locale, rerun: bo
   const truthAll = truth === null ? [] : dedupe([truth, ...alts].filter((t) => t.trim().length > 0));
   const house: string[] = [];
   for (const raw of [...(item.houseLies[locale] ?? []), ...(pack.fallbackHouseLies[item.type]?.[locale] ?? [])]) {
-    const h = displayNormalize(raw);
+    // Every option gets the same display pipeline as a player lie (§5.1 display normalisation + the Latin case rule),
+    // so a lowercase authored truth or house lie can never stand out next to the capitalised player lies.
+    const h = presentLie(raw, locale);
     if (h.length === 0) continue;
     if (truthAll.length > 0 && isTooClose(h, truthAll)) continue;
     if (house.some((x) => collides(x, h))) continue;
@@ -92,7 +94,7 @@ export function buildPrompt(rng: Rng, cand: Candidate, locale: Locale, rerun: bo
     display: src !== locale ? (item.prompt.display[locale] ?? null) : null,
     lengthHint: lengthHintOf(truth),
     rerun,
-    truthText: truth === null ? null : displayNormalize(truth),
+    truthText: truth === null ? null : presentLie(truth, locale),
     truthOriginal: truth !== null && srcTruth ? displayNormalize(srcTruth) : null,
     truthAll,
     truthAlt: dedupe(alts).filter((t) => t !== truth),

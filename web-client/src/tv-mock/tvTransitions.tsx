@@ -10,18 +10,16 @@ import { useEffect, useRef } from "preact/hooks";
 import type { GameId } from "@jamaa/shared/games/ids";
 import type { MemberPublic } from "@jamaa/shared/protocol/v2";
 import type { Locale } from "@jamaa/shared/constants";
-import { ENTRANCE, PORTAL, PORTAL_BACK, scaled, variant } from "../motion/choreo";
-import { run } from "../motion/runner";
+import { CHOREO, PORTAL_REPEAT_SCALE, run, scaled, variant } from "@jamaa/shared/motion";
 import { reduced } from "../lib/motion";
 import { Character } from "../components/Character";
 import { PosterArt, TitleLockup, WORLD_OF } from "../components/Poster";
-import { setChoreo, armGuard } from "./tvPlatform";
+import { armGuard, clearChoreo, setChoreo } from "./tvPlatform";
 
 export interface Box { x: number; y: number; w: number; h: number }
 const SCREEN: Box = { x: 0, y: 0, w: 960, h: 540 };
 /** The arch box that covers the whole canvas (the mask "exceeds the screen"). */
 const COVER: Box = { x: -720, y: -760, w: 2400, h: 1800 };
-export const PORTAL_REPEAT_SCALE = 0.64;
 
 const lerp = (a: number, b: number, p: number): number => a + (b - a) * p;
 export function lerpBox(a: Box, b: Box, p: number): Box {
@@ -36,9 +34,9 @@ export function archPath(b: Box): string {
 function useChoreo(steps: ReturnType<typeof variant>, frame: Parameters<typeof run>[1], onDone: () => void, count = 1): void {
   useEffect(() => {
     if (steps.length === 0) { onDone(); armGuard(); return; }
-    const r = run(steps, frame, () => { setChoreo(null); armGuard(); onDone(); }, count);
+    const r = run(steps, frame, () => { clearChoreo(r); armGuard(); onDone(); }, count);
     setChoreo(r);
-    return () => { r.cancel(); setChoreo(null); };
+    return () => { r.cancel(); clearChoreo(r); };
   }, []);
 }
 
@@ -49,7 +47,7 @@ export function Portal({ id, from, first, onHandoff, onDone, hubRoot }: { id: Ga
   const handed = useRef(false);
   const calm = reduced();
   const src = from ?? { x: 72, y: 82, w: 227, h: 313 };
-  const steps = calm ? variant(PORTAL, { reduced: true }) : first ? [...PORTAL] : scaled(PORTAL, PORTAL_REPEAT_SCALE);
+  const steps = calm ? variant(CHOREO.portal, { reduced: true }) : first ? [...CHOREO.portal] : scaled(CHOREO.portal, PORTAL_REPEAT_SCALE);
   const handoff = (): void => { if (!handed.current) { handed.current = true; onHandoff(); } };
   useChoreo(steps, (p) => {
     const el = root.current;
@@ -65,7 +63,7 @@ export function Portal({ id, from, first, onHandoff, onDone, hubRoot }: { id: Ga
     el.style.setProperty("--handoff", String(p("handoff")));
     const hub = hubRoot();
     if (hub) {
-      hub.style.setProperty("--out", String(p("others")));
+      hub.style.setProperty("--out", String(p("othersOut")));
       hub.style.setProperty("--press", String(p("press")));
     }
     if (p("handoff") > 0) handoff();
@@ -89,7 +87,7 @@ export function PortalBack({ id, to, onDone, hubRoot }: { id: GameId; to: () => 
   const pathRef = useRef<SVGPathElement>(null);
   const root = useRef<HTMLDivElement>(null);
   const calm = reduced();
-  const steps = calm ? variant(PORTAL_BACK, { reduced: true }) : [...PORTAL_BACK];
+  const steps = calm ? variant(CHOREO.portalBack, { reduced: true }) : [...CHOREO.portalBack];
   useChoreo(steps, (p) => {
     const el = root.current;
     if (!el) return;
@@ -100,7 +98,7 @@ export function PortalBack({ id, to, onDone, hubRoot }: { id: GameId; to: () => 
     el.style.setProperty("--dark", String(0.4 * (1 - a)));
     el.style.opacity = a >= 1 ? "0" : "1";
     const hub = hubRoot();
-    if (hub) hub.style.setProperty("--out", String(1 - p("others")));
+    if (hub) hub.style.setProperty("--out", String(1 - p("othersIn")));
   }, () => { const hub = hubRoot(); hub?.style.removeProperty("--out"); onDone(); });
   return (
     <div class={`tvportal tvportal--back${calm ? " is-calm" : ""}`} ref={root} data-world={WORLD_OF[id]} aria-hidden="true">
@@ -120,7 +118,7 @@ export function Entrance({ id, members, script, onDone }: { id: GameId; members:
   const root = useRef<HTMLDivElement>(null);
   const calm = reduced();
   const cast = members.filter((m) => !m.left && !m.benched).slice(0, 12);
-  const steps = calm ? variant(ENTRANCE, { reduced: true }) : [...ENTRANCE];
+  const steps = calm ? variant(CHOREO.entrance, { reduced: true }) : [...CHOREO.entrance];
   useChoreo(steps, (p) => {
     const el = root.current;
     if (!el) return;
@@ -128,7 +126,7 @@ export function Entrance({ id, members, script, onDone }: { id: GameId; members:
     el.style.setProperty("--darken", String(p("darken")));
     el.style.setProperty("--door", String(p("door")));
     el.style.setProperty("--title", String(p("title")));
-    el.style.setProperty("--settle", String(p("settle")));
+    el.style.setProperty("--settle", String(p("titleSettle")));
     el.querySelectorAll<HTMLElement>(".tventr__ch").forEach((c, i) => c.style.setProperty("--run", String(p("characters", i))));
   }, onDone, cast.length);
   const half = Math.ceil(cast.length / 2);

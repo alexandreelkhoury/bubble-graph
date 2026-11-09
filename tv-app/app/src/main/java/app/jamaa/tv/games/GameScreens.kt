@@ -46,6 +46,8 @@ class GameScreenArgs(
     val passHook: String?,
     /** Reports that the screen shows a host dialog (the rules sheet yields to it, §3.6). */
     val onHostDialog: (Boolean) -> Unit,
+    /** The ⓘ rules sheet (§3.6): the top-bar ⓘ a game shows on its results screen. */
+    val onRules: () -> Unit = {},
 )
 
 /**

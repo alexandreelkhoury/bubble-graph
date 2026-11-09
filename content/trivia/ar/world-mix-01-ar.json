@@ -13,7 +13,7 @@
   },
   "description": {
     "en": "Planets, paintings, penalties and paella: one quick lap around everything.",
-    "fr": "Planètes, tableaux, penalties et paella : un petit tour de tout, en vitesse.",
+    "fr": "Planètes, tableaux, penalties et paella : un petit tour de tout, en vitesse.",
     "ar": "كواكب ولوحات وركلات ترجيح وباييا: جولة سريعة حول كلّ شيء.",
     "es": "Planetas, cuadros, penaltis y paella: una vuelta rápida por todo."
   },
@@ -193,10 +193,10 @@
       "type": "mc4",
       "text": "ما أعلى شلّال في العالم؟",
       "options": [
-        "شلّالات نياغرا",
-        "شلّالات فيكتوريا",
-        "شلّال سالتو أنخل",
-        "شلّالات إغوازو"
+        "نياغرا",
+        "فيكتوريا",
+        "سالتو أنخل",
+        "إغوازو"
       ],
       "answer": 2,
       "topic": "geography",
@@ -777,8 +777,8 @@
       "answer": 0,
       "topic": "music",
       "difficulty": 1,
-      "explain": "معجبوهم يسمّون أنفسهم «آرمي».",
-      "source": "[VERIFY] trivial (BTS, South Korea)"
+      "explain": "أغنيتهم «Dynamite» سنة 2020 كانت أوّل أغنية لهم بالإنجليزية بالكامل.",
+      "source": "[VERIFY] trivial (BTS, South Korea); Billboard/Big Hit: \"Dynamite\" (Aug 2020), first all-English single"
     },
     {
       "id": "q047",

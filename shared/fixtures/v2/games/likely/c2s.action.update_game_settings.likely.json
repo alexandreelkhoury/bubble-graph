@@ -1,0 +1,13 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "6",
+  "a": {
+    "type": "UPDATE_GAME_SETTINGS",
+    "gameId": "likely",
+    "patch": {
+      "length": "short",
+      "showVoters": false
+    }
+  }
+}

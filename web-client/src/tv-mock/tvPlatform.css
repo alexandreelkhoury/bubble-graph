@@ -239,17 +239,18 @@
 .tvhint { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding-inline: 10px; border-radius: 99px; background: rgb(0 0 0 / 0.25); color: var(--color-text-muted); font: 600 15px/1 var(--font-sans); animation: fade-in 300ms both; }
 .tvgamehost, .tvgamehost__screen { position: absolute; inset: 0; }
 .tvloadinggame { display: grid; place-items: center; }
-.tvresultsbar { position: absolute; bottom: 20px; inset-inline: 40px; height: 68px; z-index: 5; display: flex; align-items: center; gap: 14px; padding: 6px 10px 6px 14px; border-radius: 20px;
+.tvresultsbar { position: absolute; bottom: 18px; inset-inline: 40px; height: 78px; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 6px 12px 6px 18px; border-radius: 22px;
   background: linear-gradient(180deg, rgb(58 34 102 / 0.96), rgb(42 22 80 / 0.98)); box-shadow: var(--elev-3-shadow), inset 0 0 0 1px rgb(var(--rgb-accent) / 0.22); animation: bar-up 360ms var(--ease-decel) both; }
 @keyframes bar-up { from { transform: translateY(100px); opacity: 0; } to { transform: none; opacity: 1; } }
-.tvresultsbar__cup { display: flex; align-items: center; gap: 12px; }
-.tvresultsbar__title { display: inline-flex; align-items: center; gap: 6px; font: 900 16px/1 var(--font-sans); color: var(--color-accent); white-space: nowrap; }
-.tvresultsbar__rows { display: flex; gap: 6px; }
+.tvresultsbar__cup { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
+.tvresultsbar__title { display: inline-flex; align-items: center; gap: 6px; font: 900 14px/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-accent); white-space: nowrap; }
+.tv:lang(ar) .tvresultsbar__title { letter-spacing: 0; }
+.tvresultsbar__rows { display: flex; gap: 14px; }
 .tvresultsbar__row { display: flex; align-items: center; gap: 2px; }
 .tvresultsbar__stars { display: inline-flex; align-items: center; gap: 2px; color: var(--color-accent); font: 900 18px/1 var(--font-sans); }
 .tvresultsbar__hook { flex: 1; min-width: 0; font-size: 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .tvresultsbar__actions { margin-inline-start: auto; display: flex; gap: 10px; }
-.tvresultsbar__actions .tvbtn { height: 50px; padding-inline: 16px; font-size: 18px; }
+.tvresultsbar__actions .tvbtn { height: 52px; min-width: 0; padding-inline: 20px; font-size: 18px; white-space: nowrap; }
 .tvresultsbar:not(.is-ready) .tvresultsbar__actions { opacity: 0.45; }
 .tvflight { position: absolute; left: 50%; bottom: 40px; color: var(--color-accent); z-index: 6; pointer-events: none; filter: drop-shadow(0 0 8px rgb(var(--rgb-accent) / 0.8));
   --p: 0; transform: translate(calc(var(--dx) + (-380px - var(--dx)) * var(--p)), calc(-260px * (1 - var(--p)) + -180px * var(--p) * (1 - var(--p)))) scale(calc(1.4 - var(--p) * 0.6)); opacity: calc(1 - max(0, var(--p) - 0.92) * 12); }

@@ -1,4 +1,5 @@
 import { render } from "preact";
+import "virtual:jamaa-worlds.css"; // the world palettes (vite.config.ts, from @jamaa/shared/worlds)
 import "./styles.css";
 import { App } from "./app";
 import { detectLocale, setLocale } from "./i18n/t";

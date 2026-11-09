@@ -1,0 +1,95 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`seeded bot games (JAMAA-PLATFORM §2.8, GAME-BLUFF §13.4) > golden: one seeded game's final scores and awards 1`] = `
+{
+  "awards": [
+    [
+      "bluffOfTheNight",
+      [
+        "p_b1uff00",
+      ],
+      2,
+    ],
+    [
+      "lieDetector",
+      [
+        "p_b1uff02",
+        "p_b1uff05",
+      ],
+      2,
+    ],
+    [
+      "crowdFavourite",
+      [
+        "p_b1uff03",
+      ],
+      3,
+    ],
+    [
+      "hookLineSinker",
+      [
+        "p_b1uff00",
+        "p_b1uff01",
+      ],
+      5,
+    ],
+  ],
+  "outcome": {
+    "points": {
+      "p_b1uff00": 780,
+      "p_b1uff01": 10,
+      "p_b1uff02": 1070,
+      "p_b1uff03": 430,
+      "p_b1uff04": 200,
+      "p_b1uff05": 300,
+    },
+    "ranking": [
+      [
+        "p_b1uff02",
+      ],
+      [
+        "p_b1uff00",
+      ],
+      [
+        "p_b1uff03",
+      ],
+      [
+        "p_b1uff05",
+      ],
+      [
+        "p_b1uff04",
+      ],
+      [
+        "p_b1uff01",
+      ],
+    ],
+  },
+  "scores": [
+    [
+      "p_b1uff00",
+      780,
+    ],
+    [
+      "p_b1uff01",
+      10,
+    ],
+    [
+      "p_b1uff02",
+      1070,
+    ],
+    [
+      "p_b1uff03",
+      430,
+    ],
+    [
+      "p_b1uff04",
+      200,
+    ],
+    [
+      "p_b1uff05",
+      300,
+    ],
+  ],
+  "steps": 121,
+}
+`;

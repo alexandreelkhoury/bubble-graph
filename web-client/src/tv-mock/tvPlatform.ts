@@ -8,7 +8,7 @@ import { INPUT_GUARD_MS } from "@jamaa/shared/constants";
 import type { GameId } from "@jamaa/shared/games/ids";
 import type { RoomPhase } from "@jamaa/shared/room";
 import { BRAND } from "@jamaa/shared/brand";
-import type { Run } from "../motion/runner";
+import type { Run } from "@jamaa/shared/motion";
 import { readRaw, removeRaw, writeRaw } from "../lib/storage";
 
 /** True once the game's own results screen has settled (e.g. Mish Ana!'s stage 2): the platform bar may appear. */
@@ -24,6 +24,11 @@ const now = (): number => (typeof performance !== "undefined" ? performance.now(
 export function setChoreo(r: Run | null): void {
   current = r;
   choreoActive.value = r !== null;
+}
+
+/** Clears `r` if it is still the registered choreography (a late cleanup never clears a newer one). */
+export function clearChoreo(r: Run): void {
+  if (current === r) setChoreo(null);
 }
 
 /** Rule 2: ignore OK and D-pad for `ms` from now. */

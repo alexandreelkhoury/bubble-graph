@@ -118,6 +118,7 @@ fun MishanaGameScreen(game: MishanaGameView, args: GameScreenArgs) {
                                 onOtherGames = args.results.onOtherGames,
                                 cupPanel = args.cupPanel,
                                 passHook = args.passHook,
+                                onRules = args.onRules,
                             )
                         }
                     }

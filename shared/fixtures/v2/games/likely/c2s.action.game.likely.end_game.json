@@ -1,0 +1,12 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "5",
+  "a": {
+    "type": "GAME",
+    "gameId": "likely",
+    "i": {
+      "type": "END_GAME"
+    }
+  }
+}

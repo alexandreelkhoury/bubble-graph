@@ -3,20 +3,31 @@
 // lean) is CSS on the wrapper. Faces are drawn from 40 px; below that the classic avatar tile is used.
 import { useEffect, useRef, useState } from "preact/hooks";
 import type { ColorId } from "@jamaa/shared/constants";
-import { CHEEKS, FACE_BOX, FEATURES, HIGHLIGHT, REACTION_BURST, featureScale } from "../characters/data";
-import type { Expression, Feature, ReactionKind } from "../characters/data";
-import { Avatar, COLOR_BY_ID, SHAPES } from "./PlayerChip";
+import {
+  BODY_PATHS, EXPRESSION_EXTRAS, EXPRESSION_FEATURES, EYE_HIGHLIGHT, FACE_BOXES, FACE_MIN_SIZE, FACE_SPACE, LOOK_MAX,
+  REACTION_BURST, REACTION_HOLD_MS, SHY_CHEEK_HEX, featureScale,
+} from "@jamaa/shared/characters";
+import type { Expression, Feature, ReactionKind } from "@jamaa/shared/characters";
+import { Avatar, COLOR_BY_ID } from "./PlayerChip";
 import { Icon } from "./Icon";
 
 const RINGED: ReadonlySet<ColorId> = new Set(["coral", "grape", "plum"]);
 const CREAM = "#FFF7EC";
 const INK = "#120A1F";
+/** Body width in body units (the glyphs span ~3..21 of the 24-unit box): the hand disc and the point nub scale from it. */
+const BODY_W = 18;
+/** Where the open eyes sit for each expression (face units; DESIGN-JAMAA §4.3), for the highlight dots. */
+const EYE_OFFSET: Partial<Record<Expression, readonly [number, number]>> = { think: [0.9, -0.8], shy: [0, 0.8], point: [1, 0] };
 
-function feat(f: Feature, i: number, ink: string) {
-  if ("s" in f) return <path key={i} d={f.s} fill="none" stroke={ink} stroke-width={0.8} stroke-linecap="round" stroke-linejoin="round" />;
-  if ("f" in f) return <path key={i} d={f.f} fill={ink} />;
-  const [cx, cy, rx, ry] = f.e;
-  return <ellipse key={i} class={rx > 1 ? "ch__eye" : undefined} cx={cx} cy={cy} rx={rx} ry={ry} fill={ink} />;
+function feat(f: Feature, i: number, ink: string, expression: Expression) {
+  const cheek = f.part === "cheeks";
+  // Cheeks: cream on ink-eyed bodies, ink at 25 % on cream-eyed ones; `shy` is rose (shared EXPRESSION_FEATURES).
+  const color = cheek ? (expression === "shy" ? SHY_CHEEK_HEX : ink === INK ? CREAM : INK) : ink;
+  const opacity = cheek ? (expression === "shy" ? f.alpha ?? 0.6 : ink === INK ? f.alpha ?? 0.35 : 0.25) : f.alpha;
+  const blink = f.part === "eyes" && f.style === "fill" && EYE_HIGHLIGHT.includes(expression) ? "ch__eye" : undefined;
+  return f.style === "stroke"
+    ? <path key={i} d={f.d} fill="none" stroke={color} stroke-width={f.strokeWidth ?? 0.8} stroke-linecap="round" stroke-linejoin="round" opacity={opacity} />
+    : <path key={i} class={blink} d={f.d} fill={color} opacity={opacity} />;
 }
 
 export interface CharacterProps {
@@ -33,55 +44,59 @@ export interface CharacterProps {
   label?: string;
 }
 
-/** The SVG character. Decorative unless `label` is set (names are always shown next to it by the caller). */
+/** The SVG character from `@jamaa/shared/characters`. Decorative unless `label` is set (names are shown by the caller). */
 export function Character({ color, size, expression = "idle", look = null, burst = null, burstKey, crown, class: cls, label }: CharacterProps) {
   const c = COLOR_BY_ID[color];
-  if (size < 40) return <Avatar color={color} size={size} state={expression === "away" ? "away" : "normal"} host={crown} />;
+  if (size < FACE_MIN_SIZE) return <Avatar color={color} size={size} state={expression === "away" ? "away" : "normal"} host={crown} />;
   const shape = c.shape;
-  const [fx, fy, fw] = FACE_BOX[shape] ?? [6, 7.5, 12];
+  const fb = FACE_BOXES[shape];
   const ink = c.glyph === "ink" ? INK : CREAM;
-  const k = (fw / 12) * featureScale(size, shape);
+  const k = (fb.w / FACE_SPACE.w) * featureScale(size, shape);
   // Scale the face around its box centre so enlarged features stay centred on the body.
-  const cx = fx + fw / 2, cy = fy + (fw * 0.75) / 2;
-  const lookDx = look === "end" ? 0.9 : look === "start" ? -0.9 : 0;
-  const face = `translate(${cx} ${cy}) scale(${k}) translate(${-6 + lookDx} -4.5)`;
-  const feats = FEATURES[expression];
+  const cx = fb.x + fb.w / 2, cy = fb.y + fb.h / 2;
+  const lookDx = look === "end" ? LOOK_MAX : look === "start" ? -LOOK_MAX : 0;
+  const face = `translate(${cx} ${cy}) scale(${k}) translate(${-FACE_SPACE.w / 2 + lookDx} ${-FACE_SPACE.h / 2})`;
+  const extra = EXPRESSION_EXTRAS[expression];
+  const [ex, ey] = EYE_OFFSET[expression] ?? [0, 0];
+  // Body-relative extras (shared JAMAA-GAP): the facepalm hand disc over the eyes, the point nub on the look side.
+  const eyeY = cy + (3.6 - FACE_SPACE.h / 2) * k;
+  const nubStart = look === "start";
   return (
     <span class={`ch ch--${expression}${cls ? ` ${cls}` : ""}`} style={{ "--ch": `${size}px` }} role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : "true"}>
       <svg viewBox="-3 -5 30 32" width={size} height={size} focusable="false" class="ch__svg">
         <ellipse class="ch__shadow" cx="12" cy="25" rx="7.5" ry="1.3" />
         <g class="ch__rig">
-          <g class="ch__body" fill={c.hex} stroke={RINGED.has(color) ? "rgba(255,247,236,.24)" : "none"} stroke-width="1"
-            dangerouslySetInnerHTML={{ __html: SHAPES[shape] ?? "" }} />
+          {extra === "nub" && (
+            // Drawn under the body and starting inside it, so only 0.2 × body sticks out and it reads as attached.
+            <rect class="ch__nub" x={nubStart ? 12 - 9 - 0.2 * BODY_W : 12} y={12.6} width={9 + 0.2 * BODY_W} height={2.8} rx={1.4} fill={c.hex} />
+          )}
+          <path class="ch__body" d={BODY_PATHS[shape]} fill={c.hex} stroke={RINGED.has(color) ? "rgba(255,247,236,.24)" : "none"} stroke-width="1" stroke-linejoin="round" />
           <g class="ch__face" key={expression} transform={face}>
-            {CHEEKS.has(expression) && (
-              <g fill={expression === "shy" ? "#FF96C5" : ink === INK ? CREAM : INK} opacity={expression === "shy" ? 0.6 : 0.3}>
-                <circle cx="2.2" cy="5.8" r="0.9" /><circle cx="9.8" cy="5.8" r="0.9" />
-              </g>
+            {EXPRESSION_FEATURES[expression].map((f, i) => feat(f, i, ink, expression))}
+            {EYE_HIGHLIGHT.includes(expression) && ink === INK && (
+              <g fill={CREAM}><circle cx={3.8 + ex + 0.35} cy={3.6 + ey - 0.45} r="0.35" /><circle cx={8.2 + ex + 0.35} cy={3.6 + ey - 0.45} r="0.35" /></g>
             )}
-            {feats.map((f, i) => feat(f, i, ink))}
-            {HIGHLIGHT.has(expression) && ink === INK && (
-              <g fill={CREAM}><circle cx={4.15 + (expression === "think" ? 0.9 : expression === "point" ? 1 : 0)} cy={3.15 + (expression === "think" ? -0.8 : expression === "shy" ? 0.8 : 0)} r="0.35" />
-                <circle cx={8.55 + (expression === "think" ? 0.9 : expression === "point" ? 1 : 0)} cy={3.15 + (expression === "think" ? -0.8 : expression === "shy" ? 0.8 : 0)} r="0.35" /></g>
-            )}
-            {expression === "facepalm" && <circle cx="4.6" cy="3.4" r="3.1" fill={c.hex} stroke={ink} stroke-width="0.6" class="ch__hand" />}
           </g>
+          {extra === "hand" && <circle class="ch__hand" cx={cx} cy={eyeY} r={0.28 * BODY_W} fill={c.hex} stroke={ink} stroke-width="1" />}
           {crown && <path class="ch__crown" d="M7.5 -1.5l2 1.6L12 -3.6l2.5 3.7 2-1.6-.9 4.5H8.4z" fill="#FFC94D" stroke={INK} stroke-width=".5" stroke-linejoin="round" />}
         </g>
-        {expression === "away" && <text class="ch__z" x="19" y="2" fill={CREAM}>z</text>}
-        {expression === "done" && <g class="ch__badge"><circle cx="21" cy="3" r="3.2" fill="#3DDC97" /><path d="M19.4 3.1l1.1 1.1 2.2-2.3" fill="none" stroke={INK} stroke-width=".9" stroke-linecap="round" /></g>}
+        {extra === "zzz" && <text class="ch__z" x="19" y="2" fill={CREAM}>z</text>}
+        {extra === "check" && <g class="ch__badge"><circle cx="21" cy="3" r="3.2" fill="#3DDC97" /><path d="M19.4 3.1l1.1 1.1 2.2-2.3" fill="none" stroke={INK} stroke-width=".9" stroke-linecap="round" /></g>}
       </svg>
       {burst && <Burst key={burstKey} kind={burst} />}
     </span>
   );
 }
 
-const BURST_ICON: Record<string, string> = { tears: "r-laugh", exclaim: "r-shock", sweat: "r-facepalm", heart: "r-happy", raincloud: "r-sad", confetti: "r-cheer" };
+/** Shared burst id → its icon (the phone reaction bar draws the same six icons, no emoji). */
+const BURST_ICON: Record<string, string> = {
+  "burst.tears": "r-laugh", "burst.exclaim": "r-shock", "burst.sweat": "r-facepalm", "burst.heart": "r-happy", "burst.raincloud": "r-sad", "burst.confetti": "r-cheer",
+};
 
 /** The reaction's icon burst above the character (1.5 s, replays per reaction.n). */
 function Burst({ kind }: { kind: ReactionKind }) {
   const b = REACTION_BURST[kind];
-  return <span class={`ch__burst ch__burst--${b}`} aria-hidden="true"><Icon name={BURST_ICON[b] ?? "star"} size={24} /></span>;
+  return <span class={`ch__burst ch__burst--${b.slice(6)}`} aria-hidden="true"><Icon name={BURST_ICON[b] ?? "star"} size={24} /></span>;
 }
 
 /** `member.reaction` → the reaction expression for 1.5 s after each new `n` (never on first render: no replay on mount). */
@@ -92,7 +107,7 @@ export function useReaction(reaction: { kind: ReactionKind; n: number } | null):
     if (!reaction || reaction.n === seen.current) return;
     seen.current = reaction.n;
     setShown(reaction.kind);
-    const id = setTimeout(() => setShown(null), 1500);
+    const id = setTimeout(() => setShown(null), REACTION_HOLD_MS);
     return () => clearTimeout(id);
   }, [reaction?.n]);
   return shown;

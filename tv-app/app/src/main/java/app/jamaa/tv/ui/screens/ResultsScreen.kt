@@ -126,6 +126,8 @@ fun ResultsScreen(
     cupPanel: (@Composable () -> Unit)? = null,
     /** §4.5: at most one soft line after the 2nd finished game ("Love it? JAMAA Pass unlocks every pack"). */
     passHook: String? = null,
+    /** §3.6: the top-bar ⓘ on results (focusable: Up from the buttons); null hides it. */
+    onRules: (() -> Unit)? = null,
 ) {
     val result = view.result ?: return
     val type = JamaaTheme.type
@@ -161,6 +163,10 @@ fun ResultsScreen(
                     Spacer(Modifier.weight(1f))
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                         Text(view.roomCode, style = type.label.copy(letterSpacing = type.code.letterSpacing), color = JamaaColors.Accent)
+                    }
+                    if (onRules != null) {
+                        Spacer(Modifier.width(12.dp))
+                        app.jamaa.tv.ui.platform.RoundIconButton(JamaaIcons.Info, stringResource(R.string.rules__open), onRules, size = 36.dp)
                     }
                 }
                 AnimatedContent(

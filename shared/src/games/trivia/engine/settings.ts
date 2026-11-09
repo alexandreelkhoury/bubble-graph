@@ -36,7 +36,7 @@ export function applySettings(s: TriviaSettings, patch: Partial<TriviaSettings>,
     const v = patch[k];
     if (v === undefined) continue;
     if (!VALID[k](v)) return null;
-    (next as Record<string, unknown>)[k] = v;
+    (next as unknown as Record<string, unknown>)[k] = v;
   }
   if (next.quizId !== null && !packFor(content, next.quizId, locale)) return null;
   return same(s, next) ? s : next;

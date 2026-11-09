@@ -1,0 +1,13 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "103",
+  "a": {
+    "type": "GAME",
+    "gameId": "trivia",
+    "i": {
+      "type": "ANSWER",
+      "choice": 2
+    }
+  }
+}

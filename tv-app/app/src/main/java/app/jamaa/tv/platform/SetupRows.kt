@@ -179,5 +179,15 @@ object SetupRows {
         }
     }
 
+    /**
+     * The pack picker's current selection for [key]: the ids of a multi row (`[]` = every playable pack, so empty), or
+     * the one family id of a single-pick row (none = the server's default).
+     */
+    fun selectedIds(setup: RoomSetup, key: String): List<String> = when (val v = setup.settings[key]) {
+        is JsonArray -> v.mapNotNull { str(it) }
+        is JsonPrimitive -> listOfNotNull(str(v))
+        else -> emptyList()
+    }
+
     private fun str(e: JsonElement?): String? = (e as? JsonPrimitive)?.takeIf { it !is JsonNull }?.content
 }

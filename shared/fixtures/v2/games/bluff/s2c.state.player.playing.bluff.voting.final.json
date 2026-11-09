@@ -1,0 +1,228 @@
+{
+  "v": 2,
+  "t": "state",
+  "seq": 57,
+  "serverNow": 1790000126120,
+  "view": {
+    "kind": "player",
+    "room": {
+      "roomCode": "KXRT",
+      "joinUrl": "https://play.example.workers.dev/KXRT",
+      "phase": "PLAYING",
+      "focusedGameId": "bluff",
+      "setupGameId": "bluff",
+      "contentLocale": "en",
+      "members": [
+        {
+          "id": "p_0a1b2c3d4e5f60718293a4b5",
+          "name": "Rami",
+          "color": "coral",
+          "seat": 0,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": true,
+          "reaction": null
+        },
+        {
+          "id": "p_1b2c3d4e5f60718293a4b5c6",
+          "name": "Léa",
+          "color": "azure",
+          "seat": 1,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_2c3d4e5f60718293a4b5c6d7",
+          "name": "نور",
+          "color": "jade",
+          "seat": 2,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_3d4e5f60718293a4b5c6d7e8",
+          "name": "Sam",
+          "color": "lemon",
+          "seat": 3,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        },
+        {
+          "id": "p_4e5f60718293a4b5c6d7e8f9",
+          "name": "Zoé",
+          "color": "grape",
+          "seat": 4,
+          "connected": true,
+          "left": false,
+          "benched": false,
+          "isHost": false,
+          "reaction": null
+        }
+      ],
+      "hostPlayerId": "p_0a1b2c3d4e5f60718293a4b5",
+      "games": [
+        {
+          "id": "mishana",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 2,
+          "durationMinutes": [
+            10,
+            20
+          ]
+        },
+        {
+          "id": "bluff",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": true,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            15,
+            20
+          ]
+        }
+      ],
+      "setup": null,
+      "cup": {
+        "stars": {},
+        "last": null
+      },
+      "premium": false,
+      "tvBusy": false,
+      "contentLocales": [
+        "en",
+        "fr",
+        "ar"
+      ]
+    },
+    "game": {
+      "gameId": "bluff",
+      "n": 1,
+      "phase": "VOTING",
+      "doneIds": [],
+      "awaitedIds": [
+        "p_0a1b2c3d4e5f60718293a4b5",
+        "p_1b2c3d4e5f60718293a4b5c6",
+        "p_2c3d4e5f60718293a4b5c6d7",
+        "p_3d4e5f60718293a4b5c6d7e8",
+        "p_4e5f60718293a4b5c6d7e8f9"
+      ],
+      "public": {
+        "schema": 1,
+        "phase": "VOTING",
+        "round": 2,
+        "roundCount": 3,
+        "roundKind": "fact",
+        "promptIndex": 3,
+        "promptCount": 5,
+        "multiplier": 2,
+        "deadline": 1790000160420,
+        "prompt": {
+          "id": "eb66c1dc",
+          "type": "fact_blank",
+          "original": "An octopus has ___ hearts",
+          "translit": null,
+          "display": null,
+          "lengthHint": "short",
+          "rerun": false
+        },
+        "submittedIds": [],
+        "spotOnIds": [],
+        "options": [
+          {
+            "id": "286bda08",
+            "text": "Where is the rest of the fish?"
+          },
+          {
+            "id": "89395732",
+            "text": "Your chair is warm. Move"
+          },
+          {
+            "id": "c33035fe",
+            "text": "Three"
+          },
+          {
+            "id": "752e7a3c",
+            "text": "Meow means meow"
+          },
+          {
+            "id": "0e017229",
+            "text": "Open the door"
+          },
+          {
+            "id": "bfd11642",
+            "text": "I forgive you for the bath"
+          }
+        ],
+        "votedIds": [],
+        "voided": false,
+        "notice": null,
+        "reveal": null,
+        "scores": [
+          {
+            "playerId": "p_0a1b2c3d4e5f60718293a4b5",
+            "score": 150,
+            "scoreBefore": 150
+          },
+          {
+            "playerId": "p_1b2c3d4e5f60718293a4b5c6",
+            "score": 700,
+            "scoreBefore": 700
+          },
+          {
+            "playerId": "p_2c3d4e5f60718293a4b5c6d7",
+            "score": 0,
+            "scoreBefore": 0
+          },
+          {
+            "playerId": "p_3d4e5f60718293a4b5c6d7e8",
+            "score": 10,
+            "scoreBefore": 10
+          },
+          {
+            "playerId": "p_4e5f60718293a4b5c6d7e8f9",
+            "score": 0,
+            "scoreBefore": 0
+          }
+        ],
+        "newIds": [],
+        "awards": [],
+        "skipsLeft": 0,
+        "hidesLeft": 3
+      },
+      "me": {
+        "myLie": "I forgive you for the bath",
+        "myLieStatus": "locked",
+        "spotOn": false,
+        "help": null,
+        "helpNone": false,
+        "myOptionIds": [
+          "bfd11642"
+        ],
+        "myVote": null,
+        "myLikes": [],
+        "foundWhileWriting": false,
+        "editsLeft": 0,
+        "tooCloseCount": 0,
+        "waitingForNext": false
+      },
+      "over": false
+    },
+    "me": {
+      "id": "p_2c3d4e5f60718293a4b5c6d7",
+      "benched": false
+    }
+  }
+}

@@ -74,6 +74,11 @@ async function dpadTo(tv: Page, sel: string, key: string, max = 8): Promise<void
   }
   await expect(tv.locator(sel)).toBeFocused();
 }
+/** §3.10 E: D-pad is ignored while a transition runs and for INPUT_GUARD_MS after it; wait that out. */
+async function settle(tv: Page): Promise<void> {
+  await expect(tv.locator(".tvportal")).toHaveCount(0);
+  await tv.waitForTimeout(500);
+}
 async function visible(p: Page, sel: string): Promise<boolean> {
   return p.locator(sel).first().isVisible().catch(() => false);
 }
@@ -332,7 +337,8 @@ test("JAMAA Pass with fake billing: the store opens from the hub on the Yearly p
   await expect(tv.locator(".tvsetup")).toBeVisible();
   if (await visible(tv, "[data-intro]")) await press(tv, "Escape"); // Back skips the intro
   await expect(tv.locator("[data-intro]")).toHaveCount(0);
-  await tv.locator("[data-howto]").evaluate((el) => (el as HTMLElement).focus());
+  await settle(tv);
+  await expect(tv.locator("[data-howto]")).toBeFocused(); // after a skipped first-visit intro, focus is on the how-to pane
   await press(tv, "ArrowRight");
   await dpadTo(tv, "[data-start]", "ArrowDown");
   await press(tv, "Enter");
@@ -363,7 +369,7 @@ test("a locked pack in setup opens the Pass store on that pack; buying it adds i
   await press(tv, "Enter");
   await expect(tv.locator(".tvsetup")).toBeVisible();
   await tv.waitForTimeout(700);
-  await dpadTo(tv, "[data-row=packIds]", "ArrowUp", 6);
+  await dpadTo(tv, "[data-row=packIds]", "ArrowDown", 6); // 1 member: canStart is false, focus starts on the first row
   await press(tv, "Enter");
   const locked = tv.locator("[data-locked-pack]").first();
   await expect(locked).toBeVisible();

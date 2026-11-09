@@ -1,0 +1,1237 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-no-truth-en",
+  "game": "bluff",
+  "title": {
+    "en": "No Truth",
+    "fr": "Aucune vérité (anglais)",
+    "ar": "ما في صحّ (إنكليزي)",
+    "es": "Ninguna es verdad (inglés)"
+  },
+  "description": {
+    "en": "The final. No right answer exists, so the most convincing lie takes the crown.",
+    "fr": "La finale en anglais. Aucune bonne réponse : le mensonge le plus crédible gagne.",
+    "ar": "النهائي بالإنكليزي. ما في جواب صح، الكذبة اللي بتنصدّق أكتر بتربح.",
+    "es": "La final en inglés. No hay respuesta correcta: gana la mentira más creíble."
+  },
+  "sourceLocale": "en",
+  "playableIn": [
+    "en"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {
+    "no_truth": {
+      "en": [
+        "Nobody knows, and that's the point",
+        "It was a Tuesday",
+        "Ask the cat"
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "nt-en-001",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What was the very first thing a cat ever said to a human?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "You may feed me now",
+          "This chair is mine",
+          "I was here first"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-002",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is the Moon's real job?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Night-shift security guard",
+          "Night light for owls",
+          "Keeping an eye on the sea"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-003",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Why do socks vanish in the washing machine?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "They elope with a towel",
+          "The machine keeps one as a tip",
+          "They escape down the drain at night"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-004",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do goldfish think about all day?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Who keeps tapping on the glass",
+          "How to look busy",
+          "The pebble that moved"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-005",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What was the very first joke in history?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Watch out, a rock",
+          "Who took the fire?",
+          "A mammoth slipping on ice"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-006",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do clouds do on their day off?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Nap on a mountain top",
+          "Pretend to be sheep",
+          "Visit their cousin, the fog"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-007",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is rule number one in the handbook every grandmother receives?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "No guest leaves hungry",
+          "Ask if they've eaten, twice",
+          "The good plates are for visitors"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-008",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do penguins argue about?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Who wears the suit better",
+          "Whose turn it is to watch the egg",
+          "Whether the sea is too cold today"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-009",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is the secret ingredient in every grandmother's cooking?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "A pinch of guilt",
+          "Patience and far too much butter",
+          "The step she never tells anyone"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-010",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Where do lost umbrellas go?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "To a beach where it never rains",
+          "Back to the shop that sold them",
+          "Wherever the socks went"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-011",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is the Wi-Fi password at the pyramids?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Pharaoh123",
+          "Triangle4ever",
+          "NoEntry3000BC"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-012",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do houseplants say about us when we go out?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Finally, some peace",
+          "Did anyone else get water?",
+          "They talk to us way too much"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-013",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do dogs dream about?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "The postman finally stopping to chat",
+          "An endless sausage",
+          "Being allowed on the sofa"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-014",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Why did the dinosaurs never invent the wheel?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Their arms were too short to push it",
+          "They were busy being enormous",
+          "Every prototype got eaten"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-015",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is written on page one of the instruction manual for babies?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "No returns, no exchanges",
+          "Batteries not included",
+          "Results may vary"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-016",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What does the satnav secretly think when you ignore it?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Fine, get lost then",
+          "I'll remember this",
+          "Recalculating my life choices"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-017",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is the most popular sport among ants?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Crumb lifting",
+          "Synchronised marching",
+          "Picnic raiding"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-018",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do your shoes talk about while you sleep?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Where we went today",
+          "Which one of us smells worse",
+          "Running away to the beach"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-019",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Why do cats knock things off tables?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Testing gravity, daily",
+          "Interior design",
+          "Revenge for bath day"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-020",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What did the very first person to eat an olive say?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Let's try again next year",
+          "This tree is pranking me",
+          "Needs salt and a lot of patience"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-021",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is the national anthem of the Moon?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Four minutes of total silence",
+          "A slow, low hum",
+          "A song about cheese"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-022",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do the stars gossip about?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Who's been looking a bit dim lately",
+          "Which planet has the most moons",
+          "The comet that never calls"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-023",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Why are lifts so awkward?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "They hear too many secrets",
+          "Nobody agrees where to look",
+          "The music is judging you"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-024",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What does a snail do when it's in a hurry?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Leaves a note",
+          "Takes the shell off",
+          "Asks a tortoise for a lift"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-025",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do pigeons whisper to each other in the park?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "That one's got crumbs",
+          "Look sad, he's eating",
+          "Meet at the statue at noon"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-026",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is the hardest test you must pass to become a cloud?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Floating with no help",
+          "Raining exactly on time",
+          "Holding one shape for ten minutes"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-027",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is the most common lie told by a cat?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Nobody has fed me today",
+          "I didn't break that",
+          "I love you, now open the door"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-028",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is the first rule of the secret club of grandfathers?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Always carry a hanky",
+          "Never pay for parking",
+          "Fall asleep first at every wedding"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-029",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do mirrors see when nobody is looking?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "The back of the room, at last",
+          "A very bored wall",
+          "Their cousin, the mirror opposite"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-030",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is a volcano's favourite food?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Spicy rocks",
+          "Anything that gets too close",
+          "Soup, extra hot"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-031",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do trees really think of birds?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Noisy but loyal tenants",
+          "They never pay rent",
+          "Living decorations"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-032",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do worms get up to on rainy days?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Throw a pool party",
+          "Go sightseeing on the pavement",
+          "Swimming lessons"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-033",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is the most boring superpower?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Always knowing the time",
+          "Making toast slightly warmer",
+          "Chatting with door handles"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-034",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do teapots dream of becoming?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "A fountain",
+          "A trumpet",
+          "A hot-air balloon"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-035",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Why do keys always hide when you're late?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "They hate being rushed",
+          "They need a holiday",
+          "They're jealous of your phone"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-036",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do sheep count when they can't sleep?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Humans",
+          "Clouds",
+          "Fences"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-037",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What would aliens complain about first on Earth?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "The gravity is far too strong",
+          "Nobody uses their indicators",
+          "Why is the sky blue?"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-038",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do snowmen do in summer?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Move into the freezer",
+          "Retire to the mountains",
+          "Become puddles with memories"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-039",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is a robot's favourite dessert?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Microchip cookies",
+          "Nuts and bolts sundae",
+          "Battery-powered jelly"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-040",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What did the first fish to walk on land say?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Who left the water running?",
+          "New feet, be patient",
+          "Back in five minutes"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-041",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do babies say to each other at the park?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Watch, I'll drop it again",
+          "Mine screams louder",
+          "Don't tell them we can talk"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-042",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What does the last biscuit in the tin think?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Nobody dares to take me",
+          "I am the chosen one",
+          "Someone please rescue me"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-en-043",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do ghosts put on their CV?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Excellent with draughts",
+          "Available nights only",
+          "Very quiet in meetings"
+        ]
+      },
+      "note": {
+        "en": "There never was a right answer. The table decided."
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    }
+  ]
+}

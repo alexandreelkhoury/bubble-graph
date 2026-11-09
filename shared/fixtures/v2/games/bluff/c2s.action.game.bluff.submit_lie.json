@@ -1,0 +1,14 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "1",
+  "a": {
+    "type": "GAME",
+    "gameId": "bluff",
+    "i": {
+      "type": "SUBMIT_LIE",
+      "text": "is a very tired camel",
+      "promptId": "3fa2b0c1"
+    }
+  }
+}

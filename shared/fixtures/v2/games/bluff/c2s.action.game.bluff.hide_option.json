@@ -1,0 +1,13 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "7",
+  "a": {
+    "type": "GAME",
+    "gameId": "bluff",
+    "i": {
+      "type": "HIDE_OPTION",
+      "optionId": "9c01d2e3"
+    }
+  }
+}

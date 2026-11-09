@@ -1,0 +1,7 @@
+{
+  "v": 2,
+  "t": "error",
+  "code": "CANNOT_VOTE_SPOT_ON",
+  "messageKey": "error.cannotVoteSpotOn",
+  "ref": "4"
+}

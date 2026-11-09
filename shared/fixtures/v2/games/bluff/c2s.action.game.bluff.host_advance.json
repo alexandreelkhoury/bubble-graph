@@ -1,0 +1,12 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "8",
+  "a": {
+    "type": "GAME",
+    "gameId": "bluff",
+    "i": {
+      "type": "HOST_ADVANCE"
+    }
+  }
+}

@@ -1,0 +1,1800 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-en-sayings",
+  "game": "bluff",
+  "title": {
+    "en": "Old Sayings",
+    "fr": "Vieux dictons anglais",
+    "ar": "أقوال إنكليزية قديمة",
+    "es": "Dichos ingleses"
+  },
+  "description": {
+    "en": "Your gran's favourite sayings, chopped in half. Finish them right or lie with a straight face.",
+    "fr": "Les dictons préférés des grands-mères anglaises, coupés en deux. Termine-les ou mens sans rougir.",
+    "ar": "أقوال إنكليزية قديمة نصّها ناقص. كمّلها صح أو اكذب ووجّك ما بيتحرّك.",
+    "es": "Los dichos favoritos de la abuela inglesa, cortados por la mitad. Termínalos o miente sin pestañear."
+  },
+  "sourceLocale": "en",
+  "playableIn": [
+    "en"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {
+    "proverb_end": {
+      "en": [
+        "Never comes home",
+        "Is always late",
+        "Ends in tears",
+        "Burns the toast",
+        "Is twice as dear"
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "enp-001",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Fine words butter…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "No parsnips"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "No bread",
+          "Nobody's toast",
+          "The cook first"
+        ]
+      },
+      "note": {
+        "en": "Nice talk achieves nothing on its own"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-002",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "A watched pot…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Never boils"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Always spills",
+          "Burns the rice",
+          "Goes cold"
+        ]
+      },
+      "note": {
+        "en": "Time drags when you're waiting for something"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-003",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Empty vessels…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Make the most noise"
+      },
+      "truthAlt": {
+        "en": [
+          "Make the most sound"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Float the highest",
+          "Sink the fastest",
+          "Catch the wind"
+        ]
+      },
+      "note": {
+        "en": "People who know the least talk the most"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-004",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Good fences…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Make good neighbours"
+      },
+      "truthAlt": {
+        "en": [
+          "Make good neighbors"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Keep the goats in",
+          "Need fresh paint",
+          "Hide messy gardens"
+        ]
+      },
+      "note": {
+        "en": "Clear boundaries keep the peace (quoted in Robert Frost's poem Mending Wall)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs ; Frost, Mending Wall (1914)"
+      }
+    },
+    {
+      "id": "enp-005",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Hunger is…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "The best sauce"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Louder than words",
+          "The cook's best friend",
+          "A patient teacher"
+        ]
+      },
+      "note": {
+        "en": "Everything tastes good when you're hungry"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-006",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "There's many a slip…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "'twixt cup and lip"
+      },
+      "truthAlt": {
+        "en": [
+          "Between the cup and the lip",
+          "Twixt the cup and the lip"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "On a frozen pond",
+          "Before the wedding",
+          "When you run"
+        ]
+      },
+      "note": {
+        "en": "Plans can still fail at the very last moment"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-007",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "One swallow…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Doesn't make a summer"
+      },
+      "truthAlt": {
+        "en": [
+          "Does not make a summer"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Won't fill a nest",
+          "Can't sing alone",
+          "Is never enough"
+        ]
+      },
+      "note": {
+        "en": "One good sign doesn't prove much (the idea goes back to Aristotle)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs ; Aristotle, Nicomachean Ethics I.7"
+      }
+    },
+    {
+      "id": "enp-008",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The proof of the pudding…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Is in the eating"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Is in the recipe",
+          "Is in the oven",
+          "Is in the custard"
+        ]
+      },
+      "note": {
+        "en": "You judge a thing by trying it"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-009",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "It's an ill wind…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "That blows nobody any good"
+      },
+      "truthAlt": {
+        "en": [
+          "That blows no one any good"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "That knocks before it enters",
+          "That brings no rain",
+          "That blows out the candles"
+        ]
+      },
+      "note": {
+        "en": "Even bad luck helps someone"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-010",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Still waters…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Run deep"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Hide the frogs",
+          "Freeze first",
+          "Reflect the sky"
+        ]
+      },
+      "note": {
+        "en": "Quiet people often think deeply. Lebanese cousin: تحت السواهي دواهي"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-011",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Fair exchange…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Is no robbery"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Is a fair price",
+          "Keeps friends friendly",
+          "Needs a receipt"
+        ]
+      },
+      "note": {
+        "en": "A fair swap harms nobody"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-012",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Ne'er cast a clout…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Till May be out"
+      },
+      "truthAlt": {
+        "en": [
+          "Until May is out",
+          "Till May is out"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "On a windy day",
+          "Before breakfast",
+          "At the neighbours"
+        ]
+      },
+      "note": {
+        "en": "Don't put your warm clothes away too early in spring"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (also Cast ne'er a clout)"
+      }
+    },
+    {
+      "id": "enp-013",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Don't spoil the ship…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "For a ha'porth of tar"
+      },
+      "truthAlt": {
+        "en": [
+          "For a halfpenny worth of tar",
+          "For a ha'penny of tar",
+          "For a hap'orth of tar"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "For want of a sail",
+          "For one rotten plank",
+          "By sinking the rowboat"
+        ]
+      },
+      "note": {
+        "en": "Don't ruin something big by being stingy over a tiny cost"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-014",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "One man's meat…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Is another man's poison"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Is his dog's dinner",
+          "Is the butcher's living",
+          "Is another man's sandwich"
+        ]
+      },
+      "note": {
+        "en": "What one person loves, another can't stand"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-015",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Many a mickle…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Makes a muckle"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Fills the purse",
+          "Makes a fortune",
+          "Buys a cow"
+        ]
+      },
+      "note": {
+        "en": "Small savings add up (the older form was many a little makes a mickle)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-016",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "A stitch in time…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Saves nine"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Saves a fortune",
+          "Mends the heart",
+          "Keeps you warm"
+        ]
+      },
+      "note": {
+        "en": "Fix a small problem now before it grows"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-017",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Don't look a gift horse…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "In the mouth"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "In the eye",
+          "Before breakfast",
+          "Up and down"
+        ]
+      },
+      "note": {
+        "en": "Don't criticise a present (you check a horse's age by its teeth)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-018",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "If wishes were horses…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Beggars would ride"
+      },
+      "truthAlt": {
+        "en": [
+          "Then beggars would ride",
+          "Beggars would ride them"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "We'd all be late for dinner",
+          "Nobody would walk",
+          "Stables would be full"
+        ]
+      },
+      "note": {
+        "en": "Wishing alone gets you nowhere"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-019",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "You can lead a horse to water…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "But you can't make it drink"
+      },
+      "truthAlt": {
+        "en": [
+          "But you cannot make it drink"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "But it will choose the puddle",
+          "But it won't say thank you",
+          "But it'll want sugar"
+        ]
+      },
+      "note": {
+        "en": "You can give someone a chance but not force them to take it"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-020",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Little strokes…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Fell great oaks"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Make big waves",
+          "Win the race",
+          "Tire the rower"
+        ]
+      },
+      "note": {
+        "en": "Small efforts, repeated, achieve big things"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (Benjamin Franklin, Poor Richard)"
+      }
+    },
+    {
+      "id": "enp-021",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Necessity is…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "The mother of invention"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "The enemy of sleep",
+          "A cruel teacher",
+          "The price of comfort"
+        ]
+      },
+      "note": {
+        "en": "Need makes people creative"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-022",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Don't change horses…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "In midstream"
+      },
+      "truthAlt": {
+        "en": [
+          "In the middle of the stream",
+          "Midstream",
+          "In mid-stream"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Without asking the horse",
+          "On a hill",
+          "After lunch"
+        ]
+      },
+      "note": {
+        "en": "Don't switch plans halfway through"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-023",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Red sky at night…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Shepherd's delight"
+      },
+      "truthAlt": {
+        "en": [
+          "Sailor's delight"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Farmer's warning",
+          "Fisherman's fright",
+          "Bring a coat tonight"
+        ]
+      },
+      "note": {
+        "en": "A red sunset was taken as a sign of good weather to come"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-024",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "You can't make a silk purse…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Out of a sow's ear"
+      },
+      "truthAlt": {
+        "en": [
+          "From a sow's ear"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Out of a paper bag",
+          "Without a silkworm",
+          "On a Monday"
+        ]
+      },
+      "note": {
+        "en": "You can't make something fine from poor material"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-025",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Penny wise…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Pound foolish"
+      },
+      "truthAlt": {
+        "en": [
+          "And pound foolish"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Purse empty",
+          "Never rich",
+          "Ten pence short"
+        ]
+      },
+      "note": {
+        "en": "Careful with small sums but careless with big ones"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-026",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Least said…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Soonest mended"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Fewest friends",
+          "Longest silence",
+          "Best forgotten"
+        ]
+      },
+      "note": {
+        "en": "The less you say, the sooner a quarrel blows over"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-027",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Don't throw the baby out…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "With the bathwater"
+      },
+      "truthAlt": {
+        "en": [
+          "With the bath water"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Before it's dry",
+          "In front of granny",
+          "On a cold night"
+        ]
+      },
+      "note": {
+        "en": "Don't lose the good part while getting rid of the bad"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-028",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "A fool and his money…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Are soon parted"
+      },
+      "truthAlt": {
+        "en": [
+          "Are easily parted"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Buy the first round",
+          "Are the life of the party",
+          "Never meet again"
+        ]
+      },
+      "note": {
+        "en": "Careless people lose their money fast"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-029",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Great oaks…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "From little acorns grow"
+      },
+      "truthAlt": {
+        "en": [
+          "Grow from little acorns",
+          "From small acorns grow"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Need a lot of rain",
+          "Make the best tables",
+          "Fall the hardest"
+        ]
+      },
+      "note": {
+        "en": "Big things have small beginnings"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-030",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Many hands…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Make light work"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Make a long queue",
+          "Break more plates",
+          "Need more gloves"
+        ]
+      },
+      "note": {
+        "en": "A job is easier when everyone helps"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-031",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Beggars…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Can't be choosers"
+      },
+      "truthAlt": {
+        "en": [
+          "Cannot be choosers"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Can't be late",
+          "Have the best stories",
+          "Always say thank you"
+        ]
+      },
+      "note": {
+        "en": "When you're asking for help, you take what you're given"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-032",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Absence makes…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "The heart grow fonder"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "The house grow quieter",
+          "The dog grow sadder",
+          "The fridge grow fuller"
+        ]
+      },
+      "note": {
+        "en": "Being apart makes you love someone more"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-033",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Time and tide…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Wait for no man"
+      },
+      "truthAlt": {
+        "en": [
+          "Wait for no one"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Turn twice a day",
+          "Bring the fish in",
+          "Are best at dawn"
+        ]
+      },
+      "note": {
+        "en": "Opportunities won't wait for you"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-034",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "What's sauce for the goose…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Is sauce for the gander"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Is gravy for the duck",
+          "Is a feast for the fox",
+          "Is lunch for the farmer"
+        ]
+      },
+      "note": {
+        "en": "What's fair for one is fair for the other"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-035",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Make hay…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "While the sun shines"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Before the cows come home",
+          "When the farmer sleeps",
+          "In your spare time"
+        ]
+      },
+      "note": {
+        "en": "Take your chance while conditions are good"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-036",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The squeaky wheel…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Gets the grease"
+      },
+      "truthAlt": {
+        "en": [
+          "Gets the oil"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Gets replaced",
+          "Wakes the baby",
+          "Goes the farthest"
+        ]
+      },
+      "note": {
+        "en": "Whoever complains loudest gets the attention"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-037",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "You can't have your cake…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "And eat it"
+      },
+      "truthAlt": {
+        "en": [
+          "And eat it too"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Before your dinner",
+          "At someone else's party",
+          "Without a candle"
+        ]
+      },
+      "note": {
+        "en": "You can't have it both ways"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-038",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Half a loaf…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Is better than none"
+      },
+      "truthAlt": {
+        "en": [
+          "Is better than no bread"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Is still a sandwich",
+          "Feeds the ducks",
+          "Goes stale faster"
+        ]
+      },
+      "note": {
+        "en": "Something is better than nothing"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-039",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "A bad workman…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Blames his tools"
+      },
+      "truthAlt": {
+        "en": [
+          "Always blames his tools"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Never finishes on time",
+          "Charges double",
+          "Leaves a mess"
+        ]
+      },
+      "note": {
+        "en": "People who do bad work blame anything but themselves"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-040",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "It never rains…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "But it pours"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "On a Sunday",
+          "When you have an umbrella",
+          "In the desert"
+        ]
+      },
+      "note": {
+        "en": "Bad things tend to come all at once"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-041",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What can't be cured…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Must be endured"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Must be ignored",
+          "Can be laughed at",
+          "Should be hidden"
+        ]
+      },
+      "note": {
+        "en": "If you can't change it, put up with it"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-042",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Every dog…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Has its day"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Has its bone",
+          "Barks at the postman",
+          "Finds its way home"
+        ]
+      },
+      "note": {
+        "en": "Everyone gets their moment of luck eventually"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-043",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Many a true word…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Is spoken in jest"
+      },
+      "truthAlt": {
+        "en": [
+          "Is said in jest",
+          "Is spoken in a joke"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Is whispered at weddings",
+          "Is never written down",
+          "Comes too late"
+        ]
+      },
+      "note": {
+        "en": "Jokes often hide the truth"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-044",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Don't cross the bridge…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Till you come to it"
+      },
+      "truthAlt": {
+        "en": [
+          "Until you come to it",
+          "Before you come to it"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Before you pay the toll",
+          "In the dark",
+          "With your eyes closed"
+        ]
+      },
+      "note": {
+        "en": "Don't worry about problems before they arrive"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-045",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "March comes in like a lion…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "And goes out like a lamb"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "And leaves like a mouse",
+          "And stays for April",
+          "And roars all month"
+        ]
+      },
+      "note": {
+        "en": "Early March is stormy, late March is mild"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-046",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Cut your coat…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "According to your cloth"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Before the winter",
+          "With sharp scissors",
+          "A size too big"
+        ]
+      },
+      "note": {
+        "en": "Live within your means. Lebanese cousin: على قد بساطك مد إجريك"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-047",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The pen is…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Mightier than the sword"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Older than the ink",
+          "Always lost",
+          "The poet's best friend"
+        ]
+      },
+      "note": {
+        "en": "Words can achieve more than force (Edward Bulwer-Lytton, 1839)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs ; Bulwer-Lytton, Richelieu (1839)"
+      }
+    },
+    {
+      "id": "enp-048",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "A miss is…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "As good as a mile"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Still a miss",
+          "Better than a hit",
+          "A lucky escape"
+        ]
+      },
+      "note": {
+        "en": "Failing narrowly is still failing"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-049",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Never trouble trouble…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Till trouble troubles you"
+      },
+      "truthAlt": {
+        "en": [
+          "Until trouble troubles you"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Before your morning tea",
+          "When it's sleeping",
+          "On an empty stomach"
+        ]
+      },
+      "note": {
+        "en": "Don't go looking for problems"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    },
+    {
+      "id": "enp-050",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "He who pays the piper…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Calls the tune"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Gets a free song",
+          "Dances first",
+          "Sits at the front"
+        ]
+      },
+      "note": {
+        "en": "Whoever pays gets to decide"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-051",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Possession is…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Nine-tenths of the law"
+      },
+      "truthAlt": {
+        "en": [
+          "Nine tenths of the law",
+          "Nine points of the law"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A lawyer's dream",
+          "Half the fun",
+          "Never permanent"
+        ]
+      },
+      "note": {
+        "en": "Whoever holds something is hard to dislodge"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-052",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "A cat may…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Look at a king"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Sleep on a throne",
+          "Land on its feet",
+          "Ignore a queen"
+        ]
+      },
+      "note": {
+        "en": "Even ordinary people have rights"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-053",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Don't teach your grandmother…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "To suck eggs"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "To knit",
+          "How to boil water",
+          "To make tea"
+        ]
+      },
+      "note": {
+        "en": "Don't explain things to someone more experienced than you"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-054",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "There's no fool…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "Like an old fool"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Like a busy fool",
+          "In the kitchen",
+          "Who knows it"
+        ]
+      },
+      "note": {
+        "en": "Age doesn't stop people doing silly things"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs"
+      }
+    },
+    {
+      "id": "enp-055",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Handsome is…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "en": "As handsome does"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "As handsome eats",
+          "Only skin deep",
+          "What handsome wears"
+        ]
+      },
+      "note": {
+        "en": "Good deeds matter more than good looks"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Oxford Dictionary of Proverbs (6th ed., 2015)"
+      }
+    }
+  ]
+}

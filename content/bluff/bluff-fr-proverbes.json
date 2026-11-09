@@ -1,0 +1,1926 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-fr-proverbes",
+  "game": "bluff",
+  "title": {
+    "en": "French Sayings",
+    "fr": "Proverbes d'ici et d'ailleurs",
+    "ar": "أمتال فرنسية",
+    "es": "Refranes franceses"
+  },
+  "description": {
+    "en": "Old French proverbs, cut in half. Finish them for real, or invent a better ending.",
+    "fr": "De vieux proverbes coupés en deux. Tu connais la suite ? Bravo. Sinon, invente plus vrai que vrai.",
+    "ar": "أمتال فرنسية قديمة مقصوصة بالنص. كمّلها صح، أو ألّف أحلى منها.",
+    "es": "Viejos refranes franceses cortados por la mitad. Termínalos de verdad o inventa uno mejor."
+  },
+  "sourceLocale": "fr",
+  "playableIn": [
+    "fr"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {
+    "proverb_end": {
+      "fr": [
+        "N'a jamais faim",
+        "Finit toujours par pleuvoir",
+        "Se lève tôt",
+        "Rentre avant minuit",
+        "Ne paie jamais l'addition"
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "frp-001",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qui veut voyager loin…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Ménage sa monture"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Part avant l'aube",
+          "Voyage léger",
+          "Ne se retourne jamais"
+        ]
+      },
+      "note": {
+        "fr": "Pour aller loin, il faut ménager ses forces"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes (cité par Racine, Les Plaideurs)"
+      }
+    },
+    {
+      "id": "frp-002",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Faute de grives…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "On mange des merles"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "On chante avec les moineaux",
+          "On se contente du pain",
+          "On reste couché"
+        ]
+      },
+      "note": {
+        "fr": "Quand on n'a pas le meilleur, on fait avec ce qu'on a"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Académie française, 9e éd., « grive »"
+      }
+    },
+    {
+      "id": "frp-003",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Tant va la cruche à l'eau…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Qu'à la fin elle se casse"
+      },
+      "truthAlt": {
+        "fr": [
+          "Qu'enfin elle se brise",
+          "Qu'elle se casse"
+        ]
+      },
+      "houseLies": {
+        "fr": [
+          "Qu'elle finit par déborder",
+          "Qu'elle apprend à nager",
+          "Que le puits s'épuise"
+        ]
+      },
+      "note": {
+        "fr": "À force de prendre des risques, on finit par se faire prendre"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-004",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "À l'impossible…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Nul n'est tenu"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "On finit par s'habituer",
+          "Il faut toujours croire",
+          "Tout le monde rêve"
+        ]
+      },
+      "note": {
+        "fr": "On ne peut exiger de personne ce qui ne peut pas se faire (vieil adage de droit)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-005",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Il n'est pire eau…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Que l'eau qui dort"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Que celle du robinet",
+          "Que la mer en hiver",
+          "Que celle qu'on n'a pas bue"
+        ]
+      },
+      "note": {
+        "fr": "Méfie-toi des gens trop calmes. Cousin libanais : تحت السواهي دواهي"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-006",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "La caque sent toujours…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Le hareng"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "La marée basse",
+          "Le vieux tonneau",
+          "La cave humide"
+        ]
+      },
+      "note": {
+        "fr": "On garde toujours la marque de ses origines (une caque est un baril à harengs)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Académie française, « caque »"
+      }
+    },
+    {
+      "id": "frp-007",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Bon chien chasse…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "De race"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Même sous la pluie",
+          "Sans qu'on le siffle",
+          "Avant son maître"
+        ]
+      },
+      "note": {
+        "fr": "Les qualités se transmettent dans la famille"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-008",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Comparaison…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "N'est pas raison"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Rend jaloux",
+          "Est un poison",
+          "Finit toujours en dispute"
+        ]
+      },
+      "note": {
+        "fr": "Une comparaison ne prouve rien"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-009",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qui trop embrasse…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Mal étreint"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Finit tout seul",
+          "S'essouffle vite",
+          "Rate son train"
+        ]
+      },
+      "note": {
+        "fr": "À vouloir tout faire, on ne fait rien bien"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-010",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "À laver la tête d'un âne…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "On perd sa lessive"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "On se fait mordre",
+          "On finit trempé",
+          "Il reste un âne"
+        ]
+      },
+      "note": {
+        "fr": "Inutile de se fatiguer pour qui ne veut rien apprendre"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-011",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Il faut laisser le temps…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Au temps"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Aux experts",
+          "De se reposer",
+          "Passer la pluie"
+        ]
+      },
+      "note": {
+        "fr": "Certaines choses ne se pressent pas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-012",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Mieux vaut plier…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Que rompre"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Que pleurer",
+          "Que partir fâché",
+          "Sa langue sept fois"
+        ]
+      },
+      "note": {
+        "fr": "Mieux vaut céder un peu que tout perdre"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-013",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Petite pluie…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Abat grand vent"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Fait pousser les champignons",
+          "Mouille quand même",
+          "Annonce l'orage"
+        ]
+      },
+      "note": {
+        "fr": "Un petit geste suffit parfois à calmer une grosse colère"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-014",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Les conseilleurs…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Ne sont pas les payeurs"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ont toujours raison après coup",
+          "Parlent la bouche pleine",
+          "Ne sont jamais à l'heure"
+        ]
+      },
+      "note": {
+        "fr": "Facile de conseiller quand on n'en paie pas les conséquences"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-015",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Ce n'est pas au vieux singe…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Qu'on apprend à faire la grimace"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Qu'on vole ses bananes",
+          "Qu'on apprend à grimper",
+          "Qu'on fait peur avec un masque"
+        ]
+      },
+      "note": {
+        "fr": "On ne piège pas quelqu'un d'expérimenté avec ses propres ruses"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-016",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quand on parle du loup…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "On en voit la queue"
+      },
+      "truthAlt": {
+        "fr": [
+          "Il sort du bois",
+          "On en voit le bout de la queue"
+        ]
+      },
+      "houseLies": {
+        "fr": [
+          "Il frappe à la porte",
+          "Les moutons se taisent",
+          "Il a déjà mangé le dessert"
+        ]
+      },
+      "note": {
+        "fr": "Se dit quand arrive pile la personne dont on parlait"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-017",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Chat échaudé…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Craint l'eau froide"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ne revient jamais",
+          "Dort au soleil",
+          "Griffe deux fois"
+        ]
+      },
+      "note": {
+        "fr": "Après une mauvaise expérience, on se méfie de tout"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-018",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Un clou…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Chasse l'autre"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ne tient jamais seul",
+          "Finit toujours tordu",
+          "Cache un trou"
+        ]
+      },
+      "note": {
+        "fr": "Une nouvelle passion fait vite oublier l'ancienne"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-019",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qui se sent morveux…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Se mouche"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Reste à la maison",
+          "Change de trottoir",
+          "Ne dit rien"
+        ]
+      },
+      "note": {
+        "fr": "Si la critique te vise, à toi de te corriger"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-020",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Une hirondelle…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Ne fait pas le printemps"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ne fait pas de bruit",
+          "Revient toujours",
+          "Ne vole jamais seule"
+        ]
+      },
+      "note": {
+        "fr": "Un seul signe ne suffit pas à conclure"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-021",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Ce sont les cordonniers…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Les plus mal chaussés"
+      },
+      "truthAlt": {
+        "fr": [
+          "Qui sont les plus mal chaussés"
+        ]
+      },
+      "houseLies": {
+        "fr": [
+          "Qui marchent le plus",
+          "Qui ont les pieds froids",
+          "Qui rentrent les derniers"
+        ]
+      },
+      "note": {
+        "fr": "On néglige souvent chez soi ce qu'on fait pour les autres"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-022",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qui dort…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Dîne"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Rêve",
+          "Ronfle",
+          "Ne vieillit pas"
+        ]
+      },
+      "note": {
+        "fr": "Le sommeil fait oublier la faim (à l'origine : qui dormait à l'auberge devait aussi y dîner)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes ; Académie française"
+      }
+    },
+    {
+      "id": "frp-023",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "À bon chat…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Bon rat"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Bonne sieste",
+          "Bon lait",
+          "Bon coussin"
+        ]
+      },
+      "note": {
+        "fr": "La riposte est à la hauteur de l'attaque"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-024",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Abondance de biens…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Ne nuit pas"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Rend paresseux",
+          "Attire les voleurs",
+          "Fatigue les jambes"
+        ]
+      },
+      "note": {
+        "fr": "Avoir trop d'une bonne chose n'est jamais un problème"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-025",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "L'appétit vient…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "En mangeant"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Le dimanche",
+          "Avec l'âge",
+          "Après la sieste"
+        ]
+      },
+      "note": {
+        "fr": "Plus on a, plus on veut"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes (Rabelais, Gargantua)"
+      }
+    },
+    {
+      "id": "frp-026",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Les bons comptes…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Font les bons amis"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Font les bons voisins",
+          "Font les bons repas",
+          "Font les vieux banquiers"
+        ]
+      },
+      "note": {
+        "fr": "Régler l'argent clairement préserve l'amitié"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-027",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "À cheval donné…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "On ne regarde pas la bride"
+      },
+      "truthAlt": {
+        "fr": [
+          "On ne regarde pas les dents",
+          "On ne regarde point la bride"
+        ]
+      },
+      "houseLies": {
+        "fr": [
+          "On ne demande pas le prix",
+          "On dit merci deux fois",
+          "On ne pose pas de selle"
+        ]
+      },
+      "note": {
+        "fr": "Un cadeau ne se critique pas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Académie française, « cheval »"
+      }
+    },
+    {
+      "id": "frp-028",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qui va à la chasse…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Perd sa place"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Rentre bredouille",
+          "Se lève tôt",
+          "Revient crotté"
+        ]
+      },
+      "note": {
+        "fr": "Qui s'absente risque de trouver sa place prise"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-029",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Tel est pris…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Qui croyait prendre"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Qui voulait partir",
+          "Qui riait trop fort",
+          "Qui comptait ses sous"
+        ]
+      },
+      "note": {
+        "fr": "Le piégeur finit piégé"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes (La Fontaine)"
+      }
+    },
+    {
+      "id": "frp-030",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Il faut battre le fer…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Tant qu'il est chaud"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Avant le déjeuner",
+          "Sans réveiller le voisin",
+          "Deux fois par jour"
+        ]
+      },
+      "note": {
+        "fr": "Agis pendant que l'occasion est bonne"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-031",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Les absents…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Ont toujours tort"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ratent le meilleur",
+          "Ont toujours une excuse",
+          "Ne mangent pas de gâteau"
+        ]
+      },
+      "note": {
+        "fr": "On accuse volontiers ceux qui ne sont pas là pour se défendre"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-032",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Comme on fait son lit…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "On se couche"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "On dort",
+          "On le défait",
+          "On rêve"
+        ]
+      },
+      "note": {
+        "fr": "On subit les conséquences de ses propres choix"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-033",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "On ne peut pas avoir le beurre…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Et l'argent du beurre"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Sans la tartine",
+          "Et la confiture avec",
+          "Sans passer à la crèmerie"
+        ]
+      },
+      "note": {
+        "fr": "On ne peut pas tout avoir en même temps"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-034",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Il n'y a que les montagnes…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Qui ne se rencontrent pas"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Qui ne bougent jamais",
+          "Qui touchent le ciel",
+          "Qui restent de marbre"
+        ]
+      },
+      "note": {
+        "fr": "Les gens finissent toujours par se recroiser"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-035",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "La nuit…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Tous les chats sont gris"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Les murs ont des oreilles",
+          "Les souris dansent",
+          "On oublie tout"
+        ]
+      },
+      "note": {
+        "fr": "Dans l'obscurité, on ne voit plus les différences"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-036",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Il ne faut jamais dire : fontaine…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Je ne boirai pas de ton eau"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Je reviendrai demain",
+          "Tu es trop froide",
+          "Garde ta monnaie"
+        ]
+      },
+      "note": {
+        "fr": "Ne jure jamais que tu n'auras pas besoin de quelque chose"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-037",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Charité bien ordonnée…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Commence par soi-même"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Finit toujours bien",
+          "Se fait en silence",
+          "Ne se compte pas"
+        ]
+      },
+      "note": {
+        "fr": "Il faut d'abord penser à soi"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-038",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qui ne dit mot…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Consent"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "N'en pense pas moins",
+          "Écoute tout",
+          "A la bouche pleine"
+        ]
+      },
+      "note": {
+        "fr": "Se taire, c'est accepter"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-039",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Un tiens vaut mieux…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Que deux tu l'auras"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Que trois peut-être",
+          "Que mille promesses",
+          "Qu'un merci"
+        ]
+      },
+      "note": {
+        "fr": "Mieux vaut le sûr que le promis (La Fontaine, Le Petit Poisson et le Pêcheur)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-040",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Araignée du matin…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Chagrin"
+      },
+      "truthAlt": {
+        "fr": [
+          "Chagrin, araignée du soir, espoir"
+        ]
+      },
+      "houseLies": {
+        "fr": [
+          "Pluie l'après-midi",
+          "Café renversé",
+          "Visite surprise"
+        ]
+      },
+      "note": {
+        "fr": "Vieille superstition : une araignée vue le matin annoncerait des ennuis (le soir, de l'espoir)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-041",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "À quelque chose…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Malheur est bon"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Il faut un début",
+          "Tout le monde a droit",
+          "On s'habitue"
+        ]
+      },
+      "note": {
+        "fr": "Même un malheur peut avoir du bon"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-042",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Ventre affamé…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "N'a point d'oreilles"
+      },
+      "truthAlt": {
+        "fr": [
+          "N'a pas d'oreilles"
+        ]
+      },
+      "houseLies": {
+        "fr": [
+          "Ne dort pas",
+          "Fait du bruit",
+          "Ne pense qu'au dessert"
+        ]
+      },
+      "note": {
+        "fr": "Quand on a faim, on n'écoute plus rien"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes (La Fontaine)"
+      }
+    },
+    {
+      "id": "frp-043",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "L'occasion fait…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Le larron"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Le bonheur",
+          "La fête",
+          "Les amis"
+        ]
+      },
+      "note": {
+        "fr": "Une bonne occasion peut transformer n'importe qui en voleur"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-044",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Il y a loin…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "De la coupe aux lèvres"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Du dire au faire",
+          "De Paris à Pékin",
+          "Du lit au bureau"
+        ]
+      },
+      "note": {
+        "fr": "Entre le projet et sa réalisation, tout peut arriver"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-045",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Chose promise…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Chose due"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Chose oubliée",
+          "Chose écrite",
+          "Chose faite"
+        ]
+      },
+      "note": {
+        "fr": "Une promesse doit être tenue"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-046",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Bien mal acquis…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Ne profite jamais"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Finit à la banque",
+          "Rend nerveux",
+          "Se dépense vite"
+        ]
+      },
+      "note": {
+        "fr": "Ce qui est volé ne porte pas bonheur"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-047",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Les petits ruisseaux…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Font les grandes rivières"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Font peur aux grenouilles",
+          "Chantent la nuit",
+          "Finissent en bouteille"
+        ]
+      },
+      "note": {
+        "fr": "Les petites économies finissent par faire beaucoup"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-048",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Mains froides…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Cœur chaud"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Gants perdus",
+          "Pieds gelés",
+          "Radiateur en panne"
+        ]
+      },
+      "note": {
+        "fr": "Des mains froides cacheraient un cœur tendre"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-049",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qui paie ses dettes…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "S'enrichit"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Dort tranquille",
+          "A des amis",
+          "N'a plus un sou"
+        ]
+      },
+      "note": {
+        "fr": "Payer ses dettes, c'est garder son crédit"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-050",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Chassez le naturel…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Il revient au galop"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Il se vexe",
+          "Il revient pour le dîner",
+          "Il laisse des traces"
+        ]
+      },
+      "note": {
+        "fr": "On ne change pas vraiment sa nature (Destouches, 1732)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte) ; Destouches, Le Glorieux (1732)"
+      }
+    },
+    {
+      "id": "frp-051",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Tout vient à point…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "À qui sait attendre"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "À qui se lève tôt",
+          "À qui demande poliment",
+          "À qui paie comptant"
+        ]
+      },
+      "note": {
+        "fr": "La patience finit par payer"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-052",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Il ne faut pas courir deux lièvres…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "À la fois"
+      },
+      "truthAlt": {
+        "fr": [
+          "En même temps"
+        ]
+      },
+      "houseLies": {
+        "fr": [
+          "Après le déjeuner",
+          "Avec des bottes neuves",
+          "Sans prévenir le chien"
+        ]
+      },
+      "note": {
+        "fr": "À vouloir tout faire en même temps, on rate tout"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-053",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Il ne faut pas mettre la charrue…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Avant les bœufs"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Dans le salon",
+          "Sans permis",
+          "Après la pluie"
+        ]
+      },
+      "note": {
+        "fr": "Fais les choses dans le bon ordre"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-054",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Chacun voit midi…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "À sa porte"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Sur sa montre",
+          "À sa fenêtre",
+          "Quand il a faim"
+        ]
+      },
+      "note": {
+        "fr": "Chacun juge selon son propre intérêt"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-055",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qui vole un œuf…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Vole un bœuf"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Vole une poule",
+          "Finit par pondre",
+          "Se fait remarquer"
+        ]
+      },
+      "note": {
+        "fr": "Qui commence par de petits vols finira par de grands"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-056",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "À chaque jour…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Suffit sa peine"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Son croissant",
+          "Sa météo",
+          "Ses surprises"
+        ]
+      },
+      "note": {
+        "fr": "Ne t'inquiète pas déjà des soucis de demain"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-057",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "En avril, ne te découvre pas d'un fil…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "En mai, fais ce qu'il te plaît"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "En mai, prends un parapluie",
+          "En juin, va te baigner",
+          "En mai, garde ton manteau"
+        ]
+      },
+      "note": {
+        "fr": "Ne range pas tes habits chauds trop tôt"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-058",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Le mieux est…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "L'ennemi du bien"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Le voisin du pire",
+          "Souvent trop cher",
+          "Toujours en retard"
+        ]
+      },
+      "note": {
+        "fr": "À vouloir trop améliorer, on abîme ce qui allait bien (Voltaire le cite)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-059",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "On ne prête…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Qu'aux riches"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Qu'à ses amis",
+          "Que des parapluies",
+          "Qu'une seule fois"
+        ]
+      },
+      "note": {
+        "fr": "On attribue volontiers succès et mérites à ceux qui en ont déjà"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse, dictionnaire des proverbes ; Wiktionnaire (forme exacte)"
+      }
+    },
+    {
+      "id": "frp-060",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "C'est en forgeant…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Qu'on devient forgeron"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Qu'on se brûle les doigts",
+          "Qu'on apprend la patience",
+          "Qu'on casse des marteaux"
+        ]
+      },
+      "note": {
+        "fr": "C'est en pratiquant qu'on apprend"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-061",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Bonne renommée…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "Vaut mieux que ceinture dorée"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "Ouvre toutes les portes",
+          "Finit toujours par se savoir",
+          "Se gagne lentement"
+        ]
+      },
+      "note": {
+        "fr": "Une bonne réputation vaut plus que la richesse"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes"
+      }
+    },
+    {
+      "id": "frp-062",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Qui s'y frotte…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "fr": "S'y pique"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "fr": [
+          "S'y brûle",
+          "S'en souvient",
+          "Y revient"
+        ]
+      },
+      "note": {
+        "fr": "Qui s'attaque à lui s'en mord les doigts (devise de Nancy et du chardon lorrain)"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Larousse des proverbes ; devise de la ville de Nancy"
+      }
+    }
+  ]
+}

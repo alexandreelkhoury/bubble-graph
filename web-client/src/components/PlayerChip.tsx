@@ -2,27 +2,20 @@
 import type { PublicPlayer, Role } from "../games/mishana/view";
 import type { ComponentChildren } from "preact";
 import { COLORS } from "@jamaa/shared/constants";
+import { BODY_PATHS } from "@jamaa/shared/characters";
 import type { ColorId } from "@jamaa/shared/constants";
 import { t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { Icon } from "./Icon";
 import { RoleEmblem } from "./Role";
+import { Character } from "./Character";
+import type { Expression } from "@jamaa/shared/characters";
+import { FACE_MIN_SIZE } from "@jamaa/shared/characters";
 
-export const SHAPES: Record<string, string> = {
-  circle: '<circle cx="12" cy="12" r="9"/>',
-  square: '<rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/>',
-  star: '<path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z" stroke-linejoin="round"/>',
-  // Triangle, drop and arch sit optically higher (their visual mass is low in a centred bbox).
-  triangle: '<path d="M12 2.4 21.4 19H2.6z" stroke-linejoin="round"/>',
-  diamond: '<path d="M12 2.2 21.8 12 12 21.8 2.2 12z"/>',
-  hexagon: '<path d="M12 2.6 20.2 7.3v9.4L12 21.4 3.8 16.7V7.3z"/>',
-  plus: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',
-  drop: '<path d="M12 1.25S5 9.15 5 13.75a7 7 0 0 0 14 0c0-4.6-7-12.5-7-12.5z"/>',
-  crescent: '<path d="M15 2.7a9.5 9.5 0 1 0 6.3 13.6A7.6 7.6 0 0 1 15 2.7z"/>',
-  bolt: '<path d="M13.5 2 5 13.5h6L10 22l9-12h-6.2z"/>',
-  flower: '<circle cx="12" cy="7.4" r="4.6"/><circle cx="16.6" cy="12" r="4.6"/><circle cx="12" cy="16.6" r="4.6"/><circle cx="7.4" cy="12" r="4.6"/><circle cx="12" cy="12" r="4"/>',
-  arch: '<path d="M5 20.75V10.25a7 7 0 0 1 14 0v10.5h-4.5v-6.5a2.5 2.5 0 0 0-5 0v6.5z"/>',
-};
+/** The DESIGN §5.2 glyphs, from the shared character geometry (one path per shape). */
+export const SHAPES: Record<string, string> = Object.fromEntries(
+  Object.entries(BODY_PATHS).map(([k, d]) => [k, `<path d="${d}" stroke-linejoin="round"/>`]),
+);
 
 export const COLOR_BY_ID = Object.fromEntries(COLORS.map((c) => [c.id, c])) as Record<ColorId, (typeof COLORS)[number]>;
 export const LIGHT_GLYPH = (id: ColorId): boolean => COLOR_BY_ID[id].glyph === "cream";
@@ -57,26 +50,33 @@ export interface AvatarProps {
   check?: boolean;
   speaking?: boolean;
   class?: string;
+  /** Character expression at ≥ 40 px (default: from the state: away → away, out → sad, check → done, else idle). */
+  expression?: Expression;
 }
 
-/** Badges: away (wifi-off) wins over ready/voted (check); host crown top-start; role emblem bottom-end when out. */
-export function Avatar({ color, size = 56, state = "normal", role = null, host = false, check = false, speaking = false, class: cls }: AvatarProps) {
+/**
+ * DESIGN-JAMAA §4.1: the character IS the avatar. At ≥ 40 px the player's character (body + face) is drawn, with the
+ * DESIGN §5.2 badges on top; below 40 px the classic tile + glyph. The `done` face carries its own check badge.
+ * Badges: away (wifi-off) wins over ready/voted (check); host crown top-start; role emblem bottom-end when out. */
+export function Avatar({ color, size = 56, state = "normal", role = null, host = false, check = false, speaking = false, class: cls, expression }: AvatarProps) {
   const away = state === "away";
   const out = state === "out" || state === "left";
   const badge = Math.max(16, Math.round(size * 0.36));
+  const face = size >= FACE_MIN_SIZE;
+  const expr: Expression = expression ?? (away ? "away" : out ? "sad" : check ? "done" : "idle");
   return (
     <span
-      class={`avatar avatar--${state}${speaking ? " avatar--speaking" : ""}${cls ? ` ${cls}` : ""}`}
+      class={`avatar avatar--${state}${face ? " avatar--char" : ""}${speaking ? " avatar--speaking" : ""}${cls ? ` ${cls}` : ""}`}
       style={{ ...colorVars(color), "--avatar-size": `${size}px`, "--badge-size": `${badge}px` }}
       aria-hidden="true"
     >
-      <span class="avatar__tile"><Glyph color={color} /></span>
+      {face ? <Character color={color} size={size} expression={expr} /> : <span class="avatar__tile"><Glyph color={color} /></span>}
       {host && <span class="badge badge--host"><Icon name="crown" /></span>}
       {state === "left" ? (
         <span class="badge badge--end badge--left"><Icon name="door-out" /></span>
       ) : away ? (
         <span class="badge badge--end badge--away"><Icon name="wifi-off" /></span>
-      ) : check ? (
+      ) : check && !(face && expr === "done") ? (
         <span class="badge badge--end badge--check"><Icon name="check" /></span>
       ) : null}
       {out && role && <span class={`badge badge--role badge--${role.toLowerCase()}`}><RoleEmblem role={role} /></span>}
