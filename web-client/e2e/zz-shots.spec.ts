@@ -27,6 +27,7 @@ async function dpadTo(tv: Page, sel: string, key: string, max = 10): Promise<voi
 for (const L of LOCALES) {
   test(`shots ${L}`, async ({ browser }) => {
     const dir = `${ROOT}/${L}`;
+    const END = L === "ar" ? "ArrowLeft" : "ArrowRight", START = L === "ar" ? "ArrowRight" : "ArrowLeft";
     mkdirSync(dir, { recursive: true });
     const snap = async (p: Page, name: string, wait = 350): Promise<void> => { await p.waitForTimeout(wait); await p.screenshot({ path: `${dir}/${name}.png` }); };
 
@@ -56,9 +57,9 @@ for (const L of LOCALES) {
     await snap(phones[1]!, "ph-02c-hub-rules");
     await phones[1]!.keyboard.press("Escape");
     await snap(tv, "tv-03-hub-gang", 2600);
-    await press(tv, "ArrowRight");
+    await press(tv, END);
     await snap(tv, "tv-03b-hub-focus-next", 700);
-    await press(tv, "ArrowLeft");
+    await press(tv, START);
     await tv.waitForTimeout(600);
 
     // Hub ⓘ (rules + How JAMAA works), Settings, Close confirm, the Pass store.
@@ -68,7 +69,7 @@ for (const L of LOCALES) {
     await snap(tv, "tv-04b-hub-rules-scrolled");
     await press(tv, "Escape");
     await press(tv, "ArrowUp");
-    await dpadTo(tv, ".tvhubtop__end .tvround:last-child", "ArrowRight", 4);
+    await dpadTo(tv, ".tvhubtop__end .tvround:last-child", END, 4);
     await press(tv, "Enter");
     await snap(tv, "tv-05-hub-settings");
     await press(tv, "Escape");
@@ -78,10 +79,10 @@ for (const L of LOCALES) {
     await press(tv, "Escape");
     if (await tv.locator("[data-pass]").count()) {
       await press(tv, "ArrowUp");
-      await dpadTo(tv, "[data-pass]", "ArrowRight", 4);
+      await dpadTo(tv, "[data-pass]", END, 4);
       await press(tv, "Enter");
       await snap(tv, "tv-07-pass-store", 900);
-      await press(tv, "ArrowRight");
+      await press(tv, END);
       await snap(tv, "tv-07b-pass-store-monthly");
       await press(tv, "Escape");
       await press(tv, "ArrowDown");
@@ -117,7 +118,7 @@ for (const L of LOCALES) {
     await press(tv, "Escape");
     await tv.waitForTimeout(300);
     await tv.locator("[data-howto]").evaluate((el) => (el as HTMLElement).focus());
-    await press(tv, "ArrowRight");
+    await press(tv, END);
     await dpadTo(tv, "[data-row=packIds]", "ArrowDown", 6);
     if (await tv.locator("[data-row=packIds]").evaluate((el) => el === document.activeElement).catch(() => false)) {
       await press(tv, "Enter");
@@ -186,12 +187,12 @@ for (const L of LOCALES) {
     await snap(phones[0]!, "ph-09-results-vip");
     await phones[1]!.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await snap(phones[1]!, "ph-09b-results-cup");
-    await dpadTo(tv, "[data-back-hub]", "ArrowRight", 4);
+    await dpadTo(tv, "[data-back-hub]", END, 4);
     await press(tv, "Enter");
     await snap(tv, "tv-19-portal-back", 100);
     await snap(tv, "tv-20-hub-cup", 1200);
     await press(tv, "ArrowUp");
-    await dpadTo(tv, ".tvcupchip", "ArrowLeft", 4);
+    await dpadTo(tv, ".tvcupchip", START, 4);
     await press(tv, "Enter");
     await snap(tv, "tv-21-cup-sheet");
     await press(tv, "Escape");
