@@ -572,4 +572,69 @@ class GameViewModelTest {
         assertNull(vm.moment.value)
         assertEquals(GateDecision.CONSUME, vm.gateKey(RemoteKey.OK)) // the guard after the bounce
     }
+
+    /**
+     * §3.10 E on overlays (AppRoot puts the gate on the one parent of the screens AND every overlay): an overlay opened
+     * via openOverlay consumes OK and the D-pad for INPUT_GUARD_MS, so hub Back, Right, OK inside 400 ms never reaches
+     * "Close JAMAA" on the confirm.
+     */
+    @Test
+    fun anOverlayConsumesOkAndDpadDuringTheGuard() = runTest(dispatcher) {
+        val vm = newVm()
+        val conn = open(vm)
+        advanceUntilIdle()
+        emit(conn, hub, 1)
+        now += Constants.INPUT_GUARD_MS
+        assertEquals(GateDecision.PASS, vm.gateKey(RemoteKey.BACK))
+        vm.openOverlay(Overlay.CloseConfirm)
+        now += 100
+        assertEquals(GateDecision.CONSUME, vm.gateKey(RemoteKey.RIGHT))
+        now += 100
+        assertEquals(GateDecision.CONSUME, vm.gateKey(RemoteKey.OK))
+        assertEquals(GateDecision.PASS, vm.gateKey(RemoteKey.BACK)) // Back always works (Stay)
+        now += Constants.INPUT_GUARD_MS
+        assertEquals(GateDecision.PASS, vm.gateKey(RemoteKey.OK))
+    }
+
+    /** The setup intro: closing it arms the guard (a double OK on "Got it" never replays it); INFO is off meanwhile. */
+    @Test
+    fun closingTheSetupIntroArmsTheGuard() = runTest(dispatcher) {
+        val vm = newVm()
+        val conn = open(vm)
+        advanceUntilIdle()
+        emit(conn, setup, 1)
+        vm.moment.value?.let { vm.momentEnded(it.seq) }
+        now += Constants.INPUT_GUARD_MS
+        vm.setIntroOpen(true)
+        assertTrue(vm.introOpen.value)
+        assertEquals(GateDecision.PASS, vm.gateKey(RemoteKey.OK)) // "Got it"
+        vm.setIntroOpen(false)
+        assertFalse(vm.introOpen.value)
+        now += 80
+        assertEquals(GateDecision.CONSUME, vm.gateKey(RemoteKey.OK)) // the second press of a double OK
+        vm.setIntroOpen(true)
+        emit(conn, hub, 2) // leaving the setup forgets the intro
+        assertFalse(vm.introOpen.value)
+    }
+
+    /** Hub → setup (the VIP opened a game from the phone) closes hub Settings too: it must not hold focus over the portal. */
+    @Test
+    fun enteringSetupClosesHubSettings() = runTest(dispatcher) {
+        val vm = newVm()
+        val conn = open(vm)
+        advanceUntilIdle()
+        emit(conn, hub, 1)
+        vm.openOverlay(Overlay.HubSettings)
+        emit(conn, setup, 2)
+        assertTrue(vm.overlays.value.isEmpty())
+    }
+
+    /** §2.5: the games the server offers that this build cannot render, in registry order; unknown → none. */
+    @Test
+    fun missingGamesAreTheServersMinusThisBuilds() {
+        assertEquals(emptyList<String>(), GameViewModel.missingGamesOf(null))
+        assertEquals(emptyList<String>(), GameViewModel.missingGamesOf(listOf("mishana", "karaoke")))
+        val all = app.jamaa.tv.games.GameIds.ALL
+        assertEquals(all.filter { !app.jamaa.tv.games.GameDecoders.isSupported(it) }, GameViewModel.missingGamesOf(all.reversed()))
+    }
 }

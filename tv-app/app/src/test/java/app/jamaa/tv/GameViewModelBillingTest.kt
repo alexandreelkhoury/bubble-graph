@@ -171,6 +171,19 @@ class GameViewModelBillingTest {
         assertTrue(conn.sent.none { it is EntitlementMsg || it is StoreOpenMsg })
     }
 
+    /** §3.10 E: opening the store arms the guard, so OK, OK on "JAMAA Pass" never buys Yearly on the second press. */
+    @Test
+    fun openingTheStoreArmsTheInputGuard() = runTest(dispatcher) {
+        val vm = newVm()
+        val conn = connections.single()
+        conn.state.value = ConnState.OPEN
+        conn.state(lobby)
+        advanceUntilIdle()
+        assertEquals(app.jamaa.tv.platform.GateDecision.PASS, vm.gateKey(app.jamaa.tv.platform.RemoteKey.OK))
+        vm.openStore(StoreEntry(null, StoreOrigin.LOBBY_BUTTON))
+        assertEquals(app.jamaa.tv.platform.GateDecision.CONSUME, vm.gateKey(app.jamaa.tv.platform.RemoteKey.OK))
+    }
+
     @Test
     fun entitlementIsQueuedUntilTheFirstStateAfterHello() = runTest(dispatcher) {
         newVm()

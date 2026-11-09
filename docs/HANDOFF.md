@@ -51,3 +51,15 @@ The owner stopped the session for the night. This file lists what is done, what 
 - Final game names (D4), the voice host budget, audience mode scope.
 - Native review of all AR/FR/ES content, and of the facts marked `[VERIFY]`.
 - Marking the four free `*-everyday-01` packs as reviewed. `pnpm run deploy` refuses draft free packs.
+
+## Update 2026-11-09 (stopped again by the owner)
+- **Platform (milestone P):** lanes A, B, C, D and E are all finished. Review done (architecture/security, design, TV remote). Fixes: lane A done; lanes B (web) and C (TV) were interrupted mid-fix; the verify step has not run.
+- **Games:**
+  - Bluff! and Most Likely: engine, content and TV screens done; web screens (phone + /tv) interrupted mid-way; reviews not started.
+  - Quiz Night: engine, content, TV and web screens done; the security review is done; the rules/fun and design reviews were interrupted.
+- **Art:** board in `docs/art-board/`, sources in `drafts/art-drafts.tar.xz`. Not integrated into the app yet.
+- **Resume:**
+  1. Rerun the platform review workflow; completed reviews replay from cache.
+  2. Rerun the three game workflows with `{"game": ...}` and their run ids (wf_3b7ffa60-454 bluff, wf_7a96543e-a25 likely, wf_72a6948e-a0e trivia); completed agents replay from cache.
+  3. Integrate the art.
+  4. Final gate, then push.

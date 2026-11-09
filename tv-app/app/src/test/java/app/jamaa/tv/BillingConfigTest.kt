@@ -46,4 +46,21 @@ class BillingConfigTest {
         server.close()
         assertFalse(enabled())
     }
+
+    /** JAMAA-PLATFORM §2.5: `games` comes in the same call; absent or malformed → null (the TV uses its own list). */
+    @Test
+    fun clientConfigReadsTheOfferedGames() {
+        fun config() = runBlocking { RoomApi.clientConfig(server.url("/").toString(), OkHttpClient()) }
+        reply(200, Fixtures.v2("http.config.json"))
+        val c = config()
+        assertEquals(listOf("mishana"), c.games)
+        reply(200, """{"billing":true,"games":["mishana","bluff","likely","trivia"]}""")
+        assertEquals(app.jamaa.tv.net.ClientConfig(true, listOf("mishana", "bluff", "likely", "trivia")), config())
+        reply(200, """{"billing":false}""")
+        assertEquals(app.jamaa.tv.net.ClientConfig(false, null), config())
+        reply(200, """{"billing":false,"games":"mishana"}""")
+        assertEquals(null, config().games)
+        reply(500, "")
+        assertEquals(app.jamaa.tv.net.ClientConfig.OFF, config())
+    }
 }
