@@ -77,7 +77,12 @@ class BluffScript private constructor(
 ) {
     val totalMs: Long get() = segments.lastOrNull()?.endMs ?: 0L
 
-    fun segmentAt(tMs: Long): Segment? = segments.lastOrNull { tMs >= it.startMs }?.takeIf { tMs < totalMs } ?: if (tMs >= totalMs) segments.lastOrNull() else segments.firstOrNull()
+    /** The segment playing at [tMs] (the last one once the script ended, the first one before it starts). */
+    fun segmentAt(tMs: Long): Segment? = when {
+        segments.isEmpty() -> null
+        tMs >= totalMs -> segments.last()
+        else -> segments.lastOrNull { tMs >= it.startMs } ?: segments.first()
+    }
 
     /** True while OK should complete the reveal (§3.10 E): before the script's end. */
     fun running(tMs: Long): Boolean = tMs < totalMs
@@ -118,10 +123,9 @@ class BluffScript private constructor(
         if (reduced) 1f else ChoreoSampler.cubicBezier(0.4, -0.15, 0.2, 1.0, (tMs - coin.launchAtMs).toDouble() / (coin.landAtMs - coin.launchAtMs)).toFloat()
 
     /** The options already stamped at [tMs] (their segment's stamp landed), in reveal order. */
-    fun stamped(tMs: Long): List<RevealStep> = segments.filter { s ->
-        val st = s.step ?: return@filter false
-        st.kind != OptionKind.TRUTH || s.kind == SegmentKind.TRUTH
-    }.filter { s -> tMs >= s.startMs + (s.sub("stamp")?.endMs ?: 0L) }.mapNotNull { it.step }
+    fun stamped(tMs: Long): List<RevealStep> = segments
+        .filter { s -> s.step != null && tMs >= s.startMs + ((s.sub("stamp") ?: s.sub("liar"))?.endMs ?: 0L) }
+        .mapNotNull { it.step }
 
     /**
      * The event expression a player's character holds at [tMs] (null = the default, idle). Public by construction:
@@ -146,8 +150,8 @@ class BluffScript private constructor(
                 playerId in st.spotOnIds -> Expression.HAPPY
                 playerId in st.foundEarlyIds -> Expression.HAPPY
                 playerId in st.voterIds -> Expression.CHEER
+                nobodyFound -> Expression.SHOCK // "Nobody saw that coming!": every character
                 playerId in votersOfAnything -> Expression.SAD
-                st.voterIds.isEmpty() && reveal.notice() -> Expression.SHOCK
                 else -> null
             }
             SegmentKind.FINAL_ANSWER -> if (st != null && playerId in st.authorIds && after("liar")) Expression.SMUG else null
@@ -163,8 +167,14 @@ class BluffScript private constructor(
     private val topAuthors: Set<String> = reveal.steps.filter { it.top }.flatMap { it.authorIds }.toSet()
     private val unpickedAuthors: Set<String> = reveal.unpicked.flatMap { it.authorIds }.toSet()
 
-    /** "Nobody saw that coming!": nobody found the truth (every character shocked). */
-    private fun BluffReveal.notice(): Boolean = !final && steps.any { it.kind == OptionKind.TRUTH && it.voteCount == 0 } && votersOfAnything.isNotEmpty()
+
+    /** "Nobody saw that coming!" (GAME-BLUFF §7): votes were cast and none found the truth (every character shocked). */
+    val nobodyFound: Boolean = !reveal.final && votersOfAnything.isNotEmpty() &&
+        reveal.steps.any { it.kind == OptionKind.TRUTH && it.voteCount == 0 }
+
+    /** "Too easy!" (GAME-BLUFF §7): every vote went to the truth. */
+    val tooEasy: Boolean = !reveal.final && reveal.steps.isNotEmpty() && reveal.steps.all { it.kind == OptionKind.TRUTH } &&
+        reveal.steps.any { it.voteCount > 0 }
 
     companion object {
         const val MAX_SPRITES = 24
@@ -214,6 +224,45 @@ class BluffScript private constructor(
             }
             if (r.unpicked.isNotEmpty()) add(Triple(SegmentKind.NOBODY, NOBODY_MS, null))
             if (r.steps.any { it.likerIds.isNotEmpty() } || r.unpicked.any { it.likerIds.isNotEmpty() }) add(Triple(SegmentKind.LIKES, LIKES_MS, null))
+        }
+
+        /** Staggered element counts of a segment's sub-steps (voters, envelopes, pins, coins, cards, hearts). */
+        private fun elementsOf(kind: SegmentKind, st: RevealStep?, r: BluffReveal): Map<String, Int> {
+            val v = st?.voteCount ?: 0
+            return when (kind) {
+                SegmentKind.LIE, SegmentKind.HOUSE, SegmentKind.QUICK -> mapOf("jump" to v, "coins" to lieCoinCount(st))
+                SegmentKind.TRUTH -> mapOf(
+                    "jump" to v, "pins" to (st?.spotOnIds?.size ?: 0),
+                    "coins" to (st?.deltas?.count { it.reason == DeltaReason.TRUTH } ?: 0),
+                )
+                SegmentKind.FINAL_ANSWER -> mapOf("envelopes" to minOf(v, 12), "coins" to finalCoinCount(st))
+                SegmentKind.CROWN -> mapOf("coins" to r.steps.sumOf { s -> s.deltas.count { it.reason == DeltaReason.CONVINCING } })
+                SegmentKind.TWIST -> mapOf("flip" to r.steps.size + r.unpicked.size)
+                SegmentKind.LIKES -> mapOf("hearts" to heartCount(r))
+                else -> emptyMap()
+            }
+        }
+
+        /** Coins per author of a lie: one per fooled voter, capped so all authors' coins stay ≤ [MAX_SPRITES]. */
+        private fun lieCoinCount(st: RevealStep?): Int {
+            if (st == null) return 0
+            val authors = st.authorIds.size.coerceAtLeast(1)
+            return minOf(st.voterIds.size.coerceAtLeast(1), MAX_SPRITES / authors)
+        }
+
+        private fun finalCoinCount(st: RevealStep?): Int {
+            if (st == null) return 0
+            val authors = st.authorIds.size.coerceAtLeast(1)
+            return minOf(st.voteCount, MAX_SPRITES / authors).coerceAtLeast(1)
+        }
+
+        private fun likeDeltas(r: BluffReveal): List<Pair<List<String>, BluffDelta>> =
+            r.steps.flatMap { st -> st.deltas.filter { it.reason == DeltaReason.LIKE }.map { st.likerIds to it } } +
+                r.unpicked.flatMap { u -> u.deltas.filter { it.reason == DeltaReason.LIKE }.map { u.likerIds to it } }
+
+        private fun heartCount(r: BluffReveal): Int {
+            val hearts = likeDeltas(r).sumOf { it.first.size.coerceAtLeast(1) }
+            return if (hearts > MAX_SPRITES) likeDeltas(r).size else hearts
         }
 
         /** The sub-steps of one segment (relative times), fitted inside `duration − HOLD_MS`. */
@@ -281,7 +330,8 @@ class BluffScript private constructor(
                     s.copy(startMs = (s.startMs * f).toInt(), durationMs = 200, easing = "ease.standard", staggerMs = (s.staggerMs * f).toInt(), reduced = Choreo.Reduced.FADE)
                 }
             }
-            val elements = { s: Choreo.Step -> when (s.id) { "jump" -> v; "envelopes" -> minOf(v, 12); "pins" -> st?.spotOnIds?.size ?: 0; else -> 1 } }
+            val counts = elementsOf(kind, st, r)
+            val elements = { s: Choreo.Step -> counts[s.id] ?: 1 }
             val end = natural.maxOf { it.startMs + it.staggerMs * maxOf(0, elements(it) - 1) + it.durationMs }
             if (end <= limit) return natural
             // Big groups: compress start times and staggers (never a spring's settle time) to fit the server budget.
@@ -321,7 +371,6 @@ class BluffScript private constructor(
                 assigned[to] = (assigned[to] ?: 0) + total
             }
 
-            val likeDeltas = ArrayList<Pair<List<String>, BluffDelta>>() // (likers, delta) for the likes tally
             for (seg in segments) {
                 val st = seg.step
                 when (seg.kind) {
@@ -330,25 +379,24 @@ class BluffScript private constructor(
                             DeltaReason.FOOLED -> {
                                 val voters = st.voterIds
                                 if (voters.isEmpty()) coinsFor(seg, "coins", { CoinSource.Card(st.optionId) }, 1, d.playerId, d.points)
-                                else coinsFor(seg, "coins", { k -> CoinSource.Voter(voters[k]) }, voters.size, d.playerId, d.points)
+                                else coinsFor(seg, "coins", { k -> CoinSource.Voter(voters[k % voters.size]) }, lieCoinCount(st), d.playerId, d.points)
                             }
-                            DeltaReason.LIKE -> likeDeltas += st.likerIds to d
+                            DeltaReason.LIKE -> Unit // the likes tally
                             else -> Unit
                         }
                     }
                     SegmentKind.TRUTH -> if (st != null) {
                         for ((k, d) in st.deltas.withIndex()) when (d.reason) {
                             DeltaReason.TRUTH -> coinsFor(seg, "coins", { CoinSource.Card(st.optionId) }, 1, d.playerId, d.points, offset = k)
-                            DeltaReason.LIKE -> likeDeltas += st.likerIds to d
+                            DeltaReason.LIKE -> Unit // the likes tally
                             else -> Unit
                         }
                     }
                     SegmentKind.FINAL_ANSWER -> if (st != null) {
-                        val authors = st.authorIds.size.coerceAtLeast(1)
                         for (d in st.deltas) when (d.reason) {
                             // One coin per vote from the ballot box, shared by co-authors; ≤ 24 sprites.
-                            DeltaReason.FOOLED -> coinsFor(seg, "coins", { CoinSource.BallotBox }, minOf(st.voteCount, MAX_SPRITES / authors).coerceAtLeast(1), d.playerId, d.points)
-                            DeltaReason.LIKE -> likeDeltas += st.likerIds to d
+                            DeltaReason.FOOLED -> coinsFor(seg, "coins", { CoinSource.BallotBox }, finalCoinCount(st), d.playerId, d.points)
+                            DeltaReason.LIKE -> Unit // the likes tally
                             else -> Unit
                         }
                     }
@@ -361,12 +409,11 @@ class BluffScript private constructor(
                     coinsFor(crown, "coins", { CoinSource.Card(st.optionId) }, 1, d.playerId, d.points, offset = k++)
                 }
             }
-            for (u in r.unpicked) for (d in u.deltas) if (d.reason == DeltaReason.LIKE) likeDeltas += u.likerIds to d
             segments.firstOrNull { it.kind == SegmentKind.LIKES }?.let { likes ->
                 var offset = 0
-                val hearts = likeDeltas.sumOf { it.first.size.coerceAtLeast(1) }
-                val bundle = hearts > MAX_SPRITES
-                for ((likers, d) in likeDeltas) {
+                val all = likeDeltas(r)
+                val bundle = all.sumOf { it.first.size.coerceAtLeast(1) } > MAX_SPRITES
+                for ((likers, d) in all) {
                     val n = if (bundle || likers.isEmpty()) 1 else likers.size
                     coinsFor(likes, "hearts", { k -> if (likers.isEmpty()) CoinSource.BallotBox else CoinSource.Liker(likers[k]) }, n, d.playerId, d.points, heart = true, offset = offset)
                     offset += n
