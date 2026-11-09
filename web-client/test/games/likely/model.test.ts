@@ -118,10 +118,14 @@ describe("TV reveal plan (§12.2, shared layout)", () => {
     const plan = revealPlan(m, false);
     const ids = m.seats.map((s) => s.id);
     const arc = likelyJuryArc(ids.length, false);
-    const pos = likelyRevealPositions(arc, ids, m.pub.reveal!.ballots!);
+    const targeted = new Set(m.pub.reveal!.counts.map((c) => c.playerId));
+    const running = m.pub.reveal!.ballots!.filter((b) => b.voterId !== b.targetId && !targeted.has(b.voterId));
+    const pos = likelyRevealPositions(arc, ids, running);
     for (const id of plan.runners) expect(plan.ends[id]).toEqual({ x: pos[id]!.x + SAFE.x, y: pos[id]!.y + SAFE.y });
     expect(plan.selfVoters).toEqual(["p_0a1b2c3d4e5f60718293a4b5"]);
-    expect(plan.runners).not.toContain("p_0a1b2c3d4e5f60718293a4b5");
+    // p0 voted for themself; p1 received a vote, so it heads its own line and stays seated.
+    expect(plan.runners).toEqual(["p_2c3d4e5f60718293a4b5c6d7", "p_3d4e5f60718293a4b5c6d7e8"]);
+    expect(plan.ends["p_1b2c3d4e5f60718293a4b5c6"]).toEqual(plan.arc["p_1b2c3d4e5f60718293a4b5c6"]);
     expect(plan.coins.map((c) => [c.voterId, c.points])).toEqual([
       ["p_0a1b2c3d4e5f60718293a4b5", 200], ["p_1b2c3d4e5f60718293a4b5c6", 100], ["p_2c3d4e5f60718293a4b5c6d7", 100],
     ]);

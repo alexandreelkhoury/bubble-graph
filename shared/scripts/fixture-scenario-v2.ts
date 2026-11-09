@@ -35,6 +35,16 @@ const ZOE = CAST[4]!.id;
 
 const json = (v: unknown): string => JSON.stringify(v, null, 2) + "\n";
 
+/**
+ * §6.1: the platform fixtures whose bytes come from a G2–G4 game's own `projectSetup` (the per-game SETUP views the TV
+ * hub/setup tests read). `pnpm fixtures` still regenerates them, but neither the fixtures test nor `--check` pins their
+ * bytes: a G lane changing its SETUP extras must not turn a platform check red (they are still schema-checked).
+ */
+export function isGameProjectedV2(name: string): boolean {
+  const m = /^(?:v2\/)?s2c\.state\.tv\.setup\.([a-z]+)\.json$/.exec(name);
+  return m !== null && m[1] !== "mishana" && (GAME_IDS as readonly string[]).includes(m[1]!);
+}
+
 /** Returns `v2/<name>` → file content (pretty-printed, trailing newline). */
 export function generateFixturesV2(): Map<string, string> {
   const files = new Map<string, string>();
@@ -107,7 +117,8 @@ export function generateFixturesV2(): Map<string, string> {
   player("hub.host", RAMI);
   player("hub.spectator", null);
 
-  // Each stub game's SETUP extras, projected from a SETUP state for that game (stubs cannot be opened: enabled:false).
+  // Each G2–G4 game's SETUP extras, projected from a SETUP state for that game (opened without the registry's enabled
+  // flag; see isGameProjectedV2).
   for (const id of GAME_IDS.filter((g): g is Exclude<GameId, "mishana"> => g !== "mishana")) {
     const ctx = { ...h.viewCtx(), enabledGames: GAME_IDS };
     const s = { ...h.state, phase: "SETUP" as const, setupGameId: id };

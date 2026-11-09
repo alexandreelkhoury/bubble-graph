@@ -3,7 +3,10 @@
 // over the real protocol.
 import { describe, expect, it } from "vitest";
 import { GAME_META } from "@jamaa/shared/games/meta";
+import { GAME_IDS } from "@jamaa/shared/games/ids";
 import type { GameId } from "@jamaa/shared/games/ids";
+import { GameIntentSchema } from "@jamaa/shared/games/protocol";
+import { GAMES } from "@jamaa/shared/games/registry";
 import { Harness, seqs, strictlyIncreasing } from "./support/fakes";
 import type { FakeConn, FakeStorage } from "./support/fakes";
 
@@ -138,7 +141,7 @@ describe("GAMES_ENABLED at runtime (§2.6) and TV capability (§2.5)", () => {
     expect(h.room.setupGameId).toBeNull();
     expect(room(p.conn).games).toEqual([]);
     await h.open(tv);
-    expect(tv.errors()).toEqual(["GAME_DISABLED"]);
+    expect(tv.errors()).toEqual(["GAME_UNAVAILABLE"]); // registry-enabled but not deployed: not GAME_DISABLED (§2.5)
   });
 
   it("an instance already PLAYING finishes normally after its game leaves GAMES_ENABLED", async () => {
@@ -180,12 +183,24 @@ describe("GAMES_ENABLED at runtime (§2.6) and TV capability (§2.5)", () => {
     expect(room(tv2).games.map((g) => g.id)).toEqual(["mishana"]);
   });
 
-  it("OPEN_GAME: UNKNOWN_GAME for an unknown id, GAME_DISABLED for a stub", async () => {
+  // Whichever games the registry still has disabled (none once every G lane ships: then only UNKNOWN_GAME is checked).
+  const registryDisabled = GAME_IDS.filter((id) => !GAMES[id].enabled);
+  it("OPEN_GAME: UNKNOWN_GAME for an unknown id, GAME_DISABLED for a registry-disabled game", async () => {
     const h = await new Harness().init();
     const tv = await h.tv();
     await h.open(tv, "chess" as GameId);
-    await h.open(tv, "trivia");
-    expect(tv.errors()).toEqual(["UNKNOWN_GAME", "GAME_DISABLED"]);
+    for (const id of registryDisabled) await h.open(tv, id);
+    expect(tv.errors()).toEqual(["UNKNOWN_GAME", ...registryDisabled.map(() => "GAME_DISABLED")]);
+  });
+
+  it("OPEN_GAME / HUB_FOCUS for a registry-enabled game that GAMES_ENABLED leaves out → GAME_UNAVAILABLE (§2.5)", async () => {
+    expect(GAMES.mishana.enabled).toBe(true);
+    const h = await new Harness({ enabledGames: [] as GameId[] }).init();
+    const tv = await h.tv();
+    expect(room(tv).games).toEqual([]);
+    await h.open(tv, "mishana");
+    await h.act(tv, { type: "HUB_FOCUS", gameId: "mishana" });
+    expect(tv.errors()).toEqual(["GAME_UNAVAILABLE", "GAME_UNAVAILABLE"]);
   });
 
   it("GAME for another game → WRONG_GAME; outside PLAYING → NOT_IN_GAME", async () => {
@@ -196,10 +211,17 @@ describe("GAMES_ENABLED at runtime (§2.6) and TV capability (§2.5)", () => {
     const { ps } = await h.startedGame({ n: 3 });
     void ps;
     const tv2 = h.conns.all.find((c) => c.open && c.state?.role === "tv")!;
-    await h.act(tv2, { type: "GAME", gameId: "trivia", i: { type: "END_GAME" } } as never);
-    expect(tv2.errors().at(-1)).toBe("BAD_MESSAGE"); // stub intent schemas accept nothing (z.never)
-    await h.act(tv2, { type: "GAME", gameId: "bluff", i: {} } as never);
-    expect(tv2.errors().at(-1)).toBe("BAD_MESSAGE");
+    // An intent that is valid for another game's schema → WRONG_GAME; one no schema accepts → BAD_MESSAGE. Built from
+    // the registry's intent schemas, so it holds whether that game is a stub (z.never) or a full game.
+    for (const id of GAME_IDS.filter((g) => g !== "mishana")) {
+      for (const i of [{ type: "END_GAME" }, { type: "HOST_ADVANCE" }]) {
+        await h.act(tv2, { type: "GAME", gameId: id, i } as never);
+        expect(tv2.errors().at(-1), `${id} ${i.type}`).toBe(GameIntentSchema[id].safeParse(i).success ? "WRONG_GAME" : "BAD_MESSAGE");
+      }
+      await h.act(tv2, { type: "GAME", gameId: id, i: {} } as never);
+      expect(tv2.errors().at(-1), id).toBe("BAD_MESSAGE");
+    }
+    expect(tv2.errors()).toContain("WRONG_GAME");
   });
 });
 
@@ -234,7 +256,7 @@ describe("HUB_FOCUS (§2.3, §2.8 hub/meta)", () => {
 });
 
 describe("one full session over the real protocol (§2.8 server)", () => {
-  it("hub → mishana → replay → hub → bluff (a stub until G2: GAME_DISABLED), cup arithmetic and seq everywhere", async () => {
+  it("hub → mishana → replay → hub → a game this deploy does not run (GAME_DISABLED / GAME_UNAVAILABLE), cup arithmetic and seq everywhere", async () => {
     const h = await new Harness().init();
     const tv = await h.tv();
     const ps = [];
@@ -260,11 +282,13 @@ describe("one full session over the real protocol (§2.8 server)", () => {
     expect(room(tv).phase).toBe("HUB");
     expect(room(tv).focusedGameId).toBe("mishana");
     expect(Object.values(room(ps[0]!.conn).cup.stars).reduce((a, b) => a + b, 0)).toBeGreaterThan(stars1);
+    // The default Harness deploys only mishana: bluff is GAME_DISABLED while a registry stub, GAME_UNAVAILABLE after.
+    const bluffError = GAMES.bluff.enabled ? "GAME_UNAVAILABLE" : "GAME_DISABLED";
     await h.open(tv, "bluff");
-    expect(tv.errors()).toEqual(["GAME_DISABLED"]);
+    expect(tv.errors()).toEqual([bluffError]);
     for (const c of [tv, ...ps.map((p) => p.conn)]) {
       expect(strictlyIncreasing(seqs(c))).toBe(true);
-      expect(c.errors().filter((e) => e !== "GAME_DISABLED")).toEqual([]);
+      expect(c.errors().filter((e) => e !== bluffError)).toEqual([]);
     }
   });
 });

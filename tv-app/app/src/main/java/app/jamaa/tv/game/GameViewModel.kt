@@ -20,6 +20,7 @@ import app.jamaa.tv.games.mishana.MishanaSetupView
 import app.jamaa.tv.games.mishana.MishanaTv
 import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.i18n.MessageKeys
+import app.jamaa.tv.net.ClientConfig
 import app.jamaa.tv.net.ConnState
 import app.jamaa.tv.net.CreateRoomException
 import app.jamaa.tv.net.RoomConnection
@@ -97,6 +98,8 @@ sealed interface TvUiState {
         val store: StoreEntry? = null,
         /** The server's BILLING_ENABLED for this room (`GET /api/config`). false: no Pass UI, Store or install id. */
         val billingEnabled: Boolean = true,
+        /** Games the server offers (`GET /api/config` `games`) that this build cannot render: the hub's "Update JAMAA" slots. */
+        val missingGames: List<String> = emptyList(),
     ) : TvUiState
     data class Fatal(val messageKey: String) : TvUiState
 }
@@ -138,6 +141,8 @@ class GameDeps(
     val billing: RoomBilling? = null,
     /** `GET /api/config` before each room: false = the server has billing off (no token, no billing messages or UI). */
     val billingEnabled: suspend (baseUrl: String) -> Boolean = { true },
+    /** §2.5 `GET /api/config` with `games`; when set it replaces [billingEnabled] (one request before each room). */
+    val clientConfig: (suspend (baseUrl: String) -> ClientConfig)? = null,
     /** PAYMENTS-SPEC §2.1 install id, shown in Settings → About (§3.12 admin grants); null = none on this build. */
     val installId: () -> String? = { null },
     /** Per-device platform prefs: `intro_seen_<gameId>` and Calm animations (JAMAA-PLATFORM §3.2, §3.8). */
@@ -173,6 +178,10 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
 
     /** Local overlays above the current screen (top-most last); none sends anything by itself. */
     val overlays: StateFlow<List<Overlay>> = _overlays.asStateFlow()
+
+    /** The setup's full-screen first-time intro is up: INFO does not open the ⓘ sheet over it (as /tv). */
+    private val _introOpen = MutableStateFlow(false)
+    val introOpen: StateFlow<Boolean> = _introOpen.asStateFlow()
 
     private val _focusedGameId = MutableStateFlow<String?>(null)
 
@@ -271,6 +280,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
 
     /** The server's BILLING_ENABLED, read before each room is created (fail closed). */
     private var billingOn = true
+    private var missingGames: List<String> = emptyList()
 
     init {
         billing?.let { b ->
@@ -289,7 +299,15 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         _ui.value = TvUiState.CreatingRoom
         createJob = viewModelScope.launch {
             val resp = try {
-                billingOn = try { deps.billingEnabled(deps.serverUrl()) } catch (e: CancellationException) { throw e } catch (e: Exception) { false }
+                val config = try {
+                    deps.clientConfig?.invoke(deps.serverUrl()) ?: ClientConfig(deps.billingEnabled(deps.serverUrl()), null)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    ClientConfig.OFF
+                }
+                billingOn = config.billing
+                missingGames = missingGamesOf(config.games)
                 deps.createRoom(deps.serverUrl(), deps.appLocale(), if (billingOn) billing?.tokenForCreate() else null)
             } catch (e: CancellationException) {
                 throw e
@@ -320,6 +338,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
             clockOffsetMs = 0L,
             lastError = null,
             billingEnabled = billingOn,
+            missingGames = missingGames,
         )
         // Subscribe before connecting so nothing is missed.
         roomJobs = listOf(
@@ -335,6 +354,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
 
     private fun teardownRoom() {
         if ((_ui.value as? TvUiState.InRoom)?.store != null) billing?.closeStore()
+        _introOpen.value = false
         billing?.setInRoom(false)
         storeOpenJob?.cancel()
         storeOpenJob = null
@@ -429,6 +449,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         if (_focusedGameId.value == null) _focusedGameId.value = after.room.focusedGameId
         if (after.room.focusedGameId == hubFocusSent || to != RoomPhase.HUB) hubFocusSent = null
         if (from != to) {
+            if (from == RoomPhase.SETUP) _introOpen.value = false
             // Overlays belong to the screen they opened on: entering a game closes them all; leaving one closes the
             // game's menus; hub ↔ setup closes the rules sheet and the hub dialogs.
             overlayStack.closeAll { o ->
@@ -436,7 +457,9 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                     to == RoomPhase.PLAYING -> true
                     o is Overlay.Rules -> true
                     from == RoomPhase.PLAYING -> o == Overlay.PauseMenu || o == Overlay.AbortConfirm || o is Overlay.PauseItemConfirm || o == Overlay.HostDialog
-                    else -> o == Overlay.CloseConfirm || o is Overlay.MemberMenu || o is Overlay.KickConfirm || o is Overlay.SwitchLanguage || o == Overlay.CupSheet
+                    // Leaving the hub closes every hub-only overlay (Settings too: it must not hold focus over the portal).
+                    else -> o == Overlay.CloseConfirm || o is Overlay.MemberMenu || o is Overlay.KickConfirm || o is Overlay.SwitchLanguage ||
+                        o == Overlay.CupSheet || o == Overlay.HubSettings
                 }
             }
             publishOverlays()
@@ -568,6 +591,13 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
 
     /** A screen reached without a moment became interactive (a dialog opening): starts the input guard. */
     fun screenInteractive() = gate.becameInteractive()
+
+    /** The setup intro opened or closed; closing it hands the remote back to the setup screen behind the guard. */
+    fun setIntroOpen(open: Boolean) {
+        val was = _introOpen.value
+        _introOpen.value = open
+        if (was && !open) screenInteractive()
+    }
 
     // ---------------------------------------------------------------- overlays (§3.2 HUB-06, §3.6)
 
@@ -910,6 +940,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         val view = s.view ?: return
         if (view.room.phase == RoomPhase.PLAYING || billing == null || !s.billingEnabled) return
         _ui.value = s.copy(store = entry)
+        gate.becameInteractive() // §3.10 E: the store's first focus (Yearly) never takes the press that opened it
         billing.openStore(view.room.setup?.lockedPacks.orEmpty())
         toastQueue.flush(true, view.betweenGames)?.let { _events.tryEmit(TvEvent.Billing(it)) }
     }
@@ -950,6 +981,13 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
     }
 
     companion object {
+        /**
+         * §2.5: the games the server offers (`GET /api/config` `games`) that this build cannot render, in registry order;
+         * null (unknown) → none. Ids this build has never heard of are left out (no title to show).
+         */
+        fun missingGamesOf(serverGames: List<String>?): List<String> =
+            serverGames.orEmpty().let { offered -> GameIds.ALL.filter { it in offered && !GameDecoders.isSupported(it) } }
+
         /** The hub → setup portal variants (not the reverse portal). */
         val OPEN_PORTALS: Set<String> = setOf("portal", "portal.repeat", "portal.reduced")
 

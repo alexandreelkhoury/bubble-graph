@@ -232,8 +232,10 @@ function AwardCard({ a, seat, big }: { a: LikelyAward; seat: Seat | null; big: b
         {a.kind === "mystery" ? <MysteryPuff size={big ? 96 : 56} /> : a.kind === "mindReader" ? <CrystalBall size={big ? 80 : 48} /> : <Rosette size={big ? 84 : 44} />}
         {big && seat && <Character color={seat.color} size={88} expression={a.kind === "mystery" ? "smug" : "cheer"} class="lk-award__ch" />}
       </div>
-      <h2 class="lk-award__title">{title}</h2>
-      {line && <p class="lk-award__line">{line}</p>}
+      <div class="lk-award__text">
+        <h2 class="lk-award__title">{title}</h2>
+        {line && <p class="lk-award__line">{line}</p>}
+      </div>
     </section>
   );
 }

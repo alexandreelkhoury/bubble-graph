@@ -6,7 +6,7 @@ import "./phone.css";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { effect } from "@preact/signals";
 import type { PlayerRoomView } from "@jamaa/shared/protocol/v2";
-import { isolate, listOf, t } from "../../i18n/t";
+import { isolate, listOf, t, tSplit } from "../../i18n/t";
 import type { MessageKey, Params } from "../../i18n/t";
 import { act } from "../../state/session";
 import { announce, clockOffset, lastError, pushToast, toasts } from "../../state/store";
@@ -17,10 +17,10 @@ import { Icon } from "../../components/Icon";
 import { Button, ConfirmSheet, Sheet } from "../../components/UI";
 import { TimerBar, now } from "../../components/Timer";
 import { ReactionsBar } from "../../platform/Reactions";
-import { Ballot, Envelope, Heart, HouseChar, Lifebuoy, Moustache, Odo, Stamp } from "./art";
+import { Envelope, Heart, HouseChar, Lifebuoy, Moustache, Odo, Stamp } from "./art";
 import {
   BLUFF_ERRORS, LIE_MAX, activeSeats, awardAt, awardBodyKey, awardTitleKey, beatAt, bluffModel, deadlineOf, errorKey, graphemes, hintKey,
-  isFinal, isHost, k, letterOf, lieReady, myReveal, needsAction, placeOf, ranked, revealPlan, roundIntroKey, roundNameKey, typeKey,
+  isFinal, isHost, k, letterOf, promptLines, lieReady, myReveal, needsAction, placeOf, ranked, revealPlan, roundIntroKey, roundNameKey, typeKey,
 } from "./model";
 import type { BluffModel, Prompt, RevealStep, Seat } from "./model";
 
@@ -43,7 +43,7 @@ function Eyebrow({ m }: { m: BluffModel }) {
         <span class="bf-eyebrow__round">{isFinal(p) ? tk("round.final") : tk("round.number", { round: p.round })}</span>
         <span class="bf-eyebrow__sep" aria-hidden="true">·</span>
         <span class="tnum bf-eyebrow__count">{tk("prompt.counter", { index: Math.min(p.promptIndex + 1, p.promptCount), count: p.promptCount })}</span>
-        {p.multiplier === 2 && <span class="bf-x2">×2</span>}
+        {p.multiplier === 2 && <span class="bf-x2" dir="ltr">×2</span>}
       </p>
       {dl && <TimerBar deadline={dl} class="timerbar--inline" tone={p.phase === "WRITING" || p.phase === "VOTING" ? undefined : "neutral"} />}
     </div>
@@ -52,6 +52,7 @@ function Eyebrow({ m }: { m: BluffModel }) {
 
 /** The prompt as the phone shows it: type chip, the text (AR original + translit + translation when given), hint. */
 function PromptCard({ prompt, final, hint = true }: { prompt: Prompt; final: boolean; hint?: boolean }) {
+  const lines = promptLines(prompt);
   return (
     <section class="bf-pcard" key={prompt.id}>
       <div class="bf-pcard__chips">
@@ -59,9 +60,9 @@ function PromptCard({ prompt, final, hint = true }: { prompt: Prompt; final: boo
         {final && <span class="bf-chip bf-chip--signal">{tk("noTruth.chip")}</span>}
         {prompt.rerun && <span class="bf-chip">{tk("prompt.rerun")}</span>}
       </div>
-      <p class="bf-pcard__text" dir="auto">{prompt.original}</p>
-      {prompt.translit && <p class="bf-pcard__translit" dir="ltr">{prompt.translit}</p>}
-      {prompt.display && <p class="bf-pcard__display" dir="auto">{prompt.display}</p>}
+      <p class="bf-pcard__text" dir="auto">{lines.main}</p>
+      {lines.translit && <p class="bf-pcard__translit" dir="ltr">{lines.translit}</p>}
+      {lines.sub && <p class="bf-pcard__display" dir="auto">{lines.sub}</p>}
       {hint && <p class="bf-pcard__hint"><Icon name="info" size={16} />{t(hintKey(prompt.lengthHint) as MessageKey)}</p>}
     </section>
   );
@@ -87,7 +88,7 @@ function PhRoundIntro({ m }: { m: BluffModel }) {
         <p class="bf-introcard__num">{fin ? tk("round.final") : tk("round.number", { round: m.pub.round })}</p>
         <h1 class="bf-introcard__name" tabIndex={-1}>{t(roundNameKey(m.pub) as MessageKey)}</h1>
         <p class="bf-introcard__rule">{t(roundIntroKey(m.pub) as MessageKey)}</p>
-        {m.pub.multiplier === 2 && <span class="bf-x2 bf-x2--big">×2</span>}
+        {m.pub.multiplier === 2 && <span class="bf-x2 bf-x2--big" dir="ltr">×2</span>}
       </div>
       <div class="bf-introme"><Me m={m} size={96} expression={fin ? "smug" : "happy"} /></div>
     </main>
@@ -128,12 +129,15 @@ function writeDraft(id: string, s: string): void {
 function useBluffError(promptId: string | null, contentLocale: string): string | null {
   const [err, setErr] = useState<string | null>(null);
   useEffect(() => setErr(null), [promptId]);
-  useEffect(() => effect(() => {
+  useEffect(() => {
+    const stale = lastError.peek();
+    return effect(() => {
     const e = lastError.value;
-    if (!e || !(BLUFF_ERRORS as readonly string[]).includes(e.code)) return;
+    if (!e || e === stale || !(BLUFF_ERRORS as readonly string[]).includes(e.code)) return;
     const key = e.code === "LIE_WRONG_SCRIPT" ? k(contentLocale === "ar" ? "error.lieWrongScriptAr" : "error.lieWrongScriptLatn") : errorKey(e.code);
     setErr(e.code === "STALE_PROMPT" ? null : t(key as MessageKey));
-  }), [contentLocale]);
+    });
+  }, [contentLocale, promptId]);
   return err;
 }
 
@@ -145,8 +149,18 @@ function PhWrite({ m }: { m: BluffModel }) {
   const [editing, setEditing] = useState(me.myLieStatus === "none");
   const [askSkip, setAskSkip] = useState(false);
   const input = useRef<HTMLTextAreaElement>(null);
-  const err = useBluffError(p.id, m.contentLocale);
+  const serverErr = useBluffError(p.id, m.contentLocale);
   const sentText = useRef<string | null>(null);
+  // GAME-BLUFF §5.2 anti-oracle: a "too close" probe is accepted and recorded (lane A JAMAA-GAP: an error cannot carry a
+  // state change), so the phone learns it from `me.tooCloseCount` going up: the field stays open with the warning.
+  const closeSeen = useRef(me.tooCloseCount);
+  const [closeErr, setCloseErr] = useState(false);
+  useEffect(() => {
+    if (me.tooCloseCount > closeSeen.current) { setCloseErr(true); setEditing(true); haptic(HAPTIC.error); announce(tk("error.lieTooClose"), true); }
+    closeSeen.current = me.tooCloseCount;
+  }, [me.tooCloseCount]);
+  useEffect(() => { setCloseErr(false); }, [p.id]);
+  const err = closeErr ? tk("error.lieTooClose") : serverErr;
   // A new prompt (skip, "Too famous!") resets the field; a help suggestion fills an empty one.
   useEffect(() => { setDraft(readDraft(p.id) || me.myLie || ""); setEditing(me.myLieStatus === "none"); }, [p.id]);
   useEffect(() => { if (me.help && !draft.trim()) { setDraft(me.help); writeDraft(p.id, me.help); } }, [me.help]);
@@ -194,10 +208,10 @@ function PhWrite({ m }: { m: BluffModel }) {
         </div>
       ) : (
         <div class="bf-field">
-          <textarea ref={input} class="input bf-input" dir="auto" rows={2} maxLength={240} value={draft} enterKeyHint="send"
+          <textarea ref={input} class="input bf-input" dir="auto" rows={2} maxLength={240} value={draft} enterkeyhint="send"
             placeholder={fin ? tk("write.placeholderNoTruth") : tk("write.placeholder")} aria-label={fin ? tk("write.placeholderNoTruth") : tk("write.placeholder")}
             aria-invalid={err ? true : undefined}
-            onInput={(e) => { const v = (e.currentTarget as HTMLTextAreaElement).value.replace(/\n/g, " "); setDraft(v); writeDraft(p.id, v); }}
+            onInput={(e) => { const v = (e.currentTarget as HTMLTextAreaElement).value.replace(/\n/g, " "); setDraft(v); writeDraft(p.id, v); setCloseErr(false); }}
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); submit(); } }} />
           <span class={`bf-count tnum${count > LIE_MAX ? " is-over" : ""}`} aria-hidden="true">{tk("write.charCount", { count })}</span>
           {err && <p class="hint hint--error bf-err" role="alert">{err}</p>}
@@ -363,19 +377,32 @@ function PhReveal({ m }: { m: BluffModel }) {
           {beat.steps.length === 0 ? <p class="bf-rcard__text">{tk("reveal.noCrown")}</p>
             : beat.steps.map((i) => <p key={i} class="bf-rcard__text" dir="auto">{r.steps[i]!.text}</p>)}
           {beat.steps.length > 0 && stamped && <Stamp tone="gold">{tk("reveal.mostConvincing")}</Stamp>}
-          {beat.steps.some((i) => m.myId && r.steps[i]!.authorIds.includes(m.myId)) && <p class="bf-own bf-own--good">+400</p>}
+          {beat.steps.some((i) => m.myId && r.steps[i]!.authorIds.includes(m.myId)) && <p class="bf-own bf-own--good"><b class="tnum">+400</b></p>}
         </div>
       ) : beat.kind === "twist" ? (
         <div class="bf-rcard is-twist" key={`b${bi}`}><Stamp tone="lie">{tk("reveal.noTruthStamp")}</Stamp></div>
       ) : step ? (
         <div class={`bf-rcard${step.kind === "truth" && stamped ? " is-truth" : ""}`} key={`b${bi}`}>
-          <p class="bf-rcard__ask">{tk("reveal.isIt", { text: "" }).replace(/["«»“”„]\s*["«»“”„]?/g, "").trim()}</p>
-          <p class="bf-rcard__text" dir="auto">{step.text}</p>
+          <IsIt text={step.text} />
           {stamped && <Stamp tone={stampOf(step, r.final).tone}>{r.final ? `×${step.voteCount}` : tk(stampOf(step, r.final).key)}</Stamp>}
           {stamped && <OwnEvent m={m} step={step} final={r.final} kind={ownEvent} />}
         </div>
       ) : null}
     </main>
+  );
+}
+
+/** "Is it… «text»?" with the answer set big (the locale's own quotes and question mark stay around it). */
+function IsIt({ text }: { text: string }) {
+  const [a, b] = tSplit(k("reveal.isIt") as MessageKey, "text");
+  // The locale's own quotes hug the answer; the lead ("Is it…") stays small above it.
+  const open = /["«“„]\s*$/.exec(a)?.[0].trim() ?? "";
+  const close = /^\s*["»”]/.exec(b)?.[0].trim() ?? "";
+  return (
+    <>
+      <p class="bf-rcard__ask">{a.slice(0, a.length - (/["«“„]\s*$/.exec(a)?.[0].length ?? 0)).trim()}</p>
+      <p class="bf-rcard__text" dir="auto">{open}{text}{close}{b.slice(/^\s*["»”]/.exec(b)?.[0].length ?? 0).trim()}</p>
+    </>
   );
 }
 
@@ -385,7 +412,7 @@ function OwnEvent({ m, step, final, kind }: { m: BluffModel; step: RevealStep; f
     if (step.spotOnIds.includes(id)) return <p class="bf-own bf-own--good">{tk("reveal.knewItPin")}</p>;
     if (step.foundEarlyIds.includes(id)) return <p class="bf-own">{tk("reveal.foundEarly")}</p>;
     const d = step.deltas.find((x) => x.playerId === id && x.reason === "truth");
-    return d ? <p class="bf-own bf-own--good"><Me m={m} size={48} expression="cheer" />+{d.points}</p> : null;
+    return d ? <p class="bf-own bf-own--good"><Me m={m} size={48} expression="cheer" /><b class="tnum">+{d.points}</b></p> : null;
   }
   if (kind === "author") {
     const pts = step.deltas.filter((d) => d.playerId === id && d.reason === "fooled").reduce((a, d) => a + d.points, 0);

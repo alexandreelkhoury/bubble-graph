@@ -203,7 +203,7 @@ export interface RevealPlan {
   arc: Record<string, LikelyPt>;
   /** Where each character ends (public mode: conga lines; otherwise its seat). */
   ends: Record<string, LikelyPt>;
-  /** Voters in ballot order (public mode only): their index is their run stagger. */
+  /** Voters who run to a line, in ballot order (public mode only; not self-voters, not players who received votes). */
   runners: string[];
   selfVoters: string[];
   /** Agreement coins (public mode): from the head of the voter's line (its pick) to the voter's character. */
@@ -230,11 +230,14 @@ export function revealPlan(m: LikelyModel, rtl: boolean): RevealPlan {
   for (const d of r?.deltas ?? []) gains[d.playerId] = (gains[d.playerId] ?? 0) + d.points;
   const coins: Coin[] = [];
   if (r?.ballots) {
-    const pos = likelyRevealPositions(arcPts, ids, r.ballots);
-    for (const b of r.ballots) {
-      if (!(b.voterId in arc) || !(b.targetId in arc)) continue;
-      if (b.voterId === b.targetId) selfVoters.push(b.voterId);
-      else runners.push(b.voterId);
+    // A player who received votes heads a line, so it stays in its seat (and points at its own pick from there); only
+    // the other voters run. The positions are the shared layout's for exactly those runners.
+    const targeted = new Set(r.counts.map((c) => c.playerId));
+    const running = r.ballots.filter((b) => b.voterId !== b.targetId && !targeted.has(b.voterId) && b.voterId in arc && b.targetId in arc);
+    const pos = likelyRevealPositions(arcPts, ids, running);
+    for (const b of r.ballots) if (b.voterId === b.targetId && b.voterId in arc) selfVoters.push(b.voterId);
+    for (const b of running) {
+      runners.push(b.voterId);
       const p = pos[b.voterId];
       if (p) ends[b.voterId] = toCanvas(p);
     }

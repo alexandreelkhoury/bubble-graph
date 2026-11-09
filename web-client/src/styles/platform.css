@@ -47,10 +47,14 @@
 .ch__badge { animation: ch-pop 260ms var(--ease-overshoot) both; transform-box: fill-box; transform-origin: center; }
 @keyframes ch-pop { from { transform: scale(0); } to { transform: scale(1); } }
 .ch__crown { filter: drop-shadow(0 1px 0 rgb(0 0 0 / 0.3)); }
-.ch__burst { position: absolute; inset-inline-start: 50%; top: -18%; translate: -50% 0; color: var(--color-accent); pointer-events: none;
-  animation: ch-burst 1500ms var(--ease-decel) both; filter: drop-shadow(0 2px 6px rgb(0 0 0 / 0.5)); }
-.ch__burst--tears { color: #7BD3FF; } .ch__burst--exclaim { color: #FFC94D; } .ch__burst--sweat { color: #9FE4FF; }
-.ch__burst--heart { color: #FF7AB3; } .ch__burst--raincloud { color: #C9BFFF; } .ch__burst--confetti { color: #FFC94D; }
+/* The burst is a drawing (components/bursts.ts) about half the character's size, min 22 px. */
+.ch__burst { position: absolute; inset-inline-start: 50%; top: -18%; width: max(22px, calc(var(--ch) * 0.5)); height: max(22px, calc(var(--ch) * 0.5));
+  translate: -50% 0; pointer-events: none; animation: ch-burst 1500ms var(--ease-decel) both; filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.45)); }
+.ch__burst svg { display: block; overflow: visible; }
+/* Boil: 3 tracings shown in turn at 8 fps (125 ms each). */
+.ch__boil { opacity: 0; animation: ch-boil 375ms step-end infinite; }
+.ch__boil--1 { animation-delay: -250ms; } .ch__boil--2 { animation-delay: -125ms; }
+@keyframes ch-boil { 0% { opacity: 1; } 33.333% { opacity: 0; } }
 @keyframes ch-burst { 0% { opacity: 0; transform: translateY(8px) scale(0.4); } 18% { opacity: 1; transform: translateY(-6px) scale(1.15); } 70% { opacity: 1; transform: translateY(-14px) scale(1); } 100% { opacity: 0; transform: translateY(-24px) scale(0.9); } }
 
 /* ------------------------------------------------------------------ title lockups (§1.6) */
@@ -120,6 +124,17 @@
 .howto__scene { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 10px; width: 100%; aspect-ratio: 280 / 150; border-radius: 18px;
   background: radial-gradient(60% 55% at 50% 75%, rgb(var(--w-rgb-glow) / 0.22), transparent 70%), linear-gradient(180deg, var(--w-top), var(--w-deep)); padding-bottom: 8%; overflow: hidden; }
 .howto__scene::after { content: ""; position: absolute; inset-inline: 10%; bottom: 7%; height: 3px; border-radius: 3px; background: rgb(255 247 236 / 0.08); }
+/* The acted loop (HowTo.tsx): each actor carries its prop above it; a hop is a 420 ms bounce. */
+.howto__actor { position: relative; display: flex; flex-direction: column; align-items: center; }
+.howto__actor.is-hop .ch { animation: howto-hop 420ms var(--ease-standard) both; }
+@keyframes howto-hop { 40% { transform: translateY(-16%) scaleY(1.04); } 75% { transform: translateY(0) scaleY(0.94); } }
+.howto__prop { display: flex; justify-content: center; align-items: flex-end; width: 100%; padding-bottom: 2px; animation: howto-prop 260ms var(--ease-overshoot) both; }
+@keyframes howto-prop { from { opacity: 0; transform: translateY(6px) scale(0.6); } }
+.howto__prop svg { height: 100%; width: auto; overflow: visible; fill: none; stroke: var(--color-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.howto__card-prop rect { fill: #FFE7A0; } .howto__card-prop.is-odd rect { fill: #C9BFFF; }
+.howto__bubble path:first-child { fill: #FFF7EC; }
+.howto__prop .howto__vote { padding: 3px; border-radius: 50%; background: #FF6B5E; } .howto__prop .howto__vote path { stroke: #FFF7EC; stroke-width: 3; }
+.howto__prop .howto__trophy path { fill: #FFC94D; stroke-width: 1.6; }
 .howto__step { font: 900 14px/1 var(--font-sans); color: var(--w-accent-text); letter-spacing: 0.08em; }
 .howto__text { font: var(--type-ph-h2); text-wrap: balance; color: var(--color-text); }
 .howto__dots { display: flex; justify-content: center; gap: 6px; }
@@ -142,6 +157,8 @@
 .rules__num { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--color-accent); color: var(--color-ink); font: 900 15px/1 var(--font-sans); }
 
 @media (prefers-reduced-motion: reduce) {
-  .ch__rig, .ch__eye, .ch__z, .ch__burst, .poster__prop, .poster__prop::after, .howto__card { animation: none !important; }
+  .ch__rig, .ch__eye, .ch__z, .ch__burst, .poster__prop, .poster__prop::after, .howto__card, .ch__boil, .howto__scene * { animation: none !important; }
+  .ch__boil--0 { opacity: 1; }
 }
+:root[data-calm] .ch__boil, :root[data-calm] .howto__scene * { animation: none !important; } :root[data-calm] .ch__boil--0 { opacity: 1; }
 :root[data-calm] .ch__rig, :root[data-calm] .ch__eye, :root[data-calm] .poster__prop, :root[data-calm] .poster__prop::after, :root[data-calm] .howto__card { animation: none !important; }

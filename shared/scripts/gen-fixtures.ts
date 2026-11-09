@@ -3,7 +3,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { generateFixtures } from "./fixture-scenario";
-import { generateFixturesV2 } from "./fixture-scenario-v2";
+import { generateFixturesV2, isGameProjectedV2 } from "./fixture-scenario-v2";
 
 const dir = join(dirname(fileURLToPath(import.meta.url)), "..", "fixtures");
 const check = process.argv.includes("--check");
@@ -18,6 +18,7 @@ for (const [name, content] of [...generateFixtures(), ...generateFixturesV2()]) 
     current = null;
   }
   if (current === content) continue;
+  if (check && current !== null && isGameProjectedV2(name)) continue; // bytes owned by the game's projectSetup (§6.1)
   if (check) {
     console.error(`stale fixture: ${name}`);
     stale++;

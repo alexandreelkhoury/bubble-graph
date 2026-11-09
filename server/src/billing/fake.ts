@@ -1,7 +1,7 @@
 // PAYMENTS-SPEC §3.10: FAKE billing for local dev and e2e. FakeGoogleApi serves synthetic Google resources from the
 // Billing DO's `fake_purchases` table, so /verify, RTDN-style re-reads, acks and the ack window run unchanged.
 // Reachable only when billingModeForRequest() says "fake" (mode.ts): never in production.
-import { familyFromProductId, PASS_PRODUCT_ID, SUB_STATES } from "@jamaa/shared/billing";
+import { familyFromProductId, PASS_PRODUCT_ID, SUB_STATES, TRIAL_OFFER_ID } from "@jamaa/shared/billing";
 import type { FakePurchaseRequestBody, FakeSetRequestBody } from "@jamaa/shared/billing";
 import { sha256hex } from "../tokens";
 import type { BillingStore } from "./billing-core";
@@ -14,6 +14,11 @@ import { refreshProduct, refreshSubscription } from "./rtdn";
 export { FAKE_ENTITLEMENT_KEY } from "./fake-key";
 
 const DAY_MS = 86_400_000;
+/** PAYMENTS-SPEC §1: the `trial-7d` offer is one free-trial phase of 7 days. */
+const TRIAL_MS = 7 * DAY_MS;
+const planMs = (basePlanId: FakeRecord["basePlanId"]): number => (basePlanId === "yearly" ? 365 : 30) * DAY_MS;
+/** States in which Google still reports the free-trial phase (the trial runs until its end even after a cancel). */
+const TRIAL_STATES: readonly string[] = ["SUBSCRIPTION_STATE_ACTIVE", "SUBSCRIPTION_STATE_CANCELED"];
 
 export interface FakeRecord {
   kind: "sub" | "pack";
@@ -26,6 +31,15 @@ export interface FakeRecord {
   expiryMs: number | null;
   autoRenew: boolean;
   acknowledged: boolean;
+  /** End of the `trial-7d` free-trial phase; null without a trial, before the purchase completes, or once the trial is
+   *  over early (the sub left ACTIVE/CANCELED: grace, hold, pause, expiry). Absent on rows written before it existed. */
+  trialEndMs?: number | null;
+}
+
+/** §3.10: Google reports `offerPhase.freeTrial` only while the trial phase runs (and the sub is ACTIVE or CANCELED). */
+export function fakeInTrial(r: FakeRecord, nowMs: number): boolean {
+  const end = r.trialEndMs ?? null;
+  return end !== null && nowMs < end && TRIAL_STATES.includes(r.state);
 }
 
 const iso = (ms: number): string => new Date(ms).toISOString();
@@ -51,7 +65,7 @@ export class FakeGoogleApi implements GoogleApi {
         ...(r.expiryMs !== null ? { expiryTime: iso(r.expiryMs) } : {}),
         autoRenewingPlan: { autoRenewEnabled: r.autoRenew },
         offerDetails: { basePlanId: r.basePlanId ?? "monthly", ...(r.offerId ? { offerId: r.offerId } : {}) },
-        offerPhase: r.offerId === "trial-7d" ? { freeTrial: {} } : {},
+        offerPhase: fakeInTrial(r, this.now()) ? { freeTrial: {} } : {},
       }],
       externalAccountIdentifiers: { obfuscatedExternalAccountId: r.installHash },
       testPurchase: {},
@@ -94,14 +108,18 @@ export async function fakePurchase(body: FakePurchaseRequestBody, store: Billing
   }
   const pending = body.outcome === "PENDING";
   const basePlanId = kind === "sub" ? (body.basePlanId ?? "monthly") : null;
+  const offerId = kind === "sub" ? (body.offerId ?? null) : null;
+  const trial = offerId === TRIAL_OFFER_ID;
   const rec: FakeRecord = {
     kind, productId: body.productId, installHash: await sha256hex(body.installId),
-    basePlanId, offerId: kind === "sub" ? (body.offerId ?? null) : null,
+    basePlanId, offerId,
     state: kind === "sub" ? (pending ? "SUBSCRIPTION_STATE_PENDING" : "SUBSCRIPTION_STATE_ACTIVE") : pending ? "PENDING" : "PURCHASED",
     completedMs: pending ? null : now,
-    expiryMs: kind === "sub" ? now + (basePlanId === "yearly" ? 365 : 30) * DAY_MS : null,
+    // A trial sub's first period is the 7-day trial; the base-plan period starts at the first charge (fake/set ACTIVE).
+    expiryMs: kind === "sub" ? now + (trial ? TRIAL_MS : planMs(basePlanId)) : null,
     autoRenew: kind === "sub",
     acknowledged: false,
+    trialEndMs: trial && !pending ? now + TRIAL_MS : null,
   };
   const token = `fake.${kind}.${body.productId}.${await store.fakeNext()}`;
   await store.fakePut(token, JSON.stringify(rec));
@@ -119,6 +137,14 @@ export async function fakeSet(body: FakeSetRequestBody, store: BillingStore, now
   const next: FakeRecord = { ...r };
   if (r.kind === "sub") {
     next.state = body.state;
+    // A pending trial purchase that completes starts its trial now.
+    if (r.completedMs === null && body.state === "SUBSCRIPTION_STATE_ACTIVE" && r.offerId === TRIAL_OFFER_ID) {
+      next.trialEndMs = t + TRIAL_MS;
+      next.expiryMs = t + TRIAL_MS;
+    }
+    const trialRunning = next.trialEndMs != null && t < next.trialEndMs;
+    // Leaving ACTIVE/CANCELED (grace, hold, pause, expiry) or reaching the trial's end ends the trial for good.
+    if (!TRIAL_STATES.includes(body.state) || !trialRunning) next.trialEndMs = null;
     if (body.state === "SUBSCRIPTION_STATE_EXPIRED") {
       next.expiryMs = t - 1000;
       next.autoRenew = false;
@@ -126,7 +152,9 @@ export async function fakeSet(body: FakeSetRequestBody, store: BillingStore, now
       next.autoRenew = false;
     } else if (body.state === "SUBSCRIPTION_STATE_ACTIVE") {
       next.autoRenew = true;
-      if (next.expiryMs === null || next.expiryMs <= t) next.expiryMs = t + (r.basePlanId === "yearly" ? 365 : 30) * DAY_MS;
+      // Still in the trial: the period ends with it. Otherwise a charge happened: a fresh base-plan period.
+      if (next.trialEndMs != null) next.expiryMs = next.trialEndMs;
+      else if (next.expiryMs === null || next.expiryMs <= t || r.trialEndMs != null) next.expiryMs = t + planMs(r.basePlanId);
     }
     if (next.completedMs === null && body.state !== "SUBSCRIPTION_STATE_PENDING") next.completedMs = t;
   } else {

@@ -97,13 +97,15 @@ object LikelyStage {
         val counters = r.counts.mapNotNull { c -> seats[c.playerId]?.let { LikelyCounter(c.playerId, counterAt(it), c.count, c.percent) } }
 
         // Public: ballots in the order the view sends them (voter seat order). Secret: never read, even if present.
-        val ballots = if (kind == LikelyChoreo.RevealKind.PUBLIC) r.ballots.orEmpty() else emptyList()
+        // Public mode only (a chaos card in public mode still shows who ran to whom, like the browser TV).
+        val publicMode = !anonymous && r.ballots != null
+        val ballots = if (publicMode && (kind == LikelyChoreo.RevealKind.PUBLIC || kind == LikelyChoreo.RevealKind.CHAOS)) r.ballots.orEmpty() else emptyList()
         val ids = seats.keys.toList()
         val arc = ids.map { seats.getValue(it) }
         val ends = LikelyLayout.revealPositions(arc, ids, ballots)
         val runners = mutableListOf<LikelyRunner>()
         val selfVoters = mutableSetOf<String>()
-        if (kind == LikelyChoreo.RevealKind.PUBLIC) {
+        run {
             for (b in ballots) {
                 val from = seats[b.voterId] ?: continue
                 val to = ends[b.voterId] ?: continue
@@ -135,9 +137,13 @@ object LikelyStage {
                 coins += LikelyCoin(b.voterId, head(target), head(me), p, coins.size)
             }
         }
-        val board = if (kind == LikelyChoreo.RevealKind.SECRET) boardLines(r, view) else emptyList()
+        val board = if (!publicMode && kind != LikelyChoreo.RevealKind.NONE) boardLines(r, view) else emptyList()
         val tops = r.topIds.filter { it in seats }
-        val timeline = LikelyChoreo.reveal(r, anonymous, if (kind == LikelyChoreo.RevealKind.SECRET) envelopes.size else runners.size, coins.size, board.size)
+        val shape = LikelyChoreo.RevealShape(
+            runners = runners.size, envelopes = envelopes.size, publicMode = publicMode, chaos = r.chaos, none = kind == LikelyChoreo.RevealKind.NONE,
+            unanimous = r.unanimous, coins = coins.size,
+        )
+        val timeline = LikelyChoreo.reveal(r, shape)
         return LikelyRevealPlan(
             kind = kind,
             seats = seats,
@@ -172,8 +178,8 @@ object LikelyStage {
      */
     fun revealExpression(plan: LikelyRevealPlan, id: String, tMs: Double): Expression {
         val tl = plan.timeline
-        val stampAt = tl.step("stamp")?.startMs ?: Int.MAX_VALUE
-        val stamped = tMs >= stampAt + LikelyChoreo.STAMP_MS / 2
+        val stamp = tl.step("stamp")
+        val stamped = stamp != null && tMs >= stamp.startMs + stamp.durationMs / 2
         when (plan.kind) {
             LikelyChoreo.RevealKind.NONE -> return Expression.SHY
             LikelyChoreo.RevealKind.CHAOS -> {
@@ -198,7 +204,7 @@ object LikelyStage {
                     }
                 }
                 val coin = plan.coins.firstOrNull { it.voterId == id }
-                val coinsAt = tl.step("coins")
+                val coinsAt = tl.step("coin")
                 if (coin != null && coinsAt != null && tMs >= coinsAt.startMs + coinsAt.staggerMs * coin.index + coinsAt.durationMs) {
                     return if (plan.unanimous) Expression.CHEER else Expression.HAPPY
                 }

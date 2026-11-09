@@ -580,7 +580,8 @@
 .tvshop__packshead { margin: 0; font: var(--tv-caption); color: var(--color-text-secondary); }
 .tvshop__row { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; padding: 6px; margin-inline: -6px; }
 .tvshop__pack { flex: none; width: 200px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 14px; border: 0; border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font: var(--tv-caption); text-align: start; }
-.tvshop__packtitle { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-label); }
+.tvshop__packtitle { max-width: 100%; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; font: var(--tv-label); line-height: 1.2; min-height: 2.4em; overflow-wrap: anywhere; }
+.tvshop__packpre { padding: 1px 8px; border-radius: var(--radius-pill); background: var(--color-elevated); color: var(--color-text-secondary); font: 700 13px/18px var(--font-sans); white-space: nowrap; }
 .tvshop__packmeta { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-text-muted); }
 .tvshop__packend { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; min-width: 0; min-height: 28px; }
 .tvshop__buy { color: var(--color-primary-text); font-weight: 800; }
@@ -596,6 +597,9 @@
 .tvshop__testctl { display: inline-flex; align-items: center; gap: 10px; min-width: 0; margin-inline-start: auto; padding-inline-start: 14px; border-inline-start: 1px dashed var(--color-outline-strong); }
 .tvshop__testhead { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: var(--tv-caption); color: var(--color-text-muted); white-space: nowrap; }
 .tvshop__back { white-space: nowrap; }
+/* Fake-mode test controls: outline, muted, never the weight of Restore / Manage. */
+.tvshop__foot .tvbtn--ghost { background: transparent; color: var(--color-text-muted); box-shadow: inset 0 0 0 1px var(--color-outline); font-weight: 600; }
+.tvshop__foot .tvbtn--ghost:focus { color: var(--color-text); }
 .tvmenu__item--test { color: var(--color-text-muted); font: var(--tv-caption); }
 .tvsumchip.tvlobby__premium { color: var(--color-accent); }
 /* Four buttons in the 542 dp lobby bar: Settings and Language hug their labels; nothing shrinks its icon. */

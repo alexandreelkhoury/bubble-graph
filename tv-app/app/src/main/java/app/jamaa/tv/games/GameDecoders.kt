@@ -38,12 +38,18 @@ object GameDecoders {
     val modules: Map<String, TvGameModule> = listOf(MishanaTv, BluffTv, LikelyTv, TriviaTv).associateBy { it.meta.id }
 
     /** §2.5 capability negotiation: the games and per-game view versions this build renders, in registry order. */
-    fun supported(): List<TvGame> =
-        GameIds.ALL.mapNotNull { id -> modules[id]?.takeIf { it.implemented }?.let { TvGame(id, it.meta.viewVersion) } }
+    fun supported(): List<TvGame> = supportedOf(modules)
 
     fun isSupported(gameId: String?): Boolean = modules[gameId]?.implemented == true
 
-    fun decode(env: GameEnvelope, room: RoomPublic): GameView {
+    fun decode(env: GameEnvelope, room: RoomPublic): GameView = decodeWith(modules, env, room)
+
+    /** [supported] over any module map (tests inject one where only some games are implemented). */
+    fun supportedOf(modules: Map<String, TvGameModule>): List<TvGame> =
+        GameIds.ALL.mapNotNull { id -> modules[id]?.takeIf { it.implemented }?.let { TvGame(id, it.meta.viewVersion) } }
+
+    /** [decode] over any module map: unknown → UNKNOWN_GAME, not shipped → NOT_IMPLEMENTED, a shape it cannot read → DECODE_FAILED. */
+    fun decodeWith(modules: Map<String, TvGameModule>, env: GameEnvelope, room: RoomPublic): GameView {
         val module = modules[env.gameId] ?: return UnsupportedGameView(env.gameId, env, UnsupportedReason.UNKNOWN_GAME)
         if (!module.implemented) return UnsupportedGameView(env.gameId, env, UnsupportedReason.NOT_IMPLEMENTED)
         return try {

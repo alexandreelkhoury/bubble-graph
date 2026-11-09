@@ -23,12 +23,19 @@ type Loader = () => Promise<{ default: unknown }>;
 
 /** Merged catalog per locale: the root file plus every game file loaded so far. */
 const CATALOGS: Partial<Record<Locale, Catalog>> = {};
+/** The phone part of each root catalog (lib/i18nSplit.ts: the TV-only `store.*`, `pass.*`, `tv.*` keys stay out). */
 const ROOT_LOADERS: Record<Locale, Loader> = {
-  en: () => import("@jamaa/shared/i18n/en.json"),
-  fr: () => import("@jamaa/shared/i18n/fr.json"),
-  ar: () => import("@jamaa/shared/i18n/ar.json"),
-  es: () => import("@jamaa/shared/i18n/es.json"),
+  en: () => import("virtual:jamaa-i18n/en"),
+  fr: () => import("virtual:jamaa-i18n/fr"),
+  ar: () => import("virtual:jamaa-i18n/ar"),
+  es: () => import("virtual:jamaa-i18n/es"),
 };
+/** The TV part, registered by the /tv mock only (registerRootExtras), loaded with the phone part. */
+let rootExtras: Record<Locale, Loader> | null = null;
+export function registerRootExtras(loaders: Record<Locale, Loader>): Promise<void> {
+  rootExtras = loaders;
+  return Promise.all([...rootLoaded].map((l) => loaders[l]().then((m) => merge(l, m.default)))).then(() => undefined);
+}
 /** One lazy chunk per (game, locale). Literal paths so the bundler can split them. */
 const GAME_LOADERS: Record<GameId, Record<Locale, Loader>> = {
   mishana: {
@@ -72,9 +79,9 @@ function once(key: string, run: () => Promise<void>): Promise<void> {
 export async function loadCatalog(l: Locale): Promise<void> {
   if (rootLoaded.has(l)) return;
   await once(`root:${l}`, async () => {
-    const table = (await ROOT_LOADERS[l]()).default;
+    const [table, extra] = await Promise.all([ROOT_LOADERS[l](), rootExtras?.[l]()]);
     rootLoaded.add(l);
-    merge(l, table);
+    merge(l, { ...(table.default as Catalog), ...(extra?.default as Catalog | undefined) });
   });
 }
 
@@ -158,6 +165,16 @@ export function translate(l: Locale, key: string, params?: Params): string {
 export function t(key: MessageKey, params?: Params): string {
   void catalogRev.value;
   return translate(locale.value, key, params);
+}
+
+/**
+ * `key` when the loaded catalog has it, else `fallback`: lets the UI switch to a key lane D is adding (JAMAA-PLATFORM
+ * §3.7 "the UI calls it the character": join.characterLabel / join.characterTaken) without ever showing a raw key.
+ * Never triggers the English fallback fetch. Drop the call (plain t) once the key is in every catalog.
+ */
+export function tPrefer(key: string, fallback: MessageKey, params?: Params): string {
+  void catalogRev.value;
+  return CATALOGS[locale.value]?.[key] !== undefined ? translate(locale.value, key, params) : translate(locale.value, fallback, params);
 }
 
 export function isLocale(v: unknown): v is Locale {

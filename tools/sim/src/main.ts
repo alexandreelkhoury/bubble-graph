@@ -31,7 +31,7 @@ async function main(): Promise<number> {
     console.log(`ws mode (protocol v2) · ${args.ws} · win-rule ${args.winRule} · tie-break ${args.tieBreak} · ${((Date.now() - t0) / 1000).toFixed(1)} s`);
     console.log(formatWsTable(rows));
     if (reportFailures(rows)) return 1;
-    console.log("\nOK: every game finished over protocol v2 through the hub, resume restored the seat, a late joiner was benched then dealt in, TV views leaked nothing");
+    console.log("\nOK: every game finished over protocol v2 through the hub, resume restored the seat, a late joiner was benched then dealt in, TV and phone views leaked nothing, the Blank never opened a pass");
     return 0;
   }
   if (args.session) {

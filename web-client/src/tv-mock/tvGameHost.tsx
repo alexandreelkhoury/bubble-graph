@@ -17,6 +17,7 @@ import { Character } from "../components/Character";
 import { cupStandings, starsOfLast } from "../platform/Cup";
 import { backHintOn } from "./tvParts";
 import { tvAct } from "./tvStore";
+import { openRules } from "./tvDialogs";
 import { armGuard, clearChoreo, resultsSettled, setChoreo } from "./tvPlatform";
 import { soundCue } from "./sound/controller";
 
@@ -93,6 +94,7 @@ export function TvGameHost({ view }: { view: TvRoomView }) {
 /** HUB-05 platform part. */
 export function ResultsBar({ view }: { view: TvRoomView }) {
   const room = view.room;
+  const game = view.game?.gameId ?? null;
   const [ready, setReady] = useState(false);
   const [shown, setShown] = useState(false);
   const playRef = useRef<HTMLButtonElement>(null);
@@ -158,6 +160,11 @@ export function ResultsBar({ view }: { view: TvRoomView }) {
           onClick={() => { if (ready) tvAct({ type: "REPLAY" }); }}><Icon name="refresh" />{t("results.playAgain")}</button>
         <button type="button" class="tvbtn" data-back-setup tabIndex={ready ? 0 : -1} onClick={() => { if (ready) tvAct({ type: "BACK_TO_SETUP" }); }}>{t("results.changeSettings")}</button>
         <button type="button" class="tvbtn" data-back-hub tabIndex={ready ? 0 : -1} onClick={() => { if (ready) tvAct({ type: "BACK_TO_HUB" }); }}>{t("cup.otherGames")}</button>
+        {/* JAMAA-PLATFORM §1 "Rules access": the ⓘ is reachable on the results too (the row's end item). */}
+        {game && (
+          <button type="button" class="tvround" data-results-info aria-label={t("rules.open")} tabIndex={ready ? 0 : -1}
+            onClick={() => { if (ready) openRules({ id: game, hub: false, fromPause: false }); }}><Icon name="info" size={24} /></button>
+        )}
       </div>
     </div>
   );

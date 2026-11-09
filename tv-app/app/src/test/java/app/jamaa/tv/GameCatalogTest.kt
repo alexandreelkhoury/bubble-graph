@@ -20,10 +20,15 @@ class GameCatalogTest {
     fun registryOrderAndSupportedGames() {
         assertEquals(GameIds.ALL, GameCatalog.ALL.map { it.id })
         assertEquals(GameIds.ALL, GameDecoders.modules.keys.toList())
-        // This build renders Mish Ana! only; the G lanes flip their own module to implemented.
-        assertEquals(listOf(TvGame("mishana", 1)), GameDecoders.supported())
+        // The hello declares exactly the implemented modules, in registry order (the G lanes flip their own module).
+        val implemented = GameIds.ALL.filter { GameDecoders.modules.getValue(it).implemented }
+        assertEquals(implemented.map { TvGame(it, GameDecoders.modules.getValue(it).meta.viewVersion) }, GameDecoders.supported())
         assertTrue(GameDecoders.isSupported("mishana"))
-        assertTrue(!GameDecoders.isSupported("bluff"))
+        for (id in GameIds.ALL) assertEquals(id, id in implemented, GameDecoders.isSupported(id))
+        assertTrue(!GameDecoders.isSupported("zzz"))
+        // A build where only Mish Ana! is implemented declares only it.
+        val mishanaOnly = GameDecoders.modules.mapValues { (id, m) -> if (id == "mishana") m else NotShipped(m) }
+        assertEquals(listOf(TvGame("mishana", 1)), GameDecoders.supportedOf(mishanaOnly))
     }
 
     /** Each mirror agrees with shared/src/games/<id>/meta.ts on the values the TV relies on. */
@@ -76,4 +81,11 @@ class GameCatalogTest {
         if ("pass.trialBadge" !in I18nKeys.plurals) missing += "pass.trialBadge (plural)"
         assertEquals("keys without a string", emptyList<String>(), missing)
     }
+}
+
+/** A module this build does not ship (its game's TV screens are not implemented yet). */
+class NotShipped(private val real: app.jamaa.tv.games.TvGameModule) : app.jamaa.tv.games.TvGameModule {
+    override val meta get() = real.meta
+    override val implemented = false
+    override fun decode(env: app.jamaa.tv.protocol.GameEnvelope, room: app.jamaa.tv.protocol.RoomPublic) = real.decode(env, room)
 }

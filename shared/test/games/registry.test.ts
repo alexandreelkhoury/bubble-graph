@@ -1,21 +1,25 @@
-// JAMAA-PLATFORM §2.1 / §2.2 / §6.1: the registry has the four games (mishana live, three stubs) and agrees with meta.
+// JAMAA-PLATFORM §2.1 / §2.2 / §6.1: the registry has the four games and agrees with meta. Nothing here assumes which
+// G2–G4 games are still stubs: a G lane replacing its stub (or enabling its game) must not turn this platform test red.
 import { describe, expect, it } from "vitest";
 import { MAX_PLAYERS } from "../../src/constants";
 import { GAME_IDS, isGameId } from "../../src/games/ids";
 import { GAME_META } from "../../src/games/meta";
-import { GameEnvelopeSchema, GameIntentSchema, GameSettingsPatchSchema, GameSettingsSchema, SetupExtrasSchema } from "../../src/games/protocol";
+import { GameSettingsPatchSchema, GameSettingsSchema } from "../../src/games/protocol";
 import { GAMES, REGISTRY_ENABLED } from "../../src/games/registry";
+import { stubDefinition } from "../../src/games/stub";
+import type { GameMeta } from "../../src/games/types";
 import { competitionRanking } from "../../src/games/ranking";
 import { WORLD_IDS } from "../../src/worlds/ids";
 import { contentCatalog } from "../../src/content/catalog";
 import { TEST_FREE_CATALOG } from "../../src/testing";
 
 describe("game registry", () => {
-  it("lists the four games in hub order, and only Mish Ana! is enabled", () => {
+  it("lists the four games in hub order; REGISTRY_ENABLED is the enabled ones, Mish Ana! always among them", () => {
     expect(GAME_IDS).toEqual(["mishana", "bluff", "likely", "trivia"]);
     expect(Object.keys(GAMES)).toEqual([...GAME_IDS]);
     expect(Object.keys(GAME_META)).toEqual([...GAME_IDS]);
-    expect(REGISTRY_ENABLED).toEqual(["mishana"]);
+    expect(REGISTRY_ENABLED).toEqual(GAME_IDS.filter((id) => GAMES[id].enabled));
+    expect(REGISTRY_ENABLED).toContain("mishana");
     expect(isGameId("bluff")).toBe(true);
     expect(isGameId("chess")).toBe(false);
     expect(isGameId(3)).toBe(false);
@@ -54,33 +58,35 @@ describe("game registry", () => {
     expect(GameSettingsPatchSchema[id].safeParse({}).success).toBe(true);
     expect(GameSettingsPatchSchema[id].safeParse({ nope: 1 }).success).toBe(false);
   });
-  it.each(["bluff", "likely", "trivia"] as const)("%s is a stub: disabled, no intents, cannot start", (id) => {
-    const def = GAMES[id];
-    expect(def.enabled).toBe(false);
-    expect(GameIntentSchema[id].safeParse({ type: "HOST_ADVANCE" }).success).toBe(false);
-    const content = contentCatalog(TEST_FREE_CATALOG)[id];
+  // The stub helper itself (§6.1), on a synthetic stub built from each G2–G4 meta: independent of whether the real
+  // games/<id>/definition.ts still uses it.
+  it.each(GAME_IDS.filter((id) => id !== "mishana"))("stubDefinition(%s meta): disabled, cannot start, inert", (id) => {
+    const meta = GAME_META[id] as unknown as GameMeta<Record<string, unknown>>;
+    const valid = Object.fromEntries(Object.keys(meta.settings.defaults).map((k) => [k, () => true]));
+    const extras = { gameId: id, available: 0 };
+    const def = stubDefinition(meta, valid, () => [], () => extras);
+    const content = contentCatalog(TEST_FREE_CATALOG)[id] as never;
     const roster = [{ id: "p_1", seat: 0, locale: "en" as const, connected: true, carryScore: 0 }];
-    expect(def.startBlocker(roster, def.meta.settings.defaults as never, content, "en")).toBe("GAME_DISABLED");
-    const r = def.start({ roster, settings: def.meta.settings.defaults as never, locale: "en", memory: { usedKeys: [] }, seed: 1, now: 0, graceMs: 0, content });
-    expect(r.ok).toBe(false);
-    expect(def.reduce({ schema: 0 }, { type: "TICK" }, { now: 0, content, isHost: () => true, hostPlayerId: null })).toMatchObject({ ok: false, error: "GAME_DISABLED" });
-    expect(def.settings.apply(def.meta.settings.defaults as never, {}, content, "en")).toBeNull();
-    const s = def.meta.settings.defaults as never;
+    const st = { schema: 0 } as const;
+    const s = meta.settings.defaults;
+    expect(def.enabled).toBe(false);
+    expect(def.startBlocker(roster, s, content, "en")).toBe("GAME_DISABLED");
+    expect(def.start({ roster, settings: s, locale: "en", memory: { usedKeys: [] }, seed: 1, now: 0, graceMs: 0, content }).ok).toBe(false);
+    expect(def.reduce(st, { type: "TICK" }, { now: 0, content, isHost: () => true, hostPlayerId: null })).toMatchObject({ ok: false, error: "GAME_DISABLED" });
+    expect(def.settings.apply(s, {}, content, "en")).toBeNull();
+    expect(def.settings.normalize(undefined)).toEqual(s);
     expect(def.settings.restrict(s, { playableIds: new Set(), premium: false }, content, "en")).toBe(s);
     expect(def.settings.packIds(s)).toEqual([]);
-    expect(def.nextWakeAt({ schema: 0 })).toBeNull();
-    expect(def.outcome({ schema: 0 })).toBeNull();
-    expect(def.memory({ schema: 0 })).toEqual({ usedKeys: [] });
-    expect(def.projectPublic({ schema: 0 }, content)).toEqual({});
-    expect(def.projectMe({ schema: 0 }, "p_1", content)).toBeNull();
-    expect(def.projectStatus({ schema: 0 }).phase).toBe(def.meta.phases[0]);
-    expect(def.secretsFor({ schema: 0 }, null)).toEqual([]);
-    expect(def.leakCheck({ schema: 0 }, null, {})).toEqual([]);
-    def.assertInvariants({ schema: 0 });
-    const extras = def.projectSetup(s, roster, content, { premium: false, packs: new Set() }, "en", { usedKeys: [] });
-    expect(SetupExtrasSchema.parse(extras)).toMatchObject({ gameId: id, available: 0 });
-    const env = { gameId: id, n: 1, phase: "X", doneIds: [], awaitedIds: [], public: {}, me: null, over: false };
-    expect(GameEnvelopeSchema.safeParse(env).success).toBe(true);
+    expect(def.nextWakeAt(st)).toBeNull();
+    expect(def.outcome(st)).toBeNull();
+    expect(def.memory(st)).toEqual({ usedKeys: [] });
+    expect(def.projectPublic(st, content)).toEqual({});
+    expect(def.projectMe(st, "p_1", content)).toBeNull();
+    expect(def.projectStatus(st).phase).toBe(meta.phases[0]);
+    expect(def.secretsFor(st, null)).toEqual([]);
+    expect(def.leakCheck(st, null, {})).toEqual([]);
+    def.assertInvariants(st);
+    expect(def.projectSetup(s, roster, content, { premium: false, packs: new Set() }, "en", { usedKeys: [] })).toBe(extras);
   });
   it("trivia's packIds is its quiz family", () => {
     expect(GAMES.trivia.settings.packIds({ quizId: "lb-quiz-01", length: "normal", pace: "normal" })).toEqual(["lb-quiz-01"]);

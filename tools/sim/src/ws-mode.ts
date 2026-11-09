@@ -2,7 +2,8 @@
 // dev`) through protocol v2 only: hub → OPEN_GAME → setup → START_GAME → GAME intents → REPLAY, and once BACK_TO_HUB
 // and back in. One player socket is killed and resumed mid-game, and one late joiner arrives while PLAYING (benched,
 // then dealt in at the next instance). Every server frame is validated with ServerMessageV2Schema; every TV frame is
-// checked for secrets. No Origin header is sent (native-client path).
+// checked for secrets, every phone frame for other players' secrets (§5.4), and every opening speaking order for the
+// Blank-never-first rule. No Origin header is sent (native-client path).
 import WebSocket from "ws";
 import { COLORS, PING_FRAME, PONG_FRAME, WS_PATH_PREFIX } from "@jamaa/shared/constants";
 import { CreateRoomResponse } from "@jamaa/shared/protocol";
@@ -15,7 +16,7 @@ import { ALL_TV_GAMES, FORBIDDEN_KEYS, ROOM_FORBIDDEN_KEYS, TIMERS_OFF } from "@
 import type { SimArgs } from "./args";
 import { formatColumns } from "./format";
 
-export interface WsGameStats { n: number; games: number; civilians: number; infiltrators: number; blank: number; stalemates: number; resumes: number; lateJoins: number; failures: string[] }
+export interface WsGameStats { n: number; games: number; civilians: number; infiltrators: number; blank: number; stalemates: number; resumes: number; lateJoins: number; blanksDealt: number; openingsChecked: number; failures: string[] }
 
 const STEP_TIMEOUT_MS = 10_000;
 const MIN_SEND_GAP_MS = 220; // stay under the 5 msg/s per-connection bucket
@@ -192,6 +193,49 @@ export function tvViewProblems(view: TvRoomView, secretWords: ReadonlySet<string
   return out;
 }
 
+/** What one phone learned about its own secrets in one instance (from its own `game.me`). */
+export interface DealtSecret { word: { text: string; translit: string | null } | null; role: string | null; isBlank: boolean }
+
+/**
+ * SPEC §5.4 on a v2 phone frame: `game.me` is the viewer's own, no alive player's role is revealed before the instance
+ * is over, and no other player's secret word that differs from the viewer's own appears anywhere in the frame.
+ * `dealt` holds every player's own secrets for this instance (player id → secret).
+ */
+export function playerViewProblems(view: RoomView, viewerId: string, dealt: ReadonlyMap<string, DealtSecret>): string[] {
+  const out: string[] = [];
+  if (view.kind !== "player" || !view.game || view.game.gameId !== "mishana" || view.game.over) return out;
+  const me = view.game.me as MishanaMe | null;
+  if (me && me.id !== viewerId) out.push(`game.me is ${me.id}, not the viewer`);
+  const own = new Set([me?.word?.text, me?.word?.translit].filter((x): x is string => !!x));
+  const foreign = new Set<string>();
+  for (const [id, d] of dealt) {
+    if (id === viewerId || !d.word) continue;
+    for (const w of [d.word.text, d.word.translit]) if (w && !own.has(w)) foreign.add(w);
+  }
+  const walk = (x: unknown, path: string): void => {
+    if (typeof x === "string") {
+      if (foreign.has(x) && !path.endsWith(".name") && !path.includes(".title.")) out.push(`another player's word at ${path}`);
+    } else if (Array.isArray(x)) x.forEach((v, i) => walk(v, `${path}.${i}`));
+    else if (x && typeof x === "object") for (const [k, v] of Object.entries(x)) walk(v, `${path}.${k}`);
+  };
+  if (foreign.size > 0) walk(view, "view");
+  const pub = mishanaPub(view);
+  if (pub) for (const p of pub.players) if (p.alive && p.revealedRole !== null) out.push(`alive player ${p.id} has a revealed role`);
+  return out;
+}
+
+/**
+ * The Blank never speaks first (turns.ts openingOrder), unless no non-Blank can open that pass: no alive one in CLUES,
+ * no tie candidate in TIE_BREAK (two tied Blanks).
+ */
+export function blankOpensProblem(pub: MishanaPublic, dealt: ReadonlyMap<string, DealtSecret>): string | null {
+  const first = pub.speakingOrder[0];
+  if (first === undefined || dealt.get(first)?.isBlank !== true) return null;
+  const pool = pub.phase === "TIE_BREAK" ? pub.tieCandidates : pub.players.filter((p) => p.alive && !p.left).map((p) => p.id);
+  if (!pool.some((id) => dealt.get(id) !== undefined && dealt.get(id)?.isBlank !== true)) return null;
+  return `the Blank ${first} opens ${pub.phase} (round ${pub.round})`;
+}
+
 export async function createRoomHttp(httpBase: string): Promise<{ code: string; tvToken: string }> {
   const res = await fetch(`${httpBase}/api/rooms`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "en" }) });
   if (res.status !== 201) throw new Error(`POST /api/rooms → HTTP ${res.status}`);
@@ -209,6 +253,8 @@ interface Table {
   rng: Rng;
   failures: string[];
   onPlayerView: (c: WsClient, m: { view: RoomView }) => void;
+  /** game.n → player id → that player's own secrets, as its phone saw them. */
+  dealt: Map<number, Map<string, DealtSecret>>;
 }
 
 const member = (v: RoomView | null, id: string | null) => v?.room.members.find((m) => m.id === id);
@@ -226,14 +272,25 @@ async function newPlayer(t: Table, i: number): Promise<WsClient> {
 
 /** Runs `games` instances with `n` bots in one room: one kill-and-resume, one late joiner, one trip back to the hub. */
 export async function playRoom(httpBase: string, n: number, games: number, args: Pick<SimArgs, "seed" | "winRule" | "tieBreak" | "verbose">, log: (s: string) => void): Promise<WsGameStats> {
-  const stats: WsGameStats = { n, games: 0, civilians: 0, infiltrators: 0, blank: 0, stalemates: 0, resumes: 0, lateJoins: 0, failures: [] };
+  const stats: WsGameStats = { n, games: 0, civilians: 0, infiltrators: 0, blank: 0, stalemates: 0, resumes: 0, lateJoins: 0, blanksDealt: 0, openingsChecked: 0, failures: [] };
+  const openings = new Set<string>();
   const wsBase = httpBase.replace(/^http/, "ws");
   const { code, tvToken } = await createRoomHttp(httpBase);
   const t: Table = {
     wsBase, code, tv: null as unknown as WsClient, players: [], secretWords: new Set(), rng: createRng((args.seed * 7919 + n) >>> 0), failures: stats.failures,
-    onPlayerView: (_c, m) => {
-      if (m.view.kind !== "player" || !m.view.game || m.view.game.over) return;
-      const w = (m.view.game.me as MishanaMe | null)?.word;
+    dealt: new Map(),
+    onPlayerView: (c, m) => {
+      if (m.view.kind !== "player" || !m.view.game || m.view.game.gameId !== "mishana" || m.view.game.over) return;
+      const me = m.view.game.me as MishanaMe | null;
+      let dealt = t.dealt.get(m.view.game.n);
+      if (!dealt) t.dealt.set(m.view.game.n, (dealt = new Map()));
+      if (me && c.playerId && me.id === c.playerId) {
+        const prev = dealt.get(me.id);
+        if (!prev && me.isBlank) stats.blanksDealt++;
+        dealt.set(me.id, { word: me.word, role: me.role, isBlank: me.isBlank });
+      }
+      if (c.playerId) for (const p of playerViewProblems(m.view, c.playerId, dealt)) t.failures.push(`${c.label} §5.4: ${p}`);
+      const w = me?.word;
       if (w) {
         t.secretWords.add(w.text);
         if (w.translit) t.secretWords.add(w.translit);
@@ -246,6 +303,17 @@ export async function playRoom(httpBase: string, n: number, games: number, args:
       return;
     }
     for (const p of tvViewProblems(m.view, t.secretWords)) t.failures.push(`TV §5.4: ${p}`);
+    // Blank-first rule, at the first frame of each speaking pass (CLUES or TIE_BREAK) of each instance and round.
+    const pub = mishanaPub(m.view);
+    if (pub && m.view.game && !m.view.game.over && (pub.phase === "CLUES" || pub.phase === "TIE_BREAK")) {
+      const key = `${m.view.game.n}/${pub.round}/${pub.phase}/${pub.revote}`;
+      if (!openings.has(key)) {
+        openings.add(key);
+        stats.openingsChecked++;
+        const p = blankOpensProblem(pub, t.dealt.get(m.view.game.n) ?? new Map());
+        if (p) t.failures.push(`Blank-first rule: ${p}`);
+      }
+    }
   };
 
   try {
@@ -427,7 +495,7 @@ export async function runWsMode(args: SimArgs, log: (s: string) => void = consol
 }
 
 export function formatWsTable(rows: WsGameStats[]): string {
-  const header = ["n", "games", "civilians", "infiltrators", "blank", "stalemates", "resumes", "late joins", "failures"];
-  const lines = rows.map((r) => [r.n, r.games, r.civilians, r.infiltrators, r.blank, r.stalemates, r.resumes, r.lateJoins, r.failures.length].map(String));
+  const header = ["n", "games", "civilians", "infiltrators", "blank", "stalemates", "resumes", "late joins", "blanks dealt", "openings checked", "failures"];
+  const lines = rows.map((r) => [r.n, r.games, r.civilians, r.infiltrators, r.blank, r.stalemates, r.resumes, r.lateJoins, r.blanksDealt, r.openingsChecked, r.failures.length].map(String));
   return formatColumns(header, lines);
 }

@@ -7,14 +7,15 @@ import { fmtNum, isolate } from "../../../i18n/t";
 import { reduced } from "../../../lib/motion";
 import { run } from "@jamaa/shared/motion";
 import type { Run } from "@jamaa/shared/motion";
-import { clearChoreo, resultsSettled, setChoreo } from "../../../tv-mock/tvPlatform";
+import { resultsSettled } from "../../../tv-mock/tvPlatform";
+import { useInGameOk } from "../../../tv-mock/tvParts";
 import { play, stopAll } from "../../../tv-mock/sound/player";
 import { timelineCues } from "../../../tv-mock/sound/cues";
 import type { TimelineMark } from "../../../tv-mock/sound/cues";
 import { Character } from "../../../components/Character";
 import { Confetti } from "../../../components/UI";
 import { ellipsizeName } from "../../../lib/names";
-import type { Player, Trivia } from "../model";
+import type { Player } from "../model";
 import { biggestClimb, podiumOf, resultsStats, standings } from "../model";
 import { BOARD_MARKS, PODIUM_MARKS } from "../cues";
 import { BOARD_STEPS, PODIUM_STEPS } from "../layout";
@@ -24,23 +25,26 @@ import { Odo, tk } from "./parts";
 
 type P = (id: string, i?: number) => number;
 
-/** Runs `steps` once on mount (registered as the TV's running choreography so OK completes it), with sound marks. */
+/** Runs `steps` once on mount, with sound marks; OK completes it (platform §3.10 E rule 5: in game, OK only completes
+ *  a running choreography; D-pad and Back stay free for the pause menu). */
 function useChoreo(steps: readonly Step[], marks: readonly TimelineMark[], frame: (p: P) => void, onDone: () => void, count = 1): void {
+  const ref = useRef<Run | null>(null);
+  const [running, setRunning] = useState(!reduced());
   useLayoutEffect(() => {
     if (reduced()) { frame(() => 1); onDone(); return; }
     let last = -1;
-    const r: Run = run(steps, (p, t) => {
+    const r = run(steps, (p, t) => {
       frame(p);
       for (const m of timelineCues(marks, last, t)) play({ cue: m.cue, rate: m.rate });
       last = t;
-    }, () => { clearChoreo(wrapped); onDone(); }, count);
-    const wrapped: Run = { complete: () => { stopAll(); r.complete(); }, cancel: r.cancel, get running() { return r.running; } };
-    setChoreo(wrapped);
-    return () => { r.cancel(); clearChoreo(wrapped); };
+    }, () => { setRunning(false); onDone(); }, count);
+    ref.current = r;
+    return () => { r.cancel(); ref.current = null; };
   }, []);
+  useInGameOk(running, () => { stopAll(); ref.current?.complete(); });
 }
 
-export function Board({ tr, ps }: { tr: Trivia; ps: Player[] }) {
+export function Board({ ps }: { ps: Player[] }) {
   const root = useRef<HTMLDivElement>(null);
   const before = useRef(standings(ps, true)).current;
   const after = standings(ps);
@@ -93,7 +97,7 @@ export function Board({ tr, ps }: { tr: Trivia; ps: Player[] }) {
 /** Steps 2-1-3 left to right (mirrored in RTL by the flex direction), heights 96 / 130 / 70 dp. */
 const STEP_H: Record<1 | 2 | 3, number> = { 1: 130, 2: 96, 3: 70 };
 
-export function Results({ tr, ps }: { tr: Trivia; ps: Player[] }) {
+export function Results({ ps }: { ps: Player[] }) {
   const root = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<{ confetti: boolean; done: boolean }>({ confetti: false, done: reduced() });
   const steps = podiumOf(ps);

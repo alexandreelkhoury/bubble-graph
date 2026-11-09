@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { COLORS, MAX_PLAYERS, NAME_MAX_CHARS } from "@jamaa/shared/constants";
 import type { ColorId } from "@jamaa/shared/constants";
 import type { PlayerRoomView } from "@jamaa/shared/protocol/v2";
-import { errorKeyOf, fmtNum, isolateLtr, t } from "../i18n/t";
+import { errorKeyOf, fmtNum, isolateLtr, t, tPrefer } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import { inlineError, joinPending } from "../state/store";
 import { join } from "../state/session";
@@ -16,16 +16,20 @@ import { Character } from "../components/Character";
 import { Button, Heading } from "../components/UI";
 import { Icon } from "../components/Icon";
 
+/** JAMAA-PLATFORM §3.7: the protocol field stays `color`, the UI says "character" (keys from lane D; until they land
+ *  the colour wording shows instead of a raw key). */
+const characterTaken = (): string => tPrefer("join.characterTaken", "join.colorTaken");
+
 export function CharacterPicker({ value, taken, onChange, shake }: { value: ColorId | null; taken: ReadonlySet<string>; onChange(c: ColorId): void; shake: boolean }) {
   return (
-    <div class={`chargrid${shake ? " shake" : ""}`} role="radiogroup" aria-label={t("join.colorLabel")}>
+    <div class={`chargrid${shake ? " shake" : ""}`} role="radiogroup" aria-labelledby="character-label">
       {COLORS.map((c) => {
         const isTaken = taken.has(c.id);
         const sel = value === c.id;
         const name = t(`color.${c.id}` as MessageKey);
         return (
           <button key={c.id} type="button" role="radio" aria-checked={sel} aria-disabled={isTaken}
-            aria-label={isTaken ? `${name}, ${t("join.colorTaken")}` : name}
+            aria-label={isTaken ? `${name}, ${characterTaken()}` : name}
             class={`charpick${sel ? " is-selected" : ""}${isTaken ? " is-taken" : ""}`}
             onClick={() => { if (!isTaken) onChange(c.id); }}>
             <Character color={c.id} size={56} expression={sel ? "happy" : isTaken ? "away" : "idle"} key={sel ? "sel" : "idle"} />
@@ -67,7 +71,8 @@ export function Join({ view }: { view: PlayerRoomView }) {
     join(clean, color);
   };
   const errKey: MessageKey | null =
-    err === "COLOR_TAKEN" ? "join.colorTaken" : err && err !== "GUESS_INVALID" ? errorKeyOf(err) : full ? "error.roomFull" : null;
+    err === "COLOR_TAKEN" ? null : err && err !== "GUESS_INVALID" ? errorKeyOf(err) : full ? "error.roomFull" : null;
+  const errText = err === "COLOR_TAKEN" ? characterTaken() : errKey ? t(errKey) : null;
   const count = clean ? graphemeCount(clean) : 0;
   const playing = room.phase === "PLAYING";
 
@@ -87,11 +92,11 @@ export function Join({ view }: { view: PlayerRoomView }) {
           />
           <p class={`field__count${count >= NAME_MAX_CHARS ? " is-max" : ""}`} aria-hidden="true"><bdi class="num">{fmtNum(count)}/{fmtNum(NAME_MAX_CHARS)}</bdi></p>
         </div>
-        <p class="field-label" id="color-label">{t("join.colorLabel")}</p>
+        <p class="field-label" id="character-label">{tPrefer("join.characterLabel", "join.colorLabel")}</p>
         <CharacterPicker value={color} taken={taken} onChange={(c) => { setColor(c); if (err === "COLOR_TAKEN") inlineError.value = null; }} shake={shake > 0} key={shake} />
       </main>
       <footer class="actionbar">
-        {errKey && <p class="inline-error" role="alert"><Icon name="info" size={18} />{t(errKey)}</p>}
+        {errText && <p class="inline-error" role="alert"><Icon name="info" size={18} />{errText}</p>}
         <Button disabled={!canSubmit} onClick={submit} aria-busy={pending}>
           {pending ? t("join.joining") : t("join.submit")}
         </Button>

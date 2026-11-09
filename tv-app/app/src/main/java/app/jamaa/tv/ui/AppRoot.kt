@@ -97,7 +97,9 @@ import app.jamaa.tv.ui.hub.MemberMenu
 import app.jamaa.tv.ui.hub.PackPickerSheet
 import app.jamaa.tv.ui.hub.SwitchLanguageDialog
 import app.jamaa.tv.ui.hub.gameTitle
+import app.jamaa.tv.ui.motion.LocalPortalOrigins
 import app.jamaa.tv.ui.motion.MomentLayer
+import app.jamaa.tv.ui.motion.PortalOrigins
 import app.jamaa.tv.ui.platform.keyText
 import app.jamaa.tv.ui.platform.remoteKey
 import app.jamaa.tv.ui.platform.repeats
@@ -171,14 +173,15 @@ fun AppRoot(vm: GameViewModel) {
             Box(
                 Modifier
                     .fillMaxSize()
-                    // The remote's own feedback (ui.select / ui.back, the focus tick): observed, never consumed.
-                    .onPreviewKeyEvent { sounds.onKey(it); false }
+                    // The remote's own feedback (ui.select / ui.back, the focus tick): observed, never consumed. In a
+                    // room the §3.10 E gate plays it instead, for the keys it lets through only (RoomRoot).
+                    .onPreviewKeyEvent { if (s !is TvUiState.InRoom) sounds.onKey(it); false }
                     .padding(horizontal = JamaaSpace.SafeH, vertical = JamaaSpace.SafeV),
             ) {
                 when (s) {
                     TvUiState.CreatingRoom -> HomeScreen(HomeStatus.Busy(R.string.tv__creating_room), vm::createRoom) { debugOpen = true }
                     is TvUiState.CreateFailed -> HomeScreen(HomeStatus.Failed(s.messageKey), vm::createRoom) { debugOpen = true }
-                    is TvUiState.InRoom -> RoomRoot(s, vm, toasts) { debugOpen = true }
+                    is TvUiState.InRoom -> RoomRoot(s, vm, toasts, sounds) { debugOpen = true }
                     is TvUiState.Fatal -> FatalScreen(s.messageKey, vm::createRoom)
                 }
                 if (toasts.screenHosts == 0) {
@@ -225,7 +228,7 @@ private fun showGameToast(context: Context, toasts: ToastState, e: ViewEvent) {
 }
 
 @Composable
-private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState, onOpenDebug: () -> Unit) {
+private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState, sounds: TvSounds, onOpenDebug: () -> Unit) {
     val context = LocalContext.current
     val room = s.view?.room
     val game = s.game
@@ -315,149 +318,164 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
     }
     BackHandler(enabled = room != null && modal.isEmpty() && !storeOpen && setupSheet == null && !lostOverlay) { onBack() }
 
-    // §3.10 E: every key passes the input rule first. A KeyDown the gate swallows takes its KeyUp with it (a click fires
-    // on the release). INFO / MENU open the rules sheet unless a host dialog needs the remote.
+    // §3.10 E: every key passes the input rule first, on the one parent of the screens, the moments AND every local
+    // overlay (pause menu, confirms, hub sheets, setup sheets, the store, the fake purchase sheet, connection lost), so
+    // the guard an overlay arms covers the overlay itself. A fresh KeyDown the gate swallows takes its KeyUp with it (a
+    // click fires on the release); a swallowed auto-repeat does not, so the original press still completes on release.
+    // INFO / MENU open the rules sheet unless a host dialog or the full-screen intro needs the remote.
     val swallowed = remember { HashSet<Key>() }
+    val introOpen by vm.introOpen.collectAsStateWithLifecycle()
     val gateModifier = Modifier.onPreviewKeyEvent { e ->
         if (e.type == KeyEventType.KeyUp) return@onPreviewKeyEvent swallowed.remove(e.key)
         if (e.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
+        val fresh = e.repeats == 0
+        if (fresh) swallowed.remove(e.key) // a stale entry (its release went elsewhere) never eats a later release
         val k = e.remoteKey()
         if (k == RemoteKey.INFO) {
-            if (room != null && !hostDialogUp && !storeOpen && !lostOverlay) openRules(RulesOrigin.INFO_KEY)
-            swallowed += e.key
+            if (fresh && room != null && !hostDialogUp && !storeOpen && !lostOverlay && !introOpen) openRules(RulesOrigin.INFO_KEY)
+            if (fresh) swallowed += e.key
             return@onPreviewKeyEvent true
         }
         when (vm.gateKey(k, e.repeats)) {
             GateDecision.CONSUME, GateDecision.COMPLETE -> {
-                swallowed += e.key
+                if (fresh) swallowed += e.key
                 true
             }
-            GateDecision.PASS, GateDecision.MOVE_ONLY -> false
+            GateDecision.PASS, GateDecision.MOVE_ONLY -> {
+                sounds.onKey(e) // ui.select / ui.back only for the keys a screen actually receives
+                false
+            }
         }
     }
 
+    val portalOrigins = remember { PortalOrigins() }
     Box(Modifier.fillMaxSize().then(gateModifier)) {
-        // While a moment plays, or an overlay is up, screens must not grab focus (InitialFocus waits for the block to lift).
-        CompositionLocalProvider(LocalFocusBlocked provides (overlayOpen || moment != null)) {
-            Box(Modifier.fillMaxSize().inertWhen(overlayOpen)) {
-                when {
-                    room == null -> HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom, onOpenDebug)
-                    room.phase == RoomPhase.HUB -> HubScreen(
-                        room = room,
-                        focusedGameId = hubFocus,
-                        lastPlayed = vm.lastPlayedGameId,
-                        launchedAt = launchedAt,
-                        showPass = billingOn && !room.premium,
-                        reactions = vm.reactions,
-                        actions = HubActions(
-                            onFocusGame = vm::focusGame,
-                            onOpenGame = { card -> if (card.available) vm.openGame(card.id) else vm.openOverlay(Overlay.SwitchLanguage(card.id)) },
-                            onRules = { openRules(RulesOrigin.TOP_BAR) },
-                            onCup = { vm.openOverlay(Overlay.CupSheet) },
-                            onPass = if (billingOn && !room.premium) ({ openStore(StoreEntry(focusProductId = null, origin = StoreOrigin.LOBBY_BUTTON)) }) else null,
-                            onSettings = { vm.openOverlay(Overlay.HubSettings) },
-                            onMember = { m -> vm.openOverlay(Overlay.MemberMenu(m.id)) },
-                        ),
-                    )
-                    room.phase == RoomPhase.SETUP -> SetupRoot(
-                        room, vm, setupSheet, settingsDraft, genericDraft, toasts, billingOn, soundMuted, installId,
-                        onSheet = { setupSheet = it },
-                        openRules = { openRules(RulesOrigin.TOP_BAR) },
-                        openStore = openStore,
-                        billingUnavailable = billing.billingUnavailable,
-                    )
-                    else -> {
-                        val g = game
-                        if (g == null) {
-                            HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom, onOpenDebug)
-                        } else {
-                            GameScreens.Render(
-                                GameScreenArgs(
-                                    game = g,
-                                    room = room,
-                                    clockOffsetMs = s.clockOffsetMs,
-                                    // The pause menu and its dialogs hold reveal choreographies; the rules sheet never does (§3.6).
-                                    overlayOpen = modal.any { it !is Overlay.Rules } || lostOverlay,
-                                    degraded = degraded,
-                                    send = send,
-                                    results = ResultsActions(onReplay = vm::replay, onChangeSettings = vm::backToSetup, onOtherGames = vm::backToHub),
-                                    cupPanel = { CupPanel(room) },
-                                    passHook = if (billingOn && !room.premium && vm.finishedGames >= 2) stringResource(R.string.pass__results_hook) else null,
-                                    onHostDialog = { up -> if (up) vm.openOverlay(Overlay.HostDialog) else vm.closeOverlay(Overlay.HostDialog) },
+        CompositionLocalProvider(LocalPortalOrigins provides portalOrigins) {
+            Box(Modifier.fillMaxSize()) {
+                // While a moment plays, or an overlay is up, screens must not grab focus (InitialFocus waits for the block to lift).
+                CompositionLocalProvider(LocalFocusBlocked provides (overlayOpen || moment != null)) {
+                    Box(Modifier.fillMaxSize().inertWhen(overlayOpen)) {
+                        when {
+                            room == null -> HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom, onOpenDebug)
+                            room.phase == RoomPhase.HUB -> HubScreen(
+                                room = room,
+                                focusedGameId = hubFocus,
+                                lastPlayed = vm.lastPlayedGameId,
+                                launchedAt = launchedAt,
+                                showPass = billingOn && !room.premium,
+                                reactions = vm.reactions,
+                                missingGames = s.missingGames,
+                                actions = HubActions(
+                                    onFocusGame = vm::focusGame,
+                                    onOpenGame = { card -> if (card.available) vm.openGame(card.id) else vm.openOverlay(Overlay.SwitchLanguage(card.id)) },
                                     onRules = { openRules(RulesOrigin.TOP_BAR) },
+                                    onCup = { vm.openOverlay(Overlay.CupSheet) },
+                                    onPass = if (billingOn && !room.premium) ({ openStore(StoreEntry(focusProductId = null, origin = StoreOrigin.LOBBY_BUTTON)) }) else null,
+                                    onSettings = { vm.openOverlay(Overlay.HubSettings) },
+                                    onMember = { m -> vm.openOverlay(Overlay.MemberMenu(m.id)) },
                                 ),
                             )
-                            if (!g.envelope.over) BackMenuHint(g, Modifier.align(Alignment.TopEnd).padding(top = 52.dp))
+                            room.phase == RoomPhase.SETUP -> SetupRoot(
+                                room, vm, setupSheet, settingsDraft, genericDraft, toasts, billingOn, soundMuted, installId,
+                                onSheet = { setupSheet = it },
+                                openRules = { openRules(RulesOrigin.TOP_BAR) },
+                                openStore = openStore,
+                                billingUnavailable = billing.billingUnavailable,
+                            )
+                            else -> {
+                                val g = game
+                                if (g == null) {
+                                    HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom, onOpenDebug)
+                                } else {
+                                    GameScreens.Render(
+                                        GameScreenArgs(
+                                            game = g,
+                                            room = room,
+                                            clockOffsetMs = s.clockOffsetMs,
+                                            // The pause menu and its dialogs hold reveal choreographies; the rules sheet never does (§3.6).
+                                            overlayOpen = modal.any { it !is Overlay.Rules } || lostOverlay,
+                                            degraded = degraded,
+                                            send = send,
+                                            results = ResultsActions(onReplay = vm::replay, onChangeSettings = vm::backToSetup, onOtherGames = vm::backToHub),
+                                            cupPanel = { CupPanel(room) },
+                                            passHook = if (billingOn && !room.premium && vm.finishedGames >= 2) stringResource(R.string.pass__results_hook) else null,
+                                            onHostDialog = { up -> if (up) vm.openOverlay(Overlay.HostDialog) else vm.closeOverlay(Overlay.HostDialog) },
+                                            onRules = { openRules(RulesOrigin.TOP_BAR) },
+                                        ),
+                                    )
+                                    if (!g.envelope.over) BackMenuHint(g, Modifier.align(Alignment.TopEnd).padding(top = 52.dp))
+                                }
+                            }
                         }
                     }
+                }
+
+                // §3.10 A/B/D: the portal, the world entrance and the cup hold, drawn over the destination screen.
+                MomentLayer(moment, motion, vm::momentEnded, room?.contentLocale)
+
+                // TV-13a: the stage stays visible but frozen under a 40 % scrim, with a top banner and an attempt counter.
+                if (degraded && room != null && !offlineLong) {
+                    Box(Modifier.fillMaxSize().fullBleed().background(JamaaColors.Bg.copy(alpha = 0.4f)).blockPointer())
+                    StatusBanner(
+                        stringResource(R.string.conn__tv_reconnecting),
+                        Modifier.align(Alignment.TopCenter),
+                        spinner = true,
+                        trailing = if (attempt > 0) "#$attempt" else null,
+                    )
+                }
+                // TV-13f
+                AnimatedVisibility(phonesAsleep && !degraded, Modifier.align(Alignment.TopCenter), enter = fadeIn(), exit = fadeOut()) {
+                    // With a timer running the game is not waiting: it says so (`conn.phonesAsleepTimer`).
+                    val timer = (game as? MishanaGameView)?.view?.deadline != null
+                    StatusBanner(stringResource(if (timer) R.string.conn__phones_asleep_timer else R.string.conn__phones_asleep), icon = JamaaIcons.Phone)
                 }
             }
         }
 
-        // §3.10 A/B/D: the portal, the world entrance and the cup hold, drawn over the destination screen.
-        MomentLayer(moment, motion, vm::momentEnded)
+        // ---- setup sheets (end side, local) ----
+        if (room != null && room.phase == RoomPhase.SETUP) {
+            val setup = vm.effectiveSetup()
+            when (val sheet = setupSheet) {
+                SetupSheet.Content -> ContentLanguageSheet(room, onPick = { vm.setContentLocale(it); setupSheet = null }, onBack = { setupSheet = null })
+                is SetupSheet.Packs -> if (setup != null) PackPickerSheet(
+                    row = sheet.row,
+                    gameId = setup.gameId,
+                    selectedIds = SetupRows.selectedIds(setup, sheet.row.key),
+                    available = setup.availablePacks,
+                    locked = setup.lockedPacks,
+                    contentLocale = room.contentLocale,
+                    onChange = { ids -> vm.setPacks(sheet.row.key, ids, sheet.row.single) },
+                    onLocked = if (billingOn) ({ p -> openStore(StoreEntry(focusProductId = p.productId, origin = StoreOrigin.LOCKED_PACK)) }) else null,
+                    onBack = { setupSheet = null },
+                )
+                else -> Unit
+            }
+        }
 
-        // TV-13a: the stage stays visible but frozen under a 40 % scrim, with a top banner and an attempt counter.
-        if (degraded && room != null && !offlineLong) {
-            Box(Modifier.fillMaxSize().fullBleed().background(JamaaColors.Bg.copy(alpha = 0.4f)).blockPointer())
-            StatusBanner(
-                stringResource(R.string.conn__tv_reconnecting),
-                Modifier.align(Alignment.TopCenter),
-                spinner = true,
-                trailing = if (attempt > 0) "#$attempt" else null,
+        // ---- local overlays, bottom to top ----
+        if (room != null) {
+            for (o in overlays) OverlayView(o, room, s, vm, soundMuted, calm, { calm = it }, installId, ::openRules)
+        }
+
+        // PAYMENTS-SPEC §4.4 / JAMAA-PLATFORM §4.5: the Pass store (HUB or SETUP; the ViewModel closes it on PLAYING).
+        val entry = s.store
+        if (entry != null && room != null && room.phase != RoomPhase.PLAYING && !lostOverlay) {
+            StoreScreen(
+                entry = entry,
+                state = billing,
+                view = StoreRoomContext(room.roomCode, room.contentLocale, room.setup?.lockedPacks.orEmpty()),
+                onClose = vm::closeStore,
+                onRetry = vm::retryStore,
+                onBuy = { productId, basePlanId -> activity?.let { vm.buy(it, productId, basePlanId) } },
+                onRestore = vm::restorePurchases,
             )
         }
-        // TV-13f
-        AnimatedVisibility(phonesAsleep && !degraded, Modifier.align(Alignment.TopCenter), enter = fadeIn(), exit = fadeOut()) {
-            // With a timer running the game is not waiting: it says so (`conn.phonesAsleepTimer`).
-            val timer = (game as? MishanaGameView)?.view?.deadline != null
-            StatusBanner(stringResource(if (timer) R.string.conn__phones_asleep_timer else R.string.conn__phones_asleep), icon = JamaaIcons.Phone)
-        }
-    }
+        // §4.8 debug fake store: the purchase "sheet", over everything like Play's own sheet.
+        fakeRequest?.let { offer -> FakePurchaseDialog(offer.productId) { choice -> vm.fakePrompt?.choose(choice) } }
 
-    // ---- setup sheets (end side, local) ----
-    if (room != null && room.phase == RoomPhase.SETUP) {
-        val setup = vm.effectiveSetup()
-        when (val sheet = setupSheet) {
-            SetupSheet.Content -> ContentLanguageSheet(room, onPick = { vm.setContentLocale(it); setupSheet = null }, onBack = { setupSheet = null })
-            is SetupSheet.Packs -> if (setup != null) PackPickerSheet(
-                row = sheet.row,
-                gameId = setup.gameId,
-                selectedIds = SetupRows.selectedIds(setup, sheet.row.key),
-                available = setup.availablePacks,
-                locked = setup.lockedPacks,
-                contentLocale = room.contentLocale,
-                onChange = { ids -> vm.setPacks(sheet.row.key, ids, sheet.row.single) },
-                onLocked = if (billingOn) ({ p -> openStore(StoreEntry(focusProductId = p.productId, origin = StoreOrigin.LOCKED_PACK)) }) else null,
-                onBack = { setupSheet = null },
-            )
-            else -> Unit
-        }
+        // TV-13b: still offline after 30 s.
+        if (lostOverlay) ConnectionLost(onRetry = vm::retryConnectionNow, onBack = onBack)
     }
-
-    // ---- local overlays, bottom to top ----
-    if (room != null) {
-        for (o in overlays) OverlayView(o, room, s, vm, soundMuted, calm, { calm = it }, installId, ::openRules)
-    }
-
-    // PAYMENTS-SPEC §4.4 / JAMAA-PLATFORM §4.5: the Pass store (HUB or SETUP; the ViewModel closes it on PLAYING).
-    val entry = s.store
-    if (entry != null && room != null && room.phase != RoomPhase.PLAYING && !lostOverlay) {
-        StoreScreen(
-            entry = entry,
-            state = billing,
-            view = StoreRoomContext(room.roomCode, room.contentLocale, room.setup?.lockedPacks.orEmpty()),
-            onClose = vm::closeStore,
-            onRetry = vm::retryStore,
-            onBuy = { productId, basePlanId -> activity?.let { vm.buy(it, productId, basePlanId) } },
-            onRestore = vm::restorePurchases,
-        )
-    }
-    // §4.8 debug fake store: the purchase "sheet", over everything like Play's own sheet.
-    fakeRequest?.let { offer -> FakePurchaseDialog(offer.productId) { choice -> vm.fakePrompt?.choose(choice) } }
-
-    // TV-13b: still offline after 30 s.
-    if (lostOverlay) ConnectionLost(onRetry = vm::retryConnectionNow, onBack = onBack)
 }
 
 /** HUB-03, or Mish Ana!'s Advanced settings screen opened from it. */
@@ -518,6 +536,7 @@ private fun SetupRoot(
             onPacks = { onSheet(SetupSheet.Packs(it)) },
             onAdvanced = { if (setup.gameId == GameIds.MISHANA) onSheet(SetupSheet.Advanced) },
             onLockedSetting = if (billingOn) ({ openStore(StoreEntry(focusProductId = Products.PREMIUM_PRODUCT_ID, origin = StoreOrigin.LOCKED_SETTING)) }) else null,
+            onIntroOpen = vm::setIntroOpen,
         ),
     )
 }

@@ -51,26 +51,27 @@ object LikelyChoreo {
     /** Calm motion: a FADE step becomes a 200 ms linear fade at its start; SKIP jumps to its end at its start. */
     const val REDUCED_FADE_MS = 200
 
-    // Reveal step lengths (DESIGN-JAMAA §5.3).
-    const val DRUMROLL_MS = 800
-    const val RUN_MS = 500
-    const val RUN_STAGGER_MS = 100
-    const val COUNT_MS = 600
-    const val SPOT_MS = 800
-    const val STAMP_MS = 600
-    const val STAMP_STAGGER_MS = 150
+    // The reveal is a line-for-line port of the browser TV's step list (web-client/src/games/likely/tv/choreo.ts,
+    // `revealSteps` + `fitReveal`), so both TVs play the same moment from the same public result.
 
-    /** Ties share the 600 ms tie allowance of the server formula (§12.2). */
-    const val STAMP_STAGGER_BUDGET_MS = 600
-    const val POINTS_MS = 800
+    /** Drumroll: lights dim, the card shrinks to the top (0–800 ms). */
+    const val DRUM_MS = 800
+
+    /** Run to your pick: 100 ms per voter, the whole run ≤ 2 500 ms (§12.2 step 2). */
+    const val RUN_MS = 520
+    const val RUN_WINDOW_MS = 2_500 - RUN_MS
     const val CONFETTI_MS = 1_200
     const val SCRAMBLE_MS = 1_200
-    const val HOLD_MIN_MS = 1_000
-    const val COIN_FLIGHT_MS = 450
-    const val BOARD_LINE_MS = 400
+
+    /** Time kept free at the end of the server's REVEAL window: the hold ("defend yourself") and network slack. */
+    const val REVEAL_TAIL_MS = 1_000
 
     private fun step(id: String, start: Int, dur: Int, easing: String, stagger: Int = 0, reduced: Reduced = Reduced.FADE, lite: Lite = Lite.KEEP) =
         Choreo.Step(id, start, dur, easing, stagger, reduced, lite)
+
+    /** Same as the TS `S(id, start, dur, easing, reduced = "skip", stagger)`. */
+    private fun s(id: String, start: Double, dur: Int, easing: String, reduced: Reduced = Reduced.SKIP, stagger: Double = 0.0) =
+        Choreo.Step(id, kotlin.math.round(start).toInt(), dur, easing, kotlin.math.round(stagger).toInt(), reduced, Lite.KEEP)
 
     /** Which reveal plays (§12.2): conga (public), ballot rain (secret votes), chaos scramble, or nobody voted. */
     enum class RevealKind { PUBLIC, SECRET, CHAOS, NONE }
@@ -82,85 +83,116 @@ object LikelyChoreo {
         else -> RevealKind.PUBLIC
     }
 
-    /** Stagger between rosettes of tied targets, inside the formula's tie allowance. */
-    fun stampStagger(tops: Int): Int = if (tops <= 1) 0 else min(STAMP_STAGGER_MS, STAMP_STAGGER_BUDGET_MS / (tops - 1))
+    fun runStagger(runners: Int): Double = if (runners <= 1) 100.0 else min(100.0, RUN_WINDOW_MS.toDouble() / (runners - 1))
 
-    /**
-     * The REVEAL timeline. [runners] = characters that travel (public: non-self voters in ballot order; secret: one
-     * envelope per vote), [coins] = scoring voters (public only), [boardLines] = percentage lines (secret only).
-     */
-    fun reveal(r: LikelyReveal, anonymous: Boolean, runners: Int, coins: Int, boardLines: Int): LikelyTimeline {
-        val kind = revealKind(r, anonymous)
-        val marks = mutableListOf(LikelyMark(0, "sfx.drumroll"))
-        val steps = mutableListOf(
-            step("dim", 0, DRUMROLL_MS, "ease.standard"),
-            step("cardUp", 0, DRUMROLL_MS, "ease.standard"),
-        )
-        when (kind) {
-            RevealKind.NONE -> {
-                steps += step("noneTitle", DRUMROLL_MS, 400, "ease.overshoot")
-                marks += LikelyMark(DRUMROLL_MS, "likely.puff")
-                return LikelyTimeline("likely.reveal.none", steps, DRUMROLL_MS + 400 + HOLD_MIN_MS, marks)
-            }
-            RevealKind.CHAOS -> {
-                steps += step("scramble", DRUMROLL_MS, SCRAMBLE_MS, "linear", reduced = Reduced.SKIP, lite = Lite.KEEP)
-                steps += step("chaosTitle", DRUMROLL_MS + 400, 400, "ease.overshoot")
-                marks += LikelyMark(DRUMROLL_MS, "likely.scramble")
-                return LikelyTimeline("likely.reveal.chaos", steps, DRUMROLL_MS + SCRAMBLE_MS + HOLD_MIN_MS, marks)
-            }
-            else -> Unit
-        }
-        val secret = kind == RevealKind.SECRET
-        val n = max(1, runners)
-        // Secret votes: the ballot box shakes during the drumroll, then the envelopes burst out (no voter colour).
-        if (secret) {
-            steps += step("box", 300, 500, "spring.hop", reduced = Reduced.FADE)
-            marks += LikelyMark(400, "likely.ballot")
-        }
-        steps += step("run", DRUMROLL_MS, RUN_MS, if (secret) "ease.coin" else "ease.standard", RUN_STAGGER_MS, Reduced.SKIP)
-        val runEnd = DRUMROLL_MS + RUN_STAGGER_MS * (n - 1) + RUN_MS
-        for (i in 0 until min(runners, 12)) {
-            // "tok" on each landing, pitch rising with the line (capped to the SoundPool range).
-            marks += LikelyMark(DRUMROLL_MS + RUN_STAGGER_MS * i + RUN_MS, "likely.tok", (1f + 0.06f * i).coerceAtMost(2f))
-        }
-        steps += step("count", runEnd, COUNT_MS, "ease.decel", reduced = Reduced.SKIP)
-        marks += LikelyMark(runEnd, "counterTick")
-        val spotAt = runEnd + COUNT_MS
-        steps += step("spot", spotAt, SPOT_MS, "ease.overshoot")
-        marks += LikelyMark(spotAt, "likely.spot")
-        val stampAt = spotAt + SPOT_MS
-        val tops = max(1, r.topIds.size)
-        val stagger = stampStagger(tops)
-        steps += step("stamp", stampAt, STAMP_MS, "ease.overshoot", stagger)
-        for (i in 0 until tops) marks += LikelyMark(stampAt + stagger * i + 200, "likely.rosette")
-        val stampEnd = stampAt + stagger * (tops - 1) + STAMP_MS
-        var end = stampEnd
-        if (secret) {
-            // The percentage board replaces the points step and takes its time (§12.2).
-            val lines = max(1, boardLines)
-            val lineStagger = if (lines <= 1) 0 else min(120, (POINTS_MS - BOARD_LINE_MS) / (lines - 1))
-            steps += step("board", stampEnd, BOARD_LINE_MS, "ease.decel", lineStagger)
-            end = stampEnd + POINTS_MS
-        } else if (coins > 0) {
-            val coinStagger = coinStagger(coins)
-            steps += step("coins", stampEnd, COIN_FLIGHT_MS, "ease.coin", coinStagger, Reduced.SKIP)
-            steps += step("pointsLabel", stampEnd, POINTS_MS, "ease.decel")
-            marks += LikelyMark(stampEnd, "coinFly")
-            for (i in 0 until min(coins, 10)) marks += LikelyMark(stampEnd + coinStagger * i + COIN_FLIGHT_MS, "coinLand", (1f + 0.06f * i).coerceAtMost(2f))
-            end = stampEnd + POINTS_MS
-        }
-        if (r.unanimous) {
-            steps += step("confetti", stampEnd, CONFETTI_MS, "linear", reduced = Reduced.SKIP, lite = Lite.KEEP)
-            marks += LikelyMark(stampEnd, "likely.confetti")
-            end = max(end, stampEnd + CONFETTI_MS)
-        }
-        steps += step("defend", end, 400, "ease.overshoot")
-        val id = if (secret) "likely.reveal.secret" else "likely.reveal.public"
-        return LikelyTimeline(id, steps, end + HOLD_MIN_MS, marks)
+    /** The shape of a reveal, from the public result only (TS `RevealShape`). */
+    data class RevealShape(val runners: Int, val envelopes: Int, val publicMode: Boolean, val chaos: Boolean, val none: Boolean, val unanimous: Boolean, val coins: Int) {
+        /** The staggered element count `fitReveal` measures with. */
+        val count: Int get() = max(max(runners, envelopes), max(coins, 1))
     }
 
-    /** Coins land inside the 800 ms points step: 70 ms apart, squeezed for a big table (≤ 12 coins, DESIGN §5.1). */
-    fun coinStagger(coins: Int): Int = if (coins <= 1) 0 else min(70, (POINTS_MS - COIN_FLIGHT_MS) / (coins - 1))
+    /** TS `revealSteps`. Ids: dim, run, box, env, scramble, count, spot, stamp, confetti, coin, tick, board, hold. */
+    fun revealSteps(o: RevealShape): List<Choreo.Step> {
+        val steps = mutableListOf(s("dim", 0.0, DRUM_MS, "ease.standard", Reduced.FADE))
+        if (o.none) return steps + s("hold", DRUM_MS.toDouble(), 400, "ease.decel", Reduced.FADE)
+        var t = DRUM_MS.toDouble()
+        if (o.chaos) {
+            steps += s("scramble", t, SCRAMBLE_MS, "linear")
+            t += SCRAMBLE_MS
+            if (o.publicMode && o.runners > 0) {
+                steps += s("run", t, RUN_MS, "spring.bouncy", Reduced.SKIP, runStagger(o.runners))
+                t += RUN_MS + runStagger(o.runners) * max(0, o.runners - 1)
+            }
+            steps += s("count", t, 600, "ease.decel", Reduced.FADE)
+            t += 600
+            if (!o.publicMode) {
+                steps += s("board", t, 1_200, "ease.decel", Reduced.FADE, 120.0)
+                t += 600
+            }
+            return steps + s("hold", t, 400, "ease.decel", Reduced.FADE)
+        }
+        if (o.publicMode) {
+            val st = runStagger(o.runners)
+            steps += s("run", t, RUN_MS, "ease.decel", Reduced.SKIP, st)
+            t += if (o.runners > 0) RUN_MS + st * (o.runners - 1) else 200.0
+        } else {
+            steps += s("box", t, 360, "ease.overshoot")
+            steps += s("env", t + 240, 450, "ease.coin", Reduced.SKIP, 70.0)
+            t += 240 + 450 + 70.0 * max(0, o.envelopes - 1)
+        }
+        t += 100
+        steps += s("count", t, 600, "ease.decel", Reduced.FADE)
+        t += 600
+        steps += s("spot", t, 800, "ease.overshoot", Reduced.FADE)
+        t += 800
+        steps += s("stamp", t, 600, "ease.overshoot", Reduced.FADE)
+        if (o.unanimous) steps += s("confetti", t + 300, CONFETTI_MS, "linear")
+        t += 600
+        if (o.publicMode) {
+            if (o.coins > 0) {
+                steps += s("coin", t, 450, "ease.coin", Reduced.SKIP, 70.0)
+                steps += s("tick", t + 450, 600, "ease.decel", Reduced.FADE)
+                t += 450 + 70.0 * max(0, o.coins - 1) + 600
+            }
+        } else {
+            steps += s("board", t, 600, "ease.decel", Reduced.FADE, 120.0)
+            t += 600
+        }
+        return steps + s("hold", t, 400, "ease.decel", Reduced.FADE)
+    }
+
+    /** Shared `endMs(steps, count)`. */
+    fun endMs(steps: List<Choreo.Step>, count: Int = 1): Int =
+        steps.maxOfOrNull { it.startMs + it.staggerMs * max(0, count - 1) + it.durationMs } ?: 0
+
+    /** Shared `scaled(steps, k)`: springs keep their (physical) duration but move with the timeline. */
+    fun scaled(steps: List<Choreo.Step>, k: Double): List<Choreo.Step> = steps.map {
+        val spring = Choreo.easings[it.easing] is Choreo.Easing.Spring
+        it.copy(
+            startMs = kotlin.math.round(it.startMs * k).toInt(),
+            durationMs = if (spring) it.durationMs else kotlin.math.round(it.durationMs * k).toInt(),
+            staggerMs = kotlin.math.round(it.staggerMs * k).toInt(),
+        )
+    }
+
+    /** TS `fitReveal`: scaled down when the list runs past the server window minus [REVEAL_TAIL_MS]. */
+    fun fitReveal(steps: List<Choreo.Step>, windowMs: Long, count: Int): List<Choreo.Step> {
+        val budget = max(2_000L, windowMs - REVEAL_TAIL_MS)
+        val end = endMs(steps, count)
+        return if (end <= budget) steps else scaled(steps, budget.toDouble() / end)
+    }
+
+    /** The REVEAL timeline (steps fitted to the server window of [r]) with its sound marks. */
+    fun reveal(r: LikelyReveal, shape: RevealShape): LikelyTimeline {
+        val steps = fitReveal(revealSteps(shape), LikelyTiming.revealMs(r.votesCast, r.unanimous, r.topIds.size), shape.count)
+        fun st(id: String) = steps.firstOrNull { it.id == id }
+        val marks = mutableListOf(LikelyMark(0, "sfx.drumroll"))
+        st("scramble")?.let { marks += LikelyMark(it.startMs, "likely.scramble") }
+        st("box")?.let { marks += LikelyMark(it.startMs, "likely.ballot") }
+        st("run")?.let { run ->
+            // "tok" on each landing, pitch rising with the line (capped to the SoundPool range).
+            for (i in 0 until min(shape.runners, 12)) marks += LikelyMark(run.startMs + run.staggerMs * i + run.durationMs, "likely.tok", (1f + 0.06f * i).coerceAtMost(2f))
+        }
+        st("env")?.let { env -> for (i in 0 until min(shape.envelopes, 12)) marks += LikelyMark(env.startMs + env.staggerMs * i + env.durationMs, "likely.tok", (1f + 0.04f * i).coerceAtMost(2f)) }
+        st("count")?.let { marks += LikelyMark(it.startMs, "counterTick") }
+        st("spot")?.let { marks += LikelyMark(it.startMs, "likely.spot") }
+        st("stamp")?.let { marks += LikelyMark(it.startMs + 200, "likely.rosette") }
+        st("confetti")?.let { marks += LikelyMark(it.startMs, "likely.confetti") }
+        st("coin")?.let { c ->
+            marks += LikelyMark(c.startMs, "coinFly")
+            for (i in 0 until min(shape.coins, 10)) marks += LikelyMark(c.startMs + c.staggerMs * i + c.durationMs, "coinLand", (1f + 0.06f * i).coerceAtMost(2f))
+        }
+        if (shape.none) marks += LikelyMark(DRUM_MS, "likely.puff")
+        val total = endMs(steps, shape.count)
+        val kind = when {
+            shape.none -> "none"
+            shape.chaos -> "chaos"
+            shape.publicMode -> "public"
+            else -> "secret"
+        }
+        return LikelyTimeline("likely.reveal.$kind", steps, total, marks.filter { it.atMs <= total }.sortedBy { it.atMs })
+    }
+
 
     /**
      * The card entrance (§12.3): dealt from the golden deck at the top-end corner, flipped on the Y axis in mid-air

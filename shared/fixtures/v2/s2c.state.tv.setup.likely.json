@@ -110,10 +110,11 @@
         "settings": {
           "packIds": [],
           "length": "normal",
-          "showVoters": true
+          "showVoters": true,
+          "mode": "family"
         },
         "canStart": false,
-        "startBlocker": "GAME_DISABLED",
+        "startBlocker": "NO_CONTENT_AVAILABLE",
         "availablePacks": [],
         "lockedPacks": [],
         "extras": {

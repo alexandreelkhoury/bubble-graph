@@ -139,13 +139,22 @@ function packTrailing(state: PackState) {
   }
 }
 
+/** "Hard · Food & drink" → ["Hard", "Food & drink"]: at 10 ft the name is what tells packs apart, so the difficulty
+ *  becomes a small chip above it and the name gets two lines. */
+export function splitPackTitle(title: string): [string | null, string] {
+  const i = title.indexOf(" · ");
+  return i > 0 ? [title.slice(0, i), title.slice(i + 3)] : [null, title];
+}
+
 function PackCard({ p, target, onBuy }: { p: CatalogPackBody; target: FocusId; onBuy(p: CatalogPackBody): void }) {
   const state = packState(p.packId, p.productId, billing.ent.value, billing.pending.value);
   const l = locale.value;
+  const [pre, name] = splitPackTitle(titleIn(p.title, l));
   return (
     <button type="button" class={`tvshop__pack is-${state}`} data-focus={`pack:${p.productId}`} data-default-focus={defFocus(`pack:${p.productId}`, target)} data-pack={p.packId}
       onClick={() => { if (state === "buy") onBuy(p); }}>
-      <bdi class="tvshop__packtitle">{titleIn(p.title, l)}</bdi>
+      {pre && <span class="tvshop__packpre">{pre}</span>}
+      <bdi class="tvshop__packtitle">{name}</bdi>
       <span class="tvshop__packmeta">{t("store.packPairs", { count: p.pairCount })}</span>
       <span class="tvshop__packend">{isInflight(p.productId) ? <Busy /> : packTrailing(state)}</span>
     </button>
@@ -265,8 +274,8 @@ export function TvShop({ view, entry }: { view: TvRoomView; entry: StoreEntry })
               {/* §5.2 debug-only controls (fake mode only). Plain English: they never ship in a real store. */}
               <span class="tvshop__testctl" role="group" aria-label="Test controls">
                 <span class="tvshop__testhead">Test controls</span>
-                <button type="button" class="tvbtn tvbtn--small" data-test="expire" onClick={() => void billing.testExpirePremium()}>Expire Pass now</button>
-                <button type="button" class="tvbtn tvbtn--small" data-test="refund" onClick={() => void billing.testRefundPack()}>Refund pack</button>
+                <button type="button" class="tvbtn tvbtn--small tvbtn--ghost" data-test="expire" onClick={() => void billing.testExpirePremium()}>Expire Pass now</button>
+                <button type="button" class="tvbtn tvbtn--small tvbtn--ghost" data-test="refund" onClick={() => void billing.testRefundPack()}>Refund pack</button>
               </span>
               <span class="tvshop__back tv-muted">{t("common.back")}</span>
             </footer>

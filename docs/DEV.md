@@ -120,6 +120,8 @@ Along the way it checks that:
 - every server frame parses with `ServerMessageV2Schema`;
 - `seq` strictly increases on every socket;
 - every TV state satisfies SPEC §5.4: no secret word, no room or game `me`, no state-only key, no alive revealed role and no guess text before RESULTS.
+- every phone state satisfies SPEC §5.4 too: `game.me` is the viewer's own, no other player's word that differs from the viewer's appears anywhere, and no alive revealed role before RESULTS;
+- **the Blank never speaks first**: at the first frame of every CLUES and TIE_BREAK pass, `speakingOrder[0]` is not a Blank (known from each phone's own `me.isBlank`), unless no non-Blank can open (two tied Blanks). The table counts `blanks dealt` and `openings checked`.
 
 The same check is available as an opt-in Vitest case: `JAMAA_WS_URL=http://127.0.0.1:8787 pnpm vitest run --project sim`.
 

@@ -1,5 +1,10 @@
 package app.jamaa.tv.ui.hub
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +24,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
 import app.jamaa.tv.R
@@ -41,6 +48,8 @@ import app.jamaa.tv.ui.platform.keyText
 import app.jamaa.tv.ui.theme.JamaaColors
 import app.jamaa.tv.ui.theme.JamaaShapes
 import app.jamaa.tv.ui.theme.JamaaTheme
+import app.jamaa.tv.ui.theme.PosterArt
+import app.jamaa.tv.ui.theme.drawWorldProps
 
 /**
  * A game poster (DESIGN-JAMAA §2.2), 210 × 290 dp, focus scale 1.08 with the platform ring: the world stage, three
@@ -52,6 +61,7 @@ import app.jamaa.tv.ui.theme.JamaaTheme
 fun Poster(card: GameCard, room: RoomPublic, showPass: Boolean, focused: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val meta = GameCatalog.meta(card.id)
     val world = worldOf(meta?.world)
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     JamaaFocusSurface(
         onClick = onClick,
         modifier = modifier.size(HubModel.POSTER_W_DP.dp, HubModel.POSTER_H_DP.dp),
@@ -61,16 +71,30 @@ fun Poster(card: GameCard, room: RoomPublic, showPass: Boolean, focused: Boolean
         focusedContainer = world.deep,
     ) {
         Box(Modifier.fillMaxSize().alpha(if (card.available) 1f else 0.5f)) {
+            // The world's props; on the focused poster they loop (one infinite transition, ≤ 4 props; still in calm motion).
+            val phase = if (focused && !JamaaTheme.reduceMotion) {
+                rememberInfiniteTransition(label = "posterAmbient")
+                    .animateFloat(0f, 1f, infiniteRepeatable(tween(PosterArt.AMBIENT_MS, easing = LinearEasing)), label = "phase").value
+            } else {
+                0f
+            }
             Canvas(Modifier.fillMaxSize()) {
                 drawRect(Brush.verticalGradient(listOf(world.stageTop, world.deep)))
                 drawRect(Brush.radialGradient(listOf(world.glow.copy(alpha = 0.28f), Color.Transparent), center = Offset(size.width / 2f, 0f), radius = size.width * 0.8f))
-                drawCircle(world.accent.copy(alpha = 0.18f), size.width * 0.32f, Offset(size.width * 0.5f, size.height * 0.42f))
+                drawWorldProps(meta?.world, world, phase, rtl)
             }
             Column(Modifier.fillMaxSize().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(Modifier.height(36.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy((-6).dp), verticalAlignment = Alignment.Bottom) {
-                    val cast = posterCast(card.id)
-                    for ((color, expr) in cast) Character(color, 52.dp, if (focused) expr else Expression.IDLE)
+                    // One table with web PosterArt; the outer two look at (and point toward) the middle one.
+                    PosterArt.cast(card.id).forEachIndexed { i, (color, expr) ->
+                        Character(
+                            color,
+                            if (i == 1) 60.dp else 52.dp,
+                            if (focused) expr else Expression.IDLE,
+                            look = Offset(PosterArt.look(i, rtl), 0f),
+                        )
+                    }
                 }
                 Spacer(Modifier.weight(1f))
                 if (card.id == GameIds.MISHANA) {
@@ -103,13 +127,4 @@ fun Poster(card: GameCard, room: RoomPublic, showPass: Boolean, focused: Boolean
             )
         }
     }
-}
-
-/** DESIGN-JAMAA §2.2: three characters acting the game (public, decorative; never a player's state). */
-private fun posterCast(gameId: String): List<Pair<String, Expression>> = when (gameId) {
-    GameIds.MISHANA -> listOf("azure" to Expression.POINT, "lemon" to Expression.SHOCK, "jade" to Expression.POINT)
-    GameIds.BLUFF -> listOf("tangerine" to Expression.THINK, "grape" to Expression.SMUG, "aqua" to Expression.THINK)
-    GameIds.LIKELY -> listOf("rose" to Expression.POINT, "mint" to Expression.SHY, "sand" to Expression.POINT)
-    GameIds.TRIVIA -> listOf("coral" to Expression.THINK, "lilac" to Expression.CHEER, "plum" to Expression.THINK)
-    else -> listOf("coral" to Expression.IDLE, "azure" to Expression.IDLE, "lemon" to Expression.IDLE)
 }

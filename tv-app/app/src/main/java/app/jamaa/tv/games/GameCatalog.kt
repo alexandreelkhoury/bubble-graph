@@ -128,7 +128,20 @@ object GameCatalog {
             id = GameIds.BLUFF, minPlayers = 3, maxPlayers = 12,
             phases = listOf("ROUND_INTRO", "WRITING", "VOTING", "REVEAL", "SCORES", "AWARDS", "RESULTS", "HOLD"),
             titleKey = "$k.title", taglineKey = "$k.tagline", howToKeys = (1..4).map { "$k.howto.$it" },
-            ruleSections = emptyList(), durationMinutes = 15 to 20, world = WorldIds.HAKAWATI_CAFE,
+            // G2 (lane C): GAME-BLUFF §10.2, in the sheet's order (shared/src/games/bluff/meta.ts).
+            ruleSections = listOf(
+                RuleSectionSpec("goal", "$k.rules.goal.title", "$k.rules.goal.body", listOf("ROUND_INTRO", "HOLD")),
+                RuleSectionSpec("round1", "$k.rules.round1.title", "$k.rules.round1.body", emptyList()),
+                RuleSectionSpec("round2", "$k.rules.round2.title", "$k.rules.round2.body", emptyList()),
+                RuleSectionSpec("writing", "$k.rules.writing.title", "$k.rules.writing.body", listOf("WRITING")),
+                RuleSectionSpec("voting", "$k.rules.voting.title", "$k.rules.voting.body", listOf("VOTING")),
+                RuleSectionSpec("points", "$k.rules.points.title", "$k.rules.points.body", listOf("REVEAL", "SCORES")),
+                RuleSectionSpec("final", "$k.rules.final.title", "$k.rules.final.body", listOf("AWARDS", "RESULTS")),
+                RuleSectionSpec("house", "$k.rules.house.title", "$k.rules.house.body", emptyList()),
+                RuleSectionSpec("same", "$k.rules.same.title", "$k.rules.same.body", emptyList()),
+                RuleSectionSpec("host", "$k.rules.host.title", "$k.rules.host.body", emptyList()),
+            ),
+            durationMinutes = 15 to 20, world = WorldIds.HAKAWATI_CAFE,
             pauseItems = listOf(
                 PauseItemSpec("skipPrompt", "$k.pause.skipPrompt", "SKIP_PROMPT", listOf("WRITING")),
                 PauseItemSpec("hideOption", "$k.pause.hideOption", "HIDE_OPTION", listOf("VOTING")),

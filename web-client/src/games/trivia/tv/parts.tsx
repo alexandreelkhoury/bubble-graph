@@ -18,7 +18,7 @@ import type { Player, Trivia, TriviaPub } from "../model";
 import { expressionFor, flameLevel, leftMs, letterOf, questionNumber, standings, tokensOf } from "../model";
 import { Flame, Star, TOKEN_HEX, TOKEN_KEY, TokenShape } from "../tokens";
 import { answerTickCue } from "../cues";
-import { PODIUM_CHAR, bulbs, bulbsLit, cardRect, podiumSlots, tileRect, towerRect, towerRowH } from "../layout";
+import { PODIUM_CHAR, bulbs, bulbsLit, cardRect, podiumSlots, tileRect, towerBox, towerRowH } from "../layout";
 import type { Rect } from "../layout";
 
 export const K = "game.trivia";
@@ -36,10 +36,8 @@ export function useLeft(pub: TriviaPub): { ms: number; frac: number } {
 /** §12.1 The Studio: night navy stage, a light-bulb arch that chases, two sweeping spotlights, a curved stage; for the
  *  Lebanon quiz a stylised coast-and-mountains sunset behind it (no flags, no symbols). `heat` = FINAL_INTRO lights. */
 export function Studio({ coast, heat = false, dim = false }: { coast: boolean; heat?: boolean; dim?: boolean }) {
-  const arch = Array.from({ length: 27 }, (_, i) => {
-    const a = Math.PI * (0.06 + (0.88 * i) / 26);
-    return { x: 480 - 452 * Math.cos(a), y: 70 - 54 * Math.sin(a) };
-  });
+  // The marquee: a rail of bulbs along the top edge that chases (the quiz card drops from it at QUIZ_INTRO).
+  const arch = Array.from({ length: 34 }, (_, i) => ({ x: 14 + (i * 932) / 33, y: 7 + 3 * Math.sin((i / 33) * Math.PI) }));
   return (
     <div class={`tqs${heat ? " is-heat" : ""}${dim ? " is-dim" : ""}`} aria-hidden="true">
       {coast && (
@@ -52,9 +50,9 @@ export function Studio({ coast, heat = false, dim = false }: { coast: boolean; h
         </svg>
       )}
       <span class="tqs__spot tqs__spot--a" /><span class="tqs__spot tqs__spot--b" />
-      <svg class="tqs__arch" viewBox="0 0 960 90">
-        <path d="M28 70 Q480 -38 932 70" fill="none" stroke="#222B63" stroke-width="10" stroke-linecap="round" />
-        {arch.map((p, i) => <circle key={i} class="tqs__bulb" cx={p.x} cy={p.y} r="5.5" style={{ "--i": i }} />)}
+      <svg class="tqs__arch" viewBox="0 0 960 24">
+        <path d="M0 8 Q480 16 960 8" fill="none" stroke="#222B63" stroke-width="9" />
+        {arch.map((p, i) => <circle key={i} class="tqs__bulb" cx={p.x} cy={p.y} r="3.6" style={{ "--i": i }} />)}
       </svg>
       <div class="tqs__floor" />
     </div>
@@ -106,14 +104,14 @@ export function Actor({ tr, p, size, cls, style, elRef, expression, flame = true
  *  (white) once the player answered — no colour, no shape, no position: nothing hints at the choice (§8.1). */
 export function PodiumRow({ tr, players, actors = true, lit }: { tr: Trivia; players: Player[]; actors?: boolean; lit?: (p: Player) => boolean }) {
   const slots = podiumSlots(players.length, isRtl());
-  const w = Math.min(104, (slots[1]?.x ?? 200) - (slots[0]?.x ?? 0) - 8 || 104);
+  const w = slots.length > 1 ? Math.min(104, Math.abs(slots[1]!.x - slots[0]!.x) - 8) : 104;
   return (
     <div class="tqpods">
       {players.map((p, i) => {
         const s = slots[i]!;
         return (
-          <div key={p.id} class={`tqpod${lit?.(p) ? " is-lit" : ""}${p.connected ? "" : " is-away"}`} style={{ left: `${s.x - Math.abs(w) / 2}px`, width: `${Math.abs(w)}px` }}>
-            {actors && <Actor tr={tr} p={p} size={PODIUM_CHAR} cls="tqpod__actor" />}
+          <div key={p.id} class={`tqpod${lit?.(p) ? " is-lit" : ""}${p.connected ? "" : " is-away"}`} style={{ left: `${s.x - w / 2}px`, width: `${w}px` }}>
+            {actors ? <Actor tr={tr} p={p} size={PODIUM_CHAR} cls="tqpod__actor" /> : <span class="tqpod__spacer" />}
             <span class="tqpod__box"><span class="tqpod__ring" /><span class="tqpod__name"><bdi>{ellipsizeName(p.name, 10)}</bdi></span></span>
             {p.isNew && <span class="tqpod__new">{tk("pad.newRibbon")}</span>}
           </div>
@@ -221,11 +219,11 @@ export function Tower({ players, order, scoreOf, rankOf }: {
   const rtl = isRtl();
   const { h, gap } = towerRowH(rows.length);
   return (
-    <aside class={`tqtower${rows.length > 8 ? " is-compact" : ""}`} style={box(towerRect(rtl))} aria-label={tk("leaderboard.title")}>
+    <aside class={`tqtower${rows.length > 8 ? " is-compact" : ""}`} style={box(towerBox(rtl, rows.length))} aria-label={tk("leaderboard.title")}>
       <p class="tqtower__head">{tk("leaderboard.title")}</p>
       <ol class="tqtower__rows">
         {rows.map((p, i) => (
-          <li key={p.id} class={`tqrow${p.row.left ? " is-left" : ""}`} style={{ top: `${i * (h + gap)}px`, height: `${h}px` }}>
+          <li key={p.id} class={`tqrow${p.row.left ? " is-left" : ""}${!p.row.left && p.row.score > 0 && (rankOf ? rankOf(p) : p.row.rank) === 1 ? " is-top" : ""}`} style={{ top: `${i * (h + gap)}px`, height: `${h}px` }}>
             <span class="tqrow__rank tnum">{p.row.left ? "–" : fmtNum((rankOf ? rankOf(p) : p.row.rank) ?? 0)}</span>
             <Character color={p.color} size={rows.length > 8 ? 18 : 26} expression={p.connected ? "idle" : "away"} />
             <span class="tqrow__name"><bdi>{ellipsizeName(p.name, rows.length > 8 ? 9 : 10)}</bdi></span>

@@ -1,8 +1,8 @@
 // GAME-LIKELY / JAMAA-PLATFORM §6.6 G3 (lane B): Most Likely through the hub, the /tv mock driven by the remote ONLY
 // (D-pad, OK, Back, `i`), with 3–6 phones voting: self-votes, a changed vote, unanimous / chaos / tie cards, the
 // reveal, the awards ceremony and the results; one secret-votes game (percentage board, no points) in Arabic (RTL).
-// Secrecy is checked on the raw WebSocket frames: no ballot anywhere before REVEAL, never one in secret mode, and a
-// phone only ever receives its OWN vote. SHOTS_DIR=<dir> saves every screen (TV 1920×1080, phone 390×844) per locale.
+// Secrecy is checked on the raw WebSocket frames: no ballot anywhere before REVEAL, and never a voter→target pair in
+// secret mode, on the TV or any phone. SHOTS_DIR=<dir> saves every screen (TV 1920×1080, phone 390×844) per locale.
 //
 // Most Likely must be live on the server under test (GAMES_ENABLED containing "likely" and the registry entry enabled);
 // otherwise every test here is skipped with that reason.
@@ -29,7 +29,7 @@ const press = async (tv: Page, key: string, n = 1): Promise<void> => {
 };
 async function dpadTo(tv: Page, sel: string, key: string, max = 10): Promise<void> {
   for (let i = 0; i < max; i++) {
-    if (await tv.locator(sel).first().evaluate((el) => el === document.activeElement).catch(() => false)) return;
+    if (await tv.evaluate((s) => !!document.activeElement?.matches(s) || !!document.activeElement?.closest(s), sel).catch(() => false)) return;
     await tv.keyboard.press(key);
     await tv.waitForTimeout(160);
   }
@@ -51,6 +51,16 @@ async function setup(browser: Browser, locale: string, names: string[]): Promise
     await p.screenshot({ path: `${dir}/${name}.png` });
   };
   const tv = await newPage(browser, "tv", locale);
+  // Screenshot mode only: a frame-clock warp for the reveal. While a reveal is on screen the rAF clock (the shared
+  // runner's time base) is frozen, and the test steps it forward to exact moments of the choreography, so a slow
+  // full-HD screenshot never misses a beat. The server's timers are untouched; CSS animations run normally.
+  if (SHOTS) await tv.addInitScript(() => {
+    const raf = window.requestAnimationFrame.bind(window);
+    let vt = 0, last = -1, frozen = false;
+    window.requestAnimationFrame = (cb) => raf((now) => { if (last >= 0 && !frozen) vt += now - last; last = now; cb(vt); });
+    (window as unknown as { __lkStep(ms: number): void }).__lkStep = (ms) => { vt += ms; };
+    new MutationObserver(() => { frozen = !!document.querySelector('[data-reveal][data-running="1"]'); }).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ["data-running"] });
+  });
   const tvFrames: string[] = [];
   tv.on("websocket", (ws) => ws.on("framereceived", (f) => { if (typeof f.payload === "string") tvFrames.push(f.payload); }));
   await tv.goto("/tv");
@@ -86,6 +96,10 @@ async function openLikely(r: Run, opts: { secret: boolean; short: boolean }): Pr
   await r.shot(tv, "tv-00-hub-likely", 600);
   await press(tv, "Enter");
   await expect(tv.locator(".tvsetup")).toBeVisible();
+  await expect(tv.locator(".tvportal")).toHaveCount(0);
+  // The first-time intro opens once the portal has landed (per TV); wait for it or for the setup focus.
+  await expect(tv.locator("[data-intro], [data-start]:focus, [data-howto]:focus").first()).toBeVisible();
+  await tv.waitForTimeout(400);
   if (await visible(tv, "[data-intro]")) {
     await r.shot(tv, "tv-01-howto", 900);
     for (let i = 0; i < 6 && (await visible(tv, "[data-intro-next]")); i++) await press(tv, "Enter");
@@ -96,7 +110,8 @@ async function openLikely(r: Run, opts: { secret: boolean; short: boolean }): Pr
   for (const p of phones) if (await visible(p, ".introsheet__skip")) await p.locator(".introsheet__skip").click();
   await tv.waitForTimeout(500);
   // ⓘ from setup: Most Likely's rules, Back closes.
-  await press(tv, "i");
+  await expect(tv.locator(".tvportal")).toHaveCount(0);
+  for (let i = 0; i < 4 && !(await visible(tv, ".tvrules[data-rules=likely]")); i++) { await press(tv, "i"); await tv.waitForTimeout(500); }
   await expect(tv.locator(".tvrules[data-rules=likely]")).toBeVisible();
   await r.shot(tv, "tv-02-rules", 500);
   await press(tv, "Escape");
@@ -106,7 +121,7 @@ async function openLikely(r: Run, opts: { secret: boolean; short: boolean }): Pr
   await press(tv, fwd);
   if (opts.short) {
     await dpadTo(tv, "[data-row=length]", "ArrowUp", 8).catch(async () => dpadTo(tv, "[data-row=length]", "ArrowDown", 8));
-    await press(tv, back, 2);
+    await press(tv, back, 1);
   }
   if (opts.secret) {
     await dpadTo(tv, "[data-row=showVoters]", "ArrowDown", 8).catch(async () => dpadTo(tv, "[data-row=showVoters]", "ArrowUp", 8));
@@ -122,7 +137,7 @@ async function openLikely(r: Run, opts: { secret: boolean; short: boolean }): Pr
 
 /** Card index (0-based) as the TV shows it ("3 / 8"). */
 async function tvCardIndex(tv: Page): Promise<number> {
-  const s = (await tv.locator(".lktop__title .tnum").first().textContent().catch(() => "")) ?? "";
+  const s = await tv.evaluate(() => document.querySelector(".lktop__title .tnum")?.textContent ?? "").catch(() => "");
   const m = /(\d+)\s*\/\s*(\d+)/.exec(s);
   return m ? Number(m[1]) - 1 : -1;
 }
@@ -142,8 +157,27 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
   const n = phones.length;
   const voted = new Set<string>();
   const shotCards = new Set<string>();
-  const deadline = Date.now() + 360_000;
+  const deadline = Date.now() + 540_000;
   let seenAwards = false;
+  let usedOk = false;
+  // The reveals of cards 0–2 (unanimous, chaos, tie) are shot by a watcher running beside the voting loop, at fixed
+  // offsets into the choreography (run, spotlight + rosette, coins/board + caption).
+  const watcher = opts.shots ? (async () => {
+    for (const label of ["unanimous", "chaos", "tie"]) {
+      await tv.locator("[data-reveal]").waitFor({ timeout: 120_000 });
+      await r.shot(phones[0]!, `ph-12-reveal-${label}-p0`, 900);
+      await r.shot(phones[1]!, `ph-12-reveal-${label}-p1`, 0);
+      const step = (ms: number): Promise<void> => tv.evaluate((x) => (window as unknown as { __lkStep(ms: number): void }).__lkStep(x), ms);
+      await step(1500);
+      await r.shot(tv, `tv-12-reveal-${label}-a-run`, 60);
+      await step(1700);
+      await r.shot(tv, `tv-12-reveal-${label}-b-spot`, 60);
+      await step(2600);
+      await r.shot(tv, `tv-12-reveal-${label}-c-end`, 60);
+      await step(5000);
+      await tv.locator("[data-reveal]").waitFor({ state: "detached", timeout: 30_000 });
+    }
+  })().catch(() => undefined) : Promise.resolve();
   while (Date.now() < deadline) {
     if (await visible(tv, "[data-results]")) break;
     const card = await tvCardIndex(tv);
@@ -166,7 +200,7 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
       await expect(tiles.nth(pick)).toHaveAttribute("aria-checked", "true");
     }
     if (opts.shots && card >= 0) {
-      const phase = (await tv.locator(".lkplay").first().getAttribute("data-phase").catch(() => null)) ?? (await visible(tv, "[data-reveal]") ? "REVEAL" : null);
+      const phase = await tv.evaluate(() => (document.querySelector<HTMLElement>(".lkplay")?.dataset.phase ?? (document.querySelector("[data-reveal]") ? "REVEAL" : null))).catch(() => null);
       const tag = `${card}:${phase}`;
       if (phase && !shotCards.has(tag) && card <= 2) {
         shotCards.add(tag);
@@ -178,25 +212,13 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
           await r.shot(phones[2]!, "ph-11-vote", 200);
           await r.shot(tv, "tv-11-voting", 200);
         }
-        if (phase === "REVEAL") {
-          const label = ["unanimous", "chaos", "tie"][card]!;
-          await r.shot(tv, `tv-12-reveal-${label}-a-run`, 1100);
-          await r.shot(tv, `tv-12-reveal-${label}-b-spot`, 1600);
-          await r.shot(tv, `tv-12-reveal-${label}-c-end`, 2200);
-          await r.shot(phones[0]!, `ph-12-reveal-${label}-p0`, 0);
-          await r.shot(phones[1]!, `ph-12-reveal-${label}-p1`, 0);
-        }
       }
     }
-    // Remote: in REVEAL of card 3, OK completes the reveal; Back → pause → "Next" moves on (HOST_ADVANCE).
-    if (opts.nextVia && card === 3 && (await visible(tv, '[data-reveal][data-running="1"]'))) {
+    // Remote only: on card 4 OK completes the running reveal to its end state (§3.10 E rule 5).
+    if (opts.nextVia && card === 4 && !usedOk && (await visible(tv, '[data-reveal][data-running="1"]'))) {
+      usedOk = true;
       await press(tv, "Enter");
-      await expect(tv.locator('[data-reveal][data-running="0"]')).toBeVisible();
-      await press(tv, "Escape");
-      await expect(tv.locator(".tvdialog--menu")).toBeVisible();
-      await dpadTo(tv, "[data-pause-item=next]", "ArrowDown", 6);
-      await press(tv, "Enter");
-      await expect(tv.locator("[data-reveal]")).toHaveCount(0, { timeout: 5000 });
+      await expect(tv.locator('[data-reveal][data-running="0"]')).toBeVisible({ timeout: 2000 });
     }
     if (!seenAwards && (await visible(tv, "[data-awards]"))) {
       seenAwards = true;
@@ -210,10 +232,19 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
           await r.shot(tv, "tv-23-awards-mindreader", 1800);
         }
       }
+      // Remote only: Back → pause menu → "Next" (HOST_ADVANCE) ends the ceremony early → RESULTS.
+      if (opts.nextVia && (await visible(tv, "[data-awards]"))) {
+        await press(tv, "Escape");
+        await expect(tv.locator(".tvdialog--menu")).toBeVisible();
+        await dpadTo(tv, "[data-pause-item=next]", "ArrowDown", 6);
+        await press(tv, "Enter");
+        await expect(tv.locator("[data-results]")).toBeVisible({ timeout: 5000 });
+      }
     }
     await tv.waitForTimeout(200);
   }
   await expect(tv.locator("[data-results]")).toBeVisible();
+  await watcher;
 }
 
 /** No ballot before REVEAL anywhere (TV or phone); never a voter→target pair in secret mode, in any phase. */
@@ -247,7 +278,7 @@ function checkSecrecy(r: Run, secret: boolean): void {
 test.describe.configure({ mode: "serial" });
 
 test("Most Likely EN, public votes, 4 phones, remote-only TV: unanimous self-vote, chaos, tie, changed vote, Next via pause, awards, results", async ({ browser }) => {
-  test.setTimeout(600_000);
+  test.setTimeout(900_000);
   const r = await setup(browser, "en", ["Rami", "Lina", "Karim", "Maya"]);
   await openLikely(r, { secret: false, short: true });
   // Phones follow into the game with the rooftop world.
@@ -283,7 +314,7 @@ test("Most Likely EN, public votes, 4 phones, remote-only TV: unanimous self-vot
 });
 
 test("Most Likely AR (RTL), secret votes, 3 phones: percentage board, no points, awards without Mind Reader", async ({ browser }) => {
-  test.setTimeout(600_000);
+  test.setTimeout(900_000);
   const r = await setup(browser, "ar", ["رامي", "Léa", "نور"]);
   await expect(r.tv.locator(".tv")).toHaveAttribute("dir", "rtl");
   await openLikely(r, { secret: true, short: true });
@@ -298,7 +329,7 @@ test("Most Likely AR (RTL), secret votes, 3 phones: percentage board, no points,
 });
 
 test("Most Likely ES, public votes, 6 phones", async ({ browser }) => {
-  test.setTimeout(600_000);
+  test.setTimeout(900_000);
   const r = await setup(browser, "es", ["Lucía", "Mateo", "Sofía", "Diego", "Valentina", "Hugo"]);
   await openLikely(r, { secret: false, short: true });
   await playToResults(r, { shots: true });

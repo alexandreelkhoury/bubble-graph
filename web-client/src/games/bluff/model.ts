@@ -82,6 +82,15 @@ export const roundNameKey = (pub: BluffPub): string => k(`round.${pub.roundKind}
 export const roundIntroKey = (pub: BluffPub): string => k(`round.${pub.roundKind}.intro`);
 export const hintKey = (h: Prompt["lengthHint"]): string => k(`hint.${h}`);
 
+/**
+ * What a prompt card shows: an Arabic original keeps its place with the transliteration and the room-language
+ * translation under it (GAME-BLUFF §8.2); any other translated prompt shows the translation only.
+ */
+export function promptLines(p: Prompt): { main: string; translit: string | null; sub: string | null } {
+  if (p.translit) return { main: p.original, translit: p.translit, sub: p.display };
+  return { main: p.display ?? p.original, translit: null, sub: null };
+}
+
 // ---------------------------------------------------------------- timers
 
 /** GAME-BLUFF §4.1 nominal durations (pace "normal"); WRITING and VOTING scale by the room pace (0.75 / 1 / 1.5). */
@@ -90,7 +99,7 @@ export const NOMINAL = {
   AWARDS_BASE: 2_500, AWARDS_PER_CARD: 3_500,
 } as const;
 export const PACES = [0.75, 1, 1.5] as const;
-export const votingNominalMs = (optionCount: number): number => Math.min(50_000, Math.max(26_000, 20_000 + 2_500 * optionCount));
+export const votingNominalMs = (optionCount: number): number => Math.round(Math.min(50_000, Math.max(26_000, 20_000 + 2_500 * optionCount)) / 1000) * 1000;
 
 /** The full length of the current phase at pace "normal" (null: no deadline). */
 export function nominalMs(pub: BluffPub): number | null {
@@ -237,6 +246,7 @@ export function beatDeltas(r: Reveal, b: Beat): Map<string, number> {
     for (const u of r.unpicked) for (const d of u.deltas) if (d.reason === "like") add(d.playerId, d.points);
     return out;
   }
+  if (b.kind === "intro" || b.kind === "twist" || b.kind === "montage") return out;
   for (const i of b.steps) {
     const s = r.steps[i];
     if (!s) continue;
@@ -259,6 +269,44 @@ export function runningScores(m: { pub: BluffPub; seats: readonly Seat[] }, plan
     out.push(new Map(cur));
   }
   return out;
+}
+
+/** Reveal sub-moments of a beat: 0 start, 1 landed, 2 stamped, 3 popped, 4 counting. */
+export type Mark = 0 | 1 | 2 | 3 | 4;
+
+/** Expression of a seated (or hopping) character at this point of the reveal: a function of the public reveal only. */
+export function seatExpression(r: Reveal, beat: Beat, mark: Mark, s: Seat, ended: boolean): Expression {
+  if (!s.connected) return "away";
+  if (ended) return r.final ? "laugh" : s.score > s.scoreBefore ? "happy" : "idle";
+  const step = r.steps[beat.steps[0] ?? -1];
+  switch (beat.kind) {
+    case "lie":
+    case "quick":
+      if (!step) return "idle";
+      if (step.voterIds.includes(s.id)) return mark >= 2 ? (step.kind === "house" ? "shock" : "facepalm") : "think";
+      if (step.authorIds.includes(s.id)) return mark >= 3 ? "smug" : "idle";
+      return "idle";
+    case "truth": {
+      if (!step) return "idle";
+      if (step.spotOnIds.includes(s.id)) return "happy";
+      const nobody = step.voterIds.length === 0 && step.spotOnIds.length === 0;
+      if (mark < 2) return step.voterIds.includes(s.id) ? "think" : "idle";
+      if (nobody) return "shock";
+      return step.voterIds.includes(s.id) ? "cheer" : "sad";
+    }
+    case "answer":
+      return step && step.authorIds.includes(s.id) && mark >= 3 ? (step.top ? "laugh" : "smug") : "idle";
+    case "crown":
+      return beat.steps.some((i) => r.steps[i]?.authorIds.includes(s.id)) && mark >= 2 ? "cheer" : "idle";
+    case "twist":
+      return mark >= 2 ? "laugh" : "idle";
+    case "montage": {
+      const mine = r.unpicked.some((u) => u.authorIds.includes(s.id));
+      return mine ? "sad" : "idle";
+    }
+    default:
+      return "idle";
+  }
 }
 
 /** The step a player voted for (rounds 1–2 only: final ballots stay anonymous). */

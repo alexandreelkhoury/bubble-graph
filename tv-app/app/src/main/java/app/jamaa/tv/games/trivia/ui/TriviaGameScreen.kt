@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.withFrameMillis
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -567,79 +568,82 @@ private fun RevealOverlay(view: TriviaView, clock: PhaseClock, positions: StageP
         return Offset(pos.x + (x + TILE_CHAR_DP / 2f) * density.density, pos.y + (y + TILE_CHAR_DP) * density.density) - origin
     }
 
-    for ((tile, i, id) in order) {
-        val p = view.player(id) ?: continue
-        val from = positions.podium[id]?.minus(origin) ?: continue
-        val to = slot(tile, i) ?: continue
-        val k = jumpIndex.getValue(id)
-        val expression = TriviaBoard.expression(view, p)
-        Box(
-            Modifier
-                .graphicsLayer {
-                    val t = clock.p("jump", k)
-                    val tc = t.coerceIn(0f, 1.2f)
-                    val x = from.x + (to.x - from.x) * tc
-                    val arc = kotlin.math.sin(Math.PI * tc.coerceIn(0f, 1f)).toFloat() * TriviaMoments.JUMP_ARC_DP * density.density
-                    val y = from.y + (to.y - from.y) * tc - arc
-                    val s = 1f + (tilePx / charPx - 1f) * t.coerceIn(0f, 1f)
-                    transformOrigin = TransformOrigin(0.5f, 1f)
-                    translationX = x - charPx / 2f
-                    translationY = y - charPx
-                    scaleX = s
-                    scaleY = s
-                },
-        ) {
-            Box(Modifier.size(PODIUM_CHAR_DP.dp), contentAlignment = Alignment.BottomCenter) {
-                if (TriviaBoard.flameVisible(view, p)) FlameOverlay(TriviaBoard.flameLevel(p.streak), PODIUM_CHAR_DP.dp)
-                Character(p.color, PODIUM_CHAR_DP.dp, expression)
-                if (id in r.fastestIds) Bolt(clock)
+    // Absolute top-left: every child is placed by its layer translation in root px (no RTL mirroring).
+    Box(Modifier.fillMaxSize(), contentAlignment = AbsoluteAlignment.TopLeft) {
+        for ((tile, i, id) in order) {
+            val p = view.player(id) ?: continue
+            val from = positions.podium[id]?.minus(origin) ?: continue
+            val to = slot(tile, i) ?: continue
+            val k = jumpIndex.getValue(id)
+            val expression = TriviaBoard.expression(view, p)
+            Box(
+                Modifier
+                    .graphicsLayer {
+                        val t = clock.p("jump", k)
+                        val tc = t.coerceIn(0f, 1.2f)
+                        val x = from.x + (to.x - from.x) * tc
+                        val arc = kotlin.math.sin(Math.PI * tc.coerceIn(0f, 1f)).toFloat() * TriviaMoments.JUMP_ARC_DP * density.density
+                        val y = from.y + (to.y - from.y) * tc - arc
+                        val s = 1f + (tilePx / charPx - 1f) * t.coerceIn(0f, 1f)
+                        transformOrigin = TransformOrigin(0.5f, 1f)
+                        translationX = x - charPx / 2f
+                        translationY = y - charPx
+                        scaleX = s
+                        scaleY = s
+                    },
+            ) {
+                Box(Modifier.size(PODIUM_CHAR_DP.dp), contentAlignment = Alignment.BottomCenter) {
+                    if (TriviaBoard.flameVisible(view, p)) FlameOverlay(TriviaBoard.flameLevel(p.streak), PODIUM_CHAR_DP.dp)
+                    Character(p.color, PODIUM_CHAR_DP.dp, expression)
+                    if (id in r.fastestIds) Bolt(clock)
+                }
             }
         }
-    }
 
-    // Coins (one per correct player), label chip riding with it.
-    val coins = TriviaBoard.coins(view)
-    coins.forEachIndexed { ci, coin ->
-        val p = view.player(coin.playerId) ?: return@forEachIndexed
-        val idx = order.indexOfFirst { it.third == coin.playerId }.takeIf { it >= 0 } ?: return@forEachIndexed
-        val (tile, i, _) = order[idx]
-        val start = slot(tile, i)?.let { it - Offset(0f, tilePx * 0.6f) } ?: return@forEachIndexed
-        val end = positions.tower[coin.playerId]?.minus(origin) ?: return@forEachIndexed
-        val swatch = PlayerSwatch.byId(p.color)
-        Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
-            val t = clock.p("coin", ci)
-            if (t <= 0f || t >= 1f) return@Canvas
-            val pt = coinPoint(start, end, t, size.height, 90.dp.toPx())
-            if (coin.flame) {
-                for (k in 1..4) {
-                    val back = coinPoint(start, end, (t - 0.04f * k).coerceAtLeast(0f), size.height, 90.dp.toPx())
-                    drawCircle(Flame.copy(alpha = 0.5f - 0.1f * k), (5 - k * 0.8f).dp.toPx(), back)
+        // Coins (one per correct player), label chip riding with it.
+        val coins = TriviaBoard.coins(view)
+        coins.forEachIndexed { ci, coin ->
+            val p = view.player(coin.playerId) ?: return@forEachIndexed
+            val idx = order.indexOfFirst { it.third == coin.playerId }.takeIf { it >= 0 } ?: return@forEachIndexed
+            val (tile, i, _) = order[idx]
+            val start = slot(tile, i)?.let { it - Offset(0f, tilePx * 0.6f) } ?: return@forEachIndexed
+            val end = positions.tower[coin.playerId]?.minus(origin) ?: return@forEachIndexed
+            val swatch = PlayerSwatch.byId(p.color)
+            Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
+                val t = clock.p("coin", ci)
+                if (t <= 0f || t >= 1f) return@Canvas
+                val pt = coinPoint(start, end, t, size.height, 90.dp.toPx())
+                if (coin.flame) {
+                    for (k in 1..4) {
+                        val back = coinPoint(start, end, (t - 0.04f * k).coerceAtLeast(0f), size.height, 90.dp.toPx())
+                        drawCircle(Flame.copy(alpha = 0.5f - 0.1f * k), (5 - k * 0.8f).dp.toPx(), back)
+                    }
                 }
+                drawCircle(swatch.color, 5.dp.toPx(), pt)
+                drawCircle(JamaaColors.Text, 5.dp.toPx(), pt, style = Stroke(1.5.dp.toPx()))
             }
-            drawCircle(swatch.color, 5.dp.toPx(), pt)
-            drawCircle(JamaaColors.Text, 5.dp.toPx(), pt, style = Stroke(1.5.dp.toPx()))
+            val label = buildString {
+                append(TriviaBoard.plus(coin.points))
+                if (coin.bonus > 0) append(" ").append(TriviaBoard.plus(coin.bonus))
+                if (coin.doubled) append(" ×2")
+            }
+            Text(
+                label,
+                style = JamaaTheme.type.label,
+                color = if (coin.doubled) Ink else JamaaColors.Text,
+                maxLines = 1,
+                modifier = Modifier
+                    .graphicsLayer {
+                        val t = clock.p("coin", ci)
+                        val pt = coinPoint(start, end, t, positions.height.value, 90.dp.toPx())
+                        translationX = pt.x + 8.dp.toPx()
+                        translationY = pt.y - 28.dp.toPx()
+                        alpha = if (t <= 0f || t >= 1f) 0f else 1f
+                    }
+                    .background(if (coin.doubled) JamaaColors.Accent else Studio.elevated, RoundedCornerShape(50))
+                    .padding(horizontal = 8.dp),
+            )
         }
-        val label = buildString {
-            append(TriviaBoard.plus(coin.points))
-            if (coin.bonus > 0) append(" ").append(TriviaBoard.plus(coin.bonus))
-            if (coin.doubled) append(" ×2")
-        }
-        Text(
-            label,
-            style = JamaaTheme.type.label,
-            color = if (coin.doubled) Ink else JamaaColors.Text,
-            maxLines = 1,
-            modifier = Modifier
-                .graphicsLayer {
-                    val t = clock.p("coin", ci)
-                    val pt = coinPoint(start, end, t, positions.height.value, 90.dp.toPx())
-                    translationX = pt.x + 8.dp.toPx()
-                    translationY = pt.y - 28.dp.toPx()
-                    alpha = if (t <= 0f || t >= 1f) 0f else 1f
-                }
-                .background(if (coin.doubled) JamaaColors.Accent else Studio.elevated, RoundedCornerShape(50))
-                .padding(horizontal = 8.dp),
-        )
     }
 }
 

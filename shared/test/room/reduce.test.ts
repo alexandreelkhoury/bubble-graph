@@ -4,6 +4,8 @@ import { describe, expect, it } from "vitest";
 import { REACTION_MIN_GAP_MS, SEAT_HOLD_MS } from "../../src/constants";
 import type { ColorId } from "../../src/constants";
 import { contentCatalog } from "../../src/content/catalog";
+import { GAME_IDS } from "../../src/games/ids";
+import { GAMES } from "../../src/games/registry";
 import { cupStars, nextRoomWakeAt, reduceRoom, roomGames } from "../../src/room";
 import type { RoomAction, RoomIntent } from "../../src/room";
 import { ALL_TV_GAMES, pid, RoomHarness, TEST_CATALOG } from "../../src/testing";
@@ -276,7 +278,13 @@ describe("games offered (§2.5 TV capability, §2.6 GAMES_ENABLED)", () => {
     const h = withMembers(3);
     expect(h.err({ type: "OPEN_GAME", gameId: "chess", by: ACTORS.tv })).toBe("UNKNOWN_GAME");
     expect(h.err({ type: "HUB_FOCUS", gameId: "chess", by: ACTORS.tv })).toBe("UNKNOWN_GAME");
-    expect(h.err({ type: "OPEN_GAME", gameId: "bluff", by: ACTORS.tv })).toBe("GAME_DISABLED");
+    // Outside ctx.enabledGames: GAME_DISABLED for a registry stub, GAME_UNAVAILABLE for a registry-enabled game (§2.5).
+    for (const id of GAME_IDS.filter((g) => !h.enabledGames.includes(g))) {
+      expect(h.err({ type: "OPEN_GAME", gameId: id, by: ACTORS.tv }), id).toBe(GAMES[id].enabled ? "GAME_UNAVAILABLE" : "GAME_DISABLED");
+    }
+    const undeployed = withMembers(3);
+    undeployed.enabledGames = [];
+    expect(undeployed.err({ type: "OPEN_GAME", gameId: "mishana", by: ACTORS.tv })).toBe("GAME_UNAVAILABLE");
     h.tv({ type: "SET_CONTENT_LOCALE", locale: "es" });
     expect(h.err({ type: "OPEN_GAME", gameId: "mishana", by: ACTORS.tv })).toBe("GAME_UNAVAILABLE");
     expect(h.tvView().room.games[0]?.available).toBe(false);

@@ -709,7 +709,7 @@ Defence in depth:
 `FakeGoogleApi` serves a synthetic `SubscriptionPurchaseV2` / `ProductPurchaseV2` from the `fake_purchases` table:
 - `obfuscatedExternalAccountId` = the installHash given at fake purchase;
 - `acknowledgementState` starts `PENDING`; acks flip it;
-- sub `expiryTime` = now + 30 days (`monthly`) or 365 days (`yearly`); `offerPhase.freeTrial` when `offerId === "trial-7d"`.
+- sub `expiryTime` = now + 30 days (`monthly`) or 365 days (`yearly`); with `offerId === "trial-7d"` the first period is the **7-day trial** (`expiryTime` = trial end). `offerPhase.freeTrial` is present only while the trial runs: state `ACTIVE` or `CANCELED` and now < trial end. Moving to `IN_GRACE_PERIOD`, `ON_HOLD`, `PAUSED` or `EXPIRED` ends the trial for good; `fake/set ACTIVE` after the trial (its end passed, or recovered from grace/hold/pause) starts a fresh base-plan period with no free-trial phase (matches Google: the first charge ends the trial).
 - `startTime` / `purchaseCompletionTime` = the time the fake purchase became `PURCHASED`/`ACTIVE` (absent while `PENDING`), so the ack-window logic runs unchanged.
 
 Routes:

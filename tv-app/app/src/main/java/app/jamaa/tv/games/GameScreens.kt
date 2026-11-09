@@ -16,6 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
 import app.jamaa.tv.R
+import app.jamaa.tv.games.likely.LikelyGameView
+import app.jamaa.tv.games.likely.ui.LikelyGameScreen
 import app.jamaa.tv.games.mishana.MishanaGameView
 import app.jamaa.tv.games.mishana.ui.MishanaGameScreen
 import app.jamaa.tv.protocol.ClientIntent
@@ -58,8 +60,8 @@ class GameScreenArgs(
 object GameScreens {
     private val screens: Map<String, @Composable (GameScreenArgs) -> Unit> = mapOf(
         GameIds.MISHANA to { a -> (a.game as? MishanaGameView)?.let { MishanaGameScreen(it, a) } ?: UpdateJamaaCard(a) },
-        GameIds.BLUFF to { a -> UpdateJamaaCard(a) },   // STUB: G2 lane C (games/bluff/)
-        GameIds.LIKELY to { a -> UpdateJamaaCard(a) },  // STUB: G3 lane C (games/likely/)
+        GameIds.BLUFF to { a -> (a.game as? app.jamaa.tv.games.bluff.BluffGameView)?.let { app.jamaa.tv.games.bluff.ui.BluffGameScreen(it, a) } ?: UpdateJamaaCard(a) }, // G2 lane C
+        GameIds.LIKELY to { a -> (a.game as? LikelyGameView)?.let { LikelyGameScreen(it, a) } ?: UpdateJamaaCard(a) },
         GameIds.TRIVIA to { a -> (a.game as? app.jamaa.tv.games.trivia.TriviaGameView)?.let { app.jamaa.tv.games.trivia.ui.TriviaGameScreen(it, a) } ?: UpdateJamaaCard(a) }, // G4 lane C
     )
 

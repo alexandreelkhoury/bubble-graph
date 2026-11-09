@@ -43,15 +43,17 @@
 .tq-read .tq-bar { width: min(280px, 80%); }
 
 /* ANSWER pad (TR-PH-01): the pad fills the bottom 70 % (thumb zone). */
-.tq-pad { flex: 1; display: flex; flex-direction: column; min-height: calc(100dvh - var(--topbar-height) - env(safe-area-inset-top)); padding: var(--space-2) var(--gutter) calc(var(--space-4) + env(safe-area-inset-bottom)); gap: var(--space-3); }
-.tq-pad__head { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: var(--space-3); min-height: 0; }
+/* The page is exactly one screen while the pad is up (the platform coach mark, if any, takes its share from the head). */
+.ingame:has(> .tq-pad) { height: calc(100dvh - var(--topbar-height) - env(safe-area-inset-top)); min-height: 0; overflow: hidden; }
+.tq-pad { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; padding: var(--space-2) var(--gutter) calc(var(--space-4) + env(safe-area-inset-bottom)); gap: var(--space-3); }
+.tq-pad__head { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-end; gap: var(--space-3); min-height: 64px; }
 .tq-pad__q { display: flex; align-items: baseline; gap: var(--space-2); font: var(--type-ph-small); color: var(--color-text-secondary); }
 .tq-pad__q > b:first-child { flex: none; color: var(--color-text); font-weight: 900; }
 .tq-pad__q > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tq-pad__locked { display: flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 40px; font: var(--type-ph-h2); animation: tq-pop 260ms var(--ease-overshoot) both; }
 .tq-pad__check { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--color-surface); color: var(--color-text); }
 .tq-pad__pick { display: inline-flex; margin-inline-start: var(--space-2); }
-.tq-pad__grid { direction: ltr; flex: none; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; height: 70dvh; max-height: 640px; }
+.tq-pad__grid { direction: ltr; flex: 0 1 70dvh; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; max-height: 640px; }
 .tq-pad--tf .tq-pad__grid { grid-template-rows: 1fr; }
 .tq-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-width: 0; padding: 14px 10px 12px;
   border: 0; border-radius: var(--radius-lg); background: var(--tile); color: var(--color-ink); font: var(--type-ph-body); font-weight: 900; text-align: center;
@@ -109,6 +111,7 @@
 
 /* LEADERBOARD + RESULTS */
 .tq-standing, .tq-result { align-items: center; text-align: center; gap: var(--space-3); }
+.tq-standing { justify-content: center; }
 .tq-standing__hero, .tq-result__hero { display: flex; align-items: center; gap: var(--space-4); margin-block: var(--space-3); }
 .tq-standing__rank, .tq-result__place { font: 900 5rem/1 var(--font-sans); color: var(--w-glow, #FFD84D); text-shadow: 0 0 30px rgb(255 216 77 / 0.35); }
 .tq-standing__rank span, .tq-result__place span { font-size: 0.5em; vertical-align: 0.6em; opacity: 0.8; }

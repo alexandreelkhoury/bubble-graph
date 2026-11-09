@@ -299,7 +299,8 @@ internal fun LikelyCardFace(view: LikelyView, clock: LikelyClock, stage: StageSc
     val card = view.card ?: return
     val type = JamaaTheme.type
     val named = view.player(card.namedPlayerId)
-    val prompt = remember(card.prompt, named?.name, named?.color) {
+    val question = if (view.contentLocale == "ar") "؟" else "?"
+    val prompt = remember(card.prompt, named?.name, named?.color, question) {
         val span = LikelyStage.namedSpan(card.prompt, named?.name)
         buildAnnotatedString {
             if (span == null || named == null) {
@@ -309,7 +310,7 @@ internal fun LikelyCardFace(view: LikelyView, clock: LikelyClock, stage: StageSc
                 withStyle(SpanStyle(color = PlayerSwatch.byId(named.color).color, fontWeight = FontWeight.Black)) { append(card.prompt.substring(span)) }
                 append(card.prompt.substring(span.last + 1))
             }
-            append("?")
+            append(question)
         }
     }
     val shape = RoundedCornerShape(stage.dp(26f))
@@ -318,7 +319,7 @@ internal fun LikelyCardFace(view: LikelyView, clock: LikelyClock, stage: StageSc
             .graphicsLayer {
                 val deal = clock.p("deal")
                 val flip = clock.p("flip")
-                val up = if (view.phase == LikelyPhase.REVEAL) clock.p("cardUp") else 0f
+                val up = if (view.phase == LikelyPhase.REVEAL) clock.p("dim") else 0f
                 // Dealt from the golden deck at the top-end corner, flipping on Y; then (REVEAL) shrunk to the top.
                 val fromX = (if (stage.rtl) -1f else 1f) * size.width * 0.9f * (1f - deal)
                 translationX = fromX

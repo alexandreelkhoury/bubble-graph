@@ -113,12 +113,13 @@
           "pace": "normal"
         },
         "canStart": false,
-        "startBlocker": "GAME_DISABLED",
+        "startBlocker": "NO_CONTENT_AVAILABLE",
         "availablePacks": [],
         "lockedPacks": [],
         "extras": {
           "gameId": "bluff",
-          "available": 0
+          "available": 0,
+          "bigGroup": false
         }
       },
       "cup": {

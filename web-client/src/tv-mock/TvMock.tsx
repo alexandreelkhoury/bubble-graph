@@ -3,11 +3,11 @@
 // HUB-01 splash → HUB-02 hub → (portal) HUB-03 setup → (entrance) the game → HUB-05 results bar → hub/setup/replay.
 import "./tv.css";
 import "./tvPlatform.css";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import type { GameId } from "@jamaa/shared/games/ids";
 import type { RoomPhase } from "@jamaa/shared/room";
 import type { TvRoomView } from "@jamaa/shared/protocol/v2";
-import { dirOf, locale, t } from "../i18n/t";
+import { dirOf, locale, registerRootExtras, t } from "../i18n/t";
 import { toasts } from "../state/store";
 import {
   inRunningGame, openedGames, tvAct, tvAdvanced, tvCreateRoom, tvCupOpen, tvExit, tvHubSettings, tvIntro, tvLangOpen, tvPackPicker,
@@ -35,7 +35,14 @@ import { registerIcons } from "../components/Icon";
 import { TV_ICONS } from "../components/iconsTv";
 
 registerIcons(TV_ICONS);
+// The TV part of the root catalogs (the Store, the Pass, TV-only strings; lib/i18nSplit.ts): phones never load it.
+void registerRootExtras({
+  en: () => import("virtual:jamaa-i18n-tv/en"), fr: () => import("virtual:jamaa-i18n-tv/fr"),
+  ar: () => import("virtual:jamaa-i18n-tv/ar"), es: () => import("virtual:jamaa-i18n-tv/es"),
+}).catch(() => undefined);
 
+/** How long an optimistic portal waits for the room's SETUP before it rolls back into the poster. */
+export const PORTAL_ANSWER_MS = 4000;
 const W = 960;
 const H = 540;
 
@@ -70,7 +77,8 @@ function useFullscreenKey(): void {
 }
 
 type Tr =
-  | { kind: "portal"; id: GameId; from: Box | null; first: boolean; handed: boolean; hub: TvRoomView }
+  /** `ready`: the room is in SETUP for this game (false while the portal runs optimistically from the TV's own OK). */
+  | { kind: "portal"; id: GameId; from: Box | null; first: boolean; handed: boolean; ready: boolean; hub: TvRoomView }
   | { kind: "back"; id: GameId }
   | { kind: "entrance"; id: GameId };
 
@@ -99,9 +107,13 @@ export function TvMock() {
       const kind = transitionFor(lastPhase.current, phase);
       lastPhase.current = phase;
       const id = view.room.setupGameId ?? view.game?.gameId ?? view.room.focusedGameId;
-      if (kind === "portal" && lastHub.current) {
+      const cur0 = tr.current;
+      if (kind === "portal" && cur0?.kind === "portal" && cur0.id === id && !cur0.ready) {
+        // The optimistic portal started on OK is already running: SETUP only allows its hand-off.
+        tr.current = { ...cur0, ready: true };
+      } else if (kind === "portal" && lastHub.current) {
         const from = portalFrom.current?.id === id ? portalFrom.current.box : null;
-        tr.current = { kind: "portal", id, from, first: !openedGames.has(id), handed: false, hub: lastHub.current };
+        tr.current = { kind: "portal", id, from, first: !openedGames.has(id), handed: false, ready: true, hub: lastHub.current };
         openedGames.add(id);
         soundCue("portal_open");
       } else if (kind === "back") {
@@ -141,7 +153,8 @@ export function TvMock() {
         if ((e.target as HTMLElement | null)?.tagName === "INPUT") return;
         e.preventDefault();
         if (tvRules.value) { closeRules(); return; }
-        if (tvDialog.value || tvPicker.value || tvShop.value || tvIntro.value) return;
+        // The interface-language list renders above the rules sheet and Back closes it first: INFO waits until it is closed.
+        if (tvDialog.value || tvPicker.value || tvShop.value || tvIntro.value || tvLangOpen.value) return;
         const room = v.room;
         if (room.phase === "PLAYING" && v.game) { tvPaused.value = false; openRules({ id: v.game.gameId, hub: false, fromPause: false }); }
         else if (room.phase === "SETUP" && room.setupGameId) openRules({ id: room.setupGameId, hub: false, fromPause: false });
@@ -171,7 +184,8 @@ export function TvMock() {
     const v = tvView.value;
     if (!v || tvUi.value.kind !== "room") return;
     const room = v.room;
-    if (room.phase === "PLAYING") { if (!v.game?.over) openPause(); return; }
+    // On the results the menu still opens (Resume, Rules, Sound: native PauseMenuModel), without game items or Quit.
+    if (room.phase === "PLAYING") { openPause(); return; }
     if (room.phase === "SETUP") { tvAct({ type: "CLOSE_GAME" }); return; }
     openDialog({
       title: t("hub.closeConfirm.title"), body: t("hub.closeConfirm.body"), confirm: t("hub.closeConfirm.close"),
@@ -184,14 +198,31 @@ export function TvMock() {
   const room = ui.kind === "room" && view !== null;
   const cur = tr.current;
   const done = (): void => { tr.current = null; force((x) => x + 1); };
+  /**
+   * §3.10 A, optimistic: OK on a poster starts the portal at once (press dip, others out, the arch grows from the
+   * poster); the hand-off waits for the room's SETUP. If the server does not answer (or refuses), the world shrinks
+   * back into the poster.
+   */
+  const startPortal = (id: GameId, from: Box | null, hub: TvRoomView): void => {
+    portalFrom.current = { id, box: from };
+    if (tr.current) return;
+    tr.current = { kind: "portal", id, from, first: !openedGames.has(id), handed: false, ready: false, hub };
+    openedGames.add(id);
+    soundCue("portal_open");
+    force((x) => x + 1);
+    setTimeout(() => {
+      const c = tr.current;
+      if (c?.kind === "portal" && c.id === id && !c.ready) { tr.current = { kind: "back", id }; soundCue("portal_close"); force((x) => x + 1); }
+    }, PORTAL_ANSWER_MS);
+  };
   let content;
   if (ui.kind === "creating" || ui.kind === "failed") content = <Splash failed={ui.kind === "failed" ? ui.error : null} onRetry={() => void tvCreateRoom()} />;
   else if (ui.kind === "fatal") content = <Fatal messageKey={ui.messageKey} />;
   else if (ui.kind === "closed") content = <Closed />;
   else if (!view) content = <Splash failed={null} onRetry={() => void tvCreateRoom()} />;
-  else if (cur?.kind === "portal" && !cur.handed) content = <TvHub view={cur.hub} portalOut onOpen={() => undefined} />;
+  else if (cur?.kind === "portal" && !cur.handed) content = <TvHub view={view.room.phase === "HUB" ? view : cur.hub} portalOut onOpen={() => undefined} />;
   else if (view.room.phase === "HUB") {
-    content = <TvHub view={view} portalOut={cur?.kind === "back"} onOpen={(id, r) => { portalFrom.current = { id, box: canvasRect(r, canvas.current, box.scale) }; }} />;
+    content = <TvHub view={view} portalOut={cur?.kind === "back"} onOpen={(id, r) => startPortal(id, canvasRect(r, canvas.current, box.scale), view)} />;
   } else if (view.room.phase === "SETUP") content = <TvSetup view={view} entering={cur?.kind === "portal" ? (cur.first ? 1 : 0.64) : null} />;
   else content = <TvGameHost view={view} />;
 
@@ -200,6 +231,19 @@ export function TvMock() {
     || tvRules.value !== null || tvHubSettings.value || tvCupOpen.value || tvPackPicker.value || tvAdvanced.value || tvIntro.value !== null);
   const toast = toasts.value.at(-1);
   const rules = tvRules.value;
+  // §3.10 E rule 2: an overlay becoming interactive ignores OK and the D-pad for INPUT_GUARD_MS (a double OK on "JAMAA
+  // Pass" must not buy, Back → Right → OK must not close the room). One place for every overlay: the topmost one. The
+  // rules sheet is exempt (local, read-only, as on native).
+  const top = !room ? null
+    : tvDialog.value ? "dialog" : tvPicker.value ? "picker" : tvShop.value ? "shop" : tvLangOpen.value ? "lang" : tvRules.value ? null
+    : tvPackPicker.value ? "packs" : tvAdvanced.value ? "advanced" : tvCupOpen.value ? "cup" : tvHubSettings.value ? "settings"
+    : tvPaused.value ? "pause" : null;
+  const topKey = top === "dialog" ? `dialog:${tvDialog.value?.title}` : top === "picker" ? `picker:${tvPicker.value?.title}` : top;
+  const lastTop = useRef<string | null>(null);
+  useLayoutEffect(() => {
+    if (topKey !== null && topKey !== lastTop.current) armGuard();
+    lastTop.current = topKey;
+  }, [topKey]);
   const setup = view?.room.setup ?? null;
   return (
     <div class={`tv${calm.value ? " is-calm" : ""}`} lang={l} dir={dirOf(l)}>
@@ -209,7 +253,7 @@ export function TvMock() {
             setup sheets render inside the screen and trap focus as .tvoverlay themselves). */}
         <div class={`tv__stage${cur ? " is-transition" : ""}`} key={screenKey} inert={overlayOpen && !tvIntro.value && !tvPackPicker.value && !tvAdvanced.value}>{content}</div>
         {room && cur?.kind === "portal" && (
-          <Portal key={`p${cur.id}`} id={cur.id} from={cur.from} first={cur.first} hubRoot={hubRoot}
+          <Portal key={`p${cur.id}`} id={cur.id} from={cur.from} first={cur.first} ready={cur.ready} hubRoot={hubRoot}
             onHandoff={() => { if (tr.current?.kind === "portal") { tr.current = { ...tr.current, handed: true }; force((x) => x + 1); } }}
             onDone={done} />
         )}

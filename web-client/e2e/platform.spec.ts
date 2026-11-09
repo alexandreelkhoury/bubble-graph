@@ -49,22 +49,78 @@ async function openTv(browser: Browser, locale: string): Promise<{ tv: Page; cod
   return { tv, code, frames };
 }
 
-async function joinPhone(browser: Browser, code: string, name: string, locale: string, expectSel = ".screen--hub"): Promise<{ page: Page; words: Set<string> }> {
+/** Every WS view frame one phone received, plus its own secrets per game instance (for the secrecy check). */
+interface Spy { name: string; frames: string[]; words: Set<string>; mine: Map<number, { word: string | null; role: string | null }> }
+type FrameView = { me?: { id?: string } | null; game?: { n?: number; public?: {
+  result?: unknown; players?: { id: string; alive?: boolean; left?: boolean; revealedRole?: unknown }[];
+  eliminated?: { playerId: string } | null; history?: { eliminatedId: string | null; role: unknown }[];
+}; me?: { id?: string; word?: { text?: string } | null; role?: string | null } | null } | null };
+
+async function joinPhone(browser: Browser, code: string, name: string, locale: string, expectSel = ".screen--hub"): Promise<{ page: Page; words: Set<string>; spy: Spy }> {
   const ctx = await context(browser, "phone", locale);
   const page = await ctx.newPage();
-  const words = new Set<string>();
+  const spy: Spy = { name, frames: [], words: new Set(), mine: new Map() };
   page.on("websocket", (ws) => ws.on("framereceived", (f) => {
-    if (typeof f.payload !== "string" || !f.payload.includes('"word"')) return;
+    if (typeof f.payload !== "string") return;
+    spy.frames.push(f.payload);
     try {
-      const w = JSON.parse(f.payload)?.view?.game?.me?.word?.text;
-      if (typeof w === "string") words.add(w);
+      const g = (JSON.parse(f.payload)?.view as FrameView | undefined)?.game;
+      if (!g?.me || typeof g.n !== "number") return;
+      const w = g.me.word?.text ?? null;
+      if (typeof w === "string") spy.words.add(w);
+      const had = spy.mine.get(g.n);
+      spy.mine.set(g.n, { word: w ?? had?.word ?? null, role: g.me.role ?? had?.role ?? null });
     } catch { /* ignore */ }
   }));
   await page.goto(`/${code}`);
   await page.locator("#name").fill(name);
   await page.locator(".actionbar .btn--primary").click();
   await expect(page.locator(expectSel).first()).toBeVisible();
-  return { page, words };
+  return { page, words: spy.words, spy };
+}
+
+/** Stringifies a game view without its `me` (the only place a receiver's own secrets may sit). */
+function publicPart(g: NonNullable<FrameView["game"]>): string {
+  const { me: _me, ...rest } = g;
+  return JSON.stringify(rest);
+}
+
+/**
+ * JAMAA-PLATFORM §6 acceptance 5: no secret (word, role or vote) reaches the TV or another phone. Per frame before the
+ * instance's result: `game.me` is the receiver's own (TV: none); nothing outside `me` carries `isBlank` or `myVote`;
+ * no living player's role is public (players, eliminated, history); and no other player's word (unless it is the
+ * receiver's own word in that instance) appears anywhere in the frame.
+ */
+function assertNoSecretLeaks(tvFrames: readonly string[], spies: readonly Spy[]): void {
+  const wordsIn = new Map<number, Map<string, string>>(); // n → word → whose (first)
+  for (const s of spies) for (const [n, m] of s.mine) if (m.word) { const t = wordsIn.get(n) ?? new Map(); if (!t.has(m.word)) t.set(m.word, s.name); wordsIn.set(n, t); }
+  expect([...wordsIn.values()].some((m) => m.size > 0), "the phones received words").toBe(true);
+  const check = (who: string, frames: readonly string[], own: Spy | null): void => {
+    for (const f of frames) {
+      let v: FrameView | undefined;
+      try { v = JSON.parse(f)?.view; } catch { continue; }
+      const g = v?.game;
+      if (!g || typeof g.n !== "number") continue;
+      if (own === null) expect(g.me ?? null, `${who}: the TV never gets a game me`).toBeNull();
+      else if (g.me && v?.me?.id) expect(g.me.id, `${who}: game.me is its own`).toBe(v.me.id);
+      if (g.public?.result) continue; // RESULTS reveals words and roles to everyone
+      const pub = publicPart(g);
+      for (const k of ['"isBlank":', '"myVote":']) expect(pub.includes(k), `${who}: ${k} outside me (n=${g.n})`).toBe(false);
+      // Roles: only an eliminated (or departed) player's role is public before the result.
+      const alive = new Set((g.public?.players ?? []).filter((p) => p.alive && !p.left).map((p) => p.id));
+      for (const p of g.public?.players ?? []) if (p.alive) expect(p.revealedRole ?? null, `${who}: alive player's role revealed`).toBeNull();
+      const el = g.public?.eliminated;
+      if (el) expect(alive.has(el.playerId), `${who}: role of a living player in eliminated`).toBe(false);
+      for (const h of g.public?.history ?? []) if (h.role != null && h.eliminatedId) expect(alive.has(h.eliminatedId), `${who}: role of a living player in history`).toBe(false);
+      const mineWord = own?.mine.get(g.n)?.word ?? null;
+      for (const [w, whose] of wordsIn.get(g.n) ?? []) {
+        if (w === mineWord) continue;
+        expect(f.includes(`"${w}"`), `${who} frame (n=${g.n}) leaks ${whose}'s word`).toBe(false);
+      }
+    }
+  };
+  check("TV", tvFrames, null);
+  for (const s of spies) check(s.name, s.frames, s);
 }
 
 const press = async (tv: Page, key: string, n = 1): Promise<void> => {
@@ -84,14 +140,57 @@ async function settle(tv: Page): Promise<void> {
   await expect(tv.locator(".tvportal")).toHaveCount(0);
   await tv.waitForTimeout(500);
 }
+/**
+ * Trusted keys straight through CDP at exact gaps (Playwright's traced keyboard.press costs ~0.4 s per call, which
+ * would spread presses past the 400 ms guard). Each entry: the key and the delay before it.
+ */
+const CDP_KEYS: Record<string, { key: string; code: string; windowsVirtualKeyCode: number; text?: string }> = {
+  Enter: { key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, text: "\r" },
+  Escape: { key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 },
+  ArrowRight: { key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39 },
+  ArrowLeft: { key: "ArrowLeft", code: "ArrowLeft", windowsVirtualKeyCode: 37 },
+};
+async function burst(tv: Page, seq: readonly [string, number][]): Promise<number[]> {
+  const cdp = await tv.context().newCDPSession(tv);
+  const before = await tv.evaluate(() => (window as unknown as { __keys: number[] }).__keys.length);
+  const sends: Promise<unknown>[] = [];
+  for (const [k, delay] of seq) {
+    if (delay > 0) await new Promise((r) => setTimeout(r, delay));
+    const d = CDP_KEYS[k]!;
+    const base = { key: d.key, code: d.code, windowsVirtualKeyCode: d.windowsVirtualKeyCode, nativeVirtualKeyCode: d.windowsVirtualKeyCode };
+    sends.push(cdp.send("Input.dispatchKeyEvent", { type: "keyDown", ...(d.text ? { text: d.text, unmodifiedText: d.text } : {}), ...base }));
+    sends.push(cdp.send("Input.dispatchKeyEvent", { type: "keyUp", ...base }));
+  }
+  await Promise.all(sends);
+  await cdp.detach();
+  return tv.evaluate((n) => (window as unknown as { __keys: number[] }).__keys.slice(n), before);
+}
+
 async function visible(p: Page, sel: string): Promise<boolean> {
   return p.locator(sel).first().isVisible().catch(() => false);
 }
 
 /** Opens Mish Ana! from the hub with OK, walks the first-time intro with OK, and lands on HUB-03. */
 async function openGameWithRemote(tv: Page, introExpected: boolean): Promise<void> {
+  // §3.10 A perf: the portal starts on OK (optimistic) and the arch step (120–700 ms on a first open) runs without a
+  // stall: record every animation frame from the press on.
+  await tv.evaluate(() => {
+    const w = window as unknown as { __raf: number[] };
+    w.__raf = [];
+    const loop = (t: number): void => { w.__raf.push(t); if (w.__raf.length < 400) requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  });
   await press(tv, "Enter");
   await expect(tv.locator(".tvsetup")).toBeVisible();
+  if (introExpected) {
+    const { keys, raf } = await tv.evaluate(() => {
+      const w = window as unknown as { __raf: number[]; __keys: number[] };
+      return { keys: w.__keys, raf: w.__raf };
+    });
+    const ok = keys.at(-1)!;
+    const arch = raf.filter((t) => t >= ok + 120 && t <= ok + 700).length;
+    expect(arch, "animation frames during the portal's arch step").toBeGreaterThanOrEqual(20);
+  }
   if (introExpected) {
     await expect(tv.locator("[data-intro]")).toBeVisible();
     await shot(tv, "tv-intro");
@@ -108,7 +207,7 @@ async function playToResults(tv: Page, phones: Page[]): Promise<void> {
   // Reveal: hold the card, then "Got it".
   for (const p of phones) {
     if (!(await visible(p, ".wordcard"))) continue;
-    const box = await p.locator(".wordcard").boundingBox();
+    const box = await p.locator(".wordcard").boundingBox({ timeout: 1000 }).catch(() => null); // it may leave between the two calls
     if (box) { await p.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await p.mouse.down(); await p.waitForTimeout(250); await p.mouse.up(); }
     if (await visible(p, ".actionbar .btn--primary")) await p.locator(".actionbar .btn--primary").click().catch(() => undefined);
   }
@@ -117,7 +216,7 @@ async function playToResults(tv: Page, phones: Page[]): Promise<void> {
     if (await visible(tv, "[data-results-bar]")) return;
     for (const p of phones) {
       if (await visible(p, ".wordcard")) {
-        const box = await p.locator(".wordcard").boundingBox();
+        const box = await p.locator(".wordcard").boundingBox({ timeout: 1000 }).catch(() => null); // it may leave between the two calls
         if (box) { await p.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await p.mouse.down(); await p.waitForTimeout(200); await p.mouse.up(); }
         await p.locator(".actionbar .btn--primary").click().catch(() => undefined);
         continue;
@@ -173,6 +272,7 @@ test("remote-only platform tour (EN): hub, intro, full game, cup, replay, benche
   await expect(tv.locator(".tvdialog")).toBeVisible();
   await expect(tv.locator(".tvdialog [data-default-focus]")).toBeFocused();
   await expect(tv.locator(".tvdialog [data-default-focus]")).toContainText("Stay");
+  await tv.waitForTimeout(450); // §3.10 E rule 2: the opening dialog ignores OK for 400 ms
   await press(tv, "Enter");
   await expect(tv.locator(".tvdialog")).toHaveCount(0);
 
@@ -210,17 +310,28 @@ test("remote-only platform tour (EN): hub, intro, full game, cup, replay, benche
   for (const p of phones) await expect(p.locator(".cup")).toBeVisible();
   await shot(tv, "en-tv-results");
   await shot(phones[0]!, "en-phone-results-vip");
-  // No secret: no word any phone received ever reached the TV (whole-leaf, inside a JSON string).
-  const words = new Set(joined.flatMap((j) => [...j.words]));
-  expect(words.size).toBeGreaterThan(0);
-  for (const f of frames) {
-    let v: { game?: { public?: { result?: unknown }; me?: unknown } | null } | undefined;
-    try { v = JSON.parse(f)?.view; } catch { continue; }
-    if (!v?.game) continue;
-    expect(v.game.me ?? null).toBeNull(); // the TV never gets a `me`
-    if (v.game.public?.result) continue; // RESULTS reveals both words to everyone
-    for (const w of words) expect(f.includes(`"${w}"`), `TV frame leaks ${w}`).toBe(false);
-  }
+  // No secret (acceptance 5): words, roles and votes stay out of the TV's and the other phones' frames.
+  assertNoSecretLeaks(frames, [...joined, late].map((j) => j.spy));
+
+  // Rules access on the results (§1): the ⓘ is the row's end item; OK opens the rules, Back returns to the results.
+  await dpadTo(tv, "[data-results-info]", "ArrowRight", 6);
+  await tv.waitForTimeout(450);
+  await press(tv, "Enter");
+  await expect(tv.locator(".tvrules[data-rules=mishana]")).toBeVisible();
+  await press(tv, "Escape");
+  await expect(tv.locator(".tvrules")).toHaveCount(0);
+  await expect(tv.locator("[data-results-bar]")).toBeVisible();
+  // Back on the results opens the menu with Resume, Rules and Sound only (no game items, no Quit; native PauseMenuModel).
+  await press(tv, "Escape");
+  await expect(tv.locator(".tvdialog--menu")).toBeVisible();
+  await expect(tv.locator(".tvdialog--menu [data-pause-rules]")).toBeVisible();
+  await expect(tv.locator(".tvdialog--menu [data-pause-quit]")).toHaveCount(0);
+  await expect(tv.locator(".tvdialog--menu [data-pause-item]")).toHaveCount(0);
+  await tv.waitForTimeout(450);
+  await press(tv, "Escape");
+  await expect(tv.locator(".tvdialog--menu")).toHaveCount(0);
+  await dpadTo(tv, "[data-replay]", "ArrowLeft", 6);
+  await tv.waitForTimeout(450);
 
   // Play again → a new instance; the benched phone is dealt in.
   await press(tv, "Enter");
@@ -255,6 +366,7 @@ test("remote-only platform tour (EN): hub, intro, full game, cup, replay, benche
   await press(tv, "Enter");
   await expect(tv.locator(".tvdialog:not(.tvdialog--menu) [data-default-focus]")).toBeFocused();
   await expect(tv.locator(".tvdialog:not(.tvdialog--menu) [data-default-focus]")).toContainText("Keep playing");
+  await tv.waitForTimeout(450);
   await press(tv, "ArrowRight");
   await press(tv, "Enter");
   await expect(tv.locator(".tvsetup")).toBeVisible();
@@ -263,6 +375,8 @@ test("remote-only platform tour (EN): hub, intro, full game, cup, replay, benche
   await press(tv, "Escape");
   await expect(tv.locator(".tvhub")).toBeVisible();
   for (const p of phones) await expect(p.locator(".screen--hub")).toBeVisible();
+  // Again over both instances (the replay dealt the benched phone in).
+  assertNoSecretLeaks(frames, [...joined, late].map((j) => j.spy));
   for (const p of [...phones, late.page, tv]) await p.context().close();
 });
 
@@ -336,6 +450,7 @@ test("JAMAA Pass with fake billing: the store opens from the hub on the Yearly p
   await expect(tv.locator(".tvplan__save")).toContainText("%");
   await expect(tv.locator(".tvplan__trial").first()).toBeVisible();
   await shot(tv, "en-tv-store");
+  await tv.waitForTimeout(450);
   await press(tv, "ArrowRight");
   await expect(tv.locator('[data-focus="plan:monthly"]')).toBeFocused();
   await press(tv, "Enter");
@@ -365,6 +480,7 @@ test("JAMAA Pass with fake billing: the store opens from the hub on the Yearly p
   await press(tv, "Escape");
   await dpadTo(tv, "[data-pause-quit]", "ArrowDown", 10);
   await press(tv, "Enter");
+  await tv.waitForTimeout(450);
   await press(tv, "ArrowRight");
   await press(tv, "Enter");
   await expect(tv.locator(".tvsetup")).toBeVisible();
@@ -392,10 +508,74 @@ test("a locked pack in setup opens the Pass store on that pack; buying it adds i
   await expect(tv.locator(".tvpass")).toBeVisible();
   const focusedPack = await tv.evaluate(() => (document.activeElement as HTMLElement | null)?.dataset.pack ?? null);
   expect(focusedPack).toBe(packId);
+  await tv.waitForTimeout(450);
   await press(tv, "Enter");
   await expect(tv.locator(`[data-pack="${packId}"].is-owned`)).toBeVisible({ timeout: 20_000 });
   await press(tv, "Escape");
   // The pack is now playable (no longer a locked row) for this room.
   await expect(tv.locator(`[data-locked-pack="${packId}"]`)).toHaveCount(0, { timeout: 15_000 });
   for (const p of [vip, tv]) await p.context().close();
+});
+
+test("§3.10 E rule 2: an opening overlay ignores OK and the D-pad for 400 ms (Pass, Close JAMAA, kick)", async ({ browser }) => {
+  const { tv, code } = await openTv(browser, "en");
+  const phones = [];
+  for (const n of ["G1", "G2", "G3"]) phones.push((await joinPhone(browser, code, n, "en")).page);
+  await expect(tv.locator(".tvmember")).toHaveCount(3);
+  await tv.waitForTimeout(500);
+
+  // Hub Back, then Right and OK inside the guard: the dialog stays on "Stay" and the room stays open.
+  await expect(tv.locator(".tvposter.is-focused")).toBeFocused();
+  let keys = await burst(tv, [["Escape", 0], ["ArrowRight", 100], ["Enter", 100]]);
+  expect(keys.at(-1)! - keys[0]!, "the keys must land inside the guard for this check to mean anything").toBeLessThan(400);
+  await tv.waitForTimeout(800);
+  await expect(tv.locator(".tvdialog")).toBeVisible();
+  await expect(tv.locator(".tvdialog [data-default-focus]")).toBeFocused();
+  await expect(tv.locator(".tvhub")).toBeVisible();
+  await press(tv, "Escape");
+  await expect(tv.locator(".tvdialog")).toHaveCount(0);
+
+  // Kick confirm: OK on a member, then Right and OK inside the guard → nobody is kicked.
+  await tv.waitForTimeout(450);
+  await press(tv, "ArrowDown");
+  await expect(tv.locator(".tvmember__btn").first()).toBeFocused();
+  await tv.waitForTimeout(450);
+  keys = await burst(tv, [["Enter", 0], ["ArrowRight", 100], ["Enter", 100]]);
+  expect(keys.at(-1)! - keys[0]!).toBeLessThan(400);
+  await tv.waitForTimeout(1000);
+  await expect(tv.locator(".tvmember")).toHaveCount(3);
+  await expect(tv.locator(".tvdialog")).toBeVisible();
+  await press(tv, "Escape");
+  await expect(tv.locator(".tvdialog")).toHaveCount(0);
+
+  // JAMAA Pass: OK, then OK again 250 ms later, must not buy (billing on only).
+  if ((await tv.locator("[data-pass]").count()) > 0) {
+    await tv.waitForTimeout(450);
+    await dpadTo(tv, "[data-hub-info]", "ArrowUp", 3); // member → poster → ⓘ
+    await dpadTo(tv, "[data-pass]", "ArrowRight", 4);
+    await tv.waitForTimeout(450);
+    keys = await burst(tv, [["Enter", 0], ["Enter", 250]]);
+    expect(keys.at(-1)! - keys[0]!).toBeLessThan(400);
+    await expect(tv.locator(".tvpass")).toBeVisible();
+    await tv.waitForTimeout(2000);
+    await expect(tv.locator(".tvshop__active")).toHaveCount(0);
+    await press(tv, "Escape");
+  }
+  for (const p of [...phones, tv]) await p.context().close();
+});
+
+test("first-visit intro: OK on Got it, then OK 150 ms later does not reopen the intro", async ({ browser }) => {
+  const { tv, code } = await openTv(browser, "en");
+  const phones = [];
+  for (const n of ["I1", "I2", "I3"]) phones.push((await joinPhone(browser, code, n, "en")).page);
+  await press(tv, "Enter");
+  await expect(tv.locator("[data-intro]")).toBeVisible();
+  for (let i = 0; i < 6 && (await visible(tv, "[data-intro-next]")); i++) await press(tv, "Enter");
+  await expect(tv.locator("[data-intro-done]")).toBeFocused();
+  await tv.waitForTimeout(450);
+  await burst(tv, [["Enter", 0], ["Enter", 150]]);
+  await tv.waitForTimeout(800);
+  await expect(tv.locator("[data-intro]")).toHaveCount(0);
+  await expect(tv.locator("[data-howto]")).toBeFocused();
+  for (const p of [...phones, tv]) await p.context().close();
 });

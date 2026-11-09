@@ -71,7 +71,7 @@ export function BulbArch({ lit = true }: { lit?: boolean }) {
   const n = 19;
   return (
     <svg class={`lkarch${lit ? " is-lit" : ""}`} viewBox="0 0 680 220" width="680" height="220" aria-hidden="true">
-      <path d="M40 220 V150 A300 130 0 0 1 640 150 V220" class="lkarch__frame" />
+      <path d="M40 150 A300 130 0 0 1 640 150" class="lkarch__frame" />
       {Array.from({ length: n }, (_, i) => {
         const a = Math.PI * (i / (n - 1));
         const x = 340 - 300 * Math.cos(a), y = 150 - 130 * Math.sin(a);
@@ -81,12 +81,18 @@ export function BulbArch({ lit = true }: { lit?: boolean }) {
   );
 }
 
+/** The phrase's type size from its length (graphemes): long prompts step down so the card never reaches the jury. */
+export function cardSize(prompt: string): "s" | "m" | "l" {
+  const n = [...prompt].length;
+  return n <= 26 ? "s" : n <= 44 ? "m" : "l";
+}
+
 /** LK-TV-01 card: header + phrase (§12.3: dealt from the golden deck, flips in Y, lands with a bounce). */
 export function TvCard({ m, small = false, children }: { m: LikelyModel; small?: boolean; children?: ComponentChildren }) {
   const c = m.pub.card;
   if (!c) return null;
   return (
-    <div class={`lkcard${small ? " is-small" : ""}`} key={c.id} data-card={c.id}>
+    <div class={`lkcard lkcard--${cardSize(c.prompt)}${small ? " is-small" : ""}`} key={c.id} data-card={c.id}>
       <div class="lkcard__flip">
         <div class="lkcard__back" aria-hidden="true"><Rosette size={72} /></div>
         <div class="lkcard__face">

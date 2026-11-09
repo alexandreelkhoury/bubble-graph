@@ -9,7 +9,7 @@ import {
 } from "@jamaa/shared/characters";
 import type { Expression, Feature, ReactionKind } from "@jamaa/shared/characters";
 import { Avatar, COLOR_BY_ID } from "./PlayerChip";
-import { Icon } from "./Icon";
+import { BURST_INK, burstTracings } from "./bursts";
 
 const RINGED: ReadonlySet<ColorId> = new Set(["coral", "grape", "plum"]);
 const CREAM = "#FFF7EC";
@@ -88,15 +88,25 @@ export function Character({ color, size, expression = "idle", look = null, burst
   );
 }
 
-/** Shared burst id → its icon (the phone reaction bar draws the same six icons, no emoji). */
-const BURST_ICON: Record<string, string> = {
-  "burst.tears": "r-laugh", "burst.exclaim": "r-shock", "burst.sweat": "r-facepalm", "burst.heart": "r-happy", "burst.raincloud": "r-sad", "burst.confetti": "r-cheer",
-};
-
-/** The reaction's icon burst above the character (1.5 s, replays per reaction.n). */
+/**
+ * The reaction burst above the character (1.5 s, replays per reaction.n): a drawing, not the reaction button's icon
+ * (DESIGN-JAMAA §4.3), with 3 boil tracings cycled at 8 fps (CSS; Calm / reduced motion keep the first).
+ */
 function Burst({ kind }: { kind: ReactionKind }) {
-  const b = REACTION_BURST[kind];
-  return <span class={`ch__burst ch__burst--${b.slice(6)}`} aria-hidden="true"><Icon name={BURST_ICON[b] ?? "star"} size={24} /></span>;
+  const b = REACTION_BURST[kind].slice(6);
+  return (
+    <span class={`ch__burst ch__burst--${b}`} aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="100%" height="100%" focusable="false">
+        {burstTracings(b).map((parts, k) => (
+          <g key={k} class={`ch__boil ch__boil--${k}`}>
+            {parts.map((p, i) => p.stroke
+              ? <path key={i} d={p.d} fill="none" stroke={p.stroke} stroke-width={p.width ?? 1.2} stroke-linecap="round" />
+              : <path key={i} d={p.d} fill={p.fill} stroke={BURST_INK} stroke-width=".7" stroke-linejoin="round" />)}
+          </g>
+        ))}
+      </svg>
+    </span>
+  );
 }
 
 /** `member.reaction` → the reaction expression for 1.5 s after each new `n` (never on first render: no replay on mount). */

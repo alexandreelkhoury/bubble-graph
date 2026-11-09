@@ -113,13 +113,16 @@
           "pace": "normal"
         },
         "canStart": false,
-        "startBlocker": "GAME_DISABLED",
+        "startBlocker": "NO_CONTENT_AVAILABLE",
         "availablePacks": [],
         "lockedPacks": [],
         "extras": {
           "gameId": "trivia",
           "available": 0,
-          "quiz": null
+          "playCount": 0,
+          "rerun": false,
+          "quiz": null,
+          "quizzes": []
         }
       },
       "cup": {

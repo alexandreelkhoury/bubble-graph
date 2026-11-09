@@ -87,7 +87,8 @@
 .lk-award__art { position: relative; display: grid; place-items: center; }
 .lk-award.is-big .lk-award__art { flex-direction: column; }
 .lk-award__ch { margin-top: -18px; }
-.lk-award.is-big .lk-rosette { position: absolute; top: -6px; inset-inline-end: -64px; transform: rotate(12deg); }
+.lk-award.is-big .lk-rosette { position: absolute; top: -18px; inset-inline-end: -58px; width: 64px; height: 77px; transform: rotate(14deg); }
+.lk-award__text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .lk-award__title { margin: 0; font: var(--type-ph-display); font-size: 1.75rem; background: linear-gradient(180deg, #FFE7A0, #FFC94D 55%, #C98A1A); -webkit-background-clip: text; background-clip: text; color: transparent; text-wrap: balance; }
 .lk-award__line { margin: 0; color: var(--color-text-secondary); font: var(--type-ph-body); text-wrap: balance; }
 .lk-award--mystery .lk-award__title { background: none; color: #D9CCF5; }

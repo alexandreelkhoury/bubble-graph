@@ -62,11 +62,13 @@ export function TvReveal({ m }: { m: LikelyModel }) {
     const counts = [...el.querySelectorAll<HTMLElement>("[data-count]")];
     const scores = [...el.querySelectorAll<HTMLElement>("[data-score]")];
     const eff = variant(steps, { reduced: reduced() });
+    const has = new Set(steps.map((x) => x.id));
     platformCue("sfx.drumroll");
     const handle = run(eff, (p) => {
       const dim = p("dim");
       el.style.setProperty("--dim", String(dim));
-      for (const id of ["count", "spot", "stamp", "board", "hold", "box", "confetti"]) el.style.setProperty(`--${id}`, String(p(id)));
+      // Steps this card's list does not have stay at 0 (the reduced list has none, so p() reads 1 = the end state).
+      for (const id of ["count", "spot", "stamp", "board", "hold", "box", "confetti", "tick"]) el.style.setProperty(`--${id}`, has.has(id) ? String(p(id)) : "0");
       const scr = p("scramble");
       // Characters: run to their pick (two little hops), or scramble (chaos).
       cast.forEach((c, i) => {
@@ -151,7 +153,7 @@ export function TvReveal({ m }: { m: LikelyModel }) {
         <svg class="lkspot" viewBox="0 0 960 540" width="960" height="540" aria-hidden="true">
           <defs>
             <radialGradient id="lkspot-hole"><stop offset=".55" stop-color="#000" /><stop offset="1" stop-color="#fff" /></radialGradient>
-            <linearGradient id="lkspot-cone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B8FFF6" stop-opacity=".05" /><stop offset="1" stop-color="#B8FFF6" stop-opacity=".42" /></linearGradient>
+            <linearGradient id="lkspot-cone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B8FFF6" stop-opacity=".05" /><stop offset="1" stop-color="#B8FFF6" stop-opacity=".3" /></linearGradient>
             <mask id="lkspot-mask"><rect width="960" height="540" fill="#fff" />{top.map((s) => <ellipse key={s.id} cx={plan.arc[s.id]!.x} cy={plan.arc[s.id]!.y - CHAR / 2} rx="96" ry="120" fill="url(#lkspot-hole)" />)}</mask>
           </defs>
           <rect class="lkspot__dim" width="960" height="540" mask="url(#lkspot-mask)" />
@@ -183,8 +185,8 @@ export function TvReveal({ m }: { m: LikelyModel }) {
       {!r.chaos && top.map((s) => {
         const p = plan.arc[s.id]!;
         return (
-          <div key={s.id} class={`lkstamp${top.length > 1 ? " is-tie" : ""}`} style={{ left: `${p.x}px`, top: `${p.y - CHAR * 0.62}px` }}>
-            <Rosette size={top.length > 1 ? 44 : 60} />
+          <div key={s.id} class={`lkstamp${top.length > 1 ? " is-tie" : ""}`} style={{ left: `${p.x + CHAR * 0.42}px`, top: `${p.y - CHAR * 0.42}px` }}>
+            <Rosette size={top.length > 1 ? 36 : 44} />
           </div>
         );
       })}

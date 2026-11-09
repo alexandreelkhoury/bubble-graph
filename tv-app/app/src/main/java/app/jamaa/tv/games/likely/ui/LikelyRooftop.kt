@@ -85,8 +85,9 @@ internal fun RooftopBackdrop(dim: () -> Float, ambient: Int, modifier: Modifier 
             val y0 = h * (0.04f + 0.05f * row)
             val sag = h * 0.06f
             val wire = Path().apply {
+                // The quadratic swag (control at mid-width, 2 × sag down) as its exact cubic equivalent.
                 moveTo(0f, y0)
-                quadraticTo(w / 2f, y0 + sag * 2f, w, y0)
+                cubicTo(w / 3f, y0 + sag * 4f / 3f, w * 2f / 3f, y0 + sag * 4f / 3f, w, y0)
             }
             drawPath(wire, Color.Black.copy(alpha = 0.45f), style = Stroke(1.5f))
             val bulbs = 18

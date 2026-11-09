@@ -127,7 +127,7 @@ function Pad({ tr }: { tr: Trivia }) {
   return (
     <main class={`tq tq-pad tq-pad--${type}${locked ? " is-locked" : ""}`}>
       <div class="tq-pad__head">
-        <p class="tq-pad__q"><b class="tnum">{fmtNum(questionNumber(pub).index)} / {fmtNum(pub.total)}</b>{pub.isFinal && <b class="tq-x2">{tk("final.stamp")}</b>}
+        <p class="tq-pad__q"><b class="num">{fmtNum(questionNumber(pub).index)} / {fmtNum(pub.total)}</b>{pub.isFinal && <b class="tq-x2">{tk("final.stamp")}</b>}
           <span dir="auto">{pub.question ? excerpt(pub.question.text, 60) : ""}</span></p>
         {locked ? (
           <p class="tq-pad__locked" role="status">
@@ -224,7 +224,7 @@ function VerdictScreen({ tr, me, v }: { tr: Trivia; me: Player | null; v: Verdic
           <h1 class="h1" tabIndex={-1}>{tk("pause.voided")}</h1>
         </div>
       )}
-      {r.stumped && v.kind !== "voided" && <p class="tq-banner">{tk("reveal.stumped")}</p>}
+      {r.stumped && !r.tooSlow && v.kind !== "voided" && <p class="tq-banner">{tk("reveal.stumped")}</p>}
       {r.genius && <p class="tq-banner tq-banner--good">{tk("reveal.genius")}</p>}
       {rank !== null && v.kind !== "voided" && <p class="tq-rank tnum">{tk("reveal.yourRank", { rank: fmtNum(rank) })}</p>}
       {r.explain && <aside class="tq-explain"><b>{tk("reveal.didYouKnow")}</b><span dir="auto">{r.explain}</span></aside>}

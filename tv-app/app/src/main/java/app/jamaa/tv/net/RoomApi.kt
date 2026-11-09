@@ -5,6 +5,8 @@ import app.jamaa.tv.protocol.CreateRoomResponse
 import app.jamaa.tv.protocol.ProtocolJson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -17,6 +19,13 @@ import java.util.concurrent.TimeUnit
 /** `POST /api/rooms` failed. [errorCode] is the server's `{"error": CODE}` when present (SPEC §6.6). */
 class CreateRoomException(val httpStatus: Int?, val errorCode: String?, cause: Throwable? = null) :
     Exception("createRoom failed: status=$httpStatus error=$errorCode", cause)
+
+/** `GET /api/config` (JAMAA-PLATFORM §2.5): billing on/off and the games the server offers (null = unknown). */
+data class ClientConfig(val billing: Boolean, val games: List<String>?) {
+    companion object {
+        val OFF = ClientConfig(billing = false, games = null)
+    }
+}
 
 object RoomApi {
     private val JSON = "application/json".toMediaType()
@@ -61,16 +70,25 @@ object RoomApi {
      * `GET /api/config` → `{"billing": Boolean}` (server BILLING_ENABLED). Only an explicit `true` turns premium/billing
      * on; any failure (network, an older server without the route, a bad body) keeps it off. Never throws.
      */
-    suspend fun billingEnabled(baseUrl: String, client: OkHttpClient = defaultClient): Boolean = withContext(Dispatchers.IO) {
+    suspend fun billingEnabled(baseUrl: String, client: OkHttpClient = defaultClient): Boolean = clientConfig(baseUrl, client).billing
+
+    /**
+     * JAMAA-PLATFORM §2.5 `GET /api/config` → `{billing, games}`. [ClientConfig.billing] as [billingEnabled];
+     * [ClientConfig.games] is the server's offered game ids, or null when absent or unreadable (the TV then relies on
+     * its own list: it fails closed). Never throws.
+     */
+    suspend fun clientConfig(baseUrl: String, client: OkHttpClient = defaultClient): ClientConfig = withContext(Dispatchers.IO) {
         try {
             val request = Request.Builder().url(ServerUrls.apiConfigUrl(baseUrl)).get().build()
             client.newCall(request).execute().use { response ->
-                if (response.code != 200) return@use false
-                val v = ProtocolJson.decoder.parseToJsonElement(response.body.string()).jsonObject["billing"]?.jsonPrimitive
-                v != null && !v.isString && v.booleanOrNull == true
+                if (response.code != 200) return@use ClientConfig.OFF
+                val o = ProtocolJson.decoder.parseToJsonElement(response.body.string()).jsonObject
+                val v = o["billing"]?.jsonPrimitive
+                val games = (o["games"] as? JsonArray)?.mapNotNull { (it as? JsonPrimitive)?.takeIf { p -> p.isString }?.content }
+                ClientConfig(billing = v != null && !v.isString && v.booleanOrNull == true, games = games)
             }
         } catch (e: Exception) {
-            false
+            ClientConfig.OFF
         }
     }
 

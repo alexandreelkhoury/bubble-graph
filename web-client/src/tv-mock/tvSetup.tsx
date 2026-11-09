@@ -3,7 +3,7 @@
 // Players pane (characters on a stage, ghosts up to minPlayers, QR) · Settings pane (Content, ≤ 4 rows, Advanced, Start).
 // First visit on this TV: the full-screen intro (cards auto-advance after 6 s, any D-pad pauses, OK next, Back skips,
 // the last card waits on "Got it"). Initial focus: Start only if the intro was seen and canStart.
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import type { GameId } from "@jamaa/shared/games/ids";
 import { GAME_META } from "@jamaa/shared/games/meta";
 import type { RoomSetup, TvRoomView } from "@jamaa/shared/protocol/v2";
@@ -18,11 +18,12 @@ import { Dots, HowToCard, howToKeys } from "../components/HowTo";
 import { TitleLockup, WORLD_OF } from "../components/Poster";
 import { Qr } from "./Qr";
 import { RoomCode } from "./tvParts";
-import { tvAct, tvAdvanced, tvIntro, tvPackPicker } from "./tvStore";
-import { openPicker, openRules, rememberSideOpener } from "./tvDialogs";
+import { tvAct, tvAdvanced, tvIntro, tvPackPicker, tvScale } from "./tvStore";
+import { reduced } from "../lib/motion";
+import { closeSide, openPicker, openRules, rememberSideOpener } from "./tvDialogs";
 import { openShop } from "./shopState";
 import { useInitialFocus } from "./dpad";
-import { choreoActive, markTvIntroSeen, tvIntroSeen } from "./tvPlatform";
+import { armGuard, choreoActive, markTvIntroSeen, tvIntroSeen } from "./tvPlatform";
 import { readingDir } from "./tvHub";
 import { locale } from "../i18n/t";
 
@@ -34,7 +35,23 @@ function send(setup: RoomSetup, patch: Patch | null): void {
 }
 
 /** HUB-03 full-screen intro (DESIGN-JAMAA §2.5, §7.4). */
-export function TvIntro({ view, id, onClose }: { view: TvRoomView; id: GameId; onClose(): void }) {
+/** DESIGN-JAMAA §2.5: the intro opens as a 400 ms FLIP from the how-to pane (ease.decel); a first visit just appears. */
+export const INTRO_FLIP_MS = 400;
+export function TvIntro({ view, id, from, onClose }: { view: TvRoomView; id: GameId; from?: DOMRect | null; onClose(): void }) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = rootRef.current;
+    if (!el || !from || reduced() || typeof el.animate !== "function") return;
+    const to = el.getBoundingClientRect();
+    if (to.width === 0 || to.height === 0) return;
+    const k = tvScale.value || 1;
+    const dx = (from.left - to.left) / k, dy = (from.top - to.top) / k;
+    el.animate([
+      { transformOrigin: "0 0", transform: `translate(${dx}px, ${dy}px) scale(${from.width / to.width}, ${from.height / to.height})`, borderRadius: "24px", opacity: 0.85 },
+      { transformOrigin: "0 0", transform: "none", borderRadius: "0px", opacity: 1 },
+    ], { duration: INTRO_FLIP_MS, easing: "cubic-bezier(0.05, 0.7, 0.1, 1)" });
+    armGuard(INTRO_FLIP_MS);
+  }, []);
   const n = howToKeys(id).length;
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -56,7 +73,7 @@ export function TvIntro({ view, id, onClose }: { view: TvRoomView; id: GameId; o
   const members = room.members.filter((m) => !m.left);
   const gathering = members.length < GAME_META[id].minPlayers;
   return (
-    <div class="tvoverlay tvoverlay--solid tvintro" data-world={WORLD_OF[id]} role="dialog" aria-modal="true" aria-label={t("howto.title")} data-intro>
+    <div ref={rootRef} class="tvoverlay tvoverlay--solid tvintro" data-world={WORLD_OF[id]} role="dialog" aria-modal="true" aria-label={t("howto.title")} data-intro>
       <div class="tvintro__stage" aria-hidden="true" />
       <header class="tvintro__head">
         <TitleLockup id={id} script={room.contentLocale} class="tvintro__lockup" />
@@ -134,7 +151,7 @@ export function PackPicker({ setup }: { setup: RoomSetup }) {
             const on = sel.has(p.id) || sel.has(p.family);
             return (
               <button key={p.id} type="button" ref={i === 0 ? first : undefined} data-default-focus={i === 0 ? true : undefined}
-                role="checkbox" aria-checked={on} class={`tvmenu__item tvpack${on ? " is-on" : ""}`}
+                role="checkbox" aria-checked={on} data-pack-row={p.id} class={`tvmenu__item tvpack${on ? " is-on" : ""}`}
                 onClick={() => {
                   const next = on ? [...sel].filter((x) => x !== p.id && x !== p.family) : [...sel, p.id];
                   if (next.length > 0) send(setup, { packIds: next });
@@ -154,7 +171,7 @@ export function PackPicker({ setup }: { setup: RoomSetup }) {
             </button>
           ))}
         </div>
-        <button type="button" class="tvbtn tvsheet__close" onClick={() => { tvPackPicker.value = false; }}>{t("common.done")}</button>
+        <button type="button" class="tvbtn tvsheet__close" onClick={() => closeSide(tvPackPicker)}>{t("common.done")}</button>
       </div>
     </div>
   );
@@ -175,7 +192,7 @@ export function AdvancedSheet({ view, setup }: { view: TvRoomView; setup: RoomSe
               onLeft={() => undefined} onPacks={() => { rememberSideOpener(); tvPackPicker.value = true; }} />
           ))}
         </div>
-        <button type="button" class="tvbtn tvsheet__close" onClick={() => { tvAdvanced.value = false; }}>{t("common.done")}</button>
+        <button type="button" class="tvbtn tvsheet__close" onClick={() => closeSide(tvAdvanced)}>{t("common.done")}</button>
       </div>
     </div>
   );
@@ -197,6 +214,7 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
   const startRef = useRef<HTMLButtonElement>(null);
   const contentRef = useRef<HTMLButtonElement>(null);
   const cameFrom = useRef<HTMLElement | null>(null);
+  const introFrom = useRef<DOMRect | null>(null);
   const members = room.members.filter((m) => !m.left);
   const missing = Math.max(0, meta.minPlayers - members.length);
   const nCards = howToKeys(id).length;
@@ -267,7 +285,7 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
           else if (e.key === "ArrowUp") { e.preventDefault(); infoRef.current?.focus(); }
           else if (e.key === "ArrowDown" || readingDir(e.key, isRtl()) === -1) e.preventDefault();
         }}
-        onClick={() => { setCard(0); setIntro(true); }}>
+        onClick={() => { introFrom.current = howRef.current?.getBoundingClientRect() ?? null; setCard(0); setIntro(true); }}>
         <span class="tvpane__label"><Icon name="play" size={18} />{t("howto.title")}</span>
         <HowToCard id={id} index={card % nCards} size={64} class="howto__card--pane" />
         <Dots n={nCards} i={card % nCards} />
@@ -311,7 +329,10 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
           </button>
         </div>
       </section>
-      {intro && <TvIntro view={view} id={id} onClose={() => { setIntro(false); }} />}
+      {/* Collapsing the intro is a transition (§3.10 E rule 2): focus lands on the how-to pane, whose OK replays the
+          intro, so a quick second OK on "Got it" must not reopen it. */}
+      {/* The first-visit intro mounts after the portal (entering === null) so the arch never drops frames under it. */}
+      {intro && entering === null && <TvIntro view={view} id={id} from={introFrom.current} onClose={() => { armGuard(); introFrom.current = null; setIntro(false); }} />}
     </div>
   );
 }

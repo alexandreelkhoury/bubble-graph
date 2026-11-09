@@ -43,6 +43,12 @@ export const tvLastErrorMsg = signal<ErrorMsgV2 | null>(null);
 export const tvDownSince = signal<number | null>(null);
 /** HUB-08 Store overlay (outside a running game) and what opened it, or null when closed. */
 export const tvShop = signal<StoreEntry | null>(null);
+/** `info`: a message with a single OK (no confirm action). */
+export interface DialogSpec { title: string; body?: string; confirm: string; safe?: string; danger?: boolean; info?: boolean; onConfirm(): void }
+/** Confirm dialogs (tvDialogs.tsx renders them; kept here so a room transition can close them). */
+export const tvDialog = signal<DialogSpec | null>(null);
+export interface PickerSpec { title: string; body?: string; items: { id: string; label: string; lang?: string; onPick(): void }[] }
+export const tvPicker = signal<PickerSpec | null>(null);
 /** HUB-07 rules sheet: the game, and whether it was opened from the pause menu (then Back returns to the game). */
 export const tvRules = signal<{ id: GameId; hub: boolean; fromPause: boolean } | null>(null);
 /** Hub Settings overlay (sound, interface language, Calm animations, Show how-to again, About). */
@@ -104,6 +110,15 @@ function closeLocalUi(): void {
   tvPackPicker.value = false;
   tvAdvanced.value = false;
   tvIntro.value = null;
+  tvDialog.value = null;
+  tvPicker.value = null;
+}
+
+/** A room phase change, or the running game reaching its outcome (same instance). */
+export function roomTransition(prev: TvRoomView | null, next: TvRoomView): boolean {
+  if (!prev) return false;
+  if (prev.room.phase !== next.room.phase) return true;
+  return !!next.game?.over && !prev.game?.over;
 }
 
 /** The game is running (no outcome yet): the Store and billing toasts wait. */
@@ -148,8 +163,13 @@ export async function tvCreateRoom(): Promise<void> {
       // Leaving SETUP closes setup-only sheets; leaving the game closes the pause menu.
       // START_GAME / CLOSE_GAME (e.g. from the VIP phone) collapses the intro instantly (§3.2 HUB-03).
       if (next.room.phase !== "SETUP") { tvPackPicker.value = false; tvAdvanced.value = false; tvIntro.value = null; }
-      if (next.room.phase !== "PLAYING" || next.game?.over) tvPaused.value = false;
+      // The pause menu closes when the outcome arrives; Back on the results may reopen it (Resume, Rules, Sound).
+      if (next.room.phase !== "PLAYING" || (next.game?.over && !(prev?.game?.over && prev.game.n === next.game.n))) tvPaused.value = false;
       if (next.room.phase !== "HUB") { tvCupOpen.value = false; tvHubSettings.value = false; }
+      // Native onRoomTransition: a room phase change (or the game reaching its outcome) closes the confirm dialogs, the
+      // pickers and the rules sheet, so a stale "Quit game?", kick or "Close JAMAA?" never sits over the next screen.
+      // The rules sheet survives in-game phase changes only.
+      if (roomTransition(prev, next)) { tvDialog.value = null; tvPicker.value = null; tvRules.value = null; tvLangOpen.value = false; }
       if (tvFocusGame.value === null || (prev?.room.phase !== "HUB" && next.room.phase === "HUB")) tvFocusGame.value = next.room.focusedGameId;
       tvView.value = next;
     },

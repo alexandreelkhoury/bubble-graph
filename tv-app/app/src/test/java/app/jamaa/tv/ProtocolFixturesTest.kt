@@ -189,7 +189,10 @@ class ProtocolFixturesTest {
         val env = v.game!!
         val unknown = GameDecoders.decode(env.copy(gameId = "karaoke"), v.room)
         assertEquals(UnsupportedReason.UNKNOWN_GAME, (unknown as UnsupportedGameView).reason)
-        val stub = GameDecoders.decode(env.copy(gameId = "bluff"), v.room) as UnsupportedGameView
+        assertEquals(UnsupportedReason.UNKNOWN_GAME, (GameDecoders.decode(env.copy(gameId = "zzz"), v.room) as UnsupportedGameView).reason)
+        // A registered game this build does not ship yet (whatever the G lanes have flipped in the real map).
+        val notShipped = GameDecoders.modules.mapValues { (id, m) -> if (id == "mishana") m else NotShipped(m) }
+        val stub = GameDecoders.decodeWith(notShipped, env.copy(gameId = "bluff"), v.room) as UnsupportedGameView
         assertEquals(UnsupportedReason.NOT_IMPLEMENTED, stub.reason)
         val broken = GameDecoders.decode(env.copy(public = JsonObject(mapOf("phase" to JsonPrimitive("VOTING")))), v.room) as UnsupportedGameView
         assertEquals(UnsupportedReason.DECODE_FAILED, broken.reason)

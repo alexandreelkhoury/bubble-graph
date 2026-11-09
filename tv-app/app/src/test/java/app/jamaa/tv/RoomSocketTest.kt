@@ -1,6 +1,8 @@
 package app.jamaa.tv
 
+import app.jamaa.tv.games.GameDecoders
 import app.jamaa.tv.net.ConnState
+import app.jamaa.tv.protocol.TvGame
 import app.jamaa.tv.net.ReconnectPolicy
 import app.jamaa.tv.net.RoomSocket
 import kotlinx.coroutines.CoroutineScope
@@ -48,7 +50,7 @@ class RoomSocketTest {
 
     private fun upgrade(side: ServerSide) = MockResponse.Builder().webSocketUpgrade(side).build()
 
-    private fun socket() = RoomSocket(
+    private fun socket(games: List<TvGame> = GameDecoders.supported()) = RoomSocket(
         serverUrl = { server.url("/").toString() },
         scope = scope,
         client = client,
@@ -57,6 +59,7 @@ class RoomSocketTest {
         pongTimeoutMs = 60_000,
         slowReconnectMs = 50,
         webSocketFactory = { req, l -> client.newWebSocket(req, l).also { captured += it to l } },
+        games = games,
     )
 
     @Before fun setUp() {
@@ -77,12 +80,12 @@ class RoomSocketTest {
     fun helloIsSentOnOpen() {
         val side = ServerSide()
         server.enqueue(upgrade(side))
-        val s = socket()
+        val s = socket(games = listOf(TvGame("mishana", 1)))
         s.connect("KXRT", "0123456789abcdef0123456789abcdef")
         awaitState(s) { it == ConnState.OPEN }
         val hello = side.received.poll(5, TimeUnit.SECONDS)
         assertEquals(
-            // §2.5: the hello declares this build's games (this build renders Mish Ana! only; the G lanes add theirs).
+            // §2.5: the hello declares the games it was built with (here a Mish Ana!-only build).
             Json.parseToJsonElement(Fixtures.v2("c2s.hello.tv.mishana-only.json")),
             Json.parseToJsonElement(hello!!),
         )

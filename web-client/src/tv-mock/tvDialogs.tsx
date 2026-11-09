@@ -1,7 +1,6 @@
 // /tv overlays (JAMAA-PLATFORM §3.2): HUB-06 pause menu (Resume · the game's items · Rules · Sound · Quit game), confirm
 // dialogs, a list picker, the interface-language list and the hub Settings. Every overlay traps the D-pad, opens on its
 // safe option, closes with Back, and gives focus back to whatever opened it.
-import { signal } from "@preact/signals";
 import { useRef } from "preact/hooks";
 import { LOCALES } from "@jamaa/shared/constants";
 import { GAME_IDS } from "@jamaa/shared/games/ids";
@@ -15,20 +14,18 @@ import { billingEnabled } from "../lib/billingFlag";
 import { pushToast } from "../state/store";
 import { Icon } from "../components/Icon";
 import {
-  tvAct, tvAdvanced, tvCupOpen, tvExit, tvHubSettings, tvIntro, tvLangOpen, tvPackPicker, tvPaused, tvRules, tvShop,
+  tvAct, tvAdvanced, tvCupOpen, tvDialog, tvExit, tvHubSettings, tvIntro, tvLangOpen, tvPackPicker, tvPaused, tvPicker, tvRules, tvShop,
 } from "./tvStore";
+import type { DialogSpec, PickerSpec } from "./tvStore";
 import { closeShop } from "./shopState";
 import { billing } from "./billing";
 import { refocus, useInitialFocus } from "./dpad";
 import { SoundToggle } from "./sound/SoundToggle";
-import { clearTvIntroFlags, markTvIntroSeen } from "./tvPlatform";
+import { armGuard, clearTvIntroFlags, markTvIntroSeen } from "./tvPlatform";
 import { displayInstallId } from "./roomLife";
 
-/** `info`: a message with a single OK (no confirm action). */
-export interface DialogSpec { title: string; body?: string; confirm: string; safe?: string; danger?: boolean; info?: boolean; onConfirm(): void }
-export const tvDialog = signal<DialogSpec | null>(null);
-export interface PickerSpec { title: string; body?: string; items: { id: string; label: string; lang?: string; onPick(): void }[] }
-export const tvPicker = signal<PickerSpec | null>(null);
+export { tvDialog, tvPicker } from "./tvStore";
+export type { DialogSpec, PickerSpec } from "./tvStore";
 
 /** What had focus when each overlay opened (restored on close, Kotlin's InitialFocus(restore = …)). */
 const openers = { dialog: null as Element | null, picker: null as Element | null, pause: null as Element | null, lang: null as Element | null, rules: null as Element | null, side: null as Element | null };
@@ -77,7 +74,7 @@ export function closeRules(): void {
 }
 /** Side sheets of the hub/setup (cup, settings, packs, advanced). */
 export function rememberSideOpener(): void { openers.side = document.activeElement; }
-function closeSide(sig: { value: boolean }): void {
+export function closeSide(sig: { value: boolean }): void {
   sig.value = false;
   refocus(openers.side);
 }
@@ -94,7 +91,7 @@ export function closeTopOverlay(): boolean {
   if (tvCupOpen.value) { closeSide(tvCupOpen); return true; }
   if (tvHubSettings.value) { closeSide(tvHubSettings); return true; }
   if (tvPaused.value) { closePause(); return true; }
-  if (tvIntro.value) { markTvIntroSeen(tvIntro.value); tvIntro.value = null; return true; } // Back skips the intro
+  if (tvIntro.value) { markTvIntroSeen(tvIntro.value); tvIntro.value = null; armGuard(); return true; } // Back skips the intro
   return false;
 }
 
@@ -170,13 +167,15 @@ export function PauseMenu({ view }: { view: TvRoomView }) {
   const g = view.game;
   if (!g) return null;
   const meta = GAME_META[g.gameId];
-  const items = meta.rules.pauseItems.filter((it) => it.phases.includes(g.phase));
+  // On the results (outcome reached) the menu keeps Resume, Rules and Sound only (native PauseMenuModel).
+  const over = g.over;
+  const items = over ? [] : meta.rules.pauseItems.filter((it) => it.phases.includes(g.phase));
   const send = (intent: string): void => { tvAct({ type: "GAME", gameId: g.gameId, i: { type: intent } } as Parameters<typeof tvAct>[0]); };
   return (
     <div class="tvoverlay" role="dialog" aria-modal="true" aria-label={t("tv.pauseTitle")}>
       <div class="tvdialog tvdialog--menu">
         <h2 class="tvdialog__title tvdialog__title--center">{t("tv.pauseTitle")}</h2>
-        <p class="tvdialog__sub">{t("rules.keepsRunning")}</p>
+        {!over && <p class="tvdialog__sub">{t("rules.keepsRunning")}</p>}
         <div class="tvmenu">
           <button type="button" ref={firstRef} class="tvmenu__item" data-default-focus onClick={closePause}><Icon name="play" />{t("tv.resume")}</button>
           {items.map((it) => (
@@ -187,10 +186,10 @@ export function PauseMenu({ view }: { view: TvRoomView }) {
           ))}
           <button type="button" class="tvmenu__item" data-pause-rules onClick={() => openRules({ id: g.gameId, hub: false, fromPause: true })}><Icon name="info" />{t("rules.title")}</button>
           <SoundToggle class="tvmenu__item" />
-          <button type="button" class="tvmenu__item" data-pause-quit onClick={() => openDialog({
+          {!over && <button type="button" class="tvmenu__item" data-pause-quit onClick={() => openDialog({
             title: t("tv.endGameConfirm"), body: t("tv.endGameBody"), confirm: t("tv.endGame"), safe: t("tv.keepPlaying"), danger: true,
             onConfirm: () => { tvAct({ type: "ABORT_GAME" }); closePause(); },
-          })}><Icon name="door-out" />{t("tv.endGame")}</button>
+          })}><Icon name="door-out" />{t("tv.endGame")}</button>}
           {/* PAY-GAP: the fake-mode test controls (plain English, fake mode only) also live here, so a Pass can be
               expired mid-game (PAYMENTS-SPEC §5.3 test 4). */}
           {billing.fake && billing.hasTestTarget("premium") && (

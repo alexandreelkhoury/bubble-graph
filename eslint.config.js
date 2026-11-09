@@ -10,6 +10,7 @@ export default tseslint.config(
       "coverage/**",
       "tv-app/**",
       "growth/**", // marketing tooling (Remotion video, landing site, docs): own configs
+      "drafts/**", // archive of tarballs + the per-game workflow script (docs/HANDOFF.md), not product code
       "web-client/test-results/**",
       "web-client/playwright-report/**",
     ],

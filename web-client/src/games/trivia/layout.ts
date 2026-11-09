@@ -110,6 +110,12 @@ export function crowdSlot(tile: Rect, k: number, of: number): Pt {
 export function towerRowH(count: number): { h: number; gap: number } {
   return count <= TOWER_ROWS ? { h: TOWER_ROW_H, gap: TOWER_ROW_GAP } : { h: 22, gap: 2 };
 }
+/** The tower as drawn: as tall as its rows need (never taller than the column). */
+export function towerBox(rtl: boolean, count: number): Rect {
+  const t = towerRect(rtl);
+  const { h, gap } = towerRowH(count);
+  return { ...t, h: Math.min(t.h, TOWER_HEAD + count * (h + gap) + 8) };
+}
 /** The tower row of the player at `index` (coins land on its score). */
 export function towerRowRect(index: number, rtl: boolean, count = TOWER_ROWS): Rect {
   const t = towerRect(rtl);

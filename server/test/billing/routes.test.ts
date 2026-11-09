@@ -5,6 +5,7 @@ import type { BillingStore } from "../../src/billing/billing-core";
 import { GoogleHttpError } from "../../src/billing/google";
 import type { GoogleApi } from "../../src/billing/google";
 import { normalizeProduct } from "../../src/billing/normalize";
+import { billingPacks } from "../../src/billing/catalog-info";
 import { handleBilling, networkPrefix } from "../../src/billing/routes";
 import type { BillingRouteDeps } from "../../src/billing/routes";
 import { verifyEntitlementToken, verifyKeysFromSecret } from "../../src/billing/token";
@@ -212,7 +213,11 @@ describe("other routes", () => {
     expect(res.headers.get("Cache-Control")).toBe("public, max-age=300");
     const body = CatalogResponse.parse(await res.json());
     expect(body.mode).toBe("google");
-    expect(body.freePackIds).toEqual(["en-everyday-01", "fr-everyday-01", "ar-everyday-01", "es-everyday-01"]);
+    // Built from the content registry, so a game lane adding packs does not break this platform test (§6.1).
+    const all = billingPacks().all;
+    expect(body.freePackIds).toEqual(all.filter((p) => p.tier === "free").map((p) => p.id));
+    expect(body.packs.map((p) => p.packId)).toEqual(all.filter((p) => p.tier !== "free").map((p) => p.id));
+    expect(body.freePackIds).toEqual(expect.arrayContaining(["en-everyday-01", "fr-everyday-01", "ar-everyday-01", "es-everyday-01"]));
     expect(body.packs.map((p) => p.packId)).not.toContain("en-everyday-01");
     expect(body.packs[0]).toMatchObject({ packId: "en-food-01", productId: "pack_en_food_01", language: "en" });
     expect(body.packs.find((p) => p.packId === "lb-food-01")).toMatchObject({ locale: "ar-LB", language: "ar" });
@@ -280,6 +285,46 @@ describe("fake mode (§3.10)", () => {
     expect((await handleBilling(localPost("fake/set", { purchaseToken, state: "SUBSCRIPTION_STATE_EXPIRED" }), c.env, c.deps)).status).toBe(204);
     const en = EntitlementResponse.parse(await (await handleBilling(localPost("entitlement", { installId: INSTALL_A }), c.env, c.deps)).json());
     expect(en.entitlement.premium).toBe(false);
+  });
+
+  it("trial-7d: a 7-day first period; inTrial only while ACTIVE/CANCELED inside the trial; a charge rolls to the base plan", async () => {
+    const c = await fakeMode();
+    const DAY = 86_400_000;
+    const p = await handleBilling(localPost("fake/purchase", { installId: INSTALL_A, productId: "jamaa_pass", basePlanId: "monthly", offerId: "trial-7d" }), c.env, c.deps);
+    const { purchaseToken } = (await p.json()) as { purchaseToken: string };
+    const v = VerifyResponse.parse(await (await handleBilling(localPost("verify", { installId: INSTALL_A, purchases: [{ productId: "jamaa_pass", purchaseToken }] }), c.env, c.deps)).json());
+    expect(v.entitlement.subscription).toMatchObject({ inTrial: true, expiresAt: NOW + 7 * DAY });
+    const set = async (state: string) => {
+      expect((await handleBilling(localPost("fake/set", { purchaseToken, state }), c.env, c.deps)).status).toBe(204);
+      return EntitlementResponse.parse(await (await handleBilling(localPost("entitlement", { installId: INSTALL_A }), c.env, c.deps)).json()).entitlement.subscription;
+    };
+    // A cancel during the trial keeps the trial phase until its end.
+    expect(await set("SUBSCRIPTION_STATE_CANCELED")).toMatchObject({ inTrial: true, expiresAt: NOW + 7 * DAY });
+    expect(await set("SUBSCRIPTION_STATE_ACTIVE")).toMatchObject({ inTrial: true, expiresAt: NOW + 7 * DAY });
+    // Grace, hold and pause end the trial for good (the first charge failed); expiry never reports a trial.
+    for (const state of ["SUBSCRIPTION_STATE_IN_GRACE_PERIOD", "SUBSCRIPTION_STATE_ON_HOLD", "SUBSCRIPTION_STATE_PAUSED", "SUBSCRIPTION_STATE_EXPIRED"]) {
+      expect((await set(state))?.inTrial ?? false, state).toBe(false);
+    }
+    // Recovered: a fresh monthly base-plan period, no free-trial phase.
+    c.clock.t = NOW + 8 * DAY;
+    expect(await set("SUBSCRIPTION_STATE_ACTIVE")).toMatchObject({ inTrial: false, expiresAt: NOW + 38 * DAY });
+  });
+
+  it("trial-7d: ACTIVE after the trial's end rolls to the base-plan period with no free-trial phase", async () => {
+    const c = await fakeMode();
+    const DAY = 86_400_000;
+    const p = await handleBilling(localPost("fake/purchase", { installId: INSTALL_A, productId: "jamaa_pass", basePlanId: "yearly", offerId: "trial-7d" }), c.env, c.deps);
+    const { purchaseToken } = (await p.json()) as { purchaseToken: string };
+    await handleBilling(localPost("verify", { installId: INSTALL_A, purchases: [{ productId: "jamaa_pass", purchaseToken }] }), c.env, c.deps);
+    c.clock.t = NOW + 7 * DAY + 1000;
+    expect((await handleBilling(localPost("fake/set", { purchaseToken, state: "SUBSCRIPTION_STATE_ACTIVE" }), c.env, c.deps)).status).toBe(204);
+    const en = EntitlementResponse.parse(await (await handleBilling(localPost("entitlement", { installId: INSTALL_A }), c.env, c.deps)).json());
+    expect(en.entitlement).toMatchObject({ premium: true, subscription: { inTrial: false, expiresAt: NOW + 7 * DAY + 1000 + 365 * DAY } });
+    // Without the offer: no trial at any time.
+    const q = await handleBilling(localPost("fake/purchase", { installId: INSTALL_B, productId: "jamaa_pass", basePlanId: "monthly" }), c.env, c.deps);
+    const t2 = ((await q.json()) as { purchaseToken: string }).purchaseToken;
+    const v2 = VerifyResponse.parse(await (await handleBilling(localPost("verify", { installId: INSTALL_B, purchases: [{ productId: "jamaa_pass", purchaseToken: t2 }] }), c.env, c.deps)).json());
+    expect(v2.entitlement.subscription).toMatchObject({ inTrial: false, expiresAt: c.clock.t + 30 * DAY });
   });
 
   it("pack purchase → verify → owned; fake/set REVOKED removes it for good", async () => {

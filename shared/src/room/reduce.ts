@@ -273,7 +273,10 @@ function applyIntent(d: Draft, a: RoomIntent, by: RoomActor): Err {
       if (s.phase !== "HUB") return "WRONG_PHASE";
       if (!host) return "NOT_HOST";
       if (!isGameId(a.gameId)) return "UNKNOWN_GAME";
-      if (!d.ctx.enabledGames.includes(a.gameId)) return "GAME_DISABLED";
+      // GAME_DISABLED is the registry's `enabled:false` (a stub); a registry-enabled game this deploy (GAMES_ENABLED)
+      // leaves out is simply not in room.games → GAME_UNAVAILABLE (§2.5). ctx.enabledGames may list a registry-disabled
+      // game on purpose (tests, sim, fixtures), and then it opens.
+      if (!d.ctx.enabledGames.includes(a.gameId)) return GAME_DEFS[a.gameId].enabled ? "GAME_UNAVAILABLE" : "GAME_DISABLED";
       if (!roomGames(s, d.ctx.enabledGames).includes(a.gameId)) return "GAME_UNAVAILABLE";
       if (!gameAvailable(d.ctx.content, a.gameId, s.contentLocale)) return "GAME_UNAVAILABLE";
       s.phase = "SETUP";

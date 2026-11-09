@@ -18,6 +18,7 @@ import app.jamaa.tv.game.CuePlay
 import app.jamaa.tv.game.RateLimiter
 import app.jamaa.tv.game.SoundCues
 import app.jamaa.tv.protocol.DeadlineView
+import app.jamaa.tv.ui.platform.repeats
 
 /**
  * The screens' way to the sound cues (DESIGN §6.4): [play] goes through the ViewModel (which applies the mute),
@@ -35,6 +36,8 @@ class TvSounds(private val sink: (CuePlay) -> Unit, private val stop: () -> Unit
     /** Observes (never consumes) a key event at the root. */
     fun onKey(e: KeyEvent) {
         if (e.type != KeyEventType.KeyDown) return
+        // A held key's auto-repeats never re-select or re-back (only the arrows' repeats move focus, and tick).
+        if (e.repeats > 0 && e.key !in ARROWS) return
         when (e.key) {
             Key.DirectionUp, Key.DirectionDown, Key.DirectionLeft, Key.DirectionRight -> arrowAt = SystemClock.uptimeMillis()
             Key.DirectionCenter, Key.Enter, Key.NumPadEnter -> sink(CuePlay(Cue.UI_SELECT))
@@ -53,6 +56,7 @@ class TvSounds(private val sink: (CuePlay) -> Unit, private val stop: () -> Unit
         const val FOCUS_TICK_GAP_MS = 70L
         const val ARROW_WINDOW_MS = 150L
         val None = TvSounds({}, {})
+        private val ARROWS = setOf(Key.DirectionUp, Key.DirectionDown, Key.DirectionLeft, Key.DirectionRight)
     }
 }
 

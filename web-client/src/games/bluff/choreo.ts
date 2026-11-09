@@ -143,7 +143,7 @@ export const SEAT_CHAR = 52;
 /** The score pill row under the names. */
 export const PILL_Y = 506;
 /** The spotlight card (centre, size). */
-export const CARD = { x: 480, y: 214, w: 560, h: 132 } as const;
+export const CARD = { x: 480, y: 254, w: 540, h: 128 } as const;
 export const CARD_TOP = CARD.y - CARD.h / 2;
 /** Where the final's ballot box sits (start side of the card). */
 export const BOX = { x: 160, y: 300 } as const;
@@ -164,10 +164,10 @@ export function landing(k: number, n: number): Pt {
   return { x: CARD.x + (k - (n - 1) / 2) * gap, y: CARD_TOP + 2 };
 }
 
-/** The author's pop-out spot: behind the card's end corner. */
+/** The author's pop-out spot (feet): just outside the card's end edge, co-authors further out (mirrored in RTL). */
 export function popSpot(rtl: boolean, k = 0): Pt {
-  const dx = CARD.w / 2 - 34 - k * 70;
-  return { x: rtl ? CARD.x - dx : CARD.x + dx, y: CARD_TOP + 18 };
+  const dx = CARD.w / 2 + 50 + k * 64;
+  return { x: rtl ? CARD.x - dx : CARD.x + dx, y: CARD.y + CARD.h / 2 + 4 };
 }
 
 /** The control point of a coin's quadratic Bézier: 90 dp above the chord midpoint (below when both ends are high). */

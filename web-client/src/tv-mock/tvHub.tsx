@@ -15,9 +15,10 @@ import { Icon } from "../components/Icon";
 import { Character, MemberCharacter } from "../components/Character";
 import { Poster, WORLD_OF } from "../components/Poster";
 import { Qr } from "./Qr";
+import { HubRoom } from "./hubRoom";
 import { RoomCode } from "./tvParts";
 import { focusGame, tvAct, tvCupOpen, tvFocusGame, tvHubSettings } from "./tvStore";
-import { openDialog, openPicker, openRules, rememberSideOpener } from "./tvDialogs";
+import { closeSide, openDialog, openPicker, openRules, rememberSideOpener } from "./tvDialogs";
 import { openShop } from "./shopState";
 import { useInitialFocus } from "./dpad";
 import { soundCue } from "./sound/controller";
@@ -157,6 +158,12 @@ export function TvHub({ view, portalOut, onOpen }: { view: TvRoomView; portalOut
     if (e.key === "ArrowUp") { e.preventDefault(); infoRef.current?.focus(); return; }
     if (e.key === "ArrowDown") { e.preventDefault(); firstMember.current?.focus(); }
   };
+  /** §3.2: Left/Right stay inside the top bar and Down goes to the poster; the start-most control swallows the
+   *  reading-start arrow (no geometric fall-through to the carousel). */
+  const topKey = (e: KeyboardEvent, startMost: boolean): void => {
+    if (startMost && readingDir(e.key, isRtl()) === -1) { e.preventDefault(); return; }
+    toPoster(e, "ArrowDown");
+  };
   const toPoster = (e: KeyboardEvent, key: "ArrowDown" | "ArrowUp"): void => {
     if (e.key !== key) return;
     e.preventDefault();
@@ -166,33 +173,36 @@ export function TvHub({ view, portalOut, onOpen }: { view: TvRoomView; portalOut
     const g = games.find((x) => x.id === id);
     if (!g) return;
     if (!g.available) { contentLanguageDialog(view, id); return; }
-    onOpen(id, posterRefs.current[id]?.getBoundingClientRect() ?? null);
-    tvAct({ type: "OPEN_GAME", gameId: id });
+    const rect = posterRefs.current[id]?.getBoundingClientRect() ?? null;
+    // The portal starts on OK (optimistic), only when the intent actually left (an offline TV just stays on the hub).
+    if (tvAct({ type: "OPEN_GAME", gameId: id }) !== null) onOpen(id, rect);
   };
   const kickMenu = (m: MemberPublic): void => openDialog({
     title: t("lobby.kickConfirm", { name: isolate(m.name) }), body: t("lobby.kickBody"), confirm: t("lobby.kick"), danger: true,
     onConfirm: () => tvAct({ type: "KICK", playerId: m.id }),
   });
   const n = ids.length;
-  const ghosts = Math.max(0, 3 - n);
+  const shutter = n < 3;
   const nameMax = members.length > 8 ? 6 : 8;
   const lang = LOCALE_NATIVE_NAME[room.contentLocale];
   const needs = card ? members.length < card.minPlayers : false;
   return (
     <div class={`tvscreen tvhub${gathering ? " is-gathering" : ""}${portalOut ? " is-portal" : ""}`} data-world={WORLD_OF[focused]}>
+      <HubRoom gathering={gathering} />
       <div class="tvhub__tint" data-world={WORLD_OF[focused]} key={focused} aria-hidden="true" />
       <header class="tvhubtop">
         <img class="tvhubtop__mark" src={locale.value === "ar" ? "/brand/wordmark-ar.svg" : "/brand/wordmark-latin.svg"} alt="JAMAA" height={34} />
         <div class="tvhubtop__end">
           {cupRows.length > 0 && (
-            <button type="button" class="tvcupchip" onKeyDown={(e) => toPoster(e, "ArrowDown")} onClick={() => { rememberSideOpener(); tvCupOpen.value = true; }} aria-label={t("cup.title")}>
+            <button type="button" class="tvcupchip" data-cup-chip onKeyDown={(e) => topKey(e, true)} onClick={() => { rememberSideOpener(); tvCupOpen.value = true; }}
+              aria-label={`${t("cup.title")}. ${t("cup.leader", { name: isolate(cupRows[0]!.name) })}`}>
               <Icon name="trophy" size={20} />
-              {cupRows.slice(0, 3).map((r, i) => (
-                <span key={r.id} class="tvcupchip__who"><Character color={r.color} size={28} expression={i === 0 ? "cheer" : "idle"} crown={i === 0} /><span class="tnum">{fmtNum(r.stars)}</span></span>
-              ))}
+              {/* §2.1 / native CupChip: the visible label, then the leader's character only. */}
+              <span class="tvcupchip__label">{t("cup.title")}</span>
+              <span class="tvcupchip__who"><Character color={cupRows[0]!.color} size={28} expression="cheer" crown /></span>
             </button>
           )}
-          <button type="button" ref={infoRef} class="tvround" data-hub-info aria-label={t("rules.open")} onKeyDown={(e) => toPoster(e, "ArrowDown")}
+          <button type="button" ref={infoRef} class="tvround" data-hub-info aria-label={t("rules.open")} onKeyDown={(e) => topKey(e, cupRows.length === 0)}
             onClick={() => openRules({ id: focused, hub: true, fromPause: false })}>
             <Icon name="info" size={24} />
           </button>
@@ -228,11 +238,19 @@ export function TvHub({ view, portalOut, onOpen }: { view: TvRoomView; portalOut
             </button>
           );
         })}
-        {Array.from({ length: ghosts }, (_, k) => (
-          // JAMAA-GAP: with fewer games than the carousel shows (GAMES_ENABLED="mishana" at launch) the empty slots get
-          // quiet outlines (no text, not focusable) so the single poster does not float in an empty stage.
-          <span key={`ghost${k}`} class="tvposter tvposter--ghost" aria-hidden="true" style={{ "--x": `${24 + (n + k) * STEP}px` }} />
-        ))}
+        {shutter && (
+          // With fewer games than the carousel shows (GAMES_ENABLED="mishana" at launch) the next slot is a room prop,
+          // a closed shop shutter (not focusable), so the single poster does not float in an empty stage.
+          <span class="tvposter tvposter--shutter" aria-hidden="true" style={{ "--x": `${24 + n * STEP}px` }}>
+            <svg viewBox="0 0 210 290" width="210" height="290" focusable="false">
+              <rect x="6" y="10" width="198" height="274" rx="10" fill="#3B3A44" />
+              <path d="M6 22H204" stroke="#55545F" stroke-width="10" />
+              {Array.from({ length: 16 }, (_, k) => <path key={k} d={`M10 ${40 + k * 15}H200`} stroke="#2A2932" stroke-width="3" />)}
+              <rect x="88" y="262" width="34" height="12" rx="3" fill="#55545F" />
+              <path d="M98 262V255C98 249 112 249 112 255V262" fill="none" stroke="#8C8A96" stroke-width="3" />
+            </svg>
+          </span>
+        )}
       </div>
       {card && (
         <p class="tvhub__meta" key={focused}>
@@ -273,6 +291,13 @@ export function TvHub({ view, portalOut, onOpen }: { view: TvRoomView; portalOut
   );
 }
 
+/** Competition ranking ("1, 2, 2, 4"): tied stars share a rank, as on the results screen. `rows` is sorted by stars. */
+export function competitionRank(rows: readonly { stars: number }[], i: number): number {
+  const s = rows[i]?.stars;
+  const first = rows.findIndex((r) => r.stars === s);
+  return (first < 0 ? i : first) + 1;
+}
+
 /** "Tonight's cup" sheet: the full standings (stars), the last game. */
 export function CupSheet({ view }: { view: TvRoomView }) {
   const rows = cupStandings(view.room);
@@ -286,14 +311,14 @@ export function CupSheet({ view }: { view: TvRoomView }) {
         <ol class="tvcuplist">
           {rows.map((r, i) => (
             <li key={r.id} class="tvcuplist__row">
-              <span class="tvcuplist__rank tnum">{fmtNum(i + 1)}</span>
+              <span class="tvcuplist__rank tnum">{fmtNum(competitionRank(rows, i))}</span>
               <Character color={r.color} size={40} expression={r.stars === top && top > 0 ? "cheer" : "idle"} crown={r.stars === top && top > 0} />
               <bdi class="tvcuplist__name">{r.name}</bdi>
               <span class="tvcuplist__stars tnum"><Icon name="star" size={20} />{fmtNum(r.stars)}</span>
             </li>
           ))}
         </ol>
-        <button type="button" ref={close} class="tvbtn tvbtn--primary tvsheet__close" data-default-focus onClick={() => { tvCupOpen.value = false; }}>{t("common.close")}</button>
+        <button type="button" ref={close} class="tvbtn tvbtn--primary tvsheet__close" data-default-focus onClick={() => closeSide(tvCupOpen)}>{t("common.close")}</button>
       </div>
     </div>
   );

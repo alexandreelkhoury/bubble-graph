@@ -20,17 +20,50 @@ class LikelyStageTest {
 
     // ---------------------------------------------------------------- choreography budget (the server never waits)
 
+    private fun shape(r: LikelyReveal, publicMode: Boolean, n: Int) =
+        LikelyChoreo.RevealShape(if (publicMode) n else 0, if (publicMode) 0 else n, publicMode, r.chaos, r.none, r.unanimous, if (publicMode) n else 0)
+
+    private fun tl(r: LikelyReveal, publicMode: Boolean, n: Int) = LikelyChoreo.reveal(r, shape(r, publicMode, n))
+
+    /** The server never waits: every reveal ends inside the REVEAL window, leaving the 1 s tail for "defend yourself". */
     @Test fun everyRevealTimelineFitsTheServerDuration() {
-        for (v in 0..12) for (tops in 1..maxOf(1, v)) for (u in listOf(false, true)) for (anon in listOf(false, true)) {
+        for (v in 0..12) for (tops in 1..maxOf(1, v)) for (u in listOf(false, true)) for (pub in listOf(false, true)) for (chaos in listOf(false, true)) {
             if (u && tops > 1) continue
-            val r = reveal(v, u, tops, none = v == 0)
-            val tl = LikelyChoreo.reveal(r, anon, runners = v, coins = v, boardLines = tops + 1)
-            val budget = LikelyTiming.revealMs(v, u, tops)
-            assertTrue("v=$v tops=$tops u=$u anon=$anon: ${tl.totalMs} > $budget", tl.totalMs <= budget)
-            for (m in tl.marks) assertTrue("${m.cue} at ${m.atMs}", m.atMs in 0..tl.totalMs)
-            for (s in tl.steps) assertTrue(s.id, Choreo.easings.containsKey(s.easing))
+            if (chaos && (u || v < 3)) continue
+            val r = reveal(v, u, tops, chaos = chaos, none = v == 0)
+            val t = tl(r, pub, v)
+            val window = LikelyTiming.revealMs(v, u, tops)
+            val budget = maxOf(2_000L, window - LikelyChoreo.REVEAL_TAIL_MS)
+            // Springs keep their physical settle time when scaled (shared `scaled`): allow their length past the budget.
+            assertTrue("v=$v tops=$tops u=$u pub=$pub chaos=$chaos: ${t.totalMs} > $budget", t.totalMs <= budget + 600)
+            assertTrue(t.totalMs <= window)
+            for (m in t.marks) assertTrue("${m.cue} at ${m.atMs}", m.atMs in 0..t.totalMs)
+            for (s in t.steps) assertTrue(s.id, Choreo.easings.containsKey(s.easing))
         }
-        assertTrue(LikelyChoreo.reveal(reveal(4, chaos = true), false, 0, 0, 0).totalMs <= LikelyTiming.REVEAL_MIN_MS)
+    }
+
+    /** Line for line with web-client/src/games/likely/tv/choreo.ts `revealSteps` (spot checks of the TS numbers). */
+    @Test fun revealStepsMatchTheBrowserTv() {
+        val pub = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(3, 0, true, false, false, false, 2)).associateBy { it.id }
+        assertEquals(listOf("dim", "run", "count", "spot", "stamp", "coin", "tick", "hold"), LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(3, 0, true, false, false, false, 2)).map { it.id })
+        assertEquals(800, pub.getValue("run").startMs)
+        assertEquals(100, pub.getValue("run").staggerMs)
+        assertEquals(800 + 520 + 200 + 100, pub.getValue("count").startMs)
+        assertEquals(1620 + 600 + 800 + 600, pub.getValue("coin").startMs)
+        assertEquals(3620 + 450 + 70 + 600, pub.getValue("hold").startMs)
+        val secret = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(0, 4, false, false, false, true, 0))
+        assertEquals(listOf("dim", "box", "env", "count", "spot", "stamp", "confetti", "board", "hold"), secret.map { it.id })
+        val chaos = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(4, 0, true, true, false, false, 0))
+        assertEquals(listOf("dim", "scramble", "run", "count", "hold"), chaos.map { it.id })
+        assertEquals("spring.bouncy", chaos.first { it.id == "run" }.easing)
+        assertEquals(listOf("dim", "hold"), LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(0, 0, true, false, true, false, 0)).map { it.id })
+        // 25 runners squeeze the run into 2.5 s.
+        assertEquals(1980.0 / 24, LikelyChoreo.runStagger(25), 1e-9)
+        // fitReveal scales only when needed, and keeps spring durations.
+        val long = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(0, 0, true, true, false, false, 0) .copy(runners = 12, publicMode = true))
+        val fit = LikelyChoreo.fitReveal(long, 3_000, 12)
+        assertTrue(LikelyChoreo.endMs(fit, 12) < LikelyChoreo.endMs(long, 12))
+        assertEquals(long.first { it.id == "run" }.durationMs, fit.first { it.id == "run" }.durationMs)
     }
 
     @Test fun serverFormulasMatchTheFixtureDeadlines() {
@@ -55,7 +88,7 @@ class LikelyStageTest {
     }
 
     @Test fun reducedMotionJumpsAndFades() {
-        val tl = LikelyChoreo.reveal(reveal(4), false, 3, 2, 0)
+        val tl = tl(reveal(4), true, 3)
         val run = tl.step("run")!!
         assertEquals(Choreo.Reduced.SKIP, run.reduced)
         assertEquals(0f, LikelyChoreo.progress(run, run.startMs - 1.0, reduced = true), 0f)
@@ -71,7 +104,7 @@ class LikelyStageTest {
     }
 
     @Test fun marksAreSilentAfterAJump() {
-        val tl = LikelyChoreo.reveal(reveal(4), false, 3, 2, 0)
+        val tl = tl(reveal(4), true, 3)
         assertEquals(listOf("sfx.drumroll"), LikelyChoreo.marksBetween(tl, -1.0, 0.0).map { it.cue })
         assertTrue(LikelyChoreo.marksBetween(tl, 0.0, tl.totalMs.toDouble()).isEmpty())
         val toks = LikelyChoreo.marksBetween(tl, 0.0, 1_600.0).filter { it.cue == "likely.tok" }
@@ -81,7 +114,7 @@ class LikelyStageTest {
     @Test fun everyCueHasAPlatformSound() {
         for (id in SoundCuesLikely.cues.keys) assertNotNull(id, LikelySounds.platformCue(id))
         val timelines = listOf(LikelyChoreo.cardDeal, LikelyChoreo.awardsTrio, LikelyChoreo.mindReader, LikelyChoreo.awardsIntro) +
-            listOf(false, true).flatMap { a -> listOf(reveal(4), reveal(4, true), reveal(4, chaos = true), reveal(0, none = true)).map { LikelyChoreo.reveal(it, a, 3, 3, 2) } }
+            listOf(false, true).flatMap { a -> listOf(reveal(4), reveal(4, true), reveal(4, chaos = true), reveal(0, none = true)).map { tl(it, a, 3) } }
         for (t in timelines) for (m in t.marks) assertNotNull("${t.id} ${m.cue}", LikelySounds.platformCue(m.cue))
     }
 
@@ -145,7 +178,10 @@ class LikelyStageTest {
         val plan = LikelyStage.revealPlan(LikelyFixtures.view("reveal.chaos"), false)!!
         assertEquals(LikelyChoreo.RevealKind.CHAOS, plan.kind)
         assertNull(plan.timeline.step("spot"))
-        assertTrue(plan.runners.isEmpty() && plan.coins.isEmpty())
+        // Public mode: after the scramble the picks still show (everyone ran to a different person), no coins.
+        assertEquals(4, plan.runners.size)
+        assertTrue(plan.coins.isEmpty())
+        assertEquals(4, plan.counters.size)
         val s = plan.timeline.step("scramble")!!
         assertEquals(Expression.SHOCK, LikelyStage.revealExpression(plan, plan.seats.keys.first(), s.startMs + 10.0))
         assertEquals(Expression.LAUGH, LikelyStage.revealExpression(plan, plan.seats.keys.first(), plan.timeline.totalMs.toDouble()))
@@ -172,7 +208,7 @@ class LikelyStageTest {
         assertTrue(plan.runners.isEmpty() && plan.coins.isEmpty() && plan.selfVoterIds.isEmpty())
         assertEquals(v.reveal!!.votesCast, plan.envelopes.size)
         assertEquals(listOf(60, 20, 20), plan.board.map { it.percent })
-        assertNull(plan.timeline.step("coins"))
+        assertNull(plan.timeline.step("coin"))
         assertNotNull(plan.timeline.step("board"))
         assertEquals(Expression.SHY, LikelyStage.revealExpression(plan, plan.topIds.single(), plan.timeline.totalMs.toDouble()))
     }

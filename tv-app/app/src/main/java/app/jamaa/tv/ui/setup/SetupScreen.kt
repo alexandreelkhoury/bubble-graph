@@ -1,6 +1,23 @@
 package app.jamaa.tv.ui.setup
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.Canvas
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Dp
+import app.jamaa.tv.platform.Expression
+import app.jamaa.tv.ui.theme.JamaaMotion
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -91,6 +108,8 @@ class SetupActions(
     val onAdvanced: () -> Unit,
     /** A premium row without the Pass: OK opens the Pass store (null when billing is off). */
     val onLockedSetting: (() -> Unit)?,
+    /** The full-screen intro opened / closed: INFO stays off over it, and closing it arms the §3.10 E guard. */
+    val onIntroOpen: (Boolean) -> Unit = {},
 )
 
 /**
@@ -115,6 +134,8 @@ fun SetupScreen(
     val intro = remember(meta.id) { IntroFlow(meta.id, meta.howToKeys.size, prefs).also { if (!seenBefore) it.start() } }
     var introOpen by remember(meta.id) { mutableStateOf(intro.open) }
     var introIndex by remember(meta.id) { mutableIntStateOf(0) }
+    LaunchedEffect(introOpen) { if (introOpen) actions.onIntroOpen(true) }
+    DisposableEffect(meta.id) { onDispose { actions.onIntroOpen(false) } }
 
     val infoFocus = remember { FocusRequester() }
     val howToFocus = remember { FocusRequester() }
@@ -194,6 +215,9 @@ fun SetupScreen(
                 room = room,
                 onIndex = { introIndex = it },
                 onClose = {
+                    // Closing (OK on the last card, "Got it", or Back = skip) hands the remote back behind the guard,
+                    // so a double OK on "Got it" never replays the intro from the how-to pane.
+                    actions.onIntroOpen(false)
                     introOpen = false
                     howToFocus.tryFocus()
                 },
@@ -233,19 +257,123 @@ private fun HowToPane(meta: TvGameMeta, index: Int, modifier: Modifier, onReplay
     }
 }
 
-/** A how-to scene acted by characters (DESIGN-JAMAA §2.5: the character system, no extra assets). */
+/** The prop each how-to card acts with (web HowTo.tsx `Prop`): dealt word cards, a speech bubble, the vote mark, the trophy. */
+private enum class HowToProp { CARDS, BUBBLE, VOTE, TROPHY }
+
+/** One actor in one beat: expression, look (-1 start, +1 end, 0 ahead; logical), hop. */
+private data class Act(val e: Expression, val look: Int = 0, val hop: Boolean = false)
+
+/**
+ * Per card (step 1 → 4: receive, talk, vote, finale): a ≤ 3 s loop of three 1 s beats acted with the character rig and
+ * one prop — the same table as web `components/HowTo.tsx` SCENES (cast coral, azure, jade). Card 1: the outer two get
+ * the SAME word card and smile at each other; the middle one gets a different card and wonders.
+ */
+private val SCENES: List<Pair<HowToProp, List<List<Act>>>> = listOf(
+    HowToProp.CARDS to listOf(
+        listOf(Act(Expression.IDLE), Act(Expression.IDLE), Act(Expression.IDLE)),
+        listOf(Act(Expression.HAPPY, 1), Act(Expression.THINK), Act(Expression.HAPPY, -1)),
+        listOf(Act(Expression.SMUG, 1, true), Act(Expression.SHY, -1), Act(Expression.SMUG, -1, true)),
+    ),
+    HowToProp.BUBBLE to listOf(
+        listOf(Act(Expression.POINT, 1, true), Act(Expression.THINK, -1), Act(Expression.THINK, -1)),
+        listOf(Act(Expression.IDLE, 1), Act(Expression.LAUGH, 1, true), Act(Expression.THINK, -1)),
+        listOf(Act(Expression.THINK, 1), Act(Expression.THINK, 1), Act(Expression.POINT, -1, true)),
+    ),
+    HowToProp.VOTE to listOf(
+        listOf(Act(Expression.THINK, 1), Act(Expression.IDLE), Act(Expression.THINK, -1)),
+        listOf(Act(Expression.POINT, 1), Act(Expression.SHOCK, 0, true), Act(Expression.POINT, -1)),
+        listOf(Act(Expression.SMUG, 1, true), Act(Expression.FACEPALM), Act(Expression.SMUG, -1, true)),
+    ),
+    HowToProp.TROPHY to listOf(
+        listOf(Act(Expression.SHOCK), Act(Expression.SHOCK), Act(Expression.SHOCK)),
+        listOf(Act(Expression.HAPPY, 1), Act(Expression.CHEER, 0, true), Act(Expression.HAPPY, -1)),
+        listOf(Act(Expression.CHEER, 0, true), Act(Expression.CHEER, 0, true), Act(Expression.CHEER, 0, true)),
+    ),
+)
+private val HOWTO_CAST = listOf("coral", "azure", "jade")
+private const val HOWTO_BEAT_MS = 1_000L
+
+/**
+ * A how-to scene acted by characters (DESIGN-JAMAA §2.5: the character system, no extra assets): three 1 s beats that
+ * loop (calm motion: the last beat, still). [gameId] is part of the key so a game switch restarts the loop; the scenes
+ * are the platform's shared four steps, as on web (no per-game scene data exists yet).
+ */
 @Composable
-fun HowToScene(gameId: String, card: Int, modifier: Modifier) {
-    val casts = listOf(
-        listOf("coral" to app.jamaa.tv.platform.Expression.HAPPY, "azure" to app.jamaa.tv.platform.Expression.IDLE, "lemon" to app.jamaa.tv.platform.Expression.HAPPY),
-        listOf("jade" to app.jamaa.tv.platform.Expression.THINK, "grape" to app.jamaa.tv.platform.Expression.THINK, "tangerine" to app.jamaa.tv.platform.Expression.DONE),
-        listOf("aqua" to app.jamaa.tv.platform.Expression.POINT, "rose" to app.jamaa.tv.platform.Expression.SHOCK, "mint" to app.jamaa.tv.platform.Expression.POINT),
-        listOf("plum" to app.jamaa.tv.platform.Expression.CHEER, "sand" to app.jamaa.tv.platform.Expression.SAD, "lilac" to app.jamaa.tv.platform.Expression.CHEER),
-    )
+fun HowToScene(gameId: String, card: Int, modifier: Modifier, size: Dp = 72.dp) {
+    val (prop, beats) = SCENES[Math.floorMod(card, SCENES.size)]
+    val reduce = JamaaTheme.reduceMotion
+    var beat by remember(gameId, card) { mutableIntStateOf(if (reduce) beats.size - 1 else 0) }
+    LaunchedEffect(gameId, card, reduce) {
+        if (reduce) {
+            beat = beats.size - 1
+            return@LaunchedEffect
+        }
+        beat = 0
+        while (true) {
+            kotlinx.coroutines.delay(HOWTO_BEAT_MS)
+            beat = (beat + 1) % beats.size
+        }
+    }
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     Row(modifier, horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.Bottom) {
-        for ((c, e) in casts[Math.floorMod(card, casts.size)]) Character(c, 72.dp, e)
+        beats[beat].forEachIndexed { i, act ->
+            val hop = remember(gameId, card, i) { androidx.compose.animation.core.Animatable(0f) }
+            LaunchedEffect(beat, act.hop) {
+                if (act.hop && !reduce) {
+                    hop.animateTo(-0.18f, androidx.compose.animation.core.tween(210))
+                    hop.animateTo(0f, androidx.compose.animation.core.tween(210))
+                }
+            }
+            val actorSize = if (i == 1) size * 1.2f else size
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(Modifier.height(size * 0.42f).width(actorSize), contentAlignment = Alignment.BottomCenter) {
+                    HowToPropView(prop, i, beat, size * 0.42f)
+                }
+                Character(
+                    HOWTO_CAST[i],
+                    actorSize,
+                    act.e,
+                    modifier = Modifier.graphicsLayer { translationY = hop.value * actorSize.toPx() },
+                    look = Offset(if (rtl) -act.look.toFloat() else act.look.toFloat(), 0f),
+                )
+            }
+        }
     }
 }
+
+/** The prop over actor [i] at beat [b] (web `propFor`); nothing when the prop is not for this actor / beat. */
+@Composable
+private fun HowToPropView(prop: HowToProp, i: Int, b: Int, h: Dp) {
+    when (prop) {
+        HowToProp.CARDS -> Canvas(Modifier.height(h).width(h * 1.5f)) {
+            // A word card: the outer two the same word (two lines), the middle one a different card ("?").
+            val u = size.width / 24f
+            val stroke = Stroke(1.6f * u, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            drawRoundRect(if (i == 1) Color(0xFFC9BFFF) else Color(0xFFFFE7A0), Offset(1f * u, 1f * u), Size(22f * u, 14f * u), CornerRadius(3f * u))
+            drawRoundRect(JamaaColors.Bg, Offset(1f * u, 1f * u), Size(22f * u, 14f * u), CornerRadius(3f * u), style = stroke)
+            val d = if (i == 1) "M9 6c0-2 6-2 6 0s-3 2-3 4M12 12.5v.1" else "M6 7h12M6 10.5h8"
+            withTransform({ scale(u, u, pivot = Offset.Zero) }) { drawPath(propPath(d), JamaaColors.Bg, style = Stroke(1.6f, cap = StrokeCap.Round, join = StrokeJoin.Round)) }
+        }
+        HowToProp.BUBBLE -> if (i == b) Canvas(Modifier.height(h).width(h * 24f / 18f)) {
+            val u = size.width / 24f
+            withTransform({ scale(u, u, pivot = Offset.Zero) }) {
+                val bubble = propPath("M3 2h18a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H10l-4 3v-3H3a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z")
+                drawPath(bubble, Color(0xFFFFF7EC))
+                drawPath(bubble, JamaaColors.Bg, style = Stroke(1.6f, join = StrokeJoin.Round))
+                drawPath(propPath("M6 7h12M6 10h7"), JamaaColors.Bg, style = Stroke(1.6f, cap = StrokeCap.Round))
+            }
+        }
+        HowToProp.VOTE -> if (i == 1 && b >= 1) Box(Modifier.size(h).background(Color(0xFFFF6B5E), JamaaShapes.pill).padding(h * 0.15f)) {
+            androidx.tv.material3.Icon(JamaaIcons.X, contentDescription = null, tint = Color(0xFFFFF7EC), modifier = Modifier.fillMaxSize())
+        }
+        HowToProp.TROPHY -> if (i == 1 && b >= 1) {
+            androidx.tv.material3.Icon(JamaaIcons.Trophy, contentDescription = null, tint = Color(0xFFFFC94D), modifier = Modifier.size(h))
+        }
+    }
+}
+
+private val propPaths = HashMap<String, androidx.compose.ui.graphics.Path>()
+private fun propPath(d: String) = propPaths.getOrPut(d) { androidx.compose.ui.graphics.vector.PathParser().parsePathString(d).toPath() }
 
 @Composable
 private fun Dots(n: Int, active: Int) {
@@ -409,9 +537,27 @@ private fun IntroOverlay(meta: TvGameMeta, flow: IntroFlow, room: RoomPublic, on
     ) {
         Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(stringResource(R.string.setup__intro_progress, (index + 1).toString(), flow.cardCount.toString()), style = JamaaTheme.type.label, color = JamaaColors.Accent)
-            AnimatedContent(targetState = index, transitionSpec = { fadeIn() togetherWith fadeOut() }, label = "introCard", modifier = Modifier.weight(1f)) { i ->
+            // The next card slides 48 dp in from the reading end (mirrored in RTL) with a fade, 240 ms.
+            val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+            val reduce = JamaaTheme.reduceMotion
+            val slide = with(androidx.compose.ui.platform.LocalDensity.current) { 48.dp.roundToPx() }
+            AnimatedContent(
+                targetState = index,
+                transitionSpec = {
+                    if (reduce) {
+                        fadeIn(tween(150)) togetherWith fadeOut(tween(150))
+                    } else {
+                        val dir = if (targetState >= initialState) 1 else -1
+                        val sign = if (rtl) -dir else dir
+                        (slideInHorizontally(tween(240, easing = JamaaMotion.Decel)) { sign * slide } + fadeIn(tween(240))) togetherWith
+                            (slideOutHorizontally(tween(240, easing = JamaaMotion.Standard)) { -sign * slide } + fadeOut(tween(200)))
+                    }
+                },
+                label = "introCard",
+                modifier = Modifier.weight(1f),
+            ) { i ->
                 Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                    HowToScene(meta.id, i, Modifier.fillMaxWidth().height(200.dp))
+                    HowToScene(meta.id, i, Modifier.fillMaxWidth().height(200.dp), size = 96.dp)
                     Spacer(Modifier.height(16.dp))
                     meta.howToKeys.getOrNull(i)?.let { Text(keyText(it), style = JamaaTheme.type.displayS, color = JamaaColors.Text, textAlign = TextAlign.Center, maxLines = 2) }
                 }
@@ -433,7 +579,8 @@ private fun IntroOverlay(meta: TvGameMeta, flow: IntroFlow, room: RoomPublic, on
                 QrCode(room.joinUrl, panel = 144.dp)
                 RoomCode(room.roomCode, Modifier.width(144.dp).height(32.dp), centered = true)
             }
-            Row(Modifier.align(Alignment.BottomCenter).padding(bottom = 40.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Top-start, opposite the join chip: clear of the progress segments and the hint / "Got it" at the bottom.
+            Row(Modifier.align(Alignment.TopStart).padding(top = 28.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 for (m in members) Character(m.color, 48.dp, CharacterRules.expression(m, null, null))
             }
         }

@@ -7,7 +7,8 @@ import { useLayoutEffect, useRef, useState } from "preact/hooks";
 import { fmtNum, isolate, listOf } from "../../../i18n/t";
 import { reduced } from "../../../lib/motion";
 import { run } from "@jamaa/shared/motion";
-import { clearChoreo, setChoreo } from "../../../tv-mock/tvPlatform";
+import type { Run } from "@jamaa/shared/motion";
+import { useInGameOk } from "../../../tv-mock/tvParts";
 import { play, stopAll } from "../../../tv-mock/sound/player";
 import { timelineCues } from "../../../tv-mock/sound/cues";
 import { Confetti } from "../../../components/UI";
@@ -64,6 +65,7 @@ export function Reveal({ tr, ps }: { tr: Trivia; ps: Player[] }) {
   const pub = tr.pub, r = pub.reveal!;
   const rtl = isRtl();
   const root = useRef<HTMLDivElement>(null);
+  const runRef = useRef<Run | null>(null);
   const plan = useRef(revealPlan(tr, ps, rtl)).current;
   const [stage, setStage] = useState<{ counted: boolean; done: boolean; explain: boolean }>(() => ({ counted: reduced(), done: reduced(), explain: reduced() }));
   const active = activePlayers(ps);
@@ -131,16 +133,14 @@ export function Reveal({ tr, ps }: { tr: Trivia; ps: Player[] }) {
       play({ cue: r.stumped || r.tooSlow ? "quiz_wrong" : "quiz_correct" });
       return () => { if (explainAt) clearTimeout(explainAt); };
     }
-    const run_ = run(REVEAL_STEPS, frame, () => {
-      clearChoreo(run_);
-      setStage((s) => ({ ...s, counted: true, done: true }));
-    }, count);
-    // OK completes the choreography (and cuts the cues still ringing); the explain card then shows at once.
-    const wrapped = { ...run_, complete: (): void => { stopAll(); run_.complete(); setStage((s) => ({ ...s, explain: !!r.explain })); }, cancel: run_.cancel, get running() { return run_.running; } };
-    setChoreo(wrapped);
-    return () => { if (explainAt) clearTimeout(explainAt); run_.cancel(); clearChoreo(wrapped); };
+    const r_ = run(REVEAL_STEPS, frame, () => setStage((s) => ({ ...s, counted: true, done: true })), count);
+    runRef.current = r_;
+    return () => { if (explainAt) clearTimeout(explainAt); r_.cancel(); runRef.current = null; };
   }, []);
 
+  // §3.10 E rule 5: OK in game completes the reveal locally (cutting the cues still ringing); the explain card then
+  // shows at once. D-pad and Back stay free (Back opens the pause menu at any time).
+  useInGameOk(!stage.done, () => { stopAll(); runRef.current?.complete(); setStage((s) => ({ ...s, explain: !!r.explain })); });
   const fastNames = plan.jumpers.filter((j) => fastest.has(j.p.id)).map((j) => j.p.name);
   const banner = r.voided ? tk("pause.voided") : r.tooSlow ? tk("reveal.tooSlow") : r.stumped ? tk("reveal.stumped") : r.genius ? tk("reveal.genius") : null;
   return (

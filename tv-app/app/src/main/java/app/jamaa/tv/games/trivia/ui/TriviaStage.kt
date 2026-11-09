@@ -253,8 +253,8 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.bulbRing(lit: Int, 
             d < 2 * w + h -> { d -= w + h; Offset(inset + w - d, inset + h) }
             else -> { d -= 2 * w + h; Offset(inset, inset + h - d) }
         }
-        // Bulbs switch off clockwise: bulb i is lit while i < lit (the last ones go dark first... from the end).
-        val on = i < lit
+        // Darkness runs clockwise from the top centre: bulb 0 goes first, then 1, 2…
+        val on = i >= n - lit
         val color = when {
             flash -> Color.White
             on && pulse -> JamaaColors.Accent

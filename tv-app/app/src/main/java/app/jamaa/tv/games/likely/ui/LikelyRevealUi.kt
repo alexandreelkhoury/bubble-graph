@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -110,23 +111,25 @@ private fun Jury(view: LikelyView, args: GameScreenArgs, clock: LikelyClock, pla
                 val fwd = if (view.card?.namedPlayerId == p.id && view.phase != LikelyPhase.REVEAL) 14.0 else 0.0
                 return LikelyPt(seat.x, seat.y + fwd)
             }
+            // Chaos: everyone scrambles around their seat and bumps into the others (1.2 s), then the picks show.
+            var jx = 0.0
+            var jy = 0.0
             if (plan.kind == LikelyChoreo.RevealKind.CHAOS) {
                 val s = clock.p("scramble")
                 val env01 = sin(PI * s)
                 val t = clock.t() / 1000.0
-                val dx = sin(t * (5.0 + chaosIndex) + chaosIndex) * 46.0 * env01
-                val dy = -abs(sin(t * 9.0 + chaosIndex * 1.7)) * 18.0 * env01
-                return LikelyPt(seat.x + dx, seat.y + dy)
+                jx = sin(t * (5.0 + chaosIndex) + chaosIndex) * 46.0 * env01
+                jy = -abs(sin(t * 9.0 + chaosIndex * 1.7)) * 18.0 * env01
             }
-            if (runner == null) return seat
+            if (runner == null) return LikelyPt(seat.x + jx, seat.y + jy)
             val r = clock.p("run", runner.index).coerceIn(0f, 1f).toDouble()
             // Two hops on the way (DESIGN-JAMAA §5.3): the height follows |sin(2πr)|.
             val hop = abs(sin(2 * PI * r)) * 26.0
-            return LikelyPt(runner.from.x + (runner.to.x - runner.from.x) * r, runner.from.y + (runner.to.y - runner.from.y) * r - hop)
+            return LikelyPt(runner.from.x + (runner.to.x - runner.from.x) * r + jx, runner.from.y + (runner.to.y - runner.from.y) * r - hop + jy)
         }
-        val base = when {
-            plan != null -> LikelyStage.revealExpression(plan, p.id, clock.t())
-            else -> LikelyStage.cardExpression(view, p.id)
+        // Derived: recomposes only when the expression changes, not on every frame of the reveal.
+        val base = derived(clock, plan, p.id, view.card?.namedPlayerId) {
+            if (plan != null) LikelyStage.revealExpression(plan, p.id, clock.t()) else LikelyStage.cardExpression(view, p.id)
         }
         val expr = if (member != null) CharacterRules.expression(member, env, null, base) else if (!p.connected) Expression.AWAY else base
         val look = when {
@@ -188,7 +191,7 @@ private fun RevealBehind(plan: LikelyRevealPlan, clock: LikelyClock, stage: Stag
         val u = size.width / 864f
         if (plan.kind == LikelyChoreo.RevealKind.SECRET) {
             val box = clock.p("box")
-            val run = plan.envelopes.lastOrNull()?.let { clock.p("run", it.index) } ?: 1f
+            val run = plan.envelopes.lastOrNull()?.let { clock.p("env", it.index) } ?: 1f
             ballotBox(Offset(432f * u, 205f * u), 64f * u, shake = box.coerceIn(0f, 1f), alpha = (1f - run).coerceIn(0f, 1f).let { if (box <= 0f) 0f else it.coerceAtLeast(0.15f) })
         }
         val drop = clock.p("spot")
@@ -208,7 +211,7 @@ private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyC
         val u = size.width / 864f
         // Secret votes: identical envelopes burst from the box to their target, in tally order.
         for (e in plan.envelopes) {
-            val p = clock.p("run", e.index).coerceIn(0f, 1f)
+            val p = clock.p("env", e.index).coerceIn(0f, 1f)
             if (p <= 0f) continue
             val from = Offset(432f * u, 190f * u)
             val to = Offset(e.to.x.toFloat() * u, e.to.y.toFloat() * u)
@@ -228,7 +231,7 @@ private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyC
         }
         // Agreement coins: from the head of each voter's line (its pick) to the voter, in its colour.
         for (c in plan.coins) {
-            val p = clock.p("coins", c.index)
+            val p = clock.p("coin", c.index)
             if (p <= 0f || p >= 1f) continue
             val a = Offset(c.from.x.toFloat() * u, c.from.y.toFloat() * u)
             val b = Offset(c.to.x.toFloat() * u, c.to.y.toFloat() * u)
@@ -249,7 +252,7 @@ private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyC
                 .background(Rooftop.surface, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            val shown = (c.count * clock.p("count").coerceIn(0f, 1f)).roundToInt().coerceAtLeast(if (clock.p("count") > 0f) 1 else 0)
+            val shown = derived(clock, c) { (c.count * clock.p("count").coerceIn(0f, 1f)).roundToInt().coerceAtLeast(if (clock.p("count") > 0f) 1 else 0) }
             Text(shown.toString(), style = type.title, color = JamaaColors.Text)
         }
     }
@@ -258,9 +261,8 @@ private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyC
     plan.topIds.forEachIndexed { i, id ->
         val at = plan.seats[id] ?: return@forEachIndexed
         Box(Modifier.at(stage, { at.x }, { at.y + 40.0 }, 180.0, 26.0), contentAlignment = Alignment.Center) {
-            val p = clock.p("stamp", i).coerceIn(0f, 1f)
             val arabic = award.any { java.lang.Character.UnicodeBlock.of(it) == java.lang.Character.UnicodeBlock.ARABIC }
-            val text = if (arabic || clock.reduced) award else award.take((award.length * p).roundToInt())
+            val text = derived(clock, award, i) { if (arabic || clock.reduced) award else award.take((award.length * clock.p("stamp", i).coerceIn(0f, 1f)).roundToInt()) }
             Text(
                 text,
                 style = type.label,
@@ -269,7 +271,10 @@ private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyC
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .graphicsLayer { alpha = if (arabic || clock.reduced) p else if (p > 0f) 1f else 0f }
+                    .graphicsLayer {
+                        val p = clock.p("stamp", i).coerceIn(0f, 1f)
+                        alpha = if (arabic || clock.reduced) p else if (p > 0f) 1f else 0f
+                    }
                     .background(Rooftop.deep.copy(alpha = 0.75f), RoundedCornerShape(50))
                     .padding(horizontal = stage.dp(10f)),
             )
@@ -280,13 +285,13 @@ private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyC
         Box(
             Modifier
                 .at(stage, {
-                    val p = clock.p("coins", c.index).coerceIn(0f, 1f).toDouble()
+                    val p = clock.p("coin", c.index).coerceIn(0f, 1f).toDouble()
                     c.from.x + (c.to.x - c.from.x) * p
                 }, {
-                    val p = clock.p("coins", c.index).coerceIn(0f, 1f).toDouble()
+                    val p = clock.p("coin", c.index).coerceIn(0f, 1f).toDouble()
                     c.from.y + (c.to.y - c.from.y) * p - 22.0
                 }, 64.0, 24.0)
-                .graphicsLayer { alpha = if (clock.p("coins", c.index) > 0f) 1f else 0f },
+                .graphicsLayer { alpha = if (clock.p("coin", c.index) > 0f) 1f else 0f },
             contentAlignment = Alignment.Center,
         ) {
             Text("+${c.points}", style = type.label, color = Gold, modifier = Modifier.background(Rooftop.deep.copy(alpha = 0.8f), RoundedCornerShape(50)).padding(horizontal = stage.dp(6f)))
@@ -322,7 +327,8 @@ private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyC
             }
         }
     }
-    if (plan.unanimous && clock.t() >= (plan.timeline.step("confetti")?.startMs ?: Int.MAX_VALUE)) {
+    val confetti = derived(clock, plan) { plan.unanimous && clock.t() >= (plan.timeline.step("confetti")?.startMs ?: Int.MAX_VALUE) }
+    if (confetti) {
         Confetti(Modifier.fillMaxSize(), durationMs = LikelyChoreo.CONFETTI_MS, seed = view.cardIndex + 3)
     }
 }
@@ -333,10 +339,10 @@ private fun RevealCaption(view: LikelyView, plan: LikelyRevealPlan, clock: Likel
     val text: String
     val step: String
     when (plan.kind) {
-        LikelyChoreo.RevealKind.NONE -> { text = keyText("game.likely.reveal.none"); step = "noneTitle" }
-        LikelyChoreo.RevealKind.CHAOS -> { text = keyText("game.likely.reveal.chaos"); step = "chaosTitle" }
+        LikelyChoreo.RevealKind.NONE -> { text = keyText("game.likely.reveal.none"); step = "dim" }
+        LikelyChoreo.RevealKind.CHAOS -> { text = keyText("game.likely.reveal.chaos"); step = "scramble" }
         else -> {
-            step = "defend"
+            step = "hold"
             text = when {
                 plan.unanimous -> keyText(if (view.anonymous) "game.likely.reveal.unanimous" else "game.likely.reveal.unanimousPts")
                 plan.topIds.size > 1 -> keyText("game.likely.reveal.tie")
@@ -364,7 +370,7 @@ private fun RevealCaption(view: LikelyView, plan: LikelyRevealPlan, clock: Likel
 @Composable
 private fun PercentBoard(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyClock, stage: StageScope) {
     val type = JamaaTheme.type
-    val lang = androidx.compose.ui.platform.LocalConfiguration.current.locales.get(0)?.language ?: "en"
+    val lang = androidx.compose.ui.text.intl.Locale.current.language
     val columns = if (plan.board.size > 3) plan.board.chunked((plan.board.size + 1) / 2) else listOf(plan.board)
     var index = 0
     Row(horizontalArrangement = Arrangement.spacedBy(stage.dp(24f))) {
@@ -403,4 +409,11 @@ private fun PercentBoard(view: LikelyView, plan: LikelyRevealPlan, clock: Likely
             }
         }
     }
+}
+
+/** A value computed from the phase clock that recomposes only when it changes (never every frame). */
+@Composable
+internal fun <T> derived(vararg keys: Any?, calc: () -> T): T {
+    val state = remember(*keys) { derivedStateOf(calc) }
+    return state.value
 }

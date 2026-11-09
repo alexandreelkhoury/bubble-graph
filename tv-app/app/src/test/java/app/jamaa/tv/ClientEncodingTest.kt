@@ -40,7 +40,8 @@ class ClientEncodingTest {
 
     /** §2.5 capability negotiation: the hello declares the games this build renders, with their view versions. */
     @Test fun helloTvDeclaresTheBuildsGames() {
-        assertEncodes("c2s.hello.tv.mishana-only.json", HelloTv(tvToken = token, games = GameDecoders.supported()))
+        val mishanaOnly = GameDecoders.modules.mapValues { (id, m) -> if (id == "mishana") m else NotShipped(m) }
+        assertEncodes("c2s.hello.tv.mishana-only.json", HelloTv(tvToken = token, games = GameDecoders.supportedOf(mishanaOnly)))
         assertEncodes(
             "c2s.hello.tv.json",
             HelloTv(tvToken = token, games = listOf(TvGame("mishana", 1), TvGame("bluff", 1), TvGame("likely", 1), TvGame("trivia", 1))),

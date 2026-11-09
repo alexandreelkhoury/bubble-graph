@@ -48,7 +48,6 @@ function Question({ tr, ps, answer }: { tr: Trivia; ps: Player[]; answer: boolea
       <Tiles pub={pub} mode={answer ? "answer" : "ghost"} />
       <Tower players={ps} />
       <PodiumRow tr={tr} players={activePlayers(ps)} lit={answer ? (p) => answered.has(p.id) : undefined} />
-      {answer && <p class="tqanswered tnum" aria-live="polite">{fmtNum(answered.size)} / {fmtNum(activePlayers(ps).filter((p) => !p.waiting).length)}</p>}
     </>
   );
 }
@@ -58,7 +57,6 @@ function FinalIntro({ tr, ps }: { tr: Trivia; ps: Player[] }) {
   return (
     <>
       <section class="tqfinal">
-        <p class="tqfinal__kicker">{tk("phase.finalIntro")}</p>
         <h1 class="tqfinal__title">{tk("final.title")}</h1>
         <p class="tqfinal__stamp" aria-hidden="true">{tk("final.stamp")}</p>
       </section>
@@ -91,10 +89,10 @@ export function Tv({ view }: { view: TvRoomView }) {
     case "READ": body = <Question tr={tr} ps={ps} answer={false} />; break;
     case "ANSWER": body = <Question tr={tr} ps={ps} answer />; break;
     case "REVEAL": body = pub.reveal ? <Reveal tr={tr} ps={ps} /> : null; break;
-    case "LEADERBOARD": body = <Board tr={tr} ps={ps} />; break;
+    case "LEADERBOARD": body = <Board ps={ps} />; break;
     case "FINAL_INTRO": body = <FinalIntro tr={tr} ps={ps} />; break;
     case "HOLD": body = <Hold tr={tr} ps={ps} />; break;
-    case "RESULTS": body = <Results tr={tr} ps={ps} />; break;
+    case "RESULTS": body = <Results ps={ps} />; break;
     default: body = null;
   }
   return (
