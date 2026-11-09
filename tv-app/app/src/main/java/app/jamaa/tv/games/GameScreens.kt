@@ -60,7 +60,7 @@ object GameScreens {
         GameIds.MISHANA to { a -> (a.game as? MishanaGameView)?.let { MishanaGameScreen(it, a) } ?: UpdateJamaaCard(a) },
         GameIds.BLUFF to { a -> UpdateJamaaCard(a) },   // STUB: G2 lane C (games/bluff/)
         GameIds.LIKELY to { a -> UpdateJamaaCard(a) },  // STUB: G3 lane C (games/likely/)
-        GameIds.TRIVIA to { a -> UpdateJamaaCard(a) },  // STUB: G4 lane C (games/trivia/)
+        GameIds.TRIVIA to { a -> (a.game as? app.jamaa.tv.games.trivia.TriviaGameView)?.let { app.jamaa.tv.games.trivia.ui.TriviaGameScreen(it, a) } ?: UpdateJamaaCard(a) }, // G4 lane C
     )
 
     @Composable

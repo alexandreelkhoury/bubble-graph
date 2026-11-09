@@ -142,8 +142,8 @@
     "many": "Tu as piégé {count} personnes !",
     "other": "Tu as piégé {count} personnes !"
   },
-  "game.bluff.reveal.fellFor": "Tu es tombé dans le bluff de {name}",
-  "game.bluff.reveal.fellForHouse": "Piégé par la maison !",
+  "game.bluff.reveal.fellFor": "Le bluff de {name} t'a eu",
+  "game.bluff.reveal.fellForHouse": "La maison t'a eu !",
   "game.bluff.reveal.believed": {
     "one": "{count} vote pour toi !",
     "many": "{count} votes pour toi !",
@@ -191,9 +191,9 @@
   },
   "game.bluff.awards.hookLineSinker": "Tombé dans le panneau",
   "game.bluff.awards.hookLineSinker.body": {
-    "one": "Piégé {count} fois (on t'aime)",
-    "many": "Piégé {count} fois (on t'aime)",
-    "other": "Piégé {count} fois (on t'aime)"
+    "one": "S'est fait avoir {count} fois (on t'aime)",
+    "many": "S'est fait avoir {count} fois (on t'aime)",
+    "other": "S'est fait avoir {count} fois (on t'aime)"
   },
   "game.bluff.results.youFooled": {
     "one": "Tu as piégé {count} personne ce soir",

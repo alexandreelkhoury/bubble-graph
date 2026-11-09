@@ -55,7 +55,9 @@ export function keyVerdict(e: { key: string; repeat: boolean }, running: boolean
 /** Capture-phase keydown handler for the canvas window; true when the key was consumed. */
 export function applyInputRule(e: KeyboardEvent): boolean {
   if ((e.target as HTMLElement | null)?.tagName === "INPUT") return false;
-  const v = keyVerdict(e, current !== null, guarded());
+  // The guard is checked against the key's creation time: a press made inside the window but handled late by a busy
+  // main thread is still swallowed.
+  const v = keyVerdict(e, current !== null, guarded(e.timeStamp > 0 ? Math.min(e.timeStamp, now()) : now()));
   if (v === "pass") return false;
   e.preventDefault();
   e.stopImmediatePropagation();

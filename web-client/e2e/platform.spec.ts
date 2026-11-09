@@ -25,6 +25,11 @@ async function context(browser: Browser, kind: "tv" | "phone", locale: string): 
     try {
       if (!sessionStorage.getItem("e2e-init")) { localStorage.setItem("jamaa:locale", l); sessionStorage.setItem("e2e-init", "1"); }
     } catch { /* ignore */ }
+    // Every keydown's creation time (event.timeStamp = when the key was pressed, not when a busy page handled it),
+    // recorded before the app's capture listeners, which may swallow it (§3.10 E).
+    const w = window as unknown as { __keys: number[] };
+    w.__keys = [];
+    window.addEventListener("keydown", (e) => { w.__keys.push(e.timeStamp); }, true);
   }, locale);
   return ctx;
 }
@@ -267,11 +272,19 @@ test("OK pressed 3 times within 300 ms on a poster ends on HUB-03, never PLAYING
   for (const n of ["A1", "B2", "C3"]) phones.push((await joinPhone(browser, code, n, "en")).page);
   // Mark the intro as seen on this TV so Start would be the initial focus if the guard failed.
   await tv.evaluate(() => localStorage.setItem("jamaa:tv:introSeen:mishana", "1"));
-  await tv.keyboard.press("Enter");
-  await tv.waitForTimeout(90);
-  await tv.keyboard.press("Enter");
-  await tv.waitForTimeout(90);
-  await tv.keyboard.press("Enter");
+  // Trusted key events straight through CDP: Playwright's traced keyboard.press costs ~0.4 s per call here (a trace
+  // snapshot each), which would spread the presses past the 400 ms guard and test something else.
+  const cdp = await tv.context().newCDPSession(tv);
+  const ok = { key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 };
+  const sends: Promise<unknown>[] = [];
+  for (let i = 0; i < 3; i++) {
+    sends.push(cdp.send("Input.dispatchKeyEvent", { type: "keyDown", text: "\r", unmodifiedText: "\r", ...ok }));
+    sends.push(cdp.send("Input.dispatchKeyEvent", { type: "keyUp", ...ok }));
+    if (i < 2) await new Promise((r) => setTimeout(r, 90));
+  }
+  await Promise.all(sends);
+  const keys = await tv.evaluate(() => (window as unknown as { __keys: number[] }).__keys.slice(-3));
+  expect(keys[2]! - keys[0]!, "the three OKs must land within 300 ms for this check to mean anything").toBeLessThan(300);
   await expect(tv.locator(".tvsetup")).toBeVisible();
   await tv.waitForTimeout(2500);
   await expect(tv.locator(".tvsetup")).toBeVisible();

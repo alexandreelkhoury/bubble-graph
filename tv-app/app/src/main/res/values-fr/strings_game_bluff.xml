@@ -144,8 +144,8 @@
         <item quantity="many">Tu as piégé %1$d personnes !</item>
         <item quantity="other">Tu as piégé %1$d personnes !</item>
     </plurals>
-    <string name="game__bluff__reveal__fell_for">Tu es tombé dans le bluff de %1$s</string>
-    <string name="game__bluff__reveal__fell_for_house">Piégé par la maison !</string>
+    <string name="game__bluff__reveal__fell_for">Le bluff de %1$s t\'a eu</string>
+    <string name="game__bluff__reveal__fell_for_house">La maison t\'a eu !</string>
     <plurals name="game__bluff__reveal__believed">
         <item quantity="one">%1$d vote pour toi !</item>
         <item quantity="many">%1$d votes pour toi !</item>
@@ -193,9 +193,9 @@
     </plurals>
     <string name="game__bluff__awards__hook_line_sinker">Tombé dans le panneau</string>
     <plurals name="game__bluff__awards__hook_line_sinker__body">
-        <item quantity="one">Piégé %1$d fois (on t\'aime)</item>
-        <item quantity="many">Piégé %1$d fois (on t\'aime)</item>
-        <item quantity="other">Piégé %1$d fois (on t\'aime)</item>
+        <item quantity="one">S\'est fait avoir %1$d fois (on t\'aime)</item>
+        <item quantity="many">S\'est fait avoir %1$d fois (on t\'aime)</item>
+        <item quantity="other">S\'est fait avoir %1$d fois (on t\'aime)</item>
     </plurals>
     <plurals name="game__bluff__results__you_fooled">
         <item quantity="one">Tu as piégé %1$d personne ce soir</item>

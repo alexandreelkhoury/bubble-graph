@@ -423,8 +423,9 @@
 .tvculprits__item--blank { box-shadow: inset 0 0 0 3px var(--color-blank); }
 .tvresults__meta { max-width: 840px; justify-content: center; flex-wrap: wrap; }
 .tvsb { width: 760px; text-align: start; }
-.tvsb__row { display: grid; grid-template-columns: 44px 1fr 200px 120px 80px; column-gap: 12px; align-items: center; height: 40px; padding-inline: 12px; border-radius: var(--radius-sm); font: var(--tv-titleS); animation: tv-phase-in var(--motion-base) var(--ease-decel) both; animation-delay: calc(var(--i, 0) * 60ms); }
+.tvsb__row { display: grid; grid-template-columns: 44px 1fr 180px 150px 80px; column-gap: 12px; align-items: center; height: 40px; padding-inline: 12px; border-radius: var(--radius-sm); font: var(--tv-titleS); animation: tv-phase-in var(--motion-base) var(--ease-decel) both; animation-delay: calc(var(--i, 0) * 60ms); }
 .tvsb__row--head { height: 28px; font: var(--tv-caption); font-weight: 900; color: var(--color-text-muted); letter-spacing: 0.06em; text-transform: uppercase; animation: none; }
+.tvsb__row--head > * { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tv:lang(ar) .tvsb__row--head { text-transform: none; letter-spacing: 0; }
 /* DESIGN TV-11: 5 rows of 40 dp, focus-scroll for more; a fade and a chevron say there is more. */
 .tvsb__bodywrap { position: relative; }
@@ -580,7 +581,7 @@
 .tvshop__row { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; padding: 6px; margin-inline: -6px; }
 .tvshop__pack { flex: none; width: 200px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 14px; border: 0; border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font: var(--tv-caption); text-align: start; }
 .tvshop__packtitle { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-label); }
-.tvshop__packmeta { color: var(--color-text-muted); }
+.tvshop__packmeta { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-text-muted); }
 .tvshop__packend { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; min-width: 0; min-height: 28px; }
 .tvshop__buy { color: var(--color-primary-text); font-weight: 800; }
 .tvshop__divider { flex: none; align-self: center; padding: 0 6px; color: var(--color-text-muted); font: var(--tv-caption); white-space: nowrap; }

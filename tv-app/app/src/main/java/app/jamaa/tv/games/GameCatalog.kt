@@ -151,7 +151,15 @@ object GameCatalog {
             id = GameIds.LIKELY, minPlayers = 3, maxPlayers = 12,
             phases = listOf("CARD", "VOTING", "REVEAL", "AWARDS", "RESULTS", "HOLD"),
             titleKey = "$k.title", taglineKey = "$k.tagline", howToKeys = (1..4).map { "$k.howto.$it" },
-            ruleSections = emptyList(), durationMinutes = 6 to 10, world = WorldIds.ROOFTOP,
+            // GAME-LIKELY §10.2 (shared meta.ts); the Spicy section is compiled out with LIKELY_SPICY_ENABLED = false.
+            ruleSections = listOf(
+                RuleSectionSpec("vote", "$k.rules.vote.title", "$k.rules.vote.body", listOf("CARD", "VOTING")),
+                RuleSectionSpec("points", "$k.rules.points.title", "$k.rules.points.body", listOf("REVEAL")),
+                RuleSectionSpec("chaos", "$k.rules.chaos.title", "$k.rules.chaos.body", listOf("REVEAL")),
+                RuleSectionSpec("awards", "$k.rules.awards.title", "$k.rules.awards.body", listOf("AWARDS", "RESULTS")),
+                RuleSectionSpec("secret", "$k.rules.secret.title", "$k.rules.secret.body", listOf("VOTING", "REVEAL")),
+            ),
+            durationMinutes = 6 to 10, world = WorldIds.ROOFTOP,
             pauseItems = listOf(
                 PauseItemSpec("skipCard", "$k.pause.skipCard", "SKIP_CARD", listOf("CARD", "VOTING")),
                 PauseItemSpec("next", "$k.pause.next", "HOST_ADVANCE", listOf("CARD", "REVEAL", "AWARDS")),
@@ -167,23 +175,33 @@ object GameCatalog {
         )
     }
 
+    // G4 (lane C): the ⓘ sections and pause items of shared/src/games/trivia/meta.ts. Label keys are lane D's generated
+    // ones (`settings.lengthShort`, `pause.void`): the shared meta still names `settings.length.short` and
+    // `pause.voidQuestion`, which have no string (JAMAA-GAP in the G4 lane C report).
     val TRIVIA: TvGameMeta = run {
         val k = "game.trivia"
         TvGameMeta(
             id = GameIds.TRIVIA, minPlayers = 1, maxPlayers = 12,
             phases = listOf("QUIZ_INTRO", "READ", "ANSWER", "REVEAL", "LEADERBOARD", "FINAL_INTRO", "RESULTS", "HOLD"),
             titleKey = "$k.title", taglineKey = "$k.tagline", howToKeys = (1..4).map { "$k.howto.$it" },
-            ruleSections = emptyList(), durationMinutes = 5 to 10, world = WorldIds.QUIZ_STUDIO,
+            ruleSections = listOf(
+                RuleSectionSpec("answer", "$k.rules.answer.title", "$k.rules.answer.body", listOf("QUIZ_INTRO", "READ", "ANSWER", "HOLD")),
+                RuleSectionSpec("points", "$k.rules.points.title", "$k.rules.points.body", listOf("REVEAL")),
+                RuleSectionSpec("streaks", "$k.rules.streaks.title", "$k.rules.streaks.body", listOf("LEADERBOARD")),
+                RuleSectionSpec("final", "$k.rules.final.title", "$k.rules.final.body", listOf("FINAL_INTRO")),
+                RuleSectionSpec("ties", "$k.rules.ties.title", "$k.rules.ties.body", listOf("RESULTS")),
+            ),
+            durationMinutes = 5 to 10, world = WorldIds.QUIZ_STUDIO,
             pauseItems = listOf(
                 PauseItemSpec("next", "$k.pause.next", "HOST_ADVANCE", listOf("QUIZ_INTRO", "REVEAL", "LEADERBOARD", "FINAL_INTRO")),
-                PauseItemSpec("voidQuestion", "$k.pause.voidQuestion", "VOID_QUESTION", listOf("REVEAL"), confirm = true),
+                PauseItemSpec("voidQuestion", "$k.pause.void", "VOID_QUESTION", listOf("REVEAL"), confirm = true),
                 PauseItemSpec("endGame", "$k.pause.endGame", "END_GAME", listOf("HOLD"), confirm = true),
             ),
             carriesScore = false, viewVersion = 1,
             basic = listOf(
                 SettingFieldSpec.Packs("quizId", "$k.settings.quiz", single = true),
-                choice("length", "$k.settings.length", "short" to "$k.settings.length.short", "normal" to "$k.settings.length.normal", "long" to "$k.settings.length.long"),
-                choice("pace", "$k.settings.pace", "relaxed" to "$k.settings.pace.relaxed", "normal" to "$k.settings.pace.normal", "fast" to "$k.settings.pace.fast"),
+                choice("length", "$k.settings.length", "short" to "$k.settings.lengthShort", "normal" to "$k.settings.lengthNormal", "long" to "$k.settings.lengthLong"),
+                choice("pace", "$k.settings.pace", "relaxed" to "$k.settings.paceRelaxed", "normal" to "$k.settings.paceNormal", "fast" to "$k.settings.paceFast"),
             ),
             advanced = emptyList(), premiumKeys = emptyList(),
         )
