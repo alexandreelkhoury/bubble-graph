@@ -7,11 +7,12 @@ import type { LikelyPack } from "../../../shared/src/games/likely/content";
 import { cardAllowed } from "../../../shared/src/games/likely/engine/catalog";
 import { ERRORS } from "../../../shared/src/games/likely/errors";
 import { LIKELY_LENGTHS, LIKELY_META, LIKELY_TAGS } from "../../../shared/src/games/likely/meta";
-import { BANNED_FAMILY, findTerms, lintLikelyRaw, MIN_FREE_CARDS } from "../../../tools/content-lint/src/games/likely";
+import { AR_EASTERN_DIGITS, AR_VERB_AFTER_PLAYER, BANNED_FAMILY, findTerms, FR_ELIDING_BEFORE_PLAYER, lintLikelyRaw, MIN_FREE_CARDS } from "../../../tools/content-lint/src/games/likely";
 import en from "../../../shared/i18n/games/likely/en.json";
 import fr from "../../../shared/i18n/games/likely/fr.json";
 import ar from "../../../shared/i18n/games/likely/ar.json";
 import es from "../../../shared/i18n/games/likely/es.json";
+import review from "../../../shared/i18n/games/likely/review.json";
 import { CUES } from "../../../tools/gen-sounds/cues/likely.mjs";
 import { render, verify } from "../../../tools/gen-sounds/src/main";
 import { ALIASES } from "../../../tools/gen-sounds/src/platform-cues";
@@ -194,6 +195,43 @@ describe("content-lint: likely rules", () => {
     expect(findTerms("the expert", BANNED_FAMILY.en)).toEqual([]);
   });
 
+  it("FR elision: rejects {player} after de/que/le…, accepts it after à/avec/pour", () => {
+    const named = (fr: string): Raw => pack([
+      card(999, { spice: 1, tier: "pass", namesPlayer: true, tags: ["romance"], prompt: L("steal {player}'s hoodie", fr, "يسرق كنزة {player}", "robarle la sudadera a {player}") }),
+      ...base().map((x) => ({ ...x, spice: 1, tier: "pass" })),
+    ], { ageRating: "adult" });
+    for (const fr of ["de piquer le sweat de {player}", "de rougir dès que {player} arrive", "de regarder {player} comme le {player}"]) {
+      expect(errs(named(fr)).join(), fr).toMatch(/elides/);
+    }
+    for (const fr of ["de piquer son sweat à {player}", "de danser avec {player}", "d'apprendre une chanson pour {player}", "de défier {player} au tango"]) {
+      expect(errs(named(fr)), fr).toEqual([]);
+    }
+    expect(FR_ELIDING_BEFORE_PLAYER.test("de chanter une sérénade à {player}")).toBe(false);
+    expect(FR_ELIDING_BEFORE_PLAYER.test("chaque fois que {player} parle")).toBe(true);
+  });
+
+  it("AR: warns on a verb right after {player} and on Eastern Arabic digits", () => {
+    expect(AR_VERB_AFTER_PLAYER.test("يحمرّ وجّو كل ما {player} يقول اسمو")).toBe(true);
+    expect(AR_VERB_AFTER_PLAYER.test("كل ما {player} عم يحكي")).toBe(true);
+    expect(AR_VERB_AFTER_PLAYER.test("يسرق بطاطا {player} ويقول «هيدا غزل»")).toBe(false);
+    expect(AR_VERB_AFTER_PLAYER.test("يكون مغروم بـ{player} بالسرّ")).toBe(false);
+    expect(warns(withCard(setText("prompt", "ar", "يخلّي ٤٧ تاب مفتوحين"))).join()).toMatch(/Eastern Arabic digits/);
+    expect(warns(withCard(setText("prompt", "ar", "يخلّي 47 تاب مفتوحين"))).join()).not.toMatch(/Eastern Arabic digits/);
+  });
+
+  it("the real packs: no FR elision trap, no AR verb for {player}, Western digits only", () => {
+    for (const c of packs.flatMap((p) => p.cards)) {
+      expect(FR_ELIDING_BEFORE_PLAYER.test(c.prompt.fr), `${c.id} ${c.prompt.fr}`).toBe(false);
+      expect(AR_VERB_AFTER_PLAYER.test(c.prompt.ar), `${c.id} ${c.prompt.ar}`).toBe(false);
+      expect(AR_EASTERN_DIGITS.test(c.prompt.ar + c.award.ar), `${c.id}`).toBe(false);
+    }
+  });
+
+  it("no award reuses the card's re-run tag word (the TV would show \"Rerun!\" next to it)", () => {
+    const tag: Record<(typeof LOCS)[number], RegExp> = { en: /\brerun/iu, fr: /rediffusion/iu, ar: /إعادة/u, es: /reposici/iu };
+    for (const c of packs.flatMap((p) => p.cards)) for (const l of LOCS) expect(tag[l].test(c.award[l] as string), `${c.id} ${l}: ${c.award[l]}`).toBe(false);
+  });
+
   it("the real packs never trip a Family ban list", () => {
     for (const c of family.cards) for (const l of LOCS) expect(findTerms(c.prompt[l] as string, BANNED_FAMILY[l]), `${c.id} ${l}`).toEqual([]);
   });
@@ -242,6 +280,40 @@ describe("game.likely.* i18n", () => {
       }
     }
     expect(Object.keys(ar["game.likely.reveal.youGot"]).sort()).toEqual(["few", "many", "one", "other", "two", "zero"]);
+  });
+
+  it("the reveal coach mark is true in both modes (the platform shows it whatever showVoters is): no points promised", () => {
+    const pts: Record<(typeof LOCS)[number], RegExp> = { en: /point|score/iu, fr: /point|marque/iu, ar: /نقاط|نقطة/u, es: /punto|suma/iu };
+    for (const l of LOCS) expect(pts[l].test(FILES[l]["game.likely.coach.reveal"] as string), l).toBe(false);
+  });
+
+  it("the secret-votes rule warns that a small room can still guess", () => {
+    const caveat: Record<(typeof LOCS)[number], RegExp> = { en: /few players/u, fr: /peu de joueurs/u, ar: /قلال/u, es: /pocos jugadores/u };
+    for (const l of LOCS) expect(FILES[l]["game.likely.rules.secret.body"] as string, l).toMatch(caveat[l]);
+  });
+
+  it("AR addresses a named player without a gendered imperative; FR phone copy says « tu »; ES is the Spain variant", () => {
+    expect(ar["game.likely.reveal.defend"]).not.toMatch(/دافع|دافعي/u);
+    for (const k of ["coach.card", "coach.voting", "coach.reveal", "vote.title", "vote.locked", "error.staleCard"]) {
+      expect((fr as Record<string, string>)[`game.likely.${k}`], k).not.toMatch(/\b(vous|votre|vos|Lisez|Touchez|Regardez)\b/u);
+    }
+    // Spain: perfect tense for the just-finished vote ("Has votado"), never the LatAm-style preterite ("Votaste").
+    for (const [k, v] of Object.entries(es)) {
+      for (const x of typeof v === "string" ? [v] : Object.values(v as Record<string, string>)) expect(x, k).not.toMatch(/(?<!\p{L})(votó|votaste|elegiste|eligió|pensó|pensaron|desactivó|declaraste)(?!\p{L})/iu);
+    }
+  });
+
+  it("lists every FR/AR/ES draft for native review (keys exist; the changed copy is listed)", () => {
+    const r = review as unknown as Record<string, unknown>;
+    for (const l of ["fr", "ar", "es"] as const) {
+      const keys = r[l] as string[];
+      expect(Array.isArray(keys), l).toBe(true);
+      for (const k of keys) expect(FILES[l], `${l} ${k}`).toHaveProperty([k]);
+      for (const k of ["coach.reveal", "rules.secret.body"]) expect(keys, `${l} ${k}`).toContain(`game.likely.${k}`);
+    }
+    expect(r.ar as string[]).toContain("game.likely.reveal.defend");
+    expect(r.fr as string[]).toEqual(expect.arrayContaining(["game.likely.coach.card", "game.likely.coach.voting"]));
+    expect(r.es as string[]).toEqual(expect.arrayContaining(["game.likely.reveal.votedFor", "game.likely.settings.showVoters"]));
   });
 
   it("uses French typography (narrow no-break space before ? ! : and inside guillemets)", () => {
