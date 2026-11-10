@@ -123,7 +123,7 @@ class GameViewModelBillingTest {
                     CreateRoomResponse("KXRT", "0123456789abcdef0123456789abcdef", "https://x/KXRT", "/parties/room/KXRT", "INVALID")
                 },
                 newConnection = { _, _ -> FakeConnection().also { connections += it } },
-                clock = { 1_790_000_000_000L },
+                clock = { now },
                 billing = billing,
                 billingEnabled = { billingEnabled },
             ),
@@ -133,6 +133,8 @@ class GameViewModelBillingTest {
     }
 
     private var seq = 0L
+    /** The ViewModel's wall clock (the input gate reads it); only the guard test moves it. */
+    private var now = 1_790_000_000_000L
     private suspend fun FakeConnection.state(view: RoomView) = incoming.emit(StateMsg(seq = ++seq, serverNow = 1_790_000_000_000L, view = view))
 
     /** v2: the Mish Ana! setup is where the v1 lobby's packs, premium settings and Store entry points live. */
@@ -179,9 +181,17 @@ class GameViewModelBillingTest {
         conn.state.value = ConnState.OPEN
         conn.state(lobby)
         advanceUntilIdle()
+        vm.moment.value?.let { vm.momentEnded(it.seq) }
+        now += app.jamaa.tv.Constants.INPUT_GUARD_MS
         assertEquals(app.jamaa.tv.platform.GateDecision.PASS, vm.gateKey(app.jamaa.tv.platform.RemoteKey.OK))
         vm.openStore(StoreEntry(null, StoreOrigin.LOBBY_BUTTON))
+        runCurrent() // not advanceUntilIdle: the 4-min re-send ticker runs until the Store closes
+        now += 80
         assertEquals(app.jamaa.tv.platform.GateDecision.CONSUME, vm.gateKey(app.jamaa.tv.platform.RemoteKey.OK))
+        now += app.jamaa.tv.Constants.INPUT_GUARD_MS
+        assertEquals(app.jamaa.tv.platform.GateDecision.PASS, vm.gateKey(app.jamaa.tv.platform.RemoteKey.OK))
+        vm.closeStore() // stops the ticker, so runTest can finish
+        runCurrent()
     }
 
     @Test

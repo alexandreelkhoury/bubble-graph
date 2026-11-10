@@ -168,6 +168,11 @@ describe("answering (§5.1, §13.1)", () => {
     expect(TriviaIntentSchema.safeParse({ type: "ANSWER", choice: 1 }).success).toBe(true);
     expect(TriviaIntentSchema.safeParse({ type: "ANSWER", choice: 1, t: 12 }).success).toBe(false);
     expect(TriviaIntentSchema.safeParse({ type: "ANSWER", choice: 1, sentAt: T0 }).success).toBe(false);
+    // VOID_QUESTION: the platform pause menus send the bare intent; an id, when present, must be a question id.
+    expect(TriviaIntentSchema.safeParse({ type: "VOID_QUESTION" }).success).toBe(true);
+    expect(TriviaIntentSchema.safeParse({ type: "VOID_QUESTION", questionId: "q004" }).success).toBe(true);
+    expect(TriviaIntentSchema.safeParse({ type: "VOID_QUESTION", questionId: "Q4" }).success).toBe(false);
+    expect(TriviaIntentSchema.safeParse({ type: "VOID_QUESTION", extra: 1 }).success).toBe(false);
   });
 
   it("all connected players answered → deadline = now + 600 (never later than the original)", () => {
@@ -363,8 +368,11 @@ describe("VOID_QUESTION (§6, §13.3 invariant 4)", () => {
     const before = structuredClone(s.players);
     const qid = s.last!.questionId;
     expect(stepErr(s, intent({ type: "VOID_QUESTION", questionId: qid }, player("p2")), s.deadline!.at - 1)).toBe("NOT_HOST");
+    // The VIP (p1) is a host but Void is a TV pause-menu item only (JAMAA-GAP in reduce.ts): refused from any phone.
+    expect(stepErr(s, intent({ type: "VOID_QUESTION", questionId: qid }, player("p1")), s.deadline!.at - 1)).toBe("NOT_HOST");
+    expect(stepErr(s, intent({ type: "VOID_QUESTION" }, player("p1")), s.deadline!.at - 1)).toBe("NOT_HOST");
     expect(stepErr(s, intent({ type: "VOID_QUESTION", questionId: "q999" }), s.deadline!.at - 1)).toBe("WRONG_PHASE");
-    const v = step(s, intent({ type: "VOID_QUESTION", questionId: qid }, player("p1")), s.deadline!.at - 1);
+    const v = step(s, intent({ type: "VOID_QUESTION", questionId: qid }), s.deadline!.at - 1);
     expect(v.last).toMatchObject({ voided: true, fastestIds: [], onFireIds: [] });
     expect(v.voidedQuestionIds).toEqual([qid]);
     for (const p of v.players) {
@@ -379,8 +387,13 @@ describe("VOID_QUESTION (§6, §13.3 invariant 4)", () => {
     // A second void is a no-op (same object); the pub reveal shows 0 points; after REVEAL it is refused.
     expect(tryStep(v, intent({ type: "VOID_QUESTION", questionId: qid }), v.deadline!.at - 1).state).toBe(v);
     expect(DEF.projectPublic(v, CATALOG).reveal!.choices.every((c) => c.points === 0 && c.streakBonus === 0)).toBe(true);
+    // The bare intent (platform pause menus send no id) voids the question in REVEAL: same result as with its id.
+    const bare = step(s, intent({ type: "VOID_QUESTION" }), s.deadline!.at - 1);
+    expect(bare).toEqual(v);
+    expect(tryStep(v, intent({ type: "VOID_QUESTION" }), v.deadline!.at - 1).state).toBe(v);
     const next = tick(v);
     expect(stepErr(next, intent({ type: "VOID_QUESTION", questionId: qid }), next.deadline!.at - 1)).toBe("WRONG_PHASE");
+    expect(stepErr(next, intent({ type: "VOID_QUESTION" }), next.deadline!.at - 1)).toBe("WRONG_PHASE");
     // The next correct answer continues the RESTORED streak.
     const after = playQuestion(until(next, "READ"), { p1: { ok: true, after: 0 } });
     expect(after.last!.choices.find((c) => c.id === "p1")!.streakBonus).toBe(100);

@@ -53,13 +53,25 @@
 .tqa__flame .tq-flame { transform: scale(1.6, 1.5); transform-origin: 50% 100%; }
 @keyframes tq-flicker { from { transform: scaleY(0.92); } to { transform: scaleY(1.08); } }
 
+/* The platform "done" badge is jade; in Quiz Night jade means "correct", so before REVEAL it is neutral cream (§8.1:
+   the white podium ring is the lock cue, nothing hints at right or wrong). */
+.tqtv .ch__badge circle { fill: #FFF7EC; }
+
 /* ------------------------------------------------------------ question card + bulb ring + ready bar */
-.tqcard { position: absolute; z-index: 2; display: grid; place-items: center; padding: 14px 28px; border-radius: 20px;
+.tqcard { position: absolute; z-index: 2; display: grid; place-items: center; padding: 14px 62px; overflow: hidden; border-radius: 20px;
   background: linear-gradient(180deg, #232D6E, #161D4A); box-shadow: inset 0 0 0 2px rgb(143 168 255 / 0.35), 0 14px 40px rgb(0 0 0 / 0.45); text-align: center; }
 .tqcard__text { margin: 0; font: 900 30px/38px var(--font-sans); text-wrap: balance; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .tqcard.is-mid .tqcard__text { font-size: 26px; line-height: 33px; }
 .tqcard.is-long .tqcard__text { font-size: 22px; line-height: 28px; -webkit-line-clamp: 3; }
 .tqtv:lang(ar) .tqcard__text, .tv:lang(ar) .tqcard__text { line-height: 1.45; }
+/* REVEAL: the card squeezes (300 ms) to open the verdict band under it (layout.ts REVEAL_CARD_H). */
+.tqcard--reveal { padding: 8px 62px; animation: tq-squeeze 300ms var(--ease-standard) both; }
+@keyframes tq-squeeze { from { height: 106px; } }
+.tqcard--reveal .tqcard__text { font-size: 22px; line-height: 28px; -webkit-line-clamp: 2; }
+.tqcard--reveal.is-mid .tqcard__text { font-size: 20px; line-height: 26px; }
+.tqcard--reveal.is-long { padding-block: 4px; }
+.tqcard--reveal.is-long .tqcard__text { font-size: 17px; line-height: 21px; -webkit-line-clamp: 3; }
+.tqtv:lang(ar) .tqcard--reveal .tqcard__text, .tv:lang(ar) .tqcard--reveal .tqcard__text { font-size: 19px; line-height: 1.35; -webkit-line-clamp: 2; }
 .tqcard--read { animation: tq-slam 400ms var(--ease-overshoot) both; }
 @keyframes tq-slam { from { transform: translateY(-160px) scale(1.06); opacity: 0; } 60% { opacity: 1; } to { transform: none; opacity: 1; } }
 .tqready { position: absolute; left: 28px; right: 28px; bottom: 10px; height: 6px; border-radius: 3px; background: rgb(255 255 255 / 0.12); overflow: hidden; }
@@ -70,8 +82,8 @@
 .tqbulbs i.is-on { background: #FFE9A0; box-shadow: 0 0 10px 2px rgb(255 216 77 / 0.75); }
 .tqbulbs.is-low i.is-on { background: #FFC94D; animation: tq-pulse 1s ease-in-out infinite; }
 @keyframes tq-pulse { 50% { box-shadow: 0 0 18px 5px rgb(255 201 77 / 0.95); transform: scale(1.18); } }
-.tqbulbs__num { position: absolute; z-index: 1; top: -24px; inset-inline-end: -24px; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%;
-  background: #0A0F2E; box-shadow: inset 0 0 0 2px var(--w-glow, #FFD84D); font: 900 22px/1 var(--font-sans); color: var(--w-glow, #FFD84D); }
+.tqbulbs__num { position: absolute; z-index: 1; top: 20px; inset-inline-end: 18px; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+  background: #0A0F2E; box-shadow: inset 0 0 0 2px var(--w-glow, #FFD84D); font: 900 20px/1 var(--font-sans); color: var(--w-glow, #FFD84D); }
 .tqbulbs.is-low .tqbulbs__num { background: #FFC94D; color: var(--color-ink); }
 
 /* ------------------------------------------------------------ tiles */
@@ -171,16 +183,21 @@
 .tqtv:lang(ar) .tqstamp, .tv:lang(ar) .tqstamp { text-transform: none; }
 .tqfast, .tqbanner, .tqfire { position: absolute; z-index: 9; left: 50%; margin: 0; translate: -50% 0; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
   padding: 6px 18px; border-radius: 20px; background: rgb(10 15 46 / 0.92); box-shadow: inset 0 0 0 2px rgb(255 240 77 / 0.6), 0 8px 24px rgb(0 0 0 / 0.5); font: 900 22px/28px var(--font-sans); }
-.tqfast { top: 372px; color: #FFF04D; opacity: var(--p-bolt); transform: scale(calc(0.7 + 0.3 * var(--p-bolt))); }
-.tqbanner { top: 178px; translate: -50% -50%; color: #FF8A80; box-shadow: inset 0 0 0 2px rgb(255 107 96 / 0.6), 0 8px 24px rgb(0 0 0 / 0.5); opacity: var(--p-out); font-size: 26px; }
+/* The verdict band (layout.ts verdictBand: between the squeezed card and the grid): banner and fastest pill side by
+   side, centred on the main column, over nothing. */
+.tqband { position: absolute; z-index: 9; display: flex; align-items: center; justify-content: center; gap: 12px; pointer-events: none; }
+.tqband .tqfast, .tqband .tqbanner { position: static; translate: none; padding: 3px 16px; font-size: 20px; line-height: 26px; border-radius: 17px; }
+.tqfast { color: #FFF04D; opacity: var(--p-bolt); transform: scale(calc(0.7 + 0.3 * var(--p-bolt))); }
+.tqbanner { color: #FF8A80; box-shadow: inset 0 0 0 2px rgb(255 107 96 / 0.6), 0 8px 24px rgb(0 0 0 / 0.5); opacity: var(--p-out); transform: scale(calc(0.8 + 0.2 * var(--p-out))); }
 .tqbanner.is-good { color: #FFC94D; box-shadow: inset 0 0 0 2px rgb(255 201 77 / 0.7), 0 8px 24px rgb(0 0 0 / 0.5); }
-.tqrv.is-voided .tqbanner { color: var(--color-text); top: 290px; font-size: 30px; }
+.tqrv.is-voided .tqbanner { color: var(--color-text); }
 .tqfire { top: 520px; translate: -50% -100%; color: #FFB066; box-shadow: inset 0 0 0 2px rgb(255 122 31 / 0.6); font-size: 18px; opacity: var(--p-bolt); display: none; }
-.tqexplain { position: absolute; z-index: 10; left: 50%; bottom: 16px; width: 720px; translate: -50% 0; display: flex; flex-direction: column; gap: 4px; padding: 14px 22px; border-radius: 18px;
-  background: linear-gradient(180deg, #2A357A, #1A2258); box-shadow: inset 0 0 0 2px rgb(255 216 77 / 0.5), 0 18px 40px rgb(0 0 0 / 0.55); animation: tq-up 420ms var(--ease-decel) both; }
-.tqexplain b { font: 900 15px/1 var(--font-sans); text-transform: uppercase; letter-spacing: 0.1em; color: var(--w-glow, #FFD84D); }
-.tqexplain span { font: 700 22px/30px var(--font-sans); }
-@keyframes tq-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tqexplain { position: absolute; z-index: 10; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 6px 24px; border-radius: 20px; overflow: hidden;
+  background: linear-gradient(180deg, #2A357A, #1A2258); box-shadow: inset 0 0 0 2px rgb(255 216 77 / 0.5), 0 14px 34px rgb(0 0 0 / 0.5); animation: tq-flipdown 420ms var(--ease-decel) both; transform-origin: 50% 0; }
+.tqexplain b { font: 900 14px/16px var(--font-sans); text-transform: uppercase; letter-spacing: 0.1em; color: var(--w-glow, #FFD84D); }
+.tqtv:lang(ar) .tqexplain b, .tv:lang(ar) .tqexplain b { text-transform: none; letter-spacing: 0; }
+.tqexplain span { font: 700 20px/26px var(--font-sans); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+@keyframes tq-flipdown { from { transform: perspective(800px) rotateX(-70deg); opacity: 0; } to { transform: none; opacity: 1; } }
 
 /* ------------------------------------------------------------ leaderboard race (TR-TV-04) */
 .tqlb { position: absolute; inset: 0; --p-crown: 0; --p-climb: 0; }

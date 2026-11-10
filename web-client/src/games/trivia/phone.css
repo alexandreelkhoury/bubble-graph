@@ -52,7 +52,9 @@
 .tq-pad__q > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tq-pad__locked { display: flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 40px; font: var(--type-ph-h2); animation: tq-pop 260ms var(--ease-overshoot) both; }
 .tq-pad__check { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--color-surface); color: var(--color-text); }
-.tq-pad__pick { display: inline-flex; margin-inline-start: var(--space-2); }
+.tq-pad__pick { display: inline-flex; flex: none; margin-inline-start: auto; color: var(--color-text-muted); align-self: center; }
+/* The first-question coach mark ("Tap the shape… First tap is final!") has done its job once this phone locked. */
+.ingame:has(> .tq-pad.is-locked) > .coach { display: none; }
 .tq-pad__grid { direction: ltr; flex: 0 1 70dvh; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; max-height: 640px; }
 .tq-pad--tf .tq-pad__grid { grid-template-rows: 1fr; }
 .tq-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-width: 0; padding: 14px 10px 12px;
@@ -83,7 +85,9 @@
 .tq-verdict { align-items: center; text-align: center; gap: var(--space-4); }
 .tq-verdict .tq-eyebrow { align-self: stretch; }
 .tq-verdict__hero { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding: var(--space-5) var(--space-4); border-radius: var(--radius-xl); width: 100%;
-  animation: tq-pop 420ms var(--ease-overshoot) both; }
+  animation: tq-bump 420ms var(--ease-overshoot) both; }
+/* Scale only (never from opacity 0): the verdict is readable on the very first frame of REVEAL. */
+@keyframes tq-bump { from { transform: scale(0.9); } to { transform: none; } }
 .tq-verdict--correct .tq-verdict__hero { background: radial-gradient(120% 90% at 50% 0%, rgb(61 220 151 / 0.38), rgb(31 168 138 / 0.12) 70%); box-shadow: inset 0 0 0 2px rgb(61 220 151 / 0.5); }
 .tq-verdict--correct h1 { color: #3DDC97; }
 .tq-verdict--wrong .tq-verdict__hero, .tq-verdict--none .tq-verdict__hero { background: radial-gradient(120% 90% at 50% 0%, rgb(240 24 58 / 0.3), rgb(240 24 58 / 0.06) 70%); box-shadow: inset 0 0 0 2px rgb(255 107 96 / 0.45); }

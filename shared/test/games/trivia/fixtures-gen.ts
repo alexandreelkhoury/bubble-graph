@@ -90,6 +90,8 @@ export function generateTriviaFixtures(): Map<string, string> {
   action("game.trivia.host_advance", { type: "GAME", gameId: "trivia", i: { type: "HOST_ADVANCE" } });
   action("game.trivia.void_question", { type: "GAME", gameId: "trivia", i: { type: "VOID_QUESTION", questionId: "q004" } });
   action("game.trivia.end_game", { type: "GAME", gameId: "trivia", i: { type: "END_GAME" } });
+  // The platform pause menus (web tvDialogs, native GameViewModel) send the bare intent: it voids the question in REVEAL.
+  action("game.trivia.void_question.bare", { type: "GAME", gameId: "trivia", i: { type: "VOID_QUESTION" } });
 
   // ---------------- server → client errors (Trivia's own codes + the platform ones it uses)
   const error = (name: string, code: ErrorCode, r: string | null): void => put(`s2c.error.${name}.json`, { v: 2, t: "error", code, messageKey: errorMessageKey(code), ref: r });

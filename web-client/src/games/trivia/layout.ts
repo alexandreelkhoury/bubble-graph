@@ -13,6 +13,9 @@ const EDGE = 28;
 const GAP = 16;
 export const CARD_Y = 66;
 export const CARD_H = 106;
+/** REVEAL squeezes the card (the question was read) to open the verdict band between it and the grid: the "Stumped!"
+ *  / "Genius!" banner and the "Fastest finger" pill live there, over nothing (DESIGN-JAMAA §5.4). */
+export const REVEAL_CARD_H = 74;
 export const TILE_Y = 184;
 export const TILE_H = 104;
 export const TILE_GAP = 10;
@@ -35,9 +38,15 @@ export function mainRect(rtl: boolean): Rect {
 export function towerRect(rtl: boolean): Rect {
   return { x: rtl ? EDGE : CANVAS.w - EDGE - TOWER_W, y: CARD_Y, w: TOWER_W, h: TILE_Y + 2 * TILE_H + TILE_GAP - CARD_Y };
 }
-export function cardRect(rtl: boolean): Rect {
+export function cardRect(rtl: boolean, reveal = false): Rect {
   const m = mainRect(rtl);
-  return { x: m.x, y: CARD_Y, w: m.w, h: CARD_H };
+  return { x: m.x, y: CARD_Y, w: m.w, h: reveal ? REVEAL_CARD_H : CARD_H };
+}
+/** REVEAL's verdict band: the strip between the squeezed card and the tile grid (centre of the main column). */
+export function verdictBand(rtl: boolean): Rect {
+  const m = mainRect(rtl);
+  const y = CARD_Y + REVEAL_CARD_H;
+  return { x: m.x, y, w: m.w, h: TILE_Y - y };
 }
 
 /**
@@ -54,9 +63,10 @@ export function tileRect(i: number, type: "mc4" | "tf", rtl: boolean): Rect {
   return { x: m.x + col * (w + TILE_GAP), y: TILE_Y + row * (TILE_H + TILE_GAP), w, h: TILE_H };
 }
 
-/** The bulb ring (§12.2): `n` bulbs evenly spaced around the question card's edge, clockwise from the top-left corner
- *  (the same order in every locale: they go dark one by one, clockwise). */
-export function bulbs(rect: Rect, n = 20, inset = -8): Pt[] {
+/** The bulb ring (§12.2): `n` bulbs evenly spaced ON the question card's border (8 dp in from its edge, DESIGN-JAMAA
+ *  §5.4), clockwise from the top-left corner (the same order in every locale: they go dark one by one, clockwise). */
+export const BULB_INSET = 8;
+export function bulbs(rect: Rect, n = 20, inset = BULB_INSET): Pt[] {
   const r = { x: rect.x + inset, y: rect.y + inset, w: rect.w - 2 * inset, h: rect.h - 2 * inset };
   const per = 2 * (r.w + r.h);
   const out: Pt[] = [];

@@ -17,7 +17,7 @@ import { TimerBar } from "../../components/Timer";
 import { COLOR_BY_ID } from "../../components/PlayerChip";
 import { CrystalBall, MysteryPuff, Rosette } from "./art";
 import {
-  activeSeats, awardsOf, canVote, deadlineOf, fmtPercent, likelyModel, myReveal, needsVote, targetsOf,
+  activeSeats, canVote, deadlineOf, fmtPercent, likelyModel, myReveal, needsVote, phoneAwards, targetsOf, winners,
 } from "./model";
 import type { LikelyAward, LikelyModel, Seat } from "./model";
 import { Question, awardText, k, questionText, useFocusOnMount } from "./parts";
@@ -34,7 +34,7 @@ function counter(m: LikelyModel): string {
 function Eyebrow({ m, tone }: { m: LikelyModel; tone?: "neutral" }) {
   return (
     <div class="eyebrow-row lk-eyebrow">
-      <p class="eyebrow"><span class="lk-eyebrow__title">{t(k("title"))}</span> <span class="tnum lk-eyebrow__count">{counter(m)}</span></p>
+      <p class="eyebrow"><span class="lk-eyebrow__title">{t(k("title"))}</span> <span class="tnum lk-eyebrow__count" dir="ltr">{counter(m)}</span></p>
       <TimerBar deadline={deadlineOf(m)} class="timerbar--inline" tone={tone} />
     </div>
   );
@@ -90,6 +90,12 @@ function PhVote({ m }: { m: LikelyModel }) {
   // Optimistic: the tapped tile is marked at once; the server's `me.myVote` takes over on the next view.
   const [pending, setPending] = useState<string | null>(null);
   useEffect(() => { setPending(null); }, [mine]);
+  // A tap the server never confirms (rejected, or lost on a flaky link) must not keep looking counted.
+  useEffect(() => {
+    if (pending === null) return;
+    const id = setTimeout(() => setPending(null), 3000);
+    return () => clearTimeout(id);
+  }, [pending]);
   const picked = pending ?? mine;
   const targets = targetsOf(m);
   const voters = activeSeats(m).filter((s) => s.connected || m.pub.votedIds.includes(s.id)).length;
@@ -160,6 +166,23 @@ function CoinsIntoScore({ points, from, to, color }: { points: number; from: num
   );
 }
 
+/** Who took this card's award (public data: `topIds`), for a phone that did not: rosette, award name, the winner(s). */
+function WinnerChip({ m }: { m: LikelyModel }) {
+  const r = m.pub.reveal!;
+  const top = winners(m);
+  return (
+    <div class="lk-winner">
+      <Rosette size={34} class="lk-winner__rosette" />
+      <div class="lk-winner__text">
+        <p class="lk-winner__award">{m.pub.card?.award ?? ""}</p>
+        <p class="lk-winner__who">{top.map((s) => (
+          <span key={s.id} class="lk-winner__seat"><Character color={s.color} size={30} expression={r.unanimous ? "shock" : "shy"} /><bdi>{s.name}</bdi></span>
+        ))}</p>
+      </div>
+    </div>
+  );
+}
+
 function PhReveal({ m }: { m: LikelyModel }) {
   const r = m.pub.reveal!;
   const mine = myReveal(m)!;
@@ -187,6 +210,7 @@ function PhReveal({ m }: { m: LikelyModel }) {
           <p class="sub lk-hero__sub">{pub ? t(k("reveal.youGot"), { count: mine.got }) : t(k("reveal.percentYou"), { percent: fmtPercent(mine.percent, locale.value) })}</p>
         )}
       </div>
+      {!mine.top && winners(m).length > 0 && <WinnerChip m={m} />}
       {pub && !r.none && (
         <div class="lk-outcome">
           {mine.unanimousPoints > 0 ? <p class="lk-outcome__line is-gold"><Icon name="lk-sparkle" size={20} />{t(k("reveal.unanimousPts"))}</p>
@@ -244,7 +268,7 @@ function PhAwards({ m, results }: { m: LikelyModel; results: boolean }) {
   const h = useFocusOnMount<HTMLParagraphElement>();
   const id = m.myId;
   const seat = id ? m.byId.get(id) ?? null : null;
-  const mine = id ? awardsOf(m.pub, id) : [];
+  const mine = id ? phoneAwards(m.pub, id, results) : [];
   const [main, ...extras] = mine;
   return (
     <main class={`screen lk-ph lk-ph--awards${results ? " is-results" : ""}`}>

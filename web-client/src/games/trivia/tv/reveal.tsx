@@ -18,10 +18,10 @@ import { activePlayers, standings } from "../model";
 import { Bolt } from "../tokens";
 import { revealMarks } from "../cues";
 import {
-  CROWD_CHAR, EXPLAIN_AT_MS, PODIUM_CHAR, REVEAL_STEPS, coinPoint, crowdSlot, hopPoint, podiumSlots, tileRect, towerRowH, towerScorePoint,
+  CARD_Y, CROWD_CHAR, EXPLAIN_AT_MS, PODIUM_CHAR, REVEAL_STEPS, TILE_Y, cardRect, coinPoint, crowdSlot, hopPoint, podiumSlots, tileRect, towerRowH, towerScorePoint, verdictBand,
 } from "../layout";
 import type { Pt } from "../layout";
-import { Actor, PodiumRow, QuestionCard, Tiles, Tower, isRtl, tk } from "./parts";
+import { Actor, PodiumRow, QuestionCard, Tiles, Tower, box, isRtl, tk } from "./parts";
 
 interface Jumper { p: Player; home: Pt; to: Pt; choice: number }
 interface Coin { p: Player; from: Pt; to: Pt; label: string; final: boolean; fire: boolean }
@@ -170,13 +170,16 @@ export function Reveal({ tr, ps }: { tr: Trivia; ps: Player[] }) {
         </span>
       ))}
       <p class="tqstamp" aria-hidden="true">{tk("reveal.time")}</p>
-      {fastNames.length > 0 && !r.voided && <p class="tqfast"><Bolt size={26} />{tk("reveal.fastest", { name: listOf(fastNames) })}</p>}
-      {banner && <p class={`tqbanner${r.genius ? " is-good" : ""}`}>{banner}</p>}
+      {/* The verdict band between the squeezed card and the grid: it covers no tile, no character, no podium. */}
+      <div class="tqband" style={box(verdictBand(rtl))}>
+        {banner && <p class={`tqbanner${r.genius ? " is-good" : ""}`}>{banner}</p>}
+        {fastNames.length > 0 && !r.voided && <p class="tqfast"><Bolt size={22} />{tk("reveal.fastest", { name: listOf(fastNames) })}</p>}
+      </div>
       {r.genius && stage.done && <Confetti colors={["#FFC94D", "#FFD84D", "#FFF7EC", "#5B7CFF"]} count={42} />}
       {r.onFireIds.length > 0 && !r.voided && (
         <p class="tqfire">{plan.jumpers.filter((j) => r.onFireIds.includes(j.p.id)).map((j) => `${isolate(j.p.name)} · ${tk("streak", { count: j.p.row.streak })}`).join("   ")}</p>
       )}
-      {stage.explain && r.explain && <aside class="tqexplain"><b>{tk("reveal.didYouKnow")}</b><span dir="auto">{r.explain}</span></aside>}
+      {stage.explain && r.explain && <aside class="tqexplain" style={box({ ...cardRect(rtl), y: CARD_Y, h: TILE_Y - CARD_Y - 8 })}><b>{tk("reveal.didYouKnow")}</b><span dir="auto">{r.explain}</span></aside>}
     </div>
   );
 }

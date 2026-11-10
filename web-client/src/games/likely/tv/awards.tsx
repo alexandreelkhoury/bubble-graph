@@ -159,10 +159,11 @@ export function TvResults({ m }: { m: LikelyModel }) {
               const all = awardsOf(m.pub, r.seat.id).filter((a) => a.kind !== "mindReader");
               return (
                 <li key={r.seat.id} class={`lkres__award${r.seat.left ? " is-left" : ""}`} style={{ "--i": i }}>
-                  <Character color={r.seat.color} size={40} expression={r.award?.kind === "mystery" ? "smug" : "happy"} />
+                  <Character color={r.seat.color} size={rows.length > 6 ? 40 : 56} expression={r.award?.kind === "mystery" ? "smug" : "happy"} />
                   <span class="lkres__awtext">
                     <bdi class="lkres__awname">{r.seat.name}</bdi>
                     <span class="lkres__awtitle">{all.map((a) => awardText(a).title).join(" · ")}</span>
+                    {rows.length <= 6 && r.award && <span class="lkres__awline">{awardText(r.award).line}</span>}
                   </span>
                 </li>
               );

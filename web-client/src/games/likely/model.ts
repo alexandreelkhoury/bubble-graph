@@ -161,6 +161,21 @@ export function awardsOf(pub: LikelyPub, playerId: string): LikelyAward[] {
   return [...mine].sort((a, b) => rank(a) - rank(b));
 }
 
+/**
+ * The awards a phone shows for its player: during AWARDS the Mind Reader stays hidden (it is the TV ceremony's last
+ * beat; the phone learns it with everyone at RESULTS).
+ */
+export function phoneAwards(pub: LikelyPub, playerId: string, results: boolean): LikelyAward[] {
+  return awardsOf(pub, playerId).filter((a) => results || a.kind !== "mindReader");
+}
+
+/** The card's award holder(s) (public `topIds`; none on chaos or with no votes), in seat order. */
+export function winners(m: LikelyModel): Seat[] {
+  const r = m.pub.reveal;
+  if (!r || r.chaos || r.none) return [];
+  return m.seats.filter((s) => r.topIds.includes(s.id));
+}
+
 /** The one signature (or mystery) award each player gets, in seat order: the AWARDS trios (§12.4). */
 export function signatureRow(m: LikelyModel): { seat: Seat; award: LikelyAward | null }[] {
   return m.seats.map((seat) => ({ seat, award: m.pub.awards.find((a) => (a.kind === "signature" || a.kind === "mystery") && a.playerIds.includes(seat.id)) ?? null }));

@@ -383,7 +383,7 @@ function PhReveal({ m }: { m: BluffModel }) {
         <div class="bf-rcard is-twist" key={`b${bi}`}><Stamp tone="lie">{tk("reveal.noTruthStamp")}</Stamp></div>
       ) : step ? (
         <div class={`bf-rcard${step.kind === "truth" && stamped ? " is-truth" : ""}`} key={`b${bi}`}>
-          <IsIt text={step.text} />
+          {r.final ? <p class="bf-rcard__text" dir="auto">{step.text}</p> : <IsIt text={step.text} />}
           {stamped && <Stamp tone={stampOf(step, r.final).tone}>{r.final ? `×${step.voteCount}` : tk(stampOf(step, r.final).key)}</Stamp>}
           {stamped && <OwnEvent m={m} step={step} final={r.final} kind={ownEvent} />}
         </div>

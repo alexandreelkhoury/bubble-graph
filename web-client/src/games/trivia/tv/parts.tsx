@@ -3,7 +3,7 @@
 // controls in game (JAMAA-PLATFORM §3.2 HUB-06): host actions are pause-menu items; OK only completes a reveal.
 import type { ComponentChildren, Ref } from "preact";
 import { useEffect, useRef } from "preact/hooks";
-import { dirOf, fmtNum, locale, t } from "../../../i18n/t";
+import { dirOf, fmtNum, locale, t, titleIn } from "../../../i18n/t";
 import type { MessageKey } from "../../../i18n/t";
 import { Character, useReaction } from "../../../components/Character";
 import { Icon } from "../../../components/Icon";
@@ -59,17 +59,20 @@ export function Studio({ coast, heat = false, dim = false }: { coast: boolean; h
   );
 }
 
-const TOP_LABEL: Partial<Record<TriviaPub["phase"], string>> = {
-  LEADERBOARD: "leaderboard.title", FINAL_INTRO: "phase.finalIntro", RESULTS: "results.title", HOLD: "phase.hold",
-};
+// LEADERBOARD and RESULTS already carry a big title ("Leaderboard", "The podium"): their top bar names the quiz (and,
+// on the board, how far in we are) instead of repeating it.
+const TOP_LABEL: Partial<Record<TriviaPub["phase"], string>> = { FINAL_INTRO: "phase.finalIntro", HOLD: "phase.hold" };
 
 /** The in-game top bar: what we are on, the room code, the platform "◁ Back: menu & rules" hint, the pointer pause. */
 export function TopBar({ tr, code }: { tr: Trivia; code: string }) {
   const pub = tr.pub;
   const q = questionNumber(pub);
   const key = TOP_LABEL[pub.phase];
+  const quiz = titleIn(pub.quiz.title);
   const label = pub.phase === "QUIZ_INTRO" ? t(`${K}.title` as MessageKey)
-    : key ? tk(key)
+    : pub.phase === "LEADERBOARD" ? `${quiz} · ${tk("read.questionOf", { index: q.index, total: q.total })}`
+      : pub.phase === "RESULTS" ? quiz
+        : key ? tk(key)
       : `${tk("read.questionOf", { index: q.index, total: q.total })}${pub.question ? ` · ${topicLabel(pub.question.topic)}` : ""}`;
   return (
     <header class="tqtop">
@@ -124,7 +127,7 @@ export function PodiumRow({ tr, players, actors = true, lit }: { tr: Trivia; pla
 /** The question card with its topic chip; `bulbsOn` draws the ANSWER timer as a ring of 20 bulbs around its edge. */
 export function QuestionCard({ pub, mode }: { pub: TriviaPub; mode: "read" | "answer" | "reveal" }) {
   const rtl = isRtl();
-  const r = cardRect(rtl);
+  const r = cardRect(rtl, mode === "reveal");
   const text = pub.question?.text ?? "";
   const long = text.length > 90 ? " is-long" : text.length > 60 ? " is-mid" : "";
   return (

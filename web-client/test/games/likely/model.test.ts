@@ -9,7 +9,7 @@ import { ENTRANCE_GRACE_MS } from "@jamaa/shared/constants";
 import { endMs } from "@jamaa/shared/motion";
 import {
   SAFE, activeSeats, awardsOf, awardsStage, canVote, deadlineOf, fmtPercent, likelyModel, myReveal, needsVote, percentLines,
-  phaseDurationMs, ranking, revealExpression, revealPlan, signatureRow, targetsOf,
+  phaseDurationMs, phoneAwards, ranking, revealExpression, revealPlan, signatureRow, targetsOf, winners,
 } from "../../../src/games/likely/model";
 import type { LikelyModel } from "../../../src/games/likely/model";
 import { REVEAL_TAIL_MS, fitReveal, revealSteps, runStagger } from "../../../src/games/likely/tv/choreo";
@@ -204,5 +204,28 @@ describe("awards (§12.4)", () => {
     const m = model("s2c.state.tv.playing.likely.awards.secret.ar");
     expect(m.pub.awards.some((a) => a.kind === "mindReader" || a.kind === "selfAware")).toBe(false);
     expect(m.seats.every((s) => s.score === 0)).toBe(true);
+  });
+  it("a phone keeps the Mind Reader for RESULTS (the TV ceremony reveals it last)", () => {
+    const m = model("s2c.state.tv.playing.likely.awards");
+    const mr = m.pub.awards.find((a) => a.kind === "mindReader")!;
+    const id = mr.playerIds[0]!;
+    expect(phoneAwards(m.pub, id, false).some((a) => a.kind === "mindReader")).toBe(false);
+    expect(phoneAwards(m.pub, id, true).some((a) => a.kind === "mindReader")).toBe(true);
+    expect(phoneAwards(m.pub, id, false)[0]!.kind).toMatch(/signature|mystery/);
+  });
+});
+
+describe("award holder of a card (phone winner chip, public data only)", () => {
+  it("the top target(s) in seat order; nobody on chaos", () => {
+    const m = model("s2c.state.player.playing.likely.reveal");
+    expect(winners(m).map((s) => s.id)).toEqual(m.pub.reveal!.topIds);
+    expect(winners(model("s2c.state.tv.playing.likely.reveal.chaos"))).toEqual([]);
+    expect(winners(model("s2c.state.tv.playing.likely.reveal.none"))).toEqual([]);
+  });
+  it("is identical on every phone and the TV of the same card (no private input)", () => {
+    const tv = model("s2c.state.tv.playing.likely.reveal");
+    const ph = model("s2c.state.player.playing.likely.reveal");
+    if (tv.pub.card?.id === ph.pub.card?.id) expect(winners(tv).map((s) => s.id)).toEqual(winners(ph).map((s) => s.id));
+    expect(winners({ ...ph, me: null, myId: null }).map((s) => s.id)).toEqual(winners(ph).map((s) => s.id));
   });
 });

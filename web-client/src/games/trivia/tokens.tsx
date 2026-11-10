@@ -20,8 +20,10 @@ const RAYS = Array.from({ length: 8 }, (_, i) => {
   return `M${(12 + r1 * Math.cos(a)).toFixed(2)} ${(12 + r1 * Math.sin(a)).toFixed(2)}L${(12 + r2 * Math.cos(a)).toFixed(2)} ${(12 + r2 * Math.sin(a)).toFixed(2)}`;
 }).join("");
 
-/** One token glyph in `color` (ink on the tile fill by default). Decorative: the tile carries the label. */
-export function TokenShape({ id, size, color = INK, class: cls }: { id: TokenId; size: number; color?: string; class?: string }) {
+/** One token glyph in `color` (ink on the tile fill by default). Decorative: the tile carries the label. `outline`
+ *  draws it as a monochrome line glyph (no fill, no token colour): the phone's discreet "your pick" mark (§8.4). */
+export function TokenShape({ id, size, color = INK, class: cls, outline = false }: { id: TokenId; size: number; color?: string; class?: string; outline?: boolean }) {
+  if (outline) return <OutlineShape id={id} size={size} cls={cls} />;
   return (
     <svg class={`tq-shape tq-shape--${id}${cls ? ` ${cls}` : ""}`} viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" focusable="false">
       {id === "a" && <g fill={color} stroke={color}><circle cx="12" cy="12" r="5.2" stroke="none" /><path d={RAYS} stroke-width="2.2" stroke-linecap="round" fill="none" /></g>}
@@ -30,6 +32,21 @@ export function TokenShape({ id, size, color = INK, class: cls }: { id: TokenId;
       {id === "d" && <path d="M12 1.6l2.5 7.9 7.9 2.5-7.9 2.5-2.5 7.9-2.5-7.9L1.6 12l7.9-2.5z" fill={color} stroke={color} stroke-width="1" stroke-linejoin="round" />}
       {id === "true" && <path d="M4.6 12.6l4.8 4.8L19.6 7" fill="none" stroke={color} stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" />}
       {id === "false" && <path d="M6.2 6.2l11.6 11.6M17.8 6.2L6.2 17.8" fill="none" stroke={color} stroke-width="3.4" stroke-linecap="round" />}
+    </svg>
+  );
+}
+
+function OutlineShape({ id, size, cls }: { id: TokenId; size: number; cls?: string | undefined }) {
+  const c = "currentColor";
+  return (
+    <svg class={`tq-shape tq-shape--line${cls ? ` ${cls}` : ""}`} viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" focusable="false"
+      fill="none" stroke={c} stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      {id === "a" && <><circle cx="12" cy="12" r="4.8" /><path d={RAYS} /></>}
+      {id === "b" && <path d="M2.5 9.2c2.4-2.6 4.8-2.6 7.2 0s4.8 2.6 7.2 0 3.6-2 4.6-1.4M2.5 15.6c2.4-2.6 4.8-2.6 7.2 0s4.8 2.6 7.2 0 3.6-2 4.6-1.4" />}
+      {id === "c" && <><path d="M4.2 19.8C3.6 10.4 9.6 3.8 20.6 3.4c.6 10.6-5.8 16.8-16.4 16.4z" /><path d="M5.6 18.4C9.4 14 12.6 10.8 16.6 7.6" /></>}
+      {id === "d" && <path d="M12 2.4l2.3 7.3 7.3 2.3-7.3 2.3-2.3 7.3-2.3-7.3L2.4 12l7.3-2.3z" />}
+      {id === "true" && <path d="M4.6 12.6l4.8 4.8L19.6 7" />}
+      {id === "false" && <path d="M6.2 6.2l11.6 11.6M17.8 6.2L6.2 17.8" />}
     </svg>
   );
 }

@@ -1,0 +1,25 @@
+{
+  "name": "@jamaa/pixi-bluff-proto",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PixiJS prototype of the Bluff! REVEAL moment on the TV (decision spike: should the TV display migrate to PixiJS?). Not shipped.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/size.mjs",
+    "preview": "vite preview",
+    "typecheck": "tsc -p .",
+    "bake": "node scripts/bake.mjs",
+    "capture": "node scripts/capture.mjs",
+    "bench": "node scripts/bench.mjs"
+  },
+  "dependencies": {
+    "@jamaa/shared": "workspace:*",
+    "pixi.js": "8.22.0"
+  },
+  "devDependencies": {
+    "playwright-core": "1.63.0",
+    "typescript": "5.9.3",
+    "vite": "8.3.2"
+  }
+}

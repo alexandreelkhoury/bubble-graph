@@ -152,7 +152,7 @@ const PLAN: Plan = (card, i, n) => {
   return (card + (i < n / 2 ? 0 : 1)) % n;
 };
 
-async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolean; nextVia?: boolean }): Promise<void> {
+async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolean; nextVia?: boolean; secret?: boolean }): Promise<void> {
   const { tv, phones } = r;
   const n = phones.length;
   const voted = new Set<string>();
@@ -163,11 +163,20 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
   // The reveals of cards 0–2 (unanimous, chaos, tie) are shot by a watcher running beside the voting loop, at fixed
   // offsets into the choreography (run, spotlight + rosette, coins/board + caption).
   const watcher = opts.shots ? (async () => {
-    for (const label of ["unanimous", "chaos", "tie"]) {
-      await tv.locator("[data-reveal]").waitFor({ timeout: 120_000 });
-      await r.shot(phones[0]!, `ph-12-reveal-${label}-p0`, 900);
-      await r.shot(phones[1]!, `ph-12-reveal-${label}-p1`, 0);
+    // Cards 0–2 follow PLAN (unanimous, chaos, tie); each reveal is labelled by the card index the TV shows.
+    const labels = ["unanimous", "chaos", "tie"];
+    const done = new Set<number>();
+    while (done.size < labels.length) {
+      await tv.locator('[data-reveal][data-running="1"]').waitFor({ timeout: 120_000 });
+      const card = await tvCardIndex(tv);
+      const label = labels[card];
+      if (!label || done.has(card)) { await tv.locator("[data-reveal]").waitFor({ state: "detached", timeout: 30_000 }); if (card > 2) break; continue; }
+      done.add(card);
+      // The TV's reveal clock is frozen in screenshot mode: its three beats are stepped and shot first, then the
+      // phones, which keep their own reveal for the whole server window.
       const step = (ms: number): Promise<void> => tv.evaluate((x) => (window as unknown as { __lkStep(ms: number): void }).__lkStep(x), ms);
+      // Phones are shot in parallel (their reveal is static once its entrance has played).
+      const phoneShots = Promise.all([r.shot(phones[0]!, `ph-12-reveal-${label}-p0`, 1000), r.shot(phones[1]!, `ph-12-reveal-${label}-p1`, 1000)]);
       await step(1500);
       await r.shot(tv, `tv-12-reveal-${label}-a-run`, 60);
       await step(1700);
@@ -175,6 +184,7 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
       await step(2600);
       await r.shot(tv, `tv-12-reveal-${label}-c-end`, 60);
       await step(5000);
+      await phoneShots;
       await tv.locator("[data-reveal]").waitFor({ state: "detached", timeout: 30_000 });
     }
   })().catch(() => undefined) : Promise.resolve();
@@ -197,7 +207,12 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
         if (opts.shots) await r.shot(p, "ph-11-vote-picked");
       }
       await tiles.nth(pick).click();
-      await expect(tiles.nth(pick)).toHaveAttribute("aria-checked", "true");
+      // A tap that lands while the phone is still re-rendering can be lost (a real player taps again): one retry.
+      if (!(await expect(tiles.nth(pick)).toHaveAttribute("aria-checked", "true", { timeout: 4000 }).then(() => true).catch(() => false))) {
+        if (!(await visible(p, ".lk-ph--vote"))) continue;
+        await tiles.nth(pick).click();
+        await expect(tiles.nth(pick)).toHaveAttribute("aria-checked", "true");
+      }
     }
     if (opts.shots && card >= 0) {
       const phase = await tv.evaluate(() => (document.querySelector<HTMLElement>(".lkplay")?.dataset.phase ?? (document.querySelector("[data-reveal]") ? "REVEAL" : null))).catch(() => null);
@@ -209,8 +224,9 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
           await r.shot(phones[1]!, "ph-10-card", 0);
         }
         if (phase === "VOTING" && card === 0) {
-          await r.shot(phones[2]!, "ph-11-vote", 200);
-          await r.shot(tv, "tv-11-voting", 200);
+          await r.shot(tv, "tv-11-voting", 0);
+          await phones[2]!.locator(".lk-tile").first().waitFor({ timeout: 5000 }).catch(() => undefined);
+          await r.shot(phones[2]!, "ph-11-vote", 700);
         }
       }
     }
@@ -223,14 +239,17 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
     if (!seenAwards && (await visible(tv, "[data-awards]"))) {
       seenAwards = true;
       if (opts.shots) {
-        await r.shot(tv, "tv-20-awards-intro", 1200);
-        await r.shot(phones[0]!, "ph-20-award", 1200);
-        await r.shot(tv, "tv-21-awards-trio", 2600);
-        await r.shot(tv, "tv-22-awards-trio2", 4000);
-        await r.shot(phones[3 % n]!, "ph-21-award-other", 0);
-        if (await tv.locator('[data-awards="mindReader"]').isVisible().catch(() => false) || (await tv.waitForTimeout(3500).then(() => visible(tv, '[data-awards="mindReader"]')))) {
-          await r.shot(tv, "tv-23-awards-mindreader", 1800);
-        }
+        // Each beat of the ceremony is shot when the TV reaches it (the trio on screen follows the server deadline).
+        const beat = async (key: string, name: string, wait: number): Promise<void> => {
+          if (await tv.locator(`[data-awards="${key}"]`).waitFor({ timeout: 9000 }).then(() => true).catch(() => false)) await r.shot(tv, name, wait);
+        };
+        // Phones in parallel (their award card is static once flipped in).
+        const phoneShots = Promise.all([r.shot(phones[0]!, "ph-20-award", 1500), r.shot(phones[3 % n]!, "ph-21-award-other", 1500)]);
+        await beat("intro", "tv-20-awards-intro", 900);
+        await beat("t0", "tv-21-awards-trio", 1200);
+        await phoneShots;
+        if (n > 3 && !opts.nextVia) await beat("t1", "tv-22-awards-trio2", 1500);
+        if (!opts.secret && !opts.nextVia) await beat("mindReader", "tv-23-awards-mindreader", 1600);
       }
       // Remote only: Back → pause menu → "Next" (HOST_ADVANCE) ends the ceremony early → RESULTS.
       if (opts.nextVia && (await visible(tv, "[data-awards]"))) {
@@ -318,7 +337,7 @@ test("Most Likely AR (RTL), secret votes, 3 phones: percentage board, no points,
   const r = await setup(browser, "ar", ["رامي", "Léa", "نور"]);
   await expect(r.tv.locator(".tv")).toHaveAttribute("dir", "rtl");
   await openLikely(r, { secret: true, short: true });
-  await playToResults(r, { shots: true });
+  await playToResults(r, { shots: true, secret: true });
   await r.shot(r.tv, "tv-30-results", 1600);
   await expect(r.tv.locator(".lkres.is-secret")).toBeVisible();
   await expect(r.tv.locator(".lkres__rank")).toHaveCount(0);

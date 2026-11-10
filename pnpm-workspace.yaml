@@ -6,6 +6,8 @@ packages:
   - word-packs
   - content
   - tools/*
+  # Decision spikes (not shipped): prototypes/pixi-bluff (PixiJS TV reveal)
+  - prototypes/*
 onlyBuiltDependencies:
   - esbuild
   - workerd

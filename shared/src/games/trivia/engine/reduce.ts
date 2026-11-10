@@ -272,10 +272,13 @@ function intent(s: TriviaState, i: TriviaIntent, by: GameActor, ctx: GameCtx<Tri
       return ok(d);
     }
     case "VOID_QUESTION": {
-      if (!ctx.isHost(by)) return err("NOT_HOST", s);
+      // JAMAA-GAP: §13.1 says "host", but Void is a TV pause-menu item only (§2, §6) and wipes everyone's points for the
+      // question, so a VIP phone (which could void the questions it got wrong) is refused. TV only.
+      if (by.kind !== "tv" || !ctx.isHost(by)) return err("NOT_HOST", s);
       const r = s.last;
-      // A stale pause menu (another question) is refused like a wrong phase (JAMAA-GAP: no STALE code for Trivia).
-      if (s.phase !== "REVEAL" || !r || r.questionId !== i.questionId) return err("WRONG_PHASE", s);
+      // No id (the platform pause menu's bare intent): the question in REVEAL. With an id, a stale pause menu (another
+      // question) is refused like a wrong phase (JAMAA-GAP: no STALE code for Trivia).
+      if (s.phase !== "REVEAL" || !r || (i.questionId !== undefined && r.questionId !== i.questionId)) return err("WRONG_PHASE", s);
       if (r.voided) return ok(s);
       const d = clone(s);
       const dr = d.last as NonNullable<TriviaState["last"]>;

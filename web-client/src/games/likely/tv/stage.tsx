@@ -55,7 +55,7 @@ export function LkTop({ m, label }: { m: LikelyModel; label?: string }) {
   const counter = t(k("card.counter"), { index: Math.min(m.pub.cardIndex + 1, m.pub.cardCount), count: m.pub.cardCount });
   return (
     <header class="tvtop lktop">
-      <span class="tvtop__title lktop__title">{t(k("title"))}<span class="lktop__sep" aria-hidden="true">·</span><span class="tnum">{label ?? counter}</span></span>
+      <span class="tvtop__title lktop__title">{t(k("title"))}<span class="lktop__sep" aria-hidden="true">·</span>{label ?? <span class="tnum" dir="ltr">{counter}</span>}</span>
       <span class="tvtop__end">
         {degraded && <span class="tvchip tvchip--danger"><Icon name="wifi-off" size={20} /></span>}
         <RoomCode code={m.roomCode} />

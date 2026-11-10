@@ -1,0 +1,12 @@
+{
+  "v": 2,
+  "t": "action",
+  "id": "107",
+  "a": {
+    "type": "GAME",
+    "gameId": "trivia",
+    "i": {
+      "type": "VOID_QUESTION"
+    }
+  }
+}

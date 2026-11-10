@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>JAMAA · Pixi Bluff reveal</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #0d0718; overflow: hidden; }
+      body { display: flex; align-items: center; justify-content: center; }
+      canvas { display: block; image-rendering: auto; }
+      #boot { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff1dc;
+        font: 600 20px system-ui, sans-serif; letter-spacing: 0.04em; }
+      #boot.err { color: #ff8a80; white-space: pre-wrap; padding: 24px; font-size: 16px; }
+    </style>
+  </head>
+  <body>
+    <div id="boot">JAMAA · loading…</div>
+    <script>window.__t0 = performance.now();</script>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

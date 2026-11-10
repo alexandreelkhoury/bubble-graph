@@ -1,0 +1,70 @@
+/* Quiz Night setup pieces (GAME-TRIVIA §9.1, DESIGN-JAMAA §2.3.1): summary card, TV shelf, VIP phone list, hint.
+   TV sizes are canvas dp (px on the 960 × 540 canvas); phone sizes follow the phone type scale. */
+.tqq-stars { display: inline-flex; align-items: center; gap: 6px; }
+.tqq-stars__row { display: inline-flex; gap: 2px; }
+.tqq-stars__word { font: 700 13px/1 var(--font-sans); color: var(--color-text-secondary); }
+.tqq-stars .tq-star path { fill: none; stroke: var(--color-outline-strong, rgb(255 255 255 / 0.4)); stroke-width: 2; }
+.tqq-stars .tq-star.is-on path { fill: #FFC94D; stroke: #FFC94D; }
+.tqq-chips { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+.tqq-dom, .tqq-top { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding-inline: 8px; border-radius: 11px; font: 700 12px/1 var(--font-sans); white-space: nowrap; }
+.tqq-dom { background: var(--w-elevated, #222B63); color: var(--color-text); }
+.tqq-top { box-shadow: inset 0 0 0 1.5px var(--w-accent-text, #8FA8FF); color: var(--w-accent-text, #8FA8FF); }
+
+/* flat cover art: coast + hills at sunset (lebanon) or a night globe (other domains) */
+.tqq-cover { position: relative; display: block; overflow: hidden; background: linear-gradient(180deg, #FF9A4D 0%, #FF5E7A 48%, #5B3FA8 100%); }
+.tqq-cover i { position: absolute; bottom: -1px; height: 46%; background: #161D4A; clip-path: polygon(0 100%, 18% 38%, 32% 64%, 50% 18%, 66% 58%, 82% 30%, 100% 70%, 100% 100%); }
+.tqq-cover i:nth-child(1) { left: -12%; width: 74%; opacity: 0.6; }
+.tqq-cover i:nth-child(2) { right: -12%; width: 74%; height: 36%; opacity: 0.85; }
+.tqq-cover i:nth-child(3) { left: 0; right: 0; height: 14%; clip-path: none; background: linear-gradient(180deg, #2A357A, #161D4A); }
+.tqq-cover--globe { background: radial-gradient(circle at 50% 62%, #478CFF 0 30%, transparent 31%), linear-gradient(180deg, #141C52, #2A357A); }
+.tqq-cover--globe i:nth-child(1) { left: 34%; width: 32%; height: 42%; bottom: 17%; clip-path: none; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 2px rgb(255 247 236 / 0.45); opacity: 1; }
+.tqq-cover--globe i:nth-child(2) { left: 20%; right: 20%; width: auto; bottom: 37%; height: 2px; clip-path: none; background: rgb(255 247 236 / 0.4); }
+
+/* summary card (one quiz): TV 300 × 96 dp, not focusable */
+.tqq-summary { display: flex; gap: 10px; overflow: hidden; border-radius: 14px; background: var(--w-surface, #161D4A); box-shadow: inset 0 0 0 1.5px rgb(143 168 255 / 0.25); }
+.tqq-summary--tv { width: 300px; height: 96px; }
+.tqq-summary--tv .tqq-cover { width: 72px; height: 96px; flex: none; }
+.tqq-summary--phone { width: 100%; min-height: 96px; }
+.tqq-summary--phone .tqq-cover { width: 80px; flex: none; }
+.tqq-summary__body { display: flex; flex-direction: column; justify-content: center; gap: 5px; min-width: 0; padding: 6px 10px 6px 0; }
+.tqq-summary__title { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 900 17px/21px var(--font-sans); }
+.tqq-summary--phone .tqq-summary__title { white-space: normal; font: var(--type-ph-h2); }
+
+/* quiz card (shelf 240 × 320 dp; phone list full width) */
+.tqq-card { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 0 0 12px; overflow: hidden; border: 0; border-radius: 20px; text-align: start;
+  background: linear-gradient(180deg, #222B63, #161D4A); color: var(--color-text); box-shadow: inset 0 0 0 1.5px rgb(143 168 255 / 0.25), 0 10px 26px rgb(0 0 0 / 0.4); cursor: pointer;
+  transition: transform 160ms var(--ease-standard), box-shadow 160ms var(--ease-standard); }
+.tqq-card > :not(.tqq-cover):not(.tqq-card__check) { margin-inline: 14px; }
+.tqq-card--tv { width: 240px; height: 320px; flex: none; }
+.tqq-card--tv .tqq-cover { width: 100%; height: 118px; flex: none; transition: transform 300ms var(--ease-decel); }
+.tqq-card--tv:focus-visible, .tqq-card--tv:focus { outline: none; transform: scale(1.06); box-shadow: 0 0 0 3px #FFF7EC, 0 0 28px rgb(var(--w-rgb-glow, 255 216 77) / 0.55), 0 14px 30px rgb(0 0 0 / 0.5); z-index: 1; }
+.tqq-card--tv:focus .tqq-cover { transform: translateX(-6px) scale(1.06); }
+.tqq-card__title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font: 900 21px/26px var(--font-sans); }
+.tqq-card__check { position: absolute; top: 10px; inset-inline-end: 10px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #FFF7EC; color: var(--color-ink); box-shadow: 0 4px 10px rgb(0 0 0 / 0.35); }
+.tqq-card__foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; align-self: stretch; margin-top: auto; font: 700 14px/1 var(--font-sans); color: var(--color-text-secondary); }
+.tqq-lock { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 10px; background: var(--color-surface, #222B63); color: #FFC94D; font-size: 12px; }
+.tqq-card.is-selected { box-shadow: inset 0 0 0 2px #FFC94D, 0 10px 26px rgb(0 0 0 / 0.4); }
+.tqq-card.is-locked .tqq-cover { filter: saturate(0.4) brightness(0.8); }
+.tqq-card--phone { width: 100%; min-height: 0; padding-bottom: 14px; }
+.tqq-card--phone .tqq-cover { width: 100%; height: 88px; }
+.tqq-card--phone:active { transform: scale(0.98); }
+.tqq-card--phone .tqq-card__title { font: var(--type-ph-h2); }
+
+/* the TV shelf: full screen over the world stage */
+.tqq-shelf { position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; gap: 10px; padding: 26px 40px; overflow: hidden;
+  background: linear-gradient(180deg, rgb(20 28 82 / 0.97), rgb(10 15 46 / 0.98)); animation: tqq-in 260ms var(--ease-decel) both; }
+@keyframes tqq-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.tqq-shelf__title { margin: 0; font: 900 30px/38px var(--font-sans); color: var(--w-glow, #FFD84D); }
+.tqq-shelf__rows { display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: auto; padding: 6px 4px 18px; }
+.tqq-shelf__domain { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 900 18px/22px var(--font-sans); color: var(--w-accent-text, #8FA8FF); }
+.tqq-shelf__cards { display: flex; gap: 22px; padding: 10px 8px; }
+
+/* VIP phone list */
+.tqq-list { display: flex; flex-direction: column; gap: var(--space-3, 12px); }
+
+/* the hint under the rows */
+.tqq-hint { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; margin: 0; font: 700 14px/18px var(--font-sans); color: var(--color-text-secondary); }
+.tqq-hint__cap { flex-basis: 100%; font-style: normal; color: #FFC94D; }
+
+@media (prefers-reduced-motion: reduce) { .tqq-shelf, .tqq-card, .tqq-cover { animation: none !important; transition: none !important; } }
+:root[data-calm] .tqq-shelf, :root[data-calm] .tqq-card, :root[data-calm] .tqq-cover { animation: none !important; transition: none !important; }

@@ -63,7 +63,7 @@ function TrophyCard({ m, a }: { m: BluffModel; a: Award }) {
           const s = m.byId.get(id);
           return s ? (
             <span key={id} class="bftrophy__p" style={{ "--i": i }}>
-              <Character color={s.color} size={84} expression="cheer" />
+              <Character color={s.color} size={a.playerIds.length > 2 ? 84 : 108} expression="cheer" />
               <bdi>{s.name}</bdi>
             </span>
           ) : null;

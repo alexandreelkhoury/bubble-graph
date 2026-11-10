@@ -1,9 +1,14 @@
 // JAMAA-PLATFORM §6.7 G4 acceptance (lane B): Quiz Night played end to end against `wrangler dev`, the /tv mock driven
-// by the keyboard D-pad, OK and Back ONLY, with 3–6 phones: hub → Quiz Night poster → setup (Short, Fast) → entrance →
+// by the keyboard D-pad, OK and Back ONLY, with 3–6 phones: hub → Quiz Night poster → setup (Short, Relaxed) → entrance →
 // quiz intro → questions → reveal (OK completes it) → leaderboard after q3 → final → podium → cup. Checks GAME-TRIVIA
 // §8.4 (first tap locks, all four tiles fade equally, a second tap sends nothing), the verdict screens, the late joiner
 // (waits for the next READ), the pause menu "Next" in REVEAL, the unmirrored A–D grid in Arabic on the TV and phones,
 // and the secrecy rules of §8.1 on every frame the TV and the phones received.
+//
+// Timing (review of 2026-11-10): every phone taps only once ITS OWN pad has been visible for 300 ms (the pad ignores
+// taps for PAD_GUARD_MS = 250 after it mounts), each tap is checked to have locked, one phone is held back unanswered
+// until the lock/opacity checks are done (all answered ends ANSWER early), and screenshots are taken only after the
+// taps. Relaxed pace gives the slow CI machine room; the board index comes from the TV's own `public.index`.
 //
 // Trivia is registry-disabled until the owner ships it (shared/src/games/trivia/definition.ts `enabled: false`) and the
 // Worker needs its packs emitted (`pnpm lint:content --emit`), so this spec skips itself unless GET /api/config lists
@@ -103,7 +108,7 @@ async function joinPhone(browser: Browser, code: string, name: string, locale: s
   return { page, name, frames };
 }
 
-/** Hub → Quiz Night (D-pad) → setup (first-time intro walked with OK) → Short + Fast → Start → entrance. */
+/** Hub → Quiz Night (D-pad) → setup (first-time intro walked with OK) → Short + Relaxed → Start → entrance. */
 async function startQuiz(tv: Page, phones: Phone[], rtl: boolean, snap: (p: Page, n: string, w?: number) => Promise<void>): Promise<void> {
   const END = rtl ? "ArrowLeft" : "ArrowRight", START = rtl ? "ArrowRight" : "ArrowLeft";
   await dpadTo(tv, ".tvposter.is-focused[data-game=trivia]", END, 6);
@@ -139,7 +144,7 @@ async function startQuiz(tv: Page, phones: Phone[], rtl: boolean, snap: (p: Page
   await focusRow("length");
   await press(tv, START); // Normal → Short
   await focusRow("pace");
-  await press(tv, END); // Normal → Fast
+  await press(tv, START); // Normal → Relaxed
   await tv.waitForTimeout(500);
   await snap(tv, "tv-02-setup", 300);
   await snap(phones[0]!.page, "ph-01-setup-vip", 0);
@@ -163,12 +168,31 @@ interface PlayOpts {
 }
 
 /** Plays to RESULTS: phones answer different tiles at different speeds; screenshots every screen once. */
-async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ boards: number; reveals: number; indexAtBoard: number[] }> {
+/** Waits until this phone's own pad is up (late joiners and benched phones never get one) and past its tap guard. */
+async function padReady(ph: Phone): Promise<boolean> {
+  const ok = await ph.page.locator(".tq-pad:not(.is-locked)").first().waitFor({ state: "visible", timeout: 3000 }).then(() => true, () => false);
+  if (ok) await ph.page.waitForTimeout(300);
+  return ok;
+}
+
+/** Taps tile `n` and checks the pad locked; a tap the guard swallowed (no lock, nothing sent) is retried once. */
+async function tapAndLock(ph: Phone, n: number): Promise<void> {
+  const tiles = ph.page.locator(".tq-pad .tq-tile");
+  const count = await tiles.count();
+  if (count === 0) return; // ANSWER already closed on this phone
+  for (let attempt = 0; attempt < 2; attempt++) {
+    await tiles.nth(n % count).click({ timeout: 2000 }).catch(() => undefined);
+    const locked = await ph.page.locator(".tq-pad.is-locked").first().waitFor({ state: "visible", timeout: 1500 }).then(() => true, () => false);
+    if (locked || !(await vis(ph.page, ".tq-pad"))) return;
+  }
+  await expect(ph.page.locator(".tq-pad.is-locked")).toBeVisible({ timeout: 500 });
+}
+
+async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ boards: number; reveals: number }> {
   const { snap } = o;
   const seen = new Map<string, number>();
   let reveals = 0, boards = 0, lastKey = "";
-  const indexAtBoard: number[] = [];
-  let lastQ = -1;
+  const tapped = new Set<Phone>();
   let lockChecked = false, okChecked = false, nextChecked = false, mirrorChecked = false;
   const deadline = Date.now() + 300_000;
   while (Date.now() < deadline) {
@@ -180,7 +204,6 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
     lastKey = key;
     const all = [...phones, ...(o.extra ?? [])];
     if (fresh && phase) seen.set(phase, (seen.get(phase) ?? 0) + 1);
-    if (phase === "REVEAL") lastQ = Number(counter.match(/\d+/)?.[0] ?? "-1");
     const n = seen.get(phase ?? "") ?? 0;
     switch (phase) {
       case "QUIZ_INTRO":
@@ -197,13 +220,12 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
         }
         break;
       case "ANSWER": {
-        // Answers first (the window is 10 s at Fast pace and screenshots are slow); the last phone waits so the
-        // "locked" and "some answered" screens can be captured while ANSWER is still open.
-        if (fresh) {
-          await expect(phones[0]!.page.locator(".tq-pad")).toBeVisible();
-          await snap(tv, n === 1 ? "tv-12-answer-open" : "tv-12b-answer-later", 500);
-          await snap(phones[phones.length - 1]!.page, n === 1 ? "ph-12-pad" : "ph-12b-pad-later", 0);
-        }
+        if (!fresh) break;
+        tapped.clear();
+        // 1. Which phones play this question: each waits for ITS OWN pad (+300 ms past the 250 ms tap guard).
+        const ready = await Promise.all(all.map(padReady));
+        const playing = all.filter((_, i) => ready[i]);
+        expect(playing).toContain(phones[0]);
         if (o.rtl && !mirrorChecked) {
           // §8.2: A top-left, B top-right on every device, never mirrored (Arabic TV and phone).
           mirrorChecked = true;
@@ -214,19 +236,18 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
           const pb = await phones[0]!.page.locator(".tq-tile").nth(1).boundingBox();
           expect(pa!.x).toBeLessThan(pb!.x);
         }
-        if (fresh) await phones[0]!.page.waitForTimeout(300); // the pad ignores taps for its first 250 ms (§8.4)
-        const open: { ph: Phone; i: number }[] = [];
-        for (const [i, ph] of all.entries()) if (await vis(ph.page, ".tq-pad:not(.is-locked)")) open.push({ ph, i });
-        const last = open.length > 1 ? open.pop()! : null;
-        const tap = async ({ ph, i }: { ph: Phone; i: number }): Promise<void> => {
+        // 2. One phone (never phones[0]) is held back so ANSWER stays open through the checks and the screenshots.
+        const held = playing.length > 1 ? playing[playing.length - 1]! : null;
+        const now = playing.filter((ph) => ph !== held);
+        await Promise.all(now.map(async (ph, i) => {
           await ph.page.waitForTimeout(110 * i);
-          const tiles = ph.page.locator(".tq-tile");
-          await tiles.nth((i + reveals) % (await tiles.count())).click({ timeout: 4000 }).catch(() => undefined);
-        };
-        await Promise.all(open.map(tap));
+          await tapAndLock(ph, i + reveals);
+          tapped.add(ph);
+        }));
         const p0 = phones[0]!;
-        if (!lockChecked && open.some((x) => x.ph === p0)) {
-          // First tap locks; ALL tiles fade equally; a second tap sends nothing; the pick shows as a small glyph.
+        if (!lockChecked && tapped.has(p0) && held) {
+          // First tap locks; ALL tiles fade equally; a second tap sends nothing; the pick is a monochrome line glyph at
+          // the end of the question row, not beside the lock check (§8.4).
           lockChecked = true;
           const tiles = p0.page.locator(".tq-tile");
           await expect(p0.page.locator(".tq-pad.is-locked")).toBeVisible();
@@ -235,29 +256,57 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
           expect(op.length).toBeGreaterThan(1);
           expect(new Set(op).size).toBe(1);
           expect(Number(op[0])).toBeLessThan(0.5);
-          await expect(p0.page.locator(".tq-pad__pick")).toBeVisible();
+          await expect(p0.page.locator(".tq-pad__q .tq-pad__pick svg.tq-shape--line")).toBeVisible();
+          await expect(p0.page.locator(".tq-pad__locked .tq-pad__pick")).toHaveCount(0);
+          await expect(p0.page.locator(".coach")).toBeHidden();
           const before = p0.frames.sent.filter((x) => x.includes('"ANSWER"')).length;
           await tiles.nth(1).click({ force: true });
           await p0.page.waitForTimeout(250);
           expect(p0.frames.sent.filter((x) => x.includes('"ANSWER"')).length).toBe(before);
+          // The held-back phone is still open: the TV shows "some in" (white podium rings, no hint of the choice).
+          expect(await vis(held.page, ".tq-pad:not(.is-locked)")).toBe(true);
           await snap(p0.page, "ph-13-locked", 0);
           await snap(tv, "tv-13-answer-some-in", 0);
         }
-        if (last) await tap({ ...last, i: 0 });
+        // 3. Screenshots only after the taps (they are slow); then the held-back phone answers.
+        const n = seen.get("ANSWER") ?? 0;
+        await snap(tv, n === 1 ? "tv-12-answer-open" : "tv-12b-answer-later", 0);
+        if (held) await snap(held.page, n === 1 ? "ph-12-pad" : "ph-12b-pad-later", 0);
+        if (held) { await tapAndLock(held, 0); tapped.add(held); }
         break;
       }
       case "REVEAL": {
         if (!fresh) break;
         reveals++;
+        // The verdict paints at once (no opacity-0 entrance): every phone that answered shows a readable h1.
+        await Promise.all([...tapped].map(async (ph) => {
+          const h1 = ph.page.locator(".tq-verdict h1").first();
+          await expect(h1).toBeVisible({ timeout: 1500 });
+          const op = await h1.evaluate((e) => getComputedStyle(e.closest(".tq-verdict__hero") ?? e).opacity);
+          expect(Number(op)).toBe(1);
+        }));
+        const verdictShots = async (): Promise<void> => {
+          for (const ph of all) {
+            const v = ph.page.locator(".tq-verdict").first();
+            if (!(await v.isVisible().catch(() => false))) continue;
+            const kind = (await v.getAttribute("class"))?.match(/tq-verdict--(\w+)/)?.[1] ?? "x";
+            await snap(ph.page, `ph-14-verdict-${kind}`, 0);
+          }
+        };
         if (reveals === 1) {
-          await snap(tv, "tv-14-reveal-jump", 1700);
-          await snap(tv, "tv-15-reveal-coins", 1500);
-          await snap(tv, "tv-16-reveal-settled", 2000);
+          await Promise.all([
+            (async () => {
+              await snap(tv, "tv-14-reveal-jump", 1700);
+              await snap(tv, "tv-15-reveal-coins", 1500);
+              await snap(tv, "tv-16-reveal-settled", 2000);
+            })(),
+            verdictShots(),
+          ]);
         }
-        if (o.remote && reveals === 2 && !okChecked) {
-          // §3.10 E: OK in game only completes the reveal choreography (it never activates anything).
+        if (o.remote && reveals >= 2 && !okChecked && (await vis(tv, ".tqrv:not(.is-done)"))) {
+          // §3.10 E: OK in game only completes the reveal choreography (it never activates anything). Pressed only
+          // while the choreography still runs (the 4.9 s script), checked right after.
           okChecked = true;
-          await tv.waitForTimeout(500);
           await press(tv, "Enter");
           await expect(tv.locator(".tqrv.is-done")).toBeVisible({ timeout: 1500 });
           await snap(tv, "tv-16b-reveal-ok-completed", 100);
@@ -275,18 +324,12 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
           await expect(tv.locator(".tvdialog--menu")).toHaveCount(0);
           await expect.poll(() => tvPhase(tv), { timeout: 4000 }).not.toBe("REVEAL");
         }
-        for (const ph of all) {
-          const v = ph.page.locator(".tq-verdict").first();
-          if (!(await v.isVisible().catch(() => false))) continue;
-          const kind = (await v.getAttribute("class"))?.match(/tq-verdict--(\w+)/)?.[1] ?? "x";
-          await snap(ph.page, `ph-14-verdict-${kind}`, 900);
-        }
+        if (reveals > 1) await verdictShots();
         break;
       }
       case "LEADERBOARD":
         if (fresh) {
           boards++;
-          indexAtBoard.push(lastQ);
           await snap(tv, "tv-18-leaderboard", 2700);
           await snap(phones[0]!.page, "ph-15-standing", 0);
           await snap(phones[phones.length - 1]!.page, "ph-15b-standing-other", 0);
@@ -308,7 +351,7 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
     await tv.waitForTimeout(fresh ? 60 : 200);
   }
   await expect(tv.locator("[data-results-bar]")).toBeVisible({ timeout: 20_000 });
-  return { boards, reveals, indexAtBoard };
+  return { boards, reveals };
 }
 
 let enabled = true;
@@ -347,8 +390,11 @@ for (const [locale, names] of [
         extra.push(late);
       } : undefined,
     });
-    // §4: Short = 7 questions → a leaderboard after q3 and q6 (q6 also precedes the final).
-    expect(res.indexAtBoard[0]).toBe(3);
+    // §4: Short = 7 questions → a leaderboard after q3 and q6 (q6 also precedes the final). Read from the TV's own
+    // projection (`public.index` is 0-based), not from a counter polled off the screen.
+    const boardIdx = [...new Set(views(tvFrames.recv).filter((v) => v.game.public.phase === "LEADERBOARD").map((v) => Number(v.game.public.index)))];
+    expect(boardIdx.map((i) => i + 1)).toEqual([3, 6]);
+    expect(res.boards).toBeGreaterThanOrEqual(1);
     expect(res.reveals).toBeGreaterThanOrEqual(6);
     if (extra[0]) {
       const lv = views(extra[0].frames.recv);

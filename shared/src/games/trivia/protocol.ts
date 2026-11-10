@@ -27,7 +27,9 @@ const Nat = z.number().int().nonnegative();
 export const TriviaIntentSchema = z.discriminatedUnion("type", [
   z.strictObject({ type: z.literal("ANSWER"), choice: z.number().int().min(-1_000).max(1_000) }),
   z.strictObject({ type: z.literal("HOST_ADVANCE") }),
-  z.strictObject({ type: z.literal("VOID_QUESTION"), questionId: QuestionId }),
+  // `questionId` is optional: the platform pause menus (web tvDialogs, native GameViewModel) send the bare intent, which
+  // voids the question currently in REVEAL; with an id, a stale menu (another question) is refused (WRONG_PHASE).
+  z.strictObject({ type: z.literal("VOID_QUESTION"), questionId: QuestionId.optional() }),
   z.strictObject({ type: z.literal("END_GAME") }),
 ]);
 export type TriviaIntent = z.infer<typeof TriviaIntentSchema>;

@@ -23,7 +23,7 @@ export function botAnswer(s: TriviaState, playerId: string, rng: Rng): TriviaInt
 /** A random host move, or null (let the timers run). */
 export function botHost(s: TriviaState, rng: Rng, rates: { advance: number; void: number; end: number }): TriviaIntent | null {
   if (s.phase === "HOLD") return rng.next() < rates.end ? { type: "END_GAME" } : null;
-  if (s.phase === "REVEAL" && s.last && !s.last.voided && rng.next() < rates.void) return { type: "VOID_QUESTION", questionId: s.last.questionId };
+  if (s.phase === "REVEAL" && s.last && !s.last.voided && rng.next() < rates.void) return rng.next() < 0.5 ? { type: "VOID_QUESTION", questionId: s.last.questionId } : { type: "VOID_QUESTION" };
   if (ADVANCEABLE.includes(s.phase) && rng.next() < rates.advance) return { type: "HOST_ADVANCE" };
   return null;
 }

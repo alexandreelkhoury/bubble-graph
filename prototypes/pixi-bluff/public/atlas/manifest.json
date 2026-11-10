@@ -1,0 +1,45 @@
+{
+ "pages": [
+  "chars-0.json",
+  "chars-1.json",
+  "fx-0.json"
+ ],
+ "meta": {
+  "char": {
+   "cw": 192,
+   "ch": 210,
+   "anchorX": 0.5,
+   "anchorY": 0.8457142857142858,
+   "unitPx": 6
+  },
+  "fx": {
+   "cell": 120
+  },
+  "players": [
+   {
+    "id": "coral",
+    "hex": "#F0183A"
+   },
+   {
+    "id": "azure",
+    "hex": "#478CFF"
+   },
+   {
+    "id": "lemon",
+    "hex": "#FFF04D"
+   },
+   {
+    "id": "jade",
+    "hex": "#1FA88A"
+   },
+   {
+    "id": "grape",
+    "hex": "#7A43FF"
+   },
+   {
+    "id": "rose",
+    "hex": "#FF96C5"
+   }
+  ]
+ }
+}

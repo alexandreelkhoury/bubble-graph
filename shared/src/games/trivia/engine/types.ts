@@ -52,7 +52,7 @@ export interface TriviaCatalog { packs: readonly TriviaPack[] }
 export type TriviaIntent =
   | { type: "ANSWER"; choice: number }
   | { type: "HOST_ADVANCE" }
-  | { type: "VOID_QUESTION"; questionId: string }
+  | { type: "VOID_QUESTION"; questionId?: string | undefined }
   | { type: "END_GAME" };
 
 /** A deadline as the clients draw it (kind = the phase; durationMs = at − the moment it was set). */

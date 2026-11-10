@@ -13,9 +13,13 @@ import {
 } from "../../../src/games/trivia/model";
 import type { Player, Trivia } from "../../../src/games/trivia/model";
 import {
-  BOARD_STEPS, CANVAS, CARD_H, CARD_Y, CROWD_CHAR, PODIUM_STEPS, REVEAL_END_MS, REVEAL_STEPS, bulbs, bulbsLit, cardRect, coinPoint, crowdSlot,
-  hopPoint, mainRect, podiumSlots, tileRect, towerBox, towerRect, towerRowRect, towerScorePoint,
+  BOARD_STEPS, BULB_INSET, CANVAS, CARD_H, CARD_Y, CROWD_CHAR, PODIUM_CHAR, PODIUM_STEPS, PODIUM_TOP, REVEAL_CARD_H, REVEAL_END_MS, REVEAL_STEPS,
+  TILE_Y, bulbs, bulbsLit, cardRect, coinPoint, crowdSlot, hopPoint, mainRect, podiumSlots, tileRect, towerBox, towerRect, towerRowRect,
+  towerScorePoint, verdictBand,
 } from "../../../src/games/trivia/layout";
+import type { Rect } from "../../../src/games/trivia/layout";
+import { moreTopics, quizLocked, quizRowValue, quizUi, selectedQuiz, setupHint, shelfRows } from "../../../src/games/trivia/setupModel";
+import type { QuizCard, TriviaSetup } from "../../../src/games/trivia/setupModel";
 import { LOCK_GAP_MS, answerTickCue, introMarks, revealMarks, viewCues } from "../../../src/games/trivia/cues";
 
 const DIR = join(__dirname, "../../../../shared/fixtures/v2/games/trivia");
@@ -202,7 +206,17 @@ describe("TV studio geometry (§8.2, §12.7)", () => {
     const pts = bulbs(cardRect(false));
     expect(pts.length).toBe(20);
     expect(pts[1]!.x).toBeGreaterThan(pts[0]!.x);
-    expect(pts[0]!.y).toBe(CARD_Y - 8);
+    // DESIGN-JAMAA §5.4: the bulbs sit ON the card's border (inside its rect), never in the header band or on the tiles.
+    expect(pts[0]!.y).toBe(CARD_Y + BULB_INSET);
+    for (const rtl of [false, true]) {
+      const c = cardRect(rtl);
+      for (const b of bulbs(c)) {
+        expect(b.x - 6).toBeGreaterThanOrEqual(c.x);
+        expect(b.x + 6).toBeLessThanOrEqual(c.x + c.w);
+        expect(b.y - 6).toBeGreaterThanOrEqual(c.y);
+        expect(b.y + 6).toBeLessThanOrEqual(c.y + c.h);
+      }
+    }
     expect(bulbsLit(10_000, 10_000)).toBe(20);
     expect(bulbsLit(5_000, 10_000)).toBe(10);
     expect(bulbsLit(1, 10_000)).toBe(1);
@@ -316,5 +330,77 @@ describe("helpers", () => {
   it("activePlayers drops left players only", () => {
     const { ps } = tvOf("answer");
     expect(activePlayers(ps).length).toBe(ps.filter((p) => !p.row.left).length);
+  });
+});
+
+const overlaps = (a: Rect, b: Rect): boolean => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+
+describe("reveal layout (review: banner, fastest pill and explain card cover nothing)", () => {
+  it("the verdict band sits between the squeezed card and the grid, over no tile and no podium", () => {
+    for (const rtl of [false, true]) {
+      const band = verdictBand(rtl);
+      const card = cardRect(rtl, true);
+      expect(card.h).toBe(REVEAL_CARD_H);
+      expect(band.y).toBe(card.y + card.h);
+      expect(band.y + band.h).toBe(TILE_Y);
+      expect(band.h).toBeGreaterThanOrEqual(34); // a 34 dp pill fits
+      for (const type of ["mc4", "tf"] as const) for (let i = 0; i < (type === "mc4" ? 4 : 2); i++) expect(overlaps(band, tileRect(i, type, rtl))).toBe(false);
+      expect(overlaps(band, towerRect(rtl))).toBe(false);
+    }
+  });
+  it("the explain card takes the question card's area: above the grid, far from the podium row", () => {
+    for (const rtl of [false, true]) {
+      const ex = { ...cardRect(rtl), y: CARD_Y, h: TILE_Y - CARD_Y - 8 };
+      for (let i = 0; i < 4; i++) expect(overlaps(ex, tileRect(i, "mc4", rtl))).toBe(false);
+      expect(ex.y + ex.h).toBeLessThan(PODIUM_TOP);
+      const pods = podiumSlots(12, rtl).map((p) => ({ x: p.x - 20, y: p.y - PODIUM_CHAR / 2, w: 40, h: PODIUM_CHAR }));
+      for (const p of pods) expect(overlaps(ex, p)).toBe(false);
+    }
+  });
+});
+
+describe("setup quiz row, summary card and shelf (GAME-TRIVIA §9 / §9.1)", () => {
+  const setupOf = (n: string): TriviaSetup => (fixture<TvRoomView>(`s2c.state.tv.setup.trivia.${n}.json`).room.setup as TriviaSetup);
+  const card = (id: string, domain: QuizCard["domain"], over: Partial<QuizCard> = {}): QuizCard => ({
+    id, title: { en: `Quiz ${id}`, fr: `Quiz ${id}`, ar: `مسابقة ${id}`, es: `Quiz ${id}` }, stars: 2, domain, featuredTopics: [], moreTopics: 0, questionCount: 10, tier: "free", ...over,
+  });
+  const two = (quizId: string | null): TriviaSetup => {
+    const base = setupOf("one_quiz");
+    const lb = card("lb-quiz-01", "lebanon", { title: { en: "Lebanon: the big quiz", fr: "Liban", ar: "لبنان", es: "Líbano" }, stars: 2, questionCount: 75 });
+    const wm = card("world-mix-01", "general", { tier: "premium" });
+    return { ...base, settings: { ...base.settings, quizId }, extras: { ...base.extras, quiz: lb, quizzes: [lb, wm] } };
+  };
+  it("null resolves to extras.quiz (the first featured quiz), never 'All packs'", () => {
+    const s = setupOf("one_quiz");
+    expect(s.settings.quizId).toBeNull();
+    expect(selectedQuiz(s)?.id).toBe(s.extras.quiz!.id);
+    expect(quizRowValue(s, (t) => t.en)).toBe(s.extras.quiz!.title.en);
+    expect(quizRowValue(two(null), (t) => t.en)).toBe("Lebanon: the big quiz");
+    expect(quizRowValue(two("world-mix-01"), (t) => t.ar)).toBe("مسابقة world-mix-01");
+    // an unknown id (e.g. a quiz no longer playable) falls back to the resolved quiz
+    expect(selectedQuiz(two("gone-01"))?.id).toBe("lb-quiz-01");
+  });
+  it("one quiz → summary card; two or more → the shelf; one row per domain in server order", () => {
+    expect(quizUi(setupOf("one_quiz"))).toBe("summary");
+    expect(quizUi(two(null))).toBe("shelf");
+    const empty = setupOf("one_quiz");
+    expect(quizUi({ ...empty, extras: { ...empty.extras, quiz: null, quizzes: [] } })).toBe("none");
+    const rows = shelfRows([card("a", "lebanon"), card("b", "general"), card("c", "lebanon")]);
+    expect(rows.map((r) => [r.domain, r.quizzes.map((q) => q.id)])).toEqual([["lebanon", ["a", "c"]], ["general", ["b"]]]);
+  });
+  it("lock badge only on Pass quizzes in free rooms; '+n' topics", () => {
+    const wm = two(null).extras.quizzes[1]!;
+    expect(quizLocked(wm, false)).toBe(true);
+    expect(quizLocked(wm, true)).toBe(false);
+    expect(quizLocked(two(null).extras.quizzes[0]!, false)).toBe(false);
+    expect(moreTopics(setupOf("one_quiz").extras.quiz!)).toBe(3);
+  });
+  it("the hint: playCount questions, capped by the pool, seconds per answer at this pace", () => {
+    const s = setupOf("one_quiz");
+    expect(setupHint(s)).toEqual({ count: 9, capped: true, available: 9, seconds: 15 });
+    const short = setupOf("short");
+    expect(setupHint(short)).toEqual({ count: 7, capped: false, available: 9, seconds: 15 });
+    expect(setupHint({ ...short, settings: { ...short.settings, pace: "fast" } }).seconds).toBe(10);
+    expect(setupHint({ ...short, settings: { ...short.settings, pace: "relaxed" } }).seconds).toBe(20);
   });
 });

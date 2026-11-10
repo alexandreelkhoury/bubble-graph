@@ -35,7 +35,7 @@ export const TRIVIA_META: GameMeta<TriviaSettings> = {
     // GAME-TRIVIA §2 pause menu, in order.
     pauseItems: [
       { id: "next", labelKey: `${K}.pause.next`, intent: "HOST_ADVANCE", phases: ["QUIZ_INTRO", "REVEAL", "LEADERBOARD", "FINAL_INTRO"] },
-      { id: "voidQuestion", labelKey: `${K}.pause.voidQuestion`, intent: "VOID_QUESTION", phases: ["REVEAL"], confirm: true },
+      { id: "voidQuestion", labelKey: `${K}.pause.void`, intent: "VOID_QUESTION", phases: ["REVEAL"], confirm: true },
       { id: "endGame", labelKey: `${K}.pause.endGame`, intent: "END_GAME", phases: ["HOLD"], confirm: true },
     ],
   },
@@ -48,10 +48,10 @@ export const TRIVIA_META: GameMeta<TriviaSettings> = {
       // Hidden by the setup UI while only one quiz is playable (GAME-TRIVIA §9: the summary card shows instead).
       { key: "quizId", kind: "packs", labelKey: `${K}.settings.quiz`, single: true },
       { key: "length", kind: "choice", labelKey: `${K}.settings.length`, options: [
-        { value: "short", labelKey: `${K}.settings.length.short` }, { value: "normal", labelKey: `${K}.settings.length.normal` }, { value: "long", labelKey: `${K}.settings.length.long` },
+        { value: "short", labelKey: `${K}.settings.lengthShort` }, { value: "normal", labelKey: `${K}.settings.lengthNormal` }, { value: "long", labelKey: `${K}.settings.lengthLong` },
       ] },
       { key: "pace", kind: "choice", labelKey: `${K}.settings.pace`, options: [
-        { value: "relaxed", labelKey: `${K}.settings.pace.relaxed` }, { value: "normal", labelKey: `${K}.settings.pace.normal` }, { value: "fast", labelKey: `${K}.settings.pace.fast` },
+        { value: "relaxed", labelKey: `${K}.settings.paceRelaxed` }, { value: "normal", labelKey: `${K}.settings.paceNormal` }, { value: "fast", labelKey: `${K}.settings.paceFast` },
       ] },
     ],
     advanced: [],

@@ -128,12 +128,14 @@ function Pad({ tr }: { tr: Trivia }) {
     <main class={`tq tq-pad tq-pad--${type}${locked ? " is-locked" : ""}`}>
       <div class="tq-pad__head">
         <p class="tq-pad__q"><b class="num">{fmtNum(questionNumber(pub).index)} / {fmtNum(pub.total)}</b>{pub.isFinal && <b class="tq-x2">{tk("final.stamp")}</b>}
-          <span dir="auto">{pub.question ? excerpt(pub.question.text, 60) : ""}</span></p>
+          <span dir="auto">{pub.question ? excerpt(pub.question.text, 60) : ""}</span>
+          {/* §8.4: the pick shows only as a 24 px monochrome line glyph at the END of this row (no token colour, never
+              beside the lock check, so from 2 m it reads neither as the choice nor as a verdict), until REVEAL. */}
+          {locked && <span class="tq-pad__pick" role="img" aria-label={`${tk("pad.yourPick")}: ${t(TOKEN_KEY[tokens[choice] ?? "a"])}`}><TokenShape id={tokens[choice] ?? "a"} size={24} outline /></span>}</p>
         {locked ? (
           <p class="tq-pad__locked" role="status">
             <span class="tq-pad__check" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
             <span class="tnum">{tk("pad.locked", { seconds: lockMs === null ? "…" : secs(lockMs) })}</span>
-            <span class="tq-pad__pick" title={tk("pad.yourPick")}><TokenChip id={tokens[choice] ?? "a"} size={24} /></span>
           </p>
         ) : timeUp ? <p class="tq-pad__locked">{tk("pad.tooLate")}</p> : <Bar pub={pub} />}
       </div>

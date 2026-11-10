@@ -364,7 +364,9 @@ async function playGame(browser: Browser, plan: Plan): Promise<void> {
 
     if (phase === "REVEAL" && once(`reveal:${pid}:${await tv.locator("[data-beat]").first().getAttribute("data-beat").catch(() => "")}`)) {
       const final = (await tv.locator(".bfrv .bfprompt.is-final").count()) > 0;
-      const watchFull = !done.has(final ? "fullFinal" : "fullR") && once(final ? "fullFinal" : "fullR");
+      // Watch the choreography while any of its signature beats still lacks a screenshot (beats differ per prompt).
+      const beatsOf = final ? ["answer", "crown", "twist", "montage", "likes"] : ["lie", "quick", "truth", "montage", "likes"];
+      const watchFull = !!SHOTS && beatsOf.some((b) => !shotsTaken.has(`${L}/tv-31-reveal-${b}${final ? "-final" : ""}`));
       if (watchFull) {
         // Let the choreography run and capture its signature beats on the TV and the phone mirror.
         await shot(tv, L, `tv-30-reveal-intro${final ? "-final" : ""}`, 500);
@@ -397,8 +399,9 @@ async function playGame(browser: Browser, plan: Plan): Promise<void> {
     }
 
     if (phase === "SCORES" && pid && once(`scores:${pid}`)) {
-      await shot(tv, L, "tv-40-scores", 2100);
-      await shot(phones[0]!.page, L, "ph-40-scores", 0);
+      // The phone first (its odometer settles in ~1 s), then the TV once the race has re-sorted.
+      await shot(phones[0]!.page, L, "ph-40-scores", 1200);
+      await shot(tv, L, "tv-40-scores", 700);
       await pauseItem(tv, "[data-pause-item=next]");
       continue;
     }
