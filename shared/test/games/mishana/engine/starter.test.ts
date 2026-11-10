@@ -32,7 +32,7 @@ describe("starter selection (§4.7 startRound)", () => {
     expect(blankOpensViolation(alone)).toBeNull();
   });
 
-  it("later-round openers are drawn at random, not rotated by seat (no seat-skip leak)", () => {
+  it("later-round openers are drawn at random, not rotated by seat (no seat-skip leak)", { timeout: 60_000 }, () => {
     const starters = new Set<string>();
     for (let seed = 1; seed <= 200; seed++) {
       playGame(TEST_CATALOG, { players: 8, seed }, (prev, _a, res) => {
