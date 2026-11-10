@@ -86,7 +86,7 @@
     <string name="game__trivia__reveal__wrong">Esta vez no</string>
     <string name="game__trivia__reveal__no_answer">Sin respuesta</string>
     <string name="game__trivia__reveal__right_answer">La respuesta: %1$s</string>
-    <string name="game__trivia__reveal__fastest">El dedo más rápido: %1$s</string>
+    <string name="game__trivia__reveal__fastest">Pulgar relámpago: %1$s</string>
     <string name="game__trivia__reveal__stumped">¡Nadie la sabía!</string>
     <string name="game__trivia__reveal__too_slow">¡Demasiado lentos, todos!</string>
     <string name="game__trivia__reveal__genius">¡Genios! Todos acertaron.</string>
@@ -113,7 +113,7 @@
     <string name="game__trivia__hold__title">Esperando jugadores…</string>
     <string name="game__trivia__hold__body">El quiz sigue en cuanto vuelva alguien.</string>
     <string name="game__trivia__results__title">El podio</string>
-    <string name="game__trivia__results__fastest_count">El dedo más rápido: %1$s ×%2$d</string>
+    <string name="game__trivia__results__fastest_count">Pulgar relámpago: %1$s ×%2$d</string>
     <string name="game__trivia__results__longest_streak">Racha más larga: %1$s (%2$d)</string>
     <string name="game__trivia__results__most_correct">Más aciertos: %1$s (%2$d)</string>
     <string name="game__trivia__results__place">Puesto: %1$s</string>

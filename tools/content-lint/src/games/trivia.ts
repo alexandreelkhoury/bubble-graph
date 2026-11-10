@@ -64,6 +64,19 @@ export const BANNED_LATIN: readonly string[] = [
   // politicians' family names (people and the places named after them), any script written in Latin letters
   "hariri", "chamoun", "chehab", "chehabi", "karami", "gemayel", "jumblatt", "joumblatt", "berri", "nasrallah", "aoun",
   "geagea", "frangieh", "mikati", "siniora", "arslan",
+  // plural and feminine forms (fr/es; en plurals)
+  "milices", "armees", "soldats", "militaires", "politiciens", "presidents", "ministres", "deputes", "sectes", "sunnites",
+  "chiites", "refugiee", "refugiees", "attentats", "bombes", "eglises", "mosquees", "religieuses",
+  "milicias", "ejercitos", "militares", "soldado", "soldados", "politicos", "presidentes", "ministros", "diputados", "sectas",
+  "refugiada", "refugiadas", "asesinatos", "masacres", "bombas", "atentados", "iglesias", "mezquitas", "religiosa", "religiosos",
+  "churches", "mosques", "ministers", "bombs", "bombings", "explosions", "massacres", "invasions", "crises",
+  // parties, militias and their spellings (a bare "amal" is a common first name, "hope": only the movement is listed)
+  "hizbullah", "hizballah", "hizbollah", "hezbolla", "hezballah", "hizbolla", "lebanese forces", "forces libanaises",
+  "fuerzas libanesas", "kataeb", "kataib", "phalange", "phalanges", "phalangist", "phalangiste", "falange", "falangista",
+  "amal movement", "mouvement amal", "movimiento amal", "harakat amal",
+  // martyrdom, revolution and named tragedies
+  "martyr", "martyrs", "martyre", "martyres", "martir", "martires", "shahid", "shaheed", "shuhada", "revolution",
+  "revolutions", "revolucion", "revoluciones", "thawra", "beirut blast", "port blast", "sabra", "shatila", "chatila", "qana",
 ];
 export const BANNED_ARABIC: readonly string[] = [
   "حرب", "حروب", "ميليشيا", "ميليشيات", "جيش", "عسكر", "عسكري", "جندي", "جنود", "حزب", "احزاب", "سياسي", "سياسيين",
@@ -71,17 +84,54 @@ export const BANNED_ARABIC: readonly string[] = [
   "ماروني", "موارنة", "شيعي", "شيعة", "درزي", "دروز", "حزب الله", "لاجئ", "لاجئين", "نازح", "نازحين", "اغتيال",
   "مجزرة", "قنبلة", "انفجار", "تفجير", "اجتياح", "احتلال", "اسرائيل", "حدود", "ازمة", "كنيسة", "مسجد", "رمضان", "الفصح",
   "الحريري", "شمعون", "شهاب", "كرامي", "الجميل", "جنبلاط", "نبيه بري", "نصرالله", "جعجع", "فرنجية", "ميقاتي", "السنيورة", "ارسلان",
+  "القوات اللبنانية", "الكتائب", "حركة امل", "شهيد", "شهداء", "استشهاد", "ثورة", "ثورات", "صبرا", "شاتيلا", "قانا", "المرفأ",
 ];
 
-const fold = (s: string): string => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
-/** Arabic folding: no diacritics or tatweel; hamza seats and alef forms → bare alef, ى → ي, ة kept. */
+/** Invisible format characters (\p{Cf}: zero-width joiners and spaces, soft hyphen, bidi marks): stripped before matching. */
+const FORMAT_CHARS = /\p{Cf}/gu;
+/** Bidi controls an Arabic or mixed-direction string may legitimately need (LRM, RLM, ALM, isolates); any other Cf is an error. */
+const ALLOWED_FORMAT: ReadonlySet<string> = new Set(["‎", "‏", "؜", "⁦", "⁧", "⁨", "⁩"]);
+/** Cyrillic and Greek letters that look like Latin ones, so a look-alike spelling still matches the list. */
+const CONFUSABLES: Readonly<Record<string, string>> = {
+  а: "a", в: "b", е: "e", ё: "e", к: "k", м: "m", н: "h", о: "o", р: "p", с: "c", т: "t", у: "y", х: "x", і: "i", ї: "i",
+  ј: "j", ѕ: "s", ԁ: "d", ӏ: "l", ԛ: "q", ԝ: "w", ү: "y", һ: "h",
+  α: "a", β: "b", ε: "e", η: "n", ι: "i", κ: "k", μ: "m", ν: "v", ο: "o", ρ: "p", τ: "t", υ: "u", χ: "x", ω: "w", ς: "c",
+};
+const stripFormat = (s: string): string => s.replace(FORMAT_CHARS, "");
+const fold = (s: string): string =>
+  stripFormat(s).normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[\p{Script=Cyrillic}\p{Script=Greek}]/gu, (c) => CONFUSABLES[c] ?? c);
+/**
+ * Arabic folding: no format characters, diacritics or tatweel; hamza seats and alef forms → bare alef, ى → ي, ة → ه
+ * (a common spelling, so ثوره still matches ثورة);
+ * Persian/Urdu look-alikes → Arabic (ی ې ٸ → ي, ک → ك, ۀ ە ہ → ه, ٶ → و).
+ */
 const foldArabic = (s: string): string =>
-  s.replace(/[ً-ٰٟـ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ؤ/g, "و").replace(/ئ/g, "ي");
+  stripFormat(s)
+    .replace(/[ً-ٰٟـ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/[ىیېٸ]/g, "ي").replace(/[ؤٶ]/g, "و").replace(/ئ/g, "ي")
+    .replace(/ک/g, "ك").replace(/[ۀەہة]/g, "ه");
 const latinWords = (s: string): string[] => fold(s).match(/\p{L}+/gu) ?? [];
-const arabicTokens = (s: string): string[] => foldArabic(s).match(/[ء-ي]+/g) ?? [];
+/** Arabic-script letter runs (any Arabic-block letter, so an unfolded Persian letter cannot split a word). */
+const arabicTokens = (s: string): string[] => foldArabic(s).match(/(?:(?=\p{Script=Arabic})\p{L})+/gu) ?? [];
+
+/** Script hygiene for one player-visible string: disallowed format characters, and words mixing Latin with Cyrillic/Greek. */
+export function scriptProblems(text: string): string[] {
+  const out: string[] = [];
+  const bad = [...new Set([...text.matchAll(FORMAT_CHARS)].map((m) => m[0]).filter((c) => !ALLOWED_FORMAT.has(c)))];
+  if (bad.length > 0) out.push(`invisible format character(s) ${bad.map((c) => `U+${(c.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, "0")}`).join(", ")}`);
+  for (const w of stripFormat(text).match(/\p{L}+/gu) ?? []) {
+    if (/\p{Script=Latin}/u.test(w) && /[\p{Script=Cyrillic}\p{Script=Greek}]/u.test(w)) out.push(`word "${w}" mixes Latin with Cyrillic or Greek letters`);
+  }
+  return out;
+}
+
+/** §8.4 polish: a Latin-script option should start with a capital letter (tiles and the phone verdict show it alone). */
+export function startsLowercase(option: string): boolean {
+  const first = option.trim()[0];
+  return first !== undefined && /\p{Script=Latin}/u.test(first) && first !== first.toUpperCase();
+}
 
 const AR_PREFIX = /^(?:و|ف)?(?:ب|ل|ك|ع)?(?:ال|ل)?/;
-const AR_SUFFIX = /(?:ة|ي|ية|ين|ون|ات|ه|ها|هم|و|ن)?$/;
+const AR_SUFFIX = /(?:ي|يه|ين|ون|ات|ه|ها|هم|و|ن)?$/;
 const arabicMatches = (token: string, stem: string): boolean => {
   if (token === stem) return true;
   const m = token.match(new RegExp(`^${AR_PREFIX.source}(${stem})${AR_SUFFIX.source}`));
@@ -158,7 +208,10 @@ export function lintTriviaRaw(packs: readonly TriviaLintInput[], opts: { release
     if (featured.length < 1 || featured.length > 3) err(`featuredTopics must list 1 to 3 topics (got ${featured.length})`);
     for (const t of featured) if (!topics.includes(t)) err(`featuredTopics "${String(t)}" is not in topics`);
     for (const [where, v] of [["title", raw.title], ["description", raw.description]] as const) {
-      if (v && typeof v === "object") for (const [loc, s] of Object.entries(v)) if (str(s)) for (const b of bannedTerms(s)) err(`${where}.${loc}: sensitive term "${b}" (§11.2)`);
+      if (v && typeof v === "object") for (const [loc, s] of Object.entries(v)) if (str(s)) {
+        for (const b of bannedTerms(s)) err(`${where}.${loc}: sensitive term "${b}" (§11.2)`);
+        for (const pr of scriptProblems(s)) err(`${where}.${loc}: ${pr}`);
+      }
     }
 
     const qs = Array.isArray(raw.questions) ? (raw.questions as RawQuestion[]) : null;
@@ -248,6 +301,10 @@ export function lintTriviaRaw(packs: readonly TriviaLintInput[], opts: { release
       // §11.2 sensitivity list on everything players see.
       for (const s of [text, ...options.filter(str), ...(str(q.explain) ? [q.explain] : [])]) {
         for (const b of bannedTerms(s)) qerr(`sensitive term "${b}" (§11.2)`);
+        for (const pr of scriptProblems(s)) qerr(pr);
+      }
+      if (raw.script === "Latn" && type === "mc4") {
+        for (const [j, o] of options.entries()) if (str(o) && startsLowercase(o)) warnings.push(`${id}: ${qid}: option ${j + 1} "${o}" starts with a lowercase letter (capitalise answers)`);
       }
       // Giveaway hint: a long word shared by the question and the correct option only.
       if (answer >= 0 && answer < options.length && str(options[answer])) {

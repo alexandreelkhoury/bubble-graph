@@ -2,7 +2,7 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { bannedTerms, lint, lintTriviaRaw, TF_LABELS, type TriviaLintInput } from "../../src/games/trivia";
+import { bannedTerms, lint, lintTriviaRaw, scriptProblems, startsLowercase, TF_LABELS, type TriviaLintInput } from "../../src/games/trivia";
 
 const CONTENT = join(import.meta.dirname, "../../../../content/trivia");
 type Q = Record<string, unknown>;
@@ -167,6 +167,71 @@ describe("bannedTerms", () => {
   });
 });
 
+describe("bannedTerms: bypasses and coverage (§11.2)", () => {
+  it("sees through zero-width and other format characters inside a word", () => {
+    expect(bannedTerms("W​ar games")).toContain("war");
+    expect(bannedTerms("so­ldiers")).toContain("soldiers");
+    expect(bannedTerms("ح‌رب")).toContain("حرب");
+    expect(bannedTerms("الجي‍ش")).toContain("جيش");
+  });
+  it("maps Cyrillic and Greek look-alike letters to Latin", () => {
+    expect(bannedTerms("wаr")).toContain("war"); // Cyrillic а
+    expect(bannedTerms("аrmy")).toContain("army");
+    expect(bannedTerms("bοmb")).toContain("bomb"); // Greek ο
+  });
+  it("folds Persian letters (ی ک ۀ) into their Arabic forms", () => {
+    expect(bannedTerms("جیش")).toContain("جيش");
+    expect(bannedTerms("کنیسة")).toContain("كنيسة");
+    expect(bannedTerms("ثورۀ")).toContain("ثورة");
+    expect(bannedTerms("ثوره")).toContain("ثورة"); // ة written as ه
+  });
+  it("lists the fr/es plural and feminine forms", () => {
+    for (const w of ["militaires", "soldats", "ministres", "églises", "mosquées", "militares", "soldados", "iglesias", "mezquitas", "refugiadas"]) {
+      expect(bannedTerms(`Les ${w} du coin`).length, w).toBeGreaterThan(0);
+    }
+  });
+  it("lists party, militia and event names and martyr/revolution terms in every language", () => {
+    for (const s of ["Hizbullah", "Hezbolla", "the Lebanese Forces", "Kataeb", "the Phalange", "the Amal Movement", "a martyr", "Martyrs' Square",
+      "the revolution", "la révolution", "la revolución", "the Beirut blast", "Sabra", "Shatila", "Qana", "shahid", "thawra"]) {
+      expect(bannedTerms(s).length, s).toBeGreaterThan(0);
+    }
+    for (const s of ["القوات اللبنانية", "الكتائب", "حركة أمل", "شهيد", "الشهداء", "ثورة", "صبرا", "شاتيلا", "قانا", "انفجار المرفأ"]) {
+      expect(bannedTerms(s).length, s).toBeGreaterThan(0);
+    }
+  });
+  it("still leaves the first name Amal / «أمل» (hope) alone", () => {
+    expect(bannedTerms("Amal sings first")).toEqual([]);
+    expect(bannedTerms("عندي أمل")).toEqual([]);
+  });
+});
+
+describe("script hygiene and option capitals", () => {
+  it("scriptProblems flags format characters other than bidi marks, and mixed-script words", () => {
+    expect(scriptProblems("W​ar")).toEqual(["invisible format character(s) U+200B"]);
+    expect(scriptProblems("so­ft")).toEqual(["invisible format character(s) U+00AD"]);
+    expect(scriptProblems("wаr")[0]).toMatch(/mixes Latin with Cyrillic or Greek/);
+    expect(scriptProblems("‏مرحبا Hello‎")).toEqual([]);
+    expect(scriptProblems("Москва and Αθήνα")).toEqual([]);
+  });
+  it("a format character or a mixed-script word in a question is an error", () => {
+    const e = errorsOf([quiz("en", "z", (qs) => {
+      qs[0] = { ...qs[0], text: "Which colour is the s​ky?" };
+      qs[1] = { ...qs[1], options: ["Alphа", "Bravo", "Charlie", "Delta"] };
+    })]);
+    expect(e).toContain("z-en: q001: invisible format character(s) U+200B");
+    expect(e).toMatch(/z-en: q002: word "Alphа" mixes Latin/);
+  });
+  it("startsLowercase and the lowercase-option warning (Latin packs only)", () => {
+    expect(startsLowercase("sesame")).toBe(true);
+    expect(startsLowercase("Sesame")).toBe(false);
+    expect(startsLowercase("élan")).toBe(true);
+    expect(startsLowercase("21 March")).toBe(false);
+    expect(startsLowercase("طاولة")).toBe(false);
+    const w = lintTriviaRaw([quiz("en", "c", (qs) => void (qs[0] = { ...qs[0], options: ["sesame", "Bravo", "Charlie", "Delta"] }))]).warnings;
+    expect(w).toContain('c-en: q001: option 1 "sesame" starts with a lowercase letter (capitalise answers)');
+  });
+});
+
 describe("trivia lint: content/trivia", () => {
   const packs: TriviaLintInput[] = [];
   for (const l of readdirSync(CONTENT)) {
@@ -174,8 +239,16 @@ describe("trivia lint: content/trivia", () => {
     for (const f of readdirSync(join(CONTENT, l))) if (f.endsWith(".json")) packs.push({ file: `trivia/${l}/${f}`, raw: JSON.parse(readFileSync(join(CONTENT, l, f), "utf8")) as Record<string, unknown> });
   }
 
-  it("ships lb-quiz-01 and world-mix-01 in en, fr, ar and es with 75 questions each", () => {
+  // Held-back families (content/trivia/held/*.json.held, not shipped) are linted too, so they stay ready for review.
+  for (const f of readdirSync(join(CONTENT, "held")).filter((x) => x.endsWith(".json.held"))) {
+    packs.push({ file: `trivia/held/${f}`, raw: JSON.parse(readFileSync(join(CONTENT, "held", f), "utf8")) as Record<string, unknown> });
+  }
+
+  it("ships only lb-quiz-01 (GAME-TRIVIA §11.5); world-mix-01 is held back; every pack has 75 questions in en, fr, ar and es", () => {
     expect(packs.map((p) => p.raw.id).sort()).toEqual(["lb-quiz-01-ar", "lb-quiz-01-en", "lb-quiz-01-es", "lb-quiz-01-fr", "world-mix-01-ar", "world-mix-01-en", "world-mix-01-es", "world-mix-01-fr"]);
+    const index = readFileSync(join(CONTENT, "index.ts"), "utf8");
+    expect([...index.matchAll(/from "\.\/(\w+)\/([\w-]+)\.json"/g)].map((m) => m[2]).sort()).toEqual(["lb-quiz-01-ar", "lb-quiz-01-en", "lb-quiz-01-es", "lb-quiz-01-fr"]);
+    expect(index).not.toMatch(/world-mix-01-\w+\.json"/);
     for (const p of packs) expect((p.raw.questions as unknown[]).length, String(p.raw.id)).toBe(75);
   });
 

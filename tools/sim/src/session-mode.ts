@@ -147,10 +147,13 @@ export function playSession(seed: number, args: Pick<SimArgs, "players" | "acces
       continue;
     }
     if (rng.next() < 0.002) {
-      const before = JSON.stringify(h.state.cup.stars);
+      const before = { ...h.state.cup.stars };
       stats.aborts++;
       step({ type: "ABORT_GAME", by: TV });
-      if (JSON.stringify(h.state.cup.stars) !== before) throw new Error("ABORT_GAME changed the cup");
+      // JAMAA-PLATFORM §2.4: no stars on abort, but left members are removed and drop out of the cup.
+      const kept = new Set(h.state.members.map((m) => m.id));
+      const expected = Object.fromEntries(Object.entries(before).filter(([id]) => kept.has(id)));
+      if (JSON.stringify(h.state.cup.stars) !== JSON.stringify(expected)) throw new Error("ABORT_GAME changed the cup");
       continue;
     }
     if (h.state.game?.id === "mishana") {

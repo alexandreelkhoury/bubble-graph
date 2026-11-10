@@ -99,7 +99,8 @@ Files: `src/main.ts` (boot, params, keys, stats), `src/scene.ts` (the choreograp
 
 ## Limits (what this does not prove)
 
-- Desktop/CI numbers are not TV numbers. In the build container (4 CPU cores, no GPU) WebGL runs on SwiftShader (software) and is meaninglessly slow; the JS cost per frame there is ~2 ms, so the TV result will be decided by its GPU fill rate and the WebView.
+- Desktop/CI numbers are not TV numbers. Measured in the build container (headless Chromium, 4 CPU cores, **no GPU**): WebGL runs on SwiftShader (software rasteriser) at well under 1 fps at 1080p, which says nothing about a real GPU; the JS side of a WebGL frame (scene update + render submission) is **~1.6–2.1 ms**. The Canvas 2D renderer (CPU raster) did 24.7 fps average at 1920 × 1080 (1 % low 4, 8.6 ms JS/frame) and 33 fps at 960 × 540. First frame ≈ 0.7–1.5 s from a local server (atlas 0.3–0.4 s, bitmap fonts 0.07–0.1 s); JS heap 9.5–18 MB. So the TV result will be decided by its GPU fill rate and its WebView, which only the TV run can show.
+- Size: 189 KB gzip of JS (Pixi 8 + the scene; the WebGPU/Canvas chunks load only when chosen) + 750 KB of WebP atlases and fonts ≈ 0.94 MB per cold load.
 - No sound, no network, no phones, no localisation/RTL, one fixed round (6 players, 3 picked options). The "quick hits" strip, likes tally, split credit and house lies are not in it.
 - The character art is the art-board prototype (procedural "hand"), not the illustrator's final drawings; lettering is Cairo 900 standing in for drawn lettering.
 - The JAMAA Proto WebView loads over plain HTTP from the LAN (debug network config). A shipping PixiJS TV app would bundle the page in the APK (faster load) and need its own D-pad focus/back handling, accessibility and lifecycle work.

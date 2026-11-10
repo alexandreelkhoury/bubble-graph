@@ -167,7 +167,7 @@ export function TvReveal({ m }: { m: LikelyModel }) {
         {m.seats.map((s) => {
           const p = plan.arc[s.id]!;
           return (
-            <div key={s.id} class={`lkcast__ch${top.some((x) => x.id === s.id) ? " is-top" : ""}${s.left ? " is-left" : ""}`} data-cast={s.id} style={{ left: `${p.x - CHAR / 2}px`, top: `${p.y - CHAR}px` }}>
+            <div key={s.id} class={`lkcast__ch${top.some((x) => x.id === s.id) ? " is-top" : ""}${plan.runners.includes(s.id) ? " is-runner" : ""}${s.left ? " is-left" : ""}`} data-cast={s.id} style={{ left: `${p.x - CHAR / 2}px`, top: `${p.y - CHAR}px` }}>
               <JuryChar s={s} expression={expr(s)} size={CHAR} look={look(s)} />
               <bdi class="lkjury__name">{s.name}</bdi>
               {pub && (plan.gains[s.id] ?? 0) > 0 && <span class="lkgain">+{fmtNum(plan.gains[s.id]!)}</span>}

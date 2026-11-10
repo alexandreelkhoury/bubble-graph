@@ -228,8 +228,8 @@
       "answer": 0,
       "topic": "history",
       "difficulty": 1,
-      "explain": "كل رسالة بتبعتها، اشكرن عليها: الأبجدية اليونانية، وبعدها اللاتينية، طلعوا منها.",
-      "source": "[VERIFY] Britannica 'Phoenician alphabet' (ancestor of Greek, then Latin)"
+      "explain": "كل رسالة بتبعتها، اشكرن عليها: منها طلعت الأبجدية اليونانية واللاتينية، ومنها طلعت كمان الأبجدية العربية، عن طريق الآرامية.",
+      "source": "[VERIFY] Britannica 'Phoenician alphabet' (ancestor of Greek, then Latin; Arabic script via Aramaic and Nabataean)"
     },
     {
       "id": "q012",
@@ -238,14 +238,14 @@
       "options": [
         "10 آذار",
         "1 أيّار",
-        "31 آب",
+        "21 آذار",
         "22 تشرين التاني"
       ],
       "answer": 3,
       "topic": "history",
       "difficulty": 1,
       "explain": "من سنة 1943، وكل البلد بياخد فرصة.",
-      "source": "[VERIFY] Lebanese government / Britannica (Independence Day 22 November); reviewer: distractor dates neutral"
+      "source": "[VERIFY] Lebanese government / Britannica (Independence Day 22 November); distractor '31 August' replaced by 21 March (Mother's Day in Lebanon); Lebanese reviewer: confirm 10 March, 1 May and 21 March are neutral"
     },
     {
       "id": "q013",
@@ -378,7 +378,7 @@
       "easyIn": [
         "ar"
       ],
-      "explain": "وجدّو؟ «جدّو». والتنين رح يقولولك: ضعفان، كول شي!",
+      "explain": "وجدّو؟ التنين رح يقولولك: ضعفان، كول شي!",
       "source": "[VERIFY] common Lebanese usage (reviewer)"
     },
     {
@@ -394,6 +394,9 @@
       "answer": 3,
       "topic": "culture",
       "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
       "explain": "ستّة وخمسة إلها اسم لحالها: «شيش بيش».",
       "source": "[VERIFY] tawleh = backgammon; 'shesh besh' = a roll of six and five (Persian/Turkish numbers)"
     },
@@ -567,6 +570,9 @@
       "answer": 1,
       "topic": "music",
       "difficulty": 1,
+      "easyIn": [
+        "ar"
+      ],
       "explain": "آلة «اللوت» الأوروبية أخدت اسمها منّو.",
       "source": "[VERIFY] Britannica 'ʿūd' (fretless; name 'the wood'; root of the word 'lute')"
     },
@@ -753,7 +759,7 @@
       "text": "أيّا نادي ربح أكتر بطولات دوري لبنان؟",
       "options": [
         "النجمة",
-        "العهد",
+        "الصفاء",
         "الراسينغ",
         "الأنصار"
       ],
@@ -761,7 +767,7 @@
       "topic": "football",
       "difficulty": 2,
       "explain": "الأنصار ربح مرّة إحدعشر بطولة ورا بعض.",
-      "source": "[VERIFY] RSSSF 'Lebanon - List of Champions' (record holder Al-Ansar; 11 straight titles from 1988)"
+      "source": "[VERIFY] RSSSF 'Lebanon - List of Champions' (record holder Al-Ansar; 11 straight titles from 1988; Safa far behind); Lebanese reviewer: confirm the club list (Al-Ahed dropped: party affiliation, and its title count nears the record)"
     },
     {
       "id": "q045",
@@ -836,7 +842,7 @@
       "text": "شو بيعطي الصفوف لونو الأصفر؟",
       "options": [
         "الزعفران",
-        "العقدة الصفرا (الكركم)",
+        "العقدة الصفرا",
         "صفار البيض",
         "قشر الليمون"
       ],
@@ -907,8 +913,8 @@
       "answer": 1,
       "topic": "cinema-tv",
       "difficulty": 3,
-      "explain": "السنة يلّي بعدها مثّل لبنان بالأوسكار.",
-      "source": "[VERIFY] Festival de Cannes palmarès 2018 (Prix du jury: Capharnaüm)"
+      "explain": "وبعدها وصل للترشيح لأوسكار أفضل فيلم أجنبي.",
+      "source": "[VERIFY] Festival de Cannes palmarès 2018 (Prix du jury: Capharnaüm); 91st Academy Awards (2019) nominee, Best Foreign Language Film"
     },
     {
       "id": "q054",
@@ -1254,8 +1260,8 @@
       "answer": 3,
       "topic": "football",
       "difficulty": 3,
-      "explain": "اشتهر كمهاجم وجناح.",
-      "source": "[VERIFY] RSSSF / national-team records (Hassan Maatouk all-time top scorer)"
+      "explain": "كان كابتن المنتخب بكأس آسيا 2019، أوّل مرّة بيتأهّل فيها لبنان من التصفيات.",
+      "source": "[VERIFY] RSSSF / national-team records (Hassan Maatouk all-time top scorer, tally as of 2024); AFC Asian Cup 2019 squad (captain; first qualification on the pitch, 2000 was as host)"
     },
     {
       "id": "q075",

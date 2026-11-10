@@ -22,7 +22,7 @@ try {
     const s = rep.summary;
     console.log(`${r.padEnd(7)} → ${rep.renderer} ×${rep.res} on "${rep.gpu}"`);
     console.log(`         avg ${s.avgFps} fps · 1% low ${s.low1Fps} · 0.1% low ${s.low01Fps} · p50 ${s.p50Ms} ms · p95 ${s.p95Ms} ms · p99 ${s.p99Ms} ms · worst ${s.maxMs} ms`);
-    console.log(`         frames ${s.frames} / ${s.seconds} s · >33 ms ${s.over33ms} · stutters ${s.stutters} · heap ${s.heapMB} MB · first frame ${rep.loadMs} ms · ${JSON.stringify(rep.timings)}`);
+    console.log(`         frames ${s.frames} / ${s.seconds} s · >33 ms ${s.over33ms} · stutters ${s.stutters} · JS ${s.cpuAvgMs} ms/frame (p95 ${s.cpuP95Ms}) · heap ${s.heapMB} MB · first frame ${rep.loadMs} ms · ${JSON.stringify(rep.timings)}`);
     await page.close();
   }
 } finally {

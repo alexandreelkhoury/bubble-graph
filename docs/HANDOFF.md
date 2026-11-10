@@ -63,3 +63,17 @@ The owner stopped the session for the night. This file lists what is done, what 
   2. Rerun the three game workflows with `{"game": ...}` and their run ids (wf_3b7ffa60-454 bluff, wf_7a96543e-a25 likely, wf_72a6948e-a0e trivia); completed agents replay from cache.
   3. Integrate the art.
   4. Final gate, then push.
+
+## Update 2026-11-10: milestone P release check
+- **Platform (milestone P): verified.** The B and C fixes are done and the platform release check passes, except for the items under "Not platform" below. Results:
+  - `pnpm typecheck`, `pnpm build`, `pnpm sim --game mishana`, `lint:content`, `gen:sounds --check`, `gen:characters --check`, `check:fixtures`, `rename:gate` and `check-deploy` pass.
+  - `pnpm build` budgets: phone 59.46 / 60 KB gz (core 38.37 + bluff 11.74 + locale 5.10 + game locale 4.25). Game chunks: bluff 11.74, likely 10.23, mishana 10.85 and trivia 7.57 KB, all under the 14 KB cap. `/tv` mock 81.42 / 220 KB. Worker 376.7 / 400 KB.
+  - `pnpm e2e` (`platform.spec.ts` and `billing-off.spec.ts`): 8 of 8 pass.
+  - TV: the JVM harness passes 366 tests in 49 classes, and the UI type-check is OK. `assembleDebug`, frame-time and RTL screenshots are still pending because Google Maven is blocked.
+  - `pnpm sim --session` caught a bug in the sim, not in the room. Its abort invariant expected `cup.stars` to stay the same after `ABORT_GAME`, but left members are removed at that point and drop out of the cup (§2.4). Fixed in `tools/sim/src/session-mode.ts`.
+  - `pnpm test`: the Mish Ana! seat-rotation test (200 games) timed out at load average 29. It now has the same 60 s timeout as its sibling test.
+- **Not platform (left to their owners):**
+  - `pnpm lint` fails only in `prototypes/pixi-bluff`, the PixiJS decision spike: browser globals and unused vars in `bake/**`, `scripts/bake.mjs` and `src/assets.ts`. Lint is clean with `--ignore-pattern 'prototypes/**'`.
+  - Bluff: `shared/i18n/games/bluff` has no `error.*` keys, so the keys test fails on the first Bluff code, `LIE_EMPTY`.
+  - Likely: the props test timed out under load.
+  - Trivia: the `gen-sounds` `trivia.finalQuestion` cue test timed out under load, and `gen:strings --check` reports stale `strings_game_trivia.xml` files.

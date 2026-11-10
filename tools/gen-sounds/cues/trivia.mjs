@@ -51,7 +51,7 @@ export const CUES = [
     },
   },
   {
-    // §12.3 Fastest finger: a lightning bolt on one character: a falling electric zap over a dry crackle (never a buzzer).
+    // §12.3 Lightning thumb (the fastest correct answer): a lightning bolt on one character: a falling electric zap over a dry crackle (never a buzzer).
     id: "trivia.zap", bus: "sfx", seconds: 0.5, targetDb: -17,
     render(b) {
       tone(b, { start: 0, dur: 0.22, f0: 3200, f1: 260, glide: 0.18, wave: "saw", amp: 0.16, attack: 0.002, decay: 0.08, release: 0.03 });

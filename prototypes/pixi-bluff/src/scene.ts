@@ -384,7 +384,11 @@ export class RevealScene {
       this.cone.height = SPOT.y - CARD_H * 0.75 + 30 + 20;
     });
     if (inOut === "out") {
-      tl.tween(t0, dur, (v) => card.stampView?.scale.set(lerp(1, 0.72, v)), "ease.standard");
+      // back on the board the stamp shrinks onto the card's end so it does not reach into the next card
+      tl.tween(t0, dur, (v) => {
+        card.stampView?.scale.set(lerp(1, 0.56, v));
+        if (card.stampView) card.stampView.x = lerp(CARD_W / 2 - 4, CARD_W / 2 - 32, v);
+      }, "ease.standard");
       tl.at(t0 + dur, () => (r.zIndex = Z.card));
     }
   }

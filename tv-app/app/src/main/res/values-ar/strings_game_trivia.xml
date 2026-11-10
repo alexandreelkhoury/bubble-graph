@@ -95,7 +95,7 @@
     <string name="game__trivia__reveal__wrong">مش هالمرّة</string>
     <string name="game__trivia__reveal__no_answer">ما في جواب</string>
     <string name="game__trivia__reveal__right_answer">الجواب: %1$s</string>
-    <string name="game__trivia__reveal__fastest">أسرع إصبع: %1$s</string>
+    <string name="game__trivia__reveal__fastest">أسرع كبسة: %1$s</string>
     <string name="game__trivia__reveal__stumped">ولا حدا عرفها!</string>
     <string name="game__trivia__reveal__too_slow">كلّكن بطيئين!</string>
     <string name="game__trivia__reveal__genius">عباقرة! الكل عرفها.</string>
@@ -125,7 +125,7 @@
     <string name="game__trivia__hold__title">ناطرين اللاعبين…</string>
     <string name="game__trivia__hold__body">المسابقة بتكمّل أوّل ما يرجع حدا.</string>
     <string name="game__trivia__results__title">المنصّة</string>
-    <string name="game__trivia__results__fastest_count">أسرع إصبع: %1$s ×%2$d</string>
+    <string name="game__trivia__results__fastest_count">أسرع كبسة: %1$s ×%2$d</string>
     <string name="game__trivia__results__longest_streak">أطول سلسلة: %1$s (%2$d)</string>
     <string name="game__trivia__results__most_correct">أكتر أجوبة صح: %1$s (%2$d)</string>
     <string name="game__trivia__results__place">المركز: %1$s</string>

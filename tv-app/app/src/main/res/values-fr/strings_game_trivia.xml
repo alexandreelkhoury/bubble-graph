@@ -86,7 +86,7 @@
     <string name="game__trivia__reveal__wrong">Pas cette fois</string>
     <string name="game__trivia__reveal__no_answer">Pas de réponse</string>
     <string name="game__trivia__reveal__right_answer">La réponse : %1$s</string>
-    <string name="game__trivia__reveal__fastest">Le doigt le plus rapide : %1$s</string>
+    <string name="game__trivia__reveal__fastest">Pouce éclair : %1$s</string>
     <string name="game__trivia__reveal__stumped">Personne n’a trouvé !</string>
     <string name="game__trivia__reveal__too_slow">Trop lents, tout le monde !</string>
     <string name="game__trivia__reveal__genius">Génial ! Tout le monde a trouvé.</string>
@@ -113,7 +113,7 @@
     <string name="game__trivia__hold__title">En attente de joueurs…</string>
     <string name="game__trivia__hold__body">Le quiz reprend dès que quelqu’un revient.</string>
     <string name="game__trivia__results__title">Le podium</string>
-    <string name="game__trivia__results__fastest_count">Le doigt le plus rapide : %1$s ×%2$d</string>
+    <string name="game__trivia__results__fastest_count">Pouce éclair : %1$s ×%2$d</string>
     <string name="game__trivia__results__longest_streak">Plus longue série : %1$s (%2$d)</string>
     <string name="game__trivia__results__most_correct">Le plus de bonnes réponses : %1$s (%2$d)</string>
     <string name="game__trivia__results__place">Place : %1$s</string>
