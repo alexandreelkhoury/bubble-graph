@@ -72,6 +72,17 @@
           ]
         },
         {
+          "id": "bluff",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": false,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            15,
+            20
+          ]
+        },
+        {
           "id": "likely",
           "minPlayers": 3,
           "maxPlayers": 12,

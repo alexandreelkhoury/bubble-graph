@@ -110,8 +110,10 @@ describe("GAMES_ENABLED (JAMAA-PLATFORM §2.6)", () => {
     const orig = console.error;
     console.error = (x: unknown) => void errs.push(String(x));
     try {
-      expect(enabledGames({ GAMES_ENABLED: "mishana,chess,bluff" })).toEqual(["mishana"]);
-      expect(enabledGames({ GAMES_ENABLED: "mishana,chess,bluff" })).toEqual(["mishana"]);
+      // Registry-filtered: bluff appears only while its registry entry is enabled (G2), never a stub.
+      const want = REGISTRY_ENABLED.filter((id) => id === "mishana" || id === "bluff");
+      expect(enabledGames({ GAMES_ENABLED: "mishana,chess,bluff" })).toEqual(want);
+      expect(enabledGames({ GAMES_ENABLED: "mishana,chess,bluff" })).toEqual(want);
     } finally {
       console.error = orig;
     }

@@ -4,6 +4,10 @@ import { describe, expect, it } from "vitest";
 import { content } from "../../shared/src/games/bluff/content";
 import { BLOCKLIST, contentCounts, displayNormalize, hitsBlocklist, isTooClose, playableItems, scriptOk, startBlocker, type BluffCatalog, type BluffPack } from "../../shared/src/games/bluff/engine/index";
 import { lintBluffRaw } from "../../tools/content-lint/src/games/bluff";
+import ar from "../../shared/i18n/games/bluff/ar.json";
+import en from "../../shared/i18n/games/bluff/en.json";
+import es from "../../shared/i18n/games/bluff/es.json";
+import fr from "../../shared/i18n/games/bluff/fr.json";
 import { PACKS } from "./index";
 
 const LOCALES = ["en", "fr", "ar", "es"] as const;
@@ -153,5 +157,90 @@ describe("bluff packs: G2 exit criteria (JAMAA-PLATFORM §6.5, GAME-BLUFF §11.5
       expect(p.ageRating).toBe("all");
       expect(p.items.filter((i) => i.tier === "free").length / p.items.length, p.id).toBeGreaterThanOrEqual(0.3);
     }
+  });
+});
+
+describe("bluff packs: review fixes (2026-11-10)", () => {
+  it("no context-free fallback house lies: none for facts, sayings or finals, and never a meta answer", () => {
+    for (const p of packs) {
+      for (const t of ["fact_blank", "proverb_end", "no_truth"] as const) expect(p.fallbackHouseLies[t], `${p.id} ${t}`).toBeUndefined();
+      for (const it of p.items)
+        for (const s of Object.values(it.houseLies).flat()) expect(s, `${p.id}/${it.id}`).not.toMatch(/nobody knows|personne ne sait|nadie lo sabe|ما حدا بيعرف/i);
+    }
+  });
+
+  it("round-1 sayings every native adult knows are knownIn their own locale (so never drawn there) and difficulty 1", () => {
+    const famous: Record<string, string[]> = {
+      "bluff-en-sayings": ["enp-002", "enp-016", "enp-042", "enp-021", "enp-047", "enp-035", "enp-030", "enp-032", "enp-031"],
+      "bluff-fr-proverbes": ["frp-016", "frp-038", "frp-060", "frp-025"],
+      "bluff-es-refranes": ["esp-005", "esp-003", "esp-021", "esp-049"],
+    };
+    for (const [id, ids] of Object.entries(famous)) {
+      const p = pack(id);
+      for (const iid of ids) {
+        const it = p.items.find((i) => i.id === iid);
+        expect(it?.knownIn, `${id}/${iid}`).toContain(p.sourceLocale);
+        expect(it?.difficulty, `${id}/${iid}`).toBe(1);
+      }
+      // ≥ 30 half-known sayings stay playable, and the famous ones are a minority of the pack.
+      const known = p.items.filter((i) => i.knownIn.includes(p.sourceLocale)).length;
+      expect(p.items.length - known, id).toBeGreaterThanOrEqual(30);
+    }
+  });
+
+  it("famous Lebanese proverbs are knownIn ar, and endings shared with an EN/FR/ES proverb are knownIn that locale", () => {
+    const p = pack("bluff-lb-proverbs");
+    const known = (iid: string): string[] => p.items.find((i) => i.id === iid)?.knownIn ?? [];
+    for (const iid of ["lbp-004", "lbp-018", "lbp-022", "lbp-030", "lbp-031", "lbp-049", "lbp-050"]) expect(known(iid), iid).toContain("ar");
+    for (const iid of ["lbp-033", "lbp-053"]) expect(known(iid), iid).toEqual(expect.arrayContaining(["en", "fr", "es"]));
+    expect(known("lbp-020")).toEqual(expect.arrayContaining(["fr", "es"]));
+    expect(known("lbp-021")).toEqual(expect.arrayContaining(["en", "fr"]));
+    expect(p.items.find((i) => i.id === "lbp-024")?.prompt.original).not.toMatch(/[?؟]…$/);
+  });
+
+  it("everyday Lebanese words are knownIn ar in Teta's Words", () => {
+    const p = pack("bluff-lb-teta-words");
+    for (const iid of ["ltw-001", "ltw-008", "ltw-013", "ltw-015", "ltw-016", "ltw-017", "ltw-018", "ltw-020"])
+      expect(p.items.find((i) => i.id === iid)?.knownIn, iid).toContain("ar");
+  });
+
+  it("finals: one note per item, never the old blanket note, and no two items share house answers", () => {
+    for (const l of LOCALES) {
+      const p = pack(`bluff-no-truth-${l}`);
+      const notes = p.items.map((i) => i.note[l] ?? "");
+      expect(new Set(notes).size, l).toBe(notes.length);
+      for (const n of notes) expect(n).not.toMatch(/never was a right answer|jamais eu de bonne réponse|Nunca hubo respuesta|ما كان في جواب صح/);
+      const lies = p.items.flatMap((i) => i.houseLies[l] ?? []);
+      expect(new Set(lies).size, l).toBe(lies.length);
+    }
+  });
+
+  it("fixed facts: bubble wrap was invented (not sold) as wallpaper; Iceland's first mosquitoes; tomato pills", () => {
+    const w = pack("bluff-world-facts");
+    const it = (iid: string) => w.items.find((i) => i.id === iid);
+    expect(it("wf-010")?.prompt.original).toMatch(/invented/);
+    expect(it("wf-035")?.prompt.original).toMatch(/Until 2025/);
+    expect(it("wf-019")?.prompt.original).toMatch(/tomato pills/);
+    expect(pack("bluff-fr-proverbes").items.find((i) => i.id === "frp-044")?.houseLies.fr).not.toContain("Du dire au faire");
+  });
+});
+
+describe("bluff i18n: review fixes (2026-11-10)", () => {
+  const dicts = { en, fr, ar, es } as Record<Loc, Record<string, unknown>>;
+  it("the final's intro does not repeat the card header, and the rules promise only what the reveal keeps (ballots)", () => {
+    expect(String(en["game.bluff.round.noTruth.intro"])).not.toMatch(/^Final round/);
+    expect(String(fr["game.bluff.round.noTruth.intro"])).not.toMatch(/^Finale/);
+    expect(String(es["game.bluff.round.noTruth.intro"])).not.toMatch(/^Ronda final/);
+    expect(String(ar["game.bluff.round.noTruth.intro"])).not.toMatch(/^الجولة الأخيرة/);
+    expect(String(en["game.bluff.rules.final.body"])).toMatch(/Ballots are never shown/);
+    for (const l of LOCALES) expect(String(dicts[l]["game.bluff.rules.final.body"]), l).not.toMatch(/Nobody sees|Personne ne voit|Nadie ve|ما حدا بيعرف/);
+  });
+
+  it("AR copy about a player never uses a masculine verb (pins and awards land on anyone, GAME-BLUFF §10)", () => {
+    expect(ar["game.bluff.reveal.knewItPin"]).toBe("بالضبط!");
+    expect(ar["game.bluff.awards.hookLineSinker"]).not.toMatch(/بلعها/);
+    const flat = (v: unknown): string => (typeof v === "string" ? v : Object.values(v as Record<string, string>).join(" | "));
+    for (const k of ["game.bluff.reveal.fooled", "game.bluff.awards.bluffOfTheNight.body", "game.bluff.awards.lieDetector.body", "game.bluff.awards.hookLineSinker.body", "game.bluff.reveal.foundEarly"])
+      expect(flat((ar as Record<string, unknown>)[k]), k).not.toMatch(/ضحك على|لقى|بلعها|لقاها/);
   });
 });

@@ -2,10 +2,7 @@
 // engine (shared/src/testing/bots/bluff.ts): invariants, leak oracles, monotone scores and termination after every
 // reduce; with `--access free`, that no Pass item is ever drawn.
 //
-// JAMAA-GAP (G2, review finding): tools/sim/src/main.ts (milestone P file, outside the G2 lane) routes only mishana
-// to an engine-mode bot and SKIPS a registry-disabled game, then prints "OK" — so `pnpm sim --game bluff` is a FALSE
-// PASS that never plays Bluff. Platform follow-up: main.ts calls `runBluffEngineMode` for "bluff" (even while it is
-// registry-disabled) or fails loudly. Until then the G2 acceptance command is this module, run directly:
+// `pnpm sim --game bluff` (tools/sim/src/main.ts) routes here. The module also runs directly, e.g.
 //   pnpm --filter @jamaa/sim exec tsx src/games/bluff.ts --players 3..12 --games 300 [--seed N] [--access free]
 // `--players` also takes a comma list here (`--players 3,12`).
 import { fileURLToPath } from "node:url";

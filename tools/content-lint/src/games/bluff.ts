@@ -2,7 +2,13 @@
 //
 // The structural check below mirrors the §11.3 zod schema on the raw JSON, so these rules also run (through `lintBluffRaw`,
 // used by content/bluff/test) while the platform adapter is still being written; `lint` is the GameLint hook the common
-// pass calls with the packs its ContentAdapter accepted. Pure: no I/O.
+// pass calls with the packs its ContentAdapter accepted; it also checks the Bluff i18n phase names. Pure: no I/O (the
+// i18n dictionaries are static imports).
+import { BLUFF_META } from "@jamaa/shared/games/bluff/meta";
+import bluffAr from "@jamaa/shared/i18n/games/bluff/ar.json";
+import bluffEn from "@jamaa/shared/i18n/games/bluff/en.json";
+import bluffEs from "@jamaa/shared/i18n/games/bluff/es.json";
+import bluffFr from "@jamaa/shared/i18n/games/bluff/fr.json";
 import { profaneTokens } from "../lint";
 import type { Findings } from "../platform";
 import type { GameLint, ParsedPack } from "./types";
@@ -431,4 +437,22 @@ export function lintBluffRaw(entries: readonly { file: string; raw: unknown }[],
   return c;
 }
 
-export const lint: GameLint = (packs: readonly ParsedPack[], opts) => lintBluffRaw(packs.map((p) => ({ file: p.file, raw: p.raw })), opts);
+/** The i18n key of a phase id: `ROUND_INTRO` → `game.bluff.phase.roundIntro` (keys are lowerCamel per segment, §5.7). */
+export const phaseKey = (phase: string): string => `game.bluff.phase.${phase.toLowerCase().replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase())}`;
+
+/** Every phase in `meta.phases` has a display name in every locale (the ⓘ sheet's "You are here: <phase>" line). */
+export function lintBluffI18n(phases: readonly string[], dicts: Readonly<Record<string, Readonly<Record<string, unknown>>>>): Findings {
+  const c: Ctx = { errors: [], warnings: [] };
+  for (const [loc, dict] of Object.entries(dicts))
+    for (const ph of phases) {
+      const v = dict[phaseKey(ph)];
+      if (typeof v !== "string" || v.trim() === "") c.errors.push(`i18n/games/bluff/${loc}.json: ${phaseKey(ph)} is missing (phase ${ph} needs a display name)`);
+    }
+  return c;
+}
+
+export const lint: GameLint = (packs: readonly ParsedPack[], opts) => {
+  const r = lintBluffRaw(packs.map((p) => ({ file: p.file, raw: p.raw })), opts);
+  const i = lintBluffI18n(BLUFF_META.phases, { en: bluffEn, fr: bluffFr, ar: bluffAr, es: bluffEs });
+  return { errors: [...r.errors, ...i.errors], warnings: [...r.warnings, ...i.warnings] };
+};

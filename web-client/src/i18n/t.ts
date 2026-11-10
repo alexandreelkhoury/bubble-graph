@@ -243,6 +243,16 @@ export function errorKeyOf(code: string): MessageKey {
   return `error.${code.toLowerCase().replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())}` as MessageKey;
 }
 
+/**
+ * A wire error's text. JAMAA-PLATFORM §5.7: a game's own codes live in its file under `game.<id>.error.*`, while the
+ * server sends the bare `error.<code>` messageKey, so inside a game the scoped key wins; platform codes stay `error.*`.
+ */
+export function errorText(l: Locale, messageKey: string, gameId: string | null | undefined): string {
+  const scoped = gameId ? `game.${gameId}.${messageKey}` : null;
+  if (scoped !== null && (CATALOGS[l]?.[scoped] !== undefined || CATALOGS.en?.[scoped] !== undefined)) return translate(l, scoped);
+  return translate(l, messageKey);
+}
+
 /** Splits a translated string around one placeholder so JSX can be slotted in: [before, after]. */
 export function tSplit(key: MessageKey, slot: string, params?: Params): [string, string] {
   const s = translate(locale.value, key, { ...params, [slot]: "\u0000" });

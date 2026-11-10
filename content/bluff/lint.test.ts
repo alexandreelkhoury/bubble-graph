@@ -1,7 +1,12 @@
 // Unit tests for the Bluff content-lint rules (tools/content-lint/src/games/bluff.ts, GAME-BLUFF §11.2–§11.3).
 // They live here because the G2 lane D owns content/bluff/** and the rule module, not tools/content-lint/test/**.
 import { describe, expect, it } from "vitest";
-import { collides, lintBluffRaw, tooClose } from "../../tools/content-lint/src/games/bluff";
+import { BLUFF_META } from "../../shared/src/games/bluff/meta";
+import ar from "../../shared/i18n/games/bluff/ar.json";
+import en from "../../shared/i18n/games/bluff/en.json";
+import es from "../../shared/i18n/games/bluff/es.json";
+import fr from "../../shared/i18n/games/bluff/fr.json";
+import { collides, lintBluffI18n, lintBluffRaw, phaseKey, tooClose } from "../../tools/content-lint/src/games/bluff";
 
 type Item = Record<string, unknown>;
 const saying = (n: number, over: Item = {}): Item => ({
@@ -92,5 +97,13 @@ describe("bluff content-lint rules", () => {
   it("treats free drafts as release blockers only with --release", () => {
     expect(lint(base(), {}, false).errors).toEqual([]);
     expect(lint(base(), {}, true).errors.join("\n")).toMatch(/reviewed before release/);
+  });
+
+  it("requires a display name for every phase in meta.phases, in every locale (the ⓘ sheet's \"You are here\")", () => {
+    expect(phaseKey("ROUND_INTRO")).toBe("game.bluff.phase.roundIntro");
+    expect(phaseKey("HOLD")).toBe("game.bluff.phase.hold");
+    expect(lintBluffI18n(BLUFF_META.phases, { en, fr, ar, es }).errors).toEqual([]);
+    const { ["game.bluff.phase.writing"]: _gone, ...noWriting } = fr as Record<string, unknown>;
+    expect(lintBluffI18n(BLUFF_META.phases, { fr: noWriting }).errors.join("\n")).toMatch(/fr\.json: game\.bluff\.phase\.writing is missing/);
   });
 });

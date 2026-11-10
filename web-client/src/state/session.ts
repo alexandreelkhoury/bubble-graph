@@ -10,7 +10,7 @@ import type { ClientIntentMsg, ErrorMsg, SocketFactory } from "../net/connection
 import { clearResume, loadResume, saveColor, saveName, saveResume } from "../lib/storage";
 import { HAPTIC, haptic } from "../lib/haptics";
 import { reacquireWakeLock, releaseWakeLock, requestWakeLock, wantWakeLock } from "../lib/wakelock";
-import { loadGameCatalog, locale, t } from "../i18n/t";
+import { errorText, loadGameCatalog, locale, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
 import type { PhoneGameModule } from "../games/types";
 import { PHONE_GAMES } from "../games/phoneLoaders";
@@ -134,7 +134,7 @@ function handleError(code: string, msg: ErrorMsg): void {
     return;
   }
   joinPending.value = false;
-  pushToast(t(msg.messageKey as MessageKey), "error");
+  pushToast(errorText(locale.value, msg.messageKey, view.value?.game?.gameId), "error");
 }
 
 /** Sends an action; a tap while not OPEN does nothing (the banner explains). */

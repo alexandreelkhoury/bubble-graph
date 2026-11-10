@@ -19,24 +19,16 @@
     "en"
   ],
   "ageRating": "all",
-  "fallbackHouseLies": {
-    "no_truth": {
-      "en": [
-        "Nobody knows, and that's the point",
-        "It was a Tuesday",
-        "Ask the cat"
-      ]
-    }
-  },
+  "fallbackHouseLies": {},
   "items": [
     {
       "id": "nt-en-001",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What was the very first thing a cat ever said to a human?",
+        "original": "What did the first Phoenician sailor carve on his oar?",
         "translit": null,
         "display": {}
       },
@@ -44,13 +36,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "You may feed me now",
-          "This chair is mine",
-          "I was here first"
+          "His mother's name",
+          "Row left, then left again",
+          "Return this oar to Tyre"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "No oar from those first voyages survives, so tonight's answer is the official one"
       },
       "review": {
         "status": "draft",
@@ -64,7 +56,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What is the Moon's real job?",
+        "original": "What was the very first rule of the world's first café?",
         "translit": null,
         "display": {}
       },
@@ -72,13 +64,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Night-shift security guard",
-          "Night light for owls",
-          "Keeping an eye on the sea"
+          "No sitting without ordering",
+          "Leave the last biscuit",
+          "Speak softly near the oven"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Nobody wrote it down. Your table just did"
       },
       "review": {
         "status": "draft",
@@ -92,7 +84,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Why do socks vanish in the washing machine?",
+        "original": "What was written in the first letter ever lost in the post?",
         "translit": null,
         "display": {}
       },
@@ -100,13 +92,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "They elope with a towel",
-          "The machine keeps one as a tip",
-          "They escape down the drain at night"
+          "Sorry this is late",
+          "Please send the cat back",
+          "Wish you were here, again"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "The first lost letter was never found. That is what lost means"
       },
       "review": {
         "status": "draft",
@@ -117,10 +109,10 @@
       "id": "nt-en-004",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What do goldfish think about all day?",
+        "original": "What were the first people to form a queue in Britain waiting for?",
         "translit": null,
         "display": {}
       },
@@ -128,13 +120,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Who keeps tapping on the glass",
-          "How to look busy",
-          "The pebble that moved"
+          "A seat by the fire",
+          "Fresh bread on a Monday",
+          "To complain about the queue"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Historians cannot name the first queue. They would have had to wait"
       },
       "review": {
         "status": "draft",
@@ -145,10 +137,10 @@
       "id": "nt-en-005",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What was the very first joke in history?",
+        "original": "What was the name of the first lighthouse keeper's dog in Cornwall?",
         "translit": null,
         "display": {}
       },
@@ -156,13 +148,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Watch out, a rock",
-          "Who took the fire?",
-          "A mammoth slipping on ice"
+          "Biscuit",
+          "Captain Fog",
+          "Lamp"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Lighthouse logs record storms, ships and oil, rarely dogs"
       },
       "review": {
         "status": "draft",
@@ -173,10 +165,10 @@
       "id": "nt-en-006",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What do clouds do on their day off?",
+        "original": "What did the builders of Stonehenge call it?",
         "translit": null,
         "display": {}
       },
@@ -184,13 +176,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Nap on a mountain top",
-          "Pretend to be sheep",
-          "Visit their cousin, the fog"
+          "The Big Ring",
+          "The Sun Gate",
+          "The Old Stones"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Its builders left no writing, so nobody knows what they called it"
       },
       "review": {
         "status": "draft",
@@ -204,7 +196,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What is rule number one in the handbook every grandmother receives?",
+        "original": "What was inside the time capsule a village school buried and never found again?",
         "translit": null,
         "display": {}
       },
@@ -212,13 +204,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "No guest leaves hungry",
-          "Ask if they've eaten, twice",
-          "The good plates are for visitors"
+          "A conker and a school tie",
+          "A letter to the future head",
+          "A cassette of the school choir"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Plenty of time capsules are lost for good. This one is now yours"
       },
       "review": {
         "status": "draft",
@@ -232,7 +224,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What do penguins argue about?",
+        "original": "What tune did the first milkman whistle on his round?",
         "translit": null,
         "display": {}
       },
@@ -240,13 +232,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Who wears the suit better",
-          "Whose turn it is to watch the egg",
-          "Whether the sea is too cold today"
+          "A sea shanty",
+          "Something about the rain",
+          "The same four notes every day"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Nobody recorded it. Milkmen were up before the recorders"
       },
       "review": {
         "status": "draft",
@@ -257,10 +249,10 @@
       "id": "nt-en-009",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What is the secret ingredient in every grandmother's cooking?",
+        "original": "Which spice did the very first desert caravan forget to pack?",
         "translit": null,
         "display": {}
       },
@@ -268,13 +260,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "A pinch of guilt",
-          "Patience and far too much butter",
-          "The step she never tells anyone"
+          "Black pepper",
+          "Saffron",
+          "Cinnamon"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "The first caravan left no packing list behind"
       },
       "review": {
         "status": "draft",
@@ -285,10 +277,10 @@
       "id": "nt-en-010",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Where do lost umbrellas go?",
+        "original": "What was carved above the door of the world's first library?",
         "translit": null,
         "display": {}
       },
@@ -296,13 +288,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "To a beach where it never rains",
-          "Back to the shop that sold them",
-          "Wherever the socks went"
+          "Quiet, please",
+          "Put every book back where it lives",
+          "Enter to learn, leave wiser"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "The oldest libraries lost their doors long before their books"
       },
       "review": {
         "status": "draft",
@@ -313,10 +305,10 @@
       "id": "nt-en-011",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What is the Wi-Fi password at the pyramids?",
+        "original": "What did the lighthouse keeper write on the very last line of his last logbook?",
         "translit": null,
         "display": {}
       },
@@ -324,13 +316,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Pharaoh123",
-          "Triangle4ever",
-          "NoEntry3000BC"
+          "Lamp lit, sea calm, going home",
+          "Fog again, the gulls know",
+          "Someone else's turn"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Every keeper's last line is different. This one belongs to the table"
       },
       "review": {
         "status": "draft",
@@ -344,7 +336,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What do houseplants say about us when we go out?",
+        "original": "What was the first name suggested for the full English breakfast?",
         "translit": null,
         "display": {}
       },
@@ -352,13 +344,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Finally, some peace",
-          "Did anyone else get water?",
-          "They talk to us way too much"
+          "The Farmhouse Plate",
+          "The Morning Feast",
+          "The Big Fry"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "If there was a meeting, nobody took minutes"
       },
       "review": {
         "status": "draft",
@@ -369,10 +361,10 @@
       "id": "nt-en-013",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What do dogs dream about?",
+        "original": "What did the very first Cornish pasty have in it that we've since forgotten?",
         "translit": null,
         "display": {}
       },
@@ -380,13 +372,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "The postman finally stopping to chat",
-          "An endless sausage",
-          "Being allowed on the sofa"
+          "A spoonful of apple at one end",
+          "A sprig of wild thyme",
+          "Salt scraped from the harbour wall"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Ask three Cornish grans and you get four answers"
       },
       "review": {
         "status": "draft",
@@ -397,10 +389,10 @@
       "id": "nt-en-014",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Why did the dinosaurs never invent the wheel?",
+        "original": "What did the first person ever to see snow call it?",
         "translit": null,
         "display": {}
       },
@@ -408,13 +400,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Their arms were too short to push it",
-          "They were busy being enormous",
-          "Every prototype got eaten"
+          "Sky flour",
+          "White rain",
+          "Quiet water"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "The word came long before writing, so nobody knows"
       },
       "review": {
         "status": "draft",
@@ -428,7 +420,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What is written on page one of the instruction manual for babies?",
+        "original": "What was the very first thing ever sold at the very first market?",
         "translit": null,
         "display": {}
       },
@@ -436,13 +428,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "No returns, no exchanges",
-          "Batteries not included",
-          "Results may vary"
+          "Salt",
+          "A goat",
+          "A basket to carry the goat"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Archaeologists find old markets, never their first receipt"
       },
       "review": {
         "status": "draft",
@@ -456,7 +448,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What does the satnav secretly think when you ignore it?",
+        "original": "What was the secret ingredient in the first village fete's prize-winning jam?",
         "translit": null,
         "display": {}
       },
@@ -464,13 +456,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Fine, get lost then",
-          "I'll remember this",
-          "Recalculating my life choices"
+          "A splash of cold tea",
+          "A twist of black pepper",
+          "Rose petals from next door"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "The judges never told, and the jar is long gone"
       },
       "review": {
         "status": "draft",
@@ -481,10 +473,10 @@
       "id": "nt-en-017",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What is the most popular sport among ants?",
+        "original": "What did the Romans posted on Hadrian's Wall call the wind up there?",
         "translit": null,
         "display": {}
       },
@@ -492,13 +484,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Crumb lifting",
-          "Synchronised marching",
-          "Picnic raiding"
+          "The Northern Bite",
+          "Old Teeth",
+          "The Caledonian Cough"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Letters found near the Wall mention socks and a birthday party, sadly not this"
       },
       "review": {
         "status": "draft",
@@ -509,10 +501,10 @@
       "id": "nt-en-018",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What do your shoes talk about while you sleep?",
+        "original": "What was the first rule of the oldest knitting circle in Shetland?",
         "translit": null,
         "display": {}
       },
@@ -520,13 +512,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Where we went today",
-          "Which one of us smells worse",
-          "Running away to the beach"
+          "No dropped stitches, no gossip",
+          "Tea before patterns",
+          "Count twice, knit once"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "The first rule was said out loud, never written. Until now"
       },
       "review": {
         "status": "draft",
@@ -540,7 +532,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Why do cats knock things off tables?",
+        "original": "What did the first message ever sent by carrier pigeon say?",
         "translit": null,
         "display": {}
       },
@@ -548,13 +540,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Testing gravity, daily",
-          "Interior design",
-          "Revenge for bath day"
+          "Arrived safe, send bread",
+          "Keep the bird",
+          "Coming home Thursday"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Pigeons carried messages for thousands of years; the first one is lost"
       },
       "review": {
         "status": "draft",
@@ -568,7 +560,7 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What did the very first person to eat an olive say?",
+        "original": "When tea first reached an English village, what did people think it was for?",
         "translit": null,
         "display": {}
       },
@@ -576,13 +568,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Let's try again next year",
-          "This tree is pranking me",
-          "Needs salt and a lot of patience"
+          "Dyeing wool",
+          "Soothing a cough",
+          "Polishing boots"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Nobody kept a diary of that first confused cup"
       },
       "review": {
         "status": "draft",
@@ -593,10 +585,10 @@
       "id": "nt-en-021",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What is the national anthem of the Moon?",
+        "original": "What was the village nickname for the very first red phone box?",
         "translit": null,
         "display": {}
       },
@@ -604,13 +596,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Four minutes of total silence",
-          "A slow, low hum",
-          "A song about cheese"
+          "The Lantern",
+          "Old Ringer",
+          "The Talking Shed"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Every village had a name for it. The first one is forgotten"
       },
       "review": {
         "status": "draft",
@@ -621,10 +613,10 @@
       "id": "nt-en-022",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What do the stars gossip about?",
+        "original": "What did the very first seaside donkey ride cost?",
         "translit": null,
         "display": {}
       },
@@ -632,13 +624,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Who's been looking a bit dim lately",
-          "Which planet has the most moons",
-          "The comet that never calls"
+          "A penny and a carrot",
+          "Two buttons",
+          "Whatever the donkey decided"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "The donkeys kept no accounts"
       },
       "review": {
         "status": "draft",
@@ -652,7 +644,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Why are lifts so awkward?",
+        "original": "What was the very first lullaby ever sung?",
         "translit": null,
         "display": {}
       },
@@ -660,13 +652,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "They hear too many secrets",
-          "Nobody agrees where to look",
-          "The music is judging you"
+          "A hum about the moon",
+          "Three notes and a sigh",
+          "Something about sheep"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Lullabies are older than writing, so the first one is lost"
       },
       "review": {
         "status": "draft",
@@ -677,10 +669,10 @@
       "id": "nt-en-024",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What does a snail do when it's in a hurry?",
+        "original": "What did the first mapmaker write in the empty corner of his map?",
         "translit": null,
         "display": {}
       },
@@ -688,13 +680,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Leaves a note",
-          "Takes the shell off",
-          "Asks a tortoise for a lift"
+          "Unknown, probably sheep",
+          "Ask locally",
+          "Here the road gets muddy"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "The very first map did not survive, so neither did its corners"
       },
       "review": {
         "status": "draft",
@@ -708,7 +700,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What do pigeons whisper to each other in the park?",
+        "original": "What did the first village weather report in the parish newsletter predict?",
         "translit": null,
         "display": {}
       },
@@ -716,13 +708,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "That one's got crumbs",
-          "Look sad, he's eating",
-          "Meet at the statue at noon"
+          "Rain, then more rain",
+          "Fair, but bring a coat",
+          "Fog over the duck pond"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Nobody kept issue number one"
       },
       "review": {
         "status": "draft",
@@ -736,7 +728,7 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What is the hardest test you must pass to become a cloud?",
+        "original": "What were the last words in the guestbook of a Highland bothy before it was rebuilt?",
         "translit": null,
         "display": {}
       },
@@ -744,13 +736,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Floating with no help",
-          "Raining exactly on time",
-          "Holding one shape for ten minutes"
+          "Left dry wood, took a cold",
+          "Mice 2, walkers 0",
+          "Door sticks, lift and shove"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "The old book went on the fire, as bothy books often do"
       },
       "review": {
         "status": "draft",
@@ -764,7 +756,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "What is the most common lie told by a cat?",
+        "original": "What was the secret of the first bakery in your town?",
         "translit": null,
         "display": {}
       },
@@ -772,13 +764,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Nobody has fed me today",
-          "I didn't break that",
-          "I love you, now open the door"
+          "Butter, patience and a white lie",
+          "Half rye, half luck",
+          "Starting at three in the morning"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Bakers keep secrets better than anyone"
       },
       "review": {
         "status": "draft",
@@ -792,7 +784,7 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What is the first rule of the secret club of grandfathers?",
+        "original": "What did the first potter paint on the first painted cup?",
         "translit": null,
         "display": {}
       },
@@ -800,433 +792,13 @@
       "truthAlt": {},
       "houseLies": {
         "en": [
-          "Always carry a hanky",
-          "Never pay for parking",
-          "Fall asleep first at every wedding"
+          "A fish",
+          "A single blue line",
+          "Their own thumbprint"
         ]
       },
       "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-029",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "What do mirrors see when nobody is looking?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "The back of the room, at last",
-          "A very bored wall",
-          "Their cousin, the mirror opposite"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-030",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "What is a volcano's favourite food?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Spicy rocks",
-          "Anything that gets too close",
-          "Soup, extra hot"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-031",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "What do trees really think of birds?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Noisy but loyal tenants",
-          "They never pay rent",
-          "Living decorations"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-032",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "What do worms get up to on rainy days?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Throw a pool party",
-          "Go sightseeing on the pavement",
-          "Swimming lessons"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-033",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "What is the most boring superpower?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Always knowing the time",
-          "Making toast slightly warmer",
-          "Chatting with door handles"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-034",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "What do teapots dream of becoming?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "A fountain",
-          "A trumpet",
-          "A hot-air balloon"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-035",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "Why do keys always hide when you're late?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "They hate being rushed",
-          "They need a holiday",
-          "They're jealous of your phone"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-036",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "What do sheep count when they can't sleep?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Humans",
-          "Clouds",
-          "Fences"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-037",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "What would aliens complain about first on Earth?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "The gravity is far too strong",
-          "Nobody uses their indicators",
-          "Why is the sky blue?"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-038",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "What do snowmen do in summer?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Move into the freezer",
-          "Retire to the mountains",
-          "Become puddles with memories"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-039",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "What is a robot's favourite dessert?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Microchip cookies",
-          "Nuts and bolts sundae",
-          "Battery-powered jelly"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-040",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "What did the first fish to walk on land say?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Who left the water running?",
-          "New feet, be patient",
-          "Back in five minutes"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-041",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "What do babies say to each other at the park?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Watch, I'll drop it again",
-          "Mine screams louder",
-          "Don't tell them we can talk"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-042",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "What does the last biscuit in the tin think?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Nobody dares to take me",
-          "I am the chosen one",
-          "Someone please rescue me"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-en-043",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "What do ghosts put on their CV?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "en": [
-          "Excellent with draughts",
-          "Available nights only",
-          "Very quiet in meetings"
-        ]
-      },
-      "note": {
-        "en": "There never was a right answer. The table decided."
+        "en": "Painted pottery is ancient; the very first cup is long gone"
       },
       "review": {
         "status": "draft",

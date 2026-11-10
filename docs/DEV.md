@@ -268,7 +268,7 @@ Where each game stands and how to turn it on:
 |---|---|---|---|---|---|
 | Mish Ana! | `mishana` | enabled | on | on | on (default) |
 | Bluff the Answer | `bluff` | set by G2 | on once registry-enabled | on once registry-enabled | off until the owner adds it |
-| Most Likely | `likely` | set by G3 | on once registry-enabled | on once registry-enabled | off until the owner adds it |
+| Most Likely | `likely` | **enabled** (G3) | on (`GAMES_ENABLED=mishana,likely pnpm dev` to narrow) | on (`E2E_GAMES_ENABLED` overrides the list) | off until the owner adds it: append `likely` to `GAMES_ENABLED` (steps below); its free pack `likely-family` must be `reviewed` first |
 | Quiz Night | `trivia` | **enabled** (G4) | on | on (`E2E_GAMES_ENABLED` overrides the list) | off until the owner adds it |
 
 To turn a game on in production (one game per release, owner order `bluff`, `likely`, `trivia`):

@@ -7,6 +7,14 @@
     <string name="game__bluff__howto__2">Écrivez une fausse réponse sur votre téléphone. Vous connaissez la vraie fin du proverbe ? Tapez-la : vous marquez tout de suite.</string>
     <string name="game__bluff__howto__3">Trouvez la vraie réponse parmi les fausses. Personne ne sait qui a écrit quoi avant la fin du vote.</string>
     <string name="game__bluff__howto__4">Marquez deux fois : +100 pour la vérité, +60 par personne piégée. En finale, la réponse la plus crédible rafle la mise.</string>
+    <string name="game__bluff__phase__round_intro">Carte de manche</string>
+    <string name="game__bluff__phase__writing">Écriture</string>
+    <string name="game__bluff__phase__voting">Vote</string>
+    <string name="game__bluff__phase__reveal">Révélation</string>
+    <string name="game__bluff__phase__scores">Scores</string>
+    <string name="game__bluff__phase__awards">Trophées</string>
+    <string name="game__bluff__phase__results">Résultats</string>
+    <string name="game__bluff__phase__hold">En attente des joueurs</string>
     <string name="game__bluff__rules__goal__title">Le but</string>
     <string name="game__bluff__rules__goal__body">Piéger les autres, sans vous faire piéger. Encore mieux à 4 joueurs ou plus.</string>
     <string name="game__bluff__rules__round1__title">Manche 1 : Finis le proverbe</string>
@@ -20,7 +28,7 @@
     <string name="game__bluff__rules__points__title">Points</string>
     <string name="game__bluff__rules__points__body">Vérité : +100 (manche 2 : +200). Chaque personne piégée : +60 (manche 2 : +120). Chaque « j\'aime » : +10.</string>
     <string name="game__bluff__rules__final__title">Finale : Aucune vérité</string>
-    <string name="game__bluff__rules__final__body">Il n\'y a pas de bonne réponse. Écrivez la réponse la plus crédible, puis votez pour celle qui sonne le plus vrai. Chaque vote : +150. Le plus de votes : +400. Personne ne voit qui a voté pour quoi.</string>
+    <string name="game__bluff__rules__final__body">Il n\'y a pas de bonne réponse. Écrivez la réponse la plus crédible, puis votez pour celle qui sonne le plus vrai. Chaque vote : +150. Le plus de votes : +400. Les bulletins ne sont jamais montrés.</string>
     <string name="game__bluff__rules__house__title">Bluffs de la maison</string>
     <string name="game__bluff__rules__house__body">À peu de joueurs, le jeu ajoute ses propres pièges. Ne tombez pas dedans !</string>
     <string name="game__bluff__rules__same__title">Même bluff ?</string>
@@ -71,7 +79,7 @@
     <string name="game__bluff__round__final">Finale</string>
     <string name="game__bluff__round__saying__intro">Vous connaissez la fin ? Marquez tout de suite. Sinon, inventez !</string>
     <string name="game__bluff__round__fact__intro">Un vrai fait qui semble impossible. Points ×2.</string>
-    <string name="game__bluff__round__no_truth__intro">Finale. Il n\'y a pas de bonne réponse. Écrivez la réponse la plus crédible. Le plus de votes rafle la mise.</string>
+    <string name="game__bluff__round__no_truth__intro">Il n\'y a pas de bonne réponse. Écrivez la réponse la plus crédible. Le plus de votes rafle la mise.</string>
     <string name="game__bluff__prompt__counter">%1$s sur %2$d</string>
     <string name="game__bluff__type__proverb_end">Finis le proverbe</string>
     <string name="game__bluff__type__fact_blank">Impossible mais vrai</string>

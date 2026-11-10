@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { COLORS } from "../../src/constants";
 import { errorKey, MESSAGES } from "../../src/i18n/index";
-import { ERROR_CODES } from "../../src/protocol/errors";
+import type { ErrorCode } from "../../src/protocol/errors";
+import { GAME_ERROR_CODES, PLATFORM_ERROR_CODES } from "../../src/protocol/errors";
 
 type Value = string | Record<string, string>;
 // JAMAA-PLATFORM §5.7: segments may be numeric ("game.<id>.howto.1").
@@ -37,8 +38,15 @@ describe("i18n keys (§11)", () => {
       }
     }
   });
-  it("every ErrorCode has an error.* key", () => {
-    for (const c of ERROR_CODES) expect(en[errorKey(c)], c).toBeDefined();
+  it("every platform ErrorCode has a root error.* key", () => {
+    for (const c of PLATFORM_ERROR_CODES) expect(en[errorKey(c)], c).toBeDefined();
+  });
+  // JAMAA-PLATFORM §5.7: a game file holds only `game.<id>.*` keys, so a game's own codes live under `game.<id>.error.*`.
+  it.each(Object.entries(GAME_ERROR_CODES))("every %s ErrorCode has a game.<id>.error.* key in every locale", (id, codes) => {
+    for (const c of codes as readonly ErrorCode[]) {
+      const key = `game.${id}.${errorKey(c)}`;
+      for (const m of [en, others.fr, others.ar, others.es]) expect(m[key], key).toBeDefined();
+    }
   });
   it("PAYMENTS-SPEC §4.7 billing keys exist in every locale", () => {
     const keys = [

@@ -7,6 +7,14 @@
     <string name="game__bluff__howto__2">Write a fake answer on your phone. Know the real ending of the saying? Type it: you score right away.</string>
     <string name="game__bluff__howto__3">Find the real answer among the fakes. Nobody knows who wrote what until the vote is over.</string>
     <string name="game__bluff__howto__4">Score twice: +100 for the truth, +60 for every friend who falls for your lie. In the final, the most convincing answer wins big.</string>
+    <string name="game__bluff__phase__round_intro">Round card</string>
+    <string name="game__bluff__phase__writing">Writing</string>
+    <string name="game__bluff__phase__voting">Voting</string>
+    <string name="game__bluff__phase__reveal">Reveal</string>
+    <string name="game__bluff__phase__scores">Scores</string>
+    <string name="game__bluff__phase__awards">Awards</string>
+    <string name="game__bluff__phase__results">Results</string>
+    <string name="game__bluff__phase__hold">Waiting for players</string>
     <string name="game__bluff__rules__goal__title">The goal</string>
     <string name="game__bluff__rules__goal__body">Fool your friends, and don\'t get fooled. Best with 4 players or more.</string>
     <string name="game__bluff__rules__round1__title">Round 1: Finish the saying</string>
@@ -20,7 +28,7 @@
     <string name="game__bluff__rules__points__title">Points</string>
     <string name="game__bluff__rules__points__body">Truth: +100 (round 2: +200). Each player fooled: +60 (round 2: +120). Each like: +10.</string>
     <string name="game__bluff__rules__final__title">Final: No truth</string>
-    <string name="game__bluff__rules__final__body">There is no right answer. Write the most convincing answer, then vote for the one that sounds most true. Each vote: +150. Most votes: +400. Nobody sees who voted for what.</string>
+    <string name="game__bluff__rules__final__body">There is no right answer. Write the most convincing answer, then vote for the one that sounds most true. Each vote: +150. Most votes: +400. Ballots are never shown.</string>
     <string name="game__bluff__rules__house__title">House lies</string>
     <string name="game__bluff__rules__house__body">With few players, the game adds its own lies. Don\'t fall for them!</string>
     <string name="game__bluff__rules__same__title">Same lie?</string>
@@ -69,7 +77,7 @@
     <string name="game__bluff__round__final">Final</string>
     <string name="game__bluff__round__saying__intro">Know the ending? Score now. Don\'t? Make one up.</string>
     <string name="game__bluff__round__fact__intro">A real fact that sounds impossible. Points ×2.</string>
-    <string name="game__bluff__round__no_truth__intro">Final round. There is no right answer. Write the answer that sounds the most true. The most votes wins big.</string>
+    <string name="game__bluff__round__no_truth__intro">There is no right answer. Write the answer that sounds the most true. The most votes wins big.</string>
     <string name="game__bluff__prompt__counter">%1$s of %2$d</string>
     <string name="game__bluff__type__proverb_end">Finish the saying</string>
     <string name="game__bluff__type__fact_blank">Impossible but true</string>

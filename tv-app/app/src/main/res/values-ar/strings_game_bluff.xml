@@ -7,6 +7,14 @@
     <string name="game__bluff__howto__2">اكتبوا جواب كذب عالتلفون. بتعرفوا آخر المتل الحقيقي؟ اكتبوه وبتاخدوا النقاط دغري.</string>
     <string name="game__bluff__howto__3">لاقوا الجواب الصح بين الكذبات. ما حدا بيعرف مين كتب شو لآخر التصويت.</string>
     <string name="game__bluff__howto__4">سجّلوا مرّتين: ‎+100 إذا لقيتوا الصح، و‎+60 عن كل واحد بيصدّق كذبتكن. وبالآخر، الجواب اللي بيقنع أكتر بيربح الكبيرة.</string>
+    <string name="game__bluff__phase__round_intro">كرت الجولة</string>
+    <string name="game__bluff__phase__writing">الكتابة</string>
+    <string name="game__bluff__phase__voting">التصويت</string>
+    <string name="game__bluff__phase__reveal">الكشف</string>
+    <string name="game__bluff__phase__scores">النقاط</string>
+    <string name="game__bluff__phase__awards">الجوايز</string>
+    <string name="game__bluff__phase__results">النتيجة</string>
+    <string name="game__bluff__phase__hold">ناطرين اللاعبين</string>
     <string name="game__bluff__rules__goal__title">الهدف</string>
     <string name="game__bluff__rules__goal__body">اضحكوا عرفقاتكن بكذبكن، وما تخلّوهن يضحكوا عليكن. أحلى شي من 4 لاعبين وطالع.</string>
     <string name="game__bluff__rules__round1__title">الجولة الأولى: كمّل المتل</string>
@@ -20,7 +28,7 @@
     <string name="game__bluff__rules__points__title">النقاط</string>
     <string name="game__bluff__rules__points__body">الصح: ‎+100 (الجولة التانية: ‎+200). كل واحد بيصدّق كذبتك: ‎+60 (الجولة التانية: ‎+120). كل لايك: ‎+10.</string>
     <string name="game__bluff__rules__final__title">الجولة الأخيرة: ما في صحّ</string>
-    <string name="game__bluff__rules__final__body">ما في ولا جواب صحيح. اكتبوا الجواب اللي بيقنع أكتر، وصوّتوا للجواب اللي بيبيّن صحيح أكتر شي. كل صوت: ‎+150. أكتر أصوات: ‎+400. ما حدا بيعرف مين صوّت لمين.</string>
+    <string name="game__bluff__rules__final__body">ما في ولا جواب صحيح. اكتبوا الجواب اللي بيقنع أكتر، وصوّتوا للجواب اللي بيبيّن صحيح أكتر شي. كل صوت: ‎+150. أكتر أصوات: ‎+400. ما منفرجي مين صوّت لمين.</string>
     <string name="game__bluff__rules__house__title">كذبات البيت</string>
     <string name="game__bluff__rules__house__body">إذا كنتو قلال، اللعبة بتزيد كذباتها. انتبهوا منها!</string>
     <string name="game__bluff__rules__same__title">نفس الكذبة؟</string>
@@ -77,7 +85,7 @@
     <string name="game__bluff__round__final">الجولة الأخيرة</string>
     <string name="game__bluff__round__saying__intro">بتعرفوا الآخر؟ خدوا النقاط هلّق. ما بتعرفوا؟ ألّفوا.</string>
     <string name="game__bluff__round__fact__intro">معلومة حقيقية بتبيّن مستحيلة. النقاط دبل.</string>
-    <string name="game__bluff__round__no_truth__intro">الجولة الأخيرة. ما في جواب صح. اكتبوا الجواب اللي بيقنع أكتر، واللي بياخد أكتر أصوات بيربح الكبيرة.</string>
+    <string name="game__bluff__round__no_truth__intro">ما في جواب صح. اكتبوا الجواب اللي بيقنع أكتر، واللي بياخد أكتر أصوات بيربح الكبيرة.</string>
     <string name="game__bluff__prompt__counter">%1$s من %2$d</string>
     <string name="game__bluff__type__proverb_end">كمّل المتل</string>
     <string name="game__bluff__type__fact_blank">مستحيل بس صحيح</string>
@@ -122,7 +130,7 @@
     <string name="game__bluff__vote__title">أيّا الصحيحة؟</string>
     <string name="game__bluff__vote__title_no_truth">أيّا بتبيّن الأصدق؟</string>
     <string name="game__bluff__vote__knew_it">كانوا عارفينها! %1$s ‎+150</string>
-    <string name="game__bluff__vote__spot_on_watch">كنت عارفها: اقعد اتفرّج</string>
+    <string name="game__bluff__vote__spot_on_watch">عرفتها! هلّق وقت الفرجة</string>
     <string name="game__bluff__vote__yours">جوابك</string>
     <string name="game__bluff__vote__in">صوتك وصل</string>
     <string name="game__bluff__vote__change">كبوس عجواب تاني إذا بدك تغيّر</string>
@@ -147,12 +155,12 @@
     <string name="game__bluff__reveal__no_truth_stamp">ما في ولا صح: كلّو تأليف!</string>
     <string name="game__bluff__reveal__final_intro">أيّا صدّقتوا؟</string>
     <plurals name="game__bluff__reveal__fooled">
-        <item quantity="zero">%1$s ما ضحك على حدا</item>
-        <item quantity="one">%1$s ضحك على واحد!</item>
-        <item quantity="two">%1$s ضحك على تنين!</item>
-        <item quantity="few">%1$s ضحك على %2$d!</item>
-        <item quantity="many">%1$s ضحك على %2$d!</item>
-        <item quantity="other">%1$s ضحك على %2$d!</item>
+        <item quantity="zero">%1$s: ولا حدا صدّق</item>
+        <item quantity="one">%1$s: واحد صدّق!</item>
+        <item quantity="two">%1$s: تنين صدّقوا!</item>
+        <item quantity="few">%1$s: %2$d صدّقوا!</item>
+        <item quantity="many">%1$s: %2$d صدّقوا!</item>
+        <item quantity="other">%1$s: %2$d صدّقوا!</item>
     </plurals>
     <plurals name="game__bluff__reveal__you_fooled">
         <item quantity="zero">ما ضحكت على حدا</item>
@@ -179,8 +187,8 @@
     <string name="game__bluff__reveal__too_easy">سهلة كتير!</string>
     <string name="game__bluff__reveal__house_like">البيت بيشكرك.</string>
     <string name="game__bluff__reveal__helped">بشوية مساعدة</string>
-    <string name="game__bluff__reveal__found_early">لقاها بكّير</string>
-    <string name="game__bluff__reveal__knew_it_pin">كان عارفها</string>
+    <string name="game__bluff__reveal__found_early">من أول نظرة</string>
+    <string name="game__bluff__reveal__knew_it_pin">بالضبط!</string>
     <string name="game__bluff__reveal__it_means">يعني: %1$s</string>
     <string name="game__bluff__reveal__in_arabic">بالعربي:</string>
     <string name="game__bluff__reveal__unanimous">بالإجماع! ما حدا شكّ فيها.</string>
@@ -196,21 +204,21 @@
     <string name="game__bluff__awards__title">والجايزة بتروح لـ…</string>
     <string name="game__bluff__awards__bluff_of_the_night">بلوف السهرة</string>
     <plurals name="game__bluff__awards__bluff_of_the_night__body">
-        <item quantity="zero">ما ضحك على حدا</item>
-        <item quantity="one">ضحك على واحد بجواب واحد</item>
-        <item quantity="two">ضحك على تنين بجواب واحد</item>
-        <item quantity="few">ضحك على %1$d بجواب واحد</item>
-        <item quantity="many">ضحك على %1$d بجواب واحد</item>
-        <item quantity="other">ضحك على %1$d بجواب واحد</item>
+        <item quantity="zero">ولا حدا صدّق</item>
+        <item quantity="one">كذبة وحدة صدّقها واحد</item>
+        <item quantity="two">كذبة وحدة صدّقها تنين</item>
+        <item quantity="few">كذبة وحدة صدّقها %1$d</item>
+        <item quantity="many">كذبة وحدة صدّقها %1$d</item>
+        <item quantity="other">كذبة وحدة صدّقها %1$d</item>
     </plurals>
     <string name="game__bluff__awards__lie_detector">كاشف الكذب</string>
     <plurals name="game__bluff__awards__lie_detector__body">
-        <item quantity="zero">ما لقى ولا صح</item>
-        <item quantity="one">لقى صح واحد</item>
-        <item quantity="two">لقى صحّين</item>
-        <item quantity="few">لقى %1$d أجوبة صح</item>
-        <item quantity="many">لقى %1$d جواب صح</item>
-        <item quantity="other">لقى %1$d جواب صح</item>
+        <item quantity="zero">ولا جواب صح</item>
+        <item quantity="one">جواب صح واحد</item>
+        <item quantity="two">جوابين صح</item>
+        <item quantity="few">%1$d أجوبة صح</item>
+        <item quantity="many">%1$d جواب صح</item>
+        <item quantity="other">%1$d جواب صح</item>
     </plurals>
     <string name="game__bluff__awards__crowd_favourite">حبيب الجمهور</string>
     <plurals name="game__bluff__awards__crowd_favourite__body">
@@ -221,14 +229,14 @@
         <item quantity="many">%1$d لايك</item>
         <item quantity="other">%1$d لايك</item>
     </plurals>
-    <string name="game__bluff__awards__hook_line_sinker">بلعها</string>
+    <string name="game__bluff__awards__hook_line_sinker">صيدة سهلة</string>
     <plurals name="game__bluff__awards__hook_line_sinker__body">
-        <item quantity="zero">ولا مرّة</item>
-        <item quantity="one">بلعها مرّة (منحبّك)</item>
-        <item quantity="two">بلعها مرّتين (منحبّك)</item>
-        <item quantity="few">بلعها %1$d مرّات (منحبّك)</item>
-        <item quantity="many">بلعها %1$d مرّة (منحبّك)</item>
-        <item quantity="other">بلعها %1$d مرّة (منحبّك)</item>
+        <item quantity="zero">ولا مرّة بالفخ</item>
+        <item quantity="one">مرّة بالفخ (منحبّك)</item>
+        <item quantity="two">مرّتين بالفخ (منحبّك)</item>
+        <item quantity="few">%1$d مرّات بالفخ (منحبّك)</item>
+        <item quantity="many">%1$d مرّة بالفخ (منحبّك)</item>
+        <item quantity="other">%1$d مرّة بالفخ (منحبّك)</item>
     </plurals>
     <plurals name="game__bluff__results__you_fooled">
         <item quantity="zero">ما ضحكت على حدا الليلة</item>

@@ -7,6 +7,14 @@
     <string name="game__bluff__howto__2">Escribe una respuesta falsa en tu móvil. ¿Te sabes el final del refrán? Escríbelo y sumas al instante.</string>
     <string name="game__bluff__howto__3">Encuentra la respuesta real entre las falsas. Nadie sabe quién escribió qué hasta que termina la votación.</string>
     <string name="game__bluff__howto__4">Suma dos veces: +100 por la verdad y +60 por cada amigo que se trague tu mentira. En la final, la respuesta más creíble se lo lleva todo.</string>
+    <string name="game__bluff__phase__round_intro">Tarjeta de ronda</string>
+    <string name="game__bluff__phase__writing">Escritura</string>
+    <string name="game__bluff__phase__voting">Votación</string>
+    <string name="game__bluff__phase__reveal">Revelación</string>
+    <string name="game__bluff__phase__scores">Puntuaciones</string>
+    <string name="game__bluff__phase__awards">Premios</string>
+    <string name="game__bluff__phase__results">Resultados</string>
+    <string name="game__bluff__phase__hold">Esperando jugadores</string>
     <string name="game__bluff__rules__goal__title">El objetivo</string>
     <string name="game__bluff__rules__goal__body">Engaña a tus amigos y que no te engañen. Mejor a partir de 4 jugadores.</string>
     <string name="game__bluff__rules__round1__title">Ronda 1: Termina el refrán</string>
@@ -20,7 +28,7 @@
     <string name="game__bluff__rules__points__title">Puntos</string>
     <string name="game__bluff__rules__points__body">Verdad: +100 (ronda 2: +200). Cada jugador engañado: +60 (ronda 2: +120). Cada «me gusta»: +10.</string>
     <string name="game__bluff__rules__final__title">Final: Ninguna es verdad</string>
-    <string name="game__bluff__rules__final__body">No hay respuesta correcta. Escribe la respuesta más creíble y vota la que suene más a verdad. Cada voto: +150. La más votada: +400. Nadie ve quién votó qué.</string>
+    <string name="game__bluff__rules__final__body">No hay respuesta correcta. Escribe la respuesta más creíble y vota la que suene más a verdad. Cada voto: +150. La más votada: +400. Los votos nunca se muestran.</string>
     <string name="game__bluff__rules__house__title">Mentiras de la casa</string>
     <string name="game__bluff__rules__house__body">Con pocos jugadores, el juego añade sus propias mentiras. ¡No piques!</string>
     <string name="game__bluff__rules__same__title">¿Misma mentira?</string>
@@ -71,7 +79,7 @@
     <string name="game__bluff__round__final">Final</string>
     <string name="game__bluff__round__saying__intro">¿Te sabes el final? Suma ya. ¿No? Invéntatelo.</string>
     <string name="game__bluff__round__fact__intro">Un dato real que parece imposible. Puntos ×2.</string>
-    <string name="game__bluff__round__no_truth__intro">Ronda final. No hay respuesta correcta. Escribe la respuesta más creíble. La más votada se lo lleva todo.</string>
+    <string name="game__bluff__round__no_truth__intro">No hay respuesta correcta. Escribe la respuesta más creíble. La más votada se lo lleva todo.</string>
     <string name="game__bluff__prompt__counter">%1$s de %2$d</string>
     <string name="game__bluff__type__proverb_end">Termina el refrán</string>
     <string name="game__bluff__type__fact_blank">Imposible pero cierto</string>

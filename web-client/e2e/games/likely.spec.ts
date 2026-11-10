@@ -344,8 +344,9 @@ test("Most Likely EN, public votes, 4 phones, remote-only TV: unanimous self-vot
   await expectSharedRanks(r.tv);
   checkSecrecy(r, false);
   // Other games → hub, by remote.
-  await press(r.tv, "ArrowRight", 2);
-  await expect(r.tv.locator("[data-back-hub]")).toBeFocused();
+  // The bar's buttons settle (scale) just after `is-ready`, so step with the D-pad until "Other games" holds focus
+  // (Play again → Change settings → Other games) instead of counting presses.
+  await dpadTo(r.tv, "[data-back-hub]", "ArrowRight", 4);
   await press(r.tv, "Enter");
   await expect(r.tv.locator(".tvhub")).toBeVisible();
   for (const p of [...r.phones, r.tv]) await p.context().close();

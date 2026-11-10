@@ -19,24 +19,16 @@
     "es"
   ],
   "ageRating": "all",
-  "fallbackHouseLies": {
-    "no_truth": {
-      "es": [
-        "Nadie lo sabe, y esa es la gracia",
-        "Fue un martes",
-        "Pregúntale al gato"
-      ]
-    }
-  },
+  "fallbackHouseLies": {},
   "items": [
     {
       "id": "nt-es-001",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "¿Qué fue lo primero que un gato le dijo a un humano?",
+        "original": "¿Qué grabó el primer marinero fenicio en su remo?",
         "translit": null,
         "display": {}
       },
@@ -44,13 +36,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "Ya puedes darme de comer",
-          "Esta silla es mía",
-          "Yo llegué primero"
+          "El nombre de su madre",
+          "Rema a la izquierda, y otra vez",
+          "Devolver este remo a Tiro"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "No queda ningún remo de aquellos viajes: esta noche vale vuestra versión"
       },
       "review": {
         "status": "draft",
@@ -64,7 +56,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "¿Cuál es el verdadero trabajo de la Luna?",
+        "original": "¿Cuál era la primera norma del primer café del mundo?",
         "translit": null,
         "display": {}
       },
@@ -72,13 +64,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "Vigilante del turno de noche",
-          "Lámpara de los búhos",
-          "Cuidar el mar"
+          "Nadie se sienta sin pedir",
+          "La última galleta no se toca",
+          "Se habla bajito junto al horno"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "Nadie la apuntó. Vuestra mesa acaba de hacerlo"
       },
       "review": {
         "status": "draft",
@@ -89,10 +81,10 @@
       "id": "nt-es-003",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "¿Por qué desaparecen los calcetines en la lavadora?",
+        "original": "¿Qué especia se le olvidó a la primera caravana del desierto?",
         "translit": null,
         "display": {}
       },
@@ -100,13 +92,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "Se fugan con una toalla",
-          "La lavadora se queda uno de propina",
-          "Se escapan por el desagüe de noche"
+          "La pimienta negra",
+          "El azafrán",
+          "La canela"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "La primera caravana no dejó lista de la compra"
       },
       "review": {
         "status": "draft",
@@ -117,10 +109,10 @@
       "id": "nt-es-004",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "¿En qué piensan los peces de colores todo el día?",
+        "original": "¿Qué había tallado sobre la puerta de la primera biblioteca?",
         "translit": null,
         "display": {}
       },
@@ -128,13 +120,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "En quién golpea el cristal",
-          "En cómo parecer ocupados",
-          "En la piedrecita que cambió de sitio"
+          "Silencio, por favor",
+          "Cada libro a su sitio",
+          "Entra a aprender, sal más sabio"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "Las bibliotecas más antiguas perdieron la puerta mucho antes que los libros"
       },
       "review": {
         "status": "draft",
@@ -145,10 +137,10 @@
       "id": "nt-es-005",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "¿Cuál fue el primer chiste de la historia?",
+        "original": "¿Qué escribió el farero en la última línea de su último cuaderno?",
         "translit": null,
         "display": {}
       },
@@ -156,13 +148,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "Cuidado, una piedra",
-          "¿Quién se ha llevado el fuego?",
-          "Un mamut que resbala en el hielo"
+          "Lámpara encendida, mar en calma, me voy",
+          "Niebla otra vez, las gaviotas lo saben",
+          "Le toca a otro"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "Cada farero tiene su última línea. Esta es de la mesa"
       },
       "review": {
         "status": "draft",
@@ -176,7 +168,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "¿Qué hacen las nubes en su día libre?",
+        "original": "¿Cómo llamó a la nieve la primera persona que la vio?",
         "translit": null,
         "display": {}
       },
@@ -184,13 +176,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "Siesta en lo alto de una montaña",
-          "Se disfrazan de ovejas",
-          "Visitan a su prima la niebla"
+          "Harina del cielo",
+          "Lluvia blanca",
+          "Agua callada"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "La palabra es más antigua que la escritura: nadie lo sabe"
       },
       "review": {
         "status": "draft",
@@ -204,7 +196,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "¿Cuál es la regla número uno del manual de toda abuela?",
+        "original": "¿Qué fue lo primero que se vendió en el primer mercado?",
         "translit": null,
         "display": {}
       },
@@ -212,13 +204,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "Nadie se va con hambre",
-          "Decir siempre que estás muy delgado",
-          "La vajilla buena es para las visitas"
+          "Sal",
+          "Una cabra",
+          "Una cesta para llevar la cabra"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "Se encuentran mercados antiguos, nunca su primer tique"
       },
       "review": {
         "status": "draft",
@@ -232,7 +224,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "¿Por qué discuten los pingüinos?",
+        "original": "¿Qué decía el primer mensaje que llevó una paloma mensajera?",
         "translit": null,
         "display": {}
       },
@@ -240,13 +232,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "Por quién lleva mejor el esmoquin",
-          "Por a quién le toca vigilar el huevo",
-          "Por si hoy el mar está demasiado frío"
+          "Llegué bien, manda pan",
+          "Quédate el pájaro",
+          "Vuelvo el jueves"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "Las palomas llevan mensajes desde hace milenios; el primero se perdió"
       },
       "review": {
         "status": "draft",
@@ -260,7 +252,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "¿Cuál es el ingrediente secreto de la cocina de toda abuela?",
+        "original": "¿Cuál fue la primera nana de la historia?",
         "translit": null,
         "display": {}
       },
@@ -268,13 +260,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "Una pizca de culpa",
-          "Paciencia y demasiado aceite",
-          "El paso que nunca le cuenta a nadie"
+          "Un tarareo a la luna",
+          "Tres notas y un suspiro",
+          "Algo sobre ovejas"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "Las nanas son más antiguas que la escritura: la primera se perdió"
       },
       "review": {
         "status": "draft",
@@ -285,10 +277,10 @@
       "id": "nt-es-010",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "¿Adónde van los paraguas perdidos?",
+        "original": "¿Qué escribió el primer cartógrafo en la esquina vacía de su mapa?",
         "translit": null,
         "display": {}
       },
@@ -296,13 +288,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "A una playa donde nunca llueve",
-          "A la tienda que los vendió",
-          "Adonde se fueron los calcetines"
+          "Desconocido, seguramente ovejas",
+          "Pregunte en el pueblo",
+          "Aquí el camino se embarra"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "El primer mapa no sobrevivió, y sus esquinas tampoco"
       },
       "review": {
         "status": "draft",
@@ -313,10 +305,10 @@
       "id": "nt-es-011",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "¿Qué dicen de nosotros las plantas cuando salimos?",
+        "original": "¿Qué pintó el primer alfarero en la primera taza decorada?",
         "translit": null,
         "display": {}
       },
@@ -324,13 +316,13 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "Por fin, un poco de paz",
-          "¿Alguien ha recibido agua?",
-          "Nos hablan demasiado"
+          "Un pez",
+          "Una sola línea azul",
+          "La huella de su pulgar"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "La cerámica pintada es antiquísima; la primera taza ya no existe"
       },
       "review": {
         "status": "draft",
@@ -339,790 +331,6 @@
     },
     {
       "id": "nt-es-012",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué piensa la siesta de la gente que no la duerme?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Que se lo pierden",
-          "Que ya volverán",
-          "Que no saben vivir"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-013",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Con qué sueñan los perros?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Con un cartero que se para a charlar",
-          "Con una salchicha infinita",
-          "Con poder subir al sofá"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-014",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué pone en la primera página del manual de instrucciones de los bebés?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "No se admiten devoluciones",
-          "Pilas no incluidas",
-          "Los resultados pueden variar"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-015",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué piensa el GPS cuando no le haces caso?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Pues piérdete",
-          "Me acordaré de esto",
-          "Recalculando mi vida"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-016",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Cuál es el deporte favorito de las hormigas?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Levantamiento de migas",
-          "Desfile sincronizado",
-          "Asalto al picnic"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-017",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿De qué hablan tus zapatos mientras duermes?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "De dónde hemos ido hoy",
-          "De quién huele peor",
-          "De escaparse a la playa"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-018",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Por qué los gatos tiran cosas de las mesas?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Comprueban la gravedad cada día",
-          "Decoración de interiores",
-          "Venganza por el baño"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-019",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué dijo la primera persona que probó una aceituna?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Probemos otra vez dentro de un año",
-          "Este árbol me está tomando el pelo",
-          "Le falta sal y mucha paciencia"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-020",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Cuál es el himno nacional de la Luna?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Cuatro minutos de silencio total",
-          "Un zumbido lento y grave",
-          "Una canción sobre el queso"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-021",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Por qué los ascensores son tan incómodos?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Escuchan demasiados secretos",
-          "Nadie sabe adónde mirar",
-          "La música te juzga"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-022",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué hace un caracol cuando tiene prisa?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Deja una nota",
-          "Se quita la concha",
-          "Le pide a una tortuga que lo lleve"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-023",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué cuchichean las palomas en la plaza?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Ese tiene pipas",
-          "Pon cara de pena, que está comiendo",
-          "Quedamos en la estatua a mediodía"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-024",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Cuál es la mentira más común de un gato?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Hoy nadie me ha dado de comer",
-          "Yo no lo he roto",
-          "Te quiero, ahora abre la puerta"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-025",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Cuál es la primera regla del club secreto de los abuelos?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Llevar siempre un pañuelo",
-          "No pagar nunca el aparcamiento",
-          "Dormirse el primero en las bodas"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-026",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué ven los espejos cuando nadie mira?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "El fondo de la habitación, por fin",
-          "Una pared aburrida",
-          "A su primo, el espejo de enfrente"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-027",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Cuál es la comida favorita de los volcanes?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Piedras picantes",
-          "Todo lo que se acerque demasiado",
-          "Sopa muy caliente"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-028",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué piensan de verdad los árboles de los pájaros?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Inquilinos ruidosos pero fieles",
-          "Nunca pagan el alquiler",
-          "Adornos con vida"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-029",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué hacen las lombrices los días de lluvia?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Fiesta en la piscina",
-          "Turismo por la acera",
-          "Clases de natación"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-030",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Cuál es el superpoder más aburrido?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Saber siempre la hora",
-          "Calentar un poco las tostadas",
-          "Hablar con los pomos de las puertas"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-031",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Con qué sueñan las teteras?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Con ser fuente",
-          "Con tocar la trompeta",
-          "Con ser globo aerostático"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-032",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Por qué las llaves se esconden cuando llegas tarde?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "No soportan las prisas",
-          "Quieren vacaciones",
-          "Tienen celos del móvil"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-033",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué cuentan las ovejas cuando no pueden dormir?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Humanos",
-          "Nubes",
-          "Vallas"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-034",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿De qué se quejarían primero los extraterrestres en la Tierra?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "La gravedad pesa demasiado",
-          "Nadie pone el intermitente",
-          "¿Por qué el cielo es azul?"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-035",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué hacen los muñecos de nieve en verano?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Se mudan al congelador",
-          "Se jubilan en la sierra",
-          "Se convierten en charcos con recuerdos"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-036",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Cuál es el postre favorito de los robots?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Galletas con microchips",
-          "Natillas con tornillos",
-          "Gelatina a pilas"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-037",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué dijo el primer pez que caminó por tierra?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "¿Quién ha dejado el grifo abierto?",
-          "Pies nuevos, paciencia",
-          "Vuelvo en cinco minutos"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-038",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué se dicen los bebés en el parque?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Mira, lo tiro otra vez",
-          "El mío llora más fuerte",
-          "No les digas que hablamos"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-039",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué piensa la última croqueta del plato?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Nadie se atreve conmigo",
-          "Soy la elegida",
-          "Que alguien me rescate"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-040",
       "type": "no_truth",
       "tier": "free",
       "difficulty": 1,
@@ -1142,7 +350,7 @@
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "El churro nunca ha concedido una entrevista"
       },
       "review": {
         "status": "draft",
@@ -1150,35 +358,7 @@
       }
     },
     {
-      "id": "nt-es-041",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "¿Qué hace la paella los domingos que no viene la familia?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "es": [
-          "Se queda triste en la cocina",
-          "Ensaya el socarrat",
-          "Llama a sus primos los arroces"
-        ]
-      },
-      "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-es-042",
+      "id": "nt-es-013",
       "type": "no_truth",
       "tier": "free",
       "difficulty": 2,
@@ -1198,7 +378,7 @@
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "En agosto nadie les pregunta, pero discuten igual"
       },
       "review": {
         "status": "draft",
@@ -1206,13 +386,13 @@
       }
     },
     {
-      "id": "nt-es-043",
+      "id": "nt-es-014",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "¿Cuál es el mayor miedo de un melón?",
+        "original": "¿Qué piensa la última croqueta del plato?",
         "translit": null,
         "display": {}
       },
@@ -1220,13 +400,405 @@
       "truthAlt": {},
       "houseLies": {
         "es": [
-          "Que lo toqueteen en el súper",
-          "Que lo abran sin preguntar",
-          "No salir dulce"
+          "Nadie se atreve conmigo",
+          "Soy la elegida",
+          "Que alguien me rescate"
         ]
       },
       "note": {
-        "es": "Nunca hubo respuesta correcta. Ha decidido la mesa."
+        "es": "La vergüenza de la última croqueta es un misterio nacional"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-015",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Cómo llamaban los constructores de los talayots de Menorca a sus torres?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Casas de piedra",
+          "Las Vigías",
+          "Torres del Sol"
+        ]
+      },
+      "note": {
+        "es": "No dejaron escritura: nadie sabe cómo las llamaban"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-016",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Cuál era la norma número uno del primer patio de vecinos de Sevilla?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Las macetas se riegan antes de las diez",
+          "Nadie toca el pozo",
+          "Aquí se canta bajito"
+        ]
+      },
+      "note": {
+        "es": "Las normas del patio se sabían de memoria, nunca se escribían"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-017",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Qué cantaba el primer sereno de Madrid al dar la hora?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Las doce y sereno",
+          "Todo en calma, a dormir",
+          "Cierren bien, que hace frío"
+        ]
+      },
+      "note": {
+        "es": "Nadie apuntó la primera ronda. Los vecinos dormían"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-018",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Qué nombre le puso a su perro el primer pastor de los Picos de Europa?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Canelo",
+          "Niebla",
+          "Pinto"
+        ]
+      },
+      "note": {
+        "es": "Los pastores contaban ovejas, no apuntaban nombres de perros"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-019",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Qué llevaba en el bocadillo el primer viajero del tren de Barcelona a Mataró?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Tortilla de patatas",
+          "Pan con tomate y jamón",
+          "Queso y membrillo"
+        ]
+      },
+      "note": {
+        "es": "La línea de 1848 tiene su historia escrita; el bocadillo, no"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-020",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Qué ponía la primera carta que se perdió en el correo?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Perdona el retraso",
+          "Devuélveme el paraguas",
+          "Te echo de menos, otra vez"
+        ]
+      },
+      "note": {
+        "es": "La primera carta perdida nunca apareció. Para eso se perdió"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-021",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Cuál era el ingrediente secreto del primer gazpacho del pueblo?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Un pepino de más",
+          "Pan del día anterior",
+          "Un chorrito del vinagre de la abuela"
+        ]
+      },
+      "note": {
+        "es": "Cada abuela jura que el primero fue el suyo"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-022",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Qué mote le pusieron al primer reloj de la plaza del pueblo?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "El Tardón",
+          "La Chismosa",
+          "El Madrugador"
+        ]
+      },
+      "note": {
+        "es": "Cada pueblo tenía un mote para su reloj. El primero se olvidó"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-023",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Qué gritaba el primer vendedor del Rastro al montar el puesto?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Todo a un real",
+          "Mire sin compromiso",
+          "Lo barato sale caro, pero esto no"
+        ]
+      },
+      "note": {
+        "es": "Nadie grabó aquellos gritos de domingo"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-024",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Qué guardaba la cápsula del tiempo de una escuela rural que nunca apareció?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Una canica y una tiza",
+          "Una carta al futuro maestro",
+          "Una foto de clase movida"
+        ]
+      },
+      "note": {
+        "es": "Muchas cápsulas del tiempo se pierden. Esta ya es vuestra"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-025",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Cómo se llamaba la primera barca de pesca del puerto de Cudillero?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "La Gaviota",
+          "Marea Alta",
+          "La Terca"
+        ]
+      },
+      "note": {
+        "es": "El registro del puerto no llega tan atrás"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-026",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Qué apuntó el primer torrero del faro de Finisterre en su cuaderno?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Niebla, otra vez",
+          "Mar en calma, lámpara encendida",
+          "Las gaviotas lo saben todo"
+        ]
+      },
+      "note": {
+        "es": "Aquel primer cuaderno se lo llevó la humedad"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-027",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Qué melodía tocaba con su chiflo el primer afilador?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Cuatro notas que suben y bajan",
+          "Siempre la misma escalera",
+          "Una copla de su pueblo"
+        ]
+      },
+      "note": {
+        "es": "Cada afilador tenía su melodía; la del primero se perdió"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-es-028",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "¿Qué gritaron los vecinos la primera vez que nevó en Málaga?",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Esto es harina del cielo",
+          "Saca las mantas",
+          "Que nadie se lo cree"
+        ]
+      },
+      "note": {
+        "es": "Nadie apuntó la fecha exacta, solo el frío"
       },
       "review": {
         "status": "draft",

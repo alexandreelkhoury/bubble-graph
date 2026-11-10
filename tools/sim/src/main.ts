@@ -9,6 +9,7 @@ import { realContent } from "./catalog";
 import { formatTable, runEngineMode } from "./engine-mode";
 import { reportFailures } from "./format";
 import { formatSessionTable, runSessionMode } from "./session-mode";
+import { bluffSimCatalog, formatBluffTable, runBluffEngineMode } from "./games/bluff";
 import { formatLikelyTable, likelySimCatalog, runLikelyEngineMode } from "./games/likely";
 import { formatTriviaTable, runTriviaEngineMode, triviaSimCatalog } from "./games/trivia";
 import { formatWsTable, runWsMode } from "./ws-mode";
@@ -71,6 +72,22 @@ async function main(): Promise<number> {
       const rows = runTriviaEngineMode({ ...args, players }, catalog);
       console.log(`engine mode · ${id} · ${source} · access ${args.access} · seed ${args.seed} · ${((Date.now() - t0) / 1000).toFixed(1)} s`);
       console.log(formatTriviaTable(rows));
+      if (reportFailures(rows)) failed = true;
+      continue;
+    }
+    if (id === "bluff") {
+      // JAMAA-PLATFORM §6.5: Bluff's engine-mode bot (tools/sim/src/games/bluff.ts), 3..12 players.
+      const players = playersFor(args.players, def.meta.minPlayers, def.meta.maxPlayers);
+      if (players.length === 0) {
+        console.error(`${id}: no player count in ${args.players.join(",")} within ${def.meta.minPlayers}..${def.meta.maxPlayers}`);
+        failed = true;
+        continue;
+      }
+      const { catalog, source } = bluffSimCatalog(realContent().bluff, args.access);
+      const t0 = Date.now();
+      const rows = runBluffEngineMode({ ...args, players }, catalog);
+      console.log(`engine mode · ${id} · ${source} · access ${args.access} · seed ${args.seed} · ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+      console.log(formatBluffTable(rows));
       if (reportFailures(rows)) failed = true;
       continue;
     }

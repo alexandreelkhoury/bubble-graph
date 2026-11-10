@@ -19,24 +19,16 @@
     "ar"
   ],
   "ageRating": "all",
-  "fallbackHouseLies": {
-    "no_truth": {
-      "ar": [
-        "ما حدا بيعرف وهيدا هوي القصد",
-        "كان نهار تلاتا",
-        "اسألوا البسة"
-      ]
-    }
-  },
+  "fallbackHouseLies": {},
   "items": [
     {
       "id": "nt-ar-001",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "شو أول جملة قالها بس لإنسان؟",
+        "original": "شو حفر أول بحار فينيقي على مجدافو؟",
         "translit": null,
         "display": {}
       },
@@ -44,13 +36,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "هلق فيك تطعميني",
-          "هالكرسي إلي",
-          "أنا كنت هون قبلك"
+          "اسم إمو",
+          "شمال، وبعدين شمال كمان",
+          "رجعوا المجداف عصور"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "ما بقي ولا مجداف من أول الرحلات، فجوابكن هوي الرسمي الليلة"
       },
       "review": {
         "status": "draft",
@@ -64,7 +56,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "شو شغلة القمر الحقيقية؟",
+        "original": "شو كانت أول قاعدة بأول قهوة بالعالم؟",
         "translit": null,
         "display": {}
       },
@@ -72,13 +64,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "ناطور الليل",
-          "ضو سهر للبوم",
-          "بيراقب البحر"
+          "ما في قعدة بلا طلبية",
+          "آخر بسكوتة للضيف",
+          "وطوا صوتكن حد الفرن"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "ما حدا كتبها. الطاولة كتبتها هلق"
       },
       "review": {
         "status": "draft",
@@ -89,10 +81,10 @@
       "id": "nt-ar-003",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "ليش الكلسات بيختفوا بالغسالة؟",
+        "original": "شو البهار اللي نسيتو أول قافلة بالصحرا؟",
         "translit": null,
         "display": {}
       },
@@ -100,13 +92,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "بيسافروا بلا ما يخبروا حدا",
-          "الغسالة بتاخد وحدة بخشيش",
-          "بيهربوا من البربيش بالليل"
+          "الفلفل الأسود",
+          "الزعفران",
+          "القرفة"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "أول قافلة ما تركت ولا ليستة غراض"
       },
       "review": {
         "status": "draft",
@@ -117,10 +109,10 @@
       "id": "nt-ar-004",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "شو بيحكوا الزرعات عنا لما نطلع من البيت؟",
+        "original": "شو كان محفور فوق باب أول مكتبة؟",
         "translit": null,
         "display": {}
       },
@@ -128,13 +120,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "أخيرا شوية هدوء",
-          "حدا شرب مي؟",
-          "بيحكوا معنا كتير"
+          "هس، في ناس عم تقرا",
+          "رجعوا كل كتاب لمحلو",
+          "فوت لتتعلم، اطلع أحكم"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "أقدم المكتبات ضيعت بوابها قبل كتبها بكتير"
       },
       "review": {
         "status": "draft",
@@ -148,7 +140,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "شو القاعدة رقم واحد بالكتيب اللي بتستلمو كل تيتا؟",
+        "original": "شو كتب ناطور المنارة بآخر سطر بآخر دفتر إلو؟",
         "translit": null,
         "display": {}
       },
@@ -156,13 +148,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "ما في ضيف بيفل جوعان",
-          "اسأل أكلت مرتين",
-          "الصحون الحلوين للضيوف بس"
+          "الضو شغال والبحر هادي، رايح عالبيت",
+          "ضباب كمان مرة، النوارس بتعرف",
+          "دور غيري"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "كل ناطور إلو آخر سطر. هيدا صار للطاولة"
       },
       "review": {
         "status": "draft",
@@ -176,7 +168,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "شو المكون السري بطبخ كل تيتا؟",
+        "original": "شو سمى التلج أول واحد شافو؟",
         "translit": null,
         "display": {}
       },
@@ -184,13 +176,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "رشة عتاب",
-          "صبر وكتير سمنة",
-          "الخطوة اللي ما بتخبر حدا فيها"
+          "طحين السما",
+          "شتي أبيض",
+          "مي ساكتة"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "الكلمة أقدم من الكتابة، فما حدا بيعرف"
       },
       "review": {
         "status": "draft",
@@ -204,7 +196,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "شو بتعمل الغيوم بيوم العطلة؟",
+        "original": "شو كان أول شي انباع بأول سوق؟",
         "translit": null,
         "display": {}
       },
@@ -212,13 +204,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "بتنام عراس جبل",
-          "بتعمل حالها غنم",
-          "بتزور بنت عمها الضباب"
+          "ملح",
+          "عنزة",
+          "سلة لتحمل العنزة"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "منلاقي أسواق قديمة، بس ولا مرة أول فاتورة"
       },
       "review": {
         "status": "draft",
@@ -229,10 +221,10 @@
       "id": "nt-ar-008",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "شو كانت أول نكتة بالتاريخ؟",
+        "original": "شو كانت أول رسالة حملها حمام الزاجل؟",
         "translit": null,
         "display": {}
       },
@@ -240,13 +232,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "انتبه في حجر",
-          "مين أخد النار؟",
-          "ماموث تزحلق عالتلج"
+          "وصلت بالسلامة، ابعتولي خبز",
+          "خلي الطير عندك",
+          "راجع نهار الخميس"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "الحمام عم يحمل رسايل من آلاف السنين، وأول وحدة ضاعت"
       },
       "review": {
         "status": "draft",
@@ -260,7 +252,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "شو بيقول الزمور لما حدا يزمرلو بعجقة السير؟",
+        "original": "شو كانت أول أغنية نومة غنتها إم لابنها؟",
         "translit": null,
         "display": {}
       },
@@ -268,13 +260,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "ما في مطرح، بدك ياني طير؟",
-          "خلص سمعناك",
-          "روق، رح نوصل بكرا"
+          "دندنة عن القمر",
+          "تلات نوتات وتنهيدة",
+          "شي عن الغنمات"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "أغاني النوم أقدم من الكتابة، فأول وحدة ضاعت"
       },
       "review": {
         "status": "draft",
@@ -288,7 +280,7 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "ليش العرس اللبناني ما بيخلص قبل الفجر؟",
+        "original": "شو كتب أول راسم خرايط بالزاوية الفاضية؟",
         "translit": null,
         "display": {}
       },
@@ -296,13 +288,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "لأن الدبكة ما إلها فرام",
-          "لأن السفرة بعدها ما خلصت",
-          "لأن العريس ضايع بين الضيوف"
+          "مجهول، يمكن غنم",
+          "اسألوا أهل المنطقة",
+          "هون الطريق وحلة"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "أول خريطة ما بقيت، ولا زواياها"
       },
       "review": {
         "status": "draft",
@@ -313,10 +305,10 @@
       "id": "nt-ar-011",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "شو بيفكر البيض بالمقلاية قبل ما ينقلى؟",
+        "original": "شو رسم أول فخاري على أول فنجان مزين؟",
         "translit": null,
         "display": {}
       },
@@ -324,13 +316,13 @@
       "truthAlt": {},
       "houseLies": {
         "ar": [
-          "ليش أنا مش جاجة؟",
-          "خلوا الصفار بالنص",
-          "ما تنسوا الملح"
+          "سمكة",
+          "خط أزرق واحد",
+          "بصمة إبهامو"
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "الفخار المرسوم قديم كتير، وأول فنجان راح"
       },
       "review": {
         "status": "draft",
@@ -339,818 +331,6 @@
     },
     {
       "id": "nt-ar-012",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بتقول المنقوشة للكعكة بالفرن؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "أنا الأصل وإنتي النسخة",
-          "زعتري أطيب من سمسمك",
-          "منلتقي عالترويقة"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-013",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "لوين بيروحوا الريموتات الضايعة؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "عند الكلسات",
-          "تحت الكنباية من سنين",
-          "عند الجيران بلا ما نعرف"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-014",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو كلمة سر الواي فاي بالأهرامات؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "فرعون123",
-          "مثلث للأبد",
-          "ممنوع الدخول"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-015",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بيحلموا الكلاب؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "بوسطجي بيوقف يدردش معن",
-          "سجق ما بيخلص",
-          "يطلعوا عالكنباية"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-016",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو مكتوب بأول صفحة من كتيب تعليمات الولاد؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "ممنوع الإرجاع أو التبديل",
-          "البطاريات مش مع المنتج",
-          "النتيجة بتختلف من بيت لبيت"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-017",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بيقول الـGPS بقلبو لما ما تسمع منو؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "ضيع حالك إذا",
-          "رح إتذكرلك ياها",
-          "عم عيد حساب حياتي"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-018",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو أكتر رياضة بيحبوها النمل؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "شيل الفتافيت",
-          "المشي بالصف",
-          "الهجوم عالسيران"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-019",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "عشو بيحكوا الصبابيط وإنت نايم؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "وين رحنا اليوم",
-          "مين ريحتو أبشع",
-          "كيف منهرب عالبحر"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-020",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "ليش البسينات بيوقعوا الغراض عن الطاولة؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "عم يجربوا الجاذبية كل يوم",
-          "ديكور",
-          "انتقام من الحمام"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-021",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو قال أول واحد داق الزيتون؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "جربوا كمان سنة",
-          "هالشجرة عم تضحك علي",
-          "بدها ملح وصبر"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-022",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بتحكي النجوم عن بعضها؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "مين عم يضوي أقل هالإيام",
-          "مين الكوكب اللي عندو أكتر أقمار",
-          "المذنب اللي ما بيتصل أبدا"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-023",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "ليش الأسانسير بيعمل جو محرج؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "بيسمع أسرار كتير",
-          "ما حدا بيعرف وين يتطلع",
-          "لما تقطع الكهربا بنصو"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-024",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بيعمل الحلزون إذا كان مستعجل؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "بيترك ورقة",
-          "بيشلح بيتو",
-          "بيطلب توصيلة من سلحفاة"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-025",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بيوشوشوا الحمام بساحة الضيعة؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "هيداك معو كعكة",
-          "اعمل حالك مسكين، عم ياكل",
-          "منلتقي عالتمثال الضهر"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-026",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو أكبر كذبة بتقولها البسة؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "ما حدا طعماني اليوم",
-          "مش أنا اللي كسرتها",
-          "بحبك، يلا افتح الباب"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-027",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو القاعدة الأولى بنادي الجدود السري؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "دايما معك محرمة",
-          "ما تدفع باركينغ أبدا",
-          "أول واحد بينام بالعرس"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-028",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بتشوف المرايات لما ما حدا عم يتطلع فيها؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "آخر الأوضة أخيرا",
-          "حيط زهقان",
-          "بنت عمها المراية اللي مقابيلها"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-029",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو الأكلة المفضلة عند البركان؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "حجار حرة",
-          "كل شي بيقرب كتير",
-          "شوربة سخنة كتير"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-030",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو رأي الشجر بالعصافير؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "جيران عجقة بس أوفيا",
-          "ما بيدفعوا إيجار",
-          "زينة عايشة"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-031",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بيعملوا الدود بأيام الشتي؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "بيعملوا حفلة مسبح",
-          "سياحة عالرصيف",
-          "بيتمرنوا عالسباحة"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-032",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو أسخف قوة خارقة؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "تعرف الساعة دايما",
-          "تدفي الخبز شوي",
-          "تحكي مع مسكات البواب"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-033",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "ليش المفاتيح بتتخبى لما تكون متأخر؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "ما بتحب حدا يستعجلها",
-          "بدها فرصة",
-          "غيرانة من التلفون"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-034",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بيعدوا الغنمات إذا ما إجاهن نوم؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "بشر",
-          "غيوم",
-          "سياجات"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-035",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو أول شي رح يتشكوا منو الفضائيين عالأرض؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "الجاذبية تقيلة كتير",
-          "ما حدا بيضوي الغماز",
-          "ليش السما زرقا؟"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-036",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بيعمل رجل التلج بالصيف؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "بينتقل عالفريزر",
-          "بيتقاعد بالجرد",
-          "بيصير بركة عندها ذكريات"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-037",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو التحلاية المفضلة عند الروبوتات؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "بسكوت بالشيبس",
-          "مهلبية بالبراغي",
-          "جيلو عالبطارية"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-038",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو قالت أول سمكة مشيت عاليابسة؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "مين تارك الحنفية مفتوحة؟",
-          "إجريي جداد، طولوا بالكن",
-          "راجعة بعد خمس دقايق"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-039",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بيقولوا الأطفال لبعض بالجنينة؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "تطلع، رح وقعها كمان مرة",
-          "تبعي صوتو أعلى",
-          "ما تخبرن إنو منحكي"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-040",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "شو بيقول صحن التبولة لصحن الحمص عالسفرة؟",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "ar": [
-          "أنا الخفيف وإنت التقيل",
-          "كل الخبز عليك",
-          "ما حدا بيجي لعندي قبلك"
-        ]
-      },
-      "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-ar-041",
       "type": "no_truth",
       "tier": "free",
       "difficulty": 2,
@@ -1170,7 +350,7 @@
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "شركة الكهربا ما ردت على سؤالنا"
       },
       "review": {
         "status": "draft",
@@ -1178,13 +358,13 @@
       }
     },
     {
-      "id": "nt-ar-042",
+      "id": "nt-ar-013",
       "type": "no_truth",
       "tier": "free",
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "ليش السرفيس دايماً بيوقف حدك ولو ما أشرتلو؟",
+        "original": "ليش السرفيس دايما بيوقف حدك ولو ما أشرتلو؟",
         "translit": null,
         "display": {}
       },
@@ -1198,7 +378,7 @@
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "سر السرفيس أقدم من الزحمة نفسها"
       },
       "review": {
         "status": "draft",
@@ -1206,7 +386,35 @@
       }
     },
     {
-      "id": "nt-ar-043",
+      "id": "nt-ar-014",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو بيقول صحن التبولة لصحن الحمص عالسفرة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "أنا الخفيف وإنت التقيل",
+          "كل الخبز عليك",
+          "ما حدا بيجي لعندي قبلك"
+        ]
+      },
+      "note": {
+        "ar": "عالسفرة اللبنانية في حكي ما حدا بيسمعو"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-015",
       "type": "no_truth",
       "tier": "free",
       "difficulty": 2,
@@ -1226,7 +434,371 @@
         ]
       },
       "note": {
-        "ar": "ما كان في جواب صح من الأساس. الطاولة قرّرت."
+        "ar": "آخر حبة كبة بتضل لغز كل عزيمة"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-016",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كان أول اسم لمنقوشة الزعتر قبل ما يسموها منقوشة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "رغيف الصبح",
+          "عجقة زعتر",
+          "فطيرة الفرن"
+        ]
+      },
+      "note": {
+        "ar": "ما حدا سجل هالاجتماع بالفرن، وهلق صار عنا محضر"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-017",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كان يغني أول ناطور كروم بالضيعة ليضل فايق؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "عتابا عن القمر",
+          "أوف على طولها",
+          "يحكي مع التعالب"
+        ]
+      },
+      "note": {
+        "ar": "ما كان في مسجلة بالكرم، بس كان في قمر"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-018",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كانت أول قاعدة بأول طاولة زهر بالقهوة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "اللي بيخسر بيدفع القهوة",
+          "ما في رجعة عالحجر",
+          "الزهر ما بيكذب"
+        ]
+      },
+      "note": {
+        "ar": "القواعد بتنقال من جيل لجيل، وما حدا كتب الأولى"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-019",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كان اسم أول حمار نزل تلج صنين لبيروت؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "أبو التلج",
+          "بردان",
+          "صبري"
+        ]
+      },
+      "note": {
+        "ar": "ما حدا كتب اسمو، وهلق صار إلو اسم"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-020",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كتب أول مختار بأول دفتر للضيعة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "اليوم ما صار شي",
+          "تلات عنزات ضاعوا ولقيناهن",
+          "الجيران زعلانين عالمي"
+        ]
+      },
+      "note": {
+        "ar": "أول دفتر للمختار ضاع، أو أكلتو الفيران"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-021",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كان مكتوب على أول يافطة دكانة بالحارة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "الدين ممنوع والزعل مرفوع",
+          "كل شي موجود، اسأل",
+          "مفتوح من الصبح للمسا"
+        ]
+      },
+      "note": {
+        "ar": "أول يافطة اهترت، بس الحكي بقي"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-022",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كانت أول أغنية غنوها بأول دبكة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "عالعين يا بو الزلف",
+          "دلعونا",
+          "يا غزيل"
+        ]
+      },
+      "note": {
+        "ar": "الدبكة أقدم من كل التسجيلات، فأول أغنية ضاعت"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-023",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كان اسم أول مركب صيد بمرفأ جبيل؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "الحورية",
+          "بنت البحر",
+          "الزهرة"
+        ]
+      },
+      "note": {
+        "ar": "دفاتر المرفأ ما بترجع لهالقد"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-024",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو حطت أول ست بأول قطرميز مكدوس؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "جوز زيادة",
+          "فليفلة حمرا",
+          "توم أكتر من اللازم"
+        ]
+      },
+      "note": {
+        "ar": "كل تيتا بتحلف إن أول مكدوس كان إلها"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-025",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كان أول اسم للتبولة قبل ما تصير تبولة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "سلطة البقدونس",
+          "خضرا الجبل",
+          "سلطة الصيفية"
+        ]
+      },
+      "note": {
+        "ar": "الاسم القديم ضاع بين الضيع"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-026",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كان مكتوب بأول رسالة ضاعت بالبريد بلبنان؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "سامحني عالتأخير",
+          "رجعلي الشمسية",
+          "اشتقتلك، كمان مرة"
+        ]
+      },
+      "note": {
+        "ar": "أول رسالة ضاعت ما حدا لقاها. هيدا معنى ضاعت"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-027",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كان لقب أول ساعة بساحة الضيعة؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "أم الوقت",
+          "الكذابة",
+          "المستعجلة"
+        ]
+      },
+      "note": {
+        "ar": "كل ضيعة إلها لقب لساعتها، والأول انتسى"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "nt-ar-028",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "شو كان بكبسولة الزمن اللي دفنتها مدرسة الضيعة وما لقوها؟",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "ar": [
+          "كلة وطبشورة",
+          "رسالة للمدير الجاي",
+          "صورة صف مهزوزة"
+        ]
+      },
+      "note": {
+        "ar": "كبسولات زمن كتير بتضيع، وهيدي صارت إلكن"
       },
       "review": {
         "status": "draft",

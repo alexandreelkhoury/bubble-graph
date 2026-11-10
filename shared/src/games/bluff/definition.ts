@@ -24,10 +24,10 @@ export type BluffDefinition = GameDefinition<BluffState, BluffSettings, BluffInt
 
 export const definition: BluffDefinition = {
   meta: BLUFF_META,
-  // JAMAA-PLATFORM §6.2: a game goes live by adding its id to GAMES_ENABLED. Whether the G2 lane A also flips this
-  // registry flag is not stated (SPEC-GAP in the G2 report); until the owner decides, Bluff stays registry-disabled and
-  // every test that plays it passes `enabledGames` explicitly.
-  enabled: false,
+  // JAMAA-PLATFORM §6.2 / §2.5: G2 is built, so Bluff is registry-enabled (no longer a stub; owner-approved, as Likely
+  // and Trivia were for G3/G4). It is live only where the deploy's GAMES_ENABLED lists it: production keeps
+  // server/wrangler.jsonc's list until the owner appends "bluff"; local dev (tools/dev.mjs) already lists it.
+  enabled: true,
   stateSchema: STATE_SCHEMA,
   settings: {
     apply(s, patch, content, locale) {

@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { detectLocale, dirOf, errorKeyOf, isolate, isolateLtr, loadCatalog, loadGameCatalog, translate, tSplit } from "../src/i18n/t";
+import { detectLocale, dirOf, errorKeyOf, errorText, isolate, isolateLtr, loadCatalog, loadGameCatalog, translate, tSplit } from "../src/i18n/t";
 
 beforeAll(async () => {
   await loadCatalog("en");
@@ -68,5 +68,17 @@ describe("t()", () => {
     expect(detectLocale(["es-419"])).toBe("es");
     expect(detectLocale([])).toBe("en");
     expect(dirOf("ar")).toBe("rtl");
+  });
+});
+
+describe("errorText (JAMAA-PLATFORM §5.7 per-game error keys)", () => {
+  it("inside a game, a game code reads game.<id>.error.*; platform codes and the hub read error.*", async () => {
+    await loadGameCatalog("likely", "en");
+    await loadGameCatalog("likely", "ar");
+    expect(errorText("en", "error.staleCard", "likely")).toBe(translate("en", "game.likely.error.staleCard"));
+    expect(errorText("ar", "error.staleCard", "likely")).toBe(translate("ar", "game.likely.error.staleCard"));
+    expect(errorText("en", "error.staleCard", "likely")).not.toBe("error.staleCard");
+    expect(errorText("en", "error.notHost", "likely")).toBe(translate("en", "error.notHost"));
+    expect(errorText("en", "error.notHost", null)).toBe(translate("en", "error.notHost"));
   });
 });

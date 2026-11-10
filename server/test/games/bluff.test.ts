@@ -226,11 +226,12 @@ describe("Bluff over protocol v2 (RoomCore + fakes)", () => {
     expect(bluff(h).phase).toBe("WRITING");
   });
 
-  it("GAMES_ENABLED without bluff → GAME_DISABLED; a TV without bluff → GAME_UNAVAILABLE", async () => {
+  it("GAMES_ENABLED without bluff → GAME_UNAVAILABLE (registry-enabled, not deployed); a TV without bluff → GAME_UNAVAILABLE", async () => {
     const off = await new Harness({ enabledGames: ["mishana"], content: withBluff() }).init();
     const tv1 = await off.tv();
     await off.open(tv1, "bluff");
-    expect(tv1.errors().at(-1)).toBe("GAME_DISABLED");
+    // JAMAA-PLATFORM §2.5: a registry-enabled game left out of GAMES_ENABLED is GAME_UNAVAILABLE (GAME_DISABLED is for stubs).
+    expect(tv1.errors().at(-1)).toBe("GAME_UNAVAILABLE");
     const h = await new Harness({ enabledGames: [...BLUFF_ON], content: withBluff() }).init();
     const tv2 = await h.tv([{ id: "mishana", v: GAME_META.mishana.VIEW_VERSION }]);
     await h.open(tv2, "bluff");

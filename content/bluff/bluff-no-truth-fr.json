@@ -19,24 +19,16 @@
     "fr"
   ],
   "ageRating": "all",
-  "fallbackHouseLies": {
-    "no_truth": {
-      "fr": [
-        "Personne ne sait, c'est tout le principe",
-        "C'était un mardi",
-        "Demandez au chat"
-      ]
-    }
-  },
+  "fallbackHouseLies": {},
   "items": [
     {
       "id": "nt-fr-001",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Quelle est la toute première phrase qu'un chat a dite à un humain ?",
+        "original": "Qu'a gravé le premier marin phénicien sur sa rame ?",
         "translit": null,
         "display": {}
       },
@@ -44,13 +36,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Tu peux me nourrir maintenant",
-          "Cette chaise est à moi",
-          "J'étais là avant toi"
+          "Le nom de sa mère",
+          "Rame à gauche, puis encore à gauche",
+          "Rendre cette rame à Tyr"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Aucune rame des premiers voyages n'a survécu : ce soir, votre réponse fait foi"
       },
       "review": {
         "status": "draft",
@@ -64,7 +56,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Quel est le vrai métier de la Lune ?",
+        "original": "Quelle était la toute première règle du tout premier café ?",
         "translit": null,
         "display": {}
       },
@@ -72,13 +64,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Veilleuse pour les hiboux",
-          "Surveillante de nuit",
-          "Gardienne des marées"
+          "On ne s'assoit pas sans commander",
+          "On laisse le dernier biscuit",
+          "On parle bas près du four"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Personne ne l'a notée. Votre table vient de l'écrire"
       },
       "review": {
         "status": "draft",
@@ -89,10 +81,10 @@
       "id": "nt-fr-003",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Pourquoi les chaussettes disparaissent-elles dans la machine à laver ?",
+        "original": "Quelle épice la toute première caravane a-t-elle oublié d'emporter ?",
         "translit": null,
         "display": {}
       },
@@ -100,13 +92,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Elles partent en vacances sans prévenir",
-          "La machine en garde une en pourboire",
-          "Elles filent par le tuyau la nuit"
+          "Le poivre noir",
+          "Le safran",
+          "La cannelle"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "La première caravane n'a laissé aucune liste de courses"
       },
       "review": {
         "status": "draft",
@@ -117,10 +109,10 @@
       "id": "nt-fr-004",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Que se racontent les pigeons sur la place du marché ?",
+        "original": "Qu'était-il gravé au-dessus de la porte de la toute première bibliothèque ?",
         "translit": null,
         "display": {}
       },
@@ -128,13 +120,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Celui-là a un croissant",
-          "Fais le mignon, il mange",
-          "Rendez-vous sur la statue à midi"
+          "Silence, s'il vous plaît",
+          "Remettez chaque livre à sa place",
+          "Entrez pour apprendre, sortez plus sage"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Les plus vieilles bibliothèques ont perdu leurs portes bien avant leurs livres"
       },
       "review": {
         "status": "draft",
@@ -148,7 +140,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Que dit la baguette quand on lui croque le bout sur le chemin du retour ?",
+        "original": "Qu'a écrit le gardien de phare à la toute dernière ligne de son dernier registre ?",
         "translit": null,
         "display": {}
       },
@@ -156,13 +148,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Pas encore, on n'est pas arrivés",
-          "Ça chatouille",
-          "Encore toi"
+          "Lampe allumée, mer calme, je rentre",
+          "Encore du brouillard, les mouettes savent",
+          "À qui le tour ?"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Chaque gardien a sa dernière ligne. Celle-ci appartient à la table"
       },
       "review": {
         "status": "draft",
@@ -176,7 +168,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Que font les nuages pendant leur jour de congé ?",
+        "original": "Comment la première personne à voir la neige l'a-t-elle appelée ?",
         "translit": null,
         "display": {}
       },
@@ -184,13 +176,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "La sieste sur une montagne",
-          "Ils se déguisent en moutons",
-          "Ils rendent visite au brouillard"
+          "La farine du ciel",
+          "La pluie blanche",
+          "L'eau silencieuse"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Le mot est plus vieux que l'écriture : personne ne le sait"
       },
       "review": {
         "status": "draft",
@@ -204,7 +196,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Quelle est la règle n° 1 du manuel secret des grands-mères ?",
+        "original": "Quelle a été la toute première chose vendue au tout premier marché ?",
         "translit": null,
         "display": {}
       },
@@ -212,13 +204,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Personne ne repart le ventre vide",
-          "Toujours dire tu as maigri",
-          "La belle vaisselle, c'est pour les invités"
+          "Du sel",
+          "Une chèvre",
+          "Un panier pour porter la chèvre"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "On retrouve de vieux marchés, jamais leur premier ticket de caisse"
       },
       "review": {
         "status": "draft",
@@ -232,7 +224,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "De quoi se disputent les manchots ?",
+        "original": "Que disait le tout premier message porté par un pigeon voyageur ?",
         "translit": null,
         "display": {}
       },
@@ -240,13 +232,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Qui porte le mieux le smoking",
-          "À qui le tour de garder l'œuf",
-          "Si l'eau est trop froide aujourd'hui"
+          "Bien arrivé, envoie du pain",
+          "Garde l'oiseau",
+          "Je rentre jeudi"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Les pigeons portent des messages depuis des millénaires ; le premier est perdu"
       },
       "review": {
         "status": "draft",
@@ -260,7 +252,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "À quoi pensent les poissons rouges toute la journée ?",
+        "original": "Quelle était la toute première berceuse ?",
         "translit": null,
         "display": {}
       },
@@ -268,13 +260,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Au caillou qui a changé de place",
-          "À celui qui tape sur la vitre",
-          "À comment avoir l'air occupé"
+          "Un fredonnement pour la lune",
+          "Trois notes et un soupir",
+          "Une histoire de moutons"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Les berceuses sont plus vieilles que l'écriture : la première s'est envolée"
       },
       "review": {
         "status": "draft",
@@ -288,7 +280,7 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Quel est le mot de passe Wi-Fi de la tour Eiffel ?",
+        "original": "Qu'a écrit le premier cartographe dans le coin vide de sa carte ?",
         "translit": null,
         "display": {}
       },
@@ -296,13 +288,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Ferraille4ever",
-          "PasDAscenseur",
-          "330metresdebonheur"
+          "Inconnu, sans doute des moutons",
+          "Demandez aux gens du coin",
+          "Ici, la route est boueuse"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "La toute première carte n'a pas survécu, ses coins non plus"
       },
       "review": {
         "status": "draft",
@@ -313,10 +305,10 @@
       "id": "nt-fr-011",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Que se disent les plantes quand on part travailler ?",
+        "original": "Qu'a peint le premier potier sur la toute première tasse décorée ?",
         "translit": null,
         "display": {}
       },
@@ -324,13 +316,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Enfin un peu de calme",
-          "Quelqu'un a eu de l'eau ?",
-          "Il nous parle beaucoup trop"
+          "Un poisson",
+          "Une seule ligne bleue",
+          "L'empreinte de son pouce"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "La poterie peinte est très ancienne ; la toute première tasse a disparu"
       },
       "review": {
         "status": "draft",
@@ -341,10 +333,10 @@
       "id": "nt-fr-012",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Où vont les parapluies perdus ?",
+        "original": "Comment les bâtisseurs de Carnac appelaient-ils leurs alignements ?",
         "translit": null,
         "display": {}
       },
@@ -352,13 +344,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Sur une plage où il ne pleut jamais",
-          "Au magasin qui les a vendus",
-          "Là où sont parties les chaussettes"
+          "Les Pierres Debout",
+          "Le Chemin du Soleil",
+          "Les Vieilles Sœurs"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Ils n'ont laissé aucune écriture : personne ne sait comment ils les appelaient"
       },
       "review": {
         "status": "draft",
@@ -372,7 +364,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "De quoi rêvent les chiens ?",
+        "original": "Quelle était la recette secrète de la toute première crêperie de Bretagne ?",
         "translit": null,
         "display": {}
       },
@@ -380,13 +372,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "D'un facteur qui reste pour discuter",
-          "D'une saucisse sans fin",
-          "Du droit de monter sur le canapé"
+          "Une pincée de sel de Guérande",
+          "Un œuf de plus que prévu",
+          "Du beurre, et encore du beurre"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Les crêpières bretonnes gardent leurs secrets mieux que les notaires"
       },
       "review": {
         "status": "draft",
@@ -400,7 +392,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Qu'est-ce qui est écrit à la première page du mode d'emploi des bébés ?",
+        "original": "Qu'a dit le premier client mécontent d'un bistrot parisien ?",
         "translit": null,
         "display": {}
       },
@@ -408,13 +400,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Ni repris ni échangé",
-          "Piles non fournies",
-          "Résultats variables"
+          "On m'a oublié",
+          "Ce café est froid",
+          "Où est passé le garçon ?"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Le premier râleur parisien n'a pas laissé son nom. Il a laissé une tradition"
       },
       "review": {
         "status": "draft",
@@ -428,7 +420,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Que pense secrètement le GPS quand on ne l'écoute pas ?",
+        "original": "Quel surnom les habitants donnaient-ils à la toute première horloge du village ?",
         "translit": null,
         "display": {}
       },
@@ -436,13 +428,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Très bien, perds-toi",
-          "Je m'en souviendrai",
-          "Je recalcule ma vie"
+          "La Bavarde",
+          "L'Avance",
+          "Madame Midi"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Chaque village avait un surnom pour son horloge. Le premier s'est perdu"
       },
       "review": {
         "status": "draft",
@@ -456,7 +448,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Quel est le sport préféré des fourmis ?",
+        "original": "Comment s'appelait le premier chien de berger des Pyrénées ?",
         "translit": null,
         "display": {}
       },
@@ -464,13 +456,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Le lancer de miettes",
-          "La marche synchronisée",
-          "Le pillage de goûters"
+          "Patou",
+          "Brume",
+          "Fidèle"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Les bergers notaient leurs brebis, rarement leurs chiens"
       },
       "review": {
         "status": "draft",
@@ -484,7 +476,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "De quoi parlent tes chaussures pendant que tu dors ?",
+        "original": "Qu'était-il écrit sur la toute première carte postale envoyée de Bretagne ?",
         "translit": null,
         "display": {}
       },
@@ -492,13 +484,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "De là où on est allées",
-          "De qui sent le plus fort",
-          "D'une fugue à la plage"
+          "Il pleut, mais il fait beau",
+          "Les crêpes sont meilleures ici",
+          "Je rentre mardi, garde le chat"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Personne ne l'a gardée. Elle doit être dans un grenier, quelque part"
       },
       "review": {
         "status": "draft",
@@ -512,7 +504,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Pourquoi les chats font-ils tomber les objets des tables ?",
+        "original": "Quelle chanson fredonnait le premier boulanger du quartier en pétrissant ?",
         "translit": null,
         "display": {}
       },
@@ -520,13 +512,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Ils vérifient la gravité chaque matin",
-          "C'est de la décoration",
-          "Pour se venger du bain"
+          "Une ritournelle sur la pluie",
+          "Toujours le même refrain",
+          "Une chanson de marin"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "À quatre heures du matin, personne n'était là pour l'écouter"
       },
       "review": {
         "status": "draft",
@@ -537,10 +529,10 @@
       "id": "nt-fr-019",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Qu'a dit la toute première personne qui a goûté une olive ?",
+        "original": "Quelle était la règle d'or de la toute première partie de pétanque ?",
         "translit": null,
         "display": {}
       },
@@ -548,13 +540,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "On réessaie dans un an",
-          "Cet arbre se moque de moi",
-          "Il manque du sel et beaucoup de patience"
+          "On ne mesure pas avec ses pieds",
+          "Le cochonnet a toujours raison",
+          "Le perdant paie la limonade"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Personne ne l'a écrite. Elle se transmet en râlant"
       },
       "review": {
         "status": "draft",
@@ -565,10 +557,10 @@
       "id": "nt-fr-020",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Quel est l'hymne national de la Lune ?",
+        "original": "Comment s'appelait la vache préférée du premier fromager du Jura ?",
         "translit": null,
         "display": {}
       },
@@ -576,13 +568,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Quatre minutes de silence total",
-          "Un long bourdonnement grave",
-          "Une chanson sur le fromage"
+          "Marguerite",
+          "Clochette",
+          "Brunette"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Les fromagers notaient leurs meules, pas les prénoms de leurs vaches"
       },
       "review": {
         "status": "draft",
@@ -596,7 +588,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Pourquoi les ascenseurs sont-ils si gênants ?",
+        "original": "Que contenait la première lettre perdue par la poste ?",
         "translit": null,
         "display": {}
       },
@@ -604,13 +596,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Ils entendent trop de secrets",
-          "Personne ne sait où regarder",
-          "La musique nous juge"
+          "Pardon pour le retard",
+          "Rends-moi mon parapluie",
+          "Tu me manques, encore"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "La première lettre perdue n'a jamais été retrouvée. C'est le principe"
       },
       "review": {
         "status": "draft",
@@ -621,10 +613,10 @@
       "id": "nt-fr-022",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Que fait un escargot quand il est pressé ?",
+        "original": "Quel était le premier mot gravé sur la plus vieille cloche du village ?",
         "translit": null,
         "display": {}
       },
@@ -632,13 +624,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Il laisse un mot",
-          "Il enlève sa coquille",
-          "Il demande à une tortue de le déposer"
+          "Sonne pour tous",
+          "Midi juste",
+          "Réveille-toi"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "La plus vieille cloche a été refondue, et son mot avec elle"
       },
       "review": {
         "status": "draft",
@@ -649,10 +641,10 @@
       "id": "nt-fr-023",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Quel est le plus gros mensonge d'un chat ?",
+        "original": "Quel a été le tout premier cri des marchands des Halles au lever du jour ?",
         "translit": null,
         "display": {}
       },
@@ -660,13 +652,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "On ne m'a pas nourri",
-          "Ce n'est pas moi qui l'ai cassé",
-          "Je t'aime, maintenant ouvre la porte"
+          "Ils sont frais, mes poireaux",
+          "Au beurre, au bon beurre",
+          "Tout doit partir avant midi"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Les cris des Halles se sont tus avant qu'on pense à les enregistrer"
       },
       "review": {
         "status": "draft",
@@ -677,10 +669,10 @@
       "id": "nt-fr-024",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Quelle est la première règle du club secret des grands-pères ?",
+        "original": "Qu'y avait-il dans la capsule temporelle d'une école de village jamais retrouvée ?",
         "translit": null,
         "display": {}
       },
@@ -688,13 +680,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Toujours avoir un mouchoir",
-          "Ne jamais payer le parking",
-          "S'endormir le premier aux mariages"
+          "Une bille et une craie",
+          "Une lettre au futur directeur",
+          "Une photo de classe floue"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Beaucoup de capsules temporelles se perdent. Celle-ci est désormais la vôtre"
       },
       "review": {
         "status": "draft",
@@ -708,7 +700,7 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Que voient les miroirs quand personne ne regarde ?",
+        "original": "Comment s'appelait le tout premier bateau de pêche du port de Saint-Malo ?",
         "translit": null,
         "display": {}
       },
@@ -716,13 +708,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Le fond de la pièce, enfin",
-          "Un mur qui s'ennuie",
-          "Leur cousin, le miroir d'en face"
+          "La Mouette",
+          "Brise de Mer",
+          "Le Petit Têtu"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Le registre du port ne remonte pas si loin"
       },
       "review": {
         "status": "draft",
@@ -736,7 +728,7 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Quel est le plat préféré des volcans ?",
+        "original": "Qu'a-t-on mangé lors du tout premier déjeuner sur l'herbe au bord de la Loire ?",
         "translit": null,
         "display": {}
       },
@@ -744,13 +736,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Les cailloux épicés",
-          "Tout ce qui s'approche trop",
-          "La soupe bien brûlante"
+          "Pain, fromage et cerises",
+          "Rillettes et radis",
+          "Une omelette froide"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Personne n'a pensé à garder la nappe"
       },
       "review": {
         "status": "draft",
@@ -761,10 +753,10 @@
       "id": "nt-fr-027",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
+      "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Que pensent vraiment les arbres des oiseaux ?",
+        "original": "Quel surnom les mineurs donnaient-ils au tout premier âne de la mine ?",
         "translit": null,
         "display": {}
       },
@@ -772,13 +764,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "Des locataires bruyants mais fidèles",
-          "Ils ne paient jamais le loyer",
-          "Des décorations vivantes"
+          "Charbon",
+          "Pompon",
+          "Le Patron"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Les registres de la mine comptaient les tonnes, pas les surnoms"
       },
       "review": {
         "status": "draft",
@@ -789,66 +781,10 @@
       "id": "nt-fr-028",
       "type": "no_truth",
       "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "Que font les vers de terre les jours de pluie ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Une fête à la piscine",
-          "Du tourisme sur le trottoir",
-          "Des longueurs de bassin"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-029",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "Quel est le super-pouvoir le plus ennuyeux ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Toujours savoir l'heure",
-          "Réchauffer un tout petit peu le pain",
-          "Parler aux poignées de porte"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-030",
-      "type": "no_truth",
-      "tier": "free",
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "De quoi rêvent les théières ?",
+        "original": "Qu'a noté le premier observateur de la météo au sommet du Ventoux ?",
         "translit": null,
         "display": {}
       },
@@ -856,377 +792,13 @@
       "truthAlt": {},
       "houseLies": {
         "fr": [
-          "De devenir fontaine",
-          "De jouer de la trompette",
-          "De devenir montgolfière"
+          "Vent fort, chapeau perdu",
+          "Ciel clair, mollets en feu",
+          "Brouillard jusqu'aux oreilles"
         ]
       },
       "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-031",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "Pourquoi les clés se cachent-elles quand on est en retard ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Elles détestent qu'on les presse",
-          "Elles veulent des vacances",
-          "Elles sont jalouses du téléphone"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-032",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "Que comptent les moutons quand ils n'arrivent pas à dormir ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Des humains",
-          "Des nuages",
-          "Des clôtures"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-033",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "De quoi les extraterrestres se plaindraient-ils en premier sur Terre ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "La gravité est bien trop forte",
-          "Personne ne met son clignotant",
-          "Pourquoi le ciel est bleu ?"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-034",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "Que font les bonshommes de neige en été ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Ils déménagent au congélateur",
-          "Ils prennent leur retraite à la montagne",
-          "Ils deviennent des flaques nostalgiques"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-035",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "Quel est le dessert préféré des robots ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Les cookies aux puces",
-          "La crème aux boulons",
-          "La gelée à piles"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-036",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "Qu'a dit le premier poisson qui a marché sur la terre ferme ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Qui a laissé couler l'eau ?",
-          "Pieds tout neufs, soyez patients",
-          "Je reviens dans cinq minutes"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-037",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "Que se disent les bébés au parc ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Regarde, je le refais tomber",
-          "Le mien crie plus fort",
-          "Ne leur dis pas qu'on parle"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-038",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "Comment s'appelle en secret le dernier croissant de la boulangerie ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Le Convoité",
-          "Le Tant-pis-pour-toi",
-          "Celui de 19 heures pile"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-039",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "Que dit le fromage quand il vieillit ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Je deviens plus intéressant",
-          "Ouvrez les fenêtres",
-          "Respectez vos aînés"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-040",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "Que fait la tour Eiffel la nuit quand tout le monde dort ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Elle compte ses boulons",
-          "Elle s'étire un peu",
-          "Elle bavarde avec la Lune"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-041",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "Quel est le secret des escargots pour garder leur maison si propre ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Ils ne reçoivent jamais",
-          "Ils sortent quand il pleut",
-          "Ils passent la serpillière tous les soirs"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-042",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
-      "prompt": {
-        "original": "Qu'écrivent les fantômes sur leur CV ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Excellent en courants d'air",
-          "Disponible uniquement la nuit",
-          "Très discret en réunion"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
-      },
-      "review": {
-        "status": "draft",
-        "source": null
-      }
-    },
-    {
-      "id": "nt-fr-043",
-      "type": "no_truth",
-      "tier": "free",
-      "difficulty": 1,
-      "knownIn": [],
-      "prompt": {
-        "original": "Quel est le premier mot que les dinosaures ont appris ?",
-        "translit": null,
-        "display": {}
-      },
-      "truth": {},
-      "truthAlt": {},
-      "houseLies": {
-        "fr": [
-          "Miam",
-          "Attention",
-          "Pardon pour la queue"
-        ]
-      },
-      "note": {
-        "fr": "Il n'y a jamais eu de bonne réponse. La table a tranché."
+        "fr": "Son tout premier carnet s'est envolé. Le Ventoux porte bien son nom"
       },
       "review": {
         "status": "draft",

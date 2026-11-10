@@ -112,6 +112,7 @@ describe("Bluff in the room", () => {
   it("a room without bluff in its enabled games cannot open it", () => {
     const cat = bluffTokenCatalog();
     const h = new RoomHarness({ content: withBluff(TEST_FREE_CATALOG, cat), fullContent: withBluff(TEST_CATALOG, cat), enabledGames: ["mishana"] });
-    expect(h.err({ type: "OPEN_GAME", gameId: "bluff", by: { kind: "tv" } })).toBe("GAME_DISABLED");
+    // JAMAA-PLATFORM §2.5: registry-enabled but not deployed → GAME_UNAVAILABLE (GAME_DISABLED is for registry stubs).
+    expect(h.err({ type: "OPEN_GAME", gameId: "bluff", by: { kind: "tv" } })).toBe("GAME_UNAVAILABLE");
   });
 });
