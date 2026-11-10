@@ -2,7 +2,6 @@
 // Secrecy (§8.1, DESIGN-JAMAA §4.3): everything here reads the PUBLIC projection plus this phone's own `me`; no
 // expression, position or number may depend on anything else. Zod-free and DOM-free (web-client/test/games/bluff).
 import type { GameEnvelope, PlayerRoomView, RoomPublic, TvRoomView } from "@jamaa/shared/protocol/v2";
-import type { Expression } from "@jamaa/shared/characters";
 import { ENTRANCE_GRACE_MS } from "@jamaa/shared/constants";
 import type { DeadlineView } from "../mishana/view";
 
@@ -128,6 +127,7 @@ export function fullMs(pub: BluffPub, firstRemainingMs: number): number | null {
 }
 
 const seen = new Map<number, number>();
+const deadlineSeen: ReadonlyMap<number, number> = seen;
 /** The server deadline as the shared timer components read it. `serverNow` = Date.now() + clock offset. */
 export function deadlineOf(pub: BluffPub, serverNow: number): DeadlineView | null {
   const at = pub.deadline;
@@ -140,29 +140,6 @@ export function deadlineOf(pub: BluffPub, serverNow: number): DeadlineView | nul
   }
   const d = fullMs(pub, first);
   return d === null ? null : { kind: "VOTE", at, durationMs: d } as DeadlineView;
-}
-
-// ---------------------------------------------------------------- characters (public view only)
-
-/** A character's expression outside the reveal: away → done → think → idle (DESIGN-JAMAA §4.3, GAME-BLUFF §12.4). */
-export function baseExpression(m: BluffModel, s: Seat): Expression {
-  if (!s.connected) return "away";
-  const p = m.pub.phase;
-  if (p === "WRITING") return m.pub.submittedIds.includes(s.id) ? "done" : "think";
-  if (p === "VOTING") {
-    if (m.pub.spotOnIds.includes(s.id)) return "happy";
-    return m.pub.votedIds.includes(s.id) ? "done" : "think";
-  }
-  if (p === "SCORES") return s.score > s.scoreBefore ? "happy" : "idle";
-  return "idle";
-}
-
-/** The prop a seated character holds (DESIGN-JAMAA §4.5): pencil while writing, envelope once in, ballot once voted. */
-export function propOf(m: BluffModel, s: Seat): "pencil" | "envelope" | "ballot" | null {
-  if (!s.connected || s.left) return null;
-  if (m.pub.phase === "WRITING") return m.pub.submittedIds.includes(s.id) ? "envelope" : "pencil";
-  if (m.pub.phase === "VOTING" && m.pub.votedIds.includes(s.id)) return "ballot";
-  return null;
 }
 
 // ---------------------------------------------------------------- ranking
@@ -236,78 +213,8 @@ export function beatAt(plan: RevealPlan, tMs: number): number {
   return i;
 }
 
-/** Points a beat pays to each player (the odometers roll by these): fooled/truth on their beat, convincing on the
- *  crown, likes on the like tally. Σ beats + spot-on = score − scoreBefore (GAME-BLUFF §13.3 invariant 3). */
-export function beatDeltas(r: Reveal, b: Beat): Map<string, number> {
-  const out = new Map<string, number>();
-  const add = (id: string, p: number): void => { out.set(id, (out.get(id) ?? 0) + p); };
-  if (b.kind === "likes") {
-    for (const s of r.steps) for (const d of s.deltas) if (d.reason === "like") add(d.playerId, d.points);
-    for (const u of r.unpicked) for (const d of u.deltas) if (d.reason === "like") add(d.playerId, d.points);
-    return out;
-  }
-  if (b.kind === "intro" || b.kind === "twist" || b.kind === "montage") return out;
-  for (const i of b.steps) {
-    const s = r.steps[i];
-    if (!s) continue;
-    for (const d of s.deltas) {
-      if (d.reason === "like") continue;
-      if (b.kind === "crown" ? d.reason === "convincing" : d.reason !== "convincing") add(d.playerId, d.points);
-    }
-  }
-  return out;
-}
-
-/** Each player's pill value at the start of every beat, and at the end (`[beats.length]`). */
-export function runningScores(m: { pub: BluffPub; seats: readonly Seat[] }, plan: RevealPlan): Map<string, number>[] {
-  const r = m.pub.reveal;
-  const cur = new Map(m.seats.map((s) => [s.id, s.scoreBefore]));
-  if (r) for (const d of r.spotOnDeltas) cur.set(d.playerId, (cur.get(d.playerId) ?? 0) + d.points);
-  const out: Map<string, number>[] = [new Map(cur)];
-  for (const b of plan.beats) {
-    if (r) for (const [id, p] of beatDeltas(r, b)) cur.set(id, (cur.get(id) ?? 0) + p);
-    out.push(new Map(cur));
-  }
-  return out;
-}
-
 /** Reveal sub-moments of a beat: 0 start, 1 landed, 2 stamped, 3 popped, 4 counting. */
 export type Mark = 0 | 1 | 2 | 3 | 4;
-
-/** Expression of a seated (or hopping) character at this point of the reveal: a function of the public reveal only. */
-export function seatExpression(r: Reveal, beat: Beat, mark: Mark, s: Seat, ended: boolean): Expression {
-  if (!s.connected) return "away";
-  if (ended) return r.final ? "laugh" : s.score > s.scoreBefore ? "happy" : "idle";
-  const step = r.steps[beat.steps[0] ?? -1];
-  switch (beat.kind) {
-    case "lie":
-    case "quick":
-      if (!step) return "idle";
-      if (step.voterIds.includes(s.id)) return mark >= 2 ? (step.kind === "house" ? "shock" : "facepalm") : "think";
-      if (step.authorIds.includes(s.id)) return mark >= 3 ? "smug" : "idle";
-      return "idle";
-    case "truth": {
-      if (!step) return "idle";
-      if (step.spotOnIds.includes(s.id)) return "happy";
-      const nobody = step.voterIds.length === 0 && step.spotOnIds.length === 0;
-      if (mark < 2) return step.voterIds.includes(s.id) ? "think" : "idle";
-      if (nobody) return "shock";
-      return step.voterIds.includes(s.id) ? "cheer" : "sad";
-    }
-    case "answer":
-      return step && step.authorIds.includes(s.id) && mark >= 3 ? (step.top ? "laugh" : "smug") : "idle";
-    case "crown":
-      return beat.steps.some((i) => r.steps[i]?.authorIds.includes(s.id)) && mark >= 2 ? "cheer" : "idle";
-    case "twist":
-      return mark >= 2 ? "laugh" : "idle";
-    case "montage": {
-      const mine = r.unpicked.some((u) => u.authorIds.includes(s.id));
-      return mine ? "sad" : "idle";
-    }
-    default:
-      return "idle";
-  }
-}
 
 /** The step a player voted for (rounds 1–2 only: final ballots stay anonymous). */
 export function votedStep(r: Reveal, id: string): RevealStep | null {
@@ -393,3 +300,52 @@ export const BLUFF_ERRORS = [
 
 /** Option letters stay Latin in every locale, like the room code (cards are also told apart by position). */
 export const letterOf = (i: number): string => String.fromCharCode(65 + i);
+
+const letterMemo = { key: "", ids: [] as string[] };
+/**
+ * Option letters frozen for this VOTING (keyed by option id, from the first options list seen in it): a host hide
+ * leaves its letter unused instead of shifting every card below it, so "B" stays the card the couch agreed on. Used by
+ * the phone, /tv and the TV hide picker. A page loaded after a hide can only letter what it sees (SPEC-GAP: the
+ * projection carries no per-option slot).
+ */
+export function optionLetters(m: BluffModel): ReadonlyMap<string, string> {
+  const key = `${m.roomCode}:${m.n}:${m.pub.round}:${m.pub.promptIndex}:${m.pub.prompt?.id ?? ""}`;
+  if (letterMemo.key !== key) { letterMemo.key = key; letterMemo.ids = m.pub.options.map((o) => o.id); }
+  else for (const o of m.pub.options) if (!letterMemo.ids.includes(o.id)) letterMemo.ids.push(o.id);
+  return new Map(letterMemo.ids.map((id, i) => [id, letterOf(i)]));
+}
+export function resetOptionLetters(): void { letterMemo.key = ""; letterMemo.ids = []; }
+
+/** A signed number that reads "+150" in every direction (an LRM before it, like `vote.knewIt`; DESIGN-JAMAA §5.1). */
+export const signed = (n: number): string => `\u200E+${n}`;
+
+// ---------------------------------------------------------------- rules ⓘ params (GAME-BLUFF §10.2)
+
+/** WRITING seconds per pace (§4.1: 60 s × 1.5 / 1 / 0.75; the final is 75 s × the same factor). */
+export const WRITING_SECONDS = { relaxed: 90, normal: 60, fast: 45 } as const;
+const FINAL_SECONDS = { relaxed: 113, normal: 75, fast: 56 } as const;
+type Pace = keyof typeof WRITING_SECONDS;
+let lastPace: Pace = "normal";
+
+/**
+ * The `{seconds}` (and `{finalSeconds}`) of the ⓘ rules copy for this view: the setup's pace in SETUP (remembered for
+ * the game, where the pace is not in the view); in WRITING the running timer decides. JAMAA-GAP: RulesBody must pass
+ * these (`tk(s.bodyKey, ruleParams(view))`), see the lane B report.
+ */
+export function ruleParams(view: PlayerRoomView | TvRoomView): { seconds: number; finalSeconds: number } {
+  const setup = view.room.setup;
+  if (setup && setup.gameId === "bluff") lastPace = setup.settings.pace;
+  const g = view.game;
+  if (g && g.gameId === "bluff" && g.public.phase === "WRITING" && g.public.deadline !== null) {
+    const seen = deadlineSeen.get(g.public.deadline);
+    if (seen !== undefined) {
+      const full = fullMs(g.public, seen);
+      const base = isFinal(g.public) ? NOMINAL.WRITING_FINAL : NOMINAL.WRITING;
+      if (full !== null) {
+        const f = full / base;
+        lastPace = f > 1.2 ? "relaxed" : f < 0.9 ? "fast" : "normal";
+      }
+    }
+  }
+  return { seconds: WRITING_SECONDS[lastPace], finalSeconds: FINAL_SECONDS[lastPace] };
+}

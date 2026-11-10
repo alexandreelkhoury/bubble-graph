@@ -83,7 +83,11 @@ class ProtocolFixturesTest {
         assertEquals("mishana", v.room.focusedGameId)
         assertNull(v.room.setupGameId)
         assertNull(v.game)
-        assertEquals(listOf("mishana"), v.room.games.map { it.id })
+        // The fixture room runs every registry-enabled game (Mish Ana! first, then each G game once its milestone flips
+        // `enabled`), in GAME_IDS order.
+        val ids = v.room.games.map { it.id }
+        assertEquals("mishana", ids.first())
+        assertEquals(GameIds.ALL.filter { it in ids }, ids)
         assertEquals(listOf(10, 20), v.room.games[0].durationMinutes)
         assertEquals(listOf("Rami", "Léa", "نور", "Sam"), v.room.members.map { it.name })
         assertTrue(v.room.members.first().isHost)

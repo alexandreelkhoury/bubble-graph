@@ -7,6 +7,8 @@ import { describe, expect, it } from "vitest";
 import type { ContentCatalog } from "@jamaa/shared/content";
 import { contentCatalog } from "@jamaa/shared/content";
 import { GAME_META } from "@jamaa/shared/games/meta";
+import { GAMES } from "@jamaa/shared/games/registry";
+import { MSG_MAX_BYTES, RATE_BURST } from "@jamaa/shared/constants";
 import { ServerMessageV2Schema } from "@jamaa/shared/protocol/v2";
 import type { RoomIntentMsg } from "@jamaa/shared/protocol/v2";
 import { TEST_CATALOG } from "@jamaa/shared/testing";
@@ -185,11 +187,13 @@ describe("Most Likely over protocol v2 (RoomCore + fakes)", () => {
     expect(h.storage.alarm).toBe(likely(h).deadline);
   });
 
-  it("GAMES_ENABLED without likely → GAME_DISABLED; a TV without likely → GAME_UNAVAILABLE", async () => {
+  it("GAMES_ENABLED without likely → GAME_UNAVAILABLE (registry-enabled since G3); a TV without likely → GAME_UNAVAILABLE", async () => {
+    expect(GAMES.likely.enabled).toBe(true);
     const off = await new Harness({ enabledGames: ["mishana"], content: withLikely() }).init();
     const tv1 = await off.tv();
+    expect((tv1.lastView().room as { games: { id: string }[] }).games.map((g) => g.id)).not.toContain("likely");
     await off.open(tv1, "likely");
-    expect(tv1.errors().at(-1)).toBe("GAME_DISABLED");
+    expect(tv1.errors().at(-1)).toBe("GAME_UNAVAILABLE");
     const h = await new Harness({ enabledGames: [...LIKELY_ON], content: withLikely() }).init();
     const tv2 = await h.tv([{ id: "mishana", v: GAME_META.mishana.VIEW_VERSION }]);
     await h.open(tv2, "likely");
@@ -222,5 +226,93 @@ describe("Most Likely over protocol v2 (RoomCore + fakes)", () => {
     for (const r of likely(h).results) expect(pass.some((p) => p.id === r.cardId)).toBe(false);
     const all = seen.join("\n");
     for (const c of pass) expect(all.includes(JSON.stringify(c.prompt.en))).toBe(false);
+  });
+  // G3 review: wire behaviours the live run checked by hand.
+  it("a VOTE flood → RATE_LIMITED (sender only), 3 strikes → close 4008; the phone resumes its seat", async () => {
+    const { h, tv, ps } = await likelyRoom(3);
+    await h.act(tv, { type: "START_GAME" });
+    await gameAct(h, tv, { type: "HOST_ADVANCE" });
+    const [a, b] = ps as [P, P];
+    const cardId = likely(h).card?.cardId as string;
+    for (const x of [tv, a.conn, b.conn]) x.clear();
+    const frame = (t: string): string => JSON.stringify({ v: 2, t: "action", a: { type: "GAME", gameId: "likely", i: { type: "VOTE", cardId, targetId: t } } });
+    for (let i = 0; i < RATE_BURST + 3 && a.conn.open; i++) await h.send(a.conn, frame(i % 2 === 0 ? b.pid : a.pid), 0);
+    expect(a.conn.errors()).toEqual(["RATE_LIMITED", "RATE_LIMITED", "RATE_LIMITED"]);
+    expect(a.conn.closeCode).toBe(4008);
+    expect(tv.errors()).toEqual([]);
+    expect(b.conn.errors()).toEqual([]);
+    // The vote that got through is still the phone's own, and the seat comes back with the resume token.
+    expect(likely(h).votes[a.pid]).toBeDefined();
+    const back = await h.resume(a.token);
+    expect(back.errors()).toEqual([]);
+    expect((back.lastView().game as { me: { myVote: string | null } }).me.myVote).toBe(likely(h).votes[a.pid]);
+  });
+
+  it("an oversized Likely frame → BAD_MESSAGE to the sender only, socket open, state untouched", async () => {
+    const { h, tv, ps } = await likelyRoom(3);
+    await h.act(tv, { type: "START_GAME" });
+    await gameAct(h, tv, { type: "HOST_ADVANCE" });
+    const [a, b] = ps as [P, P];
+    const before = JSON.stringify(likely(h));
+    for (const x of [tv, a.conn, b.conn]) x.clear();
+    const big = JSON.stringify({ v: 2, t: "action", a: { type: "GAME", gameId: "likely", i: { type: "VOTE", cardId: likely(h).card?.cardId, targetId: "x".repeat(5_000) } } });
+    expect(new TextEncoder().encode(big).length).toBeGreaterThan(MSG_MAX_BYTES);
+    await h.send(a.conn, big);
+    expect(a.conn.errors()).toEqual(["BAD_MESSAGE"]);
+    expect(a.conn.open).toBe(true);
+    expect(tv.errors()).toEqual([]);
+    expect(b.conn.errors()).toEqual([]);
+    expect(tv.of("state")).toEqual([]);
+    expect(JSON.stringify(likely(h))).toBe(before);
+  });
+
+  it("every Likely error frame goes to its sender only (no other phone, no TV, no spectator)", async () => {
+    const { h, tv, ps } = await likelyRoom(4);
+    const spec = await h.spectator({ label: "spectator" });
+    await h.act(tv, { type: "START_GAME" });
+    const [a, b, c] = ps as [P, P, P];
+    const cardId = likely(h).card?.cardId as string;
+    const all = [tv, spec, ...ps.map((p) => p.conn)];
+    for (const x of all) x.clear();
+    await gameAct(h, a.conn, { type: "VOTE", cardId, targetId: b.pid });            // WRONG_PHASE (CARD)
+    await gameAct(h, tv, { type: "HOST_ADVANCE" });
+    await gameAct(h, a.conn, { type: "VOTE", cardId: "zz-stale", targetId: b.pid }); // STALE_CARD
+    await gameAct(h, a.conn, { type: "VOTE", cardId, targetId: "p_nobody" });       // INVALID_TARGET
+    await gameAct(h, b.conn, { type: "HOST_ADVANCE" });                             // NOT_HOST
+    await gameAct(h, tv, { type: "VOTE", cardId, targetId: b.pid });                 // NOT_IN_GAME
+    await gameAct(h, spec, { type: "VOTE", cardId, targetId: b.pid });               // NOT_AUTHENTICATED
+    expect(a.conn.errors()).toEqual(["WRONG_PHASE", "STALE_CARD", "INVALID_TARGET"]);
+    expect(b.conn.errors()).toEqual(["NOT_HOST"]);
+    expect(tv.errors()).toEqual(["NOT_IN_GAME"]);
+    expect(spec.errors()).toEqual(["NOT_AUTHENTICATED"]);
+    expect(c.conn.errors()).toEqual([]);
+    for (const x of all) expect(x.closeCode).toBeNull();
+  });
+
+  it("settings cannot change mid-game (WRONG_PHASE): a secret game stays secret in every later frame", async () => {
+    const { h, tv, ps } = await likelyRoom(4, { showVoters: false });
+    await h.act(tv, { type: "START_GAME" });
+    const [a] = ps as [P];
+    await h.act(tv, { type: "UPDATE_GAME_SETTINGS", gameId: "likely", patch: { showVoters: true } } as RoomIntentMsg);
+    expect(tv.errors().at(-1)).toBe("WRONG_PHASE");
+    await h.act(a.conn, { type: "UPDATE_GAME_SETTINGS", gameId: "likely", patch: { showVoters: true } } as RoomIntentMsg);
+    expect(a.conn.errors().at(-1)).toBe("WRONG_PHASE");
+    expect(likely(h).settings.showVoters).toBe(false);
+    const socks: [FakeConn, string | null][] = [[tv, null], ...ps.map((p): [FakeConn, string | null] => [p.conn, p.pid])];
+    const errs: string[] = [];
+    for (const [c] of socks) c.clear();
+    await playLikely(h, tv, ps, 5, () => {
+      const s = likely(h);
+      for (const [c, viewer] of socks) {
+        for (const m of c.of("state")) for (const e of frameLeaks(s, m, viewer)) errs.push(`${c.label} @${s.phase}: ${e}`);
+        c.clear();
+      }
+    });
+    expect(errs).toEqual([]);
+    // Defence in depth: past secret cards keep their tallies but not who voted for whom.
+    for (const r of likely(h).results) {
+      const picks = r.picks.filter((t) => t >= 0);
+      expect(picks).toEqual([...picks].sort((x, y) => x - y));
+    }
   });
 });

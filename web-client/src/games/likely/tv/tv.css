@@ -1,6 +1,18 @@
 /* Most Likely on /tv (GAME-LIKELY §8, §12; DESIGN-JAMAA §5.3, §7.8): "Awards Night on the Rooftop". 960 × 540 canvas,
    1 px = 1 dp; top bar y 27–75, the jury arc's feet on the shared layout (likely/layout.ts) + the 48/27 safe margin. */
-.lkplay, .lkrev, .lkhold, .lkawards, .lkres { --lk-gold: #FFC94D; --lk-gold-hi: #FFE7A0; --lk-gold-lo: #C98A1A; --lk-ink: #1B1430; overflow: hidden; background: var(--w-deep); }
+.lkplay, .lkrev, .lkhold, .lkawards, .lkres { --lk-gold: #FFC94D; --lk-gold-hi: #FFE7A0; --lk-gold-lo: #C98A1A; --lk-ink: #1B1430; overflow: hidden; background: var(--w-deep);
+  /* one stacking context: the game's layers (jury z 30, rail 50, top bar 60) never paint over the pause menu or a sheet */
+  isolation: isolate; }
+
+/* ------------------------------------------------------------------ first card: wait for the world entrance (play.tsx) */
+/* The jury runs in above the entrance's darkened stage, straight to its arc seats; the overlay's own runner row is not
+   drawn for this world. The deal, the timer, the rail and the top bar wait until the overlay is gone. */
+.lkplay.is-entering { isolation: auto; }
+.lkplay.is-entering .lkjury { z-index: 31; }
+.tventr[data-world="rooftop"] .tventr__cast { visibility: hidden; }
+.lkplay.is-gated .lktop, .lkplay.is-gated .lkrail, .lkplay.is-gated .lkplay__timer, .lkplay.is-gated .lkvoted { visibility: hidden; }
+.lkplay.is-ran-in .lkjury__seat { animation: none; }
+.lkplay.is-ran-in:not(.is-gated) .lktop, .lkplay.is-ran-in:not(.is-gated) .lkrail { animation: fade-in 400ms var(--ease-decel) both; }
 
 /* ------------------------------------------------------------------ world: sky, string lights, skyline */
 .lkw { position: absolute; inset: 0; background: var(--w-stage); filter: brightness(calc(1 - 0.5 * var(--dim, 0))); transition: filter 400ms var(--ease-standard); }
@@ -18,6 +30,9 @@
 
 /* ------------------------------------------------------------------ top bar */
 .lktop { z-index: 60; }
+/* A soft scrim under the bar: the string lights pass behind the title and the room code, never through them. */
+.lktop::before { content: ""; position: absolute; z-index: -1; top: -4px; bottom: -12px; inset-inline: -48px; pointer-events: none;
+  background: linear-gradient(180deg, rgb(5 14 20 / 0.6), rgb(5 14 20 / 0.4) 60%, rgb(5 14 20 / 0)); }
 .lktop__title { display: inline-flex; align-items: center; gap: 10px; color: var(--w-accent-text); }
 .lktop__sep { color: var(--color-outline-strong); }
 .lktop__title .tnum { color: var(--color-text-secondary); }
@@ -99,18 +114,22 @@
 .lkcast__ch { will-change: transform; }
 .lkcast__ch .lkjury__name { transition: opacity 200ms; }
 .lkrev[data-running="1"] .lkcast__ch:not(.is-top) .lkjury__name { opacity: calc(1 - var(--dim, 0) * 0.6); }
-/* runners stand in a tight conga line: their name plates would pile up, so they fade out as the line forms (the
+/* runners stand in a tight conga line: their name plates would pile up, so they are gone before the run starts (the
    characters keep their colours; the score rail below names everyone) */
-.lkrev .lkcast__ch.is-runner .lkjury__name { opacity: calc(1 - var(--count, 0)); }
+.lkrev .lkcast__ch.is-runner .lkjury__name { opacity: calc(1 - var(--dim, 0) * 1.5); transition: none; }
 /* runners stand shoulder to shoulder: their +N rides on the coin flight and the score rail instead of a pill */
 .lkcast__ch.is-runner .lkgain { display: none; }
 /* secret votes: the percentage board takes the unanimous banner's place */
 .lkrev--secret .lkbanner { opacity: calc(1 - var(--board, 0) * 2); }
-.lkgain { position: absolute; top: 102px; left: 50%; transform: translateX(-50%) scale(calc(0.6 + 0.4 * var(--tick, 0))); opacity: var(--tick, 0); padding: 0 8px; border-radius: 99px;
-  background: var(--lk-gold); color: var(--lk-ink); font: 900 16px/22px var(--font-sans); white-space: nowrap; z-index: 2; }
+/* +N rides above the head, where a picked target's count bubble stood (it hands over as the counters tick): never down
+   at the caption band */
+.lkgain { position: absolute; top: -34px; left: 50%; transform: translateX(-50%) scale(calc(0.6 + 0.4 * var(--tick, 0))); opacity: var(--tick, 0); padding: 0 8px; border-radius: 99px;
+  background: var(--lk-gold); color: var(--lk-ink); font: 900 16px/22px var(--font-sans); white-space: nowrap; z-index: 2; box-shadow: 0 4px 10px rgb(0 0 0 / 0.4); }
 .lkcount { position: absolute; z-index: 46; transform: translateX(-50%) scale(calc(0.4 + 0.6 * min(1, var(--count, 0) * 2))); opacity: calc(var(--count, 0) * 3 - var(--board, 0) * 3);
   min-width: 40px; height: 36px; padding-inline: 10px; display: grid; place-items: center; border-radius: 18px; background: var(--w-surface); color: #FFF7EC; font: 900 22px/1 var(--font-sans);
   box-shadow: inset 0 0 0 2px rgb(184 255 246 / 0.5), 0 6px 14px rgb(0 0 0 / 0.4); }
+.lkcount.has-gain { opacity: calc(var(--count, 0) * 3 - var(--tick, 0) * 3); }
+.lkrev.is-chaos .lkcount { z-index: 49; }
 .lkcount::after { content: ""; position: absolute; bottom: -6px; left: 50%; width: 12px; height: 12px; background: inherit; transform: translateX(-50%) rotate(45deg); box-shadow: inset -2px -2px 0 0 rgb(184 255 246 / 0.5); }
 .lkspot { position: absolute; inset: 0; z-index: 40; pointer-events: none; }
 .lkspot__dim { fill: rgb(2 8 14 / 0.66); opacity: var(--spot, 0); }
@@ -118,13 +137,16 @@
 .lkstamp { position: absolute; z-index: 47; transform: translate(-50%, -30%) rotate(calc((1 - var(--stamp, 0)) * 180deg)) scale(var(--stamp, 0)); opacity: min(1, calc(var(--stamp, 0) * 3)); filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.5)); }
 .lkplate { position: absolute; top: 404px; left: 50%; z-index: 48; margin: 0; display: inline-flex; align-items: center; gap: 10px; padding: 4px 18px 4px 10px; border-radius: 99px; white-space: nowrap;
   background: linear-gradient(180deg, var(--lk-gold-hi), var(--lk-gold) 55%, var(--lk-gold-lo)); color: var(--lk-ink); font: 900 22px/32px var(--font-sans); box-shadow: 0 8px 20px rgb(0 0 0 / 0.45);
-  transform: translateX(-50%) scale(calc(0.7 + 0.3 * var(--stamp, 0))); opacity: calc(var(--stamp, 0) * 2 - var(--hold, 0) * 3); }
+  transform: translateX(-50%) scale(calc(0.7 + 0.3 * var(--stamp, 0))); opacity: calc(var(--stamp, 0) * 2 - var(--hold, 0) * 8); }
 .lkplate__who { padding-inline-start: 10px; border-inline-start: 2px solid rgb(27 20 48 / 0.25); font-weight: 800; }
-.lkcaption { position: absolute; top: 404px; left: 50%; z-index: 48; margin: 0; transform: translateX(-50%) translateY(calc((1 - var(--hold, 0)) * 10px)); opacity: calc(var(--hold, 0) * 2 - 0.6);
+/* The hold step lasts the rest of the server window (choreo.ts fitReveal): the caption rises in its first fifth, then stays. */
+.lkcaption { --in: min(1, var(--hold, 0) * 5); position: absolute; top: 404px; left: 50%; z-index: 48; margin: 0; transform: translateX(-50%) translateY(calc((1 - var(--in)) * 10px)); opacity: var(--in);
   display: inline-flex; align-items: center; gap: 12px; padding: 4px 20px; border-radius: 99px; background: rgb(7 26 36 / 0.82); color: var(--color-text); font: var(--tv-title); white-space: nowrap; box-shadow: inset 0 0 0 1.5px rgb(255 201 77 / 0.5); }
 .lkcaption__icon { color: var(--lk-gold); animation: lk-bounce 900ms var(--ease-standard) infinite; }
 @keyframes lk-bounce { 50% { transform: translateY(-5px); } }
-.lkcaption.is-chaos, .lkcaption.is-none { top: 214px; font: var(--tv-headline); color: var(--lk-gold); opacity: max(var(--hold, 0), var(--dim, 0)); background: rgb(7 26 36 / 0.9); padding: 10px 28px; transform: translateX(-50%) rotate(-2deg); }
+/* chaos / no votes: one line in the card band, under the small card (bottom ≈ 160) and above the count bubbles (≥ 222) */
+.lkcaption.is-chaos, .lkcaption.is-none { top: 166px; z-index: 47; width: max-content; max-width: 900px; overflow: hidden; text-overflow: ellipsis; justify-content: center; font: 900 26px/34px var(--font-sans);
+  color: var(--lk-gold); opacity: max(var(--in), var(--dim, 0)); background: rgb(7 26 36 / 0.9); padding: 4px 22px; border-radius: 20px; transform: translateX(-50%) rotate(-1.5deg); }
 .lkagain { position: absolute; top: 212px; inset-inline-end: 60px; z-index: 49; margin: 0; padding: 6px 18px; border: 3px solid var(--lk-gold); border-radius: 12px; color: var(--lk-gold); font: 900 30px/36px var(--font-sans);
   text-transform: uppercase; transform: rotate(-8deg) scale(calc(2 - var(--stamp, 0))); opacity: var(--stamp, 0); background: rgb(7 26 36 / 0.7); }
 .lkbanner { position: absolute; top: 196px; left: 50%; z-index: 49; margin: 0; padding: 6px 28px; border-radius: 16px; background: linear-gradient(180deg, var(--lk-gold-hi), var(--lk-gold) 55%, var(--lk-gold-lo)); color: var(--lk-ink);
@@ -183,6 +205,11 @@
 .lkpod__glint { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.85) 50%, transparent 65%); mix-blend-mode: overlay; transform: translateX(-120%);
   animation: lk-glint 900ms var(--ease-standard) both; animation-delay: calc(var(--i) * 350ms + 1100ms); }
 @keyframes lk-glint { to { transform: translateX(120%); } }
+/* DESIGN-JAMAA §6.2 F: Arabic fades instead of sweeping (a sweep over joined script reads as a grey block). */
+[dir="rtl"] .lkpod__glint { mix-blend-mode: normal; background: none; animation: none; }
+[dir="rtl"] .lkpod__title { animation-name: lk-up, lk-glow; animation-duration: 400ms, 900ms; animation-timing-function: var(--ease-decel), ease-in-out;
+  animation-delay: calc(var(--i) * 350ms + 700ms), calc(var(--i) * 350ms + 1100ms); animation-fill-mode: both, none; }
+@keyframes lk-glow { 50% { filter: brightness(1.35) drop-shadow(0 0 8px rgb(255 201 77 / 0.6)); } }
 .lkpod__line { margin: 0; font: 600 17px/23px var(--font-sans); color: var(--color-text-secondary); text-wrap: balance; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
   animation: fade-in 400ms both; animation-delay: calc(var(--i) * 350ms + 900ms); }
 .lkpod__extras { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 4px; }
@@ -195,9 +222,13 @@
 .tv:lang(ar) .lkmr__title { line-height: 70px; }
 .lkmr__line { margin: 2px 0 0; font: var(--tv-body); color: var(--color-text-secondary); }
 .lkmr__steps { flex: 1; display: flex; align-items: flex-end; justify-content: center; gap: 14px; width: 100%; }
-.lkmr__step { width: 200px; display: flex; flex-direction: column; align-items: center; animation: lk-up 500ms var(--ease-decel) both; }
+.lkmr__step { width: 230px; display: flex; flex-direction: column; align-items: center; animation: lk-up 500ms var(--ease-decel) both; }
 .lkmr__step.is-p3 { animation-delay: 200ms; } .lkmr__step.is-p2 { animation-delay: 500ms; } .lkmr__step.is-p1 { animation-delay: 900ms; }
-.lkmr__who { position: relative; }
+.lkmr__who { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 2px; }
+.lkmr__ch { position: relative; display: inline-flex; }
+.lkmr__more { align-self: center; padding: 0 8px; border-radius: 99px; background: rgb(7 26 36 / 0.8); color: var(--lk-gold); font: 900 16px/24px var(--font-sans); }
+/* tied players share the step: their names wrap onto two lines */
+.lkmr__step.is-tie .lkmr__name { white-space: normal; text-align: center; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 18px; line-height: 22px; }
 .lkmr__ball { position: absolute; bottom: 4px; inset-inline-end: -42px; animation: lk-drop 700ms var(--ease-overshoot) 1300ms both; filter: drop-shadow(0 0 16px rgb(184 255 246 / 0.8)); }
 .lkmr__name { margin: 4px 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-title); }
 .lkmr__block { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; padding-top: 8px; border-radius: 14px 14px 0 0;
@@ -214,7 +245,7 @@
 .lkres__body { position: absolute; top: 90px; bottom: 112px; inset-inline: 48px; z-index: 5; display: flex; gap: 22px; }
 .lkres__h { margin: 0 0 8px; display: flex; align-items: center; gap: 8px; font: 800 18px/24px var(--font-sans); color: var(--lk-gold); text-transform: uppercase; letter-spacing: 0.06em; }
 .tv:lang(ar) .lkres__h { text-transform: none; letter-spacing: 0; }
-.lkres__rank { width: 320px; flex: none; padding: 14px 16px; border-radius: 20px; background: rgb(7 26 36 / 0.78); box-shadow: inset 0 0 0 1px rgb(255 201 77 / 0.3); }
+.lkres__rank { width: 290px; flex: none; padding: 14px 16px; border-radius: 20px; background: rgb(7 26 36 / 0.78); box-shadow: inset 0 0 0 1px rgb(255 201 77 / 0.3); }
 .lkres__list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
 .lkres__row { display: grid; grid-template-columns: 22px 40px 1fr auto; align-items: center; gap: 10px; height: 44px; padding-inline: 6px 10px; border-radius: 12px; animation: lk-up 400ms var(--ease-decel) both; animation-delay: calc(var(--i) * 90ms); }
 .lkres__row.is-win { background: rgb(255 201 77 / 0.16); box-shadow: inset 0 0 0 1.5px rgb(255 201 77 / 0.6); }
@@ -222,20 +253,32 @@
 .lkres__pos { font: 900 18px/1 var(--font-sans); color: var(--color-text-muted); }
 .lkres__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 19px/24px var(--font-sans); }
 .lkres__score { font: 900 20px/1 var(--font-sans); color: var(--lk-gold); }
-.lkres__wall { flex: 1; min-width: 0; padding: 14px 16px; border-radius: 20px; background: rgb(7 26 36 / 0.78); box-shadow: inset 0 0 0 1px rgb(255 201 77 / 0.3); }
-.lkres__grid { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
-.lkres.is-secret .lkres__grid.is-dense { grid-template-columns: 1fr 1fr 1fr; }
-.lkres__award { display: flex; align-items: center; gap: 10px; min-width: 0; min-height: 50px; animation: lk-up 400ms var(--ease-decel) both; animation-delay: calc(300ms + var(--i) * 70ms); }
+.lkres__wall { flex: 1; min-width: 0; overflow: hidden; padding: 14px 16px; border-radius: 20px; background: rgb(7 26 36 / 0.78); box-shadow: inset 0 0 0 1px rgb(255 201 77 / 0.3); }
+/* The wall carries the jokes: the award title, extras as chips under it, and the prompt itself (no "Who's most likely
+   to" lead-in, promptLine). ≤ 4 entries: two roomy columns; 5–9: three columns with the prompt; 10+: three, titles only. */
+.lkres__grid { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; align-content: start; }
+.lkres__grid--mid, .lkres__grid--dense { grid-template-columns: 1fr 1fr 1fr; gap: 8px 10px; }
+.lkres__award { position: relative; display: grid; grid-template-columns: auto 1fr; align-items: start; column-gap: 12px; min-width: 0; padding: 10px 12px; border-radius: 16px;
+  background: rgb(255 201 77 / 0.06); box-shadow: inset 0 0 0 1px rgb(255 201 77 / 0.18); animation: lk-up 400ms var(--ease-decel) both; animation-delay: calc(300ms + var(--i) * 70ms); }
 .lkres__award.is-left { opacity: 0.5; }
-.lkres__awtext { display: flex; flex-direction: column; min-width: 0; }
-.lkres__awname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 17px/22px var(--font-sans); }
-.lkres__awtitle { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font: 800 16px/22px var(--font-sans); color: var(--lk-gold); }
-.lkres__grid.is-dense .lkres__award { height: 44px; }
-.lkres__awline { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font: 500 14px/19px var(--font-sans); color: var(--color-text-secondary, #CFC3E8); }
-.lkres__grid:not(.is-dense) { gap: 18px 20px; align-content: start; }
-.lkres__grid:not(.is-dense) .lkres__award { align-items: flex-start; gap: 14px; padding: 12px 14px; border-radius: 16px; background: rgb(255 201 77 / 0.06); box-shadow: inset 0 0 0 1px rgb(255 201 77 / 0.18); }
-.lkres__grid:not(.is-dense) .lkres__awname { font-size: 19px; line-height: 24px; }
-.lkres__grid:not(.is-dense) .lkres__awtitle { font-size: 18px; line-height: 24px; }
+.lkres__awtext { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lkres__awname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 18px/22px var(--font-sans); }
+.lkres__awtitle { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font: 800 17px/21px var(--font-sans); color: var(--lk-gold); }
+.lkres__chips { display: flex; flex-wrap: wrap; gap: 4px; margin-block: 1px; }
+.lkres__chip { display: inline-flex; align-items: center; gap: 3px; max-width: 100%; padding: 0 8px; border-radius: 99px; background: rgb(255 201 77 / 0.16); color: var(--lk-gold-hi);
+  font: 800 13px/20px var(--font-sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lkres__awline { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; font: 500 15px/19px var(--font-sans); color: var(--color-text-secondary, #CFC3E8); }
+/* mid / dense: the character sits small beside the name; title, chips and prompt take the column's full width */
+.lkres__grid--mid .lkres__award, .lkres__grid--dense .lkres__award { grid-template-columns: auto 1fr; column-gap: 8px; padding: 6px 10px 8px; border-radius: 12px; }
+.lkres__grid--mid .lkres__award > .ch, .lkres__grid--dense .lkres__award > .ch { grid-row: 1; align-self: center; }
+.lkres__grid--mid .lkres__awtext, .lkres__grid--dense .lkres__awtext { display: contents; }
+.lkres__grid--mid .lkres__awname, .lkres__grid--dense .lkres__awname { grid-column: 2; grid-row: 1; align-self: center; font-size: 16px; line-height: 20px; }
+.lkres__grid--mid .lkres__awtitle, .lkres__grid--mid .lkres__chips, .lkres__grid--mid .lkres__awline,
+.lkres__grid--dense .lkres__awtitle, .lkres__grid--dense .lkres__chips { grid-column: 1 / -1; margin-top: 3px; }
+.lkres__grid--mid .lkres__awtitle, .lkres__grid--dense .lkres__awtitle { font-size: 15px; line-height: 19px; }
+.lkres__grid--mid .lkres__awline { -webkit-line-clamp: 2; font-size: 13px; line-height: 17px; }
+.lkres__grid--dense .lkres__chip { font-size: 12px; line-height: 17px; }
+.tv:lang(ar) .lkres__awtitle, .tv:lang(ar) .lkres__awline { line-height: 1.45; }
 
 .lk-rosette__label { font: 900 9px var(--font-sans); fill: #3A2300; }
 .lk-puff__q { font: 900 40px var(--font-sans); fill: #2A1B47; }

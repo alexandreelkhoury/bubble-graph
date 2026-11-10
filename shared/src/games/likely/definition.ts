@@ -24,10 +24,10 @@ export type LikelyDefinition = GameDefinition<LikelyState, LikelySettings, Likel
 export function createLikelyDefinition(opt: LikelyEngineOptions): LikelyDefinition {
   return {
     meta: LIKELY_META,
-    // JAMAA-PLATFORM §6.2: a game goes live by adding its id to GAMES_ENABLED. Whether the G3 lane A also flips this
-    // registry flag is not stated (SPEC-GAP, reported); like Bluff, Likely stays registry-disabled until the owner decides,
-    // and every room test that plays it passes `enabledGames` explicitly.
-    enabled: false,
+    // JAMAA-PLATFORM §6.2 / §2.5: G3 is built, so Likely is registry-enabled (no longer a stub; owner-approved in the G3
+    // review, as Trivia did for G4). It is live only where the deploy's GAMES_ENABLED lists it: production keeps the
+    // default (server/wrangler.jsonc) until the owner adds "likely"; local dev: `GAMES_ENABLED=mishana,likely pnpm dev`.
+    enabled: true,
     stateSchema: STATE_SCHEMA,
     settings: {
       apply: (s, patch, content, locale, by?: GameActor) => applySettings(s, patch, content, locale, by, opt),

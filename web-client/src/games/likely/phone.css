@@ -36,11 +36,12 @@
 @keyframes lk-tile-in { from { opacity: 0; transform: translateY(12px) scale(0.94); } to { opacity: 1; transform: none; } }
 .lk-tile:active { transform: scale(0.95); }
 .lk-tile.is-me { box-shadow: inset 0 0 0 2px transparent; background-image: none; outline: 2px dashed rgb(255 247 236 / 0.35); outline-offset: -6px; }
-.lk-tile.is-picked { box-shadow: inset 0 0 0 2px rgb(255 247 236 / 0.7); }
+/* §8.2: the pick reads to its owner, not over a shoulder: a faint hairline and a small bare check ("Vote in!" confirms). */
+.lk-tile.is-picked { box-shadow: inset 0 0 0 1.5px rgb(255 247 236 / 0.3); }
 .lk-tile.is-away { opacity: 0.7; }
 .lk-tile__name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--type-ph-small); font-weight: 800; }
-.lk-tile__check { position: absolute; top: 8px; inset-inline-end: 8px; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; color: var(--color-ink); }
-.lk-tile.is-picked .lk-tile__check { background: rgb(255 247 236 / 0.85); animation: lk-pop 220ms var(--ease-overshoot) both; }
+.lk-tile__check { position: absolute; top: 8px; inset-inline-end: 8px; display: grid; place-items: center; width: 16px; height: 16px; color: var(--color-ink); }
+.lk-tile.is-picked .lk-tile__check { color: rgb(255 247 236 / 0.55); animation: lk-pop 220ms var(--ease-overshoot) both; }
 @keyframes lk-pop { from { transform: scale(0); } to { transform: scale(1); } }
 .lk-progress { margin: 0; text-align: center; color: var(--color-text-muted); font: var(--type-ph-small); font-weight: 700; }
 .lk-named { margin: 0; }

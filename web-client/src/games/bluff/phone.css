@@ -126,7 +126,7 @@
 .odo { display: inline-flex; height: 1.15em; overflow: hidden; line-height: 1.15em; vertical-align: bottom; }
 .odo__col { display: inline-block; width: 0.62em; height: 1.15em; overflow: hidden; transition: width 200ms var(--ease-standard), opacity 200ms; }
 .odo__col.is-lead { width: 0; opacity: 0; }
-.odo__strip { display: flex; flex-direction: column; transform: translateY(calc(var(--d, 0) * -1.15em)); transition: transform 420ms var(--ease-decel); }
+.odo__strip { display: flex; flex-direction: column; transform: translateY(calc(var(--d, 0) * -1.15em)); }
 .odo__strip > span { height: 1.15em; text-align: center; }
 
 /* BL-PH-05 scores */
@@ -176,4 +176,4 @@
 }
 :root[data-calm] .bf-ph *, :root[data-calm] .bf-ph *::before { animation-duration: 1ms !important; animation-delay: 0ms !important; }
 /* Signed numbers read the same in every locale ("+150", never "150+"). */
-.bf-mine__delta, .bf-total__pts, .bf-own b, .bf-x2 { direction: ltr; unicode-bidi: isolate; }
+.bf-mine__delta, .bf-total__pts, .bf-own b, .bf-x2, .bf-signed { direction: ltr; unicode-bidi: isolate; }

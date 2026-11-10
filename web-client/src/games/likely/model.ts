@@ -205,6 +205,22 @@ export function ranking(m: LikelyModel): Seat[] {
   return [...m.seats].sort((a, b) => b.score - a.score || a.seat - b.seat);
 }
 
+/** Competition ranking (GAME-LIKELY §6: ties share; 700, 700, 700, 500 → 1, 1, 1, 4), in `ranking` order. */
+export function rankRows(seats: readonly Seat[]): { seat: Seat; rank: number }[] {
+  const sorted = [...seats].sort((a, b) => b.score - a.score || a.seat - b.seat);
+  return sorted.map((seat) => ({ seat, rank: 1 + sorted.filter((o) => o.score > seat.score).length }));
+}
+
+/**
+ * The Mind Reader podium (players still in the game): step 1, 2 and 3 hold everyone of competition rank 1, 2 and 3, so
+ * tied players stand on the same step and a step a tie skipped stays empty.
+ */
+export function podiumSteps(m: LikelyModel): [Seat[], Seat[], Seat[]] {
+  const rows = rankRows(m.seats.filter((s) => !s.left));
+  const at = (r: number): Seat[] => rows.filter((x) => x.rank === r).map((x) => x.seat);
+  return [at(1), at(2), at(3)];
+}
+
 // ---------------------------------------------------------------- the TV reveal plan (§12.2, DESIGN-JAMAA §5.3)
 
 /** The /tv canvas is 960 × 540; the shared layout works in the 864 × 486 safe area (5 % overscan margins). */

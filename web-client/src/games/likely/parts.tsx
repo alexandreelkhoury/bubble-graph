@@ -30,6 +30,16 @@ export function Question({ prompt, class: cls }: { prompt: string; class?: strin
   );
 }
 
+/**
+ * The card's prompt alone with the locale's question marks and an elision for the lead-in ("…cry at a wedding?",
+ * "¿…llorar en una boda?", "…يبكي بعرس؟"): the awards wall shows the joke, not "Who's most likely to" again.
+ */
+export function promptLine(prompt: string): string {
+  const [before, after] = tSplit(k("card.question"), "prompt", { prompt: "" });
+  const open = /^[¿¡]/.exec(before.trim())?.[0] ?? "";
+  return `${open}…${prompt}${after.trimEnd()}`;
+}
+
 /** The whole question as one plain string (aria labels, announcements). */
 export function questionText(prompt: string): string {
   return t(k("card.question"), { prompt });

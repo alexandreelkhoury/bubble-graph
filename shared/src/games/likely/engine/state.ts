@@ -1,6 +1,7 @@
 // GAME-LIKELY §4–§7, §13: the engine state, intents and view types (zod-free; protocol.ts mirrors the wire types and
 // checks they agree). Everything here is plain JSON so the room can persist it as is.
 import type { Locale } from "../../../constants";
+import { LIKELY_RUNNER_UP_VALUE } from "../meta";
 import type { LikelyAwardKind, LikelyDeltaReason, LikelyMode, LikelyPhase, LikelySettings } from "../meta";
 
 /** Bumped on any breaking change of LikelyState (the room aborts a stored instance whose schema differs, §2.2). */
@@ -22,6 +23,10 @@ export const MAX_CARD_POINTS = AGREE_CAP + UNANIMOUS_BONUS + SELF_AWARE_BONUS;
 
 // Awards (§6.2) and the "AGAIN?!" line (§6.1).
 export const STAR_MIN_TOPS = 3;
+/** Runner-up signature (owner amendment of §6.2 rule 2, G3 review): ≥ 2 votes on a card the player did not top. */
+export const RUNNER_UP_MIN_VOTES = 2;
+/** `value` of a runner-up signature award ("Runner-up: {award}"); a top signature keeps `value: null`. */
+export const RUNNER_UP_VALUE = LIKELY_RUNNER_UP_VALUE;
 export const SELF_AWARE_AWARD_MIN = 2;
 export const AGAIN_STREAK = 3;
 
@@ -77,8 +82,10 @@ export interface LikelyCardResult {
 export interface LikelyAwardEntry {
   kind: LikelyAwardKind;
   playerIds: string[];        // one id for signature/mystery; ties share star/selfAware/mindReader (seat order)
-  /** signature: the result index; star: cards topped; selfAware: bonuses; mindReader: points; mystery: null. */
+  /** signature: the result index; star, selfAware, mindReader, mystery: null. */
   cardIndex: number | null;
+  /** signature: null (top of the card) or RUNNER_UP_VALUE (2: runner-up); star: cards topped; selfAware: bonuses;
+   *  mindReader: points; mystery: null. */
   value: number | null;
 }
 

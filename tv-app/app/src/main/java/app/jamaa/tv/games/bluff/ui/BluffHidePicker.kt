@@ -30,6 +30,7 @@ import app.jamaa.tv.R
 import app.jamaa.tv.games.bluff.BluffBoard
 import app.jamaa.tv.games.bluff.BluffView
 import app.jamaa.tv.games.bluff.HidePicker
+import app.jamaa.tv.games.bluff.OptionLetters
 import app.jamaa.tv.platform.RemoteKey
 import app.jamaa.tv.protocol.GameIntent
 import app.jamaa.tv.ui.components.InitialFocus
@@ -44,12 +45,14 @@ import app.jamaa.tv.ui.theme.JamaaTheme
  * on the corkboard (same order, same grid, RTL mirrored) with a visible focus ring; the D-pad moves, OK sends
  * HIDE_OPTION for the focused card, Back closes. Nothing here depends on what a card is (the kind is never known).
  * JAMAA-GAP (G2): the platform pause menu sends only `{type}`; it must open this picker for [BluffTv.pauseAction]
- * `PickOptionToHide` (see the lane report). [onSend] gets the intent, [onClose] dismisses.
+ * `PickOptionToHide` (patch in the G2 lane C report: an overlay from AppRoot whose Back returns to the pause menu).
+ * [onSend] gets the HIDE_OPTION intent, [onClose] dismisses.
  */
 @Composable
 fun BluffHidePicker(view: BluffView, onSend: (GameIntent) -> Unit, onClose: () -> Unit) {
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val picker = remember(view.options) { HidePicker(view.options.map { it.id }, rtl) }
+    val picker = remember(view.options) { HidePicker(view.options.map { it.id }, rtl) } // initial focus: card 0 (A)
+    val letters = OptionLetters.shared.of(view)
     var focus by remember(view.options) { mutableIntStateOf(picker.focus) }
     val root = remember { FocusRequester() }
     val type = JamaaTheme.type
@@ -89,11 +92,16 @@ fun BluffHidePicker(view: BluffView, onSend: (GameIntent) -> Unit, onClose: () -
                             Box(Modifier.weight(1f)) {
                                 if (index != null) {
                                     val focused = index == focus
-                                    OptionCard(
-                                        view.options[index].text,
-                                        Modifier.fillMaxWidth().border(if (focused) 4.dp else 0.dp, if (focused) JamaaColors.Focus else Paper, RoundedCornerShape(14.dp)),
-                                        dense = cols == 2,
-                                    )
+                                    // Cells are placed by visual column; each card keeps the room's direction, so its
+                                    // letter badge sits at the start edge (right in RTL), as on the corkboard.
+                                    androidx.compose.runtime.CompositionLocalProvider(LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
+                                        OptionCard(
+                                            view.options[index].text,
+                                            Modifier.fillMaxWidth().border(if (focused) 4.dp else 0.dp, if (focused) JamaaColors.Focus else Paper, RoundedCornerShape(14.dp)),
+                                            dense = cols == 2,
+                                            letter = letters[view.options[index].id] ?: OptionLetters.letterOf(index),
+                                        )
+                                    }
                                 }
                             }
                         }

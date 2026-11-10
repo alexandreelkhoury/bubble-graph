@@ -25,7 +25,8 @@ function garland(y0: number, sag: number, n: number, x0 = -10, x1 = 970): { d: s
   }
   return { d: `M${x0} ${y0} Q ${(x0 + x1) / 2} ${y0 + sag * 2} ${x1} ${y0}`, bulbs: pts.slice(1, -1) };
 }
-const G1 = garland(-6, 46, 22), G2 = garland(10, 30, 16, 120, 980);
+// Strung overhead, above the top bar (y 27–75): the lowest bulb stays at y ≤ 22 so none sits on the title or room code.
+const G1 = garland(-26, 40, 22), G2 = garland(-20, 30, 16, 120, 980);
 /** The city skyline (original silhouette: low blocks, a crane, water tanks), behind the jury. */
 const SKYLINE = "M0 470 V430 h40 v-22 h26 v30 h30 v-48 h22 v-14 h10 v14 h18 v56 h34 v-36 h44 v-18 h8 v18 h30 v46 h26 v-70 h36 v70 h22 v-30 h40 v-26 h12 v26 h24 v44 h30 v-58 h20 v-10 h16 v10 h14 v58 h40 v-34 h36 v-20 h26 v54 h22 v-42 h34 v42 h40 v-64 h28 v64 h26 v-28 h40 v40 h28 v-24 h30 V540 H0z";
 

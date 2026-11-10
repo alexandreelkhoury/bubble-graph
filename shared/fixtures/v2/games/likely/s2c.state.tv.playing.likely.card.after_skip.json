@@ -2,7 +2,7 @@
   "v": 2,
   "t": "state",
   "seq": 17,
-  "serverNow": 1790000018000,
+  "serverNow": 1790000020000,
   "view": {
     "kind": "tv",
     "room": {
@@ -108,7 +108,7 @@
         "phase": "CARD",
         "cardIndex": 1,
         "cardCount": 8,
-        "deadline": 1790000021100,
+        "deadline": 1790000023100,
         "card": {
           "id": "fam-007",
           "prompt": "still be dancing at sunrise",

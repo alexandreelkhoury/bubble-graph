@@ -79,6 +79,22 @@ function frameLeaks(s: BluffState, frame: string, viewer: string | null): string
   return out;
 }
 
+type Envelope = { gameId: string; phase: string; doneIds: string[]; awaitedIds: string[]; public: { promptIndex: number; votedIds: string[] } };
+const envOf = (m: unknown): Envelope | null => ((m as { view?: { game?: Envelope | null } }).view?.game ?? null);
+
+/** Ballot secrecy across frames (§8.1): within one VOTING prompt, votedIds/doneIds only grow and awaitedIds only
+ *  shrink (a hide that drops a voter would expose who had picked the hidden card). `last` is per socket. */
+function ballotMonotonic(last: Map<string, Envelope>, label: string, env: Envelope | null, errs: string[]): void {
+  if (!env || env.gameId !== "bluff") return;
+  const prev = last.get(label);
+  if (env.phase === "VOTING" && prev?.phase === "VOTING" && prev.public.promptIndex === env.public.promptIndex) {
+    for (const id of prev.public.votedIds) if (!env.public.votedIds.includes(id)) errs.push(`${label}: votedIds dropped ${id}`);
+    for (const id of prev.doneIds) if (!env.doneIds.includes(id)) errs.push(`${label}: doneIds dropped ${id}`);
+    for (const id of env.awaitedIds) if (!prev.awaitedIds.includes(id)) errs.push(`${label}: awaitedIds re-added ${id}`);
+  }
+  last.set(label, env);
+}
+
 describe("Bluff over protocol v2 (RoomCore + fakes)", () => {
   it("one full session: hub → mishana → replay → hub → bluff → RESULTS, frames valid and leak-free", async () => {
     const h = await new Harness({ enabledGames: [...BLUFF_ON], content: withBluff() }).init();
@@ -100,10 +116,12 @@ describe("Bluff over protocol v2 (RoomCore + fakes)", () => {
     const socks: [FakeConn, string | null][] = [[tv, null], ...ps.map((p): [FakeConn, string | null] => [p.conn, p.pid])];
     for (const [c] of socks) c.clear();
     const errs: string[] = [];
+    const last = new Map<string, Envelope>();
     await playBluff(h, tv, ps, () => {
       const s = bluff(h);
       for (const [c, viewer] of socks) {
         for (const m of c.of("state")) {
+          ballotMonotonic(last, c.label, envOf(m), errs);
           const raw = JSON.stringify(m);
           const parsed = ServerMessageV2Schema.safeParse(m);
           if (!parsed.success) errs.push(`${c.label}: invalid frame ${JSON.stringify(parsed.error.issues.slice(0, 2))}`);
@@ -119,6 +137,43 @@ describe("Bluff over protocol v2 (RoomCore + fakes)", () => {
     expect(Object.keys(h.room.cup.stars).length).toBeGreaterThan(0);
     expect(h.history.memory.bluff?.usedKeys.length).toBe(5);
     expect(h.history.games.map((g) => g.gameId)).toEqual(["mishana", "mishana", "bluff"]);
+  });
+
+  it("a host hide in the final never changes votedIds/doneIds/awaitedIds on any socket (5 phones, review blocker)", async () => {
+    const { h, tv, ps } = await bluffRoom(5);
+    await h.act(tv, { type: "START_GAME" });
+    for (let i = 0; i < 200; i++) {
+      const s = bluff(h);
+      if (s.phase === "WRITING" && s.plan[s.promptIndex] === "noTruth") break;
+      h.advance(Math.max(0, (s.deadline ?? h.now) - h.now));
+      await h.core.onAlarm();
+    }
+    expect(bluff(h).phase).toBe("WRITING");
+    for (const [k, p] of ps.entries()) await gameAct(h, p.conn, { type: "SUBMIT_LIE", text: ["Purple goats sing", "Grandma bakes clouds", "Uncle jazz forever", "Tiny pickles sideways", "Moon under quietly"][k]!, promptId: bluff(h).prompt!.id });
+    expect(bluff(h).phase).toBe("VOTING");
+    const target = bluff(h).options.find((o) => o.authors.includes(ps[0]!.pid))!.id;
+    const other = (pid: string) => bluff(h).options.find((o) => o.id !== target && !o.authors.includes(pid))!.id;
+    await gameAct(h, ps[1]!.conn, { type: "VOTE", optionId: target });
+    await gameAct(h, ps[2]!.conn, { type: "VOTE", optionId: target });
+    await gameAct(h, ps[3]!.conn, { type: "VOTE", optionId: other(ps[3]!.pid) });
+    const socks = [tv, ...ps.map((p) => p.conn)];
+    const before = socks.map((c) => envOf(c.last("state"))!);
+    for (const e of before) expect(e.public.votedIds).toHaveLength(3);
+    for (const c of socks) c.clear();
+    await gameAct(h, tv, { type: "HIDE_OPTION", optionId: target });            // the TV remote holder
+    expect(bluff(h).phase).toBe("VOTING");
+    expect(bluff(h).options.some((o) => o.id === target)).toBe(false);
+    socks.forEach((c, i) => {
+      const e = envOf(c.last("state"))!;
+      expect(e.public.votedIds, c.label).toEqual(before[i]!.public.votedIds);
+      expect(e.doneIds, c.label).toEqual(before[i]!.doneIds);
+      expect(e.awaitedIds, c.label).toEqual(before[i]!.awaitedIds);
+    });
+    // Only the displaced voters' own phones learn it (me.myVote back to null).
+    const meOf = (c: FakeConn) => (c.last("state") as unknown as { view: { game: { me: { myVote: string | null } } } }).view.game.me;
+    expect(meOf(ps[1]!.conn).myVote).toBeNull();
+    expect(meOf(ps[2]!.conn).myVote).toBeNull();
+    expect(meOf(ps[3]!.conn).myVote).not.toBeNull();
   });
 
   it("Bluff errors are non-fatal frames to the sender only; WRONG_GAME for another game's intent", async () => {

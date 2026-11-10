@@ -116,6 +116,7 @@ async function openLikely(r: Run, opts: { secret: boolean; short: boolean }): Pr
   await r.shot(tv, "tv-02-rules", 500);
   await press(tv, "Escape");
   await expect(tv.locator(".tvrules")).toHaveCount(0);
+  await tv.waitForTimeout(600); // the setup ignores the D-pad for INPUT_GUARD_MS after the sheet closes
   // Settings column: Short length (Left/Right steps the value), secret votes (OK toggles).
   await dpadTo(tv, "[data-howto]", back, 3).catch(() => undefined);
   await press(tv, fwd);
@@ -294,6 +295,17 @@ function checkSecrecy(r: Run, secret: boolean): void {
   }
 }
 
+/** GAME-LIKELY §6: equal scores print the same (competition) rank in the Mind Reader ranking. */
+async function expectSharedRanks(tv: Page): Promise<void> {
+  const rows = await tv.locator(".lkres__row").evaluateAll((els) => els.map((e) => ({ rank: Number((e as HTMLElement).dataset.rank), score: e.querySelector(".lkres__score")?.textContent ?? "" })));
+  expect(rows.length).toBeGreaterThan(0);
+  rows.forEach((row, i) => {
+    if (i === 0) expect(row.rank).toBe(1);
+    else if (row.score === rows[i - 1]!.score) expect(row.rank).toBe(rows[i - 1]!.rank);
+    else expect(row.rank).toBe(i + 1);
+  });
+}
+
 test.describe.configure({ mode: "serial" });
 
 test("Most Likely EN, public votes, 4 phones, remote-only TV: unanimous self-vote, chaos, tie, changed vote, Next via pause, awards, results", async ({ browser }) => {
@@ -304,6 +316,12 @@ test("Most Likely EN, public votes, 4 phones, remote-only TV: unanimous self-vot
   for (const p of r.phones) await expect(p.locator('.ingame[data-world="rooftop"]')).toBeVisible();
   // In game: Back → pause menu (Resume focused) → Rules → Back returns to the game.
   await expect(r.tv.locator(".lkplay")).toBeVisible({ timeout: 10_000 });
+  // GAME-LIKELY §4/§12.1: the first card waits for the world entrance (no deal under the curtain and title).
+  // Sampled in one frame (the entrance is ≤ 2 s): while the overlay is up there is never a dealt card.
+  expect(await r.tv.evaluate(() => !document.querySelector("[data-entrance]") || (!document.querySelector(".lkplay .lkcard") && !!document.querySelector(".lkplay[data-gated]")))).toBe(true);
+  await r.tv.locator("[data-entrance]").waitFor({ state: "detached", timeout: 10_000 });
+  await expect(r.tv.locator(".lkplay .lkcard")).toBeVisible();
+  await expect(r.tv.locator(".lkplay[data-gated]")).toHaveCount(0);
   await press(r.tv, "Escape");
   await expect(r.tv.locator(".tvdialog--menu")).toBeVisible();
   await expect(r.tv.locator(".tvdialog--menu [data-default-focus]")).toBeFocused();
@@ -323,6 +341,7 @@ test("Most Likely EN, public votes, 4 phones, remote-only TV: unanimous self-vot
   await r.shot(r.phones[0]!, "ph-30-results-vip", 0);
   await r.shot(r.phones[2]!, "ph-31-results", 0);
   await expect(r.tv.locator(".lkres__rank")).toBeVisible();
+  await expectSharedRanks(r.tv);
   checkSecrecy(r, false);
   // Other games → hub, by remote.
   await press(r.tv, "ArrowRight", 2);
@@ -351,10 +370,12 @@ test("Most Likely ES, public votes, 6 phones", async ({ browser }) => {
   test.setTimeout(900_000);
   const r = await setup(browser, "es", ["Lucía", "Mateo", "Sofía", "Diego", "Valentina", "Hugo"]);
   await openLikely(r, { secret: false, short: true });
-  await playToResults(r, { shots: true });
+  // Six phones under load: the pause menu's "Next" ends the ceremony early so the run stays well inside the timeout.
+  await playToResults(r, { shots: true, nextVia: true });
   await r.shot(r.tv, "tv-30-results", 1600);
   await expect(r.tv.locator("[data-replay]")).toBeFocused({ timeout: 20_000 });
   await r.shot(r.phones[0]!, "ph-30-results-vip", 0);
+  await expectSharedRanks(r.tv);
   checkSecrecy(r, false);
   for (const p of [...r.phones, r.tv]) await p.context().close();
 });

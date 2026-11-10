@@ -42,6 +42,99 @@ object BluffBoard {
 
     /** Character size on the café row: 72 dp up to 8 players, then 56 dp (still ≥ 40 dp, faces on). */
     fun rowCharacterDp(count: Int): Int = if (count <= 8) 72 else 56
+
+    /** Spacing of the characters sitting on the spotlight card's top edge (dp between centres). */
+    const val TRAVELLER_STEP_DP = 46f
+
+    /**
+     * Horizontal offset (dp, from the card centre) of traveller [k] of [n] landed on the card. A fooled voter's coin
+     * leaves from this same slot, so the room sees who paid whom (DESIGN-JAMAA §5.2).
+     */
+    fun travellerDx(k: Int, n: Int): Float = (k - (n - 1) / 2f) * TRAVELLER_STEP_DP
+
+    /** Height (dp) the platform's "◁ Back: menu & rules" hint takes at the top end corner (52 dp + a 32 dp chip). */
+    const val BACK_HINT_SLOT_DP = 40f
+
+    /**
+     * How far (dp) the REVEAL score rail sits lower so the platform's back hint (top end corner, shown for
+     * [app.jamaa.tv.platform.GameChrome.HINT_AFTER_PHASE_MS] after each phase change) never covers the first pill:
+     * the full slot while the hint shows, then the rail eases back up over 300 ms.
+     */
+    fun railHintShiftDp(sincePhaseMs: Long): Float {
+        val visibleUntil = app.jamaa.tv.platform.GameChrome.HINT_AFTER_PHASE_MS
+        if (sincePhaseMs < visibleUntil) return BACK_HINT_SLOT_DP
+        val q = ((sincePhaseMs - visibleUntil) / 300f).coerceIn(0f, 1f)
+        return BACK_HINT_SLOT_DP * (1f - q * q * (3f - 2f * q))
+    }
+}
+
+/**
+ * The score odometer (DESIGN-JAMAA §5.1): from 100 points a pill's number rolls one digit column per place, each
+ * column turning only while the places under it pass from 9 to 0 (a mechanical counter). Pure; JVM-tested.
+ */
+object BluffOdometer {
+    /** Counts under this tick as plain integers; from it they roll. */
+    const val FROM = 100
+
+    /** Digit columns needed to show every value up to [max] (at least one). */
+    fun places(max: Int): Int = max.coerceAtLeast(0).toString().length
+
+    /**
+     * The roll position (0 ≤ x < 10, fractional while turning) of the column for 10^[place] at the continuous count
+     * [value]: digit k shows `floor(x)` and is `x − floor(x)` of the way to the next digit.
+     */
+    fun column(value: Double, place: Int): Double {
+        val v = value.coerceAtLeast(0.0)
+        var p = 1.0
+        repeat(place) { p *= 10.0 }
+        val whole = kotlin.math.floor(v / p)
+        val digit = whole % 10.0
+        val lower = v - whole * p
+        val roll = (lower - (p - 1.0)).coerceIn(0.0, 1.0)
+        return digit + roll
+    }
+}
+
+/**
+ * What a prompt card shows (GAME-BLUFF §8.2; the web's `promptLines`): an Arabic original (a proverb, `translit` set)
+ * keeps its place, with the transliteration and the room-language translation under it; any other prompt shows the
+ * room-language text only ([BluffPrompt.display], else the original). An EN-sourced fact in a FR/AR/ES room is never
+ * headlined in English.
+ */
+data class PromptLines(val main: String, val translit: String?, val sub: String?) {
+    companion object {
+        fun of(p: BluffPrompt): PromptLines =
+            if (p.translit != null) PromptLines(p.original, p.translit, p.display?.takeIf { it != p.original })
+            else PromptLines(p.display ?: p.original, null, null)
+    }
+}
+
+/**
+ * Option letters (A, B, C … M; Western letters in every locale, like the phone and the room code), frozen for one
+ * VOTING/REVEAL of one prompt: the first options list seen keys the letters by option id, so a host hide leaves its
+ * letter unused instead of shifting the cards below it ("B" stays the card the couch agreed on). Same rule as the web's
+ * `optionLetters` (web-client/src/games/bluff/model.ts). A TV that joins after a hide can only letter what it sees.
+ */
+class OptionLetters {
+    private var key: String? = null
+    private val ids = ArrayList<String>()
+
+    fun of(view: BluffView): Map<String, Char> {
+        val k = "${view.n}:${view.round}:${view.promptIndex}:${view.prompt?.id ?: ""}"
+        if (k != key) {
+            key = k
+            ids.clear()
+        }
+        for (o in view.options) if (o.id !in ids) ids += o.id
+        return ids.withIndex().associate { (i, id) -> id to letterOf(i) }
+    }
+
+    companion object {
+        fun letterOf(index: Int): Char = 'A' + index
+
+        /** The screen-wide memo (the corkboard, the hide picker and the reveal intro read the same letters). */
+        val shared = OptionLetters()
+    }
 }
 
 /**
@@ -181,7 +274,7 @@ object BluffCues {
                 }
                 SegmentKind.TWIST -> add(Timed(at("stamp", 0) + 120, CuePlay(Cue.STAMP, rate = 0.9f)))
                 SegmentKind.NOBODY -> add(Timed(at("fall", 0), CuePlay(Cue.LEAVE)))
-                SegmentKind.LIKES -> Unit
+                SegmentKind.LIKES, SegmentKind.END -> Unit
             }
             // Coin landings: rising pentatonic steps, ≤ 10 per segment; the first launch whooshes.
             val coins = script.coins.filter { it.segment == seg.index }

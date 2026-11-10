@@ -137,11 +137,18 @@ export function revealTimeline(r: Reveal, plan: RevealPlan): { steps: Step[]; be
 
 export const W = 960;
 export const H = 540;
-/** Seated characters: feet on this line. */
-export const SEAT_Y = 462;
-export const SEAT_CHAR = 52;
-/** The score pill row under the names. */
-export const PILL_Y = 506;
+/** Seated characters: feet on this line (lifted so plates and names keep 16 dp clear of the pills). */
+export const SEAT_Y = 440;
+/** Café row character size (DESIGN-JAMAA §4.4: 72–96 dp on game stages; 56 dp, doubled by body motion, above 8). */
+export const seatChar = (count: number): number => (count <= 8 ? 72 : 56);
+/** The largest row size (layout that does not depend on the player count). */
+export const SEAT_CHAR = 72;
+/** Characters hopping onto a card (≥ 56 dp; expressions doubled by hop / sink / jump-back, §4.4). */
+export const hopSize = (count: number): number => (count <= 8 ? 64 : 56);
+/** The name plate's top (under the table). */
+export const NAME_Y = SEAT_Y + 14;
+/** The score pill row's centre: 16 dp under the name plates (18 dp line). */
+export const PILL_Y = NAME_Y + 18 + 16 + 12;
 /** The spotlight card (centre, size). */
 export const CARD = { x: 480, y: 254, w: 540, h: 128 } as const;
 export const CARD_TOP = CARD.y - CARD.h / 2;
@@ -160,7 +167,7 @@ export function seatX(count: number, index: number, rtl: boolean): number {
 
 /** Where hopper `k` of `n` lands on top of the spotlight card (shoulder to shoulder). */
 export function landing(k: number, n: number): Pt {
-  const gap = n > 8 ? 40 : 48;
+  const gap = n <= 1 ? 0 : Math.min(62, 500 / (n - 1));
   return { x: CARD.x + (k - (n - 1) / 2) * gap, y: CARD_TOP + 2 };
 }
 

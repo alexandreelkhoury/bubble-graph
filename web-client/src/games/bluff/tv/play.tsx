@@ -11,9 +11,11 @@ import { RoomCode } from "../../../tv-mock/tvParts";
 import { clockOffset } from "../../../state/store";
 import { now } from "../../../components/Timer";
 import { Envelope, Odo } from "../art";
-import { activeSeats, baseExpression, isFinal, letterOf, placeOf, propOf, ranked, roundIntroKey, roundNameKey } from "../model";
+import { activeSeats, isFinal, letterOf, optionLetters, placeOf, ranked, roundIntroKey, roundNameKey } from "../model";
+import { baseExpression, countedSeats, propOf } from "../tvModel";
 import type { BluffModel, Seat } from "../model";
 import { BfTop, Cafe, Seats, TvPrompt, tk } from "./stage";
+import { HidePicker, hidePickerOpen } from "./hide";
 import type { MessageKey } from "../../../i18n/t";
 
 const serverNow = (): number => now.value + clockOffset.value;
@@ -41,7 +43,8 @@ export function TvRoundIntro({ m }: { m: BluffModel }) {
 
 export function TvWriting({ m }: { m: BluffModel }) {
   const p = m.pub.prompt;
-  const players = activeSeats(m).filter((s) => s.connected);
+  // Waiting late joiners are not on this prompt (lane A's awaitedIds): the box counts awaited + done players only.
+  const players = countedSeats(m);
   const inCount = m.pub.submittedIds.filter((id) => players.some((s) => s.id === id)).length;
   const left = m.pub.deadline ? m.pub.deadline - serverNow() : Infinity;
   const late = left <= 10_000;
@@ -77,21 +80,24 @@ export function TvVoting({ m }: { m: BluffModel }) {
     return () => clearTimeout(id);
   }, []);
   const names = listOf(m.pub.spotOnIds.map((id) => isolate(m.byId.get(id)?.name ?? "")));
+  const letters = optionLetters(m);
   return (
     <div class="tvscreen bf bf--voting" data-world="hakawati-cafe" data-bf-phase="VOTING" data-pid={m.pub.prompt?.id ?? ""}>
       <Cafe />
       <BfTop m={m} />
       <div class="bfvote__head">
-        <p class="bfvote__title">{isFinal(m.pub) ? tk("vote.titleNoTruth") : tk("vote.title")}</p>
-        {m.pub.prompt && <p class="bfvote__prompt" dir="auto">{m.pub.prompt.display ?? m.pub.prompt.original}</p>}
-        {isFinal(m.pub) && <span class="bfchip bfchip--signal">{tk("noTruth.chip")}</span>}
-        {opts.length === 2 && <span class="bfchip">{tk("vote.easyOne")}</span>}
+        <div class="bfvote__row">
+          <p class="bfvote__title">{isFinal(m.pub) ? tk("vote.titleNoTruth") : tk("vote.title")}</p>
+          {isFinal(m.pub) && <span class="bfchip bfchip--signal">{tk("noTruth.chip")}</span>}
+          {opts.length === 2 && <span class="bfchip">{tk("vote.easyOne")}</span>}
+        </div>
+        {m.pub.prompt && <p class="bfvote__prompt" dir="auto" data-bf-vprompt>{m.pub.prompt.display ?? m.pub.prompt.original}</p>}
       </div>
       <ol class={`bfboard${dense ? " is-dense" : ""}`} data-count={opts.length}>
         {opts.map((o, i) => (
           <li key={o.id} class="bfnote" style={{ "--i": i, "--tilt": `${TILT[i % TILT.length]}deg` }} data-option={o.id}>
             <span class="bfnote__pin" aria-hidden="true" />
-            <span class="bfnote__letter">{letterOf(i)}</span>
+            <span class="bfnote__letter">{letters.get(o.id) ?? letterOf(i)}</span>
             <span class="bfnote__text" dir="auto">{o.text}</span>
           </li>
         ))}
@@ -101,6 +107,7 @@ export function TvVoting({ m }: { m: BluffModel }) {
         expression: (s) => baseExpression(m, s), prop: (s) => propOf(m, s),
         pin: (s) => (m.pub.spotOnIds.includes(s.id) ? tk("reveal.knewItPin") : null),
       }} />
+      {hidePickerOpen.value && <HidePicker m={m} />}
     </div>
   );
 }
@@ -164,6 +171,8 @@ export function TvScores({ m }: { m: BluffModel }) {
             {seats.map((s) => {
               const rank = order.findIndex((x) => x.id === s.id);
               const up = stage === 2 && after.findIndex((x) => x.id === s.id) < before.findIndex((x) => x.id === s.id);
+              // Bars grow from scoreBefore; the numbers already counted up on the reveal pills, so they start at the new
+              // score with a +delta chip (never 700 → 550 → 700). SPEC-GAP vs GAME-BLUFF §12.3 (native to match).
               const v = stage >= 1 ? s.score : s.scoreBefore;
               return (
                 <li key={s.id} class={`bfrace__row${up ? " is-up" : ""}${s.left ? " is-left" : ""}`} style={{ top: `${rank * rowH}px`, height: `${rowH - 4}px` }} data-race={s.id}>
@@ -172,8 +181,8 @@ export function TvScores({ m }: { m: BluffModel }) {
                   <bdi class="bfrace__name">{s.name}</bdi>
                   {s.isNew && <span class="bfchip">{tk("scores.new")}</span>}
                   <span class="bfrace__track"><span class="bfrace__bar" style={{ "--c": COLOR_BY_ID[s.color].hex, transform: `scaleX(${Math.max(0.015, v / max)})` }} /></span>
-                  <span class="bfrace__score"><Odo value={v} max={s.score} /></span>
-                  <span class="bfrace__delta tnum">{stage >= 1 && s.score > s.scoreBefore ? `+${s.score - s.scoreBefore}` : ""}</span>
+                  <span class="bfrace__score"><Odo value={s.score} max={s.score} /></span>
+                  <span class="bfrace__delta tnum" dir="ltr">{stage >= 1 && s.score > s.scoreBefore ? `+${s.score - s.scoreBefore}` : ""}</span>
                 </li>
               );
             })}

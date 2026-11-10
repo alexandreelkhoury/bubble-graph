@@ -122,7 +122,7 @@ function PhVote({ m }: { m: LikelyModel }) {
               }}>
               <Character color={s.color} size={56} expression={s.connected ? "idle" : "away"} />
               <bdi class="lk-tile__name">{self ? t(k("vote.me")) : s.name}</bdi>
-              <span class="lk-tile__check" aria-hidden="true">{on && <Icon name="check" size={14} />}</span>
+              <span class="lk-tile__check" aria-hidden="true">{on && <Icon name="check" size={12} />}</span>
             </button>
           );
         })}

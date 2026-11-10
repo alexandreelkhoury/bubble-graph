@@ -28,7 +28,7 @@ pnpm dev
 2. Picks the LAN address: `LAN_HOST` from `/.env` wins. Otherwise it uses the first non-internal IPv4 address, preferring `192.168.*`, then `10.*`, then `172.16–31.*`.
 3. Builds the web client once if `web-client/dist/index.html` is missing. Wrangler serves that folder as static assets.
 4. Starts both processes and stops both on Ctrl+C:
-   - `wrangler dev --ip 0.0.0.0 --port 8787` with `JOIN_BASE_URL=http://<LAN_HOST>:5173`, `ALLOWED_ORIGINS=http://<LAN_HOST>:5173,http://localhost:5173`, `DEBUG_INVARIANTS=1` (the room and game invariants run after every state change), billing on and **fake billing** (`BILLING_ENABLED=1`, `BILLING_MODE=fake`, `ALLOW_FAKE_BILLING=1`; see [Billing](#billing-payments-specmd)). `GAMES_ENABLED` keeps its `wrangler.jsonc` value (`"mishana"`); add `--var GAMES_ENABLED:mishana,bluff` by hand to try a game whose G milestone is done.
+   - `wrangler dev --ip 0.0.0.0 --port 8787` with `JOIN_BASE_URL=http://<LAN_HOST>:5173`, `ALLOWED_ORIGINS=http://<LAN_HOST>:5173,http://localhost:5173`, `DEBUG_INVARIANTS=1` (the room and game invariants run after every state change), billing on and **fake billing** (`BILLING_ENABLED=1`, `BILLING_MODE=fake`, `ALLOW_FAKE_BILLING=1`; see [Billing](#billing-payments-specmd)). `GAMES_ENABLED=mishana,bluff,likely,trivia` (`DEV_GAMES_ENABLED` in `tools/dev.mjs`): local dev offers every game whose registry entry is enabled (a stub stays hidden, since the room uses `GAMES_ENABLED` ∩ registry enabled). Narrow it with an environment variable, e.g. `GAMES_ENABLED=mishana,trivia pnpm dev`. Production is unaffected: it keeps `wrangler.jsonc`'s `"mishana"`.
    - `vite --host 0.0.0.0 --port 5173 --strictPort` (hot reload for the phone UI).
 5. Prints the URLs:
    - `TV server URL: http://<LAN_HOST>:8787`. Build the Android TV app with `-PserverUrl=http://<LAN_HOST>:8787`.
@@ -260,7 +260,26 @@ Why install ids and not your Google account: the app has no accounts, and the se
 
 ### `GAMES_ENABLED` (the rollout switch)
 
-`vars.GAMES_ENABLED` in `server/wrangler.jsonc` (comma list, default `"mishana"`, JAMAA-PLATFORM §2.6). A game ships by adding its id once its G milestone is accepted (owner order: `bluff`, `likely`, `trivia`); a registry stub (`enabled: false`) is never live whatever the var says. `GET /api/config` → `games` = `GAMES_ENABLED` ∩ registry enabled; the TV intersects with its own build's games before it creates a room. `"1"`: PAYMENTS-SPEC as written. The switch and the move from `prod-rules-v2` are covered in [BILLING-LAUNCH.md](BILLING-LAUNCH.md).
+`vars.GAMES_ENABLED` in `server/wrangler.jsonc` (comma list, default `"mishana"`, JAMAA-PLATFORM §2.6). A game ships by adding its id once its G milestone is accepted (owner order: `bluff`, `likely`, `trivia`); a registry stub (`enabled: false`) is never live whatever the var says.
+
+Where each game stands and how to turn it on:
+
+| Game | id | Registry (`shared/src/games/<id>/definition.ts`) | Local dev (`pnpm dev`) | e2e (`pnpm e2e`) | Production (`server/wrangler.jsonc`) |
+|---|---|---|---|---|---|
+| Mish Ana! | `mishana` | enabled | on | on | on (default) |
+| Bluff the Answer | `bluff` | set by G2 | on once registry-enabled | on once registry-enabled | off until the owner adds it |
+| Most Likely | `likely` | set by G3 | on once registry-enabled | on once registry-enabled | off until the owner adds it |
+| Quiz Night | `trivia` | **enabled** (G4) | on | on (`E2E_GAMES_ENABLED` overrides the list) | off until the owner adds it |
+
+To turn a game on in production (one game per release, owner order `bluff`, `likely`, `trivia`):
+
+1. Its registry entry is `enabled: true` and its G acceptance is green (sim, leak tests, e2e EN + AR, chunk ≤ 14 KB gz).
+2. Its free starter content passes `pnpm --filter @jamaa/content-lint run lint --release` (for Quiz Night: the four `lb-quiz-01-*` packs `status: "reviewed"` and their `[VERIFY]` sources resolved, after the owner and Lebanese review).
+3. Edit `server/wrangler.jsonc`: `"GAMES_ENABLED": "mishana,trivia"` (append the id to whatever is already live), commit it on `main`.
+4. `pnpm run deploy` (`check-deploy.mjs` refuses an unknown id; `content-lint --release` refuses draft free packs), then check `curl -s https://play.<subdomain>.workers.dev/api/config` lists the id.
+5. Add the game to README and the site copy (JAMAA-PLATFORM §6.8). Ship a TV build whose `hello` declares the game; older TVs simply do not offer it.
+
+To turn it off again, remove the id and redeploy: a game in progress finishes, a room on its setup screen returns to the hub ([BILLING-LAUNCH.md](BILLING-LAUNCH.md) Phase 4). `GET /api/config` → `games` = `GAMES_ENABLED` ∩ registry enabled; the TV intersects with its own build's games before it creates a room. `"1"`: PAYMENTS-SPEC as written. The switch and the move from `prod-rules-v2` are covered in [BILLING-LAUNCH.md](BILLING-LAUNCH.md).
 
 ### Before the first production release
 

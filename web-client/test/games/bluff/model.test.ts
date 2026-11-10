@@ -7,10 +7,11 @@ import { EASINGS, sample } from "@jamaa/shared/motion";
 // The client keeps its own copy of the §4.1 timings (engines never reach the client, JAMAA-PLATFORM §2.1); pin them.
 import * as C from "../../../../shared/src/games/bluff/engine/constants";
 import {
-  BEAT_MS, NOMINAL, activeSeats, awardAt, baseExpression, beatAt, beatDeltas, bluffModel, deadlineOf, errorKey, fullMs, graphemes, isFinal,
-  letterOf, lieReady, myReveal, needsAction, nominalMs, placeOf, promptLines, propOf, ranked, revealPlan, runningScores, seatExpression,
+  BEAT_MS, NOMINAL, activeSeats, awardAt, beatAt, bluffModel, deadlineOf, errorKey, fullMs, graphemes, isFinal,
+  letterOf, lieReady, myReveal, needsAction, nominalMs, placeOf, promptLines, ranked, revealPlan,
   votedStep, votingNominalMs,
 } from "../../../src/games/bluff/model";
+import { baseExpression, beatDeltas, propOf, runningScores, seatExpression } from "../../../src/games/bluff/tvModel";
 import type { BluffModel, Reveal } from "../../../src/games/bluff/model";
 import { CARD, MAX_COINS, bezier, coinsOf, control, hoppers, landing, revealTimeline, seatX } from "../../../src/games/bluff/choreo";
 

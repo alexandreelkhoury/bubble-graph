@@ -2,6 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { CreateRoomResponse } from "@jamaa/shared/protocol";
 import { ClientConfigV2 } from "@jamaa/shared/protocol/v2";
+import { REGISTRY_ENABLED } from "@jamaa/shared/games/registry";
 import { ADMIN_PREFIX } from "../src/admin";
 import { BILLING_PREFIX } from "../src/billing/routes";
 import { buildClaims, importSigner, importVerifyKeys, parseKeyring, signEntitlementToken } from "../src/billing/token";
@@ -120,8 +121,9 @@ describe("GAMES_ENABLED (JAMAA-PLATFORM §2.6)", () => {
 
   it("GET /api/config games = GAMES_ENABLED ∩ registry enabled", async () => {
     const res = handleConfig(get("/api/config"), { BILLING_ENABLED: "0", GAMES_ENABLED: "trivia,mishana" });
-    expect(ClientConfigV2.parse(await res.json())).toEqual({ billing: false, games: ["mishana"] });
+    // GAME_IDS order, filtered by the registry (a game leaves the stub state when its G milestone flips `enabled`).
+    expect(ClientConfigV2.parse(await res.json())).toEqual({ billing: false, games: REGISTRY_ENABLED.filter((id) => id === "mishana" || id === "trivia") });
     const none = handleConfig(get("/api/config"), { GAMES_ENABLED: "bluff" });
-    expect(ClientConfigV2.parse(await none.json()).games).toEqual([]);
+    expect(ClientConfigV2.parse(await none.json()).games).toEqual(REGISTRY_ENABLED.filter((id) => id === "bluff"));
   });
 });

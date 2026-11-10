@@ -1,7 +1,8 @@
 // GAME-BLUFF §6.3 / §6.5 worked examples (golden), split credit, help fee, likes, voided prompts.
 import { describe, expect, it } from "vitest";
 import type { BluffState } from "../../../src/games/bluff/engine/state";
-import { G, P, TV } from "./harness";
+import { computeAwards } from "../../../src/games/bluff/engine/reduce";
+import { G, P, TV, item, lieFor, pack } from "./harness";
 
 const deltasOf = (s: BluffState): Record<string, number> => {
   const out: Record<string, number> = {};
@@ -64,8 +65,9 @@ describe("§6.3 worked example (round 1 then the same outcome in round 2)", () =
   });
 });
 
+// Final values rebalanced (owner-approved review finding): FINAL_VOTE 100, FINAL_TOP 250 split among tied top answers.
 describe("§6.5 worked example (final)", () => {
-  it("Maya 850, Rami 300, Joe 190; ballots anonymous", () => {
+  it("Maya 550, Rami 200, Joe 140; ballots anonymous", () => {
     const ids = ["maya", "rami", "joe", "karim", "nour", "lina"];
     const g = new G({ ids, settings: { length: "short" } });
     g.toWriting("noTruth");
@@ -83,7 +85,7 @@ describe("§6.5 worked example (final)", () => {
     g.do({ type: "LIKE", optionId: j, on: true }, P("karim"));
     g.do({ type: "LIKE", optionId: j, on: true }, P("nour"));
     g.tick();
-    expect(deltasOf(g.s)).toEqual({ maya: 850, rami: 300, joe: 190, karim: 0, nour: 0, lina: 0 });
+    expect(deltasOf(g.s)).toEqual({ maya: 550, rami: 200, joe: 140, karim: 0, nour: 0, lina: 0 });
     const rv = g.s.reveal!;
     expect(rv.final).toBe(true);
     expect(rv.truth).toBeNull();
@@ -91,7 +93,7 @@ describe("§6.5 worked example (final)", () => {
     expect(rv.steps.map((st) => st.voteCount)).toEqual([1, 2, 3]);     // fewest first
     expect(rv.steps.filter((st) => st.top).map((st) => st.authorIds)).toEqual([["maya"]]);
   });
-  it("every tied top answer with ≥ 1 vote gets +400; house answers never take the crown", () => {
+  it("the top answer with ≥ 1 vote gets +250; house answers never take the crown", () => {
     const ids = ["a", "b", "c", "d"];
     const g = new G({ ids, settings: { length: "short" } });
     g.toWriting("noTruth");
@@ -104,7 +106,115 @@ describe("§6.5 worked example (final)", () => {
     g.vote("c", house[0]!);
     g.vote("d", mine);
     g.tick();
-    expect(g.score("a") - g.s.players[0]!.scoreBefore).toBe(150 + 400);
+    expect(g.score("a") - g.s.players[0]!.scoreBefore).toBe(100 + 250);
+  });
+  it("tied top answers split the +250 (125 → 120 each after rounding down to 10)", () => {
+    const ids = ["a", "b", "c", "d"];
+    const g = new G({ ids, settings: { length: "short" } });
+    g.toWriting("noTruth");
+    g.submit("a", "Answer from alpha");
+    g.submit("b", "Answer from bravo");
+    g.submit("c", "Answer from charlie");
+    g.tick();
+    g.vote("c", g.optionOf("Answer from alpha"));
+    g.vote("d", g.optionOf("Answer from bravo"));
+    g.vote("a", g.optionOf("Answer from charlie"));
+    g.vote("b", g.optionOf("Answer from charlie"));
+    g.tick();
+    expect(deltasOf(g.s)).toMatchObject({ a: 100, b: 100, c: 200 + 250 });
+    const g2 = new G({ ids, settings: { length: "short" } });
+    g2.toWriting("noTruth");
+    g2.submit("a", "Answer from alpha");
+    g2.submit("b", "Answer from bravo");
+    g2.submit("c", "Answer from charlie");
+    g2.tick();
+    g2.vote("c", g2.optionOf("Answer from alpha"));
+    g2.vote("d", g2.optionOf("Answer from bravo"));
+    g2.tick();
+    expect(deltasOf(g2.s)).toMatchObject({ a: 100 + 120, b: 100 + 120, c: 0 });
+    expect(g2.s.reveal!.steps.filter((st) => st.top)).toHaveLength(2);
+  });
+  it("a \"Help me\" answer submitted as-is never takes the crown; the best typed answer does", () => {
+    const ids = ["a", "b", "c", "d", "e"];
+    const g = new G({ ids, settings: { length: "short" } });
+    g.toWriting("noTruth");
+    g.do({ type: "REQUEST_HELP", promptId: g.promptId() }, P("a"));
+    const help = g.me("a")!.help!;
+    g.submit("a", help);
+    g.submit("b", "Answer from bravo");
+    g.submit("c", "Answer from charlie");
+    g.tick();
+    const helped = g.s.options.find((o) => o.authors.includes("a"))!;
+    expect(helped.helped).toBe(true);
+    for (const p of ["b", "c", "d"]) g.vote(p, helped.id);
+    g.vote("e", g.optionOf("Answer from bravo"));
+    g.vote("a", g.optionOf("Answer from bravo"));
+    g.tick();
+    const d = deltasOf(g.s);
+    expect(d.a).toBe(300 - 60);                 // per-vote points minus the flat help fee, no crown
+    expect(d.b).toBe(200 + 250);                // the best answer a player wrote takes the crown
+    expect(g.s.reveal!.steps.find((st) => st.optionId === helped.id)!.top).toBe(false);
+  });
+});
+
+describe("§6.6 Bluff of the Night skips helped answers", () => {
+  it("a helped answer with the most votes is passed over for the best typed one", () => {
+    const g = new G({ ids: ["a", "b", "c"] });
+    const s = structuredClone(g.s);
+    s.records = [
+      { promptIndex: 1, options: [{ text: "Borrowed joke", authorIds: ["a"], votes: 5, likes: 3, helped: true }] },
+      { promptIndex: 2, options: [{ text: "Own words", authorIds: ["b"], votes: 2, likes: 0, helped: false }] },
+    ];
+    const b = computeAwards(s).find((x) => x.id === "bluffOfTheNight")!;
+    expect(b.playerIds).toEqual(["b"]);
+    expect(b.text).toBe("Own words");
+    s.records = [{ promptIndex: 1, options: [{ text: "Borrowed joke", authorIds: ["a"], votes: 5, likes: 3, helped: true }] }];
+    expect(computeAwards(s).find((x) => x.id === "bluffOfTheNight")).toBeUndefined();
+  });
+});
+
+describe("house lies: the item's own first, pack fallbacks only once those run out (§4.2 / §5.5)", () => {
+  it("an item with 3 house lies never shows a fallback in a 4-player game (fill and Help me)", () => {
+    for (let seed = 1; seed <= 60; seed++) {
+      const items = [
+        item("s1", "proverb_end", 1), item("s2", "proverb_end", 2), item("s3", "proverb_end", 3),
+        item("f1", "fact_blank", 1), item("f2", "fact_blank", 2), item("f3", "fact_blank", 3), item("f4", "fact_blank", 4),
+        item("n1", "no_truth", 1), item("n2", "no_truth", 2),
+      ].map((i) => ({ ...i, tier: "free" as const }));
+      const fb = { en: ["Zfallback one", "Zfallback two", "Zfallback three", "Zfallback four", "Zfallback five"] };
+      const cat = { packs: [pack("own-first", items, { fallbackHouseLies: { proverb_end: fb, fact_blank: fb, no_truth: fb } })] };
+      const g = new G({ players: 4, seed, cat, settings: { length: "short" } });
+      for (let k = 0; k < 40 && g.s.phase !== "RESULTS"; k++) {
+        if (g.s.phase === "WRITING") {
+          const before = g.s.prompt!;
+          expect(before.ownHouseCount).toBe(3);
+          // Odd seeds: p1 asks for help and everyone writes (fill 1). Even seeds: nobody writes (fill 3 = all own).
+          if (seed % 2) {
+            g.do({ type: "REQUEST_HELP", promptId: g.promptId() }, P("p1"));
+            const h = g.me("p1")!.help;
+            expect(h).not.toBeNull();
+            expect(h).not.toMatch(/Zfallback/);
+            g.submit("p1", h!);
+            for (const q of ["p2", "p3", "p4"]) if (g.s.phase === "WRITING") g.submit(q, lieFor(q, g.s));
+          }
+          if (g.s.phase === "WRITING") g.tick();
+          if ((g.s.phase as string) === "VOTING") for (const o of g.s.options) expect(o.text).not.toMatch(/Zfallback/);
+          continue;
+        }
+        g.tick();
+      }
+    }
+  });
+  it("fallbacks fill in once the item's own house lies are used up", () => {
+    const items = [item("n1", "no_truth", 1, { houseLies: { en: ["Zown only"] } }), item("n2", "no_truth", 2)].map((i) => ({ ...i, tier: "free" as const }));
+    const sayings = [1, 2, 3].map((i) => ({ ...item(`s${i}`, "proverb_end", i), tier: "free" as const }));
+    const facts = [1, 2, 3, 4].map((i) => ({ ...item(`f${i}`, "fact_blank", i), tier: "free" as const }));
+    const cat = { packs: [pack("fb", [...sayings, ...facts, ...items], { fallbackHouseLies: { no_truth: { en: ["Zfallback one", "Zfallback two"] } } })] };
+    const g = new G({ players: 4, seed: 3, cat, settings: { length: "short" } });
+    g.toWriting("noTruth");
+    if (g.s.prompt!.itemId !== "n1") return;     // the other final item has 3 own house lies
+    g.tick();                                     // nobody wrote: 3 house answers needed, 1 own + 2 fallbacks
+    expect(g.s.options.map((o) => o.text).sort()).toEqual(["Zfallback one", "Zfallback two", "Zown only"]);
   });
 });
 

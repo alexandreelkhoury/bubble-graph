@@ -36,10 +36,10 @@ exports[`seeded bot games (JAMAA-PLATFORM §2.8, GAME-BLUFF §13.4) > golden: on
   ],
   "outcome": {
     "points": {
-      "p_b1uff00": 780,
+      "p_b1uff00": 400,
       "p_b1uff01": 10,
-      "p_b1uff02": 1070,
-      "p_b1uff03": 430,
+      "p_b1uff02": 690,
+      "p_b1uff03": 380,
       "p_b1uff04": 200,
       "p_b1uff05": 300,
     },
@@ -67,7 +67,7 @@ exports[`seeded bot games (JAMAA-PLATFORM §2.8, GAME-BLUFF §13.4) > golden: on
   "scores": [
     [
       "p_b1uff00",
-      780,
+      400,
     ],
     [
       "p_b1uff01",
@@ -75,11 +75,11 @@ exports[`seeded bot games (JAMAA-PLATFORM §2.8, GAME-BLUFF §13.4) > golden: on
     ],
     [
       "p_b1uff02",
-      1070,
+      690,
     ],
     [
       "p_b1uff03",
-      430,
+      380,
     ],
     [
       "p_b1uff04",

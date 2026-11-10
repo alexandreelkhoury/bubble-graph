@@ -4,8 +4,7 @@
 // intents. After every reduce: invariants, the scoring checks, and the leak oracles on the TV view and every phone's
 // view; termination; with `--access free`, that no Pass-only quiz is ever played.
 //
-// JAMAA-GAP (G4): tools/sim/src/main.ts (milestone P file) still routes only mishana to an engine-mode bot; until it
-// imports `runTriviaEngineMode`, run this module directly:
+// `pnpm sim --game trivia` routes here (tools/sim/src/main.ts); the module also runs directly:
 //   pnpm --filter @jamaa/sim exec tsx src/games/trivia.ts --players 1..12 --games 300 [--seed N] [--access free]
 import { fileURLToPath } from "node:url";
 import { LOCALES } from "@jamaa/shared/constants";

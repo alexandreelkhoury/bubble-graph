@@ -9,10 +9,10 @@ import { ENTRANCE_GRACE_MS } from "@jamaa/shared/constants";
 import { endMs } from "@jamaa/shared/motion";
 import {
   SAFE, activeSeats, awardsOf, awardsStage, canVote, deadlineOf, fmtPercent, likelyModel, myReveal, needsVote, percentLines,
-  phaseDurationMs, phoneAwards, ranking, revealExpression, revealPlan, signatureRow, targetsOf, winners,
+  phaseDurationMs, phoneAwards, podiumSteps, rankRows, ranking, revealExpression, revealPlan, signatureRow, targetsOf, winners,
 } from "../../../src/games/likely/model";
 import type { LikelyModel } from "../../../src/games/likely/model";
-import { REVEAL_TAIL_MS, fitReveal, revealSteps, runStagger } from "../../../src/games/likely/tv/choreo";
+import { HOLD_MIN_MS, REVEAL_TAIL_MS, boardMs, fitReveal, revealSteps, runStagger } from "../../../src/games/likely/tv/choreo";
 
 const DIR = join(__dirname, "../../../../shared/fixtures/v2/games/likely");
 const fx = <T = PlayerRoomView | TvRoomView>(name: string): T => (JSON.parse(readFileSync(join(DIR, `${name}.json`), "utf8")) as { view: T }).view;
@@ -175,6 +175,30 @@ describe("reveal step list (shared sampler)", () => {
       if (!publicMode) expect(steps.some((s) => s.id === "coin")).toBe(false);
     }
   });
+  it("the hold fills the rest of the window: ends exactly at window − tail, and gets ≥ 2 s once the window allows it", () => {
+    for (const publicMode of [true, false]) for (const chaos of [false, true]) for (let votes = 1; votes <= 12; votes++) {
+      const shape = { runners: publicMode ? votes : 0, envelopes: publicMode ? 0 : votes, publicMode, chaos, none: false, unanimous: false, coins: publicMode ? votes : 0, lines: Math.min(4, votes) };
+      const count = Math.max(votes, 1);
+      for (const window of [likelyRevealMs(votes, false, 1), 9_500, 12_000]) {
+        const steps = fitReveal(revealSteps(shape), window, count);
+        const hold = steps.find((s) => s.id === "hold")!;
+        expect(hold.startMs + hold.durationMs).toBeCloseTo(window - REVEAL_TAIL_MS, 5);
+        expect(endMs(steps, count)).toBeLessThanOrEqual(window - REVEAL_TAIL_MS + 1);
+        // the beats before the hold are never squeezed below 70 % of their natural speed
+        const natural = revealSteps(shape).find((s) => s.id === "hold")!.startMs;
+        expect(hold.startMs).toBeGreaterThanOrEqual(Math.min(natural, natural * 0.7) - 1);
+        if (window - REVEAL_TAIL_MS - natural >= HOLD_MIN_MS) expect(hold.startMs).toBe(natural);
+        if (window >= 12_000) expect(hold.durationMs).toBeGreaterThanOrEqual(HOLD_MIN_MS);
+      }
+    }
+  });
+  it("the secret-vote board reads for ≥ 1.8 s + 120 ms per line before the hold", () => {
+    const s = revealSteps({ runners: 0, envelopes: 5, publicMode: false, chaos: false, none: false, unanimous: false, coins: 0, lines: 3 });
+    const board = s.find((x) => x.id === "board")!;
+    expect(board.durationMs).toBe(boardMs(3));
+    expect(boardMs(3)).toBe(1800 + 360);
+    expect(s.find((x) => x.id === "hold")!.startMs).toBeGreaterThanOrEqual(board.startMs + board.durationMs);
+  });
   it("chaos scrambles and never spotlights", () => {
     const s = revealSteps({ runners: 4, envelopes: 0, publicMode: true, chaos: true, none: false, unanimous: false, coins: 0 });
     expect(s.map((x) => x.id)).toContain("scramble");
@@ -212,6 +236,36 @@ describe("awards (§12.4)", () => {
     expect(phoneAwards(m.pub, id, false).some((a) => a.kind === "mindReader")).toBe(false);
     expect(phoneAwards(m.pub, id, true).some((a) => a.kind === "mindReader")).toBe(true);
     expect(phoneAwards(m.pub, id, false)[0]!.kind).toMatch(/signature|mystery/);
+  });
+});
+
+describe("Mind Reader ranking: ties share (GAME-LIKELY §6)", () => {
+  const tie = (): LikelyModel => {
+    const m = model("s2c.state.tv.playing.likely.awards");
+    const base = m.seats.slice(0, 1)[0]!;
+    const mk = (i: number, name: string, score: number) => ({ ...base, id: `p${i}`, name, seat: i, score, scoreBefore: score, left: false });
+    const seats = [mk(0, "Rami", 900), mk(1, "Lina", 700), mk(2, "Karim", 700), mk(3, "Maya", 700), mk(4, "Joe", 300)];
+    return { ...m, seats, byId: new Map(seats.map((s) => [s.id, s])) };
+  };
+  it("a 3-way tie prints the same competition rank, and the next rank skips", () => {
+    expect(rankRows(tie().seats).map((r) => [r.seat.name, r.rank])).toEqual([["Rami", 1], ["Lina", 2], ["Karim", 2], ["Maya", 2], ["Joe", 5]]);
+  });
+  it("tied players share a podium step; the rank a tie skips leaves its step empty", () => {
+    const [p1, p2, p3] = podiumSteps(tie());
+    expect(p1.map((s) => s.name)).toEqual(["Rami"]);
+    expect(p2.map((s) => s.name)).toEqual(["Lina", "Karim", "Maya"]);
+    expect(p3).toEqual([]);
+    const all = tie();
+    const flat = all.seats.map((s) => ({ ...s, score: 500 }));
+    const [a, b, c] = podiumSteps({ ...all, seats: flat });
+    expect(a).toHaveLength(5);
+    expect(b).toEqual([]);
+    expect(c).toEqual([]);
+  });
+  it("players who left are not on the podium", () => {
+    const m = tie();
+    const seats = m.seats.map((s) => (s.name === "Rami" ? { ...s, left: true } : s));
+    expect(podiumSteps({ ...m, seats })[0].map((s) => s.name)).toEqual(["Lina", "Karim", "Maya"]);
   });
 });
 

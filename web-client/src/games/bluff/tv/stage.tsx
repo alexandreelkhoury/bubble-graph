@@ -14,8 +14,9 @@ import { clockOffset } from "../../../state/store";
 import { now } from "../../../components/Timer";
 import { Ballot, Envelope, Odo, Pencil } from "../art";
 import { deadlineOf, hintKey, isFinal, k, promptLines, typeKey } from "../model";
+import { isWaiting } from "../tvModel";
 import type { BluffModel, Prompt, Seat } from "../model";
-import { PILL_Y, SEAT_CHAR, SEAT_Y, seatX } from "../choreo";
+import { NAME_Y, PILL_Y, SEAT_Y, seatChar, seatX } from "../choreo";
 
 export const rtl = (): boolean => dirOf(locale.value) === "rtl";
 export const tk = (s: string, p?: Record<string, string | number>): string => t(k(s) as MessageKey, p);
@@ -81,7 +82,8 @@ export function BfTop({ m, label, timer = true }: { m: BluffModel; label?: strin
   const p = m.pub;
   const round = isFinal(p) ? tk("round.final") : tk("round.number", { round: p.round });
   const counter = tk("prompt.counter", { index: Math.min(p.promptIndex + 1, p.promptCount), count: p.promptCount });
-  const dl = timer ? deadlineOf(p, now.value + clockOffset.value) : null;
+  // First sight of a deadline reads the wall clock (the shared `now` signal can be seconds stale when nothing watched it).
+  const dl = timer ? deadlineOf(p, Date.now() + clockOffset.value) : null;
   const live = p.phase === "WRITING" || p.phase === "VOTING";
   return (
     <header class="tvtop bftop">
@@ -125,7 +127,7 @@ export function TvPrompt({ prompt, final, small = false, children }: { prompt: P
 }
 
 /** One seated character with its live reaction burst. */
-export function SeatChar({ s, expression, size = SEAT_CHAR, crown = false }: { s: Seat; expression: Expression; size?: number; crown?: boolean }) {
+export function SeatChar({ s, expression, size = 72, crown = false }: { s: Seat; expression: Expression; size?: number; crown?: boolean }) {
   const r = useReaction(s.reaction);
   return <Character color={s.color} size={size} expression={!s.connected ? "away" : r ?? expression} burst={r} burstKey={s.reaction?.n} crown={crown} />;
 }
@@ -147,8 +149,9 @@ export interface SeatOpts {
 export function Seats({ m, o }: { m: BluffModel; o: SeatOpts }) {
   const seats = m.seats.filter((s) => !s.left || s.score > 0);
   const isRtl = rtl();
+  const size = seatChar(seats.length);
   return (
-    <div class="bfseats">
+    <div class={`bfseats${size < 72 ? " is-small" : ""}`} style={{ "--seat": `${size}px` }}>
       {seats.map((s, i) => {
         const x = seatX(seats.length, i, isRtl);
         const prop = o.prop?.(s) ?? null;
@@ -156,14 +159,15 @@ export function Seats({ m, o }: { m: BluffModel; o: SeatOpts }) {
         return (
           <div key={s.id} class={`bfseat${s.left ? " is-left" : ""}${o.spotlight?.(s) ? " is-spot" : ""}${o.away?.(s) ? " is-away" : ""}`} data-seat={s.id}
             style={{ left: `${x}px`, "--i": i }}>
-            <span class="bfseat__table" aria-hidden="true" />
-            <span class="bfseat__char" style={{ top: `${SEAT_Y - SEAT_CHAR}px` }}>
-              <SeatChar s={s} expression={o.expression(s)} crown={o.crown?.(s) ?? false} />
+            <span class="bfseat__table" aria-hidden="true" style={{ top: `${SEAT_Y - 8}px` }} />
+            <span class="bfseat__char" style={{ top: `${SEAT_Y - size}px` }}>
+              <SeatChar s={s} expression={o.expression(s)} size={size} crown={o.crown?.(s) ?? false} />
               {prop && <span class={`bfseat__prop bfseat__prop--${prop}`} key={prop}>{prop === "pencil" ? <Pencil size={20} /> : prop === "envelope" ? <Envelope size={22} /> : <Ballot size={20} />}</span>}
               {pin && <span class="bfseat__pin">{pin}</span>}
               {s.isNew && <span class="bfseat__new">{tk("scores.new")}</span>}
+              {isWaiting(m, s) && <span class="bfseat__next" aria-hidden="true"><Icon name="timer" size={14} /></span>}
             </span>
-            <bdi class="bfseat__name">{s.name}</bdi>
+            <bdi class="bfseat__name" style={{ top: `${NAME_Y}px` }}>{s.name}</bdi>
             {o.pills && <span class="bfseat__pill" style={{ top: `${PILL_Y - 12}px` }}><Odo value={o.pillValue ? o.pillValue(s) : s.score} odoKey={s.id} max={Math.max(s.score, 999)} /></span>}
           </div>
         );

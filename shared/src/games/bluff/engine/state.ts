@@ -54,7 +54,8 @@ export interface PromptState {
   truthAll: string[];          // truth + truthAlt in the content locale and the item's sourceLocale (matching only)
   truthAlt: string[];          // the alternatives alone (secrets: never shown)
   note: string | null;
-  houseLies: string[];         // the item's + the pack's fallback house lies for this locale (all of them)
+  houseLies: string[];         // the item's own house lies first, then the pack's fallbacks, for this locale
+  ownHouseCount: number;       // how many of houseLies are the item's own (drawn first, §4.2 / §5.5)
 }
 
 export type OptionKind = "lie" | "house" | "truth";
@@ -98,7 +99,7 @@ export type AwardId = "bluffOfTheNight" | "lieDetector" | "crowdFavourite" | "ho
 export interface Award { id: AwardId; playerIds: string[]; value: number; text: string | null; promptIndex: number | null }
 
 /** One record per answered prompt (awards input). */
-export interface PromptRecord { promptIndex: number; options: { text: string; authorIds: string[]; votes: number; likes: number }[] }
+export interface PromptRecord { promptIndex: number; options: { text: string; authorIds: string[]; votes: number; likes: number; helped: boolean }[] }
 
 export type Notice = "tooFamous" | "voided" | "allKnew" | null;
 
@@ -130,7 +131,9 @@ export interface BluffState {
   housePool: string[];                      // unused house lies of this prompt
   options: OptionState[];
   votes: Record<string, string>;
+  votedOnce: Record<string, true>;          // voted at least once this prompt (public votedIds/doneIds; a hide never clears it)
   likes: Record<string, string[]>;
+  likeToggles: Record<string, number>;      // accepted LIKE toggles this prompt (LIKE_TOGGLES_MAX)
   hides: number;
   voided: boolean;
   notice: Notice;

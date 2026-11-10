@@ -7,22 +7,27 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import type { Expression } from "@jamaa/shared/characters";
 import { run } from "@jamaa/shared/motion";
 import type { Run } from "@jamaa/shared/motion";
-import { isolate, listOf, t } from "../../../i18n/t";
+import { isolate, listOf } from "../../../i18n/t";
 import { reduced } from "../../../lib/motion";
 import { Character } from "../../../components/Character";
 import { COLOR_BY_ID } from "../../../components/PlayerChip";
 import { clearChoreo, setChoreo } from "../../../tv-mock/tvPlatform";
 import { stopAll } from "../../../tv-mock/sound/player";
-import { Envelope, Heart, HouseChar, Lifebuoy, Moustache, Stamp, setOdo } from "../art";
-import { beatAt, revealPlan, runningScores, seatExpression } from "../model";
+import { Envelope, Heart, HouseChar, Lifebuoy, Moustache, Signed, Stamp, setOdo } from "../art";
+import type { ColorId } from "@jamaa/shared/constants";
+import { BODY_PATHS } from "@jamaa/shared/characters";
+import { clockOffset } from "../../../state/store";
+import { beatAt, revealPlan } from "../model";
+import { runningScores, seatExpression } from "../tvModel";
 import type { Mark } from "../model";
 import type { Beat, BluffModel, Reveal, RevealStep, Seat } from "../model";
 import {
-  BOX, CARD, CARD_TOP, MAX_ENVELOPES, SEAT_CHAR, SEAT_Y, PILL_Y, bezier, coinsOf, control, hoppers, landing, popSpot, revealTimeline, seatX,
+  BOX, CARD, CARD_TOP, MAX_ENVELOPES, SEAT_Y, PILL_Y, bezier, coinsOf, control, hopSize, hoppers, landing, popSpot, revealTimeline, seatChar, seatX,
 } from "../choreo";
 import type { Coin, Pt } from "../choreo";
 import { BfTop, Cafe, Seats, TvPrompt, rtl, tk } from "./stage";
 import { cue, riseRate, sfx } from "./sfx";
+import { revealElapsed } from "./revealTime";
 
 /** OK in game completes the running reveal (module hook for TvGameModule.onOk). */
 let completeCurrent: (() => void) | null = null;
@@ -32,7 +37,6 @@ export function completeReveal(): boolean {
   return true;
 }
 
-const HOP_SIZE = 44;
 
 function stampFor(s: RevealStep): { tone: "lie" | "house" | "truth"; key: string } {
   return s.kind === "truth" ? { tone: "truth", key: "reveal.truth" } : s.kind === "house" ? { tone: "house", key: "reveal.house" } : { tone: "lie", key: "reveal.lie" };
@@ -47,6 +51,7 @@ export function TvReveal({ m }: { m: BluffModel }) {
   const scores = useMemo(() => runningScores(m, plan), [r, plan]);
   const seats = useMemo(() => m.seats.filter((s) => !s.left || s.score > 0), [m.seats]);
   const pos = useMemo(() => new Map(seats.map((s, i) => [s.id, seatX(seats.length, i, isRtl)])), [seats, isRtl]);
+  const HOP = hopSize(seats.length);
   const root = useRef<HTMLDivElement>(null);
   const [bi, setBi] = useState(0);
   const [mark, setMark] = useState<Mark>(0);
@@ -55,12 +60,15 @@ export function TvReveal({ m }: { m: BluffModel }) {
   useEffect(() => {
     const el = root.current;
     if (!el) return;
+    const elapsed = revealElapsed(m.pub.deadline, r.durationMs, Date.now() + clockOffset.value, plan.total);
     const fired = new Set<string>();
-    const once = (id: string, f: () => void): void => { if (!fired.has(id)) { fired.add(id); f(); } };
+    // Joining mid-way: the first frame marks the sounds of what already happened as played (no burst of old cues).
+    let silent = elapsed > 0;
+    const once = (id: string, f: () => void): void => { if (!fired.has(id)) { fired.add(id); if (!silent) f(); } };
     let curBeat = -1;
     let curMark: Mark = 0;
     let landed = 0;
-    const frame = (p: (id: string, i?: number) => number, tMs: number): void => {
+    const frameAt = (p: (id: string, i?: number) => number, tMs: number): void => {
       const b = beatAt(plan, tMs);
       const tb = tl.beats[b]!;
       const beat = plan.beats[b]!;
@@ -106,7 +114,10 @@ export function TvReveal({ m }: { m: BluffModel }) {
       if (kind === "montage") once(`b${b}.m`, () => cue("sfx.leave"));
       if (kind === "likes" && p(`b${b}.heart`) > 0) once(`b${b}.l`, () => sfx("like"));
     };
-    const runner: Run = run(tl.steps, frame, () => { clearChoreo(wrapped); completeCurrent = null; setEnded(true); });
+    const frame = (p: (id: string, i?: number) => number, tLocal: number): void => { frameAt(p, tLocal + elapsed); silent = false; };
+    // The step list shifted by `elapsed` (step ids unchanged): the runner starts at "now" in the reveal.
+    const steps = elapsed > 0 ? tl.steps.map((st) => ({ ...st, startMs: st.startMs - elapsed })) : tl.steps;
+    const runner: Run = run(steps, frame, () => { clearChoreo(wrapped); completeCurrent = null; setEnded(true); });
     const wrapped: Run = { complete: () => { stopAll(); runner.complete(); }, cancel: runner.cancel, get running() { return runner.running; } };
     setChoreo(wrapped);
     completeCurrent = wrapped.complete;
@@ -154,8 +165,8 @@ export function TvReveal({ m }: { m: BluffModel }) {
         const fixed = k >= hop.length;
         return (
           <span key={`${pid}.${id}`} class={`bfhop${quick ? " is-face" : ""}${fixed ? " is-fixed" : ""}`} data-s={fixed ? undefined : `${pid}.${quick ? "faces" : "jump"}`} data-i={k}
-            style={{ left: `${x0 - HOP_SIZE / 2}px`, top: `${SEAT_Y - HOP_SIZE}px`, "--dx": `${land.x - x0}px`, "--dy": `${land.y - SEAT_Y}px`, "--p": fixed ? 1 : 0 }}>
-            <Character color={s.color} size={HOP_SIZE} expression={exprOf(s)} />
+            style={{ left: `${x0 - HOP / 2}px`, top: `${SEAT_Y - HOP}px`, "--hop": `${HOP}px`, "--dx": `${land.x - x0}px`, "--dy": `${land.y - SEAT_Y}px`, "--p": fixed ? 1 : 0 }}>
+            <Character color={s.color} size={HOP} expression={exprOf(s)} />
             {fixed && <span class="bfhop__pin">{tk("reveal.knewItPin")}</span>}
             {beat.kind === "truth" && step?.foundEarlyIds.includes(id) && <span class="bfhop__pin is-early">{tk("reveal.foundEarly")}</span>}
           </span>
@@ -261,8 +272,8 @@ function CoinSprite({ c, i, pid, m, pos, hop }: { c: Coin; i: number; pid: strin
   const col = COLOR_BY_ID[to.color];
   return (
     <span class="bfcoin" data-fly={`${pid}.coin`} data-i={i} data-x0={a.x} data-y0={a.y} data-x1={z.x} data-y1={z.y} style={{ "--c": col.hex, opacity: 0 }}>
-      <span class="bfcoin__disc" />
-      {c.label && <span class="bfcoin__label tnum">{c.label}</span>}
+      <span class="bfcoin__disc"><ShapeGlyph color={to.color} size={7} /></span>
+      {c.label && <span class="bfcoin__label tnum" dir="ltr">{c.label}</span>}
     </span>
   );
 }
@@ -291,7 +302,7 @@ function AnswerCard({ m, step, pid, mark }: { m: BluffModel; step: RevealStep; p
           return s ? <span key={id} class="bfpop" data-s={`${pid}.pop`} style={{ left: `${p.x - 42}px`, top: `${p.y - 84}px` }}><Character color={s.color} size={84} expression="smug" /></span> : null;
         }))}
       <div class="bfrv__caption" style={{ top: `${CARD.y + CARD.h / 2 + 18}px` }}>
-        {mark >= 3 && <p class="bfcap bfcap--big">{house ? tk("reveal.houseWrote") : `${nameList(m, step.authorIds)} · ${t("results.pointsEarned", { count: step.deltas.filter((d) => d.reason === "fooled").reduce((a, d) => a + d.points, 0) })}`}</p>}
+        {mark >= 3 && <p class="bfcap bfcap--big">{house ? tk("reveal.houseWrote") : <>{nameList(m, step.authorIds)} · <Signed n={step.deltas.filter((d) => d.reason === "fooled").reduce((a, d) => a + d.points, 0)} /></>}</p>}
       </div>
     </>
   );
@@ -303,7 +314,7 @@ function CrownBeat({ m, r, beat, pid, mark }: { m: BluffModel; r: Reveal; beat: 
   if (tops.length === 0) return <div class="bfrv__center"><p class="bfcap bfcap--big">{tk("reveal.noCrown")}</p></div>;
   const unanimous = tops.length === 1 && tops[0]!.voteCount > 0 && tops[0]!.voteCount === r.steps.reduce((a, s) => a + s.voteCount, 0) && r.steps.filter((s) => s.voteCount > 0).length === 1;
   return (
-    <div class="bfcrown">
+    <div class="bfcrown" data-n={Math.min(3, tops.length)}>
       {tops.slice(0, 3).map((s) => (
         <div key={s.optionId} class="bfcard is-gold is-crown" data-s={`${pid}.spot`}>
           <p class="bfcard__text" dir="auto">{s.text}</p>
@@ -320,7 +331,7 @@ function CrownBeat({ m, r, beat, pid, mark }: { m: BluffModel; r: Reveal; beat: 
               ) : null;
             })}
           </div>
-          {mark >= 3 && <span class="bfcrown__bonus tnum">+400</span>}
+          {mark >= 3 && <span class="bfcrown__bonus tnum" dir="ltr">+400</span>}
         </div>
       ))}
       {mark >= 2 && <Confetti pid={pid} />}
@@ -388,7 +399,7 @@ function Likes({ r, pid, pos }: { r: Reveal; pid: string; pos: Map<string, numbe
         const x0 = pos.get(f.from), x1 = pos.get(f.to);
         if (x0 === undefined || x1 === undefined) return null;
         return (
-          <span key={i} class="bfheartfly" data-fly={`${pid}.heart`} data-i={i} data-x0={x0} data-y0={SEAT_Y - SEAT_CHAR} data-x1={x1} data-y1={PILL_Y} style={{ opacity: 0 }}>
+          <span key={i} class="bfheartfly" data-fly={`${pid}.heart`} data-i={i} data-x0={x0} data-y0={SEAT_Y - seatChar(pos.size)} data-x1={x1} data-y1={PILL_Y} style={{ opacity: 0 }}>
             <Heart size={22} on />
           </span>
         );
@@ -422,5 +433,15 @@ function EndCard({ m, r }: { m: BluffModel; r: Reveal }) {
         </div>
       )}
     </>
+  );
+}
+
+/** A player's shape glyph (shared character geometry) in the colour's glyph ink: coins are told apart without colour (CVD). */
+export function ShapeGlyph({ color, size }: { color: ColorId; size: number }) {
+  const c = COLOR_BY_ID[color];
+  return (
+    <svg class="bf-glyph" viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" focusable="false">
+      <path d={BODY_PATHS[c.shape]} fill={c.glyph === "ink" ? "#120A1F" : "#FFF7EC"} />
+    </svg>
   );
 }

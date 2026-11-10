@@ -10,6 +10,12 @@ import { TvHold, TvRoundIntro, TvScores, TvVoting, TvWriting } from "./tv/play";
 import { TvReveal, completeReveal } from "./tv/reveal";
 import { TvAwards, TvResults } from "./tv/awards";
 import { cue, sfx } from "./tv/sfx";
+import { ruleParams } from "./model";
+export { runPauseAction, hidePickerOpen } from "./tv/hide";
+export { pauseAction } from "./tv/pause";
+export type { PauseAction } from "./tv/pause";
+/** The ⓘ rules copy's `{seconds}` (JAMAA-GAP: the platform RulesBody must pass it, see model.ruleParams). */
+export { ruleParams };
 
 export function Tv({ view }: { view: TvRoomView }) {
   const m = bluffModel(view);

@@ -2,7 +2,7 @@
   "v": 2,
   "t": "state",
   "seq": 42,
-  "serverNow": 1790000076300,
+  "serverNow": 1790000084750,
   "view": {
     "kind": "tv",
     "room": {
@@ -119,7 +119,7 @@
         "phase": "REVEAL",
         "cardIndex": 4,
         "cardCount": 8,
-        "deadline": 1790000082300,
+        "deadline": 1790000092750,
         "card": {
           "id": "fam-011",
           "prompt": "lead the dabke line",

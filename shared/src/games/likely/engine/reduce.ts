@@ -196,13 +196,28 @@ function toAwards(s: LikelyState, now: number): LikelyState {
   return { ...s, phase: "AWARDS", card: null, votes: {}, earlyEnd: false, deadline: now + likelyAwardsMs(holders, !isAnonymous(s)) };
 }
 
+/**
+ * Secret votes (defence in depth, G3 review): once REVEAL ends, the revealed card keeps its tally but not who voted for
+ * whom. The same targets are dealt back to the same voters in entry-number order, so counts, votesCast, percentages,
+ * topIds and every tally-based award are unchanged, and the voter→target mapping never outlives the card's REVEAL (where
+ * only the voter's own phone reads it, as `me.myVote`). Public mode keeps the real ballots (points and Mind Reader).
+ */
+export function sealSecretBallots(s: LikelyState): LikelyState {
+  const last = s.results[s.results.length - 1];
+  if (!isAnonymous(s) || !last) return s;
+  const targets = last.picks.filter((t) => t >= 0).sort((a, b) => a - b);
+  let k = 0;
+  const picks = last.picks.map((t) => (t >= 0 ? (targets[k++] as number) : -1));
+  return { ...s, results: [...s.results.slice(0, -1), { ...last, picks }] };
+}
+
 /** The phase's deadline passed, or the host pressed Next (HOST_ADVANCE expires the phase inline, §4.1). */
 function expire(s: LikelyState, content: LikelyCatalog, now: number): LikelyState {
   switch (s.phase) {
     case "CARD": return toVoting(s, now);
     case "VOTING": return toReveal(s, now);
     case "REVEAL": {
-      const next: LikelyState = { ...s, cardIndex: s.cardIndex + 1, card: null };
+      const next: LikelyState = { ...sealSecretBallots(s), cardIndex: s.cardIndex + 1, card: null };
       return next.cardIndex >= s.cardCount ? toAwards(next, now) : enterCard(next, content, now, []);
     }
     case "AWARDS": return { ...s, phase: "RESULTS", deadline: null };

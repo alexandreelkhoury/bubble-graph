@@ -74,15 +74,15 @@
 /* ------------------------------------------------------------------ the café row */
 .bfseats { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
 .bfseat { position: absolute; top: 0; width: 0; }
-.bfseat__table { position: absolute; left: -36px; top: 452px; width: 72px; height: 16px; border-radius: 50%; background: radial-gradient(120% 140% at 30% 30%, #FFFFFF, #D9D2C7 55%, #B7AC9C);
+.bfseat__table { position: absolute; left: -40px; width: 80px; height: 16px; border-radius: 50%; background: radial-gradient(120% 140% at 30% 30%, #FFFFFF, #D9D2C7 55%, #B7AC9C);
   box-shadow: 0 6px 0 #6B5B48, 0 12px 14px rgb(0 0 0 / 0.5); }
-.bfseat__char { position: absolute; left: -26px; width: 52px; height: 52px; animation: bf-seat-in 520ms var(--ease-overshoot) both; animation-delay: calc(var(--i) * 40ms); }
+.bfseat__char { position: absolute; left: calc(var(--seat, 72px) / -2); width: var(--seat, 72px); height: var(--seat, 72px); animation: bf-seat-in 520ms var(--ease-overshoot) both; animation-delay: calc(var(--i) * 40ms); }
 @keyframes bf-seat-in { from { opacity: 0; transform: translateY(30px) scale(0.6); } to { opacity: 1; transform: none; } }
 .bfseat.is-away .bfseat__char { opacity: 0; animation: none; }
 .bfseat.is-left { opacity: 0.4; }
 .bfseat.is-spot .bfseat__char::before { content: ""; position: absolute; left: -20px; right: -20px; top: -60px; bottom: -6px; background: radial-gradient(50% 70% at 50% 0%, rgb(255 227 163 / 0.55), transparent 70%);
   border-radius: 40%; animation: fade-in 400ms both; }
-.bfseat__prop { position: absolute; inset-inline-end: -12px; top: 22px; animation: bf-pop 360ms var(--ease-overshoot) both; }
+.bfseat__prop { position: absolute; inset-inline-end: -10px; top: calc(var(--seat, 72px) * 0.44); animation: bf-pop 360ms var(--ease-overshoot) both; }
 .bfseat__prop--pencil { animation: bf-scribble 900ms ease-in-out infinite; transform-origin: 20% 90%; }
 @keyframes bf-scribble { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(10deg) translateY(-2px); } }
 .bfseat__prop--envelope { animation: bf-drop-env 700ms var(--ease-overshoot) both; }
@@ -94,7 +94,15 @@
   color: var(--bf-ink); font: 900 11px/16px var(--font-sans); white-space: nowrap; box-shadow: 0 2px 6px rgb(0 0 0 / 0.4); }
 .bfhop__pin.is-early { background: var(--color-surface); color: var(--color-text); top: auto; bottom: -16px; }
 .bfseat__new { position: absolute; top: -12px; inset-inline-start: -8px; padding: 0 6px; border-radius: 4px; background: var(--color-primary); color: var(--bf-ink); font: 900 10px/14px var(--font-sans); }
-.bfseat__name { position: absolute; left: -46px; width: 92px; top: 472px; text-align: center; font: 800 14px/18px var(--font-sans); color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.bfseat__next { position: absolute; top: -6px; inset-inline-end: 2px; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%;
+  background: rgb(18 10 31 / 0.85); color: var(--bf-gold); box-shadow: inset 0 0 0 1.5px rgb(233 162 59 / 0.6); }
+/* Below 72 dp an expression is doubled by body motion (DESIGN-JAMAA §4.4; hop/sink/jump-back come from the platform). */
+.bf .ch--facepalm .ch__rig { animation: ch-sink 600ms var(--ease-decel) both; }
+.bf .ch--smug .ch__rig { animation: bf-lean 700ms var(--ease-overshoot) both; transform-box: fill-box; transform-origin: 50% 90%; }
+@keyframes bf-lean { from { transform: rotate(0deg); } to { transform: rotate(-7deg); } }
+[dir="rtl"] .bf .ch--smug .ch__rig { animation-name: bf-lean-rtl; }
+@keyframes bf-lean-rtl { from { transform: rotate(0deg); } to { transform: rotate(7deg); } }
+.bfseat__name { position: absolute; left: -46px; width: 92px; text-align: center; font: 800 14px/18px var(--font-sans); color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.8); }
 .bfseat__pill { position: absolute; left: -36px; width: 72px; height: 24px; display: grid; place-items: center; border-radius: 99px; background: rgb(18 10 31 / 0.75);
   box-shadow: inset 0 0 0 1.5px rgb(233 162 59 / 0.6); color: var(--bf-gold); font: 900 16px/24px var(--font-sans); }
@@ -116,18 +124,25 @@
 .bf--intro.is-final .bfintro__rule { font-size: 24px; color: var(--color-text); }
 
 /* ------------------------------------------------------------------ BL-TV-03 the corkboard */
-.bfvote__head { position: absolute; z-index: 2; top: 66px; inset-inline: 0; display: flex; align-items: baseline; justify-content: center; gap: 14px; flex-wrap: wrap; padding-inline: 220px; }
-.bfvote__title { margin: 0; font: 900 24px/1.2 var(--font-sans); color: var(--color-text); }
-.bfvote__prompt { margin: 0; font: 700 17px/1.2 var(--font-sans); color: var(--color-text-secondary); max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.bfboard { position: absolute; z-index: 2; top: 104px; left: 216px; right: 216px; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr; gap: 9px; align-content: start; }
-.bfboard.is-dense { left: 150px; right: 150px; grid-template-columns: 1fr 1fr; gap: 7px 12px; top: 100px; }
+/* A fixed strip above the board (58–118 dp): the title row, then the prompt on its own line, so a full board (13 cards
+   in 2 columns) never covers the question voters re-read. */
+.bfvote__head { position: absolute; z-index: 4; top: 58px; inset-inline: 60px; height: 60px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bfvote__row { display: flex; align-items: center; justify-content: center; gap: 12px; max-width: 100%; }
+.bfvote__title { margin: 0; font: 900 24px/1.2 var(--font-sans); color: var(--color-text); white-space: nowrap; }
+.bfvote__prompt { margin: 0; max-width: 820px; padding: 2px 14px; border-radius: 99px; background: rgb(18 10 31 / 0.78); font: 700 18px/24px var(--font-sans); color: var(--color-text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bfboard { position: absolute; z-index: 2; top: 126px; left: 216px; right: 216px; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr; gap: 8px; align-content: start; }
+.bfboard.is-dense { left: 64px; right: 64px; grid-template-columns: 1fr 1fr; gap: 5px 14px; top: 126px; }
 .bfnote { position: relative; display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 7px 16px 7px 12px; border-radius: 6px; background: var(--bf-paper); color: var(--bf-ink);
   box-shadow: 0 2px 0 #C9AE82, 0 10px 18px rgb(0 0 0 / 0.38); transform: rotate(var(--tilt)); animation: bf-pin 520ms var(--ease-overshoot) both; animation-delay: calc(var(--i) * 70ms); }
 @keyframes bf-pin { from { opacity: 0; transform: translateY(-30px) rotate(calc(var(--tilt) * 4)) scale(0.92); } to { opacity: 1; transform: rotate(var(--tilt)); } }
 .bfnote__pin { position: absolute; top: -6px; inset-inline-start: 50%; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FF9A9D, #C8362F); box-shadow: 0 2px 3px rgb(0 0 0 / 0.5); }
 .bfnote__letter { flex: none; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: var(--bf-ink); color: var(--bf-gold); font: 900 14px/1 var(--font-sans); }
 .bfnote__text { font: 800 21px/1.2 var(--font-sans); }
-.bfboard.is-dense .bfnote__text { font-size: 17px; }
+.bfboard.is-dense .bfnote__text { font-size: 16px; line-height: 1.15; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.bfboard.is-dense .bfnote, .bfboard[data-count="5"] .bfnote, .bfboard[data-count="6"] .bfnote { min-height: 33px; padding-block: 4px; }
+.bfboard.is-dense .bfnote__letter { width: 22px; height: 22px; font-size: 12px; }
+.bfboard[data-count="5"] .bfnote__text, .bfboard[data-count="6"] .bfnote__text { font-size: 19px; }
 .bfboard[data-count="2"] .bfnote, .bfboard[data-count="3"] .bfnote { min-height: 54px; }
 .bfknew { position: absolute; z-index: 7; inset: 0; display: grid; place-items: center; background: rgb(18 10 31 / 0.55); animation: bf-knew 1500ms var(--ease-standard) both; }
 .bfknew__inner { padding: 18px 36px; border-radius: 22px; background: linear-gradient(160deg, #FFF1C9, #E9A23B); color: var(--bf-ink); font: 900 34px/1.2 var(--font-sans); box-shadow: 0 20px 50px rgb(233 162 59 / 0.45);
@@ -171,8 +186,8 @@
 .bfrv__intro .bfnote { animation: none; }
 /* The question sits on a dark pill above the dimmed board, so it never reads through an answer card. */
 .bfrv__ask { position: absolute; z-index: 3; top: 236px; left: 50%; translate: -50% 0; width: max-content; max-width: 720px; margin: 0; padding: 14px 40px 16px;
-  border-radius: 99px; background: rgb(18 10 31 / 0.92); box-shadow: inset 0 0 0 2px rgb(233 162 59 / 0.55), 0 18px 48px rgb(0 0 0 / 0.7);
-  text-align: center; font: 900 40px/1.2 var(--font-sans); color: var(--color-text); animation: bf-pop 520ms var(--ease-overshoot) 300ms both; }
+  border-radius: 99px; background: #120A1F; box-shadow: inset 0 0 0 2px rgb(233 162 59 / 0.55), 0 0 0 10px rgb(18 10 31 / 0.55), 0 18px 48px rgb(0 0 0 / 0.7);
+  text-align: center; font: 900 40px/1.2 var(--font-sans); color: var(--color-text); animation: bf-pop 520ms var(--ease-overshoot) 650ms both; }
 .bfrv__center { position: absolute; z-index: 4; inset: 150px 80px auto; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
 
 .bfcard { position: absolute; z-index: 4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 22px 34px; border-radius: 16px;
@@ -214,14 +229,16 @@
 .bfcap__help { display: inline-flex; gap: 4px; align-items: center; font: 700 15px/1 var(--font-sans); color: var(--color-text-secondary); }
 .bfcap__orig { color: var(--color-text-secondary); }
 
-.bfhop { position: absolute; z-index: 5; width: 44px; height: 44px;
+.bfhop { position: absolute; z-index: 5; width: var(--hop, 56px); height: var(--hop, 56px);
   transform: translate(calc(var(--dx) * var(--p, 0)), calc(var(--dy) * var(--p, 0) - 120px * 4 * min(var(--p, 0), 1) * (1 - min(var(--p, 0), 1)))); }
 .bfhop.is-face { transform: translate(var(--dx), var(--dy)) scale(calc(0.3 + 0.7 * min(1, var(--p, 0)))); opacity: min(1, calc(var(--p, 0) * 3)); }
 .bfhop.is-fixed { transform: translate(var(--dx), var(--dy)); }
 
-.bfcoin { position: absolute; z-index: 8; left: -8px; top: -8px; width: 16px; height: 16px; pointer-events: none; will-change: transform; }
-.bfcoin__disc { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FFF7EC 0 18%, var(--c) 22%); box-shadow: 0 0 0 1.5px #FFF7EC, 0 0 10px rgb(255 227 163 / 0.8); }
-.bfcoin__label { position: absolute; left: 18px; top: -16px; padding: 1px 8px; border-radius: 99px; background: var(--bf-gold); color: var(--bf-ink); font: 900 15px/20px var(--font-sans); white-space: nowrap; }
+.bfcoin { position: absolute; z-index: 8; left: -6px; top: -6px; width: 12px; height: 12px; pointer-events: none; will-change: transform; }
+/* DESIGN-JAMAA §5.1: a 12 dp disc in the scorer's colour, 1.5 dp cream rim, the shape glyph at 60 % (CVD-safe). */
+.bfcoin__disc { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 1.5px #FFF7EC, 0 0 10px rgb(255 227 163 / 0.8); }
+.bfcoin__disc .bf-glyph { display: block; }
+.bfcoin__label { position: absolute; left: 14px; top: -18px; padding: 1px 8px; border-radius: 99px; background: var(--bf-gold); color: var(--bf-ink); font: 900 15px/20px var(--font-sans); white-space: nowrap; }
 .bfheartfly { position: absolute; z-index: 8; left: -11px; top: -11px; will-change: transform; filter: drop-shadow(0 2px 6px rgb(255 107 138 / 0.7)); }
 
 .bfconfetti { position: absolute; inset: 0; pointer-events: none; }
@@ -236,17 +253,22 @@
   box-shadow: inset 0 2px 0 #7A4A1E, 0 10px 18px rgb(0 0 0 / 0.5); }
 .bfenvs { position: absolute; top: -40px; left: 50%; width: 0; height: 0; }
 .bfenv { position: absolute; left: calc(var(--k) * 30px - 14px); opacity: min(1, calc(var(--p, 0) * 3)); transform: translateY(calc((1 - var(--p, 0)) * -150px)) rotate(calc((1 - var(--p, 0)) * -30deg + var(--k) * 4deg)); }
-.bfcrown { position: absolute; z-index: 4; inset: 146px 60px auto; display: flex; justify-content: center; gap: 24px; }
-.bfcard.is-crown { position: relative; min-width: 320px; max-width: 520px; padding: 26px 34px 104px; }
-.bfcard.is-crown .bfcard__text { font-size: 30px; }
-.bfcard.is-crown .bfcard__stamp { top: -30px; inset-inline-end: -40px; }
-.bfcard.is-crown .bf-stamp__ink { font-size: 22px; padding: 4px 12px; border-width: 4px; }
+/* Below the prompt card (its stamp row starts 30 dp above the cards, clear of the prompt) and above the café row. */
+.bfcrown { position: absolute; z-index: 4; inset: 168px 48px auto; display: flex; justify-content: center; gap: 24px; }
+/* Tied tops (2–3 cards): a 24 dp gutter; the stamp and the +400 chip stay inside their own card (no overlap, no clip). */
+.bfcard.is-crown { position: relative; min-width: 320px; max-width: 520px; padding: 56px 26px 96px; }
+.bfcrown[data-n="2"] .bfcard.is-crown, .bfcrown[data-n="3"] .bfcard.is-crown { flex: 1 1 0; min-width: 0; max-width: 400px; }
+.bfcrown[data-n="3"] .bfcard.is-crown .bfcard__text { font-size: 24px; }
+.bfcard.is-crown .bfcard__text { font-size: 28px; }
+.bfcard.is-crown .bfcard__stamp { top: -30px; inset-inline-start: auto; inset-inline-end: 8px; max-width: 72%; }
+.bfcard.is-crown .bf-stamp__ink { font-size: 22px; padding: 4px 12px; border-width: 4px; white-space: normal; text-align: center; }
+.bfcrown[data-n="3"] .bfcard.is-crown .bf-stamp__ink { font-size: 18px; }
 .bfcard.is-gold { background: linear-gradient(160deg, #FFF1C9, #FFC94D); }
 .bfcrown__who { position: absolute; bottom: -22px; display: flex; gap: 10px; }
 .bfcrown__p { position: relative; display: flex; flex-direction: column; align-items: center; opacity: min(1, calc(var(--p, 1) * 2)); transform: translateY(calc((1 - var(--p, 1)) * 40px)); }
 .bfcrown__crown { position: absolute; top: -20px; z-index: 2; transform: translateY(calc((1 - var(--p, 0)) * -90px)) rotate(calc((1 - var(--p, 0)) * -40deg)); opacity: min(1, calc(var(--p, 0) * 4)); }
 .bfcrown__name { margin-top: 2px; padding: 0 10px; border-radius: 99px; background: rgb(18 10 31 / 0.85); font: 900 16px/22px var(--font-sans); color: var(--color-text); }
-.bfcrown__bonus { position: absolute; top: -24px; inset-inline-start: -24px; padding: 6px 14px; border-radius: 14px; background: var(--bf-red); color: var(--bf-ink); font: 900 30px/1 var(--font-sans);
+.bfcrown__bonus { position: absolute; top: 12px; padding: 6px 14px; border-radius: 14px; background: var(--bf-red); color: var(--bf-ink); font: 900 26px/1 var(--font-sans);
   transform: rotate(-8deg); animation: bf-slam2 520ms var(--ease-overshoot) both; }
 .bfcrown__note { position: absolute; top: 300px; }
 .bftwist { position: absolute; z-index: 4; inset: 128px 70px auto; display: flex; flex-direction: column; align-items: center; gap: 22px; }
@@ -327,7 +349,7 @@
 .bf .odo { display: inline-flex; height: 1.15em; overflow: hidden; line-height: 1.15em; }
 .bf .odo__col { display: inline-block; width: 0.62em; height: 1.15em; overflow: hidden; transition: width 200ms, opacity 200ms; }
 .bf .odo__col.is-lead { width: 0; opacity: 0; }
-.bf .odo__strip { display: flex; flex-direction: column; transform: translateY(calc(var(--d, 0) * -1.15em)); transition: transform 300ms var(--ease-decel); }
+.bf .odo__strip { display: flex; flex-direction: column; transform: translateY(calc(var(--d, 0) * -1.15em)); will-change: transform; }
 .bf .odo__strip > span { height: 1.15em; text-align: center; }
 .bf .bf-prop { display: block; }
 
@@ -336,10 +358,20 @@
 }
 :root[data-calm] .bf *, :root[data-calm] .bf *::before, :root[data-calm] .bf *::after { animation-duration: 1ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; }
 /* Signed numbers read the same in every locale (DESIGN-JAMAA §5.1: Western digits; "+150", never "150+"). */
-.bfcoin__label, .bfrace__delta, .bfcrown__bonus, .bfcard__count, .bfseat__pill, .bfbox__count { direction: ltr; unicode-bidi: isolate; }
+.bfcoin__label, .bfrace__delta, .bfcrown__bonus, .bfcard__count, .bfseat__pill, .bfbox__count, .bf-signed { direction: ltr; unicode-bidi: isolate; }
 
 /* These pills are direction:ltr (numbers), so their own logical insets would resolve LTR: pin them physically per page direction. */
-.bfcrown__bonus { inset-inline-start: auto; left: -24px; }
-[dir="rtl"] .bfcrown__bonus { left: auto; right: -24px; }
+.bfcrown__bonus { inset-inline-start: auto; left: 12px; }
+[dir="rtl"] .bfcrown__bonus { left: auto; right: 12px; }
 .bfcard__count { inset-inline-start: auto; left: -18px; }
 [dir="rtl"] .bfcard__count { left: auto; right: -18px; }
+
+/* The host's hide picker (pause menu → "Hide an answer"): the corkboard as focusable cards, cream focus ring. */
+.bfhide .bfhide__card { width: 820px; max-height: 500px; }
+.bfhide__grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.bfhide__grid.is-dense { grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+.bfhide__opt { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 5px 14px 5px 10px; border: 0; border-radius: 6px; background: var(--bf-paper, #F7EBD3);
+  color: var(--bf-ink, #120A1F); text-align: start; font: 800 17px/1.15 var(--font-sans); cursor: pointer; outline: none; transition: transform 120ms var(--ease-decel); }
+.bfhide__opt .bfnote__letter { flex: none; }
+.bfhide__text { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.bfhide__opt:focus, .bfhide__opt:focus-visible { box-shadow: 0 0 0 4px #FFF7EC, 0 0 0 7px rgb(18 10 31 / 0.9); transform: scale(1.03); }

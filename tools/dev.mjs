@@ -13,6 +13,10 @@ const SERVER_PORT = 8787;
 const VITE_PORT = 5173;
 const isWin = process.platform === "win32";
 const PNPM = isWin ? "pnpm.cmd" : "pnpm";
+// JAMAA-PLATFORM §2.5: local dev offers every game; the Worker intersects GAMES_ENABLED with the registry's `enabled`,
+// so a game still stubbed (enabled: false) stays hidden. Override with e.g. `GAMES_ENABLED=mishana,trivia pnpm dev`.
+// Production keeps server/wrangler.jsonc's value ("mishana") until the owner adds a game there (docs/DEV.md).
+export const DEV_GAMES_ENABLED = "mishana,bluff,likely,trivia";
 
 /** `LAN_HOST` from /.env (a plain KEY=VALUE file; comments and quotes allowed). */
 function lanHostFromEnvFile() {
@@ -86,6 +90,7 @@ function main() {
     "--var", `JOIN_BASE_URL:${webOrigin}`,
     "--var", `ALLOWED_ORIGINS:${webOrigin},http://localhost:${VITE_PORT}`,
     "--var", "DEBUG_INVARIANTS:1",
+    "--var", `GAMES_ENABLED:${process.env.GAMES_ENABLED?.trim() || DEV_GAMES_ENABLED}`,
     // PAYMENTS-SPEC §3.10: fake billing for local dev. The Worker still requires a localhost/LAN host per request,
     // and no Play service account may be configured (server/.dev.vars), or every billing route answers 503.
     "--var", "BILLING_MODE:fake",
@@ -127,6 +132,7 @@ function main() {
   console.log(`TV server URL: http://${lanHost}:${SERVER_PORT}   (Android TV: -PserverUrl=http://${lanHost}:${SERVER_PORT})`);
   console.log(`Phone/TV-mock: ${webOrigin}/tv`);
   console.log(`Join URLs look like: ${webOrigin}/ABCD`);
+  console.log(`Games: GAMES_ENABLED=${process.env.GAMES_ENABLED?.trim() || DEV_GAMES_ENABLED} (∩ registry-enabled games)`);
   console.log("Billing: FAKE (test store, no real payments). See docs/DEV.md \"Billing\".");
   console.log("Press Ctrl+C to stop both.\n");
 }

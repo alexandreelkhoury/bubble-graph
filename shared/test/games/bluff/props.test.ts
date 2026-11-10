@@ -191,9 +191,21 @@ describe("final ballots are anonymous (differential)", () => {
         for (const p of ids) g1.vote(p, b1[p]!);
         for (const p of [...ids].reverse()) g2.vote(p, b2[p]!);
         const same = ids.filter((p) => !swapped!.includes(p));
+        const status = (g: typeof g1) => JSON.stringify(definition.projectStatus(g.s));
+        expect(JSON.stringify(g2.pub())).toBe(JSON.stringify(g1.pub()));
+        expect(status(g2)).toBe(status(g1));
+        // The VIP hides a VOTED answer (x's pick in g1, y's in g2): the public view and the envelope status must not
+        // change differently, i.e. nobody learns who had picked the hidden card (review blocker).
+        if (picks[0]! % 2 === 0) {
+          const hidden = b1[swapped![0]]!;
+          g1.do({ type: "HIDE_OPTION", optionId: hidden }, TV);
+          g2.do({ type: "HIDE_OPTION", optionId: hidden }, TV);
+          expect(g1.s.phase).toBe("VOTING");
+        }
         let guard = 0;
         do {
           expect(JSON.stringify(g2.pub())).toBe(JSON.stringify(g1.pub()));
+          expect(status(g2)).toBe(status(g1));
           if (g1.s.phase !== "VOTING") for (const p of same) expect(JSON.stringify(g2.me(p))).toBe(JSON.stringify(g1.me(p)));
           if (g1.s.phase === "RESULTS") break;
           g1.tick();

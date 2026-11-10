@@ -17,6 +17,8 @@ export interface RevealShape {
   none: boolean;
   unanimous: boolean;
   coins: number;
+  /** Lines on the secret-vote percentage board (each adds reading time). */
+  lines?: number;
 }
 
 /** Drumroll: lights dim, the card shrinks to the top (0–800 ms). */
@@ -27,6 +29,11 @@ export const RUN_WINDOW_MS = 2500 - RUN_MS;
 
 export function runStagger(runners: number): number {
   return runners <= 1 ? 100 : Math.min(100, RUN_WINDOW_MS / (runners - 1));
+}
+
+/** The percentage board stays readable: 1 800 ms + 120 ms per line (the rows stagger in by 120 ms). */
+export function boardMs(lines: number): number {
+  return 1800 + 120 * Math.max(1, lines);
 }
 
 /** The reveal timeline. Ids: dim, run (per runner), box, env (per envelope), scramble, count, spot, stamp, coin (per coin), tick, board, confetti, hold. */
@@ -43,7 +50,7 @@ export function revealSteps(o: RevealShape): Step[] {
     }
     steps.push(S("count", t, 600, "ease.decel", "fade"));
     t += 600;
-    if (!o.publicMode) { steps.push(S("board", t, 1200, "ease.decel", "fade", 120)); t += 600; }
+    if (!o.publicMode) { const b = boardMs(o.lines ?? 1); steps.push(S("board", t, b, "ease.decel", "fade", 120)); t += b; }
     return [...steps, S("hold", t, 400, "ease.decel", "fade")];
   }
   if (o.publicMode) {
@@ -70,8 +77,9 @@ export function revealSteps(o: RevealShape): Step[] {
       t += 450 + 70 * Math.max(0, o.coins - 1) + 600;
     }
   } else {
-    steps.push(S("board", t, 600, "ease.decel", "fade", 120));
-    t += 600;
+    const b = boardMs(o.lines ?? 1);
+    steps.push(S("board", t, b, "ease.decel", "fade", 120));
+    t += b;
   }
   steps.push(S("hold", t, 400, "ease.decel", "fade"));
   return steps;
@@ -83,16 +91,31 @@ export function startOf(steps: readonly Step[], id: string): number {
   return s ? s.startMs : Infinity;
 }
 
-/** Time kept free at the end of the server's REVEAL window: the hold (≥ 1 s of "defend yourself") and network slack. */
+/** Time kept free at the end of the server's REVEAL window (network slack before the next card is dealt). */
 export const REVEAL_TAIL_MS = 1000;
+/** The "defend yourself" hold gets at least this long on screen when the window allows it (§12.2 step 7: ≥ 1 s). */
+export const HOLD_MIN_MS = 2000;
+/** The beats before the hold are never squeezed below this fraction of their natural speed to make room for it. */
+export const MIN_SCALE = 0.7;
+/** Shortest hold step (its visual fade-in; the caption then stays until the server deals the next card). */
+const HOLD_FLOOR_MS = 400;
 
 /**
- * The reveal must end inside the server's REVEAL window (likelyRevealMs, 6–9.5 s; the server never waits for the TV):
- * when the full list (with `count` staggered elements) runs past `windowMs − REVEAL_TAIL_MS`, the whole list is scaled
- * down in time with the shared `scaled` (springs keep their physical settle time).
+ * Fits the reveal to the server's REVEAL window (likelyRevealMs; the server never waits for the TV). Everything before
+ * the hold is scaled down in time with the shared `scaled` (springs keep their physical settle time) when it would leave
+ * the hold less than HOLD_MIN_MS of `windowMs − REVEAL_TAIL_MS`, but never below MIN_SCALE (the shared floor of
+ * `budget − HOLD_FLOOR_MS` still applies); then `hold` starts where the beats end and fills the rest of the budget, so
+ * the caption and the percentage board stay on screen for the whole remaining window.
  */
 export function fitReveal(steps: readonly Step[], windowMs: number, count: number): Step[] {
   const budget = Math.max(2000, windowMs - REVEAL_TAIL_MS);
-  const end = endMs(steps, count);
-  return end <= budget ? [...steps] : scaled(steps, budget / end);
+  const hold = steps.find((s) => s.id === "hold");
+  const core = steps.filter((s) => s.id !== "hold");
+  const holdAt = hold ? hold.startMs : endMs(core, count);
+  const want = Math.max(budget - HOLD_MIN_MS, holdAt * MIN_SCALE);
+  const k = Math.min(1, want / Math.max(1, holdAt), (budget - HOLD_FLOOR_MS) / Math.max(1, endMs(core, count)));
+  const fitted = k < 1 ? scaled(core, k) : [...core];
+  if (!hold) return fitted;
+  const start = holdAt * Math.min(1, k);
+  return [...fitted, { ...hold, startMs: start, durationMs: Math.max(HOLD_FLOOR_MS, budget - start) }];
 }

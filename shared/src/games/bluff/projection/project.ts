@@ -27,7 +27,7 @@ export function projectPublic(s: BluffState): BluffPublic {
     submittedIds: s.phase === "WRITING" ? seatIds(s, (id) => hasSubmitted(s, id)) : [],
     spotOnIds: spotOnVisible ? seatIds(s, (id) => s.spotOn[id] === true) : [],
     options: optionsVisible && !s.voided ? s.options.map((o) => ({ id: o.id, text: o.text })) : [],
-    votedIds: s.phase === "VOTING" ? seatIds(s, (id) => s.votes[id] !== undefined) : [],
+    votedIds: s.phase === "VOTING" ? seatIds(s, (id) => s.votedOnce[id] === true) : [],
     voided: s.voided,
     notice: s.notice,
     reveal: REVEALED.includes(s.phase) && s.reveal ? structuredClone(s.reveal) : null,
@@ -64,7 +64,8 @@ export function projectMe(s: BluffState, playerId: string): BluffMe | null {
 }
 
 export function projectStatus(s: BluffState): { phase: string; doneIds: string[]; awaitedIds: string[] } {
-  const doneIds = s.phase === "WRITING" ? seatIds(s, (id) => hasSubmitted(s, id)) : s.phase === "VOTING" ? seatIds(s, (id) => s.votes[id] !== undefined) : [];
+  // VOTING: from votedOnce, never s.votes, so a host hide does not drop (and so expose) the hidden card's voters.
+  const doneIds = s.phase === "WRITING" ? seatIds(s, (id) => hasSubmitted(s, id)) : s.phase === "VOTING" ? seatIds(s, (id) => s.votedOnce[id] === true) : [];
   const awaitedIds = s.phase === "WRITING" || s.phase === "VOTING"
     ? s.players.filter((p) => p.connected && !p.left && !p.waiting && !doneIds.includes(p.id) && !(s.phase === "VOTING" && s.spotOn[p.id])).map((p) => p.id)
     : [];
@@ -74,7 +75,7 @@ export function projectStatus(s: BluffState): { phase: string; doneIds: string[]
 /** State-only keys that never appear in any view (§13.2). `spotOn` and `foundWhileWriting` are left out on purpose:
  *  they exist as the viewer's own booleans in `me`; leakCheck polices them structurally. */
 export const FORBIDDEN_KEYS: readonly string[] = [
-  "truthAll", "truthAlt", "houseLies", "housePool", "lies", "authors", "votes", "likes", "tooCloseProbes",
+  "truthAll", "truthAlt", "houseLies", "ownHouseCount", "housePool", "lies", "authors", "votes", "votedOnce", "likes", "likeToggles", "tooCloseProbes",
   "firstSubmitDone", "firstProbe", "rngState", "usedKeys", "drawn", "records", "edits", "seq", "itemId", "packId", "truthText",
 ];
 

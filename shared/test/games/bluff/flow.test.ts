@@ -2,6 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { definition } from "../../../src/games/bluff/definition";
 import { slotKind } from "../../../src/games/bluff/engine/reduce";
+import { isSpotOn, isTooClose } from "../../../src/games/bluff/engine/similar";
 import { G, GRACE, P, T0, TV, item, lieFor, pack, synthCatalog } from "./harness";
 
 
@@ -144,6 +145,30 @@ describe("Spot on (round 1)", () => {
     expect(g.s.options.some((o) => o.kind === "house")).toBe(false);
     expect(g.s.reveal!.unpicked.map((u) => u.authorIds)).toEqual([["p4"]]);
     expect(g.s.reveal!.spotOnDeltas.map((d) => d.playerId)).toEqual(["p1", "p2", "p3"]);
+  });
+});
+
+describe("Spot on needs a real match, not a list of guesses (review finding)", () => {
+  it("a first entry listing several endings is a normal lie (no Spot on, no vote skipped)", () => {
+    const g = new G({ players: 4 });
+    g.toWriting("saying");
+    g.submit("p1", `A lion, a tiger, ${g.truth()} or a prince and more`);
+    expect(g.me("p1")).toMatchObject({ spotOn: false, myLieStatus: "locked", tooCloseCount: 0 });
+  });
+  it("a first entry that is too close but not Spot on is a probe: the shot is spent and the truth vote pays 0", () => {
+    const g = new G({ players: 4 });
+    g.toWriting("saying");
+    // truth "Ztruth <tag> kumquat": two extra long words keep rule 5 for "too close" (ratio ≥ 0.4) but not Spot on (< 0.5)
+    const t = g.truth();
+    const fillers = ["Wonderfully", "gorgeous", "magnificent", "lovely", "extraordinary", "sweet"];
+    const lie = fillers.flatMap((a) => fillers.map((b) => `${a} ${t} ${b}`))
+      .find((l) => isTooClose(l, g.s.prompt!.truthAll) && !isSpotOn(l, g.s.prompt!.truthAll))!;
+    expect(lie).toBeDefined();
+    expect(isSpotOn(lie, g.s.prompt!.truthAll)).toBe(false);
+    g.submit("p1", lie);
+    expect(g.me("p1")).toMatchObject({ spotOn: false, foundWhileWriting: true, tooCloseCount: 1 });
+    g.submit("p1", g.truth());                              // no second chance at Spot on
+    expect(g.me("p1")!.spotOn).toBe(false);
   });
 });
 
@@ -307,6 +332,40 @@ describe("host powers", () => {
     g.do({ type: "HIDE_OPTION", optionId: others[0]!.id }, TV);
     g.do({ type: "HIDE_OPTION", optionId: others[1]!.id }, TV);
     expect(g.err({ type: "HIDE_OPTION", optionId: g.s.options[0]!.id }, TV)).toBe("CANNOT_HIDE");
+  });
+  it("HIDE_OPTION never changes the public votedIds / doneIds / awaitedIds (ballot secrecy, review blocker)", () => {
+    for (const kind of ["fact", "noTruth"] as const) {
+      const g = new G({ players: 5, settings: { length: "short" } });
+      g.toWriting(kind);
+      g.allSubmit();
+      const lie = g.s.options.find((o) => o.authors.includes("p1"))!.id;
+      g.vote("p2", lie);
+      g.vote("p3", lie);
+      g.vote("p4", g.s.options.find((o) => o.id !== lie && !o.authors.includes("p4"))!.id);
+      const pub0 = g.pub();
+      const st0 = definition.projectStatus(g.s);
+      expect(pub0.votedIds).toEqual(["p2", "p3", "p4"]);
+      g.do({ type: "HIDE_OPTION", optionId: lie }, TV);
+      expect(g.s.phase).toBe("VOTING");
+      expect(g.pub().votedIds).toEqual(pub0.votedIds);
+      expect(definition.projectStatus(g.s)).toEqual(st0);
+      // Only the displaced voters' own `me` changes: their vote is gone and they may vote again.
+      expect(g.me("p2")!.myVote).toBeNull();
+      expect(g.me("p4")!.myVote).not.toBeNull();
+      g.vote("p2", g.s.options.find((o) => !o.authors.includes("p2"))!.id);
+      expect(g.pub().votedIds).toEqual(pub0.votedIds);
+    }
+  });
+  it("LIKE toggles are capped per player per prompt (each one is a broadcast)", () => {
+    const g = new G({ players: 4 });
+    g.toWriting("fact");
+    g.allSubmit();
+    const o = g.s.options.find((x) => !x.authors.includes("p1") && !x.authors.includes("p2"))!.id;
+    for (let i = 0; i < 6; i++) g.do({ type: "LIKE", optionId: o, on: i % 2 === 0 }, P("p1"));
+    expect(g.err({ type: "LIKE", optionId: o, on: true }, P("p1"))).toBe("WRONG_PHASE");
+    g.do({ type: "LIKE", optionId: o, on: true }, P("p2"));        // other players are unaffected
+    const r = g.dispatch({ type: "INTENT", intent: { type: "LIKE", optionId: o, on: false }, by: P("p1") });
+    expect(r.ok && r.state).toBe(g.s);                             // a no-op toggle is not counted and changes nothing
   });
   it("hide property: the reply does not depend on option kind", () => {
     // Refused: at 2 options left.

@@ -3,6 +3,7 @@
 // odometer (each digit column rolls, Western digits in every locale, DESIGN-JAMAA §5.1). Shared by phone and /tv.
 import type { ComponentChildren } from "preact";
 import { useLayoutEffect, useRef } from "preact/hooks";
+import { reduced } from "../../lib/motion";
 
 const INK = "#120A1F";
 const CREAM = "#FFF7EC";
@@ -86,32 +87,89 @@ export function Stamp({ tone, children, class: cls }: { tone: "lie" | "house" | 
   return <span class={`bf-stamp bf-stamp--${tone}${cls ? ` ${cls}` : ""}`} role="status"><span class="bf-stamp__ink">{children}</span></span>;
 }
 
-const DIGITS = "0123456789";
-/** Writes `value` into an odometer element (frame-driven: no re-render). Leading columns fade when unused. */
+/**
+ * The odometer's column positions for a carried value `v` (most significant first). Column k shows
+ * floor(v / 10^k) mod 10 and only rolls (a fractional position) while the columns under it carry over (…9 → …0), so
+ * columns that do not change stay still and the reading never goes backwards (DESIGN-JAMAA §5.1). A position runs
+ * 0..10 (the strip ends with a second 0 for the 9 → 0 wrap). `lead`: a leading zero, hidden.
+ */
+export function odoColumns(value: number, cols: number): { pos: number; lead: boolean }[] {
+  const v = Math.max(0, value);
+  const out: { pos: number; lead: boolean }[] = [];
+  for (let k = cols - 1; k >= 0; k--) {
+    const base = 10 ** k;
+    const whole = Math.floor(v / base) % 10;
+    const carry = k === 0 ? v - Math.floor(v) : Math.max(0, (v % base) - (base - 1));
+    out.push({ pos: whole + carry, lead: k > 0 && v < base - 1 });
+  }
+  return out;
+}
+/** What a frame of the odometer reads (each column's settled digit): never above `v`, never going backwards. */
+export function odoReading(cols: readonly { pos: number }[]): number {
+  return cols.reduce((a, c) => a * 10 + (Math.floor(c.pos + 1e-9) % 10), 0);
+}
+export const odoWidth = (...values: number[]): number => Math.max(1, ...values.map((x) => String(Math.max(0, Math.round(x))).length));
+
+/** Writes a (fractional, carried) `value` into an odometer element: frame-driven, no CSS transition, no re-render. */
 export function setOdo(el: HTMLElement, value: number): void {
-  const v = Math.max(0, Math.round(value));
-  if (el.dataset.v === String(v)) return;
-  el.dataset.v = String(v);
+  const v = Math.max(0, value);
+  const key = v.toFixed(3);
+  if (el.dataset.v === key) return;
+  el.dataset.v = key;
   const cols = el.querySelectorAll<HTMLElement>(".odo__col");
-  const s = String(v).padStart(cols.length, "0");
-  const lead = cols.length - String(v).length;
-  cols.forEach((c, i) => {
-    c.style.setProperty("--d", s[i] ?? "0");
-    c.classList.toggle("is-lead", i < lead);
+  odoColumns(v, cols.length).forEach((c, i) => {
+    const col = cols[i]!;
+    col.style.setProperty("--d", String(c.pos));
+    col.classList.toggle("is-lead", c.lead);
   });
-  el.setAttribute("aria-label", String(v));
+  el.setAttribute("aria-label", String(Math.round(v)));
 }
 
-/** An odometer showing `value` (columns for `max` digits). Re-renders roll to the new value (CSS transition). */
+const STRIP = "01234567890";
+const ROLL_MS = 900;
+const easeOut = (p: number): number => 1 - (1 - p) ** 3;
+
+/**
+ * An odometer showing `value`. A re-render with a new value rolls there (900 ms, ease-out; reduced motion snaps);
+ * with `odoKey` a choreography drives it frame by frame through `setOdo` (`data-odo`), so it snaps here.
+ */
 export function Odo({ value, max, class: cls, odoKey }: { value: number; max?: number; class?: string; odoKey?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const width = Math.max(1, String(Math.max(0, Math.round(max ?? value))).length, String(Math.max(0, Math.round(value))).length);
-  useLayoutEffect(() => { if (ref.current) setOdo(ref.current, value); }, [value, width]);
+  const shown = useRef<number | null>(null);
+  const width = odoWidth(max ?? 0, value, shown.current ?? 0);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const from = shown.current;
+    if (from === null || odoKey !== undefined || reduced() || from === value || typeof requestAnimationFrame === "undefined") {
+      shown.current = value;
+      setOdo(el, value);
+      return;
+    }
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (tNow: number): void => {
+      const p = Math.min(1, (tNow - t0) / ROLL_MS);
+      const v = from + (value - from) * easeOut(p);
+      shown.current = v;
+      setOdo(el, v);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); };
+  }, [value, width]);
   return (
     <span class={`odo tnum${cls ? ` ${cls}` : ""}`} ref={ref} data-odo={odoKey} role="img" dir="ltr">
       {Array.from({ length: width }, (_, i) => (
-        <span key={i} class="odo__col"><span class="odo__strip">{DIGITS.split("").map((d) => <span key={d}>{d}</span>)}</span></span>
+        <span key={width - i} class="odo__col"><span class="odo__strip">{STRIP.split("").map((d, j) => <span key={j}>{d}</span>)}</span></span>
       ))}
     </span>
   );
 }
+
+/** A signed number ("+150") isolated LTR so RTL never shows "150+" (DESIGN-JAMAA §5.1, GAME-BLUFF §10). */
+export function Signed({ n, class: cls, tag = "bdi" }: { n: number; class?: string; tag?: "bdi" | "b" }) {
+  const c = `tnum bf-signed${cls ? ` ${cls}` : ""}`;
+  return tag === "b" ? <b class={c} dir="ltr">+{n}</b> : <bdi class={c} dir="ltr">+{n}</bdi>;
+}
+

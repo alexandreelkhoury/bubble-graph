@@ -33,16 +33,21 @@ describe("phases and deadlines (§4.1)", () => {
     expect(v.phase).toBe("VOTING");
     expect((v.deadline as number) - (T0 + CARD_MS + GRACE)).toBe(19_000);
   });
-  it("REVEAL lasts 5 000 + 100 × votes (+1 200 unanimous, +600 ties), clamped to 6 000–9 500", () => {
-    expect(likelyRevealMs(0, false, 0)).toBe(6_000);
-    expect(likelyRevealMs(12, true, 1)).toBe(7_400);
-    expect(likelyRevealMs(12, false, 3)).toBe(6_800);
-    expect(likelyRevealMs(50, true, 2)).toBe(9_500);
+  it("REVEAL lasts 7 000 + 150 × votes (+1 200 unanimous, +600 ties), clamped to 8 000–12 000 (owner change, G3 review)", () => {
+    expect(likelyRevealMs(0, false, 0)).toBe(8_000);
+    expect(likelyRevealMs(3, true, 1)).toBe(8_650);
+    expect(likelyRevealMs(8, false, 1)).toBe(8_200);
+    expect(likelyRevealMs(12, true, 1)).toBe(10_000);
+    expect(likelyRevealMs(12, false, 3)).toBe(9_400);
+    expect(likelyRevealMs(50, true, 2)).toBe(12_000);
+    // The 12-voter public reveal (run 800 + 1 100, count 600, spot 800, stamp 600, points 800 = 4 700 ms of steps) keeps
+    // ≥ 2 s of "defend yourself" hold at every size.
+    for (let v = 0; v <= 12; v++) expect(likelyRevealMs(v, false, 1) - (800 + Math.min(2_500, 100 * v) + 600 + 800 + 600 + 800)).toBeGreaterThanOrEqual(2_000);
     const s = tick(startGame(3));
     const now = (s.deadline as number) - 15_000;
     const r = tick(vote(vote(vote(s, "p1", "p2", now), "p2", "p2", now), "p3", "p2", now));
     expect(r.phase).toBe("REVEAL");
-    expect(r.deadline).toBe(now + 1_000 + 5_000 + 300 + 1_200);
+    expect(r.deadline).toBe(now + 1_000 + 7_000 + 450 + 1_200);
   });
   it("AWARDS lasts 3 000 + 4 000 × ceil(players / 3) (+4 000 Mind Reader in public mode)", () => {
     expect(likelyAwardsMs(3, true)).toBe(11_000);
@@ -317,5 +322,32 @@ describe("skips, HOLD, joins, leaves (§7)", () => {
     const s = startGame(3);
     expect(fail(s, intent({ type: "SKIP_CARD", cardId: cardOf(s) }, P("p2")), T0, "p1")).toBe("NOT_HOST");
     expect(DEF.reduce(s, intent({ type: "SKIP_CARD", cardId: cardOf(s) }, P("p2")), ctx(T0, undefined, "p2")).ok).toBe(true);
+  });
+});
+
+describe("secret votes: the voter→target mapping never outlives REVEAL (G3 review, defence in depth)", () => {
+  it("after REVEAL the card keeps its tally, but its picks are re-dealt in entry order; public mode keeps real ballots", () => {
+    const ballots = { p1: "p3", p2: "p1", p3: "p3", p4: "p2" };
+    const secret = playCard(startGame(5, { showVoters: false }), ballots);
+    expect(secret.phase).toBe("REVEAL");
+    const live = secret.results[0]?.picks;
+    expect(live).toEqual([2, 0, 2, 1, -1]);
+    const next = tick(secret);
+    expect(next.phase).toBe("CARD");
+    expect(next.results[0]?.picks).toEqual([0, 1, 2, 2, -1]);
+    expect(resultTally(next, next.results[0] as never)).toEqual(resultTally(secret, secret.results[0] as never));
+    // Host Next out of REVEAL seals too, and the last card's seal happens on the way to AWARDS.
+    const viaNext = host(secret, { type: "HOST_ADVANCE" }, (secret.deadline as number) - 1);
+    expect(viaNext.results[0]?.picks).toEqual([0, 1, 2, 2, -1]);
+    const end = playTo(startGame(4, { showVoters: false }), { p1: "p4", p2: "p1", p3: "p4", p4: "p3" }, "AWARDS");
+    for (const r of end.results) expect(r.picks).toEqual([0, 2, 3, 3]);
+    const pub = tick(playCard(startGame(5), ballots));
+    expect(pub.results[0]?.picks).toEqual([2, 0, 2, 1, -1]);
+  });
+  it("anonymity is frozen per instance: no game action ever changes the instance's showVoters", () => {
+    let s = startGame(4, { showVoters: false });
+    s = playTo(s, { p1: "p2", p2: "p2", p3: "p1", p4: "p2" }, "RESULTS");
+    expect(s.settings.showVoters).toBe(false);
+    expect(s.results.every((r) => r.picks.join() === [...r.picks].sort((a, b) => a - b).join())).toBe(true);
   });
 });

@@ -161,3 +161,15 @@ describe("trivia in the room", () => {
     }
   }, 60_000);
 });
+
+describe("rollout (JAMAA-PLATFORM §2.5, §6.2)", () => {
+  it("Trivia is registry-enabled (no longer a stub), but only a deploy whose GAMES_ENABLED lists it offers it", async () => {
+    const { GAMES, REGISTRY_ENABLED } = await import("../../../src/games/registry");
+    expect(GAMES.trivia.enabled).toBe(true);
+    expect(REGISTRY_ENABLED).toContain("trivia");
+    const off = new RoomHarness({ seed: 3, enabledGames: ["mishana"], content: FREE, fullContent: FULL, access: { premium: false, packs: new Set() } });
+    expect(off.tvView().room.games.map((g) => g.id)).not.toContain("trivia");
+    expect(off.try({ type: "OPEN_GAME", gameId: "trivia", by: { kind: "tv" } })).toMatchObject({ ok: false, error: "GAME_UNAVAILABLE" });
+    expect(room(1).tvView().room.games.map((g) => g.id)).toContain("trivia");
+  });
+});

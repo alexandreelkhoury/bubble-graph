@@ -17,10 +17,10 @@ import { Icon } from "../../components/Icon";
 import { Button, ConfirmSheet, Sheet } from "../../components/UI";
 import { TimerBar, now } from "../../components/Timer";
 import { ReactionsBar } from "../../platform/Reactions";
-import { Envelope, Heart, HouseChar, Lifebuoy, Moustache, Odo, Stamp } from "./art";
+import { Envelope, Heart, HouseChar, Lifebuoy, Moustache, Odo, Signed, Stamp } from "./art";
 import {
   BLUFF_ERRORS, LIE_MAX, activeSeats, awardAt, awardBodyKey, awardTitleKey, beatAt, bluffModel, deadlineOf, errorKey, graphemes, hintKey,
-  isFinal, isHost, k, letterOf, promptLines, lieReady, myReveal, needsAction, placeOf, ranked, revealPlan, roundIntroKey, roundNameKey, typeKey,
+  isFinal, isHost, k, letterOf, optionLetters, promptLines, lieReady, myReveal, needsAction, placeOf, ranked, revealPlan, roundIntroKey, roundNameKey, ruleParams, signed, typeKey,
 } from "./model";
 import type { BluffModel, Prompt, RevealStep, Seat } from "./model";
 
@@ -36,7 +36,8 @@ export const HAPTIC_FELL = 40;
 
 function Eyebrow({ m }: { m: BluffModel }) {
   const p = m.pub;
-  const dl = deadlineOf(p, serverNow());
+  // First sight of a deadline reads the wall clock (the shared `now` signal can be seconds stale when nothing watched it).
+  const dl = deadlineOf(p, Date.now() + clockOffset.value);
   return (
     <div class="eyebrow-row bf-eyebrow">
       <p class="eyebrow">
@@ -124,6 +125,17 @@ function readDraft(id: string): string {
 function writeDraft(id: string, s: string): void {
   try { sessionStorage.setItem(draftKey(id), s); } catch { /* private mode */ }
 }
+/**
+ * Drops lie drafts (all, or all but `keep`): a draft can hold a past truth (a Spot-on player typed the real ending), so
+ * it never outlives its WRITING on a phone that may be passed around.
+ */
+export function clearDrafts(keep: string | null = null): void {
+  try {
+    const keys: string[] = [];
+    for (let i = 0; i < sessionStorage.length; i++) { const k2 = sessionStorage.key(i); if (k2?.startsWith("jamaa.bluff.draft.") && k2 !== keep) keys.push(k2); }
+    for (const k2 of keys) sessionStorage.removeItem(k2);
+  } catch { /* private mode */ }
+}
 
 /** The inline error of the last refused SUBMIT_LIE / REQUEST_HELP (the server's code, this game's copy). */
 function useBluffError(promptId: string | null, contentLocale: string): string | null {
@@ -163,6 +175,13 @@ function PhWrite({ m }: { m: BluffModel }) {
   const err = closeErr ? tk("error.lieTooClose") : serverErr;
   // A new prompt (skip, "Too famous!") resets the field; a help suggestion fills an empty one.
   useEffect(() => { setDraft(readDraft(p.id) || me.myLie || ""); setEditing(me.myLieStatus === "none"); }, [p.id]);
+  // Only the live prompt's draft is kept; leaving it (skip, swap, end of WRITING) drops it; Spot on drops it at once.
+  useEffect(() => {
+    clearDrafts(draftKey(p.id));
+    const key = draftKey(p.id);
+    return () => { try { sessionStorage.removeItem(key); } catch { /* private mode */ } };
+  }, [p.id]);
+  useEffect(() => { if (me.myLieStatus === "spotOn") clearDrafts(); }, [me.myLieStatus]);
   useEffect(() => { if (me.help && !draft.trim()) { setDraft(me.help); writeDraft(p.id, me.help); } }, [me.help]);
   // The server accepted the lie: leave edit mode (an error keeps it).
   useEffect(() => { if (me.myLie !== null && me.myLie === sentText.current) setEditing(false); }, [me.myLie, me.editsLeft]);
@@ -254,6 +273,7 @@ function PhVote({ m }: { m: BluffModel }) {
   const longFired = useRef(false);
   const host = isHost(m);
   const likesLeft = 2 - me.myLikes.length;
+  const letters = optionLetters(m);
   const watch = me.spotOn;
   const err = useBluffError(m.pub.prompt?.id ?? null, m.contentLocale);
   const vote = (id: string): void => {
@@ -292,7 +312,7 @@ function PhVote({ m }: { m: BluffModel }) {
                 onClick={() => { if (!longFired.current) vote(o.id); }}
                 onPointerDown={() => down(o.id)} onPointerUp={up} onPointerLeave={up} onPointerCancel={up}
                 onContextMenu={(e) => { if (host) e.preventDefault(); }}>
-                <span class="bf-opt__letter" aria-hidden="true">{letterOf(i)}</span>
+                <span class="bf-opt__letter" aria-hidden="true">{letters.get(o.id) ?? letterOf(i)}</span>
                 <span class="bf-opt__text" dir="auto">{o.text}</span>
                 {mine ? <span class="bf-opt__yours">{tk("vote.yours")}</span> : picked && <span class="bf-opt__check" aria-hidden="true"><Icon name="check" size={16} /></span>}
               </button>
@@ -358,8 +378,8 @@ function PhReveal({ m }: { m: BluffModel }) {
         {r.final && <p class="bf-twistline">{tk("reveal.noTruthStamp")}</p>}
         <div class="bf-total" role="status">
           <Me m={m} size={72} expression={mine.total > 0 ? "cheer" : "sad"} />
-          <p class="bf-total__pts"><span class="tnum">+</span><Odo value={mine.total} /></p>
-          <p class="bf-total__label">{tk("reveal.thisPrompt", { points: `+${mine.total}` })}</p>
+          <p class="bf-total__pts" dir="ltr"><span class="tnum">+</span><Odo value={mine.total} /></p>
+          <p class="bf-total__label">{tk("reveal.thisPrompt", { points: signed(mine.total) })}</p>
           {r.final && mine.believed > 0 && <p class="bf-total__sub">{tk("reveal.believed", { count: mine.believed })}</p>}
           {!r.final && mine.fooled > 0 && <p class="bf-total__sub">{tk("reveal.youFooled", { count: mine.fooled })}</p>}
         </div>
@@ -412,7 +432,7 @@ function OwnEvent({ m, step, final, kind }: { m: BluffModel; step: RevealStep; f
     if (step.spotOnIds.includes(id)) return <p class="bf-own bf-own--good">{tk("reveal.knewItPin")}</p>;
     if (step.foundEarlyIds.includes(id)) return <p class="bf-own">{tk("reveal.foundEarly")}</p>;
     const d = step.deltas.find((x) => x.playerId === id && x.reason === "truth");
-    return d ? <p class="bf-own bf-own--good"><Me m={m} size={48} expression="cheer" /><b class="tnum">+{d.points}</b></p> : null;
+    return d ? <p class="bf-own bf-own--good"><Me m={m} size={48} expression="cheer" /><Signed n={d.points} tag="b" /></p> : null;
   }
   if (kind === "author") {
     const pts = step.deltas.filter((d) => d.playerId === id && d.reason === "fooled").reduce((a, d) => a + d.points, 0);
@@ -421,7 +441,7 @@ function OwnEvent({ m, step, final, kind }: { m: BluffModel; step: RevealStep; f
         <span class="bf-own__liar"><Me m={m} size={56} expression="smug" /><Moustache size={34} /></span>
         <span>{final ? tk("reveal.believed", { count: step.voteCount }) : tk("reveal.youFooled", { count: step.voterIds.length })}</span>
         {pts > 0 && <span class="bf-coins" aria-hidden="true">{Array.from({ length: Math.min(6, final ? step.voteCount : step.voterIds.length) }, (_, i) => <i key={i} style={{ "--i": i }} />)}</span>}
-        {pts > 0 && <b class="tnum">+{pts}</b>}
+        {pts > 0 && <Signed n={pts} tag="b" />}
         {step.helped && <span class="bf-own__help"><Lifebuoy size={14} />{tk("reveal.helped")}</span>}
       </div>
     );
@@ -463,7 +483,7 @@ function Board({ m, max = 5 }: { m: BluffModel; max?: number }) {
 function PhScores({ m }: { m: BluffModel }) {
   const list = ranked(m.seats);
   const me = m.myId ? m.byId.get(m.myId) : undefined;
-  const dl = deadlineOf(m.pub, serverNow());
+  const dl = deadlineOf(m.pub, Date.now() + clockOffset.value);
   const secs = dl ? Math.ceil(Math.max(0, dl.at - serverNow()) / 1000) : 0;
   const [shown, setShown] = useState(me?.scoreBefore ?? 0);
   useEffect(() => { const id = setTimeout(() => setShown(me?.score ?? 0), reduced() ? 0 : 250); return () => clearTimeout(id); }, [me?.score]);
@@ -475,7 +495,7 @@ function PhScores({ m }: { m: BluffModel }) {
         <div class="bf-mine">
           <span class="bf-mine__place">#<span class="tnum">{placeOf(list, me.id)}</span></span>
           <span class="bf-mine__score"><Odo value={shown} max={me.score} /></span>
-          {me.score > me.scoreBefore && <span class="bf-mine__delta tnum">+{me.score - me.scoreBefore}</span>}
+          {me.score > me.scoreBefore && <Signed n={me.score - me.scoreBefore} class="bf-mine__delta" />}
         </div>
       )}
       <Board m={m} />
@@ -588,7 +608,8 @@ export function screenKey(view: PlayerRoomView): string {
 
 export function onPhoneView(prevRoom: PlayerRoomView | null, nextRoom: PlayerRoomView): void {
   const next = bluffModel(nextRoom);
-  if (!next) return;
+  if (!next) { clearDrafts(); return; }
+  if (next.pub.phase !== "WRITING") clearDrafts();
   const prev = prevRoom ? bluffModel(prevRoom) : null;
   if (prev && prev.pub.phase !== next.pub.phase) {
     if (next.pub.phase === "WRITING" || next.pub.phase === "VOTING") announce(next.pub.phase === "WRITING" ? tk("write.cta") : isFinal(next.pub) ? tk("vote.titleNoTruth") : tk("vote.title"));
@@ -617,3 +638,6 @@ export function firstRound(view: PlayerRoomView): boolean {
 }
 
 export type { Seat };
+
+/** The ⓘ rules copy's `{seconds}` for this room (JAMAA-GAP: the platform RulesBody must pass it, see model.ruleParams). */
+export { ruleParams };

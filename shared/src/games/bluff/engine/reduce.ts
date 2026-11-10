@@ -7,17 +7,17 @@ import type { GameAction, GameActor, GameCtx, GameMemory, GameOutcome, GameReduc
 import { competitionRanking } from "../../ranking";
 import { BLOCKLIST } from "./blocklist";
 import {
-  AWARDS_BASE_MS, AWARDS_PER_CARD_MS, HIDE_MIN_REMAINING_MS, HIDES_PER_PROMPT_MAX, LIE_EDITS_MAX, LIKE_GRACE_MS, LIKES_MAX,
+  AWARDS_BASE_MS, AWARDS_PER_CARD_MS, HIDE_MIN_REMAINING_MS, HIDES_PER_PROMPT_MAX, LIE_EDITS_MAX, LIKE_GRACE_MS, LIKE_TOGGLES_MAX, LIKES_MAX,
   MAX_PLAYERS, MEMORY_MAX_KEYS, MIN_CONNECTED, MIN_FINAL_OPTIONS, MIN_LIES, PACE_FACTOR, PTS, ROUND_INTRO_FINAL_MS,
   ROUND_INTRO_MS, SCORES_MS, SCORES_VOIDED_MS, SKIPS_PER_PROMPT_MAX, TOO_CLOSE_PROBES_MAX, WRITING_FINAL_MS, WRITING_MS,
-  floor10, scaleSec, votingMs,
+  QUICK_HITS_MIN_VOTED, floor10, scaleSec, votingMs,
 } from "./constants";
 import {
   type BluffCatalog, type Candidate, type RoundKind, drawPrompt, hasEnoughContent, planFor,
   playableItems,
 } from "./catalog";
 import { type Rng, createRng, hexId, shuffleInPlace } from "./rng";
-import { collides, hitsBlocklist, isTooClose } from "./similar";
+import { collides, hitsBlocklist, isSpotOn, isTooClose } from "./similar";
 import type {
   Award, BPlayer, BluffIntent, BluffSettings, BluffState, Notice, OptionState, PromptState, Reveal, RevealDelta, RevealStep,
 } from "./state";
@@ -52,7 +52,8 @@ function recordUsed(s: BluffState, itemId: string): void {
 
 function clearPerPrompt(s: BluffState): void {
   s.lies = {}; s.edits = {}; s.tooCloseProbes = {}; s.foundWhileWriting = {}; s.spotOn = {}; s.firstSubmitDone = {};
-  s.firstProbe = {}; s.help = {}; s.housePool = []; s.options = []; s.votes = {}; s.likes = {}; s.hides = 0;
+  s.firstProbe = {}; s.help = {}; s.housePool = []; s.options = []; s.votes = {}; s.votedOnce = {}; s.likes = {}; s.likeToggles = {};
+  s.hides = 0;
   s.voided = false; s.notice = null; s.reveal = null;
 }
 
@@ -72,7 +73,9 @@ export function buildPrompt(rng: Rng, cand: Candidate, locale: Locale, rerun: bo
   }
   const truthAll = truth === null ? [] : dedupe([truth, ...alts].filter((t) => t.trim().length > 0));
   const house: string[] = [];
-  for (const raw of [...(item.houseLies[locale] ?? []), ...(pack.fallbackHouseLies[item.type]?.[locale] ?? [])]) {
+  const own = item.houseLies[locale] ?? [];
+  let ownHouseCount = 0;
+  for (const [i, raw] of [...own, ...(pack.fallbackHouseLies[item.type]?.[locale] ?? [])].entries()) {
     // Every option gets the same display pipeline as a player lie (§5.1 display normalisation + the Latin case rule),
     // so a lowercase authored truth or house lie can never stand out next to the capitalised player lies.
     const h = presentLie(raw, locale);
@@ -80,6 +83,7 @@ export function buildPrompt(rng: Rng, cand: Candidate, locale: Locale, rerun: bo
     if (truthAll.length > 0 && isTooClose(h, truthAll)) continue;
     if (house.some((x) => collides(x, h))) continue;
     house.push(h);
+    if (i < own.length) ownHouseCount++;
   }
   const srcTruth = src !== locale ? item.truth[src] : undefined;
   return {
@@ -100,7 +104,20 @@ export function buildPrompt(rng: Rng, cand: Candidate, locale: Locale, rerun: bo
     truthAlt: dedupe(alts).filter((t) => t !== truth),
     note: item.note[locale] ?? null,
     houseLies: house,
+    ownHouseCount,
   };
+}
+
+/** §4.2 / §5.5: one house lie out of the pool, the item's own first; the pack's generic fallbacks only once the
+ *  item's own are used up (by the MIN_LIES fill or "Help me"). null: the pool is empty. */
+function drawHouse(s: BluffState, rng: Rng, skip: (h: string) => boolean = () => false): string | null {
+  const own = new Set((s.prompt?.houseLies ?? []).slice(0, s.prompt?.ownHouseCount ?? 0));
+  const ownLeft = s.housePool.filter((h) => own.has(h) && !skip(h));
+  const pool = ownLeft.length > 0 ? ownLeft : s.housePool.filter((h) => !skip(h));
+  if (pool.length === 0) return null;
+  const h = pool[rng.int(pool.length)] as string;
+  s.housePool.splice(s.housePool.indexOf(h), 1);
+  return h;
 }
 
 /** Draws a prompt into WRITING (fresh slot, skip, "Too famous!" swap or §4.2 step 5 redraw). false: nothing drawable. */
@@ -232,17 +249,14 @@ function finishWriting(s: BluffState, x: X): void {
   if (!allKnew) {
     const inGame = s.players.filter((p) => !p.left && !p.waiting).length;
     let need = kind === "noTruth" ? Math.max(0, MIN_FINAL_OPTIONS - opts.length) : Math.max(MIN_LIES - opts.length, inGame <= 4 ? 1 : 0);
-    const keep: string[] = [];
-    while (need > 0 && s.housePool.length > 0) {
-      const h = s.housePool.splice(x.rng.int(s.housePool.length), 1)[0] as string;
-      if (drafts.some((d) => d.raws.some((r) => collides(r, h)))) {
-        keep.push(h);                     // a player wrote it: the player's option replaces it (§4.2 step 2)
-        continue;
-      }
+    // A house lie a player already wrote is skipped (the player's option replaces it, §4.2 step 2) and stays unused.
+    const written = (h: string): boolean => drafts.some((d) => d.raws.some((r) => collides(r, h)));
+    while (need > 0) {
+      const h = drawHouse(s, x.rng, written);
+      if (h === null) break;
       opts.push({ id: "", text: h, kind: "house", authors: [], helped: false });
       need--;
     }
-    s.housePool.push(...keep);
   }
   if (kind !== "noTruth" && prompt.truthText !== null) opts.push({ id: "", text: prompt.truthText, kind: "truth", authors: [], helped: false });
 
@@ -258,7 +272,9 @@ function finishWriting(s: BluffState, x: X): void {
   }
   s.options = opts;
   s.votes = {};
+  s.votedOnce = {};
   s.likes = {};
+  s.likeToggles = {};
 
   if (allKnew) {
     s.notice = "allKnew";
@@ -296,20 +312,24 @@ function enterReveal(s: BluffState, x: X): void {
   };
 
   const lieOpts = s.options.filter((o) => o.kind === "lie");
-  const maxVotes = Math.max(0, ...lieOpts.map((o) => votersOf(o.id).length));
+  // Final crown (§6.5, tightened): a "Help me" answer the game wrote is not eligible (like a house answer), and the
+  // FINAL_TOP bonus is split among the tied top answers.
+  const crownable = lieOpts.filter((o) => !o.helped);
+  const maxVotes = Math.max(0, ...crownable.map((o) => votersOf(o.id).length));
+  const topCount = crownable.filter((o) => maxVotes >= 1 && votersOf(o.id).length === maxVotes).length;
   const stepFor = (o: OptionState): RevealStep => {
     const voters = votersOf(o.id);
     const likers = likersOf(o.id);
     const deltas: RevealDelta[] = [];
     const k = o.authors.length;
-    const top = final && o.kind === "lie" && maxVotes >= 1 && voters.length === maxVotes;
+    const top = final && o.kind === "lie" && !o.helped && maxVotes >= 1 && voters.length === maxVotes;
     let foundEarly: string[] = [];
     if (o.kind === "lie") {
       let fooled = (final ? PTS.FINAL_VOTE : PTS.FOOLED * m) * voters.length;
       if (o.helped) fooled = Math.max(0, fooled - (final ? PTS.FINAL_HELP_FEE : PTS.HELP_FEE * m));
       add(deltas, o.authors, floor10(fooled / k), "fooled");
       add(deltas, o.authors, floor10(((final ? PTS.FINAL_LIKE : PTS.LIKE) * likers.length) / k), "like");
-      if (top) add(deltas, o.authors, floor10(PTS.FINAL_TOP / k), "convincing");
+      if (top) add(deltas, o.authors, floor10(PTS.FINAL_TOP / topCount / k), "convincing");
     } else if (o.kind === "truth") {
       foundEarly = voters.filter((v) => s.foundWhileWriting[v]);
       add(deltas, voters.filter((v) => !s.foundWhileWriting[v]), PTS.TRUTH * m, "truth");
@@ -324,7 +344,8 @@ function enterReveal(s: BluffState, x: X): void {
   // Order: lies and house lies with votes, fewest first (ties: RNG order), quick hits first; the truth last.
   const voted = shuffleInPlace(x.rng, s.options.filter((o) => o.kind !== "truth" && votersOf(o.id).length > 0)).map(stepFor);
   voted.sort((a, b) => a.voteCount - b.voteCount);
-  if (!final && voted.length > 5) for (const st of voted) st.quick = st.voteCount === 1;
+  // Quick hits (§12.2, tightened): with ≥ 3 voted lies, every 1-vote lie is a quick hit (no full spotlight and drumroll).
+  if (!final && voted.length >= QUICK_HITS_MIN_VOTED) for (const st of voted) st.quick = st.voteCount === 1;
   const steps = [...voted.filter((st) => st.quick), ...voted.filter((st) => !st.quick)];
   const truthOpt = s.options.find((o) => o.kind === "truth");
   if (truthOpt) steps.push(stepFor(truthOpt));
@@ -358,7 +379,7 @@ function enterReveal(s: BluffState, x: X): void {
   }
   s.records.push({
     promptIndex: s.promptIndex,
-    options: lieOpts.map((o) => ({ text: o.text, authorIds: [...o.authors], votes: votersOf(o.id).length, likes: likersOf(o.id).length })),
+    options: lieOpts.map((o) => ({ text: o.text, authorIds: [...o.authors], votes: votersOf(o.id).length, likes: likersOf(o.id).length, helped: o.helped })),
   });
 
   const base: Omit<Reveal, "durationMs"> = {
@@ -387,7 +408,8 @@ export function computeAwards(s: BluffState): Award[] {
   let best: { votes: number; likes: number; promptIndex: number; text: string; authorIds: string[] }[] = [];
   for (const r of s.records) {
     for (const o of r.options) {
-      if (o.votes < 2 || !o.authorIds.some((a) => live.some((p) => p.id === a))) continue;
+      // A "Help me" answer was written by the game, not by its author: never the Bluff of the Night (§6.6, tightened).
+      if (o.votes < 2 || o.helped || !o.authorIds.some((a) => live.some((p) => p.id === a))) continue;
       const c = { votes: o.votes, likes: o.likes, promptIndex: r.promptIndex, text: o.text, authorIds: o.authorIds };
       const b = best[0];
       const cmp = b === undefined ? 1 : c.votes - b.votes || c.likes - b.likes || c.promptIndex - b.promptIndex;
@@ -436,7 +458,9 @@ function submitLie(s: BluffState, x: X, pid: string, text: string, promptId: str
   const kind = slotKind(s);
   const first = !s.firstSubmitDone[pid];
   const close = kind !== "noTruth" && isTooClose(t, s.prompt.truthAll);
-  const spot = close && kind === "saying" && first;
+  // §5.0 with a stricter matcher: a list of guesses is never Spot on; a first entry that is too close but not Spot on
+  // is a too-close probe (the one shot is spent, the truth vote stops paying).
+  const spot = close && kind === "saying" && first && isSpotOn(t, s.prompt.truthAll);
   // §5.1: a 4th too-close attempt is refused outright (nothing is recorded, so the error leaves the state alone).
   if (close && !spot && (s.tooCloseProbes[pid] ?? 0) >= TOO_CLOSE_PROBES_MAX) return "TOO_MANY_EDITS";
   s.edits[pid] = (s.edits[pid] ?? 0) + 1;
@@ -482,7 +506,7 @@ function requestHelp(s: BluffState, x: X, pid: string, promptId: string): Out {
   if (typeof p === "string") return p;
   if (promptId !== s.prompt.id) return "STALE_PROMPT";
   if (s.spotOn[pid] || s.lies[pid] !== undefined || pid in s.help) return "WRONG_PHASE";
-  s.help[pid] = s.housePool.length > 0 ? (s.housePool.splice(x.rng.int(s.housePool.length), 1)[0] as string) : null;
+  s.help[pid] = drawHouse(s, x.rng);
   return null;
 }
 
@@ -495,6 +519,7 @@ function vote(s: BluffState, x: X, pid: string, optionId: string): Out {
   if (!o) return "INVALID_TARGET";
   if (o.authors.includes(pid)) return "CANNOT_VOTE_OWN";
   s.votes[pid] = optionId;
+  s.votedOnce[pid] = true;     // public "has voted" (votedIds/doneIds): never cleared by a hide (§8.1 ballot secrecy)
   checkVotingDone(s, x.now);
   return null;
 }
@@ -507,16 +532,18 @@ function like(s: BluffState, pid: string, optionId: string, on: boolean): Out {
   if (!o) return "INVALID_TARGET";
   if (o.authors.includes(pid)) return "CANNOT_VOTE_OWN";
   const cur = s.likes[pid] ?? [];
+  if (on ? cur.includes(optionId) : !cur.includes(optionId)) return null;
+  // Each accepted toggle is a broadcast to every socket: capped per player per prompt (error → sender only).
+  if ((s.likeToggles[pid] ?? 0) >= LIKE_TOGGLES_MAX) return "WRONG_PHASE";
   if (on) {
-    if (cur.includes(optionId)) return null;
     if (cur.length >= LIKES_MAX) return "INVALID_TARGET";
     s.likes[pid] = [...cur, optionId];
   } else {
-    if (!cur.includes(optionId)) return null;
     const next = cur.filter((c) => c !== optionId);
     if (next.length) s.likes[pid] = next;
     else delete s.likes[pid];
   }
+  s.likeToggles[pid] = (s.likeToggles[pid] ?? 0) + 1;
   return null;
 }
 
@@ -543,12 +570,15 @@ function hideOption(s: BluffState, x: X, optionId: string): Out {
     s.voided = true;
     s.notice = "voided";
     s.votes = {};
+    s.votedOnce = {};
     s.likes = {};
     s.reveal = null;
     enterScores(s, x.now);
     return null;
   }
   s.options = s.options.filter((q) => q.id !== optionId);
+  // The displaced voters vote again; only their own `me.myVote` (now null) says so. `votedOnce` keeps them in the
+  // public votedIds/doneIds, so a hide never exposes who had picked the hidden card (§8.1, final ballots: never).
   for (const v of Object.keys(s.votes)) if (s.votes[v] === optionId) delete s.votes[v];
   for (const v of Object.keys(s.likes)) {
     const next = (s.likes[v] ?? []).filter((q) => q !== optionId);
@@ -638,6 +668,7 @@ function step(s: BluffState, a: GameAction<BluffIntent>, x: X): Out {
       p.left = true;
       p.connected = false;
       delete s.votes[p.id];
+      delete s.votedOnce[p.id];
       delete s.likes[p.id];
       checkWritingDone(s, x);
       checkVotingDone(s, x.now);
@@ -679,7 +710,7 @@ export function start(a: {
     prevType: null,
     skipsUsed: 0, swapped: false, emptyRedraw: false, seq: 0,
     lies: {}, edits: {}, tooCloseProbes: {}, foundWhileWriting: {}, spotOn: {}, firstSubmitDone: {}, firstProbe: {}, help: {},
-    housePool: [], options: [], votes: {}, likes: {}, hides: 0, voided: false, notice: null, reveal: null, awards: [], records: [],
+    housePool: [], options: [], votes: {}, votedOnce: {}, likes: {}, likeToggles: {}, hides: 0, voided: false, notice: null, reveal: null, awards: [], records: [],
     usedKeys, drawn: [],
   };
   const blocked = startBlocker(a.roster, a.settings, a.content, a.locale);

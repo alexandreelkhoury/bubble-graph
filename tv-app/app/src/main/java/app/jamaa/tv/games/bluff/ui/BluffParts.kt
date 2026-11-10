@@ -61,6 +61,8 @@ import app.jamaa.tv.games.bluff.BluffPhase
 import app.jamaa.tv.games.bluff.BluffPrompt
 import app.jamaa.tv.games.bluff.BluffView
 import app.jamaa.tv.games.bluff.LengthHint
+import app.jamaa.tv.games.bluff.OptionLetters
+import app.jamaa.tv.games.bluff.PromptLines
 import app.jamaa.tv.games.bluff.RoundKind
 import app.jamaa.tv.i18n.nameList
 import app.jamaa.tv.protocol.DeadlineKind
@@ -288,13 +290,15 @@ internal fun PromptCard(view: BluffView, prompt: BluffPrompt, modifier: Modifier
             if (prompt.rerun) Chip(stringResource(R.string.game__bluff__prompt__rerun), fill = Cafe.elevated, ink = Paper)
         }
         Spacer(Modifier.height(if (compact) 8.dp else 14.dp))
-        // AR pack in an EN/FR room: the Arabic original, then the transliteration, then the translation (smaller).
-        Text(prompt.original, style = (if (compact) type.headline else type.displayS).contentDir(), color = PaperInk, textAlign = TextAlign.Center)
-        prompt.translit?.let {
+        // The room-language text is the headline. Only an Arabic proverb (translit set) keeps its original on top, then
+        // the transliteration, then the room-language translation (smaller): GAME-BLUFF §8.2, the web's promptLines.
+        val lines = PromptLines.of(prompt)
+        Text(lines.main, style = (if (compact) type.headline else type.displayS).contentDir(), color = PaperInk, textAlign = TextAlign.Center)
+        lines.translit?.let {
             Spacer(Modifier.height(4.dp))
             Text(it, style = type.body.contentDir(), color = PaperInk.copy(alpha = 0.62f), textAlign = TextAlign.Center)
         }
-        prompt.display?.takeIf { it != prompt.original }?.let {
+        lines.sub?.let {
             Spacer(Modifier.height(6.dp))
             Text(it, style = type.title.contentDir(), color = PaperInk.copy(alpha = 0.85f), textAlign = TextAlign.Center)
         }
@@ -355,6 +359,7 @@ internal fun VotingBoard(view: BluffView, clock: PhaseClock, rtl: Boolean) {
     val type = JamaaTheme.type
     val n = view.options.size
     val cols = BluffBoard.columns(n)
+    val letters = OptionLetters.shared.of(view)
     Column(Modifier.fillMaxSize().padding(horizontal = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
@@ -397,7 +402,8 @@ internal fun VotingBoard(view: BluffView, clock: PhaseClock, rtl: Boolean) {
                                         CompositionLocalProvider(LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
                                             OptionCard(
                                                 view.options[index].text,
-                                                Modifier.fillMaxWidth().graphicsLayer {
+                                                letter = letters[view.options[index].id] ?: OptionLetters.letterOf(index),
+                                                modifier = Modifier.fillMaxWidth().graphicsLayer {
                                                     val p = clock.p("pins", index)
                                                     alpha = minOf(1f, p * 2f)
                                                     scaleX = 0.9f + 0.1f * p
@@ -418,25 +424,39 @@ internal fun VotingBoard(view: BluffView, clock: PhaseClock, rtl: Boolean) {
     }
 }
 
-/** A pinned answer card: cream paper, a brass pin, 2 lines max (60 graphemes fit at body size, GAME-BLUFF §7). */
+/**
+ * A pinned answer card: cream paper, 2 lines max (60 graphemes fit at body size, GAME-BLUFF §7). With a [letter], the
+ * brass pin becomes a brass letter badge (A, B, C … as on the phones, DESIGN-JAMAA §7.6 BL-TV-03) at the start edge
+ * (mirrored in RTL by the layout direction; the letter itself stays Western), so the room can say "I went for C".
+ */
 @Composable
-internal fun OptionCard(text: String, modifier: Modifier = Modifier, dense: Boolean = false, fill: Color = Paper, ink: Color = PaperInk) {
+internal fun OptionCard(text: String, modifier: Modifier = Modifier, dense: Boolean = false, fill: Color = Paper, ink: Color = PaperInk, letter: Char? = null) {
+    val badge = if (dense) 26.dp else 32.dp
     Box(
         modifier
             .background(fill, RoundedCornerShape(14.dp))
-            .padding(horizontal = 20.dp, vertical = if (dense) 8.dp else 12.dp),
+            .padding(horizontal = if (letter != null) 12.dp else 20.dp, vertical = if (dense) 8.dp else 12.dp),
     ) {
         Text(
             text,
-            Modifier.fillMaxWidth().padding(start = 18.dp),
+            Modifier.fillMaxWidth().padding(start = if (letter != null) badge + 12.dp else 18.dp),
             style = (if (dense) JamaaTheme.type.body else JamaaTheme.type.title).contentDir(),
             color = ink,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
-        Canvas(Modifier.align(Alignment.CenterStart).size(12.dp).clearAndSetSemantics {}) {
-            drawCircle(Gold, radius = size.minDimension / 2f)
-            drawCircle(GoldLight, radius = size.minDimension / 5f, center = Offset(size.width * 0.38f, size.height * 0.38f))
+        if (letter != null) {
+            Box(
+                Modifier.align(Alignment.CenterStart).size(badge).background(Brush.radialGradient(listOf(GoldLight, Gold)), RoundedCornerShape(50)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(letter.toString(), style = (if (dense) JamaaTheme.type.caption else JamaaTheme.type.titleS).copy(textDirection = TextDirection.Ltr), color = PaperInk, maxLines = 1)
+            }
+        } else {
+            Canvas(Modifier.align(Alignment.CenterStart).size(12.dp).clearAndSetSemantics {}) {
+                drawCircle(Gold, radius = size.minDimension / 2f)
+                drawCircle(GoldLight, radius = size.minDimension / 5f, center = Offset(size.width * 0.38f, size.height * 0.38f))
+            }
         }
     }
 }

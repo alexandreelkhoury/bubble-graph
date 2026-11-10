@@ -2,7 +2,7 @@
   "v": 2,
   "t": "state",
   "seq": 72,
-  "serverNow": 1790000112600,
+  "serverNow": 1790000127050,
   "view": {
     "kind": "tv",
     "room": {
@@ -119,7 +119,7 @@
         "phase": "REVEAL",
         "cardIndex": 7,
         "cardCount": 8,
-        "deadline": 1790000118600,
+        "deadline": 1790000135050,
         "card": {
           "id": "fam-008",
           "prompt": "arrive late to their own party",

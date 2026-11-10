@@ -2,7 +2,7 @@
   "v": 2,
   "t": "state",
   "seq": 73,
-  "serverNow": 1790000118600,
+  "serverNow": 1790000135050,
   "view": {
     "kind": "tv",
     "room": {
@@ -119,7 +119,7 @@
         "phase": "AWARDS",
         "cardIndex": 8,
         "cardCount": 8,
-        "deadline": 1790000133600,
+        "deadline": 1790000150050,
         "card": null,
         "newIds": [],
         "votedIds": [],

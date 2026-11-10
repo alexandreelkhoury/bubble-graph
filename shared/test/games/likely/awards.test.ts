@@ -2,7 +2,9 @@
 import { describe, expect, it } from "vitest";
 import { computeAwards } from "../../../src/games/likely/engine/awards";
 import type { LikelyTally } from "../../../src/games/likely/engine/result";
+import { RUNNER_UP_VALUE } from "../../../src/games/likely/engine/state";
 import type { LikelyDelta } from "../../../src/games/likely/engine/state";
+import { LIKELY_RUNNER_UP_VALUE } from "../../../src/games/likely/meta";
 import { ids } from "./helpers";
 
 const card = (votesCast: number, counts: [string, number][], topIds: string[]): LikelyTally =>
@@ -14,8 +16,8 @@ describe("awards (§6.2)", () => {
   it("signature = highest vote share; tie → the later card; never top → Mystery", () => {
     const results = [
       card(4, [["p1", 3], ["p2", 1]], ["p1"]),        // p1 75 %
-      card(4, [["p1", 2], ["p3", 2]], ["p1", "p3"]),  // p1 50 %, p3 50 %
-      card(2, [["p3", 1], ["p2", 1]], ["p2", "p3"]),  // p3 50 % (later: wins the tie), p2 50 %
+      card(4, [["p1", 2], ["p3", 2]], ["p1", "p3"]),  // p1 50 %, p3 50 % (same share, same count, later: p3's pick)
+      card(4, [["p3", 2], ["p2", 2]], ["p2", "p3"]),  // p3 50 %, p2 50 %
     ];
     expect(computeAwards(p, results, false, [], {}, none)).toEqual([
       { kind: "signature", playerIds: ["p1"], cardIndex: 0, value: null },
@@ -23,6 +25,41 @@ describe("awards (§6.2)", () => {
       { kind: "signature", playerIds: ["p3"], cardIndex: 2, value: null },
       { kind: "mystery", playerIds: ["p4"], cardIndex: null, value: null },
     ]);
+  });
+  it("equal share → more votes wins before the later card (3 of 3 beats a later 2 of 2)", () => {
+    const results = [card(3, [["p1", 3]], ["p1"]), card(2, [["p1", 2]], ["p1"])];
+    expect(computeAwards(["p1"], results, false, [], {}, none)[0]).toMatchObject({ kind: "signature", cardIndex: 0, value: null });
+    const big = [card(12, [["p1", 6], ["p2", 6]], ["p1", "p2"]), card(6, [["p1", 3], ["p3", 3]], ["p1", "p3"])];
+    expect(computeAwards(["p1"], big, false, [], {}, none)[0]).toMatchObject({ cardIndex: 0 });
+  });
+  it("a card with < 3 votes cast never beats a real majority (1 of 1 = 100 % loses to 5 of 12), unless it is the only top", () => {
+    const results = [card(12, [["p1", 5], ["p2", 4], ["p3", 3]], ["p1"]), card(1, [["p1", 1]], ["p1"]), card(2, [["p2", 2]], ["p2"])];
+    const a = computeAwards(["p1", "p2"], results, false, [], {}, none);
+    expect(a[0]).toMatchObject({ playerIds: ["p1"], cardIndex: 0 });
+    expect(a[1]).toMatchObject({ playerIds: ["p2"], cardIndex: 2, value: null });
+  });
+  it("runner-up: never top but ≥ 2 votes on a card → that card's award as a runner-up signature; else Mystery", () => {
+    const results = [
+      card(12, [["p1", 6], ["p2", 4], ["p3", 2]], ["p1"]),
+      card(12, [["p1", 7], ["p2", 3], ["p3", 1], ["p4", 1]], ["p1"]),
+      card(12, [["p1", 8], ["p3", 3], ["p4", 1]], ["p1"]),
+    ];
+    expect(computeAwards(ids(4), results, false, [], {}, none)).toEqual([
+      { kind: "signature", playerIds: ["p1"], cardIndex: 2, value: null },
+      { kind: "signature", playerIds: ["p2"], cardIndex: 0, value: RUNNER_UP_VALUE },   // 4/12 beats 3/12
+      { kind: "signature", playerIds: ["p3"], cardIndex: 2, value: RUNNER_UP_VALUE },   // 3/12 beats 2/12
+      { kind: "mystery", playerIds: ["p4"], cardIndex: null, value: null },             // never 2 votes
+      { kind: "star", playerIds: ["p1"], cardIndex: null, value: 3 },
+    ]);
+    expect(RUNNER_UP_VALUE).toBe(LIKELY_RUNNER_UP_VALUE);
+  });
+  it("runner-up never comes from a Chaos card", () => {
+    const chaos: LikelyTally = { votesCast: 3, counts: [{ playerId: "p1", count: 1 }, { playerId: "p2", count: 1 }, { playerId: "p3", count: 1 }], topIds: [], unanimous: false, chaos: true };
+    expect(computeAwards(["p1"], [chaos], false, [], {}, none)[0]).toMatchObject({ kind: "mystery" });
+  });
+  it("live regression (3 players): a unanimous 3 of 3 beats a later 2 of 2 with one abstention", () => {
+    const unanimous: LikelyTally = { votesCast: 3, counts: [{ playerId: "p1", count: 3 }], topIds: ["p1"], unanimous: true, chaos: false };
+    expect(computeAwards(["p1"], [unanimous, card(2, [["p1", 2]], ["p1"])], false, [], {}, none)[0]).toMatchObject({ cardIndex: 0 });
   });
   it("vote share is compared exactly (2/3 beats 3/5)", () => {
     expect(computeAwards(["p1"], [card(3, [["p1", 2]], ["p1"]), card(5, [["p1", 3]], ["p1"])], false, [], {}, none)[0]).toMatchObject({ kind: "signature", cardIndex: 0 });

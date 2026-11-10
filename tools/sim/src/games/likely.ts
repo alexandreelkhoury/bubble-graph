@@ -6,8 +6,7 @@
 // `--access free`, that no Pass card is ever drawn. Spicy games run on the Spicy-enabled test definition (the shipped
 // one keeps it compiled out, GAME-LIKELY §9.1).
 //
-// JAMAA-GAP (G3): tools/sim/src/main.ts (milestone P file) still routes only mishana to an engine-mode bot; until it
-// imports `runLikelyEngineMode`, run this module directly:
+// `pnpm sim --game likely …` routes here (tools/sim/src/main.ts, G3 review); the module also runs on its own:
 //   pnpm --filter @jamaa/sim exec tsx src/games/likely.ts --players 3..12 --games 300 [--seed N] [--access free]
 import { fileURLToPath } from "node:url";
 import { LOCALES } from "@jamaa/shared/constants";

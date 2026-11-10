@@ -1,6 +1,6 @@
 // The public-mode score rail along the bottom of the TV (Read the Room points; never shown with secret votes, where no
 // points exist, GAME-LIKELY §6). In REVEAL the counters tick from `scoreBefore` (the reveal's "tick" step).
-import { fmtNum } from "../../../i18n/t";
+import { fmtNum, t } from "../../../i18n/t";
 import { Character } from "../../../components/Character";
 import type { LikelyModel } from "../model";
 
@@ -8,7 +8,7 @@ export function ScoreRail({ m, tick = false }: { m: LikelyModel; tick?: boolean 
   if (!m.pub.showVoters) return null;
   const lead = Math.max(...m.seats.map((s) => s.score));
   return (
-    <ol class="lkrail" aria-label="score">
+    <ol class="lkrail" aria-label={t("results.scoreboard")}>
       {m.seats.filter((s) => !s.left).map((s) => {
         const from = tick ? s.scoreBefore : s.score;
         return (

@@ -1,7 +1,29 @@
 {
-  "_note": "GAME-BLUFF §5.4 (ES) [native review]: slurs and strong sexual or hateful terms only; mild swearing is allowed.",
+  "_note": "GAME-BLUFF §5.4 (ES) [native review]: slurs and strong sexual or hateful terms only; mild swearing is allowed. Same matching as en.json. `puta` stays blocked as a word, but the idiom «de puta madre» (mild, 'great') is allowed per §5.4 [owner/lane D review].",
   "words": [
-    "maricón", "marica", "sudaca", "negrata", "panchito", "moraco", "tortillera", "porno", "pedófilo", "violador",
-    "violación", "puta", "zorra", "sieg heil"
+    "maricón",
+    "marica",
+    "sudaca",
+    "negrata",
+    "panchito",
+    "moraco",
+    "tortillera",
+    "porno",
+    "pedófilo",
+    "violador",
+    "violación",
+    "puta",
+    "zorra",
+    "sieg heil"
+  ],
+  "glued": [
+    "maricon",
+    "sudaca",
+    "negrata",
+    "pedofilo",
+    "siegheil"
+  ],
+  "allow": [
+    "de puta madre"
   ]
 }

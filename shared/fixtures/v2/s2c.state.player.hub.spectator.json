@@ -70,6 +70,28 @@
             10,
             20
           ]
+        },
+        {
+          "id": "likely",
+          "minPlayers": 3,
+          "maxPlayers": 12,
+          "available": false,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            6,
+            10
+          ]
+        },
+        {
+          "id": "trivia",
+          "minPlayers": 1,
+          "maxPlayers": 12,
+          "available": false,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            5,
+            10
+          ]
         }
       ],
       "setup": null,

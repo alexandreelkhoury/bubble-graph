@@ -21,17 +21,22 @@ export const TOO_CLOSE_PROBES_MAX = 3;
 export const SKIPS_PER_PROMPT_MAX = 2;
 export const HIDES_PER_PROMPT_MAX = 3;
 export const LIKES_MAX = 2;
+/** Accepted LIKE on/off toggles per player per prompt (each one is a broadcast to every socket). */
+export const LIKE_TOGGLES_MAX = 6;
+/** §12.2: with at least this many voted lies, every 1-vote lie is a quick hit. */
+export const QUICK_HITS_MIN_VOTED = 3;
 export { MEMORY_MAX_KEYS } from "../../../constants";
 
-// §6.3 (rounds 1–2, ×m) and §6.5 (final)
+// §6.3 (rounds 1–2, ×m) and §6.5 (final). Final values rebalanced (owner-approved review finding, 2026-11-10):
+// FINAL_VOTE 150 → 100 and FINAL_TOP 400 → 250, split among tied top answers (GAME-BLUFF §6.5 to be updated).
 export const PTS = {
   SPOT_ON: 150,
   TRUTH: 100,
   FOOLED: 60,
   LIKE: 10,
   HELP_FEE: 40,
-  FINAL_VOTE: 150,
-  FINAL_TOP: 400,
+  FINAL_VOTE: 100,
+  FINAL_TOP: 250,
   FINAL_LIKE: 20,
   FINAL_HELP_FEE: 60,
 } as const;

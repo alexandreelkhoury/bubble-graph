@@ -10,10 +10,10 @@
 // until the lock/opacity checks are done (all answered ends ANSWER early), and screenshots are taken only after the
 // taps. Relaxed pace gives the slow CI machine room; the board index comes from the TV's own `public.index`.
 //
-// Trivia is registry-disabled until the owner ships it (shared/src/games/trivia/definition.ts `enabled: false`) and the
-// Worker needs its packs emitted (`pnpm lint:content --emit`), so this spec skips itself unless GET /api/config lists
-// "trivia". Run it against a Worker with trivia on: E2E_BASE_URL=http://127.0.0.1:<port> pnpm --filter
-// @jamaa/web-client exec playwright test e2e/games/trivia.spec.ts. SHOTS_DIR=<dir> saves every screen (TV 1920×1080,
+// Trivia is registry-enabled; production lists it only once the owner adds it to GAMES_ENABLED. `pnpm e2e` starts its
+// Worker with every game (playwright.config.ts E2E_GAMES_ENABLED) and needs the packs emitted (`pnpm content:emit`); the
+// spec still skips itself when GET /api/config does not list "trivia" (an E2E_BASE_URL server without it). Against your
+// own Worker: E2E_BASE_URL=http://127.0.0.1:<port> pnpm --filter @jamaa/web-client exec playwright test e2e/games/trivia.spec.ts. SHOTS_DIR=<dir> saves every screen (TV 1920×1080,
 // phone 390×844) under <dir>/<locale>/.
 import { mkdirSync } from "node:fs";
 import { devices, expect, test } from "@playwright/test";

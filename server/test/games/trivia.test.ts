@@ -189,11 +189,11 @@ describe("Trivia over the protocol (server, G4)", () => {
     expect(trivia(pass).quiz.id).toBe("syn-world");
   });
 
-  it("GAMES_ENABLED without trivia: OPEN_GAME trivia is refused (GAME_DISABLED) and the hub never lists it", async () => {
+  it("GAMES_ENABLED without trivia: OPEN_GAME trivia is refused (GAME_UNAVAILABLE: registry-enabled, not deployed) and the hub never lists it", async () => {
     const { h, tv } = await triviaRoom(1, { enabled: ["mishana"] });
     expect((tv.lastView() as { room: { games: { id: string }[] } }).room.games.map((g) => g.id)).toEqual(["mishana"]);
     await h.open(tv, "trivia");
-    expect(tv.errors()).toEqual(["GAME_DISABLED"]);
+    expect(tv.errors()).toEqual(["GAME_UNAVAILABLE"]);
   });
 });
 

@@ -38,9 +38,11 @@ export function TvReveal({ m }: { m: LikelyModel }) {
   const plan = useMemo(() => revealPlan(m, isRtl), [m.pub.card?.id, m.pub.cardIndex, isRtl, m.seats.length]);
   const envelopes = useMemo(() => (pub ? [] : r.counts.flatMap((c) => Array.from({ length: c.count }, () => c.playerId))), [r]);
   const count = Math.max(plan.runners.length, envelopes.length, plan.coins.length, 1);
+  const lines = percentLines(m);
+  const boardLines = Math.min(lines.length, BOARD_MAX) + (lines.length > BOARD_MAX ? 1 : 0);
   const steps = useMemo(() => fitReveal(revealSteps({
-    runners: plan.runners.length, envelopes: envelopes.length, publicMode: pub, chaos: r.chaos, none: r.none, unanimous: r.unanimous, coins: plan.coins.length,
-  }), likelyRevealMs(r.votesCast, r.unanimous, r.topIds.length), count), [plan, envelopes.length, pub, r.chaos, r.none, r.unanimous]);
+    runners: plan.runners.length, envelopes: envelopes.length, publicMode: pub, chaos: r.chaos, none: r.none, unanimous: r.unanimous, coins: plan.coins.length, lines: boardLines,
+  }), likelyRevealMs(r.votesCast, r.unanimous, r.topIds.length), count), [plan, envelopes.length, pub, r.chaos, r.none, r.unanimous, boardLines]);
   const root = useRef<HTMLDivElement>(null);
   const runRef = useRef<Run | null>(null);
   const [stage, setStage] = useState<Stage>(() => (reduced() ? "end" : "run"));
@@ -121,6 +123,8 @@ export function TvReveal({ m }: { m: LikelyModel }) {
       if (p("stamp") > 0) once("stamp", () => { sfx("rosette"); toStage("stamp"); });
       if (p("confetti") > 0) once("conf", () => sfx("confetti"));
       if (p("coin") > 0) once("coins", () => platformCue("coin_fly"));
+      // The hold fills the rest of the server window: the room has settled once it starts (OK has nothing left to finish).
+      if (has.has("hold") && p("hold") > 0) once("hold", () => { toStage("end"); setRunning(false); });
     }, () => { toStage("end"); setRunning(false); }, count);
     runRef.current = handle;
     return () => handle.cancel();
@@ -138,7 +142,6 @@ export function TvReveal({ m }: { m: LikelyModel }) {
     if (!b || b.targetId === s.id) return null;
     return (plan.arc[b.targetId]?.x ?? 0) < (plan.arc[s.id]?.x ?? 0) ? "start" : "end";
   };
-  const lines = percentLines(m);
   const caption = r.none ? t(k("reveal.none"))
     : r.chaos ? t(k("reveal.chaos"))
     : top.length > 1 ? t(k("reveal.tie"))
@@ -179,7 +182,7 @@ export function TvReveal({ m }: { m: LikelyModel }) {
       {!r.none && r.counts.map((c) => {
         const p = plan.arc[c.playerId];
         if (!p) return null;
-        return <span key={c.playerId} class="lkcount" style={{ left: `${p.x}px`, top: `${p.y - CHAR - 40}px` }}><span data-count={c.count}>{fmtNum(reduced() ? c.count : 0)}</span></span>;
+        return <span key={c.playerId} class={`lkcount${pub && (plan.gains[c.playerId] ?? 0) > 0 ? " has-gain" : ""}`} style={{ left: `${p.x}px`, top: `${p.y - CHAR - 40}px` }}><span data-count={c.count}>{fmtNum(reduced() ? c.count : 0)}</span></span>;
       })}
       {/* Rosette(s) on the top target(s) + the award name plate (§12.2 step 5). */}
       {!r.chaos && top.map((s) => {

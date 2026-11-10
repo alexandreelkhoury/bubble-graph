@@ -65,6 +65,7 @@ export function assertInvariants(s: BluffState): void {
       if (o?.authors.includes(v)) fail("2", `${v} voted own option`);
       if (s.spotOn[v]) fail("2", `spot-on ${v} voted`);
     }
+    for (const v of Object.keys(s.votes)) if (s.votedOnce[v] !== true) fail("2", `${v} has a vote but no votedOnce`);
     for (const [v, ls] of Object.entries(s.likes)) {
       if (ls.length > LIKES_MAX || new Set(ls).size !== ls.length) fail("2", `${v} likes ${ls.length}`);
       for (const oid of ls) {

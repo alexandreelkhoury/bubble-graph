@@ -2,7 +2,7 @@
   "v": 2,
   "t": "state",
   "seq": 39,
-  "serverNow": 1790000047700,
+  "serverNow": 1790000053900,
   "view": {
     "kind": "tv",
     "room": {
@@ -119,7 +119,7 @@
         "phase": "REVEAL",
         "cardIndex": 3,
         "cardCount": 8,
-        "deadline": 1790000053800,
+        "deadline": 1790000062250,
         "card": {
           "id": "fam-012",
           "prompt": "know the gossip before anyone else",

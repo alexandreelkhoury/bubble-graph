@@ -10,11 +10,18 @@ export function graphemes(s: string): string[] {
   return Array.from(segmenter.segment(s), (x) => x.segment);
 }
 
-/** sanitizeName (SPEC §7.9) without the uniqueness step and without truncation: NFC, strip Cc/Cf/Co/Cs, collapse
- *  spaces, trim, max 2 combining marks per grapheme. Returns "" when nothing is left. */
+/** Invisible "letters" and blanks that \p{L}/\s do not catch: Hangul fillers (U+115F, U+1160, U+3164, U+FFA0) and the
+ *  Braille blank U+2800. Stripped like format characters. */
+const INVISIBLE = /[\u115F\u1160\u3164\uFFA0\u2800]/gu;
+
+/** sanitizeName (SPEC §7.9) without the uniqueness step and without truncation: NFC, STRIP Cf (zero-width, soft hyphen,
+ *  word joiner, BOM, bidi controls: deleted, never turned into a space, so "شرم\u200Bوطة" stays one word) and the
+ *  invisible fillers above, Cc/Co/Cs → space, collapse spaces, trim, max 2 combining marks per grapheme. Returns ""
+ *  when nothing is left. */
 export function sanitizeLie(raw: string): string {
   let s = raw.normalize("NFC");
-  s = s.replace(/[\p{Cc}\p{Cf}\p{Co}\p{Cs}]/gu, " ");
+  s = s.replace(/\p{Cf}/gu, "").replace(INVISIBLE, "");
+  s = s.replace(/[\p{Cc}\p{Co}\p{Cs}]/gu, " ");
   s = s.replace(/\s+/gu, " ").trim();
   const out: string[] = [];
   for (const g of graphemes(s)) {
@@ -36,9 +43,14 @@ export function letterCount(s: string): number {
   return (s.match(/\p{L}/gu) ?? []).length;
 }
 
-/** §5.1 script rule: AR content needs an Arabic letter; EN/FR/ES content needs a Latin letter. */
+/** §5.1 script rule, tightened: EVERY letter must be in the room's script (Arabic for ar; Latin for en/fr/es), and
+ *  there must be at least one. This refuses homoglyph clones of the truth (Greek Eta, Cyrillic а/с/е), Hangul fillers,
+ *  and Arabizi padded with one Arabic letter. */
 export function scriptOk(s: string, locale: Locale): boolean {
-  return locale === "ar" ? /\p{Script=Arabic}/u.test(s) && /\p{L}/u.test(s) : /\p{Script=Latin}/u.test(s);
+  const letters = s.match(/\p{L}/gu) ?? [];
+  if (letters.length === 0) return false;
+  const re = locale === "ar" ? /^\p{Script=Arabic}$/u : /^\p{Script=Latin}$/u;
+  return letters.every((c) => re.test(c));
 }
 
 /** §5.1 display normalisation, applied to EVERY option alike (truth, house lies, player lies). */

@@ -9,6 +9,8 @@ import { realContent } from "./catalog";
 import { formatTable, runEngineMode } from "./engine-mode";
 import { reportFailures } from "./format";
 import { formatSessionTable, runSessionMode } from "./session-mode";
+import { formatLikelyTable, likelySimCatalog, runLikelyEngineMode } from "./games/likely";
+import { formatTriviaTable, runTriviaEngineMode, triviaSimCatalog } from "./games/trivia";
 import { formatWsTable, runWsMode } from "./ws-mode";
 
 async function main(): Promise<number> {
@@ -48,7 +50,44 @@ async function main(): Promise<number> {
   for (const id of ids) {
     const def = GAME_DEFS[id];
     if (!def.enabled) {
-      console.log(`${id}: a stub until its G milestone (enabled: false), skipped`);
+      // `--game all` skips the stubs; a game named explicitly that cannot run is a failure, never an "OK" (G3 review).
+      if (args.game === "all") console.log(`${id}: a stub until its G milestone (enabled: false), skipped`);
+      else {
+        console.error(`${id}: registry-disabled (enabled: false): nothing was played`);
+        failed = true;
+      }
+      continue;
+    }
+    if (id === "trivia") {
+      // JAMAA-PLATFORM §6.7: Trivia's engine-mode bot (tools/sim/src/games/trivia.ts), 1..12 players.
+      const players = playersFor(args.players, def.meta.minPlayers, def.meta.maxPlayers);
+      if (players.length === 0) {
+        console.error(`${id}: no player count in ${args.players.join(",")} within ${def.meta.minPlayers}..${def.meta.maxPlayers}`);
+        failed = true;
+        continue;
+      }
+      const { catalog, source } = triviaSimCatalog(args.access);
+      const t0 = Date.now();
+      const rows = runTriviaEngineMode({ ...args, players }, catalog);
+      console.log(`engine mode · ${id} · ${source} · access ${args.access} · seed ${args.seed} · ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+      console.log(formatTriviaTable(rows));
+      if (reportFailures(rows)) failed = true;
+      continue;
+    }
+    if (id === "likely") {
+      // JAMAA-PLATFORM §6.6: Likely's engine-mode bot (tools/sim/src/games/likely.ts), 3..12 players.
+      const players = playersFor(args.players, def.meta.minPlayers, def.meta.maxPlayers);
+      if (players.length === 0) {
+        console.error(`${id}: no player count in ${args.players.join(",")} within ${def.meta.minPlayers}..${def.meta.maxPlayers}`);
+        failed = true;
+        continue;
+      }
+      const { catalog, source } = likelySimCatalog(args.access);
+      const t0 = Date.now();
+      const rows = runLikelyEngineMode({ ...args, players }, catalog);
+      console.log(`engine mode · ${id} · ${source} · access ${args.access} · seed ${args.seed} · ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+      console.log(formatLikelyTable(rows));
+      if (reportFailures(rows)) failed = true;
       continue;
     }
     if (id !== "mishana") {

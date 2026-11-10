@@ -19,9 +19,10 @@ export const LIKELY_STAGE = {
   charSize: 72,
   maxSpread: 792,
   maxStep: 104,
-  /** Conga: the first 6 runners stand in a diagonal line behind the target, outward and slightly up. */
-  congaDx: 30,
-  congaDy: -12,
+  /** Conga: the first 6 runners stand in a diagonal line behind the target, sideways and slightly up. 44 dp against a
+   *  72 dp character keeps each runner's face clear of the one in front (G3 review: 30 dp hid ~58 % of it). */
+  congaDx: 44,
+  congaDy: -16,
   congaStraight: 6,
   /** After 6 the line curls: a shrinking spiral around a point above the 6th runner. */
   curlRadius: 40,
@@ -48,44 +49,108 @@ export function likelyJuryArc(n: number, rtl = false): LikelyPt[] {
   return out;
 }
 
-/** +1 when the line grows to the right of its target (targets right of centre), -1 otherwise: lines curl outward. */
-export function likelyCongaSide(target: LikelyPt): 1 | -1 {
-  return target.x >= LIKELY_STAGE.width / 2 ? 1 : -1;
+/** The x range a character's centre may take: its whole 72 dp box stays inside the 864 dp safe area. */
+export const LIKELY_CONGA_MIN_X = LIKELY_STAGE.charSize / 2;
+export const LIKELY_CONGA_MAX_X = LIKELY_STAGE.width - LIKELY_STAGE.charSize / 2;
+
+/** How far sideways a straight line of `count` runners reaches from its target. */
+const reach = (count: number): number => LIKELY_STAGE.congaDx * Math.min(Math.max(count, 1), LIKELY_STAGE.congaStraight);
+const fits = (target: LikelyPt, side: 1 | -1, count: number): boolean => {
+  const x = target.x + side * reach(count);
+  return x >= LIKELY_CONGA_MIN_X && x <= LIKELY_CONGA_MAX_X;
+};
+
+/**
+ * The side a line of `count` runners grows on: away from the stage centre (+1 right of centre, -1 otherwise), unless
+ * that would leave the safe area while the other side fits (an outer seat then lines up toward the centre).
+ */
+export function likelyCongaSide(target: LikelyPt, count = 1): 1 | -1 {
+  const out: 1 | -1 = target.x >= LIKELY_STAGE.width / 2 ? 1 : -1;
+  if (fits(target, out, count) || !fits(target, (-out) as 1 | -1, count)) return out;
+  return (-out) as 1 | -1;
 }
 
 /**
- * The k-th place (k ≥ 1) behind `target` in its conga line. Places 1..6 run diagonally outward and up; from 7 on they
- * curl into a spiral around a point above place 6, turning away from the stage centre. Mirroring the target mirrors
- * every place (the side follows the target), so RTL needs no extra flag.
+ * The k-th place (k ≥ 1) behind `target` in its conga line. Places 1..6 run diagonally sideways and up; from 7 on they
+ * curl into a spiral around a point above place 6, turning away from the target. A place that would leave the safe
+ * area is pinned to its edge and climbs instead (1 dp up per dp of overflow), so nobody walks off the stage. Mirroring
+ * the target mirrors every place (the side follows the target), so RTL needs no extra flag.
  */
 export function likelyCongaSlot(target: LikelyPt, k: number, side: 1 | -1 = likelyCongaSide(target)): LikelyPt {
   const S = LIKELY_STAGE;
-  if (k <= S.congaStraight) return { x: r1(target.x + side * S.congaDx * k), y: r1(target.y + S.congaDy * k) };
-  const p6 = { x: target.x + side * S.congaDx * S.congaStraight, y: target.y + S.congaDy * S.congaStraight };
-  const c = { x: p6.x, y: p6.y - S.curlRadius };
-  const j = k - S.congaStraight;                          // 1, 2, …
-  const radius = Math.max(8, S.curlRadius - S.curlShrink * j);
-  // Angle 90° points down (screen y grows downward): place 6 sits at 90°; the curl turns outward, then up and back.
-  const deg = 90 - side * S.curlStepDeg * j;
-  const rad = (deg * Math.PI) / 180;
-  return { x: r1(c.x + radius * Math.cos(rad)), y: r1(c.y + radius * Math.sin(rad)) };
+  let x: number;
+  let y: number;
+  if (k <= S.congaStraight) {
+    x = target.x + side * S.congaDx * k;
+    y = target.y + S.congaDy * k;
+  } else {
+    const p6 = { x: target.x + side * S.congaDx * S.congaStraight, y: target.y + S.congaDy * S.congaStraight };
+    const c = { x: p6.x, y: p6.y - S.curlRadius };
+    const j = k - S.congaStraight;                          // 1, 2, …
+    const radius = Math.max(8, S.curlRadius - S.curlShrink * j);
+    // Angle 90° points down (screen y grows downward): place 6 sits at 90°; the curl turns outward, then up and back.
+    const deg = 90 - side * S.curlStepDeg * j;
+    const rad = (deg * Math.PI) / 180;
+    x = c.x + radius * Math.cos(rad);
+    y = c.y + radius * Math.sin(rad);
+  }
+  const over = x < LIKELY_CONGA_MIN_X ? LIKELY_CONGA_MIN_X - x : x > LIKELY_CONGA_MAX_X ? x - LIKELY_CONGA_MAX_X : 0;
+  if (over > 0) {
+    x = x < LIKELY_CONGA_MIN_X ? LIKELY_CONGA_MIN_X : LIKELY_CONGA_MAX_X;
+    y -= over;
+  }
+  return { x: r1(x), y: r1(y) };
 }
 
 /** Places 1..count behind `target`. */
-export function likelyConga(target: LikelyPt, count: number): LikelyPt[] {
-  const side = likelyCongaSide(target);
+export function likelyConga(target: LikelyPt, count: number, side: 1 | -1 = likelyCongaSide(target, count)): LikelyPt[] {
   const out: LikelyPt[] = [];
   for (let k = 1; k <= count; k++) out.push(likelyCongaSlot(target, k, side));
   return out;
 }
 
 /**
+ * The side of every line in a reveal (`lines`: target id → runners, in any order; `at`: target id → arc position).
+ * Each line first takes `likelyCongaSide`. Then, left to right, two neighbouring lines that would run into each other
+ * (one grows toward the other and reaches it) are turned apart: the left one turns left and the right one turns right,
+ * each only where it still fits the safe area. Ties of neighbours therefore fan out instead of crossing.
+ */
+export function likelyCongaSides(lines: ReadonlyMap<string, number>, at: ReadonlyMap<string, LikelyPt>): Map<string, 1 | -1> {
+  const half = LIKELY_STAGE.charSize / 2;
+  const ids = [...lines.keys()].filter((id) => at.has(id) && (lines.get(id) ?? 0) > 0)
+    .sort((a, b) => (at.get(a) as LikelyPt).x - (at.get(b) as LikelyPt).x || (a < b ? -1 : a > b ? 1 : 0));
+  const side = new Map<string, 1 | -1>(ids.map((id) => [id, likelyCongaSide(at.get(id) as LikelyPt, lines.get(id) as number)]));
+  for (let i = 1; i < ids.length; i++) {
+    const a = ids[i - 1] as string;
+    const b = ids[i] as string;
+    const pa = at.get(a) as LikelyPt;
+    const pb = at.get(b) as LikelyPt;
+    const ca = lines.get(a) as number;
+    const cb = lines.get(b) as number;
+    const gap = pb.x - pa.x - half;
+    const clash = (side.get(a) === 1 && reach(ca) >= gap) || (side.get(b) === -1 && reach(cb) >= gap);
+    if (!clash) continue;
+    if (side.get(a) === 1 && fits(pa, -1, ca)) side.set(a, -1);
+    if (side.get(b) === -1 && fits(pb, 1, cb)) side.set(b, 1);
+  }
+  return side;
+}
+
+/**
  * Public-mode reveal (GAME-LIKELY §12.2 step 2): where each voter's character ends. `seatIds` are the jury arc's ids in
  * seat order (same length as `arc`); `ballots` come in voter seat order (as the view sends them). A self-voter stays in
- * its seat (`pointSelf`); every other voter joins the line behind its target in ballot order. Unknown ids are skipped.
+ * its seat (`pointSelf`); every other voter joins the line behind its target in ballot order, on the side chosen by
+ * `likelyCongaSides`. Unknown ids are skipped.
  */
 export function likelyRevealPositions(arc: readonly LikelyPt[], seatIds: readonly string[], ballots: readonly { voterId: string; targetId: string }[]): Record<string, LikelyPt> {
-  const at = new Map(seatIds.map((id, i) => [id, arc[i]]));
+  const at = new Map<string, LikelyPt>();
+  seatIds.forEach((id, i) => {
+    const p = arc[i];
+    if (p) at.set(id, p);
+  });
+  const lines = new Map<string, number>();
+  for (const b of ballots) if (b.voterId !== b.targetId && at.has(b.voterId) && at.has(b.targetId)) lines.set(b.targetId, (lines.get(b.targetId) ?? 0) + 1);
+  const sides = likelyCongaSides(lines, at);
   const lineLen = new Map<string, number>();
   const out: Record<string, LikelyPt> = {};
   for (const b of ballots) {
@@ -98,7 +163,7 @@ export function likelyRevealPositions(arc: readonly LikelyPt[], seatIds: readonl
     }
     const k = (lineLen.get(b.targetId) ?? 0) + 1;
     lineLen.set(b.targetId, k);
-    out[b.voterId] = likelyCongaSlot(target, k);
+    out[b.voterId] = likelyCongaSlot(target, k, sides.get(b.targetId) ?? likelyCongaSide(target));
   }
   return out;
 }

@@ -16,6 +16,12 @@ import type { Browser, Page } from "@playwright/test";
 type Loc = "en" | "ar" | "es";
 const SHOTS = process.env.SHOTS_DIR;
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+/**
+ * The /tv pause menu sends Bluff's "Skip prompt" / "Hide an answer" with their ids only once the platform PauseMenu
+ * routes game items through the game module's `runPauseAction` (JAMAA-GAP G2, lane B report); until then those steps
+ * are reported as skipped instead of failing on BAD_MESSAGE.
+ */
+const PAUSE_WIRED = readFileSync(join(ROOT, "web-client", "src", "tv-mock", "tvDialogs.tsx"), "utf8").includes("runPauseAction");
 
 // ---------------------------------------------------------------- content: the truths (to play Spot on / too close)
 
@@ -138,6 +144,38 @@ async function pauseItem(tv: Page, sel: string): Promise<boolean> {
   return true;
 }
 
+/** Letter → card text on the TV corkboard (letters are frozen for the whole VOTING: a hide never re-letters). */
+async function tvLetters(tv: Page): Promise<Map<string, string>> {
+  const rows = await tv.locator(".bf--voting .bfnote").evaluateAll((els) => els.map((e) => [
+    (e.querySelector(".bfnote__text")?.textContent ?? "").trim(), (e.querySelector(".bfnote__letter")?.textContent ?? "").trim(),
+  ] as [string, string]));
+  return new Map(rows);
+}
+
+/**
+ * RTL number direction, as rendered (DOM text is "+150" either way): every "+<digit>" must PAINT with the plus sign
+ * before the digit in reading-independent order (left of it), never as "150+".
+ */
+async function signedNumbersPaintLtr(p: Page): Promise<string[]> {
+  return p.evaluate(() => {
+    const bad: string[] = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const text = n.textContent ?? "";
+      const el = n.parentElement;
+      if (!el || el.closest("[aria-hidden=true]") || el.getClientRects().length === 0) continue;
+      for (const m of text.matchAll(/\+(\d)/g)) {
+        const r1 = document.createRange(); r1.setStart(n, m.index!); r1.setEnd(n, m.index! + 1);
+        const r2 = document.createRange(); r2.setStart(n, m.index! + 1); r2.setEnd(n, m.index! + 2);
+        const a = r1.getBoundingClientRect(), b = r2.getBoundingClientRect();
+        if (a.width === 0 || b.width === 0) continue;
+        if (a.left > b.left) bad.push(text.trim().slice(0, 40));
+      }
+    }
+    return bad;
+  });
+}
+
 async function tvPhase(tv: Page): Promise<string> {
   if (await visible(tv, "[data-results-bar]")) return "END";
   return (await tv.locator("[data-bf-phase]").first().getAttribute("data-bf-phase", { timeout: 500 }).catch(() => null)) ?? "";
@@ -188,6 +226,7 @@ async function playGame(browser: Browser, plan: Plan): Promise<void> {
   const done = new Set<string>();
   const once = (k: string): boolean => (done.has(k) ? false : (done.add(k), true));
   let spotOn = false, tooClose: string | null = null, hid = false, merged = false, helped = false, rulesChecked = false, late: Phone | null = null;
+  let tvSkipped = false, tvHid = false;
   const myLies = new Map<string, string[]>(); // prompt id → lies typed (for the phone secrecy check)
   const truthByPid = new Map<string, Truth | null>();
   const truthOf = async (): Promise<Truth | null> => {
@@ -234,6 +273,16 @@ async function playGame(browser: Browser, plan: Plan): Promise<void> {
       const truth = await truthOf();
       truthByPid.set(pid, truth);
       const round = truth?.type === "proverb_end" ? 1 : truth?.type === "no_truth" ? 3 : 2;
+      // Host skip from the TV pause menu (round 2, once): SKIP_PROMPT carries the prompt id; a new prompt is dealt.
+      if (round === 2 && !tvSkipped) {
+        tvSkipped = true;
+        if (PAUSE_WIRED && (await pauseItem(tv, "[data-pause-item=skipPrompt]"))) {
+          await expect.poll(() => tv.locator("[data-bf-phase]").first().getAttribute("data-pid").catch(() => pid), { timeout: 8000 }).not.toBe(pid);
+          await shot(tv, L, "tv-13-skipped", 600);
+          continue;
+        }
+        if (!PAUSE_WIRED) test.info().annotations.push({ type: "JAMAA-GAP", description: "pause-menu Skip prompt not wired to runPauseAction (tvDialogs.tsx)" });
+      }
       await shot(tv, L, `tv-10-writing-r${round}`, 900);
       const lies: string[] = [];
       myLies.set(pid, lies);
@@ -321,8 +370,36 @@ async function playGame(browser: Browser, plan: Plan): Promise<void> {
       const texts = (await opts.allTextContents()).map((s) => s.trim());
       expect(new Set(texts.map(norm)).size).toBe(texts.length); // merged duplicates show once
       const active: Phone[] = late ? [...phones, late] : phones;
+      // Host hide from the TV pause menu (once): the picker shows the board in order; D-pad to a lie, OK hides it.
+      if (PAUSE_WIRED && !tvHid && texts.length >= 4 && truth?.text) {
+        const letters = await tvLetters(tv);
+        if (await pauseItem(tv, "[data-pause-item=hideOption]")) {
+          tvHid = true;
+          await expect(tv.locator("[data-bf-hidepicker]")).toBeVisible();
+          await expect(tv.locator("[data-hide-option]").first()).toBeFocused();
+          await shot(tv, L, "tv-22-hide-picker", 300);
+          // Move off any card that holds the truth (hiding the truth voids the prompt).
+          for (let k = 0; k < 4; k++) {
+            const focusedText = ((await tv.locator("[data-hide-option]:focus .bfhide__text").textContent().catch(() => "")) ?? "").trim();
+            if (norm(focusedText) !== norm(truth.text)) break;
+            await press(tv, "ArrowDown");
+          }
+          const hiddenText = ((await tv.locator("[data-hide-option]:focus .bfhide__text").textContent()) ?? "").trim();
+          await press(tv, "Enter");
+          await expect(tv.locator("[data-bf-hidepicker]")).toHaveCount(0);
+          await expect(tv.locator(".bf--voting .bfnote")).toHaveCount(texts.length - 1);
+          const after = await tvLetters(tv);
+          expect(after.has(hiddenText)).toBe(false);
+          for (const [text, letter] of after) expect(letter, `"${text}" keeps its letter`).toBe(letters.get(text));
+          texts.splice(texts.indexOf(hiddenText), 1);
+        }
+      } else if (!PAUSE_WIRED && !tvHid) {
+        tvHid = true;
+        test.info().annotations.push({ type: "JAMAA-GAP", description: "pause-menu Hide an answer not wired to runPauseAction (tvDialogs.tsx)" });
+      }
       // VIP hide (long-press any card → "Hide this answer"): a lie, never the truth here (hiding it voids the prompt).
       if (!hid && texts.length >= 4 && truth?.text) {
+        const lettersBefore = await tvLetters(tv);
         const vip = phones[0]!.page;
         const target = vip.locator(".bf-opt:not(.is-mine) .bf-opt__main").filter({ hasNotText: truth.text }).first();
         const box = await target.boundingBox();
@@ -334,6 +411,14 @@ async function playGame(browser: Browser, plan: Plan): Promise<void> {
           await vip.locator("[data-bf-hide]").click();
           await expect(tv.locator(".bfnote")).toHaveCount(texts.length - 1);
           hid = true;
+          // Frozen letters: every remaining card keeps the letter the room agreed on, on the TV and on the phone.
+          const lettersAfter = await tvLetters(tv);
+          for (const [text, letter] of lettersAfter) expect(letter, `TV "${text}" keeps its letter`).toBe(lettersBefore.get(text));
+          await expect(vip.locator(".bf-opt")).toHaveCount(texts.length - 1);
+          const phRows = await vip.locator(".bf-opt").evaluateAll((els) => els.map((e) => [
+            (e.querySelector(".bf-opt__text")?.textContent ?? "").trim(), (e.querySelector(".bf-opt__letter")?.textContent ?? "").trim(),
+          ] as [string, string]));
+          for (const [text, letter] of phRows) expect(letter, `phone "${text}" matches the TV letter`).toBe(lettersAfter.get(text));
         }
       }
       for (const [i, p] of active.entries()) {
@@ -396,6 +481,10 @@ async function playGame(browser: Browser, plan: Plan): Promise<void> {
       await shot(tv, L, `tv-33-reveal-end${final ? "-final" : ""}`, 400);
       await phones[0]!.page.waitForTimeout(300);
       await shot(phones[0]!.page, L, `ph-33-reveal-total${final ? "-final" : ""}`, 0);
+      if (L === "ar") {
+        expect(await signedNumbersPaintLtr(tv), "TV: a signed number painted as N+").toEqual([]);
+        expect(await signedNumbersPaintLtr(phones[0]!.page), "phone: a signed number painted as N+").toEqual([]);
+      }
       await pauseItem(tv, "[data-pause-item=next]");
       continue;
     }
@@ -404,6 +493,7 @@ async function playGame(browser: Browser, plan: Plan): Promise<void> {
       // The phone first (its odometer settles in ~1 s), then the TV once the race has re-sorted.
       await shot(phones[0]!.page, L, "ph-40-scores", 1200);
       await shot(tv, L, "tv-40-scores", 700);
+      if (L === "ar") expect(await signedNumbersPaintLtr(tv), "TV scores: a signed number painted as N+").toEqual([]);
       await pauseItem(tv, "[data-pause-item=next]");
       continue;
     }

@@ -28,6 +28,12 @@ export type LikelyPhase = (typeof LIKELY_PHASES)[number];
 export const LIKELY_AWARD_KINDS = ["signature", "mystery", "star", "selfAware", "mindReader"] as const;
 export type LikelyAwardKind = (typeof LIKELY_AWARD_KINDS)[number];
 
+/**
+ * `value` of a runner-up signature award (owner amendment of GAME-LIKELY §6.2 rule 2, G3 review): a player who was never
+ * top but got ≥ 2 votes on a card gets that card's award as "Runner-up". A top signature has `value: null`.
+ */
+export const LIKELY_RUNNER_UP_VALUE = 2;
+
 /** Reasons of a public-mode point delta (GAME-LIKELY §13.2). */
 export const LIKELY_DELTA_REASONS = ["agree", "unanimous", "selfAware"] as const;
 export type LikelyDeltaReason = (typeof LIKELY_DELTA_REASONS)[number];
@@ -44,8 +50,12 @@ export const LIKELY_TIMING = {
   VOTING_PER_PLAYER_MS: 1_000,
   VOTING_MIN_MS: 18_000,
   VOTING_MAX_MS: 26_000,
-  REVEAL_MIN_MS: 6_000,
-  REVEAL_MAX_MS: 9_500,
+  REVEAL_BASE_MS: 7_000,
+  REVEAL_PER_VOTE_MS: 150,
+  REVEAL_UNANIMOUS_MS: 1_200,
+  REVEAL_TIE_MS: 600,
+  REVEAL_MIN_MS: 8_000,
+  REVEAL_MAX_MS: 12_000,
   AWARDS_BASE_MS: 3_000,
   AWARDS_TRIO_MS: 4_000,
   AWARDS_MIND_READER_MS: 4_000,
@@ -58,12 +68,16 @@ export function likelyVotingMs(players: number): number {
 }
 
 /**
- * GAME-LIKELY §12.2: `5 000 + 100 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0)`, max 9 500. §4.1 also bounds
- * REVEAL to 6 000–9 500 ms; the formula alone gives 5 000 with no vote, so it is clamped to 6 000 (SPEC-GAP, reported).
+ * The REVEAL window: `clamp(7 000 + 150 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0), 8 000, 12 000)`.
+ * Owner-approved change (G3 review, 2026-11-10) of GAME-LIKELY §12.2 / §4.1, which said `5 000 + 100 × votes …`, 6 000–9 500:
+ * live runs showed the "{name}, defend yourself!" hold cut to ~0.4 s at 12 players and the secret-mode percentage board
+ * readable for < 2 s. The longer window leaves a ≥ 2 s social hold at every room size; the host can still skip with Next.
+ * (SPEC-GAP: the doc text is the owner's to update.)
  */
 export function likelyRevealMs(votes: number, unanimous: boolean, topCount: number): number {
   const t = LIKELY_TIMING;
-  return Math.min(t.REVEAL_MAX_MS, Math.max(t.REVEAL_MIN_MS, 5_000 + 100 * votes + (unanimous ? 1_200 : 0) + (topCount > 1 ? 600 : 0)));
+  const raw = t.REVEAL_BASE_MS + t.REVEAL_PER_VOTE_MS * votes + (unanimous ? t.REVEAL_UNANIMOUS_MS : 0) + (topCount > 1 ? t.REVEAL_TIE_MS : 0);
+  return Math.min(t.REVEAL_MAX_MS, Math.max(t.REVEAL_MIN_MS, raw));
 }
 
 /** `3 000 + 4 000 × ceil(players / 3) + 4 000` (the last 4 000 = Mind Reader, public mode only; GAME-LIKELY §4.1). */

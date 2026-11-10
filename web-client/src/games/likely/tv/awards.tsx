@@ -4,7 +4,7 @@
 // screen is derived from the server deadline, so every TV (and a reconnecting one) shows the same trio.
 import { useEffect, useRef, useState } from "preact/hooks";
 import { run, variant } from "@jamaa/shared/motion";
-import { fmtNum, t } from "../../../i18n/t";
+import { fmtNum, listOf, t } from "../../../i18n/t";
 import { reduced } from "../../../lib/motion";
 import { Icon } from "../../../components/Icon";
 import { Character } from "../../../components/Character";
@@ -13,9 +13,9 @@ import { resultsSettled } from "../../../tv-mock/tvPlatform";
 import { useInGameOk } from "../../../tv-mock/tvParts";
 import { TitleLockup } from "../../../components/Poster";
 import { CrystalBall, MysteryPuff, Rosette } from "../art";
-import { activeSeats, awardsOf, awardsStage, deadlineOf, extraAwards, mindReader, ranking, signatureRow } from "../model";
+import { activeSeats, awardsOf, awardsStage, deadlineOf, extraAwards, mindReader, podiumSteps, rankRows, signatureRow } from "../model";
 import type { LikelyAward, LikelyModel, Seat } from "../model";
-import { awardText, k } from "../parts";
+import { awardText, k, promptLine } from "../parts";
 import { LkTop, World } from "./stage";
 import { sfx } from "./sfx";
 
@@ -45,9 +45,12 @@ function PodiumCard({ m, seat, award, i }: { m: LikelyModel; seat: Seat; award: 
   );
 }
 
+/** Most characters drawn on one podium step (a bigger tie shows "+n"). */
+const STEP_MAX = 4;
+
 function MindReaderPodium({ m }: { m: LikelyModel }) {
   const mr = mindReader(m.pub);
-  const ranked = ranking(m).filter((s) => !s.left).slice(0, 3);
+  const steps = podiumSteps(m);
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = root.current;
@@ -58,25 +61,32 @@ function MindReaderPodium({ m }: { m: LikelyModel }) {
     });
     return () => r.cancel();
   }, []);
-  // Steps 3-2-1: second on the start side, the winner in the middle, third on the end side.
-  const order = [ranked[1], ranked[0], ranked[2]];
+  // Steps 3-2-1: second on the start side, the winner in the middle, third on the end side. Tied players share a step.
+  const order: [Seat[], number][] = [[steps[1], 2], [steps[0], 1], [steps[2], 3]];
   return (
     <div class="lkmr" ref={root}>
       <h1 class="lkmr__title">{mr ? awardText(mr).title : t(k("awards.mindReader.title"))}</h1>
       <p class="lkmr__line">{t(k("awards.mindReader.line"))}</p>
       <div class="lkmr__steps">
-        {order.map((s, i) => {
-          if (!s) return <div key={i} class="lkmr__step is-empty" />;
-          const place = i === 1 ? 1 : i === 0 ? 2 : 3;
-          const win = mr?.playerIds.includes(s.id) ?? place === 1;
+        {order.map(([group, place]) => {
+          if (group.length === 0) return <div key={place} class={`lkmr__step is-p${place} is-empty`} />;
+          const shown = group.slice(0, STEP_MAX);
+          const big = place === 1 ? 120 : 92;
+          const size = shown.length === 1 ? big : shown.length === 2 ? Math.round(big * 0.7) : Math.round(big * 0.52);
+          const winAt = (s: Seat): boolean => mr?.playerIds.includes(s.id) ?? place === 1;
           return (
-            <div key={s.id} class={`lkmr__step is-p${place}${win ? " is-win" : ""}`}>
+            <div key={place} class={`lkmr__step is-p${place}${group.some(winAt) ? " is-win" : ""}${group.length > 1 ? " is-tie" : ""}`} data-place={place} data-tie={group.length}>
               <div class="lkmr__who">
-                <Character color={s.color} size={place === 1 ? 120 : 92} expression={win ? "cheer" : "happy"} crown={win} />
-                {win && <span class="lkmr__ball"><CrystalBall size={56} /></span>}
+                {shown.map((s) => (
+                  <span key={s.id} class="lkmr__ch">
+                    <Character color={s.color} size={size} expression={winAt(s) ? "cheer" : "happy"} crown={winAt(s)} />
+                    {winAt(s) && shown.length === 1 && <span class="lkmr__ball"><CrystalBall size={56} /></span>}
+                  </span>
+                ))}
+                {group.length > STEP_MAX && <span class="lkmr__more tnum">+{fmtNum(group.length - STEP_MAX)}</span>}
               </div>
-              <bdi class="lkmr__name">{s.name}</bdi>
-              <span class="lkmr__block"><span class="lkmr__place tnum">{place}</span><span class="lkmr__score tnum" data-score={s.score}>{fmtNum(reduced() ? s.score : 0)}</span></span>
+              <bdi class="lkmr__name">{listOf(group.map((s) => s.name))}</bdi>
+              <span class="lkmr__block"><span class="lkmr__place tnum">{fmtNum(place)}</span><span class="lkmr__score tnum" data-score={group[0]!.score}>{fmtNum(reduced() ? group[0]!.score : 0)}</span></span>
             </div>
           );
         })}
@@ -123,6 +133,11 @@ export function TvAwards({ m }: { m: LikelyModel }) {
   );
 }
 
+/** Awards wall layout by entries: ≤ 4 two roomy columns; 5–9 three columns with the prompt; 10+ three, titles only. */
+export function wallDensity(n: number): "roomy" | "mid" | "dense" {
+  return n <= 4 ? "roomy" : n <= 9 ? "mid" : "dense";
+}
+
 export function TvResults({ m }: { m: LikelyModel }) {
   useEffect(() => {
     const id = setTimeout(() => { resultsSettled.value = true; }, reduced() ? 300 : 1400);
@@ -130,7 +145,7 @@ export function TvResults({ m }: { m: LikelyModel }) {
   }, []);
   const pub = m.pub.showVoters;
   const rows = signatureRow(m);
-  const ranked = ranking(m);
+  const ranked = rankRows(m.seats);
   const mr = mindReader(m.pub);
   return (
     <div data-world="rooftop" class={`tvscreen lkres${pub ? " is-public" : " is-secret"}`} data-results>
@@ -141,9 +156,9 @@ export function TvResults({ m }: { m: LikelyModel }) {
           <section class="lkres__rank">
             <h2 class="lkres__h"><Icon name="trophy" size={22} />{t(k("results.mindReader"))}</h2>
             <ol class="lkres__list">
-              {ranked.slice(0, 6).map((s, i) => (
-                <li key={s.id} class={`lkres__row${mr?.playerIds.includes(s.id) ? " is-win" : ""}${s.left ? " is-left" : ""}`} style={{ "--i": i }}>
-                  <span class="lkres__pos tnum">{fmtNum(i + 1)}</span>
+              {ranked.slice(0, 6).map(({ seat: s, rank }, i) => (
+                <li key={s.id} data-rank={rank} class={`lkres__row${mr?.playerIds.includes(s.id) ? " is-win" : ""}${s.left ? " is-left" : ""}`} style={{ "--i": i }}>
+                  <span class="lkres__pos tnum">{fmtNum(rank)}</span>
                   <Character color={s.color} size={40} expression={mr?.playerIds.includes(s.id) ? "cheer" : "idle"} crown={mr?.playerIds.includes(s.id)} />
                   <bdi class="lkres__name">{s.name}</bdi>
                   <span class="lkres__score tnum">{fmtNum(s.score)}</span>
@@ -154,16 +169,22 @@ export function TvResults({ m }: { m: LikelyModel }) {
         )}
         <section class="lkres__wall">
           <h2 class="lkres__h"><Rosette size={22} />{t(k("results.awardsWall"))}</h2>
-          <ul class={`lkres__grid${rows.length > 6 ? " is-dense" : ""}`}>
+          <ul class={`lkres__grid lkres__grid--${wallDensity(rows.length)}`} data-density={wallDensity(rows.length)}>
             {rows.map((r, i) => {
-              const all = awardsOf(m.pub, r.seat.id).filter((a) => a.kind !== "mindReader");
+              const extras = awardsOf(m.pub, r.seat.id).filter((a) => a.kind !== "mindReader" && a !== r.award);
+              const main = r.award ?? extras.shift() ?? null;
+              const line = main?.kind === "signature" && main.card ? promptLine(main.card.prompt) : main ? awardText(main).line : "";
+              const dense = wallDensity(rows.length);
               return (
                 <li key={r.seat.id} class={`lkres__award${r.seat.left ? " is-left" : ""}`} style={{ "--i": i }}>
-                  <Character color={r.seat.color} size={rows.length > 6 ? 40 : 56} expression={r.award?.kind === "mystery" ? "smug" : "happy"} />
+                  <Character color={r.seat.color} size={dense === "roomy" ? 56 : dense === "mid" ? 40 : 34} expression={r.award?.kind === "mystery" ? "smug" : "happy"} />
                   <span class="lkres__awtext">
                     <bdi class="lkres__awname">{r.seat.name}</bdi>
-                    <span class="lkres__awtitle">{all.map((a) => awardText(a).title).join(" · ")}</span>
-                    {rows.length <= 6 && r.award && <span class="lkres__awline">{awardText(r.award).line}</span>}
+                    {main && <span class="lkres__awtitle">{awardText(main).title}</span>}
+                    {extras.length > 0 && (
+                      <span class="lkres__chips">{extras.map((a) => <span key={a.kind} class="lkres__chip"><Icon name="star" size={13} />{awardText(a).title}</span>)}</span>
+                    )}
+                    {dense !== "dense" && line && <span class="lkres__awline" dir="auto">{line}</span>}
                   </span>
                 </li>
               );

@@ -180,9 +180,29 @@ export function generateBluffFixtures(): Map<string, string> {
   tv("playing.bluff.reveal.fact");
   // Skip the rest of round 2 with the host remote.
   for (let k = 0; k < 40 && !(g().phase === "ROUND_INTRO" && g().plan[g().promptIndex] === "noTruth"); k++) {
-    if (g().phase === "WRITING") for (const id of [RAMI, LEA, NOUR, SAM, ZOE]) if (g().phase === "WRITING") as(id, { type: "SUBMIT_LIE", text: `${["odd", "brave", "sleepy", "green", "loud"][k % 5]} socks number ${"abcde"[[RAMI, LEA, NOUR, SAM, ZOE].indexOf(id)]}`, promptId: (g().prompt as { id: string }).id });
-    else h.tick(Math.max(0, (g().deadline ?? h.now) - h.now));
+    // (Braces matter: an unbraced `else` here used to bind to the inner `if`, so the loop never ticked and the
+    // "final" fixtures were really round-2 fact frames.)
+    const cast = [RAMI, LEA, NOUR, SAM, ZOE];
+    if (g().phase === "WRITING") {
+      for (const id of cast) {
+        const text = `${["Odd", "Brave", "Sleepy", "Green", "Loud"][k % 5]} ${["socks", "kettles", "pigeons", "tractors", "violins"][cast.indexOf(id)]}`;
+        if (g().phase === "WRITING") as(id, { type: "SUBMIT_LIE", text, promptId: (g().prompt as { id: string }).id });
+      }
+    } else if (g().phase === "VOTING" && Object.keys(g().votes).length === 0) {
+      // Round 2, second prompt: every vote lands on a player lie, so the truth goes unfound ("Nobody saw that coming!").
+      const rami = optionBy((o) => o.authors.includes(RAMI));
+      for (const id of [LEA, NOUR, SAM]) as(id, { type: "VOTE", optionId: rami });
+      for (const id of [RAMI, ZOE]) as(id, { type: "VOTE", optionId: optionBy((o) => o.authors.includes(LEA)) });
+      as(SAM, { type: "LIKE", optionId: optionBy((o) => o.authors.includes(NOUR)), on: true });   // +10: Nour and Sam share 3rd
+    } else {
+      h.tick(Math.max(0, (g().deadline ?? h.now) - h.now));
+      if (g().phase === "REVEAL" && !g().reveal?.final) {
+        tv("playing.bluff.reveal.nobody_found");
+        player("playing.bluff.reveal.nobody_found", LEA);
+      }
+    }
   }
+  if (!(g().phase === "ROUND_INTRO" && g().plan[g().promptIndex] === "noTruth")) throw new Error(`fixture scenario: no final ROUND_INTRO (at ${g().phase} ${g().promptIndex})`);
 
   // The final ("No truth").
   tv("playing.bluff.round_intro.final");
@@ -198,7 +218,7 @@ export function generateBluffFixtures(): Map<string, string> {
   for (const id of [LEA, NOUR, SAM]) as(id, { type: "VOTE", optionId: rami });
   as(RAMI, { type: "VOTE", optionId: optionBy((o) => o.authors.includes(LEA)) });
   as(ZOE, { type: "VOTE", optionId: optionBy((o) => o.authors.includes(LEA)) });
-  as(SAM, { type: "LIKE", optionId: optionBy((o) => o.authors.includes(NOUR)), on: true });
+  as(SAM, { type: "LIKE", optionId: rami, on: true });            // a like on the crowned answer (+20 in the final)
   until("REVEAL");
   tv("playing.bluff.reveal.final");
   player("playing.bluff.reveal.final", RAMI);

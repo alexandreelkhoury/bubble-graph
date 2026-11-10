@@ -167,6 +167,19 @@ export function playSession(seed: number, args: Pick<SimArgs, "players" | "acces
       if (a && !step(a)) step({ type: "GAME", gameId: "mishana", i: { type: "HOST_ADVANCE" }, by: TV });
       continue;
     }
+    if (h.state.game?.id === "trivia") {
+      // JAMAA-PLATFORM §6.7: deadlines fire through the room TICK; players tap a random option (an out-of-range or late
+      // tap is refused, which is fine); the TV skips now and then. The engine bot proper lives in engine mode.
+      const r = rng.next();
+      if (r < 0.3) {
+        h.now += 20_000;
+        step({ type: "TICK", by: SYS });
+      } else if (r < 0.85) {
+        const m = pick(rng, h.state.members.filter((x) => !x.left && x.connected));
+        if (m) step({ type: "GAME", gameId: "trivia", i: { type: "ANSWER", choice: rng.int(4) }, by: { kind: "player", playerId: m.id } });
+      } else step({ type: "GAME", gameId: "trivia", i: { type: "HOST_ADVANCE" }, by: TV });
+      continue;
+    }
     throw new Error(`no bot for game ${h.state.game?.id ?? "?"}`);
   }
   throw new Error(`room did not finish ${GAMES_PER_ROOM} games (finished ${finished})`);

@@ -13,10 +13,10 @@ export type TriviaDefinition = GameDefinition<TriviaState, TriviaSettings, Trivi
 
 export const definition: TriviaDefinition = {
   meta: TRIVIA_META,
-  // JAMAA-PLATFORM §6.2: a game ships by adding its id to GAMES_ENABLED (owner order: bluff, likely, trivia). Neither
-  // §6.7 nor GAME-TRIVIA asks lane A to flip this registry flag (SPEC-GAP in the G4 report), so Trivia stays
-  // registry-disabled like Bluff; every test, the fixtures and the sim that play it pass `enabledGames` explicitly.
-  enabled: false,
+  // JAMAA-PLATFORM §6.2 / §2.5: G4 is built, so Trivia is registry-enabled (no longer a stub). It is live only where the
+  // deploy's GAMES_ENABLED lists it: production keeps the default "mishana" (server/wrangler.jsonc) until the owner adds
+  // "trivia"; local dev turns it on with `GAMES_ENABLED=mishana,trivia pnpm dev` (docs/DEV.md).
+  enabled: true,
   stateSchema: STATE_SCHEMA,
   settings: {
     apply: applySettings,

@@ -28,6 +28,10 @@ function chromiumExecutable(): string | undefined {
   return undefined;
 }
 const executablePath = chromiumExecutable();
+// JAMAA-PLATFORM §2.5: the main e2e server lists every game, so each game's spec runs once its registry entry is enabled
+// (a stub stays hidden: room.games = GAMES_ENABLED ∩ registry enabled). The billing-off server keeps the production
+// default from wrangler.jsonc. E2E_GAMES_ENABLED overrides the list.
+const E2E_GAMES = process.env.E2E_GAMES_ENABLED ?? "mishana,bluff,likely,trivia";
 
 export default defineConfig({
   testDir: "e2e",
@@ -47,7 +51,7 @@ export default defineConfig({
         {
           // PAYMENTS-SPEC §3.10 / §5.3: fake billing for e2e. The Worker still decides fake mode per request (the host is
           // 127.0.0.1) and never with a service account configured; specs that need no billing are unaffected.
-          command: `pnpm --filter @jamaa/web-client build && pnpm --filter @jamaa/server exec wrangler dev --port ${PORT} --ip 127.0.0.1 --show-interactive-dev-session=false --var DEBUG_INVARIANTS:1 --var BILLING_MODE:fake --var ALLOW_FAKE_BILLING:1 --var BILLING_ENABLED:1`,
+          command: `pnpm --filter @jamaa/web-client build && pnpm --filter @jamaa/server exec wrangler dev --port ${PORT} --ip 127.0.0.1 --show-interactive-dev-session=false --var DEBUG_INVARIANTS:1 --var BILLING_MODE:fake --var ALLOW_FAKE_BILLING:1 --var BILLING_ENABLED:1 --var GAMES_ENABLED:${E2E_GAMES}`,
           cwd: "..",
           url: `${baseURL}/healthz`,
           reuseExistingServer: true,

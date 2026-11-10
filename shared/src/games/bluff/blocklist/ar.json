@@ -1,6 +1,39 @@
 {
-  "_note": "GAME-BLUFF §5.4 (AR, Lebanese) [native review]: slurs and strong sexual or hateful terms only; mild swearing is allowed. Normalised like answers (ة→ه, hamza and tashkeel folded).",
+  "_note": "GAME-BLUFF §5.4 (AR, Lebanese) [native review]: slurs and strong sexual or hateful terms only; mild swearing is allowed. Normalised like answers (ة→ه, hamza and tashkeel folded). Attached pronouns (ك/ي/ها/هم/كم), the ات/ين/ون plurals and the ال/و/ف/يا/ب prefixes are matched automatically; broken plurals are listed.",
   "words": [
-    "شرموطة", "شرموط", "قحبة", "منيك", "منيوك", "عرص", "كس", "زب", "كسختك", "لوطي", "سحاقية", "بورنو", "اغتصاب", "مغتصب"
+    "شرموطة",
+    "شرموط",
+    "شراميط",
+    "قحبة",
+    "قحاب",
+    "قحبات",
+    "منيك",
+    "منيوك",
+    "منايك",
+    "مناييك",
+    "عرص",
+    "معرص",
+    "عرصات",
+    "كس",
+    "كسمك",
+    "كسامك",
+    "كس امك",
+    "كس اختك",
+    "كسختك",
+    "زب",
+    "زبي",
+    "لوطي",
+    "سحاقية",
+    "بورنو",
+    "اغتصاب",
+    "مغتصب"
+  ],
+  "glued": [
+    "شرموط",
+    "شراميط",
+    "منيوك",
+    "كسختك",
+    "كسامك",
+    "كساختك"
   ]
 }

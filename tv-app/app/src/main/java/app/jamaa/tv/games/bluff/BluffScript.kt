@@ -13,7 +13,13 @@ import kotlin.math.roundToLong
 // Every sub-step is a choreography step sampled by the shared sampler (motion/Choreo.kt), so the curves are the ones
 // the browser TV runs. Coins carry the points: a score pill only moves when a coin lands.
 
-enum class SegmentKind { INTRO, QUICK, LIE, HOUSE, TRUTH, FINAL_ANSWER, CROWN, TWIST, NOBODY, LIKES }
+/**
+ * [END] is the resting frame once the script ran out (or OK completed it): never in [BluffScript.segments], it has no
+ * duration and holds until SCORES — rounds 1–2 the gold TRUTH card with its stamp, note and found-early tag; the final
+ * the MOST CONVINCING card(s) under the "No truth: it was all made up!" stamp. Its [Segment.step] is the truth step
+ * (rounds 1–2) or null (final); [BluffScript.rest] is the segment whose end state it draws.
+ */
+enum class SegmentKind { INTRO, QUICK, LIE, HOUSE, TRUTH, FINAL_ANSWER, CROWN, TWIST, NOBODY, LIKES, END }
 
 /** Where a coin (or a heart) leaves from. */
 sealed interface CoinSource {
@@ -77,10 +83,19 @@ class BluffScript private constructor(
 ) {
     val totalMs: Long get() = segments.lastOrNull()?.endMs ?: 0L
 
-    /** The segment playing at [tMs] (the last one once the script ended, the first one before it starts). */
+    /**
+     * The segment whose end state the resting frame shows: the TRUTH (rounds 1–2) or the CROWN (final). Never the
+     * likes tally or the "Nobody bought it" montage, whose end states are a lone word or an empty stage.
+     */
+    val rest: Segment? = segments.lastOrNull { it.kind == SegmentKind.TRUTH || it.kind == SegmentKind.CROWN }
+
+    /** The resting frame ([SegmentKind.END]), drawn from [totalMs] until the phase ends. */
+    val end: Segment = Segment(segments.size, SegmentKind.END, totalMs, 0L, rest?.step, emptyList())
+
+    /** The segment playing at [tMs] ([end] once the script ended, the first one before it starts). */
     fun segmentAt(tMs: Long): Segment? = when {
         segments.isEmpty() -> null
-        tMs >= totalMs -> segments.last()
+        tMs >= totalMs -> end
         else -> segments.lastOrNull { tMs >= it.startMs } ?: segments.first()
     }
 
@@ -91,14 +106,17 @@ class BluffScript private constructor(
      * A score pill at [tMs]: [base] plus every landed coin, each counted up over the platform counter step (600 ms,
      * `ease.decel`; integer display). Reduced motion: values jump on landing. At [totalMs] it equals the server score.
      */
-    fun pillValue(playerId: String, tMs: Long): Int {
+    fun pillValue(playerId: String, tMs: Long): Int = pillValueExact(playerId, tMs).roundToLong().toInt()
+
+    /** [pillValue] before rounding: what the §5.1 odometer rolls (a column turns while its count is between digits). */
+    fun pillValueExact(playerId: String, tMs: Long): Double {
         var v = (base[playerId] ?: 0).toDouble()
         for (c in coins) {
             if (c.toPlayerId != playerId || tMs < c.landAtMs) continue
             v += c.amount * if (reduced) 1.0 else ChoreoSampler.sample(COUNTER, (tMs - c.landAtMs).toDouble())
         }
         if (tMs >= totalMs) v += unassigned[playerId] ?: 0
-        return v.roundToLong().toInt()
+        return v
     }
 
     /** The pill pops (scale 1.15, `ease.overshoot`, 160 ms) for each landing: the strongest pop running at [tMs]. */
@@ -132,7 +150,10 @@ class BluffScript private constructor(
      * the script exists only in REVEAL, after every secret is out (DESIGN-JAMAA §4.3 secrecy rule).
      */
     fun expressionOf(playerId: String, tMs: Long): Expression? {
-        val seg = segmentAt(tMs) ?: return null
+        val at = segmentAt(tMs) ?: return null
+        // The resting frame keeps the faces of its segment's end (finders happy, the crowned author cheering).
+        if (at.kind == SegmentKind.END) return rest?.let { expressionOf(playerId, it.endMs - 1) }
+        val seg = at
         val local = tMs - seg.startMs
         val st = seg.step
         fun after(id: String) = local >= (seg.sub(id)?.step?.startMs?.toLong() ?: 0L)
@@ -159,7 +180,7 @@ class BluffScript private constructor(
             SegmentKind.TWIST -> Expression.LAUGH
             SegmentKind.NOBODY -> if (playerId in unpickedAuthors) Expression.SAD else null
             SegmentKind.LIKES -> if (coins.any { it.segment == seg.index && it.toPlayerId == playerId && tMs >= it.landAtMs }) Expression.HAPPY else null
-            SegmentKind.INTRO -> null
+            SegmentKind.INTRO, SegmentKind.END -> null
         }
     }
 
@@ -320,6 +341,7 @@ class BluffScript private constructor(
                 }
                 SegmentKind.NOBODY -> listOf(step("fan", 0, 600, "ease.decel"), step("fall", 1_700, 700, "ease.accel"))
                 SegmentKind.LIKES -> listOf(step("hearts", 0, 600, "ease.decel", 60))
+                SegmentKind.END -> return emptyList() // never built: the resting frame has no timeline
             }
             val limit = duration - HOLD_MS
             if (reduced) {

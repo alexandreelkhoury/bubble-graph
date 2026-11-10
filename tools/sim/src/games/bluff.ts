@@ -2,9 +2,12 @@
 // engine (shared/src/testing/bots/bluff.ts): invariants, leak oracles, monotone scores and termination after every
 // reduce; with `--access free`, that no Pass item is ever drawn.
 //
-// JAMAA-GAP (G2): tools/sim/src/main.ts (milestone P file) still routes only mishana to an engine-mode bot; until it
-// imports `runBluffEngineMode`, run this module directly:
+// JAMAA-GAP (G2, review finding): tools/sim/src/main.ts (milestone P file, outside the G2 lane) routes only mishana
+// to an engine-mode bot and SKIPS a registry-disabled game, then prints "OK" — so `pnpm sim --game bluff` is a FALSE
+// PASS that never plays Bluff. Platform follow-up: main.ts calls `runBluffEngineMode` for "bluff" (even while it is
+// registry-disabled) or fails loudly. Until then the G2 acceptance command is this module, run directly:
 //   pnpm --filter @jamaa/sim exec tsx src/games/bluff.ts --players 3..12 --games 300 [--seed N] [--access free]
+// `--players` also takes a comma list here (`--players 3,12`).
 import { fileURLToPath } from "node:url";
 import { GAME_CONTENT, GAME_DEFS } from "@jamaa/shared/games/registry";
 // JAMAA-GAP (G2): shared/package.json exports neither games/bluff/engine nor testing/bots/<id> (P files); relative
@@ -64,10 +67,24 @@ export function formatBluffTable(rows: readonly BluffSimRow[]): string {
   );
 }
 
+/** `--players 3,12` (a comma list) on top of the shared parser's `N` and `A..B` forms. */
+export function splitPlayersList(argv: readonly string[]): { argv: string[]; players: number[] | null } {
+  const out = [...argv];
+  const i = out.indexOf("--players");
+  const v = i >= 0 ? out[i + 1] : undefined;
+  if (v === undefined || !v.includes(",")) return { argv: out, players: null };
+  const players = v.split(",").map((x) => Number(x.trim()));
+  if (players.some((n) => !Number.isInteger(n) || n < 1 || n > 12)) throw new Error(`--players must be within 1..12, got ${v}`);
+  out.splice(i, 2);
+  return { argv: out, players: [...new Set(players)].sort((a, b) => a - b) };
+}
+
 function main(): number {
   let args: SimArgs;
   try {
-    args = parseArgs(process.argv.slice(2));
+    const split = splitPlayersList(process.argv.slice(2));
+    args = parseArgs(split.argv);
+    if (split.players) args = { ...args, players: split.players };
   } catch (e) {
     console.error(e instanceof Error ? e.message : String(e));
     return 2;

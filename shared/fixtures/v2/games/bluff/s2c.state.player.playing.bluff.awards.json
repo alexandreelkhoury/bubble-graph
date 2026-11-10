@@ -1,8 +1,8 @@
 {
   "v": 2,
   "t": "state",
-  "seq": 71,
-  "serverNow": 1790000277020,
+  "seq": 81,
+  "serverNow": 1790000192920,
   "view": {
     "kind": "player",
     "room": {
@@ -122,7 +122,7 @@
         "promptIndex": 5,
         "promptCount": 5,
         "multiplier": 1,
-        "deadline": 1790000286520,
+        "deadline": 1790000202420,
         "prompt": null,
         "submittedIds": [],
         "spotOnIds": [],
@@ -134,12 +134,12 @@
         "scores": [
           {
             "playerId": "p_0a1b2c3d4e5f60718293a4b5",
-            "score": 510,
+            "score": 1080,
             "scoreBefore": 510
           },
           {
             "playerId": "p_1b2c3d4e5f60718293a4b5c6",
-            "score": 940,
+            "score": 1140,
             "scoreBefore": 940
           },
           {

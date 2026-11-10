@@ -38,6 +38,8 @@ export function likelyLayoutFixture(): unknown {
   const right = arc12[10] as { x: number; y: number };
   const seatIds = Array.from({ length: 6 }, (_, i) => `p${i}`);
   const arc6 = likelyJuryArc(6);
+  const seat12 = Array.from({ length: 12 }, (_, i) => `p${i}`);
+  const tie12 = seat12.filter((id) => id !== "p4" && id !== "p5").map((voterId, i) => ({ voterId, targetId: i % 2 === 0 ? "p4" : "p5" }));
   const ballots = [
     { voterId: "p0", targetId: "p2" }, { voterId: "p1", targetId: "p2" }, { voterId: "p2", targetId: "p2" },
     { voterId: "p3", targetId: "p5" }, { voterId: "p4", targetId: "p2" }, { voterId: "p5", targetId: "p0" },
@@ -48,7 +50,12 @@ export function likelyLayoutFixture(): unknown {
     conga: {
       left: { target: left, side: likelyCongaSide(left), places: likelyConga(left, 11) },
       right: { target: right, side: likelyCongaSide(right), places: likelyConga(right, 11) },
+      // G3 review: an outer seat lines up toward the centre; 11 runners from the edge stay inside the safe area.
+      edge: { target: arc12[0], side: likelyCongaSide(arc12[0] as { x: number; y: number }, 11), places: likelyConga(arc12[0] as { x: number; y: number }, 11) },
+      edgeRtl: { target: likelyJuryArc(12, true)[0], side: likelyCongaSide(likelyJuryArc(12, true)[0] as { x: number; y: number }, 11), places: likelyConga(likelyJuryArc(12, true)[0] as { x: number; y: number }, 11) },
     },
+    // G3 review: a 12-player tie between two neighbours (seats 4 and 5): the two lines fan out.
+    revealTie: { seatIds: seat12, arc: arc12, ballots: tie12, positions: likelyRevealPositions(arc12, seat12, tie12) },
     reveal: { seatIds, arc: arc6, ballots, positions: likelyRevealPositions(arc6, seatIds, ballots) },
     revealRtl: { seatIds, arc: likelyJuryArc(6, true), ballots, positions: likelyRevealPositions(likelyJuryArc(6, true), seatIds, ballots) },
   };
@@ -206,9 +213,11 @@ export function generateLikelyFixtures(): Map<string, string> {
   tv("playing.likely.reveal.secret.ar");
   player("playing.likely.reveal.secret.ar", LEA);
   player("playing.likely.reveal.secret.ar.top", NOUR);
+  // On the first of these Sam gets 2 votes without topping: never top all game, Sam leaves with that card's award as a
+  // runner-up signature (`value: 2`, G3 review) instead of the Mystery Award; Rami, Léa and Zoé stay Mystery.
   for (let k = 0; k < 7; k++) {
     until("CARD");
-    card([[RAMI, SAM], [LEA, NOUR], [NOUR, NOUR], [SAM, ZOE], [ZOE, NOUR]]);
+    card([[RAMI, SAM], [LEA, NOUR], [NOUR, NOUR], [SAM, k === 0 ? NOUR : ZOE], [ZOE, k === 0 ? SAM : NOUR]]);
   }
   until("AWARDS");
   tv("playing.likely.awards.secret.ar");

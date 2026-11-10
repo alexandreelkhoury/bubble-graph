@@ -243,7 +243,14 @@ export function runBluffBotGame(o: BluffBotOptions): BluffRunResult {
         }
         case "VOTING": {
           if (chance(rng, rate.hide) && s.options.length > 2) {
+            // Ballot-secrecy oracle (§8.1): a hide that keeps VOTING must not change votedIds or the envelope status,
+            // or the TV and every phone would learn who had picked the hidden card.
+            const before = JSON.stringify([(definition.projectPublic(s, cat) as { votedIds: string[] }).votedIds, definition.projectStatus(s)]);
             bad = intent({ type: "HIDE_OPTION", optionId: (pick(rng, s.options) as { id: string }).id }, hostActor);
+            if (!bad && s.phase === "VOTING") {
+              const after = JSON.stringify([(definition.projectPublic(s, cat) as { votedIds: string[] }).votedIds, definition.projectStatus(s)]);
+              if (after !== before) bad = `HIDE_OPTION changed votedIds/status: ${before} → ${after}`;
+            }
             break;
           }
           const voters = actors.filter((p) => p.connected && !s.spotOn[p.id]);
