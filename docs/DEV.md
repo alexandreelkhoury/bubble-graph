@@ -316,3 +316,16 @@ Checklist after `pnpm run deploy`:
 4. Open `/tv` on the deployed origin: the QR code must show the intended host.
 
 Keep `DEBUG_INVARIANTS` at `"0"` in production. Workers observability (logs) is enabled with traces off, and the logging rules above keep player data and purchase tokens out of it.
+
+
+## Personal / preview deploy (draft content allowed)
+
+`pnpm run deploy` refuses packs still marked `draft` (`content-lint --release`). For the owner's own TV testing before the
+native review, use:
+
+```sh
+pnpm run deploy:preview   # same build + deploy checks, but content-lint without --release (drafts allowed)
+```
+
+Production `GAMES_ENABLED` is `"mishana,trivia"` (server/wrangler.jsonc). Bluff and Most Likely are added there when their
+G milestones pass. The phone size budget counts only registry-enabled games (`enabled: false` games are reported, not counted).

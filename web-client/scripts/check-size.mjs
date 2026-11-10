@@ -82,15 +82,27 @@ for (const f of files) {
   console.log(`${kind.padStart(22)}  ${f.padEnd(44)} ${kb(n)} gz`);
 }
 
+// A game whose registry entry is `enabled: false` (shared/src/games/<id>/definition.ts) is still in development and
+// never reaches players: it is reported, but kept out of the phone total and the per-game cap until it is enabled.
+const sharedGames = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "shared", "src", "games");
+function registryEnabled(id) {
+  try {
+    return !/\benabled:\s*false\b/.test(readFileSync(join(sharedGames, id, "definition.ts"), "utf8"));
+  } catch {
+    return true; // unknown game folder: count it, to be safe
+  }
+}
+
 let ok = true;
 let largestGame = 0;
 for (const [id, set] of gameSets) {
   let n = 0;
   for (const f of set) if (!core.has(f) && named(f) !== "tv") n += size.get(f);
+  const live = registryEnabled(id);
   const over = n > GAME_CAP;
-  if (over) ok = false;
-  largestGame = Math.max(largestGame, n);
-  console.log(`game-${id}: ${kb(n)} gz (its chunks + game-only deps) / cap ${kb(GAME_CAP)} → ${over ? "OVER" : "OK"}`);
+  if (over && live) ok = false;
+  if (live) largestGame = Math.max(largestGame, n);
+  console.log(`game-${id}: ${kb(n)} gz (its chunks + game-only deps) / cap ${kb(GAME_CAP)} → ${over ? "OVER" : "OK"}${live ? "" : " (registry-disabled: not counted)"}`);
 }
 const total = coreSize + largestGame + rootLocale + gameLocale;
 console.log(`core ${kb(coreSize)} + largest game ${kb(largestGame)} + largest locale ${kb(rootLocale)} + largest game locale ${kb(gameLocale)}`);

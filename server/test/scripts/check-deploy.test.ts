@@ -58,12 +58,12 @@ describe("check-deploy", () => {
 
   it("GAMES_ENABLED: known ids only (JAMAA-PLATFORM §2.6: the runtime ignores unknown ids, a deploy fails on them)", () => {
     expect(GAME_IDS).toEqual([...SHARED_GAME_IDS]);
-    expect(JSON.parse(stripJsonc(REAL)).vars.GAMES_ENABLED).toBe("mishana");
-    const all = REAL.replace('"GAMES_ENABLED": "mishana"', '"GAMES_ENABLED": "mishana, bluff,likely,trivia"');
+    expect(JSON.parse(stripJsonc(REAL)).vars.GAMES_ENABLED).toBe("mishana,trivia");
+    const all = REAL.replace('"GAMES_ENABLED": "mishana,trivia"', '"GAMES_ENABLED": "mishana, bluff,likely,trivia"');
     expect(all).not.toBe(REAL);
     expect(checkDeployConfig(all)).toEqual([]);
-    expect(checkDeployConfig(REAL.replace('"GAMES_ENABLED": "mishana"', '"GAMES_ENABLED": "mishana,chess"')).join()).toMatch(/GAMES_ENABLED has unknown game id\(s\) chess/);
-    const unset = REAL.replace(' "GAMES_ENABLED": "mishana",', "");
+    expect(checkDeployConfig(REAL.replace('"GAMES_ENABLED": "mishana,trivia"', '"GAMES_ENABLED": "mishana,chess"')).join()).toMatch(/GAMES_ENABLED has unknown game id\(s\) chess/);
+    const unset = REAL.replace(' "GAMES_ENABLED": "mishana,trivia",', "");
     expect(unset).not.toBe(REAL);
     expect(checkDeployConfig(unset)).toEqual([]); // unset → the default
   });

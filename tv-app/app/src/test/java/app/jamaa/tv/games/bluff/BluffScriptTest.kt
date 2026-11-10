@@ -217,6 +217,43 @@ class BluffScriptTest {
         assertTrue(sc.coins.none { it.segment == house.index })
     }
 
+    /**
+     * The resting frame after the script (natural end or OK): never the likes tally's lone word or the empty stage of
+     * "Nobody bought it" — rounds 1–2 rest on the gold TRUTH card, the final on the crowned card(s).
+     */
+    @Test fun theScriptRestsOnTheTruthOrTheCrown() {
+        for ((name, r, s) in all) for (reduced in listOf(false, true)) {
+            val sc = BluffScript.build(r, s, reduced)
+            val end = sc.segmentAt(sc.totalMs)!!
+            assertEquals(name, SegmentKind.END, end.kind)
+            assertEquals(name, end, sc.segmentAt(sc.totalMs + 60_000))
+            assertTrue(name, end !in sc.segments)
+            assertEquals(name, sc.totalMs, end.startMs)
+            assertEquals("$name: the timeline is unchanged", r.durationMs, BluffScript.build(r, s, false).totalMs)
+            val rest = sc.rest!!
+            if (r.final) {
+                assertEquals(name, SegmentKind.CROWN, rest.kind)
+                assertNull(name, end.step)
+            } else {
+                assertEquals(name, SegmentKind.TRUTH, rest.kind)
+                assertEquals(name, OptionKind.TRUTH, end.step!!.kind)
+            }
+            // Every sub-step of the rested segment has landed (stamp, gold, note): a still frame.
+            for (sub in rest.subs) assertEquals(name, 1f, rest.p(sub.id, sc.totalMs), 0f)
+            assertTrue(name, sc.coinsInFlight(sc.totalMs).isEmpty())
+            // The faces at rest are the rested segment's end faces (finders happy, the crowned author cheering).
+            for (p in sc.base.keys) assertEquals("$name $p", sc.expressionOf(p, rest.endMs - 1), sc.expressionOf(p, sc.totalMs))
+        }
+        // A reveal whose last beat is the likes tally, or "Nobody bought it", still rests on the truth.
+        val withTail = all.filter { (_, r, _) -> !r.final && (r.unpicked.isNotEmpty() || r.steps.any { it.likerIds.isNotEmpty() }) }
+        assertTrue(withTail.isNotEmpty())
+        for ((name, r, s) in withTail) {
+            val sc = BluffScript.build(r, s, false)
+            assertTrue(name, sc.segments.last().kind == SegmentKind.LIKES || sc.segments.last().kind == SegmentKind.NOBODY)
+            assertEquals(name, SegmentKind.TRUTH, sc.rest!!.kind)
+        }
+    }
+
     @Test fun okCompletesToTheEndState() {
         val sc = script("engine:quickHits")
         assertTrue(BluffInput.okCompletes(0, sc.totalMs, completed = false))
