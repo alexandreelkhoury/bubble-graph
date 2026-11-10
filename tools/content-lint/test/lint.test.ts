@@ -4,8 +4,8 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { GAME1_DIR, lintPacks, registeredPackFiles, type PackEntry } from "../src/lint";
 import { lintDirectory } from "../src/main";
+import { REPO_TIMEOUT, repoLint } from "./repoContent";
 
-const REPO_CONTENT = join(import.meta.dirname, "../../../content");
 
 type Side = { text: string; translit?: string | null; alt?: string[] };
 function pack(id: string, locale: string, pairs: [Side | string, Side | string][], extra: Record<string, unknown> = {}): Record<string, unknown> {
@@ -207,15 +207,15 @@ describe("content-lint rules", () => {
   });
 });
 
-describe("repository word packs", () => {
+describe("repository word packs", { timeout: REPO_TIMEOUT }, () => {
   it("have zero lint errors and meet the M4 counts", () => {
-    const r = lintDirectory(REPO_CONTENT);
+    const r = repoLint();
     expect(r.errors).toEqual([]);
     expect(r.warnings.filter((w) => w.startsWith("M4") || w.includes("not listed"))).toEqual([]);
   });
 
   it("have no profanity, translit-convention, plural or near-duplicate warnings", () => {
-    const r = lintDirectory(REPO_CONTENT);
+    const r = repoLint();
     expect(r.warnings.filter((w) => /profane|translit|looks plural|near-duplicate/.test(w))).toEqual([]);
   });
 });

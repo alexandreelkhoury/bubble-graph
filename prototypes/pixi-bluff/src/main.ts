@@ -18,7 +18,7 @@ const autoplay = q.get("auto") === "1" || capture;
 const holdMs = Number(q.get("hold") ?? (capture ? 1100 : 1600));
 const pref = (q.get("renderer") ?? "webgl") as "webgl" | "webgpu" | "canvas";
 const screenScale = Math.min((window.innerWidth * devicePixelRatio) / W, (window.innerHeight * devicePixelRatio) / H);
-let res = Number(q.get("res") ?? Math.min(2, Math.max(1, Math.round(screenScale * 4) / 4)));
+let res = Math.round(Number(q.get("res") ?? Math.min(2, Math.max(1, screenScale))) * 100) / 100;
 let boil = q.get("boil") !== "0";
 const RES_STEPS = [2, 1.5, 1, 0.75];
 

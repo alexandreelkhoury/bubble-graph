@@ -101,8 +101,10 @@
     <string name="join__joining_code">Te unes a %1$s</string>
     <string name="join__name_label">Tu nombre</string>
     <string name="join__name_placeholder">Apodo</string>
-    <string name="join__color_label">Tu color</string>
-    <string name="join__color_taken">Alguien acaba de elegir ese color. Elige otro.</string>
+    <string name="join__color_label">Tu personaje</string>
+    <string name="join__color_taken">Alguien acaba de elegir ese personaje. Elige otro.</string>
+    <string name="join__character_label">Tu personaje</string>
+    <string name="join__character_taken">Alguien acaba de elegir ese personaje. Elige otro.</string>
     <string name="join__submit">¡A jugar!</string>
     <string name="join__joining">Entrando…</string>
     <string name="join__resuming">Volviendo a tu lugar…</string>
@@ -200,7 +202,7 @@
     <string name="error__already_joined">Ya estás en la sala.</string>
     <string name="error__name_invalid">Elige un nombre (de 1 a 16 caracteres).</string>
     <string name="error__name_taken">Alguien ya tiene ese nombre. ¿Le agregas una inicial?</string>
-    <string name="error__color_taken">Alguien acaba de elegir ese color. Elige otro.</string>
+    <string name="error__color_taken">Alguien acaba de elegir ese personaje. Elige otro.</string>
     <string name="error__resume_invalid">Tu lugar caducó. Vuelve a unirte.</string>
     <string name="error__kicked">Te quitaron de la sala.</string>
     <string name="error__replaced">Esta partida está abierta en otra pestaña o teléfono.</string>

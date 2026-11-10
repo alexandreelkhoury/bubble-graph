@@ -45,8 +45,8 @@ class CardView {
   set goldness(v: number) { this.gold.alpha = v; }
   addStamp(word: string, color: number, seed: number): Container {
     const s = stamp(word, color, seed, word.length > 5 ? 138 : 104, 46);
-    // on the card's top-end corner, half off the paper, so the answer stays readable
-    s.position.set(CARD_W / 2 - 34, -CARD_H / 2 + 2);
+    // on the card's bottom-start corner, half off the paper: the answer and whoever stands on the card stay visible
+    s.position.set(-CARD_W / 2 + 30, CARD_H / 2 - 2);
     this.root.addChild(s);
     this.stampView = s;
     return s;
@@ -105,6 +105,7 @@ export class RevealScene {
   private readonly dim = new Graphics();
   private readonly cone: Sprite;
   private readonly sweep: Sprite;
+  private readonly glow: Sprite;
   private readonly bursts: Bursts;
   readonly confetti: Confetti;
   private readonly shake = new Shake();
@@ -146,13 +147,20 @@ export class RevealScene {
     this.cone.tint = BLUFF.glow;
     this.cone.alpha = 0;
     this.cone.zIndex = Z.cone;
+    this.glow = new Sprite(this.tex("light/glow"));
+    this.glow.anchor.set(0.5);
+    this.glow.tint = BLUFF.glow;
+    this.glow.alpha = 0;
+    this.glow.zIndex = Z.cone;
+    this.glow.position.set(SPOT.x, SPOT.y);
+    this.glow.scale.set(560 / 120, 260 / 120);
     this.sweep = new Sprite(this.tex("light/sweep"));
     this.sweep.anchor.set(0.5);
     this.sweep.alpha = 0;
     this.sweep.zIndex = Z.spot + 1;
     this.bursts = new Bursts(this.tex);
     this.bursts.layer.zIndex = Z.fx;
-    this.stage.addChild(this.dim, this.cone, this.sweep, this.bursts.layer);
+    this.stage.addChild(this.dim, this.cone, this.glow, this.sweep, this.bursts.layer);
     this.confetti = new Confetti(this.tex);
     this.root.addChild(this.confetti.layer);
 
@@ -366,7 +374,8 @@ export class RevealScene {
       r.y = lerp(from.y, to.y, v);
       r.scale.set(lerp(from.k, to.k, v));
       const d = inOut === "in" ? v : 1 - v;
-      this.dim.alpha = 0.74 * d;
+      this.dim.alpha = 0.66 * d;
+      this.glow.alpha = 0.42 * d;
       this.cone.alpha = 0.32 * d;
     }, inOut === "in" ? "ease.decel" : "ease.standard");
     tl.at(t0, () => {
@@ -374,7 +383,10 @@ export class RevealScene {
       this.cone.width = 460;
       this.cone.height = SPOT.y - CARD_H * 0.75 + 30 + 20;
     });
-    if (inOut === "out") tl.at(t0 + dur, () => (r.zIndex = Z.card));
+    if (inOut === "out") {
+      tl.tween(t0, dur, (v) => card.stampView?.scale.set(lerp(1, 0.72, v)), "ease.standard");
+      tl.at(t0 + dur, () => (r.zIndex = Z.card));
+    }
   }
 
   private drumroll(tl: Timeline, t0: number, card: CardView, dur = 600): void {
@@ -472,7 +484,7 @@ export class RevealScene {
     });
     // 5. the liar pops out from behind the card: BUSTED (double line + shock for 1 s, ART-DIRECTION §10.4) + shake
     const P = S + 520;
-    const ax = SPOT.x + 118, peekY = top + 16;
+    const ax = SPOT.x + 112, peekY = top + 2;
     tl.at(P, () => {
       author.root.zIndex = Z.author;
       author.root.position.set(ax, top + 110);
@@ -483,7 +495,7 @@ export class RevealScene {
     const busted = inkWord("BUSTED!", 58, BLUFF.signal);
     tl.at(P + 120, () => {
       this.shake.start(10, 480, this.now);
-      this.word(busted, ax + 150, top - 50, 0.12);
+      this.word(busted, ax + 40, top - 112, 0.1);
     });
     tl.tween(P + 120, 300, (v) => busted.scale.set(v), "spring.bouncy");
     const R = P + 1100;
@@ -568,7 +580,7 @@ export class RevealScene {
       this.cam.z = lerp(1.32, 1, v);
     }, "ease.standard");
     this.clearWords(tl, 2500);
-    tl.tween(2500, 400, (v) => (this.dim.alpha = lerp(0.74, 0.3, v)), "ease.standard");
+    tl.tween(2500, 400, (v) => (this.dim.alpha = lerp(0.66, 0.3, v)), "ease.standard");
     const top = SPOT.y - (CARD_H * SPOT.k) / 2 + 3;
     let landed = 2600;
     finders.forEach((f, j) => {
@@ -661,13 +673,14 @@ export class RevealScene {
     const tl = new Timeline();
     const ranked = [...PLAYERS].sort((a, b) => this.pill(b.id).value - this.pill(a.id).value);
     const leader = ranked[0]!;
-    const banner = inkWord(`${leader.name} leads!`, 60, HUB.glow);
+    const banner = inkWord(`${leader.name} leads!`, 64, HUB.glow);
     tl.at(0, () => {
-      this.confetti.rain(W, 260, PLAYERS.map((p) => p.hex).concat([PAPER, HUB.glow]), 11);
-      this.word(banner, W / 2, 320, -0.05);
+      this.confetti.rain(W, 200, PLAYERS.map((p) => p.hex).concat([PAPER, HUB.glow]), 10);
+      this.word(banner, W / 2, 330, -0.05);
+      banner.zIndex = Z.word + 10;
     });
     tl.tween(0, 420, (v) => banner.scale.set(v), "spring.bouncy");
-    tl.at(700, () => this.confetti.rain(W, 200, PLAYERS.map((p) => p.hex).concat([PAPER]), 10));
+    tl.at(900, () => this.confetti.rain(W, 140, PLAYERS.map((p) => p.hex).concat([PAPER]), 9));
     PLAYERS.forEach((p, i) => {
       const a = this.actor(p.id);
       const home = this.home.get(p.id)!;

@@ -390,7 +390,9 @@ async function playGame(browser: Browser, plan: Plan): Promise<void> {
       if ((await tvPhase(tv)) !== "REVEAL") continue;
       // OK completes the reveal locally (§3.10 E): the end state shows at once.
       if (!(await visible(tv, "[data-beat=end]"))) await press(tv, "Enter");
-      await expect(tv.locator("[data-beat=end]")).toBeVisible({ timeout: 3000 });
+      // The server timer may end REVEAL meanwhile (it never waits for the TV): that is fine too.
+      await expect.poll(async () => (await visible(tv, "[data-beat=end]")) || (await tvPhase(tv)) !== "REVEAL", { timeout: 3000 }).toBe(true);
+      if ((await tvPhase(tv)) !== "REVEAL") continue;
       await shot(tv, L, `tv-33-reveal-end${final ? "-final" : ""}`, 400);
       await phones[0]!.page.waitForTimeout(300);
       await shot(phones[0]!.page, L, `ph-33-reveal-total${final ? "-final" : ""}`, 0);

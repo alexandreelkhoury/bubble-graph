@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug only: banner of the "JAMAA Proto" launcher (320x180 dp). Night stage + an amber "work in progress" tape so it
+     is never mistaken for the real JAMAA banner. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <path android:fillColor="#1D1036" android:pathData="M0,0h320v180h-320z" />
+    <path android:fillColor="#2B1650" android:pathData="M0,0h320v90h-320z" />
+    <path android:fillColor="#E9A23B" android:pathData="M0,118L320,62L320,98L0,154z" />
+    <path android:fillColor="#160B26" android:pathData="M20,145l26,-4.6 -16,-28 -26,4.6zM72,136l26,-4.6 -16,-28 -26,4.6zM124,127l26,-4.6 -16,-28 -26,4.6zM176,118l26,-4.6 -16,-28 -26,4.6zM228,109l26,-4.6 -16,-28 -26,4.6zM280,100l26,-4.6 -16,-28 -26,4.6z" />
+    <path android:fillColor="#F0183A" android:strokeColor="#160B26" android:strokeWidth="3" android:pathData="M74,52m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0" />
+    <path android:fillColor="#478CFF" android:strokeColor="#160B26" android:strokeWidth="3" android:pathData="M128,32h40a6,6 0,0 1,6 6v34a6,6 0,0 1,-6 6h-40a6,6 0,0 1,-6 -6v-34a6,6 0,0 1,6 -6z" />
+    <path android:fillColor="#FFF04D" android:strokeColor="#160B26" android:strokeWidth="3" android:pathData="M226,24l8,17 18,2 -13,12 3,18 -16,-9 -16,9 3,-18 -13,-12 18,-2z" />
+</vector>

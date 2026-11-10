@@ -98,8 +98,10 @@
     <string name="join__joining_code">You\'re joining %1$s</string>
     <string name="join__name_label">Your name</string>
     <string name="join__name_placeholder">Nickname</string>
-    <string name="join__color_label">Your colour</string>
-    <string name="join__color_taken">That colour was just taken. Pick another.</string>
+    <string name="join__color_label">Your character</string>
+    <string name="join__color_taken">That character was just taken. Pick another.</string>
+    <string name="join__character_label">Your character</string>
+    <string name="join__character_taken">That character was just taken. Pick another.</string>
     <string name="join__submit">Let me in!</string>
     <string name="join__joining">Joining…</string>
     <string name="join__resuming">Rejoining your seat…</string>
@@ -197,7 +199,7 @@
     <string name="error__already_joined">You\'ve already joined.</string>
     <string name="error__name_invalid">Pick a name (1–16 characters).</string>
     <string name="error__name_taken">Someone already has that name. Add an initial?</string>
-    <string name="error__color_taken">That colour was just taken. Pick another.</string>
+    <string name="error__color_taken">That character was just taken. Pick another.</string>
     <string name="error__resume_invalid">Your seat expired. Join again.</string>
     <string name="error__kicked">You were removed from the room.</string>
     <string name="error__replaced">This game is open in another tab or phone.</string>

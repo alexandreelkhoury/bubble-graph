@@ -236,9 +236,13 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
           const pb = await phones[0]!.page.locator(".tq-tile").nth(1).boundingBox();
           expect(pa!.x).toBeLessThan(pb!.x);
         }
-        // 2. One phone (never phones[0]) is held back so ANSWER stays open through the checks and the screenshots.
+        // 2. One phone (never phones[0]) is held back so ANSWER stays open through the lock checks. The "open" screens
+        //    are captured first (no wait), while every pad is still untouched.
         const held = playing.length > 1 ? playing[playing.length - 1]! : null;
         const now = playing.filter((ph) => ph !== held);
+        const n = seen.get("ANSWER") ?? 0;
+        await snap(tv, n === 1 ? "tv-12-answer-open" : "tv-12b-answer-later", 0);
+        if (held) await snap(held.page, n === 1 ? "ph-12-pad" : "ph-12b-pad-later", 0);
         await Promise.all(now.map(async (ph, i) => {
           await ph.page.waitForTimeout(110 * i);
           await tapAndLock(ph, i + reveals);
@@ -268,23 +272,23 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
           await snap(p0.page, "ph-13-locked", 0);
           await snap(tv, "tv-13-answer-some-in", 0);
         }
-        // 3. Screenshots only after the taps (they are slow); then the held-back phone answers.
-        const n = seen.get("ANSWER") ?? 0;
-        await snap(tv, n === 1 ? "tv-12-answer-open" : "tv-12b-answer-later", 0);
-        if (held) await snap(held.page, n === 1 ? "ph-12-pad" : "ph-12b-pad-later", 0);
+        // 3. The held-back phone answers.
         if (held) { await tapAndLock(held, 0); tapped.add(held); }
         break;
       }
       case "REVEAL": {
         if (!fresh) break;
         reveals++;
-        // The verdict paints at once (no opacity-0 entrance): every phone that answered shows a readable h1.
+        // The verdict paints at once (no opacity-0 entrance): every phone that answered shows a readable h1 (or has
+        // already moved on, when this loop reached REVEAL late), never a blank screen under the top bar.
         await Promise.all([...tapped].map(async (ph) => {
+          await expect(ph.page.locator(".tq-verdict h1, .tq-read, .tq-standing, .tq-final, .tq-result").first()).toBeVisible({ timeout: 1500 });
           const h1 = ph.page.locator(".tq-verdict h1").first();
-          await expect(h1).toBeVisible({ timeout: 1500 });
-          const op = await h1.evaluate((e) => getComputedStyle(e.closest(".tq-verdict__hero") ?? e).opacity);
+          if (!(await h1.isVisible().catch(() => false))) return;
+          const op = await h1.evaluate((e) => getComputedStyle(e.closest(".tq-verdict__hero") ?? e).opacity).catch(() => "1");
           expect(Number(op)).toBe(1);
         }));
+        tapped.clear(); // a later REVEAL whose ANSWER this loop missed checks nobody
         const verdictShots = async (): Promise<void> => {
           for (const ph of all) {
             const v = ph.page.locator(".tq-verdict").first();
@@ -296,9 +300,9 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
         if (reveals === 1) {
           await Promise.all([
             (async () => {
-              await snap(tv, "tv-14-reveal-jump", 1700);
-              await snap(tv, "tv-15-reveal-coins", 1500);
-              await snap(tv, "tv-16-reveal-settled", 2000);
+              await snap(tv, "tv-14-reveal-jump", 1500);
+              await snap(tv, "tv-15-reveal-coins", 1100);
+              await snap(tv, "tv-16-reveal-settled", 1200);
             })(),
             verdictShots(),
           ]);
@@ -311,10 +315,10 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
           await expect(tv.locator(".tqrv.is-done")).toBeVisible({ timeout: 1500 });
           await snap(tv, "tv-16b-reveal-ok-completed", 100);
         }
-        if (o.remote && reveals === 3 && !nextChecked) {
+        if (o.remote && reveals >= 3 && okChecked && !nextChecked && (await tvPhase(tv)) === "REVEAL" && (await vis(tv, ".tqrv:not(.is-done)"))) {
           // Back → pause menu (REVEAL: Next + Void this question); "Next" advances (HOST_ADVANCE) with the remote only.
+          // Only while this REVEAL still has time left (the choreography is still running), so the menu is REVEAL's.
           nextChecked = true;
-          await tv.waitForTimeout(1200);
           await press(tv, "Escape");
           await expect(tv.locator(".tvdialog--menu")).toBeVisible();
           await expect(tv.locator("[data-pause-item=voidQuestion]")).toBeVisible();

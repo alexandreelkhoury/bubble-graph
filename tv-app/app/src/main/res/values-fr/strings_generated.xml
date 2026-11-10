@@ -101,8 +101,10 @@
     <string name="join__joining_code">Tu rejoins %1$s</string>
     <string name="join__name_label">Ton nom</string>
     <string name="join__name_placeholder">Pseudo</string>
-    <string name="join__color_label">Ta couleur</string>
-    <string name="join__color_taken">Cette couleur vient d’être prise. Choisis-en une autre.</string>
+    <string name="join__color_label">Ton personnage</string>
+    <string name="join__color_taken">Ce personnage vient d’être pris. Choisis-en un autre.</string>
+    <string name="join__character_label">Ton personnage</string>
+    <string name="join__character_taken">Ce personnage vient d’être pris. Choisis-en un autre.</string>
     <string name="join__submit">C’est parti !</string>
     <string name="join__joining">Connexion…</string>
     <string name="join__resuming">Retour à ta place…</string>
@@ -200,7 +202,7 @@
     <string name="error__already_joined">Tu as déjà rejoint la salle.</string>
     <string name="error__name_invalid">Choisis un nom (1 à 16 caractères).</string>
     <string name="error__name_taken">Ce nom est déjà pris. Ajoute une initiale ?</string>
-    <string name="error__color_taken">Cette couleur vient d’être prise. Choisis-en une autre.</string>
+    <string name="error__color_taken">Ce personnage vient d’être pris. Choisis-en un autre.</string>
     <string name="error__resume_invalid">Ta place a expiré. Rejoins la partie à nouveau.</string>
     <string name="error__kicked">L’hôte t’a retiré de la salle.</string>
     <string name="error__replaced">Cette partie est ouverte dans un autre onglet ou téléphone.</string>

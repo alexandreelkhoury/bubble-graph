@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug only (prototypes/pixi-bluff). Not translated: a developer tool. -->
+<resources>
+    <string name="proto_launcher_label" translatable="false">JAMAA Proto</string>
+</resources>

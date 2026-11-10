@@ -110,8 +110,10 @@
     <string name="join__joining_code">عالطريق لـ%1$s</string>
     <string name="join__name_label">اسمك</string>
     <string name="join__name_placeholder">لقب</string>
-    <string name="join__color_label">لونك</string>
-    <string name="join__color_taken">هاللون راح هلّق. في غيرو؟</string>
+    <string name="join__color_label">شخصيتك</string>
+    <string name="join__color_taken">هالشخصية راحت هلّق. في غيرها؟</string>
+    <string name="join__character_label">شخصيتك</string>
+    <string name="join__character_taken">هالشخصية راحت هلّق. في غيرها؟</string>
     <string name="join__submit">فوّتني!</string>
     <string name="join__joining">عم نفوت…</string>
     <string name="join__resuming">عم نرجّعك عمحلّك…</string>
@@ -209,7 +211,7 @@
     <string name="error__already_joined">انت أصلاً جوّا.</string>
     <string name="error__name_invalid">اسم من 1 لـ16 حرف.</string>
     <string name="error__name_taken">هالاسم مأخود. منزيد حرف؟</string>
-    <string name="error__color_taken">هاللون راح هلّق. في غيرو؟</string>
+    <string name="error__color_taken">هالشخصية راحت هلّق. في غيرها؟</string>
     <string name="error__resume_invalid">راح محلّك. الدخول من جديد.</string>
     <string name="error__kicked">المضيف طلّعك من الغرفة.</string>
     <string name="error__replaced">اللعبة مفتوحة بمحلّ تاني.</string>

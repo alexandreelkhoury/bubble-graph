@@ -11,10 +11,10 @@ One TV session is one **room**. The room opens on a **hub** where the group pick
 
 | # | Game (id) | What it is | Spec | Status |
 |---|---|---|---|---|
-| G1 | **Mish Ana!** «مش أنا!» (`mishana`) | Social deduction with a secret word. Everyone gets the same word except the **Mole**, who gets none and has to bluff. A caught Mole gets one last guess at the word. Hosts can add an optional **Undercover**, who gets a slightly different word and doesn't know it. One-word clues, a vote, and "not me!" from everyone. Word packs in EN / FR / AR (with Lebanese packs) / ES | [SPEC.md](docs/SPEC.md) | **Built and live** (`GAMES_ENABLED="mishana"`). It is being moved onto the platform (milestone P) |
-| G2 | **Bluff!** (`bluff`) | Everyone writes a fake answer to a real prompt (Lebanese proverbs, word meanings, expressions), then votes for the one they think is true. You score for finding the truth and for every player your lie fools. The final round has no true answer | [GAME-BLUFF.md](docs/GAME-BLUFF.md) | Specified. The platform has a stub registered (`enabled: false`); the engine is not built (milestone G2) |
-| G3 | **Most Likely** «مين فينا؟» (`likely`) | "Who's most likely to…?" Everyone votes for a player in the room with one tap. You score for reading the room. Anonymous mode available | [GAME-LIKELY.md](docs/GAME-LIKELY.md) | Specified, stub registered (milestone G3) |
-| G4 | **Quiz Night** «سهرة أسئلة» (`trivia`) | Speed trivia with streaks, played on a colour + shape + letter answer pad. The first quiz is "Lebanon: the big quiz" (`lb-quiz-01`), which is free | [GAME-TRIVIA.md](docs/GAME-TRIVIA.md) | Specified, stub registered (milestone G4) |
+| G1 | **Mish Ana!** «مش أنا!» (`mishana`) | Social deduction with a secret word. Everyone gets the same word except the **Mole**, who gets none and has to bluff. A caught Mole gets one last guess at the word. Hosts can add an optional **Undercover**, who gets a slightly different word and doesn't know it. One-word clues, a vote, and "not me!" from everyone. Word packs in EN / FR / AR (with Lebanese packs) / ES | [SPEC.md](docs/SPEC.md) | **Live on the JAMAA platform** (`GAMES_ENABLED="mishana"`) |
+| G2 | **Bluff!** (`bluff`) | Everyone writes a fake answer to a real prompt (Lebanese proverbs, word meanings, expressions), then votes for the one they think is true. You score for finding the truth and for every player your lie fools. The final round has no true answer | [GAME-BLUFF.md](docs/GAME-BLUFF.md) | Being built (milestone G2). Not offered until the owner adds `bluff` to `GAMES_ENABLED` |
+| G3 | **Most Likely** «مين فينا؟» (`likely`) | "Who's most likely to…?" Everyone votes for a player in the room with one tap. You score for reading the room. Anonymous mode available | [GAME-LIKELY.md](docs/GAME-LIKELY.md) | Being built (milestone G3). Not offered until the owner adds `likely` to `GAMES_ENABLED` |
+| G4 | **Quiz Night** «سهرة أسئلة» (`trivia`) | Speed trivia with streaks, played on a colour + shape + letter answer pad. The first quiz is "Lebanon: the big quiz" (`lb-quiz-01`), which is free | [GAME-TRIVIA.md](docs/GAME-TRIVIA.md) | Being built (milestone G4). Not offered until the owner adds `trivia` to `GAMES_ENABLED` |
 
 Every game is **free to play** with starter content. The display names above are working titles until the name clearance (BLUEPRINT §9 D4). A game goes live when the owner adds its id to `GAMES_ENABLED`, in the order bluff, likely, trivia (JAMAA-PLATFORM §6.2).
 
@@ -169,15 +169,17 @@ Fake billing is a test store inside the Worker. It is on only when **all** of th
 | **M1–M4** Mish Ana! | engine, server, phone client, `/tv` mock, Android TV app, i18n, packs, sounds | **Done**, except the on-device checks. `pnpm test`, `pnpm sim` (3–12 players, no invariant, termination or leak failures) and the Playwright e2e (EN and AR/RTL, remote-only TV) are green. The TV app passes its JVM unit tests against the shared fixtures, but the APK has not been built or tried on a real TV here, because Google Maven and the Android SDK were unavailable (see [docs/TV.md](docs/TV.md)). Packs (`content/mishana/`): EN 372, FR 369, AR 279 (51 Lebanese), ES 379 pairs; the Spanish packs are drafts for native review |
 | **Payments** | JAMAA Pass + packs, Billing DO, entitlement tokens, RTDN, cron, room access, fake billing | **Code complete, verified with fake billing only.** Not done yet: a real Play purchase (needs owner steps O4–O5), the TV APK build, and 40 pairs per free starter pack |
 | **P0** Rename to JAMAA | billing restore, then the mechanical rename (JAMAA-PLATFORM §1, §6.3) | **Done.** Gate: `pnpm rename:gate` |
-| **P** Platform | room + hub, protocol v2, `GameDefinition` registry, characters, ⓘ rules, session cup, content system, Pass store (JAMAA-PLATFORM §6.4) | **In progress** (lanes A–E). It can ship with `GAMES_ENABLED="mishana"` |
-| **G2 / G3 / G4** | Bluff!, Most Likely, Quiz Night (JAMAA-PLATFORM §6.5–6.7) | Specified; platform stubs only |
+| **M6** JAMAA platform | room + hub, setup, How to play, ⓘ rules, characters, portal, protocol v2, `GameDefinition` registry, session cup, content system, Pass store behind `BILLING_ENABLED`, Mish Ana! as the first game, EN/FR/AR/ES (JAMAA-PLATFORM §6.4) | **Done**, except the on-device checks: `assembleDebug`, frame times on a real TV and the RTL screenshots on device (Google Maven was blocked here; see [docs/TV.md](docs/TV.md)). Ships with `GAMES_ENABLED="mishana"` |
+| **G2** Bluff! | engine, phone + TV screens, content (JAMAA-PLATFORM §6.5) | In progress (game workflow). Not in `GAMES_ENABLED` until the owner enables it |
+| **G3** Most Likely | engine, phone + TV screens, content (JAMAA-PLATFORM §6.6) | In progress (game workflow). Not in `GAMES_ENABLED` until the owner enables it |
+| **G4** Quiz Night | engine, phone + TV screens, `lb-quiz-01` (JAMAA-PLATFORM §6.7) | In progress (game workflow). Not in `GAMES_ENABLED` until the owner enables it |
 | **M5** Play Store readiness | banners, signing, prod deploy, listing | Not started. The listing (EN/FR/AR/ES), graphics, Data safety and release checklist are drafted in `growth/marketing/play-store/` |
 
 ## Repository layout
 
 ```
 shared/          @jamaa/shared: room engine (hub, members, cup), game registry (games/<id>/: mishana engine,
-                 bluff/likely/trivia stubs), zod wire protocol v2, per-client projections, billing, characters,
+                 bluff/likely/trivia engines in progress), zod wire protocol v2, per-client projections, billing, characters,
                  worlds, i18n (shared/i18n/ + shared/i18n/games/<id>/), protocol fixtures
 server/          @jamaa/server: Cloudflare Worker "play" + Room DO + Billing DO (partyserver), access, rate limits
 web-client/      @jamaa/web-client: Preact phone controller + browser TV (/tv), per-game screens in src/games/<id>/,

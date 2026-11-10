@@ -176,7 +176,7 @@ function WinnerChip({ m }: { m: LikelyModel }) {
       <div class="lk-winner__text">
         <p class="lk-winner__award">{m.pub.card?.award ?? ""}</p>
         <p class="lk-winner__who">{top.map((s) => (
-          <span key={s.id} class="lk-winner__seat"><Character color={s.color} size={30} expression={r.unanimous ? "shock" : "shy"} /><bdi>{s.name}</bdi></span>
+          <span key={s.id} class="lk-winner__seat"><Character color={s.color} size={40} expression={r.unanimous ? "shock" : "shy"} /><bdi>{s.name}</bdi></span>
         ))}</p>
       </div>
     </div>
@@ -197,6 +197,8 @@ function PhReveal({ m }: { m: LikelyModel }) {
   else if (mine.top) { title = r.topIds.length > 1 ? t(k("reveal.tie")) : t(k("reveal.youTop")); expr = mine.votedFor === m.myId ? "smug" : r.unanimous ? "shock" : "shy"; }
   else if (mine.got > 0) { title = t(k("reveal.youGot"), { count: mine.got }); expr = "shy"; }
   else { title = r.unanimous ? t(k("reveal.unanimous")) : votedFor ? t(k("reveal.votedFor"), { name: isolate(votedFor.name) }) : t(k("reveal.noVote")); expr = mine.total > 0 ? "happy" : "idle"; }
+  // The "you voted for…" line, unless the title already says it.
+  const voteLineInTitle = !r.chaos && !r.none && !mine.top && mine.got === 0 && !r.unanimous;
   const pub = m.pub.showVoters;
   return (
     <main class={`screen lk-ph lk-ph--reveal${mine.top ? " is-top" : ""}`}>
@@ -220,7 +222,7 @@ function PhReveal({ m }: { m: LikelyModel }) {
           {meSeat && <CoinsIntoScore points={mine.total} from={mine.scoreBefore} to={mine.score} color={meSeat.color} />}
         </div>
       )}
-      {(mine.top || mine.got === 0 || r.chaos) && (
+      {!voteLineInTitle && (
         <p class="hint hint--center lk-myvote">
           {mine.votedFor === null ? t(k("reveal.noVote")) : mine.votedFor === m.myId ? t(k("reveal.votedSelf")) : votedFor ? t(k("reveal.votedFor"), { name: isolate(votedFor.name) }) : null}
         </p>

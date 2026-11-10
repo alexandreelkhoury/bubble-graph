@@ -95,6 +95,8 @@ object I18nKeys {
         "join.namePlaceholder" to R.string.join__name_placeholder,
         "join.colorLabel" to R.string.join__color_label,
         "join.colorTaken" to R.string.join__color_taken,
+        "join.characterLabel" to R.string.join__character_label,
+        "join.characterTaken" to R.string.join__character_taken,
         "join.submit" to R.string.join__submit,
         "join.joining" to R.string.join__joining,
         "join.resuming" to R.string.join__resuming,

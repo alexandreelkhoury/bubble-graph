@@ -167,7 +167,12 @@
     "game.likely.tagline",
     "game.trivia.title",
     "game.trivia.tagline",
-    "pass.manageHint"
+    "pass.manageHint",
+    "join.colorLabel",
+    "join.colorTaken",
+    "join.characterLabel",
+    "join.characterTaken",
+    "error.colorTaken"
   ],
   "es": [
     "brand.slogan",
@@ -335,6 +340,11 @@
     "game.likely.title",
     "game.likely.tagline",
     "game.trivia.title",
-    "game.trivia.tagline"
+    "game.trivia.tagline",
+    "join.colorLabel",
+    "join.colorTaken",
+    "join.characterLabel",
+    "join.characterTaken",
+    "error.colorTaken"
   ]
 }

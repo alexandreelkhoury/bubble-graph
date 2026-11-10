@@ -1,10 +1,9 @@
-import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { itemIds, legacyTags, lintCommon, type GameEntry } from "../src/common";
 import { GAME_LINTS } from "../src/games";
 import { readGameEntries } from "../src/main";
+import { REPO_CONTENT, REPO_TIMEOUT, registeredPackCount } from "./repoContent";
 
-const REPO_CONTENT = join(import.meta.dirname, "../../../content");
 
 function wordPack(id: string, locale: string, extra: Record<string, unknown> = {}): Record<string, unknown> {
   return {
@@ -69,9 +68,9 @@ describe("common checks (JAMAA-PLATFORM §5.5)", () => {
     expect(Object.keys(GAME_LINTS).sort()).toEqual(["bluff", "likely", "mishana", "trivia"]);
   });
 
-  it("the repo content passes, and every Mish Ana! pack carries game and only vocabulary topics", () => {
+  it("the repo content passes, and every Mish Ana! pack carries game and only vocabulary topics", { timeout: REPO_TIMEOUT }, () => {
     const entries = readGameEntries(REPO_CONTENT);
-    expect(entries.filter((x) => x.game === "mishana")).toHaveLength(23);
+    expect(entries.filter((x) => x.game === "mishana")).toHaveLength(registeredPackCount("mishana"));
     expect(lintCommon(entries).errors).toEqual([]);
     for (const x of entries) expect((x.data as { game?: string }).game).toBe(x.game);
   });

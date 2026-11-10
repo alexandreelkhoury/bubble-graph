@@ -85,7 +85,7 @@ export class Confetti {
   private add(x: number, y: number, vx: number, vy: number, tint: number, size: number): void {
     const texture = this.textures[Math.floor(Math.random() * this.textures.length)]!;
     const p = new Particle({ texture, x, y, anchorX: 0.5, anchorY: 0.5, tint, rotation: Math.random() * 6.28 });
-    const sc = size / 50;
+    const sc = size / 110; // the cut piece fills ~90 % of its 120 px cell
     p.scaleX = sc;
     p.scaleY = sc;
     this.layer.addParticle(p);

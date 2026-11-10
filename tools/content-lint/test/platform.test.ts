@@ -2,10 +2,10 @@ import { existsSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { emitContent, lintDirectory } from "../src/main";
+import { emitContent } from "../src/main";
 import { camel, lintGameI18n, lintRootIndex, lintVocab, registeredGameFiles, unlistedFiles, type I18nFiles } from "../src/platform";
+import { REPO_CONTENT, REPO_TIMEOUT, registeredPackCount, repoLint } from "./repoContent";
 
-const REPO_CONTENT = join(import.meta.dirname, "../../../content");
 const four = (m: Record<string, unknown>): I18nFiles => ({ en: { ...m }, fr: { ...m }, ar: { ...m }, es: { ...m } });
 const gameFiles = (): Record<"mishana" | "bluff" | "likely" | "trivia", I18nFiles> => ({
   mishana: four({ "game.mishana.title": "Mish Ana!", "vote.title": "Who?" }),
@@ -63,9 +63,9 @@ describe("game i18n completeness (§5.5)", () => {
   });
 });
 
-describe("repository content", () => {
+describe("repository content", { timeout: REPO_TIMEOUT }, () => {
   it("passes the registry, vocabulary and i18n checks", () => {
-    const r = lintDirectory(REPO_CONTENT);
+    const r = repoLint();
     expect(r.errors).toEqual([]);
     expect(r.warnings.filter((w) => /not listed|vocab|i18n/.test(w))).toEqual([]);
   });
@@ -75,7 +75,7 @@ describe("repository content", () => {
     mkdirSync(join(out, "mishana"), { recursive: true });
     writeFileSync(join(out, "mishana", "stale.txt"), "old");
     const written = emitContent(REPO_CONTENT, out);
-    expect(written).toHaveLength(23);
+    expect(written).toHaveLength(registeredPackCount());
     expect(existsSync(join(out, "mishana", "stale.txt"))).toBe(false);
     for (const g of ["bluff", "likely", "trivia"]) expect(existsSync(join(out, g))).toBe(true);
     const text = readFileSync(join(out, "mishana", "en-everyday-01.txt"), "utf8");

@@ -177,9 +177,9 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
       const step = (ms: number): Promise<void> => tv.evaluate((x) => (window as unknown as { __lkStep(ms: number): void }).__lkStep(x), ms);
       // Phones are shot in parallel (their reveal is static once its entrance has played).
       const phoneShots = Promise.all([r.shot(phones[0]!, `ph-12-reveal-${label}-p0`, 1000), r.shot(phones[1]!, `ph-12-reveal-${label}-p1`, 1000)]);
-      await step(1500);
-      await r.shot(tv, `tv-12-reveal-${label}-a-run`, 60);
-      await step(1700);
+      // Two TV frames fit in the server's REVEAL window even when a full-HD screenshot is slow: the spotlight beat
+      // (lines formed, counts rolled, rosette landing) and the end state (coins / percentage board, caption).
+      await step(3200);
       await r.shot(tv, `tv-12-reveal-${label}-b-spot`, 60);
       await step(2600);
       await r.shot(tv, `tv-12-reveal-${label}-c-end`, 60);
