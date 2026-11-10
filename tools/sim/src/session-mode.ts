@@ -17,6 +17,8 @@ import { findRoomLeaks, pid, RoomHarness } from "@jamaa/shared/testing";
 // JAMAA-GAP (G2): shared/package.json exports neither games/<id>/engine nor testing/bots/<id> (P files): relative imports.
 import type { BluffState } from "../../../shared/src/games/bluff/engine/state";
 import { bluffProgressIntent } from "../../../shared/src/testing/bots/bluff";
+import type { LikelyState } from "../../../shared/src/games/likely/engine/state";
+import { likelyNextIntent } from "../../../shared/src/testing/bots/likely";
 import type { SimArgs } from "./args";
 import { formatColumns } from "./format";
 
@@ -197,6 +199,17 @@ export function playSession(seed: number, args: Pick<SimArgs, "players" | "acces
       const by = n.by === null ? TV : { kind: "player" as const, playerId: n.by };
       if (!step({ type: "GAME", gameId: "bluff", i: n.i, by } as RoomAction)) {
         h.now += 30_000;
+        step({ type: "TICK", by: SYS });
+      }
+      continue;
+    }
+    if (h.state.game?.id === "likely") {
+      // JAMAA-PLATFORM §6.6: the next legal Most Likely move (shared/src/testing/bots/likely.ts: votes, then the host),
+      // else the clock runs to the phase deadline through the room TICK; now and then time jumps anyway (timeouts).
+      const gs = h.state.game.state as LikelyState;
+      const n = rng.next() < 0.1 ? null : likelyNextIntent(gs, rng, h.state.hostPlayerId);
+      if (n === null || !step({ type: "GAME", gameId: "likely", i: n.intent, by: n.by } as RoomAction)) {
+        h.now = Math.max(h.now + 1_000, gs.deadline ?? h.now + 30_000);
         step({ type: "TICK", by: SYS });
       }
       continue;

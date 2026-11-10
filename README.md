@@ -11,12 +11,12 @@ One TV session is one **room**. The room opens on a **hub** where the group pick
 
 | # | Game (id) | What it is | Spec | Status |
 |---|---|---|---|---|
-| G1 | **Mish Ana!** «مش أنا!» (`mishana`) | Social deduction with a secret word. Everyone gets the same word except the **Mole**, who gets none and has to bluff. A caught Mole gets one last guess at the word. Hosts can add an optional **Undercover**, who gets a slightly different word and doesn't know it. One-word clues, a vote, and "not me!" from everyone. Word packs in EN / FR / AR (with Lebanese packs) / ES | [SPEC.md](docs/SPEC.md) | **Live on the JAMAA platform** (`GAMES_ENABLED="mishana"`) |
-| G2 | **Bluff!** (`bluff`) | Everyone writes a fake answer to a real prompt (Lebanese proverbs, word meanings, expressions), then votes for the one they think is true. You score for finding the truth and for every player your lie fools. The final round has no true answer | [GAME-BLUFF.md](docs/GAME-BLUFF.md) | Being built (milestone G2). Not offered until the owner adds `bluff` to `GAMES_ENABLED` |
-| G3 | **Most Likely** «مين فينا؟» (`likely`) | "Who's most likely to…?" Everyone votes for a player in the room with one tap. You score for reading the room. Anonymous mode available | [GAME-LIKELY.md](docs/GAME-LIKELY.md) | Being built (milestone G3). Not offered until the owner adds `likely` to `GAMES_ENABLED` |
-| G4 | **Quiz Night** «سهرة أسئلة» (`trivia`) | Speed trivia with streaks, played on a colour + shape + letter answer pad. The first quiz is "Lebanon: the big quiz" (`lb-quiz-01`), which is free | [GAME-TRIVIA.md](docs/GAME-TRIVIA.md) | Being built (milestone G4). Not offered until the owner adds `trivia` to `GAMES_ENABLED` |
+| G1 | **Mish Ana!** «مش أنا!» (`mishana`) | Social deduction with a secret word. Everyone gets the same word except the **Mole**, who gets none and has to bluff. A caught Mole gets one last guess at the word. Hosts can add an optional **Undercover**, who gets a slightly different word and doesn't know it. One-word clues, a vote, and "not me!" from everyone. Word packs in EN / FR / AR (with Lebanese packs) / ES | [SPEC.md](docs/SPEC.md) | **Built** (in `GAMES_ENABLED`) |
+| G2 | **Bluff!** (`bluff`) | Everyone writes a fake answer to a real prompt (Lebanese proverbs, word meanings, expressions), then votes for the one they think is true. You score for finding the truth and for every player your lie fools. The final round has no true answer | [GAME-BLUFF.md](docs/GAME-BLUFF.md) | **Built** (in `GAMES_ENABLED`); content is draft pending native review |
+| G3 | **Most Likely** «مين فينا؟» (`likely`) | "Who's most likely to…?" Everyone votes for a player in the room with one tap. You score for reading the room. Anonymous mode available | [GAME-LIKELY.md](docs/GAME-LIKELY.md) | **Built** (in `GAMES_ENABLED`); content is draft pending native review |
+| G4 | **Quiz Night** «سهرة أسئلة» (`trivia`) | Speed trivia with streaks, played on a colour + shape + letter answer pad. The first quiz is "Lebanon: the big quiz" (`lb-quiz-01`), which is free | [GAME-TRIVIA.md](docs/GAME-TRIVIA.md) | **Built** (in `GAMES_ENABLED`); content is draft pending native review |
 
-Every game is **free to play** with starter content. The display names above are working titles until the name clearance (BLUEPRINT §9 D4). A game goes live when the owner adds its id to `GAMES_ENABLED`, in the order bluff, likely, trivia (JAMAA-PLATFORM §6.2).
+Every game is **free to play** with starter content. The display names above are working titles until the name clearance (BLUEPRINT §9 D4). All four games are in `GAMES_ENABLED`. Content is still `draft` until native review, so deploy with `pnpm run deploy:preview` (the strict `pnpm run deploy` refuses drafts).
 
 ## How it is built
 
@@ -105,7 +105,7 @@ Both switches are Worker vars in `server/wrangler.jsonc`. Change one and redeplo
 | Var | Default | Effect |
 |---|---|---|
 | `BILLING_ENABLED` | `"0"` | `"0"`: no Pass or pack UI anywhere (TV, phone, `/tv`), `/api/billing/*` and `/api/admin/*` answer 404, crons do nothing, and every room plays the whole catalog. `"1"`: JAMAA Pass and packs are sold on the TV, and free rooms get only the free starter content. The deploy is then refused until the secrets `PLAY_SERVICE_ACCOUNT_JSON` and `ENTITLEMENT_KEYS` exist. Launch steps: [docs/BILLING-LAUNCH.md](docs/BILLING-LAUNCH.md) |
-| `GAMES_ENABLED` | `"mishana"` | Comma list of the live game ids. A room offers `GAMES_ENABLED` ∩ the games enabled in the registry ∩ the games the TV build can draw. Add `bluff`, then `likely`, then `trivia` as each game ships. Unknown ids fail `check-deploy.mjs` |
+| `GAMES_ENABLED` | `"mishana,bluff,likely,trivia"` | Comma list of the live game ids. A room offers `GAMES_ENABLED` ∩ the games enabled in the registry ∩ the games the TV build can draw. Add `bluff`, then `likely`, then `trivia` as each game ships. Unknown ids fail `check-deploy.mjs` |
 
 **When a game is turned on**, also update the README games table, the site and the store listings in the same release ([growth/marketing/play-store/LISTING.md](growth/marketing/play-store/LISTING.md) §0). When billing is turned on, swap in the billing copy from LISTING.md §4, Data safety §1.B and privacy policy Appendix B.
 
@@ -170,22 +170,22 @@ Fake billing is a test store inside the Worker. It is on only when **all** of th
 | **Payments** | JAMAA Pass + packs, Billing DO, entitlement tokens, RTDN, cron, room access, fake billing | **Code complete, verified with fake billing only.** Not done yet: a real Play purchase (needs owner steps O4–O5), the TV APK build, and 40 pairs per free starter pack |
 | **P0** Rename to JAMAA | billing restore, then the mechanical rename (JAMAA-PLATFORM §1, §6.3) | **Done.** Gate: `pnpm rename:gate` |
 | **M6** JAMAA platform | room + hub, setup, How to play, ⓘ rules, characters, portal, protocol v2, `GameDefinition` registry, session cup, content system, Pass store behind `BILLING_ENABLED`, Mish Ana! as the first game, EN/FR/AR/ES (JAMAA-PLATFORM §6.4) | **Done**, except the on-device checks: `assembleDebug`, frame times on a real TV and the RTL screenshots on device (Google Maven was blocked here; see [docs/TV.md](docs/TV.md)). Ships with `GAMES_ENABLED="mishana"` |
-| **G2** Bluff! | engine, phone + TV screens, content (JAMAA-PLATFORM §6.5) | In progress (game workflow). Not in `GAMES_ENABLED` until the owner enables it |
-| **G3** Most Likely | engine, phone + TV screens, content (JAMAA-PLATFORM §6.6) | In progress (game workflow). Not in `GAMES_ENABLED` until the owner enables it |
-| **G4** Quiz Night | engine, phone + TV screens, `lb-quiz-01` (JAMAA-PLATFORM §6.7) | In progress (game workflow). Not in `GAMES_ENABLED` until the owner enables it |
+| **G2** Bluff! | engine, phone + TV screens, content (JAMAA-PLATFORM §6.5) | **Done** (engine, phone + TV screens, content draft, reviews). In `GAMES_ENABLED` |
+| **G3** Most Likely | engine, phone + TV screens, content (JAMAA-PLATFORM §6.6) | **Done** (engine, phone + TV screens, content draft, reviews). In `GAMES_ENABLED` |
+| **G4** Quiz Night | engine, phone + TV screens, `lb-quiz-01` (JAMAA-PLATFORM §6.7) | **Done** (engine, phone + TV screens, content draft, reviews). In `GAMES_ENABLED` |
 | **M5** Play Store readiness | banners, signing, prod deploy, listing | Not started. The listing (EN/FR/AR/ES), graphics, Data safety and release checklist are drafted in `growth/marketing/play-store/` |
 
 ## Repository layout
 
 ```
 shared/          @jamaa/shared: room engine (hub, members, cup), game registry (games/<id>/: mishana engine,
-                 bluff/likely/trivia engines in progress), zod wire protocol v2, per-client projections, billing, characters,
+                 bluff/likely/trivia engines), zod wire protocol v2, per-client projections, billing, characters,
                  worlds, i18n (shared/i18n/ + shared/i18n/games/<id>/), protocol fixtures
 server/          @jamaa/server: Cloudflare Worker "play" + Room DO + Billing DO (partyserver), access, rate limits
 web-client/      @jamaa/web-client: Preact phone controller + browser TV (/tv), per-game screens in src/games/<id>/,
                  Playwright e2e in e2e/
 tv-app/          Android TV app app.jamaa.tv (Kotlin, Compose for TV, OkHttp WebSocket, Play Billing)
-content/         @jamaa/content: content packs per game (content/mishana/{en,fr,ar,es}; bluff, likely, trivia to come)
+content/         @jamaa/content: content packs per game (mishana, bluff, likely, trivia)
 tools/
   dev.mjs        `pnpm dev` (wrangler + vite on the LAN)
   sim/           headless game simulator (in-process, or over WebSocket against a running server)

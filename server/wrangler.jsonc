@@ -49,7 +49,7 @@
   //    admin routes 404, crons idle, rooms play the whole catalog, GET /api/config says {"billing":false} and every
   //    client hides its premium UI. "1": payments as specified. `pnpm dev` and the e2e webServer pass "1".
   "vars": {
-    "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0", "BILLING_ENABLED": "0", "GAMES_ENABLED": "mishana,trivia",
+    "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0", "BILLING_ENABLED": "0", "GAMES_ENABLED": "mishana,bluff,likely,trivia",
     "BILLING_MODE": "google", "ALLOW_FAKE_BILLING": "0",
     "PLAY_PACKAGE_NAME": "app.jamaa.tv", "RTDN_AUDIENCE": "", "RTDN_SA_EMAIL": "", "RTDN_SUBSCRIPTION": ""
   }
