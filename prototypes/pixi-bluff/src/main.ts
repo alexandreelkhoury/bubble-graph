@@ -73,12 +73,13 @@ async function main(): Promise<void> {
   const overlay = new PerfOverlay(`${rname} ×${res}`);
   overlay.root.visible = q.get("overlay") !== "0";
   let frames: number[] = [];
+  let cpu: number[] = []; // JS time per frame (scene update + render submission)
   let run = 0;
   let scene: RevealScene;
   let loadMs = 0;
 
   const report = (partial: boolean): string => {
-    const summary = summarize(frames);
+    const summary = summarize(frames, cpu);
     const rep: Report = {
       renderer: rname, gpu, res, boil, loadMs: Math.round(loadMs), timings: Object.fromEntries(Object.entries(timings).map(([k, v]) => [k, Math.round(v)])),
       run, partial, ua: navigator.userAgent, screen: `${window.innerWidth}x${window.innerHeight}@${devicePixelRatio}`, summary,
@@ -89,7 +90,7 @@ async function main(): Promise<void> {
     return [
       `${s.avgFps} fps average  ·  1% low ${s.low1Fps}  ·  load ${(loadMs / 1000).toFixed(2)} s`,
       `frames ${s.frames} in ${s.seconds} s · p95 ${s.p95Ms} ms · p99 ${s.p99Ms} ms · worst ${s.maxMs} ms`,
-      `>33 ms: ${s.over33ms} · stutters: ${s.stutters} · heap ${s.heapMB ?? "n/a"} MB · ${rname} ×${res} · boil ${boil ? "on" : "off"}`,
+      `JS ${s.cpuAvgMs} ms/frame (p95 ${s.cpuP95Ms}) · >33 ms: ${s.over33ms} · stutters: ${s.stutters} · heap ${s.heapMB ?? "n/a"} MB · ${rname} ×${res} · boil ${boil ? "on" : "off"}`,
       gpu.slice(0, 70),
     ].join("\n");
   };
@@ -101,6 +102,7 @@ async function main(): Promise<void> {
     app.stage.removeChildren();
     app.stage.addChild(scene.root, scene.hud, ui);
     frames = [];
+    cpu = [];
     run++;
     scene.start();
   };
@@ -131,13 +133,18 @@ async function main(): Promise<void> {
 
   let first = true;
   let endAt: number | undefined;
-  const tick = (dt: number): void => {
+  /** dt drives the scene (capped at 100 ms by the ticker); realMs is the true frame interval for the statistics. */
+  const tick = (dt: number, realMs = dt): void => {
+    const c0 = performance.now();
     scene.update(dt);
-    if (!scene.finished) frames.push(dt);
-    overlay.frame(dt, `boil ${boil ? "on" : "off"} · confetti ${scene.confetti.count} · ${heapMB() ?? "-"} MB`);
+    overlay.frame(realMs, `boil ${boil ? "on" : "off"} · confetti ${scene.confetti.count} · ${heapMB() ?? "-"} MB`);
     draws = 0;
     app.render();
     overlay.drawCalls = draws;
+    if (!scene.finished) {
+      frames.push(realMs);
+      cpu.push(performance.now() - c0);
+    }
     if (first) {
       first = false;
       loadMs = performance.now();
@@ -159,7 +166,7 @@ async function main(): Promise<void> {
     (window as unknown as { __advance: (ms: number) => void }).__advance = (ms: number) => tick(ms);
     tick(0);
   } else {
-    app.ticker.add((t) => tick(t.deltaMS));
+    app.ticker.add((t) => tick(t.deltaMS, t.elapsedMS));
     app.ticker.start();
   }
 }

@@ -4,6 +4,15 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,6 +69,7 @@ fun TriviaSetupHeader(setup: TriviaSetupView, modifier: Modifier = Modifier) {
  * The quiz shelf, full screen over the studio stage (DESIGN-JAMAA §2.3.1): one row per domain, 240 × 320 dp cards.
  * Up/Down between rows, Left/Right between cards, OK picks (or, on a locked card, [onLocked] opens the Pass upsell
  * when billing is on), Back closes without change. Focus is local ([TriviaShelf.onKey]): nothing is sent until OK.
+ * The rows and the shelf scroll (lazy lists) so the focused card always stays at least 48 dp inside the safe area.
  */
 @Composable
 fun TriviaQuizShelf(setup: TriviaSetupView, onPick: (String) -> Unit, onLocked: ((String) -> Unit)?, onClose: () -> Unit) {
@@ -67,6 +77,15 @@ fun TriviaQuizShelf(setup: TriviaSetupView, onPick: (String) -> Unit, onLocked: 
     var focus by remember(setup.extras.quizzes.map { it.id }) { mutableStateOf(TriviaShelf.initialFocus(rows)) }
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val root = remember { FocusRequester() }
+    val column = rememberLazyListState()
+    val rowStates = remember(rows.map { it.domain }) { rows.map { LazyListState() } }
+    val density = LocalDensity.current
+    val margin = with(density) { SHELF_MARGIN.toPx() }
+    LaunchedEffect(focus, rowStates) {
+        // Item 0 of the column is the title: domain row r is item r + 1.
+        column.keepInView(focus.row + 1, margin, with(density) { SAFE_V.toPx() })
+        rowStates.getOrNull(focus.row)?.keepInView(focus.col, margin, with(density) { SAFE_H.toPx() })
+    }
     Box(
         Modifier
             .fillMaxSize()
@@ -86,28 +105,46 @@ fun TriviaQuizShelf(setup: TriviaSetupView, onPick: (String) -> Unit, onLocked: 
             .focusable(),
     ) {
         WorldStage(Studio)
-        Column(Modifier.fillMaxSize().padding(horizontal = 48.dp, vertical = 27.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(keyText("game.trivia.quiz.shelfTitle"), style = JamaaTheme.type.headline, color = JamaaColors.Text)
-            rows.forEachIndexed { r, row ->
-                Text(keyText(TriviaBoard.domainKey(row.domain)), style = JamaaTheme.type.title, color = Studio.accentText)
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                    row.cards.forEachIndexed { c, card ->
-                        val focused = focus.row == r && focus.col == c
-                        val title = localizedTitle(card.info.title)
-                        val shape = RoundedCornerShape(24.dp)
-                        Box(
-                            Modifier
-                                .semantics { contentDescription = title }
-                                .graphicsLayer {
-                                    val s = if (focused) JamaaFocus.TILE_SCALE else 1f
-                                    scaleX = s
-                                    scaleY = s
-                                }
-                                .then(if (focused) Modifier.shadow(18.dp, shape, ambientColor = JamaaColors.Primary, spotColor = JamaaColors.Primary) else Modifier)
-                                .background(Studio.surface, shape)
-                                .then(if (focused) Modifier.border(BorderStroke(3.dp, JamaaColors.Focus), shape) else Modifier),
-                        ) {
-                            TriviaQuizCard(card, focused)
+        // Remote-driven only: user scrolling is off, the lists move with the local focus.
+        LazyColumn(
+            Modifier.fillMaxSize(),
+            state = column,
+            contentPadding = PaddingValues(vertical = SAFE_V),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            userScrollEnabled = false,
+        ) {
+            item(key = "title") {
+                Text(keyText("game.trivia.quiz.shelfTitle"), style = JamaaTheme.type.headline, color = JamaaColors.Text, modifier = Modifier.padding(horizontal = SAFE_H))
+            }
+            itemsIndexed(rows, key = { _, row -> row.domain }) { r, row ->
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(keyText(TriviaBoard.domainKey(row.domain)), style = JamaaTheme.type.title, color = Studio.accentText, modifier = Modifier.padding(horizontal = SAFE_H))
+                    LazyRow(
+                        Modifier.fillMaxWidth(),
+                        state = rowStates[r],
+                        // Vertical room for the focused card's scale and glow.
+                        contentPadding = PaddingValues(horizontal = SAFE_H, vertical = 18.dp),
+                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                        userScrollEnabled = false,
+                    ) {
+                        itemsIndexed(row.cards, key = { _, card -> card.info.id }) { c, card ->
+                            val focused = focus.row == r && focus.col == c
+                            val title = localizedTitle(card.info.title)
+                            val shape = RoundedCornerShape(24.dp)
+                            Box(
+                                Modifier
+                                    .semantics { contentDescription = title }
+                                    .graphicsLayer {
+                                        val s = if (focused) JamaaFocus.TILE_SCALE else 1f
+                                        scaleX = s
+                                        scaleY = s
+                                    }
+                                    .then(if (focused) Modifier.shadow(18.dp, shape, ambientColor = JamaaColors.Primary, spotColor = JamaaColors.Primary) else Modifier)
+                                    .background(Studio.surface, shape)
+                                    .then(if (focused) Modifier.border(BorderStroke(3.dp, JamaaColors.Focus), shape) else Modifier),
+                            ) {
+                                TriviaQuizCard(card, focused)
+                            }
                         }
                     }
                 }
@@ -115,4 +152,31 @@ fun TriviaQuizShelf(setup: TriviaSetupView, onPick: (String) -> Unit, onLocked: 
         }
     }
     InitialFocus(root)
+}
+
+/** The TV safe area (DESIGN §4.2: 5 % of 960 × 540) and the extra distance the focused card keeps from its edge. */
+private val SAFE_H = 48.dp
+private val SAFE_V = 27.dp
+private val SHELF_MARGIN = 48.dp
+
+/**
+ * Scrolls so item [index] sits at least [margin] px inside the safe area of a list whose content padding is [pad] px
+ * (item offsets start after that padding). Scrolling clamps at the ends, so the first and last cards rest at the edge.
+ */
+private suspend fun LazyListState.keepInView(index: Int, margin: Float, pad: Float) {
+    var info = layoutInfo.visibleItemsInfo.firstOrNull { it.index == index }
+    if (info == null) {
+        scrollToItem(index)
+        info = layoutInfo.visibleItemsInfo.firstOrNull { it.index == index } ?: return
+    }
+    val o = info.offset.toFloat()
+    val sz = info.size.toFloat()
+    val start = margin
+    val end = layoutInfo.viewportEndOffset - pad - margin
+    val delta = when {
+        o < start -> o - start
+        o + sz > end -> minOf(o + sz - end, (o - start).coerceAtLeast(0f))
+        else -> 0f
+    }
+    if (delta != 0f) animateScrollBy(delta)
 }

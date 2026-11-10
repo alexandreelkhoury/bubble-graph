@@ -3,6 +3,7 @@ package app.jamaa.tv.games.trivia.ui
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -160,7 +162,8 @@ fun TriviaGameScreen(game: TriviaGameView, args: GameScreenArgs) {
 private val TOWER_PHASES = setOf(TriviaPhase.READ, TriviaPhase.ANSWER, TriviaPhase.REVEAL)
 private const val PODIUM_ROW_DP = 104
 private const val PODIUM_CHAR_DP = 56
-internal const val TILE_CHAR_DP = 40
+private const val COIN_DP = 16f
+private const val BOLT_FLASH_MS = 100L
 
 // ---------------------------------------------------------------- the phase clock
 
@@ -506,19 +509,12 @@ private fun Tower(view: TriviaView, clock: PhaseClock, positions: StagePositions
                     Avatar(p.color, 26.dp, state = AvatarState(away = !p.connected, left = p.left))
                     Text(Names.ellipsize(p.name, 8), style = JamaaTheme.type.caption, color = JamaaColors.Text, maxLines = 1, modifier = Modifier.weight(1f))
                     if (p.id in leaders) Icon(JamaaIcons.Crown, contentDescription = null, tint = JamaaColors.Accent, modifier = Modifier.size(16.dp))
-                    val shown by remember(p.id, view) {
-                        derivedStateOf {
-                            if (ci == null) p.score else {
-                                val c = clock.p("counter", ci)
-                                (p.scoreBefore + (p.score - p.scoreBefore) * c).roundToInt()
-                            }
-                        }
-                    }
-                    Text(
-                        shown.toString(),
+                    Odometer(
+                        from = if (ci == null) p.score else p.scoreBefore,
+                        to = p.score,
+                        progress = { if (ci == null) 1f else clock.p("counter", ci) },
                         style = JamaaTheme.type.label,
                         color = JamaaColors.Text,
-                        maxLines = 1,
                         modifier = Modifier
                             .onGloballyPositioned { c ->
                                 // Coin targets: the rows before the re-sort (the coins have landed by then).
@@ -558,14 +554,16 @@ private fun RevealOverlay(view: TriviaView, clock: PhaseClock, positions: StageP
     val jumpIndex = order.withIndex().associate { it.value.third to it.index }
     val origin = positions.origin.value
     val charPx = with(density) { PODIUM_CHAR_DP.dp.toPx() }
-    val tilePx = with(density) { TILE_CHAR_DP.dp.toPx() }
+    /** Character size (dp) on [tile]: 40, or 32 once the tile needs a second row (TriviaBoard.stackCharSize). */
+    fun charDp(tile: Int): Float = TriviaBoard.stackCharSize(stacks[tile]?.size ?: 0)
 
     /** Where a jumper stands on its tile (feet point, local px), or null before the tile was laid out. */
     fun slot(tile: Int, i: Int): Offset? {
         val (pos, size) = positions.tiles[tile] ?: return null
         val rect = app.jamaa.tv.games.trivia.Rect(0f, 0f, size.width / density.density, size.height / density.density)
-        val (x, y) = TriviaBoard.stackOffset(i, rect, TILE_CHAR_DP.toFloat())
-        return Offset(pos.x + (x + TILE_CHAR_DP / 2f) * density.density, pos.y + (y + TILE_CHAR_DP) * density.density) - origin
+        val c = charDp(tile)
+        val (x, y) = TriviaBoard.stackOffset(i, rect, c)
+        return Offset(pos.x + (x + c / 2f) * density.density, pos.y + (y + c) * density.density) - origin
     }
 
     // Absolute top-left: every child is placed by its layer translation in root px (no RTL mirroring).
@@ -575,6 +573,7 @@ private fun RevealOverlay(view: TriviaView, clock: PhaseClock, positions: StageP
             val from = positions.podium[id]?.minus(origin) ?: continue
             val to = slot(tile, i) ?: continue
             val k = jumpIndex.getValue(id)
+            val tilePx = charDp(tile) * density.density
             val expression = TriviaBoard.expression(view, p)
             Box(
                 Modifier
@@ -595,7 +594,7 @@ private fun RevealOverlay(view: TriviaView, clock: PhaseClock, positions: StageP
                 Box(Modifier.size(PODIUM_CHAR_DP.dp), contentAlignment = Alignment.BottomCenter) {
                     if (TriviaBoard.flameVisible(view, p)) FlameOverlay(TriviaBoard.flameLevel(p.streak), PODIUM_CHAR_DP.dp)
                     Character(p.color, PODIUM_CHAR_DP.dp, expression)
-                    if (id in r.fastestIds) Bolt(clock)
+                    if (id in r.fastestIds) Bolt(clock, JamaaTheme.reduceMotion)
                 }
             }
         }
@@ -606,21 +605,37 @@ private fun RevealOverlay(view: TriviaView, clock: PhaseClock, positions: StageP
             val p = view.player(coin.playerId) ?: return@forEachIndexed
             val idx = order.indexOfFirst { it.third == coin.playerId }.takeIf { it >= 0 } ?: return@forEachIndexed
             val (tile, i, _) = order[idx]
-            val start = slot(tile, i)?.let { it - Offset(0f, tilePx * 0.6f) } ?: return@forEachIndexed
+            val start = slot(tile, i)?.let { it - Offset(0f, charDp(tile) * density.density * 0.6f) } ?: return@forEachIndexed
             val end = positions.tower[coin.playerId]?.minus(origin) ?: return@forEachIndexed
             val swatch = PlayerSwatch.byId(p.color)
-            Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
-                val t = clock.p("coin", ci)
-                if (t <= 0f || t >= 1f) return@Canvas
-                val pt = coinPoint(start, end, t, size.height, 90.dp.toPx())
-                if (coin.flame) {
+            if (coin.flame) {
+                Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
+                    val t = clock.p("coin", ci)
+                    if (t <= 0f || t >= 1f) return@Canvas
                     for (k in 1..4) {
                         val back = coinPoint(start, end, (t - 0.04f * k).coerceAtLeast(0f), size.height, 90.dp.toPx())
-                        drawCircle(Flame.copy(alpha = 0.5f - 0.1f * k), (5 - k * 0.8f).dp.toPx(), back)
+                        drawCircle(Flame.copy(alpha = 0.5f - 0.1f * k), (6 - k).dp.toPx(), back)
                     }
                 }
-                drawCircle(swatch.color, 5.dp.toPx(), pt)
-                drawCircle(JamaaColors.Text, 5.dp.toPx(), pt, style = Stroke(1.5.dp.toPx()))
+            }
+            // The coin: the scorer's colour with their shape glyph at 60 % and a 1.5 dp cream rim, so coins tell apart
+            // without colour (DESIGN-JAMAA §5.1).
+            Box(
+                Modifier
+                    .graphicsLayer {
+                        val t = clock.p("coin", ci)
+                        val pt = coinPoint(start, end, t, positions.height.value, 90.dp.toPx())
+                        translationX = pt.x - COIN_DP.dp.toPx() / 2f
+                        translationY = pt.y - COIN_DP.dp.toPx() / 2f
+                        alpha = if (t <= 0f || t >= 1f) 0f else 1f
+                    }
+                    .size(COIN_DP.dp)
+                    .background(swatch.color, CircleShape)
+                    .border(1.5.dp, JamaaColors.Text, CircleShape)
+                    .clearAndSetSemantics {},
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(app.jamaa.tv.ui.components.AvatarGlyphs.of(swatch.shape), contentDescription = null, tint = swatch.glyph, modifier = Modifier.size((COIN_DP * 0.6f).dp))
             }
             val label = buildString {
                 append(TriviaBoard.plus(coin.points))
@@ -656,16 +671,22 @@ internal fun coinPoint(a: Offset, b: Offset, t: Float, height: Float, lift: Floa
     return Offset(u * u * a.x + 2 * u * t * c.x + t * t * b.x, u * u * a.y + 2 * u * t * c.y + t * t * b.y)
 }
 
-/** The fastest finger's lightning bolt (the DESIGN §5.2 bolt glyph, lemon) with a 100 ms flash on the character only. */
+/**
+ * The fastest finger's lightning bolt (the DESIGN §5.2 bolt glyph, lemon) with a 100 ms flash on the character only,
+ * timed from the moment's "fastest" step; no flash in calm motion (or when the variant dropped the step).
+ */
 @Composable
-private fun Bolt(clock: PhaseClock) {
+private fun Bolt(clock: PhaseClock, reduce: Boolean) {
     Box(Modifier.size(PODIUM_CHAR_DP.dp)) {
-        Box(
-            Modifier.fillMaxSize().graphicsLayer {
-                val local = clock.t() - 2_400L
-                alpha = if (local in 0..100) 0.7f else 0f
-            }.background(Color.White, RoundedCornerShape(50)),
-        )
+        val flashAt = clock.moment.step("fastest")?.startMs
+        if (!reduce && flashAt != null) {
+            Box(
+                Modifier.fillMaxSize().graphicsLayer {
+                    val local = clock.t() - flashAt
+                    alpha = if (!clock.completed.value && local in 0..BOLT_FLASH_MS) 0.7f else 0f
+                }.background(Color.White, RoundedCornerShape(50)),
+            )
+        }
         Icon(
             app.jamaa.tv.ui.components.AvatarGlyphs.of(app.jamaa.tv.AvatarShape.Bolt),
             contentDescription = null,

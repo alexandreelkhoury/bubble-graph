@@ -1,3 +1,4 @@
+/* global Buffer */
 // Bakes the hand-made SVG drawings (bake/art/*.js) into texture-atlas pages in public/atlas/ (committed, so `vite build`
 // needs no browser). Usage: pnpm --filter @jamaa/pixi-bluff-proto bake  (needs a Chromium: PLAYWRIGHT_BROWSERS_PATH or
 // the default Playwright cache; never runs `playwright install`).

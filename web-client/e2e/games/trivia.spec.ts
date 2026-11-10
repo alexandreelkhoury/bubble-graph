@@ -141,10 +141,21 @@ async function startQuiz(tv: Page, phones: Phone[], rtl: boolean, snap: (p: Page
     }
     await expect(tv.locator(`[data-row=${row}]`)).toBeFocused();
   };
-  await focusRow("length");
-  await press(tv, START); // Normal → Short
-  await focusRow("pace");
-  await press(tv, START); // Normal → Relaxed
+  // One step on a row; the value must change (a key can land inside a focus/input guard: retried, then asserted).
+  const stepRow = async (row: string, key: string): Promise<void> => {
+    await focusRow(row);
+    const value = tv.locator(`[data-row=${row}] .tvsrow__value`);
+    const before = (await value.textContent()) ?? "";
+    for (let i = 0; i < 3; i++) {
+      await press(tv, key);
+      const changed = await expect.poll(async () => (await value.textContent()) ?? "", { timeout: 1500 }).not.toBe(before).then(() => true, () => false);
+      if (changed) return;
+      await focusRow(row);
+    }
+    await expect(value).not.toHaveText(before);
+  };
+  await stepRow("length", START); // Normal → Short
+  await stepRow("pace", START); // Normal → Relaxed
   await tv.waitForTimeout(500);
   await snap(tv, "tv-02-setup", 300);
   await snap(phones[0]!.page, "ph-01-setup-vip", 0);
@@ -237,12 +248,9 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
           expect(pa!.x).toBeLessThan(pb!.x);
         }
         // 2. One phone (never phones[0]) is held back so ANSWER stays open through the lock checks. The "open" screens
-        //    are captured first (no wait), while every pad is still untouched.
+        //    Screenshots are slow under load (seconds each), so they come after the taps.
         const held = playing.length > 1 ? playing[playing.length - 1]! : null;
         const now = playing.filter((ph) => ph !== held);
-        const n = seen.get("ANSWER") ?? 0;
-        await snap(tv, n === 1 ? "tv-12-answer-open" : "tv-12b-answer-later", 0);
-        if (held) await snap(held.page, n === 1 ? "ph-12-pad" : "ph-12b-pad-later", 0);
         await Promise.all(now.map(async (ph, i) => {
           await ph.page.waitForTimeout(110 * i);
           await tapAndLock(ph, i + reveals);
@@ -272,8 +280,11 @@ async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ board
           await snap(p0.page, "ph-13-locked", 0);
           await snap(tv, "tv-13-answer-some-in", 0);
         }
-        // 3. The held-back phone answers.
+        // 3. The held-back phone (its open pad captured first) answers; then the TV.
+        const n = seen.get("ANSWER") ?? 0;
+        if (held) await snap(held.page, n === 1 ? "ph-12-pad" : "ph-12b-pad-later", 0);
         if (held) { await tapAndLock(held, 0); tapped.add(held); }
+        await snap(tv, n === 1 ? "tv-12-answer-open" : "tv-12b-answer-later", 0);
         break;
       }
       case "REVEAL": {

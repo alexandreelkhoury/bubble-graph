@@ -45,8 +45,8 @@ class CardView {
   set goldness(v: number) { this.gold.alpha = v; }
   addStamp(word: string, color: number, seed: number): Container {
     const s = stamp(word, color, seed, word.length > 5 ? 138 : 104, 46);
-    // on the card's bottom-start corner, half off the paper: the answer and whoever stands on the card stay visible
-    s.position.set(-CARD_W / 2 + 30, CARD_H / 2 - 2);
+    // on the card's end, half off the paper; the answer slides toward the start to make room (stays readable)
+    s.position.set(CARD_W / 2 - 4, 3);
     this.root.addChild(s);
     this.stampView = s;
     return s;
@@ -404,6 +404,8 @@ export class RevealScene {
       s.scale.set(2.4);
       s.alpha = 0;
     });
+    const lx = card.label.x;
+    tl.tween(t, 220, (v) => (card.label.x = lerp(lx, -26, v)), "ease.standard");
     tl.tween(t, 170, (v) => {
       if (!s) return;
       s.scale.set(lerp(2.4, 1, v));
@@ -567,8 +569,8 @@ export class RevealScene {
     tl.at(1950, () => {
       const cols = [BLUFF.gold, PAPER, BLUFF.accent, 0xffffff];
       const hw = (CARD_W * SPOT.k) / 2, hh = (CARD_H * SPOT.k) / 2;
-      this.confetti.burst(SPOT.x - hw, SPOT.y - hh, 70, cols, { angle: -2.2, spread: 1.0, speed: 520 });
-      this.confetti.burst(SPOT.x + hw, SPOT.y - hh, 70, cols, { angle: -0.95, spread: 1.0, speed: 520 });
+      this.confetti.burst(SPOT.x - hw, SPOT.y - hh, 90, cols, { angle: -2.2, spread: 1.0, speed: 560, size: 14 });
+      this.confetti.burst(SPOT.x + hw, SPOT.y - hh, 90, cols, { angle: -0.95, spread: 1.0, speed: 560, size: 14 });
       const w = inkWord("It's true!", 46, BLUFF.gold);
       this.word(w, SPOT.x, SPOT.y - 120, -0.05);
     });
@@ -680,6 +682,8 @@ export class RevealScene {
       banner.zIndex = Z.word + 10;
     });
     tl.tween(0, 420, (v) => banner.scale.set(v), "spring.bouncy");
+    // the board steps back so the celebration reads
+    tl.tween(0, 400, (v) => this.cards.forEach((c) => (c.root.alpha = 1 - 0.55 * v)), "ease.standard");
     tl.at(900, () => this.confetti.rain(W, 140, PLAYERS.map((p) => p.hex).concat([PAPER]), 9));
     PLAYERS.forEach((p, i) => {
       const a = this.actor(p.id);

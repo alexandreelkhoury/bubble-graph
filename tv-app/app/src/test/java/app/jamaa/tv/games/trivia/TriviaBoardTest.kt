@@ -155,12 +155,70 @@ class TriviaBoardTest {
 
     @Test
     fun twelveStackInTwoRowsOfSixInsideTheTile() {
-        val tile = Rect(0f, 0f, 300f, 64f)
-        val spots = (0 until 12).map { TriviaBoard.stackOffset(it, tile, 40f) }
+        // The native stage: grid 184 dp tall (two 86 dp rows), tiles about 320 dp wide.
+        val tile = TriviaBoard.tiles(QuestionType.MC4, 652f, 184f, 12f)[1]
+        assertEquals(86f, tile.h, 0.01f)
+        val size = TriviaBoard.stackCharSize(12)
+        assertEquals(32f, size, 0f)
+        val spots = (0 until 12).map { TriviaBoard.stackOffset(it, tile.copy(x = 0f, y = 0f), size) }
         assertEquals(12, spots.toSet().size)
         assertEquals(2, spots.map { it.second }.toSet().size)
-        assertTrue(spots.all { (x, _) -> x >= 0f && x + 40f <= tile.w })
+        assertTrue(spots.all { (x, _) -> x >= TriviaBoard.REVEAL_START_RESERVE && x + size <= tile.w })
         assertTrue(spots.take(6).all { it.second > spots[6].second }) // row 2 stands behind (higher)
+        // Nobody covers the answer text: every head stays below the one-line text band.
+        assertTrue(spots.all { it.second >= TriviaBoard.REVEAL_TEXT_BAND })
+        // Six or fewer: one row of 40 dp characters, also below the band and clear of the token column.
+        assertEquals(40f, TriviaBoard.stackCharSize(6), 0f)
+        val one = (0 until 6).map { TriviaBoard.stackOffset(it, tile.copy(x = 0f, y = 0f), 40f) }
+        assertTrue(one.all { (x, y) -> y >= TriviaBoard.REVEAL_TEXT_BAND && x >= TriviaBoard.REVEAL_START_RESERVE && x + 40f <= tile.w })
+    }
+
+    // ---------------------------------------------------------------- leaderboard race
+
+    private fun twelve(): TriviaView {
+        val base = TriviaFixtures.view("leaderboard")
+        val p0 = base.players.first()
+        // Before: player k is (k+1)th with 1200 - 100k. After: "j" (10th before) jumps to 3rd.
+        val players = (0 until 12).map { k ->
+            val before = 1_200 - 100 * k
+            val after = if (k == 9) 1_050 else before
+            p0.copy(id = "p_$k", name = "P$k", seat = k, score = after, scoreBefore = before, rankBefore = k + 1, rank = 0, left = false)
+        }
+        val ranked = players.sortedByDescending { it.score }.mapIndexed { i, p -> p.copy(rank = i + 1) }.associateBy { it.id }
+        return base.copy(players = players.map { ranked.getValue(it.id) })
+    }
+
+    @Test
+    fun twelvePlayerRaceDrawsEveryRowAndTheClimberFromTenthToThird() {
+        val v = twelve()
+        val rows = TriviaBoard.raceRows(v)
+        assertEquals(12, rows.size)
+        assertEquals((0 until 12).toList(), rows.map { it.from })
+        assertEquals((0 until 12).toList(), rows.map { it.to }.sorted()) // a permutation: no hole, no overlap
+        val climber = rows.single { it.player.id == "p_9" }
+        assertEquals(9, climber.from)
+        assertEquals(2, climber.to)
+        assertEquals("p_9" to 7, TriviaBoard.biggestClimber(v))
+        // Every row fits the stage: compact rows over 8 players, and no row lands below the area.
+        assertTrue(TriviaBoard.raceCompact(12))
+        assertFalse(TriviaBoard.raceCompact(8))
+        val h = 400f
+        val rowH = TriviaBoard.raceRowHeight(12, h)
+        assertTrue(rows.all { (it.from + 1) * rowH <= h + 0.01f && (it.to + 1) * rowH <= h + 0.01f })
+        assertEquals(50f, TriviaBoard.raceRowHeight(8, h), 0.01f)
+        assertEquals(52f, TriviaBoard.raceRowHeight(4, 600f), 0.01f)
+    }
+
+    @Test
+    fun odometerRestsOnExactDigitsAndRollsHigherColumnsOnlyOnCarry() {
+        assertEquals(listOf(0f, 7f, 8f), TriviaBoard.odometer(870.0, 3))
+        assertEquals(listOf(9f, 9f, 8f), TriviaBoard.odometer(899.0, 3))
+        // 899.5: every column is half-way to 900.
+        assertEquals(listOf(9.5f, 9.5f, 8.5f), TriviaBoard.odometer(899.5, 3))
+        // 875.5: only the ones column moves.
+        assertEquals(listOf(5.5f, 7f, 8f), TriviaBoard.odometer(875.5, 3))
+        assertEquals(4, TriviaBoard.odometerPlaces(870, 1_050))
+        assertEquals(1, TriviaBoard.odometerPlaces(0, 0))
     }
 
     @Test

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- near-verbatim copy of the art-board source (docs/art-board/README.md); kept as is so it diffs cleanly */
 // scenes.js (trimmed copy of the art-board source: helpers + hubRoom only) — worlds, posters, the hub room and ornaments (ART-DIRECTION §5, §9). Code-drawn vectors only.
 import { rng, hashStr, smoothPath, poly, inkRing, brush, brushAll, handPoly, handEllipse, wobble, smooth, sampleClosed, el, uid } from "./hand.js";
 import { characterG, INKS, PAPERS, BY_ID } from "./chars.js";

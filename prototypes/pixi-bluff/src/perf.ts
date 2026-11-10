@@ -17,6 +17,9 @@ export interface RunSummary {
   over33ms: number;
   over50ms: number;
   stutters: number;
+  /** JS (CPU) time per frame: scene update + render submission. GPU time is not in it. */
+  cpuAvgMs: number;
+  cpuP95Ms: number;
   heapMB: number | null;
 }
 
@@ -29,7 +32,7 @@ export function heapMB(): number | null {
 const pct = (sorted: number[], p: number): number => sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p))] ?? 0;
 const r1 = (v: number): number => Math.round(v * 10) / 10;
 
-export function summarize(frames: number[]): RunSummary {
+export function summarize(frames: number[], cpu: number[] = []): RunSummary {
   const n = frames.length;
   const total = frames.reduce((a, b) => a + b, 0);
   const sorted = [...frames].sort((a, b) => a - b);
@@ -55,6 +58,8 @@ export function summarize(frames: number[]): RunSummary {
     over50ms: frames.filter((f) => f > 50).length,
     // a stutter = a frame that took ≥ 2× the median (a visibly skipped frame at 60 Hz)
     stutters: frames.filter((f) => f >= median * 1.9 && f > 20).length,
+    cpuAvgMs: r1(cpu.length ? cpu.reduce((a, b) => a + b, 0) / cpu.length : 0),
+    cpuP95Ms: r1(pct([...cpu].sort((a, b) => a - b), 0.95)),
     heapMB: heapMB(),
   };
 }

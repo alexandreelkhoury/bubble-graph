@@ -1,8 +1,8 @@
 // Loads the baked atlas pages (public/atlas, made by scripts/bake.mjs from the hand-made SVG drawings), the room plate
 // and the two Cairo weights, then turns the fonts into bitmap fonts (one glyph page each: batched text, no per-label
 // texture uploads).
-import { Assets, BitmapFont, Texture } from "pixi.js";
-import type { Spritesheet } from "pixi.js";
+import { Assets, BitmapFont } from "pixi.js";
+import type { Spritesheet, Texture } from "pixi.js";
 
 export interface CharMeta { cw: number; ch: number; anchorX: number; anchorY: number; unitPx: number }
 interface Manifest { pages: string[]; meta: { char: CharMeta; fx: { cell: number } } }

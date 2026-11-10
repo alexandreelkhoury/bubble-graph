@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- near-verbatim copy of the art-board source (docs/art-board/README.md); kept as is so it diffs cleanly */
 // chars.js — the 12 shilleh drawn with a hand (ART-DIRECTION §8), on the canonical geometry of
 // shared/src/characters (bodies, face boxes, 13 expressions copied verbatim; read-only copy for the board).
 import { rng, hashStr, subpaths, sampleClosed, smooth, wobble, inkRing, brushAll, brush, smoothPath, poly, handEllipse, normals, centroid, bbox, el, uid } from "./hand.js";

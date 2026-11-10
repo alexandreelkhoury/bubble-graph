@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
@@ -30,6 +31,8 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -38,16 +41,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
@@ -93,6 +101,8 @@ internal fun QuizIntroCard(view: TriviaView, clock: PhaseClock, modifier: Modifi
             .padding(horizontal = 40.dp, vertical = 28.dp),
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            // The flat cover band (coast, hills and sunset in the studio palette), the same art as the shelf card.
+            QuizCover(q.domain, Modifier.fillMaxWidth().height(84.dp).clip(RoundedCornerShape(16.dp)), parallax = { 1f - clock.p("card").coerceIn(0f, 1f) })
             Text(
                 localizedTitle(q.title),
                 style = JamaaTheme.type.displayS.copy(textDirection = TextDirection.Content),
@@ -148,10 +158,11 @@ internal fun QuestionStage(view: TriviaView, clock: PhaseClock, clockOffsetMs: L
     val reduce = JamaaTheme.reduceMotion
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize()) {
-            QuestionCard(view, clock, clockOffsetMs, reduce, Modifier.fillMaxWidth().height(128.dp))
-            Spacer(Modifier.height(12.dp))
-            AnswerGrid(view, clock, positions, Modifier.fillMaxWidth().height(140.dp))
-            Spacer(Modifier.height(8.dp))
+            // 100 + 10 + 184 + 6 + 34 = 334 dp of the ~342 dp stage: 86 dp tiles, room for a text band and a stack.
+            QuestionCard(view, clock, clockOffsetMs, reduce, Modifier.fillMaxWidth().height(100.dp))
+            Spacer(Modifier.height(10.dp))
+            AnswerGrid(view, clock, positions, Modifier.fillMaxWidth().height(184.dp))
+            Spacer(Modifier.height(6.dp))
             if (view.phase == TriviaPhase.REVEAL) RevealHeadline(view, clock, Modifier.fillMaxWidth().height(34.dp))
         }
         val r = view.reveal
@@ -211,7 +222,7 @@ private fun QuestionCard(view: TriviaView, clock: PhaseClock, clockOffsetMs: Lon
                 val flash = view.phase == TriviaPhase.REVEAL && clock.p("lock") in 0.01f..0.99f
                 bulbRing(lit, pulse, flash, rem, dim = view.phase == TriviaPhase.READ)
             }
-            .padding(horizontal = 28.dp, vertical = 18.dp),
+            .padding(horizontal = 28.dp, vertical = 14.dp),
         contentAlignment = Alignment.Center,
     ) {
         BasicText(
@@ -219,7 +230,7 @@ private fun QuestionCard(view: TriviaView, clock: PhaseClock, clockOffsetMs: Lon
             style = JamaaTheme.type.headline.copy(color = JamaaColors.Text, textAlign = TextAlign.Center, textDirection = TextDirection.Content),
             maxLines = 3,
             overflow = TextOverflow.Ellipsis,
-            autoSize = TextAutoSize.StepBased(minFontSize = 20.sp, maxFontSize = 34.sp, stepSize = 1.sp),
+            autoSize = TextAutoSize.StepBased(minFontSize = 20.sp, maxFontSize = 32.sp, stepSize = 1.sp),
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         )
         if (view.phase == TriviaPhase.READ && deadline != null) {
@@ -343,7 +354,12 @@ private fun AnswerTile(token: TriviaToken, text: String, state: TileState, clock
             .then(if (state == TileState.CORRECT) Modifier.border(BorderStroke(4.dp, JamaaColors.Success), shape) else Modifier)
             .then(if (token == TriviaToken.FALSE) Modifier.border(BorderStroke(2.dp, JamaaColors.Text.copy(alpha = 0.24f)), shape) else Modifier),
     ) {
-        Row(Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        // REVEAL: the text moves to a one-line band at the top so the stack below it never covers the wording.
+        val reveal = state == TileState.CORRECT || state == TileState.WRONG || state == TileState.VOID
+        Row(
+            Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = if (reveal) 4.dp else 8.dp),
+            verticalAlignment = if (reveal) Alignment.Top else Alignment.CenterVertically,
+        ) {
             Box(Modifier.fillMaxHeight().width(56.dp)) {
                 token.letter?.let {
                     Text(it, style = JamaaTheme.type.label, color = Ink, modifier = Modifier.align(Alignment.TopStart))
@@ -358,18 +374,20 @@ private fun AnswerTile(token: TriviaToken, text: String, state: TileState, clock
             }
             Spacer(Modifier.width(8.dp))
             val label = if (token.letter == null && text.isEmpty()) keyText(token.labelKey) else text
+            val band = Modifier.weight(1f).then(if (reveal) Modifier.height((TriviaBoard.REVEAL_TEXT_BAND - 8f).dp) else Modifier)
             if (token.textOnFill) {
                 BasicText(
                     label,
                     style = JamaaTheme.type.title.copy(color = Ink, textDirection = TextDirection.Content),
-                    maxLines = 2,
+                    maxLines = if (reveal) 1 else 2,
                     overflow = TextOverflow.Ellipsis,
-                    autoSize = TextAutoSize.StepBased(minFontSize = 18.sp, maxFontSize = 26.sp, stepSize = 1.sp),
-                    modifier = Modifier.weight(1f),
+                    autoSize = if (reveal) TextAutoSize.StepBased(minFontSize = 14.sp, maxFontSize = 20.sp, stepSize = 1.sp)
+                    else TextAutoSize.StepBased(minFontSize = 18.sp, maxFontSize = 26.sp, stepSize = 1.sp),
+                    modifier = band,
                 )
             } else {
                 // False: ink on coral is 4.497:1, so the word sits on a cream strip (GAME-TRIVIA §8.2).
-                Box(Modifier.weight(1f).background(JamaaColors.Text, RoundedCornerShape(8.dp)).padding(horizontal = 10.dp, vertical = 2.dp)) {
+                Box(band.background(JamaaColors.Text, RoundedCornerShape(8.dp)).padding(horizontal = 10.dp, vertical = 2.dp)) {
                     Text(label, style = JamaaTheme.type.title.copy(textDirection = TextDirection.Content), color = Ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
@@ -439,25 +457,28 @@ private fun ExplainCard(text: String, clock: PhaseClock, modifier: Modifier) {
 // ---------------------------------------------------------------- LEADERBOARD (TR-TV-04)
 
 /**
- * The leaderboard race: full-width bars grow from the previous totals to the new ones (1.2 s, numbers roll), the rows
- * re-sort with a spring, the leader's crown drops, the biggest climber gets "+n places!". Top 8 (12 players: the
- * tower pages on the side screens; the race shows the top 8, GAME-TRIVIA §6).
+ * The leaderboard race: full-width bars grow from the previous totals to the new ones (1.2 s, odometer numbers), the
+ * rows re-sort with a spring, the leader's crown drops, the biggest climber gets "+n places!". Every player has a row
+ * (compact rows above 8 players, like the browser TV), so a climber from 10th into the top 3 is always drawn and no
+ * row slides off the stage; the area clips as a last guard.
  */
 @Composable
 internal fun LeaderboardRace(view: TriviaView, clock: PhaseClock, modifier: Modifier) {
-    val before = TriviaBoard.towerOrderBefore(view).take(TriviaBoard.TOWER_ROWS)
+    val rows = TriviaBoard.raceRows(view)
     val after = TriviaBoard.towerOrder(view)
     val max = (view.players.maxOfOrNull { it.score } ?: 0).coerceAtLeast(1)
     val leaders = TriviaBoard.leaders(view)
     val climber = TriviaBoard.biggestClimber(view)
     val places = TriviaBoard.places(after)
+    val compact = TriviaBoard.raceCompact(rows.size)
+    val charDp = if (compact) 30.dp else 44.dp
+    val numberStyle = if (compact) JamaaTheme.type.label else JamaaTheme.type.title
     Column(modifier.padding(horizontal = 24.dp)) {
         Text(keyText("game.trivia.leaderboard.title"), style = JamaaTheme.type.headline, color = Studio.accentText, modifier = Modifier.padding(vertical = 8.dp))
-        BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
-            val rowH = (maxHeight / TriviaBoard.TOWER_ROWS).coerceAtMost(52.dp)
-            before.forEachIndexed { from, p ->
+        BoxWithConstraints(Modifier.fillMaxWidth().weight(1f).clipToBounds()) {
+            val rowH = TriviaBoard.raceRowHeight(rows.size, maxHeight.value).dp
+            rows.forEach { (p, from, to) ->
                 key(p.id) {
-                    val to = after.indexOf(p).coerceAtLeast(0)
                     val place = places.getOrNull(to) ?: (to + 1)
                     Row(
                         Modifier
@@ -470,28 +491,34 @@ internal fun LeaderboardRace(view: TriviaView, clock: PhaseClock, modifier: Modi
                                 translationY = y * rowH.toPx() + (1f - appear.coerceIn(0f, 1f)) * 16.dp.toPx()
                             },
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(if (compact) 6.dp else 10.dp),
                     ) {
-                        Text("$place", style = JamaaTheme.type.title, color = JamaaColors.TextSecondary, modifier = Modifier.width(32.dp), textAlign = TextAlign.End)
-                        Box(Modifier.size(44.dp)) {
-                            if (TriviaBoard.flameVisible(view, p)) FlameOverlay(TriviaBoard.flameLevel(p.streak), 44.dp)
-                            Character(p.color, 44.dp, TriviaBoard.expression(view, p))
+                        Text("$place", style = numberStyle, color = JamaaColors.TextSecondary, modifier = Modifier.width(32.dp), textAlign = TextAlign.End)
+                        Box(Modifier.size(charDp)) {
+                            if (TriviaBoard.flameVisible(view, p)) FlameOverlay(TriviaBoard.flameLevel(p.streak), charDp)
+                            Character(p.color, charDp, TriviaBoard.expression(view, p))
                             if (p.id in leaders) {
                                 Icon(
                                     JamaaIcons.Crown,
                                     contentDescription = null,
                                     tint = JamaaColors.Accent,
-                                    modifier = Modifier.size(20.dp).align(Alignment.TopCenter).graphicsLayer {
+                                    modifier = Modifier.size(if (compact) 16.dp else 20.dp).align(Alignment.TopCenter).graphicsLayer {
                                         val c = clock.p("crown")
                                         alpha = c.coerceIn(0f, 1f)
-                                        translationY = (1f - c) * -24.dp.toPx() - 10.dp.toPx()
+                                        translationY = (1f - c) * -24.dp.toPx() - (if (compact) 8.dp else 10.dp).toPx()
                                     },
                                 )
                             }
                         }
-                        Text(Names.ellipsize(p.name, 12), style = JamaaTheme.type.titleS, color = JamaaColors.Text, maxLines = 1, modifier = Modifier.width(150.dp))
+                        Text(
+                            Names.ellipsize(p.name, 12),
+                            style = if (compact) JamaaTheme.type.label else JamaaTheme.type.titleS,
+                            color = JamaaColors.Text,
+                            maxLines = 1,
+                            modifier = Modifier.width(150.dp),
+                        )
                         val color = app.jamaa.tv.ui.theme.PlayerSwatch.byId(p.color).color
-                        Canvas(Modifier.weight(1f).height(18.dp)) {
+                        Canvas(Modifier.weight(1f).height(if (compact) 12.dp else 18.dp)) {
                             val b = clock.p("bars")
                             val from0 = TriviaBoard.barShare(p.scoreBefore, max)
                             val to1 = TriviaBoard.barShare(p.score, max)
@@ -501,8 +528,9 @@ internal fun LeaderboardRace(view: TriviaView, clock: PhaseClock, modifier: Modi
                             drawRoundRect(Studio.surface, cornerRadius = CornerRadius(size.height / 2f))
                             drawRoundRect(color, topLeft = Offset(if (rtl) size.width - w else 0f, 0f), size = Size(w, size.height), cornerRadius = CornerRadius(size.height / 2f))
                         }
-                        val shown by remember(p.id, view) { derivedStateOf { (p.scoreBefore + (p.score - p.scoreBefore) * clock.p("bars")).roundToInt() } }
-                        Text(shown.toString(), style = JamaaTheme.type.title, color = JamaaColors.Text, modifier = Modifier.width(84.dp), textAlign = TextAlign.End)
+                        Box(Modifier.width(84.dp), contentAlignment = Alignment.CenterEnd) {
+                            Odometer(p.scoreBefore, p.score, { clock.p("bars") }, numberStyle, JamaaColors.Text)
+                        }
                         if (climber?.first == p.id) {
                             Text(
                                 pluralStringResource(R.plurals.game__trivia__leaderboard__climb, climber.second, climber.second),
@@ -520,6 +548,43 @@ internal fun LeaderboardRace(view: TriviaView, clock: PhaseClock, modifier: Modi
                                     .padding(horizontal = 10.dp),
                             )
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * A score counter (DESIGN-JAMAA §5.1): below 100 it ticks; from 100 it is an odometer, one digit column per place
+ * rolling on translationY (TriviaBoard.odometer), sampled from [progress] in a layer lambda so a running count never
+ * recomposes. Western digits, always left-to-right; spoken as the final value.
+ */
+@Composable
+internal fun Odometer(from: Int, to: Int, progress: () -> Float, style: TextStyle, color: Color, modifier: Modifier = Modifier) {
+    if (maxOf(from, to) < 100) {
+        val shown by remember(from, to) { derivedStateOf { (from + (to - from) * progress().coerceIn(0f, 1f)).roundToInt() } }
+        Text(shown.toString(), style = style, color = color, maxLines = 1, modifier = modifier)
+        return
+    }
+    val places = TriviaBoard.odometerPlaces(from, to)
+    val lineH = with(LocalDensity.current) { (if (style.lineHeight.isSpecified) style.lineHeight else style.fontSize * 1.25f).toDp() }
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Row(modifier.clearAndSetSemantics { contentDescription = to.toString() }) {
+            for (k in places - 1 downTo 0) {
+                Box(Modifier.height(lineH).clipToBounds()) {
+                    Column(
+                        Modifier
+                            .wrapContentHeight(align = Alignment.Top, unbounded = true)
+                            .graphicsLayer {
+                                val v = from + (to - from) * progress().coerceIn(0f, 1f).toDouble()
+                                val unit = Math.pow(10.0, k.toDouble())
+                                // No leading zeros: a column above the current magnitude stays hidden.
+                                alpha = if (k > 0 && v + 1e-6 < unit) 0f else 1f
+                                translationY = -TriviaBoard.odometer(v, places)[k] * lineH.toPx()
+                            },
+                    ) {
+                        for (d in 0..10) Text("${d % 10}", style = style, color = color, maxLines = 1, modifier = Modifier.height(lineH))
                     }
                 }
             }

@@ -189,6 +189,45 @@ object TriviaBoard {
         return after.filterIndexed { i, id -> before.indexOf(id) > i }.toSet()
     }
 
+    /** One leaderboard-race row: the player, its index before the points ([from]) and after the re-sort ([to]). */
+    data class RaceRow(val player: TriviaPlayer, val from: Int, val to: Int)
+
+    /**
+     * Every player of the leaderboard race (TR-TV-04), in the order before this question's points, with where each one
+     * ends. All rows are drawn (compact when more than [TOWER_ROWS] play, like the browser TV), so a climber from 10th
+     * into the top 3 is always on screen and no row slides off the stage.
+     */
+    fun raceRows(view: TriviaView): List<RaceRow> {
+        val after = towerOrder(view).map { it.id }
+        return towerOrderBefore(view).mapIndexed { i, p -> RaceRow(p, i, after.indexOf(p.id).coerceAtLeast(0)) }
+    }
+
+    /** The race switches to compact rows (smaller characters, label type) above 8 players. */
+    fun raceCompact(players: Int): Boolean = players > TOWER_ROWS
+
+    /** The race's row height (dp) in an area [height] dp tall: 8 slots up to 52 dp, or every player when compact. */
+    fun raceRowHeight(players: Int, height: Float): Float =
+        if (raceCompact(players)) height / players else minOf(height / TOWER_ROWS, 52f)
+
+    /**
+     * The odometer (DESIGN-JAMAA §5.1, values ≥ 100): the position of each digit column, ones first, for a counter at
+     * [value] (fractional while it runs). The ones column rolls continuously; a higher column turns only while every
+     * column below it rolls over from 9, so whole values rest on exact digits.
+     */
+    fun odometer(value: Double, places: Int): List<Float> {
+        val v = value.coerceAtLeast(0.0)
+        return (0 until places).map { k ->
+            val unit = Math.pow(10.0, k.toDouble())
+            val digit = Math.floor(v / unit) % 10.0
+            val below = v - Math.floor(v / unit) * unit // what the lower columns show, 0 ≤ below < unit
+            val frac = if (k == 0) v - Math.floor(v) else (below - (unit - 1.0)).coerceIn(0.0, 1.0)
+            (digit + frac).toFloat()
+        }
+    }
+
+    /** Digit columns the odometer needs for a count running from [a] to [b]. */
+    fun odometerPlaces(a: Int, b: Int): Int = maxOf(a, b, 0).toString().length
+
     /** The leaderboard race bars: each player's share of the leader's total (0..1), before and after. */
     fun barShare(score: Int, max: Int): Float = if (max <= 0) 0f else (score.toFloat() / max).coerceIn(0f, 1f)
 
@@ -220,16 +259,32 @@ object TriviaBoard {
     }
 
     /**
+     * REVEAL tile layout (dp): the answer text moves to a one-line band at the tile's top ([REVEAL_TEXT_BAND]) and the
+     * stack stands below it, clear of the token column at the start side ([REVEAL_START_RESERVE]), so the crowd never
+     * covers the right answer's wording.
+     */
+    const val REVEAL_TEXT_BAND = 32f
+    const val REVEAL_START_RESERVE = 76f
+    const val STACK_CHAR = 40f
+    const val STACK_CHAR_CROWD = 32f
+
+    /** Character size on a tile holding [count] players: 40 dp, 32 dp once a second row is needed. */
+    fun stackCharSize(count: Int): Float = if (count > STACK_COLS) STACK_CHAR_CROWD else STACK_CHAR
+
+    /**
      * Offset (dp) of the [i]-th character of a stack on a tile of [tile] size, from the tile's top-left: 2 rows of 6
-     * at the tile's end side ("feet" on the tile's lower edge; row 2 stands behind row 1), [size] dp characters.
-     * Physical coordinates (the grid is never mirrored).
+     * at the tile's end side ("feet" on the tile's lower edge; row 2 stands behind row 1, half a step towards the
+     * start), [size] dp characters. Every character stays below the text band and after the token column whenever the
+     * tile is big enough. Physical coordinates (the grid is never mirrored).
      */
     fun stackOffset(i: Int, tile: Rect, size: Float): Pair<Float, Float> {
         val col = i % STACK_COLS
         val row = i / STACK_COLS
-        val step = size * 0.86f
-        val x = tile.w - 10f - size - col * step
-        val y = tile.h - size - 6f - row * size * 0.58f
+        val room = (tile.w - REVEAL_START_RESERVE - 10f - size).coerceAtLeast(0f)
+        val step = minOf(size * 0.86f, room / (STACK_COLS - 1 + 0.5f))
+        val lift = minOf(size * 0.58f, (tile.h - 6f - size - REVEAL_TEXT_BAND).coerceAtLeast(0f))
+        val x = tile.w - 10f - size - col * step - row * step / 2f
+        val y = tile.h - size - 6f - row * lift
         return x to y
     }
 

@@ -1,4 +1,4 @@
-/* global document, Image, Blob, FileReader, window */
+/* global document, Image, FileReader, window */
 // Bake step (runs in Chromium via scripts/bake.mjs): renders the hand-made SVG drawings (art/*.js, the board sources)
 // into a few texture-atlas pages + the room plate. The runtime never draws SVG: it only loads these pages.
 import { characterG, BY_ID, BODY_PATHS } from "./art/chars.js";

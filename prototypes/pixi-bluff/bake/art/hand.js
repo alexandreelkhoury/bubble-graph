@@ -1,3 +1,5 @@
+/* global document */
+/* eslint-disable @typescript-eslint/no-unused-vars -- near-verbatim copy of the art-board source (docs/art-board/README.md); kept as is so it diffs cleanly */
 // hand.js — the "hand" layer for JAMAA board renders (ART-DIRECTION §3, §5.4, §8, §10.3).
 // Everything is seeded: the same seed always draws the same wonk (no per-render randomness).
 // Runs in the browser (uses SVGPathElement.getPointAtLength to sample the canonical geometry).
