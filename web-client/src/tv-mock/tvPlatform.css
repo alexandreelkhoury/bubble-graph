@@ -212,8 +212,8 @@
 /* The arch mask and the world inside it change by transform only (archTransform): composited, never re-rastered. */
 .tvportal__arch { position: absolute; overflow: hidden; transform-origin: 0 0; will-change: transform; }
 .tvportal__world { position: absolute; width: 960px; height: 540px; transform-origin: 0 0; will-change: transform; }
-.tvportal__bg { position: absolute; inset: -40px; background: var(--w-stage); transform: scale(calc(1 + var(--bg, 0) * 0.08)); }
-.tvportal__props { position: absolute; inset: 0; transform: scale(calc(0.9 + var(--fg, 0) * 0.25)); transform-origin: 50% 70%; opacity: calc(1 - var(--handoff, 0)); }
+.tvportal__bg { position: absolute; inset: -40px; background: var(--w-stage); transform: scale(calc(1 + var(--bg, 0) * 0.08)); will-change: transform; }
+.tvportal__props { position: absolute; inset: 0; transform: scale(calc(0.9 + var(--fg, 0) * 0.25)); transform-origin: 50% 70%; opacity: calc(1 - var(--handoff, 0)); will-change: transform, opacity; }
 .tvportal__props .poster__art { inset: 10% 0 10% 0; }
 .tvportal.is-calm .tvportal__world { opacity: 1; }
 .tvportal--back .tvportal__world { opacity: 1; }
