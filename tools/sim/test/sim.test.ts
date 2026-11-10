@@ -44,4 +44,11 @@ describe("sim", () => {
       expect(formatSessionTable(s)).toContain("hub returns");
     }
   });
+  it("session mode plays Bluff through the room (JAMAA-PLATFORM §6.5): no leaks, no stuck instance, cup arithmetic holds", { timeout: 120_000 }, () => {
+    for (const access of ["premium", "free"] as const) {
+      const s = runSessionMode(realContent(), { ...parseArgs(["--game", "bluff"]), session: true, games: GAMES_PER_ROOM, seed: 7, access }, () => {});
+      expect(s.failures).toEqual([]);
+      expect(s.games).toBe(GAMES_PER_ROOM);
+    }
+  });
 });

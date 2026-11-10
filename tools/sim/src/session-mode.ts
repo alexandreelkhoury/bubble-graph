@@ -14,6 +14,9 @@ import type { RoomAction } from "@jamaa/shared/room";
 import { createRng } from "@jamaa/shared/engine";
 import type { Rng } from "@jamaa/shared/engine";
 import { findRoomLeaks, pid, RoomHarness } from "@jamaa/shared/testing";
+// JAMAA-GAP (G2): shared/package.json exports neither games/<id>/engine nor testing/bots/<id> (P files): relative imports.
+import type { BluffState } from "../../../shared/src/games/bluff/engine/state";
+import { bluffProgressIntent } from "../../../shared/src/testing/bots/bluff";
 import type { SimArgs } from "./args";
 import { formatColumns } from "./format";
 
@@ -178,6 +181,24 @@ export function playSession(seed: number, args: Pick<SimArgs, "players" | "acces
         const m = pick(rng, h.state.members.filter((x) => !x.left && x.connected));
         if (m) step({ type: "GAME", gameId: "trivia", i: { type: "ANSWER", choice: rng.int(4) }, by: { kind: "player", playerId: m.id } });
       } else step({ type: "GAME", gameId: "trivia", i: { type: "HOST_ADVANCE" }, by: TV });
+      continue;
+    }
+    if (h.state.game?.id === "bluff") {
+      // JAMAA-PLATFORM §6.5: the next legal Bluff move (shared/src/testing/bots/bluff.ts), else the clock runs to the
+      // phase deadline through the room TICK; now and then time jumps anyway (timeouts, auto-lies). The engine bot proper
+      // (bot lies, holds, swaps) lives in engine mode.
+      const gs = h.state.game.state as BluffState;
+      const n = rng.next() < 0.1 ? null : bluffProgressIntent(gs);
+      if (n === null) {
+        h.now = Math.max(h.now + 1_000, gs.deadline ?? h.now + 30_000);
+        step({ type: "TICK", by: SYS });
+        continue;
+      }
+      const by = n.by === null ? TV : { kind: "player" as const, playerId: n.by };
+      if (!step({ type: "GAME", gameId: "bluff", i: n.i, by } as RoomAction)) {
+        h.now += 30_000;
+        step({ type: "TICK", by: SYS });
+      }
       continue;
     }
     throw new Error(`no bot for game ${h.state.game?.id ?? "?"}`);

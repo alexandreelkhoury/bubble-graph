@@ -28,7 +28,7 @@ pnpm dev
 2. Picks the LAN address: `LAN_HOST` from `/.env` wins. Otherwise it uses the first non-internal IPv4 address, preferring `192.168.*`, then `10.*`, then `172.16–31.*`.
 3. Builds the web client once if `web-client/dist/index.html` is missing. Wrangler serves that folder as static assets.
 4. Starts both processes and stops both on Ctrl+C:
-   - `wrangler dev --ip 0.0.0.0 --port 8787` with `JOIN_BASE_URL=http://<LAN_HOST>:5173`, `ALLOWED_ORIGINS=http://<LAN_HOST>:5173,http://localhost:5173`, `DEBUG_INVARIANTS=1` (the room and game invariants run after every state change), billing on and **fake billing** (`BILLING_ENABLED=1`, `BILLING_MODE=fake`, `ALLOW_FAKE_BILLING=1`; see [Billing](#billing-payments-specmd)). `GAMES_ENABLED=mishana,bluff,likely,trivia` (`DEV_GAMES_ENABLED` in `tools/dev.mjs`): local dev offers every game whose registry entry is enabled (a stub stays hidden, since the room uses `GAMES_ENABLED` ∩ registry enabled). Narrow it with an environment variable, e.g. `GAMES_ENABLED=mishana,trivia pnpm dev`. Production is unaffected: it keeps `wrangler.jsonc`'s `"mishana"`.
+   - `wrangler dev --ip 0.0.0.0 --port 8787` with `JOIN_BASE_URL=http://<LAN_HOST>:5173`, `ALLOWED_ORIGINS=http://<LAN_HOST>:5173,http://localhost:5173`, `DEBUG_INVARIANTS=1` (the room and game invariants run after every state change), billing on and **fake billing** (`BILLING_ENABLED=1`, `BILLING_MODE=fake`, `ALLOW_FAKE_BILLING=1`; see [Billing](#billing-payments-specmd)). `GAMES_ENABLED=mishana,bluff,likely,trivia` (`DEV_GAMES_ENABLED` in `tools/dev.mjs`): local dev offers every game whose registry entry is enabled (a stub stays hidden, since the room uses `GAMES_ENABLED` ∩ registry enabled). Narrow it with an environment variable, e.g. `GAMES_ENABLED=mishana,trivia pnpm dev`. Production is unaffected: it keeps `wrangler.jsonc`'s list (today `"mishana,trivia"`).
    - `vite --host 0.0.0.0 --port 5173 --strictPort` (hot reload for the phone UI).
 5. Prints the URLs:
    - `TV server URL: http://<LAN_HOST>:8787`. Build the Android TV app with `-PserverUrl=http://<LAN_HOST>:8787`.
@@ -66,7 +66,7 @@ curl -s -X POST localhost:8787/api/rooms           # {"code":"KXRT","tvToken":"�
 | `pnpm test:coverage` | The same, with the coverage gate (≥ 90 %) on `shared/src/games/*/engine/**` and `shared/src/room/**` |
 | `ROOM_PROPS_RUNS=2000 pnpm vitest run --project shared shared/test/room/props.test.ts` | The room property tests at the P acceptance size (JAMAA-PLATFORM §6.4: ≥ 2 000 runs; the default run is 150) |
 | `pnpm lint` / `pnpm typecheck` | ESLint (flat config) and `tsc -p .` in every package |
-| `pnpm sim [--game mishana\|bluff\|likely\|trivia\|all] --players 3..12 --games 500` | Engine-mode bot games of each selected game on the real packs with invariant, termination, role-count and leak checks, and the Blank-never-opens rule at every round and tie-break. `--game` defaults to `mishana`; `all` reports the G2–G4 stubs as skipped until their G milestone. The full catalog is equivalent to a Pass room; add `--access free` to play the free starter content only (locked packs must never be picked, views carry locked-pack metadata only) |
+| `pnpm sim [--game mishana\|bluff\|likely\|trivia\|all] --players 3..12 --games 500` | Engine-mode bot games of each selected game on the real packs with invariant, termination, role-count and leak checks, and the Blank-never-opens rule at every round and tie-break. `--game` defaults to `mishana`; `all` plays every registry-enabled game and reports any remaining stub as skipped. The full catalog is equivalent to a Pass room; add `--access free` to play the free starter content only (locked packs must never be picked, views carry locked-pack metadata only) |
 | `pnpm sim --session --games 50 [--access free]` | **Session mode** (JAMAA-PLATFORM §2.9): rooms through the platform engine (`reduceRoom`), hub → a live game → setup → play → replay, back to setup or back to hub, about 10 games per room, with random reactions, disconnects, benched late joins, leaves and aborts. Room invariants and the generic leak checker after every step, and the cup arithmetic (stars recomputed from each outcome's ranking) after every finished instance |
 | `pnpm sim --ws http://127.0.0.1:8787 --players 4 --games 3` | **WS mode** against a running server, over protocol v2 (see below) |
 | `pnpm --filter @jamaa/web-client build` | Vite production build into `web-client/dist`, then the 60 KB gzip phone budget (`web-client/scripts/check-size.mjs`, TV mock excluded) |
@@ -267,7 +267,7 @@ Where each game stands and how to turn it on:
 | Game | id | Registry (`shared/src/games/<id>/definition.ts`) | Local dev (`pnpm dev`) | e2e (`pnpm e2e`) | Production (`server/wrangler.jsonc`) |
 |---|---|---|---|---|---|
 | Mish Ana! | `mishana` | enabled | on | on | on (default) |
-| Bluff the Answer | `bluff` | set by G2 | on once registry-enabled | on once registry-enabled | off until the owner adds it |
+| Bluff the Answer | `bluff` | **enabled** (G2) | on (`GAMES_ENABLED=mishana,bluff pnpm dev` to narrow) | on (`E2E_GAMES_ENABLED` overrides the list) | off until the owner adds it: append `bluff` to `GAMES_ENABLED` (steps below); its free pack `bluff-world-facts` must have every free item `reviewed` first (`content-lint --release` refuses drafts) |
 | Most Likely | `likely` | **enabled** (G3) | on (`GAMES_ENABLED=mishana,likely pnpm dev` to narrow) | on (`E2E_GAMES_ENABLED` overrides the list) | off until the owner adds it: append `likely` to `GAMES_ENABLED` (steps below); its free pack `likely-family` must be `reviewed` first |
 | Quiz Night | `trivia` | **enabled** (G4) | on | on (`E2E_GAMES_ENABLED` overrides the list) | off until the owner adds it |
 
@@ -327,5 +327,5 @@ native review, use:
 pnpm run deploy:preview   # same build + deploy checks, but content-lint without --release (drafts allowed)
 ```
 
-Production `GAMES_ENABLED` is `"mishana,trivia"` (server/wrangler.jsonc). Bluff and Most Likely are added there when their
-G milestones pass. The phone size budget counts only registry-enabled games (`enabled: false` games are reported, not counted).
+Production `GAMES_ENABLED` is `"mishana,trivia"` (server/wrangler.jsonc). Bluff and Most Likely are registry-enabled (local dev
+and e2e play them) and are added there by the owner when their G milestones are accepted (e.g. `"mishana,bluff,trivia"`). The phone size budget counts only registry-enabled games (`enabled: false` games are reported, not counted).
