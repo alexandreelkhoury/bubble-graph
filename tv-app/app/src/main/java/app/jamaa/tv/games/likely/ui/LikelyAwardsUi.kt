@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -190,12 +191,12 @@ private fun AwardsTrio(view: LikelyView, entries: List<LikelyAwardEntry>, clock:
                 }
                 val line = when (e.kind) {
                     LikelyAwardKind.MYSTERY -> keyText("game.likely.awards.mystery.line")
-                    else -> e.card?.let { keyText("game.likely.card.header") + " " + it.prompt } ?: ""
+                    else -> e.card?.let { keyText("game.likely.card.question", it.prompt) } ?: ""
                 }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .height(stage.dp(96f))
+                        .heightIn(min = stage.dp(96f))
                         .graphicsLayer { alpha = clock.p("name", i).coerceIn(0f, 1f) }
                         .drawWithContent {
                             drawContent()
@@ -204,7 +205,9 @@ private fun AwardsTrio(view: LikelyView, entries: List<LikelyAwardEntry>, clock:
                 ) {
                     Text(title, style = type.title, color = Gold, textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis)
                     Spacer(Modifier.height(stage.dp(4f)))
-                    Text(line, style = type.caption, color = JamaaColors.TextSecondary, textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    // The whole question in the locale's own punctuation (game.likely.card.question); up to 4 lines on the
+                    // 250-unit column, the spacer below absorbs the height.
+                    Text(line, style = type.caption, color = JamaaColors.TextSecondary, textAlign = TextAlign.Center, maxLines = 4, overflow = TextOverflow.Ellipsis)
                 }
                 Spacer(Modifier.weight(1f))
                 Box(

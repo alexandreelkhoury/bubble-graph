@@ -35,7 +35,7 @@ object BluffFixtures {
     fun names(prefix: String): List<String> = dir.list()!!.filter { it.startsWith(prefix) && it.endsWith(".json") }.sorted()
 
     /** The TV fixtures that carry a reveal. */
-    val revealFixtures = listOf("reveal", "reveal.fact", "reveal.final", "reveal.nobody_voted")
+    val revealFixtures = listOf("reveal", "reveal.fact", "reveal.final", "reveal.nobody_voted", "reveal.nobody_found")
 
     @Serializable data class Sample(val reveal: BluffReveal, val scores: List<BluffScore>, val phase: String)
 

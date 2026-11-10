@@ -81,6 +81,16 @@ export const REVIEW_FLAGS: Terms = {
 /** House rule (owner): no party-game brand names in our content. */
 export const BRAND_DENYLIST: readonly string[] = ["jackbox", "quiplash", "fibbage", "drawful", "kahoot", "top chef", "masterchef", "master chef"];
 
+/**
+ * House rule (FR elision): `{player}` is a display name pasted at draw time, so it must not follow a word that elides
+ * before a vowel or mute h (« de Alex », « que Imane », « le sweat de Omar »). Put the name after « à », « avec », « pour »…
+ */
+export const FR_ELIDING_BEFORE_PLAYER = /(?<!\p{L})(?:de|que|le|la|je|me|te|se|ne)\s+\{player\}/iu;
+/** House rule (AR grammar, §11.2): a verb right after `{player}` is conjugated for that player (masculine by default). */
+export const AR_VERB_AFTER_PLAYER = /\{player\}\s+(?:عم\s+)?ب?ي\p{L}/u;
+/** House rule (AR digits): cards use Western digits like the UI ("50%", "4 / 12"), not Eastern Arabic ones. */
+export const AR_EASTERN_DIGITS = /[٠-٩٪]/u;
+
 const TASHKEEL = /[ً-ْٰـ]/gu;
 const EMOJI = /\p{Extended_Pictographic}/u;
 const AR_CLITICS = ["وال", "بال", "عال", "فال", "لل", "ال", "و", "ف", "ب", "ل", "ع"];
@@ -196,7 +206,10 @@ export function lintLikelyRaw(entries: readonly { file: string; raw: unknown }[]
           if (/^to\s/iu.test(p)) c.errors.push(`${at}: prompt.en must not start with "to " (the header ends with "to…")`);
         }
         if (l === "fr" && !/^(de |d'|d’)/u.test(p)) c.errors.push(`${at}: prompt.fr must start with "de " or "d'" (it completes « Qui risque le plus… »)`);
+        if (l === "fr" && FR_ELIDING_BEFORE_PLAYER.test(p)) c.errors.push(`${at}: prompt.fr puts {player} after a word that elides before a vowel (« de Alex »): use « à {player} », « avec {player} »…`);
         if (l === "ar" && p.includes("مين")) c.errors.push(`${at}: prompt.ar must not contain «مين» (the header already has it)`);
+        if (l === "ar" && AR_VERB_AFTER_PLAYER.test(p)) c.warnings.push(`${at}: prompt.ar has a verb right after {player}, conjugated for that player's gender (reword so {player} is an object)`);
+        if (l === "ar" && (AR_EASTERN_DIGITS.test(p) || AR_EASTERN_DIGITS.test(a))) c.warnings.push(`${at}: Eastern Arabic digits in prompt.ar or award.ar (cards use Western digits, like the UI)`);
         if (l === "es" && /^(que |de )/u.test(p)) c.errors.push(`${at}: prompt.es is an infinitive phrase (it completes "¿Quién es más capaz de…?")`);
         lintText(p, l, `${at} prompt.${l}`, adult, c);
         lintText(a, l, `${at} award.${l}`, adult, c);

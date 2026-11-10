@@ -1,5 +1,6 @@
 package app.jamaa.tv.games.bluff
 
+import app.jamaa.tv.games.GameCatalog
 import app.jamaa.tv.games.GameIds
 import app.jamaa.tv.platform.GameChrome
 import app.jamaa.tv.platform.RemoteKey
@@ -69,6 +70,18 @@ class BluffScreenRulesTest {
         assertEquals('A', next.getValue(v.options.last().id))
     }
 
+    @Test fun theAfterHideFixtureKeepsTheSurvivorsLetters() {
+        val before = BluffFixtures.view("voting")
+        val after = BluffFixtures.view("voting.after_hide")
+        val memo = OptionLetters()
+        val first = memo.of(before)
+        val second = memo.of(after)
+        if (before.n == after.n && before.promptIndex == after.promptIndex && before.prompt?.id == after.prompt?.id) {
+            for (o in after.options) if (o.id in first) assertEquals(o.id, first[o.id], second[o.id])
+        }
+        assertEquals(after.options.size, after.options.mapNotNull { second[it.id] }.distinct().size)
+    }
+
     @Test fun lettersAreWesternUpToThirteenCards() {
         assertEquals("ABCDEFGHIJKLM", (0 until 13).map { OptionLetters.letterOf(it) }.joinToString(""))
     }
@@ -99,6 +112,45 @@ class BluffScreenRulesTest {
         assertEquals(JsonPrimitive("SKIP_PROMPT"), skip.intent.i["type"])
         assertEquals(JsonPrimitive(writing.prompt!!.id), skip.intent.i["promptId"])
         assertEquals(BluffTv.PauseAction.Unavailable, BluffTv.pauseAction("SKIP_PROMPT", voting.copy(skipsLeft = 1)))
+    }
+
+    // ---------------------------------------------------------------- rules ⓘ bodies (GAME-BLUFF §10.2)
+
+    private val locales = listOf("values", "values-fr", "values-ar", "values-es")
+
+    /** `res/<dir>/strings_game_bluff.xml` as name → text (Android escapes undone). */
+    private fun strings(dir: String): Map<String, String> {
+        val xml = java.io.File("src/main/res/$dir/strings_game_bluff.xml").readText(Charsets.UTF_8)
+        return Regex("""<string name="([^"]+)">(.*?)</string>""", RegexOption.DOT_MATCHES_ALL).findAll(xml)
+            .associate { it.groupValues[1] to it.groupValues[2].replace("\\'", "'").replace("\\\"", "\"").replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">") }
+    }
+
+    @Test fun noRuleBodyShowsARawPlaceholderInAnyLanguage() {
+        val sections = GameCatalog.BLUFF.ruleSections
+        assertTrue(sections.isNotEmpty())
+        for (dir in locales) {
+            val res = strings(dir)
+            for (pace in listOf("relaxed", "normal", "fast", null)) {
+                for (sec in sections) {
+                    val name = sec.bodyKey.replace(".", "__")
+                    val raw = res[name] ?: error("$dir lacks $name")
+                    val args = BluffTv.ruleArgs(sec.id, null)
+                    val text = if (args.isEmpty()) raw else String.format(java.util.Locale.ROOT, raw, *args)
+                    assertTrue("$dir ${sec.id} pace=$pace: $text", '%' !in text)
+                }
+            }
+        }
+    }
+
+    @Test fun writingSecondsFollowThePace() {
+        val setupRoom = BluffFixtures.state("s2c.state.tv.setup.bluff.json").view.room
+        val pace = BluffTv.setupView(setupRoom)!!.settings.pace
+        assertEquals(BluffTv.WRITING_SECONDS.getValue(pace).toString(), BluffTv.ruleArgs("writing", setupRoom).single())
+        // In game (no Bluff setup in the room view) the last seen pace stays; other sections take no argument.
+        val game = BluffFixtures.room("writing").room
+        assertEquals(BluffTv.WRITING_SECONDS.getValue(pace).toString(), BluffTv.ruleArgs("writing", game).single())
+        assertEquals(0, BluffTv.ruleArgs("voting", game).size)
+        assertEquals(setOf("90", "60", "45"), BluffTv.WRITING_SECONDS.values.map { it.toString() }.toSet())
     }
 
     // ---------------------------------------------------------------- coins, rail, odometer (DESIGN-JAMAA §5.1/§5.2)

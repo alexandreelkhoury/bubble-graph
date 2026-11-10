@@ -192,7 +192,8 @@ class BluffScriptTest {
 
     /** Nobody voted for the truth: "Nobody saw that coming!" and every character is shocked. */
     @Test fun nobodyFoundTheTruth() {
-        val sc = script("engine:helped") // a round-1/2 reveal where 3 votes went to lies and none to the truth
+        val sc = script("fixture:reveal.nobody_found") // votes went to lies and none to the truth
+        assertTrue(script("engine:helped").nobodyFound)
         assertTrue(sc.nobodyFound)
         val truth = sc.segments.first { it.kind == SegmentKind.TRUTH }
         val t = truth.startMs + truth.sub("stamp")!!.endMs

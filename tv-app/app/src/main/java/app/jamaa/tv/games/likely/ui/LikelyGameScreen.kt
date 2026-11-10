@@ -1,5 +1,10 @@
 package app.jamaa.tv.games.likely.ui
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
@@ -22,7 +27,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -50,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
 import app.jamaa.tv.game.CuePlay
 import app.jamaa.tv.games.GameScreenArgs
+import app.jamaa.tv.games.likely.LikelyCardFit
 import app.jamaa.tv.games.likely.LikelyChoreo
 import app.jamaa.tv.games.likely.LikelyGameView
 import app.jamaa.tv.games.likely.LikelyMark
@@ -121,7 +129,7 @@ fun LikelyGameScreen(game: LikelyGameView, args: GameScreenArgs) {
                 LikelyAwards(view, awards, rtl, args)
             } else {
                 Column(Modifier.fillMaxSize()) {
-                    Header(view, args)
+                    Header(view, args, clock)
                     LikelyStageBox(Modifier.weight(1f).fillMaxWidth()) {
                         LikelyPlayStage(view, args, clock, rtl, this)
                     }
@@ -153,7 +161,17 @@ internal class LikelyClock(val key: String, val timeline: LikelyTimeline?, priva
     /** Progress of step [id] for element [index]; a step this timeline does not have is done (1). */
     fun p(id: String, index: Int = 0): Float = LikelyChoreo.progress(timeline?.step(id), t(), index, reduced)
 
-    fun running(): Boolean = timeline != null && !completed.value && t() < timeline.totalMs
+    /** The reveal settles when its open-ended hold starts (the caption then stays): OK has nothing left to finish. */
+    private val settleMs: Int = timeline?.step("hold")?.startMs ?: timeline?.totalMs ?: 0
+
+    /** The frame loop runs to the timeline's end (the hold's fade and the rail keep drawing). */
+    fun animating(): Boolean = timeline != null && !completed.value && t() < timeline.totalMs
+
+    /** Something OK can complete: before the hold (or the end). The first card's entrance wait counts (t < 0). */
+    fun running(): Boolean = timeline != null && !completed.value && t() < settleMs
+
+    /** The first card still waits for the platform world entrance ([LikelyChoreo.cardStart]). */
+    fun waiting(): Boolean = timeline != null && !completed.value && t() < 0
 
     /** OK: jump to the end state. True when something was running. */
     fun complete(): Boolean {
@@ -177,9 +195,9 @@ internal fun rememberLikelyClock(view: LikelyView, clockOffsetMs: Long, reduced:
     val clock = remember(key, reduced) {
         val remaining = view.deadline?.let { it - (System.currentTimeMillis() + clockOffsetMs) }
         when (view.phase) {
-            LikelyPhase.CARD -> LikelyChoreo.cardDeal.let { tl ->
-                val s = LikelyChoreo.start(tl.totalMs, remaining)
-                LikelyClock(key, tl, s.atMs, s.scale, reduced)
+            // The first card waits out the platform entrance (its deadline carries ENTRANCE_GRACE_MS, GAME-LIKELY §4).
+            LikelyPhase.CARD -> LikelyChoreo.cardStart(view.cardIndex, remaining).let { s ->
+                LikelyClock(key, LikelyChoreo.cardDeal, s.atMs, s.scale, reduced)
             }
             // Mounted in VOTING (a reconnect): the card is already dealt.
             LikelyPhase.VOTING -> LikelyClock(key, LikelyChoreo.cardDeal, LikelyChoreo.cardDeal.totalMs, 1.0, reduced)
@@ -197,7 +215,7 @@ internal fun rememberLikelyClock(view: LikelyView, clockOffsetMs: Long, reduced:
         val tl = clock.timeline ?: return@LaunchedEffect
         var last = withFrameMillis { it }
         var prevT = clock.t() - 0.5
-        while (clock.running()) {
+        while (clock.animating()) {
             val now = withFrameMillis { it }
             if (!isPaused) clock.local.doubleValue += (now - last).toDouble()
             last = now
@@ -216,9 +234,13 @@ internal inline fun playMarks(marks: List<LikelyMark>, play: (CuePlay) -> Unit) 
 // ---------------------------------------------------------------- header
 
 @Composable
-private fun Header(view: LikelyView, args: GameScreenArgs) {
+private fun Header(view: LikelyView, args: GameScreenArgs, clock: LikelyClock) {
     val type = JamaaTheme.type
-    Row(Modifier.fillMaxWidth().height(44.dp), verticalAlignment = Alignment.CenterVertically) {
+    // The first card's top bar stays hidden under the platform entrance, then fades in with the deal (web is-gated).
+    Row(
+        Modifier.fillMaxWidth().height(44.dp).graphicsLayer { alpha = if (view.phase == LikelyPhase.CARD && clock.t() < 0) 0f else 1f },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         if (view.phase != LikelyPhase.HOLD) {
             Text(
                 keyText("game.likely.card.counter", LikelyStage.cardNumber(view).toString(), view.cardCount),
@@ -249,9 +271,32 @@ private fun Header(view: LikelyView, args: GameScreenArgs) {
                 number = type.label,
                 calmColor = Rooftop.accent,
             )
+        } else if (view.phase == LikelyPhase.CARD) {
+            // Votes are not live yet: the room sees that phones open in a moment (web `lkready`).
+            ReadyChip(keyText("game.likely.card.getReady"))
         } else {
             Spacer(Modifier.size(44.dp))
         }
+    }
+}
+
+/** CARD: "Voting opens in a moment", a pulsing dot in the world accent where the VOTING timer ring will sit. */
+@Composable
+private fun ReadyChip(text: String) {
+    val pulse = rememberInfiniteTransition(label = "lk-ready")
+    val a by pulse.animateFloat(0.35f, 1f, infiniteRepeatable(tween(700), RepeatMode.Reverse), label = "lk-ready-dot")
+    val reduce = JamaaTheme.reduceMotion
+    Row(
+        Modifier
+            .height(36.dp)
+            .background(Rooftop.surface.copy(alpha = 0.85f), RoundedCornerShape(50))
+            .border(1.5.dp, Rooftop.accent.copy(alpha = 0.6f), RoundedCornerShape(50))
+            .padding(horizontal = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.size(10.dp).graphicsLayer { alpha = if (reduce) 1f else a }.background(Rooftop.accent, RoundedCornerShape(50)))
+        Spacer(Modifier.width(8.dp))
+        Text(text, style = JamaaTheme.type.caption, color = JamaaColors.Text, maxLines = 1)
     }
 }
 
@@ -299,8 +344,10 @@ internal fun LikelyCardFace(view: LikelyView, clock: LikelyClock, stage: StageSc
     val card = view.card ?: return
     val type = JamaaTheme.type
     val named = view.player(card.namedPlayerId)
-    val question = if (view.contentLocale == "ar") "؟" else "?"
-    val prompt = remember(card.prompt, named?.name, named?.color, question) {
+    // game.likely.card.question split around its {prompt}: the lead-in small, the prompt + the locale's closing big
+    // (¿…? in es, the narrow no-break space before ? in fr, ؟ in ar). Never a hard-coded mark (web `Question`).
+    val (lead, closing) = LikelyStage.questionParts(keyText("game.likely.card.question", LikelyStage.QUESTION_MARK))
+    val prompt = remember(card.prompt, named?.name, named?.color, closing) {
         val span = LikelyStage.namedSpan(card.prompt, named?.name)
         buildAnnotatedString {
             if (span == null || named == null) {
@@ -310,9 +357,16 @@ internal fun LikelyCardFace(view: LikelyView, clock: LikelyClock, stage: StageSc
                 withStyle(SpanStyle(color = PlayerSwatch.byId(named.color).color, fontWeight = FontWeight.Black)) { append(card.prompt.substring(span)) }
                 append(card.prompt.substring(span.last + 1))
             }
-            append(question)
+            append(closing)
         }
     }
+    // Long prompts step the type down (web `cardSize`); if a tier still overflows the card, the next one is taken:
+    // the punchline is never ellipsized.
+    val tiers = listOf(type.displayS, type.headline, type.title, type.titleS)
+    val arabicScale = app.jamaa.tv.ui.theme.LocalIsArabic.current
+    val fitted = remember(card.prompt, closing, arabicScale) { LikelyCardFit.tier(card.prompt, closing, arabicScale) }
+    var shrink by remember(card.id) { mutableIntStateOf(0) }
+    val tier = (fitted + shrink).coerceAtMost(tiers.lastIndex)
     val shape = RoundedCornerShape(stage.dp(26f))
     Box(
         modifier
@@ -338,20 +392,21 @@ internal fun LikelyCardFace(view: LikelyView, clock: LikelyClock, stage: StageSc
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
             Text(
-                keyText("game.likely.card.header"),
-                style = type.title,
+                lead,
+                style = if (tier == 0) type.title else type.titleS,
+                textAlign = TextAlign.Center,
                 color = Rooftop.accentText,
                 modifier = Modifier.graphicsLayer { alpha = clock.p("header") },
             )
             Spacer(Modifier.height(stage.dp(8f)))
             Text(
                 prompt,
-                style = type.displayS,
+                style = tiers[tier],
                 color = JamaaColors.Text,
                 textAlign = TextAlign.Center,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.graphicsLayer {
+                onTextLayout = { if (it.hasVisualOverflow && tier < tiers.lastIndex) shrink++ },
+                // Measured after the header and the award line (weight): the phrase gets the card's remaining height.
+                modifier = Modifier.weight(1f, fill = false).graphicsLayer {
                     val p = clock.p("phrase")
                     alpha = p.coerceIn(0f, 1f)
                     scaleX = 0.92f + 0.08f * p

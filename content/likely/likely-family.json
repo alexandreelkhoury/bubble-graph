@@ -31,10 +31,10 @@
         "party"
       ],
       "prompt": {
-        "en": "cry at a wedding",
-        "fr": "de pleurer à un mariage",
-        "ar": "يبكي بعرس",
-        "es": "llorar en una boda"
+        "en": "cry at the wedding of people they met that night",
+        "fr": "de pleurer au mariage de gens rencontrés le soir même",
+        "ar": "يبكي بعرس ناس لسّا متعرّف عليهن الليلة",
+        "es": "llorar en la boda de gente que acaba de conocer"
       },
       "award": {
         "en": "Waterworks Award",
@@ -55,16 +55,16 @@
         "habits"
       ],
       "prompt": {
-        "en": "forget their own birthday",
-        "fr": "d'oublier son propre anniversaire",
-        "ar": "ينسى عيد ميلادو",
-        "es": "olvidarse de su propio cumpleaños"
+        "en": "forget their own birthday but never a cousin's",
+        "fr": "d'oublier son propre anniversaire, mais jamais celui d'un cousin",
+        "ar": "ينسى عيد ميلادو وما بيفوّت عيد ميلاد ولا ابن عمّ",
+        "es": "olvidar su propio cumpleaños pero nunca el de un primo"
       },
       "award": {
-        "en": "Goldfish Award",
-        "fr": "Prix poisson rouge",
-        "ar": "جايزة السمكة الحمرا",
-        "es": "Premio Memoria de Pez"
+        "en": "Selective Memory Award",
+        "fr": "Prix de la mémoire sélective",
+        "ar": "جايزة الذاكرة الانتقائية",
+        "es": "Premio Memoria Selectiva"
       },
       "review": {
         "status": "draft"
@@ -79,10 +79,10 @@
         "tech"
       ],
       "prompt": {
-        "en": "go viral on social media",
-        "fr": "de faire le buzz sur les réseaux",
-        "ar": "يصير ترند عالسوشيال ميديا",
-        "es": "hacerse viral en redes"
+        "en": "go viral with the one video they meant to delete",
+        "fr": "de faire le buzz avec la seule vidéo qu'il fallait supprimer",
+        "ar": "يصير ترند بالفيديو الوحيد يلّي كان بدّو يمحيه",
+        "es": "hacerse viral con el único vídeo que quería borrar"
       },
       "award": {
         "en": "Viral Award",
@@ -244,13 +244,13 @@
       "spice": 0,
       "namesPlayer": false,
       "tags": [
-        "future"
+        "habits"
       ],
       "prompt": {
-        "en": "adopt five cats",
-        "fr": "d'adopter cinq chats",
-        "ar": "يتبنّى خمس قطط",
-        "es": "adoptar cinco gatos"
+        "en": "feed every street cat in the neighbourhood by name",
+        "fr": "de nourrir tous les chats du quartier en les appelant par leur nom",
+        "ar": "يطعمي كل قطط الحيّ وكل وحدة باسما",
+        "es": "dar de comer a todos los gatos del barrio, cada uno con su nombre"
       },
       "award": {
         "en": "Cat Colony Award",
@@ -316,13 +316,14 @@
       "spice": 0,
       "namesPlayer": false,
       "tags": [
-        "food"
+        "food",
+        "family"
       ],
       "prompt": {
-        "en": "win a cooking show",
-        "fr": "de gagner une émission de cuisine",
-        "ar": "يربح برنامج طبخ",
-        "es": "ganar un concurso de cocina en la tele"
+        "en": "challenge Teta to a cook-off and demand a rematch",
+        "fr": "de défier Teta en cuisine et d'exiger une revanche",
+        "ar": "يتحدّى التيتا بالطبخ ويطالب بجولة تانية",
+        "es": "retar a la abuela a cocinar y exigir la revancha"
       },
       "award": {
         "en": "Golden Ladle Award",
@@ -343,10 +344,10 @@
         "habits"
       ],
       "prompt": {
-        "en": "fall asleep during a movie",
-        "fr": "de s'endormir devant un film",
-        "ar": "ينام بنص الفيلم",
-        "es": "dormirse en mitad de una peli"
+        "en": "fall asleep during a movie they chose",
+        "fr": "de s'endormir devant le film qu'on a choisi soi-même",
+        "ar": "ينام بنص فيلم هوّي يلّي نقّاه",
+        "es": "dormirse en mitad de la peli que ha elegido"
       },
       "award": {
         "en": "Nap Award",
@@ -484,19 +485,21 @@
       "spice": 0,
       "namesPlayer": false,
       "tags": [
-        "future"
+        "future",
+        "food",
+        "lebanon"
       ],
       "prompt": {
-        "en": "make a fortune",
-        "fr": "de faire fortune",
-        "ar": "يعمل ثروة",
-        "es": "hacer una fortuna"
+        "en": "make a fortune selling Teta's pickles",
+        "fr": "de faire fortune en vendant les bocaux de Teta",
+        "ar": "يصير معو مصاري قدّ البحر من مكدوس التيتا",
+        "es": "forrarse vendiendo las conservas de la abuela"
       },
       "award": {
-        "en": "Big Money Award",
-        "fr": "Prix du gros lot",
-        "ar": "جايزة المليون",
-        "es": "Premio Lotería"
+        "en": "Jar Empire Award",
+        "fr": "Prix de l'empire du bocal",
+        "ar": "جايزة الكنز",
+        "es": "Premio Imperio del Tarro"
       },
       "review": {
         "status": "draft"
@@ -535,10 +538,10 @@
         "future"
       ],
       "prompt": {
-        "en": "survive a zombie invasion",
-        "fr": "de survivre à une invasion de zombies",
-        "ar": "يضلّ عايش إذا هجموا الزومبي",
-        "es": "sobrevivir a una invasión zombi"
+        "en": "survive a zombie attack by inviting them in for coffee",
+        "fr": "de survivre aux zombies en les invitant à prendre un café",
+        "ar": "ينجو من الزومبي لأنّو عزمن عفنجان قهوة",
+        "es": "sobrevivir a los zombis invitándolos a un café"
       },
       "award": {
         "en": "Survivor Award",
@@ -585,7 +588,7 @@
       "prompt": {
         "en": "take 200 selfies on one trip",
         "fr": "de prendre 200 selfies en un seul voyage",
-        "ar": "ياخد ٢٠٠ سيلفي بسفرة وحدة",
+        "ar": "ياخد 200 سيلفي بسفرة وحدة",
         "es": "hacerse 200 selfis en un solo viaje"
       },
       "award": {
@@ -680,7 +683,7 @@
       ],
       "prompt": {
         "en": "forget why they walked into a room",
-        "fr": "d'oublier pourquoi on est entré dans une pièce",
+        "fr": "d'oublier ce qu'on venait faire dans une pièce",
         "ar": "ينسى ليش فات عالغرفة",
         "es": "olvidar a qué ha entrado en una habitación"
       },
@@ -1204,13 +1207,14 @@
       "spice": 0,
       "namesPlayer": false,
       "tags": [
-        "future"
+        "future",
+        "family"
       ],
       "prompt": {
-        "en": "write a bestseller",
-        "fr": "d'écrire un best-seller",
-        "ar": "يكتب كتاب بيبيع ملايين",
-        "es": "escribir un superventas"
+        "en": "turn the family group chat into a bestselling novel",
+        "fr": "de tirer un best-seller des messages du groupe familial",
+        "ar": "يكتب رواية من حكي غروب العيلة وتبيع ملايين",
+        "es": "convertir el chat de la familia en un superventas"
       },
       "award": {
         "en": "Bestseller Award",
@@ -1382,9 +1386,9 @@
       },
       "award": {
         "en": "Social Butterfly Award",
-        "fr": "Prix du papillon social",
-        "ar": "جايزة الاجتماعية",
-        "es": "Premio Mariposa Social"
+        "fr": "Prix du pote du serveur",
+        "ar": "جايزة رفيق الغرسون",
+        "es": "Premio Don de Gentes"
       },
       "review": {
         "status": "draft"
@@ -1420,13 +1424,14 @@
       "spice": 0,
       "namesPlayer": false,
       "tags": [
-        "future"
+        "future",
+        "habits"
       ],
       "prompt": {
-        "en": "invent something genius",
-        "fr": "d'inventer un truc génial",
-        "ar": "يخترع شي عبقري",
-        "es": "inventar algo genial"
+        "en": "invent a whole machine to avoid one chore",
+        "fr": "d'inventer toute une machine pour éviter une seule corvée",
+        "ar": "يخترع ماكينة كاملة بس ليهرب من شغلة وحدة بالبيت",
+        "es": "inventar una máquina entera para librarse de una sola tarea"
       },
       "award": {
         "en": "Inventor Award",
@@ -1665,7 +1670,7 @@
       "prompt": {
         "en": "have 4,000 unread emails and sleep just fine",
         "fr": "d'avoir 4 000 mails non lus et de dormir comme un bébé",
-        "ar": "يكون عندو ٤٠٠٠ إيميل مش مقري ونايم مرتاح",
+        "ar": "يكون عندو 4000 إيميل مش مقري ونايم مرتاح",
         "es": "tener 4.000 correos sin leer y dormir a pierna suelta"
       },
       "award": {
@@ -2198,7 +2203,7 @@
       "prompt": {
         "en": "keep 47 tabs open \"just in case\"",
         "fr": "de garder 47 onglets ouverts « au cas où »",
-        "ar": "يخلّي ٤٧ تاب مفتوحين «للاحتياط»",
+        "ar": "يخلّي 47 تاب مفتوحين «للاحتياط»",
         "es": "tener 47 pestañas abiertas «por si acaso»"
       },
       "award": {
@@ -2568,7 +2573,7 @@
       },
       "award": {
         "en": "Leftovers Award",
-        "fr": "Prix des tupperwares",
+        "fr": "Prix des boîtes de restes",
         "ar": "جايزة العلب",
         "es": "Premio Táper"
       },
@@ -2709,13 +2714,13 @@
         "en": "have every aunt wrapped around their finger",
         "fr": "d'avoir toutes les tantes dans sa poche",
         "ar": "يحطّ كل العمّات والخالات بجيبتو",
-        "es": "tener a todas las tías en el bolsillo"
+        "es": "tener a todas sus tías en el bolsillo"
       },
       "award": {
         "en": "Aunties' Pick Award",
         "fr": "Prix des tatas",
         "ar": "جايزة قلب الخالات",
-        "es": "Premio Tías Conquistadas"
+        "es": "Premio Debilidad de las Tías"
       },
       "review": {
         "status": "draft"
@@ -2781,13 +2786,13 @@
       "prompt": {
         "en": "live on 3% battery and refuse to charge",
         "fr": "de vivre à 3 % de batterie sans jamais recharger",
-        "ar": "يضلّ عـ٣٪ شحن وما يحطّ عالشريج",
+        "ar": "يضلّ عـ3% شحن وما يحطّ عالشريج",
         "es": "ir con el móvil al 3 % y negarse a cargarlo"
       },
       "award": {
         "en": "Living on the Edge Award",
         "fr": "Prix des 3 %",
-        "ar": "جايزة الـ٣٪",
+        "ar": "جايزة الـ3%",
         "es": "Premio 3 % de Batería"
       },
       "review": {
@@ -2902,7 +2907,7 @@
       ],
       "prompt": {
         "en": "show up in costume to a party that wasn't a costume party",
-        "fr": "de venir en costume à une soirée pas déguisée",
+        "fr": "de débarquer avec un déguisement à une soirée pas costumée",
         "ar": "يلبس تنكّرة عسهرة عادية",
         "es": "presentarse con disfraz en una fiesta que no era de disfraces"
       },
@@ -3272,10 +3277,10 @@
         "es": "contar la misma anécdota de la infancia en cada reunión"
       },
       "award": {
-        "en": "Rerun Award",
-        "fr": "Prix de la rediffusion",
-        "ar": "جايزة الإعادة",
-        "es": "Premio Reposición"
+        "en": "Broken Record Award",
+        "fr": "Prix du disque rayé",
+        "ar": "جايزة الأسطوانة",
+        "es": "Premio Disco Rayado"
       },
       "review": {
         "status": "draft"
@@ -3729,7 +3734,7 @@
       "prompt": {
         "en": "own 30 mugs and only ever use one",
         "fr": "d'avoir 30 tasses et toujours utiliser la même",
-        "ar": "يكون عندو ٣٠ ماغ وما يستعمل إلّا واحد",
+        "ar": "يكون عندو 30 ماغ وما يستعمل إلّا واحد",
         "es": "tener 30 tazas y usar siempre la misma"
       },
       "award": {

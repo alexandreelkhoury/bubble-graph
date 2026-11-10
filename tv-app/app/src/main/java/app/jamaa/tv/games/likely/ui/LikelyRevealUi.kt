@@ -2,6 +2,7 @@ package app.jamaa.tv.games.likely.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -85,7 +86,76 @@ internal fun LikelyPlayStage(view: LikelyView, args: GameScreenArgs, clock: Like
         }
         if (plan != null) RevealBehind(plan, clock, stage)
         Jury(view, args, clock, plan, seats, stage)
-        if (plan != null) RevealFront(view, plan, clock, stage)
+        // Above the score rail: the VOTING progress, or (REVEAL) the captions and the percentage board.
+        val railH = LikelyStage.railHeight(view)
+        val above = stage.dp(if (railH > 0) RAIL_BOTTOM + railH + 6.0 else 6.0)
+        if (view.phase == LikelyPhase.VOTING) VoteProgress(view, stage, Modifier.align(Alignment.BottomCenter).padding(bottom = above))
+        if (plan != null) RevealFront(view, plan, clock, stage, above, compact = LikelyStage.railRows(view).size > 1 && railH > 0)
+        ScoreRail(view, clock, stage, Modifier.align(Alignment.BottomCenter).padding(bottom = stage.dp(RAIL_BOTTOM)))
+    }
+}
+
+private const val RAIL_BOTTOM = 6.0
+
+/** VOTING: "3/5 voted" under the jury (web `lkvoted`), so the room sees who is still deciding. */
+@Composable
+private fun VoteProgress(view: LikelyView, stage: StageScope, modifier: Modifier) {
+    val (count, total) = LikelyStage.voteProgress(view)
+    CompositionLocalProvider(LocalLayoutDirection provides if (stage.rtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
+        Row(
+            modifier
+                .background(Rooftop.deep.copy(alpha = 0.8f), RoundedCornerShape(50))
+                .padding(horizontal = stage.dp(12f), vertical = stage.dp(3f)),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            androidx.tv.material3.Icon(app.jamaa.tv.ui.components.JamaaIcons.Check, contentDescription = null, tint = JamaaColors.Success, modifier = Modifier.size(stage.dp(18f)))
+            Spacer(Modifier.width(stage.dp(6f)))
+            Text(keyText("game.likely.vote.progress", count, total), style = JamaaTheme.type.label, color = JamaaColors.Text, maxLines = 1)
+        }
+    }
+}
+
+/**
+ * The public-mode score rail (web `ScoreRail`; DESIGN-JAMAA §5.1/§5.3 counters ticking): one character + score pill per
+ * non-left player, in seat order and the room's reading direction, the leader ringed in gold. Never in secret-vote mode
+ * (no points exist there). In REVEAL each counter rolls from `scoreBefore` to `score` on the `tick` step, after the
+ * agreement coins land. Up to 8 pills in one row, 9–12 in two rows (6 × 96 units: fits the 864-unit stage).
+ */
+@Composable
+private fun ScoreRail(view: LikelyView, clock: LikelyClock, stage: StageScope, modifier: Modifier) {
+    if (!LikelyStage.showRail(view)) return
+    val rows = LikelyStage.railRows(view)
+    val leaders = LikelyStage.railLeaders(view)
+    val type = JamaaTheme.type
+    val pill = RoundedCornerShape(50)
+    CompositionLocalProvider(LocalLayoutDirection provides if (stage.rtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
+        Column(
+            modifier.graphicsLayer { alpha = if (clock.waiting()) 0f else 1f },
+            verticalArrangement = Arrangement.spacedBy(stage.dp(4f)),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            for (row in rows) {
+                Row(horizontalArrangement = Arrangement.spacedBy(stage.dp(LikelyStage.RAIL_GAP))) {
+                    for (p in row) {
+                        val lead = p.id in leaders
+                        Row(
+                            Modifier
+                                .size(stage.dp(LikelyStage.RAIL_PILL_W), stage.dp(LikelyStage.RAIL_PILL_H))
+                                .background(Rooftop.deep.copy(alpha = 0.8f), pill)
+                                .border(stage.dp(if (lead) 2f else 1f), if (lead) Gold.copy(alpha = 0.75f) else JamaaColors.Text.copy(alpha = 0.1f), pill)
+                                .padding(start = stage.dp(2f), end = stage.dp(8f)),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Character(p.color, stage.dp(30f), if (p.connected) Expression.IDLE else Expression.AWAY)
+                            Spacer(Modifier.width(stage.dp(4f)))
+                            // Recomposes only when the shown number changes (the clock is read in the derived state).
+                            val shown = derived(clock, view.phase, p.id, p.score, p.scoreBefore) { LikelyStage.railScore(view, p, clock.p("tick")) }
+                            Text(shown.toString(), style = type.label, color = Gold, maxLines = 1, softWrap = false, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -204,7 +274,7 @@ private fun RevealBehind(plan: LikelyRevealPlan, clock: LikelyClock, stage: Stag
 
 /** In front of the characters: envelopes, counters, rosettes, coins, captions, the percentage board, confetti. */
 @Composable
-private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyClock, stage: StageScope) {
+private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyClock, stage: StageScope, bottom: androidx.compose.ui.unit.Dp, compact: Boolean) {
     val type = JamaaTheme.type
     val outerRtl = stage.rtl
     Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
@@ -301,10 +371,10 @@ private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyC
     CompositionLocalProvider(LocalLayoutDirection provides if (outerRtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
         Box(Modifier.fillMaxSize()) {
             Column(
-                Modifier.align(Alignment.BottomCenter).padding(bottom = stage.dp(6f)).wrapContentSize(),
+                Modifier.align(Alignment.BottomCenter).padding(bottom = bottom).wrapContentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                RevealCaption(view, plan, clock)
+                RevealCaption(view, plan, clock, stage, compact)
                 if (plan.board.isNotEmpty()) PercentBoard(view, plan, clock, stage)
             }
             plan.againId?.let { id ->
@@ -334,7 +404,7 @@ private fun RevealFront(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyC
 }
 
 @Composable
-private fun RevealCaption(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyClock) {
+private fun RevealCaption(view: LikelyView, plan: LikelyRevealPlan, clock: LikelyClock, stage: StageScope, compact: Boolean) {
     val type = JamaaTheme.type
     val text: String
     val step: String
@@ -351,19 +421,40 @@ private fun RevealCaption(view: LikelyView, plan: LikelyRevealPlan, clock: Likel
         }
     }
     if (text.isEmpty()) return
-    Text(
-        text,
-        style = type.headline,
-        color = JamaaColors.Text,
-        textAlign = TextAlign.Center,
-        maxLines = 2,
+    // A single top target gets the speech bubble (DESIGN-JAMAA §5.3 Hold), bouncing as the hold lands.
+    val bubble = (plan.kind == LikelyChoreo.RevealKind.PUBLIC || plan.kind == LikelyChoreo.RevealKind.SECRET) && plan.topIds.size == 1
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.graphicsLayer {
             val p = clock.p(step)
             alpha = p.coerceIn(0f, 1f)
             scaleX = 0.85f + 0.15f * p
             scaleY = 0.85f + 0.15f * p
         },
-    )
+    ) {
+        if (bubble) {
+            androidx.tv.material3.Icon(
+                SpeechIcon,
+                contentDescription = null,
+                tint = Rooftop.accentText,
+                modifier = Modifier
+                    .size(stage.dp(if (compact) 26f else 32f))
+                    .graphicsLayer {
+                        val q = clock.p("hold").coerceIn(0f, 1f)
+                        // Two decaying hops while the hold lands; still under calm motion.
+                        translationY = if (clock.reduced) 0f else -abs(sin(q * 2f * PI.toFloat())) * (1f - q) * 10f * density
+                    },
+            )
+            Spacer(Modifier.width(stage.dp(8f)))
+        }
+        Text(
+            text,
+            style = if (compact) type.title else type.headline,
+            color = JamaaColors.Text,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+        )
+    }
 }
 
 /** Secret votes: one line per voted target, largest first, the bar filling to its percent (GAME-LIKELY §12.2). */
@@ -387,7 +478,8 @@ private fun PercentBoard(view: LikelyView, plan: LikelyRevealPlan, clock: Likely
                             translationX = (if (stage.rtl) 1f else -1f) * 40f * (1f - q.coerceIn(0f, 1f)) * density
                         },
                     ) {
-                        Character(p.color, stage.dp(28f), Expression.IDLE)
+                        // The most-voted look shy, like on the stage (web board).
+                        Character(p.color, stage.dp(28f), if (line.playerId in plan.topIds) Expression.SHY else Expression.IDLE)
                         Spacer(Modifier.width(stage.dp(8f)))
                         Box(Modifier.size(stage.dp(90f), stage.dp(10f)).background(Rooftop.elevated, RoundedCornerShape(50))) {
                             Canvas(Modifier.fillMaxSize()) {

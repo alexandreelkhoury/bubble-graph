@@ -50,22 +50,22 @@
     {
       "id": "spc-002",
       "tier": "pass",
-      "spice": 2,
+      "spice": 1,
       "namesPlayer": true,
       "tags": [
         "romance"
       ],
       "prompt": {
-        "en": "have a secret crush on {player}",
-        "fr": "d'avoir un faible secret pour {player}",
-        "ar": "يكون مغروم بـ{player} بالسرّ",
-        "es": "tener un crush secreto con {player}"
+        "en": "offer {player} a jacket when it's 30 degrees out",
+        "fr": "de proposer sa veste à {player} alors qu'il fait 30 degrés",
+        "ar": "يعرض جاكيتو على {player} والدني 30 درجة",
+        "es": "ofrecerle la chaqueta a {player} a 30 grados"
       },
       "award": {
-        "en": "Secret Crush Award",
-        "fr": "Prix du béguin secret",
-        "ar": "جايزة الحب السرّي",
-        "es": "Premio Amor Secreto"
+        "en": "Heatwave Chivalry Award",
+        "fr": "Prix de la galanterie caniculaire",
+        "ar": "جايزة الشهامة بعزّ الشوب",
+        "es": "Premio Galantería en Agosto"
       },
       "review": {
         "status": "draft"
@@ -179,7 +179,7 @@
       ],
       "prompt": {
         "en": "steal {player}'s hoodie and never give it back",
-        "fr": "de piquer le sweat de {player} et ne jamais le rendre",
+        "fr": "de piquer son sweat à {player} et ne jamais le rendre",
         "ar": "يسرق كنزة {player} وما يرجّعها أبداً",
         "es": "robarle la sudadera a {player} y no devolverla nunca"
       },
@@ -815,7 +815,7 @@
       ],
       "prompt": {
         "en": "accidentally like {player}'s photo from three years ago",
-        "fr": "de liker par accident une photo de {player} vieille de trois ans",
+        "fr": "de liker par accident une photo vieille de trois ans chez {player}",
         "ar": "يعمل لايك بالغلط لصورة {player} من تلات سنين",
         "es": "darle like sin querer a una foto de {player} de hace tres años"
       },
@@ -838,16 +838,16 @@
         "romance"
       ],
       "prompt": {
-        "en": "blush every time {player} says their name",
-        "fr": "de rougir chaque fois que {player} prononce son prénom",
-        "ar": "يحمرّ وجّو كل ما {player} يقول اسمو",
-        "es": "sonrojarse cada vez que {player} dice su nombre"
+        "en": "laugh way too hard at every joke {player} makes",
+        "fr": "de rire trop fort à chaque blague que fait {player}",
+        "ar": "يضحك عنكت {player}، حتى البايخة",
+        "es": "reírse a carcajadas con cada chiste de {player}"
       },
       "award": {
-        "en": "Blush Award",
-        "fr": "Prix du rougissement",
-        "ar": "جايزة الخجل",
-        "es": "Premio Sonrojo"
+        "en": "Best Audience Award",
+        "fr": "Prix du meilleur public",
+        "ar": "جايزة أحلى جمهور",
+        "es": "Premio Mejor Público"
       },
       "review": {
         "status": "draft"
@@ -889,7 +889,7 @@
       ],
       "prompt": {
         "en": "save {player}'s number with a heart emoji",
-        "fr": "d'enregistrer le numéro de {player} avec un cœur",
+        "fr": "d'enregistrer {player} dans son téléphone avec un cœur",
         "ar": "يسيّف رقم {player} مع قلب أحمر",
         "es": "guardar el número de {player} con un corazoncito"
       },
@@ -1060,7 +1060,7 @@
       ],
       "prompt": {
         "en": "learn {player}'s favourite song on guitar",
-        "fr": "d'apprendre la chanson préférée de {player} à la guitare",
+        "fr": "de jouer à {player} sa chanson préférée à la guitare",
         "ar": "يتعلّم الغنية المفضّلة لـ{player} عالغيتار",
         "es": "aprender a tocar a la guitarra la canción favorita de {player}"
       },
@@ -1085,7 +1085,7 @@
       ],
       "prompt": {
         "en": "write {player}'s name in the sand",
-        "fr": "d'écrire le prénom de {player} dans le sable",
+        "fr": "de tracer dans le sable un cœur avec {player} dedans",
         "ar": "يكتب اسم {player} عالرمل",
         "es": "escribir el nombre de {player} en la arena"
       },
@@ -1208,7 +1208,7 @@
       ],
       "prompt": {
         "en": "steal {player}'s fries and call it flirting",
-        "fr": "de piquer les frites de {player} et appeler ça de la drague",
+        "fr": "de piquer ses frites à {player} et appeler ça de la drague",
         "ar": "يسرق بطاطا {player} ويقول «هيدا غزل»",
         "es": "robarle las patatas a {player} y llamarlo ligar"
       },
@@ -1250,23 +1250,24 @@
     {
       "id": "spc-127",
       "tier": "pass",
-      "spice": 2,
+      "spice": 1,
       "namesPlayer": true,
       "tags": [
         "romance",
-        "party"
+        "party",
+        "music"
       ],
       "prompt": {
-        "en": "confess feelings to {player} during truth or dare",
-        "fr": "d'avouer ses sentiments à {player} pendant un action ou vérité",
-        "ar": "يعترف بمشاعرو لـ{player} بلعبة «حقيقة أو تحدّي»",
-        "es": "confesarle sus sentimientos a {player} jugando a verdad o reto"
+        "en": "dare {player} to sing a love song mid-party",
+        "fr": "de défier {player} de chanter une chanson d'amour en pleine soirée",
+        "ar": "يتحدّى {player} عغنية حبّ بنص السهرة",
+        "es": "retar a {player} a cantar una canción de amor en plena fiesta"
       },
       "award": {
-        "en": "Confession Award",
-        "fr": "Prix de l'aveu",
-        "ar": "جايزة الاعتراف",
-        "es": "Premio Confesión"
+        "en": "Dare Master Award",
+        "fr": "Prix du défi",
+        "ar": "جايزة التحدّي",
+        "es": "Premio Reto"
       },
       "review": {
         "status": "draft"
@@ -1871,7 +1872,7 @@
         "en": "have a year-long crush on a stranger on the bus",
         "fr": "d'avoir un faible pour un inconnu du bus pendant un an",
         "ar": "يكون مغروم بحدا غريب بالفان سنة كاملة",
-        "es": "tener un flechazo de un año con alguien del autobús"
+        "es": "estar un año pillado por alguien del autobús"
       },
       "award": {
         "en": "Daily Crush Award",
@@ -1894,7 +1895,7 @@
       "prompt": {
         "en": "write a love note and rewrite it twelve times",
         "fr": "d'écrire un mot doux et le réécrire douze fois",
-        "ar": "يكتب رسالة حبّ ويعدّلها ١٢ مرّة",
+        "ar": "يكتب رسالة حبّ ويعدّلها 12 مرّة",
         "es": "escribir una nota de amor y reescribirla doce veces"
       },
       "award": {
@@ -2460,22 +2461,22 @@
     {
       "id": "spc-176",
       "tier": "pass",
-      "spice": 2,
+      "spice": 1,
       "namesPlayer": false,
       "tags": [
         "romance"
       ],
       "prompt": {
-        "en": "steam up the car windows \"just talking\"",
-        "fr": "de faire de la buée sur les vitres de la voiture « en discutant »",
-        "ar": "يغبّش قزاز السيارة «بس عم نحكي»",
-        "es": "empañar los cristales del coche «solo hablando»"
+        "en": "take an extra hour to say goodnight in the car",
+        "fr": "de mettre une heure à se dire bonne nuit dans la voiture",
+        "ar": "يقعد ساعة بالسيارة عم يقول تصبح على خير",
+        "es": "tardar una hora en despedirse dentro del coche"
       },
       "award": {
-        "en": "Foggy Windows Award",
-        "fr": "Prix de la buée",
-        "ar": "جايزة القزاز المغبّش",
-        "es": "Premio Cristales Empañados"
+        "en": "Long Goodnight Award",
+        "fr": "Prix de la bonne nuit qui dure",
+        "ar": "جايزة تصبح على خير الطويلة",
+        "es": "Premio Despedida Eterna"
       },
       "review": {
         "status": "draft"
@@ -2484,23 +2485,23 @@
     {
       "id": "spc-177",
       "tier": "pass",
-      "spice": 2,
+      "spice": 1,
       "namesPlayer": false,
       "tags": [
         "romance",
-        "party"
+        "food"
       ],
       "prompt": {
-        "en": "come home at sunrise in last night's outfit",
-        "fr": "de rentrer au petit matin avec la tenue de la veille",
-        "ar": "يرجع عالبيت مع الشمس بتياب مبارح",
-        "es": "volver a casa al amanecer con la ropa de anoche"
+        "en": "turn a \"quick coffee\" date into breakfast at sunrise",
+        "fr": "de transformer un « petit café » en petit-déjeuner à l'aube",
+        "ar": "يحوّل «قهوة عالسريع» لترويقة مع طلوع الشمس",
+        "es": "convertir un «café rápido» en un desayuno al amanecer"
       },
       "award": {
-        "en": "Walk of Fame Award",
-        "fr": "Prix du retour à l'aube",
-        "ar": "جايزة تياب مبارح",
-        "es": "Premio Paseo de la Fama"
+        "en": "Sunrise Coffee Award",
+        "fr": "Prix du café à l'aube",
+        "ar": "جايزة قهوة الصبح",
+        "es": "Premio Café al Amanecer"
       },
       "review": {
         "status": "draft"
@@ -2558,23 +2559,24 @@
     {
       "id": "spc-180",
       "tier": "pass",
-      "spice": 2,
+      "spice": 1,
       "namesPlayer": false,
       "tags": [
         "romance",
-        "party"
+        "food",
+        "lebanon"
       ],
       "prompt": {
-        "en": "slip out of a party early with someone they just met",
-        "fr": "de filer tôt d'une soirée avec quelqu'un rencontré le soir même",
-        "ar": "يفلّ من السهرة بكّير مع حدا لسّا متعرّف عليه",
-        "es": "irse pronto de una fiesta con alguien que acaba de conocer"
+        "en": "sneak out of a party with a new crush to get man'oushe",
+        "fr": "de filer d'une soirée avec son nouveau béguin pour une man'ouché",
+        "ar": "يفلّ من السهرة مع حدا عاجبو ليجيبوا مناقيش",
+        "es": "escaparse de una fiesta con su nuevo flechazo a por man'oushe"
       },
       "award": {
-        "en": "Quiet Exit Award",
-        "fr": "Prix de la sortie discrète",
-        "ar": "جايزة الفلّة عالسكت",
-        "es": "Premio Mutis por el Foro"
+        "en": "Midnight Man'oushe Award",
+        "fr": "Prix de la man'ouché de minuit",
+        "ar": "جايزة مناقيش نص الليل",
+        "es": "Premio Man'oushe de Medianoche"
       },
       "review": {
         "status": "draft"
@@ -2640,7 +2642,7 @@
       "prompt": {
         "en": "be in a \"situationship\" that needs a 12-page recap",
         "fr": "d'avoir une « relation floue » qui demande douze pages de résumé",
-        "ar": "يكون بعلاقة مش مفهومة بدها ١٢ صفحة شرح",
+        "ar": "يكون بعلاقة مش مفهومة بدها 12 صفحة شرح",
         "es": "tener un «algo» que necesita doce páginas de resumen"
       },
       "award": {
@@ -2663,16 +2665,16 @@
         "habits"
       ],
       "prompt": {
-        "en": "keep a spare outfit in the car, \"just in case\"",
-        "fr": "de garder une tenue de rechange dans la voiture, « au cas où »",
-        "ar": "يخبّي تياب احتياط بالسيارة «إذا تأخّرنا»",
-        "es": "llevar una muda en el coche «por si acaso»"
+        "en": "keep a date emergency kit in the car: mints and perfume",
+        "fr": "d'avoir un kit rencard dans la boîte à gants : parfum et chewing-gum",
+        "ar": "يخبّي بالسيارة عدّة مواعيد: عطر وعلكة",
+        "es": "llevar un kit de citas en la guantera: colonia y chicles"
       },
       "award": {
-        "en": "Overnight Bag Award",
-        "fr": "Prix du sac de secours",
-        "ar": "جايزة شنطة الاحتياط",
-        "es": "Premio Muda de Repuesto"
+        "en": "Emergency Kit Award",
+        "fr": "Prix du kit de survie",
+        "ar": "جايزة عدّة الطوارئ",
+        "es": "Premio Kit de Emergencia"
       },
       "review": {
         "status": "draft"

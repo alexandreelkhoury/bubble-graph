@@ -130,11 +130,12 @@ class LikelyStageTest {
         val sam = v.players[3].id
         assertEquals(setOf(rami), plan.selfVoterIds)
         assertEquals(listOf(lea, noor, sam), plan.runners.map { it.voterId })
-        // Léa and Noor line up behind Rami (places 1, 2), Sam behind Léa.
+        // Léa and Noor line up behind Rami (places 1, 2), Sam behind Léa, on the sides the shared layout picks.
         val seats = plan.seats
-        assertEquals(LikelyLayout.congaSlot(seats.getValue(rami), 1), plan.endOf(lea))
-        assertEquals(LikelyLayout.congaSlot(seats.getValue(rami), 2), plan.endOf(noor))
-        assertEquals(LikelyLayout.congaSlot(seats.getValue(lea), 1), plan.endOf(sam))
+        val sides = LikelyLayout.congaSides(mapOf(rami to 2, lea to 1), seats)
+        assertEquals(LikelyLayout.congaSlot(seats.getValue(rami), 1, sides.getValue(rami)), plan.endOf(lea))
+        assertEquals(LikelyLayout.congaSlot(seats.getValue(rami), 2, sides.getValue(rami)), plan.endOf(noor))
+        assertEquals(LikelyLayout.congaSlot(seats.getValue(lea), 1, sides.getValue(lea)), plan.endOf(sam))
         assertEquals(seats.getValue(rami), plan.endOf(rami))
         // Coins: one per scoring voter with its card total (Rami: agree 100 + self-aware 100).
         assertEquals(listOf(rami to 200, lea to 100, noor to 100), plan.coins.map { it.voterId to it.points })
@@ -327,5 +328,180 @@ class LikelyStageTest {
         assertEquals("false", (p["showVoters"] as kotlinx.serialization.json.JsonPrimitive).content)
         assertFalse("compiled out while the platform has no actor", LikelySpicy.needsGate(LikelyMode.FAMILY, LikelyMode.SPICY))
         assertFalse(LikelySpicy.needsGate(LikelyMode.SPICY, LikelyMode.FAMILY))
+    }
+
+    // ---------------------------------------------------------------- G3 review: entrance, question, card fit, rail
+
+    /** GAME-LIKELY §4: the first card's deadline carries the entrance grace; the deal waits it out, later cards do not. */
+    @Test fun firstCardWaitsForTheWorldEntrance() {
+        val v = LikelyFixtures.view("card")
+        assertEquals(0, v.cardIndex)
+        val rem = LikelyFixtures.remainingMs("card")
+        assertEquals(LikelyTiming.CARD_MS + LikelyTiming.ENTRANCE_GRACE_MS, rem)
+        val s = LikelyChoreo.cardStart(v.cardIndex, rem)
+        assertEquals(LikelyChoreo.Start(-LikelyTiming.ENTRANCE_GRACE_MS.toInt(), 1.0), s)
+        // Nothing is dealt (or heard) during the wait, in full and calm motion; the deal lands after it.
+        val deal = LikelyChoreo.cardDeal.step("deal")
+        for (reduced in listOf(false, true)) {
+            assertEquals(0f, LikelyChoreo.progress(deal, s.atMs.toDouble(), reduced = reduced), 0f)
+            assertEquals(0f, LikelyChoreo.progress(deal, -1.0, reduced = reduced), 0f)
+            assertEquals(1f, LikelyChoreo.progress(deal, LikelyChoreo.cardDeal.totalMs.toDouble(), reduced = reduced), 0.02f)
+        }
+        assertTrue(LikelyChoreo.marksBetween(LikelyChoreo.cardDeal, s.atMs - 0.5, -1.0).isEmpty())
+        assertEquals(listOf("likely.deal"), LikelyChoreo.marksBetween(LikelyChoreo.cardDeal, -0.5, 0.0).map { it.cue })
+        // Mounted later in the grace: only the rest is waited; after it (or on later cards) the deal starts at once.
+        assertEquals(LikelyChoreo.Start(-1_000, 1.0), LikelyChoreo.cardStart(0, LikelyTiming.CARD_MS + 1_000))
+        assertEquals(LikelyChoreo.Start(0, 1.0), LikelyChoreo.cardStart(0, LikelyTiming.CARD_MS))
+        assertEquals(LikelyChoreo.Start(0, 1.0), LikelyChoreo.cardStart(3, LikelyFixtures.remainingMs("card.new")))
+        assertEquals(LikelyChoreo.Start(0, 1.0), LikelyChoreo.cardStart(0, null))
+        // A grace longer than the platform's is never waited past ENTRANCE_GRACE_MS.
+        assertEquals(LikelyChoreo.Start(-LikelyTiming.ENTRANCE_GRACE_MS.toInt(), 1.0), LikelyChoreo.cardStart(0, 60_000))
+    }
+
+    private val res: java.io.File get() = java.io.File(app.jamaa.tv.Fixtures.dir, "../../tv-app/app/src/main/res")
+
+    /** The generated Android string (what the TV formats), unescaped, with %1$s as the {prompt} placeholder. */
+    private fun androidString(locale: String, name: String): String {
+        val dir = if (locale == "en") "values" else "values-$locale"
+        val xml = java.io.File(res, "$dir/strings_game_likely.xml").readText(Charsets.UTF_8)
+        val m = Regex("""<string name="$name">(.*?)</string>""").find(xml) ?: error("$name missing in $dir")
+        return m.groupValues[1].replace("\\'", "'").replace("\\\"", "\"").replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
+    }
+
+    /** The card keeps each locale's own punctuation (¿…?, the narrow no-break space before ? in fr, ؟): never a hard-coded mark. */
+    @Test fun cardQuestionKeepsEachLocalesPunctuation() {
+        val expected = mapOf(
+            "en" to ("Who's most likely to" to "?"),
+            "fr" to ("Qui risque le plus" to " ?"),
+            "ar" to ("مين فينا ممكن" to "؟"),
+            "es" to ("¿Quién es más capaz de" to "?"),
+        )
+        val prompts = mapOf("en" to "cry at a wedding", "fr" to "de pleurer à un mariage", "ar" to "يبكي بعرس", "es" to "llorar en una boda")
+        for ((loc, want) in expected) {
+            val template = androidString(loc, "game__likely__card__question")
+            val formatted = String.format(template, LikelyStage.QUESTION_MARK)
+            val parts = LikelyStage.questionParts(formatted)
+            assertEquals(loc, want, parts)
+            // Lead-in + prompt + closing reads exactly as the whole question (the awards line uses the whole string).
+            val prompt = prompts.getValue(loc)
+            assertEquals(loc, String.format(template, prompt), parts.first + " " + prompt + parts.second)
+            // Exactly one question mark of the locale's kind, and the Spanish pair stays a pair.
+            val whole = String.format(template, prompt)
+            assertEquals(loc, 1, whole.count { it == '?' || it == '؟' })
+            if (loc == "es") assertTrue(whole.startsWith("¿") && whole.endsWith("?"))
+        }
+        assertEquals("en" to "", LikelyStage.questionParts("en"))
+        assertEquals("cry at a wedding?", "cry at a wedding" + LikelyStage.questionParts("Who's most likely to ?").second)
+    }
+
+    private fun contentPrompts(): Map<String, List<String>> {
+        val dir = java.io.File(app.jamaa.tv.Fixtures.dir, "../../content/likely")
+        val out = LinkedHashMap<String, MutableList<String>>()
+        for (f in dir.listFiles()!!.filter { it.name.endsWith(".json") }.sorted()) {
+            val cards = kotlinx.serialization.json.Json.parseToJsonElement(f.readText(Charsets.UTF_8)).let { (it as kotlinx.serialization.json.JsonObject)["cards"] as kotlinx.serialization.json.JsonArray }
+            for (c in cards) {
+                val prompt = (c as kotlinx.serialization.json.JsonObject)["prompt"] as kotlinx.serialization.json.JsonObject
+                // {player} resolves to a name: a long one (Names.ellipsize keeps names short on the TV, 12 is generous).
+                for ((loc, p) in prompt) out.getOrPut(loc) { mutableListOf() } += (p as kotlinx.serialization.json.JsonPrimitive).content.replace("{player}", "Alexandrine")
+            }
+        }
+        return out
+    }
+
+    /** Web `cardSize` tiers (graphemes), and every card of the decks fits the card without the run-time fallback. */
+    @Test fun cardTypeStepsDownAndTheLongestPromptsFit() {
+        assertEquals(0, LikelyStage.cardTier("cry at a wedding"))
+        assertEquals(1, LikelyStage.cardTier("laugh at their own joke before the punchline"))
+        assertEquals(2, LikelyStage.cardTier("de voir les voitures volantes et finir quand même dans les bouchons"))
+        // Graphemes, not UTF-16 units: an emoji family or a combining mark counts once.
+        assertEquals(3, LikelyStage.graphemes("áb👨‍👩‍👧"))
+        val closing = mapOf("en" to "?", "fr" to " ?", "ar" to "؟", "es" to "?")
+        val prompts = contentPrompts()
+        assertEquals(setOf("en", "fr", "ar", "es"), prompts.keys)
+        for ((loc, list) in prompts) {
+            val arabic = loc == "ar"
+            val longest = list.maxByOrNull { LikelyStage.graphemes(it) }!!
+            val t = LikelyCardFit.tier(longest, closing.getValue(loc), arabic)
+            assertTrue("$loc longest '$longest' needs the last-resort tier", t < LikelyCardFit.LATIN.lastIndex)
+            assertTrue("$loc longest '$longest' does not fit at tier $t", LikelyCardFit.fits(longest + closing.getValue(loc), t, arabic))
+            assertTrue("$loc longest prompt is set small", t >= 2)
+            for (p in list) {
+                val tp = LikelyCardFit.tier(p, closing.getValue(loc), arabic)
+                assertTrue("$loc '$p'", LikelyCardFit.fits(p + closing.getValue(loc), tp, arabic))
+                assertTrue("$loc '$p' never above its web tier", tp >= LikelyStage.cardTier(p))
+            }
+        }
+        // The French example of the review: 67 graphemes, three lines of title on the card.
+        val fr = "de voir les voitures volantes et finir quand même dans les bouchons"
+        assertEquals(2, LikelyCardFit.tier(fr, " ?", arabicScale = false))
+    }
+
+    /** DESIGN-JAMAA §5.1/§5.3: the public-mode rail ticks from scoreBefore on the reveal's tick step; never with secret votes. */
+    @Test fun scoreRailTicksInPublicModeOnly() {
+        val v = LikelyFixtures.view("reveal")
+        assertTrue(LikelyStage.showRail(v))
+        val plan = LikelyStage.revealPlan(v, false)!!
+        val tick = plan.timeline.step("tick")!!
+        assertTrue("the counters roll after the coins land", tick.startMs >= plan.timeline.step("coin")!!.startMs)
+        assertTrue(plan.timeline.marks.any { it.cue == "counterTick" && it.atMs == tick.startMs })
+        assertEquals(app.jamaa.tv.game.Cue.COUNTER_TICK, LikelySounds.platformCue("counterTick"))
+        val rami = v.players[0]
+        assertEquals(0 to 200, rami.scoreBefore to rami.score)
+        assertEquals(0, LikelyStage.railScore(v, rami, 0f))
+        assertEquals(100, LikelyStage.railScore(v, rami, 0.5f))
+        assertEquals(200, LikelyStage.railScore(v, rami, 1f))
+        assertEquals(setOf(rami.id), LikelyStage.railLeaders(v))
+        // Outside REVEAL the rail shows the score as is; secret votes never show it.
+        assertEquals(rami.score, LikelyStage.railScore(v.copy(phase = LikelyPhase.VOTING), rami, 0f))
+        assertFalse(LikelyStage.showRail(LikelyFixtures.view("reveal.secret.ar")))
+        assertFalse(LikelyStage.showRail(LikelyFixtures.view("card.secret.ar")))
+        assertTrue(LikelyStage.showRail(LikelyFixtures.view("voting")))
+        assertFalse(LikelyStage.showRail(v.copy(phase = LikelyPhase.AWARDS)))
+        assertEquals(0.0, LikelyStage.railHeight(LikelyFixtures.view("reveal.secret.ar")), 0.0)
+        // Nobody leads before anyone scored.
+        assertTrue(LikelyStage.railLeaders(LikelyFixtures.view("voting")).isEmpty())
+    }
+
+    /** 1–8 players in one row, 9–12 in two; every row fits the 864-unit stage. Left players are not on the rail. */
+    @Test fun scoreRailFitsTwelvePlayers() {
+        val base = LikelyFixtures.view("reveal")
+        val proto = base.players[0]
+        for (n in 1..12) {
+            val players = (0 until n).map { proto.copy(id = "p$it", seat = it) }
+            val v = base.copy(players = players)
+            val rows = LikelyStage.railRows(v)
+            assertEquals(n, rows.sumOf { it.size })
+            assertEquals(if (n <= 8) 1 else 2, rows.size)
+            for (r in rows) assertTrue("n=$n row ${r.size}", LikelyStage.railWidth(r.size) <= LikelyLayout.WIDTH)
+            assertTrue(LikelyStage.railHeight(v) <= 72.0)
+        }
+        val left = base.copy(players = base.players.mapIndexed { i, p -> if (i == 1) p.copy(left = true) else p })
+        assertFalse(LikelyStage.railRows(left).flatten().any { it.left })
+    }
+
+    @Test fun voteProgressCountsConnectedVoters() {
+        val v = LikelyFixtures.view("voting.some_voted")
+        assertEquals(2 to 4, LikelyStage.voteProgress(v))
+        val off = v.copy(players = v.players.mapIndexed { i, p -> if (i == 3) p.copy(connected = false) else p })
+        assertEquals(2 to 3, LikelyStage.voteProgress(off))
+        assertEquals(4 to 4, LikelyStage.voteProgress(LikelyFixtures.view("voting.all_voted")))
+    }
+
+    /** Shared fitReveal: the hold starts where the beats end and fills the budget, ≥ 2 s when the window allows it. */
+    @Test fun revealHoldFillsTheServerWindow() {
+        for (v in 1..12) for (pub in listOf(false, true)) {
+            val r = reveal(v)
+            val t = tl(r, pub, v)
+            val budget = maxOf(2_000L, LikelyTiming.revealMs(v, false, 1) - LikelyChoreo.REVEAL_TAIL_MS).toInt()
+            val hold = t.step("hold")!!
+            assertEquals("v=$v pub=$pub", budget.toDouble(), (hold.startMs + hold.durationMs).toDouble(), 1.0)
+            assertTrue("v=$v pub=$pub hold ${hold.durationMs}", hold.durationMs >= LikelyChoreo.HOLD_FLOOR_MS)
+            for (s in t.steps.filter { it.id != "hold" }) assertTrue("${s.id} overlaps the hold", s.startMs <= hold.startMs + 1)
+        }
+        // A 4-player public card keeps ≥ 2 s of "defend yourself".
+        assertTrue(tl(reveal(4), true, 3).step("hold")!!.durationMs >= LikelyChoreo.HOLD_MIN_MS)
+        assertEquals(8_000L, LikelyTiming.revealMs(4, false, 1))
+        assertEquals(12_000L, LikelyTiming.revealMs(40, true, 1))
+        assertEquals(LikelyChoreo.boardMs(3), 1_800 + 360)
     }
 }

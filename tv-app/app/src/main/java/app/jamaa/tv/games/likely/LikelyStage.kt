@@ -141,7 +141,7 @@ object LikelyStage {
         val tops = r.topIds.filter { it in seats }
         val shape = LikelyChoreo.RevealShape(
             runners = runners.size, envelopes = envelopes.size, publicMode = publicMode, chaos = r.chaos, none = kind == LikelyChoreo.RevealKind.NONE,
-            unanimous = r.unanimous, coins = coins.size,
+            unanimous = r.unanimous, coins = coins.size, lines = board.size,
         )
         val timeline = LikelyChoreo.reveal(r, shape)
         return LikelyRevealPlan(
@@ -277,6 +277,81 @@ object LikelyStage {
         return if (i < 0) null else i until i + name.length
     }
 
+    /**
+     * The card question split for the card (GAME-LIKELY §8; web `Question`): [formatted] is `game.likely.card.question`
+     * formatted with [mark] as the prompt. Returns the lead-in (trimmed: "Who's most likely to", "¿Quién es más capaz de")
+     * and the locale's closing ("?", " ?" with the French narrow no-break space, "؟"), so the punctuation is the
+     * locale's own and never hard-coded.
+     */
+    fun questionParts(formatted: String, mark: String = QUESTION_MARK): Pair<String, String> {
+        val i = formatted.indexOf(mark)
+        if (i < 0) return formatted.trim() to ""
+        return formatted.substring(0, i).trim() to formatted.substring(i + mark.length).trimEnd()
+    }
+
+    /** A private-use placeholder for [questionParts] (never in a prompt). */
+    const val QUESTION_MARK = "\uE000"
+
+    /** The card phrase's type tier from its grapheme count (web `cardSize`): 0 = displayS, 1 = headline, 2 = title. */
+    fun cardTier(prompt: String): Int {
+        val n = graphemes(prompt)
+        return if (n <= 26) 0 else if (n <= 44) 1 else 2
+    }
+
+    fun graphemes(s: String): Int {
+        val it = java.text.BreakIterator.getCharacterInstance()
+        it.setText(s)
+        var n = 0
+        while (it.next() != java.text.BreakIterator.DONE) n++
+        return n
+    }
+
+    // ---------------------------------------------------------------- score rail (public mode, DESIGN-JAMAA §5.1)
+
+    const val RAIL_PILL_W = 96.0
+    const val RAIL_PILL_H = 34.0
+    const val RAIL_GAP = 6.0
+    const val RAIL_ROW_MAX = 8
+
+    /** The rail shows in public mode only (secret votes have no points, GAME-LIKELY §6), on the play and reveal stages. */
+    fun showRail(view: LikelyView): Boolean =
+        !view.anonymous && (view.phase == LikelyPhase.CARD || view.phase == LikelyPhase.VOTING || view.phase == LikelyPhase.REVEAL)
+
+    /** The rail's pills in seat order (non-`left` players), one row up to [RAIL_ROW_MAX], else two balanced rows. */
+    fun railRows(view: LikelyView): List<List<LikelyPlayer>> {
+        val ps = view.players.filter { !it.left }
+        if (ps.isEmpty()) return emptyList()
+        if (ps.size <= RAIL_ROW_MAX) return listOf(ps)
+        return ps.chunked((ps.size + 1) / 2)
+    }
+
+    /** Stage width of a rail row of [n] pills. */
+    fun railWidth(n: Int): Double = if (n <= 0) 0.0 else n * RAIL_PILL_W + (n - 1) * RAIL_GAP
+
+    /** Stage height of the whole rail (0 when hidden). */
+    fun railHeight(view: LikelyView): Double {
+        if (!showRail(view)) return 0.0
+        val rows = railRows(view).size
+        return if (rows == 0) 0.0 else rows * RAIL_PILL_H + (rows - 1) * 4.0
+    }
+
+    /** The leader(s): the highest score, once anyone scored. */
+    fun railLeaders(view: LikelyView): Set<String> {
+        val ps = view.players.filter { !it.left }
+        val lead = ps.maxOfOrNull { it.score } ?: 0
+        return if (lead <= 0) emptySet() else ps.filter { it.score == lead }.map { it.id }.toSet()
+    }
+
+    /** A rail counter at tick progress [p] (REVEAL rolls `scoreBefore` → `score`; other phases show `score`). */
+    fun railScore(view: LikelyView, p: LikelyPlayer, tick: Float): Int =
+        if (view.phase != LikelyPhase.REVEAL) p.score else p.scoreBefore + kotlin.math.round((p.score - p.scoreBefore) * tick.coerceIn(0f, 1f)).toInt()
+
+    /** VOTING: "{count}/{total} voted" (web `vote.progress`): voters are connected jury members or ones who already voted. */
+    fun voteProgress(view: LikelyView): Pair<Int, Int> {
+        val voted = view.jury.count { it.voted }
+        return voted to view.jury.count { it.connected || it.voted }
+    }
+
     /** "4 / 12": the card counter (1-based). */
     fun cardNumber(view: LikelyView): Int = (view.cardIndex + 1).coerceAtMost(view.cardCount)
 
@@ -306,3 +381,78 @@ object LikelySounds {
         else -> null
     }
 }
+
+/**
+ * Whether the card phrase fits the 520 × 230-unit card (LK-TV-01) at a type tier, estimated with Cairo's average glyph
+ * advance. The tiers are displayS, headline, title, titleS of `jamaaTypeScale` (DESIGN §3.2; the sizes below mirror it,
+ * since the theme is Compose code). The card picks the web `cardSize` tier first and steps down while the estimate says
+ * the phrase would not fit; at run time a tier that still overflows its box steps down once more, so the phrase is
+ * never ellipsized.
+ */
+object LikelyCardFit {
+    const val CARD_W = 520.0
+    const val CARD_H = 230.0
+    const val PAD_X = 28.0
+    const val PAD_Y = 16.0
+    const val GAP_LEAD = 8.0
+    const val GAP_AWARD = 10.0
+    const val AWARD_ICON = 22.0
+
+    /** Stage unit → dp on a 960 × 540 dp TV (the 864 × 486 stage fitted below the 44 dp top bar: 442 / 486). */
+    const val UNIT_DP = 0.9
+
+    /** (font size, line height) in sp of displayS, headline, title, titleS: Latin and Arabic scales. */
+    val LATIN = listOf(44 to 52, 34 to 42, 26 to 32, 22 to 28)
+    val ARABIC = listOf(44 to 64, 34 to 52, 26 to 40, 22 to 34)
+
+    /** Line heights of the lead-in (title on tier 0, titleS below) and of the award line (label). */
+    private fun leadLh(tier: Int, arabic: Boolean) = if (tier == 0) (if (arabic) 40 else 32) else (if (arabic) 34 else 28)
+    private fun awardLh(arabic: Boolean) = if (arabic) 30 else 24
+
+    /** Average advance in em of a Cairo glyph: Latin Bold, Arabic (connected, narrower). Conservative. */
+    const val EM_LATIN = 0.54
+    const val EM_ARABIC = 0.47
+
+    fun isArabicScript(text: String): Boolean = text.any { java.lang.Character.UnicodeBlock.of(it) == java.lang.Character.UnicodeBlock.ARABIC }
+
+    /** Greedy word wrap of [text] at [sp] in a box [widthDp] wide: the line count. */
+    fun lines(text: String, sp: Int, widthDp: Double, em: Double): Int {
+        val perChar = sp * em
+        var lines = 1
+        var used = 0.0
+        for (w in text.split(' ').filter { it.isNotEmpty() }) {
+            val ww = LikelyStage.graphemes(w) * perChar
+            val need = if (used == 0.0) ww else used + perChar + ww
+            if (need <= widthDp || used == 0.0) {
+                used = need
+                // A single word wider than the box wraps by characters.
+                while (used > widthDp) { lines++; used -= widthDp }
+            } else {
+                lines++
+                used = ww
+                while (used > widthDp) { lines++; used -= widthDp }
+            }
+        }
+        return lines
+    }
+
+    /** Height left for the phrase at [tier], in dp. */
+    fun phraseBox(tier: Int, arabicScale: Boolean): Double =
+        (CARD_H - 2 * PAD_Y) * UNIT_DP - leadLh(tier, arabicScale) - (GAP_LEAD + GAP_AWARD) * UNIT_DP - maxOf(AWARD_ICON * UNIT_DP, awardLh(arabicScale).toDouble())
+
+    fun fits(phrase: String, tier: Int, arabicScale: Boolean): Boolean {
+        val (sp, lh) = (if (arabicScale) ARABIC else LATIN)[tier]
+        val em = if (isArabicScript(phrase)) EM_ARABIC else EM_LATIN
+        val n = lines(phrase, sp, (CARD_W - 2 * PAD_X) * UNIT_DP, em)
+        return n * lh <= phraseBox(tier, arabicScale)
+    }
+
+    /** The tier for [prompt] shown with the locale's [closing] mark: the web tier, stepped down until it fits. */
+    fun tier(prompt: String, closing: String, arabicScale: Boolean): Int {
+        val phrase = prompt + closing
+        var t = LikelyStage.cardTier(prompt)
+        while (t < LATIN.lastIndex && !fits(phrase, t, arabicScale)) t++
+        return t
+    }
+}
+

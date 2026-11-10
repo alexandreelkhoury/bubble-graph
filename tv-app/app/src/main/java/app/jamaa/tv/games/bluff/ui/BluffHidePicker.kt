@@ -46,7 +46,7 @@ import app.jamaa.tv.ui.theme.JamaaTheme
  * HIDE_OPTION for the focused card, Back closes. Nothing here depends on what a card is (the kind is never known).
  * JAMAA-GAP (G2): the platform pause menu sends only `{type}`; it must open this picker for [BluffTv.pauseAction]
  * `PickOptionToHide` (patch in the G2 lane C report: an overlay from AppRoot whose Back returns to the pause menu).
- * [onSend] gets the HIDE_OPTION intent, [onClose] dismisses.
+ * [onSend] gets the HIDE_OPTION intent (the caller then closes the picker and the pause menu); [onClose] is Back.
  */
 @Composable
 fun BluffHidePicker(view: BluffView, onSend: (GameIntent) -> Unit, onClose: () -> Unit) {
@@ -76,7 +76,8 @@ fun BluffHidePicker(view: BluffView, onSend: (GameIntent) -> Unit, onClose: () -
                             true
                         }
                         RemoteKey.OK -> {
-                            if (e.repeats == 0) picker.confirm()?.let { onSend(it); onClose() }
+                            // OK sends; the caller closes the picker and the pause menu (Back alone returns to the menu).
+                            if (e.repeats == 0) picker.confirm()?.let(onSend)
                             true
                         }
                         else -> false

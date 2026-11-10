@@ -28,12 +28,18 @@ object LikelyLayout {
     const val MAX_SPREAD = 792.0
     const val MAX_STEP = 104.0
 
-    const val CONGA_DX = 30.0
-    const val CONGA_DY = -12.0
+    /** Conga: the first 6 runners stand in a diagonal line behind the target, sideways and slightly up. 44 dp against a
+     *  72 dp character keeps each runner's face clear of the one in front (shared layout.ts, G3 review). */
+    const val CONGA_DX = 44.0
+    const val CONGA_DY = -16.0
     const val CONGA_STRAIGHT = 6
     const val CURL_RADIUS = 40.0
     const val CURL_SHRINK = 3.0
     const val CURL_STEP_DEG = 52.0
+
+    /** The x range a character's centre may take: its whole 72 dp box stays inside the 864 dp safe area. */
+    const val CONGA_MIN_X = CHAR_SIZE / 2
+    const val CONGA_MAX_X = WIDTH - CHAR_SIZE / 2
 
     /** JS `Math.round(v * 10) / 10` (floor(v + 0.5) semantics, also for negatives). */
     fun r1(v: Double): Double = floor(v * 10 + 0.5) / 10
@@ -52,35 +58,94 @@ object LikelyLayout {
         }
     }
 
-    /** +1 when the line grows to the right of its target (targets right of centre), -1 otherwise: lines curl outward. */
-    fun congaSide(target: LikelyPt): Int = if (target.x >= WIDTH / 2) 1 else -1
+    /** How far sideways a straight line of [count] runners reaches from its target. */
+    private fun reach(count: Int): Double = CONGA_DX * count.coerceIn(1, CONGA_STRAIGHT)
 
-    /** The k-th place (k ≥ 1) behind [target]: 1..6 diagonally outward and up, then a shrinking spiral. */
+    private fun fits(target: LikelyPt, side: Int, count: Int): Boolean {
+        val x = target.x + side * reach(count)
+        return x >= CONGA_MIN_X && x <= CONGA_MAX_X
+    }
+
+    /**
+     * The side a line of [count] runners grows on: away from the stage centre (+1 right of centre, -1 otherwise), unless
+     * that would leave the safe area while the other side fits (an outer seat then lines up toward the centre).
+     */
+    fun congaSide(target: LikelyPt, count: Int = 1): Int {
+        val out = if (target.x >= WIDTH / 2) 1 else -1
+        return if (fits(target, out, count) || !fits(target, -out, count)) out else -out
+    }
+
+    /**
+     * The k-th place (k ≥ 1) behind [target]: 1..6 diagonally sideways and up, then a shrinking spiral around a point
+     * above place 6. A place that would leave the safe area is pinned to its edge and climbs instead (1 dp up per dp
+     * of overflow), so nobody walks off the stage.
+     */
     fun congaSlot(target: LikelyPt, k: Int, side: Int = congaSide(target)): LikelyPt {
-        if (k <= CONGA_STRAIGHT) return LikelyPt(r1(target.x + side * CONGA_DX * k), r1(target.y + CONGA_DY * k))
-        val p6x = target.x + side * CONGA_DX * CONGA_STRAIGHT
-        val p6y = target.y + CONGA_DY * CONGA_STRAIGHT
-        val cx = p6x
-        val cy = p6y - CURL_RADIUS
-        val j = k - CONGA_STRAIGHT
-        val radius = max(8.0, CURL_RADIUS - CURL_SHRINK * j)
-        val deg = 90 - side * CURL_STEP_DEG * j
-        val rad = deg * PI / 180
-        return LikelyPt(r1(cx + radius * cos(rad)), r1(cy + radius * sin(rad)))
+        var x: Double
+        var y: Double
+        if (k <= CONGA_STRAIGHT) {
+            x = target.x + side * CONGA_DX * k
+            y = target.y + CONGA_DY * k
+        } else {
+            val cx = target.x + side * CONGA_DX * CONGA_STRAIGHT
+            val cy = target.y + CONGA_DY * CONGA_STRAIGHT - CURL_RADIUS
+            val j = k - CONGA_STRAIGHT
+            val radius = max(8.0, CURL_RADIUS - CURL_SHRINK * j)
+            val deg = 90 - side * CURL_STEP_DEG * j
+            val rad = deg * PI / 180
+            x = cx + radius * cos(rad)
+            y = cy + radius * sin(rad)
+        }
+        val over = if (x < CONGA_MIN_X) CONGA_MIN_X - x else if (x > CONGA_MAX_X) x - CONGA_MAX_X else 0.0
+        if (over > 0) {
+            x = if (x < CONGA_MIN_X) CONGA_MIN_X else CONGA_MAX_X
+            y -= over
+        }
+        return LikelyPt(r1(x), r1(y))
     }
 
     /** Places 1..count behind [target]. */
-    fun conga(target: LikelyPt, count: Int): List<LikelyPt> {
-        val side = congaSide(target)
-        return (1..count).map { congaSlot(target, it, side) }
+    fun conga(target: LikelyPt, count: Int, side: Int = congaSide(target, count)): List<LikelyPt> =
+        (1..count).map { congaSlot(target, it, side) }
+
+    /**
+     * The side of every line in a reveal ([lines]: target id → runners; [at]: target id → arc position). Each line first
+     * takes [congaSide]; then, left to right, two neighbouring lines that would run into each other are turned apart
+     * (the left one left, the right one right), each only where it still fits the safe area.
+     */
+    fun congaSides(lines: Map<String, Int>, at: Map<String, LikelyPt>): Map<String, Int> {
+        val half = CHAR_SIZE / 2
+        val ids = lines.keys.filter { it in at && (lines[it] ?: 0) > 0 }
+            .sortedWith(compareBy<String> { at.getValue(it).x }.thenBy { it })
+        val side = LinkedHashMap<String, Int>()
+        for (id in ids) side[id] = congaSide(at.getValue(id), lines.getValue(id))
+        for (i in 1 until ids.size) {
+            val a = ids[i - 1]
+            val b = ids[i]
+            val pa = at.getValue(a)
+            val pb = at.getValue(b)
+            val ca = lines.getValue(a)
+            val cb = lines.getValue(b)
+            val gap = pb.x - pa.x - half
+            val clash = (side[a] == 1 && reach(ca) >= gap) || (side[b] == -1 && reach(cb) >= gap)
+            if (!clash) continue
+            if (side[a] == 1 && fits(pa, -1, ca)) side[a] = -1
+            if (side[b] == -1 && fits(pb, 1, cb)) side[b] = 1
+        }
+        return side
     }
 
     /**
      * Public-mode reveal (§12.2 step 2): where each voter's character ends. A self-voter stays in its seat
-     * (`pointSelf`); every other voter joins the line behind its target in ballot order. Unknown ids are skipped.
+     * (`pointSelf`); every other voter joins the line behind its target in ballot order, on the side chosen by
+     * [congaSides]. Unknown ids are skipped.
      */
     fun revealPositions(arc: List<LikelyPt>, seatIds: List<String>, ballots: List<LikelyBallot>): Map<String, LikelyPt> {
-        val at = seatIds.indices.associate { seatIds[it] to arc[it] }
+        val at = LinkedHashMap<String, LikelyPt>()
+        seatIds.forEachIndexed { i, id -> arc.getOrNull(i)?.let { at[id] = it } }
+        val lines = LinkedHashMap<String, Int>()
+        for (b in ballots) if (b.voterId != b.targetId && b.voterId in at && b.targetId in at) lines[b.targetId] = (lines[b.targetId] ?: 0) + 1
+        val sides = congaSides(lines, at)
         val lineLen = HashMap<String, Int>()
         val out = LinkedHashMap<String, LikelyPt>()
         for (b in ballots) {
@@ -92,7 +157,7 @@ object LikelyLayout {
             }
             val k = (lineLen[b.targetId] ?: 0) + 1
             lineLen[b.targetId] = k
-            out[b.voterId] = congaSlot(target, k)
+            out[b.voterId] = congaSlot(target, k, sides[b.targetId] ?: congaSide(target))
         }
         return out
     }

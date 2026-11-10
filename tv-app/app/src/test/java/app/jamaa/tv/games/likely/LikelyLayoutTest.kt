@@ -61,14 +61,16 @@ class LikelyLayoutTest {
         for ((name, e) in fx["conga"]!!.jsonObject) {
             val o = e.jsonObject
             val target = pt(o["target"]!!)
-            assertEquals(name, o["side"]!!.jsonPrimitive.int, LikelyLayout.congaSide(target))
             val places = pts(o["places"]!!)
+            // fixture-scenario.ts: left/right record the one-runner side, the edge cases the side of their 11-runner line.
+            val sideCount = if (name.startsWith("edge")) places.size else 1
+            assertEquals(name, o["side"]!!.jsonPrimitive.int, LikelyLayout.congaSide(target, sideCount))
             assertEquals(name, places, LikelyLayout.conga(target, places.size))
         }
     }
 
     @Test fun revealPositionsLtrAndRtl() {
-        for (key in listOf("reveal", "revealRtl")) {
+        for (key in listOf("reveal", "revealRtl", "revealTie")) {
             val o = fx[key]!!.jsonObject
             val seatIds = o["seatIds"]!!.jsonArray.map { it.jsonPrimitive.content }
             val arc = pts(o["arc"]!!)
@@ -82,5 +84,14 @@ class LikelyLayoutTest {
         assertEquals(-12.0, LikelyLayout.r1(-12.05), 0.0) // Math.round(-120.5) = -120
         assertEquals(0.2, LikelyLayout.r1(0.15), 1e-12)
         assertEquals(332.9, LikelyLayout.r1(332.888), 1e-9)
+    }
+
+    /** Every place of every line size stays inside the safe area (shared layout.test.ts), LTR and RTL. */
+    @Test fun congaLinesStayOnTheStage() {
+        for (n in 1..12) for (rtl in listOf(false, true)) for (target in LikelyLayout.juryArc(n, rtl)) for (count in 1..11) {
+            for (p in LikelyLayout.conga(target, count)) {
+                org.junit.Assert.assertTrue("n=$n rtl=$rtl ${target.x} $count -> $p", p.x >= LikelyLayout.CONGA_MIN_X && p.x <= LikelyLayout.CONGA_MAX_X)
+            }
+        }
     }
 }

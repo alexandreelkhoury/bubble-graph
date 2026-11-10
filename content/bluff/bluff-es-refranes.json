@@ -19,17 +19,7 @@
     "es"
   ],
   "ageRating": "all",
-  "fallbackHouseLies": {
-    "proverb_end": {
-      "es": [
-        "Siempre llega tarde",
-        "Nunca paga la cuenta",
-        "Se queda dormido",
-        "Acaba en la cocina",
-        "Vuelve en verano"
-      ]
-    }
-  },
+  "fallbackHouseLies": {},
   "items": [
     {
       "id": "esp-001",
@@ -99,8 +89,10 @@
       "id": "esp-003",
       "type": "proverb_end",
       "tier": "pass",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "De tal palo…",
         "translit": null,
@@ -160,7 +152,9 @@
       "type": "proverb_end",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Perro ladrador…",
         "translit": null,
@@ -219,8 +213,10 @@
       "id": "esp-007",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "No hay mal…",
         "translit": null,
@@ -253,8 +249,10 @@
       "id": "esp-008",
       "type": "proverb_end",
       "tier": "pass",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Cuando el río suena…",
         "translit": null,
@@ -288,8 +286,10 @@
       "id": "esp-009",
       "type": "proverb_end",
       "tier": "pass",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Mucho ruido…",
         "translit": null,
@@ -318,8 +318,10 @@
       "id": "esp-010",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Donde fueres…",
         "translit": null,
@@ -348,8 +350,10 @@
       "id": "esp-011",
       "type": "proverb_end",
       "tier": "pass",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Ojos que no ven…",
         "translit": null,
@@ -378,8 +382,10 @@
       "id": "esp-012",
       "type": "proverb_end",
       "tier": "pass",
-      "difficulty": 3,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "A buen entendedor…",
         "translit": null,
@@ -442,8 +448,10 @@
       "id": "esp-014",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "A caballo regalado…",
         "translit": null,
@@ -478,7 +486,9 @@
       "type": "proverb_end",
       "tier": "pass",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "A la cama no te irás…",
         "translit": null,
@@ -511,8 +521,10 @@
       "id": "esp-016",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "El que mucho abarca…",
         "translit": null,
@@ -541,8 +553,10 @@
       "id": "esp-017",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "No por mucho madrugar…",
         "translit": null,
@@ -572,7 +586,9 @@
       "type": "proverb_end",
       "tier": "pass",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Quien siembra vientos…",
         "translit": null,
@@ -601,8 +617,10 @@
       "id": "esp-019",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "A falta de pan…",
         "translit": null,
@@ -667,7 +685,9 @@
       "type": "proverb_end",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "En boca cerrada…",
         "translit": null,
@@ -696,8 +716,10 @@
       "id": "esp-022",
       "type": "proverb_end",
       "tier": "pass",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Quien bien te quiere…",
         "translit": null,
@@ -824,8 +846,10 @@
       "id": "esp-026",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Del dicho al hecho…",
         "translit": null,
@@ -859,7 +883,9 @@
       "type": "proverb_end",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Quien no arriesga…",
         "translit": null,
@@ -888,8 +914,10 @@
       "id": "esp-028",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "A mal tiempo…",
         "translit": null,
@@ -918,8 +946,10 @@
       "id": "esp-029",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Barriga llena…",
         "translit": null,
@@ -1046,8 +1076,10 @@
       "id": "esp-033",
       "type": "proverb_end",
       "tier": "pass",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Quien calla…",
         "translit": null,
@@ -1077,7 +1109,9 @@
       "type": "proverb_end",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "El que la sigue…",
         "translit": null,
@@ -1141,8 +1175,10 @@
       "id": "esp-036",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "En abril…",
         "translit": null,
@@ -1202,7 +1238,9 @@
       "type": "proverb_end",
       "tier": "pass",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Las apariencias…",
         "translit": null,
@@ -1231,8 +1269,10 @@
       "id": "esp-039",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Lo que no mata…",
         "translit": null,
@@ -1261,8 +1301,10 @@
       "id": "esp-040",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Cada oveja…",
         "translit": null,
@@ -1292,7 +1334,9 @@
       "type": "proverb_end",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Quien tiene boca…",
         "translit": null,
@@ -1471,8 +1515,10 @@
       "id": "esp-047",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Las penas con pan…",
         "translit": null,
@@ -1536,7 +1582,9 @@
       "type": "proverb_end",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Más vale solo…",
         "translit": null,
@@ -1625,8 +1673,10 @@
       "id": "esp-052",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Por la boca…",
         "translit": null,
@@ -1685,8 +1735,10 @@
       "id": "esp-054",
       "type": "proverb_end",
       "tier": "pass",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "es"
+      ],
       "prompt": {
         "original": "Agua pasada…",
         "translit": null,
@@ -1739,6 +1791,1033 @@
       "review": {
         "status": "draft",
         "source": "[VERIFY] CVC Refranero multilingüe"
+      }
+    },
+    {
+      "id": "esp-056",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Año de nieves…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Año de bienes"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Año de frío",
+          "Año de sopas",
+          "Año de catarros"
+        ]
+      },
+      "note": {
+        "es": "Mucha nieve en invierno anuncia buena cosecha"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-057",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Marzo ventoso y abril lluvioso…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Sacan a mayo florido y hermoso"
+      },
+      "truthAlt": {
+        "es": [
+          "Hacen a mayo florido y hermoso"
+        ]
+      },
+      "houseLies": {
+        "es": [
+          "Traen un junio caluroso",
+          "Dejan el campo sin trigo",
+          "Pintan el cielo de gris"
+        ]
+      },
+      "note": {
+        "es": "Refrán de campo: viento y lluvia a tiempo dan buena primavera"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-058",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Cuando marzo mayea…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Mayo marcea"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Junio llovizna",
+          "Abril se ríe",
+          "El campo florece"
+        ]
+      },
+      "note": {
+        "es": "Si marzo es cálido como mayo, mayo será frío como marzo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-059",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Agua de mayo…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Pan para todo el año"
+      },
+      "truthAlt": {
+        "es": [
+          "Pan para todo el año trae"
+        ]
+      },
+      "houseLies": {
+        "es": [
+          "Flores para el verano",
+          "Barro hasta junio",
+          "Ranas en el pozo"
+        ]
+      },
+      "note": {
+        "es": "La lluvia de mayo asegura la cosecha"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-060",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Unos tienen la fama…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Y otros cardan la lana"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Y otros pagan la cuenta",
+          "Y otros la siesta",
+          "Y otros el dinero"
+        ]
+      },
+      "note": {
+        "es": "Unos trabajan y otros se llevan el mérito"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-061",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quien parte y reparte…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Se queda con la mejor parte"
+      },
+      "truthAlt": {
+        "es": [
+          "Se lleva la mejor parte"
+        ]
+      },
+      "houseLies": {
+        "es": [
+          "Acaba sin postre",
+          "Nunca queda contento",
+          "Reparte también las migas"
+        ]
+      },
+      "note": {
+        "es": "Quien reparte suele quedarse lo mejor"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-062",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Las cuentas claras…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Y el chocolate espeso"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Y los amigos cerca",
+          "Y el café corto",
+          "Y la mesa puesta"
+        ]
+      },
+      "note": {
+        "es": "Las cosas, bien hechas y sin engaños"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-063",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Cada maestrillo…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Tiene su librillo"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Tiene su pizarra",
+          "Tiene su silla",
+          "Tiene su manía"
+        ]
+      },
+      "note": {
+        "es": "Cada uno tiene su manera de hacer las cosas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-064",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quien no llora…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "No mama"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "No cena",
+          "No se moja",
+          "No duerme"
+        ]
+      },
+      "note": {
+        "es": "Quien no pide, no recibe"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-065",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Lo cortés…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "No quita lo valiente"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "No paga facturas",
+          "Abre muchas puertas",
+          "Se aprende en casa"
+        ]
+      },
+      "note": {
+        "es": "Ser educado no está reñido con ser firme"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-066",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Obras son amores…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Que no buenas razones"
+      },
+      "truthAlt": {
+        "es": [
+          "Y no buenas razones"
+        ]
+      },
+      "houseLies": {
+        "es": [
+          "Y palabras, viento",
+          "Que duran siempre",
+          "Que no regalos"
+        ]
+      },
+      "note": {
+        "es": "Lo que cuenta son los hechos, no las palabras"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-067",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Cuatro ojos…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Ven más que dos"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Necesitan gafas",
+          "Leen más deprisa",
+          "Lloran el doble"
+        ]
+      },
+      "note": {
+        "es": "Mejor revisar algo entre dos personas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-068",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Tanto va el cántaro a la fuente…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Que al final se rompe"
+      },
+      "truthAlt": {
+        "es": [
+          "Que al fin se rompe"
+        ]
+      },
+      "houseLies": {
+        "es": [
+          "Que aprende a nadar",
+          "Que se llena solo",
+          "Que lo conoce el pueblo"
+        ]
+      },
+      "note": {
+        "es": "Quien se arriesga una y otra vez acaba mal"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-069",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "En todas partes…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Cuecen habas"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Hay vecinos",
+          "Sale el sol",
+          "Se come tarde"
+        ]
+      },
+      "note": {
+        "es": "Los mismos problemas existen en todos sitios"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-070",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Cada uno sabe…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Dónde le aprieta el zapato"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Cuánto gana el vecino",
+          "Dónde guarda las llaves",
+          "A qué hora cena"
+        ]
+      },
+      "note": {
+        "es": "Solo uno conoce sus propios problemas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-071",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quien tuvo…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Retuvo"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Perdió",
+          "Presume",
+          "Repartió"
+        ]
+      },
+      "note": {
+        "es": "Algo queda siempre de lo que uno fue"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-072",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "No se ganó Zamora…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "En una hora"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Sin un buen caballo",
+          "En un solo día",
+          "Sin paciencia"
+        ]
+      },
+      "note": {
+        "es": "Las cosas importantes llevan tiempo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-073",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quien fue a Sevilla…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Perdió su silla"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Volvió moreno",
+          "Se quedó a vivir",
+          "Trajo naranjas"
+        ]
+      },
+      "note": {
+        "es": "Si te vas, otro ocupa tu sitio"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-074",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Más vale un toma…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Que dos te daré"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Que mil gracias",
+          "Que un quizás",
+          "Que dos promesas"
+        ]
+      },
+      "note": {
+        "es": "Mejor algo seguro ahora que una promesa"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-075",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Quien canta…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Su mal espanta"
+      },
+      "truthAlt": {
+        "es": [
+          "Sus males espanta"
+        ]
+      },
+      "houseLies": {
+        "es": [
+          "No se aburre",
+          "Despierta al vecino",
+          "Nunca está solo"
+        ]
+      },
+      "note": {
+        "es": "Cantar alivia las penas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-076",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Del plato a la boca…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Se enfría la sopa"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Cae la mitad",
+          "Hay un buen trecho",
+          "Se pierde el apetito"
+        ]
+      },
+      "note": {
+        "es": "Hasta lo seguro puede fallar en el último momento"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-077",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Cada gallo…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Canta en su muladar"
+      },
+      "truthAlt": {
+        "es": [
+          "Canta en su corral"
+        ]
+      },
+      "houseLies": {
+        "es": [
+          "Madruga a su hora",
+          "Tiene su gallinero",
+          "Presume de cresta"
+        ]
+      },
+      "note": {
+        "es": "Cada uno manda en su propia casa"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-078",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "En la tardanza…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Está el peligro"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Está la paciencia",
+          "Se enfría la cena",
+          "Se pierde el tren"
+        ]
+      },
+      "note": {
+        "es": "Esperar demasiado puede salir caro"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-079",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Ni pidas a quien pidió…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Ni sirvas a quien sirvió"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Ni prestes a quien prestó",
+          "Ni esperes a quien tardó",
+          "Ni cantes a quien calla"
+        ]
+      },
+      "note": {
+        "es": "Quien pasó necesidad o sirvió puede ser el más exigente"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-080",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Al freír…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Será el reír"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Saltará el aceite",
+          "Se verá el cocinero",
+          "Olerá toda la casa"
+        ]
+      },
+      "note": {
+        "es": "Al final se verá quién tenía razón"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-081",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Vísteme despacio…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Que tengo prisa"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Que llego tarde",
+          "Que hace frío",
+          "Que no veo"
+        ]
+      },
+      "note": {
+        "es": "Cuando hay prisa, mejor hacer las cosas con calma"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-082",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "A buenas horas…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Mangas verdes"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Llega el cartero",
+          "Se acaba el pan",
+          "Abren la tienda"
+        ]
+      },
+      "note": {
+        "es": "Se dice cuando la ayuda llega tarde"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-083",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Hijo de gato…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Caza ratón"
+      },
+      "truthAlt": {
+        "es": [
+          "Caza ratones"
+        ]
+      },
+      "houseLies": {
+        "es": [
+          "Duerme en el tejado",
+          "Bebe leche",
+          "Maúlla de noche"
+        ]
+      },
+      "note": {
+        "es": "Los hijos heredan las costumbres de los padres"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-084",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Árbol que nace torcido…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Jamás su tronco endereza"
+      },
+      "truthAlt": {
+        "es": [
+          "Nunca su tronco endereza",
+          "Jamás se endereza"
+        ]
+      },
+      "houseLies": {
+        "es": [
+          "Da la mejor sombra",
+          "Se lo lleva el viento",
+          "Busca siempre el sol"
+        ]
+      },
+      "note": {
+        "es": "Las malas costumbres de pequeño son difíciles de corregir"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-085",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Mal de muchos…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Consuelo de tontos"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Cena de todos",
+          "Fiesta en el pueblo",
+          "Ruido en la calle"
+        ]
+      },
+      "note": {
+        "es": "No sirve de nada que otros tengan el mismo problema"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-086",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "A la vejez…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Viruelas"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Zapatillas",
+          "Siestas",
+          "Recuerdos"
+        ]
+      },
+      "note": {
+        "es": "Se dice de quien hace cosas de joven siendo ya mayor"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-087",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Más vale ser cabeza de ratón…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Que cola de león"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Que pata de elefante",
+          "Que oreja de burro",
+          "Que bigote de gato"
+        ]
+      },
+      "note": {
+        "es": "Mejor mandar en algo pequeño que obedecer en algo grande"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
+      }
+    },
+    {
+      "id": "esp-088",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Al que le pique…",
+        "translit": null,
+        "display": {}
+      },
+      "truth": {
+        "es": "Que se rasque"
+      },
+      "truthAlt": {},
+      "houseLies": {
+        "es": [
+          "Que se aguante",
+          "Que vaya al médico",
+          "Que no se queje"
+        ]
+      },
+      "note": {
+        "es": "Si te sientes aludido, es asunto tuyo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Centro Virtual Cervantes, Refranero multilingüe ; [native review] forma usual"
       }
     }
   ]

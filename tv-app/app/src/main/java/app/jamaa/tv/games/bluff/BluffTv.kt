@@ -143,4 +143,31 @@ object BluffTv : TvGameModule {
     }
 
     private val ADVANCE_PHASES = setOf(BluffPhase.ROUND_INTRO, BluffPhase.REVEAL, BluffPhase.SCORES, BluffPhase.AWARDS)
+
+    /**
+     * [pauseAction] for any decoded game view (what a platform `TvGameModule.pauseAction(intentType, view)` hook
+     * delegates to): a view that is not Bluff's offers nothing.
+     */
+    fun pauseActionFor(intentType: String, game: app.jamaa.tv.games.GameView): PauseAction =
+        (game as? BluffGameView)?.let { pauseAction(intentType, it.view) } ?: PauseAction.Unavailable
+
+    // ---------------------------------------------------------------- rules ⓘ arguments (GAME-BLUFF §10.2)
+
+    /** WRITING seconds per pace (§4.1: 60 s × 1.5 / 1 / 0.75), the "%1$s s" of the writing rules body. */
+    val WRITING_SECONDS: Map<String, Int> = mapOf("relaxed" to 90, "normal" to 60, "fast" to 45)
+
+    @Volatile private var lastPace: String = "normal"
+
+    /**
+     * The format arguments of rule section [sectionId]'s body (the sheet must never show a raw `%1$s`): "writing" takes
+     * the WRITING seconds of the room's pace. The pace is read from the setup when the room has one (SETUP, and kept
+     * for the game, whose view does not carry it, as on the web); "normal" before any setup was seen.
+     */
+    fun ruleArgs(sectionId: String, room: RoomPublic?): Array<Any> {
+        room?.let(::setupView)?.settings?.pace?.takeIf { it in WRITING_SECONDS }?.let { lastPace = it }
+        return when (sectionId) {
+            "writing" -> arrayOf(WRITING_SECONDS.getValue(lastPace).toString())
+            else -> emptyArray()
+        }
+    }
 }

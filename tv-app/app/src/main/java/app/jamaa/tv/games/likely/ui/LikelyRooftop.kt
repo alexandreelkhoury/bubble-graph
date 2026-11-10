@@ -256,3 +256,23 @@ internal fun DrawScope.glint(p: Float) {
     val x = -size.width * 0.3f + size.width * 1.6f * p
     drawRect(Brush.linearGradient(listOf(Color.Transparent, GoldHi.copy(alpha = 0.45f), Color.Transparent), start = Offset(x - 40f, 0f), end = Offset(x + 40f, size.height)))
 }
+
+/** The "defend yourself" speech bubble (24-unit viewport, stroked; DESIGN-JAMAA §5.3 Hold), shared with the /tv mock. */
+internal val SpeechIcon: androidx.compose.ui.graphics.vector.ImageVector by lazy {
+    androidx.compose.ui.graphics.vector.ImageVector.Builder(
+        name = "lk-speech",
+        defaultWidth = androidx.compose.ui.unit.Dp(24f),
+        defaultHeight = androidx.compose.ui.unit.Dp(24f),
+        viewportWidth = 24f,
+        viewportHeight = 24f,
+    ).addPath(
+        pathData = androidx.compose.ui.graphics.vector.addPathNodes(
+            "M5.5 4h13A2.5 2.5 0 0 1 21 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4h.5A2.5 2.5 0 0 1 3 14.5v-8A2.5 2.5 0 0 1 5.5 4zM8 10.5h.01M12 10.5h.01M16 10.5h.01",
+        ),
+        fill = null,
+        stroke = androidx.compose.ui.graphics.SolidColor(Color.White),
+        strokeLineWidth = 2.2f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = androidx.compose.ui.graphics.StrokeJoin.Round,
+    ).build()
+}

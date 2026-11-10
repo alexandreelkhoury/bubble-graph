@@ -19,8 +19,8 @@ import kotlin.math.min
 object LikelyTiming {
     const val CARD_MS = 3_500L
     const val ENTRANCE_GRACE_MS = 2_500L
-    const val REVEAL_MIN_MS = 6_000L
-    const val REVEAL_MAX_MS = 9_500L
+    const val REVEAL_MIN_MS = 8_000L
+    const val REVEAL_MAX_MS = 12_000L
     const val AWARDS_BASE_MS = 3_000L
     const val AWARDS_TRIO_MS = 4_000L
     const val AWARDS_MIND_READER_MS = 4_000L
@@ -28,9 +28,12 @@ object LikelyTiming {
     /** `clamp(14 000 + 1 000 × n, 18 000, 26 000)` (GAME-LIKELY §4.1; mirrors `likelyVotingMs`). */
     fun votingMs(players: Int): Long = (14_000L + 1_000L * players).coerceIn(18_000L, 26_000L)
 
-    /** §12.2 `5 000 + 100 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0)`, clamped to 6 000–9 500. */
+    /**
+     * Mirrors shared `likelyRevealMs`: `7 000 + 150 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0)`, clamped to
+     * 8 000–12 000 (owner-approved G3 review change of GAME-LIKELY §12.2, which still says 5 000 + 100 × votes, 6 000–9 500).
+     */
     fun revealMs(votes: Int, unanimous: Boolean, topCount: Int): Long =
-        (5_000L + 100L * votes + (if (unanimous) 1_200L else 0L) + (if (topCount > 1) 600L else 0L)).coerceIn(REVEAL_MIN_MS, REVEAL_MAX_MS)
+        (7_000L + 150L * votes + (if (unanimous) 1_200L else 0L) + (if (topCount > 1) 600L else 0L)).coerceIn(REVEAL_MIN_MS, REVEAL_MAX_MS)
 
     /** `3 000 + 4 000 × ceil(holders / 3) + 4 000` (the last 4 000 = Mind Reader, public mode only). */
     fun awardsMs(holders: Int, publicMode: Boolean): Long =
@@ -86,10 +89,23 @@ object LikelyChoreo {
     fun runStagger(runners: Int): Double = if (runners <= 1) 100.0 else min(100.0, RUN_WINDOW_MS.toDouble() / (runners - 1))
 
     /** The shape of a reveal, from the public result only (TS `RevealShape`). */
-    data class RevealShape(val runners: Int, val envelopes: Int, val publicMode: Boolean, val chaos: Boolean, val none: Boolean, val unanimous: Boolean, val coins: Int) {
+    data class RevealShape(
+        val runners: Int,
+        val envelopes: Int,
+        val publicMode: Boolean,
+        val chaos: Boolean,
+        val none: Boolean,
+        val unanimous: Boolean,
+        val coins: Int,
+        /** Lines on the secret-vote percentage board (each adds reading time). */
+        val lines: Int = 1,
+    ) {
         /** The staggered element count `fitReveal` measures with. */
         val count: Int get() = max(max(runners, envelopes), max(coins, 1))
     }
+
+    /** The percentage board stays readable: 1 800 ms + 120 ms per line (TS `boardMs`). */
+    fun boardMs(lines: Int): Int = 1_800 + 120 * max(1, lines)
 
     /** TS `revealSteps`. Ids: dim, run, box, env, scramble, count, spot, stamp, confetti, coin, tick, board, hold. */
     fun revealSteps(o: RevealShape): List<Choreo.Step> {
@@ -106,8 +122,9 @@ object LikelyChoreo {
             steps += s("count", t, 600, "ease.decel", Reduced.FADE)
             t += 600
             if (!o.publicMode) {
-                steps += s("board", t, 1_200, "ease.decel", Reduced.FADE, 120.0)
-                t += 600
+                val b = boardMs(o.lines)
+                steps += s("board", t, b, "ease.decel", Reduced.FADE, 120.0)
+                t += b
             }
             return steps + s("hold", t, 400, "ease.decel", Reduced.FADE)
         }
@@ -135,8 +152,9 @@ object LikelyChoreo {
                 t += 450 + 70.0 * max(0, o.coins - 1) + 600
             }
         } else {
-            steps += s("board", t, 600, "ease.decel", Reduced.FADE, 120.0)
-            t += 600
+            val b = boardMs(o.lines)
+            steps += s("board", t, b, "ease.decel", Reduced.FADE, 120.0)
+            t += b
         }
         return steps + s("hold", t, 400, "ease.decel", Reduced.FADE)
     }
@@ -155,12 +173,34 @@ object LikelyChoreo {
         )
     }
 
-    /** TS `fitReveal`: scaled down when the list runs past the server window minus [REVEAL_TAIL_MS]. */
+    /** The "defend yourself" hold gets at least this long on screen when the window allows it (§12.2 step 7). */
+    const val HOLD_MIN_MS = 2_000
+
+    /** The beats before the hold are never squeezed below this fraction of their natural speed to make room for it. */
+    const val FIT_MIN_SCALE = 0.7
+
+    /** Shortest hold step (its fade-in; the caption then stays until the server deals the next card). */
+    const val HOLD_FLOOR_MS = 400
+
+    /**
+     * TS `fitReveal`: the beats before the hold are scaled down (springs keep their settle time) when they would leave the
+     * hold less than [HOLD_MIN_MS] of `window − REVEAL_TAIL_MS`, never below [FIT_MIN_SCALE] (the floor of
+     * `budget − HOLD_FLOOR_MS` still applies); then `hold` starts where the beats end and fills the rest of the budget.
+     */
     fun fitReveal(steps: List<Choreo.Step>, windowMs: Long, count: Int): List<Choreo.Step> {
-        val budget = max(2_000L, windowMs - REVEAL_TAIL_MS)
-        val end = endMs(steps, count)
-        return if (end <= budget) steps else scaled(steps, budget.toDouble() / end)
+        val budget = max(2_000L, windowMs - REVEAL_TAIL_MS).toDouble()
+        val hold = steps.firstOrNull { it.id == "hold" }
+        val core = steps.filter { it.id != "hold" }
+        val holdAt = hold?.startMs?.toDouble() ?: endMs(core, count).toDouble()
+        val want = max(budget - HOLD_MIN_MS, holdAt * FIT_MIN_SCALE)
+        val k = min(min(1.0, want / max(1.0, holdAt)), (budget - HOLD_FLOOR_MS) / max(1, endMs(core, count)))
+        val fitted = if (k < 1) scaled(core, k) else core
+        if (hold == null) return fitted
+        val start = holdAt * min(1.0, k)
+        return fitted + hold.copy(startMs = kotlin.math.round(start).toInt(), durationMs = max(HOLD_FLOOR_MS.toDouble(), budget - start).roundToIntSafe())
     }
+
+    private fun Double.roundToIntSafe(): Int = kotlin.math.round(this).toInt()
 
     /** The REVEAL timeline (steps fitted to the server window of [r]) with its sound marks. */
     fun reveal(r: LikelyReveal, shape: RevealShape): LikelyTimeline {
@@ -182,6 +222,8 @@ object LikelyChoreo {
             marks += LikelyMark(c.startMs, "coinFly")
             for (i in 0 until min(shape.coins, 10)) marks += LikelyMark(c.startMs + c.staggerMs * i + c.durationMs, "coinLand", (1f + 0.06f * i).coerceAtMost(2f))
         }
+        // The score rail's counters roll from scoreBefore to score (public mode, DESIGN-JAMAA §5.1 counters ticking).
+        st("tick")?.let { marks += LikelyMark(it.startMs, "counterTick") }
         if (shape.none) marks += LikelyMark(DRUM_MS, "likely.puff")
         val total = endMs(steps, shape.count)
         val kind = when {
@@ -276,6 +318,19 @@ object LikelyChoreo {
     }
 
     const val MIN_SCALE = 0.6
+
+    /**
+     * CARD (GAME-LIKELY §4, §12.1): the first card of a game is never dealt under the platform world entrance. Its
+     * deadline carries [LikelyTiming.ENTRANCE_GRACE_MS] on top of [LikelyTiming.CARD_MS], so the deal starts where the
+     * grace ends: a negative [Start.atMs] is the wait (the card stays in the deck). Later cards start like any timeline.
+     */
+    fun cardStart(cardIndex: Int, remainingMs: Long?): Start {
+        if (cardIndex == 0 && remainingMs != null) {
+            val wait = remainingMs - LikelyTiming.CARD_MS
+            if (wait > 0) return Start(-wait.coerceAtMost(LikelyTiming.ENTRANCE_GRACE_MS).toInt(), 1.0)
+        }
+        return start(cardDeal.totalMs, remainingMs)
+    }
 
     /** Marks crossed between [prevMs] (exclusive) and [nowMs] (inclusive); a jump (OK) of more than the slack is silent. */
     fun marksBetween(t: LikelyTimeline, prevMs: Double, nowMs: Double, slackMs: Int = 250): List<LikelyMark> =
