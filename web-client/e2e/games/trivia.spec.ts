@@ -189,17 +189,19 @@ async function padReady(ph: Phone): Promise<boolean> {
   return ok;
 }
 
-/** Taps tile `n` and checks the pad locked; a tap the guard swallowed (no lock, nothing sent) is retried once. */
+/** Taps tile `n` and checks the pad locked. A tap the pad could not take (its 250 ms guard, or a socket reconnecting
+ *  under load) nudges the pad (`data-nudge`) and sends nothing: it is retried a few times. */
 async function tapAndLock(ph: Phone, n: number): Promise<void> {
   const tiles = ph.page.locator(".tq-pad .tq-tile");
   const count = await tiles.count();
   if (count === 0) return; // ANSWER already closed on this phone
-  for (let attempt = 0; attempt < 2; attempt++) {
-    await tiles.nth(n % count).click({ timeout: 2000 }).catch(() => undefined);
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await tiles.nth(n % count).click({ timeout: 3000 }).catch(() => undefined);
     const locked = await ph.page.locator(".tq-pad.is-locked").first().waitFor({ state: "visible", timeout: 1500 }).then(() => true, () => false);
     if (locked || !(await vis(ph.page, ".tq-pad"))) return;
   }
-  await expect(ph.page.locator(".tq-pad.is-locked")).toBeVisible({ timeout: 500 });
+  const nudges = await ph.page.locator(".tq-pad").first().getAttribute("data-nudge").catch(() => null);
+  await expect(ph.page.locator(".tq-pad.is-locked"), `${ph.name}: 4 taps, no lock (pad nudges: ${nudges ?? 0})`).toBeVisible({ timeout: 500 });
 }
 
 async function playQuiz(tv: Page, phones: Phone[], o: PlayOpts): Promise<{ boards: number; reveals: number }> {

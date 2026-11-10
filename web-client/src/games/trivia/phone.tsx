@@ -107,6 +107,9 @@ function Pad({ tr }: { tr: Trivia }) {
   const tokens = tokensOf(type);
   const shownAt = useRef(performance.now());
   const [local, setLocal] = useState<{ choice: number; ms: number } | null>(null);
+  // A tap the pad could not take (inside the 250 ms guard, or the socket is reconnecting) gives a light press-shake
+  // instead of nothing, so a player never wonders whether it counted.
+  const [nudge, setNudge] = useState(0);
   const serverChoice = tr.me?.myChoice ?? null;
   const choice = serverChoice ?? local?.choice ?? null;
   const locked = choice !== null;
@@ -115,8 +118,11 @@ function Pad({ tr }: { tr: Trivia }) {
   const timeUp = !locked && pub.deadline !== null && ms <= 0;
   useEffect(() => { shownAt.current = performance.now(); }, [pub.index]);
   const pick = (i: number): void => {
-    if (locked || timeUp || performance.now() - shownAt.current < PAD_GUARD_MS) return;
-    if (!act({ type: "GAME", gameId: "trivia", i: { type: "ANSWER", choice: i } })) return;
+    if (locked || timeUp) return;
+    if (performance.now() - shownAt.current < PAD_GUARD_MS || !act({ type: "GAME", gameId: "trivia", i: { type: "ANSWER", choice: i } })) {
+      setNudge((n) => n + 1);
+      return;
+    }
     // The phone's own estimate until the server's `myTimeMs` arrives (same rule as §5.1: receipt − open − grace).
     const open = (pub.deadline ?? 0) - (pub.durationMs ?? 0);
     const est = Math.max(0, Date.now() + clockOffset.value - open - GRACE_MS);
@@ -125,7 +131,7 @@ function Pad({ tr }: { tr: Trivia }) {
     announce(tk("pad.locked", { seconds: secs(est) }), true);
   };
   return (
-    <main class={`tq tq-pad tq-pad--${type}${locked ? " is-locked" : ""}`}>
+    <main class={`tq tq-pad tq-pad--${type}${locked ? " is-locked" : ""}`} data-nudge={nudge || undefined}>
       <div class="tq-pad__head">
         <p class="tq-pad__q"><b class="num">{fmtNum(questionNumber(pub).index)} / {fmtNum(pub.total)}</b>{pub.isFinal && <b class="tq-x2">{tk("final.stamp")}</b>}
           <span dir="auto">{pub.question ? excerpt(pub.question.text, 60) : ""}</span>
@@ -139,7 +145,7 @@ function Pad({ tr }: { tr: Trivia }) {
           </p>
         ) : timeUp ? <p class="tq-pad__locked">{tk("pad.tooLate")}</p> : <Bar pub={pub} />}
       </div>
-      <div class="tq-pad__grid" role="group" aria-label={pub.question?.text ?? ""}>
+      <div key={`g${nudge}`} class={`tq-pad__grid${nudge ? " is-nudged" : ""}`} role="group" aria-label={pub.question?.text ?? ""}>
         {tokens.map((id, i) => {
           const letter = letterOf(id);
           return (

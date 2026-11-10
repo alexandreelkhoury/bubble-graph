@@ -71,6 +71,10 @@
 .tq-pad.is-locked .tq-tile, .tq-tile:disabled { opacity: 0.3; filter: saturate(0.7); }
 .tq-pad:not(.is-locked) .tq-tile { animation: tq-tile-in 220ms var(--ease-decel) both; }
 .tq-pad .tq-tile:nth-child(2) { animation-delay: 40ms; } .tq-pad .tq-tile:nth-child(3) { animation-delay: 80ms; } .tq-pad .tq-tile:nth-child(4) { animation-delay: 120ms; }
+/* A swallowed tap (guard / reconnecting): a light press-shake of the whole pad, no colour, no choice shown. */
+.tq-pad__grid.is-nudged { animation: tq-nudge 240ms var(--ease-standard); }
+.tq-pad__grid.is-nudged .tq-tile { animation: none; }
+@keyframes tq-nudge { 0%, 100% { transform: none; } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 @keyframes tq-tile-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
 
 /* waiting / hold / final */
