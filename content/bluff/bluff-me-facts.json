@@ -22,38 +22,7 @@
     "es"
   ],
   "ageRating": "all",
-  "fallbackHouseLies": {
-    "fact_blank": {
-      "en": [
-        "Pistachios",
-        "The Romans",
-        "A camel",
-        "Seven",
-        "Olive oil"
-      ],
-      "fr": [
-        "Des pistaches",
-        "Les Romains",
-        "Un chameau",
-        "Sept",
-        "L'huile d'olive"
-      ],
-      "ar": [
-        "فستق حلبي",
-        "الرومان",
-        "جمل",
-        "سبعة",
-        "زيت زيتون"
-      ],
-      "es": [
-        "Pistachos",
-        "Los romanos",
-        "Un camello",
-        "Siete",
-        "Aceite de oliva"
-      ]
-    }
-  },
+  "fallbackHouseLies": {},
   "items": [
     {
       "id": "me-001",

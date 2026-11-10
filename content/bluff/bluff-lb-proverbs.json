@@ -22,38 +22,7 @@
     "es"
   ],
   "ageRating": "all",
-  "fallbackHouseLies": {
-    "proverb_end": {
-      "en": [
-        "Never comes back",
-        "Laughs last",
-        "Stays home",
-        "Always arrives late",
-        "Never sleeps a wink"
-      ],
-      "fr": [
-        "Ne revient jamais",
-        "Rit le dernier",
-        "Reste chez lui",
-        "Arrive toujours en retard",
-        "Ne dort jamais"
-      ],
-      "ar": [
-        "ما بيرجع",
-        "بيضحك آخر واحد",
-        "بيبقى ببيتو",
-        "بيوصل متأخر",
-        "ما بينام الليل"
-      ],
-      "es": [
-        "Nunca vuelve",
-        "Ríe el último",
-        "Se queda en casa",
-        "Siempre llega tarde",
-        "No pega ojo"
-      ]
-    }
-  },
+  "fallbackHouseLies": {},
   "items": [
     {
       "id": "lbp-001",
@@ -281,8 +250,10 @@
       "id": "lbp-004",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "يا رايح…",
         "translit": "ya rayeh…",
@@ -1289,8 +1260,10 @@
       "id": "lbp-018",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "الحكي…",
         "translit": "el-haki…",
@@ -1435,7 +1408,9 @@
       "tier": "pass",
       "difficulty": 1,
       "knownIn": [
-        "ar"
+        "ar",
+        "fr",
+        "es"
       ],
       "prompt": {
         "original": "قلي مين رفيقك…",
@@ -1505,7 +1480,9 @@
       "tier": "pass",
       "difficulty": 1,
       "knownIn": [
-        "ar"
+        "ar",
+        "en",
+        "fr"
       ],
       "prompt": {
         "original": "اللي بيحفر حفرة لخيو…",
@@ -1576,8 +1553,10 @@
       "id": "lbp-022",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "اللي بيجرب المجرب…",
         "translit": "illi byjarreb el-mjarrab…",
@@ -1726,12 +1705,12 @@
       "difficulty": 3,
       "knownIn": [],
       "prompt": {
-        "original": "شو جابرك عالمر؟…",
+        "original": "شو جابرك عالمر…",
         "translit": "shu jabrak 3al-murr…",
         "display": {
-          "en": "What drives you to the bitter?…",
-          "fr": "Qu'est-ce qui te pousse vers l'amer ?…",
-          "es": "¿Qué te obliga a lo amargo?…"
+          "en": "What drove you to the bitter…",
+          "fr": "Ce qui t'a poussé vers l'amer…",
+          "es": "Lo que te empujó a lo amargo…"
         }
       },
       "truth": {
@@ -2155,7 +2134,9 @@
       "type": "proverb_end",
       "tier": "pass",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "كل شي بوقتو…",
         "translit": "kel shi b-wa2to…",
@@ -2225,8 +2206,10 @@
       "id": "lbp-031",
       "type": "proverb_end",
       "tier": "pass",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "ضربتين عالراس…",
         "translit": "darbtein 3ar-ras…",
@@ -2372,7 +2355,10 @@
       "tier": "pass",
       "difficulty": 1,
       "knownIn": [
-        "ar"
+        "ar",
+        "en",
+        "fr",
+        "es"
       ],
       "prompt": {
         "original": "ما في دخان…",
@@ -3520,7 +3506,9 @@
       "type": "proverb_end",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "بيضة اليوم…",
         "translit": "baydet el-yom…",
@@ -3591,8 +3579,10 @@
       "id": "lbp-050",
       "type": "proverb_end",
       "tier": "pass",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "اللي بيسأل…",
         "translit": "illi bys2al…",
@@ -3807,7 +3797,10 @@
       "tier": "pass",
       "difficulty": 1,
       "knownIn": [
-        "ar"
+        "ar",
+        "en",
+        "fr",
+        "es"
       ],
       "prompt": {
         "original": "اللي بيتو من قزاز…",
@@ -4306,8 +4299,10 @@
       "id": "lbp-060",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "الولد ولد…",
         "translit": "el-walad walad…",
@@ -4745,8 +4740,10 @@
       "id": "lbp-066",
       "type": "proverb_end",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "القرش الأبيض…",
         "translit": "el-2ersh el-abyad…",
@@ -4812,6 +4809,733 @@
       "review": {
         "status": "draft",
         "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (Librairie du Liban, 1974): form and wording ; [native review]"
+      }
+    },
+    {
+      "id": "lbp-067",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "عيش يا كديش…",
+        "translit": "3ish ya kdish…",
+        "display": {
+          "en": "Hang on, old nag…",
+          "fr": "Tiens bon, vieux canasson…",
+          "es": "Aguanta, viejo jamelgo…"
+        }
+      },
+      "truth": {
+        "ar": "تينبت الحشيش",
+        "en": "Till the grass grows",
+        "fr": "Jusqu'à ce que l'herbe pousse",
+        "es": "Hasta que crezca la hierba"
+      },
+      "truthAlt": {
+        "ar": [
+          "لينبت الحشيش",
+          "حتى ينبت الحشيش"
+        ],
+        "en": [
+          "Until the grass grows",
+          "Ta yenbot el-7shish"
+        ],
+        "fr": [
+          "Que l'herbe pousse",
+          "Ta yenbot el-7shish"
+        ],
+        "es": [
+          "Que crezca la hierba",
+          "Ta yenbot el-7shish"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "وبتركض متل الغزال",
+          "بكرا بتصير حصان",
+          "وخلي الحمل علينا"
+        ],
+        "en": [
+          "You'll race again in spring",
+          "Tomorrow you'll be a stallion",
+          "We'll carry the load for you"
+        ],
+        "fr": [
+          "Tu galoperas au printemps",
+          "Demain tu seras pur-sang",
+          "On portera la charge pour toi"
+        ],
+        "es": [
+          "En primavera volverás a correr",
+          "Mañana serás pura sangre",
+          "Ya cargamos nosotros"
+        ]
+      },
+      "note": {
+        "ar": "وعد بعيد ما بيطعمي حدا هلق",
+        "en": "A far-off promise feeds nobody today",
+        "fr": "Une promesse lointaine ne nourrit personne aujourd'hui",
+        "es": "Una promesa lejana no alimenta a nadie hoy"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (1953) ; [native review] wording and how rare it is today"
+      }
+    },
+    {
+      "id": "lbp-068",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "إجت الحزينة لتفرح…",
+        "translit": "ejet el-7azine tatefra7…",
+        "display": {
+          "en": "The sad one came to celebrate…",
+          "fr": "La malheureuse est venue faire la fête…",
+          "es": "La triste vino a divertirse…"
+        }
+      },
+      "truth": {
+        "ar": "ما لقتلها مطرح",
+        "en": "Found no room for herself",
+        "fr": "N'a pas trouvé de place",
+        "es": "No encontró sitio"
+      },
+      "truthAlt": {
+        "ar": [
+          "ما لقيتلها مطرح",
+          "ما لقت مطرح"
+        ],
+        "en": [
+          "Found no place",
+          "Couldn't find a seat",
+          "Ma la2etla matra7"
+        ],
+        "fr": [
+          "Pas de place pour elle",
+          "Ma la2etla matra7"
+        ],
+        "es": [
+          "No halló sitio",
+          "Ma la2etla matra7"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ونسيت همها",
+          "رقصت للصبح",
+          "بكيت من كتر الضحك"
+        ],
+        "en": [
+          "Forgot all her sorrows",
+          "Danced until dawn",
+          "Cried with laughter"
+        ],
+        "fr": [
+          "Oublia ses chagrins",
+          "Dansa jusqu'à l'aube",
+          "Pleura de rire"
+        ],
+        "es": [
+          "Olvidó sus penas",
+          "Bailó hasta el alba",
+          "Lloró de risa"
+        ]
+      },
+      "note": {
+        "ar": "لما الحظ بيعاند، حتى الفرحة بتسكر بوابها",
+        "en": "When luck's against you, even joy shuts its door",
+        "fr": "Quand la chance boude, même la joie ferme sa porte",
+        "es": "Cuando la suerte no acompaña, hasta la alegría cierra la puerta"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (1953) ; [native review] wording and how rare it is today"
+      }
+    },
+    {
+      "id": "lbp-069",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي ما بيقدر على الحمار…",
+        "translit": "elli ma by2dar 3al-7mar…",
+        "display": {
+          "en": "Whoever can't handle the donkey…",
+          "fr": "Qui ne peut rien contre l'âne…",
+          "es": "Quien no puede con el burro…"
+        }
+      },
+      "truth": {
+        "ar": "بيتشاطر عالبردعة",
+        "en": "Takes it out on the saddle",
+        "fr": "S'en prend au bât",
+        "es": "La toma con la albarda"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيتشطر عالبردعة",
+          "بيتشاطر على البردعة"
+        ],
+        "en": [
+          "Blames the saddle",
+          "Beats the saddle",
+          "Byetshater 3al-barda3a"
+        ],
+        "fr": [
+          "S'en prend à la selle",
+          "Byetshater 3al-barda3a"
+        ],
+        "es": [
+          "Se las toma con la albarda",
+          "Byetshater 3al-barda3a"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيركب الجحش",
+          "بيمشي حدو",
+          "بيبيعو بالسوق"
+        ],
+        "en": [
+          "Rides the foal instead",
+          "Walks beside it",
+          "Sells it at the market"
+        ],
+        "fr": [
+          "Monte l'ânon",
+          "Marche à côté",
+          "Le vend au marché"
+        ],
+        "es": [
+          "Monta el pollino",
+          "Camina a su lado",
+          "Lo vende en el mercado"
+        ]
+      },
+      "note": {
+        "ar": "اللي ما بيقدر عالقوي بيفش خلقو بالضعيف",
+        "en": "Can't face the strong one, so picks on the weak",
+        "fr": "Faute de s'en prendre au fort, on s'en prend au faible",
+        "es": "Como no puede con el fuerte, se ensaña con el débil"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (1953) ; [native review] wording and how rare it is today"
+      }
+    },
+    {
+      "id": "lbp-070",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "رزق الهبل…",
+        "translit": "rez2 el-hbal…",
+        "display": {
+          "en": "The fools' fortune…",
+          "fr": "La fortune des nigauds…",
+          "es": "La fortuna de los bobos…"
+        }
+      },
+      "truth": {
+        "ar": "عالمجانين",
+        "en": "Goes to the madmen",
+        "fr": "Va aux fous",
+        "es": "Es para los locos"
+      },
+      "truthAlt": {
+        "ar": [
+          "على المجانين"
+        ],
+        "en": [
+          "Falls to the crazy ones",
+          "3al-majanin"
+        ],
+        "fr": [
+          "Revient aux fous",
+          "3al-majanin"
+        ],
+        "es": [
+          "Va a los locos",
+          "3al-majanin"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيضيع بالطريق",
+          "بيجي نهار الأحد",
+          "بيوقع من السما"
+        ],
+        "en": [
+          "Gets lost on the way",
+          "Arrives on Sundays",
+          "Falls from the sky"
+        ],
+        "fr": [
+          "Se perd en route",
+          "Arrive le dimanche",
+          "Tombe du ciel"
+        ],
+        "es": [
+          "Se pierde por el camino",
+          "Llega los domingos",
+          "Cae del cielo"
+        ]
+      },
+      "note": {
+        "ar": "بيتقال لما الرزق بيطلع لحدا ما عمل شي ليستاهلو",
+        "en": "Said when luck lands on someone who did nothing for it",
+        "fr": "Se dit quand la chance tombe sur quelqu'un qui n'a rien fait",
+        "es": "Se dice cuando la suerte le llega a quien no hizo nada"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (1953) ; [native review] wording and how rare it is today"
+      }
+    },
+    {
+      "id": "lbp-071",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "سبع صنايع…",
+        "translit": "sab3 snaye3…",
+        "display": {
+          "en": "Seven trades…",
+          "fr": "Sept métiers…",
+          "es": "Siete oficios…"
+        }
+      },
+      "truth": {
+        "ar": "والبخت ضايع",
+        "en": "And still no luck",
+        "fr": "Et pas de chance",
+        "es": "Y ni pizca de suerte"
+      },
+      "truthAlt": {
+        "ar": [
+          "بس البخت ضايع",
+          "والحظ ضايع"
+        ],
+        "en": [
+          "But no luck",
+          "And luck is lost",
+          "W el-ba5t dayi3"
+        ],
+        "fr": [
+          "Mais pas de chance",
+          "W el-ba5t dayi3"
+        ],
+        "es": [
+          "Y sin suerte",
+          "W el-ba5t dayi3"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "والجيبة فاضية",
+          "وكلها بتعب",
+          "وبيتو بلا سقف"
+        ],
+        "en": [
+          "And empty pockets",
+          "And all of them tiring",
+          "And a house with no roof"
+        ],
+        "fr": [
+          "Et les poches vides",
+          "Et tous fatigants",
+          "Et une maison sans toit"
+        ],
+        "es": [
+          "Y los bolsillos vacíos",
+          "Y todos cansados",
+          "Y una casa sin tejado"
+        ]
+      },
+      "note": {
+        "ar": "شاطر بكل شي، بس الحظ مش معو",
+        "en": "Good at everything, yet luck never shows up",
+        "fr": "Doué pour tout, mais la chance ne suit pas",
+        "es": "Sabe hacer de todo, pero la suerte nunca llega"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (1953) ; [native review] wording and how rare it is today"
+      }
+    },
+    {
+      "id": "lbp-072",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بيحط حالو بالنخالة…",
+        "translit": "elli bi7ott 7alo bel-n5ale…",
+        "display": {
+          "en": "Whoever hides in the bran…",
+          "fr": "Qui se cache dans le son…",
+          "es": "Quien se mete en el salvado…"
+        }
+      },
+      "truth": {
+        "ar": "بينقرو الجاج",
+        "en": "Gets pecked by the hens",
+        "fr": "Se fait picorer par les poules",
+        "es": "Lo picotean las gallinas"
+      },
+      "truthAlt": {
+        "ar": [
+          "بياكلو الجاج",
+          "بتنقرو الجاج"
+        ],
+        "en": [
+          "The chickens peck him",
+          "Gets eaten by the chickens",
+          "Byno2ro el-jej"
+        ],
+        "fr": [
+          "Les poules le picorent",
+          "Byno2ro el-jej"
+        ],
+        "es": [
+          "Se lo comen las gallinas",
+          "Byno2ro el-jej"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيعطس كل الليل",
+          "بيطلع كعكة",
+          "ما حدا بيلاقيه"
+        ],
+        "en": [
+          "Sneezes all night",
+          "Ends up as a cake",
+          "Is never found"
+        ],
+        "fr": [
+          "Éternue toute la nuit",
+          "Finit en gâteau",
+          "Ne se fait jamais trouver"
+        ],
+        "es": [
+          "Estornuda toda la noche",
+          "Acaba en bizcocho",
+          "Nunca lo encuentran"
+        ]
+      },
+      "note": {
+        "ar": "اللي بيصغر حالو بيدعس عليه الكل",
+        "en": "Make yourself small and everyone walks over you",
+        "fr": "Qui se fait tout petit se fait marcher dessus",
+        "es": "Quien se hace pequeño acaba pisoteado"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (1953) ; [native review] wording and how rare it is today"
+      }
+    },
+    {
+      "id": "lbp-073",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "الفاضي…",
+        "translit": "el-fadi…",
+        "display": {
+          "en": "Someone with nothing to do…",
+          "fr": "Celui qui n'a rien à faire…",
+          "es": "El que no tiene nada que hacer…"
+        }
+      },
+      "truth": {
+        "ar": "بيعمل قاضي",
+        "en": "Plays the judge",
+        "fr": "Joue au juge",
+        "es": "Se hace el juez"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيعمل حالو قاضي",
+          "بيصير قاضي"
+        ],
+        "en": [
+          "Becomes a judge",
+          "Acts like a judge",
+          "Bya3mel 2adi"
+        ],
+        "fr": [
+          "Se fait juge",
+          "Bya3mel 2adi"
+        ],
+        "es": [
+          "Hace de juez",
+          "Bya3mel 2adi"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيعد النجوم",
+          "بيزور الجيران",
+          "بينام عالكنباية"
+        ],
+        "en": [
+          "Counts the stars",
+          "Visits the neighbours",
+          "Naps on the sofa"
+        ],
+        "fr": [
+          "Compte les étoiles",
+          "Rend visite aux voisins",
+          "Fait la sieste"
+        ],
+        "es": [
+          "Cuenta las estrellas",
+          "Visita a los vecinos",
+          "Duerme la siesta"
+        ]
+      },
+      "note": {
+        "ar": "اللي ما عندو شغلة بيتدخل بشغل الناس",
+        "en": "Idle people meddle in everyone else's business",
+        "fr": "Qui n'a rien à faire se mêle de tout",
+        "es": "El ocioso se mete en todo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (1953) ; [native review] wording and how rare it is today"
+      }
+    },
+    {
+      "id": "lbp-074",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بياكل على ضرسو…",
+        "translit": "elli byekol 3a darso…",
+        "display": {
+          "en": "Whoever chews with their own tooth…",
+          "fr": "Qui mâche avec sa propre dent…",
+          "es": "Quien mastica con su propia muela…"
+        }
+      },
+      "truth": {
+        "ar": "بينفع نفسو",
+        "en": "Only helps themselves",
+        "fr": "Ne sert que lui-même",
+        "es": "Solo se ayuda a sí mismo"
+      },
+      "truthAlt": {
+        "ar": [
+          "بينفع حالو"
+        ],
+        "en": [
+          "Helps himself",
+          "Benfa3 nafso"
+        ],
+        "fr": [
+          "Se rend service",
+          "Benfa3 nafso"
+        ],
+        "es": [
+          "Se ayuda a sí mismo",
+          "Benfa3 nafso"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيخسر سنانو",
+          "ما بيشبع",
+          "بياكل لحالو"
+        ],
+        "en": [
+          "Loses all their teeth",
+          "Never feels full",
+          "Eats alone"
+        ],
+        "fr": [
+          "Perd ses dents",
+          "N'est jamais rassasié",
+          "Mange seul"
+        ],
+        "es": [
+          "Pierde los dientes",
+          "Nunca se llena",
+          "Come solo"
+        ]
+      },
+      "note": {
+        "ar": "اللي بتعبو بإيدك هوي اللي إلك",
+        "en": "What you earn with your own effort is truly yours",
+        "fr": "Ce qu'on gagne à la sueur de son front nous revient",
+        "es": "Lo que ganas con tu esfuerzo es tuyo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (1953) ; [native review] wording and how rare it is today"
+      }
+    },
+    {
+      "id": "lbp-075",
+      "type": "proverb_end",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "الصيت…",
+        "translit": "es-sit…",
+        "display": {
+          "en": "A good name…",
+          "fr": "La bonne réputation…",
+          "es": "La buena fama…"
+        }
+      },
+      "truth": {
+        "ar": "ولا الغنى",
+        "en": "Rather than riches",
+        "fr": "Plutôt que la richesse",
+        "es": "Antes que la riqueza"
+      },
+      "truthAlt": {
+        "ar": [
+          "ولا الغني",
+          "أحسن من الغنى"
+        ],
+        "en": [
+          "Is worth more than riches",
+          "Wala el-ghina"
+        ],
+        "fr": [
+          "Vaut plus que la richesse",
+          "Wala el-ghina"
+        ],
+        "es": [
+          "Vale más que la riqueza",
+          "Wala el-ghina"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "ولا الجمال",
+          "بيلحقك عالبيت",
+          "بيوصل قبلك"
+        ],
+        "en": [
+          "Rather than beauty",
+          "Follows you home",
+          "Arrives before you"
+        ],
+        "fr": [
+          "Plutôt que la beauté",
+          "Te suit jusque chez toi",
+          "Arrive avant toi"
+        ],
+        "es": [
+          "Antes que la belleza",
+          "Te sigue a casa",
+          "Llega antes que tú"
+        ]
+      },
+      "note": {
+        "ar": "السمعة المنيحة أغلى من المصاري",
+        "en": "A good name is worth more than money",
+        "fr": "Une bonne réputation vaut plus que l'argent",
+        "es": "Más vale el buen nombre que el dinero"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (1953) ; [native review] wording and how rare it is today"
+      }
+    },
+    {
+      "id": "lbp-076",
+      "type": "proverb_end",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "اللي بيحمل قربة مخزوقة…",
+        "translit": "elli bye7mol 2erbe ma5zou2a…",
+        "display": {
+          "en": "Whoever carries a leaky waterskin…",
+          "fr": "Qui porte une outre percée…",
+          "es": "Quien carga un odre agujereado…"
+        }
+      },
+      "truth": {
+        "ar": "بتشرشر على راسو",
+        "en": "Gets dripped on",
+        "fr": "Se fait arroser",
+        "es": "Acaba empapado"
+      },
+      "truthAlt": {
+        "ar": [
+          "بتنقط على راسو",
+          "بتشرشر عراسو",
+          "بتنقط عراسو"
+        ],
+        "en": [
+          "Gets wet",
+          "It drips on his head",
+          "Btsharsher 3a raso"
+        ],
+        "fr": [
+          "Ça lui coule sur la tête",
+          "Btsharsher 3a raso"
+        ],
+        "es": [
+          "Le gotea en la cabeza",
+          "Btsharsher 3a raso"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بيوصل عطشان",
+          "بيمشي عالسريع",
+          "بيضحك عليه الحمار"
+        ],
+        "en": [
+          "Arrives thirsty",
+          "Walks a bit faster",
+          "Gets laughed at by the donkey"
+        ],
+        "fr": [
+          "Arrive assoiffé",
+          "Marche plus vite",
+          "Fait rire l'âne"
+        ],
+        "es": [
+          "Llega con sed",
+          "Camina más deprisa",
+          "Hace reír al burro"
+        ]
+      },
+      "note": {
+        "ar": "اللي بيتورط بشغلة عاطلة بيتحمل نتايجها",
+        "en": "Take on a bad business and you'll bear the mess",
+        "fr": "Qui se charge d'une sale affaire en reçoit les éclaboussures",
+        "es": "Quien carga con un mal asunto acaba salpicado"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Frayha, A Dictionary of Modern Lebanese Proverbs (1953) ; [native review] wording and how rare it is today"
       }
     }
   ]

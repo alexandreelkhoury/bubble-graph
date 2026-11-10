@@ -276,7 +276,7 @@
 .lkres__grid--mid .lkres__awtitle, .lkres__grid--mid .lkres__chips, .lkres__grid--mid .lkres__awline,
 .lkres__grid--dense .lkres__awtitle, .lkres__grid--dense .lkres__chips { grid-column: 1 / -1; margin-top: 3px; }
 .lkres__grid--mid .lkres__awtitle, .lkres__grid--dense .lkres__awtitle { font-size: 14px; line-height: 17px; }
-.lkres__grid--mid .lkres__chips, .lkres__grid--dense .lkres__chips { flex-wrap: nowrap; overflow: hidden; }
+.lkres__grid--dense .lkres__chips { flex-wrap: nowrap; overflow: hidden; }
 .lkres__grid--mid .lkres__chip { font-size: 12px; line-height: 16px; flex: 0 1 auto; min-width: 0; }
 .lkres__grid--mid .lkres__awline { -webkit-line-clamp: 2; font-size: 13px; line-height: 16px; }
 .lkres__grid--dense .lkres__chip { font-size: 11px; line-height: 15px; flex: 0 1 auto; min-width: 0; }

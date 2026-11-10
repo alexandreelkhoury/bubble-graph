@@ -22,44 +22,13 @@
     "es"
   ],
   "ageRating": "all",
-  "fallbackHouseLies": {
-    "fact_blank": {
-      "en": [
-        "Socks",
-        "A small horse",
-        "Purple",
-        "Seventeen",
-        "The Romans"
-      ],
-      "fr": [
-        "Des chaussettes",
-        "Un petit cheval",
-        "Violet",
-        "Dix-sept",
-        "Les Romains"
-      ],
-      "ar": [
-        "كلسات",
-        "حصان زغير",
-        "بنفسجي",
-        "سبعتعش",
-        "الرومان"
-      ],
-      "es": [
-        "Calcetines",
-        "Un caballo pequeño",
-        "Morado",
-        "Diecisiete",
-        "Los romanos"
-      ]
-    }
-  },
+  "fallbackHouseLies": {},
   "items": [
     {
       "id": "wf-001",
       "type": "fact_blank",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
         "original": "Wombat droppings are shaped like ___",
@@ -204,7 +173,7 @@
       "id": "wf-003",
       "type": "fact_blank",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
         "original": "Scotland's official national animal is the ___",
@@ -277,7 +246,7 @@
       "id": "wf-004",
       "type": "fact_blank",
       "tier": "pass",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
         "original": "On Venus, a single day lasts longer than a ___",
@@ -349,7 +318,7 @@
       "id": "wf-005",
       "type": "fact_blank",
       "tier": "pass",
-      "difficulty": 3,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
         "original": "The University of Oxford is older than the ___ Empire",
@@ -710,12 +679,12 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Bubble wrap was first sold as ___",
+        "original": "Bubble wrap was originally invented as ___",
         "translit": null,
         "display": {
-          "fr": "Le papier bulle a d'abord été vendu comme ___",
-          "ar": "النايلون أبو الفقاقيع انباع بالأول كـ___",
-          "es": "El plástico de burbujas se vendió primero como ___"
+          "fr": "Le plastique à bulles a été inventé au départ comme ___",
+          "ar": "النايلون أبو الفقاقيع انخترع بالأساس ليكون ___",
+          "es": "El plástico de burbujas se inventó en origen como ___"
         }
       },
       "truth": {
@@ -762,10 +731,10 @@
         ]
       },
       "note": {
-        "en": "Its inventors tried wallpaper and greenhouse insulation before packaging",
-        "fr": "Ses inventeurs voulaient en faire du papier peint",
-        "ar": "المخترعين كانوا بدهن ياه ورق حيطان",
-        "es": "Sus inventores querían venderlo como papel pintado"
+        "en": "It flopped as wallpaper; its first real buyers used it to pack things",
+        "fr": "Échec comme papier peint : ses premiers vrais clients s'en servaient pour emballer",
+        "ar": "فشل كورق جدران، وأول زباين حقيقيين استعملوه للتغليف",
+        "es": "Fracasó como papel pintado; sus primeros clientes lo usaron para embalar"
       },
       "review": {
         "status": "draft",
@@ -776,7 +745,7 @@
       "id": "wf-011",
       "type": "fact_blank",
       "tier": "pass",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
         "original": "Sea otters sometimes sleep holding ___",
@@ -851,7 +820,7 @@
       "id": "wf-012",
       "type": "fact_blank",
       "tier": "pass",
-      "difficulty": 3,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
         "original": "Koala fingerprints are almost impossible to tell apart from ___",
@@ -1381,74 +1350,77 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "In the 1830s, tomato ketchup was sold in the United States as ___",
+        "original": "In the 1830s, Americans bought tomato pills sold as a cure for ___",
         "translit": null,
         "display": {
-          "fr": "Dans les années 1830, le ketchup était vendu aux États-Unis comme ___",
-          "ar": "بالـ1830، الكاتشب كان ينباع بأميركا كـ___",
-          "es": "En la década de 1830, el kétchup se vendía en EE. UU. como ___"
+          "fr": "Dans les années 1830, les Américains achetaient des pilules à la tomate censées guérir ___",
+          "ar": "بالـ1830، الأميركان كانوا يشتروا حبوب بندورة ليتعالجوا من ___",
+          "es": "En la década de 1830, en EE. UU. se vendían píldoras de tomate contra ___"
         }
       },
       "truth": {
-        "en": "Medicine",
-        "fr": "Médicament",
-        "ar": "دوا",
-        "es": "Medicina"
+        "en": "Indigestion",
+        "fr": "L'indigestion",
+        "ar": "عسر الهضم",
+        "es": "La indigestión"
       },
       "truthAlt": {
         "en": [
-          "A medicine",
-          "A cure",
-          "Medicinal pills",
-          "Tomato pills"
+          "Dyspepsia",
+          "An upset stomach",
+          "Stomach ache",
+          "Bad digestion"
         ],
         "fr": [
-          "Un médicament",
-          "Remède",
-          "Pilules"
+          "Indigestion",
+          "Mal de ventre",
+          "Mal d'estomac",
+          "Dyspepsie"
         ],
         "ar": [
-          "دواء",
-          "علاج",
-          "حبوب دوا"
+          "وجع المعدة",
+          "سوء الهضم",
+          "المعدة",
+          "التلبك"
         ],
         "es": [
-          "Medicamento",
-          "Remedio",
-          "Pastillas"
+          "Indigestión",
+          "Dolor de estómago",
+          "Mala digestión",
+          "Dispepsia"
         ]
       },
       "houseLies": {
         "en": [
-          "Hair dye",
-          "Furniture polish",
-          "Ink"
+          "Baldness",
+          "Freckles",
+          "Seasickness"
         ],
         "fr": [
-          "Teinture pour cheveux",
-          "Colle à papier peint",
-          "Encre"
+          "La calvitie",
+          "Les taches de rousseur",
+          "Le mal de mer"
         ],
         "ar": [
-          "صبغة شعر",
-          "ملمع موبيليا",
-          "حبر"
+          "الصلعة",
+          "النمش",
+          "دوخة البحر"
         ],
         "es": [
-          "Tinte para el pelo",
-          "Cera para muebles",
-          "Tinta"
+          "La calvicie",
+          "Las pecas",
+          "El mareo en barco"
         ]
       },
       "note": {
         "en": "Tomato pills and extracts were sold as cures for indigestion",
-        "fr": "Des pilules à la tomate étaient vendues contre l'indigestion",
-        "ar": "كانوا يبيعوا حبوب بندورة للمعدة",
-        "es": "Se vendían píldoras de tomate contra la indigestión"
+        "fr": "Pilules et extraits de tomate se vendaient contre l'indigestion",
+        "ar": "كانوا يبيعوا حبوب وخلاصة بندورة كدوا للمعدة",
+        "es": "Se vendían píldoras y extractos de tomate contra la indigestión"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Andrew F. Smith, The Tomato in America (1994) ; Smithsonian Magazine article on ketchup as medicine"
+        "source": "[VERIFY] Andrew F. Smith, The Tomato in America (1994), ch. on tomato pills (Dr Miles' Compound Extract of Tomato) ; check the claimed ailments"
       }
     },
     {
@@ -2273,7 +2245,7 @@
       "id": "wf-031",
       "type": "fact_blank",
       "tier": "free",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
         "original": "Bananas are very slightly ___",
@@ -2553,68 +2525,68 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Iceland has no native ___",
+        "original": "Until 2025, Iceland had never recorded a single ___",
         "translit": null,
         "display": {
-          "fr": "L'Islande n'a pas de ___",
-          "ar": "بإيسلندا ما في ___",
-          "es": "En Islandia no hay ___"
+          "fr": "Jusqu'en 2025, l'Islande n'avait jamais observé un seul ___",
+          "ar": "لحد سنة 2025، إيسلندا ما كانت شافت ولا ___",
+          "es": "Hasta 2025, en Islandia nunca se había visto ni un ___"
         }
       },
       "truth": {
-        "en": "Mosquitoes",
-        "fr": "Moustiques",
-        "ar": "بق",
-        "es": "Mosquitos"
+        "en": "Mosquito",
+        "fr": "Moustique",
+        "ar": "بقة",
+        "es": "Mosquito"
       },
       "truthAlt": {
         "en": [
-          "Mosquito",
-          "Mozzies"
+          "Mosquitoes",
+          "Mozzie"
         ],
         "fr": [
-          "Moustique"
+          "Moustiques"
         ],
         "ar": [
-          "بقة",
-          "ناموس",
-          "بعوض"
+          "بق",
+          "ناموسة",
+          "بعوضة"
         ],
         "es": [
-          "Mosquito"
+          "Mosquitos"
         ]
       },
       "houseLies": {
         "en": [
-          "Spiders",
-          "Bees",
-          "Owls"
+          "Spider",
+          "Bumblebee",
+          "Owl"
         ],
         "fr": [
-          "Araignées",
-          "Abeilles",
-          "Hiboux"
+          "Araignée",
+          "Bourdon",
+          "Hibou"
         ],
         "ar": [
-          "عناكب",
-          "نحل",
-          "بوم"
+          "عنكبوت",
+          "نحلة",
+          "بومة"
         ],
         "es": [
-          "Arañas",
-          "Abejas",
-          "Búhos"
+          "Araña",
+          "Abejorro",
+          "Búho"
         ]
       },
       "note": {
-        "en": "Scientists aren't sure why: maybe the freeze-thaw cycles",
-        "fr": "Les scientifiques hésitent encore : peut-être le gel et dégel",
-        "ar": "العلما مش متأكدين ليش، يمكن من التلج اللي بيدوب وبيجمد",
-        "es": "Los científicos no saben bien por qué: quizá por las heladas y deshielos"
+        "en": "The first ones turned up in autumn 2025; scientists blame warmer weather",
+        "fr": "Les premiers sont apparus à l'automne 2025 ; on accuse le réchauffement",
+        "ar": "أول وحدات بينوا بخريف 2025، والعلما بيلوموا الطقس اللي عم يدفى",
+        "es": "Los primeros aparecieron en otoño de 2025; culpan al calentamiento"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Icelandic Institute of Natural History (ni.is) ; BBC or National Geographic on mosquito-free Iceland. Avoid snakes as a lie (also absent) ; [native review] بق vs ناموس"
+        "source": "[VERIFY] Icelandic Institute of Natural History (ni.is), Culiseta annulata first recorded in Kjós, October 2025 ; the house lies are all recorded in Iceland (spiders, bumblebees, short-eared owl)"
       }
     },
     {
@@ -2694,7 +2666,7 @@
       "id": "wf-037",
       "type": "fact_blank",
       "tier": "pass",
-      "difficulty": 2,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
         "original": "Archaeologists have found honey in ancient Egyptian tombs that was still ___",
@@ -3060,7 +3032,7 @@
       "id": "wf-042",
       "type": "fact_blank",
       "tier": "pass",
-      "difficulty": 3,
+      "difficulty": 1,
       "knownIn": [],
       "prompt": {
         "original": "A shrimp's heart is located in its ___",

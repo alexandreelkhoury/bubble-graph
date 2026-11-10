@@ -6,24 +6,24 @@
     <string name="game__likely__howto__1">Sale una carta: «¿Quién es más capaz de…?»</string>
     <string name="game__likely__howto__2">Vota en el móvil por quien encaje mejor. Sí, puedes votarte a ti.</string>
     <string name="game__likely__howto__3">¡Revelación! Mira a quién han señalado, y quién.</string>
-    <string name="game__likely__howto__3__anon">¡Revelación! Mira los porcentajes. Quién votó a quién queda en secreto.</string>
+    <string name="game__likely__howto__3__anon">¡Revelación! Mira los porcentajes. Quién ha votado a quién queda en secreto.</string>
     <string name="game__likely__howto__4">Coincide con los demás para sumar puntos, y llévate tu premio al final.</string>
     <string name="game__likely__howto__4__anon">Llévate tu premio al final. Voto secreto: esta noche no hay puntos.</string>
     <string name="game__likely__rules__vote__title">Votar</string>
     <string name="game__likely__rules__vote__body">Un voto por carta, para cualquiera, tú incluido. Puedes cambiarlo hasta que se acabe el tiempo.</string>
     <string name="game__likely__rules__points__title">Puntos</string>
-    <string name="game__likely__rules__points__body">+50 por cada jugador que eligió a la misma persona que tú (hasta +300 por carta). ¿Todos de acuerdo? +400 cada uno. ¿Te votaste y al menos otros 2 también? +100 extra. Voto secreto: sin puntos, solo premios.</string>
+    <string name="game__likely__rules__points__body">+50 por cada jugador que ha elegido a la misma persona que tú (hasta +300 por carta). ¿Todos de acuerdo? +400 cada uno. ¿Te has votado y al menos otros 2 también? +100 extra. Voto secreto: sin puntos, solo premios.</string>
     <string name="game__likely__rules__chaos__title">Caos</string>
     <string name="game__likely__rules__chaos__body">Si cada uno vota a alguien distinto, nadie gana la carta.</string>
     <string name="game__likely__rules__awards__title">Premios</string>
     <string name="game__likely__rules__awards__body">Cada carta tiene su premio. Al final, cada uno se lleva su premio estrella. Quien sume más puntos gana el Premio Telepatía.</string>
     <string name="game__likely__rules__secret__title">Voto secreto</string>
-    <string name="game__likely__rules__secret__body">Si el anfitrión desactivó «Mostrar quién votó», la tele solo enseña porcentajes, nunca quién votó a quién, y nadie suma puntos.</string>
+    <string name="game__likely__rules__secret__body">Si el anfitrión ha desactivado «Mostrar quién ha votado», la tele solo enseña porcentajes, nunca quién ha votado a quién, y nadie suma puntos. Con pocos jugadores, se puede adivinar.</string>
     <string name="game__likely__rules__spicy__title">Modo Picante (+18)</string>
     <string name="game__likely__rules__spicy__body">Solo para adultos, se activa desde la tele. Algunas cartas nombran a un jugador, y en esa carta no se le puede votar. El anfitrión puede saltar cualquier carta.</string>
     <string name="game__likely__coach__card">Lee la carta en la tele. ¿Quién te viene a la cabeza?</string>
     <string name="game__likely__coach__voting">Toca a quien encaje mejor. Nadie ve tu elección todavía.</string>
-    <string name="game__likely__coach__reveal">¿Elegiste como los demás? Eso suma puntos.</string>
+    <string name="game__likely__coach__reveal">Mira la tele: ¿a quién ha elegido el grupo?</string>
     <string name="game__likely__coach__awards">Todo el mundo se lleva un premio. Todo el mundo.</string>
     <string name="game__likely__coach__hold">Hacen falta 3 jugadores para seguir.</string>
     <string name="game__likely__pause__skip_card">Saltar carta</string>
@@ -36,7 +36,7 @@
     <string name="game__likely__settings__length__short">Corta · 8 cartas</string>
     <string name="game__likely__settings__length__normal">Normal · 12 cartas</string>
     <string name="game__likely__settings__length__long">Larga · 16 cartas</string>
-    <string name="game__likely__settings__show_voters">Mostrar quién votó</string>
+    <string name="game__likely__settings__show_voters">Mostrar quién ha votado</string>
     <string name="game__likely__settings__show_voters__hint">Desactivado: voto secreto, sin puntos</string>
     <string name="game__likely__setup__mode">Modo</string>
     <string name="game__likely__setup__mode__family">Familia</string>
@@ -70,9 +70,9 @@
         <item quantity="other">¡Tienes %1$d votos!</item>
     </plurals>
     <plurals name="game__likely__reveal__with_group">
-        <item quantity="one">¡%1$d persona pensó como tú! +%2$s</item>
-        <item quantity="many">¡%1$d personas pensaron como tú! +%2$s</item>
-        <item quantity="other">¡%1$d personas pensaron como tú! +%2$s</item>
+        <item quantity="one">¡%1$d persona ha pensado como tú! +%2$s</item>
+        <item quantity="many">¡%1$d personas han pensado como tú! +%2$s</item>
+        <item quantity="other">¡%1$d personas han pensado como tú! +%2$s</item>
     </plurals>
     <string name="game__likely__reveal__self_aware">¡Lucidez! +100</string>
     <string name="game__likely__reveal__unanimous_pts">¡Unanimidad! +400</string>
@@ -80,15 +80,15 @@
     <string name="game__likely__reveal__chaos">¡Caos total! Aquí nadie coincide en nada.</string>
     <string name="game__likely__reveal__again">¡¿Otra vez %1$s?!</string>
     <string name="game__likely__reveal__none">¿Ningún voto? ¡Qué timidez esta noche!</string>
-    <string name="game__likely__reveal__percent">El %1$s votó por %2$s</string>
-    <string name="game__likely__reveal__percent_you">El %1$s votó por ti</string>
+    <string name="game__likely__reveal__percent">El %1$s ha votado a %2$s</string>
+    <string name="game__likely__reveal__percent_you">El %1$s te ha votado a ti</string>
     <string name="game__likely__reveal__defend">¡%1$s, defiéndete!</string>
     <string name="game__likely__reveal__tie">¡Empate! El premio es para todos.</string>
     <string name="game__likely__reveal__you_top">¡El premio es tuyo!</string>
-    <string name="game__likely__reveal__no_agree">Nadie eligió como tú. ¡Qué valor!</string>
-    <string name="game__likely__reveal__voted_for">Votaste por %1$s</string>
-    <string name="game__likely__reveal__voted_self">Te votaste a ti. Respeto.</string>
-    <string name="game__likely__reveal__no_vote">Esta vez no votaste</string>
+    <string name="game__likely__reveal__no_agree">Nadie ha elegido como tú. ¡Qué valor!</string>
+    <string name="game__likely__reveal__voted_for">Has votado a %1$s</string>
+    <string name="game__likely__reveal__voted_self">Te has votado a ti. Respeto.</string>
+    <string name="game__likely__reveal__no_vote">Esta vez no has votado</string>
     <string name="game__likely__hold__waiting">Esperando jugadores… %1$d/3</string>
     <string name="game__likely__awards__title">La gala de los premios</string>
     <string name="game__likely__awards__mystery">Premio Misterio: nadie ha podido calarte.</string>
@@ -97,7 +97,7 @@
     <string name="game__likely__awards__star__title">Estrella de la noche</string>
     <string name="game__likely__awards__star__line">El guion de esta noche solo tenía un nombre.</string>
     <string name="game__likely__awards__self_aware__title">Premio Lucidez</string>
-    <string name="game__likely__awards__self_aware__line">Te declaraste culpable antes de que nadie te acusara.</string>
+    <string name="game__likely__awards__self_aware__line">Te has declarado culpable antes de que nadie te acusara.</string>
     <string name="game__likely__awards__mind_reader__title">Premio Telepatía</string>
     <string name="game__likely__awards__mind_reader__line">Has leído a esta sala como un libro abierto.</string>
     <string name="game__likely__awards__yours">Tu premio</string>
@@ -105,5 +105,5 @@
     <string name="game__likely__results__title">Y los premios son para…</string>
     <string name="game__likely__results__mind_reader">Ranking de telepatía</string>
     <string name="game__likely__results__awards_wall">El muro de los premios</string>
-    <string name="game__likely__error__stale_card">Esa carta ya pasó. ¡Vota en la nueva!</string>
+    <string name="game__likely__error__stale_card">Esa carta ya ha pasado. ¡Vota en la nueva!</string>
 </resources>

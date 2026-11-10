@@ -18,12 +18,12 @@
     <string name="game__likely__rules__awards__title">Awards</string>
     <string name="game__likely__rules__awards__body">Each card has an award. At the end, everyone gets their signature award. The most points wins the Mind Reader award.</string>
     <string name="game__likely__rules__secret__title">Secret votes</string>
-    <string name="game__likely__rules__secret__body">If the host turned off \"Show who voted\", the TV shows only percentages, never who voted for whom, and nobody scores points.</string>
+    <string name="game__likely__rules__secret__body">If the host turned off \"Show who voted\", the TV shows only percentages, never who voted for whom, and nobody scores points. With only a few players, people can still guess.</string>
     <string name="game__likely__rules__spicy__title">Spicy mode (18+)</string>
     <string name="game__likely__rules__spicy__body">Only for adults, switched on from the TV. Some cards name a player; that player can\'t be voted for on that card. The host can skip any card.</string>
     <string name="game__likely__coach__card">Read the card on the TV. Who comes to mind?</string>
     <string name="game__likely__coach__voting">Tap the person who fits best. Nobody sees your pick yet.</string>
-    <string name="game__likely__coach__reveal">Same pick as the others? That\'s points.</string>
+    <string name="game__likely__coach__reveal">Eyes on the TV: who did the room pick?</string>
     <string name="game__likely__coach__awards">Everyone leaves with an award. Everyone.</string>
     <string name="game__likely__coach__hold">We need 3 players to keep going.</string>
     <string name="game__likely__pause__skip_card">Skip card</string>

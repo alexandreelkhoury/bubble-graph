@@ -18,12 +18,12 @@
     <string name="game__likely__rules__awards__title">Prix</string>
     <string name="game__likely__rules__awards__body">Chaque carte a son prix. À la fin, chacun repart avec son prix signature. Le plus de points remporte le Prix télépathe.</string>
     <string name="game__likely__rules__secret__title">Votes secrets</string>
-    <string name="game__likely__rules__secret__body">Si l\'hôte a désactivé « Montrer les votes », la télé n\'affiche que des pourcentages, jamais qui a voté pour qui, et personne ne marque de points.</string>
+    <string name="game__likely__rules__secret__body">Si l\'hôte a désactivé « Montrer les votes », la télé n\'affiche que des pourcentages, jamais qui a voté pour qui, et personne ne marque de points. Avec peu de joueurs, on peut quand même deviner.</string>
     <string name="game__likely__rules__spicy__title">Mode Épicé (18+)</string>
     <string name="game__likely__rules__spicy__body">Réservé aux adultes, activé depuis la télé. Certaines cartes nomment une personne, pour qui on ne peut pas voter sur cette carte. L\'hôte peut passer n\'importe quelle carte.</string>
-    <string name="game__likely__coach__card">Lisez la carte à la télé. Un nom vous vient ?</string>
-    <string name="game__likely__coach__voting">Touchez la personne qui colle le mieux. Personne ne voit votre choix.</string>
-    <string name="game__likely__coach__reveal">Même choix que les autres ? Ce sont des points.</string>
+    <string name="game__likely__coach__card">Lis la carte à la télé. Un nom te vient ?</string>
+    <string name="game__likely__coach__voting">Touche la personne qui colle le mieux. Personne ne voit ton choix.</string>
+    <string name="game__likely__coach__reveal">Regarde la télé : sur qui tombe le choix ?</string>
     <string name="game__likely__coach__awards">Tout le monde repart avec un prix. Tout le monde.</string>
     <string name="game__likely__coach__hold">Il faut 3 joueurs pour continuer.</string>
     <string name="game__likely__pause__skip_card">Passer la carte</string>

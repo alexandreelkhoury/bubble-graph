@@ -35,8 +35,10 @@
       "id": "ltw-001",
       "type": "word_meaning",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "بلكي",
         "translit": "balki",
@@ -297,8 +299,10 @@
       "id": "ltw-008",
       "type": "word_meaning",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "طرمبة",
         "translit": "trombé",
@@ -484,8 +488,10 @@
       "id": "ltw-013",
       "type": "word_meaning",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "سكربينة",
         "translit": "skarbiné",
@@ -558,8 +564,10 @@
       "id": "ltw-015",
       "type": "word_meaning",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "قطرميز",
         "translit": "2atramiz",
@@ -596,7 +604,9 @@
       "type": "word_meaning",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "كندرجي",
         "translit": "kondorji",
@@ -633,7 +643,9 @@
       "type": "word_meaning",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "سنكري",
         "translit": "sankari",
@@ -669,8 +681,10 @@
       "id": "ltw-018",
       "type": "word_meaning",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "كومودينا",
         "translit": "komodina",
@@ -744,7 +758,9 @@
       "type": "word_meaning",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "برداية",
         "translit": "bardaye",
@@ -857,7 +873,9 @@
       "type": "word_meaning",
       "tier": "free",
       "difficulty": 1,
-      "knownIn": [],
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "أنتيكا",
         "translit": "antika",
@@ -1449,8 +1467,10 @@
       "id": "ltw-039",
       "type": "word_meaning",
       "tier": "free",
-      "difficulty": 2,
-      "knownIn": [],
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
       "prompt": {
         "original": "مزراب",
         "translit": "mezrab",
@@ -1513,6 +1533,511 @@
       },
       "note": {
         "ar": "كانوا يلبسوه رجال الضيعة مع الطربوش"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-041",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "مكاري",
+        "translit": "mkari",
+        "display": {}
+      },
+      "truth": {
+        "ar": "اللي بيأجر البغال والحمير للسفر"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيأجر بغال",
+          "صاحب البغال",
+          "بيأجر حمير"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بياع كعك عالبسكليت",
+          "حارس كروم الجبل",
+          "اللي بيصلح الطرابيش"
+        ]
+      },
+      "note": {
+        "ar": "قبل السيارات، المكاري كان ينقل الناس والغراض بين الضيع"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-042",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "بيطار",
+        "translit": "bitar",
+        "display": {}
+      },
+      "truth": {
+        "ar": "اللي بيركب حدوات للخيل"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيحدي الخيل",
+          "حداد الخيل",
+          "طبيب حيوانات",
+          "دكتور حيوانات"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بياع بطيخ عالطريق",
+          "اللي بيرش المبيدات",
+          "معلم دبكة بالضيعة"
+        ]
+      },
+      "note": {
+        "ar": "كان يركب الحدوات ويداوي الدواب، ومنها كلمة بيطري"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-043",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "قباني",
+        "translit": "2abbani",
+        "display": {}
+      },
+      "truth": {
+        "ar": "وزان السوق بالميزان الكبير"
+      },
+      "truthAlt": {
+        "ar": [
+          "بيوزن بالسوق",
+          "وزان",
+          "اللي بيوزن"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "بياع قباقيب",
+          "اللي بيقبض الإيجار",
+          "حارس بوابة المدينة"
+        ]
+      },
+      "note": {
+        "ar": "كان يوزن أكياس الحبوب بالقبان، ومنو إجت عيلة قباني"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-044",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "دلال",
+        "translit": "dallal",
+        "display": {}
+      },
+      "truth": {
+        "ar": "اللي بينادي عالبضاعة وبيبيعها بالمزاد"
+      },
+      "truthAlt": {
+        "ar": [
+          "بياع بالمزاد",
+          "سمسار",
+          "منادي"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "اللي بيدلع الولاد",
+          "مزينة العرايس",
+          "اللي بيصب القهوة بالدلة"
+        ]
+      },
+      "note": {
+        "ar": "كان يلف بالسوق وينادي عالسعر لحتى يبيع للي بيدفع أكتر"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-045",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "دمجانة",
+        "translit": "damajane",
+        "display": {}
+      },
+      "truth": {
+        "ar": "قنينة إزاز كبيرة ملفوفة بالقش"
+      },
+      "truthAlt": {
+        "ar": [
+          "قنينة كبيرة",
+          "قنينة مي كبيرة",
+          "جرة إزاز"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "شنطة سفر من جلد",
+          "طاولة زغيرة للزهر",
+          "طاسة الحمام النحاس"
+        ]
+      },
+      "note": {
+        "ar": "كانوا يحطوا فيها الزيت أو المي، والكلمة من الفرنسي dame-jeanne"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-046",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "محماسة",
+        "translit": "m7mase",
+        "display": {}
+      },
+      "truth": {
+        "ar": "مقلاية حديد لتحميص البن"
+      },
+      "truthAlt": {
+        "ar": [
+          "لتحميص القهوة",
+          "مقلاية البن",
+          "مقلاية حديد"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "مكنسة من سعف النخل",
+          "سلة البيض",
+          "مخدة العروس"
+        ]
+      },
+      "note": {
+        "ar": "كانوا يحمصوا فيها البن عالنار، والريحة توصل للحارة كلها"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-047",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "جاروشة",
+        "translit": "jarousheh",
+        "display": {}
+      },
+      "truth": {
+        "ar": "طاحونة حجر بالإيد للبرغل والعدس"
+      },
+      "truthAlt": {
+        "ar": [
+          "طاحونة حجر",
+          "طاحونة إيد",
+          "طاحونة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "منجل الحصاد",
+          "حبل البير",
+          "عربية الولاد الخشب"
+        ]
+      },
+      "note": {
+        "ar": "حجرين فوق بعض، وبتبرم الإيد لتجرش البرغل"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-048",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "مدحلة",
+        "translit": "ma7dale",
+        "display": {}
+      },
+      "truth": {
+        "ar": "حجر بيدحلوه عالسطح لينرص التراب"
+      },
+      "truthAlt": {
+        "ar": [
+          "محدلة السطح",
+          "حجر للسطح",
+          "حجر بيدحلوه"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "عربية الخضرة",
+          "مخدة الضيوف",
+          "لعبة دواليب للولاد"
+        ]
+      },
+      "note": {
+        "ar": "قبل الباطون، السطوح كانت تراب، والمدحلة تمنعها تدلف بالشتي"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-049",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "خابية",
+        "translit": "khabye",
+        "display": {}
+      },
+      "truth": {
+        "ar": "جرة فخار كبيرة للزيت والمي"
+      },
+      "truthAlt": {
+        "ar": [
+          "جرة كبيرة",
+          "جرة فخار",
+          "جرة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "خزانة بالحيط للحرامات",
+          "صندوق العروس",
+          "سقيفة للبقرة"
+        ]
+      },
+      "note": {
+        "ar": "كانوا يخبوا فيها المونة، والكلمة قريبة من خبى"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-050",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "كوارة",
+        "translit": "kwara",
+        "display": {}
+      },
+      "truth": {
+        "ar": "خزانة طين لتخزين القمح والطحين"
+      },
+      "truthAlt": {
+        "ar": [
+          "خزانة طين",
+          "مخزن قمح",
+          "مخزن طحين"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "قفص الحمام",
+          "غربال كبير",
+          "مهد الطفل الخشب"
+        ]
+      },
+      "note": {
+        "ar": "كانت ببيوت الضيعة، من طين وتبن، وإلها طاقة من تحت لتطلع الحبوب"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-051",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "سراج",
+        "translit": "siraj",
+        "display": {}
+      },
+      "truth": {
+        "ar": "قنديل زغير بالزيت"
+      },
+      "truthAlt": {
+        "ar": [
+          "قنديل",
+          "لمبة زيت",
+          "ضو زيت"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "سرج الحصان",
+          "صحن الحلو",
+          "ساعة الجيبة"
+        ]
+      },
+      "note": {
+        "ar": "قبل الكهربا، السراج كان يضوي البيت بشوية زيت وفتيلة"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-052",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "شنتيان",
+        "translit": "shintiyan",
+        "display": {}
+      },
+      "truth": {
+        "ar": "سروال عريض للنسوان"
+      },
+      "truthAlt": {
+        "ar": [
+          "سروال",
+          "بنطلون عريض",
+          "شروال للنسوان"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "شنطة الضيعة",
+          "طرحة العروس",
+          "كيس الطحين"
+        ]
+      },
+      "note": {
+        "ar": "من التركي، كانت النسوان تلبسو بالضيعة قبل الفساتين"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-053",
+      "type": "word_meaning",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "تخشيبة",
+        "translit": "takhshibe",
+        "display": {}
+      },
+      "truth": {
+        "ar": "أوضة أو كوخ من خشب"
+      },
+      "truthAlt": {
+        "ar": [
+          "كوخ خشب",
+          "براكية",
+          "أوضة خشب"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "دوا للسعلة",
+          "رقصة بالأعراس",
+          "حلو بالقطر"
+        ]
+      },
+      "note": {
+        "ar": "كانت تنعمل عالسطح أو بالكرم لأيام الصيفية"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Barthélemy, Dictionnaire arabe-français (dialectes de Syrie, 1935-69) ; Frayha, Dictionary of Non-Classical Vocables in the Spoken Arabic of Lebanon (1947) ; [native review]"
+      }
+    },
+    {
+      "id": "ltw-054",
+      "type": "word_meaning",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "حنطور",
+        "translit": "7antour",
+        "display": {}
+      },
+      "truth": {
+        "ar": "عربية بيجرها حصان للركاب"
+      },
+      "truthAlt": {
+        "ar": [
+          "عربية خيل",
+          "عربة حصان",
+          "كروسة"
+        ]
+      },
+      "houseLies": {
+        "ar": [
+          "حلو بالسمسم",
+          "صندوق الفرجة",
+          "سلة العنب"
+        ]
+      },
+      "note": {
+        "ar": "كان التاكسي قبل التاكسي، وبعدو بيمشي بشوارع القاهرة"
       },
       "review": {
         "status": "draft",

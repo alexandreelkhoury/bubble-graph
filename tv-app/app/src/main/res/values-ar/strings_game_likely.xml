@@ -18,12 +18,12 @@
     <string name="game__likely__rules__awards__title">الجوايز</string>
     <string name="game__likely__rules__awards__body">كل كرت إلو جايزة. بالآخر كل واحد بياخد جايزتو. واللي معو أكتر نقاط بياخد جايزة قراءة الأفكار.</string>
     <string name="game__likely__rules__secret__title">تصويت سرّي</string>
-    <string name="game__likely__rules__secret__body">إذا المضيف طفى «فرجي مين صوّت»، التلفزيون بيفرجي بس النسب، أبداً مين صوّت لمين، وما حدا بياخد نقاط.</string>
+    <string name="game__likely__rules__secret__body">إذا المضيف طفى «فرجي مين صوّت»، التلفزيون بيفرجي بس النسب، أبداً مين صوّت لمين، وما حدا بياخد نقاط. بس إذا كنتو قلال، فيكن تحزروا.</string>
     <string name="game__likely__rules__spicy__title">وضع «حرّاق» (+18)</string>
     <string name="game__likely__rules__spicy__body">بس للكبار، وبينفتح من التلفزيون. في كروت بتذكر اسم حدا منكن، وما فيكن تصوّتوا إلو عهالكرت. والمضيف فيه ينطّ أيّ كرت.</string>
     <string name="game__likely__coach__card">اقروا الكرت عالتلفزيون. مين خطر عبالكن؟</string>
     <string name="game__likely__coach__voting">كبسوا عالشخص يلّي لابقلو. ما حدا شايف اختياركن.</string>
-    <string name="game__likely__coach__reveal">اخترتوا متل الباقيين؟ هيدي نقاط.</string>
+    <string name="game__likely__coach__reveal">عيونكن عالتلفزيون: مين اختارت الجماعة؟</string>
     <string name="game__likely__coach__awards">كل واحد بيطلع بجايزة. كل واحد.</string>
     <string name="game__likely__coach__hold">لازم يكونوا 3 لنكمّل.</string>
     <string name="game__likely__pause__skip_card">نطّ الكرت</string>
@@ -88,7 +88,7 @@
     <string name="game__likely__reveal__none">ولا صوت؟ مستحيين الليلة!</string>
     <string name="game__likely__reveal__percent">%1$s صوّتوا لـ%2$s</string>
     <string name="game__likely__reveal__percent_you">%1$s صوّتوا إلك</string>
-    <string name="game__likely__reveal__defend">%1$s، دافع عن حالك!</string>
+    <string name="game__likely__reveal__defend">%1$s، الكلمة إلك!</string>
     <string name="game__likely__reveal__tie">تعادل! الجايزة للكل.</string>
     <string name="game__likely__reveal__you_top">الجايزة إلك!</string>
     <string name="game__likely__reveal__no_agree">ما حدا اختار متلك. جرأة!</string>
