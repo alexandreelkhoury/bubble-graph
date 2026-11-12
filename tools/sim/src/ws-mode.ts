@@ -259,14 +259,24 @@ interface Table {
 
 const member = (v: RoomView | null, id: string | null) => v?.room.members.find((m) => m.id === id);
 
+/**
+ * The phone join sequence on an open socket: hello as a player, wait for the spectator state, then join. Returns the
+ * spectator view's `me` problem (null when fine). Also used by qa-bots.ts.
+ */
+export async function joinAsPlayer(c: WsClient, name: string, color: string, locale: string): Promise<string | null> {
+  await c.send({ v: 2, t: "hello", role: "player" });
+  await c.waitFor(() => c.view !== null, "spectator state");
+  const problem = c.view?.kind !== "player" || c.view.me !== null ? `${c.label}: spectator state should have me:null` : null;
+  await c.send({ v: 2, t: "join", name, color, locale });
+  await c.waitFor(() => c.playerId !== null, "welcome");
+  return problem;
+}
+
 async function newPlayer(t: Table, i: number): Promise<WsClient> {
   const c = new WsClient(`p${i + 1}`, t.wsBase, t.code, t.onPlayerView);
   await c.open();
-  await c.send({ v: 2, t: "hello", role: "player" });
-  await c.waitFor(() => c.view !== null, "spectator state");
-  if (c.view?.kind !== "player" || c.view.me !== null) t.failures.push(`${c.label}: spectator state should have me:null`);
-  await c.send({ v: 2, t: "join", name: `Bot ${i + 1}`, color: (COLORS[i] ?? COLORS[0]).id, locale: "en" });
-  await c.waitFor(() => c.playerId !== null, "welcome");
+  const problem = await joinAsPlayer(c, `Bot ${i + 1}`, (COLORS[i] ?? COLORS[0]).id, "en");
+  if (problem) t.failures.push(problem);
   return c;
 }
 

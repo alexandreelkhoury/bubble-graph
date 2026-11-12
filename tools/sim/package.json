@@ -1,6 +1,6 @@
 {
   "name": "@jamaa/sim", "version": "0.0.0", "private": true, "type": "module",
-  "scripts": { "sim": "tsx src/main.ts", "typecheck": "tsc -p ." },
+  "scripts": { "sim": "tsx src/main.ts", "qa-bots": "tsx src/qa-bots.ts", "typecheck": "tsc -p ." },
   "dependencies": { "@jamaa/shared": "workspace:*", "@jamaa/content": "workspace:*", "ws": "8.20.0" },
   "devDependencies": { "@types/ws": "8.18.2" }
 }
