@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,7 +64,8 @@ fun Poster(card: GameCard, room: RoomPublic, showPass: Boolean, focused: Boolean
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     JamaaFocusSurface(
         onClick = onClick,
-        modifier = modifier.size(HubModel.POSTER_W_DP.dp, HubModel.POSTER_H_DP.dp),
+        // requiredSize: off-screen posters keep their size inside the clipped carousel (size() let them be squashed).
+        modifier = modifier.requiredSize(HubModel.POSTER_W_DP.dp, HubModel.POSTER_H_DP.dp),
         shape = JamaaShapes.tile,
         kind = FocusKind.Tile,
         container = world.deep,
