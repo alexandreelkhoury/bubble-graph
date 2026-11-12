@@ -3,8 +3,6 @@ package app.jamaa.tv.ui.screens
 import kotlin.math.sin
 import kotlin.math.cos
 import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.sign
 import androidx.compose.animation.SizeTransform
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -13,6 +11,12 @@ import app.jamaa.tv.ui.characters.Character
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import app.jamaa.tv.ui.components.wordmarkAspect
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.size
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Animatable
@@ -80,20 +84,49 @@ fun HomeScreen(status: HomeStatus, onRetry: () -> Unit, onOpenDebug: () -> Unit,
     val retry = remember { FocusRequester() }
     // Latched: the caller flipping its flag while this splash plays must not cut the entrance short.
     val entrance = remember { animate }
+    val reduce = JamaaTheme.reduceMotion
+    val still = reduce || !entrance
+    // The wordmark settles from 92 % while its letters fade in; the slogan rises 12 dp once the ring has landed.
+    val settle = remember { Animatable(if (still) 1f else 0f) }
+    val sloganIn = remember { Animatable(if (still) 1f else 0f) }
+    LaunchedEffect(still) {
+        if (still) return@LaunchedEffect
+        launch { settle.animateTo(1f, tween(700, easing = JamaaMotion.Decel)) }
+        delay(SPLASH_MS - 300L)
+        sloganIn.animateTo(1f, tween(JamaaMotion.Slow, easing = JamaaMotion.Decel))
+    }
+    val ring = remember { SplashGeometry.ring(SPLASH_WORDMARK_DP, SPLASH_WORDMARK_DP * wordmarkAspect(), SPLASH_CHAR_DP) }
     Box(Modifier.fillMaxSize()) {
         Column(
-            Modifier.align(Alignment.Center).padding(bottom = 24.dp),
+            Modifier.align(Alignment.Center).padding(bottom = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // HUB-01: the 12 characters roll in from the sides into a ring around the wordmark (≤ 1.2 s); the wordmark's
-            // letters fade in on the same first frame.
-            Box(Modifier.size(SPLASH_RING_W, SPLASH_RING_H), contentAlignment = Alignment.Center) {
-                SplashRing(entrance)
-                Wordmark(width = 260.dp, animate = entrance)
+            // HUB-01: the 12 characters spiral in from off screen and settle on an orbit that clears the wordmark's
+            // box (JAMAA and جماعة) by 8 dp, so none ever crosses a letter; the letters fade in on the same first frame.
+            Box(Modifier.size(ring.boxW.dp, ring.boxH.dp), contentAlignment = Alignment.Center) {
+                SplashRing(entrance, ring)
+                Wordmark(
+                    width = SPLASH_WORDMARK_DP.dp,
+                    animate = entrance,
+                    modifier = Modifier.graphicsLayer {
+                        val k = 0.92f + 0.08f * settle.value
+                        scaleX = k
+                        scaleY = k
+                    },
+                )
             }
-            Spacer(Modifier.height(20.dp))
-            Text(stringResource(R.string.brand__slogan), style = type.body, color = JamaaColors.TextSecondary, textAlign = TextAlign.Center)
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(8.dp))
+            Text(
+                stringResource(R.string.brand__slogan),
+                style = type.body,
+                color = JamaaColors.TextSecondary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.graphicsLayer {
+                    alpha = sloganIn.value
+                    translationY = (1f - sloganIn.value) * 12.dp.toPx()
+                },
+            )
+            Spacer(Modifier.height(16.dp))
             AnimatedContent(
                 targetState = status,
                 transitionSpec = { (fadeIn(tween(JamaaMotion.Base)) togetherWith fadeOut(tween(JamaaMotion.Fast))) using SizeTransform(clip = false) },
@@ -152,49 +185,103 @@ fun HomeScreen(status: HomeStatus, onRetry: () -> Unit, onOpenDebug: () -> Unit,
     if (status is HomeStatus.Failed) InitialFocus(retry, key = status)
 }
 
-private val SPLASH_RING_W = 470.dp
-private val SPLASH_RING_H = 190.dp
-private const val SPLASH_MS = 1_100
+private const val SPLASH_WORDMARK_DP = 200f
+private const val SPLASH_CHAR_DP = 36f
+private const val SPLASH_MS = 1_200
 
-/** Spinner row (64) or title + error line + Retry (≈ 148): one fixed slot, so the column above never re-centres. */
-private val STATUS_SLOT_H = 160.dp
+/** Spinner row (64) or title + error line + Retry (≈ 136): one fixed slot, so the column above never re-centres. */
+private val STATUS_SLOT_H = 140.dp
 
 /**
- * JAMAA-PLATFORM §3.2 HUB-01: each of the 12 characters slides in from beyond the side edge it sits on, along its own
- * row of the ellipse, to its slot around the wordmark, 30 ms apart, and smiles on arrival. They never cross the wordmark
- * or the slogan (the top and bottom ones travel above and below the wordmark). The progress is read in the layer only;
- * a character recomposes once, when it arrives. Calm motion (or [animate] false): placed at once.
+ * HUB-01 ring geometry (pure, JVM-tested): an ellipse around the wordmark's box such that a character's circle (its
+ * radius + [SplashGeometry.GAP] dp) centred anywhere on it — or on any larger copy of it, which is where the entrance
+ * spiral flies — never touches the box. The flattest such ellipse within [SplashGeometry.RX_MAX] keeps the column short.
+ */
+internal object SplashGeometry {
+    const val GAP = 8f
+    const val RX_MAX = 228f
+
+    class Ring(val rx: Float, val ry: Float, val charDp: Float) {
+        val boxW get() = 2 * (rx + charDp / 2)
+        val boxH get() = 2 * (ry + charDp / 2)
+
+        /** Slot [i] of [n] (clockwise from the top), relative to the centre. */
+        fun slot(i: Int, n: Int, k: Float = 1f, turn: Double = 0.0): Pair<Float, Float> {
+            val a = 2.0 * PI * i / n - PI / 2 + turn
+            return (cos(a) * rx * k).toFloat() to (sin(a) * ry * k).toFloat()
+        }
+    }
+
+    /** Does the ellipse (rx, ry) contain the box (± [a], ± [b]) grown by [c] (rounded corners)? */
+    private fun clears(rx: Float, ry: Float, a: Float, b: Float, c: Float): Boolean {
+        for (k in 0..24) {
+            val t = PI / 2 * k / 24
+            val x = a + c * cos(t)
+            val y = b + c * sin(t)
+            if ((x / rx) * (x / rx) + (y / ry) * (y / ry) > 1.0) return false
+        }
+        return true
+    }
+
+    fun ring(wordW: Float, wordH: Float, charDp: Float): Ring {
+        val a = wordW / 2
+        val b = wordH / 2
+        val c = charDp / 2 + GAP
+        var ry = b + c
+        while (true) {
+            var rx = a + c
+            while (rx <= RX_MAX) {
+                if (clears(rx, ry, a, b, c)) return Ring(rx, ry, charDp)
+                rx += 1f
+            }
+            ry += 1f
+        }
+    }
+}
+
+/**
+ * JAMAA-PLATFORM §3.2 HUB-01: the 12 characters spiral in from beyond the screen — each along its own arm, a third of a
+ * turn, 40 ms apart — and land on their slots of the orbit with a small squash, then smile. The spiral only ever runs on
+ * copies of the orbit at least as big as it, so no character crosses the wordmark or the slogan. Once landed they bob
+ * gently (±2 dp, each on its own phase; never toward the letters by more than the 8 dp gap). The progress is read in
+ * the layer only; a character recomposes once, when it arrives. Calm motion (or [animate] false): placed at once, still.
  */
 @Composable
-private fun SplashRing(animate: Boolean) {
+private fun SplashRing(animate: Boolean, ring: SplashGeometry.Ring) {
     val reduce = JamaaTheme.reduceMotion
     val still = reduce || !animate
     val progress = remember { Animatable(if (still) 1f else 0f) }
     LaunchedEffect(still) { if (!still) progress.animateTo(1f, tween(SPLASH_MS, easing = LinearEasing)) }
+    val bob = if (reduce) null else rememberInfiniteTransition(label = "splashBob").animateFloat(0f, 1f, infiniteRepeatable(tween(2_400, easing = LinearEasing)), label = "bob")
     val swatches = PlayerSwatch.entries.take(12)
     val n = swatches.size
     val density = LocalDensity.current
-    val rx = with(density) { (SPLASH_RING_W / 2 - 22.dp).toPx() }
-    val ry = with(density) { (SPLASH_RING_H / 2 - 22.dp).toPx() }
-    val far = with(density) { 900.dp.toPx() } // the start sits well outside the 960 dp canvas
-    val span = 1f - 30f * (n - 1) / SPLASH_MS
+    val px = density.density
+    val stepMs = 40f
+    val span = 1f - stepMs * (n - 1) / SPLASH_MS
     swatches.forEachIndexed { i, sw ->
-        val angle = 2.0 * PI * i / n - PI / 2
-        val stagger = 30f * i / SPLASH_MS
-        val slotX = (cos(angle) * rx).toFloat()
-        val slotY = (sin(angle) * ry).toFloat()
-        // The side it comes from: its own half of the ring (the top and bottom ones alternate).
-        val side = if (abs(slotX) < 1f) (if (i % 2 == 0) -1f else 1f) else sign(slotX)
+        val stagger = stepMs * i / SPLASH_MS
         val arrived by remember { derivedStateOf { progress.value >= stagger + span } }
         Character(
-            sw.id, 36.dp,
+            sw.id, SPLASH_CHAR_DP.dp,
             if (arrived) app.jamaa.tv.platform.Expression.HAPPY else app.jamaa.tv.platform.Expression.IDLE,
             Modifier.graphicsLayer {
                 val t = ((progress.value - stagger) / span).coerceIn(0f, 1f)
                 val e = JamaaMotion.Decel.transform(t)
-                translationX = slotX + (side * far - slotX) * (1f - e)
-                translationY = slotY
-                rotationZ = (1f - e) * 360f * -side
+                // In: 3.4 × the orbit and a third of a turn back, spiralling down to the slot (k never below 1).
+                val (x, y) = ring.slot(i, n, k = 1f + 2.4f * (1f - e), turn = -(1f - e) * PI * 0.66)
+                // The bob rides along the orbit's normal outward only (never toward the letters).
+                val wobble = bob?.let { (sin(2.0 * PI * (it.value + i / n.toFloat())).toFloat() + 1f) / 2f } ?: 0f
+                val (nx, ny) = ring.slot(i, n).let { (sx, sy) -> val l = kotlin.math.hypot(sx, sy).coerceAtLeast(1f); sx / l to sy / l }
+                translationX = (x + nx * wobble * 2f * (if (t >= 1f) 1f else 0f)) * px
+                translationY = (y + ny * wobble * 2f * (if (t >= 1f) 1f else 0f)) * px
+                rotationZ = (1f - e) * -300f
+                alpha = (t * 4f).coerceAtMost(1f)
+                // Landing squash: 1.12 → 1 over the last 15 % of its flight.
+                val land = ((t - 0.85f) / 0.15f).coerceIn(0f, 1f)
+                val squash = if (t >= 1f) 1f else 1f + 0.12f * sin(PI * land).toFloat()
+                scaleX = squash
+                scaleY = 2f - squash
             },
         )
     }

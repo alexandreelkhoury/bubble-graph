@@ -1,6 +1,13 @@
 package app.jamaa.tv.ui.hub
 
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -10,7 +17,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -65,7 +71,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -76,7 +81,6 @@ import androidx.tv.material3.Text
 import app.jamaa.tv.R
 import app.jamaa.tv.game.Names
 import app.jamaa.tv.games.GameCatalog
-import app.jamaa.tv.net.ServerUrls
 import app.jamaa.tv.platform.CharacterRules
 import app.jamaa.tv.platform.HubFocus
 import app.jamaa.tv.platform.HubModel
@@ -89,12 +93,10 @@ import app.jamaa.tv.protocol.MemberPublic
 import app.jamaa.tv.protocol.RoomPublic
 import app.jamaa.tv.ui.characters.Character
 import app.jamaa.tv.ui.components.AvatarState
-import app.jamaa.tv.ui.components.FitText
 import app.jamaa.tv.ui.components.InitialFocus
 import app.jamaa.tv.ui.components.JamaaFocusSurface
 import app.jamaa.tv.ui.components.JamaaIcons
-import app.jamaa.tv.ui.components.QrCode
-import app.jamaa.tv.ui.components.RoomCode
+import app.jamaa.tv.ui.components.JoinTicketCard
 import app.jamaa.tv.ui.components.Wordmark
 import app.jamaa.tv.ui.components.WordmarkVariant
 import app.jamaa.tv.ui.components.tryFocus
@@ -112,6 +114,7 @@ import app.jamaa.tv.ui.theme.JamaaTheme
 import app.jamaa.tv.ui.theme.WorldStage
 import app.jamaa.tv.ui.theme.worldOf
 import kotlinx.coroutines.delay
+import kotlin.math.sign
 import kotlinx.coroutines.launch
 
 /** What the hub screen asks the room / overlays to do. Local navigation stays inside the screen. */
@@ -125,19 +128,19 @@ class HubActions(
     val onMember: (MemberPublic) -> Unit,
 )
 
-// DESIGN-JAMAA §2.1 zones, in the safe area's coordinates (the screen sits inside the 48 / 27 dp safe-area padding).
-private val BAR_H = 44.dp // y 27–71
-private val ROW_X = 12.dp // x 60
-private val ROW_Y = 68.dp // y 95–289
-private val ROW_W = 608.dp // 4 × 140 + 3 × 16
-private val INFO_Y = 277.dp // y 304–392
-private val INFO_W = 620.dp // x 60–680
-private val INFO_H = 88.dp
-private val TICKET_X = 656.dp // x 704–912
-private val TICKET_Y = 56.dp // y 83–427
-private val TICKET_H = 344.dp
-private val STRIP_Y = 402.dp // y 429–513 (the toast lane y 399–431 above it is AppRoot's)
-private val STRIP_H = 84.dp
+// DESIGN-JAMAA §2.1 zones, in the safe area's coordinates (the screen sits inside the 48 / 27 dp safe-area padding):
+// the whole 864 × 486 is used, bar / posters + ticket / info / members, no dead band.
+private val BAR_H = HubModel.BAR_H_DP.dp // y 27–71
+private val ROW_X = HubModel.ROW_X_DP.dp // x 58
+private val ROW_Y = HubModel.ROW_Y_DP.dp // y 89–341
+private val ROW_W = (HubModel.VISIBLE_POSTERS * HubModel.POSTER_W_DP + (HubModel.VISIBLE_POSTERS - 1) * HubModel.POSTER_GAP_DP).dp // 618
+private val INFO_Y = HubModel.INFO_Y_DP.dp // y 357–423
+private val INFO_W = (HubModel.TICKET_X_DP - HubModel.ROW_X_DP - 20).dp // x 58–676
+private val INFO_H = HubModel.INFO_H_DP.dp
+private val TICKET_X = HubModel.TICKET_X_DP.dp // x 696–912
+private val TICKET_Y = HubModel.TICKET_Y_DP.dp // y 89–~421
+private val STRIP_Y = HubModel.STRIP_Y_DP.dp // y 429–513
+private val STRIP_H = HubModel.STRIP_H_DP.dp
 
 /**
  * HUB-02 (JAMAA-PLATFORM §3.2, DESIGN-JAMAA §2.1): top bar, all four game posters in one row with the 40 % world tint,
@@ -434,27 +437,63 @@ private fun ShutterSlot() {
 }
 
 /**
- * The focused game under the posters: title (world accent), tagline, and "Needs 3+ · 6–10 min · EN" with the room's
- * content language as one chip. Crossfades 120 ms when the game changes; "Needs" recolours in place (no crossfade).
+ * The focused game under the posters, two lines: the title (world accent) with the tagline after it, then
+ * "Needs 3+ · 6–10 min · EN" with the room's content language as one chip. When the game changes the block slides
+ * 8 dp in the move's direction and fades (180 ms in, 90 ms out; a plain fade in calm motion); "Needs" recolours in place.
  */
 @Composable
 private fun InfoBlock(card: GameCard, cards: List<GameCard>, present: Int, room: RoomPublic, modifier: Modifier) {
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    // 88 dp for three lines: Arabic keeps its taller lines but slightly tightened (34 / 28) to fit.
-    val titleStyle = if (rtl) JamaaTheme.type.title.copy(lineHeight = 34.sp) else JamaaTheme.type.title
-    val bodyStyle = if (rtl) JamaaTheme.type.body.copy(lineHeight = 28.sp) else JamaaTheme.type.body
-    Crossfade(card.id, modifier, animationSpec = tween(120), label = "info") { id ->
-        val c = cards.firstOrNull { it.id == id } ?: return@Crossfade
+    val reduce = JamaaTheme.reduceMotion
+    // 66 dp for two lines: Arabic keeps its taller lines, slightly tightened (36), to fit.
+    val titleStyle = if (rtl) JamaaTheme.type.title.copy(lineHeight = 36.sp) else JamaaTheme.type.title
+    val bodyStyle = if (rtl) JamaaTheme.type.body.copy(lineHeight = 30.sp) else JamaaTheme.type.body
+    val order = cards.map { it.id }
+    val slide = with(LocalDensity.current) { 8.dp.roundToPx() }
+    AnimatedContent(
+        card.id,
+        modifier,
+        transitionSpec = {
+            val dir = (order.indexOf(targetState) - order.indexOf(initialState)).sign.let { if (rtl) -it else it }
+            val enter = fadeIn(tween(180, delayMillis = 40, easing = JamaaMotion.Decel)) +
+                if (reduce) EnterTransition.None else slideInHorizontally(tween(220, easing = JamaaMotion.Decel)) { dir * slide }
+            (enter togetherWith fadeOut(tween(90))) using SizeTransform(clip = false)
+        },
+        contentAlignment = Alignment.TopStart,
+        label = "info",
+    ) { id ->
+        val c = cards.firstOrNull { it.id == id } ?: return@AnimatedContent
         val meta = GameCatalog.meta(id)
         Column {
-            Text(gameTitle(id), style = titleStyle, color = worldOf(meta?.world).accentText, maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis)
-            meta?.let { Text(keyText(it.taglineKey), style = bodyStyle, color = JamaaColors.TextSecondary, maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis) }
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(
+                    gameTitle(id),
+                    style = titleStyle,
+                    color = worldOf(meta?.world).accentText,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.alignByBaseline(),
+                )
+                meta?.let {
+                    Text(
+                        keyText(it.taglineKey),
+                        style = bodyStyle,
+                        color = JamaaColors.TextSecondary,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.alignByBaseline().weight(1f, fill = false).padding(start = 14.dp),
+                    )
+                }
+            }
             val m = HubModel.metaLine(c, present)
             val players = if (m.needs) stringResource(R.string.hub__needs_players, m.minPlayers) else stringResource(R.string.hub__players, m.minPlayers.toString(), m.maxPlayers.toString())
             val minutes = stringResource(R.string.hub__minutes, m.minMinutes.toString(), m.maxMinutes.toString())
             val caption = JamaaTheme.type.caption.copy(lineHeight = 1.2.em)
+            val needsColor by animateColorAsState(if (m.needs) JamaaColors.Danger else JamaaColors.TextSecondary, tween(240), label = "needs")
             Row(Modifier.height(HubChipHeight), verticalAlignment = Alignment.CenterVertically) {
-                Text(players, style = caption, color = if (m.needs) JamaaColors.Danger else JamaaColors.TextSecondary, maxLines = 1)
+                Text(players, style = caption, color = needsColor, maxLines = 1)
                 Text("  ·  $minutes  ·  ", style = caption, color = JamaaColors.TextSecondary, maxLines = 1)
                 // Only the room's current content language (web `tvlangchip`, filled).
                 HubChip(room.contentLocale.uppercase(), fill = JamaaColors.TextSecondary, ink = JamaaColors.Bg)
@@ -474,66 +513,14 @@ private fun CupChip(room: RoomPublic, modifier: Modifier, onClick: () -> Unit) {
 }
 
 /**
- * The join ticket (never focusable), 208 dp wide in both states: "Join on your phone", the QR on cream (a 192 dp panel;
- * compact draws it at 176 by scale, so nothing reflows), the code, the short URL (or the host alone when it cannot fit).
+ * The join ticket (never focusable): the shared [JoinTicketCard] — "Join on your phone", the QR tile filling the card's
+ * inner width (200 dp, pixel modules, 4-module quiet zone), the code as big as the width allows, then `host/CODE`.
+ * 216 dp wide in both states; compact scales the QR to 184 by layer (400 ms, `ease.standard`), so nothing reflows.
  */
 @Composable
 private fun JoinTicket(room: RoomPublic, state: TicketState, modifier: Modifier) {
-    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val qrScale by animateFloatAsState(HubModel.panelScale(state), tween(400, easing = JamaaMotion.Standard), label = "ticketQr")
-    val gap = if (rtl) 4.dp else 6.dp
-    Column(
-        modifier
-            .size(HubModel.TICKET_W_DP.dp, TICKET_H)
-            .background(JamaaColors.Surface, JamaaShapes.tile)
-            .padding(vertical = 10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(gap, Alignment.CenterVertically),
-    ) {
-        Text(
-            stringResource(R.string.hub__join_on_phone),
-            style = JamaaTheme.type.body,
-            color = JamaaColors.Text,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            softWrap = false,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 8.dp),
-        )
-        QrCode(
-            room.joinUrl,
-            Modifier.graphicsLayer {
-                scaleX = qrScale
-                scaleY = qrScale
-            },
-            panel = HubModel.PANEL_GATHERING_DP.dp,
-        )
-        RoomCode(room.roomCode, Modifier.fillMaxWidth().padding(horizontal = 8.dp).height(44.dp), centered = true, glow = true)
-        JoinUrl(room, Modifier.fillMaxWidth().padding(horizontal = 8.dp))
-    }
-}
-
-/** "play.jamaa…/KXQP" at 20 → 16 sp; the host alone when even 16 sp would not fit. Always LTR. */
-@Composable
-private fun JoinUrl(room: RoomPublic, modifier: Modifier) {
-    val host = ServerUrls.displayHost(room.joinUrl)
-    val full = host + "/" + room.roomCode
-    val style = JamaaTheme.type.caption.copy(lineHeight = 1.2.em, letterSpacing = 0.em)
-    val measurer = rememberTextMeasurer()
-    val density = LocalDensity.current
-    BoxWithConstraints(modifier) {
-        val minStyle = style.copy(fontSize = with(density) { 16.dp.toSp() })
-        val fits = remember(full, constraints.maxWidth) { measurer.measure(full, minStyle, softWrap = false, maxLines = 1).size.width <= constraints.maxWidth }
-        FitText(
-            if (fits) full else host,
-            style = style,
-            color = JamaaColors.TextMuted,
-            maxSize = 20.dp,
-            minSize = 16.dp,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-        )
-    }
+    JoinTicketCard(room.joinUrl, room.roomCode, stringResource(R.string.hub__join_on_phone), modifier, qrScale = qrScale)
 }
 
 /**

@@ -1,6 +1,8 @@
 package app.jamaa.tv.ui.hub
 
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -24,6 +26,10 @@ import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -65,8 +71,9 @@ import app.jamaa.tv.ui.theme.drawWorldProps
 import kotlinx.coroutines.flow.collectLatest
 
 /**
- * A game poster (DESIGN-JAMAA §2.2), 140 × 194 dp, focus scale 1.06 (FocusKind.Tile) with the platform ring: the world
- * stage and its props, three characters on a ground line at ~55 % and a one-line title lockup in a fixed 112 × 48 box.
+ * A game poster (DESIGN-JAMAA §2.2), 144 × 252 dp, focus scale 1.06 (FocusKind.Tile) with the platform ring, lifted
+ * 4 dp with its world's glow pooling under it (spring, no overshoot); the others dim 16 %. The world stage and its props,
+ * three characters on a ground line at ~55 % and a one-line title lockup in a fixed 128 × 56 box.
  * The tagline lives in the hub's info block, not on the poster. Never a lock on a game: a "Pass" chip only when billing
  * is on, the room has no Pass and the game has locked packs. No content in the room's language: dimmed to 50 % with a
  * "No {language} yet" chip (still focusable; OK opens the content-language dialog).
@@ -96,22 +103,47 @@ fun Poster(card: GameCard, room: RoomPublic, showPass: Boolean, focused: Boolean
             }
         }
     }
+    val reduce = JamaaTheme.reduceMotion
+    // Lift and glow follow focus on a critically damped spring (calm: no lift, the glow fades); the rest dim slightly.
+    val lift by animateFloatAsState(if (focused && !reduce) 1f else 0f, spring(dampingRatio = 1f, stiffness = Spring.StiffnessMediumLow), label = "posterLift")
+    val glow by animateFloatAsState(if (focused) 1f else 0f, tween(240, easing = JamaaMotion.Standard), label = "posterGlow")
+    val dim by animateFloatAsState(if (focused) 0f else 0.16f, tween(240, easing = JamaaMotion.Standard), label = "posterDim")
     JamaaFocusSurface(
         onClick = onClick,
         // requiredSize: a poster never gets squashed by its row (the scrolling fallback measures it unbounded).
-        modifier = modifier.requiredSize(HubModel.POSTER_W_DP.dp, HubModel.POSTER_H_DP.dp),
+        modifier = modifier
+            .requiredSize(HubModel.POSTER_W_DP.dp, HubModel.POSTER_H_DP.dp)
+            .drawBehind {
+                // The world's light pooling under the lifted poster (drawn before the surface, so behind it).
+                if (glow > 0f) {
+                    val c = Offset(size.width / 2f, size.height * 0.98f)
+                    val r = size.width * 0.75f
+                    scale(1.25f, 0.42f, c) {
+                        drawCircle(Brush.radialGradient(listOf(world.glow.copy(alpha = 0.55f * glow), Color.Transparent), c, r), r, c)
+                    }
+                }
+            }
+            .graphicsLayer { translationY = -HubModel.POSTER_LIFT_DP.dp.toPx() * lift },
         shape = JamaaShapes.tile,
         kind = FocusKind.Tile,
         container = world.deep,
         focusedContainer = world.deep,
     ) {
-        Box(Modifier.fillMaxSize().alpha(if (card.available) 1f else 0.5f)) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .alpha(if (card.available) 1f else 0.5f)
+                .drawWithContent {
+                    drawContent()
+                    if (dim > 0f) drawRect(JamaaColors.Bg.copy(alpha = dim))
+                },
+        ) {
             Canvas(Modifier.fillMaxSize()) {
                 drawRect(Brush.verticalGradient(listOf(world.stageTop, world.deep)))
                 drawRect(Brush.radialGradient(listOf(world.glow.copy(alpha = 0.28f), Color.Transparent), center = Offset(size.width / 2f, 0f), radius = size.width * 0.8f))
                 drawWorldProps(meta?.world, world, phase.floatValue, rtl)
             }
-            // The cast stands on a ground line at ~55 % of the height (bottom of the row at y 107 of 194).
+            // The cast stands on a ground line at ~55 % of the height (bottom of the row at y 140 of 252).
             Row(
                 Modifier.align(Alignment.TopCenter).offset(y = POSTER_GROUND - CAST_MIDDLE),
                 horizontalArrangement = Arrangement.spacedBy((-6).dp),
@@ -128,7 +160,7 @@ fun Poster(card: GameCard, room: RoomPublic, showPass: Boolean, focused: Boolean
                 }
             }
             // The title lockup: one line in a fixed box, so every poster's title sits at the same place.
-            Box(Modifier.align(Alignment.BottomCenter).padding(bottom = 10.dp).size(TITLE_W, TITLE_H), contentAlignment = Alignment.Center) {
+            Box(Modifier.align(Alignment.BottomCenter).padding(bottom = 14.dp).size(TITLE_W, TITLE_H), contentAlignment = Alignment.Center) {
                 if (card.id == GameIds.MISHANA) {
                     // §2.2 Title: the lockup in the content locale's script.
                     MishanaLogo(TITLE_W, Modifier.fitInside(), variant = if (room.contentLocale == "ar") MishanaLogoVariant.Arabic else MishanaLogoVariant.Latin)
@@ -137,7 +169,7 @@ fun Poster(card: GameCard, room: RoomPublic, showPass: Boolean, focused: Boolean
                         meta?.let { keyText(it.titleKey) } ?: card.id,
                         style = JamaaTheme.type.title.copy(lineHeight = 1.2.em),
                         color = world.accentText,
-                        maxSize = 26.dp,
+                        maxSize = 30.dp,
                         minSize = 20.dp,
                         textAlign = TextAlign.Center,
                     )
@@ -159,11 +191,11 @@ fun Poster(card: GameCard, room: RoomPublic, showPass: Boolean, focused: Boolean
     }
 }
 
-private val POSTER_GROUND = 107.dp
-private val CAST_SIDE = 40.dp
-private val CAST_MIDDLE = 46.dp
-private val TITLE_W = 112.dp
-private val TITLE_H = 48.dp
+private val POSTER_GROUND = 140.dp
+private val CAST_SIDE = 44.dp
+private val CAST_MIDDLE = 52.dp
+private val TITLE_W = 128.dp
+private val TITLE_H = 56.dp
 
 internal val HubChipHeight: Dp = 28.dp
 

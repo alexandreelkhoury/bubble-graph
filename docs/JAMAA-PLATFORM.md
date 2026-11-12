@@ -629,18 +629,18 @@ The room is created at launch, as today. Players can join from the hub onward, s
 
 Layout numbers below are DESIGN-JAMAA §2 (binding for geometry); this section is binding for behaviour and focus.
 
-**HUB-01 Splash.** The JAMAA wordmark builds in (≤ 1.2 s): the 12 characters roll in from the edges into a ring and form the mark. Then → HUB-02. The "creating / failed" states are as in TV-01.
+**HUB-01 Splash.** The JAMAA wordmark builds in (≤ 1.2 s): the 12 characters spiral in from off screen and settle on an orbit around the bilingual wordmark that never overlaps its letters (DESIGN-JAMAA §1.6). Then → HUB-02. The "creating / failed" states are as in TV-01.
 
 **HUB-02 Hub** (initial focus on the last played game, else `mishana`).
 - **Top bar:** JAMAA wordmark, "Tonight's cup" chip (the top 3 characters with their stars; hidden until the first game ends; OK → the cup sheet with full standings), **ⓘ**, the Pass button (only when `billing` is on and not `premium`), and Settings (sound, interface language, **Calm animations**, **Show how-to again**).
-- **Centre:** a row of **all four game posters, 140 × 194 dp, gap 16 dp** (DESIGN-JAMAA §2.1; no scrolling, so every game is visible). The focused poster scales to 1.06 and its **world** wakes up: the background crossfades 40 % toward that world's palette and an ambient loop starts (§3.4). Below the row, an info block for the focused game: the title, the tagline, "Needs 3+ · 10–20 min" and one chip for the room's content language. A "New" badge marks games added in the last 30 days (registry constant).
+- **Centre:** a row of **all four game posters, 144 × 252 dp, gap 14 dp** (DESIGN-JAMAA §2.1; no scrolling, so every game is visible). The focused poster scales to 1.06 and its **world** wakes up: the background crossfades 40 % toward that world's palette and an ambient loop starts (§3.4). Below the row, an info block for the focused game: the title, the tagline, "Needs 3+ · 10–20 min" and one chip for the room's content language. A "New" badge marks games added in the last 30 days (registry constant).
 - Games never show a lock. Packs may be locked; the game never is. Only `room.games` are shown (§2.5).
 - If a game has no content in `contentLocale`, the poster is dimmed and says "Not available in {language} yet". OK opens a small dialog to switch the content language.
 - **Join ticket** (side column on the end side, never focusable) with the QR, the code and "Join on your phone". QR sizing uses SPEC §9.9 (`module = floor(panel / (matrixWidth + 8))`, upper-case alphanumeric URL; the production URL is a version-3 code, 29 + 8 = 37):
-  - The ticket is **208 dp** wide in both states, so the posters never reflow.
-  - **Gathering state** — while fewer than 3 members, or during the first 60 s after launch: a **192 dp** cream panel (module 5 dp).
-  - **Compact state** — afterwards (and then for good): the same panel drawn at **176 dp** by scale (400 ms); it never goes smaller.
-- **Members strip** (bottom, full width): every member's character at 48 dp **with their name** (caption, ≤ 7 graphemes when ≤ 8 members, ≤ 5 graphemes at 9–12; 72 dp slots fit 12), VIP crown, then ghost seats up to max(3, the focused game's `minPlayers`) and "{n} more to play". On join: the DESIGN.md live-join pattern — a 2.5 s toast above the strip ("Karim is with us!") and a ring/glow on the newest member until the next join.
+  - The ticket is **216 dp** wide in both states, so the posters never reflow. It is the shared join panel (DESIGN-JAMAA §2.1): the QR tile fills the card's inner width, modules in whole pixels (`floor(tilePx / (matrixWidth + 8))`, quiet zone ≈ 4 modules), the code, then `host/CODE`.
+  - **Gathering state** — while fewer than 3 members, or during the first 60 s after launch: a **200 dp** tile (12 px modules on the version-2 production code at 1080p).
+  - **Compact state** — afterwards (and then for good): the same tile drawn at **184 dp** by scale (400 ms); it never goes smaller.
+- **Members strip** (bottom, full width): every member's character at 48 dp **with their name** (caption, ≤ 7 graphemes when ≤ 8 members, ≤ 5 graphemes at 9–12; 72 dp slots fit 12), VIP crown, then ghost seats up to max(3, the focused game's `minPlayers`) and "{n} more to play". On join: the DESIGN.md live-join pattern — a 2.5 s toast in the top bar after the wordmark ("Karim is with us!") and a ring/glow on the newest member until the next join.
 - **Focus graph** (RTL mirrors Left/Right):
   - Left/Right moves through posters (it wraps); every focus rest sends a debounced `HUB_FOCUS`.
   - Up from the carousel → **ⓘ** (always; it is the rules entry point). Left/Right inside the top bar; Down from the top bar → the focused poster.
@@ -1237,7 +1237,7 @@ A review of the five JAMAA docs (this file, GAME-BLUFF, GAME-LIKELY, GAME-TRIVIA
 | Mish Ana! adapter: engine host, connected flag, grace and kick cause (blocker) | §2.7: `syncHost`, `seedScores` and `extendFirstDeadline`, each with a unit test; system DISCONNECT for absent roster entries; `PLAYER_GONE {cause}` (§2.2); adapter tests |
 | Likely anonymous mode leaks through scores (blocker ×2) | Anonymous mode awards **no points** (§2.11, GAME-LIKELY §6, §8.1, §13); differential anonymity property in every phase |
 | No TV capability negotiation (blocker) | `hello.games` with view versions; `room.games` intersection; `GAME_UNAVAILABLE`; "Update JAMAA" card (§2.5) |
-| Hub QR too small to scan (blocker) | Gathering state ≥ 208 dp panel, compact state 176 dp, SPEC §9.9 module math; join chip on HUB-03 and on the intro (§3.2, DESIGN-JAMAA §2.1) |
+| Hub QR too small to scan (blocker) | Gathering state 200 dp tile filled by pixel modules, compact state 184 dp, SPEC §9.9 module math; join chip on HUB-03 and on the intro (§3.2, DESIGN-JAMAA §2.1) |
 | OK double-press starts games (blocker) | TV input rule (§3.10 E): choreography consumes OK, `INPUT_GUARD_MS = 400`, key-repeat never activates a button, Start gets initial focus only after the intro has been seen |
 | Bluff host hide leaks the truth (blocker) | Every option is hideable through the same UI; hiding the truth voids the prompt; kind-independence property (GAME-BLUFF §5.4) |
 | State size, deploy safety, DO limit (major) | Separate `history` key; 300 item ids per game; game-state `schema`; `settings.normalize`; SQLite-backed value limit; 16 KiB `state` test (§2.3, §2.6) |

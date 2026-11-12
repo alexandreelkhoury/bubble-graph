@@ -220,8 +220,8 @@ fun AppRoot(vm: GameViewModel) {
                     )
                 } else if (toasts.screenHosts == 0) {
                     when ((s as? TvUiState.InRoom)?.view?.room?.phase) {
-                        // HUB: above the members strip (the live-join toast); SETUP: bottom start, clear of Start.
-                        null, RoomPhase.HUB -> ToastHost(toasts, Modifier.align(Alignment.BottomCenter).padding(bottom = 92.dp), maxItems = 1)
+                        // HUB: in the top bar after the wordmark (the hub uses every other band); SETUP: bottom start, clear of Start.
+                        null, RoomPhase.HUB -> ToastHost(toasts, Modifier.align(Alignment.TopStart).padding(start = 132.dp, top = 4.dp), maxWidth = 300.dp, maxItems = 1, compact = true)
                         RoomPhase.SETUP -> ToastHost(toasts, Modifier.align(Alignment.BottomStart).padding(bottom = 8.dp))
                         // In game: one compact line in the top bar's band (never over the stage or the clue rule).
                         RoomPhase.PLAYING -> ToastHost(toasts, Modifier.align(Alignment.TopCenter).padding(top = 6.dp), maxWidth = 420.dp, maxItems = 1, compact = true)

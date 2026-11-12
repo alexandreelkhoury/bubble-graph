@@ -26,14 +26,33 @@ object HubModel {
     /** First 60 s after launch the ticket stays in the gathering state. */
     const val GATHERING_MS = 60_000L
     const val GATHERING_MIN_MEMBERS = 3
-    /** The QR panel's layout size (5 dp modules for the version-3 code); compact draws the same panel scaled to 176. */
-    const val PANEL_GATHERING_DP = 192
-    const val PANEL_COMPACT_DP = 176
-    /** The join ticket is 208 dp wide in both states (the poster row never reflows). */
-    const val TICKET_W_DP = 208
-    const val POSTER_W_DP = 140
-    const val POSTER_H_DP = 194
-    const val POSTER_GAP_DP = 16
+    /**
+     * The hub ticket's QR tile (DESIGN-JAMAA §2.1): it fills the 216 dp ticket's inner width (8 dp padding), modules in
+     * whole pixels; compact draws the same tile scaled to 184 (layer only, nothing reflows).
+     */
+    const val PANEL_GATHERING_DP = 200
+    const val PANEL_COMPACT_DP = 184
+    /** The join ticket is 216 dp wide in both states (the poster row never reflows). */
+    const val TICKET_W_DP = 216
+    const val POSTER_W_DP = 144
+    const val POSTER_H_DP = 252
+    const val POSTER_GAP_DP = 14
+    /** The focused poster rises this far (on top of its 1.06 scale), its world glow pooling under it. */
+    const val POSTER_LIFT_DP = 4
+
+    // Zones in the safe area's coordinates (864 × 486; DESIGN-JAMAA §2.1 adds 48 / 27 for screen coordinates).
+    const val BAR_H_DP = 44
+    const val ROW_X_DP = 10
+    const val ROW_Y_DP = 62
+    const val INFO_Y_DP = 330
+    const val INFO_H_DP = 66
+    const val TICKET_X_DP = 648
+    const val TICKET_Y_DP = 62
+    const val STRIP_Y_DP = 402
+    const val STRIP_H_DP = 84
+    const val SAFE_W_DP = 864
+    const val SAFE_H_DP = 486
+
     /** = JamaaFocus.TILE_SCALE (posters are FocusKind.Tile); the row's insets leave room for it and the ring. */
     const val POSTER_FOCUS_SCALE = 1.06f
     /** Slots (posters, "Update JAMAA", shutter) the plain row shows; more fall back to a scrolling row. */

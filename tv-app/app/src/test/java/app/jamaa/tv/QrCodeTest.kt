@@ -35,4 +35,27 @@ class QrCodeTest {
         assertEquals(7, QrMatrix.moduleDp(240, 25)) // version 2 → 240 / 33
         assertEquals("HTTPS://A.B/KXRT", QrMatrix.content("https://a.b/KXRT"))
     }
+
+    @Test
+    fun pixelModulesKeepTheQuietZoneNearFourModules() {
+        // The hub tile (200 dp) and the setup / intro / compact tiles at 2.0 density (1080p TV), then at 1.5 and 3.0.
+        for (density in listOf(2.0f, 1.5f, 3.0f)) {
+            // Small corner tiles are checked at the 1080p TV density only (at 1.5 their 4 px modules round coarsely).
+            for (dp in listOf(200, 184, 176, 152, 120, 104).filter { it >= 176 || density == 2.0f }) {
+                for (url in listOf("https://play.mishana.workers.dev/ZUZQ", "http://192.168.100.200:8787/KXRT", "https://play.some-long-account-name.workers.dev/KXRT")) {
+                    val w = QrMatrix.encode(QrMatrix.content(url)).width
+                    val px = (dp * density).toInt()
+                    val q = QrMatrix.quietModules(px, w)
+                    // Big tiles stay near 4 modules; the small corner tiles (5–6 px modules) may round up to ~6.
+                    assertTrue("$url @ $dp dp × $density: quiet $q", q >= 4f && q < (if (dp >= 176) 6f else 7f))
+                    assertTrue("$url @ $dp dp × $density: module ${QrMatrix.modulePx(px, w)} px", QrMatrix.modulePx(px, w) >= 3)
+                }
+            }
+        }
+        // The old whole-dp module left 7.5 modules of margin on the hub's version-2 code; pixel modules leave < 5.
+        // The hub's version-2 code on the 200 dp tile at 2.0: 12 px modules, 4.2 modules of quiet zone (whole-dp
+        // modules gave 5 dp = 10 px and 7.5 modules).
+        assertEquals(12, QrMatrix.modulePx(400, 25))
+        assertEquals(4.17f, QrMatrix.quietModules(400, 25), 0.01f)
+    }
 }

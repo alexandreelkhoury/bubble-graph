@@ -75,6 +75,10 @@ private fun wordmarkBox(variant: WordmarkVariant): FloatArray {
     return floatArrayOf(box[0] - WORDMARK_PAD, box[1] - WORDMARK_PAD, box[2] + WORDMARK_PAD, box[3] + WORDMARK_PAD)
 }
 
+/** Height / width of a wordmark variant's box (the splash fits its ring of characters around it). */
+fun wordmarkAspect(variant: WordmarkVariant = WordmarkVariant.Bilingual): Float =
+    wordmarkBox(variant).let { (it[3] - it[1]) / (it[2] - it[0]) }
+
 /**
  * The JAMAA wordmark, "the three heads" (DESIGN-JAMAA §1.3): the A's lose their crossbars and an amber dot (a head)
  * sits under each roof; «جماعة» carries the same dot as the dot of ج. Drawn from Cairo Black outlines (BrandPaths,

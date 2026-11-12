@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
@@ -278,7 +279,8 @@ fun PlayerTile(
         Box(
             modifier
                 .size(width, height)
-                .background(JamaaColors.Surface, shape)
+                // A gentle top light (elevated → surface) gives the tile depth without a shadow (cheap on TV GPUs).
+                .background(Brush.verticalGradient(listOf(JamaaColors.Elevated, JamaaColors.Surface)), shape)
                 .border(BorderStroke(1.dp, JamaaColors.Text.copy(alpha = 0.06f)), shape)
                 .semantics { contentDescription = a11y },
             content = content,

@@ -109,8 +109,7 @@ import app.jamaa.tv.ui.components.JamaaFocusSurface
 import app.jamaa.tv.ui.components.focusInk
 import app.jamaa.tv.ui.components.JamaaIcons
 import app.jamaa.tv.ui.components.LocalSounds
-import app.jamaa.tv.ui.components.QrCode
-import app.jamaa.tv.ui.components.RoomCode
+import app.jamaa.tv.ui.components.JoinPanel
 import app.jamaa.tv.ui.components.fullBleed
 import app.jamaa.tv.ui.components.tryFocus
 import app.jamaa.tv.ui.hub.gameTitle
@@ -549,8 +548,8 @@ private fun GhostCircle(size: Dp) {
 
 /**
  * The members on a small stage ([GangGrid] sizes them to the room left), a dashed ghost per missing player. While short
- * of players: one Accent line "Scan to join · {n} more" and a 176 dp QR; otherwise a compact QR (120 dp, 104 dp above
- * 8 members). The room code always sits at the bottom. [nudge] (OK on a dimmed Start) pulses the "{n} more" line.
+ * of players: one Accent line "Scan to join · {n} more" and the [JoinPanel] (176 dp QR, code, `host/CODE`); otherwise a
+ * compact panel (120 dp QR, 104 dp above 8 members, and the code). The room code always sits at the bottom. [nudge] (OK on a dimmed Start) pulses the "{n} more" line.
  */
 @Composable
 private fun PlayersPane(room: RoomPublic, meta: TvGameMeta, nudge: Int, modifier: Modifier) {
@@ -606,12 +605,12 @@ private fun PlayersPane(room: RoomPublic, meta: TvGameMeta, nudge: Int, modifier
                 modifier = Modifier.fillMaxWidth().graphicsLayer { scaleX = pulse.value; scaleY = pulse.value },
                 textAlign = TextAlign.Center,
             )
-            Spacer(Modifier.height(4.dp))
-            QrCode(room.joinUrl, panel = 176.dp)
+            Spacer(Modifier.height(6.dp))
+            // The shared join panel (DESIGN-JAMAA §2.1): QR tile, the code, `host/CODE` while people still need to join.
+            JoinPanel(room.joinUrl, room.roomCode, 176.dp, codeHeight = 48.dp)
         } else {
-            QrCode(room.joinUrl, panel = if (members.size > 8) 104.dp else 120.dp)
+            JoinPanel(room.joinUrl, room.roomCode, if (members.size > 8) 104.dp else 120.dp, codeHeight = 48.dp, address = false, glow = false)
         }
-        RoomCode(room.roomCode, Modifier.fillMaxWidth().height(52.dp), centered = true)
     }
 }
 
@@ -918,10 +917,7 @@ private fun IntroOverlay(meta: TvGameMeta, flow: IntroFlow, room: RoomPublic, on
             }
             val members = room.members.filter { !it.left }
             if (members.size < meta.minPlayers) {
-                Column(Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.CenterHorizontally) {
-                    QrCode(room.joinUrl, panel = 144.dp)
-                    RoomCode(room.roomCode, Modifier.width(144.dp).height(52.dp), centered = true)
-                }
+                JoinPanel(room.joinUrl, room.roomCode, 152.dp, Modifier.align(Alignment.TopEnd), codeHeight = 44.dp)
                 // Top-start, opposite the join chip: clear of the progress segments and the hint / "Got it" at the bottom.
                 Row(Modifier.align(Alignment.TopStart).padding(top = 28.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     for (m in members) Character(m.color, 48.dp, CharacterRules.expression(m, null, null))
