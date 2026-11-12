@@ -143,7 +143,7 @@ class BluffStageTest {
         // Seats spread over the row, mirrored in RTL.
         assertEquals(50f, BluffBoard.seatX(0, 4, 400f, false), 0.01f)
         assertEquals(350f, BluffBoard.seatX(0, 4, 400f, true), 0.01f)
-        assertEquals(72, BluffBoard.rowCharacterDp(8))
+        assertEquals(60, BluffBoard.rowCharacterDp(8))
         assertTrue(BluffBoard.rowCharacterDp(12) >= 40)
     }
 

@@ -4,7 +4,13 @@ import app.jamaa.tv.games.GameIds
 import app.jamaa.tv.games.GameView
 import app.jamaa.tv.protocol.GameEnvelope
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 // Bluff! (GAME-BLUFF §13.2, shared/src/games/bluff/protocol.ts) as the TV receives it. Field names and order are the
 // zod schemas'; BluffDecodeTest decodes every Bluff fixture of shared/fixtures/v2/games/bluff with the strict decoder,
@@ -15,26 +21,40 @@ import kotlinx.serialization.Serializable
 
 @Serializable enum class BluffPhase { ROUND_INTRO, WRITING, VOTING, REVEAL, SCORES, AWARDS, RESULTS, HOLD }
 
-@Serializable enum class RoundKind {
-    @SerialName("saying") SAYING,
-    @SerialName("fact") FACT,
-    @SerialName("noTruth") NO_TRUTH,
+@Serializable(with = RoundKindSerializer::class) enum class RoundKind(override val wire: String) : Wire {
+    SAYING("saying"), FACT("fact"), NO_TRUTH("noTruth"),
+    /** A round kind this TV build does not know yet (content evolves faster than the app): drawn generically. */
+    OTHER("other"),
 }
 
-@Serializable enum class BluffType {
-    @SerialName("proverb_end") PROVERB_END,
-    @SerialName("fact_blank") FACT_BLANK,
-    @SerialName("word_meaning") WORD_MEANING,
-    @SerialName("expression_meaning") EXPRESSION_MEANING,
-    @SerialName("no_truth") NO_TRUTH,
+@Serializable(with = BluffTypeSerializer::class) enum class BluffType(override val wire: String) : Wire {
+    PROVERB_END("proverb_end"), FACT_BLANK("fact_blank"), WORD_MEANING("word_meaning"), EXPRESSION_MEANING("expression_meaning"), NO_TRUTH("no_truth"),
+    /** A prompt kind added to the content after this build: the card shows the round's name instead of a type label. */
+    OTHER("other"),
 }
 
-@Serializable enum class LengthHint {
-    @SerialName("short") SHORT,
-    @SerialName("few") FEW,
-    @SerialName("sentence") SENTENCE,
-    @SerialName("free") FREE,
+@Serializable(with = LengthHintSerializer::class) enum class LengthHint(override val wire: String) : Wire {
+    SHORT("short"), FEW("few"), SENTENCE("sentence"), FREE("free"),
+    /** Unknown hint: no chip. */
+    OTHER("other"),
 }
+
+/** An enum whose JSON value is [wire]. */
+interface Wire { val wire: String }
+
+/**
+ * Decodes an enum by its wire value, and any value this build does not know to [fallback] (a new prompt kind or
+ * round kind from the content packs must never break the whole game frame on an older TV).
+ */
+abstract class LenientEnumSerializer<E>(name: String, private val values: Array<E>, private val fallback: E) : KSerializer<E> where E : Enum<E>, E : Wire {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("app.jamaa.tv.games.bluff.$name", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: E) = encoder.encodeString(value.wire)
+    override fun deserialize(decoder: Decoder): E = decoder.decodeString().let { s -> values.firstOrNull { it.wire == s } ?: fallback }
+}
+
+object RoundKindSerializer : LenientEnumSerializer<RoundKind>("RoundKind", RoundKind.entries.toTypedArray(), RoundKind.OTHER)
+object BluffTypeSerializer : LenientEnumSerializer<BluffType>("BluffType", BluffType.entries.toTypedArray(), BluffType.OTHER)
+object LengthHintSerializer : LenientEnumSerializer<LengthHint>("LengthHint", LengthHint.entries.toTypedArray(), LengthHint.OTHER)
 
 @Serializable enum class BluffNotice {
     @SerialName("tooFamous") TOO_FAMOUS,
