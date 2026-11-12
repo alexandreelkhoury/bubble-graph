@@ -37,14 +37,14 @@ Open the Local URL in Chrome. The port is fixed at **5174** (the debug TV app's 
 
 ## Run it on the TV (the real test)
 
-The debug build of the TV app has a second launcher, **JAMAA Proto**: a fullscreen, hardware-accelerated Android WebView (JavaScript on, D-pad forwarded to the page). This is the same rendering path a PixiJS wrapper app would use, so its numbers are the ones that count. It exists only in `tv-app/app/src/debug/` (manifest, `proto/ProtoActivity.kt`, banner): release builds never contain it.
+The debug build of the TV app contains **JAMAA Proto** (no launcher tile: Google TV shows one tile per package, and a second one hid the real app), started with adb: a fullscreen, hardware-accelerated Android WebView (JavaScript on, D-pad forwarded to the page). This is the same rendering path a PixiJS wrapper app would use, so its numbers are the ones that count. It exists only in `tv-app/app/src/debug/` (manifest, `proto/ProtoActivity.kt`, banner): release builds never contain it.
 
 1. Laptop and TV on the same Wi-Fi. Start the prototype: `pnpm --filter @jamaa/pixi-bluff-proto dev --host`, note the **Network** URL. (macOS firewall: allow incoming connections for `node`, or open TCP 5174.)
 2. Install the debug app (from `tv-app/`, with your laptop's IP, as in [docs/TV.md](../../docs/TV.md)):
    ```sh
    ./gradlew :app:installDebug -PserverUrl=http://<laptop-ip>:8787
    ```
-3. On the TV: Home → Apps → **JAMAA Proto** (the banner with the amber tape; if it is not in the row, it is under "See all apps"). The start screen shows a URL field prefilled with `http://<server host>:5174/`: the host of the debug server URL (`-PserverUrl`, or the override in the main app's Debug settings), and after the first run the last URL you opened.
+3. From the laptop: `adb shell am start -n app.jamaa.tv/.proto.ProtoActivity --es url http://<laptop-ip>:5174/` (without `--es url` it opens its start screen). The start screen shows a URL field prefilled with `http://<server host>:5174/`: the host of the debug server URL (`-PserverUrl`, or the override in the main app's Debug settings), and after the first run the last URL you opened.
    - URL right: press OK on **Open (WebGL, default)**.
    - URL wrong: move ↑ to the field, OK opens the TV keyboard, type it, press the keyboard's Go/Enter.
    - The other buttons open the same URL with `res=1`, `boil=0`, `renderer=canvas`, `renderer=webgpu` or the `auto=1` benchmark loop.
