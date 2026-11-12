@@ -33,7 +33,7 @@
   "game.trivia.pause.void": "Annuler cette question",
   "game.trivia.pause.voidConfirm": "Annuler cette question ? Ses points sont retirés à tout le monde.",
   "game.trivia.pause.voided": "Question annulée : scores rétablis.",
-  "game.trivia.pause.endGame": "Terminer la partie",
+  "game.trivia.pause.endGame": "Finir maintenant",
   "game.trivia.pause.endConfirm": "Terminer le quiz maintenant et passer au podium ?",
   "game.trivia.settings.quiz": "Quiz",
   "game.trivia.settings.length": "Durée",

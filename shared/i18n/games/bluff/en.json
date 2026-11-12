@@ -45,7 +45,7 @@
   "game.bluff.pause.hideOption": "Hide an answer",
   "game.bluff.pause.hideOptionPick": "Pick the answer to hide",
   "game.bluff.pause.next": "Next",
-  "game.bluff.pause.endGame": "End game",
+  "game.bluff.pause.endGame": "Finish now",
   "game.bluff.pause.endGameConfirm": "End the game now? Scores so far go to the awards.",
   "game.bluff.pause.skipsLeft": {
     "one": "{count} skip left",

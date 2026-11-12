@@ -106,6 +106,10 @@ import app.jamaa.tv.ui.components.ToastState
 import app.jamaa.tv.ui.components.focusFallback
 import app.jamaa.tv.ui.components.inertWhen
 import app.jamaa.tv.ui.components.tryFocus
+import app.jamaa.tv.ui.components.KeepWhileExiting
+import app.jamaa.tv.ui.components.KeyHint
+import app.jamaa.tv.ui.components.edgeFade
+import app.jamaa.tv.ui.components.focusInk
 import app.jamaa.tv.ui.theme.JamaaColors
 import app.jamaa.tv.ui.theme.JamaaMotion
 import app.jamaa.tv.ui.theme.JamaaShapes
@@ -280,10 +284,11 @@ fun SettingsScreen(
                             .heightIn(max = 316.dp)
                             .focusRestorer(firstRow)
                             // More rows below: the last one fades out ("more below") instead of being cut by the divider.
-                            .fadeBottom(rowsState.canScrollForward),
+                            .edgeFade(top = false, bottom = rowsState.canScrollForward, length = 24.dp),
                         state = rowsState,
-                        // Room for the focus scale + ring, which the list would otherwise clip.
-                        contentPadding = PaddingValues(horizontal = JamaaFocus.ListPadH, vertical = JamaaFocus.ListPadV),
+                        // Room for the focus scale + ring, which the list would otherwise clip; 28 dp below, so the focused
+                        // last row sits above the "more below" fade, never dimmed by it.
+                        contentPadding = PaddingValues(start = JamaaFocus.ListPadH, end = JamaaFocus.ListPadH, top = JamaaFocus.ListPadV, bottom = 28.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
                         itemsIndexed(rows, key = { _, r -> r.key }) { i, r ->
@@ -319,12 +324,10 @@ fun SettingsScreen(
             Spacer(Modifier.height(JamaaSpace.s3))
             // "Applies to the next game · Back: categories": Back is the way from the rows to the categories,
             // because Left/Right step values.
-            Text(
-                stringResource(R.string.settings__applies) + "  ·  " + stringResource(R.string.tv__back_to_categories),
-                style = type.caption,
-                color = JamaaColors.TextMuted,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-            )
+            Row(Modifier.align(Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.settings__applies) + "  ·  ", style = type.caption, color = JamaaColors.TextMuted)
+                KeyHint(stringResource(R.string.tv__back_to_categories))
+            }
         }
         // Initial focus once; when a sub-panel (or a connection overlay) closes, focus returns to the row that was
         // focused (e.g. Packs), else the current category — never back to Game (DESIGN §7).
@@ -335,16 +338,19 @@ fun SettingsScreen(
         )
     }
 
-    when (subPanel) {
-        SubPanel.Packs -> PacksPanel(
-            view, shown,
-            onToggle = { change(SettingsPatch(packIds = it)) },
-            onClose = { subPanel = SubPanel.None },
-            onOpenStore = onOpenStore,
-            billingUnavailable = billingUnavailable,
-        )
-        SubPanel.Difficulty -> DifficultyPanel(shown, onToggle = { change(SettingsPatch(difficulties = it)) }, onClose = { subPanel = SubPanel.None })
-        SubPanel.None -> Unit
+    // Kept composed through their exit (fade + scale to 0.96) instead of vanishing.
+    KeepWhileExiting(if (subPanel == SubPanel.None) emptyList() else listOf(subPanel)) { panel ->
+        when (panel) {
+            SubPanel.Packs -> PacksPanel(
+                view, shown,
+                onToggle = { change(SettingsPatch(packIds = it)) },
+                onClose = { subPanel = SubPanel.None },
+                onOpenStore = onOpenStore,
+                billingUnavailable = billingUnavailable,
+            )
+            SubPanel.Difficulty -> DifficultyPanel(shown, onToggle = { change(SettingsPatch(difficulties = it)) }, onClose = { subPanel = SubPanel.None })
+            SubPanel.None -> Unit
+        }
     }
 }
 
@@ -592,15 +598,15 @@ private fun SettingRow(model: RowModel, rtl: Boolean, flash: Boolean, onFocused:
             if (model.locked) {
                 LockBadge(model.value)
             } else if (open != null) {
-                Text(model.value, style = JamaaTheme.type.titleS, color = JamaaColors.Accent, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.widthIn(max = 260.dp))
+                Text(model.value, style = JamaaTheme.type.titleS, color = focusInk(JamaaColors.Accent), maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.widthIn(max = 260.dp))
                 Spacer(Modifier.width(JamaaSpace.s2))
-                Icon(JamaaIcons.ChevronForward, null, Modifier.size(22.dp), tint = JamaaColors.TextSecondary)
+                Icon(JamaaIcons.ChevronForward, null, Modifier.size(22.dp), tint = focusInk(JamaaColors.TextSecondary))
             } else {
-                val chevron = if (focused) JamaaColors.Text else JamaaColors.TextMuted.copy(alpha = 0.6f)
+                val chevron = if (focused) focusInk(JamaaColors.Text) else JamaaColors.TextMuted.copy(alpha = 0.6f)
                 // Pointer remotes: each chevron is its own (non-focusable) click target, so values can go down too.
                 Chevron(JamaaIcons.ChevronBack, chevron) { step?.invoke(-1) }
                 Box(Modifier.widthIn(min = 150.dp, max = 260.dp), contentAlignment = Alignment.Center) {
-                    Text(model.value, style = JamaaTheme.type.titleS, color = JamaaColors.Accent, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(model.value, style = JamaaTheme.type.titleS, color = focusInk(JamaaColors.Accent), maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 Chevron(JamaaIcons.ChevronForward, chevron) { step?.invoke(+1) }
             }
@@ -708,10 +714,10 @@ private fun LockedPackRow(title: String, pairs: String, hint: String, onClick: (
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(title, style = JamaaTheme.type.titleS, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(pairs, style = JamaaTheme.type.caption, color = JamaaColors.TextMuted, maxLines = 1)
+                Text(pairs, style = JamaaTheme.type.caption, color = focusInk(JamaaColors.TextMuted), maxLines = 1)
             }
             Spacer(Modifier.width(JamaaSpace.s2))
-            Text(hint, style = JamaaTheme.type.caption, color = JamaaColors.Accent, maxLines = 1)
+            Text(hint, style = JamaaTheme.type.caption, color = focusInk(JamaaColors.Accent), maxLines = 1)
         }
     }
 }
@@ -762,19 +768,7 @@ private fun ToggleRow(label: String, trailing: String?, checked: Boolean, onClic
             }
             Spacer(Modifier.width(14.dp))
             Text(label, style = JamaaTheme.type.titleS, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
-            if (trailing != null) Text(trailing, style = JamaaTheme.type.caption, color = JamaaColors.TextMuted)
+            if (trailing != null) Text(trailing, style = JamaaTheme.type.caption, color = focusInk(JamaaColors.TextMuted))
         }
     }
 }
-
-/** Fades the last 24 dp out (a mask, so whatever is behind shows through) while [on]. */
-private fun Modifier.fadeBottom(on: Boolean): Modifier = if (!on) this else this
-    .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-    .drawWithContent {
-        drawContent()
-        val fade = 24.dp.toPx()
-        drawRect(
-            Brush.verticalGradient(0f to Color.Black, 1f to Color.Transparent, startY = size.height - fade, endY = size.height),
-            blendMode = BlendMode.DstIn,
-        )
-    }

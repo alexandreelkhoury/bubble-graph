@@ -60,7 +60,8 @@ fun jamaaTypeScale(arabic: Boolean): JamaaTypeScale {
         titleS = style(22, if (arabic) 34 else 28, FontWeight.SemiBold),
         body = style(20, if (arabic) 34 else 28, FontWeight.SemiBold),
         label = style(20, if (arabic) 30 else 24, FontWeight.Bold, t(0.02)),
-        caption = style(20, if (arabic) 30 else 26, FontWeight.SemiBold, t(0.01)),
+        // Regular, not SemiBold: captions are the quiet line (hints, help, metadata) under bold labels; 20 sp floor.
+        caption = style(20, if (arabic) 30 else 26, FontWeight.Normal, t(0.01)),
         timer = style(40, 44, FontWeight.Black),
     )
 }

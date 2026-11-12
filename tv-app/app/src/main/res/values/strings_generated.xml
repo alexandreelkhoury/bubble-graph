@@ -151,9 +151,9 @@
     <string name="tv__pause_note">Timers keep running</string>
     <string name="tv__resume">Back to game</string>
     <string name="tv__players">Players…</string>
-    <string name="tv__end_game">End game</string>
-    <string name="tv__end_game_confirm">End this game?</string>
-    <string name="tv__end_game_body">Nobody scores. You\'ll go back to the lobby.</string>
+    <string name="tv__end_game">Quit game</string>
+    <string name="tv__end_game_confirm">Quit this game?</string>
+    <string name="tv__end_game_body">Nobody scores. Back to the lobby.</string>
     <string name="tv__keep_playing">Keep playing</string>
     <string name="tv__exit_app">Exit</string>
     <string name="tv__sound_on">Sound: On</string>
@@ -441,6 +441,8 @@
     <string name="settings__sound">Sound</string>
     <string name="settings__interface_language">Interface language</string>
     <string name="hint__back_menu">Back: menu &amp; rules</string>
+    <string name="hint__scroll">Scroll</string>
+    <string name="hint__back_close">Back: close</string>
     <string name="error__unknown_game">This game doesn\'t exist.</string>
     <string name="error__game_disabled">This game isn\'t available yet.</string>
     <string name="error__game_unavailable">This game has no content in this language yet.</string>

@@ -154,8 +154,8 @@
     <string name="tv__pause_note">Les minuteurs continuent</string>
     <string name="tv__resume">Retour au jeu</string>
     <string name="tv__players">Joueurs…</string>
-    <string name="tv__end_game">Terminer la partie</string>
-    <string name="tv__end_game_confirm">Terminer cette partie ?</string>
+    <string name="tv__end_game">Quitter la partie</string>
+    <string name="tv__end_game_confirm">Quitter cette partie ?</string>
     <string name="tv__end_game_body">Personne ne marque. Retour au salon.</string>
     <string name="tv__keep_playing">Continuer</string>
     <string name="tv__exit_app">Quitter</string>
@@ -457,6 +457,8 @@
     <string name="settings__sound">Son</string>
     <string name="settings__interface_language">Langue de l’interface</string>
     <string name="hint__back_menu">Retour : menu et règles</string>
+    <string name="hint__scroll">Défiler</string>
+    <string name="hint__back_close">Retour : fermer</string>
     <string name="error__unknown_game">Ce jeu n’existe pas.</string>
     <string name="error__game_disabled">Ce jeu n’est pas encore disponible.</string>
     <string name="error__game_unavailable">Ce jeu n’a pas encore de contenu dans cette langue.</string>

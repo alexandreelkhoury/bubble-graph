@@ -33,7 +33,7 @@
   "game.trivia.pause.void": "Anular esta pregunta",
   "game.trivia.pause.voidConfirm": "¿Anular esta pregunta? Se quitan sus puntos a todos.",
   "game.trivia.pause.voided": "Pregunta anulada: puntuaciones restauradas.",
-  "game.trivia.pause.endGame": "Terminar partida",
+  "game.trivia.pause.endGame": "Terminar ya",
   "game.trivia.pause.endConfirm": "¿Terminar el quiz ya e ir al podio?",
   "game.trivia.settings.quiz": "Quiz",
   "game.trivia.settings.length": "Duración",

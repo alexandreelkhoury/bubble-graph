@@ -3,7 +3,11 @@ package app.jamaa.tv.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -26,7 +30,8 @@ import app.jamaa.tv.ui.theme.JamaaShapes
 
 /**
  * The one TV focus style (DESIGN §4.6): scale 1.06 (tiles) / 1.04 (buttons, pills) / 1.02 (full-width rows), a 3 dp cream ring 2 dp
- * outside the shape, a primary glow at 45 %, and the fill lifting to `elevated`.
+ * outside the shape, a primary glow at 45 %, and the fill lifting to `elevated` (rows and secondary buttons: to cream
+ * with ink content and a primary ring).
  * tv-material 1.1.0 draws `Border.inset` outward (`inset(-border.inset)`), so +2 dp = "offset 2 dp outside".
  */
 object JamaaFocus {
@@ -60,9 +65,25 @@ object JamaaFocus {
 enum class FocusKind { Tile, Button, Row }
 
 /**
+ * True inside a [JamaaFocusSurface] that is focused on the cream [JamaaColors.FocusFill]: explicitly coloured text and
+ * icons in it (an accent value, a muted caption, a chevron) switch to ink through [focusInk].
+ */
+val LocalOnFocusFill = compositionLocalOf { false }
+
+/** [rest] normally; ink (muted shades at 72 %) while the enclosing surface is focused on the cream fill. */
+@Composable
+fun focusInk(rest: Color): Color = when {
+    !LocalOnFocusFill.current -> rest
+    rest == JamaaColors.TextMuted || rest == JamaaColors.TextSecondary -> JamaaColors.Ink.copy(alpha = 0.72f)
+    else -> JamaaColors.Ink
+}
+
+/**
  * Every focusable surface of the TV app (DESIGN §13.2: one focus helper, so the style cannot drift): tv-material
  * Surface with the [JamaaFocus] scale, ring and glow, and the same colours focused AND pressed (tv-material would
  * otherwise derive the pressed content colour from the theme and dim labels on every OK).
+ * Rows focus onto the cream [JamaaColors.FocusFill] with ink content (DESIGN §4.6 amendment); on cream the 3 dp ring
+ * turns primary so it still reads. [scale] overrides the [kind]'s focus scale.
  * A pointer (air-mouse) hovering it moves focus onto it, so the ring follows the cursor and OK acts on what is under it.
  */
 @Composable
@@ -73,18 +94,30 @@ fun JamaaFocusSurface(
     kind: FocusKind = FocusKind.Button,
     container: Color = JamaaColors.Surface,
     content: Color = JamaaColors.Text,
-    focusedContainer: Color = JamaaColors.Elevated,
-    focusedContent: Color = JamaaColors.Text,
+    focusedContainer: Color = if (kind == FocusKind.Row) JamaaColors.FocusFill else JamaaColors.Elevated,
+    focusedContent: Color = if (kind == FocusKind.Row) JamaaColors.Ink else JamaaColors.Text,
     rest: Border = Border.None,
     onLongClick: (() -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
+    scale: Float? = null,
+    ring: Color = if (focusedContainer == JamaaColors.FocusFill) JamaaColors.Primary else JamaaColors.Focus,
     body: @Composable BoxScope.() -> Unit,
 ) {
     val sounds = LocalSounds.current
+    val source = interactionSource ?: remember { MutableInteractionSource() }
+    val focused by source.collectIsFocusedAsState()
+    // Tick only on a real focus GAIN (the D-pad moved it, TvSounds checks that): a re-attach or a requester that
+    // re-focuses the node already focused stays silent.
+    val wasFocused = remember { booleanArrayOf(false) }
     Surface(
         onClick = onClick,
         onLongClick = onLongClick,
-        modifier = modifier.onFocusChanged { if (it.isFocused) sounds.focusMoved() }.focusOnHover(),
+        modifier = modifier
+            .onFocusChanged {
+                if (it.isFocused && !wasFocused[0]) sounds.focusMoved()
+                wasFocused[0] = it.isFocused
+            }
+            .focusOnHover(),
         shape = ClickableSurfaceDefaults.shape(shape = shape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = container,
@@ -94,16 +127,20 @@ fun JamaaFocusSurface(
             pressedContainerColor = focusedContainer,
             pressedContentColor = focusedContent,
         ),
-        scale = when (kind) {
-            FocusKind.Tile -> JamaaFocus.tileScale()
-            FocusKind.Button -> JamaaFocus.buttonScale()
-            FocusKind.Row -> JamaaFocus.rowScale()
+        scale = when {
+            scale != null -> ClickableSurfaceDefaults.scale(focusedScale = scale, pressedScale = 1f + (scale - 1f) / 3f)
+            kind == FocusKind.Tile -> JamaaFocus.tileScale()
+            kind == FocusKind.Button -> JamaaFocus.buttonScale()
+            else -> JamaaFocus.rowScale()
         },
-        border = JamaaFocus.border(shape, rest = rest),
+        border = JamaaFocus.border(shape, ring = ring, rest = rest),
         glow = JamaaFocus.glow(),
-        interactionSource = interactionSource ?: remember { MutableInteractionSource() },
-        content = body,
-    )
+        interactionSource = source,
+    ) {
+        CompositionLocalProvider(LocalOnFocusFill provides (focused && focusedContainer == JamaaColors.FocusFill)) {
+            body()
+        }
+    }
 }
 
 /** Pointer hover → focus (the D-pad path is unaffected). The requester targets the focusable that follows it. */

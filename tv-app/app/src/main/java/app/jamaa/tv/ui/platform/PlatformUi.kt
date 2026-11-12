@@ -1,7 +1,24 @@
 package app.jamaa.tv.ui.platform
 
 import android.view.KeyEvent as AndroidKeyEvent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.tv.material3.Border
+import app.jamaa.tv.ui.theme.JamaaMotion
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -55,11 +72,38 @@ fun keyText(key: String): String = stringResource(messageKeyRes(key))
 @Composable
 fun keyText(key: String, vararg args: Any): String = stringResource(messageKeyRes(key), *args)
 
-/** A round icon button of the top bars (ⓘ 40 dp, gear). */
+/**
+ * A round icon button of the top bars (ⓘ 40 dp, gear). At rest an `elevated` disc with a 1 dp outline (it reads as a
+ * button, not a glyph on the background); focused it grows into a pill that names itself ([label]).
+ */
 @Composable
 fun RoundIconButton(icon: ImageVector, label: String, onClick: () -> Unit, modifier: Modifier = Modifier, size: Dp = 40.dp) {
-    JamaaFocusSurface(onClick = onClick, modifier = modifier.size(size), shape = JamaaShapes.pill) {
-        Icon(icon, contentDescription = label, modifier = Modifier.align(Alignment.Center).size(size * 0.55f))
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    val shape = JamaaShapes.pill
+    val glyph = size * 0.55f
+    JamaaFocusSurface(
+        onClick = onClick,
+        modifier = modifier.height(size).widthIn(min = size),
+        shape = shape,
+        container = JamaaColors.Elevated,
+        rest = Border(BorderStroke(1.dp, JamaaColors.Outline), shape = shape),
+        interactionSource = interaction,
+    ) {
+        Row(
+            Modifier.align(Alignment.Center).padding(horizontal = (size - glyph) / 2),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(icon, contentDescription = label, modifier = Modifier.size(glyph))
+            AnimatedVisibility(
+                visible = focused,
+                enter = fadeIn(tween(JamaaMotion.Fast)) + expandHorizontally(tween(JamaaMotion.Fast, easing = JamaaMotion.Standard)),
+                exit = fadeOut(tween(JamaaMotion.Fast)) + shrinkHorizontally(tween(JamaaMotion.Fast, easing = JamaaMotion.Standard)),
+            ) {
+                // The icon already carries the label for TalkBack.
+                Text(label, style = JamaaTheme.type.label, maxLines = 1, modifier = Modifier.padding(start = 8.dp, end = 4.dp).clearAndSetSemantics { })
+            }
+        }
     }
 }
 
@@ -67,11 +111,12 @@ fun RoundIconButton(icon: ImageVector, label: String, onClick: () -> Unit, modif
 @Composable
 fun Chip(text: String, modifier: Modifier = Modifier, fill: Color = JamaaColors.Surface, ink: Color = JamaaColors.TextSecondary, icon: ImageVector? = null) {
     Row(
-        modifier.background(fill, JamaaShapes.pill).padding(horizontal = 10.dp, vertical = 2.dp),
+        // One chip size everywhere: 28 dp high (taller only for Arabic's 30 sp caption line), 18 dp icon.
+        modifier.background(fill, JamaaShapes.pill).defaultMinSize(minHeight = 28.dp).padding(horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        if (icon != null) Icon(icon, contentDescription = null, tint = ink, modifier = Modifier.size(14.dp))
+        if (icon != null) Icon(icon, contentDescription = null, tint = ink, modifier = Modifier.size(18.dp))
         Text(text, style = JamaaTheme.type.caption, color = ink, maxLines = 1)
     }
 }

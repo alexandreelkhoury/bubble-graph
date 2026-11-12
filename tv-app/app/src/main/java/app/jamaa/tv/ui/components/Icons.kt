@@ -89,11 +89,23 @@ object JamaaIcons {
         "M3 12h18",
         "M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9s1.3-6.4 3.8-9z",
     )
+    /** A toothed cog (Lucide `settings` outline, ISC): the old hub-and-spokes glyph read as a sun at 10 ft. */
     val Settings = stroke(
         "settings",
-        "M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z",
-        "M12 2.5v3M12 18.5v3M3.8 7.3l2.6 1.5M17.6 15.2l2.6 1.5M3.8 16.7l2.6-1.5M17.6 8.8l2.6-1.5",
+        "M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38" +
+            "a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38" +
+            "a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18" +
+            "a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08" +
+            "a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08" +
+            "a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z",
+        "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
     )
+
+    /** Calm animations (Lucide `wind`). */
+    val Calm = stroke("calm", "M12.8 19.6A2 2 0 1 0 14 16H2", "M17.5 8a2.5 2.5 0 1 1 2 4H2", "M9.8 4.4A2 2 0 1 1 11 8H2")
+
+    /** The Up/Down keys of a scroll hint. */
+    val UpDown = stroke("up-down", "M7.5 9L12 4.5 16.5 9", "M7.5 15l4.5 4.5 4.5-4.5", width = 2.4f)
     val Play = ImageVector.Builder("play", 24.dp, 24.dp, 24f, 24f).apply {
         addPath(pathData = addPathNodes("M8 5.2v13.6a1 1 0 0 0 1.5.9l10.6-6.8a1 1 0 0 0 0-1.7L9.5 4.3A1 1 0 0 0 8 5.2z"), fill = SolidColor(Color.White))
     }.build()

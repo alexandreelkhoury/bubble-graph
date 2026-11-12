@@ -28,7 +28,7 @@
     <string name="game__likely__coach__hold">Hacen falta 3 jugadores para seguir.</string>
     <string name="game__likely__pause__skip_card">Saltar carta</string>
     <string name="game__likely__pause__next">Siguiente</string>
-    <string name="game__likely__pause__end_game">Terminar partida</string>
+    <string name="game__likely__pause__end_game">Terminar ya</string>
     <string name="game__likely__pause__end_game__confirm">¿Terminar la partida e ir directo a los premios?</string>
     <string name="game__likely__host__skip">Saltar esta carta</string>
     <string name="game__likely__settings__packs">Mazos de cartas</string>

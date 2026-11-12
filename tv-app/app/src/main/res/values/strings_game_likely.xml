@@ -28,7 +28,7 @@
     <string name="game__likely__coach__hold">We need 3 players to keep going.</string>
     <string name="game__likely__pause__skip_card">Skip card</string>
     <string name="game__likely__pause__next">Next</string>
-    <string name="game__likely__pause__end_game">End game</string>
+    <string name="game__likely__pause__end_game">Finish now</string>
     <string name="game__likely__pause__end_game__confirm">End the game and go straight to the awards?</string>
     <string name="game__likely__host__skip">Skip this card</string>
     <string name="game__likely__settings__packs">Card packs</string>

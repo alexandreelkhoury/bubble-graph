@@ -31,7 +31,10 @@ enum class ButtonKind { Primary, Secondary, Danger, Ghost }
 /**
  * Pill button (DESIGN §9 `JamaaButton`). [dimmed] renders the "disabled but explains why" state while staying
  * focusable and clickable, e.g. Start with too few players (OK then shakes). A dimmed Primary drops its pink for a
- * neutral surface + secondary text (10:1 rest, 14.6:1 focused) instead of alpha, which measured 1.35:1 / 2.59:1.
+ * neutral surface + secondary text (10:1 rest, 14.6:1 focused) instead of alpha, which measured 1.35:1 / 2.59:1; any
+ * other dimmed kind keeps a faded fill but a `textMuted` label (no alpha on text).
+ * Secondary and Ghost focus onto the cream fill with ink content and a primary ring (DESIGN §4.6 amendment).
+ * [FocusKind.Row] buttons are list rows: 28 dp icon, content start-aligned at 20 dp (or [contentAlign]).
  */
 @Composable
 fun JamaaButton(
@@ -45,13 +48,14 @@ fun JamaaButton(
     onLongClick: (() -> Unit)? = null,
     reserveText: String? = null,
     focusKind: FocusKind = FocusKind.Button,
+    contentAlign: Alignment.Horizontal? = null,
 ) {
     val shape = JamaaFocus.Pill
     var (container, content, focusedContainer, focusedContent) = when (kind) {
         ButtonKind.Primary -> Quad(JamaaColors.Primary, JamaaColors.OnPrimary, JamaaColors.Primary, JamaaColors.OnPrimary)
-        ButtonKind.Secondary -> Quad(JamaaColors.Surface, JamaaColors.Text, JamaaColors.Elevated, JamaaColors.Text)
+        ButtonKind.Secondary -> Quad(JamaaColors.Surface, JamaaColors.Text, JamaaColors.FocusFill, JamaaColors.Ink)
         ButtonKind.Danger -> Quad(Color.Transparent, JamaaColors.Danger, JamaaColors.Danger, JamaaColors.Ink)
-        ButtonKind.Ghost -> Quad(JamaaColors.Surface.copy(alpha = 0.6f), JamaaColors.Text.copy(alpha = 0.6f), JamaaColors.Elevated, JamaaColors.Text)
+        ButtonKind.Ghost -> Quad(JamaaColors.Surface.copy(alpha = 0.6f), JamaaColors.TextSecondary, JamaaColors.FocusFill, JamaaColors.Ink)
     }
     val rest = when (kind) {
         ButtonKind.Danger -> Border(BorderStroke(2.dp, JamaaColors.Danger), shape = shape)
@@ -66,13 +70,15 @@ fun JamaaButton(
         focusedContainer = JamaaColors.Elevated
         focusedContent = JamaaColors.Text
     } else if (dimmed) {
-        // Dim the fill and label only: the focus ring and glow stay at full strength (the first focus users see on
-        // the lobby is this dimmed Start, so it must be the clearest one).
+        // Dim the fill only; the label goes `textMuted` (alpha on text measured under 3:1). Focused, a dimmed button
+        // lifts to `elevated` + `textSecondary`, not cream: the ring and glow stay at full strength.
         container = container.copy(alpha = container.alpha * DIM_REST)
-        content = content.copy(alpha = content.alpha * DIM_REST)
-        focusedContainer = focusedContainer.copy(alpha = focusedContainer.alpha * DIM_FOCUSED)
-        focusedContent = focusedContent.copy(alpha = focusedContent.alpha * DIM_FOCUSED)
+        content = JamaaColors.TextMuted
+        focusedContainer = JamaaColors.Elevated
+        focusedContent = JamaaColors.TextSecondary
     }
+    val isRow = focusKind == FocusKind.Row
+    val align = contentAlign ?: if (isRow) Alignment.Start else Alignment.CenterHorizontally
     JamaaFocusSurface(
         onClick = onClick,
         onLongClick = onLongClick,
@@ -87,25 +93,32 @@ fun JamaaButton(
     ) {
         Row(
             modifier = Modifier
-                .align(Alignment.Center)
-                .padding(horizontal = 24.dp, vertical = 10.dp),
+                .align(
+                    when (align) {
+                        Alignment.Start -> Alignment.CenterStart
+                        Alignment.End -> Alignment.CenterEnd
+                        else -> Alignment.Center
+                    },
+                )
+                .padding(horizontal = if (isRow) 20.dp else 24.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = if (align == Alignment.CenterHorizontally) Arrangement.Center else Arrangement.Start,
         ) {
             if (icon != null) {
-                Icon(icon, contentDescription = null, modifier = Modifier.size(24.dp))
-                Spacer(Modifier.width(10.dp))
+                Icon(icon, contentDescription = null, modifier = Modifier.size(if (isRow) 28.dp else 24.dp))
+                Spacer(Modifier.width(if (isRow) 14.dp else 10.dp))
             }
             // [reserveText]: an invisible second label that reserves the size of the longer one, so a label swap
             // (e.g. the action pill arming to `tv.pressAgain`) never resizes the button or reflows its row.
-            Box(contentAlignment = Alignment.Center) {
+            val textAlign = if (align == Alignment.CenterHorizontally) TextAlign.Center else TextAlign.Start
+            Box(contentAlignment = if (align == Alignment.CenterHorizontally) Alignment.Center else Alignment.CenterStart) {
                 if (reserveText != null) {
                     Text(
                         text = reserveText,
                         style = JamaaTheme.type.label,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Center,
+                        textAlign = textAlign,
                         modifier = Modifier.alpha(0f).clearAndSetSemantics { },
                     )
                 }
@@ -114,7 +127,7 @@ fun JamaaButton(
                     style = JamaaTheme.type.label,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center,
+                    textAlign = textAlign,
                 )
             }
         }
@@ -124,4 +137,3 @@ fun JamaaButton(
 private data class Quad(val a: Color, val b: Color, val c: Color, val d: Color)
 
 private const val DIM_REST = 0.4f
-private const val DIM_FOCUSED = 0.7f

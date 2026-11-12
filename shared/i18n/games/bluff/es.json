@@ -45,7 +45,7 @@
   "game.bluff.pause.hideOption": "Ocultar una respuesta",
   "game.bluff.pause.hideOptionPick": "Elige la respuesta que quieres ocultar",
   "game.bluff.pause.next": "Siguiente",
-  "game.bluff.pause.endGame": "Terminar la partida",
+  "game.bluff.pause.endGame": "Terminar ya",
   "game.bluff.pause.endGameConfirm": "¿Terminar la partida ya? Los puntos actuales pasan a los premios.",
   "game.bluff.pause.skipsLeft": {
     "one": "Queda {count} salto",
