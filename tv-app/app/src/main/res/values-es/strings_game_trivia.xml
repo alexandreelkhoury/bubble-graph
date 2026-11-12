@@ -112,6 +112,8 @@
     <string name="game__trivia__diff__3">Difícil</string>
     <string name="game__trivia__hold__title">Esperando jugadores…</string>
     <string name="game__trivia__hold__body">El quiz sigue en cuanto vuelva alguien.</string>
+    <string name="game__trivia__tv__answered">%1$d/%2$s respondieron</string>
+    <string name="game__trivia__tv__get_ready">Ya vienen las respuestas…</string>
     <string name="game__trivia__results__title">El podio</string>
     <string name="game__trivia__results__fastest_count">Pulgar relámpago: %1$s ×%2$d</string>
     <string name="game__trivia__results__longest_streak">Racha más larga: %1$s (%2$d)</string>

@@ -108,6 +108,8 @@
     <string name="game__trivia__diff__3">Hard</string>
     <string name="game__trivia__hold__title">Waiting for players…</string>
     <string name="game__trivia__hold__body">The quiz picks up as soon as someone is back.</string>
+    <string name="game__trivia__tv__answered">%1$d/%2$s answered</string>
+    <string name="game__trivia__tv__get_ready">Answers in a moment…</string>
     <string name="game__trivia__results__title">The podium</string>
     <string name="game__trivia__results__fastest_count">Lightning thumb: %1$s ×%2$d</string>
     <string name="game__trivia__results__longest_streak">Longest streak: %1$s (%2$d)</string>

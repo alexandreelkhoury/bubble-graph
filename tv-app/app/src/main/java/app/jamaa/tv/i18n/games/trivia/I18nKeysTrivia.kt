@@ -96,6 +96,8 @@ object I18nKeysTrivia {
         "game.trivia.diff.3" to R.string.game__trivia__diff__3,
         "game.trivia.hold.title" to R.string.game__trivia__hold__title,
         "game.trivia.hold.body" to R.string.game__trivia__hold__body,
+        "game.trivia.tv.answered" to R.string.game__trivia__tv__answered,
+        "game.trivia.tv.getReady" to R.string.game__trivia__tv__get_ready,
         "game.trivia.results.title" to R.string.game__trivia__results__title,
         "game.trivia.results.fastestCount" to R.string.game__trivia__results__fastest_count,
         "game.trivia.results.longestStreak" to R.string.game__trivia__results__longest_streak,

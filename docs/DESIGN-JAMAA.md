@@ -556,18 +556,18 @@ Phases and timings are GAME-TRIVIA's: QUIZ_INTRO 4 s, READ 3–7 s (never skippa
 
 **Quiz intro (TR-TV-01, 4 s after the entrance).** The quiz card **scales in from the marquee** (0.6 → 1, `motion.slow`, `ease.decel`; the shelf is no longer on screen, so there is no FLIP), the ★ stars fill one by one (150 ms each, `ease.overshoot`, `cup_star` pitched up per star), domain and topic chips stagger in (60 ms), studio lights sweep on. Characters stand behind their podiums (`podium` prop).
 
-**Read (TR-TV-02a).** The question card slams in (GAME-TRIVIA §12.2); a thin "get ready" bar fills over the READ duration under the card; the four answer slots show as empty outlined ghosts so the layout does not jump at ANSWER.
+**Read (TR-TV-02a).** The question card slams in (GAME-TRIVIA §12.2); a thin "get ready" bar fills over the READ duration under the card; the four answer slots show as dashed ghosts in their token colours (faint shape and letter) so the layout does not jump at ANSWER. Slots and text fitting: GAME-TRIVIA §8.3 "TV layout".
 
 **Answer (TR-TV-02).**
 - Tiles flip in A→D (90 ms apart, Y axis, `motion.base`); fixed 2 × 2 positions, never mirrored.
 - **Countdown:** the ring of 20 bulbs (GAME-TRIVIA) drawn around the question card's edge, `world.glow` bulbs going dark one by one clockwise, computed from `deadline.at − serverNow`; the last 5 s pulse amber with `sfx.tick` (pulse removed in reduced motion; the bulbs still go dark).
-- **Answer lock:** the player's podium light ring turns on (white, 200 ms) and the character shows `done` with a buzzer tap. No colour, no shape, no position: nothing hints at the choice (GAME-TRIVIA §8.1). Sound `answer_lock` (= `trivia.buzz`), ≥ 120 ms apart.
+- **Answer lock:** the player's podium light strip turns white, a check badge pops on the name plate's corner and the character hops once (`motion.slow`, decel; reduced motion: no hop), and shows `done` with a buzzer tap; the header's "✓ n/N answered" bumps (the pill turns jade when everyone has answered). No colour, no shape, no position: nothing hints at the choice (GAME-TRIVIA §8.1). Sound `answer_lock` (= `trivia.buzz`), ≥ 120 ms apart.
 
 **Reveal (TR-TV-03, 6 s).** GAME-TRIVIA §12.3 is the script (Time! stamp → wrong tiles out → jump-on → fastest finger → points fly → tower re-sort → optional fact). Added detail:
 
 | Step | Detail | Sound |
 |---|---|---|
-| Wrong out | Wrong tiles dim to 30 % and scale 0.96 (`ease.accel`); the correct tile gets a `success` glow and its shape spins 360° (500 ms, `ease.standard`) | `quiz_correct` (= `trivia.correct`) |
+| Wrong out | Wrong tiles dim to 30 % and scale 0.96 (`ease.accel`); the correct tile grows to 1.03, gets a `success` glow and a check badge, and its shape spins 360° (500 ms, `ease.standard`); when characters will jump on, each tile's text glides (no re-layout) into the tile's top 48 dp band | `quiz_correct` (= `trivia.correct`) |
 | Jump-on | Characters (40 dp) hop from podiums onto their tile along 100 dp arcs (`spring.hop`, 60 ms stagger), stacking 2 rows of 6; on the correct tile `cheer`, on wrong tiles `sad` (or `shock` if they were the only one wrong); no-answer characters stay on the podium with `away`-style "z" | `bluff.tok`-style landing tick (`coin_land` at rate 0.8) |
 | Fastest finger | A bolt (the bolt glyph of DESIGN §5.2, lemon) strikes the fastest correct character with a 100 ms white flash on the character only (never full screen) | `trivia.zap` |
 | Points fly | One coin per correct player from their character to their row in the leaderboard tower (§5.1), with a "+870"-style label; on the final, the label shows "×2" in amber; a streak ≥ 3 adds a short flame trail to the coin | `coin_fly`, `coin_land` |
@@ -969,7 +969,7 @@ Tiles 3 per row at 360 px (≥ 96 × 112 px each), own tile dashed with "Me".
 ```
 `☼ ≈ ❦ ✦` stand for the drawn sun, wave, leaf and spark shapes. The A–D grid is never mirrored in RTL (GAME-TRIVIA §8.2); the leaderboard tower moves to the start side in RTL.
 
-**TR-TV-03 Reveal**
+**TR-TV-03 Reveal** (native TV: the verdict "ϟ Lightning thumb: Sami" sits in the header's end slot above the tower, and "Did you know?" flips down over the question card; GAME-TRIVIA §8.3)
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │ QUESTION 3 / 10 · Music                                   ┌──────────┐ │
@@ -986,7 +986,7 @@ Tiles 3 per row at 360 px (≥ 96 × 112 px each), own tile dashed with "Me".
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
-**TR-TV-04 Leaderboard** (6 s): full-screen bars, odometers, crown, "+3 places!" arrow on the biggest climber. **TR-TV-05 Final intro**: "FINAL QUESTION, double points" + ×2 stamp. **TR-TV-06 Results**: podium 3-2-1, stats cards, then the HUB-05 cup panel.
+**TR-TV-04 Leaderboard** (6 s): a big title band (its end side left to the back hint), then one row per player sharing the rest of the height (up to 84 dp each, centred), bars, odometers, crown (the leader's lane lights amber), "+3 places!" chip on the biggest climber in a slot every row reserves. **TR-TV-05 Final intro**: "FINAL QUESTION, double points" + ×2 stamp. **TR-TV-06 Results**: podium 3-2-1 (full names under the steps) with the HUB-05 cup panel beside it, a strip of stats cards, then the three buttons.
 
 ```
 TR-PH-01 Answer pad                    TR-PH-03 Reveal
