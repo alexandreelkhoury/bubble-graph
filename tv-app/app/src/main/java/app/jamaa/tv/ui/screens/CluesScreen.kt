@@ -8,6 +8,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +34,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -40,9 +44,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -53,22 +64,24 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.jamaa.tv.R
 import app.jamaa.tv.game.Names
+import app.jamaa.tv.games.mishana.MishanaLayout
+import app.jamaa.tv.games.mishana.MishanaTv
+import app.jamaa.tv.games.mishana.MishanaView
+import app.jamaa.tv.games.mishana.player
+import app.jamaa.tv.games.mishana.ui.StageText
+import app.jamaa.tv.games.mishana.ui.fitHeight
+import app.jamaa.tv.games.mishana.ui.noClip
+import app.jamaa.tv.games.mishana.ui.stagedEnter
 import app.jamaa.tv.i18n.isolate
 import app.jamaa.tv.i18n.nameList
 import app.jamaa.tv.protocol.ClientIntent
-import app.jamaa.tv.games.mishana.MishanaTv
 import app.jamaa.tv.protocol.Phase
 import app.jamaa.tv.protocol.PublicPlayer
-import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.protocol.VoteOutcome
-import app.jamaa.tv.games.mishana.player
 import app.jamaa.tv.ui.components.ActionPill
 import app.jamaa.tv.ui.components.Avatar
 import app.jamaa.tv.ui.components.AvatarState
@@ -76,18 +89,19 @@ import app.jamaa.tv.ui.components.InGameScaffold
 import app.jamaa.tv.ui.components.InitialFocus
 import app.jamaa.tv.ui.components.JamaaIcons
 import app.jamaa.tv.ui.components.Stamp
-import app.jamaa.tv.ui.components.TimerSeconds
 import app.jamaa.tv.ui.components.TimerRing
+import app.jamaa.tv.ui.components.TimerSeconds
 import app.jamaa.tv.ui.components.fullBleed
-import app.jamaa.tv.ui.theme.JamaaShapes
 import app.jamaa.tv.ui.theme.JamaaColors
 import app.jamaa.tv.ui.theme.JamaaMotion
+import app.jamaa.tv.ui.theme.JamaaShapes
 import app.jamaa.tv.ui.theme.JamaaTheme
 import kotlinx.coroutines.delay
 
 /**
- * TV-05 Clues (CLUES and TIE_BREAK). Spotlight on the current speaker with the timer ring wrapped around the avatar,
- * the speaking-order strip at the bottom, and the `clues.skipTurn` pill. TIE_BREAK first plays the TV-08 overlay.
+ * TV-05 Clues (CLUES and TIE_BREAK), broadcast layout (v4): the speaker's avatar in the depleting timer ring on the
+ * start side under a stage light, the words on the end side (rule or tie line, "Maya, your clue!", the sub-line,
+ * "Up next"), the speaking-order strip at the bottom. TIE_BREAK first plays the TV-08 overlay.
  */
 @Composable
 fun CluesScreen(view: MishanaView, clockOffsetMs: Long, paused: Boolean, send: (ClientIntent) -> Unit) {
@@ -96,6 +110,7 @@ fun CluesScreen(view: MishanaView, clockOffsetMs: Long, paused: Boolean, send: (
     val speaker = view.player(view.currentSpeakerId)
     val order = view.speakingOrder.mapNotNull { view.player(it) }
     val tie = view.phase == Phase.TIE_BREAK
+    val density = LocalDensity.current
 
     // TV-08: a 4 s tie overlay at the start of TIE_BREAK (OK skips it): long enough to read the rule from the couch.
     // Halved in reduced motion.
@@ -120,6 +135,11 @@ fun CluesScreen(view: MishanaView, clockOffsetMs: Long, paused: Boolean, send: (
         }
     }
 
+    // Where the speaker's ring is (window coordinates): the stage light aims there. Read in draw only.
+    var ringCenter by remember { mutableStateOf(Offset.Unspecified) }
+    var ringRadius by remember { mutableFloatStateOf(0f) }
+    val nextUp = nextSpeaker(order, view.currentSpeakerId)
+
     InGameScaffold(
         defaultFocus = pill,
         actionBar = {
@@ -142,52 +162,107 @@ fun CluesScreen(view: MishanaView, clockOffsetMs: Long, paused: Boolean, send: (
         },
     ) {
         Box(Modifier.fillMaxSize()) {
-            // Spotlight: a radial cone of primary at 12 % from the top centre.
+            // Stage light: a soft beam from the top of the screen onto the speaker's ring and a primary glow (14 %)
+            // around it. Full-bleed canvas in window coordinates, like the ring's recorded centre.
+            val beam = remember { Path() }
             Canvas(Modifier.fillMaxSize().fullBleed().clearAndSetSemantics {}) {
-                drawRect(
-                    Brush.radialGradient(
-                        colors = listOf(JamaaColors.Primary.copy(alpha = 0.12f), Color.Transparent),
-                        // Full-bleed canvas (window coordinates): the cone centres on the speaker's ring.
-                        center = Offset(size.width / 2f, size.height * 0.5f),
-                        radius = size.height * 0.6f,
+                val c = ringCenter
+                if (!c.isSpecified || ringRadius <= 0f) return@Canvas
+                val r = ringRadius
+                val floor = c.y + r * 0.7f
+                beam.reset()
+                beam.moveTo(c.x - r * 0.3f, 0f)
+                beam.lineTo(c.x + r * 0.3f, 0f)
+                beam.lineTo(c.x + r * 1.2f, floor)
+                beam.lineTo(c.x - r * 1.2f, floor)
+                beam.close()
+                drawPath(
+                    beam,
+                    Brush.verticalGradient(
+                        0f to JamaaColors.Primary.copy(alpha = 0.02f),
+                        0.75f to JamaaColors.Primary.copy(alpha = 0.08f),
+                        1f to Color.Transparent,
+                        startY = 0f,
+                        endY = floor,
                     ),
                 )
+                drawCircle(
+                    Brush.radialGradient(listOf(JamaaColors.Primary.copy(alpha = 0.14f), Color.Transparent), center = c, radius = r * 1.8f),
+                    radius = r * 1.8f,
+                    center = c,
+                )
             }
-            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                // During a tie-break the rule line says who tied and what happens next (the top bar already says
-                // TIE-BREAK, so no second badge).
-                if (tie) {
-                    val names = nameList(view.tieCandidates.mapNotNull { view.player(it)?.name?.let { n -> Names.ellipsize(n, 16) } })
-                    Text(stringResource(R.string.tie__persist, names), style = type.caption, color = JamaaColors.TextSecondary, textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                } else {
-                    Text(stringResource(R.string.clues__rule), style = type.caption, color = JamaaColors.TextMuted)
-                }
-                val firstTurn = view.round == 1 && !tie && view.players.none { it.alive && it.spoke }
-                if (firstTurn) {
-                    Text(stringResource(R.string.clues__first_hint), style = type.caption, color = JamaaColors.TextSecondary, textAlign = TextAlign.Center)
-                }
-                // The hero steps its ring/avatar down (216 → 140 dp) when the stage is short (Arabic line heights,
-                // the round-1 hint, large font scale) instead of pushing the name and sub-line off the stage.
-                BoxWithConstraints(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    val textH = with(LocalDensity.current) { type.displayM.lineHeight.toDp() + type.body.lineHeight.toDp() } + 10.dp
-                    val ring = (maxHeight - textH).coerceIn(140.dp, 216.dp)
-                    val dir = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1 else 1
-                    AnimatedContent(
-                        targetState = speaker,
-                        contentKey = { it?.id },
-                        transitionSpec = {
-                            if (reduce) {
-                                fadeIn(tween(JamaaMotion.Fast)) togetherWith fadeOut(tween(JamaaMotion.Fast))
-                            } else {
-                                // The next speaker comes from where the order strip continues: the end side, which is
-                                // the left in Arabic (slide offsets are absolute px, so mirror them by hand).
-                                (slideInHorizontally(tween(JamaaMotion.Slow, easing = JamaaMotion.Decel)) { dir * it / 3 } + fadeIn(tween(JamaaMotion.Slow))) togetherWith
-                                    (slideOutHorizontally(tween(JamaaMotion.Base, easing = JamaaMotion.Accel)) { -dir * it / 3 } + fadeOut(tween(JamaaMotion.Base)))
-                            }
-                        },
-                        label = "speaker",
-                    ) { sp ->
-                        if (sp != null) SpeakerHero(sp, view, clockOffsetMs, ring) else Spacer(Modifier.height(ring))
+            BoxWithConstraints(Modifier.fillMaxSize()) {
+                // The ring takes the stage height (150–260 dp); the words take the rest of the width.
+                val ring = MishanaLayout.heroRing((maxHeight - 16.dp).value).dp
+                val dir = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1 else 1
+                Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        Modifier
+                            .width(ring + 64.dp)
+                            .fillMaxHeight()
+                            .onGloballyPositioned {
+                                ringCenter = it.boundsInWindow().center
+                                ringRadius = with(density) { ring.toPx() } / 2f
+                            },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        AnimatedContent(
+                            targetState = speaker,
+                            contentKey = { it?.id },
+                            transitionSpec = {
+                                (if (reduce) {
+                                    fadeIn(tween(JamaaMotion.Fast)) togetherWith fadeOut(tween(JamaaMotion.Fast))
+                                } else {
+                                    // The new speaker pops into the light; the last one shrinks back into the dark.
+                                    (scaleIn(tween(JamaaMotion.Slow, easing = JamaaMotion.Overshoot), initialScale = 0.72f) + fadeIn(tween(JamaaMotion.Base))) togetherWith
+                                        (scaleOut(tween(JamaaMotion.Base, easing = JamaaMotion.Accel), targetScale = 0.86f) + fadeOut(tween(JamaaMotion.Base)))
+                                }).noClip()
+                            },
+                            label = "speakerRing",
+                        ) { sp ->
+                            if (sp != null) SpeakerRing(sp, view, clockOffsetMs, ring) else Spacer(Modifier.size(ring))
+                        }
+                    }
+                    Spacer(Modifier.width(16.dp))
+                    Column(Modifier.weight(1f).fitHeight(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        // During a tie-break the eyebrow says who tied and what happens next (the top bar already
+                        // says TIE-BREAK, so no second badge).
+                        if (tie) {
+                            val names = nameList(view.tieCandidates.mapNotNull { view.player(it)?.name?.let { n -> Names.ellipsize(n, 16) } })
+                            Eyebrow(stringResource(R.string.tie__persist, names), JamaaColors.Accent)
+                        } else {
+                            Eyebrow(stringResource(R.string.clues__rule), JamaaColors.TextSecondary)
+                        }
+                        AnimatedContent(
+                            targetState = speaker,
+                            contentKey = { it?.id },
+                            transitionSpec = {
+                                (if (reduce) {
+                                    fadeIn(tween(JamaaMotion.Fast)) togetherWith fadeOut(tween(JamaaMotion.Fast))
+                                } else {
+                                    // The words arrive a beat after the ring, from where the order strip continues
+                                    // (the end side; offsets are absolute px, so mirrored by hand in Arabic).
+                                    (slideInHorizontally(tween(JamaaMotion.Slow, delayMillis = 80, easing = JamaaMotion.Decel)) { dir * it / 5 } + fadeIn(tween(JamaaMotion.Slow, delayMillis = 80))) togetherWith
+                                        (slideOutHorizontally(tween(JamaaMotion.Base, easing = JamaaMotion.Accel)) { -dir * it / 5 } + fadeOut(tween(JamaaMotion.Fast)))
+                                }).noClip()
+                            },
+                            label = "speakerWords",
+                        ) { sp ->
+                            if (sp != null) SpeakerWords(sp, noTimer = view.deadline == null) else Spacer(Modifier.height(1.dp))
+                        }
+                        AnimatedContent(
+                            targetState = nextUp,
+                            contentKey = { it?.id },
+                            transitionSpec = { (fadeIn(tween(JamaaMotion.Slow, delayMillis = 160)) togetherWith fadeOut(tween(JamaaMotion.Fast))).noClip() },
+                            label = "nextUp",
+                        ) { p ->
+                            if (p != null) NextUpChip(p) else Spacer(Modifier.height(1.dp))
+                        }
+                        val firstTurn = view.round == 1 && !tie && view.players.none { it.alive && it.spoke }
+                        if (firstTurn) {
+                            StageText(stringResource(R.string.clues__first_hint), type.caption, JamaaColors.TextMuted, Modifier.fillMaxWidth(), textAlign = TextAlign.Start)
+                        }
                     }
                 }
             }
@@ -207,37 +282,91 @@ fun CluesScreen(view: MishanaView, clockOffsetMs: Long, paused: Boolean, send: (
     InitialFocus(pill)
 }
 
-/** The current speaker: 160 dp avatar inside a 216 dp / 8 dp ring (scaled together by [ring]), seconds at the ring's top end, name in displayM. */
+/** The next player in this round's order who has not spoken yet, after the current speaker (null at the end). */
+internal fun nextSpeaker(order: List<PublicPlayer>, currentId: String?): PublicPlayer? {
+    val cur = order.indexOfFirst { it.id == currentId }
+    if (cur < 0) return null
+    return order.drop(cur + 1).firstOrNull { !it.spoke && !it.left }
+}
+
+/** The quiet line over the speaker's name: the rule, or who is in the tie-break. Wraps; never cut. */
 @Composable
-private fun SpeakerHero(sp: PublicPlayer, view: MishanaView, clockOffsetMs: Long, ring: Dp) {
-    val type = JamaaTheme.type
+private fun Eyebrow(text: String, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.size(width = 4.dp, height = 24.dp).background(color, JamaaShapes.pill))
+        Spacer(Modifier.width(12.dp))
+        StageText(text, JamaaTheme.type.label, color, Modifier.fillMaxWidth(), maxLines = 2, minScale = 0.85f, textAlign = TextAlign.Start)
+    }
+}
+
+/** The speaker's avatar (74 % of the ring) in the 10 dp depleting timer ring, seconds on a chip at its top end. */
+@Composable
+private fun SpeakerRing(sp: PublicPlayer, view: MishanaView, clockOffsetMs: Long, ring: Dp) {
     val deadline = view.deadline
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.size(ring), contentAlignment = Alignment.Center) {
-            if (deadline != null) {
-                TimerRing(deadline, clockOffsetMs, ring, 8.dp)
-            }
-            Avatar(sp.color, ring * (160f / 216f), state = AvatarState.of(sp, speaking = sp.connected, showHost = false))
-            if (deadline != null) {
-                TimerSeconds(deadline, clockOffsetMs, Modifier.align(Alignment.TopEnd).offset(x = 36.dp, y = (-6).dp))
-            }
+    Box(Modifier.size(ring), contentAlignment = Alignment.Center) {
+        if (deadline != null) {
+            TimerRing(deadline, clockOffsetMs, ring, 10.dp)
         }
-        Spacer(Modifier.height(10.dp))
-        Text(
+        Avatar(sp.color, ring * 0.74f, state = AvatarState.of(sp, speaking = sp.connected, showHost = false))
+        if (deadline != null) {
+            TimerSeconds(
+                deadline,
+                clockOffsetMs,
+                Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = 14.dp, y = (-2).dp)
+                    .background(JamaaColors.Bg.copy(alpha = 0.85f), JamaaShapes.pill)
+                    .padding(horizontal = 10.dp),
+            )
+        }
+    }
+}
+
+/** "Maya, your clue!" (displayM, up to 2 lines, steps down rather than cut; only the name may ellipsize) + sub-line. */
+@Composable
+private fun SpeakerWords(sp: PublicPlayer, noTimer: Boolean) {
+    val type = JamaaTheme.type
+    Column(Modifier.fillMaxWidth().semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite }) {
+        StageText(
             stringResource(R.string.clues__speaking, isolate(Names.ellipsize(sp.name, 20))),
-            style = type.displayM,
-            color = JamaaColors.Text,
+            type.displayM,
+            JamaaColors.Text,
+            Modifier.fillMaxWidth(),
+            maxLines = 2,
+            minScale = 0.62f,
+            textAlign = TextAlign.Start,
+        )
+        Spacer(Modifier.height(4.dp))
+        StageText(
+            // TV wording: the speaker ends the turn on their phone (the TV is remote-only, never "tap").
+            stringResource(if (noTimer) R.string.tv__clues_no_timer else R.string.tv__clues_sub),
+            type.body,
+            JamaaColors.TextSecondary,
+            Modifier.fillMaxWidth(),
+            maxLines = 2,
+            minScale = 0.85f,
+            textAlign = TextAlign.Start,
+        )
+    }
+}
+
+/** "Up next: Sami" with their avatar (`clues.upNext`): the next player gets their clue ready. */
+@Composable
+private fun NextUpChip(p: PublicPlayer) {
+    Row(
+        Modifier
+            .background(JamaaColors.Surface, JamaaShapes.pill)
+            .padding(start = 6.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Avatar(p.color, 30.dp, state = AvatarState(away = !p.connected))
+        Spacer(Modifier.width(10.dp))
+        Text(
+            stringResource(R.string.clues__up_next, isolate(Names.ellipsize(p.name, 16))),
+            style = JamaaTheme.type.titleS,
+            color = JamaaColors.TextSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.widthIn(max = 820.dp).semantics { liveRegion = LiveRegionMode.Polite },
-        )
-        Text(
-            // TV wording: the speaker ends the turn on their phone (the TV is remote-only, never "tap").
-            stringResource(if (deadline == null) R.string.tv__clues_no_timer else R.string.tv__clues_sub),
-            style = type.body,
-            color = JamaaColors.TextSecondary,
-            textAlign = TextAlign.Center,
         )
     }
 }
@@ -291,12 +420,14 @@ private fun OrderStrip(order: List<PublicPlayer>, currentId: String?, modifier: 
 
 @Composable
 private fun StripItem(p: PublicPlayer, current: Boolean) {
-    val scale by animateFloatAsState(if (current) 1.25f else 1f, tween(JamaaMotion.Base, easing = JamaaMotion.Standard), label = "cur")
+    val scale by animateFloatAsState(if (current) 1.25f else 1f, tween(JamaaMotion.Slow, easing = JamaaMotion.Overshoot), label = "cur")
+    val bar by animateFloatAsState(if (current) 1f else 0f, tween(JamaaMotion.Slow, easing = JamaaMotion.Decel), label = "bar")
+    val done by animateFloatAsState(if (p.spoke && !current) 0.6f else 1f, tween(JamaaMotion.Base), label = "done")
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .width(STRIP_ITEM)
-            .alpha(if (p.spoke && !current) 0.6f else 1f),
+            .graphicsLayer { alpha = done },
     ) {
         Avatar(
             p.color,
@@ -316,11 +447,13 @@ private fun StripItem(p: PublicPlayer, current: Boolean) {
             modifier = Modifier.widthIn(max = STRIP_TEXT),
         )
         Spacer(Modifier.height(4.dp))
+        // The underline grows out from the centre when the turn arrives.
         Box(
             Modifier
                 .width(28.dp)
                 .height(4.dp)
-                .background(if (current) JamaaColors.Primary else Color.Transparent, JamaaShapes.pill),
+                .graphicsLayer { scaleX = bar; alpha = bar }
+                .background(JamaaColors.Primary, JamaaShapes.pill),
         )
         Spacer(Modifier.height(2.dp))
     }
@@ -334,74 +467,100 @@ private fun MoreCount(count: Int) {
     }
 }
 
-/** TV-08: "It's a tie!" with the tied players and their tallies, then it fades to reveal TV-05. */
+/**
+ * TV-08: "It's a tie!" stamp, the tied players' cards (2–4) sliding in from both sides to meet around "vs", their
+ * tallies, and `tie.explain`. The column is laid out with room for the stamp's −8° tilt and scales itself to the
+ * screen (never overlapping), on an opaque scrim so TV-05 never shows through the words.
+ */
 @Composable
 private fun TieOverlay(view: MishanaView) {
     val type = JamaaTheme.type
     val tally = view.lastVote?.tally.orEmpty()
     val tied = view.tieCandidates.mapNotNull { view.player(it) }
     val reduce = JamaaTheme.reduceMotion
-    // 2–3 tied: 96 dp avatars, title names, "!" separators. 4: compact cards (72 dp, titleS) without separators,
-    // so four cards always fit the 864 dp safe width.
+    // 2–3 tied: 104 dp avatars, title names, "vs" between. 4: compact cards (76 dp, titleS) without "vs", so four
+    // cards always fit the 864 dp safe width.
     val compact = tied.size > 3
-    val avatar = if (compact) 72.dp else 96.dp
+    val avatar = if (compact) 76.dp else 104.dp
     val nameStyle = if (compact) type.titleS else type.title
-    Box(Modifier.fillMaxSize().background(JamaaColors.Bg.copy(alpha = 0.94f)), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Stamp(stringResource(R.string.tie__title), JamaaColors.Accent, style = type.displayL)
-            Spacer(Modifier.height(28.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(if (compact) 20.dp else 40.dp), verticalAlignment = Alignment.CenterVertically) {
+    val dir = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1f else 1f
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(JamaaColors.Bg.copy(alpha = 0.97f))
+            .background(Brush.radialGradient(listOf(JamaaColors.Accent.copy(alpha = 0.10f), Color.Transparent))),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            // Full-bleed overlay: the column starts under the top bar and the HUB-06 back hint (screen y 115).
+            Modifier.padding(start = 48.dp, end = 48.dp, top = 115.dp, bottom = 27.dp).fitHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            // The stamp's tilt reaches ~24 dp above and below its box: padding keeps it off the cards.
+            Stamp(stringResource(R.string.tie__title), JamaaColors.Accent, Modifier.padding(vertical = 20.dp), style = type.displayL)
+            Spacer(Modifier.height(20.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(if (compact) 20.dp else 28.dp), verticalAlignment = Alignment.CenterVertically) {
                 tied.forEachIndexed { i, p ->
                     if (i > 0 && !compact) {
-                        Text("!", style = type.displayM, color = JamaaColors.Primary, modifier = Modifier.graphicsLayer { rotationZ = 8f })
+                        Text(
+                            stringResource(R.string.tie__vs),
+                            style = type.headline,
+                            color = JamaaColors.Primary,
+                            modifier = Modifier.stagedEnter(delayMs = 260, fromScale = 0.4f, rise = 0.dp),
+                        )
                     }
                     // SPEC-GAP: no i18n key for "{count} votes" (DESIGN TV-08); the tally is a number badge on the card.
                     val votes = tally.firstOrNull { it.targetId == p.id }?.voterIds?.size ?: 0
-                    val pop = remember { Animatable(if (reduce) 1f else 0f) }
+                    // The cards slide in from the side they sit on and meet in the middle.
+                    val side = if (i < tied.size / 2.0) -1f else 1f
+                    val slide = remember { Animatable(if (reduce) 1f else 0f) }
                     LaunchedEffect(Unit) {
-                        pop.animateTo(1f, tween(JamaaMotion.Base, delayMillis = 120 * i, easing = JamaaMotion.Overshoot))
+                        slide.animateTo(1f, tween(JamaaMotion.Slow, delayMillis = 60 * i, easing = JamaaMotion.Decel))
                     }
-                    run {
-                        Column(
-                            Modifier
-                                .graphicsLayer { scaleX = pop.value; scaleY = pop.value; alpha = pop.value.coerceIn(0f, 1f) }
-                                .widthIn(max = if (compact) 196.dp else 240.dp)
-                                .background(JamaaColors.Surface, JamaaShapes.tile)
-                                .padding(horizontal = if (compact) 20.dp else 28.dp, vertical = 18.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            Box {
-                                Avatar(p.color, avatar, state = AvatarState(away = !p.connected))
-                                Box(
-                                    Modifier
-                                        .align(Alignment.TopEnd)
-                                        .offset(x = 14.dp, y = (-14).dp)
-                                        .size(40.dp)
-                                        .background(JamaaColors.Accent, CircleShape),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Text(votes.toString(), style = type.title, color = JamaaColors.Ink)
-                                }
+                    Column(
+                        Modifier
+                            .graphicsLayer {
+                                translationX = side * dir * (1f - slide.value) * 160.dp.toPx()
+                                alpha = slide.value
                             }
-                            Spacer(Modifier.height(10.dp))
-                            Text(
-                                Names.ellipsize(p.name, 12),
-                                style = nameStyle,
-                                color = JamaaColors.Text,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
+                            .widthIn(max = if (compact) 196.dp else 240.dp)
+                            .background(JamaaColors.Surface, JamaaShapes.tile)
+                            .padding(horizontal = if (compact) 20.dp else 28.dp, vertical = 18.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Box {
+                            Avatar(p.color, avatar, state = AvatarState(away = !p.connected))
+                            Box(
+                                Modifier
+                                    .align(Alignment.TopEnd)
+                                    .offset(x = 14.dp, y = (-14).dp)
+                                    .stagedEnter(delayMs = 360 + 80 * i, fromScale = 0.3f, rise = 0.dp)
+                                    .size(40.dp)
+                                    .background(JamaaColors.Accent, CircleShape),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(votes.toString(), style = type.title, color = JamaaColors.Ink)
+                            }
                         }
+                        Spacer(Modifier.height(10.dp))
+                        Text(
+                            Names.ellipsize(p.name, 12),
+                            style = nameStyle,
+                            color = JamaaColors.Text,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
             }
             Spacer(Modifier.height(24.dp))
-            Text(
+            StageText(
                 stringResource(R.string.tie__explain),
-                style = type.body,
-                color = JamaaColors.TextSecondary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.widthIn(max = 640.dp),
+                type.title,
+                JamaaColors.TextSecondary,
+                Modifier.widthIn(max = 720.dp).stagedEnter(delayMs = 420),
+                maxLines = 2,
+                minScale = 0.8f,
             )
         }
     }

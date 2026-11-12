@@ -41,7 +41,6 @@ import app.jamaa.tv.ui.screens.ResultsScreen
 import app.jamaa.tv.ui.screens.RoleRevealScreen
 import app.jamaa.tv.ui.screens.VotingScreen
 import app.jamaa.tv.ui.theme.JamaaMotion
-import app.jamaa.tv.ui.theme.JamaaSpace
 import app.jamaa.tv.ui.theme.JamaaTheme
 
 /** Which full screen is showing; CLUES and TIE_BREAK share one screen (the tie is an overlay). */
@@ -85,18 +84,23 @@ fun MishanaGameScreen(game: MishanaGameView, args: GameScreenArgs) {
                     phaseOverride = if (hideVerdict) stringResource(R.string.vote__votes_in) else null,
                     aliveOverride = if (hideVerdict) view.players.count { (it.alive || it.id == view.eliminated?.playerId) && !it.left } else null,
                 )
-                Spacer(Modifier.height(JamaaSpace.s3))
+                // Clears the HUB-06 back hint under the bar's end corner (no stage line runs under it).
+                Spacer(Modifier.height(STAGE_TOP_GAP))
             }
             AnimatedContent(
                 targetState = Frame(key, view),
                 contentKey = { it.key },
                 transitionSpec = {
-                    if (reduce) {
-                        fadeIn(tween(JamaaMotion.Fast)) togetherWith fadeOut(tween(JamaaMotion.Fast))
-                    } else {
-                        (fadeIn(tween(JamaaMotion.Slow, easing = JamaaMotion.Decel)) + slideInVertically(tween(JamaaMotion.Slow, easing = JamaaMotion.Decel)) { rise }) togetherWith
-                            (fadeOut(tween(JamaaMotion.Base, easing = JamaaMotion.Accel)) + scaleOut(tween(JamaaMotion.Base, easing = JamaaMotion.Accel), targetScale = 0.98f))
-                    }
+                    // noClip: the stage draws past its box (glows, rings, the 24 dp rise); clipping it during the
+                    // hand-over cut the screens at the top-bar line and the bottom safe line.
+                    (
+                        if (reduce) {
+                            fadeIn(tween(JamaaMotion.Fast)) togetherWith fadeOut(tween(JamaaMotion.Fast))
+                        } else {
+                            (fadeIn(tween(JamaaMotion.Slow, easing = JamaaMotion.Decel)) + slideInVertically(tween(JamaaMotion.Slow, easing = JamaaMotion.Decel)) { rise }) togetherWith
+                                (fadeOut(tween(JamaaMotion.Base, easing = JamaaMotion.Accel)) + scaleOut(tween(JamaaMotion.Base, easing = JamaaMotion.Accel), targetScale = 0.98f))
+                        }
+                        ).noClip()
                 },
                 modifier = Modifier.weight(1f),
                 label = "mishanaPhase",

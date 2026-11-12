@@ -9,7 +9,15 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxWidth
+import app.jamaa.tv.games.mishana.ui.StageText
+import app.jamaa.tv.games.mishana.ui.fitHeight
+import app.jamaa.tv.games.mishana.ui.noClip
+import app.jamaa.tv.games.mishana.ui.stagedEnter
+import app.jamaa.tv.ui.theme.JamaaMotion
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -137,14 +145,21 @@ fun BlankGuessScreen(view: MishanaView, clockOffsetMs: Long, send: (ClientIntent
             },
         ) {
             Box(Modifier.fillMaxSize()) {
+                BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                // The spotlight takes what the words leave (140–240 dp; everything inside scales with it), so the
+                // title and the "say it out loud" line are never pushed off the stage (Arabic, 1.3× font scale).
+                val textH = with(density) {
+                    type.displayS.lineHeight.toDp() + type.body.lineHeight.toDp() + type.caption.lineHeight.toDp() * 2
+                } + 14.dp
+                val spot = (maxHeight - textH).coerceIn(140.dp, 240.dp)
+                val k = spot / 240.dp
                 Column(
-                    Modifier.fillMaxSize(),
+                    Modifier.fillMaxWidth().fitHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
                 ) {
-                    // One soft spotlight (radial, 340 dp) on the Blank, who wears a dashed paper ring.
-                    Box(Modifier.size(240.dp).shakeOffset(shake), contentAlignment = Alignment.Center) {
-                        Canvas(Modifier.requiredSize(340.dp).clearAndSetSemantics {}) {
+                    // One soft spotlight (radial) on the Blank, who wears a dashed paper ring.
+                    Box(Modifier.size(spot).shakeOffset(shake).stagedEnter(fromScale = 0.7f, rise = 0.dp), contentAlignment = Alignment.Center) {
+                        Canvas(Modifier.requiredSize(340.dp * k).clearAndSetSemantics {}) {
                             drawCircle(
                                 Brush.radialGradient(
                                     colors = listOf(JamaaColors.Blank.copy(alpha = 0.16f), Color.Transparent),
@@ -155,44 +170,56 @@ fun BlankGuessScreen(view: MishanaView, clockOffsetMs: Long, send: (ClientIntent
                         }
                         val deadline = view.deadline
                         if (status == GuessStatus.PENDING && deadline != null) {
-                            TimerRing(deadline, clockOffsetMs, 220.dp, 8.dp)
+                            TimerRing(deadline, clockOffsetMs, 220.dp * k, 8.dp)
                             // The seconds at the ring's top end, as on TV-05 (DESIGN TV-10 "(o 18)").
                             TimerSeconds(deadline, clockOffsetMs, Modifier.align(Alignment.TopEnd).offset(x = 8.dp, y = (-6).dp))
                         }
-                        Canvas(Modifier.size(176.dp).clearAndSetSemantics {}) {
+                        Canvas(Modifier.size(176.dp * k).clearAndSetSemantics {}) {
                             drawCircle(
                                 color = JamaaColors.Blank,
                                 style = Stroke(width = 3.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(10.dp.toPx(), 8.dp.toPx()))),
                             )
                         }
                         if (guesser != null) {
-                            Avatar(guesser.color, 128.dp, state = AvatarState(away = !guesser.connected))
+                            Avatar(guesser.color, 128.dp * k, state = AvatarState(away = !guesser.connected))
                         }
                     }
                     Spacer(Modifier.height(8.dp))
                     AnimatedContent(
                         targetState = status,
-                        transitionSpec = { fadeIn(tween(240)) togetherWith fadeOut(tween(150)) },
+                        transitionSpec = {
+                            (if (reduce) {
+                                fadeIn(tween(JamaaMotion.Fast)) togetherWith fadeOut(tween(JamaaMotion.Fast))
+                            } else {
+                                // The verdict lands like a stamp: from 80 % with a little overshoot.
+                                (fadeIn(tween(JamaaMotion.Base)) + scaleIn(tween(JamaaMotion.Slow, easing = JamaaMotion.Overshoot), initialScale = 0.8f)) togetherWith
+                                    fadeOut(tween(JamaaMotion.Fast))
+                            }).noClip()
+                        },
                         label = "verdict",
                     ) { st ->
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }) {
                             when (st) {
                                 GuessStatus.PENDING -> {
-                                    Text(stringResource(R.string.guess__title), style = type.displayS, color = JamaaColors.Text, textAlign = TextAlign.Center)
-                                    Text(
+                                    StageText(stringResource(R.string.guess__title), type.displayS, JamaaColors.Text, Modifier.fillMaxWidth(), maxLines = 1, minScale = 0.6f)
+                                    StageText(
                                         stringResource(R.string.guess__guessing, isolate(Names.ellipsize(guesser?.name.orEmpty(), 20))),
-                                        style = type.body,
-                                        color = JamaaColors.TextSecondary,
-                                        textAlign = TextAlign.Center,
+                                        type.body,
+                                        JamaaColors.TextSecondary,
+                                        Modifier.fillMaxWidth(),
+                                        maxLines = 1,
+                                        minScale = 0.8f,
                                     )
                                     Spacer(Modifier.height(6.dp))
                                     // The host's override relies on the room hearing the guess: the TV asks for it out loud
                                     // too (it replaces "Don't help!", web parity).
-                                    Text(
+                                    StageText(
                                         stringResource(R.string.guess__say_aloud, isolate(Names.ellipsize(guesser?.name.orEmpty(), 20))),
-                                        style = type.caption,
-                                        color = JamaaColors.Accent,
-                                        textAlign = TextAlign.Center,
+                                        type.label,
+                                        JamaaColors.Accent,
+                                        Modifier.fillMaxWidth(),
+                                        maxLines = 2,
+                                        minScale = 0.85f,
                                     )
                                 }
                                 GuessStatus.CORRECT -> VerdictLine(R.string.guess__correct, JamaaColors.Success, JamaaIcons.Check)
@@ -204,6 +231,7 @@ fun BlankGuessScreen(view: MishanaView, clockOffsetMs: Long, send: (ClientIntent
                             }
                         }
                     }
+                }
                 }
                 if (status == GuessStatus.CORRECT) {
                     Confetti(seed = view.round)
@@ -248,12 +276,13 @@ private fun VerdictLine(textRes: Int, color: Color, icon: androidx.compose.ui.gr
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(44.dp))
         Spacer(Modifier.width(14.dp))
-        Text(
+        StageText(
             stringResource(textRes),
-            style = JamaaTheme.type.displayS,
-            color = JamaaColors.Text,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.widthIn(max = 720.dp),
+            JamaaTheme.type.displayM,
+            JamaaColors.Text,
+            Modifier.weight(1f, fill = false),
+            maxLines = 2,
+            minScale = 0.6f,
         )
     }
 }

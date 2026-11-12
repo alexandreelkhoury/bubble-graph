@@ -612,6 +612,7 @@ Haptics come only from user gestures or right after one, as the API requires (RE
 - **Top bar** (y 27–75 dp) on every in-game screen: start side shows "GAME {count}" during ROLE_REVEAL (`game.label`; `round` is 0 there) and "ROUND {count} · <phase>" afterwards (`round.label` + `phase.*`). End side shows a mini room code `KXQP`, the alive count (`common.aliveCount`), and a `wifi-off` chip when the TV's socket is degraded.
 - **Long names** are truncated with an ellipsis at 12 graphemes on tiles and 20 in the spotlight. The TV-05 order strip uses **width-only** truncation (one ellipsis at the item's text width, no grapheme pre-cut), so a name is never cut twice ("Nour …"). Names come from players, so render them with `TextOverflow.Ellipsis` and `maxLines = 1`.
 - **The TV never shows secrets.** No word or role of a living player, and no Blank guess text, ever appears before RESULTS (SPEC §5.4).
+- **Mish Ana! stage rules (v4, after TV play-testing: "cropped top and bottom", "the sentence is cropped").** (1) The stage starts **40 dp** under the top bar (safe-area y 88, screen y 115), so no stage line, chip or panel runs under the HUB-06 "◁ Back: menu & rules" chip (safe-area y 52–84, end side). (2) **Sentences are never cut:** every stage sentence (titles, rule lines, reactions, verdicts, the words on Results) is a `StageText` that wraps (≤ 2 lines) and steps its size down to fit its box; only player names ellipsize. (3) Every stage block that could outgrow its box (Arabic line heights, FR/ES lengths, 1.3× font scale) is wrapped in `fitHeight` and scales down around its centre instead of being cropped. (4) **No AnimatedContent clips** (`SizeTransform(clip = false)`): rings, glows, stamps and the 24 dp phase rise draw past their boxes. (5) Tile, avatar and row sizes come from `MishanaLayout` (JVM-tested for 3–12 players) and the measured stage, never from fixed constants. (6) Motion is staged: headline, then sub-line (+80 ms), then tiles/avatars dealing in (40–50 ms stagger, from 60–85 % with `ease.overshoot`); reduced motion turns every entrance into a 150 ms fade.
 
 ### TV-01 Home / splash
 **Enters:** app launch. The app creates a room automatically (`POST /api/rooms` in the app language); Home is shown only while that runs or after it fails. There are no menu buttons (SPEC §9.6); How to play is M4 **[not in v1]**, and language lives in the Lobby.
@@ -752,7 +753,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                                                     (• Start now )     |
 +------------------------------------------------------------------------+
 ```
-- Avatars in one row (≤ 7) or two rows (8–12), 64 dp each. "v" marks the ready `check` badge, which pops in with `sfx.ready`. Away players show the away badge, never the check.
+- **v4:** avatars in one row (≤ 6) or two balanced rows (7–12), as big as the stage allows (up to 112 dp; `MishanaLayout.revealAvatar`); the phone icon (64 dp) shows only with one row. The headline, body and avatars deal in one after another; a player's avatar hops 14 dp when their phone says ready. "v" marks the ready `check` badge, which pops in with `sfx.ready`. Away players show the away badge, never the check.
 - The second line about the Mole shows **only when `roleCounts.blank > 0`** (every default game).
 - **Focus:** the action pill **Start now** (`tv.startNow`, double-OK → `HOST_ADVANCE`). Back → pause. The ready timer ring sits at the bottom end (48 dp).
 
@@ -777,7 +778,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |  Maya     Rami     Lina       Joe     Nour     Ziad                    |
 +------------------------------------------------------------------------+
 ```
-- **Spotlight:** a radial cone of `primary` at 12 % from the top centre onto the speaker. The avatar is 160 dp with the "Speaking" state, and the **timer ring (216 dp, 8 dp stroke) wraps the avatar** with the seconds number at its top end (`type.tv.timer`). The ring is `text` until 10 s, `accent` until 5 s, then `danger` with a pulse and `sfx.tick`. Timer Off: no ring, and the line reads `tv.cluesNoTimer`. The sub-line under the name is `tv.cluesSub` (the speaker ends the turn on their phone; the TV never says "tap", since it is used only with a remote).
+- **Broadcast layout (v4):** the speaker's ring on the **start side**, as tall as the stage allows (150–260 dp, 10 dp stroke, avatar 74 % of it), under a stage-light beam from the top of the screen and a 14 % `primary` glow; on the end side, the rule line (`clues.rule`, or `tie.persist` in accent) as an eyebrow, "Maya, your clue!" (`displayM`, up to 2 lines, steps down instead of cutting), the sub-line, and an "Up next: Sami" chip (`clues.upNext`, the next player who has not spoken). Speaker change: the new avatar pops in from 72 % (`ease.overshoot`), the words slide in 80 ms later from the end side. (Former layout: avatar 160 dp centred, **timer ring 216 dp, 8 dp stroke, wraps the avatar**) with the seconds number at its top end (`type.tv.timer`). The ring is `text` until 10 s, `accent` until 5 s, then `danger` with a pulse and `sfx.tick`. Timer Off: no ring, and the line reads `tv.cluesNoTimer`. The sub-line under the name is `tv.cluesSub` (the speaker ends the turn on their phone; the TV never says "tap", since it is used only with a remote).
 - **Order strip** (bottom action bar, **y 417–513**, 96 dp; 102 dp in Arabic for the taller line): every alive player in this round's speaking order in **104 dp items**: a 48 dp avatar, 2 dp, the name in **`type.tv.titleS` (22 sp)** truncated **once**, by a single end ellipsis at the item's 96 dp text width (no grapheme pre-cut), 4 dp, the 4 dp current-speaker underline, and 2 dp to the bottom safe line, so the names and the underline always end inside the safe area. The current speaker's full name is shown in the spotlight. Done = `check` and 60 % opacity; current = a 1.25× scale and a `primary` underline bar 4 dp; upcoming = full opacity. Chevrons between them follow the reading direction. In a tie-break round, only the tied players appear.
 - **Skipped (away) player:** the tile flashes `wifi-off`, the toast `clues.skipped` appears, and the spotlight moves on.
 - **Speaker drops mid-turn:** the turn is kept (SPEC §4.8). The spotlight avatar shows the away badge; the timer continues (with the timer off, a 15 s grace timer appears).
@@ -806,11 +807,11 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                   4 / 6 voted                      ( Close vote )      |
 +------------------------------------------------------------------------+
 ```
-- Title and subtitle are **one** `displayS` line (`vote.title` + `vote.sub`).
-- Up to 8 candidates: tiles 136 × 112 dp (avatar 64 dp), 4 per row. **9–12 candidates: a 6-column grid of 120 × 96 dp tiles** (6 × 120 + 5 × 16 = 800 dp ≤ 844), 2 rows. This keeps the stage within y 87–447.
+- **v4:** the title `vote.title` (`displayM`) and, under it, `vote.sub` (`title`, secondary), each one line that steps down to fit.
+- **v4:** the tiles fill the stage (`MishanaLayout.voteGrid`): 1–3 rows, whichever gives the biggest tiles, 96–196 dp wide at a 0.86 aspect (4 players: one row of 196 dp tiles; 12: two rows of six). They deal in (40 ms stagger, from 85 %); a tile "thunks" (1.08×) and gets a green outline with its check when that vote arrives. TV-07 reuses the same grid, so no tile moves.
 - The `check` badge means **"this player has voted"**. It never shows *for whom*. There are **no tallies** until the vote closes (SPEC §5.4).
 - Each vote plays `sfx.voteCast` (anonymous) and the "x / y voted" counter (`vote.progress`) rolls.
-- A **linear timer bar** spans the bottom; it mirrors in RTL (§10). At 10 s the label changes to `vote.tenLeft`.
+- A **linear timer bar** spans the bottom action bar, followed by "x / y voted" and the 48 dp seconds chip (one row); it mirrors in RTL (§10). At 10 s the label changes to `vote.tenLeft`.
 - Eliminated players aren't shown. Away players show the away state, and their votes count as abstentions.
 - **Focus:** the action pill **Close vote** (`vote.close`, double-OK → `HOST_ADVANCE`). Back → pause.
 
@@ -836,7 +837,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                       Press OK to skip                ( Continue )     |
 +------------------------------------------------------------------------+
 ```
-- **End states:** a unique maximum (`outcome==="ELIMINATED"`) → stamp "OUT" → TV-09. A second tie with `outcome==="RANDOM"` → TV-09 wheel variant. `outcome==="NO_ELIMINATION"` with no tally entries → stamp `vote.nobodyVoted` → TV-09 no-elimination variant. A first tie (phase TIE_BREAK) → stamp "TIE!" → TV-08.
+- **End states:** a unique maximum (`outcome==="ELIMINATED"`) → stamp "OUT" → TV-09. A second tie with `outcome==="RANDOM"` → TV-09 wheel variant. `outcome==="NO_ELIMINATION"` with no tally entries → stamp `vote.nobodyVoted` → TV-09 no-elimination variant. A first tie (phase TIE_BREAK) → stamp "TIE!" → TV-08. **v4:** the board is TV-06's grid (40 dp between rows for the chip stacks, which stop growing after 5); the "No vote" bin sits under the board, centred; the OUT stamp lands **on the voted-out player's tile** (other verdicts stamp the middle).
 - **Focus:** the action pill (Continue in ELIMINATION). **OK = skip to the end state; a second OK within 3 s = `HOST_ADVANCE`. Back = pause** (the local animation pauses too).
 
 ### TV-08 Tie-break (overlay)
@@ -857,7 +858,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                (TV-05 with the TIE-BREAK badge underneath)             |
 +------------------------------------------------------------------------+
 ```
-- The tied players' cards (2–4) with their tallies, `tie.title` and `tie.explain`. The overlay fades out after 4 s (OK skips it), revealing TV-05 where the rule line now reads `tie.persist` ("Ava and Dev are tied. One more clue each, then a re-vote."; the top bar already says TIE-BREAK, so no badge) and only the tied players in the order strip; then TV-06 with only the tied players as candidates.
+- The tied players' cards (2–4, 104 dp avatars; 76 dp for 4) slide in from both sides around `tie.vs`, tally badges pop, `tie.explain` in `title`. **v4:** an opaque scrim (97 %) so TV-05 never shows through, and the stamp's −8° tilt has its own room (it overlapped the cards); the column starts under the top bar and scales to fit. The overlay fades out after 4 s (OK skips it), revealing TV-05 where the rule line now reads `tie.persist` ("Ava and Dev are tied. One more clue each, then a re-vote."; the top bar already says TIE-BREAK, so no badge) and only the tied players in the order strip; then TV-06 with only the tied players as candidates.
 - The second-tie wheel and "Nobody's out" are **TV-09 variants** (not this screen).
 
 ### TV-09 Elimination reveal
@@ -880,7 +881,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                    Next round in 2...               ( Continue )       |
 +------------------------------------------------------------------------+
 ```
-- The sequence is §6.2-C. "Next round in {count}…" (`elim.nextRound`) counts down from `deadline.at − serverNow`; when no round follows, a calm `elim.nextIn` ("Next in 2", `textSecondary`) replaces the red stopwatch. **v3:** the player's 48 dp avatar sits before "Ben is out!", and the role-colour wash (34 % at its centre) stays at full strength. The server moves on when the 8 s ELIMINATION deadline ends (to CLUES, MR_WHITE_GUESS, RESULTS, or LOBBY on a stalemate).
+- The sequence is §6.2-C. "Next round in {count}…" (`elim.nextRound`) counts down from `deadline.at − serverNow`; when no round follows, a calm `elim.nextIn` ("Next in 2", `textSecondary`) replaces the red stopwatch. **v4:** the card grows with the stage (up to 230 × 300 dp); the reaction's line is reserved from the start (nothing moves when it lands) and steps down or wraps inside it rather than being cut. **v3:** the player's 48 dp avatar sits before "Ben is out!", and the role-colour wash (34 % at its centre) stays at full strength. The server moves on when the 8 s ELIMINATION deadline ends (to CLUES, MR_WHITE_GUESS, RESULTS, or LOBBY on a stalemate).
 - **Variants:**
   - **Random pick** (`lastVote.revote && outcome==="RANDOM"`): the tied avatars sit on a ring (radius 150 dp) and a highlight runs around it, decelerating over ≤ 2 s (`sfx.wheel` + heartbeat), landing on `eliminated.playerId` (the server's pick). Copy `elim.randomPick`. Then the card flip, compressed to fit.
   - **No elimination** (`outcome==="NO_ELIMINATION"`): stamp "NOBODY'S OUT" (`elim.noElimination`; `vote.nobodyVoted` when the tally is empty), no card.
@@ -909,6 +910,7 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 |                                                         ( Skip )       |
 +------------------------------------------------------------------------+
 ```
+- **v4:** the spotlight (ring, dashed paper ring, avatar) scales with the stage (140–240 dp), so the title and the "say it out loud" line always fit; the verdict lands from 80 % (`ease.overshoot`) in `displayM`, up to 2 lines.
 - The sequence is §6.2-D. **The guessed text is never shown before RESULTS** (SPEC §5.4: `guess.text` is null in every view). **House rule:** the Blank reads the guess out loud after submitting (the phone prompts them), and the host decides any override from what was heard. The text appears on TV-11 (`result.guesses`).
 - **While PENDING:** the action pill **Skip** (`guess.skip`) sends `HOST_ADVANCE` (TV only; the server makes it a TIMEOUT).
 - **Verdict** (status ≠ PENDING; lasts the VERDICT deadline, **8 s**, shown as a depleting bar under the buttons):
@@ -940,8 +942,8 @@ Rows list **exactly** the SPEC §4.4 settings; defaults are SPEC's `DEFAULT_SETT
 +------------------------------------------------------------------------+
 ```
 - **Stage 1 (≈ 5 s, local):** the victory moment (§6.2-E) in `displayL` (stepping down to `displayM` / `displayS` for longer titles, always one line) in the **solid** team colour (no gradient text), and the words meeting in the middle, with translit under each word whenever `translit !== null`; then (1 s) the **culprits row**: each Mole, then each Undercover, as a pill "[avatar 48] Sami was the Mole" / "Eli was the Undercover" (`elim.was*`) ringed in the role colour. The infiltrators' title names the role when the game had one kind: `winner.moles` (plural on the Mole count) or `winner.undercovers` (plural on the Undercover count); a mixed game uses `winner.infiltrators`. A right guess uses `winner.blank` ("The Mole wins: {name}!"). **Rules v2:** when the game dealt no Undercover, only the Civilians' word shows (nobody held the second word).
-- **Stage 2:** the title shrinks to `headline`; the words collapse into **one 56 dp strip**; a caption line shows `results.pack` and, if any, `guess.guessed` for each entry of `result.guesses`; the scoreboard shows **5 rows of 40 dp** (focus-scroll for more) with every player and their now-public role (emblem + label). Rank 1 gets an `accent` 8 % fill, the amber total and a `trophy` — **no glow** (tied winners stacked into a brown smear). The round **history** moved to the pause menu (TV-12).
-- **Focus:** initial **Play again** (→ PLAY_AGAIN → TV-02 with the same players and scores). Left/Right across the 3 buttons; Up enters the score list (scroll only). **Change settings** → PLAY_AGAIN, then TV-03. **New room** → TV-14b, then a new room (old phones keep the old room until it expires). **Back** → pause menu (TV-12). The VIP's phone can also Play again.
+- **Stage 2:** the title shrinks to `headline`; the words collapse into **one 56 dp strip**; a caption line shows `results.pack` and, if any, `guess.guessed` for each entry of `result.guesses`; **v4:** the scoreboard sits **beside** the platform's "Tonight's cup" panel (300 dp, HUB-05; it scales down rather than being cut), so both show in full: **every player is on screen, no scrolling** — one column with the column header while rows keep ≥ 34 dp (up to 48 dp), else two columns of compact rows (rank, avatar, name, role emblem, +points, total; ranks 1–6 on the start side). (Formerly 5 rows of 40 dp with focus-scroll, and the cup under it hid the third row.) Each player's now-public role shows (emblem + label in one column). Rank 1 gets an `accent` 8 % fill, the amber total and a `trophy` — **no glow** (tied winners stacked into a brown smear). The round **history** moved to the pause menu (TV-12).
+- **Focus:** initial **Play again** (→ PLAY_AGAIN → TV-02 with the same players and scores). Left/Right across the 3 buttons; Up reaches the ⓘ (the rows are not focusable: there is nothing to scroll). **Change settings** → PLAY_AGAIN, then TV-03. **New room** → TV-14b, then a new room (old phones keep the old room until it expires). **Back** → pause menu (TV-12). The VIP's phone can also Play again.
 - Must pass a 1.3× font-scale screenshot test with 12 players (§11).
 
 ### TV-12 Pause menu (Back during a game or on Results)
