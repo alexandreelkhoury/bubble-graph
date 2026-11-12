@@ -16,6 +16,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import app.jamaa.tv.games.trivia.TriviaLayout
+import app.jamaa.tv.ui.components.fullBleed
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -132,26 +139,37 @@ fun TriviaGameScreen(game: TriviaGameView, args: GameScreenArgs) {
                     positions.height.value = it.size.height.toFloat()
                 },
         ) {
-            val full = view.phase == TriviaPhase.LEADERBOARD
-            Column(Modifier.fillMaxSize()) {
-                Header(view)
-                Row(Modifier.weight(1f).fillMaxWidth()) {
-                    Box(Modifier.weight(1f).fillMaxHeight()) {
-                        when (view.phase) {
-                            TriviaPhase.QUIZ_INTRO -> QuizIntroCard(view, clock, Modifier.align(Alignment.Center))
-                            TriviaPhase.READ, TriviaPhase.ANSWER, TriviaPhase.REVEAL -> QuestionStage(view, clock, args.clockOffsetMs, positions)
-                            TriviaPhase.LEADERBOARD -> LeaderboardRace(view, clock, Modifier.fillMaxSize())
-                            TriviaPhase.FINAL_INTRO -> FinalIntro(clock, Modifier.fillMaxSize())
-                            TriviaPhase.HOLD -> HoldCard(Modifier.align(Alignment.Center))
-                            TriviaPhase.RESULTS -> Unit
+            // Fixed slots (TriviaLayout): header 44 + 8, the stage, the podium row 96 at the bottom of the safe area.
+            // The leaderboard owns the whole area (its rows start under the platform's back hint).
+            if (view.phase == TriviaPhase.LEADERBOARD) {
+                LeaderboardRace(view, clock, Modifier.fillMaxSize())
+            } else {
+                Column(Modifier.fillMaxSize()) {
+                    Header(view, clock, args.clockOffsetMs, Modifier.fillMaxWidth().height(TriviaLayout.HEADER.dp))
+                    Spacer(Modifier.height(TriviaLayout.HEADER_GAP.dp))
+                    Row(Modifier.weight(1f).fillMaxWidth()) {
+                        Box(Modifier.weight(1f).fillMaxHeight()) {
+                            when (view.phase) {
+                                TriviaPhase.QUIZ_INTRO -> QuizIntroCard(view, clock, Modifier.align(Alignment.Center))
+                                TriviaPhase.READ, TriviaPhase.ANSWER, TriviaPhase.REVEAL -> QuestionStage(view, clock, args.clockOffsetMs, positions)
+                                TriviaPhase.FINAL_INTRO -> FinalIntro(clock, Modifier.fillMaxSize())
+                                TriviaPhase.HOLD -> HoldCard(Modifier.align(Alignment.Center))
+                                TriviaPhase.LEADERBOARD, TriviaPhase.RESULTS -> Unit
+                            }
+                        }
+                        if (view.phase in TOWER_PHASES) {
+                            Spacer(Modifier.width(TriviaLayout.TOWER_GAP.dp))
+                            Tower(
+                                view, clock, positions,
+                                Modifier
+                                    .width(TriviaLayout.TOWER_W.dp)
+                                    .fillMaxHeight()
+                                    .padding(top = (TriviaLayout.HINT_BOTTOM - TriviaLayout.HEADER - TriviaLayout.HEADER_GAP).dp),
+                            )
                         }
                     }
-                    if (view.phase in TOWER_PHASES) {
-                        Spacer(Modifier.width(16.dp))
-                        Tower(view, clock, positions, Modifier.width(196.dp).fillMaxHeight())
-                    }
+                    PodiumRow(view, args, clock, positions, Modifier.fillMaxWidth().height(TriviaLayout.PODIUM_ROW.dp))
                 }
-                if (!full) PodiumRow(view, args, clock, positions, Modifier.fillMaxWidth().height(PODIUM_ROW_DP.dp))
             }
             if (view.phase == TriviaPhase.REVEAL) RevealOverlay(view, clock, positions)
         }
@@ -160,7 +178,6 @@ fun TriviaGameScreen(game: TriviaGameView, args: GameScreenArgs) {
 }
 
 private val TOWER_PHASES = setOf(TriviaPhase.READ, TriviaPhase.ANSWER, TriviaPhase.REVEAL)
-private const val PODIUM_ROW_DP = 104
 private const val PODIUM_CHAR_DP = 56
 private const val COIN_DP = 16f
 private const val BOLT_FLASH_MS = 100L
@@ -277,7 +294,8 @@ internal fun Modifier.layerAppear(lift: Float = 8f, p: () -> Float): Modifier = 
 private fun StudioLights(view: TriviaView, clock: PhaseClock) {
     val final = view.phase == TriviaPhase.FINAL_INTRO || (view.isFinal && view.phase != TriviaPhase.RESULTS)
     val reduce = JamaaTheme.reduceMotion
-    Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
+    // Full bleed: the cones and the arch are set dressing over the whole screen, in the top margin above the header.
+    Canvas(Modifier.fillMaxSize().fullBleed().clearAndSetSemantics {}) {
         val shift = if (final) clock.p("lights").let { if (view.phase == TriviaPhase.FINAL_INTRO) it else 1f } else 0f
         val cone = lerpColor(Studio.glow, Flame, shift).copy(alpha = 0.10f + 0.06f * shift)
         val w = size.width
@@ -299,7 +317,8 @@ private fun StudioLights(view: TriviaView, clock: PhaseClock) {
         val chase = if (reduce) -1 else ((clock.t() / 90L) % n).toInt()
         for (i in 0 until n) {
             val x = w * (0.1f + 0.8f * i / (n - 1))
-            val y = 6.dp.toPx() + kotlin.math.sin(Math.PI * i / (n - 1)).toFloat() * -2f
+            // A gentle arch in the top margin (above the safe area's header).
+            val y = 14.dp.toPx() - kotlin.math.sin(Math.PI * i / (n - 1)).toFloat() * 6.dp.toPx()
             val lit = chase < 0 || (i + chase) % 4 != 0
             val bulb = lerpColor(Studio.glow, Flame, shift)
             drawCircle(bulb.copy(alpha = if (lit) 0.9f else 0.25f), 3.dp.toPx(), Offset(x, y))
@@ -311,28 +330,151 @@ internal fun lerpColor(a: Color, b: Color, t: Float): Color = androidx.compose.u
 
 // ---------------------------------------------------------------- header
 
+/**
+ * The header strip (44 dp): on the start side the question counter with its progress pips, the topic chip and the
+ * final's ×2 chip (the quiz title outside questions); on the end side, above the tower, the status slot: "Answers in
+ * a moment…" in READ, answered count and seconds left in ANSWER, the reveal's verdict (Lightning thumb / Stumped…) in
+ * REVEAL.
+ */
 @Composable
-private fun Header(view: TriviaView) {
-    Row(Modifier.fillMaxWidth().height(40.dp).padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        val q = view.question
-        if (view.phase in TOWER_PHASES && q != null) {
-            Text(
-                keyText("game.trivia.read.questionOf", view.number.toString(), view.total.toString()).uppercase(),
-                style = JamaaTheme.type.label,
-                color = Studio.accentText,
-                maxLines = 1,
-            )
-            TopicChip(keyText(TriviaBoard.topicKey(q.topic)))
-        } else {
-            Text(app.jamaa.tv.ui.screens.localizedTitle(view.quiz.title), style = JamaaTheme.type.label, color = JamaaColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+private fun Header(view: TriviaView, clock: PhaseClock, clockOffsetMs: Long, modifier: Modifier) {
+    Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            val q = view.question
+            if (view.phase in TOWER_PHASES && q != null) {
+                Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Text(
+                        keyText("game.trivia.read.questionOf", view.number.toString(), view.total.toString()).uppercase(),
+                        style = JamaaTheme.type.label,
+                        color = Studio.accentText,
+                        maxLines = 1,
+                    )
+                    ProgressPips(view.number, view.total, view.isFinal)
+                }
+                TopicChip(keyText(TriviaBoard.topicKey(q.topic)))
+            } else {
+                Text(
+                    app.jamaa.tv.ui.screens.localizedTitle(view.quiz.title),
+                    style = JamaaTheme.type.titleS,
+                    color = JamaaColors.TextSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+            }
+            if (view.isFinal && view.phase != TriviaPhase.RESULTS) {
+                Text(
+                    keyText("game.trivia.final.stamp"),
+                    style = JamaaTheme.type.label,
+                    color = Ink,
+                    maxLines = 1,
+                    modifier = Modifier.background(JamaaColors.Accent, RoundedCornerShape(50)).padding(horizontal = 12.dp),
+                )
+            }
         }
-        if (view.isFinal && view.phase != TriviaPhase.RESULTS) {
-            Text(
-                keyText("game.trivia.final.stamp"),
+        when (view.phase) {
+            TriviaPhase.READ -> Text(
+                keyText("game.trivia.tv.getReady"),
                 style = JamaaTheme.type.label,
-                color = Ink,
-                modifier = Modifier.background(JamaaColors.Accent, RoundedCornerShape(50)).padding(horizontal = 10.dp),
+                color = Studio.glow,
+                maxLines = 1,
+                modifier = Modifier.widthIn(max = 360.dp).layerAppear { clock.p("ghosts") },
             )
+            TriviaPhase.ANSWER -> AnswerStatus(view, clock, clockOffsetMs)
+            TriviaPhase.REVEAL -> RevealHeadline(view, clock, Modifier.widthIn(max = 520.dp))
+            else -> Unit
+        }
+    }
+}
+
+/** One pip per question: done ones lit, the current one bright and larger, the final in amber. */
+@Composable
+private fun ProgressPips(number: Int, total: Int, final: Boolean) {
+    val n = total.coerceIn(1, 30)
+    Canvas(Modifier.width((n * 10).dp).height(7.dp).clearAndSetSemantics {}) {
+        val step = size.width / n
+        val rtl = layoutDirection == LayoutDirection.Rtl
+        for (i in 0 until n) {
+            val x = step * i + step / 2f
+            val cx = if (rtl) size.width - x else x
+            val current = i == number - 1
+            val color = when {
+                current && final -> JamaaColors.Accent
+                current -> Studio.glow
+                i < number - 1 -> Studio.accentText.copy(alpha = 0.75f)
+                else -> Studio.elevated
+            }
+            drawCircle(color, (if (current) 3.5f else 2.5f).dp.toPx(), Offset(cx, size.height / 2f))
+        }
+    }
+}
+
+/**
+ * ANSWER's status: "✓ 2/4 answered" (the number bumps on each lock; nothing hints at a choice) and the seconds left
+ * in a pill that turns amber in the last 5 s (the bulb ring stays the main countdown).
+ */
+@Composable
+private fun AnswerStatus(view: TriviaView, clock: PhaseClock, clockOffsetMs: Long) {
+    val reduce = JamaaTheme.reduceMotion
+    val eligible = view.players.filter { !it.left && !it.waiting }
+    val answered = eligible.count { it.answered }
+    val bump = remember { androidx.compose.animation.core.Animatable(0f) }
+    LaunchedEffect(answered) {
+        if (answered == 0 || reduce) return@LaunchedEffect
+        bump.snapTo(1f)
+        bump.animateTo(0f, androidx.compose.animation.core.tween(app.jamaa.tv.ui.theme.JamaaMotion.Slow, easing = app.jamaa.tv.ui.theme.JamaaMotion.Decel))
+    }
+    val deadline = view.deadline
+    val offset by rememberUpdatedState(clockOffsetMs)
+    val seconds by remember(clock, deadline) {
+        derivedStateOf {
+            clock.elapsed.longValue // frame tick
+            val rem = if (deadline == null) 0L else (deadline - (System.currentTimeMillis() + offset)).coerceAtLeast(0L)
+            ((rem + 999L) / 1_000L).toInt()
+        }
+    }
+    val all = eligible.isNotEmpty() && answered == eligible.size
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(
+            Modifier
+                .background(if (all) JamaaColors.Success else Studio.elevated, RoundedCornerShape(50))
+                .padding(start = 10.dp, end = 14.dp, top = 2.dp, bottom = 2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Icon(JamaaIcons.Check, contentDescription = null, tint = if (all) Ink else JamaaColors.Success, modifier = Modifier.size(20.dp))
+            Text(
+                keyText("game.trivia.tv.answered", answered.toString(), eligible.size.toString()),
+                style = JamaaTheme.type.label,
+                color = if (all) Ink else JamaaColors.Text,
+                maxLines = 1,
+                modifier = Modifier.graphicsLayer {
+                    val s = 1f + 0.18f * bump.value
+                    scaleX = s
+                    scaleY = s
+                },
+            )
+        }
+        if (deadline != null) {
+            val hurry = seconds in 1..5
+            Row(
+                Modifier
+                    .background(if (hurry) JamaaColors.Accent else Studio.elevated, RoundedCornerShape(50))
+                    .padding(horizontal = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Icon(JamaaIcons.Timer, contentDescription = null, tint = if (hurry) Ink else Studio.glow, modifier = Modifier.size(20.dp))
+                // Western digits, fixed width (Cairo's digits are tabular): the pill never jitters.
+                Text(
+                    seconds.toString().padStart(2, ' '),
+                    style = JamaaTheme.type.title,
+                    color = if (hurry) Ink else JamaaColors.Text,
+                    maxLines = 1,
+                    modifier = Modifier.width(34.dp),
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
@@ -352,64 +494,108 @@ private fun PodiumRow(view: TriviaView, args: GameScreenArgs, clock: PhaseClock,
     BoxWithConstraints(modifier) {
         val players = view.players.filter { !it.left }
         val slots = TriviaBoard.podiumSlots(players.size, maxWidth.value)
-        val podiumW = minOf(64f, (maxWidth.value / players.size.coerceAtLeast(1)) - 6f).coerceAtLeast(40f)
+        val step = minOf(TriviaBoard.PODIUM_STEP, maxWidth.value / players.size.coerceAtLeast(1))
+        val plateW = TriviaLayout.plateWidth(step)
         players.forEachIndexed { i, p ->
-            val cx = if (rtl) maxWidth.value - slots[i] else slots[i]
-            Box(
-                Modifier
-                    .absoluteOffset(x = (cx - podiumW / 2f).dp, y = 0.dp) // already mirrored for RTL above
-                    .width(podiumW.dp)
-                    .fillMaxHeight()
-                    .onGloballyPositioned { c ->
-                        val pos = c.positionInRoot()
-                        val feet = with(density) { Offset(pos.x + c.size.width / 2f, pos.y + (PODIUM_CHAR_DP + 4).dp.toPx()) }
-                        if (positions.podium[p.id] != feet) positions.podium[p.id] = feet
-                    },
-            ) {
-                Podium(view, p, args, clock, drawCharacter = p.id !in jumpers, width = podiumW.dp)
+            androidx.compose.runtime.key(p.id) {
+                val cx = if (rtl) maxWidth.value - slots[i] else slots[i]
+                Box(
+                    Modifier
+                        .absoluteOffset(x = (cx - plateW / 2f).dp, y = 0.dp) // already mirrored for RTL above
+                        .width(plateW.dp)
+                        .fillMaxHeight()
+                        .onGloballyPositioned { c ->
+                            val pos = c.positionInRoot()
+                            val feet = with(density) { Offset(pos.x + c.size.width / 2f, pos.y + (PODIUM_CHAR_DP + 4).dp.toPx()) }
+                            if (positions.podium[p.id] != feet) positions.podium[p.id] = feet
+                        },
+                ) {
+                    Podium(view, p, args, drawCharacter = p.id !in jumpers, width = plateW.dp)
+                }
             }
         }
     }
 }
 
+/**
+ * One podium: the character (56 dp) over a 36 dp name plate with the player's full name (auto-sized, ellipsis only
+ * past 14 sp). Answer lock (ANSWER): the plate's light strip turns white, a check badge pops on the plate's corner
+ * and the character hops once (`motion.slow`, decel; reduced motion: no hop, the badge just appears). Neutral:
+ * nothing says which answer.
+ */
 @Composable
-private fun Podium(view: TriviaView, p: TriviaPlayer, args: GameScreenArgs, clock: PhaseClock, drawCharacter: Boolean, width: Dp) {
+private fun Podium(view: TriviaView, p: TriviaPlayer, args: GameScreenArgs, drawCharacter: Boolean, width: Dp) {
     val member = args.room.member(p.id)
     val expression = if (member != null) {
         CharacterRules.expression(member, args.game.envelope, null, TriviaBoard.expression(view, p))
     } else {
         TriviaBoard.expression(view, p)
     }
+    val reduce = JamaaTheme.reduceMotion
     val answered = view.phase == TriviaPhase.ANSWER && p.answered
+    val lock = remember(p.id) { androidx.compose.animation.core.Animatable(if (answered) 1f else 0f) }
+    LaunchedEffect(answered, reduce) {
+        when {
+            !answered -> lock.snapTo(0f)
+            reduce -> lock.snapTo(1f)
+            else -> lock.animateTo(1f, androidx.compose.animation.core.tween(app.jamaa.tv.ui.theme.JamaaMotion.Slow, easing = app.jamaa.tv.ui.theme.JamaaMotion.Decel))
+        }
+    }
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(Modifier.size(PODIUM_CHAR_DP.dp + 4.dp), contentAlignment = Alignment.BottomCenter) {
             if (drawCharacter) {
-                if (TriviaBoard.flameVisible(view, p)) FlameOverlay(TriviaBoard.flameLevel(p.streak), PODIUM_CHAR_DP.dp)
-                Character(p.color, PODIUM_CHAR_DP.dp, expression, state = AvatarState(away = !p.connected))
+                Box(
+                    Modifier.graphicsLayer {
+                        val v = lock.value
+                        translationY = if (v in 0.001f..0.999f) -kotlin.math.sin(Math.PI * v).toFloat() * 12.dp.toPx() else 0f
+                    },
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    if (TriviaBoard.flameVisible(view, p)) FlameOverlay(TriviaBoard.flameLevel(p.streak), PODIUM_CHAR_DP.dp)
+                    Character(p.color, PODIUM_CHAR_DP.dp, expression, state = AvatarState(away = !p.connected))
+                }
                 if (TriviaBoard.snoozing(view, p)) ZBubble(Modifier.align(Alignment.TopEnd))
             }
             if (p.isNew) NewRibbon(Modifier.align(Alignment.TopStart))
         }
-        // The podium front with its light ring and the name plate.
+        // The podium front with its light strip and the name plate.
         Box(
             Modifier
                 .width(width)
-                .height(40.dp)
-                .background(Brush.verticalGradient(listOf(Studio.elevated, Studio.surface)), RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
+                .height(TriviaLayout.PLATE.dp)
+                .background(Brush.verticalGradient(listOf(Studio.elevated, Studio.surface)), RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)),
             contentAlignment = Alignment.Center,
         ) {
             Canvas(Modifier.fillMaxSize()) {
-                val ring = if (answered) Color.White else Studio.glow.copy(alpha = 0.18f)
-                drawLine(ring, Offset(6.dp.toPx(), 3.dp.toPx()), Offset(size.width - 6.dp.toPx(), 3.dp.toPx()), 3.dp.toPx(), androidx.compose.ui.graphics.StrokeCap.Round)
+                val ring = lerpColor(Studio.glow.copy(alpha = 0.18f), Color.White, lock.value)
+                drawLine(ring, Offset(8.dp.toPx(), 3.dp.toPx()), Offset(size.width - 8.dp.toPx(), 3.dp.toPx()), 3.dp.toPx(), androidx.compose.ui.graphics.StrokeCap.Round)
             }
-            Text(
-                Names.ellipsize(p.name, 7),
-                style = JamaaTheme.type.caption,
-                color = if (p.connected) JamaaColors.Text else JamaaColors.TextMuted,
+            FitLines(
+                p.name,
+                JamaaTheme.type.label,
+                if (p.connected) JamaaColors.Text else JamaaColors.TextMuted,
+                max = 20.sp,
+                min = 14.sp,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(top = 6.dp, start = 2.dp, end = 2.dp),
+                align = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(start = 6.dp, end = 6.dp, top = 4.dp),
             )
+            Box(
+                Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = 6.dp, y = (-8).dp)
+                    .size(20.dp)
+                    .graphicsLayer {
+                        val v = lock.value
+                        alpha = v.coerceIn(0f, 1f)
+                        val s = 0.4f + 0.6f * app.jamaa.tv.ui.theme.JamaaMotion.Overshoot.transform(v.coerceIn(0f, 1f))
+                        scaleX = s
+                        scaleY = s
+                    }
+                    .background(JamaaColors.Success, CircleShape)
+                    .border(1.5.dp, JamaaColors.Text, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) { Icon(JamaaIcons.Check, contentDescription = null, tint = Ink, modifier = Modifier.size(13.dp)) }
         }
     }
 }
@@ -483,10 +669,19 @@ private fun Tower(view: TriviaView, clock: PhaseClock, positions: StagePositions
     val hoppers = if (reveal) TriviaBoard.overtakers(view) else emptySet()
     val leaders = TriviaBoard.leaders(view)
     val page by remember(view) { derivedStateOf { TriviaBoard.towerPage(before, clock.t()) } }
-    Column(modifier.background(Studio.surface.copy(alpha = 0.85f), RoundedCornerShape(16.dp)).padding(8.dp)) {
-        Text(keyText("game.trivia.leaderboard.title"), style = JamaaTheme.type.label, color = Studio.accentText, modifier = Modifier.padding(start = 6.dp, bottom = 4.dp))
-        Box(Modifier.fillMaxWidth().weight(1f)) {
-            val rowH = 36.dp
+    // The panel wraps its rows (they share the height under the back hint, 30..48 dp each): no tall empty panel.
+    BoxWithConstraints(modifier) {
+        val shown = minOf(before.size, TriviaBoard.TOWER_ROWS).coerceAtLeast(1)
+        val rowH = TriviaLayout.towerRowHeight(shown, maxHeight.value - 16f).dp
+        val avatar = if (rowH >= 40.dp) 30.dp else 24.dp
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(rowH * shown + 16.dp)
+                .background(Studio.surface.copy(alpha = 0.9f), RoundedCornerShape(16.dp))
+                .border(1.dp, Studio.elevated, RoundedCornerShape(16.dp))
+                .padding(horizontal = 10.dp, vertical = 8.dp),
+        ) {
             page.forEachIndexed { slot, p -> androidx.compose.runtime.key(p.id) {
                 val from = slot
                 val to = after.indexOf(p).let { idx -> if (idx in page.indices || page.size == before.size) idx else slot }
@@ -502,12 +697,24 @@ private fun Tower(view: TriviaView, clock: PhaseClock, positions: StagePositions
                             val hop = if (p.id in hoppers) clock.p("hop") else 0f
                             translationY -= kotlin.math.sin(Math.PI * hop).toFloat() * 10.dp.toPx()
                             alpha = if (p.left) 0.5f else 1f
+                        }
+                        .drawBehind {
+                            // The row flashes in the scorer's colour as their coin lands (with the badge pop).
+                            if (ci != null) {
+                                val pop = kotlin.math.sin(Math.PI * clock.p("badgePop", ci).coerceIn(0f, 1f)).toFloat()
+                                if (pop > 0.01f) {
+                                    drawRoundRect(
+                                        PlayerSwatch.byId(p.color).color.copy(alpha = 0.35f * pop),
+                                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(10.dp.toPx()),
+                                    )
+                                }
+                            }
                         },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    Avatar(p.color, 26.dp, state = AvatarState(away = !p.connected, left = p.left))
-                    Text(Names.ellipsize(p.name, 8), style = JamaaTheme.type.caption, color = JamaaColors.Text, maxLines = 1, modifier = Modifier.weight(1f))
+                    Avatar(p.color, avatar, state = AvatarState(away = !p.connected, left = p.left))
+                    FitLines(p.name, JamaaTheme.type.label, JamaaColors.Text, max = 20.sp, min = 14.sp, maxLines = 1, modifier = Modifier.weight(1f))
                     if (p.id in leaders) Icon(JamaaIcons.Crown, contentDescription = null, tint = JamaaColors.Accent, modifier = Modifier.size(16.dp))
                     Odometer(
                         from = if (ci == null) p.score else p.scoreBefore,

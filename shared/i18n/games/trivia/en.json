@@ -106,6 +106,8 @@
   "game.trivia.diff.3": "Hard",
   "game.trivia.hold.title": "Waiting for players…",
   "game.trivia.hold.body": "The quiz picks up as soon as someone is back.",
+  "game.trivia.tv.answered": "{count}/{total} answered",
+  "game.trivia.tv.getReady": "Answers in a moment…",
   "game.trivia.results.title": "The podium",
   "game.trivia.results.fastestCount": "Lightning thumb: {name} ×{count}",
   "game.trivia.results.longestStreak": "Longest streak: {name} ({count})",

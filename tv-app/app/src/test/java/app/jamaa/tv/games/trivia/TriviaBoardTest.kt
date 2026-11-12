@@ -155,9 +155,10 @@ class TriviaBoardTest {
 
     @Test
     fun twelveStackInTwoRowsOfSixInsideTheTile() {
-        // The native stage: grid 184 dp tall (two 86 dp rows), tiles about 320 dp wide.
-        val tile = TriviaBoard.tiles(QuestionType.MC4, 652f, 184f, 12f)[1]
-        assertEquals(86f, tile.h, 0.01f)
+        // The native stage (TriviaLayout): grid 208 dp tall (two 98 dp rows), tiles 320 dp wide.
+        val tile = TriviaBoard.tiles(QuestionType.MC4, TriviaLayout.STAGE_W, TriviaLayout.GRID, TriviaLayout.TILE_GAP)[1]
+        assertEquals(98f, tile.h, 0.01f)
+        assertEquals(320f, tile.w, 0.01f)
         val size = TriviaBoard.stackCharSize(12)
         assertEquals(32f, size, 0f)
         val spots = (0 until 12).map { TriviaBoard.stackOffset(it, tile.copy(x = 0f, y = 0f), size) }
@@ -206,7 +207,33 @@ class TriviaBoardTest {
         val rowH = TriviaBoard.raceRowHeight(12, h)
         assertTrue(rows.all { (it.from + 1) * rowH <= h + 0.01f && (it.to + 1) * rowH <= h + 0.01f })
         assertEquals(50f, TriviaBoard.raceRowHeight(8, h), 0.01f)
-        assertEquals(52f, TriviaBoard.raceRowHeight(4, 600f), 0.01f)
+        // A short board shares the whole area (no dead zone), capped at 84 dp a row.
+        assertEquals(84f, TriviaBoard.raceRowHeight(4, 600f), 0.01f)
+        assertEquals(75f, TriviaBoard.raceRowHeight(4, 300f), 0.01f)
+    }
+
+    @Test
+    fun stageSlotsFillTheSafeAreaExactlyAndClearTheBackHint() {
+        val l = TriviaLayout
+        // Header + gap + question + gap + grid + podium row = the 486 dp safe height: nothing cropped, no dead band.
+        assertEquals(l.SAFE_H, l.HEADER + l.HEADER_GAP + l.QUESTION + l.CARD_GAP + l.GRID + l.PODIUM_ROW, 0.01f)
+        assertEquals(208f, l.GRID, 0.01f)
+        assertEquals(l.PODIUM_ROW, l.PODIUM_CHAR + l.PLATE + 4f, 0.01f)
+        // The tower starts under the platform hint (y 52..84 at the top end corner).
+        assertTrue(l.HINT_BOTTOM >= 84f)
+        // Eight tower rows fit the room under the hint.
+        val towerRoom = l.SAFE_H - l.HINT_BOTTOM - l.PODIUM_ROW - 16f
+        assertTrue(l.towerRowHeight(8, towerRoom) * 8 <= towerRoom + 0.01f)
+        // A 40 dp crowd character's head stays under the reveal text band on a 98 dp tile.
+        val tile = TriviaBoard.tiles(QuestionType.MC4, l.STAGE_W, l.GRID, l.TILE_GAP)[0]
+        assertTrue(tile.h - TriviaBoard.STACK_CHAR - 6f >= TriviaBoard.REVEAL_TEXT_BAND)
+        // Podium plates: wide for few players, never wider than the slot for twelve.
+        assertEquals(108f, l.plateWidth(TriviaBoard.PODIUM_STEP), 0.01f)
+        assertTrue(l.plateWidth(l.SAFE_W / 12f) <= l.SAFE_W / 12f)
+        // Fit scale: 1 when it fits, proportional when not, never below 0.6.
+        assertEquals(1f, l.fitScale(300f, 338f), 0f)
+        assertEquals(338f / 400f, l.fitScale(400f, 338f), 0.001f)
+        assertEquals(0.6f, l.fitScale(1_000f, 338f), 0f)
     }
 
     @Test

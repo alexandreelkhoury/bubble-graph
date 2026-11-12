@@ -110,6 +110,8 @@
   "game.trivia.diff.3": "Difficile",
   "game.trivia.hold.title": "En attente de joueurs…",
   "game.trivia.hold.body": "Le quiz reprend dès que quelqu’un revient.",
+  "game.trivia.tv.answered": "{count}/{total} ont répondu",
+  "game.trivia.tv.getReady": "Les réponses arrivent…",
   "game.trivia.results.title": "Le podium",
   "game.trivia.results.fastestCount": "Pouce éclair : {name} ×{count}",
   "game.trivia.results.longestStreak": "Plus longue série : {name} ({count})",

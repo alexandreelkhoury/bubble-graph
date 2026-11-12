@@ -122,6 +122,8 @@
   "game.trivia.diff.3": "صعب",
   "game.trivia.hold.title": "ناطرين اللاعبين…",
   "game.trivia.hold.body": "المسابقة بتكمّل أوّل ما يرجع حدا.",
+  "game.trivia.tv.answered": "{count}/{total} جاوبوا",
+  "game.trivia.tv.getReady": "الأجوبة جايّة…",
   "game.trivia.results.title": "المنصّة",
   "game.trivia.results.fastestCount": "أسرع كبسة: {name} ×{count}",
   "game.trivia.results.longestStreak": "أطول سلسلة: {name} ({count})",

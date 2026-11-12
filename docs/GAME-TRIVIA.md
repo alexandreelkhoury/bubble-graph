@@ -199,13 +199,15 @@ Shapes, not colours, identify answers (CVD safety, DESIGN §2.3 rule). These are
 
 | Phase | TV | Phone |
 |---|---|---|
-| QUIZ_INTRO | The quiz card scales in from the marquee (it is not on screen before), the stars fill, domain and featured topic chips stagger in, "10 questions" | "Get ready! Quiz: Lebanon ★★" |
-| READ | Question card big, top; topic chip; question counter "3 / 10"; a thin "get ready" bar fills | "Look at the TV!" + the question in small text (accessibility) |
-| ANSWER | The 4 answer tiles pop in (shape + text); timer as a ring of light bulbs switching off; characters row: `think`, then `done` when answered (no hint of which answer) | **Answer pad** (§8.4) |
-| REVEAL | Wrong tiles dim; the right one glows; characters jump onto the tile they picked; "Fastest finger" bolt; points fly into the side leaderboard, which re-sorts; optional "Did you know?" (`explain`) line | Full-screen verdict: jade "Correct! +870" with streak flame "×3", or coral "Not this time" with the right answer's shape and text; own rank "You're 2nd" |
+| QUIZ_INTRO | The quiz card (landscape: cover art beside title, stars, chips) scales in from the marquee (it is not on screen before), the stars fill, domain and featured topic chips stagger in, "10 questions" | "Get ready! Quiz: Lebanon ★★" |
+| READ | Question card big, top; topic chip; question counter "Question 3 of 10" with one progress pip per question; "Answers in a moment…" at the header's end; a thin "get ready" bar fills; the four answer slots show as dashed ghosts in their token colours | "Look at the TV!" + the question in small text (accessibility) |
+| ANSWER | The 4 answer tiles pop in (shape + text); timer as a ring of light bulbs switching off, plus the seconds left in the header (amber in the last 5 s); "✓ 2/4 answered" in the header; characters row: `think`, then `done` when answered, with a hop, a white plate light and a check badge (no hint of which answer) | **Answer pad** (§8.4) |
+| REVEAL | Wrong tiles dim; the right one grows, glows and gets a check badge; the answer text glides to the tile's top; characters jump onto the tile they picked; the verdict ("Lightning thumb: Sami", Stumped…) pops into the header; points fly into the side leaderboard, whose rows flash and re-sort; optional "Did you know?" (`explain`) card flips down over the question card | Full-screen verdict: jade "Correct! +870" with streak flame "×3", or coral "Not this time" with the right answer's shape and text; own rank "You're 2nd" |
 | LEADERBOARD | Full leaderboard race (§12.3) | Own rank, points, gap to the player ahead ("120 behind Maya") |
 | FINAL_INTRO | "FINAL QUESTION — double points!" with a drum build | "Final question! Double points" |
-| RESULTS | Podium, stats ("Fastest finger: Rami ×4", "Longest streak: Lina 6"), host buttons | Place, points, correct count, best streak; VIP buttons |
+| RESULTS | Podium with every name in full under its step, Tonight's cup beside it, a strip of stats cards ("Fastest finger: Rami ×4", "Longest streak: Lina 6"), host buttons | Place, points, correct count, best streak; VIP buttons |
+
+**TV layout (native, 864 × 486 dp safe area; `TriviaLayout`, JVM-tested).** Fixed slots so nothing is cropped at the top or bottom and no phase change moves the layout: header 44 dp (+8) · question card 118 dp · 12 dp · answer grid 208 dp (two rows of 98 dp tiles, 320 dp wide beside the 196 dp tower) · podium row 96 dp (56 dp characters on 36 dp name plates). The tower and the leaderboard's rows start at y 88, below the platform's "◁ Back: menu & rules" hint (y 52–84, top end corner). Text is never cut: question 34 → 18 sp then up to 4 lines, answers 28 → 16 sp then up to 3 lines, names auto-sized; line heights are em-based so shrunken text keeps the theme's Latin/Arabic line ratio; blocks that could overflow (quiz card, final title, hold card, results podium) scale down as a whole. The studio lights (cones, bulb arch) are drawn full-bleed, in the margin above the header.
 
 ### 8.4 Phone answer pad (one thumb)
 
@@ -394,7 +396,7 @@ A TV game-show studio at night: a curved stage, a light-bulb arch, a big screen 
 4. *Fastest finger (2 400–3 000 ms):* a lightning bolt strikes the fastest correct character; "Fastest finger: Rami".
 5. *Points fly (3 000–4 500 ms):* from each correct character, a "+870" chip flies to the leaderboard tower; streak ≥ 3 adds a flame trail and a flame overlay around the character (expression `happy`, doubled by a hop at small sizes) until the streak breaks.
 6. *Tower re-sort (4 500–6 000 ms):* the side leaderboard re-orders with springs; overtakes show a little hop.
-7. *Explain (optional, +3 s):* "Did you know?" card slides up with the question's `explain`.
+7. *Explain (optional, +3 s):* "Did you know?" card flips down over the question card with the question's `explain` (the right tile stays lit below it).
 
 Stumped: all tiles dim, the correct tile reveals with a comedic "dun-dun" and every character does `shock`. Genius: a confetti cannon.
 

@@ -205,9 +205,17 @@ object TriviaBoard {
     /** The race switches to compact rows (smaller characters, label type) above 8 players. */
     fun raceCompact(players: Int): Boolean = players > TOWER_ROWS
 
-    /** The race's row height (dp) in an area [height] dp tall: 8 slots up to 52 dp, or every player when compact. */
+    /**
+     * The race's row height (dp) in an area [height] dp tall: the rows share the whole area (no dead zone under a
+     * short board), up to [RACE_ROW_MAX] dp each; compact rows above 8 players.
+     */
     fun raceRowHeight(players: Int, height: Float): Float =
-        if (raceCompact(players)) height / players else minOf(height / TOWER_ROWS, 52f)
+        if (raceCompact(players)) height / players else minOf(height / players.coerceAtLeast(1), RACE_ROW_MAX)
+
+    const val RACE_ROW_MAX = 84f
+
+    /** Podium slots: at most this far apart (dp), so 2–6 players get wide name plates. */
+    const val PODIUM_STEP = 120f
 
     /**
      * The odometer (DESIGN-JAMAA §5.1, values ≥ 100): the position of each digit column, ones first, for a counter at
@@ -259,11 +267,11 @@ object TriviaBoard {
     }
 
     /**
-     * REVEAL tile layout (dp): the answer text moves to a one-line band at the tile's top ([REVEAL_TEXT_BAND]) and the
-     * stack stands below it, clear of the token column at the start side ([REVEAL_START_RESERVE]), so the crowd never
+     * REVEAL tile layout (dp): the answer text glides (no re-layout: same wrap, scale 0.8) into a band at the tile's
+     * top ([REVEAL_TEXT_BAND], room for two lines) and the stack stands below it, clear of the token column at the start side ([REVEAL_START_RESERVE]), so the crowd never
      * covers the right answer's wording.
      */
-    const val REVEAL_TEXT_BAND = 32f
+    const val REVEAL_TEXT_BAND = 48f
     const val REVEAL_START_RESERVE = 76f
     const val STACK_CHAR = 40f
     const val STACK_CHAR_CROWD = 32f
@@ -288,10 +296,10 @@ object TriviaBoard {
         return x to y
     }
 
-    /** Podium slot centres (dp) for [n] players across [width], seat order, at most 72 dp apart. */
+    /** Podium slot centres (dp) for [n] players across [width], seat order, at most [PODIUM_STEP] dp apart. */
     fun podiumSlots(n: Int, width: Float): List<Float> {
         if (n <= 0) return emptyList()
-        val step = minOf(72f, width / n)
+        val step = minOf(PODIUM_STEP, width / n)
         val start = (width - step * (n - 1)) / 2f
         return (0 until n).map { start + it * step }
     }
@@ -421,4 +429,54 @@ object TriviaBoard {
     }
 
     private fun camel(id: String): String = id.split('-').mapIndexed { i, s -> if (i == 0) s else s.replaceFirstChar { it.uppercase() } }.joinToString("")
+}
+
+/**
+ * The native stage metrics (dp) inside the 864 × 486 dp safe area (GAME-TRIVIA §8.3, DESIGN-JAMAA §7.9): every block
+ * has a fixed slot, so nothing is cropped at the top or bottom and no phase change moves the layout. JVM-tested.
+ */
+object TriviaLayout {
+    const val SAFE_W = 864f
+    const val SAFE_H = 486f
+
+    /** The header strip: question counter + topic at the start, the status slot (timer, answered, headline) at the end. */
+    const val HEADER = 44f
+    const val HEADER_GAP = 8f
+
+    /**
+     * The platform's "◁ Back: menu & rules" hint sits at y 52..84 in the top end corner for 3 s after each phase change
+     * (AppRoot `BackMenuHint`). The tower and the leaderboard's rows start below it, so the hint never covers a name.
+     */
+    const val HINT_BOTTOM = 88f
+
+    const val QUESTION = 118f
+    const val CARD_GAP = 12f
+    const val TILE_GAP = 12f
+
+    /** Characters 56 dp + a 36 dp name plate + 4 dp air. */
+    const val PODIUM_ROW = 96f
+    const val PODIUM_CHAR = 56f
+    const val PLATE = 36f
+
+    const val TOWER_W = 196f
+    const val TOWER_GAP = 16f
+
+    /** The answer grid's height: what is left between the question card and the podium row (208 dp). */
+    val GRID: Float get() = SAFE_H - HEADER - HEADER_GAP - QUESTION - CARD_GAP - PODIUM_ROW
+
+    /** The stage column's width beside the tower (652 dp). */
+    val STAGE_W: Float get() = SAFE_W - TOWER_W - TOWER_GAP
+
+    /** Tower rows share the room under the hint, 30..48 dp each. */
+    fun towerRowHeight(rows: Int, height: Float): Float = (height / rows.coerceAtLeast(1)).coerceIn(30f, 48f)
+
+    /** A name plate's width (dp) for a podium slot [step] dp wide. */
+    fun plateWidth(step: Float): Float = (step - 8f).coerceIn(40f, 108f)
+
+    /**
+     * The scale that fits a block measured [contentH] dp tall into [availableH] dp (1 when it fits; never below 0.6):
+     * the quiz card, the hold card and the results podium shrink as a whole instead of being cropped.
+     */
+    fun fitScale(contentH: Float, availableH: Float): Float =
+        if (contentH <= 0f || contentH <= availableH) 1f else (availableH / contentH).coerceAtLeast(0.6f)
 }

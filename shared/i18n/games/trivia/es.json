@@ -106,6 +106,8 @@
   "game.trivia.diff.3": "Difícil",
   "game.trivia.hold.title": "Esperando jugadores…",
   "game.trivia.hold.body": "El quiz sigue en cuanto vuelva alguien.",
+  "game.trivia.tv.answered": "{count}/{total} respondieron",
+  "game.trivia.tv.getReady": "Ya vienen las respuestas…",
   "game.trivia.results.title": "El podio",
   "game.trivia.results.fastestCount": "Pulgar relámpago: {name} ×{count}",
   "game.trivia.results.longestStreak": "Racha más larga: {name} ({count})",
