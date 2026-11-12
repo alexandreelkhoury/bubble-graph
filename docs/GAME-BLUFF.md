@@ -4,6 +4,8 @@ Status: **binding design spec**, draft 3 (owner decisions applied: three distinc
 
 > **Owner decision (2026-11-08, after this draft): Spanish (es) is a full language everywhere**, including this game's UI copy and its content packs. Every EN/FR/AR list or copy table in this file is read as EN/FR/AR/ES; the game's lane D writes the ES copy and ES content, marked for native review in `shared/i18n/review.json` (copy) or with `status: "draft"` (packs). JAMAA-PLATFORM §3.12.
 
+> **Owner decision (2026-11-12): sayings are out of the game.** "Finish the saying" felt odd at the table; facts nobody knows ("In 1932, ___ happened") play better. The four sayings packs (`bluff-en-sayings`, `bluff-fr-proverbes`, `bluff-es-refranes`, `bluff-lb-proverbs`) moved to `content/archive/bluff/`, which no registry, lint run or server loads; they stay schema-valid (a test checks it) and come back by re-importing them in `content/bluff/index.ts`. Round 1 is now **"Know it or bluff it"**: it draws from the "Impossible but true" facts pool through the §11.4 short-pool rule and keeps its Spot-on rule; round 2 keeps its hidden-truth rules and ×2 points. The `proverb_end` type stays in the schema and engine (archived packs still parse), but no live pack uses it. Content: §11.5, §14.9.
+
 This file defines the rules, state machine, timers, scoring, edge cases, screens, settings, copy, content schema and first content for Bluff. Things the JAMAA hub owns are only referenced here: the lobby, game picker, player characters, the ⓘ rules button, entitlements (JAMAA Pass), sound mute, room lifetime and reconnect. **The platform contract is [JAMAA-PLATFORM.md](JAMAA-PLATFORM.md) (§2.10 for Bluff); where it names a shared concept differently, the platform name wins and this file maps to it.** In particular: i18n keys written `bluff.*` here live under `game.bluff.*`; intents travel as `GAME {gameId:"bluff", i}`; `HOST_ADVANCE` is the platform's host-advance intent; late joiners are the room's *benched* members, admitted through the `join` hook; "How to play" is the platform's per-device setup intro (there is **no in-game intro phase**); the no-repeat history is the platform `memory.usedKeys`. Everything that is specific to Bluff is fixed here.
 
 Conventions are those of [SPEC.md](SPEC.md): pure engine (`reduce(state, action, ctx:{now, catalog})`, RNG `rngState` in state, one idempotent `TICK`), server-authoritative Durable Object, per-client projections, every server→client key always present (`null` when empty), times in epoch ms, durations `*Ms`. `[VERIFY]` = check before shipping. `[native review]` = a native speaker must approve the text.
@@ -14,7 +16,7 @@ Conventions are those of [SPEC.md](SPEC.md): pure engine (`reduce(state, action,
 
 Three rounds, three ways to lie.
 
-1. **"Finish the saying."** The TV shows the start of a real proverb or saying. Everyone types the ending. If you **know** the real ending, type it: you score on the spot ("Spot on!") and sit out the vote. Everyone else's endings are fakes; they go on the board next to the real one and the table votes.
+1. **"Know it or bluff it."** The TV shows a weird but **real** fact with a blank ("In 1932, Australia sent soldiers with machine guns to fight ___, and lost"). If you **know** the answer, type it: you score on the spot ("Spot on!") and sit out the vote. Everyone else writes a fake; the fakes go on the board next to the real answer and the table votes. (Until 2026-11-12 this round finished real proverbs; sayings are archived, see the owner decision above.)
 2. **"Impossible but true."** A very hard, obscure, **real** fact with a blank. Everyone writes a fake that sounds truer than the truth; the vote hunts for the real one.
 3. **Final: "No truth."** The TV says it out loud: **there is no right answer this time.** The question is absurd or impossible ("What did the first cat ever say to a human?"). Everyone writes the most convincing answer, the table votes for the one that *sounds* most true, and the most-voted answer wins big.
 
@@ -47,7 +49,7 @@ Players: **3–12** (platform bounds). Best at 4–8. Duration: about 15–20 mi
 
 ## 3. Structure
 
-| Length setting | Round 1 "Finish the saying" | Round 2 "Impossible but true" | Final "No truth" | Prompts |
+| Length setting | Round 1 "Know it or bluff it" | Round 2 "Impossible but true" | Final "No truth" | Prompts |
 |---|---|---|---|---|
 | Short | 2 | 2 | 1 | 5 |
 | **Normal** (default) | 3 | 3 | 1 | 7 |
@@ -57,7 +59,7 @@ Each **prompt** runs the loop WRITING → VOTING → REVEAL → SCORES. A round 
 
 | Round | `roundKind` | Prompt types drawn (§11.1) | Truth? | Special rule | Points (§6.3) |
 |---|---|---|---|---|---|
-| 1 | `saying` | `proverb_end` | yes | **Spot on**: a player whose **first** submission matches the real ending scores at once and does not vote on that prompt (§5.0) | base values ×1 |
+| 1 | `saying` (id kept; shown as "Know it or bluff it") | `proverb_end` when a sayings pack is listed (none since 2026-11-12); otherwise round 2's pool, `fact_blank` first (§11.4 short pools) | yes | **Spot on**: a player whose **first** submission matches the real ending scores at once and does not vote on that prompt (§5.0) | base values ×1 |
 | 2 | `fact` | `fact_blank`, then `word_meaning` / `expression_meaning` (§11.4) | yes | Hidden truth; "too close" rejection (§5.2) | base values ×2 |
 | 3 | `noTruth` | `no_truth` | **no** | No truth exists: the TV announces it; vote for the answer that sounds most true; ballots stay anonymous in the reveal (§6.5) | own table (§6.5) |
 
@@ -135,7 +137,7 @@ Durations below are for `pace: "normal"`. `relaxed` multiplies WRITING and VOTIN
 
 ### 5.0 Round 1: "Spot on" (knowing the real ending)
 
-In round 1 the phone says "Know the ending? Type it and score now. Don't know it? Make one up." (`bluff.write.sayingHint`). One function decides both "Spot on" and "too close": `matchesTruth(text, truths)` = `isTooClose` of §5.2 (normalised fuzzy match, aware of AR/FR/ES/EN stop words, Arabic letter variants, Spanish/French accents and Arabizi `truthAlt`).
+In round 1 the phone says "Know the answer? Type it and score now. Don't know it? Make one up." (`bluff.write.sayingHint`). One function decides both "Spot on" and "too close": `matchesTruth(text, truths)` = `isTooClose` of §5.2 (normalised fuzzy match, aware of AR/FR/ES/EN stop words, Arabic letter variants, Spanish/French accents and Arabizi `truthAlt`).
 
 | Submission | Matches the real ending? | Result |
 |---|---|---|
@@ -384,7 +386,7 @@ Option order and ids are random (RNG), so neither leaks the truth. The prompt (`
 
 | Phase | TV (stage) | Phone (controller) |
 |---|---|---|
-| ROUND_INTRO | Full-screen round card with the round's name and rule in one line: "Round 1 · Finish the saying. Know it? Score now." / "Round 2 · Impossible but true. Points ×2." / final, dramatic version: "Final · **No truth.** There is no right answer. The answer that sounds most true wins big." | Same line in compact form + own character |
+| ROUND_INTRO | Full-screen round card with the round's name and rule in one line: "Round 1 · Know it or bluff it. Know the answer? Score now." / "Round 2 · Impossible but true. Points ×2." / final, dramatic version: "Final · **No truth.** There is no right answer. The answer that sounds most true wins big." | Same line in compact form + own character |
 | WRITING | Prompt card centre (type label chip, e.g. "Proverb", the prompt text big; AR pack in EN/FR rooms: the Arabic original, then translit, then the translation in smaller type). Under it, the length hint chip ("Short answer (1–2 words)"). Timer ring top-end. Bottom row: every character at a little café table, scribbling (`think`); on submit, the character drops an envelope in a box (`done`). In the last 10 s, unsubmitted characters get a gentle spotlight and "Waiting for…". Final: a permanent "No right answer" chip on the prompt card | Prompt text (same as TV, compact) and the length hint. Text field (60-grapheme counter), "Lock my lie" button, "Help me" link. After submit: "Lie locked! You can still edit it." + Edit. Error toasts per §5.1; after a too-close probe, a persistent line "Finding the truth now won't score". Round 1: the hint line "Know the ending? Type it and score now." and, after a Spot on, a gold card "Spot on! +150. You sit this vote out." Final: "There is no right answer. Write the one that sounds most true." |
 | VOTING | Round 1: opens with the 1.5 s "Knew it! {names} +150" banner (if any). All options as cards on a corkboard: ≤ 6 options 1 column; 7–13 options 2 columns (RTL mirrored). No author, no counts. Bottom row: characters; a voted character holds up a ballot (`done`). Timer ring | Scrollable list of options as big tap targets. Own option(s) greyed with "Yours". Tap = vote: the chosen card gets only a **subtle outline and a small check** (no full-colour fill, the list is not recoloured) so a neighbour on the couch cannot read your pick from 2 m; a "Vote in" line in the header; haptic 20. Each card has a heart-style "like" toggle (2 max, counter "Likes left: 1"). VIP: long-press **any** card → "Hide this answer" (§5.4). Spot-on players see the options read-only with likes only ("You knew it: enjoy the show"). Final title: "Which one sounds the most true?" |
 | REVEAL | The reveal script (§12.2; final: §12.2.1) | Mirrors the step in progress in compact form: "Is it… «text»?" then the stamp; own events are highlighted ("You fooled 2!" with points; "You fell for Rami's lie" with Rami's character; final: "3 people believed you!", never who). Ends with "+160 this prompt". Reactions bar (platform `REACT`, character faces) under it |
@@ -426,7 +428,7 @@ All copy exists in EN, FR, AR (Lebanese, RTL) and ES. EN is authoritative; FR, A
 
 EN (authoritative):
 - **Goal.** Fool your friends, and don't get fooled.
-- **Round 1: Finish the saying.** Type the ending. If your first answer is the real one, you get +150 at once and sit that vote out. If not, your answer becomes a fake on the board.
+- **Round 1: Know it or bluff it.** A weird but true fact. Type the missing words. If your first answer is the real one, you get +150 at once and sit that vote out. If not, your answer becomes a fake on the board.
 - **Round 2: Impossible but true.** A very hard but real fact. Write a fake that sounds truer than the truth. Points ×2.
 - **Writing.** {seconds} s, max 60 characters, in the same alphabet as the prompt. Too close to the real answer? You'll be asked for another one, and finding the truth on that prompt won't score. Stuck? "Help me" suggests a lie (a small fee comes off what it earns).
 - **Voting.** Vote for the answer you think is true, never your own. Like up to 2 answers you find funny.
@@ -476,7 +478,7 @@ ES `[native review]`:
 
 | Key | EN | FR | AR `[native review]` | ES `[native review]` |
 |---|---|---|---|---|
-| `bluff.round.saying` | Finish the saying | Finis le proverbe | كمّل المتل | Termina el refrán |
+| `bluff.round.saying` | Know it or bluff it | Tu sais ou tu bluffes | بتعرفها أو بتكذب؟ | ¿Lo sabes o lo inventas? |
 | `bluff.round.fact` | Impossible but true | Impossible mais vrai | مستحيل بس صحيح | Imposible pero cierto |
 | `bluff.round.noTruth` | No truth | Aucune vérité | ما في صحّ | Ninguna es verdad |
 | `bluff.round.noTruth.intro` | Final round. There is no right answer. Write the answer that sounds the most true. The most votes wins big. | Finale. Il n'y a pas de bonne réponse. Écrivez la réponse la plus crédible. Le plus de votes rafle la mise. | الجولة الأخيرة. ما في جواب صح. اكتبوا الجواب اللي بيقنع أكتر، واللي بياخد أكتر أصوات بيربح الكبيرة. | Ronda final. No hay respuesta correcta. Escribe la respuesta más creíble. La más votada se lo lleva todo. |
@@ -484,7 +486,7 @@ ES `[native review]`:
 | `bluff.write.cta` | Lock my lie | Valider mon bluff | ثبّت كذبتي | Fijar mi mentira |
 | `bluff.write.help` | Help me | Aide-moi | ساعدني | Ayúdame |
 | `bluff.write.locked` | Lie locked! You can still edit it. | Bluff validé ! Tu peux encore le modifier. | كذبتك تثبّتت! بعد فيك تغيّرها. | ¡Mentira fijada! Aún puedes cambiarla. |
-| `bluff.write.sayingHint` | Know the ending? Type it and score now. Don't know it? Make one up. | Tu connais la fin ? Tape-la et marque tout de suite. Sinon, invente ! | بتعرف آخرها؟ اكتبو وخود النقاط هلّق. ما بتعرف؟ ألّف شي. | ¿Te sabes el final? Escríbelo y suma ya. ¿No? Invéntatelo. |
+| `bluff.write.sayingHint` | Know the answer? Type it and score now. Don't know it? Make one up. | Tu connais la réponse ? Tape-la et marque tout de suite. Sinon, invente ! | بتعرف الجواب؟ اكتبو وخود النقاط هلّق. ما بتعرف؟ ألّف شي. | ¿Te sabes la respuesta? Escríbela y suma ya. ¿No? Invéntatela. |
 | `bluff.write.spotOn` | Spot on! +150. You sit this vote out. | Dans le mille ! +150. Tu ne votes pas sur celle-ci. | بالضبط! ‎+150. هالمرّة ما بتصوّت. | ¡Clavado! +150. Esta vez no votas. |
 | `bluff.write.noTruthHint` | There is no right answer. Write the one that sounds most true. | Il n'y a pas de bonne réponse. Écris celle qui sonne le plus vrai. | ما في جواب صح. اكتب الجواب اللي بيبيّن صحيح أكتر شي. | No hay respuesta correcta. Escribe la que suene más a verdad. |
 | `bluff.vote.title` | Which one is true? | Laquelle est vraie ? | أيّا الصحيحة؟ | ¿Cuál es la verdadera? |
@@ -524,13 +526,15 @@ ES `[native review]`:
 
 | `type` | Round | TV label (EN · FR · AR · ES) | Prompt shows | Truth is | Example |
 |---|---|---|---|---|---|
-| `proverb_end` | 1 | Finish the saying · Finis le proverbe · «كمّل المتل» · Termina el refrán | The first half of a **real** proverb or saying, ending with "…" | The real second half (Spot on if typed first, §5.0) | «القرد بعين إمّو…» → «…غزال» |
-| `fact_blank` | 2 | Impossible but true · Impossible mais vrai · «مستحيل بس صحيح» · Imposible pero cierto | A very hard, obscure, **real** fact with `___` | The missing words | "Wombat droppings are shaped like ___" → "cubes" |
+| `proverb_end` (**archived**: no live pack since 2026-11-12) | 1 | Finish the saying · Finis le proverbe · «كمّل المتل» · Termina el refrán | The first half of a **real** proverb or saying, ending with "…" | The real second half (Spot on if typed first, §5.0) | «القرد بعين إمّو…» → «…غزال» |
+| `fact_blank` | 2 (and round 1 through the short-pool rule) | Impossible but true · Impossible mais vrai · «مستحيل بس صحيح» · Imposible pero cierto | A very hard, obscure, **real** fact with `___` | The missing words | "Wombat droppings are shaped like ___" → "cubes" |
 | `word_meaning` | 2 (filler, §11.4) | What does it mean? · Ça veut dire quoi ? · «شو يعني؟» · ¿Qué significa? | A rare word | A short definition in player voice | *Gongoozler* → "Someone who idly watches canal boats" |
 | `expression_meaning` | 2 (filler, §11.4) | What does it mean? · Ça veut dire quoi ? · «شو يعني؟» · ¿Qué significa? | An expression | Its meaning | « Peigner la girafe » → « Faire un travail inutile » |
 | `no_truth` | 3 (final) | No truth · Aucune vérité · «ما في صحّ» · Ninguna es verdad | An absurd or impossible question, with the "No right answer" chip | **none** (the item has no `truth`) | "What did the first cat ever say to a human?" |
 
 `ROUND_OF_TYPE = { proverb_end: 1, fact_blank: 2, word_meaning: 2, expression_meaning: 2, no_truth: 3 }` (shared constant; the draw and lint both use it).
+
+**`fact_blank` formats (2026-11-12).** Mix them across packs, all with one `___` and a short truth (1–4 words, easy to bluff around), EN prompt ≤ 90 characters so it fits one or two TV lines: **year facts** ("In 1966, the stolen World Cup trophy was found by ___"), plain impossible-but-true facts, world records, odd laws, animal facts, history, food origins, science and space, and Middle East / Lebanon facts for the Lebanese and Arab families who play. Write our own: never adapt a prompt from another party game.
 
 ### 11.2 Writing guide (binding for content authors)
 
@@ -541,7 +545,7 @@ ES `[native review]`:
 5. **Every item has a `note`**: one line shown after the reveal ("It means: …" or a fun origin). Notes may be longer (≤ 140).
 6. **Facts are verified** (`review.status: "verified"` with a source URL in `review.source`) before an item can be `tier:"free"` or shipped. (Bluff keeps its per-item `review`, in its own pack schema; the platform `PackHeader` per-pack status applies to Mish Ana! and Trivia packs.)
 7. **Truths come in mixed lengths** across a pack (one-word, a few words, full sentences), and the length hint (§4.2) tells players the shape; lint warns when more than 40 % of a pack's truths are one word.
-8. **Round 1 sayings are real and "half-known".** Every `proverb_end` item is a real proverb or saying in use, with `review.source` (a dictionary of proverbs, a national language academy page or a recognised collection). Best items are known to *some* of the table, not all: that is what makes Spot on exciting. Famous-to-everyone items stay `knownIn` that locale and are skipped there (rule 3).
+8. **Round 1 sayings are real and "half-known".** Every `proverb_end` item is a real proverb or saying in use, with `review.source` (a dictionary of proverbs, a national language academy page or a recognised collection). Best items are known to *some* of the table, not all: that is what makes Spot on exciting. Famous-to-everyone items stay `knownIn` that locale and are skipped there (rule 3). **Archived 2026-11-12** (no live `proverb_end` pack): this rule applies again only if a sayings pack returns.
 9. **Round 2 facts are very hard, obscure and true.** Never invent or embellish. Each `fact_blank` item carries `review.source` (a primary or reference source: a museum, agency, university, peer-reviewed paper or major encyclopaedia) and stays `draft` until a second person checks it; numbers are given only at the precision the source supports. Avoid famous "fun facts" that are actually myths (lint keeps a deny-list, e.g. "goldfish 3-second memory", "Great Wall visible from space").
 10. **Final `no_truth` prompts are absurd, impossible or unknowable**, so no answer can be checked ("What did the first cat ever say to a human?"). They must invite *plausible-sounding* answers, not just jokes: the vote is for the most convincing one. Never about a real person, never a question with a real answer, never a trap for mean answers about players. Each has ≥ 3 house answers per playable locale (they fill small games and power "Help me").
 
@@ -599,24 +603,27 @@ Pack lint (`pnpm lint:content`, `tools/content-lint/src/games/bluff.ts`): ids un
 
 `drawPrompt(catalog, settings, memory, rng, roundIndex)`: candidates = items of the selected packs (`[]` = all playable) whose `ROUND_OF_TYPE[type]` is this round, playable in the content language, **not `knownIn` the content language**, allowed by the entitlement, not in `memory.usedKeys`, not drawn earlier in this game. Weighted by difficulty: round 1 flat (1:1:1, "half-known" sayings are the point), round 2 prefers hard (1:2:3), final flat. Round 2 draws `fact_blank` first; `word_meaning` / `expression_meaning` items fill round 2 only when fewer than `round2Count + 2` unused `fact_blank` items are playable (so FR/EN rooms keep their strong word packs while the fact pack grows). Avoid two consecutive prompts of the same `type` when another type is available.
 
-**Short pools.** If round 1 has too few playable `proverb_end` items, its missing slots draw from round 2's pool (and vice versa); the round keeps its own rules (a round-1 slot filled with a fact still uses Spot on). The final requires ≥ 1 playable `no_truth` item. `startBlocker = NO_CONTENT_AVAILABLE` when `proverb_end + round-2 items < round1Count + round2Count` or no `no_truth` item is playable. Reruns per §7 "pool exhausted".
+**Short pools.** If round 1 has too few playable `proverb_end` items, its missing slots draw from round 2's pool (and vice versa); the round keeps its own rules (a round-1 slot filled with a fact still uses Spot on). The final requires ≥ 1 playable `no_truth` item. `startBlocker = NO_CONTENT_AVAILABLE` when `proverb_end + round-2 items < round1Count + round2Count` or no `no_truth` item is playable. Reruns per §7 "pool exhausted". **Since 2026-11-12 this is the normal path for round 1**: no `proverb_end` pack is listed, so every round-1 slot draws from the facts pool (`crossRound: true`, Spot on kept), flat-weighted, while round 2 still prefers hard items (1:2:3). The facts catalog (≈ 225 items per locale, ≥ 150 free) covers many Long games without repeats.
 
 ### 11.5 First content plan
 
 | Pack id | Round | Title (EN · FR · AR · ES) | Source → playable | Items | Free | Status |
 |---|---|---|---|---|---|---|
-| `bluff-lb-proverbs` | 1 | Lebanese Proverbs · Proverbes libanais · «أمتال لبنانية» · Refranes libaneses | ar → **ar** at launch; **en, fr, es added once their house lies exist** (G2 exit criterion) | 36 drafted (§14.1; #24 dropped) | 16 | draft, `[native review]` |
-| `bluff-fr-proverbes` | 1 | Proverbes d'ici et d'ailleurs · French Sayings · «أمتال فرنسية» · Refranes franceses | fr → fr | **12 drafted (§14.5)**; 30 before launch | 6 | draft, `[native review]`, `[VERIFY]` sources |
-| `bluff-en-sayings` | 1 | Old Sayings · Vieux dictons anglais · «أقوال إنكليزية قديمة» · Dichos ingleses | en → en | **12 drafted (§14.6)**; 30 before launch | 6 | draft, `[VERIFY]` sources |
-| `bluff-es-refranes` | 1 | Refranes de la abuela · Spanish Sayings · «أمتال إسبانية» · Proverbes espagnols | es → es | **12 drafted (§14.7)**; 30 before launch | 6 | draft, `[native review]`, `[VERIFY]` sources |
-| `bluff-world-facts` | 2 | Impossible but True · Impossible mais vrai · «مستحيل بس صحيح» · Imposible pero cierto | en → en, fr, ar, es | **14 drafted (§14.4)**; 30 before launch | 7 | draft, every item `[VERIFY]` |
+| ~~`bluff-lb-proverbs`~~ | — | (sayings) | — | — | — | **archived 2026-11-12** in `content/archive/bluff/` (owner: sayings out of the game) |
+| ~~`bluff-fr-proverbes`~~ | — | (sayings) | — | — | — | **archived 2026-11-12** in `content/archive/bluff/` (owner: sayings out of the game) |
+| ~~`bluff-en-sayings`~~ | — | (sayings) | — | — | — | **archived 2026-11-12** in `content/archive/bluff/` (owner: sayings out of the game) |
+| ~~`bluff-es-refranes`~~ | — | (sayings) | — | — | — | **archived 2026-11-12** in `content/archive/bluff/` (owner: sayings out of the game) |
+| `bluff-world-facts` | 1–2 | Impossible but True · Impossible mais vrai · «مستحيل بس صحيح» · Imposible pero cierto | en → en, fr, ar, es | 44 | 28 | draft, every item `[VERIFY]` |
+| `bluff-me-facts` | 1–2 | Lebanon and Beyond · Le Liban et au-delà · «من لبنان وجيرانو» · El Líbano y más allá | en → en, fr, ar, es | 77 (45 + 32 added 2026-11-12, `me-046`…`me-077`) | 60 | draft, every item `[VERIFY]` |
+| `bluff-year-facts` | 1–2 | It Really Happened · C'est vraiment arrivé · «صارت عن جد» · Pasó de verdad | en → en, fr, ar, es (year facts: every prompt names a year or decade) | 45 (new 2026-11-12) | 32 | draft, every item `[VERIFY]` |
+| `bluff-odd-facts` | 1–2 | Weird but True · Bizarre mais vrai · «غريب بس صحيح» · Raro pero cierto | en → en, fr, ar, es (odd laws, records, animals, food, science) | 59 (new 2026-11-12) | 37 | draft, every item `[VERIFY]` |
 | `bluff-lb-teta-words` | 2 | Teta's Words · Les mots de Teta · «كلمات تيتا» · Las palabras de la abuela | ar → ar (type `word_meaning`: rare Lebanese dialect words and Turkish/French loanwords most young players don't know) | **40 to source** (G2 exit criterion) | ≥ 20 | to write, `[native review]` |
 | `bluff-fr-expressions` | 2 | Strange French Expressions · Expressions bizarres · «تعابير فرنسية غريبة» · Expresiones francesas raras | fr → fr | 40 drafted (§14.2) | 14 | draft, `[native review]` |
 | `bluff-en-weird-words` | 2 | Weird English Words · Mots anglais étranges · «كلمات إنكليزية غريبة» · Palabras inglesas raras | en → en | 40 drafted (§14.3) | 13 | draft, `[VERIFY]` definitions |
 | `bluff-no-truth` | final | No Truth · Aucune vérité · «ما في صحّ» · Ninguna es verdad | en → en, fr, ar, es (each locale written natively, not translated word for word) | **12 drafted (§14.8)**; 24 before launch | 12 (all: every room needs a final) | draft, `[native review]` |
 
-- **AR rooms.** Round 1: famous proverbs in `bluff-lb-proverbs` are `knownIn: ["ar"]` (at least #2, 3, 5, 10, 11, 14, 19, 20, 21, 23, 30, 34, 37; the native reviewer adds others), so an AR room draws only the rarer ones; 40+ rare or village proverbs are a G2 exit criterion. Round 2: `bluff-world-facts` (AR column) and `bluff-lb-teta-words`. A free AR room needs ≥ 3 free round-1 items not `knownIn: ["ar"]` and ≥ 3 free round-2 items.
-- **EN/FR/ES rooms.** Round 1 uses the room's own sayings pack; `bluff-lb-proverbs` joins once its EN/FR/ES house lies exist (the truth is the translated ending and the TV shows the Arabic original on reveal: "so *that's* what Teta meant"). Round 2: `bluff-world-facts`, plus the EN/FR word packs as fillers (§11.4). ES has no word pack at launch; `bluff-world-facts` must reach 30 items with ES house lies before ES Bluff ships (G2 exit criterion for ES).
+- **AR rooms.** Round 1: famous proverbs in `bluff-lb-proverbs` are `knownIn: ["ar"]` (at least #2, 3, 5, 10, 11, 14, 19, 20, 21, 23, 30, 34, 37; the native reviewer adds others), so an AR room draws only the rarer ones; 40+ rare or village proverbs are a G2 exit criterion. Round 2: `bluff-world-facts` (AR column) and `bluff-lb-teta-words`. A free AR room needs ≥ 3 free round-1 items not `knownIn: ["ar"]` and ≥ 3 free round-2 items. *(Superseded 2026-11-12: round 1 no longer uses proverbs; AR rooms play the facts packs in rounds 1–2, plus `bluff-lb-teta-words` as round-2 filler.)*
+- **EN/FR/ES rooms.** Round 1 uses the room's own sayings pack; `bluff-lb-proverbs` joins once its EN/FR/ES house lies exist (the truth is the translated ending and the TV shows the Arabic original on reveal: "so *that's* what Teta meant"). Round 2: `bluff-world-facts`, plus the EN/FR word packs as fillers (§11.4). ES has no word pack at launch; `bluff-world-facts` must reach 30 items with ES house lies before ES Bluff ships (G2 exit criterion for ES). *(Superseded 2026-11-12: every room plays rounds 1–2 from the four facts packs, which are playable in all four languages.)*
 
 ## 12. Signature moments (animation spec)
 
@@ -770,7 +777,7 @@ State-only keys (platform `forbiddenKeys`): `truthAll`, `truthAlt`, `houseLies`,
 
 All drafts: `review.status: "draft"`. `[native review]` for every AR, FR and ES line, `[VERIFY]` for every definition, saying form and fact (with the source hint given). ★ = difficulty. **F** = proposed free item. All content below is original to JAMAA except the proverbs and sayings themselves, which are traditional and public domain; no prompt, answer or line is taken or paraphrased from any commercial game.
 
-### 14.1 `bluff-lb-proverbs` — Lebanese proverbs (type `proverb_end`; prompt = first half; truth = second half)
+### 14.1 `bluff-lb-proverbs` — Lebanese proverbs (type `proverb_end`; prompt = first half; truth = second half) — **archived 2026-11-12** (`content/archive/bluff/`)
 
 Format: AR prompt → **AR truth** · translit (prompt) · EN literal → **EN truth** · FR literal → **FR truth** · meaning (note) · AR house lies.
 
@@ -931,7 +938,7 @@ Every item is a real fact chosen because it sounds invented. **Nothing here ship
 
 Before JSON: `truthAlt` to add per locale (e.g. "3" for "three", «جبيل» and «بيبلوس» both, "Biblos" and "Byblos").
 
-### 14.5 `bluff-fr-proverbes` — round 1, French (type `proverb_end`, fr → fr)
+### 14.5 `bluff-fr-proverbes` — round 1, French (type `proverb_end`, fr → fr) — **archived 2026-11-12** (`content/archive/bluff/`)
 
 Sources to check for every line: Larousse *Dictionnaire des proverbes, sentences et maximes*, the *Dictionnaire de l'Académie française* (9th ed., online) or the Centro Virtual Cervantes *Refranero multilingüe* (which lists French equivalents). `[VERIFY]` each ending's standard form; add common variants to `truthAlt`. **K** = probably known to almost every adult French speaker (`knownIn: ["fr"]`, reviewer confirms).
 
@@ -950,7 +957,7 @@ Sources to check for every line: Larousse *Dictionnaire des proverbes, sentences
 | 11 | 2 | F | Il faut laisser le temps… | …au temps | aux experts · de se reposer · passer la pluie | Certaines choses ne se pressent pas |
 | 12 | 3 | | Mieux vaut plier… | …que rompre | que pleurer · que partir fâché · sa langue sept fois | Mieux vaut céder un peu que tout perdre |
 
-### 14.6 `bluff-en-sayings` — round 1, English (type `proverb_end`, en → en)
+### 14.6 `bluff-en-sayings` — round 1, English (type `proverb_end`, en → en) — **archived 2026-11-12** (`content/archive/bluff/`)
 
 Source to check for every line: *The Oxford Dictionary of Proverbs* (OUP) or the Centro Virtual Cervantes *Refranero multilingüe*. `[VERIFY]` the standard ending; put variants in `truthAlt` (e.g. "between the cup and the lip" for #6, "make the most sound" for #3).
 
@@ -969,7 +976,7 @@ Source to check for every line: *The Oxford Dictionary of Proverbs* (OUP) or the
 | 11 | 1 | F K | Too many cooks… | …spoil the broth | need a bigger kitchen · eat all the bread · start a fight | Too many people in charge ruin the job. Lebanese cousin: «كتر الطبّاخين بيحرق الطبخة» |
 | 12 | 3 | | Ne'er cast a clout… | …till May be out | on a windy day · before breakfast · at the neighbours | Don't put away warm clothes too early in spring (also "Cast ne'er a clout"; `[VERIFY]` form) |
 
-### 14.7 `bluff-es-refranes` — ronda 1, español (type `proverb_end`, es → es)
+### 14.7 `bluff-es-refranes` — ronda 1, español (type `proverb_end`, es → es) — **archived 2026-11-12** (`content/archive/bluff/`)
 
 Source to check for every line: Centro Virtual Cervantes, *Refranero multilingüe* (cvc.cervantes.es), or the RAE dictionary. `[VERIFY]` the standard ending and `[native review]` (Spain vs Latin America). Some openings have two real endings: both go in `truth` / `truthAlt` so either counts as Spot on.
 
@@ -1011,6 +1018,19 @@ Notes: quotes inside house answers (#7) are stripped by the display normalisatio
 
 ---
 
+### 14.9 Impossible-but-true expansion (2026-11-12)
+
+Written for the owner's request "facts we don't know, like *In 1993, ___ happened*". The JSON is the source of truth (`content/bluff/bluff-year-facts.json`, `bluff-odd-facts.json`, `bluff-me-facts.json` items `me-046`…`me-077`); every item is `draft` with a `[VERIFY]` source naming the reference to check (museum, agency, university, encyclopaedia or a major news report). Each item has EN/FR/AR/ES prompt, truth, alternatives, 3 house lies and a note, written per locale rather than translated word for word (AR in the casual Levantine register of the other packs). Facts I could not pin down were dropped (e.g. 7 Up's lithium history, disputed). Samples:
+
+- `yf-001` EN "In 1932, Australia sent soldiers with machine guns to fight ___, and lost" → **Emus**
+- `yf-009` EN "In 1966, the stolen football World Cup trophy was found by ___" → **A dog**
+- `yf-045` EN "In 1993, the lab that invented the World Wide Web decided to make it ___" → **Free for everyone**
+- `of-028` EN "Since 1992, Singapore has banned the sale of ___" → **Chewing gum**
+- `me-046` EN "In the 1960s, students at a university in Beirut built and launched their own ___" → **Space rockets**
+- `me-073` EN "In 2018, 12 camels were disqualified from a Saudi beauty contest for using ___" → **Botox**
+
+Before release: a second person checks each source and sets `review.status: "verified"` (free items must not be `draft` under `content-lint --release`).
+
 ## 15. Open items
 
 - `[native review]` all AR (proverb forms incl. #25 and #33, the `knownIn` list, translit spelling convention: Arabizi with 2/3/7 for EN/FR rooms), FR and ES copy and content (§10, §14.4–14.8).
@@ -1018,5 +1038,5 @@ Notes: quotes inside house answers (#7) are stripped by the display normalisatio
 - `[VERIFY]` zod's record-with-optional-keys helper name for the installed zod version (§11.3).
 - **Platform follow-ups (JAMAA-PLATFORM is not edited here):** add `CANNOT_VOTE_SPOT_ON` to the Bluff per-game error list (§2.2 there); §2.10 there still describes "round multipliers" and should point to §3/§6 here; `projectSetup` extras gain `bigGroup`.
 - **Owner checks:** (1) round 2 uses word/expression meanings as fillers when the fact pool is short (§11.4), since "Impossible but true" packs exist only in seed form; (2) the final's anonymous ballots (§6.5) read "anonymous vote" as "nobody sees who voted for what": confirm; (3) playtest the values (Spot on 150, truth 100, fooled 60, final 150/vote + 400) at 4, 6 and 10 players.
-- Content (G2 exit criteria, not "later"): EN/FR/ES house lies (≥ 3 per item) for `bluff-lb-proverbs`; the 40-item `bluff-lb-teta-words` pack and 40+ rare or village proverbs for AR rooms; Arabizi `truthAlt` forms for AR-sourced items; round-1 sayings packs to 30 items each (FR, EN, ES); `bluff-world-facts` to 30 verified items; `bluff-no-truth` to 24 prompts.
-- ES has no round-2 word pack; ES Bluff depends on `bluff-world-facts` reaching 30 items with ES house lies.
+- Content (G2 exit criteria, not "later"): the 40-item `bluff-lb-teta-words` pack for AR rooms; Arabizi `truthAlt` forms for AR-sourced items; a second-person check of every `[VERIFY]` fact source (`bluff-world-facts`, `bluff-me-facts`, `bluff-year-facts`, `bluff-odd-facts`) so free items can leave `draft`; `bluff-no-truth` to 24 prompts. (Sayings packs are archived since 2026-11-12, so their house-lie and size targets are on hold.)
+- ES has no round-2 word pack; ES rounds 1–2 run on the four facts packs (≈ 225 items with ES house lies).
