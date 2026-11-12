@@ -8,6 +8,10 @@ import ar from "../../shared/i18n/games/bluff/ar.json";
 import en from "../../shared/i18n/games/bluff/en.json";
 import es from "../../shared/i18n/games/bluff/es.json";
 import fr from "../../shared/i18n/games/bluff/fr.json";
+import archEnSayings from "../archive/bluff/bluff-en-sayings.json";
+import archEsRefranes from "../archive/bluff/bluff-es-refranes.json";
+import archFrProverbes from "../archive/bluff/bluff-fr-proverbes.json";
+import archLbProverbs from "../archive/bluff/bluff-lb-proverbs.json";
 import { PACKS } from "./index";
 
 const LOCALES = ["en", "fr", "ar", "es"] as const;
@@ -19,13 +23,20 @@ const pack = (id: string): BluffPack => {
   if (!p) throw new Error(`missing pack ${id}`);
   return p;
 };
+// Sayings are out of the game (owner, 2026-11-12): archived in content/archive/bluff/, kept valid so they can come back.
+const archived: BluffPack[] = [archEnSayings, archEsRefranes, archFrProverbes, archLbProverbs].map((p) => content.parse(p));
+const archivedPack = (id: string): BluffPack => {
+  const p = archived.find((x) => x.id === id);
+  if (!p) throw new Error(`missing archived pack ${id}`);
+  return p;
+};
 const freeCatalog: BluffCatalog = { packs: packs.map((p) => content.playable(p, { premium: false, ownedFamilies: new Set() })).filter((p): p is BluffPack => p !== null) };
 const fullCatalog: BluffCatalog = { packs };
 const roster = [0, 1, 2].map((i) => ({ id: `p${i}`, seat: i, locale: "en" as const, connected: true, carryScore: 0 }));
 
 describe("bluff packs: schema and lint", () => {
   it("every listed pack parses with the §11.3 schema and derives its PackMeta", () => {
-    expect(packs.length).toBe(11);
+    expect(packs.length).toBe(9);
     for (const p of packs) {
       const m = content.meta(p);
       expect(m.gameId).toBe("bluff");
@@ -115,36 +126,28 @@ describe("bluff packs: G2 exit criteria (JAMAA-PLATFORM §6.5, GAME-BLUFF §11.5
         expect(startBlocker(roster, { packIds: [], length, pace: "normal" }, freeCatalog, l), `${l} ${length}`).toBeNull();
   });
 
-  it("each round has its own free pool in every language (no cross-round filling in a Normal game)", () => {
+  it("no sayings in the game: rounds 1 and 2 share one free facts pool, big enough for many Long games per language", () => {
     for (const l of LOCALES) {
       const c = contentCounts(freeCatalog, [], l);
-      expect(c.r1, `${l} round 1`).toBeGreaterThanOrEqual(7);
-      expect(c.r2, `${l} round 2`).toBeGreaterThanOrEqual(7);
+      expect(c.r1, `${l} round 1`).toBe(0);
+      // A Long game draws 4 + 4 prompts from this pool (round 1 through the §11.4 short-pool rule, keeping Spot on).
+      expect(c.facts, `${l} free facts`).toBeGreaterThanOrEqual(100);
       expect(c.final, `${l} final`).toBeGreaterThanOrEqual(12);
     }
+    expect(packs.some((p) => p.items.some((i) => i.type === "proverb_end"))).toBe(false);
   });
 
-  it("bluff-lb-proverbs has ≥ 3 EN/FR/ES house lies per item, so it can play in EN/FR/ES rooms", () => {
-    const p = pack("bluff-lb-proverbs");
-    expect(p.playableIn).toEqual(["ar", "en", "fr", "es"]);
-    for (const it of p.items) for (const l of ["en", "fr", "es"] as const) expect((it.houseLies[l] ?? []).length, `${it.id} ${l}`).toBeGreaterThanOrEqual(3);
-    for (const it of p.items) expect(it.prompt.translit, it.id).toBeTruthy();
-  });
-
-  it("a free AR room has ≥ 20 free round-2 prompts not knownIn ar, and ≥ 40 rare Lebanese proverbs", () => {
-    const r2 = playableItems(freeCatalog, [], "ar").filter((c) => c.item.type !== "proverb_end" && c.item.type !== "no_truth");
+  it("a free AR room has ≥ 20 free round-2 prompts not knownIn ar, and Teta's Words keeps 40+ items", () => {
+    const r2 = playableItems(freeCatalog, [], "ar").filter((c) => c.item.type !== "no_truth");
     expect(r2.length).toBeGreaterThanOrEqual(20);
     const teta = playableItems(freeCatalog, ["bluff-lb-teta-words"], "ar");
     expect(teta.length).toBeGreaterThanOrEqual(20);
     expect(pack("bluff-lb-teta-words").items.length).toBeGreaterThanOrEqual(40);
-    const rare = pack("bluff-lb-proverbs").items.filter((i) => !i.knownIn.includes("ar"));
-    expect(rare.length).toBeGreaterThanOrEqual(40);
   });
 
-  it("round-1 sayings packs reach 30+ playable items, facts reach 30+ with ES, finals reach 24+ per language", () => {
-    for (const [id, l] of [["bluff-fr-proverbes", "fr"], ["bluff-en-sayings", "en"], ["bluff-es-refranes", "es"]] as const)
-      expect(playableItems(fullCatalog, [id], l).length, id).toBeGreaterThanOrEqual(30);
-    for (const id of ["bluff-world-facts", "bluff-me-facts"]) {
+  it("facts packs reach 30+ items with ES house lies, the facts catalog 200+ prompts per language, finals 24+ per language", () => {
+    for (const l of LOCALES) expect(playableItems(fullCatalog, [], l).filter((c) => c.item.type === "fact_blank").length, l).toBeGreaterThanOrEqual(200);
+    for (const id of ["bluff-world-facts", "bluff-me-facts", "bluff-year-facts", "bluff-odd-facts"]) {
       const p = pack(id);
       expect(p.playableIn).toEqual(["en", "fr", "ar", "es"]);
       expect(p.items.filter((i) => (i.houseLies.es ?? []).length >= 3).length, id).toBeGreaterThanOrEqual(30);
@@ -169,14 +172,14 @@ describe("bluff packs: review fixes (2026-11-10)", () => {
     }
   });
 
-  it("round-1 sayings every native adult knows are knownIn their own locale (so never drawn there) and difficulty 1", () => {
+  it("archived sayings: every native adult's sayings are knownIn their own locale (so never drawn there) and difficulty 1", () => {
     const famous: Record<string, string[]> = {
       "bluff-en-sayings": ["enp-002", "enp-016", "enp-042", "enp-021", "enp-047", "enp-035", "enp-030", "enp-032", "enp-031"],
       "bluff-fr-proverbes": ["frp-016", "frp-038", "frp-060", "frp-025"],
       "bluff-es-refranes": ["esp-005", "esp-003", "esp-021", "esp-049"],
     };
     for (const [id, ids] of Object.entries(famous)) {
-      const p = pack(id);
+      const p = archivedPack(id);
       for (const iid of ids) {
         const it = p.items.find((i) => i.id === iid);
         expect(it?.knownIn, `${id}/${iid}`).toContain(p.sourceLocale);
@@ -188,8 +191,8 @@ describe("bluff packs: review fixes (2026-11-10)", () => {
     }
   });
 
-  it("famous Lebanese proverbs are knownIn ar, and endings shared with an EN/FR/ES proverb are knownIn that locale", () => {
-    const p = pack("bluff-lb-proverbs");
+  it("archived: famous Lebanese proverbs are knownIn ar, and endings shared with an EN/FR/ES proverb are knownIn that locale", () => {
+    const p = archivedPack("bluff-lb-proverbs");
     const known = (iid: string): string[] => p.items.find((i) => i.id === iid)?.knownIn ?? [];
     for (const iid of ["lbp-004", "lbp-018", "lbp-022", "lbp-030", "lbp-031", "lbp-049", "lbp-050"]) expect(known(iid), iid).toContain("ar");
     for (const iid of ["lbp-033", "lbp-053"]) expect(known(iid), iid).toEqual(expect.arrayContaining(["en", "fr", "es"]));
@@ -221,7 +224,37 @@ describe("bluff packs: review fixes (2026-11-10)", () => {
     expect(it("wf-010")?.prompt.original).toMatch(/invented/);
     expect(it("wf-035")?.prompt.original).toMatch(/Until 2025/);
     expect(it("wf-019")?.prompt.original).toMatch(/tomato pills/);
-    expect(pack("bluff-fr-proverbes").items.find((i) => i.id === "frp-044")?.houseLies.fr).not.toContain("Du dire au faire");
+    expect(archivedPack("bluff-fr-proverbes").items.find((i) => i.id === "frp-044")?.houseLies.fr).not.toContain("Du dire au faire");
+  });
+});
+
+describe("bluff packs: sayings out, impossible-but-true facts in (owner, 2026-11-12)", () => {
+  it("the four sayings packs are archived: still valid for a comeback, never listed, never shipped", () => {
+    expect(archived.map((p) => p.id).sort()).toEqual(["bluff-en-sayings", "bluff-es-refranes", "bluff-fr-proverbes", "bluff-lb-proverbs"]);
+    for (const p of archived) expect(byId.has(p.id), p.id).toBe(false);
+    const r = lintBluffRaw(archived.map((raw) => ({ file: `archive/bluff/${raw.id}.json`, raw })));
+    expect(r.errors).toEqual([]);
+  });
+
+  it("round 1 no longer talks about sayings in any language", () => {
+    const dicts = { en, fr, ar, es } as Record<Loc, Record<string, unknown>>;
+    for (const l of LOCALES)
+      for (const k of ["game.bluff.howto.1", "game.bluff.howto.2", "game.bluff.round.saying", "game.bluff.round.saying.intro", "game.bluff.rules.round1.title", "game.bluff.rules.round1.body", "game.bluff.write.sayingHint"])
+        expect(String(dicts[l][k]), `${l} ${k}`).not.toMatch(/saying|proverbe|refrán|المتل|متل/i);
+  });
+
+  it("new facts are drafts with a [VERIFY] source, short enough for the TV (EN ≤ 90 characters)", () => {
+    const fresh = [...pack("bluff-year-facts").items, ...pack("bluff-odd-facts").items, ...pack("bluff-me-facts").items.filter((i) => i.id >= "me-046")];
+    expect(fresh.length).toBeGreaterThanOrEqual(120);
+    for (const it of fresh) {
+      expect(it.review.status, it.id).toBe("draft");
+      expect(it.review.source, it.id).toMatch(/^\[VERIFY\] /);
+      expect(it.prompt.original.length, it.id).toBeLessThanOrEqual(90);
+    }
+  });
+
+  it("It Really Happened is built on dates: every prompt names a year or a decade", () => {
+    for (const it of pack("bluff-year-facts").items) expect(it.prompt.original, it.id).toMatch(/\b1\d{3}s?\b|\b20\d{2}\b/);
   });
 });
 

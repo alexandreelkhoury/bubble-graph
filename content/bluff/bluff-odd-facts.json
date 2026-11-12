@@ -1,0 +1,4198 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-odd-facts",
+  "game": "bluff",
+  "title": {
+    "en": "Weird but True",
+    "fr": "Bizarre mais vrai",
+    "ar": "غريب بس صحيح",
+    "es": "Raro pero cierto"
+  },
+  "description": {
+    "en": "Odd laws, strange animals, food with a secret past, records nobody believes. All true. Your lie has to be better.",
+    "fr": "Lois bizarres, animaux étranges, plats au passé secret, records incroyables. Tout est vrai. Votre mensonge doit faire mieux.",
+    "ar": "قوانين غريبة، حيوانات عجيبة، أكلات إلها قصة، وأرقام قياسية ما بتنصدق. كلها صحيحة، وكذبتك لازم تكون أحلى.",
+    "es": "Leyes raras, animales extraños, comidas con pasado secreto, récords increíbles. Todo es verdad. Tu mentira tiene que ser mejor."
+  },
+  "sourceLocale": "en",
+  "playableIn": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {},
+  "items": [
+    {
+      "id": "of-001",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "A group of flamingos is called a ___",
+        "translit": null,
+        "display": {
+          "fr": "En anglais, un groupe de flamants roses s'appelle une ___",
+          "ar": "بالإنكليزي، جماعة طيور الفلامنغو اسمها ___",
+          "es": "En inglés, a un grupo de flamencos se le llama una ___"
+        }
+      },
+      "truth": {
+        "en": "Flamboyance",
+        "fr": "Flamboyance",
+        "ar": "فلامبويانس",
+        "es": "Flamboyance"
+      },
+      "truthAlt": {
+        "en": [
+          "A flamboyance"
+        ],
+        "fr": [
+          "Une flamboyance"
+        ],
+        "ar": [
+          "التباهي",
+          "استعراض الألوان"
+        ],
+        "es": [
+          "Ostentación",
+          "Extravagancia"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Blush",
+          "Parade",
+          "Ballet"
+        ],
+        "fr": [
+          "Rougeur",
+          "Parade",
+          "Chorale"
+        ],
+        "ar": [
+          "الخجل",
+          "الباليه",
+          "الكورال"
+        ],
+        "es": [
+          "Sonrojo",
+          "Coreografía",
+          "Pasarela"
+        ]
+      },
+      "note": {
+        "en": "Fitting for birds that are pink and love to show off",
+        "fr": "Bien choisi pour des oiseaux roses qui adorent parader",
+        "ar": "يعني التباهي بالألوان، بيليق بطيور زهر بتحب تتمخطر",
+        "es": "Algo así como ostentación: perfecto para aves rosas y presumidas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Collective noun 'a flamboyance of flamingos'; Oxford English Dictionary; San Diego Zoo Wildlife Alliance"
+      }
+    },
+    {
+      "id": "of-002",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Starfish have no brain and no ___",
+        "translit": null,
+        "display": {
+          "fr": "Les étoiles de mer n'ont pas de cerveau et pas de ___",
+          "ar": "نجمة البحر ما عندها مخ ولا ___",
+          "es": "Las estrellas de mar no tienen cerebro ni ___"
+        }
+      },
+      "truth": {
+        "en": "Blood",
+        "fr": "Sang",
+        "ar": "دم",
+        "es": "Sangre"
+      },
+      "truthAlt": {
+        "en": [
+          "Blood at all"
+        ],
+        "fr": [
+          "Sang du tout"
+        ],
+        "ar": [
+          "ولا نقطة دم"
+        ],
+        "es": [
+          "Nada de sangre"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Bones",
+          "Mouth",
+          "Eyes"
+        ],
+        "fr": [
+          "Squelette",
+          "Bouche",
+          "Estomac"
+        ],
+        "ar": [
+          "عضام",
+          "لسان",
+          "معدة"
+        ],
+        "es": [
+          "Huesos",
+          "Boca",
+          "Estómago"
+        ]
+      },
+      "note": {
+        "en": "They pump sea water through their bodies instead",
+        "fr": "Elles font circuler de l'eau de mer dans leur corps à la place",
+        "ar": "بتضخ مي البحر بجسمها بدل الدم",
+        "es": "En su lugar bombean agua de mar por el cuerpo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Starfish (sea stars) have no blood and no brain; they use a water vascular system; NOAA Ocean Service"
+      }
+    },
+    {
+      "id": "of-003",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Hummingbirds are the only birds that can truly fly ___",
+        "translit": null,
+        "display": {
+          "fr": "Les colibris sont les seuls oiseaux capables de vraiment voler ___",
+          "ar": "طير الطنان هو الطير الوحيد اللي بيقدر يطير ___",
+          "es": "Los colibríes son las únicas aves que pueden volar de verdad ___"
+        }
+      },
+      "truth": {
+        "en": "Backwards",
+        "fr": "En arrière",
+        "ar": "لورا",
+        "es": "Hacia atrás"
+      },
+      "truthAlt": {
+        "en": [
+          "Backward",
+          "In reverse"
+        ],
+        "fr": [
+          "À reculons",
+          "Vers l'arrière"
+        ],
+        "ar": [
+          "عالورا",
+          "بالعكس"
+        ],
+        "es": [
+          "Marcha atrás",
+          "Para atrás"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Upside down",
+          "In their sleep",
+          "Underwater"
+        ],
+        "fr": [
+          "La tête en bas",
+          "En dormant",
+          "Sous l'eau"
+        ],
+        "ar": [
+          "مقلوب",
+          "وهو نايم",
+          "تحت المي"
+        ],
+        "es": [
+          "Boca abajo",
+          "Dormidos",
+          "Bajo el agua"
+        ]
+      },
+      "note": {
+        "en": "Their wings rotate at the shoulder, so they can hover and reverse",
+        "fr": "Leurs ailes pivotent à l'épaule : ils peuvent faire du surplace et reculer",
+        "ar": "جوانحو بتلف من الكتف، فبيوقف بالهوا وبيرجع لورا",
+        "es": "Sus alas giran en el hombro: pueden quedarse quietos y retroceder"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Hummingbirds are the only birds that can sustain backward flight; Smithsonian's National Zoo; Audubon"
+      }
+    },
+    {
+      "id": "of-004",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Owls turn their heads so far because they cannot move their ___",
+        "translit": null,
+        "display": {
+          "fr": "Les hiboux tournent autant la tête parce qu'ils ne peuvent pas bouger leurs ___",
+          "ar": "البومة بتلف راسها كتير لأنها ما بتقدر تحرك ___",
+          "es": "Los búhos giran tanto la cabeza porque no pueden mover los ___"
+        }
+      },
+      "truth": {
+        "en": "Eyes",
+        "fr": "Yeux",
+        "ar": "عيونها",
+        "es": "Ojos"
+      },
+      "truthAlt": {
+        "en": [
+          "Eyeballs"
+        ],
+        "fr": [
+          "Globes oculaires"
+        ],
+        "ar": [
+          "عينيها",
+          "العيون"
+        ],
+        "es": [
+          "Globos oculares"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Necks",
+          "Ears",
+          "Shoulders"
+        ],
+        "fr": [
+          "Oreilles",
+          "Épaules",
+          "Paupières"
+        ],
+        "ar": [
+          "منقارها",
+          "كتافها",
+          "جفونها"
+        ],
+        "es": [
+          "Oídos",
+          "Hombros",
+          "Párpados"
+        ]
+      },
+      "note": {
+        "en": "Their eyes are tube-shaped and fixed in the skull",
+        "fr": "Leurs yeux en forme de tube sont fixés dans le crâne",
+        "ar": "عيونها متل الأنبوب ومثبتة بالجمجمة",
+        "es": "Sus ojos tienen forma de tubo y están fijos en el cráneo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Owls cannot move their eyes (tubular eyes fixed in the skull) and turn their heads up to 270 degrees; Johns Hopkins Medicine 2013; Audubon"
+      }
+    },
+    {
+      "id": "of-005",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Scientists found that rats ___ when you tickle them",
+        "translit": null,
+        "display": {
+          "fr": "Des scientifiques ont découvert que les rats ___ quand on les chatouille",
+          "ar": "علما اكتشفوا إنو الجرادين ___ لما تزكزكن",
+          "es": "Unos científicos descubrieron que las ratas ___ cuando les haces cosquillas"
+        }
+      },
+      "truth": {
+        "en": "Laugh",
+        "fr": "Rient",
+        "ar": "بيضحكوا",
+        "es": "Se ríen"
+      },
+      "truthAlt": {
+        "en": [
+          "Giggle",
+          "They laugh"
+        ],
+        "fr": [
+          "Ils rigolent",
+          "Rigolent"
+        ],
+        "ar": [
+          "بيقهقهوا",
+          "ضحك"
+        ],
+        "es": [
+          "Ríen",
+          "Se carcajean"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sneeze",
+          "Fall asleep",
+          "Purr"
+        ],
+        "fr": [
+          "Éternuent",
+          "S'endorment",
+          "Ronronnent"
+        ],
+        "ar": [
+          "بيعطسوا",
+          "بيناموا",
+          "بيخرخروا"
+        ],
+        "es": [
+          "Estornudan",
+          "Se duermen",
+          "Ronronean"
+        ]
+      },
+      "note": {
+        "en": "Their chirps are too high for us to hear without special equipment",
+        "fr": "Leurs petits cris sont trop aigus pour nos oreilles",
+        "ar": "صوتن عالي كتير ما منسمعو بلا أجهزة",
+        "es": "Sus chillidos son demasiado agudos para nuestro oído"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Rats emit ultrasonic 'laughter' chirps when tickled; Panksepp & Burgdorf 2003; Ishiyama & Brecht, Science 2016"
+      }
+    },
+    {
+      "id": "of-006",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Crows can remember for years the ___ of people who were mean to them",
+        "translit": null,
+        "display": {
+          "fr": "Les corbeaux se souviennent des années du ___ des gens qui les ont embêtés",
+          "ar": "الغراب بيتذكر لسنين ___ الناس اللي أذوه",
+          "es": "Los cuervos recuerdan durante años la ___ de quien los trató mal"
+        }
+      },
+      "truth": {
+        "en": "Faces",
+        "fr": "Visage",
+        "ar": "وجوه",
+        "es": "Cara"
+      },
+      "truthAlt": {
+        "en": [
+          "Face",
+          "Their faces"
+        ],
+        "fr": [
+          "Visages",
+          "Leur visage"
+        ],
+        "ar": [
+          "وجه",
+          "وجوهن"
+        ],
+        "es": [
+          "Caras",
+          "Su cara"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Cars",
+          "Voices",
+          "Shoes"
+        ],
+        "fr": [
+          "Voiture",
+          "Parfum",
+          "Chapeau"
+        ],
+        "ar": [
+          "سيارات",
+          "أصوات",
+          "صبابيط"
+        ],
+        "es": [
+          "Ropa",
+          "Voz",
+          "Bicicleta"
+        ]
+      },
+      "note": {
+        "en": "They even teach other crows to scold the same person",
+        "fr": "Ils apprennent même aux autres corbeaux à crier sur la même personne",
+        "ar": "وحتى بيعلم غيرو من الغربان يصرخوا عالشخص نفسو",
+        "es": "Incluso enseñan a otros cuervos a regañar a esa persona"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Crows recognise and remember the faces of people who threatened them; Marzluff et al., University of Washington, Animal Behaviour 2010"
+      }
+    },
+    {
+      "id": "of-007",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Sharks have been around longer than ___",
+        "translit": null,
+        "display": {
+          "fr": "Les requins existent depuis plus longtemps que les ___",
+          "ar": "أسماك القرش موجودة من قبل ___",
+          "es": "Los tiburones existen desde antes que los ___"
+        }
+      },
+      "truth": {
+        "en": "Trees",
+        "fr": "Arbres",
+        "ar": "الشجر",
+        "es": "Árboles"
+      },
+      "truthAlt": {
+        "en": [
+          "Forests"
+        ],
+        "fr": [
+          "Forêts"
+        ],
+        "ar": [
+          "الغابات",
+          "شجر"
+        ],
+        "es": [
+          "Bosques"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Grass",
+          "Insects",
+          "Coral reefs"
+        ],
+        "fr": [
+          "Herbes",
+          "Insectes",
+          "Récifs de corail"
+        ],
+        "ar": [
+          "العشب",
+          "الحشرات",
+          "الشعب المرجانية"
+        ],
+        "es": [
+          "Pastos",
+          "Insectos",
+          "Arrecifes de coral"
+        ]
+      },
+      "note": {
+        "en": "Sharks swam the seas tens of millions of years before the first forests grew",
+        "fr": "Ils nageaient des dizaines de millions d'années avant les premières forêts",
+        "ar": "كانت تسبح بالبحار قبل أول غابات بعشرات ملايين السنين",
+        "es": "Nadaban decenas de millones de años antes de los primeros bosques"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Sharks appeared about 450 million years ago, before the first trees (about 385 million years ago); Natural History Museum London; Smithsonian Ocean"
+      }
+    },
+    {
+      "id": "of-008",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Under its white-looking fur, a polar bear's skin is ___",
+        "translit": null,
+        "display": {
+          "fr": "Sous sa fourrure qui semble blanche, l'ours polaire a la peau ___",
+          "ar": "تحت فروه اللي بيبين أبيض، جلد الدب القطبي ___",
+          "es": "Bajo su pelaje que parece blanco, la piel del oso polar es ___"
+        }
+      },
+      "truth": {
+        "en": "Black",
+        "fr": "Noire",
+        "ar": "أسود",
+        "es": "Negra"
+      },
+      "truthAlt": {
+        "en": [
+          "Jet black",
+          "Dark"
+        ],
+        "fr": [
+          "Toute noire",
+          "Foncée"
+        ],
+        "ar": [
+          "أسود فاحم",
+          "غامق"
+        ],
+        "es": [
+          "Muy negra",
+          "Oscura"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Pink",
+          "Blue",
+          "Bright white"
+        ],
+        "fr": [
+          "Rose",
+          "Bleue",
+          "Blanche"
+        ],
+        "ar": [
+          "زهر",
+          "أزرق",
+          "أبيض"
+        ],
+        "es": [
+          "Rosa",
+          "Azul",
+          "Blanca"
+        ]
+      },
+      "note": {
+        "en": "Its hairs are actually see-through and only look white",
+        "fr": "Ses poils sont transparents et ont seulement l'air blancs",
+        "ar": "شعرو شفاف وبس بيبين أبيض",
+        "es": "Sus pelos son transparentes y solo parecen blancos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Polar bears have black skin under translucent hair; Polar Bears International; San Diego Zoo"
+      }
+    },
+    {
+      "id": "of-009",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "A giraffe's tongue is ___",
+        "translit": null,
+        "display": {
+          "fr": "La langue d'une girafe est ___",
+          "ar": "لسان الزرافة لونو ___",
+          "es": "La lengua de una jirafa es de color ___"
+        }
+      },
+      "truth": {
+        "en": "Dark blue",
+        "fr": "Bleu foncé",
+        "ar": "أزرق غامق",
+        "es": "Azul oscuro"
+      },
+      "truthAlt": {
+        "en": [
+          "Purple",
+          "Blue-black",
+          "Bluish purple"
+        ],
+        "fr": [
+          "Violette",
+          "Bleu-noir"
+        ],
+        "ar": [
+          "بنفسجي",
+          "أزرق ضارب للأسود"
+        ],
+        "es": [
+          "Morada",
+          "Negro azulado"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Bright red",
+          "Yellow",
+          "Striped"
+        ],
+        "fr": [
+          "Rouge vif",
+          "Jaune",
+          "Rayée"
+        ],
+        "ar": [
+          "أحمر فاقع",
+          "أصفر",
+          "مقلم"
+        ],
+        "es": [
+          "Rojo vivo",
+          "Amarillo",
+          "A rayas"
+        ]
+      },
+      "note": {
+        "en": "The dark colour may protect it from sunburn while it eats all day",
+        "fr": "Cette couleur la protégerait des coups de soleil pendant qu'elle mange",
+        "ar": "يمكن هاللون بيحميه من ضربة الشمس وهي عم تاكل طول النهار",
+        "es": "Ese color quizá la protege del sol mientras come todo el día"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Giraffe tongues are dark purple-blue-black, about 45-50 cm long; Smithsonian's National Zoo; Giraffe Conservation Foundation"
+      }
+    },
+    {
+      "id": "of-010",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Under ultraviolet light, platypus fur ___",
+        "translit": null,
+        "display": {
+          "fr": "Sous lumière ultraviolette, la fourrure de l'ornithorynque ___",
+          "ar": "تحت الضو فوق البنفسجي، فرو خلد الماء ___",
+          "es": "Bajo luz ultravioleta, el pelaje del ornitorrinco ___"
+        }
+      },
+      "truth": {
+        "en": "Glows",
+        "fr": "Brille",
+        "ar": "بيضوي",
+        "es": "Brilla"
+      },
+      "truthAlt": {
+        "en": [
+          "Glows blue-green",
+          "Shines"
+        ],
+        "fr": [
+          "Devient fluo",
+          "Brille en bleu-vert"
+        ],
+        "ar": [
+          "بيلمع",
+          "بيصير فوسفوري"
+        ],
+        "es": [
+          "Se ilumina",
+          "Es fluorescente"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Turns invisible",
+          "Changes shape",
+          "Smells sweet"
+        ],
+        "fr": [
+          "Devient invisible",
+          "Change de forme",
+          "Sent la vanille"
+        ],
+        "ar": [
+          "بيختفي",
+          "بيغير شكلو",
+          "بتطلع منو ريحة حلوة"
+        ],
+        "es": [
+          "Se vuelve invisible",
+          "Cambia de forma",
+          "Huele a vainilla"
+        ]
+      },
+      "note": {
+        "en": "Scientists noticed it in museum specimens in 2020. Nobody knows why yet",
+        "fr": "Découvert en 2020 sur des spécimens de musée. On ne sait pas encore pourquoi",
+        "ar": "اكتشفوها سنة 2020 بعينات متحف، وبعد ما حدا بيعرف السبب",
+        "es": "Se descubrió en 2020 en ejemplares de museo. Aún no se sabe por qué"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Platypus fur glows blue-green under UV light; Anich et al., Mammalia 2020"
+      }
+    },
+    {
+      "id": "of-011",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "A honeybee has ___ eyes",
+        "translit": null,
+        "display": {
+          "fr": "Une abeille a ___ yeux",
+          "ar": "النحلة عندها ___ عيون",
+          "es": "Una abeja tiene ___ ojos"
+        }
+      },
+      "truth": {
+        "en": "Five",
+        "fr": "Cinq",
+        "ar": "خمس",
+        "es": "Cinco"
+      },
+      "truthAlt": {
+        "en": [
+          "5"
+        ],
+        "fr": [
+          "5"
+        ],
+        "ar": [
+          "5",
+          "خمسة"
+        ],
+        "es": [
+          "5"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Two",
+          "Twelve",
+          "Eight"
+        ],
+        "fr": [
+          "Deux",
+          "Douze",
+          "Huit"
+        ],
+        "ar": [
+          "تنتين",
+          "اطناشر",
+          "تمانية"
+        ],
+        "es": [
+          "Dos",
+          "Doce",
+          "Ocho"
+        ]
+      },
+      "note": {
+        "en": "Two big eyes on the sides and three tiny ones on top of the head",
+        "fr": "Deux grands yeux sur les côtés et trois petits sur le dessus de la tête",
+        "ar": "عينين كبار عالجنب وتلاتة زغار فوق راسها",
+        "es": "Dos ojos grandes a los lados y tres pequeñitos encima de la cabeza"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Honeybees have five eyes: two compound eyes and three ocelli; Smithsonian (si.edu); Ask a Biologist, Arizona State University"
+      }
+    },
+    {
+      "id": "of-012",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "An ostrich's eye is bigger than its ___",
+        "translit": null,
+        "display": {
+          "fr": "L'œil d'une autruche est plus gros que son ___",
+          "ar": "عين النعامة أكبر من ___",
+          "es": "El ojo de un avestruz es más grande que su ___"
+        }
+      },
+      "truth": {
+        "en": "Brain",
+        "fr": "Cerveau",
+        "ar": "مخها",
+        "es": "Cerebro"
+      },
+      "truthAlt": {
+        "en": [
+          "Own brain"
+        ],
+        "fr": [
+          "Propre cerveau"
+        ],
+        "ar": [
+          "دماغها",
+          "المخ"
+        ],
+        "es": [
+          "Propio cerebro"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Beak",
+          "Heart",
+          "Egg"
+        ],
+        "fr": [
+          "Bec",
+          "Cœur",
+          "Œuf"
+        ],
+        "ar": [
+          "منقارها",
+          "قلبها",
+          "بيضتها"
+        ],
+        "es": [
+          "Pico",
+          "Corazón",
+          "Huevo"
+        ]
+      },
+      "note": {
+        "en": "Each eye is about 5 cm wide, the largest of any land animal",
+        "fr": "Chaque œil mesure environ 5 cm, le plus grand de tous les animaux terrestres",
+        "ar": "كل عين قطرها حوالي 5 سنتيم، الأكبر بين حيوانات البر",
+        "es": "Cada ojo mide unos 5 cm, el mayor de los animales terrestres"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] An ostrich's eye (about 5 cm) is larger than its brain; San Diego Zoo Wildlife Alliance; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "of-013",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Dolphins sleep with one ___ open",
+        "translit": null,
+        "display": {
+          "fr": "Les dauphins dorment avec un ___ ouvert",
+          "ar": "الدلفين بينام و ___ مفتوحة",
+          "es": "Los delfines duermen con un ___ abierto"
+        }
+      },
+      "truth": {
+        "en": "Eye",
+        "fr": "Œil",
+        "ar": "عين وحدة",
+        "es": "Ojo"
+      },
+      "truthAlt": {
+        "en": [
+          "Eye open",
+          "Half of their brain"
+        ],
+        "fr": [
+          "Œil ouvert",
+          "Demi-cerveau"
+        ],
+        "ar": [
+          "عينو",
+          "نص مخو"
+        ],
+        "es": [
+          "Ojo abierto",
+          "Medio cerebro"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Fin",
+          "Ear",
+          "Nostril"
+        ],
+        "fr": [
+          "Aileron",
+          "Évent",
+          "Oreille"
+        ],
+        "ar": [
+          "زعنفة",
+          "دينة",
+          "مناخيرو"
+        ],
+        "es": [
+          "Aleta",
+          "Oído",
+          "Orificio nasal"
+        ]
+      },
+      "note": {
+        "en": "Half of the brain rests while the other half watches and breathes",
+        "fr": "Une moitié du cerveau dort pendant que l'autre surveille et respire",
+        "ar": "نص المخ بيرتاح والنص التاني بيراقب وبيتنفس",
+        "es": "Media cabeza descansa mientras la otra mitad vigila y respira"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Dolphins sleep with one brain hemisphere at a time, keeping one eye open (unihemispheric slow-wave sleep); Scientific American; Smithsonian"
+      }
+    },
+    {
+      "id": "of-014",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "To win over a female, a male gentoo penguin offers her a ___",
+        "translit": null,
+        "display": {
+          "fr": "Pour séduire une femelle, le manchot papou mâle lui offre un ___",
+          "ar": "ليقنع الأنتى، ذكر بطريق الجنتو بيهديها ___",
+          "es": "Para conquistar a una hembra, el pingüino papúa macho le regala una ___"
+        }
+      },
+      "truth": {
+        "en": "Pebble",
+        "fr": "Caillou",
+        "ar": "حصوة",
+        "es": "Piedrita"
+      },
+      "truthAlt": {
+        "en": [
+          "Stone",
+          "Little stone"
+        ],
+        "fr": [
+          "Galet",
+          "Petit caillou"
+        ],
+        "ar": [
+          "حجرة زغيرة",
+          "بحصة"
+        ],
+        "es": [
+          "Piedra",
+          "Piedra pequeña"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Fish",
+          "Feather",
+          "Seashell"
+        ],
+        "fr": [
+          "Poisson",
+          "Plume",
+          "Coquillage"
+        ],
+        "ar": [
+          "سمكة",
+          "ريشة",
+          "صدفة"
+        ],
+        "es": [
+          "Sardina",
+          "Pluma",
+          "Concha"
+        ]
+      },
+      "note": {
+        "en": "Good stones are rare for nests, so they make a great gift. Some even steal them",
+        "fr": "Les bons cailloux pour le nid sont rares. Certains les volent même",
+        "ar": "الحجار الحلوة للعش نادرة، فهي أحلى هدية، وفي منن بيسرقوها",
+        "es": "Las buenas piedras para el nido escasean. Algunos hasta las roban"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Male gentoo penguins offer pebbles to females for nest building; Australian Antarctic Division; BBC Earth"
+      }
+    },
+    {
+      "id": "of-015",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "A woodpecker's long tongue wraps all the way around its ___",
+        "translit": null,
+        "display": {
+          "fr": "La longue langue du pic fait le tour de son ___",
+          "ar": "لسان نقار الخشب الطويل بيلف حوالين ___",
+          "es": "La larga lengua del pájaro carpintero da la vuelta a su ___"
+        }
+      },
+      "truth": {
+        "en": "Skull",
+        "fr": "Crâne",
+        "ar": "جمجمتو",
+        "es": "Cráneo"
+      },
+      "truthAlt": {
+        "en": [
+          "Head",
+          "Brain"
+        ],
+        "fr": [
+          "Tête",
+          "Cerveau"
+        ],
+        "ar": [
+          "راسو",
+          "مخو"
+        ],
+        "es": [
+          "Cabeza",
+          "Cerebro"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Beak",
+          "Neck",
+          "Heart"
+        ],
+        "fr": [
+          "Bec",
+          "Cou",
+          "Cœur"
+        ],
+        "ar": [
+          "منقارو",
+          "رقبتو",
+          "قلبو"
+        ],
+        "es": [
+          "Pico",
+          "Cuello",
+          "Corazón"
+        ]
+      },
+      "note": {
+        "en": "When it's not catching insects, the tongue is stored around the back of the head",
+        "fr": "Quand elle ne sert pas, elle est rangée autour de l'arrière de la tête",
+        "ar": "لما ما يكون عم يصطاد حشرات، بيلمّو حوالين قفا راسو",
+        "es": "Cuando no caza insectos, la guarda alrededor de la parte trasera de la cabeza"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Woodpecker hyoid apparatus: the tongue wraps around the back of the skull; Cornell Lab of Ornithology; Audubon"
+      }
+    },
+    {
+      "id": "of-016",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "An Australian river turtle can breathe underwater through its ___",
+        "translit": null,
+        "display": {
+          "fr": "Une tortue de rivière australienne peut respirer sous l'eau par les ___",
+          "ar": "سلحفاة نهر أسترالية بتقدر تتنفس تحت المي من ___",
+          "es": "Una tortuga de río australiana puede respirar bajo el agua por el ___"
+        }
+      },
+      "truth": {
+        "en": "Bottom",
+        "fr": "Fesses",
+        "ar": "مؤخرتها",
+        "es": "Trasero"
+      },
+      "truthAlt": {
+        "en": [
+          "Butt",
+          "Rear end",
+          "Behind"
+        ],
+        "fr": [
+          "Le derrière",
+          "Le popotin"
+        ],
+        "ar": [
+          "قفاها",
+          "من ورا"
+        ],
+        "es": [
+          "Pompis",
+          "Parte de atrás"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Shell",
+          "Toes",
+          "Eyelids"
+        ],
+        "fr": [
+          "Écailles",
+          "Orteils",
+          "Paupières"
+        ],
+        "ar": [
+          "قوقعتها",
+          "أصابعها",
+          "جفونها"
+        ],
+        "es": [
+          "Caparazón",
+          "Ombligo",
+          "Párpado"
+        ]
+      },
+      "note": {
+        "en": "The Fitzroy River turtle can stay underwater for days thanks to this trick",
+        "fr": "La tortue de la rivière Fitzroy peut rester sous l'eau des jours grâce à ça",
+        "ar": "سلحفاة نهر فيتزروي بتضل تحت المي أيام بفضل هالحيلة",
+        "es": "La tortuga del río Fitzroy aguanta días sumergida gracias a ese truco"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Fitzroy River turtle breathes through its cloaca (cloacal respiration); Australian Government Department of Climate Change, Energy, the Environment and Water; Queensland Museum"
+      }
+    },
+    {
+      "id": "of-017",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Peanuts are not real nuts: they belong to the same family as ___",
+        "translit": null,
+        "display": {
+          "fr": "Les cacahuètes ne sont pas de vraies noix : elles sont de la même famille que les ___",
+          "ar": "فستق العبيد مش من المكسرات: هو من عيلة ___",
+          "es": "Los cacahuetes no son frutos secos de verdad: son de la familia de las ___"
+        }
+      },
+      "truth": {
+        "en": "Beans",
+        "fr": "Haricots",
+        "ar": "الفاصوليا",
+        "es": "Judías"
+      },
+      "truthAlt": {
+        "en": [
+          "Peas",
+          "Legumes",
+          "Lentils"
+        ],
+        "fr": [
+          "Pois",
+          "Légumineuses",
+          "Lentilles"
+        ],
+        "ar": [
+          "البازيلا",
+          "البقوليات",
+          "العدس"
+        ],
+        "es": [
+          "Alubias",
+          "Legumbres",
+          "Lentejas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Potatoes",
+          "Acorns",
+          "Mushrooms"
+        ],
+        "fr": [
+          "Pommes de terre",
+          "Glands",
+          "Champignons"
+        ],
+        "ar": [
+          "البطاطا",
+          "البلوط",
+          "الفطر"
+        ],
+        "es": [
+          "Patatas",
+          "Bellotas",
+          "Setas"
+        ]
+      },
+      "note": {
+        "en": "Peanuts are legumes and ripen underground",
+        "fr": "Ce sont des légumineuses, qui mûrissent sous terre",
+        "ar": "هو من البقوليات وبيستوي تحت الأرض",
+        "es": "Son legumbres y maduran bajo tierra"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Peanuts are legumes (family Fabaceae), not true nuts; USDA; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "of-018",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "For botanists, a banana is a ___, but a strawberry is not",
+        "translit": null,
+        "display": {
+          "fr": "Pour les botanistes, la banane est une ___, mais pas la fraise",
+          "ar": "بنظر علما النبات، الموز ___، بس الفريز لأ",
+          "es": "Para los botánicos, el plátano es una ___, pero la fresa no"
+        }
+      },
+      "truth": {
+        "en": "Berry",
+        "fr": "Baie",
+        "ar": "توت",
+        "es": "Baya"
+      },
+      "truthAlt": {
+        "en": [
+          "A berry"
+        ],
+        "fr": [
+          "Une baie"
+        ],
+        "ar": [
+          "من التوت",
+          "عنبية"
+        ],
+        "es": [
+          "Una baya"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Herb",
+          "Vegetable",
+          "Nut"
+        ],
+        "fr": [
+          "Herbe",
+          "Légume",
+          "Noix"
+        ],
+        "ar": [
+          "عشبة",
+          "خضرة",
+          "مكسرات"
+        ],
+        "es": [
+          "Hierba",
+          "Verdura",
+          "Nuez"
+        ]
+      },
+      "note": {
+        "en": "A berry grows from one flower with one ovary. Strawberries break the rules",
+        "fr": "Une baie vient d'une seule fleur à un seul ovaire. La fraise triche",
+        "ar": "التوتة بتطلع من زهرة وحدة بمبيض واحد، والفريز ما بيمشي عالقاعدة",
+        "es": "Una baya nace de una sola flor con un solo ovario. La fresa no cumple"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Botanically a banana is a berry, a strawberry is not; Encyclopaedia Britannica 'Is a banana a berry'"
+      }
+    },
+    {
+      "id": "of-019",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The croissant's ancestor, a crescent roll called the kipferl, comes from ___",
+        "translit": null,
+        "display": {
+          "fr": "L'ancêtre du croissant, un petit pain en forme de lune appelé kipferl, vient d'___",
+          "ar": "جد الكرواسان، خبزة هلال اسمها كيبفيرل، أصلها من ___",
+          "es": "El antepasado del cruasán, un panecillo en media luna llamado kipferl, viene de ___"
+        }
+      },
+      "truth": {
+        "en": "Austria",
+        "fr": "Autriche",
+        "ar": "النمسا",
+        "es": "Austria"
+      },
+      "truthAlt": {
+        "en": [
+          "Vienna"
+        ],
+        "fr": [
+          "Vienne"
+        ],
+        "ar": [
+          "فيينا"
+        ],
+        "es": [
+          "Viena"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Belgium",
+          "Turkey",
+          "Switzerland"
+        ],
+        "fr": [
+          "Belgique",
+          "Turquie",
+          "Suisse"
+        ],
+        "ar": [
+          "بلجيكا",
+          "تركيا",
+          "سويسرا"
+        ],
+        "es": [
+          "Bélgica",
+          "Turquía",
+          "Suiza"
+        ]
+      },
+      "note": {
+        "en": "An Austrian baker brought it to Paris around 1838",
+        "fr": "Un boulanger autrichien l'a importé à Paris vers 1838",
+        "ar": "خباز نمساوي جابها عباريس حوالي سنة 1838",
+        "es": "Un panadero austriaco lo llevó a París hacia 1838"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] The croissant descends from the Austrian kipferl, brought to Paris by August Zang around 1838; Jim Chevallier, August Zang and the French Croissant (2009); Britannica"
+      }
+    },
+    {
+      "id": "of-020",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The Caesar salad was invented in ___",
+        "translit": null,
+        "display": {
+          "fr": "La salade César a été inventée au ___",
+          "ar": "سلطة السيزر انخترعت بـ ___",
+          "es": "La ensalada César se inventó en ___"
+        }
+      },
+      "truth": {
+        "en": "Mexico",
+        "fr": "Mexique",
+        "ar": "المكسيك",
+        "es": "México"
+      },
+      "truthAlt": {
+        "en": [
+          "Tijuana"
+        ],
+        "fr": [
+          "À Tijuana"
+        ],
+        "ar": [
+          "تيخوانا"
+        ],
+        "es": [
+          "Tijuana"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Italy",
+          "Greece",
+          "Egypt"
+        ],
+        "fr": [
+          "Portugal",
+          "Canada",
+          "Maroc"
+        ],
+        "ar": [
+          "إيطاليا",
+          "اليونان",
+          "مصر"
+        ],
+        "es": [
+          "Italia",
+          "Grecia",
+          "Egipto"
+        ]
+      },
+      "note": {
+        "en": "Restaurant owner Caesar Cardini made it in Tijuana in 1924. Nothing to do with Rome",
+        "fr": "Le restaurateur Caesar Cardini l'a créée à Tijuana en 1924. Rien à voir avec Rome",
+        "ar": "صاحب مطعم اسمو سيزر كارديني عملها بتيخوانا سنة 1924، ما إلها علاقة بروما",
+        "es": "El restaurador Caesar Cardini la creó en Tijuana en 1924. Nada que ver con Roma"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Caesar salad created by Caesar Cardini at his restaurant in Tijuana, Mexico, in 1924; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "of-021",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Hawaiian pizza, with pineapple, was invented in ___",
+        "translit": null,
+        "display": {
+          "fr": "La pizza hawaïenne, à l'ananas, a été inventée au ___",
+          "ar": "بيتزا هاواي، اللي فيها أناناس، انخترعت بـ ___",
+          "es": "La pizza hawaiana, con piña, se inventó en ___"
+        }
+      },
+      "truth": {
+        "en": "Canada",
+        "fr": "Canada",
+        "ar": "كندا",
+        "es": "Canadá"
+      },
+      "truthAlt": {
+        "en": [
+          "Ontario"
+        ],
+        "fr": [
+          "En Ontario"
+        ],
+        "ar": [
+          "أونتاريو"
+        ],
+        "es": [
+          "Ontario"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Hawaii",
+          "Italy",
+          "Australia"
+        ],
+        "fr": [
+          "Brésil",
+          "Japon",
+          "Portugal"
+        ],
+        "ar": [
+          "هاواي",
+          "إيطاليا",
+          "أستراليا"
+        ],
+        "es": [
+          "Hawái",
+          "Italia",
+          "Australia"
+        ]
+      },
+      "note": {
+        "en": "A Greek-born cook, Sam Panopoulos, tried it in Ontario in 1962",
+        "fr": "Un cuisinier d'origine grecque, Sam Panopoulos, l'a testée en Ontario en 1962",
+        "ar": "طباخ من أصل يوناني اسمو سام بانوبولوس جربها بأونتاريو سنة 1962",
+        "es": "Un cocinero de origen griego, Sam Panopoulos, la probó en Ontario en 1962"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Hawaiian pizza created in 1962 by Sam Panopoulos in Chatham, Ontario, Canada; BBC (obituary 2017); Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "of-022",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Nachos are named after ___, who first served them in 1943",
+        "translit": null,
+        "display": {
+          "fr": "Les nachos portent le nom d'___, qui les a servis le premier en 1943",
+          "ar": "الناتشوز سموها على اسم ___، اللي قدمها أول مرة سنة 1943",
+          "es": "Los nachos deben su nombre a ___, que los sirvió por primera vez en 1943"
+        }
+      },
+      "truth": {
+        "en": "Ignacio Anaya",
+        "fr": "Ignacio Anaya",
+        "ar": "إغناسيو أنايا",
+        "es": "Ignacio Anaya"
+      },
+      "truthAlt": {
+        "en": [
+          "Ignacio",
+          "A man called Nacho",
+          "Nacho Anaya"
+        ],
+        "fr": [
+          "Ignacio",
+          "Un homme surnommé Nacho",
+          "Nacho Anaya"
+        ],
+        "ar": [
+          "إغناسيو",
+          "ناتشو أنايا"
+        ],
+        "es": [
+          "Ignacio",
+          "Nacho Anaya"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A cheese brand",
+          "A Texas cowboy",
+          "A Mayan city"
+        ],
+        "fr": [
+          "Une marque de fromage",
+          "Un cow-boy texan",
+          "Une cité maya"
+        ],
+        "ar": [
+          "ماركة جبنة",
+          "كاوبوي من تكساس",
+          "مدينة للمايا"
+        ],
+        "es": [
+          "Una marca de queso",
+          "Un vaquero de Texas",
+          "Una ciudad maya"
+        ]
+      },
+      "note": {
+        "en": "A maître d' in Piedras Negras, Mexico, invented them for hungry guests",
+        "fr": "Un maître d'hôtel de Piedras Negras, au Mexique, les a inventés",
+        "ar": "مسؤول مطعم ببيدراس نيغراس بالمكسيك اخترعها لزباين جوعانين",
+        "es": "Un maître de Piedras Negras, México, los inventó para unos clientes"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Nachos created in 1943 by Ignacio 'Nacho' Anaya in Piedras Negras, Mexico; Smithsonian Magazine; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "of-023",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "For the Aztecs, cacao beans were also used as ___",
+        "translit": null,
+        "display": {
+          "fr": "Chez les Aztèques, les fèves de cacao servaient aussi de ___",
+          "ar": "عند الأزتيك، حبوب الكاكاو كانت كمان تستعمل ___",
+          "es": "Para los aztecas, los granos de cacao también servían de ___"
+        }
+      },
+      "truth": {
+        "en": "Money",
+        "fr": "Monnaie",
+        "ar": "مصاري",
+        "es": "Dinero"
+      },
+      "truthAlt": {
+        "en": [
+          "Coins",
+          "Currency"
+        ],
+        "fr": [
+          "Argent",
+          "Pièces"
+        ],
+        "ar": [
+          "عملة",
+          "فراطة"
+        ],
+        "es": [
+          "Moneda",
+          "Monedas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Earrings",
+          "Dice",
+          "Medicine"
+        ],
+        "fr": [
+          "Boucles d'oreilles",
+          "Dés",
+          "Médicament"
+        ],
+        "ar": [
+          "حلق",
+          "زهر للعب",
+          "دوا"
+        ],
+        "es": [
+          "Pendientes",
+          "Dados",
+          "Medicina"
+        ]
+      },
+      "note": {
+        "en": "A turkey or a rabbit could be bought with a handful of beans",
+        "fr": "On pouvait acheter un lapin ou une dinde avec une poignée de fèves",
+        "ar": "كان فيك تشتري أرنب أو حبش بكمشة حبوب",
+        "es": "Con un puñado de granos se compraba un conejo o un pavo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Cacao beans were used as currency by the Aztecs and Maya; Smithsonian Magazine; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "of-024",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Apples float in water because about a quarter of an apple is ___",
+        "translit": null,
+        "display": {
+          "fr": "Les pommes flottent parce qu'environ un quart d'une pomme, c'est de l'___",
+          "ar": "التفاحة بتطوف عالمي لأنو حوالي ربعها ___",
+          "es": "Las manzanas flotan porque más o menos una cuarta parte de la manzana es ___"
+        }
+      },
+      "truth": {
+        "en": "Air",
+        "fr": "Air",
+        "ar": "هوا",
+        "es": "Aire"
+      },
+      "truthAlt": {
+        "en": [
+          "Air pockets",
+          "Air bubbles"
+        ],
+        "fr": [
+          "Bulles d'air",
+          "Poches d'air"
+        ],
+        "ar": [
+          "فقاعات هوا",
+          "الهوا"
+        ],
+        "es": [
+          "Burbujas de aire",
+          "Bolsas de aire"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sugar",
+          "Wax",
+          "Seeds"
+        ],
+        "fr": [
+          "Sucre",
+          "Cire",
+          "Huile"
+        ],
+        "ar": [
+          "سكر",
+          "شمع",
+          "بزور"
+        ],
+        "es": [
+          "Azúcar",
+          "Cera",
+          "Semillas"
+        ]
+      },
+      "note": {
+        "en": "That's why apple bobbing works",
+        "fr": "C'est pour ça qu'on peut jouer à les attraper avec la bouche dans une bassine",
+        "ar": "لهيك فيك تلعب لعبة التقاط التفاح بالتم من الطشت",
+        "es": "Por eso funciona el juego de atraparlas con la boca en un barreño"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Apples float because about 25 percent of their volume is air; US Department of Agriculture; Library of Congress 'Everyday Mysteries'"
+      }
+    },
+    {
+      "id": "of-025",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Each cashew nut grows hanging under a ___",
+        "translit": null,
+        "display": {
+          "fr": "Chaque noix de cajou pousse accrochée sous un ___",
+          "ar": "كل حبة كاجو بتطلع معلقة تحت ___",
+          "es": "Cada anacardo crece colgado debajo de una ___"
+        }
+      },
+      "truth": {
+        "en": "Fruit",
+        "fr": "Fruit",
+        "ar": "تمرة",
+        "es": "Fruta"
+      },
+      "truthAlt": {
+        "en": [
+          "Cashew apple",
+          "Juicy fruit"
+        ],
+        "fr": [
+          "Pomme de cajou",
+          "Faux fruit"
+        ],
+        "ar": [
+          "تفاحة الكاجو",
+          "فاكهة"
+        ],
+        "es": [
+          "Manzana de anacardo",
+          "Fruta jugosa"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Flower",
+          "Thorn",
+          "Leaf"
+        ],
+        "fr": [
+          "Pétale",
+          "Épine",
+          "Bourgeon"
+        ],
+        "ar": [
+          "زهرة",
+          "شوكة",
+          "ورقة"
+        ],
+        "es": [
+          "Flor",
+          "Espina",
+          "Hoja"
+        ]
+      },
+      "note": {
+        "en": "The cashew apple is juicy and eaten in Brazil and India",
+        "fr": "La pomme de cajou est juteuse et se mange au Brésil et en Inde",
+        "ar": "تفاحة الكاجو مليانة عصير وبياكلوها بالبرازيل والهند",
+        "es": "La manzana del anacardo es jugosa y se come en Brasil y la India"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Each cashew nut grows at the bottom of a cashew apple (a swollen fruit stalk); Encyclopaedia Britannica 'cashew'"
+      }
+    },
+    {
+      "id": "of-026",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Most of the green wasabi served with sushi outside Japan is really ___",
+        "translit": null,
+        "display": {
+          "fr": "La plupart du wasabi vert servi avec les sushis hors du Japon est en fait du ___",
+          "ar": "أغلب الواسابي الأخضر اللي بيجي مع السوشي برا اليابان هو بالحقيقة ___",
+          "es": "Casi todo el wasabi verde que acompaña al sushi fuera de Japón es en realidad ___"
+        }
+      },
+      "truth": {
+        "en": "Horseradish",
+        "fr": "Raifort",
+        "ar": "فجل حار",
+        "es": "Rábano picante"
+      },
+      "truthAlt": {
+        "en": [
+          "Dyed horseradish",
+          "Horseradish and mustard"
+        ],
+        "fr": [
+          "Raifort coloré",
+          "Raifort et moutarde"
+        ],
+        "ar": [
+          "فجل حار ملون",
+          "فجل وخردل"
+        ],
+        "es": [
+          "Rábano teñido",
+          "Rábano y mostaza"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Avocado",
+          "Green chilli",
+          "Mint paste"
+        ],
+        "fr": [
+          "Avocat",
+          "Piment vert",
+          "Basilic"
+        ],
+        "ar": [
+          "أفوكا",
+          "فليفلة خضرا",
+          "معجون نعنع"
+        ],
+        "es": [
+          "Aguacate",
+          "Guindilla verde",
+          "Pasta de menta"
+        ]
+      },
+      "note": {
+        "en": "Real wasabi is rare and pricey, so a dyed paste takes its place",
+        "fr": "Le vrai wasabi est rare et cher, alors on le remplace par une pâte colorée",
+        "ar": "الواسابي الحقيقي نادر وغالي، فبيحطوا عجينة ملونة بدالو",
+        "es": "El wasabi auténtico es raro y caro, así que se sustituye por una pasta teñida"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Most 'wasabi' served outside Japan is horseradish with mustard and green colouring; Smithsonian Magazine; BBC Future"
+      }
+    },
+    {
+      "id": "of-027",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Most of the world's natural vanilla comes from ___",
+        "translit": null,
+        "display": {
+          "fr": "La majeure partie de la vanille naturelle du monde vient de ___",
+          "ar": "أغلب الفانيلا الطبيعية بالعالم جاية من ___",
+          "es": "La mayor parte de la vainilla natural del mundo viene de ___"
+        }
+      },
+      "truth": {
+        "en": "Madagascar",
+        "fr": "Madagascar",
+        "ar": "مدغشقر",
+        "es": "Madagascar"
+      },
+      "truthAlt": {
+        "en": [
+          "The island of Madagascar"
+        ],
+        "fr": [
+          "L'île de Madagascar"
+        ],
+        "ar": [
+          "جزيرة مدغشقر"
+        ],
+        "es": [
+          "La isla de Madagascar"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Mexico",
+          "France",
+          "India"
+        ],
+        "fr": [
+          "Mexique",
+          "France",
+          "Inde"
+        ],
+        "ar": [
+          "المكسيك",
+          "فرنسا",
+          "الهند"
+        ],
+        "es": [
+          "México",
+          "Francia",
+          "India"
+        ]
+      },
+      "note": {
+        "en": "Each vanilla flower there is pollinated by hand",
+        "fr": "Là-bas, chaque fleur de vanille est pollinisée à la main",
+        "ar": "هونيك بيلقحوا كل زهرة فانيلا بالإيد",
+        "es": "Allí cada flor de vainilla se poliniza a mano"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Madagascar produces most of the world's natural vanilla (about 80 percent); FAO; BBC"
+      }
+    },
+    {
+      "id": "of-028",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Since 1992, Singapore has banned the sale of ___",
+        "translit": null,
+        "display": {
+          "fr": "Depuis 1992, Singapour interdit la vente de ___",
+          "ar": "من سنة 1992، سنغافورة ممنوع فيها بيع ___",
+          "es": "Desde 1992, Singapur prohíbe vender ___"
+        }
+      },
+      "truth": {
+        "en": "Chewing gum",
+        "fr": "Chewing-gum",
+        "ar": "العلكة",
+        "es": "Chicle"
+      },
+      "truthAlt": {
+        "en": [
+          "Gum",
+          "Bubble gum"
+        ],
+        "fr": [
+          "Chewing-gums",
+          "Gomme à mâcher"
+        ],
+        "ar": [
+          "علكة",
+          "تشيكلس"
+        ],
+        "es": [
+          "Chicles",
+          "Goma de mascar"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Fireworks",
+          "Water pistols",
+          "Sunflower seeds"
+        ],
+        "fr": [
+          "Feux d'artifice",
+          "Pistolets à eau",
+          "Graines de tournesol"
+        ],
+        "ar": [
+          "المفرقعات",
+          "مسدسات المي",
+          "البزر"
+        ],
+        "es": [
+          "Petardos",
+          "Pistolas de agua",
+          "Pipas de girasol"
+        ]
+      },
+      "note": {
+        "en": "Used gum was jamming the doors of the new metro trains",
+        "fr": "Des chewing-gums collés bloquaient les portes du nouveau métro",
+        "ar": "العلكة الملزوقة كانت عم تعلّق أبواب المترو الجديد",
+        "es": "Los chicles pegados bloqueaban las puertas del nuevo metro"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Singapore banned the import and sale of chewing gum in 1992 (therapeutic gum allowed since 2004); Singapore Government; BBC"
+      }
+    },
+    {
+      "id": "of-029",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In St Mark's Square in Venice, you can be fined for feeding ___",
+        "translit": null,
+        "display": {
+          "fr": "Place Saint-Marc, à Venise, on peut avoir une amende pour avoir nourri les ___",
+          "ar": "بساحة سان ماركو بالبندقية، فيك تاكل مخالفة إذا طعميت ___",
+          "es": "En la plaza de San Marcos, en Venecia, te pueden multar por dar de comer a las ___"
+        }
+      },
+      "truth": {
+        "en": "Pigeons",
+        "fr": "Pigeons",
+        "ar": "الحمام",
+        "es": "Palomas"
+      },
+      "truthAlt": {
+        "en": [
+          "The pigeons",
+          "Birds"
+        ],
+        "fr": [
+          "Oiseaux"
+        ],
+        "ar": [
+          "حمام",
+          "العصافير"
+        ],
+        "es": [
+          "Aves"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Cats",
+          "Seagulls",
+          "Ducks"
+        ],
+        "fr": [
+          "Chats",
+          "Mouettes",
+          "Canards"
+        ],
+        "ar": [
+          "القطط",
+          "النورس",
+          "البط"
+        ],
+        "es": [
+          "Gaviotas",
+          "Gatas",
+          "Patas"
+        ]
+      },
+      "note": {
+        "en": "The ban came in 2008 to protect the old buildings",
+        "fr": "L'interdiction date de 2008 pour protéger les vieux bâtiments",
+        "ar": "المنع بلش سنة 2008 لحماية البنايات القديمة",
+        "es": "La prohibición llegó en 2008 para proteger los edificios antiguos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Venice banned feeding pigeons in St Mark's Square in 2008, with fines; The Guardian; City of Venice"
+      }
+    },
+    {
+      "id": "of-030",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Denmark, parents usually pick their baby's name from an official ___",
+        "translit": null,
+        "display": {
+          "fr": "Au Danemark, les parents choisissent en général le prénom du bébé sur une ___ officielle",
+          "ar": "بالدنمارك، الأهل عادةً بيختاروا اسم الطفل من ___ رسمية",
+          "es": "En Dinamarca, los padres suelen elegir el nombre del bebé de una ___ oficial"
+        }
+      },
+      "truth": {
+        "en": "List",
+        "fr": "Liste",
+        "ar": "لائحة",
+        "es": "Lista"
+      },
+      "truthAlt": {
+        "en": [
+          "Approved list",
+          "List of names"
+        ],
+        "fr": [
+          "Liste de prénoms"
+        ],
+        "ar": [
+          "قائمة",
+          "لائحة أسامي"
+        ],
+        "es": [
+          "Lista de nombres"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Lottery",
+          "Phone book",
+          "Song"
+        ],
+        "fr": [
+          "Loterie",
+          "Chanson",
+          "Carte"
+        ],
+        "ar": [
+          "قرعة",
+          "أغنية",
+          "خريطة"
+        ],
+        "es": [
+          "Lotería",
+          "Canción",
+          "Guía telefónica"
+        ]
+      },
+      "note": {
+        "en": "A name not on the list needs special approval",
+        "fr": "Un prénom hors liste doit être spécialement approuvé",
+        "ar": "أي اسم مش عاللائحة بدو موافقة خاصة",
+        "es": "Un nombre que no está en la lista necesita una aprobación especial"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Denmark's Names Act: parents choose from an official list of approved names or apply for approval; Danish Agency of Family Law; BBC"
+      }
+    },
+    {
+      "id": "of-031",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "To protect old marble, Greece banned ___ at ancient sites like the Acropolis",
+        "translit": null,
+        "display": {
+          "fr": "Pour protéger le vieux marbre, la Grèce a interdit les ___ sur des sites comme l'Acropole",
+          "ar": "لتحمي الرخام القديم، اليونان منعت ___ بمواقع متل الأكروبول",
+          "es": "Para proteger el mármol antiguo, Grecia prohibió los ___ en sitios como la Acrópolis"
+        }
+      },
+      "truth": {
+        "en": "High heels",
+        "fr": "Talons hauts",
+        "ar": "الكعب العالي",
+        "es": "Tacones altos"
+      },
+      "truthAlt": {
+        "en": [
+          "Stilettos",
+          "Heels"
+        ],
+        "fr": [
+          "Talons aiguilles",
+          "Talons"
+        ],
+        "ar": [
+          "الكعب",
+          "كعب رفيع"
+        ],
+        "es": [
+          "Tacones",
+          "Tacones de aguja"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sandals",
+          "Skateboards",
+          "Umbrellas"
+        ],
+        "fr": [
+          "Sandales",
+          "Skateboards",
+          "Parapluies"
+        ],
+        "ar": [
+          "الصنادل",
+          "السكيت بورد",
+          "الشماسي"
+        ],
+        "es": [
+          "Patinetes",
+          "Paraguas",
+          "Chanclas"
+        ]
+      },
+      "note": {
+        "en": "Sharp heels can scratch 2,500-year-old stone",
+        "fr": "Des talons pointus peuvent rayer une pierre de 2 500 ans",
+        "ar": "الكعب الرفيع بيخرّش حجر عمرو 2500 سنة",
+        "es": "Un tacón fino puede rayar una piedra de 2500 años"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Greece banned high heels at ancient sites such as the Acropolis in 2009 to protect the marble; NPR, 18 May 2009"
+      }
+    },
+    {
+      "id": "of-032",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The British monarch officially owns all unmarked ___ in open water",
+        "translit": null,
+        "display": {
+          "fr": "Le monarque britannique possède officiellement tous les ___ sans marque en eau libre",
+          "ar": "الملك البريطاني رسميًا بيملك كل ___ اللي بلا علامة بالمي المفتوحة",
+          "es": "El monarca británico es dueño oficial de todos los ___ sin marcar en aguas abiertas"
+        }
+      },
+      "truth": {
+        "en": "Mute swans",
+        "fr": "Cygnes",
+        "ar": "البجع الأبيض",
+        "es": "Cisnes"
+      },
+      "truthAlt": {
+        "en": [
+          "Swans",
+          "White swans"
+        ],
+        "fr": [
+          "Cygnes tuberculés"
+        ],
+        "ar": [
+          "البجع",
+          "بجعات"
+        ],
+        "es": [
+          "Cisnes blancos",
+          "Cisnes mudos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Ducks",
+          "Salmon",
+          "Frogs"
+        ],
+        "fr": [
+          "Canards",
+          "Saumons",
+          "Grenouilles"
+        ],
+        "ar": [
+          "البط",
+          "السلمون",
+          "الضفادع"
+        ],
+        "es": [
+          "Patos",
+          "Salmones",
+          "Ranas"
+        ]
+      },
+      "note": {
+        "en": "Every July the swans on the Thames are counted in a ceremony called Swan Upping",
+        "fr": "Chaque juillet, on recense les cygnes de la Tamise lors d'une cérémonie",
+        "ar": "كل تموز بيعدوا البجعات عنهر التايمز باحتفال خاص",
+        "es": "Cada julio se cuentan los cisnes del Támesis en una ceremonia"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] The British Crown claims ownership of all unmarked mute swans in open water; Royal Collection Trust / royal.uk 'Swan Upping'"
+      }
+    },
+    {
+      "id": "of-033",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Almost every giant panda in a zoo outside China is ___ by China",
+        "translit": null,
+        "display": {
+          "fr": "Presque tous les pandas géants des zoos hors de Chine sont ___ par la Chine",
+          "ar": "تقريبًا كل باندا بحديقة حيوانات برا الصين ___ من الصين",
+          "es": "Casi todos los pandas gigantes de zoológicos fuera de China están ___ por China"
+        }
+      },
+      "truth": {
+        "en": "On loan",
+        "fr": "Prêtés",
+        "ar": "معارة",
+        "es": "Prestados"
+      },
+      "truthAlt": {
+        "en": [
+          "Rented",
+          "Lent",
+          "Loaned"
+        ],
+        "fr": [
+          "Loués",
+          "En prêt"
+        ],
+        "ar": [
+          "مستأجرة",
+          "إعارة"
+        ],
+        "es": [
+          "Alquilados",
+          "En préstamo"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Tracked by satellite",
+          "Fed daily",
+          "Painted"
+        ],
+        "fr": [
+          "Suivis par satellite",
+          "Nourris",
+          "Peints"
+        ],
+        "ar": [
+          "مراقبة بالساتلايت",
+          "مهدية",
+          "مرسومة"
+        ],
+        "es": [
+          "Vigilados por satélite",
+          "Regalados",
+          "Pintados"
+        ]
+      },
+      "note": {
+        "en": "Even the cubs born abroad belong to China and are sent back",
+        "fr": "Même les bébés nés à l'étranger appartiennent à la Chine",
+        "ar": "حتى الصغار اللي بيخلقوا برا بيرجعوا للصين",
+        "es": "Hasta las crías nacidas fuera pertenecen a China"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Almost all giant pandas in zoos outside China are on loan from China (panda diplomacy); Smithsonian's National Zoo; BBC"
+      }
+    },
+    {
+      "id": "of-034",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Sweden, the law lets you camp for a night on almost any land, even ___",
+        "translit": null,
+        "display": {
+          "fr": "En Suède, la loi permet de camper une nuit presque partout, même sur un ___",
+          "ar": "بالسويد، القانون بيسمحلك تخيّم ليلة بأي أرض تقريبًا، حتى ___",
+          "es": "En Suecia, la ley te deja acampar una noche en casi cualquier terreno, incluso ___"
+        }
+      },
+      "truth": {
+        "en": "Private property",
+        "fr": "Terrain privé",
+        "ar": "أرض خاصة",
+        "es": "Uno privado"
+      },
+      "truthAlt": {
+        "en": [
+          "Private land",
+          "Someone's land"
+        ],
+        "fr": [
+          "Terrain de quelqu'un",
+          "Propriété privée"
+        ],
+        "ar": [
+          "أرض حدا",
+          "ملك خاص"
+        ],
+        "es": [
+          "Terreno privado",
+          "Propiedad privada"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Golf courses",
+          "Airports",
+          "Royal gardens"
+        ],
+        "fr": [
+          "Golf",
+          "Aéroport",
+          "Jardin royal"
+        ],
+        "ar": [
+          "ملعب غولف",
+          "مطار",
+          "حديقة الملك"
+        ],
+        "es": [
+          "Un campo de golf",
+          "Un aeropuerto",
+          "Un jardín real"
+        ]
+      },
+      "note": {
+        "en": "It is called the right of public access. Just stay away from houses",
+        "fr": "C'est le droit d'accès à la nature. Il faut juste rester loin des maisons",
+        "ar": "اسمو حق الوصول للطبيعة، بس ابعد عن البيوت",
+        "es": "Se llama derecho de acceso público. Solo hay que alejarse de las casas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Allemansrätten (right of public access), Sweden: you may camp one night on most land, including private land, away from homes; Swedish Environmental Protection Agency (naturvardsverket.se)"
+      }
+    },
+    {
+      "id": "of-035",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Finland, the fine for speeding depends on the driver's ___",
+        "translit": null,
+        "display": {
+          "fr": "En Finlande, l'amende pour excès de vitesse dépend du ___ du conducteur",
+          "ar": "بفنلندا، مخالفة السرعة بتتحدد حسب ___ السايق",
+          "es": "En Finlandia, la multa por exceso de velocidad depende del ___ del conductor"
+        }
+      },
+      "truth": {
+        "en": "Income",
+        "fr": "Salaire",
+        "ar": "معاش",
+        "es": "Sueldo"
+      },
+      "truthAlt": {
+        "en": [
+          "Salary",
+          "Wages"
+        ],
+        "fr": [
+          "Revenu",
+          "Revenus"
+        ],
+        "ar": [
+          "دخل",
+          "راتب"
+        ],
+        "es": [
+          "Salario",
+          "Ingresos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Age",
+          "Car colour",
+          "Shoe size"
+        ],
+        "fr": [
+          "Âge",
+          "Signe astrologique",
+          "Poids"
+        ],
+        "ar": [
+          "عمر",
+          "لون السيارة",
+          "قياس الصباط"
+        ],
+        "es": [
+          "Edad",
+          "Signo del zodiaco",
+          "Peso"
+        ]
+      },
+      "note": {
+        "en": "Some rich drivers have paid tens of thousands of euros for one ticket",
+        "fr": "Certains riches ont payé des dizaines de milliers d'euros pour une amende",
+        "ar": "في أغنيا دفعوا عشرات آلاف اليورو على مخالفة وحدة",
+        "es": "Algunos ricos han pagado decenas de miles de euros por una multa"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Finland's day-fine system: speeding fines depend on the offender's income; BBC; Finnish Police"
+      }
+    },
+    {
+      "id": "of-036",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Kopi luwak, a very pricey coffee, is made from beans that passed through a ___",
+        "translit": null,
+        "display": {
+          "fr": "Le kopi luwak, un des cafés les plus chers, est fait de grains passés par l'intestin d'une ___",
+          "ar": "الكوبي لواك، من أغلى أنواع القهوة، بيعملوه من حبوب مرقت بمعدة ___",
+          "es": "El kopi luwak, de los cafés más caros, se hace con granos que pasaron por una ___"
+        }
+      },
+      "truth": {
+        "en": "Civet",
+        "fr": "Civette",
+        "ar": "زباد",
+        "es": "Civeta"
+      },
+      "truthAlt": {
+        "en": [
+          "Civet cat",
+          "Palm civet"
+        ],
+        "fr": [
+          "Civette palmiste"
+        ],
+        "ar": [
+          "قط الزباد",
+          "سنور النخيل"
+        ],
+        "es": [
+          "Civeta de palma"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Monkey",
+          "Elephant",
+          "Parrot"
+        ],
+        "fr": [
+          "Chèvre",
+          "Chauve-souris",
+          "Perruche"
+        ],
+        "ar": [
+          "قرد",
+          "فيل",
+          "ببغا"
+        ],
+        "es": [
+          "Cabra",
+          "Llama",
+          "Cotorra"
+        ]
+      },
+      "note": {
+        "en": "The animal eats the coffee cherries and the beans are collected from its droppings",
+        "fr": "L'animal mange les cerises de café et on récupère les grains dans ses crottes",
+        "ar": "الحيوان بياكل تمر البن، وبيلموا الحبوب من فضلاتو",
+        "es": "El animal come las cerezas del café y se recogen los granos de sus excrementos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Kopi luwak coffee is made from beans eaten and excreted by the Asian palm civet; Encyclopaedia Britannica; National Geographic"
+      }
+    },
+    {
+      "id": "of-037",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "An American man had the hiccups non-stop for about ___",
+        "translit": null,
+        "display": {
+          "fr": "Un Américain a eu le hoquet sans arrêt pendant environ ___",
+          "ar": "رجال أميركي ضلت معو الحازوقة بلا وقفة حوالي ___",
+          "es": "Un estadounidense tuvo hipo sin parar durante unos ___"
+        }
+      },
+      "truth": {
+        "en": "68 years",
+        "fr": "68 ans",
+        "ar": "68 سنة",
+        "es": "68 años"
+      },
+      "truthAlt": {
+        "en": [
+          "Sixty-eight years"
+        ],
+        "fr": [
+          "Soixante-huit ans"
+        ],
+        "ar": [
+          "تمانية وستين سنة"
+        ],
+        "es": [
+          "Sesenta y ocho años"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "3 months",
+          "12 years",
+          "40 days"
+        ],
+        "fr": [
+          "3 mois",
+          "12 ans",
+          "40 jours"
+        ],
+        "ar": [
+          "3 أشهر",
+          "12 سنة",
+          "40 يوم"
+        ],
+        "es": [
+          "3 meses",
+          "12 años",
+          "40 días"
+        ]
+      },
+      "note": {
+        "en": "Charles Osborne's hiccups began in 1922 and stopped in 1990",
+        "fr": "Le hoquet de Charles Osborne a commencé en 1922 et s'est arrêté en 1990",
+        "ar": "حازوقة تشارلز أوزبورن بلشت سنة 1922 ووقفت سنة 1990",
+        "es": "El hipo de Charles Osborne empezó en 1922 y paró en 1990"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Charles Osborne hiccupped from 1922 to 1990, about 68 years (Guinness World Records); The New York Times obituary 1991"
+      }
+    },
+    {
+      "id": "of-038",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Jonathan, a giant tortoise hatched around 1832, was taken in 1882 to the island of ___",
+        "translit": null,
+        "display": {
+          "fr": "Jonathan, une tortue géante née vers 1832, a été emmenée en 1882 sur l'île de ___",
+          "ar": "جوناثان، سلحفاة عملاقة فقست حوالي 1832، انتقلت سنة 1882 لجزيرة ___",
+          "es": "Jonathan, una tortuga gigante nacida hacia 1832, fue llevada en 1882 a la isla de ___"
+        }
+      },
+      "truth": {
+        "en": "Saint Helena",
+        "fr": "Sainte-Hélène",
+        "ar": "سانت هيلينا",
+        "es": "Santa Elena"
+      },
+      "truthAlt": {
+        "en": [
+          "St Helena"
+        ],
+        "fr": [
+          "Sainte Hélène"
+        ],
+        "ar": [
+          "القديسة هيلانة",
+          "هيلينا"
+        ],
+        "es": [
+          "Isla Santa Elena"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Malta",
+          "Madagascar",
+          "Crete"
+        ],
+        "fr": [
+          "Malte",
+          "Madagascar",
+          "Crète"
+        ],
+        "ar": [
+          "مالطا",
+          "مدغشقر",
+          "كريت"
+        ],
+        "es": [
+          "Malta",
+          "Madagascar",
+          "Creta"
+        ]
+      },
+      "note": {
+        "en": "He is the oldest land animal ever recorded and lives at the governor's house",
+        "fr": "C'est l'animal terrestre le plus vieux jamais recensé",
+        "ar": "هو أكبر حيوان بري بالعمر انسجّل بالتاريخ",
+        "es": "Es el animal terrestre más viejo jamás registrado"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Jonathan, a Seychelles giant tortoise hatched around 1832, brought to Saint Helena in 1882; Guinness World Records; Government of St Helena"
+      }
+    },
+    {
+      "id": "of-039",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "The largest desert on Earth is ___",
+        "translit": null,
+        "display": {
+          "fr": "Le plus grand désert de la Terre est ___",
+          "ar": "أكبر صحرا عالأرض هي ___",
+          "es": "El mayor desierto de la Tierra es ___"
+        }
+      },
+      "truth": {
+        "en": "Antarctica",
+        "fr": "L'Antarctique",
+        "ar": "القارة القطبية الجنوبية",
+        "es": "La Antártida"
+      },
+      "truthAlt": {
+        "en": [
+          "The Antarctic"
+        ],
+        "fr": [
+          "Antarctique",
+          "Le continent antarctique"
+        ],
+        "ar": [
+          "أنتاركتيكا",
+          "القطب الجنوبي"
+        ],
+        "es": [
+          "Antártida",
+          "El Antártico"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "The Sahara",
+          "The Gobi",
+          "Arabia"
+        ],
+        "fr": [
+          "Le Sahara",
+          "Le Gobi",
+          "L'Arabie"
+        ],
+        "ar": [
+          "الصحرا الكبرى",
+          "صحرا غوبي",
+          "الربع الخالي"
+        ],
+        "es": [
+          "El Sahara",
+          "El Gobi",
+          "Arabia"
+        ]
+      },
+      "note": {
+        "en": "A desert is about very little rain or snow, not about heat",
+        "fr": "Un désert, c'est très peu de pluie ou de neige, pas forcément la chaleur",
+        "ar": "الصحرا يعني شتي وتلج قليلين كتير، مش شوب",
+        "es": "Un desierto es un lugar con muy poca lluvia o nieve, no con calor"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Antarctica is the largest desert on Earth (a desert is defined by low precipitation); NASA Earth Observatory; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "of-040",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Measured from its base to its peak, the tallest mountain on Earth is in ___",
+        "translit": null,
+        "display": {
+          "fr": "Mesurée de sa base à son sommet, la plus haute montagne du monde est à ___",
+          "ar": "إذا قسنا من القاعدة للقمة، أعلى جبل عالأرض موجود بـ ___",
+          "es": "Medida de la base a la cima, la montaña más alta de la Tierra está en ___"
+        }
+      },
+      "truth": {
+        "en": "Hawaii",
+        "fr": "Hawaï",
+        "ar": "هاواي",
+        "es": "Hawái"
+      },
+      "truthAlt": {
+        "en": [
+          "Mauna Kea",
+          "The Pacific"
+        ],
+        "fr": [
+          "Mauna Kea",
+          "Dans le Pacifique"
+        ],
+        "ar": [
+          "ماونا كيا",
+          "المحيط الهادئ"
+        ],
+        "es": [
+          "Mauna Kea",
+          "El Pacífico"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Nepal",
+          "Alaska",
+          "Chile"
+        ],
+        "fr": [
+          "Népal",
+          "Alaska",
+          "Chili"
+        ],
+        "ar": [
+          "النيبال",
+          "ألاسكا",
+          "تشيلي"
+        ],
+        "es": [
+          "Nepal",
+          "Alaska",
+          "Chile"
+        ]
+      },
+      "note": {
+        "en": "Mauna Kea starts deep under the ocean, so it is taller than Everest overall",
+        "fr": "Le Mauna Kea commence au fond de l'océan : au total, il dépasse l'Everest",
+        "ar": "ماونا كيا بيبلش من عمق المحيط، فهو بالمجمل أطول من إيفرست",
+        "es": "El Mauna Kea nace en el fondo del océano: en total supera al Everest"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Measured from base to peak (about 10,210 m, much of it underwater), Mauna Kea in Hawaii is taller than Everest; USGS; NOAA"
+      }
+    },
+    {
+      "id": "of-041",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "___ has more lakes than the rest of the world combined",
+        "translit": null,
+        "display": {
+          "fr": "Le ___ compte plus de lacs que tout le reste du monde réuni",
+          "ar": "___ فيها بحيرات أكتر من كل باقي العالم سوا",
+          "es": "___ tiene más lagos que todo el resto del mundo junto"
+        }
+      },
+      "truth": {
+        "en": "Canada",
+        "fr": "Canada",
+        "ar": "كندا",
+        "es": "Canadá"
+      },
+      "truthAlt": {
+        "en": [
+          "Canadian lakes"
+        ],
+        "fr": [
+          "Le Canada"
+        ],
+        "ar": [
+          "بكندا"
+        ],
+        "es": [
+          "En Canadá"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Finland",
+          "Russia",
+          "Sweden"
+        ],
+        "fr": [
+          "Brésil",
+          "Japon",
+          "Chili"
+        ],
+        "ar": [
+          "فنلندا",
+          "روسيا",
+          "السويد"
+        ],
+        "es": [
+          "Finlandia",
+          "Rusia",
+          "Suecia"
+        ]
+      },
+      "note": {
+        "en": "It holds roughly 60 percent of all the lakes on the planet",
+        "fr": "Il abrite environ 60 % des lacs de la planète",
+        "ar": "فيها تقريبًا 60 بالمية من بحيرات الكوكب",
+        "es": "Alberga cerca del 60 % de los lagos del planeta"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Canada has about 60 percent of the world's lakes, more than the rest of the world combined; Natural Resources Canada; Statistics Canada"
+      }
+    },
+    {
+      "id": "of-042",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Russia's land area is bigger than the whole surface of ___",
+        "translit": null,
+        "display": {
+          "fr": "La Russie est plus grande que toute la surface de ___",
+          "ar": "مساحة روسيا أكبر من كل سطح ___",
+          "es": "La superficie de Rusia es mayor que toda la superficie de ___"
+        }
+      },
+      "truth": {
+        "en": "Pluto",
+        "fr": "Pluton",
+        "ar": "بلوتو",
+        "es": "Plutón"
+      },
+      "truthAlt": {
+        "en": [
+          "The dwarf planet Pluto"
+        ],
+        "fr": [
+          "La planète naine Pluton"
+        ],
+        "ar": [
+          "الكوكب القزم بلوتو"
+        ],
+        "es": [
+          "El planeta enano Plutón"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "The Moon",
+          "Mercury",
+          "Mars"
+        ],
+        "fr": [
+          "La Lune",
+          "Mercure",
+          "Mars"
+        ],
+        "ar": [
+          "القمر",
+          "عطارد",
+          "المريخ"
+        ],
+        "es": [
+          "La Luna",
+          "Mercurio",
+          "Marte"
+        ]
+      },
+      "note": {
+        "en": "Russia covers about 17 million km². Pluto's surface is a bit less",
+        "fr": "La Russie fait environ 17 millions de km². La surface de Pluton, un peu moins",
+        "ar": "مساحة روسيا حوالي 17 مليون كم مربع، وسطح بلوتو أقل بشوي",
+        "es": "Rusia mide unos 17 millones de km². Plutón, un poco menos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Russia's area is about 17.1 million km2; Pluto's total surface area is about 16.7 million km2; NASA Pluto facts; CIA World Factbook"
+      }
+    },
+    {
+      "id": "of-043",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "There are more possible games of chess than ___ in the observable universe",
+        "translit": null,
+        "display": {
+          "fr": "Il existe plus de parties d'échecs possibles que d'___ dans l'univers observable",
+          "ar": "عدد مباريات الشطرنج الممكنة أكبر من عدد ___ بالكون اللي منشوفو",
+          "es": "Hay más partidas de ajedrez posibles que ___ en el universo observable"
+        }
+      },
+      "truth": {
+        "en": "Atoms",
+        "fr": "Atomes",
+        "ar": "الذرات",
+        "es": "Átomos"
+      },
+      "truthAlt": {
+        "en": [
+          "Atoms in the universe"
+        ],
+        "fr": [
+          "Atomes de l'univers"
+        ],
+        "ar": [
+          "ذرات الكون"
+        ],
+        "es": [
+          "Átomos del universo"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Stars",
+          "Grains of sand",
+          "Planets"
+        ],
+        "fr": [
+          "Étoiles",
+          "Grains de sable",
+          "Planètes"
+        ],
+        "ar": [
+          "النجوم",
+          "حبات الرمل",
+          "الكواكب"
+        ],
+        "es": [
+          "Estrellas",
+          "Granos de arena",
+          "Planetas"
+        ]
+      },
+      "note": {
+        "en": "Mathematician Claude Shannon estimated it in 1950",
+        "fr": "Le mathématicien Claude Shannon l'a estimé en 1950",
+        "ar": "العالم كلود شانون قدّرها سنة 1950",
+        "es": "El matemático Claude Shannon lo estimó en 1950"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Shannon number: about 10^120 possible chess games, versus about 10^80 atoms in the observable universe; Claude Shannon 1950"
+      }
+    },
+    {
+      "id": "of-045",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "On the planet HD 189733b, scientists think it rains ___ sideways",
+        "translit": null,
+        "display": {
+          "fr": "Sur la planète HD 189733b, les scientifiques pensent qu'il pleut du ___ à l'horizontale",
+          "ar": "على كوكب HD 189733b، العلماء بيظنوا إنو بتشتي ___ بالعرض",
+          "es": "En el planeta HD 189733b, los científicos creen que llueve ___ de lado"
+        }
+      },
+      "truth": {
+        "en": "Glass",
+        "fr": "Verre",
+        "ar": "إزاز",
+        "es": "Vidrio"
+      },
+      "truthAlt": {
+        "en": [
+          "Molten glass",
+          "Shards of glass"
+        ],
+        "fr": [
+          "Verre fondu",
+          "Éclats de verre"
+        ],
+        "ar": [
+          "زجاج",
+          "شقف إزاز"
+        ],
+        "es": [
+          "Cristal",
+          "Trozos de vidrio"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Diamonds",
+          "Iron nails",
+          "Hot sand"
+        ],
+        "fr": [
+          "Diamant",
+          "Fer",
+          "Sable brûlant"
+        ],
+        "ar": [
+          "ألماس",
+          "مسامير حديد",
+          "رمل سخن"
+        ],
+        "es": [
+          "Diamantes",
+          "Clavos de hierro",
+          "Arena caliente"
+        ]
+      },
+      "note": {
+        "en": "Winds there may blow at about 7,000 km/h. NASA studied it with Hubble",
+        "fr": "Les vents y souffleraient à environ 7 000 km/h. La NASA l'a étudiée avec Hubble",
+        "ar": "الهوا هونيك ممكن يوصل لحوالي 7000 كم بالساعة",
+        "es": "Allí el viento soplaría a unos 7000 km/h. La NASA lo estudió con el Hubble"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] On exoplanet HD 189733b, it is thought to rain glass sideways in 7,000 km/h winds; NASA (Hubble, 2013)"
+      }
+    },
+    {
+      "id": "of-046",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "When oxygen is cooled until it turns liquid, it is ___",
+        "translit": null,
+        "display": {
+          "fr": "Quand on refroidit l'oxygène jusqu'à le rendre liquide, il est ___",
+          "ar": "لما نبرّد الأكسجين لحتى يصير سايل، لونو ___",
+          "es": "Cuando el oxígeno se enfría hasta volverse líquido, es de color ___"
+        }
+      },
+      "truth": {
+        "en": "Pale blue",
+        "fr": "Bleu pâle",
+        "ar": "أزرق فاتح",
+        "es": "Azul pálido"
+      },
+      "truthAlt": {
+        "en": [
+          "Light blue",
+          "Blue"
+        ],
+        "fr": [
+          "Bleu clair",
+          "Bleu"
+        ],
+        "ar": [
+          "أزرق",
+          "سماوي"
+        ],
+        "es": [
+          "Azul claro",
+          "Azul"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Pink",
+          "Silver",
+          "Bright green"
+        ],
+        "fr": [
+          "Rose",
+          "Argenté",
+          "Vert vif"
+        ],
+        "ar": [
+          "زهر",
+          "فضي",
+          "أخضر فاقع"
+        ],
+        "es": [
+          "Rosa",
+          "Plateado",
+          "Verde chillón"
+        ]
+      },
+      "note": {
+        "en": "Liquid oxygen is also magnetic: it sticks between the poles of a strong magnet",
+        "fr": "L'oxygène liquide est aussi attiré par un aimant puissant",
+        "ar": "الأكسجين السايل كمان بينجذب للمغناطيس القوي",
+        "es": "El oxígeno líquido además es atraído por un imán potente"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Liquid oxygen is pale blue; Encyclopaedia Britannica 'oxygen'; Royal Society of Chemistry"
+      }
+    },
+    {
+      "id": "of-047",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "After spacewalks, astronauts say space smells like ___",
+        "translit": null,
+        "display": {
+          "fr": "Après une sortie, les astronautes disent que l'espace sent le ___",
+          "ar": "بعد المشي بالفضاء، رواد الفضاء بيقولوا إنو ريحة الفضاء متل ___",
+          "es": "Tras un paseo espacial, los astronautas dicen que el espacio huele a ___"
+        }
+      },
+      "truth": {
+        "en": "Seared steak",
+        "fr": "Steak grillé",
+        "ar": "ستيك مشوي",
+        "es": "Filete a la plancha"
+      },
+      "truthAlt": {
+        "en": [
+          "Burnt steak",
+          "Hot metal",
+          "Welding fumes"
+        ],
+        "fr": [
+          "Métal chaud",
+          "Steak brûlé"
+        ],
+        "ar": [
+          "حديد سخن",
+          "لحمة محروقة"
+        ],
+        "es": [
+          "Metal caliente",
+          "Filete quemado"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Fresh rain",
+          "Popcorn",
+          "Old books"
+        ],
+        "fr": [
+          "Pain frais",
+          "Pop-corn",
+          "Vieux livre"
+        ],
+        "ar": [
+          "شتي جديد",
+          "بوشار",
+          "كتب قديمة"
+        ],
+        "es": [
+          "Lluvia fresca",
+          "Palomitas",
+          "Libros viejos"
+        ]
+      },
+      "note": {
+        "en": "The smell clings to suits and helmets when they come back inside",
+        "fr": "L'odeur reste sur les combinaisons quand ils rentrent",
+        "ar": "الريحة بتعلق بالبدلات والخوذ لما يفوتوا عالمحطة",
+        "es": "El olor se queda en los trajes cuando vuelven a entrar"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Astronauts describe the smell of space on their suits after spacewalks as seared steak, hot metal and welding fumes; NASA"
+      }
+    },
+    {
+      "id": "of-048",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "On Mars, sunsets look ___",
+        "translit": null,
+        "display": {
+          "fr": "Sur Mars, les couchers de soleil sont ___",
+          "ar": "عالمريخ، غياب الشمس لونو ___",
+          "es": "En Marte, los atardeceres son ___"
+        }
+      },
+      "truth": {
+        "en": "Blue",
+        "fr": "Bleus",
+        "ar": "أزرق",
+        "es": "Azules"
+      },
+      "truthAlt": {
+        "en": [
+          "Bluish",
+          "Pale blue"
+        ],
+        "fr": [
+          "Bleutés",
+          "Bleu pâle"
+        ],
+        "ar": [
+          "مزرق",
+          "أزرق فاتح"
+        ],
+        "es": [
+          "Azulados",
+          "Azul pálido"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Green",
+          "Purple",
+          "Pitch black"
+        ],
+        "fr": [
+          "Verts",
+          "Violets",
+          "Tout noirs"
+        ],
+        "ar": [
+          "أخضر",
+          "بنفسجي",
+          "أسود"
+        ],
+        "es": [
+          "Verdes",
+          "Morados",
+          "Negros"
+        ]
+      },
+      "note": {
+        "en": "Fine Martian dust lets blue light through near the Sun. NASA rovers photographed it",
+        "fr": "La fine poussière martienne laisse passer le bleu autour du Soleil",
+        "ar": "غبرة المريخ الناعمة بتخلي الضو الأزرق يبين حوالين الشمس",
+        "es": "El fino polvo marciano deja pasar la luz azul cerca del Sol"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Sunsets on Mars appear blue because fine dust scatters blue light near the Sun; NASA (Curiosity, 2015)"
+      }
+    },
+    {
+      "id": "of-049",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Before it became a toy, Play-Doh was sold to clean ___",
+        "translit": null,
+        "display": {
+          "fr": "Avant d'être un jouet, la pâte Play-Doh servait à nettoyer le ___",
+          "ar": "قبل ما تصير لعبة، عجينة بلاي دو كانت تنباع لتنضيف ___",
+          "es": "Antes de ser un juguete, la plastilina Play-Doh se vendía para limpiar ___"
+        }
+      },
+      "truth": {
+        "en": "Wallpaper",
+        "fr": "Papier peint",
+        "ar": "ورق الحيطان",
+        "es": "Papel pintado"
+      },
+      "truthAlt": {
+        "en": [
+          "Walls",
+          "Soot off wallpaper"
+        ],
+        "fr": [
+          "Les murs",
+          "Le papier peint"
+        ],
+        "ar": [
+          "الحيطان",
+          "ورق الجدران"
+        ],
+        "es": [
+          "Paredes",
+          "El papel de pared"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Windows",
+          "Car seats",
+          "Teeth"
+        ],
+        "fr": [
+          "Les vitres",
+          "Les sièges auto",
+          "Les dents"
+        ],
+        "ar": [
+          "القزاز",
+          "مقاعد السيارة",
+          "السنان"
+        ],
+        "es": [
+          "Ventanas",
+          "Asientos de coche",
+          "Dientes"
+        ]
+      },
+      "note": {
+        "en": "It wiped coal soot off walls. When homes switched heating, it became a toy",
+        "fr": "Elle enlevait la suie de charbon des murs. Puis elle est devenue un jouet",
+        "ar": "كانت تشيل شحتار الفحم عن الحيطان، بعدين صارت لعبة",
+        "es": "Quitaba el hollín del carbón de las paredes. Luego se volvió juguete"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Play-Doh was first made in the 1930s as a wallpaper cleaner (Kutol Products) before being sold as a toy in 1956; Smithsonian Magazine; The Strong National Museum of Play"
+      }
+    },
+    {
+      "id": "of-050",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Bluetooth is named after a 10th-century king of ___",
+        "translit": null,
+        "display": {
+          "fr": "Le Bluetooth doit son nom à un roi du Xe siècle, roi du ___",
+          "ar": "البلوتوث مسمى على اسم ملك من القرن العاشر، ملك ___",
+          "es": "El Bluetooth debe su nombre a un rey del siglo X, rey de ___"
+        }
+      },
+      "truth": {
+        "en": "Denmark",
+        "fr": "Danemark",
+        "ar": "الدنمارك",
+        "es": "Dinamarca"
+      },
+      "truthAlt": {
+        "en": [
+          "The Danes",
+          "Danish king"
+        ],
+        "fr": [
+          "Les Danois"
+        ],
+        "ar": [
+          "الدنماركيين"
+        ],
+        "es": [
+          "Los daneses"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "England",
+          "Iceland",
+          "Poland"
+        ],
+        "fr": [
+          "Portugal",
+          "Royaume de Prusse",
+          "Pays de Galles"
+        ],
+        "ar": [
+          "إنكلترا",
+          "آيسلندا",
+          "بولندا"
+        ],
+        "es": [
+          "Inglaterra",
+          "Islandia",
+          "Polonia"
+        ]
+      },
+      "note": {
+        "en": "King Harald Bluetooth united Danish tribes, as the tech unites devices",
+        "fr": "Le roi Harald à la dent bleue a uni des tribus, comme la techno relie les appareils",
+        "ar": "الملك هارالد أبو السن الزرقا وحّد القبائل، متل ما التقنية بتوصل الأجهزة",
+        "es": "El rey Harald Diente Azul unió tribus, como la tecnología une aparatos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Bluetooth named after Harald 'Bluetooth' Gormsson, 10th-century king of Denmark; Bluetooth SIG (bluetooth.com/about-us/bluetooth-origin)"
+      }
+    },
+    {
+      "id": "of-051",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The name LEGO comes from two Danish words that mean ___",
+        "translit": null,
+        "display": {
+          "fr": "Le nom LEGO vient de deux mots danois qui veulent dire ___",
+          "ar": "اسم ليغو جاي من كلمتين دنماركيتين معناهن ___",
+          "es": "El nombre LEGO viene de dos palabras danesas que significan ___"
+        }
+      },
+      "truth": {
+        "en": "Play well",
+        "fr": "Bien jouer",
+        "ar": "العب منيح",
+        "es": "Juega bien"
+      },
+      "truthAlt": {
+        "en": [
+          "Play nicely",
+          "Play good"
+        ],
+        "fr": [
+          "Joue bien",
+          "Jouer bien"
+        ],
+        "ar": [
+          "العب بشكل حلو",
+          "لعب منيح"
+        ],
+        "es": [
+          "Jugar bien"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Little bricks",
+          "Build fast",
+          "Happy child"
+        ],
+        "fr": [
+          "Petites briques",
+          "Construire vite",
+          "Enfant heureux"
+        ],
+        "ar": [
+          "قطع زغيرة",
+          "عمر بسرعة",
+          "ولد مبسوط"
+        ],
+        "es": [
+          "Ladrillos pequeños",
+          "Construye rápido",
+          "Niño feliz"
+        ]
+      },
+      "note": {
+        "en": "Carpenter Ole Kirk Christiansen chose it in 1934",
+        "fr": "Le menuisier Ole Kirk Christiansen l'a choisi en 1934",
+        "ar": "النجار أولي كيرك كريستيانسن اختارو سنة 1934",
+        "es": "El carpintero Ole Kirk Christiansen lo eligió en 1934"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] LEGO comes from the Danish 'leg godt', meaning 'play well'; The LEGO Group history"
+      }
+    },
+    {
+      "id": "of-052",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The Danish-sounding ice cream brand Häagen-Dazs was created in ___",
+        "translit": null,
+        "display": {
+          "fr": "La marque de glace Häagen-Dazs, au nom qui sonne danois, a été créée à ___",
+          "ar": "ماركة البوظة هاغن داز، اللي اسمها بيسمع دنماركي، انخلقت بـ ___",
+          "es": "La marca de helados Häagen-Dazs, de nombre muy danés, nació en ___"
+        }
+      },
+      "truth": {
+        "en": "New York",
+        "fr": "New York",
+        "ar": "نيويورك",
+        "es": "Nueva York"
+      },
+      "truthAlt": {
+        "en": [
+          "The Bronx",
+          "New York City"
+        ],
+        "fr": [
+          "Dans le Bronx"
+        ],
+        "ar": [
+          "البرونكس"
+        ],
+        "es": [
+          "El Bronx"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Copenhagen",
+          "Oslo",
+          "Amsterdam"
+        ],
+        "fr": [
+          "Copenhague",
+          "Oslo",
+          "Amsterdam"
+        ],
+        "ar": [
+          "كوبنهاغن",
+          "أوسلو",
+          "أمستردام"
+        ],
+        "es": [
+          "Copenhague",
+          "Oslo",
+          "Ámsterdam"
+        ]
+      },
+      "note": {
+        "en": "Its founders made up the name to sound Scandinavian",
+        "fr": "Ses fondateurs ont inventé ce nom pour faire scandinave",
+        "ar": "المؤسسين ألّفوا الاسم ليبين اسكندنافي",
+        "es": "Sus fundadores se inventaron el nombre para que sonara escandinavo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Häagen-Dazs was founded in the Bronx, New York, by Reuben and Rose Mattus in 1960; the name is invented; Encyclopaedia Britannica; Häagen-Dazs history"
+      }
+    },
+    {
+      "id": "of-053",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Before it was called Pepsi, the soda had another name: ___",
+        "translit": null,
+        "display": {
+          "fr": "Avant de s'appeler Pepsi, la boisson s'appelait ___",
+          "ar": "قبل ما يصير اسمو بيبسي، كان اسمو ___",
+          "es": "Antes de llamarse Pepsi, la bebida se llamaba ___"
+        }
+      },
+      "truth": {
+        "en": "Brad's Drink",
+        "fr": "Brad's Drink",
+        "ar": "مشروب براد",
+        "es": "Brad's Drink"
+      },
+      "truthAlt": {
+        "en": [
+          "Brad's drink",
+          "Brads Drink"
+        ],
+        "fr": [
+          "La boisson de Brad"
+        ],
+        "ar": [
+          "براد درينك"
+        ],
+        "es": [
+          "La bebida de Brad"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Cola Royale",
+          "Pep Water",
+          "Sweet Fizz"
+        ],
+        "fr": [
+          "Cola Royale",
+          "Pep Water",
+          "Sweet Fizz"
+        ],
+        "ar": [
+          "كولا رويال",
+          "بيب ووتر",
+          "سويت فيز"
+        ],
+        "es": [
+          "Cola Royale",
+          "Pep Water",
+          "Sweet Fizz"
+        ]
+      },
+      "note": {
+        "en": "Pharmacist Caleb Bradham sold it in North Carolina in the 1890s",
+        "fr": "Le pharmacien Caleb Bradham la vendait en Caroline du Nord dans les années 1890",
+        "ar": "الصيدلي كاليب برادهام كان يبيعو بكارولاينا الشمالية بتسعينات القرن 19",
+        "es": "El farmacéutico Caleb Bradham la vendía en Carolina del Norte hacia 1890"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Pepsi was first called 'Brad's Drink' (1893) by pharmacist Caleb Bradham; PepsiCo history"
+      }
+    },
+    {
+      "id": "of-054",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Another official name for the hashtag symbol is the ___",
+        "translit": null,
+        "display": {
+          "fr": "Un autre nom officiel du symbole dièse, ou hashtag, est ___",
+          "ar": "اسم رسمي تاني لرمز الهاشتاغ هو ___",
+          "es": "Otro nombre oficial del símbolo almohadilla, o hashtag, es ___"
+        }
+      },
+      "truth": {
+        "en": "Octothorpe",
+        "fr": "Octothorpe",
+        "ar": "أوكتوثورب",
+        "es": "Octothorpe"
+      },
+      "truthAlt": {
+        "en": [
+          "Octothorp"
+        ],
+        "fr": [
+          "Octothorp"
+        ],
+        "ar": [
+          "أوكتوثورب بالإنكليزي"
+        ],
+        "es": [
+          "Octothorp"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Gridlock",
+          "Crosshatch tile",
+          "Tic-tac"
+        ],
+        "fr": [
+          "Grillon",
+          "Croisillon carré",
+          "Morpion"
+        ],
+        "ar": [
+          "الشبكة",
+          "المربعات",
+          "إكس أو"
+        ],
+        "es": [
+          "Rejilla",
+          "Tres en raya",
+          "Cuadrícula"
+        ]
+      },
+      "note": {
+        "en": "Bell Labs engineers are said to have coined it in the 1960s",
+        "fr": "Des ingénieurs des Bell Labs l'auraient inventé dans les années 1960",
+        "ar": "بيقولوا مهندسين بمختبرات بيل اخترعوه بالستينات",
+        "es": "Se dice que lo inventaron ingenieros de Bell Labs en los años 60"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] The # symbol is also called the octothorpe; Merriam-Webster; Oxford English Dictionary"
+      }
+    },
+    {
+      "id": "of-055",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "The little dot over a lowercase i is called a ___",
+        "translit": null,
+        "display": {
+          "fr": "En anglais, le petit point sur un i minuscule s'appelle un ___",
+          "ar": "بالإنكليزي، النقطة الزغيرة فوق حرف i اسمها ___",
+          "es": "En inglés, el puntito sobre la i minúscula se llama ___"
+        }
+      },
+      "truth": {
+        "en": "Tittle",
+        "fr": "Tittle",
+        "ar": "تيتل",
+        "es": "Tittle"
+      },
+      "truthAlt": {
+        "en": [
+          "A tittle"
+        ],
+        "fr": [
+          "Un tittle"
+        ],
+        "ar": [
+          "تيتل بالإنكليزي"
+        ],
+        "es": [
+          "Un tittle"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Pip",
+          "Speck",
+          "Dimple"
+        ],
+        "fr": [
+          "Pip",
+          "Speck",
+          "Dimple"
+        ],
+        "ar": [
+          "بيب",
+          "سبيك",
+          "ديمبل"
+        ],
+        "es": [
+          "Pip",
+          "Speck",
+          "Dimple"
+        ]
+      },
+      "note": {
+        "en": "It also gave us the old phrase to a T, some word experts say",
+        "fr": "Le mot anglais existe depuis le Moyen Âge",
+        "ar": "الكلمة الإنكليزية موجودة من القرون الوسطى",
+        "es": "La palabra inglesa existe desde la Edad Media"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] The dot over a lowercase i or j is called a tittle; Merriam-Webster; Oxford English Dictionary"
+      }
+    },
+    {
+      "id": "of-056",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The Frisbee got its name from a company that made ___",
+        "translit": null,
+        "display": {
+          "fr": "Le Frisbee doit son nom à une entreprise qui fabriquait des ___",
+          "ar": "الفريسبي أخد اسمو من شركة كانت تعمل ___",
+          "es": "El Frisbee debe su nombre a una empresa que hacía ___"
+        }
+      },
+      "truth": {
+        "en": "Pies",
+        "fr": "Tartes",
+        "ar": "فطاير",
+        "es": "Tartas"
+      },
+      "truthAlt": {
+        "en": [
+          "Pie tins",
+          "Apple pies"
+        ],
+        "fr": [
+          "Moules à tarte",
+          "Tourtes"
+        ],
+        "ar": [
+          "صواني فطاير",
+          "تارت"
+        ],
+        "es": [
+          "Moldes de tarta",
+          "Pasteles"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Hats",
+          "Plates",
+          "Hubcaps"
+        ],
+        "fr": [
+          "Chapeaux",
+          "Assiettes",
+          "Enjoliveurs"
+        ],
+        "ar": [
+          "برانيط",
+          "صحون",
+          "طاسات دواليب"
+        ],
+        "es": [
+          "Sombreros",
+          "Platos",
+          "Tapacubos"
+        ]
+      },
+      "note": {
+        "en": "Students threw the empty tins of the Frisbie Pie Company",
+        "fr": "Des étudiants se lançaient les moules vides de la Frisbie Pie Company",
+        "ar": "طلاب الجامعة كانوا يرموا الصواني الفاضية لشركة فريسبي للفطاير",
+        "es": "Los estudiantes se lanzaban los moldes vacíos de la Frisbie Pie Company"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] The Frisbee name comes from the Frisbie Pie Company of Bridgeport, Connecticut, whose pie tins students threw; Smithsonian Magazine; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "of-057",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "When a famous crisp tube's designer died in 2008, some of his ashes went into ___",
+        "translit": null,
+        "display": {
+          "fr": "À sa mort en 2008, le créateur d'un célèbre tube de chips a eu une partie de ses cendres enterrées dans ___",
+          "ar": "لما توفى مصمم عبوة شيبس مشهورة سنة 2008، دفنوا جزء من رمادو بـ ___",
+          "es": "Al morir en 2008, parte de las cenizas del diseñador de un famoso tubo de patatas fritas se enterraron en ___"
+        }
+      },
+      "truth": {
+        "en": "A Pringles can",
+        "fr": "Une boîte de Pringles",
+        "ar": "علبة برينغلز",
+        "es": "Una lata de Pringles"
+      },
+      "truthAlt": {
+        "en": [
+          "A Pringles tube",
+          "One of his tubes"
+        ],
+        "fr": [
+          "Un tube de Pringles",
+          "Un de ses tubes"
+        ],
+        "ar": [
+          "عبوة برينغلز",
+          "وحدة من علبو"
+        ],
+        "es": [
+          "Un tubo de Pringles",
+          "Uno de sus tubos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A cookie jar",
+          "A soup can",
+          "A tennis ball tube"
+        ],
+        "fr": [
+          "Une boîte à biscuits",
+          "Une boîte de soupe",
+          "Un tube de balles"
+        ],
+        "ar": [
+          "علبة بسكوت",
+          "علبة شوربة",
+          "علبة طابات تنس"
+        ],
+        "es": [
+          "Una lata de galletas",
+          "Una lata de sopa",
+          "Un bote de pelotas"
+        ]
+      },
+      "note": {
+        "en": "His children stopped at a pharmacy on the way to pick an original flavour can",
+        "fr": "Ses enfants se sont arrêtés acheter un tube goût original en chemin",
+        "ar": "ولادو وقفوا بالطريق واشتروا علبة بالنكهة الأصلية",
+        "es": "Sus hijos pararon de camino a comprar un tubo de sabor original"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Fredric Baur, designer of the Pringles can, died in 2008; part of his ashes were buried in a Pringles can; Time; BBC"
+      }
+    },
+    {
+      "id": "of-058",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Hot water sometimes freezes faster than cold water. This is called the ___ effect",
+        "translit": null,
+        "display": {
+          "fr": "L'eau chaude gèle parfois plus vite que l'eau froide. C'est l'effet ___",
+          "ar": "المي السخنة أوقات بتجلد أسرع من الباردة، واسمها ظاهرة ___",
+          "es": "El agua caliente a veces se congela antes que la fría. Se llama efecto ___"
+        }
+      },
+      "truth": {
+        "en": "Mpemba",
+        "fr": "Mpemba",
+        "ar": "مبيمبا",
+        "es": "Mpemba"
+      },
+      "truthAlt": {
+        "en": [
+          "Mpemba effect"
+        ],
+        "fr": [
+          "Effet Mpemba"
+        ],
+        "ar": [
+          "ظاهرة مبيمبا"
+        ],
+        "es": [
+          "Efecto Mpemba"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Aristotle",
+          "Freezer",
+          "Tesla"
+        ],
+        "fr": [
+          "Aristote",
+          "Congélo",
+          "Tesla"
+        ],
+        "ar": [
+          "أرسطو",
+          "الفريزر",
+          "تسلا"
+        ],
+        "es": [
+          "Aristóteles",
+          "Congelador",
+          "Tesla"
+        ]
+      },
+      "note": {
+        "en": "Named after Erasto Mpemba, a Tanzanian student who noticed it making ice cream",
+        "fr": "Du nom d'Erasto Mpemba, un élève tanzanien qui l'a remarqué en faisant de la glace",
+        "ar": "على اسم إراستو مبيمبا، تلميذ تنزاني لاحظها وهو عم يعمل بوظة",
+        "es": "Por Erasto Mpemba, un alumno tanzano que lo notó haciendo helado"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Mpemba effect: hot water can sometimes freeze faster than cold water; named after Tanzanian student Erasto Mpemba (1969); Royal Society of Chemistry; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "of-059",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "By law, at least ___ of the pop music on Canadian radio must be Canadian",
+        "translit": null,
+        "display": {
+          "fr": "Selon la loi, au moins ___ de la musique pop à la radio au Canada doit être canadienne",
+          "ar": "بالقانون، أقل شي ___ من الأغاني عالراديو بكندا لازم تكون كندية",
+          "es": "Por ley, al menos el ___ de la música pop en la radio de Canadá debe ser canadiense"
+        }
+      },
+      "truth": {
+        "en": "35 percent",
+        "fr": "35 pour cent",
+        "ar": "35 بالمية",
+        "es": "35 por ciento"
+      },
+      "truthAlt": {
+        "en": [
+          "35%",
+          "A third",
+          "About a third"
+        ],
+        "fr": [
+          "35 %",
+          "Un tiers"
+        ],
+        "ar": [
+          "35%",
+          "تلت"
+        ],
+        "es": [
+          "35 %",
+          "Un tercio"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Ten percent",
+          "Half",
+          "80 percent"
+        ],
+        "fr": [
+          "Dix pour cent",
+          "La moitié",
+          "Les trois quarts"
+        ],
+        "ar": [
+          "عشرة بالمية",
+          "النص",
+          "80 بالمية"
+        ],
+        "es": [
+          "Diez por ciento",
+          "La mitad",
+          "Tres cuartas partes"
+        ]
+      },
+      "note": {
+        "en": "The rule is called CanCon and has helped launch many Canadian stars",
+        "fr": "La règle s'appelle CanCon et a lancé beaucoup de stars canadiennes",
+        "ar": "اسم القاعدة كان كون، وساعدت كتير نجوم كنديين",
+        "es": "La norma se llama CanCon y ha lanzado a muchas estrellas canadienses"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Canadian content rules: at least 35 percent of popular music on commercial radio must be Canadian; CRTC (crtc.gc.ca)"
+      }
+    },
+    {
+      "id": "of-060",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Australia has more ___ than people",
+        "translit": null,
+        "display": {
+          "fr": "L'Australie compte plus de ___ que d'habitants",
+          "ar": "بأستراليا في ___ أكتر من البشر",
+          "es": "En Australia hay más ___ que personas"
+        }
+      },
+      "truth": {
+        "en": "Kangaroos",
+        "fr": "Kangourous",
+        "ar": "كنغر",
+        "es": "Canguros"
+      },
+      "truthAlt": {
+        "en": [
+          "Wild kangaroos"
+        ],
+        "fr": [
+          "Kangourous sauvages"
+        ],
+        "ar": [
+          "الكنغر",
+          "كناغر"
+        ],
+        "es": [
+          "Canguros salvajes"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Koalas",
+          "Crocodiles",
+          "Camels"
+        ],
+        "fr": [
+          "Koalas",
+          "Crocodiles",
+          "Chameaux"
+        ],
+        "ar": [
+          "كوالا",
+          "تماسيح",
+          "جمال"
+        ],
+        "es": [
+          "Koalas",
+          "Cocodrilos",
+          "Camellos"
+        ]
+      },
+      "note": {
+        "en": "Government counts put kangaroos in the tens of millions",
+        "fr": "Les comptages officiels estiment les kangourous à des dizaines de millions",
+        "ar": "التعدادات الرسمية بتقدر الكنغر بعشرات الملايين",
+        "es": "Los recuentos oficiales hablan de decenas de millones de canguros"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Australia's kangaroo population (around 40-50 million in recent government estimates) exceeds its human population (about 27 million); Australian Government DCCEEW; ABS"
+      }
+    }
+  ]
+}

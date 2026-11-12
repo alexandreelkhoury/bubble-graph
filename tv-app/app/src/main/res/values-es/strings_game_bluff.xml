@@ -3,8 +3,8 @@
 <resources>
     <string name="game__bluff__title">¡Bluff!</string>
     <string name="game__bluff__tagline">Engaña a tus amigos</string>
-    <string name="game__bluff__howto__1">Tres rondas, tres formas de mentir: termina un refrán, descubre un dato imposible y, al final, una ronda sin ninguna verdad.</string>
-    <string name="game__bluff__howto__2">Escribe una respuesta falsa en tu móvil. ¿Te sabes el final del refrán? Escríbelo y sumas al instante.</string>
+    <string name="game__bluff__howto__1">Tres rondas, tres formas de mentir: un calentamiento donde saber da puntos, un dato imposible que vale doble y, al final, una ronda sin ninguna verdad.</string>
+    <string name="game__bluff__howto__2">Escribe una respuesta falsa en tu móvil. En la ronda 1, ¿te sabes la respuesta real? Escríbela y sumas al instante.</string>
     <string name="game__bluff__howto__3">Encuentra la respuesta real entre las falsas. Nadie sabe quién escribió qué hasta que termina la votación.</string>
     <string name="game__bluff__howto__4">Suma dos veces: +100 por la verdad y +60 por cada amigo que se trague tu mentira. En la final, la respuesta más creíble se lo lleva todo.</string>
     <string name="game__bluff__phase__round_intro">Tarjeta de ronda</string>
@@ -17,8 +17,8 @@
     <string name="game__bluff__phase__hold">Esperando jugadores</string>
     <string name="game__bluff__rules__goal__title">El objetivo</string>
     <string name="game__bluff__rules__goal__body">Engaña a tus amigos y que no te engañen. Mejor a partir de 4 jugadores.</string>
-    <string name="game__bluff__rules__round1__title">Ronda 1: Termina el refrán</string>
-    <string name="game__bluff__rules__round1__body">Escribe el final. Si tu primera respuesta es la real, +150 al instante y no votas en esa. Si no, tu respuesta pasa a ser una mentira más en el tablero.</string>
+    <string name="game__bluff__rules__round1__title">Ronda 1: ¿Lo sabes o lo inventas?</string>
+    <string name="game__bluff__rules__round1__body">Un dato raro pero cierto. Escribe lo que falta. Si tu primera respuesta es la real, +150 al instante y no votas en esa. Si no, tu respuesta pasa a ser una mentira más en el tablero.</string>
     <string name="game__bluff__rules__round2__title">Ronda 2: Imposible pero cierto</string>
     <string name="game__bluff__rules__round2__body">Un dato muy difícil, pero real. Escribe una mentira que suene más cierta que la verdad. Puntos ×2.</string>
     <string name="game__bluff__rules__writing__title">Escribir</string>
@@ -72,12 +72,12 @@
     <string name="game__bluff__settings__pace__fast">Rápido</string>
     <string name="game__bluff__settings__pace_hint">Tiempo para escribir: 90 s / 60 s / 45 s</string>
     <string name="game__bluff__setup__big_group">Grupo grande: te sugerimos una partida corta</string>
-    <string name="game__bluff__round__saying">Termina el refrán</string>
+    <string name="game__bluff__round__saying">¿Lo sabes o lo inventas?</string>
     <string name="game__bluff__round__fact">Imposible pero cierto</string>
     <string name="game__bluff__round__no_truth">Ninguna es verdad</string>
     <string name="game__bluff__round__number">Ronda %1$s</string>
     <string name="game__bluff__round__final">Final</string>
-    <string name="game__bluff__round__saying__intro">¿Te sabes el final? Suma ya. ¿No? Invéntatelo.</string>
+    <string name="game__bluff__round__saying__intro">¿Te sabes la respuesta? Suma ya. ¿No? Invéntatela.</string>
     <string name="game__bluff__round__fact__intro">Un dato real que parece imposible. Puntos ×2.</string>
     <string name="game__bluff__round__no_truth__intro">No hay respuesta correcta. Escribe la respuesta más creíble. La más votada se lo lleva todo.</string>
     <string name="game__bluff__prompt__counter">%1$s de %2$d</string>
@@ -110,7 +110,7 @@
         <item quantity="other">Te quedan %1$d cambios</item>
     </plurals>
     <string name="game__bluff__write__char_count">%1$d/60</string>
-    <string name="game__bluff__write__saying_hint">¿Te sabes el final? Escríbelo y suma ya. ¿No? Invéntatelo.</string>
+    <string name="game__bluff__write__saying_hint">¿Te sabes la respuesta? Escríbela y suma ya. ¿No? Invéntatela.</string>
     <string name="game__bluff__write__spot_on">¡Clavado! +150. Esta vez no votas.</string>
     <string name="game__bluff__write__no_truth_hint">No hay respuesta correcta. Escribe la que suene más a verdad.</string>
     <string name="game__bluff__write__found_early">Acertar la verdad ya no suma aquí.</string>

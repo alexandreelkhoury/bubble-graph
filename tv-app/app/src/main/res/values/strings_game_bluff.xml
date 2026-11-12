@@ -3,8 +3,8 @@
 <resources>
     <string name="game__bluff__title">Bluff!</string>
     <string name="game__bluff__tagline">Fool your friends</string>
-    <string name="game__bluff__howto__1">Three rounds, three ways to lie: finish a saying, crack an impossible fact, then a final with no truth at all.</string>
-    <string name="game__bluff__howto__2">Write a fake answer on your phone. Know the real ending of the saying? Type it: you score right away.</string>
+    <string name="game__bluff__howto__1">Three rounds, three ways to lie: a warm-up where knowing pays, an impossible fact worth double, then a final with no truth at all.</string>
+    <string name="game__bluff__howto__2">Write a fake answer on your phone. In round 1, know the real answer? Type it: you score right away.</string>
     <string name="game__bluff__howto__3">Find the real answer among the fakes. Nobody knows who wrote what until the vote is over.</string>
     <string name="game__bluff__howto__4">Score twice: +100 for the truth, +60 for every friend who falls for your lie. In the final, the most convincing answer wins big.</string>
     <string name="game__bluff__phase__round_intro">Round card</string>
@@ -17,8 +17,8 @@
     <string name="game__bluff__phase__hold">Waiting for players</string>
     <string name="game__bluff__rules__goal__title">The goal</string>
     <string name="game__bluff__rules__goal__body">Fool your friends, and don\'t get fooled. Best with 4 players or more.</string>
-    <string name="game__bluff__rules__round1__title">Round 1: Finish the saying</string>
-    <string name="game__bluff__rules__round1__body">Type the ending. If your first answer is the real one, you get +150 at once and sit that vote out. If not, your answer becomes a fake on the board.</string>
+    <string name="game__bluff__rules__round1__title">Round 1: Know it or bluff it</string>
+    <string name="game__bluff__rules__round1__body">A weird but true fact. Type the missing words. If your first answer is the real one, you get +150 at once and sit that vote out. If not, your answer becomes a fake on the board.</string>
     <string name="game__bluff__rules__round2__title">Round 2: Impossible but true</string>
     <string name="game__bluff__rules__round2__body">A very hard but real fact. Write a fake that sounds truer than the truth. Points ×2.</string>
     <string name="game__bluff__rules__writing__title">Writing</string>
@@ -70,12 +70,12 @@
     <string name="game__bluff__settings__pace__fast">Fast</string>
     <string name="game__bluff__settings__pace_hint">Writing time: 90 s / 60 s / 45 s</string>
     <string name="game__bluff__setup__big_group">Big group: we suggest a Short game</string>
-    <string name="game__bluff__round__saying">Finish the saying</string>
+    <string name="game__bluff__round__saying">Know it or bluff it</string>
     <string name="game__bluff__round__fact">Impossible but true</string>
     <string name="game__bluff__round__no_truth">No truth</string>
     <string name="game__bluff__round__number">Round %1$s</string>
     <string name="game__bluff__round__final">Final</string>
-    <string name="game__bluff__round__saying__intro">Know the ending? Score now. Don\'t? Make one up.</string>
+    <string name="game__bluff__round__saying__intro">Know the answer? Score now. Don\'t? Make one up.</string>
     <string name="game__bluff__round__fact__intro">A real fact that sounds impossible. Points ×2.</string>
     <string name="game__bluff__round__no_truth__intro">There is no right answer. Write the answer that sounds the most true. The most votes wins big.</string>
     <string name="game__bluff__prompt__counter">%1$s of %2$d</string>
@@ -107,7 +107,7 @@
         <item quantity="other">%1$d edits left</item>
     </plurals>
     <string name="game__bluff__write__char_count">%1$d/60</string>
-    <string name="game__bluff__write__saying_hint">Know the ending? Type it and score now. Don\'t know it? Make one up.</string>
+    <string name="game__bluff__write__saying_hint">Know the answer? Type it and score now. Don\'t know it? Make one up.</string>
     <string name="game__bluff__write__spot_on">Spot on! +150. You sit this vote out.</string>
     <string name="game__bluff__write__no_truth_hint">There is no right answer. Write the one that sounds most true.</string>
     <string name="game__bluff__write__found_early">Finding the truth now won\'t score.</string>

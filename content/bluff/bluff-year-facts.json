@@ -1,0 +1,3214 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-year-facts",
+  "game": "bluff",
+  "title": {
+    "en": "It Really Happened",
+    "fr": "C'est vraiment arrivé",
+    "ar": "صارت عن جد",
+    "es": "Pasó de verdad"
+  },
+  "description": {
+    "en": "In 1932, in 1966, in 1993… Real moments from history that sound made up. Finish them with a better lie.",
+    "fr": "En 1932, en 1966, en 1993… De vrais moments d'histoire qui ont l'air inventés. Complétez-les avec un meilleur mensonge.",
+    "ar": "سنة 1932، سنة 1966، سنة 1993… أحداث حقيقية بتسمعها بتقول مألفة. كمّلوها بكذبة أحسن.",
+    "es": "En 1932, en 1966, en 1993… Momentos reales que parecen inventados. Complétalos con una mentira mejor."
+  },
+  "sourceLocale": "en",
+  "playableIn": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {},
+  "items": [
+    {
+      "id": "yf-001",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1932, Australia sent soldiers with machine guns to fight ___, and lost",
+        "translit": null,
+        "display": {
+          "fr": "En 1932, l'Australie a envoyé des soldats armés de mitrailleuses contre des ___, et a perdu",
+          "ar": "سنة 1932، بعتت أستراليا جنود مع رشاشات ليحاربوا ___، وخسروا",
+          "es": "En 1932, Australia mandó soldados con ametralladoras contra los ___, y perdió"
+        }
+      },
+      "truth": {
+        "en": "Emus",
+        "fr": "Émeus",
+        "ar": "طيور الإيمو",
+        "es": "Emúes"
+      },
+      "truthAlt": {
+        "en": [
+          "Emu",
+          "Wild emus"
+        ],
+        "fr": [
+          "Émeu",
+          "Des émeus"
+        ],
+        "ar": [
+          "إيمو",
+          "الإيمو"
+        ],
+        "es": [
+          "Emú",
+          "Los emúes"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Kangaroos",
+          "Rabbits",
+          "Crocodiles"
+        ],
+        "fr": [
+          "Kangourous",
+          "Lapins",
+          "Crocodiles"
+        ],
+        "ar": [
+          "الكنغر",
+          "الأرانب",
+          "التماسيح"
+        ],
+        "es": [
+          "Canguros",
+          "Conejos",
+          "Cocodrilos"
+        ]
+      },
+      "note": {
+        "en": "Thousands of emus were eating wheat crops. The birds won: the operation was called off",
+        "fr": "Des milliers d'émeus dévoraient le blé. Les oiseaux ont gagné : l'opération a été annulée",
+        "ar": "آلاف طيور الإيمو كانت عم تاكل القمح. الطيور ربحت وتلغت العملية",
+        "es": "Miles de emúes se comían el trigo. Ganaron las aves: la operación se canceló"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Emu War, Western Australia, Nov-Dec 1932 (Major Meredith, Lewis guns); Britannica 'Emu War'; Australian National Archives"
+      }
+    },
+    {
+      "id": "yf-002",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1518, hundreds of people in Strasbourg could not stop ___ for weeks",
+        "translit": null,
+        "display": {
+          "fr": "En 1518, à Strasbourg, des centaines de personnes n'arrivaient plus à arrêter de ___ pendant des semaines",
+          "ar": "سنة 1518، مئات الناس بستراسبورغ ما قدروا يوقفوا ___ لأسابيع",
+          "es": "En 1518, cientos de personas en Estrasburgo no podían dejar de ___ durante semanas"
+        }
+      },
+      "truth": {
+        "en": "Dancing",
+        "fr": "Danser",
+        "ar": "رقص",
+        "es": "Bailar"
+      },
+      "truthAlt": {
+        "en": [
+          "Dance",
+          "They danced"
+        ],
+        "fr": [
+          "Danse",
+          "Ils dansaient"
+        ],
+        "ar": [
+          "الرقص",
+          "يرقصوا"
+        ],
+        "es": [
+          "Baile",
+          "Bailaban"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sneezing",
+          "Laughing",
+          "Singing"
+        ],
+        "fr": [
+          "Éternuer",
+          "Rire",
+          "Chanter"
+        ],
+        "ar": [
+          "عطس",
+          "ضحك",
+          "غناء"
+        ],
+        "es": [
+          "Estornudar",
+          "Reír",
+          "Cantar"
+        ]
+      },
+      "note": {
+        "en": "It started with one woman in July. Historians still argue about the cause",
+        "fr": "Tout a commencé avec une femme en juillet. Les historiens débattent encore de la cause",
+        "ar": "بلشت مع امرأة وحدة بتموز. المؤرخين بعدن مختلفين عالسبب",
+        "es": "Empezó con una mujer en julio. Los historiadores aún discuten la causa"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Dancing plague of 1518, Strasbourg (July-Sept 1518); Britannica; John Waller, A Time to Dance, a Time to Die (2008)"
+      }
+    },
+    {
+      "id": "yf-003",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1919, a giant wave of ___ flooded a street in Boston",
+        "translit": null,
+        "display": {
+          "fr": "En 1919, une vague géante de ___ a inondé une rue de Boston",
+          "ar": "سنة 1919، موجة عملاقة من ___ غرّقت شارع ببوسطن",
+          "es": "En 1919, una ola gigante de ___ inundó una calle de Boston"
+        }
+      },
+      "truth": {
+        "en": "Molasses",
+        "fr": "Mélasse",
+        "ar": "دبس السكر",
+        "es": "Melaza"
+      },
+      "truthAlt": {
+        "en": [
+          "Sugar syrup",
+          "Treacle"
+        ],
+        "fr": [
+          "De la mélasse",
+          "Sirop de sucre"
+        ],
+        "ar": [
+          "دبس",
+          "العسل الأسود"
+        ],
+        "es": [
+          "Melaza de caña",
+          "Jarabe de azúcar"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Milk",
+          "Maple syrup",
+          "Hot chocolate"
+        ],
+        "fr": [
+          "Lait",
+          "Sirop d'érable",
+          "Chocolat chaud"
+        ],
+        "ar": [
+          "حليب",
+          "شراب القيقب",
+          "شوكولا سخنة"
+        ],
+        "es": [
+          "Leche",
+          "Sirope de arce",
+          "Chocolate caliente"
+        ]
+      },
+      "note": {
+        "en": "A huge tank burst and a sticky wave swept through the North End",
+        "fr": "Un énorme réservoir a cédé et une vague collante a balayé le quartier",
+        "ar": "خزان ضخم انفجر وموجة دبقة غمرت الحي",
+        "es": "Un tanque enorme reventó y una ola pegajosa arrasó el barrio"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Great Molasses Flood, Boston, 15 January 1919, 21 dead; Britannica; Boston Public Library; Smithsonian Magazine"
+      }
+    },
+    {
+      "id": "yf-004",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1962, an epidemic of ___ closed schools in what is now Tanzania",
+        "translit": null,
+        "display": {
+          "fr": "En 1962, une épidémie de ___ a fait fermer des écoles dans l'actuelle Tanzanie",
+          "ar": "سنة 1962، وباء ___ سكّر مدارس بتنزانيا اليوم",
+          "es": "En 1962, una epidemia de ___ cerró escuelas en la actual Tanzania"
+        }
+      },
+      "truth": {
+        "en": "Laughter",
+        "fr": "Fou rire",
+        "ar": "ضحك",
+        "es": "Risa"
+      },
+      "truthAlt": {
+        "en": [
+          "Laughing",
+          "Giggles"
+        ],
+        "fr": [
+          "Rire",
+          "Rires"
+        ],
+        "ar": [
+          "الضحك",
+          "ضحك هستيري"
+        ],
+        "es": [
+          "Risas",
+          "Ataques de risa"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Hiccups",
+          "Yawning",
+          "Sneezing"
+        ],
+        "fr": [
+          "Hoquet",
+          "Bâillements",
+          "Éternuements"
+        ],
+        "ar": [
+          "الحازوقة",
+          "التتاوب",
+          "العطس"
+        ],
+        "es": [
+          "Hipo",
+          "Bostezos",
+          "Estornudos"
+        ]
+      },
+      "note": {
+        "en": "It began in a girls' boarding school and spread to nearby villages for months",
+        "fr": "Elle a commencé dans un pensionnat de filles et a gagné les villages voisins",
+        "ar": "بلش بمدرسة داخلية للبنات وانتشر عالضيع اللي حدها لأشهر",
+        "es": "Empezó en un internado de chicas y se extendió a los pueblos durante meses"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Tanganyika laughter epidemic, 1962, Kashasha school; Rankin & Philip, Central African Journal of Medicine 1963; Britannica"
+      }
+    },
+    {
+      "id": "yf-005",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1911, the Mona Lisa was stolen and police questioned the painter ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1911, la Joconde a été volée et la police a interrogé le peintre ___",
+          "ar": "سنة 1911، انسرقت الموناليزا والشرطة حققت مع الرسام ___",
+          "es": "En 1911, robaron la Mona Lisa y la policía interrogó al pintor ___"
+        }
+      },
+      "truth": {
+        "en": "Pablo Picasso",
+        "fr": "Pablo Picasso",
+        "ar": "بابلو بيكاسو",
+        "es": "Pablo Picasso"
+      },
+      "truthAlt": {
+        "en": [
+          "Picasso"
+        ],
+        "fr": [
+          "Picasso"
+        ],
+        "ar": [
+          "بيكاسو"
+        ],
+        "es": [
+          "Picasso"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Claude Monet",
+          "Henri Matisse",
+          "Salvador Dalí"
+        ],
+        "fr": [
+          "Claude Monet",
+          "Henri Matisse",
+          "Salvador Dalí"
+        ],
+        "ar": [
+          "كلود مونيه",
+          "هنري ماتيس",
+          "سلفادور دالي"
+        ],
+        "es": [
+          "Claude Monet",
+          "Henri Matisse",
+          "Salvador Dalí"
+        ]
+      },
+      "note": {
+        "en": "The real thief was a Louvre handyman. The painting came back in 1913",
+        "fr": "Le vrai voleur était un ouvrier du Louvre. Le tableau est revenu en 1913",
+        "ar": "السارق الحقيقي كان عامل بمتحف اللوفر. اللوحة رجعت سنة 1913",
+        "es": "El ladrón real era un operario del Louvre. El cuadro volvió en 1913"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Theft of the Mona Lisa, 21 August 1911; Picasso questioned by police, Apollinaire jailed; Louvre; Britannica"
+      }
+    },
+    {
+      "id": "yf-006",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1957, the BBC fooled viewers with a report on spaghetti growing on ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1957, la BBC a piégé ses téléspectateurs avec un reportage sur des spaghettis qui poussent sur des ___",
+          "ar": "سنة 1957، البي بي سي ضحكت عالناس بتقرير عن سباغيتي بتنبت على ___",
+          "es": "En 1957, la BBC engañó a la gente con un reportaje sobre espaguetis que crecían en ___"
+        }
+      },
+      "truth": {
+        "en": "Trees",
+        "fr": "Arbres",
+        "ar": "شجر",
+        "es": "Árboles"
+      },
+      "truthAlt": {
+        "en": [
+          "Spaghetti trees",
+          "A tree"
+        ],
+        "fr": [
+          "Des arbres",
+          "Un arbre"
+        ],
+        "ar": [
+          "الشجر",
+          "شجرة"
+        ],
+        "es": [
+          "Un árbol",
+          "Los árboles"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Vines",
+          "Cows",
+          "Rocks"
+        ],
+        "fr": [
+          "Vignes",
+          "Vaches",
+          "Rochers"
+        ],
+        "ar": [
+          "دوالي",
+          "بقرات",
+          "صخور"
+        ],
+        "es": [
+          "Parras",
+          "Vacas",
+          "Rocas"
+        ]
+      },
+      "note": {
+        "en": "An April Fools' joke: many viewers called to ask how to grow their own",
+        "fr": "Un poisson d'avril : beaucoup ont appelé pour savoir comment en faire pousser",
+        "ar": "كذبة أول نيسان: كتار اتصلوا ليسألوا كيف يزرعوها",
+        "es": "Una inocentada: muchos llamaron para preguntar cómo cultivarlos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] BBC Panorama 'spaghetti tree' April Fools' report, 1 April 1957; BBC; Museum of Hoaxes"
+      }
+    },
+    {
+      "id": "yf-007",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1971, astronaut Alan Shepard played ___ on the Moon",
+        "translit": null,
+        "display": {
+          "fr": "En 1971, l'astronaute Alan Shepard a joué au ___ sur la Lune",
+          "ar": "سنة 1971، رائد الفضاء آلان شيبرد لعب ___ عالقمر",
+          "es": "En 1971, el astronauta Alan Shepard jugó al ___ en la Luna"
+        }
+      },
+      "truth": {
+        "en": "Golf",
+        "fr": "Golf",
+        "ar": "غولف",
+        "es": "Golf"
+      },
+      "truthAlt": {
+        "en": [
+          "Golf balls",
+          "A bit of golf"
+        ],
+        "fr": [
+          "Des balles de golf"
+        ],
+        "ar": [
+          "الغولف",
+          "طابات غولف"
+        ],
+        "es": [
+          "Pelotas de golf"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Football",
+          "Ping pong",
+          "Baseball"
+        ],
+        "fr": [
+          "Foot",
+          "Ping-pong",
+          "Baseball"
+        ],
+        "ar": [
+          "فوتبول",
+          "بينغ بونغ",
+          "بيسبول"
+        ],
+        "es": [
+          "Fútbol",
+          "Ping-pong",
+          "Béisbol"
+        ]
+      },
+      "note": {
+        "en": "He hit two golf balls with a club head fixed to a sample tool",
+        "fr": "Il a frappé deux balles avec une tête de club fixée sur un outil",
+        "ar": "ضرب طابتين غولف بمضرب مركّب على أداة جمع الصخور",
+        "es": "Golpeó dos pelotas con una cabeza de palo montada en una herramienta"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Apollo 14, February 1971: Alan Shepard hit two golf balls on the Moon; NASA; USGA Museum"
+      }
+    },
+    {
+      "id": "yf-008",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1978, thieves stole Charlie Chaplin's ___ and asked for a ransom",
+        "translit": null,
+        "display": {
+          "fr": "En 1978, des voleurs ont dérobé le ___ de Charlie Chaplin et réclamé une rançon",
+          "ar": "سنة 1978، حرامية سرقوا ___ تشارلي شابلن وطلبوا فدية",
+          "es": "En 1978, unos ladrones robaron el ___ de Charlie Chaplin y pidieron un rescate"
+        }
+      },
+      "truth": {
+        "en": "Coffin",
+        "fr": "Cercueil",
+        "ar": "تابوت",
+        "es": "Ataúd"
+      },
+      "truthAlt": {
+        "en": [
+          "Body",
+          "His coffin"
+        ],
+        "fr": [
+          "Corps",
+          "Son cercueil"
+        ],
+        "ar": [
+          "التابوت",
+          "جثمانه"
+        ],
+        "es": [
+          "Cuerpo",
+          "Su ataúd"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Bowler hat",
+          "Oscar",
+          "Cane"
+        ],
+        "fr": [
+          "Chapeau melon",
+          "Oscar",
+          "Canne"
+        ],
+        "ar": [
+          "البرنيطة",
+          "الأوسكار",
+          "العكازة"
+        ],
+        "es": [
+          "Bombín",
+          "Óscar",
+          "Bastón"
+        ]
+      },
+      "note": {
+        "en": "It was found buried in a field 11 weeks later",
+        "fr": "On l'a retrouvé enterré dans un champ 11 semaines plus tard",
+        "ar": "لقوه مدفون بحقل بعد 11 أسبوع",
+        "es": "Lo encontraron enterrado en un campo 11 semanas después"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Charlie Chaplin's coffin stolen from Corsier-sur-Vevey cemetery, March 1978, ransom demanded; BBC; Britannica"
+      }
+    },
+    {
+      "id": "yf-009",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1966, the stolen football World Cup trophy was found by ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1966, le trophée de la Coupe du monde volé a été retrouvé par ___",
+          "ar": "سنة 1966، كاس العالم المسروق لقيه ___",
+          "es": "En 1966, el trofeo robado del Mundial lo encontró ___"
+        }
+      },
+      "truth": {
+        "en": "A dog",
+        "fr": "Un chien",
+        "ar": "كلب",
+        "es": "Un perro"
+      },
+      "truthAlt": {
+        "en": [
+          "A dog called Pickles",
+          "Pickles"
+        ],
+        "fr": [
+          "Un chien nommé Pickles",
+          "Pickles"
+        ],
+        "ar": [
+          "كلب اسمه بيكلز",
+          "بيكلز"
+        ],
+        "es": [
+          "Un perro llamado Pickles",
+          "Pickles"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A taxi driver",
+          "A child",
+          "A street sweeper"
+        ],
+        "fr": [
+          "Un chauffeur de taxi",
+          "Un enfant",
+          "Un balayeur"
+        ],
+        "ar": [
+          "شوفير تاكسي",
+          "ولد زغير",
+          "زبال"
+        ],
+        "es": [
+          "Un taxista",
+          "Un niño",
+          "Un barrendero"
+        ]
+      },
+      "note": {
+        "en": "A collie named Pickles sniffed it out under a hedge in London",
+        "fr": "Un colley nommé Pickles l'a flairé sous une haie à Londres",
+        "ar": "كلب كولي اسمه بيكلز شمّه تحت سياج بلندن",
+        "es": "Un collie llamado Pickles lo olfateó bajo un seto en Londres"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] 1966 Jules Rimet trophy theft, found by the dog Pickles in south London, 27 March 1966; BBC; National Football Museum"
+      }
+    },
+    {
+      "id": "yf-010",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1903, the Wright brothers' very first powered flight lasted ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1903, le tout premier vol motorisé des frères Wright a duré ___",
+          "ar": "سنة 1903، أول طيران بمحرك للأخوين رايت دام ___",
+          "es": "En 1903, el primer vuelo con motor de los hermanos Wright duró ___"
+        }
+      },
+      "truth": {
+        "en": "12 seconds",
+        "fr": "12 secondes",
+        "ar": "12 ثانية",
+        "es": "12 segundos"
+      },
+      "truthAlt": {
+        "en": [
+          "Twelve seconds"
+        ],
+        "fr": [
+          "Douze secondes"
+        ],
+        "ar": [
+          "اطناشر ثانية"
+        ],
+        "es": [
+          "Doce segundos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "2 minutes",
+          "45 seconds",
+          "Half an hour"
+        ],
+        "fr": [
+          "2 minutes",
+          "Trois minutes",
+          "Une demi-heure"
+        ],
+        "ar": [
+          "دقيقتين",
+          "45 ثانية",
+          "نص ساعة"
+        ],
+        "es": [
+          "2 minutos",
+          "Tres minutos",
+          "Media hora"
+        ]
+      },
+      "note": {
+        "en": "Orville flew about 37 metres, less than the wingspan of a modern jumbo jet",
+        "fr": "Orville a parcouru 37 mètres, moins que l'envergure d'un gros avion de ligne",
+        "ar": "أورفيل طار حوالي 37 متر، أقل من عرض جناحين طيارة كبيرة اليوم",
+        "es": "Orville voló unos 37 metros, menos que la envergadura de un avión grande"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Wright brothers, Kitty Hawk, 17 December 1903, first flight 12 seconds, 120 feet; Smithsonian National Air and Space Museum"
+      }
+    },
+    {
+      "id": "yf-011",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "From 1912 to 1948, you could win an Olympic gold medal for ___",
+        "translit": null,
+        "display": {
+          "fr": "De 1912 à 1948, on pouvait gagner une médaille d'or olympique en ___",
+          "ar": "من 1912 لـ 1948، كان فيك تربح ميدالية ذهب أولمبية بـ ___",
+          "es": "De 1912 a 1948, podías ganar una medalla de oro olímpica en ___"
+        }
+      },
+      "truth": {
+        "en": "Art",
+        "fr": "Art",
+        "ar": "الفن",
+        "es": "Arte"
+      },
+      "truthAlt": {
+        "en": [
+          "Painting",
+          "Art and music"
+        ],
+        "fr": [
+          "Peinture",
+          "Arts"
+        ],
+        "ar": [
+          "الرسم",
+          "فنون"
+        ],
+        "es": [
+          "Pintura",
+          "Artes"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Chess",
+          "Cooking",
+          "Ballroom dance"
+        ],
+        "fr": [
+          "Échecs",
+          "Cuisine",
+          "Danse de salon"
+        ],
+        "ar": [
+          "الشطرنج",
+          "الطبخ",
+          "رقص الصالونات"
+        ],
+        "es": [
+          "Ajedrez",
+          "Cocina",
+          "Baile de salón"
+        ]
+      },
+      "note": {
+        "en": "Painting, sculpture, music, literature and architecture all had medals",
+        "fr": "Peinture, sculpture, musique, littérature et architecture avaient leurs médailles",
+        "ar": "الرسم والنحت والموسيقى والأدب والهندسة كان إلن ميداليات",
+        "es": "Pintura, escultura, música, literatura y arquitectura tenían medallas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Art competitions at the Olympic Games 1912-1948 (painting, sculpture, music, literature, architecture); IOC; Britannica"
+      }
+    },
+    {
+      "id": "yf-012",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1904, the first man across the Olympic marathon finish had secretly ridden in a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1904, le premier arrivé du marathon olympique avait fait une partie du trajet en ___",
+          "ar": "سنة 1904، أول واحد وصل بماراتون الألعاب الأولمبية كان راكب سرًا بـ ___",
+          "es": "En 1904, el primero en cruzar la meta del maratón olímpico había ido un tramo en ___"
+        }
+      },
+      "truth": {
+        "en": "Car",
+        "fr": "Voiture",
+        "ar": "سيارة",
+        "es": "Coche"
+      },
+      "truthAlt": {
+        "en": [
+          "A car",
+          "Automobile"
+        ],
+        "fr": [
+          "Automobile",
+          "En voiture"
+        ],
+        "ar": [
+          "السيارة",
+          "بسيارة"
+        ],
+        "es": [
+          "Un coche",
+          "Automóvil"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Horse cart",
+          "Bicycle",
+          "Hot-air balloon"
+        ],
+        "fr": [
+          "Charrette",
+          "Vélo",
+          "Montgolfière"
+        ],
+        "ar": [
+          "عربية حصان",
+          "بسكليت",
+          "منطاد"
+        ],
+        "es": [
+          "Carreta",
+          "Bicicleta",
+          "Globo"
+        ]
+      },
+      "note": {
+        "en": "Fred Lorz got a lift for about 11 miles. He was disqualified",
+        "fr": "Fred Lorz s'est fait déposer sur environ 18 km. Il a été disqualifié",
+        "ar": "فريد لورز ركب حوالي 18 كيلومتر. وانشطب من السباق",
+        "es": "Fred Lorz recorrió unos 18 km en coche. Fue descalificado"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] 1904 St. Louis Olympic marathon, Fred Lorz rode part of the course in a car and was disqualified; Smithsonian Magazine; Olympics.com"
+      }
+    },
+    {
+      "id": "yf-013",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1835, a New York newspaper claimed astronomers had seen ___ on the Moon",
+        "translit": null,
+        "display": {
+          "fr": "En 1835, un journal new-yorkais a affirmé que des astronomes avaient vu des ___ sur la Lune",
+          "ar": "سنة 1835، جريدة بنيويورك قالت إنو علماء فلك شافوا ___ عالقمر",
+          "es": "En 1835, un periódico de Nueva York aseguró que se habían visto ___ en la Luna"
+        }
+      },
+      "truth": {
+        "en": "Bat people",
+        "fr": "Hommes chauves-souris",
+        "ar": "بشر بأجنحة خفاش",
+        "es": "Hombres murciélago"
+      },
+      "truthAlt": {
+        "en": [
+          "Man-bats",
+          "Flying men",
+          "Winged humans"
+        ],
+        "fr": [
+          "Hommes volants",
+          "Humains ailés"
+        ],
+        "ar": [
+          "رجال خفافيش",
+          "ناس بتطير"
+        ],
+        "es": [
+          "Hombres voladores",
+          "Humanos con alas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Giant rabbits",
+          "Glass cities",
+          "Frozen oceans"
+        ],
+        "fr": [
+          "Lapins géants",
+          "Villes de verre",
+          "Océans gelés"
+        ],
+        "ar": [
+          "أرانب عملاقة",
+          "مدن من إزاز",
+          "بحار مجلدة"
+        ],
+        "es": [
+          "Conejos gigantes",
+          "Ciudades de cristal",
+          "Océanos helados"
+        ]
+      },
+      "note": {
+        "en": "The Great Moon Hoax sold so many papers that the joke ran for weeks",
+        "fr": "Ce canular a fait vendre tant de journaux qu'il a duré des semaines",
+        "ar": "هالخدعة باعت جرايد كتير لدرجة إنها كملت أسابيع",
+        "es": "El gran engaño lunar vendió tantos diarios que duró semanas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] The Great Moon Hoax, The Sun (New York), August 1835, 'man-bats' (Vespertilio-homo); Britannica; Museum of Hoaxes"
+      }
+    },
+    {
+      "id": "yf-014",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1891, the very first hoops of a new indoor sport were ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1891, les tout premiers cercles d'un nouveau sport en salle étaient des ___",
+          "ar": "سنة 1891، أول حلقات لرياضة جديدة بالصالات كانت ___",
+          "es": "En 1891, los primeros aros de un nuevo deporte bajo techo eran ___"
+        }
+      },
+      "truth": {
+        "en": "Peach baskets",
+        "fr": "Paniers à pêches",
+        "ar": "سلال دراق",
+        "es": "Cestas de melocotones"
+      },
+      "truthAlt": {
+        "en": [
+          "Fruit baskets",
+          "Baskets"
+        ],
+        "fr": [
+          "Paniers à fruits",
+          "Paniers"
+        ],
+        "ar": [
+          "سلال فواكه",
+          "سلال"
+        ],
+        "es": [
+          "Cestas de fruta",
+          "Cestas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Bicycle wheels",
+          "Barrel rings",
+          "Fishing nets"
+        ],
+        "fr": [
+          "Roues de vélo",
+          "Cercles de tonneau",
+          "Filets de pêche"
+        ],
+        "ar": [
+          "دواليب بسكليت",
+          "حلقات براميل",
+          "شباك صيد"
+        ],
+        "es": [
+          "Ruedas de bici",
+          "Aros de barril",
+          "Redes de pesca"
+        ]
+      },
+      "note": {
+        "en": "The sport was basketball. Someone had to climb up and get the ball out after every goal",
+        "fr": "Ce sport, c'était le basket. Il fallait grimper pour récupérer le ballon après chaque but",
+        "ar": "الرياضة كانت كرة السلة، وكان لازم حدا يطلع يجيب الطابة بعد كل هدف",
+        "es": "Ese deporte era el baloncesto. Alguien tenía que subir a sacar el balón tras cada tanto"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] James Naismith, Springfield MA, December 1891, first basketball game used peach baskets; Naismith Memorial Basketball Hall of Fame"
+      }
+    },
+    {
+      "id": "yf-015",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1930, the name of Pluto was suggested by ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1930, le nom de Pluton a été proposé par ___",
+          "ar": "سنة 1930، اسم بلوتو اقترحتو ___",
+          "es": "En 1930, el nombre de Plutón lo propuso ___"
+        }
+      },
+      "truth": {
+        "en": "An 11-year-old girl",
+        "fr": "Une fille de 11 ans",
+        "ar": "بنت عمرها 11 سنة",
+        "es": "Una niña de 11 años"
+      },
+      "truthAlt": {
+        "en": [
+          "A schoolgirl",
+          "A girl",
+          "A little girl"
+        ],
+        "fr": [
+          "Une écolière",
+          "Une petite fille"
+        ],
+        "ar": [
+          "تلميذة",
+          "بنت زغيرة"
+        ],
+        "es": [
+          "Una colegiala",
+          "Una niña"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A Disney artist",
+          "A Roman priest",
+          "A sailor"
+        ],
+        "fr": [
+          "Un dessinateur de Disney",
+          "Un poète romain",
+          "Un marin"
+        ],
+        "ar": [
+          "رسام بديزني",
+          "شاعر روماني",
+          "بحار"
+        ],
+        "es": [
+          "Un dibujante de Disney",
+          "Un poeta romano",
+          "Un marinero"
+        ]
+      },
+      "note": {
+        "en": "Venetia Burney of Oxford loved Roman myths. Her grandad passed the idea on",
+        "fr": "Venetia Burney, d'Oxford, adorait les mythes romains. Son grand-père a transmis l'idée",
+        "ar": "فينيشيا بيرني من أكسفورد اختارت الاسم وجدها بعتو للعلماء",
+        "es": "Venetia Burney, de Oxford, eligió el nombre. Su abuelo lo hizo llegar"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Venetia Burney, aged 11, of Oxford, suggested the name Pluto in 1930; BBC; NASA"
+      }
+    },
+    {
+      "id": "yf-016",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1977, a mysterious radio signal from space was nicknamed the ___ signal",
+        "translit": null,
+        "display": {
+          "fr": "En 1977, un mystérieux signal radio venu de l'espace a été surnommé le signal ___",
+          "ar": "سنة 1977، إشارة راديو غامضة جاية من الفضاء لقبوها إشارة ___",
+          "es": "En 1977, una misteriosa señal de radio del espacio recibió el apodo de señal ___"
+        }
+      },
+      "truth": {
+        "en": "Wow",
+        "fr": "Wow",
+        "ar": "واو",
+        "es": "Wow"
+      },
+      "truthAlt": {
+        "en": [
+          "Wow!"
+        ],
+        "fr": [
+          "Wow!"
+        ],
+        "ar": [
+          "واو!"
+        ],
+        "es": [
+          "Guau"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Hello",
+          "Ghost",
+          "Knock knock"
+        ],
+        "fr": [
+          "Hello",
+          "Fantôme",
+          "Toc toc"
+        ],
+        "ar": [
+          "هالو",
+          "الشبح",
+          "دق دق"
+        ],
+        "es": [
+          "Hola",
+          "Fantasma",
+          "Toc toc"
+        ]
+      },
+      "note": {
+        "en": "Astronomer Jerry Ehman circled it on a printout and wrote Wow! next to it",
+        "fr": "L'astronome Jerry Ehman l'a entouré sur un listing et a écrit Wow! à côté",
+        "ar": "العالم جيري إيمان دوّر عليها عالورقة وكتب جنبها واو!",
+        "es": "El astrónomo Jerry Ehman la marcó en el papel y escribió Wow! al lado"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] The Wow! signal, Big Ear radio telescope, Ohio State University, 15 August 1977, Jerry Ehman; Britannica"
+      }
+    },
+    {
+      "id": "yf-017",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1947, engineers found the first real computer bug: it was a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1947, des ingénieurs ont trouvé le premier vrai bug informatique : c'était un ___",
+          "ar": "سنة 1947، مهندسين لقوا أول بق حقيقي بكمبيوتر: كانت ___",
+          "es": "En 1947, unos ingenieros hallaron el primer bicho real en un ordenador: era una ___"
+        }
+      },
+      "truth": {
+        "en": "Moth",
+        "fr": "Papillon de nuit",
+        "ar": "فراشة ليل",
+        "es": "Polilla"
+      },
+      "truthAlt": {
+        "en": [
+          "A moth",
+          "An insect"
+        ],
+        "fr": [
+          "Une mite",
+          "Insecte"
+        ],
+        "ar": [
+          "عتة",
+          "حشرة"
+        ],
+        "es": [
+          "Mariposa nocturna",
+          "Un insecto"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Mouse",
+          "Spider",
+          "Cockroach"
+        ],
+        "fr": [
+          "Souris",
+          "Araignée",
+          "Cafard"
+        ],
+        "ar": [
+          "فارة",
+          "عنكبوت",
+          "صرصور"
+        ],
+        "es": [
+          "Rata",
+          "Araña",
+          "Cucaracha"
+        ]
+      },
+      "note": {
+        "en": "They taped it into the logbook, which is now in a Smithsonian museum",
+        "fr": "Ils l'ont collé dans le cahier de bord, aujourd'hui au musée Smithsonian",
+        "ar": "لزقوها بدفتر الأعطال، واليوم الدفتر بمتحف سميثسونيان",
+        "es": "La pegaron en el cuaderno, que hoy está en un museo Smithsonian"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Harvard Mark II logbook, 9 September 1947, moth taped in the log, 'first actual case of bug being found'; Smithsonian National Museum of American History"
+      }
+    },
+    {
+      "id": "yf-018",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1975, over a million Americans bought a pet ___ in a little cardboard box",
+        "translit": null,
+        "display": {
+          "fr": "En 1975, plus d'un million d'Américains ont acheté un ___ de compagnie dans une boîte en carton",
+          "ar": "سنة 1975، أكتر من مليون أميركي اشتروا ___ أليف بعلبة كرتون",
+          "es": "En 1975, más de un millón de estadounidenses compraron una ___ mascota en una cajita de cartón"
+        }
+      },
+      "truth": {
+        "en": "Rock",
+        "fr": "Caillou",
+        "ar": "حجر",
+        "es": "Piedra"
+      },
+      "truthAlt": {
+        "en": [
+          "Stone",
+          "Pebble"
+        ],
+        "fr": [
+          "Pierre",
+          "Galet"
+        ],
+        "ar": [
+          "حجرة",
+          "بحصة"
+        ],
+        "es": [
+          "Roca",
+          "Piedrita"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Snail",
+          "Cactus",
+          "Goldfish"
+        ],
+        "fr": [
+          "Escargot",
+          "Cactus",
+          "Poisson rouge"
+        ],
+        "ar": [
+          "حلزون",
+          "صبير",
+          "سمكة حمرا"
+        ],
+        "es": [
+          "Caracola",
+          "Planta",
+          "Tortuga"
+        ]
+      },
+      "note": {
+        "en": "It came with a training manual. Its inventor became a millionaire",
+        "fr": "Il était livré avec un manuel de dressage. Son inventeur est devenu millionnaire",
+        "ar": "كان معو كتيب تدريب، ومخترعو صار مليونير",
+        "es": "Venía con un manual de adiestramiento. Su inventor se hizo millonario"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Pet Rock by Gary Dahl, 1975, sold for $3.95 in a cardboard box, over a million sold; Smithsonian Magazine; NYT obituary of Gary Dahl 2015"
+      }
+    },
+    {
+      "id": "yf-019",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The famous 1934 photo of the Loch Ness Monster was really a toy ___",
+        "translit": null,
+        "display": {
+          "fr": "La célèbre photo du monstre du Loch Ness, en 1934, montrait en fait un ___ jouet",
+          "ar": "صورة وحش بحيرة لوخ نس المشهورة سنة 1934 كانت بالحقيقة ___ لعبة",
+          "es": "La famosa foto del monstruo del lago Ness, de 1934, era en realidad un ___ de juguete"
+        }
+      },
+      "truth": {
+        "en": "Submarine",
+        "fr": "Sous-marin",
+        "ar": "غواصة",
+        "es": "Submarino"
+      },
+      "truthAlt": {
+        "en": [
+          "Toy submarine",
+          "Submarine with a fake head"
+        ],
+        "fr": [
+          "Sous-marin jouet"
+        ],
+        "ar": [
+          "غواصة زغيرة"
+        ],
+        "es": [
+          "Submarino de juguete"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Duck",
+          "Dinosaur",
+          "Rowing boat"
+        ],
+        "fr": [
+          "Canard",
+          "Dinosaure",
+          "Bateau à rames"
+        ],
+        "ar": [
+          "بطة",
+          "ديناصور",
+          "شختورة"
+        ],
+        "es": [
+          "Pato",
+          "Dinosaurio",
+          "Bote de remos"
+        ]
+      },
+      "note": {
+        "en": "The hoaxers fixed a sculpted head and neck on top. They confessed in 1994",
+        "fr": "Les faussaires y avaient fixé une tête et un cou. Ils ont avoué en 1994",
+        "ar": "ركبوا عليها راس ورقبة. واعترفوا سنة 1994",
+        "es": "Le pegaron una cabeza y un cuello. Los autores lo confesaron en 1994"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Surgeon's Photograph of the Loch Ness Monster (1934), revealed in 1994 as a toy submarine with a model head; BBC; Britannica"
+      }
+    },
+    {
+      "id": "yf-020",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1958, one of the very first video games let you play ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1958, l'un des tout premiers jeux vidéo permettait de jouer au ___",
+          "ar": "سنة 1958، من أول ألعاب الفيديو بالتاريخ وحدة بتخليك تلعب ___",
+          "es": "En 1958, uno de los primeros videojuegos de la historia permitía jugar al ___"
+        }
+      },
+      "truth": {
+        "en": "Tennis",
+        "fr": "Tennis",
+        "ar": "تنس",
+        "es": "Tenis"
+      },
+      "truthAlt": {
+        "en": [
+          "Tennis for Two"
+        ],
+        "fr": [
+          "Tennis for Two"
+        ],
+        "ar": [
+          "التنس",
+          "تنس لاتنين"
+        ],
+        "es": [
+          "Tennis for Two"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Chess",
+          "Space invaders",
+          "Snake"
+        ],
+        "fr": [
+          "Échecs",
+          "Morpion",
+          "Billard"
+        ],
+        "ar": [
+          "شطرنج",
+          "طاولة زهر",
+          "بلياردو"
+        ],
+        "es": [
+          "Ajedrez",
+          "Billar",
+          "Dominó"
+        ]
+      },
+      "note": {
+        "en": "It was called Tennis for Two and ran on an oscilloscope at a US lab",
+        "fr": "Il s'appelait Tennis for Two et tournait sur un oscilloscope",
+        "ar": "اسمها تنس فور تو وكانت تشتغل على شاشة جهاز قياس بمختبر أميركي",
+        "es": "Se llamaba Tennis for Two y funcionaba en un osciloscopio"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Tennis for Two, William Higinbotham, Brookhaven National Laboratory, October 1958; Brookhaven National Laboratory history page"
+      }
+    },
+    {
+      "id": "yf-021",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1908, a blast in the sky over Siberia knocked down about 80 million ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1908, une explosion dans le ciel de Sibérie a couché environ 80 millions d'___",
+          "ar": "سنة 1908، انفجار بسما سيبيريا وقّع حوالي 80 مليون ___",
+          "es": "En 1908, una explosión en el cielo de Siberia derribó unos 80 millones de ___"
+        }
+      },
+      "truth": {
+        "en": "Trees",
+        "fr": "Arbres",
+        "ar": "شجرة",
+        "es": "Árboles"
+      },
+      "truthAlt": {
+        "en": [
+          "Pine trees",
+          "A forest"
+        ],
+        "fr": [
+          "Pins",
+          "Une forêt"
+        ],
+        "ar": [
+          "شجر",
+          "غابة"
+        ],
+        "es": [
+          "Pinos",
+          "Un bosque"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Houses",
+          "Reindeer",
+          "Power poles"
+        ],
+        "fr": [
+          "Maisons",
+          "Rennes",
+          "Poteaux"
+        ],
+        "ar": [
+          "بيت",
+          "غزال رنة",
+          "عمود كهربا"
+        ],
+        "es": [
+          "Casas",
+          "Renos",
+          "Postes"
+        ]
+      },
+      "note": {
+        "en": "Probably an asteroid or comet exploding in the air. No crater was ever found",
+        "fr": "Sans doute un astéroïde ou une comète qui a explosé en l'air. Aucun cratère",
+        "ar": "غالبًا نيزك أو مذنب انفجر بالهوا. وما لقوا أي حفرة",
+        "es": "Seguramente un asteroide o cometa que estalló en el aire. Nunca hubo cráter"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Tunguska event, 30 June 1908, about 80 million trees flattened over 2,150 km2; NASA; Britannica"
+      }
+    },
+    {
+      "id": "yf-022",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "After a volcano erupted, 1816 became known as the year without a ___",
+        "translit": null,
+        "display": {
+          "fr": "Après l'éruption d'un volcan, 1816 a été surnommée l'année sans ___",
+          "ar": "بعد ما انفجر بركان، سنة 1816 صار اسمها السنة بلا ___",
+          "es": "Tras la erupción de un volcán, 1816 se conoció como el año sin ___"
+        }
+      },
+      "truth": {
+        "en": "Summer",
+        "fr": "Été",
+        "ar": "صيف",
+        "es": "Verano"
+      },
+      "truthAlt": {
+        "en": [
+          "Summertime"
+        ],
+        "fr": [
+          "Un été"
+        ],
+        "ar": [
+          "الصيف"
+        ],
+        "es": [
+          "El verano"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Harvest",
+          "Sunrise",
+          "Rainbow"
+        ],
+        "fr": [
+          "Récolte",
+          "Lever de soleil",
+          "Arc-en-ciel"
+        ],
+        "ar": [
+          "حصاد",
+          "شروق شمس",
+          "قوس قزح"
+        ],
+        "es": [
+          "Cosecha",
+          "Amanecer",
+          "Arcoíris"
+        ]
+      },
+      "note": {
+        "en": "Mount Tambora's ash cooled the planet. It snowed in New England in June",
+        "fr": "Les cendres du Tambora ont refroidi la planète. Il a neigé en juin",
+        "ar": "رماد بركان تامبورا برّد الأرض، وتلجت بأميركا بحزيران",
+        "es": "La ceniza del Tambora enfrió el planeta. Nevó en junio"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] 1816, the 'Year Without a Summer', after the 1815 eruption of Mount Tambora; Britannica; NOAA"
+      }
+    },
+    {
+      "id": "yf-023",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1783, the first passengers of a hot-air balloon were a sheep, a duck and a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1783, les premiers passagers d'une montgolfière étaient un mouton, un canard et un ___",
+          "ar": "سنة 1783، أول ركاب منطاد كانوا خاروف وبطة و ___",
+          "es": "En 1783, los primeros pasajeros de un globo aerostático fueron una oveja, un pato y un ___"
+        }
+      },
+      "truth": {
+        "en": "Rooster",
+        "fr": "Coq",
+        "ar": "ديك",
+        "es": "Gallo"
+      },
+      "truthAlt": {
+        "en": [
+          "Cockerel",
+          "Chicken"
+        ],
+        "fr": [
+          "Poulet"
+        ],
+        "ar": [
+          "جاجة"
+        ],
+        "es": [
+          "Pollo"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Cat",
+          "Goat",
+          "Monkey"
+        ],
+        "fr": [
+          "Chat",
+          "Bouc",
+          "Singe"
+        ],
+        "ar": [
+          "قطة",
+          "معزة",
+          "قرد"
+        ],
+        "es": [
+          "Gato",
+          "Chivo",
+          "Mono"
+        ]
+      },
+      "note": {
+        "en": "The flight at Versailles lasted about eight minutes. All three landed safely",
+        "fr": "Le vol à Versailles a duré environ huit minutes. Tous ont atterri sains et saufs",
+        "ar": "الرحلة بفرساي دامت حوالي تمن دقايق ونزلوا التلاتة سالمين",
+        "es": "El vuelo en Versalles duró unos ocho minutos. Los tres aterrizaron bien"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Montgolfier balloon at Versailles, 19 September 1783: a sheep, a duck and a rooster; Britannica; Smithsonian"
+      }
+    },
+    {
+      "id": "yf-024",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1859, a solar storm was so strong that some telegraphs worked with their ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1859, une tempête solaire était si forte que certains télégraphes marchaient avec leurs ___",
+          "ar": "سنة 1859، عاصفة شمسية كانت قوية لدرجة إنو تلغرافات اشتغلت و ___",
+          "es": "En 1859, una tormenta solar fue tan fuerte que algunos telégrafos funcionaban con las ___"
+        }
+      },
+      "truth": {
+        "en": "Batteries unplugged",
+        "fr": "Piles débranchées",
+        "ar": "البطاريات مفصولة",
+        "es": "Pilas desconectadas"
+      },
+      "truthAlt": {
+        "en": [
+          "No batteries",
+          "Power off"
+        ],
+        "fr": [
+          "Sans piles",
+          "Courant coupé"
+        ],
+        "ar": [
+          "بلا بطاريات",
+          "الكهربا مقطوعة"
+        ],
+        "es": [
+          "Sin pilas",
+          "Sin corriente"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Wires cut",
+          "Operators asleep",
+          "Keys frozen"
+        ],
+        "fr": [
+          "Fils coupés",
+          "Opérateurs endormis",
+          "Touches gelées"
+        ],
+        "ar": [
+          "الشريط مقطوع",
+          "الموظفين نايمين",
+          "الأزرار مجلدة"
+        ],
+        "es": [
+          "Líneas cortadas",
+          "Teclas congeladas",
+          "Luces apagadas"
+        ]
+      },
+      "note": {
+        "en": "The storm charged the wires. Northern lights were seen as far south as the Caribbean",
+        "fr": "La tempête chargeait les fils. On a vu des aurores jusqu'aux Caraïbes",
+        "ar": "العاصفة شحنت الشريطات. وانشاف الشفق القطبي لحد الكاريبي",
+        "es": "La tormenta cargó los cables. Hubo auroras hasta el Caribe"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Carrington Event, 1-2 September 1859: telegraph operators sent messages with batteries disconnected; NASA; Britannica"
+      }
+    },
+    {
+      "id": "yf-025",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In July 1994, astronomers watched a comet smash into ___",
+        "translit": null,
+        "display": {
+          "fr": "En juillet 1994, les astronomes ont vu une comète s'écraser sur ___",
+          "ar": "بتموز 1994، علماء الفلك شافوا مذنب عم يصطدم بـ ___",
+          "es": "En julio de 1994, los astrónomos vieron un cometa estrellarse contra ___"
+        }
+      },
+      "truth": {
+        "en": "Jupiter",
+        "fr": "Jupiter",
+        "ar": "المشتري",
+        "es": "Júpiter"
+      },
+      "truthAlt": {
+        "en": [
+          "The planet Jupiter"
+        ],
+        "fr": [
+          "La planète Jupiter"
+        ],
+        "ar": [
+          "كوكب المشتري"
+        ],
+        "es": [
+          "El planeta Júpiter"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "The Moon",
+          "The Sun",
+          "Mars"
+        ],
+        "fr": [
+          "La Lune",
+          "Le Soleil",
+          "Mars"
+        ],
+        "ar": [
+          "القمر",
+          "الشمس",
+          "المريخ"
+        ],
+        "es": [
+          "La Luna",
+          "El Sol",
+          "Marte"
+        ]
+      },
+      "note": {
+        "en": "Comet Shoemaker-Levy 9 broke into pieces first. The scars were bigger than Earth",
+        "fr": "La comète Shoemaker-Levy 9 s'était brisée. Les traces étaient plus grandes que la Terre",
+        "ar": "مذنب شوميكر ليفي 9 تكسر قبلها، والآثار كانت أكبر من الأرض",
+        "es": "El cometa Shoemaker-Levy 9 se partió antes. Las marcas eran más grandes que la Tierra"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Comet Shoemaker-Levy 9 fragments hit Jupiter, 16-22 July 1994; NASA"
+      }
+    },
+    {
+      "id": "yf-026",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1967, the world's first human heart transplant took place in ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1967, la toute première greffe de cœur humain a eu lieu en ___",
+          "ar": "سنة 1967، أول زراعة قلب بشري بالعالم صارت بـ ___",
+          "es": "En 1967, el primer trasplante de corazón humano del mundo se hizo en ___"
+        }
+      },
+      "truth": {
+        "en": "South Africa",
+        "fr": "Afrique du Sud",
+        "ar": "جنوب أفريقيا",
+        "es": "Sudáfrica"
+      },
+      "truthAlt": {
+        "en": [
+          "Cape Town"
+        ],
+        "fr": [
+          "Au Cap"
+        ],
+        "ar": [
+          "كيب تاون"
+        ],
+        "es": [
+          "Ciudad del Cabo"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sweden",
+          "Japan",
+          "Brazil"
+        ],
+        "fr": [
+          "Suède",
+          "Japon",
+          "Brésil"
+        ],
+        "ar": [
+          "السويد",
+          "اليابان",
+          "البرازيل"
+        ],
+        "es": [
+          "Suecia",
+          "Japón",
+          "Brasil"
+        ]
+      },
+      "note": {
+        "en": "Surgeon Christiaan Barnard led the team at a hospital in Cape Town",
+        "fr": "Le chirurgien Christiaan Barnard dirigeait l'équipe dans un hôpital du Cap",
+        "ar": "الجراح كريستيان بارنارد قاد الفريق بمستشفى بكيب تاون",
+        "es": "El cirujano Christiaan Barnard dirigió al equipo en Ciudad del Cabo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] First human heart transplant, Christiaan Barnard, Groote Schuur Hospital, Cape Town, 3 December 1967; Britannica"
+      }
+    },
+    {
+      "id": "yf-027",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1872, the ship Mary Celeste was found drifting at sea with ___ on board",
+        "translit": null,
+        "display": {
+          "fr": "En 1872, le navire Mary Celeste a été retrouvé à la dérive avec ___ à bord",
+          "ar": "سنة 1872، لقوا سفينة ماري سيليست عم تطوف بالبحر وعليها ___",
+          "es": "En 1872, el barco Mary Celeste apareció a la deriva con ___ a bordo"
+        }
+      },
+      "truth": {
+        "en": "Nobody",
+        "fr": "Personne",
+        "ar": "ولا حدا",
+        "es": "Nadie"
+      },
+      "truthAlt": {
+        "en": [
+          "No one",
+          "No crew"
+        ],
+        "fr": [
+          "Aucun équipage"
+        ],
+        "ar": [
+          "ما في حدا",
+          "بلا طاقم"
+        ],
+        "es": [
+          "Ni un tripulante",
+          "Sin tripulación"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A parrot",
+          "Only a cat",
+          "Gold bars"
+        ],
+        "fr": [
+          "Un perroquet",
+          "Juste un chat",
+          "Des lingots d'or"
+        ],
+        "ar": [
+          "ببغا",
+          "بس قطة",
+          "سبايك دهب"
+        ],
+        "es": [
+          "Un loro",
+          "Solo un gato",
+          "Lingotes de oro"
+        ]
+      },
+      "note": {
+        "en": "The crew had vanished. Food, water and their belongings were still there",
+        "fr": "L'équipage avait disparu. Vivres et affaires étaient encore là",
+        "ar": "الطاقم اختفى، والأكل والمي وأغراضن كانوا بعدن موجودين",
+        "es": "La tripulación había desaparecido. La comida y sus cosas seguían allí"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Mary Celeste found drifting and abandoned off the Azores, 4 December 1872; Britannica; Smithsonian Magazine"
+      }
+    },
+    {
+      "id": "yf-028",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1666, the Great Fire of London started in a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1666, le grand incendie de Londres a commencé dans une ___",
+          "ar": "سنة 1666، الحريق الكبير بلندن بلش من ___",
+          "es": "En 1666, el gran incendio de Londres empezó en una ___"
+        }
+      },
+      "truth": {
+        "en": "Bakery",
+        "fr": "Boulangerie",
+        "ar": "فرن",
+        "es": "Panadería"
+      },
+      "truthAlt": {
+        "en": [
+          "Bakehouse",
+          "Baker's shop"
+        ],
+        "fr": [
+          "Chez un boulanger"
+        ],
+        "ar": [
+          "فرن خبز",
+          "مخبز"
+        ],
+        "es": [
+          "Casa de un panadero"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Candle shop",
+          "Theatre",
+          "Stable"
+        ],
+        "fr": [
+          "Fabrique de bougies",
+          "Écurie",
+          "Taverne"
+        ],
+        "ar": [
+          "محل شمع",
+          "مسرح",
+          "إسطبل"
+        ],
+        "es": [
+          "Fábrica de velas",
+          "Taberna",
+          "Cuadra"
+        ]
+      },
+      "note": {
+        "en": "It began in the king's baker's shop on Pudding Lane, just after midnight",
+        "fr": "Il est parti de la boulangerie du roi, rue Pudding Lane, après minuit",
+        "ar": "بلش بعد نص الليل بفرن خباز الملك بشارع بودينغ لاين",
+        "es": "Empezó en la panadería del rey, en Pudding Lane, pasada la medianoche"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Great Fire of London, 2 September 1666, began in Thomas Farriner's bakery on Pudding Lane; Museum of London; Britannica"
+      }
+    },
+    {
+      "id": "yf-029",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1637, in the Netherlands, a single ___ could cost as much as a house",
+        "translit": null,
+        "display": {
+          "fr": "En 1637, aux Pays-Bas, un seul ___ pouvait coûter autant qu'une maison",
+          "ar": "سنة 1637، بهولندا، ___ وحدة كان ممكن تسوى قد بيت",
+          "es": "En 1637, en los Países Bajos, un solo ___ podía costar lo mismo que una casa"
+        }
+      },
+      "truth": {
+        "en": "Tulip bulb",
+        "fr": "Bulbe de tulipe",
+        "ar": "بصلة توليب",
+        "es": "Bulbo de tulipán"
+      },
+      "truthAlt": {
+        "en": [
+          "Tulip",
+          "Flower bulb"
+        ],
+        "fr": [
+          "Tulipe",
+          "Oignon de tulipe"
+        ],
+        "ar": [
+          "توليب",
+          "بصلة زهرة"
+        ],
+        "es": [
+          "Tulipán",
+          "Bulbo"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Wheel of cheese",
+          "Pepper grain",
+          "Pearl"
+        ],
+        "fr": [
+          "Fromage entier",
+          "Grain de poivre",
+          "Perle"
+        ],
+        "ar": [
+          "قالب جبنة",
+          "حبة بهار",
+          "لولوة"
+        ],
+        "es": [
+          "Queso entero",
+          "Grano de pimienta",
+          "Diamante"
+        ]
+      },
+      "note": {
+        "en": "Tulip mania is often called the first speculative bubble",
+        "fr": "La tulipomanie est souvent appelée la première bulle spéculative",
+        "ar": "هوس التوليب بيعتبروه أول فقاعة مضاربة بالتاريخ",
+        "es": "La tulipomanía se considera a menudo la primera burbuja especulativa"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Dutch tulip mania, 1636-1637, single bulbs sold for the price of a canal house; Britannica; Anne Goldgar, Tulipmania (2007)"
+      }
+    },
+    {
+      "id": "yf-030",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1863, the world's first underground railway, in London, ran on ___ trains",
+        "translit": null,
+        "display": {
+          "fr": "En 1863, le premier métro du monde, à Londres, roulait avec des trains à ___",
+          "ar": "سنة 1863، أول مترو تحت الأرض بالعالم، بلندن، كان يمشي بقطارات ___",
+          "es": "En 1863, el primer metro del mundo, en Londres, usaba trenes de ___"
+        }
+      },
+      "truth": {
+        "en": "Steam",
+        "fr": "Vapeur",
+        "ar": "بخار",
+        "es": "Vapor"
+      },
+      "truthAlt": {
+        "en": [
+          "Steam engines",
+          "Coal"
+        ],
+        "fr": [
+          "Locomotives à vapeur",
+          "Charbon"
+        ],
+        "ar": [
+          "عالبخار",
+          "فحم"
+        ],
+        "es": [
+          "Locomotoras de vapor",
+          "Carbón"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Horse-drawn",
+          "Electric",
+          "Rope-pulled"
+        ],
+        "fr": [
+          "Chevaux",
+          "Électricité",
+          "Câbles"
+        ],
+        "ar": [
+          "بتجرها خيل",
+          "كهربا",
+          "بحبال"
+        ],
+        "es": [
+          "Caballos",
+          "Electricidad",
+          "Cuerdas"
+        ]
+      },
+      "note": {
+        "en": "Smoky tunnels had vents to let the steam out. Electric trains came later",
+        "fr": "Les tunnels enfumés avaient des bouches d'aération. L'électrique est venu après",
+        "ar": "الأنفاق كانت مليانة دخان وفيها فتحات تهوية. الكهربا إجت بعدين",
+        "es": "Los túneles humeantes tenían respiraderos. Los eléctricos llegaron después"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Metropolitan Railway, London, opened 10 January 1863 with steam locomotives; London Transport Museum; Britannica"
+      }
+    },
+    {
+      "id": "yf-031",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1930, the very first football World Cup was held in ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1930, la toute première Coupe du monde de football a eu lieu en ___",
+          "ar": "سنة 1930، أول كاس عالم بكرة القدم صار بـ ___",
+          "es": "En 1930, el primer Mundial de fútbol de la historia se jugó en ___"
+        }
+      },
+      "truth": {
+        "en": "Uruguay",
+        "fr": "Uruguay",
+        "ar": "الأوروغواي",
+        "es": "Uruguay"
+      },
+      "truthAlt": {
+        "en": [
+          "Montevideo"
+        ],
+        "fr": [
+          "À Montevideo"
+        ],
+        "ar": [
+          "مونتيفيديو"
+        ],
+        "es": [
+          "Montevideo"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "England",
+          "Italy",
+          "Brazil"
+        ],
+        "fr": [
+          "Angleterre",
+          "Italie",
+          "Brésil"
+        ],
+        "ar": [
+          "إنكلترا",
+          "إيطاليا",
+          "البرازيل"
+        ],
+        "es": [
+          "Inglaterra",
+          "Italia",
+          "Brasil"
+        ]
+      },
+      "note": {
+        "en": "The hosts won the final against Argentina, 4 goals to 2",
+        "fr": "Le pays hôte a battu l'Argentine en finale, 4 buts à 2",
+        "ar": "البلد المضيف ربح النهائي ضد الأرجنتين 4 لـ 2",
+        "es": "Los anfitriones ganaron la final a Argentina por 4 a 2"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] First FIFA World Cup, Uruguay, July 1930; FIFA"
+      }
+    },
+    {
+      "id": "yf-032",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1873, jeans were patented thanks to a new idea: adding metal ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1873, le jean a été breveté grâce à une idée : ajouter des ___ en métal",
+          "ar": "سنة 1873، الجينز أخد براءة اختراع بفضل فكرة: يزيدوا عليه ___ معدن",
+          "es": "En 1873, los vaqueros se patentaron gracias a una idea: añadir ___ de metal"
+        }
+      },
+      "truth": {
+        "en": "Rivets",
+        "fr": "Rivets",
+        "ar": "براشيم",
+        "es": "Remaches"
+      },
+      "truthAlt": {
+        "en": [
+          "Studs",
+          "Copper rivets"
+        ],
+        "fr": [
+          "Rivets en cuivre"
+        ],
+        "ar": [
+          "مسامير برشام",
+          "برشام"
+        ],
+        "es": [
+          "Remaches de cobre"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Zips",
+          "Buttons",
+          "Belt buckles"
+        ],
+        "fr": [
+          "Fermetures éclair",
+          "Boutons",
+          "Boucles"
+        ],
+        "ar": [
+          "سحابات",
+          "زرار",
+          "إبزيمات"
+        ],
+        "es": [
+          "Cremalleras",
+          "Botones",
+          "Hebillas"
+        ]
+      },
+      "note": {
+        "en": "A tailor added rivets so workers' pockets would stop tearing",
+        "fr": "Un tailleur a ajouté des rivets pour que les poches des ouvriers ne craquent plus",
+        "ar": "خياط زاد البراشيم لحتى ما تعود تشق جيوب العمال",
+        "es": "Un sastre puso remaches para que los bolsillos de los obreros no se rompieran"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Levi Strauss and Jacob Davis patent for riveted work pants, 20 May 1873 (US patent 139,121); Levi Strauss & Co. history"
+      }
+    },
+    {
+      "id": "yf-033",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1940, four teenagers chasing their dog discovered ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1940, quatre ados qui suivaient leur chien ont découvert ___",
+          "ar": "سنة 1940، أربع مراهقين لحقوا كلبن واكتشفوا ___",
+          "es": "En 1940, cuatro adolescentes que seguían a su perro descubrieron ___"
+        }
+      },
+      "truth": {
+        "en": "Prehistoric cave paintings",
+        "fr": "Des peintures préhistoriques",
+        "ar": "رسومات ما قبل التاريخ",
+        "es": "Pinturas prehistóricas"
+      },
+      "truthAlt": {
+        "en": [
+          "Cave paintings",
+          "Lascaux cave"
+        ],
+        "fr": [
+          "La grotte de Lascaux",
+          "Des peintures rupestres"
+        ],
+        "ar": [
+          "مغارة لاسكو",
+          "رسومات بمغارة"
+        ],
+        "es": [
+          "La cueva de Lascaux",
+          "Pinturas rupestres"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A pirate treasure",
+          "A dinosaur egg",
+          "A lost Roman road"
+        ],
+        "fr": [
+          "Un trésor de pirate",
+          "Un œuf de dinosaure",
+          "Une voie romaine"
+        ],
+        "ar": [
+          "كنز قراصنة",
+          "بيضة ديناصور",
+          "طريق روماني"
+        ],
+        "es": [
+          "Un tesoro pirata",
+          "Un huevo de dinosaurio",
+          "Una calzada romana"
+        ]
+      },
+      "note": {
+        "en": "The Lascaux cave in France holds paintings around 17,000 years old",
+        "fr": "La grotte de Lascaux abrite des peintures d'environ 17 000 ans",
+        "ar": "مغارة لاسكو بفرنسا فيها رسومات عمرها حوالي 17 ألف سنة",
+        "es": "La cueva de Lascaux guarda pinturas de unos 17 000 años"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Lascaux cave discovered 12 September 1940 by four teenagers following the dog Robot; French Ministry of Culture (archeologie.culture.gouv.fr/lascaux); Britannica"
+      }
+    },
+    {
+      "id": "yf-034",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1995, the potato became the first vegetable grown in ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1995, la pomme de terre est devenue le premier légume cultivé dans ___",
+          "ar": "سنة 1995، البطاطا صارت أول خضرة انزرعت بـ ___",
+          "es": "En 1995, la patata se convirtió en la primera verdura cultivada en ___"
+        }
+      },
+      "truth": {
+        "en": "Space",
+        "fr": "L'espace",
+        "ar": "الفضاء",
+        "es": "El espacio"
+      },
+      "truthAlt": {
+        "en": [
+          "Outer space",
+          "A space shuttle"
+        ],
+        "fr": [
+          "Espace",
+          "Une navette spatiale"
+        ],
+        "ar": [
+          "مكوك فضاء"
+        ],
+        "es": [
+          "Espacio",
+          "Un transbordador"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Antarctica",
+          "The desert",
+          "A submarine"
+        ],
+        "fr": [
+          "L'Antarctique",
+          "Le désert",
+          "Un sous-marin"
+        ],
+        "ar": [
+          "القطب الجنوبي",
+          "الصحرا",
+          "غواصة"
+        ],
+        "es": [
+          "La Antártida",
+          "El desierto",
+          "Un submarino"
+        ]
+      },
+      "note": {
+        "en": "Potato plants grew aboard the space shuttle Columbia",
+        "fr": "Des plants ont poussé à bord de la navette Columbia",
+        "ar": "زرعوها على متن المكوك الفضائي كولومبيا",
+        "es": "Crecieron plantas a bordo del transbordador Columbia"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] October 1995, potato plants grown aboard Space Shuttle Columbia (STS-73), University of Wisconsin-Madison; NASA"
+      }
+    },
+    {
+      "id": "yf-035",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1787, an American clockmaker built an alarm clock that could only ring at ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1787, un horloger américain a fabriqué un réveil qui ne sonnait qu'à ___",
+          "ar": "سنة 1787، ساعاتي أميركي عمل منبّه ما بيرن إلا الساعة ___",
+          "es": "En 1787, un relojero estadounidense hizo un despertador que solo sonaba a las ___"
+        }
+      },
+      "truth": {
+        "en": "4 in the morning",
+        "fr": "4 heures du matin",
+        "ar": "4 الصبح",
+        "es": "4 de la mañana"
+      },
+      "truthAlt": {
+        "en": [
+          "4 a.m.",
+          "Four in the morning"
+        ],
+        "fr": [
+          "4 h",
+          "Quatre heures du matin"
+        ],
+        "ar": [
+          "أربعة الصبح"
+        ],
+        "es": [
+          "Cuatro de la mañana",
+          "4 a. m."
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Midnight",
+          "Noon",
+          "Sunrise"
+        ],
+        "fr": [
+          "Minuit",
+          "Midi",
+          "Au lever du soleil"
+        ],
+        "ar": [
+          "نص الليل",
+          "الضهر",
+          "مع الشروق"
+        ],
+        "es": [
+          "Medianoche",
+          "Mediodía",
+          "Al amanecer"
+        ]
+      },
+      "note": {
+        "en": "Levi Hutchins wanted to wake before dawn and never patented it",
+        "fr": "Levi Hutchins voulait se lever avant l'aube. Il ne l'a jamais breveté",
+        "ar": "ليفاي هاتشينز كان بدو يفيق قبل الفجر، وما سجّل الاختراع",
+        "es": "Levi Hutchins quería levantarse antes del alba. Nunca lo patentó"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Levi Hutchins, Concord NH, 1787, alarm clock that rang only at 4 a.m.; History.com; Concord Monitor"
+      }
+    },
+    {
+      "id": "yf-036",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1839, OK first appeared in a Boston paper as a joke spelling of ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1839, OK est apparu dans un journal de Boston comme abréviation farfelue de ___",
+          "ar": "سنة 1839، كلمة OK طلعت بجريدة ببوسطن كاختصار مزحة لـ ___",
+          "es": "En 1839, OK apareció en un diario de Boston como abreviatura en broma de ___"
+        }
+      },
+      "truth": {
+        "en": "All correct",
+        "fr": "All correct",
+        "ar": "أول كوريكت",
+        "es": "All correct"
+      },
+      "truthAlt": {
+        "en": [
+          "Oll korrect",
+          "All right"
+        ],
+        "fr": [
+          "Oll korrect",
+          "Tout est correct"
+        ],
+        "ar": [
+          "كله صح",
+          "All correct"
+        ],
+        "es": [
+          "Oll korrect",
+          "Todo correcto"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Only kidding",
+          "Old kettle",
+          "Our king"
+        ],
+        "fr": [
+          "Only kidding",
+          "Old kettle",
+          "Our king"
+        ],
+        "ar": [
+          "أونلي كيدينغ",
+          "أولد كتل",
+          "أور كينغ"
+        ],
+        "es": [
+          "Only kidding",
+          "Old kettle",
+          "Our king"
+        ]
+      },
+      "note": {
+        "en": "Abbreviating funny misspellings was a fad among Boston writers",
+        "fr": "Abréger des fautes d'orthographe exprès était une mode à Boston",
+        "ar": "كانت موضة ببوسطن يختصروا كلمات مكتوبة غلط عن قصد",
+        "es": "Abreviar palabras mal escritas a propósito era una moda en Boston"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] OK first printed in the Boston Morning Post, 23 March 1839, as an abbreviation of 'oll korrect'; Allen Walker Read; Merriam-Webster; Britannica"
+      }
+    },
+    {
+      "id": "yf-037",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1897, the cotton candy machine was co-invented by a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1897, la machine à barbe à papa a été co-inventée par un ___",
+          "ar": "سنة 1897، ماكينة غزل البنات شارك باختراعها ___",
+          "es": "En 1897, la máquina de algodón de azúcar la coinventó un ___"
+        }
+      },
+      "truth": {
+        "en": "Dentist",
+        "fr": "Dentiste",
+        "ar": "طبيب أسنان",
+        "es": "Dentista"
+      },
+      "truthAlt": {
+        "en": [
+          "A dentist",
+          "Tooth doctor"
+        ],
+        "fr": [
+          "Un dentiste"
+        ],
+        "ar": [
+          "حكيم سنان"
+        ],
+        "es": [
+          "Un dentista"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Barber",
+          "Clown",
+          "Beekeeper"
+        ],
+        "fr": [
+          "Coiffeur",
+          "Clown",
+          "Apiculteur"
+        ],
+        "ar": [
+          "حلاق",
+          "مهرج",
+          "نحال"
+        ],
+        "es": [
+          "Barbero",
+          "Payaso",
+          "Apicultor"
+        ]
+      },
+      "note": {
+        "en": "William Morrison and a sweet maker sold it as Fairy Floss at the 1904 World's Fair",
+        "fr": "William Morrison et un confiseur l'ont vendue à l'Exposition universelle de 1904",
+        "ar": "ويليام موريسون وصانع حلو باعوها بالمعرض العالمي سنة 1904",
+        "es": "William Morrison y un confitero la vendieron en la Exposición Universal de 1904"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Machine-spun 'Fairy Floss', invented 1897 by dentist William Morrison and confectioner John C. Wharton, sold at the 1904 World's Fair; Smithsonian; History.com"
+      }
+    },
+    {
+      "id": "yf-038",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1964, a 17-year-old student stayed awake for about ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1964, un lycéen de 17 ans est resté éveillé environ ___",
+          "ar": "سنة 1964، تلميذ عمرو 17 سنة ضل فايق حوالي ___",
+          "es": "En 1964, un estudiante de 17 años estuvo despierto unos ___"
+        }
+      },
+      "truth": {
+        "en": "11 days",
+        "fr": "11 jours",
+        "ar": "11 يوم",
+        "es": "11 días"
+      },
+      "truthAlt": {
+        "en": [
+          "Eleven days",
+          "264 hours"
+        ],
+        "fr": [
+          "Onze jours",
+          "264 heures"
+        ],
+        "ar": [
+          "حداعش يوم",
+          "264 ساعة"
+        ],
+        "es": [
+          "Once días",
+          "264 horas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "3 days",
+          "A month",
+          "6 days"
+        ],
+        "fr": [
+          "3 jours",
+          "Un mois",
+          "6 jours"
+        ],
+        "ar": [
+          "3 أيام",
+          "شهر",
+          "6 أيام"
+        ],
+        "es": [
+          "3 días",
+          "Un mes",
+          "6 días"
+        ]
+      },
+      "note": {
+        "en": "Randy Gardner did it for a school science fair. Don't try it at home",
+        "fr": "Randy Gardner l'a fait pour un concours scientifique. À ne pas refaire",
+        "ar": "راندي غاردنر عملها لمعرض علوم بالمدرسة. ما تجربوها",
+        "es": "Randy Gardner lo hizo para una feria de ciencias. No lo intentes"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Randy Gardner stayed awake 264 hours (about 11 days), San Diego, 1963-1964; Stanford sleep research (William Dement); Britannica"
+      }
+    },
+    {
+      "id": "yf-039",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1991, one of the first webcams was set up to watch a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1991, l'une des premières webcams servait à surveiller une ___",
+          "ar": "سنة 1991، وحدة من أول كاميرات الويب ركبوها لتراقب ___",
+          "es": "En 1991, una de las primeras webcams se instaló para vigilar una ___"
+        }
+      },
+      "truth": {
+        "en": "Coffee pot",
+        "fr": "Cafetière",
+        "ar": "إبريق قهوة",
+        "es": "Cafetera"
+      },
+      "truthAlt": {
+        "en": [
+          "Coffee machine",
+          "Pot of coffee"
+        ],
+        "fr": [
+          "Machine à café",
+          "Cafetière pleine"
+        ],
+        "ar": [
+          "ماكينة قهوة",
+          "ركوة قهوة"
+        ],
+        "es": [
+          "Máquina de café"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Fish tank",
+          "Parking space",
+          "Cat flap"
+        ],
+        "fr": [
+          "Aquarium",
+          "Place de parking",
+          "Chatière"
+        ],
+        "ar": [
+          "حوض سمك",
+          "موقف سيارة",
+          "باب القطة"
+        ],
+        "es": [
+          "Pecera",
+          "Plaza de aparcamiento",
+          "Gatera"
+        ]
+      },
+      "note": {
+        "en": "Cambridge scientists wanted to know if the pot was full before walking over",
+        "fr": "Des chercheurs de Cambridge voulaient savoir si elle était pleine avant de se déplacer",
+        "ar": "علما بكامبريدج كان بدن يعرفوا إذا الإبريق مليان قبل ما يمشوا لعنده",
+        "es": "Unos científicos de Cambridge querían saber si estaba llena antes de ir"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Trojan Room coffee pot, University of Cambridge Computer Laboratory, webcam 1991, online 1993; University of Cambridge"
+      }
+    },
+    {
+      "id": "yf-040",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1995, one of the first things sold on eBay was a broken ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1995, l'un des premiers objets vendus sur eBay était un ___ cassé",
+          "ar": "سنة 1995، من أول الأغراض اللي انباعت على إيباي ___ مكسور",
+          "es": "En 1995, una de las primeras cosas vendidas en eBay fue un ___ roto"
+        }
+      },
+      "truth": {
+        "en": "Laser pointer",
+        "fr": "Pointeur laser",
+        "ar": "مؤشر ليزر",
+        "es": "Puntero láser"
+      },
+      "truthAlt": {
+        "en": [
+          "Laser pen"
+        ],
+        "fr": [
+          "Stylo laser"
+        ],
+        "ar": [
+          "قلم ليزر"
+        ],
+        "es": [
+          "Láser"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Toaster",
+          "Umbrella",
+          "Mobile phone"
+        ],
+        "fr": [
+          "Grille-pain",
+          "Parapluie",
+          "Téléphone portable"
+        ],
+        "ar": [
+          "محمصة خبز",
+          "شمسية",
+          "تلفون خلوي"
+        ],
+        "es": [
+          "Tostador",
+          "Paraguas",
+          "Teléfono móvil"
+        ]
+      },
+      "note": {
+        "en": "The founder asked the buyer why. He collected broken laser pointers",
+        "fr": "Le fondateur a demandé pourquoi : l'acheteur collectionnait les pointeurs cassés",
+        "ar": "المؤسس سأل الشاري ليش، طلع بيجمع مؤشرات ليزر مكسورة",
+        "es": "El fundador preguntó por qué: el comprador coleccionaba punteros rotos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] First item sold on AuctionWeb (eBay), 1995: a broken laser pointer bought for $14.83; eBay Inc. history"
+      }
+    },
+    {
+      "id": "yf-041",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 2005, the very first YouTube video was filmed at a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 2005, la toute première vidéo YouTube a été filmée dans un ___",
+          "ar": "سنة 2005، أول فيديو على يوتيوب انصور بـ ___",
+          "es": "En 2005, el primer video de YouTube se grabó en un ___"
+        }
+      },
+      "truth": {
+        "en": "Zoo",
+        "fr": "Zoo",
+        "ar": "حديقة حيوانات",
+        "es": "Zoo"
+      },
+      "truthAlt": {
+        "en": [
+          "The zoo",
+          "San Diego Zoo"
+        ],
+        "fr": [
+          "Le zoo"
+        ],
+        "ar": [
+          "حديقة الحيوانات",
+          "زو"
+        ],
+        "es": [
+          "Zoológico",
+          "El zoo"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Birthday party",
+          "Beach",
+          "Car wash"
+        ],
+        "fr": [
+          "Anniversaire",
+          "Plage",
+          "Lavage auto"
+        ],
+        "ar": [
+          "عيد ميلاد",
+          "البحر",
+          "مغسل سيارات"
+        ],
+        "es": [
+          "Cumpleaños",
+          "Playa",
+          "Lavadero de coches"
+        ]
+      },
+      "note": {
+        "en": "Co-founder Jawed Karim talks about elephants for 18 seconds",
+        "fr": "Le cofondateur Jawed Karim parle d'éléphants pendant 18 secondes",
+        "ar": "الشريك المؤسس جاويد كريم بيحكي عن الفيلة 18 ثانية",
+        "es": "El cofundador Jawed Karim habla de elefantes durante 18 segundos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] 'Me at the zoo', first YouTube video, uploaded 23 April 2005 by Jawed Karim at the San Diego Zoo; YouTube"
+      }
+    },
+    {
+      "id": "yf-042",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 2017, a Japanese rail company apologised because a train left ___ early",
+        "translit": null,
+        "display": {
+          "fr": "En 2017, une compagnie ferroviaire japonaise s'est excusée car un train était parti ___ en avance",
+          "ar": "سنة 2017، شركة قطارات يابانية اعتذرت لأنو قطار فلّ قبل وقتو بـ ___",
+          "es": "En 2017, una compañía japonesa de trenes pidió perdón porque un tren salió ___ antes"
+        }
+      },
+      "truth": {
+        "en": "20 seconds",
+        "fr": "20 secondes",
+        "ar": "20 ثانية",
+        "es": "20 segundos"
+      },
+      "truthAlt": {
+        "en": [
+          "Twenty seconds"
+        ],
+        "fr": [
+          "Vingt secondes"
+        ],
+        "ar": [
+          "عشرين ثانية"
+        ],
+        "es": [
+          "Veinte segundos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "5 minutes",
+          "1 hour",
+          "2 minutes"
+        ],
+        "fr": [
+          "5 minutes",
+          "1 heure",
+          "2 minutes"
+        ],
+        "ar": [
+          "5 دقايق",
+          "ساعة",
+          "دقيقتين"
+        ],
+        "es": [
+          "5 minutos",
+          "1 hora",
+          "2 minutos"
+        ]
+      },
+      "note": {
+        "en": "The company called it a truly inexcusable inconvenience",
+        "fr": "La compagnie a parlé d'un désagrément vraiment inexcusable",
+        "ar": "الشركة قالت إنو إزعاج ما بينغفر",
+        "es": "La empresa habló de una molestia realmente imperdonable"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Tsukuba Express apology, November 2017, train left Minami-Nagareyama 20 seconds early; BBC; The Guardian"
+      }
+    },
+    {
+      "id": "yf-043",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "When it was unveiled in 1886, the Statue of Liberty was not green but ___",
+        "translit": null,
+        "display": {
+          "fr": "Lors de son inauguration en 1886, la statue de la Liberté n'était pas verte mais ___",
+          "ar": "لما دشنوه سنة 1886، تمثال الحرية ما كان أخضر، كان ___",
+          "es": "Cuando se inauguró en 1886, la Estatua de la Libertad no era verde sino ___"
+        }
+      },
+      "truth": {
+        "en": "Copper brown",
+        "fr": "Couleur cuivre",
+        "ar": "لون النحاس",
+        "es": "Color cobre"
+      },
+      "truthAlt": {
+        "en": [
+          "Shiny brown",
+          "Copper colour",
+          "Brown"
+        ],
+        "fr": [
+          "Marron cuivré",
+          "Cuivrée",
+          "Marron"
+        ],
+        "ar": [
+          "بني نحاسي",
+          "بني"
+        ],
+        "es": [
+          "Marrón cobrizo",
+          "Cobriza",
+          "Marrón"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Pure white",
+          "Gold",
+          "Silver grey"
+        ],
+        "fr": [
+          "Toute blanche",
+          "Dorée",
+          "Gris argent"
+        ],
+        "ar": [
+          "أبيض",
+          "دهبي",
+          "رمادي فضي"
+        ],
+        "es": [
+          "Blanca",
+          "Dorada",
+          "Gris plata"
+        ]
+      },
+      "note": {
+        "en": "Rain and air slowly turned the copper green over about 30 years",
+        "fr": "La pluie et l'air ont verdi le cuivre en une trentaine d'années",
+        "ar": "الشتي والهوا خضّروا النحاس بحوالي 30 سنة",
+        "es": "La lluvia y el aire volvieron verde el cobre en unos 30 años"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Statue of Liberty dedicated 1886 in copper's natural colour; green patina formed by about 1920; National Park Service"
+      }
+    },
+    {
+      "id": "yf-044",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1974, farmers digging a well in China found thousands of ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1974, des paysans qui creusaient un puits en Chine ont trouvé des milliers de ___",
+          "ar": "سنة 1974، فلاحين عم يحفروا بير بالصين لقوا آلاف ___",
+          "es": "En 1974, unos campesinos que cavaban un pozo en China encontraron miles de ___"
+        }
+      },
+      "truth": {
+        "en": "Clay soldiers",
+        "fr": "Soldats en terre cuite",
+        "ar": "جنود من فخار",
+        "es": "Soldados de barro"
+      },
+      "truthAlt": {
+        "en": [
+          "Terracotta warriors",
+          "Statues of soldiers"
+        ],
+        "fr": [
+          "Guerriers en terre cuite",
+          "Statues de soldats"
+        ],
+        "ar": [
+          "تماثيل جنود",
+          "جيش الطين"
+        ],
+        "es": [
+          "Guerreros de terracota",
+          "Estatuas de soldados"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Gold coins",
+          "Dinosaur bones",
+          "Silk robes"
+        ],
+        "fr": [
+          "Pièces d'or",
+          "Os de dinosaures",
+          "Robes de soie"
+        ],
+        "ar": [
+          "عملات دهب",
+          "عضام ديناصورات",
+          "تياب حرير"
+        ],
+        "es": [
+          "Monedas de oro",
+          "Huesos de dinosaurio",
+          "Túnicas de seda"
+        ]
+      },
+      "note": {
+        "en": "The Terracotta Army guards the tomb of China's first emperor",
+        "fr": "L'armée de terre cuite garde le tombeau du premier empereur de Chine",
+        "ar": "جيش الطين بيحرس قبر أول إمبراطور للصين",
+        "es": "El ejército de terracota custodia la tumba del primer emperador chino"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Terracotta Army discovered March 1974 by farmers digging a well near Xi'an; UNESCO World Heritage (Mausoleum of the First Qin Emperor); Britannica"
+      }
+    },
+    {
+      "id": "yf-045",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1993, the lab that invented the World Wide Web decided to make it ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1993, le labo qui a inventé le Web a décidé de le rendre ___",
+          "ar": "سنة 1993، المختبر اللي اخترع شبكة الويب قرر يخليها ___",
+          "es": "En 1993, el laboratorio que inventó la World Wide Web decidió hacerla ___"
+        }
+      },
+      "truth": {
+        "en": "Free for everyone",
+        "fr": "Gratuit pour tous",
+        "ar": "مجانية للكل",
+        "es": "Gratis para todos"
+      },
+      "truthAlt": {
+        "en": [
+          "Free",
+          "Free to use"
+        ],
+        "fr": [
+          "Gratuit",
+          "Libre"
+        ],
+        "ar": [
+          "ببلاش",
+          "مجانية"
+        ],
+        "es": [
+          "Gratis",
+          "Libre"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Members only",
+          "A paid service",
+          "Top secret"
+        ],
+        "fr": [
+          "Réservé aux membres",
+          "Payant",
+          "Top secret"
+        ],
+        "ar": [
+          "للأعضاء بس",
+          "بمصاري",
+          "سرية"
+        ],
+        "es": [
+          "Solo para socios",
+          "De pago",
+          "Secreta"
+        ]
+      },
+      "note": {
+        "en": "CERN gave away the web software on 30 April 1993, so anyone could build on it",
+        "fr": "Le CERN a offert le logiciel du Web le 30 avril 1993",
+        "ar": "سيرن عطى برنامج الويب للعالم ببلاش بـ 30 نيسان 1993",
+        "es": "El CERN regaló el software de la web el 30 de abril de 1993"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] CERN put the World Wide Web software in the public domain on 30 April 1993; CERN (home.cern, 'The birth of the Web')"
+      }
+    }
+  ]
+}

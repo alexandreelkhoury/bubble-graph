@@ -1,30 +1,29 @@
 // Bluff packs (JAMAA-PLATFORM §5.1, §6.1; GAME-BLUFF §11), owned by the G2 lane D. Sorted, explicit imports:
 // content-lint warns when a pack file under content/bluff/ is not listed here (it would not ship).
-// Round 1 (proverb_end): bluff-en-sayings, bluff-es-refranes, bluff-fr-proverbes, bluff-lb-proverbs.
-// Round 2 (fact_blank, word_meaning): bluff-me-facts, bluff-world-facts, bluff-lb-teta-words.
+// Rounds 1 and 2 ("Impossible but true", fact_blank; word_meaning fills): bluff-me-facts, bluff-odd-facts,
+// bluff-world-facts, bluff-year-facts, bluff-lb-teta-words. Round 1 has no proverb_end pack, so it draws from this pool
+// (GAME-BLUFF §11.4 short pools) and keeps its Spot-on rule.
 // Final (no_truth), one pack per language, each written natively: bluff-no-truth-{ar,en,es,fr}.
-import bluffEnSayings from "./bluff-en-sayings.json";
-import bluffEsRefranes from "./bluff-es-refranes.json";
-import bluffFrProverbes from "./bluff-fr-proverbes.json";
-import bluffLbProverbs from "./bluff-lb-proverbs.json";
+// Archived (owner, 2026-11-12: sayings are out of the game): the four sayings packs live in content/archive/bluff/,
+// which no registry, linter or test loads as live content. Re-import them here to bring round 1 sayings back.
 import bluffLbTetaWords from "./bluff-lb-teta-words.json";
 import bluffMeFacts from "./bluff-me-facts.json";
 import bluffNoTruthAr from "./bluff-no-truth-ar.json";
 import bluffNoTruthEn from "./bluff-no-truth-en.json";
 import bluffNoTruthEs from "./bluff-no-truth-es.json";
 import bluffNoTruthFr from "./bluff-no-truth-fr.json";
+import bluffOddFacts from "./bluff-odd-facts.json";
 import bluffWorldFacts from "./bluff-world-facts.json";
+import bluffYearFacts from "./bluff-year-facts.json";
 
 export const PACKS: readonly unknown[] = [
-  bluffEnSayings,
-  bluffEsRefranes,
-  bluffFrProverbes,
-  bluffLbProverbs,
   bluffLbTetaWords,
   bluffMeFacts,
   bluffNoTruthAr,
   bluffNoTruthEn,
   bluffNoTruthEs,
   bluffNoTruthFr,
+  bluffOddFacts,
   bluffWorldFacts,
+  bluffYearFacts,
 ];

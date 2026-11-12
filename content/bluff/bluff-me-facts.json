@@ -3405,6 +3405,2301 @@
         "status": "draft",
         "source": "[VERIFY] Britannica, Lebanon (land and relief) ; CIA World Factbook, Lebanon (terrain)"
       }
+    },
+    {
+      "id": "me-046",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In the 1960s, students at a university in Beirut built and launched their own ___",
+        "translit": null,
+        "display": {
+          "fr": "Dans les années 1960, des étudiants d'une université de Beyrouth ont construit et lancé leurs propres ___",
+          "ar": "بالستينات، طلاب بجامعة ببيروت عمّروا وأطلقوا ___ تبعن",
+          "es": "En los años 60, unos estudiantes de una universidad de Beirut construyeron y lanzaron sus propios ___"
+        }
+      },
+      "truth": {
+        "en": "Space rockets",
+        "fr": "Fusées",
+        "ar": "صواريخ فضائية",
+        "es": "Cohetes"
+      },
+      "truthAlt": {
+        "en": [
+          "Rockets",
+          "Cedar rockets"
+        ],
+        "fr": [
+          "Fusées spatiales",
+          "Fusées Cedar"
+        ],
+        "ar": [
+          "صواريخ",
+          "صواريخ الأرز"
+        ],
+        "es": [
+          "Cohetes espaciales",
+          "Cohetes Cedar"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Submarine",
+          "Satellite dish",
+          "Flying car"
+        ],
+        "fr": [
+          "Sous-marins",
+          "Paraboles",
+          "Voitures volantes"
+        ],
+        "ar": [
+          "غواصة",
+          "صحن لاقط",
+          "سيارة طايرة"
+        ],
+        "es": [
+          "Submarinos",
+          "Satélites",
+          "Coches voladores"
+        ]
+      },
+      "note": {
+        "en": "The Lebanese Rocket Society's Cedar rockets reached the upper atmosphere",
+        "fr": "Les fusées Cedar de la Société libanaise des fusées ont atteint la haute atmosphère",
+        "ar": "صواريخ الأرز تبع الجمعية اللبنانية للصواريخ وصلت لطبقات الجو العليا",
+        "es": "Los cohetes Cedar de la Sociedad Libanesa de Cohetes llegaron a la alta atmósfera"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Lebanese Rocket Society, Haigazian University, Cedar rockets launched 1961-1966 (Manoug Manougian); BBC; documentary The Lebanese Rocket Society (2012)"
+      }
+    },
+    {
+      "id": "me-047",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "A giant unfinished fairground in Tripoli, Lebanon, was designed by the architect of ___",
+        "translit": null,
+        "display": {
+          "fr": "Une immense foire inachevée à Tripoli, au Liban, a été dessinée par l'architecte de ___",
+          "ar": "معرض عملاق ما خلص بطرابلس بلبنان صممو مهندس ___",
+          "es": "Una enorme feria sin terminar en Trípoli, Líbano, la diseñó el arquitecto de ___"
+        }
+      },
+      "truth": {
+        "en": "Brasília",
+        "fr": "Brasília",
+        "ar": "برازيليا",
+        "es": "Brasilia"
+      },
+      "truthAlt": {
+        "en": [
+          "Brasilia",
+          "Brazil's capital"
+        ],
+        "fr": [
+          "Brasilia",
+          "La capitale du Brésil"
+        ],
+        "ar": [
+          "عاصمة البرازيل"
+        ],
+        "es": [
+          "La capital de Brasil"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "The Eiffel Tower",
+          "Dubai's Burj Khalifa",
+          "The Sydney Opera House"
+        ],
+        "fr": [
+          "La tour Eiffel",
+          "Burj Khalifa",
+          "L'Opéra de Sydney"
+        ],
+        "ar": [
+          "برج إيفل",
+          "برج خليفة",
+          "أوبرا سيدني"
+        ],
+        "es": [
+          "La torre Eiffel",
+          "El Burj Khalifa",
+          "La Ópera de Sídney"
+        ]
+      },
+      "note": {
+        "en": "Oscar Niemeyer drew it in the 1960s. UNESCO listed it in 2023",
+        "fr": "Oscar Niemeyer l'a conçue dans les années 1960. Classée par l'UNESCO en 2023",
+        "ar": "أوسكار نيماير رسمو بالستينات، والأونيسكو سجلتو سنة 2023",
+        "es": "Oscar Niemeyer la proyectó en los años 60. La UNESCO la inscribió en 2023"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Rashid Karami International Fair, Tripoli, designed by Oscar Niemeyer (architect of Brasília) from 1962, unfinished; UNESCO World Heritage 2023"
+      }
+    },
+    {
+      "id": "me-048",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Hollywood actor Keanu Reeves was born in ___",
+        "translit": null,
+        "display": {
+          "fr": "L'acteur Keanu Reeves est né à ___",
+          "ar": "الممثل الهوليوودي كيانو ريفز خلق بـ ___",
+          "es": "El actor de Hollywood Keanu Reeves nació en ___"
+        }
+      },
+      "truth": {
+        "en": "Beirut",
+        "fr": "Beyrouth",
+        "ar": "بيروت",
+        "es": "Beirut"
+      },
+      "truthAlt": {
+        "en": [
+          "Lebanon"
+        ],
+        "fr": [
+          "Au Liban"
+        ],
+        "ar": [
+          "لبنان"
+        ],
+        "es": [
+          "Líbano"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Honolulu",
+          "Toronto",
+          "Sydney"
+        ],
+        "fr": [
+          "Honolulu",
+          "Toronto",
+          "Sydney"
+        ],
+        "ar": [
+          "هونولولو",
+          "تورونتو",
+          "سيدني"
+        ],
+        "es": [
+          "Honolulu",
+          "Toronto",
+          "Sídney"
+        ]
+      },
+      "note": {
+        "en": "His family moved several times; he grew up mostly in Toronto",
+        "fr": "Sa famille a beaucoup déménagé ; il a surtout grandi à Toronto",
+        "ar": "عيلتو تنقلت كتير، وكبر بالأغلب بتورونتو",
+        "es": "Su familia se mudó varias veces; creció sobre todo en Toronto"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Keanu Reeves was born in Beirut, Lebanon, on 2 September 1964; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "me-049",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "By some estimates, more people of Lebanese descent live in ___ than in Lebanon",
+        "translit": null,
+        "display": {
+          "fr": "Selon certaines estimations, il y a plus de descendants de Libanais au ___ qu'au Liban",
+          "ar": "حسب بعض التقديرات، في ناس من أصل لبناني بـ ___ أكتر من لبنان",
+          "es": "Según algunas estimaciones, en ___ viven más descendientes de libaneses que en el Líbano"
+        }
+      },
+      "truth": {
+        "en": "Brazil",
+        "fr": "Brésil",
+        "ar": "البرازيل",
+        "es": "Brasil"
+      },
+      "truthAlt": {
+        "en": [
+          "Brasil"
+        ],
+        "fr": [
+          "Le Brésil"
+        ],
+        "ar": [
+          "برازيل"
+        ],
+        "es": [
+          "El Brasil"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Australia",
+          "Canada",
+          "France"
+        ],
+        "fr": [
+          "Canada",
+          "Mexique",
+          "Sénégal"
+        ],
+        "ar": [
+          "أستراليا",
+          "كندا",
+          "فرنسا"
+        ],
+        "es": [
+          "Australia",
+          "Canadá",
+          "Francia"
+        ]
+      },
+      "note": {
+        "en": "Waves of emigration since the 1880s built a huge community in São Paulo and beyond",
+        "fr": "Les vagues d'émigration depuis les années 1880 ont bâti une grande communauté",
+        "ar": "موجات الهجرة من التمانينات تبع القرن 19 عملت جالية كبيرة بساو باولو وغيرها",
+        "es": "Las olas de emigración desde 1880 crearon una gran comunidad en São Paulo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Brazil is estimated by Brazilian and Lebanese sources to have 7 to 10 million people of Lebanese descent, more than Lebanon's population; BBC; Lebanese Ministry of Foreign Affairs"
+      }
+    },
+    {
+      "id": "me-050",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "In 2014, UNESCO listed Lebanon's ___, duels of improvised sung poetry",
+        "translit": null,
+        "display": {
+          "fr": "En 2014, l'UNESCO a inscrit le ___ libanais, des duels de poésie chantée improvisée",
+          "ar": "سنة 2014، الأونيسكو سجّلت ___ اللبناني، مبارزات شعر مغنى مرتجل",
+          "es": "En 2014, la UNESCO inscribió el ___ libanés, duelos de poesía cantada improvisada"
+        }
+      },
+      "truth": {
+        "en": "Zajal",
+        "fr": "Zajal",
+        "ar": "الزجل",
+        "es": "Zajal"
+      },
+      "truthAlt": {
+        "en": [
+          "Al-zajal",
+          "Zajal poetry"
+        ],
+        "fr": [
+          "Al-zajal"
+        ],
+        "ar": [
+          "زجل"
+        ],
+        "es": [
+          "Al-zajal"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Dabke",
+          "Mijana",
+          "Tarab"
+        ],
+        "fr": [
+          "Dabké",
+          "Mijana",
+          "Tarab"
+        ],
+        "ar": [
+          "الدبكة",
+          "الميجانا",
+          "الطرب"
+        ],
+        "es": [
+          "Dabke",
+          "Mijana",
+          "Tarab"
+        ]
+      },
+      "note": {
+        "en": "Two teams of poets answer each other in rhyme, often with a drum and a chorus",
+        "fr": "Deux équipes de poètes se répondent en rimes, souvent avec tambour et chœur",
+        "ar": "فريقين شعراء بيردوا على بعض بالقافية، مع دربكة وكورس",
+        "es": "Dos equipos de poetas se responden en rima, a menudo con tambor y coro"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Lebanese al-Zajal (recited or sung poetry) inscribed on the UNESCO Representative List of the Intangible Cultural Heritage, 2014; ich.unesco.org"
+      }
+    },
+    {
+      "id": "me-051",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "In Arabic, the word Sahara simply means ___",
+        "translit": null,
+        "display": {
+          "fr": "En arabe, le mot Sahara veut simplement dire ___",
+          "ar": "بالعربي، كلمة صحارى يعني ببساطة ___",
+          "es": "En árabe, la palabra Sahara significa simplemente ___"
+        }
+      },
+      "truth": {
+        "en": "Deserts",
+        "fr": "Déserts",
+        "ar": "صحاري",
+        "es": "Desiertos"
+      },
+      "truthAlt": {
+        "en": [
+          "Desert",
+          "The desert"
+        ],
+        "fr": [
+          "Désert",
+          "Le désert"
+        ],
+        "ar": [
+          "صحرا",
+          "الصحرا"
+        ],
+        "es": [
+          "Desierto",
+          "El desierto"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Golden sand",
+          "Endless sun",
+          "Thirst"
+        ],
+        "fr": [
+          "Sable doré",
+          "Soleil sans fin",
+          "Soif"
+        ],
+        "ar": [
+          "رمل دهبي",
+          "شمس ما بتخلص",
+          "عطش"
+        ],
+        "es": [
+          "Arena dorada",
+          "Sol eterno",
+          "Sed"
+        ]
+      },
+      "note": {
+        "en": "So the Sahara Desert is, word for word, the Desert Desert",
+        "fr": "Le désert du Sahara, c'est donc le désert des déserts",
+        "ar": "يعني صحراء الصحارى بالحرف",
+        "es": "Así que el desierto del Sahara es, literalmente, el desierto desierto"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Sahara from Arabic sahra, plural sahara, meaning 'desert'; Encyclopaedia Britannica 'Sahara'"
+      }
+    },
+    {
+      "id": "me-052",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "To fight sandstorms, a camel has three ___ on each eye",
+        "translit": null,
+        "display": {
+          "fr": "Contre les tempêtes de sable, le chameau a trois ___ sur chaque œil",
+          "ar": "ليتحمّل عواصف الرمل، عند الجمل تلات ___ على كل عين",
+          "es": "Contra las tormentas de arena, el camello tiene tres ___ en cada ojo"
+        }
+      },
+      "truth": {
+        "en": "Eyelids",
+        "fr": "Paupières",
+        "ar": "جفون",
+        "es": "Párpados"
+      },
+      "truthAlt": {
+        "en": [
+          "Lids"
+        ],
+        "fr": [
+          "Paupières par œil"
+        ],
+        "ar": [
+          "جفن",
+          "أجفان"
+        ],
+        "es": [
+          "Párpados por ojo"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Tear ducts",
+          "Pupils",
+          "Eyebrows"
+        ],
+        "fr": [
+          "Larmes",
+          "Pupilles",
+          "Sourcils"
+        ],
+        "ar": [
+          "دموع",
+          "بؤبؤ",
+          "حواجب"
+        ],
+        "es": [
+          "Lagrimales",
+          "Pupilas",
+          "Cejas"
+        ]
+      },
+      "note": {
+        "en": "The third one is see-through, so it can close it and still see",
+        "fr": "La troisième est transparente : il peut la fermer et voir quand même",
+        "ar": "الجفن التالت شفاف، فبيسكرو وبيضل يشوف",
+        "es": "El tercero es transparente: puede cerrarlo y seguir viendo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Camels have three eyelids, including a thin nictitating membrane that protects against sand, plus two rows of eyelashes; San Diego Zoo Wildlife Alliance; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "me-053",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 2016, the United Arab Emirates appointed a minister of ___",
+        "translit": null,
+        "display": {
+          "fr": "En 2016, les Émirats arabes unis ont nommé une ministre du ___",
+          "ar": "سنة 2016، الإمارات عيّنت وزيرة ___",
+          "es": "En 2016, los Emiratos Árabes Unidos nombraron una ministra de la ___"
+        }
+      },
+      "truth": {
+        "en": "Happiness",
+        "fr": "Bonheur",
+        "ar": "السعادة",
+        "es": "Felicidad"
+      },
+      "truthAlt": {
+        "en": [
+          "Joy",
+          "Happiness and wellbeing"
+        ],
+        "fr": [
+          "Bien-être",
+          "Le bonheur"
+        ],
+        "ar": [
+          "سعادة",
+          "الفرح"
+        ],
+        "es": [
+          "Alegría",
+          "La felicidad"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Sleep",
+          "Weather",
+          "Laughter"
+        ],
+        "fr": [
+          "Sommeil",
+          "Climat",
+          "Rire"
+        ],
+        "ar": [
+          "النوم",
+          "الطقس",
+          "الضحك"
+        ],
+        "es": [
+          "Siesta",
+          "Meteorología",
+          "Risa"
+        ]
+      },
+      "note": {
+        "en": "The job was to make government policy aim for people's happiness",
+        "fr": "Le but : orienter la politique du gouvernement vers le bonheur des gens",
+        "ar": "المهمة كانت توجه سياسة الحكومة لسعادة الناس",
+        "es": "Su tarea era orientar la política del gobierno hacia la felicidad de la gente"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] UAE appointed Ohood Al Roumi Minister of State for Happiness in February 2016; UAE Government portal (u.ae); BBC"
+      }
+    },
+    {
+      "id": "me-054",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 2017, Saudi Arabia gave citizenship to a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 2017, l'Arabie saoudite a accordé la nationalité à un ___",
+          "ar": "سنة 2017، السعودية عطت الجنسية لـ ___",
+          "es": "En 2017, Arabia Saudí dio la nacionalidad a un ___"
+        }
+      },
+      "truth": {
+        "en": "Robot",
+        "fr": "Robot",
+        "ar": "روبوت",
+        "es": "Robot"
+      },
+      "truthAlt": {
+        "en": [
+          "A robot",
+          "Humanoid robot"
+        ],
+        "fr": [
+          "Un robot",
+          "Robot humanoïde"
+        ],
+        "ar": [
+          "إنسان آلي"
+        ],
+        "es": [
+          "Un robot",
+          "Robot humanoide"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Falcon",
+          "Racing camel",
+          "Dolphin"
+        ],
+        "fr": [
+          "Faucon",
+          "Chameau de course",
+          "Dauphin"
+        ],
+        "ar": [
+          "صقر",
+          "جمل سباق",
+          "دلفين"
+        ],
+        "es": [
+          "Halcón",
+          "Camello de carreras",
+          "Delfín"
+        ]
+      },
+      "note": {
+        "en": "Sophia, a humanoid robot, received it at a tech conference in Riyadh",
+        "fr": "Sophia, une robot humanoïde, l'a reçue lors d'une conférence à Riyad",
+        "ar": "صوفيا، روبوت شكلها بشري، أخدتها بمؤتمر تكنولوجيا بالرياض",
+        "es": "Sophia, una robot humanoide, la recibió en una conferencia en Riad"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Saudi Arabia granted citizenship to the humanoid robot Sophia (Hanson Robotics) in October 2017; BBC; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "me-055",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 2010, a hotel in Abu Dhabi installed a cash machine that gave out ___",
+        "translit": null,
+        "display": {
+          "fr": "En 2010, un hôtel d'Abou Dhabi a installé un distributeur qui délivrait des ___",
+          "ar": "سنة 2010، أوتيل بأبوظبي ركّب صراف آلي بيطلّع ___",
+          "es": "En 2010, un hotel de Abu Dabi instaló un cajero que daba ___"
+        }
+      },
+      "truth": {
+        "en": "Gold bars",
+        "fr": "Lingots d'or",
+        "ar": "سبايك دهب",
+        "es": "Lingotes de oro"
+      },
+      "truthAlt": {
+        "en": [
+          "Gold",
+          "Gold coins"
+        ],
+        "fr": [
+          "Or",
+          "Pièces d'or"
+        ],
+        "ar": [
+          "دهب",
+          "ليرات دهب"
+        ],
+        "es": [
+          "Oro",
+          "Monedas de oro"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Perfume",
+          "Dates",
+          "Pearls"
+        ],
+        "fr": [
+          "Parfums",
+          "Dattes",
+          "Perles"
+        ],
+        "ar": [
+          "عطور",
+          "تمر",
+          "لولو"
+        ],
+        "es": [
+          "Perfumes",
+          "Dátiles",
+          "Perlas"
+        ]
+      },
+      "note": {
+        "en": "Prices on the screen updated with the gold market every few minutes",
+        "fr": "Les prix à l'écran suivaient le cours de l'or toutes les quelques minutes",
+        "ar": "الأسعار عالشاشة كانت تتغير مع سوق الدهب كل كم دقيقة",
+        "es": "Los precios de la pantalla seguían al mercado del oro cada pocos minutos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Emirates Palace hotel, Abu Dhabi, installed a 'Gold to Go' ATM dispensing gold bars and coins in May 2010; BBC; Reuters"
+      }
+    },
+    {
+      "id": "me-056",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Since 2013, Dubai's police patrol cars have included a ___",
+        "translit": null,
+        "display": {
+          "fr": "Depuis 2013, la police de Dubaï a des voitures de patrouille comme une ___",
+          "ar": "من 2013، بين سيارات دوريات شرطة دبي في ___",
+          "es": "Desde 2013, entre los coches patrulla de la policía de Dubái hay un ___"
+        }
+      },
+      "truth": {
+        "en": "Bugatti",
+        "fr": "Bugatti",
+        "ar": "بوغاتي",
+        "es": "Bugatti"
+      },
+      "truthAlt": {
+        "en": [
+          "Lamborghini",
+          "Supercar",
+          "Bugatti Veyron"
+        ],
+        "fr": [
+          "Lamborghini",
+          "Supercar",
+          "Bugatti Veyron"
+        ],
+        "ar": [
+          "لامبورغيني",
+          "سيارة سوبر",
+          "بوغاتي فيرون"
+        ],
+        "es": [
+          "Lamborghini",
+          "Superdeportivo",
+          "Bugatti Veyron"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Golden camel",
+          "Hovercraft",
+          "Monster truck"
+        ],
+        "fr": [
+          "Calèche dorée",
+          "Aéroglisseur",
+          "Dépanneuse géante"
+        ],
+        "ar": [
+          "جمل دهب",
+          "حوامة",
+          "شاحنة عملاقة"
+        ],
+        "es": [
+          "Camello dorado",
+          "Aerodeslizador",
+          "Camión monstruo"
+        ]
+      },
+      "note": {
+        "en": "The supercars mostly patrol tourist areas and pose for photos",
+        "fr": "Ces bolides patrouillent surtout les quartiers touristiques",
+        "ar": "هالسيارات بتدور أكتر شي بمناطق السياح وبتتصور معن",
+        "es": "Estos bólidos patrullan sobre todo zonas turísticas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Dubai Police added supercars (Lamborghini Aventador, Bugatti Veyron, Ferrari FF) to its fleet in 2013; BBC; Dubai Police"
+      }
+    },
+    {
+      "id": "me-057",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The town of Shibam in Yemen has 16th-century skyscrapers made of ___",
+        "translit": null,
+        "display": {
+          "fr": "La ville de Shibam, au Yémen, a des gratte-ciel du XVIe siècle en ___",
+          "ar": "مدينة شبام باليمن فيها ناطحات سحاب من القرن 16 معمّرة من ___",
+          "es": "La ciudad de Shibam, en Yemen, tiene rascacielos del siglo XVI hechos de ___"
+        }
+      },
+      "truth": {
+        "en": "Mud brick",
+        "fr": "Briques de terre crue",
+        "ar": "طين",
+        "es": "Adobe"
+      },
+      "truthAlt": {
+        "en": [
+          "Mud",
+          "Clay bricks"
+        ],
+        "fr": [
+          "Terre",
+          "Boue",
+          "Brique crue"
+        ],
+        "ar": [
+          "طوب طين",
+          "لبن"
+        ],
+        "es": [
+          "Barro",
+          "Ladrillo de barro"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Palm wood",
+          "Coral",
+          "Copper"
+        ],
+        "fr": [
+          "Bois de palmier",
+          "Corail",
+          "Cuivre"
+        ],
+        "ar": [
+          "خشب نخل",
+          "مرجان",
+          "نحاس"
+        ],
+        "es": [
+          "Madera de palmera",
+          "Coral",
+          "Cobre"
+        ]
+      },
+      "note": {
+        "en": "Nicknamed the Manhattan of the desert, some towers rise about 30 metres",
+        "fr": "Surnommée le Manhattan du désert, certaines tours font une trentaine de mètres",
+        "ar": "بيسموها منهاتن الصحرا، وفي أبراج طولها حوالي 30 متر",
+        "es": "Apodada la Manhattan del desierto, algunas torres miden unos 30 metros"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Old Walled City of Shibam, Yemen, 16th-century tower houses of mud brick, UNESCO World Heritage (whc.unesco.org/en/list/192)"
+      }
+    },
+    {
+      "id": "me-058",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Luke Skywalker's desert home planet is named after a real town in ___",
+        "translit": null,
+        "display": {
+          "fr": "La planète désertique de Luke Skywalker doit son nom à une vraie ville de ___",
+          "ar": "كوكب لوك سكايووكر الصحراوي مسمى على اسم بلدة حقيقية بـ ___",
+          "es": "El planeta desértico de Luke Skywalker se llama como un pueblo real de ___"
+        }
+      },
+      "truth": {
+        "en": "Tunisia",
+        "fr": "Tunisie",
+        "ar": "تونس",
+        "es": "Túnez"
+      },
+      "truthAlt": {
+        "en": [
+          "Tataouine"
+        ],
+        "fr": [
+          "Tataouine"
+        ],
+        "ar": [
+          "تطاوين"
+        ],
+        "es": [
+          "Tataouine"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Morocco",
+          "Jordan",
+          "Egypt"
+        ],
+        "fr": [
+          "Maroc",
+          "Jordanie",
+          "Égypte"
+        ],
+        "ar": [
+          "المغرب",
+          "الأردن",
+          "مصر"
+        ],
+        "es": [
+          "Marruecos",
+          "Jordania",
+          "Egipto"
+        ]
+      },
+      "note": {
+        "en": "The town is Tataouine, and many desert scenes were filmed nearby",
+        "fr": "La ville, c'est Tataouine, et beaucoup de scènes ont été tournées tout près",
+        "ar": "البلدة اسمها تطاوين، وكتير مشاهد صحرا انصوروا حدها",
+        "es": "El pueblo es Tataouine, y muchas escenas se rodaron cerca"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Luke Skywalker's home planet Tatooine is named after the town of Tataouine, Tunisia, where the 1977 film was partly shot; Lucasfilm; BBC"
+      }
+    },
+    {
+      "id": "me-059",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "The oldest known written recipes, from ancient Iraq, are mostly for ___",
+        "translit": null,
+        "display": {
+          "fr": "Les plus vieilles recettes écrites connues, de l'Irak antique, sont surtout des ___",
+          "ar": "أقدم وصفات طبخ مكتوبة منعرفها، من العراق القديم، أغلبها ___",
+          "es": "Las recetas escritas más antiguas, del antiguo Irak, son sobre todo de ___"
+        }
+      },
+      "truth": {
+        "en": "Stews",
+        "fr": "Ragoûts",
+        "ar": "يخاني",
+        "es": "Guisos"
+      },
+      "truthAlt": {
+        "en": [
+          "Broths",
+          "Soups",
+          "Meat stews"
+        ],
+        "fr": [
+          "Bouillons",
+          "Soupes",
+          "Mijotés"
+        ],
+        "ar": [
+          "مرق",
+          "شوربات",
+          "طبخات لحمة"
+        ],
+        "es": [
+          "Caldos",
+          "Sopas",
+          "Estofados"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Bread",
+          "Beer",
+          "Cakes"
+        ],
+        "fr": [
+          "Pains",
+          "Gâteaux",
+          "Grillades"
+        ],
+        "ar": [
+          "خبز",
+          "حلويات",
+          "مشاوي"
+        ],
+        "es": [
+          "Panes",
+          "Pasteles",
+          "Asados"
+        ]
+      },
+      "note": {
+        "en": "Clay tablets from about 1750 BC list some 25 dishes, kept at Yale today",
+        "fr": "Des tablettes d'argile d'environ 1750 av. J.-C. décrivent environ 25 plats",
+        "ar": "ألواح طين من حوالي 1750 قبل الميلاد فيها شي 25 طبخة",
+        "es": "Tablillas de barro de hacia 1750 a. C. recogen unos 25 platos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Yale Babylonian Collection culinary tablets, about 1750 BC, the oldest known written recipes, mostly stews/broths; Yale University; Smithsonian Magazine"
+      }
+    },
+    {
+      "id": "me-060",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1206, engineer Al-Jazari described a water-powered ___ shaped like an elephant",
+        "translit": null,
+        "display": {
+          "fr": "En 1206, l'ingénieur Al-Jazari a décrit une ___ à eau en forme d'éléphant",
+          "ar": "سنة 1206، المهندس الجزري وصف ___ بتشتغل عالمي وشكلها فيل",
+          "es": "En 1206, el ingeniero Al-Jazari describió un ___ de agua con forma de elefante"
+        }
+      },
+      "truth": {
+        "en": "Clock",
+        "fr": "Horloge",
+        "ar": "ساعة",
+        "es": "Reloj"
+      },
+      "truthAlt": {
+        "en": [
+          "Water clock",
+          "Elephant clock"
+        ],
+        "fr": [
+          "Horloge à eau",
+          "Horloge éléphant"
+        ],
+        "ar": [
+          "ساعة مي",
+          "ساعة الفيل"
+        ],
+        "es": [
+          "Reloj de agua",
+          "Reloj elefante"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Fountain",
+          "Music box",
+          "Fan"
+        ],
+        "fr": [
+          "Fontaine",
+          "Boîte à musique",
+          "Balançoire"
+        ],
+        "ar": [
+          "نافورة",
+          "علبة موسيقى",
+          "مروحة"
+        ],
+        "es": [
+          "Ventilador",
+          "Columpio",
+          "Juguete"
+        ]
+      },
+      "note": {
+        "en": "Every half hour, a bird whistled and a figure struck a cymbal",
+        "fr": "Toutes les demi-heures, un oiseau sifflait et un personnage frappait une cymbale",
+        "ar": "كل نص ساعة، عصفور بيصفر وتمثال بيضرب عالصنج",
+        "es": "Cada media hora, un pájaro silbaba y una figura golpeaba un platillo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Al-Jazari's Book of Knowledge of Ingenious Mechanical Devices (1206) describes the water-powered Elephant Clock; Metropolitan Museum of Art; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "me-061",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Around 875, Abbas ibn Firnas jumped from a hill near Córdoba wearing ___",
+        "translit": null,
+        "display": {
+          "fr": "Vers 875, Abbas ibn Firnas a sauté d'une colline près de Cordoue avec des ___",
+          "ar": "حوالي سنة 875، عباس بن فرناس نط من تلة حد قرطبة لابس ___",
+          "es": "Hacia el año 875, Abbás ibn Firnás saltó de una colina cerca de Córdoba con ___"
+        }
+      },
+      "truth": {
+        "en": "Feathered wings",
+        "fr": "Ailes en plumes",
+        "ar": "جوانح ريش",
+        "es": "Alas de plumas"
+      },
+      "truthAlt": {
+        "en": [
+          "Wings",
+          "Wings of feathers"
+        ],
+        "fr": [
+          "Ailes",
+          "Ailes de plumes"
+        ],
+        "ar": [
+          "جوانح",
+          "أجنحة من ريش"
+        ],
+        "es": [
+          "Alas",
+          "Unas alas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A silk parachute",
+          "A kite",
+          "Wooden stilts"
+        ],
+        "fr": [
+          "Parachutes en soie",
+          "Cerfs-volants",
+          "Échasses"
+        ],
+        "ar": [
+          "شمسية حرير",
+          "طيارة ورق",
+          "عكاكيز خشب"
+        ],
+        "es": [
+          "Un paracaídas de seda",
+          "Una cometa",
+          "Zancos"
+        ]
+      },
+      "note": {
+        "en": "He glided a little and hurt his back. Later he said he forgot to add a tail",
+        "fr": "Il a un peu plané et s'est blessé au dos. Il aurait oublié la queue",
+        "ar": "طار شوي وانصاب بضهرو، وبيقولوا نسي يعمل دنب",
+        "es": "Planeó un poco y se lastimó la espalda. Dicen que olvidó ponerse cola"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Abbas ibn Firnas attempted flight near Córdoba around 875 using feathered wings, per al-Maqqari's later account; Encyclopaedia Britannica; Smithsonian National Air and Space Museum"
+      }
+    },
+    {
+      "id": "me-062",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "About 1,000 years ago, Ibn al-Haytham showed that we see because light ___",
+        "translit": null,
+        "display": {
+          "fr": "Il y a environ 1 000 ans, Ibn al-Haytham a montré qu'on voit parce que la lumière ___",
+          "ar": "من حوالي ألف سنة، ابن الهيثم بيّن إننا منشوف لأنو الضو ___",
+          "es": "Hace unos 1000 años, Ibn al-Haytham demostró que vemos porque la luz ___"
+        }
+      },
+      "truth": {
+        "en": "Enters the eye",
+        "fr": "Entre dans l'œil",
+        "ar": "بيفوت عالعين",
+        "es": "Entra en el ojo"
+      },
+      "truthAlt": {
+        "en": [
+          "Goes into the eye",
+          "Comes into our eyes"
+        ],
+        "fr": [
+          "Arrive dans l'œil",
+          "Entre dans les yeux"
+        ],
+        "ar": [
+          "بيدخل العين",
+          "بيوصل للعين"
+        ],
+        "es": [
+          "Llega al ojo",
+          "Entra en los ojos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Leaves the eye",
+          "Bounces off the brain",
+          "Heats the air"
+        ],
+        "fr": [
+          "Sort de l'œil",
+          "Rebondit sur le cerveau",
+          "Chauffe l'air"
+        ],
+        "ar": [
+          "بيطلع من العين",
+          "بينط عن المخ",
+          "بيسخن الهوا"
+        ],
+        "es": [
+          "Sale del ojo",
+          "Rebota en el cerebro",
+          "Calienta el aire"
+        ]
+      },
+      "note": {
+        "en": "Before him, many believed the eyes sent out rays. UNESCO honoured him in 2015",
+        "fr": "Avant lui, beaucoup pensaient que les yeux envoyaient des rayons",
+        "ar": "قبلو، كتار كانوا مفكرين إنو العين بتبعت أشعة",
+        "es": "Antes, muchos creían que los ojos lanzaban rayos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Ibn al-Haytham, Book of Optics (about 1011-1021), showed that vision occurs when light enters the eye; UNESCO International Year of Light 2015; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "me-063",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Starting in 1325, Moroccan traveller Ibn Battuta kept on the road for almost ___",
+        "translit": null,
+        "display": {
+          "fr": "À partir de 1325, le voyageur marocain Ibn Battuta est resté sur les routes presque ___",
+          "ar": "من سنة 1325، الرحالة المغربي ابن بطوطة ضل مسافر تقريبًا ___",
+          "es": "Desde 1325, el viajero marroquí Ibn Battuta pasó en el camino casi ___"
+        }
+      },
+      "truth": {
+        "en": "30 years",
+        "fr": "30 ans",
+        "ar": "30 سنة",
+        "es": "30 años"
+      },
+      "truthAlt": {
+        "en": [
+          "Thirty years",
+          "Three decades"
+        ],
+        "fr": [
+          "Trente ans",
+          "Trois décennies"
+        ],
+        "ar": [
+          "تلاتين سنة",
+          "تلات عقود"
+        ],
+        "es": [
+          "Treinta años",
+          "Tres décadas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "2 years",
+          "6 months",
+          "18 months"
+        ],
+        "fr": [
+          "2 ans",
+          "6 mois",
+          "18 mois"
+        ],
+        "ar": [
+          "سنتين",
+          "6 أشهر",
+          "10 سنين"
+        ],
+        "es": [
+          "2 años",
+          "6 meses",
+          "18 meses"
+        ]
+      },
+      "note": {
+        "en": "He reached West Africa, India and China, much farther than Marco Polo",
+        "fr": "Il a atteint l'Afrique de l'Ouest, l'Inde et la Chine, bien plus loin que Marco Polo",
+        "ar": "وصل لغرب أفريقيا والهند والصين، أبعد بكتير من ماركو بولو",
+        "es": "Llegó a África occidental, la India y China, mucho más lejos que Marco Polo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Ibn Battuta travelled from 1325 to 1354, almost 30 years, covering about 120,000 km; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "me-064",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "The Great Pyramid of Giza stayed the tallest building on Earth for about ___",
+        "translit": null,
+        "display": {
+          "fr": "La grande pyramide de Gizeh est restée le plus haut édifice du monde pendant environ ___",
+          "ar": "هرم الجيزة الكبير ضل أعلى بناية عالأرض حوالي ___",
+          "es": "La Gran Pirámide de Guiza fue el edificio más alto del mundo durante unos ___"
+        }
+      },
+      "truth": {
+        "en": "3,800 years",
+        "fr": "3 800 ans",
+        "ar": "3800 سنة",
+        "es": "3800 años"
+      },
+      "truthAlt": {
+        "en": [
+          "3800 years",
+          "Almost 4,000 years"
+        ],
+        "fr": [
+          "3800 ans",
+          "Presque 4 000 ans"
+        ],
+        "ar": [
+          "تقريبا 4000 سنة"
+        ],
+        "es": [
+          "3 800 años",
+          "Casi 4000 años"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "200 years",
+          "50 years",
+          "900 years"
+        ],
+        "fr": [
+          "200 ans",
+          "50 ans",
+          "900 ans"
+        ],
+        "ar": [
+          "200 سنة",
+          "50 سنة",
+          "900 سنة"
+        ],
+        "es": [
+          "200 años",
+          "50 años",
+          "900 años"
+        ]
+      },
+      "note": {
+        "en": "It was finally beaten in the 1300s by a cathedral spire in England",
+        "fr": "Elle a été battue vers 1300 par la flèche d'une cathédrale anglaise",
+        "ar": "سبقو أخيرًا برج كاتدرائية بإنكلترا بالقرن 14",
+        "es": "La superó hacia 1300 la aguja de una catedral inglesa"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] The Great Pyramid of Giza (about 146 m) was the tallest human-made structure for about 3,800 years, until Lincoln Cathedral's spire (around 1311); Encyclopaedia Britannica; Guinness World Records"
+      }
+    },
+    {
+      "id": "me-065",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Queen Cleopatra lived closer in time to the ___ than to the building of the Great Pyramid",
+        "translit": null,
+        "display": {
+          "fr": "La reine Cléopâtre a vécu plus près dans le temps des premiers pas sur ___ que de la construction de la grande pyramide",
+          "ar": "الملكة كليوباترا عاشت أقرب بالزمن لـ ___ من بناء الهرم الكبير",
+          "es": "La reina Cleopatra vivió más cerca en el tiempo de la llegada a ___ que de la construcción de la Gran Pirámide"
+        }
+      },
+      "truth": {
+        "en": "Moon landing",
+        "fr": "La Lune",
+        "ar": "النزول عالقمر",
+        "es": "La Luna"
+      },
+      "truthAlt": {
+        "en": [
+          "First Moon landing",
+          "Apollo 11"
+        ],
+        "fr": [
+          "Lune",
+          "Apollo 11"
+        ],
+        "ar": [
+          "أبولو 11",
+          "أول مشي عالقمر"
+        ],
+        "es": [
+          "Luna",
+          "Apolo 11"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Invention of the car",
+          "French Revolution",
+          "First Olympics"
+        ],
+        "fr": [
+          "L'Everest",
+          "Le pôle Sud",
+          "L'Amérique"
+        ],
+        "ar": [
+          "اختراع السيارة",
+          "الثورة الفرنسية",
+          "أول ألعاب أولمبية"
+        ],
+        "es": [
+          "El Everest",
+          "El Polo Sur",
+          "América"
+        ]
+      },
+      "note": {
+        "en": "The pyramid was already about 2,500 years old in her day",
+        "fr": "À son époque, la pyramide avait déjà environ 2 500 ans",
+        "ar": "بوقتها، الهرم كان عمرو حوالي 2500 سنة",
+        "es": "En su época, la pirámide ya tenía unos 2500 años"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Cleopatra VII (died 30 BC) lived closer in time to the 1969 Moon landing than to the building of the Great Pyramid (about 2560 BC); Smithsonian Magazine; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "me-066",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Ancient Egyptians tested for pregnancy by watering ___ with urine",
+        "translit": null,
+        "display": {
+          "fr": "Les Égyptiens de l'Antiquité testaient une grossesse en arrosant d'urine du ___",
+          "ar": "قدماء المصريين كانوا يفحصوا الحمل بإنو يسقوا ___ بالبول",
+          "es": "Los antiguos egipcios comprobaban un embarazo regando con orina ___"
+        }
+      },
+      "truth": {
+        "en": "Wheat and barley",
+        "fr": "Blé et de l'orge",
+        "ar": "قمح وشعير",
+        "es": "Trigo y cebada"
+      },
+      "truthAlt": {
+        "en": [
+          "Barley seeds",
+          "Wheat seeds",
+          "Grain"
+        ],
+        "fr": [
+          "Blé",
+          "Orge",
+          "Des graines"
+        ],
+        "ar": [
+          "قمح",
+          "شعير",
+          "حبوب"
+        ],
+        "es": [
+          "Trigo",
+          "Cebada",
+          "Semillas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Lotus flowers",
+          "Papyrus reeds",
+          "Onions"
+        ],
+        "fr": [
+          "Lotus",
+          "Papyrus",
+          "Oignon"
+        ],
+        "ar": [
+          "زهر اللوتس",
+          "قصب البردي",
+          "بصل"
+        ],
+        "es": [
+          "Flores de loto",
+          "Papiro",
+          "Cebollas"
+        ]
+      },
+      "note": {
+        "en": "If the seeds sprouted, she was pregnant. A 1963 test found it often worked",
+        "fr": "Si les graines germaient, la femme était enceinte. Un test de 1963 l'a souvent confirmé",
+        "ar": "إذا فرّخت الحبوب، المرا حامل. وتجربة سنة 1963 لقت إنها كتير مرات بتزبط",
+        "es": "Si germinaban, la mujer estaba embarazada. Una prueba de 1963 vio que a menudo acertaba"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Ancient Egyptian pregnancy test: urine on wheat and barley seeds (Berlin Medical Papyrus, about 1350 BC); tested in 1963 with about 70 percent accuracy; Carlsberg Papyri, University of Copenhagen 2018"
+      }
+    },
+    {
+      "id": "me-067",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In ancient Egypt, when the family cat died, people shaved off their ___",
+        "translit": null,
+        "display": {
+          "fr": "Dans l'Égypte antique, quand le chat de la maison mourait, on se rasait les ___",
+          "ar": "بمصر القديمة، لما تموت قطة البيت، الناس كانوا يحلقوا ___",
+          "es": "En el antiguo Egipto, cuando moría el gato de la casa, la gente se afeitaba las ___"
+        }
+      },
+      "truth": {
+        "en": "Eyebrows",
+        "fr": "Sourcils",
+        "ar": "حواجبن",
+        "es": "Cejas"
+      },
+      "truthAlt": {
+        "en": [
+          "Brows"
+        ],
+        "fr": [
+          "Les sourcils"
+        ],
+        "ar": [
+          "الحواجب"
+        ],
+        "es": [
+          "Las cejas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Beards",
+          "Heads",
+          "Moustaches"
+        ],
+        "fr": [
+          "Barbes",
+          "Têtes",
+          "Moustaches"
+        ],
+        "ar": [
+          "دقنن",
+          "راسن",
+          "شواربن"
+        ],
+        "es": [
+          "Barbas",
+          "Cabezas",
+          "Patillas"
+        ]
+      },
+      "note": {
+        "en": "The Greek historian Herodotus described it around 450 BC",
+        "fr": "L'historien grec Hérodote le raconte vers 450 av. J.-C.",
+        "ar": "المؤرخ اليوناني هيرودوت حكى عنها حوالي 450 قبل الميلاد",
+        "es": "El historiador griego Heródoto lo contó hacia el 450 a. C."
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Herodotus, Histories II.66: when a household cat died, Egyptians shaved their eyebrows in mourning; Encyclopaedia Britannica; Smithsonian Magazine"
+      }
+    },
+    {
+      "id": "me-068",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1799, French soldiers in Egypt found a stone that helped decode ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1799, des soldats français en Égypte ont trouvé une pierre qui a permis de déchiffrer les ___",
+          "ar": "سنة 1799، جنود فرنسيين بمصر لقوا حجر ساعد بفك رموز ___",
+          "es": "En 1799, unos soldados franceses en Egipto hallaron una piedra que ayudó a descifrar los ___"
+        }
+      },
+      "truth": {
+        "en": "Hieroglyphs",
+        "fr": "Hiéroglyphes",
+        "ar": "الهيروغليفية",
+        "es": "Jeroglíficos"
+      },
+      "truthAlt": {
+        "en": [
+          "Hieroglyphics",
+          "Egyptian writing"
+        ],
+        "fr": [
+          "Les hiéroglyphes",
+          "Écriture égyptienne"
+        ],
+        "ar": [
+          "الهيروغليف",
+          "الكتابة المصرية القديمة"
+        ],
+        "es": [
+          "Los jeroglíficos",
+          "Escritura egipcia"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Cuneiform",
+          "Phoenician",
+          "Mayan glyphs"
+        ],
+        "fr": [
+          "Cunéiformes",
+          "Runes",
+          "Glyphes mayas"
+        ],
+        "ar": [
+          "المسمارية",
+          "الفينيقية",
+          "رموز المايا"
+        ],
+        "es": [
+          "Cuneiformes",
+          "Runas",
+          "Glifos mayas"
+        ]
+      },
+      "note": {
+        "en": "The Rosetta Stone repeats one text in three scripts. It is in the British Museum",
+        "fr": "La pierre de Rosette répète un même texte en trois écritures",
+        "ar": "حجر رشيد فيه نفس النص بتلات خطوط، وهو اليوم بالمتحف البريطاني",
+        "es": "La piedra de Rosetta repite un texto en tres escrituras"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Rosetta Stone found in July 1799 at Rashid (Rosetta) by French soldiers during Napoleon's campaign; British Museum"
+      }
+    },
+    {
+      "id": "me-069",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Many Arabian horses have one fewer ___ than other horse breeds",
+        "translit": null,
+        "display": {
+          "fr": "Beaucoup de chevaux arabes ont une ___ de moins que les autres races",
+          "ar": "كتير من الخيل العربية عندها ___ أقل من باقي السلالات",
+          "es": "Muchos caballos árabes tienen una ___ menos que otras razas"
+        }
+      },
+      "truth": {
+        "en": "Rib",
+        "fr": "Côte",
+        "ar": "ضلع",
+        "es": "Costilla"
+      },
+      "truthAlt": {
+        "en": [
+          "Pair of ribs",
+          "Ribs"
+        ],
+        "fr": [
+          "Paire de côtes",
+          "Côtes"
+        ],
+        "ar": [
+          "زوج ضلوع",
+          "ضلوع"
+        ],
+        "es": [
+          "Par de costillas",
+          "Costillas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Tooth",
+          "Hoof nail",
+          "Eyelash row"
+        ],
+        "fr": [
+          "Dent",
+          "Vertèbre du cou",
+          "Rangée de cils"
+        ],
+        "ar": [
+          "سن",
+          "حافر",
+          "رمش"
+        ],
+        "es": [
+          "Muela",
+          "Vértebra del cuello",
+          "Pestaña"
+        ]
+      },
+      "note": {
+        "en": "They often have 17 pairs of ribs instead of 18, and a shorter back",
+        "fr": "Ils ont souvent 17 paires de côtes au lieu de 18, et un dos plus court",
+        "ar": "غالبًا عندها 17 زوج ضلوع بدل 18، وضهرها أقصر",
+        "es": "Suelen tener 17 pares de costillas en lugar de 18, y un lomo más corto"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Arabian horses often have 17 pairs of ribs instead of 18 and 5 lumbar vertebrae instead of 6; Arabian Horse Association; Encyclopaedia Britannica"
+      }
+    },
+    {
+      "id": "me-070",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "The words zero and cipher both come from an Arabic word meaning ___",
+        "translit": null,
+        "display": {
+          "fr": "Les mots zéro et chiffre viennent tous deux d'un mot arabe qui veut dire ___",
+          "ar": "كلمتي zero و cipher جايين من كلمة عربية معناها ___",
+          "es": "Las palabras cero y cifra vienen de una palabra árabe que significa ___"
+        }
+      },
+      "truth": {
+        "en": "Empty",
+        "fr": "Vide",
+        "ar": "فاضي",
+        "es": "Vacío"
+      },
+      "truthAlt": {
+        "en": [
+          "Nothing",
+          "Emptiness"
+        ],
+        "fr": [
+          "Rien",
+          "Le vide"
+        ],
+        "ar": [
+          "صفر",
+          "فراغ"
+        ],
+        "es": [
+          "Nada",
+          "Vacía"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Circle",
+          "Egg",
+          "Hole"
+        ],
+        "fr": [
+          "Cercle",
+          "Œuf",
+          "Trou"
+        ],
+        "ar": [
+          "دايرة",
+          "بيضة",
+          "جورة"
+        ],
+        "es": [
+          "Círculo",
+          "Huevo",
+          "Agujero"
+        ]
+      },
+      "note": {
+        "en": "The Arabic word is sifr, which travelled into Latin and Italian",
+        "fr": "Le mot arabe est sifr, passé par le latin et l'italien",
+        "ar": "الكلمة هي صفر، وانتقلت للاتينية والإيطالية",
+        "es": "La palabra árabe es sifr, que pasó al latín y al italiano"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] The words zero and cipher both come from Arabic sifr, meaning 'empty'; Merriam-Webster; Oxford English Dictionary"
+      }
+    },
+    {
+      "id": "me-071",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Burj Khalifa is so tall that you can watch the ___ twice in one day",
+        "translit": null,
+        "display": {
+          "fr": "Burj Khalifa est si haute qu'on peut voir le ___ deux fois le même jour",
+          "ar": "برج خليفة عالي لدرجة إنك بتقدر تشوف ___ مرتين بنفس النهار",
+          "es": "El Burj Khalifa es tan alto que puedes ver la ___ dos veces el mismo día"
+        }
+      },
+      "truth": {
+        "en": "Sunset",
+        "fr": "Coucher de soleil",
+        "ar": "غياب الشمس",
+        "es": "Puesta de sol"
+      },
+      "truthAlt": {
+        "en": [
+          "Sun go down",
+          "The sunset"
+        ],
+        "fr": [
+          "Soleil se coucher"
+        ],
+        "ar": [
+          "المغيب",
+          "الغروب"
+        ],
+        "es": [
+          "Puesta del sol",
+          "Caída del sol"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Fireworks",
+          "Moonrise",
+          "Rainbow"
+        ],
+        "fr": [
+          "Feu d'artifice",
+          "Lever de lune",
+          "Arc-en-ciel"
+        ],
+        "ar": [
+          "المفرقعات",
+          "طلوع القمر",
+          "قوس قزح"
+        ],
+        "es": [
+          "Lluvia de estrellas",
+          "Salida de la luna",
+          "Aurora"
+        ]
+      },
+      "note": {
+        "en": "Watch it from the ground, then ride the fast lift up and see it again",
+        "fr": "Regardez-le en bas, prenez l'ascenseur rapide et revoyez-le en haut",
+        "ar": "شوفو من تحت، بعدين اطلع بالأسانسير السريع وشوفو مرة تانية",
+        "es": "Mírala desde abajo, sube en el ascensor rápido y vuelve a verla"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Burj Khalifa (828 m): visitors can watch the sunset from the ground and again from the upper floors; widely reported by the Burj Khalifa operator and BBC; physics of horizon distance"
+      }
+    },
+    {
+      "id": "me-072",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "On Yemen's island of Socotra, the dragon's blood tree oozes red ___",
+        "translit": null,
+        "display": {
+          "fr": "Sur l'île yéménite de Socotra, le dragonnier laisse couler une ___ rouge",
+          "ar": "بجزيرة سقطرى باليمن، شجرة دم الأخوين بتطلّع ___ حمرا",
+          "es": "En la isla yemení de Socotra, el drago suelta una ___ roja"
+        }
+      },
+      "truth": {
+        "en": "Resin",
+        "fr": "Résine",
+        "ar": "صمغ",
+        "es": "Resina"
+      },
+      "truthAlt": {
+        "en": [
+          "Sap",
+          "Red resin"
+        ],
+        "fr": [
+          "Sève",
+          "Résine rouge"
+        ],
+        "ar": [
+          "نسغ",
+          "راتنج"
+        ],
+        "es": [
+          "Savia",
+          "Resina roja"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Berries",
+          "Honey",
+          "Ink"
+        ],
+        "fr": [
+          "Encre",
+          "Huile",
+          "Gelée"
+        ],
+        "ar": [
+          "توت",
+          "عسل",
+          "حبر"
+        ],
+        "es": [
+          "Tinta",
+          "Miel",
+          "Gelatina"
+        ]
+      },
+      "note": {
+        "en": "The resin has been used for dyes, paint and medicine since ancient times",
+        "fr": "Cette résine sert depuis l'Antiquité pour la teinture, la peinture et les remèdes",
+        "ar": "هالصمغ بيستعملوه من زمان للصبغة والرسم والدوا",
+        "es": "Esa resina se usa desde la Antigüedad para tintes, pintura y remedios"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Dragon's blood tree (Dracaena cinnabari) on Socotra, Yemen, produces a red resin; UNESCO World Heritage Socotra Archipelago (whc.unesco.org/en/list/1263)"
+      }
+    },
+    {
+      "id": "me-073",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 2018, 12 camels were disqualified from a Saudi beauty contest for using ___",
+        "translit": null,
+        "display": {
+          "fr": "En 2018, 12 chameaux ont été disqualifiés d'un concours de beauté saoudien pour avoir utilisé du ___",
+          "ar": "سنة 2018، 12 جمل انشطبوا من مسابقة جمال بالسعودية لأنن استعملوا ___",
+          "es": "En 2018, 12 camellos fueron descalificados de un concurso de belleza saudí por usar ___"
+        }
+      },
+      "truth": {
+        "en": "Botox",
+        "fr": "Botox",
+        "ar": "بوتوكس",
+        "es": "Bótox"
+      },
+      "truthAlt": {
+        "en": [
+          "Botox injections"
+        ],
+        "fr": [
+          "Injections de Botox"
+        ],
+        "ar": [
+          "إبر بوتوكس"
+        ],
+        "es": [
+          "Inyecciones de bótox"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Hair dye",
+          "Fake eyelashes",
+          "Lip gloss"
+        ],
+        "fr": [
+          "Fond de teint",
+          "Faux cils",
+          "Gloss"
+        ],
+        "ar": [
+          "صبغة شعر",
+          "رموش اصطناعية",
+          "ملمع شفايف"
+        ],
+        "es": [
+          "Tinte de pelo",
+          "Pestañas postizas",
+          "Brillo de labios"
+        ]
+      },
+      "note": {
+        "en": "Breeders had injected their lips and noses to make them look bigger",
+        "fr": "Les éleveurs avaient injecté lèvres et naseaux pour les faire paraître plus gros",
+        "ar": "المربين كانوا يحقنوا الشفايف والمناخير لتبين أكبر",
+        "es": "Los criadores les inyectaron labios y hocicos para que parecieran más grandes"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] In January 2018, 12 camels were disqualified from the King Abdulaziz Camel Festival beauty contest for Botox injections; NPR, 24 January 2018; BBC"
+      }
+    },
+    {
+      "id": "me-074",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In camel races in the Gulf, the jockeys are often small ___",
+        "translit": null,
+        "display": {
+          "fr": "Dans les courses de chameaux du Golfe, les jockeys sont souvent de petits ___",
+          "ar": "بسباقات الجمال بالخليج، الجوكية غالبًا ___ زغار",
+          "es": "En las carreras de camellos del Golfo, los jinetes suelen ser pequeños ___"
+        }
+      },
+      "truth": {
+        "en": "Robots",
+        "fr": "Robots",
+        "ar": "روبوتات",
+        "es": "Robots"
+      },
+      "truthAlt": {
+        "en": [
+          "Robot jockeys",
+          "Remote-control robots"
+        ],
+        "fr": [
+          "Robots jockeys",
+          "Robots télécommandés"
+        ],
+        "ar": [
+          "روبوت",
+          "روبوتات بالريموت"
+        ],
+        "es": [
+          "Robots jinetes",
+          "Robots teledirigidos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Monkeys",
+          "Dummies",
+          "Falcons"
+        ],
+        "fr": [
+          "Singes",
+          "Mannequins",
+          "Faucons"
+        ],
+        "ar": [
+          "قرود",
+          "دمى",
+          "صقور"
+        ],
+        "es": [
+          "Monos",
+          "Muñecos",
+          "Halcones"
+        ]
+      },
+      "note": {
+        "en": "Owners drive alongside in cars and steer the robots by remote control",
+        "fr": "Les propriétaires roulent à côté en voiture et les guident à distance",
+        "ar": "أصحاب الجمال بيسوقوا حدن بالسيارة وبيوجهوا الروبوت بالريموت",
+        "es": "Los dueños van al lado en coche y los guían a distancia"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Robot jockeys replaced child jockeys in Gulf camel racing from the mid-2000s (UAE, Qatar); BBC; Smithsonian Magazine"
+      }
+    },
+    {
+      "id": "me-075",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Morocco, ___ climb argan trees to eat the fruit",
+        "translit": null,
+        "display": {
+          "fr": "Au Maroc, des ___ grimpent dans les arganiers pour manger les fruits",
+          "ar": "بالمغرب، ___ بتطلع على شجر الأركان لتاكل التمر",
+          "es": "En Marruecos, las ___ trepan a los árganes para comerse el fruto"
+        }
+      },
+      "truth": {
+        "en": "Goats",
+        "fr": "Chèvres",
+        "ar": "المعزة",
+        "es": "Cabras"
+      },
+      "truthAlt": {
+        "en": [
+          "Goat",
+          "Wild goats"
+        ],
+        "fr": [
+          "Les chèvres",
+          "Biques"
+        ],
+        "ar": [
+          "المعز",
+          "عنزات"
+        ],
+        "es": [
+          "Las cabras",
+          "Cabritas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Donkeys",
+          "Camels",
+          "Tortoises"
+        ],
+        "fr": [
+          "Ânes",
+          "Chameaux",
+          "Tortues"
+        ],
+        "ar": [
+          "الحمير",
+          "الجمال",
+          "السلاحف"
+        ],
+        "es": [
+          "Burras",
+          "Camellas",
+          "Tortugas"
+        ]
+      },
+      "note": {
+        "en": "Their hooves grip the branches. Farmers sometimes help them up for tourists",
+        "fr": "Leurs sabots s'agrippent aux branches. On les y aide parfois pour les touristes",
+        "ar": "حوافرها بتمسك بالغصون، وأوقات بيطلعوها كرمال السياح",
+        "es": "Sus pezuñas se agarran a las ramas. A veces las suben para los turistas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] In south-western Morocco, goats climb argan trees to eat the fruit; Encyclopaedia Britannica 'argan'; Smithsonian Magazine"
+      }
+    },
+    {
+      "id": "me-076",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1154, geographer al-Idrisi made a world map for the King of Sicily, engraved on ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1154, le géographe al-Idrissi a fait pour le roi de Sicile une carte du monde gravée sur de l'___",
+          "ar": "سنة 1154، الجغرافي الإدريسي عمل لملك صقلية خريطة للعالم محفورة على ___",
+          "es": "En 1154, el geógrafo al-Idrisi hizo para el rey de Sicilia un mapa del mundo grabado en ___"
+        }
+      },
+      "truth": {
+        "en": "Solid silver",
+        "fr": "Argent massif",
+        "ar": "فضة",
+        "es": "Plata maciza"
+      },
+      "truthAlt": {
+        "en": [
+          "A silver disc",
+          "Silver"
+        ],
+        "fr": [
+          "Un disque d'argent",
+          "Argent"
+        ],
+        "ar": [
+          "قرص فضة",
+          "فضة صافية"
+        ],
+        "es": [
+          "Un disco de plata",
+          "Plata"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Polished copper",
+          "Ivory",
+          "A tortoise shell"
+        ],
+        "fr": [
+          "Ivoire",
+          "Écaille de tortue",
+          "Ardoise"
+        ],
+        "ar": [
+          "نحاس ملمع",
+          "عاج",
+          "قوقعة سلحفاة"
+        ],
+        "es": [
+          "Cobre pulido",
+          "Marfil",
+          "Concha de tortuga"
+        ]
+      },
+      "note": {
+        "en": "The giant silver disc was lost. Copies of his book of maps survive",
+        "fr": "Le grand disque d'argent a disparu. Des copies de son livre de cartes existent",
+        "ar": "القرص الفضي الكبير ضاع، بس نسخ من كتاب خرايطو بعدها موجودة",
+        "es": "El gran disco de plata se perdió. Quedan copias de su libro de mapas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Al-Idrisi's world map for Roger II of Sicily (1154) was engraved on a large silver disc, now lost; Encyclopaedia Britannica 'al-Idrisi'; Factum Foundation 2019"
+      }
+    },
+    {
+      "id": "me-077",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 2009, Lebanon set a world record with a bowl of tabbouleh weighing about ___",
+        "translit": null,
+        "display": {
+          "fr": "En 2009, le Liban a battu un record mondial avec un taboulé pesant environ ___",
+          "ar": "سنة 2009، لبنان كسر رقم قياسي عالمي بصحن تبولة وزنو حوالي ___",
+          "es": "En 2009, el Líbano batió un récord mundial con un tabulé de unas ___"
+        }
+      },
+      "truth": {
+        "en": "3.5 tonnes",
+        "fr": "3,5 tonnes",
+        "ar": "3 طن ونص",
+        "es": "3,5 toneladas"
+      },
+      "truthAlt": {
+        "en": [
+          "3,557 kilos",
+          "3,500 kilos",
+          "Three and a half tonnes"
+        ],
+        "fr": [
+          "3 557 kilos",
+          "3 500 kilos",
+          "Trois tonnes et demie"
+        ],
+        "ar": [
+          "3557 كيلو",
+          "3500 كيلو"
+        ],
+        "es": [
+          "3557 kilos",
+          "3500 kilos",
+          "Tres toneladas y media"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "80 kilos",
+          "40 tonnes",
+          "900 kilos"
+        ],
+        "fr": [
+          "80 kilos",
+          "40 tonnes",
+          "900 kilos"
+        ],
+        "ar": [
+          "80 كيلو",
+          "40 طن",
+          "900 كيلو"
+        ],
+        "es": [
+          "80 kilos",
+          "Media tonelada",
+          "900 kilos"
+        ]
+      },
+      "note": {
+        "en": "Hundreds of cooks chopped the parsley in downtown Beirut",
+        "fr": "Des centaines de cuisiniers ont haché le persil au centre-ville de Beyrouth",
+        "ar": "مئات الطباخين فرموا البقدونس بوسط بيروت",
+        "es": "Cientos de cocineros picaron el perejil en el centro de Beirut"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] Lebanon set a Guinness World Record for the largest serving of tabbouleh, about 3,557 kg (about 3.5 tonnes), in Beirut in October 2009; Daily Star (Lebanon) via Zawya, 26 October 2009"
+      }
     }
   ]
 }
