@@ -10,7 +10,7 @@
         <!-- Debug only: "JAMAA Proto", a fullscreen WebView for the PixiJS prototype (prototypes/pixi-bluff/README.md).
              Never merged into release (src/debug source set). NOT a launcher entry: Google TV shows one tile per package,
              so a second LEANBACK_LAUNCHER activity hid the real app. Start it with:
-             adb shell am start -n app.jamaa.tv/.proto.ProtoActivity [--es url http://<laptop-ip>:5174/] -->
+             adb shell am start -n app.jamaa.tv/.proto.ProtoActivity [-e url http://<laptop-ip>:5174/] -->
         <activity
             android:name=".proto.ProtoActivity"
             android:label="@string/proto_launcher_label"
