@@ -20,6 +20,7 @@ import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import app.jamaa.tv.game.Countdown
 import app.jamaa.tv.games.GameScreenArgs
 import app.jamaa.tv.games.bluff.BluffCues
+import app.jamaa.tv.games.bluff.BluffFit
 import app.jamaa.tv.games.bluff.BluffGameView
 import app.jamaa.tv.games.bluff.BluffInput
 import app.jamaa.tv.games.bluff.BluffMoments
@@ -84,15 +86,17 @@ fun BluffGameScreen(game: BluffGameView, args: GameScreenArgs) {
                     },
             ) {
                 val density = LocalDensity.current
-                val geo = remember(maxWidth, maxHeight, view.phase, view.players.size, density) {
+                val row = BluffFit.row(view.players.size, view.phase, view.options.size)
+                val geo = remember(maxWidth, maxHeight, view.phase, view.players.size, row, density) {
                     with(density) {
                         StageGeometry(
                             width = maxWidth.toPx(), height = maxHeight.toPx(), density = density.density,
-                            rail = view.phase == BluffPhase.REVEAL, players = view.players.size,
+                            rail = view.phase == BluffPhase.REVEAL, players = view.players.size, row = row,
                         )
                     }
                 }
                 val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+                val hasRow = BluffFit.hasRow(view.phase)
                 Column(Modifier.fillMaxSize()) {
                     Header(view, args)
                     Box(Modifier.weight(1f).fillMaxWidth()) {
@@ -107,13 +111,9 @@ fun BluffGameScreen(game: BluffGameView, args: GameScreenArgs) {
                             BluffPhase.RESULTS -> Unit
                         }
                     }
-                    if (view.phase != BluffPhase.SCORES && view.phase != BluffPhase.AWARDS) {
-                        Box(Modifier.fillMaxWidth().height(ROW_DP.dp))
-                    }
+                    if (hasRow) Box(Modifier.fillMaxWidth().height(row.heightDp.dp))
                 }
-                if (view.phase != BluffPhase.SCORES && view.phase != BluffPhase.AWARDS) {
-                    CafeRow(view, game.envelope, args.room, clock, script, geo, rtl, args.clockOffsetMs)
-                }
+                if (hasRow) CafeRow(view, game.envelope, args.room, clock, script, geo, rtl, args.clockOffsetMs)
                 if (view.phase == BluffPhase.REVEAL && script != null) {
                     RevealStage(view, clock, script, geo, rtl)
                 }
@@ -123,35 +123,65 @@ fun BluffGameScreen(game: BluffGameView, args: GameScreenArgs) {
     }
 }
 
-internal const val HEADER_DP = 64
-internal const val ROW_DP = 150
-internal const val RAIL_DP = 220
+internal const val HEADER_DP = BluffFit.HEADER
 
 /**
- * Stage geometry in px (absolute: x from the left edge, mirrored here for RTL by the callers that need it). The café
- * row spans the width left of the score rail (REVEAL), the spotlight card sits in the middle of the content area.
+ * Stage geometry in px (absolute: x from the left edge, mirrored here for RTL by the callers that need it), from the
+ * [BluffFit] budget. The café row spans the width left of the score rail (REVEAL); the reveal stack (progress strip,
+ * perched voters, the spotlight card, the liar row) is centred in the stage between the top bar and the row.
  */
 @Stable
-internal class StageGeometry(val width: Float, val height: Float, val density: Float, val rail: Boolean, val players: Int) {
+internal class StageGeometry(val width: Float, val height: Float, val density: Float, val rail: Boolean, val players: Int, val row: BluffFit.CafeRow) {
     fun dp(v: Number): Float = v.toFloat() * density
-    val railWidth: Float get() = if (rail) dp(RAIL_DP) else 0f
+    val railWidth: Float get() = if (rail) dp(BluffFit.RAIL) else 0f
     val rowWidth: Float get() = width - railWidth
-    val rowCenterY: Float get() = height - dp(ROW_DP) * 0.56f
+    /** Left edge of the stage (the rail sits at the start side in RTL). */
+    fun stageLeft(rtl: Boolean): Float = if (rtl) railWidth else 0f
+    val rowTop: Float get() = height - dp(row.heightDp)
+    val rowCenterY: Float get() = rowTop + dp(4) + dp(row.characterDp) / 2f
     val contentTop: Float get() = dp(HEADER_DP)
-    val contentBottom: Float get() = height - dp(ROW_DP)
-    /** Centre of the spotlight card (in the content area, left of the rail). */
-    fun cardCenterX(rtl: Boolean): Float = if (rtl) railWidth + rowWidth / 2f else rowWidth / 2f
-    val cardCenterY: Float get() = contentTop + (contentBottom - contentTop) * 0.48f
+    val contentBottom: Float get() = rowTop
+    private val stageH: Float get() = contentBottom - contentTop
+
+    // ---- the reveal stack
+    val stripY: Float get() = contentTop + dp(BluffFit.STRIP) / 2f
+    /** Centre x of progress-strip badge [k] (from the start edge: earlier reveals never move). */
+    fun stripX(k: Int, rtl: Boolean): Float =
+        if (rtl) stageLeft(true) + rowWidth - dp(22) - dp(STRIP_STEP_DP) * k else dp(22) + dp(STRIP_STEP_DP) * k
+    val cardW: Float get() = minOf(rowWidth - dp(40), dp(BluffFit.CARD_MAX_W))
+    val cardH: Float get() = dp(BluffFit.revealCardH(stageH / density))
+    val cardTop: Float get() = contentTop + dp(BluffFit.STRIP + BluffFit.PERCH)
+    val cardCenterY: Float get() = cardTop + cardH / 2f
+    val cardBottom: Float get() = cardTop + cardH
+    /** Centre of the spotlight card (in the stage, left of the rail). */
+    fun cardCenterX(rtl: Boolean): Float = stageLeft(rtl) + rowWidth / 2f
+    /** Perched voters sit on the card's top edge from its start side; the end corner is the stamp's. */
+    val perchY: Float get() = cardTop - dp(BluffFit.PERCH_CHARACTER) / 2f + dp(6)
+    fun perchX(k: Int, n: Int, rtl: Boolean): Float {
+        val step = dp(BluffFit.perchStepDp(n, (cardW - dp(STAMP_CORNER_DP)) / density))
+        val from = dp(44) + step * k
+        return if (rtl) cardCenterX(true) + cardW / 2f - from else cardCenterX(false) - cardW / 2f + from
+    }
+    /** The stamp lands on the card's top end corner. */
+    fun stampCenter(rtl: Boolean): Offset =
+        Offset(cardCenterX(rtl) + (cardW / 2f - dp(104)) * (if (rtl) -1f else 1f), cardTop + dp(4))
+    /** The liar row (or the truth's caption) under the card. */
+    val liarY: Float get() = cardBottom + dp(BluffFit.LIAR) / 2f
+
     /** The rail's left edge. */
     fun railX(rtl: Boolean): Float = if (rtl) 0f else width - railWidth
     fun seatX(index: Int, rtl: Boolean): Float =
-        (if (rtl) railWidth else 0f) + app.jamaa.tv.games.bluff.BluffBoard.seatX(index, players, rowWidth, rtl)
-    /** Centre of the score pill of the player at [index] (rail rows in seat order). */
+        stageLeft(rtl) + app.jamaa.tv.games.bluff.BluffBoard.seatX(index, players, rowWidth, rtl)
+    /** One seat's width on the café row (name plates are bounded by it). */
+    val seatW: Float get() = rowWidth / players.coerceAtLeast(1)
+    val railRow: Float get() = dp(BluffFit.railRowDp(players))
+    /** Centre of the score pill of the player at [index] (rail rows in seat order, under the rail label). */
     fun pillCenter(index: Int, rtl: Boolean): Pair<Float, Float> =
-        (railX(rtl) + railWidth / 2f) to (contentTop + dp(12) + dp(RAIL_ROW_DP) * (index + 0.5f))
+        (railX(rtl) + railWidth / 2f) to (contentTop + dp(BluffFit.RAIL_LABEL) + railRow * (index + 0.5f))
 }
 
-internal const val RAIL_ROW_DP = 40
+internal const val STRIP_STEP_DP = 38
+internal const val STAMP_CORNER_DP = 260
 
 // ---------------------------------------------------------------- the phase clock
 

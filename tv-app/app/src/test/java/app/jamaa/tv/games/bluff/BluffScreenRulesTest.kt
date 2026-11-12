@@ -2,7 +2,6 @@ package app.jamaa.tv.games.bluff
 
 import app.jamaa.tv.games.GameCatalog
 import app.jamaa.tv.games.GameIds
-import app.jamaa.tv.platform.GameChrome
 import app.jamaa.tv.platform.RemoteKey
 import kotlinx.serialization.json.JsonPrimitive
 import org.junit.Assert.assertEquals
@@ -172,13 +171,10 @@ class BluffScreenRulesTest {
         }
     }
 
-    @Test fun theRailWaitsUnderTheBackHintThenComesUp() {
-        assertEquals(BluffBoard.BACK_HINT_SLOT_DP, BluffBoard.railHintShiftDp(0), 0f)
-        assertEquals(BluffBoard.BACK_HINT_SLOT_DP, BluffBoard.railHintShiftDp(GameChrome.HINT_AFTER_PHASE_MS - 1), 0f)
-        val mid = BluffBoard.railHintShiftDp(GameChrome.HINT_AFTER_PHASE_MS + 150)
-        assertTrue(mid > 0f && mid < BluffBoard.BACK_HINT_SLOT_DP)
-        assertEquals(0f, BluffBoard.railHintShiftDp(GameChrome.HINT_AFTER_PHASE_MS + 300), 0f)
-        assertEquals(0f, BluffBoard.railHintShiftDp(60_000), 0f)
+    @Test fun theRailLeavesTheBackHintSlotFreeAndFitsTwelvePills() {
+        // The rail starts under its label slot (where the platform's back hint sits 3 s), so no pill is ever covered.
+        for (n in 3..12) assertTrue(BluffFit.HEADER + BluffFit.RAIL_LABEL + n * BluffFit.railRowDp(n) <= BluffFit.SAFE_H)
+        assertTrue(BluffFit.railRowDp(12) >= 30f)
     }
 
     @Test fun theOdometerRollsOneColumnPerPlace() {

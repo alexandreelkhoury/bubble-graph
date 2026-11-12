@@ -6,6 +6,14 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.ui.text.font.FontWeight
+import app.jamaa.tv.ui.theme.JamaaMotion
+import app.jamaa.tv.ui.theme.JamaaShapes
+import app.jamaa.tv.ui.theme.JamaaSpace
+import app.jamaa.tv.games.bluff.BluffFit
+import app.jamaa.tv.games.bluff.BluffType
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -91,31 +99,36 @@ internal val LieRed: Color get() = Cafe.signal ?: Color(0xFFFF5A5F)
 /** Option and prompt texts render with their own direction (an Arabic lie in an EN room, GAME-BLUFF §7). */
 internal fun TextStyle.contentDir(): TextStyle = copy(textDirection = TextDirection.Content)
 
-/** The café: world stage, two hanging lanterns (a slow sway, off in calm motion) and a corkboard glow. */
+/**
+ * The café: world stage, a warm table glow, and two hanging lanterns in the side gutters (outside the safe area, so
+ * they frame the scene and never sit on the top bar's chips or the counter; a slow sway, off in calm motion).
+ */
 @Composable
 internal fun CafeStage(view: BluffView, clock: PhaseClock) {
     WorldStage(Cafe)
     val reduce = JamaaTheme.reduceMotion
-    val sway = if (reduce) null else rememberInfiniteTransition(label = "lanterns").animateFloat(-2f, 2f, infiniteRepeatable(tween(3_200), RepeatMode.Reverse), label = "sway")
+    val sway = if (reduce) null else rememberInfiniteTransition(label = "lanterns").animateFloat(-2f, 2f, infiniteRepeatable(tween(3_200, easing = JamaaMotion.Standard), RepeatMode.Reverse), label = "sway")
     // The intro beat of the reveal narrows the lantern light to the centre (DESIGN-JAMAA §5.2: glow 100 % → 55 %).
     val narrow = view.phase == BluffPhase.REVEAL
     Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
         val glowScale = if (narrow) 0.55f + 0.45f * (1f - minOf(1f, clock.t() / 600f)) else 1f
-        drawRect(Brush.radialGradient(listOf(Cafe.glow.copy(alpha = 0.10f), Color.Transparent), center = Offset(size.width / 2f, size.height * 0.42f), radius = size.width * 0.5f * glowScale))
-        for ((i, fx) in listOf(0.16f, 0.84f).withIndex()) {
+        drawRect(Brush.radialGradient(listOf(Cafe.glow.copy(alpha = 0.12f), Color.Transparent), center = Offset(size.width / 2f, size.height * 0.45f), radius = size.width * 0.55f * glowScale))
+        val gutter = 24.dp.toPx()
+        for ((i, x) in listOf(-gutter, size.width + gutter).withIndex()) {
             val a = (sway?.value ?: 0f) * if (i == 0) 1f else -1f
-            rotate(a, Offset(size.width * fx, 0f)) { lantern(Offset(size.width * fx, size.height * 0.13f)) }
+            val top = Offset(x, -JamaaSpace.SafeV.toPx())
+            rotate(a, top) { lantern(top, Offset(x, size.height * 0.2f)) }
         }
     }
 }
 
-private fun DrawScope.lantern(c: Offset) {
-    val s = size.height / 540f
-    drawLine(Cafe.elevated, Offset(c.x, 0f), Offset(c.x, c.y - 26f * s), strokeWidth = 2f * s)
-    drawCircle(Brush.radialGradient(listOf(Cafe.glow.copy(alpha = 0.28f), Color.Transparent), center = c, radius = 90f * s), radius = 90f * s, center = c)
-    drawRoundRect(Gold, topLeft = Offset(c.x - 14f * s, c.y - 24f * s), size = Size(28f * s, 44f * s), cornerRadius = CornerRadius(8f * s))
-    drawRoundRect(GoldLight.copy(alpha = 0.9f), topLeft = Offset(c.x - 9f * s, c.y - 16f * s), size = Size(18f * s, 28f * s), cornerRadius = CornerRadius(5f * s))
-    drawRect(Cafe.elevated, topLeft = Offset(c.x - 16f * s, c.y - 28f * s), size = Size(32f * s, 5f * s))
+private fun DrawScope.lantern(hook: Offset, c: Offset) {
+    val s = size.height / 486f
+    drawLine(Cafe.elevated, hook, Offset(c.x, c.y - 26f * s), strokeWidth = 2f * s)
+    drawCircle(Brush.radialGradient(listOf(Cafe.glow.copy(alpha = 0.30f), Color.Transparent), center = c, radius = 96f * s), radius = 96f * s, center = c)
+    drawRoundRect(Gold, topLeft = Offset(c.x - 13f * s, c.y - 22f * s), size = Size(26f * s, 40f * s), cornerRadius = CornerRadius(8f * s))
+    drawRoundRect(GoldLight.copy(alpha = 0.9f), topLeft = Offset(c.x - 8f * s, c.y - 15f * s), size = Size(16f * s, 26f * s), cornerRadius = CornerRadius(5f * s))
+    drawRect(Cafe.elevated, topLeft = Offset(c.x - 15f * s, c.y - 26f * s), size = Size(30f * s, 5f * s))
 }
 
 /** The neon "BLUFF!" sign (DESIGN-JAMAA §1.6: cream tube over an amber glow, no fill); [flicker] dims the "!" once. */
@@ -126,13 +139,13 @@ internal fun NeonTitle(style: TextStyle, modifier: Modifier = Modifier, flicker:
     Text(title, modifier.graphicsLayer { alpha = 0.3f + 0.7f * flicker }, style = glow, color = Paper, maxLines = 1)
 }
 
-/** Top bar: round · rule chip · prompt counter, and the timer ring (WRITING, VOTING) at the end. */
+/** Top bar: round · rule chip · ×m · prompt counter, and the timer ring (WRITING, VOTING) and room code at the end. */
 @Composable
 internal fun Header(view: BluffView, args: GameScreenArgs) {
     val type = JamaaTheme.type
-    Row(Modifier.fillMaxWidth().height(HEADER_DP.dp).padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(Modifier.fillMaxWidth().height(HEADER_DP.dp), verticalAlignment = Alignment.CenterVertically) {
         val round = if (view.isFinal) stringResource(R.string.game__bluff__round__final) else stringResource(R.string.game__bluff__round__number, view.round.toString())
-        Text(round.uppercase(), style = type.label, color = Cafe.accentText)
+        Text(round.uppercase(), style = type.label, color = Cafe.accentText, maxLines = 1)
         Spacer(Modifier.width(12.dp))
         Chip(roundName(view.roundKind), fill = Cafe.surface, ink = JamaaColors.Text)
         if (view.multiplier > 1 && !view.isFinal) {
@@ -141,7 +154,7 @@ internal fun Header(view: BluffView, args: GameScreenArgs) {
         }
         if (view.phase in PROMPT_PHASES) {
             Spacer(Modifier.width(12.dp))
-            Text(stringResource(R.string.game__bluff__prompt__counter, view.promptNumber.toString(), view.promptCount), style = type.caption, color = JamaaColors.TextMuted)
+            Text(stringResource(R.string.game__bluff__prompt__counter, view.promptNumber.toString(), view.promptCount), style = type.caption, color = JamaaColors.TextMuted, maxLines = 1)
         }
         Spacer(Modifier.weight(1f))
         val deadline = view.deadline
@@ -150,11 +163,11 @@ internal fun Header(view: BluffView, args: GameScreenArgs) {
                 val left = deadline - Countdown.serverNow(System.currentTimeMillis(), args.clockOffsetMs)
                 maxOf(left, phaseEstimateMs(view))
             }
-            TimerRing(DeadlineView(DeadlineKind.VOTE, deadline, duration), args.clockOffsetMs, 52.dp, 5.dp, number = type.title, calmColor = Paper)
+            TimerRing(DeadlineView(DeadlineKind.VOTE, deadline, duration), args.clockOffsetMs, 46.dp, 5.dp, number = type.titleS, calmColor = Paper)
             Spacer(Modifier.width(16.dp))
         }
-        CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides LayoutDirection.Ltr) {
-            Text(args.room.roomCode, style = type.label.copy(letterSpacing = type.code.letterSpacing), color = Cafe.accentText)
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+            Text(args.room.roomCode, style = type.label.copy(letterSpacing = type.code.letterSpacing), color = Cafe.accentText, maxLines = 1)
         }
     }
 }
@@ -168,91 +181,121 @@ private fun phaseEstimateMs(v: BluffView): Long = when (v.phase) {
     else -> 1L
 }
 
+/** The round's name from its kind; a kind this build does not know reads "Bluff!" (never a hard-coded rule name). */
 @Composable
 internal fun roundName(kind: RoundKind): String = stringResource(
     when (kind) {
         RoundKind.SAYING -> R.string.game__bluff__round__saying
         RoundKind.FACT -> R.string.game__bluff__round__fact
         RoundKind.NO_TRUTH -> R.string.game__bluff__round__no_truth
+        RoundKind.OTHER -> R.string.game__bluff__title
     },
 )
 
+/** The length hint chip's text, or null for a hint this build does not know (no chip). */
 @Composable
-internal fun hintText(h: LengthHint): String = stringResource(
-    when (h) {
-        LengthHint.SHORT -> R.string.game__bluff__hint__short
-        LengthHint.FEW -> R.string.game__bluff__hint__few
-        LengthHint.SENTENCE -> R.string.game__bluff__hint__sentence
-        LengthHint.FREE -> R.string.game__bluff__hint__free
-    },
-)
+internal fun hintText(h: LengthHint): String? = when (h) {
+    LengthHint.SHORT -> stringResource(R.string.game__bluff__hint__short)
+    LengthHint.FEW -> stringResource(R.string.game__bluff__hint__few)
+    LengthHint.SENTENCE -> stringResource(R.string.game__bluff__hint__sentence)
+    LengthHint.FREE -> stringResource(R.string.game__bluff__hint__free)
+    LengthHint.OTHER -> null
+}
 
 // ---------------------------------------------------------------- ROUND_INTRO
 
-/** Full-screen round card (GAME-BLUFF §8.2); the final is the dramatic version with the "No truth" stamp. */
+/**
+ * The round card (GAME-BLUFF §8.2): the neon sign, "ROUND 1" with the round dots, the round's name big, its rule. The
+ * card fills the stage height when it needs to and every line auto-sizes, so a long rule (the final's, FR/ES/AR) is
+ * never cut. The final is the dramatic version: the "No truth" stamp lands last.
+ */
 @Composable
 internal fun RoundIntroCard(view: BluffView, clock: PhaseClock) {
     val type = JamaaTheme.type
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Column(Modifier.fillMaxSize().padding(vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         Column(
             Modifier
+                .weight(1f, fill = false)
                 .widthIn(max = 720.dp)
+                .fillMaxWidth()
                 .graphicsLayer {
                     val p = clock.p("card")
                     alpha = minOf(1f, p * 2f)
-                    scaleX = 0.86f + 0.14f * p
+                    scaleX = 0.9f + 0.1f * p
                     scaleY = scaleX
-                    translationY = (1f - p) * 60f * density
+                    translationY = (1f - p) * 48f * density
                 }
-                .background(Cafe.surface, RoundedCornerShape(28.dp))
-                .border(2.dp, Cafe.accent.copy(alpha = 0.5f), RoundedCornerShape(28.dp))
-                .padding(horizontal = 48.dp, vertical = 36.dp),
+                .background(Brush.verticalGradient(listOf(Cafe.elevated, Cafe.surface)), JamaaShapes.card)
+                .border(2.dp, Cafe.accent.copy(alpha = 0.55f), JamaaShapes.card)
+                .padding(horizontal = 40.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // The café's neon sign flickers on once with the card (one flicker, never a strobe; DESIGN-JAMAA §1.6).
-            NeonTitle(type.title, flicker = 1f, modifier = Modifier.graphicsLayer {
+            NeonTitle(type.titleS, modifier = Modifier.graphicsLayer {
                 val p = clock.p("card")
                 alpha = if (p < 0.55f) p else if (p < 0.7f) 0.3f else 1f
             })
-            val label = if (view.isFinal) stringResource(R.string.game__bluff__round__final) else stringResource(R.string.game__bluff__round__number, view.round.toString())
-            Text(label.uppercase(), style = type.label, color = Cafe.accentText)
-            Spacer(Modifier.height(8.dp))
-            Text(
+            Spacer(Modifier.height(4.dp))
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                val label = if (view.isFinal) stringResource(R.string.game__bluff__round__final) else stringResource(R.string.game__bluff__round__number, view.round.toString())
+                Text(label.uppercase(), style = type.label, color = Cafe.accentText, maxLines = 1)
+                RoundDots(view.round, view.roundCount) { clock.p("title") }
+            }
+            AutoText(
                 roundName(view.roundKind),
-                Modifier.graphicsLayer { val p = clock.p("title"); alpha = minOf(1f, p * 2f); scaleX = 1.2f - 0.2f * p; scaleY = scaleX },
-                style = type.displayM.copy(shadow = Shadow(Cafe.accent, Offset.Zero, 24f)),
-                color = Paper,
-                textAlign = TextAlign.Center,
+                type.displayM.copy(shadow = Shadow(Cafe.accent, Offset.Zero, 24f)),
+                Paper,
+                Modifier.fillMaxWidth().graphicsLayer { val p = clock.p("title"); alpha = minOf(1f, p * 2f); scaleX = 1.12f - 0.12f * p; scaleY = scaleX },
+                minSp = 28f,
+                maxLines = 1,
             )
-            Spacer(Modifier.height(16.dp))
-            val rule = stringResource(
-                when (view.roundKind) {
-                    RoundKind.SAYING -> R.string.game__bluff__round__saying__intro
-                    RoundKind.FACT -> R.string.game__bluff__round__fact__intro
-                    RoundKind.NO_TRUTH -> R.string.game__bluff__round__no_truth__intro
-                },
-            )
-            Text(
-                rule,
-                Modifier.graphicsLayer { val p = clock.p("rule"); alpha = p; translationY = (1f - p) * 16f * density },
-                style = if (view.isFinal) type.headline else type.title,
-                color = JamaaColors.TextSecondary,
-                textAlign = TextAlign.Center,
-            )
+            val rule = when (view.roundKind) {
+                RoundKind.SAYING -> stringResource(R.string.game__bluff__round__saying__intro)
+                RoundKind.FACT -> stringResource(R.string.game__bluff__round__fact__intro)
+                RoundKind.NO_TRUTH -> stringResource(R.string.game__bluff__round__no_truth__intro)
+                RoundKind.OTHER -> null
+            }
+            if (rule != null) {
+                Spacer(Modifier.height(8.dp))
+                AutoText(
+                    rule,
+                    if (view.isFinal) type.headline else type.title,
+                    JamaaColors.TextSecondary,
+                    Modifier.weight(1f, fill = false).fillMaxWidth().graphicsLayer { val p = clock.p("rule"); alpha = p; translationY = (1f - p) * 16f * density },
+                    minSp = 18f,
+                    maxLines = 4,
+                )
+            }
             if (view.isFinal) {
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(14.dp))
                 StampLabel(stringResource(R.string.game__bluff__no_truth__chip).uppercase(), LieRed, { clock.p("stamp") })
             }
         }
     }
 }
 
+/** ● ● ○: the rounds played and to come; the current dot pops in with the title. */
+@Composable
+private fun RoundDots(round: Int, count: Int, pop: () -> Float) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        for (r in 1..count.coerceIn(1, 5)) {
+            val current = r == round
+            Box(
+                Modifier.size(10.dp)
+                    .graphicsLayer { if (current) { val p = pop(); scaleX = 0.4f + 0.6f * p; scaleY = scaleX } }
+                    .background(if (r <= round) Gold else Color.Transparent, JamaaShapes.pill)
+                    .border(2.dp, if (r <= round) Gold else Cafe.accent.copy(alpha = 0.5f), JamaaShapes.pill),
+            )
+        }
+    }
+}
+
 /**
  * A rubber stamp driven by a choreography progress (−8°, scale 1.6 → 1 with `ease.overshoot`; DESIGN-JAMAA §5.2): at
- * progress 1 it is fully landed, so OK-completion shows it in place.
+ * progress 1 it is fully landed, so OK-completion shows it in place. The text auto-sizes (2 lines max) inside [maxWidth].
  */
 @Composable
-internal fun StampLabel(text: String, color: Color, progress: () -> Float, modifier: Modifier = Modifier, style: TextStyle = JamaaTheme.type.displayS) {
+internal fun StampLabel(text: String, color: Color, progress: () -> Float, modifier: Modifier = Modifier, style: TextStyle = JamaaTheme.type.displayS, maxWidth: Dp = 560.dp) {
     Box(
         modifier
             .graphicsLayer {
@@ -263,58 +306,62 @@ internal fun StampLabel(text: String, color: Color, progress: () -> Float, modif
                 scaleY = s
                 alpha = minOf(1f, p * 3f)
             }
-            .background(PaperInk.copy(alpha = 0.55f), RoundedCornerShape(10.dp))
-            .border(5.dp, color, RoundedCornerShape(10.dp))
-            .padding(horizontal = 22.dp, vertical = 4.dp),
+            .widthIn(max = maxWidth)
+            .background(PaperInk.copy(alpha = 0.6f), JamaaShapes.sm)
+            .border(5.dp, color, JamaaShapes.sm)
+            .padding(horizontal = 20.dp, vertical = 2.dp),
     ) {
-        Text(text, style = style, color = color, textAlign = TextAlign.Center, maxLines = 2)
+        AutoText(text, style, color, minSp = 16f, maxLines = 2)
     }
 }
 
 // ---------------------------------------------------------------- WRITING
 
-/** The prompt card with its type chip, the length hint and, in the final, the permanent "No right answer" chip. */
+/**
+ * The prompt card: its type chip (or the round's name for a kind this build does not know), the final's permanent
+ * "No right answer" chip, then the prompt big. The text auto-sizes from 44 sp down to 22 sp in the height the card is
+ * given, then wraps, so a long FR/ES/AR fact is never cut. An Arabic original (a proverb, `translit` set) keeps its
+ * place with the transliteration and the room-language translation under it (GAME-BLUFF §8.2, the web's promptLines).
+ */
 @Composable
-internal fun PromptCard(view: BluffView, prompt: BluffPrompt, modifier: Modifier = Modifier, compact: Boolean = false) {
+internal fun PromptCard(view: BluffView, prompt: BluffPrompt, modifier: Modifier = Modifier) {
     val type = JamaaTheme.type
     Column(
         modifier
-            .widthIn(max = if (compact) 640.dp else 760.dp)
-            .background(Paper, RoundedCornerShape(22.dp))
-            .padding(horizontal = 36.dp, vertical = if (compact) 16.dp else 26.dp),
+            .widthIn(max = 820.dp)
+            .fillMaxWidth()
+            .background(Paper, JamaaShapes.tile)
+            .padding(horizontal = 32.dp, vertical = 18.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Chip(typeLabel(prompt), fill = Cafe.deep, ink = Cafe.accentText)
+            Chip(typeLabel(prompt, view), fill = Cafe.deep, ink = Cafe.accentText)
             if (view.isFinal) Chip(stringResource(R.string.game__bluff__no_truth__chip), fill = LieRed, ink = Paper)
             if (prompt.rerun) Chip(stringResource(R.string.game__bluff__prompt__rerun), fill = Cafe.elevated, ink = Paper)
         }
-        Spacer(Modifier.height(if (compact) 8.dp else 14.dp))
-        // The room-language text is the headline. Only an Arabic proverb (translit set) keeps its original on top, then
-        // the transliteration, then the room-language translation (smaller): GAME-BLUFF §8.2, the web's promptLines.
+        Spacer(Modifier.height(10.dp))
         val lines = PromptLines.of(prompt)
-        Text(lines.main, style = (if (compact) type.headline else type.displayS).contentDir(), color = PaperInk, textAlign = TextAlign.Center)
+        AutoText(lines.main, type.displayS, PaperInk, Modifier.weight(1f, fill = false).fillMaxWidth(), minSp = 22f)
         lines.translit?.let {
             Spacer(Modifier.height(4.dp))
-            Text(it, style = type.body.contentDir(), color = PaperInk.copy(alpha = 0.62f), textAlign = TextAlign.Center)
+            AutoText(it, type.body, PaperInk.copy(alpha = 0.62f), Modifier.fillMaxWidth(), minSp = 15f, maxLines = 2)
         }
         lines.sub?.let {
-            Spacer(Modifier.height(6.dp))
-            Text(it, style = type.title.contentDir(), color = PaperInk.copy(alpha = 0.85f), textAlign = TextAlign.Center)
+            Spacer(Modifier.height(4.dp))
+            AutoText(it, type.title, PaperInk.copy(alpha = 0.85f), Modifier.fillMaxWidth(), minSp = 17f, maxLines = 3)
         }
     }
 }
 
 @Composable
-private fun typeLabel(p: BluffPrompt): String = stringResource(
-    when (p.type) {
-        app.jamaa.tv.games.bluff.BluffType.PROVERB_END -> R.string.game__bluff__type__proverb_end
-        app.jamaa.tv.games.bluff.BluffType.FACT_BLANK -> R.string.game__bluff__type__fact_blank
-        app.jamaa.tv.games.bluff.BluffType.WORD_MEANING -> R.string.game__bluff__type__word_meaning
-        app.jamaa.tv.games.bluff.BluffType.EXPRESSION_MEANING -> R.string.game__bluff__type__expression_meaning
-        app.jamaa.tv.games.bluff.BluffType.NO_TRUTH -> R.string.game__bluff__type__no_truth
-    },
-)
+private fun typeLabel(p: BluffPrompt, view: BluffView): String = when (p.type) {
+    BluffType.PROVERB_END -> stringResource(R.string.game__bluff__type__proverb_end)
+    BluffType.FACT_BLANK -> stringResource(R.string.game__bluff__type__fact_blank)
+    BluffType.WORD_MEANING -> stringResource(R.string.game__bluff__type__word_meaning)
+    BluffType.EXPRESSION_MEANING -> stringResource(R.string.game__bluff__type__expression_meaning)
+    BluffType.NO_TRUTH -> stringResource(R.string.game__bluff__type__no_truth)
+    BluffType.OTHER -> roundName(view.roundKind)
+}
 
 @Composable
 internal fun WritingStage(view: BluffView, clock: PhaseClock, clockOffsetMs: Long) {
@@ -327,22 +374,23 @@ internal fun WritingStage(view: BluffView, clock: PhaseClock, clockOffsetMs: Lon
             Countdown.remainingMs(d, clockOffsetMs, frame.value) in 1..BluffMoments.WAITING_SPOTLIGHT_MS
         }
     }
-    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+    Column(Modifier.fillMaxSize().padding(vertical = 6.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         if (view.notice == app.jamaa.tv.games.bluff.BluffNotice.TOO_FAMOUS) {
             StampLabel(stringResource(R.string.game__bluff__prompt__too_famous), Gold, { clock.p("card") }, style = type.title)
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(10.dp))
         }
+        // The card drops onto the table: from above, a little tilted, settling with `ease.decel`.
         PromptCard(
             view, prompt,
-            Modifier.graphicsLayer { val p = clock.p("card"); alpha = p; translationY = (1f - p) * -40f * density; rotationZ = (1f - p) * -2f },
+            Modifier.weight(1f, fill = false).graphicsLayer { val p = clock.p("card"); alpha = minOf(1f, p * 1.6f); translationY = (1f - p) * -36f * density; rotationZ = (1f - p) * -2f },
         )
-        Spacer(Modifier.height(14.dp))
+        Spacer(Modifier.height(12.dp))
         Row(
-            Modifier.graphicsLayer { alpha = clock.p("hint") },
+            Modifier.height(34.dp).graphicsLayer { val p = clock.p("hint"); alpha = p; translationY = (1f - p) * 10f * density },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Chip(hintText(prompt.lengthHint), fill = Cafe.elevated, ink = Paper)
+            hintText(prompt.lengthHint)?.let { Chip(it, fill = Cafe.elevated, ink = Paper) }
             val waiting = view.active.filter { it.connected && !it.submitted }
             if (lastTen && waiting.isNotEmpty()) {
                 Text("${stringResource(R.string.game__bluff__write__waiting_for)} ${nameList(waiting.map { it.name })}", style = type.caption, color = Cafe.accentText, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -353,63 +401,63 @@ internal fun WritingStage(view: BluffView, clock: PhaseClock, clockOffsetMs: Lon
 
 // ---------------------------------------------------------------- VOTING
 
-/** All options as cards pinned on the corkboard (≤ 6: 1 column; 7–13: 2 columns, RTL mirrored). No author, no counts. */
+/**
+ * All options as cards pinned on the corkboard (≤ 6: 1 column; 7–13: 2 columns, RTL mirrored). No author, no counts.
+ * The grid takes all the height left under the title and the prompt and splits it into rows ([BluffFit]): 3 options
+ * get roomy cards, 13 options 34 dp cards whose text steps down to fit, never past the café row.
+ */
 @Composable
 internal fun VotingBoard(view: BluffView, clock: PhaseClock, rtl: Boolean) {
     val type = JamaaTheme.type
     val n = view.options.size
     val cols = BluffBoard.columns(n)
     val letters = OptionLetters.shared.of(view)
-    Column(Modifier.fillMaxSize().padding(horizontal = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(
+    Column(Modifier.fillMaxSize().padding(horizontal = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        // Start-aligned and clear of the end-side back hint (y 52–84 dp) that shares this line's height.
+        Row(
+            Modifier.fillMaxWidth().height(BluffFit.VOTE_TITLE.dp).padding(end = (BluffFit.BACK_HINT_W - 8f).dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            AutoText(
                 stringResource(if (view.isFinal) R.string.game__bluff__vote__title_no_truth else R.string.game__bluff__vote__title),
-                style = type.headline, color = Paper,
+                type.headline, Paper, Modifier.weight(1f, fill = false), maxSp = 30f, minSp = 20f, maxLines = 1,
             )
-            view.prompt?.let { Chip(hintText(it.lengthHint), fill = Cafe.elevated, ink = Paper) }
+            view.prompt?.let { p -> hintText(p.lengthHint)?.let { Chip(it, fill = Cafe.elevated, ink = Paper) } }
             if (BluffBoard.easyOne(n)) Chip(stringResource(R.string.game__bluff__vote__easy_one), fill = Gold, ink = Cafe.onAccent)
         }
-        view.prompt?.let {
-            Text(it.display ?: it.original, style = type.body.contentDir(), color = JamaaColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        }
-        Spacer(Modifier.height(10.dp))
-        Box(Modifier.weight(1f).fillMaxWidth()) {
-            // The "Knew it!" banner opens round 1 when someone was Spot on (their +150 is already paid).
-            val knew = view.spotOnPlayers
-            if (knew.isNotEmpty() && view.round == 1) {
-                val names = nameList(knew.map { it.name })
-                Box(
-                    Modifier.align(Alignment.Center).graphicsLayer {
-                        val t = clock.t()
-                        alpha = when {
-                            clock.completed.value -> 0f
-                            t < 200 -> t / 200f
-                            t < BluffMoments.KNEW_IT_MS - 200 -> 1f
-                            else -> ((BluffMoments.KNEW_IT_MS - t) / 200f).coerceIn(0f, 1f)
-                        }
-                    },
-                ) { StampLabel(stringResource(R.string.game__bluff__vote__knew_it, names), Gold, { 1f }, style = type.headline) }
+        Box(Modifier.fillMaxWidth().height(BluffFit.VOTE_PROMPT.dp), contentAlignment = Alignment.CenterStart) {
+            view.prompt?.let {
+                AutoText(it.display ?: it.original, type.title, JamaaColors.TextSecondary, Modifier.fillMaxWidth(), maxSp = 22f, minSp = 15f, maxLines = 2, textAlign = TextAlign.Start)
             }
-            Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)) {
+        }
+        Spacer(Modifier.height(8.dp))
+        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
+            val cardDp = BluffFit.optionCardDp(n, maxHeight.value)
+            val textMax = BluffFit.cardTextMaxSp(cardDp)
+            Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(BluffFit.VOTE_GAP.dp, Alignment.CenterVertically)) {
                 for (row in 0 until BluffBoard.rows(n)) {
                     // Cells are placed by visual column (absolute order), so RTL fills from the right edge.
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterHorizontally)) {
+                        Row(Modifier.fillMaxWidth().height(cardDp.dp), horizontalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterHorizontally)) {
                             for (col in 0 until cols) {
                                 val index = (0 until n).firstOrNull { val c = BluffBoard.cell(it, n, rtl); c.row == row && c.col == col }
-                                Box(Modifier.weight(1f)) {
+                                Box(Modifier.weight(1f).fillMaxHeight()) {
                                     if (index != null) {
                                         CompositionLocalProvider(LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
                                             OptionCard(
                                                 view.options[index].text,
                                                 letter = letters[view.options[index].id] ?: OptionLetters.letterOf(index),
-                                                modifier = Modifier.fillMaxWidth().graphicsLayer {
+                                                modifier = Modifier.fillMaxSize().graphicsLayer {
+                                                    // Pinned one by one: a small drop and a tilt that settles (80 ms stagger).
                                                     val p = clock.p("pins", index)
                                                     alpha = minOf(1f, p * 2f)
-                                                    scaleX = 0.9f + 0.1f * p
+                                                    scaleX = 0.92f + 0.08f * p
                                                     scaleY = scaleX
-                                                    rotationZ = (if (index % 2 == 0) -1f else 1f) * (1f - p) * 4f
+                                                    translationY = (1f - p) * -14f * density
+                                                    rotationZ = (if (index % 2 == 0) -1f else 1f) * (1f - p) * 3f
                                                 },
+                                                maxSp = textMax,
                                                 dense = cols == 2,
                                             )
                                         }
@@ -420,43 +468,69 @@ internal fun VotingBoard(view: BluffView, clock: PhaseClock, rtl: Boolean) {
                     }
                 }
             }
+            // The "Knew it!" banner opens round 1 when someone was Spot on (their +150 is already paid): it stamps in
+            // over the board, then lifts away before the cards are pinned.
+            val knew = view.spotOnPlayers
+            if (knew.isNotEmpty() && view.round == 1) {
+                val names = nameList(knew.map { it.name })
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(
+                        Modifier.graphicsLayer {
+                            val t = clock.t()
+                            val out = ((t - (BluffMoments.KNEW_IT_MS - 260)) / 260f).coerceIn(0f, 1f)
+                            alpha = if (clock.completed.value) 0f else 1f - out
+                            translationY = -out * 30f * density
+                        },
+                    ) {
+                        StampLabel(stringResource(R.string.game__bluff__vote__knew_it, names), Gold, { (clock.t() / 300f).coerceIn(0f, 1f) }, style = type.headline, maxWidth = 680.dp)
+                    }
+                }
+            }
         }
     }
 }
 
 /**
- * A pinned answer card: cream paper, 2 lines max (60 graphemes fit at body size, GAME-BLUFF §7). With a [letter], the
- * brass pin becomes a brass letter badge (A, B, C … as on the phones, DESIGN-JAMAA §7.6 BL-TV-03) at the start edge
- * (mirrored in RTL by the layout direction; the letter itself stays Western), so the room can say "I went for C".
+ * A pinned answer card: cream paper; the text auto-sizes from [maxSp] down to 14 sp in 2 lines (60 graphemes, GAME-BLUFF
+ * §7) inside whatever height the card is given. With a [letter], the brass pin becomes a brass letter badge (A, B, C …
+ * as on the phones, DESIGN-JAMAA §7.6 BL-TV-03) at the start edge (mirrored in RTL by the layout direction; the letter
+ * itself stays Western), so the room can say "I went for C". [strike] crosses the text (the final's twist).
  */
 @Composable
-internal fun OptionCard(text: String, modifier: Modifier = Modifier, dense: Boolean = false, fill: Color = Paper, ink: Color = PaperInk, letter: Char? = null) {
-    val badge = if (dense) 26.dp else 32.dp
-    Box(
+internal fun OptionCard(
+    text: String,
+    modifier: Modifier = Modifier,
+    dense: Boolean = false,
+    fill: Color = Paper,
+    ink: Color = PaperInk,
+    letter: Char? = null,
+    maxSp: Float = if (dense) 22f else 26f,
+    maxLines: Int = 2,
+    strike: Boolean = false,
+) {
+    val badge = if (dense) 26.dp else 30.dp
+    Row(
         modifier
-            .background(fill, RoundedCornerShape(14.dp))
-            .padding(horizontal = if (letter != null) 12.dp else 20.dp, vertical = if (dense) 8.dp else 12.dp),
+            .background(fill, JamaaShapes.row)
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text,
-            Modifier.fillMaxWidth().padding(start = if (letter != null) badge + 12.dp else 18.dp),
-            style = (if (dense) JamaaTheme.type.body else JamaaTheme.type.title).contentDir(),
-            color = ink,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
         if (letter != null) {
             Box(
-                Modifier.align(Alignment.CenterStart).size(badge).background(Brush.radialGradient(listOf(GoldLight, Gold)), RoundedCornerShape(50)),
+                Modifier.size(badge).background(Brush.radialGradient(listOf(GoldLight, Gold)), JamaaShapes.pill),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(letter.toString(), style = (if (dense) JamaaTheme.type.caption else JamaaTheme.type.titleS).copy(textDirection = TextDirection.Ltr), color = PaperInk, maxLines = 1)
+                Text(letter.toString(), style = (if (dense) JamaaTheme.type.caption else JamaaTheme.type.titleS).copy(textDirection = TextDirection.Ltr, fontWeight = FontWeight.Bold), color = PaperInk, maxLines = 1)
             }
         } else {
-            Canvas(Modifier.align(Alignment.CenterStart).size(12.dp).clearAndSetSemantics {}) {
+            Canvas(Modifier.size(12.dp).clearAndSetSemantics {}) {
                 drawCircle(Gold, radius = size.minDimension / 2f)
                 drawCircle(GoldLight, radius = size.minDimension / 5f, center = Offset(size.width * 0.38f, size.height * 0.38f))
             }
+        }
+        Spacer(Modifier.width(12.dp))
+        Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+            AutoText(text, JamaaTheme.type.title, ink, Modifier.fillMaxWidth(), maxSp = maxSp, minSp = 14f, maxLines = maxLines, textAlign = TextAlign.Start, strike = strike)
         }
     }
 }
@@ -467,13 +541,13 @@ internal fun OptionCard(text: String, modifier: Modifier = Modifier, dense: Bool
 internal fun HoldCard(view: BluffView, args: GameScreenArgs) {
     val type = JamaaTheme.type
     val connected = view.active.count { it.connected }
-    Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(40.dp, Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(stringResource(R.string.game__bluff__hold__waiting, connected), style = type.headline, color = Paper, textAlign = TextAlign.Center)
+    Row(Modifier.fillMaxSize().padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(40.dp, Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f, fill = false), horizontalAlignment = Alignment.CenterHorizontally) {
+            AutoText(stringResource(R.string.game__bluff__hold__waiting, connected), type.headline, Paper, minSp = 20f, maxLines = 2)
             Spacer(Modifier.height(12.dp))
             RoomCode(args.room.roomCode, centered = true, glow = true)
         }
-        QrCode(args.room.joinUrl, panel = 200.dp)
+        QrCode(args.room.joinUrl, panel = 180.dp)
     }
 }
 

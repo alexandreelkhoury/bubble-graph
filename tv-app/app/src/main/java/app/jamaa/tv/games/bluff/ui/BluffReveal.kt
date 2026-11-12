@@ -1,6 +1,19 @@
 package app.jamaa.tv.games.bluff.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.sp
+import app.jamaa.tv.games.bluff.BluffFit
+import app.jamaa.tv.ui.theme.JamaaMotion
+import app.jamaa.tv.ui.theme.JamaaShapes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -88,7 +101,8 @@ import kotlin.math.roundToInt
 /**
  * Every player's character at a café table, in seat order (mirrored in RTL). Public data only (DESIGN-JAMAA §4.3):
  * `doneIds` / `awaitedIds` (scribbling `think`, envelope or ballot `done`), reactions from phones, `away`; in REVEAL the
- * script's event expressions. A character travelling to the spotlight card leaves an empty chair here.
+ * script's event expressions. A character travelling to the spotlight card leaves an empty chair here. Name plates are
+ * bounded by the seat width and auto-size down (12 players beside the score rail), never overlapping a neighbour's.
  */
 @Composable
 internal fun CafeRow(
@@ -102,13 +116,17 @@ internal fun CafeRow(
     clockOffsetMs: Long,
 ) {
     val type = JamaaTheme.type
-    val sizeDp = BluffBoard.rowCharacterDp(view.players.size)
+    val sizeDp = geo.row.characterDp
     val reactions = rememberReactions(room)
+    val seatDp = (geo.seatW / geo.density).coerceAtMost(sizeDp + 64f)
     Box(Modifier.fillMaxSize()) {
         Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
-            // Café tables: a marble top under each pair of seats.
+            // The café's long marble counter under the chairs.
             val y = geo.rowCenterY + geo.dp(sizeDp) * 0.52f
-            drawLine(Cafe.elevated, Offset((if (rtl) geo.railWidth else 0f) + geo.dp(24), y), Offset((if (rtl) geo.width else geo.rowWidth) - geo.dp(24), y), strokeWidth = geo.dp(5))
+            val x0 = geo.stageLeft(rtl) + geo.dp(16)
+            val x1 = geo.stageLeft(rtl) + geo.rowWidth - geo.dp(16)
+            drawLine(Cafe.elevated, Offset(x0, y), Offset(x1, y), strokeWidth = geo.dp(5), cap = StrokeCap.Round)
+            drawLine(Cafe.accent.copy(alpha = 0.18f), Offset(x0, y - geo.dp(3)), Offset(x1, y - geo.dp(3)), strokeWidth = geo.dp(1))
         }
         for ((i, p) in view.players.withIndex()) {
             val member = room.member(p.id)
@@ -124,12 +142,12 @@ internal fun CafeRow(
                 else -> CharacterRules.expression(member, env, if (event != null) null else reactions[p.id], event ?: Expression.IDLE)
             }
             val x = geo.seatX(i, rtl)
-            val w = geo.dp(sizeDp + 40)
+            val w = geo.dp(seatDp)
             Column(
                 Modifier
                     .align(AbsoluteAlignment.TopLeft)
                     .absoluteOffset { IntOffset((x - w / 2f).roundToInt(), (geo.rowCenterY - geo.dp(sizeDp) / 2f).roundToInt()) }
-                    .width((sizeDp + 40).dp)
+                    .width(seatDp.dp)
                     .graphicsLayer {
                         // The row slides in with the WRITING moment (characters sit down at their tables, 40 ms stagger).
                         val q = if (view.phase == BluffPhase.WRITING) clock.p("row", i) else 1f
@@ -147,13 +165,19 @@ internal fun CafeRow(
                         view.phase == BluffPhase.VOTING && p.spotOn -> Prop.PIN
                         else -> null
                     }
-                    if (prop != null) PropGlyph(prop, 26.dp, Modifier.align(Alignment.BottomEnd))
+                    if (prop != null) PropGlyph(prop, (sizeDp * 0.42f).dp, Modifier.align(Alignment.BottomEnd))
                 }
-                Text(Names.ellipsize(p.name, 10), style = type.caption, color = if (p.left) JamaaColors.TextMuted else Paper, maxLines = 1)
-                if (p.isNew) {
-                    Text(stringResource(R.string.game__bluff__scores__new), Modifier.background(Gold, RoundedCornerShape(6.dp)).padding(horizontal = 6.dp), style = type.caption, color = Cafe.onAccent)
-                } else if (view.phase == BluffPhase.VOTING && p.spotOn) {
-                    Text(stringResource(R.string.game__bluff__reveal__knew_it_pin), style = type.caption, color = Gold)
+                if (geo.row.names) {
+                    val tag = when {
+                        p.isNew -> stringResource(R.string.game__bluff__scores__new)
+                        view.phase == BluffPhase.VOTING && p.spotOn -> stringResource(R.string.game__bluff__reveal__knew_it_pin)
+                        else -> null
+                    }
+                    if (tag != null) {
+                        AutoText(tag, type.caption, Cafe.onAccent, Modifier.background(Gold, JamaaShapes.xs).padding(horizontal = 6.dp), maxSp = 18f, minSp = 12f, maxLines = 1)
+                    } else {
+                        AutoText(p.name, type.caption, if (p.left) JamaaColors.TextMuted else Paper, Modifier.fillMaxWidth().padding(horizontal = 2.dp), maxSp = 20f, minSp = 13f, maxLines = 1)
+                    }
                 }
             }
         }
@@ -205,16 +229,24 @@ private fun travelling(script: BluffScript, id: String, t: Long): Boolean {
 
 // ---------------------------------------------------------------- the reveal (GAME-BLUFF §12.2 / §12.2.1)
 
-private const val CARD_W_DP = 600
-private const val CARD_H_DP = 120
-
-/** The reveal script drawn over the stage: spotlight card, travellers, stamps, the liar, coins, pills, montages. */
+/**
+ * The reveal script drawn over the stage. One layout for every count (BL-TV-05, [BluffFit]): the progress strip of
+ * stamped answers (their letter badges) at the top, the fooled players perched on the spotlight card's top edge, the
+ * card with its stamp on the end corner, and under it the liar(s) popping out with "Rami fooled 2!" (or the truth's
+ * verdict and note). The score rail holds the end side. Every beat enters and leaves on the script clock: a stamped
+ * card shrinks into its strip badge while its voters hop back to their chairs, so nothing ever snaps.
+ */
 @Composable
 internal fun RevealStage(view: BluffView, clock: PhaseClock, script: BluffScript, geo: StageGeometry, rtl: Boolean) {
     val seg by remember(script) { derivedStateOf { script.segmentAt(clock.t()) } }
     val current = seg ?: return
     Box(Modifier.fillMaxSize()) {
         ScoreRail(view, clock, script, geo, rtl)
+        if (current.kind != SegmentKind.INTRO && current.kind != SegmentKind.TWIST && current.kind != SegmentKind.NOBODY &&
+            !(current.kind == SegmentKind.END && script.rest?.kind == SegmentKind.CROWN) && current.kind != SegmentKind.CROWN
+        ) {
+            ProgressStrip(view, clock, script, geo, rtl)
+        }
         when (current.kind) {
             SegmentKind.INTRO -> IntroBeat(view, clock, current, script, geo, rtl)
             SegmentKind.QUICK, SegmentKind.LIE, SegmentKind.HOUSE, SegmentKind.TRUTH, SegmentKind.FINAL_ANSWER ->
@@ -229,69 +261,162 @@ internal fun RevealStage(view: BluffView, clock: PhaseClock, script: BluffScript
     }
 }
 
+/** Segments that put one answer card under the spotlight. */
+private val CARD_KINDS = setOf(SegmentKind.QUICK, SegmentKind.LIE, SegmentKind.HOUSE, SegmentKind.TRUTH, SegmentKind.FINAL_ANSWER)
+
 /**
- * The resting frame after the script (natural end or OK-completion), held until SCORES. Rounds 1–2: the gold TRUTH
- * card with its stamp landed, the note and the found-early tag, the stamped lies in the strip, the rail at the final
- * scores (characters back in their chairs). Final: the MOST CONVINCING card(s) with the crown, under the
- * "No truth: it was all made up!" stamp.
+ * The exit of [seg]'s card in the segment's last [BluffScript.HOLD_MS] (no step runs there): 0 → 1, accelerating. None
+ * for the resting card, nor for the script's last card (it stays as the resting frame).
+ */
+private fun exitP(seg: Segment, t: Long, script: BluffScript, resting: Boolean): Float {
+    if (resting || seg.index == script.segments.lastIndex) return 0f
+    val q = ((t - (seg.endMs - BluffScript.HOLD_MS)).toFloat() / BluffScript.HOLD_MS).coerceIn(0f, 1f)
+    return q * q
+}
+
+/** The strip slot of [seg]'s card: how many answers were stamped before it (earlier badges never move). */
+private fun slotOf(seg: Segment, script: BluffScript): Int = script.segments.count { it.index < seg.index && it.kind in CARD_KINDS && it.step != null }
+
+/** A strip badge's ring: red lie, violet house, gold truth; the final's answers are all brass (no stamp exists). */
+private fun badgeColor(kind: OptionKind, final: Boolean): Color = if (final) Gold else stampColor(kind)
+
+/**
+ * The answers already revealed, as their letter badges (A, C, B…) in reveal order from the start edge: full words
+ * never fit 12 chips, a letter always does, and the room voted by letter. Each badge pops in as its card arrives.
  */
 @Composable
-private fun RestingFrame(view: BluffView, clock: PhaseClock, script: BluffScript, geo: StageGeometry, rtl: Boolean) {
-    val rest = script.rest ?: return
-    if (rest.kind != SegmentKind.CROWN) {
-        SpotlightCard(view, clock, rest, script, geo, rtl, resting = true)
-        return
-    }
-    CrownBeat(view, clock, rest, script, geo, rtl)
-    Box(Modifier.fillMaxSize()) {
+private fun BoxScope.ProgressStrip(view: BluffView, clock: PhaseClock, script: BluffScript, geo: StageGeometry, rtl: Boolean) {
+    val letters = OptionLetters.shared.of(view)
+    val arrivals = remember(script) { script.segments.filter { it.kind in CARD_KINDS && it.step != null }.map { it.step!! to it.endMs } }
+    val shown by remember(script) { derivedStateOf { arrivals.count { clock.t() >= it.second || clock.t() >= script.totalMs } } }
+    for (k in 0 until shown) {
+        val (st, at) = arrivals[k]
         Box(
-            Modifier.align(AbsoluteAlignment.TopLeft).at(geo, CARD_W_DP, 56) { Offset(geo.cardCenterX(rtl), geo.contentTop + geo.dp(28)) }.size(CARD_W_DP.dp, 56.dp),
+            Modifier
+                .align(AbsoluteAlignment.TopLeft)
+                .atPx(geo, geo.dp(30), geo.dp(30)) { Offset(geo.stripX(k, rtl), geo.stripY) }
+                .size(30.dp)
+                .graphicsLayer {
+                    val q = if (clock.completed.value) 1f else ((clock.t() - at) / 220f).coerceIn(0f, 1f)
+                    val s = if (script.reduced) 1f else 0.4f + 0.6f * overshoot(q)
+                    scaleX = s
+                    scaleY = s
+                    alpha = if (script.reduced) q else 1f
+                }
+                .background(if (st.kind == OptionKind.TRUTH && !script.reveal.final) Gold else Cafe.surface, JamaaShapes.pill)
+                .border(3.dp, badgeColor(st.kind, script.reveal.final), JamaaShapes.pill),
             contentAlignment = Alignment.Center,
         ) {
-            StampLabel(stringResource(R.string.game__bluff__reveal__no_truth_stamp), LieRed, { 1f }, style = JamaaTheme.type.title)
+            Text(
+                (letters[st.optionId] ?: '·').toString(),
+                style = JamaaTheme.type.caption.copy(fontWeight = FontWeight.Bold, textDirection = TextDirection.Ltr),
+                color = if (st.kind == OptionKind.TRUTH && !script.reveal.final) PaperInk else Paper,
+                maxLines = 1,
+            )
         }
     }
 }
 
-/** Positions a composable centred on an absolute stage point (px), recomputed in the layout phase only. */
-private fun Modifier.at(geo: StageGeometry, wDp: Int, hDp: Int, center: () -> Offset): Modifier =
+private fun overshoot(q: Float): Float = JamaaMotion.Overshoot.transform(q.coerceIn(0f, 1f))
+
+/**
+ * The resting frame after the script (natural end or OK-completion), held until SCORES. Rounds 1–2: the gold TRUTH
+ * card with its stamp landed, the note and the found-early tag, every badge in the strip, the rail at the final
+ * scores (characters back in their chairs). Final: the MOST CONVINCING card(s) with the crown, under the
+ * "No truth: it was all made up!" banner. When a montage ran after the last card, the frame fades back in.
+ */
+@Composable
+private fun RestingFrame(view: BluffView, clock: PhaseClock, script: BluffScript, geo: StageGeometry, rtl: Boolean) {
+    val rest = script.rest ?: return
+    val direct = rest.index == script.segments.lastIndex
+    Box(
+        Modifier.fillMaxSize().graphicsLayer {
+            alpha = if (direct || clock.completed.value) 1f else ((clock.t() - script.totalMs) / 300f).coerceIn(0f, 1f)
+        },
+    ) {
+        if (rest.kind != SegmentKind.CROWN) {
+            SpotlightCard(view, clock, rest, script, geo, rtl, resting = true)
+            return@Box
+        }
+        CrownBeat(view, clock, rest, script, geo, rtl)
+        Box(
+            Modifier.align(AbsoluteAlignment.TopLeft).atPx(geo, geo.rowWidth, geo.dp(BluffFit.STRIP + 6)) { Offset(geo.cardCenterX(rtl), geo.stripY + geo.dp(4)) }
+                .size((geo.rowWidth / geo.density).dp, (BluffFit.STRIP + 6).dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            AutoText(
+                stringResource(R.string.game__bluff__reveal__no_truth_stamp), JamaaTheme.type.title, Paper,
+                Modifier.background(LieRed, JamaaShapes.pill).padding(horizontal = 18.dp), maxSp = 22f, minSp = 14f, maxLines = 1,
+            )
+        }
+    }
+}
+
+/** Positions a composable of [wPx] × [hPx] centred on an absolute stage point (px), recomputed in the layout phase only. */
+private fun Modifier.atPx(geo: StageGeometry, wPx: Float, hPx: Float, center: () -> Offset): Modifier =
     this.absoluteOffset {
         val c = center()
-        IntOffset((c.x - geo.dp(wDp) / 2f).roundToInt(), (c.y - geo.dp(hDp) / 2f).roundToInt())
+        IntOffset((c.x - wPx / 2f).roundToInt(), (c.y - hPx / 2f).roundToInt())
     }
 
+private fun Modifier.at(geo: StageGeometry, wDp: Int, hDp: Int, center: () -> Offset): Modifier = atPx(geo, geo.dp(wDp), geo.dp(hDp), center)
+
+private fun StageGeometry.dpOf(px: Float) = (px / density).dp
+
+/**
+ * The intro beat: the corkboard's letter badges slide down and away while the lantern light narrows, and the prompt
+ * comes back up as a cream card in the spotlight's place (final: "Which one did you believe?" over it).
+ */
 @Composable
 private fun IntroBeat(view: BluffView, clock: PhaseClock, seg: Segment, script: BluffScript, geo: StageGeometry, rtl: Boolean) {
     val type = JamaaTheme.type
+    val letters = OptionLetters.shared.of(view)
     Box(Modifier.fillMaxSize()) {
-        // The corkboard slides down out of view while the lantern light narrows (DESIGN-JAMAA §5.2 intro beat).
+        Row(
+            Modifier
+                .align(AbsoluteAlignment.TopLeft)
+                .atPx(geo, geo.cardW, geo.dp(40)) { Offset(geo.cardCenterX(rtl), geo.liarY) }
+                .size(geo.dpOf(geo.cardW), 40.dp)
+                .graphicsLayer {
+                    val p = seg.p("dim", clock.t())
+                    translationY = p * 120f * density
+                    alpha = 1f - p
+                },
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            for ((i, o) in view.options.withIndex()) {
+                Box(Modifier.size(32.dp).background(Brush.radialGradient(listOf(GoldLight, Gold)), JamaaShapes.pill), contentAlignment = Alignment.Center) {
+                    Text((letters[o.id] ?: OptionLetters.letterOf(i)).toString(), style = type.caption.copy(fontWeight = FontWeight.Bold, textDirection = TextDirection.Ltr), color = PaperInk)
+                }
+            }
+        }
         Column(
             Modifier
                 .align(AbsoluteAlignment.TopLeft)
-                .at(geo, CARD_W_DP, 300) { Offset(geo.cardCenterX(rtl), geo.cardCenterY) }
-                .width(CARD_W_DP.dp)
+                .atPx(geo, geo.cardW, geo.cardH + geo.dp(BluffFit.PERCH)) { Offset(geo.cardCenterX(rtl), geo.cardCenterY - geo.dp(BluffFit.PERCH) / 2f) }
+                .size(geo.dpOf(geo.cardW), geo.dpOf(geo.cardH + geo.dp(BluffFit.PERCH)))
                 .graphicsLayer {
-                    val p = seg.p("dim", clock.t())
-                    translationY = p * 260f * density
-                    alpha = 1f - p
+                    val p = seg.p("title", clock.t())
+                    alpha = minOf(1f, p * 2f)
+                    scaleX = 0.94f + 0.06f * p
+                    scaleY = scaleX
+                    translationY = (1f - p) * 24f * density
                 },
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom,
         ) {
-            val letters = OptionLetters.shared.of(view)
-            for ((i, o) in view.options.take(6).withIndex()) OptionCard(o.text, dense = true, letter = letters[o.id] ?: OptionLetters.letterOf(i))
+            if (script.reveal.final) {
+                AutoText(stringResource(R.string.game__bluff__reveal__final_intro), type.headline, Paper, Modifier.fillMaxWidth(), maxSp = 30f, minSp = 18f, maxLines = 1)
+                Spacer(Modifier.height(6.dp))
+            }
+            Box(
+                Modifier.fillMaxWidth().height(geo.dpOf(geo.cardH)).background(Paper.copy(alpha = 0.94f), JamaaShapes.card).padding(horizontal = 28.dp, vertical = 12.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                view.prompt?.let { AutoText(it.display ?: it.original, type.headline, PaperInk, Modifier.fillMaxWidth(), minSp = 18f, maxLines = 4) }
+            }
         }
-        Text(
-            if (script.reveal.final) stringResource(R.string.game__bluff__reveal__final_intro)
-            else view.prompt?.let { it.display ?: it.original } ?: "",
-            Modifier
-                .align(AbsoluteAlignment.TopLeft)
-                .at(geo, CARD_W_DP, 80) { Offset(geo.cardCenterX(rtl), geo.cardCenterY) }
-                .width(CARD_W_DP.dp)
-                .graphicsLayer { val p = seg.p("title", clock.t()); alpha = minOf(1f, p * 2f); scaleX = 1.15f - 0.15f * p; scaleY = scaleX },
-            style = type.headline.contentDir(),
-            color = Paper,
-            textAlign = TextAlign.Center,
-        )
     }
 }
 
@@ -307,112 +432,121 @@ private fun stampColor(kind: OptionKind): Color = when (kind) {
     OptionKind.TRUTH -> JamaaColors.Success
 }
 
-/** One revealed option: spotlight → travellers hop on → drumroll tremble → stamp → the liar pops out → coins. */
+/**
+ * The spotlight card: cream paper (gold for the truth, with a light sweep), the answer's letter badge at the start
+ * edge and its text auto-sized to the card (34 → 18 sp, 3 lines), so a 60-grapheme lie is always read in full.
+ */
+@Composable
+private fun RevealCard(text: String, letter: Char?, gold: () -> Float, sweep: () -> Float, modifier: Modifier) {
+    Box(modifier) {
+        Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
+            val r = CornerRadius(24.dp.toPx())
+            drawRoundRect(PaperInk.copy(alpha = 0.35f), topLeft = Offset(0f, 6.dp.toPx()), size = size, cornerRadius = r)
+            drawRoundRect(Paper, cornerRadius = r)
+            val g = gold()
+            if (g > 0f) {
+                drawRoundRect(Brush.linearGradient(listOf(GoldLight, Gold)), alpha = g, cornerRadius = r)
+                val sw = sweep()
+                if (sw in 0.001f..0.999f) {
+                    val x = -size.width * 0.2f + size.width * 1.4f * sw
+                    drawRect(Brush.linearGradient(listOf(Color.Transparent, Color.White.copy(alpha = 0.55f), Color.Transparent), start = Offset(x - 40.dp.toPx(), 0f), end = Offset(x + 40.dp.toPx(), size.height)))
+                }
+            }
+        }
+        Row(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+            if (letter != null) {
+                Box(Modifier.size(40.dp).background(PaperInk, JamaaShapes.pill), contentAlignment = Alignment.Center) {
+                    Text(letter.toString(), style = JamaaTheme.type.title.copy(textDirection = TextDirection.Ltr), color = GoldLight, maxLines = 1)
+                }
+                Spacer(Modifier.width(12.dp))
+            }
+            Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                AutoText(text, JamaaTheme.type.headline, PaperInk, Modifier.fillMaxWidth(), minSp = 18f, maxLines = 3)
+            }
+            if (letter != null) Spacer(Modifier.width(52.dp)) // keeps the text optically centred on the card
+        }
+    }
+}
+
+/**
+ * One revealed option: spotlight → the fooled hop onto its top edge → drumroll tremble → stamp → the liar pops out from
+ * under it with the moustache → coins; then the card shrinks into its strip badge as the voters hop home.
+ */
 @Composable
 private fun SpotlightCard(view: BluffView, clock: PhaseClock, seg: Segment, script: BluffScript, geo: StageGeometry, rtl: Boolean, resting: Boolean = false) {
     val type = JamaaTheme.type
     val st = seg.step
-    val reduce = JamaaTheme.reduceMotion
+    val reduce = script.reduced || JamaaTheme.reduceMotion
     val truth = seg.kind == SegmentKind.TRUTH
     val center = { Offset(geo.cardCenterX(rtl), geo.cardCenterY) }
     val text = st?.text ?: script.reveal.truth?.text ?: ""
+    val exit = { exitP(seg, clock.t(), script, resting) }
+    val slot = remember(seg, script) { slotOf(seg, script) }
+    val letter = st?.optionId?.let { OptionLetters.shared.of(view)[it] }
     Box(Modifier.fillMaxSize()) {
-        // Already-stamped cards wait in a small strip at the top (dimmed to 35 %).
-        StampedStrip(clock, seg, script, geo, rtl, Modifier.align(AbsoluteAlignment.TopLeft))
-
-        // The liar(s) burst up from behind the card (`spring.bouncy`), smug, holding the moustache on a stick.
-        if (st != null && st.kind != OptionKind.TRUTH) {
-            val authors = st.authorIds.mapNotNull { view.player(it) }
-            if (st.kind == OptionKind.HOUSE || authors.isEmpty()) {
-                HouseCharacter(
-                    84.dp, laugh = 1f,
-                    Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 84, 84) {
-                        val p = seg.p("liar", clock.t())
-                        Offset(center().x, center().y + geo.dp(CARD_H_DP) * (0.4f - 1.25f * p))
-                    },
-                )
-            } else {
-                for ((k, a) in authors.withIndex()) {
-                    val dx = (k - (authors.size - 1) / 2f) * 96f
-                    Box(
-                        Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 84, 84) {
-                            val p = seg.p("liar", clock.t())
-                            Offset(center().x + geo.dp(dx), center().y + geo.dp(CARD_H_DP) * (0.4f - 1.3f * p))
-                        },
-                    ) {
-                        val e by remember(script, a.id) { derivedStateOf { script.expressionOf(a.id, clock.t()) ?: Expression.IDLE } }
-                        Character(a.color, 84.dp, e)
-                        Canvas(Modifier.size(84.dp).clearAndSetSemantics {}) {
-                            if (seg.p("liar", clock.t()) > 0.05f) moustache(Offset(size.width * 0.78f, size.height * 0.62f), size.width * 0.42f)
-                        }
-                    }
-                }
-            }
+        // 1. Under the card (drawn first, so it emerges from behind it): the liar row, or the truth's verdict and note.
+        if (st != null && !truth) {
+            LiarRow(view, clock, seg, script, geo, rtl, exit)
+        } else if (truth) {
+            TruthCaption(view, clock, seg, script, geo, rtl, exit)
         }
 
-        // The card itself (spotlight: to centre, grows; truth turns gold with a light sweep).
-        Box(
-            Modifier
+        // 2. The card: to the spotlight, grows; trembles on the drumroll; the truth turns gold with a light sweep. On
+        // exit it flies into its strip badge.
+        RevealCard(
+            text, letter,
+            gold = if (truth) ({ seg.p("gold", clock.t()) }) else ({ 0f }),
+            sweep = { seg.p("sweep", clock.t()) },
+            modifier = Modifier
                 .align(AbsoluteAlignment.TopLeft)
-                .at(geo, CARD_W_DP, CARD_H_DP, center)
-                .size(CARD_W_DP.dp, CARD_H_DP.dp)
+                .atPx(geo, geo.cardW, geo.cardH, center)
+                .size(geo.dpOf(geo.cardW), geo.dpOf(geo.cardH))
                 .graphicsLayer {
                     val t = clock.t()
                     val p = seg.p("spotlight", t)
-                    val s = 0.8f + 0.2f * p
-                    scaleX = s
-                    scaleY = s
-                    alpha = minOf(1f, p * 3f)
+                    var s = if (reduce) 1f else 0.86f + 0.14f * p
+                    var a = minOf(1f, p * 3f)
+                    if (!reduce) translationY = (1f - p) * 30f * density
                     // Drumroll: a ±1 dp tremble at 12 Hz (not in lite/calm motion).
                     val d = seg.sub("drumroll")
                     if (d != null && !reduce) {
                         val local = t - seg.startMs - d.step.startMs
                         if (local in 0 until d.step.durationMs) translationX = kotlin.math.sin(local / 1000f * 12f * 6.283f) * density
                     }
-                },
-        ) {
-            val gold = if (truth) ({ seg.p("gold", clock.t()) }) else ({ 0f })
-            Canvas(Modifier.fillMaxSize().clearAndSetSemantics {}) {
-                val g = gold()
-                drawRoundRect(Paper, cornerRadius = androidx.compose.ui.geometry.CornerRadius(18.dp.toPx()))
-                if (g > 0f) {
-                    drawRoundRect(Brush.linearGradient(listOf(GoldLight, Gold)), alpha = g, cornerRadius = androidx.compose.ui.geometry.CornerRadius(18.dp.toPx()))
-                    val sw = seg.p("sweep", clock.t())
-                    if (sw in 0.001f..0.999f) {
-                        val x = -size.width * 0.2f + size.width * 1.4f * sw
-                        drawRect(Brush.linearGradient(listOf(Color.Transparent, Color.White.copy(alpha = 0.55f), Color.Transparent), start = Offset(x - 40.dp.toPx(), 0f), end = Offset(x + 40.dp.toPx(), size.height)))
+                    val e = exit()
+                    if (e > 0f) {
+                        if (!reduce) {
+                            val c = center()
+                            translationX = (geo.stripX(slot, rtl) - c.x) * e
+                            translationY = (geo.stripY - c.y) * e
+                            s *= 1f - 0.94f * e
+                        }
+                        a *= 1f - e
                     }
-                }
-            }
-            Text(
-                text,
-                Modifier.align(Alignment.Center).padding(horizontal = 28.dp),
-                style = type.headline.contentDir(),
-                color = PaperInk,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+                    scaleX = s
+                    scaleY = s
+                    alpha = a
+                },
+        )
 
-        // Final: identical cream envelopes drop onto the card, one per vote (no voter identity, GAME-BLUFF §6.5).
+        // 3. Final: identical cream envelopes drop onto the card's top edge, one per vote (no voter identity, §6.5).
         if (seg.kind == SegmentKind.FINAL_ANSWER && st != null) {
-            for (k in 0 until minOf(st.voteCount, 12)) {
+            val n = minOf(st.voteCount, 12)
+            for (k in 0 until n) {
                 PropGlyph(
                     Prop.ENVELOPE, 34.dp,
                     Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 34, 34) {
                         val p = seg.p("envelopes", clock.t(), k)
-                        val slot = Offset(center().x + geo.dp((k - (minOf(st.voteCount, 12) - 1) / 2f) * 38f), center().y - geo.dp(CARD_H_DP / 2 + 22))
-                        Offset(slot.x, slot.y - (1f - p) * geo.dp(140))
-                    }.graphicsLayer { alpha = minOf(1f, seg.p("envelopes", clock.t(), k) * 4f) },
+                        Offset(geo.perchX(k, n, rtl), geo.perchY + geo.dp(6) - (1f - p) * geo.dp(120))
+                    }.graphicsLayer { alpha = minOf(1f, seg.p("envelopes", clock.t(), k) * 4f) * (1f - exit()) },
                 )
             }
-            // The neutral ballot box the coins leave from.
-            BallotBox(Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 64, 48) { ballotBoxCenter(geo, rtl) })
+            // The neutral ballot box the coins leave from, at the card's bottom start corner.
+            BallotBox(Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 64, 48) { ballotBoxCenter(geo, rtl) }.graphicsLayer { alpha = 1f - exit() })
         }
 
-        // Travellers hop from their chairs onto the top edge of the card (arc 120 dp, `spring.bouncy`). At rest they are
-        // back in their chairs (the café row draws them), so nobody is drawn twice.
+        // 4. Travellers hop from their chairs onto the card's top edge (arc 120 dp, `spring.bouncy`), and back on exit.
+        // At rest they are back in their chairs (the café row draws them), so nobody is drawn twice.
         val ts = if (resting) emptyList() else travellers(seg)
         for ((k, pair) in ts.withIndex()) {
             val (id, sub) = pair
@@ -420,69 +554,38 @@ private fun SpotlightCard(view: BluffView, clock: PhaseClock, seg: Segment, scri
             val idx = view.players.indexOf(p)
             val subIndex = ts.take(k).count { it.second == sub }
             Box(
-                Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 48, 48) {
+                Modifier.align(AbsoluteAlignment.TopLeft).at(geo, BluffFit.PERCH_CHARACTER, BluffFit.PERCH_CHARACTER) {
+                    val q = seg.p(sub, clock.t(), subIndex).coerceIn(0f, 1.2f)
+                    val e = exit()
+                    val seat = Offset(geo.seatX(idx, rtl), geo.rowCenterY)
+                    val perch = Offset(geo.perchX(k, ts.size, rtl), geo.perchY)
+                    if (reduce) return@at perch
+                    val (from, to, u) = if (e > 0f) Triple(perch, seat, e) else Triple(seat, perch, q)
+                    val uc = u.coerceIn(0f, 1f)
+                    val arc = -geo.dp(120) * 4f * uc * (1f - uc)
+                    Offset(from.x + (to.x - from.x) * u, from.y + (to.y - from.y) * u + arc)
+                }.graphicsLayer {
                     val q = seg.p(sub, clock.t(), subIndex)
-                    val from = Offset(geo.seatX(idx, rtl), geo.rowCenterY)
-                    val to = Offset(center().x + geo.dp(BluffBoard.travellerDx(k, ts.size)), center().y - geo.dp(CARD_H_DP / 2 + 24))
-                    val arc = -geo.dp(120) * 4f * q.coerceIn(0f, 1f) * (1f - q.coerceIn(0f, 1f))
-                    Offset(from.x + (to.x - from.x) * q, from.y + (to.y - from.y) * q + arc)
-                }.graphicsLayer { alpha = if (seg.p(sub, clock.t(), subIndex) > 0f) 1f else 0f },
+                    alpha = (if (reduce) q else if (q > 0f) 1f else 0f) * (if (reduce) 1f - exit() else 1f)
+                },
             ) {
                 val e by remember(script, id) { derivedStateOf { script.expressionOf(id, clock.t()) ?: Expression.IDLE } }
-                Character(p.color, 48.dp, e)
+                Character(p.color, BluffFit.PERCH_CHARACTER.dp, e)
             }
         }
 
-        // The stamp lands at −8° on the card's top end corner.
-        if (st != null || truth) {
+        // 5. The stamp lands at −8° on the card's top end corner (none in the final: there is no truth to stamp).
+        if ((st != null || truth) && seg.kind != SegmentKind.FINAL_ANSWER) {
             val kind = st?.kind ?: OptionKind.TRUTH
-            if (seg.kind != SegmentKind.FINAL_ANSWER) {
-                Box(Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 220, 60) { Offset(center().x + geo.dp(CARD_W_DP * 0.3f) * (if (rtl) -1f else 1f), center().y - geo.dp(CARD_H_DP * 0.42f)) }.size(220.dp, 60.dp), contentAlignment = Alignment.Center) {
-                    StampLabel(stringResource(stampText(kind)), stampColor(kind), { seg.p("stamp", clock.t()) })
-                }
+            Box(
+                Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 240, 72) { geo.stampCenter(rtl) }.size(240.dp, 72.dp).graphicsLayer { alpha = 1f - exit() },
+                contentAlignment = Alignment.Center,
+            ) {
+                StampLabel(stringResource(stampText(kind)), stampColor(kind), { seg.p("stamp", clock.t()) }, style = type.displayS, maxWidth = 240.dp)
             }
         }
 
-        // Caption under the card: who fooled whom, the house, co-authors, the help badge, the truth's verdict and note.
-        Column(
-            Modifier.align(AbsoluteAlignment.TopLeft).at(geo, CARD_W_DP, 90) { Offset(center().x, center().y + geo.dp(CARD_H_DP / 2 + 56)) }.size(CARD_W_DP.dp, 90.dp)
-                .graphicsLayer { alpha = seg.p(if (truth) "stamp" else "liar", clock.t()) },
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            val names = st?.authorIds?.mapNotNull { view.player(it)?.name }.orEmpty()
-            val line = when {
-                truth && view.notice == BluffNotice.ALL_KNEW -> stringResource(R.string.game__bluff__reveal__all_knew)
-                truth && script.nobodyFound -> stringResource(R.string.game__bluff__reveal__nobody_found)
-                truth && script.tooEasy -> stringResource(R.string.game__bluff__reveal__too_easy)
-                truth -> null
-                st?.kind == OptionKind.HOUSE -> stringResource(R.string.game__bluff__reveal__house_wrote)
-                seg.kind == SegmentKind.FINAL_ANSWER && st != null && names.isNotEmpty() && st.voteCount == script.reveal.steps.sumOf { it.voteCount } && script.reveal.steps.size == 1 && st.voteCount > 1 ->
-                    stringResource(R.string.game__bluff__reveal__unanimous)
-                st != null && names.size > 1 -> stringResource(R.string.game__bluff__reveal__same_lie)
-                st != null && names.isNotEmpty() -> pluralStringResource(R.plurals.game__bluff__reveal__fooled, st.voteCount, isolate(names.first()), st.voteCount)
-                else -> null
-            }
-            if (line != null) Text(line, style = type.title, color = Paper, textAlign = TextAlign.Center, maxLines = 1)
-            if (st?.helped == true) Text(stringResource(R.string.game__bluff__reveal__helped), style = type.caption, color = JamaaColors.TextMuted)
-            if (truth) {
-                val tr = script.reveal.truth
-                if (tr?.note != null) {
-                    Text(
-                        stringResource(R.string.game__bluff__reveal__it_means, tr.note),
-                        Modifier.graphicsLayer { val p = seg.p("note", clock.t()); alpha = p; translationY = (1f - p) * 20f * density },
-                        style = type.body.contentDir(), color = JamaaColors.TextSecondary, textAlign = TextAlign.Center, maxLines = 2,
-                    )
-                }
-                if (tr?.original != null && tr.original != tr.text) {
-                    Text("${stringResource(R.string.game__bluff__reveal__in_arabic)} ${tr.original}", style = type.caption.contentDir(), color = JamaaColors.TextMuted, maxLines = 1)
-                }
-                if (st != null && st.foundEarlyIds.isNotEmpty()) {
-                    Text("${names(view, st.foundEarlyIds)} · ${stringResource(R.string.game__bluff__reveal__found_early)}", style = type.caption, color = JamaaColors.TextMuted, maxLines = 1)
-                }
-            }
-        }
-
-        // Confetti from the card corners for the finders (paper white + amber, 1.2 s; none in calm motion).
+        // Confetti from the card for the finders (paper white + amber, 1.2 s; none in calm motion).
         if (truth && st != null && st.voteCount + st.spotOnIds.size > 0) {
             val burst by remember(seg) { derivedStateOf { seg.p("confetti", clock.t()) > 0f && clock.t() < seg.endMs } }
             if (burst) Confetti(Modifier.fillMaxSize(), durationMs = 1_200, seed = seg.index)
@@ -490,77 +593,177 @@ private fun SpotlightCard(view: BluffView, clock: PhaseClock, seg: Segment, scri
     }
 }
 
+/**
+ * Under a lie: its author(s) rise out from behind the card (`spring.bouncy`), `smug`, holding the moustache on a stick,
+ * each with a full name plate; beside them who they fooled ("Rami fooled 2!", co-authors, the help badge). A house lie
+ * shows the moustached house character and "The house wrote that one!".
+ */
+@Composable
+private fun BoxScope.LiarRow(view: BluffView, clock: PhaseClock, seg: Segment, script: BluffScript, geo: StageGeometry, rtl: Boolean, exit: () -> Float) {
+    val type = JamaaTheme.type
+    val st = seg.step ?: return
+    val authors = st.authorIds.mapNotNull { view.player(it) }
+    val house = st.kind == OptionKind.HOUSE || authors.isEmpty()
+    val names = authors.map { it.name }
+    val line = when {
+        house -> stringResource(R.string.game__bluff__reveal__house_wrote)
+        seg.kind == SegmentKind.FINAL_ANSWER && names.isNotEmpty() && st.voteCount == script.reveal.steps.sumOf { it.voteCount } && script.reveal.steps.size == 1 && st.voteCount > 1 ->
+            stringResource(R.string.game__bluff__reveal__unanimous)
+        names.size > 1 -> stringResource(R.string.game__bluff__reveal__same_lie)
+        names.isNotEmpty() -> pluralStringResource(R.plurals.game__bluff__reveal__fooled, st.voteCount, isolate(names.first()), st.voteCount)
+        else -> null
+    }
+    val charDp = if (authors.size > 2) 48 else 58
+    Row(
+        Modifier
+            .align(AbsoluteAlignment.TopLeft)
+            .atPx(geo, geo.cardW, geo.dp(BluffFit.LIAR)) { Offset(geo.cardCenterX(rtl), geo.liarY) }
+            .size(geo.dpOf(geo.cardW), BluffFit.LIAR.dp)
+            .graphicsLayer {
+                val p = seg.p("liar", clock.t())
+                // From behind the card (half a row up, hidden by it) to its place under it.
+                translationY = if (script.reduced) 0f else -(1f - p) * BluffFit.LIAR * 0.8f * density
+                alpha = minOf(1f, p * 2f) * (1f - exit())
+            },
+        horizontalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (house) {
+            HouseCharacter(charDp.dp, laugh = 1f)
+        } else {
+            for (a in authors.take(4)) {
+                Column(Modifier.width((charDp + 44).dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box {
+                        val e by remember(script, a.id) { derivedStateOf { script.expressionOf(a.id, clock.t()) ?: Expression.IDLE } }
+                        Character(a.color, charDp.dp, e)
+                        Canvas(Modifier.size(charDp.dp).clearAndSetSemantics {}) {
+                            moustache(Offset(size.width * 0.8f, size.height * 0.64f), size.width * 0.42f)
+                        }
+                    }
+                    AutoText(a.name, type.caption, Paper, Modifier.fillMaxWidth(), maxSp = 18f, minSp = 12f, maxLines = 1)
+                }
+            }
+        }
+        if (line != null || st.helped) {
+            Column(Modifier.weight(1f, fill = false), horizontalAlignment = Alignment.Start) {
+                if (line != null) AutoText(line, type.title, Paper, maxSp = 26f, minSp = 16f, maxLines = 2, textAlign = TextAlign.Start)
+                if (st.helped) Text(stringResource(R.string.game__bluff__reveal__helped), style = type.caption, color = JamaaColors.TextMuted, maxLines = 1)
+            }
+        }
+    }
+}
+
+/** Under the truth: the verdict (nobody found it / too easy / all knew), the note "It means…", the Arabic original. */
+@Composable
+private fun BoxScope.TruthCaption(view: BluffView, clock: PhaseClock, seg: Segment, script: BluffScript, geo: StageGeometry, rtl: Boolean, exit: () -> Float) {
+    val type = JamaaTheme.type
+    val st = seg.step
+    val tr = script.reveal.truth
+    Column(
+        Modifier
+            .align(AbsoluteAlignment.TopLeft)
+            .atPx(geo, geo.cardW, geo.dp(BluffFit.LIAR)) { Offset(geo.cardCenterX(rtl), geo.liarY) }
+            .size(geo.dpOf(geo.cardW), BluffFit.LIAR.dp)
+            .graphicsLayer { alpha = seg.p("stamp", clock.t()) * (1f - exit()) },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        val line = when {
+            view.notice == BluffNotice.ALL_KNEW -> stringResource(R.string.game__bluff__reveal__all_knew)
+            script.nobodyFound -> stringResource(R.string.game__bluff__reveal__nobody_found)
+            script.tooEasy -> stringResource(R.string.game__bluff__reveal__too_easy)
+            else -> null
+        }
+        if (line != null) AutoText(line, type.title, Paper, Modifier.fillMaxWidth(), maxSp = 26f, minSp = 16f, maxLines = 1)
+        if (tr?.note != null) {
+            AutoText(
+                stringResource(R.string.game__bluff__reveal__it_means, tr.note),
+                type.body, JamaaColors.TextSecondary,
+                Modifier.weight(1f, fill = false).fillMaxWidth().graphicsLayer { val p = seg.p("note", clock.t()); alpha = p; translationY = (1f - p) * 14f * density },
+                minSp = 14f, maxLines = 2,
+            )
+        }
+        if (tr?.original != null && tr.original != tr.text) {
+            AutoText("${stringResource(R.string.game__bluff__reveal__in_arabic)} ${tr.original}", type.caption, JamaaColors.TextMuted, Modifier.fillMaxWidth(), minSp = 13f, maxLines = 1)
+        }
+        if (st != null && st.foundEarlyIds.isNotEmpty()) {
+            AutoText("${names(view, st.foundEarlyIds)} · ${stringResource(R.string.game__bluff__reveal__found_early)}", type.caption, JamaaColors.TextMuted, Modifier.fillMaxWidth(), minSp = 13f, maxLines = 1)
+        }
+    }
+}
+
 private fun names(view: BluffView, ids: List<String>): String = ids.mapNotNull { view.player(it)?.name }.joinToString(", ") { isolate(it) }
 
 private fun ballotBoxCenter(geo: StageGeometry, rtl: Boolean): Offset {
-    val dx = geo.dp(CARD_W_DP / 2 + 60) * (if (rtl) 1f else -1f)
-    return Offset(geo.cardCenterX(rtl) + dx, geo.cardCenterY + geo.dp(CARD_H_DP / 2))
+    val dx = (geo.cardW / 2f - geo.dp(44)) * (if (rtl) 1f else -1f)
+    return Offset(geo.cardCenterX(rtl) + dx, geo.cardBottom)
 }
 
 @Composable
 private fun BallotBox(modifier: Modifier) {
     Canvas(modifier.size(64.dp, 48.dp).clearAndSetSemantics {}) {
-        drawRoundRect(Cafe.elevated, cornerRadius = androidx.compose.ui.geometry.CornerRadius(8.dp.toPx()))
-        drawRect(PaperInk, topLeft = Offset(size.width * 0.25f, size.height * 0.18f), size = androidx.compose.ui.geometry.Size(size.width * 0.5f, 4.dp.toPx()))
+        drawRoundRect(Cafe.elevated, cornerRadius = CornerRadius(8.dp.toPx()))
+        drawRoundRect(Cafe.accent.copy(alpha = 0.5f), cornerRadius = CornerRadius(8.dp.toPx()), style = Stroke(2.dp.toPx()))
+        drawRect(PaperInk, topLeft = Offset(size.width * 0.25f, size.height * 0.18f), size = Size(size.width * 0.5f, 4.dp.toPx()))
     }
 }
 
-/** Cards revealed earlier in this prompt, small and dimmed, each with its stamp colour. */
-@Composable
-private fun StampedStrip(clock: PhaseClock, seg: Segment, script: BluffScript, geo: StageGeometry, rtl: Boolean, modifier: Modifier) {
-    val done by remember(script, seg) { derivedStateOf { script.stamped(clock.t()).filter { it.optionId != seg.step?.optionId }.takeLast(6) } }
-    if (done.isEmpty()) return
-    Row(
-        modifier.absoluteOffset { IntOffset(((if (rtl) geo.railWidth else 0f) + geo.dp(16)).roundToInt(), (geo.contentTop + geo.dp(4)).roundToInt()) },
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        for (s in done) {
-            Box(Modifier.width(120.dp).graphicsLayer { alpha = 0.6f }.background(Paper, RoundedCornerShape(8.dp)).border(3.dp, stampColor(s.kind), RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 4.dp)) {
-                Text(s.text, style = JamaaTheme.type.caption.contentDir(), color = PaperInk, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
-        }
-    }
-}
-
-/** Final: the top answer(s) grow, MOST CONVINCING lands, a crown hops onto the author; or nobody wins the crown. */
+/**
+ * Final: the top answer(s) grow in gold, MOST CONVINCING lands on each, and a crown hops onto each author standing
+ * under their card (full names); or nobody wins the crown.
+ */
 @Composable
 private fun CrownBeat(view: BluffView, clock: PhaseClock, seg: Segment, script: BluffScript, geo: StageGeometry, rtl: Boolean) {
     val type = JamaaTheme.type
-    val tops = script.reveal.steps.filter { it.top }
+    val tops = script.reveal.steps.filter { it.top }.take(3)
     Box(Modifier.fillMaxSize()) {
         if (tops.isEmpty()) {
-            Text(
-                stringResource(R.string.game__bluff__reveal__no_crown),
-                Modifier.align(AbsoluteAlignment.TopLeft).at(geo, CARD_W_DP, 80) { Offset(geo.cardCenterX(rtl), geo.cardCenterY) }.width(CARD_W_DP.dp)
+            Box(
+                Modifier.align(AbsoluteAlignment.TopLeft).atPx(geo, geo.cardW, geo.cardH) { Offset(geo.cardCenterX(rtl), geo.cardCenterY) }
+                    .size(geo.dpOf(geo.cardW), geo.dpOf(geo.cardH))
                     .graphicsLayer { alpha = seg.p("grow", clock.t()) },
-                style = type.headline, color = Paper, textAlign = TextAlign.Center,
-            )
+                contentAlignment = Alignment.Center,
+            ) { AutoText(stringResource(R.string.game__bluff__reveal__no_crown), type.headline, Paper, Modifier.fillMaxWidth(), minSp = 18f, maxLines = 3) }
             return@Box
         }
+        val m = tops.size
+        val gap = geo.dp(14)
+        val w = (geo.cardW - gap * (m - 1)) / m
+        val letters = OptionLetters.shared.of(view)
         for ((k, st) in tops.withIndex()) {
-            val dx = (k - (tops.size - 1) / 2f) * (CARD_W_DP / tops.size.coerceAtMost(3) + 12f)
-            val w = (CARD_W_DP / tops.size.coerceAtMost(3)) - 12
-            val c = { Offset(geo.cardCenterX(rtl) + geo.dp(dx), geo.cardCenterY) }
+            val order = if (rtl) m - 1 - k else k
+            val cx = geo.cardCenterX(rtl) - geo.cardW / 2f + w / 2f + order * (w + gap)
+            val c = { Offset(cx, geo.cardCenterY) }
+            RevealCard(
+                st.text, if (m == 1) letters[st.optionId] else null, gold = { 1f }, sweep = { seg.p("grow", clock.t()) },
+                modifier = Modifier.align(AbsoluteAlignment.TopLeft).atPx(geo, w, geo.cardH, c).size(geo.dpOf(w), geo.dpOf(geo.cardH))
+                    .graphicsLayer { val p = seg.p("grow", clock.t()); scaleX = 0.9f + 0.1f * p; scaleY = scaleX; alpha = minOf(1f, p * 2f + 0.3f) },
+            )
             Box(
-                Modifier.align(AbsoluteAlignment.TopLeft).at(geo, w, CARD_H_DP, c).size(w.dp, CARD_H_DP.dp)
-                    .graphicsLayer { val p = seg.p("grow", clock.t()); scaleX = 0.9f + 0.15f * p; scaleY = scaleX },
+                Modifier.align(AbsoluteAlignment.TopLeft).atPx(geo, w + geo.dp(20), geo.dp(64)) { Offset(cx, geo.cardTop - geo.dp(2)) }.size(geo.dpOf(w + geo.dp(20)), 64.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                OptionCard(st.text, fill = GoldLight)
+                StampLabel(stringResource(R.string.game__bluff__reveal__most_convincing), Gold, { seg.p("stamp", clock.t()) }, style = if (m == 1) type.headline else type.title, maxWidth = geo.dpOf(w))
             }
-            Box(Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 280, 60) { Offset(c().x, c().y - geo.dp(CARD_H_DP * 0.55f)) }.size(280.dp, 60.dp), contentAlignment = Alignment.Center) {
-                StampLabel(stringResource(R.string.game__bluff__reveal__most_convincing), Gold, { seg.p("stamp", clock.t()) }, style = type.title)
-            }
-            for ((j, id) in st.authorIds.withIndex()) {
-                val p = view.player(id) ?: continue
-                Box(Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 84, 110) { Offset(c().x + geo.dp((j - (st.authorIds.size - 1) / 2f) * 90f), c().y + geo.dp(CARD_H_DP / 2 + 60)) }) {
-                    val e by remember(script, id) { derivedStateOf { script.expressionOf(id, clock.t()) ?: Expression.IDLE } }
-                    Character(p.color, 84.dp, e, Modifier.align(Alignment.BottomCenter))
-                    Canvas(Modifier.size(84.dp, 40.dp).align(Alignment.TopCenter).graphicsLayer {
-                        val q = seg.p("crown", clock.t())
-                        alpha = if (q > 0f) 1f else 0f
-                        translationY = (1f - q) * -60f * density
-                    }.clearAndSetSemantics {}) { crown(Gold) }
+            Row(
+                Modifier.align(AbsoluteAlignment.TopLeft).atPx(geo, w, geo.dp(BluffFit.LIAR)) { Offset(cx, geo.liarY) }.size(geo.dpOf(w), BluffFit.LIAR.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                for (id in st.authorIds.take(3)) {
+                    val p = view.player(id) ?: continue
+                    Column(Modifier.width(96.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Box {
+                            val e by remember(script, id) { derivedStateOf { script.expressionOf(id, clock.t()) ?: Expression.IDLE } }
+                            Character(p.color, 52.dp, e, Modifier.padding(top = 14.dp))
+                            Canvas(Modifier.size(52.dp, 24.dp).align(Alignment.TopCenter).graphicsLayer {
+                                val q = seg.p("crown", clock.t())
+                                alpha = if (q > 0f) 1f else 0f
+                                translationY = (1f - q) * -60f * density
+                            }.clearAndSetSemantics {}) { crown(Gold) }
+                        }
+                        AutoText(p.name, type.caption, Paper, Modifier.fillMaxWidth(), maxSp = 18f, minSp = 12f, maxLines = 1)
+                    }
                 }
             }
         }
@@ -569,10 +772,10 @@ private fun CrownBeat(view: BluffView, clock: PhaseClock, seg: Segment, script: 
     }
 }
 
-private fun androidx.compose.ui.graphics.drawscope.DrawScope.crown(color: Color) {
-    val w = size.width * 0.5f
+private fun DrawScope.crown(color: Color) {
+    val w = size.width * 0.6f
     val x0 = (size.width - w) / 2f
-    val h = size.height * 0.8f
+    val h = size.height
     val p = Path().apply {
         moveTo(x0, h); lineTo(x0, h * 0.35f); lineTo(x0 + w * 0.25f, h * 0.65f); lineTo(x0 + w * 0.5f, h * 0.1f)
         lineTo(x0 + w * 0.75f, h * 0.65f); lineTo(x0 + w, h * 0.35f); lineTo(x0 + w, h); close()
@@ -580,109 +783,158 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.crown(color: Color)
     drawPath(p, color)
 }
 
-/** Final twist: every card flips at once to "No truth: it was all made up!" and every character laughs. */
+/**
+ * Final twist: every answer card flips at once (40 ms stagger) to its back, the same words crossed out on dark paper,
+ * and "No truth: it was all made up!" stamps over them; every character laughs. Up to 12 cards, 2 columns past 4.
+ */
 @Composable
 private fun TwistBeat(clock: PhaseClock, seg: Segment, script: BluffScript, geo: StageGeometry, rtl: Boolean) {
     val type = JamaaTheme.type
-    val cards = script.reveal.steps.map { it.text } + script.reveal.unpicked.map { it.text }
+    val cards = (script.reveal.steps.map { it.text } + script.reveal.unpicked.map { it.text }).take(12)
+    val cols = if (cards.size > 4) 2 else 1
+    val rows = (cards.size + cols - 1) / cols
+    val zoneTop = geo.contentTop + geo.dp(10)
+    val zoneH = geo.contentBottom - zoneTop - geo.dp(10)
+    val gap = geo.dp(8)
+    val cardH = ((zoneH - gap * (rows - 1)) / rows.coerceAtLeast(1)).coerceAtMost(geo.dp(60))
     Box(Modifier.fillMaxSize()) {
         Column(
-            Modifier.align(AbsoluteAlignment.TopLeft).at(geo, CARD_W_DP, 320) { Offset(geo.cardCenterX(rtl), geo.cardCenterY) }.width(CARD_W_DP.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            Modifier.align(AbsoluteAlignment.TopLeft)
+                .absoluteOffset { IntOffset((geo.cardCenterX(rtl) - geo.cardW / 2f).roundToInt(), zoneTop.roundToInt()) }
+                .size(geo.dpOf(geo.cardW), geo.dpOf(zoneH)),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
         ) {
-            for ((i, text) in cards.take(8).withIndex()) {
-                val flip = { seg.p("flip", clock.t(), i) }
-                Box(Modifier.graphicsLayer { val f = flip(); scaleY = kotlin.math.abs(1f - 2f * f).coerceAtLeast(0.02f) }) {
-                    val back by remember(seg, i) { derivedStateOf { flip() >= 0.5f } }
-                    if (back) OptionCard("✕", dense = true, fill = Cafe.elevated, ink = Paper) else OptionCard(text, dense = true)
+            for (r in 0 until rows) {
+                Row(Modifier.fillMaxWidth().height(geo.dpOf(cardH)), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    for (c in 0 until cols) {
+                        val i = r * cols + c
+                        Box(Modifier.weight(1f).fillMaxHeight()) {
+                            if (i < cards.size) {
+                                val flip = { seg.p("flip", clock.t(), i) }
+                                val back by remember(seg, i) { derivedStateOf { flip() >= 0.5f } }
+                                Box(Modifier.fillMaxSize().graphicsLayer { scaleY = kotlin.math.abs(1f - 2f * flip()).coerceAtLeast(0.02f) }) {
+                                    if (back) OptionCard(cards[i], Modifier.fillMaxSize(), dense = true, fill = Cafe.elevated, ink = JamaaColors.TextMuted, strike = true, maxSp = BluffFit.cardTextMaxSp(cardH / geo.density))
+                                    else OptionCard(cards[i], Modifier.fillMaxSize(), dense = true, maxSp = BluffFit.cardTextMaxSp(cardH / geo.density))
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-        Box(Modifier.align(AbsoluteAlignment.TopLeft).at(geo, CARD_W_DP, 90) { Offset(geo.cardCenterX(rtl), geo.cardCenterY) }.size(CARD_W_DP.dp, 90.dp), contentAlignment = Alignment.Center) {
-            StampLabel(stringResource(R.string.game__bluff__reveal__no_truth_stamp), LieRed, { seg.p("stamp", clock.t()) }, style = type.headline)
+        Box(
+            Modifier.align(AbsoluteAlignment.TopLeft).atPx(geo, geo.cardW, geo.dp(120)) { Offset(geo.cardCenterX(rtl), zoneTop + zoneH / 2f) }.size(geo.dpOf(geo.cardW), 120.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            StampLabel(stringResource(R.string.game__bluff__reveal__no_truth_stamp), LieRed, { seg.p("stamp", clock.t()) }, style = type.headline, maxWidth = geo.dpOf(geo.cardW - geo.dp(40)))
         }
     }
 }
 
-/** "Nobody bought it…": the unpicked lies fan out like a hand of cards, each with its author's sad face, then fall. */
+/**
+ * "Nobody bought it…": the unpicked lies fan out like a hand of cards (up to 6, 2 rows of 3), each with its author's
+ * small `sad` face on the corner and the text in full, then fall off-screen together (`ease.accel`); "+N" for the rest.
+ */
 @Composable
 private fun NobodyMontage(view: BluffView, clock: PhaseClock, seg: Segment, script: BluffScript, geo: StageGeometry, rtl: Boolean) {
     val type = JamaaTheme.type
     val cards = script.reveal.unpicked.take(6)
-    val rest = script.reveal.unpicked.drop(6)
+    val rest = script.reveal.unpicked.size - cards.size
+    val cols = minOf(cards.size, 3).coerceAtLeast(1)
+    val rows = (cards.size + cols - 1) / cols
+    val gap = geo.dp(18)
+    val w = minOf(geo.dp(240), (geo.rowWidth - geo.dp(40) - gap * (cols - 1)) / cols)
+    val h = geo.dp(78)
+    val zoneTop = geo.contentTop + geo.dp(BluffFit.STRIP + 18)
+    val zoneH = geo.contentBottom - zoneTop
+    val fan = { seg.p("fan", clock.t()) }
+    val fall = { seg.p("fall", clock.t()) }
     Box(Modifier.fillMaxSize()) {
-        Text(
-            stringResource(R.string.game__bluff__reveal__nobody),
-            Modifier.align(AbsoluteAlignment.TopLeft).at(geo, CARD_W_DP, 50) { Offset(geo.cardCenterX(rtl), geo.contentTop + geo.dp(30)) }.width(CARD_W_DP.dp)
-                .graphicsLayer { alpha = seg.p("fan", clock.t()) * (1f - seg.p("fall", clock.t())) },
-            style = type.headline, color = Paper, textAlign = TextAlign.Center,
-        )
+        Box(
+            Modifier.align(AbsoluteAlignment.TopLeft).atPx(geo, geo.cardW, geo.dp(BluffFit.STRIP + 12)) { Offset(geo.cardCenterX(rtl), geo.contentTop + geo.dp(BluffFit.STRIP + 12) / 2f) }
+                .size(geo.dpOf(geo.cardW), (BluffFit.STRIP + 12).dp).graphicsLayer { alpha = fan() * (1f - fall()) },
+            contentAlignment = Alignment.Center,
+        ) {
+            AutoText(
+                stringResource(R.string.game__bluff__reveal__nobody) + if (rest > 0) "  +$rest" else "",
+                type.headline, Paper, Modifier.fillMaxWidth(), maxSp = 32f, minSp = 18f, maxLines = 1,
+            )
+        }
         for ((i, u) in cards.withIndex()) {
-            val spread = if (cards.size == 1) 0f else (i / (cards.size - 1f) - 0.5f) * 2f // −1 … 1
+            val r = i / cols
+            val c = i % cols
+            val inRow = minOf(cols, cards.size - r * cols)
+            val spread = if (inRow == 1) 0f else (c / (inRow - 1f) - 0.5f) * 2f // −1 … 1 within the row
+            val visualC = if (rtl) inRow - 1 - c else c
+            val cx = geo.cardCenterX(rtl) + (visualC - (inRow - 1) / 2f) * (w + gap)
+            val cy = zoneTop + zoneH / 2f + (r - (rows - 1) / 2f) * (h + gap)
             Box(
-                Modifier.align(AbsoluteAlignment.TopLeft).at(geo, 260, 110) {
-                    val f = seg.p("fan", clock.t())
-                    val fall = seg.p("fall", clock.t())
-                    Offset(geo.cardCenterX(rtl) + geo.dp(spread * 200f) * f, geo.cardCenterY + geo.dp(20) + fall * geo.height)
-                }.size(260.dp, 110.dp).graphicsLayer {
-                    rotationZ = spread * 12f * seg.p("fan", clock.t())
-                    alpha = seg.p("fan", clock.t())
+                Modifier.align(AbsoluteAlignment.TopLeft).atPx(geo, w, h) {
+                    val f = fan()
+                    val x = geo.cardCenterX(rtl) + (cx - geo.cardCenterX(rtl)) * f
+                    Offset(x, cy + fall() * fall() * geo.height)
+                }.size(geo.dpOf(w), geo.dpOf(h)).graphicsLayer {
+                    rotationZ = (if (rtl) -spread else spread) * 6f * fan() + fall() * spread * 20f
+                    alpha = minOf(1f, fan() * 2f)
                 },
             ) {
-                OptionCard(u.text, dense = true)
+                OptionCard(u.text, Modifier.fillMaxSize().padding(top = 6.dp), dense = true, maxSp = 22f, maxLines = 3)
                 u.authorIds.firstOrNull()?.let { view.player(it) }?.let { a ->
-                    Character(a.color, 40.dp, Expression.SAD, Modifier.align(Alignment.BottomCenter))
+                    Character(a.color, 34.dp, Expression.SAD, Modifier.align(if (rtl) Alignment.TopStart else Alignment.TopEnd).padding(end = 4.dp).graphicsLayer { translationY = -14f * density })
                 }
             }
-        }
-        if (rest.isNotEmpty()) {
-            Text(
-                rest.joinToString(" · ") { it.text },
-                Modifier.align(AbsoluteAlignment.TopLeft).at(geo, CARD_W_DP, 40) { Offset(geo.cardCenterX(rtl), geo.contentBottom - geo.dp(24)) }.width(CARD_W_DP.dp)
-                    .graphicsLayer { alpha = seg.p("fan", clock.t()) * (1f - seg.p("fall", clock.t())) },
-                style = type.caption.contentDir(), color = JamaaColors.TextMuted, textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis,
-            )
         }
     }
 }
 
 @Composable
-private fun LikesTally(clock: PhaseClock, seg: Segment, geo: StageGeometry, rtl: Boolean) {
-    Text(
-        stringResource(R.string.game__bluff__vote__like),
-        Modifier.absoluteOffset { IntOffset((geo.cardCenterX(rtl) - geo.dp(150)).roundToInt(), geo.cardCenterY.roundToInt()) }.width(300.dp)
-            .graphicsLayer { alpha = minOf(1f, (clock.t() - seg.startMs) / 200f) },
-        style = JamaaTheme.type.headline, color = Color(0xFFFF96C5), textAlign = TextAlign.Center,
-    )
+private fun BoxScope.LikesTally(clock: PhaseClock, seg: Segment, geo: StageGeometry, rtl: Boolean) {
+    Box(
+        Modifier.align(AbsoluteAlignment.TopLeft).atPx(geo, geo.cardW, geo.dp(80)) { Offset(geo.cardCenterX(rtl), geo.cardCenterY) }.size(geo.dpOf(geo.cardW), 80.dp)
+            .graphicsLayer {
+                val q = ((clock.t() - seg.startMs) / 260f).coerceIn(0f, 1f)
+                alpha = q
+                scaleX = 0.9f + 0.1f * q
+                scaleY = scaleX
+            },
+        contentAlignment = Alignment.Center,
+    ) {
+        AutoText(stringResource(R.string.game__bluff__vote__like), JamaaTheme.type.displayS, Color(0xFFFF96C5), Modifier.fillMaxWidth(), minSp = 20f, maxLines = 1)
+    }
 }
 
-/** The score rail at the end side: one pill per player (seat order), the odometer counting as each coin lands. */
+/**
+ * The score rail at the end side: under the platform's back-hint slot (kept empty), one pill per player in seat order, sized to the count (12 fit), the odometer counting as each coin lands. Name and number each
+ * own their space in the pill: they can never overlap.
+ */
 @Composable
 private fun ScoreRail(view: BluffView, clock: PhaseClock, script: BluffScript, geo: StageGeometry, rtl: Boolean) {
     val type = JamaaTheme.type
-    // The platform's back hint sits at the top end corner for 3 s after each phase change (first seen, like the hint):
-    // the rail waits below it, then eases up (no pill is ever covered).
-    val phaseSeenAt = remember(view.n, view.phase) { System.currentTimeMillis() }
-    for ((i, p) in view.players.withIndex()) {
-        Row(
-            Modifier
-                .absoluteOffset {
-                    clock.t() // re-placed every frame while the reveal clock ticks
-                    val shift = geo.dp(BluffBoard.railHintShiftDp(System.currentTimeMillis() - phaseSeenAt))
-                    val (x, y) = geo.pillCenter(i, rtl)
-                    IntOffset((x - geo.dp(RAIL_DP - 24) / 2f).roundToInt(), (y + shift - geo.dp(RAIL_ROW_DP - 6) / 2f).roundToInt())
-                }
-                .size((RAIL_DP - 24).dp, (RAIL_ROW_DP - 6).dp)
-                .graphicsLayer { val pop = script.pillPop(p.id, clock.t()); scaleX = 1f + 0.15f * pop; scaleY = scaleX; alpha = if (p.left) 0.5f else 1f }
-                .background(Cafe.surface, RoundedCornerShape(50))
-                .padding(horizontal = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // The player's shape avatar, not a bare colour dot (DESIGN §5.1: colour is never the only cue).
-            Avatar(p.color, 20.dp, state = AvatarState(left = p.left))
-            Spacer(Modifier.width(8.dp))
-            Text(Names.ellipsize(p.name, 9), Modifier.weight(1f), style = type.caption, color = Paper, maxLines = 1)
-            PillNumber(script, p.id, clock, type.titleS, Gold)
+    val pillW = BluffFit.RAIL - 16f
+    val rowDp = geo.railRow / geo.density
+    val pillH = (rowDp - 6f).coerceAtLeast(24f)
+    Box(Modifier.fillMaxSize()) {
+        for ((i, p) in view.players.withIndex()) {
+            Row(
+                Modifier
+                    .align(AbsoluteAlignment.TopLeft)
+                    .absoluteOffset {
+                        val (x, y) = geo.pillCenter(i, rtl)
+                        IntOffset((x - geo.dp(pillW) / 2f).roundToInt(), (y - geo.dp(pillH) / 2f).roundToInt())
+                    }
+                    .size(pillW.dp, pillH.dp)
+                    .graphicsLayer { val pop = script.pillPop(p.id, clock.t()); scaleX = 1f + 0.12f * pop; scaleY = scaleX; alpha = if (p.left) 0.5f else 1f }
+                    .background(Cafe.surface, JamaaShapes.pill)
+                    .padding(horizontal = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // The player's shape avatar, not a bare colour dot (DESIGN §5.1: colour is never the only cue).
+                Avatar(p.color, minOf(20f, pillH - 8f).dp, state = AvatarState(left = p.left))
+                Spacer(Modifier.width(8.dp))
+                AutoText(p.name, type.caption, Paper, Modifier.weight(1f), maxSp = 19f, minSp = 13f, maxLines = 1, textAlign = TextAlign.Start)
+                Spacer(Modifier.width(6.dp))
+                PillNumber(script, p.id, clock, type.titleS.copy(fontSize = minOf(22f, pillH * 0.68f).sp), Gold, minOf(26f, pillH - 2f).dp)
+            }
         }
     }
 }
@@ -690,9 +942,10 @@ private fun ScoreRail(view: BluffView, clock: PhaseClock, script: BluffScript, g
 /**
  * A pill's score: under [BluffOdometer.FROM] it ticks as a plain integer; from it, an odometer (DESIGN-JAMAA §5.1),
  * one Western-digit column per place rolling on translationY in a layer lambda (a running count never recomposes).
+ * Each column clips to one line ([lineH]), so a rolling digit never spills over the pill.
  */
 @Composable
-private fun PillNumber(script: BluffScript, playerId: String, clock: PhaseClock, style: TextStyle, color: Color) {
+private fun PillNumber(script: BluffScript, playerId: String, clock: PhaseClock, style: TextStyle, color: Color, lineH: Dp) {
     val final = remember(script, playerId) { script.pillValue(playerId, script.totalMs) }
     if (final < BluffOdometer.FROM) {
         val value by remember(script, playerId) { derivedStateOf { script.pillValue(playerId, clock.t()) } }
@@ -700,7 +953,6 @@ private fun PillNumber(script: BluffScript, playerId: String, clock: PhaseClock,
         return
     }
     val places = BluffOdometer.places(final)
-    val lineH = 26.dp
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Row(Modifier.clearAndSetSemantics {}) {
             for (k in places - 1 downTo 0) {
@@ -732,7 +984,7 @@ private fun PillNumber(script: BluffScript, playerId: String, clock: PhaseClock,
  */
 @Composable
 private fun Coins(view: BluffView, clock: PhaseClock, script: BluffScript, geo: StageGeometry, rtl: Boolean) {
-    val labelStyle = JamaaTheme.type.caption
+    val labelStyle = JamaaTheme.type.label
     val measurer = androidx.compose.ui.text.rememberTextMeasurer()
     // Each coin carries the scorer's shape glyph (DESIGN §5.1 CVD: colour is never the only cue). Fixed count: 12.
     val glyphs = PlayerSwatch.entries.map { rememberVectorPainter(AvatarGlyphs.of(it.shape)) }
@@ -742,44 +994,43 @@ private fun Coins(view: BluffView, clock: PhaseClock, script: BluffScript, geo: 
             val toIdx = view.players.indexOfFirst { it.id == c.toPlayerId }.takeIf { it >= 0 } ?: continue
             val (tx, ty) = geo.pillCenter(toIdx, rtl)
             val from = sourceOf(c, script, view, geo, rtl)
-            val to = Offset(tx - geo.dp(RAIL_DP / 2 - 30), ty)
+            val to = Offset(tx + geo.dp(BluffFit.RAIL / 2 - 30) * (if (rtl) 1f else -1f), ty)
             val p = script.coinProgress(c, t)
             val ctrl = Offset((from.x + to.x) / 2f, minOf(from.y, to.y) - geo.dp(90))
             val u = 1f - p
             val pos = Offset(u * u * from.x + 2 * u * p * ctrl.x + p * p * to.x, u * u * from.y + 2 * u * p * ctrl.y + p * p * to.y)
             val swatch = view.player(c.toPlayerId)?.color?.let { PlayerSwatch.byId(it) }
             if (c.heart) {
-                heart(pos, geo.dp(9), Color(0xFFFF96C5))
+                heart(pos, geo.dp(10), Color(0xFFFF96C5))
             } else {
-                drawCircle(Paper, radius = geo.dp(10f), center = pos)
-                drawCircle(swatch?.color ?: Gold, radius = geo.dp(8.5f), center = pos)
+                drawCircle(Paper, radius = geo.dp(11f), center = pos)
+                drawCircle(swatch?.color ?: Gold, radius = geo.dp(9.5f), center = pos)
                 if (swatch != null) {
-                    val gs = geo.dp(10.5f)
+                    val gs = geo.dp(11.5f)
                     translate(pos.x - gs / 2f, pos.y - gs / 2f) {
                         with(glyphs[swatch.ordinal]) { draw(Size(gs, gs), colorFilter = ColorFilter.tint(swatch.glyph)) }
                     }
                 }
             }
             c.label?.let { amount ->
-                val layout = measurer.measure("+$amount", labelStyle.copy(color = Paper))
-                drawText(layout, topLeft = Offset(pos.x + geo.dp(8), pos.y - layout.size.height))
+                val layout = measurer.measure("+$amount", labelStyle.copy(color = Paper, shadow = androidx.compose.ui.graphics.Shadow(PaperInk, Offset(0f, 2f), 6f)))
+                drawText(layout, topLeft = Offset(pos.x + geo.dp(10), pos.y - layout.size.height))
             }
         }
     }
 }
 
 /**
- * Where coin [c] leaves from. A fooled voter's coin leaves from that voter's own slot on the card (where the traveller
- * landed), so the room sees who paid whom; truth and crown coins from the card centre.
+ * Where coin [c] leaves from. A fooled voter's coin leaves from that voter's own perch on the card (where the traveller
+ * landed), so the room sees who paid whom; truth and crown coins from the card's top edge.
  */
 private fun sourceOf(c: Coin, script: BluffScript, view: BluffView, geo: StageGeometry, rtl: Boolean): Offset = when (val s = c.from) {
     is CoinSource.Voter -> {
         val ts = script.segments.getOrNull(c.segment)?.let(::travellers).orEmpty()
         val k = ts.indexOfFirst { it.first == s.playerId }
-        val dx = if (k >= 0) geo.dp(BluffBoard.travellerDx(k, ts.size)) else 0f
-        Offset(geo.cardCenterX(rtl) + dx, geo.cardCenterY - geo.dp(CARD_H_DP / 2 + 24))
+        if (k >= 0) Offset(geo.perchX(k, ts.size, rtl), geo.perchY) else Offset(geo.cardCenterX(rtl), geo.cardTop)
     }
-    is CoinSource.Card -> Offset(geo.cardCenterX(rtl), geo.cardCenterY - geo.dp(CARD_H_DP / 2 + 24))
+    is CoinSource.Card -> Offset(geo.cardCenterX(rtl), geo.cardTop)
     CoinSource.BallotBox -> ballotBoxCenter(geo, rtl)
     is CoinSource.Liker -> {
         val i = view.players.indexOfFirst { it.id == s.playerId }.coerceAtLeast(0)
@@ -787,7 +1038,7 @@ private fun sourceOf(c: Coin, script: BluffScript, view: BluffView, geo: StageGe
     }
 }
 
-private fun androidx.compose.ui.graphics.drawscope.DrawScope.heart(c: Offset, r: Float, color: Color) {
+private fun DrawScope.heart(c: Offset, r: Float, color: Color) {
     val p = Path().apply {
         moveTo(c.x, c.y + r)
         cubicTo(c.x - r * 1.6f, c.y - r * 0.2f, c.x - r * 0.6f, c.y - r * 1.4f, c.x, c.y - r * 0.4f)
@@ -797,6 +1048,3 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.heart(c: Offset, r:
     drawPath(p, color)
     drawPath(p, Paper, style = Stroke(r * 0.15f))
 }
-
-@Suppress("unused")
-private fun BluffPlayer.swatch(): Color = PlayerSwatch.byId(color).color

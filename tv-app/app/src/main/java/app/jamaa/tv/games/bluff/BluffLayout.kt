@@ -40,32 +40,104 @@ object BluffBoard {
         return slot * (i + 0.5f)
     }
 
-    /** Character size on the café row: 72 dp up to 8 players, then 56 dp (still ≥ 40 dp, faces on). */
-    fun rowCharacterDp(count: Int): Int = if (count <= 8) 72 else 56
+    /** Character size on the café row: 60 dp up to 8 players, then 48 dp (still ≥ 40 dp, faces on). */
+    fun rowCharacterDp(count: Int): Int = if (count <= 8) 60 else 48
 
-    /** Spacing of the characters sitting on the spotlight card's top edge (dp between centres). */
+    /** Default spacing of the characters sitting on the spotlight card's top edge (dp between centres). */
     const val TRAVELLER_STEP_DP = 46f
 
     /**
-     * Horizontal offset (dp, from the card centre) of traveller [k] of [n] landed on the card. A fooled voter's coin
-     * leaves from this same slot, so the room sees who paid whom (DESIGN-JAMAA §5.2).
+     * Horizontal offset (dp, from the perch centre) of traveller [k] of [n] landed on the card, [step] dp apart. A
+     * fooled voter's coin leaves from this same slot, so the room sees who paid whom (DESIGN-JAMAA §5.2).
      */
-    fun travellerDx(k: Int, n: Int): Float = (k - (n - 1) / 2f) * TRAVELLER_STEP_DP
+    fun travellerDx(k: Int, n: Int, step: Float = TRAVELLER_STEP_DP): Float = (k - (n - 1) / 2f) * step
+}
 
-    /** Height (dp) the platform's "◁ Back: menu & rules" hint takes at the top end corner (52 dp + a 32 dp chip). */
-    const val BACK_HINT_SLOT_DP = 40f
+/**
+ * Bluff's TV space budget (dp) inside the 864 × 486 dp safe area (DESIGN §4.2). Every phase is laid out from these
+ * numbers, so nothing is ever cropped at the top or bottom whatever the player and option counts (3–12 players, 2–13
+ * options); text inside the budgets auto-sizes down, then wraps. Pure; JVM-tested ([BluffFitTest]).
+ */
+object BluffFit {
+    const val SAFE_W = 864f
+    const val SAFE_H = 486f
+
+    /** Top bar: round · rule chip · ×m · counter … timer · code. */
+    const val HEADER = 56f
+
+    /** The REVEAL score rail at the end side. Its first pill starts under the platform back hint (y 52–84 dp, end side). */
+    const val RAIL = 208f
+    const val RAIL_LABEL = 34f
 
     /**
-     * How far (dp) the REVEAL score rail sits lower so the platform's back hint (top end corner, shown for
-     * [app.jamaa.tv.platform.GameChrome.HINT_AFTER_PHASE_MS] after each phase change) never covers the first pill:
-     * the full slot while the hint shows, then the rail eases back up over 300 ms.
+     * The platform's "◁ Back: menu & rules" chip sits at the top end corner, y 52–84 dp, for a few seconds after each
+     * phase change: titles, chips and scores keep out of this end-side width there (they start under y 88 or stay
+     * at the start side).
      */
-    fun railHintShiftDp(sincePhaseMs: Long): Float {
-        val visibleUntil = app.jamaa.tv.platform.GameChrome.HINT_AFTER_PHASE_MS
-        if (sincePhaseMs < visibleUntil) return BACK_HINT_SLOT_DP
-        val q = ((sincePhaseMs - visibleUntil) / 300f).coerceIn(0f, 1f)
-        return BACK_HINT_SLOT_DP * (1f - q * q * (3f - 2f * q))
+    const val BACK_HINT_W = 260f
+    const val BACK_HINT_BOTTOM = 88f
+
+    /** The café row: character, name plate, table. [names] false = compact (VOTING with 6+ rows of cards). */
+    data class CafeRow(val heightDp: Float, val characterDp: Int, val names: Boolean)
+
+    fun row(players: Int, phase: BluffPhase, options: Int): CafeRow = when {
+        phase == BluffPhase.VOTING && BluffBoard.rows(options) >= 6 -> CafeRow(56f, 40, false)
+        else -> BluffBoard.rowCharacterDp(players).let { CafeRow(it + 40f, it, true) }
     }
+
+    /** True when the phase draws the café row (SCORES and AWARDS use the whole stage). */
+    fun hasRow(phase: BluffPhase): Boolean = phase != BluffPhase.SCORES && phase != BluffPhase.AWARDS && phase != BluffPhase.RESULTS
+
+    /** Content height between the top bar and the café row. */
+    fun stageDp(players: Int, phase: BluffPhase, options: Int): Float =
+        SAFE_H - HEADER - if (hasRow(phase)) row(players, phase, options).heightDp else 0f
+
+    // ---- VOTING: title line, the prompt (≤ 2 auto-sized lines), then the option grid.
+    const val VOTE_TITLE = 36f
+    const val VOTE_PROMPT = 56f
+    const val VOTE_GAP = 6f
+    const val CARD_MAX = 68f
+
+    /** Height of the option grid of [options] cards with [players] seated. */
+    fun voteGridDp(players: Int, options: Int): Float = stageDp(players, BluffPhase.VOTING, options) - VOTE_TITLE - VOTE_PROMPT - 8f
+
+    /** One option card's height: the grid split into rows, capped so 2–3 options don't become slabs. */
+    fun optionCardDp(options: Int, gridDp: Float): Float {
+        val rows = BluffBoard.rows(options)
+        return ((gridDp - VOTE_GAP * (rows - 1)) / rows).coerceAtMost(CARD_MAX)
+    }
+
+    /** The largest text size (sp) worth trying on a card of [cardDp]: one line filling it, 14–28 sp. */
+    fun cardTextMaxSp(cardDp: Float): Float = ((cardDp - 12f) / 1.2f).coerceIn(14f, 28f)
+
+    // ---- REVEAL: progress strip · voters perched on the card · the card · the liar row (or the truth's caption).
+    const val STRIP = 34f
+    const val PERCH = 50f
+    const val PERCH_CHARACTER = 44
+    const val LIAR = 86f
+    const val CARD_MIN = 108f
+    const val CARD_MAX_H = 150f
+    const val CARD_MAX_W = 620f
+
+    fun revealCardH(stageDp: Float): Float = (stageDp - STRIP - PERCH - LIAR).coerceIn(CARD_MIN, CARD_MAX_H)
+
+    /** Spacing of [n] perched voters along [widthDp] of card edge (shoulder to shoulder, overlapping past 10). */
+    fun perchStepDp(n: Int, widthDp: Float): Float = if (n <= 1) 0f else minOf(BluffBoard.TRAVELLER_STEP_DP, widthDp / (n - 1))
+
+    /** One pill of the score rail: the rail height split by [players], at most 40 dp. */
+    fun railRowDp(players: Int): Float = ((SAFE_H - HEADER - RAIL_LABEL - 8f) / players.coerceAtLeast(1)).coerceAtMost(40f)
+
+    // ---- SCORES: title line, rows, the tease line.
+    const val SCORES_TITLE = 44f
+    const val SCORES_TEASE = 40f
+
+    fun raceRowDp(players: Int): Float = ((SAFE_H - HEADER - SCORES_TITLE - SCORES_TEASE) / players.coerceAtLeast(1)).coerceIn(24f, 52f)
+
+    // ---- RESULTS: title bar, buttons, the board between.
+    const val RESULTS_TITLE = 44f
+    const val RESULTS_BUTTONS = 60f
+
+    fun boardRowDp(players: Int): Float = ((SAFE_H - RESULTS_TITLE - RESULTS_BUTTONS) / players.coerceAtLeast(1)).coerceAtMost(36f)
 }
 
 /**

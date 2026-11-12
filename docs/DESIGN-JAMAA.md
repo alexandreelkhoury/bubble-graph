@@ -511,11 +511,11 @@ Staging on the TV (BL-TV-05), layered on GAME-BLUFF §12.2 step timings:
 | Step (GAME-BLUFF) | Visual detail added here | Sound (existing / platform / game ids) |
 |---|---|---|
 | Intro beat 1.5 s | The corkboard slides down out of view; the lantern light narrows to the centre (the world glow radius 100 % → 55 %, 600 ms) | `sfx.drumroll` start (short version) |
-| 1. Spotlight 400 ms | Option card to centre, scale 1 → 1.35, `ease.decel`; other cards dim to 35 % | `ui.select` (soft) |
+| 1. Spotlight 400 ms | Option card (letter badge at the start edge, text auto-sized) rises to centre, scale 0.86 → 1, `ease.decel`; revealed answers wait as letter badges in the top progress strip, and each stamped card shrinks into its badge in the 250 ms hold beat | `ui.select` (soft) |
 | 2. Jump-on | Voters hop from the bottom row onto the top edge of the card: arc height 120 dp, 360 ms each, `spring.bouncy` landing, 120 ms stagger; landed voters sit shoulder to shoulder, `think` | `bluff.tok` rising pitch |
 | 3. Drumroll 600 ms | The card trembles ±1 dp at 12 Hz (no strobe; disabled in lite and reduced motion) | `sfx.drumroll` peak |
 | 4. Stamp 400 ms | LIE! stamp in `world.signal` red, −8°, scale 1.6 → 1 with `ease.overshoot`, an ink-splatter ring (6 dots) for 300 ms; HOUSE LIE: violet `#9B7BFF` stamp + the house character (a cream circle body with the `moustache` prop, no player colour) pops out laughing. Voters → `facepalm` | `bluff.stampLie` / `bluff.stampHouse` |
-| 5. The liar pops out 500 ms | The author bursts up from behind the card (y from +40 % of card height to above it, `spring.bouncy`), `smug`, holding the `moustache` prop; name plate slides in under them | `reaction_pop` |
+| 5. The liar pops out 500 ms | The author rises out from under the card (from behind it to the liar row below it; voters keep the top edge, the stamp the top end corner; `spring.bouncy`), `smug`, holding the `moustache` prop; name plate slides in under them | `reaction_pop` |
 | 6. Coins 600 ms + 80 ms/voter | §5.1 coins from each voter (sitting on the card) to the liar's pill in the scoreboard rail at the end side; label "+500" (or "+1000" ×2, "+1500" ×3) | `coin_fly`, `bluff.coin` / `coin_land` |
 | Truth ≈ 4.5 s | Card turns gold (`#FFE3A3` → `#E9A23B` gradient fill), a diagonal light sweep (a 40 dp bright band crossing in 500 ms), TRUTH stamp in `success`; finders `cheer`, coins spring from the card to each finder; non-finders `sad`; the note slides up under the card | `bluff.truth`, `sfx.flip` |
 | Nobody bought it 2.5 s | Unpicked lies fan out like a hand of cards (±12° spread), each with a 40 dp `sad` author face, then fall off-screen with gravity (`ease.accel`) | `sfx.leave` (soft) |
@@ -822,7 +822,7 @@ The reaction buttons are drawn icons for the six platform `REACTIONS` (laugh, sh
 │                                                       ◁ menu           │
 └────────────────────────────────────────────────────────────────────────┘
 ```
-**BL-TV-06 Scores race** (6 s): horizontal bars per player sorted by score, odometer numbers at the bar ends, crown on the leader. **BL-TV-07 Awards / BL-TV-08 Results**: trophy cards on velvet stands; podium 3-2-1 with `cheer` characters, buttons per HUB-05.
+**BL-TV-05 note:** the wireframe above is the content; the layout is the GAME-BLUFF §8.2 fit rule (strip · perched voters · card · liar row, rail at the end side). **BL-TV-06 Scores race** (6 s): one row per player sorted by score (row height from the count, 12 fit): rank, character (crown on the leader), full name auto-sized, colour bar on a track, the prompt's "+N" in its own column, the counting total; rows slide in with a 30 ms stagger. **BL-TV-07 Awards / BL-TV-08 Results**: trophy cards on velvet stands; podium 3-2-1 with `cheer` characters, buttons per HUB-05.
 
 ### 7.7 Bluff: phone
 
