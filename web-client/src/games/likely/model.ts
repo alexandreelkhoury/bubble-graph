@@ -5,9 +5,10 @@ import type { GameEnvelope, PlayerRoomView, RoomPublic, TvRoomView } from "@jama
 import type { Expression } from "@jamaa/shared/characters";
 import { ENTRANCE_GRACE_MS } from "@jamaa/shared/constants";
 import {
-  LIKELY_STAGE, LIKELY_TIMING, likelyAwardsMs, likelyJuryArc, likelyRevealMs, likelyRevealPositions, likelyVotingMs,
+  LIKELY_STAGE, LIKELY_TIMING, likelyAwardsMs, likelyPublicTokens, likelyRevealMs, likelyRow, likelySecretTokens, likelyVotingMs,
 } from "@jamaa/shared/games/likely/meta";
-import type { LikelyPt } from "@jamaa/shared/games/likely/meta";
+import type { LikelyPt, LikelyToken } from "@jamaa/shared/games/likely/meta";
+import { likelyStackGrid } from "@jamaa/shared/games/likely/meta";
 /** The shared timer components' deadline shape (typed by the platform from Mish Ana!'s view; only `at`/`durationMs` are read). */
 import type { DeadlineView } from "../mishana/view";
 
@@ -19,10 +20,10 @@ export type LikelyAward = LikelyPub["awards"][number];
 export type LikelyPhase = LikelyPub["phase"];
 export type Member = RoomPublic["members"][number];
 
-/** A player of this game: the room member plus the game's public score. */
+/** A player of this game (the room member). Most Likely has no points (GAME-LIKELY §6), so a seat has no score. */
 export interface Seat {
   id: string; name: string; color: Member["color"]; seat: number; connected: boolean; left: boolean; isHost: boolean;
-  reaction: Member["reaction"]; score: number; scoreBefore: number;
+  reaction: Member["reaction"];
 }
 
 export interface LikelyModel {
@@ -51,7 +52,7 @@ function seatsOf(room: RoomPublic, pub: LikelyPub): Seat[] {
     // A player the room already dropped keeps a neutral identity, so a screen never crashes on a stale id.
     out.push({
       id: s.playerId, name: m?.name ?? "", color: m?.color ?? "lilac", seat: m?.seat ?? 99, connected: m?.connected ?? false,
-      left: m ? m.left : true, isHost: m?.isHost ?? false, reaction: m?.reaction ?? null, score: s.score, scoreBefore: s.scoreBefore,
+      left: m ? m.left : true, isHost: m?.isHost ?? false, reaction: m?.reaction ?? null,
     });
   }
   return out.sort((a, b) => a.seat - b.seat);
@@ -83,7 +84,7 @@ export function phaseDurationMs(pub: LikelyPub, players: number): number | null 
       const r = pub.reveal;
       return r ? likelyRevealMs(r.votesCast, r.unanimous, r.topIds.length) : LIKELY_TIMING.REVEAL_MIN_MS;
     }
-    case "AWARDS": return likelyAwardsMs(players, pub.showVoters);
+    case "AWARDS": return likelyAwardsMs(players);
     default: return null;
   }
 }
@@ -127,14 +128,10 @@ export interface MyReveal {
   got: number;
   percent: number;
   top: boolean;
-  /** Others who picked the same target (public mode, from the public ballots; 0 in secret mode). */
-  agreed: number;
-  agreePoints: number;
-  unanimousPoints: number;
-  selfAwarePoints: number;
-  total: number;
-  scoreBefore: number;
-  score: number;
+  /** Public mode only (from the public ballots; [] with secret votes): the others who voted for this player, seat order. */
+  voters: Seat[];
+  /** Public mode only: the others who picked the same person as this player, seat order. */
+  samePick: Seat[];
 }
 
 export function myReveal(m: LikelyModel): MyReveal | null {
@@ -143,14 +140,12 @@ export function myReveal(m: LikelyModel): MyReveal | null {
   if (!r || !id) return null;
   const c = r.counts.find((x) => x.playerId === id);
   const votedFor = m.me?.myVote ?? null;
-  const pts = (reason: string): number => r.deltas.filter((d) => d.playerId === id && d.reason === reason).reduce((a, d) => a + d.points, 0);
-  const agreed = r.ballots && votedFor ? r.ballots.filter((b) => b.voterId !== id && b.targetId === votedFor).length : 0;
-  const agreePoints = pts("agree"), unanimousPoints = pts("unanimous"), selfAwarePoints = pts("selfAware");
-  const s = m.byId.get(id);
+  const seats = (ids: string[]): Seat[] => m.seats.filter((s) => ids.includes(s.id));
+  const ballots = r.ballots ?? [];
   return {
-    votedFor, got: c?.count ?? 0, percent: c?.percent ?? 0, top: r.topIds.includes(id), agreed,
-    agreePoints, unanimousPoints, selfAwarePoints, total: agreePoints + unanimousPoints + selfAwarePoints,
-    scoreBefore: s?.scoreBefore ?? 0, score: s?.score ?? 0,
+    votedFor, got: c?.count ?? 0, percent: c?.percent ?? 0, top: r.topIds.includes(id),
+    voters: seats(ballots.filter((b) => b.targetId === id && b.voterId !== id).map((b) => b.voterId)),
+    samePick: votedFor ? seats(ballots.filter((b) => b.targetId === votedFor && b.voterId !== id).map((b) => b.voterId)) : [],
   };
 }
 
@@ -161,12 +156,9 @@ export function awardsOf(pub: LikelyPub, playerId: string): LikelyAward[] {
   return [...mine].sort((a, b) => rank(a) - rank(b));
 }
 
-/**
- * The awards a phone shows for its player: during AWARDS the Mind Reader stays hidden (it is the TV ceremony's last
- * beat; the phone learns it with everyone at RESULTS).
- */
-export function phoneAwards(pub: LikelyPub, playerId: string, results: boolean): LikelyAward[] {
-  return awardsOf(pub, playerId).filter((a) => results || a.kind !== "mindReader");
+/** The awards a phone shows for its player (its signature or mystery card, then Tonight's Star if it won it). */
+export function phoneAwards(pub: LikelyPub, playerId: string): LikelyAward[] {
+  return awardsOf(pub, playerId);
 }
 
 /** The card's award holder(s) (public `topIds`; none on chaos or with no votes), in seat order. */
@@ -181,119 +173,72 @@ export function signatureRow(m: LikelyModel): { seat: Seat; award: LikelyAward |
   return m.seats.map((seat) => ({ seat, award: m.pub.awards.find((a) => (a.kind === "signature" || a.kind === "mystery") && a.playerIds.includes(seat.id)) ?? null }));
 }
 
-/** Extra award cards (Tonight's Star, Self-aware; Mind Reader is its own podium). */
+/** The extra award card (Tonight's Star). */
 export function extraAwards(pub: LikelyPub): LikelyAward[] {
-  return pub.awards.filter((a) => a.kind === "star" || a.kind === "selfAware");
+  return pub.awards.filter((a) => a.kind === "star");
 }
 
-export function mindReader(pub: LikelyPub): LikelyAward | null {
-  return pub.showVoters ? pub.awards.find((a) => a.kind === "mindReader") ?? null : null;
-}
-
-/** AWARDS (§12.4): which trio is on the podium `elapsedMs` into the phase (3 s intro, 4 s per trio, then Mind Reader). */
-export function awardsStage(players: number, publicMode: boolean, elapsedMs: number): { kind: "intro" } | { kind: "trio"; index: number } | { kind: "mindReader" } {
+/** AWARDS (§12.4): which trio is on the podium `elapsedMs` into the phase (3 s intro, then 4 s per trio). */
+export function awardsStage(players: number, elapsedMs: number): { kind: "intro" } | { kind: "trio"; index: number } {
   const t = LIKELY_TIMING;
   if (elapsedMs < t.AWARDS_BASE_MS) return { kind: "intro" };
   const trios = Math.max(1, Math.ceil(players / 3));
-  const i = Math.floor((elapsedMs - t.AWARDS_BASE_MS) / t.AWARDS_TRIO_MS);
-  if (i < trios) return { kind: "trio", index: i };
-  return publicMode ? { kind: "mindReader" } : { kind: "trio", index: trios - 1 };
-}
-
-/** Mind Reader ranking (public mode): score desc, then seat. */
-export function ranking(m: LikelyModel): Seat[] {
-  return [...m.seats].sort((a, b) => b.score - a.score || a.seat - b.seat);
-}
-
-/** Competition ranking (GAME-LIKELY §6: ties share; 700, 700, 700, 500 → 1, 1, 1, 4), in `ranking` order. */
-export function rankRows(seats: readonly Seat[]): { seat: Seat; rank: number }[] {
-  const sorted = [...seats].sort((a, b) => b.score - a.score || a.seat - b.seat);
-  return sorted.map((seat) => ({ seat, rank: 1 + sorted.filter((o) => o.score > seat.score).length }));
-}
-
-/**
- * The Mind Reader podium (players still in the game): step 1, 2 and 3 hold everyone of competition rank 1, 2 and 3, so
- * tied players stand on the same step and a step a tie skipped stays empty.
- */
-export function podiumSteps(m: LikelyModel): [Seat[], Seat[], Seat[]] {
-  const rows = rankRows(m.seats.filter((s) => !s.left));
-  const at = (r: number): Seat[] => rows.filter((x) => x.rank === r).map((x) => x.seat);
-  return [at(1), at(2), at(3)];
+  return { kind: "trio", index: Math.min(trios - 1, Math.floor((elapsedMs - t.AWARDS_BASE_MS) / t.AWARDS_TRIO_MS)) };
 }
 
 // ---------------------------------------------------------------- the TV reveal plan (§12.2, DESIGN-JAMAA §5.3)
 
-/** The /tv canvas is 960 × 540; the shared layout works in the 864 × 486 safe area (5 % overscan margins). */
-export const SAFE = { x: 48, y: 27 } as const;
+/** The /tv canvas is 960 × 540; the shared layout works in stage units: the 864 × 442 area under the 44 dp game header
+ *  inside the 864 × 486 safe area (5 % overscan margins), so a stage point maps to the canvas at (+48, +27 + 44). */
+export const SAFE = { x: 48, y: 27 + 44 } as const;
 export const toCanvas = (p: LikelyPt): LikelyPt => ({ x: p.x + SAFE.x, y: p.y + SAFE.y });
 
-export interface Coin { voterId: string; targetId: string; points: number; from: LikelyPt; to: LikelyPt }
+/** Character box size on the TV stage (dp = canvas px), before and during the reveal. */
+export const CHAR = LIKELY_STAGE.charSize;
+export const REVEAL_CHAR = LIKELY_STAGE.revealChar;
 
 export interface RevealPlan {
-  /** Seat positions (feet, canvas px) of every seat id. */
-  arc: Record<string, LikelyPt>;
-  /** Where each character ends (public mode: conga lines; otherwise its seat). */
-  ends: Record<string, LikelyPt>;
-  /** Voters who run to a line, in ballot order (public mode only; not self-voters, not players who received votes). */
-  runners: string[];
-  selfVoters: string[];
-  /** Agreement coins (public mode): from the head of the voter's line (its pick) to the voter's character. */
-  coins: Coin[];
-  /** Points each voter collects on this card (sum of its deltas). */
-  gains: Record<string, number>;
+  /** Where every seat stands before the reveal (feet, canvas px), and in the reveal row. */
+  seat: Record<string, LikelyPt>;
+  row: Record<string, LikelyPt>;
+  /** The votes landing under their targets, in arrival order (public: the voter's token; secret: an envelope). */
+  tokens: LikelyToken[];
+  /** Token size (canvas px). */
+  cell: number;
   counts: Record<string, number>;
 }
 
-/** Character box size on the TV stage (dp = canvas px). */
-export const CHAR = LIKELY_STAGE.charSize;
-
+/**
+ * GAME-LIKELY §12.2: one centred row; every vote becomes a token under its target, one by one. Public mode: the
+ * voter's own character in miniature (who voted for whom); secret votes: identical envelopes from the tally only.
+ */
 export function revealPlan(m: LikelyModel, rtl: boolean): RevealPlan {
-  const ids = m.seats.map((s) => s.id);
-  const arcPts = likelyJuryArc(ids.length, rtl);
-  const arc: Record<string, LikelyPt> = {};
-  ids.forEach((id, i) => { arc[id] = toCanvas(arcPts[i]!); });
+  const ids = m.seats.filter((s) => !s.left).map((s) => s.id);
+  const before = likelyRow(ids.length, rtl).map(toCanvas);
+  const rowPts = likelyRow(ids.length, rtl, true);
+  const seat: Record<string, LikelyPt> = {}, row: Record<string, LikelyPt> = {};
+  ids.forEach((id, i) => { seat[id] = before[i]!; row[id] = toCanvas(rowPts[i]!); });
   const r = m.pub.reveal;
-  const ends: Record<string, LikelyPt> = { ...arc };
-  const runners: string[] = [], selfVoters: string[] = [];
   const counts: Record<string, number> = {};
   for (const c of r?.counts ?? []) counts[c.playerId] = c.count;
-  const gains: Record<string, number> = {};
-  for (const d of r?.deltas ?? []) gains[d.playerId] = (gains[d.playerId] ?? 0) + d.points;
-  const coins: Coin[] = [];
-  if (r?.ballots) {
-    // A player who received votes heads a line, so it stays in its seat (and points at its own pick from there); only
-    // the other voters run. The positions are the shared layout's for exactly those runners.
-    const targeted = new Set(r.counts.map((c) => c.playerId));
-    const running = r.ballots.filter((b) => b.voterId !== b.targetId && !targeted.has(b.voterId) && b.voterId in arc && b.targetId in arc);
-    const pos = likelyRevealPositions(arcPts, ids, running);
-    for (const b of r.ballots) if (b.voterId === b.targetId && b.voterId in arc) selfVoters.push(b.voterId);
-    for (const b of running) {
-      runners.push(b.voterId);
-      const p = pos[b.voterId];
-      if (p) ends[b.voterId] = toCanvas(p);
-    }
-    for (const b of r.ballots) {
-      const pts = gains[b.voterId] ?? 0;
-      if (pts <= 0 || !(b.targetId in arc)) continue;
-      const head = arc[b.targetId]!, me = ends[b.voterId]!;
-      coins.push({ voterId: b.voterId, targetId: b.targetId, points: pts, from: { x: head.x, y: head.y - CHAR }, to: { x: me.x, y: me.y - CHAR * 0.6 } });
-    }
-  }
-  return { arc, ends, runners, selfVoters, coins, gains, counts };
+  const raw = !r || r.none ? [] : r.ballots ? likelyPublicTokens(rowPts, ids, r.ballots, rtl) : likelySecretTokens(rowPts, ids, r.counts, rtl);
+  const tokens = raw.map((x) => ({ ...x, at: toCanvas(x.at) }));
+  // The same grid the shared stacks were spaced with.
+  const cell = likelyStackGrid(ids.length, Math.max(0, ...Object.values(counts))).cell;
+  return { seat, row, tokens, cell, counts };
 }
 
-/** Quadratic Bézier point (DESIGN-JAMAA §5.1 coin path: control point 90 dp above the chord midpoint). */
-export function coinPoint(from: LikelyPt, to: LikelyPt, p: number): LikelyPt {
-  const top = from.y < 270 && to.y < 270;
-  const c = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 + (top ? 90 : -90) };
+/** Quadratic Bézier point (a token's arc from its voter, or an envelope's from the card, to its slot). */
+export function arcPoint(from: LikelyPt, to: LikelyPt, p: number, lift = 60): LikelyPt {
+  const c = { x: (from.x + to.x) / 2, y: Math.min(from.y, to.y) - lift };
   const u = 1 - p;
   return { x: u * u * from.x + 2 * u * p * c.x + p * p * to.x, y: u * u * from.y + 2 * u * p * c.y + p * p * to.y };
 }
 
 /**
  * A character's expression on the TV (DESIGN-JAMAA §4.3; public data only). `stage` is how far the local reveal has
- * come: before "stamp" nobody reacts; after it, the top target(s) turn shy / smug (self-vote, public mode) / shock
- * (unanimous), runners point, self-voters point at themselves (`point` with the look toward the camera).
+ * come: during the build nobody reacts but voters point (public mode); after the stamp, the top target(s) turn shy /
+ * smug (voted for themselves, public mode) / shock (unanimous); chaos: shock then laugh.
  */
 export function revealExpression(m: LikelyModel, id: string, stage: "run" | "stamp" | "end"): Expression {
   const s = m.byId.get(id);
@@ -308,7 +253,7 @@ export function revealExpression(m: LikelyModel, id: string, stage: "run" | "sta
     if (own && own.targetId === id) return "smug";
     return r.unanimous ? "shock" : "shy";
   }
-  if (own) return stage === "end" && (m.pub.reveal?.deltas.some((d) => d.playerId === id) ?? false) ? "happy" : "point";
+  if (own) return stage === "run" ? "point" : "happy";
   return "idle";
 }
 

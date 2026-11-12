@@ -2,9 +2,9 @@
 import { MEMORY_MAX_KEYS } from "../../../constants";
 import { InvariantError } from "../../mishana/engine/invariants";
 import { LIKELY_LENGTHS, LIKELY_PHASES } from "../meta";
-import { awardsOf, isAnonymous, isTarget, resultBallots, resultNamed, resultDeltas, resultTally, seatIds } from "./reduce";
+import { awardsOf, isTarget, resultBallots, resultNamed, resultTally, seatIds } from "./reduce";
 import { percentOf } from "./result";
-import { MAX_CARD_POINTS, NAMED_MIN_PLAYERS, STATE_SCHEMA } from "./state";
+import { NAMED_MIN_PLAYERS, STATE_SCHEMA } from "./state";
 import type { LikelyState } from "./state";
 
 export function assertInvariants(s: LikelyState): void {
@@ -61,24 +61,10 @@ export function assertInvariants(s: LikelyState): void {
     if (r.named !== null && named === null) fail(`unknown named player on card ${i}`);
     if (named !== null && b.some((x) => x.targetId === named)) fail("ballot on the named player");
     if (r.picks.some((t) => t >= 0 && !s.players.some((p) => p.n === t))) fail(`pick of an unknown player on card ${i}`);
-    // 5. Per-card caps.
-    const per = new Map<string, number>();
-    for (const d of resultDeltas(s, r)) {
-      if (d.points <= 0) fail("non-positive delta");
-      per.set(d.playerId, (per.get(d.playerId) ?? 0) + d.points);
-    }
-    for (const v of per.values()) if (v > MAX_CARD_POINTS) fail("per-card cap");
   }
-  // 5. Scores ≥ 0 and equal to the sum of the deltas.
-  const sumD = s.results.reduce((m, r) => m + resultDeltas(s, r).reduce((x, d) => x + d.points, 0), 0);
-  const sumS = Object.values(s.scores).reduce((m, x) => m + x, 0);
-  if (sumD !== sumS) fail(`score sum ${sumS} ≠ deltas ${sumD}`);
-  if (Object.values(s.scores).some((x) => !Number.isInteger(x) || x < 0)) fail("negative score");
-  // 3. Secret votes: no points, no Self-aware / Mind Reader award.
-  if (isAnonymous(s)) {
-    if (Object.values(s.scores).some((x) => x !== 0)) fail("score in secret mode");
-    if (awardsOf(s).some((a) => a.kind === "selfAware" || a.kind === "mindReader")) fail("ballot award in secret mode");
-  }
+  // 5. No points, in either mode (§6): every score stays 0; no award kind outside signature / mystery / star.
+  if (Object.values(s.scores).some((x) => x !== 0)) fail("a score is not 0");
+  if (awardsOf(s).some((a) => a.kind !== "signature" && a.kind !== "mystery" && a.kind !== "star")) fail("unknown award kind");
   // 6. Family stays family; a named card has a named, non-left player in a game of ≥ 4.
   if (s.card) {
     if (s.settings.mode === "family" && (s.card.spicy || s.card.namedPlayerId !== null)) fail("spicy card in family mode");

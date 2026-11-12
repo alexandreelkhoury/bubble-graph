@@ -13,10 +13,10 @@ import { computeAwards } from "./awards";
 import { eligibleCards, textIn } from "./catalog";
 import type { LikelyCatalog } from "./catalog";
 import { drawCard, namedPool } from "./draw";
-import { scoreCard, tally } from "./result";
+import { tally } from "./result";
 import type { LikelyTally } from "./result";
 import { MIN_CONNECTED, STATE_SCHEMA } from "./state";
-import type { LikelyAwardEntry, LikelyBallot, LikelyCardResult, LikelyDelta, LikelyEngineOptions, LikelyIntent, LikelyPlayer, LikelyState } from "./state";
+import type { LikelyAwardEntry, LikelyBallot, LikelyCardResult, LikelyEngineOptions, LikelyIntent, LikelyPlayer, LikelyState } from "./state";
 
 type R = GameReduceResult<LikelyState>;
 const ok = (state: LikelyState): R => ({ ok: true, state });
@@ -55,13 +55,6 @@ export function resultNamed(s: LikelyState, r: LikelyCardResult): string | null 
 export function resultTally(s: LikelyState, r: LikelyCardResult): LikelyTally {
   return tally(resultBallots(s, r), seatIds(s));
 }
-/** Public-mode deltas of a stored result ([] in secret mode). */
-export function resultDeltas(s: LikelyState, r: LikelyCardResult): LikelyDelta[] {
-  if (isAnonymous(s)) return [];
-  const b = resultBallots(s, r);
-  return scoreCard(b, tally(b, seatIds(s)), seatIds(s));
-}
-
 /** The current vote of `id`: VOTING (live vote) or REVEAL (the revealed card's ballot); null otherwise. */
 export function ownVote(s: LikelyState, id: string): string | null {
   if (s.phase === "VOTING") return s.votes[id] ?? null;
@@ -170,11 +163,9 @@ function toReveal(s: LikelyState, now: number): LikelyState {
   };
   const ballots = voters.map((p) => ({ voterId: p.id, targetId: s.votes[p.id] as string }));
   const t = tally(ballots, seatIds(s));
-  const scores = { ...s.scores };
-  if (!isAnonymous(s)) for (const d of scoreCard(ballots, t, seatIds(s))) scores[d.playerId] = (scores[d.playerId] ?? 0) + d.points;
   const players = card.namedPlayerId ? s.players.map((p) => (p.id === card.namedPlayerId ? { ...p, namedCount: p.namedCount + 1 } : p)) : s.players;
   return {
-    ...s, phase: "REVEAL", players, scores, results: [...s.results, result], votes: {}, earlyEnd: false, prevTags: [...card.tags],
+    ...s, phase: "REVEAL", players, results: [...s.results, result], votes: {}, earlyEnd: false, prevTags: [...card.tags],
     lastNamedId: card.namedPlayerId ?? s.lastNamedId,
     deadline: now + likelyRevealMs(t.votesCast, t.unanimous, t.topIds.length),
   };
@@ -188,19 +179,19 @@ export function awardsOf(s: LikelyState): LikelyAwardEntry[] {
   if (s.phase !== "AWARDS" && s.phase !== "RESULTS") return [];
   const ids = s.players.filter((p) => !p.waiting).map((p) => p.id);
   const left = new Set(s.players.filter((p) => p.left).map((p) => p.id));
-  return computeAwards(ids, s.results.map((r) => resultTally(s, r)), !isAnonymous(s), s.results.map((r) => resultDeltas(s, r)), s.scores, left);
+  return computeAwards(ids, s.results.map((r) => resultTally(s, r)), left);
 }
 
 function toAwards(s: LikelyState, now: number): LikelyState {
   const holders = s.players.filter((p) => !p.waiting).length;
-  return { ...s, phase: "AWARDS", card: null, votes: {}, earlyEnd: false, deadline: now + likelyAwardsMs(holders, !isAnonymous(s)) };
+  return { ...s, phase: "AWARDS", card: null, votes: {}, earlyEnd: false, deadline: now + likelyAwardsMs(holders) };
 }
 
 /**
  * Secret votes (defence in depth, G3 review): once REVEAL ends, the revealed card keeps its tally but not who voted for
  * whom. The same targets are dealt back to the same voters in entry-number order, so counts, votesCast, percentages,
  * topIds and every tally-based award are unchanged, and the voter→target mapping never outlives the card's REVEAL (where
- * only the voter's own phone reads it, as `me.myVote`). Public mode keeps the real ballots (points and Mind Reader).
+ * only the voter's own phone reads it, as `me.myVote`). Public mode keeps the real ballots (they were public anyway).
  */
 export function sealSecretBallots(s: LikelyState): LikelyState {
   const last = s.results[s.results.length - 1];
@@ -325,10 +316,12 @@ export function nextWakeAt(s: LikelyState): number | null {
   return s.deadline;
 }
 
-/** RESULTS only. Secret mode: every point is 0, so nobody is ranked and nobody gets stars (§6, platform §2.4). */
+/**
+ * RESULTS only. Most Likely has no points in either mode (owner decision 2026-11-12, GAME-LIKELY §6): every point is 0,
+ * so nobody is ranked and the game gives no placement stars (platform §2.4).
+ */
 export function outcome(s: LikelyState): GameOutcome | null {
   if (s.phase !== "RESULTS") return null;
-  const left = new Set(s.players.filter((p) => p.left).map((p) => p.id));
-  const points = Object.fromEntries(s.players.map((p) => [p.id, isAnonymous(s) || p.left ? 0 : (s.scores[p.id] ?? 0)]));
-  return { points, ranking: competitionRanking(points, seatIds(s), left) };
+  const points = Object.fromEntries(s.players.map((p) => [p.id, 0]));
+  return { points, ranking: competitionRanking(points, seatIds(s)) };
 }

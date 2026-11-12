@@ -202,25 +202,6 @@ internal fun DrawScope.envelope(c: Offset, w: Float, tilt: Float, alpha: Float =
     }
 }
 
-/** The ballot box at the centre of the stage; [shake] 0..1 wobbles it while the drumroll plays. */
-internal fun DrawScope.ballotBox(c: Offset, w: Float, shake: Float, alpha: Float) {
-    if (alpha <= 0f) return
-    val wobble = sin(shake * PI.toFloat() * 6f) * 6f * (1f - shake)
-    rotate(wobble, pivot = Offset(c.x, c.y + w * 0.4f)) {
-        val h = w * 0.8f
-        drawRoundRect(Rooftop.elevated.copy(alpha = alpha), topLeft = Offset(c.x - w / 2, c.y - h / 2), size = Size(w, h), cornerRadius = CornerRadius(w * 0.08f))
-        drawRoundRect(goldBrush(c.y - h / 2, c.y + h / 2), topLeft = Offset(c.x - w / 2, c.y - h / 2), size = Size(w, h), cornerRadius = CornerRadius(w * 0.08f), style = Stroke(w * 0.04f), alpha = alpha)
-        drawRoundRect(Rooftop.deep.copy(alpha = alpha), topLeft = Offset(c.x - w * 0.3f, c.y - h / 2 + w * 0.06f), size = Size(w * 0.6f, w * 0.07f), cornerRadius = CornerRadius(w * 0.03f))
-    }
-}
-
-/** An agreement coin in the scorer's colour with a cream rim (DESIGN-JAMAA §5.1), [r] its radius. */
-internal fun DrawScope.coin(c: Offset, r: Float, color: Color) {
-    drawCircle(color, r, c)
-    drawCircle(Cream, r, c, style = Stroke(r * 0.3f))
-    drawCircle(Color.White.copy(alpha = 0.35f), r * 0.35f, Offset(c.x - r * 0.3f, c.y - r * 0.3f))
-}
-
 /** Quadratic Bézier point; the control sits 90 dp above the chord midpoint (DESIGN §6.2 B). */
 internal fun bezier(a: Offset, b: Offset, lift: Float, t: Float): Offset {
     val ctrl = Offset((a.x + b.x) / 2f, minOf(a.y, b.y) - lift)
@@ -255,24 +236,4 @@ internal fun DrawScope.glint(p: Float) {
     if (p <= 0f || p >= 1f) return
     val x = -size.width * 0.3f + size.width * 1.6f * p
     drawRect(Brush.linearGradient(listOf(Color.Transparent, GoldHi.copy(alpha = 0.45f), Color.Transparent), start = Offset(x - 40f, 0f), end = Offset(x + 40f, size.height)))
-}
-
-/** The "defend yourself" speech bubble (24-unit viewport, stroked; DESIGN-JAMAA §5.3 Hold), shared with the /tv mock. */
-internal val SpeechIcon: androidx.compose.ui.graphics.vector.ImageVector by lazy {
-    androidx.compose.ui.graphics.vector.ImageVector.Builder(
-        name = "lk-speech",
-        defaultWidth = androidx.compose.ui.unit.Dp(24f),
-        defaultHeight = androidx.compose.ui.unit.Dp(24f),
-        viewportWidth = 24f,
-        viewportHeight = 24f,
-    ).addPath(
-        pathData = androidx.compose.ui.graphics.vector.addPathNodes(
-            "M5.5 4h13A2.5 2.5 0 0 1 21 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4h.5A2.5 2.5 0 0 1 3 14.5v-8A2.5 2.5 0 0 1 5.5 4zM8 10.5h.01M12 10.5h.01M16 10.5h.01",
-        ),
-        fill = null,
-        stroke = androidx.compose.ui.graphics.SolidColor(Color.White),
-        strokeLineWidth = 2.2f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = androidx.compose.ui.graphics.StrokeJoin.Round,
-    ).build()
 }

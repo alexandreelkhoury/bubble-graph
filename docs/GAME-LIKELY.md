@@ -1,6 +1,8 @@
 # GAME-LIKELY — "Who's most likely to…" (JAMAA game #3)
 
-Status: **binding design spec**, draft 3 (owner decisions applied: secret-vote percentages, Spicy 18+ mode, ES copy for new keys), 2026-11-08. Game id: `likely`. Display names: EN **Most Likely**, FR **Qui risque le plus ?**, AR **«مين فينا؟»** (`[native review]`).
+Status: **binding design spec**, draft 4 (owner decisions applied: secret-vote percentages, Spicy 18+ mode, ES copy for new keys, 2026-11-08; **no points, who-voted-for-whom reveal, one centred TV composition, awards wall in full, no "defend yourself"**, 2026-11-12). Game id: `likely`. Display names: EN **Most Likely**, FR **Qui risque le plus ?**, AR **«مين فينا؟»** (`[native review]`).
+
+> **Owner decisions (2026-11-12, after playing it on the TV), applied everywhere in this file:** (1) **Most Likely has no points at all**, in either mode: "If I vote for someone, why would he get points? It can be a good or bad thing." No agreement, Unanimous or Self-aware points, no Mind Reader, no deltas, every score stays 0, no placement stars; the game is played for laughs and awards. (2) The "{name}, defend yourself!" hold is gone; its time goes to a cleaner reveal. (3) Public mode shows **who voted for whom**: each vote lands under its target as the voter's own character, one by one; phones say "Omar and Lina voted for you". Secret votes stay anonymous (percentages only). (4) The TV reveal is one centred composition (card on top, one row of players, votes stacking under their target), no left/right split. (5) The end screen is an awards wall with every award name in full, no ranking table, no cup panel.
 
 > **Owner decision (2026-11-08, after this draft): Spanish (es) is a full language everywhere**, including this game's UI copy and its content packs. Every EN/FR/AR list or copy table in this file is read as EN/FR/AR/ES; the game's lane D writes the ES copy and ES content, marked for native review in `shared/i18n/review.json` (copy) or with `status: "draft"` (packs). JAMAA-PLATFORM §3.12.
 
@@ -10,7 +12,7 @@ Rules, state machine, timers, scoring, edge cases, screens, settings, copy, cont
 
 ## 1. The game in one paragraph
 
-A card appears on the TV: "Who's most likely to… **cry at a wedding**?" Everyone secretly taps a player on their phone (yourself included, if you're honest). Reveal: every character runs to the person they voted for, a conga line forms behind the "winner", a spotlight drops and they get the **Waterworks Award**. In the default public mode you score "Read the Room" points for every friend who picked the same person as you. At the end, everyone leaves with their signature award ("The Drama Award", "The Two-Minutes Award") and the best mind reader wins. In secret-vote mode nobody sees who voted for whom: after each card the TV shows only percentages ("50% voted for Alex"), there are awards but no points. Family mode is the default; an adult group can switch on **Spicy** (18+, confirmed on the TV), where some cards name another player ("Who's most likely to kiss Alex?"), suggestive but never explicit.
+A card appears on the TV: "Who's most likely to… **cry at a wedding**?" Everyone secretly taps a player on their phone (yourself included, if you're honest). Reveal: one by one, every vote lands under the person it picked as the voter's own little character, so the whole room sees who voted for whom; a spotlight drops on the most-voted and they get the **Waterworks Award**. There are **no points**: being picked is neither good nor bad, the game is played for the laughs and the awards. At the end, everyone leaves with their signature award ("The Drama Award", "The Two-Minutes Award"). In secret-vote mode nobody sees who voted for whom: after each card the TV shows only percentages ("50% voted for Alex"). Family mode is the default; an adult group can switch on **Spicy** (18+, confirmed on the TV), where some cards name another player ("Who's most likely to kiss Alex?"), suggestive but never explicit.
 
 Players: **3–12**. It's the warm-up game: no typing, one tap per card, ~6–10 minutes.
 
@@ -24,7 +26,7 @@ Players: **3–12**. It's the warm-up game: no typing, one tap per card, ~6–10
 | Players | min 3, max 12 (platform). Start blocked under 3 connected; no playable card → platform `NO_CONTENT_AVAILABLE` |
 | Settings | 4 (§9): `packIds`, `length`, `showVoters`, `mode`; `packIds` is hidden while only one pack is playable, and `mode` is hidden while no Spicy card is playable (free rooms), so 2–3 visible rows at launch |
 | How to play | 4 steps (§10.1), shown **per device, the first time this game's setup opens** (platform §3.2), never as a game phase; ⓘ always |
-| Score carry | `carriesScore: false`: every game starts at 0; stars come from this game's points (none in anonymous mode) |
+| Score carry | `carriesScore: false`. **No points in either mode** (§6): `outcome` gives every player 0, nobody is ranked, the game gives no placement stars (platform §2.4) and never changes the night's cup |
 | Hooks | `join` (late joiners wait for the next CARD, §7), `projectSetup` → `{available}`, `memory` → card ids, `projectStatus` (`doneIds` = votedIds in VOTING, `awaitedIds` = the others), `leakCheck` |
 | Pause menu items (TV) | in order: "Skip card" (CARD, VOTING, `SKIP_CARD`), "Next" (CARD, REVEAL, AWARDS, `HOST_ADVANCE`), "End game" (HOLD, `END_GAME`, confirm) |
 | Characters | Expressions used (platform set): `idle`, `done`, `point` (with its self variant `pointSelf`), `shock`, `laugh`, `smug`, `shy`, `cheer`, `away` |
@@ -71,9 +73,9 @@ There is **no INTRO phase**: How to play belongs to the platform (per device, in
 |---|---|---|---|---|
 | `CARD` | `CARD` | 3 500 ms (reading time; votes not yet open); **first card of the game: + `ENTRANCE_GRACE_MS`** | host `HOST_ADVANCE` | host: `SKIP_CARD` |
 | `VOTING` | `VOTING` | `clamp(14 000 + 1 000 × n, 18 000, 26 000)`, n = players in game | all connected, non-`left` players voted → `deadline = now + 1 000` (last-second change window) | players: `VOTE`; host: `SKIP_CARD` |
-| `REVEAL` | `REVEAL` | `revealDurationMs` (§12.2): 6 000–9 500 ms | host `HOST_ADVANCE` | host |
+| `REVEAL` | `REVEAL` | `likelyRevealMs` (§12.2): `clamp(7 000 + 150 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0), 8 000, 12 000)` | host `HOST_ADVANCE` | host |
 | `HOLD` | none | — | 3 connected | host: `END_GAME` |
-| `AWARDS` | `AWARDS` | `3 000 + 4 000 × ceil(players / 3) + 4 000` (the last 4 000 = Mind Reader, public mode only) | host `HOST_ADVANCE` (OK on the TV only completes the current animation; "Next" is in the pause menu) | host |
+| `AWARDS` | `AWARDS` | `3 000 + 4 000 × ceil(players / 3)` (intro, then one page per trio of award holders) | host `HOST_ADVANCE` (OK on the TV only completes the current animation; "Next" is in the pause menu) | host |
 | `RESULTS` | none | — | — | host: platform `REPLAY`, `BACK_TO_SETUP`, `BACK_TO_HUB` |
 
 `HOST_ADVANCE` expires the phase inline (no extra alarm; platform §2.6) and is ignored in VOTING (nobody gets cut off by a remote press).
@@ -92,33 +94,24 @@ Why a separate CARD phase: everyone reads the prompt on the TV together and laug
 
 - `counts` = votes per target.
 - `topIds` = targets with the highest count, if that count ≥ 1.
-- **Chaos:** if ≥ 3 votes were cast and every voted target has exactly 1 vote (everyone picked someone different), there is **no winner**: `topIds = []`, `chaos = true`. The TV says "Total chaos! You don't agree on anything." No award, no points.
+- **Chaos:** if ≥ 3 votes were cast and every voted target has exactly 1 vote (everyone picked someone different), there is **no winner**: `topIds = []`, `chaos = true`. The TV says "Total chaos! You don't agree on anything." No award.
 - **Unanimous:** ≥ 3 votes and all of them on one target → `unanimous = true`.
 - **Ties:** all tied top targets share the card's award.
 - **Percentages** (public in both modes; the main tally in secret-vote mode): for each target with ≥ 1 vote, `percent = round(100 × count / votesCast)` (half up). They are computed from the per-card tallies only, so they reveal nothing about who voted for whom. Sums may read 99–101 % (independent rounding, as in any poll); this is accepted rather than nudging one value. Order: percent descending, then seat order.
 
 ---
 
-## 6. Scoring ("Read the Room", public mode only)
+## 6. No points (owner decision 2026-11-12)
 
-Being picked is not a merit, so it scores no points; it earns **awards** (§6.2). Points reward reading the group, measured by **agreement**: how many other people picked the same person as you.
+**Most Likely has no points, in either mode.** Being picked is neither good nor bad ("If I vote for someone, why would he get points? It can be a good or bad thing"), and rewarding agreement made people vote for the "safe" pick. The game is played for the laughs and for its **awards** (§6.2): a stamp for the most-voted on every card, and everyone's signature award at the end.
 
-| Event (per card, `showVoters: true`) | Points |
-|---|---|
-| Each **other** voter who picked the same target as you | **+50**, capped at **+300** per card |
-| Unanimous card (≥ 3 votes, all on one target) | every voter gets the cap **+300** plus a **+100** "Unanimous" bonus (= +400) |
-| You voted for **yourself**, and at least 2 others also picked you ("Self-aware") | **+100** extra |
-| Abstain, or nobody else picked your target (this includes every Chaos card) | 0 |
-
-The **Mind Reader** (most points) is the game's "winner" on the results screen; ties share. Points never go down.
-
-**Why agreement scoring.** It scales smoothly from 3 to 12 players: a real majority pays more than a 2-2-2 tie (with 12 voters, joining a group of 6 pays +250, a pair pays +50), Chaos pays 0 without a special rule, and a 3-player pact (two people always voting the same way) earns at most +50 a card. Round numbers keep it light: a Normal game (12 cards) tops out around 4 800, enough for a ranking without making anyone feel judged by their score. The Self-aware bonus rewards owning it, but only when the group agrees.
-
-**Secret-vote mode (`showVoters: false`, called "anonymous" in code) awards no points at all** (owner decision). Any public score (per card, or as a final total) would let the table work out who voted with whom, and a +100 on the top target would expose a self-vote. So in anonymous mode: no agreement, Unanimous or Self-aware points, no Mind Reader; the public `scores` stay at 0 for the whole game; the game is played for its **awards** (§6.2), which depend only on public tallies. Placement stars are not awarded for an anonymous game (no instance points, platform §2.4).
+- No agreement, Unanimous or Self-aware points; no Mind Reader; no per-card deltas; every public `score` and `scoreBefore` is 0 for the whole game, in both modes.
+- `outcome` gives every player 0 points and an empty ranking: no placement stars (platform §2.4), the night's cup is unchanged, and the TV results show no cup panel (it could only repeat unchanged rows).
+- Public mode still shows who voted for whom (§12.2) because it is the fun of the reveal, not because it scores; secret mode stays anonymous (percentages only, §8.1).
 
 ### 6.1 Herd behaviour
 
-Points could tempt players to always vote for the same "obvious" friend. Counter-measures: votes are blind until reveal (no bandwagon), agreement scoring rewards a real majority rather than any vote for a top target, the deck mixes very different traits so no one is "top" for everything, and the TV calls it out with humour when the same player tops 3 cards in a row ("{name} AGAIN?!", `likely.reveal.again`).
+Players could always vote for the same "obvious" friend. Counter-measures: votes are blind until reveal (no bandwagon), nothing is won by following the crowd (no points), the deck mixes very different traits so no one is "top" for everything, and the TV calls it out with humour when the same player tops 3 cards in a row ("{name} AGAIN?!", `likely.reveal.again`, in the result banner).
 
 ### 6.2 Awards
 
@@ -127,10 +120,10 @@ Every card has an **award name** (e.g. "Waterworks Award"). Awards are written a
 At AWARDS, **every player gets exactly one signature award**:
 1. Among the cards where the player was top, pick the one with the highest vote share (`count / votesCast`); tie → the later card. That card's award is their signature award, shown with the prompt ("for being most likely to cry at a wedding").
 2. A player who was never top gets **The Mystery Award** (EN) · **Prix du mystère** (FR) · «جايزة اللغز» (AR): "Nobody could pin you down."
-3. Extra cards (if anyone qualifies): **Tonight's Star** (most cards topped, ≥ 3) · Star de la soirée · «نجم السهرة»; **Self-aware** (most Self-aware bonuses, ≥ 2; **public mode only**) · Lucidité · «جايزة الصراحة».
-4. Last (**public mode only**): **Mind Reader** · Prix télépathe · «جايزة قراءة الأفكار» (an action noun, not «قارئ», so it stays gender-neutral).
+3. Extra card (if anyone qualifies): **Tonight's Star** (most cards topped, ≥ 3) · Star de la soirée · «نجم السهرة».
+4. (Removed 2026-11-12 with the points: Self-aware and Mind Reader no longer exist.)
 
-Signature awards, the Mystery Award and Tonight's Star use only per-card tallies, so they are identical whatever the voter→target mapping and are safe in anonymous mode.
+All awards use only per-card tallies, so they are identical whatever the voter→target mapping and are the same in both modes.
 
 ---
 
@@ -139,9 +132,9 @@ Signature awards, the Mystery Award and Tonight's Star use only per-card tallies
 | Case | Behaviour |
 |---|---|
 | **3 players** | Self-votes allowed, so every vote is meaningful. Ties are frequent and shared. Chaos needs all 3 voting differently |
-| **12 players** | Phone grid 3 × 4; TV jury arc of 12 characters at 72 dp. Reveal conga lines stack up to 11 deep (they curl into a spiral after 6) |
-| **Nobody votes** | Reveal shows "No votes? Shy tonight!" (`likely.reveal.none`); no award, no points |
-| **One vote only** | That target is top (count 1) and gets the card's award; no points (nobody agreed). (Chaos requires ≥ 3 votes) |
+| **12 players** | Phone grid 3 × 4; TV row of 12 characters at 72 dp (64 in the reveal). A stack of up to 12 votes fits under one target (2 columns × 6 rows of ≈ 28 dp tokens) |
+| **Nobody votes** | Reveal shows "No votes? Shy tonight!" (`likely.reveal.none`); no award |
+| **One vote only** | That target is top (count 1) and gets the card's award. (Chaos requires ≥ 3 votes) |
 | **Disconnect in VOTING** | Abstains; can still be voted for |
 | **Reconnect in VOTING** | Can vote; `me.myVote` restores their earlier choice |
 | **Player leaves (`left`)** | Not a target from the next card on. If they had voted on the current card, the vote stays. Their awards so far stay in AWARDS (greyed) |
@@ -168,10 +161,10 @@ Signature awards, the Mystery Award and Tonight's Star use only per-card tallies
 |---|---|---|---|
 | Who has voted | `votedIds` (all) | — | — |
 | Your own vote | `me.myVote` (own phone only) | own phone + public | own phone only |
-| Voter → target | never | `reveal.ballots` | **never projected to anyone, ever** (not in AWARDS or RESULTS either) |
+| Voter → target | never | `reveal.ballots` (the TV stacks each voter's token under its pick; each phone lists who voted for it) | **never projected to anyone, ever** (not in AWARDS or RESULTS either) |
 | Counts and percentages per target, top targets, unanimous, chaos | never | `reveal.counts` (with `percent`), `topIds`… | `reveal.counts` (with `percent`), `topIds`… |
 | Named player (Spicy) | from CARD (it is part of the card text) | same | same |
-| Points | — | `reveal.deltas`, `scores` | **none exist** (scores stay 0; no deltas, no Mind Reader, no Self-aware) |
+| Points | none exist in either mode (every score 0, no deltas) | none | none |
 
 **Anonymity guarantee (tested, platform §2.11).** In anonymous mode, two games with identical per-card tallies but a different voter→target mapping produce byte-identical TV views, and byte-identical views on every phone whose own vote is the same in both games, in every phase including AWARDS and RESULTS.
 
@@ -181,10 +174,10 @@ Signature awards, the Mystery Award and Tonight's Star use only per-card tallies
 |---|---|---|
 | CARD | The card flips in: small header "Who's most likely to…", the phrase big (`type.tv.display`), card counter "4 / 12". Jury arc of characters below, `idle`. Named card: the named player's name is set in their character colour inside the phrase, and their character steps forward with `shy`; in Spicy mode a small flame-outline "Spicy" tag (an icon, never an emoji) sits on the card corner | "Read the TV…" with the phrase in small type (accessibility) and a countdown to voting |
 | VOTING | Same card, timer ring; characters who voted switch to `done` (arms crossed, sealed lips); no target is shown | Named card: the named player's tile is absent from the grid. Grid of every player tile (character + name), own tile labelled "Me" with a dashed outline. Tap = vote: the chosen tile gets only a **subtle outline and a small check** (no full-colour fill, the grid is not recoloured, so a neighbour cannot read the pick); a "Vote in" line in the header; haptic 20; tap another to change. Header repeats the phrase |
-| REVEAL | §12.2 conga reveal (public) or ballot rain (secret votes); award stamp on the top target(s); public mode: agreement coins fly to voters. **Secret votes:** after the counts, a percentage board under the card, one line per voted target, largest first: "50% voted for Alex", "25% voted for Maya"… (`likely.reveal.percent`), never who voted for whom | "You got 3 votes!"; public mode: "3 others agreed with you: +150", "Self-aware! +100" when applicable; award banner if top. Secret votes: "50% voted for you" and awards only, never a point |
+| REVEAL | §12.2: one row; the votes land under their targets one by one (public: the voters' own characters; secret: identical envelopes); count bubbles (votes, or percentages with secret votes); spotlight and award stamp on the top target(s); the result banner "(✿) {award} · {name}". Never who voted for whom with secret votes | "You got 3 votes!" / "The award is yours!"; public mode: "Omar and Lina voted for you" (`likely.reveal.votedForYou`, with their characters) or "Nobody voted for you this time", and "Same pick as {names}" (`likely.reveal.samePick`); award banner if top. Secret votes: "50% voted for you", never who |
 | HOLD | "Waiting for players… {count}/3" | Same |
-| AWARDS | One card per player, 3 at a time, 4 s per trio (§12.4), then the Mind Reader podium (public mode only) | Own signature award card, big, shareable look (no share button in v1) |
-| RESULTS | Public: Mind Reader ranking + all signature awards wall. Anonymous: the awards wall only. Then the platform cup panel and buttons (HUB-05) | Own award (+ points in public mode); VIP buttons |
+| AWARDS | One card per player, 3 at a time, 4 s per trio (§12.4) | Own signature award card, big, shareable look (no share button in v1) |
+| RESULTS | The awards wall (both modes): one tile per player, the award name in full (it steps down a size and wraps, never an ellipsis; only names ellipsize), the card's question when ≤ 6 players, the player and Tonight's Star. No ranking, no cup panel (no points). Then the HUB-05 buttons | Own award(s); VIP buttons |
 
 ⓘ on the phone top bar in every phase; on the TV via Back → pause menu → "Rules" (announced by the platform hint). The TV shows no focusable buttons in game; host actions are pause-menu items (§2).
 
@@ -196,10 +189,10 @@ Signature awards, the Mystery Award and Tonight's Star use only per-card tallies
 |---|---|---|
 | `packIds` | Likely pack ids playable in the content language and allowed by `mode` (Family packs always; the Spicy pack only when `mode: "spicy"`) | `[]` = every playable pack for the current mode (static default). **Hidden while only one pack is playable** (launch) |
 | `length` | `short` 8 · `normal` 12 · `long` 16 | `normal` |
-| `showVoters` | `true` (public: who voted for whom, with points) · `false` (secret votes: percentages only, awards only, **no points**) | `true` |
+| `showVoters` | `true` (public: who voted for whom) · `false` (secret votes: percentages only) | `true` |
 | `mode` | `family` · `spicy` (18+) | **`family`** |
 
-`SETTINGS_SCHEMA = 2` (was 1; `mode` added); `normalize` maps unknown or missing keys to the defaults, so every stored setting comes back as `family`. The row label for `showVoters` is "Show who voted", with the subtitle "Off: secret votes, no points". The `mode` row reads "Mode: Family · Spicy (18+)" and is hidden in rooms where no Spicy card is playable.
+`SETTINGS_SCHEMA = 2` (was 1; `mode` added); `normalize` maps unknown or missing keys to the defaults, so every stored setting comes back as `family`. The row label for `showVoters` is "Show who voted", with the subtitle "Off: secret votes, percentages only". The `mode` row reads "Mode: Family · Spicy (18+)" and is hidden in rooms where no Spicy card is playable.
 
 ### 9.1 Spicy mode: the 18+ gate (binding)
 
@@ -221,8 +214,7 @@ Signature awards, the Mystery Award and Tonight's Star use only per-card tallies
 | 2 | **Vote on your phone** for the person who fits best. Yes, you can vote for yourself. | **Votez sur votre téléphone** pour la personne qui colle le mieux. Oui, on peut voter pour soi. | **صوّتوا عالتلفون** للشخص يلّي لابقلو أكتر. وإيه، فيكن تصوّتوا لحالكن. |
 | 3 | **Reveal!** See who got picked, and by whom. | **Révélation !** Découvrez sur qui tombe le choix, et qui l'a fait. | **الكشف!** شوفوا مين انختار، ومين اختارو. |
 | 3 anon (`likely.howto.3.anon`) | **Reveal!** See the percentages. Who voted for whom stays secret. | **Révélation !** Découvrez les pourcentages. Qui a voté pour qui reste secret. | **الكشف!** شوفوا النسب. مين صوّت لمين بيضلّ سرّ. |
-| 4 | **Agree with the others** to score, and collect your award at the end. | **Votez comme les autres** pour marquer des points, et repartez avec votre prix. | **صوّتوا متل الجماعة** لتربحوا نقاط، وكل واحد بياخد جايزتو بالآخر. |
-| 4 anon (`likely.howto.4.anon`) | **Collect your award** at the end. Secret votes: no points tonight. | **Repartez avec votre prix** à la fin. Votes secrets : pas de points. | **كل واحد بياخد جايزتو** بالآخر. تصويت سرّي: ما في نقاط. |
+| 4 (and `likely.howto.4.anon`, same text) | **No points, just laughs:** everyone leaves with an award at the end. | **Pas de points, juste des rires :** tout le monde repart avec un prix à la fin. | **ما في نقاط، بس ضحك:** كل واحد بياخد جايزة بالآخر. |
 
 The intro and the rules sheet pick the `.anon` variants when `showVoters` is false.
 
@@ -230,28 +222,30 @@ The intro and the rules sheet pick the `.anon` variants when `showVoters` is fal
 
 ### 10.2 ⓘ Rules sheet (keys `likely.rules.*`)
 
+The JSON files (`shared/i18n/games/likely/*.json`) hold the EN/FR/AR/ES copy; the "points" section (key id kept so the TV catalog mirror is unchanged) now says there are none.
+
 EN:
 - **Vote.** One vote per card, for any player, yourself included. You can change it until time's up.
-- **Points.** +50 for each other player who picked the same person as you (up to +300 a card). Everyone agreed? +400 each. Voted for yourself and at least 2 others did too? +100 more. Secret votes: no points, only awards.
+- **No points.** Being picked is neither good nor bad, so nobody scores in this game. You play for the laughs and the awards.
 - **Chaos.** If everyone votes for someone different, nobody wins the card.
-- **Awards.** Each card has an award. At the end, everyone gets their signature award. The most points wins the Mind Reader award.
-- **Secret votes.** If the host turned off "Show who voted", the TV shows only percentages ("50% voted for Alex"), never who voted for whom, and nobody scores points.
+- **Awards.** Each card has an award for the most-voted player. At the end, everyone gets their signature award.
+- **Secret votes.** If the host turned off "Show who voted", the TV shows only percentages, never who voted for whom. With only a few players, people can still guess.
 - **Spicy mode (18+).** Only for adults, switched on from the TV. Some cards name a player; that player can't be voted for on that card. The host can skip any card.
 
 FR:
 - **Vote.** Un vote par carte, pour n'importe qui, vous compris. Modifiable jusqu'à la fin du temps.
-- **Points.** +50 pour chaque autre personne qui a choisi comme vous (jusqu'à +300 par carte). Tout le monde d'accord ? +400 chacun. Vous avez voté pour vous et au moins 2 autres aussi ? +100 de plus. Votes secrets : pas de points, seulement des prix.
+- **Pas de points.** Recevoir des votes n'est ni bien ni mal : personne ne marque de points dans ce jeu. On joue pour rire, et pour les prix.
 - **Chaos.** Si chaque vote va à une personne différente, personne ne gagne la carte.
-- **Prix.** Chaque carte a son prix. À la fin, chacun repart avec son prix signature. Le plus de points remporte le Prix télépathe.
-- **Votes secrets.** Si l'hôte a désactivé « Montrer les votes », la télé n'affiche que des pourcentages (« 50 % ont voté pour Alex »), jamais qui a voté pour qui, et personne ne marque de points.
+- **Prix.** Chaque carte a son prix, pour la personne qui reçoit le plus de votes. À la fin, chacun repart avec son prix signature.
+- **Votes secrets.** Si l'hôte a désactivé « Montrer les votes », la télé n'affiche que des pourcentages, jamais qui a voté pour qui. Avec peu de joueurs, on peut quand même deviner.
 - **Mode Épicé (18+).** Réservé aux adultes, activé depuis la télé. Certaines cartes nomment une personne, pour qui on ne peut pas voter sur cette carte. L'hôte peut passer n'importe quelle carte.
 
 AR `[native review]`:
 - **التصويت.** صوت واحد عكل كرت، لأيّ حدا، حتى لحالك. فيك تغيّرو لآخر ثانية.
-- **النقاط.** ‎+50 عن كل واحد اختار متلك (لحدّ ‎+300 بالكرت). إذا الكل اتّفقوا: ‎+400 لكل واحد. صوّتت لحالك وتنين غيرك كمان؟ ‎+100 زيادة. بالتصويت السرّي: ما في نقاط، بس جوايز.
+- **بلا نقاط.** إنو الجماعة تختارك مش منيح ولا عاطل، فما حدا بياخد نقاط بهاللعبة. منلعب للضحك وللجوايز.
 - **فوضى.** إذا كل واحد صوّت لحدا غير، ما حدا بيربح الكرت.
-- **الجوايز.** كل كرت إلو جايزة. بالآخر كل واحد بياخد جايزتو. واللي معو أكتر نقاط بياخد جايزة قراءة الأفكار.
-- **تصويت سرّي.** إذا المضيف طفى «فرجي مين صوّت»، التلفزيون بيفرجي بس النسب («50% صوّتوا لـAlex»)، أبداً مين صوّت لمين، وما حدا بياخد نقاط.
+- **الجوايز.** كل كرت إلو جايزة للي أخد أكتر أصوات. بالآخر كل واحد بياخد جايزتو.
+- **تصويت سرّي.** إذا المضيف طفى «فرجي مين صوّت»، التلفزيون بيفرجي بس النسب، أبداً مين صوّت لمين. بس إذا كنتو قلال، فيكن تحزروا.
 - **وضع «حرّاق» (+18).** بس للكبار، وبينفتح من التلفزيون. في كروت بتذكر اسم حدا منكن، وما فيكن تصوّتوا إلو عهالكرت. والمضيف فيه ينطّ أيّ كرت.
 
 ### 10.3 Key microcopy
@@ -262,9 +256,9 @@ AR `[native review]`:
 | `likely.vote.me` | Me | Moi | أنا |
 | `likely.vote.locked` | Vote in! You can still change it. | Vote enregistré ! Tu peux encore changer. | صوتك انحسب! بعد فيك تغيّرو. |
 | `likely.reveal.youGot` (P) | You got {count} vote(s)! | {count} vote(s) pour toi ! | أخدت {count} صوت! |
-| `likely.reveal.withGroup` (P) | {count} others agreed with you! +{points} | {count} personne(s) d'accord avec toi ! +{points} | {count} اتّفقوا معك! ‎+{points} |
-| `likely.reveal.selfAware` | Self-aware! +100 | Lucidité ! +100 | صراحة! ‎+100 |
-| `likely.reveal.unanimousPts` | Unanimous! +400 | À l'unanimité ! +400 | بالإجماع! ‎+400 |
+| `likely.reveal.votedForYou` (P, `{names}` a list) | {names} voted for you | {names} a / ont voté pour toi | إلك صوت / أصوات من {names} (no verb agreeing with the voters' gender) |
+| `likely.reveal.nobodyForYou` | Nobody voted for you this time | Personne n'a voté pour toi cette fois | ولا حدا صوّتلك هالمرّة |
+| `likely.reveal.samePick` | Same pick as {names} | Même choix que {names} | نفس اختيار {names} |
 | `likely.reveal.unanimous` | Unanimous! | À l'unanimité ! | بالإجماع! |
 | `likely.reveal.chaos` | Total chaos! You don't agree on anything. | Chaos total ! Vous n'êtes d'accord sur rien. | فوضى! ما اتّفقتو على شي. |
 | `likely.reveal.again` | {name} AGAIN?! | Encore {name} ?! | {name} كمان مرّة؟! |
@@ -374,21 +368,20 @@ The server never waits for animations; OK on the remote skips to the end state; 
 
 The Likely world (platform world id `rooftop`) is a glitzy, slightly ridiculous awards ceremony on a Beirut rooftop at night: string lights, a velvet curtain on a little stage, a golden arch of bulbs, a spotlight rig, the city glowing behind. Entrance (platform world entrance, ≤ 2 000 ms): the curtain **drops closed** (250 ms) and **parts** (500 ms) onto the stage inside the platform's 750 ms door window, the title lands, then the characters run in to the jury arc; one fanfare sting. The first CARD deadline includes `ENTRANCE_GRACE_MS`.
 
-### 12.2 The reveal (public mode), 6–9.5 s
+### 12.2 The reveal, 8–12 s (owner redesign 2026-11-12)
 
-1. *Drumroll (0–800 ms):* lights dim, the card shrinks to the top.
-2. *Run to your pick (800 ms → +100 ms per voter, ≤ 2.5 s):* each voter's character leaves its seat and hops to stand behind its target, forming a **conga line** (`point` expression; self-voters do `pointSelf` and stay in place with a cheeky shrug). Landing "tok" sounds, pitch rising per line length.
-3. *Count (600 ms):* a counter bubble above each target rolls up.
-4. *Spotlight (800 ms):* everything but the top target(s) dims; a spotlight drops with a "thoom".
-5. *Award stamp (600 ms):* a golden rosette with the award name lands on the top target (`shock`, or `smug` if they voted for themselves, or `shy`); ties: one rosette each, smaller.
-6. *Points (800 ms, public mode only):* each voter who scored gets coins flying **from the head of their conga line (the target they picked) to their own character**, labelled with their agreement points ("+150"); Unanimous: the whole room's confetti cannon (paper + amber, 1.2 s) and "+400".
-7. *Hold (≥ 1 s):* "{name}, defend yourself!" caption (`likely.reveal.defend`) invites the table to talk; there is no mechanic, it's a social beat.
+One centred composition, no left/right split: the card on top, the players as ONE row, every vote landing under the person it picked. Positions come from `shared/src/games/likely/layout.ts` (stage 864 × 442 units = the safe area under the 44 dp header; `likelyRow`, `likelyStackGrid`, `likelyStackSlot`, `likelyPublicTokens`, `likelySecretTokens`); the step list is `revealSteps` + `fitReveal` (web `tv/choreo.ts`, Kotlin `LikelyChoreo`), the same on both TVs.
 
-`revealDurationMs = 5 000 + 100 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0)`, max 9 500.
+1. *Lift (0–700 ms):* the lights dim, the card halves around its top centre, the row glides up into a flat line under it (72 → 64 dp characters). No snapping: every position is interpolated.
+2. *Votes, one by one (from 750 ms; 160–320 ms apart, ≈ 2.4 s in all; each flight 520 ms):* **public mode:** each ballot (voter seat order) becomes the **voter's own character in miniature** flying on a soft arc from the voter to a slot under its target; the voter points at its pick (a self-voter looks smug, its token drops under itself). **Secret votes:** identical cream envelopes drop from the card, round-robin across the targets, from the tallies only. Stacks are centred grids (≤ 3 columns, cells 22–44 dp) that never leave their target's column or the stage. A "tok" per landing, pitch rising.
+3. *Count (400 ms):* a bubble at each voted player's head: the count (public) or the percentage (secret votes; `percent` per §5.1).
+4. *Spotlight (600 ms):* everyone else dims to 55 %, their stacks to 70 %; the most-voted step up 12 % under a cone from the rig.
+5. *Award stamp (600 ms, from spotlight + 300 ms):* a rosette spins onto the winner's chest; the result banner between the card and the row slams in: "(✿) {award} · {name(s)}", prefixed "Unanimous!" or "{name} AGAIN?!" when it applies; the banner steps its type down rather than cut anything. Unanimous: a confetti burst (1.2 s). Ties: one rosette each, all names in the banner.
+6. *Hold (the rest of the window, ≥ 2 s at every room size):* the finished picture stays readable.
 
-**Anonymous mode (secret votes):** a ballot box at the centre shakes, envelopes burst out and fly to targets (no voter colour, all identical cream envelopes), counts roll, then steps 4–5 identically; step 6 is replaced by the **percentage board** (1 200 ms): under the card, one line per voted target, largest first, each line sliding in with that target's character head: "50% voted for Alex" (`likely.reveal.percent`), the bar filling to its percent. No points. `revealDurationMs` is the same formula (the board takes the time the points step would take).
+`likelyRevealMs = clamp(7 000 + 150 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0), 8 000, 12 000)`; the last 1 000 ms stay free (network slack). There is **no "defend yourself" hold, no coin step and no score rail** (owner decision 2026-11-12).
 
-**Chaos:** characters run in all directions and bump into each other (a 1.2 s scramble), "Total chaos!" title; no spotlight.
+**Chaos:** the tokens land as usual (one under each target), the counts pop, then the row jitters in place for 1 s (`shock`, then `laugh`) and the banner says "Total chaos!"; no spotlight, no stamp. **Nobody voted:** the banner says "No votes? Shy tonight!".
 
 ### 12.3 Card entrance
 
@@ -396,7 +389,7 @@ Each card is dealt from a golden deck at the top-end corner, flips in mid-air (`
 
 ### 12.4 Awards ceremony
 
-Three players at a time walk to podium marks; each rosette drops with their award name and the original prompt in small type underneath; a golden "glint" sweep crosses each. The Mystery Award plays a comedic "?" puff of smoke. Last (public mode only): **Mind Reader** podium (steps 3-2-1), the winner gets a glowing crystal-ball prop. Each trio holds 4 s so the award names and prompts can be read from the couch.
+Three players at a time walk to podium marks; each rosette drops with their award name and the original prompt underneath (never cut: the title steps down a size and wraps to 2 lines before it could overflow); a golden "glint" sweep crosses each. The Mystery Award plays a comedic "?" puff of smoke. Each trio holds 4 s so the award names and prompts can be read from the couch. (No Mind Reader podium: no points.) Then RESULTS: the awards wall (§8.2).
 
 ### 12.5 Phone moments
 
@@ -409,7 +402,7 @@ Three players at a time walk to podium marks; each rosette drops with their awar
 
 ### 12.7 Implementation notes
 
-TV Compose: conga positions computed per target as a polyline behind the character (curling after 6); ≤ 12 moving characters at once; spotlight = a radial gradient drawn on a `Canvas` overlay (no blur). Web: same layout math in a shared TS helper (`shared/src/games/likely/layout.ts`) so TV mock and Kotlin produce identical positions (Kotlin mirrors it, with a fixture test on positions).
+TV Compose: one row and the vote stacks from `LikelyLayout` (the Kotlin mirror of `shared/src/games/likely/layout.ts`, asserted against `shared/fixtures/v2/games/likely/layout.json`); ≤ 12 characters and ≤ 12 tokens move at once, every position read in layout lambdas from the phase clock (no recomposition per frame); spotlight = a gradient cone on a `Canvas` overlay (no blur). Every text that matters (card, banner, award titles) steps down a type size instead of ellipsizing; only player names ellipsize. The top bar keeps its chips at the start side (the end side belongs to the platform's "Back: menu & rules" hint).
 
 ---
 
@@ -428,11 +421,11 @@ Errors: `INVALID_TARGET` (unknown, `left`, or the card's named player), `STALE_C
 
 ### 13.2 View (`LikelyPublic`)
 
-`schema, phase, cardIndex, cardCount, deadline, card {id, prompt /* {player} already resolved */, award, spicy: boolean, namedPlayerId | null} | null (CARD+), votedIds[], reveal | null, scores [{playerId, score, scoreBefore}], awards [] (AWARDS+), showVoters, mode: "family"|"spicy"`.
+`schema, phase, cardIndex, cardCount, deadline, card {id, prompt /* {player} kept; clients write the name */, award, spicy: boolean, namedPlayerId | null, rerun} | null (CARD+), newIds[], votedIds[], reveal | null, scores [{playerId, score: 0, scoreBefore: 0}] /* the instance's players; no points */, awards [] (AWARDS+), showVoters, mode: "family"|"spicy"`.
 
-`reveal = { votesCast, counts: [{playerId, count, percent}] /* percent per §5.1, both modes */, topIds[], unanimous, chaos, ballots: [{voterId, targetId}] | null, deltas: [{playerId, points, reason: "agree"|"unanimous"|"selfAware"}] }`.
-- **Public mode:** `ballots` and `deltas` as computed; `scores` move.
-- **Anonymous mode:** `ballots: null`, `deltas: []`, every `score` and `scoreBefore` is 0 for the whole game, `awards` never contain Self-aware or Mind Reader. Nothing in any view depends on the voter→target mapping beyond the per-card tallies.
+`reveal = { votesCast, counts: [{playerId, count, percent}] /* percent per §5.1, both modes */, topIds[], unanimous, chaos, none, againId, ballots: [{voterId, targetId}] | null }` (no `deltas`: no points). `awards[].kind` ∈ `signature | mystery | star`.
+- **Public mode:** `ballots` in voter seat order during REVEAL only.
+- **Anonymous mode:** `ballots: null`. Nothing in any view depends on the voter→target mapping beyond the per-card tallies.
 
 `me = { myVote | null, waitingForNext: boolean }`.
 
@@ -444,25 +437,25 @@ State-only keys (platform `forbiddenKeys`): `votes`, `ballotsAll`, `rngState`, `
 
 1. Every vote target is a non-`left` player; every voter is a non-`left` player; one vote per voter.
 2. Before REVEAL no projection contains another player's vote.
-3. If `!showVoters`: no projection ever contains `ballots`, a non-zero score, a delta, or the Self-aware / Mind Reader award.
+3. If `!showVoters`: no projection ever contains `ballots`. In either mode: no non-zero score, no delta, no award kind beyond signature / mystery / star.
 4. `chaos ⇒ topIds = []`; `unanimous ⇒ topIds.length = 1`.
-5. Scores ≥ 0 and Σ deltas = Σ (score − scoreBefore); a player's agreement points on a card ≤ 300 (+100 Unanimous, +100 Self-aware).
+5. Every score is 0 for the whole game (no points, §6).
 6. `mode = "family"` ⇒ the current card has `spice = 0` and no `namedPlayerId`; `namedPlayerId ≠ null` ⇒ it is a non-`left` player, not a vote target on that card, and the game has ≥ 4 players.
 7. Every `percent` equals `round(100 × count / votesCast)` of the same card's tallies.
 
 ### 13.4 Tests
 
 - Result table tests: n = 3..12, all-different (chaos), unanimous, ties, one vote, none, self-votes.
-- Scoring table tests (public mode): agreement +50 per matching other voter with the +300 cap; Unanimous = +400; Self-aware only with ≥ 2 others; Chaos and lone votes = 0; a 3-player pact earns ≤ +50 per card.
+- No points: `outcome` is all 0 with an empty ranking in both modes; scores stay 0; the leak check rejects any score, delta or point award.
 - **Anonymity differential property (fast-check, synthetic catalog `shared/src/testing/catalogs/likely.ts`):** for `showVoters=false`, generate two games with identical per-card tallies but different voter→target mappings; the TV views and the views of every phone whose own vote matches are byte-identical in every phase, AWARDS and RESULTS included (platform §2.11).
-- Awards: signature-award selection (vote share, later-card tie), Mystery Award, Tonight's Star thresholds, Self-aware and Mind Reader absent in anonymous mode.
+- Awards: signature-award selection (vote share, later-card tie), Mystery Award, Tonight's Star thresholds; only those three kinds exist.
 - Percentages: `round(100 × count / votesCast)` half up for 1..12 voters; 3 × 1 vote → 33/33/33; ordering by percent then seat; present in both modes; the anonymity differential test includes `percent`.
 - Spicy: `mode` defaults to `family` and `normalize` of any old settings gives `family`; a `spicy` patch without `ageConfirmed` or from a VIP → `INVALID_SETTINGS`; switching to `spicy` sets `showVoters:false` in the same patch; `family` never draws `spice > 0` or a named card (property over 10 000 draws); Spicy pack absent from a family room's catalog view; named cards: never with < 4 players, never two in a row, ≤ 1 in 3, named player not a valid target (`INVALID_TARGET`), named player leaving voids the card; fewest-named fairness over a seeded game.
 - Flow: first CARD deadline = 3 500 + `ENTRANCE_GRACE_MS`; early end + 1 s window; SKIP_CARD discards votes; HOLD; late joiner via `join` (`waitingForNext` until the next CARD); `left` target rejected; AWARDS duration formula.
 - Sim: `pnpm sim --game likely --players 3..12 --games 300`, invariants after every reduce.
 - Pack lint for `likely-family` (all rules in §11.2, review flags reported).
-- TV: conga layout fixture shared with TS; D-pad reach of the pause items "Skip card", "Next", "End game" and of ⓘ; RTL arc mirrored.
-- Web e2e: 3 phones + `/tv`, self-vote, change vote, reveal, awards, one anonymous game (percentage board shown, no points). One Spicy game with 4 phones once the platform dependencies of §9.1 land: TV 18+ dialog (Cancel focused by default), a named card, a VIP skip.
+- TV: row / vote-stack layout fixture shared with TS (stacks stay on the stage and in their column for 3–12 players); D-pad reach of the pause items "Skip card", "Next", "End game" and of ⓘ; RTL row mirrored; the reveal leaves ≥ 2 s of hold at every room size.
+- Web e2e: 3 phones + `/tv`, self-vote, change vote, reveal, awards, one anonymous game (percentages shown). One Spicy game with 4 phones once the platform dependencies of §9.1 land: TV 18+ dialog (Cancel focused by default), a named card, a VIP skip.
 - TV: the 18+ dialog's default focus is "Cancel" and Back closes it without enabling Spicy.
 
 ---

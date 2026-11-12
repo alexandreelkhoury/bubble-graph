@@ -15,17 +15,18 @@ class LikelyStageTest {
 
     private fun reveal(votes: Int, unanimous: Boolean = false, tops: Int = 1, chaos: Boolean = false, none: Boolean = false) = LikelyReveal(
         votesCast = votes, counts = emptyList(), topIds = (0 until tops).map { "t$it" }, unanimous = unanimous, chaos = chaos,
-        none = none, againId = null, ballots = emptyList(), deltas = emptyList(),
+        none = none, againId = null, ballots = emptyList(),
     )
 
     // ---------------------------------------------------------------- choreography budget (the server never waits)
 
-    private fun shape(r: LikelyReveal, publicMode: Boolean, n: Int) =
-        LikelyChoreo.RevealShape(if (publicMode) n else 0, if (publicMode) 0 else n, publicMode, r.chaos, r.none, r.unanimous, if (publicMode) n else 0)
+    /** Public and secret reveals share one step list (only the token's look differs): [publicMode] is kept for the loops. */
+    @Suppress("UNUSED_PARAMETER")
+    private fun shape(r: LikelyReveal, publicMode: Boolean, n: Int) = LikelyChoreo.RevealShape(if (r.none) 0 else n, r.chaos, r.none, r.unanimous)
 
     private fun tl(r: LikelyReveal, publicMode: Boolean, n: Int) = LikelyChoreo.reveal(r, shape(r, publicMode, n))
 
-    /** The server never waits: every reveal ends inside the REVEAL window, leaving the 1 s tail for "defend yourself". */
+    /** The server never waits: every reveal ends inside the REVEAL window, leaving the 1 s network tail. */
     @Test fun everyRevealTimelineFitsTheServerDuration() {
         for (v in 0..12) for (tops in 1..maxOf(1, v)) for (u in listOf(false, true)) for (pub in listOf(false, true)) for (chaos in listOf(false, true)) {
             if (u && tops > 1) continue
@@ -44,26 +45,28 @@ class LikelyStageTest {
 
     /** Line for line with web-client/src/games/likely/tv/choreo.ts `revealSteps` (spot checks of the TS numbers). */
     @Test fun revealStepsMatchTheBrowserTv() {
-        val pub = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(3, 0, true, false, false, false, 2)).associateBy { it.id }
-        assertEquals(listOf("dim", "run", "count", "spot", "stamp", "coin", "tick", "hold"), LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(3, 0, true, false, false, false, 2)).map { it.id })
-        assertEquals(800, pub.getValue("run").startMs)
-        assertEquals(100, pub.getValue("run").staggerMs)
-        assertEquals(800 + 520 + 200 + 100, pub.getValue("count").startMs)
-        assertEquals(1620 + 600 + 800 + 600, pub.getValue("coin").startMs)
-        assertEquals(3620 + 450 + 70 + 600, pub.getValue("hold").startMs)
-        val secret = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(0, 4, false, false, false, true, 0))
-        assertEquals(listOf("dim", "box", "env", "count", "spot", "stamp", "confetti", "board", "hold"), secret.map { it.id })
-        val chaos = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(4, 0, true, true, false, false, 0))
-        assertEquals(listOf("dim", "scramble", "run", "count", "hold"), chaos.map { it.id })
-        assertEquals("spring.bouncy", chaos.first { it.id == "run" }.easing)
-        assertEquals(listOf("dim", "hold"), LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(0, 0, true, false, true, false, 0)).map { it.id })
-        // 25 runners squeeze the run into 2.5 s.
-        assertEquals(1980.0 / 24, LikelyChoreo.runStagger(25), 1e-9)
-        // fitReveal scales only when needed, and keeps spring durations.
-        val long = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(0, 0, true, true, false, false, 0) .copy(runners = 12, publicMode = true))
+        val four = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(4, chaos = false, none = false, unanimous = false))
+        assertEquals(listOf("dim", "token", "count", "spot", "stamp", "hold"), four.map { it.id })
+        val by = four.associateBy { it.id }
+        assertEquals(750, by.getValue("token").startMs)
+        assertEquals(320, by.getValue("token").staggerMs)
+        assertEquals(750 + 320 * 3 + 520 + 100, by.getValue("count").startMs)
+        assertEquals(2330 + 400, by.getValue("spot").startMs)
+        assertEquals(2730 + 300, by.getValue("stamp").startMs)
+        assertEquals(2730 + 900, by.getValue("hold").startMs)
+        val unanimous = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(4, chaos = false, none = false, unanimous = true))
+        assertEquals(listOf("dim", "token", "count", "spot", "stamp", "confetti", "hold"), unanimous.map { it.id })
+        val chaos = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(4, chaos = true, none = false, unanimous = false))
+        assertEquals(listOf("dim", "token", "count", "scramble", "hold"), chaos.map { it.id })
+        assertEquals(listOf("dim", "hold"), LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(0, chaos = false, none = true, unanimous = false)).map { it.id })
+        // The build is ≈ 2.4 s whatever the room: 160–320 ms between two votes.
+        assertEquals(2400.0 / 11, LikelyChoreo.tokenStagger(12), 1e-9)
+        assertEquals(320.0, LikelyChoreo.tokenStagger(2), 0.0)
+        assertEquals(160.0, LikelyChoreo.tokenStagger(40), 0.0)
+        // fitReveal scales only when needed.
+        val long = LikelyChoreo.revealSteps(LikelyChoreo.RevealShape(12, chaos = false, none = false, unanimous = true))
         val fit = LikelyChoreo.fitReveal(long, 3_000, 12)
         assertTrue(LikelyChoreo.endMs(fit, 12) < LikelyChoreo.endMs(long, 12))
-        assertEquals(long.first { it.id == "run" }.durationMs, fit.first { it.id == "run" }.durationMs)
     }
 
     @Test fun serverFormulasMatchTheFixtureDeadlines() {
@@ -89,7 +92,7 @@ class LikelyStageTest {
 
     @Test fun reducedMotionJumpsAndFades() {
         val tl = tl(reveal(4), true, 3)
-        val run = tl.step("run")!!
+        val run = tl.step("token")!!
         assertEquals(Choreo.Reduced.SKIP, run.reduced)
         assertEquals(0f, LikelyChoreo.progress(run, run.startMs - 1.0, reduced = true), 0f)
         assertEquals(1f, LikelyChoreo.progress(run, run.startMs.toDouble(), reduced = true), 0f)
@@ -113,14 +116,15 @@ class LikelyStageTest {
 
     @Test fun everyCueHasAPlatformSound() {
         for (id in SoundCuesLikely.cues.keys) assertNotNull(id, LikelySounds.platformCue(id))
-        val timelines = listOf(LikelyChoreo.cardDeal, LikelyChoreo.awardsTrio, LikelyChoreo.mindReader, LikelyChoreo.awardsIntro) +
+        val timelines = listOf(LikelyChoreo.cardDeal, LikelyChoreo.awardsTrio, LikelyChoreo.awardsIntro) +
             listOf(false, true).flatMap { a -> listOf(reveal(4), reveal(4, true), reveal(4, chaos = true), reveal(0, none = true)).map { tl(it, a, 3) } }
         for (t in timelines) for (m in t.marks) assertNotNull("${t.id} ${m.cue}", LikelySounds.platformCue(m.cue))
     }
 
     // ---------------------------------------------------------------- reveal plan
 
-    @Test fun publicRevealBuildsCongaLinesCoinsAndExpressions() {
+    /** Public mode: every vote is the voter's own token, stacked under its pick in ballot order (who voted for whom). */
+    @Test fun publicRevealStacksTheVotersUnderTheirPick() {
         val v = LikelyFixtures.view("reveal")
         val plan = LikelyStage.revealPlan(v, rtl = false)!!
         assertEquals(LikelyChoreo.RevealKind.PUBLIC, plan.kind)
@@ -129,40 +133,38 @@ class LikelyStageTest {
         val noor = v.players[2].id
         val sam = v.players[3].id
         assertEquals(setOf(rami), plan.selfVoterIds)
-        assertEquals(listOf(lea, noor, sam), plan.runners.map { it.voterId })
-        // Léa and Noor line up behind Rami (places 1, 2), Sam behind Léa, on the sides the shared layout picks.
-        val seats = plan.seats
-        val sides = LikelyLayout.congaSides(mapOf(rami to 2, lea to 1), seats)
-        assertEquals(LikelyLayout.congaSlot(seats.getValue(rami), 1, sides.getValue(rami)), plan.endOf(lea))
-        assertEquals(LikelyLayout.congaSlot(seats.getValue(rami), 2, sides.getValue(rami)), plan.endOf(noor))
-        assertEquals(LikelyLayout.congaSlot(seats.getValue(lea), 1, sides.getValue(lea)), plan.endOf(sam))
-        assertEquals(seats.getValue(rami), plan.endOf(rami))
-        // Coins: one per scoring voter with its card total (Rami: agree 100 + self-aware 100).
-        assertEquals(listOf(rami to 200, lea to 100, noor to 100), plan.coins.map { it.voterId to it.points })
-        assertEquals(LikelyStage.head(seats.getValue(rami)), plan.coins[1].from)
+        assertEquals(listOf(Triple(rami, rami, 0), Triple(lea, rami, 1), Triple(noor, rami, 2), Triple(sam, lea, 0)), plan.tokens.map { Triple(it.voterId, it.targetId, it.k) })
+        // The slots are the shared layout's, under the target in the reveal row.
+        val grid = LikelyLayout.stackGrid(4, 3)
+        assertEquals(LikelyLayout.stackSlot(plan.row.getValue(rami), 1, 3, grid), plan.tokens[1].at)
+        assertEquals(grid.cell, plan.cell, 0.0)
+        for (t in plan.tokens) assertTrue(t.at.y > plan.row.getValue(t.targetId).y)
         assertEquals(listOf(rami), plan.topIds)
-        assertEquals(rami, plan.defendId)
-        assertTrue(plan.envelopes.isEmpty() && plan.board.isEmpty())
+        assertEquals(3, plan.counts.getValue(rami).count)
 
         val tl = plan.timeline
+        val tk = tl.step("token")!!
         assertEquals(Expression.IDLE, LikelyStage.revealExpression(plan, lea, 0.0))
-        assertEquals(Expression.POINT, LikelyStage.revealExpression(plan, lea, tl.step("run")!!.startMs + 10.0))
+        // Léa's token is the 2nd to leave: she points from then on, until the stamp.
+        assertEquals(Expression.IDLE, LikelyStage.revealExpression(plan, lea, tk.startMs + tk.staggerMs - 1.0))
+        assertEquals(Expression.POINT, LikelyStage.revealExpression(plan, lea, tk.startMs + tk.staggerMs + 1.0))
+        assertEquals(Expression.SMUG, LikelyStage.revealExpression(plan, rami, tk.startMs + 1.0))
         assertEquals(Expression.SMUG, LikelyStage.revealExpression(plan, rami, tl.totalMs.toDouble()))
         assertEquals(Expression.HAPPY, LikelyStage.revealExpression(plan, noor, tl.totalMs.toDouble()))
-        assertEquals(Expression.POINT, LikelyStage.revealExpression(plan, sam, tl.totalMs.toDouble()))
+        assertEquals(Expression.HAPPY, LikelyStage.revealExpression(plan, sam, tl.totalMs.toDouble()))
+        // No hold beat names anyone: the "defend yourself" line is gone (owner decision 2026-11-12).
+        assertTrue(tl.marks.none { it.cue.contains("defend") })
     }
 
     @Test fun rtlMirrorsTheRevealPlan() {
         val v = LikelyFixtures.view("reveal.tie")
         val ltr = LikelyStage.revealPlan(v, rtl = false)!!
         val rtl = LikelyStage.revealPlan(v, rtl = true)!!
-        for (r in ltr.runners) {
-            val m = rtl.runners.first { it.voterId == r.voterId }
-            assertEquals(LikelyLayout.WIDTH - r.to.x, m.to.x, 0.11)
-            assertEquals(r.to.y, m.to.y, 0.0)
+        for ((i, t) in ltr.tokens.withIndex()) {
+            assertEquals(LikelyLayout.WIDTH - t.at.x, rtl.tokens[i].at.x, 0.11)
+            assertEquals(t.at.y, rtl.tokens[i].at.y, 0.0)
         }
         assertEquals(2, ltr.topIds.size)
-        assertNull("a tie has no single defendant", ltr.defendId)
     }
 
     @Test fun unanimousCheersAndThrowsConfetti() {
@@ -170,7 +172,7 @@ class LikelyStageTest {
         assertTrue(plan.unanimous)
         assertNotNull(plan.timeline.step("confetti"))
         val end = plan.timeline.totalMs.toDouble()
-        val voters = plan.coins.map { it.voterId }
+        val voters = plan.tokens.mapNotNull { it.voterId }
         assertTrue(voters.isNotEmpty())
         for (id in voters.filter { it !in plan.topIds }) assertEquals(Expression.CHEER, LikelyStage.revealExpression(plan, id, end))
     }
@@ -179,20 +181,20 @@ class LikelyStageTest {
         val plan = LikelyStage.revealPlan(LikelyFixtures.view("reveal.chaos"), false)!!
         assertEquals(LikelyChoreo.RevealKind.CHAOS, plan.kind)
         assertNull(plan.timeline.step("spot"))
-        // Public mode: after the scramble the picks still show (everyone ran to a different person), no coins.
-        assertEquals(4, plan.runners.size)
-        assertTrue(plan.coins.isEmpty())
-        assertEquals(4, plan.counters.size)
+        assertNull(plan.timeline.step("stamp"))
+        // Public mode: the picks still show (everyone voted for someone different), one token under each.
+        assertEquals(4, plan.tokens.size)
+        assertEquals(4, plan.counts.size)
+        assertTrue(plan.topIds.isEmpty())
         val s = plan.timeline.step("scramble")!!
         assertEquals(Expression.SHOCK, LikelyStage.revealExpression(plan, plan.seats.keys.first(), s.startMs + 10.0))
         assertEquals(Expression.LAUGH, LikelyStage.revealExpression(plan, plan.seats.keys.first(), plan.timeline.totalMs.toDouble()))
-        assertNull(plan.defendId)
     }
 
     @Test fun noVotesIsShy() {
         val plan = LikelyStage.revealPlan(LikelyFixtures.view("reveal.none"), false)!!
         assertEquals(LikelyChoreo.RevealKind.NONE, plan.kind)
-        assertTrue(plan.counters.isEmpty())
+        assertTrue(plan.counts.isEmpty() && plan.tokens.isEmpty())
         assertEquals(Expression.SHY, LikelyStage.revealExpression(plan, plan.seats.keys.first(), 0.0))
     }
 
@@ -206,18 +208,17 @@ class LikelyStageTest {
         val v = LikelyFixtures.view("reveal.secret.ar")
         val plan = LikelyStage.revealPlan(v, rtl = true)!!
         assertEquals(LikelyChoreo.RevealKind.SECRET, plan.kind)
-        assertTrue(plan.runners.isEmpty() && plan.coins.isEmpty() && plan.selfVoterIds.isEmpty())
-        assertEquals(v.reveal!!.votesCast, plan.envelopes.size)
-        assertEquals(listOf(60, 20, 20), plan.board.map { it.percent })
-        assertNull(plan.timeline.step("coin"))
-        assertNotNull(plan.timeline.step("board"))
+        assertTrue(plan.selfVoterIds.isEmpty())
+        assertTrue(plan.tokens.all { it.voterId == null })
+        assertEquals(v.reveal!!.votesCast, plan.tokens.size)
+        assertEquals(listOf(60, 20, 20), LikelyStage.boardLines(v.reveal, v).map { it.percent })
         assertEquals(Expression.SHY, LikelyStage.revealExpression(plan, plan.topIds.single(), plan.timeline.totalMs.toDouble()))
     }
 
     /**
      * The anonymity guarantee on the TV side (JAMAA-PLATFORM §2.11): in secret-vote mode, two reveals with identical
-     * tallies but different voter→target mappings (even if a buggy server leaked ballots or deltas) draw the same
-     * plan: same positions, envelopes, counters, board, expressions at every sampled time.
+     * tallies but different voter→target mappings (even if a buggy server leaked ballots) draw the same plan: same
+     * positions, envelopes, counts, expressions at every sampled time.
      */
     @Test fun secretPlanIsIndependentOfTheMapping() {
         val st = LikelyFixtures.tv("reveal")
@@ -225,10 +226,7 @@ class LikelyStageTest {
         val pub = app.jamaa.tv.protocol.ProtocolJson.decoder.decodeFromJsonElement(LikelyPub.serializer(), env.public).copy(showVoters = false)
         val ids = pub.scores.map { it.playerId }
         val a = pub.reveal!!.copy(ballots = listOf(LikelyBallot(ids[0], ids[0]), LikelyBallot(ids[1], ids[0]), LikelyBallot(ids[2], ids[0]), LikelyBallot(ids[3], ids[1])))
-        val b = pub.reveal!!.copy(
-            ballots = listOf(LikelyBallot(ids[0], ids[1]), LikelyBallot(ids[1], ids[0]), LikelyBallot(ids[2], ids[0]), LikelyBallot(ids[3], ids[0])),
-            deltas = listOf(LikelyDelta(ids[3], 100, LikelyDeltaReason.AGREE)),
-        )
+        val b = pub.reveal.copy(ballots = listOf(LikelyBallot(ids[0], ids[1]), LikelyBallot(ids[1], ids[0]), LikelyBallot(ids[2], ids[0]), LikelyBallot(ids[3], ids[0])))
         val pa = LikelyStage.revealPlan(LikelyTv.compose(st.view.room, pub.copy(reveal = a), env), false)!!
         val pb = LikelyStage.revealPlan(LikelyTv.compose(st.view.room, pub.copy(reveal = b), env), false)!!
         assertEquals(pa, pb)
@@ -244,16 +242,16 @@ class LikelyStageTest {
     @Test fun awardsPagesFollowTheServerClock() {
         val v = LikelyFixtures.view("awards")
         val plan = LikelyStage.awardsPlan(v)
-        assertEquals(4, plan.pages.size)
+        assertEquals(3, plan.pages.size)
         assertEquals(LikelyAwardsPage.Intro, plan.pages[0])
         val trios = plan.pages.filterIsInstance<LikelyAwardsPage.Trio>()
         assertEquals(listOf(3, 2), trios.map { it.entries.size })
-        assertTrue(plan.pages.last() is LikelyAwardsPage.MindReader)
-        assertEquals(listOf(0L, 3_000L, 7_000L, 11_000L), plan.startsMs)
+        assertEquals(listOf(0L, 3_000L, 7_000L), plan.startsMs)
+        assertEquals(11_000L, plan.totalMs)
         assertEquals(0 to 0L, plan.at(0))
         assertEquals(1 to 500L, plan.at(3_500))
-        assertEquals(3 to 3_999L, plan.at(14_999))
-        assertEquals(3 to 9_000L, plan.at(20_000))
+        assertEquals(2 to 3_999L, plan.at(10_999))
+        assertEquals(2 to 13_000L, plan.at(20_000))
         // Tonight's Star rides on its holder's card; everyone holds exactly one signature or mystery award.
         val entries = LikelyStage.awardEntries(v)
         assertEquals(v.players.map { it.id }.toSet(), entries.map { it.playerId }.toSet())
@@ -261,27 +259,21 @@ class LikelyStageTest {
         assertEquals(v.players[2].id, star.playerId)
         val mystery = entries.first { it.kind == LikelyAwardKind.MYSTERY }
         assertNull(mystery.card)
-        val mind = plan.pages.last() as LikelyAwardsPage.MindReader
-        assertEquals(v.players[0].id, mind.podium.first().playerId)
+        assertEquals(LikelyTiming.awardsMs(5), plan.totalMs)
     }
 
-    @Test fun secretAwardsHaveNoMindReaderAndNoRanking() {
-        val v = LikelyFixtures.view("awards.secret.ar")
-        val plan = LikelyStage.awardsPlan(v)
-        assertTrue(plan.pages.none { it is LikelyAwardsPage.MindReader })
-        assertTrue(LikelyStage.ranking(v).isEmpty())
-        assertTrue(LikelyStage.ranking(LikelyFixtures.view("results.secret.ar")).isEmpty())
-    }
-
-    @Test fun rankingSharesTies() {
-        val v = LikelyFixtures.view("results")
-        val rows = LikelyStage.ranking(v)
-        assertEquals(v.players.size, rows.size)
-        for (i in 1 until rows.size) {
-            assertTrue(rows[i - 1].score >= rows[i].score)
-            if (rows[i - 1].score == rows[i].score) assertEquals(rows[i - 1].rank, rows[i].rank) else assertEquals(i + 1, rows[i].rank)
+    /** The awards wall: one tile per player, a grid that fits 12, the card's question only where there is room. */
+    @Test fun awardsWallGrid() {
+        assertEquals(LikelyWallGrid(3, 1, true), LikelyStage.wallGrid(3))
+        assertEquals(LikelyWallGrid(2, 2, true), LikelyStage.wallGrid(4))
+        assertEquals(LikelyWallGrid(3, 2, true), LikelyStage.wallGrid(5))
+        assertEquals(LikelyWallGrid(3, 3, false), LikelyStage.wallGrid(9))
+        assertEquals(LikelyWallGrid(4, 3, false), LikelyStage.wallGrid(12))
+        for (n in 1..12) {
+            val g = LikelyStage.wallGrid(n)
+            assertTrue(g.cols * g.rows >= n)
+            assertTrue("n=$n ${g.rows} rows", g.rows <= 3)
         }
-        assertEquals(1, rows.first().rank)
     }
 
     // ---------------------------------------------------------------- helpers
@@ -436,49 +428,6 @@ class LikelyStageTest {
         assertEquals(2, LikelyCardFit.tier(fr, " ?", arabicScale = false))
     }
 
-    /** DESIGN-JAMAA §5.1/§5.3: the public-mode rail ticks from scoreBefore on the reveal's tick step; never with secret votes. */
-    @Test fun scoreRailTicksInPublicModeOnly() {
-        val v = LikelyFixtures.view("reveal")
-        assertTrue(LikelyStage.showRail(v))
-        val plan = LikelyStage.revealPlan(v, false)!!
-        val tick = plan.timeline.step("tick")!!
-        assertTrue("the counters roll after the coins land", tick.startMs >= plan.timeline.step("coin")!!.startMs)
-        assertTrue(plan.timeline.marks.any { it.cue == "counterTick" && it.atMs == tick.startMs })
-        assertEquals(app.jamaa.tv.game.Cue.COUNTER_TICK, LikelySounds.platformCue("counterTick"))
-        val rami = v.players[0]
-        assertEquals(0 to 200, rami.scoreBefore to rami.score)
-        assertEquals(0, LikelyStage.railScore(v, rami, 0f))
-        assertEquals(100, LikelyStage.railScore(v, rami, 0.5f))
-        assertEquals(200, LikelyStage.railScore(v, rami, 1f))
-        assertEquals(setOf(rami.id), LikelyStage.railLeaders(v))
-        // Outside REVEAL the rail shows the score as is; secret votes never show it.
-        assertEquals(rami.score, LikelyStage.railScore(v.copy(phase = LikelyPhase.VOTING), rami, 0f))
-        assertFalse(LikelyStage.showRail(LikelyFixtures.view("reveal.secret.ar")))
-        assertFalse(LikelyStage.showRail(LikelyFixtures.view("card.secret.ar")))
-        assertTrue(LikelyStage.showRail(LikelyFixtures.view("voting")))
-        assertFalse(LikelyStage.showRail(v.copy(phase = LikelyPhase.AWARDS)))
-        assertEquals(0.0, LikelyStage.railHeight(LikelyFixtures.view("reveal.secret.ar")), 0.0)
-        // Nobody leads before anyone scored.
-        assertTrue(LikelyStage.railLeaders(LikelyFixtures.view("voting")).isEmpty())
-    }
-
-    /** 1–8 players in one row, 9–12 in two; every row fits the 864-unit stage. Left players are not on the rail. */
-    @Test fun scoreRailFitsTwelvePlayers() {
-        val base = LikelyFixtures.view("reveal")
-        val proto = base.players[0]
-        for (n in 1..12) {
-            val players = (0 until n).map { proto.copy(id = "p$it", seat = it) }
-            val v = base.copy(players = players)
-            val rows = LikelyStage.railRows(v)
-            assertEquals(n, rows.sumOf { it.size })
-            assertEquals(if (n <= 8) 1 else 2, rows.size)
-            for (r in rows) assertTrue("n=$n row ${r.size}", LikelyStage.railWidth(r.size) <= LikelyLayout.WIDTH)
-            assertTrue(LikelyStage.railHeight(v) <= 72.0)
-        }
-        val left = base.copy(players = base.players.mapIndexed { i, p -> if (i == 1) p.copy(left = true) else p })
-        assertFalse(LikelyStage.railRows(left).flatten().any { it.left })
-    }
-
     @Test fun voteProgressCountsConnectedVoters() {
         val v = LikelyFixtures.view("voting.some_voted")
         assertEquals(2 to 4, LikelyStage.voteProgress(v))
@@ -498,10 +447,12 @@ class LikelyStageTest {
             assertTrue("v=$v pub=$pub hold ${hold.durationMs}", hold.durationMs >= LikelyChoreo.HOLD_FLOOR_MS)
             for (s in t.steps.filter { it.id != "hold" }) assertTrue("${s.id} overlaps the hold", s.startMs <= hold.startMs + 1)
         }
-        // A 4-player public card keeps ≥ 2 s of "defend yourself".
-        assertTrue(tl(reveal(4), true, 3).step("hold")!!.durationMs >= LikelyChoreo.HOLD_MIN_MS)
+        // The finished picture stays ≥ 2 s at every room size (natural speed, no squeeze).
+        for (v in 1..12) for (u in listOf(false, true)) {
+            val t = tl(reveal(v, u), true, v)
+            assertTrue("v=$v u=$u", t.step("hold")!!.durationMs >= LikelyChoreo.HOLD_MIN_MS)
+        }
         assertEquals(8_000L, LikelyTiming.revealMs(4, false, 1))
         assertEquals(12_000L, LikelyTiming.revealMs(40, true, 1))
-        assertEquals(LikelyChoreo.boardMs(3), 1_800 + 360)
     }
 }

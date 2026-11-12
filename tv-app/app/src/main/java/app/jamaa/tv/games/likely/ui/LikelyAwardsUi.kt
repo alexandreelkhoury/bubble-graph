@@ -49,6 +49,7 @@ import app.jamaa.tv.games.likely.LikelyChoreo
 import app.jamaa.tv.games.likely.LikelyStage
 import app.jamaa.tv.games.likely.LikelyTimeline
 import app.jamaa.tv.games.likely.LikelyView
+import app.jamaa.tv.games.likely.LikelyWallGrid
 import app.jamaa.tv.platform.Expression
 import app.jamaa.tv.ui.characters.Character
 import app.jamaa.tv.ui.components.ButtonKind
@@ -63,7 +64,8 @@ import app.jamaa.tv.ui.theme.JamaaColors
 import app.jamaa.tv.ui.theme.JamaaTheme
 import kotlin.math.roundToInt
 
-// LK-TV-04 awards ceremony (GAME-LIKELY §12.4) on the server's AWARDS clock, and LK-TV-05 results (§8.2 RESULTS).
+// LK-TV-04 awards ceremony (GAME-LIKELY §12.4) on the server's AWARDS clock, and LK-TV-05 results: the awards wall
+// (§8.2 RESULTS). No points, no Mind Reader, no ranking (owner decision 2026-11-12).
 
 /**
  * The AWARDS pages on the server clock: page = [LikelyAwardsPlan.at] of the time since AWARDS started (derived from the
@@ -80,7 +82,6 @@ internal class AwardsClock(val plan: LikelyAwardsPlan, val reduced: Boolean) {
     fun timeline(i: Int): LikelyTimeline = when (plan.pages[i]) {
         LikelyAwardsPage.Intro -> LikelyChoreo.awardsIntro
         is LikelyAwardsPage.Trio -> LikelyChoreo.awardsTrio
-        is LikelyAwardsPage.MindReader -> LikelyChoreo.mindReader
     }
 
     /** Time into the current page (its end when OK completed it). */
@@ -133,7 +134,6 @@ internal fun LikelyAwards(view: LikelyView, clock: AwardsClock, rtl: Boolean, ar
             when (page) {
                 LikelyAwardsPage.Intro -> AwardsIntro(clock, this@LikelyStageBox)
                 is LikelyAwardsPage.Trio -> AwardsTrio(view, page.entries, clock, this@LikelyStageBox)
-                is LikelyAwardsPage.MindReader -> MindReaderPodium(view, page, clock, this@LikelyStageBox)
             }
         }
     }
@@ -154,9 +154,9 @@ private fun AwardsIntro(clock: AwardsClock, stage: StageScope) {
 
 /** Award-gold title text (DESIGN-JAMAA §1.6): Cairo Black in a vertical gold gradient. */
 @Composable
-internal fun GoldTitle(text: String, modifier: Modifier = Modifier) {
-    val style = JamaaTheme.type.displayM.copy(brush = Brush.verticalGradient(listOf(GoldHi, Gold, GoldLo)))
-    Text(text, style = style, textAlign = TextAlign.Center, modifier = modifier)
+internal fun GoldTitle(text: String, modifier: Modifier = Modifier, small: Boolean = false) {
+    val style = (if (small) JamaaTheme.type.headline else JamaaTheme.type.displayM).copy(brush = Brush.verticalGradient(listOf(GoldHi, Gold, GoldLo)))
+    Text(text, style = style, textAlign = TextAlign.Center, maxLines = 1, modifier = modifier)
 }
 
 /** Three holders walk to podium marks; rosettes drop with their award name and the original prompt underneath. */
@@ -203,11 +203,11 @@ private fun AwardsTrio(view: LikelyView, entries: List<LikelyAwardEntry>, clock:
                             glint(clock.p("glint", i))
                         },
                 ) {
-                    Text(title, style = type.title, color = Gold, textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    // The award name in full (never cut): it steps down a size, then wraps, before it could overflow.
+                    FitText(title, listOf(type.headline, type.title, type.titleS), Gold, maxLines = 2)
                     Spacer(Modifier.height(stage.dp(4f)))
-                    // The whole question in the locale's own punctuation (game.likely.card.question); up to 4 lines on the
-                    // 250-unit column, the spacer below absorbs the height.
-                    Text(line, style = type.caption, color = JamaaColors.TextSecondary, textAlign = TextAlign.Center, maxLines = 4, overflow = TextOverflow.Ellipsis)
+                    // The whole question in the locale's own punctuation (game.likely.card.question), never cut.
+                    FitText(line, listOf(type.body, type.caption), JamaaColors.TextSecondary, maxLines = 4)
                 }
                 Spacer(Modifier.weight(1f))
                 Box(
@@ -242,121 +242,42 @@ private fun AwardsTrio(view: LikelyView, entries: List<LikelyAwardEntry>, clock:
 @Composable
 internal fun extraTitle(kind: LikelyAwardKind): String = when (kind) {
     LikelyAwardKind.STAR -> keyText("game.likely.awards.star.title")
-    LikelyAwardKind.SELF_AWARE -> keyText("game.likely.awards.selfAware.title")
-    LikelyAwardKind.MIND_READER -> keyText("game.likely.awards.mindReader.title")
     LikelyAwardKind.MYSTERY -> keyText("game.likely.awards.mystery.title")
     LikelyAwardKind.SIGNATURE -> ""
-}
-
-/** Public mode only: the podium (steps 3-2-1) and the glowing crystal ball for the best mind reader. */
-@Composable
-private fun MindReaderPodium(view: LikelyView, page: LikelyAwardsPage.MindReader, clock: AwardsClock, stage: StageScope) {
-    val type = JamaaTheme.type
-    val winners = page.award.playerIds.toSet()
-    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        GoldTitle(keyText("game.likely.awards.mindReader.title"), Modifier.padding(top = stage.dp(12f)))
-        Text(keyText("game.likely.awards.mindReader.line"), style = type.body, color = JamaaColors.TextSecondary, textAlign = TextAlign.Center)
-        Spacer(Modifier.weight(1f))
-        // Podium order on screen: 2nd, 1st, 3rd (mirrored in RTL by the row itself).
-        val rows = page.podium
-        val display = listOfNotNull(rows.getOrNull(1), rows.getOrNull(0), rows.getOrNull(2)).let { if (stage.rtl) it.reversed() else it }
-        Row(horizontalArrangement = Arrangement.spacedBy(stage.dp(12f)), verticalAlignment = Alignment.Bottom) {
-            display.forEachIndexed { slot, row ->
-                val p = view.player(row.playerId) ?: return@forEachIndexed
-                val stepH = when (row.rank) { 1 -> 110f; 2 -> 76f; else -> 50f }
-                val idx = rows.indexOf(row)
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.graphicsLayer {
-                        val q = clock.p("podium", idx)
-                        translationY = (1f - q.coerceIn(0f, 1.2f)) * 80f * density
-                        alpha = q.coerceIn(0f, 1f)
-                    },
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        if (row.playerId in winners) {
-                            Canvas(Modifier.size(stage.dp(120f)).clearAndSetSemantics {}) {
-                                val c = clock.p("crystal")
-                                drawCircle(Brush.radialGradient(listOf(Rooftop.glow.copy(alpha = 0.55f * c), Rooftop.glow.copy(alpha = 0f))), size.minDimension / 2f)
-                                drawCircle(Rooftop.glow.copy(alpha = 0.9f * c), size.minDimension * 0.12f, Offset(size.width * 0.82f, size.height * 0.55f))
-                                drawCircle(JamaaColors.Text.copy(alpha = 0.8f * c), size.minDimension * 0.04f, Offset(size.width * 0.79f, size.height * 0.51f))
-                            }
-                        }
-                        Character(p.color, stage.dp(96f), if (row.playerId in winners) Expression.CHEER else Expression.HAPPY)
-                    }
-                    Text(shortName(p.name), style = type.title, color = JamaaColors.Text, maxLines = 1)
-                    Box(
-                        Modifier
-                            .size(stage.dp(150f), stage.dp(stepH))
-                            .background(Brush.verticalGradient(listOf(Rooftop.elevated, Rooftop.surface)), RoundedCornerShape(topStart = stage.dp(10f), topEnd = stage.dp(10f)))
-                            .border(stage.dp(2f), Gold.copy(alpha = 0.7f), RoundedCornerShape(topStart = stage.dp(10f), topEnd = stage.dp(10f))),
-                        contentAlignment = Alignment.TopCenter,
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(row.rank.toString(), style = type.headline, color = Gold)
-                            // The score rolls up as the step rises (counter, ease.decel).
-                            val shown = derived(clock, row, idx) { (row.score * clock.p("podium", idx).coerceIn(0f, 1f)).roundToInt() }
-                            Text(shown.toString(), style = type.label, color = JamaaColors.TextSecondary)
-                        }
-                    }
-                }
-                if (slot < display.size - 1) Spacer(Modifier.width(stage.dp(4f)))
-            }
-        }
-    }
 }
 
 // ---------------------------------------------------------------- RESULTS (LK-TV-05)
 
 /**
- * Public: the Mind Reader ranking + the awards wall; secret votes: the awards wall only. Then the platform cup panel
- * and the three HUB-05 buttons (the only focusable controls of the game, with the top-bar ⓘ).
+ * The awards wall (owner redesign 2026-11-12): every player's award in full (the title steps down a size and wraps,
+ * never an ellipsis; only names ellipsize), the player under it, Tonight's Star as a chip. No ranking and no cup panel:
+ * Most Likely has no points, so it never changes the night's cup (it would only repeat unchanged rows). Then the three
+ * HUB-05 buttons (the only focusable controls of the game, with the top-bar ⓘ).
  */
 @Composable
 internal fun LikelyResults(view: LikelyView, args: GameScreenArgs) {
     val type = JamaaTheme.type
     val playAgain = remember { FocusRequester() }
     val entries = remember(view.awards) { LikelyStage.awardEntries(view) }
-    val ranking = remember(view.players, view.showVoters) { LikelyStage.ranking(view) }
+    val grid = LikelyStage.wallGrid(entries.size)
     Column(Modifier.fillMaxSize().focusFallback(playAgain)) {
-        Row(Modifier.fillMaxWidth().height(44.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(keyText("game.likely.results.title"), style = type.headline, color = Gold)
+        Row(Modifier.fillMaxWidth().height(48.dp), verticalAlignment = Alignment.CenterVertically) {
+            GoldTitle(keyText("game.likely.results.title"), Modifier.weight(1f, fill = false), small = true)
             Spacer(Modifier.weight(1f))
             RoundIconButton(JamaaIcons.Info, androidx.compose.ui.res.stringResource(R.string.rules__open), args.onRules, size = 36.dp)
         }
-        Row(Modifier.weight(1f).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-            if (ranking.isNotEmpty()) {
-                Column(Modifier.width(260.dp).fillMaxHeight().background(Rooftop.surface.copy(alpha = 0.85f), RoundedCornerShape(20.dp)).padding(12.dp)) {
-                    Text(keyText("game.likely.results.mindReader"), style = type.label, color = Rooftop.accentText)
-                    Spacer(Modifier.height(6.dp))
-                    for (r in ranking.take(8)) {
-                        val p = view.player(r.playerId) ?: continue
-                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(30.dp)) {
-                            Text(r.rank.toString(), style = type.label, color = if (r.rank == 1) Gold else JamaaColors.TextSecondary, modifier = Modifier.width(22.dp))
-                            Character(p.color, 28.dp, if (r.rank == 1) Expression.CHEER else Expression.IDLE)
-                            Spacer(Modifier.width(8.dp))
-                            Text(shortName(p.name), style = type.label, color = if (p.left) JamaaColors.TextMuted else JamaaColors.Text, maxLines = 1, modifier = Modifier.weight(1f))
-                            Text(r.score.toString(), style = type.label, color = JamaaColors.Text)
-                        }
-                    }
-                }
-            }
-            Column(Modifier.weight(1f).fillMaxHeight()) {
-                Text(keyText("game.likely.results.awardsWall"), style = type.label, color = Rooftop.accentText)
-                Spacer(Modifier.height(6.dp))
-                val cols = if (entries.size > 9) 4 else 3
-                for (row in entries.chunked(cols)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(bottom = 8.dp)) {
-                        for (e in row) AwardTile(view, e, Modifier.weight(1f))
-                        repeat(cols - row.size) { Spacer(Modifier.weight(1f)) }
-                    }
+        Spacer(Modifier.height(6.dp))
+        Column(Modifier.weight(1f).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            entries.chunked(grid.cols).forEachIndexed { r, row ->
+                Row(Modifier.weight(1f).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    row.forEachIndexed { c, e -> AwardTile(view, e, grid, r * grid.cols + c, Modifier.weight(1f).fillMaxHeight()) }
+                    repeat(grid.cols - row.size) { Spacer(Modifier.weight(1f)) }
                 }
             }
         }
-        args.cupPanel()
-        args.passHook?.let { Text(it, style = type.caption, color = JamaaColors.TextMuted, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) }
+        args.passHook?.let { Text(it, style = type.caption, color = JamaaColors.TextMuted, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) }
         Row(
-            Modifier.fillMaxWidth().height(58.dp),
+            Modifier.fillMaxWidth().height(64.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -375,31 +296,57 @@ internal fun LikelyResults(view: LikelyView, args: GameScreenArgs) {
     InitialFocus(playAgain, key = "likely:results:${view.n}")
 }
 
+/** One award on the wall: the award title (gold, in full), the card's question when there is room, the player at the bottom. */
 @Composable
-private fun AwardTile(view: LikelyView, e: LikelyAwardEntry, modifier: Modifier) {
+private fun AwardTile(view: LikelyView, e: LikelyAwardEntry, grid: LikelyWallGrid, index: Int, modifier: Modifier) {
     val type = JamaaTheme.type
     val p = view.player(e.playerId) ?: return
-    Row(
-        modifier
-            .height(64.dp)
-            .background(Rooftop.surface.copy(alpha = 0.85f), RoundedCornerShape(16.dp))
-            .border(1.5.dp, Gold.copy(alpha = if (e.kind == LikelyAwardKind.MYSTERY) 0.3f else 0.7f), RoundedCornerShape(16.dp))
-            .padding(horizontal = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(contentAlignment = Alignment.BottomEnd) {
-            Character(p.color, 44.dp, if (e.left) Expression.AWAY else Expression.HAPPY)
-            Canvas(Modifier.size(18.dp).clearAndSetSemantics {}) { rosette(center, size.minDimension * 0.4f, 0f, alpha = if (e.kind == LikelyAwardKind.MYSTERY) 0.4f else 1f) }
+    val reduce = JamaaTheme.reduceMotion
+    // Tiles rise in one after the other (60 ms apart), once.
+    val shown = remember { androidx.compose.animation.core.Animatable(if (reduce) 1f else 0f) }
+    LaunchedEffect(Unit) {
+        if (!reduce) {
+            kotlinx.coroutines.delay(60L * index)
+            shown.animateTo(1f, androidx.compose.animation.core.tween(380, easing = androidx.compose.animation.core.FastOutSlowInEasing))
         }
-        Spacer(Modifier.width(8.dp))
-        Column(Modifier.weight(1f)) {
-            Text(shortName(p.name), style = type.label, color = if (e.left) JamaaColors.TextMuted else JamaaColors.Text, maxLines = 1)
-            val title = if (e.kind == LikelyAwardKind.MYSTERY) keyText("game.likely.awards.mystery.title") else e.card?.award.orEmpty()
-            Text(title, style = type.caption, color = Gold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            if (e.extras.isNotEmpty()) {
-                Text(e.extras.map { extraTitle(it.kind) }.joinToString(" · "), style = type.caption, color = GoldHi, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
+    val mystery = e.kind == LikelyAwardKind.MYSTERY
+    val title = if (mystery) keyText("game.likely.awards.mystery.title") else e.card?.award.orEmpty()
+    val big = grid.rows <= 2
+    Column(
+        modifier
+            .graphicsLayer {
+                alpha = shown.value
+                translationY = (1f - shown.value) * 24f * density
+            }
+            .background(Rooftop.surface.copy(alpha = 0.88f), RoundedCornerShape(18.dp))
+            .border(1.5.dp, Gold.copy(alpha = if (mystery) 0.35f else 0.75f), RoundedCornerShape(18.dp))
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Canvas(Modifier.size(if (big) 30.dp else 22.dp).clearAndSetSemantics {}) { rosette(center, size.minDimension * 0.36f, 0f, alpha = if (mystery) 0.45f else 1f) }
+            Spacer(Modifier.width(6.dp))
+            FitText(
+                title,
+                if (big) listOf(type.headline, type.title, type.titleS, type.label) else listOf(type.title, type.titleS, type.label, type.caption),
+                Gold,
+                maxLines = 2,
+            )
+        }
+        if (grid.withPrompt) {
+            val line = if (mystery) keyText("game.likely.awards.mystery.line") else e.card?.let { keyText("game.likely.card.question", it.prompt) }.orEmpty()
+            Spacer(Modifier.height(2.dp))
+            FitText(line, listOf(type.body, type.caption), JamaaColors.TextSecondary, maxLines = 3, modifier = Modifier.weight(1f, fill = false))
+        }
+        Spacer(Modifier.weight(1f))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Character(p.color, if (big) 52.dp else 40.dp, if (e.left) Expression.AWAY else if (mystery) Expression.SMUG else Expression.HAPPY)
+            Spacer(Modifier.width(8.dp))
+            Column {
+                Text(shortName(p.name), style = if (big) type.title else type.titleS, color = if (e.left) JamaaColors.TextMuted else JamaaColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                for (x in e.extras) Tag(extraTitle(x.kind), GoldHi)
             }
         }
     }
 }
-

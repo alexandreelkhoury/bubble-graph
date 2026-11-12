@@ -1,12 +1,13 @@
 // GAME-LIKELY §8.1 secrecy and §13.2 views. In secret mode nothing projected depends on the voter→target mapping beyond
-// the per-card tallies (the anonymity property, JAMAA-PLATFORM §2.11): no ballots, no deltas, scores pinned at 0, no
-// Self-aware or Mind Reader award, and every list is ordered by seat or by tally, never by ballot.
+// the per-card tallies (the anonymity property, JAMAA-PLATFORM §2.11): no ballots, and every list is ordered by seat or by
+// tally, never by ballot. There are no points in either mode (§6): every projected score is 0.
 import type { Locale } from "../../../constants";
 import type { RoomAccess } from "../../../content/types";
 import type { GameMemory, RosterEntry } from "../../types";
+import { LIKELY_AWARD_KINDS } from "../meta";
 import type { LikelySettings } from "../meta";
 import type { LikelyCatalog } from "../engine/catalog";
-import { awardsOf, isAnonymous, isVoter, ownVote, playableCount, resultBallots, resultDeltas, resultNamed, resultTally } from "../engine/reduce";
+import { awardsOf, isAnonymous, isVoter, ownVote, playableCount, resultBallots, resultNamed, resultTally } from "../engine/reduce";
 import { withPercent } from "../engine/result";
 import { AGAIN_STREAK } from "../engine/state";
 import type { LikelyAwardView, LikelyExtras, LikelyMe, LikelyPublic, LikelyReveal, LikelyState } from "../engine/state";
@@ -30,22 +31,15 @@ function revealOf(s: LikelyState): LikelyReveal | null {
     votesCast: t.votesCast, counts: withPercent(t), topIds: [...t.topIds], unanimous: t.unanimous, chaos: t.chaos,
     none: t.votesCast === 0, againId,
     ballots: anon ? null : resultBallots(s, r),
-    deltas: anon ? [] : resultDeltas(s, r),
   };
 }
 
 export function projectPublic(s: LikelyState): LikelyPublic {
-  const anon = isAnonymous(s);
   const reveal = revealOf(s);
-  const gained = new Map<string, number>();
-  if (reveal) for (const d of reveal.deltas) gained.set(d.playerId, (gained.get(d.playerId) ?? 0) + d.points);
-  const scores = s.players.map((p) => {
-    const score = anon ? 0 : (s.scores[p.id] ?? 0);
-    return { playerId: p.id, score, scoreBefore: score - (gained.get(p.id) ?? 0) };
-  });
+  // The instance's players in seat order; no points exist (§6), so every score is 0.
+  const scores = s.players.map((p) => ({ playerId: p.id, score: 0 as const, scoreBefore: 0 as const }));
   const c = s.card;
   const awards: LikelyAwardView[] = awardsOf(s)
-    .filter((a) => !anon || (a.kind !== "selfAware" && a.kind !== "mindReader"))
     .map((a) => {
       const r = a.cardIndex === null ? undefined : s.results[a.cardIndex];
       return {
@@ -115,7 +109,7 @@ function walk(x: unknown, path: string[], on: (k: string, v: unknown, path: read
 
 /**
  * Structural leak rules (JAMAA-PLATFORM §2.11, GAME-LIKELY §8.1, §13.3): who voted for whom never before REVEAL and never
- * in secret mode (no `ballots`, `voterId`/`targetId` pair, delta, non-zero score or ballot-based award); a reveal only in
+ * in secret mode (no `ballots`, `voterId`/`targetId` pair); no non-zero score in any mode (no points, §6); a reveal only in
  * REVEAL; `votedIds` only in VOTING; `me` only on its owner's phone and holding only the owner's vote; family stays family.
  */
 export function leakCheck(s: LikelyState, viewer: string | null, view: unknown): string[] {
@@ -130,15 +124,12 @@ export function leakCheck(s: LikelyState, viewer: string | null, view: unknown):
     if ((k === "ballots" && v !== null) || k === "voterId" || k === "targetId" || k === "myVote") {
       if (!revealing || k === "myVote") errs.push(`"${k}" at ${at}${anon ? " in secret mode" : ` in ${s.phase}`}`);
     }
-    if (anon && (k === "score" || k === "scoreBefore") && v !== 0) errs.push(`score at ${at} in secret mode`);
-    if (anon && k === "deltas" && Array.isArray(v) && v.length > 0) errs.push(`deltas at ${at} in secret mode`);
-    if (anon && k === "kind" && (v === "selfAware" || v === "mindReader")) errs.push(`${String(v)} award at ${at} in secret mode`);
+    if ((k === "score" || k === "scoreBefore") && v !== 0) errs.push(`score at ${at} (no points in this game)`);
+    if (k === "deltas" || k === "points") errs.push(`"${k}" at ${at} (no points in this game)`);
+    if (k === "kind" && path.includes("awards") && !(LIKELY_AWARD_KINDS as readonly unknown[]).includes(v)) errs.push(`${String(v)} award at ${at}`);
   });
   if (s.phase !== "REVEAL" && pub.reveal !== null) errs.push(`reveal in ${s.phase}`);
   if (s.phase !== "VOTING" && pub.votedIds.length > 0) errs.push(`votedIds in ${s.phase}`);
-  if (s.phase === "VOTING" || s.phase === "CARD") {
-    if (pub.scores.some((x) => x.score !== x.scoreBefore)) errs.push(`score moving in ${s.phase}`);
-  }
   if (pub.mode === "family" && pub.card && (pub.card.spicy || pub.card.namedPlayerId !== null)) errs.push("spicy card in family mode");
   const me = env.me;
   if (me !== null) {

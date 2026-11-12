@@ -4,57 +4,42 @@ import app.jamaa.tv.game.Cue
 import app.jamaa.tv.platform.Expression
 import kotlin.math.sign
 
-// The pure rules of the Likely TV screens (JVM-tested): who stands where on the jury arc, the reveal plan (conga
-// runners, ballot envelopes, counters, coins, the percentage board), the character expressions (public data only,
-// DESIGN-JAMAA §4.3 secrecy rule), the awards pages, the Mind Reader ranking, and small text helpers.
+// The pure rules of the Likely TV screens (JVM-tested): where the players stand (one centred row), the reveal plan (the
+// votes stacking under their targets one by one, the counts, the award stamp), the character expressions (public data
+// only, DESIGN-JAMAA §4.3 secrecy rule), the awards pages and wall, and small text helpers. No points anywhere: the game
+// is played for laughs and awards (owner decision 2026-11-12, GAME-LIKELY §6).
 //
 // Secrecy: everything here is computed from the TV's own projection. In secret-vote mode the plan reads only the
 // per-card tallies (`counts`, `topIds`, `unanimous`), so two games with identical tallies draw identical frames.
 
-/** A traveller of the public reveal: a voter's character running to stand behind its pick. */
-data class LikelyRunner(val voterId: String, val targetId: String, val from: LikelyPt, val to: LikelyPt, val index: Int, val self: Boolean)
-
-/** Secret votes: one identical cream envelope per vote, in tally order (never by voter). */
-data class LikelyEnvelope(val targetId: String, val index: Int, val to: LikelyPt)
-
-/** The counter bubble above a voted target. */
-data class LikelyCounter(val targetId: String, val at: LikelyPt, val count: Int, val percent: Int)
-
-/** Public mode: an agreement coin from the head of the voter's line (its pick) to the voter's own character. */
-data class LikelyCoin(val voterId: String, val from: LikelyPt, val to: LikelyPt, val points: Int, val index: Int)
-
-/** One line of the secret-vote percentage board ("50% voted for Alex"), largest first. */
-data class LikelyBoardLine(val playerId: String, val percent: Int, val count: Int)
-
 data class LikelyRevealPlan(
     val kind: LikelyChoreo.RevealKind,
-    /** Where every jury member stands before the reveal (seat order on the arc). */
+    /** Where every jury member stands before the reveal (the CARD/VOTING row) and in the reveal row (seat order). */
     val seats: Map<String, LikelyPt>,
-    val runners: List<LikelyRunner>,
-    val envelopes: List<LikelyEnvelope>,
-    val counters: List<LikelyCounter>,
+    val row: Map<String, LikelyPt>,
+    /** The votes, in arrival order: public mode the voters' own tokens (who voted for whom); secret, anonymous envelopes. */
+    val tokens: List<LikelyToken>,
+    /** Token size in stage units (one size for every stack). */
+    val cell: Double,
+    /** Votes and percentage per voted target. */
+    val counts: Map<String, LikelyCount>,
     val topIds: List<String>,
-    /** Public mode: voters who picked themselves (they stay in place, `pointSelf`). */
+    /** Public mode: voters who picked themselves. */
     val selfVoterIds: Set<String>,
-    val coins: List<LikelyCoin>,
-    val board: List<LikelyBoardLine>,
-    /** "{name}, defend yourself!": the first top target (a single winner only; ties say "It's a tie"). */
-    val defendId: String?,
     val againId: String?,
     val unanimous: Boolean,
     val timeline: LikelyTimeline,
 ) {
-    /** Where [id] stands at the end of the run (its conga place, or its seat). */
-    fun endOf(id: String): LikelyPt? = runners.firstOrNull { it.voterId == id }?.to ?: seats[id]
+    /** The index (arrival order) of [voterId]'s token, public mode; null otherwise. */
+    fun tokenOf(voterId: String): Int? = tokens.indexOfFirst { it.voterId == voterId }.takeIf { it >= 0 }
 }
 
-/** One player's award as AWARDS and RESULTS show it. Extras (Tonight's Star, Self-aware) ride on the holder's card. */
+/** One player's award as AWARDS and RESULTS show it. Tonight's Star rides on the holder's card. */
 data class LikelyAwardEntry(val playerId: String, val kind: LikelyAwardKind, val card: LikelyAwardCard?, val extras: List<LikelyAward>, val left: Boolean)
 
 sealed interface LikelyAwardsPage {
     data object Intro : LikelyAwardsPage
     data class Trio(val entries: List<LikelyAwardEntry>) : LikelyAwardsPage
-    data class MindReader(val award: LikelyAward, val podium: List<LikelyRankRow>) : LikelyAwardsPage
 }
 
 data class LikelyAwardsPlan(val pages: List<LikelyAwardsPage>, val startsMs: List<Long>, val totalMs: Long) {
@@ -67,106 +52,61 @@ data class LikelyAwardsPlan(val pages: List<LikelyAwardsPage>, val startsMs: Lis
     }
 }
 
-/** A Mind Reader ranking row: competition ranking (ties share a rank). */
-data class LikelyRankRow(val playerId: String, val rank: Int, val score: Int)
+/** The awards wall grid (RESULTS): [cols] × [rows] tiles, and whether a tile has room for the card's prompt line. */
+data class LikelyWallGrid(val cols: Int, val rows: Int, val withPrompt: Boolean)
 
 object LikelyStage {
-    const val CHAR = LikelyLayout.CHAR_SIZE
-
-    /** The jury arc in seat order (RTL: seat 0 on the right). */
+    /** The jury in the CARD/VOTING row, seat order (RTL: seat 0 on the right). */
     fun seats(view: LikelyView, rtl: Boolean): Map<String, LikelyPt> {
         val jury = view.jury
-        val arc = LikelyLayout.juryArc(jury.size, rtl)
-        return jury.indices.associate { jury[it].id to arc[it] }
+        val pts = LikelyLayout.row(jury.size, rtl)
+        return jury.indices.associate { jury[it].id to pts[it] }
     }
 
-    /** The head of a character standing at [feet] (its top centre). */
-    fun head(feet: LikelyPt): LikelyPt = LikelyPt(feet.x, feet.y - CHAR)
-
-    /** The counter bubble sits 30 dp over the head. */
-    fun counterAt(feet: LikelyPt): LikelyPt = LikelyPt(feet.x, feet.y - CHAR - 30)
-
-    /** Envelopes pile in rows of three over the target's head, deterministic by tally index. */
-    fun envelopeAt(target: LikelyPt, k: Int): LikelyPt = LikelyPt(target.x + ((k % 3) - 1) * 16.0, target.y - CHAR - 12 - 10.0 * (k / 3))
+    /** The jury in the (flat) reveal row. */
+    fun revealRow(view: LikelyView, rtl: Boolean): Map<String, LikelyPt> {
+        val jury = view.jury
+        val pts = LikelyLayout.row(jury.size, rtl, reveal = true)
+        return jury.indices.associate { jury[it].id to pts[it] }
+    }
 
     fun revealPlan(view: LikelyView, rtl: Boolean): LikelyRevealPlan? {
         val r = view.reveal ?: return null
         val seats = seats(view, rtl)
-        val anonymous = view.anonymous
-        val kind = LikelyChoreo.revealKind(r, anonymous)
-        val counters = r.counts.mapNotNull { c -> seats[c.playerId]?.let { LikelyCounter(c.playerId, counterAt(it), c.count, c.percent) } }
-
+        val row = revealRow(view, rtl)
+        val ids = view.jury.map { it.id }
+        val rowPts = ids.map { row.getValue(it) }
+        val kind = LikelyChoreo.revealKind(r, view.anonymous)
         // Public: ballots in the order the view sends them (voter seat order). Secret: never read, even if present.
-        // Public mode only (a chaos card in public mode still shows who ran to whom, like the browser TV).
-        val publicMode = !anonymous && r.ballots != null
-        val ballots = if (publicMode && (kind == LikelyChoreo.RevealKind.PUBLIC || kind == LikelyChoreo.RevealKind.CHAOS)) r.ballots.orEmpty() else emptyList()
-        val ids = seats.keys.toList()
-        val arc = ids.map { seats.getValue(it) }
-        val ends = LikelyLayout.revealPositions(arc, ids, ballots)
-        val runners = mutableListOf<LikelyRunner>()
-        val selfVoters = mutableSetOf<String>()
-        run {
-            for (b in ballots) {
-                val from = seats[b.voterId] ?: continue
-                val to = ends[b.voterId] ?: continue
-                if (b.voterId == b.targetId) {
-                    selfVoters += b.voterId
-                    continue
-                }
-                runners += LikelyRunner(b.voterId, b.targetId, from, to, runners.size, false)
-            }
+        val publicMode = !view.anonymous && r.ballots != null
+        val tokens = when {
+            kind == LikelyChoreo.RevealKind.NONE -> emptyList()
+            publicMode -> LikelyLayout.publicTokens(rowPts, ids, r.ballots.orEmpty(), rtl)
+            else -> LikelyLayout.secretTokens(rowPts, ids, r.counts, rtl)
         }
-        val envelopes = mutableListOf<LikelyEnvelope>()
-        if (kind == LikelyChoreo.RevealKind.SECRET) {
-            for (c in r.counts) {
-                val t = seats[c.playerId] ?: continue
-                for (k in 0 until c.count) envelopes += LikelyEnvelope(c.playerId, envelopes.size, envelopeAt(t, k))
-            }
-        }
-
-        // Coins: one per scoring voter, carrying its card total (agree + unanimous + self-aware), in ballot order.
-        val coins = mutableListOf<LikelyCoin>()
-        if (kind == LikelyChoreo.RevealKind.PUBLIC) {
-            val points = LinkedHashMap<String, Int>()
-            for (d in r.deltas) points[d.playerId] = (points[d.playerId] ?: 0) + d.points
-            for (b in ballots) {
-                val p = points[b.voterId] ?: continue
-                if (p <= 0) continue
-                val target = seats[b.targetId] ?: continue
-                val me = ends[b.voterId] ?: seats[b.voterId] ?: continue
-                coins += LikelyCoin(b.voterId, head(target), head(me), p, coins.size)
-            }
-        }
-        val board = if (!publicMode && kind != LikelyChoreo.RevealKind.NONE) boardLines(r, view) else emptyList()
-        val tops = r.topIds.filter { it in seats }
-        val shape = LikelyChoreo.RevealShape(
-            runners = runners.size, envelopes = envelopes.size, publicMode = publicMode, chaos = r.chaos, none = kind == LikelyChoreo.RevealKind.NONE,
-            unanimous = r.unanimous, coins = coins.size, lines = board.size,
-        )
-        val timeline = LikelyChoreo.reveal(r, shape)
+        val most = r.counts.filter { it.playerId in row }.maxOfOrNull { it.count } ?: 0
+        val cell = LikelyLayout.stackGrid(ids.size, most).cell
+        val selfVoters = if (publicMode) r.ballots.orEmpty().filter { it.voterId == it.targetId && it.voterId in row }.map { it.voterId }.toSet() else emptySet()
+        val shape = LikelyChoreo.RevealShape(tokens = tokens.size, chaos = r.chaos, none = kind == LikelyChoreo.RevealKind.NONE, unanimous = r.unanimous)
         return LikelyRevealPlan(
             kind = kind,
             seats = seats,
-            runners = runners,
-            envelopes = envelopes,
-            counters = counters,
-            topIds = tops,
+            row = row,
+            tokens = tokens,
+            cell = cell,
+            counts = r.counts.filter { it.playerId in row }.associateBy { it.playerId },
+            topIds = if (r.chaos) emptyList() else r.topIds.filter { it in row },
             selfVoterIds = selfVoters,
-            coins = coins,
-            board = board,
-            defendId = tops.singleOrNull()?.takeIf { kind == LikelyChoreo.RevealKind.PUBLIC || kind == LikelyChoreo.RevealKind.SECRET },
-            againId = r.againId?.takeIf { it in seats },
+            againId = r.againId?.takeIf { it in row },
             unanimous = r.unanimous,
-            timeline = timeline,
+            timeline = LikelyChoreo.reveal(r, shape),
         )
     }
 
     /** Percent descending, then seat order (§5.1); the server already sends this order, it is re-applied defensively. */
-    fun boardLines(r: LikelyReveal, view: LikelyView): List<LikelyBoardLine> {
+    fun boardLines(r: LikelyReveal, view: LikelyView): List<LikelyCount> {
         val seat = view.players.associate { it.id to it.seat }
-        return r.counts
-            .sortedWith(compareByDescending<LikelyCount> { it.percent }.thenBy { seat[it.playerId] ?: Int.MAX_VALUE })
-            .map { LikelyBoardLine(it.playerId, it.percent, it.count) }
+        return r.counts.sortedWith(compareByDescending<LikelyCount> { it.percent }.thenBy { seat[it.playerId] ?: Int.MAX_VALUE })
     }
 
     /** Look direction (face units) from [from] toward [to]. */
@@ -185,7 +125,7 @@ object LikelyStage {
             LikelyChoreo.RevealKind.CHAOS -> {
                 val s = tl.step("scramble") ?: return Expression.LAUGH
                 return when {
-                    tMs < s.startMs -> Expression.IDLE
+                    tMs < s.startMs -> Expression.THINK
                     tMs < s.startMs + s.durationMs -> Expression.SHOCK
                     else -> Expression.LAUGH
                 }
@@ -203,14 +143,11 @@ object LikelyStage {
                         else -> Expression.SHY
                     }
                 }
-                val coin = plan.coins.firstOrNull { it.voterId == id }
-                val coinsAt = tl.step("coin")
-                if (coin != null && coinsAt != null && tMs >= coinsAt.startMs + coinsAt.staggerMs * coin.index + coinsAt.durationMs) {
-                    return if (plan.unanimous) Expression.CHEER else Expression.HAPPY
-                }
-                val runStart = tl.step("run")?.startMs ?: 0
-                if (id in plan.selfVoterIds && tMs >= runStart) return Expression.SMUG
-                if (plan.runners.any { it.voterId == id } && tMs >= runStart) return Expression.POINT
+                if (stamped) return if (plan.unanimous) Expression.CHEER else Expression.HAPPY
+                val i = plan.tokenOf(id) ?: return Expression.IDLE
+                val tk = tl.step("token") ?: return Expression.IDLE
+                // A voter points at its pick as its token leaves (a self-voter looks smug about it).
+                if (tMs >= tk.startMs + tk.staggerMs.toDouble() * i) return if (id in plan.selfVoterIds) Expression.SMUG else Expression.POINT
                 return Expression.IDLE
             }
         }
@@ -222,26 +159,16 @@ object LikelyStage {
 
     // ---------------------------------------------------------------- awards (§6.2, §12.4)
 
-    /** Every holder's award (signature or mystery), in the server's order, with their extras attached. */
+    /** Every holder's award (signature or mystery), in the server's order, with Tonight's Star attached. */
     fun awardEntries(view: LikelyView): List<LikelyAwardEntry> {
         val left = view.players.filter { it.left }.map { it.id }.toSet()
-        val extras = view.awards.filter { it.kind == LikelyAwardKind.STAR || it.kind == LikelyAwardKind.SELF_AWARE }
+        val extras = view.awards.filter { it.kind == LikelyAwardKind.STAR }
         return view.awards
             .filter { it.kind == LikelyAwardKind.SIGNATURE || it.kind == LikelyAwardKind.MYSTERY }
             .flatMap { a -> a.playerIds.map { id -> LikelyAwardEntry(id, a.kind, a.card, extras.filter { id in it.playerIds }, id in left) } }
     }
 
-    /** Competition ranking by score, then seat (Mind Reader, public mode). Empty in secret-vote mode (no points). */
-    fun ranking(view: LikelyView): List<LikelyRankRow> {
-        if (view.anonymous) return emptyList()
-        val sorted = view.players.sortedWith(compareByDescending<LikelyPlayer> { it.score }.thenBy { it.seat })
-        return sorted.map { p -> LikelyRankRow(p.id, 1 + sorted.count { it.score > p.score }, p.score) }
-    }
-
-    /**
-     * The AWARDS pages on the server's clock: a 3 s intro, a 4 s page per trio of holders, then (public mode, when the
-     * server sent one) the 4 s Mind Reader podium. The total equals the server's `likelyAwardsMs`.
-     */
+    /** The AWARDS pages on the server's clock: a 3 s intro, then a 4 s page per trio of holders (= `likelyAwardsMs`). */
     fun awardsPlan(view: LikelyView): LikelyAwardsPlan {
         val entries = awardEntries(view)
         val pages = mutableListOf<LikelyAwardsPage>(LikelyAwardsPage.Intro)
@@ -252,21 +179,30 @@ object LikelyStage {
             starts += t
             t += LikelyTiming.AWARDS_TRIO_MS
         }
-        val mind = view.awards.firstOrNull { it.kind == LikelyAwardKind.MIND_READER }
-        if (!view.anonymous && mind != null) {
-            pages += LikelyAwardsPage.MindReader(mind, ranking(view).take(3))
-            starts += t
-            t += LikelyTiming.AWARDS_MIND_READER_MS
-        }
         return LikelyAwardsPlan(pages, starts, t)
+    }
+
+    /**
+     * The RESULTS awards wall: 1–3 tiles in one row, 4 as 2 × 2, 5–6 as 3 × 2, 7–9 as 3 × 3, 10–12 as 4 × 3. Up to 6 tiles
+     * have room for the card's prompt under the award; above that the award title alone (in full, never cut).
+     */
+    fun wallGrid(n: Int): LikelyWallGrid {
+        val cols = when {
+            n <= 3 -> maxOf(1, n)
+            n == 4 -> 2
+            n <= 9 -> 3
+            else -> 4
+        }
+        val rows = (maxOf(1, n) + cols - 1) / cols
+        return LikelyWallGrid(cols, rows, withPrompt = n <= 6)
     }
 
     // ---------------------------------------------------------------- text helpers
 
     /** "50%" (en, ar: Western digits), "50 %" with a narrow no-break space (fr), "50 %" with a no-break space (es). */
     fun percentText(percent: Int, uiLanguage: String): String = when (uiLanguage) {
-        "fr" -> "$percent\u202F%"
-        "es" -> "$percent\u00A0%"
+        "fr" -> "$percent %"
+        "es" -> "$percent %"
         else -> "$percent%"
     }
 
@@ -290,7 +226,7 @@ object LikelyStage {
     }
 
     /** A private-use placeholder for [questionParts] (never in a prompt). */
-    const val QUESTION_MARK = "\uE000"
+    const val QUESTION_MARK = ""
 
     /** The card phrase's type tier from its grapheme count (web `cardSize`): 0 = displayS, 1 = headline, 2 = title. */
     fun cardTier(prompt: String): Int {
@@ -298,53 +234,49 @@ object LikelyStage {
         return if (n <= 26) 0 else if (n <= 44) 1 else 2
     }
 
+    /**
+     * User-perceived characters (extended grapheme clusters, Unicode UAX #29, the cases a card or a name meets): a base
+     * code point plus every combining mark, variation selector, emoji skin-tone modifier and tag character after it;
+     * a ZWJ joins the next code point into the same cluster (emoji families); two regional indicators make one flag; CR LF
+     * is one. Written out because `java.text.BreakIterator` only learned emoji clusters in JDK 20 (the JVM unit tests run
+     * an older one; Android's ICU-backed one already knew), so both now count the same.
+     */
     fun graphemes(s: String): Int {
-        val it = java.text.BreakIterator.getCharacterInstance()
-        it.setText(s)
         var n = 0
-        while (it.next() != java.text.BreakIterator.DONE) n++
+        var i = 0
+        var prev = -1
+        var joinNext = false
+        var riRun = 0
+        while (i < s.length) {
+            val cp = s.codePointAt(i)
+            i += Character.charCount(cp)
+            val ri = cp in 0x1F1E6..0x1F1FF
+            val extend = when {
+                prev < 0 -> false
+                joinNext -> true
+                cp == 0x200D -> true
+                cp == 0x0A && prev == 0x0D -> true
+                isExtend(cp) -> true
+                ri && riRun % 2 == 1 -> true
+                else -> false
+            }
+            joinNext = cp == 0x200D
+            riRun = if (ri) riRun + 1 else 0
+            if (!extend) n++
+            prev = cp
+        }
         return n
     }
 
-    // ---------------------------------------------------------------- score rail (public mode, DESIGN-JAMAA §5.1)
-
-    const val RAIL_PILL_W = 96.0
-    const val RAIL_PILL_H = 34.0
-    const val RAIL_GAP = 6.0
-    const val RAIL_ROW_MAX = 8
-
-    /** The rail shows in public mode only (secret votes have no points, GAME-LIKELY §6), on the play and reveal stages. */
-    fun showRail(view: LikelyView): Boolean =
-        !view.anonymous && (view.phase == LikelyPhase.CARD || view.phase == LikelyPhase.VOTING || view.phase == LikelyPhase.REVEAL)
-
-    /** The rail's pills in seat order (non-`left` players), one row up to [RAIL_ROW_MAX], else two balanced rows. */
-    fun railRows(view: LikelyView): List<List<LikelyPlayer>> {
-        val ps = view.players.filter { !it.left }
-        if (ps.isEmpty()) return emptyList()
-        if (ps.size <= RAIL_ROW_MAX) return listOf(ps)
-        return ps.chunked((ps.size + 1) / 2)
+    private fun isExtend(cp: Int): Boolean {
+        if (cp in 0xFE00..0xFE0F || cp in 0xE0100..0xE01EF) return true      // variation selectors
+        if (cp in 0x1F3FB..0x1F3FF) return true                               // emoji skin-tone modifiers
+        if (cp in 0xE0020..0xE007F) return true                               // tag characters (subdivision flags)
+        return when (Character.getType(cp).toByte()) {
+            Character.NON_SPACING_MARK, Character.ENCLOSING_MARK, Character.COMBINING_SPACING_MARK -> true
+            else -> false
+        }
     }
-
-    /** Stage width of a rail row of [n] pills. */
-    fun railWidth(n: Int): Double = if (n <= 0) 0.0 else n * RAIL_PILL_W + (n - 1) * RAIL_GAP
-
-    /** Stage height of the whole rail (0 when hidden). */
-    fun railHeight(view: LikelyView): Double {
-        if (!showRail(view)) return 0.0
-        val rows = railRows(view).size
-        return if (rows == 0) 0.0 else rows * RAIL_PILL_H + (rows - 1) * 4.0
-    }
-
-    /** The leader(s): the highest score, once anyone scored. */
-    fun railLeaders(view: LikelyView): Set<String> {
-        val ps = view.players.filter { !it.left }
-        val lead = ps.maxOfOrNull { it.score } ?: 0
-        return if (lead <= 0) emptySet() else ps.filter { it.score == lead }.map { it.id }.toSet()
-    }
-
-    /** A rail counter at tick progress [p] (REVEAL rolls `scoreBefore` → `score`; other phases show `score`). */
-    fun railScore(view: LikelyView, p: LikelyPlayer, tick: Float): Int =
-        if (view.phase != LikelyPhase.REVEAL) p.score else p.scoreBefore + kotlin.math.round((p.score - p.scoreBefore) * tick.coerceIn(0f, 1f)).toInt()
 
     /** VOTING: "{count}/{total} voted" (web `vote.progress`): voters are connected jury members or ones who already voted. */
     fun voteProgress(view: LikelyView): Pair<Int, Int> {
@@ -383,23 +315,23 @@ object LikelySounds {
 }
 
 /**
- * Whether the card phrase fits the 520 × 230-unit card (LK-TV-01) at a type tier, estimated with Cairo's average glyph
+ * Whether the card phrase fits the 700 × 236-unit card (LK-TV-01) at a type tier, estimated with Cairo's average glyph
  * advance. The tiers are displayS, headline, title, titleS of `jamaaTypeScale` (DESIGN §3.2; the sizes below mirror it,
  * since the theme is Compose code). The card picks the web `cardSize` tier first and steps down while the estimate says
  * the phrase would not fit; at run time a tier that still overflows its box steps down once more, so the phrase is
  * never ellipsized.
  */
 object LikelyCardFit {
-    const val CARD_W = 520.0
-    const val CARD_H = 230.0
-    const val PAD_X = 28.0
-    const val PAD_Y = 16.0
+    const val CARD_W = LikelyLayout.CARD_WIDTH
+    const val CARD_H = LikelyLayout.CARD_HEIGHT
+    const val PAD_X = 32.0
+    const val PAD_Y = 18.0
     const val GAP_LEAD = 8.0
     const val GAP_AWARD = 10.0
     const val AWARD_ICON = 22.0
 
-    /** Stage unit → dp on a 960 × 540 dp TV (the 864 × 486 stage fitted below the 44 dp top bar: 442 / 486). */
-    const val UNIT_DP = 0.9
+    /** Stage unit → dp on a 960 × 540 dp TV (the 864 × 442 stage fills the safe area under the 44 dp header). */
+    const val UNIT_DP = 1.0
 
     /** (font size, line height) in sp of displayS, headline, title, titleS: Latin and Arabic scales. */
     val LATIN = listOf(44 to 52, 34 to 42, 26 to 32, 22 to 28)

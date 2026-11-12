@@ -104,7 +104,7 @@
       "doneIds": [],
       "awaitedIds": [],
       "public": {
-        "schema": 1,
+        "schema": 2,
         "phase": "CARD",
         "cardIndex": 0,
         "cardCount": 8,

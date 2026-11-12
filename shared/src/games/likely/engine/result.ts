@@ -1,6 +1,6 @@
-// GAME-LIKELY §5.1 (the result of a card, percentages) and §6 ("Read the Room" scoring). Pure functions.
-import { AGREE_CAP, AGREE_POINTS, RESULT_MIN_VOTES, SELF_AWARE_BONUS, SELF_AWARE_MIN_OTHERS, UNANIMOUS_BONUS } from "./state";
-import type { LikelyBallot, LikelyCount, LikelyDelta } from "./state";
+// GAME-LIKELY §5.1: the result of a card and its percentages. Pure functions. (No scoring: the game has no points, §6.)
+import { RESULT_MIN_VOTES } from "./state";
+import type { LikelyBallot, LikelyCount } from "./state";
 
 export interface LikelyTally {
   votesCast: number;
@@ -35,23 +35,4 @@ export function withPercent(t: LikelyTally): LikelyCount[] {
   return t.counts
     .map((c) => ({ playerId: c.playerId, count: c.count, percent: percentOf(c.count, t.votesCast) }))
     .sort((a, b) => b.percent - a.percent || b.count - a.count || (seat.get(a.playerId) as number) - (seat.get(b.playerId) as number));
-}
-
-/**
- * Public-mode deltas of one card, in voter seat order then reason order (agree, unanimous, selfAware). Only positive
- * deltas are listed. Secret mode never calls this (no points at all, §6).
- */
-export function scoreCard(ballots: readonly LikelyBallot[], t: LikelyTally, seatOrder: readonly string[]): LikelyDelta[] {
-  const countOf = new Map(t.counts.map((c) => [c.playerId, c.count]));
-  const seat = new Map(seatOrder.map((id, i) => [id, i]));
-  const sorted = [...ballots].sort((a, b) => (seat.get(a.voterId) ?? 0) - (seat.get(b.voterId) ?? 0));
-  const out: LikelyDelta[] = [];
-  for (const b of sorted) {
-    const others = (countOf.get(b.targetId) ?? 0) - 1;
-    const agree = t.unanimous ? AGREE_CAP : Math.min(AGREE_CAP, AGREE_POINTS * others);
-    if (agree > 0) out.push({ playerId: b.voterId, points: agree, reason: "agree" });
-    if (t.unanimous) out.push({ playerId: b.voterId, points: UNANIMOUS_BONUS, reason: "unanimous" });
-    if (b.voterId === b.targetId && others >= SELF_AWARE_MIN_OTHERS) out.push({ playerId: b.voterId, points: SELF_AWARE_BONUS, reason: "selfAware" });
-  }
-  return out;
 }

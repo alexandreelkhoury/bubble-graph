@@ -1,6 +1,13 @@
 // GAME-LIKELY §12.2 / DESIGN-JAMAA §5.3: the Most Likely reveal as a step list for the shared sampler
 // (@jamaa/shared/motion: one deterministic `sample`, the same easings and springs the Kotlin TV runs). The list depends
-// on the card's public result only (voters, mode, chaos, unanimous), so every TV plays the same moment.
+// on the card's public result only (votes, chaos, unanimous), so every TV plays the same moment. Kotlin mirror:
+// tv-app/.../games/likely/LikelyChoreo.kt (`revealSteps`, `fitReveal`), line for line.
+//
+// The redesigned reveal (owner, 2026-11-12): the card lifts to the top and the players glide into one centred row
+// ("dim"); then the votes land under their targets ONE BY ONE ("token": public mode, each voter's own character in
+// miniature flies from the voter to its pick; secret votes, identical envelopes drop from the card); the counts pop
+// ("count"); the room dims around the most-voted ("spot"); the award stamp lands ("stamp"). Chaos: a scramble instead
+// of the spotlight. The rest of the server window is the "hold": the finished picture stays readable.
 import { endMs, scaled } from "@jamaa/shared/motion";
 import type { Step } from "@jamaa/shared/motion";
 
@@ -8,81 +15,46 @@ const S = (id: string, startMs: number, durationMs: number, easing: Step["easing
   ({ id, startMs, durationMs, easing, ...(staggerMs === undefined ? {} : { staggerMs }), reduced, lite: "keep" });
 
 export interface RevealShape {
-  /** Characters that run to a conga line (public mode, voters who did not pick themselves). */
-  runners: number;
-  /** Envelopes from the ballot box (secret mode: one per vote). */
-  envelopes: number;
-  publicMode: boolean;
+  /** Votes landing under their targets (one token each). */
+  tokens: number;
   chaos: boolean;
   none: boolean;
   unanimous: boolean;
-  coins: number;
-  /** Lines on the secret-vote percentage board (each adds reading time). */
-  lines?: number;
 }
 
-/** Drumroll: lights dim, the card shrinks to the top (0–800 ms). */
-export const DRUM_MS = 800;
-/** Run to your pick: 100 ms per voter, the whole run ≤ 2 500 ms (§12.2 step 2). */
-export const RUN_MS = 520;
-export const RUN_WINDOW_MS = 2500 - RUN_MS;
+/** The card lifts, the row glides up (0–700 ms). */
+export const LIFT_MS = 700;
+/** One token's flight; tokens leave one after the other. */
+export const TOKEN_MS = 520;
+export const TOKEN_AT = 750;
+/** The whole build takes about 2.4 s whatever the room size, each token 160–320 ms after the previous one. */
+export const TOKEN_WINDOW_MS = 2400;
+export const SCRAMBLE_MS = 1000;
+export const CONFETTI_MS = 1200;
 
-export function runStagger(runners: number): number {
-  return runners <= 1 ? 100 : Math.min(100, RUN_WINDOW_MS / (runners - 1));
+export function tokenStagger(tokens: number): number {
+  return tokens <= 1 ? 320 : Math.min(320, Math.max(160, TOKEN_WINDOW_MS / (tokens - 1)));
 }
 
-/** The percentage board stays readable: 1 800 ms + 120 ms per line (the rows stagger in by 120 ms). */
-export function boardMs(lines: number): number {
-  return 1800 + 120 * Math.max(1, lines);
-}
-
-/** The reveal timeline. Ids: dim, run (per runner), box, env (per envelope), scramble, count, spot, stamp, coin (per coin), tick, board, confetti, hold. */
+/** The reveal timeline. Ids: dim, token (per vote), count, spot, stamp, confetti, scramble, hold. */
 export function revealSteps(o: RevealShape): Step[] {
-  const steps: Step[] = [S("dim", 0, DRUM_MS, "ease.standard", "fade")];
-  if (o.none) return [...steps, S("hold", DRUM_MS, 400, "ease.decel", "fade")];
-  let t = DRUM_MS;
+  const steps: Step[] = [S("dim", 0, LIFT_MS, "ease.standard", "fade")];
+  if (o.none || o.tokens === 0) return [...steps, S("hold", LIFT_MS, 400, "ease.decel", "fade")];
+  const st = tokenStagger(o.tokens);
+  steps.push(S("token", TOKEN_AT, TOKEN_MS, "ease.decel", "skip", st));
+  let t = TOKEN_AT + st * (o.tokens - 1) + TOKEN_MS + 100;
+  steps.push(S("count", t, 400, "ease.overshoot", "fade"));
+  t += 400;
   if (o.chaos) {
-    steps.push(S("scramble", t, 1200, "linear"));
-    t += 1200;
-    if (o.publicMode && o.runners > 0) {
-      steps.push(S("run", t, RUN_MS, "spring.bouncy", "skip", runStagger(o.runners)));
-      t += RUN_MS + runStagger(o.runners) * Math.max(0, o.runners - 1);
-    }
-    steps.push(S("count", t, 600, "ease.decel", "fade"));
-    t += 600;
-    if (!o.publicMode) { const b = boardMs(o.lines ?? 1); steps.push(S("board", t, b, "ease.decel", "fade", 120)); t += b; }
+    steps.push(S("scramble", t, SCRAMBLE_MS, "linear"));
+    t += SCRAMBLE_MS;
     return [...steps, S("hold", t, 400, "ease.decel", "fade")];
   }
-  if (o.publicMode) {
-    const st = runStagger(o.runners);
-    steps.push(S("run", t, RUN_MS, "ease.decel", "skip", st));
-    t += o.runners > 0 ? RUN_MS + st * (o.runners - 1) : 200;
-  } else {
-    steps.push(S("box", t, 360, "ease.overshoot"));
-    steps.push(S("env", t + 240, 450, "ease.coin", "skip", 70));
-    t += 240 + 450 + 70 * Math.max(0, o.envelopes - 1);
-  }
-  t += 100;
-  steps.push(S("count", t, 600, "ease.decel", "fade"));
-  t += 600;
-  steps.push(S("spot", t, 800, "ease.overshoot", "fade"));
-  t += 800;
-  steps.push(S("stamp", t, 600, "ease.overshoot", "fade"));
-  if (o.unanimous) steps.push(S("confetti", t + 300, 1200, "linear"));
-  t += 600;
-  if (o.publicMode) {
-    if (o.coins > 0) {
-      steps.push(S("coin", t, 450, "ease.coin", "skip", 70));
-      steps.push(S("tick", t + 450, 600, "ease.decel", "fade"));
-      t += 450 + 70 * Math.max(0, o.coins - 1) + 600;
-    }
-  } else {
-    const b = boardMs(o.lines ?? 1);
-    steps.push(S("board", t, b, "ease.decel", "fade", 120));
-    t += b;
-  }
-  steps.push(S("hold", t, 400, "ease.decel", "fade"));
-  return steps;
+  steps.push(S("spot", t, 600, "ease.decel", "fade"));
+  steps.push(S("stamp", t + 300, 600, "ease.overshoot", "fade"));
+  if (o.unanimous) steps.push(S("confetti", t + 600, CONFETTI_MS, "linear"));
+  t += 900;
+  return [...steps, S("hold", t, 400, "ease.decel", "fade")];
 }
 
 /** The first time (ms) a step starts (unknown id → Infinity). */
@@ -93,19 +65,18 @@ export function startOf(steps: readonly Step[], id: string): number {
 
 /** Time kept free at the end of the server's REVEAL window (network slack before the next card is dealt). */
 export const REVEAL_TAIL_MS = 1000;
-/** The "defend yourself" hold gets at least this long on screen when the window allows it (§12.2 step 7: ≥ 1 s). */
+/** The finished picture (who voted for whom, or the percentages) stays at least this long when the window allows it. */
 export const HOLD_MIN_MS = 2000;
 /** The beats before the hold are never squeezed below this fraction of their natural speed to make room for it. */
 export const MIN_SCALE = 0.7;
-/** Shortest hold step (its visual fade-in; the caption then stays until the server deals the next card). */
+/** Shortest hold step (its visual fade-in; the picture then stays until the server deals the next card). */
 const HOLD_FLOOR_MS = 400;
 
 /**
  * Fits the reveal to the server's REVEAL window (likelyRevealMs; the server never waits for the TV). Everything before
- * the hold is scaled down in time with the shared `scaled` (springs keep their physical settle time) when it would leave
- * the hold less than HOLD_MIN_MS of `windowMs − REVEAL_TAIL_MS`, but never below MIN_SCALE (the shared floor of
- * `budget − HOLD_FLOOR_MS` still applies); then `hold` starts where the beats end and fills the rest of the budget, so
- * the caption and the percentage board stay on screen for the whole remaining window.
+ * the hold is scaled down in time with the shared `scaled` when it would leave the hold less than HOLD_MIN_MS of
+ * `windowMs − REVEAL_TAIL_MS`, but never below MIN_SCALE (the floor of `budget − HOLD_FLOOR_MS` still applies); then
+ * `hold` starts where the beats end and fills the rest of the budget.
  */
 export function fitReveal(steps: readonly Step[], windowMs: number, count: number): Step[] {
   const budget = Math.max(2000, windowMs - REVEAL_TAIL_MS);

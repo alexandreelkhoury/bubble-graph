@@ -1,7 +1,7 @@
-// GAME-LIKELY §6.2 awards. Signature, Mystery and Tonight's Star read per-card TALLIES only (safe in secret mode);
-// Self-aware and Mind Reader read ballots and points and exist in public mode only.
-import { RESULT_MIN_VOTES, RUNNER_UP_MIN_VOTES, RUNNER_UP_VALUE, SELF_AWARE_AWARD_MIN, STAR_MIN_TOPS } from "./state";
-import type { LikelyAwardEntry, LikelyDelta } from "./state";
+// GAME-LIKELY §6.2 awards. Signature, Mystery and Tonight's Star read per-card TALLIES only, so they are identical in
+// both modes and safe in secret mode. (There are no points, hence no Self-aware or Mind Reader award, §6.)
+import { RESULT_MIN_VOTES, RUNNER_UP_MIN_VOTES, RUNNER_UP_VALUE, STAR_MIN_TOPS } from "./state";
+import type { LikelyAwardEntry } from "./state";
 import type { LikelyTally } from "./result";
 
 interface Pick { count: number; votesCast: number; index: number }
@@ -29,16 +29,9 @@ function better(a: Pick, b: Pick): boolean {
  * the Mystery Award. Tallies only, so it stays safe in secret mode.
  *
  * `playerIds`: the award holders in seat order (every dealt-in player, left ones included: their card is greyed).
- * `tallies[i]` and `deltas[i]` belong to result i. Extra awards (star, selfAware, mindReader) go to non-left players.
+ * `tallies[i]` belongs to result i. The extra award (Tonight's Star) goes to non-left players.
  */
-export function computeAwards(
-  playerIds: readonly string[],
-  tallies: readonly LikelyTally[],
-  publicMode: boolean,
-  deltas: readonly (readonly LikelyDelta[])[],
-  scores: Readonly<Record<string, number>>,
-  left: ReadonlySet<string>,
-): LikelyAwardEntry[] {
+export function computeAwards(playerIds: readonly string[], tallies: readonly LikelyTally[], left: ReadonlySet<string>): LikelyAwardEntry[] {
   const out: LikelyAwardEntry[] = [];
   const tops = new Map<string, number>();
   for (const id of playerIds) {
@@ -63,13 +56,5 @@ export function computeAwards(
   const active = playerIds.filter((id) => !left.has(id));
   const maxTops = Math.max(0, ...active.map((id) => tops.get(id) ?? 0));
   if (maxTops >= STAR_MIN_TOPS) out.push({ kind: "star", playerIds: active.filter((id) => tops.get(id) === maxTops), cardIndex: null, value: maxTops });
-  if (publicMode) {
-    const self = new Map<string, number>();
-    for (const card of deltas) for (const d of card) if (d.reason === "selfAware") self.set(d.playerId, (self.get(d.playerId) ?? 0) + 1);
-    const maxSelf = Math.max(0, ...active.map((id) => self.get(id) ?? 0));
-    if (maxSelf >= SELF_AWARE_AWARD_MIN) out.push({ kind: "selfAware", playerIds: active.filter((id) => self.get(id) === maxSelf), cardIndex: null, value: maxSelf });
-    const maxPts = Math.max(0, ...active.map((id) => scores[id] ?? 0));
-    if (maxPts > 0) out.push({ kind: "mindReader", playerIds: active.filter((id) => (scores[id] ?? 0) === maxPts), cardIndex: null, value: maxPts });
-  }
   return out;
 }

@@ -485,7 +485,7 @@ Props are small vector drawings attached to anchors in the character data: `head
 | `moustache` | front, on a stick held at the hand | **Bluff, the liar pops out** (the fake-moustache-on-a-stick: a disguise, the face of a fibber). The house lie character wears a permanent one |
 | `ballot` | hand | Bluff and Most Likely: voted |
 | `rosette` | front | Most Likely: award won (gold, with the award's first word) |
-| `crystal` | hand | Most Likely: Mind Reader |
+| `crystal` | hand | (unused since Most Likely dropped the Mind Reader, 2026-11-12) |
 | `podium` | under the body | Trivia: each character stands behind a podium with its name plate; the podium's front light ring turns on (white) when the player has answered |
 | `flame` | around the body (overlay, GAME-TRIVIA §2) | Trivia: streak ≥ 3; flame shapes in `#FF7A1F` with a lemon core, flickering by scale only (no opacity strobe); grows at 5 and 7 |
 | `magnifier` | hand | Mish Ana!: optional, VOTING only for **every** character at once (never per role) |
@@ -533,22 +533,21 @@ Staging on the TV (BL-TV-05), layered on GAME-BLUFF §12.2 step timings:
 
 ### 5.3 Most Likely: the vote reveal (GAME-LIKELY §12.2)
 
+Owner redesign (2026-11-12): **one centred composition, no left/right split, no points.** The card on top, the players as ONE row, every vote landing under the person it picked. Positions: shared `likely/layout.ts` (`likelyRow`, `likelyStackGrid`, `likelyPublicTokens`, `likelySecretTokens`), mirrored in Kotlin with a fixture.
+
 | Step | Visual detail added here | Sound |
 |---|---|---|
-| Drumroll 0–800 ms | String lights dim to 30 % in a wave from the edges to the centre; the card shrinks to the top (scale 0.6, `ease.standard`) | `sfx.drumroll` |
-| Run to your pick | Characters leave the jury arc and **hop in two arcs** to the target, landing behind the previous one: the conga is a polyline behind the target that curls after 6 (shared `likely/layout.ts`); each runner is `point`, lean toward the target | `likely.tok` rising with the line length |
-| Count 600 ms | A counter bubble (`world.surface`, cream digits, 40 dp) above each target, odometer roll | `counter_tick` |
-| Spotlight 800 ms | Everything but the top target(s) dims to 35 %; a spotlight **drops from the rig** at the top: a radial gradient cone (`world.glow` at 40 %) slides down 120 dp and settles with a small overshoot | `likely.spot` |
-| Award stamp 600 ms | A gold rosette (`world.signal` gold, 96 dp, ribbon tails) spins in 180° → 0 and lands on the target's `front` anchor; the award name types in under it (Latin letter-by-letter, Arabic fades, DESIGN §6.2 F); target turns `shy` / `shock` / `smug` | `likely.rosette` |
-| Points 800 ms (public mode only) | Agreement coins (GAME-LIKELY §6): for each voter who scored, coins in **that voter's** colour fly from the head of the conga line they joined (their pick) to their own character, labelled "+50 × matches" (e.g. "+150") | `coin_fly`, `coin_land` |
-| Unanimous | A confetti cannon from both bottom corners (paper + gold, 36 pieces, 1.2 s), "+400" (public mode) | `likely.confetti` |
-| Hold ≥ 1 s | "{name}, defend yourself!" caption with a bouncing speech-bubble icon next to the target | — |
+| Lift 0–700 ms | String lights dim; the card halves around its top centre (`ease.standard`) and the row glides up into a flat line under it (characters 72 → 64 dp, no jump) | `sfx.drumroll` |
+| Votes, one by one | Each vote flies on a soft arc to a slot **under its target**, 160–320 ms after the previous one (≈ 2.4 s in all): public mode, the **voter's own character in miniature** (its colour and shape) leaves the voter, who points at its pick; secret votes, identical cream envelopes drop from the card (tallies only, round-robin). Stacks are centred grids of ≤ 3 columns that never leave their target's column or the stage | `likely.tok` rising with the build |
+| Count 400 ms | A bubble at each voted player's head: the vote count (public) or the percentage (secret votes) | `counter_tick` |
+| Spotlight 600 ms | The others dim to 55 % (their stacks to 70 %); the most-voted step up 12 % under a cone from the rig | `likely.spot` |
+| Award stamp 600 ms | A gold rosette spins in onto the winner's chest; the banner between the card and the row slams in: rosette · award name (gold) · winner name(s), with "Unanimous!" or "{name} AGAIN?!" in front when it applies. The banner steps its type down instead of ever cutting the award | `likely.rosette` |
+| Unanimous | A confetti burst (1.2 s) | `likely.confetti` |
+| Hold (rest of the window, ≥ 2 s) | The finished picture stays: who voted for whom (or the percentages) is readable from the couch | — |
 
-Anonymous mode: identical cream envelopes burst from a ballot box (GAME-LIKELY), counts roll, spotlight and rosette as above, **no points step at all** and no score pills on screen ("Secret votes: awards only"). Chaos: characters scramble (1.2 s), no spotlight.
+Chaos: the tokens land as usual (one under each), then the row jitters in place (1 s, `shock` → `laugh`) and the banner says "Total chaos!"; no spotlight, no stamp. Nobody voted: "No votes? Shy tonight!" in the banner. The "{name}, defend yourself!" hold, the agreement coins and the score rail are gone (owner decision 2026-11-12).
 
-**Phone (LK-PH-03):** "You got 3 votes!" with your character `shy` under a rosette, or (public mode) "3 others agreed with you: +150" with coins flying into your score. Haptic `[30, 60, 30]` if you topped.
-
-**Reduced motion:** characters appear directly in their conga positions; the spotlight and rosette appear without travel; counts jump.
+**Phone (LK-PH-03):** your character with the result ("The award is yours!", "You got 3 votes!"), the award name if you won it, and (public mode) **who voted for you**: "Omar and Lina voted for you" with their small characters, plus "Same pick as Sami". Secret votes: "50% voted for you", never who. Haptic `[30, 60, 30]` if you topped.
 
 ### 5.4 Trivia: countdown, reveal, streak (GAME-TRIVIA §12)
 
@@ -641,7 +640,7 @@ Formats follow DESIGN §6.4 (OGG Vorbis 48 kHz mono, −16 LUFS, synthesised by 
 
 1. **One source of geometry.** Character bodies, face boxes, features, props and world props are path data in `shared/src/characters` and `shared/src/worlds`. `tools/gen-characters` generates Kotlin. A fixture (`shared/fixtures/v2/characters.json`) is asserted on both sides.
 2. **One source of time, one sampler.** Every moment in §3–§5 is a **step list** in `shared/src/motion/choreo.ts`: `{id, startMs, durationMs, easing, staggerMs?, reduced, lite}` with easing ids mapped to DESIGN §6.1 curves (and §8 new ones). `choreo.ts` exports a deterministic `sample(step, tMs)` covering the cubic-bezier easings **and an analytic damped-spring solution** for `spring.hop` / `spring.bouncy` (fixed settle time). `Choreo.kt` and a Kotlin port of `sample()` are generated/ported; **both products drive their transforms from it** (web: the shared rAF runner; TV: `withFrameNanos`), so the fixture of sampled values (`progress` at t = 0, 25 %, 50 %, 75 %, 100 % of each step, `shared/fixtures/v2/choreo.json`) compared in Vitest and in JVM unit tests checks the curves users actually see.
-3. **One layout math.** Positions that depend on players (conga lines, jump-on rows, coin paths, podium order) come from pure functions in `shared/src/games/<id>/layout.ts`, mirrored in Kotlin with fixture tests (GAME-LIKELY §12.7 already requires this for Likely).
+3. **One layout math.** Positions that depend on players (vote stacks, jump-on rows, coin paths, podium order) come from pure functions in `shared/src/games/<id>/layout.ts`, mirrored in Kotlin with fixture tests (GAME-LIKELY §12.7 already requires this for Likely).
 4. **Keyframe screenshots.** Playwright captures the `/tv` mock at 3 named keyframes per moment (with a test clock), and the TV's screenshot tests (Roborazzi or Paparazzi, whichever the TV lane already runs [VERIFY]) capture the same keyframes; a reviewer compares them side by side in the PR. They are not pixel-diffed across platforms (fonts render differently), only reviewed.
 5. **Reduced motion and lite motion** are flags in the step list (`reduced: 'fade' | 'skip' | 'keep'`, `lite: 'keep' | 'drop'`), so both sides degrade identically.
 
@@ -895,17 +894,17 @@ BL-PH-04 Reveal (own event)            BL-PH-05 Scores
 **LK-TV-03 Reveal (public)**
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│ CRY AT A WEDDING?                                                      │
-│                           ╲  spotlight  ╱                              │
-│                            ╲          ╱                                │
-│                             ╲  (✿)   ╱      ← rosette "Waterworks"     │
-│          ░             ▓ ▓ ▓ ▓ MAYA ▓        ░                         │
-│        Rami(1)        conga line → (4)     Joe(1)                      │
-│                                                                        │
-│                   Maya, defend yourself!                               │
-│                                                                        │
-│     coins +100 ──→ ▓Lina ▓Sami ▓Nour ▓Karim                            │
-│                                                       ◁ menu           │
+│ 4 / 12                                                                 │
+│               ╭──────── Who's most likely to… ────────╮                │
+│               │        cry at a wedding?              │ (card, ½ size) │
+│               ╰───────────────────────────────────────╯                │
+│          (✿)  Waterworks Award  ·  Maya         ← banner at the stamp  │
+│        ▓(1)      ▓        ▓(4)✿     ▓        ▓(1)      ▓               │
+│        Rami     Joe       MAYA     Lina      Sami     Nour   (one row) │
+│         ·                 · ·                  ·                       │
+│         ·                 · ·          (votes = the voters' own        │
+│                                         characters, stacked under      │
+│                                         their pick, one by one)        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 ```

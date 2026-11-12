@@ -262,12 +262,16 @@ describe("game.likely.* i18n", () => {
       ...[...m.settings.basic, ...m.settings.advanced].flatMap((f) => [f.labelKey, ...("options" in f && f.options ? f.options.map((o) => o.labelKey) : [])]),
       "game.likely.setup.mode", "game.likely.setup.mode.family", "game.likely.setup.mode.spicy", "game.likely.setup.spicyFromTv",
       ...ERRORS.map((c) => `game.likely.error.${c.toLowerCase().replace(/_([a-z])/g, (_, x: string) => x.toUpperCase())}`),
-      ...["card.header", "vote.me", "vote.locked", "reveal.youGot", "reveal.withGroup", "reveal.selfAware", "reveal.unanimousPts", "reveal.unanimous",
-        "reveal.chaos", "reveal.again", "reveal.none", "reveal.percent", "reveal.percentYou", "reveal.defend", "awards.mystery",
+      ...["card.header", "vote.me", "vote.locked", "reveal.youGot", "reveal.unanimous", "reveal.votedForYou", "reveal.nobodyForYou", "reveal.samePick",
+        "reveal.chaos", "reveal.again", "reveal.none", "reveal.percent", "reveal.percentYou", "awards.mystery",
         "spicy.gate.title", "spicy.gate.body", "spicy.gate.cancel", "spicy.gate.confirm", "spicy.joinNotice", "host.skip", "card.next",
         "coach.card", "coach.voting", "coach.reveal", "coach.awards", "hold.waiting"].map((k) => `game.likely.${k}`),
     ];
     for (const k of want) expect(en, k).toHaveProperty([k]);
+    // No points in this game (owner decision 2026-11-12): the point lines, "defend yourself" and the Mind Reader are gone.
+    for (const k of ["reveal.withGroup", "reveal.selfAware", "reveal.unanimousPts", "reveal.defend", "reveal.noAgree", "awards.mindReader.title", "awards.selfAware.title", "results.mindReader"]) {
+      for (const l of LOCS) expect(FILES[l], `${l} ${k}`).not.toHaveProperty([`game.likely.${k}`]);
+    }
   });
 
   it("keeps placeholders identical across locales, no literal %, and plural objects where EN has one", () => {
@@ -293,7 +297,8 @@ describe("game.likely.* i18n", () => {
   });
 
   it("AR addresses a named player without a gendered imperative; FR phone copy says « tu »; ES is the Spain variant", () => {
-    expect(ar["game.likely.reveal.defend"]).not.toMatch(/دافع|دافعي/u);
+    // "{names} voted for you" names real players: AR says "a vote from {names}", no verb agreeing with their gender.
+    for (const v of Object.values(ar["game.likely.reveal.votedForYou"] as Record<string, string>)) expect(v).not.toMatch(/صوّت|صوت(?:ت|و)/u);
     for (const k of ["coach.card", "coach.voting", "coach.reveal", "vote.title", "vote.locked", "error.staleCard"]) {
       expect((fr as Record<string, string>)[`game.likely.${k}`], k).not.toMatch(/\b(vous|votre|vos|Lisez|Touchez|Regardez)\b/u);
     }
@@ -311,7 +316,7 @@ describe("game.likely.* i18n", () => {
       for (const k of keys) expect(FILES[l], `${l} ${k}`).toHaveProperty([k]);
       for (const k of ["coach.reveal", "rules.secret.body"]) expect(keys, `${l} ${k}`).toContain(`game.likely.${k}`);
     }
-    expect(r.ar as string[]).toContain("game.likely.reveal.defend");
+    expect(r.ar as string[]).toContain("game.likely.reveal.votedForYou");
     expect(r.fr as string[]).toEqual(expect.arrayContaining(["game.likely.coach.card", "game.likely.coach.voting"]));
     expect(r.es as string[]).toEqual(expect.arrayContaining(["game.likely.reveal.votedFor", "game.likely.settings.showVoters"]));
   });

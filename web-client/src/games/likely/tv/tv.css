@@ -10,9 +10,9 @@
 .lkplay.is-entering { isolation: auto; }
 .lkplay.is-entering .lkjury { z-index: 31; }
 .tventr[data-world="rooftop"] .tventr__cast { visibility: hidden; }
-.lkplay.is-gated .lktop, .lkplay.is-gated .lkrail, .lkplay.is-gated .lkplay__timer, .lkplay.is-gated .lkvoted { visibility: hidden; }
+.lkplay.is-gated .lktop, .lkplay.is-gated .lkplay__timer, .lkplay.is-gated .lkvoted { visibility: hidden; }
 .lkplay.is-ran-in .lkjury__seat { animation: none; }
-.lkplay.is-ran-in:not(.is-gated) .lktop, .lkplay.is-ran-in:not(.is-gated) .lkrail { animation: fade-in 400ms var(--ease-decel) both; }
+.lkplay.is-ran-in:not(.is-gated) .lktop { animation: fade-in 400ms var(--ease-decel) both; }
 
 /* ------------------------------------------------------------------ world: sky, string lights, skyline */
 .lkw { position: absolute; inset: 0; background: var(--w-stage); filter: brightness(calc(1 - 0.5 * var(--dim, 0))); transition: filter 400ms var(--ease-standard); }
@@ -47,7 +47,7 @@
 
 .lk-q { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; text-wrap: balance; }
 .lk-q__lead, .lk-q__prompt { display: block; }
-.lkcard { position: absolute; top: 88px; left: 50%; width: 600px; transform: translateX(-50%); z-index: 20; perspective: 1400px; --deal-x: 440px; }
+.lkcard { position: absolute; top: 79px; left: 50%; width: 700px; min-height: 236px; transform: translateX(-50%); z-index: 20; perspective: 1400px; --deal-x: 440px; }
 [dir="rtl"] .lkcard { --deal-x: -440px; }
 .lkcard__flip { position: relative; transform-style: preserve-3d; animation: lk-deal 900ms var(--ease-decel) both; }
 @keyframes lk-deal {
@@ -59,7 +59,7 @@
 .lkcard__face, .lkcard__back { backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 22px; }
 .lkcard__back { position: absolute; inset: 0; display: grid; place-items: center; transform: rotateY(180deg);
   background: repeating-linear-gradient(45deg, #C98A1A 0 10px, #E3A93A 10px 20px); box-shadow: inset 0 0 0 6px #FFE7A0, inset 0 0 0 9px #7A4A00; }
-.lkcard__face { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 32px 12px; text-align: center;
+.lkcard__face { position: relative; min-height: 236px; justify-content: center; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 32px 12px; text-align: center;
   background: radial-gradient(120% 90% at 50% 0%, #FFFDF7, #F6E9CF 70%); color: var(--lk-ink);
   box-shadow: inset 0 0 0 3px #E3A93A, inset 0 0 0 7px #FFF7EC, inset 0 0 0 8.5px rgb(201 138 26 / 0.6), 0 24px 60px rgb(0 0 0 / 0.55), 0 0 60px rgb(255 201 77 / 0.18); }
 .lkcard__q { gap: 4px; }
@@ -75,98 +75,55 @@
 .lkcard__award { margin: 2px 0 0; display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px 4px 10px; border-radius: 99px; background: rgb(201 138 26 / 0.14); color: #8A5600; font: 800 16px/22px var(--font-sans); animation: lk-up 320ms var(--ease-decel) 820ms both; }
 .lkcard__tag { position: absolute; top: 14px; inset-inline-start: 18px; padding: 2px 10px; border-radius: 99px; background: #7A4A00; color: #FFE7A0; font: 800 14px/20px var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; }
 .lkcard__tag--spicy { inset-inline-start: auto; inset-inline-end: 18px; background: #E23B5A; color: #FFF7EC; }
-/* In the reveal the card sits small at the top (§12.2 step 1, driven by --dim). */
-.lkcard.is-small { top: 78px; transform-origin: 50% 0; transform: translateX(-50%) scale(calc(1 - 0.4 * var(--dim, 1))); }
+/* In the reveal the card halves around its top centre (§12.2, driven by --dim; shared layout cardRevealScale). */
+.lkcard.is-small { transform-origin: 50% 0; transform: translateX(-50%) scale(calc(1 - 0.5 * var(--dim, 1))); }
 .lkcard.is-small .lkcard__flip, .lkcard.is-small .lk-q__lead, .lkcard.is-small .lk-q__prompt, .lkcard.is-small .lkcard__award { animation: none; }
-.lkrev--secret .lkcard.is-small { opacity: calc(1 - 0.15 * var(--board, 0)); }
 
 /* timer ring (VOTING) / "votes open in a moment" (CARD) */
-.lkplay__timer { position: absolute; top: 112px; inset-inline-end: 52px; z-index: 25; }
+.lkplay__timer { position: absolute; top: 29px; inset-inline-start: 260px; z-index: 65; }
 .lkplay__timer .ring__num { position: absolute; inset: 0; display: grid; place-items: center; font: 900 32px/1 var(--font-sans); }
 .lkplay__timer .ring { background: rgb(7 26 36 / 0.65); border-radius: 50%; }
 .lkready { display: none; }
-.lkplay--card .lkplay__timer { inset-inline-end: auto; left: 50%; top: 404px; transform: translateX(-50%); }
+.lkplay--card .lkplay__timer { top: 33px; }
 .lkplay--card .lkready { display: inline-flex; align-items: center; gap: 10px; padding: 6px 16px; border-radius: 99px; background: rgb(7 26 36 / 0.7); color: var(--color-text-secondary); font: var(--tv-caption); white-space: nowrap; animation: fade-in 400ms 1200ms both; }
 .lkready__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--w-accent); animation: lk-pulse 1.1s ease-in-out infinite; }
 @keyframes lk-pulse { 50% { transform: scale(0.55); opacity: 0.45; } }
 .lkplay--card .lkjury { opacity: 0.92; }
 
-/* ------------------------------------------------------------------ the jury arc */
+/* ------------------------------------------------------------------ the row of players (shared likelyRow) */
 .lkjury, .lkcast { position: absolute; inset: 0; z-index: 30; pointer-events: none; }
-.lkjury__seat, .lkcast__ch { position: absolute; width: 72px; height: 72px; display: flex; justify-content: center; }
+.lkjury__seat { position: absolute; width: 72px; height: 72px; display: flex; justify-content: center; }
 .lkjury__seat { animation: lk-seat 520ms var(--ease-overshoot) both; animation-delay: calc(var(--i) * 40ms); }
 @keyframes lk-seat { from { opacity: 0; transform: translateY(26px) scale(0.8); } to { opacity: 1; transform: none; } }
-.lkjury__seat.is-left, .lkcast__ch.is-left { opacity: 0.35; filter: grayscale(0.8); }
-.lkjury__name { position: absolute; top: 74px; left: 50%; transform: translateX(-50%); max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  padding: 0 8px; border-radius: 99px; background: rgb(5 14 20 / 0.55); color: var(--color-text); font: 700 16px/24px var(--font-sans); }
+.lkjury__seat.is-left { opacity: 0.35; filter: grayscale(0.8); }
+.lkjury__name, .lkcast__name { position: absolute; top: calc(100% + 2px); left: 50%; transform: translateX(-50%); max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  padding: 0 8px; border-radius: 99px; background: rgb(5 14 20 / 0.55); color: var(--color-text); font: 700 18px/24px var(--font-sans); }
 .lkjury__new { position: absolute; top: -14px; left: 50%; transform: translateX(-50%) rotate(-6deg); padding: 1px 8px; border-radius: 6px; background: var(--w-accent); color: var(--w-on-accent); font: 900 12px/18px var(--font-sans); text-transform: uppercase; letter-spacing: 0.06em; }
-.lkvoted { position: absolute; top: 404px; left: 50%; transform: translateX(-50%); margin: 0; z-index: 35; display: inline-flex; align-items: center; gap: 8px; padding: 4px 16px; border-radius: 99px;
-  background: rgb(7 26 36 / 0.72); color: var(--color-text); font: var(--tv-label); box-shadow: inset 0 0 0 1px rgb(184 255 246 / 0.25); }
+.lkvoted { position: absolute; bottom: 31px; left: 50%; transform: translateX(-50%); margin: 0; z-index: 35; display: inline-flex; align-items: center; gap: 8px; padding: 4px 16px; border-radius: 99px;
+  background: rgb(7 26 36 / 0.72); color: var(--color-text); font: var(--tv-title); box-shadow: inset 0 0 0 1px rgb(184 255 246 / 0.25); }
 .lkvoted .icon { color: var(--w-accent); }
 
-/* ------------------------------------------------------------------ score rail (public mode) */
-.lkrail { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 50; display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.lkrail__pill { display: inline-flex; align-items: center; gap: 2px; height: 46px; padding-inline: 2px 12px; border-radius: 99px; background: rgb(7 26 36 / 0.8); box-shadow: inset 0 0 0 1px rgb(255 247 236 / 0.1); }
-.lkrail__pill.is-lead { box-shadow: inset 0 0 0 2px rgb(255 201 77 / 0.7); }
-.lkrail__score { min-width: 34px; color: var(--lk-gold); font: 900 18px/1 var(--font-sans); }
-
-/* ------------------------------------------------------------------ the reveal */
-.lkcast__ch { will-change: transform; }
-.lkcast__ch .lkjury__name { transition: opacity 200ms; }
-.lkrev[data-running="1"] .lkcast__ch:not(.is-top) .lkjury__name { opacity: calc(1 - var(--dim, 0) * 0.6); }
-/* runners stand in a tight conga line: their name plates would pile up, so they are gone before the run starts (the
-   characters keep their colours; the score rail below names everyone) */
-.lkrev .lkcast__ch.is-runner .lkjury__name { opacity: calc(1 - var(--dim, 0) * 1.5); transition: none; }
-/* runners stand shoulder to shoulder: their +N rides on the coin flight and the score rail instead of a pill */
-.lkcast__ch.is-runner .lkgain { display: none; }
-/* secret votes: the percentage board takes the unanimous banner's place */
-.lkrev--secret .lkbanner { opacity: calc(1 - var(--board, 0) * 2); }
-/* +N rides above the head, where a picked target's count bubble stood (it hands over as the counters tick): never down
-   at the caption band */
-.lkgain { position: absolute; top: -34px; left: 50%; transform: translateX(-50%) scale(calc(0.6 + 0.4 * var(--tick, 0))); opacity: var(--tick, 0); padding: 0 8px; border-radius: 99px;
-  background: var(--lk-gold); color: var(--lk-ink); font: 900 16px/22px var(--font-sans); white-space: nowrap; z-index: 2; box-shadow: 0 4px 10px rgb(0 0 0 / 0.4); }
-.lkcount { position: absolute; z-index: 46; transform: translateX(-50%) scale(calc(0.4 + 0.6 * min(1, var(--count, 0) * 2))); opacity: calc(var(--count, 0) * 3 - var(--board, 0) * 3);
-  min-width: 40px; height: 36px; padding-inline: 10px; display: grid; place-items: center; border-radius: 18px; background: var(--w-surface); color: #FFF7EC; font: 900 22px/1 var(--font-sans);
-  box-shadow: inset 0 0 0 2px rgb(184 255 246 / 0.5), 0 6px 14px rgb(0 0 0 / 0.4); }
-.lkcount.has-gain { opacity: calc(var(--count, 0) * 3 - var(--tick, 0) * 3); }
-.lkrev.is-chaos .lkcount { z-index: 49; }
-.lkcount::after { content: ""; position: absolute; bottom: -6px; left: 50%; width: 12px; height: 12px; background: inherit; transform: translateX(-50%) rotate(45deg); box-shadow: inset -2px -2px 0 0 rgb(184 255 246 / 0.5); }
-.lkspot { position: absolute; inset: 0; z-index: 40; pointer-events: none; }
-.lkspot__dim { fill: rgb(2 8 14 / 0.66); opacity: var(--spot, 0); }
-.lkspot__cones { opacity: var(--spot, 0); transform: translateY(calc((1 - var(--spot, 0)) * -120px)); mix-blend-mode: screen; }
-.lkstamp { position: absolute; z-index: 47; transform: translate(-50%, -30%) rotate(calc((1 - var(--stamp, 0)) * 180deg)) scale(var(--stamp, 0)); opacity: min(1, calc(var(--stamp, 0) * 3)); filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.5)); }
-.lkplate { position: absolute; top: 404px; left: 50%; z-index: 48; margin: 0; display: inline-flex; align-items: center; gap: 10px; padding: 4px 18px 4px 10px; border-radius: 99px; white-space: nowrap;
-  background: linear-gradient(180deg, var(--lk-gold-hi), var(--lk-gold) 55%, var(--lk-gold-lo)); color: var(--lk-ink); font: 900 22px/32px var(--font-sans); box-shadow: 0 8px 20px rgb(0 0 0 / 0.45);
-  transform: translateX(-50%) scale(calc(0.7 + 0.3 * var(--stamp, 0))); opacity: calc(var(--stamp, 0) * 2 - var(--hold, 0) * 8); }
-.lkplate__who { padding-inline-start: 10px; border-inline-start: 2px solid rgb(27 20 48 / 0.25); font-weight: 800; }
-/* The hold step lasts the rest of the server window (choreo.ts fitReveal): the caption rises in its first fifth, then stays. */
-.lkcaption { --in: min(1, var(--hold, 0) * 5); position: absolute; top: 404px; left: 50%; z-index: 48; margin: 0; transform: translateX(-50%) translateY(calc((1 - var(--in)) * 10px)); opacity: var(--in);
-  display: inline-flex; align-items: center; gap: 12px; padding: 4px 20px; border-radius: 99px; background: rgb(7 26 36 / 0.82); color: var(--color-text); font: var(--tv-title); white-space: nowrap; box-shadow: inset 0 0 0 1.5px rgb(255 201 77 / 0.5); }
-.lkcaption__icon { color: var(--lk-gold); animation: lk-bounce 900ms var(--ease-standard) infinite; }
-@keyframes lk-bounce { 50% { transform: translateY(-5px); } }
-/* chaos / no votes: one line in the card band, under the small card (≤ 2 prompt lines, bottom ≈ 176) and above the count bubbles (≥ 222) */
-.lkcaption.is-chaos, .lkcaption.is-none { top: 181px; z-index: 47; width: max-content; max-width: 900px; overflow: hidden; text-overflow: ellipsis; justify-content: center; font: 900 24px/30px var(--font-sans);
-  color: var(--lk-gold); opacity: max(var(--in), var(--dim, 0)); background: rgb(7 26 36 / 0.9); padding: 3px 20px; border-radius: 18px; transform: translateX(-50%) rotate(-1deg); }
-.lkagain { position: absolute; top: 212px; inset-inline-end: 60px; z-index: 49; margin: 0; padding: 6px 18px; border: 3px solid var(--lk-gold); border-radius: 12px; color: var(--lk-gold); font: 900 30px/36px var(--font-sans);
-  text-transform: uppercase; transform: rotate(-8deg) scale(calc(2 - var(--stamp, 0))); opacity: var(--stamp, 0); background: rgb(7 26 36 / 0.7); }
-.lkbanner { position: absolute; top: 196px; left: 50%; z-index: 49; margin: 0; padding: 6px 28px; border-radius: 16px; background: linear-gradient(180deg, var(--lk-gold-hi), var(--lk-gold) 55%, var(--lk-gold-lo)); color: var(--lk-ink);
-  font: 900 28px/36px var(--font-sans); transform: translateX(-50%) rotate(-3deg) scale(calc(0.5 + 0.5 * var(--stamp, 0))); opacity: var(--stamp, 0); box-shadow: 0 12px 30px rgb(0 0 0 / 0.5); white-space: nowrap; }
-.lkbox { position: absolute; z-index: 44; display: grid; place-items: center; width: 92px; height: 92px; border-radius: 18px; color: var(--lk-ink);
-  background: linear-gradient(180deg, #FFF7EC, #E9D8B6); box-shadow: inset 0 0 0 3px #C9B48A, 0 10px 24px rgb(0 0 0 / 0.5);
-  transform: translate(-50%, -50%) scale(var(--box, 0)) rotate(calc(sin(var(--box, 0) * 18.85) * 6deg)); opacity: calc(var(--box, 0) * 3 - var(--count, 0) * 3); }
-.lkenv { position: absolute; left: -17px; top: -12px; z-index: 45; opacity: 0; will-change: transform; filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.4)); }
-.lkcoin { position: absolute; left: -8px; top: -8px; z-index: 52; width: 16px; height: 16px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px #FFF7EC, 0 3px 8px rgb(0 0 0 / 0.5); opacity: 0; will-change: transform; }
-.lkcoin__label { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 0 8px; border-radius: 99px; background: var(--lk-gold); color: var(--lk-ink); font: 900 16px/22px var(--font-sans); white-space: nowrap; }
-.lkboard { position: absolute; top: 186px; left: 50%; z-index: 49; width: 520px; margin: 0; padding: 8px 14px; list-style: none; border-radius: 18px; background: rgb(7 26 36 / 0.86);
-  box-shadow: inset 0 0 0 1.5px rgb(255 201 77 / 0.45), 0 14px 30px rgb(0 0 0 / 0.5); transform: translateX(-50%) translateY(calc((1 - var(--board, 0)) * 16px)); opacity: var(--board, 0); display: flex; flex-direction: column; gap: 2px; }
-.lkboard__row { position: relative; display: grid; grid-template-columns: 40px 1fr 120px; align-items: center; gap: 12px; height: 30px; }
-.lkboard__row .ch { margin-block: -6px; }
-.lkboard__text { font: 800 20px/26px var(--font-sans); color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.lkboard__row:first-child .lkboard__text { color: var(--lk-gold); }
-.lkboard__bar { height: 10px; border-radius: 5px; background: rgb(255 247 236 / 0.12); overflow: hidden; }
-.lkboard__bar > span { display: block; height: 100%; width: var(--pc); border-radius: 5px; background: var(--c); transform-origin: 0 50%; transform: scaleX(var(--board, 0)); box-shadow: 0 0 0 1px rgb(255 247 236 / 0.3); }
-[dir="rtl"] .lkboard__bar > span { transform-origin: 100% 50%; }
-.lkboard__more { text-align: center; color: var(--color-text-muted); font: 700 16px/20px var(--font-sans); }
+/* ------------------------------------------------------------------ the reveal (one row, votes stacking under their pick) */
+.lkcast__ch { position: absolute; width: 64px; height: 64px; display: flex; justify-content: center; transform-origin: 50% 100%; will-change: transform;
+  opacity: calc(1 - 0.45 * var(--spot, 0)); }
+.lkcast__ch.is-top { opacity: 1; z-index: 2; scale: calc(1 + 0.12 * var(--spot, 0)); }
+.lkcast__ch.is-top .lkcast__name { color: var(--lk-gold-hi); }
+.lkcast__stamp { position: absolute; left: 60%; top: 40%; z-index: 3; transform: rotate(calc((1 - var(--stamp, 0)) * 180deg)) scale(var(--stamp, 0)); opacity: min(1, calc(var(--stamp, 0) * 3)); filter: drop-shadow(0 4px 8px rgb(0 0 0 / 0.5)); }
+.lktoken { position: absolute; z-index: 32; display: grid; place-items: center; opacity: 0; will-change: transform; filter: drop-shadow(0 3px 5px rgb(0 0 0 / 0.45)); }
+.lkcount { position: absolute; z-index: 46; transform: translateX(-50%) scale(calc(0.5 + 0.5 * var(--count, 0))); opacity: var(--count, 0);
+  min-width: 38px; height: 34px; padding-inline: 10px; display: grid; place-items: center; border-radius: 17px; background: var(--w-surface); color: #FFF7EC; font: 900 22px/1 var(--font-sans);
+  box-shadow: inset 0 0 0 2px rgb(255 201 77 / 0.6), 0 6px 14px rgb(0 0 0 / 0.4); }
+/* The banner between the shrunk card (bottom ≈ 197) and the row's heads (≈ 247): the award and its winner(s). */
+.lkplate { position: absolute; top: 198px; left: 50%; z-index: 48; margin: 0; max-width: 860px; display: inline-flex; align-items: center; gap: 10px; padding: 3px 20px 3px 10px; border-radius: 99px; white-space: nowrap; overflow: hidden;
+  background: rgb(7 26 36 / 0.9); box-shadow: inset 0 0 0 2px rgb(255 201 77 / 0.65), 0 8px 20px rgb(0 0 0 / 0.45); color: var(--color-text); font: 900 26px/34px var(--font-sans);
+  transform: translateX(-50%) scale(calc(1.25 - 0.25 * var(--stamp, 0))); opacity: var(--stamp, 0); }
+.lkplate__award { color: var(--lk-gold); }
+.lkplate__who { padding-inline-start: 10px; border-inline-start: 2px solid rgb(255 201 77 / 0.4); }
+.lkplate__tag { color: var(--w-accent-text, #B8FFF6); }
+.lkcaption { position: absolute; top: 198px; left: 50%; z-index: 48; margin: 0; transform: translateX(-50%); opacity: max(var(--count, 0), var(--hold, 0));
+  padding: 3px 20px; border-radius: 99px; background: rgb(7 26 36 / 0.9); color: var(--lk-gold); font: 900 26px/34px var(--font-sans); white-space: nowrap; }
+.lkagain { position: absolute; top: 160px; inset-inline-end: 60px; z-index: 49; margin: 0; padding: 4px 14px; border: 3px solid var(--lk-gold); border-radius: 12px; color: var(--lk-gold); font: 900 24px/30px var(--font-sans);
+  text-transform: uppercase; transform: rotate(-6deg) scale(calc(2 - var(--stamp, 0))); opacity: var(--stamp, 0); background: rgb(7 26 36 / 0.85); }
 .lkconf { position: absolute; inset: 0; z-index: 55; pointer-events: none; }
 .lkconf__p { position: absolute; bottom: 40px; width: 10px; height: 16px; border-radius: 2px; background: var(--c); opacity: 0; animation: lk-conf 1300ms cubic-bezier(0.2, 0.7, 0.3, 1) both; animation-delay: var(--d); }
 @keyframes lk-conf { 0% { opacity: 1; transform: translate(0, 0) rotate(0); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--x), var(--y)) rotate(var(--r)); } }
@@ -217,45 +174,14 @@
 .lkawards.is-skipped * { animation-duration: 1ms !important; animation-delay: 0ms !important; }
 
 /* Mind Reader podium (public mode) */
-.lkmr { position: absolute; top: 84px; bottom: 30px; inset-inline: 48px; z-index: 5; display: flex; flex-direction: column; align-items: center; }
-.lkmr__title { margin: 0; font: 900 46px/54px var(--font-sans); background: linear-gradient(180deg, var(--lk-gold-hi), var(--lk-gold) 55%, var(--lk-gold-lo)); -webkit-background-clip: text; background-clip: text; color: transparent; animation: lk-up 500ms var(--ease-overshoot) both; }
-.tv:lang(ar) .lkmr__title { line-height: 70px; }
-.lkmr__line { margin: 2px 0 0; font: var(--tv-body); color: var(--color-text-secondary); }
-.lkmr__steps { flex: 1; display: flex; align-items: flex-end; justify-content: center; gap: 14px; width: 100%; }
-.lkmr__step { width: 230px; display: flex; flex-direction: column; align-items: center; animation: lk-up 500ms var(--ease-decel) both; }
-.lkmr__step.is-p3 { animation-delay: 200ms; } .lkmr__step.is-p2 { animation-delay: 500ms; } .lkmr__step.is-p1 { animation-delay: 900ms; }
-.lkmr__who { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 2px; }
-.lkmr__ch { position: relative; display: inline-flex; }
-.lkmr__more { align-self: center; padding: 0 8px; border-radius: 99px; background: rgb(7 26 36 / 0.8); color: var(--lk-gold); font: 900 16px/24px var(--font-sans); }
-/* tied players share the step: their names wrap onto two lines */
-.lkmr__step.is-tie .lkmr__name { white-space: normal; text-align: center; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 18px; line-height: 22px; }
-.lkmr__ball { position: absolute; bottom: 4px; inset-inline-end: -42px; animation: lk-drop 700ms var(--ease-overshoot) 1300ms both; filter: drop-shadow(0 0 16px rgb(184 255 246 / 0.8)); }
-.lkmr__name { margin: 4px 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--tv-title); }
-.lkmr__block { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; padding-top: 8px; border-radius: 14px 14px 0 0;
-  background: linear-gradient(180deg, #17404F, #0B2430); box-shadow: inset 0 3px 0 rgb(184 255 246 / 0.4); }
-.lkmr__step.is-p1 .lkmr__block { height: 124px; background: linear-gradient(180deg, var(--lk-gold-hi), var(--lk-gold) 40%, var(--lk-gold-lo)); color: var(--lk-ink); box-shadow: 0 0 40px rgb(255 201 77 / 0.35); }
-.lkmr__step.is-p2 .lkmr__block { height: 88px; }
-.lkmr__step.is-p3 .lkmr__block { height: 64px; }
-.lkmr__step.is-empty { visibility: hidden; }
-.lkmr__place { font: 900 30px/1 var(--font-sans); }
-.lkmr__score { font: 900 22px/1 var(--font-sans); color: var(--lk-gold); }
-.lkmr__step.is-p1 .lkmr__score { color: var(--lk-ink); }
-
 /* ------------------------------------------------------------------ RESULTS (the platform results bar sits under it) */
 .lkres__body { position: absolute; top: 90px; bottom: 112px; inset-inline: 48px; z-index: 5; display: flex; gap: 22px; }
 .lkres__h { margin: 0 0 8px; display: flex; align-items: center; gap: 8px; font: 800 18px/24px var(--font-sans); color: var(--lk-gold); text-transform: uppercase; letter-spacing: 0.06em; }
 .tv:lang(ar) .lkres__h { text-transform: none; letter-spacing: 0; }
-.lkres__rank { width: 290px; flex: none; padding: 14px 16px; border-radius: 20px; background: rgb(7 26 36 / 0.78); box-shadow: inset 0 0 0 1px rgb(255 201 77 / 0.3); }
-.lkres__list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
-.lkres__row { display: grid; grid-template-columns: 22px 40px 1fr auto; align-items: center; gap: 10px; height: 44px; padding-inline: 6px 10px; border-radius: 12px; animation: lk-up 400ms var(--ease-decel) both; animation-delay: calc(var(--i) * 90ms); }
-.lkres__row.is-win { background: rgb(255 201 77 / 0.16); box-shadow: inset 0 0 0 1.5px rgb(255 201 77 / 0.6); }
-.lkres__row.is-left { opacity: 0.5; }
-.lkres__pos { font: 900 18px/1 var(--font-sans); color: var(--color-text-muted); }
-.lkres__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 19px/24px var(--font-sans); }
-.lkres__score { font: 900 20px/1 var(--font-sans); color: var(--lk-gold); }
 .lkres__wall { flex: 1; min-width: 0; overflow: hidden; display: flex; flex-direction: column; padding: 14px 16px; border-radius: 20px; background: rgb(7 26 36 / 0.78); box-shadow: inset 0 0 0 1px rgb(255 201 77 / 0.3); }
 /* The wall carries the jokes: the award title, extras as chips under it, and the prompt itself (no "Who's most likely
-   to" lead-in, promptLine). ≤ 4 entries: two roomy columns; 5–9: three columns with the prompt; 10+: three, titles only. */
+   to" lead-in, promptLine). ≤ 4 entries: two roomy columns; 5–9: three columns with the prompt; 10+: four, titles only.
+   Award titles wrap and are never clamped (owner: no "Survival Kit…"); only names ellipsize. No ranking: no points. */
 .lkres__grid { flex: 1; min-height: 0; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: minmax(0, 1fr); gap: 12px 14px; }
 .lkres__grid--mid, .lkres__grid--dense { grid-template-columns: 1fr 1fr 1fr; gap: 8px 10px; }
 .lkres__award { position: relative; display: grid; grid-template-columns: auto 1fr; align-items: start; column-gap: 12px; align-content: start; min-width: 0; overflow: hidden; padding: 10px 12px; border-radius: 16px;
@@ -263,7 +189,7 @@
 .lkres__award.is-left { opacity: 0.5; }
 .lkres__awtext { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .lkres__awname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 18px/22px var(--font-sans); }
-.lkres__awtitle { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font: 800 17px/21px var(--font-sans); color: var(--lk-gold); }
+.lkres__awtitle { overflow-wrap: anywhere; text-wrap: balance; font: 800 19px/23px var(--font-sans); color: var(--lk-gold); }
 .lkres__chips { display: flex; flex-wrap: wrap; gap: 4px; margin-block: 1px; }
 .lkres__chip { display: inline-flex; align-items: center; gap: 3px; max-width: 100%; padding: 0 8px; border-radius: 99px; background: rgb(255 201 77 / 0.16); color: var(--lk-gold-hi);
   font: 800 13px/20px var(--font-sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -275,7 +201,8 @@
 .lkres__grid--mid .lkres__awname, .lkres__grid--dense .lkres__awname { grid-column: 2; grid-row: 1; align-self: center; font-size: 15px; line-height: 18px; }
 .lkres__grid--mid .lkres__awtitle, .lkres__grid--mid .lkres__chips, .lkres__grid--mid .lkres__awline,
 .lkres__grid--dense .lkres__awtitle, .lkres__grid--dense .lkres__chips { grid-column: 1 / -1; margin-top: 3px; }
-.lkres__grid--mid .lkres__awtitle, .lkres__grid--dense .lkres__awtitle { font-size: 14px; line-height: 17px; }
+.lkres__grid--mid .lkres__awtitle, .lkres__grid--dense .lkres__awtitle { font-size: 17px; line-height: 20px; }
+.lkres__grid--dense { grid-template-columns: 1fr 1fr 1fr 1fr; }
 .lkres__grid--dense .lkres__chips { flex-wrap: nowrap; overflow: hidden; }
 .lkres__grid--mid .lkres__chip { font-size: 12px; line-height: 16px; flex: 0 1 auto; min-width: 0; }
 .lkres__grid--mid .lkres__awline { -webkit-line-clamp: 2; font-size: 13px; line-height: 16px; }

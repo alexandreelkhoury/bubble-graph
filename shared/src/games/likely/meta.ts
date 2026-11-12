@@ -24,8 +24,8 @@ export const LIKELY_SPICY_ENABLED = false;
 export const LIKELY_PHASES = ["CARD", "VOTING", "REVEAL", "AWARDS", "RESULTS", "HOLD"] as const;
 export type LikelyPhase = (typeof LIKELY_PHASES)[number];
 
-/** Award kinds (GAME-LIKELY §6.2). `selfAware` and `mindReader` exist in public mode only. */
-export const LIKELY_AWARD_KINDS = ["signature", "mystery", "star", "selfAware", "mindReader"] as const;
+/** Award kinds (GAME-LIKELY §6.2). No point-based award exists: the game has no points (owner decision 2026-11-12). */
+export const LIKELY_AWARD_KINDS = ["signature", "mystery", "star"] as const;
 export type LikelyAwardKind = (typeof LIKELY_AWARD_KINDS)[number];
 
 /**
@@ -33,10 +33,6 @@ export type LikelyAwardKind = (typeof LIKELY_AWARD_KINDS)[number];
  * top but got ≥ 2 votes on a card gets that card's award as "Runner-up". A top signature has `value: null`.
  */
 export const LIKELY_RUNNER_UP_VALUE = 2;
-
-/** Reasons of a public-mode point delta (GAME-LIKELY §13.2). */
-export const LIKELY_DELTA_REASONS = ["agree", "unanimous", "selfAware"] as const;
-export type LikelyDeltaReason = (typeof LIKELY_DELTA_REASONS)[number];
 
 /** Card tags (GAME-LIKELY §11.2); `romance` only on Spicy cards. */
 export const LIKELY_TAGS = ["party", "food", "family", "travel", "habits", "lebanon", "tech", "music", "sport", "future", "romance"] as const;
@@ -58,7 +54,6 @@ export const LIKELY_TIMING = {
   REVEAL_MAX_MS: 12_000,
   AWARDS_BASE_MS: 3_000,
   AWARDS_TRIO_MS: 4_000,
-  AWARDS_MIND_READER_MS: 4_000,
 } as const;
 
 /** `clamp(14 000 + 1 000 × n, 18 000, 26 000)`, n = players in game (GAME-LIKELY §4.1). */
@@ -68,11 +63,9 @@ export function likelyVotingMs(players: number): number {
 }
 
 /**
- * The REVEAL window: `clamp(7 000 + 150 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0), 8 000, 12 000)`.
- * Owner-approved change (G3 review, 2026-11-10) of GAME-LIKELY §12.2 / §4.1, which said `5 000 + 100 × votes …`, 6 000–9 500:
- * live runs showed the "{name}, defend yourself!" hold cut to ~0.4 s at 12 players and the secret-mode percentage board
- * readable for < 2 s. The longer window leaves a ≥ 2 s social hold at every room size; the host can still skip with Next.
- * (SPEC-GAP: the doc text is the owner's to update.)
+ * The REVEAL window (GAME-LIKELY §4.1, §12.2): `clamp(7 000 + 150 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0),
+ * 8 000, 12 000)`. The votes build up one by one under their targets (150 ms of window per vote), then the award stamp;
+ * the rest is a ≥ 2 s look at the finished picture (who voted for whom, or the percentages). The host can skip with Next.
  */
 export function likelyRevealMs(votes: number, unanimous: boolean, topCount: number): number {
   const t = LIKELY_TIMING;
@@ -80,10 +73,10 @@ export function likelyRevealMs(votes: number, unanimous: boolean, topCount: numb
   return Math.min(t.REVEAL_MAX_MS, Math.max(t.REVEAL_MIN_MS, raw));
 }
 
-/** `3 000 + 4 000 × ceil(players / 3) + 4 000` (the last 4 000 = Mind Reader, public mode only; GAME-LIKELY §4.1). */
-export function likelyAwardsMs(players: number, publicMode: boolean): number {
+/** `3 000 + 4 000 × ceil(players / 3)`: the intro, then one 4 s page per trio of award holders (GAME-LIKELY §4.1). */
+export function likelyAwardsMs(players: number): number {
   const t = LIKELY_TIMING;
-  return t.AWARDS_BASE_MS + t.AWARDS_TRIO_MS * Math.ceil(players / 3) + (publicMode ? t.AWARDS_MIND_READER_MS : 0);
+  return t.AWARDS_BASE_MS + t.AWARDS_TRIO_MS * Math.ceil(players / 3);
 }
 
 const K = "game.likely";

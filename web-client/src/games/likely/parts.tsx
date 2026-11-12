@@ -63,8 +63,6 @@ export function awardText(a: LikelyAward): { title: string; line: string } {
     case "signature": return { title: a.card?.award ?? "", line: a.card ? questionText(a.card.prompt) : "" };
     case "mystery": return { title: t(k("awards.mystery.title")), line: t(k("awards.mystery.line")) };
     case "star": return { title: t(k("awards.star.title")), line: t(k("awards.star.line")) };
-    case "selfAware": return { title: t(k("awards.selfAware.title")), line: t(k("awards.selfAware.line")) };
-    case "mindReader": return { title: t(k("awards.mindReader.title")), line: t(k("awards.mindReader.line")) };
   }
 }
 
