@@ -105,7 +105,15 @@ class HubAndSetupTest {
         assertEquals(SetupTarget.Column(3), mv(SetupTarget.HowTo, RemoteKey.RIGHT, last = 3))
         assertEquals(SetupTarget.Column(1), mv(SetupTarget.HowTo, RemoteKey.RIGHT))
         assertEquals(SetupTarget.Info, mv(SetupTarget.HowTo, RemoteKey.UP))
-        assertEquals(SetupTarget.HowTo, mv(SetupTarget.Info, RemoteKey.DOWN))
+        // ⓘ → Down onto the column below it (the row focus came from, else Content), never diagonally to the how-to pane.
+        assertEquals(SetupTarget.Column(0), mv(SetupTarget.Info, RemoteKey.DOWN))
+        assertEquals(SetupTarget.Column(3), mv(SetupTarget.Info, RemoteKey.DOWN, last = 3))
+        assertEquals(SetupTarget.Column(4), mv(SetupTarget.Info, RemoteKey.DOWN, last = 9)) // clamped to the column
+        // The toward-how-to key from ⓘ reaches the how-to pane (Left in LTR, Right in RTL); the other one does nothing.
+        assertEquals(SetupTarget.HowTo, mv(SetupTarget.Info, RemoteKey.LEFT))
+        assertEquals(SetupTarget.HowTo, mv(SetupTarget.Info, RemoteKey.RIGHT, rtl = true))
+        assertNull(mv(SetupTarget.Info, RemoteKey.RIGHT))
+        assertNull(mv(SetupTarget.Info, RemoteKey.UP))
     }
 
     @Test

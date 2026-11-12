@@ -358,6 +358,15 @@
     </plurals>
     <string name="setup__content">المحتوى: %1$s</string>
     <string name="setup__content_title">لغة المحتوى</string>
+    <string name="setup__content_label">المحتوى</string>
+    <plurals name="setup__scan_more">
+        <item quantity="zero">امسحوا الكود وفوتوا</item>
+        <item quantity="one">امسحوا الكود · ناقصنا واحد</item>
+        <item quantity="two">امسحوا الكود · ناقصنا اتنين</item>
+        <item quantity="few">امسحوا الكود · ناقصنا %1$d</item>
+        <item quantity="many">امسحوا الكود · ناقصنا %1$d</item>
+        <item quantity="other">امسحوا الكود · ناقصنا %1$d</item>
+    </plurals>
     <string name="setup__advanced">متقدّم</string>
     <string name="setup__start">يلّا نبلّش</string>
     <plurals name="setup__blocker_players">

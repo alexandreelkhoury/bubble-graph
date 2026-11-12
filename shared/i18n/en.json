@@ -319,6 +319,11 @@
   },
   "setup.content": "Content: {language}",
   "setup.contentTitle": "Content language",
+  "setup.contentLabel": "Content",
+  "setup.scanMore": {
+    "one": "Scan to join · {count} more",
+    "other": "Scan to join · {count} more"
+  },
   "setup.advanced": "Advanced",
   "setup.start": "Start",
   "setup.blockerPlayers": {

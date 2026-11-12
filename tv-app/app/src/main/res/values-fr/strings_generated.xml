@@ -331,6 +331,12 @@
     </plurals>
     <string name="setup__content">Contenu : %1$s</string>
     <string name="setup__content_title">Langue du contenu</string>
+    <string name="setup__content_label">Contenu</string>
+    <plurals name="setup__scan_more">
+        <item quantity="one">Scannez pour jouer · encore %1$d</item>
+        <item quantity="many">Scannez pour jouer · encore %1$d</item>
+        <item quantity="other">Scannez pour jouer · encore %1$d</item>
+    </plurals>
     <string name="setup__advanced">Avancé</string>
     <string name="setup__start">Lancer</string>
     <plurals name="setup__blocker_players">

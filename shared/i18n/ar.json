@@ -355,6 +355,15 @@
   },
   "setup.content": "المحتوى: {language}",
   "setup.contentTitle": "لغة المحتوى",
+  "setup.contentLabel": "المحتوى",
+  "setup.scanMore": {
+    "zero": "امسحوا الكود وفوتوا",
+    "one": "امسحوا الكود · ناقصنا واحد",
+    "two": "امسحوا الكود · ناقصنا اتنين",
+    "few": "امسحوا الكود · ناقصنا {count}",
+    "many": "امسحوا الكود · ناقصنا {count}",
+    "other": "امسحوا الكود · ناقصنا {count}"
+  },
   "setup.advanced": "متقدّم",
   "setup.start": "يلّا نبلّش",
   "setup.blockerPlayers": {
