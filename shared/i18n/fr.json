@@ -303,6 +303,7 @@
   "hub.noLanguageYet": "Pas encore en {language}",
   "hub.moreToPlay": {
     "one": "Encore {count} pour jouer",
+    "many": "Encore {count} pour jouer",
     "other": "Encore {count} pour jouer"
   },
   "hub.closeConfirm.title": "Fermer JAMAA ?",
