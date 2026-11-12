@@ -43,7 +43,10 @@ class HubAndSetupTest {
         assertEquals(TicketState.COMPACT, HubModel.ticketState(1, 120_000, wasCompact = true)) // latched: never back
         assertEquals(5, HubModel.qrModuleDp(HubModel.panelDp(TicketState.GATHERING), 29)) // version-3 code
         assertEquals(4, HubModel.qrModuleDp(HubModel.panelDp(TicketState.COMPACT), 29))
-        assertEquals(176f / 192f, HubModel.panelScale(TicketState.COMPACT), 1e-6f)
+        assertEquals(184f / 200f, HubModel.panelScale(TicketState.COMPACT), 1e-6f)
+        // The QR tile is exactly the ticket's inner width (it fills the card edge to edge, padding aside).
+        assertEquals(app.jamaa.tv.ui.components.JoinPanelMetrics.HUB_QR_DP, HubModel.PANEL_GATHERING_DP)
+        assertEquals(app.jamaa.tv.ui.components.JoinPanelMetrics.HUB_TICKET_W_DP, HubModel.TICKET_W_DP)
         assertEquals(1f, HubModel.panelScale(TicketState.GATHERING), 1e-6f)
         assertEquals(7, HubModel.captionGraphemes(8))
         assertEquals(5, HubModel.captionGraphemes(9))
@@ -51,15 +54,26 @@ class HubAndSetupTest {
 
     @Test
     fun posterRowGeometryFitsTheSafeArea() {
-        // Four posters + three gaps fill x 60–668; the 1.06 focus scale plus the 5 dp ring (2 dp offset + 3 dp stroke)
-        // stays inside the 16 dp gaps, the safe area (x ≥ 48) and clear of the ticket (x 704).
+        // Safe-area coordinates (864 × 486). Four posters + three gaps fill x 10–628; the 1.06 focus scale plus the 5 dp
+        // ring (2 dp offset + 3 dp stroke) stays inside the 14 dp gaps, the safe area and clear of the ticket (x 648).
         val row = 4 * HubModel.POSTER_W_DP + 3 * HubModel.POSTER_GAP_DP
-        assertEquals(608, row)
+        assertEquals(618, row)
         val growX = HubModel.POSTER_W_DP * (HubModel.POSTER_FOCUS_SCALE - 1f) / 2f + 5f
         val growY = HubModel.POSTER_H_DP * (HubModel.POSTER_FOCUS_SCALE - 1f) / 2f + 5f
+        val lift = HubModel.POSTER_LIFT_DP
         assertTrue(growX < HubModel.POSTER_GAP_DP)
-        assertTrue(60 - growX >= 48 && 60 + row + growX < 704)
-        assertTrue(95 - growY > 71 && 95 + HubModel.POSTER_H_DP + growY < 304) // below the top bar, above the info block
+        assertTrue(HubModel.ROW_X_DP - growX >= 0 && HubModel.ROW_X_DP + row + growX < HubModel.TICKET_X_DP)
+        // Lifted and scaled: below the top bar, above the info block.
+        assertTrue(HubModel.ROW_Y_DP - growY - lift > HubModel.BAR_H_DP)
+        assertTrue(HubModel.ROW_Y_DP + HubModel.POSTER_H_DP + growY - lift < HubModel.INFO_Y_DP)
+        // The zones tile the whole safe area: info above the strip, the strip ends on the safe area's bottom edge.
+        assertTrue(HubModel.INFO_Y_DP + HubModel.INFO_H_DP <= HubModel.STRIP_Y_DP)
+        assertEquals(HubModel.SAFE_H_DP, HubModel.STRIP_Y_DP + HubModel.STRIP_H_DP)
+        assertEquals(HubModel.SAFE_W_DP, HubModel.TICKET_X_DP + HubModel.TICKET_W_DP)
+        // The ticket (8 + 34 header + 200 QR + 58 code + ~25 address + 8) ends above the strip.
+        assertTrue(HubModel.TICKET_Y_DP + 8 + 34 + HubModel.PANEL_GATHERING_DP + 58 + 25 + 8 < HubModel.STRIP_Y_DP)
+        // 12 members in 72 dp slots still fit the strip's width.
+        assertTrue(12 * 72 <= HubModel.SAFE_W_DP)
         assertEquals(app.jamaa.tv.ui.components.JamaaFocus.TILE_SCALE, HubModel.POSTER_FOCUS_SCALE, 0f)
         assertTrue(!HubModel.scrolls(4, 0) && HubModel.scrolls(4, 1))
         assertTrue(HubModel.showShutter(2, 1) && !HubModel.showShutter(3, 1) && !HubModel.showShutter(4, 0))

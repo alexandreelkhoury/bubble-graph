@@ -28,6 +28,31 @@ import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.ui.theme.JamaaColors
 import app.jamaa.tv.ui.theme.JamaaShapes
 import app.jamaa.tv.ui.theme.JamaaTheme
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.semantics.contentDescription
+
+/** The in-game top bar's height: the hub's bar height, so the band never changes between hub and game. */
+val TOP_BAR_H = 44.dp
+
+/**
+ * The room code as a small pill (in-game corners, the top bar): accent letters, tracked, on a dark pill, always LTR.
+ * One look everywhere the code is shown small; the big code with its QR is [JoinPanel].
+ */
+@Composable
+fun CodePill(code: String, modifier: Modifier = Modifier) {
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Text(
+            code,
+            style = JamaaTheme.type.label.copy(letterSpacing = 0.14.em),
+            color = JamaaColors.Accent,
+            maxLines = 1,
+            modifier = modifier
+                .background(JamaaColors.Surface.copy(alpha = 0.72f), JamaaShapes.pill)
+                .padding(start = 12.dp, end = 10.dp, top = 2.dp, bottom = 2.dp)
+                .semantics { contentDescription = code.toCharArray().joinToString(" ") },
+        )
+    }
+}
 
 fun phaseNameRes(phase: Phase): Int = when (phase) {
     Phase.LOBBY -> R.string.phase__lobby
@@ -41,8 +66,9 @@ fun phaseNameRes(phase: Phase): Int = when (phase) {
 }
 
 /**
- * In-game top bar (DESIGN §7, y 27–75): "Game {n}" during ROLE_REVEAL, else "Round {n} · <phase>" on the start side;
- * mini room code, alive count and a wifi-off chip (socket degraded) on the end side. It never moves between phases.
+ * In-game top bar (DESIGN §7, y 27–71, the hub bar's 44 dp): "Game {n}" during ROLE_REVEAL, else "Round {n} · <phase>"
+ * on the start side; on the end side a wifi-off chip (socket degraded), the alive count, then the room code on a small
+ * pill (so latecomers can find it at a glance). It never moves between phases.
  */
 @Composable
 fun TopBar(
@@ -61,7 +87,7 @@ fun TopBar(
     // [aliveOverride]: during the vote reveal the eliminated player still counts (no spoiler before the card flips).
     val alive = aliveOverride ?: view.players.count { it.alive && !it.left }
     Row(
-        modifier.fillMaxWidth().height(48.dp),
+        modifier.fillMaxWidth().height(TOP_BAR_H),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -83,16 +109,15 @@ fun TopBar(
                     Icon(JamaaIcons.WifiOff, contentDescription = null, tint = JamaaColors.Danger, modifier = Modifier.size(20.dp))
                 }
             }
-            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                Text(view.roomCode, style = type.label.copy(letterSpacing = type.code.letterSpacing), color = JamaaColors.Accent)
-            }
             if (view.phase != Phase.RESULTS) {
                 Text(
                     pluralStringResource(R.plurals.common__alive_count, alive, alive),
                     style = type.caption,
                     color = JamaaColors.TextMuted,
+                    maxLines = 1,
                 )
             }
+            CodePill(view.roomCode)
         }
     }
 }

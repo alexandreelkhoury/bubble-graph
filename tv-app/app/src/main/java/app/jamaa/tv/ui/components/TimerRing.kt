@@ -107,7 +107,7 @@ fun TimerRing(
             val inset = sw / 2
             val arcSize = Size(this.size.width - sw, this.size.height - sw)
             drawArc(
-                color = JamaaColors.Text.copy(alpha = 0.12f),
+                color = JamaaColors.Text.copy(alpha = 0.14f),
                 startAngle = 0f,
                 sweepAngle = 360f,
                 useCenter = false,
@@ -126,6 +126,13 @@ fun TimerRing(
                 size = arcSize,
                 style = Stroke(sw, cap = StrokeCap.Round),
             )
+            // The arc's head: a soft halo on its leading end, so the moving edge reads from the sofa.
+            if (sweep > 1f) {
+                val r = arcSize.width / 2f
+                val a = Math.toRadians(-90.0 + 360.0 - sweep)
+                val head = Offset(this.size.width / 2f + (r * kotlin.math.cos(a)).toFloat(), this.size.height / 2f + (r * kotlin.math.sin(a)).toFloat())
+                drawCircle(color.copy(alpha = 0.28f), sw * 1.1f, head)
+            }
         }
         if (number != null) TimerDigits(secs, color, number)
     }

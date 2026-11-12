@@ -23,4 +23,16 @@ object QrMatrix {
 
     /** `module = floor(panelDp / (matrix.width + 8))` dp: the 4-module quiet zone is inside the light panel. */
     fun moduleDp(panelDp: Int, matrixWidth: Int): Int = panelDp / (matrixWidth + 8)
+
+    /**
+     * What the tile draws: `module = floor(panelPx / (matrix.width + 8))` **pixels**, so the code fills the tile up to
+     * its 4-module quiet zone (plus < (matrix + 8) / 2 px of rounding per side) and every module edge sits on a pixel.
+     */
+    fun modulePx(panelPx: Int, matrixWidth: Int): Int = panelPx / (matrixWidth + 8)
+
+    /** The quiet zone per side, in modules, that [modulePx] leaves in a [panelPx] tile (≥ 4). */
+    fun quietModules(panelPx: Int, matrixWidth: Int): Float {
+        val m = modulePx(panelPx, matrixWidth)
+        return (panelPx - m * matrixWidth) / 2f / m
+    }
 }

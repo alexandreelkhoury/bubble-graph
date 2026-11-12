@@ -359,7 +359,7 @@ Body text uses weight 600, not 400: at 10 ft, regular Cairo strokes break up on 
 ### 4.2 TV layout
 - **Canvas** 960 × 540 dp. **Safe area: 48 dp sides, 27 dp top/bottom → live area 864 × 486 dp** (x 48–912, y 27–513). Nothing interactive or textual goes outside it. Backgrounds, glows and particles bleed to the edges.
 - **Content grid:** 12 columns × 52 dp, 20 dp gutters = **844 dp**, centred (58 dp margins, the Google TV recommendation). Status chips and corner badges may extend out to the 48 dp safe line.
-- **Rows:** top bar y 27–75 (48 dp); stage y 87–447; bottom action bar y 459–513 (54 dp, button height 48 dp).
+- **Rows:** top bar y 27–71 (44 dp, the hub bar's height); stage y 83–459; bottom action bar y 459–513 (54 dp, button height 48 dp).
 - **Focus breathing room:** every focusable element has ≥ 12 dp of clear space around it, because focus scales it to 1.06 and adds a 3 dp ring and an 18 dp glow.
 
 ### 4.3 Phone layout
@@ -609,7 +609,7 @@ Haptics come only from user gestures or right after one, as the API requires (RE
 - **Lost focus.** When the focused node leaves composition (a kicked tile, an expired verdict button), focus moves to the screen's default target (Start, the action pill, or Resume).
 - **Back** follows TV-DB. **Lobby (TV-02) is the root: Back exits the app immediately, with no confirmation.** Home (TV-01) is only a splash. **During a game and on Results, Back opens the pause menu (TV-12)** and never exits silently. Back inside a dialog or menu closes it.
 - **No Menu-key dependency** (TV-DM). Every action is reachable with the 5-way D-pad.
-- **Top bar** (y 27–75 dp) on every in-game screen: start side shows "GAME {count}" during ROLE_REVEAL (`game.label`; `round` is 0 there) and "ROUND {count} · <phase>" afterwards (`round.label` + `phase.*`). End side shows a mini room code `KXQP`, the alive count (`common.aliveCount`), and a `wifi-off` chip when the TV's socket is degraded.
+- **Top bar** (y 27–71 dp, 44 dp like the hub's bar) on every in-game screen: start side shows "GAME {count}" during ROLE_REVEAL (`game.label`; `round` is 0 there) and "ROUND {count} · <phase>" afterwards (`round.label` + `phase.*`). End side shows a `wifi-off` chip when the TV's socket is degraded, the alive count (`common.aliveCount`), then the room code on a small pill (`CodePill`: accent `label`, tracking 0.14 em, `surface` 72 %).
 - **Long names** are truncated with an ellipsis at 12 graphemes on tiles and 20 in the spotlight. The TV-05 order strip uses **width-only** truncation (one ellipsis at the item's text width, no grapheme pre-cut), so a name is never cut twice ("Nour …"). Names come from players, so render them with `TextOverflow.Ellipsis` and `maxLines = 1`.
 - **The TV never shows secrets.** No word or role of a living player, and no Blank guess text, ever appears before RESULTS (SPEC §5.4).
 
