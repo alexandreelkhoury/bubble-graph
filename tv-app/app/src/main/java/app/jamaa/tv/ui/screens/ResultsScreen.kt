@@ -22,6 +22,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import app.jamaa.tv.games.mishana.MishanaLayout
+import app.jamaa.tv.games.mishana.ui.StageText
+import app.jamaa.tv.games.mishana.ui.fitHeight
+import app.jamaa.tv.games.mishana.ui.stagedEnter
+import app.jamaa.tv.games.mishana.ui.noClip
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -171,20 +177,14 @@ fun ResultsScreen(
                 }
                 AnimatedContent(
                     targetState = stage,
-                    transitionSpec = { fadeIn(tween(JamaaMotion.Slow, easing = JamaaMotion.Decel)) togetherWith fadeOut(tween(JamaaMotion.Base)) },
+                    transitionSpec = { (fadeIn(tween(JamaaMotion.Slow, easing = JamaaMotion.Decel)) togetherWith fadeOut(tween(JamaaMotion.Base))).noClip() },
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     label = "resultsStage",
                 ) { st ->
                     if (st == 1) {
                         VictoryMoment(winnerTitle, result, culprits(view), hadUndercover(view))
                     } else {
-                        Column(Modifier.fillMaxSize()) {
-                            Box(Modifier.weight(1f).fillMaxWidth()) { Summary(view, result, players, winnerTitle) }
-                            cupPanel?.invoke()
-                            if (passHook != null) {
-                                Text(passHook, style = type.caption, color = JamaaColors.TextMuted, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-                            }
-                        }
+                        Summary(view, result, players, winnerTitle, cupPanel, passHook)
                     }
                 }
                 Row(
@@ -302,7 +302,8 @@ private fun MaskPeek() {
 
 /**
  * Stage 1: winner banner, then the two words slide in from opposite sides and meet in the middle, then who the Mole
- * and the Blank were ("Ben was the Mole · Eli was the Blank").
+ * and the Undercover were ("Ben was the Mole · Eli was the Undercover"). The block scales itself to the stage
+ * ([fitHeight]) so a two-line title in French or Arabic never pushes the culprits off the screen.
  */
 @Composable
 private fun VictoryMoment(title: String, result: ResultView, culprits: List<PublicPlayer>, showUndercoverWord: Boolean) {
@@ -318,46 +319,50 @@ private fun VictoryMoment(title: String, result: ResultView, culprits: List<Publ
         }
     }
     val blankGuess = result.guesses.lastOrNull { it.status == GuessStatus.CORRECT }?.text
-    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        if (result.winner == Winner.BLANK) {
-            BlankCardSpin(blankGuess)
-            Spacer(Modifier.height(12.dp))
-        }
-        Text(
-            title,
-            style = type.displayL,
-            color = winnerColor(result.winner),
-            textAlign = TextAlign.Center,
-            maxLines = 2,
-            modifier = Modifier
-                .widthIn(max = 840.dp)
-                .graphicsLayer { val s = 0.6f + 0.4f * titleIn.value; scaleX = s; scaleY = s; alpha = titleIn.value.coerceIn(0f, 1f) }
-                .semantics { liveRegion = LiveRegionMode.Polite },
-        )
-        Spacer(Modifier.height(28.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(24.dp), verticalAlignment = Alignment.CenterVertically) {
-            WordCard(stringResource(R.string.results__civilian_word), result.civilianWord, Role.CIVILIAN, Modifier.graphicsLayer {
-                translationX = -(1f - words.value) * 500f
-                alpha = words.value
-            })
-            // Rules v2: no Undercover this game → nobody held the second word, so only the Civilians' word shows.
-            if (showUndercoverWord) {
-                WordCard(stringResource(R.string.results__undercover_word), result.undercoverWord, Role.UNDERCOVER, Modifier.graphicsLayer {
-                    translationX = (1f - words.value) * 500f
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(Modifier.fillMaxWidth().fitHeight(), horizontalAlignment = Alignment.CenterHorizontally) {
+            if (result.winner == Winner.BLANK) {
+                BlankCardSpin(blankGuess)
+                Spacer(Modifier.height(12.dp))
+            }
+            StageText(
+                title,
+                type.displayL,
+                winnerColor(result.winner),
+                Modifier
+                    .widthIn(max = 840.dp)
+                    .graphicsLayer { val s = 0.6f + 0.4f * titleIn.value; scaleX = s; scaleY = s; alpha = titleIn.value.coerceIn(0f, 1f) }
+                    .semantics { liveRegion = LiveRegionMode.Polite },
+                maxLines = 2,
+                minScale = 0.6f,
+            )
+            Spacer(Modifier.height(24.dp))
+            val slide = with(LocalDensity.current) { 220.dp.toPx() }
+            val dir = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1f else 1f
+            Row(horizontalArrangement = Arrangement.spacedBy(24.dp), verticalAlignment = Alignment.CenterVertically) {
+                WordCard(stringResource(R.string.results__civilian_word), result.civilianWord, Role.CIVILIAN, Modifier.graphicsLayer {
+                    translationX = -dir * (1f - words.value) * slide
                     alpha = words.value
                 })
+                // Rules v2: no Undercover this game → nobody held the second word, so only the Civilians' word shows.
+                if (showUndercoverWord) {
+                    WordCard(stringResource(R.string.results__undercover_word), result.undercoverWord, Role.UNDERCOVER, Modifier.graphicsLayer {
+                        translationX = dir * (1f - words.value) * slide
+                        alpha = words.value
+                    })
+                }
             }
-        }
-        // The Blank who won is already named in the title; everyone else who was "not one of us" is named here.
-        val shown = if (result.winner == Winner.BLANK) culprits.filter { it.revealedRole != Role.BLANK } else culprits
-        if (shown.isNotEmpty()) {
-            Spacer(Modifier.height(20.dp))
-            CulpritsRow(shown, Modifier.graphicsLayer { alpha = words.value })
+            // The Blank who won is already named in the title; everyone else who was "not one of us" is named here.
+            val shown = if (result.winner == Winner.BLANK) culprits.filter { it.revealedRole != Role.BLANK } else culprits
+            if (shown.isNotEmpty()) {
+                Spacer(Modifier.height(20.dp))
+                CulpritsRow(shown, Modifier.graphicsLayer { alpha = words.value; translationY = (1f - words.value) * 24f })
+            }
         }
     }
 }
 
-/** "[avatar] Ben was the Mole · [avatar] Eli was the Blank": 40 dp avatars, the role word's colour on the line. */
+/** "[avatar] Ben was the Mole · [avatar] Eli was the Undercover": 40 dp avatars, the role word's colour on the line. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CulpritsRow(players: List<PublicPlayer>, modifier: Modifier = Modifier) {
@@ -395,7 +400,7 @@ private fun BlankCardSpin(text: String?) {
     LaunchedEffect(Unit) { if (!reduce) spin.animateTo(1f, tween(900, easing = JamaaMotion.Decel)) }
     Box(
         Modifier
-            .size(240.dp, 96.dp)
+            .size(260.dp, 96.dp)
             .graphicsLayer { rotationZ = (1f - spin.value) * 360f; scaleX = spin.value; scaleY = spin.value }
             .background(JamaaColors.Blank, JamaaShapes.tile),
         contentAlignment = Alignment.Center,
@@ -408,7 +413,14 @@ private fun BlankCardSpin(text: String?) {
             )
         }
         if (text != null) {
-            Text(text, style = JamaaTheme.type.headline, color = JamaaColors.Ink, modifier = Modifier.alpha(((spin.value - 0.6f) / 0.4f).coerceIn(0f, 1f)), maxLines = 1)
+            StageText(
+                text,
+                JamaaTheme.type.headline,
+                JamaaColors.Ink,
+                Modifier.padding(horizontal = 20.dp).alpha(((spin.value - 0.6f) / 0.4f).coerceIn(0f, 1f)),
+                maxLines = 1,
+                minScale = 0.5f,
+            )
         }
     }
 }
@@ -428,29 +440,37 @@ private fun WordCard(label: String, word: WordRef, role: Role, modifier: Modifie
         Row(verticalAlignment = Alignment.CenterVertically) {
             RoleEmblem(role, 24.dp, roleColor(role))
             Spacer(Modifier.width(8.dp))
-            Text(label, style = type.caption, color = roleColor(role))
+            Text(label, style = type.caption, color = roleColor(role), maxLines = 1)
         }
-        Text(word.text, style = type.displayM, color = JamaaColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+        // The word is the payoff: it steps down to fit the card, never "Manoush…".
+        StageText(word.text, type.displayM, JamaaColors.Text, maxLines = 1, minScale = 0.5f)
         if (word.translit != null) {
-            Text(word.translit, style = type.body, color = JamaaColors.TextSecondary, maxLines = 1)
+            StageText(word.translit, type.body, JamaaColors.TextSecondary, maxLines = 1, minScale = 0.7f)
         }
     }
 }
 
 /**
- * Stage 2: headline, one 48 dp word strip, one caption line (pack + guesses), scoreboard (the history is in the pause
- * menu). Budget (486 dp live area − 40 header − 58 buttons = 388 dp): the fixed content stays ≤ 140 dp so the
- * scoreboard shows 5 × 40 dp rows (+ 4 gaps + the focus padding). When the column header would push the 5th row
- * out (Arabic line heights, a large font scale), the header goes (DESIGN TV-11, §11).
+ * Stage 2 (v4): headline, one 48 dp word strip, one caption line (pack + guesses), then the scoreboard **beside**
+ * the platform's "Tonight's cup" panel (HUB-05), so both always show in full: every player (3–12) is on screen
+ * without scrolling ([MishanaLayout.scoreBoard]: one column of 34–48 dp rows, or two columns), and the cup keeps
+ * its rows. The pass hook (§4.5), when any, is the last line. The history is in the pause menu.
  */
 @Composable
-private fun Summary(view: MishanaView, result: ResultView, players: List<PublicPlayer>, title: String) {
+private fun Summary(
+    view: MishanaView,
+    result: ResultView,
+    players: List<PublicPlayer>,
+    title: String,
+    cupPanel: (@Composable () -> Unit)?,
+    passHook: String?,
+) {
     val type = JamaaTheme.type
     Column(Modifier.fillMaxSize()) {
-        Text(title, style = type.headline, color = winnerColor(result.winner), maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.align(Alignment.CenterHorizontally))
+        StageText(title, type.headline, winnerColor(result.winner), Modifier.fillMaxWidth().stagedEnter(), maxLines = 1, minScale = 0.7f)
         Spacer(Modifier.height(JamaaSpace.s1))
         Row(
-            Modifier.fillMaxWidth().height(WORD_STRIP).background(JamaaColors.Surface, JamaaShapes.row).padding(horizontal = 20.dp),
+            Modifier.fillMaxWidth().height(WORD_STRIP).stagedEnter(delayMs = 80).background(JamaaColors.Surface, JamaaShapes.row).padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             WordInline(stringResource(R.string.results__civilian_word), result.civilianWord, Role.CIVILIAN, Modifier.weight(1f))
@@ -462,16 +482,27 @@ private fun Summary(view: MishanaView, result: ResultView, players: List<PublicP
         }
         Spacer(Modifier.height(JamaaSpace.s1))
         CaptionLine(view, result)
-        // The round history moved to the pause menu (Back): its 28 dp go to the 5th scoreboard row, so the Mole is
-        // on screen in the default 5–6 player game.
-        Scoreboard(players, result, Modifier.weight(1f), allowHeader = LocalDensity.current.fontScale < LARGE_FONT_SCALE)
+        Spacer(Modifier.height(JamaaSpace.s2))
+        Row(Modifier.fillMaxWidth().weight(1f)) {
+            Scoreboard(players, result, Modifier.weight(1f).fillMaxHeight())
+            if (cupPanel != null) {
+                Spacer(Modifier.width(JamaaSpace.s4))
+                // The cup panel keeps its natural height when it fits and scales down (never cut) when it does not.
+                Box(Modifier.width(CUP_W).fillMaxHeight().stagedEnter(delayMs = 500, rise = 0.dp), contentAlignment = Alignment.TopCenter) {
+                    Box(Modifier.fillMaxWidth().fitHeight()) { cupPanel() }
+                }
+            }
+        }
+        if (passHook != null) {
+            StageText(passHook, type.caption, JamaaColors.TextMuted, Modifier.fillMaxWidth().padding(top = JamaaSpace.s1), maxLines = 1, minScale = 0.8f)
+        }
     }
 }
 
 private val WORD_STRIP = 48.dp
 
-/** From this system font scale on, the scoreboard drops its column header to keep 4 rows visible. */
-private const val LARGE_FONT_SCALE = 1.15f
+/** The platform cup panel's column (its rows are 28 dp character + 140 dp name + stars + "+n stars"). */
+private val CUP_W = 300.dp
 
 /**
  * "Pack: … · Lina guessed: “…”" on one caption line (DESIGN TV-11). The guesses are the payoff: drawn in the
@@ -508,7 +539,7 @@ private fun WordInline(label: String, word: WordRef, role: Role, modifier: Modif
         Spacer(Modifier.width(8.dp))
         Text(label, style = JamaaTheme.type.caption, color = roleColor(role), maxLines = 1)
         Spacer(Modifier.width(12.dp))
-        Text(word.text, style = JamaaTheme.type.title, color = JamaaColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        StageText(word.text, JamaaTheme.type.title, JamaaColors.Text, Modifier.weight(1f, fill = false), maxLines = 1, minScale = 0.7f, textAlign = TextAlign.Start)
         if (word.translit != null) {
             Spacer(Modifier.width(8.dp))
             Text("(${word.translit})", style = JamaaTheme.type.caption, color = JamaaColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -517,115 +548,121 @@ private fun WordInline(label: String, word: WordRef, role: Role, modifier: Modif
 }
 
 /**
- * Scoreboard: 40 dp rows, focus-scroll (Up from the buttons enters it). Competition ranking (equal totals share a
- * rank, like the phone and the web TV), so every rank-1 row gets glow.accent + a trophy.
+ * Scoreboard (v4): every player on screen, no scrolling. One column with the column header while the rows keep
+ * ≥ 34 dp ([MishanaLayout.scoreBoard]), else two columns (ranks 1–6 on the start side) of compact rows (rank,
+ * avatar, name, role emblem, +points, total). Competition ranking (equal totals share a rank, like the phone and
+ * the web TV): every rank-1 row gets the 8 % accent fill and a trophy. The rows are not focusable: there is
+ * nothing to scroll to.
  */
 @Composable
-private fun Scoreboard(players: List<PublicPlayer>, result: ResultView, modifier: Modifier, allowHeader: Boolean) {
+private fun Scoreboard(players: List<PublicPlayer>, result: ResultView, modifier: Modifier) {
     val type = JamaaTheme.type
-    val first = remember { FocusRequester() }
     val ranks = remember(players) { Ranking.ranks(players) }
     BoxWithConstraints(modifier.fillMaxWidth()) {
-    val headerH = with(LocalDensity.current) { type.caption.lineHeight.toDp() }
-    val rows = minOf(players.size, VISIBLE_ROWS)
-    val listH = SCORE_ROW * rows + JamaaSpace.s1 * (rows - 1).coerceAtLeast(0) + SCORE_PAD_V * 2
-    val showHeader = allowHeader && maxHeight >= listH + headerH
-    Column(Modifier.fillMaxWidth()) {
-        if (showHeader) Row(Modifier.fillMaxWidth().padding(horizontal = JamaaFocus.ListPadH + JamaaSpace.s3), verticalAlignment = Alignment.CenterVertically) {
-            HeaderCell(stringResource(R.string.results__col_rank), 40)
-            Text(stringResource(R.string.results__col_player), style = type.caption, color = JamaaColors.TextMuted, modifier = Modifier.weight(1f))
-            HeaderCell(stringResource(R.string.results__col_role), 170)
-            HeaderCell(stringResource(R.string.results__col_game), 110)
-            HeaderCell(stringResource(R.string.results__col_total), 90)
-        }
-        LazyColumn(
-            Modifier.fillMaxWidth().weight(1f).focusRestorer(first),
-            // Room for the focused row's scale (1.02) + ring, which the list would otherwise clip.
-            contentPadding = PaddingValues(horizontal = JamaaFocus.ListPadH, vertical = SCORE_PAD_V),
-            verticalArrangement = Arrangement.spacedBy(JamaaSpace.s1),
-        ) {
-            itemsIndexed(players, key = { _, p -> p.id }) { i, p ->
-                ScoreRow(ranks[i], p, result.pointsAwarded[p.id] ?: 0, i, if (i == 0) Modifier.focusRequester(first) else Modifier)
+        val headerH = with(LocalDensity.current) { type.caption.lineHeight.toDp() } + JamaaSpace.s1
+        val single = MishanaLayout.scoreBoard(players.size, (maxHeight - headerH).value, minRow = SCORE_MIN_ROW)
+        val board = if (single.columns == 1) single else MishanaLayout.scoreBoard(players.size, maxHeight.value, minRow = SCORE_MIN_ROW)
+        val rowH = board.rowH.dp
+        val compact = board.columns > 1
+        Column(Modifier.fillMaxWidth()) {
+            if (!compact) {
+                Row(Modifier.fillMaxWidth().height(headerH).padding(horizontal = JamaaSpace.s3), verticalAlignment = Alignment.CenterVertically) {
+                    HeaderCell(stringResource(R.string.results__col_rank), 40)
+                    Text(stringResource(R.string.results__col_player), style = type.caption, color = JamaaColors.TextMuted, modifier = Modifier.weight(1f), maxLines = 1)
+                    HeaderCell(stringResource(R.string.results__col_role), 150)
+                    HeaderCell(stringResource(R.string.results__col_game), 96)
+                    HeaderCell(stringResource(R.string.results__col_total), 72)
+                }
+            }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(JamaaSpace.s3)) {
+                for (c in 0 until board.columns) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(SCORE_GAP)) {
+                        val from = c * board.perColumn
+                        val to = minOf(players.size, from + board.perColumn)
+                        for (i in from until to) {
+                            val p = players[i]
+                            ScoreRow(ranks[i], p, result.pointsAwarded[p.id] ?: 0, i, rowH, compact)
+                        }
+                    }
+                }
             }
         }
     }
-    }
 }
 
-private const val VISIBLE_ROWS = 5
-private val SCORE_ROW = 40.dp
-/** The 5 dp focus ring + the row scale's 0.4 dp, top and bottom. */
-private val SCORE_PAD_V = 6.dp
+private val SCORE_GAP = 4.dp
+private const val SCORE_MIN_ROW = 34f
 
 @Composable
 private fun RowScope.HeaderCell(text: String, widthDp: Int) {
-    Text(text, style = JamaaTheme.type.caption, color = JamaaColors.TextMuted, modifier = Modifier.width(widthDp.dp), textAlign = TextAlign.Center)
+    Text(text, style = JamaaTheme.type.caption, color = JamaaColors.TextMuted, modifier = Modifier.width(widthDp.dp), textAlign = TextAlign.Center, maxLines = 1)
 }
 
+/**
+ * One scoreboard row: slides up into place (60 ms stagger), then the total counts up from last game's to this one's.
+ * [compact] (two columns): the role is its emblem only and the cells are narrower.
+ */
 @Composable
-private fun ScoreRow(rank: Int, p: PublicPlayer, earned: Int, index: Int, modifier: Modifier) {
+private fun ScoreRow(rank: Int, p: PublicPlayer, earned: Int, index: Int, height: androidx.compose.ui.unit.Dp, compact: Boolean) {
     val type = JamaaTheme.type
     val reduce = JamaaTheme.reduceMotion
     val appear = remember { Animatable(if (reduce) 1f else 0f) }
     val counted = remember { Animatable(if (reduce) p.score.toFloat() else (p.score - earned).toFloat()) }
     LaunchedEffect(Unit) {
         if (!reduce) {
-            delay(60L * index)
-            appear.animateTo(1f, tween(JamaaMotion.Base, easing = JamaaMotion.Decel))
+            delay(200L + 60L * index)
+            appear.animateTo(1f, tween(JamaaMotion.Slow, easing = JamaaMotion.Decel))
             counted.animateTo(p.score.toFloat(), tween(700, easing = LinearEasing))
         }
     }
-    val shape = JamaaShapes.row
-    // The one focus style (DESIGN §4.6/§7). OK does nothing: rows are focusable only so Up can scroll the scoreboard.
-    JamaaFocusSurface(
-        onClick = {},
-        modifier = modifier
+    val avatar = if (compact) 26.dp else 30.dp
+    Row(
+        Modifier
             .fillMaxWidth()
-            .heightIn(min = 40.dp)
-            .graphicsLayer { alpha = appear.value; translationY = (1f - appear.value) * 24f },
-        shape = shape,
-        kind = FocusKind.Row,
-        // Rank 1: a quiet 8 % accent fill, no glow (tied winners stacked their glows into one smear); the trophy and
-        // the total carry the rank.
-        container = if (rank == 1) JamaaColors.Accent.copy(alpha = 0.08f) else JamaaColors.Surface,
+            .height(height)
+            .graphicsLayer { alpha = appear.value; translationY = (1f - appear.value) * 24f }
+            // Rank 1: a quiet 8 % accent fill, no glow (tied winners stacked their glows into one smear); the trophy
+            // and the total carry the rank.
+            .background(if (rank == 1) JamaaColors.Accent.copy(alpha = 0.10f) else JamaaColors.Surface, JamaaShapes.row)
+            .padding(horizontal = if (compact) JamaaSpace.s2 else JamaaSpace.s3),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .heightIn(min = 40.dp)
-                .padding(horizontal = JamaaSpace.s3),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(Modifier.width(40.dp), contentAlignment = Alignment.Center) {
-                if (rank == 1) {
-                    Icon(JamaaIcons.Trophy, contentDescription = null, tint = JamaaColors.Accent, modifier = Modifier.size(24.dp))
-                } else {
-                    Text(rank.toString(), style = type.titleS, color = JamaaColors.TextSecondary)
-                }
+        Box(Modifier.width(if (compact) 30.dp else 40.dp), contentAlignment = Alignment.Center) {
+            if (rank == 1) {
+                Icon(JamaaIcons.Trophy, contentDescription = null, tint = JamaaColors.Accent, modifier = Modifier.size(24.dp))
+            } else {
+                Text(rank.toString(), style = type.titleS, color = JamaaColors.TextSecondary, maxLines = 1)
             }
-            Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-                Avatar(p.color, 28.dp, state = AvatarState(away = !p.connected && !p.left, left = p.left))
-                Spacer(Modifier.width(10.dp))
-                Text(Names.ellipsize(p.name, 16), style = type.titleS, color = JamaaColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+        Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+            Avatar(p.color, avatar, state = AvatarState(away = !p.connected && !p.left, left = p.left))
+            Spacer(Modifier.width(if (compact) 8.dp else 10.dp))
+            Text(Names.ellipsize(p.name, 16), style = type.titleS, color = JamaaColors.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+        val role = p.revealedRole
+        if (compact) {
+            Box(Modifier.width(28.dp), contentAlignment = Alignment.Center) {
+                if (role != null) RoleEmblem(role, 22.dp, roleColor(role))
             }
-            Row(Modifier.width(170.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                val role = p.revealedRole
+        } else {
+            Row(Modifier.width(150.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                 if (role != null) {
                     RoleEmblem(role, 22.dp, roleColor(role))
                     Spacer(Modifier.width(6.dp))
-                    Text(roleLabel(role), style = type.body, color = roleColor(role), maxLines = 1)
+                    Text(roleLabel(role), style = type.body, color = roleColor(role), maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
-            Box(Modifier.width(110.dp), contentAlignment = Alignment.Center) {
-                Text(
-                    if (earned > 0) stringResource(R.string.results__points_earned, earned) else "0",
-                    style = type.titleS,
-                    color = if (earned > 0) JamaaColors.Accent else JamaaColors.TextMuted,
-                )
-            }
-            Box(Modifier.width(90.dp), contentAlignment = Alignment.Center) {
-                Text(counted.value.toInt().toString(), style = type.title, color = JamaaColors.Text)
-            }
+        }
+        Box(Modifier.width(if (compact) 44.dp else 96.dp), contentAlignment = Alignment.Center) {
+            Text(
+                if (earned > 0) stringResource(R.string.results__points_earned, earned) else "0",
+                style = type.titleS,
+                color = if (earned > 0) JamaaColors.Accent else JamaaColors.TextMuted,
+                maxLines = 1,
+            )
+        }
+        Box(Modifier.width(if (compact) 44.dp else 72.dp), contentAlignment = Alignment.Center) {
+            Text(counted.value.toInt().toString(), style = type.title, color = JamaaColors.Text, maxLines = 1)
         }
     }
 }

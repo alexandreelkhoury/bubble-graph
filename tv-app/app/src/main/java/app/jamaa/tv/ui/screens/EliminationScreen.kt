@@ -89,6 +89,13 @@ import app.jamaa.tv.games.mishana.MishanaView
 import app.jamaa.tv.protocol.VoteOutcome
 import app.jamaa.tv.protocol.VoteSummary
 import app.jamaa.tv.games.mishana.player
+import app.jamaa.tv.games.mishana.MishanaLayout
+import androidx.compose.ui.layout.layout
+import app.jamaa.tv.games.mishana.ui.StageText
+import app.jamaa.tv.games.mishana.ui.stagedEnter
+import app.jamaa.tv.games.mishana.ui.noClip
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import app.jamaa.tv.ui.components.ActionPill
 import app.jamaa.tv.ui.components.Avatar
 import app.jamaa.tv.ui.components.AvatarGlyphs
@@ -121,8 +128,12 @@ import kotlin.math.sin
 private const val WASH_ALPHA = 0.34f
 private const val RAYS_ALPHA = 0.07f
 
-private val CARD_W = 192.dp
-private val CARD_H = 250.dp
+// The card grows with the stage (up to 230 × 300 dp, 0.77 aspect); see EliminationCard.
+private val CARD_W = 230.dp
+private val CARD_H = 300.dp
+
+/** Chips stack 10 dp apart above a tile; past this many the stack stops growing (the tally badge has the count). */
+private const val MAX_STACK = 5
 
 /** Stages of the local reveal sequence (DESIGN §6.2-B/C). */
 private enum class Stage { Board, Verdict, Wheel, Card, Done }
@@ -230,6 +241,9 @@ private class BoardGeometry {
     var origin = Offset.Zero
     var card: Offset? = null
 
+    /** The board's tile width (dp): the card starts its flight at this size. */
+    var tileW = 136f
+
     fun record(c: LayoutCoordinates, id: String) {
         val p = c.positionInRoot()
         centers[id] = Offset(p.x + c.size.width / 2f, p.y + c.size.height / 2f)
@@ -316,7 +330,7 @@ fun EliminationScreen(
             }
             val eliminatedPlayer = view.player(elim?.playerId)
             if ((seq.stage == Stage.Card || seq.stage == Stage.Done) && elim != null && eliminatedPlayer != null) {
-                EliminationCard(view, eliminatedPlayer, elim.role, boardSpec(board.size).tileW.value, seq, geometry)
+                EliminationCard(view, eliminatedPlayer, elim.role, geometry.tileW, seq, geometry)
             }
             if (seq.stage == Stage.Done && elim == null) {
                 NoEliminationEnd(vote)
@@ -368,39 +382,39 @@ private fun VoteRevealBoard(
     val type = JamaaTheme.type
     val reduce = JamaaTheme.reduceMotion
     val plan = seq.plan
-    val spec = boardSpec(board.size)
     val topIds = remember(vote) { plan.topIds(vote) }
     Box(modifier.fillMaxSize().onGloballyPositioned { geometry.origin = it.positionInRoot() }) {
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
+            StageText(
                 stringResource(R.string.vote__votes_in),
-                style = type.displayS,
-                color = JamaaColors.Text,
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                type.displayM,
+                JamaaColors.Text,
+                Modifier.fillMaxWidth().stagedEnter().semantics { liveRegion = LiveRegionMode.Polite },
+                maxLines = 1,
+                minScale = 0.7f,
             )
-            Spacer(Modifier.weight(1f))
-            Column(verticalArrangement = Arrangement.spacedBy(30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                for (row in board.chunked(spec.perRow)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(JamaaSpace.s4)) {
-                        for (p in row) BoardTile(p, spec, plan, seq, isTop = p.id in topIds, dimmable = topIds.isNotEmpty(), unique = topIds.size == 1, geometry = geometry)
-                    }
+            // The same grid as the vote (TV-06), with 40 dp between rows for the chip stacks: no tile moves.
+            BoxWithConstraints(Modifier.fillMaxWidth().weight(1f).padding(top = 28.dp, bottom = 8.dp), contentAlignment = Alignment.Center) {
+                val grid = MishanaLayout.voteGrid(board.size, maxWidth.value, maxHeight.value, gapY = 40f)
+                geometry.tileW = grid.tileW
+                PlayerGrid(board, grid) { p, _ ->
+                    BoardTile(p, grid, plan, seq, isTop = p.id in topIds, dimmable = topIds.isNotEmpty(), unique = topIds.size == 1, geometry = geometry)
                 }
             }
-            Spacer(Modifier.weight(1f))
-        }
-        // "No vote" bin at the bottom end.
-        if (vote.abstainIds.isNotEmpty()) {
-            val landedBin by remember(plan) { derivedStateOf { plan.landed(null, seq.arrowsMs.value) } }
-            Column(
-                Modifier
-                    .align(Alignment.BottomEnd)
-                    .background(JamaaColors.Surface, JamaaShapes.row)
-                    .padding(horizontal = JamaaSpace.s4, vertical = JamaaSpace.s2)
-                    .onGloballyPositioned { geometry.bin = it.centerInRoot() },
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(stringResource(R.string.vote__no_vote), style = type.caption, color = JamaaColors.TextMuted)
-                Text(landedBin.toString(), style = type.title, color = JamaaColors.TextSecondary)
+            // "No vote" bin under the board, centred: the abstentions land there.
+            if (vote.abstainIds.isNotEmpty()) {
+                val landedBin by remember(plan) { derivedStateOf { plan.landed(null, seq.arrowsMs.value) } }
+                Row(
+                    Modifier
+                        .background(JamaaColors.Surface, JamaaShapes.pill)
+                        .padding(horizontal = JamaaSpace.s5, vertical = JamaaSpace.s1)
+                        .onGloballyPositioned { geometry.bin = it.centerInRoot() },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(stringResource(R.string.vote__no_vote), style = type.label, color = JamaaColors.TextMuted, maxLines = 1)
+                    Spacer(Modifier.width(12.dp))
+                    Text(landedBin.toString(), style = type.title, color = JamaaColors.TextSecondary)
+                }
             }
         }
         // Flights + trails (draw phase only). Reduced motion: no flying chips; the chips sit in their stacks (no trails).
@@ -415,7 +429,7 @@ private fun VoteRevealBoard(
                 if (local <= 0f) return@forEachIndexed
                 val from = (geometry.centers[f.voterId] ?: return@forEachIndexed) - geometry.origin
                 val toBase = if (f.targetId == null) geometry.bin - geometry.origin else ((geometry.tops[f.targetId] ?: return@forEachIndexed) - geometry.origin)
-                val to = if (f.targetId == null) toBase else toBase + Offset(0f, -chip / 2 - 4.dp.toPx() - f.stackIndex * 10.dp.toPx())
+                val to = if (f.targetId == null) toBase else toBase + Offset(0f, -chip / 2 - 4.dp.toPx() - minOf(f.stackIndex, MAX_STACK) * 10.dp.toPx())
                 val bothBottom = from.y > size.height * 0.55f && to.y > size.height * 0.55f
                 val mid = Offset((from.x + to.x) / 2f, (from.y + to.y) / 2f)
                 val ctrl = mid + Offset(0f, if (bothBottom) 90.dp.toPx() else -90.dp.toPx())
@@ -453,8 +467,22 @@ private fun VoteRevealBoard(
                 vote.outcome == VoteOutcome.RANDOM -> stringResource(R.string.stamp__tie)
                 else -> stringResource(R.string.stamp__out)
             }
+            // OUT lands on the voted-out player's tile (the room's eyes are already there); the other verdicts
+            // (tie, nobody) stamp the middle of the board.
+            val target = if (vote.outcome == VoteOutcome.ELIMINATED && topIds.size == 1) geometry.centers[topIds.first()] else null
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Stamp(stampText, if (vote.outcome == VoteOutcome.ELIMINATED) JamaaColors.Primary else JamaaColors.Accent)
+                Stamp(
+                    stampText,
+                    if (vote.outcome == VoteOutcome.ELIMINATED) JamaaColors.Primary else JamaaColors.Accent,
+                    if (target == null) Modifier else Modifier.layout { m, c ->
+                        val pl = m.measure(c.copy(minWidth = 0, minHeight = 0))
+                        val local = target - geometry.origin
+                        // place() in absolute coordinates: the recorded centre is in window space, LTR and RTL alike.
+                        layout(c.maxWidth, c.maxHeight) {
+                            pl.place((local.x - pl.width / 2f).toInt(), (local.y - pl.height / 2f).toInt())
+                        }
+                    },
+                )
             }
         }
     }
@@ -466,7 +494,7 @@ private const val TRAIL_STEPS = 18
 @Composable
 private fun BoardTile(
     p: PublicPlayer,
-    spec: BoardSpec,
+    grid: MishanaLayout.Grid,
     plan: EliminationPlan,
     seq: EliminationSequence,
     isTop: Boolean,
@@ -490,7 +518,7 @@ private fun BoardTile(
             }
             .onGloballyPositioned { c -> geometry.record(c, p.id) },
     ) {
-        PlayerTile(p, spec.tileW, spec.tileH, spec.avatar, state = AvatarState(away = !p.connected))
+        PlayerTile(p, grid.tileW.dp, grid.tileH.dp, grid.avatar.dp, state = AvatarState(away = !p.connected))
         if (landed > 0) TallyBadge(landed, Modifier.align(Alignment.TopEnd).offset(x = 12.dp, y = (-12).dp))
     }
 }
@@ -549,21 +577,24 @@ private fun EliminationCard(
     // The card takes what the stage leaves after the title and the reaction line (Arabic line heights included),
     // so the reaction — the payoff — is never clipped.
     BoxWithConstraints(Modifier.fillMaxSize()) {
-        val cardH = with(LocalDensity.current) {
-            maxHeight - type.displayS.lineHeight.toDp() - type.headline.lineHeight.toDp() - 24.dp
-        }.coerceIn(150.dp, CARD_H)
+        val dens = LocalDensity.current
+        val titleLh = with(dens) { type.displayS.lineHeight.toDp() }
+        val reactionLh = with(dens) { type.headline.lineHeight.toDp() }
+        // Title + 8 + card + 16 + the reaction's reserved line: the card takes the rest, 120–300 dp tall, so the
+        // reaction (the payoff) always has its line and nothing moves when it appears.
+        val cardH = (maxHeight - titleLh - reactionLh - 24.dp).coerceIn(120.dp, CARD_H)
         val cardW = cardH * (CARD_W / CARD_H)
-        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
             // Who left stays visible as a colour/shape once the card shows the role: their avatar beside the name.
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            Row(Modifier.stagedEnter(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                 Avatar(player.color, 48.dp)
-                Text(
+                StageText(
                     stringResource(R.string.elim__eliminated, isolate(Names.ellipsize(player.name, 20))),
-                    style = type.displayS,
-                    color = JamaaColors.Text,
+                    type.displayS,
+                    JamaaColors.Text,
+                    Modifier.weight(1f, fill = false).semantics { liveRegion = LiveRegionMode.Polite },
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.widthIn(max = 760.dp).semantics { liveRegion = LiveRegionMode.Polite },
+                    minScale = 0.6f,
                 )
             }
             Spacer(Modifier.height(JamaaSpace.s2))
@@ -589,7 +620,7 @@ private fun EliminationCard(
                         },
                 ) {
                     if (reduce) {
-                        AnimatedContent(faceUp, transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(200)) }, label = "flip") { up ->
+                        AnimatedContent(faceUp, transitionSpec = { (fadeIn(tween(200)) togetherWith fadeOut(tween(200))).noClip() }, label = "flip") { up ->
                             if (up) RoleCardFace(role, roleLabel(role), Modifier.fillMaxSize(), emblemSize = 84.dp) else RoleCardBack(player.color, Modifier.fillMaxSize())
                         }
                     } else if (!faceUp) {
@@ -600,15 +631,19 @@ private fun EliminationCard(
                 }
             }
             Spacer(Modifier.height(JamaaSpace.s4))
-            if (seq.stage == Stage.Done) {
-                Text(
-                    reaction(role, view.settings.blankGuess),
-                    style = type.headline,
-                    color = roleColor(role),
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    modifier = Modifier.widthIn(max = 860.dp),
-                )
+            // The reaction's line is reserved from the start (no jump when it lands); a long translation steps down
+            // or takes two smaller lines inside it rather than being cut.
+            Box(Modifier.fillMaxWidth().height(reactionLh), contentAlignment = Alignment.Center) {
+                if (seq.stage == Stage.Done) {
+                    StageText(
+                        reaction(role, view.settings.blankGuess),
+                        type.headline,
+                        roleColor(role),
+                        Modifier.fillMaxWidth().stagedEnter(fromScale = 0.85f, rise = 10.dp),
+                        maxLines = 2,
+                        minScale = 0.55f,
+                    )
+                }
             }
         }
     }
@@ -643,7 +678,7 @@ private fun TallyBadge(count: Int, modifier: Modifier) {
         AnimatedContent(
             targetState = count,
             transitionSpec = {
-                (slideInVertically(tween(200)) { it } + fadeIn(tween(200))) togetherWith (slideOutVertically(tween(200)) { -it } + fadeOut(tween(200)))
+                ((slideInVertically(tween(200)) { it } + fadeIn(tween(200))) togetherWith (slideOutVertically(tween(200)) { -it } + fadeOut(tween(200)))).noClip()
             },
             label = "tally",
         ) { n ->
@@ -680,7 +715,7 @@ private fun WheelPick(view: MishanaView, ids: List<String>, pickId: String?, pro
         val avatar = 84.dp
         val radius = ((maxHeight - titleLh - avatar * 1.2f) / 2).coerceIn(60.dp, 150.dp)
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(stringResource(R.string.elim__random_pick), style = JamaaTheme.type.displayS, color = JamaaColors.Accent, maxLines = 1)
+            StageText(stringResource(R.string.elim__random_pick), JamaaTheme.type.displayS, JamaaColors.Accent, Modifier.fillMaxWidth().stagedEnter(), maxLines = 1, minScale = 0.6f)
             Box(Modifier.size(radius * 2 + avatar * 1.2f), contentAlignment = Alignment.Center) {
                 players.forEachIndexed { i, p ->
                     val angle = -PI / 2 + 2 * PI * i / n
