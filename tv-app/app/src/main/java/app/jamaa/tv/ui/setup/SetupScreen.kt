@@ -106,6 +106,7 @@ import app.jamaa.tv.ui.components.FocusKind
 import app.jamaa.tv.ui.components.InitialFocus
 import app.jamaa.tv.ui.components.JamaaButton
 import app.jamaa.tv.ui.components.JamaaFocusSurface
+import app.jamaa.tv.ui.components.focusInk
 import app.jamaa.tv.ui.components.JamaaIcons
 import app.jamaa.tv.ui.components.LocalSounds
 import app.jamaa.tv.ui.components.QrCode
@@ -766,11 +767,14 @@ private fun SettingRow(
             if (value != null) {
                 Spacer(Modifier.width(8.dp))
                 if (stepping) Chevron(JamaaIcons.ChevronBack, canBack)
-                val color = when {
-                    dim -> JamaaColors.TextMuted
-                    focused -> JamaaColors.Accent
-                    else -> JamaaColors.TextSecondary
-                }
+                // focusInk: on the cream focus fill, Accent/TextSecondary would be unreadable.
+                val color = focusInk(
+                    when {
+                        dim -> JamaaColors.TextMuted
+                        focused -> JamaaColors.Accent
+                        else -> JamaaColors.TextSecondary
+                    },
+                )
                 AnimatedContent(
                     targetState = value,
                     transitionSpec = {
@@ -792,7 +796,7 @@ private fun SettingRow(
             }
             if (end == RowEnd.OPENS) {
                 Spacer(Modifier.width(4.dp))
-                Icon(JamaaIcons.ChevronForward, contentDescription = null, tint = if (focused) JamaaColors.Accent else JamaaColors.TextSecondary, modifier = Modifier.size(20.dp))
+                Icon(JamaaIcons.ChevronForward, contentDescription = null, tint = focusInk(if (focused) JamaaColors.Accent else JamaaColors.TextSecondary), modifier = Modifier.size(20.dp))
             }
         }
     }
@@ -801,7 +805,7 @@ private fun SettingRow(
 /** A stepper chevron (autoMirrored: ‹ is always the reading-start, −1 side). */
 @Composable
 private fun Chevron(icon: ImageVector, enabled: Boolean) {
-    Icon(icon, contentDescription = null, tint = JamaaColors.Accent.copy(alpha = if (enabled) 1f else 0.3f), modifier = Modifier.size(20.dp))
+    Icon(icon, contentDescription = null, tint = focusInk(JamaaColors.Accent).copy(alpha = if (enabled) 1f else 0.3f), modifier = Modifier.size(20.dp))
 }
 
 /**
