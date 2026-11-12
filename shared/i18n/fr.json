@@ -300,6 +300,11 @@
   "hub.switchLanguage.keep": "Garder {language}",
   "hub.joinOnPhone": "Rejoignez avec votre téléphone",
   "hub.waitingGang": "On attend la bande…",
+  "hub.noLanguageYet": "Pas encore en {language}",
+  "hub.moreToPlay": {
+    "one": "Encore {count} pour jouer",
+    "other": "Encore {count} pour jouer"
+  },
   "hub.closeConfirm.title": "Fermer JAMAA ?",
   "hub.closeConfirm.body": "La salle se ferme pour tout le monde.",
   "hub.closeConfirm.stay": "Rester",

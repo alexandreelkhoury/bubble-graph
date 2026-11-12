@@ -293,6 +293,11 @@
   "hub.switchLanguage.keep": "Keep {language}",
   "hub.joinOnPhone": "Join on your phone",
   "hub.waitingGang": "Waiting for the gang…",
+  "hub.noLanguageYet": "No {language} yet",
+  "hub.moreToPlay": {
+    "one": "{count} more to play",
+    "other": "{count} more to play"
+  },
   "hub.closeConfirm.title": "Close JAMAA?",
   "hub.closeConfirm.body": "The room ends for everyone.",
   "hub.closeConfirm.stay": "Stay",

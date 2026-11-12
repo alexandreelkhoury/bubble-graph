@@ -300,6 +300,11 @@
   "hub.switchLanguage.keep": "Mantener {language}",
   "hub.joinOnPhone": "Únanse con su teléfono",
   "hub.waitingGang": "Esperando a la pandilla…",
+  "hub.noLanguageYet": "Aún no en {language}",
+  "hub.moreToPlay": {
+    "one": "Falta {count} para jugar",
+    "other": "Faltan {count} para jugar"
+  },
   "hub.closeConfirm.title": "¿Cerrar JAMAA?",
   "hub.closeConfirm.body": "La sala se cierra para todos.",
   "hub.closeConfirm.stay": "Quedarse",

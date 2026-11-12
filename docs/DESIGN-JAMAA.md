@@ -181,56 +181,58 @@ Lockups are generated as outlines by `gen_brand.py` per locale into `assets/game
 
 ### 2.1 TV hub layout (HUB-02)
 
-Canvas 960 × 540 dp, safe area 864 × 486 (x 48–912, y 27–513), DESIGN §4.2. Two states, driven by the join ticket (platform §3.2):
+Canvas 960 × 540 dp, safe area 864 × 486 (x 48–912, y 27–513), DESIGN §4.2. All four posters are always visible and nothing reflows between the ticket's two states (platform §3.2):
 
-| Zone | Rect (dp, LTR), compact state | Gathering state (members < 3, or the first 60 s after launch) | Content |
-|---|---|---|---|
-| Top bar | x 48–912, y 27–75 | same | Start: JAMAA wordmark 120 dp wide. End: "Tonight's cup" chip (hidden until a game ends; OK → cup sheet), ⓘ (40 dp round), Pass button (billing on and not premium), Settings (gear) |
-| Carousel | x 48–688, y 87–405 | x 48–640 (about 2 posters visible) | Game posters **210 × 290 dp**, gap 28 dp, the focused one scaled to **1.08** (227 × 313) with the platform focus ring (3 dp cream + `glow.primary`). About 2.6 posters visible in the compact state, so the cut-off poster invites scrolling. The focused poster sits at the start edge + 24 dp. Below it, a meta line (y 405–427, `type.tv.caption`): "3–12 players · 15 min · EN FR AR ES" |
-| Join ticket | x 712–912 (200 wide), y 87–427 | x 664–912 (**248** wide) | A ticket card (`elev.1`, `radius.lg`), never focusable: "Join on your phone" (`type.tv.body`), the QR on a cream inner panel (`radius.sm`; the 4-module quiet zone is inside the panel), the room code in `type.tv.code` scaled 0.6 (53 sp) `K X Q P`, then "play.jamaa…/KXQP" in caption. **QR panel: 176 dp compact, ≥ 208 dp gathering.** SPEC §9.9 math, `module = floor(panel / (29 + 8))` for the production version-3 code: 208 → 5 dp modules, 176 → 4 dp (never smaller). The width change animates over 400 ms (`ease.standard`) and never while the carousel moves |
-| Members strip | x 48–912, y 435–513 | same | Joined members as **48 dp characters** (faces on) in 72 dp slots with **names under them** (caption; ≤ 8 graphemes when ≤ 8 members, ≤ 6 graphemes at 9–12), idle animation (§4.4), VIP crown badge; 12 × 72 = 864 fits. **Live join:** the joiner drops in (DESIGN §6.2 F), a 2.5 s toast above the strip ("Karim is with us!", `type.tv.body`), and a ring/glow on the newest member until the next join. Empty: "Waiting for the gang…" with three ghost outlines |
+| Zone | Rect (dp, LTR) | Content |
+|---|---|---|
+| Top bar | x 48–912, y 27–71 | Start: JAMAA wordmark 112 dp wide. End, 12 dp apart: "Tonight's cup" chip (hidden until a game ends; the top 3 as 32 dp characters overlapping −10 dp; OK → cup sheet), ⓘ (40 dp round), Pass button (billing on and not premium; 18 dp gem), Settings (gear) |
+| Posters | x 60–668, y 95–289 | Four posters **140 × 194 dp**, gap 16 dp, in a plain row (no scrolling, no clipping). The focused one scales to **1.06** (`FocusKind.Tile`) with the platform focus ring (3 dp cream 2 dp outside + `glow.primary`); scale and ring stay inside the gaps and the safe area. An "Update JAMAA" slot per game this build lacks; a closed-shutter prop only while fewer than 4 slots are filled. More than 4 slots: a scrolling row with the focused poster one slot from the start (fallback) |
+| Info block | x 60–680, y 304–392 | The focused game: title (`type.tv.title`, world `accentText`), tagline (`type.tv.body`), meta line (`type.tv.caption`) "Needs 3+ · 6–10 min · EN" with one chip for the room's content language (28 dp, padding 8 / 2). Crossfades 120 ms when the game changes; "Needs" recolours in place |
+| Toast lane | y 399–431 | Kept free for AppRoot's toasts ("Karim is with us!") |
+| Join ticket | x 704–912 (**208** wide, both states), y 83–427 | A ticket card (`elev.1`, `radius.lg`), never focusable, 10 dp vertical padding, gaps 6 dp (4 dp in Arabic): "Join on your phone" (`type.tv.body`, one line, ellipsis), the QR on a cream inner panel (the 4-module quiet zone is inside the panel), the room code (44 dp tall), then "play.jamaa…/KXQP" fitted 20 → 16 sp (the host alone if it cannot fit). **QR panel: 192 dp gathering (5 dp modules, SPEC §9.9 `floor(192 / (29 + 8))`); compact draws the same panel scaled to 176 dp** (400 ms, `ease.standard`). Gathering = fewer than 3 members or the first 60 s; once compact it stays compact |
+| Members strip | x 48–912, y 429–513 | Joined members as **48 dp characters** (faces on) in 72 dp slots with **names under them** (caption, one line; ≤ 7 graphemes when ≤ 8 members, ≤ 5 at 9–12, then ellipsis), idle animation (§4.4), VIP crown; 12 × 72 = 864 fits. Dashed 48 dp ghost seats (cream 32 %) up to max(3, the focused game's `minPlayers`), then "Waiting for the gang…" (empty) or "{n} more to play" (`textSecondary`). **Live join:** the joiner drops in (DESIGN §6.2 F), a 2.5 s toast in the toast lane, and a ring/glow on the newest member until the next join |
 
 **Focus and D-pad** (RTL mirrors Left/Right; every edge is in the remote-only e2e).
 - Initial focus: the last played game, else `mishana`.
-- Left/Right move through posters and wrap. In RTL the order reverses and Right moves to the previous poster in reading order.
-- **Up from the carousel → ⓘ, always** (the rules entry point; it opens the focused game's rules ending with "How JAMAA works"). Left/Right move inside the top bar (wordmark is not focusable); Down from the top bar → the focused poster.
-- **Down → the members strip** (first member). OK on a member opens a small menu: **Kick** (confirm dialog, initial focus "Cancel") / **Cancel**. Up → the focused poster.
+- Left/Right move through posters and wrap (nothing scrolls). In RTL the order reverses and Right moves to the previous poster in reading order. Held keys: auto-repeats closer than 150 ms are dropped.
+- **Up from a poster → ⓘ, always** (the rules entry point; it opens the focused game's rules ending with "How JAMAA works"). Left/Right move inside the top bar (wordmark is not focusable); Down from the top bar → the focused poster.
+- **Down → the members strip** (the member focused last, else the first). If the focused member leaves, focus moves to their neighbour, else the focused poster. OK on a member opens a small menu: **Kick** (confirm dialog, initial focus "Cancel") / **Cancel**. Up → the focused poster.
 - The ticket has no focusable element (the QR is not a button), so Left/Right stay purely for games.
-- Leaving the carousel keeps `focusedGameId` and the 40 % world tint.
+- Leaving the posters keeps `focusedGameId` and the 40 % world tint.
 - **Back on the hub** → confirm "Close JAMAA? The room ends for everyone", initial focus **Stay**.
+- After any overlay closes (rules, settings, cup, member menu), focus returns to what was focused when it opened.
 - `hub_move` sound on each move (platform §3.11), at most one per 70 ms like `ui.move`.
 
 **When a poster gains focus** (the "world wakes up", platform §3.2):
 1. 0–240 ms: the hub stage crossfades **40 %** toward the focused world's stage (never 100 %: the hub stays recognisably the hub). `ease.standard`.
-2. The poster's art starts its ambient loop (≤ 4 moving elements on the poster itself; §5.1 "ambient").
-3. The meta line swaps with a 120 ms crossfade.
+2. The poster's art starts its ambient loop (≤ 4 moving elements on the poster itself; §5.1 "ambient"); it eases in and out over 300 ms and the props rest where they are when focus leaves.
+3. The info block (title, tagline, meta line) swaps with a 120 ms crossfade.
 4. After 300 ms of rest, the TV sends `HUB_FOCUS` (platform debounce; ephemeral, not persisted) and phones slide their card.
 
 ### 2.2 Game cards (posters)
 
 ```
-┌──────────────────────┐   210 × 290 dp, radius.lg, clip
-│ ★ NEW          ◆Pass │   badges: top-start / top-end, 24 dp tall pills
-│                      │
-│    [world scene]     │   world stage gradient + 2–3 code-drawn props
-│   ▓   ▓▓   ▓         │   3 characters acting the game (expressions)
-│                      │
-│ ╔══════════════════╗ │   title lockup (§1.6), max 180 × 64 dp
-│ ║   BLUFF!         ║ │
-│ ╚══════════════════╝ │
-│  Fool your friends   │   tagline, type.tv.caption, 2 lines max
-└──────────────────────┘
+┌──────────────┐   140 × 194 dp, radius.lg, clip
+│★NEW     ◆Pass│   badges: top-start / top-end, 28 dp pills
+│  [world]     │   world stage gradient + 2–3 code-drawn props
+│  ▓ ▓▓ ▓      │   3 characters (40 / 46 / 40 dp) on a ground line at ~55 %
+│──────────────│
+│ ╔══════════╗ │   one-line title lockup in a fixed 112 × 48 dp box
+│ ║  BLUFF!  ║ │
+│ ╚══════════╝ │
+└──────────────┘
 ```
 
 | Element | Spec |
 |---|---|
 | Art | Code-drawn, no bitmaps (platform §3.4): the world stage, 2–3 props (café: a lantern and a cup; rooftop: string lights and a rosette; studio: two spotlight cones and a buzzer podium; night market: drifting bang marks), and **3 characters** acting the game: Mish Ana!: two `point` at a third `shock`; Bluff: one `smug` holding the fake-moustache prop, two `think`; Most Likely: one `shy` with a rosette, two `point`; Trivia: three behind podiums, one `cheer` |
 | Title | The game's lockup in the content locale's script when the content language is AR, else Latin (the poster speaks the language the game will be played in) |
-| Tagline | `game.<id>.tagline`, `type.tv.caption`, `textSecondary`, 2 lines max |
+| Title box | Fixed 112 × 48 dp at the bottom: the title on one line fitted 26 → 20 sp, or the Mish Ana! logo scaled to fit the same box |
+| Tagline | Not on the poster: the hub's info block shows the focused game's `game.<id>.tagline` |
 | ★ New | Amber pill (`accent` fill, `ink` text, "★ New" / «★ جديد»), shown when the registry marks the game new (platform: last 30 days) |
 | Pass chip | Only when `billing` is on, the room is not premium, and the game has Pass packs: a small `gem` chip "Pass" in `overlay` with `textSecondary` text. **Never a lock on a game**: every game is free with starter content (platform §3.2, §4.3). Locks appear only on packs and premium settings inside setup |
-| Not available in this content language | The poster dims to 50 % (no blur), with a caption "Not available in {language} yet" across the bottom; it stays focusable and OK opens the platform's content-language dialog |
-| Players | The meta line under the focused poster (not on the poster, to keep the art clean): "{min}–{max} players · {minutes} min". When the room has fewer than `minPlayers`, the player part turns `dangerText` and says "Needs 3+" |
+| Not available in this content language | The poster dims to 50 % (no blur), with a top-start chip "No {language} yet" (`overlay` fill; under the Pass chip when both show), never over the title; it stays focusable and OK opens the platform's content-language dialog |
+| Players | The info block's meta line (not on the poster, to keep the art clean): "{min}–{max} players · {minutes} min". When the room has fewer than `minPlayers`, the player part turns `dangerText` and says "Needs 3+" |
 
 ### 2.3 Game detail / setup (HUB-03)
 
@@ -324,7 +326,7 @@ Timeline (first open, 1 100 ms):
 
 | t (ms) | TV | Easing / token |
 |---|---|---|
-| 0–120 | OK pressed: the poster does a press dip (scale 1.08 → 1.03), `portal_open` sound starts | `motion.instant`, `ease.standard` |
+| 0–120 | OK pressed: the poster does a press dip (scale 1.06 → 1.03), `portal_open` sound starts | `motion.instant`, `ease.standard` |
 | 0–300 | The other posters slide out sideways (start-side ones toward the start edge, the others toward the end) and fade; the ticket column and members strip slide down 24 dp and fade | 240 ms, `ease.accel` |
 | 120–700 | A **clip mask in the arch shape** (the bab path, flat-bottomed) grows from the poster's rect to cover the whole canvas (scale factor ≈ 4.6 at the end, origin = poster centre moving to screen centre). Inside the mask, the world stage is drawn at full screen (not scaled), so it looks like you are approaching a door that opens onto a bigger place. Outside the mask, the hub darkens to `#000` at 40 % | 580 ms, `ease.decel` |
 | 200–800 | **Parallax inside the arch:** the world background layer moves at 0.6× of the mask growth, the world props at 1.0× (platform two-layer parallax), so depth reads | same |
@@ -646,23 +648,22 @@ Formats follow DESIGN §6.4 (OGG Vorbis 48 kHz mono, −16 LUFS, synthesised by 
 ┌────────────────────────────────────────────────────────────────────────┐
 │ J A M A A                         [Cup ▓▓▓ ★] (i) [◆ Pass] [⚙]         │ top bar
 │                                                                        │
-│ ╔═══════════════╗  ┌─────────────┐  ┌─────────────┐┌──┐ ┌────────────┐ │
-│ ║★NEW           ║  │             │  │             ││  │ │ Join on    │ │
-│ ║  ~ steam ~    ║  │  ▓  ▓  ▓    │  │  ▓ ▓ ▓      ││  │ │ your phone │ │
-│ ║ ▓  ▓▓  ▓      ║  │             │  │             ││  │ │ ┌────────┐ │ │
-│ ║               ║  │             │  │             ││  │ │ │ ▚▞▚▞▚▞ │ │ │
-│ ║ ╔═ BLUFF! ══╗ ║  │ MISH ANA!   │  │ MOST LIKELY ││  │ │ │ ▞▚ QR▚ │ │ │
-│ ║ ╚═══════════╝ ║  │             │  │             ││  │ │ │ ▚▞▚▞▚▞ │ │ │
-│ ║ Fool your     ║  │ Who's not   │  │ Who's the   ││  │ │ └────────┘ │ │
-│ ║ friends(•)    ║  │ one of us?  │  │ one…?       ││  │ │  K X Q P   │ │
-│ ╚═══════════════╝  └─────────────┘  └─────────────┘└──┘ │ play.jamaa…│ │
-│ 3–12 players · 15 min · EN FR AR ES                     └────────────┘ │
+│ ╔═════════╗ ┌─────────┐ ┌─────────┐ ┌─────────┐         ┌────────────┐ │
+│ ║★NEW     ║ │         │ │         │ │         │         │ Join on yo…│ │
+│ ║ ~steam~ ║ │ ▓ ▓▓ ▓  │ │ ▓ ▓▓ ▓  │ │ ▓ ▓▓ ▓  │         │ ┌────────┐ │ │
+│ ║ ▓ ▓▓ ▓  ║ │─────────│ │─────────│ │─────────│         │ │ ▚▞▚▞▚▞ │ │ │
+│ ║─────────║ │MISH ANA!│ │MOST LIK.│ │ TRIVIA  │         │ │ ▞▚ QR▚ │ │ │
+│ ║ BLUFF!  ║ └─────────┘ └─────────┘ └─────────┘         │ │ ▚▞▚▞▚▞ │ │ │
+│ ╚═════════╝                                             │ └────────┘ │ │
+│ Bluff!                                                  │  K X Q P   │ │
+│ Fool your friends                                       │ play.jamaa…│ │
+│ Needs 3+ · 6–10 min · [EN]                              └────────────┘ │
 │                                                                        │
-│ ▓     ▓     ▓     ▓     ▓     ▓♛      Karim is with us!                │ members
-│ Rami  Maya  Joe   Lina  Sami  Karim                                    │ (names)
+│ ▓     ▓     ◌     Karim is with us!   1 more to play                   │ members
+│ Rami  Maya                                                             │ (names)
 └────────────────────────────────────────────────────────────────────────┘
 ```
-Compact state. Focused poster (double frame, platform focus ring) at the reading start with its world waking up; the fourth poster is cut off at the ticket edge. In the gathering state (< 3 members or the first 60 s) the ticket widens to 248 dp with a ≥ 208 dp QR panel and about 2 posters show. No in-game screen draws focusable buttons: host actions live in the pause menu, and the wireframes below show the non-focusable "◁ Back: menu" hint where a button used to be. RTL: the wordmark moves to the right, the ticket to the left, posters run right to left.
+Focused poster (double frame, platform focus ring) at the reading start with its world waking up; all four posters are always visible and nothing scrolls. The info block under the row names the focused game. The ticket keeps its 208 dp width in both states; only the QR panel scales (192 dp gathering → 176 dp compact). No in-game screen draws focusable buttons: host actions live in the pause menu, and the wireframes below show the non-focusable "◁ Back: menu" hint where a button used to be. RTL: the wordmark moves to the right, the ticket to the left, posters run right to left.
 
 ### 7.2 Game detail / setup (HUB-03, Bluff)
 

@@ -6,7 +6,7 @@ import app.jamaa.tv.protocol.GameCard
 import app.jamaa.tv.protocol.MemberPublic
 import app.jamaa.tv.protocol.RoomPublic
 
-// JAMAA-PLATFORM §3.2 HUB-02 and DESIGN-JAMAA §2.1 as pure data (JVM-tested): carousel order and wrap, the join ticket
+// JAMAA-PLATFORM §3.2 HUB-02 and DESIGN-JAMAA §2.1 as pure data (JVM-tested): poster order and wrap, the join ticket
 // states and QR math, member captions, the cup chip, and the D-pad focus graph.
 
 /** Focus targets of the hub. Top-bar items appear only when shown. */
@@ -26,29 +26,47 @@ object HubModel {
     /** First 60 s after launch the ticket stays in the gathering state. */
     const val GATHERING_MS = 60_000L
     const val GATHERING_MIN_MEMBERS = 3
-    const val PANEL_GATHERING_DP = 208
+    /** The QR panel's layout size (5 dp modules for the version-3 code); compact draws the same panel scaled to 176. */
+    const val PANEL_GATHERING_DP = 192
     const val PANEL_COMPACT_DP = 176
-    const val COLUMN_GATHERING_DP = 248
-    const val COLUMN_COMPACT_DP = 200
-    const val POSTER_W_DP = 210
-    const val POSTER_H_DP = 290
-    const val POSTER_GAP_DP = 28
-    const val POSTER_FOCUS_SCALE = 1.08f
+    /** The join ticket is 208 dp wide in both states (the poster row never reflows). */
+    const val TICKET_W_DP = 208
+    const val POSTER_W_DP = 140
+    const val POSTER_H_DP = 194
+    const val POSTER_GAP_DP = 16
+    /** = JamaaFocus.TILE_SCALE (posters are FocusKind.Tile); the row's insets leave room for it and the ring. */
+    const val POSTER_FOCUS_SCALE = 1.06f
+    /** Slots (posters, "Update JAMAA", shutter) the plain row shows; more fall back to a scrolling row. */
+    const val VISIBLE_POSTERS = 4
+    /** Held Left/Right: auto-repeats closer together than this are dropped. */
+    const val KEY_REPEAT_MS = 150L
 
     /** The hub stage crossfades this far toward the focused world (never 100 %). */
     const val WORLD_TINT = 0.40f
 
-    fun ticketState(presentMembers: Int, sinceLaunchMs: Long): TicketState =
-        if (presentMembers < GATHERING_MIN_MEMBERS || sinceLaunchMs < GATHERING_MS) TicketState.GATHERING else TicketState.COMPACT
+    /** Compact once 60 s have passed with ≥ 3 members; [wasCompact] latches it (never back to gathering). */
+    fun ticketState(presentMembers: Int, sinceLaunchMs: Long, wasCompact: Boolean = false): TicketState =
+        if (wasCompact || (presentMembers >= GATHERING_MIN_MEMBERS && sinceLaunchMs >= GATHERING_MS)) TicketState.COMPACT else TicketState.GATHERING
 
     fun panelDp(state: TicketState): Int = if (state == TicketState.GATHERING) PANEL_GATHERING_DP else PANEL_COMPACT_DP
-    fun columnDp(state: TicketState): Int = if (state == TicketState.GATHERING) COLUMN_GATHERING_DP else COLUMN_COMPACT_DP
+
+    /** The compact ticket's QR scale (graphicsLayer; the layout keeps the gathering size). */
+    fun panelScale(state: TicketState): Float = panelDp(state).toFloat() / PANEL_GATHERING_DP
 
     /** SPEC §9.9: `module = floor(panel / (matrixWidth + 8))` (the 4-module quiet zone sits inside the panel). */
     fun qrModuleDp(panelDp: Int, matrixWidth: Int): Int = panelDp / (matrixWidth + 8)
 
-    /** Member caption length: ≤ 8 graphemes with ≤ 8 members, ≤ 6 at 9–12 (72 dp slots fit 12). */
-    fun captionGraphemes(memberCount: Int): Int = if (memberCount <= 8) 8 else 6
+    /** Member caption length: ≤ 7 graphemes with ≤ 8 members, ≤ 5 at 9–12 (72 dp slots fit 12). */
+    fun captionGraphemes(memberCount: Int): Int = if (memberCount <= 8) 7 else 5
+
+    /** Dashed ghost seats after the members, up to max(3, the focused game's minPlayers); also "{n} more to play". */
+    fun ghostSeats(memberCount: Int, minPlayers: Int): Int = (maxOf(GATHERING_MIN_MEMBERS, minPlayers) - memberCount).coerceAtLeast(0)
+
+    /** Shutter prop in the row only while it would otherwise show fewer than [VISIBLE_POSTERS] slots. */
+    fun showShutter(cards: Int, missing: Int): Boolean = cards + missing < VISIBLE_POSTERS
+
+    /** Plain row (no scrolling) when every slot fits; otherwise the scrolling fallback. */
+    fun scrolls(cards: Int, missing: Int): Boolean = cards + missing > VISIBLE_POSTERS
 
     /** Members shown on the strip (left members linger in a game only), by seat. */
     fun strip(room: RoomPublic): List<MemberPublic> = room.members.filter { !it.left }.sortedBy { it.seat }
@@ -102,10 +120,11 @@ object HubModel {
     }
 
     /**
-     * The hub focus graph (§3.2, DESIGN-JAMAA §2.1). Keys are physical; [rtl] mirrors Left/Right. Returns the new focus
-     * or null when the key does nothing (it then must not move focus anywhere else).
+     * The hub focus graph (§3.2, DESIGN-JAMAA §2.1). Keys are physical; [rtl] mirrors Left/Right. Down from a poster goes
+     * to [lastMember] (the member focused last, else the first). Returns the new focus or null when the key does nothing
+     * (it then must not move focus anywhere else).
      */
-    fun move(from: HubFocus, key: RemoteKey, rtl: Boolean, posters: Int, members: Int, topBar: List<TopBarItem>): HubFocus? {
+    fun move(from: HubFocus, key: RemoteKey, rtl: Boolean, posters: Int, members: Int, topBar: List<TopBarItem>, lastMember: Int = 0): HubFocus? {
         val forward = if (rtl) RemoteKey.LEFT else RemoteKey.RIGHT
         val backward = if (rtl) RemoteKey.RIGHT else RemoteKey.LEFT
         return when (from) {
@@ -113,7 +132,7 @@ object HubModel {
                 forward -> if (posters <= 1) null else HubFocus.Poster((from.index + 1) % posters)
                 backward -> if (posters <= 1) null else HubFocus.Poster((from.index - 1 + posters) % posters)
                 RemoteKey.UP -> HubFocus.TopBar(TopBarItem.INFO)
-                RemoteKey.DOWN -> if (members > 0) HubFocus.Member(0) else null
+                RemoteKey.DOWN -> if (members > 0) HubFocus.Member(lastMember.coerceIn(0, members - 1)) else null
                 else -> null
             }
             is HubFocus.TopBar -> {

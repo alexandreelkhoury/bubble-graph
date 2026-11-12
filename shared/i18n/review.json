@@ -172,7 +172,9 @@
     "join.colorTaken",
     "join.characterLabel",
     "join.characterTaken",
-    "error.colorTaken"
+    "error.colorTaken",
+    "hub.noLanguageYet",
+    "hub.moreToPlay"
   ],
   "es": [
     "brand.slogan",
@@ -345,6 +347,8 @@
     "join.colorTaken",
     "join.characterLabel",
     "join.characterTaken",
-    "error.colorTaken"
+    "error.colorTaken",
+    "hub.noLanguageYet",
+    "hub.moreToPlay"
   ]
 }

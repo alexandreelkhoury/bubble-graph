@@ -324,6 +324,15 @@
     <string name="hub__switch_language__keep">خلّيها %1$s</string>
     <string name="hub__join_on_phone">فوتوا من تلفوناتكن</string>
     <string name="hub__waiting_gang">ناطرين الجماعة…</string>
+    <string name="hub__no_language_yet">مش بـ%1$s بعد</string>
+    <plurals name="hub__more_to_play">
+        <item quantity="zero">جاهزين نلعب</item>
+        <item quantity="one">ناقصنا واحد تنلعب</item>
+        <item quantity="two">ناقصنا اتنين تنلعب</item>
+        <item quantity="few">ناقصنا %1$d تنلعب</item>
+        <item quantity="many">ناقصنا %1$d تنلعب</item>
+        <item quantity="other">ناقصنا %1$d تنلعب</item>
+    </plurals>
     <string name="hub__close_confirm__title">منسكّر جماعة؟</string>
     <string name="hub__close_confirm__body">الغرفة بتسكّر للكل.</string>
     <string name="hub__close_confirm__stay">خلّينا</string>
