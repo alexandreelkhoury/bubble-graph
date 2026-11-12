@@ -321,6 +321,15 @@
   "hub.switchLanguage.keep": "خلّيها {language}",
   "hub.joinOnPhone": "فوتوا من تلفوناتكن",
   "hub.waitingGang": "ناطرين الجماعة…",
+  "hub.noLanguageYet": "مش بـ{language} بعد",
+  "hub.moreToPlay": {
+    "zero": "جاهزين نلعب",
+    "one": "ناقصنا واحد تنلعب",
+    "two": "ناقصنا اتنين تنلعب",
+    "few": "ناقصنا {count} تنلعب",
+    "many": "ناقصنا {count} تنلعب",
+    "other": "ناقصنا {count} تنلعب"
+  },
   "hub.closeConfirm.title": "منسكّر جماعة؟",
   "hub.closeConfirm.body": "الغرفة بتسكّر للكل.",
   "hub.closeConfirm.stay": "خلّينا",

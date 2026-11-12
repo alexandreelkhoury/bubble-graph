@@ -633,17 +633,18 @@ Layout numbers below are DESIGN-JAMAA §2 (binding for geometry); this section i
 
 **HUB-02 Hub** (initial focus on the last played game, else `mishana`).
 - **Top bar:** JAMAA wordmark, "Tonight's cup" chip (the top 3 characters with their stars; hidden until the first game ends; OK → the cup sheet with full standings), **ⓘ**, the Pass button (only when `billing` is on and not `premium`), and Settings (sound, interface language, **Calm animations**, **Show how-to again**).
-- **Centre:** a horizontal **carousel of game posters, 210 × 290 dp, gap 28 dp** (DESIGN-JAMAA §2.1; the earlier 300 × 400 dp did not fit the 540 dp canvas). The focused poster scales to 1.08 and its **world** wakes up: the background crossfades 40 % toward that world's palette and an ambient loop starts (§3.4). Below it: the title, the tagline, "3–12 players · 10–20 min", and chips for the content languages available. A "New" badge marks games added in the last 30 days (registry constant).
+- **Centre:** a row of **all four game posters, 140 × 194 dp, gap 16 dp** (DESIGN-JAMAA §2.1; no scrolling, so every game is visible). The focused poster scales to 1.06 and its **world** wakes up: the background crossfades 40 % toward that world's palette and an ambient loop starts (§3.4). Below the row, an info block for the focused game: the title, the tagline, "Needs 3+ · 10–20 min" and one chip for the room's content language. A "New" badge marks games added in the last 30 days (registry constant).
 - Games never show a lock. Packs may be locked; the game never is. Only `room.games` are shown (§2.5).
 - If a game has no content in `contentLocale`, the poster is dimmed and says "Not available in {language} yet". OK opens a small dialog to switch the content language.
 - **Join ticket** (side column on the end side, never focusable) with the QR, the code and "Join on your phone". QR sizing uses SPEC §9.9 (`module = floor(panel / (matrixWidth + 8))`, upper-case alphanumeric URL; the production URL is a version-3 code, 29 + 8 = 37):
-  - **Gathering state** — while fewer than 3 members, or during the first 60 s after launch: the ticket column widens to **≥ 248 dp** with a **≥ 208 dp** cream panel (module ≥ 5 dp), and the carousel shows about 2 posters.
-  - **Compact state** — afterwards: the column is 200 dp with a **176 dp** panel (module ≥ 4 dp); it never goes smaller. The width change animates over 400 ms and never while the carousel is moving.
-- **Members strip** (bottom, full width): every member's character at 48 dp **with their name** (caption, ≤ 8 graphemes when ≤ 8 members, ≤ 6 graphemes at 9–12; 72 dp slots fit 12), VIP crown. On join: the DESIGN.md live-join pattern — a 2.5 s toast above the strip ("Karim is with us!") and a ring/glow on the newest member until the next join.
+  - The ticket is **208 dp** wide in both states, so the posters never reflow.
+  - **Gathering state** — while fewer than 3 members, or during the first 60 s after launch: a **192 dp** cream panel (module 5 dp).
+  - **Compact state** — afterwards (and then for good): the same panel drawn at **176 dp** by scale (400 ms); it never goes smaller.
+- **Members strip** (bottom, full width): every member's character at 48 dp **with their name** (caption, ≤ 7 graphemes when ≤ 8 members, ≤ 5 graphemes at 9–12; 72 dp slots fit 12), VIP crown, then ghost seats up to max(3, the focused game's `minPlayers`) and "{n} more to play". On join: the DESIGN.md live-join pattern — a 2.5 s toast above the strip ("Karim is with us!") and a ring/glow on the newest member until the next join.
 - **Focus graph** (RTL mirrors Left/Right):
-  - Carousel Left/Right moves through posters (it wraps); every focus rest sends a debounced `HUB_FOCUS`.
+  - Left/Right moves through posters (it wraps); every focus rest sends a debounced `HUB_FOCUS`.
   - Up from the carousel → **ⓘ** (always; it is the rules entry point). Left/Right inside the top bar; Down from the top bar → the focused poster.
-  - Down from the carousel → the members strip (first member). OK on a member → a small menu: **Kick** (confirm) / **Cancel** (TV KICK is allowed by the protocol). Up → the focused poster.
+  - Down from the carousel → the members strip (the member focused last, else the first). OK on a member → a small menu: **Kick** (confirm) / **Cancel** (TV KICK is allowed by the protocol). Up → the focused poster.
   - Leaving the carousel keeps `focusedGameId` and the 40 % world tint.
   - **Back on the hub** → a confirm "Close JAMAA? The room ends for everyone", initial focus on **Stay**.
 

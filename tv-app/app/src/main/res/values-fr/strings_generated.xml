@@ -303,6 +303,12 @@
     <string name="hub__switch_language__keep">Garder %1$s</string>
     <string name="hub__join_on_phone">Rejoignez avec votre téléphone</string>
     <string name="hub__waiting_gang">On attend la bande…</string>
+    <string name="hub__no_language_yet">Pas encore en %1$s</string>
+    <plurals name="hub__more_to_play">
+        <item quantity="one">Encore %1$d pour jouer</item>
+        <item quantity="many">Encore %1$d pour jouer</item>
+        <item quantity="other">Encore %1$d pour jouer</item>
+    </plurals>
     <string name="hub__close_confirm__title">Fermer JAMAA ?</string>
     <string name="hub__close_confirm__body">La salle se ferme pour tout le monde.</string>
     <string name="hub__close_confirm__stay">Rester</string>

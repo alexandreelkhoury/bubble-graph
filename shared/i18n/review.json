@@ -177,7 +177,9 @@
     "error.colorTaken",
     "tv.endGame",
     "tv.endGameConfirm",
-    "tv.endGameBody"
+    "tv.endGameBody",
+    "hub.noLanguageYet",
+    "hub.moreToPlay"
   ],
   "es": [
     "brand.slogan",
@@ -355,6 +357,8 @@
     "error.colorTaken",
     "tv.endGame",
     "tv.endGameConfirm",
-    "tv.endGameBody"
+    "tv.endGameBody",
+    "hub.noLanguageYet",
+    "hub.moreToPlay"
   ]
 }
