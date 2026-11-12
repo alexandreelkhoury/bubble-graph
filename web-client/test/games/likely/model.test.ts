@@ -1,18 +1,19 @@
-// Most Likely web view model (GAME-LIKELY §8, §12) against lane A's v2 fixtures: secrecy, the phone's own outcome, the
-// TV reveal plan (shared layout + safe margin), awards staging, and the reveal step list fitting the server window.
+// Most Likely web view model (GAME-LIKELY §8, §12) against lane A's v2 fixtures: secrecy, the phone's own outcome (who
+// voted for me, no points), the TV reveal plan (one row, vote stacks; shared layout + safe margin), awards staging, and
+// the reveal step list fitting the server window.
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { PlayerRoomView, TvRoomView } from "@jamaa/shared/protocol/v2";
-import { LIKELY_TIMING, likelyJuryArc, likelyRevealMs, likelyRevealPositions, likelyVotingMs } from "@jamaa/shared/games/likely/meta";
+import { LIKELY_STAGE, LIKELY_TIMING, likelyPublicTokens, likelyRevealMs, likelyRow, likelyVotingMs } from "@jamaa/shared/games/likely/meta";
 import { ENTRANCE_GRACE_MS } from "@jamaa/shared/constants";
 import { endMs } from "@jamaa/shared/motion";
 import {
   SAFE, activeSeats, awardsOf, awardsStage, canVote, deadlineOf, fmtPercent, likelyModel, myReveal, needsVote, percentLines,
-  phaseDurationMs, phoneAwards, podiumSteps, rankRows, ranking, revealExpression, revealPlan, signatureRow, targetsOf, winners,
+  phaseDurationMs, phoneAwards, revealExpression, revealPlan, signatureRow, targetsOf, winners,
 } from "../../../src/games/likely/model";
 import type { LikelyModel } from "../../../src/games/likely/model";
-import { HOLD_MIN_MS, REVEAL_TAIL_MS, boardMs, fitReveal, revealSteps, runStagger } from "../../../src/games/likely/tv/choreo";
+import { HOLD_MIN_MS, REVEAL_TAIL_MS, TOKEN_AT, TOKEN_MS, fitReveal, revealSteps, tokenStagger } from "../../../src/games/likely/tv/choreo";
 
 const DIR = join(__dirname, "../../../../shared/fixtures/v2/games/likely");
 const fx = <T = PlayerRoomView | TvRoomView>(name: string): T => (JSON.parse(readFileSync(join(DIR, `${name}.json`), "utf8")) as { view: T }).view;
@@ -64,14 +65,13 @@ describe("secrecy (GAME-LIKELY §8.1)", () => {
       for (const s of m.seats) expect(revealExpression(m, s.id, "end")).toMatch(/idle|away/);
     }
   });
-  it("secret mode: no ballots, no points, no runners and no coins on the TV", () => {
+  it("secret mode: no ballots; the TV's tokens are anonymous envelopes, one per vote, from the tally", () => {
     const m = model("s2c.state.tv.playing.likely.reveal.secret.ar");
     expect(m.pub.reveal!.ballots).toBeNull();
     const plan = revealPlan(m, true);
-    expect(plan.runners).toEqual([]);
-    expect(plan.coins).toEqual([]);
-    expect(Object.keys(plan.gains)).toEqual([]);
-    for (const id of Object.keys(plan.arc)) expect(plan.ends[id]).toEqual(plan.arc[id]);
+    expect(plan.tokens.every((x) => x.voterId === null)).toBe(true);
+    expect(plan.tokens).toHaveLength(m.pub.reveal!.votesCast);
+    for (const c of m.pub.reveal!.counts) expect(plan.tokens.filter((x) => x.targetId === c.playerId)).toHaveLength(c.count);
   });
   it("the TV reveal plan depends on public data only (same plan when the room's private fields change)", () => {
     const v = fx<TvRoomView>("s2c.state.tv.playing.likely.reveal");
@@ -98,45 +98,42 @@ describe("secrecy (GAME-LIKELY §8.1)", () => {
 });
 
 describe("the phone's own reveal (LK-PH-03)", () => {
-  it("public: votes received, agreement and self-aware points, score before/after", () => {
+  it("public: votes received and who cast them, who made the same pick; no points", () => {
     const m = model("s2c.state.player.playing.likely.reveal");
     const r = myReveal(m)!;
-    expect(r).toMatchObject({ votedFor: m.myId, got: 3, percent: 75, top: true, agreed: 2, agreePoints: 100, selfAwarePoints: 100, unanimousPoints: 0, total: 200, scoreBefore: 0, score: 200 });
+    expect(r).toMatchObject({ votedFor: m.myId, got: 3, percent: 75, top: true });
+    // Rami voted for themself; Léa and نور voted for Rami too.
+    expect(r.voters.map((s) => s.name)).toEqual(["Léa", "نور"]);
+    expect(r.samePick.map((s) => s.name)).toEqual(["Léa", "نور"]);
+    expect(r).not.toHaveProperty("total");
   });
-  it("secret: a percentage and never a point", () => {
+  it("secret: a percentage, never who voted", () => {
     const m = model("s2c.state.player.playing.likely.reveal.secret.ar");
     const r = myReveal(m)!;
-    expect(r.total).toBe(0);
-    expect(r.agreed).toBe(0);
+    expect(r.voters).toEqual([]);
+    expect(r.samePick).toEqual([]);
     expect(r.percent).toBe(20);
   });
 });
 
 describe("TV reveal plan (§12.2, shared layout)", () => {
-  it("runners join conga lines at the shared layout positions + the safe margin; self-voters stay seated", () => {
+  it("public: one token per ballot, in ballot order, at the shared stack slots + the safe margin; self-votes included", () => {
     const m = model("s2c.state.tv.playing.likely.reveal");
     const plan = revealPlan(m, false);
-    const ids = m.seats.map((s) => s.id);
-    const arc = likelyJuryArc(ids.length, false);
-    const targeted = new Set(m.pub.reveal!.counts.map((c) => c.playerId));
-    const running = m.pub.reveal!.ballots!.filter((b) => b.voterId !== b.targetId && !targeted.has(b.voterId));
-    const pos = likelyRevealPositions(arc, ids, running);
-    for (const id of plan.runners) expect(plan.ends[id]).toEqual({ x: pos[id]!.x + SAFE.x, y: pos[id]!.y + SAFE.y });
-    expect(plan.selfVoters).toEqual(["p_0a1b2c3d4e5f60718293a4b5"]);
-    // p0 voted for themself; p1 received a vote, so it heads its own line and stays seated.
-    expect(plan.runners).toEqual(["p_2c3d4e5f60718293a4b5c6d7", "p_3d4e5f60718293a4b5c6d7e8"]);
-    expect(plan.ends["p_1b2c3d4e5f60718293a4b5c6"]).toEqual(plan.arc["p_1b2c3d4e5f60718293a4b5c6"]);
-    expect(plan.coins.map((c) => [c.voterId, c.points])).toEqual([
-      ["p_0a1b2c3d4e5f60718293a4b5", 200], ["p_1b2c3d4e5f60718293a4b5c6", 100], ["p_2c3d4e5f60718293a4b5c6d7", 100],
-    ]);
-    // Coins leave from the head of the voter's pick and land on the voter.
-    for (const c of plan.coins) expect(c.from.x).toBe(plan.arc[c.targetId]!.x);
+    const ids = m.seats.filter((s) => !s.left).map((s) => s.id);
+    const want = likelyPublicTokens(likelyRow(ids.length, false, true), ids, m.pub.reveal!.ballots!);
+    expect(plan.tokens.map((x) => [x.voterId, x.targetId, x.k])).toEqual(want.map((x) => [x.voterId, x.targetId, x.k]));
+    for (const [i, x] of plan.tokens.entries()) expect(x.at).toEqual({ x: want[i]!.at.x + SAFE.x, y: want[i]!.at.y + SAFE.y });
+    expect(plan.tokens.some((x) => x.voterId === x.targetId)).toBe(true);
+    // The row sits under the shrunk card, inside the canvas; tokens never leave it.
+    for (const id of ids) expect(plan.row[id]!.y).toBe(LIKELY_STAGE.revealRowY + SAFE.y);
+    for (const x of plan.tokens) expect(x.at.y + plan.cell / 2).toBeLessThanOrEqual(540 - 27 + 0.1);
   });
-  it("RTL mirrors the arc", () => {
+  it("RTL mirrors the row", () => {
     const m = model("s2c.state.tv.playing.likely.reveal.tie");
     const ltr = revealPlan(m, false), rtl = revealPlan(m, true);
     const first = m.seats[0]!.id;
-    expect(ltr.arc[first]!.x + rtl.arc[first]!.x).toBeCloseTo(960, 0);
+    expect(ltr.row[first]!.x + rtl.row[first]!.x).toBeCloseTo(960, 0);
   });
   it("expressions after the stamp: smug self-voting top, shock when unanimous, shy otherwise", () => {
     const pub = model("s2c.state.tv.playing.likely.reveal");
@@ -160,59 +157,52 @@ describe("TV reveal plan (§12.2, shared layout)", () => {
 });
 
 describe("reveal step list (shared sampler)", () => {
-  it("the run takes 100 ms per voter and ≤ 2.5 s in all", () => {
-    for (let n = 1; n <= 12; n++) expect(520 + runStagger(n) * (n - 1)).toBeLessThanOrEqual(2500);
+  it("the votes land one by one, 160–320 ms apart, the whole build ≤ 2.4 s + one flight", () => {
+    for (let n = 1; n <= 12; n++) {
+      expect(tokenStagger(n)).toBeGreaterThanOrEqual(160);
+      expect(tokenStagger(n)).toBeLessThanOrEqual(320);
+      expect(tokenStagger(n) * (n - 1)).toBeLessThanOrEqual(2400);
+    }
   });
-  it("always ends inside the server's REVEAL window, leaving the hold", () => {
-    for (const publicMode of [true, false]) for (const unanimous of [false, true]) for (let votes = 0; votes <= 12; votes++) {
-      const shape = { runners: publicMode ? votes : 0, envelopes: publicMode ? 0 : votes, publicMode, chaos: false, none: votes === 0, unanimous, coins: publicMode ? votes : 0 };
+  it("always ends inside the server's REVEAL window, leaving the hold; no point step exists", () => {
+    for (const unanimous of [false, true]) for (let votes = 0; votes <= 12; votes++) {
+      const shape = { tokens: votes, chaos: false, none: votes === 0, unanimous };
       const count = Math.max(votes, 1);
       const window = likelyRevealMs(votes, unanimous, 1);
       const steps = fitReveal(revealSteps(shape), window, count);
       expect(endMs(steps, count)).toBeLessThanOrEqual(window - REVEAL_TAIL_MS + 1);
       expect(steps.map((s) => s.id)).toContain("dim");
-      if (!shape.none) expect(steps.some((s) => s.id === (publicMode ? "run" : "env"))).toBe(true);
-      if (!publicMode) expect(steps.some((s) => s.id === "coin")).toBe(false);
+      if (!shape.none) expect(steps.map((s) => s.id)).toEqual(expect.arrayContaining(["token", "count", "spot", "stamp", "hold"]));
+      for (const id of ["coin", "tick", "run", "board"]) expect(steps.some((s) => s.id === id)).toBe(false);
     }
   });
-  it("the hold fills the rest of the window: ends exactly at window − tail, and gets ≥ 2 s once the window allows it", () => {
-    for (const publicMode of [true, false]) for (const chaos of [false, true]) for (let votes = 1; votes <= 12; votes++) {
-      const shape = { runners: publicMode ? votes : 0, envelopes: publicMode ? 0 : votes, publicMode, chaos, none: false, unanimous: false, coins: publicMode ? votes : 0, lines: Math.min(4, votes) };
+  it("the hold fills the rest of the window and gets ≥ 2 s at every room size (natural speed)", () => {
+    for (const chaos of [false, true]) for (let votes = 1; votes <= 12; votes++) {
+      const shape = { tokens: votes, chaos, none: false, unanimous: false };
       const count = Math.max(votes, 1);
-      for (const window of [likelyRevealMs(votes, false, 1), 9_500, 12_000]) {
-        const steps = fitReveal(revealSteps(shape), window, count);
-        const hold = steps.find((s) => s.id === "hold")!;
-        expect(hold.startMs + hold.durationMs).toBeCloseTo(window - REVEAL_TAIL_MS, 5);
-        expect(endMs(steps, count)).toBeLessThanOrEqual(window - REVEAL_TAIL_MS + 1);
-        // the beats before the hold are never squeezed below 70 % of their natural speed
-        const natural = revealSteps(shape).find((s) => s.id === "hold")!.startMs;
-        expect(hold.startMs).toBeGreaterThanOrEqual(Math.min(natural, natural * 0.7) - 1);
-        if (window - REVEAL_TAIL_MS - natural >= HOLD_MIN_MS) expect(hold.startMs).toBe(natural);
-        if (window >= 12_000) expect(hold.durationMs).toBeGreaterThanOrEqual(HOLD_MIN_MS);
-      }
+      const window = likelyRevealMs(votes, false, 1);
+      const steps = fitReveal(revealSteps(shape), window, count);
+      const hold = steps.find((s) => s.id === "hold")!;
+      expect(hold.startMs + hold.durationMs).toBeCloseTo(window - REVEAL_TAIL_MS, 5);
+      expect(hold.durationMs).toBeGreaterThanOrEqual(HOLD_MIN_MS);
+      expect(hold.startMs).toBe(revealSteps(shape).find((s) => s.id === "hold")!.startMs);
     }
-  });
-  it("the secret-vote board reads for ≥ 1.8 s + 120 ms per line before the hold", () => {
-    const s = revealSteps({ runners: 0, envelopes: 5, publicMode: false, chaos: false, none: false, unanimous: false, coins: 0, lines: 3 });
-    const board = s.find((x) => x.id === "board")!;
-    expect(board.durationMs).toBe(boardMs(3));
-    expect(boardMs(3)).toBe(1800 + 360);
-    expect(s.find((x) => x.id === "hold")!.startMs).toBeGreaterThanOrEqual(board.startMs + board.durationMs);
+    expect(TOKEN_AT + TOKEN_MS).toBeLessThan(1500);
   });
   it("chaos scrambles and never spotlights", () => {
-    const s = revealSteps({ runners: 4, envelopes: 0, publicMode: true, chaos: true, none: false, unanimous: false, coins: 0 });
+    const s = revealSteps({ tokens: 4, chaos: true, none: false, unanimous: false });
     expect(s.map((x) => x.id)).toContain("scramble");
     expect(s.map((x) => x.id)).not.toContain("spot");
+    expect(s.map((x) => x.id)).not.toContain("stamp");
   });
 });
 
 describe("awards (§12.4)", () => {
-  it("3 s intro, 4 s per trio, then Mind Reader in public mode only", () => {
-    expect(awardsStage(5, true, 0)).toEqual({ kind: "intro" });
-    expect(awardsStage(5, true, 3000)).toEqual({ kind: "trio", index: 0 });
-    expect(awardsStage(5, true, 7000)).toEqual({ kind: "trio", index: 1 });
-    expect(awardsStage(5, true, 11000)).toEqual({ kind: "mindReader" });
-    expect(awardsStage(5, false, 11000)).toEqual({ kind: "trio", index: 1 });
+  it("3 s intro, then 4 s per trio (no Mind Reader page: no points)", () => {
+    expect(awardsStage(5, 0)).toEqual({ kind: "intro" });
+    expect(awardsStage(5, 3000)).toEqual({ kind: "trio", index: 0 });
+    expect(awardsStage(5, 7000)).toEqual({ kind: "trio", index: 1 });
+    expect(awardsStage(5, 11000)).toEqual({ kind: "trio", index: 1 });
   });
   it("every player has exactly one signature or mystery award; extras come after", () => {
     const m = model("s2c.state.tv.playing.likely.awards");
@@ -222,50 +212,14 @@ describe("awards (§12.4)", () => {
     const mine = awardsOf(m.pub, star.playerIds[0]!);
     expect(mine[0]!.kind === "signature" || mine[0]!.kind === "mystery").toBe(true);
     expect(mine.some((a) => a.kind === "star")).toBe(true);
-    expect(ranking(m)[0]!.score).toBeGreaterThanOrEqual(ranking(m)[1]!.score);
+    expect(phoneAwards(m.pub, star.playerIds[0]!)).toEqual(mine);
   });
-  it("secret mode: no Mind Reader, no Self-aware", () => {
-    const m = model("s2c.state.tv.playing.likely.awards.secret.ar");
-    expect(m.pub.awards.some((a) => a.kind === "mindReader" || a.kind === "selfAware")).toBe(false);
-    expect(m.seats.every((s) => s.score === 0)).toBe(true);
-  });
-  it("a phone keeps the Mind Reader for RESULTS (the TV ceremony reveals it last)", () => {
-    const m = model("s2c.state.tv.playing.likely.awards");
-    const mr = m.pub.awards.find((a) => a.kind === "mindReader")!;
-    const id = mr.playerIds[0]!;
-    expect(phoneAwards(m.pub, id, false).some((a) => a.kind === "mindReader")).toBe(false);
-    expect(phoneAwards(m.pub, id, true).some((a) => a.kind === "mindReader")).toBe(true);
-    expect(phoneAwards(m.pub, id, false)[0]!.kind).toMatch(/signature|mystery/);
-  });
-});
-
-describe("Mind Reader ranking: ties share (GAME-LIKELY §6)", () => {
-  const tie = (): LikelyModel => {
-    const m = model("s2c.state.tv.playing.likely.awards");
-    const base = m.seats.slice(0, 1)[0]!;
-    const mk = (i: number, name: string, score: number) => ({ ...base, id: `p${i}`, name, seat: i, score, scoreBefore: score, left: false });
-    const seats = [mk(0, "Rami", 900), mk(1, "Lina", 700), mk(2, "Karim", 700), mk(3, "Maya", 700), mk(4, "Joe", 300)];
-    return { ...m, seats, byId: new Map(seats.map((s) => [s.id, s])) };
-  };
-  it("a 3-way tie prints the same competition rank, and the next rank skips", () => {
-    expect(rankRows(tie().seats).map((r) => [r.seat.name, r.rank])).toEqual([["Rami", 1], ["Lina", 2], ["Karim", 2], ["Maya", 2], ["Joe", 5]]);
-  });
-  it("tied players share a podium step; the rank a tie skips leaves its step empty", () => {
-    const [p1, p2, p3] = podiumSteps(tie());
-    expect(p1.map((s) => s.name)).toEqual(["Rami"]);
-    expect(p2.map((s) => s.name)).toEqual(["Lina", "Karim", "Maya"]);
-    expect(p3).toEqual([]);
-    const all = tie();
-    const flat = all.seats.map((s) => ({ ...s, score: 500 }));
-    const [a, b, c] = podiumSteps({ ...all, seats: flat });
-    expect(a).toHaveLength(5);
-    expect(b).toEqual([]);
-    expect(c).toEqual([]);
-  });
-  it("players who left are not on the podium", () => {
-    const m = tie();
-    const seats = m.seats.map((s) => (s.name === "Rami" ? { ...s, left: true } : s));
-    expect(podiumSteps({ ...m, seats })[0].map((s) => s.name)).toEqual(["Lina", "Karim", "Maya"]);
+  it("only signature, mystery and star awards exist; every score is 0 (both modes)", () => {
+    for (const n of ["s2c.state.tv.playing.likely.awards", "s2c.state.tv.playing.likely.awards.secret.ar"]) {
+      const m = model(n);
+      expect(m.pub.awards.every((a) => ["signature", "mystery", "star"].includes(a.kind))).toBe(true);
+      expect(m.pub.scores.every((x) => x.score === 0)).toBe(true);
+    }
   });
 });
 

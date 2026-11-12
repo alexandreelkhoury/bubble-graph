@@ -12,16 +12,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable enum class LikelyMode { @SerialName("family") FAMILY, @SerialName("spicy") SPICY }
 
-/** GAME-LIKELY §6.2. `SELF_AWARE` and `MIND_READER` exist in public mode only. */
+/** GAME-LIKELY §6.2. No point-based award: the game has no points (owner decision 2026-11-12). */
 @Serializable enum class LikelyAwardKind {
     @SerialName("signature") SIGNATURE,
     @SerialName("mystery") MYSTERY,
     @SerialName("star") STAR,
-    @SerialName("selfAware") SELF_AWARE,
-    @SerialName("mindReader") MIND_READER,
 }
-
-@Serializable enum class LikelyDeltaReason { @SerialName("agree") AGREE, @SerialName("unanimous") UNANIMOUS, @SerialName("selfAware") SELF_AWARE }
 
 /** The card on screen (CARD+). `prompt` already has `{player}` resolved to the named player's name. */
 @Serializable data class LikelyCard(
@@ -36,10 +32,8 @@ import kotlinx.serialization.Serializable
 /** Votes per target; `percent` = round(100 × count / votesCast), both modes (§5.1). */
 @Serializable data class LikelyCount(val playerId: String, val count: Int, val percent: Int)
 
-/** Public mode only (`null` in secret-vote mode, never projected there). */
+/** Public mode only (`null` in secret-vote mode, never projected there): who voted for whom. */
 @Serializable data class LikelyBallot(val voterId: String, val targetId: String)
-
-@Serializable data class LikelyDelta(val playerId: String, val points: Int, val reason: LikelyDeltaReason)
 
 @Serializable data class LikelyReveal(
     val votesCast: Int,
@@ -50,9 +44,9 @@ import kotlinx.serialization.Serializable
     val none: Boolean,
     val againId: String?,
     val ballots: List<LikelyBallot>?,
-    val deltas: List<LikelyDelta>,
 )
 
+/** The instance's players in seat order. No points in this game (§6): `score` and `scoreBefore` are always 0. */
 @Serializable data class LikelyScore(val playerId: String, val score: Int, val scoreBefore: Int)
 
 @Serializable data class LikelyAwardCard(val index: Int, val id: String, val prompt: String, val award: String, val namedPlayerId: String?)
@@ -92,8 +86,6 @@ data class LikelyPlayer(
     /** Left the room (or its member is gone): not on the jury arc any more; greyed in AWARDS/RESULTS. */
     val left: Boolean,
     val isHost: Boolean,
-    val score: Int,
-    val scoreBefore: Int,
     /** In VOTING: has voted (never for whom). */
     val voted: Boolean,
     /** First card of a late joiner: the "New" ribbon. */
@@ -122,7 +114,7 @@ data class LikelyView(
 
     fun player(id: String?): LikelyPlayer? = if (id == null) null else players.firstOrNull { it.id == id }
 
-    /** Secret-vote mode ("anonymous" in code): no ballots, no points, awards only (GAME-LIKELY §6, §8.1). */
+    /** Secret-vote mode ("anonymous" in code): no ballots, percentages only (GAME-LIKELY §8.1). */
     val anonymous: Boolean get() = !showVoters
 }
 

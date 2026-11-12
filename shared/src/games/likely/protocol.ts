@@ -4,7 +4,7 @@ import * as z from "zod";
 import type { Same } from "../../protocol/common";
 import type { LikelyExtras as EngineExtras, LikelyIntent as EngineIntent, LikelyMe as EngineMe, LikelyPublic as EnginePublic } from "./engine/state";
 import type { LikelySettingsPatch } from "./engine/settings";
-import { LIKELY_AWARD_KINDS, LIKELY_DELTA_REASONS, LIKELY_PHASES } from "./meta";
+import { LIKELY_AWARD_KINDS, LIKELY_PHASES } from "./meta";
 import type { LikelySettings } from "./meta";
 
 const PackIds = z.array(z.string().regex(/^[a-z0-9-]{1,35}$/)).max(50);
@@ -41,7 +41,6 @@ export const _likelyPatchAgree: Same<z.infer<typeof LikelySettingsPatchSchema>, 
 const Phase = z.enum(LIKELY_PHASES);
 const Count = z.object({ playerId: PlayerId, count: z.number().int().positive(), percent: z.number().int().min(0).max(100) });
 const Ballot = z.object({ voterId: PlayerId, targetId: PlayerId });
-const Delta = z.object({ playerId: PlayerId, points: z.number().int().positive(), reason: z.enum(LIKELY_DELTA_REASONS) });
 
 export const LikelyRevealSchema = z.object({
   votesCast: z.number().int().nonnegative(),
@@ -52,7 +51,6 @@ export const LikelyRevealSchema = z.object({
   none: z.boolean(),
   againId: PlayerId.nullable(),
   ballots: z.array(Ballot).nullable(),
-  deltas: z.array(Delta),
 });
 
 export const LikelyCardSchema = z.object({
@@ -81,7 +79,8 @@ export const LikelyPublicSchema = z.object({
   newIds: z.array(PlayerId),
   votedIds: z.array(PlayerId),
   reveal: LikelyRevealSchema.nullable(),
-  scores: z.array(z.object({ playerId: PlayerId, score: z.number().int().nonnegative(), scoreBefore: z.number().int().nonnegative() })),
+  /** The instance's players (seat order). No points in this game (§6): `score` and `scoreBefore` are always 0. */
+  scores: z.array(z.object({ playerId: PlayerId, score: z.literal(0), scoreBefore: z.literal(0) })),
   awards: z.array(LikelyAwardSchema),
   showVoters: z.boolean(),
   mode: z.enum(["family", "spicy"]),

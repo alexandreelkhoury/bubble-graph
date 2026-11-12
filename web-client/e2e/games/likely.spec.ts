@@ -1,6 +1,6 @@
 // GAME-LIKELY / JAMAA-PLATFORM §6.6 G3 (lane B): Most Likely through the hub, the /tv mock driven by the remote ONLY
 // (D-pad, OK, Back, `i`), with 3–6 phones voting: self-votes, a changed vote, unanimous / chaos / tie cards, the
-// reveal, the awards ceremony and the results; one secret-votes game (percentage board, no points) in Arabic (RTL).
+// reveal, the awards ceremony and the results; one secret-votes game (percentages only; no points in any mode) in Arabic (RTL).
 // Secrecy is checked on the raw WebSocket frames: no ballot anywhere before REVEAL, and never a voter→target pair in
 // secret mode, on the TV or any phone. SHOTS_DIR=<dir> saves every screen (TV 1920×1080, phone 390×844) per locale.
 //
@@ -250,7 +250,6 @@ async function playToResults(r: Run, opts: { shots: boolean; changeVote?: boolea
         await beat("t0", "tv-21-awards-trio", 1200);
         await phoneShots;
         if (n > 3 && !opts.nextVia) await beat("t1", "tv-22-awards-trio2", 1500);
-        if (!opts.secret && !opts.nextVia) await beat("mindReader", "tv-23-awards-mindreader", 1600);
       }
       // Remote only: Back → pause menu → "Next" (HOST_ADVANCE) ends the ceremony early → RESULTS.
       if (opts.nextVia && (await visible(tv, "[data-awards]"))) {
@@ -295,15 +294,12 @@ function checkSecrecy(r: Run, secret: boolean): void {
   }
 }
 
-/** GAME-LIKELY §6: equal scores print the same (competition) rank in the Mind Reader ranking. */
-async function expectSharedRanks(tv: Page): Promise<void> {
-  const rows = await tv.locator(".lkres__row").evaluateAll((els) => els.map((e) => ({ rank: Number((e as HTMLElement).dataset.rank), score: e.querySelector(".lkres__score")?.textContent ?? "" })));
-  expect(rows.length).toBeGreaterThan(0);
-  rows.forEach((row, i) => {
-    if (i === 0) expect(row.rank).toBe(1);
-    else if (row.score === rows[i - 1]!.score) expect(row.rank).toBe(rows[i - 1]!.rank);
-    else expect(row.rank).toBe(i + 1);
-  });
+/** GAME-LIKELY §6 / §8.2: no points, so the results are the awards wall only, every award title shown in full. */
+async function expectAwardsWall(tv: Page): Promise<void> {
+  await expect(tv.locator(".lkres__rank")).toHaveCount(0);
+  const titles = await tv.locator(".lkres__awtitle").evaluateAll((els) => els.map((e) => ({ text: e.textContent ?? "", cut: e.scrollWidth > e.clientWidth + 1 || e.scrollHeight > e.clientHeight + 1 })));
+  expect(titles.length).toBeGreaterThan(0);
+  for (const t of titles) expect(t.cut, t.text).toBe(false);
 }
 
 test.describe.configure({ mode: "serial" });
@@ -340,8 +336,7 @@ test("Most Likely EN, public votes, 4 phones, remote-only TV: unanimous self-vot
   await r.shot(r.tv, "tv-31-results-bar", 300);
   await r.shot(r.phones[0]!, "ph-30-results-vip", 0);
   await r.shot(r.phones[2]!, "ph-31-results", 0);
-  await expect(r.tv.locator(".lkres__rank")).toBeVisible();
-  await expectSharedRanks(r.tv);
+  await expectAwardsWall(r.tv);
   checkSecrecy(r, false);
   // Other games → hub, by remote.
   // The bar's buttons settle (scale) just after `is-ready`, so step with the D-pad until "Other games" holds focus
@@ -352,7 +347,7 @@ test("Most Likely EN, public votes, 4 phones, remote-only TV: unanimous self-vot
   for (const p of [...r.phones, r.tv]) await p.context().close();
 });
 
-test("Most Likely AR (RTL), secret votes, 3 phones: percentage board, no points, awards without Mind Reader", async ({ browser }) => {
+test("Most Likely AR (RTL), secret votes, 3 phones: percentages, no points, the awards wall", async ({ browser }) => {
   test.setTimeout(900_000);
   const r = await setup(browser, "ar", ["رامي", "Léa", "نور"]);
   await expect(r.tv.locator(".tv")).toHaveAttribute("dir", "rtl");
@@ -376,7 +371,7 @@ test("Most Likely ES, public votes, 6 phones", async ({ browser }) => {
   await r.shot(r.tv, "tv-30-results", 1600);
   await expect(r.tv.locator("[data-replay]")).toBeFocused({ timeout: 20_000 });
   await r.shot(r.phones[0]!, "ph-30-results-vip", 0);
-  await expectSharedRanks(r.tv);
+  await expectAwardsWall(r.tv);
   checkSecrecy(r, false);
   for (const p of [...r.phones, r.tv]) await p.context().close();
 });

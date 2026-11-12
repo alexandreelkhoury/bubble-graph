@@ -42,7 +42,7 @@ describe("Likely fixtures (shared/fixtures/v2/games/likely)", () => {
       expect(files.has(`s2c.state.tv.playing.likely.${ph}.json`), ph).toBe(true);
       expect(files.has(`s2c.state.player.playing.likely.${ph}.json`), ph).toBe(true);
     }
-    expect(frame("s2c.state.tv.playing.likely.reveal.secret.ar.json").view.game?.public.reveal).toMatchObject({ ballots: null, deltas: [] });
+    expect(frame("s2c.state.tv.playing.likely.reveal.secret.ar.json").view.game?.public.reveal).toMatchObject({ ballots: null });
     expect(frame("s2c.state.tv.playing.likely.reveal.json").view.game?.public.reveal).toMatchObject({ ballots: expect.any(Array) });
     expect(frame("s2c.state.tv.playing.likely.reveal.chaos.json").view.game?.public.reveal).toMatchObject({ chaos: true, topIds: [] });
     expect(frame("s2c.state.tv.playing.likely.reveal.unanimous.json").view.game?.public.reveal).toMatchObject({ unanimous: true });
@@ -64,23 +64,21 @@ describe("Likely fixtures (shared/fixtures/v2/games/likely)", () => {
       if (name.startsWith("s2c.state.tv.")) expect(g.me, name).toBeNull();
     }
   });
-  it("secret-vote frames carry no ballot, delta, score or ballot award; no frame shows a vote before REVEAL", () => {
+  it("secret-vote frames carry no ballot; no frame carries a point; no frame shows a vote before REVEAL", () => {
     for (const [name, c] of files) {
       if (!name.startsWith("s2c.state.")) continue;
       const g = (JSON.parse(c) as Frame).view.game;
       if (!g) continue;
       const pub = JSON.stringify(g.public);
-      if (name.includes(".secret.")) {
-        expect(pub, name).not.toMatch(/voterId|targetId|"selfAware"|"mindReader"|"reason"/);
-        expect(pub, name).not.toMatch(/"score":[1-9]/);
-      }
+      if (name.includes(".secret.")) expect(pub, name).not.toMatch(/voterId|targetId/);
+      expect(pub, name).not.toMatch(/"score":[1-9]|"scoreBefore":[1-9]|"deltas"|"selfAware"|"mindReader"|"reason"/);
       if (g.phase !== "REVEAL") expect(pub, name).not.toMatch(/voterId|targetId/);
     }
   });
-  it("layout.json mirrors the shared layout math (12 seats, curl after 6, RTL mirrored)", () => {
-    const l = JSON.parse(files.get("layout.json") as string) as { arcs: Record<string, { ltr: { x: number }[]; rtl: { x: number }[] }>; conga: { left: { places: unknown[] } } };
-    expect(l.arcs["12"]?.ltr).toHaveLength(12);
-    expect(l.arcs["12"]?.rtl[0]?.x).toBe(l.arcs["12"]?.ltr[11]?.x);
-    expect(l.conga.left.places).toHaveLength(11);
+  it("layout.json mirrors the shared layout math (12-seat rows, RTL mirrored, vote stacks)", () => {
+    const l = JSON.parse(files.get("layout.json") as string) as { rows: Record<string, { ltr: { x: number }[]; rtl: { x: number }[] }>; publicTokens12: { tokens: unknown[] } };
+    expect(l.rows["12"]?.ltr).toHaveLength(12);
+    expect(l.rows["12"]?.rtl[0]?.x).toBe(l.rows["12"]?.ltr[11]?.x);
+    expect(l.publicTokens12.tokens).toHaveLength(12);
   });
 });

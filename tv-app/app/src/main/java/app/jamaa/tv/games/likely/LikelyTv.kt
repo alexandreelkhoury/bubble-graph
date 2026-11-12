@@ -42,8 +42,6 @@ object LikelyTv : TvGameModule {
                 connected = m?.connected ?: false,
                 left = m == null || m.left,
                 isHost = m?.isHost ?: false,
-                score = s.score,
-                scoreBefore = s.scoreBefore,
                 voted = pub.phase == LikelyPhase.VOTING && s.playerId in voted,
                 isNew = s.playerId in fresh,
             )
@@ -56,7 +54,7 @@ object LikelyTv : TvGameModule {
             deadline = pub.deadline,
             card = pub.card,
             // Defensive: a reveal is only drawn in REVEAL, and ballots only in public mode (§8.1), whatever arrives.
-            reveal = pub.reveal?.takeIf { pub.phase == LikelyPhase.REVEAL }?.let { if (pub.showVoters) it else it.copy(ballots = null, deltas = emptyList()) },
+            reveal = pub.reveal?.takeIf { pub.phase == LikelyPhase.REVEAL }?.let { if (pub.showVoters) it else it.copy(ballots = null) },
             players = players,
             awards = if (pub.phase == LikelyPhase.AWARDS || pub.phase == LikelyPhase.RESULTS) pub.awards else emptyList(),
             showVoters = pub.showVoters,

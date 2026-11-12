@@ -61,14 +61,20 @@ class LikelyDecodeTest {
         assertTrue(card.players.none { it.voted })
     }
 
-    @Test fun secretModeNeverCarriesBallotsOrPoints() {
+    @Test fun secretModeNeverCarriesBallots() {
         for (s in listOf("reveal.secret.ar", "awards.secret.ar", "results.secret.ar", "card.secret.ar")) {
             val v = LikelyFixtures.view(s)
             assertTrue(s, v.anonymous)
             assertNull(s, v.reveal?.ballots)
-            assertTrue(s, v.reveal?.deltas.orEmpty().isEmpty())
-            assertTrue(s, v.players.all { it.score == 0 && it.scoreBefore == 0 })
-            assertTrue(s, v.awards.none { it.kind == LikelyAwardKind.MIND_READER || it.kind == LikelyAwardKind.SELF_AWARE })
+        }
+    }
+
+    /** No points in this game (owner decision 2026-11-12): every award is a signature, a mystery or Tonight's Star. */
+    @Test fun awardsAreSignatureMysteryOrStarOnly() {
+        for (s in listOf("awards", "results", "awards.secret.ar", "results.secret.ar")) {
+            val v = LikelyFixtures.view(s)
+            assertTrue(s, v.awards.isNotEmpty())
+            assertTrue(s, v.awards.all { it.kind in setOf(LikelyAwardKind.SIGNATURE, LikelyAwardKind.MYSTERY, LikelyAwardKind.STAR) })
         }
     }
 
@@ -78,7 +84,6 @@ class LikelyDecodeTest {
         val pub = ProtocolJson.decoder.decodeFromJsonElement(LikelyPub.serializer(), env.public).copy(showVoters = false)
         val v = LikelyTv.compose(st.view.room, pub, env)
         assertNull(v.reveal!!.ballots)
-        assertTrue(v.reveal!!.deltas.isEmpty())
         // ... and a reveal outside REVEAL is never drawn.
         val early = LikelyTv.compose(st.view.room, pub.copy(phase = LikelyPhase.VOTING), env)
         assertNull(early.reveal)

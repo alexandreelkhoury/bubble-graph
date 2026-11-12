@@ -1,128 +1,97 @@
-// LK-TV-03 the reveal (GAME-LIKELY §12.2, DESIGN-JAMAA §5.3). Public mode: everyone runs to their pick and forms a conga
-// line, counters roll, the spotlight drops, the rosette lands, agreement coins fly from each line's head to the voter.
-// Secret votes: a ballot box bursts identical cream envelopes onto the targets, then the percentage board; no points.
-// Chaos: a scramble. The whole moment is one step list on the shared sampler; OK completes it (§3.10 E rule 5); the
-// server's REVEAL timer runs regardless. Positions come from the shared layout (likely/layout.ts) like on the Kotlin TV.
+// LK-TV-03 the reveal (GAME-LIKELY §12.2, DESIGN-JAMAA §5.3), redesigned with the owner (2026-11-12): one centred
+// composition, no left/right split. The card lifts to the top, the players glide into one row; then every vote lands
+// under its target one by one: public mode, the VOTER'S OWN CHARACTER in miniature flies from the voter to its pick
+// (who voted for whom, at a glance); secret votes, identical envelopes drop from the card (tallies only). The counts
+// pop (votes, or percentages with secret votes), the room dims around the most-voted, the award stamp lands and the
+// banner names the award and its winner(s). No points anywhere (§6). One step list on the shared sampler; OK completes
+// it (§3.10 E rule 5); the server's REVEAL timer runs regardless. Positions: the shared layout (likely/layout.ts).
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import type { Expression } from "@jamaa/shared/characters";
 import { run, variant } from "@jamaa/shared/motion";
 import type { Run } from "@jamaa/shared/motion";
+import { likelyRevealMs } from "@jamaa/shared/games/likely/meta";
 import { fmtNum, isolate, listOf, locale, t } from "../../../i18n/t";
 import { reduced } from "../../../lib/motion";
-import { Icon } from "../../../components/Icon";
-import { COLOR_BY_ID } from "../../../components/PlayerChip";
 import { Character } from "../../../components/Character";
 import { useInGameOk } from "../../../tv-mock/tvParts";
 import { stopAll } from "../../../tv-mock/sound/player";
-import { likelyRevealMs } from "@jamaa/shared/games/likely/meta";
 import { Envelope, Rosette } from "../art";
-import { CHAR, againName, coinPoint, fmtPercent, percentLines, revealExpression, revealPlan } from "../model";
+import { CHAR, REVEAL_CHAR, againName, arcPoint, fmtPercent, revealExpression, revealPlan } from "../model";
 import type { LikelyModel, Seat } from "../model";
 import { k } from "../parts";
 import { fitReveal, revealSteps } from "./choreo";
 import { JuryChar, LkTop, TvCard, World, rtl } from "./stage";
 import { platformCue, riseRate, sfx } from "./sfx";
-import { ScoreRail } from "./rail";
-
-/** The ballot box (secret votes) sits between the card and the jury. */
-const BOX = { x: 480, y: 250 } as const;
-/** At most this many percentage lines are listed (the rest share one "+n" line). */
-const BOARD_MAX = 3;
 
 type Stage = "run" | "stamp" | "end";
+
+/** Where secret envelopes leave from: under the shrunk card. */
+const CARD_DROP = { x: 480, y: 150 } as const;
 
 export function TvReveal({ m }: { m: LikelyModel }) {
   const r = m.pub.reveal!;
   const isRtl = rtl();
-  const pub = m.pub.showVoters;
+  const pub = m.pub.showVoters && !!r.ballots;
   const plan = useMemo(() => revealPlan(m, isRtl), [m.pub.card?.id, m.pub.cardIndex, isRtl, m.seats.length]);
-  const envelopes = useMemo(() => (pub ? [] : r.counts.flatMap((c) => Array.from({ length: c.count }, () => c.playerId))), [r]);
-  const count = Math.max(plan.runners.length, envelopes.length, plan.coins.length, 1);
-  const lines = percentLines(m);
-  const boardLines = Math.min(lines.length, BOARD_MAX) + (lines.length > BOARD_MAX ? 1 : 0);
-  const steps = useMemo(() => fitReveal(revealSteps({
-    runners: plan.runners.length, envelopes: envelopes.length, publicMode: pub, chaos: r.chaos, none: r.none, unanimous: r.unanimous, coins: plan.coins.length, lines: boardLines,
-  }), likelyRevealMs(r.votesCast, r.unanimous, r.topIds.length), count), [plan, envelopes.length, pub, r.chaos, r.none, r.unanimous, boardLines]);
+  const count = Math.max(1, plan.tokens.length);
+  const steps = useMemo(() => fitReveal(revealSteps({ tokens: plan.tokens.length, chaos: r.chaos, none: r.none, unanimous: r.unanimous }),
+    likelyRevealMs(r.votesCast, r.unanimous, r.topIds.length), count), [plan, r.chaos, r.none, r.unanimous]);
   const root = useRef<HTMLDivElement>(null);
   const runRef = useRef<Run | null>(null);
   const [stage, setStage] = useState<Stage>(() => (reduced() ? "end" : "run"));
   const [running, setRunning] = useState(true);
+  const seats = m.seats.filter((s) => plan.row[s.id]);
+  const top = r.topIds.map((id) => m.byId.get(id)).filter((s): s is Seat => !!s && !!plan.row[s.id]);
 
   useEffect(() => {
     const el = root.current;
     if (!el) return;
     const fired = new Set<string>();
     const once = (id: string, f: () => void): void => { if (!fired.has(id)) { fired.add(id); f(); } };
-    const runnerIdx = new Map(plan.runners.map((id, i) => [id, i]));
-    const lineLen = new Map<string, number>();
-    const ballotOf = new Map((r.ballots ?? []).map((b) => [b.voterId, b.targetId]));
     let stageNow: Stage = "run";
     const toStage = (s: Stage): void => { if (s !== stageNow) { stageNow = s; setStage(s); } };
     const cast = [...el.querySelectorAll<HTMLElement>("[data-cast]")];
-    const envs = [...el.querySelectorAll<HTMLElement>("[data-env]")];
-    const coins = [...el.querySelectorAll<HTMLElement>("[data-coin]")];
-    const counts = [...el.querySelectorAll<HTMLElement>("[data-count]")];
-    const scores = [...el.querySelectorAll<HTMLElement>("[data-score]")];
-    const eff = variant(steps, { reduced: reduced() });
+    const toks = [...el.querySelectorAll<HTMLElement>("[data-token]")];
     const has = new Set(steps.map((x) => x.id));
+    const eff = variant(steps, { reduced: reduced() });
+    const landed = new Map<string, number>();
     platformCue("sfx.drumroll");
     const handle = run(eff, (p) => {
-      const dim = p("dim");
-      el.style.setProperty("--dim", String(dim));
-      // Steps this card's list does not have stay at 0 (the reduced list has none, so p() reads 1 = the end state).
-      for (const id of ["count", "spot", "stamp", "board", "hold", "box", "confetti", "tick"]) el.style.setProperty(`--${id}`, has.has(id) ? String(p(id)) : "0");
+      const lift = Math.max(0, Math.min(1, p("dim")));
+      el.style.setProperty("--dim", String(lift));
+      for (const id of ["count", "spot", "stamp", "hold", "confetti", "scramble"]) el.style.setProperty(`--${id}`, has.has(id) ? String(p(id)) : "0");
       const scr = p("scramble");
-      // Characters: run to their pick (two little hops), or scramble (chaos).
+      // The row glides from its card-phase seats to the reveal row (and shrinks 72 → 64), then holds still.
       cast.forEach((c, i) => {
         const id = c.dataset.cast!;
-        const from = plan.arc[id]!, to = plan.ends[id]!;
-        let dx = 0, dy = 0;
+        const a = plan.seat[id]!, b = plan.row[id]!;
+        let x = a.x + (b.x - a.x) * lift, y = a.y + (b.y - a.y) * lift;
         if (scr > 0 && scr < 1) {
-          dx = 70 * Math.sin(2 * Math.PI * (scr * 1.7 + i * 0.37)) * Math.sin(Math.PI * scr);
-          dy = -26 * Math.abs(Math.sin(2 * Math.PI * (scr * 2.3 + i * 0.21)));
+          x += 18 * Math.sin(2 * Math.PI * (scr * 3 + i * 0.37)) * Math.sin(Math.PI * scr);
+          y -= 14 * Math.abs(Math.sin(2 * Math.PI * (scr * 2.5 + i * 0.21)));
         }
-        const ri = runnerIdx.get(id);
-        if (ri !== undefined) {
-          const q = p("run", ri);
-          dx += (to.x - from.x) * q;
-          dy += (to.y - from.y) * q - 40 * Math.abs(Math.sin(2 * Math.PI * Math.min(1, q)));
-          if (q >= 1) once(`land${id}`, () => {
-            const target = ballotOf.get(id) ?? "";
-            const n = (lineLen.get(target) ?? 0) + 1;
-            lineLen.set(target, n);
-            sfx("tok", riseRate(n - 1));
-          });
-        }
-        c.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
-        // Later runners stand in front of earlier ones (z by y).
-        c.style.zIndex = String(Math.round(from.y + dy));
+        const sc = (CHAR + (REVEAL_CHAR - CHAR) * lift) / REVEAL_CHAR;
+        c.style.transform = `translate(${(x - b.x).toFixed(1)}px, ${(y - b.y).toFixed(1)}px) scale(${sc.toFixed(3)})`;
       });
-      envs.forEach((e, i) => {
-        const q = p("env", i);
-        const target = plan.arc[e.dataset.env!]!;
-        const pt = coinPoint(BOX, { x: target.x, y: target.y - CHAR - 8 }, Math.max(0, Math.min(1, q)));
-        e.style.transform = `translate(${pt.x.toFixed(1)}px, ${pt.y.toFixed(1)}px) rotate(${(1 - q) * (i % 2 ? 40 : -40)}deg)`;
-        e.style.opacity = q > 0 && q < 1 ? "1" : "0";
-        if (q > 0) once(`env${i}`, () => { if (i === 0) sfx("ballot"); });
+      // The votes: one by one, from the voter (public) or from the card (secret), along a soft arc to their slot.
+      toks.forEach((e, i) => {
+        const tk = plan.tokens[i]!;
+        const q = Math.max(0, Math.min(1, p("token", i)));
+        const from = tk.voterId ? { x: plan.row[tk.voterId]!.x, y: plan.row[tk.voterId]!.y - REVEAL_CHAR / 2 } : CARD_DROP;
+        const pt = arcPoint(from, tk.at, q, tk.voterId === tk.targetId ? 20 : 70);
+        e.style.transform = `translate(${(pt.x - tk.at.x).toFixed(1)}px, ${(pt.y - tk.at.y).toFixed(1)}px) scale(${(0.5 + 0.5 * q).toFixed(3)})`;
+        e.style.opacity = q > 0 ? "1" : "0";
+        if (q >= 1) once(`tok${i}`, () => {
+          const n = (landed.get(tk.targetId) ?? 0) + 1;
+          landed.set(tk.targetId, n);
+          sfx("tok", riseRate(n - 1));
+        });
       });
-      coins.forEach((c, i) => {
-        const q = p("coin", i);
-        const coin = plan.coins[i]!;
-        const pt = coinPoint(coin.from, coin.to, Math.max(0, Math.min(1, q)));
-        c.style.transform = `translate(${pt.x.toFixed(1)}px, ${pt.y.toFixed(1)}px)`;
-        c.style.opacity = q > 0 && q < 1 ? "1" : "0";
-        if (q >= 1) once(`coin${i}`, () => platformCue("coin_land"));
-      });
-      const cq = p("count");
-      counts.forEach((c) => { c.textContent = fmtNum(Math.round(Number(c.dataset.count) * cq)); });
-      const tq = p("tick");
-      scores.forEach((s) => { const a = Number(s.dataset.from), b = Number(s.dataset.score); s.textContent = fmtNum(Math.round(a + (b - a) * tq)); });
-      if (cq > 0) once("count", () => platformCue("counter_tick"));
+      if (p("count") > 0) once("count", () => platformCue("counter_tick"));
       if (scr > 0) once("scr", () => sfx("scramble"));
       if (p("spot") > 0) once("spot", () => sfx("spot"));
       if (p("stamp") > 0) once("stamp", () => { sfx("rosette"); toStage("stamp"); });
       if (p("confetti") > 0) once("conf", () => sfx("confetti"));
-      if (p("coin") > 0) once("coins", () => platformCue("coin_fly"));
       // The hold fills the rest of the server window: the room has settled once it starts (OK has nothing left to finish).
       if (has.has("hold") && p("hold") > 0) once("hold", () => { toStage("end"); setRunning(false); });
     }, () => { toStage("end"); setRunning(false); }, count);
@@ -133,96 +102,65 @@ export function TvReveal({ m }: { m: LikelyModel }) {
   // OK completes the moment to its end state (and cuts the drumroll).
   useInGameOk(running, () => { stopAll(); runRef.current?.complete(); });
 
-  const top = r.topIds.map((id) => m.byId.get(id)).filter((s): s is Seat => !!s);
   const again = againName(m);
-  const expr = (s: Seat): Expression => (stage === "run" && !plan.runners.includes(s.id) && !plan.selfVoters.includes(s.id) ? (s.connected ? "idle" : "away") : revealExpression(m, s.id, stage));
+  const expr = (s: Seat): Expression => (stage === "run" && !(r.ballots ?? []).some((b) => b.voterId === s.id) ? (s.connected ? "idle" : "away") : revealExpression(m, s.id, stage));
   const look = (s: Seat): "start" | "end" | null => {
     if (stage !== "run" || !r.ballots) return null;
     const b = r.ballots.find((x) => x.voterId === s.id);
     if (!b || b.targetId === s.id) return null;
-    return (plan.arc[b.targetId]?.x ?? 0) < (plan.arc[s.id]?.x ?? 0) ? "start" : "end";
+    return (plan.row[b.targetId]?.x ?? 0) < (plan.row[s.id]?.x ?? 0) ? "start" : "end";
   };
-  const caption = r.none ? t(k("reveal.none"))
-    : r.chaos ? t(k("reveal.chaos"))
-    : top.length > 1 ? t(k("reveal.tie"))
-    : top[0] ? t(k("reveal.defend"), { name: isolate(top[0].name) }) : "";
+  const caption = r.none ? t(k("reveal.none")) : r.chaos ? t(k("reveal.chaos")) : "";
   return (
     <div data-world="rooftop" class={`tvscreen lkrev lkrev--${pub ? "public" : "secret"}${r.chaos ? " is-chaos" : ""}${r.unanimous ? " is-unanimous" : ""}`} ref={root} data-reveal={pub ? "public" : "secret"} data-running={running ? "1" : "0"}>
       <World dim />
       <LkTop m={m} />
       <TvCard m={m} small />
-      {/* Spotlight: the room dims around the top target(s), a cone drops from the rig (§12.2 step 4). */}
-      {!r.chaos && !r.none && top.length > 0 && (
-        <svg class="lkspot" viewBox="0 0 960 540" width="960" height="540" aria-hidden="true">
-          <defs>
-            <radialGradient id="lkspot-hole"><stop offset=".55" stop-color="#000" /><stop offset="1" stop-color="#fff" /></radialGradient>
-            <linearGradient id="lkspot-cone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B8FFF6" stop-opacity=".05" /><stop offset="1" stop-color="#B8FFF6" stop-opacity=".3" /></linearGradient>
-            <mask id="lkspot-mask"><rect width="960" height="540" fill="#fff" />{top.map((s) => <ellipse key={s.id} cx={plan.arc[s.id]!.x} cy={plan.arc[s.id]!.y - CHAR / 2} rx="96" ry="120" fill="url(#lkspot-hole)" />)}</mask>
-          </defs>
-          <rect class="lkspot__dim" width="960" height="540" mask="url(#lkspot-mask)" />
-          <g class="lkspot__cones">
-            {top.map((s) => { const p = plan.arc[s.id]!; return <path key={s.id} d={`M${p.x - 26} 0 L${p.x + 26} 0 L${p.x + 92} ${p.y + 6} L${p.x - 92} ${p.y + 6} Z`} fill="url(#lkspot-cone)" />; })}
-          </g>
-        </svg>
-      )}
-      {!pub && !r.none && <div class="lkbox" style={{ left: `${BOX.x}px`, top: `${BOX.y}px` }} aria-hidden="true"><Icon name="lk-ballot" size={56} /></div>}
+      {/* The players: one centred row; the most-voted step forward under the spotlight. */}
       <div class="lkcast">
-        {m.seats.map((s) => {
-          const p = plan.arc[s.id]!;
+        {seats.map((s) => {
+          const p = plan.row[s.id]!;
+          const isTop = top.some((x) => x.id === s.id);
           return (
-            <div key={s.id} class={`lkcast__ch${top.some((x) => x.id === s.id) ? " is-top" : ""}${plan.runners.includes(s.id) ? " is-runner" : ""}${s.left ? " is-left" : ""}`} data-cast={s.id} style={{ left: `${p.x - CHAR / 2}px`, top: `${p.y - CHAR}px` }}>
-              <JuryChar s={s} expression={expr(s)} size={CHAR} look={look(s)} />
-              <bdi class="lkjury__name">{s.name}</bdi>
-              {pub && (plan.gains[s.id] ?? 0) > 0 && <span class="lkgain">+{fmtNum(plan.gains[s.id]!)}</span>}
+            <div key={s.id} class={`lkcast__ch${isTop ? " is-top" : ""}`} data-cast={s.id} style={{ left: `${p.x - REVEAL_CHAR / 2}px`, top: `${p.y - REVEAL_CHAR}px` }}>
+              <JuryChar s={s} expression={expr(s)} size={REVEAL_CHAR} look={look(s)} />
+              {isTop && !r.chaos && <span class="lkcast__stamp"><Rosette size={30} /></span>}
+              <bdi class="lkcast__name">{s.name}</bdi>
             </div>
           );
         })}
       </div>
-      {/* Count bubbles above each picked target (§12.2 step 3). */}
+      {/* The count above each voted player: votes (public) or the percentage (secret votes, GAME-LIKELY §8.1). */}
       {!r.none && r.counts.map((c) => {
-        const p = plan.arc[c.playerId];
+        const p = plan.row[c.playerId];
         if (!p) return null;
-        return <span key={c.playerId} class={`lkcount${pub && (plan.gains[c.playerId] ?? 0) > 0 ? " has-gain" : ""}`} style={{ left: `${p.x}px`, top: `${p.y - CHAR - 40}px` }}><span data-count={c.count}>{fmtNum(reduced() ? c.count : 0)}</span></span>;
+        return <span key={c.playerId} class="lkcount" style={{ left: `${p.x + REVEAL_CHAR * 0.42}px`, top: `${p.y - REVEAL_CHAR - 7}px` }}>{pub ? fmtNum(c.count) : fmtPercent(c.percent, locale.value)}</span>;
       })}
-      {/* Rosette(s) on the top target(s) + the award name plate (§12.2 step 5). */}
-      {!r.chaos && top.map((s) => {
-        const p = plan.arc[s.id]!;
+      {/* The votes, stacked under their targets in arrival order. */}
+      {plan.tokens.map((tk, i) => {
+        const v = tk.voterId ? m.byId.get(tk.voterId) : null;
         return (
-          <div key={s.id} class={`lkstamp${top.length > 1 ? " is-tie" : ""}`} style={{ left: `${p.x + CHAR * 0.42}px`, top: `${p.y - CHAR * 0.42}px` }}>
-            <Rosette size={top.length > 1 ? 36 : 44} />
-          </div>
+          <span key={i} class={`lktoken${v ? "" : " is-env"}`} data-token={i} style={{ left: `${tk.at.x - plan.cell / 2}px`, top: `${tk.at.y - plan.cell / 2}px`, width: `${plan.cell}px`, height: `${plan.cell}px` }}>
+            {v ? <Character color={v.color} size={Math.round(plan.cell * 0.92)} expression="point" /> : <Envelope size={Math.round(plan.cell * 0.9)} />}
+          </span>
         );
       })}
-      {!r.chaos && !r.none && m.pub.card && <p class="lkplate"><Rosette size={26} /><span>{m.pub.card.award}</span>{top.length > 0 && <bdi class="lkplate__who">{listOf(top.map((s) => s.name))}</bdi>}</p>}
-      {again && !r.chaos && <p class="lkagain">{t(k("reveal.again"), { name: isolate(again) })}</p>}
-      {r.unanimous && <p class="lkbanner">{t(k(pub ? "reveal.unanimousPts" : "reveal.unanimous"))}</p>}
-      {r.unanimous && stage !== "run" && !reduced() && <Confetti />}
-      {envelopes.map((id, i) => <span key={i} class="lkenv" data-env={id}><Envelope size={34} /></span>)}
-      {plan.coins.map((c, i) => (
-        <span key={i} class="lkcoin" data-coin={i} style={{ "--c": COLOR_BY_ID[m.byId.get(c.voterId)!.color].hex }}>
-          {i === plan.coins.findIndex((x) => x.voterId === c.voterId) && <span class="lkcoin__label">+{fmtNum(c.points)}</span>}
-        </span>
-      ))}
-      {/* Secret votes: the percentage board under the card (never who voted for whom). */}
-      {!pub && lines.length > 0 && (
-        <ol class="lkboard" aria-label={t(k("rules.secret.title"))}>
-          {lines.slice(0, BOARD_MAX).map((l, i) => (
-            <li key={l.seat.id} class="lkboard__row" style={{ "--i": i, "--pc": `${l.percent}%`, "--c": COLOR_BY_ID[l.seat.color].hex }}>
-              <Character color={l.seat.color} size={40} expression={r.topIds.includes(l.seat.id) ? "shy" : "idle"} />
-              <span class="lkboard__text">{t(k("reveal.percent"), { percent: fmtPercent(l.percent, locale.value), name: isolate(l.seat.name) })}</span>
-              <span class="lkboard__bar" aria-hidden="true"><span /></span>
-            </li>
-          ))}
-          {lines.length > BOARD_MAX && <li class="lkboard__more tnum">+{fmtNum(lines.length - BOARD_MAX)}</li>}
-        </ol>
+      {/* The result banner between the card and the row: the award and its winner(s), or chaos / no votes. */}
+      {!r.chaos && !r.none && top.length > 0 && m.pub.card && (
+        <p class="lkplate">
+          {r.unanimous && <span class="lkplate__tag">{t(k("reveal.unanimous"))}</span>}
+          <Rosette size={30} /><span class="lkplate__award">{m.pub.card.award}</span>
+          <bdi class="lkplate__who">{listOf(top.map((s) => isolate(s.name)))}</bdi>
+        </p>
       )}
-      {caption && <p class={`lkcaption${r.chaos ? " is-chaos" : ""}${r.none ? " is-none" : ""}`}>{!r.chaos && !r.none && top.length === 1 && <Icon name="lk-speech" size={30} class="lkcaption__icon" />}{caption}</p>}
-      {pub && <ScoreRail m={m} tick />}
+      {caption && <p class={`lkcaption${r.chaos ? " is-chaos" : " is-none"}`}>{caption}</p>}
+      {again && !r.chaos && <p class="lkagain">{t(k("reveal.again"), { name: isolate(again) })}</p>}
+      {r.unanimous && stage !== "run" && !reduced() && <Confetti />}
     </div>
   );
 }
 
-/** Unanimous: a confetti cannon from both bottom corners (paper + gold, 36 pieces, 1.2 s; §12.2 step 6). */
+/** Unanimous: a confetti cannon from both bottom corners (paper + gold, 36 pieces, 1.2 s). */
 function Confetti() {
   const colors = ["#FFC94D", "#FFF7EC", "#29D3C2", "#FF7AB3", "#FFE7A0", "#B8FFF6"];
   return (

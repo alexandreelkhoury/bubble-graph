@@ -124,10 +124,10 @@ exports[`golden seeded games > n=3 seed=101 showVoters=true 1`] = `
       },
     ],
     "rngState": 2399460387,
-    "schema": 1,
+    "schema": 2,
     "scores": {
-      "p_11ke1y00": 50,
-      "p_11ke1y01": 50,
+      "p_11ke1y00": 0,
+      "p_11ke1y01": 0,
       "p_11ke1y02": 0,
     },
     "settings": {
@@ -150,16 +150,11 @@ exports[`golden seeded games > n=3 seed=101 showVoters=true 1`] = `
   },
   "outcome": {
     "points": {
-      "p_11ke1y00": 50,
-      "p_11ke1y01": 50,
+      "p_11ke1y00": 0,
+      "p_11ke1y01": 0,
       "p_11ke1y02": 0,
     },
-    "ranking": [
-      [
-        "p_11ke1y00",
-        "p_11ke1y01",
-      ],
-    ],
+    "ranking": [],
   },
   "steps": [
     {
@@ -713,7 +708,7 @@ exports[`golden seeded games > n=6 seed=202 showVoters=false 1`] = `
       },
     ],
     "rngState": 1767624818,
-    "schema": 1,
+    "schema": 2,
     "scores": {
       "p_11ke1y00": 0,
       "p_11ke1y01": 0,
@@ -1439,19 +1434,19 @@ exports[`golden seeded games > n=12 seed=303 showVoters=true 1`] = `
       },
     ],
     "rngState": 1767624919,
-    "schema": 1,
+    "schema": 2,
     "scores": {
       "p_11ke1y00": 0,
-      "p_11ke1y01": 150,
+      "p_11ke1y01": 0,
       "p_11ke1y02": 0,
-      "p_11ke1y03": 100,
-      "p_11ke1y04": 50,
+      "p_11ke1y03": 0,
+      "p_11ke1y04": 0,
       "p_11ke1y05": 0,
       "p_11ke1y06": 0,
       "p_11ke1y07": 0,
       "p_11ke1y08": 0,
-      "p_11ke1y09": 150,
-      "p_11ke1y10": 50,
+      "p_11ke1y09": 0,
+      "p_11ke1y10": 0,
       "p_11ke1y11": 0,
     },
     "settings": {
@@ -1477,31 +1472,19 @@ exports[`golden seeded games > n=12 seed=303 showVoters=true 1`] = `
   "outcome": {
     "points": {
       "p_11ke1y00": 0,
-      "p_11ke1y01": 150,
+      "p_11ke1y01": 0,
       "p_11ke1y02": 0,
-      "p_11ke1y03": 100,
-      "p_11ke1y04": 50,
+      "p_11ke1y03": 0,
+      "p_11ke1y04": 0,
       "p_11ke1y05": 0,
       "p_11ke1y06": 0,
       "p_11ke1y07": 0,
       "p_11ke1y08": 0,
-      "p_11ke1y09": 150,
-      "p_11ke1y10": 50,
+      "p_11ke1y09": 0,
+      "p_11ke1y10": 0,
       "p_11ke1y11": 0,
     },
-    "ranking": [
-      [
-        "p_11ke1y01",
-        "p_11ke1y09",
-      ],
-      [
-        "p_11ke1y03",
-      ],
-      [
-        "p_11ke1y04",
-        "p_11ke1y10",
-      ],
-    ],
+    "ranking": [],
   },
   "steps": [
     {
@@ -2015,7 +1998,7 @@ exports[`golden seeded games > n=12 seed=303 showVoters=true 1`] = `
     },
     {
       "error": null,
-      "now": 1790000305223,
+      "now": 1790000301223,
       "ok": true,
       "type": "TICK",
     },

@@ -2,12 +2,12 @@
 // first"): one deterministic room (seed 12345, the readable demo pack, a scripted clock) played hub → Likely setup → a
 // Short public game through every phase (self-votes, a vote change, a host skip, Chaos, Unanimous, a tie, nobody voting,
 // a late joiner with the "New" ribbon, a HOLD), AWARDS and RESULTS; then a REPLAY in Arabic with secret votes
-// (percentages only, no points). Plus `layout.json`, the conga/jury-arc positions the TV mirrors in Kotlin.
+// (percentages only). No points in either mode. Plus `layout.json`, the row / vote-stack positions the TV mirrors in Kotlin.
 // Lanes B (web) and C (TV) decode these files; `fixtures.test.ts` keeps them current.
 import type { ColorId, Locale } from "../../../src/constants";
 import { ERRORS } from "../../../src/games/likely/errors";
 import type { LikelyIntent, LikelyState } from "../../../src/games/likely/engine/state";
-import { LIKELY_STAGE, likelyConga, likelyCongaSide, likelyJuryArc, likelyRevealPositions } from "../../../src/games/likely/layout";
+import { LIKELY_STAGE, likelyPublicTokens, likelyRow, likelySecretTokens, likelyStackGrid } from "../../../src/games/likely/layout";
 import { errorMessageKey } from "../../../src/protocol/errors";
 import type { ErrorCode } from "../../../src/protocol/errors";
 import { LIKELY_DEMO_CATALOG, withLikely } from "../../../src/testing/catalogs/likely";
@@ -29,35 +29,31 @@ const [RAMI, LEA, NOUR, SAM, ZOE] = CAST.map((c) => c.id) as [string, string, st
 
 const json = (v: unknown): string => JSON.stringify(v, null, 2) + "\n";
 
-/** The conga / jury-arc layout fixture (GAME-LIKELY §12.7): Kotlin asserts the same numbers. */
+/** The player-row / vote-stack layout fixture (GAME-LIKELY §12.7): Kotlin asserts the same numbers. */
 export function likelyLayoutFixture(): unknown {
-  const arcs: Record<string, unknown> = {};
-  for (let n = 1; n <= 12; n++) arcs[String(n)] = { ltr: likelyJuryArc(n), rtl: likelyJuryArc(n, true) };
-  const arc12 = likelyJuryArc(12);
-  const left = arc12[1] as { x: number; y: number };
-  const right = arc12[10] as { x: number; y: number };
-  const seatIds = Array.from({ length: 6 }, (_, i) => `p${i}`);
-  const arc6 = likelyJuryArc(6);
-  const seat12 = Array.from({ length: 12 }, (_, i) => `p${i}`);
-  const tie12 = seat12.filter((id) => id !== "p4" && id !== "p5").map((voterId, i) => ({ voterId, targetId: i % 2 === 0 ? "p4" : "p5" }));
-  const ballots = [
+  const rows: Record<string, unknown> = {};
+  for (let n = 1; n <= 12; n++) {
+    rows[String(n)] = { ltr: likelyRow(n), rtl: likelyRow(n, true), reveal: likelyRow(n, false, true), revealRtl: likelyRow(n, true, true) };
+  }
+  const grids: Record<string, unknown> = {};
+  for (const n of [3, 4, 6, 8, 12]) for (const m of [1, 2, 3, 5, 7, 12]) if (m <= n) grids[`${n}x${m}`] = likelyStackGrid(n, m);
+  const ids6 = Array.from({ length: 6 }, (_, i) => `p${i}`);
+  const ids12 = Array.from({ length: 12 }, (_, i) => `p${i}`);
+  const ballots6 = [
     { voterId: "p0", targetId: "p2" }, { voterId: "p1", targetId: "p2" }, { voterId: "p2", targetId: "p2" },
     { voterId: "p3", targetId: "p5" }, { voterId: "p4", targetId: "p2" }, { voterId: "p5", targetId: "p0" },
   ];
+  // 12 players, everyone on p11 (the widest stack, from the edge seat).
+  const ballots12 = ids12.map((voterId) => ({ voterId, targetId: "p11" }));
+  const counts6 = [{ playerId: "p2", count: 4 }, { playerId: "p5", count: 1 }, { playerId: "p0", count: 1 }];
   return {
     stage: LIKELY_STAGE,
-    arcs,
-    conga: {
-      left: { target: left, side: likelyCongaSide(left), places: likelyConga(left, 11) },
-      right: { target: right, side: likelyCongaSide(right), places: likelyConga(right, 11) },
-      // G3 review: an outer seat lines up toward the centre; 11 runners from the edge stay inside the safe area.
-      edge: { target: arc12[0], side: likelyCongaSide(arc12[0] as { x: number; y: number }, 11), places: likelyConga(arc12[0] as { x: number; y: number }, 11) },
-      edgeRtl: { target: likelyJuryArc(12, true)[0], side: likelyCongaSide(likelyJuryArc(12, true)[0] as { x: number; y: number }, 11), places: likelyConga(likelyJuryArc(12, true)[0] as { x: number; y: number }, 11) },
-    },
-    // G3 review: a 12-player tie between two neighbours (seats 4 and 5): the two lines fan out.
-    revealTie: { seatIds: seat12, arc: arc12, ballots: tie12, positions: likelyRevealPositions(arc12, seat12, tie12) },
-    reveal: { seatIds, arc: arc6, ballots, positions: likelyRevealPositions(arc6, seatIds, ballots) },
-    revealRtl: { seatIds, arc: likelyJuryArc(6, true), ballots, positions: likelyRevealPositions(likelyJuryArc(6, true), seatIds, ballots) },
+    rows,
+    grids,
+    publicTokens: { ids: ids6, ballots: ballots6, tokens: likelyPublicTokens(likelyRow(6, false, true), ids6, ballots6) },
+    publicTokensRtl: { ids: ids6, ballots: ballots6, tokens: likelyPublicTokens(likelyRow(6, true, true), ids6, ballots6, true) },
+    publicTokens12: { ids: ids12, ballots: ballots12, tokens: likelyPublicTokens(likelyRow(12, false, true), ids12, ballots12) },
+    secretTokens: { ids: ids6, counts: counts6, tokens: likelySecretTokens(likelyRow(6, false, true), ids6, counts6) },
   };
 }
 

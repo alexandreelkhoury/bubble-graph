@@ -115,7 +115,7 @@
       "doneIds": [],
       "awaitedIds": [],
       "public": {
-        "schema": 1,
+        "schema": 2,
         "phase": "REVEAL",
         "cardIndex": 2,
         "cardCount": 8,
@@ -163,74 +163,27 @@
               "voterId": "p_3d4e5f60718293a4b5c6d7e8",
               "targetId": "p_2c3d4e5f60718293a4b5c6d7"
             }
-          ],
-          "deltas": [
-            {
-              "playerId": "p_0a1b2c3d4e5f60718293a4b5",
-              "points": 300,
-              "reason": "agree"
-            },
-            {
-              "playerId": "p_0a1b2c3d4e5f60718293a4b5",
-              "points": 100,
-              "reason": "unanimous"
-            },
-            {
-              "playerId": "p_1b2c3d4e5f60718293a4b5c6",
-              "points": 300,
-              "reason": "agree"
-            },
-            {
-              "playerId": "p_1b2c3d4e5f60718293a4b5c6",
-              "points": 100,
-              "reason": "unanimous"
-            },
-            {
-              "playerId": "p_2c3d4e5f60718293a4b5c6d7",
-              "points": 300,
-              "reason": "agree"
-            },
-            {
-              "playerId": "p_2c3d4e5f60718293a4b5c6d7",
-              "points": 100,
-              "reason": "unanimous"
-            },
-            {
-              "playerId": "p_2c3d4e5f60718293a4b5c6d7",
-              "points": 100,
-              "reason": "selfAware"
-            },
-            {
-              "playerId": "p_3d4e5f60718293a4b5c6d7e8",
-              "points": 300,
-              "reason": "agree"
-            },
-            {
-              "playerId": "p_3d4e5f60718293a4b5c6d7e8",
-              "points": 100,
-              "reason": "unanimous"
-            }
           ]
         },
         "scores": [
           {
             "playerId": "p_0a1b2c3d4e5f60718293a4b5",
-            "score": 600,
-            "scoreBefore": 200
+            "score": 0,
+            "scoreBefore": 0
           },
           {
             "playerId": "p_1b2c3d4e5f60718293a4b5c6",
-            "score": 500,
-            "scoreBefore": 100
+            "score": 0,
+            "scoreBefore": 0
           },
           {
             "playerId": "p_2c3d4e5f60718293a4b5c6d7",
-            "score": 600,
-            "scoreBefore": 100
+            "score": 0,
+            "scoreBefore": 0
           },
           {
             "playerId": "p_3d4e5f60718293a4b5c6d7e8",
-            "score": 400,
+            "score": 0,
             "scoreBefore": 0
           },
           {

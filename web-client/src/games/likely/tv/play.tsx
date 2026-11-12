@@ -13,7 +13,6 @@ import { activeSeats, deadlineOf } from "../model";
 import type { LikelyModel, Seat } from "../model";
 import { k } from "../parts";
 import { BulbArch, Jury, LkTop, TvCard, World } from "./stage";
-import { ScoreRail } from "./rail";
 import { sfx } from "./sfx";
 
 function juryExpression(m: LikelyModel, s: Seat): Expression {
@@ -88,7 +87,6 @@ export function TvPlay({ m }: { m: LikelyModel }) {
       {voting && (
         <p class="lkvoted tnum" aria-live="polite"><Icon name="check" size={22} />{t(k("vote.progress"), { count: m.pub.votedIds.length, total: voters })}</p>
       )}
-      <ScoreRail m={m} />
     </div>
   );
 }

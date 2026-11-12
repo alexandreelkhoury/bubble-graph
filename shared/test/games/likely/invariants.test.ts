@@ -49,21 +49,18 @@ describe("invariants (§13.3)", () => {
     breaks(card, (x) => { x.cardIndex = 3; });
     breaks(awards, (x) => { x.phase = "HOLD"; x.deadline = null; x.card = null; x.cardIndex = 99; });
   });
-  it("results: chaos/unanimous, percent, named, caps (4, 5, 6, 7)", () => {
+  it("results: chaos/unanimous, percent, named; every score stays 0 (4, 5, 6, 7)", () => {
     breaks(reveal, (x) => { (x.results[0] as { picks: number[] }).picks = [7, 1, 1, 0]; });
     breaks(reveal, (x) => { (x.results[0] as { named: number | null }).named = 9; });
     breaks(reveal, (x) => { (x.results[0] as { named: number | null }).named = 1; x.settings.mode = "spicy"; });
     breaks(reveal, (x) => { x.scores.p1 = (x.scores.p1 ?? 0) + 50; });
     breaks(reveal, (x) => { x.scores.p1 = -1; x.scores.p2 = (x.scores.p2 ?? 0) + 1 + (reveal.scores.p1 ?? 0); });
-    breaks(revealAnon, (x) => { x.settings.showVoters = true; });
-    breaks(reveal, (x) => { x.settings.showVoters = false; });
   });
   it("family stays family; named cards need a present player and 4 players; named spacing", () => {
     breaks(card, (x) => { (x.card as { spicy: boolean }).spicy = true; });
     breaks(card, (x) => { (x.card as { namedPlayerId: string | null }).namedPlayerId = "p2"; });
     breaks(card, (x) => { x.settings.mode = "spicy"; (x.card as { namedPlayerId: string | null }).namedPlayerId = "ghost"; });
     breaks(card, (x) => { x.settings.mode = "spicy"; (x.card as { namedPlayerId: string | null }).namedPlayerId = "p2"; (x.players[1] as { left: boolean; connected: boolean }).left = true; (x.players[1] as { connected: boolean }).connected = false; });
-    breaks(reveal, (x) => { x.settings.mode = "spicy"; (x.results[0] as { named: number | null }).named = 3; (x.card as { namedPlayerId: string | null }).namedPlayerId = "p4"; x.phase = "CARD"; x.results = []; x.cardIndex = 0; });
     const three = startGame(3);
     breaks(three, (x) => { x.settings.mode = "spicy"; (x.card as { namedPlayerId: string | null }).namedPlayerId = "p2"; });
   });

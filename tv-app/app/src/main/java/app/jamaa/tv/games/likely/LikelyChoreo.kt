@@ -23,21 +23,16 @@ object LikelyTiming {
     const val REVEAL_MAX_MS = 12_000L
     const val AWARDS_BASE_MS = 3_000L
     const val AWARDS_TRIO_MS = 4_000L
-    const val AWARDS_MIND_READER_MS = 4_000L
 
     /** `clamp(14 000 + 1 000 × n, 18 000, 26 000)` (GAME-LIKELY §4.1; mirrors `likelyVotingMs`). */
     fun votingMs(players: Int): Long = (14_000L + 1_000L * players).coerceIn(18_000L, 26_000L)
 
-    /**
-     * Mirrors shared `likelyRevealMs`: `7 000 + 150 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0)`, clamped to
-     * 8 000–12 000 (owner-approved G3 review change of GAME-LIKELY §12.2, which still says 5 000 + 100 × votes, 6 000–9 500).
-     */
+    /** Mirrors shared `likelyRevealMs`: `7 000 + 150 × votes + (unanimous ? 1 200 : 0) + (ties > 1 ? 600 : 0)`, clamped to 8 000–12 000. */
     fun revealMs(votes: Int, unanimous: Boolean, topCount: Int): Long =
         (7_000L + 150L * votes + (if (unanimous) 1_200L else 0L) + (if (topCount > 1) 600L else 0L)).coerceIn(REVEAL_MIN_MS, REVEAL_MAX_MS)
 
-    /** `3 000 + 4 000 × ceil(holders / 3) + 4 000` (the last 4 000 = Mind Reader, public mode only). */
-    fun awardsMs(holders: Int, publicMode: Boolean): Long =
-        AWARDS_BASE_MS + AWARDS_TRIO_MS * ceil(holders / 3.0).toLong() + (if (publicMode) AWARDS_MIND_READER_MS else 0L)
+    /** `3 000 + 4 000 × ceil(holders / 3)`: the intro, then one page per trio (no Mind Reader: no points, GAME-LIKELY §6). */
+    fun awardsMs(holders: Int): Long = AWARDS_BASE_MS + AWARDS_TRIO_MS * ceil(holders / 3.0).toLong()
 }
 
 /** A timeline: step list + sound marks (cue ids of DESIGN-JAMAA §5.5 / GAME-LIKELY §12.6) + its natural end. */
@@ -55,18 +50,21 @@ object LikelyChoreo {
     const val REDUCED_FADE_MS = 200
 
     // The reveal is a line-for-line port of the browser TV's step list (web-client/src/games/likely/tv/choreo.ts,
-    // `revealSteps` + `fitReveal`), so both TVs play the same moment from the same public result.
+    // `revealSteps` + `fitReveal`), so both TVs play the same moment from the same public result. Owner redesign
+    // 2026-11-12: the card lifts and the row glides up ("dim"); the votes land under their targets one by one ("token":
+    // public mode, each voter's own character in miniature; secret votes, identical envelopes); the counts pop
+    // ("count"); the room dims around the most-voted ("spot"); the award stamp lands ("stamp"). No points, no
+    // "defend yourself" hold: the rest of the window keeps the finished picture on screen ("hold").
 
-    /** Drumroll: lights dim, the card shrinks to the top (0–800 ms). */
-    const val DRUM_MS = 800
-
-    /** Run to your pick: 100 ms per voter, the whole run ≤ 2 500 ms (§12.2 step 2). */
-    const val RUN_MS = 520
-    const val RUN_WINDOW_MS = 2_500 - RUN_MS
+    /** The card lifts, the row glides up (0–700 ms). */
+    const val LIFT_MS = 700
+    const val TOKEN_AT = 750
+    const val TOKEN_MS = 520
+    const val TOKEN_WINDOW_MS = 2_400
     const val CONFETTI_MS = 1_200
-    const val SCRAMBLE_MS = 1_200
+    const val SCRAMBLE_MS = 1_000
 
-    /** Time kept free at the end of the server's REVEAL window: the hold ("defend yourself") and network slack. */
+    /** Time kept free at the end of the server's REVEAL window (network slack before the next card is dealt). */
     const val REVEAL_TAIL_MS = 1_000
 
     private fun step(id: String, start: Int, dur: Int, easing: String, stagger: Int = 0, reduced: Reduced = Reduced.FADE, lite: Lite = Lite.KEEP) =
@@ -76,7 +74,7 @@ object LikelyChoreo {
     private fun s(id: String, start: Double, dur: Int, easing: String, reduced: Reduced = Reduced.SKIP, stagger: Double = 0.0) =
         Choreo.Step(id, kotlin.math.round(start).toInt(), dur, easing, kotlin.math.round(stagger).toInt(), reduced, Lite.KEEP)
 
-    /** Which reveal plays (§12.2): conga (public), ballot rain (secret votes), chaos scramble, or nobody voted. */
+    /** Which reveal plays (§12.2): public (the voters' own tokens), secret (envelopes), chaos, or nobody voted. */
     enum class RevealKind { PUBLIC, SECRET, CHAOS, NONE }
 
     fun revealKind(r: LikelyReveal, anonymous: Boolean): RevealKind = when {
@@ -86,76 +84,32 @@ object LikelyChoreo {
         else -> RevealKind.PUBLIC
     }
 
-    fun runStagger(runners: Int): Double = if (runners <= 1) 100.0 else min(100.0, RUN_WINDOW_MS.toDouble() / (runners - 1))
+    /** Tokens leave one after the other, 160–320 ms apart, the whole build ≈ 2.4 s (TS `tokenStagger`). */
+    fun tokenStagger(tokens: Int): Double = if (tokens <= 1) 320.0 else min(320.0, max(160.0, TOKEN_WINDOW_MS.toDouble() / (tokens - 1)))
 
     /** The shape of a reveal, from the public result only (TS `RevealShape`). */
-    data class RevealShape(
-        val runners: Int,
-        val envelopes: Int,
-        val publicMode: Boolean,
-        val chaos: Boolean,
-        val none: Boolean,
-        val unanimous: Boolean,
-        val coins: Int,
-        /** Lines on the secret-vote percentage board (each adds reading time). */
-        val lines: Int = 1,
-    ) {
-        /** The staggered element count `fitReveal` measures with. */
-        val count: Int get() = max(max(runners, envelopes), max(coins, 1))
+    data class RevealShape(val tokens: Int, val chaos: Boolean, val none: Boolean, val unanimous: Boolean) {
+        val count: Int get() = max(tokens, 1)
     }
 
-    /** The percentage board stays readable: 1 800 ms + 120 ms per line (TS `boardMs`). */
-    fun boardMs(lines: Int): Int = 1_800 + 120 * max(1, lines)
-
-    /** TS `revealSteps`. Ids: dim, run, box, env, scramble, count, spot, stamp, confetti, coin, tick, board, hold. */
+    /** TS `revealSteps`. Ids: dim, token, count, scramble, spot, stamp, confetti, hold. */
     fun revealSteps(o: RevealShape): List<Choreo.Step> {
-        val steps = mutableListOf(s("dim", 0.0, DRUM_MS, "ease.standard", Reduced.FADE))
-        if (o.none) return steps + s("hold", DRUM_MS.toDouble(), 400, "ease.decel", Reduced.FADE)
-        var t = DRUM_MS.toDouble()
+        val steps = mutableListOf(s("dim", 0.0, LIFT_MS, "ease.standard", Reduced.FADE))
+        if (o.none || o.tokens == 0) return steps + s("hold", LIFT_MS.toDouble(), 400, "ease.decel", Reduced.FADE)
+        val st = tokenStagger(o.tokens)
+        steps += s("token", TOKEN_AT.toDouble(), TOKEN_MS, "ease.decel", Reduced.SKIP, st)
+        var t = TOKEN_AT + st * (o.tokens - 1) + TOKEN_MS + 100
+        steps += s("count", t, 400, "ease.overshoot", Reduced.FADE)
+        t += 400
         if (o.chaos) {
             steps += s("scramble", t, SCRAMBLE_MS, "linear")
             t += SCRAMBLE_MS
-            if (o.publicMode && o.runners > 0) {
-                steps += s("run", t, RUN_MS, "spring.bouncy", Reduced.SKIP, runStagger(o.runners))
-                t += RUN_MS + runStagger(o.runners) * max(0, o.runners - 1)
-            }
-            steps += s("count", t, 600, "ease.decel", Reduced.FADE)
-            t += 600
-            if (!o.publicMode) {
-                val b = boardMs(o.lines)
-                steps += s("board", t, b, "ease.decel", Reduced.FADE, 120.0)
-                t += b
-            }
             return steps + s("hold", t, 400, "ease.decel", Reduced.FADE)
         }
-        if (o.publicMode) {
-            val st = runStagger(o.runners)
-            steps += s("run", t, RUN_MS, "ease.decel", Reduced.SKIP, st)
-            t += if (o.runners > 0) RUN_MS + st * (o.runners - 1) else 200.0
-        } else {
-            steps += s("box", t, 360, "ease.overshoot")
-            steps += s("env", t + 240, 450, "ease.coin", Reduced.SKIP, 70.0)
-            t += 240 + 450 + 70.0 * max(0, o.envelopes - 1)
-        }
-        t += 100
-        steps += s("count", t, 600, "ease.decel", Reduced.FADE)
-        t += 600
-        steps += s("spot", t, 800, "ease.overshoot", Reduced.FADE)
-        t += 800
-        steps += s("stamp", t, 600, "ease.overshoot", Reduced.FADE)
-        if (o.unanimous) steps += s("confetti", t + 300, CONFETTI_MS, "linear")
-        t += 600
-        if (o.publicMode) {
-            if (o.coins > 0) {
-                steps += s("coin", t, 450, "ease.coin", Reduced.SKIP, 70.0)
-                steps += s("tick", t + 450, 600, "ease.decel", Reduced.FADE)
-                t += 450 + 70.0 * max(0, o.coins - 1) + 600
-            }
-        } else {
-            val b = boardMs(o.lines)
-            steps += s("board", t, b, "ease.decel", Reduced.FADE, 120.0)
-            t += b
-        }
+        steps += s("spot", t, 600, "ease.decel", Reduced.FADE)
+        steps += s("stamp", t + 300, 600, "ease.overshoot", Reduced.FADE)
+        if (o.unanimous) steps += s("confetti", t + 600, CONFETTI_MS, "linear")
+        t += 900
         return steps + s("hold", t, 400, "ease.decel", Reduced.FADE)
     }
 
@@ -173,13 +127,13 @@ object LikelyChoreo {
         )
     }
 
-    /** The "defend yourself" hold gets at least this long on screen when the window allows it (§12.2 step 7). */
+    /** The finished picture (who voted for whom, or the percentages) stays at least this long when the window allows it. */
     const val HOLD_MIN_MS = 2_000
 
     /** The beats before the hold are never squeezed below this fraction of their natural speed to make room for it. */
     const val FIT_MIN_SCALE = 0.7
 
-    /** Shortest hold step (its fade-in; the caption then stays until the server deals the next card). */
+    /** Shortest hold step (its fade-in; the picture then stays until the server deals the next card). */
     const val HOLD_FLOOR_MS = 400
 
     /**
@@ -207,34 +161,24 @@ object LikelyChoreo {
         val steps = fitReveal(revealSteps(shape), LikelyTiming.revealMs(r.votesCast, r.unanimous, r.topIds.size), shape.count)
         fun st(id: String) = steps.firstOrNull { it.id == id }
         val marks = mutableListOf(LikelyMark(0, "sfx.drumroll"))
-        st("scramble")?.let { marks += LikelyMark(it.startMs, "likely.scramble") }
-        st("box")?.let { marks += LikelyMark(it.startMs, "likely.ballot") }
-        st("run")?.let { run ->
-            // "tok" on each landing, pitch rising with the line (capped to the SoundPool range).
-            for (i in 0 until min(shape.runners, 12)) marks += LikelyMark(run.startMs + run.staggerMs * i + run.durationMs, "likely.tok", (1f + 0.06f * i).coerceAtMost(2f))
+        st("token")?.let { tk ->
+            // "tok" as each vote lands, pitch rising with the build (capped to the SoundPool range).
+            for (i in 0 until min(shape.tokens, 12)) marks += LikelyMark(tk.startMs + tk.staggerMs * i + tk.durationMs, "likely.tok", (1f + 0.05f * i).coerceAtMost(2f))
         }
-        st("env")?.let { env -> for (i in 0 until min(shape.envelopes, 12)) marks += LikelyMark(env.startMs + env.staggerMs * i + env.durationMs, "likely.tok", (1f + 0.04f * i).coerceAtMost(2f)) }
         st("count")?.let { marks += LikelyMark(it.startMs, "counterTick") }
+        st("scramble")?.let { marks += LikelyMark(it.startMs, "likely.scramble") }
         st("spot")?.let { marks += LikelyMark(it.startMs, "likely.spot") }
         st("stamp")?.let { marks += LikelyMark(it.startMs + 200, "likely.rosette") }
         st("confetti")?.let { marks += LikelyMark(it.startMs, "likely.confetti") }
-        st("coin")?.let { c ->
-            marks += LikelyMark(c.startMs, "coinFly")
-            for (i in 0 until min(shape.coins, 10)) marks += LikelyMark(c.startMs + c.staggerMs * i + c.durationMs, "coinLand", (1f + 0.06f * i).coerceAtMost(2f))
-        }
-        // The score rail's counters roll from scoreBefore to score (public mode, DESIGN-JAMAA §5.1 counters ticking).
-        st("tick")?.let { marks += LikelyMark(it.startMs, "counterTick") }
-        if (shape.none) marks += LikelyMark(DRUM_MS, "likely.puff")
+        if (shape.none) marks += LikelyMark(LIFT_MS, "likely.puff")
         val total = endMs(steps, shape.count)
         val kind = when {
             shape.none -> "none"
             shape.chaos -> "chaos"
-            shape.publicMode -> "public"
-            else -> "secret"
+            else -> "reveal"
         }
         return LikelyTimeline("likely.reveal.$kind", steps, total, marks.filter { it.atMs <= total }.sortedBy { it.atMs })
     }
-
 
     /**
      * The card entrance (§12.3): dealt from the golden deck at the top-end corner, flipped on the Y axis in mid-air
@@ -264,18 +208,6 @@ object LikelyChoreo {
         ),
         2_400,
         listOf(LikelyMark(500, "likely.rosette"), LikelyMark(700, "likely.rosette"), LikelyMark(900, "likely.rosette"), LikelyMark(1_300, "likely.glint")),
-    )
-
-    /** The Mind Reader podium (public mode only): steps rise 3-2-1, the crystal ball glows on the winner. */
-    val mindReader: LikelyTimeline = LikelyTimeline(
-        "likely.awards.mindReader",
-        listOf(
-            step("podium", 0, 600, "spring.bouncy", 150, Reduced.FADE),
-            step("crystal", 700, 600, "ease.overshoot"),
-            step("glint", 1_300, 700, "linear", reduced = Reduced.SKIP, lite = Lite.DROP),
-        ),
-        2_000,
-        listOf(LikelyMark(0, "likely.rosette"), LikelyMark(700, "likely.glint")),
     )
 
     /** The intro page of AWARDS: the curtain sweeps, "Awards Night" lands. */

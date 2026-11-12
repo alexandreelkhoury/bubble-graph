@@ -49,12 +49,12 @@ describe("phases and deadlines (§4.1)", () => {
     expect(r.phase).toBe("REVEAL");
     expect(r.deadline).toBe(now + 1_000 + 7_000 + 450 + 1_200);
   });
-  it("AWARDS lasts 3 000 + 4 000 × ceil(players / 3) (+4 000 Mind Reader in public mode)", () => {
-    expect(likelyAwardsMs(3, true)).toBe(11_000);
-    expect(likelyAwardsMs(7, false)).toBe(15_000);
+  it("AWARDS lasts 3 000 + 4 000 × ceil(players / 3) (no Mind Reader page: no points)", () => {
+    expect(likelyAwardsMs(3)).toBe(7_000);
+    expect(likelyAwardsMs(7)).toBe(15_000);
     const a = playTo(startGame(7, { showVoters: false }), {}, "AWARDS");
     expect(a.results).toHaveLength(8);
-    const revealEnd = a.deadline as number - likelyAwardsMs(7, false);
+    const revealEnd = a.deadline as number - likelyAwardsMs(7);
     expect(revealEnd).toBeGreaterThan(T0);
     const b = playTo(startGame(4), {}, "AWARDS");
     expect(awardsOf(b)).toHaveLength(4);
@@ -168,19 +168,18 @@ describe("skips, HOLD, joins, leaves (§7)", () => {
     expect(s.phase).toBe("RESULTS");
     expect(s.deadline).toBeNull();
     expect(DEF.nextWakeAt(s)).toBeNull();
-    // p1 and p2 agree on every card: +50 × 8; p3 never agrees.
-    expect(DEF.outcome(s)).toEqual({ points: { p1: 400, p2: 400, p3: 0 }, ranking: [["p1", "p2"]] });
-    expect(awardsOf(s).find((a) => a.kind === "mindReader")?.playerIds).toEqual(["p1", "p2"]);
+    // No points in either mode (owner decision 2026-11-12): nobody is ranked, no placement stars.
+    expect(DEF.outcome(s)).toEqual({ points: { p1: 0, p2: 0, p3: 0 }, ranking: [] });
+    expect(Object.values(s.scores)).toEqual([0, 0, 0]);
     expect(awardsOf(s).find((a) => a.kind === "star")?.playerIds).toEqual(["p2"]);
     expect(tick(s)).toBe(s);
   });
-  it("secret votes: no points at all, outcome all 0 and no ranking, no Self-aware or Mind Reader", () => {
+  it("secret votes: no points either, outcome all 0 and no ranking; awards from the tallies", () => {
     const s = playTo(startGame(3, { showVoters: false }), { p1: "p1", p2: "p1", p3: "p1" }, "RESULTS");
     expect(DEF.outcome(s)).toEqual({ points: { p1: 0, p2: 0, p3: 0 }, ranking: [] });
-    expect(awardsOf(s).some((a) => a.kind === "mindReader" || a.kind === "selfAware")).toBe(false);
     expect(awardsOf(s).find((a) => a.kind === "signature")?.playerIds).toEqual(["p1"]);
   });
-  it("nobody votes: no award, no points; everyone gets the Mystery Award", () => {
+  it("nobody votes: no award; everyone gets the Mystery Award", () => {
     const s = playTo(startGame(3), {}, "AWARDS");
     expect(awardsOf(s).map((a) => a.kind)).toEqual(["mystery", "mystery", "mystery"]);
   });
@@ -201,7 +200,7 @@ describe("skips, HOLD, joins, leaves (§7)", () => {
     const ended = host(s, { type: "END_GAME" }, T0 + 90_000);
     expect(ended.phase).toBe("AWARDS");
     expect(awardsOf(ended).filter((a) => a.kind === "signature" || a.kind === "mystery")).toHaveLength(3);
-    expect(ended.deadline).toBe(T0 + 90_000 + likelyAwardsMs(3, true));
+    expect(ended.deadline).toBe(T0 + 90_000 + likelyAwardsMs(3));
   });
   it("start with a disconnected roster entry: it is dealt in, abstains, and counts for the HOLD quorum", () => {
     const r = roster(4);

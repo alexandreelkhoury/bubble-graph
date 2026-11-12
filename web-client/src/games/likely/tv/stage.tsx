@@ -1,8 +1,8 @@
 // The rooftop stage of Most Likely on /tv (GAME-LIKELY §12.1, DESIGN-JAMAA §7.8 LK-TV-01/02): the night sky with
-// string lights and the city glow, the in-game top bar, the gold bulb arch, the card and the jury arc of characters.
+// string lights and the city glow, the in-game top bar, the gold bulb arch, the card and the row of characters.
 import type { ComponentChildren } from "preact";
 import type { Expression } from "@jamaa/shared/characters";
-import { likelyJuryArc } from "@jamaa/shared/games/likely/meta";
+import { likelyRow } from "@jamaa/shared/games/likely/meta";
 import { dirOf, locale, t } from "../../../i18n/t";
 import { Icon } from "../../../components/Icon";
 import { Character, useReaction } from "../../../components/Character";
@@ -114,13 +114,14 @@ function JuryChar({ s, expression, size, look }: { s: Seat; expression: Expressi
   return <Character color={s.color} size={size} expression={r ?? expression} burst={r} burstKey={s.reaction?.n} look={look ?? null} />;
 }
 
-/** LK-TV-01/02 jury arc: characters on the shared arc (feet at the arc point), names under them. */
+/** LK-TV-01/02 the players: one centred row (shared `likelyRow`, feet on the row), names under them. */
 export function Jury({ m, expressionOf, newIds = [], hideNames = false }: { m: LikelyModel; expressionOf(s: Seat): Expression; newIds?: readonly string[]; hideNames?: boolean }) {
-  const pts = likelyJuryArc(m.seats.length, rtl()).map(toCanvas);
+  const seats = m.seats.filter((s) => !s.left);
+  const pts = likelyRow(seats.length, rtl()).map(toCanvas);
   const size = CHAR;
   return (
     <div class="lkjury">
-      {m.seats.map((s, i) => {
+      {seats.map((s, i) => {
         const p = pts[i]!;
         return (
           <div key={s.id} class={`lkjury__seat${s.left ? " is-left" : ""}`} data-seat={s.id} style={{ left: `${p.x - size / 2}px`, top: `${p.y - size}px`, "--i": i }}>

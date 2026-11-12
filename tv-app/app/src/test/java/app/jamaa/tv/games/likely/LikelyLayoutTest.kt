@@ -2,6 +2,8 @@ package app.jamaa.tv.games.likely
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.double
 import kotlinx.serialization.json.int
@@ -9,75 +11,77 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** GAME-LIKELY §12.7 / DESIGN-JAMAA §6.4.3: the Kotlin layout math equals shared/src/games/likely/layout.ts. */
 class LikelyLayoutTest {
     private val fx: JsonObject = Json.parseToJsonElement(LikelyFixtures.text("layout.json")).jsonObject
 
-    private fun pt(e: kotlinx.serialization.json.JsonElement) = e.jsonObject.let { LikelyPt(it["x"]!!.jsonPrimitive.double, it["y"]!!.jsonPrimitive.double) }
-    private fun pts(e: kotlinx.serialization.json.JsonElement) = (e as JsonArray).map(::pt)
+    private fun pt(e: JsonElement) = e.jsonObject.let { LikelyPt(it["x"]!!.jsonPrimitive.double, it["y"]!!.jsonPrimitive.double) }
+    private fun pts(e: JsonElement) = (e as JsonArray).map(::pt)
+    private fun tokens(e: JsonElement) = e.jsonArray.map {
+        val o = it.jsonObject
+        val v = o["voterId"]!!
+        LikelyToken(if (v is JsonNull) null else v.jsonPrimitive.content, o["targetId"]!!.jsonPrimitive.content, o["k"]!!.jsonPrimitive.int, pt(o["at"]!!))
+    }
 
     @Test fun stageConstantsMatch() {
         val s = fx["stage"]!!.jsonObject
         fun d(k: String) = s[k]!!.jsonPrimitive.double
         assertEquals(d("width"), LikelyLayout.WIDTH, 0.0)
         assertEquals(d("height"), LikelyLayout.HEIGHT, 0.0)
-        assertEquals(d("arcY"), LikelyLayout.ARC_Y, 0.0)
-        assertEquals(d("arcLift"), LikelyLayout.ARC_LIFT, 0.0)
+        assertEquals(d("cardTop"), LikelyLayout.CARD_TOP, 0.0)
+        assertEquals(d("cardWidth"), LikelyLayout.CARD_WIDTH, 0.0)
+        assertEquals(d("cardHeight"), LikelyLayout.CARD_HEIGHT, 0.0)
+        assertEquals(d("cardRevealScale"), LikelyLayout.CARD_REVEAL_SCALE, 0.0)
+        assertEquals(d("rowY"), LikelyLayout.ROW_Y, 0.0)
+        assertEquals(d("rowLift"), LikelyLayout.ROW_LIFT, 0.0)
         assertEquals(d("charSize"), LikelyLayout.CHAR_SIZE, 0.0)
+        assertEquals(d("revealChar"), LikelyLayout.REVEAL_CHAR, 0.0)
         assertEquals(d("maxSpread"), LikelyLayout.MAX_SPREAD, 0.0)
         assertEquals(d("maxStep"), LikelyLayout.MAX_STEP, 0.0)
-        assertEquals(d("congaDx"), LikelyLayout.CONGA_DX, 0.0)
-        assertEquals(d("congaDy"), LikelyLayout.CONGA_DY, 0.0)
-        assertEquals(s["congaStraight"]!!.jsonPrimitive.int, LikelyLayout.CONGA_STRAIGHT)
-        assertEquals(d("curlRadius"), LikelyLayout.CURL_RADIUS, 0.0)
-        assertEquals(d("curlShrink"), LikelyLayout.CURL_SHRINK, 0.0)
-        assertEquals(d("curlStepDeg"), LikelyLayout.CURL_STEP_DEG, 0.0)
+        assertEquals(d("bannerY"), LikelyLayout.BANNER_Y, 0.0)
+        assertEquals(d("revealRowY"), LikelyLayout.REVEAL_ROW_Y, 0.0)
+        assertEquals(d("stackTop"), LikelyLayout.STACK_TOP, 0.0)
+        assertEquals(d("stackBottom"), LikelyLayout.STACK_BOTTOM, 0.0)
+        assertEquals(d("cellMax"), LikelyLayout.CELL_MAX, 0.0)
+        assertEquals(d("cellMin"), LikelyLayout.CELL_MIN, 0.0)
+        assertEquals(s["stackColsMax"]!!.jsonPrimitive.int, LikelyLayout.STACK_COLS_MAX)
     }
 
-    @Test fun juryArcsLtrAndRtl() {
-        val arcs = fx["arcs"]!!.jsonObject
-        for ((n, e) in arcs) {
-            assertEquals("ltr $n", pts(e.jsonObject["ltr"]!!), LikelyLayout.juryArc(n.toInt(), rtl = false))
-            assertEquals("rtl $n", pts(e.jsonObject["rtl"]!!), LikelyLayout.juryArc(n.toInt(), rtl = true))
-        }
-        assertEquals(12, arcs.size)
-        assertEquals(emptyList<LikelyPt>(), LikelyLayout.juryArc(0))
-    }
-
-    @Test fun rtlMirrorsTheArc() {
-        for (n in 1..12) {
-            val ltr = LikelyLayout.juryArc(n)
-            val rtl = LikelyLayout.juryArc(n, rtl = true)
-            for (i in 0 until n) {
-                assertEquals(LikelyLayout.WIDTH - ltr[i].x, rtl[i].x, 0.11)
-                assertEquals(ltr[i].y, rtl[i].y, 0.0)
-            }
-        }
-    }
-
-    @Test fun congaLinesCurlAfterSix() {
-        for ((name, e) in fx["conga"]!!.jsonObject) {
+    @Test fun rowsLtrRtlAndReveal() {
+        val rows = fx["rows"]!!.jsonObject
+        for ((n, e) in rows) {
             val o = e.jsonObject
-            val target = pt(o["target"]!!)
-            val places = pts(o["places"]!!)
-            // fixture-scenario.ts: left/right record the one-runner side, the edge cases the side of their 11-runner line.
-            val sideCount = if (name.startsWith("edge")) places.size else 1
-            assertEquals(name, o["side"]!!.jsonPrimitive.int, LikelyLayout.congaSide(target, sideCount))
-            assertEquals(name, places, LikelyLayout.conga(target, places.size))
+            assertEquals("ltr $n", pts(o["ltr"]!!), LikelyLayout.row(n.toInt()))
+            assertEquals("rtl $n", pts(o["rtl"]!!), LikelyLayout.row(n.toInt(), rtl = true))
+            assertEquals("reveal $n", pts(o["reveal"]!!), LikelyLayout.row(n.toInt(), reveal = true))
+            assertEquals("revealRtl $n", pts(o["revealRtl"]!!), LikelyLayout.row(n.toInt(), rtl = true, reveal = true))
+        }
+        assertEquals(12, rows.size)
+        assertEquals(emptyList<LikelyPt>(), LikelyLayout.row(0))
+    }
+
+    @Test fun stackGrids() {
+        for ((key, e) in fx["grids"]!!.jsonObject) {
+            val (n, m) = key.split("x").map { it.toInt() }
+            val o = e.jsonObject
+            assertEquals(key, LikelyStackGrid(o["cols"]!!.jsonPrimitive.int, o["cell"]!!.jsonPrimitive.double), LikelyLayout.stackGrid(n, m))
         }
     }
 
-    @Test fun revealPositionsLtrAndRtl() {
-        for (key in listOf("reveal", "revealRtl", "revealTie")) {
+    @Test fun publicAndSecretTokens() {
+        for ((key, rtl) in listOf("publicTokens" to false, "publicTokensRtl" to true, "publicTokens12" to false)) {
             val o = fx[key]!!.jsonObject
-            val seatIds = o["seatIds"]!!.jsonArray.map { it.jsonPrimitive.content }
-            val arc = pts(o["arc"]!!)
+            val ids = o["ids"]!!.jsonArray.map { it.jsonPrimitive.content }
             val ballots = o["ballots"]!!.jsonArray.map { LikelyBallot(it.jsonObject["voterId"]!!.jsonPrimitive.content, it.jsonObject["targetId"]!!.jsonPrimitive.content) }
-            val expected = o["positions"]!!.jsonObject.mapValues { pt(it.value) }
-            assertEquals(key, expected, LikelyLayout.revealPositions(arc, seatIds, ballots))
+            assertEquals(key, tokens(o["tokens"]!!), LikelyLayout.publicTokens(LikelyLayout.row(ids.size, rtl, reveal = true), ids, ballots, rtl))
         }
+        val o = fx["secretTokens"]!!.jsonObject
+        val ids = o["ids"]!!.jsonArray.map { it.jsonPrimitive.content }
+        val counts = o["counts"]!!.jsonArray.map { LikelyCount(it.jsonObject["playerId"]!!.jsonPrimitive.content, it.jsonObject["count"]!!.jsonPrimitive.int, 0) }
+        assertEquals(tokens(o["tokens"]!!), LikelyLayout.secretTokens(LikelyLayout.row(ids.size, reveal = true), ids, counts))
     }
 
     @Test fun roundingIsJsMathRound() {
@@ -86,11 +90,16 @@ class LikelyLayoutTest {
         assertEquals(332.9, LikelyLayout.r1(332.888), 1e-9)
     }
 
-    /** Every place of every line size stays inside the safe area (shared layout.test.ts), LTR and RTL. */
-    @Test fun congaLinesStayOnTheStage() {
-        for (n in 1..12) for (rtl in listOf(false, true)) for (target in LikelyLayout.juryArc(n, rtl)) for (count in 1..11) {
-            for (p in LikelyLayout.conga(target, count)) {
-                org.junit.Assert.assertTrue("n=$n rtl=$rtl ${target.x} $count -> $p", p.x >= LikelyLayout.CONGA_MIN_X && p.x <= LikelyLayout.CONGA_MAX_X)
+    /** Every token of every stack size stays on the stage and inside its target's column (shared layout.test.ts). */
+    @Test fun stacksStayOnTheStageAndInTheirColumn() {
+        for (n in 3..12) for (m in 1..n) for (rtl in listOf(false, true)) {
+            val g = LikelyLayout.stackGrid(n, m)
+            val step = LikelyLayout.rowStep(n)
+            for (target in LikelyLayout.row(n, rtl, reveal = true)) for (k in 0 until m) {
+                val p = LikelyLayout.stackSlot(target, k, m, g, rtl)
+                assertTrue("n=$n m=$m", p.y + g.cell / 2 <= LikelyLayout.STACK_BOTTOM + 0.05 && p.y - g.cell / 2 >= LikelyLayout.STACK_TOP - 0.05)
+                assertTrue("n=$n m=$m", p.x - g.cell / 2 >= -0.05 && p.x + g.cell / 2 <= LikelyLayout.WIDTH + 0.05)
+                assertTrue("n=$n m=$m k=$k", kotlin.math.abs(p.x - target.x) + g.cell / 2 <= step / 2 + 0.05)
             }
         }
     }

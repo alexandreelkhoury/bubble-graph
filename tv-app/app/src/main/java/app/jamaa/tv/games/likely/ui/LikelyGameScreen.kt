@@ -60,6 +60,7 @@ import app.jamaa.tv.games.GameScreenArgs
 import app.jamaa.tv.games.likely.LikelyCardFit
 import app.jamaa.tv.games.likely.LikelyChoreo
 import app.jamaa.tv.games.likely.LikelyGameView
+import app.jamaa.tv.games.likely.LikelyLayout
 import app.jamaa.tv.games.likely.LikelyMark
 import app.jamaa.tv.games.likely.LikelyMode
 import app.jamaa.tv.games.likely.LikelyPhase
@@ -236,7 +237,9 @@ internal inline fun playMarks(marks: List<LikelyMark>, play: (CuePlay) -> Unit) 
 @Composable
 private fun Header(view: LikelyView, args: GameScreenArgs, clock: LikelyClock) {
     val type = JamaaTheme.type
-    // The first card's top bar stays hidden under the platform entrance, then fades in with the deal (web is-gated).
+    // Everything sits at the START side: the end side of the top bar belongs to the platform's "Back: menu & rules" hint
+    // (AppRoot, top end), which must never cover a game chip. The first card's top bar stays hidden under the platform
+    // entrance, then fades in with the deal (web is-gated).
     Row(
         Modifier.fillMaxWidth().height(44.dp).graphicsLayer { alpha = if (view.phase == LikelyPhase.CARD && clock.t() < 0) 0f else 1f },
         verticalAlignment = Alignment.CenterVertically,
@@ -244,39 +247,37 @@ private fun Header(view: LikelyView, args: GameScreenArgs, clock: LikelyClock) {
         if (view.phase != LikelyPhase.HOLD) {
             Text(
                 keyText("game.likely.card.counter", LikelyStage.cardNumber(view).toString(), view.cardCount),
-                style = type.label,
+                style = type.title,
                 color = Rooftop.accentText,
             )
-            if (view.card?.rerun == true && view.phase != LikelyPhase.REVEAL) {
-                Spacer(Modifier.width(12.dp))
-                Tag(keyText("game.likely.card.rerun"), GoldHi)
-            }
-            if (view.mode == LikelyMode.SPICY) {
-                Spacer(Modifier.width(12.dp))
-                Tag(keyText("game.likely.spicy.tag"), Color(0xFFFF7A59))
-            }
-        }
-        Spacer(Modifier.weight(1f))
-        if (view.anonymous) {
-            Tag(keyText("game.likely.rules.secret.title"), JamaaColors.TextSecondary)
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(14.dp))
         }
         val deadline = view.deadline
         if (view.phase == LikelyPhase.VOTING && deadline != null) {
             TimerRing(
                 DeadlineView(DeadlineKind.VOTE, deadline, LikelyStage.votingDurationMs(view)),
                 args.clockOffsetMs,
-                size = 44.dp,
+                size = 42.dp,
                 stroke = 4.dp,
                 number = type.label,
                 calmColor = Rooftop.accent,
             )
+            Spacer(Modifier.width(12.dp))
         } else if (view.phase == LikelyPhase.CARD) {
             // Votes are not live yet: the room sees that phones open in a moment (web `lkready`).
             ReadyChip(keyText("game.likely.card.getReady"))
-        } else {
-            Spacer(Modifier.size(44.dp))
+            Spacer(Modifier.width(12.dp))
         }
+        if (view.card?.rerun == true && view.phase != LikelyPhase.REVEAL) {
+            Tag(keyText("game.likely.card.rerun"), GoldHi)
+            Spacer(Modifier.width(10.dp))
+        }
+        if (view.mode == LikelyMode.SPICY) {
+            Tag(keyText("game.likely.spicy.tag"), Color(0xFFFF7A59))
+            Spacer(Modifier.width(10.dp))
+        }
+        if (view.anonymous) Tag(keyText("game.likely.rules.secret.title"), JamaaColors.TextSecondary)
+        Spacer(Modifier.weight(1f))
     }
 }
 
@@ -313,7 +314,7 @@ internal fun Tag(text: String, ink: Color) {
 
 // ---------------------------------------------------------------- the stage box (864 × 486 dp coordinates)
 
-/** The stage scale: stage units (TV dp of the 864 × 486 safe area) → real dp of the area the stage got. */
+/** The stage scale: stage units (TV dp of the 864 × 442 area under the header) → real dp of the area the stage got. */
 @Stable
 internal class StageScope(val unit: Float, val rtl: Boolean) {
     fun dp(v: Double): Dp = (v * unit).dp
@@ -328,17 +329,18 @@ internal class StageScope(val unit: Float, val rtl: Boolean) {
 internal fun LikelyStageBox(modifier: Modifier, content: @Composable StageScope.() -> Unit) {
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
-        val unit = minOf(maxWidth.value / 864f, maxHeight.value / 486f)
+        // 864 × 442 fills the safe area under the 44 dp header exactly (unit 1.0 on a 960 × 540 dp TV): no dead bands.
+        val unit = minOf(maxWidth.value / 864f, maxHeight.value / 442f)
         val scope = remember(unit, rtl) { StageScope(unit, rtl) }
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-            Box(Modifier.requiredSize((864 * unit).dp, (486 * unit).dp)) { scope.content() }
+            Box(Modifier.requiredSize((864 * unit).dp, (442 * unit).dp)) { scope.content() }
         }
     }
 }
 
 // ---------------------------------------------------------------- the card (LK-TV-01 / 02)
 
-/** The card: header, the phrase big (named player in their colour), the award line; dealt in, shrunk on REVEAL. */
+/** The card: header, the phrase big (named player in their colour), the award line; dealt in, lifted and halved on REVEAL. */
 @Composable
 internal fun LikelyCardFace(view: LikelyView, clock: LikelyClock, stage: StageScope, modifier: Modifier = Modifier) {
     val card = view.card ?: return
@@ -377,17 +379,19 @@ internal fun LikelyCardFace(view: LikelyView, clock: LikelyClock, stage: StageSc
                 // Dealt from the golden deck at the top-end corner, flipping on Y; then (REVEAL) shrunk to the top.
                 val fromX = (if (stage.rtl) -1f else 1f) * size.width * 0.9f * (1f - deal)
                 translationX = fromX
-                translationY = -size.height * 0.7f * (1f - deal) - size.height * 0.26f * up
+                translationY = -size.height * 0.7f * (1f - deal)
                 rotationY = 180f * (1f - flip).coerceIn(0f, 1f) * (if (stage.rtl) -1f else 1f)
                 cameraDistance = 12f * density
-                val sc = 1f - 0.4f * up
+                // REVEAL: shrinks around its top centre (the top edge stays put), leaving room for the banner and the row.
+                transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 0f)
+                val sc = 1f - (1f - LikelyLayout.CARD_REVEAL_SCALE.toFloat()) * up
                 scaleX = sc * (0.6f + 0.4f * deal.coerceAtMost(1.1f))
                 scaleY = sc * (0.6f + 0.4f * deal.coerceAtMost(1.1f))
                 alpha = deal.coerceIn(0f, 1f)
             }
             .background(Brush.verticalGradient(listOf(Rooftop.elevated, Rooftop.surface)), shape)
             .border(stage.dp(2.5f), goldBrush(0f, 400f), shape)
-            .padding(horizontal = stage.dp(28f), vertical = stage.dp(16f)),
+            .padding(horizontal = stage.dp(LikelyCardFit.PAD_X), vertical = stage.dp(LikelyCardFit.PAD_Y)),
         contentAlignment = Alignment.Center,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
@@ -417,7 +421,7 @@ internal fun LikelyCardFace(view: LikelyView, clock: LikelyClock, stage: StageSc
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.graphicsLayer { alpha = clock.p("award") }) {
                 androidx.compose.foundation.Canvas(Modifier.size(stage.dp(22f))) { rosette(center, size.minDimension * 0.36f, 0f) }
                 Spacer(Modifier.width(stage.dp(6f)))
-                Text(card.award, style = type.label, color = Gold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                FitText(card.award, listOf(type.label, type.caption), Gold, maxLines = 1, textAlign = TextAlign.Start)
             }
         }
     }
@@ -451,6 +455,43 @@ internal fun HoldPanel(view: LikelyView, args: GameScreenArgs, stage: StageScope
         QrCode(args.room.joinUrl, panel = stage.dp(140f))
     }
 }
+
+/**
+ * Text that never ellipsizes: it takes the first of [styles] whose layout fits [maxLines] lines in the space it got,
+ * stepping down one style per overflowing layout; the last style may use one more line (meaningful text is never cut,
+ * owner rule; only player names ellipsize).
+ */
+@Composable
+internal fun FitText(
+    text: androidx.compose.ui.text.AnnotatedString,
+    styles: List<androidx.compose.ui.text.TextStyle>,
+    color: Color,
+    maxLines: Int,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Center,
+) {
+    var i by remember(text, styles.size) { mutableIntStateOf(0) }
+    val last = i >= styles.lastIndex
+    Text(
+        text,
+        style = styles[i.coerceAtMost(styles.lastIndex)],
+        color = color,
+        textAlign = textAlign,
+        maxLines = if (last) maxLines + 1 else maxLines,
+        onTextLayout = { if (it.hasVisualOverflow && i < styles.lastIndex) i++ },
+        modifier = modifier,
+    )
+}
+
+@Composable
+internal fun FitText(
+    text: String,
+    styles: List<androidx.compose.ui.text.TextStyle>,
+    color: Color,
+    maxLines: Int,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Center,
+) = FitText(androidx.compose.ui.text.AnnotatedString(text), styles, color, maxLines, modifier, textAlign)
 
 /** A name, isolated for bidi, ellipsized. */
 internal fun shortName(name: String): String = isolate(app.jamaa.tv.game.Names.ellipsize(name, 10))
