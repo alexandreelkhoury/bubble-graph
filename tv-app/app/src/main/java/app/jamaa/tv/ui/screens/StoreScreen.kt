@@ -477,7 +477,7 @@ private fun PacksRow(packs: List<PackCard>, showOther: Boolean, onBuy: (String, 
     val entry = packs.firstOrNull()?.let { packFocus.getOrPut(it.productId) { FocusRequester() } }
     LazyRow(
         modifier = Modifier.fillMaxWidth().then(if (entry != null) Modifier.focusRestorer(entry) else Modifier),
-        contentPadding = PaddingValues(horizontal = 6.dp, vertical = StoreMetrics.PACK_ROW_PAD_V.dp),
+        contentPadding = PaddingValues(horizontal = StoreMetrics.PACK_ROW_PAD_H.dp, vertical = StoreMetrics.PACK_ROW_PAD_V.dp),
         horizontalArrangement = Arrangement.spacedBy(JamaaSpace.s3),
     ) {
         items(packs.size + if (firstOther >= 0) 1 else 0, key = { i -> keyAt(packs, firstOther, i) }) { i ->

@@ -15,7 +15,7 @@ object StoreMetrics {
     const val CONTENT_H = CANVAS_H - 2 * SAFE_V // 486
 
     const val HEADER_H = 40
-    const val HEADER_GAP = 4
+    const val HEADER_GAP = 0
 
     const val CARD_PAD_H = 20
     const val CARD_PAD_V = 12
@@ -31,11 +31,14 @@ object StoreMetrics {
     /** The trial badge is a sticker on the button's top-end corner, overhanging it by this much (no label width used). */
     const val BADGE_OVERHANG = 12
 
-    const val CARD_TO_PACKS = 6
+    const val CARD_TO_PACKS = 0 // the packs row's own 10 dp padding is the gap
     const val PACKS_TITLE_GAP = 0
     const val PACK_CARD_W = 232
     const val PACK_CARD_PAD_V = 8
-    const val PACK_ROW_PAD_V = 4 // room for the 1.04 focus scale
+    /** Room for the focused card's 1.04 scale, 3 dp ring and glow, so the LazyRow never clips them (top, bottom). */
+    const val PACK_ROW_PAD_V = 10
+    /** The same room at the row's start and end edges. */
+    const val PACK_ROW_PAD_H = 12
 
     const val FOOTER_H = 48
 

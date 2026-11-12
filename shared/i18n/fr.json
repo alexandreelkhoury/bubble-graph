@@ -322,6 +322,12 @@
   },
   "setup.content": "Contenu : {language}",
   "setup.contentTitle": "Langue du contenu",
+  "setup.contentLabel": "Contenu",
+  "setup.scanMore": {
+    "one": "Scannez pour jouer · encore {count}",
+    "many": "Scannez pour jouer · encore {count}",
+    "other": "Scannez pour jouer · encore {count}"
+  },
   "setup.advanced": "Avancé",
   "setup.start": "Lancer",
   "setup.blockerPlayers": {

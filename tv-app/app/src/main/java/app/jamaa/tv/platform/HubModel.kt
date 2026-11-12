@@ -162,7 +162,13 @@ object SetupFocusGraph {
         val towardHowTo = if (rtl) RemoteKey.RIGHT else RemoteKey.LEFT
         val towardColumn = if (rtl) RemoteKey.LEFT else RemoteKey.RIGHT
         return when (from) {
-            SetupTarget.Info -> if (key == RemoteKey.DOWN) SetupTarget.HowTo else null
+            // ⓘ sits above the settings column (title-strip end): Down drops straight onto it (the row it came from,
+            // else Content) instead of jumping diagonally; the toward-how-to key reaches the how-to pane.
+            SetupTarget.Info -> when (key) {
+                RemoteKey.DOWN -> if (columnSize > 0) SetupTarget.Column((lastColumn ?: 0).coerceIn(0, columnSize - 1)) else SetupTarget.HowTo
+                towardHowTo -> SetupTarget.HowTo
+                else -> null
+            }
             SetupTarget.HowTo -> when (key) {
                 towardColumn -> SetupTarget.Column((lastColumn ?: firstRow).coerceIn(0, (columnSize - 1).coerceAtLeast(0)))
                 RemoteKey.UP -> SetupTarget.Info

@@ -322,6 +322,12 @@
   },
   "setup.content": "Contenido: {language}",
   "setup.contentTitle": "Idioma del contenido",
+  "setup.contentLabel": "Contenido",
+  "setup.scanMore": {
+    "one": "Escanea para jugar · falta {count}",
+    "many": "Escanea para jugar · faltan {count}",
+    "other": "Escanea para jugar · faltan {count}"
+  },
   "setup.advanced": "Avanzado",
   "setup.start": "Empezar",
   "setup.blockerPlayers": {

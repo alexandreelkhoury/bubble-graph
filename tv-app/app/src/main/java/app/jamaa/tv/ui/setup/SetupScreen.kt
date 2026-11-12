@@ -1,30 +1,22 @@
 package app.jamaa.tv.ui.setup
 
+import android.os.SystemClock
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.Canvas
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.Dp
-import app.jamaa.tv.platform.Expression
-import app.jamaa.tv.ui.theme.JamaaMotion
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,13 +27,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
@@ -49,29 +47,53 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import app.jamaa.tv.R
+import app.jamaa.tv.game.Cue
+import app.jamaa.tv.game.CuePlay
 import app.jamaa.tv.game.Names
+import app.jamaa.tv.games.SettingFieldSpec
 import app.jamaa.tv.games.TvGameMeta
 import app.jamaa.tv.platform.CharacterRules
+import app.jamaa.tv.platform.Expression
 import app.jamaa.tv.platform.IntroFlow
 import app.jamaa.tv.platform.RemoteKey
 import app.jamaa.tv.platform.SetupFocus
 import app.jamaa.tv.platform.SetupFocusGraph
 import app.jamaa.tv.platform.SetupFocusRule
 import app.jamaa.tv.platform.SetupRow
+import app.jamaa.tv.platform.SetupRows
 import app.jamaa.tv.platform.SetupTarget
-import app.jamaa.tv.ui.theme.worldOf
 import app.jamaa.tv.platform.steps
+import app.jamaa.tv.protocol.MemberPublic
 import app.jamaa.tv.protocol.RoomPublic
 import app.jamaa.tv.protocol.RoomSetup
 import app.jamaa.tv.protocol.StartBlocker
@@ -85,18 +107,24 @@ import app.jamaa.tv.ui.components.InitialFocus
 import app.jamaa.tv.ui.components.JamaaButton
 import app.jamaa.tv.ui.components.JamaaFocusSurface
 import app.jamaa.tv.ui.components.JamaaIcons
+import app.jamaa.tv.ui.components.LocalSounds
 import app.jamaa.tv.ui.components.QrCode
 import app.jamaa.tv.ui.components.RoomCode
+import app.jamaa.tv.ui.components.fullBleed
 import app.jamaa.tv.ui.components.tryFocus
 import app.jamaa.tv.ui.hub.gameTitle
 import app.jamaa.tv.ui.hub.languageName
 import app.jamaa.tv.ui.platform.RoundIconButton
 import app.jamaa.tv.ui.platform.keyText
 import app.jamaa.tv.ui.platform.remoteKey
+import app.jamaa.tv.ui.platform.repeats
 import app.jamaa.tv.ui.theme.JamaaColors
+import app.jamaa.tv.ui.theme.JamaaMotion
 import app.jamaa.tv.ui.theme.JamaaShapes
+import app.jamaa.tv.ui.theme.JamaaSpace
 import app.jamaa.tv.ui.theme.JamaaTheme
 import app.jamaa.tv.ui.theme.WorldStage
+import app.jamaa.tv.ui.theme.worldOf
 
 /** What the setup screen asks for; everything else (focus, the intro) is local. */
 class SetupActions(
@@ -111,6 +139,9 @@ class SetupActions(
     /** The full-screen intro opened / closed: INFO stays off over it, and closing it arms the §3.10 E guard. */
     val onIntroOpen: (Boolean) -> Unit = {},
 )
+
+/** Held Left/Right on a stepper row: at most one step per this many ms (choices and toggles ignore key repeats). */
+private const val STEP_REPEAT_MS = 120L
 
 /**
  * HUB-03 (JAMAA-PLATFORM §3.2, DESIGN-JAMAA §2.3) on the full world stage: the title strip ("‹ Games" hint, title, ⓘ),
@@ -129,6 +160,7 @@ fun SetupScreen(
 ) {
     val world = worldOf(meta.world)
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val sounds = LocalSounds.current
     // Read once per opening: decides the intro and the initial focus (the intro sets the flag as it goes).
     val seenBefore = remember(meta.id) { prefs.introSeen(meta.id) }
     val intro = remember(meta.id) { IntroFlow(meta.id, meta.howToKeys.size, prefs).also { if (!seenBefore) it.start() } }
@@ -144,6 +176,12 @@ fun SetupScreen(
     var lastColumn by remember { mutableStateOf<Int?>(null) }
     val firstRow = column.indexOfFirst { it !is SetupRow.Content }.takeIf { it >= 0 } ?: 0
     val startIndex = column.indexOfFirst { it is SetupRow.Start }
+    // OK on a dimmed Start: Start shakes, the players pane's "{n} more" pulses (a counter, so every press replays).
+    var nudge by remember { mutableIntStateOf(0) }
+    // The physical direction of the last step (+1 Right, −1 Left): the value slides that way.
+    var stepDir by remember { mutableIntStateOf(1) }
+    val lastStepAt = remember { longArrayOf(Long.MIN_VALUE / 2) }
+    val fields = remember(meta.id) { (meta.basic + meta.advanced).associateBy { it.key } }
 
     fun requester(t: SetupTarget): FocusRequester? = when (t) {
         SetupTarget.Info -> infoFocus
@@ -163,7 +201,16 @@ fun SetupScreen(
                 if (t is SetupTarget.Column && (k == RemoteKey.LEFT || k == RemoteKey.RIGHT)) {
                     val row = column.getOrNull(t.index)
                     if (row is SetupRow.Step && row.steps) {
+                        // A held key: a wrapping choice / toggle would spin and flood the server with patches, so its
+                        // repeats are ignored; a stepper keeps counting, one step per STEP_REPEAT_MS at most.
+                        val now = SystemClock.uptimeMillis()
+                        if (e.repeats > 0) {
+                            if (fields[row.key] !is SettingFieldSpec.Stepper) return@onPreviewKeyEvent true
+                            if (now - lastStepAt[0] < STEP_REPEAT_MS) return@onPreviewKeyEvent true
+                        }
+                        lastStepAt[0] = now
                         val forward = if (rtl) RemoteKey.LEFT else RemoteKey.RIGHT
+                        stepDir = if (k == RemoteKey.RIGHT) 1 else -1
                         actions.onStep(row.key, if (k == forward) 1 else -1)
                         return@onPreviewKeyEvent true
                     }
@@ -173,15 +220,27 @@ fun SetupScreen(
                 true
             },
         ) {
-            // ---- title strip (y 27–91)
-            Row(Modifier.fillMaxWidth().height(56.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text("‹ " + stringResource(R.string.hub__title), style = JamaaTheme.type.caption, color = JamaaColors.TextMuted)
-                Spacer(Modifier.weight(1f))
-                Text(gameTitle(meta.id), style = JamaaTheme.type.headline, color = world.accentText, maxLines = 1)
-                Spacer(Modifier.weight(1f))
+            // ---- title strip (y 27–91): hint at the start, the title truly centred, ⓘ at the end.
+            Box(Modifier.fillMaxWidth().height(56.dp)) {
+                Text(
+                    "‹ " + stringResource(R.string.hub__title),
+                    style = JamaaTheme.type.caption,
+                    color = JamaaColors.TextMuted,
+                    maxLines = 1,
+                    modifier = Modifier.align(Alignment.CenterStart),
+                )
+                Text(
+                    gameTitle(meta.id),
+                    style = JamaaTheme.type.displayS,
+                    color = world.accentText,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center).padding(horizontal = 140.dp),
+                )
                 RoundIconButton(
                     JamaaIcons.Info, stringResource(R.string.rules__open), actions.onRules,
-                    Modifier.focusRequester(infoFocus).onFocusChanged { if (it.isFocused) target = SetupTarget.Info },
+                    Modifier.align(Alignment.CenterEnd).focusRequester(infoFocus).onFocusChanged { if (it.isFocused) target = SetupTarget.Info },
                 )
             }
             Spacer(Modifier.height(8.dp))
@@ -195,16 +254,22 @@ fun SetupScreen(
                         introOpen = true
                     },
                 )
-                PlayersPane(room, meta, Modifier.width(216.dp).fillMaxHeight())
+                PlayersPane(room, meta, nudge, Modifier.width(216.dp).fillMaxHeight())
                 SettingsColumn(
-                    column, room, setup, rowFocus,
+                    column, meta, setup, rowFocus,
                     onFocused = { i ->
                         target = SetupTarget.Column(i)
                         lastColumn = i
                     },
                     actions = actions,
+                    stepDir = stepDir,
+                    accent = world.accent,
+                    nudge = nudge,
+                    onDimmedStart = {
+                        nudge++
+                        sounds.play(CuePlay(Cue.ERROR))
+                    },
                     modifier = Modifier.weight(1f).fillMaxHeight(),
-                    minPlayers = meta.minPlayers,
                 )
             }
         }
@@ -230,28 +295,78 @@ fun SetupScreen(
             SetupFocus.HOW_TO -> howToFocus
             SetupFocus.FIRST_ROW -> rowFocus.getOrNull(firstRow) ?: howToFocus
         }
-        InitialFocus(initial, key = meta.id)
+        // After a sheet (rules, packs, content language, Advanced) closes, focus returns to the item that opened it.
+        InitialFocus(initial, key = meta.id, restore = { requester(target) })
     }
 }
 
-/** The collapsed How to play pane: the current card (auto-advances every 6 s), dots; OK replays the full intro. */
+/**
+ * Text that keeps all of a (translated) sentence: the size steps down from [style]'s size to [minSize] until it fits
+ * [maxLines] in the space it is given, and only then ellipsizes. The line height scales with the size.
+ */
+@Composable
+private fun AutoSizeText(
+    text: String,
+    style: TextStyle,
+    color: Color,
+    maxLines: Int,
+    minSize: TextUnit,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start,
+) {
+    val lineHeight = if (style.lineHeight.isSp && style.fontSize.isSp) (style.lineHeight.value / style.fontSize.value).em else style.lineHeight
+    BasicText(
+        text = text,
+        modifier = modifier,
+        style = style.copy(color = color, textAlign = textAlign, lineHeight = lineHeight),
+        overflow = TextOverflow.Ellipsis,
+        maxLines = maxLines,
+        autoSize = TextAutoSize.StepBased(minFontSize = minSize, maxFontSize = style.fontSize, stepSize = 1.sp),
+    )
+}
+
+/**
+ * The collapsed How to play pane: the current card (auto-advances every 6 s while not focused, with a cross-fade),
+ * dots; OK replays the full intro. Focus is the full-width row scale (1.02): a tile's 1.06 would grow this 324 × 422
+ * pane into the overscan and the title strip.
+ */
 @Composable
 private fun HowToPane(meta: TvGameMeta, index: Int, modifier: Modifier, onReplay: () -> Unit) {
     var shown by remember(meta.id) { mutableIntStateOf(index) }
-    LaunchedEffect(meta.id) {
+    // The intro's last card wins whenever it changes (closing the intro shows where it stopped).
+    LaunchedEffect(index) { shown = index }
+    var focused by remember { mutableStateOf(false) }
+    LaunchedEffect(meta.id, focused) {
+        if (focused) return@LaunchedEffect
         while (true) {
             kotlinx.coroutines.delay(IntroFlow.AUTO_ADVANCE_MS)
             if (meta.howToKeys.isNotEmpty()) shown = (shown + 1) % meta.howToKeys.size
         }
     }
-    JamaaFocusSurface(onClick = onReplay, modifier = modifier, shape = JamaaShapes.tile, kind = FocusKind.Tile) {
+    JamaaFocusSurface(
+        onClick = onReplay,
+        modifier = modifier.onFocusChanged { focused = it.isFocused },
+        shape = JamaaShapes.tile,
+        kind = FocusKind.Row,
+    ) {
         Column(Modifier.fillMaxSize().padding(16.dp)) {
-            Text(stringResource(R.string.howto__title), style = JamaaTheme.type.titleS, color = JamaaColors.TextSecondary)
+            Text(stringResource(R.string.howto__title), style = JamaaTheme.type.titleS, color = JamaaColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
             Spacer(Modifier.height(12.dp))
-            HowToScene(meta.id, shown, Modifier.fillMaxWidth().height(150.dp))
+            AnimatedContent(
+                targetState = shown,
+                transitionSpec = { fadeIn(tween(JamaaMotion.Base)) togetherWith fadeOut(tween(200)) },
+                label = "howToCard",
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+            ) { card ->
+                Column(Modifier.fillMaxSize()) {
+                    HowToScene(meta.id, card, Modifier.fillMaxWidth().height(150.dp))
+                    Spacer(Modifier.height(12.dp))
+                    meta.howToKeys.getOrNull(card)?.let {
+                        AutoSizeText(keyText(it), JamaaTheme.type.body, JamaaColors.Text, maxLines = 5, minSize = 15.sp, modifier = Modifier.weight(1f).fillMaxWidth())
+                    }
+                }
+            }
             Spacer(Modifier.height(12.dp))
-            meta.howToKeys.getOrNull(shown)?.let { Text(keyText(it), style = JamaaTheme.type.body, color = JamaaColors.Text, maxLines = 4) }
-            Spacer(Modifier.weight(1f))
             Dots(meta.howToKeys.size, shown)
         }
     }
@@ -375,119 +490,327 @@ private fun HowToPropView(prop: HowToProp, i: Int, b: Int, h: Dp) {
 private val propPaths = HashMap<String, androidx.compose.ui.graphics.Path>()
 private fun propPath(d: String) = propPaths.getOrPut(d) { androidx.compose.ui.graphics.vector.PathParser().parsePathString(d).toPath() }
 
+/** Pager dots: 12 dp dots, the active one a 32 × 12 pill (its width animates); centred on one line, so nothing jumps. */
 @Composable
 private fun Dots(n: Int, active: Int) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+    val reduce = JamaaTheme.reduceMotion
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) {
         repeat(n) { i ->
-            Box(Modifier.size(if (i == active) 10.dp else 8.dp).background(if (i == active) JamaaColors.Accent else JamaaColors.Outline, JamaaShapes.pill))
+            val on = i == active
+            val w by animateDpAsState(if (on) 32.dp else 12.dp, tween(if (reduce) 0 else JamaaMotion.Base, easing = JamaaMotion.Standard), label = "dotW")
+            val c by animateColorAsState(if (on) JamaaColors.Accent else JamaaColors.OutlineStrong, tween(if (reduce) 0 else JamaaMotion.Base), label = "dotC")
+            Box(Modifier.width(w).height(12.dp).background(c, JamaaShapes.pill))
         }
     }
 }
 
-/** The members on a small stage (64 dp, 3 per row), a ghost per missing player, the QR (200 dp while short). */
+/**
+ * The players pane's member grid (pure, JVM-tested): how many per row and how big, so 1..12 seats always fit the room
+ * left above the QR. The biggest character wins; at equal size, 3 per row (60 dp cells, names up to 6 graphemes)
+ * before 4 per row (cells a quarter of the width, names up to 5 graphemes).
+ */
+internal object GangGrid {
+    const val GAP = 4
+    const val MIN_CHAR = 28
+    private const val CELL_3 = 60
+
+    data class Fit(val perRow: Int, val cell: Int, val char: Int, val graphemes: Int) {
+        fun rows(n: Int) = (n + perRow - 1) / perRow
+        fun height(n: Int, nameLh: Int) = rows(n).let { r -> r * (char + nameLh) + (r - 1).coerceAtLeast(0) * GAP }
+        fun width() = perRow * cell + (perRow - 1) * GAP
+    }
+
+    fun fit(n: Int, width: Int, height: Int, nameLh: Int): Fit {
+        val cell3 = minOf(CELL_3, (width - 2 * GAP) / 3)
+        val cell4 = (width - 3 * GAP) / 4
+        val candidates = buildList {
+            for (c in 52 downTo MIN_CHAR step 4) {
+                if (c <= cell3 - 8) add(Fit(3, cell3, c, 6))
+                if (c <= cell4 - 2) add(Fit(4, cell4, c, 5))
+            }
+        }
+        return candidates.firstOrNull { it.height(n, nameLh) <= height } ?: candidates.last()
+    }
+}
+
+/** A dashed ghost outline (cream at 20 %, like the hub's), a seat waiting for someone. */
 @Composable
-private fun PlayersPane(room: RoomPublic, meta: TvGameMeta, modifier: Modifier) {
+private fun GhostCircle(size: Dp) {
+    Canvas(Modifier.size(size)) {
+        val w = 2.dp.toPx()
+        drawCircle(
+            Color(0xFFFFF7EC).copy(alpha = 0.2f),
+            radius = this.size.minDimension / 2f - w / 2f,
+            style = Stroke(width = w, pathEffect = PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 4.dp.toPx()))),
+        )
+    }
+}
+
+/**
+ * The members on a small stage ([GangGrid] sizes them to the room left), a dashed ghost per missing player. While short
+ * of players: one Accent line "Scan to join · {n} more" and a 176 dp QR; otherwise a compact QR (120 dp, 104 dp above
+ * 8 members). The room code always sits at the bottom. [nudge] (OK on a dimmed Start) pulses the "{n} more" line.
+ */
+@Composable
+private fun PlayersPane(room: RoomPublic, meta: TvGameMeta, nudge: Int, modifier: Modifier) {
     val members = room.members.filter { !it.left }.sortedBy { it.seat }
     val missing = (meta.minPlayers - members.size).coerceAtLeast(0)
+    val type = JamaaTheme.type
+    val density = LocalDensity.current
     Column(modifier.background(JamaaColors.Surface.copy(alpha = 0.6f), JamaaShapes.tile).padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(stringResource(R.string.setup__gang), style = JamaaTheme.type.titleS, color = JamaaColors.TextSecondary)
+        Text(stringResource(R.string.setup__gang), style = type.titleS, color = JamaaColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
         Spacer(Modifier.height(6.dp))
-        val slots = members.map { it as Any } + List(missing) { Unit }
-        for (rowItems in slots.chunked(3).take(if (missing > 0) 2 else 4)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                for (s in rowItems) {
-                    if (s is app.jamaa.tv.protocol.MemberPublic) {
-                        Column(Modifier.width(64.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Character(s.color, 52.dp, CharacterRules.expression(s, null, null), state = AvatarState(host = s.isHost))
-                            Text(Names.ellipsize(s.name, 6), style = JamaaTheme.type.caption, color = JamaaColors.TextSecondary, maxLines = 1)
+        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+            val nameLh = with(density) { type.caption.lineHeight.toDp() }
+            val slots: List<MemberPublic?> = members + List(missing) { null }
+            val grid = GangGrid.fit(slots.size, maxWidth.value.toInt(), maxHeight.value.toInt(), nameLh.value.toInt() + 1)
+            Column(verticalArrangement = Arrangement.spacedBy(GangGrid.GAP.dp)) {
+                for (rowItems in slots.chunked(grid.perRow)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(GangGrid.GAP.dp)) {
+                        for (s in rowItems) {
+                            Column(Modifier.width(grid.cell.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                if (s != null) {
+                                    Character(s.color, grid.char.dp, CharacterRules.expression(s, null, null), state = AvatarState(host = s.isHost))
+                                    Text(
+                                        Names.ellipsize(s.name, grid.graphemes),
+                                        style = type.caption,
+                                        color = JamaaColors.TextSecondary,
+                                        maxLines = 1,
+                                        softWrap = false,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                } else {
+                                    GhostCircle(grid.char.dp)
+                                }
+                            }
                         }
-                    } else {
-                        Box(Modifier.size(52.dp).border(BorderStroke(2.dp, JamaaColors.Outline), JamaaShapes.pill))
                     }
                 }
             }
         }
-        Spacer(Modifier.weight(1f))
         if (missing > 0) {
-            Text(pluralStringResource(R.plurals.setup__need_more, missing, missing), style = JamaaTheme.type.label, color = JamaaColors.Danger)
-            QrCode(room.joinUrl, panel = 150.dp)
+            val pulse = remember { Animatable(1f) }
+            LaunchedEffect(nudge) {
+                if (nudge == 0) return@LaunchedEffect
+                pulse.snapTo(1f)
+                pulse.animateTo(1.1f, tween(120, easing = JamaaMotion.Standard))
+                pulse.animateTo(1f, tween(120, easing = JamaaMotion.Standard))
+            }
+            AutoSizeText(
+                pluralStringResource(R.plurals.setup__scan_more, missing, missing),
+                type.label,
+                JamaaColors.Accent,
+                maxLines = 2,
+                minSize = 16.sp,
+                modifier = Modifier.fillMaxWidth().graphicsLayer { scaleX = pulse.value; scaleY = pulse.value },
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(4.dp))
+            QrCode(room.joinUrl, panel = 176.dp)
         } else {
-            QrCode(room.joinUrl, panel = 120.dp)
+            QrCode(room.joinUrl, panel = if (members.size > 8) 104.dp else 120.dp)
         }
-        RoomCode(room.roomCode, Modifier.fillMaxWidth().height(32.dp), centered = true)
+        RoomCode(room.roomCode, Modifier.fillMaxWidth().height(52.dp), centered = true)
     }
 }
 
-/** Content, the rows, Advanced and Start (one vertical column; Down from Start → nothing). */
+/**
+ * Content, the rows and Advanced in a scrolling column (a focused row scrolls into view), then the blocker line and
+ * Start pinned at the bottom (one vertical focus column; Down from Start → nothing).
+ */
 @Composable
 private fun SettingsColumn(
     column: List<SetupRow>,
-    room: RoomPublic,
+    meta: TvGameMeta,
     setup: RoomSetup,
     focus: List<FocusRequester>,
     onFocused: (Int) -> Unit,
     actions: SetupActions,
+    stepDir: Int,
+    accent: Color,
+    nudge: Int,
+    onDimmedStart: () -> Unit,
     modifier: Modifier,
-    minPlayers: Int = 3,
 ) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        column.forEachIndexed { i, row ->
-            val m = Modifier.fillMaxWidth().focusRequester(focus[i]).onFocusChanged { if (it.isFocused) onFocused(i) }
-            when (row) {
-                is SetupRow.Content -> RowSurface(stringResource(R.string.setup__content, languageName(row.locale)) + " ▾", null, m.height(40.dp), actions.onContentLanguage)
-                is SetupRow.Step -> {
-                    val value = row.valueKey?.let { keyText(it) } ?: row.valueText.orEmpty()
-                    val label = keyText(row.labelKey) + if (row.premium) "  ◆" else ""
-                    RowSurface(
-                        label = if (row.inline) "   $label" else label,
-                        value = if (row.locked) "$value · " + stringResource(R.string.hub__pass_chip) else "‹ $value ›",
-                        modifier = m.height(if (row.inline) 44.dp else 52.dp),
-                        onClick = { if (row.locked) actions.onLockedSetting?.invoke() },
-                        dim = row.locked,
+    fun focusOf(i: Int) = Modifier.focusRequester(focus[i]).onFocusChanged { if (it.isFocused) onFocused(i) }
+    val reduce = JamaaTheme.reduceMotion
+    Column(modifier) {
+        Column(
+            Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(vertical = 6.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            column.forEachIndexed { i, row ->
+                when (row) {
+                    is SetupRow.Content -> SettingRow(
+                        label = stringResource(R.string.setup__content_label),
+                        value = languageName(row.locale),
+                        modifier = focusOf(i).fillMaxWidth().height(48.dp),
+                        onClick = actions.onContentLanguage,
+                        end = RowEnd.OPENS,
                     )
-                }
-                is SetupRow.Packs -> RowSurface(
-                    keyText(row.labelKey),
-                    pluralStringResource(R.plurals.setup__pack_count, row.selected, row.selected) + " ›",
-                    m.height(52.dp),
-                    { actions.onPacks(row) },
-                )
-                SetupRow.Advanced -> RowSurface(stringResource(R.string.setup__advanced) + " ›", null, m.height(44.dp), actions.onAdvanced)
-                is SetupRow.Start -> {
-                    Spacer(Modifier.weight(1f))
-                    blockerText(setup, minPlayers)?.let {
-                        Text(it, style = JamaaTheme.type.label, color = JamaaColors.Danger, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                    is SetupRow.Step -> {
+                        val value = row.valueKey?.let { keyText(it) } ?: row.valueText.orEmpty()
+                        val label = keyText(row.labelKey) + if (row.premium) "  ◆" else ""
+                        val item = @Composable { m: Modifier ->
+                            SettingRow(
+                                label = label,
+                                value = if (row.locked) "$value · " + stringResource(R.string.hub__pass_chip) else value,
+                                modifier = m,
+                                onClick = { if (row.locked) actions.onLockedSetting?.invoke() },
+                                end = if (row.locked) RowEnd.NONE else RowEnd.STEPS,
+                                dim = row.locked,
+                                // A stepper at its limit: that chevron dims (choices wrap, toggles flip: never).
+                                canBack = !row.locked && SetupRows.step(meta, setup, row.key, -1) != null,
+                                canForward = !row.locked && SetupRows.step(meta, setup, row.key, 1) != null,
+                                stepDir = stepDir,
+                            )
+                        }
+                        if (row.inline) {
+                            // An inline sub-row (Mish Ana! Custom counts): indented 24 dp behind a 2 dp world-accent bar.
+                            Row(Modifier.fillMaxWidth().height(40.dp)) {
+                                Spacer(Modifier.width(10.dp))
+                                Box(Modifier.width(2.dp).fillMaxHeight().background(accent, JamaaShapes.pill))
+                                Spacer(Modifier.width(12.dp))
+                                item(focusOf(i).weight(1f).fillMaxHeight())
+                            }
+                        } else {
+                            item(focusOf(i).fillMaxWidth().height(48.dp))
+                        }
                     }
-                    JamaaButton(
-                        stringResource(R.string.setup__start),
-                        { if (row.canStart) actions.onStart() },
-                        m.height(56.dp),
-                        kind = ButtonKind.Primary,
-                        icon = JamaaIcons.Play,
-                        dimmed = !row.canStart,
-                        focusKind = FocusKind.Row,
+                    is SetupRow.Packs -> SettingRow(
+                        label = keyText(row.labelKey),
+                        value = pluralStringResource(R.plurals.setup__pack_count, row.selected, row.selected),
+                        modifier = focusOf(i).fillMaxWidth().height(48.dp),
+                        onClick = { actions.onPacks(row) },
+                        end = RowEnd.OPENS,
                     )
+                    SetupRow.Advanced -> SettingRow(
+                        label = stringResource(R.string.setup__advanced),
+                        value = null,
+                        modifier = focusOf(i).fillMaxWidth().height(40.dp),
+                        onClick = actions.onAdvanced,
+                        end = RowEnd.OPENS,
+                    )
+                    is SetupRow.Start -> Unit
                 }
+            }
+        }
+        val startIndex = column.indexOfFirst { it is SetupRow.Start }
+        val start = column.getOrNull(startIndex) as? SetupRow.Start ?: return@Column
+        blockerText(setup)?.let {
+            Text(
+                it, style = JamaaTheme.type.label, color = JamaaColors.Danger, textAlign = TextAlign.Center, maxLines = 2,
+                overflow = TextOverflow.Ellipsis, modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        Spacer(Modifier.height(6.dp))
+        // OK on a dimmed Start: ±8 dp, 3 cycles in 300 ms; skipped under reduced motion (the sound and the pulse remain).
+        val shake = remember { Animatable(0f) }
+        LaunchedEffect(nudge) {
+            if (nudge == 0 || reduce) return@LaunchedEffect
+            shake.snapTo(0f)
+            shake.animateTo(
+                0f,
+                keyframes {
+                    durationMillis = 300
+                    8f at 25
+                    -8f at 75
+                    8f at 125
+                    -8f at 175
+                    8f at 225
+                    -8f at 275
+                },
+            )
+        }
+        val canStart by rememberUpdatedState(start.canStart)
+        JamaaButton(
+            stringResource(R.string.setup__start),
+            { if (canStart) actions.onStart() else onDimmedStart() },
+            focusOf(startIndex).fillMaxWidth().height(56.dp).graphicsLayer { translationX = shake.value.dp.toPx() },
+            kind = ButtonKind.Primary,
+            icon = JamaaIcons.Play,
+            dimmed = !start.canStart,
+            focusKind = FocusKind.Row,
+        )
+    }
+}
+
+/** What a settings row shows at its end: nothing, an "opens something" chevron, or ‹ › steppers (focused only). */
+private enum class RowEnd { NONE, OPENS, STEPS }
+
+/**
+ * One settings row: the label (start, ellipsized) and the value (end, ≤ 150 dp, ellipsized, 8 dp from the label).
+ * A stepping row shows its ‹ › chevrons only while focused (Accent, 20 dp; one dims to 30 % at a stepper's limit) and
+ * its value in Accent; unfocused, the value is TextSecondary. A new value slides 16 dp in the step's direction (160 ms;
+ * a fade under reduced motion).
+ */
+@Composable
+private fun SettingRow(
+    label: String,
+    value: String?,
+    modifier: Modifier,
+    onClick: () -> Unit,
+    end: RowEnd,
+    dim: Boolean = false,
+    canBack: Boolean = true,
+    canForward: Boolean = true,
+    stepDir: Int = 1,
+) {
+    var focused by remember { mutableStateOf(false) }
+    val reduce = JamaaTheme.reduceMotion
+    val slide = with(LocalDensity.current) { 16.dp.roundToPx() }
+    JamaaFocusSurface(onClick = onClick, modifier = modifier.onFocusChanged { focused = it.isFocused }, kind = FocusKind.Row) {
+        Row(Modifier.fillMaxSize().padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(label, style = JamaaTheme.type.titleS, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+            val stepping = end == RowEnd.STEPS && focused
+            if (value != null) {
+                Spacer(Modifier.width(8.dp))
+                if (stepping) Chevron(JamaaIcons.ChevronBack, canBack)
+                val color = when {
+                    dim -> JamaaColors.TextMuted
+                    focused -> JamaaColors.Accent
+                    else -> JamaaColors.TextSecondary
+                }
+                AnimatedContent(
+                    targetState = value,
+                    transitionSpec = {
+                        if (reduce) {
+                            fadeIn(tween(160)) togetherWith fadeOut(tween(160))
+                        } else {
+                            // Offsets are physical: stepDir is the physical key (+1 Right), so RTL needs no flip.
+                            (slideInHorizontally(tween(160, easing = JamaaMotion.Decel)) { -stepDir * slide } + fadeIn(tween(160))) togetherWith
+                                (slideOutHorizontally(tween(160, easing = JamaaMotion.Standard)) { stepDir * slide } + fadeOut(tween(120)))
+                        }
+                    },
+                    contentAlignment = Alignment.CenterEnd,
+                    label = "rowValue",
+                    modifier = Modifier.widthIn(max = 150.dp),
+                ) { v ->
+                    Text(v, style = JamaaTheme.type.titleS, color = color, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+                if (stepping) Chevron(JamaaIcons.ChevronForward, canForward)
+            }
+            if (end == RowEnd.OPENS) {
+                Spacer(Modifier.width(4.dp))
+                Icon(JamaaIcons.ChevronForward, contentDescription = null, tint = if (focused) JamaaColors.Accent else JamaaColors.TextSecondary, modifier = Modifier.size(20.dp))
             }
         }
     }
 }
 
+/** A stepper chevron (autoMirrored: ‹ is always the reading-start, −1 side). */
 @Composable
-private fun RowSurface(label: String, value: String?, modifier: Modifier, onClick: () -> Unit, dim: Boolean = false) {
-    JamaaFocusSurface(onClick = onClick, modifier = modifier, kind = FocusKind.Row) {
-        Row(Modifier.fillMaxSize().padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(label, style = JamaaTheme.type.titleS, maxLines = 1, modifier = Modifier.weight(1f))
-            if (value != null) Text(value, style = JamaaTheme.type.titleS, color = if (dim) JamaaColors.TextMuted else JamaaColors.Accent, maxLines = 1)
-        }
-    }
+private fun Chevron(icon: ImageVector, enabled: Boolean) {
+    Icon(icon, contentDescription = null, tint = JamaaColors.Accent.copy(alpha = if (enabled) 1f else 0.3f), modifier = Modifier.size(20.dp))
 }
 
-/** One line above Start ("Need 3 players", "No content in this language"). */
+/**
+ * The one red line above Start, for content blockers only ("No content in this language"). Too few players is not
+ * repeated here: the players pane already says "Scan to join · {n} more" (in Accent, where people look to join).
+ */
 @Composable
-private fun blockerText(setup: RoomSetup, minPlayers: Int): String? = when (setup.blocker) {
-    null -> null
-    StartBlocker.NOT_ENOUGH_PLAYERS -> pluralStringResource(R.plurals.setup__blocker_players, minPlayers, minPlayers)
+private fun blockerText(setup: RoomSetup): String? = when (setup.blocker) {
+    null, StartBlocker.NOT_ENOUGH_PLAYERS -> null
     StartBlocker.NO_CONTENT_AVAILABLE, StartBlocker.NO_WORDS_AVAILABLE -> stringResource(R.string.setup__blocker_content)
     else -> keyText(app.jamaa.tv.game.GameViewModel.errorMessageKey(setup.startBlocker ?: "INTERNAL"))
 }
@@ -495,12 +818,16 @@ private fun blockerText(setup: RoomSetup, minPlayers: Int): String? = when (setu
 /**
  * The full-screen first-time intro (DESIGN-JAMAA §2.5): a large scene, "1/4", one sentence, a segmented progress bar;
  * OK = next, Back = skip, the last card shows "Got it" and never auto-dismisses; any D-pad pauses auto-advance. While
- * the room is short of players a corner join chip and the members row keep gathering possible.
+ * the room is short of players a corner join chip and the members row keep gathering possible. The scrim bleeds to the
+ * screen edges (content stays in the safe area) and enters with a fade + scale from 0.92 (300 ms, decel).
  */
 @Composable
 private fun IntroOverlay(meta: TvGameMeta, flow: IntroFlow, room: RoomPublic, onIndex: (Int) -> Unit, onClose: () -> Unit) {
     var index by remember { mutableIntStateOf(flow.index) }
     val gotIt = remember { FocusRequester() }
+    val reduce = JamaaTheme.reduceMotion
+    val appear = remember { Animatable(0f) }
+    LaunchedEffect(Unit) { appear.animateTo(1f, tween(300, easing = JamaaMotion.Decel)) }
     LaunchedEffect(flow) {
         var last = withFrameMillis { it }
         while (flow.open) {
@@ -517,71 +844,84 @@ private fun IntroOverlay(meta: TvGameMeta, flow: IntroFlow, room: RoomPublic, on
         onClose()
     }
     Box(
-        Modifier.fillMaxSize().background(JamaaColors.Bg.copy(alpha = 0.96f)).onPreviewKeyEvent { e ->
-            if (e.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
-            when (e.remoteKey()) {
-                RemoteKey.OK -> {
-                    flow.onOk()
-                    index = flow.index
-                    onIndex(index)
-                    if (!flow.open) onClose()
-                    true
-                }
-                RemoteKey.UP, RemoteKey.DOWN, RemoteKey.LEFT, RemoteKey.RIGHT -> {
-                    flow.onDpad()
-                    true
-                }
-                else -> false
+        Modifier
+            .fillMaxSize()
+            .fullBleed()
+            .graphicsLayer {
+                alpha = appear.value
+                val s = if (reduce) 1f else 0.92f + 0.08f * appear.value
+                scaleX = s
+                scaleY = s
             }
-        },
-    ) {
-        Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(stringResource(R.string.setup__intro_progress, (index + 1).toString(), flow.cardCount.toString()), style = JamaaTheme.type.label, color = JamaaColors.Accent)
-            // The next card slides 48 dp in from the reading end (mirrored in RTL) with a fade, 240 ms.
-            val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-            val reduce = JamaaTheme.reduceMotion
-            val slide = with(androidx.compose.ui.platform.LocalDensity.current) { 48.dp.roundToPx() }
-            AnimatedContent(
-                targetState = index,
-                transitionSpec = {
-                    if (reduce) {
-                        fadeIn(tween(150)) togetherWith fadeOut(tween(150))
-                    } else {
-                        val dir = if (targetState >= initialState) 1 else -1
-                        val sign = if (rtl) -dir else dir
-                        (slideInHorizontally(tween(240, easing = JamaaMotion.Decel)) { sign * slide } + fadeIn(tween(240))) togetherWith
-                            (slideOutHorizontally(tween(240, easing = JamaaMotion.Standard)) { -sign * slide } + fadeOut(tween(200)))
+            .background(JamaaColors.Bg.copy(alpha = 0.96f))
+            .onPreviewKeyEvent { e ->
+                if (e.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
+                when (e.remoteKey()) {
+                    RemoteKey.OK -> {
+                        flow.onOk()
+                        index = flow.index
+                        onIndex(index)
+                        if (!flow.open) onClose()
+                        true
                     }
-                },
-                label = "introCard",
-                modifier = Modifier.weight(1f),
-            ) { i ->
-                Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                    HowToScene(meta.id, i, Modifier.fillMaxWidth().height(200.dp), size = 96.dp)
-                    Spacer(Modifier.height(16.dp))
-                    meta.howToKeys.getOrNull(i)?.let { Text(keyText(it), style = JamaaTheme.type.displayS, color = JamaaColors.Text, textAlign = TextAlign.Center, maxLines = 2) }
+                    RemoteKey.UP, RemoteKey.DOWN, RemoteKey.LEFT, RemoteKey.RIGHT -> {
+                        flow.onDpad()
+                        true
+                    }
+                    else -> false
+                }
+            },
+    ) {
+        Box(Modifier.fillMaxSize().padding(horizontal = JamaaSpace.SafeH, vertical = JamaaSpace.SafeV)) {
+            Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(stringResource(R.string.setup__intro_progress, (index + 1).toString(), flow.cardCount.toString()), style = JamaaTheme.type.label, color = JamaaColors.Accent)
+                // The next card slides 48 dp in from the reading end (mirrored in RTL) with a fade, 240 ms.
+                val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+                val slide = with(LocalDensity.current) { 48.dp.roundToPx() }
+                AnimatedContent(
+                    targetState = index,
+                    transitionSpec = {
+                        if (reduce) {
+                            fadeIn(tween(150)) togetherWith fadeOut(tween(150))
+                        } else {
+                            val dir = if (targetState >= initialState) 1 else -1
+                            val sign = if (rtl) -dir else dir
+                            (slideInHorizontally(tween(240, easing = JamaaMotion.Decel)) { sign * slide } + fadeIn(tween(240))) togetherWith
+                                (slideOutHorizontally(tween(240, easing = JamaaMotion.Standard)) { -sign * slide } + fadeOut(tween(200)))
+                        }
+                    },
+                    label = "introCard",
+                    modifier = Modifier.weight(1f),
+                ) { i ->
+                    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                        HowToScene(meta.id, i, Modifier.fillMaxWidth().height(200.dp), size = 96.dp)
+                        Spacer(Modifier.height(16.dp))
+                        meta.howToKeys.getOrNull(i)?.let {
+                            AutoSizeText(keyText(it), JamaaTheme.type.displayS, JamaaColors.Text, maxLines = 2, minSize = 28.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                        }
+                    }
+                }
+                if (flow.isLast) {
+                    JamaaButton(stringResource(R.string.setup__got_it), { flow.onOk(); onClose() }, Modifier.focusRequester(gotIt), kind = ButtonKind.Primary)
+                    InitialFocus(gotIt)
+                } else {
+                    Text(stringResource(R.string.setup__intro_hint), style = JamaaTheme.type.caption, color = JamaaColors.TextMuted)
+                }
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    repeat(flow.cardCount) { i -> Box(Modifier.width(48.dp).height(4.dp).background(if (i <= index) JamaaColors.Accent else JamaaColors.Outline, JamaaShapes.pill)) }
                 }
             }
-            if (flow.isLast) {
-                JamaaButton(stringResource(R.string.setup__got_it), { flow.onOk(); onClose() }, Modifier.focusRequester(gotIt), kind = ButtonKind.Primary)
-                InitialFocus(gotIt)
-            } else {
-                Text(stringResource(R.string.setup__intro_hint), style = JamaaTheme.type.caption, color = JamaaColors.TextMuted)
-            }
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                repeat(flow.cardCount) { i -> Box(Modifier.width(48.dp).height(4.dp).background(if (i <= index) JamaaColors.Accent else JamaaColors.Outline, JamaaShapes.pill)) }
-            }
-        }
-        val members = room.members.filter { !it.left }
-        if (members.size < meta.minPlayers) {
-            Column(Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.CenterHorizontally) {
-                QrCode(room.joinUrl, panel = 144.dp)
-                RoomCode(room.roomCode, Modifier.width(144.dp).height(32.dp), centered = true)
-            }
-            // Top-start, opposite the join chip: clear of the progress segments and the hint / "Got it" at the bottom.
-            Row(Modifier.align(Alignment.TopStart).padding(top = 28.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                for (m in members) Character(m.color, 48.dp, CharacterRules.expression(m, null, null))
+            val members = room.members.filter { !it.left }
+            if (members.size < meta.minPlayers) {
+                Column(Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.CenterHorizontally) {
+                    QrCode(room.joinUrl, panel = 144.dp)
+                    RoomCode(room.roomCode, Modifier.width(144.dp).height(52.dp), centered = true)
+                }
+                // Top-start, opposite the join chip: clear of the progress segments and the hint / "Got it" at the bottom.
+                Row(Modifier.align(Alignment.TopStart).padding(top = 28.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    for (m in members) Character(m.color, 48.dp, CharacterRules.expression(m, null, null))
+                }
             }
         }
     }

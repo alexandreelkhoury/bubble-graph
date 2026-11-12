@@ -317,6 +317,11 @@
     </plurals>
     <string name="setup__content">Content: %1$s</string>
     <string name="setup__content_title">Content language</string>
+    <string name="setup__content_label">Content</string>
+    <plurals name="setup__scan_more">
+        <item quantity="one">Scan to join · %1$d more</item>
+        <item quantity="other">Scan to join · %1$d more</item>
+    </plurals>
     <string name="setup__advanced">Advanced</string>
     <string name="setup__start">Start</string>
     <plurals name="setup__blocker_players">
