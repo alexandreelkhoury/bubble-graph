@@ -47,7 +47,7 @@
     <string name="game__bluff__pause__hide_option">Masquer une réponse</string>
     <string name="game__bluff__pause__hide_option_pick">Choisissez la réponse à masquer</string>
     <string name="game__bluff__pause__next">Suivant</string>
-    <string name="game__bluff__pause__end_game">Terminer la partie</string>
+    <string name="game__bluff__pause__end_game">Finir maintenant</string>
     <string name="game__bluff__pause__end_game_confirm">Terminer la partie maintenant ? Les scores actuels passent aux trophées.</string>
     <plurals name="game__bluff__pause__skips_left">
         <item quantity="one">%1$d passage restant</item>

@@ -35,7 +35,7 @@
     <string name="game__trivia__pause__void">إلغاء هالسؤال</string>
     <string name="game__trivia__pause__void_confirm">منلغي هالسؤال؟ نقاطو بتنشال عن الكل.</string>
     <string name="game__trivia__pause__voided">انلغى السؤال: النقاط رجعت متل ما كانت.</string>
-    <string name="game__trivia__pause__end_game">خلّص اللعبة</string>
+    <string name="game__trivia__pause__end_game">خلّصوا هلّق</string>
     <string name="game__trivia__pause__end_confirm">منخلّص المسابقة هلّق ومنروح عالمنصّة؟</string>
     <string name="game__trivia__settings__quiz">المسابقة</string>
     <string name="game__trivia__settings__length">الطول</string>

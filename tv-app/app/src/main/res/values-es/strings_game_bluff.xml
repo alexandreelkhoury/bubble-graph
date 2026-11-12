@@ -47,7 +47,7 @@
     <string name="game__bluff__pause__hide_option">Ocultar una respuesta</string>
     <string name="game__bluff__pause__hide_option_pick">Elige la respuesta que quieres ocultar</string>
     <string name="game__bluff__pause__next">Siguiente</string>
-    <string name="game__bluff__pause__end_game">Terminar la partida</string>
+    <string name="game__bluff__pause__end_game">Terminar ya</string>
     <string name="game__bluff__pause__end_game_confirm">¿Terminar la partida ya? Los puntos actuales pasan a los premios.</string>
     <plurals name="game__bluff__pause__skips_left">
         <item quantity="one">Queda %1$d salto</item>

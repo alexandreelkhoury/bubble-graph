@@ -28,7 +28,7 @@
     <string name="game__likely__coach__hold">Il faut 3 joueurs pour continuer.</string>
     <string name="game__likely__pause__skip_card">Passer la carte</string>
     <string name="game__likely__pause__next">Suivant</string>
-    <string name="game__likely__pause__end_game">Terminer la partie</string>
+    <string name="game__likely__pause__end_game">Finir maintenant</string>
     <string name="game__likely__pause__end_game__confirm">Terminer la partie et passer directement aux prix ?</string>
     <string name="game__likely__host__skip">Passer cette carte</string>
     <string name="game__likely__settings__packs">Paquets de cartes</string>

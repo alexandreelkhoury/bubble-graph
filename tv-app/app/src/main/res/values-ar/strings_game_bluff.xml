@@ -47,7 +47,7 @@
     <string name="game__bluff__pause__hide_option">خبّي جواب</string>
     <string name="game__bluff__pause__hide_option_pick">اختار الجواب اللي بدك تخبّيه</string>
     <string name="game__bluff__pause__next">التالي</string>
-    <string name="game__bluff__pause__end_game">خلّص اللعبة</string>
+    <string name="game__bluff__pause__end_game">خلّصوا هلّق</string>
     <string name="game__bluff__pause__end_game_confirm">بدك تخلّص اللعبة هلّق؟ النقاط لهون بتروح عالجوايز.</string>
     <plurals name="game__bluff__pause__skips_left">
         <item quantity="zero">ما ضل ولا نطّة</item>

@@ -119,6 +119,8 @@
     "settings.sound",
     "settings.interfaceLanguage",
     "hint.backMenu",
+    "hint.scroll",
+    "hint.backClose",
     "error.unknownGame",
     "error.gameDisabled",
     "error.gameUnavailable",
@@ -172,7 +174,10 @@
     "join.colorTaken",
     "join.characterLabel",
     "join.characterTaken",
-    "error.colorTaken"
+    "error.colorTaken",
+    "tv.endGame",
+    "tv.endGameConfirm",
+    "tv.endGameBody"
   ],
   "es": [
     "brand.slogan",
@@ -293,6 +298,8 @@
     "settings.sound",
     "settings.interfaceLanguage",
     "hint.backMenu",
+    "hint.scroll",
+    "hint.backClose",
     "error.unknownGame",
     "error.gameDisabled",
     "error.gameUnavailable",
@@ -345,6 +352,9 @@
     "join.colorTaken",
     "join.characterLabel",
     "join.characterTaken",
-    "error.colorTaken"
+    "error.colorTaken",
+    "tv.endGame",
+    "tv.endGameConfirm",
+    "tv.endGameBody"
   ]
 }

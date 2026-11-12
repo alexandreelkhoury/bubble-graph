@@ -1,6 +1,23 @@
 package app.jamaa.tv.ui.hub
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.platform.LocalDensity
+import app.jamaa.tv.ui.components.KeyHint
+import app.jamaa.tv.ui.components.SettingsRow
+import app.jamaa.tv.ui.components.inertWhen
+import app.jamaa.tv.ui.rules.ChoiceList
+import app.jamaa.tv.ui.rules.EndSheet
+import app.jamaa.tv.ui.theme.JamaaMotion
+import kotlinx.coroutines.delay
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.LaunchedEffect
@@ -119,14 +136,19 @@ fun CupSheet(room: RoomPublic, onBack: () -> Unit) {
             }
         }
         Spacer(Modifier.height(12.dp))
-        JamaaButton(stringResource(R.string.common__close), onBack, Modifier.fillMaxWidth().focusRequester(close), kind = ButtonKind.Primary, focusKind = FocusKind.Row)
+        JamaaButton(
+            stringResource(R.string.common__close), onBack, Modifier.fillMaxWidth().focusRequester(close),
+            kind = ButtonKind.Primary, focusKind = FocusKind.Row, contentAlign = Alignment.CenterHorizontally,
+        )
     }
     InitialFocus(close)
 }
 
 /**
  * Hub Settings (JAMAA-PLATFORM §3.2): sound, interface language, **Calm animations**, **Show how-to again**, and About
- * (version, install id for admin grants). Device settings only; nothing is sent to the room.
+ * (version, install id for admin grants) at the bottom with a "Back: close" hint. Device settings only; nothing is
+ * sent to the room. One [SettingsRow] per setting (label + value). The language picker opens inside the same sheet
+ * (the content slides 24 dp and cross-fades in 200 ms); Back there returns to the list with focus on Language.
  */
 @Composable
 fun HubSettingsSheet(
@@ -140,49 +162,120 @@ fun HubSettingsSheet(
     onBack: () -> Unit,
 ) {
     val first = remember { FocusRequester() }
+    val languageRow = remember { FocusRequester() }
     var languages by remember { mutableStateOf(false) }
-    var howToCleared by remember { mutableStateOf(false) }
-    if (languages) {
-        ChoiceSheet(stringResource(R.string.common__language), { languages = false }) {
-            val current = uiLanguage()
-            val focus = remember { FocusRequester() }
-            for (tag in Locales.ALL) {
-                JamaaButton(
-                    stringResource(langNameRes(tag)),
-                    { languages = false; if (tag != current) LocaleController.set(tag) },
-                    Modifier.fillMaxWidth().then(if (tag == current) Modifier.focusRequester(focus) else Modifier),
-                    kind = if (tag == current) ButtonKind.Primary else ButtonKind.Secondary,
-                    icon = if (tag == current) JamaaIcons.Check else null,
-                    focusKind = FocusKind.Row,
-                )
+    // Back from the picker lands on Language, never on the first row.
+    var fromLanguages by remember { mutableStateOf(false) }
+    var howToDoneAt by remember { mutableLongStateOf(0L) }
+    val reduce = JamaaTheme.reduceMotion
+    val shift = with(LocalDensity.current) { 24.dp.roundToPx() }
+    val closeLanguages = { languages = false; fromLanguages = true }
+    EndSheet(420.dp, JamaaColors.Elevated, onBack = { if (languages) closeLanguages() else onBack() }, scrim = true) {
+        AnimatedContent(
+            targetState = languages,
+            transitionSpec = {
+                // Forward (into the picker) slides from the end; back slides from the start (mirrored in RTL by layout).
+                val dir = if (targetState) 1 else -1
+                if (reduce) {
+                    fadeIn(tween(PANE_MS)) togetherWith fadeOut(tween(PANE_MS))
+                } else {
+                    (fadeIn(tween(PANE_MS, easing = JamaaMotion.Decel)) + slideInHorizontally(tween(PANE_MS, easing = JamaaMotion.Decel)) { shift * dir }) togetherWith
+                        (fadeOut(tween(PANE_MS, easing = JamaaMotion.Accel)) + slideOutHorizontally(tween(PANE_MS, easing = JamaaMotion.Accel)) { -shift * dir })
+                } using SizeTransform(clip = false)
+            },
+            modifier = Modifier.weight(1f).fillMaxWidth(),
+            label = "hubSettingsPane",
+        ) { picker ->
+            // The pane on its way out cannot be reached while it fades.
+            val leaving = transition.targetState != androidx.compose.animation.EnterExitState.Visible
+            Column(Modifier.fillMaxSize().inertWhen(leaving)) {
+                if (picker) {
+                    Text(stringResource(R.string.common__language), style = JamaaTheme.type.headline, color = JamaaColors.Text)
+                    Spacer(Modifier.height(2.dp))
+                    val current = uiLanguage()
+                    val focus = remember { FocusRequester() }
+                    ChoiceList(Modifier.weight(1f)) {
+                        for (tag in Locales.ALL) {
+                            JamaaButton(
+                                stringResource(langNameRes(tag)),
+                                { closeLanguages(); if (tag != current) LocaleController.set(tag) },
+                                Modifier.fillMaxWidth().then(if (tag == current) Modifier.focusRequester(focus) else Modifier),
+                                kind = if (tag == current) ButtonKind.Primary else ButtonKind.Secondary,
+                                icon = if (tag == current) JamaaIcons.Check else null,
+                                focusKind = FocusKind.Row,
+                            )
+                        }
+                    }
+                    InitialFocus(focus)
+                } else {
+                    Text(stringResource(R.string.hub__settings), style = JamaaTheme.type.headline, color = JamaaColors.Text)
+                    Spacer(Modifier.height(2.dp))
+                    // The list takes what it needs (scrolling when the About block leaves too little); About sits at the bottom.
+                    Column(Modifier.weight(1f)) {
+                        ChoiceList(Modifier.weight(1f, fill = false)) {
+                            SettingsRow(
+                                if (soundOn) JamaaIcons.Volume else JamaaIcons.VolumeOff,
+                                stringResource(R.string.settings__sound),
+                                stringResource(if (soundOn) R.string.common__on else R.string.common__off),
+                                onToggleSound,
+                                Modifier.focusRequester(first),
+                            )
+                            SettingsRow(
+                                JamaaIcons.Globe,
+                                stringResource(R.string.common__language),
+                                stringResource(langNameRes(uiLanguage())),
+                                { languages = true },
+                                Modifier.focusRequester(languageRow),
+                                picker = true,
+                            )
+                            Column {
+                                SettingsRow(
+                                    JamaaIcons.Calm,
+                                    stringResource(R.string.settings__calm_motion),
+                                    stringResource(if (calm) R.string.common__on else R.string.common__off),
+                                    onToggleCalm,
+                                )
+                                Text(
+                                    stringResource(R.string.settings__calm_motion_help),
+                                    style = JamaaTheme.type.caption,
+                                    color = JamaaColors.TextMuted,
+                                    modifier = Modifier.padding(start = 20.dp, top = 2.dp),
+                                )
+                            }
+                            // "Done" shows in the row's own value slot for 2 s: nothing below it moves.
+                            val doneNow = howToDoneAt != 0L
+                            LaunchedEffect(howToDoneAt) {
+                                if (howToDoneAt != 0L) {
+                                    delay(HOW_TO_DONE_MS)
+                                    howToDoneAt = 0L
+                                }
+                            }
+                            SettingsRow(
+                                JamaaIcons.Refresh,
+                                stringResource(R.string.settings__show_how_to),
+                                if (doneNow) stringResource(R.string.common__done) else null,
+                                { onShowHowTo(); howToDoneAt = System.currentTimeMillis() },
+                                valueColor = JamaaColors.Success,
+                            )
+                        }
+                    }
+                    Text(stringResource(R.string.settings__app_version) + "  " + isolate(appVersion), style = JamaaTheme.type.caption, color = JamaaColors.TextSecondary)
+                    if (installId != null) {
+                        Text(stringResource(R.string.settings__install_id) + "  " + isolate(InstallId.display(installId)), style = JamaaTheme.type.caption, color = JamaaColors.TextSecondary, maxLines = 1)
+                        Text(stringResource(R.string.settings__install_id_help), style = JamaaTheme.type.caption, color = JamaaColors.TextMuted, maxLines = 2)
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    KeyHint(stringResource(R.string.hint__back_close))
+                    InitialFocus(if (fromLanguages) languageRow else first)
+                }
             }
-            InitialFocus(focus)
-        }
-        return
-    }
-    ChoiceSheet(stringResource(R.string.hub__settings), onBack) {
-        val row = FocusKind.Row
-        JamaaButton(
-            stringResource(if (soundOn) R.string.tv__sound_on else R.string.tv__sound_off), onToggleSound,
-            Modifier.fillMaxWidth().focusRequester(first), icon = if (soundOn) JamaaIcons.Volume else JamaaIcons.VolumeOff, focusKind = row,
-        )
-        JamaaButton(stringResource(R.string.common__language) + " · " + stringResource(langNameRes(uiLanguage())), { languages = true }, Modifier.fillMaxWidth(), icon = JamaaIcons.Globe, focusKind = row)
-        JamaaButton(
-            stringResource(R.string.settings__calm_motion) + " · " + stringResource(if (calm) R.string.common__on else R.string.common__off),
-            onToggleCalm, Modifier.fillMaxWidth(), focusKind = row,
-        )
-        Text(stringResource(R.string.settings__calm_motion_help), style = JamaaTheme.type.caption, color = JamaaColors.TextMuted)
-        JamaaButton(stringResource(R.string.settings__show_how_to), { onShowHowTo(); howToCleared = true }, Modifier.fillMaxWidth(), icon = JamaaIcons.Refresh, focusKind = row)
-        if (howToCleared) Text(stringResource(R.string.settings__show_how_to_done), style = JamaaTheme.type.caption, color = JamaaColors.Success)
-        Spacer(Modifier.height(8.dp))
-        Text(stringResource(R.string.settings__app_version) + "  " + isolate(appVersion), style = JamaaTheme.type.caption, color = JamaaColors.TextSecondary)
-        if (installId != null) {
-            Text(stringResource(R.string.settings__install_id) + "  " + isolate(InstallId.display(installId)), style = JamaaTheme.type.caption, color = JamaaColors.TextSecondary)
-            Text(stringResource(R.string.settings__install_id_help), style = JamaaTheme.type.caption, color = JamaaColors.TextMuted)
         }
     }
-    InitialFocus(first)
 }
+
+private const val PANE_MS = 200
+private const val HOW_TO_DONE_MS = 2_000L
+
 
 /** The content-language dialog (setup "Content: English ▾", a dimmed poster): only languages with content. */
 @Composable

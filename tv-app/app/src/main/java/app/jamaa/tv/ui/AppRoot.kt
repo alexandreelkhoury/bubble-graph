@@ -4,7 +4,26 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalDensity
+import app.jamaa.tv.i18n.MessageKeys
+import app.jamaa.tv.ui.components.KeepWhileExiting
+import app.jamaa.tv.ui.components.LocalOverlayActive
+import app.jamaa.tv.ui.components.LocalOverlayScrim
+import app.jamaa.tv.ui.components.Spinner
+import app.jamaa.tv.ui.screens.StoreMetrics
+import app.jamaa.tv.ui.theme.JamaaMotion
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -147,6 +166,7 @@ fun AppRoot(vm: GameViewModel) {
     val context = LocalContext.current
     val toasts = remember { ToastState() }
     var debugOpen by remember { mutableStateOf(false) }
+    var splashPlayed by rememberSaveable { mutableStateOf(false) }
     val sounds = remember(vm) { TvSounds(vm::playCue, vm::stopCues) }
 
     LaunchedEffect(vm) {
@@ -178,13 +198,27 @@ fun AppRoot(vm: GameViewModel) {
                     .onPreviewKeyEvent { if (s !is TvUiState.InRoom) sounds.onKey(it); false }
                     .padding(horizontal = JamaaSpace.SafeH, vertical = JamaaSpace.SafeV),
             ) {
+                // HUB-01 plays once per app session: a status change or a reconnect shows the splash still.
+                val splash: @Composable (HomeStatus) -> Unit = { st ->
+                    HomeScreen(st, vm::createRoom, { debugOpen = true }, animate = !splashPlayed)
+                    SideEffect { splashPlayed = true }
+                }
                 when (s) {
-                    TvUiState.CreatingRoom -> HomeScreen(HomeStatus.Busy(R.string.tv__creating_room), vm::createRoom) { debugOpen = true }
-                    is TvUiState.CreateFailed -> HomeScreen(HomeStatus.Failed(s.messageKey), vm::createRoom) { debugOpen = true }
-                    is TvUiState.InRoom -> RoomRoot(s, vm, toasts, sounds) { debugOpen = true }
+                    TvUiState.CreatingRoom -> splash(HomeStatus.Busy(R.string.tv__creating_room))
+                    is TvUiState.CreateFailed -> splash(HomeStatus.Failed(s.messageKey))
+                    is TvUiState.InRoom -> RoomRoot(s, vm, toasts, sounds, splash)
                     is TvUiState.Fatal -> FatalScreen(s.messageKey, vm::createRoom)
                 }
-                if (toasts.screenHosts == 0) {
+                val anchor = toasts.anchor
+                if (anchor != null) {
+                    // A full screen owns the usual zone (the Store, Advanced settings): out of the way of its focusables.
+                    ToastHost(
+                        toasts,
+                        Modifier.align(anchor).padding(top = if (anchor == Alignment.TopCenter) StoreMetrics.HEADER_H.dp + 4.dp else 0.dp),
+                        maxWidth = 420.dp,
+                        maxItems = 1,
+                    )
+                } else if (toasts.screenHosts == 0) {
                     when ((s as? TvUiState.InRoom)?.view?.room?.phase) {
                         // HUB: above the members strip (the live-join toast); SETUP: bottom start, clear of Start.
                         null, RoomPhase.HUB -> ToastHost(toasts, Modifier.align(Alignment.BottomCenter).padding(bottom = 92.dp), maxItems = 1)
@@ -227,8 +261,17 @@ private fun showGameToast(context: Context, toasts: ToastState, e: ViewEvent) {
     }
 }
 
+/** The screen the room shows; the key of the screen transition (never the state object, which changes every tick). */
+private enum class RoomScreen { Home, Hub, Setup, Advanced, Game }
+
 @Composable
-private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState, sounds: TvSounds, onOpenDebug: () -> Unit) {
+private fun RoomRoot(
+    s: TvUiState.InRoom,
+    vm: GameViewModel,
+    toasts: ToastState,
+    sounds: TvSounds,
+    splash: @Composable (HomeStatus) -> Unit,
+) {
     val context = LocalContext.current
     val room = s.view?.room
     val game = s.game
@@ -263,6 +306,16 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
             offlineLong = true
         }
     }
+    // The first room state never came (the socket may even be open): after 30 s "Connecting…" turns into the failed
+    // splash with Try again, never an endless spinner.
+    var noRoomLong by remember { mutableStateOf(false) }
+    LaunchedEffect(room == null) {
+        noRoomLong = false
+        if (room == null) {
+            delay(30_000)
+            noRoomLong = true
+        }
+    }
     val inGame = room?.phase == RoomPhase.PLAYING && game?.envelope?.over == false
     val phonesAsleepNow = inGame && room.members.none { it.connected && !it.left && !it.benched }
     var phonesAsleep by remember { mutableStateOf(false) }
@@ -292,8 +345,20 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
     // Overlays that own focus (the game's own host dialog is drawn and focused by the game itself).
     val modal = overlays.filter { it != Overlay.HostDialog }
     val storeOpen = s.store != null && room != null && room.phase != RoomPhase.PLAYING
-    val lostOverlay = offlineLong && room != null && degraded
+    // TV-13b also before the first room state: offline for 30 s is "Connection lost" whatever is under it.
+    val lostOverlay = offlineLong && degraded
     val overlayOpen = modal.isNotEmpty() || lostOverlay || storeOpen || setupSheet.let { it is SetupSheet.Content || it is SetupSheet.Packs }
+    val advancedOpen = setupSheet == SetupSheet.Advanced && room?.phase == RoomPhase.SETUP && room.setupGameId == GameIds.MISHANA
+    // §9 ToastHost: full screens that own the usual toast zones send the root host where nothing focusable is.
+    val toastAnchor = when {
+        storeOpen -> Alignment.TopCenter
+        advancedOpen -> Alignment.BottomEnd
+        else -> null
+    }
+    DisposableEffect(toastAnchor) {
+        toasts.anchor = toastAnchor
+        onDispose { toasts.anchor = null }
+    }
     val hostDialogUp = overlays.any { it is Overlay.CloseConfirm || it is Overlay.AbortConfirm || it is Overlay.KickConfirm || it is Overlay.PauseItemConfirm || it is Overlay.HostDialog || it is Overlay.SwitchLanguage }
 
     /** ⓘ for the current screen (§3.6): hub → the last-focused game; setup → its game; in game → the game. */
@@ -325,11 +390,27 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
     // INFO / MENU open the rules sheet unless a host dialog or the full-screen intro needs the remote.
     val swallowed = remember { HashSet<Key>() }
     val introOpen by vm.introOpen.collectAsStateWithLifecycle()
+
+    // ---- the screen transition (DESIGN §6.2): keyed on the screen, never on the state object ----
+    val screen = when {
+        room == null -> RoomScreen.Home
+        room.phase == RoomPhase.HUB -> RoomScreen.Hub
+        room.phase == RoomPhase.SETUP -> if (advancedOpen) RoomScreen.Advanced else RoomScreen.Setup
+        else -> RoomScreen.Game
+    }
+    val screenTransition = updateTransition(screen, label = "roomScreen")
+    val switching = screenTransition.currentState != screenTransition.targetState
+
     val gateModifier = Modifier.onPreviewKeyEvent { e ->
         if (e.type == KeyEventType.KeyUp) return@onPreviewKeyEvent swallowed.remove(e.key)
         if (e.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
         val fresh = e.repeats == 0
         if (fresh) swallowed.remove(e.key) // a stale entry (its release went elsewhere) never eats a later release
+        // While one screen hands over to the next (≤ 400 ms) no key lands on either of them.
+        if (switching) {
+            if (fresh) swallowed += e.key
+            return@onPreviewKeyEvent true
+        }
         val k = e.remoteKey()
         if (k == RemoteKey.INFO) {
             if (fresh && room != null && !hostDialogUp && !storeOpen && !lostOverlay && !introOpen) openRules(RulesOrigin.INFO_KEY)
@@ -352,12 +433,34 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
     Box(Modifier.fillMaxSize().then(gateModifier)) {
         CompositionLocalProvider(LocalPortalOrigins provides portalOrigins) {
             Box(Modifier.fillMaxSize()) {
-                // While a moment plays, or an overlay is up, screens must not grab focus (InitialFocus waits for the block to lift).
-                CompositionLocalProvider(LocalFocusBlocked provides (overlayOpen || moment != null)) {
-                    Box(Modifier.fillMaxSize().inertWhen(overlayOpen)) {
+                // While a moment plays, an overlay is up or the screens hand over, screens must not grab focus
+                // (InitialFocus waits for the block to lift). Under an overlay their own traps (a settings sub-panel)
+                // stand down too, so the overlay's buttons can take focus.
+                CompositionLocalProvider(
+                    LocalFocusBlocked provides (overlayOpen || moment != null || switching),
+                    LocalOverlayActive provides !overlayOpen,
+                ) {
+                    val reduce = LocalReduceMotion.current
+                    val rise = with(LocalDensity.current) { 24.dp.roundToPx() }
+                    screenTransition.AnimatedContent(
+                        modifier = Modifier.fillMaxSize().inertWhen(overlayOpen),
+                        transitionSpec = {
+                            val enter = fadeIn(tween(JamaaMotion.Slow, easing = JamaaMotion.Decel)) +
+                                if (reduce) EnterTransition.None else slideInVertically(tween(JamaaMotion.Slow, easing = JamaaMotion.Decel)) { rise }
+                            val exit = fadeOut(tween(JamaaMotion.Base, easing = JamaaMotion.Accel)) +
+                                if (reduce) ExitTransition.None else scaleOut(tween(JamaaMotion.Base, easing = JamaaMotion.Accel), targetScale = 0.98f)
+                            (enter togetherWith exit) using SizeTransform(clip = false)
+                        },
+                    ) { shown ->
+                    // The screen on its way out keeps drawing but can never be reached.
+                    val leaving = shown != screenTransition.targetState
+                    Box(Modifier.fillMaxSize().inertWhen(leaving)) {
                         when {
-                            room == null -> HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom, onOpenDebug)
-                            room.phase == RoomPhase.HUB -> HubScreen(
+                            shown == RoomScreen.Home || room == null -> splash(
+                                // TV-13: the first state never came: the failed splash and Try again, not a forever spinner.
+                                if (noRoomLong) HomeStatus.Failed(MessageKeys.TV_CREATE_FAILED) else HomeStatus.Busy(R.string.conn__connecting),
+                            )
+                            shown == RoomScreen.Hub -> HubScreen(
                                 room = room,
                                 focusedGameId = hubFocus,
                                 lastPlayed = vm.lastPlayedGameId,
@@ -375,17 +478,22 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
                                     onMember = { m -> vm.openOverlay(Overlay.MemberMenu(m.id)) },
                                 ),
                             )
-                            room.phase == RoomPhase.SETUP -> SetupRoot(
-                                room, vm, setupSheet, settingsDraft, genericDraft, toasts, billingOn, soundMuted, installId,
+                            shown == RoomScreen.Setup || shown == RoomScreen.Advanced -> SetupRoot(
+                                room, vm,
+                                // Each side of a Setup ⇄ Advanced hand-over draws its own screen, not the new one twice.
+                                if (shown == RoomScreen.Advanced) SetupSheet.Advanced else setupSheet.takeIf { it != SetupSheet.Advanced },
+                                settingsDraft, genericDraft, toasts, billingOn, soundMuted, installId,
                                 onSheet = { setupSheet = it },
                                 openRules = { openRules(RulesOrigin.TOP_BAR) },
                                 openStore = openStore,
                                 billingUnavailable = billing.billingUnavailable,
+                                waiting = !leaving,
                             )
                             else -> {
                                 val g = game
                                 if (g == null) {
-                                    HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom, onOpenDebug)
+                                    // The game state is on its way: a quiet spinner, not the splash again.
+                                    if (!leaving) Spinner(Modifier.align(Alignment.Center), size = 48.dp)
                                 } else {
                                     GameScreens.Render(
                                         GameScreenArgs(
@@ -407,6 +515,7 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
                                 }
                             }
                         }
+                    }
                     }
                 }
 
@@ -432,49 +541,81 @@ private fun RoomRoot(s: TvUiState.InRoom, vm: GameViewModel, toasts: ToastState,
             }
         }
 
-        // ---- setup sheets (end side, local) ----
-        if (room != null && room.phase == RoomPhase.SETUP) {
-            val setup = vm.effectiveSetup()
-            when (val sheet = setupSheet) {
-                SetupSheet.Content -> ContentLanguageSheet(room, onPick = { vm.setContentLocale(it); setupSheet = null }, onBack = { setupSheet = null })
-                is SetupSheet.Packs -> if (setup != null) PackPickerSheet(
-                    row = sheet.row,
-                    gameId = setup.gameId,
-                    selectedIds = SetupRows.selectedIds(setup, sheet.row.key),
-                    available = setup.availablePacks,
-                    locked = setup.lockedPacks,
-                    contentLocale = room.contentLocale,
-                    onChange = { ids -> vm.setPacks(sheet.row.key, ids, sheet.row.single) },
-                    onLocked = if (billingOn) ({ p -> openStore(StoreEntry(focusProductId = p.productId, origin = StoreOrigin.LOCKED_PACK)) }) else null,
-                    onBack = { setupSheet = null },
-                )
-                else -> Unit
+        // ---- the overlay layers, bottom to top: setup sheet, local overlays, the store, the fake purchase sheet, lost ----
+        // Only the TOPMOST layer traps focus and Back (LocalOverlayActive); a lower one stands down (its InitialFocus
+        // waits on LocalFocusBlocked) and gets its focus back when it is on top again. While the connection is lost
+        // nothing else is composed at all: Back and every hidden button under the 96 % screen stay out of reach.
+        val entry = s.store
+        val storeShown = entry != null && room != null && room.phase != RoomPhase.PLAYING && !lostOverlay
+        val fakeShown = fakeRequest != null && !lostOverlay
+        val stack = if (room != null && !lostOverlay) modal else emptyList()
+        val above = { layer: Int -> // something is drawn above layer 0 (sheet), 1 (overlays), 2 (store)
+            lostOverlay || fakeShown || (layer < 2 && storeShown) || (layer < 1 && stack.isNotEmpty())
+        }
+
+        // ---- setup sheets (end side, local), kept composed through their slide-out ----
+        val sheets = if (room != null && room.phase == RoomPhase.SETUP && !lostOverlay) {
+            listOfNotNull(setupSheet.takeIf { it is SetupSheet.Content || it is SetupSheet.Packs })
+        } else {
+            emptyList()
+        }
+        CompositionLocalProvider(LocalOverlayActive provides !above(0), LocalFocusBlocked provides above(0)) {
+            KeepWhileExiting(sheets) { sheet ->
+                val r = room ?: return@KeepWhileExiting
+                val setup = vm.effectiveSetup()
+                when (sheet) {
+                    SetupSheet.Content -> ContentLanguageSheet(r, onPick = { vm.setContentLocale(it); setupSheet = null }, onBack = { setupSheet = null })
+                    is SetupSheet.Packs -> if (setup != null) PackPickerSheet(
+                        row = sheet.row,
+                        gameId = setup.gameId,
+                        selectedIds = SetupRows.selectedIds(setup, sheet.row.key),
+                        available = setup.availablePacks,
+                        locked = setup.lockedPacks,
+                        contentLocale = r.contentLocale,
+                        onChange = { ids -> vm.setPacks(sheet.row.key, ids, sheet.row.single) },
+                        onLocked = if (billingOn) ({ p -> openStore(StoreEntry(focusProductId = p.productId, origin = StoreOrigin.LOCKED_PACK)) }) else null,
+                        onBack = { setupSheet = null },
+                    )
+                    else -> Unit
+                }
             }
         }
 
-        // ---- local overlays, bottom to top ----
+        // ---- local overlays, bottom to top; each kept composed through its exit ----
         if (room != null) {
-            for (o in overlays) OverlayView(o, room, s, vm, soundMuted, calm, { calm = it }, installId, ::openRules)
+            // D20: of stacked dialog cards only the lowest draws the 80 % scrim.
+            val firstCard = stack.firstOrNull { it.isCard() }
+            KeepWhileExiting(stack) { o ->
+                val top = !above(1) && o == stack.lastOrNull()
+                CompositionLocalProvider(
+                    LocalOverlayActive provides top,
+                    LocalFocusBlocked provides !top,
+                    LocalOverlayScrim provides (o == firstCard || (firstCard == null && o.isCard())),
+                ) {
+                    OverlayView(o, room, s, vm, soundMuted, calm, { calm = it }, installId, ::openRules, childOpen = o != stack.lastOrNull())
+                }
+            }
         }
 
         // PAYMENTS-SPEC §4.4 / JAMAA-PLATFORM §4.5: the Pass store (HUB or SETUP; the ViewModel closes it on PLAYING).
-        val entry = s.store
-        if (entry != null && room != null && room.phase != RoomPhase.PLAYING && !lostOverlay) {
-            StoreScreen(
-                entry = entry,
-                state = billing,
-                view = StoreRoomContext(room.roomCode, room.contentLocale, room.setup?.lockedPacks.orEmpty()),
-                onClose = vm::closeStore,
-                onRetry = vm::retryStore,
-                onBuy = { productId, basePlanId -> activity?.let { vm.buy(it, productId, basePlanId) } },
-                onRestore = vm::restorePurchases,
-            )
+        if (storeShown && entry != null && room != null) {
+            CompositionLocalProvider(LocalOverlayActive provides !above(2), LocalFocusBlocked provides above(2)) {
+                StoreScreen(
+                    entry = entry,
+                    state = billing,
+                    view = StoreRoomContext(room.roomCode, room.contentLocale, room.setup?.lockedPacks.orEmpty()),
+                    onClose = vm::closeStore,
+                    onRetry = vm::retryStore,
+                    onBuy = { productId, basePlanId -> activity?.let { vm.buy(it, productId, basePlanId) } },
+                    onRestore = vm::restorePurchases,
+                )
+            }
         }
         // §4.8 debug fake store: the purchase "sheet", over everything like Play's own sheet.
-        fakeRequest?.let { offer -> FakePurchaseDialog(offer.productId) { choice -> vm.fakePrompt?.choose(choice) } }
+        if (fakeShown) fakeRequest?.let { offer -> FakePurchaseDialog(offer.productId) { choice -> vm.fakePrompt?.choose(choice) } }
 
-        // TV-13b: still offline after 30 s.
-        if (lostOverlay) ConnectionLost(onRetry = vm::retryConnectionNow, onBack = onBack)
+        // TV-13b: still offline after 30 s. Back does nothing here (nothing to go back to while offline).
+        if (lostOverlay) ConnectionLost(onRetry = vm::retryConnectionNow, onBack = {})
     }
 }
 
@@ -494,11 +635,13 @@ private fun SetupRoot(
     openRules: () -> Unit,
     openStore: (StoreEntry) -> Unit,
     billingUnavailable: Boolean,
+    waiting: Boolean = true,
 ) {
     val setup = vm.effectiveSetup()
     val meta = GameCatalog.meta(setup?.gameId ?: room.setupGameId)
     if (setup == null || meta == null) {
-        HomeScreen(HomeStatus.Busy(R.string.conn__connecting), vm::createRoom) {}
+        // The setup state is on its way: a quiet spinner (none on the screen being left), not the splash again.
+        if (waiting) Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Spinner(size = 48.dp) }
         return
     }
     val mishana = if (sheet == SetupSheet.Advanced && setup.gameId == GameIds.MISHANA) vm.mishanaSetup() else null
@@ -541,6 +684,12 @@ private fun SetupRoot(
     )
 }
 
+/** The overlays drawn as a centred [app.jamaa.tv.ui.components.OverlayCard] (with its scrim), not as an end sheet. */
+private fun Overlay.isCard(): Boolean = when (this) {
+    is Overlay.Rules, Overlay.HubSettings, Overlay.CupSheet, Overlay.HostDialog -> false
+    else -> true
+}
+
 /** One local overlay (§3.2 HUB-06, §3.6); Back on each one is [GameViewModel.overlayBack]. */
 @Composable
 private fun OverlayView(
@@ -553,6 +702,7 @@ private fun OverlayView(
     onCalm: (Boolean) -> Unit,
     installId: String?,
     openRules: (RulesOrigin) -> Unit,
+    childOpen: Boolean = false,
 ) {
     val activity = LocalContext.current.findActivity()
     val game = s.game
@@ -575,6 +725,7 @@ private fun OverlayView(
                 soundOn = !soundMuted,
                 onToggleSound = { vm.setSoundMuted(!soundMuted) },
                 onQuit = { vm.openOverlay(Overlay.AbortConfirm) },
+                childOpen = childOpen,
             )
         }
         Overlay.AbortConfirm -> AbortConfirm(

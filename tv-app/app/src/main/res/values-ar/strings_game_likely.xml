@@ -28,7 +28,7 @@
     <string name="game__likely__coach__hold">لازم يكونوا 3 لنكمّل.</string>
     <string name="game__likely__pause__skip_card">نطّ الكرت</string>
     <string name="game__likely__pause__next">التالي</string>
-    <string name="game__likely__pause__end_game">خلّص اللعبة</string>
+    <string name="game__likely__pause__end_game">خلّصوا هلّق</string>
     <string name="game__likely__pause__end_game__confirm">نخلّص اللعبة ونروح عالجوايز دغري؟</string>
     <string name="game__likely__host__skip">نطّ هالكرت</string>
     <string name="game__likely__settings__packs">مجموعات الكروت</string>

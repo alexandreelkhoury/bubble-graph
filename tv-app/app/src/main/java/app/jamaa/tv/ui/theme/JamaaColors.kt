@@ -26,6 +26,8 @@ object JamaaColors {
     val Success = Color(0xFF3DDC97)
     val Danger = Color(0xFFFF5A4E)
     val Focus = Color(0xFFFFF7EC)
+    /** DESIGN §4.6 amendment: the fill of a focused secondary/ghost button or row (ink content, primary ring). */
+    val FocusFill = Focus
     val Civilian = Color(0xFF5AB8FF)
     val Undercover = Color(0xFFFF8A3D)
     val Blank = Color(0xFFECE6F5)

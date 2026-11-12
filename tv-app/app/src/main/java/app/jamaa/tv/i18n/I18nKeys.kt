@@ -384,6 +384,8 @@ object I18nKeys {
         "settings.sound" to R.string.settings__sound,
         "settings.interfaceLanguage" to R.string.settings__interface_language,
         "hint.backMenu" to R.string.hint__back_menu,
+        "hint.scroll" to R.string.hint__scroll,
+        "hint.backClose" to R.string.hint__back_close,
         "error.unknownGame" to R.string.error__unknown_game,
         "error.gameDisabled" to R.string.error__game_disabled,
         "error.gameUnavailable" to R.string.error__game_unavailable,

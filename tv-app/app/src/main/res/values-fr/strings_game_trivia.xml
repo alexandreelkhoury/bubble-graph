@@ -35,7 +35,7 @@
     <string name="game__trivia__pause__void">Annuler cette question</string>
     <string name="game__trivia__pause__void_confirm">Annuler cette question ? Ses points sont retirés à tout le monde.</string>
     <string name="game__trivia__pause__voided">Question annulée : scores rétablis.</string>
-    <string name="game__trivia__pause__end_game">Terminer la partie</string>
+    <string name="game__trivia__pause__end_game">Finir maintenant</string>
     <string name="game__trivia__pause__end_confirm">Terminer le quiz maintenant et passer au podium ?</string>
     <string name="game__trivia__settings__quiz">Quiz</string>
     <string name="game__trivia__settings__length">Durée</string>

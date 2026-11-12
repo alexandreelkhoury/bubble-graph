@@ -33,7 +33,7 @@
   "game.trivia.pause.void": "Void this question",
   "game.trivia.pause.voidConfirm": "Void this question? Its points are removed for everyone.",
   "game.trivia.pause.voided": "Question voided: scores restored.",
-  "game.trivia.pause.endGame": "End game",
+  "game.trivia.pause.endGame": "Finish now",
   "game.trivia.pause.endConfirm": "End the quiz now and go to the podium?",
   "game.trivia.settings.quiz": "Quiz",
   "game.trivia.settings.length": "Length",

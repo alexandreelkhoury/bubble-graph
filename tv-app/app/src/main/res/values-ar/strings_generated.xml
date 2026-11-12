@@ -163,8 +163,8 @@
     <string name="tv__pause_note">الوقت ماشي</string>
     <string name="tv__resume">رجوع للعبة</string>
     <string name="tv__players">اللاعبين…</string>
-    <string name="tv__end_game">نوقّف اللعبة</string>
-    <string name="tv__end_game_confirm">نوقّف هاللعبة؟</string>
+    <string name="tv__end_game">اطلع من اللعبة</string>
+    <string name="tv__end_game_confirm">بدك تطلع من هاللعبة؟</string>
     <string name="tv__end_game_body">ما حدا بيسجّل نقاط. منرجع عالصالون.</string>
     <string name="tv__keep_playing">منكمّل</string>
     <string name="tv__exit_app">خروج</string>
@@ -505,6 +505,8 @@
     <string name="settings__sound">الصوت</string>
     <string name="settings__interface_language">لغة الواجهة</string>
     <string name="hint__back_menu">رجوع: القائمة والقواعد</string>
+    <string name="hint__scroll">تمرير</string>
+    <string name="hint__back_close">رجوع: إغلاق</string>
     <string name="error__unknown_game">هاللعبة مش موجودة.</string>
     <string name="error__game_disabled">هاللعبة مش متوفّرة بعد.</string>
     <string name="error__game_unavailable">هاللعبة ما إلها محتوى بهاللغة بعد.</string>

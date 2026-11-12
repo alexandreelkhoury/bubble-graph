@@ -45,7 +45,7 @@
   "game.bluff.pause.hideOption": "Masquer une réponse",
   "game.bluff.pause.hideOptionPick": "Choisissez la réponse à masquer",
   "game.bluff.pause.next": "Suivant",
-  "game.bluff.pause.endGame": "Terminer la partie",
+  "game.bluff.pause.endGame": "Finir maintenant",
   "game.bluff.pause.endGameConfirm": "Terminer la partie maintenant ? Les scores actuels passent aux trophées.",
   "game.bluff.pause.skipsLeft": {
     "one": "{count} passage restant",

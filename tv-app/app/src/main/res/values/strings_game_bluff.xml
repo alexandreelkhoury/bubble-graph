@@ -47,7 +47,7 @@
     <string name="game__bluff__pause__hide_option">Hide an answer</string>
     <string name="game__bluff__pause__hide_option_pick">Pick the answer to hide</string>
     <string name="game__bluff__pause__next">Next</string>
-    <string name="game__bluff__pause__end_game">End game</string>
+    <string name="game__bluff__pause__end_game">Finish now</string>
     <string name="game__bluff__pause__end_game_confirm">End the game now? Scores so far go to the awards.</string>
     <plurals name="game__bluff__pause__skips_left">
         <item quantity="one">%1$d skip left</item>

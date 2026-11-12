@@ -64,8 +64,10 @@ class IntroFlowTest {
     }
 
     @Test
-    fun sharedPrefsStoreIntroFlagsAndCalmMotion() {
-        val p = SharedPlatformPrefs(android.content.Context())
+    fun platformPrefsStoreIntroFlagsAndCalmMotion() {
+        // android.content.Context is abstract in the android.jar stubs (no instance in a JVM test): the contract is
+        // checked on the in-memory prefs; SharedPlatformPrefs keeps the same keys ([SharedPlatformPrefs.introKey]).
+        val p: app.jamaa.tv.settings.PlatformPrefs = app.jamaa.tv.settings.MemoryPlatformPrefs()
         p.setIntroSeen("mishana")
         p.setIntroSeen("trivia")
         assertTrue(p.introSeen("mishana"))
