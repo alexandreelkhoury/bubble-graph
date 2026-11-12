@@ -511,7 +511,7 @@ private fun RoomRoot(
                                             onRules = { openRules(RulesOrigin.TOP_BAR) },
                                         ),
                                     )
-                                    if (!g.envelope.over) BackMenuHint(g, Modifier.align(Alignment.BottomEnd)) // top-end overlapped the games' status chips
+                                    if (!g.envelope.over) BackMenuHint(g, Modifier.align(Alignment.TopEnd).padding(top = 52.dp))
                                 }
                             }
                         }
