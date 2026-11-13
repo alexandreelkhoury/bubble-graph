@@ -5,7 +5,8 @@ import { ROOM_CODE_ALPHABET, ROOM_CODE_LENGTH, ROOM_CODE_REGEX } from "@jamaa/sh
 export type Route =
   | { kind: "home"; prefill: string }
   | { kind: "room"; code: string; canonical: boolean }
-  | { kind: "tv" };
+  | { kind: "tv" }
+  | { kind: "tvpixi" };
 
 /** Upper-cases and keeps only room-code alphabet characters (max 4). */
 export function cleanCodeInput(raw: string): { code: string; rejected: boolean } {
@@ -32,6 +33,7 @@ export function parseRoute(pathname: string): Route {
   if (seg === "") return { kind: "home", prefill: "" };
   const lower = seg.toLowerCase();
   if (lower === "tv" || lower === "tv-mock") return { kind: "tv" };
+  if (lower === "tv-pixi") return { kind: "tvpixi" };
   if (!seg.includes("/")) {
     const upper = seg.toUpperCase();
     if (ROOM_CODE_REGEX.test(upper)) return { kind: "room", code: upper, canonical: upper === seg };

@@ -9,6 +9,7 @@ import type { RoomPhase } from "@jamaa/shared/room";
 import type { TvRoomView } from "@jamaa/shared/protocol/v2";
 import { dirOf, locale, registerRootExtras, t } from "../i18n/t";
 import { toasts } from "../state/store";
+import { route } from "../router";
 import {
   inRunningGame, openedGames, tvAct, tvAdvanced, tvCreateRoom, tvCupOpen, tvExit, tvHubSettings, tvIntro, tvLangOpen, tvPackPicker,
   tvPaused, tvRules, tvScale, tvShop, tvStop, tvUi, tvView,
@@ -17,6 +18,7 @@ import { TvShop } from "./tvShop";
 import { bootBilling, useBillingView, useBillingVisibility } from "./billingEffects";
 import { loadBillingFlag } from "../lib/billingFlag";
 import { canvasRect, CupSheet, Splash, TvHub } from "./tvHub";
+import { tvSkin } from "./tvSkin";
 import { AdvancedSheet, PackPicker, TvSetup } from "./tvSetup";
 import { TvGameHost, tvGameModule, loadTvGame } from "./tvGameHost";
 import { RulesSheet } from "./tvRules";
@@ -82,7 +84,21 @@ type Tr =
   | { kind: "back"; id: GameId }
   | { kind: "entrance"; id: GameId };
 
+/**
+ * /tv-pixi: loads the Pixi skin (tvSkin: the hub and Most Likely drawn by PixiJS) before the first screen. If the chunk
+ * fails to load the mock simply stays all-DOM. On /tv this is a no-op and the Pixi chunk is never requested.
+ */
+function usePixiSkin(): boolean {
+  const wanted = route.value.kind === "tvpixi";
+  const [ready, setReady] = useState(!wanted);
+  useEffect(() => {
+    if (wanted) void import("../tv-pixi/skin").catch(() => undefined).then(() => setReady(true));
+  }, []);
+  return ready;
+}
+
 export function TvMock() {
+  const skinReady = usePixiSkin();
   const box = useCanvasBox();
   const canvas = useRef<HTMLDivElement>(null);
   const hubRoot = (): HTMLElement | null => canvas.current?.querySelector<HTMLElement>(".tvhub") ?? null;
@@ -215,14 +231,15 @@ export function TvMock() {
       if (c?.kind === "portal" && c.id === id && !c.ready) { tr.current = { kind: "back", id }; soundCue("portal_close"); force((x) => x + 1); }
     }, PORTAL_ANSWER_MS);
   };
+  const Hub = tvSkin.Hub ?? TvHub;
   let content;
   if (ui.kind === "creating" || ui.kind === "failed") content = <Splash failed={ui.kind === "failed" ? ui.error : null} onRetry={() => void tvCreateRoom()} />;
   else if (ui.kind === "fatal") content = <Fatal messageKey={ui.messageKey} />;
   else if (ui.kind === "closed") content = <Closed />;
-  else if (!view) content = <Splash failed={null} onRetry={() => void tvCreateRoom()} />;
-  else if (cur?.kind === "portal" && !cur.handed) content = <TvHub view={view.room.phase === "HUB" ? view : cur.hub} portalOut onOpen={() => undefined} />;
+  else if (!view || !skinReady) content = <Splash failed={null} onRetry={() => void tvCreateRoom()} />;
+  else if (cur?.kind === "portal" && !cur.handed) content = <Hub view={view.room.phase === "HUB" ? view : cur.hub} portalOut onOpen={() => undefined} />;
   else if (view.room.phase === "HUB") {
-    content = <TvHub view={view} portalOut={cur?.kind === "back"} onOpen={(id, r) => startPortal(id, canvasRect(r, canvas.current, box.scale), view)} />;
+    content = <Hub view={view} portalOut={cur?.kind === "back"} onOpen={(id, r) => startPortal(id, canvasRect(r, canvas.current, box.scale), view)} />;
   } else if (view.room.phase === "SETUP") content = <TvSetup view={view} entering={cur?.kind === "portal" ? (cur.first ? 1 : 0.64) : null} />;
   else content = <TvGameHost view={view} />;
 

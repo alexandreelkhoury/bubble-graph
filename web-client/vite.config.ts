@@ -39,9 +39,11 @@ export function i18nSplit(): Plugin {
 //   i18n-<id>-<locale>       one game's strings in one locale (lazy; the largest counts)
 //   <locale>                 the EN/FR/AR/ES root catalogs, phone part (lazy; one per player, the largest counts)
 //   tv-mock-i18n-<locale>    the TV part of a root catalog (src/lib/i18nSplit.ts; the /tv mock only)
+const PIXI_DEPS = /\/node_modules\/(\.pnpm\/[^/]+\/node_modules\/)?(pixi\.js|@pixi|earcut|@types\/earcut|eventemitter3|gifuct-js|ismobilejs|parse-svg-path|tiny-lru|@webgpu|@xmldom|js-binary-schema-parser)\//;
 const norm = (p: string | null | undefined): string => (p ?? "").replace(/\\/g, "/");
 function chunkName(facade: string, modules: readonly string[]): string | null {
   const f = norm(facade);
+  if (PIXI_DEPS.test(f)) return "tv-mock-pixi";
   const v = /virtual:jamaa-i18n(-tv)?\/([a-z]{2})$/.exec(f);
   if (v) return v[1] ? `tv-mock-i18n-${v[2]}` : v[2]!;
   let m = /\/src\/games\/([a-z]+)\/phone\.tsx$/.exec(f);
@@ -50,13 +52,13 @@ function chunkName(facade: string, modules: readonly string[]): string | null {
   if (m) return `tv-mock-game-${m[1]}`;
   m = /\/i18n\/games\/([a-z]+)\/([a-z]{2})\.json$/.exec(f);
   if (m) return `i18n-${m[1]}-${m[2]}`;
-  if (/\/src\/tv-mock\//.test(f)) return "tv-mock";
+  if (/\/src\/tv-(mock|pixi)\//.test(f)) return "tv-mock";
   const mods = modules.map(norm);
   if (mods.length > 0) {
     const g = /\/src\/games\/([a-z]+)\//.exec(mods[0]!);
     if (g && mods.every((x) => x.includes(`/src/games/${g[1]}/`) && !x.includes("/tv/") && !x.endsWith("/tv.tsx"))) return `game-${g[1]}-shared`;
     // The phone never imports /tv code, so any chunk holding a tv-mock module (or a game's TV screens) is TV-only.
-    if (mods.some((x) => x.includes("/src/tv-mock/") || /\/src\/games\/[a-z]+\/(tv\/|tv\.tsx)/.test(x))) return "tv-mock-shared";
+    if (mods.some((x) => x.includes("/src/tv-mock/") || x.includes("/src/tv-pixi/") || PIXI_DEPS.test(x) || /\/src\/games\/[a-z]+\/(tv\/|tv\.tsx)/.test(x))) return "tv-mock-shared";
   }
   return null;
 }
@@ -78,7 +80,9 @@ export default defineConfig({
             test: (id: string) => {
               const f = norm(id);
               if (!/(\/web-client\/src\/|\/shared\/src\/|\/node_modules\/)/.test(f)) return false;
-              return !/\/tv-mock\/|\/src\/games\/[a-z]+\/|\/motion\/|iconsTv|qrcode|\.json$|\/shared\/src\/games\/(meta|registry|[a-z]+\/)|\/shared\/src\/(billing|room|content|projection|protocol\/)|\/src\/games\/tvLoaders/.test(f);
+              // PixiJS (and its deps) belong to the lazy /tv-pixi chunk, never the phone core.
+              if (PIXI_DEPS.test(f)) return false;
+              return !/\/tv-mock\/|\/tv-pixi\/|\/src\/games\/[a-z]+\/|\/motion\/|iconsTv|qrcode|\.json$|\/shared\/src\/games\/(meta|registry|[a-z]+\/)|\/shared\/src\/worlds\/palettes|\/shared\/src\/worlds\/palettes|\/shared\/src\/(billing|room|content|projection|protocol\/)|\/src\/games\/tvLoaders/.test(f);
             },
           }],
         },

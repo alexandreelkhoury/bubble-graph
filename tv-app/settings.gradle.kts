@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "jamaa-tv"
 include(":app")
+include(":pixi")

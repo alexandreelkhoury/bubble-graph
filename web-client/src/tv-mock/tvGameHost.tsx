@@ -17,6 +17,7 @@ import { Character } from "../components/Character";
 import { cupStandings, starsOfLast } from "../platform/Cup";
 import { backHintOn } from "./tvParts";
 import { tvAct } from "./tvStore";
+import { tvSkin } from "./tvSkin";
 import { openRules } from "./tvDialogs";
 import { armGuard, clearChoreo, resultsSettled, setChoreo } from "./tvPlatform";
 import { soundCue } from "./sound/controller";
@@ -82,7 +83,7 @@ export function TvGameHost({ view }: { view: TvRoomView }) {
   }, [view, mod]);
   if (!g) return <div class="tvscreen" />;
   if (!mod) return <div class="tvscreen tvloadinggame"><Icon name="refresh" size={32} class="spin" /></div>;
-  const Tv = mod.Tv;
+  const Tv = tvSkin.games[g.gameId] ?? mod.Tv;
   return (
     <div class={`tvgamehost${g.over ? " is-over" : ""}`} data-game={g.gameId}>
       <div class="tvgamehost__screen" key={mod.screenKey(view)}><Tv view={view} /></div>

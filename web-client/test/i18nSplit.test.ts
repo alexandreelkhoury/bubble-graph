@@ -13,7 +13,7 @@ function files(dir: string): string[] {
     return statSync(p).isDirectory() ? files(p) : /\.tsx?$/.test(f) ? [p] : [];
   });
 }
-const isTvFile = (p: string): boolean => /[\\/]tv-mock[\\/]/.test(p) || /[\\/]games[\\/][a-z]+[\\/](tv[\\/]|tv\.tsx|tv[A-Z])/.test(p);
+const isTvFile = (p: string): boolean => /[\\/]tv-(mock|pixi)[\\/]/.test(p) || /[\\/]games[\\/][a-z]+[\\/](tv[\\/]|tv\.tsx|tv[A-Z])/.test(p);
 
 describe("root catalog split", () => {
   it("the two parts partition the catalog", () => {

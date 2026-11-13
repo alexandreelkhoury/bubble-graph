@@ -1,0 +1,2 @@
+/* /tv-pixi: the Pixi canvas fills the stage slot of the 960 × 540 TV canvas (it is backed 1920 × 1080). */
+.tvpixi { position: absolute; inset: 0; overflow: hidden; }

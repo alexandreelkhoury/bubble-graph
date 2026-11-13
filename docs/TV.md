@@ -240,6 +240,25 @@ Real Play Billing only works for an app **installed from Play** (internal or clo
 
 **JVM tests** (`./gradlew :app:testDebugUnitTest`): `ProductsTest`, `OfferSelectionTest`, `BillingErrorsTest`, `EntitlementApiTest` (MockWebServer), `BillingRepositoryTest` (fake gateway + fake API, virtual time), `StoreFocusTest`, `BillingNoticesTest`, `GameViewModelBillingTest`, `LobbyBarFitTest`, `StoreLayoutFitTest`, plus the billing fixtures in `ProtocolFixturesTest` and `ClientEncodingTest`.
 
+## JAMAA Pixi (comparison app)
+
+A second Android TV app, **JAMAA Pixi** (`tv-app/pixi`, package `app.jamaa.tv.pixi`, teal banner), next to the native **JAMAA** (`:app`) so the two renderers can be compared on the same TV. It is a fullscreen WebView on `<server>/tv-pixi`: the browser TV mock (`/tv`) with the hub and **Most Likely** drawn by PixiJS 8 (web-client/src/tv-pixi, a lazy `tv-mock-pixi` chunk the phone never loads). Same Worker, same room protocol, same origin as the API.
+
+- **Pixi**: the hub (four posters, the focused one lifts, room code + QR, players strip) and Most Likely in full (card, voting, the who-voted-for-whom reveal with count bubbles, spotlight and award, secret mode as percentages, awards, results wall). 1920 x 1080 canvas, Pixi `Text` (Arabic is shaped by the canvas).
+- **Fallback (DOM, unchanged /tv mock)**: setup, the pause menu, rules, store, hub settings and dialogs, the portal, the results bar, and every other game (Mish Ana!, Bluff!, Quiz Night). Whatever Pixi does not draw is the DOM mock, so the app stays playable end to end.
+- **Remote**: Left/Right move the poster focus, OK opens, Down opens hub Settings, Back/Info as in the mock. OK also skips a running reveal.
+- **fps**: **hold Up on the hub (about 1 s)** to toggle the corner overlay (avg fps, ms, worst frame); it is remembered, and `?fps=1` forces it. Every 5 s the page also logs `[pixi-tv] fps ...`: `adb logcat -s JamaaPixi`.
+- **Back**: short Back goes to the page (Escape); on the "closed" splash it exits; **hold Back** reloads (new room).
+
+```bash
+# deploy the web side first (the Worker serves /tv-pixi from the web-client build)
+pnpm deploy                      # or: pnpm deploy:preview
+# build + install the comparison app (the native one is untouched: ./gradlew :app:installDebug)
+cd tv-app && ./gradlew :pixi:installDebug -PserverUrl=https://play.mishana.workers.dev
+```
+
+The server URL resolves like `:app` (`-PserverUrl`, else `jamaa.prodServerUrl`). Try it in a laptop browser first: `https://<server>/tv-pixi`. The page-size check (`pnpm --filter @jamaa/web-client size`) keeps Pixi out of the phone budget; the TV chunks are reported against a soft cap only.
+
 ## Debug server override
 
 Debug builds only: on the splash screen, focus the small version label at the bottom end and **long-press OK**. The Debug settings dialog stores a server URL in SharedPreferences `jamaa_debug` / `server_url`; blank means `BuildConfig.SERVER_URL`. Saving creates a new room on that server. Release builds always use `BuildConfig.SERVER_URL`. The same dialog holds the **Billing: Google Play / Fake** toggle ([Fake billing](#fake-billing-debug-builds-no-play-account-needed)).
