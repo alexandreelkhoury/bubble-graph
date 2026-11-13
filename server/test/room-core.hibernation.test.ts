@@ -32,7 +32,7 @@ describe("RoomCore hibernation / restore", () => {
       }
       await h.game(tv, { type: "HOST_ADVANCE" });
       out.push(structuredClone(h.state));
-      out.push(all.map((c) => c.last("state")?.seq));
+      // seq: a revived instance starts above every frame the old one may have sent (see EPH_SPAN), so only the state compares.
       return out;
     };
 
@@ -53,7 +53,9 @@ describe("RoomCore hibernation / restore", () => {
     await fresh.start();
     expect(fresh.peek().state).toEqual(h.room);
     expect(fresh.peek().history).toEqual(h.history);
-    expect(fresh.peek().meta).toEqual(h.core.peek().meta);
+    // A reload lifts viewRev by EPH_SPAN (the seq floor); everything else in the meta is identical.
+    expect({ ...fresh.peek().meta, viewRev: 0 }).toEqual({ ...h.core.peek().meta, viewRev: 0 });
+    expect(fresh.peek().meta?.viewRev).toBeGreaterThan(h.core.peek().meta?.viewRev ?? 0);
     expect(fresh.peek().sessions).toEqual(h.core.peek().sessions);
     // And it keeps serving existing sockets (attachments survived).
     h.core = fresh;

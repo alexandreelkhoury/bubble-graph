@@ -170,7 +170,10 @@ export async function tvCreateRoom(): Promise<void> {
       // pickers and the rules sheet, so a stale "Quit game?", kick or "Close JAMAA?" never sits over the next screen.
       // The rules sheet survives in-game phase changes only.
       if (roomTransition(prev, next)) { tvDialog.value = null; tvPicker.value = null; tvRules.value = null; tvLangOpen.value = false; }
-      if (tvFocusGame.value === null || (prev?.room.phase !== "HUB" && next.room.phase === "HUB")) tvFocusGame.value = next.room.focusedGameId;
+      // Back from setup lands on the poster that was opened (the room's own focus can have been lost server side).
+      const back = prev?.room.phase === "SETUP" && next.room.phase === "HUB" ? prev.room.setupGameId : null;
+      if (back && next.room.games.some((g) => g.id === back)) tvFocusGame.value = back;
+      else if (tvFocusGame.value === null || (prev?.room.phase !== "HUB" && next.room.phase === "HUB")) tvFocusGame.value = next.room.focusedGameId;
       tvView.value = next;
     },
     onWelcome: () => undefined,

@@ -706,6 +706,11 @@ export class RoomCore {
       return;
     }
     if (r.state === state && r.history === this.#history) return;
+    if (a.type === "OPEN_GAME" && this.#meta) {
+      // The poster the room opened is the hub focus when it comes back (Back from setup), also after hibernation.
+      this.#focus = a.gameId as GameId;
+      this.#meta = { ...this.#meta, focus: a.gameId };
+    }
     if (a.type === "KICK") {
       const s = this.#sessions[a.playerId];
       if (s) this.#sessions = { ...this.#sessions, [a.playerId]: { ...s, kicked: true } };
@@ -836,6 +841,7 @@ export class RoomCore {
       return;
     }
     this.#setCache(r.meta, r.state as RoomState, r.history as RoomHistory, r.sessions);
+    this.#focus = r.meta.focus !== undefined && r.meta.focus !== null && isGameId(r.meta.focus) ? r.meta.focus : null;
     if (norm.changed) {
       // Kept unsaved (`#savedState` is the stored value); the next commit (start() does it) writes the fixed records.
       this.#state = norm.state;
@@ -843,10 +849,25 @@ export class RoomCore {
       if (r.history === null) this.#savedHistory = null;
       if (norm.gameSchemaReset) this.#log("game_schema_reset", { phase: norm.state.phase });
     }
+    await this.#ensureSeqFloor();
   }
 
   async #ensureLoaded(): Promise<void> {
     if (!this.#loaded) await this.#load();
+  }
+
+  /**
+   * After a (re)load the in-memory `#eph` is gone: frames already sent under it carried seq up to version + viewRev +
+   * eph, so the first frame of ANY kind (a state change too, not only HUB_FOCUS) must start above that. Otherwise a
+   * client that saw HUB_FOCUS frames drops the next state frame as "not newer" (the TV stayed on setup after Back).
+   */
+  async #ensureSeqFloor(): Promise<void> {
+    const meta = this.#meta;
+    if (this.#ephSafe || !meta || !this.#state) return;
+    this.#meta = { ...meta, viewRev: (meta.viewRev ?? 0) + EPH_SPAN };
+    this.#eph = 0;
+    this.#ephSafe = true;
+    await this.#flushMeta();
   }
 
   /** Persist + broadcast + reschedule for an accepted reduce that changed the state or history. */

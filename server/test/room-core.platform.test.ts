@@ -255,6 +255,29 @@ describe("HUB_FOCUS (§2.3, §2.8 hub/meta)", () => {
   });
 });
 
+describe("hibernation between HUB_FOCUS frames and a state change (TV stuck on setup after Back)", () => {
+  it("the first state frame after a reload is newer than every focus frame sent before it, and the opened game stays the hub focus", async () => {
+    const h = await new Harness({ enabledGames: ["mishana", "bluff"] as GameId[] }).init();
+    const tv = await h.tv();
+    await h.player(0);
+    await h.act(tv, { type: "HUB_FOCUS", gameId: "bluff" });
+    await h.act(tv, { type: "HUB_FOCUS", gameId: "mishana" });
+    await h.act(tv, { type: "HUB_FOCUS", gameId: "bluff" });
+    await h.act(tv, { type: "HUB_FOCUS", gameId: "mishana" });
+    await h.open(tv);
+    expect(room(tv).phase).toBe("SETUP");
+    const before = seqs(tv).at(-1)!;
+    h.core = h.makeCore(); // the Durable Object slept while the room sat on the setup screen
+    await h.core.start();
+    expect(h.core.peek().focusedGameId).toBe("mishana"); // the opened poster survives the reload (it was in memory only)
+    await h.act(tv, { type: "CLOSE_GAME" });
+    expect(room(tv).phase).toBe("HUB");
+    expect(seqs(tv).at(-1)!).toBeGreaterThan(before); // a client drops a frame whose seq is not greater
+    expect(strictlyIncreasing(seqs(tv))).toBe(true);
+    expect(room(tv).focusedGameId).toBe("mishana");
+  });
+});
+
 describe("one full session over the real protocol (§2.8 server)", () => {
   it("hub → mishana → replay → hub → a game this deploy does not run (GAME_DISABLED / GAME_UNAVAILABLE), cup arithmetic and seq everywhere", async () => {
     const h = await new Harness().init();

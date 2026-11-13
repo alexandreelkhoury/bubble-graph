@@ -23,6 +23,8 @@ export interface RoomMeta {
   tvBusyUntil?: number | null;
   /** Meta-only broadcasts since creation (missing = 0); frame `seq = state.version + viewRev` (room-core #metaBroadcast). */
   viewRev?: number;
+  /** The hub carousel focus last committed by OPEN_GAME (HUB_FOCUS itself is ephemeral); survives hibernation so Back from setup lands on that poster. */
+  focus?: string | null;
 }
 
 export interface SessionRecord { tokenHash: string; kicked: boolean }
