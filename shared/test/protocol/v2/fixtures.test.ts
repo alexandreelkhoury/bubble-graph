@@ -8,7 +8,9 @@ import { GAME_IDS } from "../../../src/games/ids";
 import { GAME_META } from "../../../src/games/meta";
 import { errorMessageKey } from "../../../src/protocol/errors";
 import type { ErrorCode } from "../../../src/protocol/errors";
-import { ClientConfigV2, ClientMessageV2Schema, HealthzV2, HelloTvV2Schema, ServerMessageV2Schema } from "../../../src/protocol/v2";
+import { ClientConfigV2, ClientMessageV2Schema, HealthzV2, HelloTvV2Schema, MemoryV2Schema, ServerMessageV2Schema } from "../../../src/protocol/v2";
+import { CreateRoomRequest } from "../../../src/protocol/http";
+import { sanitizeMemoryWire } from "../../../src/room/memory";
 import { ClientMessageSchema } from "../../../src/protocol/messages";
 import { REACTIONS } from "../../../src/room/types";
 import { generateFixturesV2, isGameProjectedV2 } from "../../../scripts/fixture-scenario-v2";
@@ -47,6 +49,13 @@ describe("fixtures v2 (§2.5)", () => {
     expect(HealthzV2.parse(parse("http.healthz.json"))).toEqual({ ok: true, app: "jamaa", protocol: 2 });
     expect(ClientConfigV2.safeParse(parse("http.config.json")).success).toBe(true);
     expect(ClientConfigV2.safeParse(parse("http.config.billing_off.json")).success).toBe(true);
+  });
+  it("§2.6a memory: the s2c frame and the create-room request carry sanitized-clean memory", () => {
+    const m = MemoryV2Schema.parse(parse("s2c.memory.json"));
+    expect(sanitizeMemoryWire(m.memory)).toEqual(m.memory);
+    const req = CreateRoomRequest.parse(parse("http.create_room.request.json"));
+    expect(req.memory && sanitizeMemoryWire(req.memory)).toEqual(req.memory);
+    expect(req.locale).toBe("fr");
   });
   it("hello.tv declares all four games at the server VIEW_VERSION; mishana-only declares one", () => {
     const all = HelloTvV2Schema.parse(parse("c2s.hello.tv.json"));

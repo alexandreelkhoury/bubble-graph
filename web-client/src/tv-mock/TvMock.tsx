@@ -10,14 +10,15 @@ import type { TvRoomView } from "@jamaa/shared/protocol/v2";
 import { dirOf, locale, registerRootExtras, t } from "../i18n/t";
 import { toasts } from "../state/store";
 import {
-  inRunningGame, openedGames, tvAct, tvAdvanced, tvCreateRoom, tvCupOpen, tvExit, tvHubSettings, tvIntro, tvLangOpen, tvPackPicker,
+  inRunningGame, openedGames, tvAct, tvAdvanced, tvCreateRoom, tvCupOpen, tvExit, tvHubSettings, tvIntro, tvLangOpen, tvPackPicker, tvQuizShelf,
   tvPaused, tvRules, tvScale, tvShop, tvStop, tvUi, tvView,
 } from "./tvStore";
 import { TvShop } from "./tvShop";
 import { bootBilling, useBillingView, useBillingVisibility } from "./billingEffects";
 import { loadBillingFlag } from "../lib/billingFlag";
 import { canvasRect, CupSheet, Splash, TvHub } from "./tvHub";
-import { AdvancedSheet, PackPicker, TvSetup } from "./tvSetup";
+import { AdvancedSheet, PackPicker, TvQuizShelf, TvSetup } from "./tvSetup";
+import { isTriviaSetup } from "../games/trivia/setupModel";
 import { TvGameHost, tvGameModule, loadTvGame } from "./tvGameHost";
 import { RulesSheet } from "./tvRules";
 import { Entrance, Portal, PortalBack } from "./tvTransitions";
@@ -228,7 +229,7 @@ export function TvMock() {
 
   const screenKey = view ? (cur?.kind === "portal" && !cur.handed ? "HUB" : view.room.phase === "PLAYING" ? `PLAYING:${view.game?.gameId}:${view.game?.n}` : view.room.phase) : ui.kind;
   const overlayOpen = room && (tvDialog.value !== null || tvPicker.value !== null || tvPaused.value || tvLangOpen.value || tvShop.value !== null
-    || tvRules.value !== null || tvHubSettings.value || tvCupOpen.value || tvPackPicker.value || tvAdvanced.value || tvIntro.value !== null);
+    || tvRules.value !== null || tvHubSettings.value || tvCupOpen.value || tvPackPicker.value || tvQuizShelf.value || tvAdvanced.value || tvIntro.value !== null);
   const toast = toasts.value.at(-1);
   const rules = tvRules.value;
   // §3.10 E rule 2: an overlay becoming interactive ignores OK and the D-pad for INPUT_GUARD_MS (a double OK on "JAMAA
@@ -236,7 +237,7 @@ export function TvMock() {
   // rules sheet is exempt (local, read-only, as on native).
   const top = !room ? null
     : tvDialog.value ? "dialog" : tvPicker.value ? "picker" : tvShop.value ? "shop" : tvLangOpen.value ? "lang" : tvRules.value ? null
-    : tvPackPicker.value ? "packs" : tvAdvanced.value ? "advanced" : tvCupOpen.value ? "cup" : tvHubSettings.value ? "settings"
+    : tvPackPicker.value ? "packs" : tvQuizShelf.value ? "quizzes" : tvAdvanced.value ? "advanced" : tvCupOpen.value ? "cup" : tvHubSettings.value ? "settings"
     : tvPaused.value ? "pause" : null;
   const topKey = top === "dialog" ? `dialog:${tvDialog.value?.title}` : top === "picker" ? `picker:${tvPicker.value?.title}` : top;
   const lastTop = useRef<string | null>(null);
@@ -251,7 +252,7 @@ export function TvMock() {
         <div class="tv__bg" aria-hidden="true" />
         {/* Content behind an overlay is inert: neither the remote, Tab nor a pointer can reach it (the intro and the
             setup sheets render inside the screen and trap focus as .tvoverlay themselves). */}
-        <div class={`tv__stage${cur ? " is-transition" : ""}`} key={screenKey} inert={overlayOpen && !tvIntro.value && !tvPackPicker.value && !tvAdvanced.value}>{content}</div>
+        <div class={`tv__stage${cur ? " is-transition" : ""}`} key={screenKey} inert={overlayOpen && !tvIntro.value && !tvPackPicker.value && !tvQuizShelf.value && !tvAdvanced.value}>{content}</div>
         {room && cur?.kind === "portal" && (
           <Portal key={`p${cur.id}`} id={cur.id} from={cur.from} first={cur.first} ready={cur.ready} hubRoot={hubRoot}
             onHandoff={() => { if (tr.current?.kind === "portal") { tr.current = { ...tr.current, handed: true }; force((x) => x + 1); } }}
@@ -266,6 +267,7 @@ export function TvMock() {
         )}
         {room && tvPaused.value && <PauseMenu view={view} />}
         {room && view.room.phase === "SETUP" && setup && tvPackPicker.value && <PackPicker setup={setup} />}
+        {room && view.room.phase === "SETUP" && setup && isTriviaSetup(setup) && tvQuizShelf.value && <TvQuizShelf view={view} setup={setup} />}
         {room && view.room.phase === "SETUP" && setup && tvAdvanced.value && !tvPackPicker.value && <AdvancedSheet view={view} setup={setup} />}
         {room && tvCupOpen.value && <CupSheet view={view} />}
         {room && tvHubSettings.value && <HubSettings />}

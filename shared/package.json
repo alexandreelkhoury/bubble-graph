@@ -10,6 +10,7 @@
     "./projection": "./src/projection/index.ts",
     "./projection/room": "./src/projection/room.ts",
     "./room": "./src/room/index.ts",
+    "./room/memory": "./src/room/memory.ts",
     "./protocol/v2": "./src/protocol/v2/index.ts",
     "./packs": "./src/packs/index.ts",
     "./billing": "./src/billing/index.ts",

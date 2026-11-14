@@ -124,8 +124,16 @@ async function startQuiz(tv: Page, phones: Phone[], rtl: boolean, snap: (p: Page
     await expect(tv.locator("[data-intro]")).toHaveCount(0);
   }
   for (const p of phones) if (await vis(p.page, ".introsheet__skip")) await p.page.locator(".introsheet__skip").click();
+  // The quiz shelf opens on its own when the setup is entered (two or more quizzes): it starts on the selected
+  // (default) quiz; OK picks it, the shelf closes and focus moves to Start.
+  await expect(tv.locator("[data-quiz-shelf]")).toBeVisible({ timeout: 8_000 });
+  await snap(tv, "tv-01b-quiz-shelf", 400);
+  await expect(tv.locator("[data-quiz-shelf] .tqq-card.is-selected")).toBeFocused();
+  await press(tv, "Enter");
+  await expect(tv.locator("[data-quiz-shelf]")).toHaveCount(0);
+  await expect(tv.locator("[data-start]")).toBeFocused();
   await tv.waitForTimeout(700);
-  // How-to pane → the settings column (Right in LTR, Left in RTL).
+  // Start → the settings column; else how-to pane → the settings column (Right in LTR, Left in RTL).
   for (let i = 0; i < 4 && !(await tv.evaluate(() => !!document.activeElement?.closest(".tvpane--settings"))); i++) await press(tv, END, 1);
   await expect.poll(() => tv.evaluate(() => !!document.activeElement?.closest(".tvpane--settings"))).toBe(true);
   // Up/Down in the settings column until `row` is focused (direction from the DOM order of the column's controls).

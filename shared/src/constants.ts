@@ -26,7 +26,11 @@ export const ROOM_TV_MAX_TTL_MS = 12 * 60 * 60_000;
 /** §7.5 expiry: a room without a connected TV expires this long after the TV left (or after creation). */
 export const ROOM_TV_GONE_TTL_MS = 15 * 60_000;
 export const MSG_MAX_BYTES = 4096;          // UTF-8 bytes (TextEncoder)
-export const HTTP_BODY_MAX_BYTES = 4096;    // POST /api/rooms (PAYMENTS-SPEC §3.3: was 1024; now carries an entitlement token)
+/**
+ * POST /api/rooms (PAYMENTS-SPEC §3.3: was 1024, then 4096 for the entitlement token). JAMAA-PLATFORM §2.6a: the body
+ * now also carries the TV's no-repeat memory (≤ 4 games × MEMORY_MAX_KEYS keys of ≤ MEMORY_KEY_MAX_CHARS, ~100 KB).
+ */
+export const HTTP_BODY_MAX_BYTES = 128 * 1024;
 export const RATE_MSGS_PER_SEC = 5;         // token bucket refill / s
 export const RATE_BURST = 10;               // bucket capacity
 export const JOINS_PER_MIN_PER_IP = 30;     // per room; a whole party shares one NAT IP
@@ -139,6 +143,13 @@ export const ENTRANCE_GRACE_MS = 2_500;
 export const REACTION_MIN_GAP_MS = 1_500;
 /** §2.2 GameMemory: item ids kept per game in RoomHistory (oldest dropped). */
 export const MEMORY_MAX_KEYS = 300;
+/**
+ * §2.6a TV memory seed: one item key as the games store it, `<id>` or `<packId|family>:<itemId>` (content ids are
+ * lowercase `[a-z0-9-]`, ≤ 40 chars). Longer or other-shaped keys are dropped from a seed.
+ */
+export const MEMORY_KEY_MAX_CHARS = 81;
+/** §2.6a: at most this many game entries in a memory seed (unknown game ids are dropped, not refused). */
+export const MEMORY_WIRE_MAX_GAMES = 8;
 /** §2.3 RoomHistory.games: finished instances kept for the cup sheet. */
 export const HISTORY_GAMES_MAX = 20;
 /** §2.5 HUB_FOCUS: the TV sends at most one message per this much carousel rest. */

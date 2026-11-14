@@ -7,7 +7,7 @@ import { LOCALES } from "@jamaa/shared/constants";
 import type { Locale } from "@jamaa/shared/constants";
 import type { RoomPublic, RoomSetup } from "@jamaa/shared/protocol/v2";
 import { LOCALE_NATIVE_NAME, locale, t, titleIn } from "../i18n/t";
-import { act } from "../state/session";
+import { act, gameModules } from "../state/session";
 import { pushToast } from "../state/store";
 import { advancedRows, basicRows } from "../lib/gameSettings";
 import type { Patch, Row } from "../lib/gameSettings";
@@ -106,6 +106,8 @@ export function SettingsList({ room, setup, edit }: { room: RoomPublic; setup: R
   const basic = basicRows(setup);
   const advanced = advancedRows(setup);
   const lockedRow = (r: Row): boolean => r.premium && !room.premium;
+  // A game's own setup content (Quiz Night's quiz cards) comes with its lazy phone chunk, loaded at SETUP.
+  const Extra = gameModules.value[setup.gameId]?.SetupExtra;
   return (
     <section class="card setlist" aria-label={t("settings.title")}>
       <ul class="setlist__rows">
@@ -115,6 +117,7 @@ export function SettingsList({ room, setup, edit }: { room: RoomPublic; setup: R
             <bdi lang={room.contentLocale}>{LOCALE_NATIVE_NAME[room.contentLocale]}</bdi>{edit && <Icon name="chevron-down" size={18} />}
           </button>
         </li>
+        {Extra && <Extra room={room} setup={setup} edit={edit} send={(patch) => send(setup, patch)} />}
         {basic.map((r) => <RowView key={r.id} row={r} setup={setup} edit={edit} locked={lockedRow(r)} onPacks={() => setPacks(true)} />)}
         {advanced.length > 0 && (
           <li class="srow srow--adv">

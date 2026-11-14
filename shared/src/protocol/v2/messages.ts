@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { ENTITLEMENT_TOKEN_MAX_CHARS, LOCALES, NAME_MAX_CODEPOINTS, PROTOCOL_VERSION_V2 } from "../../constants";
 import { GameIdSchema, GameMsgIntentSchema, UpdateGameSettingsIntentSchema } from "../../games/protocol";
-import { ColorIdSchema, ErrorCodeSchema, LocaleSchema, PlayerId, Token } from "../common";
+import { ColorIdSchema, ErrorCodeSchema, LocaleSchema, MemoryWireSchema, PlayerId, Token } from "../common";
 import { ACTION_ID_REGEX } from "../messages";
 import { ReactionKindSchema, RoomViewSchema } from "./views";
 
@@ -50,7 +50,13 @@ export const WelcomeV2Schema = z.object({ v: V, t: z.literal("welcome"), playerI
 export const StateV2Schema = z.object({ v: V, t: z.literal("state"), seq: z.number().int(), serverNow: z.number(), view: RoomViewSchema });
 export const ErrorMsgV2Schema = z.object({ v: V, t: z.literal("error"), code: ErrorCodeSchema, messageKey: z.string(), ref: z.string().nullable() });
 export const PongV2Schema = z.object({ v: V, t: z.literal("pong") });
-export const ServerMessageV2Schema = z.discriminatedUnion("t", [WelcomeV2Schema, StateV2Schema, ErrorMsgV2Schema, PongV2Schema]);
+/**
+ * §2.6a: the room's no-repeat memory, to the TV socket ONLY (never a phone): after the TV's hello when non-empty, and
+ * whenever a game end, REPLAY or ABORT changes it. The TV stores it and seeds the next room's POST /api/rooms with it.
+ * Additive in v2: clients ignore an unknown `t`.
+ */
+export const MemoryV2Schema = z.object({ v: V, t: z.literal("memory"), memory: MemoryWireSchema });
+export const ServerMessageV2Schema = z.discriminatedUnion("t", [WelcomeV2Schema, StateV2Schema, ErrorMsgV2Schema, PongV2Schema, MemoryV2Schema]);
 
 export type RoomIntentMsg = z.infer<typeof RoomIntentSchema>;
 export type TvGames = z.infer<typeof TvGamesSchema>;
@@ -64,4 +70,5 @@ export type StoreOpenV2Msg = z.infer<typeof StoreOpenMsgV2Schema>;
 export type WelcomeV2Msg = z.infer<typeof WelcomeV2Schema>;
 export type StateV2Msg = z.infer<typeof StateV2Schema>;
 export type ErrorMsgV2 = z.infer<typeof ErrorMsgV2Schema>;
+export type MemoryV2Msg = z.infer<typeof MemoryV2Schema>;
 export type ServerMessageV2 = z.infer<typeof ServerMessageV2Schema>;

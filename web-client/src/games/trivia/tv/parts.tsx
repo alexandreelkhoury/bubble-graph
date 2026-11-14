@@ -20,12 +20,13 @@ import { Flame, Star, TOKEN_HEX, TOKEN_KEY, TokenShape } from "../tokens";
 import { answerTickCue } from "../cues";
 import { PODIUM_CHAR, bulbs, bulbsLit, cardRect, podiumSlots, tileRect, towerBox, towerRowH } from "../layout";
 import type { Rect } from "../layout";
+import { topicLabel } from "../vocab";
 
 export const K = "game.trivia";
 export const tk = (k: string, p?: Record<string, string | number>): string => t(`${K}.${k}` as MessageKey, p);
 export const isRtl = (): boolean => dirOf(locale.value) === "rtl";
 export const box = (r: Rect): Record<string, string> => ({ left: `${r.x}px`, top: `${r.y}px`, width: `${r.w}px`, height: `${r.h}px` });
-export const topicLabel = (id: string): string => t(`content.topic.${id}` as MessageKey);
+export { topicLabel };
 
 /** The server-clock countdown of the current phase, re-read at 5 Hz (the shared `now` clock). */
 export function useLeft(pub: TriviaPub): { ms: number; frac: number } {

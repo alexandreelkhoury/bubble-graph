@@ -111,9 +111,17 @@ const realRaw = (): { file: string; raw: unknown }[] => {
 
 describe("pack schema on the shipped quizzes (§11.3)", () => {
   const raws = realRaw();
-  it("finds the lb-quiz-01 family in en/fr/ar/es", () => {
+  it("finds the lb-quiz-01 and world-mix-01 families in en/fr/ar/es", () => {
     const ids = raws.map((r) => (r.raw as { id: string }).id);
-    for (const l of ["en", "fr", "ar", "es"]) expect(ids).toContain(`lb-quiz-01-${l}`);
+    for (const l of ["en", "fr", "ar", "es"]) for (const f of ["lb-quiz-01", "world-mix-01"]) expect(ids).toContain(`${f}-${l}`);
+  });
+  it("world-mix-01 is featured: first on the shelf and the default quiz in every language", () => {
+    const catalog = { packs: raws.map((r) => adapter.parse(r.raw)) };
+    for (const l of ["en", "fr", "ar", "es"] as const) {
+      expect(quizzesFor(catalog, l).map((p) => p.family)).toEqual(["world-mix-01", "lb-quiz-01"]);
+      expect(resolveQuiz(catalog, null, l)?.id).toBe(`world-mix-01-${l}`);
+      expect(packFor(catalog, "lb-quiz-01", l)?.id).toBe(`lb-quiz-01-${l}`);
+    }
   });
   it.each(raws.map((r) => [r.file, r.raw] as const))("%s parses through the adapter", (_f, raw) => {
     const p = adapter.parse(raw);

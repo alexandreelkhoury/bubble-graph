@@ -239,16 +239,10 @@ describe("trivia lint: content/trivia", () => {
     for (const f of readdirSync(join(CONTENT, l))) if (f.endsWith(".json")) packs.push({ file: `trivia/${l}/${f}`, raw: JSON.parse(readFileSync(join(CONTENT, l, f), "utf8")) as Record<string, unknown> });
   }
 
-  // Held-back families (content/trivia/held/*.json.held, not shipped) are linted too, so they stay ready for review.
-  for (const f of readdirSync(join(CONTENT, "held")).filter((x) => x.endsWith(".json.held"))) {
-    packs.push({ file: `trivia/held/${f}`, raw: JSON.parse(readFileSync(join(CONTENT, "held", f), "utf8")) as Record<string, unknown> });
-  }
-
-  it("ships only lb-quiz-01 (GAME-TRIVIA §11.5); world-mix-01 is held back; every pack has 75 questions in en, fr, ar and es", () => {
+  it("ships lb-quiz-01 and world-mix-01 (GAME-TRIVIA §11.5); every pack has 75 questions in en, fr, ar and es", () => {
     expect(packs.map((p) => p.raw.id).sort()).toEqual(["lb-quiz-01-ar", "lb-quiz-01-en", "lb-quiz-01-es", "lb-quiz-01-fr", "world-mix-01-ar", "world-mix-01-en", "world-mix-01-es", "world-mix-01-fr"]);
     const index = readFileSync(join(CONTENT, "index.ts"), "utf8");
-    expect([...index.matchAll(/from "\.\/(\w+)\/([\w-]+)\.json"/g)].map((m) => m[2]).sort()).toEqual(["lb-quiz-01-ar", "lb-quiz-01-en", "lb-quiz-01-es", "lb-quiz-01-fr"]);
-    expect(index).not.toMatch(/world-mix-01-\w+\.json"/);
+    expect([...index.matchAll(/from "\.\/(\w+)\/([\w-]+)\.json"/g)].map((m) => m[2]).sort()).toEqual(packs.map((p) => p.raw.id).sort());
     for (const p of packs) expect((p.raw.questions as unknown[]).length, String(p.raw.id)).toBe(75);
   });
 

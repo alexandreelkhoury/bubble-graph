@@ -39,14 +39,22 @@ object RoomApi {
 
     /**
      * SPEC §9.3. OkHttp POST on the IO dispatcher. Throws [CreateRoomException]. [entitlement] is the stored token
-     * (PAYMENTS-SPEC §4.3) or null; a null is omitted from the body.
+     * (PAYMENTS-SPEC §4.3) or null; [memory] is the stored no-repeat memory (JAMAA-PLATFORM §2.6a). Null or empty values
+     * are omitted from the body.
      */
-    suspend fun createRoom(baseUrl: String, locale: String, entitlement: String? = null): CreateRoomResponse =
-        createRoom(baseUrl, locale, entitlement, defaultClient)
+    suspend fun createRoom(baseUrl: String, locale: String, entitlement: String? = null, memory: Map<String, List<String>>? = null): CreateRoomResponse =
+        createRoom(baseUrl, locale, entitlement, memory, defaultClient)
 
-    suspend fun createRoom(baseUrl: String, locale: String, entitlement: String?, client: OkHttpClient): CreateRoomResponse =
+    suspend fun createRoom(
+        baseUrl: String,
+        locale: String,
+        entitlement: String?,
+        memory: Map<String, List<String>>?,
+        client: OkHttpClient,
+    ): CreateRoomResponse =
         withContext(Dispatchers.IO) {
-            val body = ProtocolJson.encoder.encodeToString(CreateRoomRequest.serializer(), CreateRoomRequest(locale, entitlement))
+            val req = CreateRoomRequest(locale, entitlement, memory?.takeIf { it.isNotEmpty() })
+            val body = ProtocolJson.encoder.encodeToString(CreateRoomRequest.serializer(), req)
             val request = Request.Builder()
                 .url(ServerUrls.apiRoomsUrl(baseUrl))
                 .post(body.toRequestBody(JSON))

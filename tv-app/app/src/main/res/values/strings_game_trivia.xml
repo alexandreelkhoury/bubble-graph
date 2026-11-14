@@ -63,6 +63,11 @@
     <string name="game__trivia__quiz__selected">Selected</string>
     <string name="game__trivia__quiz__locked">With JAMAA Pass</string>
     <string name="game__trivia__quiz__rerun">Rerun</string>
+    <string name="game__trivia__quiz__sort_theme">By theme</string>
+    <string name="game__trivia__quiz__sort_difficulty">By difficulty</string>
+    <string name="game__trivia__quiz__all">All</string>
+    <string name="game__trivia__quiz__none">No quiz at this level yet</string>
+    <string name="game__trivia__quiz__change">Change</string>
     <string name="game__trivia__intro__get_ready">Get ready! Quiz: %1$s</string>
     <string name="game__trivia__read__look">Look at the TV!</string>
     <string name="game__trivia__read__counter">%1$s / %2$s</string>

@@ -18,7 +18,7 @@ import {
   towerScorePoint, verdictBand,
 } from "../../../src/games/trivia/layout";
 import type { Rect } from "../../../src/games/trivia/layout";
-import { moreTopics, quizLocked, quizRowValue, quizUi, selectedQuiz, setupHint, shelfRows } from "../../../src/games/trivia/setupModel";
+import { moreTopics, quizLocked, quizRowValue, quizUi, selectedQuiz, setupHint, shelfRows, shelfView, starLevels } from "../../../src/games/trivia/setupModel";
 import type { QuizCard, TriviaSetup } from "../../../src/games/trivia/setupModel";
 import { LOCK_GAP_MS, answerTickCue, introMarks, revealMarks, viewCues } from "../../../src/games/trivia/cues";
 
@@ -387,6 +387,17 @@ describe("setup quiz row, summary card and shelf (GAME-TRIVIA §9 / §9.1)", () 
     expect(quizUi({ ...empty, extras: { ...empty.extras, quiz: null, quizzes: [] } })).toBe("none");
     const rows = shelfRows([card("a", "lebanon"), card("b", "general"), card("c", "lebanon")]);
     expect(rows.map((r) => [r.domain, r.quizzes.map((q) => q.id)])).toEqual([["lebanon", ["a", "c"]], ["general", ["b"]]]);
+  });
+  it("shelf sort (theme | difficulty) and difficulty filter; empty rows are dropped", () => {
+    const qs = [card("a", "world", { stars: 2 }), card("b", "lebanon", { stars: 3 }), card("c", "world", { stars: 1 }), card("d", "lebanon", { stars: 2 })];
+    const ids = (rows: ReturnType<typeof shelfView>): [string, string[]][] => rows.map((r) => [r.key, r.quizzes.map((q) => q.id)]);
+    expect(ids(shelfView(qs, "theme", 0))).toEqual([["d:world", ["a", "c"]], ["d:lebanon", ["b", "d"]]]);
+    expect(ids(shelfView(qs, "difficulty", 0))).toEqual([["s:1", ["c"]], ["s:2", ["a", "d"]], ["s:3", ["b"]]]);
+    expect(ids(shelfView(qs, "theme", 2))).toEqual([["d:world", ["a"]], ["d:lebanon", ["d"]]]);
+    expect(ids(shelfView(qs, "difficulty", 3))).toEqual([["s:3", ["b"]]]);
+    expect(shelfView([card("a", "world", { stars: 2 })], "theme", 1)).toEqual([]);
+    expect(starLevels(qs)).toEqual([1, 2, 3]);
+    expect(starLevels([card("a", "world"), card("b", "lebanon")])).toEqual([2]);
   });
   it("lock badge only on Pass quizzes in free rooms; '+n' topics", () => {
     const wm = two(null).extras.quizzes[1]!;

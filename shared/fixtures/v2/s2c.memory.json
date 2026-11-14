@@ -1,0 +1,17 @@
+{
+  "v": 2,
+  "t": "memory",
+  "memory": {
+    "mishana": [
+      "en-food-01:p004",
+      "en-food-01:p011"
+    ],
+    "bluff": [
+      "lb-proverbs-07"
+    ],
+    "trivia": [
+      "lb-quiz-01:q001",
+      "lb-quiz-01:q017"
+    ]
+  }
+}

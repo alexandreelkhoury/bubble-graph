@@ -48,6 +48,7 @@ import app.jamaa.tv.protocol.GameIntent
 import app.jamaa.tv.protocol.GuessStatus
 import app.jamaa.tv.protocol.HubFocus
 import app.jamaa.tv.protocol.Kick
+import app.jamaa.tv.protocol.MemoryMsg
 import app.jamaa.tv.protocol.OpenGame
 import app.jamaa.tv.protocol.Phase
 import app.jamaa.tv.protocol.ProtocolJson
@@ -63,7 +64,9 @@ import app.jamaa.tv.protocol.StoreOpenMsg
 import app.jamaa.tv.protocol.UpdateGameSettings
 import app.jamaa.tv.protocol.betweenGames
 import app.jamaa.tv.settings.MemoryPlatformPrefs
+import app.jamaa.tv.settings.MemoryRoomMemoryStore
 import app.jamaa.tv.settings.PlatformPrefs
+import app.jamaa.tv.settings.RoomMemoryStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -128,8 +131,11 @@ class GameDeps(
     val serverUrl: () -> String,
     /** Current app language: en | fr | ar | es (default en). */
     val appLocale: () -> String,
-    /** POST /api/rooms; [entitlement] is the stored token or null (PAYMENTS-SPEC §4.3). */
-    val createRoom: suspend (baseUrl: String, locale: String, entitlement: String?) -> CreateRoomResponse,
+    /**
+     * POST /api/rooms; [entitlement] is the stored token or null (PAYMENTS-SPEC §4.3); [memory] is the stored no-repeat
+     * memory (JAMAA-PLATFORM §2.6a; empty = none).
+     */
+    val createRoom: suspend (baseUrl: String, locale: String, entitlement: String?, memory: Map<String, List<String>>) -> CreateRoomResponse,
     val newConnection: (scope: CoroutineScope, serverUrl: () -> String) -> RoomConnection,
     val clock: () -> Long = { System.currentTimeMillis() },
     /** Sound cues (DESIGN §6.4); SoundPool on the device. */
@@ -147,6 +153,8 @@ class GameDeps(
     val installId: () -> String? = { null },
     /** Per-device platform prefs: `intro_seen_<gameId>` and Calm animations (JAMAA-PLATFORM §3.2, §3.8). */
     val prefs: PlatformPrefs = MemoryPlatformPrefs(),
+    /** JAMAA-PLATFORM §2.6a: this TV's no-repeat memory across rooms (seeds each new room; saved from `memory` frames). */
+    val roomMemory: RoomMemoryStore = MemoryRoomMemoryStore(),
     /** §3.8 motion decision from the Calm animations pref (the device part — low RAM, animator scale — is bound in). */
     val motion: (calm: Boolean) -> MotionMode = { calm -> MotionMode(reduced = calm, lite = false) },
 )
@@ -308,7 +316,13 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 }
                 billingOn = config.billing
                 missingGames = missingGamesOf(config.games)
-                deps.createRoom(deps.serverUrl(), deps.appLocale(), if (billingOn) billing?.tokenForCreate() else null)
+                // §2.6a: questions played on this TV in earlier rooms do not come back in the new one.
+                val memory = try {
+                    deps.roomMemory.load()
+                } catch (e: Exception) {
+                    emptyMap()
+                }
+                deps.createRoom(deps.serverUrl(), deps.appLocale(), if (billingOn) billing?.tokenForCreate() else null, memory)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: CreateRoomException) {
@@ -437,6 +451,8 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                     gate.becameInteractive()
                 }
             }
+            // §2.6a: the room's memory after a game end / REPLAY / ABORT (TV socket only): kept for the next room.
+            is MemoryMsg -> deps.roomMemory.save(msg.memory)
             else -> Unit // welcome/pong are not for the TV
         }
     }

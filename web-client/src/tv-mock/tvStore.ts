@@ -19,6 +19,7 @@ import { billing } from "./billing";
 import type { StoreEntry } from "./billing/model";
 import { billingEnabled } from "../lib/billingFlag";
 import { recreatesRoomOnFatal } from "./roomLife";
+import { tvMemoryBody, withMemoryTap } from "./tvMemory";
 
 export type TvUi =
   | { kind: "creating" }
@@ -57,6 +58,8 @@ export const tvHubSettings = signal(false);
 export const tvCupOpen = signal(false);
 /** HUB-03 pack picker sheet. */
 export const tvPackPicker = signal(false);
+/** HUB-03 Quiz Night quiz shelf (GAME-TRIVIA §9.1), full screen; opens on its own when the setup is entered. */
+export const tvQuizShelf = signal(false);
 /** HUB-03 "Advanced" sheet (Mish Ana!'s extra settings). */
 export const tvAdvanced = signal(false);
 /** HUB-03 full-screen first-time intro, for this game (Back skips it). */
@@ -108,6 +111,7 @@ function closeLocalUi(): void {
   tvHubSettings.value = false;
   tvCupOpen.value = false;
   tvPackPicker.value = false;
+  tvQuizShelf.value = false;
   tvAdvanced.value = false;
   tvIntro.value = null;
   tvDialog.value = null;
@@ -136,7 +140,8 @@ export async function tvCreateRoom(): Promise<void> {
   resetClock();
   const started = Date.now();
   const billingOn = billingEnabled.value;
-  const res = await createRoom(locale.value, billingOn ? billing.tokenForCreate() : null);
+  // §2.6a: the stored no-repeat memory seeds the new room (questions played on this TV yesterday do not come back).
+  const res = await createRoom(locale.value, billingOn ? billing.tokenForCreate() : null, tvMemoryBody());
   // HUB-01: the wordmark builds in (≤ 1.2 s) while the room is created.
   const wait = Math.max(0, 1200 - (Date.now() - started));
   if (wait) await new Promise((r) => setTimeout(r, wait));
@@ -147,7 +152,7 @@ export async function tvCreateRoom(): Promise<void> {
   const room = res.room;
   tvUi.value = { kind: "room", room };
   let freshOpen = false;
-  conn = new Connection(partySocketFactory(room.code), {
+  conn = new Connection(withMemoryTap(partySocketFactory(room.code)), { // §2.6a: `memory` frames → localStorage
     hello: () => ({ v: PROTOCOL_VERSION, t: "hello", role: "tv", tvToken: room.tvToken, games: tvGames() }),
     onState: (msg) => {
       sampleClock(msg.serverNow);
@@ -162,7 +167,7 @@ export async function tvCreateRoom(): Promise<void> {
       for (const g of next.room.games) { void loadGameCatalog(g.id, locale.value); void ensureMeta(g.id); }
       // Leaving SETUP closes setup-only sheets; leaving the game closes the pause menu.
       // START_GAME / CLOSE_GAME (e.g. from the VIP phone) collapses the intro instantly (§3.2 HUB-03).
-      if (next.room.phase !== "SETUP") { tvPackPicker.value = false; tvAdvanced.value = false; tvIntro.value = null; }
+      if (next.room.phase !== "SETUP") { tvPackPicker.value = false; tvQuizShelf.value = false; tvAdvanced.value = false; tvIntro.value = null; }
       // The pause menu closes when the outcome arrives; Back on the results may reopen it (Resume, Rules, Sound).
       if (next.room.phase !== "PLAYING" || (next.game?.over && !(prev?.game?.over && prev.game.n === next.game.n))) tvPaused.value = false;
       if (next.room.phase !== "HUB") { tvCupOpen.value = false; tvHubSettings.value = false; }

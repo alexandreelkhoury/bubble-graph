@@ -1,8 +1,9 @@
 // GAME-TRIVIA §9 / §9.1, DESIGN-JAMAA §2.3.1: Quiz Night's setup pieces, built for the platform setup pane to mount
-// (TV HUB-03 and the VIP phone). Lane B-in-G4 owns this folder only, so the platform seam that mounts them (the
-// quizId row of lib/gameSettings, tv-mock/tvSetup, platform/SettingsList) is a SPEC-GAP for the platform owner.
-// Neither in-game module (phone, tv) imports this file: it never weighs on the in-game chunks. The TV shelf lives in
-// tvSetup.tsx (it uses the TV mock's focus helpers, which must stay out of the phone bundle).
+// (TV HUB-03 and the VIP phone): the TV settings pane mounts <QuizPick> and the shelf (tvSetup.tsx), the phone settings
+// list mounts <SetupExtra>; the generic quizId row of lib/gameSettings is skipped for Quiz Night.
+// The phone game chunk re-exports <SetupExtra> (PhoneGameModule.SetupExtra, loaded at SETUP), so these cards ride in
+// game-trivia, never in the phone's core bundle. The TV shelf lives in tvSetup.tsx (it uses the TV mock's focus
+// helpers, which must stay out of the phone bundle).
 //
 //  - <QuizSummary>  one playable quiz: a non-focusable 300 × 96 dp card above the rows (nothing to open);
 //  - <QuizList>     the VIP phone: the same cards as a vertical list (radio semantics);
@@ -10,19 +11,21 @@
 //  - quizRowValue() the row's value: the selected quiz's title, never "All packs" (null = extras.quiz).
 import "./setup.css";
 import type { Ref } from "preact";
+import type { RoomPublic, RoomSetup } from "@jamaa/shared/protocol/v2";
+import { pushToast } from "../../state/store";
 import { fmtNum, t, titleIn } from "../../i18n/t";
 import type { MessageKey } from "../../i18n/t";
 import { Icon } from "../../components/Icon";
 import { Star } from "./tokens";
-import { moreTopics, quizLocked, quizRowValue as rowValue, selectedQuiz, setupHint } from "./setupModel";
+import { domainLabel, topicLabel } from "./vocab";
+import { isTriviaSetup, moreTopics, quizLocked, quizRowValue as rowValue, quizUi, selectedQuiz, setupHint } from "./setupModel";
 import type { QuizCard, TriviaSetup } from "./setupModel";
 
 export { isTriviaSetup, quizLocked, quizUi, selectedQuiz, shelfRows } from "./setupModel";
 export type { QuizCard, TriviaSetup } from "./setupModel";
 
 export const tk = (k: string, p?: Record<string, string | number>): string => t(`game.trivia.${k}` as MessageKey, p);
-export const domainLabel = (d: string): string => t(`content.domain.${d}` as MessageKey);
-const topicLabel = (x: string): string => t(`content.topic.${x}` as MessageKey);
+export { domainLabel } from "./vocab";
 
 /** The `quizId` row's value on TV and phone (the resolved quiz title). */
 export const quizRowValue = (setup: TriviaSetup): string => rowValue(setup, (x) => titleIn(x));
@@ -67,14 +70,15 @@ export function QuizSummary({ setup, surface = "tv" }: { setup: TriviaSetup; sur
   const q = selectedQuiz(setup);
   if (!q) return null;
   return (
-    <section class={`tqq-summary tqq-summary--${surface}`} aria-label={`${tk("settings.quiz")}: ${titleIn(q.title)}`} data-quiz-summary={q.id}>
+    // A span (phrasing content): the TV mounts it inside the quiz button (QuizPick).
+    <span class={`tqq-summary tqq-summary--${surface}`} role="group" aria-label={`${tk("settings.quiz")}: ${titleIn(q.title)}`} data-quiz-summary={q.id}>
       <Cover domain={q.domain} />
       <span class="tqq-summary__body">
         <bdi class="tqq-summary__title">{titleIn(q.title)}</bdi>
         <StarsLine n={q.stars} size={surface === "tv" ? 14 : 16} />
         <Chips q={q} />
       </span>
-    </section>
+    </span>
   );
 }
 
@@ -117,5 +121,25 @@ export function SetupHint({ setup }: { setup: TriviaSetup }) {
       <span>{tk("settings.paceSeconds", { seconds: h.seconds })}</span>
       {h.capped && <em class="tqq-hint__cap">{tk("settings.available", { count: h.available })}</em>}
     </p>
+  );
+}
+
+/**
+ * The phone's Quiz Night block above the settings rows (PhoneGameModule.SetupExtra, shipped in the game-trivia chunk):
+ * the VIP picks the quiz from the cards; everyone else sees the chosen one. Phones never sell: a locked quiz says so.
+ */
+export function SetupExtra({ room, setup, edit, send }: { room: RoomPublic; setup: RoomSetup; edit: boolean; send(patch: Record<string, unknown>): void }) {
+  if (!isTriviaSetup(setup)) return null;
+  const ui = quizUi(setup);
+  if (ui === "none") return null;
+  return (
+    <li class="srow srow--quiz">
+      {edit && ui === "shelf"
+        ? <QuizList setup={setup} roomPremium={room.premium} onPick={(q) => {
+            if (quizLocked(q, room.premium)) { pushToast(t("error.packLocked"), "error"); return; }
+            send({ quizId: q.id });
+          }} />
+        : <QuizSummary setup={setup} surface="phone" />}
+    </li>
   );
 }

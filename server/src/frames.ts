@@ -2,7 +2,8 @@
 import { PROTOCOL_VERSION } from "@jamaa/shared/constants";
 import type { ErrorCode } from "@jamaa/shared/protocol";
 import { ERROR_INFO, errorMessageKey } from "@jamaa/shared/protocol";
-import type { ErrorMsgV2, RoomView, StateV2Msg, WelcomeV2Msg as WelcomeMsg } from "@jamaa/shared/protocol/v2";
+import type { ErrorMsgV2, MemoryV2Msg, RoomView, StateV2Msg, WelcomeV2Msg as WelcomeMsg } from "@jamaa/shared/protocol/v2";
+import type { MemoryWire } from "@jamaa/shared/room/memory";
 
 /** The subset of a socket the frames are written to (partyserver's Connection, or a test fake). */
 export interface FrameSink {
@@ -23,6 +24,11 @@ export function welcomeFrame(playerId: string, resumeToken: string, roomCode: st
 
 export function stateFrame(seq: number, serverNow: number, view: RoomView): string {
   return JSON.stringify({ v: PROTOCOL_VERSION, t: "state", seq, serverNow, view } satisfies StateV2Msg);
+}
+
+/** JAMAA-PLATFORM §2.6a: the room's no-repeat memory. TV sockets only (room-core never sends it to a phone). */
+export function memoryFrame(memory: MemoryWire): string {
+  return JSON.stringify({ v: PROTOCOL_VERSION, t: "memory", memory } satisfies MemoryV2Msg);
 }
 
 export function safeSend(conn: FrameSink, msg: string): void {

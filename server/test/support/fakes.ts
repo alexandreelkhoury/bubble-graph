@@ -8,7 +8,7 @@ import type { RoomIntentMsg } from "@jamaa/shared/protocol/v2";
 import { ALL_TV_GAMES, T0, TEST_CATALOG, TIMERS_OFF } from "@jamaa/shared/testing";
 import type { RoomEntitlement } from "../../src/billing/token";
 import { RoomCore } from "../../src/room-core";
-import type { ConnHandle, ConnState, RoomBillingDeps, RoomStorage } from "../../src/room-core";
+import type { ConnHandle, ConnState, InitRoomArgs, RoomBillingDeps, RoomStorage } from "../../src/room-core";
 import { randomBytes, sha256hex } from "../../src/tokens";
 
 export { T0, ALL_TV_GAMES };
@@ -150,10 +150,11 @@ export class Harness {
     });
   }
 
-  async init(): Promise<this> {
+  /** `memory`: the TV's no-repeat seed (POST /api/rooms `memory`, JAMAA-PLATFORM §2.6a). */
+  async init(opts: { memory?: InitRoomArgs["memory"] } = {}): Promise<this> {
     const r = await this.core.initRoom({
       tvTokenHash: await sha256hex(TV_TOKEN), joinUrl: `https://x.test/${ROOM}`, locale: "en", now: this.now,
-      entitlement: this.entitlement, billingMode: this.billingMode,
+      entitlement: this.entitlement, billingMode: this.billingMode, ...(opts.memory ? { memory: opts.memory } : {}),
     });
     if (!r.ok) throw new Error("initRoom failed");
     return this;

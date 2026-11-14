@@ -18,7 +18,10 @@ import { Dots, HowToCard, howToKeys } from "../components/HowTo";
 import { TitleLockup, WORLD_OF } from "../components/Poster";
 import { Qr } from "./Qr";
 import { RoomCode } from "./tvParts";
-import { tvAct, tvAdvanced, tvIntro, tvPackPicker, tvScale } from "./tvStore";
+import { tvAct, tvAdvanced, tvIntro, tvPackPicker, tvQuizShelf, tvScale } from "./tvStore";
+import { isTriviaSetup, quizLocked, quizUi } from "../games/trivia/setupModel";
+import type { QuizCard, TriviaSetup } from "../games/trivia/setupModel";
+import { QuizPick, QuizShelf } from "../games/trivia/tvSetup";
 import { reduced } from "../lib/motion";
 import { closeSide, openPicker, openRules, rememberSideOpener } from "./tvDialogs";
 import { openShop } from "./shopState";
@@ -177,6 +180,20 @@ export function PackPicker({ setup }: { setup: RoomSetup }) {
   );
 }
 
+/** GAME-TRIVIA §9.1 the quiz shelf: OK on a card picks it and closes; a locked card opens the Pass store (billing on). */
+export function TvQuizShelf({ view, setup }: { view: TvRoomView; setup: TriviaSetup }) {
+  const onPick = (q: QuizCard): void => {
+    if (quizLocked(q, view.room.premium)) {
+      if (billingEnabled.value) openShop({ origin: "LOCKED_PACK", focusProductId: null });
+      return;
+    }
+    send(setup, { quizId: q.id });
+    // A quiz picked: the next thing to do is usually Start.
+    closeSide(tvQuizShelf, document.querySelector<HTMLElement>(".tvsetup [data-start]"));
+  };
+  return <QuizShelf setup={setup} roomPremium={view.room.premium} onPick={onPick} />;
+}
+
 /** "Advanced" (Mish Ana!'s extra settings) as an end sheet of the same rows. */
 export function AdvancedSheet({ view, setup }: { view: TvRoomView; setup: RoomSetup }) {
   const first = useRef<HTMLButtonElement | null>(null);
@@ -247,6 +264,19 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
     const tm = setTimeout(focusInitial, 40);
     return () => clearTimeout(tm);
   }, [intro, choreoActive.value]);
+  // Quiz Night (owner request): entering the setup opens the quiz shelf at once, so picking a quiz feels like entering
+  // a game of its own. Once per entry, after the portal and the first-visit intro; Back keeps the current quiz.
+  const shelfShown = useRef(false);
+  const hasShelf = !!setup && isTriviaSetup(setup) && quizUi(setup) === "shelf";
+  useEffect(() => {
+    if (shelfShown.current || !hasShelf || intro || entering !== null || choreoActive.value) return;
+    const tm = setTimeout(() => {
+      shelfShown.current = true;
+      rememberSideOpener();
+      tvQuizShelf.value = true;
+    }, 60);
+    return () => clearTimeout(tm);
+  }, [hasShelf, intro, entering, choreoActive.value]);
 
   if (!setup) return <div class="tvscreen tvsetup" data-world={WORLD_OF[id]} />;
   const basic = basicRows(setup);
@@ -311,6 +341,10 @@ export function TvSetup({ view, entering }: { view: TvRoomView; entering: number
           <span class="tvsrow__label">{t("setup.contentTitle")}</span>
           <span class="tvsrow__value"><bdi lang={room.contentLocale}>{LOCALE_NATIVE_NAME[room.contentLocale]}</bdi><Icon name="chevron-down" size={20} class="tvsrow__chev" /></span>
         </button>
+        {isTriviaSetup(setup) && quizUi(setup) !== "none" && (
+          <QuizPick setup={setup} canChange={quizUi(setup) === "shelf"} onKeyDown={(e) => columnKey(e)}
+            onOpen={() => { rememberSideOpener(); tvQuizShelf.value = true; }} />
+        )}
         {basic.map((r) => (
           <SettingRow key={r.id} row={r} setup={setup} locked={r.premium && !room.premium}
             onLeft={toHow}

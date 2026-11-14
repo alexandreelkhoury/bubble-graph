@@ -18,7 +18,9 @@ import {
   excerpt, flameLevel, gapAhead, leftMs, letterOf, playersOf, questionNumber, secs, sharedPlace, tokensOf, triviaOfPhone, verdictOf,
 } from "./model";
 import type { Player, Trivia, TriviaPub, Verdict } from "./model";
+export { SetupExtra } from "./setup";
 import { Bolt, Flame, Star, TOKEN_HEX, TOKEN_KEY, TokenChip, TokenShape } from "./tokens";
+import { domainLabel, topicLabel } from "./vocab";
 
 /** §8.4: taps are ignored for 250 ms after the pad appears (a tap meant for the previous screen). */
 export const PAD_GUARD_MS = 250;
@@ -77,8 +79,8 @@ function Intro({ tr, me }: { tr: Trivia; me: Player | null }) {
       <h1 class="h1" tabIndex={-1}>{tk("intro.getReady", { title: isolate(titleIn(pub.quiz.title)) })}</h1>
       <p class="tq-intro__meta"><Stars n={pub.quiz.stars} /><span>{tk(`diff.${pub.quiz.stars}`)}</span></p>
       <p class="tq-intro__chips">
-        <span class="tq-chipdom">{t(`content.domain.${pub.quiz.domain}` as MessageKey)}</span>
-        {pub.quiz.featuredTopics.map((x) => <span key={x} class="tq-chiptop">{t(`content.topic.${x}` as MessageKey)}</span>)}
+        <span class="tq-chipdom">{domainLabel(pub.quiz.domain)}</span>
+        {pub.quiz.featuredTopics.map((x) => <span key={x} class="tq-chiptop">{topicLabel(x)}</span>)}
       </p>
       <p class="sub tnum">{tk("quiz.questions", { count: pub.total })}</p>
       {pub.rerun && <p class="tq-rerun">{tk("quiz.rerun")}</p>}

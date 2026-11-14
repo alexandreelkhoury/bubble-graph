@@ -112,6 +112,9 @@ export function basicRows(setup: RoomSetup): Row[] {
   const s = setup.settings as Settings;
   const out: Row[] = [];
   for (const f of metaOf(id)?.settings.basic ?? []) {
+    // Quiz Night's quiz is never a generic pack row (that picker writes `packIds`): the TV shows the quiz card + shelf
+    // and the phone the quiz list (games/trivia/setup.tsx).
+    if (id === "trivia" && f.key === "quizId") continue;
     const r = fieldRow(id, f, s, setup);
     if (!r) continue;
     out.push(r);

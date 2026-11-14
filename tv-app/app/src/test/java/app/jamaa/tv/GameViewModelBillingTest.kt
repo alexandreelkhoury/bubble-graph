@@ -118,7 +118,7 @@ class GameViewModelBillingTest {
             GameDeps(
                 serverUrl = { "https://play.example.workers.dev" },
                 appLocale = { "en" },
-                createRoom = { _, _, token ->
+                createRoom = { _, _, token, _ ->
                     createTokens += token
                     CreateRoomResponse("KXRT", "0123456789abcdef0123456789abcdef", "https://x/KXRT", "/parties/room/KXRT", "INVALID")
                 },
@@ -343,7 +343,7 @@ class GameViewModelBillingTest {
             GameDeps(
                 serverUrl = { "https://play.example.workers.dev" },
                 appLocale = { "en" },
-                createRoom = { _, _, _ -> CreateRoomResponse("KXRT", "0123456789abcdef0123456789abcdef", "https://x/KXRT", "/parties/room/KXRT", null) },
+                createRoom = { _, _, _, _ -> CreateRoomResponse("KXRT", "0123456789abcdef0123456789abcdef", "https://x/KXRT", "/parties/room/KXRT", null) },
                 newConnection = { _, _ -> FakeConnection().also { connections += it } },
                 clock = { now },
                 billing = billing,

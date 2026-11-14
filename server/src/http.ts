@@ -5,6 +5,8 @@ import type { Locale } from "@jamaa/shared/constants";
 import type { EntitlementStatus, ErrorCode } from "@jamaa/shared/protocol";
 import { CreateRoomRequest } from "@jamaa/shared/protocol";
 import type { HealthzV2Body } from "@jamaa/shared/protocol/v2";
+import { sanitizeMemoryWire } from "@jamaa/shared/room/memory";
+import type { MemoryWire } from "@jamaa/shared/room/memory";
 import { billingPacks } from "./billing/catalog-info";
 import { billingModeForRequest } from "./billing/mode";
 import { verifyEntitlementToken, verifyKeysFromSecret } from "./billing/token";
@@ -76,11 +78,12 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
   const { success } = await env.CREATE_ROOM_LIMITER.limit({ key: clientIp(req) });
   if (!success) return httpError("RATE_LIMITED", 429);
 
-  // 3. Body: optional JSON {locale, entitlement}.
+  // 3. Body: optional JSON {locale, entitlement, memory} (memory: JAMAA-PLATFORM §2.6a, the TV's no-repeat seed).
   const body = await readBodyLimited(req, HTTP_BODY_MAX_BYTES);
   if (body === null) return httpError("BAD_MESSAGE", 400);
   let locale: Locale = "en";
   let entitlementToken: string | null = null;
+  let memory: MemoryWire = {};
   if (body.byteLength > 0) {
     const ct = (req.headers.get("Content-Type") ?? "").split(";")[0]?.trim().toLowerCase();
     if (ct !== "application/json") return httpError("BAD_MESSAGE", 400);
@@ -95,6 +98,8 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
     locale = r.data.locale ?? "en";
     // BILLING_ENABLED off: a token is ignored (never verified), so the room is created as with none.
     entitlementToken = billingEnabled(env) ? r.data.entitlement ?? null : null;
+    // Only the room's creator (the TV, who gets the tvToken) can seed it; unknown games and malformed keys are dropped.
+    memory = sanitizeMemoryWire(r.data.memory);
   }
   // PAYMENTS-SPEC §3.10/§3.11: the billing mode is decided here, once, from the request; the token is verified before
   // a code is drawn. An invalid or expired token gives a free room (the TV refreshes on "INVALID").
@@ -120,7 +125,7 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
     let ok: boolean;
     try {
       const stub = await deps.getStub(code);
-      const r = await stub.initRoom({ tvTokenHash, joinUrl, locale, now: deps.now(), entitlement: roomEntitlement, billingMode });
+      const r = await stub.initRoom({ tvTokenHash, joinUrl, locale, now: deps.now(), entitlement: roomEntitlement, billingMode, memory });
       ok = r.ok;
     } catch {
       console.error(JSON.stringify({ code: "INTERNAL", phase: "createRoom", roomCode: code }));

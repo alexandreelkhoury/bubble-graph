@@ -2,13 +2,23 @@
 // quiz cards (stars, domain, featured topics) and the shelf (one row per domain) with filters. Pure.
 import type { Locale } from "../../../constants";
 import { DOMAINS } from "../../../content/vocab";
+import { FEATURED_QUIZ_IDS } from "../constants";
 import type { Domain, Topic, TriviaCatalog, TriviaPack } from "./types";
 
 export const familyOf = (p: Pick<TriviaPack, "id" | "family">): string => p.family ?? p.id;
 /** Platform §5.3: packs in ar-LB count as ar. */
 export const languageOf = (p: Pick<TriviaPack, "locale">): Locale => (p.locale === "ar-LB" ? "ar" : p.locale);
 
-/** Quizzes playable in `locale`, one pack per family (the first in catalog order); adult packs are never served. */
+/** Featured families first (FEATURED_QUIZ_IDS order), then the rest in catalog order (stable). */
+const featuredRank = (p: TriviaPack): number => {
+  const i = FEATURED_QUIZ_IDS.indexOf(familyOf(p));
+  return i < 0 ? FEATURED_QUIZ_IDS.length : i;
+};
+
+/**
+ * Quizzes playable in `locale`, one pack per family (the first in catalog order); adult packs are never served.
+ * Order: featured families first (FEATURED_QUIZ_IDS), then catalog order.
+ */
 export function quizzesFor(content: TriviaCatalog, locale: Locale): TriviaPack[] {
   const seen = new Set<string>();
   const out: TriviaPack[] = [];
@@ -19,7 +29,7 @@ export function quizzesFor(content: TriviaCatalog, locale: Locale): TriviaPack[]
     seen.add(f);
     out.push(p);
   }
-  return out;
+  return out.map((p, i) => ({ p, i, r: featuredRank(p) })).sort((a, b) => a.r - b.r || a.i - b.i).map((x) => x.p);
 }
 
 /** The pack of `family` in `locale`, or undefined. */
@@ -28,8 +38,8 @@ export function packFor(content: TriviaCatalog, family: string, locale: Locale):
 }
 
 /**
- * GAME-TRIVIA §9: `quizId` null = "the first featured quiz playable in the content language". JAMAA-GAP: the pack header
- * has no `featured` flag, so "featured" is: free quizzes first, then catalog (id) order. A family without a pack in the
+ * GAME-TRIVIA §9: `quizId` null = "the first featured quiz playable in the content language": the first free quiz in
+ * `quizzesFor` order (FEATURED_QUIZ_IDS first, then catalog order), else the first quiz. A family without a pack in the
  * locale resolves to undefined (start fails NO_CONTENT_AVAILABLE; the room's settings fit resets it to null first).
  */
 export function resolveQuiz(content: TriviaCatalog, quizId: string | null, locale: Locale): TriviaPack | undefined {

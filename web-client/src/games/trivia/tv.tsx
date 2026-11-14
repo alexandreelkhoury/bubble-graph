@@ -4,8 +4,7 @@
 // before REVEAL and no player's choice before REVEAL exist in it (§8.1), and the characters are a function of it.
 import "./tv.css";
 import type { TvRoomView } from "@jamaa/shared/protocol/v2";
-import { fmtNum, t, titleIn } from "../../i18n/t";
-import type { MessageKey } from "../../i18n/t";
+import { fmtNum, titleIn } from "../../i18n/t";
 import { playAll } from "../../tv-mock/sound/player";
 import { activePlayers, playersOf, triviaOfTv } from "./model";
 import type { Player, Trivia, TriviaPub } from "./model";
@@ -13,6 +12,7 @@ import { viewCues } from "./cues";
 import { Reveal } from "./tv/reveal";
 import { Board, Results } from "./tv/board";
 import { PodiumRow, QuestionCard, Stars, Studio, Tiles, TopBar, Tower, tk, topicLabel } from "./tv/parts";
+import { domainLabel } from "./vocab";
 
 /** TR-TV-01 Quiz intro: the quiz card scales in from the marquee, the stars fill one by one, domain and topic chips
  *  stagger in, "10 questions" (DESIGN-JAMAA §5.4). Characters stand behind their podiums. */
@@ -26,7 +26,7 @@ function QuizIntro({ tr, ps }: { tr: Trivia; ps: Player[] }) {
         <h1 class="tqquiz__title">{titleIn(q.title)}</h1>
         <Stars n={q.stars} size={34} />
         <p class="tqquiz__chips">
-          <span class="tqquiz__dom">{t(`content.domain.${q.domain}` as MessageKey)}</span>
+          <span class="tqquiz__dom">{domainLabel(q.domain)}</span>
           {q.featuredTopics.map((x, i) => <span key={x} class="tqquiz__top" style={{ "--i": i }}>{topicLabel(x)}</span>)}
           {more > 0 && <span class="tqquiz__top tqquiz__more num" style={{ "--i": q.featuredTopics.length }}>+{fmtNum(more)}</span>}
         </p>

@@ -75,6 +75,11 @@
     <string name="game__trivia__quiz__selected">مختارة</string>
     <string name="game__trivia__quiz__locked">مع JAMAA Pass</string>
     <string name="game__trivia__quiz__rerun">لعبتوها قبل</string>
+    <string name="game__trivia__quiz__sort_theme">حسب الموضوع</string>
+    <string name="game__trivia__quiz__sort_difficulty">حسب الصعوبة</string>
+    <string name="game__trivia__quiz__all">الكل</string>
+    <string name="game__trivia__quiz__none">ما في مسابقة بهالمستوى بعد</string>
+    <string name="game__trivia__quiz__change">غيّر</string>
     <string name="game__trivia__intro__get_ready">جهزين؟ المسابقة: %1$s</string>
     <string name="game__trivia__read__look">اطلعوا عالتلفزيون!</string>
     <string name="game__trivia__read__counter">%1$s / %2$s</string>

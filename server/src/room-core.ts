@@ -18,6 +18,8 @@ import type { Locale } from "@jamaa/shared/constants";
 import { gameAvailable } from "@jamaa/shared/room";
 import { assertRoomInvariants, createRoomHistory, createRoomState, nextRoomWakeAt, normalizeLoaded, reduceRoom, roomGames } from "@jamaa/shared/room";
 import type { RoomAction, RoomActor, RoomCtx, RoomHistory, RoomIntent, RoomState } from "@jamaa/shared/room";
+import { memoryFromWire, memoryToWire, sameMemory, sanitizeMemoryWire } from "@jamaa/shared/room/memory";
+import type { MemoryWire } from "@jamaa/shared/room/memory";
 import type { ContentCatalog } from "@jamaa/shared/content";
 import { isGameId } from "@jamaa/shared/games/ids";
 import type { GameId } from "@jamaa/shared/games/ids";
@@ -32,7 +34,7 @@ import { playableFor, roomAccess, settingsPrecheck } from "./access";
 import type { RoomAccess } from "./access";
 import { verifyEntitlementToken } from "./billing/token";
 import type { RoomEntitlement } from "./billing/token";
-import { errorFrame, safeClose, safeSend, sendFatal, stateFrame, welcomeFrame } from "./frames";
+import { errorFrame, memoryFrame, safeClose, safeSend, sendFatal, stateFrame, welcomeFrame } from "./frames";
 import type { FatalErrorCode } from "./frames";
 import { Mutex } from "./mutex";
 import { addStrike, fullBucket, JoinLimiter, pruneStrikes, STRIKES_TO_CLOSE, takeToken } from "./ratelimit";
@@ -68,6 +70,11 @@ export interface InitRoomArgs {
   entitlement: RoomEntitlement | null;
   /** §3.10: decided once, in the Worker, from the request. */
   billingMode: "google" | "fake";
+  /**
+   * JAMAA-PLATFORM §2.6a: the TV's stored no-repeat memory (POST /api/rooms `memory`), the new room's starting
+   * `RoomHistory.memory`. Sanitized again here. Only room creation seeds memory: no WebSocket message can.
+   */
+  memory?: MemoryWire;
 }
 export type InitRoomResult = { ok: true } | { ok: false; reason: "EXISTS" };
 
@@ -281,7 +288,7 @@ export class RoomCore {
       const hasLocale = (l: Locale): boolean => (["mishana", "bluff", "likely", "trivia"] as const).some((id) => gameAvailable(full, id, l));
       const contentLocale: Locale = hasLocale(args.locale) ? args.locale : "en";
       const state = createRoomState({ roomCode: this.#d.roomCode, joinUrl: args.joinUrl, seed, contentLocale });
-      const history = createRoomHistory();
+      const history = createRoomHistory(memoryFromWire(sanitizeMemoryWire(args.memory)));
       const sessions: Sessions = {};
       await this.#store.write({ meta, state, history, sessions });
       this.#setCache(meta, state, history, sessions);
@@ -584,11 +591,23 @@ export class RoomCore {
       const r = this.#reduce(state, { type: "TV_GAMES", games: m.games, by: SYSTEM });
       if (r.ok && (r.state !== state || r.history !== this.#history)) {
         await this.#commit(r.state, r.history);
+        this.#sendMemory(conn);
         return;
       }
     }
     this.#sendState(conn);
+    this.#sendMemory(conn);
     await this.#reschedule();
+  }
+
+  /**
+   * §2.6a: the room's memory to ONE TV socket (after its hello; a new TV app instance re-syncs its store). Skipped
+   * when the room has none. Never called for a player socket.
+   */
+  #sendMemory(conn: ConnHandle): void {
+    if (conn.state?.role !== "tv") return;
+    const wire = memoryToWire(this.#history.memory);
+    if (Object.keys(wire).length > 0) safeSend(conn, memoryFrame(wire));
   }
 
   async #helloPlayer(conn: ConnHandle, st: ConnState, m: HelloPlayerV2Msg): Promise<void> {
@@ -878,6 +897,8 @@ export class RoomCore {
       sessions = Object.fromEntries(Object.entries(sessions).filter(([pid]) => live.has(pid)));
     }
     const writeMeta = meta !== null && meta !== this.#savedMeta;
+    // §2.6a: memory changes only when an instance ends (game end, REPLAY, ABORT…), so it never holds a running secret.
+    const memoryChanged = history !== this.#savedHistory && !sameMemory(history.memory, this.#savedHistory?.memory);
     await this.#store.write({
       ...(next !== this.#savedState ? { state: next } : {}),
       ...(history !== this.#savedHistory ? { history } : {}),
@@ -891,6 +912,10 @@ export class RoomCore {
     this.#savedHistory = history;
     this.#sessions = sessions;
     this.#savedSessions = sessions;
+    if (memoryChanged) {
+      const frame = memoryFrame(memoryToWire(history.memory));
+      for (const c of this.#conns()) if (c.state?.role === "tv") safeSend(c, frame);
+    }
   }
 
   async #saveSessions(): Promise<void> {

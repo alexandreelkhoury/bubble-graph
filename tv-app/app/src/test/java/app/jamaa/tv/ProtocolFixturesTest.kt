@@ -11,6 +11,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import app.jamaa.tv.protocol.DeadlineKind
 import app.jamaa.tv.protocol.ErrorMsg
+import app.jamaa.tv.protocol.MemoryMsg
 import app.jamaa.tv.protocol.Phase
 import app.jamaa.tv.protocol.PongMsg
 import app.jamaa.tv.protocol.ProtocolJson
@@ -272,6 +273,19 @@ class ProtocolFixturesTest {
             Json.parseToJsonElement("""{"locale":"fr"}"""),
             ProtocolJson.encoder.encodeToJsonElement(CreateRoomRequest.serializer(), CreateRoomRequest("fr")),
         )
+    }
+
+    /** JAMAA-PLATFORM §2.6a: the TV-only `memory` frame and POST /api/rooms with `memory` (shared/fixtures/v2). */
+    @Test
+    fun memoryFrameAndCreateRoomWithMemory() {
+        val msg = roundTrip("s2c.memory.json") as MemoryMsg
+        assertEquals(listOf("en-food-01:p004", "en-food-01:p011"), msg.memory["mishana"])
+        assertEquals(listOf("mishana", "bluff", "trivia"), msg.memory.keys.toList())
+        assertTrue(ProtocolJson.decodeServer(Fixtures.v2("s2c.memory.json")) is MemoryMsg)
+        val expected = Json.parseToJsonElement(Fixtures.v2("http.create_room.request.json"))
+        val token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImsxIn0.e30.c2ln"
+        val memory = mapOf("mishana" to listOf("en-food-01:p004"), "likely" to listOf("late-again"))
+        assertEquals(expected, ProtocolJson.encoder.encodeToJsonElement(CreateRoomRequest.serializer(), CreateRoomRequest("fr", token, memory)))
     }
 
     @Test

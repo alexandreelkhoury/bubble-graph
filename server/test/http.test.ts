@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { HTTP_BODY_MAX_BYTES } from "@jamaa/shared/constants";
 import { CreateRoomResponse } from "@jamaa/shared/protocol";
 import { HealthzV2 } from "@jamaa/shared/protocol/v2";
 import { createRoom, healthz } from "../src/http";
@@ -36,7 +37,7 @@ describe("POST /api/rooms", () => {
     expect(body.joinUrl).toBe(`https://jamaa.app/${body.code}`);
     expect(log[0]?.locale).toBe("en");
   });
-  it("body ≤ 4096 bytes (PAYMENTS-SPEC §3.3): a 3000-char token fits; 4097 bytes → 400", async () => {
+  it("token ≤ 3000 chars (PAYMENTS-SPEC §3.3), body ≤ HTTP_BODY_MAX_BYTES (128 KiB since the §2.6a memory seed)", async () => {
     const fits = JSON.stringify({ locale: "en", entitlement: "x".repeat(3000) });
     expect((await createRoom(post(fits, { "Content-Type": "application/json" }), fakeEnv(), deps())).status).toBe(201);
     const big = JSON.stringify({ locale: "en", entitlement: "x".repeat(4097) });
@@ -45,6 +46,8 @@ describe("POST /api/rooms", () => {
     expect(await res.json()).toEqual({ error: "BAD_MESSAGE" });
     const tooLong = JSON.stringify({ entitlement: "x".repeat(3001) });
     expect((await createRoom(post(tooLong, { "Content-Type": "application/json" }), fakeEnv(), deps())).status).toBe(400);
+    const huge = JSON.stringify({ locale: "en", pad: "x".repeat(HTTP_BODY_MAX_BYTES) });
+    expect((await createRoom(post(huge, { "Content-Type": "application/json" }), fakeEnv(), deps())).status).toBe(400);
   });
   it("wrong content type → 400; bad JSON or unknown keys → 400", async () => {
     expect((await createRoom(post('{"locale":"en"}', { "Content-Type": "text/plain" }), fakeEnv(), deps())).status).toBe(400);

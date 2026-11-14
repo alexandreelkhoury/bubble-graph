@@ -58,3 +58,26 @@ export function setupHint(setup: TriviaSetup): { count: number; capped: boolean;
   const want = LENGTHS[setup.settings.length];
   return { count: playCount, capped: available < want, available, seconds: Math.round(PACE_MC4_MS[setup.settings.pace] / 1000) };
 }
+
+/** The shelf's grouping (owner request): one row per theme (domain), or one row per difficulty (stars). */
+export type ShelfSort = "theme" | "difficulty";
+/** The shelf's difficulty filter: every quiz, or only quizzes of that many stars. */
+export type ShelfStars = 0 | 1 | 2 | 3;
+export type ShelfRow = { key: string; kind: "domain"; domain: QuizCard["domain"]; quizzes: QuizCard[] } | { key: string; kind: "stars"; stars: 1 | 2 | 3; quizzes: QuizCard[] };
+
+/**
+ * The shelf rows for a sort and a filter. "theme": `shelfRows` order (featured first). "difficulty": easiest first,
+ * cards in server order within a row. Empty rows are dropped, so a filter with no match gives [].
+ */
+export function shelfView(quizzes: readonly QuizCard[], sort: ShelfSort, stars: ShelfStars): ShelfRow[] {
+  const kept = stars === 0 ? quizzes : quizzes.filter((q) => q.stars === stars);
+  if (sort === "theme") return shelfRows(kept).map((r) => ({ key: `d:${r.domain}`, kind: "domain", domain: r.domain, quizzes: r.quizzes }));
+  return ([1, 2, 3] as const)
+    .map((n) => ({ key: `s:${n}`, kind: "stars" as const, stars: n, quizzes: kept.filter((q) => q.stars === n) }))
+    .filter((r) => r.quizzes.length > 0);
+}
+
+/** Star levels that at least one quiz has (the filter chips only offer levels that exist, plus "All"). */
+export function starLevels(quizzes: readonly QuizCard[]): (1 | 2 | 3)[] {
+  return ([1, 2, 3] as const).filter((n) => quizzes.some((q) => q.stars === n));
+}
