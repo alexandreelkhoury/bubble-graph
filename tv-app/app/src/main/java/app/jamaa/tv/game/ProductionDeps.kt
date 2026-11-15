@@ -13,6 +13,7 @@ import app.jamaa.tv.billing.EntitlementApi
 import app.jamaa.tv.billing.GatewayFactory
 import app.jamaa.tv.billing.PrefsEntitlementStore
 import app.jamaa.tv.i18n.LocaleController
+import app.jamaa.tv.monitor.Monitor
 import app.jamaa.tv.net.RoomApi
 import app.jamaa.tv.net.RoomSocket
 import app.jamaa.tv.audio.SoundPoolPlayer
@@ -41,6 +42,7 @@ internal fun productionDeps(app: Application): GameDeps {
         prefs = SharedPlatformPrefs(app),
         roomMemory = SharedRoomMemoryStore(app),
         motion = { calm -> deviceMotion(app, calm) },
+        reportError = { where, e -> Monitor.report(where, e) },
     )
 }
 
