@@ -26,3 +26,22 @@ export function watchKeyboard(win: { visualViewport?: VV | null }, root: { clien
   vv.addEventListener("scroll", sync);
   sync();
 }
+
+/** Keeps `--actionbar-h` on <html> equal to the fixed action bar's height (0 when there is none), so `.stage` can
+ *  reserve that room. Bars come and go with screens, hence the MutationObserver. */
+export function watchActionBar(doc: Document): void {
+  if (typeof ResizeObserver === "undefined") return;
+  let bar: Element | null = null;
+  const set = (): void => doc.documentElement.style.setProperty("--actionbar-h", `${bar ? Math.ceil(bar.getBoundingClientRect().height) : 0}px`);
+  const ro = new ResizeObserver(set);
+  const find = (): void => {
+    const next = doc.querySelector(".actionbar");
+    if (next === bar) return;
+    if (bar) ro.unobserve(bar);
+    bar = next;
+    if (bar) ro.observe(bar);
+    set();
+  };
+  new MutationObserver(find).observe(doc.body, { childList: true, subtree: true });
+  find();
+}

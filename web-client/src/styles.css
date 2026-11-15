@@ -37,6 +37,8 @@ h1:focus, h1:focus-visible { outline: none; }
   overflow-x: clip;
 }
 .stage { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+/* Room for the fixed action bar, so the last line of the screen scrolls clear of it. */
+.stage:has(.actionbar) { padding-bottom: var(--actionbar-h, 0px); }
 .screen {
   flex: 1; display: flex; flex-direction: column; gap: var(--space-4);
   padding: var(--space-3) var(--gutter) var(--space-6);
@@ -47,8 +49,10 @@ h1:focus, h1:focus-visible { outline: none; }
 /* Opaque, so nothing scrolling under it shows through behind the timer or the buttons; the fade above it is the
    "more below" cue. */
 .actionbar {
-  /* --kb-inset (lib/keyboard.ts): right above an on-screen keyboard that covers the page, never under it. */
-  position: sticky; bottom: var(--kb-inset, 0px); z-index: 5;
+  /* --kb-inset (lib/keyboard.ts): right above an on-screen keyboard that covers the page, never under it.
+     Fixed, not sticky: iOS WebKit (every iPhone browser) left a sticky bar unpainted until a repaint (owner's iPhone 15:
+     "Let me in!" only flashed on a tap). The page reserves the bar's height (--actionbar-h, measured in keyboard.ts). */
+  position: fixed; bottom: var(--kb-inset, 0px); inset-inline: 0; margin-inline: auto; max-width: 480px; z-index: 5;
   display: flex; flex-direction: column; gap: var(--space-3);
   padding: var(--space-3) var(--gutter) calc(var(--space-5) + env(safe-area-inset-bottom));
   background: var(--color-bg);
