@@ -44,7 +44,7 @@
       "source": "SETE (Eiffel Tower operator)",
       "review": {
         "status": "draft",
-        "ref": "https://www.toureiffel.paris/en/the-monument/key-figures"
+        "ref": "https://sete.toureiffel.paris/sites/default/files/2024-07/The%20Eiffel%20Tower%20Press%20Kit%20-%20July%202024.pdf"
       }
     },
     {
@@ -69,7 +69,7 @@
       "source": "SETE (Eiffel Tower operator)",
       "review": {
         "status": "draft",
-        "ref": "https://www.toureiffel.paris/en/the-monument/key-figures"
+        "ref": "https://sete.toureiffel.paris/sites/default/files/2024-07/The%20Eiffel%20Tower%20Press%20Kit%20-%20July%202024.pdf"
       }
     },
     {
@@ -95,7 +95,7 @@
       "source": "SETE (Eiffel Tower operator)",
       "review": {
         "status": "draft",
-        "ref": "https://www.toureiffel.paris/en/the-monument/key-figures"
+        "ref": "https://sete.toureiffel.paris/sites/default/files/2024-07/The%20Eiffel%20Tower%20Press%20Kit%20-%20July%202024.pdf"
       }
     },
     {
@@ -171,7 +171,7 @@
       "source": "China–Nepal survey 2020",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Mount-Everest"
+        "ref": "https://www.washingtontimes.com/news/2020/dec/8/china-nepal-say-everest-a-bit-higher-than-past-mea/"
       }
     },
     {
@@ -197,7 +197,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Kilimanjaro"
+        "ref": "https://en.wikipedia.org/wiki/Mount_Kilimanjaro"
       }
     },
     {
@@ -223,7 +223,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Nile-River"
+        "ref": "https://www.britannica.com/summary/Nile-River"
       }
     },
     {
@@ -273,7 +273,7 @@
       "source": "NASA / IAU (1 au)",
       "review": {
         "status": "draft",
-        "ref": "https://www.iau.org/static/resolutions/IAU2012_English.pdf"
+        "ref": "https://windows2universe.org/sun/sun_size_distance.html"
       }
     },
     {
@@ -323,7 +323,7 @@
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://science.nasa.gov/sun/facts/"
+        "ref": "https://windows2universe.org/sun/sun_size_distance.html"
       }
     },
     {
@@ -374,7 +374,7 @@
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html"
+        "ref": "https://www.space.com/17638-how-big-is-earth.html"
       }
     },
     {
@@ -399,7 +399,7 @@
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://science.nasa.gov/sun/facts/"
+        "ref": "https://www.asc-csa.gc.ca/eng/astronomy/solar-system/sun.asp"
       }
     },
     {
@@ -424,7 +424,7 @@
       "source": "NASA / ESA Planck",
       "review": {
         "status": "draft",
-        "ref": "https://science.nasa.gov/universe/overview/"
+        "ref": "https://svs.gsfc.nasa.gov/30133"
       }
     },
     {
@@ -475,7 +475,7 @@
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://science.nasa.gov/mars/facts/"
+        "ref": "https://solarsystem.nasa.gov/planets/mars/in-depth.amp"
       }
     },
     {
@@ -496,11 +496,11 @@
         "ar": "°C",
         "es": "°C"
       },
-      "answer": 475,
+      "answer": 465,
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://science.nasa.gov/venus/facts/"
+        "ref": "https://science.gsfc.nasa.gov/690/Venus.html"
       }
     },
     {
@@ -550,7 +550,7 @@
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://science.nasa.gov/sun/facts/"
+        "ref": "https://scied.ucar.edu/sun"
       }
     },
     {
@@ -575,7 +575,7 @@
       "source": "IAU",
       "review": {
         "status": "draft",
-        "ref": "https://www.iau.org/public/themes/measuring/"
+        "ref": "https://en.wikipedia.org/wiki/Light-year"
       }
     },
     {
@@ -601,7 +601,7 @@
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://www.nasa.gov/international-space-station/space-station-facts-and-figures/"
+        "ref": "https://myspacemuseum.com/how-fast-does-the-space-station-travel"
       }
     },
     {
@@ -627,7 +627,7 @@
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://www.nasa.gov/international-space-station/space-station-facts-and-figures/"
+        "ref": "https://issinfo.net/blog/tracking-the-iss-why-its-orbit-altitude-and-speed-constantly-change"
       }
     },
     {
@@ -653,7 +653,7 @@
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://www.nasa.gov/history/"
+        "ref": "https://m.esa.int/ESA_Multimedia/Images/2021/09/Ten_things_you_did_not_know_about_the_Moon_1._Moonwalkers"
       }
     },
     {
@@ -678,7 +678,7 @@
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://science.nasa.gov/earth/facts/"
+        "ref": "https://space.com/33527-how-fast-is-earth-moving.html"
       }
     },
     {
@@ -728,7 +728,7 @@
       "source": "United Nations",
       "review": {
         "status": "draft",
-        "ref": "https://www.un.org/en/dayof8billion"
+        "ref": "https://www.un.org/development/desa/pd/node/4259"
       }
     },
     {
@@ -753,7 +753,7 @@
       "source": "UN World Population Prospects 2024",
       "review": {
         "status": "draft",
-        "ref": "https://population.un.org/wpp/ (132.1 million births in 2023 / 365)"
+        "ref": "https://www.un.org/development/desa/pd/node/4324"
       }
     },
     {
@@ -764,10 +764,10 @@
         "history"
       ],
       "text": {
-        "en": "How many people lived on Earth in the year 1900?",
-        "fr": "Combien de personnes vivaient sur Terre en 1900 ?",
-        "ar": "كم شخص كان عايش عالأرض سنة 1900؟",
-        "es": "¿Cuántas personas vivían en la Tierra en el año 1900?"
+        "en": "About how many people lived on Earth in the year 1900 (UN 1999 estimate)?",
+        "fr": "Environ combien de personnes vivaient sur Terre en 1900 (estimation ONU 1999) ?",
+        "ar": "كم شخص تقريباً كان عايش عالأرض سنة 1900 (تقدير الأمم المتحدة 1999)؟",
+        "es": "¿Cuántas personas vivían aproximadamente en la Tierra en 1900 (estimación de la ONU de 1999)?"
       },
       "unit": {
         "en": "people",
@@ -775,11 +775,11 @@
         "ar": "نسمة",
         "es": "habitantes"
       },
-      "answer": 1650000000,
+      "answer": 1600000000,
       "source": "UN Population Division",
       "review": {
         "status": "draft",
-        "ref": "https://www.un.org/en/development/desa/population/publications/pdf/trends/WorldPopulation2050.pdf"
+        "ref": "https://www.census.gov/data/tables/time-series/demo/international-programs/historical-est-worldpop.html"
       }
     },
     {
@@ -829,7 +829,7 @@
       "source": "US Census Bureau (2020)",
       "review": {
         "status": "draft",
-        "ref": "https://www.census.gov/library/stories/2021/04/2020-census-data-release.html"
+        "ref": "https://census.gov/newsroom/press-releases/2021/2020-census-apportionment-results.html"
       }
     },
     {
@@ -854,7 +854,7 @@
       "source": "IBGE census 2022",
       "review": {
         "status": "draft",
-        "ref": "https://www.ibge.gov.br/en/statistics/social/population/22836-2022-census-3.html"
+        "ref": "https://www.opovo.com.br/noticias/economia/2023/08/31/ibge-revisa-dados-do-censo-2022-populacao-brasileira-sobe-para-203-080-756-pessoas.html"
       }
     },
     {
@@ -879,7 +879,7 @@
       "source": "Statistics Bureau of Japan (2020 census)",
       "review": {
         "status": "draft",
-        "ref": "https://www.stat.go.jp/english/data/kokusei/2020/summary.html"
+        "ref": "https://www.stat.go.jp/english/info/news/20211228.html"
       }
     },
     {
@@ -904,7 +904,7 @@
       "source": "Statistics Canada (2021 census)",
       "review": {
         "status": "draft",
-        "ref": "https://www12.statcan.gc.ca/census-recensement/2021/"
+        "ref": "https://www12.statcan.gc.ca/census-recensement/2021/dp-pd/prof/details/page.cfm"
       }
     },
     {
@@ -929,7 +929,7 @@
       "source": "INEGI (2020 census)",
       "review": {
         "status": "draft",
-        "ref": "https://www.inegi.org.mx/programas/ccpv/2020/"
+        "ref": "https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/nueva_estruc/702825198060.pdf"
       }
     },
     {
@@ -955,7 +955,7 @@
       "source": "INSEE (legal population 2021)",
       "review": {
         "status": "draft",
-        "ref": "https://www.insee.fr/fr/statistiques/7739206"
+        "ref": "https://www.insee.fr/fr/statistiques/fichier/7733777/Popleg2021_dep75_VILLE%20DE%20PARIS.pdf"
       }
     },
     {
@@ -981,7 +981,7 @@
       "source": "United Nations",
       "review": {
         "status": "draft",
-        "ref": "https://www.un.org/en/about-us/member-states"
+        "ref": "https://research.un.org/en/unmembers/intro"
       }
     },
     {
@@ -991,10 +991,10 @@
         "geo"
       ],
       "text": {
-        "en": "How many countries are there in Africa?",
-        "fr": "Combien de pays compte l'Afrique ?",
-        "ar": "كم دولة في بأفريقيا؟",
-        "es": "¿Cuántos países hay en África?"
+        "en": "How many African countries are members of the United Nations?",
+        "fr": "Combien de pays africains sont membres de l'ONU ?",
+        "ar": "كم دولة أفريقية عضو بالأمم المتحدة؟",
+        "es": "¿Cuántos países africanos son miembros de la ONU?"
       },
       "unit": {
         "en": "countries",
@@ -1003,10 +1003,10 @@
         "es": "países"
       },
       "answer": 54,
-      "source": "African Union / UN",
+      "source": "African Union (UN mission): 54 of the AU's 55 members are UN members",
       "review": {
         "status": "draft",
-        "ref": "https://au.int/en/member_states/countryprofiles2"
+        "ref": "https://africanunion-un.org/memberstates"
       }
     },
     {
@@ -1056,7 +1056,7 @@
       "source": "European Union",
       "review": {
         "status": "draft",
-        "ref": "https://european-union.europa.eu/principles-countries-history/symbols/european-flag_en"
+        "ref": "https://www.consilium.europa.eu/en/policies/eu-flag/"
       }
     },
     {
@@ -1081,7 +1081,7 @@
       "source": "United Nations",
       "review": {
         "status": "draft",
-        "ref": "https://www.un.org/en/our-work/official-languages"
+        "ref": "https://languages.un.org/en/language-and-communications/six-official-un-languages"
       }
     },
     {
@@ -1106,7 +1106,7 @@
       "source": "CIA World Factbook",
       "review": {
         "status": "draft",
-        "ref": "https://www.cia.gov/the-world-factbook/countries/russia/"
+        "ref": "https://www.cia.gov/the-world-factbook/countries/russia/summaries"
       }
     },
     {
@@ -1116,10 +1116,10 @@
         "geo"
       ],
       "text": {
-        "en": "What is the area of Vatican City, the smallest country on Earth, in km²?",
-        "fr": "Quelle est la superficie du Vatican, le plus petit pays du monde, en km² ?",
-        "ar": "قدّيش مساحة الفاتيكان، أصغر بلد بالعالم، بالكلم المربّع؟",
-        "es": "¿Cuál es la superficie del Vaticano, el país más pequeño del mundo, en km²?"
+        "en": "What is the area of Vatican City, the smallest country on Earth, in km² (Britannica figure)?",
+        "fr": "Quelle est la superficie du Vatican, le plus petit pays du monde, en km² (chiffre de Britannica) ?",
+        "ar": "قدّيش مساحة الفاتيكان، أصغر بلد بالعالم، بالكلم المربّع (حسب موسوعة بريتانيكا)؟",
+        "es": "¿Cuál es la superficie del Vaticano, el país más pequeño del mundo, en km² (cifra de Britannica)?"
       },
       "unit": {
         "en": "km²",
@@ -1128,10 +1128,10 @@
         "es": "km²"
       },
       "answer": 0.44,
-      "source": "Britannica",
+      "source": "Britannica and Guinness World Records (0.44 km2); CIA Factbook now lists 0.49",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Vatican-City"
+        "ref": "https://www.britannica.com/topic/list-of-the-smallest-countries-by-area"
       }
     },
     {
@@ -1142,10 +1142,10 @@
         "nature"
       ],
       "text": {
-        "en": "What is the area of the Sahara desert, in km²?",
-        "fr": "Quelle est la superficie du désert du Sahara, en km² ?",
-        "ar": "قدّيش مساحة الصحرا الكبرى، بالكلم المربّع؟",
-        "es": "¿Cuál es la superficie del desierto del Sáhara, en km²?"
+        "en": "What is the area of the Sahara desert, in km² (Wikipedia figure)?",
+        "fr": "Quelle est la superficie du désert du Sahara, en km² (chiffre de Wikipédia) ?",
+        "ar": "قدّيش مساحة الصحرا الكبرى، بالكلم المربّع (حسب ويكيبيديا)؟",
+        "es": "¿Cuál es la superficie del desierto del Sáhara, en km² (cifra de Wikipedia)?"
       },
       "unit": {
         "en": "km²",
@@ -1154,10 +1154,10 @@
         "es": "km²"
       },
       "answer": 9000000,
-      "source": "Britannica",
+      "source": "Wikipedia / Britannica Kids (9.0 M km2); Britannica main article says 8.6 M",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Sahara-desert-Africa"
+        "ref": "https://kids.britannica.com/students/article/Sahara/276838"
       }
     },
     {
@@ -1183,7 +1183,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Lake-Baikal"
+        "ref": "https://en.wikipedia.org/wiki/Lake_Baikal"
       }
     },
     {
@@ -1209,7 +1209,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Angel-Falls"
+        "ref": "https://kids.britannica.com/students/article/Angel-Falls/272869"
       }
     },
     {
@@ -1286,7 +1286,7 @@
       "source": "China State Administration of Cultural Heritage (2012)",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/topic/Great-Wall-of-China"
+        "ref": "https://theworld.org/stories/2012-06-06/great-wall-china-length-announced-after-five-year-study"
       }
     },
     {
@@ -1312,7 +1312,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/topic/Pyramids-of-Giza"
+        "ref": "https://madainproject.com/great_pyramid_of_giza"
       }
     },
     {
@@ -1337,7 +1337,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/topic/Pyramids-of-Giza"
+        "ref": "https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza"
       }
     },
     {
@@ -1363,7 +1363,7 @@
       "source": "US National Park Service",
       "review": {
         "status": "draft",
-        "ref": "https://www.nps.gov/stli/learn/historyculture/statue-statistics.htm"
+        "ref": "https://www.nps.gov/stli/historyculture/statue-statistics.htm"
       }
     },
     {
@@ -1388,7 +1388,7 @@
       "source": "Empire State Realty Trust",
       "review": {
         "status": "draft",
-        "ref": "https://www.esbnyc.com/about/facts-figures"
+        "ref": "https://kvia.com/cnn-national/2024/07/10/empire-state-building-fast-facts-2/"
       }
     },
     {
@@ -1413,7 +1413,7 @@
       "source": "UK Parliament",
       "review": {
         "status": "draft",
-        "ref": "https://www.parliament.uk/about/living-heritage/building/palace/big-ben/"
+        "ref": "https://webtest.parliament.uk/about/living-heritage/building/palace/big-ben/facts-figures"
       }
     },
     {
@@ -1465,7 +1465,7 @@
       "source": "Getlink (Channel Tunnel)",
       "review": {
         "status": "draft",
-        "ref": "https://www.getlinkgroup.com/en/our-group/eurotunnel/"
+        "ref": "https://www.eurostar.com/fr-fr/voyage/experience-eurostar/le-tunnel-sous-la-manche"
       }
     },
     {
@@ -1491,7 +1491,7 @@
       "source": "Berlin.de",
       "review": {
         "status": "draft",
-        "ref": "https://www.berlin.de/mauer/en/"
+        "ref": "https://www.bundesregierung.de/breg-de/themen/deutsche-einheit/eine-traurige-bilanz-393916"
       }
     },
     {
@@ -1516,7 +1516,7 @@
       "source": "Berlin.de",
       "review": {
         "status": "draft",
-        "ref": "https://www.berlin.de/mauer/en/"
+        "ref": "https://stiftung-berliner-mauer.de/en/node/9"
       }
     },
     {
@@ -1567,7 +1567,7 @@
       "source": "NASA",
       "review": {
         "status": "draft",
-        "ref": "https://www.nasa.gov/mission/apollo-11/"
+        "ref": "https://spaceline.org/?p=1431"
       }
     },
     {
