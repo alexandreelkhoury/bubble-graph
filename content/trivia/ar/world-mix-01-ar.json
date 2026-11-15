@@ -60,7 +60,7 @@
       "topic": "geography",
       "difficulty": 1,
       "explain": "مساحته أكبر من مساحة كلّ اليابسة مجتمعة.",
-      "source": "[VERIFY] NOAA Ocean Service 'largest ocean' (Pacific)"
+      "source": "https://www.britannica.com/summary/Pacific-Ocean"
     },
     {
       "id": "q002",
@@ -76,7 +76,7 @@
       "topic": "geography",
       "difficulty": 1,
       "explain": "تمتدّ على إحدى عشرة منطقة زمنية: في مكان ما من روسيا، هناك دائمًا من يتناول فطوره.",
-      "source": "[VERIFY] CIA World Factbook area ranking (Russia #1)"
+      "source": "https://en.wikipedia.org/wiki/Area_of_Russia"
     },
     {
       "id": "q003",
@@ -92,7 +92,7 @@
       "topic": "geography",
       "difficulty": 2,
       "explain": "بُنيت حلًّا وسطًا بين المدينتين المتنافستين سيدني وملبورن.",
-      "source": "[VERIFY] Britannica 'Canberra' (purpose-built capital, compromise Sydney/Melbourne)"
+      "source": "https://australiangeographic.com.au/?p=21733"
     },
     {
       "id": "q004",
@@ -108,7 +108,7 @@
       "topic": "geography",
       "difficulty": 2,
       "explain": "وإذا حسبنا الصحارى الباردة، فأكبرها على الإطلاق هي القارّة القطبية الجنوبية.",
-      "source": "[VERIFY] Britannica 'Sahara' (largest hot desert); 'desert' (Antarctica largest overall)"
+      "source": "https://www.guinnessworldrecords.com/world-records/largest-desert"
     },
     {
       "id": "q005",
@@ -124,7 +124,7 @@
       "topic": "geography",
       "difficulty": 3,
       "explain": "بفضل جزرها المنتشرة في المحيطات، لدى فرنسا 12 منطقة.",
-      "source": "[VERIFY] French government / time-zone references (France: 12 zones incl. overseas, 13 with Adélie Land)"
+      "source": "https://www.timeanddate.com/time/country-with-the-most-time-zones.html"
     },
     {
       "id": "q006",
@@ -138,7 +138,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "تدور الزهرة حول نفسها ببطء شديد، فتُكمل دورتها حول الشمس قبل أن تُنهي دورة واحدة حول نفسها.",
-      "source": "[VERIFY] NASA 'Venus' (sidereal day ~243 Earth days; year ~225 Earth days)"
+      "source": "https://www.snopes.com/fact-check/one-day-on-venus-is-longer-than-a-year-on-venus/"
     },
     {
       "id": "q007",
@@ -154,7 +154,7 @@
       "topic": "geography",
       "difficulty": 1,
       "explain": "مساحتها أقلّ من نصف كيلومتر مربّع.",
-      "source": "[VERIFY] CIA World Factbook 'Holy See' (~0.44 km²)"
+      "source": "https://www.britannica.com/topic/list-of-the-smallest-countries-by-area"
     },
     {
       "id": "q008",
@@ -170,7 +170,7 @@
       "topic": "geography",
       "difficulty": 1,
       "explain": "وصقلية عند طرف القدم تبدو كأنّها كرة على وشك أن تُركل.",
-      "source": "[VERIFY] trivial (map of Italy)"
+      "source": "https://www.esa.int/Applications/Observing_the_Earth/Earth_from_Space_The_Boot"
     },
     {
       "id": "q009",
@@ -186,7 +186,7 @@
       "topic": "geography",
       "difficulty": 3,
       "explain": "بريتوريا وكيب تاون وبلومفونتين تتقاسم المهمّة.",
-      "source": "[VERIFY] South African Government 'Capital cities' (Pretoria, Cape Town, Bloemfontein)"
+      "source": "https://www.worldatlas.com/articles/what-is-the-capital-of-south-africa.html"
     },
     {
       "id": "q010",
@@ -202,7 +202,7 @@
       "topic": "geography",
       "difficulty": 2,
       "explain": "ينحدر نحو 979 مترًا في فنزويلا، حتّى يتحوّل الماء إلى رذاذ.",
-      "source": "[VERIFY] Britannica 'Angel Falls' (Venezuela, ~979 m)"
+      "source": "https://en.wikipedia.org/wiki/Angel_Falls"
     },
     {
       "id": "q011",
@@ -218,7 +218,7 @@
       "topic": "nature",
       "difficulty": 2,
       "explain": "أمّا أستراليا فتضمّ بعضًا من أكثر أنواع النمل تنوّعًا.",
-      "source": "[VERIFY] encyclopedia 'ant' (on every continent except Antarctica)"
+      "source": "https://www.pestworld.org/news-hub/pest-articles/8-interesting-facts-about-ants/"
     },
     {
       "id": "q012",
@@ -234,7 +234,7 @@
       "topic": "science",
       "difficulty": 1,
       "explain": "وفي المقابل تطلق الأكسجين الذي نتنفّسه.",
-      "source": "[VERIFY] school biology 'photosynthesis'"
+      "source": "https://www.livescience.com/51720-photosynthesis.html"
     },
     {
       "id": "q013",
@@ -250,7 +250,7 @@
       "topic": "nature",
       "difficulty": 1,
       "explain": "للحشرات ستّ أرجل، فالعنكبوت ليس حشرة بل من العنكبيات.",
-      "source": "[VERIFY] trivial (arachnids: 8 legs)"
+      "source": "https://www.newworldencyclopedia.org/entry/Arachnida"
     },
     {
       "id": "q014",
@@ -266,7 +266,7 @@
       "topic": "science",
       "difficulty": 1,
       "explain": "يتصدّر مقياس موس للصلابة بالدرجة 10.",
-      "source": "[VERIFY] Mohs scale (diamond = 10)"
+      "source": "https://www.livescience.com/planet-earth/geology/is-anything-harder-than-a-diamond"
     },
     {
       "id": "q015",
@@ -282,7 +282,7 @@
       "topic": "science",
       "difficulty": 2,
       "explain": "هذه العاصفة أعرض من الأرض كلّها.",
-      "source": "[VERIFY] NASA 'Jupiter: Great Red Spot' (storm wider than Earth)"
+      "source": "https://www.jpl.nasa.gov/images/pia21774-jupiters-great-red-spot-swallows-earth/"
     },
     {
       "id": "q016",
@@ -298,7 +298,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "محوره مائل بنحو 98 درجة.",
-      "source": "[VERIFY] NASA 'Uranus' (axial tilt ~98°)"
+      "source": "https://science.gsfc.nasa.gov/690/Uranus.html"
     },
     {
       "id": "q017",
@@ -312,7 +312,7 @@
       "topic": "nature",
       "difficulty": 1,
       "explain": "وهي الثدييات الوحيدة القادرة على الطيران الحقيقي.",
-      "source": "[VERIFY] encyclopedia 'bat' (only mammals capable of true flight)"
+      "source": "https://www.pbs.org/wnet/nature/group/mammals/bat"
     },
     {
       "id": "q018",
@@ -327,8 +327,8 @@
       "answer": 1,
       "topic": "nature",
       "difficulty": 2,
-      "explain": "قلبه لحالو بيوزن شي 180 كيلو، قدّ بيانو حيط تقريبًا.",
-      "source": "[VERIFY] NOAA Fisheries 'blue whale' (largest animal known to have lived); Royal Ontario Museum 2014 heart (about 180 kg)"
+      "explain": "قلبه وحده يزن نحو 180 كيلوغرامًا، أي ما يقارب وزن بيانو عمودي.",
+      "source": "https://www.guinnessworldrecords.com/world-records/largest-heart"
     },
     {
       "id": "q019",
@@ -344,7 +344,7 @@
       "topic": "nature",
       "difficulty": 2,
       "explain": "ودمه أزرق أيضًا… من نبلاء البحر!",
-      "source": "[VERIFY] encyclopedia 'octopus' (three hearts; copper-based blue blood)"
+      "source": "https://www.livescience.com/how-many-hearts-does-an-octopus-have"
     },
     {
       "id": "q020",
@@ -360,7 +360,7 @@
       "topic": "science",
       "difficulty": 2,
       "explain": "كان يُستعمل قديمًا في معظم موازين الحرارة.",
-      "source": "[VERIFY] Royal Society of Chemistry periodic table 'Mercury'"
+      "source": "https://www.britannica.com/science/mercury-chemical-element"
     },
     {
       "id": "q021",
@@ -376,7 +376,7 @@
       "topic": "science",
       "difficulty": 2,
       "explain": "مأخوذ من «أوروم»، أي الذهب باللاتينية.",
-      "source": "[VERIFY] RSC periodic table 'Gold' (Au, Latin aurum)"
+      "source": "https://en.wikipedia.org/wiki/Gold"
     },
     {
       "id": "q022",
@@ -392,7 +392,7 @@
       "topic": "food",
       "difficulty": 2,
       "explain": "ويُعتقد أنّ شجرة البنّ أصلها من إثيوبيا.",
-      "source": "[VERIFY] FAO / USDA coffee production data (Brazil #1)"
+      "source": "https://www.aljazeera.com/news/2023/10/1/international-coffee-day-where-does-your-caffeine-fix-come-from"
     },
     {
       "id": "q023",
@@ -408,7 +408,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "لهذا تبقى شفّافة تمامًا.",
-      "source": "[VERIFY] ophthalmology refs (cornea is avascular; oxygen from air via tear film)"
+      "source": "https://kolibri.teacherinabox.org.au/modules/en-wikipedia_for_schools-static/wp/c/Cornea.htm"
     },
     {
       "id": "q024",
@@ -422,7 +422,7 @@
       "topic": "science",
       "difficulty": 2,
       "explain": "أسرع بنحو أربع مرّات.",
-      "source": "[VERIFY] physics refs (speed of sound ~1,480 m/s in water vs ~343 m/s in air)"
+      "source": "https://en.wikipedia.org/wiki/Speed_of_sound"
     },
     {
       "id": "q025",
@@ -435,8 +435,8 @@
       "answer": 1,
       "topic": "science",
       "difficulty": 1,
-      "explain": "مبنى إمباير ستيت يُضرب نحو عشرين مرّة في السنة.",
-      "source": "[VERIFY] NOAA / NWS lightning myths (Empire State Building struck ~20-25 times a year)"
+      "explain": "مبنى إمباير ستيت يُضرب نحو 25 مرّة في السنة.",
+      "source": "https://www.nyc.gov/site/em/ready/thunderstorms.page"
     },
     {
       "id": "q026",
@@ -452,7 +452,7 @@
       "topic": "nature",
       "difficulty": 3,
       "explain": "حتّى تحت المجهر يصعب التفريق بينها.",
-      "source": "[VERIFY] Henneberg et al. 1997 / encyclopedia 'koala' (human-like fingerprints)"
+      "source": "https://www.pbs.org/wgbh/nova/article/koala-fingerprints"
     },
     {
       "id": "q027",
@@ -468,7 +468,7 @@
       "topic": "science",
       "difficulty": 2,
       "explain": "النجم التالي، بروكسيما سنتوري، يبعد أكثر من أربع سنوات ضوئية.",
-      "source": "[VERIFY] NASA 'Sun' / 'Proxima Centauri' (nearest star beyond the Sun)"
+      "source": "https://science.nasa.gov/?p=465403"
     },
     {
       "id": "q028",
@@ -484,7 +484,7 @@
       "topic": "history",
       "difficulty": 1,
       "explain": "وهو أيضًا أقدم العجائب السبع.",
-      "source": "[VERIFY] Britannica 'Seven Wonders of the World'"
+      "source": "https://education.nationalgeographic.org/resource/seven-wonders-ancient-world/"
     },
     {
       "id": "q029",
@@ -500,7 +500,7 @@
       "topic": "art",
       "difficulty": 1,
       "explain": "كان ليوناردو مخترعًا أيضًا ورسم آلات طائرة.",
-      "source": "[VERIFY] Musée du Louvre 'Mona Lisa' (Leonardo da Vinci)"
+      "source": "https://www.britannica.com/question/Where-is-the-real-Mona-Lisa-kept"
     },
     {
       "id": "q030",
@@ -516,7 +516,7 @@
       "topic": "art",
       "difficulty": 1,
       "explain": "معلّقة خلف زجاج واقٍ في متحف اللوفر.",
-      "source": "[VERIFY] Musée du Louvre (Mona Lisa location, protective glass)"
+      "source": "https://www.britannica.com/question/Where-is-the-real-Mona-Lisa-kept"
     },
     {
       "id": "q031",
@@ -532,7 +532,7 @@
       "topic": "history",
       "difficulty": 1,
       "explain": "لحق به باز ألدرين بعد نحو عشرين دقيقة.",
-      "source": "https://airandspace.si.edu/amp-stories/buzz-aldrin (Aldrin followed Armstrong about 19 minutes later)"
+      "source": "https://www.nasa.gov/feature/50-years-ago-one-small-step-one-giant-leap"
     },
     {
       "id": "q032",
@@ -548,7 +548,7 @@
       "topic": "history",
       "difficulty": 2,
       "explain": "كان ذلك في تمّوز/يوليو مع رحلة أبولو 11.",
-      "source": "[VERIFY] NASA 'Apollo 11' (July 1969)"
+      "source": "https://www.nasa.gov/feature/50-years-ago-apollo-astronauts-land-take-first-us-steps-on-moon"
     },
     {
       "id": "q033",
@@ -564,7 +564,7 @@
       "topic": "history",
       "difficulty": 2,
       "explain": "عمل في مدينة ماينتس نحو خمسينيات القرن الخامس عشر.",
-      "source": "[VERIFY] Britannica 'Johannes Gutenberg' (movable metal type, ~1450, Mainz)"
+      "source": "https://www.britannica.com/biography/Johannes-Gutenberg"
     },
     {
       "id": "q034",
@@ -580,7 +580,7 @@
       "topic": "history",
       "difficulty": 2,
       "explain": "حفظ الرماد شوارعها ومخابزها وحتّى الكتابات على جدرانها.",
-      "source": "[VERIFY] Britannica 'Pompeii' (AD 79)"
+      "source": "https://www.smithsonianmag.com/travel/a-glimpse-of-old-pompeii-10918623/"
     },
     {
       "id": "q035",
@@ -596,7 +596,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "اقترحها سنة 1989 حين كان يعمل في مختبر سيرن.",
-      "source": "[VERIFY] CERN 'The birth of the Web' (Tim Berners-Lee, 1989)"
+      "source": "https://timeline.web.cern.ch/node/365"
     },
     {
       "id": "q036",
@@ -612,7 +612,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "واسمه هو أعطانا كلمة أخرى: «Algorithm» أي الخوارزمية.",
-      "source": "[VERIFY] Britannica 'al-Khwārizmī' (al-jabr → algebra; name → algorithm)"
+      "source": "https://www.britannica.com/biography/al-Khwarizmi"
     },
     {
       "id": "q037",
@@ -631,7 +631,7 @@
         "ar"
       ],
       "explain": "انتقلت من «قهوة» إلى التركية «kahve» ثمّ إلى أوروبا.",
-      "source": "[VERIFY] Online Etymology Dictionary 'coffee' (Arabic qahwa via Turkish kahve)"
+      "source": "https://en.wiktionary.org/wiki/coffee"
     },
     {
       "id": "q038",
@@ -646,8 +646,8 @@
       "answer": 0,
       "topic": "art",
       "difficulty": 1,
-      "explain": "رسمها سنة 1889 من ذاكرته للمنظر من نافذته.",
-      "source": "[VERIFY] MoMA 'The Starry Night' (Van Gogh, 1889)"
+      "explain": "رسمها سنة 1889 في مصحّ بسان ريمي، مستوحيًا المنظر من نافذته.",
+      "source": "https://www.britannica.com/topic/The-Starry-Night"
     },
     {
       "id": "q039",
@@ -663,7 +663,7 @@
       "topic": "art",
       "difficulty": 2,
       "explain": "بيتها الأزرق في مكسيكو أصبح اليوم متحفًا.",
-      "source": "[VERIFY] Britannica 'Frida Kahlo' (Mexico; Casa Azul)"
+      "source": "https://www.mexicocity.cdmx.gob.mx/venues/frida-kahlo-museum-casa-azul/"
     },
     {
       "id": "q040",
@@ -679,7 +679,7 @@
       "topic": "art",
       "difficulty": 2,
       "explain": "اسم اللوحة «إصرار الذاكرة» (1931).",
-      "source": "[VERIFY] MoMA 'The Persistence of Memory' (Dalí, 1931)"
+      "source": "https://www.britannica.com/topic/The-Persistence-of-Memory"
     },
     {
       "id": "q041",
@@ -695,7 +695,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "52 أبيض و36 أسود.",
-      "source": "[VERIFY] trivial (standard piano: 88 keys = 52 white + 36 black)"
+      "source": "https://www.gear4music.com/blog/piano-notes/"
     },
     {
       "id": "q042",
@@ -711,7 +711,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "كتب سمفونيّته التاسعة وهو أصمّ تقريبًا.",
-      "source": "[VERIFY] Britannica 'Ludwig van Beethoven' (deafness; Ninth Symphony)"
+      "source": "https://www.britannica.com/print/article/578114"
     },
     {
       "id": "q043",
@@ -727,7 +727,7 @@
       "topic": "music",
       "difficulty": 1,
       "explain": "أمّا غيتار الباص فعادةً له أربعة.",
-      "source": "[VERIFY] trivial (standard guitar: 6 strings)"
+      "source": "https://www.britannica.com/art/bass-guitar"
     },
     {
       "id": "q044",
@@ -743,7 +743,7 @@
       "topic": "dance",
       "difficulty": 2,
       "explain": "تسجّله الأونيسكو تراثًا مشتركًا بين الأرجنتين والأوروغواي، وما زالت بوينس آيرس ومونتيفيديو تتنازعان على الرقصة الأولى.",
-      "source": "[VERIFY] UNESCO ICH 'Tango' (Argentina and Uruguay, 2009)"
+      "source": "https://ich.unesco.org/en/RL/00258"
     },
     {
       "id": "q045",
@@ -762,7 +762,7 @@
         "es"
       ],
       "explain": "يجمع الغناء والغيتار والرقص والتصفيق الإيقاعي المسمّى «بالماس».",
-      "source": "[VERIFY] UNESCO ICH 'Flamenco' (Spain, 2010; Andalusian roots)"
+      "source": "https://ich.unesco.org/es/RL/el-flamenco-00363"
     },
     {
       "id": "q046",
@@ -778,7 +778,7 @@
       "topic": "music",
       "difficulty": 1,
       "explain": "أغنيتهم «Dynamite» سنة 2020 كانت أوّل أغنية لهم بالإنجليزية بالكامل.",
-      "source": "[VERIFY] trivial (BTS, South Korea); Billboard/Big Hit: \"Dynamite\" (Aug 2020), first all-English single"
+      "source": "https://www.korea.net/NewsFocus/Culture/view?articleId=188978"
     },
     {
       "id": "q047",
@@ -794,7 +794,7 @@
       "topic": "cinema-tv",
       "difficulty": 1,
       "explain": "تدور أحداث فيلم 1994 في السافانا الأفريقية.",
-      "source": "[VERIFY] Disney 'The Lion King' (1994) characters"
+      "source": "https://d23.com/disney-a-to-z/lion-king-the-film"
     },
     {
       "id": "q048",
@@ -810,7 +810,7 @@
       "topic": "cinema-tv",
       "difficulty": 2,
       "explain": "وأخرج أيضًا «إي تي» و«الفكّ المفترس».",
-      "source": "[VERIFY] AFI catalog 'Jurassic Park' (1993, Spielberg)"
+      "source": "https://www.britannica.com/topic/Jurassic-Park-film-by-Spielberg"
     },
     {
       "id": "q049",
@@ -826,7 +826,7 @@
       "topic": "cinema-tv",
       "difficulty": 2,
       "explain": "أصبح اسم بومباي الرسمي مومباي منذ 1995.",
-      "source": "[VERIFY] OED / Britannica 'Bollywood' (Bombay + Hollywood)"
+      "source": "https://en.wikipedia.org/wiki/Bollywood"
     },
     {
       "id": "q050",
@@ -842,7 +842,7 @@
       "topic": "cinema-tv",
       "difficulty": 3,
       "explain": "صدر سنة 1937.",
-      "source": "[VERIFY] Walt Disney Archives 'Snow White and the Seven Dwarfs' (1937)"
+      "source": "https://www.britannica.com/topic/Snow-White-and-the-Seven-Dwarfs-film-1937"
     },
     {
       "id": "q051",
@@ -858,7 +858,7 @@
       "topic": "cinema-tv",
       "difficulty": 3,
       "explain": "فاز الفيلم الكوري الجنوبي بها سنة 2020.",
-      "source": "[VERIFY] Academy Awards database, 92nd ceremony (Parasite, Best Picture)"
+      "source": "https://www.pbs.org/newshour/arts/parasite-becomes-first-non-english-language-film-to-win-best-picture-oscar"
     },
     {
       "id": "q052",
@@ -874,7 +874,7 @@
       "topic": "football",
       "difficulty": 1,
       "explain": "منهم حارس المرمى، الوحيد المسموح له باستعمال يديه.",
-      "source": "[VERIFY] IFAB Laws of the Game, Law 3"
+      "source": "https://www.thefa.com/football-rules-governance/lawsandrules/laws/football-11-11/law-3---the-players"
     },
     {
       "id": "q053",
@@ -890,7 +890,7 @@
       "topic": "football",
       "difficulty": 2,
       "explain": "للبرازيل خمسة ألقاب.",
-      "source": "[VERIFY] FIFA World Cup records (Brazil, 5 titles)"
+      "source": "https://www.britannica.com/sports/football-soccer"
     },
     {
       "id": "q054",
@@ -906,7 +906,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "وفازت بها الأوروغواي أيضًا.",
-      "source": "[VERIFY] FIFA '1930 FIFA World Cup Uruguay' (host and winner)"
+      "source": "https://olympics.com/en/news/first-fifa-world-cup-football-1930-uruguay-champion-records"
     },
     {
       "id": "q055",
@@ -922,7 +922,7 @@
       "topic": "football",
       "difficulty": 1,
       "explain": "حُسم النهائي أمام فرنسا بركلات الترجيح.",
-      "source": "[VERIFY] FIFA 'Qatar 2022 final' (Argentina beat France on penalties)"
+      "source": "https://www.aljazeera.com/sports/2022/12/18/messis-argentina-beat-france-on-penalties-to-win-world-cup"
     },
     {
       "id": "q056",
@@ -938,7 +938,7 @@
       "topic": "football",
       "difficulty": 2,
       "explain": "وكانت أيضًا سابقة لمنتخب عربي.",
-      "source": "[VERIFY] FIFA Qatar 2022 (Morocco: first African and Arab semi-finalist)"
+      "source": "https://egyptianstreets.com/2022/12/10/morocco-first-african-arab-nation-to-reach-world-cup-semi-finals/"
     },
     {
       "id": "q057",
@@ -954,7 +954,7 @@
       "topic": "sports",
       "difficulty": 1,
       "explain": "طوكيو 2020 كانت استثناءً نادرًا، إذ أُقيمت سنة 2021.",
-      "source": "[VERIFY] IOC (Summer Games every 4 years; Tokyo 2020 held in 2021)"
+      "source": "https://www.olympics.com.au/news/ioc-statement-tokyo-2020-postponed-until-2021"
     },
     {
       "id": "q058",
@@ -970,7 +970,7 @@
       "topic": "sports",
       "difficulty": 1,
       "explain": "ترمز إلى اتّحاد القارّات.",
-      "source": "[VERIFY] IOC 'Olympic rings'"
+      "source": "https://olympics.com/ioc/news/in-1913-pierre-de-coubertin-designed-one-of-the-world-s-most-famous-symbols"
     },
     {
       "id": "q059",
@@ -986,7 +986,7 @@
       "topic": "sports",
       "difficulty": 2,
       "explain": "ثمّ يُحتسب الشوط 15 و30 و40… ولا أحد متأكّد تمامًا من السبب.",
-      "source": "[VERIFY] ITF Rules of Tennis (scoring terms)"
+      "source": "https://www.britannica.com/one-good-fact/why-is-a-zero-score-in-tennis-called-love"
     },
     {
       "id": "q060",
@@ -1002,7 +1002,7 @@
       "topic": "sports",
       "difficulty": 2,
       "explain": "بالضبط 42.195 كم.",
-      "source": "[VERIFY] World Athletics (marathon 42.195 km)"
+      "source": "https://worldathletics.org/disciplines/road/marathon"
     },
     {
       "id": "q061",
@@ -1018,7 +1018,7 @@
       "topic": "food",
       "difficulty": 2,
       "explain": "طماطم وموزاريلا وريحان: ألوان العلم الإيطالي.",
-      "source": "[VERIFY] AVPN / encyclopedia 'pizza Margherita' (Naples)"
+      "source": "https://en.wikipedia.org/wiki/Pizza_Margherita"
     },
     {
       "id": "q062",
@@ -1034,7 +1034,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "أصلها من المكسيك، موطن الأفوكادو.",
-      "source": "[VERIFY] trivial (guacamole = avocado)"
+      "source": "https://www.britannica.com/topic/guacamole"
     },
     {
       "id": "q063",
@@ -1050,7 +1050,7 @@
       "topic": "food",
       "difficulty": 3,
       "explain": "كلّ زهرة كروكوس تعطي ثلاث شعيرات فقط تُقطف باليد.",
-      "source": "[VERIFY] Britannica 'saffron' (stigmas of Crocus sativus; priciest spice by weight)"
+      "source": "https://www.britannica.com/topic/saffron"
     },
     {
       "id": "q064",
@@ -1069,7 +1069,7 @@
         "es"
       ],
       "explain": "تُطبخ تقليديًا في الهواء الطلق في مقلاة واسعة ومسطّحة.",
-      "source": "[VERIFY] encyclopedia 'paella' (Valencia)"
+      "source": "https://en.wikipedia.org/wiki/Paella"
     },
     {
       "id": "q065",
@@ -1085,7 +1085,7 @@
       "topic": "food",
       "difficulty": 2,
       "explain": "لوز مطحون وسكّر يُشكَّل فواكه وحيوانات وأكثر.",
-      "source": "[VERIFY] encyclopedia 'marzipan' (almonds, sugar)"
+      "source": "https://www.britannica.com/topic/marzipan"
     },
     {
       "id": "q066",
@@ -1099,7 +1099,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "بل يصنّفها علماء النبات من التوتيّات.",
-      "source": "[VERIFY] botany refs (tomato = berry, a fruit)"
+      "source": "https://www.britannica.com/story/is-a-tomato-a-fruit-or-a-vegetable"
     },
     {
       "id": "q067",
@@ -1113,7 +1113,7 @@
       "topic": "places",
       "difficulty": 2,
       "explain": "حتّى من المدار المنخفض يصعب جدًّا رؤيته بالعين المجرّدة.",
-      "source": "[VERIFY] NASA Earth Observatory 'Great Wall from space' myth"
+      "source": "https://www.britannica.com/question/Can-you-see-the-Great-Wall-of-China-from-space"
     },
     {
       "id": "q068",
@@ -1127,7 +1127,7 @@
       "topic": "nature",
       "difficulty": 2,
       "explain": "أثبتت التجارب أنّها تتذكّر أشياء لشهور.",
-      "source": "[VERIFY] animal-cognition studies on goldfish memory (months, not seconds)"
+      "source": "https://www.amnh.org/learn-teach/curriculum-collections/young-naturalist-awards/goldfish-as-a-model-for-understanding-learning-and-memory-more-complex-than-you-think"
     },
     {
       "id": "q069",
@@ -1143,7 +1143,7 @@
       "topic": "language",
       "difficulty": 2,
       "explain": "أمّا إذا حسبنا من يتكلّمها لغةً ثانية، فالإنجليزية تتصدّر.",
-      "source": "[VERIFY] Ethnologue (most native speakers: Mandarin)"
+      "source": "https://www.ethnologue.com/insights/most-spoken-language/"
     },
     {
       "id": "q070",
@@ -1159,7 +1159,7 @@
       "topic": "language",
       "difficulty": 2,
       "explain": "سُمّيت باسم كيرلس، عالم من القرن التاسع وُلد في سالونيك.",
-      "source": "[VERIFY] Britannica 'Cyrillic alphabet'"
+      "source": "https://www.britannica.com/topic/Cyrillic-alphabet"
     },
     {
       "id": "q071",
@@ -1175,7 +1175,7 @@
       "topic": "language",
       "difficulty": 1,
       "explain": "«كونيتشيوا» تعني مرحبًا، و«سايونارا» وداعًا، و«كاواي» لطيف.",
-      "source": "[VERIFY] trivial (Japanese 'arigatō')"
+      "source": "https://insidekyoto.com/most-useful-japanese-expressions"
     },
     {
       "id": "q072",
@@ -1191,7 +1191,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "يدور حول نفسه في نحو عشر ساعات رغم أنّه أكبر الكواكب.",
-      "source": "[VERIFY] NASA 'Jupiter' (rotation ~10 hours)"
+      "source": "https://science.nasa.gov/jupiter/facts/"
     },
     {
       "id": "q073",
@@ -1207,7 +1207,7 @@
       "topic": "language",
       "difficulty": 3,
       "explain": "حرف Z في Arizona، وX في Texas، وJ في New Jersey.",
-      "source": "[VERIFY] list of US state names (no letter Q)"
+      "source": "https://a-z-animals.com/blog/what-letter-is-not-in-any-state-name-and-which-is-most-popular/"
     },
     {
       "id": "q074",
@@ -1223,7 +1223,7 @@
       "topic": "nature",
       "difficulty": 2,
       "explain": "قد ترفرف أجنحته عشرات المرّات في الثانية.",
-      "source": "[VERIFY] encyclopedia 'hummingbird' (can fly backwards)"
+      "source": "https://www.sciencing.com/1864840/why-hummingbirds-only-bird-species-fly-backwards"
     },
     {
       "id": "q075",
@@ -1239,7 +1239,7 @@
       "topic": "places",
       "difficulty": 1,
       "explain": "قلعة الإنكا عالية في جبال الأنديز، على ارتفاع نحو 2400 متر.",
-      "source": "[VERIFY] UNESCO WHC 'Historic Sanctuary of Machu Picchu' (Peru)"
+      "source": "https://en.wikipedia.org/wiki/Machu_Picchu"
     }
   ]
 }

@@ -60,7 +60,7 @@
       "topic": "geography",
       "difficulty": 1,
       "explain": "It is bigger than all the land on Earth put together.",
-      "source": "[VERIFY] NOAA Ocean Service 'largest ocean' (Pacific)"
+      "source": "https://www.britannica.com/summary/Pacific-Ocean"
     },
     {
       "id": "q002",
@@ -76,7 +76,7 @@
       "topic": "geography",
       "difficulty": 1,
       "explain": "It spans eleven time zones: somewhere in Russia, someone is always having breakfast.",
-      "source": "[VERIFY] CIA World Factbook area ranking (Russia #1)"
+      "source": "https://en.wikipedia.org/wiki/Area_of_Russia"
     },
     {
       "id": "q003",
@@ -92,7 +92,7 @@
       "topic": "geography",
       "difficulty": 2,
       "explain": "It was built as a compromise between rivals Sydney and Melbourne.",
-      "source": "[VERIFY] Britannica 'Canberra' (purpose-built capital, compromise Sydney/Melbourne)"
+      "source": "https://australiangeographic.com.au/?p=21733"
     },
     {
       "id": "q004",
@@ -108,7 +108,7 @@
       "topic": "geography",
       "difficulty": 2,
       "explain": "Counting cold deserts too, the biggest of all is Antarctica.",
-      "source": "[VERIFY] Britannica 'Sahara' (largest hot desert); 'desert' (Antarctica largest overall)"
+      "source": "https://www.guinnessworldrecords.com/world-records/largest-desert"
     },
     {
       "id": "q005",
@@ -124,7 +124,7 @@
       "topic": "geography",
       "difficulty": 3,
       "explain": "Thanks to islands scattered across the oceans, France has 12.",
-      "source": "[VERIFY] French government / time-zone references (France: 12 zones incl. overseas, 13 with Adélie Land)"
+      "source": "https://www.timeanddate.com/time/country-with-the-most-time-zones.html"
     },
     {
       "id": "q006",
@@ -138,7 +138,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "Venus spins so slowly that it goes round the Sun before it finishes one turn.",
-      "source": "[VERIFY] NASA 'Venus' (sidereal day ~243 Earth days; year ~225 Earth days)"
+      "source": "https://www.snopes.com/fact-check/one-day-on-venus-is-longer-than-a-year-on-venus/"
     },
     {
       "id": "q007",
@@ -154,7 +154,7 @@
       "topic": "geography",
       "difficulty": 1,
       "explain": "It covers less than half a square kilometre.",
-      "source": "[VERIFY] CIA World Factbook 'Holy See' (~0.44 km²)"
+      "source": "https://www.britannica.com/topic/list-of-the-smallest-countries-by-area"
     },
     {
       "id": "q008",
@@ -170,7 +170,7 @@
       "topic": "geography",
       "difficulty": 1,
       "explain": "Sicily, just off the toe, looks like the ball it's about to kick.",
-      "source": "[VERIFY] trivial (map of Italy)"
+      "source": "https://www.esa.int/Applications/Observing_the_Earth/Earth_from_Space_The_Boot"
     },
     {
       "id": "q009",
@@ -186,7 +186,7 @@
       "topic": "geography",
       "difficulty": 3,
       "explain": "Pretoria, Cape Town and Bloemfontein share the job.",
-      "source": "[VERIFY] South African Government 'Capital cities' (Pretoria, Cape Town, Bloemfontein)"
+      "source": "https://www.worldatlas.com/articles/what-is-the-capital-of-south-africa.html"
     },
     {
       "id": "q010",
@@ -202,7 +202,7 @@
       "topic": "geography",
       "difficulty": 2,
       "explain": "It drops about 979 m in Venezuela, so high the water turns to mist.",
-      "source": "[VERIFY] Britannica 'Angel Falls' (Venezuela, ~979 m)"
+      "source": "https://en.wikipedia.org/wiki/Angel_Falls"
     },
     {
       "id": "q011",
@@ -218,7 +218,7 @@
       "topic": "nature",
       "difficulty": 2,
       "explain": "Australia, by contrast, is home to some of the most varied ants on Earth.",
-      "source": "[VERIFY] encyclopedia 'ant' (on every continent except Antarctica)"
+      "source": "https://www.pestworld.org/news-hub/pest-articles/8-interesting-facts-about-ants/"
     },
     {
       "id": "q012",
@@ -234,7 +234,7 @@
       "topic": "science",
       "difficulty": 1,
       "explain": "In return, they release the oxygen we breathe.",
-      "source": "[VERIFY] school biology 'photosynthesis'"
+      "source": "https://www.livescience.com/51720-photosynthesis.html"
     },
     {
       "id": "q013",
@@ -250,7 +250,7 @@
       "topic": "nature",
       "difficulty": 1,
       "explain": "Insects have six, so spiders aren't insects: they're arachnids.",
-      "source": "[VERIFY] trivial (arachnids: 8 legs)"
+      "source": "https://www.newworldencyclopedia.org/entry/Arachnida"
     },
     {
       "id": "q014",
@@ -266,7 +266,7 @@
       "topic": "science",
       "difficulty": 1,
       "explain": "It tops the Mohs hardness scale at 10.",
-      "source": "[VERIFY] Mohs scale (diamond = 10)"
+      "source": "https://www.livescience.com/planet-earth/geology/is-anything-harder-than-a-diamond"
     },
     {
       "id": "q015",
@@ -282,7 +282,7 @@
       "topic": "science",
       "difficulty": 2,
       "explain": "The storm is wider than the whole Earth.",
-      "source": "[VERIFY] NASA 'Jupiter: Great Red Spot' (storm wider than Earth)"
+      "source": "https://www.jpl.nasa.gov/images/pia21774-jupiters-great-red-spot-swallows-earth/"
     },
     {
       "id": "q016",
@@ -298,7 +298,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "Its axis is tilted by about 98 degrees.",
-      "source": "[VERIFY] NASA 'Uranus' (axial tilt ~98°)"
+      "source": "https://science.gsfc.nasa.gov/690/Uranus.html"
     },
     {
       "id": "q017",
@@ -312,7 +312,7 @@
       "topic": "nature",
       "difficulty": 1,
       "explain": "They are the only mammals that can truly fly.",
-      "source": "[VERIFY] encyclopedia 'bat' (only mammals capable of true flight)"
+      "source": "https://www.pbs.org/wnet/nature/group/mammals/bat"
     },
     {
       "id": "q018",
@@ -328,7 +328,7 @@
       "topic": "nature",
       "difficulty": 2,
       "explain": "Its heart alone weighs around 180 kg, about as much as an upright piano.",
-      "source": "[VERIFY] NOAA Fisheries 'blue whale' (largest animal known to have lived); Royal Ontario Museum 2014 heart (about 180 kg)"
+      "source": "https://www.guinnessworldrecords.com/world-records/largest-heart"
     },
     {
       "id": "q019",
@@ -344,7 +344,7 @@
       "topic": "nature",
       "difficulty": 2,
       "explain": "And its blood is blue. Ocean royalty.",
-      "source": "[VERIFY] encyclopedia 'octopus' (three hearts; copper-based blue blood)"
+      "source": "https://www.livescience.com/how-many-hearts-does-an-octopus-have"
     },
     {
       "id": "q020",
@@ -360,7 +360,7 @@
       "topic": "science",
       "difficulty": 2,
       "explain": "It was once used in most thermometers.",
-      "source": "[VERIFY] Royal Society of Chemistry periodic table 'Mercury'"
+      "source": "https://www.britannica.com/science/mercury-chemical-element"
     },
     {
       "id": "q021",
@@ -376,7 +376,7 @@
       "topic": "science",
       "difficulty": 2,
       "explain": "It comes from \"aurum\", the Latin word for gold.",
-      "source": "[VERIFY] RSC periodic table 'Gold' (Au, Latin aurum)"
+      "source": "https://en.wikipedia.org/wiki/Gold"
     },
     {
       "id": "q022",
@@ -392,7 +392,7 @@
       "topic": "food",
       "difficulty": 2,
       "explain": "Ethiopia is where the coffee plant is thought to come from.",
-      "source": "[VERIFY] FAO / USDA coffee production data (Brazil #1)"
+      "source": "https://www.aljazeera.com/news/2023/10/1/international-coffee-day-where-does-your-caffeine-fix-come-from"
     },
     {
       "id": "q023",
@@ -408,7 +408,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "That's why it stays perfectly clear.",
-      "source": "[VERIFY] ophthalmology refs (cornea is avascular; oxygen from air via tear film)"
+      "source": "https://kolibri.teacherinabox.org.au/modules/en-wikipedia_for_schools-static/wp/c/Cornea.htm"
     },
     {
       "id": "q024",
@@ -422,7 +422,7 @@
       "topic": "science",
       "difficulty": 2,
       "explain": "About four times faster.",
-      "source": "[VERIFY] physics refs (speed of sound ~1,480 m/s in water vs ~343 m/s in air)"
+      "source": "https://en.wikipedia.org/wiki/Speed_of_sound"
     },
     {
       "id": "q025",
@@ -435,8 +435,8 @@
       "answer": 1,
       "topic": "science",
       "difficulty": 1,
-      "explain": "The Empire State Building is hit around 20 times a year.",
-      "source": "[VERIFY] NOAA / NWS lightning myths (Empire State Building struck ~20-25 times a year)"
+      "explain": "The Empire State Building is hit about 25 times a year.",
+      "source": "https://www.nyc.gov/site/em/ready/thunderstorms.page"
     },
     {
       "id": "q026",
@@ -452,7 +452,7 @@
       "topic": "nature",
       "difficulty": 3,
       "explain": "Even under a microscope they are hard to tell apart.",
-      "source": "[VERIFY] Henneberg et al. 1997 / encyclopedia 'koala' (human-like fingerprints)"
+      "source": "https://www.pbs.org/wgbh/nova/article/koala-fingerprints"
     },
     {
       "id": "q027",
@@ -468,7 +468,7 @@
       "topic": "science",
       "difficulty": 2,
       "explain": "The next closest, Proxima Centauri, is over four light-years away.",
-      "source": "[VERIFY] NASA 'Sun' / 'Proxima Centauri' (nearest star beyond the Sun)"
+      "source": "https://science.nasa.gov/?p=465403"
     },
     {
       "id": "q028",
@@ -484,7 +484,7 @@
       "topic": "history",
       "difficulty": 1,
       "explain": "It's also the oldest of the seven.",
-      "source": "[VERIFY] Britannica 'Seven Wonders of the World'"
+      "source": "https://education.nationalgeographic.org/resource/seven-wonders-ancient-world/"
     },
     {
       "id": "q029",
@@ -500,7 +500,7 @@
       "topic": "art",
       "difficulty": 1,
       "explain": "Leonardo was also an inventor who sketched flying machines.",
-      "source": "[VERIFY] Musée du Louvre 'Mona Lisa' (Leonardo da Vinci)"
+      "source": "https://www.britannica.com/question/Where-is-the-real-Mona-Lisa-kept"
     },
     {
       "id": "q030",
@@ -516,7 +516,7 @@
       "topic": "art",
       "difficulty": 1,
       "explain": "She hangs behind protective glass at the Louvre.",
-      "source": "[VERIFY] Musée du Louvre (Mona Lisa location, protective glass)"
+      "source": "https://www.britannica.com/question/Where-is-the-real-Mona-Lisa-kept"
     },
     {
       "id": "q031",
@@ -532,7 +532,7 @@
       "topic": "history",
       "difficulty": 1,
       "explain": "Buzz Aldrin followed him about twenty minutes later.",
-      "source": "https://airandspace.si.edu/amp-stories/buzz-aldrin (Aldrin followed Armstrong about 19 minutes later)"
+      "source": "https://www.nasa.gov/feature/50-years-ago-one-small-step-one-giant-leap"
     },
     {
       "id": "q032",
@@ -548,7 +548,7 @@
       "topic": "history",
       "difficulty": 2,
       "explain": "It happened in July, with Apollo 11.",
-      "source": "[VERIFY] NASA 'Apollo 11' (July 1969)"
+      "source": "https://www.nasa.gov/feature/50-years-ago-apollo-astronauts-land-take-first-us-steps-on-moon"
     },
     {
       "id": "q033",
@@ -564,7 +564,7 @@
       "topic": "history",
       "difficulty": 2,
       "explain": "He worked in Mainz, around the 1450s.",
-      "source": "[VERIFY] Britannica 'Johannes Gutenberg' (movable metal type, ~1450, Mainz)"
+      "source": "https://www.britannica.com/biography/Johannes-Gutenberg"
     },
     {
       "id": "q034",
@@ -580,7 +580,7 @@
       "topic": "history",
       "difficulty": 2,
       "explain": "The ash preserved streets, bakeries and even graffiti.",
-      "source": "[VERIFY] Britannica 'Pompeii' (AD 79)"
+      "source": "https://www.smithsonianmag.com/travel/a-glimpse-of-old-pompeii-10918623/"
     },
     {
       "id": "q035",
@@ -596,7 +596,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "He proposed it in 1989 while working at CERN.",
-      "source": "[VERIFY] CERN 'The birth of the Web' (Tim Berners-Lee, 1989)"
+      "source": "https://timeline.web.cern.ch/node/365"
     },
     {
       "id": "q036",
@@ -612,7 +612,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "His own name gave us another word: \"algorithm\".",
-      "source": "[VERIFY] Britannica 'al-Khwārizmī' (al-jabr → algebra; name → algorithm)"
+      "source": "https://www.britannica.com/biography/al-Khwarizmi"
     },
     {
       "id": "q037",
@@ -631,7 +631,7 @@
         "ar"
       ],
       "explain": "It travelled from \"qahwa\" through Turkish \"kahve\" into Europe.",
-      "source": "[VERIFY] Online Etymology Dictionary 'coffee' (Arabic qahwa via Turkish kahve)"
+      "source": "https://en.wiktionary.org/wiki/coffee"
     },
     {
       "id": "q038",
@@ -646,8 +646,8 @@
       "answer": 0,
       "topic": "art",
       "difficulty": 1,
-      "explain": "He painted it in 1889, from memory of the view from his window.",
-      "source": "[VERIFY] MoMA 'The Starry Night' (Van Gogh, 1889)"
+      "explain": "He painted it in 1889 at an asylum in Saint-Rémy, inspired by the view from his window.",
+      "source": "https://www.britannica.com/topic/The-Starry-Night"
     },
     {
       "id": "q039",
@@ -663,7 +663,7 @@
       "topic": "art",
       "difficulty": 2,
       "explain": "Her Blue House in Mexico City is now a museum.",
-      "source": "[VERIFY] Britannica 'Frida Kahlo' (Mexico; Casa Azul)"
+      "source": "https://www.mexicocity.cdmx.gob.mx/venues/frida-kahlo-museum-casa-azul/"
     },
     {
       "id": "q040",
@@ -679,7 +679,7 @@
       "topic": "art",
       "difficulty": 2,
       "explain": "The painting is called \"The Persistence of Memory\" (1931).",
-      "source": "[VERIFY] MoMA 'The Persistence of Memory' (Dalí, 1931)"
+      "source": "https://www.britannica.com/topic/The-Persistence-of-Memory"
     },
     {
       "id": "q041",
@@ -695,7 +695,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "52 white and 36 black.",
-      "source": "[VERIFY] trivial (standard piano: 88 keys = 52 white + 36 black)"
+      "source": "https://www.gear4music.com/blog/piano-notes/"
     },
     {
       "id": "q042",
@@ -711,7 +711,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "He wrote his Ninth Symphony when he was almost completely deaf.",
-      "source": "[VERIFY] Britannica 'Ludwig van Beethoven' (deafness; Ninth Symphony)"
+      "source": "https://www.britannica.com/print/article/578114"
     },
     {
       "id": "q043",
@@ -727,7 +727,7 @@
       "topic": "music",
       "difficulty": 1,
       "explain": "A standard bass guitar usually has four.",
-      "source": "[VERIFY] trivial (standard guitar: 6 strings)"
+      "source": "https://www.britannica.com/art/bass-guitar"
     },
     {
       "id": "q044",
@@ -743,7 +743,7 @@
       "topic": "dance",
       "difficulty": 2,
       "explain": "UNESCO lists tango as heritage shared by Argentina and Uruguay. Buenos Aires and Montevideo still argue about who danced first.",
-      "source": "[VERIFY] UNESCO ICH 'Tango' (Argentina and Uruguay, 2009)"
+      "source": "https://ich.unesco.org/en/RL/00258"
     },
     {
       "id": "q045",
@@ -762,7 +762,7 @@
         "es"
       ],
       "explain": "It mixes song, guitar, dance and rhythmic hand-clapping called \"palmas\".",
-      "source": "[VERIFY] UNESCO ICH 'Flamenco' (Spain, 2010; Andalusian roots)"
+      "source": "https://ich.unesco.org/es/RL/el-flamenco-00363"
     },
     {
       "id": "q046",
@@ -778,7 +778,7 @@
       "topic": "music",
       "difficulty": 1,
       "explain": "Their 2020 hit \"Dynamite\" was their first song sung entirely in English.",
-      "source": "[VERIFY] trivial (BTS, South Korea); Billboard/Big Hit: \"Dynamite\" (Aug 2020), first all-English single"
+      "source": "https://www.korea.net/NewsFocus/Culture/view?articleId=188978"
     },
     {
       "id": "q047",
@@ -794,7 +794,7 @@
       "topic": "cinema-tv",
       "difficulty": 1,
       "explain": "The 1994 film is set in the African savanna.",
-      "source": "[VERIFY] Disney 'The Lion King' (1994) characters"
+      "source": "https://d23.com/disney-a-to-z/lion-king-the-film"
     },
     {
       "id": "q048",
@@ -810,7 +810,7 @@
       "topic": "cinema-tv",
       "difficulty": 2,
       "explain": "He also directed \"E.T.\" and \"Jaws\".",
-      "source": "[VERIFY] AFI catalog 'Jurassic Park' (1993, Spielberg)"
+      "source": "https://www.britannica.com/topic/Jurassic-Park-film-by-Spielberg"
     },
     {
       "id": "q049",
@@ -826,7 +826,7 @@
       "topic": "cinema-tv",
       "difficulty": 2,
       "explain": "Bombay has been officially called Mumbai since 1995.",
-      "source": "[VERIFY] OED / Britannica 'Bollywood' (Bombay + Hollywood)"
+      "source": "https://en.wikipedia.org/wiki/Bollywood"
     },
     {
       "id": "q050",
@@ -842,7 +842,7 @@
       "topic": "cinema-tv",
       "difficulty": 3,
       "explain": "It came out in 1937.",
-      "source": "[VERIFY] Walt Disney Archives 'Snow White and the Seven Dwarfs' (1937)"
+      "source": "https://www.britannica.com/topic/Snow-White-and-the-Seven-Dwarfs-film-1937"
     },
     {
       "id": "q051",
@@ -858,7 +858,7 @@
       "topic": "cinema-tv",
       "difficulty": 3,
       "explain": "The South Korean film won in 2020.",
-      "source": "[VERIFY] Academy Awards database, 92nd ceremony (Parasite, Best Picture)"
+      "source": "https://www.pbs.org/newshour/arts/parasite-becomes-first-non-english-language-film-to-win-best-picture-oscar"
     },
     {
       "id": "q052",
@@ -874,7 +874,7 @@
       "topic": "football",
       "difficulty": 1,
       "explain": "One of them is the goalkeeper, the only one allowed to use their hands.",
-      "source": "[VERIFY] IFAB Laws of the Game, Law 3"
+      "source": "https://www.thefa.com/football-rules-governance/lawsandrules/laws/football-11-11/law-3---the-players"
     },
     {
       "id": "q053",
@@ -890,7 +890,7 @@
       "topic": "football",
       "difficulty": 2,
       "explain": "Brazil has five titles.",
-      "source": "[VERIFY] FIFA World Cup records (Brazil, 5 titles)"
+      "source": "https://www.britannica.com/sports/football-soccer"
     },
     {
       "id": "q054",
@@ -906,7 +906,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "Uruguay also won it.",
-      "source": "[VERIFY] FIFA '1930 FIFA World Cup Uruguay' (host and winner)"
+      "source": "https://olympics.com/en/news/first-fifa-world-cup-football-1930-uruguay-champion-records"
     },
     {
       "id": "q055",
@@ -922,7 +922,7 @@
       "topic": "football",
       "difficulty": 1,
       "explain": "The final against France ended in a penalty shoot-out.",
-      "source": "[VERIFY] FIFA 'Qatar 2022 final' (Argentina beat France on penalties)"
+      "source": "https://www.aljazeera.com/sports/2022/12/18/messis-argentina-beat-france-on-penalties-to-win-world-cup"
     },
     {
       "id": "q056",
@@ -938,7 +938,7 @@
       "topic": "football",
       "difficulty": 2,
       "explain": "It was also a first for an Arab team.",
-      "source": "[VERIFY] FIFA Qatar 2022 (Morocco: first African and Arab semi-finalist)"
+      "source": "https://egyptianstreets.com/2022/12/10/morocco-first-african-arab-nation-to-reach-world-cup-semi-finals/"
     },
     {
       "id": "q057",
@@ -954,7 +954,7 @@
       "topic": "sports",
       "difficulty": 1,
       "explain": "Tokyo 2020 was a rare exception: it took place in 2021.",
-      "source": "[VERIFY] IOC (Summer Games every 4 years; Tokyo 2020 held in 2021)"
+      "source": "https://www.olympics.com.au/news/ioc-statement-tokyo-2020-postponed-until-2021"
     },
     {
       "id": "q058",
@@ -970,7 +970,7 @@
       "topic": "sports",
       "difficulty": 1,
       "explain": "They stand for the union of the continents.",
-      "source": "[VERIFY] IOC 'Olympic rings'"
+      "source": "https://olympics.com/ioc/news/in-1913-pierre-de-coubertin-designed-one-of-the-world-s-most-famous-symbols"
     },
     {
       "id": "q059",
@@ -986,7 +986,7 @@
       "topic": "sports",
       "difficulty": 2,
       "explain": "Then a game goes 15, 30, 40… and nobody fully agrees why.",
-      "source": "[VERIFY] ITF Rules of Tennis (scoring terms)"
+      "source": "https://www.britannica.com/one-good-fact/why-is-a-zero-score-in-tennis-called-love"
     },
     {
       "id": "q060",
@@ -1002,7 +1002,7 @@
       "topic": "sports",
       "difficulty": 2,
       "explain": "Exactly 42.195 km.",
-      "source": "[VERIFY] World Athletics (marathon 42.195 km)"
+      "source": "https://worldathletics.org/disciplines/road/marathon"
     },
     {
       "id": "q061",
@@ -1018,7 +1018,7 @@
       "topic": "food",
       "difficulty": 2,
       "explain": "Tomato, mozzarella and basil: the colours of the Italian flag.",
-      "source": "[VERIFY] AVPN / encyclopedia 'pizza Margherita' (Naples)"
+      "source": "https://en.wikipedia.org/wiki/Pizza_Margherita"
     },
     {
       "id": "q062",
@@ -1034,7 +1034,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "It comes from Mexico, where the avocado was first grown.",
-      "source": "[VERIFY] trivial (guacamole = avocado)"
+      "source": "https://www.britannica.com/topic/guacamole"
     },
     {
       "id": "q063",
@@ -1050,7 +1050,7 @@
       "topic": "food",
       "difficulty": 3,
       "explain": "Each crocus flower gives just three threads, picked by hand.",
-      "source": "[VERIFY] Britannica 'saffron' (stigmas of Crocus sativus; priciest spice by weight)"
+      "source": "https://www.britannica.com/topic/saffron"
     },
     {
       "id": "q064",
@@ -1069,7 +1069,7 @@
         "es"
       ],
       "explain": "It's traditionally cooked outdoors in a wide, shallow pan.",
-      "source": "[VERIFY] encyclopedia 'paella' (Valencia)"
+      "source": "https://en.wikipedia.org/wiki/Paella"
     },
     {
       "id": "q065",
@@ -1085,7 +1085,7 @@
       "topic": "food",
       "difficulty": 2,
       "explain": "Ground almonds and sugar, shaped into fruits, animals and more.",
-      "source": "[VERIFY] encyclopedia 'marzipan' (almonds, sugar)"
+      "source": "https://www.britannica.com/topic/marzipan"
     },
     {
       "id": "q066",
@@ -1099,7 +1099,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "Botanists even class it as a berry.",
-      "source": "[VERIFY] botany refs (tomato = berry, a fruit)"
+      "source": "https://www.britannica.com/story/is-a-tomato-a-fruit-or-a-vegetable"
     },
     {
       "id": "q067",
@@ -1113,7 +1113,7 @@
       "topic": "places",
       "difficulty": 2,
       "explain": "Even from low orbit it is very hard to spot with the naked eye.",
-      "source": "[VERIFY] NASA Earth Observatory 'Great Wall from space' myth"
+      "source": "https://www.britannica.com/question/Can-you-see-the-Great-Wall-of-China-from-space"
     },
     {
       "id": "q068",
@@ -1127,7 +1127,7 @@
       "topic": "nature",
       "difficulty": 2,
       "explain": "Experiments show they can remember things for months.",
-      "source": "[VERIFY] animal-cognition studies on goldfish memory (months, not seconds)"
+      "source": "https://www.amnh.org/learn-teach/curriculum-collections/young-naturalist-awards/goldfish-as-a-model-for-understanding-learning-and-memory-more-complex-than-you-think"
     },
     {
       "id": "q069",
@@ -1143,7 +1143,7 @@
       "topic": "language",
       "difficulty": 2,
       "explain": "English wins if you count everyone who speaks it as a second language.",
-      "source": "[VERIFY] Ethnologue (most native speakers: Mandarin)"
+      "source": "https://www.ethnologue.com/insights/most-spoken-language/"
     },
     {
       "id": "q070",
@@ -1159,7 +1159,7 @@
       "topic": "language",
       "difficulty": 2,
       "explain": "It's named after Cyril, a 9th-century scholar from Thessaloniki.",
-      "source": "[VERIFY] Britannica 'Cyrillic alphabet'"
+      "source": "https://www.britannica.com/topic/Cyrillic-alphabet"
     },
     {
       "id": "q071",
@@ -1175,7 +1175,7 @@
       "topic": "language",
       "difficulty": 1,
       "explain": "\"Konnichiwa\" is hello, \"sayōnara\" goodbye, and \"kawaii\" cute.",
-      "source": "[VERIFY] trivial (Japanese 'arigatō')"
+      "source": "https://insidekyoto.com/most-useful-japanese-expressions"
     },
     {
       "id": "q072",
@@ -1191,7 +1191,7 @@
       "topic": "science",
       "difficulty": 3,
       "explain": "It spins once in about ten hours, despite being the biggest planet.",
-      "source": "[VERIFY] NASA 'Jupiter' (rotation ~10 hours)"
+      "source": "https://science.nasa.gov/jupiter/facts/"
     },
     {
       "id": "q073",
@@ -1207,7 +1207,7 @@
       "topic": "language",
       "difficulty": 3,
       "explain": "Z is in Arizona, X in Texas and J in New Jersey.",
-      "source": "[VERIFY] list of US state names (no letter Q)"
+      "source": "https://a-z-animals.com/blog/what-letter-is-not-in-any-state-name-and-which-is-most-popular/"
     },
     {
       "id": "q074",
@@ -1223,7 +1223,7 @@
       "topic": "nature",
       "difficulty": 2,
       "explain": "Its wings can beat dozens of times a second.",
-      "source": "[VERIFY] encyclopedia 'hummingbird' (can fly backwards)"
+      "source": "https://www.sciencing.com/1864840/why-hummingbirds-only-bird-species-fly-backwards"
     },
     {
       "id": "q075",
@@ -1239,7 +1239,7 @@
       "topic": "places",
       "difficulty": 1,
       "explain": "The Inca citadel sits high in the Andes, about 2,400 m up.",
-      "source": "[VERIFY] UNESCO WHC 'Historic Sanctuary of Machu Picchu' (Peru)"
+      "source": "https://en.wikipedia.org/wiki/Machu_Picchu"
     }
   ]
 }

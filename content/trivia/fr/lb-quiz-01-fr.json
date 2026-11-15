@@ -62,7 +62,7 @@
       ],
       "region": "beirut",
       "explain": "Beyrouth s'avance dans la Méditerranée sur un cap, comme pour mieux voir la mer.",
-      "source": "[VERIFY] trivial; any encyclopedia (Britannica: Beirut)"
+      "source": "https://www.britannica.com/place/Beirut"
     },
     {
       "id": "q002",
@@ -79,7 +79,7 @@
       "difficulty": 2,
       "region": "north",
       "explain": "Il culmine à environ 3 088 m, au-dessus de la vallée de la Qadisha, au nord.",
-      "source": "[VERIFY] Britannica 'Qurnat al-Sawdāʾ' (name, ~3,088 m, location above Qadisha)"
+      "source": "https://en.wikipedia.org/wiki/Qurnat_as_Sawda%27"
     },
     {
       "id": "q003",
@@ -96,7 +96,7 @@
       "difficulty": 2,
       "region": "bekaa",
       "explain": "Il prend sa source dans la Békaa, près de Baalbek.",
-      "source": "[VERIFY] Britannica 'Līṭānī River' (longest entirely within Lebanon; source near Baalbek)"
+      "source": "https://en.wikipedia.org/wiki/Litani_River"
     },
     {
       "id": "q004",
@@ -113,7 +113,7 @@
       "difficulty": 1,
       "region": "mount-lebanon",
       "explain": "Même ville, deux noms : les Grecs disaient Byblos, au port tout le monde dit Jbeil.",
-      "source": "[VERIFY] UNESCO WHC 'Byblos' (Byblos = Jbeil)"
+      "source": "https://en.wikipedia.org/wiki/Jbeil_(disambiguation)"
     },
     {
       "id": "q005",
@@ -130,7 +130,7 @@
       "difficulty": 1,
       "region": "mount-lebanon",
       "explain": "La grotte inférieure se visite en barque, sur une rivière souterraine. Oui, une rivière. Dans une montagne.",
-      "source": "[VERIFY] Jeita Grotto official site / Britannica (limestone karst caves; lower grotto by boat)"
+      "source": "https://en.wikipedia.org/wiki/Jeita_Grotto"
     },
     {
       "id": "q006",
@@ -147,7 +147,7 @@
       "difficulty": 1,
       "region": "beirut",
       "explain": "Le spot coucher de soleil préféré de la Corniche… et son spot selfie préféré.",
-      "source": "[VERIFY] Britannica / Lebanon Ministry of Tourism (Pigeon Rocks off Raouché)"
+      "source": "https://afar.com/places/pigeon-rocks-raouche"
     },
     {
       "id": "q007",
@@ -164,7 +164,7 @@
       "difficulty": 2,
       "region": "bekaa",
       "explain": "Le Berdawni la traverse, bordé de restaurants en plein air et de tables bien garnies.",
-      "source": "[VERIFY] Zahlé municipality / Britannica (nickname 'Bride of the Bekaa'; Berdawni river)"
+      "source": "https://www.traveldojo.com/zahle"
     },
     {
       "id": "q008",
@@ -181,7 +181,7 @@
       "difficulty": 2,
       "region": "north",
       "explain": "Avec la vallée de la Qadisha, elle est inscrite au patrimoine mondial de l'UNESCO.",
-      "source": "[VERIFY] UNESCO WHC 'Ouadi Qadisha and the Forest of the Cedars of God' (near Bsharri)"
+      "source": "https://whc.unesco.org/en/list/850-002"
     },
     {
       "id": "q009",
@@ -196,7 +196,7 @@
       "difficulty": 1,
       "region": "south",
       "explain": "Cap au sud, plutôt : Saïda est à une quarantaine de kilomètres de Beyrouth en descendant la côte, sur la route de Tyr.",
-      "source": "[VERIFY] Britannica 'Sidon' (port city about 40 km south of Beirut)"
+      "source": "https://en.wikipedia.org/wiki/Sidon"
     },
     {
       "id": "q010",
@@ -213,7 +213,7 @@
       "difficulty": 1,
       "region": "mount-lebanon",
       "explain": "La fierté locale : ski le matin, baignade en mer l'après-midi.",
-      "source": "[VERIFY] Mzaar Kfardebian official site (location in Keserwan, Lebanon)"
+      "source": "https://en.wikipedia.org/wiki/Mzaar_Kfardebian"
     },
     {
       "id": "q011",
@@ -229,7 +229,7 @@
       "topic": "history",
       "difficulty": 1,
       "explain": "Merci à eux pour chaque SMS : le grec, le latin et même l'écriture arabe, via l'araméen, en descendent.",
-      "source": "[VERIFY] Britannica 'Phoenician alphabet' (ancestor of Greek, then Latin; Arabic script via Aramaic and Nabataean)"
+      "source": "https://www.worldhistory.org/article/17/the-phoenician-alphabet--language/"
     },
     {
       "id": "q012",
@@ -245,7 +245,7 @@
       "topic": "history",
       "difficulty": 1,
       "explain": "Elle remonte à 1943, et tout le pays est en congé ce jour-là.",
-      "source": "[VERIFY] Lebanese government / Britannica (Independence Day 22 November); distractor '31 August' replaced by 21 March (Mother's Day in Lebanon); Lebanese reviewer: confirm 10 March, 1 May and 21 March are neutral"
+      "source": "https://en.wikipedia.org/wiki/Public_holidays_in_Lebanon"
     },
     {
       "id": "q013",
@@ -262,7 +262,7 @@
       "difficulty": 1,
       "region": "bekaa",
       "explain": "Les Romains appelaient la ville Héliopolis, « la cité du soleil ».",
-      "source": "[VERIFY] UNESCO WHC 'Baalbek' (Roman temples; Heliopolis)"
+      "source": "https://whc.unesco.org/en/list/294"
     },
     {
       "id": "q014",
@@ -279,7 +279,7 @@
       "difficulty": 3,
       "region": "bekaa",
       "explain": "Il se dresse à côté des six colonnes géantes restées du temple de Jupiter.",
-      "source": "[VERIFY] UNESCO WHC 'Baalbek' / Britannica (Temple of Bacchus preservation; beside the Temple of Jupiter columns)"
+      "source": "https://en.wikipedia.org/wiki/Temple_of_Bacchus"
     },
     {
       "id": "q015",
@@ -296,7 +296,7 @@
       "difficulty": 3,
       "region": "south",
       "explain": "Tirée des murex, elle coûtait si cher que la pourpre est devenue la couleur des empereurs.",
-      "source": "[VERIFY] Britannica 'Tyrian purple' (murex sea snails; imperial/royal purple)"
+      "source": "https://www.worldhistory.org/Tyrian_Purple/"
     },
     {
       "id": "q016",
@@ -311,7 +311,7 @@
       "difficulty": 2,
       "region": "mount-lebanon",
       "explain": "L'UNESCO y signale des traces d'habitat dès le néolithique.",
-      "source": "[VERIFY] UNESCO WHC 'Byblos' ('continuously inhabited since Neolithic times')"
+      "source": "https://whc.unesco.org/en/list/295"
     },
     {
       "id": "q017",
@@ -327,7 +327,7 @@
       "topic": "culture",
       "difficulty": 1,
       "explain": "Paru en 1923, il a été traduit dans des dizaines de langues.",
-      "source": "[VERIFY] Britannica 'Khalil Gibran' (The Prophet, 1923; translations claim)"
+      "source": "https://en.wikipedia.org/wiki/The_Prophet_(book)"
     },
     {
       "id": "q018",
@@ -344,7 +344,7 @@
       "difficulty": 2,
       "region": "north",
       "explain": "Un musée à Bcharré expose ses tableaux, et il y repose.",
-      "source": "[VERIFY] Gibran Museum, Bsharri (birthplace; museum and resting place)"
+      "source": "https://en.wikipedia.org/wiki/Gibran_Museum"
     },
     {
       "id": "q019",
@@ -360,7 +360,7 @@
       "topic": "culture",
       "difficulty": 3,
       "explain": "Il l'a reçu en 1993. En 2023, il est devenu secrétaire perpétuel de l'Académie française.",
-      "source": "[VERIFY] Académie Goncourt laureates (1993, Le Rocher de Tanios); Académie française (Maalouf, secrétaire perpétuel 2023)"
+      "source": "https://en.wikipedia.org/wiki/Amin_Maalouf"
     },
     {
       "id": "q020",
@@ -379,7 +379,7 @@
         "ar"
       ],
       "explain": "Et le grand-père ? « Jeddo ». Les deux vous diront que vous avez maigri et qu'il faut manger.",
-      "source": "[VERIFY] common Lebanese usage (reviewer)"
+      "source": "https://lebanese-arabic.com/lesson12/"
     },
     {
       "id": "q021",
@@ -398,7 +398,7 @@
         "ar"
       ],
       "explain": "Un six et un cinq ont leur propre nom : « shesh besh ».",
-      "source": "[VERIFY] tawleh = backgammon; 'shesh besh' = a roll of six and five (Persian/Turkish numbers)"
+      "source": "https://egyptianstreets.com/2022/09/10/sheesh-beesh-egypts-5-most-common-tawla-games-and-how-theyre-played/"
     },
     {
       "id": "q022",
@@ -412,7 +412,7 @@
       "topic": "culture",
       "difficulty": 1,
       "explain": "Points bonus si la phrase finit par « merci, yalla bye ».",
-      "source": "[VERIFY] widely cited Lebanese code-switching phrase (keep as culture, not a statistic)"
+      "source": "https://core.ac.uk/download/6609.pdf"
     },
     {
       "id": "q023",
@@ -428,7 +428,7 @@
       "topic": "culture",
       "difficulty": 2,
       "explain": "Le zajal libanais est inscrit au patrimoine immatériel de l'UNESCO.",
-      "source": "[VERIFY] UNESCO ICH 'Al-Zajal, recited or sung poetry' (Lebanon, 2014)"
+      "source": "https://ich.unesco.org/en/RL/01000"
     },
     {
       "id": "q024",
@@ -443,7 +443,7 @@
       "difficulty": 3,
       "region": "bekaa",
       "explain": "Fairouz et les frères Rahbani s'y sont produits dès ses débuts.",
-      "source": "[VERIFY] Baalbeck International Festival official site (founded 1956; early Rahbani/Fairuz nights)"
+      "source": "https://www.baalbeck.org.lb/en/history"
     },
     {
       "id": "q025",
@@ -459,7 +459,7 @@
       "topic": "cinema-tv",
       "difficulty": 2,
       "explain": "Sa famille est partie quand il était petit, il a surtout grandi à Toronto. Ça compte quand même.",
-      "source": "[VERIFY] Britannica 'Keanu Reeves' (born Beirut 1964; raised mainly in Toronto)"
+      "source": "https://en.wikipedia.org/wiki/Keanu_Reeves"
     },
     {
       "id": "q026",
@@ -475,7 +475,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "Jeanette Feghali est le vrai nom de Sabah.",
-      "source": "[VERIFY] Britannica 'Fairuz' (Nouhad Haddad); Britannica 'Sabah' (Jeanette Feghali)"
+      "source": "https://en.wikipedia.org/wiki/Fairuz"
     },
     {
       "id": "q027",
@@ -491,7 +491,7 @@
       "topic": "music",
       "difficulty": 1,
       "explain": "Assi Rahbani était aussi son mari. Les Bee Gees étaient pris.",
-      "source": "[VERIFY] Britannica 'Fairuz' (Assi and Mansour Rahbani; married Assi)"
+      "source": "https://en.wikipedia.org/wiki/Assi_Rahbani"
     },
     {
       "id": "q028",
@@ -507,7 +507,7 @@
       "topic": "music",
       "difficulty": 3,
       "explain": "Le concerto est du compositeur espagnol Joaquín Rodrigo.",
-      "source": "[VERIFY] song credits 'Li Beirut' (melody: Rodrigo, Concierto de Aranjuez, 2nd mvt)"
+      "source": "https://www.pri.org/file/2020-08-07/fairuz-s-li-beirut"
     },
     {
       "id": "q029",
@@ -523,7 +523,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "Elle a aussi tourné dans des dizaines de films égyptiens et libanais.",
-      "source": "[VERIFY] Britannica 'Sabah' (nickname al-Shahrourah; film career)"
+      "source": "https://m.imdb.com/es/name/nm0754480/bio"
     },
     {
       "id": "q030",
@@ -539,7 +539,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "Il joue d'une trompette à quarts de ton, capable des gammes arabes.",
-      "source": "[VERIFY] ibrahimmaalouf.com bio (trumpet; quarter-tone trumpet)"
+      "source": "https://theartsdesk.com/node/94307"
     },
     {
       "id": "q031",
@@ -555,7 +555,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "Enfant, il est parti à Paris, puis à Londres.",
-      "source": "[VERIFY] Britannica / official bio 'Mika' (born Beirut 1983; Paris then London; 'Grace Kelly' 2007)"
+      "source": "https://en.wikipedia.org/wiki/Mika_(singer)"
     },
     {
       "id": "q032",
@@ -574,7 +574,7 @@
         "ar"
       ],
       "explain": "Le luth européen lui doit son nom.",
-      "source": "[VERIFY] Britannica 'ʿūd' (fretless; name 'the wood'; root of the word 'lute')"
+      "source": "https://en.wikipedia.org/wiki/Oud"
     },
     {
       "id": "q033",
@@ -590,7 +590,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "Sortie en 2004, on l'a entendue tout l'été, jusque dans la voiture de tata.",
-      "source": "[VERIFY] album credits 'Ah W Noss' (Nancy Ajram, 2004); distractors by other artists"
+      "source": "https://en.wikipedia.org/wiki/Ah_W_Noss"
     },
     {
       "id": "q034",
@@ -609,7 +609,7 @@
         "ar"
       ],
       "explain": "Son nom vient du martèlement des pieds sur le sol.",
-      "source": "[VERIFY] trivial; Britannica 'dabke' (name linked to stamping)"
+      "source": "https://en.wikipedia.org/wiki/Dabke"
     },
     {
       "id": "q035",
@@ -625,7 +625,7 @@
       "topic": "dance",
       "difficulty": 2,
       "explain": "Le meneur improvise pendant que la ligne garde le pas de base.",
-      "source": "[VERIFY] folk-dance references (handkerchief/mandil of the line leader); reviewer: «محرمة»"
+      "source": "https://en.wikipedia.org/wiki/Dabke"
     },
     {
       "id": "q036",
@@ -641,7 +641,7 @@
       "topic": "dance",
       "difficulty": 3,
       "explain": "Elle a été fondée par Abdel-Halim Caracalla.",
-      "source": "[VERIFY] Caracalla Dance Theatre official site (founder Abdel-Halim Caracalla)"
+      "source": "https://en.wikipedia.org/wiki/Caracalla_Dance_Theatre"
     },
     {
       "id": "q037",
@@ -657,7 +657,7 @@
       "topic": "dance",
       "difficulty": 2,
       "explain": "Le musicien inspire par le nez tout en soufflant : le son ne s'arrête jamais.",
-      "source": "[VERIFY] ethnomusicology refs on the mijwiz (dabke; circular breathing); AR term for bagpipe [native review]"
+      "source": "https://en.wikipedia.org/wiki/Mijwiz"
     },
     {
       "id": "q038",
@@ -671,7 +671,7 @@
       "topic": "dance",
       "difficulty": 1,
       "explain": "C'est une ligne ou un cercle, main dans la main ou épaule contre épaule. La dabké, ça se danse ensemble.",
-      "source": "[VERIFY] trivial"
+      "source": "https://en.wikipedia.org/wiki/Dabke"
     },
     {
       "id": "q039",
@@ -687,7 +687,7 @@
       "topic": "dance",
       "difficulty": 2,
       "explain": "Les invités y ajoutent souvent la zalghouta, les youyous de joie.",
-      "source": "[VERIFY] wedding-custom references (zaffeh; zalghouta = ululation)"
+      "source": "https://www.theknot.com/content/lebanese-wedding-traditions"
     },
     {
       "id": "q040",
@@ -703,7 +703,7 @@
       "topic": "football",
       "difficulty": 2,
       "explain": "Le cèdre trône aussi au centre du drapeau national.",
-      "source": "[VERIFY] FIFA / Lebanese FA (team nickname; AR «رجال الأرز»)"
+      "source": "https://en.wikipedia.org/wiki/Lebanon_national_football_team"
     },
     {
       "id": "q041",
@@ -719,7 +719,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "Le Japon a remporté cette édition.",
-      "source": "[VERIFY] AFC 'AFC Asian Cup 2000' (host Lebanon; winner Japan)"
+      "source": "https://en.wikipedia.org/wiki/2000_AFC_Asian_Cup"
     },
     {
       "id": "q042",
@@ -735,7 +735,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "Il a joué à Hambourg, Fribourg et Cologne.",
-      "source": "[VERIFY] Transfermarkt / Kicker 'Roda Antar' (Hamburger SV, SC Freiburg, 1. FC Köln)"
+      "source": "https://en.wikipedia.org/wiki/Roda_Antar"
     },
     {
       "id": "q043",
@@ -751,12 +751,12 @@
       "topic": "sports",
       "difficulty": 2,
       "explain": "Le Liban a aussi accueilli la Coupe d'Asie FIBA en 2017.",
-      "source": "[VERIFY] FIBA archive (World Cup 2002, 2006, 2010, 2023; FIBA Asia Cup 2017 hosted by Lebanon)"
+      "source": "https://en.wikipedia.org/wiki/2017_FIBA_Asia_Cup"
     },
     {
       "id": "q044",
       "type": "mc4",
-      "text": "Quel club a remporté le plus de titres de champion du Liban ?",
+      "text": "Quel club a remporté le plus de titres de champion du Liban (en 2025) ?",
       "options": [
         "Nejmeh",
         "Safa",
@@ -767,7 +767,7 @@
       "topic": "football",
       "difficulty": 2,
       "explain": "Al-Ansar a un jour enchaîné onze titres de suite.",
-      "source": "[VERIFY] RSSSF 'Lebanon - List of Champions' (record holder Al-Ansar; 11 straight titles from 1988; Safa far behind); Lebanese reviewer: confirm the club list (Al-Ahed dropped: party affiliation, and its title count nears the record)"
+      "source": "https://en.wikipedia.org/wiki/Lebanese_Premier_League"
     },
     {
       "id": "q045",
@@ -783,7 +783,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "Coup d'envoi au stade de Lusail, celui-là même de la finale du Mondial 2022.",
-      "source": "[VERIFY] AFC match report: Qatar 3-0 Lebanon, 12 January 2024, Lusail Stadium (AFC Asian Cup 2023 opening match)"
+      "source": "https://www.aljazeera.com/sports/2024/1/12/hosts-qatar-beat-lebanon-thrill-fans-afc-asian-cup-2023-opener"
     },
     {
       "id": "q046",
@@ -799,7 +799,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "Ce tournoi s'est joué aux Émirats arabes unis.",
-      "source": "[VERIFY] AFC 'AFC Asian Cup 2019' (Lebanon's first qualification via qualifiers; hosted by UAE)"
+      "source": "https://en.wikipedia.org/wiki/Lebanon_at_the_AFC_Asian_Cup"
     },
     {
       "id": "q047",
@@ -815,7 +815,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "Le boulgour n'est qu'une pincée : la star, c'est le persil. Le taboulé à la semoule ? On n'en parle pas.",
-      "source": "[VERIFY] cookbook/encyclopedia 'tabbouleh' (parsley-based Lebanese version)"
+      "source": "https://en.wikipedia.org/wiki/Tabbouleh"
     },
     {
       "id": "q048",
@@ -834,7 +834,7 @@
         "ar"
       ],
       "explain": "Ail, huile, citron, sel, et pas un seul œuf. Votre haleine s'en souviendra demain.",
-      "source": "[VERIFY] cookbook refs 'toum' (garlic, oil, lemon, salt; no egg)"
+      "source": "https://www.themediterraneandish.com/toum-garlic-sauce/"
     },
     {
       "id": "q049",
@@ -850,7 +850,7 @@
       "topic": "food",
       "difficulty": 2,
       "explain": "C'est un gâteau de semoule, souvent garni de pignons ou d'amandes.",
-      "source": "[VERIFY] cookbook refs 'sfouf' (turmeric, semolina; AR «عقدة صفرا»)"
+      "source": "https://en.wikipedia.org/wiki/Sfouf"
     },
     {
       "id": "q050",
@@ -866,7 +866,7 @@
       "topic": "food",
       "difficulty": 2,
       "explain": "On la mange avec menthe fraîche, oignon et un filet d'huile d'olive.",
-      "source": "[VERIFY] cookbook refs 'kibbeh nayyeh' (raw meat + fine bulgur); AR options differ on purpose (name says 'raw')"
+      "source": "https://en.wikipedia.org/wiki/Kibbeh_nayyeh"
     },
     {
       "id": "q051",
@@ -882,7 +882,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "Le sumac donne à sa sauce un goût acidulé et une teinte rougeâtre.",
-      "source": "[VERIFY] trivial; cookbook refs 'fattoush' (sumac dressing)"
+      "source": "https://www.loveandlemons.com/fattoush-salad/"
     },
     {
       "id": "q052",
@@ -898,7 +898,7 @@
       "topic": "cinema-tv",
       "difficulty": 2,
       "explain": "Elle joue aussi dans ses propres films.",
-      "source": "[VERIFY] IMDb / Britannica 'Nadine Labaki' (director and actress of Caramel, Capernaum)"
+      "source": "https://www.festival-cannes.com/en/festival/artist/nadine-labaki"
     },
     {
       "id": "q053",
@@ -914,7 +914,7 @@
       "topic": "cinema-tv",
       "difficulty": 3,
       "explain": "Il a ensuite décroché une nomination à l'Oscar du meilleur film en langue étrangère.",
-      "source": "[VERIFY] Festival de Cannes palmarès 2018 (Prix du jury: Capharnaüm); 91st Academy Awards (2019) nominee, Best Foreign Language Film"
+      "source": "https://www.motionpictures.org/2018/11/first-capernaum-trailer-reveals-director-nadine-labakis-cannes-jury-prize-winner/"
     },
     {
       "id": "q054",
@@ -930,7 +930,7 @@
       "topic": "cinema-tv",
       "difficulty": 1,
       "explain": "La famille de son père venait du Liban ; elle est née au Mexique.",
-      "source": "[VERIFY] Britannica 'Salma Hayek' (father of Lebanese descent; born Mexico)"
+      "source": "https://www.biography.com/actors/salma-hayek"
     },
     {
       "id": "q055",
@@ -946,7 +946,7 @@
       "topic": "cinema-tv",
       "difficulty": 2,
       "explain": "Beaucoup de grands chanteurs libanais y ont débuté.",
-      "source": "[VERIFY] Télé Liban / press archives 'Studio El Fan' (Simon Asmar, launched 1970s)"
+      "source": "https://en.wikipedia.org/wiki/Studio_El_Fan"
     },
     {
       "id": "q056",
@@ -960,7 +960,7 @@
       "topic": "celebrities",
       "difficulty": 1,
       "explain": "Elles viennent du côté de son père.",
-      "source": "[VERIFY] Britannica 'Shakira' (paternal Lebanese ancestry)"
+      "source": "https://thenationalnews.com/arts-culture/music-stage/2024/06/10/shakira-lebanese-father-william-mebarak-chadid"
     },
     {
       "id": "q057",
@@ -977,7 +977,7 @@
       "difficulty": 3,
       "region": "south",
       "explain": "Ses gradins pouvaient accueillir environ 20 000 fans de courses de chars.",
-      "source": "[VERIFY] UNESCO WHC 'Tyre' (Roman hippodrome; size/seating claim)"
+      "source": "https://en.wikipedia.org/wiki/Tyre_Hippodrome"
     },
     {
       "id": "q058",
@@ -994,7 +994,7 @@
       "difficulty": 3,
       "region": "bekaa",
       "explain": "Son quadrillage de rues, d'arcades et de boutiques date du début du VIIIe siècle.",
-      "source": "[VERIFY] UNESCO WHC 'Anjar' (Umayyad, early 8th century); reviewer: dynasty name OK under §11.2"
+      "source": "https://en.wikipedia.org/wiki/Anjar,_Lebanon"
     },
     {
       "id": "q059",
@@ -1011,7 +1011,7 @@
       "difficulty": 2,
       "region": "mount-lebanon",
       "explain": "Ses cours deviennent une scène en plein air chaque été.",
-      "source": "[VERIFY] Beiteddine Art Festival official site (Beiteddine palace, Chouf)"
+      "source": "https://en.wikipedia.org/wiki/Beiteddine_Festival"
     },
     {
       "id": "q060",
@@ -1028,7 +1028,7 @@
       "difficulty": 1,
       "region": "mount-lebanon",
       "explain": "Elle protège environ un quart des forêts de cèdres restantes du Liban.",
-      "source": "[VERIFY] Shouf Biosphere Reserve official site / UNESCO MAB (cedar share claim ~25%)"
+      "source": "https://www.iucn.org/news/protected-areas/201804/wonders-shouf-biosphere-reserve"
     },
     {
       "id": "q061",
@@ -1045,7 +1045,7 @@
       "difficulty": 3,
       "region": "bekaa",
       "explain": "On l'appelle al-Assi, « le rebelle », parce qu'il coule vers le nord.",
-      "source": "[VERIFY] Britannica 'Orontes River' (source near Hermel; flows north; 'al-Assi' = the rebel)"
+      "source": "https://www.britannica.com/place/Orontes-River"
     },
     {
       "id": "q062",
@@ -1062,7 +1062,7 @@
       "difficulty": 2,
       "region": "south",
       "explain": "Il se dresse sur un îlot relié au rivage par une jetée de pierre.",
-      "source": "[VERIFY] Lebanon Ministry of Tourism 'Sidon Sea Castle' (island + causeway)"
+      "source": "https://en.wikipedia.org/wiki/Sidon_Sea_Castle"
     },
     {
       "id": "q063",
@@ -1081,7 +1081,7 @@
         "ar"
       ],
       "explain": "Il conclut aussi chaque coup de fil libanais : « yalla bye ».",
-      "source": "[VERIFY] trivial; common usage ('yalla bye')"
+      "source": "https://www.thenationalnews.com/arts-culture/2025/07/25/learn-arabic-words-what-is-yallah"
     },
     {
       "id": "q064",
@@ -1097,7 +1097,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "La man'ouché est le petit-déj classique, tout droit sorti du four.",
-      "source": "[VERIFY] cookbook refs 'za'atar' blend (thyme, sumac, sesame)"
+      "source": "https://www.saveur.com/article/recipes/manoushé-bil-zaatar-flatbread-with-zaatar"
     },
     {
       "id": "q065",
@@ -1113,7 +1113,7 @@
       "topic": "nature",
       "difficulty": 1,
       "explain": "Le cèdre vert est posé sur une bande blanche, entre deux bandes rouges.",
-      "source": "[VERIFY] Lebanese Constitution art. 5 / Britannica 'flag of Lebanon'"
+      "source": "https://flagspot.net/flags/lb.html"
     },
     {
       "id": "q066",
@@ -1130,7 +1130,7 @@
       "difficulty": 2,
       "region": "north",
       "explain": "Batroun se dit aussi l'une des plus anciennes villes de la côte.",
-      "source": "[VERIFY] Lebanon Ministry of Tourism / travel guides (Batroun lemonade; 'one of the oldest coastal towns')"
+      "source": "https://en.wikipedia.org/wiki/Batroun"
     },
     {
       "id": "q067",
@@ -1147,7 +1147,7 @@
       "difficulty": 2,
       "region": "north",
       "explain": "Le Khan al-Saboun, le khan du savon, a plusieurs siècles.",
-      "source": "[VERIFY] Khan al-Saboun, Tripoli (soap khan; olive-oil soap craft)"
+      "source": "https://www.lonelyplanet.com/points-of-interest/khan-as-saboun/1584430"
     },
     {
       "id": "q068",
@@ -1162,7 +1162,7 @@
       "difficulty": 2,
       "region": "south",
       "explain": "Des caouannes et des tortues vertes y enfouissent leurs œufs dans le sable.",
-      "source": "[VERIFY] Tyre Coast Nature Reserve (loggerhead and green turtle nesting)"
+      "source": "https://en.wikipedia.org/wiki/Tyre_Coast_Nature_Reserve"
     },
     {
       "id": "q069",
@@ -1179,7 +1179,7 @@
       "difficulty": 2,
       "region": "south",
       "explain": "Elle est aussi connue pour ses couteaux artisanaux au manche en forme d'oiseau.",
-      "source": "[VERIFY] Jezzine municipality / Ministry of Tourism (waterfall; bird-handled cutlery craft)"
+      "source": "https://en.libnanews.com/lebanon-heritage-the-cutlery-of-jezzine/"
     },
     {
       "id": "q070",
@@ -1196,7 +1196,7 @@
       "difficulty": 3,
       "region": "bekaa",
       "explain": "On l'appelle Qamouaa el-Hermel ; il a environ 2 000 ans.",
-      "source": "[VERIFY] Lebanon DGA / archaeology refs 'Qamouaa el-Hermel' (pyramid-topped tower, ~1st c. BC)"
+      "source": "https://en.wikipedia.org/wiki/Kamouh_el_Hermel"
     },
     {
       "id": "q071",
@@ -1212,7 +1212,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "Son père était Assi Rahbani. Ziad a fait de la musique familiale un théâtre mordant et très drôle.",
-      "source": "[VERIFY] Britannica 'Fairuz' / 'Ziad Rahbani' (son of Fairuz and Assi Rahbani; died July 2025)"
+      "source": "https://www.newarab.com/news/loss-lebanon-fairuz-fans-bid-farewell-ziad-rahbani"
     },
     {
       "id": "q072",
@@ -1228,7 +1228,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "Il a chanté pendant plus de soixante ans.",
-      "source": "[VERIFY] press obituaries 2013 'Wadih El Safi' (nickname 'the Voice of Lebanon'; career length)"
+      "source": "https://en.wikipedia.org/wiki/Wadih_El_Safi"
     },
     {
       "id": "q073",
@@ -1245,7 +1245,7 @@
       "difficulty": 2,
       "region": "beirut",
       "explain": "La villa mêle styles vénitien et ottoman.",
-      "source": "[VERIFY] Sursock Museum official site (Achrafieh; modern and contemporary art)"
+      "source": "https://en.wikipedia.org/wiki/Sursock_Museum"
     },
     {
       "id": "q074",
@@ -1261,7 +1261,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "Il portait le brassard de capitaine à la Coupe d'Asie 2019, la première où le Liban s'est qualifié sur le terrain.",
-      "source": "[VERIFY] RSSSF / national-team records (Hassan Maatouk all-time top scorer, tally as of 2024); AFC Asian Cup 2019 squad (captain; first qualification on the pitch, 2000 was as host)"
+      "source": "https://en.wikipedia.org/wiki/Hassan_Maatouk"
     },
     {
       "id": "q075",
@@ -1277,7 +1277,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "Fromage, semoule, sirop et pain au sésame : le réveil le plus sucré.",
-      "source": "[VERIFY] food refs 'knefeh / ka'ak' (Lebanese breakfast)"
+      "source": "https://www.anissas.com/my-favourite-breakfast-kaket-knafeh/"
     }
   ]
 }
