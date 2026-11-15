@@ -48,7 +48,11 @@ const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "del"] as c
 function Pad({ tq }: { tq: Taq }) {
   const pub = tq.pub;
   const q = pub.question;
-  const [e, setE] = useState<Entry>(EMPTY);
+  const [e, setRaw] = useState<Entry>(EMPTY);
+  // The latest entry, synchronously: a hardware keyboard can type "3", "0", Enter before the next render.
+  const cur = useRef<Entry>(EMPTY);
+  cur.current = e;
+  const setE = (n: Entry): void => { cur.current = n; setRaw(n); };
   const [nudge, setNudge] = useState(0);
   const hold = useRef<ReturnType<typeof setTimeout> | null>(null);
   const held = useRef(false);   // a long press on ⌫ cleared everything: its click is swallowed
@@ -56,13 +60,14 @@ function Pad({ tq }: { tq: Taq }) {
   const st = entryState(e);
   const v = valueOf(e);
   const key = (k: string): void => {
-    const n = press(e, k);
-    if (n === e) { setNudge((x) => x + 1); return; }
+    const n = press(cur.current, k);
+    if (n === cur.current) { setNudge((x) => x + 1); return; }
     setE(n);
     haptic(HAPTIC.tick);
   };
   const send = (): void => {
-    if (!q || st !== "ok" || v === null || timeUp) { setNudge((x) => x + 1); return; }
+    const v = valueOf(cur.current);
+    if (!q || entryState(cur.current) !== "ok" || v === null || timeUp) { setNudge((x) => x + 1); return; }
     if (!act({ type: "GAME", gameId: "taqriban", i: { type: "GUESS", questionId: q.id, value: v } })) { setNudge((x) => x + 1); return; }
     haptic(HAPTIC.voteLocked);
     announce(tk("phone.locked"), true);
@@ -73,7 +78,7 @@ function Pad({ tq }: { tq: Taq }) {
       if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
       const k = ev.key === "," ? "." : ev.key === "Backspace" ? "del" : ev.key === "Escape" ? "clr" : ev.key;
       if (k === "Enter") { ev.preventDefault(); send(); return; }
-      if (/^[\d.]$/.test(k) || k === "del" || k === "clr") { ev.preventDefault(); setE((cur) => press(cur, k)); }
+      if (/^[\d.]$/.test(k) || k === "del" || k === "clr") { ev.preventDefault(); setE(press(cur.current, k)); }
     };
     window.addEventListener("keydown", on);
     return () => window.removeEventListener("keydown", on);

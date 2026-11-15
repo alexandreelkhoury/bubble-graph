@@ -272,7 +272,7 @@ describe("split layout (JAMAA-PLATFORM §5.7)", () => {
     const root = buildKotlin(t.root, GAME_IDS);
     expect(root).toContain("import app.jamaa.tv.i18n.games.trivia.I18nKeysTrivia");
     expect(root).toContain('"round.label" to R.string.round__label,');
-    expect(root).toContain("val strings: Map<String, Int> by lazy { platformStrings + I18nKeysMishana.strings + I18nKeysBluff.strings + I18nKeysLikely.strings + I18nKeysTrivia.strings }");
+    expect(root).toContain("val strings: Map<String, Int> by lazy { platformStrings + I18nKeysMishana.strings + I18nKeysBluff.strings + I18nKeysLikely.strings + I18nKeysTrivia.strings + I18nKeysTaqriban.strings }");
     expect(gameKotlinPath("likely")).toBe("tv-app/app/src/main/java/app/jamaa/tv/i18n/games/likely/I18nKeysLikely.kt");
     expect(gameOutputPaths("trivia").ar).toBe("tv-app/app/src/main/res/values-ar/strings_game_trivia.xml");
   });

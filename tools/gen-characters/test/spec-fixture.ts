@@ -27,6 +27,7 @@ export const SPEC_WORLDS: WorldModel[] = [
   same("hakawati-cafe", palette({ deep: "#1C1209", stageTop: "#2E1D0E", surface: "#33230F", elevated: "#4A3418", accent: "#E9A23B", accentText: "#E9A23B", onAccent: "#120A1F", glow: "#FFE3A3", signal: "#FF5A5F" })),
   same("rooftop", palette({ deep: "#071A24", stageTop: "#0E2C3B", surface: "#0F2E3D", elevated: "#17404F", accent: "#29D3C2", accentText: "#29D3C2", onAccent: "#120A1F", glow: "#B8FFF6", signal: "#FFC94D" })),
   same("quiz-studio", palette({ deep: "#0A0F2E", stageTop: "#141C52", surface: "#161D4A", elevated: "#222B63", accent: "#5B7CFF", accentText: "#8FA8FF", onAccent: "#120A1F", glow: "#FFD84D", signal: "#3DDC97" })),
+  same("observatory", palette({ deep: "#06161A", stageTop: "#0C2A30", surface: "#0F2F36", elevated: "#18434B", accent: "#FFB547", accentText: "#FFC46B", onAccent: "#120A1F", glow: "#FFE7B0", signal: "#FF6B5B" })),
 ];
 
 export const SPEC_MODEL: GenModel = {

@@ -52,6 +52,7 @@ enum class Cue(val id: String, val bus: Bus) {
     WORLD_BLUFF_STING("worldBluffSting", Bus.STING),
     WORLD_LIKELY_STING("worldLikelySting", Bus.STING),
     WORLD_TRIVIA_STING("worldTriviaSting", Bus.STING),
+    WORLD_TAQRIBAN_STING("worldTaqribanSting", Bus.STING),
     COIN_FLY("coinFly", Bus.SFX),
     COIN_LAND("coinLand", Bus.SFX),
     COUNTER_TICK("counterTick", Bus.SFX),
@@ -81,6 +82,7 @@ object SoundCues {
         "bluff" -> Cue.WORLD_BLUFF_STING
         "likely" -> Cue.WORLD_LIKELY_STING
         "trivia" -> Cue.WORLD_TRIVIA_STING
+        "taqriban" -> Cue.WORLD_TAQRIBAN_STING
         else -> null
     }
 

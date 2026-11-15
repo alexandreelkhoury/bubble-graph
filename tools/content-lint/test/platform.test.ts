@@ -7,16 +7,17 @@ import { camel, lintGameI18n, lintRootIndex, lintVocab, registeredGameFiles, unl
 import { REPO_CONTENT, REPO_TIMEOUT, registeredPackCount, repoLint } from "./repoContent";
 
 const four = (m: Record<string, unknown>): I18nFiles => ({ en: { ...m }, fr: { ...m }, ar: { ...m }, es: { ...m } });
-const gameFiles = (): Record<"mishana" | "bluff" | "likely" | "trivia", I18nFiles> => ({
+const gameFiles = (): Record<"mishana" | "bluff" | "likely" | "trivia" | "taqriban", I18nFiles> => ({
   mishana: four({ "game.mishana.title": "Mish Ana!", "vote.title": "Who?" }),
   bluff: four({ "game.bluff.title": "Bluff!" }),
   likely: four({ "game.likely.title": "Most Likely" }),
   trivia: four({ "game.trivia.title": "Quiz Night" }),
+  taqriban: four({ "game.taqriban.title": "Taqriban!" }),
 });
 
 describe("registry (JAMAA-PLATFORM §5.1)", () => {
   it("requires every game index and CONTENT in content/index.ts", () => {
-    const ok = `import { PACKS as bluff } from "./bluff/index";\nimport { PACKS as likely } from "./likely/index";\nimport { PACKS as mishana } from "./mishana/index";\nimport { PACKS as trivia } from "./trivia/index";\nexport const CONTENT = {};`;
+    const ok = `import { PACKS as bluff } from "./bluff/index";\nimport { PACKS as likely } from "./likely/index";\nimport { PACKS as mishana } from "./mishana/index";\nimport { PACKS as taqriban } from "./taqriban/index";\nimport { PACKS as trivia } from "./trivia/index";\nexport const CONTENT = {};`;
     expect(lintRootIndex(ok).errors).toEqual([]);
     const errs = lintRootIndex(`import { PACKS as mishana } from "./mishana/index";`).errors.join("\n");
     expect(errs).toContain("does not import ./bluff/index");

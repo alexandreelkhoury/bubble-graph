@@ -4,6 +4,8 @@
 // The number-line reveal is the star (§8.3): the line draws, every guess drops onto it one by one (seat colour, name,
 // value), a beat, the true answer's pin falls, the closest dots light up with the "Closest!" stamp, then the points.
 import "./tv.css";
+import { useEffect } from "preact/hooks";
+import { soundMuted } from "../../tv-mock/sound/player";
 import type { TvRoomView } from "@jamaa/shared/protocol/v2";
 import { fmtNum, isolate, isolateLtr } from "../../i18n/t";
 import { Character } from "../../components/Character";
@@ -15,6 +17,31 @@ const LINE_X0 = 72, LINE_W = 816;
 /** Reveal timeline (ms): guesses start, one every STEP, then a beat, then the answer pin, then the stamp. */
 export const REVEAL_T = { lineIn: 300, firstDot: 700, step: 260, beat: 900, stamp: 700 } as const;
 export const answerAt = (n: number): number => REVEAL_T.firstDot + REVEAL_T.step * Math.max(0, n - 1) + REVEAL_T.beat;
+
+/** Taqriban's own cues (tools/gen-sounds → public/sounds/taqriban/taqriban_*.ogg), under the per-device mute. */
+function sfx(cue: "drop" | "pin" | "closest", rate = 1): void {
+  if (soundMuted.value || typeof Audio === "undefined") return;
+  try {
+    const a = new Audio(`${import.meta.env.BASE_URL}sounds/taqriban/taqriban_${cue}.ogg`);
+    a.playbackRate = rate;
+    void a.play().catch(() => undefined);
+  } catch {
+    /* sound is never required: every cue has a visual counterpart */
+  }
+}
+
+/** The reveal's sound track, on the same timeline as the CSS delays (calm motion: only the pin). */
+function useRevealSounds(n: number, key: string): void {
+  useEffect(() => {
+    const calm = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ids: ReturnType<typeof setTimeout>[] = [];
+    const at = (ms: number, f: () => void): void => { ids.push(setTimeout(f, calm ? 0 : ms)); };
+    if (!calm) for (let i = 0; i < n; i++) at(REVEAL_T.firstDot + REVEAL_T.step * i, () => sfx("drop", Math.pow(2, Math.min(i, 9) / 12)));
+    at(answerAt(n), () => sfx("pin"));
+    if (n > 0) at(answerAt(n) + REVEAL_T.stamp, () => sfx("closest"));
+    return () => ids.forEach(clearTimeout);
+  }, [key]);
+}
 
 const qSize = (s: string): string => (s.length > 110 ? "s" : s.length > 70 ? "m" : "l");
 
@@ -46,7 +73,7 @@ function Ring({ pub }: { pub: TaqPub }) {
 /** The cast at the bottom; `lit` marks who has guessed (never what). */
 function Cast({ ps, lit }: { ps: Player[]; lit?: ReadonlySet<string> }) {
   const live = ps.filter((p) => !p.row.left);
-  const size = live.length > 8 ? 52 : 64;
+  const size = live.length > 8 ? 56 : 80;
   return (
     <div class="tqbcast">
       {live.map((p) => (
@@ -91,6 +118,7 @@ function Reveal({ tq, ps }: { tq: Taq; ps: Player[] }) {
   const tAns = answerAt(order.length);
   const tStamp = tAns + REVEAL_T.stamp;
   const wild = r.wildId ? r.guesses.find((g) => g.id === r.wildId) : undefined;
+  useRevealSounds(order.length, `${tq.n}:${pub.index}`);
   const px = (x: number): number => LINE_X0 + x * LINE_W;
   const ms = (n: number) => ({ "--d": `${n}ms` });
   return (

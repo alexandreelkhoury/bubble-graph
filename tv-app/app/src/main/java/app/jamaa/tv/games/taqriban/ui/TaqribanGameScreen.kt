@@ -368,7 +368,7 @@ private fun Reveal(view: TaqView, clock: PhaseClock) {
                             Box(Modifier.width(2.dp).height(laneH * d.lane + 4.dp).background(p?.let { PlayerSwatch.byId(it.color).color } ?: JamaaColors.TextMuted))
                         }
                         if (win && g.points > 0) {
-                            Box(Modifier.align(Alignment.TopEnd).graphicsLayer { val s = clock.p(tStamp + 200, 360); alpha = s; scaleX = overshoot(s); scaleY = overshoot(s) }
+                            Box(Modifier.align(Alignment.TopEnd).offset(y = 40.dp).graphicsLayer { val s = clock.p(tStamp + 200, 360); alpha = s; scaleX = overshoot(s); scaleY = overshoot(s) }
                                 .background(Obs.accent, RoundedCornerShape(10.dp)).padding(horizontal = 6.dp)) {
                                 Text(ltr("+${g.points}"), style = JamaaTheme.type.caption, color = JamaaColors.Ink, fontWeight = FontWeight.Black)
                             }

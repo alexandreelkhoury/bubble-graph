@@ -91,6 +91,16 @@ export const PLATFORM_CUES: readonly CueDef[] = [
     },
   },
   {
+    // Observatory (Taqriban!): a dome hum swelling, a ruler being measured (rising ticks), then a bright bell on the answer.
+    id: "world_taqriban_sting", bus: "sting", seconds: 1.8, targetDb: -16,
+    render(b) {
+      tone(b, { start: 0, dur: 1.7, f0: note(-21), amp: 0.35, attack: 0.5, decay: 0.8, release: 0.3 });
+      noise(b, { start: 0, dur: 0.9, amp: 0.25, filter: "bp", f0: 700, f1: 2400, q: 1.1, attack: 0.6, release: 0.2, seed: 391 });
+      for (let i = 0; i < 6; i++) fm(b, { start: 0.25 + i * 0.1, dur: 0.12, f: note(-2 + i * 2), ratio: 2, index: 0.9, amp: 0.12 + i * 0.02, decay: 0.03, attack: 0.0006 });
+      [A5, E6].forEach((f, i) => fm(b, { start: 0.9 + i * 0.12, dur: 0.85, f, ratio: 3.5, index: 1.4, amp: 0.26, decay: 0.3, attack: 0.001 }));
+    },
+  },
+  {
     // One coin leaving its source (§3.10 C): a light airy flick with a rising glint.
     id: "coin_fly", bus: "sfx", seconds: 0.3, targetDb: -24,
     render(b) {
@@ -199,6 +209,7 @@ export const ALIASES: Readonly<Record<string, string>> = {
   "sting.bluffIntro": "world_bluff_sting",
   "sting.likelyIntro": "world_likely_sting",
   "sting.triviaIntro": "world_trivia_sting",
+  "sting.taqribanIntro": "world_taqriban_sting",
   "bluff.coin": "coin_land",
   "bluff.truth": "truth_reveal",
   "bluff.stampHouse": "house_got_you",

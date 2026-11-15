@@ -36,13 +36,13 @@
 
 /* TQ-PH-02 locked */
 .tqb-locked { align-items: stretch; gap: var(--space-3); }
-.tqb-locked__hero { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; }
+.tqb-locked__hero { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; }
 .tqb-check { display: inline-grid; place-items: center; width: 1.4em; height: 1.4em; margin-inline-end: 0.35em; border-radius: 50%; background: var(--w-accent, #FFB547); color: var(--w-on-accent, #120A1F); font-size: 0.8em; }
 .tqb-big { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
 .tqb-big b { font: 900 clamp(2rem, 9vw, 3rem)/1.1 var(--font-sans); overflow-wrap: anywhere; }
 .tqb-big__words { font: 800 1.125rem/1.2 var(--font-sans); color: var(--w-accent-text, #FFC46B); }
 .tqb-big--answer b { color: var(--w-signal, #FF6B5B); text-shadow: 0 0 24px rgb(255 107 91 / 0.35); animation: tqb-drop 520ms var(--ease-overshoot, ease-out) both; }
-.tqb-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.tqb-dots { margin-bottom: auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
 .tqb-dots i { width: 12px; height: 12px; border-radius: 50%; background: rgb(255 255 255 / 0.12); transition: background var(--motion-fast); }
 .tqb-dots i.is-on { background: var(--w-accent, #FFB547); }
 @keyframes tqb-drop { from { opacity: 0; transform: translateY(-24px) scale(1.2); } to { opacity: 1; transform: none; } }

@@ -1,0 +1,8 @@
+{
+  "generatedBy": "tools/gen-sounds",
+  "cues": {
+    "taqriban.drop": "taqriban_drop",
+    "taqriban.pin": "taqriban_pin",
+    "taqriban.closest": "taqriban_closest"
+  }
+}
