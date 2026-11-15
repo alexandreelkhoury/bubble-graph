@@ -4,6 +4,7 @@
 // REPLAY or ABORT) and `sessions`. RoomCore normalizes what it loads (shared/room `normalizeLoaded`).
 import type { RoomHistory, RoomState } from "@jamaa/shared/room";
 import type { RoomEntitlement } from "./billing/token";
+import type { PlatformOrUnknown } from "./monitor/events";
 
 export interface RoomMeta {
   schema: 1;
@@ -25,6 +26,14 @@ export interface RoomMeta {
   viewRev?: number;
   /** The hub carousel focus last committed by OPEN_GAME (HUB_FOCUS itself is ephemeral); survives hibernation so Back from setup lands on that poster. */
   focus?: string | null;
+  // JAMAA-PLATFORM §8 monitoring (optional on disk; older rooms read as unknown / none):
+  /** The TV platform that created the room (X-Jamaa-Client). */
+  platform?: PlatformOrUnknown;
+  /** When the active game instance started (its duration at the end). */
+  gameStartedAt?: number | null;
+  /** Players who joined this room, and how many of them the Stats DO was already told about. */
+  joins?: number;
+  joinsSent?: number;
 }
 
 export interface SessionRecord { tokenHash: string; kicked: boolean }

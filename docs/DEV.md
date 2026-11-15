@@ -186,7 +186,7 @@ curl -s -X POST $B/api/billing/fake/set -H 'Content-Type: application/json' \
 ### Cron (local)
 
 ```sh
-curl "http://localhost:8787/cdn-cgi/local/scheduled?cron=23+*+*+*+*"   # hourly: ack retries, overdue alert
+curl "http://localhost:8787/cdn-cgi/local/scheduled?cron=23+*+*+*+*"   # hourly: monitoring alerts; ack retries, overdue alert
 curl "http://localhost:8787/cdn-cgi/local/scheduled?cron=17+3+*+*+*"   # daily: voided purchases, stale-sub alert, prune
 ```
 
@@ -286,6 +286,71 @@ To turn it off again, remove the id and redeploy: a game in progress finishes, a
 - `pnpm run deploy` (never bare `pnpm deploy`: pnpm 10 runs its built-in `deploy` command instead of the script) runs `content-lint --release`: each free starter pack (`*-everyday-01`) needs at least **40 pairs** and `status: "reviewed"`, plus the per-game release gates of JAMAA-PLATFORM §4.3. The deploy is refused until the owner (and a native reviewer for AR/ES) marks the free starter packs reviewed; this is intended, not a bug.
 - Create the JAMAA Pass and the pack products from `pnpm --filter @jamaa/server billing:products` (PAYMENTS-SPEC §8.B, [BILLING-LAUNCH.md](BILLING-LAUNCH.md)).
 - Replace the rate-limit `namespace_id`s `1003`/`1004` like `1001`/`1002`.
+
+## Monitoring (JAMAA-PLATFORM §8)
+
+What exists: live rooms/games/players, today's counts by game, error reports from every client, server errors, hourly
+alerts and an owner page at `/admin`. Everything is within the Workers Free plan and never writes per WebSocket message.
+
+| Piece | Where | Binding / var (server/wrangler.jsonc) |
+|---|---|---|
+| Event history (one point per room/game/player/error event) | Workers Analytics Engine, dataset `jamaa_events` | `analytics_engine_datasets` → `EVENTS` |
+| Live numbers, hourly counts, last 100 errors, alert incidents | `Stats` Durable Object (singleton `global`) | `durable_objects` → `STATS`, migration `v3` |
+| Client error reports | `POST /api/client-errors` | `ratelimits` → `CLIENT_ERROR_LIMITER` (namespace `1005`) |
+| Alerts (hourly cron `23 * * * *`) | Email Routing `send_email` | `send_email` → `ALERT_MAILER`; vars `ALERT_EMAIL`, `ALERT_EMAIL_FROM`, thresholds |
+| Owner page | `GET /admin`, `GET /api/admin/overview`, `GET /api/admin/errors` | secret `ADMIN_TOKEN` (already used by grants) |
+
+### One-time setup (owner, Cloudflare dashboard)
+
+1. **Analytics Engine**: Workers & Pages → Analytics Engine → enable it for the account if asked. The `jamaa_events`
+   dataset is created by the first write; nothing else to create.
+2. **Stats DO**: nothing to create; the next deploy applies migration `v3` (`new_sqlite_classes: ["Stats"]`).
+3. **Rate limit**: `CLIENT_ERROR_LIMITER` uses `namespace_id` `"1005"`; change it like the others if it collides.
+4. **Admin token** (if not set yet): `openssl rand -hex 32 | pnpm --filter @jamaa/server exec wrangler secret put ADMIN_TOKEN`.
+   Shorter than 32 characters = unset (everything admin answers 404).
+5. **Alert email** (optional; needs a domain on Cloudflare):
+   - Email → Email Routing on the domain → enable it, then **Destination addresses → add the owner's address and click
+     the verification link** (`send_email` only delivers to verified destinations).
+   - Set the vars in `server/wrangler.jsonc` (they are not secrets): `ALERT_EMAIL` = that verified address,
+     `ALERT_EMAIL_FROM` = a sender on the routed domain (e.g. `alerts@<your-domain>`). Redeploy.
+   - The `send_email` binding (`ALERT_MAILER`, no address restriction) is already declared. If a deploy is refused
+     because Email Routing is not enabled on any zone yet, remove the `send_email` block until it is; alerts then stay
+     logged only.
+   - Without email: every new incident is still one `{"code":"ALERT",…}` line in Workers Logs and a red banner on `/admin`.
+6. Thresholds (vars, strings): `ALERT_SERVER_ERRORS_PER_HOUR` (20), `ALERT_CLIENT_ERRORS_PER_HOUR` (50),
+   `PLAN_DAILY_REQUESTS` (100000, the Free plan's daily request quota as documented; [VERIFY] for this account),
+   `ALERT_QUOTA_RATIO` (0.8). `"0"` turns an error rule off.
+
+### How to read it
+
+- **`/admin`** (on the Worker's origin, e.g. `https://play.<subdomain>.workers.dev/admin`): paste the token once per tab.
+  Tiles = live now and today (UTC); the table = games started / finished today and live now; the meter = today's
+  *estimated* Worker requests vs `PLAN_DAILY_REQUESTS` (4 per room + 4 per player + 1 per error report; the real number is
+  on the Workers dashboard); bars = rooms per hour; then the last 100 errors, newest first (`3x` = merged duplicates).
+  Live counts self-heal: a room that died without saying so leaves the count after ~12.5 h (a game after 4 h).
+- **JSON**: `curl -H "Authorization: Bearer $ADMIN_TOKEN" https://<origin>/api/admin/overview`.
+- **History** (Analytics Engine SQL API, needs an account API token with "Account Analytics: Read"):
+  ```sql
+  SELECT blob2 AS game, SUM(_sample_interval) AS games FROM jamaa_events
+  WHERE index1 = 'game_started' AND timestamp > NOW() - INTERVAL '7' DAY GROUP BY game ORDER BY games DESC
+  ```
+  Columns: `blob1` event, `blob2` game, `blob3` locale, `blob4` platform, `blob5` reason / error name, `blob6` app version,
+  `blob7` screen, `blob8` room code; `double1` players, `double2` duration (s), `double3` count.
+- **Workers Logs**: filter `code = "CLIENT_ERROR"` (warn level), `"ALERT"`, `"INTERNAL"`, `"UNHANDLED"`, `"ADMIN_INTERNAL"`.
+- Local dev: `wrangler dev` simulates the DO and AE locally; alerts never email locally (no `ALERT_EMAIL`). Trigger the
+  cron with `curl "http://localhost:8787/cdn-cgi/local/scheduled?cron=23+*+*+*+*"` (see "Cron (local)").
+
+### Privacy rules (unchanged, extended to monitoring)
+
+The logging rules of "How the server is put together" apply to every monitoring path: codes, phases, counts, game ids,
+locales, platforms, app versions and room codes only. **Never** player names, words, answers, tokens, install ids, IPs
+or request bodies. Concretely:
+- clients send error name, message, stack, screen and room code, nothing they read from the room view about people;
+- the server truncates and scrubs every report (emails, URL query strings and fragments, long hex/token-like strings,
+  long digit runs) before it logs or stores it; the client IP is only a rate-limit key;
+- server error forwarding reuses the already-sanitised log fields (`billingLog` redaction included);
+- the Stats DO stores ids of the form `<code>:<createdAt>`, counts and the scrubbed error ring, nothing else;
+- the alert email carries counts and thresholds only. Workers traces stay off.
 
 ## Deploy (Cloudflare)
 

@@ -1,5 +1,6 @@
 package app.jamaa.tv.net
 
+import app.jamaa.tv.BuildConfig
 import app.jamaa.tv.protocol.CreateRoomRequest
 import app.jamaa.tv.protocol.CreateRoomResponse
 import app.jamaa.tv.protocol.ProtocolJson
@@ -58,6 +59,8 @@ object RoomApi {
             val request = Request.Builder()
                 .url(ServerUrls.apiRoomsUrl(baseUrl))
                 .post(body.toRequestBody(JSON))
+                // JAMAA-PLATFORM §8: which TV created the room (monitoring only; an older server ignores the header).
+                .header("X-Jamaa-Client", "tv-android/" + BuildConfig.VERSION_NAME)
                 .build()
             try {
                 client.newCall(request).execute().use { response ->

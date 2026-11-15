@@ -1,6 +1,9 @@
 import type { CreateRoomResponseBody } from "@jamaa/shared/protocol";
 import type { Locale } from "@jamaa/shared/constants";
 
+/** JAMAA-PLATFORM §8: which browser TV this is (/tv-pixi or /tv); monitoring only. */
+export const tvPlatform = (): string => (/^\/tv-pixi\/?$/i.test(globalThis.location?.pathname ?? "") ? "tv-pixi" : "tv-web");
+
 export type CreateRoomResult = { ok: true; room: CreateRoomResponseBody } | { ok: false; error: string };
 
 /**
@@ -11,7 +14,8 @@ export async function createRoom(locale: Locale, entitlement: string | null = nu
   try {
     const res = await fetch("/api/rooms", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      // JAMAA-PLATFORM §8: which TV created the room (monitoring only; an older server ignores the header).
+      headers: { "Content-Type": "application/json", "X-Jamaa-Client": `${tvPlatform()}/web` },
       body: JSON.stringify({ locale, entitlement: entitlement ?? undefined, ...extra }), // undefined keys are dropped
       cache: "no-store",
     });

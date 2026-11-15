@@ -10,7 +10,10 @@ import { billingEnabled, enabledGames } from "./config";
 import { serverContent } from "./content";
 import { verifyKeysFromSecret } from "./billing/token";
 import { RoomCore } from "./room-core";
-import type { ConnHandle, ConnState, InitRoomArgs, InitRoomResult, RoomBillingDeps, RoomStorage } from "./room-core";
+import type { ConnHandle, ConnState, InitRoomArgs, InitRoomResult, RoomBillingDeps, RoomCoreDeps, RoomStorage } from "./room-core";
+import { isStatsEvent, roomEventPoint, writePoint } from "./monitor/events";
+import { bindMonitor, forwardServerError } from "./monitor/report";
+import { statsStub } from "./monitor/stats-api";
 import { randomBytes, sha256hex } from "./tokens";
 
 // §7.8 / JAMAA-PLATFORM §5.6: the content is parsed lazily, once per isolate, on first use by a Room (the stateless
@@ -20,6 +23,26 @@ import { randomBytes, sha256hex } from "./tokens";
 let billingDeps: Promise<RoomBillingDeps> | null = null;
 function roomBillingDeps(env: Env): Promise<RoomBillingDeps> {
   return (billingDeps ??= verifyKeysFromSecret(env.ENTITLEMENT_KEYS).then((verifyKeys) => ({ verifyKeys, fakeAllowedByEnv: fakeAllowedByEnv(env) })));
+}
+
+/**
+ * JAMAA-PLATFORM §8: one AE point per room event, and the four lifecycle events to the Stats DO (a DO-to-DO RPC that
+ * the room does not await: a slow or failing Stats never delays a game). Player joins/leaves are AE only.
+ */
+function roomMonitor(env: Env): NonNullable<RoomCoreDeps["monitor"]> {
+  bindMonitor(env);
+  return {
+    emit(ev) {
+      writePoint(env.EVENTS, roomEventPoint(ev));
+      if (!isStatsEvent(ev)) return;
+      try {
+        void statsStub(env)?.ingest([ev]).catch(() => undefined);
+      } catch {
+        // best effort
+      }
+    },
+    error: (code, fields) => forwardServerError(code, fields),
+  };
 }
 
 export class Room extends Server<Env> {
@@ -51,6 +74,7 @@ export class Room extends Server<Env> {
         billingEnabled: billingEnabled(this.env),
         debugInvariants: this.env.DEBUG_INVARIANTS === "1",
         roomCode: this.name,
+        monitor: roomMonitor(this.env),
       });
     }
     return this.#core;

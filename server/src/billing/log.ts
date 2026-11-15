@@ -2,6 +2,8 @@
 // counts, booleans, HTTP statuses and a few fixed enum strings. Every other string value is replaced by
 // "[redacted]", so a token, a token hash, an install id, an email, an order id or a Google URL can never be logged.
 
+import { forwardServerError } from "../monitor/report";
+
 export type BillingLogCode =
   | "BILLING_BUDGET" | "BILLING_AUTH" | "BILLING_RESTORE_OTHER_INSTALL" | "BILLING_ACK_REJECTED" | "BILLING_ACK_OVERDUE"
   | "BILLING_SUB_STALE" | "BILLING_NOT_CONFIGURED" | "BILLING_REVOKE_SUB_IGNORED" | "BILLING_UPSTREAM" | "BILLING_INTERNAL"
@@ -34,7 +36,10 @@ export function sanitizeLogFields(fields: Readonly<Record<string, LogValue>>): R
 
 export function billingLog(code: BillingLogCode, fields: Readonly<Record<string, LogValue>> = {}, level: "log" | "warn" | "error" = "log"): void {
   const line = JSON.stringify({ code, ...sanitizeLogFields(fields) });
-  if (level === "error") console.error(line);
+  if (level === "error") {
+    console.error(line);
+    forwardServerError(code, { ...sanitizeLogFields(fields) }); // JAMAA-PLATFORM §8.3: same sanitised fields only
+  }
   else if (level === "warn") console.warn(line);
   else console.log(line);
 }

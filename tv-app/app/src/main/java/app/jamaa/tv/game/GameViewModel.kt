@@ -157,6 +157,8 @@ class GameDeps(
     val roomMemory: RoomMemoryStore = MemoryRoomMemoryStore(),
     /** §3.8 motion decision from the Calm animations pref (the device part — low RAM, animator scale — is bound in). */
     val motion: (calm: Boolean) -> MotionMode = { calm -> MotionMode(reduced = calm, lite = false) },
+    /** JAMAA-PLATFORM §8.3: a caught error that should not happen (not a network failure) → /api/client-errors. */
+    val reportError: (where: String, e: Throwable) -> Unit = { _, _ -> },
 )
 
 /** SPEC §9.8 + JAMAA-PLATFORM §3 (hub, setup, game, overlays, the input rule). */
@@ -312,6 +314,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
+                    deps.reportError("clientConfig", e) // RoomApi.clientConfig never throws: this is a bug
                     ClientConfig.OFF
                 }
                 billingOn = config.billing
@@ -320,6 +323,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 val memory = try {
                     deps.roomMemory.load()
                 } catch (e: Exception) {
+                    deps.reportError("roomMemory", e)
                     emptyMap()
                 }
                 deps.createRoom(deps.serverUrl(), deps.appLocale(), if (billingOn) billing?.tokenForCreate() else null, memory)
@@ -329,6 +333,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
                 _ui.value = TvUiState.CreateFailed(e.errorCode?.let { errorMessageKey(it) } ?: MessageKeys.TV_CREATE_FAILED)
                 return@launch
             } catch (e: Exception) {
+                deps.reportError("createRoom", e) // network failures arrive as CreateRoomException above
                 _ui.value = TvUiState.CreateFailed(MessageKeys.TV_CREATE_FAILED)
                 return@launch
             }
@@ -702,7 +707,7 @@ class GameViewModel(app: Application, private val deps: GameDeps) : AndroidViewM
         val meta = GameCatalog.meta(setup.gameId) ?: return
         val patch = SetupRows.step(meta, setup, key, delta) ?: return
         if (setup.gameId == GameIds.MISHANA) {
-            val p = try { ProtocolJson.decoder.decodeFromJsonElement(SettingsPatch.serializer(), patch) } catch (e: IllegalArgumentException) { return }
+            val p = try { ProtocolJson.decoder.decodeFromJsonElement(SettingsPatch.serializer(), patch) } catch (e: IllegalArgumentException) { deps.reportError("settings", e); return }
             changeSettings(p)
         } else {
             changeGenericSettings(setup.gameId, patch)

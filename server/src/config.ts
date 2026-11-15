@@ -1,6 +1,6 @@
 // Worker vars that switch features on (JAMAA-PLATFORM §2.6, §4.3).
 // - BILLING_ENABLED (wrangler.jsonc, default "0"): the production switch for everything premium/billing. Off (anything but
-//   "1"): /api/billing/* and /api/admin/* answer 404, the crons do nothing, createRoom ignores entitlement tokens, rooms
+//   "1"): /api/billing/* and /api/admin/grants answer 404, the billing crons do nothing, createRoom ignores entitlement tokens, rooms
 //   play the whole catalog and ignore `entitlement` / `storeOpen`, and GET /api/config tells every client to hide its
 //   premium UI and never call billing. "1": PAYMENTS-SPEC as written.
 // - GAMES_ENABLED (comma list, default "mishana"): the live games. At runtime unknown ids are ignored with one logged
@@ -12,8 +12,11 @@ import type { ClientConfigV2Body } from "@jamaa/shared/protocol/v2";
 import { notFound } from "./request";
 
 export const CONFIG_PATH = "/api/config";
-/** BILLING_PREFIX (billing/routes.ts) and ADMIN_PREFIX (admin.ts), repeated so this module imports neither (http.ts uses it). */
-export const GATED_PREFIXES = ["/api/billing/", "/api/admin/"] as const;
+/**
+ * BILLING_PREFIX (billing/routes.ts) and the admin grants route (admin.ts), repeated so this module imports neither
+ * (http.ts uses it). The other /api/admin/* routes (monitoring, JAMAA-PLATFORM §8.5) work with billing off.
+ */
+export const GATED_PREFIXES = ["/api/billing/", "/api/admin/grants"] as const;
 export const GAMES_ENABLED_DEFAULT = "mishana";
 
 type ConfigEnv = { BILLING_ENABLED?: string | undefined; GAMES_ENABLED?: string | undefined };

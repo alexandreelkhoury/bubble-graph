@@ -1,4 +1,5 @@
 // In-memory fakes for driving RoomCore in Node (§7.5 "Dependency injection"), protocol v2 (JAMAA-PLATFORM §2.5).
+import type { RoomEvent } from "../../src/monitor/events";
 import type { GameState, SettingsPatch } from "@jamaa/shared/engine";
 import { contentCatalog } from "@jamaa/shared/content";
 import type { ContentCatalog } from "@jamaa/shared/content";
@@ -118,6 +119,8 @@ export class Harness {
   enabledGames: readonly GameId[] | undefined;
   content: ContentCatalog = TEST_CONTENT;
   logs: { code: string; fields: Record<string, string | number | null> }[] = [];
+  /** JAMAA-PLATFORM §8: every monitoring event the room emitted. */
+  events: RoomEvent[] = [];
   #n = 0;
 
   constructor(opts: { storage?: FakeStorage; conns?: FakeConnections; now?: number; entitlement?: RoomEntitlement | null; billingMode?: "google" | "fake"; billing?: RoomBillingDeps; billingEnabled?: boolean; enabledGames?: readonly GameId[]; content?: ContentCatalog } = {}) {
@@ -143,6 +146,7 @@ export class Harness {
       premiumFamilies: () => TEST_PREMIUM_FAMILIES,
       billing: async () => this.billing,
       log: (code, fields) => void this.logs.push({ code, fields }),
+      monitor: { emit: (e) => void this.events.push(e) },
       ...(this.billingEnabled === undefined ? {} : { billingEnabled: this.billingEnabled }),
       ...(this.enabledGames === undefined ? {} : { enabledGames: this.enabledGames }),
       debugInvariants: this.debugInvariants,

@@ -31,15 +31,17 @@ describe("BILLING_ENABLED", () => {
     expect(handleConfig(get("/api/config", "POST"), { BILLING_ENABLED: "1" }).status).toBe(405);
   });
 
-  it("off: every billing and admin path answers 404; on: nothing is gated", () => {
-    expect(GATED_PREFIXES).toEqual([BILLING_PREFIX, ADMIN_PREFIX]);
-    for (const p of ["/api/billing/catalog", "/api/billing/verify", "/api/billing/rtdn", "/api/admin/grant"]) {
+  it("off: every billing path and the admin grants answer 404; on: nothing is gated", () => {
+    expect(GATED_PREFIXES).toEqual([BILLING_PREFIX, ADMIN_PREFIX + "grants"]);
+    for (const p of ["/api/billing/catalog", "/api/billing/verify", "/api/billing/rtdn", "/api/admin/grants"]) {
       expect(billingGate(p, { BILLING_ENABLED: "0" })?.status).toBe(404);
       expect(billingGate(p, {})?.status).toBe(404);
       expect(billingGate(p, { BILLING_ENABLED: "1" })).toBeNull();
     }
     expect(billingGate("/api/rooms", { BILLING_ENABLED: "0" })).toBeNull();
     expect(billingGate("/api/config", { BILLING_ENABLED: "0" })).toBeNull();
+    // JAMAA-PLATFORM §8.5: the monitoring admin routes work with billing off (they have their own ADMIN_TOKEN check).
+    expect(billingGate("/api/admin/overview", { BILLING_ENABLED: "0" })).toBeNull();
   });
 
   it("off: createRoom ignores an entitlement token (NONE, no verification, a room without entitlement)", async () => {

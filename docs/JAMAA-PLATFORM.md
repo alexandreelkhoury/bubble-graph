@@ -1239,6 +1239,123 @@ The rule from SPEC §0.4 still holds: D's i18n keys and content stubs exist befo
 | Play title length limit and Android TV form-factor path in Play Console | E, owner | Release |
 | AR/FR/ES game titles and the Lebanese proverb, expression and quiz content | owner review | Release of each game |
 | "JAMAA" trademark searches | owner (O9) | Release |
+| Workers Free-plan limits for this account (≈100 k requests/day, Analytics Engine writes, `send_email` on Free) used by §8 | owner | No (§8 alerts are estimates) |
+
+---
+
+## 8. Monitoring
+
+Goal: know cheaply whether JAMAA is being played and whether it is breaking, inside the Workers Free plan. Nothing here
+writes per WebSocket message, and no player data is recorded (docs/DEV.md "Monitoring", privacy rules).
+
+### 8.1 Events (Workers Analytics Engine, `server/src/monitor/events.ts`)
+
+One data point per meaningful event, dataset `jamaa_events` (binding `EVENTS`):
+
+| Event | Emitted by | Fields |
+|---|---|---|
+| `room_created` | `RoomCore.initRoom` | locale, platform |
+| `room_closed` | room expiry (alarm), or a code reused after expiry (`reason` expired / replaced) | joins not yet reported |
+| `game_started` | `RoomCore#persist` (a new `state.game` instance) | game id, players in the game, content locale, platform |
+| `game_ended` | `#persist`, expiry | game id, players, duration, `reason`: finished (a new `history.games` entry), aborted (ABORT_GAME → SETUP), abandoned (§2.3 empty game → HUB), expired (the room expired mid-game) |
+| `player_joined` / `player_left` | `#persist` (member diff) | platform |
+| `client_error` | `POST /api/client-errors` | platform, app version, screen, error name, room code |
+| `server_error` | `logServerError`, billing errors | code, phase |
+
+Layout (fixed so SQL queries stay stable): `index1` event; `blob1` event, `blob2` game id, `blob3` locale, `blob4`
+platform, `blob5` reason or error name, `blob6` app version, `blob7` screen/phase, `blob8` room code; `double1` players,
+`double2` duration (s), `double3` count. The room events come from a **diff of the state `#persist` is about to write**,
+so they cost nothing per message, and the game start time and join counters (`RoomMeta.gameStartedAt`, `joins`,
+`joinsSent`) ride in the same atomic storage write. Idempotency ids: room `<code>:<createdAt>`, game
+`<room>:<n>:<startedAt>` (`n` alone repeats after an ABORT).
+
+Platform: the TVs send `X-Jamaa-Client: <platform>/<version>` (`tv-android/1.0.0`, `tv-web/web`, `tv-pixi/web`) with
+`POST /api/rooms`, stored as `RoomMeta.platform`. A header, not a body field: `CreateRoomRequest` is strict, and an older
+server ignores an unknown header. Missing or malformed = `unknown`.
+
+### 8.2 Live numbers (the `Stats` Durable Object, `server/src/monitor/stats-core.ts`)
+
+Analytics Engine answers "how many today" only through its SQL API (an account API token) and cannot say "how many right
+now". A **single `Stats` DO** (`env.STATS.getByName("global")`, SQLite-backed, migration `v3`) keeps:
+
+- live rooms and games, id → start time. A room pings it when created and closed, a game when started and ended
+  (≈ 2 + 2 × games RPCs per room). **TTL**: a room that crashed without its "closed" ping stops counting after
+  `ROOM_TV_MAX_TTL_MS` + 30 min, a game after 4 h; `room_closed` also ends that room's games;
+- hourly counters (UTC hour → name → n) for 48 h: `rooms_created`, `games_started`, `started:<game>`,
+  `finished:<game>`, `ended:<reason>`, `players_joined`, `client_errors`, `server_errors`;
+- the last 100 client and server errors (a ring; the same error within 10 min is merged with a count);
+- the alert incidents (§8.4).
+
+Every ping carries an idempotency id; a duplicate (among the last 2 000) is ignored. **Writes are batched**: the state
+lives in memory and one alarm flushes the changed keys at most every 30 s, so storage writes do not grow with traffic
+(≤ 2 880 flushes/day). Trade-off: a runtime restart between two flushes loses up to 30 s of counts (monitoring, not
+billing). Joins are counted when the room next pings Stats (game start/end, close), so "today" lags by at most a game.
+
+Why not a per-hour sharded counter: two pings per game at Free-plan scale is far below one DO's throughput, and a
+single instance makes "live now" one read. If JAMAA outgrows it, shard by `hash(roomCode) % N` and sum the shards in the
+admin read; the RPC surface (`ingest`, `snapshot`, `evaluate`) stays.
+
+### 8.3 Error reports
+
+`POST /api/client-errors` (`server/src/monitor/client-errors.ts`): a JSON or `text/plain` (sendBeacon) body ≤ 8 KB with
+short keys `{p?, v?, s?, k?, n?, m?, st?, r?, c?}` = platform (phone | tv-web | tv-pixi | tv-android; absent = phone), app version,
+screen, kind, error name, message, stack, room code, count. Origin-checked like `/api/rooms`; per-IP limit
+`CLIENT_ERROR_LIMITER` (10/min, checked before the body is read); message ≤ 300 and stack ≤ 1 500 chars after a PII scrub
+(emails, URL queries and fragments, long hex and token-like runs, long digit runs, control characters). Answers 204;
+`Script error.` and empty reports are accepted and dropped. Each accepted report = one `CLIENT_ERROR` JSON log line
+(`console.warn`), one AE point, one entry in the Stats ring.
+
+Clients throttle first:
+- **Phone, /tv, /tv-pixi** (`web-client/src/lib/report.ts`, in the phone core, ≈ 0.3 KB gz): `error` and
+  `unhandledrejection` → `navigator.sendBeacon`, at most 5 per page load, each distinct error once, with the screen
+  (the phone: its path, `/` or `/<CODE>`, since the room phase did not fit the §3.8 budget; the TVs:
+  `tv:<PHASE>:<setupGame>` and the room code). The phone has no Preact error boundary; render errors reach
+  `window.onerror`.
+- **Android TV** (`tv-app/.../monitor/`): an uncaught-exception handler saves the crash to `noBackupFilesDir/monitor/`
+  (synchronously; then the previous handler crashes the app as before) and the next launch sends it once; the same crash
+  twice bumps its count. Caught errors that mean a bug (never network failures) in `GameViewModel` go through
+  `GameDeps.reportError`. 5 per process, each once.
+
+Server errors: `logServerError(code, fields)` (`server/src/monitor/report.ts`) keeps the structured `console.error` line
+and also writes an AE point and forwards the entry to the Stats ring, capped at 10 forwards per isolate per minute. Wired
+into `createRoom` INTERNAL, the room's INTERNAL catch-all, `ADMIN_INTERNAL`, every `billingLog(…, "error")` (the same
+sanitised fields) and a new Worker-level catch of unhandled exceptions (`UNHANDLED`, path prefix only).
+
+### 8.4 Alerts (hourly cron)
+
+The existing hourly trigger (`23 * * * *`) now always runs `runMonitorCron` (the billing work still needs
+`BILLING_ENABLED`). The Stats DO evaluates, on **the last complete UTC hour**:
+
+| Rule | Default | Var |
+|---|---|---|
+| Server errors | ≥ 20 / hour | `ALERT_SERVER_ERRORS_PER_HOUR` (0 = off) |
+| Client error reports | ≥ 50 / hour | `ALERT_CLIENT_ERRORS_PER_HOUR` (0 = off) |
+| Estimated Worker requests today | ≥ 80 % of 100 000 | `PLAN_DAILY_REQUESTS`, `ALERT_QUOTA_RATIO` |
+
+The request count is an **estimate** from the counters (`4 × rooms + 4 × players + client reports`: POST /api/rooms,
+GET /api/config, the WebSocket upgrade and a reconnect or two each; static assets never run the Worker). The real number
+is in the Cloudflare dashboard, and the plan quota is [VERIFY] (§7).
+
+One notification per incident: an incident opens when a rule fires, stays open and silent while it keeps firing, and
+closes at the first hour below the threshold; one that re-opens within 6 h of its last notification is not notified
+again (flapping). The quota incident is keyed by UTC day. A new incident is always logged as one `ALERT` JSON line
+(`{"code":"ALERT","rule",…}`) and, when `ALERT_MAILER` + `ALERT_EMAIL` + `ALERT_EMAIL_FROM` are set, emailed through the
+Email Routing `send_email` binding (counts and thresholds only). Email Routing is free, but it needs a domain on
+Cloudflare with Email Routing on and a **verified** destination address. Without them, alerts stay a logged `ALERT` line
+plus the admin page banner.
+
+### 8.5 Admin page
+
+`GET /admin` (and `/admin/app.js`), served by the Worker (`run_worker_first`), plain HTML + JS, never in the phone bundle.
+404 while `ADMIN_TOKEN` is unset or shorter than 32 characters, like every admin route. The token is typed once, kept in
+`sessionStorage` and sent as `Authorization: Bearer`; never in a URL. Strict CSP (`script-src 'self'`, no inline
+script), `no-store`, `noindex`, `frame-ancestors 'none'`. It shows live rooms, games and players; today's counts, games
+by game and ends by reason; the estimated quota meter; rooms per hour over 24 h; the last 100 errors (client and server,
+with stacks); open alerts and missing-binding banners. It refreshes every 30 s while visible, and is usable on a phone.
+
+JSON (same auth, the shared `BILLING_LIMITER` under `admin:<ip>`, available with billing **off**):
+`GET /api/admin/overview` → `{stats, quota, alerting, bindings, billing}` and `GET /api/admin/errors` → `{errors}`.
+`/api/admin/grants` stays billing-only: `GATED_PREFIXES` now gates `/api/admin/grants`, no longer all of `/api/admin/`.
 
 ---
 

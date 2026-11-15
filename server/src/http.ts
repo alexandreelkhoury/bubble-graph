@@ -15,6 +15,8 @@ import { generateRoomCode } from "./codes";
 import { billingEnabled } from "./config";
 import type { Env } from "./env";
 import { isOriginAllowed } from "./origin";
+import { CLIENT_HEADER, parseClientHeader } from "./monitor/events";
+import { logServerError } from "./monitor/report";
 import type { InitRoomArgs, InitRoomResult } from "./room-core";
 import { clientIp } from "./request";
 import { randomHex, sha256hex } from "./tokens";
@@ -115,6 +117,9 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
   const tvToken = randomHex(16, deps.randomBytes);
   const tvTokenHash = await sha256hex(tvToken);
 
+  // JAMAA-PLATFORM §8: which TV created the room (monitoring only; a missing or odd header is "unknown").
+  const { platform } = parseClientHeader(req.headers.get(CLIENT_HEADER));
+
   // 7. joinUrl base (computed once; it does not depend on the code).
   const base = (env.JOIN_BASE_URL || new URL(req.url).origin).replace(/\/$/, "");
 
@@ -125,10 +130,10 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
     let ok: boolean;
     try {
       const stub = await deps.getStub(code);
-      const r = await stub.initRoom({ tvTokenHash, joinUrl, locale, now: deps.now(), entitlement: roomEntitlement, billingMode, memory });
+      const r = await stub.initRoom({ tvTokenHash, joinUrl, locale, now: deps.now(), entitlement: roomEntitlement, billingMode, memory, platform });
       ok = r.ok;
     } catch {
-      console.error(JSON.stringify({ code: "INTERNAL", phase: "createRoom", roomCode: code }));
+      logServerError("INTERNAL", { phase: "createRoom", roomCode: code });
       return httpError("INTERNAL", 503);
     }
     if (ok) {
