@@ -290,7 +290,8 @@ To turn it off again, remove the id and redeploy: a game in progress finishes, a
 ## Monitoring (JAMAA-PLATFORM §8)
 
 What exists: live rooms/games/players, today's counts by game, error reports from every client, server errors, hourly
-alerts and an owner page at `/admin`. Everything is within the Workers Free plan and never writes per WebSocket message.
+alerts and an owner page at `/admin` with 90-day history charts, the most skipped content, per-game on/off switches and
+a read-only room inspector. Everything is within the Workers Free plan and never writes per WebSocket message.
 
 | Piece | Where | Binding / var (server/wrangler.jsonc) |
 |---|---|---|
@@ -298,7 +299,9 @@ alerts and an owner page at `/admin`. Everything is within the Workers Free plan
 | Live numbers, hourly counts, last 100 errors, alert incidents | `Stats` Durable Object (singleton `global`) | `durable_objects` → `STATS`, migration `v3` |
 | Client error reports | `POST /api/client-errors` | `ratelimits` → `CLIENT_ERROR_LIMITER` (namespace `1005`) |
 | Alerts (hourly cron `23 * * * *`) | Email Routing `send_email` | `send_email` → `ALERT_MAILER`; vars `ALERT_EMAIL`, `ALERT_EMAIL_FROM`, thresholds |
-| Owner page | `GET /admin`, `GET /api/admin/overview`, `GET /api/admin/errors` | secret `ADMIN_TOKEN` (already used by grants) |
+| Owner page | `GET /admin`, `GET /api/admin/{overview,errors,history,content,games,room}`, `POST /api/admin/games` | secret `ADMIN_TOKEN` (already used by grants) |
+| History + content stats on `/admin` | Analytics Engine SQL API, answers cached 5 min in the Stats DO | var `CF_ACCOUNT_ID` (set), secret `CF_ANALYTICS_TOKEN` (owner creates it) |
+| Game switches (no redeploy) | override + audit log in the Stats DO, merged with `GAMES_ENABLED` | none (uses `STATS`) |
 
 ### One-time setup (owner, Cloudflare dashboard)
 
@@ -317,7 +320,15 @@ alerts and an owner page at `/admin`. Everything is within the Workers Free plan
      because Email Routing is not enabled on any zone yet, remove the `send_email` block until it is; alerts then stay
      logged only.
    - Without email: every new incident is still one `{"code":"ALERT",…}` line in Workers Logs and a red banner on `/admin`.
-6. Thresholds (vars, strings): `ALERT_SERVER_ERRORS_PER_HOUR` (20), `ALERT_CLIENT_ERRORS_PER_HOUR` (50),
+6. **Analytics token** (for the History and Content panels of `/admin`; until then they say "Connect Analytics"):
+   - Dashboard → **My Profile → API Tokens → Create Token → Create Custom Token**. Permissions: **Account › Account
+     Analytics › Read** (nothing else). Account resources: include only the JAMAA account. No IP filter needed (the Worker
+     calls the API). Optionally set a TTL and renew it.
+   - `pnpm --filter @jamaa/server exec wrangler secret put CF_ANALYTICS_TOKEN` (paste the token; same as
+     `npx wrangler secret put CF_ANALYTICS_TOKEN` from `server/`). No redeploy needed for a secret.
+   - `CF_ACCOUNT_ID` is already a var in `server/wrangler.jsonc` (`0e3069b0e41fcc0463f6f603c3a1a0d1`). A 401/403 on the
+     page means the token lacks the permission or belongs to another account.
+7. Thresholds (vars, strings): `ALERT_SERVER_ERRORS_PER_HOUR` (20), `ALERT_CLIENT_ERRORS_PER_HOUR` (50),
    `PLAN_DAILY_REQUESTS` (100000, the Free plan's daily request quota as documented; [VERIFY] for this account),
    `ALERT_QUOTA_RATIO` (0.8). `"0"` turns an error rule off.
 
@@ -328,14 +339,34 @@ alerts and an owner page at `/admin`. Everything is within the Workers Free plan
   *estimated* Worker requests vs `PLAN_DAILY_REQUESTS` (4 per room + 4 per player + 1 per error report; the real number is
   on the Workers dashboard); bars = rooms per hour; then the last 100 errors, newest first (`3x` = merged duplicates).
   Live counts self-heal: a room that died without saying so leaves the count after ~12.5 h (a game after 4 h).
-- **JSON**: `curl -H "Authorization: Bearer $ADMIN_TOKEN" https://<origin>/api/admin/overview`.
-- **History** (Analytics Engine SQL API, needs an account API token with "Account Analytics: Read"):
+  The sticky chips jump to each section; live numbers refresh every 30 s (and when the tab comes back), the rest on
+  load and with **Reload**.
+  - **History** (last 90 days, UTC): games started per day stacked by game, rooms per day, most played games, average
+    finished game length per game, how games end (finished / aborted / abandoned / expired), content languages, TV
+    platforms (tv-android / tv-web / tv-pixi) and players-per-game distribution. Cached 5 min in the Stats DO.
+  - **Most skipped content** (30 / 90 days): every accepted host skip, void or hide as game, pack id, item id, action
+    (`skip`: Bluff prompt, Likely card, Taqriban question; `void`: Trivia question; `hide_truth` / `hide_house`: a Bluff
+    card hidden that came from the pack). Fix or remove the top items in `content/`. Mish Ana!'s pause "skip" only ends a
+    timer, so it is not counted; a hidden player lie is not content and never recorded.
+  - **Games on / off**: `GAMES_ENABLED` stays the default; a switch (with a confirm) overrides one game, **Reset** drops
+    the override. New rooms and `GET /api/config` follow within 30 s (per-isolate cache); running rooms keep the list
+    they were created with. Every change is in the change log (time, game, before → after). Only games this build ships
+    (registry) can be turned on.
+  - **Room inspector**: type a room code to see its live state read-only: phase, game and game phase, host, members
+    (name, colour, seat, connected / left / benched / kicked), sockets (role only), timers (game deadline, alarm, expiry),
+    seq / version / viewRev, settings and the errors reported for that code. Tokens, token hashes, connection ids, hashed
+    IPs and the entitlement subject are redacted. The **hidden game state** (answers, roles, words, votes) is shown
+    behind a separate "owner only" fold. Nothing on the page changes a room.
+- **JSON**: `curl -H "Authorization: Bearer $ADMIN_TOKEN" https://<origin>/api/admin/overview` (also `history`,
+  `content?days=30|90`, `games`, `room?code=ABCD`; `POST games` with `{"gameId":"bluff","enabled":false}`, `null` = reset).
+- **Ad-hoc history** (Analytics Engine SQL API, the same read token):
   ```sql
   SELECT blob2 AS game, SUM(_sample_interval) AS games FROM jamaa_events
   WHERE index1 = 'game_started' AND timestamp > NOW() - INTERVAL '7' DAY GROUP BY game ORDER BY games DESC
   ```
   Columns: `blob1` event, `blob2` game, `blob3` locale, `blob4` platform, `blob5` reason / error name, `blob6` app version,
-  `blob7` screen, `blob8` room code; `double1` players, `double2` duration (s), `double3` count.
+  `blob7` screen, `blob8` room code; `double1` players, `double2` duration (s), `double3` count. `content_flag` rows:
+  `blob5` action, `blob7` pack id, `blob8` item id.
 - **Workers Logs**: filter `code = "CLIENT_ERROR"` (warn level), `"ALERT"`, `"INTERNAL"`, `"UNHANDLED"`, `"ADMIN_INTERNAL"`.
 - Local dev: `wrangler dev` simulates the DO and AE locally; alerts never email locally (no `ALERT_EMAIL`). Trigger the
   cron with `curl "http://localhost:8787/cdn-cgi/local/scheduled?cron=23+*+*+*+*"` (see "Cron (local)").
@@ -350,7 +381,9 @@ or request bodies. Concretely:
   long digit runs) before it logs or stores it; the client IP is only a rate-limit key;
 - server error forwarding reuses the already-sanitised log fields (`billingLog` redaction included);
 - the Stats DO stores ids of the form `<code>:<createdAt>`, counts and the scrubbed error ring, nothing else;
-- the alert email carries counts and thresholds only. Workers traces stay off.
+- the alert email carries counts and thresholds only. Workers traces stay off;
+- content stats carry game, pack and item ids only; the room inspector shows display names of a live room to the owner
+  only, never tokens, hashes, connection ids or IP keys.
 
 ## Deploy (Cloudflare)
 

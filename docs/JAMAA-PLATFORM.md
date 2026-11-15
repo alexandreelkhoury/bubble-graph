@@ -1261,13 +1261,15 @@ One data point per meaningful event, dataset `jamaa_events` (binding `EVENTS`):
 | `player_joined` / `player_left` | `#persist` (member diff) | platform |
 | `client_error` | `POST /api/client-errors` | platform, app version, screen, error name, room code |
 | `server_error` | `logServerError`, billing errors | code, phase |
+| `content_flag` | `RoomCore#action`, after an accepted host skip / void / hide (§8.6) | game id, content locale, platform, action, pack id, item id |
 
 Layout (fixed so SQL queries stay stable): `index1` event; `blob1` event, `blob2` game id, `blob3` locale, `blob4`
 platform, `blob5` reason or error name, `blob6` app version, `blob7` screen/phase, `blob8` room code; `double1` players,
 `double2` duration (s), `double3` count. The room events come from a **diff of the state `#persist` is about to write**,
 so they cost nothing per message, and the game start time and join counters (`RoomMeta.gameStartedAt`, `joins`,
 `joinsSent`) ride in the same atomic storage write. Idempotency ids: room `<code>:<createdAt>`, game
-`<room>:<n>:<startedAt>` (`n` alone repeats after an ABORT).
+`<room>:<n>:<startedAt>` (`n` alone repeats after an ABORT). `content_flag` reuses `blob5` for the action, `blob7`
+for the pack id and `blob8` for the item id.
 
 Platform: the TVs send `X-Jamaa-Client: <platform>/<version>` (`tv-android/1.0.0`, `tv-web/web`, `tv-pixi/web`) with
 `POST /api/rooms`, stored as `RoomMeta.platform`. A header, not a body field: `CreateRoomRequest` is strict, and an older
@@ -1351,11 +1353,95 @@ plus the admin page banner.
 `sessionStorage` and sent as `Authorization: Bearer`; never in a URL. Strict CSP (`script-src 'self'`, no inline
 script), `no-store`, `noindex`, `frame-ancestors 'none'`. It shows live rooms, games and players; today's counts, games
 by game and ends by reason; the estimated quota meter; rooms per hour over 24 h; the last 100 errors (client and server,
-with stacks); open alerts and missing-binding banners. It refreshes every 30 s while visible, and is usable on a phone.
+with stacks); open alerts and missing-binding banners; and the §8.6–§8.9 panels (history, most skipped content, game
+switches, room inspector). Phone-first: a sticky header with section chips and the last-updated time; live data
+refreshes every 30 s while visible (and on return to the tab), the AE panels on load and on **Reload**. Charts are
+inline SVG drawn by the script (no library, CSP unchanged). The HTML and script are wrangler Text modules
+(`server/src/monitor/admin-ui/*.txt`): served by the Worker as before but counted with the content modules, not the
+450 KB script budget.
 
 JSON (same auth, the shared `BILLING_LIMITER` under `admin:<ip>`, available with billing **off**):
-`GET /api/admin/overview` → `{stats, quota, alerting, bindings, billing}` and `GET /api/admin/errors` → `{errors}`.
-`/api/admin/grants` stays billing-only: `GATED_PREFIXES` now gates `/api/admin/grants`, no longer all of `/api/admin/`.
+`GET /api/admin/overview` → `{stats, quota, alerting, bindings, billing}` and `GET /api/admin/errors` → `{errors}`;
+`history`, `content`, `games` (GET + POST) and `room` below. `/api/admin/grants` stays billing-only: `GATED_PREFIXES`
+now gates `/api/admin/grants`, no longer all of `/api/admin/`.
+
+### 8.6 Content stats
+
+A host skip is the cheapest signal that a pack item is broken, offensive or too hard. `RoomCore#action` reads, from the
+game state **before** the intent (`server/src/monitor/content-flags.ts`), which item it acts on, and after the intent is
+accepted and changed the room emits one `content_flag` AE point (never a Stats ping, never per message):
+
+| Game | Intent | Action | Pack / item |
+|---|---|---|---|
+| Bluff! | `SKIP_PROMPT` | `skip` | `prompt.packId` / `prompt.itemId` |
+| Bluff! | `HIDE_OPTION` on the truth / a house card | `hide_truth` / `hide_house` | the prompt's (a hidden player lie: nothing) |
+| Most Likely | `SKIP_CARD` | `skip` | `card.packId` / `card.cardId` |
+| Trivia | `VOID_QUESTION` (not already voided) | `void` | `quiz.packId` / `last.questionId` |
+| Taqriban! | `SKIP_QUESTION` | `skip` | the pack holding `cur.id` (settings packs first) / `cur.id` |
+
+Mish Ana!'s pause "skip" is a `HOST_ADVANCE` that ends a timer, not a word skip: no flag. Ids only, no player data.
+`GET /api/admin/content?days=30|90` → `{connected, at, cached, days, items:[{game, pack, item, action, n}]}` (top 100,
+`SUM(_sample_interval)` desc).
+
+### 8.7 Game switches (no redeploy)
+
+`GAMES_ENABLED` (§2.6) is the default. The owner can override any game on or off from `/admin`; the override
+(`{gameId: boolean}`, known ids only) and an audit log (`{at, gameId, enabled, before}`, newest 200) live in the `Stats`
+DO (`server/src/monitor/admin-store.ts`, storage keys `admin:games`, `admin:audit`). Effective list =
+`GAME_IDS.filter(id => registry enabled ∧ (override[id] ?? id ∈ GAMES_ENABLED))` (`config.ts mergeGames`), so a switch
+can never enable a game this build does not ship.
+
+Read path: `GET /api/config` and `POST /api/rooms` call `effectiveGames(env)`, which reads the override through a
+**per-isolate cache of 30 s** (`GAMES_OVERRIDE_TTL_MS`; one Stats RPC per isolate per 30 s at most; a failed read keeps
+the last known value; no `STATS` binding = no override). `createRoom` passes the list to `initRoom`, which stores it as
+`RoomMeta.enabledGames`; the room uses it instead of the env list for its whole life. So the override costs nothing per
+WebSocket message, and a running room is never changed under its players. Older rooms (no field) use the env list.
+
+`GET /api/admin/games` → `{known, registry, env, envUnknown, override, effective, audit, stats}`;
+`POST /api/admin/games` `{gameId, enabled: true|false|null}` (strict; `null` = back to the default) → the same body
+(409 without a `STATS` binding). The admin's own isolate updates its cache at once.
+
+### 8.8 Room inspector
+
+`GET /api/admin/room?code=ABCD` (code validated with `ROOM_CODE_REGEX`, case-insensitive) → `{room, errors}`: the Worker
+calls the Room DO's `adminInspect()` **native RPC** (`room.ts`) after ADMIN_TOKEN auth. RPC methods are reachable only
+through the Worker's `Room` binding; the DO's HTTP `onRequest` stays 404 and partyserver routes only WebSocket
+upgrades, so no client can call it. `RoomCore.inspect()` is read-only: a loaded room answers from memory; an evicted
+one is read straight from storage (no load, so no seq-floor write, no reschedule, no broadcast).
+
+The view (`server/src/monitor/inspect.ts`): phase, game id and game phase, setup game, content locale, host, version /
+viewRev / seq, TV games, the room's game list, the current settings; timers (alarm, next wake, expiry, game deadline,
+tvBusy, created / last activity / TV left / game start); members (id, display name, colour, seat, locale,
+connected / left / benched / kicked, host); sockets (role and player id only); meta (platform, billing mode, entitlement
+mode / premium-until / expiry / packs); cup; history (games, memory sizes); `errors` = the Stats ring entries with that
+room code. **Redacted** at any depth (`redactDeep`): keys matching token / hash / ip / ipKey / cid / sig / sub / secret /
+password, so the TV token hash, resume-token hashes, connection ids, hashed IPs and the entitlement subject never leave
+the DO. The hidden game state (answers, roles, words, votes) is included on purpose under `hiddenState` with a note, and
+the page shows it behind a separate "owner only" fold. No mutation actions in v1.
+
+### 8.9 History (Analytics Engine SQL API)
+
+`GET /api/admin/history` → the 90-day panels, from the AE SQL API
+(`POST https://api.cloudflare.com/client/v4/accounts/<CF_ACCOUNT_ID>/analytics_engine/sql`, `Authorization: Bearer
+<CF_ANALYTICS_TOKEN>`, the SQL as the body). `CF_ACCOUNT_ID` is a var in `wrangler.jsonc`; `CF_ANALYTICS_TOKEN` is a
+secret the owner creates (read-only, **Account › Account Analytics › Read**; docs/DEV.md "Monitoring"). Without them the
+endpoint answers `{connected:false, help}` and the page shows how to connect. Queries (`server/src/monitor/history.ts`,
+fixed strings, only the integer day window varies; counts are `SUM(_sample_interval)`):
+
+| Panel | Event | Grouping |
+|---|---|---|
+| `gamesPerDay` (and "most played", summed on the page) | `game_started` | day (`toStartOfInterval(timestamp, INTERVAL '1' DAY)`), `blob2` game |
+| `roomsPerDay` | `room_created` | day |
+| `ends` (end reasons; average finished duration = Σ`_sample_interval·double2` / n) | `game_ended` | game, `blob5` reason |
+| `languages` | `game_started` | `blob3` locale |
+| `platforms` | `room_created` | `blob4` platform |
+| `players` (distribution + average) | `game_started` | game, `double1` players |
+
+The six queries run in parallel and the combined answer is cached **5 min** in the Stats DO's memory
+(`cacheGet` / `cachePut`, ≤ 32 keys; an evicted DO just asks again), so a page refreshing every 30 s asks the API at most
+once per 5 min per panel set. Content stats (§8.6) use the same path and cache per window. An API error is returned as
+`{connected:true, error:"AE_HTTP_<status>"}` and not cached. The token is only ever sent to `api.cloudflare.com` and
+never logged or returned. AE keeps data about 3 months, which bounds the 90-day window.
 
 ---
 
