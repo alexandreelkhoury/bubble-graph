@@ -253,7 +253,8 @@ describe("trivia lint: content/trivia", () => {
   });
 
   it("is still a draft: --release refuses it until every fact is verified and the packs are reviewed", () => {
-    expect(errorsOf(packs, true)).toContain("lb-quiz-01-en: 75 question source(s) still marked [VERIFY]");
+    // Every source is verified now (fact-check 2026-11); the draft status alone still blocks a release.
+    expect(errorsOf(packs, true)).toContain('lb-quiz-01-en: status is "draft"');
     for (const p of packs) expect(p.raw.status).toBe("draft");
   });
 

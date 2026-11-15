@@ -336,6 +336,8 @@ export function lintTriviaRaw(packs: readonly TriviaLintInput[], opts: { release
       if (opts.release) err(`${verify} question source(s) still marked [VERIFY]; check each fact before release (§14)`);
       else warn(`${verify} question source(s) still marked [VERIFY]`);
     }
+    // Sources can all be verified while the wording is still unreviewed: a draft pack never ships (like Bluff's drafts).
+    if (opts.release && raw.status === "draft") err(`status is "draft"; a native review must set it to "reviewed" before release (§14)`);
   }
 
   // Family rules (§11.3): translations share the header metadata and every question's shape.
