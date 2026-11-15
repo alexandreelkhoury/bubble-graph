@@ -62,7 +62,7 @@
       ],
       "region": "beirut",
       "explain": "بيروت قاعدة على راس فايت بالبحر، كأنّها بدّها تشوف البحر أحسن.",
-      "source": "[VERIFY] trivial; any encyclopedia (Britannica: Beirut)"
+      "source": "https://www.britannica.com/place/Beirut"
     },
     {
       "id": "q002",
@@ -79,7 +79,7 @@
       "difficulty": 2,
       "region": "north",
       "explain": "علوّها حوالي 3088 متر، فوق وادي قاديشا بالشمال.",
-      "source": "[VERIFY] Britannica 'Qurnat al-Sawdāʾ' (name, ~3,088 m, location above Qadisha)"
+      "source": "https://en.wikipedia.org/wiki/Qurnat_as_Sawda%27"
     },
     {
       "id": "q003",
@@ -96,7 +96,7 @@
       "difficulty": 2,
       "region": "bekaa",
       "explain": "نبعو بالبقاع، قريب من بعلبك.",
-      "source": "[VERIFY] Britannica 'Līṭānī River' (longest entirely within Lebanon; source near Baalbek)"
+      "source": "https://en.wikipedia.org/wiki/Litani_River"
     },
     {
       "id": "q004",
@@ -113,7 +113,7 @@
       "difficulty": 1,
       "region": "mount-lebanon",
       "explain": "نفس المدينة باسمين: اليونان قالوا بيبلوس، وأهل المينا بيقولوا جبيل.",
-      "source": "[VERIFY] UNESCO WHC 'Byblos' (Byblos = Jbeil)"
+      "source": "https://en.wikipedia.org/wiki/Jbeil_(disambiguation)"
     },
     {
       "id": "q005",
@@ -130,7 +130,7 @@
       "difficulty": 1,
       "region": "mount-lebanon",
       "explain": "المغارة التحتانية بتزورها بالشختورة، على نهر تحت الأرض. إيه، نهر. جوّا جبل.",
-      "source": "[VERIFY] Jeita Grotto official site / Britannica (limestone karst caves; lower grotto by boat)"
+      "source": "https://en.wikipedia.org/wiki/Jeita_Grotto"
     },
     {
       "id": "q006",
@@ -147,7 +147,7 @@
       "difficulty": 1,
       "region": "beirut",
       "explain": "أحلى محطّة غروب عالكورنيش… وأحلى محطّة سيلفي كمان.",
-      "source": "[VERIFY] Britannica / Lebanon Ministry of Tourism (Pigeon Rocks off Raouché)"
+      "source": "https://afar.com/places/pigeon-rocks-raouche"
     },
     {
       "id": "q007",
@@ -164,7 +164,7 @@
       "difficulty": 2,
       "region": "bekaa",
       "explain": "نهر البردوني بيقطع فيها، وعلى طرفو مطاعم وطاولات مليانة مازة.",
-      "source": "[VERIFY] Zahlé municipality / Britannica (nickname 'Bride of the Bekaa'; Berdawni river)"
+      "source": "https://www.traveldojo.com/zahle"
     },
     {
       "id": "q008",
@@ -181,7 +181,7 @@
       "difficulty": 2,
       "region": "north",
       "explain": "هيّي ووادي قاديشا مسجّلين عالتراث العالمي بالأونيسكو.",
-      "source": "[VERIFY] UNESCO WHC 'Ouadi Qadisha and the Forest of the Cedars of God' (near Bsharri)"
+      "source": "https://whc.unesco.org/en/list/850-002"
     },
     {
       "id": "q009",
@@ -196,7 +196,7 @@
       "difficulty": 1,
       "region": "south",
       "explain": "لأ، نزول عالجنوب: صيدا على بعد شي أربعين كيلومتر من بيروت عالساحل، عطريق صور.",
-      "source": "[VERIFY] Britannica 'Sidon' (port city about 40 km south of Beirut)"
+      "source": "https://en.wikipedia.org/wiki/Sidon"
     },
     {
       "id": "q010",
@@ -213,7 +213,7 @@
       "difficulty": 1,
       "region": "mount-lebanon",
       "explain": "المفخرة اللبنانية: تزلّج الصبح وسباحة بالبحر بعد الضهر.",
-      "source": "[VERIFY] Mzaar Kfardebian official site (location in Keserwan, Lebanon)"
+      "source": "https://en.wikipedia.org/wiki/Mzaar_Kfardebian"
     },
     {
       "id": "q011",
@@ -229,7 +229,7 @@
       "topic": "history",
       "difficulty": 1,
       "explain": "كل رسالة بتبعتها، اشكرن عليها: منها طلعت الأبجدية اليونانية واللاتينية، ومنها طلعت كمان الأبجدية العربية، عن طريق الآرامية.",
-      "source": "[VERIFY] Britannica 'Phoenician alphabet' (ancestor of Greek, then Latin; Arabic script via Aramaic and Nabataean)"
+      "source": "https://www.worldhistory.org/article/17/the-phoenician-alphabet--language/"
     },
     {
       "id": "q012",
@@ -245,7 +245,7 @@
       "topic": "history",
       "difficulty": 1,
       "explain": "من سنة 1943، وكل البلد بياخد فرصة.",
-      "source": "[VERIFY] Lebanese government / Britannica (Independence Day 22 November); distractor '31 August' replaced by 21 March (Mother's Day in Lebanon); Lebanese reviewer: confirm 10 March, 1 May and 21 March are neutral"
+      "source": "https://en.wikipedia.org/wiki/Public_holidays_in_Lebanon"
     },
     {
       "id": "q013",
@@ -262,7 +262,7 @@
       "difficulty": 1,
       "region": "bekaa",
       "explain": "الرومان سمّوا المدينة «هليوبوليس»، يعني مدينة الشمس.",
-      "source": "[VERIFY] UNESCO WHC 'Baalbek' (Roman temples; Heliopolis)"
+      "source": "https://whc.unesco.org/en/list/294"
     },
     {
       "id": "q014",
@@ -279,7 +279,7 @@
       "difficulty": 3,
       "region": "bekaa",
       "explain": "واقف حدّ العواميد الستّة العملاقة يلّي بقيو من معبد جوبيتر.",
-      "source": "[VERIFY] UNESCO WHC 'Baalbek' / Britannica (Temple of Bacchus preservation; beside the Temple of Jupiter columns)"
+      "source": "https://en.wikipedia.org/wiki/Temple_of_Bacchus"
     },
     {
       "id": "q015",
@@ -296,7 +296,7 @@
       "difficulty": 3,
       "region": "south",
       "explain": "كانوا يطلّعوها من صدف المُريق، وكانت غالية لدرجة صار الأرجوان لون الأباطرة.",
-      "source": "[VERIFY] Britannica 'Tyrian purple' (murex sea snails; imperial/royal purple)"
+      "source": "https://www.worldhistory.org/Tyrian_Purple/"
     },
     {
       "id": "q016",
@@ -311,7 +311,7 @@
       "difficulty": 2,
       "region": "mount-lebanon",
       "explain": "الأونيسكو بتذكر آثار سكن فيها من العصر الحجري الحديث.",
-      "source": "[VERIFY] UNESCO WHC 'Byblos' ('continuously inhabited since Neolithic times')"
+      "source": "https://whc.unesco.org/en/list/295"
     },
     {
       "id": "q017",
@@ -327,7 +327,7 @@
       "topic": "culture",
       "difficulty": 1,
       "explain": "طلع سنة 1923، وانترجم لعشرات اللغات.",
-      "source": "[VERIFY] Britannica 'Khalil Gibran' (The Prophet, 1923; translations claim)"
+      "source": "https://en.wikipedia.org/wiki/The_Prophet_(book)"
     },
     {
       "id": "q018",
@@ -344,7 +344,7 @@
       "difficulty": 2,
       "region": "north",
       "explain": "متحفو ببشرّي في لوحاتو، وهوّي مدفون هونيك.",
-      "source": "[VERIFY] Gibran Museum, Bsharri (birthplace; museum and resting place)"
+      "source": "https://en.wikipedia.org/wiki/Gibran_Museum"
     },
     {
       "id": "q019",
@@ -360,7 +360,7 @@
       "topic": "culture",
       "difficulty": 3,
       "explain": "ربحها سنة 1993، وسنة 2023 صار أمين السرّ الدائم للأكاديمية الفرنسية.",
-      "source": "[VERIFY] Académie Goncourt laureates (1993, Le Rocher de Tanios); Académie française (Maalouf, secrétaire perpétuel 2023)"
+      "source": "https://en.wikipedia.org/wiki/Amin_Maalouf"
     },
     {
       "id": "q020",
@@ -379,7 +379,7 @@
         "ar"
       ],
       "explain": "وجدّو؟ التنين رح يقولولك: ضعفان، كول شي!",
-      "source": "[VERIFY] common Lebanese usage (reviewer)"
+      "source": "https://lebanese-arabic.com/lesson12/"
     },
     {
       "id": "q021",
@@ -398,7 +398,7 @@
         "ar"
       ],
       "explain": "ستّة وخمسة إلها اسم لحالها: «شيش بيش».",
-      "source": "[VERIFY] tawleh = backgammon; 'shesh besh' = a roll of six and five (Persian/Turkish numbers)"
+      "source": "https://egyptianstreets.com/2022/09/10/sheesh-beesh-egypts-5-most-common-tawla-games-and-how-theyre-played/"
     },
     {
       "id": "q022",
@@ -412,7 +412,7 @@
       "topic": "culture",
       "difficulty": 1,
       "explain": "وإذا خلصت الجملة بـ«merci، يلّا باي»، بونص.",
-      "source": "[VERIFY] widely cited Lebanese code-switching phrase (keep as culture, not a statistic)"
+      "source": "https://core.ac.uk/download/6609.pdf"
     },
     {
       "id": "q023",
@@ -428,7 +428,7 @@
       "topic": "culture",
       "difficulty": 2,
       "explain": "الزجل اللبناني مسجّل عالتراث غير المادّي بالأونيسكو.",
-      "source": "[VERIFY] UNESCO ICH 'Al-Zajal, recited or sung poetry' (Lebanon, 2014)"
+      "source": "https://ich.unesco.org/en/RL/01000"
     },
     {
       "id": "q024",
@@ -443,7 +443,7 @@
       "difficulty": 3,
       "region": "bekaa",
       "explain": "فيروز والأخوين رحباني غنّوا فيها من أوّل سنينها.",
-      "source": "[VERIFY] Baalbeck International Festival official site (founded 1956; early Rahbani/Fairuz nights)"
+      "source": "https://www.baalbeck.org.lb/en/history"
     },
     {
       "id": "q025",
@@ -459,7 +459,7 @@
       "topic": "cinema-tv",
       "difficulty": 2,
       "explain": "عيلتو فلّت وهوّي زغير وكبر أكتر شي بتورونتو. بس بتنحسب!",
-      "source": "[VERIFY] Britannica 'Keanu Reeves' (born Beirut 1964; raised mainly in Toronto)"
+      "source": "https://en.wikipedia.org/wiki/Keanu_Reeves"
     },
     {
       "id": "q026",
@@ -475,7 +475,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "جانيت فغالي هوّي اسم صباح الحقيقي.",
-      "source": "[VERIFY] Britannica 'Fairuz' (Nouhad Haddad); Britannica 'Sabah' (Jeanette Feghali)"
+      "source": "https://en.wikipedia.org/wiki/Fairuz"
     },
     {
       "id": "q027",
@@ -491,7 +491,7 @@
       "topic": "music",
       "difficulty": 1,
       "explain": "عاصي الرحباني كان كمان جوزها. والبي جيز كانوا مشغولين.",
-      "source": "[VERIFY] Britannica 'Fairuz' (Assi and Mansour Rahbani; married Assi)"
+      "source": "https://en.wikipedia.org/wiki/Assi_Rahbani"
     },
     {
       "id": "q028",
@@ -507,7 +507,7 @@
       "topic": "music",
       "difficulty": 3,
       "explain": "الكونشرتو للمؤلّف الإسباني خواكين رودريغو.",
-      "source": "[VERIFY] song credits 'Li Beirut' (melody: Rodrigo, Concierto de Aranjuez, 2nd mvt)"
+      "source": "https://www.pri.org/file/2020-08-07/fairuz-s-li-beirut"
     },
     {
       "id": "q029",
@@ -523,7 +523,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "ومثّلت كمان بعشرات الأفلام المصرية واللبنانية.",
-      "source": "[VERIFY] Britannica 'Sabah' (nickname al-Shahrourah; film career)"
+      "source": "https://m.imdb.com/es/name/nm0754480/bio"
     },
     {
       "id": "q030",
@@ -539,7 +539,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "بيعزف على ترومبيت بربع الصوت، بتقدر تعزف المقامات العربية.",
-      "source": "[VERIFY] ibrahimmaalouf.com bio (trumpet; quarter-tone trumpet)"
+      "source": "https://theartsdesk.com/node/94307"
     },
     {
       "id": "q031",
@@ -555,7 +555,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "راح وهوّي زغير عباريس، وبعدها علندن.",
-      "source": "[VERIFY] Britannica / official bio 'Mika' (born Beirut 1983; Paris then London; 'Grace Kelly' 2007)"
+      "source": "https://en.wikipedia.org/wiki/Mika_(singer)"
     },
     {
       "id": "q032",
@@ -574,7 +574,7 @@
         "ar"
       ],
       "explain": "آلة «اللوت» الأوروبية أخدت اسمها منّو.",
-      "source": "[VERIFY] Britannica 'ʿūd' (fretless; name 'the wood'; root of the word 'lute')"
+      "source": "https://en.wikipedia.org/wiki/Oud"
     },
     {
       "id": "q033",
@@ -590,7 +590,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "نزلت سنة 2004 وضلّت عم تنسمع كل الصيف، حتّى بسيّارة خالتك.",
-      "source": "[VERIFY] album credits 'Ah W Noss' (Nancy Ajram, 2004); distractors by other artists"
+      "source": "https://en.wikipedia.org/wiki/Ah_W_Noss"
     },
     {
       "id": "q034",
@@ -609,7 +609,7 @@
         "ar"
       ],
       "explain": "اسمها جايي من الدبك بالإجرين عالأرض.",
-      "source": "[VERIFY] trivial; Britannica 'dabke' (name linked to stamping)"
+      "source": "https://en.wikipedia.org/wiki/Dabke"
     },
     {
       "id": "q035",
@@ -625,7 +625,7 @@
       "topic": "dance",
       "difficulty": 2,
       "explain": "يلّي عالراس بيرتجل خطوات، والصفّ ماسك الإيقاع.",
-      "source": "[VERIFY] folk-dance references (handkerchief/mandil of the line leader); reviewer: «محرمة»"
+      "source": "https://en.wikipedia.org/wiki/Dabke"
     },
     {
       "id": "q036",
@@ -641,7 +641,7 @@
       "topic": "dance",
       "difficulty": 3,
       "explain": "أسّسها عبد الحليم كركلا.",
-      "source": "[VERIFY] Caracalla Dance Theatre official site (founder Abdel-Halim Caracalla)"
+      "source": "https://en.wikipedia.org/wiki/Caracalla_Dance_Theatre"
     },
     {
       "id": "q037",
@@ -657,7 +657,7 @@
       "topic": "dance",
       "difficulty": 2,
       "explain": "العازف بيتنفّس من مناخيرو وهوّي عم ينفخ، فالصوت ما بيوقف.",
-      "source": "[VERIFY] ethnomusicology refs on the mijwiz (dabke; circular breathing); AR term for bagpipe [native review]"
+      "source": "https://en.wikipedia.org/wiki/Mijwiz"
     },
     {
       "id": "q038",
@@ -671,7 +671,7 @@
       "topic": "dance",
       "difficulty": 1,
       "explain": "الدبكة صفّ أو دايرة، إيد بإيد أو كتف بكتف. ما في حدا بيدبك لحالو!",
-      "source": "[VERIFY] trivial"
+      "source": "https://en.wikipedia.org/wiki/Dabke"
     },
     {
       "id": "q039",
@@ -687,7 +687,7 @@
       "topic": "dance",
       "difficulty": 2,
       "explain": "والمعازيم بيزيدوا عليها الزلغوطة.",
-      "source": "[VERIFY] wedding-custom references (zaffeh; zalghouta = ululation)"
+      "source": "https://www.theknot.com/content/lebanese-wedding-traditions"
     },
     {
       "id": "q040",
@@ -703,7 +703,7 @@
       "topic": "football",
       "difficulty": 2,
       "explain": "والأرزة كمان بنصّ العلم اللبناني.",
-      "source": "[VERIFY] FIFA / Lebanese FA (team nickname; AR «رجال الأرز»)"
+      "source": "https://en.wikipedia.org/wiki/Lebanon_national_football_team"
     },
     {
       "id": "q041",
@@ -719,7 +719,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "اليابان ربحت هيديك النسخة.",
-      "source": "[VERIFY] AFC 'AFC Asian Cup 2000' (host Lebanon; winner Japan)"
+      "source": "https://en.wikipedia.org/wiki/2000_AFC_Asian_Cup"
     },
     {
       "id": "q042",
@@ -735,7 +735,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "لعب مع هامبورغ وفرايبورغ وكولن.",
-      "source": "[VERIFY] Transfermarkt / Kicker 'Roda Antar' (Hamburger SV, SC Freiburg, 1. FC Köln)"
+      "source": "https://en.wikipedia.org/wiki/Roda_Antar"
     },
     {
       "id": "q043",
@@ -751,12 +751,12 @@
       "topic": "sports",
       "difficulty": 2,
       "explain": "ولبنان استضاف كمان كاس آسيا لكرة السلّة سنة 2017.",
-      "source": "[VERIFY] FIBA archive (World Cup 2002, 2006, 2010, 2023; FIBA Asia Cup 2017 hosted by Lebanon)"
+      "source": "https://en.wikipedia.org/wiki/2017_FIBA_Asia_Cup"
     },
     {
       "id": "q044",
       "type": "mc4",
-      "text": "أيّا نادي ربح أكتر بطولات دوري لبنان؟",
+      "text": "أيّا نادي ربح أكتر بطولات دوري لبنان (لغاية 2025)؟",
       "options": [
         "النجمة",
         "الصفاء",
@@ -767,7 +767,7 @@
       "topic": "football",
       "difficulty": 2,
       "explain": "الأنصار ربح مرّة إحدعشر بطولة ورا بعض.",
-      "source": "[VERIFY] RSSSF 'Lebanon - List of Champions' (record holder Al-Ansar; 11 straight titles from 1988; Safa far behind); Lebanese reviewer: confirm the club list (Al-Ahed dropped: party affiliation, and its title count nears the record)"
+      "source": "https://en.wikipedia.org/wiki/Lebanese_Premier_League"
     },
     {
       "id": "q045",
@@ -783,7 +783,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "البطولة افتتحت بملعب لوسيل، نفس الملعب يلّي انلعب فيه نهائي مونديال 2022.",
-      "source": "[VERIFY] AFC match report: Qatar 3-0 Lebanon, 12 January 2024, Lusail Stadium (AFC Asian Cup 2023 opening match)"
+      "source": "https://www.aljazeera.com/sports/2024/1/12/hosts-qatar-beat-lebanon-thrill-fans-afc-asian-cup-2023-opener"
     },
     {
       "id": "q046",
@@ -799,7 +799,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "هيديك البطولة انلعبت بالإمارات.",
-      "source": "[VERIFY] AFC 'AFC Asian Cup 2019' (Lebanon's first qualification via qualifiers; hosted by UAE)"
+      "source": "https://en.wikipedia.org/wiki/Lebanon_at_the_AFC_Asian_Cup"
     },
     {
       "id": "q047",
@@ -815,7 +815,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "البرغل رشّة بس، البطل هوّي البقدونس. والتبّولة بالسميد؟ ما منحكي عنها.",
-      "source": "[VERIFY] cookbook/encyclopedia 'tabbouleh' (parsley-based Lebanese version)"
+      "source": "https://en.wikipedia.org/wiki/Tabbouleh"
     },
     {
       "id": "q048",
@@ -834,7 +834,7 @@
         "ar"
       ],
       "explain": "توم وزيت وحامض وملح، بلا ولا بيضة. وريحتك رح تتذكّرو لبكرا.",
-      "source": "[VERIFY] cookbook refs 'toum' (garlic, oil, lemon, salt; no egg)"
+      "source": "https://www.themediterraneandish.com/toum-garlic-sauce/"
     },
     {
       "id": "q049",
@@ -850,23 +850,23 @@
       "topic": "food",
       "difficulty": 2,
       "explain": "قالب سميد، وعادةً بيزيّنوه بالصنوبر أو اللوز.",
-      "source": "[VERIFY] cookbook refs 'sfouf' (turmeric, semolina; AR «عقدة صفرا»)"
+      "source": "https://en.wikipedia.org/wiki/Sfouf"
     },
     {
       "id": "q050",
       "type": "mc4",
-      "text": "شو بيحطّوا بالكبّة النيّة؟",
+      "text": "كيف بتنقدّم الكبّة النيّة؟",
       "options": [
-        "دجاج وبرغل",
-        "سمك ورز",
-        "لحمة وبرغل",
-        "عدس وبصل"
+        "مقليّة",
+        "مشويّة",
+        "نيّة",
+        "بالفرن"
       ],
       "answer": 2,
       "topic": "food",
       "difficulty": 2,
       "explain": "بتنوكل مع نعنع وبصل وشوية زيت زيتون.",
-      "source": "[VERIFY] cookbook refs 'kibbeh nayyeh' (raw meat + fine bulgur); AR options differ on purpose (name says 'raw')"
+      "source": "https://en.wikipedia.org/wiki/Kibbeh_nayyeh"
     },
     {
       "id": "q051",
@@ -882,7 +882,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "السمّاق بيعطي صلصتها طعمة حامضة ولون أحمر.",
-      "source": "[VERIFY] trivial; cookbook refs 'fattoush' (sumac dressing)"
+      "source": "https://www.loveandlemons.com/fattoush-salad/"
     },
     {
       "id": "q052",
@@ -898,7 +898,7 @@
       "topic": "cinema-tv",
       "difficulty": 2,
       "explain": "وبتمثّل كمان بأفلامها.",
-      "source": "[VERIFY] IMDb / Britannica 'Nadine Labaki' (director and actress of Caramel, Capernaum)"
+      "source": "https://www.festival-cannes.com/en/festival/artist/nadine-labaki"
     },
     {
       "id": "q053",
@@ -914,7 +914,7 @@
       "topic": "cinema-tv",
       "difficulty": 3,
       "explain": "وبعدها وصل للترشيح لأوسكار أفضل فيلم أجنبي.",
-      "source": "[VERIFY] Festival de Cannes palmarès 2018 (Prix du jury: Capharnaüm); 91st Academy Awards (2019) nominee, Best Foreign Language Film"
+      "source": "https://www.motionpictures.org/2018/11/first-capernaum-trailer-reveals-director-nadine-labakis-cannes-jury-prize-winner/"
     },
     {
       "id": "q054",
@@ -930,7 +930,7 @@
       "topic": "cinema-tv",
       "difficulty": 1,
       "explain": "عيلة بيّها من لبنان، وهيّي خلقت بالمكسيك.",
-      "source": "[VERIFY] Britannica 'Salma Hayek' (father of Lebanese descent; born Mexico)"
+      "source": "https://www.biography.com/actors/salma-hayek"
     },
     {
       "id": "q055",
@@ -946,7 +946,7 @@
       "topic": "cinema-tv",
       "difficulty": 2,
       "explain": "كتير مطربين لبنانيين مشهورين بلّشوا منّو.",
-      "source": "[VERIFY] Télé Liban / press archives 'Studio El Fan' (Simon Asmar, launched 1970s)"
+      "source": "https://en.wikipedia.org/wiki/Studio_El_Fan"
     },
     {
       "id": "q056",
@@ -960,7 +960,7 @@
       "topic": "celebrities",
       "difficulty": 1,
       "explain": "أصلها اللبناني من جهة بيّها.",
-      "source": "[VERIFY] Britannica 'Shakira' (paternal Lebanese ancestry)"
+      "source": "https://thenationalnews.com/arts-culture/music-stage/2024/06/10/shakira-lebanese-father-william-mebarak-chadid"
     },
     {
       "id": "q057",
@@ -977,7 +977,7 @@
       "difficulty": 3,
       "region": "south",
       "explain": "مدرّجاتو كانت تساع حوالي 20 ألف متفرّج على سباق العربيات.",
-      "source": "[VERIFY] UNESCO WHC 'Tyre' (Roman hippodrome; size/seating claim)"
+      "source": "https://en.wikipedia.org/wiki/Tyre_Hippodrome"
     },
     {
       "id": "q058",
@@ -994,7 +994,7 @@
       "difficulty": 3,
       "region": "bekaa",
       "explain": "شوارعها وقناطرها ودكاكينها انخطّطت بأوّل القرن التامن.",
-      "source": "[VERIFY] UNESCO WHC 'Anjar' (Umayyad, early 8th century); reviewer: dynasty name OK under §11.2"
+      "source": "https://en.wikipedia.org/wiki/Anjar,_Lebanon"
     },
     {
       "id": "q059",
@@ -1011,7 +1011,7 @@
       "difficulty": 2,
       "region": "mount-lebanon",
       "explain": "كل صيف، باحاتو بتصير مسرح بالهوا الطلق.",
-      "source": "[VERIFY] Beiteddine Art Festival official site (Beiteddine palace, Chouf)"
+      "source": "https://en.wikipedia.org/wiki/Beiteddine_Festival"
     },
     {
       "id": "q060",
@@ -1028,7 +1028,7 @@
       "difficulty": 1,
       "region": "mount-lebanon",
       "explain": "بتحمي حوالي ربع غابات الأرز الباقية بلبنان.",
-      "source": "[VERIFY] Shouf Biosphere Reserve official site / UNESCO MAB (cedar share claim ~25%)"
+      "source": "https://www.iucn.org/news/protected-areas/201804/wonders-shouf-biosphere-reserve"
     },
     {
       "id": "q061",
@@ -1045,7 +1045,7 @@
       "difficulty": 3,
       "region": "bekaa",
       "explain": "سمّوه «العاصي» لأنو بيمشي عكس، صوب الشمال.",
-      "source": "[VERIFY] Britannica 'Orontes River' (source near Hermel; flows north; 'al-Assi' = the rebel)"
+      "source": "https://www.britannica.com/place/Orontes-River"
     },
     {
       "id": "q062",
@@ -1062,7 +1062,7 @@
       "difficulty": 2,
       "region": "south",
       "explain": "مبنية على جزيرة زغيرة موصولة بالشطّ بممرّ من حجر.",
-      "source": "[VERIFY] Lebanon Ministry of Tourism 'Sidon Sea Castle' (island + causeway)"
+      "source": "https://en.wikipedia.org/wiki/Sidon_Sea_Castle"
     },
     {
       "id": "q063",
@@ -1081,7 +1081,7 @@
         "ar"
       ],
       "explain": "وكل تلفون لبناني بيخلص بـ«يلّا باي».",
-      "source": "[VERIFY] trivial; common usage ('yalla bye')"
+      "source": "https://www.thenationalnews.com/arts-culture/2025/07/25/learn-arabic-words-what-is-yallah"
     },
     {
       "id": "q064",
@@ -1097,7 +1097,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "المنقوشة ترويقة كلاسيكية، سخنة من الفرن.",
-      "source": "[VERIFY] cookbook refs 'za'atar' blend (thyme, sumac, sesame)"
+      "source": "https://www.saveur.com/article/recipes/manoushé-bil-zaatar-flatbread-with-zaatar"
     },
     {
       "id": "q065",
@@ -1113,7 +1113,7 @@
       "topic": "nature",
       "difficulty": 1,
       "explain": "الأرزة الخضرا عالخطّ الأبيض بين خطّين حمر.",
-      "source": "[VERIFY] Lebanese Constitution art. 5 / Britannica 'flag of Lebanon'"
+      "source": "https://flagspot.net/flags/lb.html"
     },
     {
       "id": "q066",
@@ -1130,7 +1130,7 @@
       "difficulty": 2,
       "region": "north",
       "explain": "والبترون كمان من أقدم البلدات عالساحل.",
-      "source": "[VERIFY] Lebanon Ministry of Tourism / travel guides (Batroun lemonade; 'one of the oldest coastal towns')"
+      "source": "https://en.wikipedia.org/wiki/Batroun"
     },
     {
       "id": "q067",
@@ -1147,7 +1147,7 @@
       "difficulty": 2,
       "region": "north",
       "explain": "خان الصابون بطرابلس عمرو مئات السنين.",
-      "source": "[VERIFY] Khan al-Saboun, Tripoli (soap khan; olive-oil soap craft)"
+      "source": "https://www.lonelyplanet.com/points-of-interest/khan-as-saboun/1584430"
     },
     {
       "id": "q068",
@@ -1162,7 +1162,7 @@
       "difficulty": 2,
       "region": "south",
       "explain": "سلاحف الكاريتا والسلاحف الخضرا بيدفنوا بيضن بالرمل هونيك.",
-      "source": "[VERIFY] Tyre Coast Nature Reserve (loggerhead and green turtle nesting)"
+      "source": "https://en.wikipedia.org/wiki/Tyre_Coast_Nature_Reserve"
     },
     {
       "id": "q069",
@@ -1179,7 +1179,7 @@
       "difficulty": 2,
       "region": "south",
       "explain": "ومشهورة كمان بسكاكينها اليدوية يلّي إيدها على شكل عصفور.",
-      "source": "[VERIFY] Jezzine municipality / Ministry of Tourism (waterfall; bird-handled cutlery craft)"
+      "source": "https://en.libnanews.com/lebanon-heritage-the-cutlery-of-jezzine/"
     },
     {
       "id": "q070",
@@ -1196,7 +1196,7 @@
       "difficulty": 3,
       "region": "bekaa",
       "explain": "اسمو «قاموع الهرمل»، وعمرو حوالي ألفين سنة.",
-      "source": "[VERIFY] Lebanon DGA / archaeology refs 'Qamouaa el-Hermel' (pyramid-topped tower, ~1st c. BC)"
+      "source": "https://en.wikipedia.org/wiki/Kamouh_el_Hermel"
     },
     {
       "id": "q071",
@@ -1212,7 +1212,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "بيّو عاصي الرحباني. وزياد عمل من موسيقى العيلة مسرح لاذع وبيموّت من الضحك.",
-      "source": "[VERIFY] Britannica 'Fairuz' / 'Ziad Rahbani' (son of Fairuz and Assi Rahbani; died July 2025)"
+      "source": "https://www.newarab.com/news/loss-lebanon-fairuz-fans-bid-farewell-ziad-rahbani"
     },
     {
       "id": "q072",
@@ -1228,7 +1228,7 @@
       "topic": "music",
       "difficulty": 2,
       "explain": "ضلّ يغنّي أكتر من ستّين سنة.",
-      "source": "[VERIFY] press obituaries 2013 'Wadih El Safi' (nickname 'the Voice of Lebanon'; career length)"
+      "source": "https://en.wikipedia.org/wiki/Wadih_El_Safi"
     },
     {
       "id": "q073",
@@ -1245,7 +1245,7 @@
       "difficulty": 2,
       "region": "beirut",
       "explain": "الفيلّا بتجمع بين الطراز البندقي والعثماني.",
-      "source": "[VERIFY] Sursock Museum official site (Achrafieh; modern and contemporary art)"
+      "source": "https://en.wikipedia.org/wiki/Sursock_Museum"
     },
     {
       "id": "q074",
@@ -1261,7 +1261,7 @@
       "topic": "football",
       "difficulty": 3,
       "explain": "كان كابتن المنتخب بكأس آسيا 2019، أوّل مرّة بيتأهّل فيها لبنان من التصفيات.",
-      "source": "[VERIFY] RSSSF / national-team records (Hassan Maatouk all-time top scorer, tally as of 2024); AFC Asian Cup 2019 squad (captain; first qualification on the pitch, 2000 was as host)"
+      "source": "https://en.wikipedia.org/wiki/Hassan_Maatouk"
     },
     {
       "id": "q075",
@@ -1277,7 +1277,7 @@
       "topic": "food",
       "difficulty": 1,
       "explain": "جبنة وسميد وقطر وكعك: أطيب صباح.",
-      "source": "[VERIFY] food refs 'knefeh / ka'ak' (Lebanese breakfast)"
+      "source": "https://www.anissas.com/my-favourite-breakfast-kaket-knafeh/"
     }
   ]
 }
