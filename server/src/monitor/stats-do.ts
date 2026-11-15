@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.2: the `Stats` Durable Object, a single instance (`env.STATS.getByName("global")`). A thin RPC
+// JAMAA-PLATFORM §8.2: the `Stats` Durable Object, a single instance (`env.STATS.getByName("global")`). A thin RPC
 // adapter over StatsCore: key-value storage on the SQLite backend, writes batched by one alarm.
 import { DurableObject } from "cloudflare:workers";
 import type { Env } from "../env";

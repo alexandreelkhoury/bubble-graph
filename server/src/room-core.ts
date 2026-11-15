@@ -77,7 +77,7 @@ export interface InitRoomArgs {
    * `RoomHistory.memory`. Sanitized again here. Only room creation seeds memory: no WebSocket message can.
    */
   memory?: MemoryWire;
-  /** JAMAA-PLATFORM §7: the TV platform from the `X-Jamaa-Client` header (monitoring only). */
+  /** JAMAA-PLATFORM §8: the TV platform from the `X-Jamaa-Client` header (monitoring only). */
   platform?: PlatformOrUnknown;
 }
 export type InitRoomResult = { ok: true } | { ok: false; reason: "EXISTS" };
@@ -126,7 +126,7 @@ export interface RoomCoreDeps {
   // read (and `meta` is missing for never-created rooms), so the DO name is passed in explicitly.
   roomCode: string;
   /**
-   * JAMAA-PLATFORM §7: room lifecycle events (created, game started/ended, player joined/left, closed) for Analytics
+   * JAMAA-PLATFORM §8: room lifecycle events (created, game started/ended, player joined/left, closed) for Analytics
    * Engine and the Stats DO. Emitted from #persist (a diff of the state it writes), never per message. Default: none.
    */
   monitor?: RoomMonitor & { error?(code: string, fields: Record<string, string | number | null>): void };
@@ -169,7 +169,7 @@ export function expiresAt(meta: RoomMeta, tvConnected: boolean): number {
   return (meta.tvLeftAt ?? meta.lastActivityAt) + ROOM_TV_GONE_TTL_MS;
 }
 
-/** JAMAA-PLATFORM §7: the room's monitoring id (a code is reused after expiry; the creation time makes it unique). */
+/** JAMAA-PLATFORM §8: the room's monitoring id (a code is reused after expiry; the creation time makes it unique). */
 function roomId(meta: RoomMeta): string {
   return `${meta.code}:${meta.createdAt}`;
 }
@@ -964,7 +964,7 @@ export class RoomCore {
     for (const ev of events) this.#emit(ev);
   }
 
-  // ---------------------------------------------------------------- monitoring (JAMAA-PLATFORM §7)
+  // ---------------------------------------------------------------- monitoring (JAMAA-PLATFORM §8)
 
   /**
    * The lifecycle events between the cached state and `next` (about to be written). Updates `#meta` (game start time,

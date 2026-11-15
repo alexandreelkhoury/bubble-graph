@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.3: the tiny client error reporter (phone, /tv, /tv-pixi). Uncaught errors and unhandled rejections
+// JAMAA-PLATFORM §8.3: the tiny client error reporter (phone, /tv, /tv-pixi). Uncaught errors and unhandled rejections
 // become one compact POST /api/client-errors each (sendBeacon: no preflight, survives a closing tab). Throttled per page
 // load: at most MAX_REPORTS, each distinct error once. No player data: error name/message/stack, the screen and the
 // room code only (the server scrubs again). Written for size: it ships in the phone core (§3.8 budget, ≈0.3 KB gz).

@@ -40,7 +40,7 @@ describe("BILLING_ENABLED", () => {
     }
     expect(billingGate("/api/rooms", { BILLING_ENABLED: "0" })).toBeNull();
     expect(billingGate("/api/config", { BILLING_ENABLED: "0" })).toBeNull();
-    // JAMAA-PLATFORM §7.5: the monitoring admin routes work with billing off (they have their own ADMIN_TOKEN check).
+    // JAMAA-PLATFORM §8.5: the monitoring admin routes work with billing off (they have their own ADMIN_TOKEN check).
     expect(billingGate("/api/admin/overview", { BILLING_ENABLED: "0" })).toBeNull();
   });
 

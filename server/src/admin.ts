@@ -70,7 +70,7 @@ function grantJson(g: Grant, nowMs: number): Record<string, unknown> {
   return { ...g, active: g.expiresAt === null || g.expiresAt > nowMs };
 }
 
-/** JAMAA-PLATFORM §7.5 monitoring routes (GET, same auth). They work with billing off; `grants` needs billing on. */
+/** JAMAA-PLATFORM §8.5 monitoring routes (GET, same auth). They work with billing off; `grants` needs billing on. */
 export const MONITOR_ROUTES = ["overview", "errors"] as const;
 
 export async function handleAdmin(req: Request, env: Env, deps: AdminDeps): Promise<Response> {

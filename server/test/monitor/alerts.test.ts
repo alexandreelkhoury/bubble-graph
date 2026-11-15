@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.4: alert evaluation (one notification per incident) and the hourly cron (log line + email).
+// JAMAA-PLATFORM §8.4: alert evaluation (one notification per incident) and the hourly cron (log line + email).
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ALERT_DEFAULTS, alertConfig, estimateRequests, evaluateAlerts, REQUESTS_PER_PLAYER, REQUESTS_PER_ROOM } from "../../src/monitor/alerts";
 import type { AlertIncident, AlertResult } from "../../src/monitor/alerts";

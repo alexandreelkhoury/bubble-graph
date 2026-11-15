@@ -40,7 +40,7 @@ async function fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
   try {
     return await route(req, env, ctx);
   } catch (e) {
-    // JAMAA-PLATFORM §7.3: an unhandled exception is a server error (code only; never the request).
+    // JAMAA-PLATFORM §8.3: an unhandled exception is a server error (code only; never the request).
     void e;
     logServerError("UNHANDLED", { phase: new URL(req.url).pathname.split("/").slice(0, 3).join("/") });
     return httpError("INTERNAL", 500);
@@ -100,7 +100,7 @@ async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
 }
 
 /**
- * Hourly: JAMAA-PLATFORM §7.4 monitoring alerts (always). PAYMENTS-SPEC §3.8 (billing on only): hourly ack retries,
+ * Hourly: JAMAA-PLATFORM §8.4 monitoring alerts (always). PAYMENTS-SPEC §3.8 (billing on only): hourly ack retries,
  * daily voided purchases + prune. Dispatches on `controller.cron`.
  */
 function scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): void {

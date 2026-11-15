@@ -26,7 +26,7 @@ export interface RoomMeta {
   viewRev?: number;
   /** The hub carousel focus last committed by OPEN_GAME (HUB_FOCUS itself is ephemeral); survives hibernation so Back from setup lands on that poster. */
   focus?: string | null;
-  // JAMAA-PLATFORM §7 monitoring (optional on disk; older rooms read as unknown / none):
+  // JAMAA-PLATFORM §8 monitoring (optional on disk; older rooms read as unknown / none):
   /** The TV platform that created the room (X-Jamaa-Client). */
   platform?: PlatformOrUnknown;
   /** When the active game instance started (its duration at the end). */

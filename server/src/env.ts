@@ -27,7 +27,7 @@ export interface Env {
   ENTITLEMENT_KEYS?: string;
   /** PAYMENTS-SPEC §3.12: optional owner secret for /api/admin/* (unset = those endpoints answer 404). */
   ADMIN_TOKEN?: string;
-  // JAMAA-PLATFORM §7 monitoring. Bindings are optional at the type level: tests and a Worker without them still run
+  // JAMAA-PLATFORM §8 monitoring. Bindings are optional at the type level: tests and a Worker without them still run
   // (no counters, no forwarding, alerts only logged).
   /** Singleton live counters, hourly counts, error ring and alert incidents. */
   STATS?: DurableObjectNamespace<Stats>;

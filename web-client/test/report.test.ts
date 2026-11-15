@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.3: the client error reporter — throttle (MAX_REPORTS per page load), dedupe, noise filter, context.
+// JAMAA-PLATFORM §8.3: the client error reporter — throttle (MAX_REPORTS per page load), dedupe, noise filter, context.
 import { afterEach, describe, expect, it } from "vitest";
 import { errorReport, installReporter, MAX_REPORTS, reportError, resetReporter, setReportContext } from "../src/lib/report";
 

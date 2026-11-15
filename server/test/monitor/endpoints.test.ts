@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.3 / §7.5: POST /api/client-errors (size cap, rate limit, scrub, AE + Stats) and the admin monitoring
+// JAMAA-PLATFORM §8.3 / §7.5: POST /api/client-errors (size cap, rate limit, scrub, AE + Stats) and the admin monitoring
 // routes + page (auth, billing-independent, CSP).
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ADMIN_TOKEN_MIN_CHARS, handleAdmin } from "../../src/admin";

@@ -117,7 +117,7 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
   const tvToken = randomHex(16, deps.randomBytes);
   const tvTokenHash = await sha256hex(tvToken);
 
-  // JAMAA-PLATFORM §7: which TV created the room (monitoring only; a missing or odd header is "unknown").
+  // JAMAA-PLATFORM §8: which TV created the room (monitoring only; a missing or odd header is "unknown").
   const { platform } = parseClientHeader(req.headers.get(CLIENT_HEADER));
 
   // 7. joinUrl base (computed once; it does not depend on the code).

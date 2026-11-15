@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.4: alert rules, evaluated by the hourly cron on the Stats counters (pure; stats-core.ts stores the
+// JAMAA-PLATFORM §8.4: alert rules, evaluated by the hourly cron on the Stats counters (pure; stats-core.ts stores the
 // incidents, index.ts sends the notification). ONE notification per incident: an incident opens when a rule crosses its
 // threshold, stays open (silent) while it keeps firing, and closes at the first evaluation below it. A rule that
 // re-opens within ALERT_RENOTIFY_MS of its last notification is recorded but not notified again (flapping).

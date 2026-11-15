@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.5: the owner's monitoring page, GET /admin (+ /admin/app.js), served by the Worker (never part of
+// JAMAA-PLATFORM §8.5: the owner's monitoring page, GET /admin (+ /admin/app.js), served by the Worker (never part of
 // the phone bundle). Plain HTML + JS. The page itself holds no data: it asks for ADMIN_TOKEN once, keeps it in
 // sessionStorage (never in the URL), and reads GET /api/admin/overview with `Authorization: Bearer`. 404 while
 // ADMIN_TOKEN is unset or too short, like the API. Strict CSP: same-origin script only, no inline script.

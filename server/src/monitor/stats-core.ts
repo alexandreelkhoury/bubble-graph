@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.2: the `Stats` Durable Object's behaviour (runtime-agnostic; stats-do.ts adapts it, tests use a Map).
+// JAMAA-PLATFORM §8.2: the `Stats` Durable Object's behaviour (runtime-agnostic; stats-do.ts adapts it, tests use a Map).
 // A single instance ("global") receives a handful of pings per room (created, game started, game ended, closed) and
 // one per error report, never one per WebSocket message. It keeps:
 //   - the LIVE rooms and games (id → start time) with a TTL, so a room that crashed without its "closed" ping stops

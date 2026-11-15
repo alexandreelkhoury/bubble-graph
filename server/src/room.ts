@@ -26,7 +26,7 @@ function roomBillingDeps(env: Env): Promise<RoomBillingDeps> {
 }
 
 /**
- * JAMAA-PLATFORM §7: one AE point per room event, and the four lifecycle events to the Stats DO (a DO-to-DO RPC that
+ * JAMAA-PLATFORM §8: one AE point per room event, and the four lifecycle events to the Stats DO (a DO-to-DO RPC that
  * the room does not await: a slow or failing Stats never delays a game). Player joins/leaves are AE only.
  */
 function roomMonitor(env: Env): NonNullable<RoomCoreDeps["monitor"]> {

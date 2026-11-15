@@ -9,7 +9,7 @@ import { route, startRouter } from "./router";
 import { installReporter, setReportContext } from "./lib/report";
 import { view } from "./state/store";
 
-// JAMAA-PLATFORM §7.3: uncaught errors → POST /api/client-errors (throttled). The TV store sets its own context.
+// JAMAA-PLATFORM §8.3: uncaught errors → POST /api/client-errors (throttled). The TV store sets its own context.
 installReporter();
 setReportContext(() => {
   const r = route.value;

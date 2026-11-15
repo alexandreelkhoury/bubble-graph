@@ -38,7 +38,7 @@ export function billingLog(code: BillingLogCode, fields: Readonly<Record<string,
   const line = JSON.stringify({ code, ...sanitizeLogFields(fields) });
   if (level === "error") {
     console.error(line);
-    forwardServerError(code, { ...sanitizeLogFields(fields) }); // JAMAA-PLATFORM §7.3: same sanitised fields only
+    forwardServerError(code, { ...sanitizeLogFields(fields) }); // JAMAA-PLATFORM §8.3: same sanitised fields only
   }
   else if (level === "warn") console.warn(line);
   else console.log(line);

@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.3: server errors reach the monitoring too. `logServerError` keeps the existing structured
+// JAMAA-PLATFORM §8.3: server errors reach the monitoring too. `logServerError` keeps the existing structured
 // `console.error(JSON)` line (Workers Logs) and also, best effort, writes one AE point and forwards the entry to the
 // Stats DO ring (the admin page cannot read Workers Logs without an API token). Forwarding is capped per isolate
 // (SERVER_FORWARDS_PER_MIN), so an error storm costs a bounded number of DO requests.

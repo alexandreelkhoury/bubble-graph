@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.1: the room lifecycle events RoomCore emits (a diff of what #persist writes, never per message).
+// JAMAA-PLATFORM §8.1: the room lifecycle events RoomCore emits (a diff of what #persist writes, never per message).
 import { describe, expect, it } from "vitest";
 import { ROOM_TV_GONE_TTL_MS } from "@jamaa/shared/constants";
 import type { RoomEvent } from "../src/monitor/events";

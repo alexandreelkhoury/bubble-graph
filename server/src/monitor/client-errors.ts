@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.3: POST /api/client-errors. A compact, size-capped, rate-limited, PII-free error report from the
+// JAMAA-PLATFORM §8.3: POST /api/client-errors. A compact, size-capped, rate-limited, PII-free error report from the
 // phone, the browser TVs and the Android TV app. Logged as one structured JSON line (code CLIENT_ERROR), written as one
 // AE point and kept in the Stats DO ring for the admin page. Clients throttle and dedupe before sending (a few reports
 // per session); the server limits per IP (CLIENT_ERROR_LIMITER), caps the body, truncates and scrubs every string.

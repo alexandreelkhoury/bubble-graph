@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.2: the Stats DO core — live counters (start/end/TTL), idempotency, batched writes, error ring.
+// JAMAA-PLATFORM §8.2: the Stats DO core — live counters (start/end/TTL), idempotency, batched writes, error ring.
 import { describe, expect, it } from "vitest";
 import type { RoomEvent } from "../../src/monitor/events";
 import { ALERT_DEFAULTS } from "../../src/monitor/alerts";

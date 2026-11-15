@@ -14,7 +14,7 @@ import { notFound } from "./request";
 export const CONFIG_PATH = "/api/config";
 /**
  * BILLING_PREFIX (billing/routes.ts) and the admin grants route (admin.ts), repeated so this module imports neither
- * (http.ts uses it). The other /api/admin/* routes (monitoring, JAMAA-PLATFORM §7.5) work with billing off.
+ * (http.ts uses it). The other /api/admin/* routes (monitoring, JAMAA-PLATFORM §8.5) work with billing off.
  */
 export const GATED_PREFIXES = ["/api/billing/", "/api/admin/grants"] as const;
 export const GAMES_ENABLED_DEFAULT = "mishana";

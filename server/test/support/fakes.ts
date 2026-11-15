@@ -119,7 +119,7 @@ export class Harness {
   enabledGames: readonly GameId[] | undefined;
   content: ContentCatalog = TEST_CONTENT;
   logs: { code: string; fields: Record<string, string | number | null> }[] = [];
-  /** JAMAA-PLATFORM §7: every monitoring event the room emitted. */
+  /** JAMAA-PLATFORM §8: every monitoring event the room emitted. */
   events: RoomEvent[] = [];
   #n = 0;
 

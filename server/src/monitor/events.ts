@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7 (Monitoring): the meaningful events a room emits, and their Workers Analytics Engine layout.
+// JAMAA-PLATFORM §8 (Monitoring): the meaningful events a room emits, and their Workers Analytics Engine layout.
 // One data point per event, NEVER per WebSocket message. Ids, codes and counts only: no names, no IPs, no tokens.
 //
 // AE layout (dataset `jamaa_events`, binding EVENTS), fixed positions so SQL queries stay stable:

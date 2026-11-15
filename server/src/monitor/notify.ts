@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §7.4: the hourly monitoring cron. Asks the Stats DO to evaluate the alert rules, then for each NEW
+// JAMAA-PLATFORM §8.4: the hourly monitoring cron. Asks the Stats DO to evaluate the alert rules, then for each NEW
 // incident writes one `ALERT` log line (always) and sends one email through the Email Routing `send_email` binding
 // when it is configured (ALERT_MAILER + ALERT_EMAIL + ALERT_EMAIL_FROM). Unset = alerts are only logged and shown on
 // the admin page banner. The email carries counts and thresholds only.

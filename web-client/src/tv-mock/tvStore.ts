@@ -34,7 +34,7 @@ export const tvUi = signal<TvUi>({ kind: "creating" });
 export const tvView = signal<TvRoomView | null>(null);
 export const tvConn = signal<ConnStatus>("connecting");
 
-// JAMAA-PLATFORM §7.3: error reports from the browser TV carry its screen and room code (main.tsx installed the reporter).
+// JAMAA-PLATFORM §8.3: error reports from the browser TV carry its screen and room code (main.tsx installed the reporter).
 setReportContext(() => {
   const ui = tvUi.value;
   const room = tvView.value?.room;
