@@ -63,7 +63,12 @@ export async function aeQuery(env: Pick<Env, "CF_ACCOUNT_ID" | "CF_ANALYTICS_TOK
   const res = await f(AE_SQL_URL(env.CF_ACCOUNT_ID as string), {
     method: "POST", headers: { Authorization: `Bearer ${env.CF_ANALYTICS_TOKEN as string}`, "Content-Type": "text/plain" }, body: sql,
   });
-  if (!res.ok) throw new Error(`AE_HTTP_${res.status}`);
+  if (!res.ok) {
+    // Cloudflare's own reason (e.g. a disabled dataset or a quota) makes the admin message actionable; the body never
+    // carries the token, and it is cut short.
+    const why = (await res.text().catch(() => "")).replace(/\s+/g, " ").slice(0, 200);
+    throw new Error(`AE_HTTP_${res.status}${why ? `: ${why}` : ""}`);
+  }
   return rows(await res.json());
 }
 
@@ -85,7 +90,9 @@ export async function historyBody(env: Env, deps: HistoryDeps): Promise<Analytic
     const sql = historySql();
     const r = await cached(deps, `history:${HISTORY_DAYS}`, async () => {
       const keys = Object.keys(sql) as HistoryPanel[];
-      const all = await Promise.all(keys.map((k) => aeQuery(env, sql[k], deps.fetch)));
+      // One query at a time: six parallel calls drew HTTP 429 from the AE SQL API.
+      const all: Row[][] = [];
+      for (const k of keys) all.push(await aeQuery(env, sql[k], deps.fetch));
       return Object.fromEntries(keys.map((k, i) => [k, all[i]])) as Record<HistoryPanel, Row[]>;
     });
     return { connected: true, at: r.at, cached: r.cached, days: HISTORY_DAYS, ...r.value };

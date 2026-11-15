@@ -110,8 +110,8 @@ describe("history (Analytics Engine SQL API)", () => {
     const admin = fakeAdmin();
     const deps: AdminDeps = { store, now: () => 0, admin: () => admin, fetch: f };
     const on = env({ CF_ACCOUNT_ID: ACCOUNT, CF_ANALYTICS_TOKEN: AE_TOKEN });
-    expect(await (await handleAdmin(req("history"), on, deps)).json()).toEqual({ connected: true, error: "AE_HTTP_403" });
-    expect(await (await handleAdmin(req("content?days=30"), on, deps)).json()).toEqual({ connected: true, error: "AE_HTTP_403" });
+    expect(await (await handleAdmin(req("history"), on, deps)).json()).toEqual({ connected: true, error: "AE_HTTP_403: no" });
+    expect(await (await handleAdmin(req("content?days=30"), on, deps)).json()).toEqual({ connected: true, error: "AE_HTTP_403: no" });
     status = 200;
     expect(await (await handleAdmin(req("content?days=90"), on, deps)).json()).toMatchObject({ connected: true, days: 90, items: [{ game: "trivia", pack: "world-mix-01-en", item: "q007", action: "void", n: 4 }] });
     for (const d of ["7", "abc", "-30"]) expect((await handleAdmin(req(`content?days=${d}`), on, deps)).status).toBe(400);
