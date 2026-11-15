@@ -100,7 +100,11 @@ describe("POST /api/rooms entitlement (PAYMENTS-SPEC §3.10/§3.11)", () => {
     expect(ok.entitlement).toBe("OK");
     expect(log[0]?.entitlement).toMatchObject({ sub: "a".repeat(64), packs: ["en-food-01"], mode: "google" });
     expect(log[0]?.billingMode).toBe("google");
-    const bad = CreateRoomResponse.parse(await (await createRoom(post(body(t.slice(0, -2) + "AA"), ct), env, deps(log))).json());
+    // Tamper deterministically: the Ed25519 signature is random per run, and ending in "AA" has odds of 1/256,
+    // so blindly overwriting the tail with "AA" was occasionally a no-op (the flake). Always change the tail.
+    const tampered = t.slice(0, -2) + (t.endsWith("AA") ? "AB" : "AA");
+    expect(tampered).not.toBe(t);
+    const bad = CreateRoomResponse.parse(await (await createRoom(post(body(tampered), ct), env, deps(log))).json());
     expect(bad.entitlement).toBe("INVALID");
     expect(log[1]?.entitlement).toBeNull();
     const none = CreateRoomResponse.parse(await (await createRoom(post(body(), ct), env, deps(log))).json());
