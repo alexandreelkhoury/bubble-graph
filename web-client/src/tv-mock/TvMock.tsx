@@ -9,7 +9,6 @@ import type { RoomPhase } from "@jamaa/shared/room";
 import type { TvRoomView } from "@jamaa/shared/protocol/v2";
 import { dirOf, locale, registerRootExtras, t } from "../i18n/t";
 import { toasts } from "../state/store";
-import { route } from "../router";
 import {
   inRunningGame, openedGames, tvAct, tvAdvanced, tvCreateRoom, tvCupOpen, tvExit, tvHubSettings, tvIntro, tvLangOpen, tvPackPicker, tvQuizShelf,
   tvPaused, tvRules, tvScale, tvShop, tvStop, tvUi, tvView,
@@ -90,7 +89,7 @@ type Tr =
  * fails to load the mock simply stays all-DOM. On /tv this is a no-op and the Pixi chunk is never requested.
  */
 function usePixiSkin(): boolean {
-  const wanted = route.value.kind === "tvpixi";
+  const wanted = /^\/tv-pixi\/?$/i.test(location.pathname);
   const [ready, setReady] = useState(!wanted);
   useEffect(() => {
     if (wanted) void import("../tv-pixi/skin").catch(() => undefined).then(() => setReady(true));

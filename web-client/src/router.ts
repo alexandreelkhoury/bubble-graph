@@ -5,8 +5,7 @@ import { ROOM_CODE_ALPHABET, ROOM_CODE_LENGTH, ROOM_CODE_REGEX } from "@jamaa/sh
 export type Route =
   | { kind: "home"; prefill: string }
   | { kind: "room"; code: string; canonical: boolean }
-  | { kind: "tv" }
-  | { kind: "tvpixi" };
+  | { kind: "tv" };
 
 /** Upper-cases and keeps only room-code alphabet characters (max 4). */
 export function cleanCodeInput(raw: string): { code: string; rejected: boolean } {
@@ -32,8 +31,8 @@ export function parseRoute(pathname: string): Route {
   const seg = decoded.replace(/^\/+|\/+$/g, "");
   if (seg === "") return { kind: "home", prefill: "" };
   const lower = seg.toLowerCase();
-  if (lower === "tv" || lower === "tv-mock") return { kind: "tv" };
-  if (lower === "tv-pixi") return { kind: "tvpixi" };
+  // /tv-pixi is the same TV route; TvMock reads the path to load the Pixi skin (keeps the phone core free of it).
+  if (lower === "tv" || lower === "tv-mock" || lower === "tv-pixi") return { kind: "tv" };
   if (!seg.includes("/")) {
     const upper = seg.toUpperCase();
     if (ROOM_CODE_REGEX.test(upper)) return { kind: "room", code: upper, canonical: upper === seg };

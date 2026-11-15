@@ -113,7 +113,7 @@ function TvRoute() {
 
 export function App() {
   const r = route.value;
-  if (r.kind === "tv" || r.kind === "tvpixi") return <TvRoute />;
+  if (r.kind === "tv") return <TvRoute />;
   if (r.kind === "home") {
     return (
       <>

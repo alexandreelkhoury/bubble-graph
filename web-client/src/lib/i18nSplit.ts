@@ -1,11 +1,11 @@
 // JAMAA-PLATFORM §3.8 budget: the root catalog ships in two parts. Phones download only the phone part; the /tv mock
-// adds the TV part (the Pass store, the Pass and the TV-only strings: `store.*`, `pass.*`, `tv.*`), about a third of
+// adds the TV part (the Pass store, the Pass and the TV-only strings: `store.*`, `pass.*`, `tv.*`, `hint.*`), about a third of
 // every root catalog. The JSON files stay whole (lane D's key parity); vite.config.ts splits them at build time
 // (`virtual:jamaa-i18n/<locale>` and `virtual:jamaa-i18n-tv/<locale>`). test/i18nSplit.test.ts keeps phone code off
 // the TV-only prefixes.
 
 /** Root-catalog prefixes only the TV renders. */
-export const TV_ONLY_PREFIXES = ["store.", "pass.", "tv."] as const;
+export const TV_ONLY_PREFIXES = ["store.", "pass.", "tv.", "hint."] as const;
 /** TV-only-prefixed keys the phone does show (the VIP's "the Pass ended" toast). */
 export const PHONE_ALSO = new Set(["pass.endedPhone"]);
 
