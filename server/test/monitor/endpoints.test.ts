@@ -178,4 +178,16 @@ describe("GET /admin page", () => {
     expect(js).not.toMatch(/[?&]token=/);
     expect(handleAdminPage(new Request("https://play.example/admin/other"), env).status).toBe(404);
   });
+
+  it("the page script parses, has every section, calls only /api/admin/* and loads nothing external", async () => {
+    const env = fakeEnv({ ADMIN_TOKEN: TOKEN });
+    const html = await handleAdminPage(new Request("https://play.example/admin"), env).text();
+    const js = await handleAdminPage(new Request("https://play.example/admin/app.js"), env).text();
+    expect(() => new Function(js)).not.toThrow();
+    for (const id of ["live", "history", "content", "games", "room", "errors"]) expect(html).toContain(`id="${id}"`);
+    expect(new Set(html.match(/id="[^"]+"/g)).size).toBe(html.match(/id="[^"]+"/g)!.length); // ids unique
+    for (const route of ["overview", "history", "content?days=", "games", "room?code="]) expect(js).toContain(`"${route}`);
+    expect(js).toContain("setInterval");
+    expect(html + js).not.toMatch(/https?:\/\/(?!www\.w3\.org\/2000\/svg)/);
+  });
 });

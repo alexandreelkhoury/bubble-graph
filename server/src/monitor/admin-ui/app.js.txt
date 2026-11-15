@@ -1,0 +1,185 @@
+"use strict";
+// JAMAA-PLATFORM §8.5: the /admin page script (served as /admin/app.js; a wrangler Text module, never in the phone bundle).
+(function(){
+var KEY="jamaa-admin-token",timer=null,contentDays=30,NS="http://www.w3.org/2000/svg";
+var GAME_COLORS={mishana:"#e4572e",bluff:"#3b82f6",likely:"#f59e0b",trivia:"#10b981",taqriban:"#8b5cf6"};
+var GAME_NAMES={mishana:"Mish Ana!",bluff:"Bluff!",likely:"Most Likely",trivia:"Trivia",taqriban:"Taqriban!"};
+var PLAYER_COLORS={coral:"#F0183A",azure:"#478CFF",lemon:"#FFF04D",jade:"#1FA88A",grape:"#7A43FF",tangerine:"#FF7A1F",aqua:"#7BFFF4",rose:"#FF96C5",mint:"#BDF5C8",plum:"#C02A8F",sand:"#E6C486",lilac:"#C9BFFF"};
+function $(id){return document.getElementById(id)}
+function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=String(text);return e}
+function svg(tag,attrs){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);return e}
+function getTok(){try{return sessionStorage.getItem(KEY)}catch(e){return null}}
+function setTok(t){try{t?sessionStorage.setItem(KEY,t):sessionStorage.removeItem(KEY)}catch(e){}}
+function fmt(n){return (Math.round((n||0)*10)/10).toLocaleString()}
+function gname(g){return GAME_NAMES[g]||g||"(none)"}
+function gcolor(g){return GAME_COLORS[g]||"#8a8a8a"}
+function ago(t){if(t==null)return "–";var s=Math.round((Date.now()-t)/1000);if(s<0)return "in "+dur(-s);if(s<60)return s+" s ago";if(s<3600)return Math.round(s/60)+" min ago";if(s<86400)return Math.round(s/3600)+" h ago";return new Date(t).toISOString().slice(0,16).replace("T"," ")+" UTC"}
+function dur(s){s=Math.round(s);if(s<60)return s+" s";if(s<3600)return Math.floor(s/60)+" min "+(s%60?s%60+" s":"");return Math.floor(s/3600)+" h "+Math.floor((s%3600)/60)+" min"}
+function clear(id){var e=$(id);e.textContent="";return e}
+function showLogin(msg){$("app").hidden=true;$("nav").hidden=true;$("logout").hidden=true;$("login").hidden=false;$("loginError").textContent=msg||"";if(timer){clearInterval(timer);timer=null}}
+// Every call: the token only in the Authorization header.
+function api(path,opt){var t=getTok();if(!t){showLogin();return Promise.reject(new Error("no token"))}
+  opt=opt||{};var h={Authorization:"Bearer "+t};if(opt.body)h["Content-Type"]="application/json";
+  return fetch("/api/admin/"+path,{method:opt.method||"GET",headers:h,body:opt.body,cache:"no-store"}).then(function(r){
+    if(r.status===401){setTok(null);showLogin("That token was refused.");throw new Error("401")}
+    if(r.status===429)throw new Error("Rate limited, retry in a minute");
+    if(!r.ok)throw new Error("Error "+r.status);
+    return r.json()})}
+function fail(id){return function(e){if(e.message!=="401"){var c=clear(id);c.appendChild(el("p","muted",e.message||"Offline"))}}}
+
+// ---------- live (every 30 s) ----------
+function loadLive(){api("overview").then(renderLive).catch(function(e){if(e.message!=="401")$("updated").textContent=e.message||"Offline, retrying"})}
+function tile(label,value,sub){var d=el("div","tile");d.appendChild(el("span","muted",label));d.appendChild(el("b",null,value));if(sub)d.appendChild(el("span","muted",sub));return d}
+function renderLive(d){
+  $("login").hidden=true;$("app").hidden=false;$("nav").hidden=false;$("logout").hidden=false;
+  $("updated").textContent="Updated "+new Date().toLocaleTimeString();
+  var s=d.stats,b=clear("banners");
+  (d.alerting.open||[]).forEach(function(a){b.appendChild(el("div","banner","ALERT "+a.rule+": "+fmt(a.value)+" (threshold "+fmt(a.threshold)+"), open since "+ago(a.openedAt)))});
+  if(!d.bindings.stats)b.appendChild(el("div","banner info","The STATS Durable Object binding is missing: no live numbers, no game switches. See docs/DEV.md Monitoring."));
+  if(!d.bindings.events)b.appendChild(el("div","banner info","The EVENTS Analytics Engine binding is missing: no event history is recorded."));
+  if(!d.alerting.email)b.appendChild(el("div","banner info","Alert email is not set up: alerts are only logged (code ALERT) and shown here."));
+  if(!s)return;
+  var c=s.today||{},tl=clear("tiles");
+  tl.appendChild(tile("Rooms live",fmt(s.live.rooms)));
+  tl.appendChild(tile("Games live",fmt(s.live.games),fmt(s.live.players)+" players"));
+  tl.appendChild(tile("Rooms today",fmt(c.rooms_created)));
+  tl.appendChild(tile("Games today",fmt(c.games_started),fmt(c["ended:finished"])+" finished"));
+  tl.appendChild(tile("Players today",fmt(c.players_joined),"joins reported"));
+  tl.appendChild(tile("Client errors",fmt(c.client_errors),fmt((s.lastHour||{}).client_errors)+" last hour"));
+  tl.appendChild(tile("Server errors",fmt(c.server_errors),fmt((s.lastHour||{}).server_errors)+" last hour"));
+  var ids={};Object.keys(c).forEach(function(k){var m=/^(started|finished):(.+)$/.exec(k);if(m)ids[m[2]]=1});Object.keys(s.live.byGame||{}).forEach(function(k){ids[k]=1});
+  var gb=clear("todayGames"),list=Object.keys(ids).sort();
+  if(!list.length){var tr=el("tr"),td=el("td","muted","No games yet today");td.colSpan=4;tr.appendChild(td);gb.appendChild(tr)}
+  list.forEach(function(g){var tr=el("tr");tr.appendChild(el("td",null,gname(g)));[c["started:"+g],c["finished:"+g],(s.live.byGame||{})[g]].forEach(function(v){tr.appendChild(el("td","n",fmt(v)))});gb.appendChild(tr)});
+  $("ended").textContent="Ended today: "+["finished","aborted","abandoned","expired"].map(function(r){return fmt(c["ended:"+r])+" "+r}).join(", ");
+  var q=d.quota,pct=Math.min(100,Math.round(q.ratio*100)),qd=clear("quota");
+  var m=el("div","meter"+(q.ratio>=q.alertAt?" hot":""));var i=el("i");i.style.width=pct+"%";m.appendChild(i);qd.appendChild(m);
+  qd.appendChild(el("p","muted","About "+fmt(q.estimate)+" of "+fmt(q.limit)+" Worker requests ("+pct+"%). An estimate from these counters; the real number is in the Cloudflare dashboard."));
+  var bars=clear("bars"),mx=1;s.hours.forEach(function(h){mx=Math.max(mx,h.c.rooms_created||0)});
+  s.hours.forEach(function(h){var sp=el("span");sp.style.height=Math.round(100*(h.c.rooms_created||0)/mx)+"%";sp.title=new Date(h.hour).toISOString().slice(11,13)+":00 UTC: "+(h.c.rooms_created||0)+" rooms";bars.appendChild(sp)});
+  $("barsNote").textContent="Peak "+mx+" rooms in an hour";
+  var ed=clear("errorList");
+  if(!s.errors.length)ed.appendChild(el("p","muted","No errors recorded."));
+  s.errors.slice(0,100).forEach(function(e){ed.appendChild(errorRow(e))});
+}
+function errorRow(e){var w=el("div","err");var top=el("div");top.appendChild(el("span","pill "+e.kind,e.kind));
+  top.appendChild(el("span","t",e.code+(e.message?": "+e.message:"")));w.appendChild(top);
+  var meta=[e.platform,e.v&&("v"+e.v),e.screen,e.room&&("room "+e.room),(e.n>1?e.n+"x":null),ago(e.last)].filter(Boolean).join(" · ");
+  w.appendChild(el("div","muted",meta));if(e.stack){var det=el("details");det.appendChild(el("summary","muted","stack"));det.appendChild(el("pre",null,e.stack));w.appendChild(det)}
+  return w}
+
+// ---------- charts (inline SVG, no library) ----------
+function legend(keys){var l=el("div","legend");keys.forEach(function(k){var s=el("span");var b=el("b");b.style.background=gcolor(k);s.appendChild(b);s.appendChild(document.createTextNode(gname(k)));l.appendChild(s)});return l}
+// Daily bars over `days` days ending today (UTC); rows {day, n, game?} stacked by game when `stacked`.
+function dayChart(rows,days,stacked){
+  var W=600,H=170,P=26,byDay={},keys={},end=Math.floor(Date.now()/86400000);
+  rows.forEach(function(r){var d=Math.floor(Date.parse(String(r.day).replace(" ","T")+"Z")/86400000);if(isNaN(d))return;var g=stacked?r.game:"_";keys[g]=1;(byDay[d]=byDay[d]||{})[g]=((byDay[d]||{})[g]||0)+r.n});
+  var ks=Object.keys(keys).sort(),mx=1,d,k;
+  for(d in byDay){var t=0;for(k in byDay[d])t+=byDay[d][k];mx=Math.max(mx,t)}
+  var s=svg("svg",{"class":"chart",viewBox:"0 0 "+W+" "+(H+P),role:"img"}),bw=W/days;
+  s.appendChild(svg("line",{x1:0,x2:W,y1:H,y2:H}));
+  var top=svg("text",{x:2,y:16});top.textContent="max "+fmt(mx)+"/day";s.appendChild(top);
+  for(var i=0;i<days;i++){var day=end-days+1+i,y=H,vals=byDay[day]||{},tot=0;
+    ks.forEach(function(g){var v=vals[g]||0;if(!v)return;tot+=v;var h=Math.max(1,v/mx*(H-14));y-=h;
+      var r=svg("rect",{x:(i*bw+0.5).toFixed(1),y:y.toFixed(1),width:Math.max(1,bw-1).toFixed(1),height:h.toFixed(1),fill:stacked?gcolor(g):"var(--accent)"});
+      var tt=svg("title",{});tt.textContent=new Date(day*86400000).toISOString().slice(0,10)+(stacked?" "+gname(g):"")+": "+fmt(v);r.appendChild(tt);s.appendChild(r)});
+    if(i%15===0||i===days-1){var lb=svg("text",{x:Math.min(W-50,i*bw).toFixed(0),y:H+20});lb.textContent=new Date(day*86400000).toISOString().slice(5,10);s.appendChild(lb)}}
+  var w=el("div");w.appendChild(s);if(stacked&&ks.length)w.appendChild(legend(ks));return w}
+// Horizontal bars: items [{label, n, color?, note?}].
+function hbars(items,unit){var g=el("div","hb");var mx=1;items.forEach(function(x){mx=Math.max(mx,x.n)});
+  if(!items.length){var p=el("p","muted","No data yet.");return p}
+  items.forEach(function(x){g.appendChild(el("span",null,x.label));var t=el("span");var i=el("i");i.style.width=Math.max(1,Math.round(100*x.n/mx))+"%";if(x.color)i.style.background=x.color;t.appendChild(i);g.appendChild(t);g.appendChild(el("span",null,x.note!=null?x.note:fmt(x.n)+(unit||"")))});return g}
+function sumBy(rows,key){var o={};rows.forEach(function(r){o[r[key]]=(o[r[key]]||0)+r.n});return Object.keys(o).map(function(k){return{k:k,n:o[k]}}).sort(function(a,b){return b.n-a.n})}
+function panel(parent,title,node){parent.appendChild(el("h3",null,title));parent.appendChild(node)}
+
+// ---------- history ----------
+function loadHistory(){api("history").then(renderHistory).catch(fail("hist"))}
+function notConnected(box,d){if(d.connected===false){box.appendChild(el("div","banner info",d.help));return true}
+  if(d.error){box.appendChild(el("div","banner","Analytics Engine answered "+d.error+(/403|401/.test(d.error)?": check that CF_ANALYTICS_TOKEN has Account › Account Analytics › Read on this account.":"")));return true}return false}
+function renderHistory(d){var h=clear("hist");if(notConnected(h,d))return;
+  h.appendChild(el("p","muted","Last "+d.days+" days (UTC). Fetched "+ago(d.at)+(d.cached?" (cached, refreshes every 5 min)":"")+"."));
+  var cols=el("div","cols"),a=el("div"),b=el("div");cols.appendChild(a);cols.appendChild(b);
+  panel(a,"Games started per day",dayChart(d.gamesPerDay,d.days,true));
+  panel(b,"Rooms created per day",dayChart(d.roomsPerDay,d.days,false));
+  panel(a,"Most played",hbars(sumBy(d.gamesPerDay,"game").map(function(x){return{label:gname(x.k),n:x.n,color:gcolor(x.k)}})));
+  var fin={},reasons={};d.ends.forEach(function(r){reasons[r.reason]=(reasons[r.reason]||0)+r.n;if(r.reason==="finished"){var f=fin[r.game]=fin[r.game]||{n:0,dur:0};f.n+=r.n;f.dur+=r.dur}});
+  panel(b,"Average finished game",hbars(Object.keys(fin).sort().map(function(g){var s=fin[g].n?fin[g].dur/fin[g].n:0;return{label:gname(g),n:s,color:gcolor(g),note:dur(s)}})));
+  var RC={finished:"var(--ok)",aborted:"var(--warn)",abandoned:"var(--bad)",expired:"var(--mute)"};
+  panel(a,"How games end",hbars(Object.keys(reasons).map(function(k){return{label:k,n:reasons[k],color:RC[k]}}).sort(function(x,y){return y.n-x.n})));
+  panel(b,"Content languages",hbars(sumBy(d.languages,"locale").map(function(x){return{label:x.k||"?",n:x.n}})));
+  panel(a,"TV platforms (rooms)",hbars(sumBy(d.platforms,"platform").map(function(x){return{label:x.k||"?",n:x.n}})));
+  var pg={};d.players.forEach(function(r){(pg[r.game]=pg[r.game]||[]).push(r)});var pw=el("div");
+  Object.keys(pg).sort().forEach(function(g){var rows=pg[g],tot=0,wsum=0;rows.forEach(function(r){tot+=r.n;wsum+=r.n*r.players});
+    pw.appendChild(el("div","muted",gname(g)+": average "+fmt(tot?wsum/tot:0)+" players"));
+    pw.appendChild(hbars(rows.map(function(r){return{label:r.players+" players",n:r.n,color:gcolor(g)}})))});
+  if(!Object.keys(pg).length)pw.appendChild(el("p","muted","No data yet."));
+  panel(b,"Players per game",pw);
+  h.appendChild(cols)}
+
+// ---------- content stats ----------
+var ACTION_LABEL={skip:"skipped",void:"voided",hide_truth:"truth hidden",hide_house:"house card hidden"};
+function loadContent(){api("content?days="+contentDays).then(renderContent).catch(fail("contentBody"))}
+function renderContent(d){var c=clear("contentBody");if(notConnected(c,d))return;
+  c.appendChild(el("p","muted","Host skips, voids and hides in the last "+d.days+" days, most first (top 100). Fix or remove the items at the top. Fetched "+ago(d.at)+"."));
+  if(!d.items.length){c.appendChild(el("p","muted","Nothing skipped yet."));return}
+  var w=el("div","scroll"),t=el("table"),hd=el("tr");["Game","Pack","Item","Action","Times"].forEach(function(x,i){hd.appendChild(el("th",i===4?"n":null,x))});var th=el("thead");th.appendChild(hd);t.appendChild(th);
+  var tb=el("tbody");d.items.forEach(function(r){var tr=el("tr");tr.appendChild(el("td",null,gname(r.game)));tr.appendChild(el("td",null,r.pack));
+    var it=el("td");it.appendChild(el("code",null,r.item));tr.appendChild(it);tr.appendChild(el("td",null,ACTION_LABEL[r.action]||r.action));tr.appendChild(el("td","n",fmt(r.n)));tb.appendChild(tr)});
+  t.appendChild(tb);w.appendChild(t);c.appendChild(w)}
+
+// ---------- game toggles ----------
+function loadGames(){api("games").then(renderGames).catch(fail("toggles"))}
+function renderGames(d){var box=clear("toggles");
+  if(!d.stats)box.appendChild(el("div","banner info","The STATS binding is missing: switches are unavailable, GAMES_ENABLED applies."));
+  if(d.envUnknown&&d.envUnknown.length)box.appendChild(el("div","banner","GAMES_ENABLED has unknown ids: "+d.envUnknown.join(", ")));
+  d.known.forEach(function(g){var on=d.effective.indexOf(g)>=0,inReg=d.registry.indexOf(g)>=0,envOn=d.env.indexOf(g)>=0,ov=d.override[g];
+    var row=el("div","toggle"),left=el("div"),name=el("div");var dot=el("span","dot");dot.style.background=gcolor(g);name.appendChild(dot);name.appendChild(document.createTextNode(gname(g)+" "));name.appendChild(el("code","muted",g));left.appendChild(name);
+    var note=inReg?("Default "+(envOn?"on":"off")+" (GAMES_ENABLED)"+(ov!==undefined?" · overridden "+(ov?"on":"off"):"")):"Not shipped in this build (registry): stays off";left.appendChild(el("div","muted",note));
+    var right=el("div");right.style.display="flex";right.style.gap="8px";right.style.alignItems="center";
+    if(ov!==undefined){var rs=el("button","small","Reset");rs.addEventListener("click",function(){toggle(g,null,"Reset "+gname(g)+" to the GAMES_ENABLED default ("+(envOn?"on":"off")+")?")});right.appendChild(rs)}
+    var sw=el("button","switch");sw.setAttribute("role","switch");sw.setAttribute("aria-checked",String(on));sw.setAttribute("aria-label",gname(g)+" enabled");sw.disabled=!d.stats||!inReg;
+    sw.addEventListener("click",function(){toggle(g,!on,(on?"Turn OFF ":"Turn ON ")+gname(g)+" for new rooms? TVs and phones follow within a minute; running rooms are not affected.")});
+    right.appendChild(sw);row.appendChild(left);row.appendChild(right);box.appendChild(row)});
+  var a=clear("audit");if(!d.audit.length){a.appendChild(el("p","muted","No changes yet."));return}
+  var t=el("table");d.audit.forEach(function(e){var tr=el("tr");tr.appendChild(el("td",null,ago(e.at)));tr.appendChild(el("td",null,gname(e.gameId)));
+    tr.appendChild(el("td",null,(e.before===null?"default":e.before?"on":"off")+" → "+(e.enabled===null?"default":e.enabled?"on":"off")));t.appendChild(tr)});a.appendChild(t)}
+function toggle(g,enabled,question){if(!window.confirm(question))return;
+  api("games",{method:"POST",body:JSON.stringify({gameId:g,enabled:enabled})}).then(renderGames).catch(function(e){if(e.message!=="401")window.alert("Not saved: "+e.message)})}
+
+// ---------- room inspector ----------
+function kv(pairs){var dl=el("dl","kv");pairs.forEach(function(p){if(p[1]===undefined)return;dl.appendChild(el("dt",null,p[0]));dl.appendChild(el("dd",null,p[1]===null?"–":p[1]))});return dl}
+function inspect(code){var o=clear("roomOut");o.appendChild(el("p","muted","Loading…"));
+  api("room?code="+encodeURIComponent(code)).then(function(d){renderRoom(d)}).catch(function(e){if(e.message==="Error 400"){e.message="That is not a room code (4 letters)."}fail("roomOut")(e)})}
+function renderRoom(d){var o=clear("roomOut"),r=d.room;
+  if(!r.exists){o.appendChild(el("p",null,"Room "+r.code+" does not exist (never created, or expired)."));return}
+  var rm=r.room,tm=r.timers;
+  o.appendChild(el("h3",null,"Room "+r.code+" · "+rm.phase+(rm.gameId?" · "+gname(rm.gameId):"")));
+  o.appendChild(kv([["Game phase",r.game?r.game.phase+" (instance "+r.game.n+")":null],["Host",hostName(r)],["Content language",rm.contentLocale],["Platform",r.meta.platform],
+    ["seq / version / viewRev",rm.seq+" / "+rm.version+" / "+rm.viewRev],["Game deadline",tm.gameDeadline?ago(tm.gameDeadline):null],["Next wake / alarm",ago(tm.nextWakeAt)+" / "+ago(tm.alarm)],
+    ["Expires",ago(tm.expiresAt)],["Created",ago(tm.createdAt)],["Last activity",ago(tm.lastActivityAt)],["TV left",tm.tvLeftAt?ago(tm.tvLeftAt):"TV connected"],
+    ["Games in this room",(rm.enabledGames||[]).map(gname).join(", ")||"env default"],["Billing",r.meta.billingMode+(r.meta.entitlement?" · premium entitlement":"")],["Source",r.source==="memory"?"live (in memory)":"storage (room asleep)"]]));
+  o.appendChild(el("h3",null,"Members ("+r.members.length+")"));
+  var w=el("div","scroll"),t=el("table"),hd=el("tr");["","Name","Seat","State","Joined"].forEach(function(x){hd.appendChild(el("th",null,x))});t.appendChild(hd);
+  r.members.forEach(function(m){var tr=el("tr"),c=el("td"),dot=el("span","dot");dot.style.background=PLAYER_COLORS[m.color]||"#999";dot.title=m.color;c.appendChild(dot);tr.appendChild(c);
+    tr.appendChild(el("td",null,m.name+(m.host?" (host)":"")));tr.appendChild(el("td",null,m.seat));
+    var st=el("td");[[m.connected,"connected","ok","offline","warn"],[m.left,"left","bad"],[m.benched,"benched","warn"],[m.kicked,"kicked","bad"]].forEach(function(f){if(f[0])st.appendChild(el("span","pill "+f[2],f[1]));else if(f[3])st.appendChild(el("span","pill "+f[4],f[3]))});
+    tr.appendChild(st);tr.appendChild(el("td",null,ago(m.joinedAt)));t.appendChild(tr)});
+  w.appendChild(t);o.appendChild(w);
+  o.appendChild(el("p","muted","Sockets: "+r.sockets.map(function(s){return s.role+(s.playerId?" "+s.playerId:"")}).join(", ")));
+  if(d.errors.length){o.appendChild(el("h3",null,"Errors reported for this room"));d.errors.forEach(function(e){o.appendChild(errorRow(e))})}
+  var raw=el("details");raw.appendChild(el("summary",null,"Full state (JSON, redacted)"));var copy=JSON.parse(JSON.stringify(r));delete copy.hiddenState;raw.appendChild(el("pre",null,JSON.stringify(copy,null,2)));o.appendChild(raw);
+  if(r.hiddenState){var sec=el("details","secret");sec.appendChild(el("summary",null,"Hidden game state: owner only"));sec.appendChild(el("p","muted",r.hiddenState.note));sec.appendChild(el("pre",null,JSON.stringify(r.hiddenState.gameState,null,2)));o.appendChild(sec)}}
+function hostName(r){var h=r.members.filter(function(m){return m.host})[0];return h?h.name:null}
+
+// ---------- wiring ----------
+function loadAll(){loadLive();loadHistory();loadContent();loadGames()}
+$("loginForm").addEventListener("submit",function(ev){ev.preventDefault();var v=$("token").value.trim();$("token").value="";if(v){setTok(v);start()}});
+$("logout").addEventListener("click",function(){setTok(null);showLogin()});
+$("histReload").addEventListener("click",function(){loadHistory();loadContent();loadGames()});
+Array.prototype.forEach.call(document.querySelectorAll("[data-days]"),function(b){b.addEventListener("click",function(){contentDays=Number(b.getAttribute("data-days"));
+  Array.prototype.forEach.call(document.querySelectorAll("[data-days]"),function(x){x.classList.toggle("on",x===b)});clear("contentBody").appendChild(el("p","muted","Loading…"));loadContent()})});
+$("roomForm").addEventListener("submit",function(ev){ev.preventDefault();var c=$("roomCode").value.trim().toUpperCase();if(c)inspect(c)});
+function start(){loadAll();if(!timer)timer=setInterval(function(){if(!document.hidden)loadLive()},30000)}
+document.addEventListener("visibilitychange",function(){if(!document.hidden&&timer)loadLive()});
+if(getTok())start();else showLogin();
+})();
