@@ -1298,7 +1298,7 @@ admin read; the RPC surface (`ingest`, `snapshot`, `evaluate`) stays.
 ### 8.3 Error reports
 
 `POST /api/client-errors` (`server/src/monitor/client-errors.ts`): a JSON or `text/plain` (sendBeacon) body ≤ 8 KB with
-short keys `{p, v?, s?, k?, n?, m?, st?, r?, c?}` = platform (phone | tv-web | tv-pixi | tv-android), app version,
+short keys `{p?, v?, s?, k?, n?, m?, st?, r?, c?}` = platform (phone | tv-web | tv-pixi | tv-android; absent = phone), app version,
 screen, kind, error name, message, stack, room code, count. Origin-checked like `/api/rooms`; per-IP limit
 `CLIENT_ERROR_LIMITER` (10/min, checked before the body is read); message ≤ 300 and stack ≤ 1 500 chars after a PII scrub
 (emails, URL queries and fragments, long hex and token-like runs, long digit runs, control characters). Answers 204;
@@ -1308,7 +1308,8 @@ screen, kind, error name, message, stack, room code, count. Origin-checked like 
 Clients throttle first:
 - **Phone, /tv, /tv-pixi** (`web-client/src/lib/report.ts`, in the phone core, ≈ 0.3 KB gz): `error` and
   `unhandledrejection` → `navigator.sendBeacon`, at most 5 per page load, each distinct error once, with the screen
-  (`PHASE:setupGame`, `tv:…` on the TV) and the room code. The phone has no Preact error boundary; render errors reach
+  (the phone: its path, `/` or `/<CODE>`, since the room phase did not fit the §3.8 budget; the TVs:
+  `tv:<PHASE>:<setupGame>` and the room code). The phone has no Preact error boundary; render errors reach
   `window.onerror`.
 - **Android TV** (`tv-app/.../monitor/`): an uncaught-exception handler saves the crash to `noBackupFilesDir/monitor/`
   (synchronously; then the previous handler crashes the app as before) and the next launch sends it once; the same crash

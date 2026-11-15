@@ -66,7 +66,10 @@ describe("POST /api/client-errors", () => {
     expect((await handleClientErrors(report({ p: "phone", m: "Script error." }), env, noop)).status).toBe(204);
     expect((await handleClientErrors(report({ p: "phone" }), env, noop)).status).toBe(204);
     expect(warn).toHaveBeenCalledTimes(1);
-    expect(points).toHaveLength(1);
+    // The phone reporter omits `p`: it defaults to phone.
+    expect((await handleClientErrors(report({ m: "from the phone", s: "/KXRT" }), env, noop)).status).toBe(204);
+    expect(JSON.parse(String(warn.mock.calls[1]![0]))).toMatchObject({ platform: "phone", screen: "/KXRT" });
+    expect(points).toHaveLength(2);
     expect((await handleClientErrors(report({ p: "tv-web" }, { "Content-Type": "application/x-www-form-urlencoded" }), env, noop)).status).toBe(415);
     expect((await handleClientErrors(report("{nope"), env, noop)).status).toBe(400);
     expect((await handleClientErrors(report({ p: "desktop" }), env, noop)).status).toBe(400);

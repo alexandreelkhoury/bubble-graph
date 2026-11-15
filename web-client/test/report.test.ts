@@ -1,8 +1,8 @@
 // JAMAA-PLATFORM §8.3: the client error reporter — throttle (MAX_REPORTS per page load), dedupe, noise filter, context.
-import { afterEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { errorReport, installReporter, MAX_REPORTS, reportError, resetReporter, setReportContext } from "../src/lib/report";
 
-afterEach(() => resetReporter());
+beforeEach(() => resetReporter()); // also replaces the default context (location.pathname: no `location` in Node)
 
 describe("client error reporter", () => {
   it("sends each distinct error once and at most MAX_REPORTS per page load", () => {
@@ -22,7 +22,9 @@ describe("client error reporter", () => {
   it("a compact body: platform, name, truncated message and stack, plus the screen and room context", () => {
     const w = { addEventListener: () => undefined } as unknown as Window;
     installReporter(w);
-    expect(errorReport(new Error("plain"))).toMatchObject({ p: "phone" });
+    setReportContext(() => ({ s: "/KXRT" }));
+    expect(errorReport(new Error("plain"))).toEqual(expect.objectContaining({ n: "Error", m: "plain", s: "/KXRT" }));
+    expect(errorReport(new Error("plain2"))).not.toHaveProperty("p"); // the server defaults it to phone
     setReportContext(() => ({ p: "tv-pixi", s: "tv:PLAYING:likely", r: "KXRT" }));
     const e = new RangeError("x".repeat(500));
     const r = errorReport(e)!;

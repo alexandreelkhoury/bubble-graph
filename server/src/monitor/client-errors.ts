@@ -19,7 +19,8 @@ export const STACK_MAX = 1500;
 
 /** Short keys keep the phone reporter tiny. Over-long strings are refused at the schema caps, then truncated below. */
 export const ClientErrorReport = z.object({
-  p: z.enum(PLATFORMS),
+  /** Absent = the phone (its reporter omits it to save bytes in the phone core). */
+  p: z.enum(PLATFORMS).default("phone"),
   v: z.string().max(40).optional(),
   s: z.string().max(80).optional(),
   k: z.enum(["error", "rejection", "boundary", "crash", "caught"]).optional(),
