@@ -40,6 +40,8 @@ import { Mutex } from "./mutex";
 import { addStrike, fullBucket, JoinLimiter, pruneStrikes, STRIKES_TO_CLOSE, takeToken } from "./ratelimit";
 import type { Bucket } from "./ratelimit";
 import { RoomStore } from "./room-store";
+import { NO_MONITOR } from "./monitor/events";
+import type { GameEndReason, PlatformOrUnknown, RoomEvent, RoomMonitor } from "./monitor/events";
 import type { RoomMeta, RoomStorage, Sessions } from "./room-store";
 import { randomHex, timingSafeEqualHex } from "./tokens";
 
@@ -75,6 +77,8 @@ export interface InitRoomArgs {
    * `RoomHistory.memory`. Sanitized again here. Only room creation seeds memory: no WebSocket message can.
    */
   memory?: MemoryWire;
+  /** JAMAA-PLATFORM §7: the TV platform from the `X-Jamaa-Client` header (monitoring only). */
+  platform?: PlatformOrUnknown;
 }
 export type InitRoomResult = { ok: true } | { ok: false; reason: "EXISTS" };
 
@@ -121,6 +125,11 @@ export interface RoomCoreDeps {
   // SPEC-GAP: §7.5 lists the deps without the room code, but `ipKey` must be hashed before any state is
   // read (and `meta` is missing for never-created rooms), so the DO name is passed in explicitly.
   roomCode: string;
+  /**
+   * JAMAA-PLATFORM §7: room lifecycle events (created, game started/ended, player joined/left, closed) for Analytics
+   * Engine and the Stats DO. Emitted from #persist (a diff of the state it writes), never per message. Default: none.
+   */
+  monitor?: RoomMonitor & { error?(code: string, fields: Record<string, string | number | null>): void };
 }
 
 /** Request facts `onConnect` needs; the raw IP is only hashed, never stored. */
@@ -159,6 +168,16 @@ export function expiresAt(meta: RoomMeta, tvConnected: boolean): number {
   if (tvConnected) return meta.lastActivityAt + ROOM_TV_MAX_TTL_MS;
   return (meta.tvLeftAt ?? meta.lastActivityAt) + ROOM_TV_GONE_TTL_MS;
 }
+
+/** JAMAA-PLATFORM §7: the room's monitoring id (a code is reused after expiry; the creation time makes it unique). */
+function roomId(meta: RoomMeta): string {
+  return `${meta.code}:${meta.createdAt}`;
+}
+function unsentJoins(meta: RoomMeta): number {
+  return Math.max(0, (meta.joins ?? 0) - (meta.joinsSent ?? 0));
+}
+const histKey = (g: { gameId: GameId; n: number }): string => `${g.gameId}:${g.n}`;
+const instKey = (g: { id: GameId; n: number }): string => `${g.id}:${g.n}`;
 
 function uint32(bytes: Uint8Array): number {
   return (((bytes[0] ?? 0) << 24) | ((bytes[1] ?? 0) << 16) | ((bytes[2] ?? 0) << 8) | (bytes[3] ?? 0)) >>> 0;
@@ -276,12 +295,14 @@ export class RoomCore {
       if (head.meta) {
         if (args.now < expiresAt(head.meta, this.#conns().some((c) => isTv(c)))) return { ok: false, reason: "EXISTS" };
         this.#closeWhere(() => true, "ROOM_EXPIRED");
+        this.#emit({ t: "room_closed", room: roomId(head.meta), at: args.now, reason: "replaced", joins: unsentJoins(head.meta) });
       }
       await this.#store.wipe();
       const meta: RoomMeta = {
         schema: 1, code: this.#d.roomCode, tvTokenHash: args.tvTokenHash, joinUrl: args.joinUrl,
         createdAt: args.now, lastActivityAt: args.now, tvLeftAt: args.now,
         entitlement, billingMode: args.billingMode, tvBusyUntil: null, viewRev: 0,
+        platform: args.platform ?? "unknown", gameStartedAt: null, joins: 0, joinsSent: 0,
       };
       // §2.3: the content language starts as the TV's UI language when any shipped pack (any game) has it, else English.
       const full = this.#d.content();
@@ -296,6 +317,7 @@ export class RoomCore {
       this.#eph = 0;
       this.#ephSafe = true; // a fresh room: no frame was ever sent under this epoch
       await this.#reschedule();
+      this.#emit({ t: "room_created", room: roomId(meta), at: args.now, locale: args.locale, platform: meta.platform ?? "unknown" });
       return { ok: true };
     });
   }
@@ -401,6 +423,7 @@ export class RoomCore {
       const synced = this.#syncTvLeft(now);
       if (now >= expiresAt(synced, this.#tvConnected())) {
         this.#closeWhere(() => true, "ROOM_EXPIRED");
+        this.#emitExpiry(meta, now);
         await this.#store.clearAlarm();
         await this.#store.wipe();
         this.#setCache(null, null, createRoomHistory(), {});
@@ -911,6 +934,7 @@ export class RoomCore {
       this.#meta = { ...this.#meta, tvBusyUntil: null }; // the busy flag never outlives HUB/SETUP
     }
     if (this.#d.debugInvariants) assertRoomInvariants(next, history);
+    const events = this.#monitorDiff(next, history);
     const meta = this.#meta;
     const live = new Set(next.members.map((p) => p.id));
     let sessions = this.#sessions;
@@ -936,6 +960,83 @@ export class RoomCore {
     if (memoryChanged) {
       const frame = memoryFrame(memoryToWire(history.memory));
       for (const c of this.#conns()) if (c.state?.role === "tv") safeSend(c, frame);
+    }
+    for (const ev of events) this.#emit(ev);
+  }
+
+  // ---------------------------------------------------------------- monitoring (JAMAA-PLATFORM §7)
+
+  /**
+   * The lifecycle events between the cached state and `next` (about to be written). Updates `#meta` (game start time,
+   * join counters) so those fields ride in the same atomic write. Ids and counts only.
+   */
+  #monitorDiff(next: RoomState, history: RoomHistory): RoomEvent[] {
+    const meta = this.#meta;
+    const prev = this.#state;
+    if (!meta || !prev) return [];
+    const now = this.#d.clock.now();
+    const room = roomId(meta);
+    const platform = meta.platform ?? "unknown";
+    const events: RoomEvent[] = [];
+    let m = meta;
+    const active = (s: RoomState): Set<string> => new Set(s.members.filter((x) => !x.left).map((x) => x.id));
+    const before = active(prev);
+    const after = active(next);
+    const known = new Set(prev.members.map((x) => x.id));
+    for (const id of after) {
+      if (!known.has(id)) {
+        events.push({ t: "player_joined", room, at: now, platform });
+        m = { ...m, joins: (m.joins ?? 0) + 1 };
+      }
+    }
+    for (const id of before) if (!after.has(id)) events.push({ t: "player_left", room, at: now, platform });
+    const inGame = (s: RoomState): number => s.members.filter((x) => !x.left && !x.benched).length;
+    const prevGame = prev.game;
+    const nextGame = next.game;
+    const finishedBefore = new Set(this.#history.games.map(histKey));
+    const takeJoins = (): number => {
+      const n = (m.joins ?? 0) - (m.joinsSent ?? 0);
+      m = { ...m, joinsSent: m.joins ?? 0 };
+      return Math.max(0, n);
+    };
+    const durationMs = (): number => Math.max(0, now - (m.gameStartedAt ?? now));
+    for (const g of history.games) {
+      if (finishedBefore.has(histKey(g))) continue;
+      const players = prevGame && instKey(prevGame) === histKey(g) ? inGame(prev) : inGame(next);
+      events.push({ t: "game_ended", room, game: `${room}:${g.n}:${m.gameStartedAt ?? 0}`, at: now, gameId: g.gameId, players, durationMs: durationMs(), reason: "finished", platform, joins: takeJoins() });
+    }
+    if (prevGame && (!nextGame || instKey(prevGame) !== instKey(nextGame)) && !history.games.some((g) => histKey(g) === instKey(prevGame))) {
+      // No outcome: ABORT_GAME (back to SETUP) or the §2.3 empty game (back to HUB).
+      const reason: GameEndReason = next.phase === "HUB" ? "abandoned" : "aborted";
+      events.push({ t: "game_ended", room, game: `${room}:${prevGame.n}:${m.gameStartedAt ?? 0}`, at: now, gameId: prevGame.id, players: inGame(prev), durationMs: durationMs(), reason, platform, joins: takeJoins() });
+    }
+    if (nextGame && (!prevGame || instKey(prevGame) !== instKey(nextGame))) {
+      m = { ...m, gameStartedAt: now };
+      events.push({ t: "game_started", room, game: `${room}:${nextGame.n}:${now}`, at: now, gameId: nextGame.id, players: inGame(next), locale: next.contentLocale, platform, joins: takeJoins() });
+    }
+    if (m !== meta) this.#meta = m;
+    return events;
+  }
+
+  /** The room expired (alarm): its running game (if any) and the room itself end. */
+  #emitExpiry(meta: RoomMeta, now: number): void {
+    const room = roomId(meta);
+    const st = this.#state;
+    const g = st?.game;
+    if (st && g && !this.#history.games.some((h) => histKey(h) === instKey(g))) {
+      this.#emit({
+        t: "game_ended", room, game: `${room}:${g.n}:${meta.gameStartedAt ?? 0}`, at: now, gameId: g.id, players: st.members.filter((x) => !x.left && !x.benched).length,
+        durationMs: Math.max(0, now - (meta.gameStartedAt ?? now)), reason: "expired", platform: meta.platform ?? "unknown", joins: 0,
+      });
+    }
+    this.#emit({ t: "room_closed", room, at: now, reason: "expired", joins: unsentJoins(meta) });
+  }
+
+  #emit(ev: RoomEvent): void {
+    try {
+      (this.#d.monitor ?? NO_MONITOR).emit(ev);
+    } catch {
+      // monitoring is best effort
     }
   }
 
@@ -1147,7 +1248,13 @@ export class RoomCore {
   #logInternal(e: unknown): void {
     // Never log bodies, state, words, tokens, names or IPs (§7.5): only the code, phase and room.
     void e;
-    console.error(JSON.stringify({ code: "INTERNAL", phase: this.#state?.phase ?? null, roomCode: this.#d.roomCode }));
+    const fields = { phase: this.#state?.phase ?? null, roomCode: this.#d.roomCode };
+    console.error(JSON.stringify({ code: "INTERNAL", ...fields }));
+    try {
+      this.#d.monitor?.error?.("INTERNAL", fields);
+    } catch {
+      // best effort
+    }
   }
 
   // ---------------------------------------------------------------- test/introspection helpers

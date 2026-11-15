@@ -1,5 +1,6 @@
 import type { Billing } from "./billing/billing-do";
 import type { Room } from "./room";
+import type { Stats } from "./monitor/stats-do";
 export interface Env {
   Room: DurableObjectNamespace<Room>;
   ASSETS: Fetcher;
@@ -26,4 +27,21 @@ export interface Env {
   ENTITLEMENT_KEYS?: string;
   /** PAYMENTS-SPEC §3.12: optional owner secret for /api/admin/* (unset = those endpoints answer 404). */
   ADMIN_TOKEN?: string;
+  // JAMAA-PLATFORM §7 monitoring. Bindings are optional at the type level: tests and a Worker without them still run
+  // (no counters, no forwarding, alerts only logged).
+  /** Singleton live counters, hourly counts, error ring and alert incidents. */
+  STATS?: DurableObjectNamespace<Stats>;
+  /** Workers Analytics Engine dataset `jamaa_events` (one point per meaningful event). */
+  EVENTS?: AnalyticsEngineDataset;
+  /** Per-IP limit for POST /api/client-errors. */
+  CLIENT_ERROR_LIMITER?: RateLimit;
+  /** Cloudflare Email Routing `send_email` binding for alerts (unset or unconfigured = alerts are only logged). */
+  ALERT_MAILER?: SendEmail;
+  /** Owner address (a verified Email Routing destination) and the sender on a domain with Email Routing on. */
+  ALERT_EMAIL?: string;
+  ALERT_EMAIL_FROM?: string;
+  ALERT_SERVER_ERRORS_PER_HOUR?: string;
+  ALERT_CLIENT_ERRORS_PER_HOUR?: string;
+  PLAN_DAILY_REQUESTS?: string;
+  ALERT_QUOTA_RATIO?: string;
 }

@@ -8,7 +8,13 @@ import { InstallIdSchema } from "@jamaa/shared/billing";
 import type { BillingStore, Grant } from "./billing/billing-core";
 import { billingPacks } from "./billing/catalog-info";
 import { readJson } from "./billing/routes";
+import { billingEnabled } from "./config";
 import type { Env } from "./env";
+import { alertConfig, estimateRequests } from "./monitor/alerts";
+import { alertMailReady } from "./monitor/notify";
+import { logServerError } from "./monitor/report";
+import { statsStub } from "./monitor/stats-api";
+import type { StatsApi } from "./monitor/stats-api";
 import { clientIp, notFound } from "./request";
 import { sha256hex, timingSafeEqualHex } from "./tokens";
 
@@ -33,7 +39,7 @@ export const GrantRequest = z
 /** Revoke by the raw install id (what the TV shows) or by the hash (what `GET` lists). */
 export const RevokeRequest = z.union([z.strictObject({ installId: InstallIdSchema }), z.strictObject({ installHash: z.string().regex(HEX64) })]);
 
-export interface AdminDeps { store: () => BillingStore; now: () => number }
+export interface AdminDeps { store: () => BillingStore; now: () => number; stats?: (env: Env) => StatsApi | null }
 
 export type AdminErrorCode = "UNAUTHORIZED" | "RATE_LIMITED" | "BAD_REQUEST" | "UNKNOWN_PACK" | "EXPIRED" | "INTERNAL";
 
@@ -64,16 +70,25 @@ function grantJson(g: Grant, nowMs: number): Record<string, unknown> {
   return { ...g, active: g.expiresAt === null || g.expiresAt > nowMs };
 }
 
+/** JAMAA-PLATFORM §7.5 monitoring routes (GET, same auth). They work with billing off; `grants` needs billing on. */
+export const MONITOR_ROUTES = ["overview", "errors"] as const;
+
 export async function handleAdmin(req: Request, env: Env, deps: AdminDeps): Promise<Response> {
   const token = adminToken(env);
   if (token === null) return notFound();
   const route = new URL(req.url).pathname.slice(ADMIN_PREFIX.length);
-  if (route !== "grants") return notFound();
+  const monitorRoute = (MONITOR_ROUTES as readonly string[]).includes(route);
+  if (route !== "grants" && !monitorRoute) return notFound();
+  if (route === "grants" && !billingEnabled(env)) return notFound();
   try {
     // Before the token check, so guessing is rate-limited too. Shares BILLING_LIMITER (per IP) under its own key.
     const { success } = await env.BILLING_LIMITER.limit({ key: `admin:${clientIp(req)}` });
     if (!success) return adminError("RATE_LIMITED", 429);
     if (!(await bearerMatches(req, token))) return adminError("UNAUTHORIZED", 401);
+    if (monitorRoute) {
+      if (req.method !== "GET") return adminError("BAD_REQUEST", 405);
+      return respond(await monitorBody(route as (typeof MONITOR_ROUTES)[number], env, deps));
+    }
     const store = deps.store();
     const now = deps.now();
     if (req.method === "GET") {
@@ -104,7 +119,26 @@ export async function handleAdmin(req: Request, env: Env, deps: AdminDeps): Prom
     return adminError("BAD_REQUEST", 405);
   } catch {
     // Never log the request (it carries the token and install ids): only that it failed.
-    console.error(JSON.stringify({ code: "ADMIN_INTERNAL" }));
+    logServerError("ADMIN_INTERNAL", { phase: route });
     return adminError("INTERNAL", 500);
   }
+}
+
+/** The admin page's data. `stats: null` when the STATS binding is missing (the page says so). */
+async function monitorBody(route: (typeof MONITOR_ROUTES)[number], env: Env, deps: AdminDeps): Promise<Record<string, unknown>> {
+  const stub = (deps.stats ?? statsStub)(env);
+  const snap = stub ? await stub.snapshot() : null;
+  if (route === "errors") return { errors: snap?.errors ?? [] };
+  const cfg = alertConfig(env);
+  const estimate = snap ? estimateRequests(snap.today) : 0;
+  return {
+    stats: snap,
+    quota: { estimate, limit: cfg.dailyRequests, ratio: cfg.dailyRequests > 0 ? estimate / cfg.dailyRequests : 0, alertAt: cfg.quotaRatio, estimated: true },
+    alerting: {
+      email: alertMailReady(env), serverErrorsPerHour: cfg.serverErrorsPerHour, clientErrorsPerHour: cfg.clientErrorsPerHour,
+      open: snap?.alerts.filter((a) => a.closedAt === null) ?? [],
+    },
+    bindings: { stats: stub !== null, events: env.EVENTS !== undefined },
+    billing: billingEnabled(env),
+  };
 }

@@ -17,17 +17,25 @@
     "directory": "../web-client/dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*", "/parties/*", "/healthz"]
+    "run_worker_first": ["/api/*", "/parties/*", "/healthz", "/admin", "/admin/*"]
   },
-  "durable_objects": { "bindings": [{ "name": "Room", "class_name": "Room" }, { "name": "BILLING", "class_name": "Billing" }] },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Room"] }, { "tag": "v2", "new_sqlite_classes": ["Billing"] }],
+  "durable_objects": { "bindings": [{ "name": "Room", "class_name": "Room" }, { "name": "BILLING", "class_name": "Billing" }, { "name": "STATS", "class_name": "Stats" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Room"] }, { "tag": "v2", "new_sqlite_classes": ["Billing"] }, { "tag": "v3", "new_sqlite_classes": ["Stats"] }],
   "ratelimits": [
     { "name": "CREATE_ROOM_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },
     { "name": "CONNECT_LIMITER", "namespace_id": "1002", "simple": { "limit": 60, "period": 60 } },
     { "name": "BILLING_LIMITER", "namespace_id": "1003", "simple": { "limit": 30, "period": 60 } },
-    { "name": "RTDN_LIMITER", "namespace_id": "1004", "simple": { "limit": 120, "period": 60 } }
+    { "name": "RTDN_LIMITER", "namespace_id": "1004", "simple": { "limit": 120, "period": 60 } },
+    { "name": "CLIENT_ERROR_LIMITER", "namespace_id": "1005", "simple": { "limit": 10, "period": 60 } }
   ],
+  // JAMAA-PLATFORM §7 monitoring (docs/DEV.md "Monitoring"). EVENTS: one Analytics Engine point per meaningful event
+  // (the dataset is created on first write). ALERT_MAILER: Email Routing send_email for alerts; it only delivers to a
+  // VERIFIED destination address, and the sender must be on a zone with Email Routing on (ALERT_EMAIL / ALERT_EMAIL_FROM
+  // below; empty = alerts are only logged as code ALERT and shown on /admin).
+  "analytics_engine_datasets": [{ "binding": "EVENTS", "dataset": "jamaa_events" }],
+  "send_email": [{ "name": "ALERT_MAILER" }],
   // PAYMENTS-SPEC §3.8 (UTC): hourly ack retries + overdue alert; daily voided purchases, stale-sub alert, prune.
+  // JAMAA-PLATFORM §7.4: the hourly one also evaluates the monitoring alerts (always, billing on or off).
   "triggers": { "crons": ["23 * * * *", "17 3 * * *"] },
   // Billing secrets PLAY_SERVICE_ACCOUNT_JSON and ENTITLEMENT_KEYS are NOT listed under `secrets.required`, so the
   // Worker deploys while billing is off (BILLING_ENABLED "0"). check-deploy.mjs requires both (via `wrangler secret
@@ -45,12 +53,17 @@
   //    RTDN_SUBSCRIPTION: projects/<project>/subscriptions/play-rtdn-push (PAYMENTS-SPEC §8.C/§8.D).
   //  - GAMES_ENABLED: comma list of the live games (JAMAA-PLATFORM §2.6; default "mishana"). Add bluff, likely, trivia as
   //    each ships. Unknown ids are ignored at runtime (logged once) and refused by check-deploy.mjs.
+  //  - Monitoring (JAMAA-PLATFORM §7.4): ALERT_EMAIL = the owner's verified Email Routing destination, ALERT_EMAIL_FROM =
+  //    a sender on a zone with Email Routing on (both empty = alerts only logged). Thresholds per hour; PLAN_DAILY_REQUESTS
+  //    is the plan's daily Worker request quota (Free: 100000, unverified) and ALERT_QUOTA_RATIO the share that alerts.
   //  - BILLING_ENABLED: the production switch for everything premium/billing (server/src/config.ts). "0": billing and
-  //    admin routes 404, crons idle, rooms play the whole catalog, GET /api/config says {"billing":false} and every
+  //    admin grants 404, billing crons idle (monitoring runs), rooms play the whole catalog, GET /api/config says {"billing":false} and every
   //    client hides its premium UI. "1": payments as specified. `pnpm dev` and the e2e webServer pass "1".
   "vars": {
     "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0", "BILLING_ENABLED": "0", "GAMES_ENABLED": "mishana,bluff,likely,trivia,taqriban",
     "BILLING_MODE": "google", "ALLOW_FAKE_BILLING": "0",
-    "PLAY_PACKAGE_NAME": "app.jamaa.tv", "RTDN_AUDIENCE": "", "RTDN_SA_EMAIL": "", "RTDN_SUBSCRIPTION": ""
+    "PLAY_PACKAGE_NAME": "app.jamaa.tv", "RTDN_AUDIENCE": "", "RTDN_SA_EMAIL": "", "RTDN_SUBSCRIPTION": "",
+    "ALERT_EMAIL": "", "ALERT_EMAIL_FROM": "", "ALERT_SERVER_ERRORS_PER_HOUR": "20", "ALERT_CLIENT_ERRORS_PER_HOUR": "50",
+    "PLAN_DAILY_REQUESTS": "100000", "ALERT_QUOTA_RATIO": "0.8"
   }
 }
