@@ -3,6 +3,7 @@
 // Keys: `meta`, `state` (RoomState, rewritten on every change), `history` (RoomHistory: written only at game end,
 // REPLAY or ABORT) and `sessions`. RoomCore normalizes what it loads (shared/room `normalizeLoaded`).
 import type { RoomHistory, RoomState } from "@jamaa/shared/room";
+import type { GameId } from "@jamaa/shared/games/ids";
 import type { RoomEntitlement } from "./billing/token";
 import type { PlatformOrUnknown } from "./monitor/events";
 
@@ -34,6 +35,8 @@ export interface RoomMeta {
   /** Players who joined this room, and how many of them the Stats DO was already told about. */
   joins?: number;
   joinsSent?: number;
+  /** JAMAA-PLATFORM §8.7: the live games at creation (env merged with the admin override); absent = the env list. */
+  enabledGames?: GameId[];
 }
 
 export interface SessionRecord { tokenHash: string; kicked: boolean }

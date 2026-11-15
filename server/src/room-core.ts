@@ -40,6 +40,8 @@ import { Mutex } from "./mutex";
 import { addStrike, fullBucket, JoinLimiter, pruneStrikes, STRIKES_TO_CLOSE, takeToken } from "./ratelimit";
 import type { Bucket } from "./ratelimit";
 import { RoomStore } from "./room-store";
+import { contentFlag } from "./monitor/content-flags";
+import { inspectRoom } from "./monitor/inspect";
 import { NO_MONITOR } from "./monitor/events";
 import type { GameEndReason, PlatformOrUnknown, RoomEvent, RoomMonitor } from "./monitor/events";
 import type { RoomMeta, RoomStorage, Sessions } from "./room-store";
@@ -79,6 +81,11 @@ export interface InitRoomArgs {
   memory?: MemoryWire;
   /** JAMAA-PLATFORM §8: the TV platform from the `X-Jamaa-Client` header (monitoring only). */
   platform?: PlatformOrUnknown;
+  /**
+   * JAMAA-PLATFORM §8.7: the live games when the room was created (GAMES_ENABLED merged with the admin override,
+   * config.ts `effectiveGames`). Stored in meta; absent = `deps.enabledGames` (the env list).
+   */
+  enabledGames?: readonly GameId[];
 }
 export type InitRoomResult = { ok: true } | { ok: false; reason: "EXISTS" };
 
@@ -303,6 +310,7 @@ export class RoomCore {
         createdAt: args.now, lastActivityAt: args.now, tvLeftAt: args.now,
         entitlement, billingMode: args.billingMode, tvBusyUntil: null, viewRev: 0,
         platform: args.platform ?? "unknown", gameStartedAt: null, joins: 0, joinsSent: 0,
+        ...(args.enabledGames ? { enabledGames: args.enabledGames.filter(isGameId) } : {}),
       };
       // §2.3: the content language starts as the TV's UI language when any shipped pack (any game) has it, else English.
       const full = this.#d.content();
@@ -732,6 +740,8 @@ export class RoomCore {
       return;
     }
     const a = m.a as RoomIntent;
+    // JAMAA-PLATFORM §8.6: the pack item a host skip/void/hide acts on, read before the intent changes the game state.
+    const flag = a.type === "GAME" && state.game?.id === a.gameId ? contentFlag(a.gameId, state.game.state, a.i, this.#d.content()) : null;
     const r = this.#reduce(state, { ...a, by } as RoomAction);
     if (!r.ok) {
       safeSend(conn, errorFrame(r.error, ref));
@@ -766,6 +776,9 @@ export class RoomCore {
     } else {
       await this.#persist(r.state, r.history);
     }
+    if (flag && this.#meta && a.type === "GAME") {
+      this.#emit({ t: "content_flag", room: roomId(this.#meta), at: this.#d.clock.now(), gameId: a.gameId, ...flag, locale: state.contentLocale, platform: this.#meta.platform ?? "unknown" });
+    }
     this.#broadcast();
     await this.#reschedule();
   }
@@ -775,7 +788,7 @@ export class RoomCore {
   #ctx(history: RoomHistory = this.#history): RoomCtx {
     const now = this.#d.clock.now();
     const { access, playable } = this.#accessAt(now);
-    return { now, content: playable, enabledGames: this.#enabled, access: { premium: access.premium, packs: access.packs }, history };
+    return { now, content: playable, enabledGames: this.#games(), access: { premium: access.premium, packs: access.packs }, history };
   }
 
   /**
@@ -832,6 +845,11 @@ export class RoomCore {
     }
     if (a.type === "START_GAME" && by.kind === "player" && state.phase === "SETUP" && this.#tvBusy(now)) return "TV_BUSY";
     return null;
+  }
+
+  /** The room's live games: the list stored at creation (§8.7 admin override), else the env list. */
+  #games(): readonly GameId[] {
+    return this.#meta?.enabledGames ?? this.#enabled;
   }
 
   #tvBusy(now: number): boolean {
@@ -1142,7 +1160,7 @@ export class RoomCore {
     const { access, playable } = this.#accessAt(now);
     return {
       content: playable, fullContent: this.#d.content(), access: { premium: access.premium, packs: access.packs },
-      enabledGames: this.#enabled, focusedGameId: this.#focusedGameId(state), tvBusy: this.#tvBusy(now), history: this.#history,
+      enabledGames: this.#games(), focusedGameId: this.#focusedGameId(state), tvBusy: this.#tvBusy(now), history: this.#history,
     };
   }
 
@@ -1226,7 +1244,7 @@ export class RoomCore {
     if (wake !== null) candidates.push(wake);
     // §2.6: a SETUP for a game GAMES_ENABLED no longer lists returns to HUB on the next write; the alarm makes it one.
     const st = this.#state;
-    if (st && st.phase === "SETUP" && st.setupGameId !== null && !roomGames(st, this.#enabled).includes(st.setupGameId)) candidates.push(this.#d.clock.now());
+    if (st && st.phase === "SETUP" && st.setupGameId !== null && !roomGames(st, this.#games()).includes(st.setupGameId)) candidates.push(this.#d.clock.now());
     const pending = this.#pendingDeadline();
     if (pending !== null) candidates.push(pending);
     await this.#store.scheduleAlarm(Math.max(Math.min(...candidates), this.#d.clock.now() + MIN_ALARM_GAP_MS));
@@ -1260,6 +1278,24 @@ export class RoomCore {
   // ---------------------------------------------------------------- test/introspection helpers
 
   /** Read-only snapshot of the cache (tests only). */
+  /**
+   * JAMAA-PLATFORM §8.8 admin inspector (Room.adminInspect, Worker admin route only): read-only. A room this isolate has
+   * not loaded is read straight from storage (no load, so no seq-floor write and no reschedule).
+   */
+  inspect(): Promise<Record<string, unknown>> {
+    return this.#run(async () => {
+      const now = this.#d.clock.now();
+      const fromCache = this.#loaded;
+      const r = fromCache ? { meta: this.#meta, state: this.#state, history: this.#history, sessions: this.#sessions } : await this.#store.load();
+      const state = r.meta && r.state && (r.state as { schema?: unknown }).schema === 2 ? (r.state as RoomState) : null;
+      return inspectRoom({
+        code: this.#d.roomCode, now, meta: r.meta, state, history: (r.history as RoomHistory | null) ?? null, sessions: r.sessions ?? {},
+        sockets: this.#conns().map((c) => c.state), alarm: await this.#d.storage.getAlarm(), nextWakeAt: state ? nextRoomWakeAt(state) : null,
+        expiresAt: r.meta ? expiresAt(r.meta, this.#conns().some((c) => isTv(c))) : null, source: fromCache ? "memory" : "storage",
+      });
+    });
+  }
+
   peek(): { meta: RoomMeta | null; state: RoomState | null; history: RoomHistory; sessions: Sessions; focusedGameId: GameId | null } {
     return { meta: this.#meta, state: this.#state, history: this.#history, sessions: this.#sessions, focusedGameId: this.#focus };
   }

@@ -6,6 +6,7 @@
 //   blob1   event   blob2 game id   blob3 locale   blob4 platform   blob5 reason / error name   blob6 app version
 //   blob7   screen / phase          blob8 room code (client errors only, optional)
 //   double1 players   double2 duration (s)   double3 count (1, or the dedupe count of a client error)
+//   content_flag (a host skipped / voided / hid a pack item): blob5 action, blob7 pack id, blob8 item id.
 import type { GameId } from "@jamaa/shared/games/ids";
 
 export const PLATFORMS = ["phone", "tv-web", "tv-pixi", "tv-android"] as const;
@@ -27,6 +28,8 @@ export function isPlatform(x: unknown): x is Platform {
 
 export type GameEndReason = "finished" | "aborted" | "abandoned" | "expired";
 export type RoomCloseReason = "expired" | "replaced";
+/** What a host did to a pack item (content stats): skip (Bluff prompt, Likely card, Taqriban question), void (Trivia), hide (a Bluff house/truth card). */
+export type ContentAction = "skip" | "void" | "hide_truth" | "hide_house";
 
 /** What a room reports (RoomCore → RoomMonitor). `room` / `game` are idempotency ids (code:createdAt[:n]). */
 export type RoomEvent =
@@ -35,7 +38,8 @@ export type RoomEvent =
   | { t: "game_started"; room: string; game: string; at: number; gameId: GameId; players: number; locale: string; platform: PlatformOrUnknown; joins: number }
   | { t: "game_ended"; room: string; game: string; at: number; gameId: GameId; players: number; durationMs: number; reason: GameEndReason; platform: PlatformOrUnknown; joins: number }
   | { t: "player_joined"; room: string; at: number; platform: PlatformOrUnknown }
-  | { t: "player_left"; room: string; at: number; platform: PlatformOrUnknown };
+  | { t: "player_left"; room: string; at: number; platform: PlatformOrUnknown }
+  | { t: "content_flag"; room: string; at: number; gameId: GameId; action: ContentAction; packId: string; itemId: string; locale: string; platform: PlatformOrUnknown };
 
 /** The sink a Room gets. Must never throw and never block the room (best effort). */
 export interface RoomMonitor { emit(ev: RoomEvent): void }
@@ -43,9 +47,9 @@ export const NO_MONITOR: RoomMonitor = { emit: () => undefined };
 
 /** The AE data point for a room event. */
 export function roomEventPoint(ev: RoomEvent): AnalyticsEngineDataPoint {
-  const base = (gameId: string, locale: string, platform: string, reason: string, players: number, durationS: number): AnalyticsEngineDataPoint => ({
+  const base = (gameId: string, locale: string, platform: string, reason: string, players: number, durationS: number, b7 = "", b8 = ""): AnalyticsEngineDataPoint => ({
     indexes: [ev.t],
-    blobs: [ev.t, gameId, locale, platform, reason, "", "", ""],
+    blobs: [ev.t, gameId, locale, platform, reason, "", b7, b8],
     doubles: [players, durationS, 1],
   });
   switch (ev.t) {
@@ -55,6 +59,7 @@ export function roomEventPoint(ev: RoomEvent): AnalyticsEngineDataPoint {
     case "game_ended": return base(ev.gameId, "", ev.platform, ev.reason, ev.players, Math.round(ev.durationMs / 1000));
     case "player_joined":
     case "player_left": return base("", "", ev.platform, "", 0, 0);
+    case "content_flag": return base(ev.gameId, ev.locale, ev.platform, ev.action, 0, 0, ev.packId, ev.itemId);
   }
 }
 

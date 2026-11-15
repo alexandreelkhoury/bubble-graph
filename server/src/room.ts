@@ -90,6 +90,14 @@ export class Room extends Server<Env> {
     return this.#roomCore.initRoom(args);
   }
 
+  /**
+   * JAMAA-PLATFORM §8.8: the admin room inspector (read-only). Native RPC only: reachable solely through the Worker's
+   * `Room` binding, which calls it after ADMIN_TOKEN auth (admin.ts). No HTTP route reaches it (onRequest is 404).
+   */
+  async adminInspect(): Promise<Record<string, unknown>> {
+    return this.#roomCore.inspect();
+  }
+
   override async onConnect(conn: Connection<ConnState>, ctx: ConnectionContext): Promise<void> {
     await this.#roomCore.onConnect(conn as unknown as ConnHandle, {
       url: ctx.request.url,
