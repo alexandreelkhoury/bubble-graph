@@ -14,7 +14,7 @@ import { billingEnabled } from "../lib/billingFlag";
 import { pushToast } from "../state/store";
 import { Icon } from "../components/Icon";
 import {
-  tvAct, tvAdvanced, tvCupOpen, tvDialog, tvExit, tvHubSettings, tvIntro, tvLangOpen, tvPackPicker, tvPaused, tvPicker, tvRules, tvShop,
+  tvAct, tvAdvanced, tvCupOpen, tvDialog, tvExit, tvHubSettings, tvIntro, tvLangOpen, tvPackPicker, tvPaused, tvQuizShelf, tvPicker, tvRules, tvShop,
 } from "./tvStore";
 import type { DialogSpec, PickerSpec } from "./tvStore";
 import { closeShop } from "./shopState";
@@ -74,9 +74,10 @@ export function closeRules(): void {
 }
 /** Side sheets of the hub/setup (cup, settings, packs, advanced). */
 export function rememberSideOpener(): void { openers.side = document.activeElement; }
-export function closeSide(sig: { value: boolean }): void {
+/** Closes a side sheet; focus returns to its opener, or to `to` when given (e.g. Start after a quiz is picked). */
+export function closeSide(sig: { value: boolean }, to?: Element | null): void {
   sig.value = false;
-  refocus(openers.side);
+  refocus(to ?? openers.side);
 }
 
 /** Back, innermost first. False when nothing was open. */
@@ -87,6 +88,7 @@ export function closeTopOverlay(): boolean {
   if (tvLangOpen.value) { closeLanguages(); return true; }
   if (tvRules.value) { closeRules(); return true; }
   if (tvPackPicker.value) { closeSide(tvPackPicker); return true; }
+  if (tvQuizShelf.value) { closeSide(tvQuizShelf); return true; }
   if (tvAdvanced.value) { closeSide(tvAdvanced); return true; }
   if (tvCupOpen.value) { closeSide(tvCupOpen); return true; }
   if (tvHubSettings.value) { closeSide(tvHubSettings); return true; }

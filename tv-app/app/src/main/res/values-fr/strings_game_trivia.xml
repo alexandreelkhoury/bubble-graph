@@ -66,6 +66,11 @@
     <string name="game__trivia__quiz__selected">Choisi</string>
     <string name="game__trivia__quiz__locked">Avec le JAMAA Pass</string>
     <string name="game__trivia__quiz__rerun">Déjà joué</string>
+    <string name="game__trivia__quiz__sort_theme">Par thème</string>
+    <string name="game__trivia__quiz__sort_difficulty">Par difficulté</string>
+    <string name="game__trivia__quiz__all">Tous</string>
+    <string name="game__trivia__quiz__none">Aucun quiz à ce niveau pour l\'instant</string>
+    <string name="game__trivia__quiz__change">Changer</string>
     <string name="game__trivia__intro__get_ready">Préparez-vous ! Quiz : %1$s</string>
     <string name="game__trivia__read__look">Regardez la télé !</string>
     <string name="game__trivia__read__counter">%1$s / %2$s</string>

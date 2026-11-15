@@ -49,7 +49,11 @@ object Constants {
     const val ROOM_TV_MAX_TTL_MS = 12 * 60 * 60_000L
     const val ROOM_TV_GONE_TTL_MS = 15 * 60_000L
     const val MSG_MAX_BYTES = 4096
-    const val HTTP_BODY_MAX_BYTES = 4096 // PAYMENTS-SPEC §3.3: was 1024; POST /api/rooms carries the entitlement token
+    /** PAYMENTS-SPEC §3.3 (was 1024, then 4096 for the token); JAMAA-PLATFORM §2.6a: POST /api/rooms also carries `memory`. */
+    const val HTTP_BODY_MAX_BYTES = 128 * 1024
+    /** JAMAA-PLATFORM §2.2/§2.6a: item keys kept per game in the room's (and this TV's) no-repeat memory, oldest dropped. */
+    const val MEMORY_MAX_KEYS = 300
+    const val MEMORY_KEY_MAX_CHARS = 81
     const val RATE_MSGS_PER_SEC = 5
     const val RATE_BURST = 10
     const val JOINS_PER_MIN_PER_IP = 30

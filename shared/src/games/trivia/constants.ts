@@ -62,5 +62,11 @@ export const ON_FIRE_MIN = 3;                 // 3, 5, 7…
 export const EASY_SHARE = 0.3;
 export const HARD_SHARE = 0.3;
 
+/**
+ * §9 "featured" order (owner decision, JAMAA-GAP: the pack header has no `featured` flag): these families come first,
+ * in this order, on the shelf and as the `quizId: null` default. Families not listed follow in catalog order.
+ */
+export const FEATURED_QUIZ_IDS: readonly string[] = ["world-mix-01"];
+
 /** Platform §5.2 table: a Trivia pack has ≥ 20 questions. */
 export const MIN_QUESTIONS = 20;

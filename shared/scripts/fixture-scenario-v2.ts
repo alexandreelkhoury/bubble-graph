@@ -92,11 +92,15 @@ export function generateFixturesV2(): Map<string, string> {
   error("not_in_game", "NOT_IN_GAME", "9");
   error("reaction_too_fast", "REACTION_TOO_FAST", "12");
   error("unsupported_version", "UNSUPPORTED_VERSION", null);
+  // §2.6a: the room's no-repeat memory, to the TV only (oldest key first per game; games with no key are omitted).
+  put("s2c.memory.json", { v: 2, t: "memory", memory: { mishana: ["en-food-01:p004", "en-food-01:p011"], bluff: ["lb-proverbs-07"], trivia: ["lb-quiz-01:q001", "lb-quiz-01:q017"] } });
 
   // ---------------- HTTP
   put("http.healthz.json", { ok: true, app: "jamaa", protocol: 2 });
   put("http.config.json", { billing: true, games: ["mishana"] });
   put("http.config.billing_off.json", { billing: false, games: ["mishana"] });
+  // §2.6a: POST /api/rooms with the TV's stored memory (`entitlement` and `memory` are optional, PAYMENTS-SPEC §4.3).
+  put("http.create_room.request.json", { locale: "fr", entitlement: ENTITLEMENT_TOKEN, memory: { mishana: ["en-food-01:p004"], likely: ["late-again"] } });
 
   // ---------------- state views (a free room: free test packs playable, premium ones locked)
   const h = new RoomHarness({ seed: FIXTURE_V2_SEED, now: FIXTURE_V2_T0, roomCode: "KXRT", joinUrl: "https://play.example.workers.dev/KXRT" });

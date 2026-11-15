@@ -17,6 +17,11 @@ import kotlinx.serialization.json.JsonObject
 @Serializable @SerialName("state") data class StateMsg(val v: Int = Constants.PROTOCOL_VERSION, val seq: Long, val serverNow: Long, val view: RoomView) : ServerMessage()
 @Serializable @SerialName("error") data class ErrorMsg(val v: Int = Constants.PROTOCOL_VERSION, val code: String, val messageKey: String, val ref: String?) : ServerMessage()
 @Serializable @SerialName("pong") data class PongMsg(val v: Int = Constants.PROTOCOL_VERSION) : ServerMessage()
+/**
+ * JAMAA-PLATFORM §2.6a: the room's no-repeat memory (game id → used item keys, oldest first), sent to the TV socket only:
+ * after its hello when non-empty, and whenever a game end, REPLAY or ABORT changes it. Saved by [app.jamaa.tv.settings.RoomMemoryStore].
+ */
+@Serializable @SerialName("memory") data class MemoryMsg(val v: Int = Constants.PROTOCOL_VERSION, val memory: Map<String, List<String>>) : ServerMessage()
 
 @Serializable @JsonClassDiscriminator("t") sealed class ClientMessage
 
@@ -73,8 +78,11 @@ import kotlinx.serialization.json.JsonObject
     val points: Points? = null,
 )
 
-/** PAYMENTS-SPEC §4.3: `entitlement` is the stored token (omitted when null: the encoder drops nulls). */
-@Serializable data class CreateRoomRequest(val locale: String, val entitlement: String? = null)
+/**
+ * PAYMENTS-SPEC §4.3: `entitlement` is the stored token; JAMAA-PLATFORM §2.6a: `memory` is this TV's stored no-repeat
+ * memory, the new room's starting history. Each is omitted when null (the encoder drops nulls).
+ */
+@Serializable data class CreateRoomRequest(val locale: String, val entitlement: String? = null, val memory: Map<String, List<String>>? = null)
 
 /** PAYMENTS-SPEC §3.11: `entitlement` ∈ NONE | OK | INVALID (null from a pre-billing server). */
 @Serializable data class CreateRoomResponse(

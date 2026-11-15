@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import app.jamaa.tv.platform.MotionMode
 import app.jamaa.tv.settings.SharedPlatformPrefs
+import app.jamaa.tv.settings.SharedRoomMemoryStore
 import android.util.Log
 import app.jamaa.tv.BuildConfig
 import app.jamaa.tv.billing.BillingRepository
@@ -29,7 +30,7 @@ internal fun productionDeps(app: Application): GameDeps {
     return GameDeps(
         serverUrl = { prefs.effectiveServerUrl() },
         appLocale = { LocaleController.currentLanguage() },
-        createRoom = { baseUrl, locale, entitlement -> RoomApi.createRoom(baseUrl, locale, entitlement) },
+        createRoom = { baseUrl, locale, entitlement, memory -> RoomApi.createRoom(baseUrl, locale, entitlement, memory) },
         clientConfig = { baseUrl -> RoomApi.clientConfig(baseUrl) },
         newConnection = { scope, url -> RoomSocket(serverUrl = url, scope = scope) },
         sound = SoundPoolPlayer(app),
@@ -38,6 +39,7 @@ internal fun productionDeps(app: Application): GameDeps {
         billing = BillingRuntime.get(app),
         installId = { PrefsEntitlementStore(app).installId() },
         prefs = SharedPlatformPrefs(app),
+        roomMemory = SharedRoomMemoryStore(app),
         motion = { calm -> deviceMotion(app, calm) },
     )
 }

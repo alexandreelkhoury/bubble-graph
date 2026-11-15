@@ -80,6 +80,7 @@
 .srow { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: 52px; border-bottom: 1px solid rgb(255 247 236 / 0.07); }
 .srow:last-child { border-bottom: 0; }
 .srow--sub { padding-inline-start: var(--space-4); }
+.srow--quiz { display: block; padding-block: var(--space-3); }
 .srow__label { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
 .srow__gem { color: var(--color-accent); }
 .srow__value { display: inline-flex; align-items: center; gap: 6px; color: var(--color-text-secondary); font-weight: 700; text-align: end; }

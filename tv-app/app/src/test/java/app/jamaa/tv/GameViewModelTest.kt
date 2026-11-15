@@ -29,6 +29,7 @@ import app.jamaa.tv.protocol.ClientMessage
 import app.jamaa.tv.protocol.CreateRoomResponse
 import app.jamaa.tv.protocol.ErrorMsg
 import app.jamaa.tv.protocol.HubFocus
+import app.jamaa.tv.protocol.MemoryMsg
 import app.jamaa.tv.protocol.OpenGame
 import app.jamaa.tv.protocol.Replay
 import app.jamaa.tv.protocol.RoomView
@@ -39,6 +40,7 @@ import app.jamaa.tv.protocol.StartGame
 import app.jamaa.tv.protocol.StateMsg
 import app.jamaa.tv.protocol.UpdateGameSettings
 import app.jamaa.tv.settings.MemoryPlatformPrefs
+import app.jamaa.tv.settings.MemoryRoomMemoryStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -87,6 +89,8 @@ class GameViewModelTest {
 
     private val connections = mutableListOf<FakeConnection>()
     private val createCalls = mutableListOf<Pair<String, String>>()
+    private val createMemories = mutableListOf<Map<String, List<String>>>()
+    private val roomMemory = MemoryRoomMemoryStore()
     private val codes = ArrayDeque(listOf("KXRT", "WXYZ", "ABCD"))
 
     private var now = 1_790_000_000_000L
@@ -102,8 +106,9 @@ class GameViewModelTest {
     private fun deps() = GameDeps(
         serverUrl = { "https://play.example.workers.dev" },
         appLocale = { "fr" },
-        createRoom = { url, locale, _ ->
+        createRoom = { url, locale, _, memory ->
             createCalls += url to locale
+            createMemories += memory
             val code = codes.removeFirst()
             CreateRoomResponse(code, "0123456789abcdef0123456789abcdef", "https://play.example.workers.dev/$code", "/parties/room/$code")
         },
@@ -113,6 +118,7 @@ class GameViewModelTest {
         loadMuted = { false },
         saveMuted = { savedMuted = it },
         prefs = prefs,
+        roomMemory = roomMemory,
     )
 
     @Before fun setUp() = Dispatchers.setMain(dispatcher)
@@ -157,6 +163,23 @@ class GameViewModelTest {
     }
 
     private fun intents(conn: FakeConnection) = conn.sent.filterIsInstance<ActionMsg>().map { it.a }
+
+    /** JAMAA-PLATFORM §2.6a: the stored memory seeds every new room; `memory` frames are merged into the store. */
+    @Test
+    fun roomMemorySeedsEachNewRoomAndIsSavedFromMemoryFrames() = runTest(dispatcher) {
+        val vm = newVm()
+        assertEquals(listOf(emptyMap<String, List<String>>()), createMemories)
+        val conn = open(vm)
+        emit(conn, hub, 1)
+        conn.incoming.emit(MemoryMsg(memory = mapOf("mishana" to listOf("en-food-01:p001", "BAD KEY"), "karaoke" to listOf("x"))))
+        advanceUntilIdle()
+        assertEquals(mapOf("mishana" to listOf("en-food-01:p001")), roomMemory.stored)
+        conn.incoming.emit(MemoryMsg(memory = mapOf("trivia" to listOf("lb-quiz-01:q001"))))
+        advanceUntilIdle()
+        vm.createRoom()
+        advanceUntilIdle()
+        assertEquals(mapOf("mishana" to listOf("en-food-01:p001"), "trivia" to listOf("lb-quiz-01:q001")), createMemories.last())
+    }
 
     @Test
     fun broadcastsPlayTheirCuesUnlessMuted() = runTest(dispatcher) {
@@ -345,7 +368,7 @@ class GameViewModelTest {
         val failing = GameDeps(
             serverUrl = { "http://x" },
             appLocale = { "en" },
-            createRoom = { _, _, _ -> throw app.jamaa.tv.net.CreateRoomException(429, "RATE_LIMITED") },
+            createRoom = { _, _, _, _ -> throw app.jamaa.tv.net.CreateRoomException(429, "RATE_LIMITED") },
             newConnection = { _, _ -> FakeConnection() },
         )
         val vm = GameViewModel(Application(), failing)

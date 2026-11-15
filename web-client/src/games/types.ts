@@ -1,7 +1,7 @@
 // JAMAA-PLATFORM §6.1 "the web game loader map": what each game's lazy phone and TV modules export. P creates this
 // contract and a stub module for every game; each G lane replaces only the files inside web-client/src/games/<id>/.
 import type { ComponentType } from "preact";
-import type { PlayerRoomView, TvRoomView } from "@jamaa/shared/protocol/v2";
+import type { PlayerRoomView, RoomPublic, RoomSetup, TvRoomView } from "@jamaa/shared/protocol/v2";
 
 /** `games/<id>/phone.tsx` (the `game-<id>` chunk; counted in the phone budget, ≤ 14 KB gz). */
 export interface PhoneGameModule {
@@ -15,6 +15,8 @@ export interface PhoneGameModule {
   needsMe?(view: PlayerRoomView): boolean;
   /** Whether the game is still in its first round (coach marks show only then, §3.3 PHH-04). Default: true. */
   firstRound?(view: PlayerRoomView): boolean;
+  /** Extra setup content above the settings rows (Quiz Night's quiz cards); loaded with this chunk at SETUP. */
+  SetupExtra?: ComponentType<{ room: RoomPublic; setup: RoomSetup; edit: boolean; send(patch: Record<string, unknown>): void }>;
 }
 
 /** `games/<id>/tv.tsx` (a `tv-mock-game-<id>` chunk: excluded from the phone budget). */

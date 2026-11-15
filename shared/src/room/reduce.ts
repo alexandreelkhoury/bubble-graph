@@ -49,8 +49,9 @@ export function createRoomState(a: { roomCode: string; joinUrl: string; seed: nu
   };
 }
 
-export function createRoomHistory(): RoomHistory {
-  return { memory: {}, games: [] };
+/** §2.6a: `memory` is the TV's seed (already sanitized: `sanitizeMemoryWire` + `memoryFromWire`), copied. */
+export function createRoomHistory(memory: RoomHistory["memory"] = {}): RoomHistory {
+  return { memory: cloneJson(memory), games: [] };
 }
 
 /** §2.5: `room.games` = enabled (GAMES_ENABLED ∩ registry) ∩ the TV's games at the server's VIEW_VERSION, GAME_IDS order. */

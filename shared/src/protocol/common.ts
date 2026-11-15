@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { COLORS, LOCALES, SETTINGS_BOUNDS } from "../constants";
+import { COLORS, LOCALES, MEMORY_KEY_MAX_CHARS, MEMORY_MAX_KEYS, MEMORY_WIRE_MAX_GAMES, SETTINGS_BOUNDS } from "../constants";
 import { AGE_RATINGS, PACK_TIERS } from "../games/mishana/engine/catalog";
 import type { LocalizedTitle, Points, Settings } from "../games/mishana/engine/types";
 import { DEADLINE_KINDS, GUESS_STATUSES, HISTORY_CAUSES, PHASES, ROLES, VOTE_OUTCOMES, WINNERS } from "../games/mishana/engine/types";
@@ -20,6 +20,14 @@ export const HistoryCauseSchema = z.enum(HISTORY_CAUSES);
 export const AgeRatingSchema = z.enum(AGE_RATINGS);
 export const PackTierSchema = z.enum(PACK_TIERS);
 export const ErrorCodeSchema = z.enum(ERROR_CODES);
+/**
+ * JAMAA-PLATFORM §2.6a no-repeat memory on the wire (POST /api/rooms `memory`, s2c `memory`): game id → used item keys,
+ * oldest first. The shape is bounded here (a body breaking it → BAD_MESSAGE); unknown game ids and malformed keys are
+ * then DROPPED by `sanitizeMemoryWire` (room/memory.ts), so an older or newer TV never fails to create a room.
+ */
+export const MemoryWireSchema = z
+  .record(z.string().max(32), z.array(z.string().max(MEMORY_KEY_MAX_CHARS)).max(MEMORY_MAX_KEYS))
+  .refine((r) => Object.keys(r).length <= MEMORY_WIRE_MAX_GAMES, { message: "too many games" });
 /** A title in every UI locale (engine `LocalizedTitle`). */
 export const LocalizedTitleSchema = z.object({ en: z.string(), fr: z.string(), ar: z.string(), es: z.string().optional() });
 

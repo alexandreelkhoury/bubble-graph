@@ -488,6 +488,17 @@ RoomMe = { id: string; benched: boolean }
 
 **Size and write cost.** Room is a SQLite-backed Durable Object class (`new_sqlite_classes`), whose per-value limit is far above our data [VERIFY the current documented limit, 2 MB at the time of writing]; the real constraint is **write cost and latency**, because `state` is rewritten on every vote, tap and answer. Therefore the large, rarely changing data (`memory`, the cup history) lives in `history`. A test (`room/size.test.ts`) serializes the worst case `state` for each game at 12 members (longest names, every setting slot, a full game state) and requires **≤ 16 KiB**; a second test bounds `history` (4 games × 300 ids + 20 cup entries) at ≤ 32 KiB.
 
+### 2.6a No-repeat memory across rooms (TV-held)
+
+A room lives ≤ 12 h, so `RoomHistory.memory` alone forgets yesterday's party. The **TV keeps the memory on the device** and seeds each new room with it (`shared/src/room/memory.ts`, zod-free):
+
+- **Store.** Browser TV: localStorage `jamaa:tvMemory` (every access in try/catch). Android: SharedPreferences `jamaa_prefs` / `room_memory` (`settings/RoomMemoryPrefs.kt`). Same shape as the wire: `{ "<gameId>": ["<key>", …] }`, oldest first, ≤ `MEMORY_MAX_KEYS` per game.
+- **Seed (creation only).** `POST /api/rooms` takes an optional `memory` (`CreateRoomRequest`; the body limit `HTTP_BODY_MAX_BYTES` is 128 KiB for it). The shape is bounded by zod (≤ 8 game entries, ≤ 300 keys of ≤ `MEMORY_KEY_MAX_CHARS` = 81 chars; else 400 `BAD_MESSAGE`); `sanitizeMemoryWire` then drops unknown game ids, keys not matching `MEMORY_KEY_REGEX` (`<id>` or `<packId|family>:<itemId>`, lowercase `[a-z0-9-]` ≤ 40 each) and duplicates (the latest place wins), keeps the 300 most recent, and `initRoom` re-sanitizes before `createRoomHistory(memory)`. Only the room's creator (who receives the `tvToken`) can seed; **no WebSocket message carries memory** (the strict v2 schemas refuse a `memory` key on any client frame), so a phone can never set it. Unknown keys are harmless (draws ignore them) and capped.
+- **Delivery (TV only).** s2c `{v:2, t:"memory", memory}` (`MemoryV2Schema`) goes to TV sockets only: after the TV's hello when the room's memory is non-empty, and from `#persist` whenever a write changes the memory (game end, REPLAY, ABORT, i.e. only after an instance ended, so it never reveals a running secret). Phones never receive it; `memory` stays in `ROOM_FORBIDDEN_KEYS` for every view.
+- **Merge on the TV.** Games in the frame replace the stored list (the room started from it); games absent keep theirs (`mergeMemoryWire`, Kotlin `RoomMemory.merge`).
+- **Versioning.** Additive within protocol v2: the request field is optional and older clients ignore an unknown `t`. Fixtures: `v2/s2c.memory.json`, `v2/http.create_room.request.json`.
+- **Known limit.** Most Likely's `start` keeps only the memory keys of cards the room can draw (§2.6 size), so a free room's write-back drops stored Spicy-pack keys from the TV's list.
+
 ### 2.7 How Mish Ana! plugs in (`games/mishana/adapter.ts`)
 
 The engine's rules, scoring, normalisation and invariants **do not change**. It needs exactly **three small additions**, each in `games/mishana/engine/` with its own unit test, because the engine keeps its own host and deadline fields (reduce.ts sets `s.hostPlayerId` on the first JOIN, `reassignHost` re-picks it on leave/remove, and the engine `isHost`, `HOST_ADVANCE` and `HOST_OVERRIDE_GUESS` checks all read it; `GameCtx.isHost` alone would be ignored):

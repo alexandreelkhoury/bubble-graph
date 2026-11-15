@@ -1,11 +1,14 @@
 import * as z from "zod";
 import { ENTITLEMENT_TOKEN_MAX_CHARS, ROOM_CODE_REGEX } from "../constants";
-import { ErrorCodeSchema, LocaleSchema, Token } from "./common";
+import { ErrorCodeSchema, LocaleSchema, MemoryWireSchema, Token } from "./common";
 
 /** PAYMENTS-SPEC §3.11: what `createRoom` made of the request's entitlement token. "INVALID" → the TV refreshes its token. */
 export const ENTITLEMENT_STATUSES = ["NONE", "OK", "INVALID"] as const;
 export type EntitlementStatus = (typeof ENTITLEMENT_STATUSES)[number];
-export const CreateRoomRequest = z.strictObject({ locale: LocaleSchema.optional(), entitlement: z.string().max(ENTITLEMENT_TOKEN_MAX_CHARS).optional() });
+/** JAMAA-PLATFORM §2.6a: `memory` = the TV's stored no-repeat memory; the new room's `RoomHistory.memory` starts from it. */
+export const CreateRoomRequest = z.strictObject({
+  locale: LocaleSchema.optional(), entitlement: z.string().max(ENTITLEMENT_TOKEN_MAX_CHARS).optional(), memory: MemoryWireSchema.optional(),
+});
 export const CreateRoomResponse = z.object({
   code: z.string().regex(ROOM_CODE_REGEX), tvToken: Token, joinUrl: z.string(), wsPath: z.string(),
   entitlement: z.enum(ENTITLEMENT_STATUSES),

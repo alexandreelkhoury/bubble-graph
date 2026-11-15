@@ -2,3 +2,4 @@
 export * from "./types";
 export { createRoomState, createRoomHistory, reduceRoom, nextRoomWakeAt, roomGames, roomOutcome, rosterOf, gameAvailable, cupStars, normalizeLoaded, ROOM_SCHEMA, type LoadedRoom } from "./reduce";
 export { assertRoomInvariants, RoomInvariantError } from "./invariants";
+export { sanitizeMemoryWire, memoryFromWire, memoryToWire, mergeMemoryWire, sameMemory, isMemoryKey, MEMORY_KEY_REGEX, type MemoryWire, type RoomMemory } from "./memory";

@@ -191,7 +191,7 @@ Where things are (`app/src/main/java/app/jamaa/tv/`):
 | `ui/characters/` | The Canvas character renderer over the generated `CharacterPaths.kt` (do not edit; `pnpm gen:characters`) |
 | `motion/Choreo.kt`, `ui/theme/WorldColors.kt` | Generated (lane D): the choreography steps + sampler and the world palettes |
 
-Per-device prefs (SharedPreferences `jamaa_prefs`, shared with the mute setting): `intro_seen_<gameId>` and **Calm animations** (hub Settings), which with a system animator scale of 0 or a low-RAM device selects reduced or lite motion.
+Per-device prefs (SharedPreferences `jamaa_prefs`, shared with the mute setting): `intro_seen_<gameId>` and **Calm animations** (hub Settings), which with a system animator scale of 0 or a low-RAM device selects reduced or lite motion. The same file holds `room_memory` (`settings/RoomMemoryPrefs.kt`, JAMAA-PLATFORM §2.6a): the no-repeat memory sent with every POST /api/rooms and updated from the server's TV-only `memory` frames, so questions played yesterday do not come back in today's room.
 
 ## Sound
 
