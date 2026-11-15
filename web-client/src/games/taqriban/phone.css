@@ -1,0 +1,73 @@
+/* Taqriban! phone (GAME-TAQRIBAN §8.4, TQ-PH-01..05). World tokens --w-* (observatory) come from the platform's
+   [data-world] wrapper. Numbers and the keypad are LTR in every locale; text around them follows the page. */
+.tqb-center { text-align: center; justify-content: center; }
+.tqb-eyebrow .eyebrow { display: inline-flex; gap: 8px; align-items: center; }
+.tqb-x2 { display: inline-grid; place-items: center; height: 1.5em; padding-inline: 0.45em; border-radius: var(--radius-pill); background: var(--w-signal, #FF6B5B); color: var(--color-ink); font: 900 0.8125rem/1 var(--font-sans); letter-spacing: 0; }
+
+/* TQ-PH-01 the pad: one screen, never scrolls; the keypad flexes, the button stays on screen */
+.ingame:has(> .tqb-pad) { height: calc(100dvh - var(--topbar-height) - env(safe-area-inset-top)); min-height: 0; overflow: hidden; }
+.tqb-pad { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; gap: clamp(6px, 1.4dvh, 14px);
+  padding: var(--space-2) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom)); animation: phase-in var(--motion-slow) var(--ease-decel) both; }
+.tqb-q { flex: none; font: 800 clamp(1.05rem, 2.6dvh, 1.35rem)/1.25 var(--font-sans); text-wrap: balance;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.tqb-q.is-long { font-size: clamp(0.95rem, 2.2dvh, 1.15rem); }
+.tqb-display { flex: none; padding: clamp(6px, 1.2dvh, 12px) var(--space-4); border-radius: var(--radius-lg, 20px); background: var(--w-surface, #0F2F36);
+  box-shadow: inset 0 0 0 2px rgb(var(--w-rgb-accent, 255 181 71) / 0.35); text-align: center; }
+.tqb-display.is-bad { box-shadow: inset 0 0 0 2px var(--color-danger, #FF5A5F); }
+.tqb-display.is-nudged { animation: tqb-shake 260ms ease-out; }
+.tqb-display__n { display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 0 0.3em; min-height: 1.2em;
+  font: 900 clamp(2rem, 6.4dvh, 3rem)/1.15 var(--font-sans); color: var(--color-text); overflow-wrap: anywhere; }
+.tqb-display__n em { font-style: normal; font-size: 0.55em; color: var(--w-accent-text, #FFC46B); }
+.tqb-display__n small { font-size: 0.42em; font-weight: 700; color: var(--color-text-secondary); }
+.tqb-ph { color: var(--color-text-muted); }
+.tqb-display__pre { min-height: 1.3em; font: 700 0.9375rem/1.3 var(--font-sans); color: var(--color-text-secondary); }
+.tqb-display.is-bad .tqb-display__pre { color: var(--color-danger-text, #FF8A8E); }
+.tqb-mags { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.tqb-mag { min-height: 44px; padding: 0 4px; border: 0; border-radius: var(--radius-pill); background: var(--w-elevated, #18434B); color: var(--color-text);
+  font: 800 0.875rem/1.1 var(--font-sans); box-shadow: var(--inner-hi); transition: transform var(--motion-instant); overflow-wrap: anywhere; }
+.tqb-mag.is-on { background: var(--w-accent, #FFB547); color: var(--w-on-accent, #120A1F); box-shadow: 0 0 18px rgb(var(--w-rgb-accent, 255 181 71) / 0.5); }
+.tqb-mag:active, .tqb-key:active { transform: scale(0.95); }
+.tqb-keys { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: clamp(5px, 1dvh, 10px); }
+.tqb-key { min-height: 40px; border: 0; border-radius: 16px; background: var(--color-surface); color: var(--color-text); box-shadow: var(--inner-hi);
+  font: 800 clamp(1.4rem, 4dvh, 2rem)/1 var(--font-sans); font-variant-numeric: tabular-nums; display: grid; place-items: center; touch-action: manipulation; }
+.tqb-key--del { background: transparent; box-shadow: inset 0 0 0 2px var(--color-outline); color: var(--color-text-secondary); }
+.tqb-send { flex: none; }
+@keyframes tqb-shake { 25% { translate: -6px 0; } 50% { translate: 5px 0; } 75% { translate: -3px 0; } }
+
+/* TQ-PH-02 locked */
+.tqb-locked { align-items: stretch; gap: var(--space-3); }
+.tqb-locked__hero { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; }
+.tqb-check { display: inline-grid; place-items: center; width: 1.4em; height: 1.4em; margin-inline-end: 0.35em; border-radius: 50%; background: var(--w-accent, #FFB547); color: var(--w-on-accent, #120A1F); font-size: 0.8em; }
+.tqb-big { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+.tqb-big b { font: 900 clamp(2rem, 9vw, 3rem)/1.1 var(--font-sans); overflow-wrap: anywhere; }
+.tqb-big__words { font: 800 1.125rem/1.2 var(--font-sans); color: var(--w-accent-text, #FFC46B); }
+.tqb-big--answer b { color: var(--w-signal, #FF6B5B); text-shadow: 0 0 24px rgb(255 107 91 / 0.35); animation: tqb-drop 520ms var(--ease-overshoot, ease-out) both; }
+.tqb-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.tqb-dots i { width: 12px; height: 12px; border-radius: 50%; background: rgb(255 255 255 / 0.12); transition: background var(--motion-fast); }
+.tqb-dots i.is-on { background: var(--w-accent, #FFB547); }
+@keyframes tqb-drop { from { opacity: 0; transform: translateY(-24px) scale(1.2); } to { opacity: 1; transform: none; } }
+
+/* watch / waiting */
+.tqb-watch { align-items: center; justify-content: center; text-align: center; gap: var(--space-4); }
+.tqb-watch .tqb-eyebrow { align-self: stretch; }
+.tqb-tv { position: relative; width: 112px; height: 76px; border-radius: 14px; background: var(--w-elevated, #18434B); box-shadow: inset 0 0 0 3px var(--w-accent-text, #FFC46B), 0 0 40px rgb(var(--w-rgb-glow, 255 231 176) / 0.25); }
+.tqb-tv i { position: absolute; inset: 34px 14px auto; height: 3px; border-radius: 2px; background: var(--w-accent-text, #FFC46B); }
+.tqb-tv i::after { content: ""; position: absolute; left: 62%; top: -12px; width: 4px; height: 24px; border-radius: 2px; background: var(--w-signal, #FF6B5B); animation: tqb-needle 1.8s ease-in-out infinite alternate; }
+@keyframes tqb-needle { from { left: 20%; } to { left: 74%; } }
+
+/* TQ-PH-03 result */
+.tqb-result { gap: var(--space-3); }
+.tqb-mine { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); }
+.tqb-mine__said { font: 700 1rem/1.3 var(--font-sans); color: var(--color-text-secondary); }
+.tqb-mine__said b { color: var(--color-text); font-size: 1.25rem; }
+.tqb-mine__verdict { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; font: 800 1rem/1.3 var(--font-sans); }
+.tqb-stamp { display: inline-flex; align-items: center; height: 30px; padding-inline: 12px; border-radius: var(--radius-pill); background: var(--w-accent, #FFB547); color: var(--w-on-accent, #120A1F); animation: tqb-stamp 420ms var(--ease-overshoot, ease-out) both; }
+.tqb-stamp--bull { background: var(--w-signal, #FF6B5B); animation-delay: 180ms; }
+.tqb-pts { text-align: center; font: 900 2.5rem/1 var(--font-sans); color: var(--w-glow, #FFE7B0); }
+@keyframes tqb-stamp { from { opacity: 0; transform: scale(1.8) rotate(-8deg); } to { opacity: 1; transform: none; } }
+
+/* TQ-PH-04/05 standings */
+.tqb-standing { align-items: center; text-align: center; gap: var(--space-3); }
+.tqb-standing__hero { display: flex; align-items: center; gap: var(--space-3); }
+.tqb-place { font: 900 3.5rem/1 var(--font-sans); color: var(--w-accent-text, #FFC46B); }
+@media (prefers-reduced-motion: reduce) { .tqb-pad, .tqb-big--answer b, .tqb-stamp, .tqb-tv i::after, .tqb-display.is-nudged { animation: none; } }

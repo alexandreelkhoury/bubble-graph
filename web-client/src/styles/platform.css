@@ -63,6 +63,9 @@
 .lockup--bluff { color: transparent; -webkit-text-stroke: 0.06em #FFF7EC; text-shadow: 0 0 0.12em var(--w-accent), 0 0 0.4em var(--w-accent), 0 0 0.8em rgb(233 162 59 / 0.6); }
 .lockup--likely { background: linear-gradient(180deg, #FFE7A0 0%, #FFC94D 55%, #C98A1A 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
   filter: drop-shadow(0 0.05em 0 #7A4A00); }
+/* Taqriban: brass letters over a ruler line with a red "answer" tick */
+.lockup--taqriban { position: relative; padding-bottom: 0.18em; color: #FFC46B; text-shadow: 0 0.04em 0 #7A4A00, 0 0 0.4em rgb(255 181 71 / 0.45);
+  background: linear-gradient(#FF6B5B 0 0) 62% 100% / 0.07em 0.3em no-repeat, repeating-linear-gradient(90deg, rgb(255 231 176 / 0.7) 0 0.04em, transparent 0.04em 0.25em) 0 100% / 100% 0.12em no-repeat; }
 .lockup--trivia { position: relative; padding: 0.3em 0.55em; border-radius: 0.28em; background: #161D4A; color: #FFF7EC;
   box-shadow: inset 0 0 0 0.05em rgb(255 216 77 / 0.55), 0 0 0.5em rgb(91 124 255 / 0.45); }
 .lockup--trivia::before { content: ""; position: absolute; inset: 0.07em 0.12em; border-radius: inherit; pointer-events: none;
@@ -102,6 +105,10 @@
 .poster__art--trivia .poster__prop--a { inset-inline-start: 0; }
 .poster__art--trivia .poster__prop--b { inset-inline-end: 0; animation-delay: -2.5s; }
 .poster__art--trivia .poster__prop--c { bottom: 2%; inset-inline: 22%; height: 9%; border-radius: 6px 6px 0 0; background: linear-gradient(#222B63, #161D4A); box-shadow: inset 0 3px 0 rgb(255 216 77 / 0.6); }
+/* observatory: a dome slit of stars, a ruler line and the falling answer pin */
+.poster__art--taqriban .poster__prop--a { top: 4%; inset-inline: 18%; height: 34%; border-radius: 50% 50% 0 0; background: radial-gradient(1.5px 1.5px at 30% 40%, #FFE7B0 50%, transparent 51%), radial-gradient(1.5px 1.5px at 70% 25%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 55% 60%, #fff 50%, transparent 51%), linear-gradient(#0C2A30, #06161A); box-shadow: inset 0 0 0 3px rgb(255 196 107 / 0.35); animation: prop-twinkle 3s steps(2) infinite; }
+.poster__art--taqriban .poster__prop--b { top: 44%; inset-inline: 6%; height: 10px; background: repeating-linear-gradient(90deg, rgb(255 231 176 / 0.8) 0 2px, transparent 2px 14px) 0 0 / 100% 7px no-repeat, linear-gradient(rgb(255 231 176 / 0.8) 0 0) 0 100% / 100% 2px no-repeat; }
+.poster__art--taqriban .poster__prop--c { top: 30%; inset-inline-start: 62%; width: 4px; height: 16%; border-radius: 2px; background: #FF6B5B; box-shadow: 0 0 10px #FF6B5B; animation: prop-drift 3s ease-in-out infinite; }
 @keyframes prop-drift { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
 @keyframes prop-flicker { 0%, 100% { opacity: 1; } 47% { opacity: 0.86; } 50% { opacity: 1; } 72% { opacity: 0.92; } }
 @keyframes prop-steam { 0% { opacity: 0; translate: 0 6px; } 40% { opacity: 1; } 100% { opacity: 0; translate: 3px -10px; } }

@@ -14,6 +14,7 @@ const CAST: Record<GameId, readonly [ColorId, Expression][]> = {
   bluff: [["jade", "think"], ["tangerine", "smug"], ["lilac", "think"]],
   likely: [["aqua", "point"], ["rose", "shy"], ["sand", "point"]],
   trivia: [["grape", "idle"], ["coral", "cheer"], ["mint", "idle"]],
+  taqriban: [["sand", "think"], ["lemon", "shock"], ["azure", "think"]],
 };
 
 export { WORLD_OF } from "../lib/meta";

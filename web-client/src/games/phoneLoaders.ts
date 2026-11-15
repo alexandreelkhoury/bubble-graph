@@ -7,4 +7,5 @@ export const PHONE_GAMES: Record<GameId, () => Promise<PhoneGameModule>> = {
   bluff: () => import("./bluff/phone"),
   likely: () => import("./likely/phone"),
   trivia: () => import("./trivia/phone"),
+  taqriban: () => import("./taqriban/phone"),
 };
