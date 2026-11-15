@@ -2206,10 +2206,10 @@
         "food"
       ],
       "text": {
-        "en": "How much did the heaviest pumpkin ever weigh (2023 record), in kg?",
-        "fr": "Combien pesait la citrouille la plus lourde jamais pesée (record de 2023), en kg ?",
-        "ar": "قدّيش كان وزن أتقل يقطينة بالتاريخ (رقم قياسي 2023)، بالكيلو؟",
-        "es": "¿Cuánto pesaba la calabaza más pesada de la historia (récord de 2023), en kg?"
+        "en": "In October 2023 Travis Gienger of the USA set a new pumpkin world record. How much did his pumpkin weigh, in kg?",
+        "fr": "En octobre 2023, l'Américain Travis Gienger a établi un nouveau record du monde de citrouille. Combien pesait sa citrouille, en kg ?",
+        "ar": "في تشرين الأول 2023 حطّم الأميركي ترافيس جينجر الرقم القياسي العالمي لأتقل يقطينة. قدّيش كان وزن يقطينته، بالكيلو؟",
+        "es": "En octubre de 2023, el estadounidense Travis Gienger batió el récord mundial de calabaza más pesada. ¿Cuánto pesaba su calabaza, en kg?"
       },
       "unit": {
         "en": "kg",
@@ -2221,7 +2221,7 @@
       "source": "Guinness World Records (2023)",
       "review": {
         "status": "draft",
-        "ref": "https://www.guinnessworldrecords.com/world-records/heaviest-pumpkin"
+        "ref": "https://guinnessworldrecords.com/news/2023/10/good-gourd-american-pumpkin-as-heavy-as-two-cows-squashes-all-past-rivals-759626"
       }
     },
     {
@@ -2567,11 +2567,11 @@
         "ar": "كلم",
         "es": "km"
       },
-      "answer": 1050,
+      "answer": 1053,
       "source": "Great-circle distance (city centres)",
       "review": {
         "status": "draft",
-        "ref": "computed: haversine Paris 48.8566,2.3522 – Madrid 40.4168,-3.7038 = 1053 km"
+        "ref": "computed: haversine Paris 48.8566,2.3522 – Madrid 40.4168,-3.7038 = 1052.9 km (R = 6371.0088 km)"
       }
     },
     {
@@ -2592,11 +2592,11 @@
         "ar": "كلم",
         "es": "km"
       },
-      "answer": 340,
+      "answer": 344,
       "source": "Great-circle distance (city centres)",
       "review": {
         "status": "draft",
-        "ref": "computed: haversine London 51.5072,-0.1276 – Paris = 344 km"
+        "ref": "computed: haversine London 51.5072,-0.1276 – Paris 48.8566,2.3522 = 343.5 km (R = 6371.0088 km)"
       }
     }
   ]

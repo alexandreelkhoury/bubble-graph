@@ -94,10 +94,10 @@
         "es": "kg"
       },
       "answer": 3557,
-      "source": "Guinness World Records (2009)",
+      "source": "The Daily Star via Zawya (Guinness World Records, 2009)",
       "review": {
         "status": "draft",
-        "ref": "https://www.guinnessworldrecords.com/world-records/largest-serving-of-tabbouleh"
+        "ref": "https://www.zawya.com/en/business/lebanon-breaks-hummus-tabbouleh-guinness-record-eyfqhw7j"
       }
     },
     {
@@ -250,10 +250,10 @@
         "es": "toneladas"
       },
       "answer": 1650,
-      "source": "German Archaeological Institute (2014)",
+      "source": "Guinness World Records / German Archaeological Institute (2014)",
       "review": {
         "status": "draft",
-        "ref": "https://www.dainst.org/"
+        "ref": "https://www.guinnessworldrecords.com/world-records/605305-largest-megalith-from-antiquity"
       }
     },
     {
@@ -585,7 +585,7 @@
         "ar": "كلم",
         "es": "km"
       },
-      "answer": 85,
+      "answer": 83,
       "source": "Great-circle distance (city centres)",
       "review": {
         "status": "draft",
@@ -611,7 +611,7 @@
         "ar": "كلم",
         "es": "km"
       },
-      "answer": 70,
+      "answer": 68,
       "source": "Great-circle distance (city centres)",
       "review": {
         "status": "draft",
@@ -941,11 +941,11 @@
         "ar": "م",
         "es": "m"
       },
-      "answer": 40,
-      "source": "Britannica",
+      "answer": 39,
+      "source": "Archnet (Petra Treasury survey, 38.77 m to urn) / Jordan sources 39.1 m",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Petra-ancient-city-Jordan"
+        "ref": "https://archnet.org/sites/10364"
       }
     },
     {
