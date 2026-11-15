@@ -3,18 +3,22 @@
 // in the Authorization header, is compared in constant time and is never logged; grants are stored by install-id
 // hash only (Billing DO `grants` table) and merged into the normal signed entitlement (BillingCore.entitlementFor).
 import * as z from "zod";
-import { MAX_TOKEN_PACKS } from "@jamaa/shared/constants";
+import { MAX_TOKEN_PACKS, ROOM_CODE_REGEX } from "@jamaa/shared/constants";
+import { GAME_IDS } from "@jamaa/shared/games/ids";
+import { REGISTRY_ENABLED } from "@jamaa/shared/games/registry";
 import { InstallIdSchema } from "@jamaa/shared/billing";
 import type { BillingStore, Grant } from "./billing/billing-core";
 import { billingPacks } from "./billing/catalog-info";
 import { readJson } from "./billing/routes";
-import { billingEnabled } from "./config";
+import { billingEnabled, enabledGames, mergeGames, parseGamesEnabled, setGamesOverrideCache } from "./config";
 import type { Env } from "./env";
 import { alertConfig, estimateRequests } from "./monitor/alerts";
+import { analyticsReady, CONTENT_WINDOWS, contentBody, historyBody } from "./monitor/history";
+import type { HistoryDeps } from "./monitor/history";
 import { alertMailReady } from "./monitor/notify";
 import { logServerError } from "./monitor/report";
-import { statsStub } from "./monitor/stats-api";
-import type { StatsApi } from "./monitor/stats-api";
+import { adminStub, statsStub } from "./monitor/stats-api";
+import type { AdminStoreApi, StatsApi } from "./monitor/stats-api";
 import { clientIp, notFound } from "./request";
 import { sha256hex, timingSafeEqualHex } from "./tokens";
 
@@ -39,7 +43,16 @@ export const GrantRequest = z
 /** Revoke by the raw install id (what the TV shows) or by the hash (what `GET` lists). */
 export const RevokeRequest = z.union([z.strictObject({ installId: InstallIdSchema }), z.strictObject({ installHash: z.string().regex(HEX64) })]);
 
-export interface AdminDeps { store: () => BillingStore; now: () => number; stats?: (env: Env) => StatsApi | null }
+/** JAMAA-PLATFORM §8.7: a toggle names a known game; `enabled: null` drops the override (back to GAMES_ENABLED). */
+export const GameToggleRequest = z.strictObject({ gameId: z.enum(GAME_IDS), enabled: z.boolean().nullable() });
+
+/** The Room DO's admin RPC (room.ts `adminInspect`), injected by index.ts (this module never imports partyserver). */
+export type InspectStub = { adminInspect(): Promise<Record<string, unknown>> };
+
+export interface AdminDeps {
+  store: () => BillingStore; now: () => number; stats?: (env: Env) => StatsApi | null;
+  admin?: (env: Env) => AdminStoreApi | null; room?: (code: string) => Promise<InspectStub>; fetch?: typeof fetch;
+}
 
 export type AdminErrorCode = "UNAUTHORIZED" | "RATE_LIMITED" | "BAD_REQUEST" | "UNKNOWN_PACK" | "EXPIRED" | "INTERNAL";
 
@@ -70,8 +83,9 @@ function grantJson(g: Grant, nowMs: number): Record<string, unknown> {
   return { ...g, active: g.expiresAt === null || g.expiresAt > nowMs };
 }
 
-/** JAMAA-PLATFORM §8.5 monitoring routes (GET, same auth). They work with billing off; `grants` needs billing on. */
-export const MONITOR_ROUTES = ["overview", "errors"] as const;
+/** JAMAA-PLATFORM §8.5 monitoring routes (GET, same auth; `games` also POST). They work with billing off; `grants` needs billing on. */
+export const MONITOR_ROUTES = ["overview", "errors", "history", "content", "games", "room"] as const;
+type MonitorRoute = (typeof MONITOR_ROUTES)[number];
 
 export async function handleAdmin(req: Request, env: Env, deps: AdminDeps): Promise<Response> {
   const token = adminToken(env);
@@ -86,8 +100,29 @@ export async function handleAdmin(req: Request, env: Env, deps: AdminDeps): Prom
     if (!success) return adminError("RATE_LIMITED", 429);
     if (!(await bearerMatches(req, token))) return adminError("UNAUTHORIZED", 401);
     if (monitorRoute) {
+      if (req.method === "POST" && route === "games") {
+        const body = await readJson(req, GameToggleRequest);
+        if (!body) return adminError("BAD_REQUEST", 400);
+        const stub = (deps.admin ?? adminStub)(env);
+        if (!stub) return adminError("BAD_REQUEST", 409, { reason: "NO_STATS_BINDING" });
+        const { override } = await stub.setGame(body.gameId, body.enabled);
+        setGamesOverrideCache(override, deps.now());
+        return respond(await gamesBody(env, deps));
+      }
       if (req.method !== "GET") return adminError("BAD_REQUEST", 405);
-      return respond(await monitorBody(route as (typeof MONITOR_ROUTES)[number], env, deps));
+      const url = new URL(req.url);
+      if (route === "room") {
+        const code = (url.searchParams.get("code") ?? "").trim().toUpperCase();
+        if (!ROOM_CODE_REGEX.test(code)) return adminError("BAD_REQUEST", 400);
+        if (!deps.room) return notFound();
+        return respond(await roomBody(code, env, deps));
+      }
+      if (route === "content") {
+        const days = Number(url.searchParams.get("days") ?? "30");
+        if (!(CONTENT_WINDOWS as readonly number[]).includes(days)) return adminError("BAD_REQUEST", 400);
+        return respond(await contentBody(env, days, historyDeps(env, deps)));
+      }
+      return respond(await monitorBody(route as Exclude<MonitorRoute, "room" | "content">, env, deps));
     }
     const store = deps.store();
     const now = deps.now();
@@ -124,8 +159,33 @@ export async function handleAdmin(req: Request, env: Env, deps: AdminDeps): Prom
   }
 }
 
+function historyDeps(env: Env, deps: AdminDeps): HistoryDeps {
+  return { fetch: deps.fetch ?? ((i, init) => fetch(i, init)), now: deps.now, store: (deps.admin ?? adminStub)(env) };
+}
+
+/** §8.7: the env default, the override, the merged list and the audit log (newest first). */
+async function gamesBody(env: Env, deps: AdminDeps): Promise<Record<string, unknown>> {
+  const stub = (deps.admin ?? adminStub)(env);
+  const [override, audit] = stub ? await Promise.all([stub.gamesOverride(), stub.auditLog()]) : [{}, []];
+  const envIds = enabledGames(env);
+  return {
+    known: GAME_IDS, registry: REGISTRY_ENABLED, env: envIds, envUnknown: parseGamesEnabled(env.GAMES_ENABLED).unknown,
+    override, effective: mergeGames(envIds, override), audit: audit.slice(0, 50), stats: stub !== null,
+  };
+}
+
+/** §8.8: the Room DO's read-only view plus the errors the Stats ring holds for that room code. */
+async function roomBody(code: string, env: Env, deps: AdminDeps): Promise<Record<string, unknown>> {
+  const stub = await (deps.room as (code: string) => Promise<InspectStub>)(code);
+  const room = await stub.adminInspect();
+  const snap = await (deps.stats ?? statsStub)(env)?.snapshot().catch(() => null);
+  return { room, errors: (snap?.errors ?? []).filter((e) => e.room === code) };
+}
+
 /** The admin page's data. `stats: null` when the STATS binding is missing (the page says so). */
-async function monitorBody(route: (typeof MONITOR_ROUTES)[number], env: Env, deps: AdminDeps): Promise<Record<string, unknown>> {
+async function monitorBody(route: Exclude<MonitorRoute, "room" | "content">, env: Env, deps: AdminDeps): Promise<Record<string, unknown>> {
+  if (route === "history") return historyBody(env, historyDeps(env, deps));
+  if (route === "games") return gamesBody(env, deps);
   const stub = (deps.stats ?? statsStub)(env);
   const snap = stub ? await stub.snapshot() : null;
   if (route === "errors") return { errors: snap?.errors ?? [] };
@@ -138,7 +198,7 @@ async function monitorBody(route: (typeof MONITOR_ROUTES)[number], env: Env, dep
       email: alertMailReady(env), serverErrorsPerHour: cfg.serverErrorsPerHour, clientErrorsPerHour: cfg.clientErrorsPerHour,
       open: snap?.alerts.filter((a) => a.closedAt === null) ?? [],
     },
-    bindings: { stats: stub !== null, events: env.EVENTS !== undefined },
+    bindings: { stats: stub !== null, events: env.EVENTS !== undefined, analytics: analyticsReady(env) },
     billing: billingEnabled(env),
   };
 }

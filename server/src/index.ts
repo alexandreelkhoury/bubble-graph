@@ -66,14 +66,14 @@ async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
         now: () => Date.now(),
       });
     }
-    if (path === CONFIG_PATH) return handleConfig(req, env);
+    if (path === CONFIG_PATH) return await handleConfig(req, env);
     if (path === CLIENT_ERRORS_PATH) return handleClientErrors(req, env, (p) => ctx.waitUntil(p));
     const gated = billingGate(path, env);
     if (gated) return gated;
     if (path.startsWith(BILLING_PREFIX)) return handleBilling(req, env, productionBillingDeps(env));
     if (path.startsWith(ADMIN_PREFIX)) {
       const deps = productionBillingDeps(env);
-      return handleAdmin(req, env, { store: deps.store, now: deps.now });
+      return handleAdmin(req, env, { store: deps.store, now: deps.now, room: (code) => getServerByName(env.Room, code) });
     }
     return httpError("BAD_MESSAGE", 405);
   }

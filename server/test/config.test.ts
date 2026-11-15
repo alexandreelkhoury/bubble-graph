@@ -23,12 +23,12 @@ describe("BILLING_ENABLED", () => {
 
   it("GET /api/config reports the flag and the live games, never cached; other methods 405", async () => {
     for (const [v, billing] of [["0", false], ["1", true]] as const) {
-      const res = handleConfig(get("/api/config"), { BILLING_ENABLED: v });
+      const res = await handleConfig(get("/api/config"), { BILLING_ENABLED: v });
       expect(res.status).toBe(200);
       expect(res.headers.get("Cache-Control")).toBe("no-store");
       expect(ClientConfigV2.parse(await res.json())).toEqual({ billing, games: ["mishana"] });
     }
-    expect(handleConfig(get("/api/config", "POST"), { BILLING_ENABLED: "1" }).status).toBe(405);
+    expect((await handleConfig(get("/api/config", "POST"), { BILLING_ENABLED: "1" })).status).toBe(405);
   });
 
   it("off: every billing path and the admin grants answer 404; on: nothing is gated", () => {
@@ -124,10 +124,10 @@ describe("GAMES_ENABLED (JAMAA-PLATFORM §2.6)", () => {
   });
 
   it("GET /api/config games = GAMES_ENABLED ∩ registry enabled", async () => {
-    const res = handleConfig(get("/api/config"), { BILLING_ENABLED: "0", GAMES_ENABLED: "trivia,mishana" });
+    const res = await handleConfig(get("/api/config"), { BILLING_ENABLED: "0", GAMES_ENABLED: "trivia,mishana" });
     // GAME_IDS order, filtered by the registry (a game leaves the stub state when its G milestone flips `enabled`).
     expect(ClientConfigV2.parse(await res.json())).toEqual({ billing: false, games: REGISTRY_ENABLED.filter((id) => id === "mishana" || id === "trivia") });
-    const none = handleConfig(get("/api/config"), { GAMES_ENABLED: "bluff" });
+    const none = await handleConfig(get("/api/config"), { GAMES_ENABLED: "bluff" });
     expect(ClientConfigV2.parse(await none.json()).games).toEqual(REGISTRY_ENABLED.filter((id) => id === "bluff"));
   });
 });

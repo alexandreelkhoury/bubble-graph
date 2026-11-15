@@ -12,7 +12,7 @@ import { billingModeForRequest } from "./billing/mode";
 import { verifyEntitlementToken, verifyKeysFromSecret } from "./billing/token";
 import type { RoomEntitlement } from "./billing/token";
 import { generateRoomCode } from "./codes";
-import { billingEnabled } from "./config";
+import { billingEnabled, effectiveGames } from "./config";
 import type { Env } from "./env";
 import { isOriginAllowed } from "./origin";
 import { CLIENT_HEADER, parseClientHeader } from "./monitor/events";
@@ -120,6 +120,9 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
   // JAMAA-PLATFORM §8: which TV created the room (monitoring only; a missing or odd header is "unknown").
   const { platform } = parseClientHeader(req.headers.get(CLIENT_HEADER));
 
+  // JAMAA-PLATFORM §8.7: the live games (env + admin override), stored in the room's meta at creation.
+  const enabledGames = await effectiveGames(env, deps.now());
+
   // 7. joinUrl base (computed once; it does not depend on the code).
   const base = (env.JOIN_BASE_URL || new URL(req.url).origin).replace(/\/$/, "");
 
@@ -130,7 +133,7 @@ export async function createRoom(req: Request, env: Env, deps: CreateRoomDeps): 
     let ok: boolean;
     try {
       const stub = await deps.getStub(code);
-      const r = await stub.initRoom({ tvTokenHash, joinUrl, locale, now: deps.now(), entitlement: roomEntitlement, billingMode, memory, platform });
+      const r = await stub.initRoom({ tvTokenHash, joinUrl, locale, now: deps.now(), entitlement: roomEntitlement, billingMode, memory, platform, enabledGames });
       ok = r.ok;
     } catch {
       logServerError("INTERNAL", { phase: "createRoom", roomCode: code });

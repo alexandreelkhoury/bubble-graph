@@ -5,10 +5,18 @@
 //   premium UI and never call billing. "1": PAYMENTS-SPEC as written.
 // - GAMES_ENABLED (comma list, default "mishana"): the live games. At runtime unknown ids are ignored with one logged
 //   error (`games_enabled_unknown_id`), so billing verify and RTDN keep working; check-deploy fails the deploy on them.
+//   JAMAA-PLATFORM §8.7: the owner can override it per game from /admin without a redeploy (Stats DO, admin-store.ts).
+//   GAMES_ENABLED is the default; the override turns any known game on or off. GET /api/config and POST /api/rooms
+//   read the override through a per-isolate cache (GAMES_OVERRIDE_TTL_MS); rooms keep the list they were created with,
+//   so no WebSocket message ever reads it.
 import { GAME_IDS, isGameId } from "@jamaa/shared/games/ids";
 import type { GameId } from "@jamaa/shared/games/ids";
 import { REGISTRY_ENABLED } from "@jamaa/shared/games/registry";
 import type { ClientConfigV2Body } from "@jamaa/shared/protocol/v2";
+import type { Env } from "./env";
+import { sanitizeOverride } from "./monitor/admin-store";
+import type { GamesOverride } from "./monitor/admin-store";
+import { adminStub } from "./monitor/stats-api";
 import { notFound } from "./request";
 
 export const CONFIG_PATH = "/api/config";
@@ -19,7 +27,7 @@ export const CONFIG_PATH = "/api/config";
 export const GATED_PREFIXES = ["/api/billing/", "/api/admin/grants"] as const;
 export const GAMES_ENABLED_DEFAULT = "mishana";
 
-type ConfigEnv = { BILLING_ENABLED?: string | undefined; GAMES_ENABLED?: string | undefined };
+type ConfigEnv = { BILLING_ENABLED?: string | undefined; GAMES_ENABLED?: string | undefined; STATS?: Env["STATS"] };
 
 export function billingEnabled(env: { BILLING_ENABLED?: string | undefined }): boolean {
   return env.BILLING_ENABLED === "1";
@@ -50,12 +58,49 @@ export function enabledGames(env: { GAMES_ENABLED?: string | undefined }): GameI
   return ids.filter((id) => REGISTRY_ENABLED.includes(id));
 }
 
-/** GET/HEAD /api/config. Never cached, so flipping a var takes effect on the next page load. */
-export function handleConfig(req: Request, env: ConfigEnv): Response {
+/** §8.7: the env list with the admin override applied (on/off per known id), ∩ registry enabled, in GAME_IDS order. */
+export function mergeGames(envIds: readonly GameId[], override: GamesOverride): GameId[] {
+  return GAME_IDS.filter((id) => REGISTRY_ENABLED.includes(id) && (override[id] ?? envIds.includes(id)));
+}
+
+/** At most one Stats read per isolate per this long: a toggle reaches every client within it (≤ 60 s). */
+export const GAMES_OVERRIDE_TTL_MS = 30_000;
+let overrideCache: { at: number; value: GamesOverride } | null = null;
+/** Test hook, and the admin toggle's own isolate (it knows the new value at once). */
+export function setGamesOverrideCache(value: GamesOverride | null, at = Date.now()): void {
+  overrideCache = value === null ? null : { at, value };
+}
+
+/**
+ * The admin override, cached per isolate. No STATS binding = none. A failed read keeps the last known value (or none)
+ * for another TTL, so a Stats outage never blocks room creation or retries on every request.
+ */
+export async function gamesOverride(env: Pick<ConfigEnv, "STATS">, now = Date.now()): Promise<GamesOverride> {
+  if (overrideCache && now - overrideCache.at < GAMES_OVERRIDE_TTL_MS) return overrideCache.value;
+  let value = overrideCache?.value ?? {};
+  const stub = adminStub(env);
+  if (stub) {
+    try {
+      value = sanitizeOverride(await stub.gamesOverride());
+    } catch {
+      // keep the last known override
+    }
+  }
+  overrideCache = { at: now, value };
+  return value;
+}
+
+/** The live games: GAMES_ENABLED merged with the admin override (POST /api/rooms, GET /api/config). */
+export async function effectiveGames(env: ConfigEnv, now = Date.now()): Promise<GameId[]> {
+  return mergeGames(enabledGames(env), await gamesOverride(env, now));
+}
+
+/** GET/HEAD /api/config. Never cached, so flipping a var takes effect on the next page load (an admin toggle within GAMES_OVERRIDE_TTL_MS). */
+export async function handleConfig(req: Request, env: ConfigEnv): Promise<Response> {
   if (req.method !== "GET" && req.method !== "HEAD") {
     return new Response(JSON.stringify({ error: "BAD_MESSAGE" }), { status: 405, headers: { "Content-Type": "application/json; charset=utf-8" } });
   }
-  const body: ClientConfigV2Body = { billing: billingEnabled(env), games: enabledGames(env) };
+  const body: ClientConfigV2Body = { billing: billingEnabled(env), games: await effectiveGames(env) };
   return new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" } });
 }
 

@@ -44,4 +44,8 @@ export interface Env {
   ALERT_CLIENT_ERRORS_PER_HOUR?: string;
   PLAN_DAILY_REQUESTS?: string;
   ALERT_QUOTA_RATIO?: string;
+  /** JAMAA-PLATFORM §8.9: the account whose Analytics Engine SQL API the admin history reads (a var). */
+  CF_ACCOUNT_ID?: string;
+  /** Read-only API token (Account › Account Analytics › Read), a secret. Unset = the admin page asks to connect it. */
+  CF_ANALYTICS_TOKEN?: string;
 }
