@@ -39,7 +39,12 @@ object WorldPalettes {
         accent = 0xFF5B7CFF, accentText = 0xFF8FA8FF, onAccent = 0xFF120A1F, glow = 0xFFFFD84D, signal = 0xFF3DDC97,
     )
 
-    val ALL: List<WorldPalette> = listOf(NIGHT_MARKET, HAKAWATI_CAFE, ROOFTOP, QUIZ_STUDIO)
+    val OBSERVATORY = WorldPalette(
+        WorldIds.OBSERVATORY, deep = 0xFF06161A, stageTop = 0xFF0C2A30, surface = 0xFF0F2F36, elevated = 0xFF18434B,
+        accent = 0xFFFFB547, accentText = 0xFFFFC46B, onAccent = 0xFF120A1F, glow = 0xFFFFE7B0, signal = 0xFFFF6B5B,
+    )
+
+    val ALL: List<WorldPalette> = listOf(NIGHT_MARKET, HAKAWATI_CAFE, ROOFTOP, QUIZ_STUDIO, OBSERVATORY)
 
     /** The palette of a world id; unknown ids fall back to the night market (the hub stage). */
     fun of(id: String?): WorldPalette = ALL.firstOrNull { it.id == id } ?: NIGHT_MARKET

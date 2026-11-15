@@ -63,7 +63,7 @@ describe("WorldColors.kt (§3.4) and the contrast rules (DESIGN §2.4, DESIGN-JA
     expect(kt).toContain("deep = Color(0xFF120A1F),"); // native night stage
     expect(kt).toContain("signal = null,");
     expect(kt).toContain("accentText = Color(0xFF8FA8FF),");
-    expect(kt).toContain("val all: List<WorldColors> = listOf(NightMarket, HakawatiCafe, Rooftop, QuizStudio)");
+    expect(kt).toContain("val all: List<WorldColors> = listOf(NightMarket, HakawatiCafe, Rooftop, QuizStudio, Observatory)");
     expect(balanced(kt)).toBe(true);
   });
 

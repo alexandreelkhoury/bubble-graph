@@ -285,7 +285,7 @@ export class RoomCore {
       };
       // §2.3: the content language starts as the TV's UI language when any shipped pack (any game) has it, else English.
       const full = this.#d.content();
-      const hasLocale = (l: Locale): boolean => (["mishana", "bluff", "likely", "trivia"] as const).some((id) => gameAvailable(full, id, l));
+      const hasLocale = (l: Locale): boolean => (["mishana", "bluff", "likely", "trivia", "taqriban"] as const).some((id) => gameAvailable(full, id, l));
       const contentLocale: Locale = hasLocale(args.locale) ? args.locale : "en";
       const state = createRoomState({ roomCode: this.#d.roomCode, joinUrl: args.joinUrl, seed, contentLocale });
       const history = createRoomHistory(memoryFromWire(sanitizeMemoryWire(args.memory)));

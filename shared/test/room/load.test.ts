@@ -45,7 +45,7 @@ describe("normalizeLoaded (§2.6)", () => {
     if (!r.ok) throw new Error("expired");
     expect(r.changed).toBe(true);
     expect(r.state.gameSettings.mishana.clueSeconds).toBe(GAME_META.mishana.settings.defaults.clueSeconds);
-    expect(Object.keys(r.state.gameSettings)).toEqual(["mishana", "bluff", "likely", "trivia"]);
+    expect(Object.keys(r.state.gameSettings)).toEqual(["mishana", "bluff", "likely", "trivia", "taqriban"]);
     expect(r.state.tvGames.some((g) => (g.id as string) === "chess")).toBe(false);
     expect(r.state.cup.last).toBeNull();
     expect(r.state.cup.matchScores).toEqual({});

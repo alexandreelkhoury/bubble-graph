@@ -6,6 +6,7 @@ import { BluffExtrasSchema, BluffSettingsSchema } from "../../games/bluff/protoc
 import { LikelyExtrasSchema, LikelySettingsSchema } from "../../games/likely/protocol";
 import { MishanaExtrasSchema, MishanaSettingsSchema } from "../../games/mishana/protocol";
 import { TriviaExtrasSchema, TriviaSettingsSchema } from "../../games/trivia/protocol";
+import { TaqribanExtrasSchema, TaqribanSettingsSchema } from "../../games/taqriban/protocol";
 import { REACTIONS, ROOM_PHASES } from "../../room/types";
 import { AgeRatingSchema, ColorIdSchema, ErrorCodeSchema, LocaleSchema, LocalizedTitleSchema } from "../common";
 
@@ -45,6 +46,7 @@ export const RoomSetupSchema = z.discriminatedUnion("gameId", [
   setup("bluff", BluffSettingsSchema, BluffExtrasSchema),
   setup("likely", LikelySettingsSchema, LikelyExtrasSchema),
   setup("trivia", TriviaSettingsSchema, TriviaExtrasSchema),
+  setup("taqriban", TaqribanSettingsSchema, TaqribanExtrasSchema),
 ]);
 export const CupPublicSchema = z.object({
   stars: z.record(z.string(), z.number().int()),

@@ -4,7 +4,8 @@ import type { GameLint } from "./types";
 import { lint as bluff } from "./bluff";
 import { lint as likely } from "./likely";
 import { lint as mishana } from "./mishana";
+import { lint as taqriban } from "./taqriban";
 import { lint as trivia } from "./trivia";
 
-export const GAME_LINTS: { readonly [K in GameId]: GameLint } = { mishana, bluff, likely, trivia };
+export const GAME_LINTS: { readonly [K in GameId]: GameLint } = { mishana, bluff, likely, trivia, taqriban };
 export type { GameLint, ParsedPack } from "./types";

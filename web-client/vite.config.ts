@@ -34,7 +34,7 @@ export function i18nSplit(): Plugin {
 }
 
 // JAMAA-PLATFORM §3.8: chunk names the budget script (scripts/check-size.mjs) understands.
-//   game-<id>[-shared]       a game's phone screens (lazy; counted per game, ≤ 14 KB gz)
+//   game-<id>[-shared|-meta] a game's phone screens and its lazy meta facade (counted per game, ≤ 14 KB gz)
 //   tv-mock*                 the /tv browser TV and its per-game screens (excluded from the phone budget)
 //   i18n-<id>-<locale>       one game's strings in one locale (lazy; the largest counts)
 //   <locale>                 the EN/FR/AR/ES root catalogs, phone part (lazy; one per player, the largest counts)
@@ -48,6 +48,9 @@ function chunkName(facade: string, modules: readonly string[]): string | null {
   if (v) return v[1] ? `tv-mock-i18n-${v[2]}` : v[2]!;
   let m = /\/src\/games\/([a-z]+)\/phone\.tsx$/.exec(f);
   if (m) return `game-${m[1]}`;
+  // A game's meta facade (lib/meta.ts loads it lazily, for the games of the room): counted with that game.
+  m = /\/shared\/src\/games\/([a-z]+)\/meta\.ts$/.exec(f);
+  if (m) return `game-${m[1]}-meta`;
   m = /\/src\/games\/([a-z]+)\/tv\.tsx$/.exec(f);
   if (m) return `tv-mock-game-${m[1]}`;
   m = /\/i18n\/games\/([a-z]+)\/([a-z]{2})\.json$/.exec(f);

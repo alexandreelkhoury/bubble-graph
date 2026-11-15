@@ -9,7 +9,7 @@ export const CUE_IDS = [
   "sting.civilian", "sting.mole", "sting.blank", "sting.correct", "sting.wrong", "sting.winCivilians", "sting.winInfiltrators",
   "ui.move", "ui.select", "ui.back",
   // JAMAA-PLATFORM §3.11 platform cues (tools/gen-sounds ids, used verbatim as file names).
-  "hub_move", "portal_open", "portal_close", "world_mishana_sting", "world_bluff_sting", "world_likely_sting", "world_trivia_sting",
+  "hub_move", "portal_open", "portal_close", "world_mishana_sting", "world_bluff_sting", "world_likely_sting", "world_trivia_sting", "world_taqriban_sting",
   "coin_fly", "coin_land", "counter_tick", "crown_drop", "cup_star", "reaction_pop",
   "answer_lock", "truth_reveal", "house_got_you", "quiz_correct", "quiz_wrong",
 ] as const;

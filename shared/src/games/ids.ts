@@ -1,5 +1,5 @@
 // JAMAA-PLATFORM §2.2: the registered games, in hub (registry) order. Zod-free.
-export const GAME_IDS = ["mishana", "bluff", "likely", "trivia"] as const;
+export const GAME_IDS = ["mishana", "bluff", "likely", "trivia", "taqriban"] as const;
 export type GameId = (typeof GAME_IDS)[number];
 
 export function isGameId(v: unknown): v is GameId {

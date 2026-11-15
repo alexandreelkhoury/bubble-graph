@@ -11,9 +11,11 @@ import { content as mishanaContent } from "./mishana/content";
 import { definition as mishana } from "./mishana/definition";
 import { content as triviaContent } from "./trivia/content";
 import { definition as trivia } from "./trivia/definition";
+import { content as taqribanContent } from "./taqriban/content";
+import { definition as taqriban } from "./taqriban/definition";
 import type { AnyGameDefinition } from "./types";
 
-export const GAMES = { mishana, bluff, likely, trivia } as const;
+export const GAMES = { mishana, bluff, likely, trivia, taqriban } as const;
 export type GameDefinitionOf<K extends GameId> = (typeof GAMES)[K];
 
 /** The registry as the room sees it: type parameters erased (each game's values stay inside its own slot). */
@@ -22,7 +24,7 @@ export const GAME_DEFS: { readonly [K in GameId]: AnyGameDefinition } = GAMES;
 /** §5.2: each game's content adapter (games/<id>/content.ts). */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const GAME_CONTENT: { readonly [K in GameId]: ContentAdapter<any, any> } = {
-  mishana: mishanaContent, bluff: bluffContent, likely: likelyContent, trivia: triviaContent,
+  mishana: mishanaContent, bluff: bluffContent, likely: likelyContent, trivia: triviaContent, taqriban: taqribanContent,
 };
 
 /** Registry-enabled games, in GAME_IDS order (stubs are `enabled: false`). */

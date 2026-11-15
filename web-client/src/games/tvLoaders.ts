@@ -7,4 +7,5 @@ export const TV_GAMES: Record<GameId, () => Promise<TvGameModule>> = {
   bluff: () => import("./bluff/tv"),
   likely: () => import("./likely/tv"),
   trivia: () => import("./trivia/tv"),
+  taqriban: () => import("./taqriban/tv"),
 };

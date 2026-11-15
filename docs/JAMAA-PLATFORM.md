@@ -491,7 +491,7 @@ RoomMe = { id: string; benched: boolean }
 | `http.ts` | healthz and config as above. |
 | `billing/**` | §4. |
 
-**Size and write cost.** Room is a SQLite-backed Durable Object class (`new_sqlite_classes`), whose per-value limit is far above our data [VERIFY the current documented limit, 2 MB at the time of writing]; the real constraint is **write cost and latency**, because `state` is rewritten on every vote, tap and answer. Therefore the large, rarely changing data (`memory`, the cup history) lives in `history`. A test (`room/size.test.ts`) serializes the worst case `state` for each game at 12 members (longest names, every setting slot, a full game state) and requires **≤ 16 KiB**; a second test bounds `history` (4 games × 300 ids + 20 cup entries) at ≤ 32 KiB.
+**Size and write cost.** Room is a SQLite-backed Durable Object class (`new_sqlite_classes`), whose per-value limit is far above our data [VERIFY the current documented limit, 2 MB at the time of writing]; the real constraint is **write cost and latency**, because `state` is rewritten on every vote, tap and answer. Therefore the large, rarely changing data (`memory`, the cup history) lives in `history`. A test (`room/size.test.ts`) serializes the worst case `state` for each game at 12 members (longest names, every setting slot, a full game state) and requires **≤ 16 KiB**; a second test bounds `history` (4 games × 300 ids, Taqriban's 120 short ids, 20 cup entries) at ≤ 34 KiB (32 KiB before the 5th game; `history` is written once per game end).
 
 ### 2.6a No-repeat memory across rooms (TV-held)
 

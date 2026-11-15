@@ -1,0 +1,2603 @@
+{
+  "schemaVersion": 1,
+  "id": "taqriban-world",
+  "game": "taqriban",
+  "title": {
+    "en": "Around the World",
+    "fr": "Le tour du monde",
+    "ar": "حول العالم",
+    "es": "La vuelta al mundo"
+  },
+  "description": {
+    "en": "Heights, distances, crowds and records from everywhere: nobody knows them exactly.",
+    "fr": "Hauteurs, distances, foules et records du monde entier : personne ne les connaît exactement.",
+    "ar": "علوّات ومسافات وأعداد وأرقام قياسية من كل العالم: ما حدا بيعرفها بالضبط.",
+    "es": "Alturas, distancias, multitudes y récords de todo el mundo: nadie los sabe con exactitud."
+  },
+  "locales": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "all",
+  "items": [
+    {
+      "id": "tw-001",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How tall is the Eiffel Tower today, antennas included, in metres?",
+        "fr": "Quelle est la hauteur de la tour Eiffel aujourd'hui, antennes comprises, en mètres ?",
+        "ar": "قدّيش طول برج إيفل اليوم، مع الهوائيات، بالمتر؟",
+        "es": "¿Cuánto mide hoy la Torre Eiffel, antenas incluidas, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 330,
+      "source": "SETE (Eiffel Tower operator)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.toureiffel.paris/en/the-monument/key-figures"
+      }
+    },
+    {
+      "id": "tw-002",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How many steps lead from the ground to the very top of the Eiffel Tower?",
+        "fr": "Combien de marches mènent du sol jusqu'au sommet de la tour Eiffel ?",
+        "ar": "كم درجة في من الأرض لآخر قمة برج إيفل؟",
+        "es": "¿Cuántos escalones hay desde el suelo hasta la cima de la Torre Eiffel?"
+      },
+      "unit": {
+        "en": "steps",
+        "fr": "marches",
+        "ar": "درجة",
+        "es": "escalones"
+      },
+      "answer": 1665,
+      "source": "SETE (Eiffel Tower operator)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.toureiffel.paris/en/the-monument/key-figures"
+      }
+    },
+    {
+      "id": "tw-003",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "history"
+      ],
+      "text": {
+        "en": "How much does the whole Eiffel Tower weigh, in tonnes?",
+        "fr": "Combien pèse la tour Eiffel au total, en tonnes ?",
+        "ar": "قدّيش وزن برج إيفل كلّه، بالطن؟",
+        "es": "¿Cuánto pesa la Torre Eiffel en total, en toneladas?"
+      },
+      "unit": {
+        "en": "tonnes",
+        "fr": "tonnes",
+        "ar": "طن",
+        "es": "toneladas"
+      },
+      "answer": 10100,
+      "source": "SETE (Eiffel Tower operator)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.toureiffel.paris/en/the-monument/key-figures"
+      }
+    },
+    {
+      "id": "tw-004",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How tall is the Burj Khalifa in Dubai, in metres?",
+        "fr": "Quelle est la hauteur de la Burj Khalifa à Dubaï, en mètres ?",
+        "ar": "قدّيش طول برج خليفة بدبي، بالمتر؟",
+        "es": "¿Cuánto mide el Burj Khalifa de Dubái, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 828,
+      "source": "CTBUH",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.skyscrapercenter.com/building/burj-khalifa/3"
+      }
+    },
+    {
+      "id": "tw-005",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How many floors above ground does the Burj Khalifa have?",
+        "fr": "Combien d'étages au-dessus du sol compte la Burj Khalifa ?",
+        "ar": "كم طابق فوق الأرض في ببرج خليفة؟",
+        "es": "¿Cuántas plantas sobre el suelo tiene el Burj Khalifa?"
+      },
+      "unit": {
+        "en": "floors",
+        "fr": "étages",
+        "ar": "طابق",
+        "es": "plantas"
+      },
+      "answer": 163,
+      "source": "CTBUH",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.skyscrapercenter.com/building/burj-khalifa/3"
+      }
+    },
+    {
+      "id": "tw-006",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "nature"
+      ],
+      "text": {
+        "en": "How high is Mount Everest, in metres (2020 survey)?",
+        "fr": "Quelle est l'altitude du mont Everest, en mètres (mesure de 2020) ?",
+        "ar": "قدّيش علوّ جبل إيفرست، بالمتر (قياس 2020)؟",
+        "es": "¿Qué altura tiene el monte Everest, en metros (medición de 2020)?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 8849,
+      "source": "China–Nepal survey 2020",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Mount-Everest"
+      }
+    },
+    {
+      "id": "tw-007",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "nature"
+      ],
+      "text": {
+        "en": "How high is Mount Kilimanjaro, Africa's highest peak, in metres?",
+        "fr": "Quelle est l'altitude du Kilimandjaro, le plus haut sommet d'Afrique, en mètres ?",
+        "ar": "قدّيش علوّ جبل كليمنجارو، أعلى قمة بأفريقيا، بالمتر؟",
+        "es": "¿Qué altura tiene el Kilimanjaro, la cumbre más alta de África, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 5895,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Kilimanjaro"
+      }
+    },
+    {
+      "id": "tw-008",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "nature"
+      ],
+      "text": {
+        "en": "How long is the Nile, according to Britannica, in km?",
+        "fr": "Quelle est la longueur du Nil selon l'encyclopédie Britannica, en km ?",
+        "ar": "قدّيش طول نهر النيل حسب موسوعة بريتانيكا، بالكلم؟",
+        "es": "¿Cuánto mide el Nilo según la Enciclopedia Britannica, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 6650,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Nile-River"
+      }
+    },
+    {
+      "id": "tw-009",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "What is the average distance from the Earth to the Moon, in km?",
+        "fr": "Quelle est la distance moyenne entre la Terre et la Lune, en km ?",
+        "ar": "قدّيش متوسط المسافة بين الأرض والقمر، بالكلم؟",
+        "es": "¿Cuál es la distancia media entre la Tierra y la Luna, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 384400,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://science.nasa.gov/moon/facts/"
+      }
+    },
+    {
+      "id": "tw-010",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "What is the average distance from the Earth to the Sun, in km?",
+        "fr": "Quelle est la distance moyenne entre la Terre et le Soleil, en km ?",
+        "ar": "قدّيش متوسط المسافة بين الأرض والشمس، بالكلم؟",
+        "es": "¿Cuál es la distancia media entre la Tierra y el Sol, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 149600000,
+      "source": "NASA / IAU (1 au)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.iau.org/static/resolutions/IAU2012_English.pdf"
+      }
+    },
+    {
+      "id": "tw-011",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "How fast does light travel in a vacuum, in km per second?",
+        "fr": "À quelle vitesse va la lumière dans le vide, en km par seconde ?",
+        "ar": "قدّيش سرعة الضو بالفراغ، بالكلم بالثانية؟",
+        "es": "¿A qué velocidad viaja la luz en el vacío, en km por segundo?"
+      },
+      "unit": {
+        "en": "km/s",
+        "fr": "km/s",
+        "ar": "كلم/ث",
+        "es": "km/s"
+      },
+      "answer": 299792,
+      "source": "BIPM (SI definition)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.bipm.org/en/si-base-units"
+      }
+    },
+    {
+      "id": "tw-012",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "How many seconds does sunlight take to reach the Earth, on average?",
+        "fr": "Combien de secondes met la lumière du Soleil pour atteindre la Terre, en moyenne ?",
+        "ar": "كم ثانية بياخد ضو الشمس ليوصل عالأرض، بالمتوسط؟",
+        "es": "¿Cuántos segundos tarda la luz del Sol en llegar a la Tierra, de media?"
+      },
+      "unit": {
+        "en": "s",
+        "fr": "s",
+        "ar": "ث",
+        "es": "s"
+      },
+      "answer": 499,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://science.nasa.gov/sun/facts/"
+      }
+    },
+    {
+      "id": "tw-013",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "What is the Earth's diameter at the equator, in km?",
+        "fr": "Quel est le diamètre de la Terre à l'équateur, en km ?",
+        "ar": "قدّيش قطر الأرض عند خط الاستوا، بالكلم؟",
+        "es": "¿Cuál es el diámetro de la Tierra en el ecuador, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 12756,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html"
+      }
+    },
+    {
+      "id": "tw-014",
+      "tier": "free",
+      "tags": [
+        "space",
+        "geo"
+      ],
+      "text": {
+        "en": "How long is the Earth's equator, all the way around, in km?",
+        "fr": "Quelle est la longueur de l'équateur terrestre, tour complet, en km ?",
+        "ar": "قدّيش طول خط الاستوا، دورة كاملة حول الأرض، بالكلم؟",
+        "es": "¿Cuánto mide el ecuador terrestre, la vuelta completa, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 40075,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html"
+      }
+    },
+    {
+      "id": "tw-015",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "How hot is the visible surface of the Sun, in °C?",
+        "fr": "Quelle est la température de la surface visible du Soleil, en °C ?",
+        "ar": "قدّيش حرارة سطح الشمس المرئي، بالدرجة المئوية؟",
+        "es": "¿Qué temperatura tiene la superficie visible del Sol, en °C?"
+      },
+      "unit": {
+        "en": "°C",
+        "fr": "°C",
+        "ar": "°C",
+        "es": "°C"
+      },
+      "answer": 5500,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://science.nasa.gov/sun/facts/"
+      }
+    },
+    {
+      "id": "tw-016",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "How old is the universe, in years?",
+        "fr": "Quel âge a l'Univers, en années ?",
+        "ar": "قدّيش عمر الكون، بالسنين؟",
+        "es": "¿Qué edad tiene el universo, en años?"
+      },
+      "unit": {
+        "en": "years",
+        "fr": "ans",
+        "ar": "سنة",
+        "es": "años"
+      },
+      "answer": 13800000000,
+      "source": "NASA / ESA Planck",
+      "review": {
+        "status": "draft",
+        "ref": "https://science.nasa.gov/universe/overview/"
+      }
+    },
+    {
+      "id": "tw-017",
+      "tier": "free",
+      "tags": [
+        "space",
+        "nature"
+      ],
+      "text": {
+        "en": "How old is the Earth, in years?",
+        "fr": "Quel âge a la Terre, en années ?",
+        "ar": "قدّيش عمر الأرض، بالسنين؟",
+        "es": "¿Qué edad tiene la Tierra, en años?"
+      },
+      "unit": {
+        "en": "years",
+        "fr": "ans",
+        "ar": "سنة",
+        "es": "años"
+      },
+      "answer": 4540000000,
+      "source": "USGS",
+      "review": {
+        "status": "draft",
+        "ref": "https://pubs.usgs.gov/gip/geotime/age.html"
+      }
+    },
+    {
+      "id": "tw-018",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "How many Earth days does one year on Mars last?",
+        "fr": "Combien de jours terrestres dure une année sur Mars ?",
+        "ar": "كم يوم أرضي بتطول السنة على المرّيخ؟",
+        "es": "¿Cuántos días terrestres dura un año en Marte?"
+      },
+      "unit": {
+        "en": "days",
+        "fr": "jours",
+        "ar": "يوم",
+        "es": "días"
+      },
+      "answer": 687,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://science.nasa.gov/mars/facts/"
+      }
+    },
+    {
+      "id": "tw-019",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "How hot is the surface of Venus, in °C?",
+        "fr": "Quelle est la température à la surface de Vénus, en °C ?",
+        "ar": "قدّيش حرارة سطح كوكب الزهرة، بالدرجة المئوية؟",
+        "es": "¿Qué temperatura hay en la superficie de Venus, en °C?"
+      },
+      "unit": {
+        "en": "°C",
+        "fr": "°C",
+        "ar": "°C",
+        "es": "°C"
+      },
+      "answer": 475,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://science.nasa.gov/venus/facts/"
+      }
+    },
+    {
+      "id": "tw-020",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "How many Earths would fit side by side across Jupiter's diameter?",
+        "fr": "Combien de Terres alignées faut-il pour couvrir le diamètre de Jupiter ?",
+        "ar": "كم أرض لازم نصفّ جنب بعض لنغطّي قطر كوكب المشتري؟",
+        "es": "¿Cuántas Tierras en fila caben a lo ancho del diámetro de Júpiter?"
+      },
+      "unit": {
+        "en": "Earths",
+        "fr": "Terres",
+        "ar": "أرض",
+        "es": "Tierras"
+      },
+      "answer": 11,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://science.nasa.gov/jupiter/facts/"
+      }
+    },
+    {
+      "id": "tw-021",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "Roughly how many Earths could fit inside the Sun?",
+        "fr": "Combien de Terres pourraient tenir à l'intérieur du Soleil, à peu près ?",
+        "ar": "تقريبًا كم أرض بتساع جوّا الشمس؟",
+        "es": "¿Cuántas Tierras cabrían dentro del Sol, más o menos?"
+      },
+      "unit": {
+        "en": "Earths",
+        "fr": "Terres",
+        "ar": "أرض",
+        "es": "Tierras"
+      },
+      "answer": 1300000,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://science.nasa.gov/sun/facts/"
+      }
+    },
+    {
+      "id": "tw-022",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "How far is one light-year, in km?",
+        "fr": "Combien de kilomètres mesure une année-lumière ?",
+        "ar": "قدّيش طول السنة الضوئية، بالكلم؟",
+        "es": "¿Cuántos kilómetros mide un año luz?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 9461000000000,
+      "source": "IAU",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.iau.org/public/themes/measuring/"
+      }
+    },
+    {
+      "id": "tw-023",
+      "tier": "free",
+      "tags": [
+        "space",
+        "tech"
+      ],
+      "text": {
+        "en": "How fast does the International Space Station travel, in km/h?",
+        "fr": "À quelle vitesse se déplace la Station spatiale internationale, en km/h ?",
+        "ar": "قدّيش سرعة محطة الفضاء الدولية، بالكلم بالساعة؟",
+        "es": "¿A qué velocidad viaja la Estación Espacial Internacional, en km/h?"
+      },
+      "unit": {
+        "en": "km/h",
+        "fr": "km/h",
+        "ar": "كلم/س",
+        "es": "km/h"
+      },
+      "answer": 28000,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.nasa.gov/international-space-station/space-station-facts-and-figures/"
+      }
+    },
+    {
+      "id": "tw-024",
+      "tier": "free",
+      "tags": [
+        "space",
+        "tech"
+      ],
+      "text": {
+        "en": "How many times does the International Space Station circle the Earth in one day?",
+        "fr": "Combien de fois la Station spatiale internationale fait-elle le tour de la Terre en un jour ?",
+        "ar": "كم مرّة بتلفّ محطة الفضاء الدولية حول الأرض بيوم واحد؟",
+        "es": "¿Cuántas vueltas da la Estación Espacial Internacional a la Tierra en un día?"
+      },
+      "unit": {
+        "en": "orbits",
+        "fr": "tours",
+        "ar": "دورة",
+        "es": "vueltas"
+      },
+      "answer": 16,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.nasa.gov/international-space-station/space-station-facts-and-figures/"
+      }
+    },
+    {
+      "id": "tw-025",
+      "tier": "free",
+      "tags": [
+        "space",
+        "history"
+      ],
+      "text": {
+        "en": "How many people have walked on the Moon?",
+        "fr": "Combien de personnes ont marché sur la Lune ?",
+        "ar": "كم شخص مشي على القمر؟",
+        "es": "¿Cuántas personas han caminado sobre la Luna?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "personnes",
+        "ar": "شخص",
+        "es": "personas"
+      },
+      "answer": 12,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.nasa.gov/history/"
+      }
+    },
+    {
+      "id": "tw-026",
+      "tier": "free",
+      "tags": [
+        "space"
+      ],
+      "text": {
+        "en": "How fast does the Earth travel around the Sun, in km/h?",
+        "fr": "À quelle vitesse la Terre tourne-t-elle autour du Soleil, en km/h ?",
+        "ar": "قدّيش سرعة الأرض بدورتها حول الشمس، بالكلم بالساعة؟",
+        "es": "¿A qué velocidad gira la Tierra alrededor del Sol, en km/h?"
+      },
+      "unit": {
+        "en": "km/h",
+        "fr": "km/h",
+        "ar": "كلم/س",
+        "es": "km/h"
+      },
+      "answer": 107000,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://science.nasa.gov/earth/facts/"
+      }
+    },
+    {
+      "id": "tw-027",
+      "tier": "free",
+      "tags": [
+        "nature"
+      ],
+      "text": {
+        "en": "How many trees are there on Earth (2015 global estimate)?",
+        "fr": "Combien d'arbres y a-t-il sur Terre (estimation mondiale de 2015) ?",
+        "ar": "كم شجرة في عالأرض (تقدير عالمي سنة 2015)؟",
+        "es": "¿Cuántos árboles hay en la Tierra (estimación mundial de 2015)?"
+      },
+      "unit": {
+        "en": "trees",
+        "fr": "arbres",
+        "ar": "شجرة",
+        "es": "árboles"
+      },
+      "answer": 3040000000000,
+      "source": "Crowther et al., Nature 2015",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.nature.com/articles/nature14967"
+      }
+    },
+    {
+      "id": "tw-028",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "On 15 November 2022 the UN marked a world population milestone. How many people?",
+        "fr": "Le 15 novembre 2022, l'ONU a célébré un cap de la population mondiale. Combien d'habitants ?",
+        "ar": "بـ15 تشرين التاني 2022 الأمم المتحدة احتفلت بوصول سكان العالم لرقم معيّن. قدّيش؟",
+        "es": "El 15 de noviembre de 2022 la ONU celebró un hito de la población mundial. ¿Cuántas personas?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 8000000000,
+      "source": "United Nations",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.un.org/en/dayof8billion"
+      }
+    },
+    {
+      "id": "tw-029",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "About how many babies were born in the world every day in 2023?",
+        "fr": "Combien de bébés sont nés dans le monde chaque jour en 2023, environ ?",
+        "ar": "تقريبًا كم طفل انولد بالعالم كل يوم سنة 2023؟",
+        "es": "¿Cuántos bebés nacieron en el mundo cada día en 2023, aproximadamente?"
+      },
+      "unit": {
+        "en": "babies",
+        "fr": "bébés",
+        "ar": "طفل",
+        "es": "bebés"
+      },
+      "answer": 362000,
+      "source": "UN World Population Prospects 2024",
+      "review": {
+        "status": "draft",
+        "ref": "https://population.un.org/wpp/ (132.1 million births in 2023 / 365)"
+      }
+    },
+    {
+      "id": "tw-030",
+      "tier": "free",
+      "tags": [
+        "people",
+        "history"
+      ],
+      "text": {
+        "en": "How many people lived on Earth in the year 1900?",
+        "fr": "Combien de personnes vivaient sur Terre en 1900 ?",
+        "ar": "كم شخص كان عايش عالأرض سنة 1900؟",
+        "es": "¿Cuántas personas vivían en la Tierra en el año 1900?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 1650000000,
+      "source": "UN Population Division",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.un.org/en/development/desa/population/publications/pdf/trends/WorldPopulation2050.pdf"
+      }
+    },
+    {
+      "id": "tw-031",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "What was China's population in its 2020 census?",
+        "fr": "Quelle était la population de la Chine lors du recensement de 2020 ?",
+        "ar": "قدّيش كان عدد سكان الصين بإحصاء 2020؟",
+        "es": "¿Cuál era la población de China en su censo de 2020?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 1411778724,
+      "source": "China 7th national census (2020)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.stats.gov.cn/english/PressRelease/202105/t20210510_1817185.html"
+      }
+    },
+    {
+      "id": "tw-032",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "What was the population of the United States in the 2020 census?",
+        "fr": "Quelle était la population des États-Unis lors du recensement de 2020 ?",
+        "ar": "قدّيش كان عدد سكان الولايات المتحدة بإحصاء 2020؟",
+        "es": "¿Cuál era la población de Estados Unidos en el censo de 2020?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 331449281,
+      "source": "US Census Bureau (2020)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.census.gov/library/stories/2021/04/2020-census-data-release.html"
+      }
+    },
+    {
+      "id": "tw-033",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "What was Brazil's population in its 2022 census?",
+        "fr": "Quelle était la population du Brésil lors du recensement de 2022 ?",
+        "ar": "قدّيش كان عدد سكان البرازيل بإحصاء 2022؟",
+        "es": "¿Cuál era la población de Brasil en su censo de 2022?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 203080756,
+      "source": "IBGE census 2022",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.ibge.gov.br/en/statistics/social/population/22836-2022-census-3.html"
+      }
+    },
+    {
+      "id": "tw-034",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "What was Japan's population in its 2020 census?",
+        "fr": "Quelle était la population du Japon lors du recensement de 2020 ?",
+        "ar": "قدّيش كان عدد سكان اليابان بإحصاء 2020؟",
+        "es": "¿Cuál era la población de Japón en su censo de 2020?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 126146099,
+      "source": "Statistics Bureau of Japan (2020 census)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.stat.go.jp/english/data/kokusei/2020/summary.html"
+      }
+    },
+    {
+      "id": "tw-035",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "What was Canada's population in its 2021 census?",
+        "fr": "Quelle était la population du Canada lors du recensement de 2021 ?",
+        "ar": "قدّيش كان عدد سكان كندا بإحصاء 2021؟",
+        "es": "¿Cuál era la población de Canadá en su censo de 2021?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 36991981,
+      "source": "Statistics Canada (2021 census)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www12.statcan.gc.ca/census-recensement/2021/"
+      }
+    },
+    {
+      "id": "tw-036",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "What was Mexico's population in its 2020 census?",
+        "fr": "Quelle était la population du Mexique lors du recensement de 2020 ?",
+        "ar": "قدّيش كان عدد سكان المكسيك بإحصاء 2020؟",
+        "es": "¿Cuál era la población de México en su censo de 2020?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 126014024,
+      "source": "INEGI (2020 census)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.inegi.org.mx/programas/ccpv/2020/"
+      }
+    },
+    {
+      "id": "tw-037",
+      "tier": "free",
+      "tags": [
+        "people",
+        "geo"
+      ],
+      "text": {
+        "en": "How many people lived in the city of Paris (official 2021 count)?",
+        "fr": "Combien d'habitants comptait la ville de Paris (population légale 2021) ?",
+        "ar": "كم شخص كان ساكن بمدينة باريس (الإحصاء الرسمي لسنة 2021)؟",
+        "es": "¿Cuántos habitantes tenía la ciudad de París (cifra oficial de 2021)?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 2133111,
+      "source": "INSEE (legal population 2021)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.insee.fr/fr/statistiques/7739206"
+      }
+    },
+    {
+      "id": "tw-038",
+      "tier": "free",
+      "tags": [
+        "people",
+        "geo"
+      ],
+      "text": {
+        "en": "How many member states does the United Nations have?",
+        "fr": "Combien d'États membres compte l'Organisation des Nations unies ?",
+        "ar": "كم دولة عضو في بالأمم المتحدة؟",
+        "es": "¿Cuántos Estados miembros tiene la ONU?"
+      },
+      "unit": {
+        "en": "countries",
+        "fr": "pays",
+        "ar": "دولة",
+        "es": "países"
+      },
+      "answer": 193,
+      "source": "United Nations",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.un.org/en/about-us/member-states"
+      }
+    },
+    {
+      "id": "tw-039",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How many countries are there in Africa?",
+        "fr": "Combien de pays compte l'Afrique ?",
+        "ar": "كم دولة في بأفريقيا؟",
+        "es": "¿Cuántos países hay en África?"
+      },
+      "unit": {
+        "en": "countries",
+        "fr": "pays",
+        "ar": "دولة",
+        "es": "países"
+      },
+      "answer": 54,
+      "source": "African Union / UN",
+      "review": {
+        "status": "draft",
+        "ref": "https://au.int/en/member_states/countryprofiles2"
+      }
+    },
+    {
+      "id": "tw-040",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How many countries are members of the European Union?",
+        "fr": "Combien de pays sont membres de l'Union européenne ?",
+        "ar": "كم دولة عضو بالاتحاد الأوروبي؟",
+        "es": "¿Cuántos países son miembros de la Unión Europea?"
+      },
+      "unit": {
+        "en": "countries",
+        "fr": "pays",
+        "ar": "دولة",
+        "es": "países"
+      },
+      "answer": 27,
+      "source": "European Union",
+      "review": {
+        "status": "draft",
+        "ref": "https://european-union.europa.eu/principles-countries-history/eu-countries_en"
+      }
+    },
+    {
+      "id": "tw-041",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "How many stars are on the flag of the European Union?",
+        "fr": "Combien d'étoiles y a-t-il sur le drapeau de l'Union européenne ?",
+        "ar": "كم نجمة في على علم الاتحاد الأوروبي؟",
+        "es": "¿Cuántas estrellas tiene la bandera de la Unión Europea?"
+      },
+      "unit": {
+        "en": "stars",
+        "fr": "étoiles",
+        "ar": "نجمة",
+        "es": "estrellas"
+      },
+      "answer": 12,
+      "source": "European Union",
+      "review": {
+        "status": "draft",
+        "ref": "https://european-union.europa.eu/principles-countries-history/symbols/european-flag_en"
+      }
+    },
+    {
+      "id": "tw-042",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "How many official languages does the United Nations have?",
+        "fr": "Combien de langues officielles l'ONU a-t-elle ?",
+        "ar": "كم لغة رسمية عند الأمم المتحدة؟",
+        "es": "¿Cuántos idiomas oficiales tiene la ONU?"
+      },
+      "unit": {
+        "en": "languages",
+        "fr": "langues",
+        "ar": "لغة",
+        "es": "idiomas"
+      },
+      "answer": 6,
+      "source": "United Nations",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.un.org/en/our-work/official-languages"
+      }
+    },
+    {
+      "id": "tw-043",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "What is the area of Russia, the largest country on Earth, in km²?",
+        "fr": "Quelle est la superficie de la Russie, le plus grand pays du monde, en km² ?",
+        "ar": "قدّيش مساحة روسيا، أكبر بلد بالعالم، بالكلم المربّع؟",
+        "es": "¿Cuál es la superficie de Rusia, el país más grande del mundo, en km²?"
+      },
+      "unit": {
+        "en": "km²",
+        "fr": "km²",
+        "ar": "كلم²",
+        "es": "km²"
+      },
+      "answer": 17098246,
+      "source": "CIA World Factbook",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.cia.gov/the-world-factbook/countries/russia/"
+      }
+    },
+    {
+      "id": "tw-044",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "What is the area of Vatican City, the smallest country on Earth, in km²?",
+        "fr": "Quelle est la superficie du Vatican, le plus petit pays du monde, en km² ?",
+        "ar": "قدّيش مساحة الفاتيكان، أصغر بلد بالعالم، بالكلم المربّع؟",
+        "es": "¿Cuál es la superficie del Vaticano, el país más pequeño del mundo, en km²?"
+      },
+      "unit": {
+        "en": "km²",
+        "fr": "km²",
+        "ar": "كلم²",
+        "es": "km²"
+      },
+      "answer": 0.44,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Vatican-City"
+      }
+    },
+    {
+      "id": "tw-045",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "nature"
+      ],
+      "text": {
+        "en": "What is the area of the Sahara desert, in km²?",
+        "fr": "Quelle est la superficie du désert du Sahara, en km² ?",
+        "ar": "قدّيش مساحة الصحرا الكبرى، بالكلم المربّع؟",
+        "es": "¿Cuál es la superficie del desierto del Sáhara, en km²?"
+      },
+      "unit": {
+        "en": "km²",
+        "fr": "km²",
+        "ar": "كلم²",
+        "es": "km²"
+      },
+      "answer": 9000000,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Sahara-desert-Africa"
+      }
+    },
+    {
+      "id": "tw-046",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "nature"
+      ],
+      "text": {
+        "en": "How deep is Lake Baikal, the deepest lake in the world, in metres?",
+        "fr": "Quelle est la profondeur du lac Baïkal, le lac le plus profond du monde, en mètres ?",
+        "ar": "قدّيش عمق بحيرة بايكال، أعمق بحيرة بالعالم، بالمتر؟",
+        "es": "¿Qué profundidad tiene el lago Baikal, el más profundo del mundo, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 1642,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Lake-Baikal"
+      }
+    },
+    {
+      "id": "tw-047",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "nature"
+      ],
+      "text": {
+        "en": "How high is Angel Falls in Venezuela, the tallest waterfall in the world, in metres?",
+        "fr": "Quelle est la hauteur du Salto Ángel au Venezuela, la plus haute chute du monde, en mètres ?",
+        "ar": "قدّيش علوّ شلالات أنجل بفنزويلا، أعلى شلال بالعالم، بالمتر؟",
+        "es": "¿Qué altura tiene el Salto Ángel en Venezuela, la cascada más alta del mundo, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 979,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Angel-Falls"
+      }
+    },
+    {
+      "id": "tw-048",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "nature"
+      ],
+      "text": {
+        "en": "How deep is the deepest point of the ocean, the Challenger Deep, in metres?",
+        "fr": "Quelle est la profondeur du point le plus profond de l'océan, la fosse Challenger, en mètres ?",
+        "ar": "قدّيش عمق أعمق نقطة بالمحيط، هوّة تشالنجر، بالمتر؟",
+        "es": "¿Qué profundidad tiene el punto más hondo del océano, el abismo Challenger, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 10935,
+      "source": "NOAA",
+      "review": {
+        "status": "draft",
+        "ref": "https://oceanexplorer.noaa.gov/facts/mariana-trench.html"
+      }
+    },
+    {
+      "id": "tw-049",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How many countries does the Danube river flow through?",
+        "fr": "Combien de pays le Danube traverse-t-il ?",
+        "ar": "بكم دولة بيمرق نهر الدانوب؟",
+        "es": "¿Por cuántos países pasa el río Danubio?"
+      },
+      "unit": {
+        "en": "countries",
+        "fr": "pays",
+        "ar": "دولة",
+        "es": "países"
+      },
+      "answer": 10,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Danube-River"
+      }
+    },
+    {
+      "id": "tw-050",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "history"
+      ],
+      "text": {
+        "en": "How long is the Great Wall of China, all branches together (2012 survey), in km?",
+        "fr": "Quelle est la longueur de la Grande Muraille de Chine, toutes branches comprises (relevé de 2012), en km ?",
+        "ar": "قدّيش طول سور الصين العظيم مع كل فروعه (مسح 2012)، بالكلم؟",
+        "es": "¿Cuánto mide la Gran Muralla china, todos sus tramos juntos (estudio de 2012), en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 21196,
+      "source": "China State Administration of Cultural Heritage (2012)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/topic/Great-Wall-of-China"
+      }
+    },
+    {
+      "id": "tw-051",
+      "tier": "free",
+      "tags": [
+        "history",
+        "geo"
+      ],
+      "text": {
+        "en": "How tall was the Great Pyramid of Giza when it was built, in metres?",
+        "fr": "Quelle était la hauteur de la grande pyramide de Gizeh à sa construction, en mètres ?",
+        "ar": "قدّيش كان طول هرم الجيزة الأكبر لمّا انبنى، بالمتر؟",
+        "es": "¿Cuánto medía la Gran Pirámide de Guiza cuando se construyó, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 146.6,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/topic/Pyramids-of-Giza"
+      }
+    },
+    {
+      "id": "tw-052",
+      "tier": "free",
+      "tags": [
+        "history"
+      ],
+      "text": {
+        "en": "About how many stone blocks make up the Great Pyramid of Giza?",
+        "fr": "Combien de blocs de pierre forment la grande pyramide de Gizeh, environ ?",
+        "ar": "تقريبًا كم حجر في بهرم الجيزة الأكبر؟",
+        "es": "¿Cuántos bloques de piedra forman la Gran Pirámide de Guiza, aproximadamente?"
+      },
+      "unit": {
+        "en": "blocks",
+        "fr": "blocs",
+        "ar": "حجر",
+        "es": "bloques"
+      },
+      "answer": 2300000,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/topic/Pyramids-of-Giza"
+      }
+    },
+    {
+      "id": "tw-053",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "history"
+      ],
+      "text": {
+        "en": "How tall is the Statue of Liberty from the ground to the tip of the torch, in metres?",
+        "fr": "Quelle est la hauteur de la statue de la Liberté, du sol à la flamme, en mètres ?",
+        "ar": "قدّيش طول تمثال الحرية من الأرض لراس الشعلة، بالمتر؟",
+        "es": "¿Cuánto mide la Estatua de la Libertad desde el suelo hasta la antorcha, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 93,
+      "source": "US National Park Service",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.nps.gov/stli/learn/historyculture/statue-statistics.htm"
+      }
+    },
+    {
+      "id": "tw-054",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How tall is the Empire State Building, antenna included, in metres?",
+        "fr": "Quelle est la hauteur de l'Empire State Building, antenne comprise, en mètres ?",
+        "ar": "قدّيش طول مبنى إمباير ستيت مع الهوائي، بالمتر؟",
+        "es": "¿Cuánto mide el Empire State Building, antena incluida, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 443,
+      "source": "Empire State Realty Trust",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.esbnyc.com/about/facts-figures"
+      }
+    },
+    {
+      "id": "tw-055",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How tall is the Elizabeth Tower, home of Big Ben, in metres?",
+        "fr": "Quelle est la hauteur de la tour Elizabeth, qui abrite Big Ben, en mètres ?",
+        "ar": "قدّيش طول برج إليزابيث يلي فيه ساعة بيغ بن، بالمتر؟",
+        "es": "¿Cuánto mide la torre Elizabeth, la del Big Ben, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 96,
+      "source": "UK Parliament",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.parliament.uk/about/living-heritage/building/palace/big-ben/"
+      }
+    },
+    {
+      "id": "tw-056",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "tech"
+      ],
+      "text": {
+        "en": "How long is the Golden Gate Bridge in total, in metres?",
+        "fr": "Quelle est la longueur totale du Golden Gate Bridge, en mètres ?",
+        "ar": "قدّيش طول جسر البوابة الذهبية كلّه، بالمتر؟",
+        "es": "¿Cuánto mide en total el puente Golden Gate, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 2737,
+      "source": "Golden Gate Bridge District",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+      }
+    },
+    {
+      "id": "tw-057",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "tech"
+      ],
+      "text": {
+        "en": "How long is the Channel Tunnel between France and England, in km?",
+        "fr": "Quelle est la longueur du tunnel sous la Manche, en km ?",
+        "ar": "قدّيش طول النفق تحت بحر المانش بين فرنسا وإنكلترا، بالكلم؟",
+        "es": "¿Cuánto mide el túnel del canal de la Mancha, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 50.45,
+      "source": "Getlink (Channel Tunnel)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.getlinkgroup.com/en/our-group/eurotunnel/"
+      }
+    },
+    {
+      "id": "tw-058",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "history"
+      ],
+      "text": {
+        "en": "How long was the Berlin Wall around West Berlin, in km?",
+        "fr": "Quelle était la longueur du mur de Berlin autour de Berlin-Ouest, en km ?",
+        "ar": "قدّيش كان طول جدار برلين حوالين برلين الغربية، بالكلم؟",
+        "es": "¿Cuánto medía el Muro de Berlín alrededor de Berlín Oeste, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 155,
+      "source": "Berlin.de",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.berlin.de/mauer/en/"
+      }
+    },
+    {
+      "id": "tw-059",
+      "tier": "free",
+      "tags": [
+        "history"
+      ],
+      "text": {
+        "en": "How many years did the Berlin Wall stand?",
+        "fr": "Combien d'années le mur de Berlin est-il resté debout ?",
+        "ar": "كم سنة ضلّ جدار برلين واقف؟",
+        "es": "¿Cuántos años estuvo en pie el Muro de Berlín?"
+      },
+      "unit": {
+        "en": "years",
+        "fr": "ans",
+        "ar": "سنة",
+        "es": "años"
+      },
+      "answer": 28,
+      "source": "Berlin.de",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.berlin.de/mauer/en/"
+      }
+    },
+    {
+      "id": "tw-060",
+      "tier": "free",
+      "tags": [
+        "history"
+      ],
+      "text": {
+        "en": "How many years did the Hundred Years' War actually last?",
+        "fr": "Combien d'années la guerre de Cent Ans a-t-elle réellement duré ?",
+        "ar": "كم سنة دامت فعليًا حرب المية سنة؟",
+        "es": "¿Cuántos años duró realmente la guerra de los Cien Años?"
+      },
+      "unit": {
+        "en": "years",
+        "fr": "ans",
+        "ar": "سنة",
+        "es": "años"
+      },
+      "answer": 116,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/event/Hundred-Years-War"
+      }
+    },
+    {
+      "id": "tw-061",
+      "tier": "free",
+      "tags": [
+        "history",
+        "space"
+      ],
+      "text": {
+        "en": "How many days did the Apollo 11 Moon mission last, from launch to splashdown?",
+        "fr": "Combien de jours a duré la mission Apollo 11, du décollage à l'amerrissage ?",
+        "ar": "كم يوم طوّلت مهمّة أبولو 11 عالقمر، من الإقلاع للهبوط بالبحر؟",
+        "es": "¿Cuántos días duró la misión Apolo 11, del despegue al amerizaje?"
+      },
+      "unit": {
+        "en": "days",
+        "fr": "jours",
+        "ar": "يوم",
+        "es": "días"
+      },
+      "answer": 8,
+      "source": "NASA",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.nasa.gov/mission/apollo-11/"
+      }
+    },
+    {
+      "id": "tw-062",
+      "tier": "free",
+      "tags": [
+        "history"
+      ],
+      "text": {
+        "en": "About how many people were on board the Titanic on its maiden voyage?",
+        "fr": "Combien de personnes environ étaient à bord du Titanic lors de son premier voyage ?",
+        "ar": "تقريبًا كم شخص كان على متن التايتانيك برحلتها الأولى؟",
+        "es": "¿Cuántas personas iban a bordo del Titanic en su viaje inaugural, aproximadamente?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "personnes",
+        "ar": "شخص",
+        "es": "personas"
+      },
+      "answer": 2224,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/topic/Titanic"
+      }
+    },
+    {
+      "id": "tw-063",
+      "tier": "free",
+      "tags": [
+        "history",
+        "money"
+      ],
+      "text": {
+        "en": "How many US dollars did the United States pay France for Louisiana in 1803?",
+        "fr": "Combien de dollars les États-Unis ont-ils payé à la France pour la Louisiane en 1803 ?",
+        "ar": "قدّيش دولار دفعت أميركا لفرنسا تتشتري لويزيانا سنة 1803؟",
+        "es": "¿Cuántos dólares pagó Estados Unidos a Francia por Luisiana en 1803?"
+      },
+      "unit": {
+        "en": "US$",
+        "fr": "US$",
+        "ar": "دولار",
+        "es": "US$"
+      },
+      "answer": 15000000,
+      "source": "US National Archives",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.archives.gov/milestone-documents/louisiana-purchase-treaty"
+      }
+    },
+    {
+      "id": "tw-064",
+      "tier": "free",
+      "tags": [
+        "money",
+        "culture"
+      ],
+      "text": {
+        "en": "How much did Leonardo da Vinci's 'Salvator Mundi' sell for at auction in 2017, in US$?",
+        "fr": "Combien a été vendu le « Salvator Mundi » de Léonard de Vinci aux enchères en 2017, en dollars ?",
+        "ar": "بقدّيش انباعت لوحة «سالفاتور موندي» لليوناردو دافنشي بالمزاد سنة 2017، بالدولار؟",
+        "es": "¿Por cuánto se vendió el «Salvator Mundi» de Leonardo da Vinci en subasta en 2017, en dólares?"
+      },
+      "unit": {
+        "en": "US$",
+        "fr": "US$",
+        "ar": "دولار",
+        "es": "US$"
+      },
+      "answer": 450300000,
+      "source": "Christie's (2017)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.christies.com/features/Salvator-Mundi-Leonardo-da-Vinci-8737-1.aspx"
+      }
+    },
+    {
+      "id": "tw-065",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "How tall is the Mona Lisa painting, in cm?",
+        "fr": "Quelle est la hauteur du tableau de la Joconde, en cm ?",
+        "ar": "قدّيش طول لوحة الموناليزا، بالسنتيمتر؟",
+        "es": "¿Cuánto mide de alto el cuadro de la Mona Lisa, en cm?"
+      },
+      "unit": {
+        "en": "cm",
+        "fr": "cm",
+        "ar": "سم",
+        "es": "cm"
+      },
+      "answer": 77,
+      "source": "Musée du Louvre",
+      "review": {
+        "status": "draft",
+        "ref": "https://collections.louvre.fr/en/ark:/53355/cl010062370"
+      }
+    },
+    {
+      "id": "tw-066",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "How many visitors did the Louvre museum welcome in 2023?",
+        "fr": "Combien de visiteurs le musée du Louvre a-t-il accueillis en 2023 ?",
+        "ar": "كم زائر استقبل متحف اللوفر سنة 2023؟",
+        "es": "¿Cuántos visitantes recibió el museo del Louvre en 2023?"
+      },
+      "unit": {
+        "en": "visitors",
+        "fr": "visiteurs",
+        "ar": "زائر",
+        "es": "visitantes"
+      },
+      "answer": 8900000,
+      "source": "Musée du Louvre (2023)",
+      "review": {
+        "status": "draft",
+        "ref": "https://presse.louvre.fr/8-9-million-visitors-to-the-louvre-in-2023"
+      }
+    },
+    {
+      "id": "tw-067",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "How many Oscars did the film 'Titanic' win?",
+        "fr": "Combien d'Oscars le film « Titanic » a-t-il remportés ?",
+        "ar": "كم أوسكار ربح فيلم «تايتانيك»؟",
+        "es": "¿Cuántos Óscar ganó la película «Titanic»?"
+      },
+      "unit": {
+        "en": "Oscars",
+        "fr": "Oscars",
+        "ar": "أوسكار",
+        "es": "Óscar"
+      },
+      "answer": 11,
+      "source": "Academy of Motion Picture Arts and Sciences",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.oscars.org/oscars/ceremonies/1998"
+      }
+    },
+    {
+      "id": "tw-068",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "How many symphonies did Beethoven complete?",
+        "fr": "Combien de symphonies Beethoven a-t-il achevées ?",
+        "ar": "كم سمفونية كمّل بيتهوفن؟",
+        "es": "¿Cuántas sinfonías completó Beethoven?"
+      },
+      "unit": {
+        "en": "symphonies",
+        "fr": "symphonies",
+        "ar": "سمفونية",
+        "es": "sinfonías"
+      },
+      "answer": 9,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/biography/Ludwig-van-Beethoven"
+      }
+    },
+    {
+      "id": "tw-069",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "How many keys does a standard modern piano have?",
+        "fr": "Combien de touches compte un piano moderne standard ?",
+        "ar": "كم مفتاح في ببيانو حديث عادي؟",
+        "es": "¿Cuántas teclas tiene un piano moderno estándar?"
+      },
+      "unit": {
+        "en": "keys",
+        "fr": "touches",
+        "ar": "مفتاح",
+        "es": "teclas"
+      },
+      "answer": 88,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/art/piano"
+      }
+    },
+    {
+      "id": "tw-070",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "How many letters are there in the Arabic alphabet?",
+        "fr": "Combien de lettres compte l'alphabet arabe ?",
+        "ar": "كم حرف في بالأبجدية العربية؟",
+        "es": "¿Cuántas letras tiene el alfabeto árabe?"
+      },
+      "unit": {
+        "en": "letters",
+        "fr": "lettres",
+        "ar": "حرف",
+        "es": "letras"
+      },
+      "answer": 28,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/topic/Arabic-alphabet"
+      }
+    },
+    {
+      "id": "tw-071",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "How many characters are on China's official list of commonly used characters?",
+        "fr": "Combien de caractères compte la liste officielle chinoise des caractères courants ?",
+        "ar": "كم حرف بلائحة الصين الرسمية للأحرف الشائعة الاستعمال؟",
+        "es": "¿Cuántos caracteres tiene la lista oficial china de caracteres de uso común?"
+      },
+      "unit": {
+        "en": "characters",
+        "fr": "caractères",
+        "ar": "حرف",
+        "es": "caracteres"
+      },
+      "answer": 3500,
+      "source": "Ministry of Education of China (1988 list)",
+      "review": {
+        "status": "draft",
+        "ref": "https://en.wikipedia.org/wiki/List_of_Commonly_Used_Characters_in_Modern_Chinese"
+      }
+    },
+    {
+      "id": "tw-072",
+      "tier": "free",
+      "tags": [
+        "tech"
+      ],
+      "text": {
+        "en": "How many characters could a tweet hold before Twitter doubled the limit in 2017?",
+        "fr": "Combien de caractères pouvait contenir un tweet avant que Twitter double la limite en 2017 ?",
+        "ar": "كم حرف كانت تساع التغريدة قبل ما تويتر يضاعف الحد سنة 2017؟",
+        "es": "¿Cuántos caracteres cabían en un tuit antes de que Twitter duplicara el límite en 2017?"
+      },
+      "unit": {
+        "en": "characters",
+        "fr": "caractères",
+        "ar": "حرف",
+        "es": "caracteres"
+      },
+      "answer": 140,
+      "source": "Twitter (2006–2017 limit)",
+      "review": {
+        "status": "draft",
+        "ref": "https://blog.x.com/en_us/topics/product/2017/tweetingmadeeasier"
+      }
+    },
+    {
+      "id": "tw-073",
+      "tier": "free",
+      "tags": [
+        "tech"
+      ],
+      "text": {
+        "en": "How many different IPv4 internet addresses can exist?",
+        "fr": "Combien d'adresses Internet IPv4 différentes peuvent exister ?",
+        "ar": "كم عنوان إنترنت IPv4 مختلف ممكن يكون في؟",
+        "es": "¿Cuántas direcciones de Internet IPv4 distintas pueden existir?"
+      },
+      "unit": {
+        "en": "addresses",
+        "fr": "adresses",
+        "ar": "عنوان",
+        "es": "direcciones"
+      },
+      "answer": 4294967296,
+      "source": "IETF RFC 791 (2^32)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.rfc-editor.org/rfc/rfc791"
+      }
+    },
+    {
+      "id": "tw-074",
+      "tier": "free",
+      "tags": [
+        "tech",
+        "geo"
+      ],
+      "text": {
+        "en": "How many passengers passed through Dubai International Airport in 2023?",
+        "fr": "Combien de passagers sont passés par l'aéroport international de Dubaï en 2023 ?",
+        "ar": "كم راكب مرق بمطار دبي الدولي سنة 2023؟",
+        "es": "¿Cuántos pasajeros pasaron por el aeropuerto internacional de Dubái en 2023?"
+      },
+      "unit": {
+        "en": "passengers",
+        "fr": "passagers",
+        "ar": "راكب",
+        "es": "pasajeros"
+      },
+      "answer": 86900000,
+      "source": "Dubai Airports (2023)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.thenationalnews.com/business/aviation/2024/04/15/dxb-dubai-airport-worlds-busiest"
+      }
+    },
+    {
+      "id": "tw-075",
+      "tier": "free",
+      "tags": [
+        "body"
+      ],
+      "text": {
+        "en": "How many bones are there in an adult human body?",
+        "fr": "Combien d'os compte le corps humain adulte ?",
+        "ar": "كم عظمة في بجسم الإنسان البالغ؟",
+        "es": "¿Cuántos huesos tiene el cuerpo humano adulto?"
+      },
+      "unit": {
+        "en": "bones",
+        "fr": "os",
+        "ar": "عظمة",
+        "es": "huesos"
+      },
+      "answer": 206,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/science/human-skeleton"
+      }
+    },
+    {
+      "id": "tw-076",
+      "tier": "free",
+      "tags": [
+        "body"
+      ],
+      "text": {
+        "en": "How many teeth does a full adult set have, wisdom teeth included?",
+        "fr": "Combien de dents compte une denture adulte complète, dents de sagesse comprises ?",
+        "ar": "كم سن في عند الإنسان البالغ، مع ضروس العقل؟",
+        "es": "¿Cuántos dientes tiene una dentadura adulta completa, muelas del juicio incluidas?"
+      },
+      "unit": {
+        "en": "teeth",
+        "fr": "dents",
+        "ar": "سن",
+        "es": "dientes"
+      },
+      "answer": 32,
+      "source": "NHS",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.nhs.uk/conditions/wisdom-tooth-removal/"
+      }
+    },
+    {
+      "id": "tw-077",
+      "tier": "free",
+      "tags": [
+        "body"
+      ],
+      "text": {
+        "en": "How many chromosomes are there in a normal human cell?",
+        "fr": "Combien de chromosomes y a-t-il dans une cellule humaine normale ?",
+        "ar": "كم كروموسوم في بخلية الإنسان العادية؟",
+        "es": "¿Cuántos cromosomas hay en una célula humana normal?"
+      },
+      "unit": {
+        "en": "chromosomes",
+        "fr": "chromosomes",
+        "ar": "كروموسوم",
+        "es": "cromosomas"
+      },
+      "answer": 46,
+      "source": "NIH (NHGRI)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.genome.gov/about-genomics/fact-sheets/Chromosomes-Fact-Sheet"
+      }
+    },
+    {
+      "id": "tw-078",
+      "tier": "free",
+      "tags": [
+        "body"
+      ],
+      "text": {
+        "en": "About how many neurons are there in a human brain?",
+        "fr": "Combien de neurones y a-t-il dans un cerveau humain, environ ?",
+        "ar": "تقريبًا كم خلية عصبية في بدماغ الإنسان؟",
+        "es": "¿Cuántas neuronas hay en un cerebro humano, aproximadamente?"
+      },
+      "unit": {
+        "en": "neurons",
+        "fr": "neurones",
+        "ar": "خلية",
+        "es": "neuronas"
+      },
+      "answer": 86000000000,
+      "source": "Azevedo et al. 2009",
+      "review": {
+        "status": "draft",
+        "ref": "https://pubmed.ncbi.nlm.nih.gov/19226510/"
+      }
+    },
+    {
+      "id": "tw-079",
+      "tier": "free",
+      "tags": [
+        "body"
+      ],
+      "text": {
+        "en": "About how many times does a human heart beat in one day?",
+        "fr": "Combien de fois un cœur humain bat-il en une journée, environ ?",
+        "ar": "تقريبًا كم مرّة بيدق قلب الإنسان بيوم واحد؟",
+        "es": "¿Cuántas veces late un corazón humano en un día, aproximadamente?"
+      },
+      "unit": {
+        "en": "beats",
+        "fr": "battements",
+        "ar": "دقة",
+        "es": "latidos"
+      },
+      "answer": 100000,
+      "source": "American Heart Association",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.heart.org/en/health-topics/consumer-healthcare/what-is-cardiovascular-disease/anatomy-of-the-heart-and-blood-vessels"
+      }
+    },
+    {
+      "id": "tw-080",
+      "tier": "free",
+      "tags": [
+        "body"
+      ],
+      "text": {
+        "en": "About how many litres of blood are in an adult's body?",
+        "fr": "Combien de litres de sang y a-t-il dans le corps d'un adulte, environ ?",
+        "ar": "تقريبًا كم ليتر دم في بجسم الإنسان البالغ؟",
+        "es": "¿Cuántos litros de sangre hay en el cuerpo de un adulto, aproximadamente?"
+      },
+      "unit": {
+        "en": "litres",
+        "fr": "litres",
+        "ar": "ليتر",
+        "es": "litros"
+      },
+      "answer": 5,
+      "source": "NHS Blood and Transplant",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.blood.co.uk/news-and-campaigns/the-donor/latest-stories/how-much-blood-is-in-the-human-body/"
+      }
+    },
+    {
+      "id": "tw-081",
+      "tier": "free",
+      "tags": [
+        "body"
+      ],
+      "text": {
+        "en": "Up to what percentage of an adult human body is water?",
+        "fr": "Jusqu'à quel pourcentage le corps humain adulte est-il composé d'eau ?",
+        "ar": "لحدّ قدّيش بالمية من جسم الإنسان البالغ هو مي؟",
+        "es": "¿Hasta qué porcentaje del cuerpo humano adulto es agua?"
+      },
+      "unit": {
+        "en": "%",
+        "fr": "%",
+        "ar": "%",
+        "es": "%"
+      },
+      "answer": 60,
+      "source": "USGS",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.usgs.gov/special-topics/water-science-school/science/water-you-water-and-human-body"
+      }
+    },
+    {
+      "id": "tw-082",
+      "tier": "free",
+      "tags": [
+        "body"
+      ],
+      "text": {
+        "en": "If you unrolled the DNA from one human cell, how long would it be, in metres?",
+        "fr": "Si on déroulait l'ADN d'une seule cellule humaine, quelle longueur ferait-il, en mètres ?",
+        "ar": "إذا فلّشنا الـDNA تبع خلية وحدة من جسم الإنسان، قدّيش بيطلع طوله بالمتر؟",
+        "es": "Si desenrollaras el ADN de una sola célula humana, ¿cuánto mediría, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 2,
+      "source": "NIH (NHGRI)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.genome.gov/about-genomics/fact-sheets/Deoxyribonucleic-Acid-Fact-Sheet"
+      }
+    },
+    {
+      "id": "tw-083",
+      "tier": "free",
+      "tags": [
+        "body"
+      ],
+      "text": {
+        "en": "About how many hairs are on an average human head?",
+        "fr": "Combien de cheveux y a-t-il sur une tête humaine moyenne, environ ?",
+        "ar": "تقريبًا كم شعرة في براس الإنسان بالمتوسط؟",
+        "es": "¿Cuántos pelos hay en una cabeza humana media, aproximadamente?"
+      },
+      "unit": {
+        "en": "hairs",
+        "fr": "cheveux",
+        "ar": "شعرة",
+        "es": "pelos"
+      },
+      "answer": 100000,
+      "source": "American Academy of Dermatology",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.aad.org/public/diseases/hair-loss/insider/shedding"
+      }
+    },
+    {
+      "id": "tw-084",
+      "tier": "free",
+      "tags": [
+        "nature"
+      ],
+      "text": {
+        "en": "How many hearts does an octopus have?",
+        "fr": "Combien de cœurs a une pieuvre ?",
+        "ar": "كم قلب عند الأخطبوط؟",
+        "es": "¿Cuántos corazones tiene un pulpo?"
+      },
+      "unit": {
+        "en": "hearts",
+        "fr": "cœurs",
+        "ar": "قلب",
+        "es": "corazones"
+      },
+      "answer": 3,
+      "source": "Smithsonian Ocean",
+      "review": {
+        "status": "draft",
+        "ref": "https://ocean.si.edu/ocean-life/invertebrates/octopus"
+      }
+    },
+    {
+      "id": "tw-085",
+      "tier": "free",
+      "tags": [
+        "nature"
+      ],
+      "text": {
+        "en": "How many vertebrae are in a giraffe's neck?",
+        "fr": "Combien de vertèbres compte le cou d'une girafe ?",
+        "ar": "كم فقرة في برقبة الزرافة؟",
+        "es": "¿Cuántas vértebras tiene el cuello de una jirafa?"
+      },
+      "unit": {
+        "en": "vertebrae",
+        "fr": "vertèbres",
+        "ar": "فقرة",
+        "es": "vértebras"
+      },
+      "answer": 7,
+      "source": "Smithsonian National Zoo",
+      "review": {
+        "status": "draft",
+        "ref": "https://nationalzoo.si.edu/animals/giraffe"
+      }
+    },
+    {
+      "id": "tw-086",
+      "tier": "free",
+      "tags": [
+        "nature"
+      ],
+      "text": {
+        "en": "How many months does an elephant pregnancy last?",
+        "fr": "Combien de mois dure la gestation d'un éléphant ?",
+        "ar": "كم شهر بيطوّل حمل الفيلة؟",
+        "es": "¿Cuántos meses dura la gestación de un elefante?"
+      },
+      "unit": {
+        "en": "months",
+        "fr": "mois",
+        "ar": "شهر",
+        "es": "meses"
+      },
+      "answer": 22,
+      "source": "Smithsonian National Zoo",
+      "review": {
+        "status": "draft",
+        "ref": "https://nationalzoo.si.edu/animals/asian-elephant"
+      }
+    },
+    {
+      "id": "tw-087",
+      "tier": "free",
+      "tags": [
+        "nature",
+        "food"
+      ],
+      "text": {
+        "en": "How much did the heaviest pumpkin ever weigh (2023 record), in kg?",
+        "fr": "Combien pesait la citrouille la plus lourde jamais pesée (record de 2023), en kg ?",
+        "ar": "قدّيش كان وزن أتقل يقطينة بالتاريخ (رقم قياسي 2023)، بالكيلو؟",
+        "es": "¿Cuánto pesaba la calabaza más pesada de la historia (récord de 2023), en kg?"
+      },
+      "unit": {
+        "en": "kg",
+        "fr": "kg",
+        "ar": "كلغ",
+        "es": "kg"
+      },
+      "answer": 1247,
+      "source": "Guinness World Records (2023)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/heaviest-pumpkin"
+      }
+    },
+    {
+      "id": "tw-088",
+      "tier": "free",
+      "tags": [
+        "food"
+      ],
+      "text": {
+        "en": "How many kilocalories are in one tablespoon of olive oil?",
+        "fr": "Combien de kilocalories contient une cuillère à soupe d'huile d'olive ?",
+        "ar": "كم سعرة حرارية في بمعلقة كبيرة زيت زيتون؟",
+        "es": "¿Cuántas kilocalorías tiene una cucharada de aceite de oliva?"
+      },
+      "unit": {
+        "en": "kcal",
+        "fr": "kcal",
+        "ar": "سعرة",
+        "es": "kcal"
+      },
+      "answer": 119,
+      "source": "USDA FoodData Central",
+      "review": {
+        "status": "draft",
+        "ref": "https://fdc.nal.usda.gov/"
+      }
+    },
+    {
+      "id": "tw-089",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "How long is a marathon, in km?",
+        "fr": "Quelle est la longueur d'un marathon, en km ?",
+        "ar": "قدّيش طول سباق الماراتون، بالكلم؟",
+        "es": "¿Cuánto mide un maratón, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 42.195,
+      "source": "World Athletics",
+      "review": {
+        "status": "draft",
+        "ref": "https://worldathletics.org/disciplines/road-running/marathon"
+      }
+    },
+    {
+      "id": "tw-090",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "What is Usain Bolt's 100 m world record, in seconds?",
+        "fr": "Quel est le record du monde du 100 m d'Usain Bolt, en secondes ?",
+        "ar": "قدّيش الرقم القياسي العالمي لأوسين بولت بسباق 100 متر، بالثانية؟",
+        "es": "¿Cuál es el récord mundial de los 100 m de Usain Bolt, en segundos?"
+      },
+      "unit": {
+        "en": "s",
+        "fr": "s",
+        "ar": "ث",
+        "es": "s"
+      },
+      "answer": 9.58,
+      "source": "World Athletics",
+      "review": {
+        "status": "draft",
+        "ref": "https://worldathletics.org/records/by-discipline/sprints/100-metres/outdoor/men"
+      }
+    },
+    {
+      "id": "tw-091",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "How many goals were scored in total at the 2022 World Cup in Qatar?",
+        "fr": "Combien de buts ont été marqués au total pendant la Coupe du monde 2022 au Qatar ?",
+        "ar": "كم هدف انسجّل بالمجمل بكاس العالم 2022 بقطر؟",
+        "es": "¿Cuántos goles se marcaron en total en el Mundial 2022 de Catar?"
+      },
+      "unit": {
+        "en": "goals",
+        "fr": "buts",
+        "ar": "هدف",
+        "es": "goles"
+      },
+      "answer": 172,
+      "source": "FIFA",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.fifa.com/en/tournaments/mens/worldcup/qatar2022"
+      }
+    },
+    {
+      "id": "tw-092",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "How many spectators attended the 2022 World Cup final at Lusail Stadium?",
+        "fr": "Combien de spectateurs ont assisté à la finale de la Coupe du monde 2022 au stade de Lusail ?",
+        "ar": "كم متفرّج حضر نهائي كاس العالم 2022 بملعب لوسيل؟",
+        "es": "¿Cuántos espectadores asistieron a la final del Mundial 2022 en el estadio de Lusail?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "personnes",
+        "ar": "شخص",
+        "es": "personas"
+      },
+      "answer": 88966,
+      "source": "FIFA",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.fifa.com/en/tournaments/mens/worldcup/qatar2022"
+      }
+    },
+    {
+      "id": "tw-093",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "How many men's football World Cups had been played up to and including 2022?",
+        "fr": "Combien de Coupes du monde masculines de football avaient été disputées jusqu'en 2022 inclus ?",
+        "ar": "كم كاس عالم للرجال بكرة القدم انلعب لحدّ سنة 2022 ضمنًا؟",
+        "es": "¿Cuántos Mundiales masculinos de fútbol se habían jugado hasta 2022 incluido?"
+      },
+      "unit": {
+        "en": "editions",
+        "fr": "éditions",
+        "ar": "نسخة",
+        "es": "ediciones"
+      },
+      "answer": 22,
+      "source": "FIFA",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.fifa.com/en/tournaments/mens/worldcup"
+      }
+    },
+    {
+      "id": "tw-094",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "How many Olympic gold medals did swimmer Michael Phelps win?",
+        "fr": "Combien de médailles d'or olympiques le nageur Michael Phelps a-t-il remportées ?",
+        "ar": "كم ميدالية ذهبية أولمبية ربح السبّاح مايكل فيلبس؟",
+        "es": "¿Cuántas medallas de oro olímpicas ganó el nadador Michael Phelps?"
+      },
+      "unit": {
+        "en": "medals",
+        "fr": "médailles",
+        "ar": "ميدالية",
+        "es": "medallas"
+      },
+      "answer": 23,
+      "source": "International Olympic Committee",
+      "review": {
+        "status": "draft",
+        "ref": "https://olympics.com/en/athletes/michael-phelps-ii"
+      }
+    },
+    {
+      "id": "tw-095",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "How many Ballon d'Or awards had Lionel Messi won by the end of 2025?",
+        "fr": "Combien de Ballons d'or Lionel Messi avait-il remportés fin 2025 ?",
+        "ar": "كم كرة ذهبية كان ربح ليونيل ميسي لآخر سنة 2025؟",
+        "es": "¿Cuántos Balones de Oro había ganado Lionel Messi a finales de 2025?"
+      },
+      "unit": {
+        "en": "awards",
+        "fr": "trophées",
+        "ar": "جائزة",
+        "es": "premios"
+      },
+      "answer": 8,
+      "source": "France Football",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.francefootball.fr/ballon-d-or/"
+      }
+    },
+    {
+      "id": "tw-096",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "How high is a basketball hoop above the floor, in cm?",
+        "fr": "À quelle hauteur se trouve un panier de basket au-dessus du sol, en cm ?",
+        "ar": "قدّيش علوّ سلّة كرة السلّة عن الأرض، بالسنتيمتر؟",
+        "es": "¿A qué altura del suelo está una canasta de baloncesto, en cm?"
+      },
+      "unit": {
+        "en": "cm",
+        "fr": "cm",
+        "ar": "سم",
+        "es": "cm"
+      },
+      "answer": 305,
+      "source": "FIBA",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.fiba.basketball/documents/official-basketball-rules"
+      }
+    },
+    {
+      "id": "tw-097",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "How much does a men's Olympic shot put weigh, in kg?",
+        "fr": "Combien pèse le poids du lancer masculin olympique, en kg ?",
+        "ar": "قدّيش وزن كرة رمي الجلّة للرجال بالأولمبياد، بالكيلو؟",
+        "es": "¿Cuánto pesa la bola de lanzamiento de peso masculino olímpico, en kg?"
+      },
+      "unit": {
+        "en": "kg",
+        "fr": "kg",
+        "ar": "كلغ",
+        "es": "kg"
+      },
+      "answer": 7.26,
+      "source": "World Athletics",
+      "review": {
+        "status": "draft",
+        "ref": "https://worldathletics.org/about-iaaf/documents/book-of-rules"
+      }
+    },
+    {
+      "id": "tw-098",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "How many litres of water fill an Olympic pool at its minimum depth of 2 metres?",
+        "fr": "Combien de litres d'eau remplissent une piscine olympique à sa profondeur minimale de 2 mètres ?",
+        "ar": "كم ليتر مي بتعبّي مسبح أولمبي بأقل عمق إلو، يعني مترين؟",
+        "es": "¿Cuántos litros de agua llenan una piscina olímpica a su profundidad mínima de 2 metros?"
+      },
+      "unit": {
+        "en": "litres",
+        "fr": "litres",
+        "ar": "ليتر",
+        "es": "litros"
+      },
+      "answer": 2500000,
+      "source": "World Aquatics (minimum Olympic pool, 50 × 25 × 2 m)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.worldaquatics.com/rules/competition-regulations"
+      }
+    },
+    {
+      "id": "tw-099",
+      "tier": "free",
+      "tags": [
+        "nature"
+      ],
+      "text": {
+        "en": "How fast does sound travel in air at 20 °C, in metres per second?",
+        "fr": "À quelle vitesse le son se propage-t-il dans l'air à 20 °C, en mètres par seconde ?",
+        "ar": "قدّيش سرعة الصوت بالهوا على حرارة 20 درجة، بالمتر بالثانية؟",
+        "es": "¿A qué velocidad viaja el sonido en el aire a 20 °C, en metros por segundo?"
+      },
+      "unit": {
+        "en": "m/s",
+        "fr": "m/s",
+        "ar": "م/ث",
+        "es": "m/s"
+      },
+      "answer": 343,
+      "source": "NIST",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/science/sound-physics/The-speed-of-sound"
+      }
+    },
+    {
+      "id": "tw-100",
+      "tier": "free",
+      "tags": [
+        "nature"
+      ],
+      "text": {
+        "en": "At what temperature does water boil at sea level, in degrees Fahrenheit?",
+        "fr": "À quelle température l'eau bout-elle au niveau de la mer, en degrés Fahrenheit ?",
+        "ar": "على أي حرارة بتغلي المي عند سطح البحر، بالفهرنهايت؟",
+        "es": "¿A qué temperatura hierve el agua al nivel del mar, en grados Fahrenheit?"
+      },
+      "unit": {
+        "en": "°F",
+        "fr": "°F",
+        "ar": "°F",
+        "es": "°F"
+      },
+      "answer": 212,
+      "source": "NIST",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.nist.gov/pml/owm/si-units-temperature"
+      }
+    },
+    {
+      "id": "tw-101",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How far is Paris from Madrid as the crow flies, in km?",
+        "fr": "Quelle distance sépare Paris de Madrid à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين باريس ومدريد بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre París y Madrid en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 1050,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Paris 48.8566,2.3522 – Madrid 40.4168,-3.7038 = 1053 km"
+      }
+    },
+    {
+      "id": "tw-102",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How far is London from Paris as the crow flies, in km?",
+        "fr": "Quelle distance sépare Londres de Paris à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين لندن وباريس بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre Londres y París en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 340,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine London 51.5072,-0.1276 – Paris = 344 km"
+      }
+    }
+  ]
+}

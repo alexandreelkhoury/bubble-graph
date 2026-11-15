@@ -73,7 +73,7 @@ describe("storage: two keys (§2.3, §2.6)", () => {
     h.core = h.makeCore();
     await h.core.start();
     const s = h.room.gameSettings;
-    expect(Object.keys(s)).toEqual(["mishana", "bluff", "likely", "trivia"]);
+    expect(Object.keys(s)).toEqual(["mishana", "bluff", "likely", "trivia", "taqriban"]);
     expect(s.mishana.clueSeconds).toBe(GAME_META.mishana.settings.defaults.clueSeconds);
     expect(s.mishana.voteSeconds).toBe(GAME_META.mishana.settings.defaults.voteSeconds);
     expect("legacy" in s.mishana).toBe(false);

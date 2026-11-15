@@ -54,6 +54,10 @@ const GAME_LOADERS: Record<GameId, Record<Locale, Loader>> = {
     en: () => import("@jamaa/shared/i18n/games/trivia/en.json"), fr: () => import("@jamaa/shared/i18n/games/trivia/fr.json"),
     ar: () => import("@jamaa/shared/i18n/games/trivia/ar.json"), es: () => import("@jamaa/shared/i18n/games/trivia/es.json"),
   },
+  taqriban: {
+    en: () => import("@jamaa/shared/i18n/games/taqriban/en.json"), fr: () => import("@jamaa/shared/i18n/games/taqriban/fr.json"),
+    ar: () => import("@jamaa/shared/i18n/games/taqriban/ar.json"), es: () => import("@jamaa/shared/i18n/games/taqriban/es.json"),
+  },
 };
 const rootLoaded = new Set<Locale>();
 const gameLoaded = new Set<string>();

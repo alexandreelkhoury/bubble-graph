@@ -23,7 +23,7 @@ export const WEB_DIR = "web-client/public/sounds";
 export const RAW_DIR = "tv-app/app/src/main/res/raw";
 export const OUT_DIRS = [WEB_DIR, RAW_DIR] as const;
 export const KT_GAMES_DIR = "tv-app/app/src/main/java/app/jamaa/tv/games";
-export const GAME_IDS = ["mishana", "bluff", "likely", "trivia"] as const;
+export const GAME_IDS = ["mishana", "bluff", "likely", "trivia", "taqriban"] as const;
 export type GameId = (typeof GAME_IDS)[number];
 
 const TOOL_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "..");

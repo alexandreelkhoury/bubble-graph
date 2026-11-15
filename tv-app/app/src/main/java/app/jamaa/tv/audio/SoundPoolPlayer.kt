@@ -104,6 +104,7 @@ class SoundPoolPlayer(context: Context) : SoundSink {
             Cue.WORLD_BLUFF_STING -> R.raw.world_bluff_sting
             Cue.WORLD_LIKELY_STING -> R.raw.world_likely_sting
             Cue.WORLD_TRIVIA_STING -> R.raw.world_trivia_sting
+            Cue.WORLD_TAQRIBAN_STING -> R.raw.world_taqriban_sting
             Cue.COIN_FLY -> R.raw.coin_fly
             Cue.COIN_LAND -> R.raw.coin_land
             Cue.COUNTER_TICK -> R.raw.counter_tick

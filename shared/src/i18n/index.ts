@@ -17,6 +17,10 @@ import mishanaAr from "../../i18n/games/mishana/ar.json";
 import mishanaEn from "../../i18n/games/mishana/en.json";
 import mishanaEs from "../../i18n/games/mishana/es.json";
 import mishanaFr from "../../i18n/games/mishana/fr.json";
+import taqribanAr from "../../i18n/games/taqriban/ar.json";
+import taqribanEn from "../../i18n/games/taqriban/en.json";
+import taqribanEs from "../../i18n/games/taqriban/es.json";
+import taqribanFr from "../../i18n/games/taqriban/fr.json";
 import triviaAr from "../../i18n/games/trivia/ar.json";
 import triviaEn from "../../i18n/games/trivia/en.json";
 import triviaEs from "../../i18n/games/trivia/es.json";
@@ -24,18 +28,18 @@ import triviaFr from "../../i18n/games/trivia/fr.json";
 import type { ErrorCode } from "../protocol/errors";
 import { errorMessageKey } from "../protocol/errors";
 
-type EnMerged = typeof en & typeof mishanaEn & typeof bluffEn & typeof likelyEn & typeof triviaEn;
+type EnMerged = typeof en & typeof mishanaEn & typeof bluffEn & typeof likelyEn & typeof triviaEn & typeof taqribanEn;
 export type MessageKey = keyof EnMerged;
 export type MessageValue = string | Partial<Record<"zero" | "one" | "two" | "few" | "many" | "other", string>>;
 export type Messages = Record<MessageKey, MessageValue>;
 type Table = Record<string, MessageValue>;
 
 /** The per-game files of each locale, in GAME_IDS order. */
-export const GAME_MESSAGES: Record<"en" | "fr" | "ar" | "es", Record<"mishana" | "bluff" | "likely" | "trivia", Table>> = {
-  en: { mishana: mishanaEn, bluff: bluffEn, likely: likelyEn, trivia: triviaEn },
-  fr: { mishana: mishanaFr, bluff: bluffFr, likely: likelyFr, trivia: triviaFr },
-  ar: { mishana: mishanaAr, bluff: bluffAr, likely: likelyAr, trivia: triviaAr },
-  es: { mishana: mishanaEs, bluff: bluffEs, likely: likelyEs, trivia: triviaEs },
+export const GAME_MESSAGES: Record<"en" | "fr" | "ar" | "es", Record<"mishana" | "bluff" | "likely" | "trivia" | "taqriban", Table>> = {
+  en: { mishana: mishanaEn, bluff: bluffEn, likely: likelyEn, trivia: triviaEn, taqriban: taqribanEn },
+  fr: { mishana: mishanaFr, bluff: bluffFr, likely: likelyFr, trivia: triviaFr, taqriban: taqribanFr },
+  ar: { mishana: mishanaAr, bluff: bluffAr, likely: likelyAr, trivia: triviaAr, taqriban: taqribanAr },
+  es: { mishana: mishanaEs, bluff: bluffEs, likely: likelyEs, trivia: triviaEs, taqriban: taqribanEs },
 };
 export const ROOT_MESSAGES: Record<"en" | "fr" | "ar" | "es", Table> = { en, fr, ar, es };
 

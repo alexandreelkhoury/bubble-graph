@@ -3,6 +3,7 @@ package app.jamaa.tv.games
 import app.jamaa.tv.games.bluff.BluffTv
 import app.jamaa.tv.games.likely.LikelyTv
 import app.jamaa.tv.games.mishana.MishanaTv
+import app.jamaa.tv.games.taqriban.TaqribanTv
 import app.jamaa.tv.games.trivia.TriviaTv
 import app.jamaa.tv.protocol.GameEnvelope
 import app.jamaa.tv.protocol.RoomPublic
@@ -35,7 +36,7 @@ interface TvGameModule {
 
 /** gameId → decoder (P creates the four entries; each G lane replaces only its own module object). */
 object GameDecoders {
-    val modules: Map<String, TvGameModule> = listOf(MishanaTv, BluffTv, LikelyTv, TriviaTv).associateBy { it.meta.id }
+    val modules: Map<String, TvGameModule> = listOf(MishanaTv, BluffTv, LikelyTv, TriviaTv, TaqribanTv).associateBy { it.meta.id }
 
     /** §2.5 capability negotiation: the games and per-game view versions this build renders, in registry order. */
     fun supported(): List<TvGame> = supportedOf(modules)

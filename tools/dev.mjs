@@ -16,7 +16,7 @@ const PNPM = isWin ? "pnpm.cmd" : "pnpm";
 // JAMAA-PLATFORM §2.5: local dev offers every game; the Worker intersects GAMES_ENABLED with the registry's `enabled`,
 // so a game still stubbed (enabled: false) stays hidden. Override with e.g. `GAMES_ENABLED=mishana,trivia pnpm dev`.
 // Production keeps server/wrangler.jsonc's value ("mishana") until the owner adds a game there (docs/DEV.md).
-export const DEV_GAMES_ENABLED = "mishana,bluff,likely,trivia";
+export const DEV_GAMES_ENABLED = "mishana,bluff,likely,trivia,taqriban";
 
 /** `LAN_HOST` from /.env (a plain KEY=VALUE file; comments and quotes allowed). */
 function lanHostFromEnvFile() {

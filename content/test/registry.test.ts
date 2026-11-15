@@ -4,7 +4,7 @@ import vocab from "../vocab.json";
 
 describe("content registry (JAMAA-PLATFORM §5.1)", () => {
   it("has one array per game, in GAME_IDS order, with the Mish Ana! packs under mishana", () => {
-    expect(Object.keys(CONTENT)).toEqual(["mishana", "bluff", "likely", "trivia"]);
+    expect(Object.keys(CONTENT)).toEqual(["mishana", "bluff", "likely", "trivia", "taqriban"]);
     expect(CONTENT.mishana.length).toBe(23);
     expect(PACKS).toBe(CONTENT.mishana);
     for (const p of CONTENT.mishana) expect((p as { id?: unknown }).id).toBeTypeOf("string");

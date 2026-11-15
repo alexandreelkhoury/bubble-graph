@@ -6,6 +6,7 @@ import app.jamaa.tv.i18n.games.mishana.I18nKeysMishana
 import app.jamaa.tv.i18n.games.bluff.I18nKeysBluff
 import app.jamaa.tv.i18n.games.likely.I18nKeysLikely
 import app.jamaa.tv.i18n.games.trivia.I18nKeysTrivia
+import app.jamaa.tv.i18n.games.taqriban.I18nKeysTaqriban
 
 object I18nKeys {
     val platformStrings: Map<String, Int> = mapOf(
@@ -421,6 +422,6 @@ object I18nKeys {
         "pass.legalTrialRenew" to R.plurals.pass__legal_trial_renew,
     )
     /** Platform + every game's keys (JAMAA-PLATFORM §5.7). */
-    val strings: Map<String, Int> by lazy { platformStrings + I18nKeysMishana.strings + I18nKeysBluff.strings + I18nKeysLikely.strings + I18nKeysTrivia.strings }
-    val plurals: Map<String, Int> by lazy { platformPlurals + I18nKeysMishana.plurals + I18nKeysBluff.plurals + I18nKeysLikely.plurals + I18nKeysTrivia.plurals }
+    val strings: Map<String, Int> by lazy { platformStrings + I18nKeysMishana.strings + I18nKeysBluff.strings + I18nKeysLikely.strings + I18nKeysTrivia.strings + I18nKeysTaqriban.strings }
+    val plurals: Map<String, Int> by lazy { platformPlurals + I18nKeysMishana.plurals + I18nKeysBluff.plurals + I18nKeysLikely.plurals + I18nKeysTrivia.plurals + I18nKeysTaqriban.plurals }
 }

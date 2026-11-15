@@ -24,6 +24,7 @@ const CAST: Record<GameId, readonly [ColorId, Expression][]> = {
   bluff: [["jade", "think"], ["tangerine", "smug"], ["lilac", "think"]],
   likely: [["aqua", "point"], ["rose", "shy"], ["sand", "point"]],
   trivia: [["grape", "idle"], ["coral", "cheer"], ["mint", "idle"]],
+  taqriban: [["sand", "think"], ["lemon", "shock"], ["azure", "think"]],
 };
 const wc = (id: GameId, tok: "deep" | "stageTop" | "accent" | "glow" | "surface"): number => hex(worldColor(WORLD_OF[id] as WorldId, tok, "web") ?? "#222244");
 const vgrad = (a: number, b: number): FillGradient => new FillGradient({

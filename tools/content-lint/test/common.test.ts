@@ -65,7 +65,7 @@ describe("common checks (JAMAA-PLATFORM §5.5)", () => {
   });
 
   it("has a lint module for every game", () => {
-    expect(Object.keys(GAME_LINTS).sort()).toEqual(["bluff", "likely", "mishana", "trivia"]);
+    expect(Object.keys(GAME_LINTS).sort()).toEqual(["bluff", "likely", "mishana", "taqriban", "trivia"]);
   });
 
   it("the repo content passes, and every Mish Ana! pack carries game and only vocabulary topics", { timeout: REPO_TIMEOUT }, () => {

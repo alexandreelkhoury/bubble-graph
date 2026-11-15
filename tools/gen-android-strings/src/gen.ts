@@ -8,7 +8,7 @@ export type MessageSet = Record<Locale, MessageFile>;
 
 export const LOCALES: readonly Locale[] = ["en", "fr", "ar", "es"];
 /** JAMAA-PLATFORM §5.7 / §6.1: P creates one i18n folder per game (stubs included), so this list is fixed in P. */
-export const GAME_IDS = ["mishana", "bluff", "likely", "trivia"] as const;
+export const GAME_IDS = ["mishana", "bluff", "likely", "trivia", "taqriban"] as const;
 export type GameId = (typeof GAME_IDS)[number];
 /** Root (platform) files plus one message set per game (`shared/i18n/games/<id>/<locale>.json`). */
 export interface I18nTree { root: MessageSet; games: Record<GameId, MessageSet> }

@@ -44,7 +44,7 @@ class ClientEncodingTest {
         assertEncodes("c2s.hello.tv.mishana-only.json", HelloTv(tvToken = token, games = GameDecoders.supportedOf(mishanaOnly)))
         assertEncodes(
             "c2s.hello.tv.json",
-            HelloTv(tvToken = token, games = listOf(TvGame("mishana", 1), TvGame("bluff", 1), TvGame("likely", 1), TvGame("trivia", 1))),
+            HelloTv(tvToken = token, games = listOf(TvGame("mishana", 1), TvGame("bluff", 1), TvGame("likely", 1), TvGame("trivia", 1), TvGame("taqriban", 1))),
         )
     }
 

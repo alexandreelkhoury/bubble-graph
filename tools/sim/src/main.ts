@@ -1,4 +1,4 @@
-// pnpm sim [--game mishana|bluff|likely|trivia|all] [--players 1..12|N] [--games N=200] [--seed N=1]
+// pnpm sim [--game mishana|bluff|likely|trivia|taqriban|all] [--players 1..12|N] [--games N=200] [--seed N=1]
 //          [--win-rule official|parity] [--tie-break random|none] [--access premium|free] [--session] [--ws URL] [--verbose]
 // JAMAA-PLATFORM §2.9. Without --session/--ws: seeded bot games of each selected game straight through its engine.
 import { GAME_IDS } from "@jamaa/shared/games/ids";
@@ -11,6 +11,7 @@ import { reportFailures } from "./format";
 import { formatSessionTable, runSessionMode } from "./session-mode";
 import { bluffSimCatalog, formatBluffTable, runBluffEngineMode } from "./games/bluff";
 import { formatLikelyTable, likelySimCatalog, runLikelyEngineMode } from "./games/likely";
+import { formatTaqribanTable, runTaqribanEngineMode, taqribanSimCatalog } from "./games/taqriban";
 import { formatTriviaTable, runTriviaEngineMode, triviaSimCatalog } from "./games/trivia";
 import { formatWsTable, runWsMode } from "./ws-mode";
 
@@ -104,6 +105,22 @@ async function main(): Promise<number> {
       const rows = runLikelyEngineMode({ ...args, players }, catalog);
       console.log(`engine mode · ${id} · ${source} · access ${args.access} · seed ${args.seed} · ${((Date.now() - t0) / 1000).toFixed(1)} s`);
       console.log(formatLikelyTable(rows));
+      if (reportFailures(rows)) failed = true;
+      continue;
+    }
+    if (id === "taqriban") {
+      // GAME-TAQRIBAN §13.3: Taqriban's engine-mode bot (tools/sim/src/games/taqriban.ts), 2..12 players.
+      const players = playersFor(args.players, def.meta.minPlayers, def.meta.maxPlayers);
+      if (players.length === 0) {
+        console.error(`${id}: no player count in ${args.players.join(",")} within ${def.meta.minPlayers}..${def.meta.maxPlayers}`);
+        failed = true;
+        continue;
+      }
+      const { catalog, source } = taqribanSimCatalog(args.access);
+      const t0 = Date.now();
+      const rows = runTaqribanEngineMode({ ...args, players }, catalog);
+      console.log(`engine mode · ${id} · ${source} · access ${args.access} · seed ${args.seed} · ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+      console.log(formatTaqribanTable(rows));
       if (reportFailures(rows)) failed = true;
       continue;
     }

@@ -10,7 +10,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 /** = shared/src/games/ids.ts GAME_IDS (server/test/scripts/check-deploy.test.ts checks they agree). */
-export const GAME_IDS = ["mishana", "bluff", "likely", "trivia"];
+export const GAME_IDS = ["mishana", "bluff", "likely", "trivia", "taqriban"];
 
 /** Strips // and block comments and trailing commas from JSONC, leaving string contents untouched. */
 export function stripJsonc(text) {

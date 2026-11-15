@@ -11,7 +11,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const GAME_IDS = ["mishana", "bluff", "likely", "trivia"]; // = shared/src/games/ids.ts (checked by the test)
+export const GAME_IDS = ["mishana", "bluff", "likely", "trivia", "taqriban"]; // = shared/src/games/ids.ts (checked by the test)
 export const PASS_PRODUCT_ID = "jamaa_pass";
 const PRODUCT_ID_REGEX = /^[a-z0-9][a-z0-9_.]{0,39}$/;
 const LANG = { en: "en", fr: "fr", ar: "ar", "ar-LB": "ar", es: "es" };

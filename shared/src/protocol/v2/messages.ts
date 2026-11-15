@@ -1,6 +1,7 @@
 // JAMAA-PLATFORM §2.5: protocol v2 frames. The envelope is v1's with `v: 2`; `hello` (TV) gains `games`; the room
 // intents replace Mish Ana!'s top-level intents, whose in-game ones now travel inside `GAME {gameId, i}`.
 import * as z from "zod";
+import { GAME_IDS } from "../../games/ids";
 import { ENTITLEMENT_TOKEN_MAX_CHARS, LOCALES, NAME_MAX_CODEPOINTS, PROTOCOL_VERSION_V2 } from "../../constants";
 import { GameIdSchema, GameMsgIntentSchema, UpdateGameSettingsIntentSchema } from "../../games/protocol";
 import { ColorIdSchema, ErrorCodeSchema, LocaleSchema, MemoryWireSchema, PlayerId, Token } from "../common";
@@ -29,11 +30,11 @@ export const RoomIntentSchema = z.discriminatedUnion("type", [
   z.strictObject({ type: z.literal("LEAVE") }),
 ]);
 
-/** §2.5 capability negotiation: the games (1–4, unique ids) and per-game VIEW_VERSIONs this TV build renders. */
+/** §2.5 capability negotiation: the games (1–GAME_IDS.length, unique ids) and per-game VIEW_VERSIONs this TV build renders. */
 export const TvGamesSchema = z
   .array(z.strictObject({ id: GameIdSchema, v: z.number().int().min(1) }))
   .min(1)
-  .max(4)
+  .max(GAME_IDS.length)
   .refine((gs) => new Set(gs.map((g) => g.id)).size === gs.length, { message: "duplicate game id" });
 
 export const HelloTvV2Schema = z.strictObject({ v: V, t: z.literal("hello"), role: z.literal("tv"), tvToken: Token, games: TvGamesSchema });

@@ -19,6 +19,7 @@ const LOADERS: Record<GameId, () => Promise<AnyMeta>> = {
   bluff: () => import("@jamaa/shared/games/bluff/meta").then((m) => m.BLUFF_META as unknown as AnyMeta),
   likely: () => import("@jamaa/shared/games/likely/meta").then((m) => m.LIKELY_META as unknown as AnyMeta),
   trivia: () => import("@jamaa/shared/games/trivia/meta").then((m) => m.TRIVIA_META as unknown as AnyMeta),
+  taqriban: () => import("@jamaa/shared/games/taqriban/meta").then((m) => m.TAQRIBAN_META as unknown as AnyMeta),
 };
 const pending = new Map<GameId, Promise<AnyMeta>>();
 
@@ -40,4 +41,4 @@ export function metaOf(id: GameId): AnyMeta | undefined {
 }
 
 /** §3.4: each game's world (a fixed table; a unit test checks it against GAME_META). */
-export const WORLD_OF: Record<GameId, string> = { mishana: "night-market", bluff: "hakawati-cafe", likely: "rooftop", trivia: "quiz-studio" };
+export const WORLD_OF: Record<GameId, string> = { mishana: "night-market", bluff: "hakawati-cafe", likely: "rooftop", trivia: "quiz-studio", taqriban: "observatory" };
