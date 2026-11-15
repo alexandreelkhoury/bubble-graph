@@ -96,7 +96,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://www.etymonline.com/word/Bible ; https://en.wikipedia.org/wiki/Byblos"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.historyofinformation.com/detail.php?id=1292"
       }
     },
     {
@@ -172,7 +172,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Phoenician_alphabet"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.worldhistory.org/Greek_Alphabet/"
       }
     },
     {
@@ -244,14 +244,14 @@
         ]
       },
       "note": {
-        "en": "Thousands of murex snails gave just a few grams of dye, worth more than gold",
-        "fr": "Des milliers de murex pour quelques grammes de teinture",
-        "ar": "آلاف الصدفات لكم غرام صبغة، أغلى من الدهب",
-        "es": "Miles de múrex para unos gramos de tinte"
+        "en": "Around 10,000 murex snails were needed for a single gram of dye",
+        "fr": "Il fallait environ 10 000 murex pour un seul gramme de teinture",
+        "ar": "لازم حوالي 10 آلاف صدفة موريكس لغرام صبغة واحد",
+        "es": "Hacían falta unos 10 000 múrex para un solo gramo de tinte"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Tyrian_purple"
+        "source": "[VERIFY] fact-checked 2026-11, https://phys.org/news/2020-07-passion-purple-revives-ancient-dye.pdf"
       }
     },
     {
@@ -326,7 +326,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Stone_of_the_Pregnant_Woman"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Baalbek_Stones"
       }
     },
     {
@@ -403,7 +403,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Jeita_Grotto"
+        "source": "[VERIFY] fact-checked 2026-11, https://showcaves.com/english/lb/showcaves/Jeita.html"
       }
     },
     {
@@ -469,7 +469,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/The_Prophet_(book)"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.history.com/this-day-in-history/the-prophet-kahlil-gibran-published"
       }
     },
     {
@@ -479,12 +479,12 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "In 2010, Lebanon set a world record with one plate of hummus weighing over ___",
+        "original": "In 2010, Lebanon set a world record with one plate of hummus weighing about ___",
         "translit": null,
         "display": {
-          "fr": "En 2010, le Liban a battu un record du monde avec une assiette de houmous de plus de ___",
-          "ar": "سنة 2010، لبنان كسر رقم قياسي بصحن حمص وزنو أكتر من ___",
-          "es": "En 2010, el Líbano batió un récord mundial con un plato de hummus de más de ___"
+          "fr": "En 2010, le Liban a battu un record du monde avec une assiette de houmous pesant environ ___",
+          "ar": "سنة 2010، لبنان كسر رقم قياسي بصحن حمص وزنو حوالي ___",
+          "es": "En 2010, el Líbano batió un récord mundial con un plato de hummus de unas ___"
         }
       },
       "truth": {
@@ -537,10 +537,10 @@
         ]
       },
       "note": {
-        "en": "Over 10,450 kg, made by hundreds of chefs",
-        "fr": "Plus de 10 450 kg, préparés par des centaines de chefs",
-        "ar": "أكتر من 10450 كيلو، عملوه مئات الطباخين",
-        "es": "Más de 10 450 kg, preparado por cientos de cocineros"
+        "en": "10,452 kg according to Guinness, made by about 300 student chefs",
+        "fr": "10 452 kg selon Guinness, préparés par environ 300 étudiants cuisiniers",
+        "ar": "10452 كيلو حسب غينيس، عملوها حوالي 300 طالب طبخ",
+        "es": "10 452 kg según Guinness, preparados por unos 300 estudiantes de cocina"
       },
       "review": {
         "status": "draft",
@@ -618,9 +618,9 @@
         ]
       },
       "note": {
-        "en": "The flower's name comes from the Turkish word for turban, via French",
+        "en": "The flower's name is thought to come from the Turkish word for turban, via French",
         "fr": "Leur nom viendrait du mot turc pour turban",
-        "ar": "اسمها جاي من كلمة تركية معناها عمامة",
+        "ar": "اسمها غالبًا جاي من كلمة تركية معناها عمامة",
         "es": "Su nombre vendría de la palabra turca para turbante"
       },
       "review": {
@@ -699,7 +699,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Mocha,_Yemen"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.smithsonianmag.com/smart-news/your-mocha-named-after-birthplace-coffee-trade-180965016/"
       }
     },
     {
@@ -781,7 +781,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Algebra"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.etymonline.com/de/word/algebra"
       }
     },
     {
@@ -849,7 +849,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Muhammad_ibn_Musa_al-Khwarizmi"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.britannica.com/biography/al-Khwarizmi"
       }
     },
     {
@@ -859,12 +859,12 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "The shore of the Dead Sea lies more than ___ below sea level",
+        "original": "The shore of the Dead Sea lies about ___ below sea level",
         "translit": null,
         "display": {
-          "fr": "Le rivage de la mer Morte se trouve à plus de ___ sous le niveau de la mer",
-          "ar": "شط البحر الميت أوطى من سطح البحر بأكتر من ___",
-          "es": "La orilla del mar Muerto está a más de ___ bajo el nivel del mar"
+          "fr": "Le rivage de la mer Morte se trouve à environ ___ sous le niveau de la mer",
+          "ar": "شط البحر الميت أوطى من سطح البحر بحوالي ___",
+          "es": "La orilla del mar Muerto está a unos ___ bajo el nivel del mar"
         }
       },
       "truth": {
@@ -926,7 +926,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Dead_Sea"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.britannica.com/place/Dead-Sea"
       }
     },
     {
@@ -1073,7 +1073,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Geography_of_Saudi_Arabia"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.worldatlas.com/articles/are-there-any-rivers-in-saudi-arabia.html"
       }
     },
     {
@@ -1146,7 +1146,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Camel"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.britannica.com/story/do-camels-store-water-in-their-humps"
       }
     },
     {
@@ -1289,7 +1289,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Necho_II"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.livius.org/sources/content/herodotus/herodotus-on-the-first-circumnavigation-of-africa"
       }
     },
     {
@@ -1365,7 +1365,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Dido"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/History_of_Carthage"
       }
     },
     {
@@ -1514,7 +1514,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Europa_(mythology)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Europa_(consort_of_Zeus)"
       }
     },
     {
@@ -1591,7 +1591,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Anjar,_Lebanon"
+        "source": "[VERIFY] fact-checked 2026-11, https://whc.unesco.org/document/216483"
       }
     },
     {
@@ -1668,7 +1668,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Safari"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.dictionary.com/browse/safaris"
       }
     },
     {
@@ -1748,7 +1748,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Magazine"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wiktionary.org/wiki/magasin"
       }
     },
     {
@@ -1820,14 +1820,14 @@
         ]
       },
       "note": {
-        "en": "From amir al-, as in commander of the sea",
-        "fr": "De amir al-, comme dans commandant de la mer",
-        "ar": "من أمير البحر أو أمير الـ...",
-        "es": "De amir al-, como en comandante del mar"
+        "en": "Probably from amir al-bahr, \"commander of the sea\" (the exact origin is debated)",
+        "fr": "Probablement de amir al-bahr, « commandant de la mer » (l'origine exacte est débattue)",
+        "ar": "غالبًا من أمير البحر (والأصل بالضبط فيه خلاف)",
+        "es": "Probablemente de amir al-bahr, «comandante del mar» (el origen exacto se discute)"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Admiral"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.etymonline.com/word/admiral"
       }
     },
     {
@@ -1907,7 +1907,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Mattress"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.dictionary.com/browse/mattress"
       }
     },
     {
@@ -1926,16 +1926,15 @@
         }
       },
       "truth": {
-        "en": "Sap",
+        "en": "Resin",
         "fr": "Résine",
         "ar": "صمغ",
         "es": "Resina"
       },
       "truthAlt": {
         "en": [
-          "Resin",
-          "Gum",
-          "Tree resin"
+          "Sap",
+          "Gum"
         ],
         "fr": [
           "Sève",
@@ -1981,7 +1980,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Frankincense"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.khaleejtimes.com/world/mena/oman-efforts-to-preserve-frankincense-white-gold"
       }
     },
     {
@@ -2050,7 +2049,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://iucn.org/content/a-grain-hope-desert"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Arabian_oryx"
       }
     },
     {
@@ -2194,7 +2193,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cuneiform"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.britannica.com/summary/cuneiform"
       }
     },
     {
@@ -2268,7 +2267,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Sexagesimal"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.livescience.com/44964-why-60-minutes-in-an-hour.html"
       }
     },
     {
@@ -2346,7 +2345,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cleopatra"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.worldhistory.org/Cleopatra_VII/"
       }
     },
     {
@@ -2418,7 +2417,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Sidon"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Audi_Soap_Museum"
       }
     },
     {
@@ -2490,7 +2489,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Glass#History"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.deseret.com/1999/12/1/19478200/phoenicians-credited-with-discovering-glass"
       }
     },
     {
@@ -2566,7 +2565,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Lebanon#Etymology"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wiktionary.org/wiki/Lebanon"
       }
     },
     {
@@ -2641,7 +2640,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Beirut#Etymology"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Beirut"
       }
     },
     {
@@ -2789,7 +2788,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Rub%27_al_Khali"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.britannica.com/place/Rub-al-Khali"
       }
     },
     {
@@ -2862,7 +2861,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Ski_Dubai"
+        "source": "[VERIFY] fact-checked 2026-11, https://thenationalnews.com/uae/2023/10/31/working-wonders-ski-dubais-penguin-trainer-on-why-its-her-dream-job"
       }
     },
     {
@@ -2937,7 +2936,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Coffee#History"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Kaldi"
       }
     },
     {
@@ -3094,7 +3093,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Checkmate#Etymology"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Checkmate"
       }
     },
     {
@@ -3164,14 +3163,14 @@
         ]
       },
       "note": {
-        "en": "Damascus weavers made it famous along the trade routes",
-        "fr": "Les tisserands de Damas l'ont rendu célèbre",
-        "ar": "حياكين الشام شهروه على طرق التجارة",
-        "es": "Los tejedores de Damasco la hicieron famosa"
+        "en": "The name means cloth from Damascus, a city famed for fine fabrics on the trade routes",
+        "fr": "Le nom signifie tissu de Damas, ville réputée pour ses beaux tissus sur les routes commerciales",
+        "ar": "الاسم يعني قماش من الشام، مدينة مشهورة بالأقمشة الحلوة على طرق التجارة",
+        "es": "El nombre significa tela de Damasco, ciudad famosa por sus telas finas en las rutas comerciales"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Damask"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.etymonline.com/word/Damascus"
       }
     },
     {
@@ -3339,12 +3338,12 @@
         "ar"
       ],
       "prompt": {
-        "original": "Lebanon is one of the very few countries in the Middle East with no ___",
+        "original": "Lebanon is often said to be one of the very few countries in the Middle East with no ___",
         "translit": null,
         "display": {
-          "fr": "Le Liban est l'un des très rares pays du Moyen-Orient sans ___",
-          "ar": "لبنان من البلدان القليلة بالشرق الأوسط اللي ما فيها ___",
-          "es": "El Líbano es uno de los poquísimos países de Oriente Medio sin ___"
+          "fr": "Le Liban est souvent présenté comme l'un des très rares pays du Moyen-Orient sans ___",
+          "ar": "يقولوا إن لبنان من البلدان القليلة بالشرق الأوسط اللي ما فيها ___",
+          "es": "Se suele decir que el Líbano es uno de los poquísimos países de Oriente Medio sin ___"
         }
       },
       "truth": {
@@ -3396,14 +3395,14 @@
         ]
       },
       "note": {
-        "en": "Mountains, snow and the sea, but not one desert",
-        "fr": "Des montagnes, de la neige et la mer, mais pas un seul désert",
-        "ar": "جبال وتلج وبحر، بس ولا صحرا",
-        "es": "Montañas, nieve y mar, pero ni un solo desierto"
+        "en": "Mountains, snow and the sea, but no true desert",
+        "fr": "Des montagnes, de la neige et la mer, mais pas de vrai désert",
+        "ar": "جبال وتلج وبحر، بس ما في صحرا حقيقية",
+        "es": "Montañas, nieve y mar, pero ningún desierto propiamente dicho"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Geography_of_Lebanon"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Geography_of_the_Arab_world"
       }
     },
     {
@@ -3475,7 +3474,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://www.haigazian.edu.lb/?p=228 ; https://en.wikipedia.org/wiki/Lebanese_space_program"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cedar_rocket"
       }
     },
     {
@@ -3545,7 +3544,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Rashid_Karami_International_Fair"
+        "source": "[VERIFY] fact-checked 2026-11, https://whc.unesco.org/en/news/2516"
       }
     },
     {
@@ -3613,7 +3612,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Keanu_Reeves"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.biography.com/actor/keanu-reeves"
       }
     },
     {
@@ -3681,7 +3680,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Lebanese_diaspora"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Lebanese_Brazilians"
       }
     },
     {
@@ -3752,7 +3751,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Zajal"
+        "source": "[VERIFY] fact-checked 2026-11, https://ich.unesco.org/en/RL/01000"
       }
     },
     {
@@ -3826,7 +3825,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Sahara#Etymology"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.britannica.com/question/How-did-the-Sahara-get-its-name"
       }
     },
     {
@@ -3895,7 +3894,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Camel#Adaptations"
+        "source": "[VERIFY] fact-checked 2026-11, https://animals.sandiegozoo.org/animals/camel"
       }
     },
     {
@@ -3967,7 +3966,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Minister_of_State_for_Happiness_and_Wellbeing_(United_Arab_Emirates)"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.nbcnews.com/news/world/united-arab-emirates-names-official-minister-happiness-n516141"
       }
     },
     {
@@ -4038,7 +4037,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Sophia_(robot)"
+        "source": "[VERIFY] fact-checked 2026-11, https://weforum.org/agenda/2017/10/a-robot-has-just-been-granted-citizenship-of-saudi-arabia"
       }
     },
     {
@@ -4110,7 +4109,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Emirates_Palace"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.thenationalnews.com/business/travel-and-tourism/emirates-palace-atm-worth-its-weight-in-gold-1.413371"
       }
     },
     {
@@ -4259,7 +4258,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Shibam"
+        "source": "[VERIFY] fact-checked 2026-11, https://whc.unesco.org/en/list/192"
       }
     },
     {
@@ -4327,7 +4326,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Tataouine"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Tatooine"
       }
     },
     {
@@ -4375,35 +4374,35 @@
       },
       "houseLies": {
         "en": [
-          "Bread",
+          "Salads",
           "Beer",
           "Cakes"
         ],
         "fr": [
-          "Pains",
+          "Salades",
           "Gâteaux",
           "Grillades"
         ],
         "ar": [
-          "خبز",
+          "سلطات",
           "حلويات",
           "مشاوي"
         ],
         "es": [
-          "Panes",
+          "Ensaladas",
           "Pasteles",
           "Asados"
         ]
       },
       "note": {
-        "en": "Clay tablets from about 1750 BC list some 25 dishes, kept at Yale today",
-        "fr": "Des tablettes d'argile d'environ 1750 av. J.-C. décrivent environ 25 plats",
-        "ar": "ألواح طين من حوالي 1750 قبل الميلاد فيها شي 25 طبخة",
-        "es": "Tablillas de barro de hacia 1750 a. C. recogen unos 25 platos"
+        "en": "Clay tablets from about 1750 BC list dozens of dishes, one tablet alone has 25 stews. Kept at Yale today",
+        "fr": "Des tablettes d'argile d'environ 1750 av. J.-C. décrivent des dizaines de plats, dont 25 ragoûts sur une seule. Conservées à Yale",
+        "ar": "ألواح طين من حوالي 1750 قبل الميلاد فيها عشرات الطبخات، ولوح واحد فيه 25 يخنة. محفوظة اليوم في ييل",
+        "es": "Tablillas de barro de hacia 1750 a. C. recogen decenas de platos, y una sola tiene 25 guisos. Hoy se conservan en Yale"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Yale_Babylonian_Collection#Culinary_tablets"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Yale_culinary_tablets"
       }
     },
     {
@@ -4475,7 +4474,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Elephant_clock"
+        "source": "[VERIFY] fact-checked 2026-11, https://libapps.luc.edu/digitalexhibits/s/honr212/page/morganc2"
       }
     },
     {
@@ -4619,7 +4618,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Ibn_al-Haytham"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.sciencenews.org/blog/context/islamic-science-paved-way-millennial-celebration-light"
       }
     },
     {
@@ -4691,7 +4690,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Ibn_Battuta"
+        "source": "[VERIFY] fact-checked 2026-11, https://archive.aramcoworld.com/issue/196107/ibn.battuta.traveler.from.tangier.htm"
       }
     },
     {
@@ -4762,7 +4761,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.historyrevealed.com/feature/what-overtook-the-great-pyramid-of-giza-as-the-tallest-manmade-structure/"
       }
     },
     {
@@ -4809,23 +4808,23 @@
       "houseLies": {
         "en": [
           "Invention of writing",
-          "Building of Stonehenge",
-          "The last woolly mammoths"
+          "Invention of the wheel",
+          "First Sumerian cities"
         ],
         "fr": [
           "L'invention de l'écriture",
-          "La construction de Stonehenge",
-          "Les derniers mammouths"
+          "L'invention de la roue",
+          "Les premières cités sumériennes"
         ],
         "ar": [
           "اختراع الكتابة",
-          "بناء ستونهنج",
-          "آخر الماموث"
+          "اختراع العجلة",
+          "أولى المدن السومرية"
         ],
         "es": [
           "La invención de la escritura",
-          "La construcción de Stonehenge",
-          "Los últimos mamuts"
+          "La invención de la rueda",
+          "Las primeras ciudades sumerias"
         ]
       },
       "note": {
@@ -4836,7 +4835,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cleopatra"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.worldatlas.com/articles/so-cleopatra-lived-closer-in-time-to-the-first-lunar-landing-than-the-great-pyramids.html"
       }
     },
     {
@@ -4912,7 +4911,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Pregnancy_test#History"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.smithsonianmag.com/smart-news/egyptian-papyrus-reveals-old-wives-tale-very-very-old-indeed-180970066/"
       }
     },
     {
@@ -4980,7 +4979,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cats_in_ancient_Egypt"
+        "source": "[VERIFY] fact-checked 2026-11, https://lexundria.com/hdt/2.66/mcly"
       }
     },
     {
@@ -5052,7 +5051,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Rosetta_Stone"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.history.co.uk/this-day-in-history/19-july/the-rosetta-stone-is-discovered"
       }
     },
     {
@@ -5124,7 +5123,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://horsenation.com/?p=155671 ; https://en.wikipedia.org/wiki/Arabian_horse"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Arabian_horse"
       }
     },
     {
@@ -5198,7 +5197,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Zero#Etymology"
+        "source": "[VERIFY] fact-checked 2026-11, https://mathshistory.st-andrews.ac.uk/Miller/mathword/z/"
       }
     },
     {
@@ -5269,7 +5268,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Burj_Khalifa"
+        "source": "[VERIFY] fact-checked 2026-11, https://sepwww.stanford.edu/sep/jon/sunset.pdf"
       }
     },
     {
@@ -5341,7 +5340,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Dracaena_cinnabari"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.mdpi.com/2223-7747/7/4/91"
       }
     },
     {
@@ -5481,7 +5480,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Camel_racing"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.gulf-times.com/article/717541/qatar/robot-jockeys-take-the-reins-at-qatars-camel-racing-season"
       }
     },
     {
@@ -5553,7 +5552,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Argan#Tree_climbing_goats"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.nationalgeographic.com/animals/article/moroccos-tree-climbing-goats"
       }
     },
     {
@@ -5625,7 +5624,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Tabula_Rogeriana"
+        "source": "[VERIFY] fact-checked 2026-11, https://factumfoundation.org/our-projects/digital-restorations/re-creating-the-lost-map-of-al-idrisi/al-idrisi-and-roger-ii-mapping-the-world-in-the-twelfth-century/"
       }
     },
     {

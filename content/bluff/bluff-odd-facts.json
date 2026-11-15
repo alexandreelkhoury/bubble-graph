@@ -84,14 +84,14 @@
         ]
       },
       "note": {
-        "en": "Fitting for birds that are pink and love to show off",
-        "fr": "Bien choisi pour des oiseaux roses qui adorent parader",
-        "ar": "يعني التباهي بالألوان، بيليق بطيور زهر بتحب تتمخطر",
-        "es": "Algo así como ostentación: perfecto para aves rosas y presumidas"
+        "en": "A popular name for a group of flamingos, fitting for pink birds that love to show off. Scientists just say flock",
+        "fr": "Surnom populaire d'un groupe de flamants, bien choisi pour des oiseaux roses qui adorent parader. Les experts disent une bande",
+        "ar": "اسم شعبي، بيليق بطيور زهر بتحب تتمخطر. العلما بيقولوا بس سرب",
+        "es": "Nombre popular para un grupo de flamencos, perfecto para aves rosas y presumidas. Los científicos dicen simplemente bandada"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Flamingo"
+        "source": "[VERIFY] fact-checked 2026-11, https://animals.howstuffworks.com/birds/what-is-a-group-of-flamingos-called.htm"
       }
     },
     {
@@ -131,24 +131,24 @@
       },
       "houseLies": {
         "en": [
-          "Bones",
-          "Mouth",
-          "Eyes"
+          "Arms",
+          "Stomach",
+          "Skin"
         ],
         "fr": [
-          "Squelette",
-          "Bouche",
-          "Estomac"
+          "Bras",
+          "Estomac",
+          "Peau"
         ],
         "ar": [
-          "عضام",
-          "لسان",
-          "معدة"
+          "أذرع",
+          "معدة",
+          "جلد"
         ],
         "es": [
-          "Huesos",
-          "Boca",
-          "Estómago"
+          "Brazos",
+          "Estómago",
+          "Piel"
         ]
       },
       "note": {
@@ -159,7 +159,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Starfish"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.scuba.com/blog/explore-the-blue/5-cool-facts-echinoderms/"
       }
     },
     {
@@ -203,35 +203,35 @@
       },
       "houseLies": {
         "en": [
-          "Upside down",
+          "Without flapping",
           "In their sleep",
           "Underwater"
         ],
         "fr": [
-          "La tête en bas",
+          "Sans battre des ailes",
           "En dormant",
           "Sous l'eau"
         ],
         "ar": [
-          "مقلوب",
+          "من غير ما يرفرف بجناحاتو",
           "وهو نايم",
           "تحت المي"
         ],
         "es": [
-          "Boca abajo",
+          "Sin aletear",
           "Dormidos",
           "Bajo el agua"
         ]
       },
       "note": {
-        "en": "Their wings rotate at the shoulder, so they can hover and reverse",
-        "fr": "Leurs ailes pivotent à l'épaule : ils peuvent faire du surplace et reculer",
-        "ar": "جوانحو بتلف من الكتف، فبيوقف بالهوا وبيرجع لورا",
-        "es": "Sus alas giran en el hombro: pueden quedarse quietos y retroceder"
+        "en": "Their wings rotate at the shoulder, so they can hover and reverse. A few other birds manage only a brief step backwards",
+        "fr": "Leurs ailes pivotent à l'épaule : ils peuvent faire du surplace et reculer. Quelques autres oiseaux ne reculent que brièvement",
+        "ar": "جوانحو بتلف من الكتف، فبيوقف بالهوا وبيرجع لورا. في طيور تانية بترجع لورا بس شوي",
+        "es": "Sus alas giran en el hombro: pueden quedarse quietos y retroceder. Algunas otras aves solo retroceden un instante"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://southwest.audubon.org/node/1701"
+        "source": "[VERIFY] fact-checked 2026-11, https://worldatlas.com/articles/which-is-the-only-bird-that-can-fly-backward.html"
       }
     },
     {
@@ -300,7 +300,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Owl"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.nationalgeographic.com/animals/article/how-owls-twist-heads-almost-360-degrees"
       }
     },
     {
@@ -346,33 +346,33 @@
         "en": [
           "Sneeze",
           "Fall asleep",
-          "Purr"
+          "Cry"
         ],
         "fr": [
           "Éternuent",
           "S'endorment",
-          "Ronronnent"
+          "Pleurent"
         ],
         "ar": [
           "بيعطسوا",
           "بيناموا",
-          "بيخرخروا"
+          "بيبكوا"
         ],
         "es": [
           "Estornudan",
           "Se duermen",
-          "Ronronean"
+          "Lloran"
         ]
       },
       "note": {
-        "en": "Their chirps are too high for us to hear without special equipment",
-        "fr": "Leurs petits cris sont trop aigus pour nos oreilles",
-        "ar": "صوتن عالي كتير ما منسمعو بلا أجهزة",
-        "es": "Sus chillidos son demasiado agudos para nuestro oído"
+        "en": "Their chirps are too high for us to hear without special equipment. Researchers think it is a kind of play laughter",
+        "fr": "Leurs petits cris sont trop aigus pour nos oreilles. Les chercheurs y voient une sorte de rire de jeu",
+        "ar": "صوتن عالي كتير ما منسمعو بلا أجهزة. العلما بيعتبروه نوع من ضحك اللعب",
+        "es": "Sus chillidos son demasiado agudos para nuestro oído. Los investigadores creen que es una especie de risa de juego"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Rat"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.scientificamerican.com/article/rats-laugh-but-not-like-human/"
       }
     },
     {
@@ -444,7 +444,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Corvidae"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.nbcnews.com/news/amp/wbna43570637"
       }
     },
     {
@@ -585,7 +585,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Polar_bear"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.aquazoo.nl/en/more-over-ice-bear/skin-of-a-ice-bear"
       }
     },
     {
@@ -658,7 +658,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Giraffe"
+        "source": "[VERIFY] fact-checked 2026-11, https://giraffeconservation.org/facts-about-giraffe/how-long-is-a-giraffes-tongue-what-color-is-it/"
       }
     },
     {
@@ -730,7 +730,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Platypus"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.sciencenews.org/article/platypus-glow-blue-green-ultraviolet-light-fluorescent-fur"
       }
     },
     {
@@ -799,7 +799,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Honey_bee"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.bbka.org.uk/six-legs-four-wings-five-eyes"
       }
     },
     {
@@ -868,7 +868,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Common_ostrich"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.guinnessworldrecords.com/world-records/516760-largest-eyes-for-a-land-animal"
       }
     },
     {
@@ -936,11 +936,11 @@
         "en": "Half of the brain rests while the other half watches and breathes",
         "fr": "Une moitié du cerveau dort pendant que l'autre surveille et respire",
         "ar": "نص المخ بيرتاح والنص التاني بيراقب وبيتنفس",
-        "es": "Media cabeza descansa mientras la otra mitad vigila y respira"
+        "es": "Medio cerebro descansa mientras la otra mitad vigila y respira"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Unihemispheric_slow-wave_sleep"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.livescience.com/44822-how-do-dolphins-sleep.html"
       }
     },
     {
@@ -1012,7 +1012,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Gentoo_penguin"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.discoverwildlife.com/animal-facts/birds/why-do-penguins-give-stones-to-each-other"
       }
     },
     {
@@ -1084,7 +1084,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Woodpecker"
+        "source": "[VERIFY] fact-checked 2026-11, https://pmc.ncbi.nlm.nih.gov/articles/PMC5063634"
       }
     },
     {
@@ -1233,7 +1233,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Peanut"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.britannica.com/plant/peanut"
       }
     },
     {
@@ -1274,22 +1274,22 @@
       },
       "houseLies": {
         "en": [
-          "Herb",
+          "Drupe",
           "Vegetable",
           "Nut"
         ],
         "fr": [
-          "Herbe",
+          "Drupe",
           "Légume",
           "Noix"
         ],
         "ar": [
-          "عشبة",
+          "ثمرة ذات نواة",
           "خضرة",
           "مكسرات"
         ],
         "es": [
-          "Hierba",
+          "Drupa",
           "Verdura",
           "Nuez"
         ]
@@ -1302,7 +1302,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Berry_(botany)"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.livescience.com/57477-why-are-bananas-considered-berries.html"
       }
     },
     {
@@ -1363,10 +1363,10 @@
         ]
       },
       "note": {
-        "en": "An Austrian baker brought it to Paris around 1838",
-        "fr": "Un boulanger autrichien l'a importé à Paris vers 1838",
-        "ar": "خباز نمساوي جابها عباريس حوالي سنة 1838",
-        "es": "Un panadero austriaco lo llevó a París hacia 1838"
+        "en": "Traditionally credited to an Austrian baker, August Zang, who opened a Viennese bakery in Paris around 1838-1839",
+        "fr": "On l'attribue traditionnellement à un boulanger autrichien, August Zang, qui ouvrit une boulangerie viennoise à Paris vers 1838-1839",
+        "ar": "بيقولوا إنو خباز نمساوي اسمو أوغست زانغ فتح مخبز فيناوي بباريس حوالي 1838-1839",
+        "es": "Se atribuye a un panadero austriaco, August Zang, que abrió una panadería vienesa en París hacia 1838-1839"
       },
       "review": {
         "status": "draft",
@@ -1431,14 +1431,14 @@
         ]
       },
       "note": {
-        "en": "Restaurant owner Caesar Cardini made it in Tijuana in 1924. Nothing to do with Rome",
-        "fr": "Le restaurateur Caesar Cardini l'a créée à Tijuana en 1924. Rien à voir avec Rome",
-        "ar": "صاحب مطعم اسمو سيزر كارديني عملها بتيخوانا سنة 1924، ما إلها علاقة بروما",
-        "es": "El restaurador Caesar Cardini la creó en Tijuana en 1924. Nada que ver con Roma"
+        "en": "Caesar Cardini is credited with making it in Tijuana in 1924, according to his family; others dispute the details. Nothing to do with Rome",
+        "fr": "On attribue la recette à Caesar Cardini, à Tijuana en 1924, selon sa famille ; d'autres contestent les détails. Rien à voir avec Rome",
+        "ar": "بينسبوها لسيزر كارديني بتيخوانا سنة 1924 حسب عيلتو، وفي ناس بتعارض التفاصيل. ما إلها علاقة بروما",
+        "es": "Se atribuye a Caesar Cardini, en Tijuana en 1924, según su familia; otros discuten los detalles. Nada que ver con Roma"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Caesar_salad"
+        "source": "[VERIFY] fact-checked 2026-11, https://thepublicsradio.org/npr/hail-caesar-salad-born-100-years-ago-in-tijuana/"
       }
     },
     {
@@ -1499,14 +1499,14 @@
         ]
       },
       "note": {
-        "en": "A Greek-born cook, Sam Panopoulos, tried it in Ontario in 1962",
-        "fr": "Un cuisinier d'origine grecque, Sam Panopoulos, l'a testée en Ontario en 1962",
-        "ar": "طباخ من أصل يوناني اسمو سام بانوبولوس جربها بأونتاريو سنة 1962",
-        "es": "Un cocinero de origen griego, Sam Panopoulos, la probó en Ontario en 1962"
+        "en": "Greek-born cook Sam Panopoulos is credited with trying it in Ontario in 1962",
+        "fr": "On attribue l'idée à un cuisinier d'origine grecque, Sam Panopoulos, en Ontario en 1962",
+        "ar": "بيقولوا إنو طباخ من أصل يوناني اسمو سام بانوبولوس جربها بأونتاريو سنة 1962",
+        "es": "Se atribuye a un cocinero de origen griego, Sam Panopoulos, que la probó en Ontario en 1962"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Hawaiian_pizza"
+        "source": "[VERIFY] fact-checked 2026-11, https://thecanadianencyclopedia.ca/en/article/sam-panopolous"
       }
     },
     {
@@ -1573,10 +1573,10 @@
         ]
       },
       "note": {
-        "en": "A maître d' in Piedras Negras, Mexico, invented them for hungry guests",
-        "fr": "Un maître d'hôtel de Piedras Negras, au Mexique, les a inventés",
-        "ar": "مسؤول مطعم ببيدراس نيغراس بالمكسيك اخترعها لزباين جوعانين",
-        "es": "Un maître de Piedras Negras, México, los inventó para unos clientes"
+        "en": "By the usual account, a maître d' in Piedras Negras, Mexico, invented them for hungry guests",
+        "fr": "Selon la version courante, un maître d'hôtel de Piedras Negras, au Mexique, les a inventés pour des clients affamés",
+        "ar": "حسب الرواية المشهورة، مسؤول مطعم ببيدراس نيغراس بالمكسيك اخترعها لزباين جوعانين",
+        "es": "Según la versión habitual, un maître de Piedras Negras, México, los inventó para unos clientes"
       },
       "review": {
         "status": "draft",
@@ -1625,34 +1625,34 @@
       "houseLies": {
         "en": [
           "Earrings",
-          "Dice",
-          "Medicine"
+          "Candles",
+          "Paint"
         ],
         "fr": [
           "Boucles d'oreilles",
-          "Dés",
-          "Médicament"
+          "Bougies",
+          "Peinture"
         ],
         "ar": [
           "حلق",
-          "زهر للعب",
-          "دوا"
+          "شموع",
+          "دهان"
         ],
         "es": [
           "Pendientes",
-          "Dados",
-          "Medicina"
+          "Velas",
+          "Pintura"
         ]
       },
       "note": {
-        "en": "A turkey or a rabbit could be bought with a handful of beans",
-        "fr": "On pouvait acheter un lapin ou une dinde avec une poignée de fèves",
-        "ar": "كان فيك تشتري أرنب أو حبش بكمشة حبوب",
-        "es": "Con un puñado de granos se compraba un conejo o un pavo"
+        "en": "In the 1500s a rabbit cost roughly 10 to 30 beans and a turkey hen about 100",
+        "fr": "Au XVIe siècle, un lapin coûtait environ 10 à 30 fèves et une dinde environ 100",
+        "ar": "بالقرن السادس عشر كان الأرنب بحوالي 10 لـ30 حبة والحبشة بحوالي 100",
+        "es": "En el siglo XVI un conejo costaba unos 10 a 30 granos y una pava unos 100"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cocoa_bean"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.worldhistory.org/Chocolate_in_Mesoamerica/"
       }
     },
     {
@@ -1724,7 +1724,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Apple"
+        "source": "[VERIFY] fact-checked 2026-11, https://webarchive.library.unt.edu/eot2008/20090109075824/http://content.fsa.usda.gov/fsakids/Zip_Color_Sheets/2apples.pdf"
       }
     },
     {
@@ -1796,7 +1796,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cashew"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.mentalfloss.com/article/31226/cashew-nuts-grow-out-of-crazy-apples"
       }
     },
     {
@@ -1842,7 +1842,7 @@
         "en": [
           "Avocado",
           "Green chilli",
-          "Mint paste"
+          "Pistachio paste"
         ],
         "fr": [
           "Avocat",
@@ -1852,12 +1852,12 @@
         "ar": [
           "أفوكا",
           "فليفلة خضرا",
-          "معجون نعنع"
+          "معجون فستق حلبي"
         ],
         "es": [
           "Aguacate",
           "Guindilla verde",
-          "Pasta de menta"
+          "Pasta de pistacho"
         ]
       },
       "note": {
@@ -1936,7 +1936,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Vanilla"
+        "source": "[VERIFY] fact-checked 2026-11, https://verite.org/initiative/africa/commodities/vanilla/"
       }
     },
     {
@@ -1980,35 +1980,35 @@
       },
       "houseLies": {
         "en": [
-          "Fireworks",
+          "Bubble tea",
           "Water pistols",
           "Sunflower seeds"
         ],
         "fr": [
-          "Feux d'artifice",
+          "Thé aux perles",
           "Pistolets à eau",
           "Graines de tournesol"
         ],
         "ar": [
-          "المفرقعات",
+          "بوبا تي",
           "مسدسات المي",
           "البزر"
         ],
         "es": [
-          "Petardos",
+          "Té de burbujas",
           "Pistolas de agua",
           "Pipas de girasol"
         ]
       },
       "note": {
-        "en": "Used gum was jamming the doors of the new metro trains",
-        "fr": "Des chewing-gums collés bloquaient les portes du nouveau métro",
-        "ar": "العلكة الملزوقة كانت عم تعلّق أبواب المترو الجديد",
-        "es": "Los chicles pegados bloqueaban las puertas del nuevo metro"
+        "en": "Gum stuck on the new metro trains' doors was one reason. Only medical gum has been allowed since 2004",
+        "fr": "Des chewing-gums collés sur les portes du nouveau métro ont joué un rôle. Seul le chewing-gum médical est autorisé depuis 2004",
+        "ar": "العلكة الملزوقة عأبواب المترو الجديد كانت من الأسباب. بس العلكة الطبية مسموحة من سنة 2004",
+        "es": "Los chicles pegados en las puertas del nuevo metro fueron una causa. Solo se permite el chicle medicinal desde 2004"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Chewing_gum_ban_in_Singapore"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Chewing_gum_sales_ban_in_Singapore"
       }
     },
     {
@@ -2051,22 +2051,22 @@
       "houseLies": {
         "en": [
           "Cats",
-          "Seagulls",
+          "Peacocks",
           "Ducks"
         ],
         "fr": [
           "Chats",
-          "Mouettes",
+          "Paons",
           "Canards"
         ],
         "ar": [
           "القطط",
-          "النورس",
+          "الطواويس",
           "البط"
         ],
         "es": [
           "Gaviotas",
-          "Gatas",
+          "Pavos reales",
           "Patas"
         ]
       },
@@ -2078,7 +2078,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Piazza_San_Marco"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.nbcnews.com/id/wbna24390018"
       }
     },
     {
@@ -2148,7 +2148,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Danish_name_law"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Naming_law"
       }
     },
     {
@@ -2220,7 +2220,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Acropolis_of_Athens"
+        "source": "[VERIFY] fact-checked 2026-11, https://greekcitytimes.com/2025/02/12/important-notice-for-all-holidaymakers-new-rules-and-fines-in-greece-and-italy/"
       }
     },
     {
@@ -2291,7 +2291,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Swan_Upping"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.royal.uk/swans"
       }
     },
     {
@@ -2337,22 +2337,22 @@
       "houseLies": {
         "en": [
           "Tracked by satellite",
-          "Fed daily",
+          "Sold",
           "Painted"
         ],
         "fr": [
           "Suivis par satellite",
-          "Nourris",
+          "Vendus",
           "Peints"
         ],
         "ar": [
           "مراقبة بالساتلايت",
-          "مهدية",
+          "مباعة",
           "مرسومة"
         ],
         "es": [
           "Vigilados por satélite",
-          "Regalados",
+          "Vendidos",
           "Pintados"
         ]
       },
@@ -2364,7 +2364,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Panda_diplomacy"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.scmp.com/news/china/diplomacy/article/3222175/how-has-chinas-panda-diplomacy-evolved-and-where-are-its-stars-now"
       }
     },
     {
@@ -2436,7 +2436,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Freedom_to_roam"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.weforum.org/stories/nature-and-biodiversity/sweden-roam-freely-law-Allemansr%C3%A4tt-access-nature/"
       }
     },
     {
@@ -2508,7 +2508,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Day-fine"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.euronews.com/2023/01/04/finlands-progressive-punishment-when-it-comes-to-speeding-tickets"
       }
     },
     {
@@ -2578,7 +2578,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Kopi_luwak"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.sciencefocus.com/nature/civet"
       }
     },
     {
@@ -2646,7 +2646,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Charles_Osborne_(hiccups)"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.smithsonianmag.com/history/the-curious-case-of-charles-osborne-who-hiccuped-for-68-years-straight-180980232/"
       }
     },
     {
@@ -2786,7 +2786,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Antarctic"
+        "source": "[VERIFY] fact-checked 2026-11, https://britannica.com/topic/worlds-largest-deserts-2225895"
       }
     },
     {
@@ -2858,7 +2858,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Mauna_Kea"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.guinnessworldrecords.com/world-records/tallest-mountain.html"
       }
     },
     {
@@ -2936,65 +2936,65 @@
       "difficulty": 3,
       "knownIn": [],
       "prompt": {
-        "original": "Russia's land area is bigger than the whole surface of ___",
+        "original": "Pluto's whole surface is about as big as the country of ___",
         "translit": null,
         "display": {
-          "fr": "La Russie est plus grande que toute la surface de ___",
-          "ar": "مساحة روسيا أكبر من كل سطح ___",
-          "es": "La superficie de Rusia es mayor que toda la superficie de ___"
+          "fr": "La surface entière de Pluton a à peu près la taille du pays suivant : ___",
+          "ar": "مساحة سطح بلوتو كله تقريبًا بحجم دولة ___",
+          "es": "La superficie total de Plutón es casi tan grande como la de este país: ___"
         }
       },
       "truth": {
-        "en": "Pluto",
-        "fr": "Pluton",
-        "ar": "بلوتو",
-        "es": "Plutón"
+        "en": "Russia",
+        "fr": "Russie",
+        "ar": "روسيا",
+        "es": "Rusia"
       },
       "truthAlt": {
         "en": [
-          "The dwarf planet Pluto"
+          "The Russian Federation"
         ],
         "fr": [
-          "La planète naine Pluton"
+          "Fédération de Russie"
         ],
         "ar": [
-          "الكوكب القزم بلوتو"
+          "الاتحاد الروسي"
         ],
         "es": [
-          "El planeta enano Plutón"
+          "Federación Rusa"
         ]
       },
       "houseLies": {
         "en": [
-          "The Moon",
-          "Mercury",
-          "Mars"
+          "Canada",
+          "China",
+          "Brazil"
         ],
         "fr": [
-          "La Lune",
-          "Mercure",
-          "Mars"
+          "Canada",
+          "Chine",
+          "Brésil"
         ],
         "ar": [
-          "القمر",
-          "عطارد",
-          "المريخ"
+          "كندا",
+          "الصين",
+          "البرازيل"
         ],
         "es": [
-          "La Luna",
-          "Mercurio",
-          "Marte"
+          "Canadá",
+          "China",
+          "Brasil"
         ]
       },
       "note": {
-        "en": "Russia covers about 17 million km². Pluto's surface is a bit less",
-        "fr": "La Russie fait environ 17 millions de km². La surface de Pluton, un peu moins",
-        "ar": "مساحة روسيا حوالي 17 مليون كم مربع، وسطح بلوتو أقل بشوي",
-        "es": "Rusia mide unos 17 millones de km². Plutón, un poco menos"
+        "en": "Pluto's surface is about 17.7 million km², just above Russia's 17.1 million km²",
+        "fr": "La surface de Pluton fait environ 17,7 millions de km², juste au-dessus des 17,1 de la Russie",
+        "ar": "سطح بلوتو حوالي 17.7 مليون كم مربع، أكبر بشوي من مساحة روسيا 17.1 مليون",
+        "es": "La superficie de Plutón es de unos 17,7 millones de km², un poco más que los 17,1 de Rusia"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Pluto"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.worldatlas.com/space/how-big-is-pluto.html"
       }
     },
     {
@@ -3062,7 +3062,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Shannon_number"
+        "source": "[VERIFY] fact-checked 2026-11, https://mathworld.wolfram.com/ShannonNumber.html"
       }
     },
     {
@@ -3134,7 +3134,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/HD_189733_b"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.nasa.gov/news-release/nasa-hubble-finds-a-true-blue-planet/"
       }
     },
     {
@@ -3206,7 +3206,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Liquid_oxygen"
+        "source": "[VERIFY] fact-checked 2026-11, https://chemed.chem.purdue.edu/genchem/demosheets/8.6.html"
       }
     },
     {
@@ -3216,12 +3216,12 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "After spacewalks, astronauts say space smells like ___",
+        "original": "After spacewalks, some astronauts say space smells like ___",
         "translit": null,
         "display": {
-          "fr": "Après une sortie, les astronautes disent que l'espace sent le ___",
-          "ar": "بعد المشي بالفضاء، رواد الفضاء بيقولوا إنو ريحة الفضاء متل ___",
-          "es": "Tras un paseo espacial, los astronautas dicen que el espacio huele a ___"
+          "fr": "Après une sortie, certains astronautes disent que l'espace sent le ___",
+          "ar": "بعد المشي بالفضاء، بعض رواد الفضاء بيقولوا إنو ريحة الفضاء متل ___",
+          "es": "Tras un paseo espacial, algunos astronautas dicen que el espacio huele a ___"
         }
       },
       "truth": {
@@ -3272,14 +3272,14 @@
         ]
       },
       "note": {
-        "en": "The smell clings to suits and helmets when they come back inside",
-        "fr": "L'odeur reste sur les combinaisons quand ils rentrent",
-        "ar": "الريحة بتعلق بالبدلات والخوذ لما يفوتوا عالمحطة",
-        "es": "El olor se queda en los trajes cuando vuelven a entrar"
+        "en": "Descriptions vary (hot metal, welding fumes), but the smell clings to suits and helmets when they come back inside",
+        "fr": "Les descriptions varient (métal chaud, soudure), mais l'odeur reste sur les combinaisons au retour",
+        "ar": "الوصف بيختلف (معدن سخن، لحام) بس الريحة بتعلق بالبدلات لما يفوتوا",
+        "es": "Las descripciones varían (metal caliente, soldadura), pero el olor se queda en los trajes al volver a entrar"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Space_food"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.smithsonianmag.com/smart-news/what-does-space-smell-like-3457620/"
       }
     },
     {
@@ -3351,7 +3351,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Mars"
+        "source": "[VERIFY] fact-checked 2026-11, https://svs.gsfc.nasa.gov/11875"
       }
     },
     {
@@ -3423,7 +3423,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Play-Doh"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.fox10phoenix.com/news/brief-history-play-doh"
       }
     },
     {
@@ -3492,7 +3492,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Bluetooth"
+        "source": "[VERIFY] fact-checked 2026-11, https://gizmodo.com/bluetooth-is-named-after-a-medieval-king-who-may-have-h-1671450657"
       }
     },
     {
@@ -3556,14 +3556,14 @@
         ]
       },
       "note": {
-        "en": "Carpenter Ole Kirk Christiansen chose it in 1934",
-        "fr": "Le menuisier Ole Kirk Christiansen l'a choisi en 1934",
-        "ar": "النجار أولي كيرك كريستيانسن اختارو سنة 1934",
-        "es": "El carpintero Ole Kirk Christiansen lo eligió en 1934"
+        "en": "Carpenter Ole Kirk Christiansen came up with the name in the 1930s",
+        "fr": "Le menuisier Ole Kirk Christiansen a trouvé le nom dans les années 1930",
+        "ar": "النجار أولي كيرك كريستيانسن ابتكر الاسم بالثلاثينات",
+        "es": "El carpintero Ole Kirk Christiansen ideó el nombre en los años 30"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Lego"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.lego.com/en-ae/aboutus/news/2026/february/90-year-history-of-the-lego-name"
       }
     },
     {
@@ -3632,7 +3632,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/H%C3%A4agen-Dazs"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.atlasobscura.com/articles/haagen-dazs-fake-foreign-branding"
       }
     },
     {
@@ -3711,12 +3711,12 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Another official name for the hashtag symbol is the ___",
+        "original": "Another name for the hashtag symbol is the ___",
         "translit": null,
         "display": {
-          "fr": "Un autre nom officiel du symbole dièse, ou hashtag, est ___",
-          "ar": "اسم رسمي تاني لرمز الهاشتاغ هو ___",
-          "es": "Otro nombre oficial del símbolo almohadilla, o hashtag, es ___"
+          "fr": "Un autre nom du symbole dièse, ou hashtag, est ___",
+          "ar": "اسم تاني لرمز الهاشتاغ هو ___",
+          "es": "Otro nombre del símbolo almohadilla, o hashtag, es ___"
         }
       },
       "truth": {
@@ -3742,12 +3742,12 @@
       "houseLies": {
         "en": [
           "Gridlock",
-          "Crosshatch tile",
+          "Quadrille",
           "Tic-tac"
         ],
         "fr": [
           "Grillon",
-          "Croisillon carré",
+          "Quadrille",
           "Morpion"
         ],
         "ar": [
@@ -3902,10 +3902,10 @@
         ]
       },
       "note": {
-        "en": "Students threw the empty tins of the Frisbie Pie Company",
-        "fr": "Des étudiants se lançaient les moules vides de la Frisbie Pie Company",
-        "ar": "طلاب الجامعة كانوا يرموا الصواني الفاضية لشركة فريسبي للفطاير",
-        "es": "Los estudiantes se lanzaban los moldes vacíos de la Frisbie Pie Company"
+        "en": "Students are said to have thrown the empty tins of the Frisbie Pie Company",
+        "fr": "Des étudiants auraient lancé les moules vides de la Frisbie Pie Company",
+        "ar": "بيقولوا إنو طلاب الجامعة كانوا يرموا الصواني الفاضية لشركة فريسبي للفطاير",
+        "es": "Se dice que los estudiantes se lanzaban los moldes vacíos de la Frisbie Pie Company"
       },
       "review": {
         "status": "draft",
@@ -3981,7 +3981,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Fredric_Baur"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Fredric_J._Baur"
       }
     },
     {
@@ -4042,10 +4042,10 @@
         ]
       },
       "note": {
-        "en": "Named after Erasto Mpemba, a Tanzanian student who noticed it making ice cream",
-        "fr": "Du nom d'Erasto Mpemba, un élève tanzanien qui l'a remarqué en faisant de la glace",
-        "ar": "على اسم إراستو مبيمبا، تلميذ تنزاني لاحظها وهو عم يعمل بوظة",
-        "es": "Por Erasto Mpemba, un alumno tanzano que lo notó haciendo helado"
+        "en": "Named after Erasto Mpemba, a Tanzanian student who noticed it making ice cream; scientists still debate when and why it happens",
+        "fr": "Du nom d'Erasto Mpemba, un élève tanzanien qui l'a remarqué en faisant de la glace ; les scientifiques en débattent encore",
+        "ar": "على اسم إراستو مبيمبا، تلميذ تنزاني لاحظها وهو عم يعمل بوظة؛ العلماء لسا بيتناقشوا متى وليش بيصير",
+        "es": "Por Erasto Mpemba, un alumno tanzano que lo notó haciendo helado; los científicos aún debaten cuándo y por qué ocurre"
       },
       "review": {
         "status": "draft",
