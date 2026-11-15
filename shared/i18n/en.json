@@ -172,6 +172,8 @@
   "phone.leaveShort": "Leave",
   "phone.leaveConfirm": "Leave the game?",
   "phone.leaveBody": "Your seat will be freed.",
+  "phone.endGame": "End the game",
+  "phone.endGameConfirm": "End it for everyone? Nobody scores.",
   "phone.youAreHost": "You're the host",
   "phone.keepScreenOn": "Keep your screen on during the game",
   "phone.vibration": "Vibration",

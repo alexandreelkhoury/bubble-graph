@@ -175,6 +175,8 @@
     <string name="phone__leave_short">Leave</string>
     <string name="phone__leave_confirm">Leave the game?</string>
     <string name="phone__leave_body">Your seat will be freed.</string>
+    <string name="phone__end_game">End the game</string>
+    <string name="phone__end_game_confirm">End it for everyone? Nobody scores.</string>
     <string name="phone__you_are_host">You\'re the host</string>
     <string name="phone__keep_screen_on">Keep your screen on during the game</string>
     <string name="phone__vibration">Vibration</string>

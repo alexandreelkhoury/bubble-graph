@@ -103,6 +103,33 @@ describe("Bluff in the room", () => {
     for (const item of drawn) expect(h.history.memory.bluff?.usedKeys).toContain(item);
   });
 
+  it("owner report: the host leaves → a new VIP who can end it; everyone leaves → back to the HUB, not a game for nobody", () => {
+    const h = room(3);
+    step(h, { type: "OPEN_GAME", gameId: "bluff", by: { kind: "tv" } });
+    step(h, { type: "START_GAME", by: { kind: "tv" } });
+    step(h, { type: "LEAVE", by: { kind: "player", playerId: id(0) } });
+    expect(h.state.phase).toBe("PLAYING");
+    expect(h.state.hostPlayerId).toBe(id(1));
+    // The leaver comes back at once with the same name and character: a new member, admitted through `join`.
+    h.join(id(7), "Bot 0", "coral");
+    expect(h.state.members.find((m) => m.id === id(7))).toMatchObject({ left: false, benched: false });
+    expect((h.playerView(id(7)).game?.me as { waitingForNext: boolean }).waitingForNext).toBe(true);
+    for (const p of [1, 2, 7]) step(h, { type: "LEAVE", by: { kind: "player", playerId: id(p) } });
+    expect(h.state).toMatchObject({ phase: "HUB", game: null, setupGameId: null, members: [], hostPlayerId: null });
+    expect(h.state.cup.stars).toEqual({});
+  });
+
+  it("the new VIP can end a running game (ABORT_GAME)", () => {
+    const h = room(4);
+    step(h, { type: "OPEN_GAME", gameId: "bluff", by: { kind: "tv" } });
+    step(h, { type: "START_GAME", by: { kind: "tv" } });
+    step(h, { type: "LEAVE", by: { kind: "player", playerId: id(0) } });
+    expect(h.err({ type: "ABORT_GAME", by: { kind: "player", playerId: id(2) } })).toBe("NOT_HOST");
+    step(h, { type: "ABORT_GAME", by: { kind: "player", playerId: id(1) } });
+    expect(h.state.phase).toBe("SETUP");
+    expect(h.state.members.map((m) => m.id)).toEqual([id(1), id(2), id(3)]);
+  });
+
   it("start is blocked under 3 connected players", () => {
     const h = room(2);
     step(h, { type: "OPEN_GAME", gameId: "bluff", by: { kind: "tv" } });

@@ -13,6 +13,8 @@ export const NAME_MAX_CHARS = 16;   // graphemes (Intl.Segmenter) after sanitisi
 export const GUESS_MAX_CHARS = 40;
 export const NAME_MAX_CODEPOINTS = 64;  // after sanitising; guards combining-mark abuse
 export const SEAT_HOLD_MS = 120_000;    // LOBBY only (§4.8)
+/** JAMAA-PLATFORM §2.3 "Empty game": a running game whose players are ALL disconnected this long ends (→ HUB). */
+export const GAME_ABANDON_MS = 300_000;
 export const ELIMINATION_HOLD_MS = 8_000;
 export const VERDICT_HOLD_MS = 8_000;
 export const CLUE_GRACE_MS = 15_000;    // speaker disconnects mid-turn with the clue timer off

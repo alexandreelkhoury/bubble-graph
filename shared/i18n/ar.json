@@ -184,6 +184,8 @@
   "phone.leaveShort": "طلوع",
   "phone.leaveConfirm": "بدّك تطلع من اللعبة؟",
   "phone.leaveBody": "محلّك رح يفضى.",
+  "phone.endGame": "وقّف اللعبة",
+  "phone.endGameConfirm": "بدك توقّفها للكل؟ ما حدا بيسجّل نقاط.",
   "phone.youAreHost": "معك التحكّم",
   "phone.keepScreenOn": "خلّي الشاشة ضاوية خلال اللعبة",
   "phone.vibration": "الهزّاز",

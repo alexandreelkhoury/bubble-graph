@@ -28,8 +28,10 @@ export function assertRoomInvariants(s: RoomState, h?: RoomHistory): void {
   if (ms.filter((m) => !m.left).length > MAX_PLAYERS) fail(1, "too many members");
   if (!unique(ms.map((m) => m.id))) fail(1, "duplicate id");
   if (!unique(ms.map((m) => m.seat))) fail(1, "duplicate seat");
-  if (!unique(ms.map((m) => m.color))) fail(1, "duplicate colour");
-  if (!unique(ms.map((m) => nameKey(m.name)))) fail(1, "duplicate name");
+  // Left members (PLAYING only) release their name and character (§2.3), so uniqueness holds among the others.
+  const present = ms.filter((m) => !m.left);
+  if (!unique(present.map((m) => m.color))) fail(1, "duplicate colour");
+  if (!unique(present.map((m) => nameKey(m.name)))) fail(1, "duplicate name");
   for (let i = 1; i < ms.length; i++) if ((ms[i - 1]?.seat ?? 0) >= (ms[i]?.seat ?? 0)) fail(1, "members not sorted by seat");
   for (const m of ms) {
     if (m.connected !== (m.disconnectedAt === null)) fail(1, `connected/disconnectedAt of ${m.id}`);

@@ -386,8 +386,13 @@ export interface RoomHistory {
 **Membership.** This is SPEC §4.8 moved up one level; the rules stay the same.
 - **Joins** are allowed in every phase. In HUB and SETUP the new member is active. While PLAYING the new member is `benched: true`: they see the game's public view (no `me`), and they are dealt in at the next `START_GAME` or `REPLAY`. If the active game defines `join` (Bluff, Likely and Trivia all do), the room calls it at once and clears `benched` when it succeeds; the game alone decides when the newcomer first acts and projects `me.waitingForNext: true` until then. The limit is still `MAX_PLAYERS = 12` members in all, benched ones included.
 - **Seat holds.** In HUB and SETUP a disconnected seat is held for `SEAT_HOLD_MS` (120 s); after that, the system TICK removes it. While PLAYING, seats are held until the game ends, and the game receives `PLAYER_AWAY` / `PLAYER_BACK` events. A roster entry that is disconnected at `START_GAME` / `REPLAY` (still within its hold) is dealt in with `connected: false`.
-- **Leaving.** LEAVE and KICK while PLAYING mark the member `left: true` and send `PLAYER_GONE {cause}` to the game. Left members are removed when the game ends (on REPLAY, BACK_TO_SETUP, BACK_TO_HUB or ABORT_GAME).
-- **Host.** The host (VIP) rules are SPEC §4.8, unchanged: the first joiner, with reassignment on leave or on seat expiry. **`room.hostPlayerId` is the single source of truth**: games read host power only from `ctx.isHost` / `ctx.hostPlayerId`, never from a field of their own (Mish Ana!'s engine field is synced by the adapter, §2.7).
+- **Leaving.** LEAVE and KICK while PLAYING mark the member `left: true` and send `PLAYER_GONE {cause}` to the game. Left members are removed when the game ends (on REPLAY, BACK_TO_SETUP, BACK_TO_HUB, ABORT_GAME or the empty-game end below). The phone's menu → "Leave the game" sends LEAVE, drops its resume token and closes the socket; closing the tab is only a disconnect (the seat is held, the resume token brings the same seat back).
+- **A left member releases its name and character at once** (added 2026-11-15). JOIN checks `NAME_TAKEN` / `COLOR_TAKEN` (SPEC §4.8) against members that are **not** `left`; a disconnected member still holds both (their seat is held for them). So a player who left a running game can come straight back with the same name and character: they join as a new member (a new id, through the game's `join` when it has one, else benched), and their left entry stays in the game's scores until the instance ends. The phone's character picker greys only the characters of non-left members. Invariant 1 (unique colour and name) applies to non-left members.
+- **Empty game** (added 2026-11-15). A running instance (with or without an outcome) nobody plays any more ends by itself, as ABORT_GAME (no stars, `matchScores` unchanged, memory kept), and the room goes to the **HUB** (benched members, if any, become ordinary members there):
+  - at once, in the same write, when every member dealt into the instance has left or been kicked;
+  - after `GAME_ABANDON_MS` (300 s) when every one of them is disconnected (the clock starts at the last disconnect; one reconnect cancels it). `nextRoomWakeAt` includes this time, so the alarm fires it. The seats are then held `SEAT_HOLD_MS` in the HUB as usual.
+  Below that, a game with too few players is the game's own rule (Bluff, Likely and Trivia `HOLD`; Mish Ana!'s win check).
+- **Host.** The host (VIP) rules are SPEC §4.8, unchanged: the first joiner, with reassignment on leave or on seat expiry (a VIP who leaves a running game passes it to the earliest player still in it). **`room.hostPlayerId` is the single source of truth**: games read host power only from `ctx.isHost` / `ctx.hostPlayerId`, never from a field of their own (Mish Ana!'s engine field is synced by the adapter, §2.7). The way out of a running game is ABORT_GAME: the TV pause menu → "Quit game", and the VIP phone's menu → "End the game for everyone" (confirm; only while a game runs without an outcome).
 
 ### 2.4 Session cup (scores across games)
 
@@ -425,7 +430,7 @@ export interface RoomHistory {
 | `REPLAY` | TV, VIP | PLAYING with `outcome ≠ null` | A new instance of the same game with the same settings and the updated roster. |
 | `BACK_TO_SETUP` | TV, VIP | PLAYING with outcome | → SETUP |
 | `BACK_TO_HUB` | TV, VIP | SETUP, or PLAYING with outcome | → HUB |
-| `ABORT_GAME` | TV, VIP | PLAYING without outcome | → SETUP. No stars; `matchScores` are unchanged; memory is kept. The TV asks for confirmation first (dialog, initial focus on "Keep playing"). |
+| `ABORT_GAME` | TV, VIP | PLAYING without outcome | → SETUP. No stars; `matchScores` are unchanged; memory is kept. The TV asks for confirmation first (dialog, initial focus on "Keep playing"); the VIP phone sends it from its menu after a confirm sheet (§2.3 "Host"). The room also ends an instance by itself when nobody plays it (§2.3 "Empty game", → HUB). |
 | `REACT {kind}` | player | any | `kind ∈ REACTIONS` (§2.3). Sets `member.reaction` (`n` + 1). At most 1 per `REACTION_MIN_GAP_MS = 1500` per member, else `REACTION_TOO_FAST`. |
 | `KICK {playerId}` | TV, VIP (VIP: only disconnected players, as today) | any | |
 | `LEAVE` | player | any | |
@@ -682,7 +687,7 @@ Layout numbers below are DESIGN-JAMAA §2 (binding for geometry); this section i
 
 ### 3.3 Phone screens
 
-**PHH-01 Join.** As PH-02, but the colour picker becomes a **character picker**: 12 faces in a 4 × 3 grid, already taken ones greyed out, and the selected one makes a happy face.
+**PHH-01 Join.** As PH-02, but the colour picker becomes a **character picker**: 12 faces in a 4 × 3 grid, already taken ones greyed out, and the selected one makes a happy face. Only non-left members grey a face (§2.3). "Let me in!" is always on screen: disabled with its reason just above it ("Pick a name…") until a valid name and a free character are set, and the action bar rides right above an on-screen keyboard (`--kb-inset` from `visualViewport`, `web-client/src/lib/keyboard.ts`; every phone action bar gets it), so it never hides under the keyboard while the name is typed.
 
 **PHH-02 Hub follow** (`phase = HUB`).
 - A big card for `focusedGameId` slides left or right as the TV focus moves (direction from the registry order; reversed in RTL), showing the title, tagline and player range, with the line "{host} is picking a game on the TV".

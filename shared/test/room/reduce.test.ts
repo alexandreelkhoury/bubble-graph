@@ -1,7 +1,7 @@
 // JAMAA-PLATFORM §2.3–§2.5 / §2.8: the room engine (permission matrix, membership, cup, REACT, contentLocale,
 // GAMES_ENABLED and TV capability).
 import { describe, expect, it } from "vitest";
-import { REACTION_MIN_GAP_MS, SEAT_HOLD_MS } from "../../src/constants";
+import { GAME_ABANDON_MS, REACTION_MIN_GAP_MS, SEAT_HOLD_MS } from "../../src/constants";
 import type { ColorId } from "../../src/constants";
 import { contentCatalog } from "../../src/content/catalog";
 import { GAME_IDS } from "../../src/games/ids";
@@ -164,6 +164,71 @@ describe("membership (§2.3)", () => {
     h.sys({ type: "DISCONNECT", playerId: pid(7) });
     h.sys({ type: "RECONNECT", playerId: pid(0) });
     expect(h.state).toBe(before);
+  });
+  it("a player who LEFT a running game can rejoin at once with the same name and character", () => {
+    const h = at("PLAYING");
+    h.p(pid(2), { type: "LEAVE" });
+    // Case and spacing variants of the left name are fine too (nameKey).
+    h.join(pid(9), "PLAYER2", "lemon");
+    expect(h.state.members.filter((m) => m.color === "lemon").map((m) => [m.id, m.left])).toEqual([[pid(2), true], [pid(9), false]]);
+    // A present member (connected or held while disconnected) still owns both.
+    expect(h.err({ type: "JOIN", playerId: pid(10), name: "Player4", color: "plum", locale: "en", by: { kind: "system" } })).toBe("NAME_TAKEN");
+    expect(h.err({ type: "JOIN", playerId: pid(10), name: "Other", color: "grape", locale: "en", by: { kind: "system" } })).toBe("COLOR_TAKEN");
+    // The left ghost goes when the game ends; the new member stays.
+    h.playMishanaToResults();
+    h.tv({ type: "BACK_TO_SETUP" });
+    expect(h.state.members.filter((m) => m.color === "lemon").map((m) => m.id)).toEqual([pid(9)]);
+  });
+  it("empty game: when the last player in a running game leaves, the game ends and the room goes back to the HUB", () => {
+    const h = at("PLAYING");
+    const stars = h.state.cup.stars;
+    h.p(pid(0), { type: "LEAVE" });
+    expect(h.state.hostPlayerId).toBe(pid(1));   // the VIP left: host passes on, the game goes on
+    expect(h.state.phase).toBe("PLAYING");
+    for (const i of [1, 2, 3]) h.p(pid(i), { type: "LEAVE" });
+    expect(h.state.phase).toBe("PLAYING");       // pid 4 is still held (disconnected)
+    h.tv({ type: "KICK", playerId: pid(4) });
+    expect(h.state).toMatchObject({ phase: "HUB", setupGameId: null, game: null, members: [], hostPlayerId: null });
+    expect(h.state.cup.stars).toEqual(stars);    // no stars, as ABORT_GAME
+    expect(h.history.memory.mishana?.usedKeys.length).toBe(1);   // memory kept
+  });
+  it("empty game: benched watchers stay and become active members in the HUB", () => {
+    const h = at("PLAYING");
+    h.join(pid(9), "Late", "lilac");
+    for (const i of [0, 1, 2, 3]) h.p(pid(i), { type: "LEAVE" });
+    h.tv({ type: "KICK", playerId: pid(4) });
+    expect(h.state.phase).toBe("HUB");
+    expect(h.state.members.map((m) => [m.id, m.benched, m.left])).toEqual([[pid(9), false, false]]);
+    expect(h.state.hostPlayerId).toBe(pid(9));
+  });
+  it("empty game: every player disconnected for GAME_ABANDON_MS ends the game (→ HUB), seats then held SEAT_HOLD_MS", () => {
+    const h = at("PLAYING");
+    for (const i of [0, 1, 2, 3]) {
+      h.now += 1000;
+      h.sys({ type: "DISCONNECT", playerId: pid(i) });
+    }
+    const last = h.now;
+    expect(nextRoomWakeAt(h.state)).toBe(Math.min(last + GAME_ABANDON_MS, GAMES.mishana.nextWakeAt(h.mishana()) ?? Infinity));
+    // One player back in time keeps the game.
+    h.now = last + GAME_ABANDON_MS - 1;
+    h.sys({ type: "RECONNECT", playerId: pid(1) });
+    h.now += 10;
+    h.sys({ type: "DISCONNECT", playerId: pid(1) });
+    h.now += GAME_ABANDON_MS - 1;
+    h.sys({ type: "TICK" });
+    expect(h.state.phase).toBe("PLAYING");
+    h.tick(1);
+    expect(h.state).toMatchObject({ phase: "HUB", game: null });
+    expect(h.state.members).toHaveLength(5);
+    expect(nextRoomWakeAt(h.state)).toBe(h.now + SEAT_HOLD_MS);
+    h.tick(SEAT_HOLD_MS);
+    expect(h.state.members).toHaveLength(0);
+  });
+  it("empty game also clears a finished game (results on screen) nobody is left to leave", () => {
+    const h = at("OVER");
+    for (const i of [0, 1, 2, 3]) h.p(pid(i), { type: "LEAVE" });
+    h.tv({ type: "KICK", playerId: pid(4) });
+    expect(h.state.phase).toBe("HUB");
   });
   it("VIP KICK: only absent members while PLAYING, never themselves", () => {
     const h = at("PLAYING");

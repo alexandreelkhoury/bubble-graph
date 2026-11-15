@@ -40,6 +40,13 @@ export function CharacterPicker({ value, taken, onChange, shake }: { value: Colo
   );
 }
 
+/** Why "Let me in!" is disabled right now, or null (enabled, joining, or the room-full error already says it). */
+export function joinBlockedReason(clean: string | null, color: ColorId | null, pending: boolean, full: boolean): string | null {
+  if (pending || full) return null;
+  if (clean === null) return t("error.nameInvalid");
+  return color === null ? tPrefer("join.characterLabel", "join.colorLabel") : null;
+}
+
 export function Join({ view }: { view: PlayerRoomView }) {
   const room = view.room;
   const taken = useMemo(() => new Set(room.members.filter((m) => !m.left).map((m) => m.color)), [room.members]);
@@ -73,6 +80,7 @@ export function Join({ view }: { view: PlayerRoomView }) {
   const errKey: MessageKey | null =
     err === "COLOR_TAKEN" ? null : err && err !== "GUESS_INVALID" ? errorKeyOf(err) : full ? "error.roomFull" : null;
   const errText = err === "COLOR_TAKEN" ? characterTaken() : errKey ? t(errKey) : null;
+  const why = joinBlockedReason(clean, color, pending, full);
   const count = clean ? graphemeCount(clean) : 0;
   const playing = room.phase === "PLAYING";
 
@@ -95,9 +103,12 @@ export function Join({ view }: { view: PlayerRoomView }) {
         <p class="field-label" id="character-label">{tPrefer("join.characterLabel", "join.colorLabel")}</p>
         <CharacterPicker value={color} taken={taken} onChange={(c) => { setColor(c); if (err === "COLOR_TAKEN") inlineError.value = null; }} shake={shake > 0} key={shake} />
       </main>
+      {/* The button is always there (never unmounted or hidden): disabled with its reason when it cannot join yet.
+          The bar rides above an on-screen keyboard (lib/keyboard.ts), so it stays reachable while typing. */}
       <footer class="actionbar">
-        {errText && <p class="inline-error" role="alert"><Icon name="info" size={18} />{errText}</p>}
-        <Button disabled={!canSubmit} onClick={submit} aria-busy={pending}>
+        {errText ? <p class="inline-error" role="alert"><Icon name="info" size={18} />{errText}</p>
+          : why && <p class="hint" id="join-why">{why}</p>}
+        <Button disabled={!canSubmit} onClick={submit} aria-busy={pending} aria-describedby={why && !errText ? "join-why" : undefined}>
           {pending ? t("join.joining") : t("join.submit")}
         </Button>
       </footer>

@@ -175,6 +175,8 @@
   "phone.leaveShort": "Quitter",
   "phone.leaveConfirm": "Quitter la partie ?",
   "phone.leaveBody": "Ta place sera libérée.",
+  "phone.endGame": "Arrêter la partie",
+  "phone.endGameConfirm": "L’arrêter pour tout le monde ? Personne ne marque.",
   "phone.youAreHost": "C’est toi l’hôte",
   "phone.keepScreenOn": "Garde l’écran allumé pendant la partie",
   "phone.vibration": "Vibration",

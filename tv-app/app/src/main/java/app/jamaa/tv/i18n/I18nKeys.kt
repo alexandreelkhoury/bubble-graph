@@ -170,6 +170,8 @@ object I18nKeys {
         "phone.leaveShort" to R.string.phone__leave_short,
         "phone.leaveConfirm" to R.string.phone__leave_confirm,
         "phone.leaveBody" to R.string.phone__leave_body,
+        "phone.endGame" to R.string.phone__end_game,
+        "phone.endGameConfirm" to R.string.phone__end_game_confirm,
         "phone.youAreHost" to R.string.phone__you_are_host,
         "phone.keepScreenOn" to R.string.phone__keep_screen_on,
         "phone.vibration" to R.string.phone__vibration,

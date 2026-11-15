@@ -784,7 +784,7 @@ RESULTS --PLAY_AGAIN--> LOBBY ;  any non-LOBBY --BACK_TO_LOBBY (TV)--> LOBBY
   - Phase LOBBY only, else `ROOM_LOCKED`.
   - Fewer than 12 players, else `ROOM_FULL`.
   - Name: `sanitizeName` (§7.9) returns non-null, else `NAME_INVALID`. A name whose `nameKey` (NFKC + `toLowerCase()`) equals another player's → `NAME_TAKEN`.
-  - Colour already in use → `COLOR_TAKEN` (no automatic reassignment).
+  - Colour already in use → `COLOR_TAKEN` (no automatic reassignment). Platform rooms: only members that are not `left` count, for the name and the colour (JAMAA-PLATFORM §2.3).
   - `seat` = the smallest non-negative integer not in use.
   - If `hostPlayerId===null`, the player becomes host.
   - New player: `connected=true`, `disconnectedAt=null`, `alive=true`, `left=false`, `score=0`, `joinedAt=now`.

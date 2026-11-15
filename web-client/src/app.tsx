@@ -7,7 +7,7 @@ import type { GameId } from "@jamaa/shared/games/ids";
 import type { PlayerRoomView } from "@jamaa/shared/protocol/v2";
 import { goHome, route } from "./router";
 import { conn, fatalCode, me, meMember, menuOpen, resuming, rulesFor, shownCard, view } from "./state/store";
-import { gameModules, leave, startSession, stopSession } from "./state/session";
+import { act, gameModules, leave, startSession, stopSession } from "./state/session";
 import { loadBillingFlag } from "./lib/billingFlag";
 import { CLOSE } from "./net/connection";
 import { t } from "./i18n/t";
@@ -97,7 +97,8 @@ function Room({ code }: { code: string }) {
       <Toasts />
       {rules && v && <RulesSheet id={target.hub ? rules : target.id} phase={target.phase} hub={target.hub} yourTurn={yourTurn} onClose={() => { rulesFor.value = null; }} />}
       <MenuSheet open={menuOpen.value} joined={joined} onClose={() => { menuOpen.value = false; }}
-        onLeave={() => { leave(); menuOpen.value = false; setTimeout(() => goHome(), 200); }} />
+        onLeave={() => { leave(); menuOpen.value = false; setTimeout(() => goHome(), 200); }}
+        onEndGame={joined && mm.isHost && g && !g.over ? () => { act({ type: "ABORT_GAME" }); menuOpen.value = false; } : undefined} />
       <LiveRegions />
     </div>
   );

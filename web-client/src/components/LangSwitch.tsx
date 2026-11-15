@@ -35,9 +35,10 @@ export function LangSwitch({ labelled = false }: { labelled?: boolean }) {
   );
 }
 
-export function MenuSheet({ open, onClose, onLeave, joined }: { open: boolean; onClose(): void; onLeave?(): void; joined: boolean }) {
+/** `onEndGame`: the VIP's way out of a running game (ABORT_GAME, JAMAA-PLATFORM §2.3 "Host"), only while one runs. */
+export function MenuSheet({ open, onClose, onLeave, onEndGame, joined }: { open: boolean; onClose(): void; onLeave?(): void; onEndGame?(): void; joined: boolean }) {
   const [vib, setVib] = useState(vibrationEnabled());
-  const [confirm, setConfirm] = useState(false);
+  const [confirm, setConfirm] = useState<"leave" | "end" | null>(null);
   return (
     <>
       <Sheet open={open && !confirm} onClose={onClose} title={joined ? t("phone.menu") : t("common.language")}>
@@ -62,19 +63,20 @@ export function MenuSheet({ open, onClose, onLeave, joined }: { open: boolean; o
             </button>
           </>
         )}
-        {joined && onLeave && (
+        {joined && ([["end", onEndGame, "x", "phone.endGame"], ["leave", onLeave, "door-out", "phone.leave"]] as const).map(([k, f, icon, key]) => f && (
           <>
             <hr class="sheet__rule" />
-            <button type="button" class="switchrow switchrow--danger" onClick={() => setConfirm(true)}>
-              <Icon name="door-out" />
-              <span>{t("phone.leave")}</span>
+            <button type="button" class="switchrow switchrow--danger" onClick={() => setConfirm(k)}>
+              <Icon name={icon} />
+              <span>{t(key)}</span>
               <Icon name="chevron-forward" size={20} />
             </button>
           </>
-        )}
+        ))}
       </Sheet>
-      <ConfirmSheet open={open && confirm} title={t("phone.leaveConfirm")} body={t("phone.leaveBody")} confirm={t("phone.leaveShort")}
-        onConfirm={() => { onLeave?.(); }} onClose={() => { setConfirm(false); onClose(); }} />
+      <ConfirmSheet open={open && !!confirm} title={t(confirm === "end" ? "phone.endGameConfirm" : "phone.leaveConfirm")} body={confirm === "end" ? undefined : t("phone.leaveBody")}
+        confirm={t(confirm === "end" ? "phone.endGame" : "phone.leaveShort")}
+        onConfirm={() => { (confirm === "end" ? onEndGame : onLeave)?.(); }} onClose={() => { setConfirm(null); onClose(); }} />
     </>
   );
 }

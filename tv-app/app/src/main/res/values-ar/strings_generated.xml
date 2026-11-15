@@ -187,6 +187,8 @@
     <string name="phone__leave_short">طلوع</string>
     <string name="phone__leave_confirm">بدّك تطلع من اللعبة؟</string>
     <string name="phone__leave_body">محلّك رح يفضى.</string>
+    <string name="phone__end_game">وقّف اللعبة</string>
+    <string name="phone__end_game_confirm">بدك توقّفها للكل؟ ما حدا بيسجّل نقاط.</string>
     <string name="phone__you_are_host">معك التحكّم</string>
     <string name="phone__keep_screen_on">خلّي الشاشة ضاوية خلال اللعبة</string>
     <string name="phone__vibration">الهزّاز</string>

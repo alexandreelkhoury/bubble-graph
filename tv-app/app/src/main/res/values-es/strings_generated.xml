@@ -178,6 +178,8 @@
     <string name="phone__leave_short">Salir</string>
     <string name="phone__leave_confirm">¿Salir de la partida?</string>
     <string name="phone__leave_body">Tu lugar quedará libre.</string>
+    <string name="phone__end_game">Terminar la partida</string>
+    <string name="phone__end_game_confirm">¿Terminarla para todos? Nadie suma puntos.</string>
     <string name="phone__you_are_host">Eres el anfitrión</string>
     <string name="phone__keep_screen_on">Mantén la pantalla encendida durante la partida</string>
     <string name="phone__vibration">Vibración</string>

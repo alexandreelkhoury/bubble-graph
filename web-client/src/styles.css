@@ -47,7 +47,8 @@ h1:focus, h1:focus-visible { outline: none; }
 /* Opaque, so nothing scrolling under it shows through behind the timer or the buttons; the fade above it is the
    "more below" cue. */
 .actionbar {
-  position: sticky; bottom: 0; z-index: 5;
+  /* --kb-inset (lib/keyboard.ts): right above an on-screen keyboard that covers the page, never under it. */
+  position: sticky; bottom: var(--kb-inset, 0px); z-index: 5;
   display: flex; flex-direction: column; gap: var(--space-3);
   padding: var(--space-3) var(--gutter) calc(var(--space-5) + env(safe-area-inset-bottom));
   background: var(--color-bg);

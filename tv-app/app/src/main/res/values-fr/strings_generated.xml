@@ -178,6 +178,8 @@
     <string name="phone__leave_short">Quitter</string>
     <string name="phone__leave_confirm">Quitter la partie ?</string>
     <string name="phone__leave_body">Ta place sera libérée.</string>
+    <string name="phone__end_game">Arrêter la partie</string>
+    <string name="phone__end_game_confirm">L’arrêter pour tout le monde ? Personne ne marque.</string>
     <string name="phone__you_are_host">C’est toi l’hôte</string>
     <string name="phone__keep_screen_on">Garde l’écran allumé pendant la partie</string>
     <string name="phone__vibration">Vibration</string>

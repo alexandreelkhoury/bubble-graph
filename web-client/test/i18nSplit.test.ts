@@ -4,7 +4,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import en from "@jamaa/shared/i18n/en.json";
-import { isTvOnlyKey, splitCatalog } from "../src/lib/i18nSplit";
+import { isTvOnlyKey, splitCatalog, TV_ONLY_KEYS } from "../src/lib/i18nSplit";
 
 const SRC = join(__dirname, "..", "src");
 function files(dir: string): string[] {
@@ -22,13 +22,15 @@ describe("root catalog split", () => {
     expect(Object.keys(tv).length).toBeGreaterThan(20);
     expect(phone["pass.endedPhone"]).toBeDefined();
     expect(Object.keys(phone).some(isTvOnlyKey)).toBe(false);
+    for (const k of TV_ONLY_KEYS) expect(tv[k], k).toBeDefined();   // no stale names in the list
   });
   it("phone code uses no TV-only key", () => {
     const bad: string[] = [];
-    for (const f of files(SRC).filter((p) => !isTvFile(p))) {
+    for (const f of files(SRC).filter((p) => !isTvFile(p) && !p.endsWith("i18nSplit.ts"))) {
       const src = readFileSync(f, "utf8");
       for (const m of src.matchAll(/["'`]((?:store|pass|tv)\.[A-Za-z0-9_.]+)["'`]/g)) if (isTvOnlyKey(m[1]!)) bad.push(`${f}: ${m[1]}`);
       if (/[`]\s*(store|pass|tv)\.\$\{/.test(src)) bad.push(`${f}: dynamic TV-only key`);
+      for (const k of TV_ONLY_KEYS) if (src.includes(`"${k}"`) || src.includes(`'${k}'`) || src.includes(`\`${k}`)) bad.push(`${f}: ${k}`);
     }
     expect(bad).toEqual([]);
   });

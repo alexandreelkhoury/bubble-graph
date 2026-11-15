@@ -1,7 +1,7 @@
 // JAMAA-PLATFORM §2.3–§2.5: the platform room engine. Pure: no I/O, no Date.now(), no Math.random(); time comes from
 // ctx.now and randomness from RoomState.rngState. Never mutates its inputs and returns the SAME objects when nothing
 // changed. Membership and host rules are SPEC §4.8 moved up one level.
-import { COLORS, CUP_STARS, ENTRANCE_GRACE_MS, HISTORY_GAMES_MAX, LOCALES, MAX_PLAYERS, MEMORY_MAX_KEYS, REACTION_MIN_GAP_MS, SEAT_HOLD_MS } from "../constants";
+import { COLORS, CUP_STARS, ENTRANCE_GRACE_MS, GAME_ABANDON_MS, HISTORY_GAMES_MAX, LOCALES, MAX_PLAYERS, MEMORY_MAX_KEYS, REACTION_MIN_GAP_MS, SEAT_HOLD_MS } from "../constants";
 import type { Locale } from "../constants";
 import type { ContentCatalog } from "../content/catalog";
 import { GAME_IDS, isGameId } from "../games/ids";
@@ -65,9 +65,28 @@ export function gameAvailable(content: ContentCatalog, id: GameId, locale: Local
   return (content[id].packs as unknown[]).some((p) => adapter.meta(p).languages.includes(locale));
 }
 
-/** min(HUB/SETUP seat expiries, the active game's nextWakeAt). */
+/**
+ * §2.3 "Empty game": when the active instance counts as abandoned. Every member dealt into it has left → at once (the
+ * last departure's time); every one of them is disconnected → GAME_ABANDON_MS after the last disconnect. null while
+ * one of them is connected (or outside PLAYING).
+ */
+export function gameAbandonAt(state: RoomState): number | null {
+  if (state.phase !== "PLAYING" || !state.game) return null;
+  const dealt = state.members.filter((m) => !m.benched);
+  const here = dealt.filter((m) => !m.left);
+  if (here.some((m) => m.connected)) return null;
+  const last = (ms: readonly Member[]): number => ms.reduce((t, m) => Math.max(t, m.disconnectedAt ?? 0), 0);
+  if (here.length === 0) return last(dealt);
+  return last(here) + GAME_ABANDON_MS;
+}
+
+/** min(HUB/SETUP seat expiries, the active game's nextWakeAt, the empty-game end). */
 export function nextRoomWakeAt(state: RoomState): number | null {
-  if (state.phase === "PLAYING") return state.game ? GAME_DEFS[state.game.id].nextWakeAt(state.game.state) : null;
+  if (state.phase === "PLAYING") {
+    const wake = state.game ? GAME_DEFS[state.game.id].nextWakeAt(state.game.state) : null;
+    const abandon = gameAbandonAt(state);
+    return wake === null ? abandon : abandon === null ? wake : Math.min(wake, abandon);
+  }
   let at: number | null = null;
   for (const m of state.members) {
     if (!m.connected && m.disconnectedAt !== null) {
@@ -376,8 +395,11 @@ function applySystem(d: Draft, a: RoomSystemAction): Err {
       const name = sanitizeName(a.name);
       if (name === null) return "NAME_INVALID";
       const key = nameKey(name);
-      if (s.members.some((m) => nameKey(m.name) === key)) return "NAME_TAKEN";
-      if (s.members.some((m) => m.color === a.color)) return "COLOR_TAKEN";
+      // §2.3: a member who LEFT (kept only until the game ends, for its scores) holds neither name nor character, so
+      // the same person can come straight back; a disconnected member still does (their seat is held for them).
+      const present = s.members.filter((m) => !m.left);
+      if (present.some((m) => nameKey(m.name) === key)) return "NAME_TAKEN";
+      if (present.some((m) => m.color === a.color)) return "COLOR_TAKEN";
       const used = new Set(s.members.map((m) => m.seat));
       let seat = 0;
       while (used.has(seat)) seat++;
@@ -417,8 +439,8 @@ function applySystem(d: Draft, a: RoomSystemAction): Err {
     }
     case "TICK": {
       if (s.phase === "PLAYING") {
-        const at = nextRoomWakeAt(s);
-        return at !== null && d.now >= at ? runGame(d, { type: "TICK" }) : null;
+        const at = s.game ? def(s.game.id).nextWakeAt(s.game.state) : null;
+        return at !== null && d.now >= at ? runGame(d, { type: "TICK" }) : null;   // the empty-game end: settleEmptyGame
       }
       const expired = s.members.filter((m) => !m.connected && m.disconnectedAt !== null && m.disconnectedAt + SEAT_HOLD_MS <= d.now);
       for (const m of expired) removeMember(s, m.id);
@@ -439,6 +461,20 @@ function applySystem(d: Draft, a: RoomSystemAction): Err {
       else if (s.phase === "HUB") for (const id of GAME_IDS) restrict(d, id);
       return null;   // PLAYING: the running game finishes with what it started (§4.4)
   }
+}
+
+/**
+ * §2.3 "Empty game": nobody is left to play the active instance (every player in it LEFT or was kicked, or all of them
+ * have been disconnected for GAME_ABANDON_MS). The instance ends as ABORT_GAME does when it has no outcome yet (no
+ * stars, matchScores unchanged, memory kept) and the room returns to the HUB, so the TV never shows a game nobody plays.
+ * Runs after every successful step, so the LEAVE / KICK of the last player ends it in the same write.
+ */
+function settleEmptyGame(d: Draft): void {
+  const at = gameAbandonAt(d.s);
+  if (at === null || d.now < at) return;
+  endInstance(d);
+  d.s.phase = "HUB";
+  d.s.setupGameId = null;
 }
 
 /** §2.6: a room in SETUP for a game that left `room.games` (redeploy without it) returns to HUB on its next write. */
@@ -488,6 +524,7 @@ export function reduceRoom(state: RoomState, action: RoomAction, ctx: RoomCtx): 
     ? applySystem(d, action as RoomSystemAction)
     : applyIntent(d, action as RoomIntent, action.by);
   if (err) return fail(err);
+  settleEmptyGame(d);
   normalizeSetup(d);
   d.s.rngState = d.rng.state >>> 0;
   const sameS = JSON.stringify(d.s) === beforeS;
