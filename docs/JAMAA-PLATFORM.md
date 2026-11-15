@@ -1076,7 +1076,7 @@ export interface ContentAdapter<P> {
 - `server/src/content.ts` takes an **injected loader**: `createContent(loader: (game: GameId) => string[])`. The Worker entry passes a loader over the text-module imports (wrangler's Text rule); Vitest, the sim and `tools/*` pass a loader over the `@jamaa/content` JSON (plain Node, where the Text rule does not apply). Each game's packs are `JSON.parse`d **on first use** in an isolate.
 - Root `vitest.config.ts` coverage includes move with the engines: `shared/src/games/*/engine/**` and `shared/src/room/**` (90 % threshold), replacing `shared/src/engine/**`.
 - `check-size.mjs` then checks:
-  - JS ≤ 400 KB minified (code only);
+  - JS ≤ 450 KB minified (code only; 400 → 450 KB in 2026-11 with the 5th game, Taqriban!);
   - content text modules ≤ 2 MB raw in all;
   - the whole upload under the Workers plan limit [VERIFY current limits: Free 3 MB / Paid 10 MB gzip were documented in 2025].
 - Content never goes to static assets: premium items must not be downloadable.

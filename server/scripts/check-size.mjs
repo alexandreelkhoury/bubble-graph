@@ -2,7 +2,7 @@
 // regression such as zod's full namespace with its locale packs (+350 KB) must fail the build. The packs no longer live
 // in the script: `content-lint --emit` writes them to content-dist/ and wrangler uploads them as Text modules, which
 // `wrangler deploy --dry-run --outdir dist` copies next to index.js. Run after that dry run (`pnpm build` does).
-//   1. JS (dist/index.js, code only) ≤ 400 KB minified;
+//   1. JS (dist/index.js, code only) ≤ 450 KB minified;
 //   2. content text modules (dist/*.txt) ≤ 2 MB raw in all;
 //   3. the whole upload (JS + modules) ≤ 3 MB gzip: the Workers Free plan limit as documented in 2025
 //      [VERIFY the current limits for the owner's plan: Free 3 MB / Paid 10 MB gzip]. The conservative one is used.
@@ -13,7 +13,7 @@ import { Buffer } from "node:buffer";
 import { gzipSync } from "node:zlib";
 
 const KB = 1024;
-export const JS_BUDGET = 400 * KB;
+export const JS_BUDGET = 450 * KB; // 400 → 450 with the 5th game engine (taqriban); the hard Free-plan limit is the 3 MB gzip upload below
 export const CONTENT_BUDGET = 2 * KB * KB;
 export const UPLOAD_GZ_BUDGET = 3 * KB * KB;
 

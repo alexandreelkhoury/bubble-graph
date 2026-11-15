@@ -12,7 +12,7 @@ describe("check-size", () => {
     expect(r.lines).toHaveLength(3);
     expect(r.lines[1]).toMatch(/1 text modules/);
   });
-  it("fails on code over 400 KB, content over 2 MB raw, or a missing script", () => {
+  it("fails on code over 450 KB, content over 2 MB raw, or a missing script", () => {
     expect(checkSizes([{ name: "index.js", bytes: bytes(JS_BUDGET + 1) }]).ok).toBe(false);
     expect(checkSizes([{ name: "index.js", bytes: new TextEncoder().encode('"./x.txt"') }, { name: "x.txt", bytes: bytes(CONTENT_BUDGET + 1) }]).ok).toBe(false);
     expect(checkSizes([{ name: "x.txt", bytes: bytes(1) }]).ok).toBe(false);
