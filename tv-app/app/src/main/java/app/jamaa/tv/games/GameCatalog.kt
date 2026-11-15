@@ -50,9 +50,10 @@ object GameIds {
     const val BLUFF = "bluff"
     const val LIKELY = "likely"
     const val TRIVIA = "trivia"
+    const val TAQRIBAN = "taqriban"
 
     /** Registry (hub) order, §2.2 GAME_IDS. */
-    val ALL: List<String> = listOf(MISHANA, BLUFF, LIKELY, TRIVIA)
+    val ALL: List<String> = listOf(MISHANA, BLUFF, LIKELY, TRIVIA, TAQRIBAN)
 }
 
 /** §3.4 world ids. */
@@ -61,6 +62,7 @@ object WorldIds {
     const val HAKAWATI_CAFE = "hakawati-cafe"
     const val ROOFTOP = "rooftop"
     const val QUIZ_STUDIO = "quiz-studio"
+    const val OBSERVATORY = "observatory"
 }
 
 object GameCatalog {
@@ -220,7 +222,36 @@ object GameCatalog {
         )
     }
 
-    val ALL: List<TvGameMeta> = listOf(MISHANA, BLUFF, LIKELY, TRIVIA)
+    // Taqriban! (GAME-TAQRIBAN §9, §10; shared/src/games/taqriban/meta.ts).
+    val TAQRIBAN: TvGameMeta = run {
+        val k = "game.taqriban"
+        TvGameMeta(
+            id = GameIds.TAQRIBAN, minPlayers = 2, maxPlayers = 12,
+            phases = listOf("QUESTION", "REVEAL", "LEADERBOARD", "FINAL_INTRO", "RESULTS", "HOLD"),
+            titleKey = "$k.title", taglineKey = "$k.tagline", howToKeys = (1..4).map { "$k.howto.$it" },
+            ruleSections = listOf(
+                RuleSectionSpec("guess", "$k.rules.guess.title", "$k.rules.guess.body", listOf("QUESTION", "HOLD")),
+                RuleSectionSpec("closest", "$k.rules.closest.title", "$k.rules.closest.body", listOf("REVEAL")),
+                RuleSectionSpec("points", "$k.rules.points.title", "$k.rules.points.body", listOf("REVEAL", "LEADERBOARD")),
+                RuleSectionSpec("final", "$k.rules.final.title", "$k.rules.final.body", listOf("FINAL_INTRO", "RESULTS")),
+            ),
+            durationMinutes = 6 to 12, world = WorldIds.OBSERVATORY,
+            pauseItems = listOf(
+                PauseItemSpec("skip", "$k.pause.skip", "SKIP_QUESTION", listOf("QUESTION"), confirm = true),
+                PauseItemSpec("next", "$k.pause.next", "HOST_ADVANCE", listOf("REVEAL", "LEADERBOARD", "FINAL_INTRO")),
+                PauseItemSpec("endGame", "$k.pause.endGame", "END_GAME", listOf("HOLD"), confirm = true),
+            ),
+            carriesScore = false, viewVersion = 1,
+            basic = listOf(
+                SettingFieldSpec.Packs("packIds", "$k.settings.packs", single = false),
+                choice("length", "$k.settings.length", "short" to "$k.settings.length.short", "normal" to "$k.settings.length.normal", "long" to "$k.settings.length.long"),
+                choice("pace", "$k.settings.pace", "relaxed" to "$k.settings.pace.relaxed", "normal" to "$k.settings.pace.normal", "fast" to "$k.settings.pace.fast"),
+            ),
+            advanced = emptyList(), premiumKeys = emptyList(),
+        )
+    }
+
+    val ALL: List<TvGameMeta> = listOf(MISHANA, BLUFF, LIKELY, TRIVIA, TAQRIBAN)
 
     fun meta(id: String?): TvGameMeta? = ALL.firstOrNull { it.id == id }
 }

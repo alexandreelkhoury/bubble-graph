@@ -63,6 +63,7 @@ object GameScreens {
         GameIds.BLUFF to { a -> (a.game as? app.jamaa.tv.games.bluff.BluffGameView)?.let { app.jamaa.tv.games.bluff.ui.BluffGameScreen(it, a) } ?: UpdateJamaaCard(a) }, // G2 lane C
         GameIds.LIKELY to { a -> (a.game as? LikelyGameView)?.let { LikelyGameScreen(it, a) } ?: UpdateJamaaCard(a) },
         GameIds.TRIVIA to { a -> (a.game as? app.jamaa.tv.games.trivia.TriviaGameView)?.let { app.jamaa.tv.games.trivia.ui.TriviaGameScreen(it, a) } ?: UpdateJamaaCard(a) }, // G4 lane C
+        GameIds.TAQRIBAN to { a -> (a.game as? app.jamaa.tv.games.taqriban.TaqribanGameView)?.let { app.jamaa.tv.games.taqriban.ui.TaqribanGameScreen(it, a) } ?: UpdateJamaaCard(a) },
     )
 
     @Composable

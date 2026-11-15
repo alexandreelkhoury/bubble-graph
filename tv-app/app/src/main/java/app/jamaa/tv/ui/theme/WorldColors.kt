@@ -76,7 +76,20 @@ object Worlds {
         signal = Color(0xFF3DDC97),
     )
 
-    val all: List<WorldColors> = listOf(NightMarket, HakawatiCafe, Rooftop, QuizStudio)
+    val Observatory = WorldColors(
+        id = "observatory",
+        deep = Color(0xFF06161A),
+        stageTop = Color(0xFF0C2A30),
+        surface = Color(0xFF0F2F36),
+        elevated = Color(0xFF18434B),
+        accent = Color(0xFFFFB547),
+        accentText = Color(0xFFFFC46B),
+        onAccent = Color(0xFF120A1F),
+        glow = Color(0xFFFFE7B0),
+        signal = Color(0xFFFF6B5B),
+    )
+
+    val all: List<WorldColors> = listOf(NightMarket, HakawatiCafe, Rooftop, QuizStudio, Observatory)
 
     /** The world for [id]; an unknown id falls back to NightMarket. */
     fun byId(id: String): WorldColors = all.firstOrNull { it.id == id } ?: NightMarket

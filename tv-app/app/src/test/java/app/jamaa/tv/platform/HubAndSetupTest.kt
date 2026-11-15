@@ -90,7 +90,7 @@ class HubAndSetupTest {
     @Test
     fun cardsCupAndMetaLine() {
         val room = TvFixtures.room("setup.bluff").room
-        assertEquals(listOf("mishana", "bluff", "likely", "trivia"), HubModel.cards(room).map { it.id })
+        assertEquals(listOf("mishana", "bluff", "likely", "trivia", "taqriban"), HubModel.cards(room).map { it.id })
         assertEquals(1, HubModel.initialIndex(HubModel.cards(room), lastPlayed = null, focused = "bluff"))
         assertEquals(0, HubModel.initialIndex(HubModel.cards(room), lastPlayed = "karaoke", focused = null))
         val trivia = HubModel.metaLine(room.games.first { it.id == "trivia" }, 0)

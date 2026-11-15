@@ -30,6 +30,7 @@ object PosterArt {
         GameIds.BLUFF -> listOf("jade" to Expression.THINK, "tangerine" to Expression.SMUG, "lilac" to Expression.THINK)
         GameIds.LIKELY -> listOf("aqua" to Expression.POINT, "rose" to Expression.SHY, "sand" to Expression.POINT)
         GameIds.TRIVIA -> listOf("grape" to Expression.IDLE, "coral" to Expression.CHEER, "mint" to Expression.IDLE)
+        GameIds.TAQRIBAN -> listOf("sand" to Expression.THINK, "lemon" to Expression.SHOCK, "azure" to Expression.THINK)
         else -> listOf("coral" to Expression.IDLE, "azure" to Expression.IDLE, "lemon" to Expression.IDLE)
     }
 
@@ -143,6 +144,23 @@ fun DrawScope.drawWorldProps(worldId: String?, colors: WorldColors, phase: Float
                 val desk = Rect(w * 0.22f, h * (1f - 0.02f - 0.09f), w * 0.78f, h * 0.98f)
                 drawRoundRect(Brush.verticalGradient(listOf(Color(0xFF222B63), Color(0xFF161D4A)), desk.top, desk.bottom), desk.topLeft, desk.size, CornerRadius(6f * u))
                 drawRect(Color(0x99FFD84D), desk.topLeft, Size(desk.width, 3f * u))
+            }
+            WorldIds.OBSERVATORY -> {
+                // A dome slit full of stars, a ruler line and the answer's red pin drifting onto it (web .poster__art--taqriban).
+                val dome = Rect(w * 0.18f, h * 0.04f, w * 0.82f, h * 0.38f)
+                drawRoundRect(Brush.verticalGradient(listOf(Color(0xFF0C2A30), Color(0xFF06161A)), dome.top, dome.bottom), dome.topLeft, dome.size, CornerRadius(dome.width / 2f, dome.width / 2f))
+                drawRoundRect(Color(0x59FFC46B), dome.topLeft, dome.size, CornerRadius(dome.width / 2f, dome.width / 2f), style = Stroke(3f * u))
+                for ((k, s) in listOf(0.30f to 0.40f, 0.70f to 0.25f, 0.55f to 0.60f, 0.42f to 0.20f).withIndex()) {
+                    val tw = 0.5f + 0.5f * (0.5f + 0.5f * wave(k / 4f))
+                    drawCircle(colors.glow, 1.6f * u, Offset(dome.left + s.first * dome.width, dome.top + s.second * dome.height), alpha = tw)
+                }
+                val ry = h * 0.44f + 8f * u
+                drawLine(Color(0xCCFFE7B0), Offset(w * 0.06f, ry), Offset(w * 0.94f, ry), 2f * u)
+                var tx = w * 0.06f
+                while (tx <= w * 0.94f) { drawLine(Color(0xCCFFE7B0), Offset(tx, ry - 6f * u), Offset(tx, ry), 2f * u); tx += 14f * u }
+                val px = sx(0.62f)
+                val drop = 8f * u * (0.5f - 0.5f * wave(0f))
+                drawRoundRect(Color(0xFFFF6B5B), Offset(px - 2f * u, h * 0.30f - drop), Size(4f * u, h * 0.16f), CornerRadius(2f * u))
             }
             else -> {
                 // The night market's bang marks: three tilted "!" in glow → accent, drifting (Mish Ana!'s shared bang).
