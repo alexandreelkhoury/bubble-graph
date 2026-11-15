@@ -9,7 +9,7 @@ import type { CreateRoomResponseBody, ErrorCode } from "@jamaa/shared/protocol";
 import type { ErrorMsgV2, RoomIntentMsg, TvRoomView } from "@jamaa/shared/protocol/v2";
 import { bindWake, CLOSE, Connection, partySocketFactory } from "../net/connection";
 import type { ConnStatus } from "../net/connection";
-import { createRoom } from "../net/api";
+import { createRoom, tvPlatform } from "../net/api";
 import { ensureMeta } from "../lib/meta";
 import { loadGameCatalog, locale, t } from "../i18n/t";
 import type { MessageKey } from "../i18n/t";
@@ -20,6 +20,7 @@ import type { StoreEntry } from "./billing/model";
 import { billingEnabled } from "../lib/billingFlag";
 import { recreatesRoomOnFatal } from "./roomLife";
 import { tvMemoryBody, withMemoryTap } from "./tvMemory";
+import { setReportContext } from "../lib/report";
 
 export type TvUi =
   | { kind: "creating" }
@@ -32,6 +33,13 @@ export type TvUi =
 export const tvUi = signal<TvUi>({ kind: "creating" });
 export const tvView = signal<TvRoomView | null>(null);
 export const tvConn = signal<ConnStatus>("connecting");
+
+// JAMAA-PLATFORM §7.3: error reports from the browser TV carry its screen and room code (main.tsx installed the reporter).
+setReportContext(() => {
+  const ui = tvUi.value;
+  const room = tvView.value?.room;
+  return { p: tvPlatform(), s: "tv:" + (room ? room.phase + (room.setupGameId ? ":" + room.setupGameId : "") : ui.kind), ...(ui.kind === "room" ? { r: ui.room.code } : {}) };
+});
 /** HUB-06 pause menu (in game). */
 export const tvPaused = signal(false);
 /** The canvas scale (CSS px per dp), for pixel-snapping the QR modules. */
