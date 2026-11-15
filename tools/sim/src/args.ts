@@ -21,7 +21,7 @@ export interface SimArgs {
 }
 
 /**
- * Parses `--game mishana|bluff|likely|trivia|all --players 1..12|N --games N --seed N --win-rule official|parity
+ * Parses `--game mishana|bluff|likely|trivia|taqriban|all --players 1..12|N --games N --seed N --win-rule official|parity
  * --tie-break random|none --access premium|free --session --ws URL --verbose`.
  */
 export function parseArgs(argv: readonly string[]): SimArgs {

@@ -7,7 +7,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const GAME_IDS = ["mishana", "bluff", "likely", "trivia"]; // = shared/src/games/ids.ts (checked by server/test/content.test.ts)
+const GAME_IDS = ["mishana", "bluff", "likely", "trivia", "taqriban"]; // = shared/src/games/ids.ts (checked by server/test/content.test.ts)
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "content-dist");
 const out = join(root, "src", "content-modules.gen.ts");

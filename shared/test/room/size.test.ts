@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { HISTORY_GAMES_MAX, MAX_PLAYERS, MEMORY_MAX_KEYS, NAME_MAX_CHARS } from "../../src/constants";
 import type { ColorId } from "../../src/constants";
 import { GAME_IDS } from "../../src/games/ids";
+import { TAQ_MEMORY_MAX } from "../../src/games/taqriban/constants";
 import { pid, RoomHarness, TEST_CATALOG } from "../../src/testing";
 import { contentCatalog } from "../../src/content/catalog";
 import type { RoomHistory } from "../../src/room/types";
@@ -29,13 +30,15 @@ describe("room storage size (§2.6)", () => {
   });
   // Item keys as the games store them: Mish Ana! pair keys "<packId>:<pairId>" (a typical 14-character pack id), and
   // "<family>:<itemId>" for G2–G4 (e.g. "lb-quiz-01:q0123").
-  it("history (4 games × 300 ids + 20 cup entries at 12 members) ≤ 32 KiB", () => {
+  // Taqriban caps its memory at TAQ_MEMORY_MAX short ids (≤ 9 chars): each game's worst case is its own cap and id shape.
+  // The 5th game (Taqriban) raised the budget from 32 to 34 KiB: `history` is written once per game end, not per tap.
+  it("history (every game at its memory cap + 20 cup entries at 12 members) ≤ 34 KiB", () => {
     const ids = Array.from({ length: MAX_PLAYERS }, (_, i) => pid(i));
     const h: RoomHistory = {
-      memory: Object.fromEntries(GAME_IDS.map((g) => [g, { usedKeys: Array.from({ length: MEMORY_MAX_KEYS }, (_, i) => (g === "mishana" ? `en-everyday-01:p${String(i).padStart(3, "0")}` : `lb-quiz-01:q${String(i).padStart(4, "0")}`)) }])),
-      games: Array.from({ length: HISTORY_GAMES_MAX }, (_, n) => ({ gameId: GAME_IDS[n % 4] as "mishana", n: n + 1, ranking: ids.map((id) => [id]), endedAt: 1_790_000_000_000 + n })),
+      memory: Object.fromEntries(GAME_IDS.map((g) => [g, { usedKeys: Array.from({ length: g === "taqriban" ? TAQ_MEMORY_MAX : MEMORY_MAX_KEYS }, (_, i) => (g === "mishana" ? `en-everyday-01:p${String(i).padStart(3, "0")}` : g === "taqriban" ? `twld-${String(i).padStart(4, "0")}` : `lb-quiz-01:q${String(i).padStart(4, "0")}`)) }])),
+      games: Array.from({ length: HISTORY_GAMES_MAX }, (_, n) => ({ gameId: GAME_IDS[n % GAME_IDS.length] as "mishana", n: n + 1, ranking: ids.map((id) => [id]), endedAt: 1_790_000_000_000 + n })),
     };
     console.log(`history worst case: ${bytes(h)} bytes`);
-    expect(bytes(h)).toBeLessThanOrEqual(32 * 1024);
+    expect(bytes(h)).toBeLessThanOrEqual(34 * 1024);
   });
 });

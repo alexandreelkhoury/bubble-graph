@@ -19,6 +19,8 @@ import type { BluffState } from "../../../shared/src/games/bluff/engine/state";
 import { bluffProgressIntent } from "../../../shared/src/testing/bots/bluff";
 import type { LikelyState } from "../../../shared/src/games/likely/engine/state";
 import { likelyNextIntent } from "../../../shared/src/testing/bots/likely";
+import type { TaqribanState } from "../../../shared/src/games/taqriban/engine/types";
+import { taqribanNextIntent } from "../../../shared/src/testing/bots/taqriban";
 import type { SimArgs } from "./args";
 import { formatColumns } from "./format";
 
@@ -210,6 +212,17 @@ export function playSession(seed: number, args: Pick<SimArgs, "players" | "acces
       const n = rng.next() < 0.1 ? null : likelyNextIntent(gs, rng, h.state.hostPlayerId);
       if (n === null || !step({ type: "GAME", gameId: "likely", i: n.intent, by: n.by } as RoomAction)) {
         h.now = Math.max(h.now + 1_000, gs.deadline ?? h.now + 30_000);
+        step({ type: "TICK", by: SYS });
+      }
+      continue;
+    }
+    if (h.state.game?.id === "taqriban") {
+      // GAME-TAQRIBAN §13.3: the next legal Taqriban move (shared/src/testing/bots/taqriban.ts: guesses, then the host),
+      // else the clock runs to the phase deadline through the room TICK.
+      const gs = h.state.game.state as TaqribanState;
+      const n = rng.next() < 0.1 ? null : taqribanNextIntent(gs, rng, h.state.hostPlayerId);
+      if (n === null || !step({ type: "GAME", gameId: "taqriban", i: n.intent, by: n.by } as RoomAction)) {
+        h.now = Math.max(h.now + 1_000, gs.deadline?.at ?? h.now + 30_000);
         step({ type: "TICK", by: SYS });
       }
       continue;

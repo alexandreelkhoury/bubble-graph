@@ -312,7 +312,7 @@ describe("games offered (§2.5 TV capability, §2.6 GAMES_ENABLED)", () => {
     expect(h.state).toBe(before);
   });
   it("hello games of a current TV are every game at its VIEW_VERSION", () => {
-    expect(ALL_TV_GAMES.map((g) => g.id)).toEqual(["mishana", "bluff", "likely", "trivia"]);
+    expect(ALL_TV_GAMES.map((g) => g.id)).toEqual(["mishana", "bluff", "likely", "trivia", "taqriban"]);
   });
 });
 

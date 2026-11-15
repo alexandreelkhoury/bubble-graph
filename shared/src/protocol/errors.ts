@@ -5,6 +5,7 @@ import { ERRORS as BLUFF_ERRORS } from "../games/bluff/errors";
 import { ERRORS as LIKELY_ERRORS } from "../games/likely/errors";
 import { ERRORS as MISHANA_ERRORS } from "../games/mishana/errors";
 import { ERRORS as TRIVIA_ERRORS } from "../games/trivia/errors";
+import { ERRORS as TAQRIBAN_ERRORS } from "../games/taqriban/errors";
 
 export const PLATFORM_ERROR_CODES = [
   "BAD_MESSAGE", "UNSUPPORTED_VERSION", "NOT_AUTHENTICATED", "TV_AUTH_FAILED", "ROOM_NOT_FOUND", "ROOM_EXPIRED",
@@ -22,13 +23,13 @@ export type PlatformErrorCode = (typeof PLATFORM_ERROR_CODES)[number];
 
 /** JAMAA-PLATFORM §2.2: each registered game's own codes (games/<id>/errors.ts). A duplicate across lists fails a test. */
 export const GAME_ERROR_CODES = {
-  mishana: MISHANA_ERRORS, bluff: BLUFF_ERRORS, likely: LIKELY_ERRORS, trivia: TRIVIA_ERRORS,
+  mishana: MISHANA_ERRORS, bluff: BLUFF_ERRORS, likely: LIKELY_ERRORS, trivia: TRIVIA_ERRORS, taqriban: TAQRIBAN_ERRORS,
 } as const;
 type GameErrorCode = (typeof GAME_ERROR_CODES)[keyof typeof GAME_ERROR_CODES][number];
 
 export const ERROR_CODES = [
   ...PLATFORM_ERROR_CODES,
-  ...GAME_ERROR_CODES.mishana, ...GAME_ERROR_CODES.bluff, ...GAME_ERROR_CODES.likely, ...GAME_ERROR_CODES.trivia,
+  ...GAME_ERROR_CODES.mishana, ...GAME_ERROR_CODES.bluff, ...GAME_ERROR_CODES.likely, ...GAME_ERROR_CODES.trivia, ...GAME_ERROR_CODES.taqriban,
 ] as const;
 export type ErrorCode = PlatformErrorCode | GameErrorCode;
 

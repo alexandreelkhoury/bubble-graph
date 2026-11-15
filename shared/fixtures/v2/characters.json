@@ -450,6 +450,17 @@
       "onAccent": "#120A1F",
       "glow": "#FFD84D",
       "signal": "#3DDC97"
+    },
+    "observatory": {
+      "deep": "#06161A",
+      "stageTop": "#0C2A30",
+      "surface": "#0F2F36",
+      "elevated": "#18434B",
+      "accent": "#FFB547",
+      "accentText": "#FFC46B",
+      "onAccent": "#120A1F",
+      "glow": "#FFE7B0",
+      "signal": "#FF6B5B"
     }
   }
 }

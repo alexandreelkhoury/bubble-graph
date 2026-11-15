@@ -1,0 +1,1003 @@
+{
+  "schemaVersion": 1,
+  "id": "taqriban-levant",
+  "game": "taqriban",
+  "title": {
+    "en": "Lebanon & the Middle East",
+    "fr": "Liban et Moyen-Orient",
+    "ar": "لبنان والشرق الأوسط",
+    "es": "Líbano y Oriente Medio"
+  },
+  "description": {
+    "en": "Cedars, hummus records, Baalbek and the road to everywhere from Beirut.",
+    "fr": "Cèdres, records de houmous, Baalbek et Beyrouth vue du monde entier.",
+    "ar": "أرز، أرقام قياسية بالحمّص، بعلبك، وبيروت عن بعد كل العالم.",
+    "es": "Cedros, récords de hummus, Baalbek y Beirut a un vuelo de todas partes."
+  },
+  "locales": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "all",
+  "items": [
+    {
+      "id": "tl-001",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "What is the area of Lebanon, in km²?",
+        "fr": "Quelle est la superficie du Liban, en km² ?",
+        "ar": "قدّيش مساحة لبنان، بالكلم المربّع؟",
+        "es": "¿Cuál es la superficie del Líbano, en km²?"
+      },
+      "unit": {
+        "en": "km²",
+        "fr": "km²",
+        "ar": "كلم²",
+        "es": "km²"
+      },
+      "answer": 10452,
+      "source": "CIA World Factbook",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.cia.gov/the-world-factbook/countries/lebanon/"
+      }
+    },
+    {
+      "id": "tl-002",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "food"
+      ],
+      "text": {
+        "en": "In 2010 Lebanon set the record for the largest plate of hummus. How much did it weigh, in kg?",
+        "fr": "En 2010, le Liban a battu le record de la plus grande assiette de houmous. Combien pesait-elle, en kg ?",
+        "ar": "سنة 2010 لبنان كسر الرقم القياسي لأكبر صحن حمّص. قدّيش كان وزنه، بالكيلو؟",
+        "es": "En 2010 el Líbano batió el récord del plato de hummus más grande. ¿Cuánto pesaba, en kg?"
+      },
+      "unit": {
+        "en": "kg",
+        "fr": "kg",
+        "ar": "كلغ",
+        "es": "kg"
+      },
+      "answer": 10452,
+      "source": "Guinness World Records (2010)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/largest-serving-of-hummus"
+      }
+    },
+    {
+      "id": "tl-003",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "food"
+      ],
+      "text": {
+        "en": "In 2009 Lebanon made the largest tabbouleh ever. How much did it weigh, in kg?",
+        "fr": "En 2009, le Liban a préparé le plus grand taboulé du monde. Combien pesait-il, en kg ?",
+        "ar": "سنة 2009 لبنان عمل أكبر صحن تبّولة بالعالم. قدّيش كان وزنه، بالكيلو؟",
+        "es": "En 2009 el Líbano preparó el tabulé más grande del mundo. ¿Cuánto pesaba, en kg?"
+      },
+      "unit": {
+        "en": "kg",
+        "fr": "kg",
+        "ar": "كلغ",
+        "es": "kg"
+      },
+      "answer": 3557,
+      "source": "Guinness World Records (2009)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/largest-serving-of-tabbouleh"
+      }
+    },
+    {
+      "id": "tl-004",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How high is Qurnat as Sawda', the highest peak in Lebanon, in metres?",
+        "fr": "Quelle est l'altitude de Qornet es-Saouda, le plus haut sommet du Liban, en mètres ?",
+        "ar": "قدّيش علوّ القرنة السودا، أعلى قمة بلبنان، بالمتر؟",
+        "es": "¿Qué altura tiene el Qurnat as Sawda', la cumbre más alta del Líbano, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 3088,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Qurnat-al-Sawda"
+      }
+    },
+    {
+      "id": "tl-005",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How high is Mount Hermon (Jabal el-Sheikh), in metres?",
+        "fr": "Quelle est l'altitude du mont Hermon (Jabal el-Cheikh), en mètres ?",
+        "ar": "قدّيش علوّ جبل الشيخ (حرمون)، بالمتر؟",
+        "es": "¿Qué altura tiene el monte Hermón (Jabal el-Sheij), en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 2814,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Mount-Hermon"
+      }
+    },
+    {
+      "id": "tl-006",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How long is Lebanon's coastline, in km?",
+        "fr": "Quelle est la longueur du littoral libanais, en km ?",
+        "ar": "قدّيش طول الشاطئ اللبناني، بالكلم؟",
+        "es": "¿Cuánto mide la costa del Líbano, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 225,
+      "source": "CIA World Factbook",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.cia.gov/the-world-factbook/countries/lebanon/"
+      }
+    },
+    {
+      "id": "tl-007",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "history"
+      ],
+      "text": {
+        "en": "How many columns of the Temple of Jupiter in Baalbek are still standing?",
+        "fr": "Combien de colonnes du temple de Jupiter à Baalbek sont encore debout ?",
+        "ar": "كم عامود من معبد جوبيتر ببعلبك بعدهم واقفين؟",
+        "es": "¿Cuántas columnas del templo de Júpiter en Baalbek siguen en pie?"
+      },
+      "unit": {
+        "en": "columns",
+        "fr": "colonnes",
+        "ar": "عمود",
+        "es": "columnas"
+      },
+      "answer": 6,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Baalbek"
+      }
+    },
+    {
+      "id": "tl-008",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "history"
+      ],
+      "text": {
+        "en": "About how tall are the standing columns of the Temple of Jupiter in Baalbek, in metres?",
+        "fr": "Quelle est la hauteur des colonnes encore debout du temple de Jupiter à Baalbek, en mètres, environ ?",
+        "ar": "تقريبًا قدّيش طول العواميد الواقفة بمعبد جوبيتر ببعلبك، بالمتر؟",
+        "es": "¿Cuánto miden las columnas que siguen en pie del templo de Júpiter en Baalbek, en metros, aproximadamente?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 20,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Baalbek"
+      }
+    },
+    {
+      "id": "tl-009",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "history"
+      ],
+      "text": {
+        "en": "The biggest stone block found at Baalbek's quarry (2014) weighs about how many tonnes?",
+        "fr": "Le plus gros bloc de pierre découvert dans la carrière de Baalbek (2014) pèse environ combien de tonnes ?",
+        "ar": "أكبر حجر انلقى بمقلع بعلبك (2014) قدّيش وزنه تقريبًا، بالطن؟",
+        "es": "¿Cuántas toneladas pesa, aproximadamente, el mayor bloque de piedra hallado en la cantera de Baalbek (2014)?"
+      },
+      "unit": {
+        "en": "tonnes",
+        "fr": "tonnes",
+        "ar": "طن",
+        "es": "toneladas"
+      },
+      "answer": 1650,
+      "source": "German Archaeological Institute (2014)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.dainst.org/"
+      }
+    },
+    {
+      "id": "tl-010",
+      "tier": "free",
+      "tags": [
+        "lebanon"
+      ],
+      "text": {
+        "en": "How many UNESCO World Heritage Sites does Lebanon have (as of 2023)?",
+        "fr": "Combien de sites du patrimoine mondial de l'UNESCO compte le Liban (en 2023) ?",
+        "ar": "كم موقع للتراث العالمي (يونسكو) عند لبنان (لسنة 2023)؟",
+        "es": "¿Cuántos sitios del Patrimonio Mundial de la UNESCO tiene el Líbano (en 2023)?"
+      },
+      "unit": {
+        "en": "sites",
+        "fr": "sites",
+        "ar": "موقع",
+        "es": "sitios"
+      },
+      "answer": 6,
+      "source": "UNESCO",
+      "review": {
+        "status": "draft",
+        "ref": "https://whc.unesco.org/en/statesparties/lb"
+      }
+    },
+    {
+      "id": "tl-011",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "history",
+        "culture"
+      ],
+      "text": {
+        "en": "How many letters did the Phoenician alphabet have?",
+        "fr": "Combien de lettres comptait l'alphabet phénicien ?",
+        "ar": "كم حرف كان في بالأبجدية الفينيقية؟",
+        "es": "¿Cuántas letras tenía el alfabeto fenicio?"
+      },
+      "unit": {
+        "en": "letters",
+        "fr": "lettres",
+        "ar": "حرف",
+        "es": "letras"
+      },
+      "answer": 22,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/topic/Phoenician-alphabet"
+      }
+    },
+    {
+      "id": "tl-012",
+      "tier": "free",
+      "tags": [
+        "lebanon"
+      ],
+      "text": {
+        "en": "How many seats are there in the Lebanese Parliament?",
+        "fr": "Combien de sièges compte le Parlement libanais ?",
+        "ar": "كم مقعد في بمجلس النوّاب اللبناني؟",
+        "es": "¿Cuántos escaños tiene el Parlamento libanés?"
+      },
+      "unit": {
+        "en": "seats",
+        "fr": "sièges",
+        "ar": "مقعد",
+        "es": "escaños"
+      },
+      "answer": 128,
+      "source": "Lebanese Parliament",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.lp.gov.lb/"
+      }
+    },
+    {
+      "id": "tl-013",
+      "tier": "free",
+      "tags": [
+        "lebanon"
+      ],
+      "text": {
+        "en": "How many governorates (mohafazat) does Lebanon have?",
+        "fr": "Combien de gouvernorats (mohafazat) compte le Liban ?",
+        "ar": "كم محافظة في بلبنان؟",
+        "es": "¿Cuántas gobernaciones (mohafazat) tiene el Líbano?"
+      },
+      "unit": {
+        "en": "governorates",
+        "fr": "gouvernorats",
+        "ar": "محافظة",
+        "es": "gobernaciones"
+      },
+      "answer": 9,
+      "source": "Lebanese Ministry of Interior",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.interior.gov.lb/"
+      }
+    },
+    {
+      "id": "tl-014",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "money"
+      ],
+      "text": {
+        "en": "From 1997 to 2023, how many Lebanese pounds was the official rate for one US dollar?",
+        "fr": "De 1997 à 2023, combien de livres libanaises valait officiellement un dollar américain ?",
+        "ar": "من 1997 لـ2023، قدّيش كان سعر الدولار الرسمي بالليرة اللبنانية؟",
+        "es": "De 1997 a 2023, ¿cuántas libras libanesas valía oficialmente un dólar estadounidense?"
+      },
+      "unit": {
+        "en": "LBP",
+        "fr": "LBP",
+        "ar": "ل.ل.",
+        "es": "LBP"
+      },
+      "answer": 1507.5,
+      "source": "Banque du Liban",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.bdl.gov.lb/"
+      }
+    },
+    {
+      "id": "tl-015",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "money"
+      ],
+      "text": {
+        "en": "What was Lebanon's GDP in 2019, before the crisis, in US$?",
+        "fr": "Quel était le PIB du Liban en 2019, avant la crise, en dollars américains ?",
+        "ar": "قدّيش كان الناتج المحلّي للبنان سنة 2019، قبل الأزمة، بالدولار؟",
+        "es": "¿Cuál era el PIB del Líbano en 2019, antes de la crisis, en dólares?"
+      },
+      "unit": {
+        "en": "US$",
+        "fr": "US$",
+        "ar": "دولار",
+        "es": "US$"
+      },
+      "answer": 51600000000,
+      "source": "World Bank (WDI)",
+      "review": {
+        "status": "draft",
+        "ref": "https://fred.stlouisfed.org/series/MKTGDPLBA646NWDB"
+      }
+    },
+    {
+      "id": "tl-016",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "nature"
+      ],
+      "text": {
+        "en": "How long is the giant stalactite in the White Chamber of Jeita Grotto, in metres?",
+        "fr": "Quelle est la longueur de la grande stalactite de la Chambre blanche de la grotte de Jeita, en mètres ?",
+        "ar": "قدّيش طول النوّاسة الكبيرة بالغرفة البيضا بمغارة جعيتا، بالمتر؟",
+        "es": "¿Cuánto mide la gran estalactita de la Cámara Blanca de la gruta de Jeita, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 8.2,
+      "source": "Jeita Grotto",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Jeita-Grotto (8.2 m stalactite, White Chamber)"
+      }
+    },
+    {
+      "id": "tl-017",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How far is Beirut from Paris as the crow flies, in km?",
+        "fr": "Quelle distance sépare Beyrouth de Paris à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين بيروت وباريس بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre Beirut y París en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 3190,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Beirut 33.8938,35.5018 – Paris 48.8566,2.3522 = 3190 km"
+      }
+    },
+    {
+      "id": "tl-018",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How far is Beirut from Dubai as the crow flies, in km?",
+        "fr": "Quelle distance sépare Beyrouth de Dubaï à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين بيروت ودبي بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre Beirut y Dubái en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 2140,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Beirut – Dubai 25.2048,55.2708 = 2137 km"
+      }
+    },
+    {
+      "id": "tl-019",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How far is Beirut from New York as the crow flies, in km?",
+        "fr": "Quelle distance sépare Beyrouth de New York à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين بيروت ونيويورك بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre Beirut y Nueva York en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 9030,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Beirut – New York 40.7128,-74.0060 = 9025 km"
+      }
+    },
+    {
+      "id": "tl-020",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How far is Beirut from Cairo as the crow flies, in km?",
+        "fr": "Quelle distance sépare Beyrouth du Caire à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين بيروت والقاهرة بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre Beirut y El Cairo en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 590,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Beirut – Cairo 30.0444,31.2357 = 587 km"
+      }
+    },
+    {
+      "id": "tl-021",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How far is Beirut from Sydney as the crow flies, in km?",
+        "fr": "Quelle distance sépare Beyrouth de Sydney à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين بيروت وسيدني بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre Beirut y Sídney en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 14190,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Beirut – Sydney -33.8688,151.2093 = 14185 km"
+      }
+    },
+    {
+      "id": "tl-022",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How far is Beirut from Damascus as the crow flies, in km?",
+        "fr": "Quelle distance sépare Beyrouth de Damas à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين بيروت والشام بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre Beirut y Damasco en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 85,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Beirut – Damascus 33.5138,36.2765 = 83 km"
+      }
+    },
+    {
+      "id": "tl-023",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How far is Beirut from Tripoli (Lebanon) as the crow flies, in km?",
+        "fr": "Quelle distance sépare Beyrouth de Tripoli (Liban) à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين بيروت وطرابلس بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre Beirut y Trípoli (Líbano) en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 70,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Beirut – Tripoli 34.4367,35.8497 = 68 km"
+      }
+    },
+    {
+      "id": "tl-024",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How far is Beirut from Montreal as the crow flies, in km?",
+        "fr": "Quelle distance sépare Beyrouth de Montréal à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين بيروت ومونتريال بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre Beirut y Montreal en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 8680,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Beirut – Montreal 45.5019,-73.5674 = 8675 km"
+      }
+    },
+    {
+      "id": "tl-025",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "How far is Beirut from São Paulo as the crow flies, in km?",
+        "fr": "Quelle distance sépare Beyrouth de São Paulo à vol d'oiseau, en km ?",
+        "ar": "قدّيش المسافة بين بيروت وساو باولو بخط مستقيم، بالكلم؟",
+        "es": "¿Qué distancia hay entre Beirut y São Paulo en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 10770,
+      "source": "Great-circle distance (city centres)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Beirut – São Paulo -23.5505,-46.6333 = 10766 km"
+      }
+    },
+    {
+      "id": "tl-026",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How long is the Suez Canal, in km?",
+        "fr": "Quelle est la longueur du canal de Suez, en km ?",
+        "ar": "قدّيش طول قناة السويس، بالكلم؟",
+        "es": "¿Cuánto mide el canal de Suez, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 193.3,
+      "source": "Suez Canal Authority",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.suezcanal.gov.eg/English/About/SuezCanal/Pages/CanalCharacteristics.aspx"
+      }
+    },
+    {
+      "id": "tl-027",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "nature"
+      ],
+      "text": {
+        "en": "How long is the Euphrates river, in km?",
+        "fr": "Quelle est la longueur de l'Euphrate, en km ?",
+        "ar": "قدّيش طول نهر الفرات، بالكلم؟",
+        "es": "¿Cuánto mide el río Éufrates, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 2800,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Euphrates-River"
+      }
+    },
+    {
+      "id": "tl-028",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "What was Egypt's population in its 2017 census?",
+        "fr": "Quelle était la population de l'Égypte lors du recensement de 2017 ?",
+        "ar": "قدّيش كان عدد سكان مصر بإحصاء 2017؟",
+        "es": "¿Cuál era la población de Egipto en su censo de 2017?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 94798827,
+      "source": "CAPMAS (Egypt census 2017)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.capmas.gov.eg/"
+      }
+    },
+    {
+      "id": "tl-029",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "What was Saudi Arabia's population in its 2022 census?",
+        "fr": "Quelle était la population de l'Arabie saoudite lors du recensement de 2022 ?",
+        "ar": "قدّيش كان عدد سكان السعودية بإحصاء 2022؟",
+        "es": "¿Cuál era la población de Arabia Saudí en su censo de 2022?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 32175224,
+      "source": "GASTAT (Saudi census 2022)",
+      "review": {
+        "status": "draft",
+        "ref": "https://portal.saudicensus.sa/"
+      }
+    },
+    {
+      "id": "tl-030",
+      "tier": "free",
+      "tags": [
+        "people"
+      ],
+      "text": {
+        "en": "What was Jordan's population in its 2015 census?",
+        "fr": "Quelle était la population de la Jordanie lors du recensement de 2015 ?",
+        "ar": "قدّيش كان عدد سكان الأردن بإحصاء 2015؟",
+        "es": "¿Cuál era la población de Jordania en su censo de 2015?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "habitants",
+        "ar": "نسمة",
+        "es": "habitantes"
+      },
+      "answer": 9531712,
+      "source": "Department of Statistics, Jordan (2015 census)",
+      "review": {
+        "status": "draft",
+        "ref": "https://dosweb.dos.gov.jo/"
+      }
+    },
+    {
+      "id": "tl-031",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "What is the area of Saudi Arabia, in km²?",
+        "fr": "Quelle est la superficie de l'Arabie saoudite, en km² ?",
+        "ar": "قدّيش مساحة السعودية، بالكلم المربّع؟",
+        "es": "¿Cuál es la superficie de Arabia Saudí, en km²?"
+      },
+      "unit": {
+        "en": "km²",
+        "fr": "km²",
+        "ar": "كلم²",
+        "es": "km²"
+      },
+      "answer": 2149690,
+      "source": "CIA World Factbook",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.cia.gov/the-world-factbook/countries/saudi-arabia/"
+      }
+    },
+    {
+      "id": "tl-032",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "What is the area of Qatar, in km²?",
+        "fr": "Quelle est la superficie du Qatar, en km² ?",
+        "ar": "قدّيش مساحة قطر، بالكلم المربّع؟",
+        "es": "¿Cuál es la superficie de Catar, en km²?"
+      },
+      "unit": {
+        "en": "km²",
+        "fr": "km²",
+        "ar": "كلم²",
+        "es": "km²"
+      },
+      "answer": 11586,
+      "source": "CIA World Factbook",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.cia.gov/the-world-factbook/countries/qatar/"
+      }
+    },
+    {
+      "id": "tl-033",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How many countries share a land border with Saudi Arabia?",
+        "fr": "Combien de pays ont une frontière terrestre avec l'Arabie saoudite ?",
+        "ar": "كم دولة إلها حدود برّية مع السعودية؟",
+        "es": "¿Cuántos países tienen frontera terrestre con Arabia Saudí?"
+      },
+      "unit": {
+        "en": "countries",
+        "fr": "pays",
+        "ar": "دولة",
+        "es": "países"
+      },
+      "answer": 7,
+      "source": "CIA World Factbook",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.cia.gov/the-world-factbook/countries/saudi-arabia/"
+      }
+    },
+    {
+      "id": "tl-034",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "geo"
+      ],
+      "text": {
+        "en": "How many member states does the Arab League have?",
+        "fr": "Combien d'États membres compte la Ligue arabe ?",
+        "ar": "كم دولة عضو بجامعة الدول العربية؟",
+        "es": "¿Cuántos Estados miembros tiene la Liga Árabe?"
+      },
+      "unit": {
+        "en": "members",
+        "fr": "membres",
+        "ar": "عضو",
+        "es": "miembros"
+      },
+      "answer": 22,
+      "source": "League of Arab States",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/topic/Arab-League"
+      }
+    },
+    {
+      "id": "tl-035",
+      "tier": "free",
+      "tags": [
+        "sport"
+      ],
+      "text": {
+        "en": "How many stadiums hosted matches at the 2022 World Cup in Qatar?",
+        "fr": "Combien de stades ont accueilli des matchs de la Coupe du monde 2022 au Qatar ?",
+        "ar": "كم ملعب استضاف ماتشات كاس العالم 2022 بقطر؟",
+        "es": "¿Cuántos estadios acogieron partidos del Mundial 2022 de Catar?"
+      },
+      "unit": {
+        "en": "stadiums",
+        "fr": "stades",
+        "ar": "ملعب",
+        "es": "estadios"
+      },
+      "answer": 8,
+      "source": "FIFA",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.fifa.com/en/tournaments/mens/worldcup/qatar2022"
+      }
+    },
+    {
+      "id": "tl-036",
+      "tier": "free",
+      "tags": [
+        "history",
+        "geo"
+      ],
+      "text": {
+        "en": "About how tall is the façade of the Treasury (Al-Khazneh) in Petra, in metres?",
+        "fr": "Quelle est la hauteur de la façade du Trésor (Al-Khazneh) à Pétra, en mètres, environ ?",
+        "ar": "تقريبًا قدّيش علوّ واجهة الخزنة بالبترا، بالمتر؟",
+        "es": "¿Cuánto mide la fachada del Tesoro (Al-Jazneh) de Petra, en metros, aproximadamente?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 40,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Petra-ancient-city-Jordan"
+      }
+    },
+    {
+      "id": "tl-037",
+      "tier": "free",
+      "tags": [
+        "history",
+        "geo"
+      ],
+      "text": {
+        "en": "About how tall are the seated statues of Ramses II at Abu Simbel, in metres?",
+        "fr": "Quelle est la hauteur des statues assises de Ramsès II à Abou Simbel, en mètres, environ ?",
+        "ar": "تقريبًا قدّيش طول تماثيل رمسيس التاني القاعدة بأبو سمبل، بالمتر؟",
+        "es": "¿Cuánto miden las estatuas sedentes de Ramsés II en Abu Simbel, en metros, aproximadamente?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 20,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Abu-Simbel"
+      }
+    },
+    {
+      "id": "tl-038",
+      "tier": "free",
+      "tags": [
+        "geo"
+      ],
+      "text": {
+        "en": "How high is Mount Sinai (Jabal Musa) in Egypt, in metres?",
+        "fr": "Quelle est l'altitude du mont Sinaï (Jabal Moussa) en Égypte, en mètres ?",
+        "ar": "قدّيش علوّ جبل موسى (سيناء) بمصر، بالمتر؟",
+        "es": "¿Qué altura tiene el monte Sinaí (Jabal Musa) en Egipto, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 2285,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/place/Mount-Sinai-mountain-Egypt"
+      }
+    }
+  ]
+}

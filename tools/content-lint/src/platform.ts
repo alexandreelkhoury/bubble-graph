@@ -1,7 +1,7 @@
 // Platform-level content checks (JAMAA-PLATFORM §5.1, §5.4, §5.5): the per-game registry, the controlled vocabulary
 // and i18n completeness for game.<id>.* keys and vocabulary labels. Pure; main.ts does the I/O.
 
-export const GAME_IDS = ["mishana", "bluff", "likely", "trivia"] as const;
+export const GAME_IDS = ["mishana", "bluff", "likely", "trivia", "taqriban"] as const;
 export type GameId = (typeof GAME_IDS)[number];
 export const I18N_LOCALES = ["en", "fr", "ar", "es"] as const;
 export type I18nLocale = (typeof I18N_LOCALES)[number];

@@ -21,6 +21,7 @@ import type { MishanaMe, MishanaPublic } from "@jamaa/shared/games/mishana/proto
 import type { BluffMe, BluffPublic } from "@jamaa/shared/games/bluff/protocol";
 import type { LikelyMe, LikelyPublic } from "@jamaa/shared/games/likely/protocol";
 import type { TriviaMe, TriviaPublic } from "@jamaa/shared/games/trivia/protocol";
+import type { TaqribanMe, TaqribanPublic } from "@jamaa/shared/games/taqriban/protocol";
 import { ALL_TV_GAMES } from "@jamaa/shared/testing";
 import { WsClient, createRoomHttp, joinAsPlayer } from "./ws-mode";
 
@@ -114,6 +115,10 @@ export function phaseLabel(v: RoomView): string {
       const p = g.public as TriviaPublic;
       return `[trivia #${g.n}] ${p.phase} question ${Math.min(p.index + 1, p.total)}/${p.total}${over}`;
     }
+    case "taqriban": {
+      const p = g.public as TaqribanPublic;
+      return `[taqriban #${g.n}] ${p.phase} question ${Math.min(p.index + 1, p.total)}/${p.total}${over}`;
+    }
   }
 }
 
@@ -194,6 +199,14 @@ function decide(v: RoomView, myId: string, locale: Locale, hold: boolean, quietL
       const n = p.options.length || (p.question.type === "tf" ? 2 : 4);
       const choice = Math.floor(Math.random() * n);
       return { key: `t${g.n}:${p.index}:${p.question.id}`, what: `ANSWER ${choice} "${p.options[choice] ?? ""}"`, a: gameIntent("trivia", { type: "ANSWER", choice }) };
+    }
+    case "taqriban": {
+      const p = g.public as TaqribanPublic;
+      const me = g.me as TaqribanMe;
+      if (p.phase !== "QUESTION" || me.waitingForNext || me.myGuess !== null || p.answeredIds.includes(myId) || !p.question) return null;
+      // A log-uniform guess between 1 and a billion: closest wins, Way off! and Bullseye all happen.
+      const value = Math.round(10 ** (Math.random() * 9));
+      return { key: `q${g.n}:${p.index}:${p.question.id}`, what: `GUESS ${value}`, a: gameIntent("taqriban", { type: "GUESS", questionId: p.question.id, value }) };
     }
   }
   return null;

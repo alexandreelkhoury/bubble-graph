@@ -117,6 +117,17 @@
             5,
             10
           ]
+        },
+        {
+          "id": "taqriban",
+          "minPlayers": 2,
+          "maxPlayers": 12,
+          "available": false,
+          "lockedPackCount": 0,
+          "durationMinutes": [
+            6,
+            12
+          ]
         }
       ],
       "setup": null,

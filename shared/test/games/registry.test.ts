@@ -15,7 +15,7 @@ import { TEST_FREE_CATALOG } from "../../src/testing";
 
 describe("game registry", () => {
   it("lists the four games in hub order; REGISTRY_ENABLED is the enabled ones, Mish Ana! always among them", () => {
-    expect(GAME_IDS).toEqual(["mishana", "bluff", "likely", "trivia"]);
+    expect(GAME_IDS).toEqual(["mishana", "bluff", "likely", "trivia", "taqriban"]);
     expect(Object.keys(GAMES)).toEqual([...GAME_IDS]);
     expect(Object.keys(GAME_META)).toEqual([...GAME_IDS]);
     expect(REGISTRY_ENABLED).toEqual(GAME_IDS.filter((id) => GAMES[id].enabled));

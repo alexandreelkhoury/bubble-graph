@@ -39,6 +39,11 @@ export const WORLD_PALETTES: { readonly [W in WorldId]: WorldPalette } = {
     deep: "#0A0F2E", stageTop: "#141C52", surface: "#161D4A", elevated: "#222B63",
     accent: "#5B7CFF", accentText: "#8FA8FF", onAccent: "#120A1F", glow: "#FFD84D", signal: "#3DDC97",
   },
+  // Taqriban! (estimation): a night observatory, deep teal-ink with a brass needle; signal = the true-answer pin.
+  observatory: {
+    deep: "#06161A", stageTop: "#0C2A30", surface: "#0F2F36", elevated: "#18434B",
+    accent: "#FFB547", accentText: "#FFC46B", onAccent: "#120A1F", glow: "#FFE7B0", signal: "#FF6B5B",
+  },
 };
 
 /** One token for one surface (`null` only for a world without a signal colour). */
