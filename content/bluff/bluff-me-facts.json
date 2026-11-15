@@ -33,12 +33,12 @@
         "ar"
       ],
       "prompt": {
-        "original": "The Greek word for book, biblion, comes from the name of the Lebanese port ___",
+        "original": "The Greek word for book, biblion, is traditionally linked to the Lebanese port ___",
         "translit": null,
         "display": {
-          "fr": "Le mot grec pour livre, biblion, vient du nom du port libanais ___",
-          "ar": "الكلمة اليونانية يلي معناها كتاب، بيبليون، جاية من اسم مرفأ لبناني: ___",
-          "es": "La palabra griega para libro, biblion, viene del nombre del puerto libanés de ___"
+          "fr": "Le mot grec pour livre, biblion, est traditionnellement lié au port libanais ___",
+          "ar": "الكلمة اليونانية يلي معناها كتاب، بيبليون، مرتبطة تقليديًا باسم مرفأ لبناني: ___",
+          "es": "La palabra griega para libro, biblion, se vincula tradicionalmente con el puerto libanés de ___"
         }
       },
       "truth": {
@@ -96,7 +96,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Byblos ; Etymonline, Bible"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.etymonline.com/word/Bible ; https://en.wikipedia.org/wiki/Byblos"
       }
     },
     {
@@ -172,7 +172,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Phoenician alphabet"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Phoenician_alphabet"
       }
     },
     {
@@ -251,7 +251,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Tyrian purple ; Smithsonian Magazine on murex dye"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Tyrian_purple"
       }
     },
     {
@@ -326,7 +326,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] German Archaeological Institute (DAI) 2014 Baalbek quarry report ; Britannica, Baalbek"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Stone_of_the_Pregnant_Woman"
       }
     },
     {
@@ -403,7 +403,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] jeitagrotto.com official site"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Jeita_Grotto"
       }
     },
     {
@@ -469,7 +469,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Khalil Gibran ; Knopf / Penguin Random House publication history"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/The_Prophet_(book)"
       }
     },
     {
@@ -544,7 +544,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Guinness World Records, largest serving of hummus (Lebanon, 8 May 2010, 10,452 kg). Check whether a later record exists and keep the 2010 framing (over 10 tonnes)"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.guinnessworldrecords.com/world-records/largest-serving-of-hummus"
       }
     },
     {
@@ -625,7 +625,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, tulip ; Etymonline, tulip"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Tulip"
       }
     },
     {
@@ -699,7 +699,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Mocha (Al-Mukha), Yemen"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Mocha,_Yemen"
       }
     },
     {
@@ -781,7 +781,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Etymonline, algebra ; Britannica, al-Khwarizmi. AR prompt asks for the Arabic word itself (the meaning would give it away in Arabic)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Algebra"
       }
     },
     {
@@ -849,7 +849,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, al-Khwarizmi ; Etymonline, algorithm"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Muhammad_ibn_Musa_al-Khwarizmi"
       }
     },
     {
@@ -926,7 +926,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Dead Sea (shore ~430 m below sea level, falling) ; USGS (more than 400 m)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Dead_Sea"
       }
     },
     {
@@ -999,7 +999,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] UNESCO World Heritage, Petra ; Britannica, Petra (rose-red city, Burgon's poem 1845)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Petra"
       }
     },
     {
@@ -1073,7 +1073,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] CIA World Factbook, Saudi Arabia (no permanent rivers). [VERIFY] size comparison wording"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Geography_of_Saudi_Arabia"
       }
     },
     {
@@ -1146,7 +1146,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Smithsonian National Zoo or San Diego Zoo, camel fact sheet"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Camel"
       }
     },
     {
@@ -1218,7 +1218,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Hindu-Arabic numerals"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Hindu%E2%80%93Arabic_numeral_system"
       }
     },
     {
@@ -1289,7 +1289,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Herodotus, Histories IV.42 (Pharaoh Necho II) ; Britannica summary"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Necho_II"
       }
     },
     {
@@ -1365,7 +1365,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Carthage"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Dido"
       }
     },
     {
@@ -1439,7 +1439,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Cádiz ; Ayuntamiento de Cádiz history page"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/C%C3%A1diz"
       }
     },
     {
@@ -1514,7 +1514,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Europa (Greek mythology). Note: a myth, framed as such"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Europa_(mythology)"
       }
     },
     {
@@ -1591,7 +1591,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] UNESCO World Heritage, Anjar (early 8th century)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Anjar,_Lebanon"
       }
     },
     {
@@ -1668,7 +1668,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Etymonline, safari ; Merriam-Webster. knownIn ar candidate (native reviewer decides)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Safari"
       }
     },
     {
@@ -1748,7 +1748,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Etymonline, magazine ; CNRTL, magasin ; DLE, almacén"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Magazine"
       }
     },
     {
@@ -1827,7 +1827,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Etymonline, admiral ; DLE, almirante"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Admiral"
       }
     },
     {
@@ -1907,7 +1907,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Etymonline, mattress (Arabic matrah) ; CNRTL, matelas"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Mattress"
       }
     },
     {
@@ -1981,7 +1981,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] UNESCO World Heritage, Land of Frankincense (Oman) ; Britannica, frankincense"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Frankincense"
       }
     },
     {
@@ -2050,7 +2050,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] IUCN Red List press release, Arabian oryx (June 2011) ; [native review] IUCN AR term"
+        "source": "[VERIFY] fact-checked 2026-11, https://iucn.org/content/a-grain-hope-desert"
       }
     },
     {
@@ -2118,7 +2118,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Jordan Tourism Board / Royal Film Commission Jordan, Wadi Rum filmography"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Wadi_Rum"
       }
     },
     {
@@ -2194,7 +2194,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] British Museum, cuneiform ; Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cuneiform"
       }
     },
     {
@@ -2268,7 +2268,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, sexagesimal system ; Scientific American, why 60 minutes"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Sexagesimal"
       }
     },
     {
@@ -2346,7 +2346,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Cleopatra ; Britannica, Ptolemaic dynasty"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cleopatra"
       }
     },
     {
@@ -2418,7 +2418,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Audi Foundation, Soap Museum, Saida (fondationaudi.org)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Sidon"
       }
     },
     {
@@ -2490,7 +2490,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Pliny the Elder, Natural History XXXVI.65 ; Corning Museum of Glass. Framed as a legend"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Glass#History"
       }
     },
     {
@@ -2566,7 +2566,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Lebanon (name) ; Etymonline, Lebanon"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Lebanon#Etymology"
       }
     },
     {
@@ -2641,7 +2641,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Beirut (name from Canaanite/Phoenician be'erot, wells). knownIn ar candidate"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Beirut#Etymology"
       }
     },
     {
@@ -2718,7 +2718,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Khufu ship ; Grand Egyptian Museum, Khufu boat (Lebanese cedar)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Khufu_ship"
       }
     },
     {
@@ -2789,7 +2789,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Rub al-Khali"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Rub%27_al_Khali"
       }
     },
     {
@@ -2862,7 +2862,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] skidxb.com official site (Penguin Encounter)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Ski_Dubai"
       }
     },
     {
@@ -2937,7 +2937,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] National Coffee Association USA, history of coffee (Kaldi legend). Framed as a legend"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Coffee#History"
       }
     },
     {
@@ -3012,7 +3012,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Guinness World Records, oldest existing university ; UNESCO, Medina of Fez"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/University_of_al-Qarawiyyin"
       }
     },
     {
@@ -3094,7 +3094,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Etymonline, checkmate ; Britannica, chess terminology"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Checkmate#Etymology"
       }
     },
     {
@@ -3171,7 +3171,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Etymonline, damask ; Britannica, damask"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Damask"
       }
     },
     {
@@ -3247,7 +3247,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica or a museum page on Aleppo soap (olive and laurel oil)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Aleppo_soap"
       }
     },
     {
@@ -3259,12 +3259,12 @@
         "fr"
       ],
       "prompt": {
-        "original": "Beirut's seaside district of Raouché takes its name from the French word for ___",
+        "original": "Beirut's seaside Raouché probably takes its name from the French word for ___",
         "translit": null,
         "display": {
-          "fr": "Le quartier de Raouché, à Beyrouth, tire son nom du mot français ___",
-          "ar": "منطقة الروشة ببيروت أخدت اسمها من كلمة فرنساوية معناها ___",
-          "es": "El barrio costero de Raouché, en Beirut, debe su nombre a la palabra francesa para ___"
+          "fr": "Le quartier de Raouché, à Beyrouth, tire probablement son nom du mot français ___",
+          "ar": "منطقة الروشة ببيروت غالبًا أخدت اسمها من كلمة فرنساوية معناها ___",
+          "es": "El barrio costero de Raouché, en Beirut, debe probablemente su nombre a la palabra francesa para ___"
         }
       },
       "truth": {
@@ -3320,14 +3320,14 @@
         ]
       },
       "note": {
-        "en": "Rocher: the famous Pigeon Rocks stand just offshore",
-        "fr": "Rocher : la célèbre Grotte aux Pigeons est juste en face",
-        "ar": "من rocher، وصخرة الروشة الشهيرة قبالها بالبحر",
-        "es": "De rocher: las famosas Rocas de las Palomas están justo enfrente"
+        "en": "Likely from rocher: the famous Pigeon Rocks stand just offshore",
+        "fr": "Probablement de rocher : la célèbre Grotte aux Pigeons est juste en face",
+        "ar": "غالبًا من rocher، وصخرة الروشة الشهيرة قبالها بالبحر",
+        "es": "Probablemente de rocher: las famosas Rocas de las Palomas están justo enfrente"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica or Lebanese Ministry of Tourism, Raouché and Pigeon Rocks (name from French rocher)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Raouch%C3%A9"
       }
     },
     {
@@ -3403,7 +3403,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Britannica, Lebanon (land and relief) ; CIA World Factbook, Lebanon (terrain)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Geography_of_Lebanon"
       }
     },
     {
@@ -3475,7 +3475,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Lebanese Rocket Society, Haigazian University, Cedar rockets launched 1961-1966 (Manoug Manougian); BBC; documentary The Lebanese Rocket Society (2012)"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.haigazian.edu.lb/?p=228 ; https://en.wikipedia.org/wiki/Lebanese_space_program"
       }
     },
     {
@@ -3545,7 +3545,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Rashid Karami International Fair, Tripoli, designed by Oscar Niemeyer (architect of Brasília) from 1962, unfinished; UNESCO World Heritage 2023"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Rashid_Karami_International_Fair"
       }
     },
     {
@@ -3613,7 +3613,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Keanu Reeves was born in Beirut, Lebanon, on 2 September 1964; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Keanu_Reeves"
       }
     },
     {
@@ -3681,7 +3681,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Brazil is estimated by Brazilian and Lebanese sources to have 7 to 10 million people of Lebanese descent, more than Lebanon's population; BBC; Lebanese Ministry of Foreign Affairs"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Lebanese_diaspora"
       }
     },
     {
@@ -3752,7 +3752,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Lebanese al-Zajal (recited or sung poetry) inscribed on the UNESCO Representative List of the Intangible Cultural Heritage, 2014; ich.unesco.org"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Zajal"
       }
     },
     {
@@ -3826,7 +3826,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Sahara from Arabic sahra, plural sahara, meaning 'desert'; Encyclopaedia Britannica 'Sahara'"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Sahara#Etymology"
       }
     },
     {
@@ -3895,7 +3895,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Camels have three eyelids, including a thin nictitating membrane that protects against sand, plus two rows of eyelashes; San Diego Zoo Wildlife Alliance; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Camel#Adaptations"
       }
     },
     {
@@ -3967,7 +3967,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] UAE appointed Ohood Al Roumi Minister of State for Happiness in February 2016; UAE Government portal (u.ae); BBC"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Minister_of_State_for_Happiness_and_Wellbeing_(United_Arab_Emirates)"
       }
     },
     {
@@ -4038,7 +4038,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Saudi Arabia granted citizenship to the humanoid robot Sophia (Hanson Robotics) in October 2017; BBC; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Sophia_(robot)"
       }
     },
     {
@@ -4110,7 +4110,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Emirates Palace hotel, Abu Dhabi, installed a 'Gold to Go' ATM dispensing gold bars and coins in May 2010; BBC; Reuters"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Emirates_Palace"
       }
     },
     {
@@ -4120,12 +4120,12 @@
       "difficulty": 1,
       "knownIn": [],
       "prompt": {
-        "original": "Since 2013, Dubai's police patrol cars have included a ___",
+        "original": "Among Dubai's police patrol cars you can find a ___",
         "translit": null,
         "display": {
-          "fr": "Depuis 2013, la police de Dubaï a des voitures de patrouille comme une ___",
-          "ar": "من 2013، بين سيارات دوريات شرطة دبي في ___",
-          "es": "Desde 2013, entre los coches patrulla de la policía de Dubái hay un ___"
+          "fr": "Parmi les voitures de patrouille de la police de Dubaï, il y a une ___",
+          "ar": "بين سيارات دوريات شرطة دبي في ___",
+          "es": "Entre los coches patrulla de la policía de Dubái hay un ___"
         }
       },
       "truth": {
@@ -4186,7 +4186,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Dubai Police added supercars (Lamborghini Aventador, Bugatti Veyron, Ferrari FF) to its fleet in 2013; BBC; Dubai Police"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.automotive-fleet.com/116774/bugatti-veyron-joins-dubai-police-fleet"
       }
     },
     {
@@ -4259,7 +4259,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Old Walled City of Shibam, Yemen, 16th-century tower houses of mud brick, UNESCO World Heritage (whc.unesco.org/en/list/192)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Shibam"
       }
     },
     {
@@ -4327,7 +4327,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Luke Skywalker's home planet Tatooine is named after the town of Tataouine, Tunisia, where the 1977 film was partly shot; Lucasfilm; BBC"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Tataouine"
       }
     },
     {
@@ -4403,7 +4403,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Yale Babylonian Collection culinary tablets, about 1750 BC, the oldest known written recipes, mostly stews/broths; Yale University; Smithsonian Magazine"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Yale_Babylonian_Collection#Culinary_tablets"
       }
     },
     {
@@ -4468,14 +4468,14 @@
         ]
       },
       "note": {
-        "en": "Every half hour, a bird whistled and a figure struck a cymbal",
-        "fr": "Toutes les demi-heures, un oiseau sifflait et un personnage frappait une cymbale",
-        "ar": "كل نص ساعة، عصفور بيصفر وتمثال بيضرب عالصنج",
-        "es": "Cada media hora, un pájaro silbaba y una figura golpeaba un platillo"
+        "en": "Every half hour, a falling ball set the phoenix and the driver figure in motion",
+        "fr": "Toutes les demi-heures, une bille qui tombait mettait en mouvement le phénix et le cornac",
+        "ar": "كل نص ساعة، كرة بتقع وبتحرك الفينيق وسايس الفيل",
+        "es": "Cada media hora, una bola al caer ponía en marcha al fénix y al cornac"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Al-Jazari's Book of Knowledge of Ingenious Mechanical Devices (1206) describes the water-powered Elephant Clock; Metropolitan Museum of Art; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Elephant_clock"
       }
     },
     {
@@ -4485,12 +4485,12 @@
       "difficulty": 3,
       "knownIn": [],
       "prompt": {
-        "original": "Around 875, Abbas ibn Firnas jumped from a hill near Córdoba wearing ___",
+        "original": "Legend says Abbas ibn Firnas jumped from a hill near Córdoba around 875 wearing ___",
         "translit": null,
         "display": {
-          "fr": "Vers 875, Abbas ibn Firnas a sauté d'une colline près de Cordoue avec des ___",
-          "ar": "حوالي سنة 875، عباس بن فرناس نط من تلة حد قرطبة لابس ___",
-          "es": "Hacia el año 875, Abbás ibn Firnás saltó de una colina cerca de Córdoba con ___"
+          "fr": "La légende dit qu'Abbas ibn Firnas a sauté d'une colline près de Cordoue vers 875 avec des ___",
+          "ar": "بتقول الأسطورة إنو عباس بن فرناس نط من تلة حد قرطبة حوالي سنة 875 لابس ___",
+          "es": "Cuenta la leyenda que Abbás ibn Firnás saltó de una colina cerca de Córdoba hacia el 875 con ___"
         }
       },
       "truth": {
@@ -4540,14 +4540,14 @@
         ]
       },
       "note": {
-        "en": "He glided a little and hurt his back. Later he said he forgot to add a tail",
-        "fr": "Il a un peu plané et s'est blessé au dos. Il aurait oublié la queue",
-        "ar": "طار شوي وانصاب بضهرو، وبيقولوا نسي يعمل دنب",
-        "es": "Planeó un poco y se lastimó la espalda. Dicen que olvidó ponerse cola"
+        "en": "A chronicler wrote it 700 years later: he glided a little, hurt his back and blamed a missing tail",
+        "fr": "Un chroniqueur l'a écrit 700 ans plus tard : il a un peu plané, s'est blessé au dos et a accusé la queue manquante",
+        "ar": "كاتب سجلها بعد 700 سنة: طار شوي وانصاب بضهرو ولام الدنب الناقص",
+        "es": "Un cronista lo escribió 700 años después: planeó un poco, se lastimó la espalda y culpó a la cola que faltaba"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Abbas ibn Firnas attempted flight near Córdoba around 875 using feathered wings, per al-Maqqari's later account; Encyclopaedia Britannica; Smithsonian National Air and Space Museum"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Abbas_ibn_Firnas"
       }
     },
     {
@@ -4619,7 +4619,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Ibn al-Haytham, Book of Optics (about 1011-1021), showed that vision occurs when light enters the eye; UNESCO International Year of Light 2015; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Ibn_al-Haytham"
       }
     },
     {
@@ -4691,7 +4691,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Ibn Battuta travelled from 1325 to 1354, almost 30 years, covering about 120,000 km; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Ibn_Battuta"
       }
     },
     {
@@ -4762,7 +4762,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] The Great Pyramid of Giza (about 146 m) was the tallest human-made structure for about 3,800 years, until Lincoln Cathedral's spire (around 1311); Encyclopaedia Britannica; Guinness World Records"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza"
       }
     },
     {
@@ -4775,16 +4775,16 @@
         "original": "Queen Cleopatra lived closer in time to the ___ than to the building of the Great Pyramid",
         "translit": null,
         "display": {
-          "fr": "La reine Cléopâtre a vécu plus près dans le temps des premiers pas sur ___ que de la construction de la grande pyramide",
+          "fr": "La reine Cléopâtre a vécu plus près dans le temps de ___ que de la construction de la grande pyramide",
           "ar": "الملكة كليوباترا عاشت أقرب بالزمن لـ ___ من بناء الهرم الكبير",
-          "es": "La reina Cleopatra vivió más cerca en el tiempo de la llegada a ___ que de la construcción de la Gran Pirámide"
+          "es": "La reina Cleopatra vivió más cerca en el tiempo de ___ que de la construcción de la Gran Pirámide"
         }
       },
       "truth": {
         "en": "Moon landing",
-        "fr": "La Lune",
+        "fr": "Les premiers pas sur la Lune",
         "ar": "النزول عالقمر",
-        "es": "La Luna"
+        "es": "La llegada a la Luna"
       },
       "truthAlt": {
         "en": [
@@ -4792,38 +4792,40 @@
           "Apollo 11"
         ],
         "fr": [
-          "Lune",
-          "Apollo 11"
+          "La Lune",
+          "Apollo 11",
+          "Le premier alunissage"
         ],
         "ar": [
           "أبولو 11",
           "أول مشي عالقمر"
         ],
         "es": [
-          "Luna",
-          "Apolo 11"
+          "La Luna",
+          "Apolo 11",
+          "El primer alunizaje"
         ]
       },
       "houseLies": {
         "en": [
-          "Invention of the car",
-          "French Revolution",
-          "First Olympics"
+          "Invention of writing",
+          "Building of Stonehenge",
+          "The last woolly mammoths"
         ],
         "fr": [
-          "L'Everest",
-          "Le pôle Sud",
-          "L'Amérique"
+          "L'invention de l'écriture",
+          "La construction de Stonehenge",
+          "Les derniers mammouths"
         ],
         "ar": [
-          "اختراع السيارة",
-          "الثورة الفرنسية",
-          "أول ألعاب أولمبية"
+          "اختراع الكتابة",
+          "بناء ستونهنج",
+          "آخر الماموث"
         ],
         "es": [
-          "El Everest",
-          "El Polo Sur",
-          "América"
+          "La invención de la escritura",
+          "La construcción de Stonehenge",
+          "Los últimos mamuts"
         ]
       },
       "note": {
@@ -4834,7 +4836,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Cleopatra VII (died 30 BC) lived closer in time to the 1969 Moon landing than to the building of the Great Pyramid (about 2560 BC); Smithsonian Magazine; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cleopatra"
       }
     },
     {
@@ -4910,7 +4912,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Ancient Egyptian pregnancy test: urine on wheat and barley seeds (Berlin Medical Papyrus, about 1350 BC); tested in 1963 with about 70 percent accuracy; Carlsberg Papyri, University of Copenhagen 2018"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Pregnancy_test#History"
       }
     },
     {
@@ -4978,7 +4980,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Herodotus, Histories II.66: when a household cat died, Egyptians shaved their eyebrows in mourning; Encyclopaedia Britannica; Smithsonian Magazine"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cats_in_ancient_Egypt"
       }
     },
     {
@@ -5050,7 +5052,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Rosetta Stone found in July 1799 at Rashid (Rosetta) by French soldiers during Napoleon's campaign; British Museum"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Rosetta_Stone"
       }
     },
     {
@@ -5060,36 +5062,36 @@
       "difficulty": 3,
       "knownIn": [],
       "prompt": {
-        "original": "Many Arabian horses have one fewer ___ than other horse breeds",
+        "original": "Many Arabian horses have one fewer pair of ___ than other horse breeds",
         "translit": null,
         "display": {
-          "fr": "Beaucoup de chevaux arabes ont une ___ de moins que les autres races",
-          "ar": "كتير من الخيل العربية عندها ___ أقل من باقي السلالات",
-          "es": "Muchos caballos árabes tienen una ___ menos que otras razas"
+          "fr": "Beaucoup de chevaux arabes ont une paire de ___ de moins que les autres races",
+          "ar": "كتير من الخيل العربية عندها زوج ___ أقل من باقي السلالات",
+          "es": "Muchos caballos árabes tienen un par de ___ menos que otras razas"
         }
       },
       "truth": {
-        "en": "Rib",
-        "fr": "Côte",
-        "ar": "ضلع",
-        "es": "Costilla"
+        "en": "Ribs",
+        "fr": "Côtes",
+        "ar": "ضلوع",
+        "es": "Costillas"
       },
       "truthAlt": {
         "en": [
-          "Pair of ribs",
-          "Ribs"
+          "Rib",
+          "Pair of ribs"
         ],
         "fr": [
-          "Paire de côtes",
-          "Côtes"
+          "Côte",
+          "Paire de côtes"
         ],
         "ar": [
-          "زوج ضلوع",
-          "ضلوع"
+          "ضلع",
+          "زوج ضلوع"
         ],
         "es": [
-          "Par de costillas",
-          "Costillas"
+          "Costilla",
+          "Par de costillas"
         ]
       },
       "houseLies": {
@@ -5122,7 +5124,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Arabian horses often have 17 pairs of ribs instead of 18 and 5 lumbar vertebrae instead of 6; Arabian Horse Association; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://horsenation.com/?p=155671 ; https://en.wikipedia.org/wiki/Arabian_horse"
       }
     },
     {
@@ -5196,7 +5198,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] The words zero and cipher both come from Arabic sifr, meaning 'empty'; Merriam-Webster; Oxford English Dictionary"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Zero#Etymology"
       }
     },
     {
@@ -5267,7 +5269,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Burj Khalifa (828 m): visitors can watch the sunset from the ground and again from the upper floors; widely reported by the Burj Khalifa operator and BBC; physics of horizon distance"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Burj_Khalifa"
       }
     },
     {
@@ -5339,7 +5341,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Dragon's blood tree (Dracaena cinnabari) on Socotra, Yemen, produces a red resin; UNESCO World Heritage Socotra Archipelago (whc.unesco.org/en/list/1263)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Dracaena_cinnabari"
       }
     },
     {
@@ -5407,7 +5409,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] In January 2018, 12 camels were disqualified from the King Abdulaziz Camel Festival beauty contest for Botox injections; NPR, 24 January 2018; BBC"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.npr.org/sections/thetwo-way/2018/01/24/580228837/a-dozen-camels-disqualified-from-saudi-beauty-pageant-over-botox-injections"
       }
     },
     {
@@ -5479,7 +5481,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Robot jockeys replaced child jockeys in Gulf camel racing from the mid-2000s (UAE, Qatar); BBC; Smithsonian Magazine"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Camel_racing"
       }
     },
     {
@@ -5551,7 +5553,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] In south-western Morocco, goats climb argan trees to eat the fruit; Encyclopaedia Britannica 'argan'; Smithsonian Magazine"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Argan#Tree_climbing_goats"
       }
     },
     {
@@ -5623,7 +5625,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Al-Idrisi's world map for Roger II of Sicily (1154) was engraved on a large silver disc, now lost; Encyclopaedia Britannica 'al-Idrisi'; Factum Foundation 2019"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Tabula_Rogeriana"
       }
     },
     {
@@ -5698,7 +5700,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Lebanon set a Guinness World Record for the largest serving of tabbouleh, about 3,557 kg (about 3.5 tonnes), in Beirut in October 2009; Daily Star (Lebanon) via Zawya, 26 October 2009"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.zawya.com/en/business/lebanon-breaks-hummus-tabbouleh-guinness-record-eyfqhw7j"
       }
     }
   ]

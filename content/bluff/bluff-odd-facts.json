@@ -91,7 +91,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Collective noun 'a flamboyance of flamingos'; Oxford English Dictionary; San Diego Zoo Wildlife Alliance"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Flamingo"
       }
     },
     {
@@ -159,7 +159,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Starfish (sea stars) have no blood and no brain; they use a water vascular system; NOAA Ocean Service"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Starfish"
       }
     },
     {
@@ -231,7 +231,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Hummingbirds are the only birds that can sustain backward flight; Smithsonian's National Zoo; Audubon"
+        "source": "[VERIFY] fact-checked 2026-11, https://southwest.audubon.org/node/1701"
       }
     },
     {
@@ -300,7 +300,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Owls cannot move their eyes (tubular eyes fixed in the skull) and turn their heads up to 270 degrees; Johns Hopkins Medicine 2013; Audubon"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Owl"
       }
     },
     {
@@ -372,7 +372,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Rats emit ultrasonic 'laughter' chirps when tickled; Panksepp & Burgdorf 2003; Ishiyama & Brecht, Science 2016"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Rat"
       }
     },
     {
@@ -444,7 +444,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Crows recognise and remember the faces of people who threatened them; Marzluff et al., University of Washington, Animal Behaviour 2010"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Corvidae"
       }
     },
     {
@@ -485,24 +485,24 @@
       },
       "houseLies": {
         "en": [
-          "Grass",
-          "Insects",
-          "Coral reefs"
+          "Oceans",
+          "Trilobites",
+          "Jellyfish"
         ],
         "fr": [
-          "Herbes",
-          "Insectes",
-          "Récifs de corail"
+          "Les océans",
+          "Les trilobites",
+          "Les méduses"
         ],
         "ar": [
-          "العشب",
-          "الحشرات",
-          "الشعب المرجانية"
+          "المحيطات",
+          "ثلاثيات الفصوص",
+          "قناديل البحر"
         ],
         "es": [
-          "Pastos",
-          "Insectos",
-          "Arrecifes de coral"
+          "Los océanos",
+          "Los trilobites",
+          "Las medusas"
         ]
       },
       "note": {
@@ -513,7 +513,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Sharks appeared about 450 million years ago, before the first trees (about 385 million years ago); Natural History Museum London; Smithsonian Ocean"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.livescience.com/animals/sharks/are-sharks-really-older-than-trees"
       }
     },
     {
@@ -585,7 +585,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Polar bears have black skin under translucent hair; Polar Bears International; San Diego Zoo"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Polar_bear"
       }
     },
     {
@@ -658,7 +658,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Giraffe tongues are dark purple-blue-black, about 45-50 cm long; Smithsonian's National Zoo; Giraffe Conservation Foundation"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Giraffe"
       }
     },
     {
@@ -730,7 +730,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Platypus fur glows blue-green under UV light; Anich et al., Mammalia 2020"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Platypus"
       }
     },
     {
@@ -799,7 +799,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Honeybees have five eyes: two compound eyes and three ocelli; Smithsonian (si.edu); Ask a Biologist, Arizona State University"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Honey_bee"
       }
     },
     {
@@ -868,7 +868,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] An ostrich's eye (about 5 cm) is larger than its brain; San Diego Zoo Wildlife Alliance; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Common_ostrich"
       }
     },
     {
@@ -940,7 +940,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Dolphins sleep with one brain hemisphere at a time, keeping one eye open (unihemispheric slow-wave sleep); Scientific American; Smithsonian"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Unihemispheric_slow-wave_sleep"
       }
     },
     {
@@ -1012,7 +1012,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Male gentoo penguins offer pebbles to females for nest building; Australian Antarctic Division; BBC Earth"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Gentoo_penguin"
       }
     },
     {
@@ -1084,7 +1084,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Woodpecker hyoid apparatus: the tongue wraps around the back of the skull; Cornell Lab of Ornithology; Audubon"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Woodpecker"
       }
     },
     {
@@ -1157,7 +1157,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Fitzroy River turtle breathes through its cloaca (cloacal respiration); Australian Government Department of Climate Change, Energy, the Environment and Water; Queensland Museum"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.livescience.com/can-turtles-breathe-through-butts/"
       }
     },
     {
@@ -1233,7 +1233,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Peanuts are legumes (family Fabaceae), not true nuts; USDA; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Peanut"
       }
     },
     {
@@ -1302,7 +1302,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Botanically a banana is a berry, a strawberry is not; Encyclopaedia Britannica 'Is a banana a berry'"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Berry_(botany)"
       }
     },
     {
@@ -1370,7 +1370,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] The croissant descends from the Austrian kipferl, brought to Paris by August Zang around 1838; Jim Chevallier, August Zang and the French Croissant (2009); Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Croissant"
       }
     },
     {
@@ -1438,7 +1438,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Caesar salad created by Caesar Cardini at his restaurant in Tijuana, Mexico, in 1924; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Caesar_salad"
       }
     },
     {
@@ -1506,7 +1506,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Hawaiian pizza created in 1962 by Sam Panopoulos in Chatham, Ontario, Canada; BBC (obituary 2017); Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Hawaiian_pizza"
       }
     },
     {
@@ -1580,7 +1580,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Nachos created in 1943 by Ignacio 'Nacho' Anaya in Piedras Negras, Mexico; Smithsonian Magazine; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Nachos"
       }
     },
     {
@@ -1652,7 +1652,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Cacao beans were used as currency by the Aztecs and Maya; Smithsonian Magazine; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cocoa_bean"
       }
     },
     {
@@ -1724,7 +1724,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Apples float because about 25 percent of their volume is air; US Department of Agriculture; Library of Congress 'Everyday Mysteries'"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Apple"
       }
     },
     {
@@ -1745,7 +1745,7 @@
       "truth": {
         "en": "Fruit",
         "fr": "Fruit",
-        "ar": "تمرة",
+        "ar": "ثمرة",
         "es": "Fruta"
       },
       "truthAlt": {
@@ -1796,7 +1796,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Each cashew nut grows at the bottom of a cashew apple (a swollen fruit stalk); Encyclopaedia Britannica 'cashew'"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Cashew"
       }
     },
     {
@@ -1868,7 +1868,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Most 'wasabi' served outside Japan is horseradish with mustard and green colouring; Smithsonian Magazine; BBC Future"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Wasabi"
       }
     },
     {
@@ -1936,7 +1936,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Madagascar produces most of the world's natural vanilla (about 80 percent); FAO; BBC"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Vanilla"
       }
     },
     {
@@ -2008,7 +2008,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Singapore banned the import and sale of chewing gum in 1992 (therapeutic gum allowed since 2004); Singapore Government; BBC"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Chewing_gum_ban_in_Singapore"
       }
     },
     {
@@ -2078,7 +2078,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Venice banned feeding pigeons in St Mark's Square in 2008, with fines; The Guardian; City of Venice"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Piazza_San_Marco"
       }
     },
     {
@@ -2148,7 +2148,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Denmark's Names Act: parents choose from an official list of approved names or apply for approval; Danish Agency of Family Law; BBC"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Danish_name_law"
       }
     },
     {
@@ -2220,7 +2220,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Greece banned high heels at ancient sites such as the Acropolis in 2009 to protect the marble; NPR, 18 May 2009"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Acropolis_of_Athens"
       }
     },
     {
@@ -2291,7 +2291,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] The British Crown claims ownership of all unmarked mute swans in open water; Royal Collection Trust / royal.uk 'Swan Upping'"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Swan_Upping"
       }
     },
     {
@@ -2364,7 +2364,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Almost all giant pandas in zoos outside China are on loan from China (panda diplomacy); Smithsonian's National Zoo; BBC"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Panda_diplomacy"
       }
     },
     {
@@ -2436,7 +2436,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Allemansrätten (right of public access), Sweden: you may camp one night on most land, including private land, away from homes; Swedish Environmental Protection Agency (naturvardsverket.se)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Freedom_to_roam"
       }
     },
     {
@@ -2508,7 +2508,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Finland's day-fine system: speeding fines depend on the offender's income; BBC; Finnish Police"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Day-fine"
       }
     },
     {
@@ -2578,7 +2578,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Kopi luwak coffee is made from beans eaten and excreted by the Asian palm civet; Encyclopaedia Britannica; National Geographic"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Kopi_luwak"
       }
     },
     {
@@ -2646,7 +2646,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Charles Osborne hiccupped from 1922 to 1990, about 68 years (Guinness World Records); The New York Times obituary 1991"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Charles_Osborne_(hiccups)"
       }
     },
     {
@@ -2708,14 +2708,14 @@
         ]
       },
       "note": {
-        "en": "He is the oldest land animal ever recorded and lives at the governor's house",
-        "fr": "C'est l'animal terrestre le plus vieux jamais recensé",
-        "ar": "هو أكبر حيوان بري بالعمر انسجّل بالتاريخ",
-        "es": "Es el animal terrestre más viejo jamás registrado"
+        "en": "He is the oldest known living land animal and lives at the governor's house",
+        "fr": "C'est le plus vieil animal terrestre vivant connu",
+        "ar": "هو أكبر حيوان بري حي معروف بالعمر",
+        "es": "Es el animal terrestre vivo más viejo que se conoce"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Jonathan, a Seychelles giant tortoise hatched around 1832, brought to Saint Helena in 1882; Guinness World Records; Government of St Helena"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.guinnessworldrecords.com/world-records/511806-oldest-living-land-animal"
       }
     },
     {
@@ -2786,7 +2786,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Antarctica is the largest desert on Earth (a desert is defined by low precipitation); NASA Earth Observatory; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Antarctic"
       }
     },
     {
@@ -2858,7 +2858,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Measured from base to peak (about 10,210 m, much of it underwater), Mauna Kea in Hawaii is taller than Everest; USGS; NOAA"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Mauna_Kea"
       }
     },
     {
@@ -2868,12 +2868,12 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "___ has more lakes than the rest of the world combined",
+        "original": "___ has more lakes than any other country",
         "translit": null,
         "display": {
-          "fr": "Le ___ compte plus de lacs que tout le reste du monde réuni",
-          "ar": "___ فيها بحيرات أكتر من كل باقي العالم سوا",
-          "es": "___ tiene más lagos que todo el resto del mundo junto"
+          "fr": "Le ___ compte plus de lacs que n'importe quel autre pays",
+          "ar": "___ فيها بحيرات أكتر من أي بلد تاني",
+          "es": "___ tiene más lagos que cualquier otro país"
         }
       },
       "truth": {
@@ -2919,14 +2919,14 @@
         ]
       },
       "note": {
-        "en": "It holds roughly 60 percent of all the lakes on the planet",
-        "fr": "Il abrite environ 60 % des lacs de la planète",
-        "ar": "فيها تقريبًا 60 بالمية من بحيرات الكوكب",
-        "es": "Alberga cerca del 60 % de los lagos del planeta"
+        "en": "Counts vary with lake size, but no other country has more",
+        "fr": "Les décomptes varient selon la taille des lacs, mais aucun autre pays n'en a plus",
+        "ar": "العدد بيتغير حسب حجم البحيرة، بس ما في بلد عندو أكتر",
+        "es": "Los recuentos varían según el tamaño, pero ningún otro país tiene más"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Canada has about 60 percent of the world's lakes, more than the rest of the world combined; Natural Resources Canada; Statistics Canada"
+        "source": "[VERIFY] fact-checked 2026-11, https://www.snopes.com/fact-check/canada-lakes/"
       }
     },
     {
@@ -2994,7 +2994,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Russia's area is about 17.1 million km2; Pluto's total surface area is about 16.7 million km2; NASA Pluto facts; CIA World Factbook"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Pluto"
       }
     },
     {
@@ -3062,7 +3062,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Shannon number: about 10^120 possible chess games, versus about 10^80 atoms in the observable universe; Claude Shannon 1950"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Shannon_number"
       }
     },
     {
@@ -3134,7 +3134,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] On exoplanet HD 189733b, it is thought to rain glass sideways in 7,000 km/h winds; NASA (Hubble, 2013)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/HD_189733_b"
       }
     },
     {
@@ -3206,7 +3206,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Liquid oxygen is pale blue; Encyclopaedia Britannica 'oxygen'; Royal Society of Chemistry"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Liquid_oxygen"
       }
     },
     {
@@ -3279,7 +3279,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Astronauts describe the smell of space on their suits after spacewalks as seared steak, hot metal and welding fumes; NASA"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Space_food"
       }
     },
     {
@@ -3351,7 +3351,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Sunsets on Mars appear blue because fine dust scatters blue light near the Sun; NASA (Curiosity, 2015)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Mars"
       }
     },
     {
@@ -3423,7 +3423,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Play-Doh was first made in the 1930s as a wallpaper cleaner (Kutol Products) before being sold as a toy in 1956; Smithsonian Magazine; The Strong National Museum of Play"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Play-Doh"
       }
     },
     {
@@ -3492,7 +3492,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Bluetooth named after Harald 'Bluetooth' Gormsson, 10th-century king of Denmark; Bluetooth SIG (bluetooth.com/about-us/bluetooth-origin)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Bluetooth"
       }
     },
     {
@@ -3563,7 +3563,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] LEGO comes from the Danish 'leg godt', meaning 'play well'; The LEGO Group history"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Lego"
       }
     },
     {
@@ -3632,7 +3632,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Häagen-Dazs was founded in the Bronx, New York, by Reuben and Rose Mattus in 1960; the name is invented; Encyclopaedia Britannica; Häagen-Dazs history"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/H%C3%A4agen-Dazs"
       }
     },
     {
@@ -3701,7 +3701,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Pepsi was first called 'Brad's Drink' (1893) by pharmacist Caleb Bradham; PepsiCo history"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Pepsi"
       }
     },
     {
@@ -3769,7 +3769,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] The # symbol is also called the octothorpe; Merriam-Webster; Oxford English Dictionary"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Number_sign"
       }
     },
     {
@@ -3837,7 +3837,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] The dot over a lowercase i or j is called a tittle; Merriam-Webster; Oxford English Dictionary"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Tittle"
       }
     },
     {
@@ -3909,7 +3909,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] The Frisbee name comes from the Frisbie Pie Company of Bridgeport, Connecticut, whose pie tins students threw; Smithsonian Magazine; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Frisbee"
       }
     },
     {
@@ -3981,7 +3981,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Fredric Baur, designer of the Pringles can, died in 2008; part of his ashes were buried in a Pringles can; Time; BBC"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Fredric_Baur"
       }
     },
     {
@@ -4049,7 +4049,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Mpemba effect: hot water can sometimes freeze faster than cold water; named after Tanzanian student Erasto Mpemba (1969); Royal Society of Chemistry; Encyclopaedia Britannica"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Mpemba_effect"
       }
     },
     {
@@ -4122,7 +4122,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Canadian content rules: at least 35 percent of popular music on commercial radio must be Canadian; CRTC (crtc.gc.ca)"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Canadian_content"
       }
     },
     {
@@ -4191,7 +4191,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] Australia's kangaroo population (around 40-50 million in recent government estimates) exceeds its human population (about 27 million); Australian Government DCCEEW; ABS"
+        "source": "[VERIFY] fact-checked 2026-11, https://en.wikipedia.org/wiki/Kangaroo"
       }
     }
   ]
