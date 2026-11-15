@@ -1592,7 +1592,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/topic/Titanic"
+        "ref": "https://en.wikipedia.org/wiki/Sinking_of_the_Titanic (2,224 estimated on board; US Senate 2,223, BoT 2,201)"
       }
     },
     {
@@ -1644,7 +1644,7 @@
       "source": "Christie's (2017)",
       "review": {
         "status": "draft",
-        "ref": "https://www.christies.com/features/Salvator-Mundi-Leonardo-da-Vinci-8737-1.aspx"
+        "ref": "https://news.artnet.com/market/last-known-leonardo-da-vinci-painting-just-sold-1149032"
       }
     },
     {
@@ -1669,7 +1669,7 @@
       "source": "Musée du Louvre",
       "review": {
         "status": "draft",
-        "ref": "https://collections.louvre.fr/en/ark:/53355/cl010062370"
+        "ref": "https://boutique.louvre.fr/en/product/52026-the-mona-lisa-art-prints.html"
       }
     },
     {
@@ -1719,7 +1719,7 @@
       "source": "Academy of Motion Picture Arts and Sciences",
       "review": {
         "status": "draft",
-        "ref": "https://www.oscars.org/oscars/ceremonies/1998"
+        "ref": "https://www.oscars.org/node/52951"
       }
     },
     {
@@ -1744,7 +1744,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/biography/Ludwig-van-Beethoven"
+        "ref": "https://www.classical-music.com/article/how-many-symphonies-did-beethoven-write"
       }
     },
     {
@@ -1804,10 +1804,10 @@
         "culture"
       ],
       "text": {
-        "en": "How many characters are on China's official list of commonly used characters?",
-        "fr": "Combien de caractères compte la liste officielle chinoise des caractères courants ?",
-        "ar": "كم حرف بلائحة الصين الرسمية للأحرف الشائعة الاستعمال؟",
-        "es": "¿Cuántos caracteres tiene la lista oficial china de caracteres de uso común?"
+        "en": "How many characters does China's 1988 list of frequently used characters contain?",
+        "fr": "Combien de caractères compte la liste chinoise de 1988 des caractères d'usage fréquent ?",
+        "ar": "كم حرف بلائحة الصين لسنة 1988 للأحرف كتير الاستعمال؟",
+        "es": "¿Cuántos caracteres tiene la lista china de 1988 de caracteres de uso frecuente?"
       },
       "unit": {
         "en": "characters",
@@ -1819,7 +1819,7 @@
       "source": "Ministry of Education of China (1988 list)",
       "review": {
         "status": "draft",
-        "ref": "https://en.wikipedia.org/wiki/List_of_Commonly_Used_Characters_in_Modern_Chinese"
+        "ref": "https://en.wikipedia.org/wiki/List_of_Frequently_Used_Characters_in_Modern_Chinese"
       }
     },
     {
@@ -1844,7 +1844,7 @@
       "source": "Twitter (2006–2017 limit)",
       "review": {
         "status": "draft",
-        "ref": "https://blog.x.com/en_us/topics/product/2017/tweetingmadeeasier"
+        "ref": "https://techcrunch.com/2017/11/07/twitter-officially-expands-its-character-count-to-280-starting-today/"
       }
     },
     {
@@ -1869,7 +1869,7 @@
       "source": "IETF RFC 791 (2^32)",
       "review": {
         "status": "draft",
-        "ref": "https://www.rfc-editor.org/rfc/rfc791"
+        "ref": "https://en.wikipedia.org/wiki/IPv4 (2^32 = 4,294,967,296; RFC 791)"
       }
     },
     {
@@ -1895,7 +1895,7 @@
       "source": "Dubai Airports (2023)",
       "review": {
         "status": "draft",
-        "ref": "https://www.thenationalnews.com/business/aviation/2024/04/15/dxb-dubai-airport-worlds-busiest"
+        "ref": "https://gulfnews.com/business/aviation/dubai-international-crowned-worlds-busiest-international-airport-for-10th-consecutive-year-1.1713182687660"
       }
     },
     {
@@ -1920,7 +1920,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/science/human-skeleton"
+        "ref": "https://en.wikipedia.org/wiki/List_of_bones_of_the_human_skeleton"
       }
     },
     {
@@ -1945,7 +1945,7 @@
       "source": "NHS",
       "review": {
         "status": "draft",
-        "ref": "https://www.nhs.uk/conditions/wisdom-tooth-removal/"
+        "ref": "https://www.northerncarealliance.nhs.uk/patient-information/patient-leaflets/oral-surgery-removal-wisdom-teeth"
       }
     },
     {
@@ -1970,7 +1970,7 @@
       "source": "NIH (NHGRI)",
       "review": {
         "status": "draft",
-        "ref": "https://www.genome.gov/about-genomics/fact-sheets/Chromosomes-Fact-Sheet"
+        "ref": "https://medlineplus.gov/genetics/understanding/basics/howmanychromosomes"
       }
     },
     {
@@ -2020,7 +2020,7 @@
       "source": "American Heart Association",
       "review": {
         "status": "draft",
-        "ref": "https://www.heart.org/en/health-topics/consumer-healthcare/what-is-cardiovascular-disease/anatomy-of-the-heart-and-blood-vessels"
+        "ref": "https://www.livescience.com/34655-human-heart.html (about 100,000 beats a day, 60-100 bpm resting)"
       }
     },
     {
@@ -2045,7 +2045,7 @@
       "source": "NHS Blood and Transplant",
       "review": {
         "status": "draft",
-        "ref": "https://www.blood.co.uk/news-and-campaigns/the-donor/latest-stories/how-much-blood-is-in-the-human-body/"
+        "ref": "https://www.britannica.com/video/253594/How-much-blood-is-in-the-human-body (about 5 litres)"
       }
     },
     {
@@ -2095,7 +2095,7 @@
       "source": "NIH (NHGRI)",
       "review": {
         "status": "draft",
-        "ref": "https://www.genome.gov/about-genomics/fact-sheets/Deoxyribonucleic-Acid-Fact-Sheet"
+        "ref": "https://www.sciencenews.org/article/human-genome-takes-shape-and-shifts-over-time (about 2 m per cell)"
       }
     },
     {
@@ -2120,7 +2120,7 @@
       "source": "American Academy of Dermatology",
       "review": {
         "status": "draft",
-        "ref": "https://www.aad.org/public/diseases/hair-loss/insider/shedding"
+        "ref": "https://healthline.com/health/how-many-hairs-on-a-human-head (about 100,000 hairs)"
       }
     },
     {
@@ -2145,7 +2145,7 @@
       "source": "Smithsonian Ocean",
       "review": {
         "status": "draft",
-        "ref": "https://ocean.si.edu/ocean-life/invertebrates/octopus"
+        "ref": "https://www.smithsonianmag.com/science-nature/ten-curious-facts-about-octopuses-7625828/"
       }
     },
     {
@@ -2170,7 +2170,7 @@
       "source": "Smithsonian National Zoo",
       "review": {
         "status": "draft",
-        "ref": "https://nationalzoo.si.edu/animals/giraffe"
+        "ref": "https://www.sfzoo.org/reticulated-giraffe/ (seven neck vertebrae)"
       }
     },
     {
@@ -2180,10 +2180,10 @@
         "nature"
       ],
       "text": {
-        "en": "How many months does an elephant pregnancy last?",
-        "fr": "Combien de mois dure la gestation d'un éléphant ?",
-        "ar": "كم شهر بيطوّل حمل الفيلة؟",
-        "es": "¿Cuántos meses dura la gestación de un elefante?"
+        "en": "How many months does an African elephant's pregnancy last, on average?",
+        "fr": "Combien de mois dure en moyenne la gestation d'une éléphante d'Afrique ?",
+        "ar": "كم شهر بيطوّل حمل الفيلة الأفريقية بالمعدّل؟",
+        "es": "¿Cuántos meses dura de media la gestación de una elefanta africana?"
       },
       "unit": {
         "en": "months",
@@ -2192,10 +2192,10 @@
         "es": "meses"
       },
       "answer": 22,
-      "source": "Smithsonian National Zoo",
+      "source": "Smithsonian Magazine",
       "review": {
         "status": "draft",
-        "ref": "https://nationalzoo.si.edu/animals/asian-elephant"
+        "ref": "https://www.smithsonianmag.com/smart-news/this-feisty-asian-elephant-at-the-national-zoo-is-pregnant-she-may-birth-the-first-calf-born-there-in-nearly-25-years-180987745/ (African elephant average 22 months; Asian 18-22)"
       }
     },
     {
@@ -2221,7 +2221,7 @@
       "source": "Guinness World Records (2023)",
       "review": {
         "status": "draft",
-        "ref": "https://guinnessworldrecords.com/news/2023/10/good-gourd-american-pumpkin-as-heavy-as-two-cows-squashes-all-past-rivals-759626"
+        "ref": "https://wjla.com/news/offbeat/pumpkin-weighing-2749-pounds-wins-california-contest-sets-guinness-world-record-biggest-gourd-50th-world-championship-weigh-off-horticulture-teacher-travis-gienger-champion-october-2023 (AP: 2,749 lb = 1,247 kg)"
       }
     },
     {
@@ -2246,7 +2246,7 @@
       "source": "USDA FoodData Central",
       "review": {
         "status": "draft",
-        "ref": "https://fdc.nal.usda.gov/"
+        "ref": "https://www.recipal.com/ingredients/664-nutrition-facts-calories-protein-carbs-fat-oil-olive-salad-or-cooking (USDA NDB 4053: 119 kcal per tbsp)"
       }
     },
     {
@@ -2271,7 +2271,7 @@
       "source": "World Athletics",
       "review": {
         "status": "draft",
-        "ref": "https://worldathletics.org/disciplines/road-running/marathon"
+        "ref": "https://worldathletics.org/disciplines/road/marathon"
       }
     },
     {
@@ -2296,7 +2296,7 @@
       "source": "World Athletics",
       "review": {
         "status": "draft",
-        "ref": "https://worldathletics.org/records/by-discipline/sprints/100-metres/outdoor/men"
+        "ref": "https://worldathletics.org/news/report/event-report-mens-100m-final-1"
       }
     },
     {
@@ -2321,7 +2321,7 @@
       "source": "FIFA",
       "review": {
         "status": "draft",
-        "ref": "https://www.fifa.com/en/tournaments/mens/worldcup/qatar2022"
+        "ref": "https://www.fifa.com/news/one-month-on-5-billion-engaged-with-the-fifa-world-cup-qatar-2022-tm"
       }
     },
     {
@@ -2346,7 +2346,7 @@
       "source": "FIFA",
       "review": {
         "status": "draft",
-        "ref": "https://www.fifa.com/en/tournaments/mens/worldcup/qatar2022"
+        "ref": "https://inside.fifa.com/tournament-organisation/world-cup-2022-in-numbers/fifa-world-cup-qatar-2022-at-a-glance"
       }
     },
     {
@@ -2371,7 +2371,7 @@
       "source": "FIFA",
       "review": {
         "status": "draft",
-        "ref": "https://www.fifa.com/en/tournaments/mens/worldcup"
+        "ref": "https://inside.fifa.com/tournament-organisation/world-cup-2022-in-numbers/fifa-world-cup-qatar-2022-at-a-glance (22nd edition)"
       }
     },
     {
@@ -2421,7 +2421,7 @@
       "source": "France Football",
       "review": {
         "status": "draft",
-        "ref": "https://www.francefootball.fr/ballon-d-or/"
+        "ref": "https://www.si.com/soccer/ballon-dor-2025-winners-full-list (2025 went to Dembele; Messi stays on 8)"
       }
     },
     {
@@ -2446,7 +2446,7 @@
       "source": "FIBA",
       "review": {
         "status": "draft",
-        "ref": "https://www.fiba.basketball/documents/official-basketball-rules"
+        "ref": "https://www.hoopsbeast.com/basketball-hoop-height (10 ft = 305 cm, FIBA and NBA)"
       }
     },
     {
@@ -2471,7 +2471,7 @@
       "source": "World Athletics",
       "review": {
         "status": "draft",
-        "ref": "https://worldathletics.org/about-iaaf/documents/book-of-rules"
+        "ref": "https://worldathletics.org/disciplines/throws/shot-put"
       }
     },
     {
@@ -2496,7 +2496,7 @@
       "source": "World Aquatics (minimum Olympic pool, 50 × 25 × 2 m)",
       "review": {
         "status": "draft",
-        "ref": "https://www.worldaquatics.com/rules/competition-regulations"
+        "ref": "https://en.wikipedia.org/wiki/Olympic-size_swimming_pool (50 x 25 x 2 m = 2,500,000 L)"
       }
     },
     {
@@ -2521,7 +2521,7 @@
       "source": "NIST",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/science/sound-physics/The-speed-of-sound"
+        "ref": "https://en.wikipedia.org/wiki/Speed_of_sound (343 m/s at 20 C)"
       }
     },
     {
@@ -2546,7 +2546,7 @@
       "source": "NIST",
       "review": {
         "status": "draft",
-        "ref": "https://www.nist.gov/pml/owm/si-units-temperature"
+        "ref": "https://www.britannica.com/science/boiling-point (100 C = 212 F)"
       }
     },
     {

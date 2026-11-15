@@ -1,14 +1,14 @@
 # Fact-check: Taqriban! (taqriban-world, taqriban-levant), 2026-11 (second pass)
 
-**Result: INCOMPLETE. The live-search budget ran out part-way.** The run hit the tool's cap of 200 WebSearch calls per turn (shared with every agent in the turn) after the first 61 items of `taqriban-world` (tw-001 to tw-061). WebSearch returned "budget used up" for every later call, and no workaround was attempted. So **61 of 140 items were checked live this pass**, with a URL recorded for each. The other **68 items (tw-062 to tw-100, tl-001 to tl-016 and tl-026 to tl-038) were NOT re-verified live**; they keep their status from the previous pass (aa77a7e) and are marked NOT RE-VERIFIED below. They are not marked confirmed. They need a follow-up run once the search budget is raised (CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION) or in a new turn.
+**Result: COMPLETE (third pass).** The second pass ran out of search budget after 61 items. This pass re-verified the remaining 68 items (tw-062 to tw-100, tl-001 to tl-016, tl-026 to tl-038) with one live WebSearch each (a second only for tl-038) and recorded a reliable URL in `review.ref` for every one. All 140 items are now checked live or by haversine. Where a page blocked fetch, the URL plus the snippet value is recorded.
 
 Totals (140 items: 102 world + 38 levant):
-- Checked live this pass and CONFIRMED: 56 (includes a few with notes)
+- CONFIRMED: 121 (56 from the second pass + 65 from this pass, some with notes)
 - FIXED: 1 (tw-019)
-- AMBIGUOUS -> rewritten: 4 (tw-030 also changed the number, see table; tw-039, tw-044, tw-045)
+- AMBIGUOUS -> rewritten: 7 (tw-030 also changed the number; tw-039, tw-044, tw-045; third pass: tw-071, tw-086, tl-031)
 - DELETED: 0
 - Distances recomputed by haversine (11 items), all within 0.5% of the stored value: 11
-- NOT RE-VERIFIED (search budget exhausted): 68
+- NOT RE-VERIFIED: 0
 
 Draft flags unchanged. `pnpm --filter @jamaa/content-lint run lint` passes (0 errors) and `pnpm vitest run content` passes (142 tests, after generating the gitignored server/src/content-modules.gen with `node server/scripts/gen-content-modules.mjs`).
 
@@ -20,6 +20,9 @@ Source URLs: all `review.ref` fields for the 61 live-checked items were replaced
 - tw-039 Africa: reworded to "How many African countries are members of the United Nations?" (54); the AU has 55 members.
 - tw-044 Vatican area: kept 0.44, wording now "(Britannica figure)" because the CIA Factbook lists 0.49.
 - tw-045 Sahara area: kept 9,000,000, wording now "(Wikipedia figure)" because Britannica's main article says 8.6 M.
+- tw-071 China characters: number kept at 3,500, but the current official list (2013) has 8,105 characters; the question now asks about the 1988 list of frequently used characters (3,500).
+- tw-086 elephant gestation: kept 22; that is the African elephant average (Asian is 18-22), so the question now says African elephant, on average.
+- tl-031 Saudi area: kept 2,149,690 (CIA Factbook); other databases give up to 2.25 M, so the question now names the CIA World Factbook figure.
 - Previous-pass changes (tw-087, tw-101, tw-102, tl-022, tl-023, tl-036, tl-003, tl-009) are retained; tw-101/102, tl-022/023 were re-checked by haversine here.
 
 ## Full table (id, stored answer, source value, % diff, status, URL)
@@ -86,63 +89,63 @@ Source URLs: all `review.ref` fields for the 61 live-checked items were replaced
 | tw-059 | 28 years | 28 | 0.00 | CONFIRMED | https://stiftung-berliner-mauer.de/en/node/9  |
 | tw-060 | 116 years | 116 | 0.00 | CONFIRMED | https://www.britannica.com/event/Hundred-Years-War (1337-1453)  |
 | tw-061 | 8 days | 8.14 | 1.72 | CONFIRMED | https://spaceline.org/?p=1431 (NASA-derived Apollo 11 fact sheet)  |
-| tw-062 | 2224 people | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/topic/Titanic (stored ref, not opened)  |
-| tw-063 | 1.5e+07 US$ | n/a | n/a | NOT RE-VERIFIED | https://www.archives.gov/milestone-documents/louisiana-purchase-treaty (stored ref, not opened)  |
-| tw-064 | 4.503e+08 US$ | n/a | n/a | NOT RE-VERIFIED | https://www.christies.com/features/Salvator-Mundi-Leonardo-da-Vinci-8737-1.aspx (stored ref, not opened)  |
-| tw-065 | 77 cm | n/a | n/a | NOT RE-VERIFIED | https://collections.louvre.fr/en/ark:/53355/cl010062370 (stored ref, not opened)  |
-| tw-066 | 8.9e+06 visitors | n/a | n/a | NOT RE-VERIFIED | https://presse.louvre.fr/8-9-million-visitors-to-the-louvre-in-2023 (stored ref, not opened)  |
-| tw-067 | 11 Oscars | n/a | n/a | NOT RE-VERIFIED | https://www.oscars.org/oscars/ceremonies/1998 (stored ref, not opened)  |
-| tw-068 | 9 symphonies | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/biography/Ludwig-van-Beethoven (stored ref, not opened)  |
-| tw-069 | 88 keys | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/art/piano (stored ref, not opened)  |
-| tw-070 | 28 letters | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/topic/Arabic-alphabet (stored ref, not opened)  |
-| tw-071 | 3500 characters | n/a | n/a | NOT RE-VERIFIED | https://en.wikipedia.org/wiki/List_of_Commonly_Used_Characters_in_Modern_Chinese (stored ref, not opened)  |
-| tw-072 | 140 characters | n/a | n/a | NOT RE-VERIFIED | https://blog.x.com/en_us/topics/product/2017/tweetingmadeeasier (stored ref, not opened)  |
-| tw-073 | 4.29497e+09 addresses | n/a | n/a | NOT RE-VERIFIED | https://www.rfc-editor.org/rfc/rfc791 (stored ref, not opened)  |
-| tw-074 | 8.69e+07 passengers | n/a | n/a | NOT RE-VERIFIED | https://www.thenationalnews.com/business/aviation/2024/04/15/dxb-dubai-airport-worlds-busiest (stored ref, not opened)  |
-| tw-075 | 206 bones | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/science/human-skeleton (stored ref, not opened)  |
-| tw-076 | 32 teeth | n/a | n/a | NOT RE-VERIFIED | https://www.nhs.uk/conditions/wisdom-tooth-removal/ (stored ref, not opened)  |
-| tw-077 | 46 chromosomes | n/a | n/a | NOT RE-VERIFIED | https://www.genome.gov/about-genomics/fact-sheets/Chromosomes-Fact-Sheet (stored ref, not opened)  |
-| tw-078 | 8.6e+10 neurons | n/a | n/a | NOT RE-VERIFIED | https://pubmed.ncbi.nlm.nih.gov/19226510/ (stored ref, not opened)  |
-| tw-079 | 100000 beats | n/a | n/a | NOT RE-VERIFIED | https://www.heart.org/en/health-topics/consumer-healthcare/what-is-cardiovascular-disease/anatomy-of-the-heart-and-blood-vessels (stored ref, not opened)  |
-| tw-080 | 5 litres | n/a | n/a | NOT RE-VERIFIED | https://www.blood.co.uk/news-and-campaigns/the-donor/latest-stories/how-much-blood-is-in-the-human-body/ (stored ref, not opened)  |
-| tw-081 | 60 % | n/a | n/a | NOT RE-VERIFIED | https://www.usgs.gov/special-topics/water-science-school/science/water-you-water-and-human-body (stored ref, not opened)  |
-| tw-082 | 2 m | n/a | n/a | NOT RE-VERIFIED | https://www.genome.gov/about-genomics/fact-sheets/Deoxyribonucleic-Acid-Fact-Sheet (stored ref, not opened)  |
-| tw-083 | 100000 hairs | n/a | n/a | NOT RE-VERIFIED | https://www.aad.org/public/diseases/hair-loss/insider/shedding (stored ref, not opened)  |
-| tw-084 | 3 hearts | n/a | n/a | NOT RE-VERIFIED | https://ocean.si.edu/ocean-life/invertebrates/octopus (stored ref, not opened)  |
-| tw-085 | 7 vertebrae | n/a | n/a | NOT RE-VERIFIED | https://nationalzoo.si.edu/animals/giraffe (stored ref, not opened)  |
-| tw-086 | 22 months | n/a | n/a | NOT RE-VERIFIED | https://nationalzoo.si.edu/animals/asian-elephant (stored ref, not opened)  |
-| tw-087 | 1247 kg | n/a | n/a | NOT RE-VERIFIED | https://guinnessworldrecords.com/news/2023/10/good-gourd-american-pumpkin-as-heavy-as-two-cows-squashes-all-past-rivals-759626 (stored ref, not opened)  |
-| tw-088 | 119 kcal | n/a | n/a | NOT RE-VERIFIED | https://fdc.nal.usda.gov/ (stored ref, not opened)  |
-| tw-089 | 42.195 km | n/a | n/a | NOT RE-VERIFIED | https://worldathletics.org/disciplines/road-running/marathon (stored ref, not opened)  |
-| tw-090 | 9.58 s | n/a | n/a | NOT RE-VERIFIED | https://worldathletics.org/records/by-discipline/sprints/100-metres/outdoor/men (stored ref, not opened)  |
-| tw-091 | 172 goals | n/a | n/a | NOT RE-VERIFIED | https://www.fifa.com/en/tournaments/mens/worldcup/qatar2022 (stored ref, not opened)  |
-| tw-092 | 88966 people | n/a | n/a | NOT RE-VERIFIED | https://www.fifa.com/en/tournaments/mens/worldcup/qatar2022 (stored ref, not opened)  |
-| tw-093 | 22 editions | n/a | n/a | NOT RE-VERIFIED | https://www.fifa.com/en/tournaments/mens/worldcup (stored ref, not opened)  |
-| tw-094 | 23 medals | n/a | n/a | NOT RE-VERIFIED | https://olympics.com/en/athletes/michael-phelps-ii (stored ref, not opened)  |
-| tw-095 | 8 awards | n/a | n/a | NOT RE-VERIFIED | https://www.francefootball.fr/ballon-d-or/ (stored ref, not opened)  |
-| tw-096 | 305 cm | n/a | n/a | NOT RE-VERIFIED | https://www.fiba.basketball/documents/official-basketball-rules (stored ref, not opened)  |
-| tw-097 | 7.26 kg | n/a | n/a | NOT RE-VERIFIED | https://worldathletics.org/about-iaaf/documents/book-of-rules (stored ref, not opened)  |
-| tw-098 | 2.5e+06 litres | n/a | n/a | NOT RE-VERIFIED | https://www.worldaquatics.com/rules/competition-regulations (stored ref, not opened)  |
-| tw-099 | 343 m/s | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/science/sound-physics/The-speed-of-sound (stored ref, not opened)  |
-| tw-100 | 212 °F | n/a | n/a | NOT RE-VERIFIED | https://www.nist.gov/pml/owm/si-units-temperature (stored ref, not opened)  |
+| tw-062 | 2224 people | 2224 | 0.00 | CONFIRMED | https://en.wikipedia.org/wiki/Sinking_of_the_Titanic (2,224 estimated on board; US Senate 2,223, BoT 2,201) |
+| tw-063 | 15000000 US$ | 15 | 0.00 | CONFIRMED | https://www.archives.gov/milestone-documents/louisiana-purchase-treaty |
+| tw-064 | 450300000 US$ | 450.3 | 0.00 | CONFIRMED | https://news.artnet.com/market/last-known-leonardo-da-vinci-painting-just-sold-1149032 |
+| tw-065 | 77 cm | 77 | 0.00 | CONFIRMED | https://boutique.louvre.fr/en/product/52026-the-mona-lisa-art-prints.html |
+| tw-066 | 8900000 visitors | 8.9 | 0.00 | CONFIRMED | https://presse.louvre.fr/8-9-million-visitors-to-the-louvre-in-2023 |
+| tw-067 | 11 Oscars | 11 | 0.00 | CONFIRMED | https://www.oscars.org/node/52951 |
+| tw-068 | 9 symphonies | 9 | 0.00 | CONFIRMED | https://www.classical-music.com/article/how-many-symphonies-did-beethoven-write |
+| tw-069 | 88 keys | 88 | 0.00 | CONFIRMED | https://www.britannica.com/art/piano |
+| tw-070 | 28 letters | 28 | 0.00 | CONFIRMED | https://www.britannica.com/topic/Arabic-alphabet |
+| tw-071 | 3500 characters | 3500 | 0.00 | AMBIGUOUS -> rewritten (the current 2013 list has 8,105 characters; the question now names the 1988 list of frequently used characters, 3,500) | https://en.wikipedia.org/wiki/List_of_Frequently_Used_Characters_in_Modern_Chinese |
+| tw-072 | 140 characters | 140 | 0.00 | CONFIRMED | https://techcrunch.com/2017/11/07/twitter-officially-expands-its-character-count-to-280-starting-today/ |
+| tw-073 | 4294967296 addresses | 4294967296 | 0.00 | CONFIRMED | https://en.wikipedia.org/wiki/IPv4 (2^32 = 4,294,967,296; RFC 791) |
+| tw-074 | 86900000 passengers | 86.9 | 0.00 | CONFIRMED | https://gulfnews.com/business/aviation/dubai-international-crowned-worlds-busiest-international-airport-for-10th-consecutive-year-1.1713182687660 |
+| tw-075 | 206 bones | 206 | 0.00 | CONFIRMED | https://en.wikipedia.org/wiki/List_of_bones_of_the_human_skeleton |
+| tw-076 | 32 teeth | 32 | 0.00 | CONFIRMED | https://www.northerncarealliance.nhs.uk/patient-information/patient-leaflets/oral-surgery-removal-wisdom-teeth |
+| tw-077 | 46 chromosomes | 46 | 0.00 | CONFIRMED | https://medlineplus.gov/genetics/understanding/basics/howmanychromosomes |
+| tw-078 | 86000000000 neurons | 86.1 | 0.12 | CONFIRMED | https://pubmed.ncbi.nlm.nih.gov/19226510/ |
+| tw-079 | 100000 beats | 100000 | 0.00 | CONFIRMED | https://www.livescience.com/34655-human-heart.html (about 100,000 beats a day, 60-100 bpm resting) |
+| tw-080 | 5 litres | 5 | 0.00 | CONFIRMED | https://www.britannica.com/video/253594/How-much-blood-is-in-the-human-body (about 5 litres) |
+| tw-081 | 60 % | 60 | 0.00 | CONFIRMED | https://www.usgs.gov/special-topics/water-science-school/science/water-you-water-and-human-body |
+| tw-082 | 2 m | 2 | 0.00 | CONFIRMED (about 2 m; 2.18 m if computed for a diploid cell, within the 'about') | https://www.sciencenews.org/article/human-genome-takes-shape-and-shifts-over-time (about 2 m per cell) |
+| tw-083 | 100000 hairs | 100000 | 0.00 | CONFIRMED | https://healthline.com/health/how-many-hairs-on-a-human-head (about 100,000 hairs) |
+| tw-084 | 3 hearts | 3 | 0.00 | CONFIRMED | https://www.smithsonianmag.com/science-nature/ten-curious-facts-about-octopuses-7625828/ |
+| tw-085 | 7 vertebrae | 7 | 0.00 | CONFIRMED | https://www.sfzoo.org/reticulated-giraffe/ (seven neck vertebrae) |
+| tw-086 | 22 months | 22 | 0.00 | AMBIGUOUS -> rewritten (22 months is the African elephant average; Asian is 18-22; question now says African elephant) | https://www.smithsonianmag.com/smart-news/this-feisty-asian-elephant-at-the-national-zoo-is-pregnant-she-may-birth-the-first-calf-born-there-in-nearly-25-years-180987745/ (African elephant average 22 months; Asian 18-22) |
+| tw-087 | 1247 kg | 1247 | 0.00 | CONFIRMED | https://wjla.com/news/offbeat/pumpkin-weighing-2749-pounds-wins-california-contest-sets-guinness-world-record-biggest-gourd-50th-world-championship-weigh-off-horticulture-teacher-travis-gienger-champion-october-2023 (AP: 2,749 lb = 1,247 kg) |
+| tw-088 | 119 kcal | 119 | 0.00 | CONFIRMED | https://www.recipal.com/ingredients/664-nutrition-facts-calories-protein-carbs-fat-oil-olive-salad-or-cooking (USDA NDB 4053: 119 kcal per tbsp) |
+| tw-089 | 42.195 km | 42.195 | 0.00 | CONFIRMED | https://worldathletics.org/disciplines/road/marathon |
+| tw-090 | 9.58 s | 9.58 | 0.00 | CONFIRMED | https://worldathletics.org/news/report/event-report-mens-100m-final-1 |
+| tw-091 | 172 goals | 172 | 0.00 | CONFIRMED | https://www.fifa.com/news/one-month-on-5-billion-engaged-with-the-fifa-world-cup-qatar-2022-tm |
+| tw-092 | 88966 people | 88966 | 0.00 | CONFIRMED | https://inside.fifa.com/tournament-organisation/world-cup-2022-in-numbers/fifa-world-cup-qatar-2022-at-a-glance |
+| tw-093 | 22 editions | 22 | 0.00 | CONFIRMED | https://inside.fifa.com/tournament-organisation/world-cup-2022-in-numbers/fifa-world-cup-qatar-2022-at-a-glance (22nd edition) |
+| tw-094 | 23 medals | 23 | 0.00 | CONFIRMED | https://olympics.com/en/athletes/michael-phelps-ii |
+| tw-095 | 8 awards | 8 | 0.00 | CONFIRMED | https://www.si.com/soccer/ballon-dor-2025-winners-full-list (2025 went to Dembele; Messi stays on 8) |
+| tw-096 | 305 cm | 305 | 0.00 | CONFIRMED | https://www.hoopsbeast.com/basketball-hoop-height (10 ft = 305 cm, FIBA and NBA) |
+| tw-097 | 7.26 kg | 7.26 | 0.00 | CONFIRMED | https://worldathletics.org/disciplines/throws/shot-put |
+| tw-098 | 2500000 litres | 2500000 | 0.00 | CONFIRMED | https://en.wikipedia.org/wiki/Olympic-size_swimming_pool (50 x 25 x 2 m = 2,500,000 L) |
+| tw-099 | 343 m/s | 343.2 | 0.06 | CONFIRMED | https://en.wikipedia.org/wiki/Speed_of_sound (343 m/s at 20 C) |
+| tw-100 | 212 °F | 212 | 0.00 | CONFIRMED | https://www.britannica.com/science/boiling-point (100 C = 212 F) |
 | tw-101 | 1053 km | 1052.9 | 0.01 | DISTANCE (recomputed) | computed haversine R=6371.0088 km, city-centre coordinates in the item ref (Wikipedia coordinates; not re-opened this pass)  |
 | tw-102 | 344 km | 343.5 | 0.15 | DISTANCE (recomputed) | computed haversine R=6371.0088 km, city-centre coordinates in the item ref (Wikipedia coordinates; not re-opened this pass)  |
-| tl-001 | 10452 km² | n/a | n/a | NOT RE-VERIFIED | https://www.cia.gov/the-world-factbook/countries/lebanon/ (stored ref, not opened)  |
-| tl-002 | 10452 kg | n/a | n/a | NOT RE-VERIFIED | https://www.guinnessworldrecords.com/world-records/largest-serving-of-hummus (stored ref, not opened)  |
-| tl-003 | 3557 kg | n/a | n/a | NOT RE-VERIFIED | https://www.zawya.com/en/business/lebanon-breaks-hummus-tabbouleh-guinness-record-eyfqhw7j (stored ref, not opened)  |
-| tl-004 | 3088 m | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/place/Qurnat-al-Sawda (stored ref, not opened)  |
-| tl-005 | 2814 m | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/place/Mount-Hermon (stored ref, not opened)  |
-| tl-006 | 225 km | n/a | n/a | NOT RE-VERIFIED | https://www.cia.gov/the-world-factbook/countries/lebanon/ (stored ref, not opened)  |
-| tl-007 | 6 columns | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/place/Baalbek (stored ref, not opened)  |
-| tl-008 | 20 m | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/place/Baalbek (stored ref, not opened)  |
-| tl-009 | 1650 tonnes | n/a | n/a | NOT RE-VERIFIED | https://www.guinnessworldrecords.com/world-records/605305-largest-megalith-from-antiquity (stored ref, not opened)  |
-| tl-010 | 6 sites | n/a | n/a | NOT RE-VERIFIED | https://whc.unesco.org/en/statesparties/lb (stored ref, not opened)  |
-| tl-011 | 22 letters | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/topic/Phoenician-alphabet (stored ref, not opened)  |
-| tl-012 | 128 seats | n/a | n/a | NOT RE-VERIFIED | https://www.lp.gov.lb/ (stored ref, not opened)  |
-| tl-013 | 9 governorates | n/a | n/a | NOT RE-VERIFIED | https://www.interior.gov.lb/ (stored ref, not opened)  |
-| tl-014 | 1507.5 LBP | n/a | n/a | NOT RE-VERIFIED | https://www.bdl.gov.lb/ (stored ref, not opened)  |
-| tl-015 | 5.16e+10 US$ | n/a | n/a | NOT RE-VERIFIED | https://fred.stlouisfed.org/series/MKTGDPLBA646NWDB (stored ref, not opened)  |
-| tl-016 | 8.2 m | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/place/Jeita-Grotto (8.2 m stalactite, White Chamber) (stored ref, not opened)  |
+| tl-001 | 10452 km² | 10452 | 0.00 | CONFIRMED (CIA Factbook says 10,400, a 0.5 % gap) | https://en.wikipedia.org/wiki/Lebanon (10,452 km2; CIA Factbook rounds to 10,400) |
+| tl-002 | 10452 kg | 10452 | 0.00 | CONFIRMED | https://www.guinnessworldrecords.com/world-records/largest-serving-of-hummus |
+| tl-003 | 3557 kg | 3557 | 0.00 | CONFIRMED | https://www.zawya.com/en/business/lebanon-breaks-hummus-tabbouleh-guinness-record-eyfqhw7j |
+| tl-004 | 3088 m | 3088 | 0.00 | CONFIRMED | https://www.britannica.com/place/Qurnat-al-Sawda |
+| tl-005 | 2814 m | 2814 | 0.00 | CONFIRMED | https://peakbook.org/peakbook-element/10849/Mount+Hermon.html (2,814 m) |
+| tl-006 | 225 km | 225 | 0.00 | CONFIRMED | https://www.cia.gov/the-world-factbook/about/archives/2022/countries/lebanon |
+| tl-007 | 6 columns | 6 | 0.00 | CONFIRMED | https://en.wikipedia.org/wiki/Temple_of_Jupiter_(Baalbek) |
+| tl-008 | 20 m | 19.9 | 0.50 | CONFIRMED | https://en.wikipedia.org/wiki/Temple_of_Jupiter_(Baalbek) (19.9 m) |
+| tl-009 | 1650 tonnes | 1650 | 0.00 | CONFIRMED (team estimate; one Wikipedia passage says about 1,500 t) | https://www.guinnessworldrecords.com/world-records/605305-largest-megalith-from-antiquity |
+| tl-010 | 6 sites | 6 | 0.00 | CONFIRMED (six sites as of 2023; a seventh was listed in 2026, the question says as of 2023) | https://en.wikipedia.org/wiki/List_of_World_Heritage_Sites_in_Lebanon (six sites inscribed by 2023; a seventh listed in 2026) |
+| tl-011 | 22 letters | 22 | 0.00 | CONFIRMED | https://www.britannica.com/topic/Phoenician-alphabet |
+| tl-012 | 128 seats | 128 | 0.00 | CONFIRMED | https://en.wikipedia.org/wiki/Parliament_of_Lebanon |
+| tl-013 | 9 governorates | 9 | 0.00 | CONFIRMED | https://en.wikipedia.org/wiki/Governorates_of_Lebanon |
+| tl-014 | 1507.5 LBP | 1507.5 | 0.00 | CONFIRMED | https://www.abl.org.lb/Library/Assets/Gallery/Documents/3%20ANNUEL%20REPORT%20%20ENG%202021%20CIR%20BDL.pdf |
+| tl-015 | 51600000000 US$ | 51.606 | 0.01 | CONFIRMED (World Bank via FRED, 51.606 bn) | https://fred.stlouisfed.org/series/MKTGDPLBA646NWDB (World Bank: 51,605,959,131 US$ for 2019) |
+| tl-016 | 8.2 m | 8.2 | 0.00 | CONFIRMED | https://showcaves.com/english/lb/showcaves/Jeita.html (8.2 m) |
 | tl-017 | 3190 km | 3190.5 | 0.02 | DISTANCE (recomputed) | computed haversine R=6371.0088 km, city-centre coordinates in the item ref (Wikipedia coordinates; not re-opened this pass)  |
 | tl-018 | 2140 km | 2137.2 | 0.13 | DISTANCE (recomputed) | computed haversine R=6371.0088 km, city-centre coordinates in the item ref (Wikipedia coordinates; not re-opened this pass)  |
 | tl-019 | 9030 km | 9024.9 | 0.06 | DISTANCE (recomputed) | computed haversine R=6371.0088 km, city-centre coordinates in the item ref (Wikipedia coordinates; not re-opened this pass)  |
@@ -152,16 +155,16 @@ Source URLs: all `review.ref` fields for the 61 live-checked items were replaced
 | tl-023 | 68 km | 68.3 | 0.44 | DISTANCE (recomputed) | computed haversine R=6371.0088 km, city-centre coordinates in the item ref (Wikipedia coordinates; not re-opened this pass)  |
 | tl-024 | 8680 km | 8674.7 | 0.06 | DISTANCE (recomputed) | computed haversine R=6371.0088 km, city-centre coordinates in the item ref (Wikipedia coordinates; not re-opened this pass)  |
 | tl-025 | 10770 km | 10765.5 | 0.04 | DISTANCE (recomputed) | computed haversine R=6371.0088 km, city-centre coordinates in the item ref (Wikipedia coordinates; not re-opened this pass)  |
-| tl-026 | 193.3 km | n/a | n/a | NOT RE-VERIFIED | https://www.suezcanal.gov.eg/English/About/SuezCanal/Pages/CanalCharacteristics.aspx (stored ref, not opened)  |
-| tl-027 | 2800 km | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/place/Euphrates-River (stored ref, not opened)  |
-| tl-028 | 9.47988e+07 people | n/a | n/a | NOT RE-VERIFIED | https://www.capmas.gov.eg/ (stored ref, not opened)  |
-| tl-029 | 3.21752e+07 people | n/a | n/a | NOT RE-VERIFIED | https://portal.saudicensus.sa/ (stored ref, not opened)  |
-| tl-030 | 9.53171e+06 people | n/a | n/a | NOT RE-VERIFIED | https://dosweb.dos.gov.jo/ (stored ref, not opened)  |
-| tl-031 | 2.14969e+06 km² | n/a | n/a | NOT RE-VERIFIED | https://www.cia.gov/the-world-factbook/countries/saudi-arabia/ (stored ref, not opened)  |
-| tl-032 | 11586 km² | n/a | n/a | NOT RE-VERIFIED | https://www.cia.gov/the-world-factbook/countries/qatar/ (stored ref, not opened)  |
-| tl-033 | 7 countries | n/a | n/a | NOT RE-VERIFIED | https://www.cia.gov/the-world-factbook/countries/saudi-arabia/ (stored ref, not opened)  |
-| tl-034 | 22 members | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/topic/Arab-League (stored ref, not opened)  |
-| tl-035 | 8 stadiums | n/a | n/a | NOT RE-VERIFIED | https://www.fifa.com/en/tournaments/mens/worldcup/qatar2022 (stored ref, not opened)  |
-| tl-036 | 39 m | n/a | n/a | NOT RE-VERIFIED | https://archnet.org/sites/10364 (stored ref, not opened)  |
-| tl-037 | 20 m | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/place/Abu-Simbel (stored ref, not opened)  |
-| tl-038 | 2285 m | n/a | n/a | NOT RE-VERIFIED | https://www.britannica.com/place/Mount-Sinai-mountain-Egypt (stored ref, not opened)  |
+| tl-026 | 193.3 km | 193.3 | 0.00 | CONFIRMED | https://en.wikipedia.org/wiki/Suez_Canal (193.3 km; SCA-attributed table) |
+| tl-027 | 2800 km | 2800 | 0.00 | CONFIRMED (Britannica 2,800; Wikipedia 2,780) | https://www.britannica.com/place/Euphrates-River |
+| tl-028 | 94798827 people | 94.798827 | 0.00 | CONFIRMED | https://www.foxnews.com/world/egypts-population-stands-at-nearly-95-million (CAPMAS 2017 census: 94,798,827) |
+| tl-029 | 32175224 people | 32.175224 | 0.00 | CONFIRMED | https://gulfmigration.grc.net/?p=9728 (GASTAT 2022 census: 32,175,224) |
+| tl-030 | 9531712 people | 9.531712 | 0.00 | CONFIRMED | https://ghdx.healthdata.org/node/284683 (Jordan DoS 2015 census: 9,531,712) |
+| tl-031 | 2149690 km² | 2149.69 | 0.00 | AMBIGUOUS -> rewritten (CIA Factbook 2,149,690; other databases range up to 2.25 M, so the question names the CIA figure) | https://www.cia.gov/the-world-factbook/about/archives/2022/countries/saudi-arabia (2,149,690; other sources up to 2.25 M) |
+| tl-032 | 11586 km² | 11586 | 0.00 | CONFIRMED | https://www.cia.gov/the-world-factbook/countries/qatar/summaries |
+| tl-033 | 7 countries | 7 | 0.00 | CONFIRMED | https://saudipedia.com/en/list-of-the-saudi-land-borders |
+| tl-034 | 22 members | 22 | 0.00 | CONFIRMED | https://en.wikipedia.org/wiki/Arab_League |
+| tl-035 | 8 stadiums | 8 | 0.00 | CONFIRMED | https://www.al-monitor.com/originals/2022/10/qatars-eight-world-cup-stadiums |
+| tl-036 | 39 m | 38.77 | 0.59 | CONFIRMED (38.77 to 39.6 m depending on source) | https://archnet.org/sites/10364 (38.77 m; others 39-39.6) |
+| tl-037 | 20 m | 20 | 0.00 | CONFIRMED | https://www.newworldencyclopedia.org/entry/Abu_Simbel (66 ft / 20 m) |
+| tl-038 | 2285 m | 2285 | 0.00 | CONFIRMED | https://en.wikipedia.org/wiki/Mount_Sinai (2,285 m) |

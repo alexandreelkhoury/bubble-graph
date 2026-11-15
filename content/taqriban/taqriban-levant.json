@@ -45,7 +45,7 @@
       "source": "CIA World Factbook",
       "review": {
         "status": "draft",
-        "ref": "https://www.cia.gov/the-world-factbook/countries/lebanon/"
+        "ref": "https://en.wikipedia.org/wiki/Lebanon (10,452 km2; CIA Factbook rounds to 10,400)"
       }
     },
     {
@@ -149,7 +149,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Mount-Hermon"
+        "ref": "https://peakbook.org/peakbook-element/10849/Mount+Hermon.html (2,814 m)"
       }
     },
     {
@@ -175,7 +175,7 @@
       "source": "CIA World Factbook",
       "review": {
         "status": "draft",
-        "ref": "https://www.cia.gov/the-world-factbook/countries/lebanon/"
+        "ref": "https://www.cia.gov/the-world-factbook/about/archives/2022/countries/lebanon"
       }
     },
     {
@@ -201,7 +201,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Baalbek"
+        "ref": "https://en.wikipedia.org/wiki/Temple_of_Jupiter_(Baalbek)"
       }
     },
     {
@@ -227,7 +227,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Baalbek"
+        "ref": "https://en.wikipedia.org/wiki/Temple_of_Jupiter_(Baalbek) (19.9 m)"
       }
     },
     {
@@ -278,7 +278,7 @@
       "source": "UNESCO",
       "review": {
         "status": "draft",
-        "ref": "https://whc.unesco.org/en/statesparties/lb"
+        "ref": "https://en.wikipedia.org/wiki/List_of_World_Heritage_Sites_in_Lebanon (six sites inscribed by 2023; a seventh listed in 2026)"
       }
     },
     {
@@ -330,7 +330,7 @@
       "source": "Lebanese Parliament",
       "review": {
         "status": "draft",
-        "ref": "https://www.lp.gov.lb/"
+        "ref": "https://en.wikipedia.org/wiki/Parliament_of_Lebanon"
       }
     },
     {
@@ -355,7 +355,7 @@
       "source": "Lebanese Ministry of Interior",
       "review": {
         "status": "draft",
-        "ref": "https://www.interior.gov.lb/"
+        "ref": "https://en.wikipedia.org/wiki/Governorates_of_Lebanon"
       }
     },
     {
@@ -381,7 +381,7 @@
       "source": "Banque du Liban",
       "review": {
         "status": "draft",
-        "ref": "https://www.bdl.gov.lb/"
+        "ref": "https://www.abl.org.lb/Library/Assets/Gallery/Documents/3%20ANNUEL%20REPORT%20%20ENG%202021%20CIR%20BDL.pdf"
       }
     },
     {
@@ -407,7 +407,7 @@
       "source": "World Bank (WDI)",
       "review": {
         "status": "draft",
-        "ref": "https://fred.stlouisfed.org/series/MKTGDPLBA646NWDB"
+        "ref": "https://fred.stlouisfed.org/series/MKTGDPLBA646NWDB (World Bank: 51,605,959,131 US$ for 2019)"
       }
     },
     {
@@ -433,7 +433,7 @@
       "source": "Jeita Grotto",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Jeita-Grotto (8.2 m stalactite, White Chamber)"
+        "ref": "https://showcaves.com/english/lb/showcaves/Jeita.html (8.2 m)"
       }
     },
     {
@@ -692,7 +692,7 @@
       "source": "Suez Canal Authority",
       "review": {
         "status": "draft",
-        "ref": "https://www.suezcanal.gov.eg/English/About/SuezCanal/Pages/CanalCharacteristics.aspx"
+        "ref": "https://en.wikipedia.org/wiki/Suez_Canal (193.3 km; SCA-attributed table)"
       }
     },
     {
@@ -743,7 +743,7 @@
       "source": "CAPMAS (Egypt census 2017)",
       "review": {
         "status": "draft",
-        "ref": "https://www.capmas.gov.eg/"
+        "ref": "https://www.foxnews.com/world/egypts-population-stands-at-nearly-95-million (CAPMAS 2017 census: 94,798,827)"
       }
     },
     {
@@ -768,7 +768,7 @@
       "source": "GASTAT (Saudi census 2022)",
       "review": {
         "status": "draft",
-        "ref": "https://portal.saudicensus.sa/"
+        "ref": "https://gulfmigration.grc.net/?p=9728 (GASTAT 2022 census: 32,175,224)"
       }
     },
     {
@@ -793,7 +793,7 @@
       "source": "Department of Statistics, Jordan (2015 census)",
       "review": {
         "status": "draft",
-        "ref": "https://dosweb.dos.gov.jo/"
+        "ref": "https://ghdx.healthdata.org/node/284683 (Jordan DoS 2015 census: 9,531,712)"
       }
     },
     {
@@ -803,10 +803,10 @@
         "geo"
       ],
       "text": {
-        "en": "What is the area of Saudi Arabia, in km²?",
-        "fr": "Quelle est la superficie de l'Arabie saoudite, en km² ?",
-        "ar": "قدّيش مساحة السعودية، بالكلم المربّع؟",
-        "es": "¿Cuál es la superficie de Arabia Saudí, en km²?"
+        "en": "What is the area of Saudi Arabia, in km² (CIA World Factbook figure)?",
+        "fr": "Quelle est la superficie de l'Arabie saoudite, en km² (chiffre du CIA World Factbook) ?",
+        "ar": "قدّيش مساحة السعودية، بالكلم المربّع (حسب CIA World Factbook)؟",
+        "es": "¿Cuál es la superficie de Arabia Saudí, en km² (cifra del CIA World Factbook)?"
       },
       "unit": {
         "en": "km²",
@@ -818,7 +818,7 @@
       "source": "CIA World Factbook",
       "review": {
         "status": "draft",
-        "ref": "https://www.cia.gov/the-world-factbook/countries/saudi-arabia/"
+        "ref": "https://www.cia.gov/the-world-factbook/about/archives/2022/countries/saudi-arabia (2,149,690; other sources up to 2.25 M)"
       }
     },
     {
@@ -843,7 +843,7 @@
       "source": "CIA World Factbook",
       "review": {
         "status": "draft",
-        "ref": "https://www.cia.gov/the-world-factbook/countries/qatar/"
+        "ref": "https://www.cia.gov/the-world-factbook/countries/qatar/summaries"
       }
     },
     {
@@ -868,7 +868,7 @@
       "source": "CIA World Factbook",
       "review": {
         "status": "draft",
-        "ref": "https://www.cia.gov/the-world-factbook/countries/saudi-arabia/"
+        "ref": "https://saudipedia.com/en/list-of-the-saudi-land-borders"
       }
     },
     {
@@ -894,7 +894,7 @@
       "source": "League of Arab States",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/topic/Arab-League"
+        "ref": "https://en.wikipedia.org/wiki/Arab_League"
       }
     },
     {
@@ -919,7 +919,7 @@
       "source": "FIFA",
       "review": {
         "status": "draft",
-        "ref": "https://www.fifa.com/en/tournaments/mens/worldcup/qatar2022"
+        "ref": "https://www.al-monitor.com/originals/2022/10/qatars-eight-world-cup-stadiums"
       }
     },
     {
@@ -945,7 +945,7 @@
       "source": "Archnet (Petra Treasury survey, 38.77 m to urn) / Jordan sources 39.1 m",
       "review": {
         "status": "draft",
-        "ref": "https://archnet.org/sites/10364"
+        "ref": "https://archnet.org/sites/10364 (38.77 m; others 39-39.6)"
       }
     },
     {
@@ -971,7 +971,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Abu-Simbel"
+        "ref": "https://www.newworldencyclopedia.org/entry/Abu_Simbel (66 ft / 20 m)"
       }
     },
     {
@@ -996,7 +996,7 @@
       "source": "Britannica",
       "review": {
         "status": "draft",
-        "ref": "https://www.britannica.com/place/Mount-Sinai-mountain-Egypt"
+        "ref": "https://en.wikipedia.org/wiki/Mount_Sinai (2,285 m)"
       }
     }
   ]
