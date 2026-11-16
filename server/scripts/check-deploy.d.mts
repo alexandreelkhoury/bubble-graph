@@ -5,7 +5,7 @@ export const NOT_INHERITED: string[];
 export function stripJsonc(text: string): string;
 export function resolveTarget(cfg: Record<string, unknown>, target: DeployTarget): { name?: string; vars?: Record<string, string>; [key: string]: unknown };
 export function checkDeployConfig(jsoncText: string, target?: string): string[];
-export function draftContentProblems(distDir: string): string[];
+export function draftContentProblems(distDir: string, opts?: { allowAdult?: boolean }): string[];
 export const BILLING_SECRETS: string[];
 export function billingOn(jsoncText: string, target?: DeployTarget): boolean;
 export function missingBillingSecrets(secretListJson: string): string[];
