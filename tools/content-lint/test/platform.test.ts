@@ -83,4 +83,14 @@ describe("repository content", { timeout: REPO_TIMEOUT }, () => {
     expect(text.includes("\n")).toBe(false);
     expect((JSON.parse(text) as { id: string }).id).toBe("en-everyday-01");
   });
+  it("--exclude-adult leaves out the adult (Spicy 18+) pack and nothing else", () => {
+    const all = mkdtempSync(join(tmpdir(), "content-emit-"));
+    const prod = mkdtempSync(join(tmpdir(), "content-emit-"));
+    const a = emitContent(REPO_CONTENT, all);
+    const b = emitContent(REPO_CONTENT, prod, { excludeAdult: true });
+    expect(a).toContain("likely/likely-spicy.txt");
+    expect(b).not.toContain("likely/likely-spicy.txt");
+    expect(b).toHaveLength(a.length - 1);
+    expect(existsSync(join(prod, "likely", "likely-family.txt"))).toBe(true);
+  });
 });

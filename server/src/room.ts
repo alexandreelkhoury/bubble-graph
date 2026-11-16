@@ -6,8 +6,8 @@ import type { Env } from "./env";
 import { clientIp, notFound } from "./request";
 import { fakeAllowedByEnv } from "./billing/mode";
 import { billingPacks } from "./billing/catalog-info";
-import { billingEnabled, enabledGames } from "./config";
-import { serverContent } from "./content";
+import { billingEnabled, enabledGames, spicyEnabled } from "./config";
+import { catalogFor, serverContent } from "./content";
 import { verifyKeysFromSecret } from "./billing/token";
 import { RoomCore } from "./room-core";
 import type { ConnHandle, ConnState, InitRoomArgs, InitRoomResult, RoomBillingDeps, RoomCoreDeps, RoomStorage } from "./room-core";
@@ -67,7 +67,7 @@ export class Room extends Server<Env> {
         connections: { list: () => [...this.getConnections<ConnState>()] as unknown as ConnHandle[] },
         clock: { now: () => Date.now() },
         crypto: { randomBytes, sha256hex },
-        content: () => serverContent().catalog(),
+        content: () => catalogFor(serverContent().catalog(), spicyEnabled(this.env)),
         premiumFamilies: () => billingPacks().premiumIds,
         enabledGames: enabledGames(this.env),
         billing: () => roomBillingDeps(this.env),

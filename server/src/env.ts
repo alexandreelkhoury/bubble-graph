@@ -13,6 +13,8 @@ export interface Env {
   BILLING_ENABLED?: string;
   /** JAMAA-PLATFORM §2.6: comma list of live games (default "mishana", config.ts). */
   GAMES_ENABLED?: string;
+  /** "1" serves Most Likely's Spicy 18+ pack (config.ts spicyEnabled); production "0". */
+  LIKELY_SPICY_ENABLED?: string;
   // PAYMENTS-SPEC §3.2. Secrets are optional at the type level: local dev (fake mode) runs without them.
   BILLING: DurableObjectNamespace<Billing>;
   BILLING_LIMITER: RateLimit;

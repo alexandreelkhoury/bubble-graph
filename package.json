@@ -8,6 +8,7 @@
     "dev": "node tools/dev.mjs",
     "content:emit": "pnpm --filter @jamaa/content-lint run lint --quiet --emit",
     "build": "pnpm run content:emit && pnpm --filter @jamaa/web-client run build && pnpm --filter @jamaa/server run build",
+    "content:emit:production": "pnpm --filter @jamaa/content-lint run lint --quiet --emit --exclude-adult",
     "test": "pnpm run content:emit && vitest run",
     "test:coverage": "vitest run --coverage",
     "sim": "pnpm --filter @jamaa/sim run sim",
@@ -22,7 +23,7 @@
     "rename:gate": "node tools/rename-gate/src/main.mjs",
     "e2e": "pnpm --filter @jamaa/web-client run e2e",
     "grant": "node server/scripts/grant.mjs",
-    "deploy": "pnpm --filter @jamaa/content-lint run lint -- --release && pnpm run build && pnpm --filter @jamaa/server run build:production && pnpm --filter @jamaa/server run deploy:production",
+    "deploy": "pnpm --filter @jamaa/content-lint run lint -- --release && pnpm run build && pnpm run content:emit:production && pnpm --filter @jamaa/server run build:production && pnpm --filter @jamaa/server run deploy:production",
     "deploy:preview": "pnpm run build && pnpm --filter @jamaa/content-lint run lint && pnpm --filter @jamaa/server run deploy:preview"
   },
   "devDependencies": {

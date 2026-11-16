@@ -53,3 +53,20 @@ export function serverContent(): ServerContent {
   if (!installed) throw new Error("content loader not installed");
   return installed;
 }
+
+const filtered = new WeakMap<ContentCatalog, ContentCatalog>();
+/**
+ * The catalog a room may use. `LIKELY_SPICY_ENABLED` ("1" = on, anything else off: config.ts `spicyEnabled`): when off,
+ * every adult (`ageRating: "adult"`, Most Likely's Spicy 18+) pack is removed, so no room can draw or list it. Defence in
+ * depth next to the production build, which does not bundle adult packs at all (content-lint `--exclude-adult`).
+ */
+export function catalogFor(catalog: ContentCatalog, spicyEnabled: boolean): ContentCatalog {
+  if (spicyEnabled) return catalog;
+  let out = filtered.get(catalog);
+  if (!out) {
+    const likely = { ...catalog.likely, packs: catalog.likely.packs.filter((p) => (p as { ageRating?: string }).ageRating !== "adult") };
+    out = { ...catalog, likely };
+    filtered.set(catalog, out);
+  }
+  return out;
+}

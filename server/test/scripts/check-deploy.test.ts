@@ -172,6 +172,40 @@ describe("check-deploy: preview vs production (docs/DEV.md \"Production\")", () 
     expect(prodRaw()).toBeDefined();
   });
 
+  it("v1 production ships without Spicy: LIKELY_SPICY_ENABLED \"0\" in env.production, \"1\" in preview, anything else refused", () => {
+    expect(resolveTarget(cfg, "production").vars?.LIKELY_SPICY_ENABLED).toBe("0");
+    expect(resolveTarget(cfg, "preview").vars?.LIKELY_SPICY_ENABLED).toBe("1");
+    const on = mut((c) => { (c.env.production.vars as Record<string, string>).LIKELY_SPICY_ENABLED = "1"; });
+    expect(checkDeployConfig(on, "production").join()).toMatch(/LIKELY_SPICY_ENABLED must be "0"/);
+    const unset = mut((c) => { delete (c.env.production.vars as Record<string, string>).LIKELY_SPICY_ENABLED; });
+    expect(checkDeployConfig(unset, "production").join()).toMatch(/LIKELY_SPICY_ENABLED must be "0"/);
+    const override = mut((c) => {
+      const v = c.env.production.vars as Record<string, string>;
+      v.LIKELY_SPICY_ENABLED = "1";
+      v.ALLOW_SPICY_IN_PRODUCTION = "1";
+    });
+    expect(checkDeployConfig(override, "production")).toEqual([]);
+    expect(checkDeployConfig(on, "preview")).toEqual([]);
+  });
+
+  it("production content gate: an adult (Spicy) pack in content-dist is refused unless overridden", () => {
+    const dir = mkdtempSync(join(tmpdir(), "jamaa-dist-"));
+    try {
+      mkdirSync(join(dir, "likely"));
+      writeFileSync(join(dir, "likely", "likely-spicy.txt"), JSON.stringify({ id: "likely-spicy", ageRating: "adult", cards: [] }));
+      expect(draftContentProblems(dir).join()).toMatch(/adult \(18\+\) pack bundled/);
+      expect(draftContentProblems(dir, { allowAdult: true })).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("package scripts: the release deploy re-emits content without adult packs before bundling", () => {
+    const root = JSON.parse(readFileSync(new URL("../../../package.json", import.meta.url), "utf8")) as { scripts: Record<string, string> };
+    expect(root.scripts["content:emit:production"]).toMatch(/--emit --exclude-adult/);
+    expect(root.scripts.deploy).toMatch(/run content:emit:production && .*build:production/);
+  });
+
   it("production content gate: no draft pack or item in content-dist, and content-dist not empty", () => {
     const dir = mkdtempSync(join(tmpdir(), "jamaa-dist-"));
     try {

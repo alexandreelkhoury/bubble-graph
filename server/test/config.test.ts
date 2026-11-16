@@ -6,7 +6,8 @@ import { REGISTRY_ENABLED } from "@jamaa/shared/games/registry";
 import { ADMIN_PREFIX } from "../src/admin";
 import { BILLING_PREFIX } from "../src/billing/routes";
 import { buildClaims, importSigner, importVerifyKeys, parseKeyring, signEntitlementToken } from "../src/billing/token";
-import { billingEnabled, billingGate, enabledGames, GATED_PREFIXES, handleConfig, parseGamesEnabled, resetGamesEnabledLog } from "../src/config";
+import { billingEnabled, billingGate, enabledGames, spicyEnabled, GATED_PREFIXES, handleConfig, parseGamesEnabled, resetGamesEnabledLog } from "../src/config";
+import { catalogFor, serverContent } from "../src/content";
 import { createRoom } from "../src/http";
 import type { InitRoomArgs } from "../src/room-core";
 import { randomBytes } from "../src/tokens";
@@ -14,6 +15,25 @@ import { fakeEnv } from "./support/env";
 import { Harness } from "./support/fakes";
 
 const get = (path: string, method = "GET") => new Request(`https://play.test${path}`, { method });
+
+describe("LIKELY_SPICY_ENABLED", () => {
+  it('only "1" turns the Spicy pack on; unset or anything else is off', () => {
+    expect(spicyEnabled({ LIKELY_SPICY_ENABLED: "1" })).toBe(true);
+    for (const v of [undefined, "", "0", "true", " 1"]) expect(spicyEnabled({ LIKELY_SPICY_ENABLED: v })).toBe(false);
+  });
+
+  it("catalogFor removes adult packs when off (the shipped Spicy pack is not served), keeps them when on", () => {
+    const full = serverContent().catalog();
+    const has = (c: typeof full) => c.likely.packs.some((p) => (p as { ageRating?: string }).ageRating === "adult");
+    expect(has(full)).toBe(true);
+    const off = catalogFor(full, false);
+    expect(has(off)).toBe(false);
+    expect(off.likely.packs.length).toBeGreaterThan(0);
+    expect(catalogFor(full, false)).toBe(off);
+    expect(catalogFor(full, true)).toBe(full);
+    expect(off.bluff).toBe(full.bluff);
+  });
+});
 
 describe("BILLING_ENABLED", () => {
   it('only "1" turns billing on; unset, "0" or anything else keeps it off', () => {

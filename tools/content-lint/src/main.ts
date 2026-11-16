@@ -1,4 +1,4 @@
-// CLI: `pnpm lint:content [--quiet] [--release] [--emit [--out <dir>]]` (`pnpm lint:packs` is a one-milestone alias).
+// CLI: `pnpm lint:content [--quiet] [--release] [--emit [--exclude-adult] [--out <dir>]]` (`pnpm lint:packs` is a one-milestone alias).
 // Exits 1 on any error; warnings are printed but never fail. `--release` (PAYMENTS-SPEC §1.5, run by `pnpm deploy`) turns
 // the starter-pack size gate into an error. `--emit` (JAMAA-PLATFORM §5.6) writes every registered, validated pack as
 // minified JSON to server/content-dist/<game>/<id>.txt (gitignored, never edited by hand), only when there is no error.
@@ -140,7 +140,7 @@ function registeredFor(contentRoot: string, game: GameId): string[] {
 }
 
 /** §5.6: writes every registered pack of a lint-clean tree as minified JSON to `<outDir>/<game>/<id>.txt`. */
-export function emitContent(contentRoot: string, outDir: string): string[] {
+export function emitContent(contentRoot: string, outDir: string, opts: { excludeAdult?: boolean } = {}): string[] {
   const written: string[] = [];
   for (const id of GAME_IDS) {
     const dir = join(outDir, id);
@@ -150,6 +150,8 @@ export function emitContent(contentRoot: string, outDir: string): string[] {
   const registered = new Map(GAME_IDS.map((g) => [g, new Set(registeredFor(contentRoot, g))] as const));
   for (const e of readGameEntries(contentRoot)) {
     if (!registered.get(e.game)?.has(e.file) || e.data === null) continue;
+    // Production v1 ships without the adult (Spicy 18+) pack: it is not bundled at all (docs/RELEASE-CHECKLIST.md).
+    if (opts.excludeAdult && (e.data as { ageRating?: string }).ageRating === "adult") continue;
     const rel = `${e.game}/${(e.data as { id: string }).id}.txt`;
     writeFileSync(join(outDir, rel), JSON.stringify(e.data), "utf8");
     written.push(rel);
@@ -170,7 +172,7 @@ function main(): void {
   for (const e of errors) console.error(`error: ${e}`);
   console.log(`content-lint: pairs en=${counts.en ?? 0} fr=${counts.fr ?? 0} ar=${counts.ar ?? 0} (ar-LB=${counts["ar-LB"] ?? 0}) es=${counts.es ?? 0}; ${errors.length} error(s), ${warnings.length} warning(s)`);
   if (errors.length > 0) process.exitCode = 1;
-  else if (args.includes("--emit")) console.log(`content-lint --emit: wrote ${emitContent(root, out).length} pack(s) to ${out}`);
+  else if (args.includes("--emit")) console.log(`content-lint --emit: wrote ${emitContent(root, out, { excludeAdult: args.includes("--exclude-adult") }).length} pack(s) to ${out}`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

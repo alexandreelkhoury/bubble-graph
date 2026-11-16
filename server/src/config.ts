@@ -33,6 +33,16 @@ export function billingEnabled(env: { BILLING_ENABLED?: string | undefined }): b
   return env.BILLING_ENABLED === "1";
 }
 
+/**
+ * LIKELY_SPICY_ENABLED: Most Likely's Spicy 18+ pack. "1" = served; anything else or unset = off (the safe default).
+ * Production ships "0" for v1 (owner decision 2026-11-17), preview "1". Note the engine also has the compile-time
+ * switch LIKELY_SPICY_ENABLED in shared/src/games/likely/meta.ts (false until the platform passes the actor to
+ * `settings.apply`, GAME-LIKELY §9.1 rule 2); both must be on for Spicy to be playable.
+ */
+export function spicyEnabled(env: { LIKELY_SPICY_ENABLED?: string | undefined }): boolean {
+  return env.LIKELY_SPICY_ENABLED === "1";
+}
+
 /** The ids listed in GAMES_ENABLED (unset → the default), split and trimmed; empty entries dropped. */
 export function parseGamesEnabled(raw: string | undefined): { ids: GameId[]; unknown: string[] } {
   const list = (raw ?? GAMES_ENABLED_DEFAULT).split(",").map((x) => x.trim()).filter((x) => x.length > 0);

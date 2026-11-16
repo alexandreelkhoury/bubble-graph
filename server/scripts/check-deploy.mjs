@@ -8,7 +8,7 @@
 // Both targets need: BILLING_MODE "google", ALLOW_FAKE_BILLING "0", PLAY_PACKAGE_NAME "app.jamaa.tv", known
 // GAMES_ENABLED ids, traces off (they would record outbound Google URLs, which carry raw purchase tokens), ADMIN_TOKEN
 // never a var nor a required secret, AE_DATASET = the EVENTS binding's dataset.
-// Production adds: DEBUG_INVARIANTS "0", no placeholder/non-https URL vars, its own Worker name, Durable Objects,
+// Production adds: LIKELY_SPICY_ENABLED "0" (unless ALLOW_SPICY_IN_PRODUCTION "1"; no adult pack bundled either), DEBUG_INVARIANTS "0", no placeholder/non-https URL vars, its own Worker name, Durable Objects,
 // rate-limit ids and Analytics Engine dataset (never preview's), and NO draft content in server/content-dist (the
 // packs the Worker bundles), whatever the lint said.
 import { execFileSync } from "node:child_process";
@@ -124,6 +124,10 @@ function productionRules(raw, cfg, vars) {
   const errors = [];
   const top = resolveTarget(raw, "preview");
   const p = "env.production.";
+  // v1 ships without Most Likely's Spicy 18+ mode (owner decision 2026-11-17): off unless explicitly overridden.
+  if (vars.LIKELY_SPICY_ENABLED !== "0" && vars.ALLOW_SPICY_IN_PRODUCTION !== "1") {
+    errors.push(`${p}vars.LIKELY_SPICY_ENABLED must be "0" for v1 (is ${JSON.stringify(vars.LIKELY_SPICY_ENABLED)}); vars.ALLOW_SPICY_IN_PRODUCTION "1" overrides on purpose`);
+  }
   if (cfg.name !== PRODUCTION_NAME) errors.push(`${p}name must be "${PRODUCTION_NAME}" (is ${JSON.stringify(cfg.name)})`);
   if (cfg.name === top.name) errors.push(`${p}name must differ from the preview Worker's name`);
   if (vars.DEBUG_INVARIANTS !== "0") errors.push(`${p}vars.DEBUG_INVARIANTS must be "0" (is ${JSON.stringify(vars.DEBUG_INVARIANTS)})`);
@@ -156,12 +160,14 @@ function productionRules(raw, cfg, vars) {
 
 /** Matches a draft marker in an emitted pack: a pack header `"status":"draft"` or an item `"review":{"status":"draft"}`. */
 const DRAFT_RE = /"status":"draft"/g;
+/** An adult (Spicy 18+) pack header in an emitted pack. */
+const ADULT_RE = /"ageRating":"adult"/;
 
 /**
  * Production content gate: the packs the Worker bundles (server/content-dist/<game>/*.txt, written by
  * `pnpm lint:content --emit`) must exist and contain no draft pack or item. Returns problems (empty = OK).
  */
-export function draftContentProblems(distDir) {
+export function draftContentProblems(distDir, { allowAdult = false } = {}) {
   if (!existsSync(distDir)) return [`${distDir} is missing (run \`pnpm lint:content --emit\`)`];
   const problems = [];
   let n = 0;
@@ -170,7 +176,9 @@ export function draftContentProblems(distDir) {
     if (!existsSync(dir)) continue;
     for (const f of readdirSync(dir).filter((x) => x.endsWith(".txt")).sort()) {
       n++;
-      const hits = (readFileSync(join(dir, f), "utf8").match(DRAFT_RE) ?? []).length;
+      const text = readFileSync(join(dir, f), "utf8");
+      if (!allowAdult && ADULT_RE.test(text)) problems.push(`content-dist/${game}/${f}: adult (18+) pack bundled (v1 production ships none: run \`pnpm run content:emit:production\`)`);
+      const hits = (text.match(DRAFT_RE) ?? []).length;
       if (hits > 0) problems.push(`content-dist/${game}/${f}: ${hits} draft marker(s) (production ships reviewed content only)`);
     }
   }
@@ -237,7 +245,10 @@ function main() {
   const file = join(serverDir, "wrangler.jsonc");
   const text = readFileSync(file, "utf8");
   const errors = checkDeployConfig(text, target);
-  if (target === "production") errors.push(...draftContentProblems(join(serverDir, "content-dist")));
+  if (target === "production") {
+    const pv = resolveTarget(parse(text), "production").vars ?? {};
+    errors.push(...draftContentProblems(join(serverDir, "content-dist"), { allowAdult: pv.ALLOW_SPICY_IN_PRODUCTION === "1" }));
+  }
   for (const w of deployWarnings(text, target)) console.warn(`check-deploy: warning: ${w}`);
   const on = billingOn(text, target);
   if (errors.length === 0 && on) {
