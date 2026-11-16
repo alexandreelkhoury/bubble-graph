@@ -1,4 +1,4 @@
-// JAMAA-PLATFORM §8.9: history from Workers Analytics Engine (dataset `jamaa_events`) through its SQL API, for the
+// JAMAA-PLATFORM §8.9: history from Workers Analytics Engine (dataset `jamaa_events`, production `jamaa_events_prod`) through its SQL API, for the
 // admin page. Needs the read-only API token secret CF_ANALYTICS_TOKEN (Account › Account Analytics › Read) and the var
 // CF_ACCOUNT_ID; without them the admin page shows how to connect it. Answers are cached in the Stats DO for
 // HISTORY_TTL_MS (admin-store.ts), so a page refreshing every 30 s asks the API at most once per 5 minutes.
@@ -6,7 +6,14 @@
 import type { Env } from "../env";
 import type { AdminStoreApi } from "./stats-api";
 
+/** Default dataset (the preview Worker's). Production sets the var AE_DATASET (wrangler.jsonc env.production). */
 export const AE_DATASET = "jamaa_events";
+const DATASET_RE = /^[A-Za-z_][A-Za-z0-9_]{0,63}$/;
+/** The dataset this Worker writes to (= its `analytics_engine_datasets` EVENTS entry; check-deploy.mjs checks they agree). */
+export function aeDataset(env: Pick<Env, "AE_DATASET">): string {
+  const v = env.AE_DATASET?.trim() ?? "";
+  return DATASET_RE.test(v) ? v : AE_DATASET;
+}
 export const HISTORY_DAYS = 90;
 export const CONTENT_WINDOWS = [30, 90] as const;
 export const HISTORY_TTL_MS = 5 * 60_000;
@@ -21,24 +28,24 @@ const ACCOUNT_RE = /^[0-9a-f]{32}$/;
 const n = "SUM(_sample_interval) AS n";
 const since = (days: number): string => `timestamp > NOW() - INTERVAL '${Math.trunc(days)}' DAY`;
 const day = "toStartOfInterval(timestamp, INTERVAL '1' DAY) AS day";
-const from = (event: string, days: number): string => `FROM ${AE_DATASET} WHERE index1 = '${event}' AND ${since(days)}`;
+const from = (event: string, days: number, dataset: string): string => `FROM ${dataset} WHERE index1 = '${event}' AND ${since(days)}`;
 
 /** The history panels' SQL (fixed strings: only the integer day window varies). */
-export function historySql(days = HISTORY_DAYS): Record<HistoryPanel, string> {
+export function historySql(days = HISTORY_DAYS, dataset = AE_DATASET): Record<HistoryPanel, string> {
   return {
-    gamesPerDay: `SELECT ${day}, blob2 AS game, ${n} ${from("game_started", days)} GROUP BY day, game ORDER BY day FORMAT JSON`,
-    roomsPerDay: `SELECT ${day}, ${n} ${from("room_created", days)} GROUP BY day ORDER BY day FORMAT JSON`,
-    ends: `SELECT blob2 AS game, blob5 AS reason, ${n}, SUM(_sample_interval * double2) AS dur ${from("game_ended", days)} GROUP BY game, reason ORDER BY n DESC FORMAT JSON`,
-    languages: `SELECT blob3 AS locale, ${n} ${from("game_started", days)} GROUP BY locale ORDER BY n DESC FORMAT JSON`,
-    platforms: `SELECT blob4 AS platform, ${n} ${from("room_created", days)} GROUP BY platform ORDER BY n DESC FORMAT JSON`,
-    players: `SELECT blob2 AS game, double1 AS players, ${n} ${from("game_started", days)} GROUP BY game, players ORDER BY game, players FORMAT JSON`,
+    gamesPerDay: `SELECT ${day}, blob2 AS game, ${n} ${from("game_started", days, dataset)} GROUP BY day, game ORDER BY day FORMAT JSON`,
+    roomsPerDay: `SELECT ${day}, ${n} ${from("room_created", days, dataset)} GROUP BY day ORDER BY day FORMAT JSON`,
+    ends: `SELECT blob2 AS game, blob5 AS reason, ${n}, SUM(_sample_interval * double2) AS dur ${from("game_ended", days, dataset)} GROUP BY game, reason ORDER BY n DESC FORMAT JSON`,
+    languages: `SELECT blob3 AS locale, ${n} ${from("game_started", days, dataset)} GROUP BY locale ORDER BY n DESC FORMAT JSON`,
+    platforms: `SELECT blob4 AS platform, ${n} ${from("room_created", days, dataset)} GROUP BY platform ORDER BY n DESC FORMAT JSON`,
+    players: `SELECT blob2 AS game, double1 AS players, ${n} ${from("game_started", days, dataset)} GROUP BY game, players ORDER BY game, players FORMAT JSON`,
   };
 }
 export type HistoryPanel = "gamesPerDay" | "roomsPerDay" | "ends" | "languages" | "platforms" | "players";
 
 /** The most skipped / voided / hidden pack items in the last `days` days. */
-export function contentSql(days: number): string {
-  return `SELECT blob2 AS game, blob7 AS pack, blob8 AS item, blob5 AS action, ${n} ${from("content_flag", days)} GROUP BY game, pack, item, action ORDER BY n DESC LIMIT ${CONTENT_LIMIT} FORMAT JSON`;
+export function contentSql(days: number, dataset = AE_DATASET): string {
+  return `SELECT blob2 AS game, blob7 AS pack, blob8 AS item, blob5 AS action, ${n} ${from("content_flag", days, dataset)} GROUP BY game, pack, item, action ORDER BY n DESC LIMIT ${CONTENT_LIMIT} FORMAT JSON`;
 }
 
 type Row = Record<string, string | number>;
@@ -87,7 +94,7 @@ export type AnalyticsAnswer = { connected: false; help: string } | { connected: 
 export async function historyBody(env: Env, deps: HistoryDeps): Promise<AnalyticsAnswer> {
   if (!analyticsReady(env)) return { connected: false, help: CONNECT_HELP };
   try {
-    const sql = historySql();
+    const sql = historySql(HISTORY_DAYS, aeDataset(env));
     const r = await cached(deps, `history:${HISTORY_DAYS}`, async () => {
       const keys = Object.keys(sql) as HistoryPanel[];
       // One query at a time: six parallel calls drew HTTP 429 from the AE SQL API.
@@ -104,7 +111,7 @@ export async function historyBody(env: Env, deps: HistoryDeps): Promise<Analytic
 export async function contentBody(env: Env, days: number, deps: HistoryDeps): Promise<AnalyticsAnswer> {
   if (!analyticsReady(env)) return { connected: false, help: CONNECT_HELP };
   try {
-    const r = await cached(deps, `content:${days}`, () => aeQuery(env, contentSql(days), deps.fetch));
+    const r = await cached(deps, `content:${days}`, () => aeQuery(env, contentSql(days, aeDataset(env)), deps.fetch));
     return { connected: true, at: r.at, cached: r.cached, days, items: r.value };
   } catch (e) {
     return { connected: true, error: e instanceof Error && /^AE_/.test(e.message) ? e.message : "AE_UNREACHABLE" };

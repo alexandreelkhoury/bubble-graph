@@ -31,7 +31,7 @@ export interface Env {
   // (no counters, no forwarding, alerts only logged).
   /** Singleton live counters, hourly counts, error ring and alert incidents. */
   STATS?: DurableObjectNamespace<Stats>;
-  /** Workers Analytics Engine dataset `jamaa_events` (one point per meaningful event). */
+  /** Workers Analytics Engine dataset `jamaa_events`, production `jamaa_events_prod` (one point per meaningful event). */
   EVENTS?: AnalyticsEngineDataset;
   /** Per-IP limit for POST /api/client-errors. */
   CLIENT_ERROR_LIMITER?: RateLimit;
@@ -46,6 +46,8 @@ export interface Env {
   ALERT_QUOTA_RATIO?: string;
   /** JAMAA-PLATFORM §8.9: the account whose Analytics Engine SQL API the admin history reads (a var). */
   CF_ACCOUNT_ID?: string;
+  /** The Analytics Engine dataset the admin history queries (= the EVENTS binding's dataset; unset = jamaa_events). */
+  AE_DATASET?: string;
   /** Read-only API token (Account › Account Analytics › Read), a secret. Unset = the admin page asks to connect it. */
   CF_ANALYTICS_TOKEN?: string;
 }
