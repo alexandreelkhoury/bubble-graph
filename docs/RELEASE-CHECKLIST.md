@@ -4,6 +4,54 @@ Audit date 2026-11-16, repo at `c43f199`. Read-only review: nothing was built, r
 
 Overlaps with, and is stricter than, the older Play-Console runbook [growth/marketing/play-store/RELEASE-CHECKLIST.md](../growth/marketing/play-store/RELEASE-CHECKLIST.md) (written 2026-10-04 for Mish Ana!; its dates are stale).
 
+## Update 2026-11-17: owner decisions and what is done
+
+**Owner decisions (2026-11-17), applied in the repo:**
+
+| Decision | Effect |
+|---|---|
+| Personal Play account **created before Nov 2023** | The **14-day closed test with 12 testers does not apply** (items 1.2, 1.3 are void). Production access is requested directly; an internal test track is still worth one dry run (signing, install via Play on the TV) but nothing waits on 14 days |
+| **v1 ships without Most Likely's Spicy 18+ mode** | Production var `LIKELY_SPICY_ENABLED "0"` (preview keeps `"1"`); `content-lint --emit --exclude-adult` leaves the adult pack out of the production bundle; `check-deploy --env production` refuses Spicy on (or an adult pack in `content-dist`) unless `ALLOW_SPICY_IN_PRODUCTION "1"`. IARC answered for family content only |
+| **Free at launch, billing off** | `BILLING_ENABLED "0"`; no Pass, prices or "free" in the listing; "contains in-app purchases" = No; Data safety has no purchase or device-id rows |
+| **No custom domain yet**: production is https://jamaa.mishana.workers.dev (Worker `jamaa`, `env.production`) | `JOIN_BASE_URL` stays empty (the QR uses the Worker origin); the TV release build points there (`tv-app/gradle.properties`); site `browserUrl` updated. Moving to a domain later needs a TV release |
+| **All five games ship**: Mish Ana!, Bluff!, Most Likely, Quiz Night, Taqriban! | `GAMES_ENABLED` on production lists all five; listing, Data safety and QA cover five games |
+
+**Done by the 2026-11-17 submission-material pass** (branch `worktree-agent-a20234aa1dab0d342`):
+
+| Item | Status now | Where |
+|---|---|---|
+| 1.1 Play account type | **DONE (decision)**: personal, pre-Nov-2023 | above |
+| 1.2, 1.3 closed test + 12 testers | **N/A** | above |
+| 1.5 Store listing EN/FR/AR/ES, five games, within limits | **DONE (draft)**; FR/AR/ES need native review (4.5) | [LISTING.md](../growth/marketing/play-store/LISTING.md) |
+| 1.7 TV screenshots | **Shot list DONE**; captures TODO (needs QA build on the TV, 5.1) | LISTING.md §4 |
+| 1.8 Privacy policy matches the code | **DONE** (EN/FR/AR; site page regenerated); hosting the page publicly is 1.9 | [PRIVACY-POLICY.md](../growth/marketing/play-store/PRIVACY-POLICY.md), `growth/site/privacy/index.html` |
+| 1.10 Data safety form | **DONE (answers drafted; owner submits)**; one owner check on the TV install id | [DATA-SAFETY.md](../growth/marketing/play-store/DATA-SAFETY.md) §0, §1 |
+| 1.11 Content rating (IARC) | **DONE (answers; owner submits)** | DATA-SAFETY.md §2 |
+| 1.12 Target audience 13+ | **DONE (answers)** | DATA-SAFETY.md §3 |
+| 1.13 Other App-content forms | **DONE (answers)**, reviewer note drafted | DATA-SAFETY.md §4 |
+| 1.18 "Contains in-app purchases" flag | **DECIDED**: No for v1 | DATA-SAFETY.md §4 |
+| 2.1 Release server URL | **DONE**: `jamaa.prodServerUrl=https://jamaa.mishana.workers.dev` | `tv-app/gradle.properties` |
+| 3.1 Separate prod and preview Workers | **DONE** (config + scripts); first production deploy is an owner step | `server/wrangler.jsonc`, [docs/DEV.md](DEV.md) "Production" |
+| 3.13 Docs agree on prod URL and `GAMES_ENABLED` | **PARTIAL**: wrangler, gradle, site and listing agree; DEV.md/BILLING-LAUNCH examples may still name the old hosts | grep `play.jamaa.workers.dev` |
+| 4.1 Launch set | **DECIDED**: all five | above |
+| 4.6 Spicy in v1 | **DECIDED**: out | above |
+| 7.0/7.1 Pass vs lifetime, free first | **DECIDED**: free launch, billing off (the Pass-or-lifetime question reopens only before billing goes on) | above |
+| 4 (site) `browserUrl` / site links | **DONE**: `https://jamaa.mishana.workers.dev/tv`; `playUrl` stays the Play listing | `growth/site/site.config.json`, `growth/site/index.html` |
+
+**Still the owner's, in the order that matters:** (1) native-speaker review of FR/AR/ES copy and content, then flip the free packs to `reviewed` (4.4, 4.5): this is what lets `pnpm run deploy` pass the release gate; (2) create the Play app `app.jamaa.tv`, upload key and Play App Signing (1.4, 2.2); (3) first `pnpm run deploy` to Worker `jamaa`, ADMIN_TOKEN and CF token with `--env production` (3.4, 3.7, 6.2); (4) release AAB on the Mac, TV QA in EN and AR, then the screenshots (2.4, 5.1, 5.2, 1.7); (5) host the site so `/privacy/` is public (1.9), paste the Data safety, IARC and audience answers, upload listing and graphics, submit. Open questions: is `versionCode 3` already used on Play for `app.jamaa.tv` (any earlier upload, even a draft)? Does the TV send its local install id to the server while billing is off (DATA-SAFETY.md §0)?
+
+**Recomputed critical path (personal pre-2023 account, no 14-day test).** Elapsed time is now set by content sign-off, QA and Google's review, not by a test clock:
+
+1. **Days 0-3, in parallel:** native reviewers read FR/AR/ES (copy and content) and flip `draft` to `reviewed` (4.3-4.5); Play app and upload key created (1.4, 2.2); release AAB built on the Mac with `jamaa.versionCode` set (2.4); first production deploy once the gate passes (3.4); the site goes up for the privacy URL (1.9, 3.2 decision stays "no domain").
+2. **Days 3-8:** native TV QA, five games x EN and AR, spot-check FR and ES (5.1, 5.2); phone QA on a real iPhone and Android (5.4); capture the eight screenshots per language (LISTING.md §4); fix what turns up; optional one internal-track upload to prove signing and install through Play.
+3. **About day 8:** fill Play Console (listing, graphics, Data safety, IARC, audience, App access with demo video), upload the AAB to **production** and submit.
+4. **Google review:** new-app review of a few days (up to about 7), then the Android TV quality review, 1-3 weeks with no SLA (1.14). Rejections for "cannot access functionality" are the main risk: the App access note and demo video address it.
+5. **Launch: about 3-5 weeks from today (mid-December 2026 to early January 2027)**, against 4-6 weeks if a 14-day test were required. The earliest-possible case is limited by native review, not code.
+
+The original audit follows unchanged apart from the statuses above.
+
+---
+
 ## Findings that change the plan (read first)
 
 1. **The release APK would point at a server that does not exist.** `tv-app/gradle.properties:3` sets `jamaa.prodServerUrl=https://play.jamaa.workers.dev`, but the only deployed Worker is `play.mishana.workers.dev` (owner step O1, renaming the workers.dev subdomain, was never done). `preReleaseBuild` only rejects the `example` placeholder (`tv-app/app/build.gradle.kts:97`), so a release build would pass and ship a dead URL. docs/BILLING-LAUNCH.md and DEV.md also name `play.jamaa.workers.dev`.
@@ -17,9 +65,9 @@ Overlaps with, and is stricter than, the older Play-Console runbook [growth/mark
 
 | # | Item | Status | Evidence | Who | Eff | Blk |
 |---|---|---|---|---|---|---|
-| 1.1 | Play Console developer account exists, identity verified, account type known (personal vs organization) | DECISION | Status unknown (owner session). Drives item 1.2 | OWNER | S (+days for verification) | Y |
-| 1.2 | **Closed test: 12+ testers opted in continuously for 14 days**, then apply for production. Applies to personal accounts created after 13 Nov 2023; organization accounts and older accounts are exempt. Open tests do not count; production is not unlocked automatically, you must apply. TV-only app means each tester needs an Android TV / Google TV device. See [Google's policy page](https://support.google.com/googleplay/android-developer/answer/14151465) and [secondary summary](https://www.revenuecat.com/blog/engineering/google-play-14-day/). The one source giving an earlier cutoff (1 Nov 2023) is a blog; verify the date in Play Console | TODO | Same rule as growth/marketing/play-store/RELEASE-CHECKLIST.md "Timing and blockers" | OWNER | L (14 d + review) | Y if personal |
-| 1.3 | Recruit 12+ testers with Google TVs (family, friends, Reddit/Discord); keep 12+ opted in for the full 14 days | TODO | growth/marketing/launch/LAUNCH-PLAN.md | OWNER | M | Y if personal |
+| 1.1 | Play Console developer account exists, identity verified, account type known (personal vs organization) | **DONE** (personal, created before Nov 2023, 2026-11-17) | Status unknown (owner session). Drives item 1.2 | OWNER | S (+days for verification) | Y |
+| 1.2 | **N/A for this account (pre-Nov-2023 personal).** Was: **Closed test: 12+ testers opted in continuously for 14 days**, then apply for production. Applies to personal accounts created after 13 Nov 2023; organization accounts and older accounts are exempt. Open tests do not count; production is not unlocked automatically, you must apply. TV-only app means each tester needs an Android TV / Google TV device. See [Google's policy page](https://support.google.com/googleplay/android-developer/answer/14151465) and [secondary summary](https://www.revenuecat.com/blog/engineering/google-play-14-day/). The one source giving an earlier cutoff (1 Nov 2023) is a blog; verify the date in Play Console | TODO | Same rule as growth/marketing/play-store/RELEASE-CHECKLIST.md "Timing and blockers" | OWNER | L (14 d + review) | Y if personal |
+| 1.3 | **N/A** (no 14-day test). Was: Recruit 12+ testers with Google TVs (family, friends, Reddit/Discord); keep 12+ opted in for the full 14 days | N/A | growth/marketing/launch/LAUNCH-PLAN.md | OWNER | M | Y if personal |
 | 1.4 | Create Play app `app.jamaa.tv` (Android TV form factor, not the old `app.mishana.tv`) | TODO | JAMAA-PLATFORM §1.6 step O4 | OWNER | S | Y |
 | 1.5 | Store listing text EN/FR/AR/ES for the multi-game platform (title "JAMAA: Party Games for TV", hub first, then each live game) | PARTIAL | `growth/marketing/play-store/LISTING.md` is paste-ready but describes Mish Ana! only (`:56`); plan to rewrite at JAMAA-PLATFORM §1.5 | CLAUDE | M | Y |
 | 1.6 | TV banner 1280x720 (EN/AR/FR/ES), icon 512, feature graphic 1024x500 | DONE | `growth/marketing/play-store/graphics/` (banner is XML vector in-app: `tv-app/app/src/main/AndroidManifest.xml:19`) | CLAUDE | S (visual check on real TV: M-hours) | N |

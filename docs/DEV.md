@@ -411,8 +411,9 @@ games and `BILLING_ENABLED` `"0"` until the owner decides (the billing plumbing 
 ### What the deploy scripts run
 
 - `pnpm run deploy` (never bare `pnpm deploy`: pnpm 10 runs its built-in command): `content-lint --release` first, then
-  `pnpm build` (content emit, web client with its size checks, preview dry run with the Worker size checks), a
-  production dry run (`wrangler deploy --dry-run --env production`), then `check-deploy.mjs --env production` and
+  `pnpm build` (content emit, web client with its size checks, preview dry run with the Worker size checks), then
+  `pnpm run content:emit:production` (re-emits `server/content-dist` **without adult packs**: v1 ships no Spicy 18+
+  pack), a production dry run (`wrangler deploy --dry-run --env production`), then `check-deploy.mjs --env production` and
   `wrangler deploy --env production`.
 - `pnpm run deploy:preview`: `pnpm build`, `content-lint` (drafts allowed), `check-deploy.mjs --env preview`, `wrangler deploy`.
 - `check-deploy.mjs` has no default target (`pnpm --filter @jamaa/server run deploy` only prints how to choose). Both
@@ -461,6 +462,18 @@ npx wrangler secret put CF_ANALYTICS_TOKEN --env production   # optional: the sa
    play one round, and open `$JAMAA_PROD/admin` with the production `ADMIN_TOKEN` (counters move; History fills after
    the first events, with `CF_ANALYTICS_TOKEN` set).
 4. Build the TV release against it ([TV.md → Release build](TV.md#release-build-google-play)).
+
+### Spicy (Most Likely 18+) is off in production
+
+v1 ships without Most Likely's Spicy 18+ mode (owner decision 2026-11-17). Three independent layers: the production
+bundle contains no adult pack (`content:emit:production` = `content-lint --emit --exclude-adult`); the Worker var
+`LIKELY_SPICY_ENABLED` is `"0"` in `env.production` (`"1"` on preview) and a room's catalog drops adult packs unless it
+is `"1"` (`server/src/content.ts` `catalogFor`, `server/src/config.ts` `spicyEnabled`); and `check-deploy.mjs --env
+production` refuses `LIKELY_SPICY_ENABLED` other than `"0"`, or an adult pack in `content-dist`, unless the explicit
+override var `ALLOW_SPICY_IN_PRODUCTION "1"` is set. Note the engine's own compile-time switch
+(`LIKELY_SPICY_ENABLED = false` in `shared/src/games/likely/meta.ts`, GAME-LIKELY §9.1) is still off everywhere, so
+Spicy is not playable on preview either until the platform passes the actor to `settings.apply`; the var and the
+exclusion are the release-time guarantees for the day that switch is turned on.
 
 ### Rollback
 
