@@ -6,8 +6,9 @@
 
   "_playStoreLive_note": "Set to true the day the Google Play listing is public. It switches guide CTAs, llms.txt wording and adds the Play URL to structured data (sameAs / installUrl).",
   "playStoreLive": false,
+  "_playUrl_note": "The Google Play listing (package app.jamaa.tv), not the Worker; the web version is browserUrl (production Worker jamaa, https://jamaa.mishana.workers.dev).",
   "playUrl": "https://play.google.com/store/apps/details?id=app.jamaa.tv",
-  "browserUrl": "https://play.jamaa.workers.dev/tv",
+  "browserUrl": "https://jamaa.mishana.workers.dev/tv",
 
   "_placeholders_note": "Leave null to keep {{CONTACT_EMAIL}} / {{OWNER_NAME}} / {{CF_BEACON_TOKEN}} in the output; set a string to fill them in at build time.",
   "contactEmail": "alexkhoury@hotmail.com",
