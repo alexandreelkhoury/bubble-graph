@@ -39,7 +39,8 @@ class JoinPanelAndSplashTest {
         assertTrue("$widest is $ink dp at $size dp", ink <= HubModel.PANEL_GATHERING_DP)
         // The production host with the code fits at ≥ 12 dp (JoinAddress's minimum before it drops the code).
         val semi = font("cairo_semibold.ttf")
-        val line = "play.mishana.workers.dev/$widest"
+        // A workers.dev host one letter longer than production's (jamaa.<7-letter subdomain>.workers.dev, gradle.properties).
+        val line = "jamaa.example1.workers.dev/$widest"
         val at12 = em(semi, line) * 12
         assertTrue("$line is $at12 dp at 12 dp", at12 <= JoinPanelMetrics.HUB_QR_DP)
     }
