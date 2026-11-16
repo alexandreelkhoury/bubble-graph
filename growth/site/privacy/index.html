@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Privacy Policy – JAMAA</title>
-<meta name="description" content="How JAMAA and its games use information: a nickname for one game, no accounts, no ads, no tracking in the game, cookieless visit counts on this site. Rooms are deleted automatically.">
+<meta name="description" content="How JAMAA and its five games use information: a nickname per game, no accounts, no ads, no tracking, anonymous usage counts and error reports without personal details. Rooms are deleted automatically.">
 <meta name="theme-color" content="#2B1650">
 <meta name="color-scheme" content="dark">
 <link rel="canonical" href="{{SITE_URL}}/privacy/">
@@ -41,234 +41,252 @@ if(l!=='fr'&&l!=='ar')l='en';var d=document.documentElement;d.setAttribute('data
 </header>
 
 <!--
-  Source: growth/marketing/play-store/PRIVACY-POLICY.md (EN + FR, appendices not published).
+  Source: growth/marketing/play-store/PRIVACY-POLICY.md (EN + FR + AR sections, appendices not published).
   Regenerate this page from that file if it changes. When Play Billing ships, add Appendix B there first.
 -->
 <main id="main" class="legal">
   <article class="wrap wrap--narrow pv-en" lang="en">
     <h1>Privacy policy<span class="dot">.</span></h1>
-    <p class="meta">Last updated: October 7, 2026</p>
-    <p>JAMAA ("the game", "the app") is a party-games app for the TV, whose first game is Mish Ana!: an app for Android TV and Google TV, and a TV page that runs in any web browser. The TV hosts a game room; players join from their phones in a web browser. This policy explains what information the game uses, why, and for how long. It covers the Android TV app "JAMAA" (package <code>app.jamaa.tv</code>), the TV page that runs the game in a web browser at <span dir="ltr">play.jamaa.workers.dev/tv</span>, and the player web page that the QR code on the TV opens.</p>
+    <p class="meta">Last updated: November 17, 2026</p>
+<p>JAMAA ("the app", "the games") is a party-games app for Android TV and Google TV with five games: Mish Ana!, Bluff!, Most Likely, Quiz Night and Taqriban!. The TV app hosts a game room; players join from their phones in a web browser. This policy explains what information the app uses, why, and for how long. It covers the Android TV app "JAMAA" (package <code>app.jamaa.tv</code>), the TV page that runs the games in a web browser at <span dir="ltr">jamaa.mishana.workers.dev/tv</span>, and the player web page that the QR code on the TV opens. JAMAA is free, with no ads and no purchases.</p>
 <p><strong>Who is responsible.</strong> {{OWNER_NAME}} (the developer), contact: <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a>.</p>
 <h2>1. The short version</h2>
 <ul>
 <li>No accounts, no sign-in, no email address, no phone number.</li>
-<li>In the game: no ads, no analytics, no tracking, no third-party SDKs.</li>
-<li>On this website: anonymous, cookieless visit and click counts only (see section 12).</li>
-<li>Players type a nickname. That nickname is visible to the other players in the room.</li>
-<li>Every game room, with the nicknames and everything played in it, is <strong>deleted automatically</strong>, at the latest 2 hours after the last activity.</li>
+<li>No ads, no purchases, no tracking, no third-party SDKs, no advertising or analytics services.</li>
+<li>Players type a nickname. That nickname is visible to the other players in the room. Answers you type in a game (a guess in Mish Ana!, a made-up answer in Bluff!) are shown to the room too.</li>
+<li>Every game room, with the nicknames and everything played in it, is <strong>deleted automatically</strong> when the room closes: 15 minutes after the TV leaves, and in any case at most 12 hours after the last activity.</li>
+<li>To know whether the games work, we collect <strong>anonymous usage counts</strong> and <strong>error reports with personal details removed</strong> (section 2). They never contain nicknames or what players type.</li>
 <li>We never sell or share your information.</li>
 </ul>
 <h2>2. Information we use</h2>
 <p><strong>When you join a game from your phone</strong></p>
 <ul>
 <li><strong>Nickname</strong> (1–16 characters) and the <strong>colour</strong> you pick: shown on the TV and on the other players' phones in your room.</li>
-<li><strong>Your language</strong> (English, French or Arabic): to show the game in your language.</li>
-<li><strong>What you do in the game</strong>: when you are ready, end your turn, vote, change settings as the host, and, if you are the Mole and get voted out, the last guess you type. These are needed to run the game and are shown to the room according to the rules (for example, votes and the Mole's last guess are revealed at the end of a round or game).</li>
-<li>Spoken clues are said out loud in the room; the game never records audio.</li>
+<li><strong>Your language</strong> (English, French, Arabic or Spanish): to show the game in your language.</li>
+<li><strong>What you do in the game</strong>: when you are ready, vote, tap a player (Most Likely), choose an answer (Quiz Night), enter a number (Taqriban!), change settings as the host, and the text you type (a guess of up to 200 characters in Mish Ana!, a made-up answer of up to 480 characters in Bluff!). These are needed to run the game and are shown to the room according to the rules (for example, votes and answers are revealed at the end of a round).</li>
+<li>Spoken clues are said out loud in the room; the apps never record audio.</li>
 </ul>
 <p><strong>When the TV opens a room</strong></p>
 <ul>
-<li>The TV (app or browser page) sends only its <strong>display language</strong>. It does not send any device identifier, Google account, location or list of apps.</li>
+<li>The TV app sends its <strong>display language</strong>, its <strong>platform and app version</strong> (in a header named <code>X-Jamaa-Client</code>, for example "tv-android/1.0.0") and a short list of the <strong>ids of questions and cards it has already shown</strong>, so the games do not repeat them. It does not send any device identifier, Google account, location or list of apps.</li>
 </ul>
 <p><strong>Technical information</strong></p>
 <ul>
 <li>To connect phones and the TV, the server creates random, temporary identifiers (a room code, a player id and secret "resume" and TV tokens so you can rejoin after a dropped connection). Tokens are stored only in hashed form on the server.</li>
-<li>Your <strong>IP address</strong> is used only briefly to prevent abuse (rate limiting). Our code does not store it in game data or write it to our logs; inside a room, only a short one-way hash of it is used while you are connected. Our hosting provider may keep technical request logs, which can include IP addresses, for up to 7 days for security and debugging.</li>
+<li>Your <strong>IP address</strong> is used only briefly to prevent abuse (rate limiting: how many rooms, connections or error reports one address can open per minute). Our code does not store it in game data, in usage statistics or in error reports, and does not write it to our logs; inside a room, only a short one-way hash of it (mixed with the room code) is used while you are connected. Our hosting provider may keep technical request logs, which can include IP addresses, for up to 7 days for security and debugging.</li>
 </ul>
+<p><strong>Error reports (so we can fix bugs)</strong></p>
+<p>When the TV app, the TV web page or the player page hits an error, it can send us a short report: the platform (phone, TV web page or Android TV), the app version, the screen or page where it happened (for example a screen name, or the page path), the kind of error, the error message and technical stack trace (cut to at most 300 and 1,500 characters), how many times it happened and, optionally, the room code. Before the report is kept, the server removes email addresses, URL query strings, and long codes and numbers that could be tokens or identifiers. A report never contains your nickname, what you typed, a device identifier or your IP address. Each client sends only a few reports per session.</p>
+<p><strong>Usage statistics (so we know whether the games are played and work)</strong></p>
+<p>The server records anonymous events, one record per event, never one per message: a room was created (language, platform); a room closed (why, and how many players had joined); a game started (which game, number of players, language, platform); a game ended (which game, number of players, duration, and whether it finished, was stopped, abandoned or expired); a player joined or left (platform only); and when a host skips or hides a question or card (which game, the content pack and item id, the language and platform) so we can improve the content. These records contain no nicknames, no typed text, no IP addresses and no tokens. Live counters (rooms and games now, counts per hour) are kept in the same way.</p>
 <p><strong>We do not collect:</strong> your real name (unless you choose to use it as a nickname), email, phone number, contacts, photos, microphone or camera data, location, advertising identifiers, or browsing history.</p>
 <h2>3. Why we use it (legal bases)</h2>
-<p>We use this information only to run the game you asked to play (performance of the service you request) and to keep it secure and protect it from abuse (our legitimate interest). We do not use it for advertising, profiling or analytics.</p>
+<p>We use game information only to run the game you asked to play (performance of the service you request). We use the IP address, error reports and usage statistics to keep the service secure, to protect it from abuse, to find and fix bugs and to understand, in aggregate, which games are played (our legitimate interest). We do not use anything for advertising or profiling, and none of it is linked to an identity.</p>
 <h2>4. How long we keep it</h2>
-<p>A game room and everything in it (nicknames, colours, languages, roles, words, votes, guesses, scores, hashed tokens) is deleted automatically:</p>
 <ul>
-<li>15 minutes after the room was opened if nobody joined;</li>
-<li>30 minutes after a game ends if nobody starts another one;</li>
-<li>in any case, at most 2 hours after the last activity in the room.</li>
+<li><strong>Game rooms.</strong> A room and everything in it (nicknames, colours, languages, scores, votes, typed answers, hashed tokens) is deleted automatically when the room closes: 15 minutes after the TV leaves the room (or after it was opened if the TV never connected), and, while a TV stays connected, at most 12 hours after the last activity in the room. A player who disconnects keeps their seat for up to 2 minutes in the lobby, then is removed.</li>
+<li><strong>Live counters.</strong> Hourly counts are kept for 48 hours. The error list keeps only the 100 most recent errors.</li>
+<li><strong>Usage statistics and error records</strong> stored in Cloudflare's Analytics Engine: about 3 months, then Cloudflare deletes them.</li>
+<li><strong>Technical request logs</strong> kept by our hosting provider, including the error-report log lines: at most 7 days.</li>
 </ul>
-<p>A player who disconnects keeps their seat for up to 2 minutes in the lobby, then is removed.</p>
-<p>Technical request logs kept by our hosting provider are deleted after at most 7 days.</p>
 <h2>5. Information stored on your devices</h2>
 <ul>
 <li><strong>Phone (browser storage):</strong> your last nickname, colour and language, your vibration setting, and, for each room you joined, a resume token that lets you rejoin your seat; resume tokens are discarded after 6 hours. You can clear this at any time by clearing the site data in your browser.</li>
-<li><strong>TV:</strong> only the sound on/off setting (in the app, or in the browser's local storage for the TV page). The TV app does not back up any data to your Google account.</li>
+<li><strong>TV:</strong> the sound on/off and calm-animation settings, the ids of questions and cards already shown (so games do not repeat), and, if the app crashes, a short crash report that is kept until the next launch, sent once and deleted. The app does not back up any data to your Google account.</li>
 </ul>
 <h2>6. Who can see it, and who processes it</h2>
 <ul>
-<li><strong>Other players in your room</strong> see your nickname, colour and in-game actions as described above. Room codes are short-lived; anyone you give the code to can join the lobby, and the host can remove players.</li>
-<li><strong>Cloudflare, Inc.</strong> hosts our server and processes this information on our behalf, on its global network, under its data processing terms. Rooms are usually created in a data centre close to the TV.</li>
-<li><strong>Google</strong> distributes the app through Google Play; Google's own privacy policy applies to your use of Google Play.</li>
-<li>We do not sell, rent or share your information with anyone else, and the game does not use advertising or analytics services. This website uses Cloudflare Web Analytics, without cookies (see section 12).</li>
+<li><strong>Other players in your room</strong> see your nickname, colour, typed answers and in-game actions as described above. Room codes are short-lived; anyone you give the code to can join the lobby, and the host can remove players.</li>
+<li><strong>Cloudflare, Inc.</strong> hosts our server, stores the room data, the usage statistics and the error reports, and processes this information on our behalf, on its global network, under its data processing terms. Rooms are usually created in a data centre close to the TV.</li>
+<li><strong>Google</strong> distributes the app through Google Play; Google's own privacy policy applies to your use of Google Play, and Google may show us crash and quality statistics for the app.</li>
+<li>We do not sell, rent or share your information with anyone else, and the app does not use advertising or analytics services. This website uses Cloudflare Web Analytics, without cookies (see section 12).</li>
 </ul>
 <h2>7. International transfers</h2>
 <p>Our hosting provider may process data outside your country, including in the United States. When data from the European Economic Area, the UK or Switzerland is transferred, it is protected by the provider's contractual safeguards (such as the European Commission's Standard Contractual Clauses).</p>
 <h2>8. Children</h2>
-<p>JAMAA and its games are made for teenagers and adults, often played with the whole family. They are not directed at children under 13 and does not knowingly collect personal information from them; players only enter a nickname, which is deleted automatically with the room. If you believe a child has entered personal information (for example a full name as a nickname), contact us and we will delete it if it still exists.</p>
+<p>JAMAA and its games are made for teenagers and adults, often played with the whole family. They are not directed at children under 13 and do not knowingly collect personal information from them; players only enter a nickname and, in some games, short answers, which are deleted automatically with the room. If you believe a child has entered personal information (for example a full name as a nickname), contact us and we will delete it if it still exists.</p>
 <h2>9. Your rights</h2>
-<p>Depending on where you live (for example under the GDPR in the EU/EEA and the UK), you have the right to access, correct or delete your personal data, to object to or restrict its use, and to data portability. Because we have no accounts and delete rooms automatically within hours, we usually cannot link any remaining data to you; but contact us at <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a> with the room code and nickname and we will help. You can also lodge a complaint with your data protection authority (in France: the CNIL, <a href="https://www.cnil.fr" rel="noopener">www.cnil.fr</a>).</p>
+<p>Depending on where you live (for example under the GDPR in the EU/EEA and the UK), you have the right to access, correct or delete your personal data, to object to or restrict its use, and to data portability. Because we have no accounts, delete rooms automatically within hours, and record no nicknames in usage statistics or error reports, we usually cannot link any remaining data to you; but contact us at <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a> with the room code and nickname and we will help. You can also lodge a complaint with your data protection authority (in France: the CNIL, <a href="https://www.cnil.fr" rel="noopener">www.cnil.fr</a>).</p>
 <h2>10. Security</h2>
 <p>All connections between the TV app, the phones and the server are encrypted (HTTPS/WSS). Secret words are sent only to the phone of the player who owns them and never to the TV during play. Tokens are stored only as hashes.</p>
 <h2>11. Changes</h2>
-<p>If the game changes how it uses information (for example when optional in-app purchases are added), we will update this page and the date at the top before the change takes effect.</p>
+<p>If the app changes how it uses information (for example if optional purchases are added later), we will update this page and the date at the top before the change takes effect.</p>
 <h2>12. This website</h2>
-<p>This section covers only the website you are reading (not the game). To know how many people visit and which buttons and ads work, it uses:</p>
+<p>This section covers only the website you are reading (not the games). To know how many people visit and which buttons and ads work, it uses:</p>
 <ul>
-<li><strong>Cloudflare Web Analytics</strong>: counts page views and page-load performance. It does not use cookies or local storage and does not fingerprint visitors. Cloudflare processes this on our behalf.</li>
-<li><strong>Anonymous click counts</strong> sent to our own server when you press a button such as “Install on my TV” or “Play in your browser”, open a question, or scroll: which button or section, the page language, the ad campaign named in the link (utm tags), the device type (phone or computer) and the country Cloudflare derives from the connection. No identifier, no cookie, and your IP address is not stored. These counts are kept for at most 3 months.</li>
-<li>Your <strong>language choice</strong> is remembered in your browser (local storage) so the site opens in your language next time. It never leaves your device.</li>
+<li>Cloudflare Web Analytics: counts page views and page-load performance. It does not use cookies or local storage and does not fingerprint visitors. Cloudflare processes this on our behalf.</li>
 </ul>
-<p>If your browser sends <strong>Global Privacy Control</strong> or <strong>Do Not Track</strong>, none of this measurement runs. We use it on the basis of our legitimate interest in understanding, in aggregate, how the website is used. Clicking through to Google Play takes you to Google, whose own privacy policy applies.</p>
+<ul>
+<li>Anonymous click counts sent to our own server when you press a button such as “Install on my TV” or “Play in your browser”, open a question, or scroll: which button or section, the page language, the ad campaign named in the link (utm tags), the device type (phone or computer) and the country Cloudflare derives from the connection. No identifier, no cookie, and your IP address is not stored. These counts are kept for at most 3 months.</li>
+</ul>
+<ul>
+<li>Your language choice is remembered in your browser (local storage) so the site opens in your language next time. It never leaves your device.</li>
+</ul>
+<p>If your browser sends Global Privacy Control or Do Not Track, none of this measurement runs. We use it on the basis of our legitimate interest in understanding, in aggregate, how the website is used. Clicking through to Google Play takes you to Google, whose own privacy policy applies.</p>
 <h2>13. Contact</h2>
 <p>{{OWNER_NAME}} — <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a></p>
     <p class="back"><a href="/">← Back to JAMAA</a></p>
   </article>
   <article class="wrap wrap--narrow pv-fr" lang="fr">
     <h1>Politique de confidentialité<span class="dot">.</span></h1>
-    <p class="meta">Dernière mise à jour : 7 octobre 2026</p>
-    <p>JAMAA (« le jeu », « l’application ») est une appli de jeux d’ambiance pour la télé, dont le premier jeu est Mish Ana! : une application pour Android TV et Google TV, et une page télé qui tourne dans n’importe quel navigateur web. La télé héberge une salle de jeu ; les joueurs la rejoignent depuis le navigateur de leur téléphone. Cette politique explique quelles informations le jeu utilise, pourquoi et pendant combien de temps. Elle couvre l’application Android TV « JAMAA » (package <code>app.jamaa.tv</code>), la page télé qui fait tourner le jeu dans un navigateur web à l’adresse <span dir="ltr">play.jamaa.workers.dev/tv</span>, et la page web joueur ouverte par le QR code affiché sur la télé.</p>
+    <p class="meta">Dernière mise à jour : 17 novembre 2026</p>
+<p>JAMAA (« l’application », « les jeux ») est une appli de jeux d’ambiance pour Android TV et Google TV, avec cinq jeux : Mish Ana!, Bluff !, Qui risque le plus ?, Soirée quiz et À peu près !. L’application TV héberge une salle de jeu ; les joueurs la rejoignent depuis le navigateur de leur téléphone. Cette politique explique quelles informations l’application utilise, pourquoi et pendant combien de temps. Elle couvre l’application Android TV « JAMAA » (package <code>app.jamaa.tv</code>), la page télé qui fait tourner les jeux dans un navigateur web sur <span dir="ltr">jamaa.mishana.workers.dev/tv</span>, et la page web joueur ouverte par le QR code affiché sur la télé. JAMAA est gratuit, sans publicité et sans achat.</p>
 <p><strong>Responsable du traitement.</strong> {{OWNER_NAME}} (le développeur), contact : <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a>.</p>
 <h2>1. En bref</h2>
 <ul>
 <li>Pas de compte, pas de connexion, pas d’adresse e-mail, pas de numéro de téléphone.</li>
-<li>Dans le jeu : pas de publicité, pas de statistiques d’audience, pas de pistage, pas de SDK tiers.</li>
-<li>Sur ce site : uniquement des comptages anonymes de visites et de clics, sans cookies (voir la section 12).</li>
-<li>Les joueurs saisissent un pseudo, visible par les autres joueurs de la salle.</li>
-<li>Chaque salle de jeu, avec les pseudos et tout ce qui y a été joué, est <strong>supprimée automatiquement</strong>, au plus tard 2 heures après la dernière activité.</li>
+<li>Pas de publicité, pas d’achat, pas de pistage, pas de SDK tiers, aucun service de publicité ou de statistiques d’audience.</li>
+<li>Les joueurs saisissent un pseudo, visible par les autres joueurs de la salle. Les réponses saisies dans un jeu (une proposition dans Mish Ana!, une fausse réponse dans Bluff !) sont aussi montrées à la salle.</li>
+<li>Chaque salle de jeu, avec les pseudos et tout ce qui y a été joué, est <strong>supprimée automatiquement</strong> à sa fermeture : 15 minutes après le départ de la télé, et dans tous les cas au plus tard 12 heures après la dernière activité.</li>
+<li>Pour savoir si les jeux fonctionnent, nous collectons des <strong>comptages d’usage anonymes</strong> et des <strong>rapports d’erreur dépourvus de données personnelles</strong> (section 2). Ils ne contiennent jamais de pseudo ni ce que les joueurs saisissent.</li>
 <li>Nous ne vendons ni ne partageons jamais vos informations.</li>
 </ul>
 <h2>2. Informations utilisées</h2>
 <p><strong>Quand vous rejoignez une partie depuis votre téléphone</strong></p>
 <ul>
 <li><strong>Pseudo</strong> (1 à 16 caractères) et <strong>couleur</strong> choisie : affichés sur la télé et sur les téléphones des autres joueurs de votre salle.</li>
-<li><strong>Votre langue</strong> (français, anglais ou arabe) : pour afficher le jeu dans votre langue.</li>
-<li><strong>Vos actions dans le jeu</strong> : « prêt », fin de tour, votes, réglages de l’hôte et, si vous êtes la Taupe et êtes éliminé·e, le mot que vous proposez en dernière chance. Elles servent à faire fonctionner la partie et sont montrées à la salle selon les règles (par exemple, les votes et la dernière proposition de la Taupe sont révélés à la fin d’une manche ou de la partie).</li>
-<li>Les indices se disent à voix haute ; le jeu n’enregistre jamais de son.</li>
+<li><strong>Votre langue</strong> (français, anglais, arabe ou espagnol) : pour afficher le jeu dans votre langue.</li>
+<li><strong>Vos actions dans le jeu</strong> : « prêt », votes, choix d’un joueur (Qui risque le plus ?), choix d’une réponse (Soirée quiz), saisie d’un nombre (À peu près !), réglages de l’hôte, et le texte que vous saisissez (une proposition de 200 caractères au plus dans Mish Ana!, une fausse réponse de 480 caractères au plus dans Bluff !). Elles servent à faire fonctionner la partie et sont montrées à la salle selon les règles (par exemple, votes et réponses sont révélés à la fin d’une manche).</li>
+<li>Les indices se disent à voix haute ; l’application n’enregistre jamais de son.</li>
 </ul>
 <p><strong>Quand la télé ouvre une salle</strong></p>
 <ul>
-<li>L’application TV envoie seulement sa <strong>langue d’affichage</strong>. Elle n’envoie aucun identifiant d’appareil, compte Google, position ou liste d’applications.</li>
+<li>L’application TV envoie sa <strong>langue d’affichage</strong>, sa <strong>plateforme et la version de l’application</strong> (dans un en-tête nommé <code>X-Jamaa-Client</code>, par exemple « tv-android/1.0.0 ») et une courte liste des <strong>identifiants des questions et cartes déjà affichées</strong>, pour que les jeux ne se répètent pas. Elle n’envoie aucun identifiant d’appareil, compte Google, position ou liste d’applications.</li>
 </ul>
 <p><strong>Informations techniques</strong></p>
 <ul>
 <li>Pour relier les téléphones et la télé, le serveur crée des identifiants aléatoires et temporaires (code de salle, identifiant de joueur, jetons secrets de reprise et de la télé pour revenir après une coupure). Les jetons ne sont conservés sur le serveur que sous forme hachée.</li>
-<li>Votre <strong>adresse IP</strong> n’est utilisée que brièvement pour prévenir les abus (limitation du nombre de requêtes). Notre code ne l’enregistre ni dans les données de jeu ni dans nos journaux ; dans une salle, seule une courte empreinte à sens unique est utilisée pendant votre connexion. Notre hébergeur peut conserver des journaux techniques de requêtes, pouvant contenir des adresses IP, pendant 7 jours au maximum, à des fins de sécurité et de débogage.</li>
+<li>Votre <strong>adresse IP</strong> n’est utilisée que brièvement pour prévenir les abus (limitation du débit : combien de salles, de connexions ou de rapports d’erreur une même adresse peut ouvrir par minute). Notre code ne l’enregistre ni dans les données de jeu, ni dans les statistiques d’usage, ni dans les rapports d’erreur, et ne l’écrit pas dans nos journaux ; dans une salle, seule une courte empreinte à sens unique (mélangée au code de la salle) est utilisée pendant votre connexion. Notre hébergeur peut conserver des journaux techniques de requêtes, pouvant contenir des adresses IP, pendant 7 jours au plus, pour la sécurité et le débogage.</li>
 </ul>
+<p><strong>Rapports d’erreur (pour corriger les bugs)</strong></p>
+<p>Quand l’application TV, la page télé web ou la page joueur rencontre une erreur, elle peut nous envoyer un court rapport : la plateforme (téléphone, page télé web ou Android TV), la version de l’application, l’écran ou la page concernée (par exemple un nom d’écran ou le chemin de la page), le type d’erreur, le message d’erreur et la trace technique (coupés à 300 et 1 500 caractères au plus), le nombre de fois où elle s’est produite et, facultativement, le code de la salle. Avant conservation, le serveur retire les adresses e-mail, les paramètres d’URL, ainsi que les longs codes et nombres pouvant être des jetons ou des identifiants. Un rapport ne contient jamais votre pseudo, ce que vous avez saisi, un identifiant d’appareil ni votre adresse IP. Chaque appareil n’envoie que quelques rapports par session.</p>
+<p><strong>Statistiques d’usage (pour savoir si les jeux sont joués et fonctionnent)</strong></p>
+<p>Le serveur enregistre des événements anonymes, un enregistrement par événement, jamais un par message : une salle a été créée (langue, plateforme) ; une salle a été fermée (pourquoi, et combien de joueurs l’avaient rejointe) ; une partie a commencé (quel jeu, nombre de joueurs, langue, plateforme) ; une partie s’est terminée (quel jeu, nombre de joueurs, durée, et si elle est allée au bout, a été arrêtée, abandonnée ou a expiré) ; un joueur est arrivé ou parti (plateforme seulement) ; et quand un hôte passe ou masque une question ou une carte (quel jeu, le pack et l’identifiant de l’élément, la langue et la plateforme), pour améliorer le contenu. Ces enregistrements ne contiennent ni pseudo, ni texte saisi, ni adresse IP, ni jeton. Des compteurs en direct (salles et parties en cours, comptages par heure) sont tenus de la même façon.</p>
 <p><strong>Nous ne collectons pas :</strong> votre vrai nom (sauf si vous l’utilisez comme pseudo), e-mail, numéro de téléphone, contacts, photos, micro ou caméra, position, identifiant publicitaire ou historique de navigation.</p>
 <h2>3. Finalités et bases légales</h2>
-<p>Ces informations servent uniquement à faire fonctionner la partie que vous avez demandée (exécution du service demandé) et à la protéger contre les abus (notre intérêt légitime). Elles ne servent ni à la publicité, ni au profilage, ni à des statistiques.</p>
+<p>Nous utilisons les informations de jeu uniquement pour faire fonctionner la partie que vous avez demandée (exécution du service demandé). Nous utilisons l’adresse IP, les rapports d’erreur et les statistiques d’usage pour assurer la sécurité du service, le protéger des abus, trouver et corriger les bugs et comprendre, de façon agrégée, quels jeux sont joués (notre intérêt légitime). Rien n’est utilisé pour la publicité ou le profilage, et rien n’est rattaché à une identité.</p>
 <h2>4. Durée de conservation</h2>
-<p>Une salle et tout son contenu (pseudos, couleurs, langues, rôles, mots, votes, propositions, scores, jetons hachés) sont supprimés automatiquement :</p>
 <ul>
-<li>15 minutes après l’ouverture de la salle si personne ne l’a rejointe ;</li>
-<li>30 minutes après la fin d’une partie si aucune autre n’est lancée ;</li>
-<li>dans tous les cas, au plus tard 2 heures après la dernière activité dans la salle.</li>
+<li><strong>Salles de jeu.</strong> Une salle et tout son contenu (pseudos, couleurs, langues, scores, votes, réponses saisies, jetons hachés) sont supprimés automatiquement à la fermeture de la salle : 15 minutes après le départ de la télé (ou après l’ouverture si la télé ne s’est jamais connectée) et, tant qu’une télé reste connectée, au plus 12 heures après la dernière activité dans la salle. Un joueur déconnecté garde sa place jusqu’à 2 minutes dans le salon d’attente, puis il est retiré.</li>
+<li><strong>Compteurs en direct.</strong> Les comptages horaires sont conservés 48 heures. La liste d’erreurs ne garde que les 100 plus récentes.</li>
+<li><strong>Statistiques d’usage et enregistrements d’erreur</strong> stockés dans Analytics Engine de Cloudflare : environ 3 mois, puis Cloudflare les supprime.</li>
+<li><strong>Journaux techniques de requêtes</strong> conservés par notre hébergeur, y compris les lignes de journal des rapports d’erreur : 7 jours au plus.</li>
 </ul>
-<p>Un joueur déconnecté garde sa place jusqu’à 2 minutes dans le salon d’attente, puis il est retiré.</p>
-<p>Les journaux techniques conservés par notre hébergeur sont supprimés au plus tard après 7 jours.</p>
 <h2>5. Informations stockées sur vos appareils</h2>
 <ul>
 <li><strong>Téléphone (stockage du navigateur) :</strong> votre dernier pseudo, votre couleur et votre langue, le réglage de vibration et, pour chaque salle rejointe, un jeton de reprise permettant de retrouver votre place ; les jetons de reprise sont effacés après 6 heures. Vous pouvez tout effacer à tout moment en supprimant les données du site dans votre navigateur.</li>
-<li><strong>Télé :</strong> uniquement le réglage du son (activé/désactivé), dans l’application ou, pour la page télé, dans le stockage local du navigateur. L’application TV ne sauvegarde aucune donnée sur votre compte Google.</li>
+<li><strong>Télé :</strong> les réglages du son et des animations calmes, les identifiants des questions et cartes déjà affichées (pour éviter les répétitions) et, si l’application plante, un court rapport de plantage conservé jusqu’au lancement suivant, envoyé une fois puis supprimé. L’application ne sauvegarde aucune donnée sur votre compte Google.</li>
 </ul>
 <h2>6. Qui peut voir ces informations et qui les traite</h2>
 <ul>
-<li><strong>Les autres joueurs de votre salle</strong> voient votre pseudo, votre couleur et vos actions de jeu comme décrit ci-dessus. Les codes de salle sont éphémères ; toute personne à qui vous donnez le code peut rejoindre le salon, et l’hôte peut retirer des joueurs.</li>
-<li><strong>Cloudflare, Inc.</strong> héberge notre serveur et traite ces informations pour notre compte, sur son réseau mondial, selon ses conditions de traitement des données. Les salles sont généralement créées dans un centre de données proche de la télé.</li>
-<li><strong>Google</strong> distribue l’application via Google Play ; la politique de confidentialité de Google s’applique à votre utilisation de Google Play.</li>
-<li>Nous ne vendons, ne louons ni ne partageons vos informations avec qui que ce soit d’autre, et le jeu n’utilise aucun service de publicité ou de statistiques. Ce site utilise Cloudflare Web Analytics, sans cookies (voir la section 12).</li>
+<li><strong>Les autres joueurs de votre salle</strong> voient votre pseudo, votre couleur, vos réponses saisies et vos actions de jeu comme décrit ci-dessus. Les codes de salle sont éphémères ; toute personne à qui vous donnez le code peut rejoindre le salon, et l’hôte peut retirer des joueurs.</li>
+<li><strong>Cloudflare, Inc.</strong> héberge notre serveur, stocke les données de salle, les statistiques d’usage et les rapports d’erreur, et traite ces informations pour notre compte, sur son réseau mondial, selon ses conditions de traitement des données. Les salles sont généralement créées dans un centre de données proche de la télé.</li>
+<li><strong>Google</strong> distribue l’application via Google Play ; la politique de confidentialité de Google s’applique à votre utilisation de Google Play, et Google peut nous montrer des statistiques de plantages et de qualité de l’application.</li>
+<li>Nous ne vendons, ne louons ni ne partageons vos informations avec qui que ce soit d’autre, et l’application n’utilise aucun service de publicité ou de statistiques d’audience. Ce site web utilise Cloudflare Web Analytics, sans cookie (voir la section 12).</li>
 </ul>
 <h2>7. Transferts internationaux</h2>
 <p>Notre hébergeur peut traiter des données hors de votre pays, notamment aux États-Unis. Les données provenant de l’Espace économique européen, du Royaume-Uni ou de la Suisse sont alors protégées par les garanties contractuelles de l’hébergeur (comme les clauses contractuelles types de la Commission européenne).</p>
 <h2>8. Enfants</h2>
-<p>JAMAA et ses jeux sont destinés aux adolescents et aux adultes, et souvent joués en famille. Ils ne s’adressent pas aux enfants de moins de 13 ans et ne collecte pas sciemment de données personnelles les concernant ; les joueurs saisissent seulement un pseudo, supprimé automatiquement avec la salle. Si vous pensez qu’un enfant a saisi une information personnelle (par exemple son nom complet comme pseudo), contactez-nous et nous la supprimerons si elle existe encore.</p>
+<p>JAMAA et ses jeux sont destinés aux adolescents et aux adultes, et souvent joués en famille. Ils ne s’adressent pas aux enfants de moins de 13 ans et ne collectent pas sciemment de données personnelles les concernant ; les joueurs saisissent seulement un pseudo et, dans certains jeux, de courtes réponses, supprimés automatiquement avec la salle. Si vous pensez qu’un enfant a saisi une information personnelle (par exemple son nom complet comme pseudo), contactez-nous et nous la supprimerons si elle existe encore.</p>
 <h2>9. Vos droits</h2>
-<p>Selon votre lieu de résidence (par exemple au titre du RGPD dans l’UE/EEE et au Royaume-Uni), vous disposez d’un droit d’accès, de rectification, d’effacement, d’opposition, de limitation et de portabilité. Comme il n’y a pas de compte et que les salles sont supprimées automatiquement en quelques heures, nous ne pouvons généralement relier aucune donnée restante à vous ; écrivez-nous toutefois à <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a> avec le code de la salle et votre pseudo, et nous vous aiderons. Vous pouvez aussi introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" rel="noopener">www.cnil.fr</a>) ou de l’autorité de protection des données de votre pays.</p>
+<p>Selon votre lieu de résidence (par exemple au titre du RGPD dans l’UE/EEE et au Royaume-Uni), vous disposez d’un droit d’accès, de rectification, d’effacement, d’opposition, de limitation et de portabilité. Comme il n’y a pas de compte, que les salles sont supprimées automatiquement en quelques heures et qu’aucun pseudo n’est enregistré dans les statistiques d’usage ni les rapports d’erreur, nous ne pouvons généralement relier aucune donnée restante à vous ; écrivez-nous toutefois à <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a> avec le code de la salle et votre pseudo, et nous vous aiderons. Vous pouvez aussi introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" rel="noopener">www.cnil.fr</a>) ou de l’autorité de protection des données de votre pays.</p>
 <h2>10. Sécurité</h2>
 <p>Toutes les connexions entre l’application TV, les téléphones et le serveur sont chiffrées (HTTPS/WSS). Les mots secrets ne sont envoyés qu’au téléphone du joueur concerné et jamais à la télé pendant la partie. Les jetons ne sont conservés que sous forme hachée.</p>
 <h2>11. Modifications</h2>
-<p>Si le jeu change sa façon d’utiliser les informations (par exemple lors de l’ajout d’achats intégrés facultatifs), nous mettrons cette page et sa date à jour avant que le changement ne s’applique.</p>
+<p>Si l’application change sa façon d’utiliser les informations (par exemple si des achats facultatifs sont ajoutés plus tard), nous mettrons cette page et sa date à jour avant que le changement ne s’applique.</p>
 <h2>12. Ce site web</h2>
-<p>Cette section concerne uniquement le site que vous lisez (pas le jeu). Pour savoir combien de personnes le visitent et quels boutons et quelles publicités fonctionnent, il utilise :</p>
+<p>Cette section concerne uniquement le site que vous lisez (pas les jeux). Pour savoir combien de personnes le visitent et quels boutons et quelles publicités fonctionnent, il utilise :</p>
 <ul>
-<li><strong>Cloudflare Web Analytics</strong> : compte les pages vues et la vitesse de chargement. Aucun cookie, aucun stockage local, aucune prise d’empreinte du navigateur. Cloudflare traite ces données pour notre compte.</li>
-<li><strong>Des comptages anonymes de clics</strong>, envoyés à notre propre serveur quand vous touchez un bouton comme « Installer sur ma télé » ou « Jouer dans le navigateur », ouvrez une question ou faites défiler la page : quel bouton ou quelle section, la langue de la page, la campagne publicitaire indiquée dans le lien (balises utm), le type d’appareil (téléphone ou ordinateur) et le pays déduit par Cloudflare. Aucun identifiant, aucun cookie, et votre adresse IP n’est pas enregistrée. Ces comptages sont conservés 3 mois au maximum.</li>
-<li>Votre <strong>choix de langue</strong> est mémorisé dans votre navigateur (stockage local) pour que le site s’ouvre dans votre langue la prochaine fois. Il ne quitte jamais votre appareil.</li>
+<li>Cloudflare Web Analytics : compte les pages vues et la vitesse de chargement. Aucun cookie, aucun stockage local, aucune prise d’empreinte du navigateur. Cloudflare traite ces données pour notre compte.</li>
 </ul>
-<p>Si votre navigateur envoie <strong>Global Privacy Control</strong> ou <strong>Do Not Track</strong>, aucune de ces mesures n’est effectuée. Cette mesure repose sur notre intérêt légitime à comprendre, de façon agrégée, l’utilisation du site. En suivant le lien vers Google Play, vous arrivez chez Google, dont la propre politique de confidentialité s’applique.</p>
+<ul>
+<li>Des comptages anonymes de clics, envoyés à notre propre serveur quand vous touchez un bouton comme « Installer sur ma télé » ou « Jouer dans le navigateur », ouvrez une question ou faites défiler la page : quel bouton ou quelle section, la langue de la page, la campagne publicitaire indiquée dans le lien (balises utm), le type d’appareil (téléphone ou ordinateur) et le pays déduit par Cloudflare de la connexion. Aucun identifiant, aucun cookie, et votre adresse IP n’est pas conservée. Ces comptages sont gardés 3 mois au plus.</li>
+</ul>
+<ul>
+<li>Votre choix de langue est mémorisé dans votre navigateur (stockage local) pour que le site s’ouvre dans votre langue la prochaine fois. Il ne quitte jamais votre appareil.</li>
+</ul>
+<p>Si votre navigateur envoie Global Privacy Control ou Do Not Track, aucune de ces mesures n’est effectuée. Cette mesure repose sur notre intérêt légitime à comprendre, de façon agrégée, l’utilisation du site. En suivant le lien vers Google Play, vous arrivez chez Google, dont la propre politique de confidentialité s’applique.</p>
 <h2>13. Contact</h2>
 <p>{{OWNER_NAME}} — <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a></p>
     <p class="back"><a href="/fr/">← Retour à JAMAA</a></p>
   </article>
   <article class="wrap wrap--narrow pv-ar" lang="ar" dir="rtl">
     <h1>سياسة الخصوصية<span class="dot">.</span></h1>
-    <p class="meta">آخر تحديث: 7 تشرين الأول 2026 · ترجمة عربية للنسخة الإنكليزية، وبحال في أي اختلاف، النسخة الإنكليزية هي المعتمدة.</p>
-    <p>«جماعة» («اللعبة» أو «التطبيق») تطبيق ألعاب سهرة للتلفزيون، أوّل لعبة فيه «مش أنا!»: تطبيق لـ Android TV و Google TV، وصفحة تلفزيون بتشتغل بأي متصفّح إنترنت. التلفزيون بيفتح غرفة اللعبة، واللاعبين بيفوتوا عليها من متصفّح تلفوناتن. هالسياسة بتشرح شو المعلومات اللي بتستعملها اللعبة، وليش، وقدّيش بتضلّ محفوظة. وهي بتغطّي تطبيق Android TV «JAMAA» (الحزمة <code dir="ltr">app.jamaa.tv</code>)، وصفحة التلفزيون اللي بتشغّل اللعبة بالمتصفّح على <span dir="ltr">play.jamaa.workers.dev/tv</span>، وصفحة اللاعب اللي بتفتح لمّا تمسحوا كود QR اللي عالتلفزيون.</p>
+    <p class="meta">آخر تحديث: 17 تشرين الثاني 2026 · ترجمة عربية للنسخة الإنكليزية، وبحال في أي اختلاف، النسخة الإنكليزية هي المعتمدة.</p>
+<p>«جماعة» («التطبيق» أو «الألعاب») تطبيق ألعاب سهرة لـ Android TV و Google TV فيه خمس ألعاب: «مش أنا!»، «بلوف!»، «مين فينا؟»، «سهرة أسئلة» و«تقريبًا!». تطبيق التلفزيون بيفتح غرفة لعب، واللاعبين بيدخلوا من تلفوناتهم بمتصفّح الإنترنت. هالسياسة بتشرح شو المعلومات اللي بيستعملها التطبيق، ولشو، ولأي مدّة. وبتغطّي تطبيق Android TV «جماعة» (الحزمة <code>app.jamaa.tv</code>)، وصفحة التلفزيون اللي بتشغّل الألعاب بمتصفّح على <span dir="ltr">jamaa.mishana.workers.dev/tv</span>، وصفحة اللاعب اللي بيفتحها الـ QR على التلفزيون. «جماعة» مجانية، بلا إعلانات وبلا مشتريات.</p>
 <p><strong>المسؤول.</strong> <bdi>{{OWNER_NAME}}</bdi> (المطوّر)، للتواصل: <a href="mailto:{{CONTACT_EMAIL}}" dir="ltr">{{CONTACT_EMAIL}}</a>.</p>
 <h2>1. باختصار</h2>
 <ul>
 <li>ما في حسابات، ولا تسجيل دخول، ولا إيميل، ولا رقم تلفون.</li>
-<li>جوّا اللعبة: ما في إعلانات، ولا إحصاءات، ولا تتبّع، ولا مكتبات (SDK) لجهات تانية.</li>
-<li>على هالموقع: بس عدّ زيارات وكبسات مجهول وبلا كوكيز (شوفوا القسم 12).</li>
-<li>اللاعبين بيكتبوا اسم مستعار، وهالاسم بيشوفوه باقي اللاعبين بالغرفة.</li>
-<li>كل غرفة لعب، مع الأسامي وكل شي انلعب فيها، <strong>بتنمحى لحالها</strong>، بأقصى حدّ بعد ساعتين من آخر حركة.</li>
-<li>ما منبيع معلوماتك ولا منشاركها مع حدا.</li>
+<li>بلا إعلانات، بلا مشتريات، بلا تتبّع، بلا أدوات طرف ثالث (SDK)، وبلا خدمات إعلانات أو إحصائيات.</li>
+<li>اللاعبين بيكتبوا اسم مستعار، وبيشوفو باقي اللاعبين بالغرفة. والأجوبة اللي بتكتبا بلعبة (تخمين بـ«مش أنا!»، جواب مفبرك بـ«بلوف!») بتنعرض للغرفة كمان.</li>
+<li>كل غرفة لعب، مع الأسماء المستعارة وكل شي انلعب فيها، <strong>بتنمحى لحالها</strong> لمّا تسكّر الغرفة: بعد 15 دقيقة من مغادرة التلفزيون، وعلى أي حال بحدّ أقصى 12 ساعة بعد آخر نشاط.</li>
+<li>لنعرف إذا الألعاب شغّالة، منجمع <strong>أعداد استعمال مجهولة</strong> و<strong>تقارير أخطاء مشطوبة منها البيانات الشخصية</strong> (القسم 2). ما فيها أبدًا أسماء مستعارة ولا اللي كتبو اللاعبين.</li>
+<li>ما منبيع ولا منشارك معلوماتك مع حدا.</li>
 </ul>
 <h2>2. المعلومات اللي منستعملها</h2>
-<p><strong>لمّا تفوت على لعبة من تلفونك</strong></p>
+<p><strong>لمّا تدخل لعبة من تلفونك</strong></p>
 <ul>
-<li><strong>الاسم المستعار</strong> (من 1 لـ16 حرف) و<strong>اللون</strong> اللي بتنقّيه: بيبيّنوا عالتلفزيون وعلى تلفونات باقي اللاعبين بغرفتك.</li>
-<li><strong>لغتك</strong> (إنكليزي، فرنساوي أو عربي): لنفرجيك اللعبة بلغتك.</li>
-<li><strong>شو بتعمل باللعبة</strong>: إنّك جاهز، إنّك خلّصت دورك، تصويتك، تغيير الإعدادات إذا إنت المضيف، وإذا دورك «الجاسوس» وانكشف أمرك، الكلمة اللي بتحزرها بآخر فرصة. هيدي لازمة لتمشي اللعبة، وبتنعرض عالغرفة حسب القواعد (مثلًا الأصوات وآخر حزورة للجاسوس بيبيّنوا آخر الجولة أو آخر اللعبة).</li>
-<li>التلميحات بتنقال بصوت عالي بالغرفة؛ اللعبة ما بتسجّل صوت أبدًا.</li>
+<li><strong>الاسم المستعار</strong> (من 1 لـ16 حرف) و<strong>اللون</strong> اللي بتنقّيه: بيظهروا عالتلفزيون وعتلفونات باقي اللاعبين بغرفتك.</li>
+<li><strong>لغتك</strong> (إنكليزي، فرنسي، عربي أو إسباني): لنعرض اللعبة بلغتك.</li>
+<li><strong>شو بتعمل باللعبة</strong>: لمّا تصير جاهز، تصوّت، تكبس على لاعب («مين فينا؟»)، تختار جواب («سهرة أسئلة»)، تكتب رقم («تقريبًا!»)، تغيّر إعدادات كمضيف، والنص اللي بتكتبو (تخمين لحدّ 200 حرف بـ«مش أنا!»، جواب مفبرك لحدّ 480 حرف بـ«بلوف!»). هيدي لازمة لتشغيل اللعبة وبتنعرض للغرفة حسب القواعد (مثلًا الأصوات والأجوبة بتنكشف بآخر الجولة).</li>
+<li>التلميحات بتنقال بصوت عالي بالغرفة، والتطبيق ما بيسجّل صوت أبدًا.</li>
 </ul>
 <p><strong>لمّا التلفزيون يفتح غرفة</strong></p>
 <ul>
-<li>التلفزيون (التطبيق أو صفحة المتصفّح) بيبعت بس <strong>لغة العرض</strong>. ما بيبعت أي معرّف للجهاز، ولا حساب Google، ولا الموقع، ولا لائحة التطبيقات.</li>
+<li>تطبيق التلفزيون بيبعت <strong>لغة العرض</strong>، و<strong>المنصّة ورقم نسخة التطبيق</strong> (بهيدر اسمو <code>X-Jamaa-Client</code>، مثلًا «tv-android/1.0.0») وقايمة قصيرة بـ<strong>معرّفات الأسئلة والكروت اللي عرضها قبل</strong> لئلّا تتكرّر الألعاب. وما بيبعت أي معرّف جهاز، ولا حساب Google، ولا موقع، ولا قايمة تطبيقات.</li>
 </ul>
 <p><strong>معلومات تقنية</strong></p>
 <ul>
-<li>لنوصّل التلفونات بالتلفزيون، السيرفر بيعمل معرّفات عشوائية ومؤقّتة (كود الغرفة، معرّف اللاعب، و«رموز» سرّية للرجعة وللتلفزيون لتقدر ترجع على محلّك إذا انقطع الاتصال). الرموز بتنحفظ عالسيرفر بس بشكل مشفّر (hash).</li>
-<li><strong>عنوان IP</strong> تبعك بيُستعمل لفترة قصيرة بس لمنع الإساءة (تحديد عدد الطلبات). الكود تبعنا ما بيحفظو بمعلومات اللعبة ولا بيكتبو بالسجلّات؛ جوّا الغرفة، بيُستعمل بس hash قصير منّو وإنت متّصل. شركة الاستضافة ممكن تحتفظ بسجلّات تقنية فيها عناوين IP لمدّة أقصاها 7 أيّام، للأمان وتصليح الأعطال.</li>
+<li>لنوصّل التلفونات بالتلفزيون، السيرفر بيعمل معرّفات عشوائية ومؤقتة (كود الغرفة، معرّف اللاعب، ورموز سرّية للرجوع وللتلفزيون لتقدر ترجع بعد ما ينقطع الاتصال). الرموز بتنحفظ عالسيرفر بشكل مشفّر (hash) بس.</li>
+<li><strong>عنوان الـ IP</strong> تبعك بنستعملو لمدّة قصيرة لمنع الإساءة (تحديد المعدّل: كم غرفة أو اتصال أو تقرير خطأ بيقدر يفتح عنوان واحد بالدقيقة). كودنا ما بيخزّنو ببيانات اللعب ولا بإحصائيات الاستعمال ولا بتقارير الأخطاء، وما بيكتبو بسجلّاتنا؛ وجوّا الغرفة بينستعمل بس بصمة قصيرة باتجاه واحد منو (مخلوطة مع كود الغرفة) طول ما أنت متّصل. مزوّد الاستضافة ممكن يحتفظ بسجلّات تقنية للطلبات، فيها ممكن عناوين IP، لحدّ 7 أيام للأمان وتصحيح الأخطاء.</li>
 </ul>
-<p><strong>ما منجمع:</strong> اسمك الحقيقي (إلّا إذا اخترت تستعملو كاسم مستعار)، ولا إيميلك، ولا رقم تلفونك، ولا جهات الاتصال، ولا الصور، ولا الميكروفون أو الكاميرا، ولا موقعك، ولا معرّفات الإعلانات، ولا سجلّ التصفّح.</p>
+<p><strong>تقارير الأخطاء (لنصلّح الأعطال)</strong></p>
+<p>لمّا تطبيق التلفزيون، أو صفحة التلفزيون، أو صفحة اللاعب يصادفوا خطأ، ممكن يبعتولنا تقرير قصير: المنصّة (تلفون، صفحة تلفزيون، أو Android TV)، نسخة التطبيق، الشاشة أو الصفحة اللي صار فيها (مثلًا اسم شاشة أو مسار الصفحة)، نوع الخطأ، رسالة الخطأ وأثرها التقني (مقصوصة لـ300 و1500 حرف بالحدّ الأقصى)، كم مرّة صار، واختياريًا كود الغرفة. قبل ما نحفظ التقرير، السيرفر بيشيل عناوين الإيميل، ووسائط الروابط (query)، والأكواد والأرقام الطويلة اللي ممكن تكون رموز أو معرّفات. التقرير ما فيه أبدًا اسمك المستعار، ولا اللي كتبتو، ولا معرّف جهاز، ولا عنوان IP. وكل جهاز بيبعت كم تقرير بس بالجلسة.</p>
+<p><strong>إحصائيات الاستعمال (لنعرف إذا الألعاب عم تنلعب وعم تشتغل)</strong></p>
+<p>السيرفر بيسجّل أحداث مجهولة، سجلّ واحد لكل حدث وما في سجلّ لكل رسالة: غرفة انفتحت (اللغة، المنصّة)؛ غرفة سكّرت (ليش، وكم لاعب كانوا دخلوا)؛ لعبة بلّشت (أيّ لعبة، عدد اللاعبين، اللغة، المنصّة)؛ لعبة خلصت (أيّ لعبة، عدد اللاعبين، المدّة، وإذا خلصت للآخر أو وقفت أو انهجرت أو انتهت صلاحيتها)؛ لاعب دخل أو طلع (المنصّة بس)؛ ولمّا المضيف بيتخطّى أو بيخبّي سؤال أو كرت (أيّ لعبة، الحزمة ومعرّف العنصر، اللغة والمنصّة) لنحسّن المحتوى. هالسجلّات ما فيها أسماء مستعارة، ولا نص مكتوب، ولا عناوين IP، ولا رموز. وبنحتفظ بعدّادات حيّة (الغرف والألعاب هلّق، أعداد كل ساعة) بنفس الطريقة.</p>
+<p><strong>ما منجمع:</strong> اسمك الحقيقي (إلّا إذا اخترتو كاسم مستعار)، الإيميل، رقم التلفون، جهات الاتصال، الصور، الميكروفون أو الكاميرا، الموقع، معرّفات الإعلانات، أو سجلّ التصفّح.</p>
 <h2>3. ليش منستعملها (الأسس القانونية)</h2>
-<p>منستعمل هالمعلومات بس لنشغّل اللعبة اللي طلبت تلعبها (تقديم الخدمة اللي طلبتها)، ولنحميها من الإساءة ونحافظ على أمانها (مصلحتنا المشروعة). ما منستعملها لا للإعلانات، ولا للتنميط، ولا للإحصاءات.</p>
-<h2>4. قدّيش منحتفظ فيها</h2>
-<p>غرفة اللعب وكل شي فيها (الأسامي، الألوان، اللغات، الأدوار، الكلمات، الأصوات، الحزورات، النقاط، الرموز المشفّرة) بتنمحى لحالها:</p>
+<p>منستعمل معلومات اللعب بس لتشغيل اللعبة اللي طلبتها (تنفيذ الخدمة اللي بتطلبها). ومنستعمل عنوان الـ IP وتقارير الأخطاء وإحصائيات الاستعمال لنحافظ على أمان الخدمة ونحميها من الإساءة، ولنلاقي الأعطال ونصلّحها، ولنفهم بشكل إجمالي أيّ ألعاب عم تنلعب (مصلحتنا المشروعة). ما منستعمل شي للإعلانات أو للتنميط، وما في شي مربوط بهويّة.</p>
+<h2>4. لأي مدّة منحتفظ فيها</h2>
 <ul>
-<li>بعد 15 دقيقة من فتح الغرفة إذا ما فات حدا؛</li>
-<li>بعد 30 دقيقة من آخر لعبة إذا ما بلّش حدا لعبة جديدة؛</li>
-<li>وبكل الأحوال، بأقصى حدّ بعد ساعتين من آخر حركة بالغرفة.</li>
+<li><strong>غرف اللعب.</strong> الغرفة وكل شي فيها (أسماء مستعارة، ألوان، لغات، نقاط، أصوات، أجوبة مكتوبة، رموز مشفّرة) بتنمحى لحالها لمّا تسكّر الغرفة: بعد 15 دقيقة من مغادرة التلفزيون (أو من فتحها إذا التلفزيون ما اتّصل أبدًا)، ومادام تلفزيون متّصل، بحدّ أقصى 12 ساعة بعد آخر نشاط بالغرفة. اللاعب اللي بينقطع اتصالو بيحتفظ بمقعدو لحدّ دقيقتين بصالة الانتظار، وبعدين بيتشال.</li>
+<li><strong>العدّادات الحيّة.</strong> أعداد كل ساعة بتنحفظ 48 ساعة. وقايمة الأخطاء بتحتفظ بس بآخر 100 خطأ.</li>
+<li><strong>إحصائيات الاستعمال وسجلّات الأخطاء</strong> المخزّنة بـ Analytics Engine عند Cloudflare: حوالي 3 شهور، وبعدها Cloudflare بتمحيها.</li>
+<li><strong>سجلّات الطلبات التقنية</strong> عند مزوّد الاستضافة، بما فيها أسطر سجلّ تقارير الأخطاء: 7 أيام بالحدّ الأقصى.</li>
 </ul>
-<p>اللاعب اللي بينقطع اتصالو بيضلّ محلّو محفوظ لدقيقتين بغرفة الانتظار، وبعدها بيطلع.</p>
-<p>السجلّات التقنية عند شركة الاستضافة بتنمحى بعد 7 أيّام بأقصى حدّ.</p>
-<h2>5. المعلومات المحفوظة على أجهزتك</h2>
+<h2>5. المعلومات المخزّنة على أجهزتك</h2>
 <ul>
-<li><strong>التلفون (تخزين المتصفّح):</strong> آخر اسم ولون ولغة استعملتن، إعداد الاهتزاز، ولكل غرفة فتت عليها رمز رجعة ليرجّعك على محلّك؛ رموز الرجعة بتنمحى بعد 6 ساعات. فيك تمحي كل شي بأي وقت بمحي بيانات الموقع من متصفّحك.</li>
-<li><strong>التلفزيون:</strong> بس إعداد الصوت (شغّال/مطفي)، بالتطبيق، أو بالتخزين المحلّي للمتصفّح لصفحة التلفزيون. تطبيق التلفزيون ما بيعمل نسخة احتياطية لأي معلومات على حساب Google تبعك.</li>
+<li><strong>التلفون (تخزين المتصفّح):</strong> آخر اسم مستعار ولون ولغة، إعداد الاهتزاز، ولكل غرفة دخلتا رمز رجوع بيخلّيك ترجع لمقعدك؛ رموز الرجوع بتنرمي بعد 6 ساعات. فيك تمحي هالشي بأي وقت بمسح بيانات الموقع من متصفّحك.</li>
+<li><strong>التلفزيون:</strong> إعدادات الصوت والحركات الهادية، معرّفات الأسئلة والكروت المعروضة سابقًا (لئلّا تتكرّر)، وإذا التطبيق وقع، تقرير توقّف قصير بيضلّ لحدّ التشغيل الجاي، بينبعت مرّة وحدة وبينمحى. التطبيق ما بيحفظ نسخة احتياطية من أي بيانات على حساب Google تبعك.</li>
 </ul>
-<h2>6. مين فيه يشوفها، ومين بيعالجها</h2>
+<h2>6. مين بيشوفها ومين بيعالجها</h2>
 <ul>
-<li><strong>باقي اللاعبين بغرفتك</strong> بيشوفوا اسمك المستعار ولونك وحركاتك باللعبة متل ما شرحنا فوق. أكواد الغرف مؤقّتة؛ أي حدا بتعطيه الكود فيه يفوت عغرفة الانتظار، والمضيف فيه يطلّع لاعبين.</li>
-<li><strong>Cloudflare, Inc.</strong> بتستضيف السيرفر تبعنا وبتعالج هالمعلومات عن لساننا، على شبكتها العالمية، حسب شروط معالجة البيانات تبعها. الغرف عادةً بتنعمل بمركز بيانات قريب من التلفزيون.</li>
-<li><strong>Google</strong> بتوزّع التطبيق عبر Google Play؛ وسياسة الخصوصية تبع Google هيّي اللي بتنطبق على استعمالك لـ Google Play.</li>
-<li>ما منبيع ولا منأجّر ولا منشارك معلوماتك مع حدا تاني، واللعبة ما بتستعمل خدمات إعلانات ولا إحصاءات. هالموقع بيستعمل Cloudflare Web Analytics بلا كوكيز (شوفوا القسم 12).</li>
+<li><strong>باقي اللاعبين بغرفتك</strong> بيشوفو اسمك المستعار ولونك وأجوبتك المكتوبة وحركاتك باللعبة متل ما انشرح فوق. أكواد الغرف قصيرة العمر؛ أي حدا بتعطيه الكود بيقدر يفوت على صالة الانتظار، والمضيف بيقدر يطرد لاعبين.</li>
+<li><strong>Cloudflare, Inc.</strong> بتستضيف سيرفرنا، وبتخزّن بيانات الغرف وإحصائيات الاستعمال وتقارير الأخطاء، وبتعالج هالمعلومات عن لساننا، عبر شبكتها العالمية، حسب شروط معالجة البيانات تبعها. الغرف غالبًا بتنفتح بمركز بيانات قريب من التلفزيون.</li>
+<li><strong>Google</strong> بتوزّع التطبيق عبر Google Play؛ سياسة الخصوصية تبع Google بتنطبق على استعمالك لـ Google Play، وممكن Google تعرضلنا إحصائيات الأعطال والجودة للتطبيق.</li>
+<li>ما منبيع ولا منأجّر ولا منشارك معلوماتك مع حدا تاني، والتطبيق ما بيستعمل خدمات إعلانات أو إحصائيات. وهالموقع بيستعمل Cloudflare Web Analytics بلا كوكيز (شوف القسم 12).</li>
 </ul>
-<h2>7. النقل لبرّا بلدك</h2>
-<p>شركة الاستضافة ممكن تعالج البيانات برّا بلدك، ومن ضمنها بالولايات المتّحدة. لمّا تنتقل بيانات من المنطقة الاقتصادية الأوروبية أو بريطانيا أو سويسرا، بتكون محميّة بالضمانات التعاقدية تبع الشركة (متل البنود التعاقدية النموذجية للمفوضية الأوروبية).</p>
-<h2>8. الولاد</h2>
-<p>«جماعة» وألعابها معمولة للمراهقين والكبار، وكتير بتنلعب مع كل العيلة. هيّي مش موجّهة للولاد اللي عمرن أقل من 13 سنة، وما منجمع عن قصد معلومات شخصية عنّن؛ اللاعبين بيكتبوا بس اسم مستعار، وبينمحى لحالو مع الغرفة. إذا بتفكّر إنّو ولد كتب معلومات شخصية (مثلًا اسمو الكامل كاسم مستعار)، تواصل معنا ومنمحيها إذا بعدها موجودة.</p>
+<h2>7. النقل الدولي</h2>
+<p>مزوّد الاستضافة ممكن يعالج بيانات خارج بلدك، منها بالولايات المتحدة. ولمّا بتنتقل بيانات من المنطقة الاقتصادية الأوروبية أو بريطانيا أو سويسرا، بتنحمى بضمانات المزوّد التعاقدية (متل البنود التعاقدية النموذجية للمفوّضية الأوروبية).</p>
+<h2>8. الأطفال</h2>
+<p>«جماعة» وألعابها مصنوعة للمراهقين والكبار، وغالبًا بتنلعب مع العيلة كلها. مش موجّهة للأطفال تحت 13 سنة وما بتجمع عن قصد معلومات شخصية منهم؛ اللاعبين بيكتبو بس اسم مستعار، وببعض الألعاب أجوبة قصيرة، وبتنمحى لحالها مع الغرفة. إذا بتفكّر إنّو طفل كتب معلومة شخصية (مثلًا اسمو الكامل كاسم مستعار)، تواصل معنا ومنمحيها إذا لسا موجودة.</p>
 <h2>9. حقوقك</h2>
-<p>حسب وين ساكن (مثلًا تحت الـ GDPR بالاتحاد الأوروبي وبريطانيا)، إلك الحقّ توصل لبياناتك الشخصية، تصحّحها أو تمحيها، تعترض على استعمالها أو تحدّدو، وتنقلها. بما إنّو ما في حسابات والغرف بتنمحى لحالها خلال ساعات، عادةً ما منقدر نربط أي بيانات باقية فيك؛ بس تواصل معنا على <a href="mailto:{{CONTACT_EMAIL}}" dir="ltr">{{CONTACT_EMAIL}}</a> مع كود الغرفة والاسم المستعار ومنساعدك. وفيك كمان تقدّم شكوى لهيئة حماية البيانات ببلدك (بفرنسا: CNIL، <a href="https://www.cnil.fr" rel="noopener" dir="ltr">www.cnil.fr</a>).</p>
+<p>حسب وين ساكن (مثلًا تحت الـ GDPR بالاتحاد الأوروبي وبريطانيا)، إلك الحقّ توصل لبياناتك الشخصية، تصحّحها أو تمحيها، تعترض على استعمالها أو تحدّدو، وتنقلها. بما إنّو ما في حسابات، والغرف بتنمحى لحالها خلال ساعات، وما بنسجّل أسماء مستعارة بإحصائيات الاستعمال ولا بتقارير الأخطاء، عادةً ما منقدر نربط أي بيانات باقية فيك؛ بس تواصل معنا على <a href="mailto:{{CONTACT_EMAIL}}" dir="ltr">{{CONTACT_EMAIL}}</a> مع كود الغرفة والاسم المستعار ومنساعدك. وفيك كمان تقدّم شكوى لهيئة حماية البيانات ببلدك (بفرنسا: CNIL، <a href="https://www.cnil.fr" rel="noopener" dir="ltr">www.cnil.fr</a>).</p>
 <h2>10. الأمان</h2>
-<p>كل الاتصالات بين تطبيق التلفزيون أو صفحتو، والتلفونات، والسيرفر مشفّرة (HTTPS/WSS). الكلمات السرّية بتنبعت بس لتلفون اللاعب صاحبها، وأبدًا مش للتلفزيون وقت اللعب. والرموز بتنحفظ بس بشكل مشفّر.</p>
+<p>كل الاتصالات بين تطبيق التلفزيون، والتلفونات، والسيرفر مشفّرة (HTTPS/WSS). الكلمات السرّية بتنبعت بس لتلفون اللاعب صاحبها، وأبدًا مش للتلفزيون وقت اللعب. والرموز بتنحفظ بس بشكل مشفّر.</p>
 <h2>11. التغييرات</h2>
-<p>إذا اللعبة غيّرت طريقة استعمالها للمعلومات (مثلًا لمّا تنزاد مشتريات اختيارية جوّا اللعبة)، منحدّث هالصفحة والتاريخ اللي فوق قبل ما يصير التغيير.</p>
+<p>إذا التطبيق غيّر طريقة استعمالو للمعلومات (مثلًا لمّا تنزاد مشتريات اختيارية بعدين)، منحدّث هالصفحة والتاريخ اللي فوق قبل ما يصير التغيير.</p>
 <h2>12. هالموقع</h2>
-<p>هالقسم بيغطّي بس الموقع اللي عم تقراه (مش اللعبة). لنعرف قدّيش في زوّار وأيّا أزرار وإعلانات عم تشتغل، منستعمل:</p>
+<p>هالقسم بيغطّي بس الموقع اللي عم تقراه (مش الألعاب). لنعرف قدّيش في زوّار وأيّا أزرار وإعلانات عم تشتغل، منستعمل:</p>
 <ul>
 <li><strong>Cloudflare Web Analytics</strong>: بيعدّ مشاهدات الصفحات وسرعة تحميلها. ما بيستعمل كوكيز ولا تخزين محلّي، وما بيعمل «بصمة» للزوّار. Cloudflare بتعالج هالشي عن لساننا.</li>
-<li><strong>عدّ كبسات مجهول</strong> بينبعت للسيرفر تبعنا لمّا تكبس على زرّ متل «العب ببلاش»، أو تفتح سؤال، أو تنزل بالصفحة: أيّا زرّ أو قسم، لغة الصفحة، الحملة الإعلانية المذكورة بالرابط (utm)، نوع الجهاز (تلفون أو كمبيوتر)، والبلد اللي بتستنتجو Cloudflare من الاتصال. بلا أي معرّف، بلا كوكيز، وعنوان IP ما بينحفظ. هالأرقام بتضلّ محفوظة 3 أشهر بأقصى حدّ.</li>
+</ul>
+<ul>
+<li><strong>عدّ كبسات مجهول</strong> بينبعت للسيرفر تبعنا لمّا تكبس على زرّ متل «ركّبها عتلفزيوني» أو «العب بالمتصفّح»، أو تفتح سؤال، أو تنزل بالصفحة: أيّا زرّ أو قسم، لغة الصفحة، الحملة الإعلانية المذكورة بالرابط (utm)، نوع الجهاز (تلفون أو كمبيوتر)، والبلد اللي بتستنتجو Cloudflare من الاتصال. بلا أي معرّف، بلا كوكي، وعنوان الـ IP تبعك ما بينحفظ. هالأعداد بتنحفظ 3 شهور بالحدّ الأقصى.</li>
+</ul>
+<ul>
 <li><strong>اللغة اللي بتنقّيها</strong> بتنحفظ بمتصفّحك (تخزين محلّي) ليفتح الموقع بلغتك المرّة الجايي. وما بتطلع من جهازك أبدًا.</li>
 </ul>
 <p>إذا متصفّحك بيبعت <strong>Global Privacy Control</strong> أو <strong>Do Not Track</strong>، ولا شي من هالقياس بيشتغل. منستعملو على أساس مصلحتنا المشروعة إنّو نفهم، بشكل إجمالي، كيف الموقع عم ينستعمل. والانتقال لـ Google Play بياخدك لـ Google، وسياسة الخصوصية تبعها هيّي اللي بتنطبق.</p>
