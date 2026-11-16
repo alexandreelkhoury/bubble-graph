@@ -82,16 +82,17 @@ On the emulator and in the `/tv` browser TV, the arrow keys are the D-pad, Enter
 
 | What | Command | Served at |
 |---|---|---|
-| Game server + phone page (Worker `play`) | `pnpm run deploy`: build, `content-lint --release`, `check-deploy.mjs` (Google billing, fake billing off, `PLAY_PACKAGE_NAME` = `app.jamaa.tv`, `GAMES_ENABLED` lists only known ids), then `wrangler deploy`. Always use `run`, because bare `pnpm deploy` is pnpm's built-in command | `https://play.jamaa.workers.dev` |
+| **Production** game server + phone page (Worker `jamaa`, `env.production`) | `pnpm run deploy`: `content-lint --release`, build, production dry run, `check-deploy.mjs --env production` (Google billing, fake billing off, no debug, no placeholders, own DOs/dataset/rate limits, no draft content), then `wrangler deploy --env production`. Always use `run`, because bare `pnpm deploy` is pnpm's built-in command | `https://jamaa.<subdomain>.workers.dev` (until a custom domain) |
+| **Preview** game server (Worker `play`, the owner's test server, drafts allowed) | `pnpm run deploy:preview` | `https://play.<subdomain>.workers.dev` |
 | Site (Worker `www`) | `cd growth/site && npx wrangler deploy` (runs `node build.mjs` first) | `https://www.jamaa.workers.dev` |
 
-The release gate requires at least 40 pairs in each free Mish Ana! starter pack, so `pnpm run deploy` fails on purpose until that is true.
+The release gate requires reviewed content (at least 40 pairs in each free Mish Ana! starter pack, no draft pack or item), so `pnpm run deploy` fails on purpose until that is true. Setup, smoke test and rollback: [DEV.md → Production](docs/DEV.md#production).
 
 ### Production configuration
 
 | What | Where | Value |
 |---|---|---|
-| TV app server (`BuildConfig.SERVER_URL`) | `jamaa.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=` | `https://play.jamaa.workers.dev` (valid once owner step O1 is done). Release builds refuse the `play.example.workers.dev` placeholder and any non-`https://` URL |
+| TV app server (`BuildConfig.SERVER_URL`) | `tv-app/gradle.properties`: `jamaa.prodServerUrl` (release builds) and `jamaa.previewServerUrl` (debug builds), or `-PserverUrl=` | the production and preview Worker origins. Release builds refuse the placeholder, the preview URL and any non-`https://` URL |
 | Phone join URL in the QR code | `JOIN_BASE_URL` in `server/wrangler.jsonc` `vars` | `""` (the origin the TV called). Set `https://<your-domain>` only with a custom domain |
 | Extra browser origins | `ALLOWED_ORIGINS` in `server/wrangler.jsonc` `vars` | `""` (same origin only) |
 | Site origin, browser-version link, Play link | `growth/site/site.config.json` (`origin`, `browserUrl`, `playUrl`, `playStoreLive`) | `https://www.jamaa.workers.dev`, `https://play.jamaa.workers.dev/tv`, `…?id=app.jamaa.tv`, `false` until the Play listing is public |

@@ -4,6 +4,8 @@ Production (`https://play.jamaa.workers.dev`, Worker `play`) runs the branch `pr
 
 > JAMAA rename (docs/JAMAA-PLATFORM.md §1.6): the URLs below assume owner step O1 (the account's workers.dev subdomain renamed to `jamaa`) is done; until then the live Worker answers on the old subdomain. The Play app is the new `app.jamaa.tv` app (step O4), so products, license testers, service-account access and RTDN are set up for it.
 
+> Production is now the Worker **`jamaa`** (`env.production` in `server/wrangler.jsonc`, [DEV.md → Production](DEV.md#production)); `play` is the preview Worker. Read every `play.…workers.dev` URL below as the production origin, put the billing vars in `env.production.vars`, and add `--env production` to every `wrangler secret` command.
+
 Everything below is run by the owner. Agents never deploy, set secrets or touch Play Console.
 
 ## What deploying `main` changes (once, cannot be undone)
