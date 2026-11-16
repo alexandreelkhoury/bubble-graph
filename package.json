@@ -22,8 +22,8 @@
     "rename:gate": "node tools/rename-gate/src/main.mjs",
     "e2e": "pnpm --filter @jamaa/web-client run e2e",
     "grant": "node server/scripts/grant.mjs",
-    "deploy": "pnpm run build && pnpm --filter @jamaa/content-lint run lint -- --release && pnpm --filter @jamaa/server run deploy",
-    "deploy:preview": "pnpm run build && pnpm --filter @jamaa/content-lint run lint && pnpm --filter @jamaa/server run deploy"
+    "deploy": "pnpm --filter @jamaa/content-lint run lint -- --release && pnpm run build && pnpm --filter @jamaa/server run build:production && pnpm --filter @jamaa/server run deploy:production",
+    "deploy:preview": "pnpm run build && pnpm --filter @jamaa/content-lint run lint && pnpm --filter @jamaa/server run deploy:preview"
   },
   "devDependencies": {
     "typescript": "5.9.3", "vitest": "4.1.11", "@vitest/coverage-v8": "4.1.11",

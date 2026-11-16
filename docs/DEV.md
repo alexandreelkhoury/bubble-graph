@@ -206,6 +206,8 @@ cd server && npx wrangler secret put ENTITLEMENT_KEYS          # paste {"active"
 npx wrangler secret put PLAY_SERVICE_ACCOUNT_JSON < ../play-api.json
 ```
 
+- These commands set the **preview** Worker's secrets. For the production Worker add `--env production` to every
+  `wrangler secret` command (see [Production](#production)); the two Workers never share secrets or keys.
 - They are needed only when `BILLING_ENABLED` is `"1"`: `check-deploy.mjs` then checks both exist (`wrangler secret list`, names only) and refuses the deploy otherwise. With billing off (the shipped `"0"`), the Worker deploys without them.
 - `ADMIN_TOKEN` is the one optional secret (see [Admin grants](#admin-grants-comp-premium-for-a-tv-payments-spec-312)).
 - **Key rotation:** generate `k2`, add it to `keys`, set `"active":"k2"`, deploy; remove `k1` (or keep only its `x`) after at least 16 h (2 × token TTL; 24 h recommended).
@@ -385,45 +387,114 @@ or request bodies. Concretely:
 - content stats carry game, pack and item ids only; the room inspector shows display names of a live room to the owner
   only, never tokens, hashes, connection ids or IP keys.
 
-## Deploy (Cloudflare)
+## Production
 
-1. Log in once: `pnpm --filter @jamaa/server exec wrangler login`.
-2. **Rate-limit namespaces.** `namespace_id` must be a positive integer string that is unique in your account. `"1001"` to `"1004"` in `server/wrangler.jsonc` work locally; change them if they collide with other Workers.
-3. **Billing secrets and vars:** see [Billing](#billing-payments-specmd). Only with `BILLING_ENABLED` `"1"`: the deploy is refused while `PLAY_SERVICE_ACCOUNT_JSON` or `ENTITLEMENT_KEYS` is missing. With billing off, no billing secret is needed.
-4. Deploy: `pnpm run deploy`. This emits the content, builds the web client, dry-run bundles the Worker with the size checks, runs `content-lint --release` and `check-deploy.mjs` (google billing, fake billing off, traces off, `PLAY_PACKAGE_NAME` `app.jamaa.tv`, known `GAMES_ENABLED` ids), then `wrangler deploy`. The Worker is served at `https://play.<your-subdomain>.workers.dev`.
-5. **Custom domain** (optional). Add the domain to the Worker in the Cloudflare dashboard, then set `JOIN_BASE_URL` (see below).
-6. Build the TV app against the deployed URL (see below and [TV.md](TV.md#production-server-url)).
+Two Workers are built from the same code and the same `server/wrangler.jsonc`:
+
+| | Preview | Production |
+|---|---|---|
+| Worker | `play` (the config's top level) | `jamaa` (`env.production`) |
+| Served at | `https://play.<subdomain>.workers.dev` | `https://jamaa.<subdomain>.workers.dev` until a custom domain is attached |
+| Deploy | `pnpm run deploy:preview` | `pnpm run deploy` |
+| Content | drafts allowed (`content-lint`) | reviewed only: `content-lint --release`, then `check-deploy` refuses any `"status":"draft"` pack or item in `server/content-dist` |
+| Durable Objects (rooms, billing, stats) | its own | its own (a Worker's DO namespaces are per script: no shared rooms, purchases, grants, counters or game switches) |
+| Analytics Engine dataset | `jamaa_events` | `jamaa_events_prod` (var `AE_DATASET` names it for `/admin`) |
+| Rate-limit `namespace_id`s | `1001`–`1005` | `2001`–`2005` (account-wide counters, so never the same ids) |
+| Secrets | `wrangler secret put X` | `wrangler secret put X --env production` (secrets are per Worker; nothing is copied) |
+| Who uses it | the owner's test TV (debug builds: `jamaa.previewServerUrl`) | release TV builds (`jamaa.prodServerUrl`) and the public phone page |
+
+`<subdomain>` is the account's workers.dev subdomain (README owner step O1 renames it; the two real origins are written
+once, in `tv-app/gradle.properties`). Both Workers have the same vars except `AE_DATASET`; production ships all five
+games and `BILLING_ENABLED` `"0"` until the owner decides (the billing plumbing is unchanged: see
+[BILLING-LAUNCH.md](BILLING-LAUNCH.md), adding `--env production` to every `wrangler secret` command).
+
+### What the deploy scripts run
+
+- `pnpm run deploy` (never bare `pnpm deploy`: pnpm 10 runs its built-in command): `content-lint --release` first, then
+  `pnpm build` (content emit, web client with its size checks, preview dry run with the Worker size checks), a
+  production dry run (`wrangler deploy --dry-run --env production`), then `check-deploy.mjs --env production` and
+  `wrangler deploy --env production`.
+- `pnpm run deploy:preview`: `pnpm build`, `content-lint` (drafts allowed), `check-deploy.mjs --env preview`, `wrangler deploy`.
+- `check-deploy.mjs` has no default target (`pnpm --filter @jamaa/server run deploy` only prints how to choose). Both
+  targets: Google billing mode, fake billing off, `PLAY_PACKAGE_NAME` `app.jamaa.tv`, known `GAMES_ENABLED` ids, traces
+  off, `ADMIN_TOKEN` never a var or a required secret, `AE_DATASET` = the `EVENTS` dataset, no `env` other than
+  `production`. Production also: Worker name `jamaa`, `DEBUG_INVARIANTS` `"0"`, no placeholder vars or routes, `https://`
+  `JOIN_BASE_URL` / `RTDN_AUDIENCE` without a trailing slash, every non-inherited binding present, nothing shared with
+  preview, no draft content; with `BILLING_ENABLED` `"1"` it checks the billing secrets with `wrangler secret list --env production`.
+- Never run `wrangler deploy --env production` by hand: it skips every check above.
+
+Wrangler environments (checked in wrangler 4.147): `vars`, `durable_objects`, `ratelimits`, `analytics_engine_datasets`,
+`send_email` and secrets are **not** inherited, so `env.production` repeats them; `main`, `compatibility_date`, `rules`,
+`minify`, `assets`, `migrations`, `triggers` (crons), `workers_dev` and `observability` are inherited (observability is
+repeated anyway so traces stay explicitly off). A new binding or var therefore goes in **both** places;
+`check-deploy` fails a production deploy that lacks a non-inherited block.
+
+### One-time setup (owner)
+
+```sh
+pnpm --filter @jamaa/server exec wrangler login           # once per machine
+cd server
+openssl rand -hex 32 | npx wrangler secret put ADMIN_TOKEN --env production         # keep it in the password manager
+npx wrangler secret put CF_ANALYTICS_TOKEN --env production   # optional: the same read-only token as preview works
+```
+
+- Secrets can only be put on a Worker that exists. If `wrangler secret put … --env production` says the Worker does not
+  exist yet, do the first deploy below, then put the secrets (no redeploy needed for a secret).
+- Billing stays off: no `PLAY_SERVICE_ACCOUNT_JSON` / `ENTITLEMENT_KEYS` needed. When the owner turns it on, create
+  NEW entitlement keys for production (do not reuse preview's) and follow BILLING-LAUNCH.md with `--env production`.
+- Analytics Engine is already enabled for the account; `jamaa_events_prod` is created by the first write.
+- Alert email: set `ALERT_EMAIL` / `ALERT_EMAIL_FROM` in `env.production.vars` (Monitoring step 5).
+
+### First production deploy
+
+1. All shipped content reviewed: `pnpm lint:content --release` passes (today it lists the draft items to review).
+2. `pnpm run deploy`. It prints the URL: `https://jamaa.<subdomain>.workers.dev`.
+3. Smoke test:
+
+   ```sh
+   export JAMAA_PROD=https://jamaa.<subdomain>.workers.dev
+   curl -s $JAMAA_PROD/healthz       # {"ok":true,"app":"jamaa","protocol":2}
+   curl -s $JAMAA_PROD/api/config    # {"billing":false,"games":["mishana","bluff","likely","trivia","taqriban"]}
+   ```
+
+   Then open `$JAMAA_PROD/tv` in a laptop browser, join from a phone with the QR code (it must show the `jamaa.` host),
+   play one round, and open `$JAMAA_PROD/admin` with the production `ADMIN_TOKEN` (counters move; History fills after
+   the first events, with `CF_ANALYTICS_TOKEN` set).
+4. Build the TV release against it ([TV.md → Release build](TV.md#release-build-google-play)).
+
+### Rollback
+
+- Code or vars: `cd server && npx wrangler deployments list --env production`, then
+  `npx wrangler rollback <version-id> --env production` (or Workers & Pages → `jamaa` → Deployments → Rollback).
+  A rollback cannot go back past a Durable Object migration; data in the DOs is not rolled back.
+- Billing problem: set `BILLING_ENABLED` `"0"` in `env.production.vars` and `pnpm run deploy` (BILLING-LAUNCH.md).
+- A broken game: switch it off on `/admin` (no deploy), or remove it from `GAMES_ENABLED` and redeploy.
+- Preview is never affected by any of these.
 
 ### Production URLs
 
-Nothing in the repo names a real domain. There are exactly three settings, all empty or placeholders until you deploy:
-
-| Setting | Where | Placeholder / default | Set it to |
+| Setting | Where | Now | With a custom domain (e.g. `jamaa.app`, undecided) |
 |---|---|---|---|
-| TV app server URL → `BuildConfig.SERVER_URL` | `jamaa.prodServerUrl` in `tv-app/gradle.properties`, or `-PserverUrl=…` / env `ORG_GRADLE_PROJECT_serverUrl` | `https://play.example.workers.dev` (placeholder; release builds refuse it, and refuse any non-`https://` URL) | The Worker origin: the `https://play.<your-subdomain>.workers.dev` URL printed by `pnpm run deploy`, or `https://<your-domain>`. No trailing slash, no path |
-| Phone join base URL (QR code and join link) | `JOIN_BASE_URL` in `server/wrangler.jsonc` `vars` (or the dashboard) | `""` = the origin the TV called, i.e. the same URL as above | Leave empty on `*.workers.dev`. With a custom domain: `https://<your-domain>`, so QR codes do not show the `workers.dev` host |
-| Extra browser origins | `ALLOWED_ORIGINS` in `server/wrangler.jsonc` `vars` | `""` = same-origin only | Leave empty in production (the Worker serves the phone page itself). Only for a web client hosted elsewhere: a comma-separated list of exact origins |
+| Production Worker origin | workers.dev, or `env.production.routes` (commented block in `server/wrangler.jsonc`) | `https://jamaa.<subdomain>.workers.dev` | uncomment the `routes` custom-domain entry; keep `workers_dev` on until every shipped TV build uses the domain |
+| TV release server URL → `BuildConfig.SERVER_URL` | `jamaa.prodServerUrl` in `tv-app/gradle.properties` (or `-PserverUrl=` / `ORG_GRADLE_PROJECT_serverUrl`) | the workers.dev origin above | `https://jamaa.app` |
+| TV debug server URL | `jamaa.previewServerUrl` (or `-PserverUrl=`) | `https://play.<subdomain>.workers.dev` | unchanged |
+| Phone join base URL (QR code, join link) | `JOIN_BASE_URL` in `env.production.vars` | `""` = the origin the TV called | `https://jamaa.app` |
+| Play RTDN push audience | `RTDN_AUDIENCE` in `env.production.vars` | `""` (billing off) | `https://jamaa.app/api/billing/rtdn` |
+| Extra browser origins | `ALLOWED_ORIGINS` | `""` (same origin only) | `""` |
 
-The phone client has no server URL of its own: it is served by the Worker and connects to `location.host` (in dev, Vite proxies `/api`, `/parties` and `/healthz` to `:8787`). So `JOIN_BASE_URL` must point at an origin that serves this Worker.
+The phone client has no server URL of its own: it is served by the Worker and connects to `location.host` (in dev, Vite
+proxies `/api`, `/parties` and `/healthz` to `:8787`), and the TV app gets the join URL from the server. So a new domain is
+one Worker setting (`routes` + `JOIN_BASE_URL`) and one TV setting (`jamaa.prodServerUrl`). Release TV builds refuse the
+placeholder, the preview URL and any non-`https://` URL.
 
-Checklist after `pnpm run deploy`:
+Keep `DEBUG_INVARIANTS` at `"0"` (checked for production). Workers observability (logs) is enabled with traces off, and
+the logging rules above keep player data and purchase tokens out of it.
 
-1. `curl https://<worker-origin>/healthz` prints `{"ok":true,"app":"jamaa","protocol":2}` and `/api/config` lists the live games.
-2. With a custom domain: set `JOIN_BASE_URL`, run `pnpm run deploy` again.
-3. Put the same origin in `tv-app/gradle.properties` (`jamaa.prodServerUrl=https://…`) and run `./gradlew :app:bundleRelease`; the build log prints `JAMAA release server URL: …`.
-4. Open `/tv` on the deployed origin: the QR code must show the intended host.
-
-Keep `DEBUG_INVARIANTS` at `"0"` in production. Workers observability (logs) is enabled with traces off, and the logging rules above keep player data and purchase tokens out of it.
-
-
-## Personal / preview deploy (draft content allowed)
-
-`pnpm run deploy` refuses packs still marked `draft` (`content-lint --release`). For the owner's own TV testing before the
-native review, use:
+## Preview deploy (draft content allowed)
 
 ```sh
-pnpm run deploy:preview   # same build + deploy checks, but content-lint without --release (drafts allowed)
+pnpm run deploy:preview   # Worker "play": same build and checks, content-lint without --release (drafts allowed)
 ```
 
-Production `GAMES_ENABLED` is `"mishana,trivia"` (server/wrangler.jsonc). Bluff and Most Likely are registry-enabled (local dev
-and e2e play them) and are added there by the owner when their G milestones are accepted (e.g. `"mishana,bluff,trivia"`). The phone size budget counts only registry-enabled games (`enabled: false` games are reported, not counted).
+It never touches the production Worker or its data. Its rate-limit ids (`1001`–`1005`) must be unique in the account
+(change them if they collide with other Workers; production's are `2001`–`2005`).

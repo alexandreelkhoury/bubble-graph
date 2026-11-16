@@ -10,7 +10,7 @@ import type { Env } from "../../src/env";
 import { createRoom } from "../../src/http";
 import type { InitRoomArgs } from "../../src/room-core";
 import { AdminStoreCore, AUDIT_KEPT, CACHE_KEYS_MAX, sanitizeOverride } from "../../src/monitor/admin-store";
-import { AE_SQL_URL, CONNECT_HELP, contentSql, HISTORY_TTL_MS, historySql } from "../../src/monitor/history";
+import { AE_SQL_URL, aeDataset, CONNECT_HELP, contentSql, HISTORY_TTL_MS, historySql } from "../../src/monitor/history";
 import type { AdminStoreApi, StatsApi } from "../../src/monitor/stats-api";
 import type { StatsSnapshot } from "../../src/monitor/stats-core";
 import { fakeEnv } from "../support/env";
@@ -75,6 +75,14 @@ describe("history (Analytics Engine SQL API)", () => {
     expect(q.players).toContain("double1 AS players");
     expect(historySql(7.9).roomsPerDay).toContain("INTERVAL '7' DAY");
     expect(contentSql(30)).toBe("SELECT blob2 AS game, blob7 AS pack, blob8 AS item, blob5 AS action, SUM(_sample_interval) AS n FROM jamaa_events WHERE index1 = 'content_flag' AND timestamp > NOW() - INTERVAL '30' DAY GROUP BY game, pack, item, action ORDER BY n DESC LIMIT 100 FORMAT JSON");
+  });
+
+  it("SQL dataset: the AE_DATASET var (production jamaa_events_prod); unset or not an identifier → jamaa_events", () => {
+    expect(aeDataset({ AE_DATASET: "jamaa_events_prod" })).toBe("jamaa_events_prod");
+    expect(aeDataset({})).toBe("jamaa_events");
+    expect(aeDataset({ AE_DATASET: "x; DROP" })).toBe("jamaa_events");
+    expect(historySql(90, "jamaa_events_prod").roomsPerDay).toContain("FROM jamaa_events_prod WHERE");
+    expect(contentSql(30, "jamaa_events_prod")).toContain("FROM jamaa_events_prod WHERE");
   });
 
   it("no token → connect help (no API call); with it → one POST per panel to the account's SQL URL, then cached 5 min", async () => {

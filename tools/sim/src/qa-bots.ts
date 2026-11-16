@@ -1,7 +1,7 @@
 // QA bots: slow bot "phones" that join an EXISTING room (the real TV app's room code) and play whatever game the TV
 // starts, so a human can screenshot every phase on the TV. Bots never start a game; the TV remote drives the room.
 //
-//   pnpm --filter @jamaa/sim run qa-bots -- --server https://play.mishana.workers.dev --code ABCD --bots 4 --delay 4000
+//   pnpm --filter @jamaa/sim run qa-bots -- --server https://play.<subdomain>.workers.dev --code ABCD --bots 4 --delay 4000
 //     [--locale en|ar|fr|es] [--hold] [--quiet-lobby]
 //   pnpm --filter @jamaa/sim run qa-bots -- --server … --selftest [--bots 4] [--delay 1500]
 //

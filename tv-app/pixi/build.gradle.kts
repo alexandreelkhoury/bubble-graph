@@ -1,12 +1,14 @@
 // "JAMAA Pixi" (docs/TV.md "JAMAA Pixi (comparison app)"): a second, tiny Android TV app, a fullscreen WebView on
 // <server>/tv-pixi (the PixiJS TV client served by the Worker). Independent of :app (no shared code or resources);
-// AGP 9 built-in Kotlin, no dependencies. The server URL resolves exactly like :app's (app/build.gradle.kts).
+// AGP 9 built-in Kotlin, no dependencies. The server URL resolves like :app's DEBUG builds (app/build.gradle.kts):
+// -PserverUrl, else the preview Worker, else production. It is a comparison app, never released.
 plugins {
     alias(libs.plugins.android.application)
 }
 
 val PLACEHOLDER_SERVER_URL = "https://play.example.workers.dev"
 val serverUrl: String = ((project.findProperty("serverUrl") as String?)
+    ?: (project.findProperty("jamaa.previewServerUrl") as String?)
     ?: (project.findProperty("jamaa.prodServerUrl") as String?)
     ?: PLACEHOLDER_SERVER_URL).trim().trimEnd('/')
 

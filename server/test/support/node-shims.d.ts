@@ -16,6 +16,18 @@ declare module "node:sqlite" {
 
 declare module "node:fs" {
   export function readFileSync(path: string | URL, encoding: "utf8"): string;
+  export function mkdtempSync(prefix: string): string;
+  export function mkdirSync(path: string): void;
+  export function writeFileSync(path: string, data: string): void;
+  export function rmSync(path: string, opts: { recursive: boolean; force: boolean }): void;
+}
+
+declare module "node:os" {
+  export function tmpdir(): string;
+}
+
+declare module "node:path" {
+  export function join(...parts: string[]): string;
 }
 
 interface ImportMeta { readonly url: string }

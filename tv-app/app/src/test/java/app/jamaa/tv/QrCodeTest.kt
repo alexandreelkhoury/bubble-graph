@@ -42,7 +42,7 @@ class QrCodeTest {
         for (density in listOf(2.0f, 1.5f, 3.0f)) {
             // Small corner tiles are checked at the 1080p TV density only (at 1.5 their 4 px modules round coarsely).
             for (dp in listOf(200, 184, 176, 152, 120, 104).filter { it >= 176 || density == 2.0f }) {
-                for (url in listOf("https://play.mishana.workers.dev/ZUZQ", "http://192.168.100.200:8787/KXRT", "https://play.some-long-account-name.workers.dev/KXRT")) {
+                for (url in listOf("https://jamaa.example.workers.dev/ZUZQ", "http://192.168.100.200:8787/KXRT", "https://play.some-long-account-name.workers.dev/KXRT")) {
                     val w = QrMatrix.encode(QrMatrix.content(url)).width
                     val px = (dp * density).toInt()
                     val q = QrMatrix.quietModules(px, w)

@@ -72,3 +72,8 @@ line: \(JAMAA, Mish Ana, Arabizi
 # Owner-step rows (README, JAMAA-PLATFORM §1.6) and the release checklist's note name the OLD identifiers on purpose
 line: ^\| O[0-9]+ \| .*(mishana|app\.mishana\.tv)
 line: ~/\.mishana-keys/` for the old package
+# The Cloudflare account's workers.dev subdomain is still the pre-rename one until owner step O1: the real Worker
+# origins are written ONCE, in tv-app/gradle.properties (every other file derives them or uses <subdomain>).
+line: ^jamaa\.(prod|preview)ServerUrl=https://(jamaa|play)\.mishana\.workers\.dev$
+# The TV build reads the pre-rename key folder as a fallback (docs/TV.md "Release signing")
+line: \.mishana-keys

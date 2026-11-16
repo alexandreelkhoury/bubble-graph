@@ -8,22 +8,72 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-// Server URL baked into BuildConfig.SERVER_URL (SPEC §9.1, §9.4; docs/TV.md "Production server URL"), first set wins:
-//   1. -PserverUrl=…  (or the env var ORG_GRADLE_PROJECT_serverUrl, e.g. in CI)
-//   2. jamaa.prodServerUrl in tv-app/gradle.properties
-//   3. PLACEHOLDER_SERVER_URL below.
-// The placeholder is deliberately not a real host: release builds refuse it (see preReleaseBuild below).
-val PLACEHOLDER_SERVER_URL = "https://play.example.workers.dev"
-val serverUrl: String = ((project.findProperty("serverUrl") as String?)
-    ?: (project.findProperty("jamaa.prodServerUrl") as String?)
-    ?: PLACEHOLDER_SERVER_URL).trim().trimEnd('/')
+fun prop(name: String): String? = (project.findProperty(name) as String?)?.trim()?.takeIf { it.isNotEmpty() }
+fun env(name: String): String? = System.getenv(name)?.trim()?.takeIf { it.isNotEmpty() }
+fun origin(url: String): String = url.trim().trimEnd('/')
 
-// Upload key for Play App Signing (docs/TV.md "Release signing"). Never committed: the properties file lives outside
-// the repo, at -PsigningProps=… or ~/.jamaa-keys/keystore.properties (storeFile, storePassword, keyAlias,
-// keyPassword). Without it, release builds stay unsigned.
-val signingProps: Properties? = File(
-    (project.findProperty("signingProps") as String?) ?: "${System.getProperty("user.home")}/.jamaa-keys/keystore.properties"
-).takeIf { it.isFile }?.let { f -> Properties().apply { f.inputStream().use { load(it) } } }
+// Server URL baked into BuildConfig.SERVER_URL (SPEC §9.1, §9.4; docs/TV.md "Production server URL"), first set wins:
+//   release: -PserverUrl=… (or env ORG_GRADLE_PROJECT_serverUrl, e.g. CI) > jamaa.prodServerUrl > placeholder
+//   debug:   -PserverUrl=… > jamaa.previewServerUrl > jamaa.prodServerUrl > placeholder
+// (jamaa.* live in tv-app/gradle.properties.) The placeholder is deliberately not a real host: release builds refuse it,
+// and the preview URL, and anything not https (see preReleaseBuild below).
+val PLACEHOLDER_SERVER_URL = "https://play.example.workers.dev"
+val cliServerUrl: String? = prop("serverUrl")
+val previewServerUrlProp: String? = prop("jamaa.previewServerUrl")?.let(::origin)
+val releaseServerUrl: String = origin(cliServerUrl ?: prop("jamaa.prodServerUrl") ?: PLACEHOLDER_SERVER_URL)
+val debugServerUrl: String = origin(cliServerUrl ?: previewServerUrlProp ?: prop("jamaa.prodServerUrl") ?: PLACEHOLDER_SERVER_URL)
+
+// Play version (docs/TV.md "Versions"): jamaa.versionCode / jamaa.versionName in gradle.properties (-P overrides them).
+val appVersionCode: Int = prop("jamaa.versionCode")?.toIntOrNull()?.takeIf { it > 0 }
+    ?: error("jamaa.versionCode must be a positive integer (tv-app/gradle.properties)")
+val appVersionName: String = prop("jamaa.versionName") ?: error("jamaa.versionName is missing (tv-app/gradle.properties)")
+
+// Upload key for Play App Signing (docs/TV.md "Release signing"). NEVER in the repo; first complete source wins:
+//   1. env JAMAA_UPLOAD_STORE_FILE / JAMAA_UPLOAD_STORE_PASSWORD / JAMAA_UPLOAD_KEY_ALIAS / JAMAA_UPLOAD_KEY_PASSWORD, or
+//      the Gradle properties jamaa.signing.storeFile / .storePassword / .keyAlias / .keyPassword (put those in
+//      ~/.gradle/gradle.properties, never in tv-app/gradle.properties). keyAlias defaults to "upload", keyPassword to
+//      the store password.
+//   2. a properties file (storeFile, storePassword, keyAlias, keyPassword): -PsigningProps=…, else
+//      ~/.jamaa-keys/keystore.properties, else ~/.mishana-keys/keystore.properties (the pre-rename folder).
+// Without one, assembleRelease is unsigned (a warning) and bundleRelease fails (Play only takes signed bundles).
+class UploadKey(val storeFile: File, val storePassword: String, val keyAlias: String, val keyPassword: String)
+val home: String = System.getProperty("user.home")
+val signingSource: Pair<String, (String) -> String?>? = run {
+    val direct: (String) -> String? = { k ->
+        when (k) {
+            "storeFile" -> env("JAMAA_UPLOAD_STORE_FILE") ?: prop("jamaa.signing.storeFile")
+            "storePassword" -> env("JAMAA_UPLOAD_STORE_PASSWORD") ?: prop("jamaa.signing.storePassword")
+            "keyAlias" -> env("JAMAA_UPLOAD_KEY_ALIAS") ?: prop("jamaa.signing.keyAlias")
+            "keyPassword" -> env("JAMAA_UPLOAD_KEY_PASSWORD") ?: prop("jamaa.signing.keyPassword")
+            else -> null
+        }
+    }
+    if (direct("storeFile") != null) return@run "env/Gradle properties" to direct
+    val explicit = prop("signingProps")
+    val file = if (explicit != null) File(explicit) else listOf("$home/.jamaa-keys", "$home/.mishana-keys")
+        .map { File(it, "keystore.properties") }.firstOrNull { it.isFile }
+    file?.let { f ->
+        val p = Properties().apply { if (f.isFile) f.inputStream().use { load(it) } }
+        f.path to { k: String -> p.getProperty(k)?.trim()?.takeIf { it.isNotEmpty() } }
+    }
+}
+var signingProblem: String? = null
+val uploadKey: UploadKey? = signingSource?.let { (source, get) ->
+    val store = get("storeFile")?.let { File(it.replaceFirst(Regex("^~(?=/|$)"), home)) }
+    val storePassword = get("storePassword")
+    signingProblem = when {
+        store == null && source != "env/Gradle properties" && !File(source).isFile -> "properties file not found: $source"
+        store == null -> "no storeFile in $source"
+        !store.isFile -> "keystore not found: $store (from $source)"
+        store.canonicalPath.startsWith(rootDir.parentFile.canonicalPath + File.separator) ->
+            "keystore $store is inside the repository: move it out (e.g. ~/.jamaa-keys/upload.jks)"
+        storePassword == null -> "no store password in $source"
+        else -> null
+    }
+    if (signingProblem != null || store == null || storePassword == null) null
+    else UploadKey(store, storePassword, get("keyAlias") ?: "upload", get("keyPassword") ?: storePassword)
+}
+val wantsBundle: Boolean = gradle.startParameter.taskNames.any { it.substringAfterLast(':').startsWith("bundle") && it.contains("Release") }
 
 android {
     namespace = "app.jamaa.tv"
@@ -34,25 +84,28 @@ android {
         applicationId = "app.jamaa.tv"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.0.0"
-        buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
+        versionCode = appVersionCode
+        versionName = appVersionName
     }
 
-    signingProps?.let { p ->
+    uploadKey?.let { k ->
         signingConfigs {
             create("upload") {
-                storeFile = file(p.getProperty("storeFile"))
-                storePassword = p.getProperty("storePassword")
-                keyAlias = p.getProperty("keyAlias")
-                keyPassword = p.getProperty("keyPassword")
+                storeFile = k.storeFile
+                storePassword = k.storePassword
+                keyAlias = k.keyAlias
+                keyPassword = k.keyPassword
             }
         }
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "SERVER_URL", "\"$debugServerUrl\"")
+        }
         release {
-            if (signingProps != null) signingConfig = signingConfigs.getByName("upload")
+            buildConfigField("String", "SERVER_URL", "\"$releaseServerUrl\"")
+            if (uploadKey != null) signingConfig = signingConfigs.getByName("upload")
             // R8 matters for Compose on low-end TV SoCs (inlining, dead group removal); resources shrink with it.
             isMinifyEnabled = true
             isShrinkResources = true
@@ -88,20 +141,36 @@ composeCompiler {
     stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose-stability.conf"))
 }
 
-// A release must never ship the placeholder server (SPEC §9.4), nor a cleartext one (release has no cleartext
-// network config, so http:// would fail at runtime): set jamaa.prodServerUrl or pass -PserverUrl=https://….
+// A release must never ship the placeholder server (SPEC §9.4), nor the preview Worker, nor a cleartext one (release
+// has no cleartext network config, so http:// would fail at runtime): set jamaa.prodServerUrl or pass
+// -PserverUrl=https://…. It must be signed when it is a bundle (Play Console only accepts signed uploads).
 tasks.matching { it.name == "preReleaseBuild" }.configureEach {
-    val url = serverUrl // local copies: the task action captures no script object
+    val url = releaseServerUrl // local copies: the task action captures no script object
     val placeholder = PLACEHOLDER_SERVER_URL
+    val preview = previewServerUrlProp
+    val signedBy = uploadKey?.let { "${it.storeFile} (alias ${it.keyAlias})" }
+    val problem = signingProblem
+    val bundle = wantsBundle
+    val version = "$appVersionName ($appVersionCode)"
     doFirst {
         check(url != placeholder && !url.contains(".example.") && !url.contains("<")) {
             "Release build with the placeholder server URL ($url): set jamaa.prodServerUrl in tv-app/gradle.properties " +
-                "to your deployed Worker (e.g. https://play.<your-subdomain>.workers.dev) or pass -PserverUrl=https://…"
+                "to the production Worker (https://jamaa.<subdomain>.workers.dev or the custom domain) or pass -PserverUrl=https://…"
         }
         check(url.startsWith("https://")) {
             "Release server URL must be https:// (release builds allow no cleartext traffic): $url"
         }
-        logger.lifecycle("JAMAA release server URL: $url")
+        check(url != preview) {
+            "Release server URL is the PREVIEW Worker ($url): releases talk to production (jamaa.prodServerUrl)"
+        }
+        check(problem == null) { "Release signing: $problem (docs/TV.md \"Release signing\")" }
+        check(signedBy != null || !bundle) {
+            "bundleRelease needs the upload key: set JAMAA_UPLOAD_STORE_FILE + JAMAA_UPLOAD_STORE_PASSWORD, or " +
+                "jamaa.signing.* in ~/.gradle/gradle.properties, or ~/.jamaa-keys/keystore.properties (docs/TV.md \"Release signing\")"
+        }
+        logger.lifecycle("JAMAA release $version, server URL: $url")
+        if (signedBy != null) logger.lifecycle("JAMAA release signed with upload key $signedBy")
+        else logger.warn("JAMAA release is UNSIGNED (no upload key found): fine for a local R8 check, not for Play")
     }
 }
 

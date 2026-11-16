@@ -2,7 +2,7 @@
 
 The Android TV app lives in [`/tv-app`](../tv-app). It is a single-module Gradle project (`:app`, package `app.jamaa.tv`, launcher name **JAMAA**) written in Kotlin with Compose for TV. JAMAA is the multi-game TV party platform (JAMAA-PLATFORM §0); game #1 follows SPEC.md. The app creates a room on the server, shows the QR code and room code, and is the stage for the whole game (SPEC §9, DESIGN §7).
 
-Contents: [Prerequisites](#prerequisites) · [First-time setup](#first-time-setup-gradle-wrapper) · [Build and install](#build-and-install) · [Emulator](#emulator-google-tv-avd) · [Real TV (TCL)](#real-tv-tcl-google-tv--android-tv) · [Unit tests](#unit-tests) · [Billing: premium and packs](#billing-premium-and-packs) · [Debug server override](#debug-server-override) · [Troubleshooting](#troubleshooting)
+Contents: [Prerequisites](#prerequisites) · [First-time setup](#first-time-setup-gradle-wrapper) · [Build and install](#build-and-install) · [Release build](#release-build-google-play) · [Emulator](#emulator-google-tv-avd) · [Real TV (TCL)](#real-tv-tcl-google-tv--android-tv) · [Unit tests](#unit-tests) · [Billing: premium and packs](#billing-premium-and-packs) · [Debug server override](#debug-server-override) · [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -45,11 +45,15 @@ sdk.dir=/Users/<you>/Library/Android/sdk
 
 ## Build and install
 
-The server URL is baked into `BuildConfig.SERVER_URL` at build time (SPEC §9.4):
+The server URL is baked into `BuildConfig.SERVER_URL` at build time (SPEC §9.4), per build type:
 
-1. `-PserverUrl=…` on the command line, else
-2. `jamaa.prodServerUrl` in `tv-app/gradle.properties` (a placeholder until you deploy; see [Production server URL](#production-server-url)), else
-3. `https://play.example.workers.dev` (the same placeholder).
+| Build | First set wins |
+|---|---|
+| debug | `-PserverUrl=…` > `jamaa.previewServerUrl` (the **preview** Worker `play`) > `jamaa.prodServerUrl` > placeholder |
+| release | `-PserverUrl=…` > `jamaa.prodServerUrl` (the **production** Worker `jamaa`) > placeholder |
+
+Both `jamaa.*` properties live in `tv-app/gradle.properties` (see [Production server URL](#production-server-url));
+`ORG_GRADLE_PROJECT_serverUrl=…` is the CI form of `-PserverUrl`. The placeholder is `https://play.example.workers.dev`.
 
 Build and install a debug APK against your Mac's dev server:
 
@@ -58,6 +62,8 @@ cd tv-app
 ./gradlew :app:assembleDebug :app:installDebug -PserverUrl=http://<mac-ip>:8787
 adb shell am start -n app.jamaa.tv/.MainActivity
 ```
+
+Without `-PserverUrl`, a debug build talks to the preview Worker (`pnpm run deploy:preview`).
 
 **Test TVs with a build from before the rename:** the application id changed to `app.jamaa.tv` with the JAMAA rename (JAMAA-PLATFORM §1.4, §1.5), so the TV sees a new, separate app with empty data (new install id, default settings) and keeps the old one next to it. Remove the old build from each test TV once:
 
@@ -69,37 +75,86 @@ Debug builds allow cleartext `http://` / `ws://` (a debug-only network security 
 
 ### Production server URL
 
-`tv-app/gradle.properties` ships a **placeholder**: `jamaa.prodServerUrl=https://play.example.workers.dev`. Before a release, replace it with your deployed Worker origin (the `https://play.<your-subdomain>.workers.dev` URL that `pnpm run deploy` prints, or your custom domain; no trailing slash, no path), or pass it per build:
+`tv-app/gradle.properties` holds the two real origins, the only place they are written:
 
-```sh
-./gradlew :app:bundleRelease -PserverUrl=https://<your-worker-origin>
-# CI: ORG_GRADLE_PROJECT_serverUrl=https://<your-worker-origin> ./gradlew :app:bundleRelease
-```
+- `jamaa.prodServerUrl`: the production Worker, `https://jamaa.<subdomain>.workers.dev` until a custom domain exists. With a
+  domain (e.g. `https://jamaa.app`), change this one line (and `JOIN_BASE_URL` on the server, [DEV.md → Production URLs](DEV.md#production-urls)).
+- `jamaa.previewServerUrl`: the preview Worker, `https://play.<subdomain>.workers.dev`, for debug builds.
 
-The phone join link in the QR code comes from the server, not from the app (`JOIN_BASE_URL`, see [DEV.md](DEV.md#production-urls)).
+Origins only: `https://`, no path, no trailing slash. One-off override: `-PserverUrl=https://…`. The phone join link in
+the QR code comes from the server, not from the app (`JOIN_BASE_URL`).
 
-Release build (production URL from `gradle.properties`):
+`preReleaseBuild` **fails** when the release URL is the `example.workers.dev` placeholder, the preview URL, or not
+`https://` (release builds allow no cleartext traffic); on success it logs `JAMAA release <versionName> (<versionCode>), server URL: …`.
 
-```sh
-./gradlew :app:assembleRelease      # or :app:bundleRelease for Play (AAB)
-```
-
-Release builds are minified and resource-shrunk (R8). `preReleaseBuild` **fails** while the server URL is still the `example.workers.dev` placeholder, and when it is not `https://` (release builds allow no cleartext traffic); on success it logs `JAMAA release server URL: …`. The Compose compiler treats the protocol models as stable (`app/compose-stability.conf`), so unchanged parts of a broadcast skip recomposition.
+Release builds are minified and resource-shrunk (R8). The Compose compiler treats the protocol models as stable (`app/compose-stability.conf`), so unchanged parts of a broadcast skip recomposition.
 
 The app appears in the TV launcher's apps row as **JAMAA** (Arabic: «جماعة») with its banner (`res/drawable/banner.xml`: the ring mark + the JAMAA wordmark; `drawable-ar/` mirrors it with «جماعة»). The banner, the adaptive launcher icon (`mipmap-anydpi-v26/ic_launcher.xml`: background, foreground and the Android 13 monochrome layer) and the in-app mark (`drawable/ic_mark.xml`) are generated by `assets/brand/scripts/gen_brand.py` (see [assets/brand/README.md](../assets/brand/README.md)); do not edit them by hand.
 
 ### Release signing
 
-Play App Signing holds the app signing key; we only keep an **upload key**. `app/build.gradle.kts` signs release builds with it when it finds a properties file (never committed): `-PsigningProps=/path/to/keystore.properties`, else `~/.jamaa-keys/keystore.properties`:
+Play App Signing holds the app signing key; we only keep an **upload key**. It never goes in the repository (the build
+refuses a keystore inside it). `app/build.gradle.kts` takes the first complete source:
 
-```properties
-storeFile=/home/<you>/.jamaa-keys/upload.jks
-storePassword=…
-keyAlias=upload
-keyPassword=…
-```
+1. **Env vars or Gradle properties** (good for CI and for `~/.gradle/gradle.properties`, which is outside the repo):
 
-Create one with `keytool -genkeypair -keystore upload.jks -alias upload -keyalg RSA -keysize 4096 -validity 10000`. Without the file, release builds are unsigned. If the upload key is lost, request an upload-key reset in Play Console (Setup → App signing). Back up `~/.jamaa-keys/` somewhere safe and offline.
+   | Env var | Gradle property | |
+   |---|---|---|
+   | `JAMAA_UPLOAD_STORE_FILE` | `jamaa.signing.storeFile` | path to the `.jks` (`~` allowed) |
+   | `JAMAA_UPLOAD_STORE_PASSWORD` | `jamaa.signing.storePassword` | |
+   | `JAMAA_UPLOAD_KEY_ALIAS` | `jamaa.signing.keyAlias` | default `upload` |
+   | `JAMAA_UPLOAD_KEY_PASSWORD` | `jamaa.signing.keyPassword` | default = the store password |
+
+   Never put `jamaa.signing.*` in `tv-app/gradle.properties` (it is committed).
+2. **A properties file**: `-PsigningProps=/path/to/keystore.properties`, else `~/.jamaa-keys/keystore.properties`, else
+   `~/.mishana-keys/keystore.properties` (the pre-rename folder, where the current upload key lives):
+
+   ```properties
+   storeFile=/home/<you>/.jamaa-keys/upload.jks
+   storePassword=…
+   keyAlias=upload
+   keyPassword=…
+   ```
+
+Without a key, `assembleRelease` builds an unsigned APK (with a warning; fine for an R8 check) and `bundleRelease` fails.
+An incomplete source (missing file or password) fails every release build with the reason. The log names the keystore
+used. Create a key with `keytool -genkeypair -keystore upload.jks -alias upload -keyalg RSA -keysize 4096 -validity 10000`.
+If the upload key is lost, request an upload-key reset in Play Console (Setup → App signing). Back up the key folder
+somewhere safe and offline.
+
+### Versions
+
+`jamaa.versionCode` and `jamaa.versionName` in `tv-app/gradle.properties` (`-Pjamaa.versionCode=…` overrides for one build):
+
+- **versionCode**: +1 for **every** AAB uploaded to any Play track (internal, closed, production). Play refuses a code it
+  has already seen, even on another track, and never accepts a lower one. Never reuse a code after a failed upload.
+- **versionName**: `MAJOR.MINOR.PATCH`, shown to users. PATCH for fixes, MINOR for features or a new game, MAJOR for a
+  protocol break (a new server protocol the old app cannot speak).
+- Bump both in one commit (`tv: release <versionName> (<versionCode>)`) on the commit you build, and tag it
+  `tv-v<versionName>` after the upload.
+
+### Release build (Google Play)
+
+Requirements checked (2026-11): `targetSdk` 36 meets Google Play's target-API rule for new apps and updates (API 36
+for phones from 2026-08-31; Android TV apps need API 34 or higher). The manifest is TV-only (`android.software.leanback`
+required, `LEANBACK_LAUNCHER`, banner) and requires no touchscreen, faketouch or Wi-Fi; the UI is D-pad only.
+
+1. The production Worker is deployed and passes the smoke test ([DEV.md → Production](DEV.md#production)).
+2. Bump `jamaa.versionCode` (and `jamaa.versionName`), commit.
+3. Build the bundle (the upload key from one of the sources above):
+
+   ```sh
+   cd tv-app
+   ./gradlew :app:testDebugUnitTest :app:bundleRelease
+   # -> app/build/outputs/bundle/release/app-release.aab
+   ```
+
+   Check the log: `JAMAA release 1.0.0 (N), server URL: https://jamaa.…` and `signed with upload key …`.
+4. Optional device check of the same code: `./gradlew :app:installRelease` (signed with the upload key; uninstall the
+   debug build first, the signatures differ), or let Play's internal-testing track install it.
+5. Play Console → JAMAA (`app.jamaa.tv`) → Test and release → **Internal testing** → Create new release → upload the
+   AAB → release notes → roll out. Promote to closed/production from there once tested on a TV; the first production
+   release of a TV app goes through Android TV review (Play Console → Advanced settings → Form factors → Android TV).
 
 ## Emulator (Google TV AVD)
 
@@ -252,12 +307,12 @@ A second Android TV app, **JAMAA Pixi** (`tv-app/pixi`, package `app.jamaa.tv.pi
 
 ```bash
 # deploy the web side first (the Worker serves /tv-pixi from the web-client build)
-pnpm deploy                      # or: pnpm deploy:preview
+pnpm run deploy:preview          # or: pnpm run deploy (production)
 # build + install the comparison app (the native one is untouched: ./gradlew :app:installDebug)
-cd tv-app && ./gradlew :pixi:installDebug -PserverUrl=https://play.mishana.workers.dev
+cd tv-app && ./gradlew :pixi:installDebug   # the preview Worker (jamaa.previewServerUrl); -PserverUrl=… for another
 ```
 
-The server URL resolves like `:app` (`-PserverUrl`, else `jamaa.prodServerUrl`). Try it in a laptop browser first: `https://<server>/tv-pixi`. The page-size check (`pnpm --filter @jamaa/web-client size`) keeps Pixi out of the phone budget; the TV chunks are reported against a soft cap only.
+The server URL resolves like `:app` debug builds (`-PserverUrl`, else `jamaa.previewServerUrl`, else `jamaa.prodServerUrl`). Try it in a laptop browser first: `https://<server>/tv-pixi`. The page-size check (`pnpm --filter @jamaa/web-client size`) keeps Pixi out of the phone budget; the TV chunks are reported against a soft cap only.
 
 ## Debug server override
 

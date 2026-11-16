@@ -58,6 +58,7 @@
   //    is the plan's daily Worker request quota (Free: 100000, unverified) and ALERT_QUOTA_RATIO the share that alerts.
   //  - CF_ACCOUNT_ID (JAMAA-PLATFORM §8.9): the account whose Analytics Engine SQL API the /admin history reads, with the
   //    secret CF_ANALYTICS_TOKEN (read-only: Account > Account Analytics > Read; unset = /admin asks to connect it).
+  //    AE_DATASET: the dataset that history queries; must equal the EVENTS binding's dataset (check-deploy.mjs).
   //  - BILLING_ENABLED: the production switch for everything premium/billing (server/src/config.ts). "0": billing and
   //    admin grants 404, billing crons idle (monitoring runs), rooms play the whole catalog, GET /api/config says {"billing":false} and every
   //    client hides its premium UI. "1": payments as specified. `pnpm dev` and the e2e webServer pass "1".
@@ -67,6 +68,55 @@
     "PLAY_PACKAGE_NAME": "app.jamaa.tv", "RTDN_AUDIENCE": "", "RTDN_SA_EMAIL": "", "RTDN_SUBSCRIPTION": "",
     "ALERT_EMAIL": "", "ALERT_EMAIL_FROM": "", "ALERT_SERVER_ERRORS_PER_HOUR": "20", "ALERT_CLIENT_ERRORS_PER_HOUR": "50",
     "PLAN_DAILY_REQUESTS": "100000", "ALERT_QUOTA_RATIO": "0.8",
-    "CF_ACCOUNT_ID": "0e3069b0e41fcc0463f6f603c3a1a0d1"
+    "CF_ACCOUNT_ID": "0e3069b0e41fcc0463f6f603c3a1a0d1", "AE_DATASET": "jamaa_events"
+  },
+
+  // ─── Environments (docs/DEV.md "Production") ───────────────────────────────────────────────────────────────────────
+  // The TOP LEVEL above is the PREVIEW Worker "play" (https://play.<subdomain>.workers.dev): the owner's test server,
+  // `pnpm run deploy:preview`, draft content allowed. `env.production` below is the PRODUCTION Worker "jamaa":
+  // `pnpm run deploy` (= `wrangler deploy --env production` behind the strict release gate). Never run a bare
+  // `wrangler deploy --env production`: check-deploy.mjs is what refuses drafts, fake billing and debug settings.
+  //
+  // Wrangler 4.147 inheritance (checked in wrangler-dist normalizeAndValidateEnvironment, and the config schema notes):
+  //  - INHERITED from the top level unless repeated: main, compatibility_date, rules, minify, workers_dev, assets,
+  //    migrations, triggers, observability, routes. `name` is inherited as "<name>-<env>", so it is set explicitly.
+  //  - NOT inherited (must be repeated here, or the binding is missing): vars, secrets, durable_objects, ratelimits,
+  //    analytics_engine_datasets, send_email. Secrets are per Worker: `wrangler secret put X --env production`.
+  // Durable Object namespaces belong to a Worker script, so "jamaa" gets its own Room/Billing/Stats namespaces and data
+  // (no shared rooms, purchases or counters with preview); the v1–v3 migrations run on its first deploy.
+  "env": {
+    "production": {
+      "name": "jamaa",
+      // Repeated on purpose (it would be inherited): check-deploy.mjs requires traces off in every environment.
+      "observability": { "enabled": true, "logs": { "enabled": true, "invocation_logs": true }, "traces": { "enabled": false } },
+      // Until a custom domain exists the Worker answers on https://jamaa.<subdomain>.workers.dev (workers_dev is
+      // inherited: true). With a domain (e.g. jamaa.app, undecided), uncomment and set JOIN_BASE_URL, RTDN_AUDIENCE
+      // and the TV's jamaa.prodServerUrl to it. Keep workers_dev on until every shipped TV build uses the domain.
+      // "routes": [{ "pattern": "jamaa.app", "custom_domain": true }],
+      "durable_objects": { "bindings": [{ "name": "Room", "class_name": "Room" }, { "name": "BILLING", "class_name": "Billing" }, { "name": "STATS", "class_name": "Stats" }] },
+      // Rate-limit namespace ids are account-wide counters: production uses 2001–2005 so it never shares a bucket with
+      // preview's 1001–1005.
+      "ratelimits": [
+        { "name": "CREATE_ROOM_LIMITER", "namespace_id": "2001", "simple": { "limit": 10, "period": 60 } },
+        { "name": "CONNECT_LIMITER", "namespace_id": "2002", "simple": { "limit": 60, "period": 60 } },
+        { "name": "BILLING_LIMITER", "namespace_id": "2003", "simple": { "limit": 30, "period": 60 } },
+        { "name": "RTDN_LIMITER", "namespace_id": "2004", "simple": { "limit": 120, "period": 60 } },
+        { "name": "CLIENT_ERROR_LIMITER", "namespace_id": "2005", "simple": { "limit": 10, "period": 60 } }
+      ],
+      // Its own dataset (created on first write); AE_DATASET below must name it (the /admin history queries it).
+      "analytics_engine_datasets": [{ "binding": "EVENTS", "dataset": "jamaa_events_prod" }],
+      "send_email": [{ "name": "ALERT_MAILER" }],
+      // Same meaning as the top-level vars. Launch: all five games; billing OFF until the owner decides (BILLING_ENABLED
+      // "1" then needs PLAY_SERVICE_ACCOUNT_JSON + ENTITLEMENT_KEYS set with --env production; docs/BILLING-LAUNCH.md).
+      // PLAN_DAILY_REQUESTS is the ACCOUNT's quota, shared with preview.
+      "vars": {
+        "JOIN_BASE_URL": "", "ALLOWED_ORIGINS": "", "DEBUG_INVARIANTS": "0", "BILLING_ENABLED": "0", "GAMES_ENABLED": "mishana,bluff,likely,trivia,taqriban",
+        "BILLING_MODE": "google", "ALLOW_FAKE_BILLING": "0",
+        "PLAY_PACKAGE_NAME": "app.jamaa.tv", "RTDN_AUDIENCE": "", "RTDN_SA_EMAIL": "", "RTDN_SUBSCRIPTION": "",
+        "ALERT_EMAIL": "", "ALERT_EMAIL_FROM": "", "ALERT_SERVER_ERRORS_PER_HOUR": "20", "ALERT_CLIENT_ERRORS_PER_HOUR": "50",
+        "PLAN_DAILY_REQUESTS": "100000", "ALERT_QUOTA_RATIO": "0.8",
+        "CF_ACCOUNT_ID": "0e3069b0e41fcc0463f6f603c3a1a0d1", "AE_DATASET": "jamaa_events_prod"
+      }
+    }
   }
 }
