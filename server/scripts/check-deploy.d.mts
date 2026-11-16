@@ -1,7 +1,14 @@
+export type DeployTarget = "preview" | "production";
+export const TARGETS: DeployTarget[];
+export const PRODUCTION_NAME: string;
+export const NOT_INHERITED: string[];
 export function stripJsonc(text: string): string;
-export function checkDeployConfig(jsoncText: string): string[];
+export function resolveTarget(cfg: Record<string, unknown>, target: DeployTarget): { name?: string; vars?: Record<string, string>; [key: string]: unknown };
+export function checkDeployConfig(jsoncText: string, target?: string): string[];
+export function draftContentProblems(distDir: string): string[];
 export const BILLING_SECRETS: string[];
-export function billingOn(jsoncText: string): boolean;
+export function billingOn(jsoncText: string, target?: DeployTarget): boolean;
 export function missingBillingSecrets(secretListJson: string): string[];
-export function deployWarnings(jsoncText: string): string[];
+export function deployWarnings(jsoncText: string, target?: DeployTarget): string[];
+export function targetFromArgs(argv: string[]): string | null;
 export const GAME_IDS: string[];
