@@ -272,7 +272,10 @@ function intent(s: TaqribanState, i: TaqribanIntent, by: GameActor, ctx: GameCtx
       const pool = eligibleItems(ctx.content, s.settings.packIds, s.locale);
       const d = clone(s);
       const rng = createRng(d.rngState);
-      const rep = drawReplacement(pool, new Set([...d.questionIds, ...d.skippedIds]), d.usedKeys, rng);
+      // At most one question per family: the game's other questions' families are avoided (the skipped one's is not).
+      const others = d.questionIds.filter((_, k) => k !== d.index);
+      const families = new Set(pool.filter((c) => others.includes(c.item.id)).map((c) => c.item.family).filter((f): f is string => f !== undefined));
+      const rep = drawReplacement(pool, new Set([...d.questionIds, ...d.skippedIds]), d.usedKeys, rng, families);
       if (!rep) return err("NO_CONTENT_AVAILABLE", s);
       d.rngState = rng.state;
       d.skippedIds.push(s.cur.id);

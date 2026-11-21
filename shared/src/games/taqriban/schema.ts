@@ -18,6 +18,11 @@ export const TaqribanItemSchema = z.strictObject({
   id: z.string().regex(ITEM_ID),
   tier: z.enum(["free", "pass"]),
   tags: z.array(z.enum(TAQRIBAN_TAGS)).min(1).max(3),
+  /**
+   * Questions built on the same template ("the area of <place>", "the population of <country>"): a game draws at most
+   * one item per family (owner request: the same question shape twice in a game is boring). Optional.
+   */
+  family: z.string().regex(/^[a-z0-9-]{1,24}$/).optional(),
   text: L4,
   unit: Unit,
   /** The true value, in the unit the question states. Positive (the closeness rule needs answer > 0). */

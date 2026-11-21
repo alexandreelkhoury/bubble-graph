@@ -29,6 +29,7 @@
         "lebanon",
         "geo"
       ],
+      "family": "area",
       "text": {
         "en": "What is the area of Lebanon, in km²?",
         "fr": "Quelle est la superficie du Liban, en km² ?",
@@ -727,6 +728,7 @@
       "tags": [
         "people"
       ],
+      "family": "population",
       "text": {
         "en": "What was Egypt's population in its 2017 census?",
         "fr": "Quelle était la population de l'Égypte lors du recensement de 2017 ?",
@@ -752,6 +754,7 @@
       "tags": [
         "people"
       ],
+      "family": "population",
       "text": {
         "en": "What was Saudi Arabia's population in its 2022 census?",
         "fr": "Quelle était la population de l'Arabie saoudite lors du recensement de 2022 ?",
@@ -777,6 +780,7 @@
       "tags": [
         "people"
       ],
+      "family": "population",
       "text": {
         "en": "What was Jordan's population in its 2015 census?",
         "fr": "Quelle était la population de la Jordanie lors du recensement de 2015 ?",
@@ -802,6 +806,7 @@
       "tags": [
         "geo"
       ],
+      "family": "area",
       "text": {
         "en": "What is the area of Saudi Arabia, in km² (CIA World Factbook figure)?",
         "fr": "Quelle est la superficie de l'Arabie saoudite, en km² (chiffre du CIA World Factbook) ?",
@@ -827,6 +832,7 @@
       "tags": [
         "geo"
       ],
+      "family": "area",
       "text": {
         "en": "What is the area of Qatar, in km²?",
         "fr": "Quelle est la superficie du Qatar, en km² ?",

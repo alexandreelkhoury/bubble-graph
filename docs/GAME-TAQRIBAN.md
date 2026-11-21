@@ -260,6 +260,12 @@ question per language; ≥ 28 questions per pack; drafts are warnings (errors wi
 then the least recently used (`rerun`); consecutive questions avoid sharing their first tag. Memory: the shown and skipped
 ids, ≤ 120 (`TAQ_MEMORY_MAX`, so the room history stays inside the §2.6 budget with five games).
 
+**One question per family (owner decision, 2026-11-21).** An item may carry `family` (`"area"`: "What is the area of
+<place>?", `"population"`: "What was <country>'s population…?"). A game draws at most one item per family: fresh items
+of a new family first, then old items of a new family, and a second item of a family only when nothing else is left. A
+host skip's replacement avoids the families of the game's other questions the same way. The launch packs tag 6 area and
+12 population questions.
+
 ### 11.4 Launch content (draft)
 
 | Pack | Questions | Mix |

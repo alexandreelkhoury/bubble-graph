@@ -712,6 +712,7 @@
       "tags": [
         "people"
       ],
+      "family": "population",
       "text": {
         "en": "On 15 November 2022 the UN marked a world population milestone. How many people?",
         "fr": "Le 15 novembre 2022, l'ONU a célébré un cap de la population mondiale. Combien d'habitants ?",
@@ -763,6 +764,7 @@
         "people",
         "history"
       ],
+      "family": "population",
       "text": {
         "en": "About how many people lived on Earth in the year 1900 (UN 1999 estimate)?",
         "fr": "Environ combien de personnes vivaient sur Terre en 1900 (estimation ONU 1999) ?",
@@ -788,6 +790,7 @@
       "tags": [
         "people"
       ],
+      "family": "population",
       "text": {
         "en": "What was China's population in its 2020 census?",
         "fr": "Quelle était la population de la Chine lors du recensement de 2020 ?",
@@ -813,6 +816,7 @@
       "tags": [
         "people"
       ],
+      "family": "population",
       "text": {
         "en": "What was the population of the United States in the 2020 census?",
         "fr": "Quelle était la population des États-Unis lors du recensement de 2020 ?",
@@ -838,6 +842,7 @@
       "tags": [
         "people"
       ],
+      "family": "population",
       "text": {
         "en": "What was Brazil's population in its 2022 census?",
         "fr": "Quelle était la population du Brésil lors du recensement de 2022 ?",
@@ -863,6 +868,7 @@
       "tags": [
         "people"
       ],
+      "family": "population",
       "text": {
         "en": "What was Japan's population in its 2020 census?",
         "fr": "Quelle était la population du Japon lors du recensement de 2020 ?",
@@ -888,6 +894,7 @@
       "tags": [
         "people"
       ],
+      "family": "population",
       "text": {
         "en": "What was Canada's population in its 2021 census?",
         "fr": "Quelle était la population du Canada lors du recensement de 2021 ?",
@@ -913,6 +920,7 @@
       "tags": [
         "people"
       ],
+      "family": "population",
       "text": {
         "en": "What was Mexico's population in its 2020 census?",
         "fr": "Quelle était la population du Mexique lors du recensement de 2020 ?",
@@ -939,6 +947,7 @@
         "people",
         "geo"
       ],
+      "family": "population",
       "text": {
         "en": "How many people lived in the city of Paris (official 2021 count)?",
         "fr": "Combien d'habitants comptait la ville de Paris (population légale 2021) ?",
@@ -1090,6 +1099,7 @@
       "tags": [
         "geo"
       ],
+      "family": "area",
       "text": {
         "en": "What is the area of Russia, the largest country on Earth, in km²?",
         "fr": "Quelle est la superficie de la Russie, le plus grand pays du monde, en km² ?",
@@ -1115,6 +1125,7 @@
       "tags": [
         "geo"
       ],
+      "family": "area",
       "text": {
         "en": "What is the area of Vatican City, the smallest country on Earth, in km² (Britannica figure)?",
         "fr": "Quelle est la superficie du Vatican, le plus petit pays du monde, en km² (chiffre de Britannica) ?",
@@ -1141,6 +1152,7 @@
         "geo",
         "nature"
       ],
+      "family": "area",
       "text": {
         "en": "What is the area of the Sahara desert, in km² (Wikipedia figure)?",
         "fr": "Quelle est la superficie du désert du Sahara, en km² (chiffre de Wikipédia) ?",
