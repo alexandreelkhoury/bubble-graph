@@ -32,7 +32,9 @@ Owner request: a Christmas pack for every game, for a Christmas dinner. This is 
 - Tiers: most facts free (as written: 27 of 33; the six harder ones are `pass`), every final free, so a free room can
   play a Long game from this pack alone.
 - Note: with no pack selected (`packIds: []` = all packs), the Christmas facts and finals also join the general pool.
-  Nothing in the engine is seasonal; leaving it that way keeps the engine unchanged.
+  Nothing in the engine is seasonal; leaving it that way keeps the engine unchanged. *Superseded by the review
+  (2026-11-21):* themed packs are opt-in; `[]` leaves them out (`isThemedPack`, GAME-BLUFF §11.3), so Christmas finals
+  do not make up a third of every room's finals in July. Select the pack to play it.
 - `knownIn`: items most people at a table of that language would know are skipped there (Lebanese customs in AR,
   Provence's 13 desserts in FR, El Gordo's singing children in ES).
 
@@ -92,3 +94,14 @@ alone: `startBlocker` null in every locale and length, free room included; a see
 reaches RESULTS and every drawn prompt, final included, comes from it), a lint test for the themed-pack rule, GAME-BLUFF
 §11.3 and §11.5 notes. Then `pnpm i`, `pnpm run content:emit`, content-lint (0 errors),
 `server/scripts/gen-content-modules.mjs`, `pnpm test`, `pnpm typecheck`.
+
+## Review (2026-11-21)
+
+Independent fact-check and language pass. Reworded to what is solidly sourced: xmas-007 (1962 is the secretariat's
+founding; the office is in Libourne today, its Libourne site is dated 1967 by some sources), xmas-024 ("the Three Kings'
+animals": camels in family memory, horses in Puerto Rican folk art), xmas-030 (tinsel began in Nuremberg around 1610 as
+silver; the prompt no longer says "for trees"), xmas-031 (sled reindeer are often castrated males that also keep their
+antlers, so "a reindeer with antlers at Christmas is often a female"); notes softened on xmas-011 (Swedish premiere
+1959 or 1960), xmas-018 (about 6,300 singers in 1983, virtual in 2020-21), xmas-023 (1952 TV start disputed), xmas-027
+(cress is also sprouted, so no longer a house lie). Language: AR xmas-012, f01, f03, f04, f07; neutral ES (Papá Noel,
+no vosotros, no Spain-only film title); f06 names Santa's sleigh.

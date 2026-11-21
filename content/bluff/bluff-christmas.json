@@ -165,7 +165,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://www.vam.ac.uk/articles/the-christmas-cracker (Tom Smith, cracker, 1847)"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.vam.ac.uk/articles/the-christmas-cracker ; https://historicengland.org.uk/listing/what-is-designation/heritage-highlights/how-did-sweets-and-fire-lead-to-the-invention-of-the-christmas-cracker (Tom Smith, 1847 is the traditional date; the bang came later)"
       }
     },
     {
@@ -324,7 +324,7 @@
         "display": {
           "fr": "En 1955, à cause d'une faute dans une pub, des enfants qui voulaient le Père Noël appelaient ___",
           "ar": "سنة 1955، غلطة بإعلان خط بابا نويل خلت الولاد يتصلوا بـ ___",
-          "es": "En 1955, por una errata en un anuncio, los niños que querían hablar con Santa llamaban a ___"
+          "es": "En 1955, por una errata en un anuncio, los niños que querían hablar con Papá Noel llamaban a ___"
         }
       },
       "truth": {
@@ -377,7 +377,7 @@
         "en": "The colonel on duty played along and gave Santa's position. NORAD still tracks Santa every Christmas Eve",
         "fr": "Le colonel de garde a joué le jeu et donné la position du Père Noël. Le NORAD le suit encore chaque année",
         "ar": "الكولونيل اللي كان مناوب جاراهن وعطاهن مطرح بابا نويل. لهلق النوراد بيلحقو كل سنة",
-        "es": "El coronel de guardia les siguió el juego y dio la posición de Santa. NORAD aún lo sigue cada año"
+        "es": "El coronel de guardia les siguió el juego y dio la posición de Papá Noel. NORAD aún lo sigue cada año"
       },
       "review": {
         "status": "draft",
@@ -449,7 +449,7 @@
         "en": "The slogan was Kentucky for Christmas. Families book their bucket weeks ahead",
         "fr": "Le slogan disait Kentucky pour Noël. Les familles réservent leur seau des semaines avant",
         "ar": "الشعار كان كنتاكي للميلاد. العيل بيحجزوا السطل قبل بأسابيع",
-        "es": "El lema era Kentucky para Navidad. Las familias reservan su cubeta semanas antes"
+        "es": "El lema era Kentucky para Navidad. Las familias encargan su pedido semanas antes"
       },
       "review": {
         "status": "draft",
@@ -463,12 +463,12 @@
       "difficulty": 3,
       "knownIn": [],
       "prompt": {
-        "original": "Since 1962, French children's letters to Santa are answered from the town of ___",
+        "original": "La Poste's Santa office, answering French kids' letters since 1962, is in the town of ___",
         "translit": null,
         "display": {
-          "fr": "Depuis 1962, les lettres des enfants au Père Noël reçoivent leur réponse depuis la ville de ___",
-          "ar": "من سنة 1962، رسايل ولاد فرنسا لبابا نويل بيجيها الجواب من مدينة ___",
-          "es": "Desde 1962, las cartas de los niños franceses a Papá Noel se responden desde la ciudad de ___"
+          "fr": "Le secrétariat du Père Noël de La Poste, qui répond aux lettres des enfants depuis 1962, se trouve à ___",
+          "ar": "مكتب بابا نويل تبع البريد الفرنسي، اللي عم يرد على رسايل الولاد من 1962، موجود بمدينة ___",
+          "es": "La oficina de Papá Noel de La Poste, que responde las cartas de los niños franceses desde 1962, está en la ciudad de ___"
         }
       },
       "truth": {
@@ -515,14 +515,14 @@
         ]
       },
       "note": {
-        "en": "La Poste's Santa office has answered from Libourne since 1962. The first reply is said to be by Françoise Dolto",
-        "fr": "Le secrétariat du Père Noël de La Poste répond depuis Libourne depuis 1962. La 1re réponse serait de Françoise Dolto",
-        "ar": "مكتب بابا نويل تبع البريد الفرنسي بيرد من ليبورن من 1962. بيقولوا أول جواب كتبتو فرانسواز دولتو",
-        "es": "La oficina de Papá Noel de La Poste responde desde Libourne desde 1962. La primera respuesta sería de Françoise Dolto"
+        "en": "Over a million letters arrive there every year. Françoise Dolto is said to have written the very first reply",
+        "fr": "Plus d'un million de lettres y arrivent chaque année. La toute première réponse serait de Françoise Dolto",
+        "ar": "بيوصلو أكتر من مليون رسالة بالسنة. بيقولوا إنو فرانسواز دولتو كتبت أول جواب",
+        "es": "Allí llegan más de un millón de cartas al año. Se dice que la primera respuesta la escribió Françoise Dolto"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://www.europe1.fr/france/le-secretariat-du-pere-noel-de-la-poste-a-ouvert-ses-portes-872018 ; https://comitehistoire.laposte.fr/wp-content/uploads/2024/06/communication_pere_noel2013-CHP.pdf (secrétariat du Père Noël, Libourne, 1962)"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.connexionfrance.com/news/letters-from-santa-a-french-idea/497042 ; https://www.europe1.fr/france/le-secretariat-du-pere-noel-de-la-poste-a-ouvert-ses-portes-872018 (secrétariat du Père Noël created 1962 with Dolto's first reply; based in Libourne, its Libourne site is dated 1967 by some sources)"
       }
     },
     {
@@ -760,7 +760,7 @@
         "en": "Donald Duck cartoons",
         "fr": "Les dessins animés de Donald",
         "ar": "رسوم دونالد داك",
-        "es": "Dibujos del Pato Donald"
+        "es": "Dibujos animados del Pato Donald"
       },
       "truthAlt": {
         "en": [
@@ -798,19 +798,19 @@
         ],
         "es": [
           "Una final de saltos de esquí",
-          "Sonrisas y lágrimas",
+          "Un musical de Hollywood",
           "Un concurso de cocina"
         ]
       },
       "note": {
-        "en": "The same 1958 Disney special airs every year, called Kalle Anka. Nobody cooks during that hour",
-        "fr": "Le même spécial Disney de 1958 passe chaque année, sous le nom de Kalle Anka. Pendant une heure, personne ne cuisine",
-        "ar": "نفس برنامج ديزني تبع 1958 بينعرض كل سنة، اسمو كاله أنكا. ولا حدا بيطبخ بهيديك الساعة",
-        "es": "El mismo especial de Disney de 1958 se emite cada año, se llama Kalle Anka. Nadie cocina durante esa hora"
+        "en": "It's a 1958 Disney special, called Kalle Anka in Sweden and shown every year for decades. Families plan the day around it",
+        "fr": "C'est un spécial Disney de 1958, Kalle Anka en Suède, diffusé chaque année depuis des décennies. Les familles s'organisent autour",
+        "ar": "هيدا برنامج ديزني من 1958، اسمو بالسويد كاله أنكا، بينعرض كل سنة من عشرات السنين. العيل بتنظم نهارها على أساسو",
+        "es": "Es un especial de Disney de 1958, Kalle Anka en Suecia, emitido cada año desde hace décadas. Las familias organizan el día en torno a él"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://www.atlasobscura.com/articles/sweden-christmas-donald-duck-television (3 pm Christmas Eve, 1958 special)"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.atlasobscura.com/articles/sweden-christmas-donald-duck-television ; https://www.thelocal.se/20191216/adventcalendar-the-strange-things-that-happen-in-sweden-at-3pm-on-christmas-eve (3 pm on Christmas Eve, the 1958 Disney special From All of Us to All of You; Swedish premiere given as 1959 or 1960)"
       }
     },
     {
@@ -824,7 +824,7 @@
         "translit": null,
         "display": {
           "fr": "On dit que le Chat de Noël islandais dévore ceux qui n'ont pas eu de nouveaux ___ pour Noël",
-          "ar": "بإيسلندا بيقولوا إنو قطوط الميلاد بياكل كل مين ما إجاه ___ جديدة بالعيد",
+          "ar": "بإيسلندا بيقولوا إنو قط الميلاد بياكل كل مين ما إجاه ___ جديدة بالعيد",
           "es": "Dicen que el Gato de Navidad islandés se come a quien no recibió ___ nueva por Navidad"
         }
       },
@@ -1307,14 +1307,14 @@
         ]
       },
       "note": {
-        "en": "Locals call it Daiku, number nine. An Osaka concert has gathered 10,000 singers every December since 1983",
-        "fr": "On l'appelle Daiku, numéro neuf. À Osaka, un concert réunit 10 000 choristes chaque décembre depuis 1983",
-        "ar": "بيسموها دايكو، يعني رقم تسعة. بأوساكا في حفلة بتجمع 10 آلاف مغني كل كانون من 1983",
-        "es": "La llaman Daiku, número nueve. En Osaka, un concierto reúne 10 000 cantantes cada diciembre desde 1983"
+        "en": "Locals call it Daiku, number nine. Since 1983, an Osaka concert has brought together up to 10,000 singers",
+        "fr": "On l'appelle Daiku, numéro neuf. Depuis 1983, un concert à Osaka réunit jusqu'à 10 000 choristes",
+        "ar": "بيسموها دايكو، يعني رقم تسعة. من 1983، في حفلة بأوساكا بتجمع لحد 10 آلاف مغني",
+        "es": "La llaman Daiku, número nueve. Desde 1983, un concierto en Osaka reúne hasta 10 000 cantantes"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://www.japantimes.co.jp/culture/2010/12/24/music/japan-makes-beethovens-ninth-no-1-for-the-holidays/ (Daiku, year-end Ninth; Osaka 10,000 chorus since 1983)"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.japantimes.co.jp/culture/2010/12/24/music/japan-makes-beethovens-ninth-no-1-for-the-holidays/ ; https://www.suntory.com/topics/2022/01/007898.html (Daiku, year-end Ninth; Osaka Cast of 10,000 since 1983, about 6,300 singers the first year, virtual in 2020-21)"
       }
     },
     {
@@ -1388,7 +1388,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://www.npr.org/2023/12/22/1221136041/spains-christmas-lottery-el-gordo-starts-dishing-out-millions-of-dollars-in-priz ; https://www.loteriasyapuestas.es/en/loteria-nacional/historia-del-juego/historia-de-la-loteria-de-navidad"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.npr.org/2023/12/22/1221136041/spains-christmas-lottery-el-gordo-starts-dishing-out-millions-of-dollars-in-priz ; https://www.loteriasyapuestas.es/en/loteria-nacional/historia-del-juego/historia-de-la-loteria-de-navidad (San Ildefonso pupils sing numbers and prizes, December 22)"
       }
     },
     {
@@ -1403,7 +1403,7 @@
         "display": {
           "fr": "En Pologne, la table du réveillon garde traditionnellement ___ en plus",
           "ar": "ببولندا، طاولة ليلة الميلاد بتخلي عادة ___ زيادة",
-          "es": "En Polonia, la mesa de Nochebuena guarda por tradición un ___ de más"
+          "es": "En Polonia, en la mesa de Nochebuena se deja por tradición ___"
         }
       },
       "truth": {
@@ -1669,14 +1669,14 @@
         ]
       },
       "note": {
-        "en": "His arrival has been on national TV since 1952. Dutch children get their gifts on December 5",
-        "fr": "Son arrivée passe à la télé nationale depuis 1952. Les enfants néerlandais ont leurs cadeaux le 5 décembre",
-        "ar": "وصولو عالتلفزيون الوطني من 1952. ولاد هولندا بياخدوا هداياهن بـ 5 كانون الأول",
-        "es": "Su llegada se televisa desde 1952. Los niños neerlandeses reciben regalos el 5 de diciembre"
+        "en": "Each year he lands in a different Dutch port, live on TV. Dutch children get their gifts on December 5",
+        "fr": "Chaque année, il accoste dans un port différent, en direct à la télé. Les enfants néerlandais ont leurs cadeaux le 5 décembre",
+        "ar": "كل سنة بيوصل على مرفأ مختلف بهولندا، مباشر عالتلفزيون. ولاد هولندا بياخدوا هداياهن بـ 5 كانون الأول",
+        "es": "Cada año llega a un puerto distinto, en directo por televisión. Los niños neerlandeses reciben regalos el 5 de diciembre"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://www.iamexpat.nl/lifestyle/events-festivals-netherlands/sinterklaas-arrives-netherlands ; https://www.stnicholascenter.org/around-the-world/festivals/official-entry"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.stnicholascenter.org/around-the-world/festivals/official-entry ; https://www.dutchnews.nl/2025/11/inburgering-with-dn-how-to-celebrate-sinterklaas-the-dutch-way/ (steamboat from Spain, mid-November, gifts on December 5)"
       }
     },
     {
@@ -1686,12 +1686,12 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "On January 5, Puerto Rican kids put a shoebox of ___ under the bed for the camels",
+        "original": "On January 5, Puerto Rican kids leave a shoebox of ___ for the Three Kings' animals",
         "translit": null,
         "display": {
-          "fr": "Le 5 janvier, les enfants portoricains glissent sous le lit une boîte à chaussures pleine d'___ pour les chameaux",
-          "ar": "بـ 5 كانون التاني، ولاد بورتوريكو بيحطوا تحت التخت علبة صباط فيها ___ للجمال",
-          "es": "El 5 de enero, los niños puertorriqueños dejan bajo la cama una caja de zapatos con ___ para los camellos"
+          "fr": "Le 5 janvier, les enfants portoricains préparent une boîte à chaussures pour les montures des Rois mages. Dedans : ___",
+          "ar": "بـ 5 كانون التاني، ولاد بورتوريكو بيحضروا علبة صباط فيها ___ لحيوانات المجوس",
+          "es": "El 5 de enero, los niños puertorriqueños dejan una caja de zapatos con ___ para los animales de los Reyes Magos"
         }
       },
       "truth": {
@@ -1741,14 +1741,14 @@
         ]
       },
       "note": {
-        "en": "It's for the Three Kings' camels on the night before January 6. By morning the box holds presents",
-        "fr": "C'est pour les chameaux des Rois mages, la veille du 6 janvier. Au matin, la boîte contient des cadeaux",
-        "ar": "هيدا لجمال المجوس ليلة 6 كانون التاني. بالصبح بتكون العلبة مليانة هدايا",
-        "es": "Es para los camellos de los Reyes Magos, la víspera del 6 de enero. Por la mañana, la caja trae regalos"
+        "en": "It's for the Kings' camels or horses, the night before January 6. By morning the box holds presents",
+        "fr": "C'est pour les chameaux ou les chevaux des Rois mages, la veille du 6 janvier. Au matin, la boîte contient des cadeaux",
+        "ar": "هيدا لجمال أو خيل المجوس، ليلة 6 كانون التاني. بالصبح بتكون العلبة مليانة هدايا",
+        "es": "Es para los camellos o caballos de los Reyes Magos, la víspera del 6 de enero. Por la mañana, la caja trae regalos"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://www.discoverpuertorico.com/article/timeless-puerto-rican-tradition-three-kings-day ; https://www.npr.org/2018/01/07/576301260/puerto-ricans-celebrate-three-kings-day-in-frigid-new-england"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.discoverpuertorico.com/article/timeless-puerto-rican-tradition-three-kings-day ; https://www.npr.org/2018/01/07/576301260/puerto-ricans-celebrate-three-kings-day-in-frigid-new-england (grass in a shoebox on January 5; camels in family memory, horses in folk art)"
       }
     },
     {
@@ -1942,33 +1942,33 @@
         "en": [
           "Mint and parsley",
           "Pine seedlings",
-          "Watercress"
+          "Basil"
         ],
         "fr": [
           "De la menthe et du persil",
           "Des pins",
-          "Du cresson"
+          "Du basilic"
         ],
         "ar": [
           "نعنع وبقدونس",
           "شتول صنوبر",
-          "رشاد"
+          "حبق"
         ],
         "es": [
           "Menta y perejil",
           "Plantones de pino",
-          "Berros"
+          "Albahaca"
         ]
       },
       "note": {
-        "en": "The seeds go on cotton in early December and the green shoots decorate the house and the foot of the tree",
-        "fr": "On les sème début décembre et les pousses vertes décorent la maison et le pied du sapin",
-        "ar": "بيزرعوها أول كانون الأول، والزرع الأخضر بيزين البيت وتحت الشجرة",
-        "es": "Se siembran a principios de diciembre y los brotes verdes adornan la casa y el pie del árbol"
+        "en": "Seeds go on cotton around Saint Barbara's day, December 4, and the green shoots decorate the house and the foot of the tree",
+        "fr": "On les sème vers la Sainte-Barbe, le 4 décembre, et les pousses vertes décorent la maison et le pied du sapin",
+        "ar": "بيزرعوها حوالي عيد البربارة، 4 كانون الأول، والزرع الأخضر بيزين البيت وتحت الشجرة",
+        "es": "Se siembran hacia el día de Santa Bárbara, el 4 de diciembre, y los brotes adornan la casa y el pie del árbol"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://www.middleeasteye.net/features/lebanese-christmas-traditions-symbolise-solidarity-and-rebirth ; https://whychristmas.com/cultures/lebanon"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://en.wikipedia.org/wiki/Eid_il-Burbara ; https://today.lorientlejour.com/article/1322198/five-lebanese-christmas-traditions-and-a-very-cute-syrian-one.html (wheat, lentils, chickpeas or other seeds sprouted on cotton, set under the tree)"
       }
     },
     {
@@ -2042,7 +2042,7 @@
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://en.wikipedia.org/wiki/Eid_il-Burbara ; https://fanack.com/lebanon/culture-of-lebanon/saint-barbara-for-christians-of-the-levant-preservation-and-tradition/"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://en.wikipedia.org/wiki/Eid_il-Burbara ; https://tasteofbeirut.com/wheat-berry-pudding (December 4, boiled wheat with sugar, anise and nuts)"
       }
     },
     {
@@ -2126,12 +2126,12 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "The very first tinsel for Christmas trees was made of shredded real ___",
+        "original": "Tinsel was invented in Germany in the 1600s, first made of shredded real ___",
         "translit": null,
         "display": {
-          "fr": "Les toutes premières guirlandes pour sapin étaient faites en ___ véritable, découpé en fils",
-          "ar": "أول زينة لماعة لشجر الميلاد كانت معمولة من ___ عن جد، مقصوص خيطان",
-          "es": "El primer espumillón para los árboles de Navidad se hacía con hilos de ___ auténtica"
+          "fr": "Les guirlandes scintillantes sont nées en Allemagne au XVIIe siècle, et les premiers fils étaient en ___ véritable",
+          "ar": "الزينة اللماعة انخلقت بألمانيا بالقرن 17، وأول خيطانها كانت من ___ عن جد",
+          "es": "El espumillón nació en Alemania en el siglo XVII y los primeros hilos eran de ___ auténtica"
         }
       },
       "truth": {
@@ -2181,14 +2181,14 @@
         ]
       },
       "note": {
-        "en": "It came from Germany and shone beautifully, but it tarnished black near candle flames. Today's is plastic",
-        "fr": "Venue d'Allemagne, elle brillait, mais noircissait près des bougies. Celle d'aujourd'hui est en plastique",
-        "ar": "إجت من ألمانيا وكانت تلمع، بس كانت تسود حد الشموع. اليوم صارت بلاستيك",
-        "es": "Venía de Alemania y brillaba, pero se ennegrecía junto a las velas. La de hoy es de plástico"
+        "en": "Nuremberg made it around 1610. Silver shone but soon tarnished, so cheaper metals and then plastic took over",
+        "fr": "Nuremberg en fabriquait vers 1610. L'argent brillait mais noircissait vite : d'autres métaux puis le plastique l'ont remplacé",
+        "ar": "بدأت بنورمبرغ حوالي 1610. الفضة كانت تلمع بس بتسود بسرعة، فإجت معادن أرخص وبعدين البلاستيك",
+        "es": "Núremberg la fabricaba hacia 1610. La plata brillaba pero se ennegrecía pronto; luego llegaron otros metales y el plástico"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://en.wikipedia.org/wiki/Tinsel ; https://www.foxbusiness.com/lifestyle/first-tinsel-decorating-christmas-trees-created-real-silver"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://en.wikipedia.org/wiki/Tinsel ; https://www.irishtimes.com/life-and-style/homes-and-property/fine-art-antiques/design-moment-tinsel-1600s-1.3729925 (Nuremberg around 1610, shredded silver; inventor and date uncertain)"
       }
     },
     {
@@ -2198,69 +2198,69 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "Male reindeer lose their antlers by early winter, so Santa's antlered team is likely ___",
+        "original": "Male reindeer drop their antlers in autumn, so an antlered one at Christmas is often a ___",
         "translit": null,
         "display": {
-          "fr": "Les rennes mâles perdent leurs bois au début de l'hiver, donc l'équipe à bois du Père Noël est sûrement ___",
-          "ar": "دكور الرنة بيوقعوا قرونن أول الشتوية، يعني فريق بابا نويل اللي إلو قرون غالبا ___",
-          "es": "Los renos machos pierden la cornamenta a principios del invierno, así que el equipo de Santa seguramente es ___"
+          "fr": "Les rennes mâles adultes perdent leurs bois à la fin de l'automne : un renne qui a encore ses bois à Noël est souvent ___",
+          "ar": "دكور الرنة الكبار بيوقعوا قرونن آخر الخريف، يعني الرنة اللي بعدها بقرونها بالميلاد غالبا ___",
+          "es": "Los renos machos adultos pierden la cornamenta a finales del otoño, así que un reno que aún la tiene en Navidad suele ser ___"
         }
       },
       "truth": {
         "en": "Female",
-        "fr": "Des femelles",
-        "ar": "إناث",
-        "es": "Hembras"
+        "fr": "Une femelle",
+        "ar": "أنثى",
+        "es": "Una hembra"
       },
       "truthAlt": {
         "en": [
-          "All female",
-          "Females"
+          "A female",
+          "Female reindeer"
         ],
         "fr": [
-          "Femelles",
-          "Que des femelles"
+          "Femelle",
+          "Des femelles"
         ],
         "ar": [
-          "كلن إناث",
-          "الإناث"
+          "إنثى",
+          "نتاية"
         ],
         "es": [
-          "Todas hembras",
-          "Hembra"
+          "Hembra",
+          "Un reno hembra"
         ]
       },
       "houseLies": {
         "en": [
-          "Very old males",
-          "Young calves",
-          "Moose in disguise"
+          "Very old male",
+          "Moose in disguise",
+          "Lost mountain goat"
         ],
         "fr": [
-          "Des vieux mâles",
-          "Des faons",
-          "Des élans déguisés"
+          "Un très vieux mâle",
+          "Un élan déguisé",
+          "Un bouquetin égaré"
         ],
         "ar": [
-          "دكور ختيارية",
-          "عجول صغار",
-          "أيائل متنكرة"
+          "دكر ختيار كتير",
+          "أيل متنكر",
+          "تيس جبلي ضايع"
         ],
         "es": [
-          "Machos muy viejos",
-          "Crías",
-          "Alces disfrazados"
+          "Un macho muy viejo",
+          "Un alce disfrazado",
+          "Una cabra montés perdida"
         ]
       },
       "note": {
-        "en": "Males drop antlers from late November to mid-December; females keep theirs until calving in spring",
-        "fr": "Les mâles perdent leurs bois de fin novembre à mi-décembre ; les femelles les gardent jusqu'au printemps",
-        "ar": "الدكور بيوقعوا قرونن من آخر تشرين التاني لنص كانون؛ الإناث بيضلوا فيهن للربيع",
-        "es": "Los machos pierden la cornamenta de fines de noviembre a mediados de diciembre; las hembras, en primavera"
+        "en": "Females keep theirs all winter, until calving in spring. Sled reindeer, often neutered males, keep theirs too",
+        "fr": "Les femelles gardent leurs bois tout l'hiver, jusqu'à la mise bas. Les rennes de traîneau, souvent des mâles castrés, aussi",
+        "ar": "الإناث بيضلوا بقرونن كل الشتوية لحتى يخلفوا بالربيع. ورنات الزلاجة كمان، لأنها غالبا دكور مخصية",
+        "es": "Las hembras la conservan todo el invierno, hasta parir en primavera. Los renos de trineo, a menudo machos castrados, también"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://www.britannica.com/one-good-fact/why-are-santas-reindeer-likely-female ; https://www.snopes.com/fact-check/reindeer-games/"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.britannica.com/one-good-fact/why-are-santas-reindeer-likely-female ; https://www.pbs.org/wnet/nature/blog/reindeer-fact-sheet (males shed in late autumn, females keep antlers until calving; castrated sled males keep theirs too)"
       }
     },
     {
@@ -2325,14 +2325,14 @@
         ]
       },
       "note": {
-        "en": "Pickers climb firs that can reach 50 metres in the mountains around Ambrolauri to gather the cones",
-        "fr": "Les cueilleurs grimpent dans des sapins qui peuvent atteindre 50 mètres, dans les montagnes d'Ambrolauri",
-        "ar": "اللماما بيطلعوا على شجر شوح بيوصل لـ 50 متر بجبال أمبرولاوري ليقطفوا الكوز",
+        "en": "Pickers climb firs up to 50 metres tall in the mountains around Ambrolauri to gather the cones",
+        "fr": "Les cueilleurs grimpent dans des sapins qui atteignent jusqu'à 50 mètres, dans les montagnes d'Ambrolauri",
+        "ar": "القطافين بيطلعوا على شجر شوح بيوصل لـ 50 متر بجبال أمبرولاوري ليقطفوا الكوز",
         "es": "Los recolectores trepan abetos de hasta 50 metros en las montañas de Ambrolauri para coger las piñas"
       },
       "review": {
         "status": "draft",
-        "source": "[VERIFY] fact-checked 2026-11-21, https://www.nationalgeographic.com/science/article/georgia-mountains-christmas-tree-harvesting-fair-trees-danger"
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.nationalgeographic.com/science/article/georgia-mountains-christmas-tree-harvesting-fair-trees-danger ; https://www.rferl.org/a/georgia-christmas-trees-europe-business/32105473.html (Georgian Nordmann seed for European growers, Ambrolauri, firs climbed to 30-50 m)"
       }
     },
     {
@@ -2438,7 +2438,7 @@
         "ar": [
           "مين بيقعد قدام السنة الجاية",
           "مين خلص الجزرات",
-          "دور مين ينزل فيها"
+          "دور مين ينزلها"
         ],
         "es": [
           "Quién va delante el año que viene",
@@ -2500,7 +2500,7 @@
         "en": "The recipe never left the North Pole. Yours is now the house special",
         "fr": "La recette n'a jamais quitté le pôle Nord. La vôtre devient la spécialité maison",
         "ar": "الوصفة ما طلعت من القطب. وصفتكن صارت سر البيت",
-        "es": "La receta nunca salió del Polo Norte. La vuestra es ahora la especialidad de la casa"
+        "es": "La receta nunca salió del Polo Norte. La de esta noche es ahora la especialidad de la casa"
       },
       "review": {
         "status": "draft",
@@ -2536,7 +2536,7 @@
           "Rendez-vous l'hiver prochain"
         ],
         "ar": [
-          "بدي كشكول",
+          "بدي شال",
           "وين إجريي",
           "منتلاقى الشتوية الجاية"
         ],
@@ -2586,7 +2586,7 @@
           "Les nuits de travail en décembre"
         ],
         "ar": [
-          "اللمعة بالقهوة",
+          "الغليتر بالقهوة",
           "ورق التغليف الجديد",
           "شغل الليل كل كانون"
         ],
@@ -2664,12 +2664,12 @@
       "difficulty": 2,
       "knownIn": [],
       "prompt": {
-        "original": "What is written on page one of the sleigh's instruction manual?",
+        "original": "What is written on page one of Santa's sleigh manual?",
         "translit": null,
         "display": {
-          "fr": "Qu'est-ce qui est écrit à la première page du mode d'emploi du traîneau ?",
-          "ar": "شو مكتوب بأول صفحة من كتيب تعليمات الزلاجة؟",
-          "es": "¿Qué pone en la primera página del manual del trineo?"
+          "fr": "Qu'est-ce qui est écrit à la première page du mode d'emploi du traîneau du Père Noël ?",
+          "ar": "شو مكتوب بأول صفحة من كتيب تعليمات زلاجة بابا نويل؟",
+          "es": "¿Qué dice la primera página del manual del trineo de Papá Noel?"
         }
       },
       "truth": {},
@@ -2718,7 +2718,7 @@
         "translit": null,
         "display": {
           "fr": "Que se chuchotent les guirlandes lumineuses la nuit ?",
-          "ar": "شو بيوشوشوا بعض أضواية الميلاد بالليل؟",
+          "ar": "شو بيتوشوشوا لمبات الزينة بالليل؟",
           "es": "¿Qué se susurran las luces de Navidad por la noche?"
         }
       },

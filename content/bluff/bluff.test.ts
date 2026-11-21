@@ -2,7 +2,7 @@
 // The engine and lint helpers are imported by path: neither is a public `@jamaa/shared` export (server/sim/tests only).
 import { describe, expect, it } from "vitest";
 import { content } from "../../shared/src/games/bluff/content";
-import { BLOCKLIST, contentCounts, displayNormalize, hasEnoughContent, hitsBlocklist, isTooClose, playableItems, scriptOk, startBlocker, type BluffCatalog, type BluffPack } from "../../shared/src/games/bluff/engine/index";
+import { BLOCKLIST, contentCounts, displayNormalize, hasEnoughContent, hitsBlocklist, isThemedPack, isTooClose, playableItems, scriptOk, startBlocker, type BluffCatalog, type BluffPack } from "../../shared/src/games/bluff/engine/index";
 import { runBluffBotGame } from "../../shared/src/testing/bots/bluff";
 import { lintBluffRaw } from "../../tools/content-lint/src/games/bluff";
 import ar from "../../shared/i18n/games/bluff/ar.json";
@@ -312,6 +312,16 @@ describe("bluff packs: the Christmas pack plays a whole game alone (2026-11-21, 
           expect(c.facts, l).toBeGreaterThanOrEqual(8);
           expect(c.final, l).toBeGreaterThanOrEqual(8);
         }
+  });
+
+  it("is opt-in: the all-packs pool ([]) leaves it out, in every language, in full and free rooms (review 2026-11-21)", () => {
+    for (const cat of [fullCatalog, freeCatalog])
+      for (const l of LOCALES) {
+        expect(isThemedPack(cat.packs.find((p) => p.id === X) as BluffPack), l).toBe(true);
+        expect(playableItems(cat, [], l).some((c) => c.pack.id === X), l).toBe(false);
+        expect(playableItems(cat, [X], l).length, l).toBeGreaterThan(0);
+        expect(cat.packs.filter((p) => p.id !== X).every((p) => !isThemedPack(p)), l).toBe(true);
+      }
   });
 
   it("a seeded bot game with only this pack selected reaches RESULTS, and every prompt drawn (final included) is from it", () => {
