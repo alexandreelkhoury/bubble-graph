@@ -5,30 +5,17 @@
 // value), a beat, the true answer's pin falls, the closest dots light up with the "Closest!" stamp, then the points.
 import "./tv.css";
 import { useEffect } from "preact/hooks";
-import { soundMuted } from "../../tv-mock/sound/player";
 import type { TvRoomView } from "@jamaa/shared/protocol/v2";
 import { fmtNum, isolate, isolateLtr } from "../../i18n/t";
 import { Character } from "../../components/Character";
 import { useDeadline } from "../../components/Timer";
 import { groupDigits, layoutLine, playersOf, ranked, shortNum, taqOfTv, tk, withUnit } from "./phone";
 import type { Player, Taq, TaqPub } from "./model";
+import { REVEAL_T, answerAt } from "./tv/timeline";
+import { dropRate, sfx } from "./tv/sfx";
+export { REVEAL_T, answerAt };
 
 const LINE_X0 = 72, LINE_W = 816;
-/** Reveal timeline (ms): guesses start, one every STEP, then a beat, then the answer pin, then the stamp. */
-export const REVEAL_T = { lineIn: 300, firstDot: 700, step: 260, beat: 900, stamp: 700 } as const;
-export const answerAt = (n: number): number => REVEAL_T.firstDot + REVEAL_T.step * Math.max(0, n - 1) + REVEAL_T.beat;
-
-/** Taqriban's own cues (tools/gen-sounds → public/sounds/taqriban/taqriban_*.ogg), under the per-device mute. */
-function sfx(cue: "drop" | "pin" | "closest", rate = 1): void {
-  if (soundMuted.value || typeof Audio === "undefined") return;
-  try {
-    const a = new Audio(`${import.meta.env.BASE_URL}sounds/taqriban/taqriban_${cue}.ogg`);
-    a.playbackRate = rate;
-    void a.play().catch(() => undefined);
-  } catch {
-    /* sound is never required: every cue has a visual counterpart */
-  }
-}
 
 /** The reveal's sound track, on the same timeline as the CSS delays (calm motion: only the pin). */
 function useRevealSounds(n: number, key: string): void {
@@ -36,7 +23,7 @@ function useRevealSounds(n: number, key: string): void {
     const calm = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
     const ids: ReturnType<typeof setTimeout>[] = [];
     const at = (ms: number, f: () => void): void => { ids.push(setTimeout(f, calm ? 0 : ms)); };
-    if (!calm) for (let i = 0; i < n; i++) at(REVEAL_T.firstDot + REVEAL_T.step * i, () => sfx("drop", Math.pow(2, Math.min(i, 9) / 12)));
+    if (!calm) for (let i = 0; i < n; i++) at(REVEAL_T.firstDot + REVEAL_T.step * i, () => sfx("drop", dropRate(i)));
     at(answerAt(n), () => sfx("pin"));
     if (n > 0) at(answerAt(n) + REVEAL_T.stamp, () => sfx("closest"));
     return () => ids.forEach(clearTimeout);
