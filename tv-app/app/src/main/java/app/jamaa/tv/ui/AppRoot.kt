@@ -13,6 +13,7 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -167,6 +168,11 @@ fun AppRoot(vm: GameViewModel) {
     val toasts = remember { ToastState() }
     var debugOpen by remember { mutableStateOf(false) }
     var splashPlayed by rememberSaveable { mutableStateOf(false) }
+    val splashContent = remember(vm) {
+        movableContentOf { st: HomeStatus, animate: Boolean ->
+            HomeScreen(st, vm::createRoom, { debugOpen = true }, animate = animate)
+        }
+    }
     val sounds = remember(vm) { TvSounds(vm::playCue, vm::stopCues) }
 
     LaunchedEffect(vm) {
@@ -199,8 +205,12 @@ fun AppRoot(vm: GameViewModel) {
                     .padding(horizontal = JamaaSpace.SafeH, vertical = JamaaSpace.SafeV),
             ) {
                 // HUB-01 plays once per app session: a status change or a reconnect shows the splash still.
+                // The splash is shown from several places (creating the room, then inside the room until its first
+                // state): movable content carries the SAME HomeScreen, with its running entrance, from one place to
+                // the next. A plain call would start a new, already "played" (still) splash there, which cut the
+                // entrance after the ~200 ms room creation.
                 val splash: @Composable (HomeStatus) -> Unit = { st ->
-                    HomeScreen(st, vm::createRoom, { debugOpen = true }, animate = !splashPlayed)
+                    splashContent(st, !splashPlayed)
                     SideEffect { splashPlayed = true }
                 }
                 when (s) {
