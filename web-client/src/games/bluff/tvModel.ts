@@ -119,3 +119,8 @@ export function seatExpression(r: Reveal, beat: Beat, mark: Mark, s: Seat, ended
   }
 }
 
+
+/** "In Arabic: …" only when the truth's source wording IS Arabic (proverbs, Teta's words); an English-source fact's
+ * original is not shown under that label. */
+export const showArabicOriginal = (t: { text: string; original: string | null }): boolean =>
+  !!t.original && t.original !== t.text && /[\u0600-\u06FF]/.test(t.original);

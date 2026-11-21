@@ -43,6 +43,7 @@ import {
   neonAlpha, overshoot, pickSize, podiumCols, podiumDropAt, popSpots, prog, raceCols, raceRowH, RACE, rowTops, stackHeight, tiltOf, twistCells,
 } from "./bluffLayout";
 import { Char, FONT } from "./kit";
+import { showArabicOriginal } from "../games/bluff/tvModel";
 import type { Scene } from "./stage";
 
 // ---------------------------------------------------------------- palette (tv.css :root of .bf, the café world tokens)
@@ -1815,7 +1816,7 @@ class RevealPhase implements Phase {
   private noteCaption(): Container {
     const r = this.r;
     const note = r.truth!.note!;
-    const orig = r.truth?.original && r.truth.original !== r.truth.text ? ` · ${tk("reveal.inArabic")} ${isolate(r.truth.original)}` : "";
+    const orig = r.truth && showArabicOriginal(r.truth) && r.truth.original ? ` · ${tk("reveal.inArabic")} ${isolate(r.truth.original)}` : "";
     const c = new Container();
     const tt = tx(`${tk("reveal.itMeans", { note })}${orig}`, 18, { w: "700", fill: GOLDL, wrap: 720, lh: 1.35 });
     const w = tt.width + 36, h = tt.height + 12;

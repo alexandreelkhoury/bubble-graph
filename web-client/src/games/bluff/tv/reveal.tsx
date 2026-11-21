@@ -27,6 +27,7 @@ import {
 import type { Coin, Pt } from "../choreo";
 import { BfTop, Cafe, Seats, TvPrompt, rtl, tk } from "./stage";
 import { cue, riseRate, sfx } from "./sfx";
+import { showArabicOriginal } from "../tvModel";
 import { revealElapsed } from "./revealTime";
 
 /** OK in game completes the running reveal (module hook for TvGameModule.onOk). */
@@ -243,7 +244,7 @@ function LieCard({ m, r, step, beat, pid, mark }: { m: BluffModel; r: Reveal; st
         {truth && mark >= 2 && caption && <p class="bfcap bfcap--big">{caption}</p>}
         {truth && r.truth?.note && mark >= 4 && (
           <p class="bfcap bfcap--note" data-s={`${pid}.note`} dir="auto">{tk("reveal.itMeans", { note: r.truth.note })}
-            {r.truth.original && r.truth.original !== r.truth.text && <span class="bfcap__orig"> · {tk("reveal.inArabic")} <bdi dir="rtl">{r.truth.original}</bdi></span>}</p>
+            {showArabicOriginal(r.truth) && <span class="bfcap__orig"> · {tk("reveal.inArabic")} <bdi dir="rtl">{r.truth.original}</bdi></span>}</p>
         )}
       </div>
     </>
@@ -429,7 +430,7 @@ function EndCard({ m, r }: { m: BluffModel; r: Reveal }) {
       {r.truth?.note && (
         <div class="bfrv__caption" style={{ top: `${CARD.y + CARD.h / 2 + 18}px` }}>
           <p class="bfcap bfcap--note" dir="auto">{tk("reveal.itMeans", { note: r.truth.note })}
-            {r.truth.original && r.truth.original !== r.truth.text && <span class="bfcap__orig"> · {tk("reveal.inArabic")} <bdi dir="rtl">{r.truth.original}</bdi></span>}</p>
+            {showArabicOriginal(r.truth) && <span class="bfcap__orig"> · {tk("reveal.inArabic")} <bdi dir="rtl">{r.truth.original}</bdi></span>}</p>
         </div>
       )}
     </>

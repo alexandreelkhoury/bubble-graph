@@ -181,3 +181,13 @@ describe("keyframe equivalents", () => {
   });
   it("stays inside the 960 × 540 canvas", () => { expect([W, H]).toEqual([960, 540]); });
 });
+
+describe("truth caption: the Arabic original only when it is Arabic", () => {
+  it("shows an Arabic-script original, hides an English or identical one", async () => {
+    const { showArabicOriginal } = await import("../../../src/games/bluff/tvModel");
+    expect(showArabicOriginal({ text: "Le loup", original: "الديب" })).toBe(true);
+    expect(showArabicOriginal({ text: "Des humains", original: "Human ones" })).toBe(false);
+    expect(showArabicOriginal({ text: "Human ones", original: "Human ones" })).toBe(false);
+    expect(showArabicOriginal({ text: "x", original: null })).toBe(false);
+  });
+});
