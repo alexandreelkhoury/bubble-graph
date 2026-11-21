@@ -131,7 +131,7 @@
           "Caja de chocolates"
         ]
       },
-      "difficulty": 3,
+      "difficulty": 2,
       "reviewedBy": [],
       "notes": "Theme: Decorations"
     },
@@ -247,18 +247,20 @@
       "civilian": {
         "text": "Gambas",
         "alt": [
-          "Gamba"
+          "Gamba",
+          "Camarones",
+          "Camarón"
         ]
       },
       "undercover": {
-        "text": "Langostinos",
+        "text": "Mejillones",
         "alt": [
-          "Langostino"
+          "Mejillón"
         ]
       },
-      "difficulty": 3,
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Food"
+      "notes": "Theme: Food. Review: replaces Gambas / Langostinos (too close, Spain-only distinction)"
     },
     {
       "id": "p016",
@@ -638,14 +640,14 @@
         "text": "Villancico"
       },
       "undercover": {
-        "text": "Nana",
+        "text": "Canción de cuna",
         "alt": [
-          "Canción de cuna"
+          "Nana"
         ]
       },
       "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Carols and music"
+      "notes": "Theme: Carols and music. Review: \"Canción de cuna\" as text (Nana means grandma in Latin America)"
     },
     {
       "id": "p043",

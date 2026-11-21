@@ -91,14 +91,17 @@
     {
       "id": "p005",
       "civilian": {
-        "text": "Soulier"
-      },
-      "undercover": {
         "text": "Sabot"
       },
-      "difficulty": 3,
+      "undercover": {
+        "text": "Pantoufle",
+        "alt": [
+          "Chausson"
+        ]
+      },
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Decorations. Les souliers et les sabots au pied du sapin."
+      "notes": "Theme: Decorations. Le sabot au pied du sapin. Review: replaces Soulier / Sabot (near-synonyms)"
     },
     {
       "id": "p006",
@@ -121,14 +124,11 @@
         ]
       },
       "undercover": {
-        "text": "Calendrier de l'Avent",
-        "alt": [
-          "Calendrier"
-        ]
+        "text": "Étable"
       },
-      "difficulty": 3,
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Nativity. Crèche de Noël (santons), pas la garderie."
+      "notes": "Theme: Nativity. Review: replaces Crèche / Calendrier de l'Avent (weak link)"
     },
     {
       "id": "p008",
@@ -144,7 +144,7 @@
           "Biscuit roulé"
         ]
       },
-      "difficulty": 2,
+      "difficulty": 3,
       "reviewedBy": [],
       "notes": "Theme: Food"
     },
@@ -220,14 +220,20 @@
     {
       "id": "p014",
       "civilian": {
-        "text": "Papillote"
+        "text": "Calendrier de l'Avent",
+        "alt": [
+          "Calendrier"
+        ]
       },
       "undercover": {
-        "text": "Bonbon"
+        "text": "Boîte de chocolats",
+        "alt": [
+          "Chocolats"
+        ]
       },
-      "difficulty": 3,
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Food. Papillote : le chocolat emballé avec une blague."
+      "notes": "Theme: Decorations. Review: replaces Papillote / Bonbon (regional; Papillote is a kind of bonbon)"
     },
     {
       "id": "p015",
@@ -271,14 +277,20 @@
     {
       "id": "p018",
       "civilian": {
-        "text": "Clémentine"
+        "text": "Marron glacé",
+        "alt": [
+          "Marrons glacés"
+        ]
       },
       "undercover": {
-        "text": "Mandarine"
+        "text": "Pâte de fruits",
+        "alt": [
+          "Pâtes de fruits"
+        ]
       },
       "difficulty": 3,
       "reviewedBy": [],
-      "notes": "Theme: Food"
+      "notes": "Theme: Food. Review: replaces Clémentine / Mandarine (fr-everyday-01 p064 treats them as one word)"
     },
     {
       "id": "p019",
@@ -412,7 +424,7 @@
       "undercover": {
         "text": "Sac à dos"
       },
-      "difficulty": 3,
+      "difficulty": 2,
       "reviewedBy": [],
       "notes": "Theme: Characters. La hotte du Père Noël, pas celle de la cuisine."
     },
@@ -650,11 +662,11 @@
         "text": "Grelot"
       },
       "undercover": {
-        "text": "Clochette"
+        "text": "Cloche"
       },
-      "difficulty": 3,
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Carols and music"
+      "notes": "Theme: Music. Review: replaces Grelot / Clochette (near-synonyms)"
     },
     {
       "id": "p047",
@@ -701,22 +713,21 @@
     {
       "id": "p050",
       "civilian": {
-        "text": "Jour de l'An",
+        "text": "Nouvel An",
         "alt": [
-          "Nouvel An",
+          "Jour de l'An",
           "Premier de l'an"
         ]
       },
       "undercover": {
-        "text": "14 Juillet",
+        "text": "Anniversaire",
         "alt": [
-          "Quatorze juillet",
-          "Fête nationale"
+          "Anniv"
         ]
       },
       "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: New Year's Eve"
+      "notes": "Theme: New Year's Eve. Review: replaces Jour de l'An / 14 Juillet (digits)"
     },
     {
       "id": "p051",

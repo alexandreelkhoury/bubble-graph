@@ -41,7 +41,10 @@
         "translit": "Shajrat el milad",
         "alt": [
           "shajra",
-          "sapin"
+          "sapin",
+          "shajret el milad",
+          "shajret el eid",
+          "شجرة العيد"
         ]
       },
       "undercover": {
@@ -88,16 +91,16 @@
         ]
       },
       "undercover": {
-        "text": "فانوس",
-        "translit": "Fanous",
+        "text": "قنديل",
+        "translit": "Andil",
         "alt": [
-          "fanoos",
-          "lantern"
+          "qandil",
+          "2andil"
         ]
       },
-      "difficulty": 1,
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Decorations"
+      "notes": "Theme: Decorations. Review: replaces فانوس (Ramadan lantern)"
     },
     {
       "id": "p004",
@@ -127,7 +130,9 @@
         "text": "غزال",
         "translit": "Ghazal",
         "alt": [
-          "ghazel"
+          "ghazel",
+          "renne",
+          "reindeer"
         ]
       },
       "undercover": {
@@ -212,20 +217,22 @@
         "text": "مزلجة",
         "translit": "Mazlajeh",
         "alt": [
-          "mazlaje"
+          "mazlaje",
+          "luge",
+          "traineau"
         ]
       },
       "undercover": {
-        "text": "عربية",
-        "translit": "Arabiyyeh",
+        "text": "حنطور",
+        "translit": "Hantour",
         "alt": [
-          "arabiye",
-          "arabeh"
+          "hantur",
+          "7antour"
         ]
       },
       "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Characters. Sleigh / carriage"
+      "notes": "Theme: Characters. Review: عربية also means \"Arabic\", replaced by حنطور"
     },
     {
       "id": "p010",
@@ -334,23 +341,26 @@
     {
       "id": "p015",
       "civilian": {
-        "text": "يانصيب",
-        "translit": "Yanasib",
+        "text": "البربارة",
+        "translit": "El Barbara",
         "alt": [
-          "yanassib",
-          "lottery"
+          "barbara",
+          "burbara",
+          "عيد البربارة",
+          "eid el barbara"
         ]
       },
       "undercover": {
-        "text": "لوتو",
-        "translit": "Loto",
+        "text": "هالوين",
+        "translit": "Halloween",
         "alt": [
-          "lotto"
+          "halloween",
+          "hallowin"
         ]
       },
-      "difficulty": 3,
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Gifts"
+      "notes": "Theme: Season. Eid el Burbara (4 December): children dress up, eat amh msalla2 and atayef. Review: replaces يانصيب / لوتو (gambling, near-synonyms)"
     },
     {
       "id": "p016",
@@ -571,24 +581,24 @@
     {
       "id": "p026",
       "civilian": {
-        "text": "بطانية",
-        "translit": "Battaniyyeh",
+        "text": "شومينيه",
+        "translit": "Shomineh",
         "alt": [
-          "battaniye",
-          "blanket"
+          "cheminee",
+          "shomine",
+          "shiminee"
         ]
       },
       "undercover": {
-        "text": "لحاف",
-        "translit": "Lhaf",
+        "text": "فرن",
+        "translit": "Forn",
         "alt": [
-          "l7af",
-          "lehaf"
+          "furn"
         ]
       },
-      "difficulty": 3,
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Winter"
+      "notes": "Theme: Winter. Review: replaces بطانية / لحاف (ar-everyday-01 p088 treats them as one word)"
     },
     {
       "id": "p027",
@@ -743,24 +753,24 @@
     {
       "id": "p034",
       "civilian": {
-        "text": "فاريا",
-        "translit": "Faraya",
+        "text": "حرب تلج",
+        "translit": "Harb talj",
         "alt": [
-          "fariya"
+          "harb telj",
+          "snowball fight"
         ]
       },
       "undercover": {
-        "text": "الأرز",
-        "translit": "El Arz",
+        "text": "حرب مخدات",
+        "translit": "Harb mkhaddat",
         "alt": [
-          "arz",
-          "cedars",
-          "al arz"
+          "harb m5addet",
+          "pillow fight"
         ]
       },
-      "difficulty": 3,
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Winter. Two Lebanese ski resorts"
+      "notes": "Theme: Winter. Review: replaces فاريا / الأرز (place names; أرز also means rice)"
     },
     {
       "id": "p035",
@@ -901,7 +911,9 @@
         "translit": "Mfar'a'at",
         "alt": [
           "mfarqaat",
-          "fireworks"
+          "fireworks",
+          "فتيش",
+          "fatish"
         ]
       },
       "undercover": {
@@ -940,24 +952,25 @@
     {
       "id": "p043",
       "civilian": {
-        "text": "عد عكسي",
-        "translit": "Add 'aksi",
+        "text": "توقعات",
+        "translit": "Tawa'ou'at",
         "alt": [
-          "ad 3aksi",
-          "countdown"
+          "tawaqqouat",
+          "tawa2o3at",
+          "predictions"
         ]
       },
       "undercover": {
-        "text": "منبّه",
-        "translit": "Mnabbeh",
+        "text": "أبراج",
+        "translit": "Abraj",
         "alt": [
-          "mnabbe",
-          "alarm"
+          "abrej",
+          "horoscope"
         ]
       },
       "difficulty": 3,
       "reviewedBy": [],
-      "notes": "Theme: New Year's Eve"
+      "notes": "Theme: New Year's Eve. The New Year's Eve TV predictions. Review: replaces عد عكسي / منبّه (weak link)"
     },
     {
       "id": "p044",
@@ -985,24 +998,25 @@
     {
       "id": "p045",
       "civilian": {
-        "text": "زيارة",
-        "translit": "Ziyara",
+        "text": "جيران",
+        "translit": "Jiran",
         "alt": [
-          "zyara",
-          "ziyareh"
+          "jiraan",
+          "jeeran"
         ]
       },
       "undercover": {
-        "text": "عزيمة",
-        "translit": "Azimeh",
+        "text": "قرايب",
+        "translit": "Arayeb",
         "alt": [
-          "3azime",
-          "azime"
+          "qarayeb",
+          "2arayeb",
+          "araybe"
         ]
       },
-      "difficulty": 3,
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: New Year's Eve. Holiday visits vs a dinner invitation"
+      "notes": "Theme: Family. Review: replaces زيارة / عزيمة (weak link)"
     }
   ]
 }

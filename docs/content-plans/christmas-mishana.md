@@ -54,3 +54,11 @@ selects it. The spec note is dated 2026-11-21.
 - `tools/content-lint` rule + test for the seasonal exemption.
 - Unit test (`content/test/christmas.test.ts`): in a free room, with only the Christmas pack selected, START succeeds in each language and deals a Christmas pair.
 - README "Packs (content/mishana/)" counts, SPEC/JAMAA-PLATFORM where Mish Ana! packs are listed, PAYMENTS-SPEC §1.5 note.
+
+## Review (2026-11-21)
+
+An independent review replaced 19 weak pairs (each changed pair says why in its `notes`, "Review: …"): British-only items and eggnog (EN);
+near-synonyms Soulier/Sabot and Grelot/Clochette, the regional Papillote, "14 Juillet" with digits, and Clémentine/Mandarine, which
+`fr-everyday-01` treats as one word (FR); Gambas/Langostinos and Nana as text (ES); فانوس, عربية ("Arabic"), the gambling pair يانصيب/لوتو,
+place names فاريا/الأرز, بطانية/لحاف (one word in `ar-everyday-01`) and two weak links (AR). Lebanese ski resorts are no longer named; Eid el
+Burbara (4 December) and the New Year's Eve TV predictions were added. The packs stay `draft` until a native speaker of each language signs off.

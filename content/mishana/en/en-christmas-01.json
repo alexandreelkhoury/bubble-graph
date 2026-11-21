@@ -76,7 +76,11 @@
     {
       "id": "p004",
       "civilian": {
-        "text": "Bauble"
+        "text": "Bauble",
+        "alt": [
+          "Ornament",
+          "Christmas ornament"
+        ]
       },
       "undercover": {
         "text": "Snow globe",
@@ -134,36 +138,33 @@
     {
       "id": "p008",
       "civilian": {
-        "text": "Nativity scene",
-        "alt": [
-          "Nativity",
-          "Crib"
-        ]
-      },
-      "undercover": {
         "text": "Advent calendar"
       },
-      "difficulty": 3,
+      "undercover": {
+        "text": "Box of chocolates",
+        "alt": [
+          "Chocolate box",
+          "Chocolates"
+        ]
+      },
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Nativity"
+      "notes": "Theme: Decorations. Review: replaces Nativity scene / Advent calendar (weak link)"
     },
     {
       "id": "p009",
       "civilian": {
-        "text": "Christmas pudding",
-        "alt": [
-          "Plum pudding"
-        ]
-      },
-      "undercover": {
         "text": "Fruitcake",
         "alt": [
           "Fruit cake"
         ]
       },
-      "difficulty": 3,
+      "undercover": {
+        "text": "Carrot cake"
+      },
+      "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Food"
+      "notes": "Theme: Food. Review: replaces Christmas pudding (British-only)"
     },
     {
       "id": "p010",
@@ -171,7 +172,10 @@
         "text": "Yule log"
       },
       "undercover": {
-        "text": "Swiss roll"
+        "text": "Swiss roll",
+        "alt": [
+          "Jelly roll"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": [],
@@ -192,14 +196,18 @@
     {
       "id": "p012",
       "civilian": {
-        "text": "Mince pie"
+        "text": "Stuffing"
       },
       "undercover": {
-        "text": "Sausage roll"
+        "text": "Mashed potato",
+        "alt": [
+          "Mashed potatoes",
+          "Mash"
+        ]
       },
       "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Food"
+      "notes": "Theme: Food. Review: replaces Mince pie / Sausage roll (British-only)"
     },
     {
       "id": "p013",
@@ -216,18 +224,21 @@
     {
       "id": "p014",
       "civilian": {
-        "text": "Eggnog"
-      },
-      "undercover": {
         "text": "Hot chocolate",
         "alt": [
           "Hot cocoa",
           "Cocoa"
         ]
       },
+      "undercover": {
+        "text": "Milkshake",
+        "alt": [
+          "Milk shake"
+        ]
+      },
       "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: Food"
+      "notes": "Theme: Food. Review: replaces Eggnog (often alcoholic)"
     },
     {
       "id": "p015",
@@ -736,20 +747,17 @@
     {
       "id": "p053",
       "civilian": {
-        "text": "Christmas cracker",
-        "alt": [
-          "Cracker"
-        ]
-      },
-      "undercover": {
         "text": "Party popper",
         "alt": [
           "Popper"
         ]
       },
+      "undercover": {
+        "text": "Balloon"
+      },
       "difficulty": 2,
       "reviewedBy": [],
-      "notes": "Theme: New Year's Eve"
+      "notes": "Theme: New Year's Eve. Review: replaces Christmas cracker (British-only)"
     },
     {
       "id": "p054",
