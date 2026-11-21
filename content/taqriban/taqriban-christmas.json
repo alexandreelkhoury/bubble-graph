@@ -1,0 +1,896 @@
+{
+  "schemaVersion": 1,
+  "id": "taqriban-christmas",
+  "game": "taqriban",
+  "title": {
+    "en": "Christmas in numbers",
+    "fr": "Noël en chiffres",
+    "ar": "الميلاد بالأرقام",
+    "es": "La Navidad en cifras"
+  },
+  "description": {
+    "en": "Giant trees, record bûches, Santas by the thousand and songs that took decades to top the charts.",
+    "fr": "Sapins géants, bûches record, pères Noël par milliers et chansons qui ont mis des décennies à finir numéro 1.",
+    "ar": "شجرات عملاقة، بوش دو نويل قياسي، بابا نويل بالآلاف وأغاني استنّت سنين لتوصل للمركز الأوّل.",
+    "es": "Árboles gigantes, troncos récord, Papá Noel por miles y canciones que tardaron décadas en llegar al número 1."
+  },
+  "locales": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "all",
+  "items": [
+    {
+      "id": "txm-001",
+      "tier": "free",
+      "tags": [
+        "nature",
+        "history"
+      ],
+      "family": "record-height",
+      "text": {
+        "en": "The tallest cut Christmas tree on record stood in a Seattle shopping centre in 1950. How tall was it, in metres?",
+        "fr": "Le plus grand sapin de Noël coupé jamais vu a été dressé dans un centre commercial de Seattle en 1950. Combien mesurait-il, en mètres ?",
+        "ar": "أطول شجرة ميلاد مقطوعة بالتاريخ انحطّت بمركز تجاري بسياتل سنة 1950. قدّيش كان طولها، بالمتر؟",
+        "es": "El árbol de Navidad cortado más alto de la historia se instaló en un centro comercial de Seattle en 1950. ¿Cuánto medía, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 64.6,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/77271-tallest-christmas-tree (64.6 m / 212 ft Douglas fir, Northgate Shopping Center, Seattle, Dec 1950); https://www.historylink.org/File/21359 (212 ft; the 221 ft in older listings is a typo)"
+      }
+    },
+    {
+      "id": "txm-002",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "geo"
+      ],
+      "family": "record-height",
+      "text": {
+        "en": "The largest artificial Christmas tree on record was built in Colombo, Sri Lanka, in 2016. How tall was it, in metres?",
+        "fr": "Le plus grand sapin de Noël artificiel jamais construit se dressait à Colombo, au Sri Lanka, en 2016. Combien mesurait-il, en mètres ?",
+        "ar": "أكبر شجرة ميلاد اصطناعية بالتاريخ انعمرت بكولومبو بسريلانكا سنة 2016. قدّيش كان طولها، بالمتر؟",
+        "es": "¿Cuánto medía, en metros, el árbol de Navidad artificial más grande de la historia, levantado en Colombo (Sri Lanka) en 2016?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 72.1,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://guinnessworldrecords.de/world-records/largest-artificial-christmas-tree (72.1 m tall, Colombo, 24 Dec 2016); https://globalnews.ca/news/3146896/sri-lanka-claims-worlds-tallest-artificial-christmas-tree"
+      }
+    },
+    {
+      "id": "txm-003",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "history"
+      ],
+      "family": "record-height",
+      "text": {
+        "en": "The tallest tree ever put up at Rockefeller Center in New York was the 1999 one. How tall was it, in metres?",
+        "fr": "Le plus grand sapin jamais installé au Rockefeller Center de New York est celui de 1999. Combien mesurait-il, en mètres ?",
+        "ar": "أطول شجرة انحطّت بتاريخ روكفلر سنتر بنيويورك كانت شجرة 1999. قدّيش كان طولها، بالمتر؟",
+        "es": "¿Cuánto medía, en metros, el árbol de 1999, el más alto jamás instalado en el Rockefeller Center de Nueva York?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 30.5,
+      "source": "Rockefeller Center (100 ft = 30.5 m)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.rockefellercenter.com/blog/2015/11/18/tree-through-years/ (1999: tallest tree on record, 100 feet); https://www.govinfo.gov/content/pkg/CRECB-1999-pt20/html/CRECB-1999-pt20-Pg29623-2.htm (100-foot Killingworth spruce, tallest ever); 100 ft = 30.48 m"
+      }
+    },
+    {
+      "id": "txm-004",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "tech"
+      ],
+      "text": {
+        "en": "Since 2018, the star on top of the Rockefeller Center tree in New York is covered in Swarovski crystals. How many crystals?",
+        "fr": "Depuis 2018, l'étoile au sommet du sapin du Rockefeller Center à New York est couverte de cristaux Swarovski. Combien de cristaux ?",
+        "ar": "من 2018، النجمة يلّي فوق شجرة روكفلر سنتر بنيويورك مغطّاية بكريستال سواروفسكي. كم حبّة كريستال فيها؟",
+        "es": "Desde 2018, la estrella que corona el árbol del Rockefeller Center de Nueva York está cubierta de cristales Swarovski. ¿Cuántos cristales tiene?"
+      },
+      "unit": {
+        "en": "crystals",
+        "fr": "cristaux",
+        "ar": "حبّة",
+        "es": "cristales"
+      },
+      "answer": 3000000,
+      "source": "Rockefeller Center / Libeskind studio",
+      "review": {
+        "status": "draft",
+        "ref": "https://libeskind.com/work/swarovski-star-and-kiosk/ (3 million crystals, 70 spikes, 900 lb); https://www.bloomberg.com/news/articles/2018-11-14/rockefeller-center-s-christmas-tree-gets-a-star-with-three-million-crystals"
+      }
+    },
+    {
+      "id": "txm-005",
+      "tier": "free",
+      "tags": [
+        "people",
+        "culture"
+      ],
+      "text": {
+        "en": "In December 2014, the city of Thrissur in India set the record for the largest gathering of Santa Clauses. How many Santas came?",
+        "fr": "En décembre 2014, la ville de Thrissur, en Inde, a battu le record du plus grand rassemblement de pères Noël. Combien étaient-ils ?",
+        "ar": "بكانون الأول 2014، مدينة تريشور بالهند كسرت رقم أكبر تجمّع لبابا نويل. كم بابا نويل اجتمعوا؟",
+        "es": "En diciembre de 2014, la ciudad de Thrissur (India) batió el récord de la mayor reunión de Papá Noel. ¿Cuántos Papá Noel se juntaron?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "personnes",
+        "ar": "شخص",
+        "es": "personas"
+      },
+      "answer": 18112,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/largest-gathering-of-santa-claus (18,112 people, Thrissur, 27 Dec 2014); https://www.business-standard.com/amp/article/news-ians/18-112-santa-clauses-break-guinness-record-114122700517_1.html"
+      }
+    },
+    {
+      "id": "txm-006",
+      "tier": "free",
+      "tags": [
+        "money",
+        "culture"
+      ],
+      "text": {
+        "en": "The most expensive decorated Christmas tree on record stood in the Emirates Palace hotel in Abu Dhabi in 2010. What was it worth, in US dollars?",
+        "fr": "Le sapin de Noël décoré le plus cher jamais vu trônait à l'hôtel Emirates Palace d'Abou Dabi en 2010. Combien valait-il, en dollars américains ?",
+        "ar": "أغلى شجرة ميلاد مزيّنة بالتاريخ كانت بفندق قصر الإمارات بأبوظبي سنة 2010. قدّيش كانت قيمتها، بالدولار الأميركي؟",
+        "es": "¿Cuánto valía, en dólares estadounidenses, el árbol de Navidad decorado más caro de la historia, expuesto en el hotel Emirates Palace de Abu Dabi en 2010?"
+      },
+      "unit": {
+        "en": "$",
+        "fr": "$",
+        "ar": "دولار",
+        "es": "$"
+      },
+      "answer": 11026900,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://guinnessworldrecords.com/world-records/most-expensive-christmas-tree-decorated (41,329,531 AED = US$11,026,900, Emirates Palace, Dec 2010); https://www.thenationalnews.com/uae/emirates-palace-christmas-tree-awarded-guinness-world-record-1.564287"
+      }
+    },
+    {
+      "id": "txm-007",
+      "tier": "free",
+      "tags": [
+        "nature",
+        "people"
+      ],
+      "family": "record-height",
+      "text": {
+        "en": "In 2008, the town of Bethel in Maine (USA) built the tallest snowperson on record, a snowwoman named Olympia. How tall was she, in metres?",
+        "fr": "En 2008, la ville de Bethel, dans le Maine (États-Unis), a construit la plus grande « bonne femme de neige » du monde, nommée Olympia. Combien mesurait-elle, en mètres ?",
+        "ar": "سنة 2008، بلدة بيثيل بولاية مين الأميركية عمّرت أطول رجل تلج بالتاريخ، وهيّي مرا تلج اسمها أوليمبيا. قدّيش كان طولها، بالمتر؟",
+        "es": "En 2008, el pueblo de Bethel, en Maine (EE. UU.), construyó la muñeca de nieve más alta de la historia, llamada Olympia. ¿Cuánto medía, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 37.21,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/tallest-snowman/ (37.21 m / 122 ft 1 in, Bethel, completed 26 Feb 2008); https://www.bangordailynews.com/2024/12/24/state/state-culture/maine-world-record-tallest-snowman-n6hjn1me0n"
+      }
+    },
+    {
+      "id": "txm-008",
+      "tier": "free",
+      "tags": [
+        "tech",
+        "culture"
+      ],
+      "text": {
+        "en": "In 2014, a family in LaGrangeville, New York, set the record for the most lights on a house and garden. How many lights were lit at once?",
+        "fr": "En 2014, une famille de LaGrangeville (New York) a battu le record de lumières sur une maison et son jardin. Combien de lumières étaient allumées en même temps ?",
+        "ar": "سنة 2014، عيلة بلاغرانجفيل بنيويورك كسرت رقم أكتر لمبات على بيت وجنينته. كم لمبة ضوّوا بنفس الوقت؟",
+        "es": "En 2014, una familia de LaGrangeville (Nueva York) batió el récord de luces en una casa y su jardín. ¿Cuántas luces se encendieron a la vez?"
+      },
+      "unit": {
+        "en": "lights",
+        "fr": "lumières",
+        "ar": "لمبة",
+        "es": "luces"
+      },
+      "answer": 601736,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/most-lights-on-a-residential-property (601,736 lights, Gay family, LaGrangeville NY, 28 Nov 2014; later ~687,000 displays not certified); https://www.upi.com/Odd_News/2014/12/01/Holiday-display-breaks-Guinness-record-for-lights/6331417453110/"
+      }
+    },
+    {
+      "id": "txm-009",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "history"
+      ],
+      "family": "copies",
+      "text": {
+        "en": "Guinness World Records calls Bing Crosby's \"White Christmas\" (1942) the best-selling physical single ever. How many copies, by their estimate?",
+        "fr": "Selon le Guinness des records, « White Christmas » de Bing Crosby (1942) est le single physique le plus vendu de l'histoire. Combien d'exemplaires, d'après eux ?",
+        "ar": "حسب غينيس، أغنية \"White Christmas\" لبينغ كروسبي (1942) هيّي أكتر سينغل انباع بالتاريخ. كم نسخة انباعت منها حسب تقديرهم؟",
+        "es": "Según el Guinness World Records, «White Christmas» de Bing Crosby (1942) es el sencillo físico más vendido de la historia. ¿Cuántas copias, según su estimación?"
+      },
+      "unit": {
+        "en": "copies",
+        "fr": "exemplaires",
+        "ar": "نسخة",
+        "es": "copias"
+      },
+      "answer": 50000000,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/best-selling-single (Best-selling physical single: White Christmas, an estimated 50 million copies); https://www.guinnessworldrecords.com/world-records/70153-best-selling-single-by-a-solo-artist-male (same 50 million estimate)"
+      }
+    },
+    {
+      "id": "txm-010",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "family": "years-to-no1",
+      "text": {
+        "en": "Mariah Carey's \"All I Want for Christmas Is You\" came out in 1994. How many years later did it first reach No. 1 on the US Billboard Hot 100?",
+        "fr": "« All I Want for Christmas Is You » de Mariah Carey est sorti en 1994. Combien d'années plus tard a-t-il atteint pour la première fois la 1re place du Billboard Hot 100 ?",
+        "ar": "أغنية \"All I Want for Christmas Is You\" لماريا كاري نزلت سنة 1994. بعد كم سنة وصلت لأوّل مرّة للمركز الأوّل على بيلبورد هوت 100 الأميركي؟",
+        "es": "«All I Want for Christmas Is You» de Mariah Carey salió en 1994. ¿Cuántos años después llegó por primera vez al n.º 1 del Billboard Hot 100?"
+      },
+      "unit": {
+        "en": "years",
+        "fr": "ans",
+        "ar": "سنة",
+        "es": "años"
+      },
+      "answer": 25,
+      "source": "Billboard",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.cbsnews.com/news/mariah-carey-all-i-want-for-christmas-is-you-hits-top-spot-billboard-hot-100-today-2019-12-16 (first Hot 100 No. 1 on the chart dated 21 Dec 2019, 25 years after its 1994 release)"
+      }
+    },
+    {
+      "id": "txm-011",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "family": "years-to-no1",
+      "text": {
+        "en": "Wham!'s \"Last Christmas\" came out in December 1984. How many years later did it first reach No. 1 in the UK singles chart?",
+        "fr": "« Last Christmas » de Wham! est sorti en décembre 1984. Combien d'années plus tard a-t-il atteint pour la première fois la 1re place des ventes au Royaume-Uni ?",
+        "ar": "أغنية \"Last Christmas\" لفرقة Wham! نزلت بكانون الأول 1984. بعد كم سنة وصلت لأوّل مرّة للمركز الأوّل ببريطانيا؟",
+        "es": "«Last Christmas» de Wham! salió en diciembre de 1984. ¿Cuántos años después llegó por primera vez al n.º 1 de la lista de sencillos del Reino Unido?"
+      },
+      "unit": {
+        "en": "years",
+        "fr": "ans",
+        "ar": "سنة",
+        "es": "años"
+      },
+      "answer": 36,
+      "source": "Official Charts Company",
+      "review": {
+        "status": "draft",
+        "ref": "https://officialcharts.com/chart-news/whams-last-christmas-finally-reaches-number-1-and-sets-official-uk-chart-record__32041 (first No. 1 on 1 Jan 2021, 36 years after release)"
+      }
+    },
+    {
+      "id": "txm-012",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "In \"The Twelve Days of Christmas\", each day brings new gifts plus all the earlier ones again. How many gifts in total over the 12 days?",
+        "fr": "Dans le chant « The Twelve Days of Christmas », chaque jour apporte de nouveaux cadeaux et répète tous ceux d'avant. Combien de cadeaux en tout sur les 12 jours ?",
+        "ar": "بأغنية \"The Twelve Days of Christmas\"، كل يوم في هدايا جديدة وبتنعاد كل الهدايا يلّي قبلها. كم هديّة بالمجموع بالـ12 يوم؟",
+        "es": "En el villancico «The Twelve Days of Christmas», cada día llegan regalos nuevos y se repiten todos los anteriores. ¿Cuántos regalos hay en total en los 12 días?"
+      },
+      "unit": {
+        "en": "gifts",
+        "fr": "cadeaux",
+        "ar": "هديّة",
+        "es": "regalos"
+      },
+      "answer": 364,
+      "source": "The carol's lyrics (sum)",
+      "review": {
+        "status": "draft",
+        "ref": "computed: sum over day d=1..12 of (1+2+…+d) = sum k·(13−k) for k=1..12 = 364; PNC counts the same 364 gifts: https://pnc.mediaroom.com/2025-11-24-PNCs-2025-Christmas-Price-Index-R-Holiday-Cheer-Comes-at-a-Premium"
+      }
+    },
+    {
+      "id": "txm-013",
+      "tier": "free",
+      "tags": [
+        "money",
+        "culture"
+      ],
+      "text": {
+        "en": "Every year a US bank prices one set of all the gifts in \"The Twelve Days of Christmas\". What did the set cost in 2025, in US dollars?",
+        "fr": "Chaque année, une banque américaine calcule le prix d'une série de tous les cadeaux de « The Twelve Days of Christmas ». Combien coûtait-elle en 2025, en dollars ?",
+        "ar": "كل سنة بنك أميركي بيحسب سعر كل هدايا \"The Twelve Days of Christmas\" (مجموعة وحدة). قدّيش كان سعرها سنة 2025، بالدولار؟",
+        "es": "Cada año, un banco estadounidense calcula el precio de un lote de todos los regalos de «The Twelve Days of Christmas». ¿Cuánto costaba en 2025, en dólares?"
+      },
+      "unit": {
+        "en": "$",
+        "fr": "$",
+        "ar": "دولار",
+        "es": "$"
+      },
+      "answer": 51476.12,
+      "source": "PNC Christmas Price Index 2025",
+      "review": {
+        "status": "draft",
+        "ref": "https://pnc.mediaroom.com/2025-11-24-PNCs-2025-Christmas-Price-Index-R-Holiday-Cheer-Comes-at-a-Premium ($51,476.12 in 2025, up 4.5 % from $49,263.47 in 2024)"
+      }
+    },
+    {
+      "id": "txm-014",
+      "tier": "free",
+      "tags": [
+        "geo",
+        "people"
+      ],
+      "family": "population",
+      "text": {
+        "en": "Christmas Island, in the Indian Ocean, is an Australian territory. How many people lived there at the 2021 census?",
+        "fr": "L'île Christmas, dans l'océan Indien, est un territoire australien. Combien d'habitants y comptait-on au recensement de 2021 ?",
+        "ar": "جزيرة كريسماس بالمحيط الهندي أرض أستراليّة. كم شخص كانوا ساكنين فيها بإحصاء 2021؟",
+        "es": "La isla de Navidad, en el océano Índico, es un territorio australiano. ¿Cuántos habitantes tenía en el censo de 2021?"
+      },
+      "unit": {
+        "en": "people",
+        "fr": "personnes",
+        "ar": "شخص",
+        "es": "personas"
+      },
+      "answer": 1692,
+      "source": "Australian Bureau of Statistics, 2021 census",
+      "review": {
+        "status": "draft",
+        "ref": "https://abs.gov.au/census/find-census-data/quickstats/2021/SAL90001 (2021 Census: 1,692 people); https://www.infrastructure.gov.au/territories-regions/territories/indian-ocean-territories-christmas-island-and-cocos-keeling-islands/christmas-island/christmas-island-census-data"
+      }
+    },
+    {
+      "id": "txm-015",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "history"
+      ],
+      "family": "copies",
+      "text": {
+        "en": "Charles Dickens's \"A Christmas Carol\" came out in December 1843 and sold out by Christmas Eve. How many copies were in that first printing?",
+        "fr": "« Un chant de Noël » de Charles Dickens est paru en décembre 1843 et était épuisé la veille de Noël. Combien d'exemplaires comptait ce premier tirage ?",
+        "ar": "رواية \"ترنيمة عيد الميلاد\" لتشارلز ديكنز نزلت بكانون الأول 1843 وخلصت قبل ليلة العيد. كم نسخة كانت بأوّل طبعة؟",
+        "es": "«Cuento de Navidad» de Charles Dickens salió en diciembre de 1843 y se agotó antes de Nochebuena. ¿Cuántos ejemplares tenía esa primera tirada?"
+      },
+      "unit": {
+        "en": "copies",
+        "fr": "exemplaires",
+        "ar": "نسخة",
+        "es": "copias"
+      },
+      "answer": 6000,
+      "source": "Library of Congress",
+      "review": {
+        "status": "draft",
+        "ref": "https://blogs.loc.gov/loc/2015/12/highlighting-the-holidays-a-tale-of-two-publishings/ (initial run of 6,000 copies, sold out by Christmas Eve); Smithsonian Magazine 2024, 'A Christmas Carol marvelously captured…' (same 6,000)"
+      }
+    },
+    {
+      "id": "txm-016",
+      "tier": "free",
+      "tags": [
+        "history",
+        "culture"
+      ],
+      "family": "copies",
+      "text": {
+        "en": "The first commercial Christmas card was made for Henry Cole in London in 1843. How many copies of it were printed?",
+        "fr": "La première carte de Noël commerciale a été créée pour Henry Cole à Londres en 1843. Combien d'exemplaires en ont été imprimés ?",
+        "ar": "أوّل بطاقة معايدة للميلاد انعملت لهنري كول بلندن سنة 1843. كم نسخة انطبعت منها؟",
+        "es": "La primera tarjeta de Navidad comercial se hizo para Henry Cole en Londres en 1843. ¿Cuántos ejemplares se imprimieron?"
+      },
+      "unit": {
+        "en": "copies",
+        "fr": "exemplaires",
+        "ar": "نسخة",
+        "es": "copias"
+      },
+      "answer": 1000,
+      "source": "V&A Museum",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.vam.ac.uk/articles/the-first-christmas-card (a thousand copies printed); https://www.historyofinformation.com/detail.php?id=3285 (first printing 1000 copies); https://www.guinnessworldrecords.com/world-records/77401-first-printed-christmas-card (12 of the original 1,000 survive)"
+      }
+    },
+    {
+      "id": "txm-017",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "history"
+      ],
+      "family": "copies",
+      "text": {
+        "en": "Rudolph the Red-Nosed Reindeer was born in a free Montgomery Ward booklet in 1939. How many copies went out that season, per the Smithsonian?",
+        "fr": "Rudolph, le renne au nez rouge, est né en 1939 dans un livret offert par Montgomery Ward. Combien d'exemplaires distribués cette saison-là, selon la Smithsonian ?",
+        "ar": "رودولف، الغزال أبو منخار أحمر، طلع سنة 1939 بكتيّب مجّاني من محلّات مونتغمري وارد. كم نسخة توزّعت بهيداك الموسم، حسب سميثسونيان؟",
+        "es": "Rudolph, el reno de la nariz roja, nació en 1939 en un folleto gratuito de Montgomery Ward. ¿Cuántos ejemplares se repartieron esa temporada, según la Smithsonian?"
+      },
+      "unit": {
+        "en": "copies",
+        "fr": "exemplaires",
+        "ar": "نسخة",
+        "es": "copias"
+      },
+      "answer": 2400000,
+      "source": "Smithsonian",
+      "review": {
+        "status": "draft",
+        "ref": "https://si.edu/stories/where-did-rudolph-get-his-shiny-nose (2.4 million copies in the first year); https://www.census.gov/about/history/stories/monthly/2019/december-2019.html (2.4 million); others round to 2 or 2.5 million"
+      }
+    },
+    {
+      "id": "txm-018",
+      "tier": "free",
+      "tags": [
+        "money",
+        "culture"
+      ],
+      "text": {
+        "en": "Spain's Christmas lottery: a ticket share (décimo) costs €20. In the 2025 draw, how much did one décimo of the top prize, \"El Gordo\", win, in euros?",
+        "fr": "À la loterie de Noël espagnole, un dixième de billet (décimo) coûte 20 €. Au tirage de 2025, combien rapportait un décimo du gros lot, « El Gordo », en euros ?",
+        "ar": "بيانصيب الميلاد بإسبانيا، العُشر من البطاقة (décimo) سعره 20 يورو. بسحب 2025، قدّيش ربح عُشر واحد من الجائزة الكبرى \"إل غوردو\"، باليورو؟",
+        "es": "En la Lotería de Navidad, un décimo cuesta 20 €. En el sorteo de 2025, ¿cuánto ganó un décimo premiado con «El Gordo», en euros?"
+      },
+      "unit": {
+        "en": "€",
+        "fr": "€",
+        "ar": "يورو",
+        "es": "€"
+      },
+      "answer": 400000,
+      "source": "Lotería de Navidad 2025 (SELAE prize table)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.publico.es/sociedad/premios-loteria-navidad-2025-lista-completa-importes.html (El Gordo 2025: 4,000,000 € por serie, 400,000 € por décimo); https://rtvc.es/loteria-navidad/premios-loteria-de-navidad/ (same)"
+      }
+    },
+    {
+      "id": "txm-019",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "food"
+      ],
+      "family": "record-length",
+      "text": {
+        "en": "In December 2018, a club in the village of Mayfouk (Lebanon) made the longest yule log (bûche de Noël) on record. How long was it, in metres?",
+        "fr": "En décembre 2018, un club du village de Mayfouk (Liban) a réalisé la plus longue bûche de Noël du monde. Combien mesurait-elle, en mètres ?",
+        "ar": "بكانون الأول 2018، نادي بضيعة ميفوق (لبنان) عمل أطول بوش دو نويل بالعالم. قدّيش كان طوله، بالمتر؟",
+        "es": "En diciembre de 2018, un club del pueblo de Mayfouk (Líbano) hizo el tronco de Navidad más largo de la historia. ¿Cuánto medía, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 1136.36,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/longest-yule-log (1,136.36 m, Club Achtarout Mayfouk, 21 Dec 2018); https://the961.com/?p=41131"
+      }
+    },
+    {
+      "id": "txm-020",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "people"
+      ],
+      "text": {
+        "en": "On 21 December 2025, Batroun (Lebanon) set the Guinness world record for the most messages to Santa collected in 24 hours. How many did it collect?",
+        "fr": "Le 21 décembre 2025, Batroun (Liban) a battu le record Guinness du plus grand nombre de lettres au père Noël récoltées en 24 heures. Combien en a-t-elle récolté ?",
+        "ar": "بـ21 كانون الأول 2025، البترون كسرت رقم غينيس لأكتر رسايل لبابا نويل انجمعت بـ24 ساعة. كم رسالة جمعت؟",
+        "es": "El 21 de diciembre de 2025, Batrún (Líbano) batió el récord Guinness de más cartas a Papá Noel reunidas en 24 horas. ¿Cuántas reunió?"
+      },
+      "unit": {
+        "en": "messages",
+        "fr": "lettres",
+        "ar": "رسالة",
+        "es": "cartas"
+      },
+      "answer": 2924,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/most-letters-to-santa-collected-in-24-hours (most messages to Santa collected in 24 hours: 2,924, Batroun, 21 Dec 2025; previous 2,144, Dubai 2020); https://en.annahar.com/en/lifestyle/offbeat/265646/ (2,924)"
+      }
+    },
+    {
+      "id": "txm-021",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "food"
+      ],
+      "family": "record-length",
+      "text": {
+        "en": "The largest Christmas cracker on record was made by parents at a school in Chesham, England, in 2001. How long was it, in metres?",
+        "fr": "Le plus grand diablotin de Noël (« Christmas cracker ») a été fabriqué par des parents d'élèves à Chesham, en Angleterre, en 2001. Combien mesurait-il, en mètres ?",
+        "ar": "أكبر \"كريسماس كراكر\" (فرقيعة الميلاد) انعمل سنة 2001 من أهالي تلاميذ مدرسة بتشيشام بإنكلترا. قدّيش كان طوله، بالمتر؟",
+        "es": "El mayor «Christmas cracker» (petardo navideño de papel) lo hicieron padres de alumnos de Chesham (Inglaterra) en 2001. ¿Cuánto medía, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 63.1,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/largest-christmas-cracker (63.1 m long, 4 m diameter, Chesham, 20 Dec 2001)"
+      }
+    },
+    {
+      "id": "txm-022",
+      "tier": "free",
+      "tags": [
+        "food"
+      ],
+      "family": "record-weight",
+      "text": {
+        "en": "The largest gingerbread man on record was baked at an IKEA store in Oslo, Norway, in 2009. How much did it weigh, in kilograms?",
+        "fr": "Le plus grand bonhomme en pain d'épices a été cuit dans un magasin IKEA d'Oslo, en Norvège, en 2009. Combien pesait-il, en kilos ?",
+        "ar": "أكبر رجل زنجبيل (جينجربريد) انخبز بمحلّ إيكيا بأوسلو بالنروج سنة 2009. قدّيش كان وزنه، بالكيلو؟",
+        "es": "El hombre de jengibre más grande de la historia se horneó en una tienda IKEA de Oslo (Noruega) en 2009. ¿Cuánto pesaba, en kilos?"
+      },
+      "unit": {
+        "en": "kg",
+        "fr": "kg",
+        "ar": "كلغ",
+        "es": "kg"
+      },
+      "answer": 651,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/largest-gingerbread-man (651 kg, IKEA Furuset, Oslo, 9 Nov 2009); https://www.nbcnews.com/id/33889619/ns/world_news-weird_news/t/tallest-man-unveils-largest-gingerbread-cookie/"
+      }
+    },
+    {
+      "id": "txm-023",
+      "tier": "free",
+      "tags": [
+        "food"
+      ],
+      "family": "record-weight",
+      "text": {
+        "en": "The largest panettone on record was made in Milan, Italy, in December 2018. How much did it weigh, in kilograms?",
+        "fr": "Le plus gros panettone du monde a été fabriqué à Milan, en Italie, en décembre 2018. Combien pesait-il, en kilos ?",
+        "ar": "أكبر پانيتوني بالعالم انعمل بميلانو بإيطاليا بكانون الأول 2018. قدّيش كان وزنه، بالكيلو؟",
+        "es": "El panettone más grande de la historia se hizo en Milán (Italia) en diciembre de 2018. ¿Cuánto pesaba, en kilos?"
+      },
+      "unit": {
+        "en": "kg",
+        "fr": "kg",
+        "ar": "كلغ",
+        "es": "kg"
+      },
+      "answer": 332.2,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/374214-the-biggest-panetone-of-the-world (332.20 kg, Davide Comaschi, Milan, 16 Dec 2018); https://bakeryinfo.co.uk/events/guinness-world-record-for-332kg-panettone/625679.article"
+      }
+    },
+    {
+      "id": "txm-024",
+      "tier": "free",
+      "tags": [
+        "food",
+        "people"
+      ],
+      "family": "record-weight",
+      "text": {
+        "en": "The largest Christmas pudding on record was made by the villagers of Aughton, England, in 1992. How much did it weigh, in tonnes?",
+        "fr": "Le plus gros pudding de Noël a été préparé par les habitants d'Aughton, en Angleterre, en 1992. Combien pesait-il, en tonnes ?",
+        "ar": "أكبر \"كريسماس بودينغ\" انعمل سنة 1992 من أهالي ضيعة أوتن بإنكلترا. قدّيش كان وزنه، بالطن؟",
+        "es": "El mayor pudin de Navidad lo hicieron los vecinos de Aughton (Inglaterra) en 1992. ¿Cuánto pesaba, en toneladas?"
+      },
+      "unit": {
+        "en": "tonnes",
+        "fr": "tonnes",
+        "ar": "طن",
+        "es": "toneladas"
+      },
+      "answer": 3.28,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/68427-largest-christmas-pudding (3.28 tonnes, Aughton Pudding Festival, 11 Jul 1992)"
+      }
+    },
+    {
+      "id": "txm-025",
+      "tier": "free",
+      "tags": [
+        "nature"
+      ],
+      "text": {
+        "en": "The record snowfall for one winter season was measured at Mount Baker (USA) in 1998–99. How much snow fell in total, in metres?",
+        "fr": "Le record de neige tombée en une saison a été mesuré au mont Baker (États-Unis) en 1998-1999. Combien de neige est tombée au total, en mètres ?",
+        "ar": "أكبر كمّية تلج نزلت بموسم واحد انقاست بجبل بيكر بأميركا بموسم 1998–99. قدّيش نزل تلج بالمجموع، بالمتر؟",
+        "es": "El récord de nieve caída en una temporada se midió en el monte Baker (EE. UU.) en 1998-99. ¿Cuánta nieve cayó en total, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 28.96,
+      "source": "NOAA (via Mt. Baker Ski Area)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.mtbaker.us/snow-report/snowfall-statistics (1,140 in, 1998-99, NOAA-verified world record); https://archive.seattletimes.com/archive/19990803/2975327/snowfall-breaks-record----mt-baker-topped-out-at-95-feet; 1,140 in × 2.54 = 28.96 m"
+      }
+    },
+    {
+      "id": "txm-026",
+      "tier": "free",
+      "tags": [
+        "nature",
+        "geo"
+      ],
+      "text": {
+        "en": "The coldest air temperature ever measured on Earth was at Vostok station, Antarctica, in July 1983. How many degrees Celsius below zero?",
+        "fr": "La température la plus froide jamais mesurée sur Terre l'a été à la station Vostok, en Antarctique, en juillet 1983. Combien de degrés Celsius sous zéro ?",
+        "ar": "أبرد حرارة انقاست على الأرض كانت بمحطّة فوستوك بالقطب الجنوبي بتمّوز 1983. كم درجة مئويّة تحت الصفر؟",
+        "es": "La temperatura más fría jamás medida en la Tierra se registró en la estación Vostok (Antártida) en julio de 1983. ¿Cuántos grados Celsius bajo cero?"
+      },
+      "unit": {
+        "en": "°C below 0",
+        "fr": "°C sous 0",
+        "ar": "درجة تحت الصفر",
+        "es": "°C bajo 0"
+      },
+      "answer": 89.2,
+      "source": "WMO",
+      "review": {
+        "status": "draft",
+        "ref": "https://wmo.int/asu-map?map=Temp_020 (Lowest temperature: −89.2 °C, Vostok, 21 Jul 1983)"
+      }
+    },
+    {
+      "id": "txm-027",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "money"
+      ],
+      "text": {
+        "en": "\"Home Alone\" (1990) is one of the biggest Christmas films ever. How much did it earn at cinemas worldwide, in millions of US dollars?",
+        "fr": "« Maman, j'ai raté l'avion ! » (1990) est l'un des plus grands films de Noël. Combien a-t-il rapporté au cinéma dans le monde, en millions de dollars ?",
+        "ar": "فيلم \"Home Alone\" (1990) من أكبر أفلام الميلاد. قدّيش جاب بالسينما بكل العالم، بملايين الدولارات؟",
+        "es": "«Solo en casa» («Mi pobre angelito» en Hispanoamérica, 1990) es una de las mayores películas navideñas. ¿Cuánto recaudó en cines de todo el mundo, en millones de dólares?"
+      },
+      "unit": {
+        "en": "million $",
+        "fr": "millions $",
+        "ar": "مليون دولار",
+        "es": "millones $"
+      },
+      "answer": 476.7,
+      "source": "Box Office Mojo",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.boxofficemojo.com/title/tt0099785/ ($285,761,243 domestic + $190,923,432 international = $476.7M); https://www.the-numbers.com/movie/Home-Alone ($476,678,838); Box Office Mojo's release-group page says $477.4M (re-releases), 0.15 % apart"
+      }
+    },
+    {
+      "id": "txm-028",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "history"
+      ],
+      "text": {
+        "en": "In the 1823 poem \"A Visit from St. Nicholas\" (\"'Twas the night before Christmas\"), how many reindeer pull the sleigh?",
+        "fr": "Dans le poème « A Visit from St. Nicholas » (1823), qui a fixé l'image moderne du père Noël, combien de rennes tirent le traîneau ?",
+        "ar": "بقصيدة \"A Visit from St. Nicholas\" (سنة 1823) يلّي رسمت صورة بابا نويل الحديثة، كم غزال بيجرّوا الزحّافة؟",
+        "es": "En el poema «A Visit from St. Nicholas» (1823), que fijó la imagen moderna de Papá Noel, ¿cuántos renos tiran del trineo?"
+      },
+      "unit": {
+        "en": "reindeer",
+        "fr": "rennes",
+        "ar": "غزال",
+        "es": "renos"
+      },
+      "answer": 8,
+      "source": "Britannica",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.britannica.com/topic/A-Visit-from-St-Nicholas ; https://en.wikipedia.org/wiki/Santa_Claus%27s_reindeer (8 named: Dasher, Dancer, Prancer, Vixen, Comet, Cupid, Dunder/Donder, Blixem/Blitzen; Rudolph came in 1939)"
+      }
+    },
+    {
+      "id": "txm-029",
+      "tier": "free",
+      "tags": [
+        "culture"
+      ],
+      "text": {
+        "en": "In Dickens's \"A Christmas Carol\", how many ghosts visit Scrooge in all, counting his old partner Marley?",
+        "fr": "Dans « Un chant de Noël » de Dickens, combien de fantômes rendent visite à Scrooge en tout, en comptant son ancien associé Marley ?",
+        "ar": "بـ\"ترنيمة عيد الميلاد\" لديكنز، كم شبح بيزوروا سكروج بالمجموع، مع شريكه القديم مارلي؟",
+        "es": "En «Cuento de Navidad» de Dickens, ¿cuántos fantasmas visitan a Scrooge en total, contando a su antiguo socio Marley?"
+      },
+      "unit": {
+        "en": "ghosts",
+        "fr": "fantômes",
+        "ar": "شبح",
+        "es": "fantasmas"
+      },
+      "answer": 4,
+      "source": "Dickens, A Christmas Carol (1843)",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.gutenberg.org/cache/epub/46/pg46-images.html (Marley's Ghost, then the Ghosts of Christmas Past, Present and Yet to Come = 4)"
+      }
+    },
+    {
+      "id": "txm-030",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "geo"
+      ],
+      "text": {
+        "en": "Santa lives at the North Pole. How far is the North Pole from Beirut in a straight line, in km?",
+        "fr": "Le père Noël habite au pôle Nord. À quelle distance de Beyrouth se trouve le pôle Nord à vol d'oiseau, en km ?",
+        "ar": "بابا نويل ساكن بالقطب الشمالي. قدّيش بعيد القطب الشمالي عن بيروت بخط مستقيم، بالكلم؟",
+        "es": "Papá Noel vive en el Polo Norte. ¿A qué distancia de Beirut está el Polo Norte en línea recta, en km?"
+      },
+      "unit": {
+        "en": "km",
+        "fr": "km",
+        "ar": "كلم",
+        "es": "km"
+      },
+      "answer": 6239,
+      "source": "Great-circle distance",
+      "review": {
+        "status": "draft",
+        "ref": "computed: haversine Beirut 33.8938,35.5018 – North Pole 90,0, R = 6371 km = 6239 km"
+      }
+    },
+    {
+      "id": "txm-031",
+      "tier": "free",
+      "tags": [
+        "lebanon",
+        "sport",
+        "nature"
+      ],
+      "text": {
+        "en": "Mzaar Kfardebian is Lebanon's biggest ski resort. How high is its top station on Mount Mzaar, in metres above sea level?",
+        "fr": "Mzaar Kfardebian est la plus grande station de ski du Liban. À quelle altitude se trouve son point le plus haut, sur le mont Mzaar, en mètres ?",
+        "ar": "مزار كفردبيان أكبر مركز تزلّج بلبنان. قدّيش علوّ أعلى نقطة فيه، على جبل المزار، بالمتر عن سطح البحر؟",
+        "es": "Mzaar Kfardebian es la mayor estación de esquí del Líbano. ¿A qué altitud está su punto más alto, en el monte Mzaar, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 2465,
+      "source": "Skiresort.info / Mzaar",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.skiresort.info/ski-resorts/mount-lebanon/sorted/mountain-altitude (top 2,465 m, base 1,850 m); https://www.aljazeera.com/indepth/inpictures/2017/03/hitting-slopes-lebanon-oldest-ski-resort-170302093027667.html (Mount Mzaar 2,465 m); https://skileb.com/ski-lebanon/resorts (2465 m)"
+      }
+    },
+    {
+      "id": "txm-032",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "people"
+      ],
+      "family": "record-length",
+      "text": {
+        "en": "The largest Christmas stocking on record was sewn in Carrara, Italy, in January 2011. How long was it, in metres?",
+        "fr": "La plus grande chaussette de Noël du monde a été cousue à Carrare, en Italie, en janvier 2011. Combien mesurait-elle de long, en mètres ?",
+        "ar": "أكبر جرابة ميلاد بالعالم انخيّطت بكارارا بإيطاليا بكانون التاني 2011. قدّيش كان طولها، بالمتر؟",
+        "es": "El calcetín de Navidad más grande de la historia se cosió en Carrara (Italia) en enero de 2011. ¿Cuánto medía de largo, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 51.35,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://www.guinnessworldrecords.com/world-records/largest-christmas-stocking (51.35 m long, 21.63 m wide, Pubblica Assistenza Carrara e Sezioni, 5 Jan 2011; Sedalia's 2017 attempt was not ratified)"
+      }
+    },
+    {
+      "id": "txm-033",
+      "tier": "free",
+      "tags": [
+        "culture",
+        "geo"
+      ],
+      "family": "record-length",
+      "text": {
+        "en": "In 2018, the Dubai Mall hung the largest Christmas bauble on record. What was its diameter, in metres?",
+        "fr": "En 2018, le Dubai Mall a suspendu la plus grosse boule de Noël du monde. Quel était son diamètre, en mètres ?",
+        "ar": "سنة 2018، دبي مول علّق أكبر طابة ميلاد بالعالم. قدّيش كان قطرها، بالمتر؟",
+        "es": "En 2018, el Dubai Mall colgó la bola de Navidad más grande de la historia. ¿Cuál era su diámetro, en metros?"
+      },
+      "unit": {
+        "en": "m",
+        "fr": "m",
+        "ar": "م",
+        "es": "m"
+      },
+      "answer": 4.68,
+      "source": "Guinness World Records",
+      "review": {
+        "status": "draft",
+        "ref": "https://guinnessworldrecords.com/news/commercial/2018/12/record-breaking-christmas-bauble-creates-must-see-spectacle-in-shopping-centre-553200/ (4.68 m / 15 ft 4 in diameter, 1,100 kg)"
+      }
+    }
+  ]
+}
