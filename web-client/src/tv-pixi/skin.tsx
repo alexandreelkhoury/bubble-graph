@@ -14,6 +14,7 @@ import { focusGame, tvAct, tvCupOpen, tvDialog, tvFocusGame, tvHubSettings, tvIn
 import { tvSkin } from "../tv-mock/tvSkin";
 import { HubScene } from "./hub";
 import { LikelyScene } from "./likely";
+import { PixiMishana } from "./mishana";
 import { PixiHost } from "./stage";
 
 const overlayOpen = (): boolean =>
@@ -66,3 +67,4 @@ function PixiLikely({ view }: { view: TvRoomView }) {
 
 tvSkin.Hub = PixiHub;
 tvSkin.games.likely = PixiLikely;
+tvSkin.games.mishana = PixiMishana;
