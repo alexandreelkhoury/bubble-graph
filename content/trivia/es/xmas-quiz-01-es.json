@@ -124,7 +124,7 @@
       "answer": 0,
       "topic": "history",
       "difficulty": 2,
-      "explain": "Su leyenda de regalos en secreto dio lugar a Sinterklaas en los Países Bajos y luego a Papá Noel.",
+      "explain": "En 1087, unos marineros llevaron sus reliquias de Mira a Bari, en Italia, donde siguen; su leyenda dio lugar a Sinterklaas y luego a Papá Noel.",
       "source": "https://www.britannica.com/biography/Saint-Nicholas"
     },
     {
@@ -280,8 +280,8 @@
       "answer": 0,
       "topic": "traditions",
       "difficulty": 2,
-      "explain": "Santa Lucía cae en lo más oscuro del invierno nórdico; hoy las velas suelen ser de pilas.",
-      "source": "https://en.wikipedia.org/wiki/Saint_Lucy%27s_Day"
+      "explain": "Santa Lucía cae en lo más oscuro del invierno nórdico; hoy muchas velas son de pilas, por seguridad.",
+      "source": "https://www.thelocal.se/20251211/saints-spooks-and-eyeballs-an-immigrants-view-of-lucia-in-sweden"
     },
     {
       "id": "q016",
@@ -405,7 +405,7 @@
       "options": [
         "Trigo cocido con azúcar y granada",
         "Bizcocho de sémola y cúrcuma",
-        "Arroz con leche y agua de rosas",
+        "Arroz con leche y agua de azahar",
         "Sopa de lentejas"
       ],
       "answer": 0,
@@ -508,7 +508,7 @@
       "answer": 0,
       "topic": "food",
       "difficulty": 2,
-      "explain": "Hoy el relleno es de fruta pasa, manzana y especias; de la carne solo queda el nombre.",
+      "explain": "Hoy el relleno es de fruta pasa, manzana y especias, a menudo con sebo; la carne picada desapareció hace mucho.",
       "source": "https://en.wikipedia.org/wiki/Mince_pie"
     },
     {
@@ -540,7 +540,7 @@
       "answer": 3,
       "topic": "cinema-tv",
       "difficulty": 3,
-      "explain": "Clarence, sin alas después de 200 años, se las gana salvando a George Bailey.",
+      "explain": "Clarence, un «ángel de segunda clase» que aún no tiene alas, se las gana por fin salvando a George Bailey.",
       "source": "https://en.wikipedia.org/wiki/Clarence_Odbody"
     },
     {
@@ -641,8 +641,8 @@
       "answer": 3,
       "topic": "cinema-tv",
       "difficulty": 3,
-      "explain": "Fue la primera película navideña de animación nominada al Óscar a la mejor película animada.",
-      "source": "https://en.wikipedia.org/wiki/Klaus_(film)"
+      "explain": "Sergio Pablos la hizo en su estudio de Madrid; ganó siete premios Annie, entre ellos el de mejor película animada.",
+      "source": "https://deadline.com/2020/01/annie-awards-2020-winners-list-livestream-1202841495"
     },
     {
       "id": "q038",
@@ -705,8 +705,8 @@
       "answer": 3,
       "topic": "food",
       "difficulty": 3,
-      "explain": "Portugal es el mayor consumidor de bacalao del mundo: unos seis kilos por persona al año.",
-      "source": "https://fortune.com/europe/2024/12/20/portugal-cod-christmas/"
+      "explain": "A los portugueses les encanta el bacalao: solo diciembre supone una cuarta parte o más de todo el que comen en el año.",
+      "source": "https://postal.pt/economia/consumo-de-bacalhau-no-mes-de-dezembro-vai-representar-entre-25-a-30-do-total/"
     },
     {
       "id": "q042",
@@ -730,21 +730,18 @@
     {
       "id": "q043",
       "type": "mc4",
-      "text": "¿Dónde transcurre la comedia francesa de culto «Le Père Noël est une ordure» (1982)?",
+      "text": "En «Milagro en la calle 34» (1947), al bondadoso Kris Kringle lo contratan como Papá Noel en ¿qué gran almacén?",
       "options": [
-        "En una estación de esquí",
-        "En una línea de ayuda telefónica",
-        "En un centro comercial",
-        "En un hospital"
+        "Harrods",
+        "Macy's",
+        "Bloomingdale's",
+        "Galeries Lafayette"
       ],
       "answer": 1,
       "topic": "cinema-tv",
       "difficulty": 3,
-      "easyIn": [
-        "fr"
-      ],
-      "explain": "Ocurre en Nochebuena y adapta una obra de 1979 de la compañía cómica del Splendid.",
-      "source": "https://www.unifrance.org/film/501/le-pere-noel-est-une-ordure"
+      "explain": "Edmund Gwenn ganó el Óscar al mejor actor de reparto por el papel; con 71 años, era entonces el ganador de más edad.",
+      "source": "https://www.britannica.com/topic/Miracle-on-34th-Street"
     },
     {
       "id": "q044",
@@ -894,7 +891,7 @@
       "options": [
         "Se disfrazan y van de casa en casa",
         "Encienden hogueras en las azoteas",
-        "Plantan un pequeño cedro",
+        "Sueltan farolillos de papel al cielo",
         "Tiran agua desde los balcones"
       ],
       "answer": 0,
@@ -933,8 +930,8 @@
       "answer": 1,
       "topic": "traditions",
       "difficulty": 2,
-      "explain": "Los filipinos hablan de los «ber months»: en cuanto empieza septiembre, suenan los villancicos.",
-      "source": "https://www.npr.org/2018/12/24/678616528/love-the-holidays-the-philippines-celebrates-4-months-of-christmas-mania"
+      "explain": "Los filipinos hablan de los «ber months»: desde el 1 de septiembre, la radio y la tele ponen villancicos.",
+      "source": "https://www.cnbc.com/2021/12/21/philippines-the-longest-christmas-celebrations-in-the-world-.html"
     },
     {
       "id": "q056",
@@ -990,7 +987,7 @@
       "text": "En el Líbano, ¿cómo suelen llamar los niños al anciano vestido de rojo que trae los regalos?",
       "options": [
         "Sinterklaas",
-        "Papa Noël",
+        "Baba Noël",
         "Ded Moroz",
         "Joulupukki"
       ],
@@ -1001,8 +998,8 @@
         "ar",
         "fr"
       ],
-      "explain": "El nombre viene del francés; algunos dicen también «Baba Noël».",
-      "source": "https://businessmirror.com.ph/jesus-isnt-only-for-the-christians/"
+      "explain": "En árabe, «baba» significa «papá», igual que el «papa» del «Papa Noël» francés.",
+      "source": "https://whychristmas.com/cultures/lebanon"
     },
     {
       "id": "q060",

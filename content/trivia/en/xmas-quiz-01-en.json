@@ -124,7 +124,7 @@
       "answer": 0,
       "topic": "history",
       "difficulty": 2,
-      "explain": "His legend of secret gift-giving became Sinterklaas in the Netherlands, then Santa Claus.",
+      "explain": "In 1087 sailors carried his relics from Myra to Bari, in Italy, where they still rest; his legend later became Sinterklaas, then Santa.",
       "source": "https://www.britannica.com/biography/Saint-Nicholas"
     },
     {
@@ -280,8 +280,8 @@
       "answer": 0,
       "topic": "traditions",
       "difficulty": 2,
-      "explain": "Lucia's day falls in the darkest weeks of the Nordic winter; today the candles are usually battery-powered.",
-      "source": "https://en.wikipedia.org/wiki/Saint_Lucy%27s_Day"
+      "explain": "Lucia's day falls in the darkest weeks of the Nordic winter; today the candles are often battery-powered, for safety.",
+      "source": "https://www.thelocal.se/20251211/saints-spooks-and-eyeballs-an-immigrants-view-of-lucia-in-sweden"
     },
     {
       "id": "q016",
@@ -405,7 +405,7 @@
       "options": [
         "Boiled wheat, sugar and pomegranate",
         "Semolina and turmeric cake",
-        "Rice pudding with rose water",
+        "Rice pudding with orange blossom water",
         "Lentil soup"
       ],
       "answer": 0,
@@ -508,7 +508,7 @@
       "answer": 0,
       "topic": "food",
       "difficulty": 2,
-      "explain": "Today's 'mincemeat' is dried fruit, apples and spices; only the name is left of the meat.",
+      "explain": "Today's 'mincemeat' is dried fruit, apples and spices, often with suet; the minced meat itself is long gone.",
       "source": "https://en.wikipedia.org/wiki/Mince_pie"
     },
     {
@@ -540,7 +540,7 @@
       "answer": 3,
       "topic": "cinema-tv",
       "difficulty": 3,
-      "explain": "Clarence, still without wings after 200 years, earns them by saving George Bailey.",
+      "explain": "Clarence, an 'angel second class' who has not earned his wings yet, finally gets them by saving George Bailey.",
       "source": "https://en.wikipedia.org/wiki/Clarence_Odbody"
     },
     {
@@ -641,8 +641,8 @@
       "answer": 3,
       "topic": "cinema-tv",
       "difficulty": 3,
-      "explain": "It was the first animated Christmas film nominated for the Oscar for best animated feature.",
-      "source": "https://en.wikipedia.org/wiki/Klaus_(film)"
+      "explain": "Sergio Pablos made it at his studio in Madrid; it won seven Annie Awards, including best animated feature.",
+      "source": "https://deadline.com/2020/01/annie-awards-2020-winners-list-livestream-1202841495"
     },
     {
       "id": "q038",
@@ -705,8 +705,8 @@
       "answer": 3,
       "topic": "food",
       "difficulty": 3,
-      "explain": "Portugal is the world's biggest eater of bacalhau: around six kilos per person a year.",
-      "source": "https://fortune.com/europe/2024/12/20/portugal-cod-christmas/"
+      "explain": "The Portuguese love bacalhau so much that December alone accounts for a quarter or more of all the cod they eat in a year.",
+      "source": "https://postal.pt/economia/consumo-de-bacalhau-no-mes-de-dezembro-vai-representar-entre-25-a-30-do-total/"
     },
     {
       "id": "q042",
@@ -730,21 +730,18 @@
     {
       "id": "q043",
       "type": "mc4",
-      "text": "Where does the cult French comedy 'Le Père Noël est une ordure' (1982) take place?",
+      "text": "In 'Miracle on 34th Street' (1947), the kindly Kris Kringle is hired to play Santa at which department store?",
       "options": [
-        "At a ski resort",
-        "At a telephone helpline",
-        "In a shopping centre",
-        "In a hospital"
+        "Harrods",
+        "Macy's",
+        "Bloomingdale's",
+        "Galeries Lafayette"
       ],
       "answer": 1,
       "topic": "cinema-tv",
       "difficulty": 3,
-      "easyIn": [
-        "fr"
-      ],
-      "explain": "It is set on Christmas Eve and was adapted from a 1979 play by the Splendid comedy troupe.",
-      "source": "https://www.unifrance.org/film/501/le-pere-noel-est-une-ordure"
+      "explain": "Edmund Gwenn won the Oscar for best supporting actor for the role; at 71, he was then the oldest actor to win one.",
+      "source": "https://www.britannica.com/topic/Miracle-on-34th-Street"
     },
     {
       "id": "q044",
@@ -894,7 +891,7 @@
       "options": [
         "Dress up and go door to door",
         "Light bonfires on the rooftops",
-        "Plant a small cedar",
+        "Release paper lanterns into the sky",
         "Throw water from balconies"
       ],
       "answer": 0,
@@ -933,8 +930,8 @@
       "answer": 1,
       "topic": "traditions",
       "difficulty": 2,
-      "explain": "Filipinos call them the 'ber months': as soon as September begins, the Christmas songs start.",
-      "source": "https://www.npr.org/2018/12/24/678616528/love-the-holidays-the-philippines-celebrates-4-months-of-christmas-mania"
+      "explain": "Filipinos call them the 'ber months': from 1 September, radio and TV start playing Christmas songs.",
+      "source": "https://www.cnbc.com/2021/12/21/philippines-the-longest-christmas-celebrations-in-the-world-.html"
     },
     {
       "id": "q056",
@@ -990,7 +987,7 @@
       "text": "In Lebanon, what do children usually call the old man in red who brings the presents?",
       "options": [
         "Sinterklaas",
-        "Papa Noël",
+        "Baba Noël",
         "Ded Moroz",
         "Joulupukki"
       ],
@@ -1001,8 +998,8 @@
         "ar",
         "fr"
       ],
-      "explain": "The name comes from French; some also say 'Baba Noël'.",
-      "source": "https://businessmirror.com.ph/jesus-isnt-only-for-the-christians/"
+      "explain": "In Arabic, 'baba' means 'daddy', just like the 'papa' in the French Papa Noël.",
+      "source": "https://whychristmas.com/cultures/lebanon"
     },
     {
       "id": "q060",

@@ -124,7 +124,7 @@
       "answer": 0,
       "topic": "history",
       "difficulty": 2,
-      "explain": "قصّتو إنّو كان يعطي هدايا بالسرّ، صارت «سينتركلاس» بهولندا، وبعدين بابا نويل.",
+      "explain": "سنة 1087، بحّارة نقلوا رفاتو من ميرا لباري بإيطاليا، وبعدو هونيك لليوم؛ وقصّتو صارت «سينتركلاس»، وبعدين بابا نويل.",
       "source": "https://www.britannica.com/biography/Saint-Nicholas"
     },
     {
@@ -280,8 +280,8 @@
       "answer": 0,
       "topic": "traditions",
       "difficulty": 2,
-      "explain": "عيد لوسيا بيجي بعزّ عتمة الشتي بالشمال، واليوم صارت الشموع بأغلبها عالبطارية.",
-      "source": "https://en.wikipedia.org/wiki/Saint_Lucy%27s_Day"
+      "explain": "عيد لوسيا بيجي بعزّ عتمة الشتي بالشمال، واليوم شموع كتير صارت عالبطارية، كرمال السلامة.",
+      "source": "https://www.thelocal.se/20251211/saints-spooks-and-eyeballs-an-immigrants-view-of-lucia-in-sweden"
     },
     {
       "id": "q016",
@@ -508,7 +508,7 @@
       "answer": 0,
       "topic": "food",
       "difficulty": 2,
-      "explain": "اليوم حشوتها فواكه يابسة وتفّاح وبهارات، وما ضلّ من اللحمة غير الاسم.",
+      "explain": "اليوم حشوتها فواكه يابسة وتفّاح وبهارات، وأوقات شوية دهن، بس اللحمة المفرومة راحت من زمان.",
       "source": "https://en.wikipedia.org/wiki/Mince_pie"
     },
     {
@@ -540,7 +540,7 @@
       "answer": 3,
       "topic": "cinema-tv",
       "difficulty": 3,
-      "explain": "كلارنس، بعد 200 سنة بلا جوانح، بيربحهن لمّا بينقذ جورج بايلي.",
+      "explain": "كلارنس، «ملاك درجة تانية» بعدو بلا جوانح، بيربحهن أخيراً لمّا بينقذ جورج بايلي.",
       "source": "https://en.wikipedia.org/wiki/Clarence_Odbody"
     },
     {
@@ -641,8 +641,8 @@
       "answer": 3,
       "topic": "cinema-tv",
       "difficulty": 3,
-      "explain": "كان أوّل فيلم رسوم متحرّكة عن الميلاد بيترشّح لأوسكار أحسن فيلم رسوم متحرّكة.",
-      "source": "https://en.wikipedia.org/wiki/Klaus_(film)"
+      "explain": "عملو سيرجيو بابلوس باستوديو تبعو بمدريد، وربح سبع جوايز «آني»، منّن جايزة أحسن فيلم رسوم متحرّكة.",
+      "source": "https://deadline.com/2020/01/annie-awards-2020-winners-list-livestream-1202841495"
     },
     {
       "id": "q038",
@@ -705,8 +705,8 @@
       "answer": 3,
       "topic": "food",
       "difficulty": 3,
-      "explain": "البرتغال أكبر مستهلك للباكالاو بالعالم: حوالي 6 كيلو للشخص بالسنة.",
-      "source": "https://fortune.com/europe/2024/12/20/portugal-cod-christmas/"
+      "explain": "البرتغاليين بيموتوا بالباكالاو: شهر كانون الأوّل وحدو فيه ربع، أو أكتر، من كل القدّ يلّي بياكلوه بالسنة.",
+      "source": "https://postal.pt/economia/consumo-de-bacalhau-no-mes-de-dezembro-vai-representar-entre-25-a-30-do-total/"
     },
     {
       "id": "q042",
@@ -730,21 +730,18 @@
     {
       "id": "q043",
       "type": "mc4",
-      "text": "وين بتصير أحداث الكوميديا الفرنسية الشهيرة «Le Père Noël est une ordure» (1982)؟",
+      "text": "بفيلم «Miracle on 34th Street» (1947)، كريس كرينغل الطيّب بيشتغل بابا نويل بأيّا محلّ كبير؟",
       "options": [
-        "بمنتجع تزلّج",
-        "بمركز خطّ مساعدة عالتلفون",
-        "بمول",
-        "بمستشفى"
+        "هارودز",
+        "ميسيز",
+        "بلومينغديلز",
+        "غاليري لافاييت"
       ],
       "answer": 1,
       "topic": "cinema-tv",
       "difficulty": 3,
-      "easyIn": [
-        "fr"
-      ],
-      "explain": "القصّة ليلة الميلاد، والفيلم مأخوذ عن مسرحية لفرقة «السبلنديد» من سنة 1979.",
-      "source": "https://www.unifrance.org/film/501/le-pere-noel-est-une-ordure"
+      "explain": "إدموند غوين ربح أوسكار أحسن ممثّل بدور تاني عن هالدور، وكان عمرو 71 سنة: أكبر واحد ربحها لوقتها.",
+      "source": "https://www.britannica.com/topic/Miracle-on-34th-Street"
     },
     {
       "id": "q044",
@@ -894,7 +891,7 @@
       "options": [
         "بيتنكّروا وبيلفّوا عالبيوت",
         "بيولّعوا نار عالسطوح",
-        "بيزرعوا أرزة زغيرة",
+        "بيطيّروا فوانيس ورق بالسما",
         "بيكبّوا مَي من البلكون"
       ],
       "answer": 0,
@@ -933,8 +930,8 @@
       "answer": 1,
       "topic": "traditions",
       "difficulty": 2,
-      "explain": "بيسمّوها «أشهر الـber»، من September لـDecember: من أوّل أيلول بتبلّش غناني الميلاد.",
-      "source": "https://www.npr.org/2018/12/24/678616528/love-the-holidays-the-philippines-celebrates-4-months-of-christmas-mania"
+      "explain": "بيسمّوها «أشهر الـber»، من September لـDecember: من أوّل أيلول، الراديو والتلفزيون بيبلّشوا يحطّوا غناني الميلاد.",
+      "source": "https://www.cnbc.com/2021/12/21/philippines-the-longest-christmas-celebrations-in-the-world-.html"
     },
     {
       "id": "q056",
@@ -1001,8 +998,8 @@
         "ar",
         "fr"
       ],
-      "explain": "الاسم جايي من الفرنسي «Papa Noël»، وفي كمان مين بيقول «Baba Noël».",
-      "source": "https://businessmirror.com.ph/jesus-isnt-only-for-the-christians/"
+      "explain": "«بابا» يعني البيّ، متل «Papa» بـ«Papa Noël» الفرنسي.",
+      "source": "https://whychristmas.com/cultures/lebanon"
     },
     {
       "id": "q060",
