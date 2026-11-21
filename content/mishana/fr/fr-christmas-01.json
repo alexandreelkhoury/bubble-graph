@@ -1,0 +1,787 @@
+{
+  "id": "fr-christmas-01",
+  "game": "mishana",
+  "version": 1,
+  "locale": "fr",
+  "script": "Latn",
+  "title": {
+    "en": "Christmas",
+    "fr": "Noël",
+    "ar": "الميلاد",
+    "es": "Navidad"
+  },
+  "description": {
+    "en": "Christmas and New Year: decorations, food, Santa, snow, gifts, carols",
+    "fr": "Noël et le Nouvel An : déco, repas, Père Noël, neige, cadeaux, chants",
+    "ar": "الميلاد وراس السنة: زينة، أكل، بابا نويل، تلج، هدايا، ترانيم",
+    "es": "Navidad y Año Nuevo: adornos, comida, Papá Noel, nieve, regalos, villancicos"
+  },
+  "tags": [
+    "christmas",
+    "seasonal",
+    "winter",
+    "food",
+    "family"
+  ],
+  "topics": [
+    "traditions",
+    "food",
+    "music"
+  ],
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Sapin",
+        "alt": [
+          "Sapin de Noël"
+        ]
+      },
+      "undercover": {
+        "text": "Palmier"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Gui"
+      },
+      "undercover": {
+        "text": "Houx",
+        "alt": [
+          "Branche de houx"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Guirlande"
+      },
+      "undercover": {
+        "text": "Ruban"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Bougie"
+      },
+      "undercover": {
+        "text": "Lampion"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Sabot"
+      },
+      "undercover": {
+        "text": "Pantoufle",
+        "alt": [
+          "Chausson"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations. Le sabot au pied du sapin. Review: replaces Soulier / Sabot (near-synonyms)"
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Étoile"
+      },
+      "undercover": {
+        "text": "Comète"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Crèche",
+        "alt": [
+          "Crèche de Noël"
+        ]
+      },
+      "undercover": {
+        "text": "Étable"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity. Review: replaces Crèche / Calendrier de l'Avent (weak link)"
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Bûche",
+        "alt": [
+          "Bûche de Noël"
+        ]
+      },
+      "undercover": {
+        "text": "Gâteau roulé",
+        "alt": [
+          "Biscuit roulé"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Pain d'épices",
+        "alt": [
+          "Pain d'épice"
+        ]
+      },
+      "undercover": {
+        "text": "Sablé"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Dinde"
+      },
+      "undercover": {
+        "text": "Chapon"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Foie gras"
+      },
+      "undercover": {
+        "text": "Saumon fumé",
+        "alt": [
+          "Saumon"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Huître"
+      },
+      "undercover": {
+        "text": "Moule"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Châtaigne",
+        "alt": [
+          "Marron"
+        ]
+      },
+      "undercover": {
+        "text": "Noisette"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Calendrier de l'Avent",
+        "alt": [
+          "Calendrier"
+        ]
+      },
+      "undercover": {
+        "text": "Boîte de chocolats",
+        "alt": [
+          "Chocolats"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations. Review: replaces Papillote / Bonbon (regional; Papillote is a kind of bonbon)"
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Panettone"
+      },
+      "undercover": {
+        "text": "Brioche"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Nougat"
+      },
+      "undercover": {
+        "text": "Pâte d'amande",
+        "alt": [
+          "Massepain"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Chocolat chaud"
+      },
+      "undercover": {
+        "text": "Café"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Marron glacé",
+        "alt": [
+          "Marrons glacés"
+        ]
+      },
+      "undercover": {
+        "text": "Pâte de fruits",
+        "alt": [
+          "Pâtes de fruits"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food. Review: replaces Clémentine / Mandarine (fr-everyday-01 p064 treats them as one word)"
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Sucre d'orge"
+      },
+      "undercover": {
+        "text": "Sucette"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Raclette"
+      },
+      "undercover": {
+        "text": "Fondue"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Galette des rois",
+        "alt": [
+          "Galette"
+        ]
+      },
+      "undercover": {
+        "text": "Crêpe"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Père Noël",
+        "alt": [
+          "Papa Noël"
+        ]
+      },
+      "undercover": {
+        "text": "Grand-père",
+        "alt": [
+          "Papi",
+          "Papy"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Renne"
+      },
+      "undercover": {
+        "text": "Élan"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Lutin"
+      },
+      "undercover": {
+        "text": "Nain de jardin",
+        "alt": [
+          "Nain"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Ange"
+      },
+      "undercover": {
+        "text": "Fée"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Bonhomme de neige"
+      },
+      "undercover": {
+        "text": "Épouvantail"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Traîneau"
+      },
+      "undercover": {
+        "text": "Carrosse"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Hotte",
+        "alt": [
+          "Hotte du Père Noël"
+        ]
+      },
+      "undercover": {
+        "text": "Sac à dos"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters. La hotte du Père Noël, pas celle de la cuisine."
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Pôle Nord"
+      },
+      "undercover": {
+        "text": "Pôle Sud"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Atelier"
+      },
+      "undercover": {
+        "text": "Usine"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Cheminée"
+      },
+      "undercover": {
+        "text": "Radiateur"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Flocon",
+        "alt": [
+          "Flocon de neige"
+        ]
+      },
+      "undercover": {
+        "text": "Grêlon"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Luge"
+      },
+      "undercover": {
+        "text": "Ski"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Patinoire"
+      },
+      "undercover": {
+        "text": "Piste de ski",
+        "alt": [
+          "Piste"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Moufle"
+      },
+      "undercover": {
+        "text": "Gant"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "Écharpe"
+      },
+      "undercover": {
+        "text": "Bonnet"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p037",
+      "civilian": {
+        "text": "Igloo"
+      },
+      "undercover": {
+        "text": "Tente"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p038",
+      "civilian": {
+        "text": "Avalanche"
+      },
+      "undercover": {
+        "text": "Tempête",
+        "alt": [
+          "Tempête de neige"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p039",
+      "civilian": {
+        "text": "Pyjama"
+      },
+      "undercover": {
+        "text": "Robe de chambre",
+        "alt": [
+          "Peignoir"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p040",
+      "civilian": {
+        "text": "Pull de Noël",
+        "alt": [
+          "Pull moche"
+        ]
+      },
+      "undercover": {
+        "text": "Sweat à capuche",
+        "alt": [
+          "Sweat"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p041",
+      "civilian": {
+        "text": "Papier cadeau"
+      },
+      "undercover": {
+        "text": "Carton"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p042",
+      "civilian": {
+        "text": "Carte de vœux",
+        "alt": [
+          "Carte de voeux"
+        ]
+      },
+      "undercover": {
+        "text": "Carte postale"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p043",
+      "civilian": {
+        "text": "Marché de Noël"
+      },
+      "undercover": {
+        "text": "Brocante"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p044",
+      "civilian": {
+        "text": "Chant de Noël",
+        "alt": [
+          "Chant"
+        ]
+      },
+      "undercover": {
+        "text": "Berceuse"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p045",
+      "civilian": {
+        "text": "Chorale"
+      },
+      "undercover": {
+        "text": "Orchestre"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p046",
+      "civilian": {
+        "text": "Grelot"
+      },
+      "undercover": {
+        "text": "Cloche"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Music. Review: replaces Grelot / Clochette (near-synonyms)"
+    },
+    {
+      "id": "p047",
+      "civilian": {
+        "text": "Boîte à musique"
+      },
+      "undercover": {
+        "text": "Juke-box",
+        "alt": [
+          "Jukebox"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p048",
+      "civilian": {
+        "text": "Berger"
+      },
+      "undercover": {
+        "text": "Fermier"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity"
+    },
+    {
+      "id": "p049",
+      "civilian": {
+        "text": "Âne"
+      },
+      "undercover": {
+        "text": "Bœuf",
+        "alt": [
+          "Boeuf"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity. L'âne et le bœuf de la crèche."
+    },
+    {
+      "id": "p050",
+      "civilian": {
+        "text": "Nouvel An",
+        "alt": [
+          "Jour de l'An",
+          "Premier de l'an"
+        ]
+      },
+      "undercover": {
+        "text": "Anniversaire",
+        "alt": [
+          "Anniv"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve. Review: replaces Jour de l'An / 14 Juillet (digits)"
+    },
+    {
+      "id": "p051",
+      "civilian": {
+        "text": "Feu d'artifice"
+      },
+      "undercover": {
+        "text": "Cierge magique"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p052",
+      "civilian": {
+        "text": "Confettis",
+        "alt": [
+          "Confetti"
+        ]
+      },
+      "undercover": {
+        "text": "Serpentin"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p053",
+      "civilian": {
+        "text": "Résolution",
+        "alt": [
+          "Bonne résolution"
+        ]
+      },
+      "undercover": {
+        "text": "Promesse"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p054",
+      "civilian": {
+        "text": "Minuit"
+      },
+      "undercover": {
+        "text": "Midi"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    }
+  ]
+}

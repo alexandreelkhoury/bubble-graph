@@ -1,0 +1,1022 @@
+{
+  "id": "ar-christmas-01",
+  "game": "mishana",
+  "version": 1,
+  "locale": "ar",
+  "script": "Arab",
+  "title": {
+    "en": "Christmas",
+    "fr": "Noël",
+    "ar": "الميلاد",
+    "es": "Navidad"
+  },
+  "description": {
+    "en": "Christmas and New Year: decorations, food, Santa, snow, gifts, carols",
+    "fr": "Noël et le Nouvel An : déco, repas, Père Noël, neige, cadeaux, chants",
+    "ar": "الميلاد وراس السنة: زينة، أكل، بابا نويل، تلج، هدايا، ترانيم",
+    "es": "Navidad y Año Nuevo: adornos, comida, Papá Noel, nieve, regalos, villancicos"
+  },
+  "tags": [
+    "christmas",
+    "seasonal",
+    "winter",
+    "food",
+    "family"
+  ],
+  "topics": [
+    "traditions",
+    "food",
+    "music"
+  ],
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "شجرة الميلاد",
+        "translit": "Shajrat el milad",
+        "alt": [
+          "shajra",
+          "sapin",
+          "shajret el milad",
+          "shajret el eid",
+          "شجرة العيد"
+        ]
+      },
+      "undercover": {
+        "text": "مغارة",
+        "translit": "Maghara",
+        "alt": [
+          "maghara el milad",
+          "creche"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations. مغارة الميلاد: the nativity scene"
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "نجمة",
+        "translit": "Najmeh",
+        "alt": [
+          "najme"
+        ]
+      },
+      "undercover": {
+        "text": "قمر",
+        "translit": "Amar",
+        "alt": [
+          "qamar",
+          "2amar"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "شمعة",
+        "translit": "Sham'a",
+        "alt": [
+          "shame3",
+          "shamaa"
+        ]
+      },
+      "undercover": {
+        "text": "قنديل",
+        "translit": "Andil",
+        "alt": [
+          "qandil",
+          "2andil"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations. Review: replaces فانوس (Ramadan lantern)"
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "بابا نويل",
+        "translit": "Baba Noel",
+        "alt": [
+          "santa",
+          "papa noel"
+        ]
+      },
+      "undercover": {
+        "text": "جدو",
+        "translit": "Jeddo",
+        "alt": [
+          "jiddo",
+          "jaddo"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "غزال",
+        "translit": "Ghazal",
+        "alt": [
+          "ghazel",
+          "renne",
+          "reindeer"
+        ]
+      },
+      "undercover": {
+        "text": "حصان",
+        "translit": "Hsan",
+        "alt": [
+          "hisan",
+          "hsen"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters. غزال بابا نويل: Santa's reindeer"
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "ملاك",
+        "translit": "Malak",
+        "alt": [
+          "malek"
+        ]
+      },
+      "undercover": {
+        "text": "جنية",
+        "translit": "Jenniyeh",
+        "alt": [
+          "jinniyeh",
+          "jenniye"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "رجل التلج",
+        "translit": "Rajol el talj",
+        "alt": [
+          "rajel el talj",
+          "snowman"
+        ]
+      },
+      "undercover": {
+        "text": "فزاعة",
+        "translit": "Fazza'a",
+        "alt": [
+          "fazzaa"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "قزم",
+        "translit": "Azam",
+        "alt": [
+          "qazam",
+          "2azam"
+        ]
+      },
+      "undercover": {
+        "text": "عملاق",
+        "translit": "Emla'",
+        "alt": [
+          "emlaq",
+          "3emla2"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "مزلجة",
+        "translit": "Mazlajeh",
+        "alt": [
+          "mazlaje",
+          "luge",
+          "traineau"
+        ]
+      },
+      "undercover": {
+        "text": "حنطور",
+        "translit": "Hantour",
+        "alt": [
+          "hantur",
+          "7antour"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters. Review: عربية also means \"Arabic\", replaced by حنطور"
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "مدخنة",
+        "translit": "Madkhaneh",
+        "alt": [
+          "madkhane"
+        ]
+      },
+      "undercover": {
+        "text": "سطح",
+        "translit": "Sateh",
+        "alt": [
+          "sateh el bayt"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "ورق هدايا",
+        "translit": "Wara' hadaya",
+        "alt": [
+          "waraq hadaya"
+        ]
+      },
+      "undercover": {
+        "text": "شريطة",
+        "translit": "Shrita",
+        "alt": [
+          "shreeta"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "هدية",
+        "translit": "Hdiyyeh",
+        "alt": [
+          "hdiye",
+          "hadiyyeh"
+        ]
+      },
+      "undercover": {
+        "text": "كرت معايدة",
+        "translit": "Kart me'aydeh",
+        "alt": [
+          "kart meayde"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "عيدية",
+        "translit": "Eidiyyeh",
+        "alt": [
+          "3idiyye",
+          "eidiye"
+        ]
+      },
+      "undercover": {
+        "text": "مصروف",
+        "translit": "Masrouf",
+        "alt": [
+          "masrouf el jeyb"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts. Holiday money given to children"
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "لعبة",
+        "translit": "Lo'beh",
+        "alt": [
+          "lo3be",
+          "lobeh"
+        ]
+      },
+      "undercover": {
+        "text": "تياب",
+        "translit": "Tyab",
+        "alt": [
+          "thyab",
+          "tiyab"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "البربارة",
+        "translit": "El Barbara",
+        "alt": [
+          "barbara",
+          "burbara",
+          "عيد البربارة",
+          "eid el barbara"
+        ]
+      },
+      "undercover": {
+        "text": "هالوين",
+        "translit": "Halloween",
+        "alt": [
+          "halloween",
+          "hallowin"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Season. Eid el Burbara (4 December): children dress up, eat amh msalla2 and atayef. Review: replaces يانصيب / لوتو (gambling, near-synonyms)"
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "بوش دو نويل",
+        "translit": "Boush de Noel",
+        "alt": [
+          "buche de noel",
+          "bouche de noel",
+          "yule log"
+        ]
+      },
+      "undercover": {
+        "text": "كاتو",
+        "translit": "Gateau",
+        "alt": [
+          "gato"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "كعك",
+        "translit": "Ka'ak",
+        "alt": [
+          "kaak",
+          "ka3ak"
+        ]
+      },
+      "undercover": {
+        "text": "معمول",
+        "translit": "Ma'moul",
+        "alt": [
+          "maamoul",
+          "ma3moul"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "حبش",
+        "translit": "Habash",
+        "alt": [
+          "7abash",
+          "turkey"
+        ]
+      },
+      "undercover": {
+        "text": "دجاج",
+        "translit": "Djej",
+        "alt": [
+          "djeij",
+          "dajaj"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food. Turkey"
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "رز ع دجاج",
+        "translit": "Rezz a djej",
+        "alt": [
+          "riz a djej",
+          "rezz w djej"
+        ]
+      },
+      "undercover": {
+        "text": "مقلوبة",
+        "translit": "Ma'loubeh",
+        "alt": [
+          "maqloubeh",
+          "ma2loube"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "كستنا",
+        "translit": "Kastana",
+        "alt": [
+          "kestana"
+        ]
+      },
+      "undercover": {
+        "text": "بطاطا حلوة",
+        "translit": "Batata helweh",
+        "alt": [
+          "batata hilwe"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food. Winter street snacks"
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "ملبس",
+        "translit": "Mlabbas",
+        "alt": [
+          "mlabbass",
+          "dragee"
+        ]
+      },
+      "undercover": {
+        "text": "شوكولا",
+        "translit": "Shokola",
+        "alt": [
+          "shokolata",
+          "chocolat"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food. Sugared almonds"
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "بانيتوني",
+        "translit": "Panettone",
+        "alt": [
+          "panettoni"
+        ]
+      },
+      "undercover": {
+        "text": "بريوش",
+        "translit": "Briosh",
+        "alt": [
+          "brioche"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "سحلب",
+        "translit": "Sahlab",
+        "alt": [
+          "sa7lab",
+          "salep"
+        ]
+      },
+      "undercover": {
+        "text": "شوكولا سخنة",
+        "translit": "Shokola sukhneh",
+        "alt": [
+          "hot chocolate",
+          "shokola s5ne"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "عوامات",
+        "translit": "Awwamat",
+        "alt": [
+          "3awwamet",
+          "awwamet"
+        ]
+      },
+      "undercover": {
+        "text": "زلابية",
+        "translit": "Zlebyeh",
+        "alt": [
+          "zlabiyeh",
+          "zlebye"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food. Sweets of Eid el Ghitas (6 January)"
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "صوبيا",
+        "translit": "Sobya",
+        "alt": [
+          "soba",
+          "sobia"
+        ]
+      },
+      "undercover": {
+        "text": "شوفاج",
+        "translit": "Shofaj",
+        "alt": [
+          "chauffage",
+          "shoufaj"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter. Wood or diesel stove / central heating"
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "شومينيه",
+        "translit": "Shomineh",
+        "alt": [
+          "cheminee",
+          "shomine",
+          "shiminee"
+        ]
+      },
+      "undercover": {
+        "text": "فرن",
+        "translit": "Forn",
+        "alt": [
+          "furn"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter. Review: replaces بطانية / لحاف (ar-everyday-01 p088 treats them as one word)"
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "جليد",
+        "translit": "Jalid",
+        "alt": [
+          "jlid",
+          "jaleed"
+        ]
+      },
+      "undercover": {
+        "text": "تلج",
+        "translit": "Talj",
+        "alt": [
+          "telj",
+          "snow"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "شتي",
+        "translit": "Shiteh",
+        "alt": [
+          "shiti",
+          "sheteh"
+        ]
+      },
+      "undercover": {
+        "text": "ريح",
+        "translit": "Rih",
+        "alt": [
+          "ri7",
+          "hawa"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "كفوف",
+        "translit": "Kfouf",
+        "alt": [
+          "kfoof",
+          "gloves"
+        ]
+      },
+      "undercover": {
+        "text": "شال",
+        "translit": "Shal",
+        "alt": [
+          "shaal",
+          "scarf"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "كنزة صوف",
+        "translit": "Kanzet souf",
+        "alt": [
+          "kanze souf",
+          "kanzeh"
+        ]
+      },
+      "undercover": {
+        "text": "هودي",
+        "translit": "Hoodie",
+        "alt": [
+          "hoody"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "بيجاما",
+        "translit": "Pijama",
+        "alt": [
+          "pyjama",
+          "bijama"
+        ]
+      },
+      "undercover": {
+        "text": "روب",
+        "translit": "Robe",
+        "alt": [
+          "rob"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "جزمة",
+        "translit": "Jazmeh",
+        "alt": [
+          "jazme",
+          "boots"
+        ]
+      },
+      "undercover": {
+        "text": "صباط",
+        "translit": "Sabbat",
+        "alt": [
+          "sabbet"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "سكي",
+        "translit": "Ski",
+        "alt": [
+          "skii"
+        ]
+      },
+      "undercover": {
+        "text": "تلفريك",
+        "translit": "Teleferik",
+        "alt": [
+          "telepherique",
+          "teleferique"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "حرب تلج",
+        "translit": "Harb talj",
+        "alt": [
+          "harb telj",
+          "snowball fight"
+        ]
+      },
+      "undercover": {
+        "text": "حرب مخدات",
+        "translit": "Harb mkhaddat",
+        "alt": [
+          "harb m5addet",
+          "pillow fight"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter. Review: replaces فاريا / الأرز (place names; أرز also means rice)"
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "جرس",
+        "translit": "Jaras",
+        "alt": [
+          "jaras el milad",
+          "bell"
+        ]
+      },
+      "undercover": {
+        "text": "صفارة",
+        "translit": "Saffara",
+        "alt": [
+          "saffaara",
+          "whistle"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "كورال",
+        "translit": "Koral",
+        "alt": [
+          "chorale",
+          "choir"
+        ]
+      },
+      "undercover": {
+        "text": "فرقة",
+        "translit": "Fer'a",
+        "alt": [
+          "fir2a",
+          "firqa",
+          "band"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p037",
+      "civilian": {
+        "text": "ترنيمة",
+        "translit": "Tarnimeh",
+        "alt": [
+          "tarnime",
+          "carol"
+        ]
+      },
+      "undercover": {
+        "text": "أغنية",
+        "translit": "Ghinniyeh",
+        "alt": [
+          "ghinniye",
+          "oghniyeh"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music. A Christmas carol"
+    },
+    {
+      "id": "p038",
+      "civilian": {
+        "text": "راعي",
+        "translit": "Ra'i",
+        "alt": [
+          "ra3i",
+          "rai"
+        ]
+      },
+      "undercover": {
+        "text": "فلاح",
+        "translit": "Fallah",
+        "alt": [
+          "fella7"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity"
+    },
+    {
+      "id": "p039",
+      "civilian": {
+        "text": "حمار",
+        "translit": "Hmar",
+        "alt": [
+          "7mar",
+          "hmaar"
+        ]
+      },
+      "undercover": {
+        "text": "بقرة",
+        "translit": "Ba'ra",
+        "alt": [
+          "ba2ra",
+          "baqara"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity. The donkey and the cow of the nativity scene"
+    },
+    {
+      "id": "p040",
+      "civilian": {
+        "text": "ليلة الميلاد",
+        "translit": "Laylet el milad",
+        "alt": [
+          "lilt el milad",
+          "christmas eve"
+        ]
+      },
+      "undercover": {
+        "text": "ليلة راس السنة",
+        "translit": "Laylet ras el seneh",
+        "alt": [
+          "lilt ras el sene",
+          "new year's eve"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p041",
+      "civilian": {
+        "text": "مفرقعات",
+        "translit": "Mfar'a'at",
+        "alt": [
+          "mfarqaat",
+          "fireworks",
+          "فتيش",
+          "fatish"
+        ]
+      },
+      "undercover": {
+        "text": "بالونات",
+        "translit": "Ballonat",
+        "alt": [
+          "balonet",
+          "balloons"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p042",
+      "civilian": {
+        "text": "روزنامة",
+        "translit": "Roznameh",
+        "alt": [
+          "roznama",
+          "calendar"
+        ]
+      },
+      "undercover": {
+        "text": "أجندة",
+        "translit": "Ajenda",
+        "alt": [
+          "agenda"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p043",
+      "civilian": {
+        "text": "توقعات",
+        "translit": "Tawa'ou'at",
+        "alt": [
+          "tawaqqouat",
+          "tawa2o3at",
+          "predictions"
+        ]
+      },
+      "undercover": {
+        "text": "أبراج",
+        "translit": "Abraj",
+        "alt": [
+          "abrej",
+          "horoscope"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve. The New Year's Eve TV predictions. Review: replaces عد عكسي / منبّه (weak link)"
+    },
+    {
+      "id": "p044",
+      "civilian": {
+        "text": "نص الليل",
+        "translit": "Noss el leil",
+        "alt": [
+          "nos el lel",
+          "midnight"
+        ]
+      },
+      "undercover": {
+        "text": "الضهر",
+        "translit": "El dohr",
+        "alt": [
+          "dohr",
+          "noon",
+          "doher"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p045",
+      "civilian": {
+        "text": "جيران",
+        "translit": "Jiran",
+        "alt": [
+          "jiraan",
+          "jeeran"
+        ]
+      },
+      "undercover": {
+        "text": "قرايب",
+        "translit": "Arayeb",
+        "alt": [
+          "qarayeb",
+          "2arayeb",
+          "araybe"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Family. Review: replaces زيارة / عزيمة (weak link)"
+    }
+  ]
+}

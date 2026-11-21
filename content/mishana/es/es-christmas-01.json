@@ -1,0 +1,797 @@
+{
+  "id": "es-christmas-01",
+  "game": "mishana",
+  "version": 1,
+  "locale": "es",
+  "script": "Latn",
+  "title": {
+    "en": "Christmas",
+    "fr": "Noël",
+    "ar": "الميلاد",
+    "es": "Navidad"
+  },
+  "description": {
+    "en": "Christmas and New Year: decorations, food, Santa, snow, gifts, carols",
+    "fr": "Noël et le Nouvel An : déco, repas, Père Noël, neige, cadeaux, chants",
+    "ar": "الميلاد وراس السنة: زينة، أكل، بابا نويل، تلج، هدايا، ترانيم",
+    "es": "Navidad y Año Nuevo: adornos, comida, Papá Noel, nieve, regalos, villancicos"
+  },
+  "tags": [
+    "christmas",
+    "seasonal",
+    "winter",
+    "food",
+    "family"
+  ],
+  "topics": [
+    "traditions",
+    "food",
+    "music"
+  ],
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Belén",
+        "alt": [
+          "Pesebre",
+          "Nacimiento"
+        ]
+      },
+      "undercover": {
+        "text": "Árbol de Navidad",
+        "alt": [
+          "Árbol"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity"
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Guirnalda",
+        "alt": [
+          "Espumillón"
+        ]
+      },
+      "undercover": {
+        "text": "Lazo"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Muérdago"
+      },
+      "undercover": {
+        "text": "Acebo"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Vela"
+      },
+      "undercover": {
+        "text": "Farol"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Calcetín"
+      },
+      "undercover": {
+        "text": "Bota"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Estrella"
+      },
+      "undercover": {
+        "text": "Luna"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Calendario de Adviento",
+        "alt": [
+          "Calendario"
+        ]
+      },
+      "undercover": {
+        "text": "Caja de bombones",
+        "alt": [
+          "Bombones",
+          "Caja de chocolates"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Turrón"
+      },
+      "undercover": {
+        "text": "Mazapán"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Polvorón",
+        "alt": [
+          "Mantecado"
+        ]
+      },
+      "undercover": {
+        "text": "Galleta"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Roscón de Reyes",
+        "alt": [
+          "Roscón",
+          "Rosca de Reyes"
+        ]
+      },
+      "undercover": {
+        "text": "Panettone",
+        "alt": [
+          "Panetón",
+          "Pan dulce"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Tronco de Navidad"
+      },
+      "undercover": {
+        "text": "Tarta",
+        "alt": [
+          "Pastel"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Pavo"
+      },
+      "undercover": {
+        "text": "Pollo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Cordero"
+      },
+      "undercover": {
+        "text": "Lechón",
+        "alt": [
+          "Cochinillo"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Uvas",
+        "alt": [
+          "Uva"
+        ]
+      },
+      "undercover": {
+        "text": "Pasas",
+        "alt": [
+          "Pasa"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food. Las doce uvas de Nochevieja."
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Gambas",
+        "alt": [
+          "Gamba",
+          "Camarones",
+          "Camarón"
+        ]
+      },
+      "undercover": {
+        "text": "Mejillones",
+        "alt": [
+          "Mejillón"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food. Review: replaces Gambas / Langostinos (too close, Spain-only distinction)"
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Chocolate caliente",
+        "alt": [
+          "Chocolate"
+        ]
+      },
+      "undercover": {
+        "text": "Café con leche",
+        "alt": [
+          "Café"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Castaña"
+      },
+      "undercover": {
+        "text": "Nuez"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Bastón de caramelo",
+        "alt": [
+          "Bastón de dulce"
+        ]
+      },
+      "undercover": {
+        "text": "Piruleta",
+        "alt": [
+          "Paleta",
+          "Chupetín"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Papá Noel",
+        "alt": [
+          "Santa Claus",
+          "Santa"
+        ]
+      },
+      "undercover": {
+        "text": "Abuelo"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Rey Mago",
+        "alt": [
+          "Reyes Magos",
+          "Mago"
+        ]
+      },
+      "undercover": {
+        "text": "Pastor"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Paje"
+      },
+      "undercover": {
+        "text": "Elfo",
+        "alt": [
+          "Duende"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Characters. Paje de los Reyes Magos."
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Reno"
+      },
+      "undercover": {
+        "text": "Alce"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Ángel"
+      },
+      "undercover": {
+        "text": "Hada"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Muñeco de nieve"
+      },
+      "undercover": {
+        "text": "Espantapájaros"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Trineo"
+      },
+      "undercover": {
+        "text": "Carroza"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters. Carroza: la de la cabalgata."
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Polo Norte"
+      },
+      "undercover": {
+        "text": "Polo Sur"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "Taller"
+      },
+      "undercover": {
+        "text": "Fábrica"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Chimenea"
+      },
+      "undercover": {
+        "text": "Estufa"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Copo de nieve",
+        "alt": [
+          "Copo"
+        ]
+      },
+      "undercover": {
+        "text": "Granizo"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Esquí"
+      },
+      "undercover": {
+        "text": "Patinaje",
+        "alt": [
+          "Patinaje sobre hielo"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Guante"
+      },
+      "undercover": {
+        "text": "Manopla"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Bufanda"
+      },
+      "undercover": {
+        "text": "Chal"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Iglú"
+      },
+      "undercover": {
+        "text": "Tienda de campaña",
+        "alt": [
+          "Tienda"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Avalancha",
+        "alt": [
+          "Alud"
+        ]
+      },
+      "undercover": {
+        "text": "Ventisca"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Pijama"
+      },
+      "undercover": {
+        "text": "Bata"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "Jersey navideño",
+        "alt": [
+          "Suéter navideño",
+          "Jersey"
+        ]
+      },
+      "undercover": {
+        "text": "Sudadera"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p037",
+      "civilian": {
+        "text": "Papel de regalo"
+      },
+      "undercover": {
+        "text": "Caja"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p038",
+      "civilian": {
+        "text": "Amigo invisible",
+        "alt": [
+          "Amigo secreto"
+        ]
+      },
+      "undercover": {
+        "text": "Rifa",
+        "alt": [
+          "Sorteo"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p039",
+      "civilian": {
+        "text": "Carta a los Reyes",
+        "alt": [
+          "Carta a Papá Noel",
+          "Carta"
+        ]
+      },
+      "undercover": {
+        "text": "Lista de la compra",
+        "alt": [
+          "Lista"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p040",
+      "civilian": {
+        "text": "Lotería",
+        "alt": [
+          "Lotería de Navidad"
+        ]
+      },
+      "undercover": {
+        "text": "Bingo"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p041",
+      "civilian": {
+        "text": "Mercadillo navideño",
+        "alt": [
+          "Mercado navideño",
+          "Mercadillo"
+        ]
+      },
+      "undercover": {
+        "text": "Feria"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p042",
+      "civilian": {
+        "text": "Villancico"
+      },
+      "undercover": {
+        "text": "Canción de cuna",
+        "alt": [
+          "Nana"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music. Review: \"Canción de cuna\" as text (Nana means grandma in Latin America)"
+    },
+    {
+      "id": "p043",
+      "civilian": {
+        "text": "Coro"
+      },
+      "undercover": {
+        "text": "Orquesta"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p044",
+      "civilian": {
+        "text": "Pandereta"
+      },
+      "undercover": {
+        "text": "Cascabel"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p045",
+      "civilian": {
+        "text": "Campana"
+      },
+      "undercover": {
+        "text": "Timbre"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p046",
+      "civilian": {
+        "text": "Buey"
+      },
+      "undercover": {
+        "text": "Mula"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity. El buey y la mula del belén."
+    },
+    {
+      "id": "p047",
+      "civilian": {
+        "text": "Camello"
+      },
+      "undercover": {
+        "text": "Caballo"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity"
+    },
+    {
+      "id": "p048",
+      "civilian": {
+        "text": "Nochebuena"
+      },
+      "undercover": {
+        "text": "Nochevieja"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p049",
+      "civilian": {
+        "text": "Fuegos artificiales",
+        "alt": [
+          "Fuego artificial"
+        ]
+      },
+      "undercover": {
+        "text": "Bengala"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p050",
+      "civilian": {
+        "text": "Confeti"
+      },
+      "undercover": {
+        "text": "Serpentina"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p051",
+      "civilian": {
+        "text": "Campanadas",
+        "alt": [
+          "Campanada"
+        ]
+      },
+      "undercover": {
+        "text": "Cuenta atrás",
+        "alt": [
+          "Cuenta regresiva"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve. Las campanadas de medianoche."
+    },
+    {
+      "id": "p052",
+      "civilian": {
+        "text": "Propósito",
+        "alt": [
+          "Propósito de Año Nuevo"
+        ]
+      },
+      "undercover": {
+        "text": "Promesa"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p053",
+      "civilian": {
+        "text": "Medianoche"
+      },
+      "undercover": {
+        "text": "Mediodía"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    }
+  ]
+}

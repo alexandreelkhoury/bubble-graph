@@ -11,10 +11,12 @@ const words = (p: WordPack): string[] =>
   p.pairs.flatMap((pair) => [pair.civilian, pair.undercover]).flatMap((s) => [s.text, ...(s.alt ?? []), ...(s.translit ? [s.translit] : [])]);
 
 describe("word packs", () => {
-  it("PAYMENTS-SPEC §1.2/§1.5: exactly one free starter pack per language, unregional and for all ages", () => {
+  it("PAYMENTS-SPEC §1.2/§1.5: exactly one free starter pack per language (seasonal free packs aside), unregional and for all ages", () => {
     const free = parsed.filter((p) => p.tier === "free");
-    expect(free.map((p) => p.id).sort()).toEqual(["ar-everyday-01", "en-everyday-01", "es-everyday-01", "fr-everyday-01"]);
-    for (const lang of ["en", "fr", "ar", "es"]) expect(free.filter((p) => language(p) === lang), lang).toHaveLength(1);
+    const starters = free.filter((p) => !p.tags.includes("seasonal"));
+    expect(starters.map((p) => p.id).sort()).toEqual(["ar-everyday-01", "en-everyday-01", "es-everyday-01", "fr-everyday-01"]);
+    expect(free.filter((p) => p.tags.includes("seasonal")).map((p) => p.id).sort()).toEqual(["ar-christmas-01", "en-christmas-01", "es-christmas-01", "fr-christmas-01"]);
+    for (const lang of ["en", "fr", "ar", "es"]) expect(starters.filter((p) => language(p) === lang), lang).toHaveLength(1);
     for (const p of free) {
       expect(["en", "fr", "ar", "es"], p.id).toContain(p.locale);
       expect(p.ageRating, p.id).toBe("all");

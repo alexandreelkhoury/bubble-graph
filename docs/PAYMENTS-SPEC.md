@@ -45,7 +45,7 @@ Implementers never talk to each other. Every name that crosses a package boundar
 - Restriction (`RESTRICT_SETTINGS`): `def.settings.restrict` on the setup game in SETUP and on every game in HUB, in the same write; unchanged settings keep object identity (no write). Mid-game expiry: the running game finishes with what it started; the restriction applies back in SETUP or HUB.
 - `storeOpen` is honoured in HUB and SETUP (ignored while PLAYING); `tvBusy` reaches clients as `room.tvBusy`.
 
-**R4.6 Free starter content** (JAMAA-PLATFORM §4.3): every game is free to play. Mish Ana!: `en-everyday-01`, `fr-everyday-01`, `ar-everyday-01`, `es-everyday-01`; Bluff and Likely: their `tier:"free"` items; Trivia: the `lb-quiz-01` family. The release gate (`content-lint --release`, run by `pnpm run deploy`) requires ≥ 40 pairs per free Mish Ana! starter pack, `status: "reviewed"` for free content, and each game's gate.
+**R4.6 Free starter content** (JAMAA-PLATFORM §4.3): every game is free to play. Mish Ana!: `en-everyday-01`, `fr-everyday-01`, `ar-everyday-01`, `es-everyday-01`, plus the seasonal free packs `*-christmas-01` (§1.5, 2026-11-21); Bluff and Likely: their `tier:"free"` items; Trivia: the `lb-quiz-01` family. The release gate (`content-lint --release`, run by `pnpm run deploy`) requires ≥ 40 pairs per free Mish Ana! starter pack, `status: "reviewed"` for free content, and each game's gate.
 
 **R4.7 Switches.** `BILLING_ENABLED` (default `"0"`): off → `/api/billing/*` and `/api/admin/*` answer 404, the crons do nothing, rooms play every game's whole catalog with `premium: true` semantics for access (no locks, no premium-setting refusals) and ignore `entitlement` / `storeOpen`, and `GET /api/config` → `{billing: false, games}` hides every Pass UI. `GAMES_ENABLED` (default `"mishana"`) lists the live games (JAMAA-PLATFORM §2.6); it does not change billing: the Pass covers every game, live or future.
 
@@ -164,7 +164,7 @@ Kotlin (B) `billing/Products.kt` mirrors these constants and the two functions e
 ### 1.5 Pack lint additions (A, `tools/content-lint`)
 
 Errors:
-- Not exactly **one** `tier:"free"` pack per **language** (`languageOf(locale)`; `ar-LB` counts as `ar`).
+- Not exactly **one** `tier:"free"` starter pack per **language** (`languageOf(locale)`; `ar-LB` counts as `ar`). **2026-11-21 (owner, Christmas packs):** a free pack tagged `seasonal` (`SEASONAL_TAG`; today `en-/fr-/ar-/es-christmas-01`) is an extra free pack, not the starter, and does not count here. It keeps every other free-pack rule below (unregional locale, `ageRating:"all"`, ≥ 40 pairs and reviewed at release) and is not in `DEFAULT_PACK_IDS`, so a free room plays it only when the host ticks it.
 - A free pack whose `locale` is not exactly `en`/`fr`/`ar`. Starter packs are not regional.
 - A free pack whose `ageRating !== "all"`.
 - A premium pack whose `id.length > PREMIUM_PACK_ID_MAX` (35).

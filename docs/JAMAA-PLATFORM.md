@@ -915,7 +915,7 @@ Reduced motion: the final numbers appear at once and the ranks swap with a cross
 
 | Game | Free (tier `free`) | Release gate (`content-lint --release`) |
 |---|---|---|
-| Mish Ana! | `en-everyday-01`, `fr-everyday-01`, `ar-everyday-01`, `es-everyday-01` (= `DEFAULT_PACK_IDS` plus es) | ≥ 40 pairs per free starter pack (unchanged; it currently fails on purpose) |
+| Mish Ana! | `en-everyday-01`, `fr-everyday-01`, `ar-everyday-01`, `es-everyday-01` (= `DEFAULT_PACK_IDS` plus es); the seasonal Christmas packs `en-/fr-/ar-/es-christmas-01` are free too, but not selected by default (PAYMENTS-SPEC §1.5, 2026-11-21) | ≥ 40 pairs per free pack, starter or seasonal (unchanged; it currently fails on purpose) |
 | Bluff | `tier:"free"` items, per GAME-BLUFF §11 (item-level tiers, ≥ 30 % of each pack free) | the GAME-BLUFF §11.3 lint rules; enough free items in every playable locale for one Normal-length game with margin; an AR room must have ≥ 20 free prompts not marked `knownIn: ["ar"]` (GAME-BLUFF §11.5) |
 | Most Likely | the `tier:"free"` cards of the Family pack (GAME-LIKELY §2, §11) | the GAME-LIKELY §11 lint rules |
 | Trivia | the Lebanon quiz family `lb-quiz-01` (en, fr, ar, es) is **free**: it is the only quiz at launch, and every game must be playable for free. Later quizzes are premium. | ≥ 30 questions per locale, every question with a `source`, `status: "reviewed"` |
