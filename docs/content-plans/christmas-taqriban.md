@@ -37,10 +37,11 @@ Owner request (2026-11-21): a Christmas pack for every game, for a Christmas din
 
 | Family | Template | Items |
 |---|---|---|
-| `tree-height` | "How tall was the record/that Christmas tree…?" | Seattle 1950, Colombo 2016, Rockefeller 1999 |
+| `record-height` | "How tall was the record <tree/snowperson>…, in metres?" | Seattle 1950, Colombo 2016, Rockefeller 1999, Bethel snowwoman |
 | `years-to-no1` | "How many years after its release did <song> reach No. 1?" | All I Want for Christmas Is You, Last Christmas |
-| `record-weight` | "How much did the largest <Christmas food> weigh?" | gingerbread man, panettone, Christmas pudding |
-| `record-length` | "How long was the longest/largest <thing>?" | yule log, Christmas cracker, stocking |
+| `record-weight` | "How much did the largest <food> weigh?" | gingerbread man, panettone, Christmas pudding (+ Levant pack: hummus, tabbouleh) |
+| `record-length` | "How long/wide was the longest/largest <thing>, in metres?" | yule log, Christmas cracker, stocking, Dubai bauble |
+| `copies` | "How many copies…?" | White Christmas, A Christmas Carol first printing, first Christmas card, Rudolph booklet |
 | `population` (shared with the launch packs) | "What was the population of <place>…?" | Christmas Island |
 
 ## Dropped while planning
@@ -52,3 +53,13 @@ Owner request (2026-11-21): a Christmas pack for every game, for a Christmas din
 - "Silent Night" translations: only "about 300".
 - The Grinch (2018) box office: trackers differ by 7 % (re-releases).
 - Gingerbread house record (Texas 2013): figure only in cubic feet; Christmas Island area: 135 vs 136 km².
+
+## Review (2026-11-21, second check)
+
+Every number re-checked by web search (Guinness pages through search results). Changes: the Rockefeller 1999 tree is
+asked in metres (100 ft = 30.5 m); Batroun asked with the exact Guinness title ("most messages to Santa collected in 24
+hours", 21 Dec 2025); Rudolph pinned to the Smithsonian's 2.4 million; "White Christmas" asked "according to Guinness"
+(best-selling physical single); El Gordo dated to the 2025 draw; PNC index moved to 2025 ($51,476.12); the disputed
+publication day of A Christmas Carol (16/17/19 Dec) removed; Arabic aligned with the Levant pack (ه endings, كلغ, أغنية
+instead of ترنيمة for the song). Families: `tree-height` became `record-height` (adds the snowwoman), the bauble joins
+`record-length`, a new `copies` family, and the Levant hummus/tabbouleh records join `record-weight`.

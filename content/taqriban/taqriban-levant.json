@@ -56,6 +56,7 @@
         "lebanon",
         "food"
       ],
+      "family": "record-weight",
       "text": {
         "en": "In 2010 Lebanon set the record for the largest plate of hummus. How much did it weigh, in kg?",
         "fr": "En 2010, le Liban a battu le record de la plus grande assiette de houmous. Combien pesait-elle, en kg ?",
@@ -82,6 +83,7 @@
         "lebanon",
         "food"
       ],
+      "family": "record-weight",
       "text": {
         "en": "In 2009 Lebanon made the largest tabbouleh ever. How much did it weigh, in kg?",
         "fr": "En 2009, le Liban a préparé le plus grand taboulé du monde. Combien pesait-il, en kg ?",

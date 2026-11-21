@@ -62,10 +62,12 @@ describe("shipped packs", () => {
     for (const i of all.filter((x) => x.family === "area")) expect(i.text.en).toMatch(/\barea\b/i);
     for (const i of all.filter((x) => x.family === "population")) expect(i.text.en).toMatch(/population|people lived/i);
   });
-  it("the Christmas pack tags its repeated templates (tree heights, years to No. 1, record weights and lengths)", () => {
+  it("the Christmas pack tags its repeated templates (record heights, years to No. 1, record weights and lengths, copies)", () => {
     const xmas = packs[0]!.items;
     const fams = (f: string): number => xmas.filter((i) => i.family === f).length;
-    expect([fams("tree-height"), fams("years-to-no1"), fams("record-weight"), fams("record-length")]).toEqual([3, 2, 3, 3]);
+    expect([fams("record-height"), fams("years-to-no1"), fams("record-weight"), fams("record-length"), fams("copies")]).toEqual([4, 2, 3, 4, 4]);
+    // the Levant hummus and tabbouleh records share the record-weight family
+    expect(packs[1]!.items.filter((i) => i.family === "record-weight").map((i) => i.id)).toEqual(["tl-002", "tl-003"]);
   });
   it("a normal game from all packs has at most one of each family (300 seeds)", () => {
     const cands = packs.flatMap((p) => pool(p));
