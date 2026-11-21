@@ -991,6 +991,7 @@ const PackHeader = {
   license: z.string().min(1), source: z.string().min(1),
   status: z.enum(["draft", "reviewed"]),                // review status is per PACK (no per-item review field)
   reviewedBy: z.array(z.string()).default([]),
+  occasion: z.enum(["christmas"]).optional(),          // seasonal pack (2026-11-21): trivia lint lifts only the Christmas words (GAME-TRIVIA §11.2)
 };
 ```
 

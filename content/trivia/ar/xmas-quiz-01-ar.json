@@ -1,0 +1,1024 @@
+{
+  "id": "xmas-quiz-01-ar",
+  "family": "xmas-quiz-01",
+  "game": "trivia",
+  "version": 1,
+  "locale": "ar",
+  "script": "Arab",
+  "title": {
+    "en": "Christmas Quiz",
+    "fr": "Le quiz de Noël",
+    "ar": "مسابقة الميلاد",
+    "es": "El quiz de Navidad"
+  },
+  "description": {
+    "en": "Réveillon, carols, bûche and reindeer: a festive lap around the world's Christmas traditions.",
+    "fr": "Réveillon, chants, bûche et rennes : un tour du monde des traditions de Noël.",
+    "ar": "ريفيون، أغاني، بوش دو نويل وغزلان الرنّة: جولة حول العالم بتقاليد الميلاد.",
+    "es": "Cenas de Nochebuena, villancicos, turrón y renos: una vuelta al mundo por las tradiciones navideñas."
+  },
+  "domain": "world",
+  "topics": [
+    "traditions",
+    "food",
+    "music",
+    "cinema-tv",
+    "history",
+    "nature",
+    "geography"
+  ],
+  "featuredTopics": [
+    "traditions",
+    "food",
+    "music"
+  ],
+  "stars": 2,
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "reviewedBy": [],
+  "occasion": "christmas",
+  "questions": [
+    {
+      "id": "q001",
+      "type": "mc4",
+      "text": "بفرنسا، شو اسم العشا الكبير ليلة 24 كانون الأوّل؟",
+      "options": [
+        "الريفيون",
+        "الغوتيه",
+        "الكريماييه",
+        "الغاليت"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 1,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "الكلمة جايي من «réveiller» يعني فيّق: السهرة بتطوّل لآخر الليل.",
+      "source": "https://en.wikipedia.org/wiki/R%C3%A9veillon"
+    },
+    {
+      "id": "q002",
+      "type": "mc4",
+      "text": "قالب الحلو الفرنسي «Bûche de Noël» شو شكلو؟",
+      "options": [
+        "نجمة",
+        "جذع حطب",
+        "تاج",
+        "جرس"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 1,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "بيقلّد جذع الحطب الكبير يلّي كانوا يولّعوه بالموقدة ليلة الميلاد.",
+      "source": "https://en.wikipedia.org/wiki/Yule_log_(cake)"
+    },
+    {
+      "id": "q003",
+      "type": "mc4",
+      "text": "أغنية «Silent Night» الميلادية انغنّت لأوّل مرّة سنة 1818 بضيعة بأيّا بلد؟",
+      "options": [
+        "ألمانيا",
+        "سويسرا",
+        "النمسا",
+        "إنكلترا"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "أوّل مرّة انغنّت ببلدة أوبرندورف حدّ سالزبورغ، وكانت عالغيتار.",
+      "source": "https://en.wikipedia.org/wiki/Silent_Night"
+    },
+    {
+      "id": "q004",
+      "type": "mc4",
+      "text": "بفيلم «Home Alone» (1990)، عيلة كيفن بتسافر بلاه لتقضّي الميلاد بأيّا مدينة؟",
+      "options": [
+        "لندن",
+        "روما",
+        "ميامي",
+        "باريس"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "عيلة ماكاليستر ساكنة حدّ شيكاغو، والإمّ بترجع عالبيت نهار الميلاد.",
+      "source": "https://www.britannica.com/topic/Home-Alone"
+    },
+    {
+      "id": "q005",
+      "type": "mc4",
+      "text": "القدّيس نيقولاوس، يلّي منّو طلعت فكرة بابا نويل، عاش بميرا. بأيّا بلد صارت هالمدينة اليوم؟",
+      "options": [
+        "تركيا",
+        "اليونان",
+        "إيطاليا",
+        "هولندا"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "قصّتو إنّو كان يعطي هدايا بالسرّ، صارت «سينتركلاس» بهولندا، وبعدين بابا نويل.",
+      "source": "https://www.britannica.com/biography/Saint-Nicholas"
+    },
+    {
+      "id": "q006",
+      "type": "tf",
+      "text": "إناث غزال الرنّة كمان بيطلعلهن قرون.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "هوّي الغزال الوحيد يلّي إناثو إلهن قرون، والإمّهات عادةً بيخلّوهن طول الشتي.",
+      "source": "https://www.usgs.gov/news/national-news-release/other-364-days-year-real-lives-wild-reindeer"
+    },
+    {
+      "id": "q007",
+      "type": "mc4",
+      "text": "روفانييمي، بلابلاند الفنلندية، بتقول عن حالها إنّها مدينة بابا نويل الرسمية. أيّا خطّ بيقطع بقرية بابا نويل فيها؟",
+      "options": [
+        "خطّ الاستوا",
+        "الدائرة القطبية الشمالية",
+        "مدار السرطان",
+        "خطّ غرينتش"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "في خطّ مرسوم عالأرض بساحة القرية بيعلّم الدائرة القطبية، وفيك تقطعو بخطوة.",
+      "source": "https://www.visitrovaniemi.fi/love/santa-claus-magic-of-christmas/"
+    },
+    {
+      "id": "q008",
+      "type": "mc4",
+      "text": "ببروفانس بجنوب فرنسا، قدّيش صنف حلو بيحطّوا عالطاولة بعد عشا ليلة الميلاد؟",
+      "options": [
+        "7",
+        "10",
+        "13",
+        "24"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "منن «الشحّادين الأربعة»: تين يابس، لوز، زبيب، وجوز أو بندق.",
+      "source": "https://en.wikipedia.org/wiki/Thirteen_desserts"
+    },
+    {
+      "id": "q009",
+      "type": "mc4",
+      "text": "البانيتوني، كعكة الميلاد العالية بالفواكه المسكّرة والزبيب، من أيّا مدينة إيطالية أصلها؟",
+      "options": [
+        "نابولي",
+        "روما",
+        "البندقية",
+        "ميلانو"
+      ],
+      "answer": 3,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "قريبها «الباندورو»، عشكل نجمة ومرشوش عليه سكّر بودرة، أصلو من فيرونا.",
+      "source": "https://www.britannica.com/topic/panettone"
+    },
+    {
+      "id": "q010",
+      "type": "mc4",
+      "text": "أيّا فرقة غنّت «Last Christmas» سنة 1984؟",
+      "options": [
+        "وام!",
+        "كوين",
+        "آبا",
+        "دوران دوران"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "ما وصلت عالمرتبة الأولى ببريطانيا إلّا بكانون التاني 2021، بعد 36 سنة من صدورها.",
+      "source": "https://officialcharts.com/chart-news/whams-last-christmas-finally-reaches-number-1-and-sets-official-uk-chart-record__32041"
+    },
+    {
+      "id": "q011",
+      "type": "mc4",
+      "text": "مين الممثّل يلّي بيلعب دور «بادي»، الإنسان يلّي ربيوه الأقزام، بفيلم «Elf» (2003)؟",
+      "options": [
+        "جيم كاري",
+        "ويل فيريل",
+        "آدم ساندلر",
+        "بن ستيلر"
+      ],
+      "answer": 1,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "وهوّي بيبي، فات بكيس بابا نويل بميتم، وفاق بالقطب الشمالي.",
+      "source": "https://en.wikipedia.org/wiki/Elf_(film)"
+    },
+    {
+      "id": "q012",
+      "type": "tf",
+      "text": "كوكا كولا هيّي يلّي اخترعت تياب بابا نويل الحمرا.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "بابا نويل بالأحمر كان موجود من قبل بكتير؛ إعلانات كوكا كولا من سنة 1931 بس شهّرت هالشكل.",
+      "source": "https://www.coca-cola.com/us/en/about-us/faq/did-coca-cola-create-santa-claus"
+    },
+    {
+      "id": "q013",
+      "type": "mc4",
+      "text": "شو اسم غزال الرنّة البرّي بأميركا الشمالية؟",
+      "options": [
+        "موظ",
+        "وابيتي",
+        "كاريبو",
+        "بيسون"
+      ],
+      "answer": 2,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "نفس الحيوان، اسمين: «رنّة» بأوروبا، و«كاريبو» للبرّي بأميركا الشمالية.",
+      "source": "https://www.fda.gov/animal-veterinary/animal-health-literacy/fun-facts-about-reindeer-and-caribou"
+    },
+    {
+      "id": "q014",
+      "type": "mc4",
+      "text": "من سنة 1947، أيّا مدينة بتبعت كل سنة للندن شجرة الميلاد الكبيرة يلّي بساحة ترافالغار؟",
+      "options": [
+        "كوبنهاغن",
+        "ستوكهولم",
+        "هلسنكي",
+        "أوسلو"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 3,
+      "explain": "الشجرة تنّوب نرويجي، طولها عادةً فوق الـ20 متر وعمرها بين 50 و60 سنة، بينقّوها من غابات المدينة.",
+      "source": "https://www.london.gov.uk/who-we-are/city-halls-buildings-and-squares/trafalgar-square/christmas"
+    },
+    {
+      "id": "q015",
+      "type": "mc4",
+      "text": "بالسويد، شو بتلبس عراسها البنت يلّي بيختاروها «لوسيا» بـ13 كانون الأوّل؟",
+      "options": [
+        "تاج شموع",
+        "تاج ورق",
+        "قرون غزال الرنّة",
+        "إكليل ورد"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "عيد لوسيا بيجي بعزّ عتمة الشتي بالشمال، واليوم صارت الشموع بأغلبها عالبطارية.",
+      "source": "https://en.wikipedia.org/wiki/Saint_Lucy%27s_Day"
+    },
+    {
+      "id": "q016",
+      "type": "mc4",
+      "text": "التورّون، حلو الميلاد الإسباني، معمول بالأساس من…",
+      "options": [
+        "كستنا وشوكولا",
+        "لوز وعسل",
+        "تمر وسمسم",
+        "فستق ومَي ورد"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "تورّون خيخونا الطري معمول من لوز مطحون، وتورّون أليكانتي القاسي بيضلّ فيه اللوز حبّ كامل.",
+      "source": "https://agriculture.ec.europa.eu/farming/geographical-indications-and-quality-schemes/geographical-indications-food-and-drink/turron-de-alicante-pgi_en"
+    },
+    {
+      "id": "q017",
+      "type": "mc4",
+      "text": "مين بتغنّي «All I Want for Christmas Is You» (1994)؟",
+      "options": [
+        "سيلين ديون",
+        "ويتني هيوستن",
+        "ماريا كاري",
+        "مادونا"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "كتبتها مع والتر أفاناسييف، وكانت أوّل أغنية من أوّل ألبوم ميلادي إلها.",
+      "source": "https://en.wikipedia.org/wiki/Merry_Christmas_(Mariah_Carey_album)"
+    },
+    {
+      "id": "q018",
+      "type": "mc4",
+      "text": "مين اخترع «الغرينش»، النقّاق الأخضر يلّي بدّو يسرق الميلاد؟",
+      "options": [
+        "رولد دال",
+        "تشارلز شولتز",
+        "والت ديزني",
+        "دكتور سوس"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "الغرينش بينقّ إنّو صرلو 53 سنة متحمّل الميلاد: نفس عمر دكتور سوس لمّا طلع الكتاب سنة 1957.",
+      "source": "https://en.wikipedia.org/wiki/How_the_Grinch_Stole_Christmas!"
+    },
+    {
+      "id": "q019",
+      "type": "mc4",
+      "text": "«رودولف» غزال الرنّة أبو منخار أحمر، انخلق سنة 1939 كرمال…",
+      "options": [
+        "كتيّب مجّاني لمحلّ تجاري كبير",
+        "رسوم متحرّكة لوالت ديزني",
+        "إعلان لكوكا كولا",
+        "حكاية شعبية سويدية"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "محلّات «مونتغمري وارد» وزّعت 2.4 مليون نسخة من قصّتو بأوّل سنة.",
+      "source": "https://en.wikipedia.org/wiki/Rudolph_the_Red-Nosed_Reindeer"
+    },
+    {
+      "id": "q020",
+      "type": "mc4",
+      "text": "عيون غزال الرنّة بتغيّر لونها حسب الفصل: دهبي بالصيف، وشو لونها بالشتي؟",
+      "options": [
+        "أحمر",
+        "أزرق",
+        "أخضر",
+        "أسود"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 3,
+      "explain": "هالتغيير بيخلّي عيونها أحسّ بكتير عالضو بليل القطب الطويل.",
+      "source": "https://www.nationalgeographic.com/science/article/why-are-reindeer-eyes-golden-in-summer-but-blue-in-winter"
+    },
+    {
+      "id": "q021",
+      "type": "mc4",
+      "text": "أيّا مدينة فرنسية، فيها سوق ميلاد من سنة 1570، بتسمّي حالها «عاصمة الميلاد»؟",
+      "options": [
+        "ليون",
+        "ليل",
+        "ستراسبورغ",
+        "بوردو"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "سوقها «كريستكيندلسماريك» أقدم سوق ميلاد بفرنسا.",
+      "source": "https://www.connexionfrance.com/article/Mag/French-Facts/Did-you-know-Strasbourg-was-France-s-first-Christmas-market"
+    },
+    {
+      "id": "q022",
+      "type": "mc4",
+      "text": "بالمكسيك، قدّيش ليلة بتطوّل «البوسادات» قبل الميلاد؟",
+      "options": [
+        "3",
+        "7",
+        "12",
+        "9"
+      ],
+      "answer": 3,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "من 16 لـ24 كانون الأوّل: غناني وشموع، وبآخر السهرة بيكسّروا البينياتا.",
+      "source": "https://www.britannica.com/topic/Las-Posadas"
+    },
+    {
+      "id": "q023",
+      "type": "mc4",
+      "text": "بلبنان، «البربارة» يلّي منعملها لعيد البربارة، هيّي بالأساس…",
+      "options": [
+        "قمح مسلوق بسكّر ورمّان",
+        "صفوف",
+        "رز بحليب بمَي الزهر",
+        "شوربة عدس"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 2,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "بتقول القصّة إنّو حقول القمح طلعت بلحظة حوالين بربارة تتخبّيها.",
+      "source": "https://en.wikipedia.org/wiki/Eid_il-Burbara"
+    },
+    {
+      "id": "q024",
+      "type": "mc4",
+      "text": "بكانون الأوّل 1965، روّاد فضاء «جيميناي 6» عزفوا أيّا أغنية ميلادية بالمدار، عالهارمونيكا وجراس زغار؟",
+      "options": [
+        "سايلنت نايت",
+        "جينغل بلز",
+        "وايت كريسمس",
+        "ديك ذا هولز"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "كانت أوّل مرّة حدا بيعزف عآلة موسيقية بالفضا، والهارمونيكا والجراس اليوم بمتحف سميثسونيان.",
+      "source": "https://airandspace.si.edu/stories/editorial/tom-staffords-jingle-bells-and-wally-schirras-harmonica"
+    },
+    {
+      "id": "q025",
+      "type": "mc4",
+      "text": "بفيلم «The Nightmare Before Christmas»، جاك سكيلينغتون هوّي ملك اليقطين بأيّا مدينة؟",
+      "options": [
+        "مدينة الميلاد",
+        "مدينة الألعاب",
+        "مدينة الهالوين",
+        "مدينة الفالنتاين"
+      ],
+      "answer": 2,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "كريس ساراندون بيعطيه صوتو بالحكي، وداني إلفمان بيغنّيلو أغانيه.",
+      "source": "https://d23.com/disney-a-to-z/nightmare-before-christmas-the-film/"
+    },
+    {
+      "id": "q026",
+      "type": "mc4",
+      "text": "مين من العيلة المالكة خلّى شجرة الميلاد موضة ببريطانيا، بعد صورة سنة 1848 للعيلة حوالين شجرة؟",
+      "options": [
+        "الملك هنري الثامن",
+        "الملكة إليزابيث الأولى",
+        "الملك جورج الخامس",
+        "الأمير ألبرت"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "الصورة نزلت بجريدة Illustrated London News، وصارت كل البيوت بدّها شجرة.",
+      "source": "https://www.rct.uk/collection/stories/a-royal-christmas/the-christmas-tree"
+    },
+    {
+      "id": "q027",
+      "type": "mc4",
+      "text": "البونسيتيا، نبتة «نجمة الميلاد» الحمرا، أصلها من أيّا بلد؟",
+      "options": [
+        "المكسيك",
+        "البرازيل",
+        "إسبانيا",
+        "الهند"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "«بتلاتها» الحمرا هنّي بالحقيقة ورق؛ الزهر الحقيقي هوّي الحبّات الصفرا الزغيرة بالنص.",
+      "source": "https://www.britannica.com/plant/poinsettia"
+    },
+    {
+      "id": "q028",
+      "type": "mc4",
+      "text": "بإيطاليا، مين بيجيب الهدايا للولاد ليلة 5 كانون التاني؟",
+      "options": [
+        "كرامبوس",
+        "البيفانا",
+        "سينتركلاس",
+        "جدّو الصقيع"
+      ],
+      "answer": 1,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "ختيارة طايرة عمكنسة، والولد المشاغب بتحطّلو فحم بدل الهدية.",
+      "source": "https://en.wikipedia.org/wiki/Befana"
+    },
+    {
+      "id": "q029",
+      "type": "tf",
+      "text": "الـ«مينس بايز» البريطانية كانت زمان محشية لحمة حقيقية.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "اليوم حشوتها فواكه يابسة وتفّاح وبهارات، وما ضلّ من اللحمة غير الاسم.",
+      "source": "https://en.wikipedia.org/wiki/Mince_pie"
+    },
+    {
+      "id": "q030",
+      "type": "mc4",
+      "text": "موسوعة غينيس بتعتبر «White Christmas» أكتر أغنية منفردة انباعت بالتاريخ. مين غنّاها؟",
+      "options": [
+        "فرانك سيناترا",
+        "إلفيس بريسلي",
+        "بينغ كروسبي",
+        "دين مارتن"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "كتبها إيرفينغ برلين لفيلم «Holiday Inn» سنة 1942، وأخدت أوسكار أحسن أغنية.",
+      "source": "https://www.guinnessworldrecords.com/world-records/best-selling-single"
+    },
+    {
+      "id": "q031",
+      "type": "mc4",
+      "text": "بفيلم «It's a Wonderful Life» (1946)، شو بيصير «كل ما يرنّ جرس»؟",
+      "options": [
+        "ولد بيتمنّى أمنية",
+        "نجمة بتوقع",
+        "بابا نويل بيفيق",
+        "ملاك بياخد جوانحو"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "كلارنس، بعد 200 سنة بلا جوانح، بيربحهن لمّا بينقذ جورج بايلي.",
+      "source": "https://en.wikipedia.org/wiki/Clarence_Odbody"
+    },
+    {
+      "id": "q032",
+      "type": "tf",
+      "text": "أوّل شرايط لمّاعة لزينة الشجر، يلّي انعملت بنورمبرغ حوالي سنة 1610، كانت من فضّة حقيقية.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "الفضّة كانت تسودّ بسرعة، واليوم صارت بأغلبها بلاستيك ملبّس بلون معدني.",
+      "source": "https://en.wikipedia.org/wiki/Tinsel"
+    },
+    {
+      "id": "q033",
+      "type": "mc4",
+      "text": "الدبق، يلّي بيعلّقوه بالأعياد ببريطانيا وفرنسا، هوّي…",
+      "options": [
+        "نبتة نص طفيلية بتعيش عالشجر",
+        "نوع من السرخس",
+        "نوع من الطحالب",
+        "نبتة متسلّقة"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 3,
+      "explain": "العصافير بتنشر بزورو بزرقها، أو لمّا بتمسح منقارها بقشرة الشجر.",
+      "source": "https://www.britannica.com/plant/mistletoe"
+    },
+    {
+      "id": "q034",
+      "type": "tf",
+      "text": "بإسبانيا، ولاد كتار بياخدوا هداياهن الكبيرة بـ6 كانون التاني، من المجوس التلاتة.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 1,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "ليلة 5 كانون التاني بتطلع بالمدن مسيرات كبيرة للملوك، اسمها «كابالغاتا».",
+      "source": "https://www.thelocal.es/20200102/why-spain-loves-the-three-kings-more-than-santa"
+    },
+    {
+      "id": "q035",
+      "type": "mc4",
+      "text": "بفرنسا، شو بيخبّوا جوّا «غاليت الملوك» بكانون التاني؟",
+      "options": [
+        "ورقة مكتوب عليها",
+        "«فيف»، تمثال زغير",
+        "كستناية مسكّرة",
+        "جرس زغير"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 1,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "يلّي بيلاقيها بيلبس التاج الورق وبيصير ملك أو ملكة النهار.",
+      "source": "https://www.thelocal.fr/20190103/the-galette-des-rois"
+    },
+    {
+      "id": "q036",
+      "type": "mc4",
+      "text": "«Petit Papa Noël» (1946)، أكتر أغنية منفردة انباعت بفرنسا، مين المغنّي يلّي اشتهر فيها؟",
+      "options": [
+        "شارل أزنافور",
+        "إديت بياف",
+        "تينو روسي",
+        "جوني هاليداي"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "حسب غينيس، انباع منها حوالي 5.7 مليون نسخة بفرنسا وحدها.",
+      "source": "https://en.wikipedia.org/wiki/Petit_Papa_No%C3%ABl"
+    },
+    {
+      "id": "q037",
+      "type": "mc4",
+      "text": "فيلم الرسوم المتحرّكة «Klaus» (2019)، يلّي ترشّح للأوسكار وبيحكي كيف بلّش بابا نويل، بأيّا بلد انعمل؟",
+      "options": [
+        "فرنسا",
+        "إيرلندا",
+        "كندا",
+        "إسبانيا"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "كان أوّل فيلم رسوم متحرّكة عن الميلاد بيترشّح لأوسكار أحسن فيلم رسوم متحرّكة.",
+      "source": "https://en.wikipedia.org/wiki/Klaus_(film)"
+    },
+    {
+      "id": "q038",
+      "type": "mc4",
+      "text": "سنة 1882، ضوّت بنيويورك أوّل شجرة ميلاد بالكهربا، ببيت شريك لأيّا مخترع؟",
+      "options": [
+        "توماس إديسون",
+        "نيكولا تيسلا",
+        "ألكسندر غراهام بيل",
+        "هنري فورد"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "إدوارد جونسون وصّل 80 لمبة حمرا وبيضا وزرقا بإيدو، والشجرة كانت كمان تبرم على حالها.",
+      "source": "https://www.history.com/news/electric-christmas-tree-lights"
+    },
+    {
+      "id": "q039",
+      "type": "mc4",
+      "text": "قدّيش ضلع إلها ندفة التلج؟",
+      "options": [
+        "4",
+        "6",
+        "5",
+        "8"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "جزيئات المَي بتجلد بشكل حلقات سداسية، ومن هون كل ندفة إلها ستّ جهات.",
+      "source": "https://www.smithsonianmag.com/smart-news/snowflakes-may-have-different-designs-but-they-always-have-six-sides-172052136/"
+    },
+    {
+      "id": "q040",
+      "type": "mc4",
+      "text": "حسب التقليد الهولندي، «سينتركلاس» بيوصل بنص تشرين التاني بباخرة من أيّا بلد؟",
+      "options": [
+        "تركيا",
+        "فنلندا",
+        "إسبانيا",
+        "إيطاليا"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "بس ينزل عالبرّ، بيمشي بالشوارع عحصانو، ووصولو بينعرض مباشر عالتلفزيون.",
+      "source": "https://www.stnicholascenter.org/around-the-world/customs/netherlands"
+    },
+    {
+      "id": "q041",
+      "type": "mc4",
+      "text": "بالبرتغال، شو الطبخة الكلاسيكية بعشا ليلة الميلاد (الـ«كونسوادا»)؟",
+      "options": [
+        "سردين مشوي",
+        "دجاج بالفرن",
+        "باييلا بثمار البحر",
+        "سمك القدّ المملّح"
+      ],
+      "answer": 3,
+      "topic": "food",
+      "difficulty": 3,
+      "explain": "البرتغال أكبر مستهلك للباكالاو بالعالم: حوالي 6 كيلو للشخص بالسنة.",
+      "source": "https://fortune.com/europe/2024/12/20/portugal-cod-christmas/"
+    },
+    {
+      "id": "q042",
+      "type": "mc4",
+      "text": "مين كتب وغنّى «Feliz Navidad» سنة 1970؟",
+      "options": [
+        "خوسيه فيليسيانو",
+        "مارك أنتوني",
+        "ريكي مارتن",
+        "كارلوس سانتانا"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "المغنّي البورتوريكي بيغنّيها بالإسباني والإنكليزي، وبيعزف فيها عالكواترو، آلة من بورتوريكو.",
+      "source": "https://en.wikipedia.org/wiki/Feliz_Navidad_(song)"
+    },
+    {
+      "id": "q043",
+      "type": "mc4",
+      "text": "وين بتصير أحداث الكوميديا الفرنسية الشهيرة «Le Père Noël est une ordure» (1982)؟",
+      "options": [
+        "بمنتجع تزلّج",
+        "بمركز خطّ مساعدة عالتلفون",
+        "بمول",
+        "بمستشفى"
+      ],
+      "answer": 1,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "القصّة ليلة الميلاد، والفيلم مأخوذ عن مسرحية لفرقة «السبلنديد» من سنة 1979.",
+      "source": "https://www.unifrance.org/film/501/le-pere-noel-est-une-ordure"
+    },
+    {
+      "id": "q044",
+      "type": "mc4",
+      "text": "بأيّا بلد بلّشت عادة تزيين شجرة الميلاد؟",
+      "options": [
+        "إيطاليا",
+        "إنكلترا",
+        "ألمانيا",
+        "الولايات المتّحدة"
+      ],
+      "answer": 2,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "في وثيقة من مدينة بريمن سنة 1570 بتوصف شجرة معلّق عليها تفّاح وجوز وتمر وبريتزل وورود ورق.",
+      "source": "https://en.wikipedia.org/wiki/Christmas_tree"
+    },
+    {
+      "id": "q045",
+      "type": "tf",
+      "text": "الدببة القطبية والبطاريق فيهن يلتقوا بالطبيعة.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "الدببة القطبية عايشة بالقطب الشمالي، والبطاريق البرّية تقريباً كلّها بنصّ الكرة الجنوبي.",
+      "source": "https://www.nationalgeographic.com/animals/article/arctic-antarctica-wildlife-myths-explained"
+    },
+    {
+      "id": "q046",
+      "type": "mc4",
+      "text": "بالفولكلور الإيسلندي، قدّيش عدد «صبيان الميلاد» يلّي بيزوروا الولاد بالأيام يلّي قبل العيد؟",
+      "options": [
+        "3",
+        "7",
+        "24",
+        "13"
+      ],
+      "answer": 3,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "الولاد بيتركوا صبّاط عالشبّاك: هدية زغيرة للشاطر، وحبّة بطاطا للمشاغب.",
+      "source": "https://www.visiticeland.com/article/meet-the-icelandic-yule-troll-family/"
+    },
+    {
+      "id": "q047",
+      "type": "mc4",
+      "text": "فيروز بتغنّي «ليلة عيد» على لحن أيّا أغنية ميلادية أجنبية؟",
+      "options": [
+        "جينغل بلز",
+        "سايلنت نايت",
+        "وي ويش يو أ ميري كريسمس",
+        "أو تاننباوم"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "بنسختها، التلج والزحّافات صاروا بيوت دافية، زينة، وجراس عم تدقّ للعيد.",
+      "source": "https://www.middleeasteye.net/discover/christmas-songs-five-arabic-get-through-festive-season"
+    },
+    {
+      "id": "q048",
+      "type": "mc4",
+      "text": "مين كتب «ترنيمة الميلاد» (A Christmas Carol)، قصّة البخيل إيبينيزر سكروج؟",
+      "options": [
+        "أوسكار وايلد",
+        "تشارلز ديكنز",
+        "لويس كارول",
+        "فيكتور هوغو"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "طلعت بكانون الأوّل 1843 وخلصت النسخ قبل ليلة العيد، ومن وقتها ما وقفت طباعتها.",
+      "source": "https://www.smithsonianmag.com/smart-news/a-christmas-carol-marvelously-captured-the-holidays-victorian-spirit-and-inspired-new-traditions-for-centuries-to-come-180985649/"
+    },
+    {
+      "id": "q049",
+      "type": "tf",
+      "text": "بأستراليا، الميلاد بيجي بعزّ الشتي.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "جنوب خطّ الاستوا، كانون الأوّل صيف: أقصر نهار عنّا هوّي أطول نهار عندن.",
+      "source": "https://www.rmg.co.uk/stories/time/when-winter-solstice-shortest-day"
+    },
+    {
+      "id": "q050",
+      "type": "tf",
+      "text": "باليابان، أكل دجاج KFC المقلي بالميلاد تقليد منتشر كتير.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "كلّو بلّش بحملة إعلانات سنة 1974 اسمها «كنتاكي للميلاد».",
+      "source": "https://www.smithsonianmag.com/arts-culture/why-japan-is-obsessed-with-kentucky-fried-chicken-on-christmas-1-161666960"
+    },
+    {
+      "id": "q051",
+      "type": "mc4",
+      "text": "قدّيش كان عمر بريندا لي لمّا سجّلت «Rockin' Around the Christmas Tree» سنة 1958؟",
+      "options": [
+        "18 سنة",
+        "21 سنة",
+        "13 سنة",
+        "25 سنة"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "بكانون الأوّل 2023، بعد 65 سنة، وصلت الأغنية أخيراً عالمرتبة الأولى بأميركا.",
+      "source": "https://www.npr.org/2023/12/05/1217387261/brenda-lee-rockin-around-the-christmas-tree-billboard-number-one"
+    },
+    {
+      "id": "q052",
+      "type": "mc4",
+      "text": "بنصّ الكرة الشمالي، أقصر نهار بالسنة بيجي حوالي…",
+      "options": [
+        "21 آذار",
+        "21 حزيران",
+        "21 أيلول",
+        "21 كانون الأوّل"
+      ],
+      "answer": 3,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "بعد الانقلاب الشتوي، النهار بيرجع يطوّل شوي شوي.",
+      "source": "https://www.rmg.co.uk/stories/time/when-winter-solstice-shortest-day"
+    },
+    {
+      "id": "q053",
+      "type": "mc4",
+      "text": "بلبنان، شو بيعملوا الولاد عادةً ليلة عيد البربارة، بـ4 كانون الأوّل؟",
+      "options": [
+        "بيتنكّروا وبيلفّوا عالبيوت",
+        "بيولّعوا نار عالسطوح",
+        "بيزرعوا أرزة زغيرة",
+        "بيكبّوا مَي من البلكون"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 2,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "العادة بتذكّر بقصّة بربارة يلّي تخبّت ورا تنكّرات كتيرة.",
+      "source": "https://en.wikipedia.org/wiki/Eid_il-Burbara"
+    },
+    {
+      "id": "q054",
+      "type": "tf",
+      "text": "باليه «كسّارة البندق» نجح نجاح كبير من أوّل ليلة، بسان بطرسبرغ سنة 1892.",
+      "options": [
+        "صح",
+        "غلط"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "النقّاد بهدلوا العرض الأوّل، وما صار الباليه كلاسيك تبع الميلاد إلّا بعد عشرات السنين.",
+      "source": "https://www.wpr.org/rocky-start-beloved-christmas-classic"
+    },
+    {
+      "id": "q055",
+      "type": "mc4",
+      "text": "أيّا بلد معروف إنّو عندو أطول موسم ميلاد بالعالم، بيبلّش من أيلول؟",
+      "options": [
+        "البرازيل",
+        "الفيليبين",
+        "إيطاليا",
+        "المكسيك"
+      ],
+      "answer": 1,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "بيسمّوها «أشهر الـber»، من September لـDecember: من أوّل أيلول بتبلّش غناني الميلاد.",
+      "source": "https://www.npr.org/2018/12/24/678616528/love-the-holidays-the-philippines-celebrates-4-months-of-christmas-mania"
+    },
+    {
+      "id": "q056",
+      "type": "mc4",
+      "text": "بكاتالونيا، «تيو دي نادال» يلّي «بيعطي» الولاد سكاكر بالميلاد هوّي…",
+      "options": [
+        "حمار لعبة",
+        "جرّة فخّار",
+        "جذع حطب",
+        "رجل تلج"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "الولاد بـ«يطعموه» أسابيع، وبعدين بيدقّوا عليه بالعصي وهنّي عم يغنّوا تيطلّع الحلو.",
+      "source": "https://www.npr.org/sections/thesalt/2017/12/22/572569325/caga-ti-a-catalan-log-that-poops-nougats-at-christmas"
+    },
+    {
+      "id": "q057",
+      "type": "mc4",
+      "text": "ببولندا، شو بينطروا عادةً قبل ما يبلّشوا عشا ليلة الميلاد (Wigilia)؟",
+      "options": [
+        "أوّل حبّة تلج",
+        "الساعة تدقّ عشرة",
+        "وصول الجيران",
+        "أوّل نجمة بالسما"
+      ],
+      "answer": 3,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "وبيحطّوا صحن زيادة عالطاولة لضيف ما حدا ناطرو.",
+      "source": "https://en.wikipedia.org/wiki/Wigilia"
+    },
+    {
+      "id": "q058",
+      "type": "mc4",
+      "text": "شو بتلاقي عادةً جوّا «الكراكر» البريطاني تبع الميلاد؟",
+      "options": [
+        "تاج ورق ونكتة",
+        "شمعة زغيرة",
+        "ورقة لوتو",
+        "كيس بزورات"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 1,
+      "explain": "اخترعو حلواني من لندن اسمو توم سميث، بالأربعينات من القرن الـ19.",
+      "source": "https://en.wikipedia.org/wiki/Christmas_cracker"
+    },
+    {
+      "id": "q059",
+      "type": "mc4",
+      "text": "بلبنان، شو بيسمّوا الولاد عادةً الختيار بالأحمر يلّي بيجيب الهدايا؟",
+      "options": [
+        "سينتركلاس",
+        "بابا نويل",
+        "جدّو الصقيع",
+        "يولوبوكي"
+      ],
+      "answer": 1,
+      "topic": "traditions",
+      "difficulty": 1,
+      "easyIn": [
+        "ar",
+        "fr"
+      ],
+      "explain": "الاسم جايي من الفرنسي «Papa Noël»، وفي كمان مين بيقول «Baba Noël».",
+      "source": "https://businessmirror.com.ph/jesus-isnt-only-for-the-christians/"
+    },
+    {
+      "id": "q060",
+      "type": "mc4",
+      "text": "بكولومبيا، موسم الميلاد بيفتتح عادةً ليلة 7 كانون الأوّل بـ…",
+      "options": [
+        "مسابقة طيّارات ورق ضخمة",
+        "معركة مَي كبيرة",
+        "شموع وفوانيس بكل مكان",
+        "عرض كلاب"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "اسمو «Día de las Velitas»، يعني نهار الشمعات الزغار، بيضوّوها بالبيوت وبالشوارع.",
+      "source": "https://www.smithsonianmag.com/smart-news/colombia-begins-christmas-season-these-beautiful-light-displays-180967423/"
+    }
+  ]
+}

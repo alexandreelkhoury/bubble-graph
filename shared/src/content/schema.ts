@@ -11,6 +11,9 @@ export const FAMILY_ID_MAX = 35;
 export const PACK_ID_REGEX = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 export const PACK_LOCALES = ["en", "fr", "ar", "ar-LB", "es"] as const;
+/** Seasonal pack occasions (`occasion` header field). */
+export const PACK_OCCASIONS = ["christmas"] as const;
+export type PackOccasion = (typeof PACK_OCCASIONS)[number];
 
 export const PackHeaderShape = {
   id: z.string().max(PACK_ID_MAX).regex(PACK_ID_REGEX),                       // globally unique across games
@@ -33,6 +36,11 @@ export const PackHeaderShape = {
   source: z.string().min(1),
   status: z.enum(["draft", "reviewed"]),
   reviewedBy: z.array(z.string()).default([]),
+  /**
+   * Seasonal pack (owner decision 2026-11-21): `"christmas"` lets the pack name Christmas itself. Content-lint then lifts
+   * only the Christmas words from the sensitivity list (GAME-TRIVIA §11.2); every other banned term stays banned.
+   */
+  occasion: z.enum(PACK_OCCASIONS).optional(),
   /** Legacy word-pack field (§5.2: mapped to `topics` where it matches the vocabulary, else dropped by lane D). */
   tags: z.array(z.string()).default([]),
 } as const;

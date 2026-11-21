@@ -1,0 +1,1024 @@
+{
+  "id": "xmas-quiz-01-fr",
+  "family": "xmas-quiz-01",
+  "game": "trivia",
+  "version": 1,
+  "locale": "fr",
+  "script": "Latn",
+  "title": {
+    "en": "Christmas Quiz",
+    "fr": "Le quiz de Noël",
+    "ar": "مسابقة الميلاد",
+    "es": "El quiz de Navidad"
+  },
+  "description": {
+    "en": "Réveillon, carols, bûche and reindeer: a festive lap around the world's Christmas traditions.",
+    "fr": "Réveillon, chants, bûche et rennes : un tour du monde des traditions de Noël.",
+    "ar": "ريفيون، أغاني، بوش دو نويل وغزلان الرنّة: جولة حول العالم بتقاليد الميلاد.",
+    "es": "Cenas de Nochebuena, villancicos, turrón y renos: una vuelta al mundo por las tradiciones navideñas."
+  },
+  "domain": "world",
+  "topics": [
+    "traditions",
+    "food",
+    "music",
+    "cinema-tv",
+    "history",
+    "nature",
+    "geography"
+  ],
+  "featuredTopics": [
+    "traditions",
+    "food",
+    "music"
+  ],
+  "stars": 2,
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "reviewedBy": [],
+  "occasion": "christmas",
+  "questions": [
+    {
+      "id": "q001",
+      "type": "mc4",
+      "text": "En France, comment s'appelle le grand dîner du soir du 24 décembre ?",
+      "options": [
+        "Le réveillon",
+        "Le goûter",
+        "La crémaillère",
+        "La galette"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 1,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "Le mot vient de « réveiller » : le repas se prolonge souvent tard dans la nuit.",
+      "source": "https://en.wikipedia.org/wiki/R%C3%A9veillon"
+    },
+    {
+      "id": "q002",
+      "type": "mc4",
+      "text": "À quoi ressemble le gâteau de Noël appelé « bûche » ?",
+      "options": [
+        "À une étoile",
+        "À un morceau de bois",
+        "À une couronne",
+        "À une cloche"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 1,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "Elle rappelle la grosse bûche qu'on faisait brûler dans la cheminée à Noël.",
+      "source": "https://en.wikipedia.org/wiki/Yule_log_(cake)"
+    },
+    {
+      "id": "q003",
+      "type": "mc4",
+      "text": "« Douce nuit » a été chanté pour la première fois en 1818 dans un village de quel pays ?",
+      "options": [
+        "L'Allemagne",
+        "La Suisse",
+        "L'Autriche",
+        "L'Angleterre"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "La première fois, à Oberndorf près de Salzbourg, le chant était accompagné à la guitare.",
+      "source": "https://en.wikipedia.org/wiki/Silent_Night"
+    },
+    {
+      "id": "q004",
+      "type": "mc4",
+      "text": "Dans « Maman, j'ai raté l'avion ! » (1990), la famille de Kevin s'envole sans lui pour passer Noël dans quelle ville ?",
+      "options": [
+        "Londres",
+        "Rome",
+        "Miami",
+        "Paris"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "Les McCallister habitent près de Chicago ; la mère de Kevin finit par rentrer le jour de Noël.",
+      "source": "https://www.britannica.com/topic/Home-Alone"
+    },
+    {
+      "id": "q005",
+      "type": "mc4",
+      "text": "Saint Nicolas, qui a inspiré le père Noël, vivait à Myre. Dans quel pays actuel se trouve cette ville ?",
+      "options": [
+        "La Turquie",
+        "La Grèce",
+        "L'Italie",
+        "Les Pays-Bas"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "Sa légende de cadeaux offerts en secret a donné Sinterklaas aux Pays-Bas, puis le père Noël.",
+      "source": "https://www.britannica.com/biography/Saint-Nicholas"
+    },
+    {
+      "id": "q006",
+      "type": "tf",
+      "text": "Les femelles rennes ont, elles aussi, des bois.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "C'est le seul cervidé dont les femelles portent des bois ; les mères les gardent en général tout l'hiver.",
+      "source": "https://www.usgs.gov/news/national-news-release/other-364-days-year-real-lives-wild-reindeer"
+    },
+    {
+      "id": "q007",
+      "type": "mc4",
+      "text": "Rovaniemi, en Laponie finlandaise, se dit la ville officielle du père Noël. Quelle ligne traverse son village du père Noël ?",
+      "options": [
+        "L'équateur",
+        "Le cercle polaire arctique",
+        "Le tropique du Cancer",
+        "Le méridien de Greenwich"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "Une ligne tracée au sol sur la place du village marque le cercle polaire : on peut l'enjamber.",
+      "source": "https://www.visitrovaniemi.fi/love/santa-claus-magic-of-christmas/"
+    },
+    {
+      "id": "q008",
+      "type": "mc4",
+      "text": "En Provence, combien de desserts sert-on traditionnellement après le souper du 24 décembre ?",
+      "options": [
+        "7",
+        "10",
+        "13",
+        "24"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "Parmi eux, les « quatre mendiants » : figues sèches, amandes, raisins secs, et noix ou noisettes.",
+      "source": "https://en.wikipedia.org/wiki/Thirteen_desserts"
+    },
+    {
+      "id": "q009",
+      "type": "mc4",
+      "text": "Le panettone, grande brioche de Noël aux fruits confits et aux raisins secs, vient de quelle ville italienne ?",
+      "options": [
+        "Naples",
+        "Rome",
+        "Venise",
+        "Milan"
+      ],
+      "answer": 3,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "Son cousin le pandoro, en forme d'étoile et saupoudré de sucre glace, vient de Vérone.",
+      "source": "https://www.britannica.com/topic/panettone"
+    },
+    {
+      "id": "q010",
+      "type": "mc4",
+      "text": "Quel groupe chantait « Last Christmas » en 1984 ?",
+      "options": [
+        "Wham!",
+        "Queen",
+        "ABBA",
+        "Duran Duran"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "Le titre n'a atteint la première place au Royaume-Uni qu'en janvier 2021, 36 ans après sa sortie.",
+      "source": "https://officialcharts.com/chart-news/whams-last-christmas-finally-reaches-number-1-and-sets-official-uk-chart-record__32041"
+    },
+    {
+      "id": "q011",
+      "type": "mc4",
+      "text": "Quel acteur joue Buddy, l'humain élevé par les lutins, dans « Elfe » (2003) ?",
+      "options": [
+        "Jim Carrey",
+        "Will Ferrell",
+        "Adam Sandler",
+        "Ben Stiller"
+      ],
+      "answer": 1,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "Bébé, Buddy s'est glissé dans la hotte du père Noël dans un orphelinat et s'est réveillé au pôle Nord.",
+      "source": "https://en.wikipedia.org/wiki/Elf_(film)"
+    },
+    {
+      "id": "q012",
+      "type": "tf",
+      "text": "C'est Coca-Cola qui a inventé le costume rouge du père Noël.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "Des pères Noël en rouge existaient bien avant ; les pubs de Coca-Cola, dès 1931, ont surtout popularisé ce look jovial.",
+      "source": "https://www.coca-cola.com/us/en/about-us/faq/did-coca-cola-create-santa-claus"
+    },
+    {
+      "id": "q013",
+      "type": "mc4",
+      "text": "Comment appelle-t-on les rennes sauvages en Amérique du Nord ?",
+      "options": [
+        "Des orignaux",
+        "Des wapitis",
+        "Des caribous",
+        "Des bisons"
+      ],
+      "answer": 2,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Même espèce, deux noms : « renne » en Europe, « caribou » pour les animaux sauvages d'Amérique du Nord.",
+      "source": "https://www.fda.gov/animal-veterinary/animal-health-literacy/fun-facts-about-reindeer-and-caribou"
+    },
+    {
+      "id": "q014",
+      "type": "mc4",
+      "text": "Depuis 1947, quelle ville offre chaque année à Londres le grand sapin de Noël de Trafalgar Square ?",
+      "options": [
+        "Copenhague",
+        "Stockholm",
+        "Helsinki",
+        "Oslo"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 3,
+      "explain": "C'est un épicéa commun, souvent haut de plus de 20 mètres et âgé de 50 à 60 ans, choisi dans les forêts de la ville.",
+      "source": "https://www.london.gov.uk/who-we-are/city-halls-buildings-and-squares/trafalgar-square/christmas"
+    },
+    {
+      "id": "q015",
+      "type": "mc4",
+      "text": "En Suède, que porte sur la tête la jeune fille choisie pour être Lucia, le 13 décembre ?",
+      "options": [
+        "Une couronne de bougies",
+        "Une couronne en papier",
+        "Des bois de renne",
+        "Une couronne de roses"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "La Sainte-Lucie tombe au cœur de l'hiver nordique ; aujourd'hui, les bougies sont le plus souvent à piles.",
+      "source": "https://en.wikipedia.org/wiki/Saint_Lucy%27s_Day"
+    },
+    {
+      "id": "q016",
+      "type": "mc4",
+      "text": "Le turrón, une douceur de Noël espagnole, est fait surtout de…",
+      "options": [
+        "Châtaignes et chocolat",
+        "Amandes et miel",
+        "Dattes et sésame",
+        "Pistaches et eau de rose"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "Le turrón de Jijona, tendre, est à base d'amandes moulues ; celui d'Alicante, dur, les garde entières.",
+      "source": "https://agriculture.ec.europa.eu/farming/geographical-indications-and-quality-schemes/geographical-indications-food-and-drink/turron-de-alicante-pgi_en"
+    },
+    {
+      "id": "q017",
+      "type": "mc4",
+      "text": "Qui chante « All I Want for Christmas Is You » (1994) ?",
+      "options": [
+        "Céline Dion",
+        "Whitney Houston",
+        "Mariah Carey",
+        "Madonna"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "Elle l'a écrite avec Walter Afanasieff ; c'était le premier single de son premier album de Noël.",
+      "source": "https://en.wikipedia.org/wiki/Merry_Christmas_(Mariah_Carey_album)"
+    },
+    {
+      "id": "q018",
+      "type": "mc4",
+      "text": "Qui a créé le Grinch, le grincheux tout vert qui veut voler Noël ?",
+      "options": [
+        "Roald Dahl",
+        "Charles Schulz",
+        "Walt Disney",
+        "Dr Seuss"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "Le Grinch râle de supporter Noël depuis 53 ans : c'était l'âge du Dr Seuss à la sortie du livre, en 1957.",
+      "source": "https://en.wikipedia.org/wiki/How_the_Grinch_Stole_Christmas!"
+    },
+    {
+      "id": "q019",
+      "type": "mc4",
+      "text": "Rudolph, le renne au nez rouge, a été créé en 1939 pour…",
+      "options": [
+        "La brochure d'un grand magasin",
+        "Un dessin animé de Walt Disney",
+        "Une pub Coca-Cola",
+        "Un conte populaire suédois"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "Les magasins Montgomery Ward en ont distribué 2,4 millions d'exemplaires dès la première année.",
+      "source": "https://en.wikipedia.org/wiki/Rudolph_the_Red-Nosed_Reindeer"
+    },
+    {
+      "id": "q020",
+      "type": "mc4",
+      "text": "Les yeux des rennes changent de couleur selon la saison : dorés l'été, et de quelle couleur l'hiver ?",
+      "options": [
+        "Rouges",
+        "Bleus",
+        "Verts",
+        "Noirs"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 3,
+      "explain": "Ce changement rend leurs yeux bien plus sensibles à la lumière pendant la longue nuit polaire.",
+      "source": "https://www.nationalgeographic.com/science/article/why-are-reindeer-eyes-golden-in-summer-but-blue-in-winter"
+    },
+    {
+      "id": "q021",
+      "type": "mc4",
+      "text": "Quelle ville française, qui accueille un marché de Noël depuis 1570, se proclame « capitale de Noël » ?",
+      "options": [
+        "Lyon",
+        "Lille",
+        "Strasbourg",
+        "Bordeaux"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "Son Christkindelsmärik est le plus ancien marché de Noël de France.",
+      "source": "https://www.connexionfrance.com/article/Mag/French-Facts/Did-you-know-Strasbourg-was-France-s-first-Christmas-market"
+    },
+    {
+      "id": "q022",
+      "type": "mc4",
+      "text": "Au Mexique, combien de nuits durent les « posadas » avant Noël ?",
+      "options": [
+        "3",
+        "7",
+        "12",
+        "9"
+      ],
+      "answer": 3,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "Du 16 au 24 décembre : chants, bougies et une piñata pour finir la soirée.",
+      "source": "https://www.britannica.com/topic/Las-Posadas"
+    },
+    {
+      "id": "q023",
+      "type": "mc4",
+      "text": "Au Liban, la « burbara », préparée pour la Sainte-Barbe, c'est surtout…",
+      "options": [
+        "Du blé bouilli, sucre et grenade",
+        "Un gâteau de semoule au curcuma",
+        "Un riz au lait à l'eau de rose",
+        "Une soupe de lentilles"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 2,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "Selon la légende, des champs de blé ont poussé en un instant autour de Barbe pour la cacher.",
+      "source": "https://en.wikipedia.org/wiki/Eid_il-Burbara"
+    },
+    {
+      "id": "q024",
+      "type": "mc4",
+      "text": "En décembre 1965, les astronautes de Gemini 6 ont joué quelle chanson de Noël en orbite, à l'harmonica et aux clochettes ?",
+      "options": [
+        "Douce nuit",
+        "Jingle Bells",
+        "White Christmas",
+        "Petit Papa Noël"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "C'était la première fois qu'on jouait d'un instrument dans l'espace ; l'harmonica et les clochettes sont aujourd'hui au Smithsonian.",
+      "source": "https://airandspace.si.edu/stories/editorial/tom-staffords-jingle-bells-and-wally-schirras-harmonica"
+    },
+    {
+      "id": "q025",
+      "type": "mc4",
+      "text": "Dans « L'Étrange Noël de monsieur Jack », Jack Skellington est le roi des citrouilles de quelle ville ?",
+      "options": [
+        "La ville de Noël",
+        "La ville des jouets",
+        "La ville d'Halloween",
+        "La ville des amoureux"
+      ],
+      "answer": 2,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "En version originale, Chris Sarandon lui prête sa voix parlée et Danny Elfman chante ses chansons.",
+      "source": "https://d23.com/disney-a-to-z/nightmare-before-christmas-the-film/"
+    },
+    {
+      "id": "q026",
+      "type": "mc4",
+      "text": "Quel membre de la famille royale a mis le sapin de Noël à la mode en Grande-Bretagne, après une gravure de 1848 ?",
+      "options": [
+        "Le roi Henri VIII",
+        "La reine Élisabeth Ire",
+        "Le roi George V",
+        "Le prince Albert"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "La gravure de la famille royale autour du sapin, parue dans l'Illustrated London News, a inspiré tout le pays.",
+      "source": "https://www.rct.uk/collection/stories/a-royal-christmas/the-christmas-tree"
+    },
+    {
+      "id": "q027",
+      "type": "mc4",
+      "text": "Le poinsettia, la plante rouge appelée « étoile de Noël », est originaire de quel pays ?",
+      "options": [
+        "Le Mexique",
+        "Le Brésil",
+        "L'Espagne",
+        "L'Inde"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "Ses « pétales » rouges sont en fait des feuilles, les bractées ; les vraies fleurs sont les petits boutons jaunes du centre.",
+      "source": "https://www.britannica.com/plant/poinsettia"
+    },
+    {
+      "id": "q028",
+      "type": "mc4",
+      "text": "En Italie, qui apporte des cadeaux aux enfants dans la nuit du 5 janvier ?",
+      "options": [
+        "Krampus",
+        "La Befana",
+        "Sinterklaas",
+        "Ded Moroz"
+      ],
+      "answer": 1,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "C'est une vieille femme sur un balai ; selon la tradition, les enfants pas sages reçoivent du charbon.",
+      "source": "https://en.wikipedia.org/wiki/Befana"
+    },
+    {
+      "id": "q029",
+      "type": "tf",
+      "text": "Les « mince pies » britanniques contenaient autrefois de la vraie viande.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "Aujourd'hui, leur garniture est faite de fruits secs, de pommes et d'épices ; seul le nom rappelle la viande.",
+      "source": "https://en.wikipedia.org/wiki/Mince_pie"
+    },
+    {
+      "id": "q030",
+      "type": "mc4",
+      "text": "Le Guinness classe « White Christmas » comme le single le plus vendu de tous les temps. Qui le chantait ?",
+      "options": [
+        "Frank Sinatra",
+        "Elvis Presley",
+        "Bing Crosby",
+        "Dean Martin"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "Irving Berlin l'a écrite pour le film Holiday Inn (1942) ; elle a remporté l'Oscar de la meilleure chanson.",
+      "source": "https://www.guinnessworldrecords.com/world-records/best-selling-single"
+    },
+    {
+      "id": "q031",
+      "type": "mc4",
+      "text": "Dans « La vie est belle » (1946), que se passe-t-il « chaque fois qu'une cloche sonne » ?",
+      "options": [
+        "Un enfant fait un vœu",
+        "Une étoile tombe",
+        "Le père Noël se réveille",
+        "Un ange gagne ses ailes"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "Clarence, toujours sans ailes après 200 ans, les gagne en sauvant George Bailey.",
+      "source": "https://en.wikipedia.org/wiki/Clarence_Odbody"
+    },
+    {
+      "id": "q032",
+      "type": "tf",
+      "text": "Les premiers fils scintillants pour décorer les sapins, fabriqués à Nuremberg vers 1610, étaient en argent véritable.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "L'argent noircissait vite ; aujourd'hui, ces guirlandes sont surtout en plastique métallisé.",
+      "source": "https://en.wikipedia.org/wiki/Tinsel"
+    },
+    {
+      "id": "q033",
+      "type": "mc4",
+      "text": "Le gui, qu'on accroche pour les fêtes, est…",
+      "options": [
+        "Une plante semi-parasite des arbres",
+        "Une sorte de fougère",
+        "Une mousse",
+        "Une plante grimpante"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 3,
+      "explain": "Les oiseaux dispersent ses graines par leurs fientes, ou en s'essuyant le bec sur l'écorce des arbres.",
+      "source": "https://www.britannica.com/plant/mistletoe"
+    },
+    {
+      "id": "q034",
+      "type": "tf",
+      "text": "En Espagne, beaucoup d'enfants reçoivent leurs principaux cadeaux le 6 janvier, de la part des Rois mages.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 1,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "Le 5 au soir, les villes organisent de grands défilés pour les Rois, les « cabalgatas ».",
+      "source": "https://www.thelocal.es/20200102/why-spain-loves-the-three-kings-more-than-santa"
+    },
+    {
+      "id": "q035",
+      "type": "mc4",
+      "text": "En France, que cache-t-on dans une galette des rois en janvier ?",
+      "options": [
+        "Un petit mot en papier",
+        "Une fève",
+        "Un marron glacé",
+        "Une clochette"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 1,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "Celui ou celle qui la trouve porte la couronne en papier : roi ou reine d'un jour.",
+      "source": "https://www.thelocal.fr/20190103/the-galette-des-rois"
+    },
+    {
+      "id": "q036",
+      "type": "mc4",
+      "text": "« Petit Papa Noël » (1946), le single le plus vendu de l'histoire en France, a été un tube pour quel chanteur ?",
+      "options": [
+        "Charles Aznavour",
+        "Édith Piaf",
+        "Tino Rossi",
+        "Johnny Hallyday"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "Le Guinness l'estime à environ 5,7 millions d'exemplaires vendus rien qu'en France.",
+      "source": "https://en.wikipedia.org/wiki/Petit_Papa_No%C3%ABl"
+    },
+    {
+      "id": "q037",
+      "type": "mc4",
+      "text": "« Klaus » (2019), le film d'animation nommé aux Oscars sur les débuts du père Noël, a été réalisé dans quel pays ?",
+      "options": [
+        "La France",
+        "L'Irlande",
+        "Le Canada",
+        "L'Espagne"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "C'est le premier film d'animation de Noël nommé à l'Oscar du meilleur film d'animation.",
+      "source": "https://en.wikipedia.org/wiki/Klaus_(film)"
+    },
+    {
+      "id": "q038",
+      "type": "mc4",
+      "text": "En 1882, le premier sapin illuminé à l'électricité brillait à New York, chez un associé de quel inventeur ?",
+      "options": [
+        "Thomas Edison",
+        "Nikola Tesla",
+        "Alexander Graham Bell",
+        "Henry Ford"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "Edward Johnson a câblé à la main 80 ampoules rouges, blanches et bleues ; le sapin tournait même sur son socle.",
+      "source": "https://www.history.com/news/electric-christmas-tree-lights"
+    },
+    {
+      "id": "q039",
+      "type": "mc4",
+      "text": "Combien de côtés a un flocon de neige ?",
+      "options": [
+        "4",
+        "6",
+        "5",
+        "8"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "En gelant, les molécules d'eau forment des anneaux hexagonaux : d'où la symétrie à six branches.",
+      "source": "https://www.smithsonianmag.com/smart-news/snowflakes-may-have-different-designs-but-they-always-have-six-sides-172052136/"
+    },
+    {
+      "id": "q040",
+      "type": "mc4",
+      "text": "Selon la tradition néerlandaise, de quel pays Sinterklaas arrive-t-il en bateau à vapeur, à la mi-novembre ?",
+      "options": [
+        "La Turquie",
+        "La Finlande",
+        "L'Espagne",
+        "L'Italie"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "Une fois à terre, il défile à cheval dans les rues ; son arrivée est retransmise en direct à la télévision.",
+      "source": "https://www.stnicholascenter.org/around-the-world/customs/netherlands"
+    },
+    {
+      "id": "q041",
+      "type": "mc4",
+      "text": "Au Portugal, quel est le plat classique du souper du 24 décembre (la consoada) ?",
+      "options": [
+        "Les sardines grillées",
+        "Le poulet rôti",
+        "La paella aux fruits de mer",
+        "La morue salée"
+      ],
+      "answer": 3,
+      "topic": "food",
+      "difficulty": 3,
+      "explain": "Le Portugal est le premier consommateur de bacalhau au monde : environ six kilos par habitant et par an.",
+      "source": "https://fortune.com/europe/2024/12/20/portugal-cod-christmas/"
+    },
+    {
+      "id": "q042",
+      "type": "mc4",
+      "text": "Qui a écrit et chanté « Feliz Navidad » en 1970 ?",
+      "options": [
+        "José Feliciano",
+        "Marc Anthony",
+        "Ricky Martin",
+        "Carlos Santana"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "Le chanteur portoricain la chante en espagnol et en anglais, et y joue du cuatro portoricain.",
+      "source": "https://en.wikipedia.org/wiki/Feliz_Navidad_(song)"
+    },
+    {
+      "id": "q043",
+      "type": "mc4",
+      "text": "Où se déroule la comédie culte « Le père Noël est une ordure » (1982) ?",
+      "options": [
+        "Dans une station de ski",
+        "Dans une permanence téléphonique",
+        "Dans un centre commercial",
+        "Dans un hôpital"
+      ],
+      "answer": 1,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "L'action se passe le soir du réveillon ; le film adapte une pièce créée en 1979 par la troupe du Splendid.",
+      "source": "https://www.unifrance.org/film/501/le-pere-noel-est-une-ordure"
+    },
+    {
+      "id": "q044",
+      "type": "mc4",
+      "text": "Dans quel pays la coutume du sapin de Noël décoré est-elle née ?",
+      "options": [
+        "L'Italie",
+        "L'Angleterre",
+        "L'Allemagne",
+        "Les États-Unis"
+      ],
+      "answer": 2,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "Un document de Brême, en 1570, décrit un arbre orné de pommes, de noix, de dattes, de bretzels et de fleurs en papier.",
+      "source": "https://en.wikipedia.org/wiki/Christmas_tree"
+    },
+    {
+      "id": "q045",
+      "type": "tf",
+      "text": "Les ours polaires et les manchots peuvent se croiser dans la nature.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Les ours polaires vivent dans l'Arctique ; les manchots sauvages, presque tous dans l'hémisphère sud.",
+      "source": "https://www.nationalgeographic.com/animals/article/arctic-antarctica-wildlife-myths-explained"
+    },
+    {
+      "id": "q046",
+      "type": "mc4",
+      "text": "Dans le folklore islandais, combien de « garçons de Noël » rendent visite aux enfants dans les jours avant Noël ?",
+      "options": [
+        "3",
+        "7",
+        "24",
+        "13"
+      ],
+      "answer": 3,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "Les enfants laissent une chaussure sur le rebord de la fenêtre : un petit cadeau s'ils sont sages, une pomme de terre sinon.",
+      "source": "https://www.visiticeland.com/article/meet-the-icelandic-yule-troll-family/"
+    },
+    {
+      "id": "q047",
+      "type": "mc4",
+      "text": "Fairouz chante une célèbre chanson de Noël en arabe sur l'air de quel chant ?",
+      "options": [
+        "Jingle Bells",
+        "Douce nuit",
+        "Petit Papa Noël",
+        "Mon beau sapin"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "Dans sa version, la neige et les traîneaux laissent place à des maisons chaleureuses, des décorations et des cloches.",
+      "source": "https://www.middleeasteye.net/discover/christmas-songs-five-arabic-get-through-festive-season"
+    },
+    {
+      "id": "q048",
+      "type": "mc4",
+      "text": "Qui a écrit « Un chant de Noël », l'histoire de l'avare Ebenezer Scrooge ?",
+      "options": [
+        "Oscar Wilde",
+        "Charles Dickens",
+        "Lewis Carroll",
+        "Victor Hugo"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "Paru en décembre 1843, le livre était épuisé avant le réveillon et n'a jamais cessé d'être réédité.",
+      "source": "https://www.smithsonianmag.com/smart-news/a-christmas-carol-marvelously-captured-the-holidays-victorian-spirit-and-inspired-new-traditions-for-centuries-to-come-180985649/"
+    },
+    {
+      "id": "q049",
+      "type": "tf",
+      "text": "En Australie, Noël tombe en plein hiver.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Au sud de l'équateur, décembre, c'est l'été : notre jour le plus court y est le plus long de l'année.",
+      "source": "https://www.rmg.co.uk/stories/time/when-winter-solstice-shortest-day"
+    },
+    {
+      "id": "q050",
+      "type": "tf",
+      "text": "Au Japon, manger du poulet frit KFC à Noël est une tradition populaire.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "Tout est parti d'une campagne publicitaire de 1974 : « Kentucky pour Noël ».",
+      "source": "https://www.smithsonianmag.com/arts-culture/why-japan-is-obsessed-with-kentucky-fried-chicken-on-christmas-1-161666960"
+    },
+    {
+      "id": "q051",
+      "type": "mc4",
+      "text": "Quel âge avait Brenda Lee quand elle a enregistré « Rockin' Around the Christmas Tree » en 1958 ?",
+      "options": [
+        "18 ans",
+        "21 ans",
+        "13 ans",
+        "25 ans"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "En décembre 2023, 65 ans plus tard, la chanson est enfin devenue numéro 1 aux États-Unis.",
+      "source": "https://www.npr.org/2023/12/05/1217387261/brenda-lee-rockin-around-the-christmas-tree-billboard-number-one"
+    },
+    {
+      "id": "q052",
+      "type": "mc4",
+      "text": "Dans l'hémisphère nord, le jour le plus court de l'année tombe vers le…",
+      "options": [
+        "21 mars",
+        "21 juin",
+        "21 septembre",
+        "21 décembre"
+      ],
+      "answer": 3,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Après le solstice d'hiver, les jours rallongent peu à peu.",
+      "source": "https://www.rmg.co.uk/stories/time/when-winter-solstice-shortest-day"
+    },
+    {
+      "id": "q053",
+      "type": "mc4",
+      "text": "Au Liban, que font traditionnellement les enfants le soir de la Sainte-Barbe, vers le 4 décembre ?",
+      "options": [
+        "Déguisés, ils passent de porte en porte",
+        "Ils allument des feux sur les toits",
+        "Ils plantent un petit cèdre",
+        "Ils jettent de l'eau des balcons"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 2,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "La coutume rappelle la légende de Barbe, qui se cachait sous de nombreux déguisements.",
+      "source": "https://en.wikipedia.org/wiki/Eid_il-Burbara"
+    },
+    {
+      "id": "q054",
+      "type": "tf",
+      "text": "Le ballet « Casse-Noisette » a connu un grand succès dès sa première, à Saint-Pétersbourg en 1892.",
+      "options": [
+        "Vrai",
+        "Faux"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "La critique a éreinté la première ; le ballet complet n'est devenu un classique de Noël que des décennies plus tard.",
+      "source": "https://www.wpr.org/rocky-start-beloved-christmas-classic"
+    },
+    {
+      "id": "q055",
+      "type": "mc4",
+      "text": "Quel pays est connu pour avoir la plus longue période de Noël au monde, qui commence dès septembre ?",
+      "options": [
+        "Le Brésil",
+        "Les Philippines",
+        "L'Italie",
+        "Le Mexique"
+      ],
+      "answer": 1,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "On parle des « ber months » : dès septembre, les chansons de Noël résonnent.",
+      "source": "https://www.npr.org/2018/12/24/678616528/love-the-holidays-the-philippines-celebrates-4-months-of-christmas-mania"
+    },
+    {
+      "id": "q056",
+      "type": "mc4",
+      "text": "En Catalogne, le « Tió de Nadal », qui « donne » des friandises aux enfants à Noël, est…",
+      "options": [
+        "Un âne en peluche",
+        "Un pot en terre",
+        "Une bûche en bois",
+        "Un bonhomme de neige"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "Les enfants le « nourrissent » pendant des semaines, puis le tapotent avec des bâtons en chantant pour qu'il livre ses friandises.",
+      "source": "https://www.npr.org/sections/thesalt/2017/12/22/572569325/caga-ti-a-catalan-log-that-poops-nougats-at-christmas"
+    },
+    {
+      "id": "q057",
+      "type": "mc4",
+      "text": "En Pologne, qu'attend-on traditionnellement avant de commencer le souper du 24 décembre (Wigilia) ?",
+      "options": [
+        "Le premier flocon de neige",
+        "Les dix coups de l'horloge",
+        "L'arrivée des voisins",
+        "La première étoile"
+      ],
+      "answer": 3,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "On dresse aussi un couvert de plus pour un invité inattendu.",
+      "source": "https://en.wikipedia.org/wiki/Wigilia"
+    },
+    {
+      "id": "q058",
+      "type": "mc4",
+      "text": "Que trouve-t-on traditionnellement dans un « cracker » de Noël britannique ?",
+      "options": [
+        "Une couronne en papier et une blague",
+        "Une petite bougie",
+        "Un billet de loterie",
+        "Un sachet de graines"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 1,
+      "explain": "Ces papillotes qui claquent ont été inventées par le confiseur londonien Tom Smith dans les années 1840.",
+      "source": "https://en.wikipedia.org/wiki/Christmas_cracker"
+    },
+    {
+      "id": "q059",
+      "type": "mc4",
+      "text": "Au Liban, comment les enfants appellent-ils le plus souvent le vieux monsieur en rouge qui apporte les cadeaux ?",
+      "options": [
+        "Sinterklaas",
+        "Papa Noël",
+        "Ded Moroz",
+        "Joulupukki"
+      ],
+      "answer": 1,
+      "topic": "traditions",
+      "difficulty": 1,
+      "easyIn": [
+        "ar",
+        "fr"
+      ],
+      "explain": "Le nom vient du français ; certains disent aussi « Baba Noël ».",
+      "source": "https://businessmirror.com.ph/jesus-isnt-only-for-the-christians/"
+    },
+    {
+      "id": "q060",
+      "type": "mc4",
+      "text": "En Colombie, la période de Noël s'ouvre traditionnellement le soir du 7 décembre avec…",
+      "options": [
+        "Un concours géant de cerfs-volants",
+        "Une immense bataille d'eau",
+        "Des bougies et des lanternes partout",
+        "Un défilé de chiens"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "C'est le « Día de las Velitas », le jour des petites bougies, allumées dans les maisons comme dans les rues.",
+      "source": "https://www.smithsonianmag.com/smart-news/colombia-begins-christmas-season-these-beautiful-light-displays-180967423/"
+    }
+  ]
+}

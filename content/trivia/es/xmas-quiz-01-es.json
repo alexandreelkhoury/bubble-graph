@@ -1,0 +1,1024 @@
+{
+  "id": "xmas-quiz-01-es",
+  "family": "xmas-quiz-01",
+  "game": "trivia",
+  "version": 1,
+  "locale": "es",
+  "script": "Latn",
+  "title": {
+    "en": "Christmas Quiz",
+    "fr": "Le quiz de Noël",
+    "ar": "مسابقة الميلاد",
+    "es": "El quiz de Navidad"
+  },
+  "description": {
+    "en": "Réveillon, carols, bûche and reindeer: a festive lap around the world's Christmas traditions.",
+    "fr": "Réveillon, chants, bûche et rennes : un tour du monde des traditions de Noël.",
+    "ar": "ريفيون، أغاني، بوش دو نويل وغزلان الرنّة: جولة حول العالم بتقاليد الميلاد.",
+    "es": "Cenas de Nochebuena, villancicos, turrón y renos: una vuelta al mundo por las tradiciones navideñas."
+  },
+  "domain": "world",
+  "topics": [
+    "traditions",
+    "food",
+    "music",
+    "cinema-tv",
+    "history",
+    "nature",
+    "geography"
+  ],
+  "featuredTopics": [
+    "traditions",
+    "food",
+    "music"
+  ],
+  "stars": 2,
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "reviewedBy": [],
+  "occasion": "christmas",
+  "questions": [
+    {
+      "id": "q001",
+      "type": "mc4",
+      "text": "En Francia, ¿cómo se llama la gran cena de la noche del 24 de diciembre?",
+      "options": [
+        "Le réveillon",
+        "Le goûter",
+        "La crémaillère",
+        "La galette"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 1,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "Viene de «réveiller», despertar: la cena suele alargarse hasta altas horas.",
+      "source": "https://en.wikipedia.org/wiki/R%C3%A9veillon"
+    },
+    {
+      "id": "q002",
+      "type": "mc4",
+      "text": "El pastel navideño francés llamado «bûche de Noël» tiene forma de…",
+      "options": [
+        "Estrella",
+        "Tronco",
+        "Corona",
+        "Campana"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 1,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "Imita el gran tronco que antes se quemaba en la chimenea en Navidad.",
+      "source": "https://en.wikipedia.org/wiki/Yule_log_(cake)"
+    },
+    {
+      "id": "q003",
+      "type": "mc4",
+      "text": "«Noche de paz» se cantó por primera vez en 1818 en un pueblo de ¿qué país?",
+      "options": [
+        "Alemania",
+        "Suiza",
+        "Austria",
+        "Inglaterra"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "La primera vez, en Oberndorf, cerca de Salzburgo, se acompañó con una guitarra.",
+      "source": "https://en.wikipedia.org/wiki/Silent_Night"
+    },
+    {
+      "id": "q004",
+      "type": "mc4",
+      "text": "En «Solo en casa» («Mi pobre angelito», 1990), la familia de Kevin vuela sin él para pasar la Navidad en ¿qué ciudad?",
+      "options": [
+        "Londres",
+        "Roma",
+        "Miami",
+        "París"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "Los McCallister viven cerca de Chicago; la madre de Kevin logra volver a casa el día de Navidad.",
+      "source": "https://www.britannica.com/topic/Home-Alone"
+    },
+    {
+      "id": "q005",
+      "type": "mc4",
+      "text": "San Nicolás, que inspiró a Papá Noel, vivió en Mira. ¿En qué país actual está esa ciudad?",
+      "options": [
+        "Turquía",
+        "Grecia",
+        "Italia",
+        "Países Bajos"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "Su leyenda de regalos en secreto dio lugar a Sinterklaas en los Países Bajos y luego a Papá Noel.",
+      "source": "https://www.britannica.com/biography/Saint-Nicholas"
+    },
+    {
+      "id": "q006",
+      "type": "tf",
+      "text": "Las hembras de reno también tienen astas.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "Es el único cérvido cuyas hembras tienen astas; las madres suelen conservarlas todo el invierno.",
+      "source": "https://www.usgs.gov/news/national-news-release/other-364-days-year-real-lives-wild-reindeer"
+    },
+    {
+      "id": "q007",
+      "type": "mc4",
+      "text": "Rovaniemi, en la Laponia finlandesa, se proclama la ciudad oficial de Papá Noel. ¿Qué línea cruza su Aldea de Papá Noel?",
+      "options": [
+        "El ecuador",
+        "El círculo polar ártico",
+        "El trópico de Cáncer",
+        "El meridiano de Greenwich"
+      ],
+      "answer": 1,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "Una línea marcada en el suelo de la plaza señala el círculo polar: se puede cruzar de un paso.",
+      "source": "https://www.visitrovaniemi.fi/love/santa-claus-magic-of-christmas/"
+    },
+    {
+      "id": "q008",
+      "type": "mc4",
+      "text": "En la Provenza, ¿cuántos postres se sirven tradicionalmente después de la cena de Nochebuena?",
+      "options": [
+        "7",
+        "10",
+        "13",
+        "24"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "Entre ellos, los «cuatro mendigos»: higos secos, almendras, pasas, y nueces o avellanas.",
+      "source": "https://en.wikipedia.org/wiki/Thirteen_desserts"
+    },
+    {
+      "id": "q009",
+      "type": "mc4",
+      "text": "El panettone, el alto pan dulce navideño con fruta confitada y pasas, viene de ¿qué ciudad italiana?",
+      "options": [
+        "Nápoles",
+        "Roma",
+        "Venecia",
+        "Milán"
+      ],
+      "answer": 3,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "Su primo el pandoro, con forma de estrella y espolvoreado de azúcar glas, es de Verona.",
+      "source": "https://www.britannica.com/topic/panettone"
+    },
+    {
+      "id": "q010",
+      "type": "mc4",
+      "text": "¿Qué grupo cantaba «Last Christmas» en 1984?",
+      "options": [
+        "Wham!",
+        "Queen",
+        "ABBA",
+        "Duran Duran"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "No llegó al número 1 en el Reino Unido hasta enero de 2021, 36 años después de su lanzamiento.",
+      "source": "https://officialcharts.com/chart-news/whams-last-christmas-finally-reaches-number-1-and-sets-official-uk-chart-record__32041"
+    },
+    {
+      "id": "q011",
+      "type": "mc4",
+      "text": "¿Qué actor interpreta a Buddy, el humano criado por elfos, en «Elf» (2003)?",
+      "options": [
+        "Jim Carrey",
+        "Will Ferrell",
+        "Adam Sandler",
+        "Ben Stiller"
+      ],
+      "answer": 1,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "De bebé, Buddy se metió en el saco de Papá Noel en un orfanato y despertó en el Polo Norte.",
+      "source": "https://en.wikipedia.org/wiki/Elf_(film)"
+    },
+    {
+      "id": "q012",
+      "type": "tf",
+      "text": "Coca-Cola inventó el traje rojo de Papá Noel.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "Ya había Papás Noel de rojo mucho antes; los anuncios de Coca-Cola desde 1931 sobre todo popularizaron esa imagen jovial.",
+      "source": "https://www.coca-cola.com/us/en/about-us/faq/did-coca-cola-create-santa-claus"
+    },
+    {
+      "id": "q013",
+      "type": "mc4",
+      "text": "¿Cómo se llama a los renos salvajes en Norteamérica?",
+      "options": [
+        "Alces",
+        "Uapitíes",
+        "Caribúes",
+        "Bisontes"
+      ],
+      "answer": 2,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Misma especie, dos nombres: «reno» en Europa y «caribú» para los salvajes de Norteamérica.",
+      "source": "https://www.fda.gov/animal-veterinary/animal-health-literacy/fun-facts-about-reindeer-and-caribou"
+    },
+    {
+      "id": "q014",
+      "type": "mc4",
+      "text": "Desde 1947, ¿qué ciudad regala cada año a Londres el gran árbol de Navidad de Trafalgar Square?",
+      "options": [
+        "Copenhague",
+        "Estocolmo",
+        "Helsinki",
+        "Oslo"
+      ],
+      "answer": 3,
+      "topic": "geography",
+      "difficulty": 3,
+      "explain": "Es una pícea de Noruega, normalmente de más de 20 metros y de entre 50 y 60 años, elegida en los bosques de la ciudad.",
+      "source": "https://www.london.gov.uk/who-we-are/city-halls-buildings-and-squares/trafalgar-square/christmas"
+    },
+    {
+      "id": "q015",
+      "type": "mc4",
+      "text": "En Suecia, ¿qué lleva en la cabeza la chica elegida como Lucía el 13 de diciembre?",
+      "options": [
+        "Una corona de velas",
+        "Una corona de papel",
+        "Astas de reno",
+        "Una corona de rosas"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "Santa Lucía cae en lo más oscuro del invierno nórdico; hoy las velas suelen ser de pilas.",
+      "source": "https://en.wikipedia.org/wiki/Saint_Lucy%27s_Day"
+    },
+    {
+      "id": "q016",
+      "type": "mc4",
+      "text": "El turrón, dulce navideño español, se hace sobre todo con…",
+      "options": [
+        "Castañas y chocolate",
+        "Almendras y miel",
+        "Dátiles y sésamo",
+        "Pistachos y agua de rosas"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 2,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "El de Jijona, blando, lleva almendra molida; el de Alicante, duro, la lleva entera.",
+      "source": "https://agriculture.ec.europa.eu/farming/geographical-indications-and-quality-schemes/geographical-indications-food-and-drink/turron-de-alicante-pgi_en"
+    },
+    {
+      "id": "q017",
+      "type": "mc4",
+      "text": "¿Quién canta «All I Want for Christmas Is You» (1994)?",
+      "options": [
+        "Céline Dion",
+        "Whitney Houston",
+        "Mariah Carey",
+        "Madonna"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 1,
+      "explain": "La escribió con Walter Afanasieff; fue el primer sencillo de su primer disco navideño.",
+      "source": "https://en.wikipedia.org/wiki/Merry_Christmas_(Mariah_Carey_album)"
+    },
+    {
+      "id": "q018",
+      "type": "mc4",
+      "text": "¿Quién creó al Grinch, el gruñón verde que intenta robar la Navidad?",
+      "options": [
+        "Roald Dahl",
+        "Charles Schulz",
+        "Walt Disney",
+        "Dr. Seuss"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "El Grinch se queja de llevar 53 años aguantando la Navidad: la edad del Dr. Seuss cuando salió el libro, en 1957.",
+      "source": "https://en.wikipedia.org/wiki/How_the_Grinch_Stole_Christmas!"
+    },
+    {
+      "id": "q019",
+      "type": "mc4",
+      "text": "Rudolph, el reno de la nariz roja, fue creado en 1939 para…",
+      "options": [
+        "El folleto de unos grandes almacenes",
+        "Un dibujo animado de Walt Disney",
+        "Un anuncio de Coca-Cola",
+        "Un cuento popular sueco"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "Los almacenes Montgomery Ward repartieron 2,4 millones de ejemplares el primer año.",
+      "source": "https://en.wikipedia.org/wiki/Rudolph_the_Red-Nosed_Reindeer"
+    },
+    {
+      "id": "q020",
+      "type": "mc4",
+      "text": "Los ojos de los renos cambian de color con las estaciones: dorados en verano y ¿de qué color en invierno?",
+      "options": [
+        "Rojos",
+        "Azules",
+        "Verdes",
+        "Negros"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 3,
+      "explain": "El cambio hace sus ojos mucho más sensibles a la luz durante la larga noche polar.",
+      "source": "https://www.nationalgeographic.com/science/article/why-are-reindeer-eyes-golden-in-summer-but-blue-in-winter"
+    },
+    {
+      "id": "q021",
+      "type": "mc4",
+      "text": "¿Qué ciudad francesa, con mercado navideño desde 1570, se proclama «capital de la Navidad»?",
+      "options": [
+        "Lyon",
+        "Lille",
+        "Estrasburgo",
+        "Burdeos"
+      ],
+      "answer": 2,
+      "topic": "geography",
+      "difficulty": 2,
+      "explain": "Su Christkindelsmärik es el mercado navideño más antiguo de Francia.",
+      "source": "https://www.connexionfrance.com/article/Mag/French-Facts/Did-you-know-Strasbourg-was-France-s-first-Christmas-market"
+    },
+    {
+      "id": "q022",
+      "type": "mc4",
+      "text": "En México, ¿cuántas noches duran las posadas antes de Navidad?",
+      "options": [
+        "3",
+        "7",
+        "12",
+        "9"
+      ],
+      "answer": 3,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "Del 16 al 24 de diciembre: cantos, velas y una piñata para cerrar la noche.",
+      "source": "https://www.britannica.com/topic/Las-Posadas"
+    },
+    {
+      "id": "q023",
+      "type": "mc4",
+      "text": "En el Líbano, la «burbara», que se prepara para Santa Bárbara, es sobre todo…",
+      "options": [
+        "Trigo cocido con azúcar y granada",
+        "Bizcocho de sémola y cúrcuma",
+        "Arroz con leche y agua de rosas",
+        "Sopa de lentejas"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 2,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "Según la leyenda, unos campos de trigo crecieron en un instante alrededor de Bárbara para esconderla.",
+      "source": "https://en.wikipedia.org/wiki/Eid_il-Burbara"
+    },
+    {
+      "id": "q024",
+      "type": "mc4",
+      "text": "En diciembre de 1965, los astronautas del Gemini 6 tocaron ¿qué canción navideña en órbita, con una armónica y cascabeles?",
+      "options": [
+        "Noche de paz",
+        "Jingle Bells",
+        "White Christmas",
+        "Campana sobre campana"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "Fue la primera vez que se tocaron instrumentos musicales en el espacio; la armónica y los cascabeles están hoy en el Smithsonian.",
+      "source": "https://airandspace.si.edu/stories/editorial/tom-staffords-jingle-bells-and-wally-schirras-harmonica"
+    },
+    {
+      "id": "q025",
+      "type": "mc4",
+      "text": "En «Pesadilla antes de Navidad», Jack Skellington es el Rey Calabaza de ¿qué ciudad?",
+      "options": [
+        "Ciudad Navidad",
+        "Ciudad Juguete",
+        "Ciudad Halloween",
+        "Ciudad San Valentín"
+      ],
+      "answer": 2,
+      "topic": "cinema-tv",
+      "difficulty": 1,
+      "explain": "En la versión original, Chris Sarandon le pone la voz hablada y Danny Elfman canta sus canciones.",
+      "source": "https://d23.com/disney-a-to-z/nightmare-before-christmas-the-film/"
+    },
+    {
+      "id": "q026",
+      "type": "mc4",
+      "text": "¿Qué miembro de la realeza puso de moda el árbol de Navidad en Gran Bretaña, tras un grabado de 1848?",
+      "options": [
+        "El rey Enrique VIII",
+        "La reina Isabel I",
+        "El rey Jorge V",
+        "El príncipe Alberto"
+      ],
+      "answer": 3,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "El grabado de la familia real junto al árbol, publicado en el Illustrated London News, inspiró a todo el país.",
+      "source": "https://www.rct.uk/collection/stories/a-royal-christmas/the-christmas-tree"
+    },
+    {
+      "id": "q027",
+      "type": "mc4",
+      "text": "La flor de Nochebuena (poinsettia), la planta roja típica de estas fiestas, es originaria de ¿qué país?",
+      "options": [
+        "México",
+        "Brasil",
+        "España",
+        "India"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 2,
+      "explain": "Sus «pétalos» rojos son en realidad hojas llamadas brácteas; las flores de verdad son los botoncitos amarillos del centro.",
+      "source": "https://www.britannica.com/plant/poinsettia"
+    },
+    {
+      "id": "q028",
+      "type": "mc4",
+      "text": "En Italia, ¿quién trae regalos a los niños la noche del 5 de enero?",
+      "options": [
+        "Krampus",
+        "La Befana",
+        "Sinterklaas",
+        "Ded Moroz"
+      ],
+      "answer": 1,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "Es una anciana que vuela en escoba; a los niños traviesos, dice la tradición, les deja carbón.",
+      "source": "https://en.wikipedia.org/wiki/Befana"
+    },
+    {
+      "id": "q029",
+      "type": "tf",
+      "text": "Los «mince pies» británicos llevaban antiguamente carne de verdad.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 0,
+      "topic": "food",
+      "difficulty": 2,
+      "explain": "Hoy el relleno es de fruta pasa, manzana y especias; de la carne solo queda el nombre.",
+      "source": "https://en.wikipedia.org/wiki/Mince_pie"
+    },
+    {
+      "id": "q030",
+      "type": "mc4",
+      "text": "Guinness considera «White Christmas» el sencillo más vendido de la historia. ¿Quién lo cantaba?",
+      "options": [
+        "Frank Sinatra",
+        "Elvis Presley",
+        "Bing Crosby",
+        "Dean Martin"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "explain": "Irving Berlin la compuso para la película Holiday Inn (1942); ganó el Óscar a la mejor canción.",
+      "source": "https://www.guinnessworldrecords.com/world-records/best-selling-single"
+    },
+    {
+      "id": "q031",
+      "type": "mc4",
+      "text": "En «¡Qué bello es vivir!» (1946), ¿qué pasa «cada vez que suena una campana»?",
+      "options": [
+        "Un niño pide un deseo",
+        "Cae una estrella",
+        "Papá Noel se despierta",
+        "Un ángel consigue sus alas"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "Clarence, sin alas después de 200 años, se las gana salvando a George Bailey.",
+      "source": "https://en.wikipedia.org/wiki/Clarence_Odbody"
+    },
+    {
+      "id": "q032",
+      "type": "tf",
+      "text": "El primer espumillón, fabricado en Núremberg hacia 1610, era de plata de verdad.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "La plata se oscurecía enseguida; hoy el espumillón es casi siempre plástico metalizado.",
+      "source": "https://en.wikipedia.org/wiki/Tinsel"
+    },
+    {
+      "id": "q033",
+      "type": "mc4",
+      "text": "El muérdago, que se cuelga en estas fiestas en Gran Bretaña y Francia, es…",
+      "options": [
+        "Una planta semiparásita de árboles",
+        "Un tipo de helecho",
+        "Un musgo",
+        "Una enredadera"
+      ],
+      "answer": 0,
+      "topic": "nature",
+      "difficulty": 3,
+      "explain": "Los pájaros dispersan sus semillas con sus excrementos o al limpiarse el pico en la corteza.",
+      "source": "https://www.britannica.com/plant/mistletoe"
+    },
+    {
+      "id": "q034",
+      "type": "tf",
+      "text": "En España, muchos niños reciben sus regalos principales el 6 de enero, de manos de los Reyes Magos.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 1,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "La tarde del 5 de enero, las ciudades celebran grandes cabalgatas de Reyes.",
+      "source": "https://www.thelocal.es/20200102/why-spain-loves-the-three-kings-more-than-santa"
+    },
+    {
+      "id": "q035",
+      "type": "mc4",
+      "text": "En Francia, ¿qué se esconde dentro de una galette des rois en enero?",
+      "options": [
+        "Una nota de papel",
+        "Una «fève», una figurita",
+        "Una castaña confitada",
+        "Una campanita"
+      ],
+      "answer": 1,
+      "topic": "food",
+      "difficulty": 1,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "Quien la encuentra lleva la corona de papel: rey o reina por un día.",
+      "source": "https://www.thelocal.fr/20190103/the-galette-des-rois"
+    },
+    {
+      "id": "q036",
+      "type": "mc4",
+      "text": "«Petit Papa Noël» (1946), el sencillo más vendido de la historia en Francia, fue un éxito de ¿qué cantante?",
+      "options": [
+        "Charles Aznavour",
+        "Édith Piaf",
+        "Tino Rossi",
+        "Johnny Hallyday"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 2,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "Guinness calcula unos 5,7 millones de copias vendidas solo en Francia.",
+      "source": "https://en.wikipedia.org/wiki/Petit_Papa_No%C3%ABl"
+    },
+    {
+      "id": "q037",
+      "type": "mc4",
+      "text": "«Klaus» (2019), la película de animación nominada al Óscar sobre los orígenes de Papá Noel, se hizo en ¿qué país?",
+      "options": [
+        "Francia",
+        "Irlanda",
+        "Canadá",
+        "España"
+      ],
+      "answer": 3,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "explain": "Fue la primera película navideña de animación nominada al Óscar a la mejor película animada.",
+      "source": "https://en.wikipedia.org/wiki/Klaus_(film)"
+    },
+    {
+      "id": "q038",
+      "type": "mc4",
+      "text": "En 1882, el primer árbol de Navidad con luces eléctricas brilló en Nueva York, en casa de un socio de ¿qué inventor?",
+      "options": [
+        "Thomas Edison",
+        "Nikola Tesla",
+        "Alexander Graham Bell",
+        "Henry Ford"
+      ],
+      "answer": 0,
+      "topic": "history",
+      "difficulty": 3,
+      "explain": "Edward Johnson cableó a mano 80 bombillas rojas, blancas y azules; el árbol incluso giraba sobre su base.",
+      "source": "https://www.history.com/news/electric-christmas-tree-lights"
+    },
+    {
+      "id": "q039",
+      "type": "mc4",
+      "text": "¿Cuántos lados tiene un copo de nieve?",
+      "options": [
+        "4",
+        "6",
+        "5",
+        "8"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Al congelarse, las moléculas de agua forman anillos hexagonales: de ahí su simetría de seis puntas.",
+      "source": "https://www.smithsonianmag.com/smart-news/snowflakes-may-have-different-designs-but-they-always-have-six-sides-172052136/"
+    },
+    {
+      "id": "q040",
+      "type": "mc4",
+      "text": "Según la tradición neerlandesa, ¿desde qué país llega Sinterklaas en barco de vapor a mediados de noviembre?",
+      "options": [
+        "Turquía",
+        "Finlandia",
+        "España",
+        "Italia"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "Ya en tierra, recorre las calles a caballo; su llegada se transmite en directo por televisión.",
+      "source": "https://www.stnicholascenter.org/around-the-world/customs/netherlands"
+    },
+    {
+      "id": "q041",
+      "type": "mc4",
+      "text": "En Portugal, ¿cuál es el plato clásico de la cena de Nochebuena (la consoada)?",
+      "options": [
+        "Sardinas a la brasa",
+        "Pollo asado",
+        "Paella de marisco",
+        "Bacalao"
+      ],
+      "answer": 3,
+      "topic": "food",
+      "difficulty": 3,
+      "explain": "Portugal es el mayor consumidor de bacalao del mundo: unos seis kilos por persona al año.",
+      "source": "https://fortune.com/europe/2024/12/20/portugal-cod-christmas/"
+    },
+    {
+      "id": "q042",
+      "type": "mc4",
+      "text": "¿Quién compuso y cantó «Feliz Navidad» en 1970?",
+      "options": [
+        "José Feliciano",
+        "Marc Anthony",
+        "Ricky Martin",
+        "Carlos Santana"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "easyIn": [
+        "es"
+      ],
+      "explain": "El cantante puertorriqueño la canta en español y en inglés, y toca en ella el cuatro puertorriqueño.",
+      "source": "https://en.wikipedia.org/wiki/Feliz_Navidad_(song)"
+    },
+    {
+      "id": "q043",
+      "type": "mc4",
+      "text": "¿Dónde transcurre la comedia francesa de culto «Le Père Noël est une ordure» (1982)?",
+      "options": [
+        "En una estación de esquí",
+        "En una línea de ayuda telefónica",
+        "En un centro comercial",
+        "En un hospital"
+      ],
+      "answer": 1,
+      "topic": "cinema-tv",
+      "difficulty": 3,
+      "easyIn": [
+        "fr"
+      ],
+      "explain": "Ocurre en Nochebuena y adapta una obra de 1979 de la compañía cómica del Splendid.",
+      "source": "https://www.unifrance.org/film/501/le-pere-noel-est-une-ordure"
+    },
+    {
+      "id": "q044",
+      "type": "mc4",
+      "text": "¿En qué país nació la costumbre del árbol de Navidad decorado?",
+      "options": [
+        "Italia",
+        "Inglaterra",
+        "Alemania",
+        "Estados Unidos"
+      ],
+      "answer": 2,
+      "topic": "history",
+      "difficulty": 1,
+      "explain": "Un documento de Bremen de 1570 describe un árbol adornado con manzanas, nueces, dátiles, pretzels y flores de papel.",
+      "source": "https://en.wikipedia.org/wiki/Christmas_tree"
+    },
+    {
+      "id": "q045",
+      "type": "tf",
+      "text": "Los osos polares y los pingüinos pueden encontrarse en libertad.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Los osos polares viven en el Ártico; los pingüinos salvajes, casi todos en el hemisferio sur.",
+      "source": "https://www.nationalgeographic.com/animals/article/arctic-antarctica-wildlife-myths-explained"
+    },
+    {
+      "id": "q046",
+      "type": "mc4",
+      "text": "En el folclore islandés, ¿cuántos «muchachos de Navidad» visitan a los niños en los días previos a la Navidad?",
+      "options": [
+        "3",
+        "7",
+        "24",
+        "13"
+      ],
+      "answer": 3,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "Los niños dejan un zapato en la ventana: un regalito si se portan bien, una patata si no.",
+      "source": "https://www.visiticeland.com/article/meet-the-icelandic-yule-troll-family/"
+    },
+    {
+      "id": "q047",
+      "type": "mc4",
+      "text": "Fairuz canta una famosa canción navideña en árabe con la melodía de ¿qué villancico?",
+      "options": [
+        "Jingle Bells",
+        "Noche de paz",
+        "Campana sobre campana",
+        "Mi burrito sabanero"
+      ],
+      "answer": 0,
+      "topic": "music",
+      "difficulty": 2,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "En su versión, la nieve y los trineos dejan paso a casas cálidas, adornos y campanas que repican.",
+      "source": "https://www.middleeasteye.net/discover/christmas-songs-five-arabic-get-through-festive-season"
+    },
+    {
+      "id": "q048",
+      "type": "mc4",
+      "text": "¿Quién escribió «Canción de Navidad», la historia del avaro Ebenezer Scrooge?",
+      "options": [
+        "Oscar Wilde",
+        "Charles Dickens",
+        "Lewis Carroll",
+        "Victor Hugo"
+      ],
+      "answer": 1,
+      "topic": "history",
+      "difficulty": 2,
+      "explain": "Publicada en diciembre de 1843, se agotó antes de Nochebuena y nunca ha dejado de editarse.",
+      "source": "https://www.smithsonianmag.com/smart-news/a-christmas-carol-marvelously-captured-the-holidays-victorian-spirit-and-inspired-new-traditions-for-centuries-to-come-180985649/"
+    },
+    {
+      "id": "q049",
+      "type": "tf",
+      "text": "En Australia, la Navidad cae en pleno invierno.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 1,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Al sur del ecuador, diciembre es verano: nuestro día más corto es allí el más largo del año.",
+      "source": "https://www.rmg.co.uk/stories/time/when-winter-solstice-shortest-day"
+    },
+    {
+      "id": "q050",
+      "type": "tf",
+      "text": "En Japón, comer pollo frito de KFC en Navidad es una tradición popular.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "Todo empezó con una campaña publicitaria de 1974: «Kentucky para Navidad».",
+      "source": "https://www.smithsonianmag.com/arts-culture/why-japan-is-obsessed-with-kentucky-fried-chicken-on-christmas-1-161666960"
+    },
+    {
+      "id": "q051",
+      "type": "mc4",
+      "text": "¿Cuántos años tenía Brenda Lee cuando grabó «Rockin' Around the Christmas Tree» en 1958?",
+      "options": [
+        "18 años",
+        "21 años",
+        "13 años",
+        "25 años"
+      ],
+      "answer": 2,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "En diciembre de 2023, 65 años después, la canción llegó por fin al número 1 en Estados Unidos.",
+      "source": "https://www.npr.org/2023/12/05/1217387261/brenda-lee-rockin-around-the-christmas-tree-billboard-number-one"
+    },
+    {
+      "id": "q052",
+      "type": "mc4",
+      "text": "En el hemisferio norte, el día más corto del año cae hacia el…",
+      "options": [
+        "21 de marzo",
+        "21 de junio",
+        "21 de septiembre",
+        "21 de diciembre"
+      ],
+      "answer": 3,
+      "topic": "nature",
+      "difficulty": 1,
+      "explain": "Tras el solsticio de invierno, los días empiezan poco a poco a alargarse.",
+      "source": "https://www.rmg.co.uk/stories/time/when-winter-solstice-shortest-day"
+    },
+    {
+      "id": "q053",
+      "type": "mc4",
+      "text": "En el Líbano, ¿qué hacen tradicionalmente los niños la noche de Santa Bárbara, hacia el 4 de diciembre?",
+      "options": [
+        "Se disfrazan y van de casa en casa",
+        "Encienden hogueras en las azoteas",
+        "Plantan un pequeño cedro",
+        "Tiran agua desde los balcones"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 2,
+      "easyIn": [
+        "ar"
+      ],
+      "explain": "La costumbre recuerda la leyenda de Bárbara, que se ocultó bajo muchos disfraces.",
+      "source": "https://en.wikipedia.org/wiki/Eid_il-Burbara"
+    },
+    {
+      "id": "q054",
+      "type": "tf",
+      "text": "El ballet «El cascanueces» fue un gran éxito desde su estreno, en San Petersburgo en 1892.",
+      "options": [
+        "Verdadero",
+        "Falso"
+      ],
+      "answer": 1,
+      "topic": "music",
+      "difficulty": 3,
+      "explain": "La crítica destrozó el estreno; el ballet completo no se convirtió en un clásico navideño hasta décadas después.",
+      "source": "https://www.wpr.org/rocky-start-beloved-christmas-classic"
+    },
+    {
+      "id": "q055",
+      "type": "mc4",
+      "text": "¿Qué país es famoso por tener la temporada navideña más larga del mundo, que empieza en septiembre?",
+      "options": [
+        "Brasil",
+        "Filipinas",
+        "Italia",
+        "México"
+      ],
+      "answer": 1,
+      "topic": "traditions",
+      "difficulty": 2,
+      "explain": "Los filipinos hablan de los «ber months»: en cuanto empieza septiembre, suenan los villancicos.",
+      "source": "https://www.npr.org/2018/12/24/678616528/love-the-holidays-the-philippines-celebrates-4-months-of-christmas-mania"
+    },
+    {
+      "id": "q056",
+      "type": "mc4",
+      "text": "En Cataluña, el «Tió de Nadal», que «regala» dulces a los niños en Navidad, es…",
+      "options": [
+        "Un burro de peluche",
+        "Una olla de barro",
+        "Un tronco de madera",
+        "Un muñeco de nieve"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "Los niños lo «alimentan» durante semanas y luego le dan golpecitos con palos, cantando, hasta que suelta sus dulces.",
+      "source": "https://www.npr.org/sections/thesalt/2017/12/22/572569325/caga-ti-a-catalan-log-that-poops-nougats-at-christmas"
+    },
+    {
+      "id": "q057",
+      "type": "mc4",
+      "text": "En Polonia, ¿qué se espera tradicionalmente antes de empezar la cena de Nochebuena (Wigilia)?",
+      "options": [
+        "El primer copo de nieve",
+        "Que el reloj dé las diez",
+        "La llegada de los vecinos",
+        "La primera estrella"
+      ],
+      "answer": 3,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "También se pone un cubierto de más para un invitado inesperado.",
+      "source": "https://en.wikipedia.org/wiki/Wigilia"
+    },
+    {
+      "id": "q058",
+      "type": "mc4",
+      "text": "¿Qué se encuentra tradicionalmente dentro de un «cracker» navideño británico?",
+      "options": [
+        "Una corona de papel y un chiste",
+        "Una velita",
+        "Un billete de lotería",
+        "Un sobre de semillas"
+      ],
+      "answer": 0,
+      "topic": "traditions",
+      "difficulty": 1,
+      "explain": "Los inventó el confitero londinense Tom Smith en la década de 1840.",
+      "source": "https://en.wikipedia.org/wiki/Christmas_cracker"
+    },
+    {
+      "id": "q059",
+      "type": "mc4",
+      "text": "En el Líbano, ¿cómo suelen llamar los niños al anciano vestido de rojo que trae los regalos?",
+      "options": [
+        "Sinterklaas",
+        "Papa Noël",
+        "Ded Moroz",
+        "Joulupukki"
+      ],
+      "answer": 1,
+      "topic": "traditions",
+      "difficulty": 1,
+      "easyIn": [
+        "ar",
+        "fr"
+      ],
+      "explain": "El nombre viene del francés; algunos dicen también «Baba Noël».",
+      "source": "https://businessmirror.com.ph/jesus-isnt-only-for-the-christians/"
+    },
+    {
+      "id": "q060",
+      "type": "mc4",
+      "text": "En Colombia, la temporada navideña se abre tradicionalmente la noche del 7 de diciembre con…",
+      "options": [
+        "Un concurso gigante de cometas",
+        "Una gran batalla de agua",
+        "Velas y faroles por todas partes",
+        "Un desfile de perros"
+      ],
+      "answer": 2,
+      "topic": "traditions",
+      "difficulty": 3,
+      "explain": "Es el Día de las Velitas: se encienden velas y faroles en casas y calles.",
+      "source": "https://www.smithsonianmag.com/smart-news/colombia-begins-christmas-season-these-beautiful-light-displays-180967423/"
+    }
+  ]
+}
