@@ -2,7 +2,7 @@
 // plus the draw's last-resort paths (§11.4, §7 "pool exhausted").
 import { describe, expect, it } from "vitest";
 import { definition } from "../../../src/games/bluff/definition";
-import { drawPrompt, playableItems } from "../../../src/games/bluff/engine/catalog";
+import { drawPrompt, isThemedPack, playableItems } from "../../../src/games/bluff/engine/catalog";
 import { InvariantError } from "../../../src/games/bluff/engine/invariants";
 import { createRng } from "../../../src/games/bluff/engine/rng";
 import type { BluffState } from "../../../src/games/bluff/engine/state";
@@ -86,6 +86,18 @@ describe("draw last resorts (§11.4, §7)", () => {
     expect(r?.cand.item.id).toBe("n01");
     expect(r?.rerun).toBe(true);
     expect(drawPrompt(createRng(1), { candidates: [], slotKind: "noTruth", usedKeys: [], drawn: [], currentId: null, prevType: null, factRich: false })).toBeNull();
+  });
+  it("a themed pack (truths + its own finals) plays only when selected, never in the all-packs pool (§11.3, 2026-11-21)", () => {
+    const base = synthCatalog({ sayings: 0, facts: 3, finals: 1 });
+    const themed = { ...base.packs[0]!, id: "syn-themed", items: [...base.packs[0]!.items.map((i) => ({ ...i, id: `t-${i.id}` })), { ...base.packs[1]!.items[0]!, id: "t-n01" }] };
+    const cat = { packs: [...base.packs, themed] };
+    expect(isThemedPack(themed)).toBe(true);
+    expect(base.packs.some(isThemedPack)).toBe(false);
+    expect(playableItems(cat, [], "en").map((c) => c.pack.id)).not.toContain("syn-themed");
+    expect(playableItems(cat, [], "en").length).toBe(4);
+    expect(playableItems(cat, ["syn-themed"], "en").map((c) => c.item.id).sort()).toEqual(["t-f01", "t-f02", "t-f03", "t-n01"]);
+    // With no plain pack in the catalog, [] still plays the themed one (never an empty pool by this rule alone).
+    expect(playableItems({ packs: [themed] }, [], "en").length).toBe(4);
   });
   it("exhausted pools rerun the least recently used item", () => {
     const cat = synthCatalog({ sayings: 3, facts: 0, finals: 1 });

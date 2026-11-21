@@ -54,11 +54,27 @@ export function planFor(length: "short" | "normal" | "long"): RoundKind[] {
   return [...Array<RoundKind>(a).fill("saying"), ...Array<RoundKind>(b).fill("fact"), "noTruth"];
 }
 
-/** Items of the selected packs playable in `locale` (truth present unless no_truth), not knownIn `locale`. */
+/** GAME-BLUFF §11.3 themed pack (2026-11-21): one that carries its own finals next to truth items (e.g. bluff-christmas).
+ *  Themed packs are opt-in: they play when selected, but stay out of the "all packs" pool (`packIds: []`), so seasonal
+ *  prompts and finals do not join every room all year (like Mish Ana!'s seasonal packs, which are not default packs). */
+export function isThemedPack(pack: BluffPack): boolean {
+  let finals = false;
+  let truths = false;
+  for (const i of pack.items) {
+    if (i.type === "no_truth") finals = true;
+    else truths = true;
+  }
+  return finals && truths;
+}
+
+/** Items of the selected packs (`[]` = every non-themed pack) playable in `locale` (truth present unless no_truth), not
+ *  knownIn `locale`. */
 export function playableItems(cat: BluffCatalog, packIds: readonly string[], locale: Locale): Candidate[] {
   const out: Candidate[] = [];
+  // A catalog with no plain pack in this locale (a test catalog of one mixed pack) still plays its themed packs.
+  const skipThemed = packIds.length === 0 && cat.packs.some((p) => p.playableIn.includes(locale) && !isThemedPack(p));
   for (const pack of cat.packs) {
-    if (packIds.length > 0 && !packIds.includes(pack.id)) continue;
+    if (packIds.length > 0 ? !packIds.includes(pack.id) : skipThemed && isThemedPack(pack)) continue;
     if (!pack.playableIn.includes(locale)) continue;
     for (const item of pack.items) {
       if (item.knownIn.includes(locale)) continue;

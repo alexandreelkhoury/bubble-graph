@@ -2,7 +2,8 @@
 // The engine and lint helpers are imported by path: neither is a public `@jamaa/shared` export (server/sim/tests only).
 import { describe, expect, it } from "vitest";
 import { content } from "../../shared/src/games/bluff/content";
-import { BLOCKLIST, contentCounts, displayNormalize, hitsBlocklist, isTooClose, playableItems, scriptOk, startBlocker, type BluffCatalog, type BluffPack } from "../../shared/src/games/bluff/engine/index";
+import { BLOCKLIST, contentCounts, displayNormalize, hasEnoughContent, hitsBlocklist, isThemedPack, isTooClose, playableItems, scriptOk, startBlocker, type BluffCatalog, type BluffPack } from "../../shared/src/games/bluff/engine/index";
+import { runBluffBotGame } from "../../shared/src/testing/bots/bluff";
 import { lintBluffRaw } from "../../tools/content-lint/src/games/bluff";
 import ar from "../../shared/i18n/games/bluff/ar.json";
 import en from "../../shared/i18n/games/bluff/en.json";
@@ -36,7 +37,7 @@ const roster = [0, 1, 2].map((i) => ({ id: `p${i}`, seat: i, locale: "en" as con
 
 describe("bluff packs: schema and lint", () => {
   it("every listed pack parses with the §11.3 schema and derives its PackMeta", () => {
-    expect(packs.length).toBe(9);
+    expect(packs.length).toBe(10);
     for (const p of packs) {
       const m = content.meta(p);
       expect(m.gameId).toBe("bluff");
@@ -276,4 +277,64 @@ describe("bluff i18n: review fixes (2026-11-10)", () => {
     for (const k of ["game.bluff.reveal.fooled", "game.bluff.awards.bluffOfTheNight.body", "game.bluff.awards.lieDetector.body", "game.bluff.awards.hookLineSinker.body", "game.bluff.reveal.foundEarly"])
       expect(flat((ar as Record<string, unknown>)[k]), k).not.toMatch(/ضحك على|لقى|بلعها|لقاها/);
   });
+});
+
+describe("bluff packs: the Christmas pack plays a whole game alone (2026-11-21, docs/content-plans/christmas-bluff.md)", () => {
+  const X = "bluff-christmas";
+  const xmas = (): BluffPack => pack(X);
+
+  it("has facts (incl. year facts) and its own finals, in all four languages, ending in a question mark", () => {
+    const p = xmas();
+    expect(p.playableIn).toEqual(["en", "fr", "ar", "es"]);
+    const facts = p.items.filter((i) => i.type === "fact_blank");
+    const finals = p.items.filter((i) => i.type === "no_truth");
+    expect(facts.length).toBeGreaterThanOrEqual(30);
+    expect(finals.length).toBeGreaterThanOrEqual(8);
+    expect(facts.filter((i) => /\b1\d{3}\b/.test(i.prompt.original)).length).toBeGreaterThanOrEqual(8);
+    for (const it of finals) {
+      expect(it.tier, it.id).toBe("free");
+      for (const l of LOCALES) {
+        const q = l === "en" ? it.prompt.original : it.prompt.display[l];
+        expect(q, `${it.id} ${l}`).toMatch(/[?؟]$/);
+        expect((it.houseLies[l] ?? []).length, `${it.id} ${l}`).toBeGreaterThanOrEqual(3);
+      }
+    }
+    for (const it of facts) expect(it.prompt.original.length, it.id).toBeLessThanOrEqual(90);
+  });
+
+  it("selected alone, it can start every length in every language, in a free room too", () => {
+    for (const cat of [fullCatalog, freeCatalog])
+      for (const l of LOCALES)
+        for (const length of ["short", "normal", "long"] as const) {
+          expect(hasEnoughContent(cat, [X], l, length), `${l} ${length}`).toBe(true);
+          expect(startBlocker(roster, { packIds: [X], length, pace: "normal" }, cat, l), `${l} ${length}`).toBeNull();
+          const c = contentCounts(cat, [X], l);
+          expect(c.facts, l).toBeGreaterThanOrEqual(8);
+          expect(c.final, l).toBeGreaterThanOrEqual(8);
+        }
+  });
+
+  it("is opt-in: the all-packs pool ([]) leaves it out, in every language, in full and free rooms (review 2026-11-21)", () => {
+    for (const cat of [fullCatalog, freeCatalog])
+      for (const l of LOCALES) {
+        expect(isThemedPack(cat.packs.find((p) => p.id === X) as BluffPack), l).toBe(true);
+        expect(playableItems(cat, [], l).some((c) => c.pack.id === X), l).toBe(false);
+        expect(playableItems(cat, [X], l).length, l).toBeGreaterThan(0);
+        expect(cat.packs.filter((p) => p.id !== X).every((p) => !isThemedPack(p)), l).toBe(true);
+      }
+  });
+
+  it("a seeded bot game with only this pack selected reaches RESULTS, and every prompt drawn (final included) is from it", () => {
+    const own = new Set(xmas().items.map((i) => i.id));
+    const finals = new Set(xmas().items.filter((i) => i.type === "no_truth").map((i) => i.id));
+    for (const l of LOCALES)
+      for (const [length, seed] of [["long", 11 + l.length]] as const) {
+        const r = runBluffBotGame({ seed: seed + LOCALES.indexOf(l), players: 4, locale: l, catalog: freeCatalog, settings: { packIds: [X], length }, leaveRate: 0, joinRate: 0, churnRate: 0, skipRate: 0 });
+        expect(r.failure, `${l} ${length}`).toBeNull();
+        expect(r.final.phase, `${l} ${length}`).toBe("RESULTS");
+        expect(r.final.drawn.length, `${l} ${length}`).toBeGreaterThanOrEqual(r.final.plan.length);
+        for (const id of r.final.drawn) expect(own.has(id), `${l} ${length} drew ${id}`).toBe(true);
+        expect(r.final.drawn.some((id) => finals.has(id)), `${l} ${length} final`).toBe(true);
+      }
+  }, 60_000);
 });

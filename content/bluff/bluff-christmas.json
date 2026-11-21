@@ -1,0 +1,2811 @@
+{
+  "schemaVersion": 1,
+  "id": "bluff-christmas",
+  "game": "bluff",
+  "title": {
+    "en": "Christmas Bluff",
+    "fr": "Bluff de Noël",
+    "ar": "كذبة الميلاد",
+    "es": "Bluff navideño"
+  },
+  "description": {
+    "en": "Christmas customs from Beirut to Oaxaca, festive history and a festive final. All true, except your lies.",
+    "fr": "Coutumes de Noël de Beyrouth à Oaxaca, histoire et finale de fête. Tout est vrai, sauf vos mensonges.",
+    "ar": "عادات الميلاد من بيروت للمكسيك، تاريخ العيد، ونهائي عالسهرة. كلو صحيح إلا كذباتكن.",
+    "es": "Costumbres navideñas de Beirut a Oaxaca, historia y una final de fiesta. Todo es verdad, menos tus mentiras."
+  },
+  "sourceLocale": "en",
+  "playableIn": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "all",
+  "fallbackHouseLies": {},
+  "items": [
+    {
+      "id": "xmas-001",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1966, the Swedish town of Gävle built a giant Christmas ___ out of straw",
+        "translit": null,
+        "display": {
+          "fr": "En 1966, la ville suédoise de Gävle a construit un ___ de Noël géant en paille",
+          "ar": "سنة 1966، مدينة غافله بالسويد عمرت ___ ميلادي عملاق من القش",
+          "es": "En 1966, la ciudad sueca de Gävle construyó un ___ navideño gigante de paja"
+        }
+      },
+      "truth": {
+        "en": "Goat",
+        "fr": "Bouc",
+        "ar": "تيس",
+        "es": "Macho cabrío"
+      },
+      "truthAlt": {
+        "en": [
+          "Billy goat",
+          "A goat"
+        ],
+        "fr": [
+          "Chèvre",
+          "Un bouc"
+        ],
+        "ar": [
+          "معزة",
+          "ماعز"
+        ],
+        "es": [
+          "Cabra",
+          "Una cabra"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Reindeer",
+          "Horse",
+          "Snowman"
+        ],
+        "fr": [
+          "Renne",
+          "Cheval",
+          "Bonhomme de neige"
+        ],
+        "ar": [
+          "غزال رنة",
+          "حصان",
+          "رجل تلج"
+        ],
+        "es": [
+          "Reno",
+          "Caballo",
+          "Muñeco de nieve"
+        ]
+      },
+      "note": {
+        "en": "It burned on its very first New Year's Eve, and has been set on fire dozens of times since",
+        "fr": "Il a brûlé dès son premier réveillon du Nouvel An, et des dizaines de fois depuis",
+        "ar": "انحرق بأول ليلة راس سنة، وانحرق عشرات المرات من وقتها",
+        "es": "Ardió en su primera Nochevieja y lo han quemado decenas de veces desde entonces"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.smithsonianmag.com/smart-news/50-years-swedish-city-has-celebrated-christmas-season-giant-straw-goat-180961259/ (1966 straw goat, burned repeatedly)"
+      }
+    },
+    {
+      "id": "xmas-002",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1847, London sweet maker Tom Smith is said to have invented the ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1847, le confiseur londonien Tom Smith aurait inventé un classique de Noël : ___",
+          "ar": "سنة 1847، بيقولوا إنو بياع السكاكر اللندني توم سميث اخترع ___ الميلاد",
+          "es": "En 1847, el confitero londinense Tom Smith habría inventado un clásico navideño: ___"
+        }
+      },
+      "truth": {
+        "en": "Christmas cracker",
+        "fr": "Le cracker",
+        "ar": "مفرقعة",
+        "es": "El cracker"
+      },
+      "truthAlt": {
+        "en": [
+          "Cracker",
+          "Crackers"
+        ],
+        "fr": [
+          "Cracker",
+          "Le diablotin"
+        ],
+        "ar": [
+          "مفرقعة الورق",
+          "الكراكر"
+        ],
+        "es": [
+          "Cracker",
+          "El petardo sorpresa"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Christmas stocking",
+          "Advent wreath",
+          "Gingerbread house"
+        ],
+        "fr": [
+          "La chaussette",
+          "La couronne",
+          "La maison en pain d'épices"
+        ],
+        "ar": [
+          "الجرابة",
+          "الإكليل",
+          "بيت الزنجبيل"
+        ],
+        "es": [
+          "El calcetín",
+          "La corona",
+          "La casita de jengibre"
+        ]
+      },
+      "note": {
+        "en": "He sold sweets in twists of paper and later added the bang. Inside, a paper hat and a terrible joke",
+        "fr": "Il vendait des bonbons dans du papier torsadé, puis il a ajouté le pétard. Dedans : un chapeau et une blague nulle",
+        "ar": "كان يبيع سكاكر ملفوفة بورق، وبعدين زاد الطقة. جواتها طربوش ورق ونكتة بايخة",
+        "es": "Vendía caramelos envueltos en papel y luego añadió el estallido. Dentro, un gorro de papel y un chiste malo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.vam.ac.uk/articles/the-christmas-cracker ; https://historicengland.org.uk/listing/what-is-designation/heritage-highlights/how-did-sweets-and-fire-lead-to-the-invention-of-the-christmas-cracker (Tom Smith, 1847 is the traditional date; the bang came later)"
+      }
+    },
+    {
+      "id": "xmas-003",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1939, Rudolph the red-nosed reindeer was created to promote a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1939, Rudolph le renne au nez rouge a été créé pour faire la publicité de ___",
+          "ar": "سنة 1939، انخلق رودولف غزال الرنة أبو منخار أحمر كرمال يعمل دعاية لـ ___",
+          "es": "En 1939, Rodolfo el reno de la nariz roja se creó para promocionar ___"
+        }
+      },
+      "truth": {
+        "en": "Department store",
+        "fr": "Un grand magasin",
+        "ar": "محلات كبيرة",
+        "es": "Unos grandes almacenes"
+      },
+      "truthAlt": {
+        "en": [
+          "A department store",
+          "Montgomery Ward"
+        ],
+        "fr": [
+          "Grand magasin",
+          "Magasin"
+        ],
+        "ar": [
+          "سلسلة محلات",
+          "محل كبير"
+        ],
+        "es": [
+          "Grandes almacenes",
+          "Tienda departamental"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Soft drink",
+          "Railway company",
+          "Radio show"
+        ],
+        "fr": [
+          "Un soda",
+          "Une compagnie de chemin de fer",
+          "Une émission de radio"
+        ],
+        "ar": [
+          "مشروب غازي",
+          "شركة قطارات",
+          "برنامج راديو"
+        ],
+        "es": [
+          "Un refresco",
+          "Una compañía de trenes",
+          "Un programa de radio"
+        ]
+      },
+      "note": {
+        "en": "A copywriter at Montgomery Ward wrote the story for a free booklet handed to shoppers",
+        "fr": "Un rédacteur de Montgomery Ward a écrit l'histoire pour un livret offert aux clients",
+        "ar": "كاتب إعلانات بمحلات مونتغمري وارد كتب القصة بكتيب ببلاش للزباين",
+        "es": "Un redactor de Montgomery Ward escribió la historia para un folleto gratis para los clientes"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.si.edu/stories/where-did-rudolph-get-his-shiny-nose (1939 Montgomery Ward department store booklet)"
+      }
+    },
+    {
+      "id": "xmas-004",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1965, two astronauts played Jingle Bells in space on little bells and a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1965, deux astronautes ont joué Vive le vent dans l'espace avec des grelots et un ___",
+          "ar": "سنة 1965، رائدين فضا عزفوا جينغل بيلز بالفضا على جراس صغار و ___",
+          "es": "En 1965, dos astronautas tocaron Jingle Bells en el espacio con cascabeles y ___"
+        }
+      },
+      "truth": {
+        "en": "Small harmonica",
+        "fr": "Harmonica",
+        "ar": "هارمونيكا",
+        "es": "Una armónica"
+      },
+      "truthAlt": {
+        "en": [
+          "Harmonica",
+          "Mouth organ"
+        ],
+        "fr": [
+          "Un harmonica",
+          "Ruine-babines"
+        ],
+        "ar": [
+          "الهارمونيكا",
+          "مزمار بالتم"
+        ],
+        "es": [
+          "Armónica",
+          "Armónica de boca"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Ukulele",
+          "Kazoo",
+          "Tin whistle"
+        ],
+        "fr": [
+          "Ukulélé",
+          "Kazoo",
+          "Pipeau"
+        ],
+        "ar": [
+          "يوكوليلي",
+          "كازو",
+          "صفارة"
+        ],
+        "es": [
+          "Un ukelele",
+          "Un kazoo",
+          "Una flauta dulce"
+        ]
+      },
+      "note": {
+        "en": "On Gemini 6 they first joked about a UFO in a red suit. The harmonica is now in the Smithsonian",
+        "fr": "Sur Gemini 6, ils ont d'abord signalé pour rire un OVNI en costume rouge. L'harmonica est au Smithsonian",
+        "ar": "بمهمة جيميني 6 مزحوا أول شي إنو شافوا صحن طاير لابس أحمر. الهارمونيكا اليوم بمتحف سميثسونيان",
+        "es": "En la Gemini 6 bromearon con un ovni vestido de rojo. La armónica está hoy en el Smithsonian"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://airandspace.si.edu/stories/editorial/tom-staffords-jingle-bells-and-wally-schirras-harmonica (Gemini 6, December 1965)"
+      }
+    },
+    {
+      "id": "xmas-005",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1955, a misprint in a Santa hotline ad had kids calling a ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1955, à cause d'une faute dans une pub, des enfants qui voulaient le Père Noël appelaient ___",
+          "ar": "سنة 1955، غلطة بإعلان خط بابا نويل خلت الولاد يتصلوا بـ ___",
+          "es": "En 1955, por una errata en un anuncio, los niños que querían hablar con Papá Noel llamaban a ___"
+        }
+      },
+      "truth": {
+        "en": "Military command centre",
+        "fr": "Un centre militaire",
+        "ar": "مركز عسكري",
+        "es": "Un centro militar"
+      },
+      "truthAlt": {
+        "en": [
+          "Air defense center",
+          "Military base"
+        ],
+        "fr": [
+          "Centre militaire",
+          "Une base militaire"
+        ],
+        "ar": [
+          "قاعدة عسكرية",
+          "مركز دفاع جوي"
+        ],
+        "es": [
+          "Centro militar",
+          "Una base militar"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Pizza place",
+          "Zoo",
+          "Fire station"
+        ],
+        "fr": [
+          "Une pizzeria",
+          "Un zoo",
+          "La caserne des pompiers"
+        ],
+        "ar": [
+          "محل بيتزا",
+          "حديقة حيوانات",
+          "مركز إطفاء"
+        ],
+        "es": [
+          "Una pizzería",
+          "Un zoológico",
+          "Los bomberos"
+        ]
+      },
+      "note": {
+        "en": "The colonel on duty played along and gave Santa's position. NORAD still tracks Santa every Christmas Eve",
+        "fr": "Le colonel de garde a joué le jeu et donné la position du Père Noël. Le NORAD le suit encore chaque année",
+        "ar": "الكولونيل اللي كان مناوب جاراهن وعطاهن مطرح بابا نويل. لهلق النوراد بيلحقو كل سنة",
+        "es": "El coronel de guardia les siguió el juego y dio la posición de Papá Noel. NORAD aún lo sigue cada año"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.npr.org/2014/12/19/371647099/norads-santa-tracker-began-with-a-typo-and-a-good-sport (1955 Sears ad misprint, CONAD)"
+      }
+    },
+    {
+      "id": "xmas-006",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Since an ad campaign in 1974, millions in Japan eat ___ at Christmas",
+        "translit": null,
+        "display": {
+          "fr": "Depuis une campagne de pub en 1974, des millions de Japonais mangent du ___ à Noël",
+          "ar": "من حملة إعلانات سنة 1974، ملايين باليابان بياكلوا ___ بالميلاد",
+          "es": "Desde una campaña publicitaria en 1974, millones de japoneses comen ___ en Navidad"
+        }
+      },
+      "truth": {
+        "en": "Fried chicken",
+        "fr": "Poulet frit",
+        "ar": "دجاج مقلي",
+        "es": "Pollo frito"
+      },
+      "truthAlt": {
+        "en": [
+          "KFC",
+          "Kentucky Fried Chicken"
+        ],
+        "fr": [
+          "KFC",
+          "Du poulet frit"
+        ],
+        "ar": [
+          "كنتاكي",
+          "فراريج مقلية"
+        ],
+        "es": [
+          "KFC",
+          "Pollo de KFC"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Roast duck",
+          "Beef curry",
+          "Sushi rolls"
+        ],
+        "fr": [
+          "Canard laqué",
+          "Curry de bœuf",
+          "Bœuf de Kobe"
+        ],
+        "ar": [
+          "بطة مشوية",
+          "كاري لحمة",
+          "سوشي"
+        ],
+        "es": [
+          "Pato asado",
+          "Curry de ternera",
+          "Sushi"
+        ]
+      },
+      "note": {
+        "en": "The slogan was Kentucky for Christmas. Families book their bucket weeks ahead",
+        "fr": "Le slogan disait Kentucky pour Noël. Les familles réservent leur seau des semaines avant",
+        "ar": "الشعار كان كنتاكي للميلاد. العيل بيحجزوا السطل قبل بأسابيع",
+        "es": "El lema era Kentucky para Navidad. Las familias encargan su pedido semanas antes"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.smithsonianmag.com/arts-culture/why-japan-celebrates-christmas-with-kfc-1-161666960/ (Kurisumasu ni wa Kentakkii, 1974)"
+      }
+    },
+    {
+      "id": "xmas-007",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "La Poste's Santa office, answering French kids' letters since 1962, is in the town of ___",
+        "translit": null,
+        "display": {
+          "fr": "Le secrétariat du Père Noël de La Poste, qui répond aux lettres des enfants depuis 1962, se trouve à ___",
+          "ar": "مكتب بابا نويل تبع البريد الفرنسي، اللي عم يرد على رسايل الولاد من 1962، موجود بمدينة ___",
+          "es": "La oficina de Papá Noel de La Poste, que responde las cartas de los niños franceses desde 1962, está en la ciudad de ___"
+        }
+      },
+      "truth": {
+        "en": "Libourne, near Bordeaux",
+        "fr": "Libourne",
+        "ar": "ليبورن",
+        "es": "Libourne"
+      },
+      "truthAlt": {
+        "en": [
+          "Libourne",
+          "Libourne in Gironde"
+        ],
+        "fr": [
+          "Libourne en Gironde"
+        ],
+        "ar": [
+          "ليبورن بفرنسا"
+        ],
+        "es": [
+          "Libourne en Gironda"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Colmar, in Alsace",
+          "Chamonix, in the Alps",
+          "Annecy, near Geneva"
+        ],
+        "fr": [
+          "Colmar",
+          "Chamonix",
+          "Annecy"
+        ],
+        "ar": [
+          "كولمار",
+          "شاموني",
+          "آنسي"
+        ],
+        "es": [
+          "Colmar",
+          "Chamonix",
+          "Annecy"
+        ]
+      },
+      "note": {
+        "en": "Over a million letters arrive there every year. Françoise Dolto is said to have written the very first reply",
+        "fr": "Plus d'un million de lettres y arrivent chaque année. La toute première réponse serait de Françoise Dolto",
+        "ar": "بيوصلو أكتر من مليون رسالة بالسنة. بيقولوا إنو فرانسواز دولتو كتبت أول جواب",
+        "es": "Allí llegan más de un millón de cartas al año. Se dice que la primera respuesta la escribió Françoise Dolto"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.connexionfrance.com/news/letters-from-santa-a-french-idea/497042 ; https://www.europe1.fr/france/le-secretariat-du-pere-noel-de-la-poste-a-ouvert-ses-portes-872018 (secrétariat du Père Noël created 1962 with Dolto's first reply; based in Libourne, its Libourne site is dated 1967 by some sources)"
+      }
+    },
+    {
+      "id": "xmas-008",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "In 1882, the first electrically lit Christmas tree, in New York, also ___",
+        "translit": null,
+        "display": {
+          "fr": "En 1882, à New York, le premier sapin de Noël électrique avait un truc en plus : il ___",
+          "ar": "سنة 1882، أول شجرة ميلاد بضو كهربا، بنيويورك، كمان كانت ___",
+          "es": "En 1882, el primer árbol de Navidad con luz eléctrica, en Nueva York, además ___"
+        }
+      },
+      "truth": {
+        "en": "Rotated",
+        "fr": "Tournait sur lui-même",
+        "ar": "عم تدور",
+        "es": "Giraba"
+      },
+      "truthAlt": {
+        "en": [
+          "Turned slowly",
+          "Spun around"
+        ],
+        "fr": [
+          "Tournait",
+          "Pivotait"
+        ],
+        "ar": [
+          "بتدور",
+          "تبرم"
+        ],
+        "es": [
+          "Daba vueltas",
+          "Rotaba"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Played a tune",
+          "Sprayed perfume",
+          "Rang little bells"
+        ],
+        "fr": [
+          "Jouait une mélodie",
+          "Sentait le parfum",
+          "Faisait sonner des clochettes"
+        ],
+        "ar": [
+          "تعزف موسيقى",
+          "ترش ريحة",
+          "ترن جراس"
+        ],
+        "es": [
+          "Tocaba una melodía",
+          "Echaba perfume",
+          "Hacía sonar campanitas"
+        ]
+      },
+      "note": {
+        "en": "An Edison partner, Edward Johnson, hand-wired 80 red, white and blue bulbs on a turning tree at home",
+        "fr": "Edward Johnson, associé d'Edison, a câblé à la main 80 ampoules rouges, blanches et bleues sur un sapin tournant",
+        "ar": "إدوارد جونسون، شريك إديسون، ركب بإيدو 80 لمبة حمرا وبيضا وزرقا على شجرة بتدور ببيتو",
+        "es": "Edward Johnson, socio de Edison, cableó a mano 80 bombillas rojas, blancas y azules en un árbol giratorio"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.history.com/news/electric-christmas-tree-lights (Edward H. Johnson, 1882, rotating electrically lit tree)"
+      }
+    },
+    {
+      "id": "xmas-009",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Every December 23, the Mexican city of Oaxaca holds a contest of carved ___",
+        "translit": null,
+        "display": {
+          "fr": "Chaque 23 décembre, la ville mexicaine d'Oaxaca organise un concours de ___ sculptés",
+          "ar": "كل 23 كانون الأول، مدينة واهاكا بالمكسيك بتعمل مسابقة ___ محفور",
+          "es": "Cada 23 de diciembre, la ciudad mexicana de Oaxaca celebra un concurso de ___ tallados"
+        }
+      },
+      "truth": {
+        "en": "Giant radishes",
+        "fr": "Radis",
+        "ar": "فجل",
+        "es": "Rábanos"
+      },
+      "truthAlt": {
+        "en": [
+          "Radishes",
+          "Radish"
+        ],
+        "fr": [
+          "Radis géants",
+          "Des radis"
+        ],
+        "ar": [
+          "الفجل",
+          "فجل عملاق"
+        ],
+        "es": [
+          "Rábanos gigantes",
+          "Rábano"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Pumpkins",
+          "Coconuts",
+          "Bars of soap"
+        ],
+        "fr": [
+          "Potirons",
+          "Ananas",
+          "Savons"
+        ],
+        "ar": [
+          "يقطين",
+          "جوز هند",
+          "صابون"
+        ],
+        "es": [
+          "Melones",
+          "Cocos",
+          "Jabones"
+        ]
+      },
+      "note": {
+        "en": "The Night of the Radishes, official since 1897. Radishes wilt fast, so the show lasts only a few hours",
+        "fr": "La Nuit des radis, officielle depuis 1897. Les radis fanent vite : l'expo ne dure que quelques heures",
+        "ar": "ليلة الفجل، رسمية من سنة 1897. الفجل بيدبل بسرعة، فالمعرض بيدوم كم ساعة بس",
+        "es": "La Noche de Rábanos, oficial desde 1897. Los rábanos se marchitan rápido y la muestra dura pocas horas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://en.wikipedia.org/wiki/Night_of_the_Radishes ; https://www.smithsonianmag.com/travel/why-radish-carving-has-become-popular-holiday-event-oaxaca-180971096/"
+      }
+    },
+    {
+      "id": "xmas-010",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Czechia, the Christmas carp often spent its last days in the family ___",
+        "translit": null,
+        "display": {
+          "fr": "En Tchéquie, la carpe de Noël passait souvent ses derniers jours dans ___ de la maison",
+          "ar": "بتشيكيا، سمكة الكارب تبع الميلاد كانت تقضي آخر إيامها بـ ___",
+          "es": "En Chequia, la carpa de Navidad solía pasar sus últimos días en ___ de casa"
+        }
+      },
+      "truth": {
+        "en": "Bathtub",
+        "fr": "La baignoire",
+        "ar": "البانيو",
+        "es": "La bañera"
+      },
+      "truthAlt": {
+        "en": [
+          "Bath",
+          "The bathtub"
+        ],
+        "fr": [
+          "Baignoire",
+          "Le bain"
+        ],
+        "ar": [
+          "البانيو تبع الحمام",
+          "الحمام"
+        ],
+        "es": [
+          "Bañera",
+          "La tina"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Garden pond",
+          "Snowy balcony",
+          "Rain barrel"
+        ],
+        "fr": [
+          "La mare du jardin",
+          "Le balcon enneigé",
+          "Le tonneau de pluie"
+        ],
+        "ar": [
+          "بركة الجنينة",
+          "البلكون تحت التلج",
+          "برميل مي الشتي"
+        ],
+        "es": [
+          "El estanque del jardín",
+          "El balcón nevado",
+          "El barril de lluvia"
+        ]
+      },
+      "note": {
+        "en": "Carp were sold alive in the street before Christmas Eve. Some families now set theirs free",
+        "fr": "Les carpes se vendaient vivantes dans la rue avant le réveillon. Certaines familles relâchent la leur",
+        "ar": "كانوا يبيعوا الكارب طيب بالشارع قبل ليلة الميلاد. في عيل اليوم بيرجعوها عالنهر",
+        "es": "Las carpas se vendían vivas en la calle antes de Nochebuena. Algunas familias hoy la sueltan"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.euronews.com/2021/12/22/christmas-across-europe-carp-in-your-bathtub-and-other-czech-traditions ; https://www.npr.org/sections/thesalt/2014/12/22/372088391/in-slovakia-christmas-dinner-starts-in-the-bathtub"
+      }
+    },
+    {
+      "id": "xmas-011",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "At 3 pm on Christmas Eve, millions of Swedes stop everything to watch ___",
+        "translit": null,
+        "display": {
+          "fr": "À 15 h le 24 décembre, des millions de Suédois arrêtent tout pour regarder ___",
+          "ar": "الساعة 3 بعد الضهر ليلة الميلاد، ملايين بالسويد بيوقفوا كل شي ليحضروا ___",
+          "es": "A las 3 de la tarde del 24 de diciembre, millones de suecos lo dejan todo para ver ___"
+        }
+      },
+      "truth": {
+        "en": "Donald Duck cartoons",
+        "fr": "Les dessins animés de Donald",
+        "ar": "رسوم دونالد داك",
+        "es": "Dibujos animados del Pato Donald"
+      },
+      "truthAlt": {
+        "en": [
+          "Donald Duck",
+          "A Disney special"
+        ],
+        "fr": [
+          "Donald Duck",
+          "Un spécial Disney"
+        ],
+        "ar": [
+          "دونالد داك",
+          "برنامج ديزني"
+        ],
+        "es": [
+          "El Pato Donald",
+          "Un especial de Disney"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A ski jumping final",
+          "The Sound of Music",
+          "A cooking contest"
+        ],
+        "fr": [
+          "Une finale de saut à ski",
+          "La Mélodie du bonheur",
+          "Un concours de cuisine"
+        ],
+        "ar": [
+          "نهائي قفز بالتزلج",
+          "صوت الموسيقى",
+          "مسابقة طبخ"
+        ],
+        "es": [
+          "Una final de saltos de esquí",
+          "Un musical de Hollywood",
+          "Un concurso de cocina"
+        ]
+      },
+      "note": {
+        "en": "It's a 1958 Disney special, called Kalle Anka in Sweden and shown every year for decades. Families plan the day around it",
+        "fr": "C'est un spécial Disney de 1958, Kalle Anka en Suède, diffusé chaque année depuis des décennies. Les familles s'organisent autour",
+        "ar": "هيدا برنامج ديزني من 1958، اسمو بالسويد كاله أنكا، بينعرض كل سنة من عشرات السنين. العيل بتنظم نهارها على أساسو",
+        "es": "Es un especial de Disney de 1958, Kalle Anka en Suecia, emitido cada año desde hace décadas. Las familias organizan el día en torno a él"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.atlasobscura.com/articles/sweden-christmas-donald-duck-television ; https://www.thelocal.se/20191216/adventcalendar-the-strange-things-that-happen-in-sweden-at-3pm-on-christmas-eve (3 pm on Christmas Eve, the 1958 Disney special From All of Us to All of You; Swedish premiere given as 1959 or 1960)"
+      }
+    },
+    {
+      "id": "xmas-012",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Iceland's Yule Cat is said to eat anyone who got no new ___ for Christmas",
+        "translit": null,
+        "display": {
+          "fr": "On dit que le Chat de Noël islandais dévore ceux qui n'ont pas eu de nouveaux ___ pour Noël",
+          "ar": "بإيسلندا بيقولوا إنو قط الميلاد بياكل كل مين ما إجاه ___ جديدة بالعيد",
+          "es": "Dicen que el Gato de Navidad islandés se come a quien no recibió ___ nueva por Navidad"
+        }
+      },
+      "truth": {
+        "en": "Clothes",
+        "fr": "Vêtements",
+        "ar": "تياب",
+        "es": "Ropa"
+      },
+      "truthAlt": {
+        "en": [
+          "New clothes",
+          "Clothing"
+        ],
+        "fr": [
+          "Habits",
+          "Des vêtements neufs"
+        ],
+        "ar": [
+          "تياب جديدة",
+          "ملابس"
+        ],
+        "es": [
+          "Ropa nueva",
+          "Prendas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Books",
+          "Candles",
+          "Toys"
+        ],
+        "fr": [
+          "Livres",
+          "Bougies",
+          "Jouets"
+        ],
+        "ar": [
+          "كتب",
+          "شموع",
+          "ألعاب"
+        ],
+        "es": [
+          "Libros",
+          "Velas",
+          "Juguetes"
+        ]
+      },
+      "note": {
+        "en": "The legend pushed people to finish their chores: hard workers were rewarded with new clothes",
+        "fr": "La légende poussait à finir son travail : les plus courageux étaient récompensés par des habits neufs",
+        "ar": "القصة كانت تخلي الناس يخلصوا شغلن: اللي بيشتغل منيح بياخد تياب جديدة",
+        "es": "La leyenda animaba a terminar las tareas: a los trabajadores se les premiaba con ropa nueva"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.smithsonianmag.com/smart-news/each-christmas-icelands-yule-cat-takes-fashion-policing-extreme-180961420/"
+      }
+    },
+    {
+      "id": "xmas-013",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Denmark, whoever finds the whole almond in the Christmas rice pudding wins a ___",
+        "translit": null,
+        "display": {
+          "fr": "Au Danemark, celui qui trouve l'amande entière dans le riz au lait de Noël gagne ___",
+          "ar": "بالدنمارك، اللي بيلاقي اللوزة الكاملة برز بحليب الميلاد بيربح ___",
+          "es": "En Dinamarca, quien encuentra la almendra entera en el arroz con leche de Navidad gana ___"
+        }
+      },
+      "truth": {
+        "en": "Marzipan pig",
+        "fr": "Un cochon en massepain",
+        "ar": "خنزير صغير من المرصبان",
+        "es": "Un cerdito de mazapán"
+      },
+      "truthAlt": {
+        "en": [
+          "A marzipan pig",
+          "Pig made of marzipan"
+        ],
+        "fr": [
+          "Cochon en pâte d'amande",
+          "Cochon en massepain"
+        ],
+        "ar": [
+          "خنزير مرصبان",
+          "مرصبان"
+        ],
+        "es": [
+          "Cerdito de mazapán",
+          "Un cerdo de mazapán"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Gold coin",
+          "Silver spoon",
+          "Night off washing up"
+        ],
+        "fr": [
+          "Une pièce d'or",
+          "Une cuillère en argent",
+          "Un soir sans vaisselle"
+        ],
+        "ar": [
+          "ليرة دهب",
+          "معلقة فضة",
+          "إعفاء من جلي الصحون"
+        ],
+        "es": [
+          "Una moneda de oro",
+          "Una cuchara de plata",
+          "Librarse de fregar"
+        ]
+      },
+      "note": {
+        "en": "Finders often hide the almond so that everyone has to keep eating",
+        "fr": "Celui qui la trouve la cache souvent pour que tout le monde continue de manger",
+        "ar": "اللي بيلاقيها بيخبيها عادة لحتى الكل يضل ياكل",
+        "es": "Quien la encuentra suele esconderla para que todos sigan comiendo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://en.wikipedia.org/wiki/Risalamande ; https://denmark.dk/people-and-culture/christmas-recipes/risalamande"
+      }
+    },
+    {
+      "id": "xmas-014",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Peru, the classic Christmas pair is hot chocolate and ___, even in summer heat",
+        "translit": null,
+        "display": {
+          "fr": "Au Pérou, le duo classique de Noël, c'est le chocolat chaud et ___, même en plein été",
+          "ar": "ببيرو، الثنائي التقليدي بالميلاد هو الشوكولا السخنة مع ___، حتى بشوب الصيف",
+          "es": "En Perú, la pareja clásica de Navidad es el chocolate caliente con ___, incluso con el calor del verano"
+        }
+      },
+      "truth": {
+        "en": "Panettone",
+        "fr": "Le panettone",
+        "ar": "بانيتوني",
+        "es": "Panetón"
+      },
+      "truthAlt": {
+        "en": [
+          "Paneton",
+          "Panetón"
+        ],
+        "fr": [
+          "Panettone",
+          "Le panetone"
+        ],
+        "ar": [
+          "البانيتوني",
+          "كيك البانيتوني"
+        ],
+        "es": [
+          "Panettone",
+          "Paneton"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Churros",
+          "Quinoa cookies",
+          "Alfajores"
+        ],
+        "fr": [
+          "Les churros",
+          "Les biscuits au quinoa",
+          "Les alfajores"
+        ],
+        "ar": [
+          "تشوروس",
+          "بسكويت كينوا",
+          "ألفاخوريس"
+        ],
+        "es": [
+          "Churros",
+          "Galletas de quinua",
+          "Alfajores"
+        ]
+      },
+      "note": {
+        "en": "Panettone came with Italian immigrants. Charity chocolatadas hand out cocoa and cake to children",
+        "fr": "Le panettone est arrivé avec les immigrés italiens. Les chocolatadas offrent cacao et gâteau aux enfants",
+        "ar": "البانيتوني إجا مع المهاجرين الطليان. بالشوكولاتادا بيوزعوا كاكاو وكيك عالولاد",
+        "es": "El panetón llegó con los inmigrantes italianos. En las chocolatadas se reparte cacao y panetón a los niños"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://food52.com/blog/24888-what-is-peruvian-panettone ; https://www.kuodatravel.com/blog/the-chocolatada-a-peruvian-christmas-tradition-that-gives-back/"
+      }
+    },
+    {
+      "id": "xmas-015",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Colombia, the Christmas season opens on the night of December 7 with ___",
+        "translit": null,
+        "display": {
+          "fr": "En Colombie, la saison de Noël s'ouvre la nuit du 7 décembre avec des ___",
+          "ar": "بكولومبيا، موسم الميلاد بيفتتح ليلة 7 كانون الأول بـ ___",
+          "es": "En Colombia, la temporada navideña empieza la noche del 7 de diciembre con ___"
+        }
+      },
+      "truth": {
+        "en": "Candles and paper lanterns",
+        "fr": "Bougies et lanternes en papier",
+        "ar": "شموع وفوانيس ورق",
+        "es": "Velitas y faroles"
+      },
+      "truthAlt": {
+        "en": [
+          "Little candles",
+          "Candles everywhere"
+        ],
+        "fr": [
+          "Bougies",
+          "Petites bougies"
+        ],
+        "ar": [
+          "شموع",
+          "شموع زغار"
+        ],
+        "es": [
+          "Velas y faroles",
+          "Velitas"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Fireworks at dawn",
+          "Flower carpets",
+          "Kites"
+        ],
+        "fr": [
+          "Feux d'artifice à l'aube",
+          "Tapis de fleurs",
+          "Cerfs-volants"
+        ],
+        "ar": [
+          "مفرقعات عالفجر",
+          "سجاد ورد",
+          "طيارات ورق"
+        ],
+        "es": [
+          "Fuegos artificiales al alba",
+          "Alfombras de flores",
+          "Cometas"
+        ]
+      },
+      "note": {
+        "en": "It's Día de las Velitas: families light up balconies, sidewalks and parks",
+        "fr": "C'est le Día de las Velitas : les familles illuminent balcons, trottoirs et parcs",
+        "ar": "اسمو يوم الشموع الزغار: العيل بيضووا البلاكين والرصفان والجنينات",
+        "es": "Es el Día de las Velitas: las familias iluminan balcones, aceras y parques"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.smithsonianmag.com/smart-news/colombia-begins-christmas-season-these-beautiful-light-displays-180967423/ (Día de las Velitas, December 7, candles and paper lanterns)"
+      }
+    },
+    {
+      "id": "xmas-016",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In the Philippines, Christmas songs start playing on the radio in ___",
+        "translit": null,
+        "display": {
+          "fr": "Aux Philippines, les chansons de Noël passent à la radio dès ___",
+          "ar": "بالفيليبين، أغاني الميلاد بتبلش عالراديو من ___",
+          "es": "En Filipinas, los villancicos empiezan a sonar en la radio en ___"
+        }
+      },
+      "truth": {
+        "en": "September",
+        "fr": "Septembre",
+        "ar": "أيلول",
+        "es": "Septiembre"
+      },
+      "truthAlt": {
+        "en": [
+          "Early September",
+          "September 1st"
+        ],
+        "fr": [
+          "Début septembre",
+          "Le 1er septembre"
+        ],
+        "ar": [
+          "أول أيلول",
+          "شهر 9"
+        ],
+        "es": [
+          "Principios de septiembre",
+          "El 1 de septiembre"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Late October",
+          "August",
+          "Mid-November"
+        ],
+        "fr": [
+          "Fin octobre",
+          "Août",
+          "Mi-novembre"
+        ],
+        "ar": [
+          "آخر تشرين الأول",
+          "آب",
+          "نص تشرين التاني"
+        ],
+        "es": [
+          "Finales de octubre",
+          "Agosto",
+          "Mediados de noviembre"
+        ]
+      },
+      "note": {
+        "en": "The ber months, September to December, make it one of the longest Christmas seasons in the world",
+        "fr": "Les mois en -bre, de septembre à décembre, en font l'une des plus longues saisons de Noël au monde",
+        "ar": "أشهر الـ ber، من أيلول لكانون، بتخلي موسم الميلاد عندن من الأطول بالعالم",
+        "es": "Los meses que terminan en -bre, de septiembre a diciembre, la hacen una de las Navidades más largas del mundo"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.npr.org/2018/12/24/678616528/love-the-holidays-the-philippines-celebrates-4-months-of-christmas-mania"
+      }
+    },
+    {
+      "id": "xmas-017",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In China, a popular Christmas Eve gift is a single, gift-wrapped ___",
+        "translit": null,
+        "display": {
+          "fr": "En Chine, un cadeau populaire le soir du réveillon, c'est une seule ___, emballée comme un cadeau",
+          "ar": "بالصين، هدية منتشرة ليلة الميلاد هي ___ وحدة، ملفوفة متل الهدية",
+          "es": "En China, un regalo popular en Nochebuena es una sola ___ envuelta para regalo"
+        }
+      },
+      "truth": {
+        "en": "Apple",
+        "fr": "Pomme",
+        "ar": "تفاحة",
+        "es": "Manzana"
+      },
+      "truthAlt": {
+        "en": [
+          "An apple",
+          "Red apple"
+        ],
+        "fr": [
+          "Une pomme",
+          "Pomme rouge"
+        ],
+        "ar": [
+          "تفاحة حمرا",
+          "تفاح"
+        ],
+        "es": [
+          "Una manzana",
+          "Manzana roja"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Mandarin orange",
+          "Box of tea",
+          "Red candle"
+        ],
+        "fr": [
+          "Mandarine",
+          "Boîte de thé",
+          "Bougie rouge"
+        ],
+        "ar": [
+          "أفندية",
+          "علبة شاي",
+          "شمعة حمرا"
+        ],
+        "es": [
+          "Mandarina",
+          "Caja de té",
+          "Vela roja"
+        ]
+      },
+      "note": {
+        "en": "In Mandarin, Christmas Eve is ping'an ye and apple is pingguo: the gift wishes a peaceful year",
+        "fr": "En mandarin, le réveillon se dit ping'an ye et pomme pingguo : le cadeau souhaite une année paisible",
+        "ar": "بالصيني، ليلة الميلاد بينقال لها بينغ آن يه والتفاحة بينغ غوو: يعني بتتمنالو سنة هادية",
+        "es": "En mandarín, Nochebuena es ping'an ye y manzana pingguo: el regalo desea un año en paz"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.csmonitor.com/Commentary/the-monitors-view/2024/1220/Christmas-in-China-the-people-s-way ; https://folklore.usc.edu/?p=46911"
+      }
+    },
+    {
+      "id": "xmas-018",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Japan, December is the season for huge sing-alongs of ___",
+        "translit": null,
+        "display": {
+          "fr": "Au Japon, décembre est la saison des grands concerts où le public chante ___",
+          "ar": "باليابان، كانون الأول هو موسم الحفلات الضخمة اللي الناس بتغني فيها ___",
+          "es": "En Japón, diciembre es la temporada de enormes coros que cantan ___"
+        }
+      },
+      "truth": {
+        "en": "Beethoven's Ninth",
+        "fr": "La Neuvième de Beethoven",
+        "ar": "سمفونية بيتهوفن التاسعة",
+        "es": "La Novena de Beethoven"
+      },
+      "truthAlt": {
+        "en": [
+          "Ode to Joy",
+          "Beethoven's Ninth Symphony"
+        ],
+        "fr": [
+          "L'Hymne à la joie",
+          "La 9e de Beethoven"
+        ],
+        "ar": [
+          "نشيد الفرح",
+          "التاسعة لبيتهوفن"
+        ],
+        "es": [
+          "El Himno de la alegría",
+          "La Novena Sinfonía"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Vivaldi's Four Seasons",
+          "The Nutcracker",
+          "ABBA songs"
+        ],
+        "fr": [
+          "Les Quatre Saisons de Vivaldi",
+          "Casse-Noisette",
+          "Des chansons d'ABBA"
+        ],
+        "ar": [
+          "الفصول الأربعة لفيفالدي",
+          "كسارة البندق",
+          "أغاني آبا"
+        ],
+        "es": [
+          "Las cuatro estaciones de Vivaldi",
+          "El cascanueces",
+          "Canciones de ABBA"
+        ]
+      },
+      "note": {
+        "en": "Locals call it Daiku, number nine. Since 1983, an Osaka concert has brought together up to 10,000 singers",
+        "fr": "On l'appelle Daiku, numéro neuf. Depuis 1983, un concert à Osaka réunit jusqu'à 10 000 choristes",
+        "ar": "بيسموها دايكو، يعني رقم تسعة. من 1983، في حفلة بأوساكا بتجمع لحد 10 آلاف مغني",
+        "es": "La llaman Daiku, número nueve. Desde 1983, un concierto en Osaka reúne hasta 10 000 cantantes"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.japantimes.co.jp/culture/2010/12/24/music/japan-makes-beethovens-ninth-no-1-for-the-holidays/ ; https://www.suntory.com/topics/2022/01/007898.html (Daiku, year-end Ninth; Osaka Cast of 10,000 since 1983, about 6,300 singers the first year, virtual in 2020-21)"
+      }
+    },
+    {
+      "id": "xmas-019",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "es"
+      ],
+      "prompt": {
+        "original": "In Spain, the winning numbers of the big Christmas lottery are ___",
+        "translit": null,
+        "display": {
+          "fr": "En Espagne, les numéros gagnants de la grande loterie de Noël sont ___",
+          "ar": "بإسبانيا، أرقام اللوتو الكبير تبع الميلاد ___",
+          "es": "En España, los números ganadores de la gran lotería de Navidad son ___"
+        }
+      },
+      "truth": {
+        "en": "Sung by schoolchildren",
+        "fr": "Chantés par des écoliers",
+        "ar": "بيغنوها ولاد مدرسة",
+        "es": "Cantados por niños de un colegio"
+      },
+      "truthAlt": {
+        "en": [
+          "Sung by kids",
+          "Sung by children"
+        ],
+        "fr": [
+          "Chantés par des enfants",
+          "Chantés"
+        ],
+        "ar": [
+          "بيغنوها ولاد",
+          "ولاد بيغنوها"
+        ],
+        "es": [
+          "Cantados por niños",
+          "Cantados"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Drawn by a parrot",
+          "Read by a famous actor",
+          "Spelled out in fireworks"
+        ],
+        "fr": [
+          "Tirés par un perroquet",
+          "Lus par un acteur célèbre",
+          "Écrits en feux d'artifice"
+        ],
+        "ar": [
+          "بيسحبها ببغا",
+          "بيقراها ممثل مشهور",
+          "بيكتبوها بالمفرقعات"
+        ],
+        "es": [
+          "Sacados por un loro",
+          "Leídos por un actor famoso",
+          "Escritos con fuegos artificiales"
+        ]
+      },
+      "note": {
+        "en": "Pupils of Madrid's San Ildefonso school sing every number and prize live on TV each December 22",
+        "fr": "Les élèves de l'école San Ildefonso de Madrid chantent chaque numéro et chaque lot en direct le 22 décembre",
+        "ar": "تلاميذ مدرسة سان إلدفونسو بمدريد بيغنوا كل رقم وجايزتو عالهوا كل 22 كانون الأول",
+        "es": "Los alumnos del colegio de San Ildefonso de Madrid cantan cada número y premio en directo cada 22 de diciembre"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.npr.org/2023/12/22/1221136041/spains-christmas-lottery-el-gordo-starts-dishing-out-millions-of-dollars-in-priz ; https://www.loteriasyapuestas.es/en/loteria-nacional/historia-del-juego/historia-de-la-loteria-de-navidad (San Ildefonso pupils sing numbers and prizes, December 22)"
+      }
+    },
+    {
+      "id": "xmas-020",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Poland, the Christmas Eve table traditionally keeps an extra ___",
+        "translit": null,
+        "display": {
+          "fr": "En Pologne, la table du réveillon garde traditionnellement ___ en plus",
+          "ar": "ببولندا، طاولة ليلة الميلاد بتخلي عادة ___ زيادة",
+          "es": "En Polonia, en la mesa de Nochebuena se deja por tradición ___"
+        }
+      },
+      "truth": {
+        "en": "Place for a stranger",
+        "fr": "Un couvert pour un inconnu",
+        "ar": "صحن لضيف غريب",
+        "es": "Plato para un desconocido"
+      },
+      "truthAlt": {
+        "en": [
+          "Empty seat for a guest",
+          "Seat for an unexpected guest"
+        ],
+        "fr": [
+          "Couvert pour un inconnu",
+          "Une place vide"
+        ],
+        "ar": [
+          "كرسي فاضي لضيف",
+          "محل لضيف ما حدا ناطرو"
+        ],
+        "es": [
+          "Sitio para un invitado",
+          "Silla vacía"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Plate for the dog",
+          "Loaf for the birds",
+          "Candle for each guest"
+        ],
+        "fr": [
+          "Une assiette pour le chien",
+          "Un pain pour les oiseaux",
+          "Une bougie par invité"
+        ],
+        "ar": [
+          "صحن للكلب",
+          "رغيف للعصافير",
+          "شمعة لكل ضيف"
+        ],
+        "es": [
+          "Plato para el perro",
+          "Pan para los pájaros",
+          "Cubierto de plata"
+        ]
+      },
+      "note": {
+        "en": "Most Polish families still keep that seat free for a wanderer or for a loved one who is missing",
+        "fr": "La plupart des familles polonaises gardent cette place pour un voyageur ou un proche absent",
+        "ar": "أغلب العيل البولندية بعدها بتخلي هالمحل لعابر سبيل أو لحدا غايب من العيلة",
+        "es": "La mayoría de las familias polacas aún guarda ese sitio para un viajero o un ser querido ausente"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.nationalgeographic.com/travel/article/how-to-celebrate-christmas-polish-style ; https://en.wikipedia.org/wiki/Wigilia"
+      }
+    },
+    {
+      "id": "xmas-021",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "On Greek islands, the traditional Christmas decoration was a little ___",
+        "translit": null,
+        "display": {
+          "fr": "Dans les îles grecques, la décoration de Noël traditionnelle était un petit ___",
+          "ar": "بالجزر اليونانية، زينة الميلاد التقليدية كانت ___ صغير",
+          "es": "En las islas griegas, el adorno navideño tradicional era un pequeño ___"
+        }
+      },
+      "truth": {
+        "en": "Sailing boat",
+        "fr": "Bateau",
+        "ar": "مركب",
+        "es": "Barco"
+      },
+      "truthAlt": {
+        "en": [
+          "Boat",
+          "Ship"
+        ],
+        "fr": [
+          "Voilier",
+          "Navire"
+        ],
+        "ar": [
+          "شختورة",
+          "سفينة"
+        ],
+        "es": [
+          "Velero",
+          "Barquito"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Olive tree",
+          "Lighthouse",
+          "Clay lantern"
+        ],
+        "fr": [
+          "Olivier",
+          "Phare",
+          "Lampion en terre cuite"
+        ],
+        "ar": [
+          "شجرة زيتون",
+          "منارة",
+          "فانوس فخار"
+        ],
+        "es": [
+          "Olivo",
+          "Faro",
+          "Farolillo de arcilla"
+        ]
+      },
+      "note": {
+        "en": "The karavaki honours sailors coming home. Trees only arrived in the 1800s, and the boats are back in many squares",
+        "fr": "Le karavaki rend hommage aux marins qui rentrent. Le sapin n'est arrivé qu'au XIXe siècle et les bateaux reviennent",
+        "ar": "الكارافاكي تحية للبحارة الراجعين. الشجرة ما وصلت إلا بالقرن 19، والمراكب رجعت عساحات كتير",
+        "es": "El karavaki homenajea a los marineros que vuelven. El árbol llegó en el siglo XIX y los barcos vuelven a las plazas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.marinersmuseum.org/2020/12/the-greek-maritime-holiday-tradition-of-karavakia/ ; https://greekherald.com.au/culture/karavaki-the-greek-tradition-of-decorating-boats-for-christmas/"
+      }
+    },
+    {
+      "id": "xmas-022",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Catalonia, children feed a small wooden log for weeks and tuck it under a ___",
+        "translit": null,
+        "display": {
+          "fr": "En Catalogne, les enfants nourrissent une petite bûche pendant des semaines et la mettent sous ___",
+          "ar": "بكاتالونيا، الولاد بيطعموا جذع خشب صغير لأسابيع وبيحطوه تحت ___",
+          "es": "En Cataluña, los niños alimentan un tronquito durante semanas y lo dejan bajo ___"
+        }
+      },
+      "truth": {
+        "en": "Little blanket",
+        "fr": "Une couverture",
+        "ar": "بطانية",
+        "es": "Una manta"
+      },
+      "truthAlt": {
+        "en": [
+          "Blanket",
+          "Small blanket"
+        ],
+        "fr": [
+          "Couverture",
+          "Un plaid"
+        ],
+        "ar": [
+          "حرام",
+          "بطانية صغيرة"
+        ],
+        "es": [
+          "Manta",
+          "Una mantita"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Pile of hay",
+          "Kitchen table",
+          "Bed of moss"
+        ],
+        "fr": [
+          "Un tas de foin",
+          "La table de la cuisine",
+          "Un lit de mousse"
+        ],
+        "ar": [
+          "كومة قش",
+          "طاولة المطبخ",
+          "فرشة طحالب"
+        ],
+        "es": [
+          "Un montón de paja",
+          "La mesa de la cocina",
+          "Una cama de musgo"
+        ]
+      },
+      "note": {
+        "en": "On Christmas they tap it with sticks and sing until it drops sweets under the blanket. It's the Tió de Nadal",
+        "fr": "À Noël, on la tape avec des bâtons en chantant jusqu'à ce qu'elle lâche des bonbons. C'est le Tió de Nadal",
+        "ar": "بالعيد بيضربوه بعصيان وبيغنوا لحتى يطلع سكاكر من تحت البطانية. اسمو تيو دي نادال",
+        "es": "En Navidad lo golpean con palos y cantan hasta que deja dulces bajo la manta. Es el Tió de Nadal"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.atlasobscura.com/places/caga-tio ; https://www.catalannews.com/life-style/item/move-over-santa-claus-the-caga-tio-rules-in-catalonia-2 (fed from December 8, kept under a blanket)"
+      }
+    },
+    {
+      "id": "xmas-023",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "In the Netherlands, Sinterklaas arrives each November from Spain by ___",
+        "translit": null,
+        "display": {
+          "fr": "Aux Pays-Bas, Saint-Nicolas arrive chaque novembre d'Espagne en ___",
+          "ar": "بهولندا، سينتركلاس بيوصل كل تشرين التاني من إسبانيا بـ ___",
+          "es": "En los Países Bajos, Sinterklaas llega cada noviembre desde España en ___"
+        }
+      },
+      "truth": {
+        "en": "Steamboat",
+        "fr": "Bateau à vapeur",
+        "ar": "باخرة",
+        "es": "Barco de vapor"
+      },
+      "truthAlt": {
+        "en": [
+          "Steamship",
+          "Boat"
+        ],
+        "fr": [
+          "Vapeur",
+          "Bateau"
+        ],
+        "ar": [
+          "سفينة",
+          "مركب"
+        ],
+        "es": [
+          "Vapor",
+          "Barco"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Hot-air balloon",
+          "Horse-drawn sleigh",
+          "Tractor parade"
+        ],
+        "fr": [
+          "Montgolfière",
+          "Traîneau à cheval",
+          "Défilé de tracteurs"
+        ],
+        "ar": [
+          "منطاد",
+          "عربة خيل",
+          "تراكتور مزين"
+        ],
+        "es": [
+          "Globo aerostático",
+          "Trineo de caballos",
+          "Desfile de tractores"
+        ]
+      },
+      "note": {
+        "en": "Each year he lands in a different Dutch port, live on TV. Dutch children get their gifts on December 5",
+        "fr": "Chaque année, il accoste dans un port différent, en direct à la télé. Les enfants néerlandais ont leurs cadeaux le 5 décembre",
+        "ar": "كل سنة بيوصل على مرفأ مختلف بهولندا، مباشر عالتلفزيون. ولاد هولندا بياخدوا هداياهن بـ 5 كانون الأول",
+        "es": "Cada año llega a un puerto distinto, en directo por televisión. Los niños neerlandeses reciben regalos el 5 de diciembre"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.stnicholascenter.org/around-the-world/festivals/official-entry ; https://www.dutchnews.nl/2025/11/inburgering-with-dn-how-to-celebrate-sinterklaas-the-dutch-way/ (steamboat from Spain, mid-November, gifts on December 5)"
+      }
+    },
+    {
+      "id": "xmas-024",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "On January 5, Puerto Rican kids leave a shoebox of ___ for the Three Kings' animals",
+        "translit": null,
+        "display": {
+          "fr": "Le 5 janvier, les enfants portoricains préparent une boîte à chaussures pour les montures des Rois mages. Dedans : ___",
+          "ar": "بـ 5 كانون التاني، ولاد بورتوريكو بيحضروا علبة صباط فيها ___ لحيوانات المجوس",
+          "es": "El 5 de enero, los niños puertorriqueños dejan una caja de zapatos con ___ para los animales de los Reyes Magos"
+        }
+      },
+      "truth": {
+        "en": "Grass",
+        "fr": "Herbe",
+        "ar": "عشب",
+        "es": "Hierba"
+      },
+      "truthAlt": {
+        "en": [
+          "Fresh grass",
+          "Hay"
+        ],
+        "fr": [
+          "De l'herbe",
+          "Foin"
+        ],
+        "ar": [
+          "حشايش",
+          "قش"
+        ],
+        "es": [
+          "Pasto",
+          "Grama"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Dates",
+          "Carrots",
+          "Cookies"
+        ],
+        "fr": [
+          "Dattes",
+          "Carottes",
+          "Biscuits"
+        ],
+        "ar": [
+          "تمر",
+          "جزر",
+          "بسكويت"
+        ],
+        "es": [
+          "Dátiles",
+          "Zanahorias",
+          "Galletas"
+        ]
+      },
+      "note": {
+        "en": "It's for the Kings' camels or horses, the night before January 6. By morning the box holds presents",
+        "fr": "C'est pour les chameaux ou les chevaux des Rois mages, la veille du 6 janvier. Au matin, la boîte contient des cadeaux",
+        "ar": "هيدا لجمال أو خيل المجوس، ليلة 6 كانون التاني. بالصبح بتكون العلبة مليانة هدايا",
+        "es": "Es para los camellos o caballos de los Reyes Magos, la víspera del 6 de enero. Por la mañana, la caja trae regalos"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.discoverpuertorico.com/article/timeless-puerto-rican-tradition-three-kings-day ; https://www.npr.org/2018/01/07/576301260/puerto-ricans-celebrate-three-kings-day-in-frigid-new-england (grass in a shoebox on January 5; camels in family memory, horses in folk art)"
+      }
+    },
+    {
+      "id": "xmas-025",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "In Ukraine, Christmas trees are often decorated with ___ for luck",
+        "translit": null,
+        "display": {
+          "fr": "En Ukraine, on décore souvent le sapin de Noël avec des ___ pour la chance",
+          "ar": "بأوكرانيا، كتير بيزينوا شجرة الميلاد بـ ___ للحظ",
+          "es": "En Ucrania, el árbol de Navidad se adorna a menudo con ___ para la suerte"
+        }
+      },
+      "truth": {
+        "en": "Spider webs",
+        "fr": "Toiles d'araignée",
+        "ar": "بيوت عنكبوت",
+        "es": "Telarañas"
+      },
+      "truthAlt": {
+        "en": [
+          "Cobwebs",
+          "Spiders and webs"
+        ],
+        "fr": [
+          "Araignées",
+          "Des toiles"
+        ],
+        "ar": [
+          "خيطان عنكبوت",
+          "عناكب"
+        ],
+        "es": [
+          "Arañas",
+          "Telas de araña"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Garlic",
+          "Paper birds",
+          "Walnut shells"
+        ],
+        "fr": [
+          "Ail",
+          "Oiseaux en papier",
+          "Coquilles de noix"
+        ],
+        "ar": [
+          "توم",
+          "عصافير ورق",
+          "قشر جوز"
+        ],
+        "es": [
+          "Ajos",
+          "Pájaros de papel",
+          "Cáscaras de nuez"
+        ]
+      },
+      "note": {
+        "en": "A folk tale says a spider decorated a poor family's tree overnight. A web on the tree means good luck",
+        "fr": "Selon un conte, une araignée a décoré en une nuit le sapin d'une famille pauvre. Une toile porte bonheur",
+        "ar": "بتقول الحكاية إنو عنكبوت زين بليلة شجرة عيلة فقيرة. بيت العنكبوت عالشجرة بيجيب الحظ",
+        "es": "Un cuento dice que una araña adornó en una noche el árbol de una familia pobre. Una telaraña trae suerte"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://en.wikipedia.org/wiki/Legend_of_the_Christmas_Spider ; https://www.mentalfloss.com/holidays/christmas/why-eastern-europeans-hang-spider-webs-from-christmas-trees"
+      }
+    },
+    {
+      "id": "xmas-026",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "fr"
+      ],
+      "prompt": {
+        "original": "In Provence, Christmas Eve dinner ends with exactly ___ desserts",
+        "translit": null,
+        "display": {
+          "fr": "En Provence, le repas du réveillon se termine par exactement ___ desserts",
+          "ar": "ببروفانس، عشا ليلة الميلاد بيخلص بـ ___ حلو بالزبط",
+          "es": "En Provenza, la cena de Nochebuena termina con exactamente ___ postres"
+        }
+      },
+      "truth": {
+        "en": "Thirteen",
+        "fr": "Treize",
+        "ar": "تلتعش",
+        "es": "Trece"
+      },
+      "truthAlt": {
+        "en": [
+          "13",
+          "Thirteen desserts"
+        ],
+        "fr": [
+          "13",
+          "Treize desserts"
+        ],
+        "ar": [
+          "13",
+          "تلطعش"
+        ],
+        "es": [
+          "13",
+          "Trece postres"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Twelve",
+          "Seven",
+          "Twenty-four"
+        ],
+        "fr": [
+          "Douze",
+          "Sept",
+          "Vingt-quatre"
+        ],
+        "ar": [
+          "اتنعش",
+          "سبعة",
+          "أربعة وعشرين"
+        ],
+        "es": [
+          "Doce",
+          "Siete",
+          "Veinticuatro"
+        ]
+      },
+      "note": {
+        "en": "Dried fruit, nougat, olive-oil bread and more. Everyone tastes each one, and they stay out for three days",
+        "fr": "Fruits secs, nougat, pompe à l'huile... On goûte à tout, et ils restent sur la table trois jours",
+        "ar": "فواكه مجففة ونوغا وخبز بزيت الزيتون وغيرن. الكل بيدوق من كلن، وبيضلوا عالطاولة تلت إيام",
+        "es": "Frutos secos, turrón, pan de aceite y más. Se prueban todos y se quedan en la mesa tres días"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://en.wikipedia.org/wiki/Thirteen_desserts ; https://www.marseille-tourisme.com/en/vivez-marseille/blog-marseille/the-thirteen-desserts-of-christmas/ (13 desserts)"
+      }
+    },
+    {
+      "id": "xmas-027",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "Weeks before Christmas, many Lebanese families grow ___ on wet cotton to decorate",
+        "translit": null,
+        "display": {
+          "fr": "Des semaines avant Noël, beaucoup de familles libanaises font pousser ___ sur du coton humide pour décorer",
+          "ar": "قبل الميلاد بأسابيع، عيل لبنانية كتير بتزرع ___ على قطن مبلول للزينة",
+          "es": "Semanas antes de Navidad, muchas familias libanesas hacen crecer ___ sobre algodón húmedo para decorar"
+        }
+      },
+      "truth": {
+        "en": "Wheat and lentil sprouts",
+        "fr": "Du blé et des lentilles",
+        "ar": "قمح وعدس",
+        "es": "Brotes de trigo y lenteja"
+      },
+      "truthAlt": {
+        "en": [
+          "Wheat and lentils",
+          "Lentils and chickpeas"
+        ],
+        "fr": [
+          "Blé et lentilles",
+          "Des lentilles et des pois chiches"
+        ],
+        "ar": [
+          "عدس وحمص",
+          "قمح وحمص"
+        ],
+        "es": [
+          "Trigo y lentejas",
+          "Lentejas y garbanzos"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Mint and parsley",
+          "Pine seedlings",
+          "Basil"
+        ],
+        "fr": [
+          "De la menthe et du persil",
+          "Des pins",
+          "Du basilic"
+        ],
+        "ar": [
+          "نعنع وبقدونس",
+          "شتول صنوبر",
+          "حبق"
+        ],
+        "es": [
+          "Menta y perejil",
+          "Plantones de pino",
+          "Albahaca"
+        ]
+      },
+      "note": {
+        "en": "Seeds go on cotton around Saint Barbara's day, December 4, and the green shoots decorate the house and the foot of the tree",
+        "fr": "On les sème vers la Sainte-Barbe, le 4 décembre, et les pousses vertes décorent la maison et le pied du sapin",
+        "ar": "بيزرعوها حوالي عيد البربارة، 4 كانون الأول، والزرع الأخضر بيزين البيت وتحت الشجرة",
+        "es": "Se siembran hacia el día de Santa Bárbara, el 4 de diciembre, y los brotes adornan la casa y el pie del árbol"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://en.wikipedia.org/wiki/Eid_il-Burbara ; https://today.lorientlejour.com/article/1322198/five-lebanese-christmas-traditions-and-a-very-cute-syrian-one.html (wheat, lentils, chickpeas or other seeds sprouted on cotton, set under the tree)"
+      }
+    },
+    {
+      "id": "xmas-028",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "On December 4 in Lebanon, kids in costumes go door to door and families eat ___",
+        "translit": null,
+        "display": {
+          "fr": "Le 4 décembre au Liban, les enfants déguisés font du porte-à-porte et les familles mangent ___",
+          "ar": "بـ 4 كانون الأول بلبنان، الولاد بيتنكروا وبيدقوا عالبيوت، والعيل بتاكل ___",
+          "es": "El 4 de diciembre en Líbano, los niños disfrazados van de puerta en puerta y las familias comen ___"
+        }
+      },
+      "truth": {
+        "en": "Boiled wheat with sugar",
+        "fr": "Du blé bouilli sucré",
+        "ar": "قمح مسلوق مع سكر",
+        "es": "Trigo hervido con azúcar"
+      },
+      "truthAlt": {
+        "en": [
+          "Sweet wheat",
+          "Burbara wheat"
+        ],
+        "fr": [
+          "Blé bouilli sucré",
+          "Du blé sucré"
+        ],
+        "ar": [
+          "قمحية",
+          "بربارة"
+        ],
+        "es": [
+          "Trigo dulce",
+          "Trigo con azúcar"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Roasted chestnuts",
+          "Pumpkin jam",
+          "Sugared almonds"
+        ],
+        "fr": [
+          "Des marrons grillés",
+          "De la confiture de citrouille",
+          "Des dragées"
+        ],
+        "ar": [
+          "كستنا مشوية",
+          "مربى يقطين",
+          "ملبس"
+        ],
+        "es": [
+          "Castañas asadas",
+          "Mermelada de calabaza",
+          "Peladillas"
+        ]
+      },
+      "note": {
+        "en": "It's Eid el-Burbara. The wheat recalls a field said to have grown in an instant to hide Barbara",
+        "fr": "C'est la Sainte-Barbe, Eid el-Burbara. Le blé rappelle un champ qui aurait poussé d'un coup pour cacher Barbara",
+        "ar": "عيد البربارة. القمح بيذكر بالحقل اللي بيقولوا طلع بلحظة ليخبي بربارة",
+        "es": "Es Eid el-Burbara. El trigo recuerda un campo que habría crecido de golpe para esconder a Bárbara"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://en.wikipedia.org/wiki/Eid_il-Burbara ; https://tasteofbeirut.com/wheat-berry-pudding (December 4, boiled wheat with sugar, anise and nuts)"
+      }
+    },
+    {
+      "id": "xmas-029",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [
+        "ar"
+      ],
+      "prompt": {
+        "original": "In Lebanon, meghli, the spiced rice pudding of Christmas, is also made for ___",
+        "translit": null,
+        "display": {
+          "fr": "Au Liban, le meghli, crème de riz épicée de Noël, se prépare aussi pour ___",
+          "ar": "بلبنان، المغلي، حلو الرز بالبهارات تبع الميلاد، بينعمل كمان لـ ___",
+          "es": "En Líbano, el meghli, el pudín de arroz especiado de Navidad, también se prepara por ___"
+        }
+      },
+      "truth": {
+        "en": "A new baby",
+        "fr": "Une naissance",
+        "ar": "ولادة طفل",
+        "es": "Un recién nacido"
+      },
+      "truthAlt": {
+        "en": [
+          "A birth",
+          "Newborns"
+        ],
+        "fr": [
+          "Un bébé",
+          "La naissance d'un bébé"
+        ],
+        "ar": [
+          "ولادة",
+          "المولود الجديد"
+        ],
+        "es": [
+          "Un nacimiento",
+          "Un bebé"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "A wedding",
+          "Exam results",
+          "A new house"
+        ],
+        "fr": [
+          "Un mariage",
+          "Les résultats du bac",
+          "Une nouvelle maison"
+        ],
+        "ar": [
+          "عرس",
+          "نتايج الرسمية",
+          "بيت جديد"
+        ],
+        "es": [
+          "Una boda",
+          "Notas de exámenes",
+          "Una casa nueva"
+        ]
+      },
+      "note": {
+        "en": "Lebanese families serve it to celebrate any birth, which is why it also appears at Christmas",
+        "fr": "Les familles libanaises le servent pour fêter chaque naissance, d'où sa place à Noël",
+        "ar": "العيل اللبنانية بتعملو لتحتفل بكل ولادة، وهيك صار كمان عسفرة الميلاد",
+        "es": "Las familias libanesas lo sirven para celebrar cada nacimiento; por eso también está en Navidad"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://www.npr.org/sections/thesalt/2016/12/19/504694918/meghli-lebanons-own-rice-pudding-welcomes-babies-including-jesus"
+      }
+    },
+    {
+      "id": "xmas-030",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Tinsel was invented in Germany in the 1600s, first made of shredded real ___",
+        "translit": null,
+        "display": {
+          "fr": "Les guirlandes scintillantes sont nées en Allemagne au XVIIe siècle, et les premiers fils étaient en ___ véritable",
+          "ar": "الزينة اللماعة انخلقت بألمانيا بالقرن 17، وأول خيطانها كانت من ___ عن جد",
+          "es": "El espumillón nació en Alemania en el siglo XVII y los primeros hilos eran de ___ auténtica"
+        }
+      },
+      "truth": {
+        "en": "Silver",
+        "fr": "Argent",
+        "ar": "فضة",
+        "es": "Plata"
+      },
+      "truthAlt": {
+        "en": [
+          "Real silver",
+          "Silver threads"
+        ],
+        "fr": [
+          "Argent véritable",
+          "Fils d'argent"
+        ],
+        "ar": [
+          "فضة حقيقية",
+          "خيطان فضة"
+        ],
+        "es": [
+          "Plata de verdad",
+          "Hilos de plata"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Gold",
+          "Copper",
+          "Tin"
+        ],
+        "fr": [
+          "Or",
+          "Cuivre",
+          "Étain"
+        ],
+        "ar": [
+          "دهب",
+          "نحاس",
+          "تنك"
+        ],
+        "es": [
+          "Oro",
+          "Cobre",
+          "Estaño"
+        ]
+      },
+      "note": {
+        "en": "Nuremberg made it around 1610. Silver shone but soon tarnished, so cheaper metals and then plastic took over",
+        "fr": "Nuremberg en fabriquait vers 1610. L'argent brillait mais noircissait vite : d'autres métaux puis le plastique l'ont remplacé",
+        "ar": "بدأت بنورمبرغ حوالي 1610. الفضة كانت تلمع بس بتسود بسرعة، فإجت معادن أرخص وبعدين البلاستيك",
+        "es": "Núremberg la fabricaba hacia 1610. La plata brillaba pero se ennegrecía pronto; luego llegaron otros metales y el plástico"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://en.wikipedia.org/wiki/Tinsel ; https://www.irishtimes.com/life-and-style/homes-and-property/fine-art-antiques/design-moment-tinsel-1600s-1.3729925 (Nuremberg around 1610, shredded silver; inventor and date uncertain)"
+      }
+    },
+    {
+      "id": "xmas-031",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "Male reindeer drop their antlers in autumn, so an antlered one at Christmas is often a ___",
+        "translit": null,
+        "display": {
+          "fr": "Les rennes mâles adultes perdent leurs bois à la fin de l'automne : un renne qui a encore ses bois à Noël est souvent ___",
+          "ar": "دكور الرنة الكبار بيوقعوا قرونن آخر الخريف، يعني الرنة اللي بعدها بقرونها بالميلاد غالبا ___",
+          "es": "Los renos machos adultos pierden la cornamenta a finales del otoño, así que un reno que aún la tiene en Navidad suele ser ___"
+        }
+      },
+      "truth": {
+        "en": "Female",
+        "fr": "Une femelle",
+        "ar": "أنثى",
+        "es": "Una hembra"
+      },
+      "truthAlt": {
+        "en": [
+          "A female",
+          "Female reindeer"
+        ],
+        "fr": [
+          "Femelle",
+          "Des femelles"
+        ],
+        "ar": [
+          "إنثى",
+          "نتاية"
+        ],
+        "es": [
+          "Hembra",
+          "Un reno hembra"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Very old male",
+          "Moose in disguise",
+          "Lost mountain goat"
+        ],
+        "fr": [
+          "Un très vieux mâle",
+          "Un élan déguisé",
+          "Un bouquetin égaré"
+        ],
+        "ar": [
+          "دكر ختيار كتير",
+          "أيل متنكر",
+          "تيس جبلي ضايع"
+        ],
+        "es": [
+          "Un macho muy viejo",
+          "Un alce disfrazado",
+          "Una cabra montés perdida"
+        ]
+      },
+      "note": {
+        "en": "Females keep theirs all winter, until calving in spring. Sled reindeer, often neutered males, keep theirs too",
+        "fr": "Les femelles gardent leurs bois tout l'hiver, jusqu'à la mise bas. Les rennes de traîneau, souvent des mâles castrés, aussi",
+        "ar": "الإناث بيضلوا بقرونن كل الشتوية لحتى يخلفوا بالربيع. ورنات الزلاجة كمان، لأنها غالبا دكور مخصية",
+        "es": "Las hembras la conservan todo el invierno, hasta parir en primavera. Los renos de trineo, a menudo machos castrados, también"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.britannica.com/one-good-fact/why-are-santas-reindeer-likely-female ; https://www.pbs.org/wnet/nature/blog/reindeer-fact-sheet (males shed in late autumn, females keep antlers until calving; castrated sled males keep theirs too)"
+      }
+    },
+    {
+      "id": "xmas-032",
+      "type": "fact_blank",
+      "tier": "pass",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "Many seeds of Europe's favourite Christmas tree, the Nordmann fir, are picked in ___",
+        "translit": null,
+        "display": {
+          "fr": "Beaucoup de graines du sapin de Noël préféré des Européens, le Nordmann, sont récoltées en ___",
+          "ar": "كتير من بزر شجرة الميلاد المفضلة بأوروبا، شوح نوردمان، بيلموه من ___",
+          "es": "Muchas semillas del árbol de Navidad favorito de Europa, el abeto Nordmann, se recogen en ___"
+        }
+      },
+      "truth": {
+        "en": "Georgia, in the Caucasus",
+        "fr": "Géorgie",
+        "ar": "جورجيا",
+        "es": "Georgia"
+      },
+      "truthAlt": {
+        "en": [
+          "Georgia",
+          "The Caucasus"
+        ],
+        "fr": [
+          "Le Caucase",
+          "La Géorgie"
+        ],
+        "ar": [
+          "القوقاز",
+          "بلاد جورجيا"
+        ],
+        "es": [
+          "El Cáucaso",
+          "Georgia del Cáucaso"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Norway's fjords",
+          "Canada's Rockies",
+          "Lebanon's mountains"
+        ],
+        "fr": [
+          "Norvège",
+          "Suède",
+          "Autriche"
+        ],
+        "ar": [
+          "النروج",
+          "كندا",
+          "لبنان"
+        ],
+        "es": [
+          "Noruega",
+          "Canadá",
+          "Líbano"
+        ]
+      },
+      "note": {
+        "en": "Pickers climb firs up to 50 metres tall in the mountains around Ambrolauri to gather the cones",
+        "fr": "Les cueilleurs grimpent dans des sapins qui atteignent jusqu'à 50 mètres, dans les montagnes d'Ambrolauri",
+        "ar": "القطافين بيطلعوا على شجر شوح بيوصل لـ 50 متر بجبال أمبرولاوري ليقطفوا الكوز",
+        "es": "Los recolectores trepan abetos de hasta 50 metros en las montañas de Ambrolauri para coger las piñas"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21 (review), https://www.nationalgeographic.com/science/article/georgia-mountains-christmas-tree-harvesting-fair-trees-danger ; https://www.rferl.org/a/georgia-christmas-trees-europe-business/32105473.html (Georgian Nordmann seed for European growers, Ambrolauri, firs climbed to 30-50 m)"
+      }
+    },
+    {
+      "id": "xmas-033",
+      "type": "fact_blank",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "Every year, tens of millions of red ___ march across Christmas Island to the sea",
+        "translit": null,
+        "display": {
+          "fr": "Chaque année, des dizaines de millions de ___ rouges traversent l'île Christmas vers la mer",
+          "ar": "كل سنة، عشرات الملايين من ___ الحمر بيقطعوا جزيرة كريسماس ليوصلوا عالبحر",
+          "es": "Cada año, decenas de millones de ___ rojos cruzan la isla de Navidad hacia el mar"
+        }
+      },
+      "truth": {
+        "en": "Crabs",
+        "fr": "Crabes",
+        "ar": "سلطعونات",
+        "es": "Cangrejos"
+      },
+      "truthAlt": {
+        "en": [
+          "Red crabs",
+          "Land crabs"
+        ],
+        "fr": [
+          "Crabes rouges",
+          "Des crabes"
+        ],
+        "ar": [
+          "سلطعون",
+          "سراطين"
+        ],
+        "es": [
+          "Cangrejos rojos",
+          "Cangrejo"
+        ]
+      },
+      "houseLies": {
+        "en": [
+          "Ants",
+          "Frogs",
+          "Ladybirds"
+        ],
+        "fr": [
+          "Fourmis",
+          "Grenouilles",
+          "Coccinelles"
+        ],
+        "ar": [
+          "نمل",
+          "ضفادع",
+          "خنافس حمرا"
+        ],
+        "es": [
+          "Hormigas",
+          "Ranas",
+          "Mariquitas"
+        ]
+      },
+      "note": {
+        "en": "The Australian island closes roads and builds crab bridges so they can reach the sea to breed",
+        "fr": "L'île australienne ferme des routes et construit des ponts à crabes pour qu'ils rejoignent la mer",
+        "ar": "الجزيرة الأسترالية بتسكر طرقات وبتعمر جسور للسلطعونات لحتى يوصلوا عالبحر ويبيضوا",
+        "es": "La isla australiana cierra carreteras y construye puentes para que lleguen al mar a reproducirse"
+      },
+      "review": {
+        "status": "draft",
+        "source": "[VERIFY] fact-checked 2026-11-21, https://christmasislandnationalpark.gov.au/discover/highlights/red-crab-migration/"
+      }
+    },
+    {
+      "id": "xmas-f01",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What did the reindeer argue about on the way home?",
+        "translit": null,
+        "display": {
+          "fr": "De quoi les rennes se disputaient-ils sur le chemin du retour ?",
+          "ar": "على شو تخانقوا الرنات بطريق الرجعة؟",
+          "es": "¿Por qué discutían los renos en el viaje de vuelta?"
+        }
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Who sits in front next year",
+          "Who ate all the carrots",
+          "Whose turn it is to land"
+        ],
+        "fr": [
+          "Qui passe devant l'an prochain",
+          "Qui a mangé toutes les carottes",
+          "Qui pilote l'atterrissage"
+        ],
+        "ar": [
+          "مين بيقعد قدام السنة الجاية",
+          "مين خلص الجزرات",
+          "دور مين ينزلها"
+        ],
+        "es": [
+          "Quién va delante el año que viene",
+          "Quién se comió las zanahorias",
+          "A quién le toca aterrizar"
+        ]
+      },
+      "note": {
+        "en": "Reindeer keep no minutes, so tonight's version goes in the record",
+        "fr": "Les rennes ne tiennent pas de procès-verbal : votre version fera foi",
+        "ar": "الرنات ما بيكتبوا محاضر، فنسختكن هي الرسمية",
+        "es": "Los renos no levantan actas, así que vale la versión de esta noche"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "xmas-f02",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is the secret ingredient in hot chocolate at the North Pole?",
+        "translit": null,
+        "display": {
+          "fr": "Quel est l'ingrédient secret du chocolat chaud au pôle Nord ?",
+          "ar": "شو السر بالشوكولا السخنة بالقطب الشمالي؟",
+          "es": "¿Cuál es el ingrediente secreto del chocolate caliente en el Polo Norte?"
+        }
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "A pinch of fresh snow",
+          "Melted candy cane",
+          "Cinnamon grown by elves"
+        ],
+        "fr": [
+          "Une pincée de neige fraîche",
+          "Du sucre d'orge fondu",
+          "De la cannelle cultivée par les lutins"
+        ],
+        "ar": [
+          "رشة تلج جديد",
+          "عصاية سكاكر دايبة",
+          "قرفة من جنينة الأقزام"
+        ],
+        "es": [
+          "Una pizca de nieve fresca",
+          "Bastón de caramelo derretido",
+          "Canela cultivada por duendes"
+        ]
+      },
+      "note": {
+        "en": "The recipe never left the North Pole. Yours is now the house special",
+        "fr": "La recette n'a jamais quitté le pôle Nord. La vôtre devient la spécialité maison",
+        "ar": "الوصفة ما طلعت من القطب. وصفتكن صارت سر البيت",
+        "es": "La receta nunca salió del Polo Norte. La de esta noche es ahora la especialidad de la casa"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "xmas-f03",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What did the very first snowman say once he was finished?",
+        "translit": null,
+        "display": {
+          "fr": "Qu'a dit le tout premier bonhomme de neige une fois terminé ?",
+          "ar": "شو قال أول رجل تلج بس خلصوه؟",
+          "es": "¿Qué dijo el primer muñeco de nieve cuando lo terminaron?"
+        }
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "I need a scarf",
+          "Where are my feet",
+          "Same time next winter"
+        ],
+        "fr": [
+          "Il me faut une écharpe",
+          "Où sont passés mes pieds",
+          "Rendez-vous l'hiver prochain"
+        ],
+        "ar": [
+          "بدي شال",
+          "وين إجريي",
+          "منتلاقى الشتوية الجاية"
+        ],
+        "es": [
+          "Necesito una bufanda",
+          "Dónde están mis pies",
+          "Nos vemos el próximo invierno"
+        ]
+      },
+      "note": {
+        "en": "He melted before anyone wrote it down",
+        "fr": "Il a fondu avant que quelqu'un ne le note",
+        "ar": "داب قبل ما حدا يكتبها",
+        "es": "Se derritió antes de que nadie lo apuntara"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "xmas-f04",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do the elves complain about at their end-of-year meeting?",
+        "translit": null,
+        "display": {
+          "fr": "De quoi se plaignent les lutins à leur réunion de fin d'année ?",
+          "ar": "على شو بيشكوا الأقزام باجتماع آخر السنة؟",
+          "es": "¿De qué se quejan los duendes en su reunión de fin de año?"
+        }
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Glitter in the coffee",
+          "The new wrapping paper",
+          "Night shifts all December"
+        ],
+        "fr": [
+          "Les paillettes dans le café",
+          "Le nouveau papier cadeau",
+          "Les nuits de travail en décembre"
+        ],
+        "ar": [
+          "الغليتر بالقهوة",
+          "ورق التغليف الجديد",
+          "شغل الليل كل كانون"
+        ],
+        "es": [
+          "La purpurina en el café",
+          "El papel de regalo nuevo",
+          "Los turnos de noche en diciembre"
+        ]
+      },
+      "note": {
+        "en": "The minutes are sealed in a gift box nobody is allowed to open",
+        "fr": "Le compte rendu est scellé dans un paquet cadeau que personne n'a le droit d'ouvrir",
+        "ar": "المحضر مسكر بعلبة هدية ممنوع حدا يفتحها",
+        "es": "El acta está sellada en una caja de regalo que nadie puede abrir"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "xmas-f05",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What does a Christmas tree dream about the rest of the year?",
+        "translit": null,
+        "display": {
+          "fr": "À quoi rêve un sapin de Noël le reste de l'année ?",
+          "ar": "بشو بتحلم شجرة الميلاد باقي السنة؟",
+          "es": "¿Con qué sueña un árbol de Navidad el resto del año?"
+        }
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Wearing its lights again",
+          "Growing just a bit taller",
+          "A family that waters it"
+        ],
+        "fr": [
+          "Remettre ses guirlandes",
+          "Grandir encore un peu",
+          "Une famille qui l'arrose"
+        ],
+        "ar": [
+          "ترجع تلبس الضو",
+          "تطول شوي كمان",
+          "عيلة بتسقيها"
+        ],
+        "es": [
+          "Volver a llevar sus luces",
+          "Crecer un poquito más",
+          "Una familia que lo riegue"
+        ]
+      },
+      "note": {
+        "en": "Trees talk in their sleep, but only to other trees",
+        "fr": "Les sapins parlent en dormant, mais seulement aux autres sapins",
+        "ar": "الشجر بيحكي بنومو، بس مع الشجر",
+        "es": "Los árboles hablan en sueños, pero solo con otros árboles"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "xmas-f06",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 2,
+      "knownIn": [],
+      "prompt": {
+        "original": "What is written on page one of Santa's sleigh manual?",
+        "translit": null,
+        "display": {
+          "fr": "Qu'est-ce qui est écrit à la première page du mode d'emploi du traîneau du Père Noël ?",
+          "ar": "شو مكتوب بأول صفحة من كتيب تعليمات زلاجة بابا نويل؟",
+          "es": "¿Qué dice la primera página del manual del trineo de Papá Noel?"
+        }
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Feed the reindeer first",
+          "Mind the chimneys",
+          "Never land on a flat roof"
+        ],
+        "fr": [
+          "Nourrir les rennes d'abord",
+          "Attention aux cheminées",
+          "Jamais d'atterrissage sur un toit plat"
+        ],
+        "ar": [
+          "طعمي الرنات قبل ما تطير",
+          "انتبه للمداخن",
+          "ما تنزل عسطح فيه صحون لاقطة"
+        ],
+        "es": [
+          "Primero, da de comer a los renos",
+          "Cuidado con las chimeneas",
+          "Nunca aterrices en un tejado plano"
+        ]
+      },
+      "note": {
+        "en": "The manual was lost under a pile of wrapping paper. Allegedly",
+        "fr": "Le mode d'emploi s'est perdu sous une pile de papier cadeau. Paraît-il",
+        "ar": "الكتيب ضاع تحت كومة ورق هدايا. هيك بيقولوا",
+        "es": "El manual se perdió bajo una montaña de papel de regalo. Eso dicen"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "xmas-f07",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 1,
+      "knownIn": [],
+      "prompt": {
+        "original": "What do Christmas lights whisper to each other at night?",
+        "translit": null,
+        "display": {
+          "fr": "Que se chuchotent les guirlandes lumineuses la nuit ?",
+          "ar": "شو بيتوشوشوا لمبات الزينة بالليل؟",
+          "es": "¿Qué se susurran las luces de Navidad por la noche?"
+        }
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Your turn to blink",
+          "Someone's coming downstairs",
+          "Don't tell them about the fuse"
+        ],
+        "fr": [
+          "C'est ton tour de clignoter",
+          "Quelqu'un descend l'escalier",
+          "Ne leur parle pas du fusible"
+        ],
+        "ar": [
+          "دورك تغمز",
+          "في حدا نازل عالدرج",
+          "قربت تقطع الكهربا"
+        ],
+        "es": [
+          "Te toca parpadear",
+          "Alguien baja por la escalera",
+          "No les cuentes lo del fusible"
+        ]
+      },
+      "note": {
+        "en": "Only the cat has heard them, and the cat isn't talking",
+        "fr": "Seul le chat les a entendues, et le chat ne dit rien",
+        "ar": "بس القطة سمعتن، والقطة ما رح تحكي",
+        "es": "Solo el gato las ha oído, y el gato no dice nada"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "xmas-f08",
+      "type": "no_truth",
+      "tier": "free",
+      "difficulty": 3,
+      "knownIn": [],
+      "prompt": {
+        "original": "What did the first person ever to wrap a present use as paper?",
+        "translit": null,
+        "display": {
+          "fr": "Qu'a utilisé comme papier la toute première personne à emballer un cadeau ?",
+          "ar": "شو استعمل أول واحد لف هدية بالتاريخ بدل الورق؟",
+          "es": "¿Qué usó como papel la primera persona que envolvió un regalo?"
+        }
+      },
+      "truth": {},
+      "truthAlt": {},
+      "houseLies": {
+        "en": [
+          "Yesterday's newspaper",
+          "A big cabbage leaf",
+          "Grandma's tablecloth"
+        ],
+        "fr": [
+          "Le journal de la veille",
+          "Une grande feuille de chou",
+          "La nappe de mamie"
+        ],
+        "ar": [
+          "جريدة مبارح",
+          "ورقة ملفوف كبيرة",
+          "شرشف تيتا"
+        ],
+        "es": [
+          "El periódico de ayer",
+          "Una hoja de col enorme",
+          "El mantel de la abuela"
+        ]
+      },
+      "note": {
+        "en": "Nobody kept the wrapping. Nobody ever does",
+        "fr": "Personne n'a gardé l'emballage. Personne ne le garde jamais",
+        "ar": "ما حدا خبى الورق. ولا مرة حدا بيخبيه",
+        "es": "Nadie guardó el envoltorio. Nadie lo guarda nunca"
+      },
+      "review": {
+        "status": "draft",
+        "source": null
+      }
+    }
+  ]
+}
