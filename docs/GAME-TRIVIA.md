@@ -325,7 +325,7 @@ Adding a value is a `vocab.json` + i18n change, which keeps labels broad and the
 
 ### 11.2 Sensitivity rules (binding for every quiz, strict for `lebanon`)
 
-No questions about: wars and armed conflicts, political parties and politicians (including places named after them), religious communities and sects, borders and disputed territory, refugees, assassinations, militia or army, current economic crisis figures. Distractors follow the same rule (no war years as wrong answers). Famous people only for arts, sport and science achievements. Holidays only if national and non-religious. **Regional balance:** place questions carry a `region` tag (`beirut`, `mount-lebanon`, `north`, `south`, `bekaa`) and no region may exceed 35 % of a quiz's tagged questions. Every question has a `source`; a reviewer from the target community signs off **the pack** (`status: "reviewed"`, their name in `reviewedBy`). There is no per-question review field.
+No questions about: wars and armed conflicts, political parties and politicians (including places named after them), religious communities and sects, borders and disputed territory, refugees, assassinations, militia or army, current economic crisis figures. Distractors follow the same rule (no war years as wrong answers). Famous people only for arts, sport and science achievements. Holidays only if national and non-religious, with one exception: **seasonal packs** (owner decision, 2026-11-21). A pack whose header says `occasion: "christmas"` may name Christmas itself; the lint then lifts only the words christmas / noël / navidad (so Père Noël and Papá Noel pass too). Church, religion, Easter, Eid and the rest of the list stay banned, and religious facts are stated neutrally. Packs without the field keep the full list. **Regional balance:** place questions carry a `region` tag (`beirut`, `mount-lebanon`, `north`, `south`, `bekaa`) and no region may exceed 35 % of a quiz's tagged questions. Every question has a `source`; a reviewer from the target community signs off **the pack** (`status: "reviewed"`, their name in `reviewedBy`). There is no per-question review field.
 
 ### 11.3 Schema (platform `PackHeader` + Trivia items; `content/trivia/<locale>/<pack-id>.json`)
 
@@ -369,10 +369,13 @@ Lint (platform common checks + Trivia, `tools/content-lint/src/games/trivia.ts`)
 |---|---|---|---|---|---|---|
 | `lb-quiz-01` (`-en`, `-fr`, `-ar`, `-es`) — "Lebanon: the big quiz" · « Liban : le grand quiz » · «لبنان: المسابقة الكبيرة» | lebanon | music, dance, football | ★★ (mean ≈ 1.84) | 75 (§14) | free (whole quiz) | draft; every fact `[VERIFY]` |
 | `world-mix-01` (`-en`, `-fr`, `-ar`, `-es`) — "World Mix" · « Le monde en vrac » · «خلطة من العالم» · "Mezcla mundial" | world | geography, science, cinema-tv | ★★ | 75 | free | **shipped, the default quiz** (`FEATURED_QUIZ_IDS`, 2026-11-14); draft, unreviewed; its Arabic is formal MSA, not the light Lebanese register |
+| `xmas-quiz-01` (`-en`, `-fr`, `-ar`, `-es`) — "Christmas Quiz" · « Le quiz de Noël » · «مسابقة الميلاد» · "El quiz de Navidad" | world | traditions, food, music | ★★ (mean ≈ 2.02) | 60 (19 × d3) | free | draft, unreviewed; seasonal (`occasion: "christmas"`, §11.2); plan and sources: `docs/content-plans/christmas-trivia.md` |
 | `world-easy-01` — Around the World | world | — | ★ | 60 planned | free | later |
 | `arab-music-01` — Arab Music Legends | arab-world | — | ★★ | 40 planned | Pass | later |
 
 `lb-quiz-01` pack `topics` (exactly those its questions use): `geography`, `history`, `culture`, `music`, `dance`, `football`, `sports`, `food`, `cinema-tv`, `celebrities`, `nature`.
+
+`xmas-quiz-01` pack `topics`: `traditions`, `food`, `music`, `cinema-tv`, `history`, `nature`, `geography`.
 
 ---
 

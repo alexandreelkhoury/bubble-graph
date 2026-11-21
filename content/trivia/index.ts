@@ -5,7 +5,8 @@
 //
 // Shipped (GAME-TRIVIA §11.5): world-mix-01 "World Mix" (the default quiz, see DEFAULT_QUIZ_ID) and lb-quiz-01
 // "Lebanon: the big quiz". Both are free drafts pending review; world-mix-01's Arabic is formal MSA (owner decision:
-// ship as is for now).
+// ship as is for now). xmas-quiz-01 "Christmas Quiz" (2026-11-21, docs/content-plans/christmas-trivia.md) is a free
+// seasonal draft with `occasion: "christmas"`.
 import enLbQuiz01 from "./en/lb-quiz-01-en.json";
 import frLbQuiz01 from "./fr/lb-quiz-01-fr.json";
 import arLbQuiz01 from "./ar/lb-quiz-01-ar.json";
@@ -14,5 +15,14 @@ import enWorldMix01 from "./en/world-mix-01-en.json";
 import frWorldMix01 from "./fr/world-mix-01-fr.json";
 import arWorldMix01 from "./ar/world-mix-01-ar.json";
 import esWorldMix01 from "./es/world-mix-01-es.json";
+import enXmasQuiz01 from "./en/xmas-quiz-01-en.json";
+import frXmasQuiz01 from "./fr/xmas-quiz-01-fr.json";
+import arXmasQuiz01 from "./ar/xmas-quiz-01-ar.json";
+import esXmasQuiz01 from "./es/xmas-quiz-01-es.json";
 
-export const PACKS: readonly unknown[] = [enLbQuiz01, enWorldMix01, frLbQuiz01, frWorldMix01, arLbQuiz01, arWorldMix01, esLbQuiz01, esWorldMix01];
+export const PACKS: readonly unknown[] = [
+  enLbQuiz01, enWorldMix01, enXmasQuiz01,
+  frLbQuiz01, frWorldMix01, frXmasQuiz01,
+  arLbQuiz01, arWorldMix01, arXmasQuiz01,
+  esLbQuiz01, esWorldMix01, esXmasQuiz01,
+];

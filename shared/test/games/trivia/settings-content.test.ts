@@ -96,7 +96,7 @@ describe("quiz selection (§9, §9.1)", () => {
   });
 });
 
-// ─── the real content (lane D's lb-quiz-01 and world-mix-01 families) ────────────────────────────────────────────────
+// ─── the real content (lb-quiz-01, world-mix-01 and xmas-quiz-01 families) ───────────────────────────────────────────
 
 const CONTENT_DIR = join(import.meta.dirname, "..", "..", "..", "..", "content", "trivia");
 const realRaw = (): { file: string; raw: unknown }[] => {
@@ -111,14 +111,14 @@ const realRaw = (): { file: string; raw: unknown }[] => {
 
 describe("pack schema on the shipped quizzes (§11.3)", () => {
   const raws = realRaw();
-  it("finds the lb-quiz-01 and world-mix-01 families in en/fr/ar/es", () => {
+  it("finds the lb-quiz-01, world-mix-01 and xmas-quiz-01 families in en/fr/ar/es", () => {
     const ids = raws.map((r) => (r.raw as { id: string }).id);
-    for (const l of ["en", "fr", "ar", "es"]) for (const f of ["lb-quiz-01", "world-mix-01"]) expect(ids).toContain(`${f}-${l}`);
+    for (const l of ["en", "fr", "ar", "es"]) for (const f of ["lb-quiz-01", "world-mix-01", "xmas-quiz-01"]) expect(ids).toContain(`${f}-${l}`);
   });
   it("world-mix-01 is featured: first on the shelf and the default quiz in every language", () => {
     const catalog = { packs: raws.map((r) => adapter.parse(r.raw)) };
     for (const l of ["en", "fr", "ar", "es"] as const) {
-      expect(quizzesFor(catalog, l).map((p) => p.family)).toEqual(["world-mix-01", "lb-quiz-01"]);
+      expect(quizzesFor(catalog, l).map((p) => p.family)).toEqual(["world-mix-01", "lb-quiz-01", "xmas-quiz-01"]);
       expect(resolveQuiz(catalog, null, l)?.id).toBe(`world-mix-01-${l}`);
       expect(packFor(catalog, "lb-quiz-01", l)?.id).toBe(`lb-quiz-01-${l}`);
     }

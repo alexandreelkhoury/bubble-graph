@@ -87,6 +87,16 @@ export const BANNED_ARABIC: readonly string[] = [
   "القوات اللبنانية", "الكتائب", "حركة امل", "شهيد", "شهداء", "استشهاد", "ثورة", "ثورات", "صبرا", "شاتيلا", "قانا", "المرفأ",
 ];
 
+/**
+ * Seasonal exemptions (owner decision 2026-11-21, GAME-TRIVIA §11.2): a pack whose header says `occasion: "christmas"`
+ * may use the Christmas words themselves (Christmas, Noël/Père Noël, Navidad/Papá Noel; folded forms as in BANNED_LATIN).
+ * Nothing else is lifted: church, religion, Easter, Eid and the rest of the list still fail. Packs without the field
+ * keep the full list.
+ */
+export const OCCASION_EXEMPT: Readonly<Record<string, readonly string[]>> = {
+  christmas: ["christmas", "noel", "navidad"],
+};
+
 /** Invisible format characters (\p{Cf}: zero-width joiners and spaces, soft hyphen, bidi marks): stripped before matching. */
 const FORMAT_CHARS = /\p{Cf}/gu;
 /** Bidi controls an Arabic or mixed-direction string may legitimately need (LRM, RLM, ALM, isolates); any other Cf is an error. */
@@ -138,8 +148,14 @@ const arabicMatches = (token: string, stem: string): boolean => {
   return m !== null && m[0] === token;
 };
 
-/** The banned terms found in one string (folded forms); empty when clean. */
-export function bannedTerms(text: string): string[] {
+/** The banned terms found in one string (folded forms); empty when clean. `occasion` applies OCCASION_EXEMPT. */
+export function bannedTerms(text: string, occasion?: string): string[] {
+  const exempt = occasion !== undefined ? OCCASION_EXEMPT[occasion] : undefined;
+  const hits = bannedTermsAll(text);
+  return exempt ? hits.filter((t) => !exempt.includes(t)) : hits;
+}
+
+function bannedTermsAll(text: string): string[] {
   const hits = new Set<string>();
   const words = latinWords(text);
   const joined = ` ${words.join(" ")} `;
@@ -197,6 +213,11 @@ export function lintTriviaRaw(packs: readonly TriviaLintInput[], opts: { release
     if (raw.script !== (lang === "ar" ? "Arab" : "Latn")) err(`script must be ${lang === "ar" ? "Arab" : "Latn"} for locale ${locale}`);
     const family = str(raw.family) ? raw.family : id;
     families.set(family, [...(families.get(family) ?? []), pack]);
+    let occasion: string | undefined;
+    if (raw.occasion !== undefined) {
+      if (str(raw.occasion) && Object.hasOwn(OCCASION_EXEMPT, raw.occasion)) occasion = raw.occasion;
+      else err(`occasion must be one of ${Object.keys(OCCASION_EXEMPT).join(", ")} (got ${JSON.stringify(raw.occasion)})`);
+    }
 
     // Header (§5.4 Trivia rules).
     if (!str(raw.domain) || !(DOMAINS as readonly string[]).includes(raw.domain)) err(`domain is required and must be a vocabulary domain (got ${JSON.stringify(raw.domain)})`);
@@ -209,7 +230,7 @@ export function lintTriviaRaw(packs: readonly TriviaLintInput[], opts: { release
     for (const t of featured) if (!topics.includes(t)) err(`featuredTopics "${String(t)}" is not in topics`);
     for (const [where, v] of [["title", raw.title], ["description", raw.description]] as const) {
       if (v && typeof v === "object") for (const [loc, s] of Object.entries(v)) if (str(s)) {
-        for (const b of bannedTerms(s)) err(`${where}.${loc}: sensitive term "${b}" (§11.2)`);
+        for (const b of bannedTerms(s, occasion)) err(`${where}.${loc}: sensitive term "${b}" (§11.2)`);
         for (const pr of scriptProblems(s)) err(`${where}.${loc}: ${pr}`);
       }
     }
@@ -300,7 +321,7 @@ export function lintTriviaRaw(packs: readonly TriviaLintInput[], opts: { release
 
       // §11.2 sensitivity list on everything players see.
       for (const s of [text, ...options.filter(str), ...(str(q.explain) ? [q.explain] : [])]) {
-        for (const b of bannedTerms(s)) qerr(`sensitive term "${b}" (§11.2)`);
+        for (const b of bannedTerms(s, occasion)) qerr(`sensitive term "${b}" (§11.2)`);
         for (const pr of scriptProblems(s)) qerr(pr);
       }
       if (raw.script === "Latn" && type === "mc4") {
@@ -352,7 +373,7 @@ export function lintTriviaRaw(packs: readonly TriviaLintInput[], opts: { release
     const firstQs = new Map(((first.raw.questions as RawQuestion[] | undefined) ?? []).map((q) => [String(q.id), q]));
     for (const m of members.slice(1)) {
       const mid = String(m.raw.id);
-      for (const k of ["domain", "stars", "topics", "featuredTopics", "title", "ageRating", "tier"] as const) {
+      for (const k of ["domain", "stars", "topics", "featuredTopics", "title", "ageRating", "tier", "occasion"] as const) {
         if (JSON.stringify(m.raw[k]) !== JSON.stringify(first.raw[k])) errors.push(`family ${family}: ${mid} has a different ${k} from ${fid}`);
       }
       for (const q of (m.raw.questions as RawQuestion[] | undefined) ?? []) {

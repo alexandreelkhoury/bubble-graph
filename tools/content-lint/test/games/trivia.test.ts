@@ -120,6 +120,32 @@ describe("trivia lint: synthetic packs", () => {
     expect(errorsOf([withHeader(quiz("en"), { title: { en: "Parliament night", fr: "x", ar: "x", es: "x" } })])).toContain('title.en: sensitive term "parliament"');
   });
 
+  it("occasion \"christmas\" lifts only the Christmas words, only in packs that declare it", () => {
+    const xmas = (occasion: unknown): TriviaLintInput => withHeader(quiz("en", "xm", (qs) => {
+      qs[0] = { ...qs[0], text: "What does Père Noël bring at Christmas?" };
+      qs[1] = { ...qs[1], options: ["Feliz Navidad", "Bravo", "Charlie", "Delta"] };
+      qs[2] = { ...qs[2], text: "Which church bell rings at Christmas?" };
+      qs[3] = { ...qs[3], explain: "Christmas and Easter are both public holidays there." };
+    }), { occasion, title: { en: "Christmas Quiz", fr: "Le quiz de Noël", ar: "مسابقة الميلاد", es: "El quiz de Navidad" } });
+    const on = errorsOf([xmas("christmas")]);
+    for (const t of ["christmas", "noel", "navidad"]) expect(on).not.toContain(`sensitive term "${t}"`);
+    expect(on).toContain('xm-en: q003: sensitive term "church"');
+    expect(on).toContain('xm-en: q004: sensitive term "easter"');
+    const off = errorsOf([xmas(undefined)]);
+    expect(off).toContain('title.en: sensitive term "christmas"');
+    expect(off).toContain('title.fr: sensitive term "noel"');
+    expect(off).toContain('title.es: sensitive term "navidad"');
+    expect(off).toContain('xm-en: q001: sensitive term "noel"');
+    expect(off).toContain('xm-en: q002: sensitive term "navidad"');
+    expect(errorsOf([xmas("ramadan")])).toContain('occasion must be one of christmas (got "ramadan")');
+    expect(bannedTerms("Joyeux Noël", "christmas")).toEqual([]);
+    expect(bannedTerms("Joyeux Noël")).toEqual(["noel"]);
+    expect(bannedTerms("Noël à l'église", "christmas")).toEqual(["eglise"]);
+    // Translations share the occasion (family header rule).
+    const [en, fr] = family();
+    expect(errorsOf([withHeader(en as TriviaLintInput, { occasion: "christmas" }), fr as TriviaLintInput])).toContain("fx-quiz-fr has a different occasion from fx-quiz-en");
+  });
+
   it("the giveaway hint warns when only the correct option repeats a long word of the question", () => {
     const w = lintTriviaRaw([quiz("en", "a", (qs) => void (qs[1] = { ...qs[1], text: "Which river flows through the valley?", options: ["Lake", "Valley river", "Sea", "Pond"], answer: 1 }))]).warnings;
     expect(w.join("\n")).toContain('q002: the correct option shares "valley", "river" with the question');
@@ -239,11 +265,32 @@ describe("trivia lint: content/trivia", () => {
     for (const f of readdirSync(join(CONTENT, l))) if (f.endsWith(".json")) packs.push({ file: `trivia/${l}/${f}`, raw: JSON.parse(readFileSync(join(CONTENT, l, f), "utf8")) as Record<string, unknown> });
   }
 
-  it("ships lb-quiz-01 and world-mix-01 (GAME-TRIVIA §11.5); every pack has 75 questions in en, fr, ar and es", () => {
-    expect(packs.map((p) => p.raw.id).sort()).toEqual(["lb-quiz-01-ar", "lb-quiz-01-en", "lb-quiz-01-es", "lb-quiz-01-fr", "world-mix-01-ar", "world-mix-01-en", "world-mix-01-es", "world-mix-01-fr"]);
+  it("ships lb-quiz-01, world-mix-01 and xmas-quiz-01 (GAME-TRIVIA §11.5) in en, fr, ar and es, with their question counts", () => {
+    expect(packs.map((p) => p.raw.id).sort()).toEqual([
+      "lb-quiz-01-ar", "lb-quiz-01-en", "lb-quiz-01-es", "lb-quiz-01-fr", "world-mix-01-ar", "world-mix-01-en", "world-mix-01-es", "world-mix-01-fr",
+      "xmas-quiz-01-ar", "xmas-quiz-01-en", "xmas-quiz-01-es", "xmas-quiz-01-fr",
+    ]);
     const index = readFileSync(join(CONTENT, "index.ts"), "utf8");
     expect([...index.matchAll(/from "\.\/(\w+)\/([\w-]+)\.json"/g)].map((m) => m[2]).sort()).toEqual(packs.map((p) => p.raw.id).sort());
-    for (const p of packs) expect((p.raw.questions as unknown[]).length, String(p.raw.id)).toBe(75);
+    const want: Record<string, number> = { "lb-quiz-01": 75, "world-mix-01": 75, "xmas-quiz-01": 60 };
+    for (const p of packs) expect((p.raw.questions as unknown[]).length, String(p.raw.id)).toBe(want[String(p.raw.family)]);
+  });
+
+  it("xmas-quiz-01 matches docs/content-plans/christmas-trivia.md (seasonal, free, Long-ready)", () => {
+    const xmas = packs.filter((x) => x.raw.family === "xmas-quiz-01");
+    expect(xmas).toHaveLength(4);
+    for (const p of xmas) {
+      expect(p.raw.occasion).toBe("christmas");
+      expect(p.raw.domain).toBe("world");
+      expect(p.raw.featuredTopics).toEqual(["traditions", "food", "music"]);
+      expect(p.raw.stars).toBe(2);
+      expect(p.raw.tier).toBe("free");
+      expect(p.raw.title).toEqual({ en: "Christmas Quiz", fr: "Le quiz de Noël", ar: "مسابقة الميلاد", es: "El quiz de Navidad" });
+      const qs = p.raw.questions as { difficulty: number }[];
+      expect(qs.filter((q) => q.difficulty === 3).length).toBeGreaterThanOrEqual(15);
+    }
+    // Only the Christmas words are lifted: the pack still passes the full list once those three are allowed.
+    expect(lintTriviaRaw(xmas.map((p) => withHeader(p, { occasion: undefined }))).errors.every((e) => /sensitive term "(christmas|noel|navidad)"/.test(e))).toBe(true);
   });
 
   it("passes every trivia rule; the only warnings are the open [VERIFY] notes", () => {
