@@ -85,7 +85,7 @@ type Tr =
   | { kind: "entrance"; id: GameId };
 
 /**
- * /tv-pixi: loads the Pixi skin (tvSkin: the hub and Most Likely drawn by PixiJS) before the first screen. If the chunk
+ * /tv-pixi: loads the Pixi skin (tvSkin: the hub and every game drawn by PixiJS) before the first screen. If the chunk
  * fails to load the mock simply stays all-DOM. On /tv this is a no-op and the Pixi chunk is never requested.
  */
 function usePixiSkin(): boolean {
