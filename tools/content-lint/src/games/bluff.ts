@@ -27,6 +27,9 @@ export const ANSWER_SOFT_MAX_GRAPHEMES = 50;
 export const MIN_FREE_SHARE = 0.3;
 export const ONE_WORD_MAX_SHARE = 0.4;
 export const TRUTH_PACK_MIN_ITEMS = 20;
+/** §11.3 themed packs (truths + their own finals): a Long game draws 4 + 4 truth prompts, plus the final. */
+export const THEMED_PACK_MIN_TRUTHS = 8;
+export const THEMED_PACK_MIN_FINALS = 3;
 
 /** §11.2 rule 9: famous "fun facts" that are myths. Matched on the normalised prompt + truth of fact items. */
 export const MYTH_DENYLIST: readonly string[] = [
@@ -315,9 +318,20 @@ export function lintBluffRaw(entries: readonly { file: string; raw: unknown }[],
     }
     if (pack.ageRating !== "all") c.warnings.push(`${P}: ageRating "${pack.ageRating}" (every launch pack is "all", §9)`);
     const types = new Set(pack.items.map((i) => i.type));
-    if (types.has("no_truth") && types.size > 1) c.errors.push(`${P}: a pack with no_truth items must have only no_truth items`);
-    if (!types.has("no_truth") && pack.items.length < TRUTH_PACK_MIN_ITEMS) c.warnings.push(`${P}: ${pack.items.length} items (aim for at least ${TRUTH_PACK_MIN_ITEMS})`);
     const free = pack.items.filter((i) => i.tier === "free");
+    if (types.has("no_truth") && types.size > 1) {
+      // §11.3 (2026-11-21): a themed pack (e.g. bluff-christmas) may carry its own finals, so that selecting it alone
+      // plays a whole game. It must then really be playable alone: enough free truths for a Long game and ≥ 3 free finals
+      // in every playable locale.
+      for (const l of pack.playableIn) {
+        const truths = free.filter((i) => i.type !== "no_truth" && !i.knownIn.includes(l)).length;
+        const finals = free.filter((i) => i.type === "no_truth").length;
+        if (truths < THEMED_PACK_MIN_TRUTHS || finals < THEMED_PACK_MIN_FINALS)
+          c.errors.push(`${P}: a pack mixing no_truth with other types is a themed pack and must play a whole game alone: ${l} has ${truths} free truth items (≥ ${THEMED_PACK_MIN_TRUTHS}) and ${finals} free no_truth items (≥ ${THEMED_PACK_MIN_FINALS})`);
+      }
+    }
+    const truthCount = pack.items.filter((i) => i.type !== "no_truth").length;
+    if (truthCount > 0 && truthCount < TRUTH_PACK_MIN_ITEMS) c.warnings.push(`${P}: ${truthCount} truth items (aim for at least ${TRUTH_PACK_MIN_ITEMS})`);
     if (free.length < Math.ceil(pack.items.length * MIN_FREE_SHARE)) c.errors.push(`${P}: ${free.length}/${pack.items.length} items are free (at least ${MIN_FREE_SHARE * 100} %)`);
     for (const l of playable) {
       const n = free.filter((i) => !i.knownIn.includes(l)).length;

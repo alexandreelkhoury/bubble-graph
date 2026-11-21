@@ -56,10 +56,16 @@ describe("bluff content-lint rules", () => {
     expect(e).toMatch(/only 5 free items/);
   });
 
-  it("keeps finals in their own packs and without a truth", () => {
-    const items = base();
-    items[0] = { ...saying(1), type: "no_truth", prompt: { original: "Why?", translit: null, display: {} }, truth: {} };
-    expect(lint(items).errors.join("\n")).toMatch(/only no_truth items/);
+  it("keeps finals without a truth, and a themed pack mixing finals with truths must play a whole game alone (2026-11-21)", () => {
+    const final = (n: number): Item => ({ ...saying(n), type: "no_truth", prompt: { original: `Why ${n}?`, translit: null, display: {} }, truth: {}, truthAlt: {} });
+    const one = base();
+    one[0] = final(1);
+    expect(lint(one).errors.join("\n")).toMatch(/themed pack.*1 free no_truth items/);
+    const themed = [...base(), final(21), final(22), final(23)];
+    expect(lint(themed).errors).toEqual([]);
+    const fewTruths = [...base().slice(0, 7), final(21), final(22), final(23), final(24), final(25), final(26), final(27), final(28), final(29), final(30), final(31), final(32)];
+    expect(lint(fewTruths).errors.join("\n")).toMatch(/en has 7 free truth items/);
+    expect(lint([{ ...final(1), truth: { en: "Because" } }, ...base().slice(1)]).errors.join("\n")).toMatch(/no_truth items have no truth/);
   });
 
   it("blocks other games' names, religion/politics tokens, profanity and famous myths", () => {
