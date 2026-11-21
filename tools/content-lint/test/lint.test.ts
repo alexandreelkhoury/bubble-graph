@@ -172,6 +172,17 @@ describe("content-lint rules", () => {
     expect(errs).toMatch(/lb-f-01: a free pack must have locale en, fr, ar or es/);
   });
 
+  it("PAYMENTS-SPEC §1.5 (2026-11-21): a free pack tagged \"seasonal\" is not the starter, but keeps the free-pack rules", () => {
+    const starter = entry(pack("en-f-01", "en", TEN));
+    const xmas = entry(pack("en-christmas-01", "en", TEN.map(([x, y]) => [`${x}x`, `${y}x`] as [string, string]), { tags: ["christmas", "seasonal"] }));
+    expect(lintPacks([starter, xmas]).errors).toEqual([]);
+    expect(lintPacks([xmas]).errors.join("\n")).toMatch(/language en: exactly one free .* starter pack is required, found 0/);
+    const teenXmas = entry(pack("en-christmas-02", "en", TEN.map(([x, y]) => [`${x}y`, `${y}y`] as [string, string]), { tags: ["seasonal"], ageRating: "teen" }));
+    expect(lintPacks([starter, teenXmas]).errors.join("\n")).toMatch(/en-christmas-02: a free pack must have ageRating "all"/);
+    const r = lintPacks([starter, xmas], null, { release: true });
+    expect(r.errors.join("\n")).toMatch(/en-christmas-01: free starter pack has 10 pairs \(release gate/);
+  });
+
   it("PAYMENTS-SPEC §1.5: free packs are for all ages; premium id length; product ids", () => {
     const teen = lintPacks([entry(pack("en-t-01", "en", TEN, { ageRating: "teen" }))]);
     expect(teen.errors.join("\n")).toMatch(/en-t-01: a free pack must have ageRating "all"/);

@@ -23,6 +23,12 @@ export interface LintResult {
   legacyTags?: string[];
 }
 
+/**
+ * PAYMENTS-SPEC §1.5 (2026-11-21): a free pack with this tag (the Christmas packs) is a seasonal extra, not the language's
+ * starter, so it does not count toward "exactly one free pack per language". Every other free-pack rule still applies.
+ */
+export const SEASONAL_TAG = "seasonal";
+
 /** PAYMENTS-SPEC §1.2 release gate: every free starter pack needs at least this many pairs (error with --release). */
 export const STARTER_MIN_PAIRS = 40;
 /** PAYMENTS-SPEC §1.5: a premium pack below this is only a warning. */
@@ -82,7 +88,7 @@ export function looksPlural(text: string): boolean {
  */
 export function lintPacks(entries: readonly PackEntry[], registered: readonly string[] | null = null, opts: LintOptions = {}): LintResult {
   const errors: string[] = [];
-  const tiers: { id: string; lang: string; locale: string; tier: "free" | "premium" }[] = [];
+  const tiers: { id: string; lang: string; locale: string; tier: "free" | "premium"; seasonal: boolean }[] = [];
   const warnings: string[] = [];
   const counts: Record<string, number> = { en: 0, fr: 0, ar: 0, "ar-LB": 0 };
   const packIds = new Map<string, string>();
@@ -118,7 +124,7 @@ export function lintPacks(entries: readonly PackEntry[], registered: readonly st
     if (pack.status === "draft") warnings.push(`${pack.id}: status is "draft"`);
 
     // PAYMENTS-SPEC §1.5: tiers and Play product ids.
-    tiers.push({ id: pack.id, lang, locale: pack.locale, tier: pack.tier });
+    tiers.push({ id: pack.id, lang, locale: pack.locale, tier: pack.tier, seasonal: pack.tags.includes(SEASONAL_TAG) });
     if (pack.tier === "free") {
       if (pack.locale !== "en" && pack.locale !== "fr" && pack.locale !== "ar" && pack.locale !== "es") errors.push(`${pack.id}: a free pack must have locale en, fr, ar or es (starter packs are not regional), not ${pack.locale}`);
       if (pack.ageRating !== "all") errors.push(`${pack.id}: a free pack must have ageRating "all"`);
@@ -212,10 +218,11 @@ export function lintPacks(entries: readonly PackEntry[], registered: readonly st
     }
   }
 
-  // PAYMENTS-SPEC §1.5: exactly one free pack per language; product ids unique.
+  // PAYMENTS-SPEC §1.5: exactly one free starter pack per language (a free pack tagged "seasonal" is not the starter);
+  // product ids unique.
   for (const lang of [...new Set(tiers.map((t) => t.lang))].sort()) {
-    const free = tiers.filter((t) => t.lang === lang && t.tier === "free");
-    if (free.length !== 1) errors.push(`language ${lang}: exactly one free (tier "free") pack is required, found ${free.length}${free.length ? ` (${free.map((t) => t.id).join(", ")})` : ""}`);
+    const free = tiers.filter((t) => t.lang === lang && t.tier === "free" && !t.seasonal);
+    if (free.length !== 1) errors.push(`language ${lang}: exactly one free (tier "free") starter pack is required, found ${free.length}${free.length ? ` (${free.map((t) => t.id).join(", ")})` : ""}`);
   }
   const byProduct = new Map<string, string>();
   for (const t of tiers) {

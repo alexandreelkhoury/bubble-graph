@@ -1,0 +1,815 @@
+{
+  "id": "en-christmas-01",
+  "game": "mishana",
+  "version": 1,
+  "locale": "en",
+  "script": "Latn",
+  "title": {
+    "en": "Christmas",
+    "fr": "Noël",
+    "ar": "الميلاد",
+    "es": "Navidad"
+  },
+  "description": {
+    "en": "Christmas and New Year: decorations, food, Santa, snow, gifts, carols",
+    "fr": "Noël et le Nouvel An : déco, repas, Père Noël, neige, cadeaux, chants",
+    "ar": "الميلاد وراس السنة: زينة، أكل، بابا نويل، تلج، هدايا، ترانيم",
+    "es": "Navidad y Año Nuevo: adornos, comida, Papá Noel, nieve, regalos, villancicos"
+  },
+  "tags": [
+    "christmas",
+    "seasonal",
+    "winter",
+    "food",
+    "family"
+  ],
+  "topics": [
+    "traditions",
+    "food",
+    "music"
+  ],
+  "ageRating": "all",
+  "tier": "free",
+  "license": "CC-BY-4.0",
+  "source": "original",
+  "status": "draft",
+  "pairs": [
+    {
+      "id": "p001",
+      "civilian": {
+        "text": "Tinsel"
+      },
+      "undercover": {
+        "text": "Garland"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p002",
+      "civilian": {
+        "text": "Mistletoe"
+      },
+      "undercover": {
+        "text": "Holly"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p003",
+      "civilian": {
+        "text": "Christmas tree",
+        "alt": [
+          "Xmas tree"
+        ]
+      },
+      "undercover": {
+        "text": "Wreath"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p004",
+      "civilian": {
+        "text": "Bauble"
+      },
+      "undercover": {
+        "text": "Snow globe",
+        "alt": [
+          "Snowglobe"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p005",
+      "civilian": {
+        "text": "Fairy lights",
+        "alt": [
+          "Fairy light",
+          "String lights"
+        ]
+      },
+      "undercover": {
+        "text": "Candle"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p006",
+      "civilian": {
+        "text": "Stocking",
+        "alt": [
+          "Christmas stocking"
+        ]
+      },
+      "undercover": {
+        "text": "Pillowcase"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p007",
+      "civilian": {
+        "text": "Star"
+      },
+      "undercover": {
+        "text": "Comet"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Decorations"
+    },
+    {
+      "id": "p008",
+      "civilian": {
+        "text": "Nativity scene",
+        "alt": [
+          "Nativity",
+          "Crib"
+        ]
+      },
+      "undercover": {
+        "text": "Advent calendar"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity"
+    },
+    {
+      "id": "p009",
+      "civilian": {
+        "text": "Christmas pudding",
+        "alt": [
+          "Plum pudding"
+        ]
+      },
+      "undercover": {
+        "text": "Fruitcake",
+        "alt": [
+          "Fruit cake"
+        ]
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p010",
+      "civilian": {
+        "text": "Yule log"
+      },
+      "undercover": {
+        "text": "Swiss roll"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p011",
+      "civilian": {
+        "text": "Gingerbread"
+      },
+      "undercover": {
+        "text": "Shortbread"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p012",
+      "civilian": {
+        "text": "Mince pie"
+      },
+      "undercover": {
+        "text": "Sausage roll"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p013",
+      "civilian": {
+        "text": "Turkey"
+      },
+      "undercover": {
+        "text": "Ham"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food. Turkey the bird, not the country."
+    },
+    {
+      "id": "p014",
+      "civilian": {
+        "text": "Eggnog"
+      },
+      "undercover": {
+        "text": "Hot chocolate",
+        "alt": [
+          "Hot cocoa",
+          "Cocoa"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p015",
+      "civilian": {
+        "text": "Candy cane"
+      },
+      "undercover": {
+        "text": "Lollipop"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p016",
+      "civilian": {
+        "text": "Chestnut"
+      },
+      "undercover": {
+        "text": "Walnut"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p017",
+      "civilian": {
+        "text": "Cranberry sauce",
+        "alt": [
+          "Cranberry"
+        ]
+      },
+      "undercover": {
+        "text": "Gravy"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p018",
+      "civilian": {
+        "text": "Panettone"
+      },
+      "undercover": {
+        "text": "Brioche"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p019",
+      "civilian": {
+        "text": "Marzipan"
+      },
+      "undercover": {
+        "text": "Nougat"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p020",
+      "civilian": {
+        "text": "Brussels sprout",
+        "alt": [
+          "Sprout",
+          "Brussel sprout"
+        ]
+      },
+      "undercover": {
+        "text": "Broccoli"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Food"
+    },
+    {
+      "id": "p021",
+      "civilian": {
+        "text": "Santa",
+        "alt": [
+          "Santa Claus",
+          "Father Christmas"
+        ]
+      },
+      "undercover": {
+        "text": "Grandpa",
+        "alt": [
+          "Grandfather"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p022",
+      "civilian": {
+        "text": "Reindeer"
+      },
+      "undercover": {
+        "text": "Moose"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p023",
+      "civilian": {
+        "text": "Angel"
+      },
+      "undercover": {
+        "text": "Fairy"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p024",
+      "civilian": {
+        "text": "Snowman"
+      },
+      "undercover": {
+        "text": "Scarecrow"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p025",
+      "civilian": {
+        "text": "Elf"
+      },
+      "undercover": {
+        "text": "Gnome"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p026",
+      "civilian": {
+        "text": "Sleigh"
+      },
+      "undercover": {
+        "text": "Carriage"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p027",
+      "civilian": {
+        "text": "North Pole"
+      },
+      "undercover": {
+        "text": "South Pole"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p028",
+      "civilian": {
+        "text": "Workshop"
+      },
+      "undercover": {
+        "text": "Factory"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Characters"
+    },
+    {
+      "id": "p029",
+      "civilian": {
+        "text": "Chimney"
+      },
+      "undercover": {
+        "text": "Fireplace"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p030",
+      "civilian": {
+        "text": "Snowflake"
+      },
+      "undercover": {
+        "text": "Icicle"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p031",
+      "civilian": {
+        "text": "Snowball fight"
+      },
+      "undercover": {
+        "text": "Pillow fight"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p032",
+      "civilian": {
+        "text": "Mitten"
+      },
+      "undercover": {
+        "text": "Glove"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p033",
+      "civilian": {
+        "text": "Scarf"
+      },
+      "undercover": {
+        "text": "Beanie",
+        "alt": [
+          "Woolly hat"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p034",
+      "civilian": {
+        "text": "Skiing",
+        "alt": [
+          "Ski"
+        ]
+      },
+      "undercover": {
+        "text": "Ice skating",
+        "alt": [
+          "Skating"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p035",
+      "civilian": {
+        "text": "Igloo"
+      },
+      "undercover": {
+        "text": "Tent"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p036",
+      "civilian": {
+        "text": "Blizzard"
+      },
+      "undercover": {
+        "text": "Avalanche"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p037",
+      "civilian": {
+        "text": "Pyjamas",
+        "alt": [
+          "Pajamas"
+        ]
+      },
+      "undercover": {
+        "text": "Onesie"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p038",
+      "civilian": {
+        "text": "Christmas jumper",
+        "alt": [
+          "Christmas sweater",
+          "Ugly sweater"
+        ]
+      },
+      "undercover": {
+        "text": "Hoodie"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Winter"
+    },
+    {
+      "id": "p039",
+      "civilian": {
+        "text": "Wrapping paper",
+        "alt": [
+          "Gift wrap"
+        ]
+      },
+      "undercover": {
+        "text": "Gift bag"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p040",
+      "civilian": {
+        "text": "Ribbon"
+      },
+      "undercover": {
+        "text": "String"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p041",
+      "civilian": {
+        "text": "Secret Santa"
+      },
+      "undercover": {
+        "text": "Raffle"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p042",
+      "civilian": {
+        "text": "Wish list",
+        "alt": [
+          "Wishlist"
+        ]
+      },
+      "undercover": {
+        "text": "Shopping list"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p043",
+      "civilian": {
+        "text": "Christmas card"
+      },
+      "undercover": {
+        "text": "Postcard"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Gifts"
+    },
+    {
+      "id": "p044",
+      "civilian": {
+        "text": "Carol",
+        "alt": [
+          "Christmas carol"
+        ]
+      },
+      "undercover": {
+        "text": "Lullaby"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p045",
+      "civilian": {
+        "text": "Choir"
+      },
+      "undercover": {
+        "text": "Orchestra"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p046",
+      "civilian": {
+        "text": "Jingle bell",
+        "alt": [
+          "Sleigh bell"
+        ]
+      },
+      "undercover": {
+        "text": "Triangle"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p047",
+      "civilian": {
+        "text": "Music box"
+      },
+      "undercover": {
+        "text": "Jukebox"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Carols and music"
+    },
+    {
+      "id": "p048",
+      "civilian": {
+        "text": "Shepherd"
+      },
+      "undercover": {
+        "text": "Farmer"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity"
+    },
+    {
+      "id": "p049",
+      "civilian": {
+        "text": "Manger"
+      },
+      "undercover": {
+        "text": "Cradle"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity"
+    },
+    {
+      "id": "p050",
+      "civilian": {
+        "text": "Camel"
+      },
+      "undercover": {
+        "text": "Donkey"
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: Nativity"
+    },
+    {
+      "id": "p051",
+      "civilian": {
+        "text": "Fireworks",
+        "alt": [
+          "Firework"
+        ]
+      },
+      "undercover": {
+        "text": "Sparklers",
+        "alt": [
+          "Sparkler"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p052",
+      "civilian": {
+        "text": "Confetti"
+      },
+      "undercover": {
+        "text": "Glitter"
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p053",
+      "civilian": {
+        "text": "Christmas cracker",
+        "alt": [
+          "Cracker"
+        ]
+      },
+      "undercover": {
+        "text": "Party popper",
+        "alt": [
+          "Popper"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p054",
+      "civilian": {
+        "text": "Party hat"
+      },
+      "undercover": {
+        "text": "Crown",
+        "alt": [
+          "Paper crown"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p055",
+      "civilian": {
+        "text": "Resolution",
+        "alt": [
+          "New Year's resolution"
+        ]
+      },
+      "undercover": {
+        "text": "Promise"
+      },
+      "difficulty": 3,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p056",
+      "civilian": {
+        "text": "Midnight"
+      },
+      "undercover": {
+        "text": "Noon",
+        "alt": [
+          "Midday"
+        ]
+      },
+      "difficulty": 1,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    },
+    {
+      "id": "p057",
+      "civilian": {
+        "text": "Christmas Eve"
+      },
+      "undercover": {
+        "text": "New Year's Eve",
+        "alt": [
+          "New Years Eve"
+        ]
+      },
+      "difficulty": 2,
+      "reviewedBy": [],
+      "notes": "Theme: New Year's Eve"
+    }
+  ]
+}

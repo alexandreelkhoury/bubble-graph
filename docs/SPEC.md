@@ -2462,6 +2462,8 @@ The file name equals `<id>.json`.
 
 EN/FR seed packs drawn from `antebrl/undercover-word-game` use `license:"MIT"` and `source:"antebrl/undercover-word-game"`, contain no brand names, and are credited in `THIRD_PARTY.md`.
 
+**Christmas packs (2026-11-21):** `content/mishana/<lang>/<lang>-christmas-01.json` (en, fr, ar in the Lebanese register, es), original, free, tagged `seasonal` so they are not the language's starter pack (PAYMENTS-SPEC §1.5), not in `DEFAULT_PACK_IDS`. Plan and themes: [docs/content-plans/christmas-mishana.md](content-plans/christmas-mishana.md).
+
 ### 12.3 Catalog (`engine/catalog.ts`)
 ```ts
 interface CatalogPair { key: string; packId: string; packVersion: number; pairId: string; difficulty: 1|2|3; civilian: WordSide; undercover: WordSide }
