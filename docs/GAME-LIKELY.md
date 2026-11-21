@@ -356,6 +356,7 @@ Lint (`tools/content-lint/src/games/likely.ts`): ids unique; review-flag keyword
 |---|---|---|---|
 | `likely-family` — Family Night · Soirée en famille · «سهرة عيلة» | 67 drafted (§14) | 33 (marked F) | draft, `[native review]` FR/AR |
 | `likely-spicy` — After Midnight · Après minuit · «بعد نص الليل» · Después de medianoche | **24 drafted (§14.1)**, 60 before launch (≤ 40 % named) | 0 | draft, Pass, **18+** (`ageRating: "adult"`), `[native review]` FR/AR/ES; ships only once the two platform dependencies of §9.1 are done |
+| `likely-christmas` — Christmas Dinner · Le réveillon · «عشا الميلاد» · Cena de Navidad (2026-11-21) | 64 (`xmas-001`…, plan in `docs/content-plans/christmas-likely.md`) | 64 (all) | draft, `ageRating: "all"` (spice 0, family mode, bundled in production like the Family pack), `[native review]` FR/AR/ES |
 | `likely-lebanon` — Lebanese Life · Vie libanaise · «عيشة لبنانية» | 40 planned (traffic, power-cut humour kept light, family lunches, weddings), plus the former Family #40 "move abroad and fly back for the food" pending a native reviewer's tone check | 10 | later |
 
 ---
