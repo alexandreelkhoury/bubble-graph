@@ -16,6 +16,7 @@ import { HubScene } from "./hub";
 import { LikelyScene } from "./likely";
 import { PixiMishana } from "./mishana";
 import { PixiTaqriban } from "./taqriban";
+import { PixiBluff } from "./bluffSkin";
 import { PixiHost } from "./stage";
 
 const overlayOpen = (): boolean =>
@@ -70,3 +71,4 @@ tvSkin.Hub = PixiHub;
 tvSkin.games.likely = PixiLikely;
 tvSkin.games.mishana = PixiMishana;
 tvSkin.games.taqriban = PixiTaqriban;
+tvSkin.games.bluff = PixiBluff;
