@@ -41,13 +41,13 @@ the Most Likely one ("Who's most likely to…?", everyone votes for a player in 
 | Theme | ≈ cards | Examples |
 |---|---|---|
 | Dinner and food | 12 | third slice of bûche, Teta's third plate, carving the turkey, chocolates, chestnuts, leftovers for breakfast |
-| Presents | 12 | opening early, shaking presents, wrapping badly, forgotten gift, re-gift, 6 a.m. wake-up, "I love it!" |
+| Presents | 12 | opening early, shaking presents, wrapping badly, forgotten gift, mixed-up gift tags, 6 a.m. wake-up, "I love it!" |
 | Secret Santa | 4 | guessing yours, spilling yours, buying it on the way, wanting to keep it |
 | Decorations and the tree | 6 | 100 photos of the tree, tangled lights, the star, tree up until February, decorating before Halloween |
 | Music, films, party | 8 | carols loudest, Christmas songs from November, Christmas dabke, card game final, reindeer antlers, family photo |
 | Family visits | 6 | five visits in an afternoon, "so, what's new?" ten times, kids' table, Lebanese goodbye, late arrival |
-| New Year and resolutions | 6 | countdown too early, asleep before midnight, resolution forgotten on Jan 2, gym once, fireworks on a screen |
-| Lebanese touches | 6 | maamoul "from Teta", ka'ak, the Byblos tree, traffic to see the lights, Faraya snow, a suitcase full of food |
+| New Year and resolutions | 6 | countdown too early, asleep before midnight, resolution forgotten on Jan 2, waving the phone for signal at midnight, fireworks on a screen |
+| Lebanese touches | 6 | maamoul "from Teta", meghli, the Byblos tree, traffic to see the lights, Faraya snow, a suitcase full of food |
 
 ## Wiring
 
