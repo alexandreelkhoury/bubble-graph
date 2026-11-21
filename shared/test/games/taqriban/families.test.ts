@@ -54,20 +54,25 @@ describe("one question per family", () => {
 
 describe("shipped packs", () => {
   const dir = join(import.meta.dirname, "..", "..", "..", "..", "content", "taqriban");
-  const packs = ["taqriban-levant.json", "taqriban-world.json"].map((f) => TaqribanPackSchema.parse(JSON.parse(readFileSync(join(dir, f), "utf8"))));
+  const packs = ["taqriban-christmas.json", "taqriban-levant.json", "taqriban-world.json"].map((f) => TaqribanPackSchema.parse(JSON.parse(readFileSync(join(dir, f), "utf8"))));
   it("tag the area and population questions", () => {
     const all = packs.flatMap((p) => p.items);
     expect(all.filter((i) => i.family === "area").length).toBe(6);
-    expect(all.filter((i) => i.family === "population").length).toBe(12);
+    expect(all.filter((i) => i.family === "population").length).toBe(13);
     for (const i of all.filter((x) => x.family === "area")) expect(i.text.en).toMatch(/\barea\b/i);
     for (const i of all.filter((x) => x.family === "population")) expect(i.text.en).toMatch(/population|people lived/i);
   });
-  it("a normal game from both packs has at most one of each (300 seeds)", () => {
+  it("the Christmas pack tags its repeated templates (tree heights, years to No. 1, record weights and lengths)", () => {
+    const xmas = packs[0]!.items;
+    const fams = (f: string): number => xmas.filter((i) => i.family === f).length;
+    expect([fams("tree-height"), fams("years-to-no1"), fams("record-weight"), fams("record-length")]).toEqual([3, 2, 3, 3]);
+  });
+  it("a normal game from all packs has at most one of each family (300 seeds)", () => {
     const cands = packs.flatMap((p) => pool(p));
+    const families = [...new Set(packs.flatMap((p) => p.items.flatMap((i) => (i.family ? [i.family] : []))))];
     for (let seed = 1; seed <= 300; seed++) {
       const { picked } = drawQuestions(cands, 10, [], createRng(seed));
-      expect(famCount(picked, "area")).toBeLessThanOrEqual(1);
-      expect(famCount(picked, "population")).toBeLessThanOrEqual(1);
+      for (const f of families) expect(famCount(picked, f), f).toBeLessThanOrEqual(1);
     }
   });
 });

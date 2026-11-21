@@ -264,7 +264,8 @@ ids, ≤ 120 (`TAQ_MEMORY_MAX`, so the room history stays inside the §2.6 budge
 <place>?", `"population"`: "What was <country>'s population…?"). A game draws at most one item per family: fresh items
 of a new family first, then old items of a new family, and a second item of a family only when nothing else is left. A
 host skip's replacement avoids the families of the game's other questions the same way. The launch packs tag 6 area and
-12 population questions.
+12 population questions; the Christmas pack adds `tree-height`, `years-to-no1`, `record-weight`, `record-length` and one
+`population` item (2026-11-21).
 
 ### 11.4 Launch content (draft)
 
@@ -272,8 +273,9 @@ host skip's replacement avoids the families of the game's other questions the sa
 |---|---|---|
 | `taqriban-world` "Around the World" | 102 | geo, space, people (censuses), body, nature, history, culture, sport, tech, food, money |
 | `taqriban-levant` "Lebanon & the Middle East" | 38 | Lebanon (area, peaks, coast, Baalbek, hummus/tabbouleh records, the 1 507.5 LBP peg, GDP 2019, distances from Beirut), Arab world (censuses, areas, Suez, Petra, Abu Simbel, Qatar 2022) |
+| `taqriban-christmas` "Christmas in numbers" (2026-11-21, owner's Christmas dinner) | 33 | Christmas records (tallest cut and artificial trees, Rockefeller tree and star, most lights on a house, Abu Dhabi's jewelled tree, Dubai's bauble, Santa gathering, snowwoman, cracker, stocking), songs/films/books (White Christmas, years to No. 1, Home Alone, A Christmas Carol, Rudolph, first card), food records (Mayfouk's 1 136 m bûche, gingerbread man, panettone, pudding), El Gordo, PNC index, winter extremes, Lebanon (Batroun letters to Santa, Mzaar, Beirut–North Pole). Families: `tree-height`, `years-to-no1`, `record-weight`, `record-length`, `population`. Plan: `docs/content-plans/christmas-taqriban.md` |
 
-140 questions × 4 languages; ~25 % absolute-mode (answers < 100), the rest ratio-mode.
+173 questions × 4 languages (140 at launch + 33 Christmas); ~25 % absolute-mode (answers < 100), the rest ratio-mode.
 
 ---
 
