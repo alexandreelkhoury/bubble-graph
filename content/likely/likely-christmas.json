@@ -1,0 +1,1586 @@
+{
+  "schemaVersion": 1,
+  "id": "likely-christmas",
+  "game": "likely",
+  "title": {
+    "en": "Christmas Dinner",
+    "fr": "Le réveillon",
+    "ar": "عشا الميلاد",
+    "es": "Cena de Navidad"
+  },
+  "description": {
+    "en": "Yule log, Secret Santa, tangled lights and resolutions.",
+    "fr": "Bûche, Secret Santa, guirlandes emmêlées et bonnes résolutions.",
+    "ar": "بوش، سيكريت سانتا، لمبات معقودة وقرارات راس السنة.",
+    "es": "Tronco de Navidad, intercambio de regalos, luces enredadas y propósitos."
+  },
+  "locales": [
+    "en",
+    "fr",
+    "ar",
+    "es"
+  ],
+  "ageRating": "all",
+  "cards": [
+    {
+      "id": "xmas-001",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "sneak a third slice of yule log when nobody's looking",
+        "fr": "de piquer une troisième part de bûche en douce",
+        "ar": "ياخد تالت شقفة بوش عالسكت",
+        "es": "servirse un tercer trozo de tronco de Navidad a escondidas"
+      },
+      "award": {
+        "en": "Yule Log Bandit Award",
+        "fr": "Prix du voleur de bûche",
+        "ar": "جايزة شقفة البوش التالتة",
+        "es": "Premio Ladrón de Tronco"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-002",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "fall asleep on the sofa before dessert",
+        "fr": "de s'endormir sur le canapé avant le dessert",
+        "ar": "يغفى عالكنباية قبل الحلو",
+        "es": "dormirse en el sofá antes del postre"
+      },
+      "award": {
+        "en": "Food Coma Award",
+        "fr": "Prix de la sieste digestive",
+        "ar": "جايزة غفوة العيد",
+        "es": "Premio Siesta Navideña"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-003",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "open a present early and rewrap it so nobody notices",
+        "fr": "d'ouvrir un cadeau en avance et de le remballer en douce",
+        "ar": "يفتح هديّة قبل وقتها ويرجع يلفّها كأنّو ما صار شي",
+        "es": "abrir un regalo antes de tiempo y volver a envolverlo"
+      },
+      "award": {
+        "en": "Sneak Peek Award",
+        "fr": "Prix du coup d'œil",
+        "ar": "جايزة الفضول",
+        "es": "Premio Curiosidad"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-004",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "shake every present under the tree to guess what's inside",
+        "fr": "de secouer tous les cadeaux sous le sapin pour deviner",
+        "ar": "يهزّ كل الهدايا تحت الشجرة ليحزر شو فيها",
+        "es": "agitar todos los regalos bajo el árbol para adivinar qué hay dentro"
+      },
+      "award": {
+        "en": "Gift Detective Award",
+        "fr": "Prix du détective",
+        "ar": "جايزة المحقّق",
+        "es": "Premio Detective"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-005",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "forget one gift and swear it's \"still in the post\"",
+        "fr": "d'oublier un cadeau et de jurer qu'il est « encore en livraison »",
+        "ar": "ينسى هديّة ويقول «بعدها بالتوصيل»",
+        "es": "olvidar un regalo y jurar que «todavía está en camino»"
+      },
+      "award": {
+        "en": "Lost in the Post Award",
+        "fr": "Prix du colis perdu",
+        "ar": "جايزة الطلبيّة المتأخرة",
+        "es": "Premio Paquete Perdido"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-006",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "wrap a present with half a roll of tape",
+        "fr": "d'emballer un cadeau avec un demi-rouleau de scotch",
+        "ar": "يلفّ هديّة بنصّ رول سكوتش",
+        "es": "envolver un regalo con medio rollo de cinta adhesiva"
+      },
+      "award": {
+        "en": "Tape Master Award",
+        "fr": "Prix du scotch",
+        "ar": "جايزة السكوتش",
+        "es": "Premio Cinta Adhesiva"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-007",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "wrap a gift so badly you can tell what it is",
+        "fr": "d'emballer un cadeau si mal qu'on devine tout de suite ce que c'est",
+        "ar": "يلفّ الهديّة بطريقة بتفضح شو جوّاتها",
+        "es": "envolver un regalo tan mal que se adivina lo que es"
+      },
+      "award": {
+        "en": "No Mystery Award",
+        "fr": "Prix de l'emballage transparent",
+        "ar": "جايزة اللفّة الفاضحة",
+        "es": "Premio Envoltorio Delator"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-008",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music",
+        "party"
+      ],
+      "prompt": {
+        "en": "get the whole table singing Christmas songs",
+        "fr": "de faire chanter des chansons de Noël à toute la table",
+        "ar": "يخلّي كل الطاولة تغنّي أغاني الميلاد",
+        "es": "poner a toda la mesa a cantar villancicos"
+      },
+      "award": {
+        "en": "Choirmaster Award",
+        "fr": "Prix du chef de chœur",
+        "ar": "جايزة قائد الكورال",
+        "es": "Premio Director de Coro"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-009",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "music"
+      ],
+      "prompt": {
+        "en": "play Christmas songs from the first of November",
+        "fr": "de passer des chansons de Noël dès le 1er novembre",
+        "ar": "يحطّ أغاني الميلاد من أوّل تشرين التاني",
+        "es": "poner canciones navideñas desde el 1 de noviembre"
+      },
+      "award": {
+        "en": "Early Jingle Award",
+        "fr": "Prix du grelot précoce",
+        "ar": "جايزة الجرس البكّير",
+        "es": "Premio Cascabel Madrugador"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-010",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "wear the loudest Christmas sweater in the room",
+        "fr": "de porter le pull de Noël le plus kitsch de la soirée",
+        "ar": "يلبس أفقع كنزة ميلاد بالسهرة",
+        "es": "llevar la ropa navideña más llamativa de la noche"
+      },
+      "award": {
+        "en": "Loud Sweater Award",
+        "fr": "Prix du pull kitsch",
+        "ar": "جايزة الكنزة الفاقعة",
+        "es": "Premio Look Navideño"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-011",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "take 100 photos of the tree and post just one",
+        "fr": "de prendre 100 photos du sapin pour en poster une seule",
+        "ar": "ياخد 100 صورة للشجرة وينزّل وحدة بس",
+        "es": "sacar 100 fotos del árbol y publicar solo una"
+      },
+      "award": {
+        "en": "Tree Paparazzi Award",
+        "fr": "Prix du paparazzi du sapin",
+        "ar": "جايزة باباراتزي الشجرة",
+        "es": "Premio Paparazzi del Árbol"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-012",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "spend an hour untangling the fairy lights",
+        "fr": "de passer une heure à démêler la guirlande lumineuse",
+        "ar": "يقضّي ساعة عم يفكّ شريط اللمبات المعقود",
+        "es": "pasarse una hora desenredando las luces del árbol"
+      },
+      "award": {
+        "en": "Tangled Lights Award",
+        "fr": "Prix de la guirlande",
+        "ar": "جايزة اللمبات المعقودة",
+        "es": "Premio Luces Enredadas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-013",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "keep the tree up until February",
+        "fr": "de garder le sapin jusqu'en février",
+        "ar": "يخلّي الشجرة مزيّنة لشباط",
+        "es": "dejar el árbol puesto hasta febrero"
+      },
+      "award": {
+        "en": "Evergreen Award",
+        "fr": "Prix du sapin éternel",
+        "ar": "جايزة الشجرة الدايمة",
+        "es": "Premio Árbol Eterno"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-014",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "start decorating before Halloween is even over",
+        "fr": "de décorer pour Noël avant même la fin d'Halloween",
+        "ar": "يبلّش يزيّن للميلاد قبل ما يخلص الهالووين",
+        "es": "decorar para Navidad antes de que termine Halloween"
+      },
+      "award": {
+        "en": "Head Start Award",
+        "fr": "Prix de l'avance",
+        "ar": "جايزة البكّير",
+        "es": "Premio Adelantado"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-015",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "habits"
+      ],
+      "prompt": {
+        "en": "secretly rearrange the ornaments someone else hung",
+        "fr": "de replacer en douce les décorations accrochées par les autres",
+        "ar": "يرجع يرتّب زينة الشجرة يلّي علّقها غيرو بالسرّ",
+        "es": "recolocar a escondidas los adornos que colgaron los demás"
+      },
+      "award": {
+        "en": "Ornament Inspector Award",
+        "fr": "Prix de la déco parfaite",
+        "ar": "جايزة مفتّش الزينة",
+        "es": "Premio Inspector de Adornos"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-016",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "insist on putting the star on top every single year",
+        "fr": "d'exiger de poser l'étoile en haut du sapin chaque année",
+        "ar": "يصرّ هوّي يحطّ النجمة فوق الشجرة كل سنة",
+        "es": "insistir en poner la estrella del árbol todos los años"
+      },
+      "award": {
+        "en": "Top of the Tree Award",
+        "fr": "Prix de l'étoile",
+        "ar": "جايزة النجمة",
+        "es": "Premio Estrella"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-017",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "figure out their Secret Santa before the exchange",
+        "fr": "de deviner qui est son Secret Santa avant l'échange des cadeaux",
+        "ar": "يكشف السيكريت سانتا تبعو قبل تبادل الهدايا",
+        "es": "descubrir quién le hace el regalo antes del intercambio"
+      },
+      "award": {
+        "en": "Secret Agent Award",
+        "fr": "Prix de l'agent secret",
+        "ar": "جايزة العميل السرّي",
+        "es": "Premio Agente Secreto"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-018",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "spill who they got for Secret Santa within five minutes",
+        "fr": "de vendre la mèche sur son Secret Santa en cinq minutes",
+        "ar": "ما يقدر يخبّي السيكريت سانتا تبعو أكتر من خمس دقايق",
+        "es": "revelar en cinco minutos a quién le toca regalar"
+      },
+      "award": {
+        "en": "Loose Lips Award",
+        "fr": "Prix du secret éventé",
+        "ar": "جايزة السرّ المفضوح",
+        "es": "Premio Secreto a Voces"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-019",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "buy their Secret Santa gift on the way over",
+        "fr": "d'acheter son cadeau de Secret Santa sur le chemin",
+        "ar": "يشتري هديّة السيكريت سانتا وهوّي بالطريق",
+        "es": "comprar el regalo del intercambio de camino a la fiesta"
+      },
+      "award": {
+        "en": "Last-Minute Award",
+        "fr": "Prix de la dernière minute",
+        "ar": "جايزة آخر دقيقة",
+        "es": "Premio Último Minuto"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-020",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "pick a Secret Santa gift they secretly want to keep",
+        "fr": "de choisir un cadeau de Secret Santa qu'on rêve de garder pour soi",
+        "ar": "ينقّي هديّة سيكريت سانتا وهوّي بدّو ياها لإلو",
+        "es": "elegir para el intercambio un regalo que preferiría quedarse"
+      },
+      "award": {
+        "en": "Finders Keepers Award",
+        "fr": "Prix du cadeau à garder",
+        "ar": "جايزة الهديّة الأنانية",
+        "es": "Premio Me lo Quedo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-065",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party",
+        "family"
+      ],
+      "prompt": {
+        "en": "mix up the gift tags and hand everyone the wrong present",
+        "fr": "de mélanger les étiquettes et de distribuer les cadeaux de travers",
+        "ar": "يلخبط أسامي الهدايا وكل واحد يفتح هديّة غيرو",
+        "es": "confundir las etiquetas y darle a cada uno el regalo equivocado"
+      },
+      "award": {
+        "en": "Mix-Up Award",
+        "fr": "Prix de la pagaille",
+        "ar": "جايزة اللخبطة",
+        "es": "Premio Lío de Etiquetas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-022",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "volunteer to carve the turkey and regret it at once",
+        "fr": "de se proposer pour découper la dinde et le regretter aussitôt",
+        "ar": "يتطوّع يقطّع الديك الحبش ويندم فوراً",
+        "es": "ofrecerse a trinchar el pavo y arrepentirse al instante"
+      },
+      "award": {
+        "en": "Carving Chaos Award",
+        "fr": "Prix de la découpe",
+        "ar": "جايزة التقطيع",
+        "es": "Premio Trinchador"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-023",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon",
+        "food"
+      ],
+      "prompt": {
+        "en": "arrive with a tray of maamoul \"from Teta\"",
+        "fr": "de débarquer avec un plateau de maamoul « de la part de Teta »",
+        "ar": "يوصل ومعو صينيّة معمول «من عند تيتا»",
+        "es": "llegar con una bandeja de maamoul «de parte de la abuela»"
+      },
+      "award": {
+        "en": "Maamoul Award",
+        "fr": "Prix du maamoul",
+        "ar": "جايزة المعمول",
+        "es": "Premio Maamoul"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-024",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon",
+        "food"
+      ],
+      "prompt": {
+        "en": "finish the meghli before dinner even starts",
+        "fr": "de finir le meghli avant même le début du dîner",
+        "ar": "يخلّص المغلي قبل ما يبلّش العشا",
+        "es": "acabarse el meghli antes de que empiece la cena"
+      },
+      "award": {
+        "en": "Meghli Award",
+        "fr": "Prix du meghli",
+        "ar": "جايزة المغلي",
+        "es": "Premio Meghli"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-025",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon",
+        "travel"
+      ],
+      "prompt": {
+        "en": "drag everyone to see the Christmas tree in Byblos",
+        "fr": "d'embarquer tout le monde pour aller voir le sapin de Byblos",
+        "ar": "يجرّ الكل يشوفوا شجرة جبيل",
+        "es": "llevar a todo el mundo a ver el árbol de Navidad de Biblos"
+      },
+      "award": {
+        "en": "Byblos Lights Award",
+        "fr": "Prix des lumières de Byblos",
+        "ar": "جايزة شجرة جبيل",
+        "es": "Premio Luces de Biblos"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-026",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon",
+        "travel"
+      ],
+      "prompt": {
+        "en": "sit in traffic for two hours just to see the lights",
+        "fr": "de passer deux heures dans les bouchons pour voir les illuminations",
+        "ar": "يعلق ساعتين بعجقة السير كرمال يشوف الزينة",
+        "es": "pasar dos horas en el tráfico solo para ver las luces"
+      },
+      "award": {
+        "en": "Traffic Jam Award",
+        "fr": "Prix des bouchons",
+        "ar": "جايزة عجقة العيد",
+        "es": "Premio Embotellamiento"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-027",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "food"
+      ],
+      "prompt": {
+        "en": "say \"I'm full\" and still accept Teta's third plate",
+        "fr": "de dire « je cale » et de reprendre quand même une assiette de Teta",
+        "ar": "يقول «شبعت» ويقبل الصحن التالت من تيتا",
+        "es": "decir «no puedo más» y aceptar el tercer plato de la abuela"
+      },
+      "award": {
+        "en": "Can't Say No Award",
+        "fr": "Prix du « juste un peu »",
+        "ar": "جايزة «بس شوي»",
+        "es": "Premio No Sé Decir Que No"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-028",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "arrive after the meal with a spectacular excuse",
+        "fr": "d'arriver après le repas avec une excuse spectaculaire",
+        "ar": "يوصل بعد العشا ومعو حجّة ما بتنصدّق",
+        "es": "llegar después de la cena con una excusa espectacular"
+      },
+      "award": {
+        "en": "Grand Entrance Award",
+        "fr": "Prix de l'excuse en or",
+        "ar": "جايزة الحجّة",
+        "es": "Premio Excusa de Oro"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-029",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "travel"
+      ],
+      "prompt": {
+        "en": "squeeze five family visits into one afternoon",
+        "fr": "d'enchaîner cinq visites de famille en un après-midi",
+        "ar": "يلحّق خمس معايدات بنفس بعد الضهر",
+        "es": "hacer cinco visitas familiares en una sola tarde"
+      },
+      "award": {
+        "en": "Visit Marathon Award",
+        "fr": "Prix du marathon des visites",
+        "ar": "جايزة المعايدات",
+        "es": "Premio Maratón de Visitas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-030",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "answer \"so, what's new?\" ten times in one night",
+        "fr": "de répondre dix fois dans la soirée à « alors, quoi de neuf ? »",
+        "ar": "يجاوب عـ«شو في جديد؟» عشر مرّات بسهرة وحدة",
+        "es": "responder diez veces en una noche a «¿y qué hay de nuevo?»"
+      },
+      "award": {
+        "en": "Press Conference Award",
+        "fr": "Prix de la conférence de presse",
+        "ar": "جايزة المؤتمر الصحفي",
+        "es": "Premio Rueda de Prensa"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-031",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "party"
+      ],
+      "prompt": {
+        "en": "end up at the kids' table and have the most fun",
+        "fr": "de finir à la table des enfants et de s'y éclater",
+        "ar": "يقعد عطاولة الولاد ويكون مبسوط أكتر من الكل",
+        "es": "acabar en la mesa de los niños y pasarlo mejor que nadie"
+      },
+      "award": {
+        "en": "Kids' Table Award",
+        "fr": "Prix de la table des enfants",
+        "ar": "جايزة طاولة الولاد",
+        "es": "Premio Mesa de los Niños"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-067",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "recite every line of the Christmas movie while it's on",
+        "fr": "de réciter toutes les répliques du film de Noël pendant qu'il passe",
+        "ar": "يسمّع كل حوار فيلم الميلاد قبل الممثلين",
+        "es": "recitar de memoria toda la película navideña mientras la ven"
+      },
+      "award": {
+        "en": "Word-Perfect Award",
+        "fr": "Prix de la réplique",
+        "ar": "جايزة الحفظ",
+        "es": "Premio Memoria de Cine"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-033",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "habits"
+      ],
+      "prompt": {
+        "en": "eat leftover turkey for breakfast the next morning",
+        "fr": "de manger les restes de dinde au petit-déj le lendemain",
+        "ar": "يترويق بقايا الديك الحبش تاني يوم الصبح",
+        "es": "desayunar las sobras del pavo al día siguiente"
+      },
+      "award": {
+        "en": "Turkey Breakfast Award",
+        "fr": "Prix du petit-déj à la dinde",
+        "ar": "جايزة ترويقة الديك الحبش",
+        "es": "Premio Desayuno de Pavo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-034",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech",
+        "family"
+      ],
+      "prompt": {
+        "en": "film the ceiling during the family video call",
+        "fr": "de filmer le plafond pendant l'appel vidéo avec la famille",
+        "ar": "يصوّر السقف وهوّي عم يعمل فيديو كول مع العيلة",
+        "es": "enfocar el techo durante la videollamada familiar"
+      },
+      "award": {
+        "en": "Ceiling Cam Award",
+        "fr": "Prix de la caméra au plafond",
+        "ar": "جايزة كاميرا السقف",
+        "es": "Premio Cámara al Techo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-035",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "send the same copy-pasted wishes to all their contacts",
+        "fr": "d'envoyer les mêmes vœux copiés-collés à tous ses contacts",
+        "ar": "يبعت نفس رسالة المعايدة كوبي بايست لكل الكونتاكتس",
+        "es": "mandar la misma felicitación copiada y pegada a todos sus contactos"
+      },
+      "award": {
+        "en": "Bulk Wishes Award",
+        "fr": "Prix des vœux en série",
+        "ar": "جايزة الكوبي بايست",
+        "es": "Premio Copiar y Pegar"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-036",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech"
+      ],
+      "prompt": {
+        "en": "answer Christmas messages under the table all dinner",
+        "fr": "de répondre aux messages de Noël sous la table pendant tout le dîner",
+        "ar": "يردّ عرسايل العيد من تحت الطاولة طول العشا",
+        "es": "contestar mensajes navideños debajo de la mesa toda la cena"
+      },
+      "award": {
+        "en": "Under-the-Table Award",
+        "fr": "Prix du texto sous la table",
+        "ar": "جايزة تحت الطاولة",
+        "es": "Premio Bajo la Mesa"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-037",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future"
+      ],
+      "prompt": {
+        "en": "forget their New Year's resolution by January 2nd",
+        "fr": "d'oublier sa bonne résolution dès le 2 janvier",
+        "ar": "ينسى قرار راس السنة بـ2 كانون التاني",
+        "es": "olvidar su propósito de Año Nuevo el 2 de enero"
+      },
+      "award": {
+        "en": "Fresh Start Award",
+        "fr": "Prix de la bonne résolution",
+        "ar": "جايزة القرار الطاير",
+        "es": "Premio Propósito Fugaz"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-038",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "future"
+      ],
+      "prompt": {
+        "en": "write a list of twenty resolutions and laminate it",
+        "fr": "d'écrire une liste de vingt résolutions et de la plastifier",
+        "ar": "يكتب لايحة عشرين قرار لراس السنة ويغلّفها بالنايلون",
+        "es": "escribir una lista de veinte propósitos y plastificarla"
+      },
+      "award": {
+        "en": "Big Plans Award",
+        "fr": "Prix des grands projets",
+        "ar": "جايزة المشاريع الكبيرة",
+        "es": "Premio Grandes Planes"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-066",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech",
+        "party"
+      ],
+      "prompt": {
+        "en": "spend midnight waving their phone around for signal",
+        "fr": "de passer minuit à agiter son téléphone pour capter du réseau",
+        "ar": "يقضّي نصّ الليل رافع تلفونو يدوّر عالإرسال",
+        "es": "pasar la medianoche moviendo el teléfono para buscar señal"
+      },
+      "award": {
+        "en": "No Signal Award",
+        "fr": "Prix du réseau",
+        "ar": "جايزة الإرسال",
+        "es": "Premio Sin Señal"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-040",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "start the New Year countdown ten seconds too early",
+        "fr": "de lancer le compte à rebours du Nouvel An dix secondes trop tôt",
+        "ar": "يبلّش العدّ لراس السنة قبل وقتو بعشر ثواني",
+        "es": "empezar a contar para Año Nuevo diez segundos antes de tiempo"
+      },
+      "award": {
+        "en": "Countdown Award",
+        "fr": "Prix du compte à rebours",
+        "ar": "جايزة العدّ العكسي",
+        "es": "Premio Impaciente"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-041",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party",
+        "habits"
+      ],
+      "prompt": {
+        "en": "fall asleep before midnight on New Year's Eve",
+        "fr": "de s'endormir avant minuit le soir du Nouvel An",
+        "ar": "ينام قبل نصّ الليل براس السنة",
+        "es": "dormirse antes de medianoche en Fin de Año"
+      },
+      "award": {
+        "en": "Early Night Award",
+        "fr": "Prix du réveillon express",
+        "ar": "جايزة النومة البكّير",
+        "es": "Premio Dormilón de Fin de Año"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-042",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "tech",
+        "party"
+      ],
+      "prompt": {
+        "en": "watch the fireworks only through their phone screen",
+        "fr": "de regarder les feux d'artifice uniquement à travers son écran",
+        "ar": "يتفرّج عالمفرقعات بس من شاشة تلفونو",
+        "es": "ver los fuegos artificiales solo a través de la pantalla"
+      },
+      "award": {
+        "en": "Screen View Award",
+        "fr": "Prix de l'écran",
+        "ar": "جايزة الشاشة",
+        "es": "Premio Pantalla"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-043",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "cry at the same Christmas movie every single year",
+        "fr": "de pleurer devant le même film de Noël chaque année",
+        "ar": "يبكي عنفس فيلم الميلاد كل سنة",
+        "es": "llorar con la misma película navideña todos los años"
+      },
+      "award": {
+        "en": "Movie Tears Award",
+        "fr": "Prix du mouchoir",
+        "ar": "جايزة المحارم",
+        "es": "Premio Pañuelo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-044",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "do all their Christmas shopping on December 24th",
+        "fr": "de faire tous ses achats de Noël le 24 décembre",
+        "ar": "يشتري كل هدايا العيد بـ24 كانون الأوّل",
+        "es": "hacer todas las compras navideñas el 24 de diciembre"
+      },
+      "award": {
+        "en": "Christmas Eve Sprint Award",
+        "fr": "Prix du sprint du 24",
+        "ar": "جايزة سباق 24",
+        "es": "Premio Carrera del 24"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-045",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "have every gift bought and wrapped by August",
+        "fr": "d'avoir acheté et emballé tous ses cadeaux dès le mois d'août",
+        "ar": "يكون شاري ولافف كل الهدايا من شهر آب",
+        "es": "tener todos los regalos comprados y envueltos en agosto"
+      },
+      "award": {
+        "en": "Planner Award",
+        "fr": "Prix de l'organisation",
+        "ar": "جايزة التنظيم",
+        "es": "Premio Previsor"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-046",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "keep reindeer antlers on all night and forget they're there",
+        "fr": "de garder des bois de renne toute la soirée en oubliant qu'ils sont là",
+        "ar": "يضلّ لابس قرون الرنّة طول السهرة وناسي حالو",
+        "es": "llevar astas de reno toda la noche y olvidarse de que las lleva"
+      },
+      "award": {
+        "en": "Reindeer Award",
+        "fr": "Prix du renne",
+        "ar": "جايزة الرنّة",
+        "es": "Premio Reno"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-047",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "eat all the best chocolates and leave the weird ones",
+        "fr": "de piocher les meilleurs chocolats et de laisser les bizarres",
+        "ar": "ياكل أطيب الشوكولا ويترك يلّي ما حدا بيحبّها",
+        "es": "comerse los mejores chocolates y dejar los que nadie quiere"
+      },
+      "award": {
+        "en": "Chocolate Sniper Award",
+        "fr": "Prix du sniper de chocolats",
+        "ar": "جايزة قنّاص الشوكولا",
+        "es": "Premio Francotirador de Chocolates"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-048",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "family"
+      ],
+      "prompt": {
+        "en": "cook enough food for three Christmases",
+        "fr": "de cuisiner de quoi nourrir trois réveillons",
+        "ar": "يطبخ أكل بيكفّي تلات أعياد",
+        "es": "cocinar comida para tres Navidades"
+      },
+      "award": {
+        "en": "Feast Award",
+        "fr": "Prix du festin",
+        "ar": "جايزة العزيمة الكبيرة",
+        "es": "Premio Banquete"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-049",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food"
+      ],
+      "prompt": {
+        "en": "burn the chestnuts while telling a story",
+        "fr": "de cramer les marrons en racontant une histoire",
+        "ar": "يحرق الكستنا وهوّي عم يخبّر قصّة",
+        "es": "quemar las castañas mientras cuenta una historia"
+      },
+      "award": {
+        "en": "Roasted Chestnut Award",
+        "fr": "Prix des marrons grillés",
+        "ar": "جايزة الكستنا",
+        "es": "Premio Castañas"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-068",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "family"
+      ],
+      "prompt": {
+        "en": "ban everyone from the kitchen on Christmas Eve",
+        "fr": "d'interdire la cuisine à tout le monde le soir du réveillon",
+        "ar": "يمنع الكل يفوتوا عالمطبخ ليلة العيد",
+        "es": "prohibir a todos entrar en la cocina en Nochebuena"
+      },
+      "award": {
+        "en": "Head Chef Award",
+        "fr": "Prix du chef",
+        "ar": "جايزة الشيف",
+        "es": "Premio Jefe de Cocina"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-069",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits",
+        "family"
+      ],
+      "prompt": {
+        "en": "volunteer for the dishes just to escape the small talk",
+        "fr": "de se porter volontaire pour la vaisselle pour fuir les discussions",
+        "ar": "يتطوّع يجلي الصحون بس ليهرب من الحكي",
+        "es": "ofrecerse a lavar los platos solo para escapar de la charla"
+      },
+      "award": {
+        "en": "Sink Refuge Award",
+        "fr": "Prix du refuge",
+        "ar": "جايزة الجلي",
+        "es": "Premio Refugio"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-070",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "dig out the embarrassing childhood photos after dinner",
+        "fr": "de ressortir les photos d'enfance gênantes après le repas",
+        "ar": "يطلّع صور الولدنة المحرجة بعد العشا",
+        "es": "sacar las fotos de infancia más vergonzosas tras la cena"
+      },
+      "award": {
+        "en": "Photo Album Award",
+        "fr": "Prix de l'album photo",
+        "ar": "جايزة ألبوم الصور",
+        "es": "Premio Álbum de Fotos"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-053",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon",
+        "music"
+      ],
+      "prompt": {
+        "en": "start a dabke in the middle of Christmas dinner",
+        "fr": "de lancer une dabké en plein dîner de Noël",
+        "ar": "يقوّم دبكة بنصّ عشا الميلاد",
+        "es": "armar un dabke en mitad de la cena de Navidad"
+      },
+      "award": {
+        "en": "Christmas Dabke Award",
+        "fr": "Prix de la dabké de Noël",
+        "ar": "جايزة دبكة العيد",
+        "es": "Premio Dabke Navideño"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-054",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "spend Christmas Day in pyjamas from morning to night",
+        "fr": "de passer le jour de Noël en pyjama du matin au soir",
+        "ar": "يقضّي نهار العيد كلّو بالبيجاما",
+        "es": "pasar todo el día de Navidad en pijama"
+      },
+      "award": {
+        "en": "Pyjama Award",
+        "fr": "Prix du pyjama",
+        "ar": "جايزة البيجاما",
+        "es": "Premio Pijama"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-055",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits",
+        "family"
+      ],
+      "prompt": {
+        "en": "wake the whole house at 6 a.m. to open presents",
+        "fr": "de réveiller toute la maison à 6 h pour ouvrir les cadeaux",
+        "ar": "يفيّق كل البيت الساعة 6 الصبح ليفتحوا الهدايا",
+        "es": "despertar a toda la casa a las 6 para abrir los regalos"
+      },
+      "award": {
+        "en": "Rooster Award",
+        "fr": "Prix du coq",
+        "ar": "جايزة الديك",
+        "es": "Premio Gallo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-056",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "habits"
+      ],
+      "prompt": {
+        "en": "carefully save the wrapping paper for next year",
+        "fr": "de plier soigneusement le papier cadeau pour l'an prochain",
+        "ar": "يطوي ورق الهدايا بعناية كرمال السنة الجايي",
+        "es": "guardar con cuidado el papel de regalo para el año que viene"
+      },
+      "award": {
+        "en": "Recycling Award",
+        "fr": "Prix du recyclage",
+        "ar": "جايزة ورق الهدايا",
+        "es": "Premio Reciclaje"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-057",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "tear open a present in under two seconds",
+        "fr": "de déchirer un papier cadeau en moins de deux secondes",
+        "ar": "يشرّط ورق الهديّة بأقلّ من ثانيتين",
+        "es": "romper el papel de un regalo en menos de dos segundos"
+      },
+      "award": {
+        "en": "Speed Unwrap Award",
+        "fr": "Prix de la tornade",
+        "ar": "جايزة الإعصار",
+        "es": "Premio Tornado"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-058",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "party"
+      ],
+      "prompt": {
+        "en": "say \"I love it!\" before even seeing the gift",
+        "fr": "de crier « j'adore ! » avant même d'avoir vu le cadeau",
+        "ar": "يقول «بتجنّن!» قبل ما يشوف الهديّة",
+        "es": "decir «¡me encanta!» antes de ver el regalo"
+      },
+      "award": {
+        "en": "Instant Joy Award",
+        "fr": "Prix de l'enthousiasme",
+        "ar": "جايزة الحماس",
+        "es": "Premio Entusiasmo"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-059",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family"
+      ],
+      "prompt": {
+        "en": "give a handmade gift that makes everyone cry",
+        "fr": "d'offrir un cadeau fait main qui fait pleurer tout le monde",
+        "ar": "يهدي هديّة من صنع إيدو بتبكّي الكل",
+        "es": "hacer un regalo hecho a mano que emocione a todos"
+      },
+      "award": {
+        "en": "Golden Heart Award",
+        "fr": "Prix du cœur d'or",
+        "ar": "جايزة القلب الدهب",
+        "es": "Premio Corazón de Oro"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-060",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "food",
+        "lebanon"
+      ],
+      "prompt": {
+        "en": "crack seeds and nuts nonstop all evening",
+        "fr": "de décortiquer graines et noix sans s'arrêter de toute la soirée",
+        "ar": "يضلّ يقزقز بزورات طول السهرة",
+        "es": "pelar semillas y frutos secos sin parar toda la noche"
+      },
+      "award": {
+        "en": "Nutcracker Award",
+        "fr": "Prix du casse-noisette",
+        "ar": "جايزة البزورات",
+        "es": "Premio Cascanueces"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-061",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "family",
+        "tech"
+      ],
+      "prompt": {
+        "en": "set the timer for the family photo and miss the shot",
+        "fr": "de lancer le retardateur pour la photo de famille et de ne pas y être",
+        "ar": "يضبط التايمر لصورة العيلة وما يلحّق يطلع فيها",
+        "es": "poner el temporizador para la foto familiar y no llegar a salir"
+      },
+      "award": {
+        "en": "Self-Timer Award",
+        "fr": "Prix du retardateur",
+        "ar": "جايزة التايمر",
+        "es": "Premio Temporizador"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-062",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon",
+        "family"
+      ],
+      "prompt": {
+        "en": "say \"we're leaving\" and start a new chat at the door",
+        "fr": "de dire « on y va » et de relancer la discussion devant la porte",
+        "ar": "يقول «يلّا ماشيين» ويفتح حديث جديد عالباب",
+        "es": "decir «ya nos vamos» y empezar otra charla en la puerta"
+      },
+      "award": {
+        "en": "Lebanese Goodbye Award",
+        "fr": "Prix de l'au revoir libanais",
+        "ar": "جايزة «يلّا ماشيين»",
+        "es": "Premio Despedida Libanesa"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-063",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "travel"
+      ],
+      "prompt": {
+        "en": "fly in for the holidays with a suitcase full of food",
+        "fr": "d'arriver pour les fêtes avec une valise remplie de bouffe",
+        "ar": "ينزل عالبلد بالعيد ومعو شنطة كلّها أكل",
+        "es": "llegar por las fiestas con una maleta llena de comida"
+      },
+      "award": {
+        "en": "Suitcase Award",
+        "fr": "Prix de la valise",
+        "ar": "جايزة الشنطة",
+        "es": "Premio Maleta"
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "id": "xmas-064",
+      "tier": "free",
+      "spice": 0,
+      "namesPlayer": false,
+      "tags": [
+        "lebanon",
+        "travel"
+      ],
+      "prompt": {
+        "en": "drive up to Faraya on the 26th hoping for snow",
+        "fr": "de monter à Faraya le 26 en espérant voir la neige",
+        "ar": "يطلع عفاريا تاني يوم العيد ناطر التلج",
+        "es": "subir a Faraya el 26 con la ilusión de ver nieve"
+      },
+      "award": {
+        "en": "Snow Chaser Award",
+        "fr": "Prix du chasseur de neige",
+        "ar": "جايزة التلج",
+        "es": "Premio Cazanieves"
+      },
+      "review": {
+        "status": "draft"
+      }
+    }
+  ]
+}

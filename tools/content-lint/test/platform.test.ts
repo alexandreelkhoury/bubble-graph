@@ -92,5 +92,6 @@ describe("repository content", { timeout: REPO_TIMEOUT }, () => {
     expect(b).not.toContain("likely/likely-spicy.txt");
     expect(b).toHaveLength(a.length - 1);
     expect(existsSync(join(prod, "likely", "likely-family.txt"))).toBe(true);
+    expect(existsSync(join(prod, "likely", "likely-christmas.txt"))).toBe(true);
   });
 });

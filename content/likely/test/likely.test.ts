@@ -22,10 +22,11 @@ const LOCS = ["en", "fr", "ar", "es"] as const;
 const packs: LikelyPack[] = PACKS.map((p) => content.parse(p));
 const family = packs.find((p) => p.id === "likely-family") as LikelyPack;
 const spicy = packs.find((p) => p.id === "likely-spicy") as LikelyPack;
+const christmas = packs.find((p) => p.id === "likely-christmas") as LikelyPack;
 
 describe("Likely packs (GAME-LIKELY §11)", () => {
-  it("registers the Family and Spicy packs, both parsing with the Likely ContentAdapter", () => {
-    expect(packs.map((p) => p.id)).toEqual(["likely-family", "likely-spicy"]);
+  it("registers the Christmas, Family and Spicy packs, all parsing with the Likely ContentAdapter", () => {
+    expect(packs.map((p) => p.id)).toEqual(["likely-christmas", "likely-family", "likely-spicy"]);
     for (const p of packs) expect(p.locales).toEqual(["en", "fr", "ar", "es"]);
   });
 
@@ -39,6 +40,17 @@ describe("Likely packs (GAME-LIKELY §11)", () => {
     expect(free.length).toBeGreaterThanOrEqual(Math.max(MIN_FREE_CARDS, 2 * LIKELY_LENGTHS.long));
     // §11.3: the first card of a game is an easy opener (party or habits), so a free room needs some.
     expect(free.filter((c) => c.tags.includes("party") || c.tags.includes("habits")).length).toBeGreaterThanOrEqual(LIKELY_LENGTHS.long);
+  });
+
+  it("Christmas: 60+ all-ages cards, every one free and spice 0, served whole to a free room in family mode", () => {
+    expect(christmas.ageRating).toBe("all");
+    expect(christmas.cards.length).toBeGreaterThanOrEqual(60);
+    for (const c of christmas.cards) for (const l of LOCS) expect(c.prompt[l]?.length, `${c.id} ${l}`).toBeGreaterThan(0);
+    expect(christmas.cards.every((c) => c.tier === "free" && c.spice === 0 && !c.namesPlayer && !c.tags.includes("romance"))).toBe(true);
+    expect(christmas.cards.every((c) => cardAllowed(c, "family"))).toBe(true);
+    expect(christmas.cards.filter((c) => c.tags.includes("party") || c.tags.includes("habits")).length).toBeGreaterThanOrEqual(LIKELY_LENGTHS.long);
+    expect(content.playable(christmas, { premium: false, ownedFamilies: new Set<string>() })).toBe(christmas);
+    expect(content.meta(christmas).tier).toBe("free");
   });
 
   it("Spicy: 60+ adult cards, all spice ≥ 1, Pass-only, ≤ 40 % naming a player, every named card has {player} once per locale", () => {
@@ -77,7 +89,7 @@ describe("Likely packs (GAME-LIKELY §11)", () => {
     const f = lintLikelyRaw(raws);
     expect(f.errors).toEqual([]);
     const rel = lintLikelyRaw(raws, { release: true });
-    const drafts = family.cards.filter((c) => c.tier === "free" && c.review.status === "draft").length;
+    const drafts = packs.flatMap((p) => p.cards).filter((c) => c.tier === "free" && c.review.status === "draft").length;
     expect(rel.errors.length).toBe(drafts);
   });
 });
