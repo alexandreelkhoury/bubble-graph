@@ -10,7 +10,7 @@
 // Design units are the 960 × 540 canvas; the host scales them 2×.
 import { Container, FillGradient, Graphics, Sprite, Texture } from "pixi.js";
 import type { Text } from "pixi.js";
-import { BODY_PATHS, REACTION_EXPRESSION, REACTION_HOLD_MS } from "@jamaa/shared/characters";
+import { BODY_PATHS, REACTION_HOLD_MS } from "@jamaa/shared/characters";
 import type { Expression } from "@jamaa/shared/characters";
 import { COLORS } from "@jamaa/shared/constants";
 import type { ColorId } from "@jamaa/shared/constants";
@@ -291,7 +291,7 @@ class Reactions {
       const n = p.reaction?.n ?? 0;
       const was = this.seen.get(p.id);
       this.seen.set(p.id, n);
-      if (was !== undefined && p.reaction && n !== was) this.until.set(p.id, { e: REACTION_EXPRESSION[p.reaction.kind], at: Date.now() + REACTION_HOLD_MS });
+      if (was !== undefined && p.reaction && n !== was) this.until.set(p.id, { e: p.reaction.kind as Expression /* every reaction IS its expression (§3.7, tested) */, at: Date.now() + REACTION_HOLD_MS });
     }
   }
   of(id: string): Expression | null {

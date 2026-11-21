@@ -7,7 +7,7 @@
 // an option (author, kind, votes, likes) is drawn before REVEAL. Design units: the 960 × 540 canvas (backed 2×).
 import { BitmapFont, BitmapText, Container, FillGradient, Graphics, Sprite, Text } from "pixi.js";
 import type { TextStyleOptions } from "pixi.js";
-import { EXPRESSIONS, REACTION_HOLD_MS } from "@jamaa/shared/characters";
+import { EXPRESSION_FEATURES, REACTION_HOLD_MS } from "@jamaa/shared/characters";
 import type { Expression } from "@jamaa/shared/characters";
 import { COLORS } from "@jamaa/shared/constants";
 import type { ColorId } from "@jamaa/shared/constants";
@@ -34,7 +34,7 @@ import {
   BOX, CARD, CARD_TOP, MAX_ENVELOPES, NAME_Y, PILL_Y, SEAT_Y, bezier, coinsOf, control, hopSize, hoppers, landing, revealTimeline, seatChar, seatX,
 } from "../games/bluff/choreo";
 import type { Coin, TimedBeat } from "../games/bluff/choreo";
-import { revealElapsed } from "../games/bluff/tv/revealTime";
+import { revealElapsed, showArabicOriginal } from "../games/bluff/tv/revealTime";
 import { cue, riseRate, sfx } from "../games/bluff/tv/sfx";
 import { charTexture } from "./art";
 import { ArtSprite, LAMP_X, WINDOW_AT, WINDOW_LIGHTS, bigTexture, forgetBluffArt, loadBluffArt } from "./bluffArt";
@@ -43,7 +43,6 @@ import {
   neonAlpha, overshoot, pickSize, podiumCols, podiumDropAt, popSpots, prog, raceCols, raceRowH, RACE, rowTops, stackHeight, tiltOf, twistCells,
 } from "./bluffLayout";
 import { Char, FONT } from "./kit";
-import { showArabicOriginal } from "../games/bluff/tvModel";
 import type { Scene } from "./stage";
 
 // ---------------------------------------------------------------- palette (tv.css :root of .bf, the café world tokens)
@@ -313,7 +312,7 @@ class Actor extends Container {
 
 /** Preloads every expression of these colours (a first-time texture decodes asynchronously: no blank frame later). */
 function preloadChars(colors: Iterable<ColorId>): void {
-  for (const c of new Set(colors)) for (const e of EXPRESSIONS) charTexture(c, e);
+  for (const c of new Set(colors)) for (const e of Object.keys(EXPRESSION_FEATURES) as Expression[]) charTexture(c, e); // keys = EXPRESSIONS (phone core keeps no extra export)
 }
 
 // ---------------------------------------------------------------- the café

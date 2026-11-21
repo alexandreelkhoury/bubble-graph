@@ -184,7 +184,7 @@ describe("keyframe equivalents", () => {
 
 describe("truth caption: the Arabic original only when it is Arabic", () => {
   it("shows an Arabic-script original, hides an English or identical one", async () => {
-    const { showArabicOriginal } = await import("../../../src/games/bluff/tvModel");
+    const { showArabicOriginal } = await import("../../../src/games/bluff/tv/revealTime");
     expect(showArabicOriginal({ text: "Le loup", original: "الديب" })).toBe(true);
     expect(showArabicOriginal({ text: "Des humains", original: "Human ones" })).toBe(false);
     expect(showArabicOriginal({ text: "Human ones", original: "Human ones" })).toBe(false);

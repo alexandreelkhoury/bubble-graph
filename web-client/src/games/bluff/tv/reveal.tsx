@@ -27,7 +27,7 @@ import {
 import type { Coin, Pt } from "../choreo";
 import { BfTop, Cafe, Seats, TvPrompt, rtl, tk } from "./stage";
 import { cue, riseRate, sfx } from "./sfx";
-import { showArabicOriginal } from "../tvModel";
+import { showArabicOriginal } from "./revealTime";
 import { revealElapsed } from "./revealTime";
 
 /** OK in game completes the running reveal (module hook for TvGameModule.onOk). */
